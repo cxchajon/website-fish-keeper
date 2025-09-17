@@ -198,23 +198,21 @@ function pctUsed(){
 function updateBar(){ $("#barFill").style.width = pctUsed() + "%"; }
 
 /* =========================
-   Aggression warnings (v5)
-   - Rule 1: 2+ male bettas → DANGER
-   - Rule 2: Betta (male) + Tiger Barbs → WARNING
-   - Rule 3: Fin-nippers + Long-fins → WARNING
-   - Rule 4: Dwarf cichlids (<20g) → CAUTION
-   - Rule 5: Betta + Gourami-family → CAUTION
+   Aggression warnings (7 rules)
    ========================= */
 function checkAggressionIssues(currentStock){
   const issues = [];
 
   const BETTA_MALE_ID = 'betta_male';
   const TIGER_BARB_ID = 'tiger_barb';
+  const ANGELFISH_ID  = 'angelfish';
 
   // Define groups
   const NIPPER_IDS   = new Set(['tiger_barb','black_skirt_tetra','zebra_danio','guppy']); 
   const LONG_FIN_IDS = new Set(['betta_male','guppy','angelfish','pearl_gourami']);
   const GOURAMI_IDS  = new Set(['dwarf_gourami','honey_gourami','pearl_gourami']);
+  const SHRIMP_IDS   = new Set(['amano_shrimp','cherry_shrimp']);
+  const AGGRESSIVE_IDS = new Set([BETTA_MALE_ID,'apistogramma','ram_cichlid',...GOURAMI_IDS]);
 
   // Dwarf cichlids
   const APISTO_ID = 'apistogramma';
@@ -228,6 +226,9 @@ function checkAggressionIssues(currentStock){
   let hasApisto = false;
   let hasRam = false;
   let hasGourami = false;
+  let hasShrimp = false;
+  let hasAggressive = false;
+  let hasAngelfish = false;
 
   currentStock.forEach(item => {
     const qty = Number(item.qty || 0);
@@ -237,56 +238,47 @@ function checkAggressionIssues(currentStock){
     if (qty > 0 && NIPPER_IDS.has(item.id))   hasNippers = true;
     if (qty > 0 && LONG_FIN_IDS.has(item.id)) hasLongFins = true;
     if (qty > 0 && GOURAMI_IDS.has(item.id))  hasGourami = true;
-
+    if (qty > 0 && SHRIMP_IDS.has(item.id))   hasShrimp = true;
+    if (qty > 0 && AGGRESSIVE_IDS.has(item.id)) hasAggressive = true;
     if (qty > 0 && item.id === APISTO_ID) hasApisto = true;
     if (qty > 0 && item.id === RAM_ID)    hasRam = true;
+    if (qty > 0 && item.id === ANGELFISH_ID) hasAngelfish = true;
   });
 
-  // Rule 1: multiple male bettas
+  // 1) multiple male bettas
   if (maleBettas >= 2) {
-    issues.push({
-      id: 'multi-male-betta',
-      severity: 'danger',
-      message: 'Multiple male Bettas selected — extremely high aggression risk (fighting until serious injury or death). Keep exactly one male Betta per tank.'
-    });
+    issues.push({ severity:'danger', message:'Multiple male Bettas selected — extremely high aggression risk. Keep exactly one male Betta per tank.' });
   }
 
-  // Rule 2: betta + tiger barbs
+  // 2) betta + tiger barbs
   if (maleBettas >= 1 && tigerBarbs >= 1) {
-    issues.push({
-      id: 'betta-vs-tigerbarb',
-      severity: 'warning',
-      message: 'Betta with Tiger Barbs — barbs are notorious fin-nippers and will harass long-finned fish. Choose different schooling fish (rasboras, small peaceful tetras) or skip the Betta.'
-    });
+    issues.push({ severity:'warning', message:'Betta with Tiger Barbs — barbs are notorious fin-nippers and will harass long-finned fish.' });
   }
 
-  // Rule 3: any nippers + any long-fins
+  // 3) any nippers + any long-fins
   if (hasNippers && hasLongFins) {
-    issues.push({
-      id: 'nippers-vs-longfins',
-      severity: 'warning',
-      message: 'Fin-nipping species detected with long-finned fish — high risk of torn fins and stress. Avoid mixing, or increase group size of nippers and add heavy planting/sightline breaks.'
-    });
+    issues.push({ severity:'warning', message:'Fin-nipping species detected with long-finned fish — high risk of torn fins and stress.' });
   }
 
-  // Rule 4: dwarf cichlids in small tanks (<20g)
+  // 4) dwarf cichlids in small tanks (<20g)
   const gallons = Number($("#gallons").value || 0);
   if (gallons > 0 && gallons < 20 && (hasApisto || hasRam)) {
-    const names = [hasApisto ? 'Apistogramma' : null, hasRam ? 'Ram cichlid' : null].filter(Boolean).join(' / ');
-    issues.push({
-      id: 'dwarf-cichlid-small-tank',
-      severity: 'caution',
-      message: `${names} in a tank under 20 gallons — territorial species may become aggressive or stressed in smaller spaces. Aim for ~20g+ with hides, caves, and broken sightlines.`
-    });
+    issues.push({ severity:'caution', message:'Dwarf cichlids in tanks under 20 gallons — may become aggressive or stressed. Aim for ~20g+ with hiding spots.' });
   }
 
-  // Rule 5: betta + gourami-family
+  // 5) betta + gourami-family
   if (maleBettas >= 1 && hasGourami) {
-    issues.push({
-      id: 'betta-vs-gourami',
-      severity: 'caution',
-      message: 'Betta with Gourami-family fish (Dwarf, Honey, Pearl) — all are labyrinth species and often view each other as rivals. Risk of displays, stress, or fighting.'
-    });
+    issues.push({ severity:'caution', message:'Betta with Gourami-family fish — risk of rivalry and aggression.' });
+  }
+
+  // 6) shrimp + aggressive fish
+  if (hasShrimp && hasAggressive) {
+    issues.push({ severity:'caution', message:'Shrimp may be hunted or harassed by Bettas, Cichlids, or Gouramis. Provide heavy cover or avoid mixing.' });
+  }
+
+  // 7) angelfish in <29g
+  if (gallons > 0 && gallons < 29 && hasAngelfish) {
+    issues.push({ severity:'caution', message:'Angelfish in tanks under 29 gallons may become stunted or aggressive. Recommend 29g+ tall tanks.' });
   }
 
   return issues;
@@ -294,19 +286,11 @@ function checkAggressionIssues(currentStock){
 
 function renderAggressionMessages(issues){
   const target = $("#aggression-warnings");
-  if (!target) return;
   target.innerHTML = "";
-
   if (!issues.length) {
-    const ok = document.createElement('div');
-    ok.style.padding = '8px';
-    ok.style.color = '#475569';
-    ok.style.fontSize = '0.95rem';
-    ok.textContent = 'No aggression issues detected with the current stock.';
-    target.appendChild(ok);
+    target.textContent = "No aggression issues detected with the current stock.";
     return;
   }
-
   issues.forEach(issue => {
     const box = document.createElement('div');
     box.style.border = issue.severity === 'danger' ? '2px solid #b91c1c' : '1px solid #c2410c';
@@ -314,22 +298,12 @@ function renderAggressionMessages(issues){
     box.style.padding = '10px';
     box.style.margin = '8px 0';
     box.style.borderRadius = '10px';
-
-    const strong = document.createElement('strong');
-    strong.textContent = (issue.severity || 'warning').toUpperCase() + ': ';
-    box.appendChild(strong);
-
-    const msg = document.createElement('span');
-    msg.textContent = issue.message;
-    box.appendChild(msg);
-
+    box.textContent = issue.message;
     target.appendChild(box);
   });
 }
-
 function refreshAggression(){
-  const issues = checkAggressionIssues(stock);
-  renderAggressionMessages(issues);
+  renderAggressionMessages(checkAggressionIssues(stock));
 }
 
 /* =========================
@@ -342,7 +316,7 @@ function renderStock(){
     const f = fishById(it.id);
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${f ? f.name : "(unknown)"}</td>
+      <td>${f ? f.name : "(unknown)")}</td>
       <td class="right">${it.qty}</td>
       <td class="right">
         <div class="controls">
@@ -362,7 +336,7 @@ function renderStock(){
       if (act === "del")   stock.splice(i,1);
       renderStock();
       updateBar();
-      refreshAggression();   // keep warnings in sync
+      refreshAggression();
     };
   });
 }
