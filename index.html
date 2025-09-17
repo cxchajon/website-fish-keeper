@@ -88,7 +88,7 @@
     </div>
 
     <div class="bar-block">
-      <h3>Aggression Risk (Average)</h3>
+      <h3>Aggression Risk (Average conflicts)</h3>
       <div class="bar" aria-live="polite"><div id="aggBarFill" class="bar-fill"></div></div>
       <div class="bar-note"><span>Calm</span><span>Danger</span></div>
     </div>
@@ -232,7 +232,7 @@ function pctUsed() {
 }
 function updateBioloadBar() { $("#barFill").style.width = pctUsed() + "%"; }
 
-/* ===== Aggression: Option 2 ===== */
+/* ===== Aggression: Option 2 & meters ===== */
 const AGGRESSION_BASE = {
   betta_male: 70, tiger_barb: 55, angelfish: 50, dwarf_gourami: 35,
   honey_gourami: 25, pearl_gourami: 30, guppy: 15, cherry_barb: 20,
@@ -242,10 +242,14 @@ const AGGRESSION_BASE = {
   bristlenose_pleco: 15, praecox_rainbow: 25, apistogramma: 40, ram_cichlid: 40,
   amano_shrimp: 0, cherry_shrimp: 0, nerite_snail: 0, mystery_snail: 0
 };
+
+// Per-species Option 2 value
 function getAggressionValue(base, conflict) {
   const boosted = Math.min(100, (conflict || 0) + 10);
   return Math.max(base || 0, boosted);
 }
+
+// Conflict model used by meters/warnings
 function conflictForEntry(entry, allStock) {
   const NIPPER_IDS   = new Set(['tiger_barb','black_skirt_tetra','zebra_danio','guppy']);
   const LONG_FIN_IDS = new Set(['betta_male','guppy','angelfish','pearl_gourami']);
@@ -271,23 +275,24 @@ function conflictForEntry(entry, allStock) {
   return conflict; // 0–100
 }
 
-/* === Average aggression across tank (quantity-weighted) === */
-function averageAggressionPercent() {
-  let totalAgg = 0;
+/* === OVERALL METER: average CONFLICTS ONLY (quantity-weighted) ===
+   We intentionally *ignore* base temperament here so a single betta
+   in an empty tank won't peg the overall bar. */
+function averageConflictPercent() {
+  let total = 0;
   let totalQty = 0;
   stock.forEach(entry => {
     const qty = Math.max(1, Math.floor(entry.qty || 0));
-    const base = AGGRESSION_BASE[entry.id] ?? 0;
     const conflict = conflictForEntry(entry, stock);
-    const agg = getAggressionValue(base, conflict); // Option 2 per species
-    totalAgg += agg * qty;
+    const boosted = Math.min(100, (conflict || 0) + 10); // conflict + 10, capped
+    total += boosted * qty;
     totalQty += qty;
   });
   if (totalQty === 0) return 0;
-  return Math.round(totalAgg / totalQty);
+  return Math.round(total / totalQty);
 }
 function updateAggressionBar() {
-  $("#aggBarFill").style.width = averageAggressionPercent() + "%";
+  $("#aggBarFill").style.width = averageConflictPercent() + "%";
 }
 
 /* ===== Aggression & Compatibility warnings (safer logic) ===== */
@@ -398,7 +403,7 @@ function renderStock() {
     const fish = fishById(item.id);
     const qty  = Math.max(1, Math.floor(item.qty || 0));
 
-    // Aggression Option 2
+    // Per-species Option 2 display
     const base = AGGRESSION_BASE[item.id] ?? 0;
     const conflict = conflictForEntry({ id: item.id, qty }, stock);
     const agg = getAggressionValue(base, conflict);
@@ -444,7 +449,7 @@ function updateRecMin() {
 /* ===== Recalc everything ===== */
 function refreshAll() {
   updateBioloadBar();
-  updateAggressionBar();      // average across tank
+  updateAggressionBar();      // now averages conflicts only
   refreshAggressionWarnings();
   renderStock();
 }
@@ -494,4 +499,4 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 </body>
-</html> 
+</html>
