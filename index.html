@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Bio-load Capacity — Preloaded Library (vP11)</title>
+<title>Stocking Calculator</title>
 <style>
   :root { --gap: 12px; --radius: 12px; }
   *{ box-sizing: border-box; }
@@ -11,7 +11,6 @@
         margin:0; padding:24px; background:#f8fafc; color:#0f172a; }
   header{ margin-bottom:16px; }
   h1{ font-size:1.35rem; margin:0 0 4px; }
-  .sub{ color:#475569; margin:0; }
   .card{ background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.06);
          padding:16px; margin-bottom:16px; }
   .row{ display:flex; flex-wrap:wrap; gap:var(--gap); }
@@ -36,10 +35,7 @@
   th, td{ padding:10px; border-bottom:1px solid #e2e8f0; text-align:left; }
   .right{ text-align:right; }
   .controls{ display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap; }
-  .small{ font-size:12px; color:#64748b; }
-  .uploader{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 
-  /* Mobile niceties */
   @media (max-width: 540px){
     body{ padding:16px; }
     .row > *{ flex:1 1 100%; }
@@ -48,8 +44,7 @@
 </head>
 <body>
   <header>
-    <h1>Bio-load Capacity — Preloaded Library (vP11)</h1>
-    <p class="sub">Species → Recommended minimum → Quantity → bar fills. Preloaded library, upload optional.</p>
+    <h1>Stocking Calculator</h1>
   </header>
 
   <section class="card">
@@ -81,15 +76,6 @@
         <div id="barFill" class="bar-fill"></div>
       </div>
     </div>
-  </section>
-
-  <section class="card">
-    <h2 style="margin-top:0">Fish Library</h2>
-    <div class="uploader">
-      <input id="fileInput" type="file" accept=".json,.csv" />
-      <button id="resetDemo" class="ghost" title="Restore built-in demo list">Reset to demo</button>
-    </div>
-    <div class="small" style="margin-top:6px">Optional upload: JSON/CSV with <code>id,name,points,min</code>.</div>
   </section>
 
   <section class="card">
@@ -135,7 +121,6 @@
   </section>
 
 <script>
-// --- Built-in demo list (25+ species) ---------------------------------------
 const DEMO_FISH = [
   { id:"neon_tetra", name:"Neon tetra", points:1.0, min:6 },
   { id:"cardinal_tetra", name:"Cardinal tetra", points:1.2, min:6 },
@@ -170,14 +155,14 @@ const DEMO_FISH = [
   { id:"mystery_snail", name:"Mystery snail", points:0.8, min:1 }
 ];
 
-let FISH = [...DEMO_FISH];        // active library (can be replaced by upload)
-let FILTERED = [...FISH];         // search results
-let stock = [];                   // {id, qty}
+let FISH = [...DEMO_FISH];
+let FILTERED = [...FISH];
+let stock = [];
 
 function $(s){ return document.querySelector(s); }
 function fishById(id){ return FISH.find(f=>f.id===id); }
 
-// Capacity model
+// Capacity
 function capacity(){
   const g = Number($("#gallons").value||0);
   const filt = $("#filtration").value;
@@ -198,11 +183,9 @@ function pctUsed(){
   if (cap <= 0 || u <= 0) return 0;
   return Math.min(100, Math.round((u / cap) * 100));
 }
-function updateBar(){
-  $("#barFill").style.width = pctUsed() + "%";
-}
+function updateBar(){ $("#barFill").style.width = pctUsed() + "%"; }
 
-// Stock table
+// Stock
 function renderStock(){
   const tb = $("#tbody");
   tb.innerHTML = "";
@@ -241,7 +224,7 @@ function populateFishDropdown(list){
   list.forEach(f => {
     const opt = document.createElement("option");
     opt.value = f.id;
-    opt.textContent = `${f.name} — ${Number(f.points).toFixed(1)} pts/fish`;
+    opt.textContent = f.name;
     sel.appendChild(opt);
   });
   updateRecMin();
@@ -256,90 +239,32 @@ function applySearch(){
   populateFishDropdown(FILTERED);
 }
 
-// Upload handlers
-function parseCSV(text){
-  const lines = text.split(/\r?\n/).filter(l => l.trim().length>0);
-  if (lines.length === 0) return [];
-  const header = lines[0].split(",").map(h => h.trim().toLowerCase());
-  const idx = {
-    id: header.indexOf("id"),
-    name: header.indexOf("name"),
-    points: header.indexOf("points"),
-    min: header.indexOf("min")
-  };
-  const rows = [];
-  for (let i=1; i<lines.length; i++){
-    const cols = lines[i].split(",").map(c => c.trim());
-    const id = idx.id>=0 ? cols[idx.id] : "";
-    const name = idx.name>=0 ? cols[idx.name] : "";
-    const points = idx.points>=0 ? Number(cols[idx.points]) : NaN;
-    const min = idx.min>=0 ? Number(cols[idx.min]) : NaN;
-    if (!id || !name || !(points>0) || !(min>=1)) continue;
-    rows.push({ id, name, points, min });
-  }
-  return rows;
-}
-function handleFile(file){
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const text = e.target.result;
-      let data = [];
-      if (file.name.toLowerCase().endsWith(".json")){
-        const parsed = JSON.parse(text);
-        if (Array.isArray(parsed)){
-          data = parsed.filter(x => x && x.id && x.name && Number(x.points)>0 && Number(x.min)>=1)
-                      .map(x => ({ id:String(x.id), name:String(x.name), points:Number(x.points), min:Number(x.min) }));
-        }
-      } else if (file.name.toLowerCase().endsWith(".csv")){
-        data = parseCSV(text);
-      }
-      if (data.length === 0) { alert("No valid rows found. Ensure id,name,points,min are present."); return; }
-      FISH = data;
-      applySearch(); // repopulate dropdown from FISH with current search
-    } catch(err){
-      alert("Failed to read file: " + err.message);
-    }
-  };
-  reader.readAsText(file);
-}
-
 // Events
 ["#gallons","#filtration","#planted"].forEach(q => document.querySelector(q).addEventListener("input", updateBar));
-document.getElementById("fileInput").addEventListener("change", (e) => {
-  const file = e.target.files && e.target.files[0];
-  if (file) handleFile(file);
-});
-document.getElementById("resetDemo").addEventListener("click", () => {
-  FISH = [...DEMO_FISH];
-  applySearch();
-});
+$("#fishSearch").addEventListener("input", applySearch);
+$("#fishSelect").addEventListener("change", updateRecMin);
 
-document.getElementById("fishSearch").addEventListener("input", applySearch);
-document.getElementById("fishSelect").addEventListener("change", updateRecMin);
-
-document.getElementById("addFish").addEventListener("click", () => {
-  const id = document.getElementById("fishSelect").value;
-  const qty = Math.max(1, Number(document.getElementById("fQty").value||0));
+$("#addFish").addEventListener("click", () => {
+  const id = $("#fishSelect").value;
+  const qty = Math.max(1, Number($("#fQty").value||0));
   if (!id) return;
   if (!qty){ alert("Enter a quantity."); return; }
   stock.push({ id, qty });
   renderStock();
   updateBar();
-  document.getElementById("fQty").value = "";
+  $("#fQty").value = "";
 });
 
-document.getElementById("reset").addEventListener("click", () => {
+$("#reset").addEventListener("click", () => {
   stock = [];
   renderStock();
   updateBar();
 });
 
 // Init
-applySearch();     // populates dropdown
+applySearch();
 renderStock();
 updateBar();
 </script>
 </body>
 </html>
-
