@@ -129,196 +129,171 @@
   <!-- Load species data first, then the app logic -->
   <script src="fish-data.js"></script>
   <script>
-/* =========================
-   Setup with fallback
-   ========================= */
+/* ===== Setup with fallback ===== */
 const DEFAULT_FISH_DATA = [
-  { id:"neon_tetra", name:"Neon tetra", points:1.0, min:6, temp:[72,78], ph:[6.0,7.0] },
-  { id:"cardinal_tetra", name:"Cardinal tetra", points:1.2, min:6, temp:[74,82], ph:[5.0,7.0] },
-  { id:"ember_tetra", name:"Ember tetra", points:0.9, min:8, temp:[72,82], ph:[5.5,7.0] },
-  { id:"rummynose_tetra", name:"Rummy-nose tetra", points:1.4, min:8, temp:[75,82], ph:[5.5,6.8] },
-  { id:"black_skirt_tetra", name:"Black skirt tetra", points:2.0, min:6, temp:[70,82], ph:[6.0,7.5] },
-  { id:"harlequin_rasbora", name:"Harlequin rasbora", points:1.0, min:6, temp:[72,80], ph:[6.0,7.5] },
-  { id:"chili_rasbora", name:"Chili rasbora", points:0.6, min:10, temp:[72,80], ph:[5.0,7.0] },
-  { id:"zebra_danio", name:"Zebra danio", points:1.2, min:6, temp:[64,77], ph:[6.5,7.5] },
-  { id:"white_cloud", name:"White cloud mountain minnow", points:1.0, min:6, temp:[60,72], ph:[6.5,7.5] },
-  { id:"cherry_barb", name:"Cherry barb", points:2.0, min:6, temp:[73,81], ph:[6.0,7.5] },
-  { id:"tiger_barb", name:"Tiger barb", points:2.5, min:6, temp:[74,80], ph:[6.0,7.5] },
-  { id:"guppy", name:"Guppy (male)", points:1.6, min:3, temp:[72,82], ph:[6.8,8.0] },
-  { id:"platy", name:"Platy", points:3.0, min:3, temp:[70,82], ph:[7.0,8.2] },
-  { id:"molly", name:"Molly", points:4.0, min:3, temp:[72,82], ph:[7.5,8.5] },
-  { id:"swordtail", name:"Swordtail", points:4.5, min:3, temp:[72,82], ph:[7.0,8.2] },
-  { id:"dwarf_gourami", name:"Dwarf gourami", points:5.0, min:1, temp:[77,82], ph:[6.0,7.5] },
-  { id:"honey_gourami", name:"Honey gourami", points:3.5, min:1, temp:[76,82], ph:[6.0,7.5] },
-  { id:"pearl_gourami", name:"Pearl gourami", points:7.0, min:1, temp:[76,82], ph:[6.0,8.0] },
-  { id:"betta_male", name:"Betta (male)", points:6.0, min:1, temp:[76,82], ph:[6.5,7.5] },
-  { id:"cory_small", name:"Corydoras (small)", points:2.2, min:6, temp:[72,78], ph:[6.0,7.5] },
-  { id:"cory_panda", name:"Corydoras panda", points:2.4, min:6, temp:[72,78], ph:[6.0,7.5] },
-  { id:"kuhli_loach", name:"Kuhli loach", points:2.5, min:5, temp:[75,82], ph:[5.5,7.0] },
-  { id:"otocinclus", name:"Otocinclus", points:1.2, min:6, temp:[72,79], ph:[6.0,7.5] },
-  { id:"bristlenose_pleco", name:"Bristlenose pleco", points:8.0, min:1, temp:[72,82], ph:[6.5,7.8] },
-  { id:"praecox_rainbow", name:"Dwarf rainbowfish (Praecox)", points:4.5, min:6, temp:[75,82], ph:[6.5,7.5] },
-  { id:"angelfish", name:"Angelfish", points:10.0, min:1, temp:[76,82], ph:[6.5,7.5] },
-  { id:"apistogramma", name:"Apistogramma (pair)", points:6.0, min:1, temp:[74,82], ph:[5.5,7.0] },
-  { id:"ram_cichlid", name:"Ram cichlid (German blue)", points:5.0, min:1, temp:[78,84], ph:[5.5,7.0] },
-  { id:"amano_shrimp", name:"Amano shrimp", points:0.5, min:3, temp:[68,78], ph:[6.5,7.5] },
-  { id:"cherry_shrimp", name:"Cherry shrimp", points:0.3, min:6, temp:[68,78], ph:[6.5,7.8] },
-  { id:"nerite_snail", name:"Nerite snail", points:0.4, min:1, temp:[72,78], ph:[7.2,8.4] },
-  { id:"mystery_snail", name:"Mystery snail", points:0.8, min:1, temp:[68,82], ph:[7.2,8.4] }
+  { id:"neon_tetra", name:"Neon tetra", points:1.0, min:6 },
+  { id:"cardinal_tetra", name:"Cardinal tetra", points:1.2, min:6 },
+  { id:"ember_tetra", name:"Ember tetra", points:0.9, min:8 },
+  { id:"rummynose_tetra", name:"Rummy-nose tetra", points:1.4, min:8 },
+  { id:"black_skirt_tetra", name:"Black skirt tetra", points:2.0, min:6 },
+  { id:"harlequin_rasbora", name:"Harlequin rasbora", points:1.0, min:6 },
+  { id:"chili_rasbora", name:"Chili rasbora", points:0.6, min:10 },
+  { id:"zebra_danio", name:"Zebra danio", points:1.2, min:6 },
+  { id:"white_cloud", name:"White cloud mountain minnow", points:1.0, min:6 },
+  { id:"cherry_barb", name:"Cherry barb", points:2.0, min:6 },
+  { id:"tiger_barb", name:"Tiger barb", points:2.5, min:6 },    // nipper
+  { id:"guppy", name:"Guppy (male)", points:1.6, min:3 },      // nipper + long fin
+  { id:"platy", name:"Platy", points:3.0, min:3 },
+  { id:"molly", name:"Molly", points:4.0, min:3 },
+  { id:"swordtail", name:"Swordtail", points:4.5, min:3 },
+  { id:"dwarf_gourami", name:"Dwarf gourami", points:5.0, min:1 },
+  { id:"honey_gourami", name:"Honey gourami", points:3.5, min:1 },
+  { id:"pearl_gourami", name:"Pearl gourami", points:7.0, min:1 },
+  { id:"betta_male", name:"Betta (male)", points:6.0, min:1 },
+  { id:"cory_small", name:"Corydoras (small)", points:2.2, min:6 },
+  { id:"cory_panda", name:"Corydoras panda", points:2.4, min:6 },
+  { id:"kuhli_loach", name:"Kuhli loach", points:2.5, min:5 },
+  { id:"otocinclus", name:"Otocinclus", points:1.2, min:6 },
+  { id:"bristlenose_pleco", name:"Bristlenose pleco", points:8.0, min:1 },
+  { id:"praecox_rainbow", name:"Dwarf rainbowfish (Praecox)", points:4.5, min:6 },
+  { id:"angelfish", name:"Angelfish", points:10.0, min:1 },
+  { id:"apistogramma", name:"Apistogramma (pair)", points:6.0, min:1 },
+  { id:"ram_cichlid", name:"Ram cichlid (German blue)", points:5.0, min:1 },
+  { id:"amano_shrimp", name:"Amano shrimp", points:0.5, min:3 },
+  { id:"cherry_shrimp", name:"Cherry shrimp", points:0.3, min:6 },
+  { id:"nerite_snail", name:"Nerite snail", points:0.4, min:1 },
+  { id:"mystery_snail", name:"Mystery snail", points:0.8, min:1 }
 ];
 
-// If fish-data.js loaded and has entries, use it; otherwise fallback
+// Use external fish list if available; fallback otherwise
 let FISH = (Array.isArray(window.FISH_DATA) && window.FISH_DATA.length > 0)
   ? [...window.FISH_DATA]
   : [...DEFAULT_FISH_DATA];
 let FILTERED = [...FISH];
 let stock = [];
 
-function $(s){ return document.querySelector(s); }
-function fishById(id){ return FISH.find(f=>f.id===id); }
+// Helper to fetch elements easily
+function $(sel) { return document.querySelector(sel); }
 
-/* =========================
-   Capacity / Bar
-   ========================= */
-function capacity(){
-  const g = Number($("#gallons").value||0);
-  const filt = $("#filtration").value;
-  const planted = $("#planted").checked;
-  const filtFactor = filt==="high" ? 1.3 : (filt==="low" ? 0.7 : 1.0);
+/* ===== Capacity & Bar ===== */
+function capacity() {
+  const gallons = Number($("#gallons").value || 0);
+  const filtration = $("#filtration").value;
+  const planted   = $("#planted").checked;
+  const filtFactor  = filtration === "high" ? 1.3 : (filtration === "low" ? 0.7 : 1.0);
   const plantFactor = planted ? 1.15 : 1.0;
-  return Math.max(0, g * filtFactor * plantFactor);
+  return Math.max(0, gallons * filtFactor * plantFactor);
 }
-function used(){
-  return stock.reduce((a, it) => {
-    const f = fishById(it.id);
-    const qty = Math.max(1, Math.floor(Number(it.qty)||0));
-    return a + (f ? f.points * qty : 0);
+function used() {
+  return stock.reduce((acc, item) => {
+    const fish = FISH.find(f => f.id === item.id);
+    const qty = Math.max(1, Math.floor(item.qty || 0));
+    return acc + (fish ? fish.points * qty : 0);
   }, 0);
 }
-function pctUsed(){
+function pctUsed() {
   const cap = capacity();
-  const u = used();
+  const u   = used();
   if (cap <= 0 || u <= 0) return 0;
   return Math.min(100, Math.round((u / cap) * 100));
 }
-function updateBar(){ $("#barFill").style.width = pctUsed() + "%"; }
-
-/* =========================
-   Helpers: overlap
-   ========================= */
-function overlap(ranges){
-  if (!ranges.length) return null;
-  const minMax = Math.min(...ranges.map(r=>r[1]));
-  const maxMin = Math.max(...ranges.map(r=>r[0]));
-  if (maxMin > minMax) return null; // no overlap
-  return [maxMin, minMax];
+function updateBar() {
+  $("#barFill").style.width = pctUsed() + "%";
 }
 
-/* =========================
-   Aggression + Water warnings (7 rules + temp/pH overlap)
-   ========================= */
-function checkAggressionIssues(currentStock){
+/* ===== Check for aggression & compatibility ===== */
+function checkAggressionIssues(currentStock) {
   const issues = [];
 
   const BETTA_MALE_ID = 'betta_male';
   const TIGER_BARB_ID = 'tiger_barb';
   const ANGELFISH_ID  = 'angelfish';
 
-  const NIPPER_IDS   = new Set(['tiger_barb','black_skirt_tetra','zebra_danio','guppy']); 
-  const LONG_FIN_IDS = new Set(['betta_male','guppy','angelfish','pearl_gourami']);
-  const GOURAMI_IDS  = new Set(['dwarf_gourami','honey_gourami','pearl_gourami']);
-  const SHRIMP_IDS   = new Set(['amano_shrimp','cherry_shrimp']);
-  const AGGRESSIVE_IDS = new Set([BETTA_MALE_ID,'apistogramma','ram_cichlid',...GOURAMI_IDS]);
+  const NIPPER_IDS   = new Set(['tiger_barb', 'black_skirt_tetra', 'zebra_danio', 'guppy']);
+  const LONG_FIN_IDS = new Set(['betta_male', 'guppy', 'angelfish', 'pearl_gourami']);
+  const GOURAMI_IDS  = new Set(['dwarf_gourami', 'honey_gourami', 'pearl_gourami']);
+  const SHRIMP_IDS   = new Set(['amano_shrimp', 'cherry_shrimp']);
+  const AGGRESSIVE_IDS = new Set([BETTA_MALE_ID, 'apistogramma', 'ram_cichlid', ...GOURAMI_IDS]);
 
-  const APISTO_ID = 'apistogramma';
-  const RAM_ID    = 'ram_cichlid';
-
-  let maleBettas = 0, tigerBarbs = 0;
-  let hasNippers = false, hasLongFins = false, hasApisto = false, hasRam = false;
-  let hasGourami = false, hasShrimp = false, hasAggressive = false, hasAngelfish = false;
+  let maleBettas    = 0;
+  let tigerBarbs    = 0;
+  let hasNippers    = false;
+  let hasLongFins   = false;
+  let hasGourami    = false;
+  let hasShrimp     = false;
+  let hasAggressive = false;
+  let hasAngelfish  = false;
+  let hasApisto     = false;
+  let hasRam        = false;
 
   const presentFish = [];
-  const tempRanges = [];
-  const phRanges = [];
+  const tempRanges  = [];
+  const phRanges    = [];
 
   currentStock.forEach(item => {
-    const qty = Math.max(1, Math.floor(Number(item.qty)||0));
-    if (!qty) return;
-    const f = fishById(item.id);
-    if (!f) return;
-
-    presentFish.push(f);
-    if (f.temp) tempRanges.push(f.temp);
-    if (f.ph)   phRanges.push(f.ph);
-
+    const qty = Math.max(1, Math.floor(item.qty || 0));
+    if (qty < 1) return;
+    const fish = FISH.find(f => f.id === item.id);
+    if (!fish) return;
+    presentFish.push(fish);
+    if (fish.temp) tempRanges.push(fish.temp);
+    if (fish.ph)   phRanges.push(fish.ph);
     if (item.id === BETTA_MALE_ID) maleBettas += qty;
     if (item.id === TIGER_BARB_ID)  tigerBarbs += qty;
-
     if (NIPPER_IDS.has(item.id))   hasNippers = true;
     if (LONG_FIN_IDS.has(item.id)) hasLongFins = true;
     if (GOURAMI_IDS.has(item.id))  hasGourami = true;
     if (SHRIMP_IDS.has(item.id))   hasShrimp = true;
     if (AGGRESSIVE_IDS.has(item.id)) hasAggressive = true;
-    if (item.id === APISTO_ID) hasApisto = true;
-    if (item.id === RAM_ID)    hasRam = true;
+    if (item.id === 'apistogramma') hasApisto = true;
+    if (item.id === 'ram_cichlid')  hasRam    = true;
     if (item.id === ANGELFISH_ID) hasAngelfish = true;
   });
 
+  const gallons = Number($("#gallons").value || 0);
   const distinctSpeciesCount = presentFish.length;
 
-  // 1) multiple male bettas
+  // Aggression rules
   if (maleBettas >= 2) {
     issues.push({ severity:'danger', message:'Multiple male Bettas selected — extremely high aggression risk. Keep exactly one male Betta per tank.' });
   }
-  // 2) betta + tiger barbs
   if (maleBettas >= 1 && tigerBarbs >= 1) {
     issues.push({ severity:'warning', message:'Betta with Tiger Barbs — barbs are notorious fin-nippers and will harass long-finned fish.' });
   }
-  // 3) any nippers + any long-fins
-  if (hasNippers && hasLongFins /* && distinctSpeciesCount > 1 */) {
+  if (hasNippers && hasLongFins) {
+    // To suppress noise when only one species has both traits, uncomment below:
+    // if (distinctSpeciesCount > 1)
     issues.push({ severity:'warning', message:'Fin-nipping species detected with long-finned fish — high risk of torn fins and stress.' });
   }
-  // 4) dwarf cichlids in small tanks (<20g)
-  const gallons = Number($("#gallons").value || 0);
   if (gallons > 0 && gallons < 20 && (hasApisto || hasRam)) {
     issues.push({ severity:'caution', message:'Dwarf cichlids in tanks under 20 gallons — may become aggressive or stressed. Aim for ~20g+ with hiding spots.' });
   }
-  // 5) betta + gourami-family
   if (maleBettas >= 1 && hasGourami) {
     issues.push({ severity:'caution', message:'Betta with Gourami-family fish — risk of rivalry and aggression.' });
   }
-  // 6) shrimp + aggressive fish
   if (hasShrimp && hasAggressive) {
     issues.push({ severity:'caution', message:'Shrimp may be hunted or harassed by Bettas, Cichlids, or Gouramis. Provide heavy cover or avoid mixing.' });
   }
-  // 7) angelfish in <29g
   if (gallons > 0 && gallons < 29 && hasAngelfish) {
     issues.push({ severity:'caution', message:'Angelfish in tanks under 29 gallons may become stunted or aggressive. Recommend 29g+ tall tanks.' });
   }
 
-  /* ---------- Water compatibility checks (overlap-only) ---------- */
+  // Temp & pH overlap warnings
   if (presentFish.length >= 2) {
     const tOverlap = overlap(tempRanges);
     const pOverlap = overlap(phRanges);
-
     if (!tOverlap) {
-      issues.push({
-        severity:'warning',
-        message:'Temperature ranges across selected species do not overlap. Consider different stocking or a species-only tank.'
-      });
+      issues.push({ severity:'warning', message:'Temperature ranges across selected species do not overlap. Consider different stocking or a species-only tank.' });
     }
     if (!pOverlap) {
-      issues.push({
-        severity:'warning',
-        message:'pH ranges across selected species do not overlap. Consider adjusting stocking for matching water chemistry.'
-      });
+      issues.push({ severity:'warning', message:'pH ranges across selected species do not overlap. Consider adjusting stocking for matching water chemistry.' });
     }
   }
-
   return issues;
 }
 
-function renderAggressionMessages(issues){
+/* ===== Warnings render ===== */
+function renderAggressionMessages(issues) {
   const target = $("#aggression-warnings");
   target.innerHTML = "";
   if (!issues.length) {
@@ -330,28 +305,27 @@ function renderAggressionMessages(issues){
     box.style.border = issue.severity === 'danger' ? '2px solid #b91c1c' : '1px solid #c2410c';
     box.style.background = issue.severity === 'danger' ? '#fee2e2' : '#ffedd5';
     box.style.padding = '10px';
-    box.style.margin = '8px 0';
+    box.style.margin  = '8px 0';
     box.style.borderRadius = '10px';
     box.textContent = issue.message;
     target.appendChild(box);
   });
 }
-function refreshAggression(){
+function refreshAggression() {
   renderAggressionMessages(checkAggressionIssues(stock));
 }
 
-/* =========================
-   Stock table render
-   ========================= */
-function renderStock(){
+/* ===== Stock table render ===== */
+function renderStock() {
   const tb = $("#tbody");
   tb.innerHTML = "";
-  stock.forEach((it, i) => {
-    const f = fishById(it.id);
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${f ? f.name : "(unknown)")}</td>
-      <td class="right">${Math.max(1, Math.floor(Number(it.qty)||0))}</td>
+  stock.forEach((item, i) => {
+    const fish = fishById(item.id);
+    const qty  = Math.max(1, Math.floor(item.qty || 0));
+    const row  = document.createElement('tr');
+    row.innerHTML = `
+      <td>${fish ? fish.name : '(unknown)'}</td>
+      <td class="right">${qty}</td>
       <td class="right">
         <div class="controls">
           <button class="ghost" data-act="minus" data-i="${i}">–1</button>
@@ -359,15 +333,15 @@ function renderStock(){
           <button class="ghost" data-act="del" data-i="${i}">Delete</button>
         </div>
       </td>`;
-    tb.appendChild(tr);
+    tb.appendChild(row);
   });
-  tb.querySelectorAll("button[data-act]").forEach(btn => {
+  tb.querySelectorAll('button[data-act]').forEach(btn => {
     const i = Number(btn.dataset.i);
     const act = btn.dataset.act;
     btn.onclick = () => {
-      if (act === "minus") stock[i].qty = Math.max(1, Math.floor(stock[i].qty) - 1);
-      if (act === "plus")  stock[i].qty = Math.max(1, Math.floor(stock[i].qty) + 1);
-      if (act === "del")   stock.splice(i,1);
+      if (act === 'minus') stock[i].qty = Math.max(1, Math.floor(stock[i].qty) - 1);
+      if (act === 'plus')  stock[i].qty = Math.max(1, Math.floor(stock[i].qty) + 1);
+      if (act === 'del')   stock.splice(i,1);
       renderStock();
       updateBar();
       refreshAggression();
@@ -375,76 +349,70 @@ function renderStock(){
   });
 }
 
-/* =========================
-   Dropdown + Search
-   ========================= */
-function populateFishDropdown(list){
+/* ===== Dropdown & search ===== */
+function populateFishDropdown(list) {
   const sel = $("#fishSelect");
   sel.innerHTML = "";
   list.forEach(f => {
-    const opt = document.createElement("option");
+    const opt = document.createElement('option');
     opt.value = f.id;
     opt.textContent = f.name;
     sel.appendChild(opt);
   });
   updateRecMin();
 }
-function updateRecMin(){
-  const f = fishById($("#fishSelect").value);
-  $("#recMin").value = f ? f.min : "";
+function updateRecMin() {
+  const fish = fishById($("#fishSelect").value);
+  $("#recMin").value = fish ? fish.min : "";
 }
-function applySearch(){
-  const q = ($("#fishSearch").value||"").trim().toLowerCase();
+function applySearch() {
+  const q = ($("#fishSearch").value || "").trim().toLowerCase();
   FILTERED = q ? FISH.filter(f => f.name.toLowerCase().includes(q)) : [...FISH];
   populateFishDropdown(FILTERED);
 }
 
-/* =========================
-   Events
-   ========================= */
-["#gallons","#filtration","#planted"].forEach(q =>
-  document.querySelector(q).addEventListener("input", () => {
+/* ===== Events ===== */
+["#gallons","#filtration","#planted"].forEach(selector =>
+  $(selector).addEventListener('input', () => {
     updateBar();
     refreshAggression();
   })
 );
-$("#fishSearch").addEventListener("input", applySearch);
-$("#fishSelect").addEventListener("change", updateRecMin);
+$("#fishSearch").addEventListener('input', applySearch);
+$("#fishSelect").addEventListener('change', updateRecMin);
 
-$("#addFish").addEventListener("click", () => {
+$("#addFish").addEventListener('click', () => {
   const id = $("#fishSelect").value;
   let qty = Number($("#fQty").value || 0);
   if (!id) return;
-  if (!Number.isFinite(qty) || qty < 1) { alert("Enter a quantity (whole number ≥ 1)."); return; }
+  if (!Number.isFinite(qty) || qty < 1) {
+    alert("Enter a quantity (whole number ≥ 1).");
+    return;
+  }
   qty = Math.floor(qty);
-
-  // Merge if species already exists
-  const existing = stock.find(it => it.id === id);
+  // Merge duplicates
+  const existing = stock.find(item => item.id === id);
   if (existing) {
     existing.qty = Math.max(1, Math.floor(existing.qty) + qty);
   } else {
     stock.push({ id, qty });
   }
-
   renderStock();
   updateBar();
   refreshAggression();
   $("#fQty").value = "";
 });
 
-$("#reset").addEventListener("click", () => {
+$("#reset").addEventListener('click', () => {
   stock = [];
   renderStock();
   updateBar();
   refreshAggression();
 });
 
-/* =========================
-   Init
-   ========================= */
-function init(){
-  FILTERED = [...FISH];
-  populateFishDropdown(FILTERED);
+/* ===== Init ===== */
+function init() {
+  populateFishDropdown([...FISH]);
   renderStock();
   updateBar();
   refreshAggression();
