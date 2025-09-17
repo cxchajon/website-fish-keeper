@@ -1,53 +1,187 @@
-// js/fish-data.js
-// Baseline aggression: 0 (very peaceful) → 100 (very aggressive)
-// These are general community-aquarium heuristics, not hard lab values.
+// js/stocking_advisor.js
+// Glue code: wires the UI to the logic in aggression.js
 
-window.DEMO_FISH = [
-  // Peaceful schooling tetras/rasboras generally 8–14
-  { id:"neon_tetra",        name:"Neon tetra",                 points:1.0,  min:6,  aggression:10 },
-  { id:"cardinal_tetra",    name:"Cardinal tetra",             points:1.2,  min:6,  aggression:12 },
-  { id:"ember_tetra",       name:"Ember tetra",                points:0.9,  min:8,  aggression:8  },
-  { id:"rummynose_tetra",   name:"Rummy-nose tetra",           points:1.4,  min:8,  aggression:12 },
-  { id:"black_skirt_tetra", name:"Black skirt tetra",          points:2.0,  min:6,  aggression:22 }, // can nip
-  { id:"harlequin_rasbora", name:"Harlequin rasbora",          points:1.0,  min:6,  aggression:10 },
-  { id:"chili_rasbora",     name:"Chili rasbora",              points:0.6,  min:10, aggression:8  },
-  { id:"zebra_danio",       name:"Zebra danio",                points:1.2,  min:6,  aggression:20 }, // boisterous
-  { id:"white_cloud",       name:"White cloud mountain minnow",points:1.0,  min:6,  aggression:8  },
-  { id:"cherry_barb",       name:"Cherry barb",                points:2.0,  min:6,  aggression:15 },
+function $(sel) { return document.querySelector(sel); }
 
-  // Livebearers
-  { id:"guppy",             name:"Guppy (male)",               points:1.6,  min:3,  aggression:18 }, // mild nipper, long-fin
-  { id:"platy",             name:"Platy",                      points:3.0,  min:3,  aggression:12 },
-  { id:"molly",             name:"Molly",                      points:4.0,  min:3,  aggression:18 },
-  { id:"swordtail",         name:"Swordtail",                  points:4.5,  min:3,  aggression:22 },
+let stock = [];                         // [{id, qty}, ...]
+let FISH  = [];                         // will be set on boot
+let FILTERED = [];
 
-  // Gouramis (labyrinth fish)
-  { id:"dwarf_gourami",     name:"Dwarf gourami",              points:5.0,  min:1,  aggression:35 },
-  { id:"honey_gourami",     name:"Honey gourami",              points:3.5,  min:1,  aggression:20 },
-  { id:"pearl_gourami",     name:"Pearl gourami",              points:7.0,  min:1,  aggression:25 },
+/* ---------- Helpers ---------- */
+function getFishArrayFromWindow() {
+  // Accept any of these globals from fish-data.js
+  const candidates = [
+    window.FISH_DATA,
+    window.FISH,
+    window.fishData,
+    window.fish_list,
+    window.fish // just in case
+  ];
+  for (const c of candidates) {
+    if (Array.isArray(c) && c.length) return c;
+  }
+  return []; // none found
+}
 
-  // Centerpiece / semi-aggressive
-  { id:"betta_male",        name:"Betta (male)",               points:6.0,  min:1,  aggression:70 }, // baseline—conflicts handled separately
-  { id:"tiger_barb",        name:"Tiger barb",                 points:2.5,  min:6,  aggression:45 }, // nippy
+/* ---------- Bioload ---------- */
+function capacity() {
+  const gallons    = Number($("#gallons").value || 0);
+  const filtration = $("#filtration").value;
+  const planted    = $("#planted").checked;
+  const filtFactor  = filtration === "high" ? 1.3 : (filtration === "low" ? 0.7 : 1.0);
+  const plantFactor = planted ? 1.15 : 1.0;
+  return Math.max(0, gallons * filtFactor * plantFactor);
+}
+function usedPoints() {
+  return stock.reduce((acc, item) => {
+    const fish = FISH.find(f => f.id === item.id);
+    return acc + (fish ? (fish.points * item.qty) : 0);
+  }, 0);
+}
+function updateBioloadBar() {
+  const cap = capacity();
+  const used = usedPoints();
+  const pct = (cap <= 0 || used <= 0) ? 0 : Math.min(100, Math.round((used / cap) * 100));
+  $("#barFill").style.width = pct + "%";
+}
 
-  // Bottom dwellers & algae crew (very peaceful)
-  { id:"cory_small",        name:"Corydoras (small)",          points:2.2,  min:6,  aggression:5  },
-  { id:"cory_panda",        name:"Corydoras panda",            points:2.4,  min:6,  aggression:5  },
-  { id:"kuhli_loach",       name:"Kuhli loach",                points:2.5,  min:5,  aggression:5  },
-  { id:"otocinclus",        name:"Otocinclus",                 points:1.2,  min:6,  aggression:5  },
-  { id:"bristlenose_pleco", name:"Bristlenose pleco",          points:8.0,  min:1,  aggression:12 },
+/* ---------- Aggression (overall meter uses conflicts average) ---------- */
+function updateAggressionBar() {
+  const gallons = Number($("#gallons").value || 0);
+  const overall = Aggression.overallAverageConflict(stock, FISH, gallons);
+  $("#aggBarFill").style.width = overall + "%";
+}
 
-  // Rainbows / larger community
-  { id:"praecox_rainbow",   name:"Dwarf rainbowfish (Praecox)",points:4.5,  min:6,  aggression:20 },
+/* ---------- Warnings ---------- */
+function renderAggressionMessages(issues) {
+  const target = $("#aggression-warnings");
+  target.innerHTML = "";
+  if (!issues.length) {
+    target.textContent = "No aggression/compatibility issues detected with the current stock.";
+    return;
+  }
+  issues.forEach(issue => {
+    const box = document.createElement("div");
+    box.style.border = issue.severity === "danger" ? "2px solid #b91c1c" : "1px solid #c2410c";
+    box.style.background = issue.severity === "danger" ? "#fee2e2" : "#ffedd5";
+    box.style.padding = "10px";
+    box.style.margin  = "8px 0";
+    box.style.borderRadius = "10px";
+    box.textContent = issue.message;
+    target.appendChild(box);
+  });
+}
+function refreshAggressionWarnings() {
+  const gallons = Number($("#gallons").value || 0);
+  renderAggressionMessages(Aggression.checkIssues(stock, FISH, gallons));
+}
 
-  // Cichlids (community-safe dwarfs vs. angels)
-  { id:"angelfish",         name:"Angelfish",                  points:10.0, min:1,  aggression:55 },
-  { id:"apistogramma",      name:"Apistogramma (pair)",        points:6.0,  min:1,  aggression:40 },
-  { id:"ram_cichlid",       name:"Ram cichlid (German blue)",  points:5.0,  min:1,  aggression:35 },
+/* ---------- Stock table ---------- */
+function renderStock() {
+  const tb = $("#tbody");
+  tb.innerHTML = "";
+  stock.forEach((item, i) => {
+    const fish = FISH.find(f => f.id === item.id);
+    const qty  = item.qty;
+    const gallons = Number($("#gallons").value || 0);
+    const agg = Aggression.speciesAggression(item, stock, FISH, gallons);
 
-  // Inverts
-  { id:"amano_shrimp",      name:"Amano shrimp",               points:0.5,  min:3,  aggression:0  },
-  { id:"cherry_shrimp",     name:"Cherry shrimp",              points:0.3,  min:6,  aggression:0  },
-  { id:"nerite_snail",      name:"Nerite snail",               points:0.4,  min:1,  aggression:0  },
-  { id:"mystery_snail",     name:"Mystery snail",              points:0.8,  min:1,  aggression:0  }
-];
+    const tr  = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${fish ? fish.name : "(unknown)"}</td>
+      <td class="right">${qty}</td>
+      <td class="right">
+        <span class="mini-bar"><span class="mini-fill" style="width:${agg}%"></span></span>
+        <span class="mini-label">${agg}%</span>
+      </td>
+      <td class="right">
+        <div class="controls">
+          <button class="ghost" data-act="minus" data-i="${i}">–1</button>
+          <button class="ghost" data-act="plus" data-i="${i}">+1</button>
+          <button class="ghost" data-act="del" data-i="${i}">Delete</button>
+        </div>
+      </td>`;
+    tb.appendChild(tr);
+  });
+}
+
+/* ---------- Fish select + search ---------- */
+function refreshFishSelect() {
+  const select = $("#fishSelect");
+  select.innerHTML = "";
+  FILTERED.forEach(fish => {
+    const opt = document.createElement("option");
+    opt.value = fish.id;
+    opt.textContent = fish.name;
+    select.appendChild(opt);
+  });
+  updateRecMin();
+}
+function updateRecMin() {
+  const id   = $("#fishSelect").value;
+  const fish = FISH.find(f => f.id === id);
+  $("#recMin").value = fish ? (fish.min ?? "") : "";
+}
+
+/* ---------- Recalc all ---------- */
+function refreshAll() {
+  updateBioloadBar();
+  updateAggressionBar();
+  refreshAggressionWarnings();
+  renderStock();
+}
+
+/* ---------- Events ---------- */
+$("#fishSearch").addEventListener("input", (e) => {
+  const val = e.target.value.toLowerCase();
+  FILTERED = FISH.filter(f => f.name.toLowerCase().includes(val));
+  refreshFishSelect();
+});
+$("#fishSelect").addEventListener("change", updateRecMin);
+
+$("#addFish").addEventListener("click", () => {
+  const id  = $("#fishSelect").value;
+  const qty = Math.max(1, Number($("#fQty").value || 1));
+  if (!id) return;
+  const existing = stock.find(s => s.id === id);
+  if (existing) existing.qty += qty;
+  else stock.push({ id, qty });
+  $("#fQty").value = "";
+  refreshAll();
+});
+
+$("#tbody").addEventListener("click", (e) => {
+  if (!e.target || !e.target.dataset.act) return;
+  const i = Number(e.target.dataset.i);
+  if (!Number.isFinite(i) || !stock[i]) return;
+  const act = e.target.dataset.act;
+  if (act === "minus") {
+    stock[i].qty -= 1;
+    if (stock[i].qty <= 0) stock.splice(i, 1);
+  } else if (act === "plus") {
+    stock[i].qty += 1;
+  } else if (act === "del") {
+    stock.splice(i, 1);
+  }
+  refreshAll();
+});
+
+$("#reset").addEventListener("click", () => { stock.length = 0; refreshAll(); });
+["#filtration", "#planted", "#gallons"].forEach(sel => {
+  $(sel).addEventListener("change", refreshAll);
+});
+
+/* ---------- Boot ---------- */
+window.addEventListener("DOMContentLoaded", () => {
+  // Pull fish array from whichever global name your fish-data.js uses
+  FISH = getFishArrayFromWindow();
+
+  // If still empty, show a helpful message in the species selector
+  if (!FISH.length) {
+    console.warn("No fish data found. Make sure js/fish-data.js defines window.FISH_DATA (or FISH / fishData).");
+  }
+
+  FILTERED = [...FISH];
+  refreshFishSelect();
+  refreshAll();
+});
