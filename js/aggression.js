@@ -1,54 +1,198 @@
-// js/aggression.js
+/* js/aggression.js
+   Standalone aggression logic for the Stocking Advisor.
+   Usage (global):
+     const a = Aggression;
+     const overall = a.overallAverageConflict(stock, FISH, gallons);
+     const perRow  = a.speciesAggression({id, qty}, stock, FISH, gallons);
+     const issues  = a.checkIssues(stock, FISH, gallons);
+*/
+(function (global) {
+  const baseMap = {
+    betta_male: 70, tiger_barb: 55, angelfish: 50, dwarf_gourami: 35,
+    honey_gourami: 25, pearl_gourami: 30, guppy: 15, cherry_barb: 20,
+    black_skirt_tetra: 25, zebra_danio: 25, cardinal_tetra: 20, neon_tetra: 15,
+    ember_tetra: 10, rummynose_tetra: 20, harlequin_rasbora: 15, chili_rasbora: 10,
+    white_cloud: 10, cory_small: 10, cory_panda: 10, kuhli_loach: 10, otocinclus: 5,
+    bristlenose_pleco: 15, praecox_rainbow: 25, apistogramma: 40, ram_cichlid: 40,
+    amano_shrimp: 0, cherry_shrimp: 0, nerite_snail: 0, mystery_snail: 0
+  };
 
-// Option 2: boost conflicts by +10, cap at 100, then take the max vs base.
-function getAggression(base, conflict) {
-  const conflictBoosted = Math.min(100, conflict + 10);
-  return Math.max(base, conflictBoosted);
-}
+  /** Option 2: Math.max(base, Math.min(100, conflict + 10)) */
+  function option2(base, conflict) {
+    const boosted = Math.min(100, (conflict || 0) + 10);
+    return Math.max(base || 0, boosted);
+  }
 
-// Tiny UI helper: renders a simple aggression bar into a container element.
-function renderAggressionBar(container, base, conflict, label = "Aggression") {
-  const value = getAggression(base, conflict);
+  /** Safe overlap helper for ranges like [[min,max], ...]
+      Returns [lo,hi] if overlap exists; true if not enough info; null if no overlap. */
+  function overlap(ranges) {
+    if (!Array.isArray(ranges)) return null;
+    const valid = ranges.filter(r =>
+      Array.isArray(r) && r.length === 2 && Number.isFinite(r[0]) && Number.isFinite(r[1])
+    );
+    if (valid.length < 2) return true; // not enough info to warn
+    const lo = Math.max(...valid.map(r => Math.min(r[0], r[1])));
+    const hi = Math.min(...valid.map(r => Math.max(r[0], r[1])));
+    return (lo <= hi) ? [lo, hi] : null;
+  }
 
-  // container can be an element or an id string
-  const el = typeof container === "string" ? document.getElementById(container) : container;
-  if (!el) return;
+  /** Find fish metadata by id */
+  function fishById(fishList, id) {
+    return Array.isArray(fishList) ? fishList.find(f => f.id === id) : undefined;
+  }
 
-  // wipe previous
-  el.innerHTML = "";
+  /** Per-entry conflict score (0–100). Mirrors warnings logic. */
+  function conflictForEntry(entry, stock, fishList, gallons) {
+    const NIPPER_IDS   = new Set(['tiger_barb','black_skirt_tetra','zebra_danio','guppy']);
+    const LONG_FIN_IDS = new Set(['betta_male','guppy','angelfish','pearl_gourami']);
+    const GOURAMI_IDS  = new Set(['dwarf_gourami','honey_gourami','pearl_gourami']);
 
-  const wrap = document.createElement("div");
-  wrap.style.width = "100%";
-  wrap.style.margin = "8px 0";
+    let conflict = 0;
+    const qty = Math.max(1, Math.floor(entry?.qty || 0));
+    const id  = entry?.id;
 
-  const lab = document.createElement("label");
-  lab.style.display = "block";
-  lab.style.marginBottom = "4px";
-  lab.textContent = `${label}: ${value}%`;
+    if (!id || !Array.isArray(stock)) return 0;
 
-  const track = document.createElement("div");
-  track.style.width = "100%";
-  track.style.height = "20px";
-  track.style.background = "#e0e0e0";
-  track.style.borderRadius = "4px";
-  track.style.overflow = "hidden";
+    const count = (findId) => (stock.find(s => s.id === findId)?.qty) || 0;
+    const hasAny = (set) => stock.some(s => set.has(s.id) && s.qty > 0);
+    const g = Number(gallons || 0);
 
-  const fill = document.createElement("div");
-  fill.style.width = value + "%";
-  fill.style.height = "100%";
-  fill.style.transition = "width 0.3s ease-in-out";
-  fill.style.background =
-    value < 40 ? "green" : value < 70 ? "orange" : "red";
+    const recMin = fishById(fishList, id)?.min ?? 1;
+    const isSchooling = recMin >= 6;
+    const isLongFin   = LONG_FIN_IDS.has(id);
 
-  track.appendChild(fill);
-  wrap.appendChild(lab);
-  wrap.appendChild(track);
-  el.appendChild(wrap);
+    // Key conflict rules
+    if (id === 'betta_male' && qty > 1) conflict = Math.max(conflict, 90);
+    if (id === 'betta_male' && count('tiger_barb') > 0) conflict = Math.max(conflict, 75);
+    if (isLongFin && hasAny(NIPPER_IDS)) conflict = Math.max(conflict, 70);
 
-  return value; // in case you need the number
-}
+    if ((id === 'apistogramma' || id === 'ram_cichlid') && g < 20)
+      conflict = Math.max(conflict, 55);
 
-// Example usage hook (safe to remove):
-// window.addEventListener("DOMContentLoaded", () => {
-//   renderAggressionBar("aggression-demo", 70, 20, "Betta");
-// });
+    if ((id === 'betta_male' && hasAny(GOURAMI_IDS)) ||
+        (GOURAMI_IDS.has(id) && count('betta_male') > 0))
+      conflict = Math.max(conflict, 60);
+
+    const aggressiveHere = stock.some(s =>
+      ['betta_male','apistogramma','ram_cichlid','dwarf_gourami','honey_gourami','pearl_gourami'].includes(s.id) && s.qty > 0
+    );
+    if ((id === 'amano_shrimp' || id === 'cherry_shrimp') && aggressiveHere)
+      conflict = Math.max(conflict, 60);
+
+    if (id === 'angelfish' && g > 0 && g < 29)
+      conflict = Math.max(conflict, 55);
+
+    if (isSchooling && qty < recMin)
+      conflict = Math.max(conflict, 40);
+
+    return conflict;
+  }
+
+  /** Per-species aggression (Option 2), 0–100 */
+  function speciesAggression(entry, stock, fishList, gallons) {
+    const id = entry?.id;
+    const base = baseMap[id] ?? 0;
+    const conf = conflictForEntry(entry, stock, fishList, gallons);
+    return option2(base, conf);
+  }
+
+  /** OVERALL METER: quantity-weighted average *conflict only* (+10, capped) */
+  function overallAverageConflict(stock, fishList, gallons) {
+    if (!Array.isArray(stock) || stock.length === 0) return 0;
+    let total = 0, totalQty = 0;
+    stock.forEach(e => {
+      const qty = Math.max(1, Math.floor(e.qty || 0));
+      const conf = conflictForEntry(e, stock, fishList, gallons);
+      const boosted = Math.min(100, (conf || 0) + 10);
+      total += boosted * qty;
+      totalQty += qty;
+    });
+    return totalQty ? Math.round(total / totalQty) : 0;
+  }
+
+  /** Build warnings list using same rules as conflict model + env overlap */
+  function checkIssues(stock, fishList, gallons) {
+    const issues = [];
+    if (!Array.isArray(stock) || !Array.isArray(fishList)) return issues;
+
+    const BETTA_MALE_ID = 'betta_male';
+    const TIGER_BARB_ID = 'tiger_barb';
+    const ANGELFISH_ID  = 'angelfish';
+    const NIPPER_IDS    = new Set(['tiger_barb','black_skirt_tetra','zebra_danio','guppy']);
+    const LONG_FIN_IDS  = new Set(['betta_male','guppy','angelfish','pearl_gourami']);
+    const GOURAMI_IDS   = new Set(['dwarf_gourami','honey_gourami','pearl_gourami']);
+    const SHRIMP_IDS    = new Set(['amano_shrimp','cherry_shrimp']);
+    const AGGRESSIVE_IDS= new Set([BETTA_MALE_ID,'apistogramma','ram_cichlid',...GOURAMI_IDS]);
+
+    let maleBettas=0, tigerBarbs=0, hasNippers=false, hasLongFins=false,
+        hasGourami=false, hasShrimp=false, hasAggressive=false,
+        hasAngelfish=false, hasApisto=false, hasRam=false;
+
+    const temps=[], phs=[];
+    stock.forEach(it => {
+      const q = Math.max(1, Math.floor(it.qty || 0));
+      if (q < 1) return;
+      const f = fishById(fishList, it.id);
+      if (!f) return;
+      if (Array.isArray(f.temp)) temps.push(f.temp);
+      if (Array.isArray(f.ph))   phs.push(f.ph);
+      if (it.id === BETTA_MALE_ID) maleBettas += q;
+      if (it.id === TIGER_BARB_ID) tigerBarbs += q;
+      if (NIPPER_IDS.has(it.id))   hasNippers = true;
+      if (LONG_FIN_IDS.has(it.id)) hasLongFins = true;
+      if (GOURAMI_IDS.has(it.id))  hasGourami = true;
+      if (SHRIMP_IDS.has(it.id))   hasShrimp = true;
+      if (AGGRESSIVE_IDS.has(it.id)) hasAggressive = true;
+      if (it.id === 'apistogramma') hasApisto = true;
+      if (it.id === 'ram_cichlid')  hasRam = true;
+      if (it.id === ANGELFISH_ID)   hasAngelfish = true;
+    });
+
+    const g = Number(gallons || 0);
+
+    if (maleBettas >= 2)
+      issues.push({severity:'danger', message:'Multiple male Bettas selected — extremely high aggression risk. Keep exactly one male Betta per tank.'});
+
+    if (maleBettas >= 1 && tigerBarbs >= 1)
+      issues.push({severity:'warning', message:'Betta with Tiger Barbs — barbs are notorious fin-nippers and will harass long-finned fish.'});
+
+    if (hasNippers && hasLongFins)
+      issues.push({severity:'warning', message:'Fin-nipping species detected with long-finned fish — high risk of torn fins and stress.'});
+
+    if (g > 0 && g < 20 && (hasApisto || hasRam))
+      issues.push({severity:'caution', message:'Dwarf cichlids in tanks under 20 gallons — may become aggressive or stressed. Aim for ~20g+ with hiding spots.'});
+
+    if (maleBettas >= 1 && hasGourami)
+      issues.push({severity:'caution', message:'Betta with Gourami-family fish — risk of rivalry and aggression.'});
+
+    if (hasShrimp && hasAggressive)
+      issues.push({severity:'caution', message:'Shrimp may be hunted or harassed by Bettas, Cichlids, or Gouramis. Provide heavy cover or avoid mixing.'});
+
+    if (g > 0 && g < 29 && hasAngelfish)
+      issues.push({severity:'caution', message:'Angelfish in tanks under 29 gallons may become stunted or aggressive. Recommend 29g+ tall tanks.'});
+
+    const t = overlap(temps);
+    const p = overlap(phs);
+    if (t === null) issues.push({severity:'warning', message:'Selected species have non-overlapping temperature ranges.'});
+    if (p === null) issues.push({severity:'warning', message:'Selected species have non-overlapping pH ranges.'});
+
+    return issues;
+  }
+
+  const Aggression = {
+    baseMap,
+    option2,
+    overlap,
+    conflictForEntry,
+    speciesAggression,
+    overallAverageConflict,
+    checkIssues
+  };
+
+  // Export
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = Aggression;
+  } else {
+    global.Aggression = Aggression;
+  }
+})(this);
