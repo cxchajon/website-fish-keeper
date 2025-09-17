@@ -1,6 +1,4 @@
-// fish-data.js
-// Defines the global species array used by index.html
-
+// fish-data.js — global species list used by index.html
 window.FISH_DATA = [
   { id:"neon_tetra", name:"Neon tetra", points:1.0, min:6, temp:[72,78], ph:[6.0,7.0] },
   { id:"cardinal_tetra", name:"Cardinal tetra", points:1.2, min:6, temp:[74,82], ph:[5.0,7.0] },
