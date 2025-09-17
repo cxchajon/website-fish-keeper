@@ -1,5 +1,6 @@
-// Keep all species data in this file.
-// It defines a global array: window.FISH_DATA
+// fish-data.js
+// Defines the global species array used by index.html
+
 window.FISH_DATA = [
   { id:"neon_tetra", name:"Neon tetra", points:1.0, min:6, temp:[72,78], ph:[6.0,7.0] },
   { id:"cardinal_tetra", name:"Cardinal tetra", points:1.2, min:6, temp:[74,82], ph:[5.0,7.0] },
@@ -11,8 +12,8 @@ window.FISH_DATA = [
   { id:"zebra_danio", name:"Zebra danio", points:1.2, min:6, temp:[64,77], ph:[6.5,7.5] },
   { id:"white_cloud", name:"White cloud mountain minnow", points:1.0, min:6, temp:[60,72], ph:[6.5,7.5] },
   { id:"cherry_barb", name:"Cherry barb", points:2.0, min:6, temp:[73,81], ph:[6.0,7.5] },
-  { id:"tiger_barb", name:"Tiger barb", points:2.5, min:6, temp:[74,80], ph:[6.0,7.5] },      // nipper
-  { id:"guppy", name:"Guppy (male)", points:1.6, min:3, temp:[72,82], ph:[6.8,8.0] },        // mild nipper, long-fin
+  { id:"tiger_barb", name:"Tiger barb", points:2.5, min:6, temp:[74,80], ph:[6.0,7.5] },   // nipper
+  { id:"guppy", name:"Guppy (male)", points:1.6, min:3, temp:[72,82], ph:[6.8,8.0] },     // mild nipper, long-fin
   { id:"platy", name:"Platy", points:3.0, min:3, temp:[70,82], ph:[7.0,8.2] },
   { id:"molly", name:"Molly", points:4.0, min:3, temp:[72,82], ph:[7.5,8.5] },
   { id:"swordtail", name:"Swordtail", points:4.5, min:3, temp:[72,82], ph:[7.0,8.2] },
