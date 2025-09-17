@@ -1,431 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Stocking Calculator</title>
-<style>
-  :root { --gap: 12px; --radius: 12px; }
-  * { box-sizing: border-box; }
-  body {
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI,
-                 Roboto, Helvetica, Arial, sans-serif;
-    margin: 0; padding: 24px; background: #f8fafc; color: #0f172a;
-  }
-  header { margin-bottom: 16px; }
-  h1 { font-size: 1.35rem; margin: 0 0 4px; }
-  .card {
-    background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.06);
-    padding: 16px; margin-bottom: 16px;
-  }
-  .row { display: flex; flex-wrap: wrap; gap: var(--gap); }
-  .row > * { flex: 1 1 220px; }
-  label { display: block; font-weight: 600; margin-bottom: 6px; }
-  input[type="number"], input[type="text"], select {
-    width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff;
-  }
-  button {
-    padding: 10px 14px; border: 0; border-radius: 10px;
-    cursor: pointer; background: #2563eb; color: #fff; font-weight: 600;
-  }
-  button.ghost { background: #eef2ff; color: #1e293b; }
-  .switch { display: flex; align-items: center; gap: 8px; }
-  .switch input { width: 18px; height: 18px; }
-
-  /* Bars */
-  .bar-wrap { margin-top: 8px; }
-  .bar-labels { display: flex; justify-content: space-between; font-size: 0.9rem; color:#475569; margin-bottom: 6px; }
-  .bar { position: relative; height: 24px; border-radius: 999px; overflow: hidden; background: #e2e8f0; }
-  .bar-fill { position:absolute; top:0; left:0; bottom:0; width:0%; background: linear-gradient(to right,#10b981,#f59e0b,#ef4444); transition: width .25s ease; }
-
-  table { width:100%; border-collapse:collapse; }
-  th, td { padding:10px; border-bottom:1px solid #e2e8f0; text-align:left; }
-  .right { text-align:right; }
-  .controls { display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap; }
-
-  @media (max-width: 540px){
-    body{ padding:16px; }
-    .row > *{ flex:1 1 100%; }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FishKeeper – Stocking Advisor (Aggression v2)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 16px; background: #f7f7f7; }
+    h1 { text-align: center; margin-bottom: 12px; }
+    .card { background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px; margin:12px auto; max-width:720px; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; }
+    .row > * { flex:1; min-width: 160px; }
+    label { display:block; font-size:14px; margin-bottom:6px; color:#333; }
+    input, select, button { width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; font-size:16px; }
+    button { background:#0b84ff; color:#fff; border:none; cursor:pointer; }
+    button:hover { opacity:0.95; }
+    .list { display:flex; flex-direction:column; gap:10px; }
+    .fish-item { border:1px solid #e3e3e3; border-radius:8px; padding:10px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .fish-meta { flex: 2; min-width: 220px; }
+    .fish-actions { display:flex; gap:8px; }
+    .pill { display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; background:#eef2ff; color:#274;
+            margin-left:6px; border:1px solid #cbd5ff; }
+    .warn { font-size:12px; color:#b45309; margin-top:6px; }
+    .danger { color:#b91c1c; }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Stocking Calculator</h1>
-  </header>
+  <h1>Stocking Advisor – Aggression (Option 2)</h1>
 
-  <!-- Tank settings -->
-  <section class="card">
+  <!-- Controls -->
+  <div class="card">
     <div class="row">
       <div>
-        <label for="gallons">Tank size (US gallons)</label>
-        <input id="gallons" type="number" min="1" value="20"/>
+        <label for="species">Species</label>
+        <select id="species"></select>
       </div>
       <div>
-        <label for="filtration">Filtration</label>
-        <select id="filtration">
-          <option value="low">Low — Sponge filter (gentle flow)</option>
-          <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
-          <option value="high">High — Sump/Canister (oversized)</option>
-        </select>
+        <label for="recommended">Recommended minimum (if schooling)</label>
+        <input id="recommended" type="number" min="1" value="1" readonly />
       </div>
       <div>
-        <label>Planted?</label>
-        <div class="switch">
-          <input id="planted" type="checkbox"/>
-          <span>Yes</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bioload bar -->
-    <div class="bar-wrap">
-      <div class="bar-labels"><span>Low</span><span>High</span></div>
-      <div class="bar" aria-live="polite">
-        <div id="barFill" class="bar-fill"></div>
-      </div>
-    </div>
-
-    <!-- Aggression bar -->
-    <div class="bar-wrap">
-      <div class="bar-labels"><span>Peaceful</span><span>Aggressive</span></div>
-      <div class="bar" aria-live="polite">
-        <div id="aggBarFill" class="bar-fill"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Add Fish -->
-  <section class="card">
-    <h2 style="margin-top:0">Add Fish</h2>
-    <div class="row">
-      <div style="flex:1 1 320px">
-        <label for="fishSearch">Search species</label>
-        <input id="fishSearch" type="text" placeholder="Type to filter the list"/>
-      </div>
-    </div>
-    <div class="row">
-      <div style="flex:1 1 320px">
-        <label for="fishSelect">Species</label>
-        <select id="fishSelect"></select>
-      </div>
-    </div>
-    <div class="row">
-      <div style="flex:1 1 200px">
-        <label for="recMin">Recommended minimum</label>
-        <input id="recMin" type="number" value="" disabled/>
-      </div>
-    </div>
-    <div class="row" style="align-items:flex-end">
-      <div style="flex:1 1 200px">
-        <label for="fQty">Quantity</label>
-        <input id="fQty" type="number" min="1" placeholder=""/>
+        <label for="qty">Quantity</label>
+        <input id="qty" type="number" min="1" value="1" />
       </div>
       <div>
-        <button id="addFish">Add</button>
+        <button id="addBtn">Add fish</button>
       </div>
     </div>
-  </section>
+    <small id="speciesNotes" style="display:block;margin-top:8px;color:#555;"></small>
+  </div>
 
-  <!-- Current Stock -->
-  <section class="card">
-    <h2 style="margin-top:0">Current Stock</h2>
-    <table>
-      <thead><tr><th>Name</th><th class="right">Qty</th><th class="right">Actions</th></tr></thead>
-      <tbody id="tbody"></tbody>
-    </table>
-    <div class="row" style="margin-top:8px">
-      <div style="flex:1 1 200px"><button id="reset" class="ghost">Clear Stock</button></div>
-    </div>
-  </section>
+  <!-- Tank list -->
+  <div class="card">
+    <h2 style="margin-top:0;">Your Tank</h2>
+    <div id="tankList" class="list"></div>
+  </div>
 
-  <!-- Warnings -->
-  <section class="card">
-    <h2 style="margin-top:0">Aggression & Compatibility Warnings</h2>
-    <div id="aggression-warnings"></div>
-  </section>
-
-  <!-- Load fish data BEFORE main script -->
-  <script src="js/fish-data.js"></script>
   <script>
-    // Data & state
-    let FISH = [...window.DEMO_FISH];
-    let FILTERED = [...FISH];
-    let stock = [];
+    /**********************
+     * Species “database” *
+     **********************/
+    const SPECIES = [
+      {
+        id: "betta_male",
+        name: "Betta (Male)",
+        baseAggression: 70,
+        tags: { longFin: true, territorialMale: true, aggressive: true },
+        notes: "Long-finned, territorial males should generally be kept solo.",
+        recommendedMin: 1
+      },
+      {
+        id: "cardinal_tetra",
+        name: "Cardinal Tetra",
+        baseAggression: 20,
+        tags: { peaceful: true, schooling: true, small: true },
+        notes: "Peaceful schooling fish. Keep in a group.",
+        recommendedMin: 6
+      },
+      {
+        id: "angelfish",
+        name: "Angelfish",
+        baseAggression: 50,
+        tags: { semiAggressive: true, predator: true, longFin: true },
+        notes: "Can prey on small fish as they grow. Semi-aggressive.",
+        recommendedMin: 1
+      },
+      {
+        id: "guppy",
+        name: "Guppy",
+        baseAggression: 15,
+        tags: { peaceful: true, longFin: true, small: true },
+        notes: "Peaceful, small, long-finned livebearer.",
+        recommendedMin: 3
+      },
+      {
+        id: "dwarf_gourami",
+        name: "Dwarf Gourami",
+        baseAggression: 35,
+        tags: { semiAggressive: true, longFin: true },
+        notes: "Can be territorial. Long fins.",
+        recommendedMin: 1
+      },
+      {
+        id: "zebra_danio",
+        name: "Zebra Danio",
+        baseAggression: 25,
+        tags: { finNipper: true, schooling: true },
+        notes: "Active, can nip fins if understocked.",
+        recommendedMin: 6
+      }
+    ];
 
-    // Helpers
-    function $(s){ return document.querySelector(s); }
-    function fishById(id){ return FISH.find(f=>f.id===id); }
+    /********************
+     * UI: dropdown init *
+     ********************/
+    const speciesSelect = document.getElementById("species");
+    const recommendedInput = document.getElementById("recommended");
+    const qtyInput = document.getElementById("qty");
+    const addBtn = document.getElementById("addBtn");
+    const speciesNotes = document.getElementById("speciesNotes");
+    const tankListEl = document.getElementById("tankList");
 
-    // Capacity & bioload
-    function capacity(){
-      const g = Number($("#gallons").value||0);
-      const filt = $("#filtration").value;
-      const planted = $("#planted").checked;
-      const filtFactor = filt==="high" ? 1.3 : (filt==="low" ? 0.7 : 1.0);
-      const plantFactor = planted ? 1.15 : 1.0;
-      return Math.max(0, g * filtFactor * plantFactor);
+    // Fill dropdown
+    SPECIES.forEach(s => {
+      const opt = document.createElement("option");
+      opt.value = s.id;
+      opt.textContent = s.name;
+      speciesSelect.appendChild(opt);
+    });
+
+    function updateRecommendedUI() {
+      const s = SPECIES.find(x => x.id === speciesSelect.value);
+      if (!s) return;
+      recommendedInput.value = s.recommendedMin || 1;
+      speciesNotes.textContent = s.notes || "";
     }
-    function used(){
-      return stock.reduce((a, it) => {
-        const f = fishById(it.id);
-        return a + (f ? f.points * it.qty : 0);
-      }, 0);
-    }
-    function pctUsed(){
-      const cap = capacity();
-      const u = used();
-      if (cap <= 0 || u <= 0) return 0;
-      return Math.min(100, Math.round((u / cap) * 100));
-    }
-    function updateBar(){ $("#barFill").style.width = pctUsed() + "%"; }
 
-    // Baseline aggression (weighted average by headcount)
-    function baselineAggression(currentStock) {
-      let totalQty = 0;
-      let weighted = 0;
-      currentStock.forEach(item => {
-        const f = fishById(item.id);
-        if (!f || !item.qty) return;
-        const qty = Number(item.qty) || 0;
-        totalQty += qty;
-        const a = typeof f.aggression === 'number' ? f.aggression : 10;
-        weighted += a * qty;
-      });
-      if (totalQty === 0) return 0;
-      return Math.max(0, Math.min(100, Math.round(weighted / totalQty)));
-    }
+    speciesSelect.addEventListener("change", updateRecommendedUI);
+    updateRecommendedUI();
 
-    // Aggression rules
-    function computeAggressionIndex(issues){
-      if (!issues || !issues.length) return 0;
-      let index = 0;
-      issues.forEach(issue => {
-        if (issue.severity === 'danger') index = Math.max(index, 100);
-        else if (issue.severity === 'warning') index = Math.max(index, 60);
-        else if (issue.severity === 'caution') index = Math.max(index, 30);
-      });
-      return index;
+    /******************
+     * Tank structure *
+     ******************/
+    // Each entry: { id, name, baseAggression, tags, qty, recommendedMin }
+    const tank = [];
+
+    addBtn.addEventListener("click", () => {
+      const s = SPECIES.find(x => x.id === speciesSelect.value);
+      const qty = Math.max(1, Number(qtyInput.value || 1));
+
+      // push as one entry (aggregate quantity)
+      const existing = tank.find(t => t.id === s.id);
+      if (existing) {
+        existing.qty += qty;
+      } else {
+        tank.push({ ...s, qty });
+      }
+      renderTank();
+    });
+
+    /***********************
+     * Aggression Option 2 *
+     ***********************/
+    function getAggression(base, conflict) {
+      const conflictBoosted = Math.min(100, conflict + 10);
+      return Math.max(base, conflictBoosted);
     }
 
-    function checkAggressionIssues(currentStock){
-      const issues = [];
-      const BETTA_MALE_ID = 'betta_male';
-      const TIGER_BARB_ID = 'tiger_barb';
-      const APISTO_ID     = 'apistogramma';
-      const RAM_ID        = 'ram_cichlid';
+    /*********************
+     * Conflict heuristics
+     * (simple, explainable rules)
+     *********************/
+    function computeConflictForEntry(entry, allEntries) {
+      let conflict = 0;
+      const warnings = [];
 
-      const NIPPER_IDS   = new Set(['tiger_barb','black_skirt_tetra','zebra_danio','guppy']);
-      const LONG_FIN_IDS = new Set(['betta_male','guppy','angelfish','pearl_gourami']);
-      const GOURAMI_IDS  = new Set(['dwarf_gourami','honey_gourami','pearl_gourami']);
-
-      let maleBettas = 0;
-      let tigerBarbs = 0;
-      let hasApisto = false;
-      let hasRam    = false;
-      let hasGourami = false;
-
-      const nipperSpecies = [];
-      const longFinSpecies = [];
-
-      currentStock.forEach(item => {
-        const qty = Number(item.qty || 0);
-        if (qty <= 0) return;
-
-        if (item.id === BETTA_MALE_ID) maleBettas += qty;
-        if (item.id === TIGER_BARB_ID) tigerBarbs += qty;
-
-        if (NIPPER_IDS.has(item.id))   nipperSpecies.push(item.id);
-        if (LONG_FIN_IDS.has(item.id)) longFinSpecies.push(item.id);
-        if (GOURAMI_IDS.has(item.id))  hasGourami = true;
-
-        if (item.id === APISTO_ID) hasApisto = true;
-        if (item.id === RAM_ID)    hasRam    = true;
-      });
-
-      if (maleBettas >= 2) {
-        issues.push({
-          id: 'multi-male-betta',
-          severity: 'danger',
-          message: 'Multiple male Bettas selected — extremely high aggression risk (fighting until serious injury or death). Keep exactly one male Betta per tank.'
-        });
+      // 1) Multiple territorial male Bettas together
+      if (entry.tags.territorialMale && entry.qty > 1) {
+        conflict = Math.max(conflict, 90);
+        warnings.push("Multiple territorial males together.");
       }
 
-      if (maleBettas >= 1 && tigerBarbs >= 1) {
-        issues.push({
-          id: 'betta-vs-tigerbarb',
-          severity: 'warning',
-          message: 'Betta with Tiger Barbs — barbs are notorious fin-nippers and will harass long-finned fish. Choose different schooling fish (rasboras, small peaceful tetras) or skip the Betta.'
-        });
+      // 2) Fin-nippers vs long-fin fish (conflict on the long-fin fish)
+      const anyFinNipper = allEntries.some(e => e.tags.finNipper && e.qty > 0);
+      if (entry.tags.longFin && anyFinNipper) {
+        conflict = Math.max(conflict, 70);
+        warnings.push("Long fins with fin-nippers.");
       }
 
-      const hasNippers  = nipperSpecies.length > 0;
-      const hasLongFins = longFinSpecies.length > 0;
-      const distinctConflict = hasNippers && hasLongFins &&
-        (nipperSpecies.some(id => !longFinSpecies.includes(id)) &&
-         longFinSpecies.some(id => !nipperSpecies.includes(id)));
-      if (distinctConflict) {
-        issues.push({
-          id: 'nippers-vs-longfins',
-          severity: 'warning',
-          message: 'Fin-nipping species detected with long-finned fish — high risk of torn fins and stress. Avoid mixing, or increase group size of nippers and add heavy planting/sightline breaks.'
-        });
+      // 3) Peaceful fish kept with aggressive / semi-aggressive fish
+      const anyAggressive = allEntries.some(e => (e.tags.aggressive || e.tags.semiAggressive) && e.qty > 0);
+      if (entry.tags.peaceful && anyAggressive) {
+        conflict = Math.max(conflict, 60);
+        warnings.push("Peaceful fish with aggressive tankmates.");
       }
 
-      const gallons = Number($("#gallons").value || 0);
-      if (gallons > 0 && gallons < 20 && (hasApisto || hasRam)) {
-        const names = [hasApisto ? 'Apistogramma' : null, hasRam ? 'Ram cichlid' : null].filter(Boolean).join(' / ');
-        issues.push({
-          id: 'dwarf-cichlid-small-tank',
-          severity: 'caution',
-          message: `${names} in a tank under 20 gallons — territorial species may become aggressive or stressed in smaller spaces. Aim for ~20g+ with hides, caves, and broken sightlines.`
-        });
+      // 4) Predator with small fish (conflict on the small fish)
+      const anyPredator = allEntries.some(e => e.tags.predator && e.qty > 0);
+      if (entry.tags.small && anyPredator) {
+        conflict = Math.max(conflict, 80);
+        warnings.push("Predator present with small fish.");
       }
 
-      if (maleBettas >= 1 && hasGourami) {
-        issues.push({
-          id: 'betta-vs-gourami',
-          severity: 'caution',
-          message: 'Betta with Gourami-family fish (Dwarf, Honey, Pearl) — all are labyrinth species and often view each other as rivals. Risk of displays, stress, or fighting.'
-        });
+      // 5) Schooling fish below recommended minimum (conflict on the schooling species)
+      if (entry.tags.schooling && entry.qty < (entry.recommendedMin || 6)) {
+        conflict = Math.max(conflict, 40);
+        warnings.push(`Schooling understocked (have ${entry.qty}, recommend ${entry.recommendedMin || 6}).`);
       }
 
-      return issues;
+      return { conflict, warnings };
     }
 
-    function renderAggressionMessages(issues){
-      const target = $("#aggression-warnings");
-      if (!target) return;
-      target.innerHTML = "";
+    /****************
+     * Render logic *
+     ****************/
+    function renderAggressionBar(container, base, conflict, label = "Aggression") {
+      const value = getAggression(base, conflict);
 
-      if (!issues.length) {
-        const ok = document.createElement('div');
-        ok.style.padding   = '8px';
-        ok.style.color     = '#475569';
-        ok.style.fontSize  = '0.95rem';
-        ok.textContent     = 'No aggression issues detected with the current stock.';
-        target.appendChild(ok);
+      container.innerHTML = "";
+      const wrap = document.createElement("div");
+      wrap.style.width = "100%";
+      wrap.style.margin = "6px 0";
+
+      const lab = document.createElement("label");
+      lab.style.display = "block";
+      lab.style.marginBottom = "4px";
+      lab.textContent = `${label}: ${value}%`;
+
+      const track = document.createElement("div");
+      track.style.width = "100%";
+      track.style.height = "20px";
+      track.style.background = "#e0e0e0";
+      track.style.borderRadius = "4px";
+      track.style.overflow = "hidden";
+
+      const fill = document.createElement("div");
+      fill.style.width = value + "%";
+      fill.style.height = "100%";
+      fill.style.transition = "width 0.3s ease-in-out";
+      fill.style.background = value < 40 ? "green" : value < 70 ? "orange" : "red";
+
+      track.appendChild(fill);
+      wrap.appendChild(lab);
+      wrap.appendChild(track);
+      container.appendChild(wrap);
+
+      return value;
+    }
+
+    function renderTank() {
+      tankListEl.innerHTML = "";
+
+      if (tank.length === 0) {
+        const empty = document.createElement("div");
+        empty.textContent = "No fish added yet.";
+        empty.style.color = "#666";
+        tankListEl.appendChild(empty);
         return;
       }
 
-      issues.forEach(issue => {
-        const box = document.createElement('div');
-        box.style.border = issue.severity === 'danger' ? '2px solid #b91c1c' : '1px solid #c2410c';
-        box.style.background = issue.severity === 'danger' ? '#fee2e2' : '#ffedd5';
-        box.style.padding   = '10px';
-        box.style.margin    = '8px 0';
-        box.style.borderRadius = '10px';
+      tank.forEach((entry, idx) => {
+        const item = document.createElement("div");
+        item.className = "fish-item";
 
-        const strong = document.createElement('strong');
-        strong.textContent = (issue.severity || 'warning').toUpperCase() + ': ';
-        box.appendChild(strong);
+        const meta = document.createElement("div");
+        meta.className = "fish-meta";
+        const title = document.createElement("div");
+        title.innerHTML = `<strong>${entry.name}</strong> <span class="pill">Qty: ${entry.qty}</span>`;
+        meta.appendChild(title);
 
-        const msg = document.createElement('span');
-        msg.textContent = issue.message;
-        box.appendChild(msg);
+        const barHolder = document.createElement("div");
+        const { conflict, warnings } = computeConflictForEntry(entry, tank);
+        const agg = renderAggressionBar(barHolder, entry.baseAggression, conflict, "Aggression");
 
-        target.appendChild(box);
+        if (warnings.length) {
+          const warn = document.createElement("div");
+          warn.className = "warn";
+          warn.textContent = "Notes: " + warnings.join(" ");
+          if (agg >= 80) warn.classList.add("danger");
+          meta.appendChild(warn);
+        }
+
+        item.appendChild(meta);
+        item.appendChild(barHolder);
+
+        const actions = document.createElement("div");
+        actions.className = "fish-actions";
+
+        const removeBtn = document.createElement("button");
+        removeBtn.textContent = "Remove one";
+        removeBtn.style.background = "#ef4444";
+        removeBtn.addEventListener("click", () => {
+          entry.qty -= 1;
+          if (entry.qty <= 0) {
+            const i = tank.findIndex(t => t.id === entry.id);
+            if (i >= 0) tank.splice(i, 1);
+          }
+          renderTank();
+        });
+
+        const addOneBtn = document.createElement("button");
+        addOneBtn.textContent = "Add one";
+        addOneBtn.style.background = "#10b981";
+        addOneBtn.addEventListener("click", () => {
+          entry.qty += 1;
+          renderTank();
+        });
+
+        actions.appendChild(addOneBtn);
+        actions.appendChild(removeBtn);
+        item.appendChild(actions);
+
+        tankListEl.appendChild(item);
       });
     }
 
-    // Update both bars + warnings
-    function updateMeters(){
-      updateBar();
-
-      const issues = checkAggressionIssues(stock);
-      const conflictIndex = computeAggressionIndex(issues);
-      const baseIndex = baselineAggression(stock);
-      const finalIndex = Math.max(baseIndex, conflictIndex);
-
-      $("#aggBarFill").style.width = finalIndex + "%";
-      renderAggressionMessages(issues);
-    }
-
-    // Stock table
-    function renderStock(){
-      const tb = $("#tbody");
-      tb.innerHTML = "";
-      stock.forEach((it, i) => {
-        const f = fishById(it.id);
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${f ? f.name : "(unknown)"}</td>
-          <td class="right">${it.qty}</td>
-          <td class="right">
-            <div class="controls">
-              <button class="ghost" data-act="minus" data-i="${i}">–1</button>
-              <button class="ghost" data-act="plus"  data-i="${i}">+1</button>
-              <button class="ghost" data-act="del"   data-i="${i}">Delete</button>
-            </div>
-          </td>`;
-        tb.appendChild(tr);
-      });
-      tb.querySelectorAll("button[data-act]").forEach(btn => {
-        const i = Number(btn.dataset.i);
-        const act = btn.dataset.act;
-        btn.onclick = () => {
-          if (act === "minus") stock[i].qty = Math.max(1, stock[i].qty - 1);
-          if (act === "plus")  stock[i].qty = Math.max(1, stock[i].qty + 1);
-          if (act === "del")   stock.splice(i,1);
-          renderStock();
-          updateMeters();
-        };
-      });
-    }
-
-    // Dropdown + Search
-    function populateFishDropdown(list){
-      const sel = $("#fishSelect");
-      sel.innerHTML = "";
-      list.forEach(f => {
-        const opt = document.createElement("option");
-        opt.value = f.id;
-        opt.textContent = f.name;
-        sel.appendChild(opt);
-      });
-      updateRecMin();
-    }
-    function updateRecMin(){
-      const f = fishById($("#fishSelect").value);
-      $("#recMin").value = f ? f.min : "";
-    }
-    function applySearch(){
-      const q = ($("#fishSearch").value||"").trim().toLowerCase();
-      FILTERED = q ? FISH.filter(f => f.name.toLowerCase().includes(q)) : [...FISH];
-      populateFishDropdown(FILTERED);
-    }
-
-    // Events
-    ["#gallons","#filtration","#planted"].forEach(q => document.querySelector(q).addEventListener("input", updateMeters));
-    $("#fishSearch").addEventListener("input", applySearch);
-    $("#fishSelect").addEventListener("change", updateRecMin);
-
-    // Add with MERGE behavior
-    $("#addFish").addEventListener("click", () => {
-      const id = $("#fishSelect").value;
-      const qty = Math.max(1, Number($("#fQty").value||0));
-      if (!id) return;
-      if (!qty){ alert("Enter a quantity."); return; }
-
-      const existing = stock.find(it => it.id === id);
-      if (existing) existing.qty += qty;
-      else stock.push({ id, qty });
-
-      renderStock();
-      updateMeters();
-      $("#fQty").value = "";
-    });
-
-    $("#reset").addEventListener("click", () => {
-      stock = [];
-      renderStock();
-      updateMeters();
-    });
-
-    // Init
-    applySearch();
-    renderStock();
-    updateMeters();
+    // Initial render (empty state)
+    renderTank();
   </script>
 </body>
 </html>
