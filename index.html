@@ -198,10 +198,11 @@ function pctUsed(){
 function updateBar(){ $("#barFill").style.width = pctUsed() + "%"; }
 
 /* =========================
-   Aggression warnings (v3)
+   Aggression warnings (v4)
    - Rule 1: 2+ male bettas → DANGER
    - Rule 2: Betta (male) + Tiger Barbs → WARNING
    - Rule 3: Fin-nippers + Long-fins → WARNING
+   - Rule 4: Dwarf cichlids (<20g) → CAUTION
    ========================= */
 function checkAggressionIssues(currentStock){
   const issues = [];
@@ -210,21 +211,31 @@ function checkAggressionIssues(currentStock){
   const TIGER_BARB_ID = 'tiger_barb';
 
   // Define groups
-  const NIPPER_IDS = new Set(['tiger_barb','black_skirt_tetra','zebra_danio']); // danios/black skirt can nip
+  const NIPPER_IDS   = new Set(['tiger_barb','black_skirt_tetra','zebra_danio']); 
   const LONG_FIN_IDS = new Set(['betta_male','guppy','angelfish','pearl_gourami']);
 
-  // Counts
+  // Dwarf cichlids of interest
+  const APISTO_ID = 'apistogramma';
+  const RAM_ID    = 'ram_cichlid';
+
+  // Counts/flags
   let maleBettas = 0;
   let tigerBarbs = 0;
   let hasNippers = false;
   let hasLongFins = false;
+  let hasApisto = false;
+  let hasRam = false;
 
   currentStock.forEach(item => {
     const qty = Number(item.qty || 0);
     if (item.id === BETTA_MALE_ID) maleBettas += qty;
     if (item.id === TIGER_BARB_ID)  tigerBarbs += qty;
-    if (qty > 0 && NIPPER_IDS.has(item.id)) hasNippers = true;
+
+    if (qty > 0 && NIPPER_IDS.has(item.id))   hasNippers = true;
     if (qty > 0 && LONG_FIN_IDS.has(item.id)) hasLongFins = true;
+
+    if (qty > 0 && item.id === APISTO_ID) hasApisto = true;
+    if (qty > 0 && item.id === RAM_ID)    hasRam = true;
   });
 
   // Rule 1: multiple male bettas
@@ -251,6 +262,17 @@ function checkAggressionIssues(currentStock){
       id: 'nippers-vs-longfins',
       severity: 'warning',
       message: 'Fin-nipping species detected with long-finned fish — high risk of torn fins and stress. Avoid mixing, or increase group size of nippers and add heavy planting/sightline breaks.'
+    });
+  }
+
+  // Rule 4: dwarf cichlids in small tanks (<20g)
+  const gallons = Number($("#gallons").value || 0);
+  if (gallons > 0 && gallons < 20 && (hasApisto || hasRam)) {
+    const names = [hasApisto ? 'Apistogramma' : null, hasRam ? 'Ram cichlid' : null].filter(Boolean).join(' / ');
+    issues.push({
+      id: 'dwarf-cichlid-small-tank',
+      severity: 'caution',
+      message: `${names} in a tank under 20 gallons — territorial species may become aggressive or stressed in smaller spaces. Aim for ~20g+ with hides, caves, and broken sightlines.`
     });
   }
 
