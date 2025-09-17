@@ -120,15 +120,18 @@
     </div>
   </section>
 
+  <!-- Aggression & Compatibility warnings -->
   <section class="card">
     <h2 style="margin-top:0">Aggression & Compatibility Warnings</h2>
     <div id="aggression-warnings"></div>
   </section>
 
-  <!-- Load species data, then run the app logic -->
+  <!-- Load species data first, then the app logic -->
   <script src="fish-data.js"></script>
   <script>
-/* --- Setup with fallback --- */
+/* =========================
+   Setup with fallback
+   ========================= */
 const DEFAULT_FISH_DATA = [
   { id:"neon_tetra", name:"Neon tetra", points:1.0, min:6, temp:[72,78], ph:[6.0,7.0] },
   { id:"cardinal_tetra", name:"Cardinal tetra", points:1.2, min:6, temp:[74,82], ph:[5.0,7.0] },
@@ -164,14 +167,17 @@ const DEFAULT_FISH_DATA = [
   { id:"mystery_snail", name:"Mystery snail", points:0.8, min:1, temp:[68,82], ph:[7.2,8.4] }
 ];
 
-let FISH = Array.isArray(window.FISH_DATA) && window.FISH_DATA.length ? [...window.FISH_DATA] : [...DEFAULT_FISH_DATA];
+// If fish-data.js loaded, use that; otherwise fallback
+let FISH = Array.isArray(window.FISH_DATA) ? [...window.FISH_DATA] : [...DEFAULT_FISH_DATA];
 let FILTERED = [...FISH];
 let stock = [];
 
 function $(s){ return document.querySelector(s); }
 function fishById(id){ return FISH.find(f=>f.id===id); }
 
-/* --- Capacity & bar functions --- */
+/* =========================
+   Capacity / Bar
+   ========================= */
 function capacity(){
   const g = Number($("#gallons").value||0);
   const filt = $("#filtration").value;
@@ -194,7 +200,9 @@ function pctUsed(){
 }
 function updateBar(){ $("#barFill").style.width = pctUsed() + "%"; }
 
-/* --- Helper to compute overlap for temp/pH --- */
+/* =========================
+   Helpers: overlap
+   ========================= */
 function overlap(ranges){
   if (!ranges.length) return null;
   const minMax = Math.min(...ranges.map(r=>r[1]));
@@ -203,7 +211,9 @@ function overlap(ranges){
   return [maxMin, minMax];
 }
 
-/* --- Aggression & compatibility rules (7 rules + temp/pH overlap) --- */
+/* =========================
+   Aggression + Water warnings (7 rules + temp/pH overlap)
+   ========================= */
 function checkAggressionIssues(currentStock){
   const issues = [];
 
@@ -251,37 +261,37 @@ function checkAggressionIssues(currentStock){
     if (item.id === ANGELFISH_ID) hasAngelfish = true;
   });
 
-  // Rule 1: multiple male bettas
+  // 1) multiple male bettas
   if (maleBettas >= 2) {
     issues.push({ severity:'danger', message:'Multiple male Bettas selected — extremely high aggression risk. Keep exactly one male Betta per tank.' });
   }
-  // Rule 2: betta + tiger barbs
+  // 2) betta + tiger barbs
   if (maleBettas >= 1 && tigerBarbs >= 1) {
     issues.push({ severity:'warning', message:'Betta with Tiger Barbs — barbs are notorious fin-nippers and will harass long-finned fish.' });
   }
-  // Rule 3: any nippers + any long-fins
+  // 3) any nippers + any long-fins
   if (hasNippers && hasLongFins) {
     issues.push({ severity:'warning', message:'Fin-nipping species detected with long-finned fish — high risk of torn fins and stress.' });
   }
-  // Rule 4: dwarf cichlids in small tanks (<20g)
+  // 4) dwarf cichlids in small tanks (<20g)
   const gallons = Number($("#gallons").value || 0);
   if (gallons > 0 && gallons < 20 && (hasApisto || hasRam)) {
     issues.push({ severity:'caution', message:'Dwarf cichlids in tanks under 20 gallons — may become aggressive or stressed. Aim for ~20g+ with hiding spots.' });
   }
-  // Rule 5: betta + gourami-family
+  // 5) betta + gourami-family
   if (maleBettas >= 1 && hasGourami) {
     issues.push({ severity:'caution', message:'Betta with Gourami-family fish — risk of rivalry and aggression.' });
   }
-  // Rule 6: shrimp + aggressive fish
+  // 6) shrimp + aggressive fish
   if (hasShrimp && hasAggressive) {
     issues.push({ severity:'caution', message:'Shrimp may be hunted or harassed by Bettas, Cichlids, or Gouramis. Provide heavy cover or avoid mixing.' });
   }
-  // Rule 7: angelfish in <29g
+  // 7) angelfish in <29g
   if (gallons > 0 && gallons < 29 && hasAngelfish) {
     issues.push({ severity:'caution', message:'Angelfish in tanks under 29 gallons may become stunted or aggressive. Recommend 29g+ tall tanks.' });
   }
 
-  // Temperature & pH overlap warnings (no user inputs; just cross-species)
+  /* ---------- Water compatibility checks (overlap-only) ---------- */
   if (presentFish.length >= 2) {
     const tOverlap = overlap(tempRanges);
     const pOverlap = overlap(phRanges);
@@ -303,7 +313,6 @@ function checkAggressionIssues(currentStock){
   return issues;
 }
 
-/* --- Render warnings --- */
 function renderAggressionMessages(issues){
   const target = $("#aggression-warnings");
   target.innerHTML = "";
@@ -326,7 +335,9 @@ function refreshAggression(){
   renderAggressionMessages(checkAggressionIssues(stock));
 }
 
-/* --- Stock table render --- */
+/* =========================
+   Stock table render
+   ========================= */
 function renderStock(){
   const tb = $("#tbody");
   tb.innerHTML = "";
@@ -359,7 +370,9 @@ function renderStock(){
   });
 }
 
-/* --- Dropdown & search --- */
+/* =========================
+   Dropdown + Search
+   ========================= */
 function populateFishDropdown(list){
   const sel = $("#fishSelect");
   sel.innerHTML = "";
@@ -381,7 +394,9 @@ function applySearch(){
   populateFishDropdown(FILTERED);
 }
 
-/* --- Event handlers --- */
+/* =========================
+   Events
+   ========================= */
 ["#gallons","#filtration","#planted"].forEach(q =>
   document.querySelector(q).addEventListener("input", () => {
     updateBar();
@@ -410,7 +425,9 @@ $("#reset").addEventListener("click", () => {
   refreshAggression();
 });
 
-/* --- Initialization --- */
+/* =========================
+   Init
+   ========================= */
 function init(){
   FILTERED = [...FISH];
   populateFishDropdown(FILTERED);
