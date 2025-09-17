@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bio-load Capacity — Preloaded Library (vP10)</title>
+<style>
+  :root { --gap: 12px; --radius: 12px; }
+  *{ box-sizing: border-box; }
+  body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        margin:0; padding:24px; background:#f8fafc; color:#0f172a; }
+  header{ margin-bottom:16px; }
+  h1{ font-size:1.35rem; margin:0 0 4px; }
+  .sub{ color:#475569; margin:0; }
+  .card{ background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.06);
+         padding:16px; margin-bottom:16px; }
+  .row{ display:flex; flex-wrap:wrap; gap:var(--gap); }
+  .row > *{ flex:1 1 220px; }
+  label{ display:block; font-weight:600; margin-bottom:6px; }
+  input[type="number"], input[type="text"], select{
+    width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:10px; background:#fff;
+  }
+  button{ padding:10px 14px; border:0; border-radius:10px; cursor:pointer; background:#2563eb; color:#fff; font-weight:600; }
+  button.ghost{ background:#eef2ff; color:#1e293b; }
+  .switch{ display:flex; align-items:center; gap:8px; }
+  .switch input{ width:18px; height:18px; }
+
+  /* Bar */
+  .bar-wrap{ margin-top:8px; }
+  .bar-labels{ display:flex; justify-content:space-between; font-size:0.9rem; color:#475569; margin-bottom:6px; }
+  .bar{ position:relative; height:24px; border-radius:999px; overflow:hidden; background:#e2e8f0; }
+  .bar-fill{ position:absolute; top:0; left:0; bottom:0; width:0%;
+             background: linear-gradient(to right, #10b981, #f59e0b, #ef4444); transition: width .25s ease; }
+
+  table{ width:100%; border-collapse:collapse; }
+  th, td{ padding:10px; border-bottom:1px solid #e2e8f0; text-align:left; }
+  .right{ text-align:right; }
+  .controls{ display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap; }
+  .small{ font-size:12px; color:#64748b; }
+  .uploader{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Bio-load Capacity — Preloaded Library (vP10)</h1>
+    <p class="sub">Species → Recommended minimum → Quantity → bar fills. Library is preloaded; you can still upload to replace it.</p>
+  </header>
+
+  <section class="card">
+    <div class="row">
+      <div>
+        <label for="gallons">Tank size (US gallons)</label>
+        <input id="gallons" type="number" min="1" value="20"/>
+      </div>
+      <div>
+        <label for="filtration">Filtration</label>
+        <select id="filtration">
+          <option value="low">Low — Sponge filter (gentle flow)</option>
+          <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
+          <option value="high">High — Sump/Canister (oversized)</option>
+        </select>
+      </div>
+      <div>
+        <label>Planted?</label>
+        <div class="switch">
+          <input id="planted" type="checkbox"/>
+          <span>Yes</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bar-wrap">
+      <div class="bar-labels"><span>Low</span><span>High</span></div>
+      <div class="bar" aria-live="polite">
+        <div id="barFill" class="bar-fill"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">Fish Library</h2>
+    <div class="uploader">
+      <input id="fileInput" type="file" accept=".json,.csv" />
+      <button id="resetDemo" class="ghost" title="Restore built-in demo list">Reset to demo</button>
+    </div>
+    <div class="small" style="margin-top:6px">Optional upload: JSON or CSV with columns <code>id,name,points,min</code>. Extra columns are ignored.</div>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">Add Fish</h2>
+    <div class="row">
+      <div style="flex:1 1 320px">
+        <label for="fishSelect">Species</label>
+        <select id="fishSelect"></select>
+      </div>
+    </div>
+    <div class="row">
+      <div style="flex:1 1 200px">
+        <label for="recMin">Recommended minimum</label>
+        <input id="recMin" type="number" value="" disabled/>
+      </div>
+    </div>
+    <div class="row" style="align-items:flex-end">
+      <div style="flex:1 1 200px">
+        <label for="fQty">Quantity</label>
+        <input id="fQty" type="number" min="1" placeholder=""/>
+      </div>
+      <div>
+        <button id="addFish">Add</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">Current Stock</h2>
+    <table>
+      <thead><tr><th>Name</th><th class="right">Qty</th><th class="right">Actions</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="row" style="margin-top:8px">
+      <div style="flex:1 1 200px"><button id="reset" class="ghost">Clear Stock</button></div>
+    </div>
+  </section>
+
+<script>
+// --- Built-in demo list (25+ species) ---------------------------------------
+const DEMO_FISH = [
+  { id:"neon_tetra", name:"Neon tetra", points:1.0, min:6 },
+  { id:"cardinal_tetra", name:"Cardinal tetra", points:1.2, min:6 },
+  { id:"ember_tetra", name:"Ember tetra", points:0.9, min:8 },
+  { id:"rummynose_tetra", name:"Rummy-nose tetra", points:1.4, min:8 },
+  { id:"black_skirt_tetra", name:"Black skirt tetra", points:2.0, min:6 },
+  { id:"harlequin_rasbora", name:"Harlequin rasbora", points:1.0, min:6 },
+  { id:"chili_rasbora", name:"Chili rasbora", points:0.6, min:10 },
+  { id:"zebra_danio", name:"Zebra danio", points:1.2, min:6 },
+  { id:"white_cloud", name:"White cloud mountain minnow", points:1.0, min:6 },
+  { id:"cherry_barb", name:"Cherry barb", points:2.0, min:6 },
+  { id:"guppy", name:"Guppy (male)", points:1.6, min:3 },
+  { id:"platy", name:"Platy", points:3.0, min:3 },
+  { id:"molly", name:"Molly", points:4.0, min:3 },
+  { id:"swordtail", name:"Swordtail", points:4.5, min:3 },
+  { id:"dwarf_gourami", name:"Dwarf gourami", points:5.0, min:1 },
+  { id:"honey_gourami", name:"Honey gourami", points:3.5, min:1 },
+  { id:"pearl_gourami", name:"Pearl gourami", points:7.0, min:1 },
+  { id:"betta_male", name:"Betta (male)", points:6.0, min:1 },
+  { id:"cory_small", name:"Corydoras (small)", points:2.2, min:6 },
+  { id:"cory_panda", name:"Corydoras panda", points:2.4, min:6 },
+  { id:"kuhli_loach", name:"Kuhli loach", points:2.5, min:5 },
+  { id:"otocinclus", name:"Otocinclus", points:1.2, min:6 },
+  { id:"bristlenose_pleco", name:"Bristlenose pleco", points:8.0, min:1 },
+  { id:"praecox_rainbow", name:"Dwarf rainbowfish (Praecox)", points:4.5, min:6 },
+  { id:"angelfish", name:"Angelfish", points:10.0, min:1 },
+  { id:"apistogramma", name:"Apistogramma (pair)", points:6.0, min:1 },
+  { id:"ram_cichlid", name:"Ram cichlid (German blue)", points:5.0, min:1 },
+  { id:"amano_shrimp", name:"Amano shrimp", points:0.5, min:3 },
+  { id:"cherry_shrimp", name:"Cherry shrimp", points:0.3, min:6 },
+  { id:"nerite_snail", name:"Nerite snail", points:0.4, min:1 },
+  { id:"mystery_snail", name:"Mystery snail", points:0.8, min:1 }
+];
+
+let FISH = [...DEMO_FISH]; // active library (can be replaced by upload)
+let stock = []; // {id, qty}
+
+function $(s){ return document.querySelector(s); }
+function fishById(id){ return FISH.find(f=>f.id===id); }
+
+// Capacity model
+function capacity(){
+  const g = Number($("#gallons").value||0);
+  const filt = $("#filtration").value;
+  const planted = $("#planted").checked;
+  const filtFactor = filt==="high" ? 1.3 : (filt==="low" ? 0.7 : 1.0);
+  const plantFactor = planted ? 1.15 : 1.0;
+  return Math.max(0, g * filtFactor * plantFactor);
+}
+function used(){
+  return stock.reduce((a, it) => {
+    const f = fishById(it.id);
+    return a + (f ? f.points * it.qty : 0);
+  }, 0);
+}
+function pctUsed(){
+  const cap = capacity();
+  const u = used();
+  if (cap <= 0 || u <= 0) return 0;
+  return Math.min(100, Math.round((u / cap) * 100));
+}
+function updateBar(){
+  $("#barFill").style.width = pctUsed() + "%";
+}
+
+// Stock table
+function renderStock(){
+  const tb = $("#tbody");
+  tb.innerHTML = "";
+  stock.forEach((it, i) => {
+    const f = fishById(it.id);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${f ? f.name : "(unknown)"}</td>
+      <td class="right">${it.qty}</td>
+      <td class="right">
+        <div class="controls">
+          <button class="ghost" data-act="minus" data-i="${i}">–1</button>
+          <button class="ghost" data-act="plus" data-i="${i}">+1</button>
+          <button class="ghost" data-act="del" data-i="${i}">Delete</button>
+        </div>
+      </td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll("button[data-act]").forEach(btn => {
+    const i = Number(btn.dataset.i);
+    const act = btn.dataset.act;
+    btn.onclick = () => {
+      if (act === "minus") stock[i].qty = Math.max(1, stock[i].qty - 1);
+      if (act === "plus")  stock[i].qty = Math.max(1, stock[i].qty + 1);
+      if (act === "del")   stock.splice(i,1);
+      renderStock();
+      updateBar();
+    };
+  });
+}
+
+// Dropdown
+function populateFishDropdown(){
+  const sel = $("#fishSelect");
+  sel.innerHTML = "";
+  FISH.forEach(f => {
+    const opt = document.createElement("option");
+    opt.value = f.id;
+    opt.textContent = `${f.name} — ${Number(f.points).toFixed(1)} pts/fish`;
+    sel.appendChild(opt);
+  });
+  updateRecMin();
+}
+function updateRecMin(){
+  const f = fishById($("#fishSelect").value);
+  $("#recMin").value = f ? f.min : "";
+}
+
+// Upload handlers
+function parseCSV(text){
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length>0);
+  if (lines.length === 0) return [];
+  const header = lines[0].split(",").map(h => h.trim().toLowerCase());
+  const idx = {
+    id: header.indexOf("id"),
+    name: header.indexOf("name"),
+    points: header.indexOf("points"),
+    min: header.indexOf("min")
+  };
+  const rows = [];
+  for (let i=1; i<lines.length; i++){
+    const cols = lines[i].split(",").map(c => c.trim());
+    const id = idx.id>=0 ? cols[idx.id] : "";
+    const name = idx.name>=0 ? cols[idx.name] : "";
+    const points = idx.points>=0 ? Number(cols[idx.points]) : NaN;
+    const min = idx.min>=0 ? Number(cols[idx.min]) : NaN;
+    if (!id || !name || !(points>0) || !(min>=1)) continue;
+    rows.push({ id, name, points, min });
+  }
+  return rows;
+}
+function handleFile(file){
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const text = e.target.result;
+      let data = [];
+      if (file.name.toLowerCase().endsWith(".json")){
+        const parsed = JSON.parse(text);
+        if (Array.isArray(parsed)){
+          data = parsed.filter(x => x && x.id && x.name && Number(x.points)>0 && Number(x.min)>=1)
+                      .map(x => ({ id:String(x.id), name:String(x.name), points:Number(x.points), min:Number(x.min) }));
+        }
+      } else if (file.name.toLowerCase().endsWith(".csv")){
+        data = parseCSV(text);
+      }
+      if (data.length === 0) { alert("No valid rows found. Ensure id,name,points,min are present."); return; }
+      FISH = data;
+      populateFishDropdown();
+    } catch(err){
+      alert("Failed to read file: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Events
+["#gallons","#filtration","#planted"].forEach(q => document.querySelector(q).addEventListener("input", updateBar));
+document.getElementById("fileInput").addEventListener("change", (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (file) handleFile(file);
+});
+document.getElementById("resetDemo").addEventListener("click", () => {
+  FISH = [...DEMO_FISH];
+  populateFishDropdown();
+});
+
+document.getElementById("fishSelect").addEventListener("change", updateRecMin);
+
+document.getElementById("addFish").addEventListener("click", () => {
+  const id = document.getElementById("fishSelect").value;
+  const qty = Math.max(1, Number(document.getElementById("fQty").value||0));
+  if (!id) return;
+  if (!qty){ alert("Enter a quantity."); return; }
+  stock.push({ id, qty });
+  renderStock();
+  updateBar();
+  document.getElementById("fQty").value = "";
+});
+
+document.getElementById("reset").addEventListener("click", () => {
+  stock = [];
+  renderStock();
+  updateBar();
+});
+
+// Init: preload demo list
+populateFishDropdown();
+renderStock();
+updateBar();
+</script>
+</body>
+</html>
