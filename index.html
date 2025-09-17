@@ -48,14 +48,10 @@
   }
   .switch { display: flex; align-items: center; gap: 8px; }
   .switch input { width: 18px; height: 18px; }
-  /* Bars */
   .bar-wrap { margin-top: 8px; }
   .bar-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9rem;
-    color: #475569;
-    margin-bottom: 6px;
+    display: flex; justify-content: space-between;
+    font-size: 0.9rem; color: #475569; margin-bottom: 6px;
   }
   .bar {
     position: relative;
@@ -66,11 +62,9 @@
   }
   .bar-fill {
     position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
+    top: 0; left: 0; bottom: 0;
     width: 0%;
-    background: linear-gradient(to right,#10b981,#f59e0b,#ef4444);
+    background: linear-gradient(to right, #10b981, #f59e0b, #ef4444);
     transition: width .25s ease;
   }
   table { width: 100%; border-collapse: collapse; }
@@ -84,416 +78,396 @@
 </style>
 </head>
 <body>
-  <header>
-    <h1>Stocking Calculator</h1>
-  </header>
+<header>
+  <h1>Stocking Calculator</h1>
+</header>
 
-  <!-- Tank settings -->
-  <section class="card">
-    <div class="row">
-      <div>
-        <label for="gallons">Tank size (US gallons)</label>
-        <input id="gallons" type="number" min="1" value="20" />
-      </div>
-      <div>
-        <label for="filtration">Filtration</label>
-        <select id="filtration">
-          <option value="low">Low — Sponge filter (gentle flow)</option>
-          <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
-          <option value="high">High — Sump/Canister (oversized)</option>
-        </select>
-      </div>
-      <div>
-        <label>Planted?</label>
-        <div class="switch">
-          <input id="planted" type="checkbox" />
-          <span>Yes</span>
-        </div>
+<!-- Tank settings -->
+<section class="card">
+  <div class="row">
+    <div>
+      <label for="gallons">Tank size (US gallons)</label>
+      <input id="gallons" type="number" min="1" value="20" />
+    </div>
+    <div>
+      <label for="filtration">Filtration</label>
+      <select id="filtration">
+        <option value="low">Low — Sponge filter (gentle flow)</option>
+        <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
+        <option value="high">High — Sump/Canister (oversized)</option>
+      </select>
+    </div>
+    <div>
+      <label>Planted?</label>
+      <div class="switch">
+        <input id="planted" type="checkbox" />
+        <span>Yes</span>
       </div>
     </div>
-    <!-- Bioload bar -->
-    <div class="bar-wrap">
-      <div class="bar-labels"><span>Low</span><span>High</span></div>
-      <div class="bar" aria-live="polite">
-        <div id="barFill" class="bar-fill"></div>
-      </div>
+  </div>
+  <!-- Bioload bar -->
+  <div class="bar-wrap">
+    <div class="bar-labels"><span>Low</span><span>High</span></div>
+    <div class="bar" aria-live="polite">
+      <div id="barFill" class="bar-fill"></div>
     </div>
-    <!-- Aggression bar -->
-    <div class="bar-wrap">
-      <div class="bar-labels"><span>Peaceful</span><span>Aggressive</span></div>
-      <div class="bar" aria-live="polite">
-        <div id="aggBarFill" class="bar-fill"></div>
-      </div>
+  </div>
+  <!-- Aggression bar -->
+  <div class="bar-wrap">
+    <div class="bar-labels"><span>Peaceful</span><span>Aggressive</span></div>
+    <div class="bar" aria-live="polite">
+      <div id="aggBarFill" class="bar-fill"></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Add fish form -->
-  <section class="card">
-    <h2 style="margin-top:0">Add Fish</h2>
-    <div class="row">
-      <div style="flex:1 1 320px">
-        <label for="fishSearch">Search species</label>
-        <input id="fishSearch" type="text" placeholder="Type to filter the list" />
-      </div>
+<!-- Add fish form -->
+<section class="card">
+  <h2 style="margin-top:0">Add Fish</h2>
+  <div class="row">
+    <div style="flex:1 1 320px">
+      <label for="fishSearch">Search species</label>
+      <input id="fishSearch" type="text" placeholder="Type to filter the list" />
     </div>
-    <div class="row">
-      <div style="flex:1 1 320px">
-        <label for="fishSelect">Species</label>
-        <select id="fishSelect"></select>
-      </div>
+  </div>
+  <div class="row">
+    <div style="flex:1 1 320px">
+      <label for="fishSelect">Species</label>
+      <select id="fishSelect"></select>
     </div>
-    <div class="row">
-      <div style="flex:1 1 200px">
-        <label for="recMin">Recommended minimum</label>
-        <input id="recMin" type="number" value="" disabled />
-      </div>
+  </div>
+  <div class="row">
+    <div style="flex:1 1 200px">
+      <label for="recMin">Recommended minimum</label>
+      <input id="recMin" type="number" value="" disabled />
     </div>
-    <div class="row" style="align-items:flex-end">
-      <div style="flex:1 1 200px">
-        <label for="fQty">Quantity</label>
-        <input id="fQty" type="number" min="1" placeholder="" />
-      </div>
-      <div>
-        <button id="addFish">Add</button>
-      </div>
+  </div>
+  <div class="row" style="align-items:flex-end">
+    <div style="flex:1 1 200px">
+      <label for="fQty">Quantity</label>
+      <input id="fQty" type="number" min="1" placeholder="" />
     </div>
-  </section>
-
-  <!-- Current stock list -->
-  <section class="card">
-    <h2 style="margin-top:0">Current Stock</h2>
-    <table>
-      <thead>
-        <tr><th>Name</th><th class="right">Qty</th><th class="right">Actions</th></tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-    <div class="row" style="margin-top:8px">
-      <div style="flex:1 1 200px"><button id="reset" class="ghost">Clear Stock</button></div>
+    <div>
+      <button id="addFish">Add</button>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Warnings -->
-  <section class="card">
-    <h2 style="margin-top:0">Aggression & Compatibility Warnings</h2>
-    <div id="aggression-warnings"></div>
-  </section>
+<!-- Current stock list -->
+<section class="card">
+  <h2 style="margin-top:0">Current Stock</h2>
+  <table>
+    <thead>
+      <tr><th>Name</th><th class="right">Qty</th><th class="right">Actions</th></tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="row" style="margin-top:8px">
+    <div style="flex:1 1 200px"><button id="reset" class="ghost">Clear Stock</button></div>
+  </div>
+</section>
 
-  <!-- Load fish data -->
-  <script src="js/fish-data.js"></script>
-  <script>
-    /*
-      The main script.  It uses window.DEMO_FISH from fish-data.js,
-      computes bioload capacity, detects aggression/compatibility issues,
-      and updates the UI accordingly.
-    */
+<!-- Warnings -->
+<section class="card">
+  <h2 style="margin-top:0">Aggression & Compatibility Warnings</h2>
+  <div id="aggression-warnings"></div>
+</section>
 
-    // Make copies so we can filter/search without mutating the original
-    let FISH = [...window.DEMO_FISH];
-    let FILTERED = [...FISH];
-    let stock = [];
+<!-- Load fish data -->
+<script src="js/fish-data.js"></script>
+<script>
+  /*
+   * Main script.  Pulls species from fish-data.js, manages stock,
+   * computes aggression issues, and updates both the bioload
+   * bar and the aggression meter.
+   */
 
-    // Helper query
-    function $(selector) {
-      return document.querySelector(selector);
-    }
+  let FISH = [...window.DEMO_FISH];
+  let FILTERED = [...FISH];
+  let stock = [];
 
-    function fishById(id) {
-      return FISH.find(f => f.id === id);
-    }
+  function $(selector) {
+    return document.querySelector(selector);
+  }
 
-    /*
-     * Bioload capacity calculations
-     */
-    function capacity() {
-      const g = Number($("#gallons").value || 0);
-      const filt = $("#filtration").value;
-      const planted = $("#planted").checked;
-      const filtFactor = filt === "high" ? 1.3 : (filt === "low" ? 0.7 : 1.0);
-      const plantFactor = planted ? 1.15 : 1.0;
-      return Math.max(0, g * filtFactor * plantFactor);
-    }
+  function fishById(id) {
+    return FISH.find(f => f.id === id);
+  }
 
-    function used() {
-      return stock.reduce((a, item) => {
-        const f = fishById(item.id);
-        return a + (f ? f.points * item.qty : 0);
-      }, 0);
-    }
+  function capacity() {
+    const g = Number($("#gallons").value || 0);
+    const filt = $("#filtration").value;
+    const planted = $("#planted").checked;
+    const filtFactor = filt === "high" ? 1.3 : (filt === "low" ? 0.7 : 1.0);
+    const plantFactor = planted ? 1.15 : 1.0;
+    return Math.max(0, g * filtFactor * plantFactor);
+  }
 
-    function pctUsed() {
-      const cap = capacity();
-      const u = used();
-      if (cap <= 0 || u <= 0) return 0;
-      return Math.min(100, Math.round((u / cap) * 100));
-    }
+  function used() {
+    return stock.reduce((a, item) => {
+      const f = fishById(item.id);
+      return a + (f ? f.points * item.qty : 0);
+    }, 0);
+  }
 
-    function updateBar() {
-      $("#barFill").style.width = pctUsed() + "%";
-    }
+  function pctUsed() {
+    const cap = capacity();
+    const u = used();
+    if (cap <= 0 || u <= 0) return 0;
+    return Math.min(100, Math.round((u / cap) * 100));
+  }
 
-    /*
-     * Aggression & compatibility logic
-     * - Detects multiple male bettas (danger)
-     * - Betta + Tiger Barbs (warning)
-     * - Fin-nippers + long-finned species (warning)
-     *   (only if at least two different species are involved)
-     * - Dwarf cichlids in tanks < 20 gallons (caution)
-     * - Betta + Gourami-family fish (caution)
-     */
+  function updateBar() {
+    $("#barFill").style.width = pctUsed() + "%";
+  }
 
-    function computeAggressionIndex(issues) {
-      if (!issues || !issues.length) return 0;
-      let index = 0;
-      issues.forEach(issue => {
-        if (issue.severity === "danger") index = Math.max(index, 100);
-        else if (issue.severity === "warning") index = Math.max(index, 60);
-        else if (issue.severity === "caution") index = Math.max(index, 30);
-      });
-      return index;
-    }
+  function computeAggressionIndex(issues) {
+    if (!issues || !issues.length) return 0;
+    let index = 0;
+    issues.forEach(issue => {
+      if (issue.severity === "danger") index = Math.max(index, 100);
+      else if (issue.severity === "warning") index = Math.max(index, 60);
+      else if (issue.severity === "caution") index = Math.max(index, 30);
+    });
+    return index;
+  }
 
-    function checkAggressionIssues(currentStock) {
-      const issues = [];
+  function checkAggressionIssues(currentStock) {
+    const issues = [];
 
-      const BETTA_MALE_ID = "betta_male";
-      const TIGER_BARB_ID = "tiger_barb";
-      const APISTO_ID = "apistogramma";
-      const RAM_ID = "ram_cichlid";
+    const BETTA_MALE_ID = "betta_male";
+    const TIGER_BARB_ID = "tiger_barb";
+    const APISTO_ID     = "apistogramma";
+    const RAM_ID        = "ram_cichlid";
 
-      // Define groups.  Guppies are long-fin and mild nippers.
-      const NIPPER_IDS = new Set(["tiger_barb", "black_skirt_tetra", "zebra_danio", "guppy"]);
-      const LONG_FIN_IDS = new Set(["betta_male", "guppy", "angelfish", "pearl_gourami"]);
-      const GOURAMI_IDS = new Set(["dwarf_gourami", "honey_gourami", "pearl_gourami"]);
+    // Define sets (guppy counts as both nipper and long-fin)
+    const NIPPER_IDS   = new Set(["tiger_barb","black_skirt_tetra","zebra_danio","guppy"]);
+    const LONG_FIN_IDS = new Set(["betta_male","guppy","angelfish","pearl_gourami"]);
+    const GOURAMI_IDS  = new Set(["dwarf_gourami","honey_gourami","pearl_gourami"]);
 
-      // Counters/flags
-      let maleBettas = 0;
-      let tigerBarbs = 0;
-      let hasApisto = false;
-      let hasRam = false;
-      let hasGourami = false;
+    let maleBettas = 0;
+    let tigerBarbs = 0;
+    let hasApisto = false;
+    let hasRam    = false;
+    let hasGourami = false;
 
-      // Collect lists of species present that belong to each group
-      const nipperSpecies = [];
-      const longFinSpecies = [];
+    const nipperSpecies = [];
+    const longFinSpecies = [];
 
-      currentStock.forEach(item => {
-        const qty = Number(item.qty || 0);
-        if (qty <= 0) return;
-        // Count bettas and tiger barbs
-        if (item.id === BETTA_MALE_ID) maleBettas += qty;
-        if (item.id === TIGER_BARB_ID) tigerBarbs += qty;
+    currentStock.forEach(item => {
+      const qty = Number(item.qty || 0);
+      if (qty <= 0) return;
+      if (item.id === BETTA_MALE_ID) maleBettas += qty;
+      if (item.id === TIGER_BARB_ID)  tigerBarbs += qty;
 
-        // Membership flags
-        if (NIPPER_IDS.has(item.id))   nipperSpecies.push(item.id);
-        if (LONG_FIN_IDS.has(item.id)) longFinSpecies.push(item.id);
-        if (GOURAMI_IDS.has(item.id))  hasGourami = true;
+      if (NIPPER_IDS.has(item.id))   nipperSpecies.push(item.id);
+      if (LONG_FIN_IDS.has(item.id)) longFinSpecies.push(item.id);
+      if (GOURAMI_IDS.has(item.id))  hasGourami = true;
 
-        if (item.id === APISTO_ID) hasApisto = true;
-        if (item.id === RAM_ID)    hasRam = true;
-      });
+      if (item.id === APISTO_ID) hasApisto = true;
+      if (item.id === RAM_ID)    hasRam    = true;
+    });
 
-      // Rule 1: 2+ male bettas → DANGER
-      if (maleBettas >= 2) {
-        issues.push({
-          id: "multi-male-betta",
-          severity: "danger",
-          message: "Multiple male Bettas selected — extremely high aggression risk (fighting until serious injury or death). Keep exactly one male Betta per tank."
-        });
-      }
-
-      // Rule 2: Betta + Tiger Barbs → WARNING
-      if (maleBettas >= 1 && tigerBarbs >= 1) {
-        issues.push({
-          id: "betta-vs-tigerbarb",
-          severity: "warning",
-          message: "Betta with Tiger Barbs — barbs are notorious fin-nippers and will harass long-finned fish. Choose different schooling fish (rasboras, small peaceful tetras) or skip the Betta."
-        });
-      }
-
-      // Rule 3: Fin‑nippers + Long‑finned species → WARNING
-      // Only trigger if at least two distinct species are involved (i.e. not just one species that is both long-fin and a nipper).
-      const hasNippers = nipperSpecies.length > 0;
-      const hasLongFins = longFinSpecies.length > 0;
-      const distinctConflict = hasNippers && hasLongFins &&
-        (nipperSpecies.some(id => !longFinSpecies.includes(id)) &&
-         longFinSpecies.some(id => !nipperSpecies.includes(id)));
-      if (distinctConflict) {
-        issues.push({
-          id: "nippers-vs-longfins",
-          severity: "warning",
-          message: "Fin-nipping species detected with long-finned fish — high risk of torn fins and stress. Avoid mixing, or increase group size of nippers and add heavy planting/sightline breaks."
-        });
-      }
-
-      // Rule 4: Dwarf cichlids in tank < 20g → CAUTION
-      const gallons = Number($("#gallons").value || 0);
-      if (gallons > 0 && gallons < 20 && (hasApisto || hasRam)) {
-        const names = [
-          hasApisto ? "Apistogramma" : null,
-          hasRam ? "Ram cichlid" : null
-        ].filter(Boolean).join(" / ");
-        issues.push({
-          id: "dwarf-cichlid-small-tank",
-          severity: "caution",
-          message: `${names} in a tank under 20 gallons — territorial species may become aggressive or stressed in smaller spaces. Aim for ~20g+ with hides, caves, and broken sightlines.`
-        });
-      }
-
-      // Rule 5: Betta + Gourami-family → CAUTION
-      if (maleBettas >= 1 && hasGourami) {
-        issues.push({
-          id: "betta-vs-gourami",
-          severity: "caution",
-          message: "Betta with Gourami-family fish (Dwarf, Honey, Pearl) — all are labyrinth species and often view each other as rivals. Risk of displays, stress, or fighting."
-        });
-      }
-
-      return issues;
-    }
-
-    function renderAggressionMessages(issues) {
-      const target = $("#aggression-warnings");
-      if (!target) return;
-      target.innerHTML = "";
-
-      if (!issues.length) {
-        const ok = document.createElement("div");
-        ok.style.padding = "8px";
-        ok.style.color   = "#475569";
-        ok.style.fontSize = "0.95rem";
-        ok.textContent = "No aggression issues detected with the current stock.";
-        target.appendChild(ok);
-        return;
-      }
-
-      issues.forEach(issue => {
-        const box = document.createElement("div");
-        box.style.border = issue.severity === "danger" ? "2px solid #b91c1c" : "1px solid #c2410c";
-        box.style.background = issue.severity === "danger" ? "#fee2e2" : "#ffedd5";
-        box.style.padding = "10px";
-        box.style.margin = "8px 0";
-        box.style.borderRadius = "10px";
-
-        const strong = document.createElement("strong");
-        strong.textContent = (issue.severity || "warning").toUpperCase() + ": ";
-        box.appendChild(strong);
-
-        const msg = document.createElement("span");
-        msg.textContent = issue.message;
-        box.appendChild(msg);
-
-        target.appendChild(box);
+    // Rule 1: 2+ male bettas → danger
+    if (maleBettas >= 2) {
+      issues.push({
+        id: "multi-male-betta",
+        severity: "danger",
+        message: "Multiple male Bettas selected — extremely high aggression risk (fighting until serious injury or death). Keep exactly one male Betta per tank."
       });
     }
 
-    /*
-     * Update both bars and render warnings together
-     */
-    function updateMeters() {
-      updateBar(); // bioload bar
-      const issues = checkAggressionIssues(stock);
-      const index = computeAggressionIndex(issues);
-      $("#aggBarFill").style.width = index + "%";
-      renderAggressionMessages(issues);
-    }
-
-    /*
-     * Stock table rendering
-     */
-    function renderStock() {
-      const tb = $("#tbody");
-      tb.innerHTML = "";
-      stock.forEach((item, idx) => {
-        const f = fishById(item.id);
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${f ? f.name : "(unknown)"}</td>
-          <td class="right">${item.qty}</td>
-          <td class="right">
-            <div class="controls">
-              <button class="ghost" data-act="minus" data-i="${idx}">–1</button>
-              <button class="ghost" data-act="plus" data-i="${idx}">+1</button>
-              <button class="ghost" data-act="del" data-i="${idx}">Delete</button>
-            </div>
-          </td>
-        `;
-        tb.appendChild(tr);
-      });
-
-      tb.querySelectorAll("button[data-act]").forEach(btn => {
-        const idx = Number(btn.dataset.i);
-        const act = btn.dataset.act;
-        btn.onclick = () => {
-          if (act === "minus") stock[idx].qty = Math.max(1, stock[idx].qty - 1);
-          if (act === "plus")  stock[idx].qty = Math.max(1, stock[idx].qty + 1);
-          if (act === "del")   stock.splice(idx, 1);
-          renderStock();
-          updateMeters();
-        };
+    // Rule 2: Betta + tiger barbs → warning
+    if (maleBettas >= 1 && tigerBarbs >= 1) {
+      issues.push({
+        id: "betta-vs-tigerbarb",
+        severity: "warning",
+        message: "Betta with Tiger Barbs — barbs are notorious fin-nippers and will harass long-finned fish. Choose different schooling fish (rasboras, small peaceful tetras) or skip the Betta."
       });
     }
 
-    /*
-     * Dropdown and search helpers
-     */
-    function populateFishDropdown(list) {
-      const sel = $("#fishSelect");
-      sel.innerHTML = "";
-      list.forEach(f => {
-        const opt = document.createElement("option");
-        opt.value = f.id;
-        opt.textContent = f.name;
-        sel.appendChild(opt);
+    // Rule 3: fin-nippers + long-fins → warning (only if at least two different species)
+    const hasNippers  = nipperSpecies.length > 0;
+    const hasLongFins = longFinSpecies.length > 0;
+    const distinctConflict =
+      hasNippers && hasLongFins &&
+      (nipperSpecies.some(id => !longFinSpecies.includes(id)) &&
+       longFinSpecies.some(id => !nipperSpecies.includes(id)));
+    if (distinctConflict) {
+      issues.push({
+        id: "nippers-vs-longfins",
+        severity: "warning",
+        message: "Fin-nipping species detected with long-finned fish — high risk of torn fins and stress. Avoid mixing, or increase group size of nippers and add heavy planting/sightline breaks."
       });
-      updateRecMin();
     }
 
-    function updateRecMin() {
-      const f = fishById($("#fishSelect").value);
-      $("#recMin").value = f ? f.min : "";
+    // Rule 4: dwarf cichlids in tank < 20g → caution
+    const gallons = Number($("#gallons").value || 0);
+    if (gallons > 0 && gallons < 20 && (hasApisto || hasRam)) {
+      const names = [
+        hasApisto ? "Apistogramma" : null,
+        hasRam    ? "Ram cichlid"  : null
+      ].filter(Boolean).join(" / ");
+      issues.push({
+        id: "dwarf-cichlid-small-tank",
+        severity: "caution",
+        message: `${names} in a tank under 20 gallons — territorial species may become aggressive or stressed in smaller spaces. Aim for ~20g+ with hides, caves, and broken sightlines.`
+      });
     }
 
-    function applySearch() {
-      const q = ($("#fishSearch").value || "").trim().toLowerCase();
-      FILTERED = q ? FISH.filter(f => f.name.toLowerCase().includes(q)) : [...FISH];
-      populateFishDropdown(FILTERED);
+    // Rule 5: betta + gourami-family → caution
+    if (maleBettas >= 1 && hasGourami) {
+      issues.push({
+        id: "betta-vs-gourami",
+        severity: "caution",
+        message: "Betta with Gourami-family fish (Dwarf, Honey, Pearl) — all are labyrinth species and often view each other as rivals. Risk of displays, stress, or fighting."
+      });
     }
 
-    /*
-     * Event listeners
-     */
-    ["#gallons", "#filtration", "#planted"].forEach(sel => {
-      document.querySelector(sel).addEventListener("input", () => {
+    return issues;
+  }
+
+  function renderAggressionMessages(issues) {
+    const target = $("#aggression-warnings");
+    if (!target) return;
+    target.innerHTML = "";
+
+    if (!issues.length) {
+      const ok = document.createElement("div");
+      ok.style.padding   = "8px";
+      ok.style.color     = "#475569";
+      ok.style.fontSize  = "0.95rem";
+      ok.textContent     = "No aggression issues detected with the current stock.";
+      target.appendChild(ok);
+      return;
+    }
+
+    issues.forEach(issue => {
+      const box = document.createElement("div");
+      box.style.border = issue.severity === "danger" ? "2px solid #b91c1c" : "1px solid #c2410c";
+      box.style.background = issue.severity === "danger" ? "#fee2e2" : "#ffedd5";
+      box.style.padding = "10px";
+      box.style.margin  = "8px 0";
+      box.style.borderRadius = "10px";
+
+      const strong = document.createElement("strong");
+      strong.textContent = (issue.severity || "warning").toUpperCase() + ": ";
+      box.appendChild(strong);
+
+      const msg = document.createElement("span");
+      msg.textContent = issue.message;
+      box.appendChild(msg);
+
+      target.appendChild(box);
+    });
+  }
+
+  function updateMeters() {
+    updateBar();
+    const issues = checkAggressionIssues(stock);
+    const index  = computeAggressionIndex(issues);
+    $("#aggBarFill").style.width = index + "%";
+    renderAggressionMessages(issues);
+  }
+
+  function renderStock() {
+    const tb = $("#tbody");
+    tb.innerHTML = "";
+    stock.forEach((item, idx) => {
+      const f = fishById(item.id);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${f ? f.name : "(unknown)"}</td>
+        <td class="right">${item.qty}</td>
+        <td class="right">
+          <div class="controls">
+            <button class="ghost" data-act="minus" data-i="${idx}">–1</button>
+            <button class="ghost" data-act="plus"  data-i="${idx}">+1</button>
+            <button class="ghost" data-act="del"   data-i="${idx}">Delete</button>
+          </div>
+        </td>
+      `;
+      tb.appendChild(tr);
+    });
+
+    tb.querySelectorAll("button[data-act]").forEach(btn => {
+      const idx = Number(btn.dataset.i);
+      const act = btn.dataset.act;
+      btn.onclick = () => {
+        if (act === "minus") stock[idx].qty = Math.max(1, stock[idx].qty - 1);
+        if (act === "plus")  stock[idx].qty = Math.max(1, stock[idx].qty + 1);
+        if (act === "del")   stock.splice(idx, 1);
+        renderStock();
         updateMeters();
-      });
+      };
     });
-    $("#fishSearch").addEventListener("input", applySearch);
-    $("#fishSelect").addEventListener("change", updateRecMin);
+  }
 
-    $("#addFish").addEventListener("click", () => {
-      const id = $("#fishSelect").value;
-      const qty = Math.max(1, Number($("#fQty").value || 0));
-      if (!id) return;
-      if (!qty) { alert("Enter a quantity."); return; }
+  function populateFishDropdown(list) {
+    const sel = $("#fishSelect");
+    sel.innerHTML = "";
+    list.forEach(f => {
+      const opt = document.createElement("option");
+      opt.value = f.id;
+      opt.textContent = f.name;
+      sel.appendChild(opt);
+    });
+    updateRecMin();
+  }
+
+  function updateRecMin() {
+    const f = fishById($("#fishSelect").value);
+    $("#recMin").value = f ? f.min : "";
+  }
+
+  function applySearch() {
+    const q = ($("#fishSearch").value || "").trim().toLowerCase();
+    FILTERED = q ? FISH.filter(f => f.name.toLowerCase().includes(q)) : [...FISH];
+    populateFishDropdown(FILTERED);
+  }
+
+  // Event listeners for tank settings
+  ["#gallons","#filtration","#planted"].forEach(sel => {
+    document.querySelector(sel).addEventListener("input", () => {
+      updateMeters();
+    });
+  });
+
+  // Search & select events
+  $("#fishSearch").addEventListener("input", applySearch);
+  $("#fishSelect").addEventListener("change", updateRecMin);
+
+  // Add fish: merge quantities instead of adding duplicate lines
+  $("#addFish").addEventListener("click", () => {
+    const id  = $("#fishSelect").value;
+    let   qty = Math.max(1, Number($("#fQty").value || 0));
+    if (!id) return;
+    if (!qty){ alert("Enter a quantity."); return; }
+
+    // merge if this species already exists
+    const existing = stock.find(item => item.id === id);
+    if (existing) {
+      existing.qty += qty;
+    } else {
       stock.push({ id, qty });
-      renderStock();
-      updateMeters();
-      $("#fQty").value = "";
-    });
+    }
 
-    $("#reset").addEventListener("click", () => {
-      stock = [];
-      renderStock();
-      updateMeters();
-    });
-
-    /*
-     * Initialization
-     */
-    applySearch();
     renderStock();
     updateMeters();
-  </script>
+    $("#fQty").value = "";
+  });
+
+  // Clear stock
+  $("#reset").addEventListener("click", () => {
+    stock = [];
+    renderStock();
+    updateMeters();
+  });
+
+  // Initialize dropdown, stock, and bars
+  applySearch();
+  renderStock();
+  updateMeters();
+</script>
 </body>
 </html>
