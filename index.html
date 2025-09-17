@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Bio-load Capacity — Preloaded Library (vP10)</title>
+<title>Bio-load Capacity — Preloaded Library (vP11)</title>
 <style>
   :root { --gap: 12px; --radius: 12px; }
   *{ box-sizing: border-box; }
@@ -38,12 +38,18 @@
   .controls{ display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap; }
   .small{ font-size:12px; color:#64748b; }
   .uploader{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+  /* Mobile niceties */
+  @media (max-width: 540px){
+    body{ padding:16px; }
+    .row > *{ flex:1 1 100%; }
+  }
 </style>
 </head>
 <body>
   <header>
-    <h1>Bio-load Capacity — Preloaded Library (vP10)</h1>
-    <p class="sub">Species → Recommended minimum → Quantity → bar fills. Library is preloaded; you can still upload to replace it.</p>
+    <h1>Bio-load Capacity — Preloaded Library (vP11)</h1>
+    <p class="sub">Species → Recommended minimum → Quantity → bar fills. Preloaded library, upload optional.</p>
   </header>
 
   <section class="card">
@@ -83,11 +89,17 @@
       <input id="fileInput" type="file" accept=".json,.csv" />
       <button id="resetDemo" class="ghost" title="Restore built-in demo list">Reset to demo</button>
     </div>
-    <div class="small" style="margin-top:6px">Optional upload: JSON or CSV with columns <code>id,name,points,min</code>. Extra columns are ignored.</div>
+    <div class="small" style="margin-top:6px">Optional upload: JSON/CSV with <code>id,name,points,min</code>.</div>
   </section>
 
   <section class="card">
     <h2 style="margin-top:0">Add Fish</h2>
+    <div class="row">
+      <div style="flex:1 1 320px">
+        <label for="fishSearch">Search species</label>
+        <input id="fishSearch" type="text" placeholder="Type to filter the list"/>
+      </div>
+    </div>
     <div class="row">
       <div style="flex:1 1 320px">
         <label for="fishSelect">Species</label>
@@ -158,8 +170,9 @@ const DEMO_FISH = [
   { id:"mystery_snail", name:"Mystery snail", points:0.8, min:1 }
 ];
 
-let FISH = [...DEMO_FISH]; // active library (can be replaced by upload)
-let stock = []; // {id, qty}
+let FISH = [...DEMO_FISH];        // active library (can be replaced by upload)
+let FILTERED = [...FISH];         // search results
+let stock = [];                   // {id, qty}
 
 function $(s){ return document.querySelector(s); }
 function fishById(id){ return FISH.find(f=>f.id===id); }
@@ -221,11 +234,11 @@ function renderStock(){
   });
 }
 
-// Dropdown
-function populateFishDropdown(){
+// Dropdown + Search
+function populateFishDropdown(list){
   const sel = $("#fishSelect");
   sel.innerHTML = "";
-  FISH.forEach(f => {
+  list.forEach(f => {
     const opt = document.createElement("option");
     opt.value = f.id;
     opt.textContent = `${f.name} — ${Number(f.points).toFixed(1)} pts/fish`;
@@ -236,6 +249,11 @@ function populateFishDropdown(){
 function updateRecMin(){
   const f = fishById($("#fishSelect").value);
   $("#recMin").value = f ? f.min : "";
+}
+function applySearch(){
+  const q = ($("#fishSearch").value||"").trim().toLowerCase();
+  FILTERED = q ? FISH.filter(f => f.name.toLowerCase().includes(q)) : [...FISH];
+  populateFishDropdown(FILTERED);
 }
 
 // Upload handlers
@@ -278,7 +296,7 @@ function handleFile(file){
       }
       if (data.length === 0) { alert("No valid rows found. Ensure id,name,points,min are present."); return; }
       FISH = data;
-      populateFishDropdown();
+      applySearch(); // repopulate dropdown from FISH with current search
     } catch(err){
       alert("Failed to read file: " + err.message);
     }
@@ -294,9 +312,10 @@ document.getElementById("fileInput").addEventListener("change", (e) => {
 });
 document.getElementById("resetDemo").addEventListener("click", () => {
   FISH = [...DEMO_FISH];
-  populateFishDropdown();
+  applySearch();
 });
 
+document.getElementById("fishSearch").addEventListener("input", applySearch);
 document.getElementById("fishSelect").addEventListener("change", updateRecMin);
 
 document.getElementById("addFish").addEventListener("click", () => {
@@ -316,10 +335,11 @@ document.getElementById("reset").addEventListener("click", () => {
   updateBar();
 });
 
-// Init: preload demo list
-populateFishDropdown();
+// Init
+applySearch();     // populates dropdown
 renderStock();
 updateBar();
 </script>
 </body>
 </html>
+
