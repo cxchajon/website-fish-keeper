@@ -68,15 +68,6 @@
           <span>Yes</span>
         </div>
       </div>
-      <!-- NEW: Water parameters -->
-      <div>
-        <label for="tempF">Temperature (°F)</label>
-        <input id="tempF" type="number" step="0.1" min="50" max="90" value="78"/>
-      </div>
-      <div>
-        <label for="ph">pH</label>
-        <input id="ph" type="number" step="0.1" min="5.0" max="9.0" value="7.0"/>
-      </div>
     </div>
 
     <div class="bar-wrap">
@@ -207,16 +198,9 @@ function pctUsed(){
 function updateBar(){ $("#barFill").style.width = pctUsed() + "%"; }
 
 /* =========================
-   Helpers: water params
+   Helpers: overlap
    ========================= */
-function tankParams(){
-  return {
-    tempF: Number($("#tempF").value || 0),
-    ph: Number($("#ph").value || 0),
-  };
-}
 function overlap(ranges){
-  // ranges = [[min,max], [min,max], ...]
   if (!ranges.length) return null;
   const minMax = Math.min(...ranges.map(r=>r[1]));
   const maxMin = Math.max(...ranges.map(r=>r[0]));
@@ -226,7 +210,7 @@ function overlap(ranges){
 function names(list){ return list.map(x=>x.name).join(", "); }
 
 /* =========================
-   Aggression & water warnings
+   Aggression + Water warnings
    ========================= */
 function checkAggressionIssues(currentStock){
   const issues = [];
@@ -246,19 +230,12 @@ function checkAggressionIssues(currentStock){
   const APISTO_ID = 'apistogramma';
   const RAM_ID    = 'ram_cichlid';
 
-  // Counts/flags
-  let maleBettas = 0;
-  let tigerBarbs = 0;
-  let hasNippers = false;
-  let hasLongFins = false;
-  let hasApisto = false;
-  let hasRam = false;
-  let hasGourami = false;
-  let hasShrimp = false;
-  let hasAggressive = false;
-  let hasAngelfish = false;
+  // Flags
+  let maleBettas = 0, tigerBarbs = 0;
+  let hasNippers = false, hasLongFins = false, hasApisto = false, hasRam = false;
+  let hasGourami = false, hasShrimp = false, hasAggressive = false, hasAngelfish = false;
 
-  // For water compatibility
+  // Water compatibility accumulators
   const presentFish = [];
   const tempRanges = [];
   const phRanges = [];
@@ -322,8 +299,7 @@ function checkAggressionIssues(currentStock){
     issues.push({ severity:'caution', message:'Angelfish in tanks under 29 gallons may become stunted or aggressive. Recommend 29g+ tall tanks.' });
   }
 
-  /* ---------- Water compatibility checks ---------- */
-  // Cross-species overlap (only if 2+ species present)
+  /* ---------- Water compatibility checks (overlap-only) ---------- */
   if (presentFish.length >= 2) {
     const tOverlap = overlap(tempRanges);
     const pOverlap = overlap(phRanges);
@@ -338,27 +314,6 @@ function checkAggressionIssues(currentStock){
       issues.push({
         severity:'warning',
         message:'pH ranges across selected species do not overlap. Consider adjusting stocking for matching water chemistry.'
-      });
-    }
-  }
-
-  // Tank settings vs species ranges (if user filled)
-  const { tempF, ph } = tankParams();
-  if (tempF) {
-    const outOfTemp = presentFish.filter(f => f.temp && (tempF < f.temp[0] || tempF > f.temp[1]));
-    if (outOfTemp.length) {
-      issues.push({
-        severity:'caution',
-        message:`Tank temperature ${tempF.toFixed(1)}°F is outside the preferred range for: ${names(outOfTemp)}.`
-      });
-    }
-  }
-  if (ph) {
-    const outOfPh = presentFish.filter(f => f.ph && (ph < f.ph[0] || ph > f.ph[1]));
-    if (outOfPh.length) {
-      issues.push({
-        severity:'caution',
-        message:`Tank pH ${ph.toFixed(1)} is outside the preferred range for: ${names(outOfPh)}.`
       });
     }
   }
@@ -450,7 +405,7 @@ function applySearch(){
 /* =========================
    Events
    ========================= */
-["#gallons","#filtration","#planted","#tempF","#ph"].forEach(q =>
+["#gallons","#filtration","#planted"].forEach(q =>
   document.querySelector(q).addEventListener("input", () => {
     updateBar();
     refreshAggression();
@@ -482,7 +437,6 @@ $("#reset").addEventListener("click", () => {
    Init
    ========================= */
 function init(){
-  // populate dropdown from FISH
   FILTERED = [...FISH];
   populateFishDropdown(FILTERED);
   renderStock();
