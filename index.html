@@ -5,28 +5,86 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Stocking Calculator</title>
 <style>
-  /* … keep all your existing styles … */
   :root { --gap: 12px; --radius: 12px; }
   *{ box-sizing: border-box; }
-  body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-        margin:0; padding:24px; background:#f8fafc; color:#0f172a; }
-  /* … existing CSS omitted for brevity … */
+  body{
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    margin:0; padding:24px; background:#f8fafc; color:#0f172a;
+  }
+  header{ margin-bottom:16px; }
+  h1{ font-size:1.35rem; margin:0 0 4px; }
+  .card{
+    background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    padding:16px; margin-bottom:16px;
+  }
+  .row{ display:flex; flex-wrap:wrap; gap:var(--gap); }
+  .row > *{ flex:1 1 220px; }
+  label{ display:block; font-weight:600; margin-bottom:6px; }
+  input[type="number"], input[type="text"], select{
+    width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:10px; background:#fff;
+  }
+  button{
+    padding:10px 14px; border:0; border-radius:10px;
+    cursor:pointer; background:#2563eb; color:#fff; font-weight:600;
+  }
+  button.ghost{ background:#eef2ff; color:#1e293b; }
+  .switch{ display:flex; align-items:center; gap:8px; }
+  .switch input{ width:18px; height:18px; }
 
+  /* Bars */
   .bar-wrap{ margin-top:8px; }
   .bar-labels{ display:flex; justify-content:space-between; font-size:0.9rem; color:#475569; margin-bottom:6px; }
-  .bar{ position:relative; height:24px; border-radius:999px; overflow:hidden; background:#e2e8f0; }
-  .bar-fill{ position:absolute; top:0; left:0; bottom:0; width:0%; background:linear-gradient(to right,#10b981,#f59e0b,#ef4444); transition: width .25s ease; }
+  .bar{
+    position:relative; height:24px; border-radius:999px;
+    overflow:hidden; background:#e2e8f0;
+  }
+  .bar-fill{
+    position:absolute; top:0; left:0; bottom:0; width:0%;
+    background: linear-gradient(to right, #10b981, #f59e0b, #ef4444);
+    transition: width .25s ease;
+  }
+
+  table{ width:100%; border-collapse:collapse; }
+  th, td{ padding:10px; border-bottom:1px solid #e2e8f0; text-align:left; }
+  .right{ text-align:right; }
+  .controls{ display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap; }
+
+  @media (max-width: 540px){
+    body{ padding:16px; }
+    .row > *{ flex:1 1 100%; }
+  }
 </style>
 </head>
 <body>
-  <!-- header and other sections remain unchanged -->
+  <header>
+    <h1>Stocking Calculator</h1>
+  </header>
 
+  <!-- Tank settings -->
   <section class="card">
     <div class="row">
-      <!-- tank size/filtration/planting fields remain here -->
+      <div>
+        <label for="gallons">Tank size (US gallons)</label>
+        <input id="gallons" type="number" min="1" value="20"/>
+      </div>
+      <div>
+        <label for="filtration">Filtration</label>
+        <select id="filtration">
+          <option value="low">Low — Sponge filter (gentle flow)</option>
+          <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
+          <option value="high">High — Sump/Canister (oversized)</option>
+        </select>
+      </div>
+      <div>
+        <label>Planted?</label>
+        <div class="switch">
+          <input id="planted" type="checkbox"/>
+          <span>Yes</span>
+        </div>
+      </div>
     </div>
 
-    <!-- existing bioload bar -->
+    <!-- Bioload bar -->
     <div class="bar-wrap">
       <div class="bar-labels"><span>Low</span><span>High</span></div>
       <div class="bar" aria-live="polite">
@@ -34,7 +92,7 @@
       </div>
     </div>
 
-    <!-- NEW: aggression meter -->
+    <!-- Aggression meter -->
     <div class="bar-wrap">
       <div class="bar-labels"><span>Peaceful</span><span>Aggressive</span></div>
       <div class="bar" aria-live="polite">
@@ -43,19 +101,102 @@
     </div>
   </section>
 
-  <!-- rest of your form and stock table sections remain unchanged -->
+  <!-- Add fish form -->
+  <section class="card">
+    <h2 style="margin-top:0">Add Fish</h2>
+    <div class="row">
+      <div style="flex:1 1 320px">
+        <label for="fishSearch">Search species</label>
+        <input id="fishSearch" type="text" placeholder="Type to filter the list"/>
+      </div>
+    </div>
+    <div class="row">
+      <div style="flex:1 1 320px">
+        <label for="fishSelect">Species</label>
+        <select id="fishSelect"></select>
+      </div>
+    </div>
+    <div class="row">
+      <div style="flex:1 1 200px">
+        <label for="recMin">Recommended minimum</label>
+        <input id="recMin" type="number" value="" disabled/>
+      </div>
+    </div>
+    <div class="row" style="align-items:flex-end">
+      <div style="flex:1 1 200px">
+        <label for="fQty">Quantity</label>
+        <input id="fQty" type="number" min="1" placeholder=""/>
+      </div>
+      <div>
+        <button id="addFish">Add</button>
+      </div>
+    </div>
+  </section>
 
-  <!-- Aggression warnings section unchanged -->
+  <!-- Current stock list -->
+  <section class="card">
+    <h2 style="margin-top:0">Current Stock</h2>
+    <table>
+      <thead><tr><th>Name</th><th class="right">Qty</th><th class="right">Actions</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="row" style="margin-top:8px">
+      <div style="flex:1 1 200px"><button id="reset" class="ghost">Clear Stock</button></div>
+    </div>
+  </section>
+
+  <!-- Warnings -->
   <section class="card">
     <h2 style="margin-top:0">Aggression & Compatibility Warnings</h2>
     <div id="aggression-warnings"></div>
   </section>
 
+<!-- Load fish data before scripts that reference it -->
+<script src="js/fish-data.js"></script>
 <script>
-/* existing species data and variables remain the same */
+/*
+ *  Initialization of fish lists and global helpers
+ */
+let FISH = [...window.DEMO_FISH];   // copy global fish list from fish-data.js
+let FILTERED = [...FISH];
+let stock = [];
 
-/* helper: compute aggression index (0 peaceful–100 conflict) based on issue severities */
-function computeAggressionIndex(issues) {
+// Short query helper
+function $(s){ return document.querySelector(s); }
+function fishById(id){ return FISH.find(f=>f.id === id); }
+
+/*
+ *  Capacity calculations
+ */
+function capacity(){
+  const g = Number($("#gallons").value||0);
+  const filt = $("#filtration").value;
+  const planted = $("#planted").checked;
+  const filtFactor = filt==="high" ? 1.3 : (filt==="low" ? 0.7 : 1.0);
+  const plantFactor = planted ? 1.15 : 1.0;
+  return Math.max(0, g * filtFactor * plantFactor);
+}
+function used(){
+  return stock.reduce((a, it) => {
+    const f = fishById(it.id);
+    return a + (f ? f.points * it.qty : 0);
+  }, 0);
+}
+function pctUsed(){
+  const cap = capacity();
+  const u = used();
+  if (cap <= 0 || u <= 0) return 0;
+  return Math.min(100, Math.round((u / cap) * 100));
+}
+function updateBar(){
+  // update bioload bar
+  $("#barFill").style.width = pctUsed() + "%";
+}
+
+/*
+ *  Aggression and compatibility logic
+ */
+function computeAggressionIndex(issues){
   if (!issues || !issues.length) return 0;
   let index = 0;
   issues.forEach(issue => {
@@ -66,28 +207,144 @@ function computeAggressionIndex(issues) {
   return index;
 }
 
-/* update both bioload and aggression meters */
-function updateMeters() {
-  // bioload bar
-  $("#barFill").style.width = pctUsed() + "%";
-  // aggression bar
+function checkAggressionIssues(currentStock){
+  const issues = [];
+
+  // Key fish IDs
+  const BETTA_MALE_ID = 'betta_male';
+  const TIGER_BARB_ID = 'tiger_barb';
+  const APISTO_ID     = 'apistogramma';
+  const RAM_ID        = 'ram_cichlid';
+
+  // Group definitions
+  const NIPPER_IDS   = new Set(['tiger_barb','black_skirt_tetra','zebra_danio','guppy']);
+  const LONG_FIN_IDS = new Set(['betta_male','guppy','angelfish','pearl_gourami']);
+  const GOURAMI_IDS  = new Set(['dwarf_gourami','honey_gourami','pearl_gourami']);
+
+  let maleBettas = 0;
+  let tigerBarbs = 0;
+  let hasNippers = false;
+  let hasLongFins = false;
+  let hasApisto = false;
+  let hasRam    = false;
+  let hasGourami = false;
+
+  currentStock.forEach(item => {
+    const qty = Number(item.qty || 0);
+    if (item.id === BETTA_MALE_ID) maleBettas += qty;
+    if (item.id === TIGER_BARB_ID) tigerBarbs += qty;
+
+    if (qty > 0 && NIPPER_IDS.has(item.id))   hasNippers = true;
+    if (qty > 0 && LONG_FIN_IDS.has(item.id)) hasLongFins = true;
+    if (qty > 0 && GOURAMI_IDS.has(item.id))  hasGourami = true;
+
+    if (qty > 0 && item.id === APISTO_ID) hasApisto = true;
+    if (qty > 0 && item.id === RAM_ID)    hasRam    = true;
+  });
+
+  // Rule 1: 2+ male bettas → DANGER
+  if (maleBettas >= 2) {
+    issues.push({
+      id: 'multi-male-betta',
+      severity: 'danger',
+      message: 'Multiple male Bettas selected — extremely high aggression risk (fighting until serious injury or death). Keep exactly one male Betta per tank.'
+    });
+  }
+
+  // Rule 2: Betta + Tiger Barbs → WARNING
+  if (maleBettas >= 1 && tigerBarbs >= 1) {
+    issues.push({
+      id: 'betta-vs-tigerbarb',
+      severity: 'warning',
+      message: 'Betta with Tiger Barbs — barbs are notorious fin-nippers and will harass long-finned fish. Choose different schooling fish (rasboras, small peaceful tetras) or skip the Betta.'
+    });
+  }
+
+  // Rule 3: Fin-nippers + Long-fins → WARNING
+  if (hasNippers && hasLongFins) {
+    issues.push({
+      id: 'nippers-vs-longfins',
+      severity: 'warning',
+      message: 'Fin-nipping species detected with long-finned fish — high risk of torn fins and stress. Avoid mixing, or increase group size of nippers and add heavy planting/sightline breaks.'
+    });
+  }
+
+  // Rule 4: Dwarf cichlids in tank <20g → CAUTION
+  const gallons = Number($("#gallons").value || 0);
+  if (gallons > 0 && gallons < 20 && (hasApisto || hasRam)) {
+    const names = [hasApisto ? 'Apistogramma' : null, hasRam ? 'Ram cichlid' : null].filter(Boolean).join(' / ');
+    issues.push({
+      id: 'dwarf-cichlid-small-tank',
+      severity: 'caution',
+      message: `${names} in a tank under 20 gallons — territorial species may become aggressive or stressed in smaller spaces. Aim for ~20g+ with hides, caves, and broken sightlines.`
+    });
+  }
+
+  // Rule 5: Betta + Gourami-family → CAUTION
+  if (maleBettas >= 1 && hasGourami) {
+    issues.push({
+      id: 'betta-vs-gourami',
+      severity: 'caution',
+      message: 'Betta with Gourami-family fish (Dwarf, Honey, Pearl) — all are labyrinth species and often view each other as rivals. Risk of displays, stress, or fighting.'
+    });
+  }
+
+  return issues;
+}
+
+function renderAggressionMessages(issues){
+  const target = $("#aggression-warnings");
+  if (!target) return;
+  target.innerHTML = "";
+
+  if (!issues.length) {
+    const ok = document.createElement('div');
+    ok.style.padding   = '8px';
+    ok.style.color     = '#475569';
+    ok.style.fontSize  = '0.95rem';
+    ok.textContent     = 'No aggression issues detected with the current stock.';
+    target.appendChild(ok);
+    return;
+  }
+
+  issues.forEach(issue => {
+    const box = document.createElement('div');
+    box.style.border = issue.severity === 'danger' ? '2px solid #b91c1c' : '1px solid #c2410c';
+    box.style.background = issue.severity === 'danger' ? '#fee2e2' : '#ffedd5';
+    box.style.padding   = '10px';
+    box.style.margin    = '8px 0';
+    box.style.borderRadius = '10px';
+
+    const strong = document.createElement('strong');
+    strong.textContent = (issue.severity || 'warning').toUpperCase() + ': ';
+    box.appendChild(strong);
+
+    const msg = document.createElement('span');
+    msg.textContent = issue.message;
+    box.appendChild(msg);
+
+    target.appendChild(box);
+  });
+}
+
+/*
+ *  Update both bars and warnings
+ */
+function updateMeters(){
+  updateBar(); // update bioload bar
   const issues = checkAggressionIssues(stock);
-  const index = computeAggressionIndex(issues);
+  const index  = computeAggressionIndex(issues);
   $("#aggBarFill").style.width = index + "%";
-  // render warnings
   renderAggressionMessages(issues);
 }
 
-/* modify refreshAggression so it only calls updateMeters */
-function refreshAggression() {
-  updateMeters();
-}
-
-/* update all stock actions to call updateMeters instead of separate bar/warning calls */
+/*
+ *  Stock table rendering with event hooks
+ */
 function renderStock(){
   const tb = $("#tbody");
   tb.innerHTML = "";
-  stock.forEach((it,i) => {
+  stock.forEach((it, i) => {
     const f = fishById(it.id);
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -103,25 +360,56 @@ function renderStock(){
     tb.appendChild(tr);
   });
   tb.querySelectorAll("button[data-act]").forEach(btn => {
-    const i = Number(btn.dataset.i);
+    const i   = Number(btn.dataset.i);
     const act = btn.dataset.act;
     btn.onclick = () => {
       if (act === "minus") stock[i].qty = Math.max(1, stock[i].qty - 1);
       if (act === "plus")  stock[i].qty = Math.max(1, stock[i].qty + 1);
-      if (act === "del")   stock.splice(i,1);
+      if (act === "del")   stock.splice(i, 1);
       renderStock();
       updateMeters();
     };
   });
 }
 
-/* update other events to call updateMeters */
-["#gallons","#filtration","#planted"].forEach(q => document.querySelector(q).addEventListener("input", () => {
-  updateMeters();
-}));
+/*
+ *  Dropdown and search helpers
+ */
+function populateFishDropdown(list){
+  const sel = $("#fishSelect");
+  sel.innerHTML = "";
+  list.forEach(f => {
+    const opt = document.createElement("option");
+    opt.value     = f.id;
+    opt.textContent = f.name;
+    sel.appendChild(opt);
+  });
+  updateRecMin();
+}
+function updateRecMin(){
+  const f = fishById($("#fishSelect").value);
+  $("#recMin").value = f ? f.min : "";
+}
+function applySearch(){
+  const q = ($("#fishSearch").value || "").trim().toLowerCase();
+  FILTERED = q ? FISH.filter(f => f.name.toLowerCase().includes(q)) : [...FISH];
+  populateFishDropdown(FILTERED);
+}
+
+/*
+ *  Event listeners
+ */
+["#gallons","#filtration","#planted"].forEach(q => {
+  document.querySelector(q).addEventListener("input", () => {
+    updateMeters();
+  });
+});
+$("#fishSearch").addEventListener("input", applySearch);
+$("#fishSelect").addEventListener("change", updateRecMin);
+
 $("#addFish").addEventListener("click", () => {
   const id = $("#fishSelect").value;
-  const qty = Math.max(1, Number($("#fQty").value||0));
+  const qty = Math.max(1, Number($("#fQty").value || 0));
   if (!id) return;
   if (!qty){ alert("Enter a quantity."); return; }
   stock.push({ id, qty });
@@ -129,13 +417,16 @@ $("#addFish").addEventListener("click", () => {
   updateMeters();
   $("#fQty").value = "";
 });
+
 $("#reset").addEventListener("click", () => {
   stock = [];
   renderStock();
   updateMeters();
 });
 
-/* init: call once at load */
+/*
+ *  Initialization
+ */
 applySearch();
 renderStock();
 updateMeters();
