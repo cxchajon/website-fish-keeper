@@ -7,12 +7,16 @@
 <style>
   :root { --gap: 12px; --radius: 12px; }
   *{ box-sizing: border-box; }
-  body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-        margin:0; padding:24px; background:#f8fafc; color:#0f172a; }
+  body{
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    margin:0; padding:24px; background:#f8fafc; color:#0f172a;
+  }
   header{ margin-bottom:16px; }
   h1{ font-size:1.35rem; margin:0 0 4px; }
-  .card{ background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.06);
-         padding:16px; margin-bottom:16px; }
+  .card{
+    background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    padding:16px; margin-bottom:16px;
+  }
   .row{ display:flex; flex-wrap:wrap; gap:var(--gap); }
   .row > *{ flex:1 1 220px; }
   label{ display:block; font-weight:600; margin-bottom:6px; }
@@ -23,15 +27,23 @@
   button.ghost{ background:#eef2ff; color:#1e293b; }
   .switch{ display:flex; align-items:center; gap:8px; }
   .switch input{ width:18px; height:18px; }
-  /* Bar */
+
+  /* Capacity bar */
   .bar-wrap{ margin-top:8px; }
   .bar-labels{ display:flex; justify-content:space-between; font-size:0.9rem; color:#475569; margin-bottom:6px; }
   .bar{ position:relative; height:24px; border-radius:999px; overflow:hidden; background:#e2e8f0; }
   .bar-fill{ position:absolute; top:0; left:0; bottom:0; width:0%; background: linear-gradient(to right, #10b981, #f59e0b, #ef4444); transition: width .25s ease; }
+
   table{ width:100%; border-collapse:collapse; }
   th, td{ padding:10px; border-bottom:1px solid #e2e8f0; text-align:left; }
   .right{ text-align:right; }
   .controls{ display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap; }
+
+  /* Aggression mini bar */
+  .mini-bar { width:120px; height:10px; background:#e2e8f0; border-radius:999px; overflow:hidden; display:inline-block; vertical-align:middle; }
+  .mini-fill { height:100%; width:0%; transition:width .25s ease; background:linear-gradient(90deg, #10b981, #f59e0b, #ef4444); }
+  .mini-label { font-size:12px; color:#475569; margin-left:6px; vertical-align:middle; }
+
   @media (max-width: 540px){
     body{ padding:16px; }
     .row > *{ flex:1 1 100%; }
@@ -107,7 +119,14 @@
 <section class="card">
   <h2 style="margin-top:0">Current Stock</h2>
   <table>
-    <thead><tr><th>Name</th><th class="right">Qty</th><th class="right">Actions</th></tr></thead>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th class="right">Qty</th>
+        <th class="right">Aggression</th>
+        <th class="right">Actions</th>
+      </tr>
+    </thead>
     <tbody id="tbody"></tbody>
   </table>
   <div class="row" style="margin-top:8px">
@@ -115,16 +134,15 @@
   </div>
 </section>
 
-<!-- Aggression & Compatibility warnings -->
 <section class="card">
   <h2 style="margin-top:0">Aggression & Compatibility Warnings</h2>
   <div id="aggression-warnings"></div>
 </section>
 
-<!-- Load species data first, then the app logic -->
+<!-- Optional external species data; we also ship a fallback in this file -->
 <script src="fish-data.js"></script>
 <script>
-/* ===== Setup with fallback ===== */
+/* ===== Fallback fish list (used if fish-data.js is absent) ===== */
 const DEFAULT_FISH_DATA = [
   { id:"neon_tetra", name:"Neon tetra", points:1.0, min:6 },
   { id:"cardinal_tetra", name:"Cardinal tetra", points:1.2, min:6 },
@@ -136,8 +154,8 @@ const DEFAULT_FISH_DATA = [
   { id:"zebra_danio", name:"Zebra danio", points:1.2, min:6 },
   { id:"white_cloud", name:"White cloud mountain minnow", points:1.0, min:6 },
   { id:"cherry_barb", name:"Cherry barb", points:2.0, min:6 },
-  { id:"tiger_barb", name:"Tiger barb", points:2.5, min:6 },    // nipper
-  { id:"guppy", name:"Guppy (male)", points:1.6, min:3 },      // nipper + long fin
+  { id:"tiger_barb", name:"Tiger barb", points:2.5, min:6 },
+  { id:"guppy", name:"Guppy (male)", points:1.6, min:3 },
   { id:"platy", name:"Platy", points:3.0, min:3 },
   { id:"molly", name:"Molly", points:4.0, min:3 },
   { id:"swordtail", name:"Swordtail", points:4.5, min:3 },
@@ -160,20 +178,16 @@ const DEFAULT_FISH_DATA = [
   { id:"mystery_snail", name:"Mystery snail", points:0.8, min:1 }
 ];
 
-// Use external fish list if available; fallback otherwise
+// Use external fish list if provided; otherwise fallback
 let FISH = (Array.isArray(window.FISH_DATA) && window.FISH_DATA.length > 0)
   ? [...window.FISH_DATA]
   : [...DEFAULT_FISH_DATA];
 let FILTERED = [...FISH];
 let stock = [];
 
-// Helper to fetch elements easily
+/* ===== Helpers ===== */
 function $(sel) { return document.querySelector(sel); }
-
-// === Missing helper definitions: fishById & overlap
-function fishById(id) {
-  return FISH.find(fish => fish.id === id);
-}
+function fishById(id) { return FISH.find(fish => fish.id === id); }
 function overlap(ranges) {
   if (!ranges || ranges.length === 0) return null;
   const minMax = Math.min(...ranges.map(r => r[1] ?? r[0]));
@@ -204,11 +218,25 @@ function pctUsed() {
   if (cap <= 0 || u <= 0) return 0;
   return Math.min(100, Math.round((u / cap) * 100));
 }
-function updateBar() {
-  $("#barFill").style.width = pctUsed() + "%";
+function updateBar() { $("#barFill").style.width = pctUsed() + "%"; }
+
+/* ===== Aggression: Option 2 setup ===== */
+const AGGRESSION_BASE = {
+  betta_male: 70, tiger_barb: 55, angelfish: 50, dwarf_gourami: 35,
+  honey_gourami: 25, pearl_gourami: 30, guppy: 15, cherry_barb: 20,
+  black_skirt_tetra: 25, zebra_danio: 25, cardinal_tetra: 20, neon_tetra: 15,
+  ember_tetra: 10, rummynose_tetra: 20, harlequin_rasbora: 15, chili_rasbora: 10,
+  white_cloud: 10, cory_small: 10, cory_panda: 10, kuhli_loach: 10, otocinclus: 5,
+  bristlenose_pleco: 15, praecox_rainbow: 25, apistogramma: 40, ram_cichlid: 40,
+  amano_shrimp: 0, cherry_shrimp: 0, nerite_snail: 0, mystery_snail: 0
+};
+// Option 2 math
+function getAggressionValue(base, conflict) {
+  const boosted = Math.min(100, (conflict || 0) + 10);
+  return Math.max(base || 0, boosted);
 }
 
-/* ===== Check for aggression & compatibility ===== */
+/* ===== Aggression & Compatibility warnings (existing logic) ===== */
 function checkAggressionIssues(currentStock) {
   const issues = [];
   const BETTA_MALE_ID = 'betta_male';
@@ -220,16 +248,9 @@ function checkAggressionIssues(currentStock) {
   const SHRIMP_IDS   = new Set(['amano_shrimp', 'cherry_shrimp']);
   const AGGRESSIVE_IDS = new Set([BETTA_MALE_ID, 'apistogramma', 'ram_cichlid', ...GOURAMI_IDS]);
 
-  let maleBettas    = 0;
-  let tigerBarbs    = 0;
-  let hasNippers    = false;
-  let hasLongFins   = false;
-  let hasGourami    = false;
-  let hasShrimp     = false;
-  let hasAggressive = false;
-  let hasAngelfish  = false;
-  let hasApisto     = false;
-  let hasRam        = false;
+  let maleBettas=0, tigerBarbs=0, hasNippers=false, hasLongFins=false,
+      hasGourami=false, hasShrimp=false, hasAggressive=false,
+      hasAngelfish=false, hasApisto=false, hasRam=false;
 
   const presentFish = [];
   const tempRanges  = [];
@@ -244,7 +265,7 @@ function checkAggressionIssues(currentStock) {
     if (fish.temp) tempRanges.push(fish.temp);
     if (fish.ph)   phRanges.push(fish.ph);
     if (item.id === BETTA_MALE_ID) maleBettas += qty;
-    if (item.id === TIGER_BARB_ID)  tigerBarbs += qty;
+    if (item.id === TIGER_BARB_ID) tigerBarbs += qty;
     if (NIPPER_IDS.has(item.id))   hasNippers = true;
     if (LONG_FIN_IDS.has(item.id)) hasLongFins = true;
     if (GOURAMI_IDS.has(item.id))  hasGourami = true;
@@ -256,9 +277,7 @@ function checkAggressionIssues(currentStock) {
   });
 
   const gallons = Number($("#gallons").value || 0);
-  const distinctSpeciesCount = presentFish.length;
 
-  // Aggression rules
   if (maleBettas >= 2) {
     issues.push({ severity:'danger', message:'Multiple male Bettas selected — extremely high aggression risk. Keep exactly one male Betta per tank.' });
   }
@@ -281,21 +300,58 @@ function checkAggressionIssues(currentStock) {
     issues.push({ severity:'caution', message:'Angelfish in tanks under 29 gallons may become stunted or aggressive. Recommend 29g+ tall tanks.' });
   }
 
-  // Temp & pH overlap warnings
   if (presentFish.length >= 2) {
     const tOverlap = overlap(tempRanges);
     const pOverlap = overlap(phRanges);
     if (!tOverlap) {
-      issues.push({ severity:'warning', message:'Temperature ranges across selected species do not overlap. Consider different stocking or a species-only tank.' });
+      issues.push({ severity:'warning', message:'Temperature ranges across selected species do not overlap.' });
     }
     if (!pOverlap) {
-      issues.push({ severity:'warning', message:'pH ranges across selected species do not overlap. Consider adjusting stocking for matching water chemistry.' });
+      issues.push({ severity:'warning', message:'pH ranges across selected species do not overlap.' });
     }
   }
   return issues;
 }
 
-/* ===== Warnings render ===== */
+/* ==== Per-entry conflict score for the meter ==== */
+function conflictForEntry(entry, allStock) {
+  const NIPPER_IDS   = new Set(['tiger_barb','black_skirt_tetra','zebra_danio','guppy']);
+  const LONG_FIN_IDS = new Set(['betta_male','guppy','angelfish','pearl_gourami']);
+  const GOURAMI_IDS  = new Set(['dwarf_gourami','honey_gourami','pearl_gourami']);
+  let conflict = 0;
+
+  const count = (id) => (allStock.find(s => s.id === id)?.qty) || 0;
+  const hasAny = (set) => allStock.some(s => set.has(s.id) && s.qty > 0);
+  const gallons = Number($("#gallons").value || 0);
+
+  const isLongFin   = LONG_FIN_IDS.has(entry.id);
+  const recMin      = (FISH.find(f=>f.id===entry.id)?.min || 1);
+  const isSchooling = recMin >= 6;
+
+  if (entry.id === 'betta_male' && entry.qty > 1) conflict = Math.max(conflict, 90);
+  if (entry.id === 'betta_male' && count('tiger_barb') > 0) conflict = Math.max(conflict, 75);
+  if (isLongFin && hasAny(NIPPER_IDS)) conflict = Math.max(conflict, 70);
+
+  if (['apistogramma','ram_cichlid'].includes(entry.id) && gallons < 20)
+    conflict = Math.max(conflict, 55);
+
+  if ((entry.id === 'betta_male' && hasAny(GOURAMI_IDS)) ||
+      (GOURAMI_IDS.has(entry.id) && count('betta_male') > 0))
+    conflict = Math.max(conflict, 60);
+
+  const aggressiveHere = allStock.some(s => ['betta_male','apistogramma','ram_cichlid','dwarf_gourami','honey_gourami','pearl_gourami'].includes(s.id) && s.qty > 0);
+  if ((entry.id === 'amano_shrimp' || entry.id === 'cherry_shrimp') && aggressiveHere)
+    conflict = Math.max(conflict, 60);
+
+  if (entry.id === 'angelfish' && gallons > 0 && gallons < 29)
+    conflict = Math.max(conflict, 55);
+
+  if (isSchooling && entry.qty < recMin) conflict = Math.max(conflict, 40);
+
+  return conflict; // 0–100
+}
+
+/* ===== Warning render ===== */
 function renderAggressionMessages(issues) {
   const target = $("#aggression-warnings");
   target.innerHTML = "";
@@ -318,17 +374,27 @@ function refreshAggression() {
   renderAggressionMessages(checkAggressionIssues(stock));
 }
 
-/* ===== Stock table render ===== */
+/* ===== Stock table render (with Aggression meter) ===== */
 function renderStock() {
   const tb = $("#tbody");
   tb.innerHTML = "";
   stock.forEach((item, i) => {
     const fish = fishById(item.id);
     const qty  = Math.max(1, Math.floor(item.qty || 0));
+
+    // Aggression Option 2
+    const base = AGGRESSION_BASE[item.id] ?? 0;
+    const conflict = conflictForEntry({ id: item.id, qty }, stock);
+    const agg = getAggressionValue(base, conflict);
+
     const row  = document.createElement('tr');
     row.innerHTML = `
       <td>${fish ? fish.name : '(unknown)'}</td>
       <td class="right">${qty}</td>
+      <td class="right">
+        <span class="mini-bar"><span class="mini-fill" style="width:${agg}%"></span></span>
+        <span class="mini-label">${agg}%</span>
+      </td>
       <td class="right">
         <div class="controls">
           <button class="ghost" data-act="minus" data-i="${i}">–1</button>
@@ -340,7 +406,7 @@ function renderStock() {
   });
 }
 
-/* ===== Update fish list ===== */
+/* ===== Fish list select & rec min ===== */
 function refreshFishSelect() {
   const select = $("#fishSelect");
   select.innerHTML = "";
@@ -352,8 +418,6 @@ function refreshFishSelect() {
   });
   updateRecMin();
 }
-
-/* ===== Update recommended min ===== */
 function updateRecMin() {
   const rec = $("#recMin");
   const id  = $("#fishSelect").value;
@@ -361,23 +425,20 @@ function updateRecMin() {
   rec.value = fish ? fish.min : "";
 }
 
-/* ===== Recalculate bar and warnings ===== */
+/* ===== Recalc everything ===== */
 function refreshAll() {
   updateBar();
   refreshAggression();
   renderStock();
 }
 
-/* ===== Event handlers ===== */
-// Search filter
+/* ===== Events ===== */
 $("#fishSearch").addEventListener("input", (e) => {
   const val = e.target.value.toLowerCase();
   FILTERED = FISH.filter(f => f.name.toLowerCase().includes(val));
   refreshFishSelect();
 });
-// Change species selection
 $("#fishSelect").addEventListener("change", updateRecMin);
-// Add fish
 $("#addFish").addEventListener("click", () => {
   const id = $("#fishSelect").value;
   const qty = Math.max(1, Number($("#fQty").value || 1));
@@ -387,7 +448,6 @@ $("#addFish").addEventListener("click", () => {
   $("#fQty").value = "";
   refreshAll();
 });
-// Remove or add individual from table buttons
 $("#tbody").addEventListener("click", (e) => {
   if (e.target && e.target.dataset.act) {
     const i = parseInt(e.target.dataset.i, 10);
@@ -405,17 +465,12 @@ $("#tbody").addEventListener("click", (e) => {
     }
   }
 });
-// Clear stock
-$("#reset").addEventListener("click", () => {
-  stock.length = 0;
-  refreshAll();
-});
-// Filtration, planted, gallons => update
+$("#reset").addEventListener("click", () => { stock.length = 0; refreshAll(); });
 ["#filtration", "#planted", "#gallons"].forEach(sel => {
   $(sel).addEventListener("change", refreshAll);
 });
 
-/* ===== Initial load ===== */
+/* ===== Boot ===== */
 window.addEventListener("DOMContentLoaded", () => {
   refreshFishSelect();
   refreshAll();
