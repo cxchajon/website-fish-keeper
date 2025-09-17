@@ -120,7 +120,16 @@
     </div>
   </section>
 
+  <!-- NEW: Aggression & Compatibility warnings section -->
+  <section class="card">
+    <h2 style="margin-top:0">Aggression & Compatibility Warnings</h2>
+    <div id="aggression-warnings"></div>
+  </section>
+
 <script>
+/* =========================
+   Species Data (demo list)
+   ========================= */
 const DEMO_FISH = [
   { id:"neon_tetra", name:"Neon tetra", points:1.0, min:6 },
   { id:"cardinal_tetra", name:"Cardinal tetra", points:1.2, min:6 },
@@ -162,7 +171,9 @@ let stock = [];
 function $(s){ return document.querySelector(s); }
 function fishById(id){ return FISH.find(f=>f.id===id); }
 
-// Capacity
+/* =========================
+   Capacity / Bar
+   ========================= */
 function capacity(){
   const g = Number($("#gallons").value||0);
   const filt = $("#filtration").value;
@@ -185,7 +196,76 @@ function pctUsed(){
 }
 function updateBar(){ $("#barFill").style.width = pctUsed() + "%"; }
 
-// Stock
+/* =========================
+   Aggression warnings (v1)
+   - Warn if 2+ male bettas present
+   ========================= */
+function checkAggressionIssues(currentStock){
+  const issues = [];
+
+  // Count total male bettas
+  const BETTA_MALE_IDS = ['betta_male']; // adjust if you add more IDs later
+  let maleBettas = 0;
+  currentStock.forEach(item => {
+    if (BETTA_MALE_IDS.includes(item.id)) {
+      maleBettas += Number(item.qty || 0);
+    }
+  });
+
+  if (maleBettas >= 2) {
+    issues.push({
+      id: 'multi-male-betta',
+      severity: 'danger',
+      message: 'Multiple male Bettas selected — extremely high aggression risk (fighting until serious injury or death). Keep exactly one male Betta per tank.'
+    });
+  }
+
+  return issues;
+}
+
+function renderAggressionMessages(issues){
+  const target = $("#aggression-warnings");
+  if (!target) return;
+  target.innerHTML = "";
+
+  if (!issues.length) {
+    const ok = document.createElement('div');
+    ok.style.padding = '8px';
+    ok.style.color = '#475569';
+    ok.style.fontSize = '0.95rem';
+    ok.textContent = 'No aggression issues detected with the current stock.';
+    target.appendChild(ok);
+    return;
+  }
+
+  issues.forEach(issue => {
+    const box = document.createElement('div');
+    box.style.border = issue.severity === 'danger' ? '2px solid #b91c1c' : '1px solid #c2410c';
+    box.style.background = issue.severity === 'danger' ? '#fee2e2' : '#ffedd5';
+    box.style.padding = '10px';
+    box.style.margin = '8px 0';
+    box.style.borderRadius = '10px';
+
+    const strong = document.createElement('strong');
+    strong.textContent = (issue.severity || 'warning').toUpperCase() + ': ';
+    box.appendChild(strong);
+
+    const msg = document.createElement('span');
+    msg.textContent = issue.message;
+    box.appendChild(msg);
+
+    target.appendChild(box);
+  });
+}
+
+function refreshAggression(){
+  const issues = checkAggressionIssues(stock);
+  renderAggressionMessages(issues);
+}
+
+/* =========================
+   Stock table render
+   ========================= */
 function renderStock(){
   const tb = $("#tbody");
   tb.innerHTML = "";
@@ -213,11 +293,14 @@ function renderStock(){
       if (act === "del")   stock.splice(i,1);
       renderStock();
       updateBar();
+      refreshAggression();   // <— keep warnings in sync
     };
   });
 }
 
-// Dropdown + Search
+/* =========================
+   Dropdown + Search
+   ========================= */
 function populateFishDropdown(list){
   const sel = $("#fishSelect");
   sel.innerHTML = "";
@@ -239,8 +322,13 @@ function applySearch(){
   populateFishDropdown(FILTERED);
 }
 
-// Events
-["#gallons","#filtration","#planted"].forEach(q => document.querySelector(q).addEventListener("input", updateBar));
+/* =========================
+   Events
+   ========================= */
+["#gallons","#filtration","#planted"].forEach(q => document.querySelector(q).addEventListener("input", () => {
+  updateBar();
+  refreshAggression();
+}));
 $("#fishSearch").addEventListener("input", applySearch);
 $("#fishSelect").addEventListener("change", updateRecMin);
 
@@ -252,6 +340,7 @@ $("#addFish").addEventListener("click", () => {
   stock.push({ id, qty });
   renderStock();
   updateBar();
+  refreshAggression();
   $("#fQty").value = "";
 });
 
@@ -259,12 +348,16 @@ $("#reset").addEventListener("click", () => {
   stock = [];
   renderStock();
   updateBar();
+  refreshAggression();
 });
 
-// Init
+/* =========================
+   Init
+   ========================= */
 applySearch();
 renderStock();
 updateBar();
+refreshAggression();
 </script>
 </body>
 </html>
