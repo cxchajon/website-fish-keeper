@@ -167,8 +167,10 @@ const DEFAULT_FISH_DATA = [
   { id:"mystery_snail", name:"Mystery snail", points:0.8, min:1, temp:[68,82], ph:[7.2,8.4] }
 ];
 
-// If fish-data.js loaded, use that; otherwise fallback
-let FISH = Array.isArray(window.FISH_DATA) ? [...window.FISH_DATA] : [...DEFAULT_FISH_DATA];
+// If fish-data.js loaded and has entries, use it; otherwise fallback
+let FISH = (Array.isArray(window.FISH_DATA) && window.FISH_DATA.length > 0)
+  ? [...window.FISH_DATA]
+  : [...DEFAULT_FISH_DATA];
 let FILTERED = [...FISH];
 let stock = [];
 
@@ -189,7 +191,8 @@ function capacity(){
 function used(){
   return stock.reduce((a, it) => {
     const f = fishById(it.id);
-    return a + (f ? f.points * it.qty : 0);
+    const qty = Math.max(1, Math.floor(Number(it.qty)||0));
+    return a + (f ? f.points * qty : 0);
   }, 0);
 }
 function pctUsed(){
@@ -239,7 +242,7 @@ function checkAggressionIssues(currentStock){
   const phRanges = [];
 
   currentStock.forEach(item => {
-    const qty = Number(item.qty || 0);
+    const qty = Math.max(1, Math.floor(Number(item.qty)||0));
     if (!qty) return;
     const f = fishById(item.id);
     if (!f) return;
@@ -261,6 +264,8 @@ function checkAggressionIssues(currentStock){
     if (item.id === ANGELFISH_ID) hasAngelfish = true;
   });
 
+  const distinctSpeciesCount = presentFish.length;
+
   // 1) multiple male bettas
   if (maleBettas >= 2) {
     issues.push({ severity:'danger', message:'Multiple male Bettas selected — extremely high aggression risk. Keep exactly one male Betta per tank.' });
@@ -270,7 +275,7 @@ function checkAggressionIssues(currentStock){
     issues.push({ severity:'warning', message:'Betta with Tiger Barbs — barbs are notorious fin-nippers and will harass long-finned fish.' });
   }
   // 3) any nippers + any long-fins
-  if (hasNippers && hasLongFins) {
+  if (hasNippers && hasLongFins /* && distinctSpeciesCount > 1 */) {
     issues.push({ severity:'warning', message:'Fin-nipping species detected with long-finned fish — high risk of torn fins and stress.' });
   }
   // 4) dwarf cichlids in small tanks (<20g)
@@ -345,8 +350,8 @@ function renderStock(){
     const f = fishById(it.id);
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${f ? f.name : "(unknown)"}</td>
-      <td class="right">${it.qty}</td>
+      <td>${f ? f.name : "(unknown)")}</td>
+      <td class="right">${Math.max(1, Math.floor(Number(it.qty)||0))}</td>
       <td class="right">
         <div class="controls">
           <button class="ghost" data-act="minus" data-i="${i}">–1</button>
@@ -360,8 +365,8 @@ function renderStock(){
     const i = Number(btn.dataset.i);
     const act = btn.dataset.act;
     btn.onclick = () => {
-      if (act === "minus") stock[i].qty = Math.max(1, stock[i].qty - 1);
-      if (act === "plus")  stock[i].qty = Math.max(1, stock[i].qty + 1);
+      if (act === "minus") stock[i].qty = Math.max(1, Math.floor(stock[i].qty) - 1);
+      if (act === "plus")  stock[i].qty = Math.max(1, Math.floor(stock[i].qty) + 1);
       if (act === "del")   stock.splice(i,1);
       renderStock();
       updateBar();
@@ -408,10 +413,19 @@ $("#fishSelect").addEventListener("change", updateRecMin);
 
 $("#addFish").addEventListener("click", () => {
   const id = $("#fishSelect").value;
-  const qty = Math.max(1, Number($("#fQty").value||0));
+  let qty = Number($("#fQty").value || 0);
   if (!id) return;
-  if (!qty){ alert("Enter a quantity."); return; }
-  stock.push({ id, qty });
+  if (!Number.isFinite(qty) || qty < 1) { alert("Enter a quantity (whole number ≥ 1)."); return; }
+  qty = Math.floor(qty);
+
+  // Merge if species already exists
+  const existing = stock.find(it => it.id === id);
+  if (existing) {
+    existing.qty = Math.max(1, Math.floor(existing.qty) + qty);
+  } else {
+    stock.push({ id, qty });
+  }
+
   renderStock();
   updateBar();
   refreshAggression();
