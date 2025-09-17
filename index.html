@@ -120,7 +120,7 @@
     </div>
   </section>
 
-  <!-- NEW: Aggression & Compatibility warnings section -->
+  <!-- Aggression & Compatibility warnings -->
   <section class="card">
     <h2 style="margin-top:0">Aggression & Compatibility Warnings</h2>
     <div id="aggression-warnings"></div>
@@ -141,21 +141,22 @@ const DEMO_FISH = [
   { id:"zebra_danio", name:"Zebra danio", points:1.2, min:6 },
   { id:"white_cloud", name:"White cloud mountain minnow", points:1.0, min:6 },
   { id:"cherry_barb", name:"Cherry barb", points:2.0, min:6 },
-  { id:"guppy", name:"Guppy (male)", points:1.6, min:3 },
+  { id:"tiger_barb", name:"Tiger barb", points:2.5, min:6 },      /* nipper */
+  { id:"guppy", name:"Guppy (male)", points:1.6, min:3 },         /* long-fin */
   { id:"platy", name:"Platy", points:3.0, min:3 },
   { id:"molly", name:"Molly", points:4.0, min:3 },
   { id:"swordtail", name:"Swordtail", points:4.5, min:3 },
   { id:"dwarf_gourami", name:"Dwarf gourami", points:5.0, min:1 },
   { id:"honey_gourami", name:"Honey gourami", points:3.5, min:1 },
-  { id:"pearl_gourami", name:"Pearl gourami", points:7.0, min:1 },
-  { id:"betta_male", name:"Betta (male)", points:6.0, min:1 },
+  { id:"pearl_gourami", name:"Pearl gourami", points:7.0, min:1 },/* long-fin(ish) */
+  { id:"betta_male", name:"Betta (male)", points:6.0, min:1 },    /* long-fin */
   { id:"cory_small", name:"Corydoras (small)", points:2.2, min:6 },
   { id:"cory_panda", name:"Corydoras panda", points:2.4, min:6 },
   { id:"kuhli_loach", name:"Kuhli loach", points:2.5, min:5 },
   { id:"otocinclus", name:"Otocinclus", points:1.2, min:6 },
   { id:"bristlenose_pleco", name:"Bristlenose pleco", points:8.0, min:1 },
   { id:"praecox_rainbow", name:"Dwarf rainbowfish (Praecox)", points:4.5, min:6 },
-  { id:"angelfish", name:"Angelfish", points:10.0, min:1 },
+  { id:"angelfish", name:"Angelfish", points:10.0, min:1 },       /* long-fin */
   { id:"apistogramma", name:"Apistogramma (pair)", points:6.0, min:1 },
   { id:"ram_cichlid", name:"Ram cichlid (German blue)", points:5.0, min:1 },
   { id:"amano_shrimp", name:"Amano shrimp", points:0.5, min:3 },
@@ -197,26 +198,59 @@ function pctUsed(){
 function updateBar(){ $("#barFill").style.width = pctUsed() + "%"; }
 
 /* =========================
-   Aggression warnings (v1)
-   - Warn if 2+ male bettas present
+   Aggression warnings (v3)
+   - Rule 1: 2+ male bettas → DANGER
+   - Rule 2: Betta (male) + Tiger Barbs → WARNING
+   - Rule 3: Fin-nippers + Long-fins → WARNING
    ========================= */
 function checkAggressionIssues(currentStock){
   const issues = [];
 
-  // Count total male bettas
-  const BETTA_MALE_IDS = ['betta_male']; // adjust if you add more IDs later
+  const BETTA_MALE_ID = 'betta_male';
+  const TIGER_BARB_ID = 'tiger_barb';
+
+  // Define groups
+  const NIPPER_IDS = new Set(['tiger_barb','black_skirt_tetra','zebra_danio']); // danios/black skirt can nip
+  const LONG_FIN_IDS = new Set(['betta_male','guppy','angelfish','pearl_gourami']);
+
+  // Counts
   let maleBettas = 0;
+  let tigerBarbs = 0;
+  let hasNippers = false;
+  let hasLongFins = false;
+
   currentStock.forEach(item => {
-    if (BETTA_MALE_IDS.includes(item.id)) {
-      maleBettas += Number(item.qty || 0);
-    }
+    const qty = Number(item.qty || 0);
+    if (item.id === BETTA_MALE_ID) maleBettas += qty;
+    if (item.id === TIGER_BARB_ID)  tigerBarbs += qty;
+    if (qty > 0 && NIPPER_IDS.has(item.id)) hasNippers = true;
+    if (qty > 0 && LONG_FIN_IDS.has(item.id)) hasLongFins = true;
   });
 
+  // Rule 1: multiple male bettas
   if (maleBettas >= 2) {
     issues.push({
       id: 'multi-male-betta',
       severity: 'danger',
       message: 'Multiple male Bettas selected — extremely high aggression risk (fighting until serious injury or death). Keep exactly one male Betta per tank.'
+    });
+  }
+
+  // Rule 2: betta + tiger barbs
+  if (maleBettas >= 1 && tigerBarbs >= 1) {
+    issues.push({
+      id: 'betta-vs-tigerbarb',
+      severity: 'warning',
+      message: 'Betta with Tiger Barbs — barbs are notorious fin-nippers and will harass long-finned fish. Choose different schooling fish (rasboras, small peaceful tetras) or skip the Betta.'
+    });
+  }
+
+  // Rule 3: any nippers + any long-fins
+  if (hasNippers && hasLongFins) {
+    issues.push({
+      id: 'nippers-vs-longfins',
+      severity: 'warning',
+      message: 'Fin-nipping species detected with long-finned fish — high risk of torn fins and stress. Avoid mixing, or increase group size of nippers and add heavy planting/sightline breaks.'
     });
   }
 
@@ -293,7 +327,7 @@ function renderStock(){
       if (act === "del")   stock.splice(i,1);
       renderStock();
       updateBar();
-      refreshAggression();   // <— keep warnings in sync
+      refreshAggression();   // keep warnings in sync
     };
   });
 }
