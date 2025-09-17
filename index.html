@@ -175,6 +175,18 @@ let stock = [];
 // Helper to fetch elements easily
 function $(sel) { return document.querySelector(sel); }
 
+// === Missing helper definitions: fishById & overlap
+function fishById(id) {
+  return FISH.find(fish => fish.id === id);
+}
+function overlap(ranges) {
+  if (!ranges || ranges.length === 0) return null;
+  const minMax = Math.min(...ranges.map(r => r[1] ?? r[0]));
+  const maxMin = Math.max(...ranges.map(r => r[0] ?? r[1]));
+  if (maxMin > minMax) return null;
+  return [maxMin, minMax];
+}
+
 /* ===== Capacity & Bar ===== */
 function capacity() {
   const gallons = Number($("#gallons").value || 0);
