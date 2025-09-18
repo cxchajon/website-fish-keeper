@@ -8,8 +8,8 @@
 <!-- Preload a common-size WebP; browser will choose best via srcset -->
 <link rel="preload"
       as="image"
-      href="images/fishkeepinglifeco-logo-720.webp"
-      imagesrcset="images/fishkeepinglifeco-logo-360.webp 360w, images/fishkeepinglifeco-logo-720.webp 720w, images/fishkeepinglifeco-logo-1080.webp 1080w"
+      href="images/fishkeepinglifeco-logo-720.webp?v=2"
+      imagesrcset="images/fishkeepinglifeco-logo-360.webp?v=2 360w, images/fishkeepinglifeco-logo-720.webp?v=2 720w, images/fishkeepinglifeco-logo-1080.webp?v=2 1080w"
       imagesizes="(max-width: 768px) 70vw, 420px"
       fetchpriority="high">
 
@@ -42,12 +42,11 @@
     padding: 28px 20px 48px;
   }
 
-  /* Brand (uses your optimized image files) */
+  /* Brand */
   .brand {
     text-align: center;
     margin-bottom: 24px;
   }
-  /* nice size on mobile → desktop */
   .brand picture {
     display: inline-block;
     width: min(70vw, 420px);
@@ -56,10 +55,6 @@
     display: block;
     width: 100%;
     height: auto;
-    border: 0;
-    /* If a cached version with a white frame ever appears,
-       this will hide it by clipping  (visual safety net) */
-    clip-path: inset(0 round 16px);
     border-radius: 16px;
   }
 
@@ -162,22 +157,22 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- Brand logo: uses your images/fishkeepinglifeco-logo-*.webp/.jpg -->
+    <!-- Brand logo with ?v=2 -->
     <div class="brand" aria-label="FishkeepingLifeCo">
       <picture>
         <source type="image/webp"
                 srcset="
-                  images/fishkeepinglifeco-logo-360.webp 360w,
-                  images/fishkeepinglifeco-logo-720.webp 720w,
-                  images/fishkeepinglifeco-logo-1080.webp 1080w"
+                  images/fishkeepinglifeco-logo-360.webp?v=2 360w,
+                  images/fishkeepinglifeco-logo-720.webp?v=2 720w,
+                  images/fishkeepinglifeco-logo-1080.webp?v=2 1080w"
                 sizes="(max-width: 768px) 70vw, 420px">
         <source type="image/jpeg"
                 srcset="
-                  images/fishkeepinglifeco-logo-360.jpg 360w,
-                  images/fishkeepinglifeco-logo-720.jpg 720w,
-                  images/fishkeepinglifeco-logo-1080.jpg 1080w"
+                  images/fishkeepinglifeco-logo-360.jpg?v=2 360w,
+                  images/fishkeepinglifeco-logo-720.jpg?v=2 720w,
+                  images/fishkeepinglifeco-logo-1080.jpg?v=2 1080w"
                 sizes="(max-width: 768px) 70vw, 420px">
-        <img src="images/fishkeepinglifeco-logo-720.jpg"
+        <img src="images/fishkeepinglifeco-logo-720.jpg?v=2"
              alt="FishkeepingLifeCo logo"
              decoding="async"
              fetchpriority="high"
