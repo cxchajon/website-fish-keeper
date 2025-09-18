@@ -39,7 +39,7 @@
     margin-bottom: 24px;
   }
   .brand svg {
-    max-width: 510px;           /* slightly larger, like the reference */
+    max-width: 520px;  /* proportion more like your reference */
     width: 100%;
     height: auto;
     display: inline-block;
@@ -55,7 +55,7 @@
     margin: 0;
   }
 
-  /* Frosted glass cards */
+  /* Frosted cards */
   .card {
     background: rgba(255, 255, 255, 0.85);
     border-radius: var(--radius);
@@ -73,7 +73,7 @@
     border:1px solid #cbd5e1; border-radius:10px;
   }
 
-  /* Generic button baseline */
+  /* Base button */
   button {
     background: var(--brand); color:#fff; border:1px solid var(--brand-2);
     padding: 10px 14px; border-radius:10px; cursor:pointer;
@@ -101,7 +101,7 @@
   th, td { padding: 8px 6px; border-bottom: 1px solid #e2e8f0; }
   th.right, td.right { text-align: right; }
 
-  /* Current Stock action buttons: spacing + solid look + per-action colors */
+  /* Current Stock buttons */
   tbody td:last-child {
     display:flex;
     justify-content:flex-end;
@@ -122,7 +122,7 @@
   }
   tbody td:last-child button:active { transform: translateY(1px); }
 
-  /* Specific colors */
+  /* Per-action colors */
   button.minus { background: var(--warn); min-width: 52px; }
   button.minus:hover { background: #d97706; }
 
@@ -132,7 +132,7 @@
   button.delete { background: var(--bad); min-width: 90px; }
   button.delete:hover { background: #dc2626; }
 
-  /* Clear Stock — danger style (keeps id="reset") */
+  /* Clear Stock — danger style */
   #reset.clear-danger {
     background: var(--bad);
     border: none;
@@ -144,28 +144,26 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- Brand logo (inline SVG) rebuilt to match your reference fish -->
+    <!-- Brand logo (inline SVG) – rebuilt to match your reference -->
     <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 200" role="img" preserveAspectRatio="xMidYMid meet">
         <title>FishkeepingLifeCo — Aquarium Education</title>
 
-        <!-- Fish icon: round body + simple tail like your reference -->
-        <g transform="translate(30,25)" fill="#ffffff">
-          <!-- body as perfect circle -->
-          <circle cx="105" cy="75" r="55"></circle>
-          <!-- tail (triangle) -->
-          <path d="M45,35 L5,65 L45,95 Z"></path>
-          <!-- small dorsal fin (subtle like ref) -->
-          <path d="M100,20 L115,38 L85,38 Z"></path>
+        <!-- FISH: compact tail + round body, no extra fins -->
+        <!-- Draw tail first, then overlap with round body for clean join -->
+        <g transform="translate(40,35)">
+          <!-- Tail (small, compact triangle) -->
+          <path d="M0,45 L42,75 L0,105 Z" fill="#ffffff"/>
+          <!-- Round body (slightly horizontal ellipse like the reference) -->
+          <ellipse cx="120" cy="75" rx="68" ry="60" fill="#ffffff"/>
+          <!-- Eye (small dot, slightly forward) -->
+          <circle cx="160" cy="75" r="7" fill="#0ea5e9"/>
         </g>
-        <!-- eye -->
-        <circle cx="120" cy="88" r="7" fill="#0ea5e9"></circle>
 
-        <!-- Wordmark -->
+        <!-- WORDMARK -->
         <g font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial" fill="#ffffff">
-          <!-- aligned vertically with the fish centerline -->
-          <text x="260" y="95" font-size="58" font-weight="700" letter-spacing=".2">FishkeepingLifeCo</text>
-          <text x="260" y="135" font-size="28" opacity=".95">Aquarium Education</text>
+          <text x="300" y="95" font-size="58" font-weight="700" letter-spacing=".2">FishkeepingLifeCo</text>
+          <text x="300" y="137" font-size="28" opacity=".95">Aquarium Education</text>
         </g>
       </svg>
     </div>
@@ -264,7 +262,6 @@
       </table>
       <div class="row" style="margin-top:8px">
         <div style="flex:1 1 200px">
-          <!-- keep id for JS; add class for style -->
           <button id="reset" class="clear-danger">Clear Stock</button>
         </div>
       </div>
