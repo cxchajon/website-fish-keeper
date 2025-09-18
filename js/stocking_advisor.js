@@ -7,13 +7,13 @@ let FILTERED = [];
 
 /* ---------- Fallback data (used only if fish-data.js didn't register a global) ---------- */
 const DEFAULT_FISH = [
-  { id:"neon_tetra", name:"Neon tetra", points:1.0, min:6, temp:[72,80], ph:[6.0,7.2] },
-  { id:"cardinal_tetra", name:"Cardinal tetra", points:1.2, min:6, temp:[75,82], ph:[4.6,6.8] },
-  { id:"tiger_barb", name:"Tiger barb", points:2.5, min:6, temp:[74,79], ph:[6.0,7.0] },
-  { id:"guppy", name:"Guppy (male)", points:1.6, min:3, temp:[72,82], ph:[7.0,8.0] },
-  { id:"betta_male", name:"Betta (male)", points:6.0, min:1, temp:[78,82], ph:[6.0,7.5] },
-  { id:"cory_small", name:"Corydoras (small)", points:2.2, min:6, temp:[72,79], ph:[6.2,7.4] },
-  { id:"amano_shrimp", name:"Amano shrimp", points:0.5, min:3 }
+  { id:"neon_tetra",        name:"Neon tetra",                    points:1.0, min:6,  temp:[72,80], ph:[6.0,7.2] },
+  { id:"cardinal_tetra",    name:"Cardinal tetra",                points:1.2, min:6,  temp:[75,82], ph:[4.6,6.8] },
+  { id:"tiger_barb",        name:"Tiger barb",                    points:2.5, min:6,  temp:[74,79], ph:[6.0,7.0] },
+  { id:"guppy",             name:"Guppy (male)",                  points:1.6, min:3,  temp:[72,82], ph:[7.0,8.0] },
+  { id:"betta_male",        name:"Betta (male)",                  points:6.0, min:1,  temp:[78,82], ph:[6.0,7.5] },
+  { id:"cory_small",        name:"Corydoras (small)",             points:2.2, min:6,  temp:[72,79], ph:[6.2,7.4] },
+  { id:"amano_shrimp",      name:"Amano shrimp",                  points:0.5, min:3 }
 ];
 
 /* ---------- Detect fish-data.js global ---------- */
@@ -53,10 +53,19 @@ function updateBioloadBar() {
   $("#barFill").style.width = pct + "%";
 }
 
-/* ---------- Aggression (overall = average conflicts only) ---------- */
+/* ---------- Aggression (overall = average conflicts; max out if serious warnings exist) ---------- */
 function updateAggressionBar() {
   const gallons = Number($("#gallons").value || 0);
-  const overall = Aggression.overallAverageConflict(stock, FISH, gallons);
+
+  // Base overall value from conflicts-only model
+  let overall = Aggression.overallAverageConflict(stock, FISH, gallons);
+
+  // If any WARNING or DANGER issue exists (e.g., fin-nippers with long fins),
+  // force the overall meter to 100%. Ignore "caution" items like schooling.
+  const issues = Aggression.checkIssues(stock, FISH, gallons) || [];
+  const hasSerious = issues.some(i => i.severity === 'warning' || i.severity === 'danger');
+  if (hasSerious) overall = 100;
+
   $("#aggBarFill").style.width = overall + "%";
 }
 
@@ -184,7 +193,7 @@ window.addEventListener("DOMContentLoaded", () => {
     msg.style.fontSize = "12px";
     msg.style.color = "#6b7280";
     msg.style.marginTop = "6px";
-    const speciesCard = document.querySelector(".card + .card"); // the Add Fish card
+    const speciesCard = document.querySelector(".card + .card");
     speciesCard && speciesCard.insertBefore(msg, speciesCard.firstChild);
     console.warn("No fish data found. Make sure js/fish-data.js exposes a global like window.FISH_DATA.");
   }
