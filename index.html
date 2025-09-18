@@ -14,7 +14,7 @@
     --muted-2: #94a3b8;
 
     /* Brand & UI colors */
-    --brand: #026aa2;   /* deep blue for actions */
+    --brand: #026aa2;   /* default deep blue */
     --brand-2: #015586;
     --brand-3: #0ea5e9; /* header gradient start */
     --brand-4: #38bdf8; /* header gradient mid */
@@ -24,9 +24,14 @@
     --warn: #f59e0b; /* amber */
     --bad:  #ef4444; /* red */
 
-    /* Cards (soft aqua tint like before) */
-    --card: rgba(224, 242, 254, 0.92); /* #e0f2fe with translucency */
+    /* Cards (soft aqua tint) */
+    --card: rgba(224, 242, 254, 0.92);
     --card-border: rgba(15, 23, 42, 0.06);
+
+    /* Table field boxes */
+    --field-bg: #ffffff;
+    --field-bd: #cbd5e1;
+    --field-shadow: 0 1px 2px rgba(2,6,23,.06);
   }
 
   * { box-sizing: border-box; }
@@ -36,46 +41,22 @@
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: var(--ink);
 
-    /* Fallback solid */
-    background: var(--brand-3);
-
-    /* Gradient */
+    background: var(--brand-3); /* fallback */
     background: linear-gradient(180deg, var(--brand-3) 0%, var(--brand-4) 60%, var(--brand-5) 100%);
     background-attachment: fixed;
   }
 
-  .wrap {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 28px 20px 48px;
-  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 28px 20px 48px; }
 
-  /* ===== Brand (text only, left aligned) ===== */
-  .brand {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    margin-bottom: 8px;
-    color: #fff;
-    text-align: left;
-  }
+  /* ===== Brand ===== */
+  .brand { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 8px; color: #fff; }
   .brand-name { font-size: 1.6rem; font-weight: 700; line-height: 1.2; }
-  .brand-sub  { font-size: 1rem;  opacity: 0.95; }
+  .brand-sub  { font-size: 1rem; opacity: 0.95; }
 
-  header {
-    margin-bottom: 16px;
-    text-align: left;
-    color: white;
-  }
-  header h2 {
-    margin: 0;
-    font-size: 1.2rem; /* small section label under brand */
-    font-weight: 600;
-    opacity: 0.95;
-  }
+  header { margin-bottom: 16px; text-align: left; color: white; }
+  header h2 { margin: 0; font-size: 1.2rem; font-weight: 600; opacity: 0.95; }
 
-  /* ===== Cards (soft aqua like before) ===== */
+  /* ===== Cards ===== */
   .card {
     background: var(--card);
     border-radius: var(--radius);
@@ -86,111 +67,97 @@
     backdrop-filter: blur(10px) saturate(160%);
     -webkit-backdrop-filter: blur(10px) saturate(160%);
   }
-  .card h2, .card h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-weight: 700;
-  }
+  .card h2, .card h3 { margin-top: 0; margin-bottom: 10px; font-weight: 700; }
 
   /* ===== Forms ===== */
   label { font-weight: 700; margin-bottom: 6px; display: block; }
   input, select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--field-bd);
     border-radius: 10px;
     background: #fff;
   }
-
-  /* Layout helpers */
   .row {
     display: grid;
     gap: var(--gap);
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    align-items: end; /* tidy label/control bottoms */
+    align-items: end;
   }
 
   /* ===== Buttons ===== */
   .btn {
-    background: var(--brand);
-    color: #fff;
-    border: 1px solid var(--brand-2);
-    padding: 10px 14px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 700;
-    box-shadow: 0 2px 8px rgba(2,6,23,.18);
-    transition: transform .06s ease, background .2s ease, box-shadow .2s ease, opacity .2s ease;
+    font-weight: 700; cursor: pointer; border-radius: 8px;
+    transition: transform .06s ease, background .2s ease, box-shadow .2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    border: none; color: #fff;
   }
-  .btn:hover { background: var(--brand-2); box-shadow: 0 4px 12px rgba(2,6,23,.22); }
   .btn:active { transform: translateY(1px); }
 
-  /* Current Stock table */
-  table { width: 100%; border-collapse: collapse; }
-  th, td { padding: 10px 6px; border-bottom: 1px solid #cfe7fb4d; }
+  /* ===== Current Stock Table ===== */
+  table { width: 100%; border-collapse: separate; border-spacing: 0 10px; } /* row gaps */
+  thead th { padding: 0 6px 4px; font-weight: 700; }
   th.right, td.right { text-align: right; }
 
-  /* ===== Actions cell: responsive so portrait isn't cramped ===== */
-  td.actions {
-    padding-top: 12px;
-    padding-bottom: 12px;
+  /* Field boxes inside cells */
+  .field {
+    background: var(--field-bg);
+    border: 1px solid var(--field-bd);
+    border-radius: 10px;
+    box-shadow: var(--field-shadow);
+    padding: 10px 12px;
+    height: 42px;
+    display: flex; align-items: center;
   }
-  .actions-wrap {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: nowrap;      /* desktop/landscape: single row */
-  }
-  .btn.action { min-width: 52px; height: 40px; padding: 0 14px; border-radius: 8px; }
-  .btn.delete { min-width: 92px; background: var(--bad); border: none; }
+  .field.center { justify-content: center; }
+  .field.single-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .field.small { min-width: 64px; justify-content: center; font-variant-numeric: tabular-nums; }
+
+  /* Status coloring for fields */
+  .field.ok   { border-color: var(--ok);   box-shadow: 0 0 0 3px rgba(16,185,129,.18); }
+  .field.warn { border-color: var(--warn); box-shadow: 0 0 0 3px rgba(245,158,11,.18); }
+  .field.bad  { border-color: var(--bad);  box-shadow: 0 0 0 3px rgba(239,68,68,.18); }
+
+  /* Actions cell */
+  td.actions { padding: 0 0 0 6px; }
+  .actions-wrap { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: nowrap; }
+
+  /* Compact action buttons with colors */
+  .btn.action { min-width: 50px; height: 36px; padding: 0 10px; font-size: 0.9rem; line-height: 1; }
+  .btn.minus { background: var(--warn); }  .btn.minus:hover { background: #d97706; }
+  .btn.plus  { background: var(--ok); }    .btn.plus:hover  { background: #059669; }
+  .btn.delete { background: var(--bad); min-width: 88px; height: 36px; }
   .btn.delete:hover { background: #dc2626; }
 
-  /* Portrait tweak: allow wrapping + add vertical breathing room */
+  /* Portrait adjustments */
   @media (max-width: 480px) {
-    .actions-wrap {
-      flex-wrap: wrap;      /* -1, +1, Delete can wrap to two lines */
-      gap: 8px 10px;        /* tighter horizontally, comfy vertically */
-    }
-    .btn.action { flex: 0 0 64px; }     /* consistent width for -1/+1 */
-    .btn.delete { flex: 1 1 100%; }     /* full line if it wraps */
-    tbody td:last-child { padding-top: 8px; padding-bottom: 8px; }
+    .actions-wrap { flex-wrap: wrap; gap: 8px 8px; }
+    .btn.action { flex: 0 0 58px; }
+    .btn.delete { flex: 1 1 100%; }
+    td.actions { padding-top: 6px; }
   }
 
-  /* ===== Clear Stock button ===== */
-  #reset.clear-danger {
-    background: var(--bad);
-    border: none;
-    color: #fff;
-    box-shadow: 0 2px 6px rgba(0,0,0,.15);
-  }
+  /* Clear Stock */
+  #reset.clear-danger { background: var(--bad); }
   #reset.clear-danger:hover { background: #dc2626; }
 
-  /* ===== Bars ===== */
+  /* Bars */
   .bar { height: 26px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
   .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--ok), var(--warn), var(--bad)); transition: width .25s ease; }
   .bar-note { display: flex; justify-content: space-between; font-size: .85rem; color: var(--muted); }
 
-  /* Info notes */
-  small.note {
-    color: var(--muted-2);
-    font-size: .8rem;
-    font-style: italic;
-    display: block;
-    margin-top: 6px;
-    padding-left: 20px;
-    position: relative;
-  }
+  small.note { color: var(--muted-2); font-size: .8rem; font-style: italic; display: block; margin-top: 6px; padding-left: 20px; position: relative; }
   small.note::before { content:"ℹ️"; position:absolute; left:0; }
 
-  /* ===== Warnings block (keeps your pale orange callout style) ===== */
+  /* Warnings list style */
   #aggression-warnings > div {
-    background: #fff7ed;               /* orange-50 */
-    border: 2px solid #fdba74;         /* orange-300 */
+    background: #fff7ed;
+    border: 2px solid #fdba74;
     color: #7a3419;
     padding: 14px 16px;
     border-radius: 12px;
     line-height: 1.4;
+    margin-bottom: 8px;
   }
 </style>
 </head>
@@ -281,7 +248,6 @@
         </thead>
         <tbody id="tbody"></tbody>
       </table>
-
       <div class="row" style="margin-top:10px">
         <div><button id="reset" class="btn clear-danger">Clear Stock</button></div>
       </div>
@@ -294,36 +260,125 @@
     </section>
   </div>
 
-  <!-- Data + Logic + Glue -->
   <script src="js/fish-data.js"></script>
   <script src="js/aggression.js"></script>
+
+  <!-- UI polish: field boxes + responsive actions + status colors -->
   <script>
-    // Enhance actions cell markup at runtime so we can control spacing responsively
-    // (keeps your existing stocking_advisor.js simpler)
     const tbody = document.getElementById('tbody');
-    const observer = new MutationObserver(() => {
-      // find rows and wrap action buttons
-      [...tbody.querySelectorAll('tr')].forEach(tr => {
-        const actionsTd = tr.lastElementChild;
-        if (!actionsTd) return;
-        actionsTd.classList.add('actions');
-        if (!actionsTd.querySelector('.actions-wrap')) {
-          const wrap = document.createElement('div');
-          wrap.className = 'actions-wrap';
-          // move all buttons into the wrap and style them
-          const btns = [...actionsTd.querySelectorAll('button')];
-          btns.forEach((b, i) => {
-            b.classList.add('btn');
-            if (i < 2) b.classList.add('action'); // -1 / +1
-            if (/delete/i.test(b.textContent)) b.classList.add('delete');
-            wrap.appendChild(b);
-          });
-          actionsTd.appendChild(wrap);
+    const warningsBox = document.getElementById('aggression-warnings');
+
+    function wrapIntoField(td, options = {}) {
+      if (!td || td.querySelector('.field')) return;
+      const box = document.createElement('div');
+      box.className = 'field';
+      if (options.center) box.classList.add('center');
+      if (options.singleLine) box.classList.add('single-line');
+      if (options.small) box.classList.add('small');
+      const text = td.textContent.trim();
+      td.textContent = '';
+      box.textContent = text;
+      td.appendChild(box);
+      return box;
+    }
+
+    function tidyActions(td) {
+      if (!td) return;
+      td.classList.add('actions');
+      if (td.querySelector('.actions-wrap')) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'actions-wrap';
+      const buttons = [...td.querySelectorAll('button')];
+      buttons.forEach(b => {
+        // classify buttons by text
+        if (/delete/i.test(b.textContent)) {
+          b.classList.add('btn', 'delete');
+        } else if (b.textContent.includes('-')) {
+          b.classList.add('btn', 'action', 'minus');
+        } else if (b.textContent.includes('+')) {
+          b.classList.add('btn', 'action', 'plus');
+        } else {
+          b.classList.add('btn', 'action');
+        }
+        wrap.appendChild(b);
+      });
+      td.appendChild(wrap);
+    }
+
+    function colorAggression(fieldEl, percentStr) {
+      if (!fieldEl) return;
+      const n = parseFloat(String(percentStr).replace('%','').trim());
+      fieldEl.classList.remove('ok','warn','bad');
+      if (isNaN(n)) return;
+      if (n <= 33) fieldEl.classList.add('ok');
+      else if (n <= 66) fieldEl.classList.add('warn');
+      else fieldEl.classList.add('bad');
+    }
+
+    // Parse warnings like: "Neon tetra: schooling species below recommended group size (3/6)."
+    function parseWarnings() {
+      const map = new Map(); // species -> {qty, min}
+      const items = warningsBox ? [...warningsBox.querySelectorAll('div')] : [];
+      items.forEach(div => {
+        const text = div.textContent || '';
+        const m = text.match(/^\s*([^:]+):.*\((\d+)\s*\/\s*(\d+)\)/i);
+        if (m) {
+          const species = m[1].trim();
+          const qty = parseInt(m[2],10);
+          const min = parseInt(m[3],10);
+          map.set(species.toLowerCase(), { qty, min });
         }
       });
-    });
+      return map;
+    }
+
+    function applyStatusColors() {
+      const warnMap = parseWarnings();
+      [...tbody.querySelectorAll('tr')].forEach(tr => {
+        const tds = tr.querySelectorAll('td');
+        if (tds.length < 4) return;
+
+        // Wrap cells into fields if not already
+        const nameField = wrapIntoField(tds[0], { singleLine: true });
+        const qtyField  = wrapIntoField(tds[1], { center: true, small: true });
+        const aggField  = wrapIntoField(tds[2], { center: true, small: true });
+        tidyActions(tds[3]);
+
+        // Aggression coloring
+        const aggText = aggField ? aggField.textContent : tds[2].textContent;
+        colorAggression(aggField, aggText);
+
+        // Group-size coloring based on warnings box
+        const speciesText = (nameField ? nameField.textContent : tds[0].textContent).trim().toLowerCase();
+        const info = warnMap.get(speciesText);
+        [nameField, qtyField].forEach(el => el && el.classList.remove('ok','warn','bad'));
+        if (info) {
+          const { qty, min } = info;
+          if (qty < Math.max(1, Math.floor(min / 2))) {
+            nameField && nameField.classList.add('bad');
+            qtyField  && qtyField.classList.add('bad');
+          } else {
+            nameField && nameField.classList.add('warn');
+            qtyField  && qtyField.classList.add('warn');
+          }
+        } else {
+          // No warning for this species — mark as ok
+          nameField && nameField.classList.add('ok');
+          qtyField  && qtyField.classList.add('ok');
+        }
+      });
+    }
+
+    const observer = new MutationObserver(() => applyStatusColors());
     observer.observe(tbody, { childList: true, subtree: true });
+    if (warningsBox) {
+      const warnObserver = new MutationObserver(() => applyStatusColors());
+      warnObserver.observe(warningsBox, { childList: true, subtree: true });
+    }
+    // Initial paint
+    window.addEventListener('DOMContentLoaded', applyStatusColors);
   </script>
+
   <script src="js/stocking_advisor.js"></script>
 </body>
 </html>
