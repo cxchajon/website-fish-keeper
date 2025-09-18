@@ -71,6 +71,7 @@
   /* ===== Current Stock ===== */
   table.stock{width:100%;border-collapse:collapse}
   thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66}
+  thead th.qty{ text-align:center; } /* better align Qty title */
   .right{text-align:right}
   tbody td{padding:10px 6px}
 
@@ -83,6 +84,7 @@
     height:40px;
     display:flex; align-items:center; min-width:0;
   }
+  tbody td:first-child{ padding-left:2px; } /* pull Name closer to left */
   .field.single-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:120px}
   .field.center{justify-content:center}
   .field.small{min-width:60px;justify-content:center;font-variant-numeric:tabular-nums}
@@ -92,18 +94,43 @@
   .field.warn{ border-color:#f6c76a }
   .field.bad { border-color:#f2a3a3 }
 
-  /* Actions: pair (-/+) grouped, Delete separate */
-  .actions{display:flex;justify-content:flex-end;align-items:center;gap:6px}
-  .actions .group{display:flex;gap:6px}
-  .pill{height:34px;padding:0 12px;border-radius:999px;font-size:.9rem;color:#fff;border:none;box-shadow:0 2px 6px rgba(2,6,23,.14)}
-  .pill.minus{background:var(--warn)} .pill.minus:hover{background:var(--warn-2)}
-  .pill.plus {background:var(--ok)}   .pill.plus:hover {background:var(--ok-2)}
-  .pill.delete{background:var(--bad)} .pill.delete:hover{background:var(--bad-2)}
+  /* Aggression circle */
+  .aggr{
+    display:flex; align-items:center; gap:8px; justify-content:center;
+  }
+  .aggr-dot{
+    width:26px; height:26px; border-radius:50%;
+    background:#10b981; /* default green */
+    border:2px solid rgba(15,23,42,.08);
+    flex:0 0 26px;
+  }
+  .aggr.ok   { --dot: var(--ok); }
+  .aggr.warn { --dot: var(--warn); }
+  .aggr.bad  { --dot: var(--bad); }
+  .aggr-dot{ background:var(--dot, var(--ok)); }
+  .aggr-val{ font-variant-numeric: tabular-nums; font-weight:600; }
 
-  /* Phone: stack neatly */
+  /* Icon circles for actions */
+  .actions{display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:nowrap}
+  .circle{
+    width:36px; height:36px; border-radius:50%; display:inline-flex;
+    align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:18px;
+    border:none; cursor:pointer; box-shadow:0 2px 6px rgba(2,6,23,.14);
+    transition:transform .06s ease, filter .15s ease;
+  }
+  .circle:active{ transform: translateY(1px); }
+  .circle.minus{ background:var(--warn); }
+  .circle.minus:hover{ filter:brightness(.95); }
+  .circle.plus{ background:var(--ok); }
+  .circle.plus:hover{ filter:brightness(.95); }
+  .circle.trash{ background:var(--bad); width:36px; }
+  .circle svg{ width:18px; height:18px; fill:#fff; }
+
+  /* Phone: stack neatly; never overflow card */
   @media (max-width:480px){
-    .actions{flex-wrap:wrap}
-    .pill.delete{flex:1 1 100%;min-width:96px}
+    .actions{flex-wrap:wrap; gap:8px 10px;}
+    .circle.trash{ flex: 0 0 36px; }
+    thead th{ font-size:1rem; }
   }
 
   /* Warnings list */
@@ -193,7 +220,7 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th class="right">Qty</th>
+            <th class="qty">Qty</th>
             <th class="right">Aggression</th>
             <th class="right">Actions</th>
           </tr>
@@ -239,42 +266,88 @@
         return el;
       }
 
-      // Group (-/+) together, keep Delete separate
+      // Build aggression circle + % text
+      function enhanceAgg(td){
+        if(!td || td.dataset.enhanced === '1') return;
+        const field = wrapField(td, { center:true, small:true });
+        const pct = (field.textContent || '').trim();
+        const wrap = document.createElement('div');
+        wrap.className = 'aggr';
+
+        const dot = document.createElement('span');
+        dot.className = 'aggr-dot';
+        const val = document.createElement('span');
+        val.className = 'aggr-val';
+        val.textContent = pct;
+
+        wrap.append(dot, val);
+        td.innerHTML = '';
+        td.appendChild(wrap);
+        td.dataset.enhanced = '1';
+
+        // color
+        const n = parseFloat(pct.replace('%',''));
+        wrap.classList.remove('ok','warn','bad');
+        if (!isNaN(n)){
+          if (n <= 33) wrap.classList.add('ok');
+          else if (n <= 66) wrap.classList.add('warn');
+          else wrap.classList.add('bad');
+        } else {
+          wrap.classList.add('ok');
+        }
+      }
+
+      // Group to icon circles
       function enhanceActions(td){
         if(!td || td.dataset.enhanced === '1') return;
+
+        const buttons = [...td.querySelectorAll('button')];
+        if(buttons.length === 0) return;
 
         const wrap = document.createElement('div');
         wrap.className = 'actions';
 
-        const pair = document.createElement('div');
-        pair.className = 'group';
+        // find by label
+        let minusBtn = buttons.find(b => b.textContent.includes('-'));
+        let plusBtn  = buttons.find(b => b.textContent.includes('+'));
+        let delBtn   = buttons.find(b => /delete/i.test(b.textContent));
 
-        const buttons = [...td.querySelectorAll('button')];
-        buttons.forEach(b=>{
-          const t = b.textContent;
-          b.classList.add('pill');
-          if(/delete/i.test(t)){
-            b.classList.add('delete');
-            wrap.appendChild(b);         // delete sits on the right
-          } else {
-            if(t.includes('-')) b.classList.add('minus');
-            if(t.includes('+')) b.classList.add('plus');
-            pair.appendChild(b);         // -/+ stay together
-          }
-        });
+        // - circle
+        if(minusBtn){
+          const m = document.createElement('button');
+          m.type = 'button';
+          m.className = 'circle minus';
+          m.innerHTML = '<span aria-hidden="true">−</span>';
+          m.title = 'Decrease';
+          m.addEventListener('click', ()=> minusBtn.click());
+          wrap.appendChild(m);
+        }
+        // + circle
+        if(plusBtn){
+          const p = document.createElement('button');
+          p.type = 'button';
+          p.className = 'circle plus';
+          p.innerHTML = '<span aria-hidden="true">+</span>';
+          p.title = 'Increase';
+          p.addEventListener('click', ()=> plusBtn.click());
+          wrap.appendChild(p);
+        }
+        // trash circle
+        if(delBtn){
+          const d = document.createElement('button');
+          d.type = 'button';
+          d.className = 'circle trash';
+          d.title = 'Delete';
+          d.innerHTML = `
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/>
+            </svg>`;
+          d.addEventListener('click', ()=> delBtn.click());
+          wrap.appendChild(d);
+        }
 
-        wrap.prepend(pair);
-        td.appendChild(wrap);            // append wrapper without clearing cell
+        td.appendChild(wrap);
         td.dataset.enhanced = '1';
-      }
-
-      function aggressionColor(fieldEl, txt){
-        const n = parseFloat(String(txt).replace('%',''));
-        fieldEl.classList.remove('ok','warn','bad');
-        if (isNaN(n)) return;            // stay neutral
-        if (n <= 33) fieldEl.classList.add('ok');
-        else if (n <= 66) fieldEl.classList.add('warn');
-        else fieldEl.classList.add('bad');
       }
 
       function parseWarnings(){
@@ -288,7 +361,7 @@
         return map;
       }
 
-      function colorRows(){
+      function colorNameQty(){
         const warnMap = parseWarnings();
         tbody.querySelectorAll('tr').forEach(tr=>{
           if (tr.dataset.styled === '1') return;
@@ -297,13 +370,11 @@
 
           const fName = wrapField(tds[0], { single:true });
           const fQty  = wrapField(tds[1], { center:true, small:true });
-          const fAgg  = wrapField(tds[2], { center:true, small:true });
-          enhanceActions(tds[3]);
 
-          // Aggression coloring
-          aggressionColor(fAgg, fAgg.textContent);
+          enhanceAgg(tds[2]);     // colored circle + %
+          enhanceActions(tds[3]); // icon buttons
 
-          // Group-size status from warnings (if present)
+          // Color name/qty from warnings if present
           const key = (fName.textContent || '').trim().toLowerCase();
           [fName,fQty].forEach(el=> el && el.classList.remove('ok','warn','bad'));
           const info = warnMap.get(key);
@@ -312,19 +383,19 @@
             if (info.qty < redCut){ fName.classList.add('bad'); fQty.classList.add('bad'); }
             else { fName.classList.add('warn'); fQty.classList.add('warn'); }
           }
-          // else: remain neutral (no class)
+          // else: stay neutral
 
           tr.dataset.styled = '1';
         });
       }
 
-      const rowObs = new MutationObserver(colorRows);
+      const rowObs = new MutationObserver(colorNameQty);
       rowObs.observe(tbody, { childList:true, subtree:true });
 
-      const warnObs = new MutationObserver(()=>{ tbody.querySelectorAll('tr').forEach(tr=> tr.dataset.styled=''); colorRows(); });
-      warnObs.observe(warningsBox, { childList:true, subtree:true });
+      const warnObs = new MutationObserver(()=>{ tbody.querySelectorAll('tr').forEach(tr=> tr.dataset.styled=''); colorNameQty(); });
+      warnObs.observe(document.getElementById('aggression-warnings'), { childList:true, subtree:true });
 
-      window.addEventListener('load', colorRows);
+      window.addEventListener('load', colorNameQty);
     })();
   </script>
 </body>
