@@ -5,7 +5,7 @@ let stock = [];
 let FISH  = [];
 let FILTERED = [];
 
-/* ---------- Fallback data (used only if fish-data.js didn't register a global) ---------- */
+/* ---------- Fallback data if fish-data.js fails ---------- */
 const DEFAULT_FISH = [
   { id:"neon_tetra",        name:"Neon tetra",                    points:1.0, min:6,  temp:[72,80], ph:[6.0,7.2] },
   { id:"cardinal_tetra",    name:"Cardinal tetra",                points:1.2, min:6,  temp:[75,82], ph:[4.6,6.8] },
@@ -25,9 +25,7 @@ function getFishArrayFromWindow() {
     window.fish_list,
     window.fish
   ];
-  for (const c of candidates) {
-    if (Array.isArray(c) && c.length) return c;
-  }
+  for (const c of candidates) if (Array.isArray(c) && c.length) return c;
   return [];
 }
 
@@ -53,17 +51,16 @@ function updateBioloadBar() {
   $("#barFill").style.width = pct + "%";
 }
 
-/* ---------- Aggression (overall = average conflicts; max out if serious warnings exist) ---------- */
+/* ---------- Aggression (overall = avg conflicts; max if serious issue) ---------- */
 function updateAggressionBar() {
   const gallons = Number($("#gallons").value || 0);
 
-  // Base overall value from conflicts-only model
+  // Base overall from conflicts-only model (ignores schooling penalty)
   let overall = Aggression.overallAverageConflict(stock, FISH, gallons);
 
-  // If any WARNING or DANGER issue exists (e.g., fin-nippers with long fins),
-  // force the overall meter to 100%. Ignore "caution" items like schooling.
+  // Force to 100% if any non-"caution" issue exists (warning or danger)
   const issues = Aggression.checkIssues(stock, FISH, gallons) || [];
-  const hasSerious = issues.some(i => i.severity === 'warning' || i.severity === 'danger');
+  const hasSerious = issues.some(i => i && i.severity && i.severity !== 'caution');
   if (hasSerious) overall = 100;
 
   $("#aggBarFill").style.width = overall + "%";
