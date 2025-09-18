@@ -33,20 +33,15 @@
     padding: 28px 20px 48px;
   }
 
-  /* Logo + subtitle */
+  /* Brand */
   .brand {
     text-align: center;
     margin-bottom: 24px;
   }
-  .brand img {
-    max-width: 320px;
+  .brand svg {
+    max-width: 420px;
+    width: 100%;
     height: auto;
-  }
-  .brand .subtitle {
-    margin-top: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    color: white;
   }
 
   header {
@@ -61,7 +56,7 @@
 
   /* Frosted glass cards */
   .card {
-    background: rgba(255, 255, 255, 0.75); /* semi-transparent white */
+    background: rgba(255, 255, 255, 0.75);
     border-radius: var(--radius);
     border: 1px solid rgba(255,255,255,0.3);
     box-shadow: 0 12px 24px -10px rgba(2,6,23,.25);
@@ -85,7 +80,7 @@
   button:hover { background: var(--brand-2); }
 
   .bar { height:26px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
-  .bar-fill { height:100%; width:0%; background: linear-gradient(90deg, var(--ok), var(--warn), var(--bad)); }
+  .bar-fill { height:100%; width:0%; background: linear-gradient(90deg, var(--ok), var(--warn), var(--bad)); transition: width .25s ease; }
   .bar-note { display:flex; justify-content:space-between; font-size:.85rem; color:var(--muted); }
 
   small.note {
@@ -93,14 +88,34 @@
     display:block; margin-top:6px; padding-left:20px; position:relative;
   }
   small.note::before { content:"ℹ️"; position:absolute; left:0; }
+
+  /* Simple layout helpers used in your markup */
+  .row { display: grid; gap: var(--gap); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 8px 6px; border-bottom: 1px solid #e2e8f0; }
+  th.right, td.right { text-align: right; }
+  button.ghost { background: transparent; color: var(--brand); border: 1px solid var(--brand); }
 </style>
 </head>
 <body>
   <div class="wrap">
-    <!-- Logo + subtitle -->
-    <div class="brand">
-      <img src="your-logo.png" alt="FishkeepingLifeCo logo"/>
-      <p class="subtitle">Aquarium Education &amp; Books for Beginners</p>
+    <!-- Brand logo (inline SVG). The old subtitle line is removed. -->
+    <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 200" role="img">
+        <title>FishkeepingLifeCo — Aquarium Education</title>
+        <!-- Fish icon (white) -->
+        <g transform="translate(40,35)">
+          <path fill="#ffffff" d="M72 65c0-19.3 15.7-35 35-35 7.7 0 14.8 2.4 20.5 6.6l31.6-18.8c2.5-1.5 5.6 1 4.4 3.7l-11.2 25c3.9 5.3 6.1 11.6 6.1 18.5s-2.2 13.2-6.1 18.5l11.2 25c1.2 2.7-1.9 5.2-4.4 3.7l-31.6-18.8c-5.7 4.2-12.8 6.6-20.5 6.6-19.3 0-35-15.7-35-35z"/>
+          <circle cx="117" cy="65" r="6.5" fill="#0ea5e9"/>
+          <!-- tail notch -->
+          <path fill="#ffffff" d="M60 30c-10 6-23 23-23 35s13 29 23 35c3 1.8 7-0.6 7-4.1V34.1c0-3.5-4-5.9-7-4.1z"/>
+        </g>
+        <!-- Wordmark -->
+        <g font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial" fill="#ffffff">
+          <text x="240" y="95" font-size="56" font-weight="700" letter-spacing="0.2">FishkeepingLifeCo</text>
+          <text x="240" y="140" font-size="28" opacity="0.95">Aquarium Education</text>
+        </g>
+      </svg>
     </div>
 
     <header>
