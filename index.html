@@ -5,173 +5,281 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Stocking Calculator</title>
 <style>
-  :root { --gap: 12px; --radius: 12px; }
-  *{ box-sizing: border-box; }
+  :root {
+    --gap: 12px;
+    --radius: 14px;
+    --card-bg: #ffffff;
+    --ink: #0f172a;
+    --muted: #475569;
+    --muted-2: #94a3b8;
+    --brand: #2563eb;
+    --brand-2: #1e40af;
+    --ok: #10b981;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
   body{
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-    margin:0; padding:24px; background:#f8fafc; color:#0f172a;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin:0;
+    color: var(--ink);
+    /* Soft, aquatic background */
+    background:
+      radial-gradient(1200px 800px at -10% -10%, #e0f2fe 0%, rgba(224,242,254,0) 60%),
+      radial-gradient(900px 700px at 110% -10%, #e9d5ff 0%, rgba(233,213,255,0) 60%),
+      linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+    position: relative;
   }
-  header{ margin-bottom:16px; }
-  h1{ font-size:1.35rem; margin:0 0 4px; }
+  /* Subtle wave overlay */
+  body::before{
+    content:"";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .09;
+    background-image:
+      radial-gradient(120px 6px at 0 20px, rgba(2,6,23,.25) 40%, transparent 41%),
+      radial-gradient(120px 6px at 120px 40px, rgba(2,6,23,.18) 35%, transparent 36%);
+    background-size: 120px 40px, 120px 40px;
+    background-repeat: repeat-x;
+  }
+
+  /* Layout container */
+  .wrap{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 28px 20px 48px;
+  }
+
+  header{ margin-bottom: 18px; }
+  h1{
+    font-size: clamp(1.35rem, 1.1rem + 1.2vw, 1.9rem);
+    margin: 0 0 4px;
+    letter-spacing: .2px;
+  }
+  header p{
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: .95rem;
+  }
+
+  /* Card */
   .card{
-    background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.06);
-    padding:16px; margin-bottom:16px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 1px solid rgba(15,23,42,0.06);
+    box-shadow:
+      0 1px 0 rgba(15,23,42,0.04),
+      0 12px 30px -12px rgba(2,6,23,0.18);
+    padding: 16px;
+    margin-bottom: 16px;
+    backdrop-filter: saturate(120%);
   }
-  .row{ display:flex; flex-wrap:wrap; gap:var(--gap); }
-  .row > *{ flex:1 1 220px; }
+
+  .row{ display:flex; flex-wrap:wrap; gap: var(--gap); }
+  .row > *{ flex: 1 1 220px; }
+
   label{ display:block; font-weight:600; margin-bottom:6px; }
   input[type="number"], input[type="text"], select{
-    width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:10px; background:#fff;
+    width:100%; padding:12px 12px;
+    border:1px solid #cbd5e1; border-radius:12px; background:#fff;
+    transition: box-shadow .15s ease, border-color .15s ease, transform .02s ease;
   }
-  button{ padding:10px 14px; border:0; border-radius:10px; cursor:pointer; background:#2563eb; color:#fff; font-weight:600; }
-  button.ghost{ background:#eef2ff; color:#1e293b; }
+  input:focus, select:focus{
+    outline: none;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(147,197,253,.45);
+  }
+  button{
+    padding:11px 15px; border:0; border-radius:12px; cursor:pointer;
+    background: var(--brand); color:#fff; font-weight:700; letter-spacing:.2px;
+    box-shadow: 0 8px 18px -8px rgba(37,99,235,.55);
+    transition: transform .06s ease, box-shadow .2s ease, background .15s ease;
+  }
+  button:hover{ background: var(--brand-2); box-shadow: 0 10px 22px -8px rgba(30,64,175,.6); }
+  button:active{ transform: translateY(1px); }
+  button.ghost{
+    background:#eef2ff; color:#1e293b; box-shadow:none; font-weight:600;
+  }
+  button.ghost:hover{ background:#e0e7ff; }
+
   .switch{ display:flex; align-items:center; gap:8px; }
   .switch input{ width:18px; height:18px; }
 
   /* Bars */
-  .bars-wrap{ margin-top:8px; display:flex; flex-direction:column; gap:14px; }
-  .bar-block h3{ margin:0 0 6px; font-size:1rem; color:#0f172a; }
-  .bar{ position:relative; height:24px; border-radius:999px; overflow:hidden; background:#e2e8f0; }
-  .bar-fill{ position:absolute; top:0; left:0; bottom:0; width:0%; background: linear-gradient(to right, #10b981, #f59e0b, #ef4444); transition: width .25s ease; }
-  .bar-note{ display:flex; justify-content:space-between; font-size:0.9rem; color:#475569; margin-top:6px; }
+  .bars-wrap{ margin-top:8px; display:flex; flex-direction:column; gap:16px; }
+  .bar-block h3{ margin:0 0 8px; font-size:1rem; color:#0f172a; }
+
+  .bar{
+    position:relative; height:26px; border-radius:999px; overflow:hidden; background:#e2e8f0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -1px 0 rgba(2,6,23,.06);
+  }
+  .bar-fill{
+    position:absolute; inset:0 auto 0 0; width:0%;
+    background: linear-gradient(90deg, var(--ok), var(--warn) 55%, var(--bad));
+    transition: width .28s ease;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.1);
+  }
+  .bar-note{
+    display:flex; justify-content:space-between; font-size:0.9rem; color:var(--muted); margin-top:6px;
+  }
 
   /* Always-visible helper notes with icon */
-  small.note { 
-    color:#94a3b8; 
-    display:block; 
-    margin-top:4px; 
-    font-size:0.8rem; 
-    font-style:italic; 
+  small.note {
+    color: var(--muted-2);
+    display:block;
+    margin-top:6px;
+    font-size:0.85rem;
+    font-style:italic;
     position:relative;
-    padding-left:20px;
+    padding-left:22px;
   }
   small.note::before {
     content: "ℹ️";
     position:absolute;
-    left:0;
-    top:0;
+    left:0; top:0;
     font-style:normal;
   }
 
-  table{ width:100%; border-collapse:collapse; }
-  th, td{ padding:10px; border-bottom:1px solid #e2e8f0; text-align:left; }
+  /* Table */
+  table{ width:100%; border-collapse:separate; border-spacing:0; }
+  thead th{
+    font-size:.9rem; color:#0f172a; background:#f1f5f9; position:sticky; top:0; z-index:1;
+  }
+  th, td{ padding:12px 10px; border-bottom:1px solid #e2e8f0; text-align:left; }
+  tbody tr:hover{ background:#f8fafc; }
   .right{ text-align:right; }
   .controls{ display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap; }
 
   /* Aggression mini bar in table */
-  .mini-bar { width:120px; height:10px; background:#e2e8f0; border-radius:999px; overflow:hidden; display:inline-block; vertical-align:middle; }
-  .mini-fill { height:100%; width:0%; transition:width .25s ease; background:linear-gradient(90deg, #10b981, #f59e0b, #ef4444); }
+  .mini-bar {
+    width:140px; height:10px; background:#e2e8f0;
+    border-radius:999px; overflow:hidden; display:inline-block; vertical-align:middle;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+  }
+  .mini-fill {
+    height:100%; width:0%;
+    transition:width .25s ease;
+    background:linear-gradient(90deg, var(--ok), var(--warn), var(--bad));
+  }
   .mini-label { font-size:12px; color:#475569; margin-left:6px; vertical-align:middle; }
 
+  /* Footer spacing on mobile */
   @media (max-width: 540px){
-    body{ padding:16px; }
+    .wrap{ padding: 22px 14px 42px; }
     .row > *{ flex:1 1 100%; }
+    .mini-bar{ width:120px; }
   }
 </style>
 </head>
 <body>
-<header>
-  <h1>Stocking Calculator</h1>
-</header>
+  <div class="wrap">
+    <header>
+      <h1>Stocking Calculator</h1>
+      <p>Plan your community, balance bioload, and avoid aggression conflicts.</p>
+    </header>
 
-<section class="card">
-  <div class="row">
-    <div>
-      <label for="gallons">Tank size (US gallons)</label>
-      <input id="gallons" type="number" min="1" value="20"/>
-    </div>
-    <div>
-      <label for="filtration">Filtration</label>
-      <select id="filtration">
-        <option value="low">Low — Sponge filter (gentle flow)</option>
-        <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
-        <option value="high">High — Sump/Canister (oversized)</option>
-      </select>
-    </div>
-    <div>
-      <label>Planted?</label>
-      <div class="switch">
-        <input id="planted" type="checkbox"/>
-        <span>Yes</span>
+    <section class="card">
+      <div class="row">
+        <div>
+          <label for="gallons">Tank size (US gallons)</label>
+          <input id="gallons" type="number" min="1" value="20"/>
+        </div>
+        <div>
+          <label for="filtration">Filtration</label>
+          <select id="filtration">
+            <option value="low">Low — Sponge filter (gentle flow)</option>
+            <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
+            <option value="high">High — Sump/Canister (oversized)</option>
+          </select>
+        </div>
+        <div>
+          <label>Planted?</label>
+          <div class="switch">
+            <input id="planted" type="checkbox"/>
+            <span>Yes</span>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <!-- Both meters with titles + always-visible notes -->
+      <div class="bars-wrap">
+        <div class="bar-block">
+          <h3>Bioload</h3>
+          <div class="bar" aria-live="polite"><div id="barFill" class="bar-fill"></div></div>
+          <div class="bar-note"><span>Low</span><span>High</span></div>
+          <small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small>
+        </div>
+
+        <div class="bar-block">
+          <h3>Aggression Risk (Average conflicts)</h3>
+          <div class="bar" aria-live="polite"><div id="aggBarFill" class="bar-fill"></div></div>
+          <div class="bar-note"><span>Low</span><span>High</span></div>
+          <small class="note">Serious conflicts automatically max this bar.</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin-top:0">Add Fish</h2>
+      <div class="row">
+        <div style="flex:1 1 320px">
+          <label for="fishSearch">Search species</label>
+          <input id="fishSearch" type="text" placeholder="Type to filter the list"/>
+        </div>
+      </div>
+      <div class="row">
+        <div style="flex:1 1 320px">
+          <label for="fishSelect">Species</label>
+          <select id="fishSelect"></select>
+        </div>
+      </div>
+      <div class="row">
+        <div style="flex:1 1 200px">
+          <label for="recMin">Recommended minimum</label>
+          <input id="recMin" type="number" value="" disabled/>
+        </div>
+      </div>
+      <div class="row" style="align-items:flex-end">
+        <div style="flex:1 1 200px">
+          <label for="fQty">Quantity</label>
+          <input id="fQty" type="number" min="1" placeholder=""/>
+        </div>
+        <div>
+          <button id="addFish">Add</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin-top:0">Current Stock</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th class="right">Qty</th>
+            <th class="right">Aggression</th>
+            <th class="right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="row" style="margin-top:8px">
+        <div style="flex:1 1 200px"><button id="reset" class="ghost">Clear Stock</button></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin-top:0">Aggression & Compatibility Warnings</h2>
+      <div id="aggression-warnings"></div>
+    </section>
   </div>
 
-  <!-- Both meters with titles + always-visible notes -->
-  <div class="bars-wrap">
-    <div class="bar-block">
-      <h3>Bioload</h3>
-      <div class="bar" aria-live="polite"><div id="barFill" class="bar-fill"></div></div>
-      <div class="bar-note"><span>Low</span><span>High</span></div>
-      <small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small>
-    </div>
-
-    <div class="bar-block">
-      <h3>Aggression Risk (Average conflicts)</h3>
-      <div class="bar" aria-live="polite"><div id="aggBarFill" class="bar-fill"></div></div>
-      <div class="bar-note"><span>Low</span><span>High</span></div>
-      <small class="note">Serious conflicts automatically max this bar.</small>
-    </div>
-  </div>
-</section>
-
-<section class="card">
-  <h2 style="margin-top:0">Add Fish</h2>
-  <div class="row">
-    <div style="flex:1 1 320px">
-      <label for="fishSearch">Search species</label>
-      <input id="fishSearch" type="text" placeholder="Type to filter the list"/>
-    </div>
-  </div>
-  <div class="row">
-    <div style="flex:1 1 320px">
-      <label for="fishSelect">Species</label>
-      <select id="fishSelect"></select>
-    </div>
-  </div>
-  <div class="row">
-    <div style="flex:1 1 200px">
-      <label for="recMin">Recommended minimum</label>
-      <input id="recMin" type="number" value="" disabled/>
-    </div>
-  </div>
-  <div class="row" style="align-items:flex-end">
-    <div style="flex:1 1 200px">
-      <label for="fQty">Quantity</label>
-      <input id="fQty" type="number" min="1" placeholder=""/>
-    </div>
-    <div>
-      <button id="addFish">Add</button>
-    </div>
-  </div>
-</section>
-
-<section class="card">
-  <h2 style="margin-top:0">Current Stock</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th class="right">Qty</th>
-        <th class="right">Aggression</th>
-        <th class="right">Actions</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-  </table>
-  <div class="row" style="margin-top:8px">
-    <div style="flex:1 1 200px"><button id="reset" class="ghost">Clear Stock</button></div>
-  </div>
-</section>
-
-<section class="card">
-  <h2 style="margin-top:0">Aggression & Compatibility Warnings</h2>
-  <div id="aggression-warnings"></div>
-</section>
-
-<!-- Data + Logic + Glue -->
-<script src="js/fish-data.js"></script>
-<script src="js/aggression.js"></script>
-<script src="js/stocking_advisor.js"></script>
+  <!-- Data + Logic + Glue -->
+  <script src="js/fish-data.js"></script>
+  <script src="js/aggression.js"></script>
+  <script src="js/stocking_advisor.js"></script>
 </body>
 </html>
