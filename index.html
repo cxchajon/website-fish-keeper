@@ -8,14 +8,25 @@
   :root {
     --gap: 12px;
     --radius: 14px;
+
     --ink: #0f172a;
     --muted: #475569;
     --muted-2: #94a3b8;
-    --brand: #0284c7;
-    --brand-2: #0369a1;
-    --ok: #10b981;
-    --warn: #f59e0b;
-    --bad: #ef4444;
+
+    /* Brand & UI colors */
+    --brand: #026aa2;   /* deep blue for actions */
+    --brand-2: #015586;
+    --brand-3: #0ea5e9; /* header gradient start */
+    --brand-4: #38bdf8; /* header gradient mid */
+    --brand-5: #7dd3fc; /* header gradient end */
+
+    --ok:   #10b981; /* green */
+    --warn: #f59e0b; /* amber */
+    --bad:  #ef4444; /* red */
+
+    /* Cards (soft aqua tint like before) */
+    --card: rgba(224, 242, 254, 0.92); /* #e0f2fe with translucency */
+    --card-border: rgba(15, 23, 42, 0.06);
   }
 
   * { box-sizing: border-box; }
@@ -25,16 +36,11 @@
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: var(--ink);
 
-    /* Fallback solid color */
-    background: #0ea5e9;
+    /* Fallback solid */
+    background: var(--brand-3);
 
-    /* Gradient for capable browsers */
-    background: linear-gradient(
-      180deg,
-      #0ea5e9 0%,   /* aqua blue */
-      #38bdf8 60%,  /* lighter blue */
-      #7dd3fc 100%  /* soft blue fade */
-    );
+    /* Gradient */
+    background: linear-gradient(180deg, var(--brand-3) 0%, var(--brand-4) 60%, var(--brand-5) 100%);
     background-attachment: fixed;
   }
 
@@ -50,49 +56,44 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
-    margin-bottom: 8px; /* tighter space */
+    margin-bottom: 8px;
     color: #fff;
     text-align: left;
   }
-
-  .brand-name {
-    font-size: 1.6rem;
-    font-weight: 700;
-    line-height: 1.2;
-  }
-
-  .brand-sub {
-    font-size: 1rem;
-    opacity: 0.95;
-  }
+  .brand-name { font-size: 1.6rem; font-weight: 700; line-height: 1.2; }
+  .brand-sub  { font-size: 1rem;  opacity: 0.95; }
 
   header {
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     text-align: left;
     color: white;
   }
-
   header h2 {
     margin: 0;
-    font-size: 1.2rem; /* smaller than before */
+    font-size: 1.2rem; /* small section label under brand */
     font-weight: 600;
     opacity: 0.95;
   }
 
-  /* Frosted glass cards */
+  /* ===== Cards (soft aqua like before) ===== */
   .card {
-    background: rgba(255, 255, 255, 0.85);
+    background: var(--card);
     border-radius: var(--radius);
-    border: 1px solid rgba(255,255,255,0.38);
+    border: 1px solid var(--card-border);
     box-shadow: 0 12px 24px -10px rgba(2,6,23,.25);
-    padding: 16px;
-    margin-bottom: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
     backdrop-filter: blur(10px) saturate(160%);
     -webkit-backdrop-filter: blur(10px) saturate(160%);
   }
+  .card h2, .card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
 
-  label { font-weight: 600; margin-bottom: 6px; display: block; }
-
+  /* ===== Forms ===== */
+  label { font-weight: 700; margin-bottom: 6px; display: block; }
   input, select {
     width: 100%;
     padding: 10px;
@@ -101,41 +102,76 @@
     background: #fff;
   }
 
-  /* Generic button baseline */
-  button {
+  /* Layout helpers */
+  .row {
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    align-items: end; /* tidy label/control bottoms */
+  }
+
+  /* ===== Buttons ===== */
+  .btn {
     background: var(--brand);
     color: #fff;
     border: 1px solid var(--brand-2);
     padding: 10px 14px;
     border-radius: 10px;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
     box-shadow: 0 2px 8px rgba(2,6,23,.18);
     transition: transform .06s ease, background .2s ease, box-shadow .2s ease, opacity .2s ease;
   }
-  button:hover { background: var(--brand-2); box-shadow: 0 4px 12px rgba(2,6,23,.22); }
-  button:active { transform: translateY(1px); }
+  .btn:hover { background: var(--brand-2); box-shadow: 0 4px 12px rgba(2,6,23,.22); }
+  .btn:active { transform: translateY(1px); }
 
-  /* Bars */
-  .bar {
-    height: 26px;
-    background: #e2e8f0;
-    border-radius: 999px;
-    overflow: hidden;
+  /* Current Stock table */
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px 6px; border-bottom: 1px solid #cfe7fb4d; }
+  th.right, td.right { text-align: right; }
+
+  /* ===== Actions cell: responsive so portrait isn't cramped ===== */
+  td.actions {
+    padding-top: 12px;
+    padding-bottom: 12px;
   }
-  .bar-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--ok), var(--warn), var(--bad));
-    transition: width .25s ease;
-  }
-  .bar-note {
+  .actions-wrap {
     display: flex;
-    justify-content: space-between;
-    font-size: .85rem;
-    color: var(--muted);
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;      /* desktop/landscape: single row */
+  }
+  .btn.action { min-width: 52px; height: 40px; padding: 0 14px; border-radius: 8px; }
+  .btn.delete { min-width: 92px; background: var(--bad); border: none; }
+  .btn.delete:hover { background: #dc2626; }
+
+  /* Portrait tweak: allow wrapping + add vertical breathing room */
+  @media (max-width: 480px) {
+    .actions-wrap {
+      flex-wrap: wrap;      /* -1, +1, Delete can wrap to two lines */
+      gap: 8px 10px;        /* tighter horizontally, comfy vertically */
+    }
+    .btn.action { flex: 0 0 64px; }     /* consistent width for -1/+1 */
+    .btn.delete { flex: 1 1 100%; }     /* full line if it wraps */
+    tbody td:last-child { padding-top: 8px; padding-bottom: 8px; }
   }
 
+  /* ===== Clear Stock button ===== */
+  #reset.clear-danger {
+    background: var(--bad);
+    border: none;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  }
+  #reset.clear-danger:hover { background: #dc2626; }
+
+  /* ===== Bars ===== */
+  .bar { height: 26px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+  .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--ok), var(--warn), var(--bad)); transition: width .25s ease; }
+  .bar-note { display: flex; justify-content: space-between; font-size: .85rem; color: var(--muted); }
+
+  /* Info notes */
   small.note {
     color: var(--muted-2);
     font-size: .8rem;
@@ -147,56 +183,20 @@
   }
   small.note::before { content:"ℹ️"; position:absolute; left:0; }
 
-  /* Layout helpers */
-  .row { display: grid; gap: var(--gap); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-  table { width: 100%; border-collapse: collapse; }
-  th, td { padding: 8px 6px; border-bottom: 1px solid #e2e8f0; }
-  th.right, td.right { text-align: right; }
-
-  /* Current Stock buttons */
-  tbody td:last-child {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+  /* ===== Warnings block (keeps your pale orange callout style) ===== */
+  #aggression-warnings > div {
+    background: #fff7ed;               /* orange-50 */
+    border: 2px solid #fdba74;         /* orange-300 */
+    color: #7a3419;
+    padding: 14px 16px;
+    border-radius: 12px;
+    line-height: 1.4;
   }
-  tbody td:last-child button {
-    height: 40px;
-    padding: 0 14px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: #fff;
-    border: none;
-    box-shadow: 0 2px 6px rgba(0,0,0,.15);
-    cursor: pointer;
-    transition: background .2s ease, transform .05s ease;
-    opacity: 1;
-  }
-  tbody td:last-child button:active { transform: translateY(1px); }
-
-  /* Per-action colors */
-  button.minus { background: var(--warn); min-width: 52px; }
-  button.minus:hover { background: #d97706; }
-
-  button.plus { background: var(--ok); min-width: 52px; }
-  button.plus:hover { background: #059669; }
-
-  button.delete { background: var(--bad); min-width: 90px; }
-  button.delete:hover { background: #dc2626; }
-
-  /* Clear Stock — danger style */
-  #reset.clear-danger {
-    background: var(--bad);
-    border: none;
-    color: #fff;
-    box-shadow: 0 2px 6px rgba(0,0,0,.15);
-  }
-  #reset.clear-danger:hover { background: #dc2626; }
 </style>
 </head>
 <body>
   <div class="wrap">
-    <!-- Brand (text only, left aligned) -->
+    <!-- Brand -->
     <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
       <div class="brand-name">FishkeepingLifeCo</div>
       <div class="brand-sub">Aquarium Education</div>
@@ -206,12 +206,12 @@
 
     <!-- Tank setup card -->
     <section class="card">
+      <h2>Tank Setup</h2>
       <div class="row">
         <div>
           <label for="gallons">Tank size (US gallons)</label>
           <input id="gallons" type="number" min="1" value="20"/>
         </div>
-
         <div>
           <label for="filtration">Filtration</label>
           <select id="filtration">
@@ -220,26 +220,22 @@
             <option value="high">High — Sump/Canister (oversized)</option>
           </select>
         </div>
-
         <div>
           <label>Planted?</label>
-          <div class="switch">
-            <input id="planted" type="checkbox"/><span>Yes</span>
-          </div>
+          <input id="planted" type="checkbox"/> <span>Yes</span>
         </div>
       </div>
 
-      <div class="bars-wrap">
+      <div class="bars-wrap" style="margin-top:16px">
         <div class="bar-block">
           <h3>Bioload</h3>
-          <div class="bar" aria-live="polite"><div id="barFill" class="bar-fill"></div></div>
+          <div class="bar"><div id="barFill" class="bar-fill"></div></div>
           <div class="bar-note"><span>Low</span><span>High</span></div>
           <small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small>
         </div>
-
-        <div class="bar-block">
-          <h3>Aggression Risk (Average conflicts)</h3>
-          <div class="bar" aria-live="polite"><div id="aggBarFill" class="bar-fill"></div></div>
+        <div class="bar-block" style="margin-top:14px">
+          <h3>Aggression Risk</h3>
+          <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
           <div class="bar-note"><span>Low</span><span>High</span></div>
           <small class="note">Serious conflicts automatically max this bar.</small>
         </div>
@@ -255,27 +251,24 @@
           <input id="fishSearch" type="text" placeholder="Type to filter the list"/>
         </div>
       </div>
-
       <div class="row">
         <div style="flex:1 1 320px">
           <label for="fishSelect">Species</label>
           <select id="fishSelect"></select>
         </div>
       </div>
-
       <div class="row">
         <div style="flex:1 1 200px">
           <label for="recMin">Recommended minimum</label>
           <input id="recMin" type="number" value="" disabled/>
         </div>
       </div>
-
-      <div class="row" style="align-items:flex-end">
+      <div class="row">
         <div style="flex:1 1 200px">
           <label for="fQty">Quantity</label>
-          <input id="fQty" type="number" min="1" placeholder=""/>
+          <input id="fQty" type="number" min="1"/>
         </div>
-        <div><button id="addFish">Add</button></div>
+        <div><button id="addFish" class="btn">Add</button></div>
       </div>
     </section>
 
@@ -288,8 +281,9 @@
         </thead>
         <tbody id="tbody"></tbody>
       </table>
-      <div class="row" style="margin-top:8px">
-        <div style="flex:1 1 200px"><button id="reset" class="clear-danger">Clear Stock</button></div>
+
+      <div class="row" style="margin-top:10px">
+        <div><button id="reset" class="btn clear-danger">Clear Stock</button></div>
       </div>
     </section>
 
@@ -303,6 +297,33 @@
   <!-- Data + Logic + Glue -->
   <script src="js/fish-data.js"></script>
   <script src="js/aggression.js"></script>
+  <script>
+    // Enhance actions cell markup at runtime so we can control spacing responsively
+    // (keeps your existing stocking_advisor.js simpler)
+    const tbody = document.getElementById('tbody');
+    const observer = new MutationObserver(() => {
+      // find rows and wrap action buttons
+      [...tbody.querySelectorAll('tr')].forEach(tr => {
+        const actionsTd = tr.lastElementChild;
+        if (!actionsTd) return;
+        actionsTd.classList.add('actions');
+        if (!actionsTd.querySelector('.actions-wrap')) {
+          const wrap = document.createElement('div');
+          wrap.className = 'actions-wrap';
+          // move all buttons into the wrap and style them
+          const btns = [...actionsTd.querySelectorAll('button')];
+          btns.forEach((b, i) => {
+            b.classList.add('btn');
+            if (i < 2) b.classList.add('action'); // -1 / +1
+            if (/delete/i.test(b.textContent)) b.classList.add('delete');
+            wrap.appendChild(b);
+          });
+          actionsTd.appendChild(wrap);
+        }
+      });
+    });
+    observer.observe(tbody, { childList: true, subtree: true });
+  </script>
   <script src="js/stocking_advisor.js"></script>
 </body>
 </html>
