@@ -19,13 +19,19 @@
   }
 
   * { box-sizing: border-box; }
+
   body {
-    margin:0;
+    margin: 0;
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: var(--ink);
+
+    /* Fallback solid color (older browsers) */
+    background: #0ea5e9;
+
+    /* Gradient for capable browsers */
     background: linear-gradient(
       180deg,
-      #0ea5e9 0%,   /* aqua blue (matches fish logo background) */
+      #0ea5e9 0%,   /* aqua blue */
       #38bdf8 60%,  /* lighter blue */
       #7dd3fc 100%  /* soft blue fade */
     );
@@ -38,22 +44,13 @@
     padding: 28px 20px 48px;
   }
 
-  /* ===== Brand ===== */
+  /* ===== Brand (text only) ===== */
   .brand {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* centered per current layout */
     gap: 12px;
     margin-bottom: 24px;
-  }
-
-  .brand-logo {
-    height: 60px;   /* adjust logo size */
-    width: auto;
-    display: block;
-  }
-
-  .brand-text {
     color: #fff;
     text-align: left;
   }
@@ -74,9 +71,8 @@
     text-align: center;
     color: white;
   }
-  h2 {
-    margin-top: 0;
-  }
+
+  h2 { margin-top: 0; }
 
   /* Frosted glass cards */
   .card {
@@ -90,17 +86,25 @@
     -webkit-backdrop-filter: blur(10px) saturate(160%);
   }
 
-  label { font-weight:600; margin-bottom:6px; display:block; }
+  label { font-weight: 600; margin-bottom: 6px; display: block; }
+
   input, select {
-    width:100%; padding:10px;
-    border:1px solid #cbd5e1; border-radius:10px;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #fff;
   }
 
   /* Generic button baseline */
   button {
-    background: var(--brand); color:#fff; border:1px solid var(--brand-2);
-    padding: 10px 14px; border-radius:10px; cursor:pointer;
-    font-weight:600;
+    background: var(--brand);
+    color: #fff;
+    border: 1px solid var(--brand-2);
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
     box-shadow: 0 2px 8px rgba(2,6,23,.18);
     transition: transform .06s ease, background .2s ease, box-shadow .2s ease, opacity .2s ease;
   }
@@ -108,13 +112,33 @@
   button:active { transform: translateY(1px); }
 
   /* Bars */
-  .bar { height:26px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
-  .bar-fill { height:100%; width:0%; background: linear-gradient(90deg, var(--ok), var(--warn), var(--bad)); transition: width .25s ease; }
-  .bar-note { display:flex; justify-content:space-between; font-size:.85rem; color:var(--muted); }
+  .bar {
+    height: 26px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--ok), var(--warn), var(--bad));
+    transition: width .25s ease;
+  }
+  .bar-note {
+    display: flex;
+    justify-content: space-between;
+    font-size: .85rem;
+    color: var(--muted);
+  }
 
   small.note {
-    color: var(--muted-2); font-size:.8rem; font-style:italic;
-    display:block; margin-top:6px; padding-left:20px; position:relative;
+    color: var(--muted-2);
+    font-size: .8rem;
+    font-style: italic;
+    display: block;
+    margin-top: 6px;
+    padding-left: 20px;
+    position: relative;
   }
   small.note::before { content:"ℹ️"; position:absolute; left:0; }
 
@@ -126,9 +150,9 @@
 
   /* Current Stock buttons */
   tbody td:last-child {
-    display:flex;
-    justify-content:flex-end;
-    gap:10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
   }
   tbody td:last-child button {
     height: 40px;
@@ -167,10 +191,9 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- Brand logo -->
+    <!-- Brand (text only) -->
     <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
-      <img src="images/fishkeepinglifeco-logo-720.webp?v=1" alt="FishkeepingLifeCo logo" class="brand-logo"/>
-      <div class="brand-text">
+      <div>
         <div class="brand-name">FishkeepingLifeCo</div>
         <div class="brand-sub">Aquarium Education</div>
       </div>
@@ -181,32 +204,90 @@
     <!-- Tank setup card -->
     <section class="card">
       <div class="row">
-        <div><label for="gallons">Tank size (US gallons)</label><input id="gallons" type="number" min="1" value="20"/></div>
-        <div><label for="filtration">Filtration</label>
-          <select id="filtration"><option value="low">Low — Sponge filter (gentle flow)</option><option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option><option value="high">High — Sump/Canister (oversized)</option></select>
+        <div>
+          <label for="gallons">Tank size (US gallons)</label>
+          <input id="gallons" type="number" min="1" value="20"/>
         </div>
-        <div><label>Planted?</label><div class="switch"><input id="planted" type="checkbox"/><span>Yes</span></div></div>
+
+        <div>
+          <label for="filtration">Filtration</label>
+          <select id="filtration">
+            <option value="low">Low — Sponge filter (gentle flow)</option>
+            <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
+            <option value="high">High — Sump/Canister (oversized)</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Planted?</label>
+          <div class="switch">
+            <input id="planted" type="checkbox"/><span>Yes</span>
+          </div>
+        </div>
       </div>
+
       <div class="bars-wrap">
-        <div class="bar-block"><h3>Bioload</h3><div class="bar" aria-live="polite"><div id="barFill" class="bar-fill"></div></div><div class="bar-note"><span>Low</span><span>High</span></div><small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small></div>
-        <div class="bar-block"><h3>Aggression Risk (Average conflicts)</h3><div class="bar" aria-live="polite"><div id="aggBarFill" class="bar-fill"></div></div><div class="bar-note"><span>Low</span><span>High</span></div><small class="note">Serious conflicts automatically max this bar.</small></div>
+        <div class="bar-block">
+          <h3>Bioload</h3>
+          <div class="bar" aria-live="polite"><div id="barFill" class="bar-fill"></div></div>
+          <div class="bar-note"><span>Low</span><span>High</span></div>
+          <small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small>
+        </div>
+
+        <div class="bar-block">
+          <h3>Aggression Risk (Average conflicts)</h3>
+          <div class="bar" aria-live="polite"><div id="aggBarFill" class="bar-fill"></div></div>
+          <div class="bar-note"><span>Low</span><span>High</span></div>
+          <small class="note">Serious conflicts automatically max this bar.</small>
+        </div>
       </div>
     </section>
 
     <!-- Add Fish -->
     <section class="card">
       <h2>Add Fish</h2>
-      <div class="row"><div style="flex:1 1 320px"><label for="fishSearch">Search species</label><input id="fishSearch" type="text" placeholder="Type to filter the list"/></div></div>
-      <div class="row"><div style="flex:1 1 320px"><label for="fishSelect">Species</label><select id="fishSelect"></select></div></div>
-      <div class="row"><div style="flex:1 1 200px"><label for="recMin">Recommended minimum</label><input id="recMin" type="number" value="" disabled/></div></div>
-      <div class="row" style="align-items:flex-end"><div style="flex:1 1 200px"><label for="fQty">Quantity</label><input id="fQty" type="number" min="1" placeholder=""/></div><div><button id="addFish">Add</button></div></div>
+      <div class="row">
+        <div style="flex:1 1 320px">
+          <label for="fishSearch">Search species</label>
+          <input id="fishSearch" type="text" placeholder="Type to filter the list"/>
+        </div>
+      </div>
+
+      <div class="row">
+        <div style="flex:1 1 320px">
+          <label for="fishSelect">Species</label>
+          <select id="fishSelect"></select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div style="flex:1 1 200px">
+          <label for="recMin">Recommended minimum</label>
+          <input id="recMin" type="number" value="" disabled/>
+        </div>
+      </div>
+
+      <div class="row" style="align-items:flex-end">
+        <div style="flex:1 1 200px">
+          <label for="fQty">Quantity</label>
+          <input id="fQty" type="number" min="1" placeholder=""/>
+        </div>
+        <div><button id="addFish">Add</button></div>
+      </div>
     </section>
 
     <!-- Current Stock -->
     <section class="card">
       <h2>Current Stock</h2>
-      <table><thead><tr><th>Name</th><th class="right">Qty</th><th class="right">Aggression</th><th class="right">Actions</th></tr></thead><tbody id="tbody"></tbody></table>
-      <div class="row" style="margin-top:8px"><div style="flex:1 1 200px"><button id="reset" class="clear-danger">Clear Stock</button></div></div>
+      <table>
+        <thead>
+          <tr><th>Name</th><th class="right">Qty</th><th class="right">Aggression</th><th class="right">Actions</th></tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="row" style="margin-top:8px">
+        <div style="flex:1 1 200px"><button id="reset" class="clear-danger">Clear Stock</button></div>
+      </div>
     </section>
 
     <!-- Warnings -->
