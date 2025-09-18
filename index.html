@@ -24,10 +24,10 @@
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: var(--ink);
     background: linear-gradient(
-      180deg, 
-      #0ea5e9 0%,     /* aqua blue (matches fish background) */
-      #38bdf8 60%,   /* lighter blue */
-      #7dd3fc 100%   /* very soft blue for bottom fade */
+      180deg,
+      #0ea5e9 0%,   /* aqua blue (matches fish logo background) */
+      #38bdf8 60%,  /* lighter blue */
+      #7dd3fc 100%  /* soft blue fade */
     );
     background-attachment: fixed;
   }
@@ -38,36 +38,35 @@
     padding: 28px 20px 48px;
   }
 
-  /* Brand */
+  /* ===== Brand ===== */
   .brand {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 12px;
     margin-bottom: 24px;
   }
 
-  .brand img {
-    width: 60px;   /* balanced with text */
-    height: auto;
+  .brand-logo {
+    height: 60px;   /* adjust logo size */
+    width: auto;
     display: block;
   }
 
   .brand-text {
+    color: #fff;
     text-align: left;
   }
 
-  .brand-text h1 {
-    margin: 0;
+  .brand-name {
     font-size: 1.6rem;
     font-weight: 700;
-    color: white;
+    line-height: 1.2;
   }
 
-  .brand-text p {
-    margin: 2px 0 0;
+  .brand-sub {
     font-size: 1rem;
-    color: rgba(255,255,255,0.9);
+    opacity: 0.95;
   }
 
   header {
@@ -170,10 +169,10 @@
   <div class="wrap">
     <!-- Brand logo -->
     <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
-      <img src="images/fish-logo.webp" alt="FishkeepingLifeCo logo"/>
+      <img src="images/fishkeepinglifeco-logo-720.webp?v=1" alt="FishkeepingLifeCo logo" class="brand-logo"/>
       <div class="brand-text">
-        <h1>FishkeepingLifeCo</h1>
-        <p>Aquarium Education</p>
+        <div class="brand-name">FishkeepingLifeCo</div>
+        <div class="brand-sub">Aquarium Education</div>
       </div>
     </div>
 
