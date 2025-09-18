@@ -103,7 +103,7 @@
   .circle.minus{background:var(--warn)}
   .circle.plus{background:var(--ok)}
   .circle.trash{background:var(--bad)}
-  .circle svg{width:18px;height:18px;fill:#fff}
+  .circle .ico{width:18px;height:18px;display:block}
 
   @media (max-width:480px){
     .actions{flex-wrap:wrap;gap:8px 10px}
@@ -220,7 +220,7 @@
   <script src="js/aggression.js"></script>
   <script src="js/stocking_advisor.js"></script>
 
-  <!-- UI Enhancement Patch -->
+  <!-- UI Enhancement Patch (warning-only; SVG icons for actions) -->
   <script>
     (function(){
       const tbody = document.getElementById('tbody');
@@ -245,12 +245,11 @@
       function enhanceActions(td){
         if(!td || td.dataset.enhanced === '1') return;
 
-        const origButtons = [...td.querySelectorAll('button')];
-        // If this td doesn't have buttons, find the one that does (often the last cell)
+        // Find the cell with the original buttons
         let btnCell = td;
-        if(origButtons.length === 0){
+        if(!td.querySelector('button')){
           const tr = td.closest('tr');
-          const withBtns = [...tr.children].find(c => c.querySelector && c.querySelector('button'));
+          const withBtns = tr ? [...tr.children].find(c => c.querySelector && c.querySelector('button')) : null;
           if(withBtns) btnCell = withBtns;
         }
         const buttons = [...btnCell.querySelectorAll('button')];
@@ -259,19 +258,22 @@
         const wrap = document.createElement('div');
         wrap.className = 'actions';
 
-        let minusBtn = buttons.find(b => /-\s*1?/.test(b.textContent));
-        let plusBtn  = buttons.find(b => /\+\s*1?/.test(b.textContent));
-        let delBtn   = buttons.find(b => /delete/i.test(b.textContent));
+        // Recognize legacy buttons by text
+        const minusBtn = buttons.find(b => /-\s*1?/.test(b.textContent));
+        const plusBtn  = buttons.find(b => /\+\s*1?/.test(b.textContent));
+        const delBtn   = buttons.find(b => /delete/i.test(b.textContent));
 
-        // Hide originals
+        // Hide originals, but keep their click behavior
         buttons.forEach(b => b.style.display = 'none');
 
         if(minusBtn){
           const m = document.createElement('button');
           m.type = 'button';
           m.className = 'circle minus';
-          m.innerHTML = '<span aria-hidden="true">-</span>';
           m.title = 'Decrease';
+          m.setAttribute('aria-label','Decrease');
+          /* SVG minus: a single horizontal rounded rectangle */
+          m.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>';
           m.addEventListener('click', ()=> minusBtn.click());
           wrap.appendChild(m);
         }
@@ -279,8 +281,10 @@
           const p = document.createElement('button');
           p.type = 'button';
           p.className = 'circle plus';
-          p.innerHTML = '<span aria-hidden="true">+</span>';
           p.title = 'Increase';
+          p.setAttribute('aria-label','Increase');
+          /* SVG plus: two rectangles */
+          p.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/><rect x="9" y="4" width="2" height="12" rx="1" fill="currentColor"/></svg>';
           p.addEventListener('click', ()=> plusBtn.click());
           wrap.appendChild(p);
         }
@@ -289,7 +293,9 @@
           d.type = 'button';
           d.className = 'circle trash';
           d.title = 'Delete';
-          d.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/></svg>';
+          d.setAttribute('aria-label','Delete');
+          /* SVG trash bin */
+          d.innerHTML = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/></svg>';
           d.addEventListener('click', ()=> delBtn.click());
           wrap.appendChild(d);
         }
@@ -303,6 +309,7 @@
         if (!warningsBox) return map;
         warningsBox.querySelectorAll('div').forEach(div=>{
           const s = div.textContent || '';
+          // Expected: "Cardinal Tetra: needs 6 (2 / 6)"
           const m = s.match(/^\s*([^:]+):.*\((\d+)\s*\/\s*(\d+)\)/i);
           if (m) map.set(m[1].trim().toLowerCase(), { qty:+m[2], min:+m[3] });
         });
@@ -316,11 +323,11 @@
           const cells = [...tr.querySelectorAll('td')];
           if (cells.length === 0) return;
 
-          // Remove legacy aggression % cell if it exists
+          // Remove any legacy aggression % cell
           const maybePct = cells.find(c => !c.querySelector('button') && /\d+\s*%$/.test(c.textContent.trim()));
           if (maybePct) { maybePct.remove(); }
 
-          // Recollect after removal
+          // Re-evaluate after removal
           const tds = [...tr.querySelectorAll('td')];
           const nameTd = tds[0];
           const qtyTd  = tds[1];
@@ -330,7 +337,7 @@
           const fQty  = wrapField(qtyTd,  { center:true, small:true });
           enhanceActions(actionsTd);
 
-          // optional: name/qty color from warnings
+          // Optional color hint from warnings
           const key = (fName.textContent || '').trim().toLowerCase();
           [fName,fQty].forEach(el=> el && el.classList.remove('ok','warn','bad'));
           const info = warnMap.get(key);
