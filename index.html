@@ -35,6 +35,52 @@
   .bar-fill{ position:absolute; top:0; left:0; bottom:0; width:0%; background: linear-gradient(to right, #10b981, #f59e0b, #ef4444); transition: width .25s ease; }
   .bar-note{ display:flex; justify-content:space-between; font-size:0.9rem; color:#475569; margin-top:6px; }
 
+  /* Helper notes with tooltip */
+  small.note {
+    color:#94a3b8;
+    display:block;
+    margin-top:4px;
+    font-size:0.8rem;
+    font-style:italic;
+    position:relative;
+    padding-left:22px;   /* space for icon */
+    max-width:100%;
+  }
+  .note .info {
+    position:absolute;
+    left:0;
+    top:0;
+    line-height:1;
+    cursor:pointer;
+    user-select:none;
+    font-style:normal;
+  }
+  .note .info:focus { outline:2px solid #94a3b8; outline-offset:2px; border-radius:4px; }
+
+  /* Tooltip bubble (appears BELOW the note) */
+  .note .tip {
+    position:absolute;
+    left:0;           /* align with note start */
+    top:100%;         /* directly below note */
+    margin-top:6px;
+    background:#111827;   /* dark gray */
+    color:#fff;
+    font-size:0.75rem;
+    padding:6px 10px;
+    border-radius:6px;
+    white-space:nowrap;
+    box-shadow:0 4px 10px rgba(0,0,0,.18);
+    opacity:0;
+    pointer-events:none;
+    transform:translateY(-4px);
+    transition: opacity .15s ease, transform .15s ease;
+    z-index:20;
+  }
+  /* Show on desktop hover */
+  .note:hover .tip { opacity:1; pointer-events:auto; transform:translateY(0); }
+  /* Show when toggled (mobile tap) */
+  .note.show-tip .tip { opacity:1; pointer-events:auto; transform:translateY(0); }
+
   table{ width:100%; border-collapse:collapse; }
   th, td{ padding:10px; border-bottom:1px solid #e2e8f0; text-align:left; }
   .right{ text-align:right; }
@@ -48,6 +94,8 @@
   @media (max-width: 540px){
     body{ padding:16px; }
     .row > *{ flex:1 1 100%; }
+    /* Let long tooltips wrap on small screens */
+    .note .tip { white-space:normal; max-width:calc(100vw - 64px); }
   }
 </style>
 </head>
@@ -79,18 +127,28 @@
     </div>
   </div>
 
-  <!-- Both meters with titles -->
+  <!-- Both meters with titles + tooltip notes -->
   <div class="bars-wrap">
     <div class="bar-block">
       <h3>Bioload</h3>
       <div class="bar" aria-live="polite"><div id="barFill" class="bar-fill"></div></div>
       <div class="bar-note"><span>Low</span><span>High</span></div>
+      <small class="note">
+        <span class="info" tabindex="0" role="button" aria-label="More info" aria-expanded="false">ℹ️</span>
+        Bioload is an estimate. Filtration and plants adjust capacity.
+        <span class="tip" role="tooltip">Estimated load. Adjusted by filtration and planting.</span>
+      </small>
     </div>
 
     <div class="bar-block">
       <h3>Aggression Risk (Average conflicts)</h3>
       <div class="bar" aria-live="polite"><div id="aggBarFill" class="bar-fill"></div></div>
-      <div class="bar-note"><span>Calm</span><span>Danger</span></div>
+      <div class="bar-note"><span>Low</span><span>High</span></div>
+      <small class="note">
+        <span class="info" tabindex="0" role="button" aria-label="More info" aria-expanded="false">ℹ️</span>
+        Serious conflicts automatically max this bar.
+        <span class="tip" role="tooltip">Warnings (e.g., fin-nippers, Betta conflicts) will max this bar.</span>
+      </small>
     </div>
   </div>
 </section>
@@ -153,5 +211,51 @@
 <script src="js/fish-data.js"></script>
 <script src="js/aggression.js"></script>
 <script src="js/stocking_advisor.js"></script>
+
+<!-- Tooltip behavior: hover (CSS) + tap/click (JS) + outside/ESC to close -->
+<script>
+  (function(){
+    function closeAllNotes(except) {
+      document.querySelectorAll('small.note.show-tip').forEach(n => {
+        if (n !== except) {
+          n.classList.remove('show-tip');
+          const btn = n.querySelector('.info');
+          if (btn) btn.setAttribute('aria-expanded','false');
+        }
+      });
+    }
+
+    // Toggle on click/tap
+    document.addEventListener('click', function(e){
+      const info = e.target.closest('.note .info');
+      const note = info ? info.closest('.note') : null;
+
+      if (note) {
+        // Toggle this one
+        const isOpen = note.classList.toggle('show-tip');
+        info.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        // Close others
+        if (isOpen) closeAllNotes(note);
+        e.stopPropagation();
+        return;
+      }
+      // Clicked elsewhere — close all
+      closeAllNotes();
+    });
+
+    // Keyboard support: Enter/Space toggles, Esc closes
+    document.addEventListener('keydown', function(e){
+      const active = document.activeElement;
+      const isInfo = active && active.classList && active.classList.contains('info');
+
+      if (isInfo && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        active.click();
+      } else if (e.key === 'Escape') {
+        closeAllNotes();
+      }
+    });
+  })();
+</script>
 </body>
 </html>
