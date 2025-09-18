@@ -49,13 +49,10 @@
   .brand{
     display:flex;align-items:center;gap:12px;
   }
-  .brand .fishmark{
-    width:40px;height:40px;display:inline-block;
-  }
-  .title{
-    font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:.2px
-  }
+  .brand .fishmark{width:40px;height:40px;display:inline-block}
+  .title{font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:.2px}
   .subtitle{color:var(--muted-2);font-size:14px}
+
   .card{
     background:var(--card);
     border:1px solid rgba(255,255,255,.06);
@@ -252,7 +249,7 @@ function renderFishOptions(){
 function currentHas(id){ return stock.find(x=>x.id===id); }
 
 function validateAdd(fish, qty){
-  // Disallow >1 male betta (common-sense hard guard)
+  // Disallow >1 male betta (hard guard)
   if(fish.id==='betta_m'){
     const existing = currentHas('betta_m');
     if((existing?.qty||0) + qty > 1){
@@ -264,7 +261,7 @@ function validateAdd(fish, qty){
 
 function updateMeters(){
   const totalBio = stock.reduce((s,x)=>s + x.bio * x.qty, 0);
-  // Aggression: weighted avg by count; bias towards most aggressive species
+  // Aggression: weighted avg by count; bias toward most aggressive species
   const totalCount = stock.reduce((s,x)=>s + x.qty, 0);
   let baseAgg = totalCount ? (stock.reduce((s,x)=>s + x.agg * x.qty, 0) / totalCount) : 0;
   const topAgg  = stock.reduce((m,x)=>Math.max(m, x.agg), 0);
