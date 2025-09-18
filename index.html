@@ -71,11 +71,12 @@
   /* ===== Current Stock ===== */
   table.stock{width:100%;border-collapse:collapse}
   thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66}
-  thead th.qty{ text-align:center; } /* better align Qty title */
+  thead th.qty{text-align:center}
   .right{text-align:right}
   tbody td{padding:10px 6px}
+  tbody td:first-child{padding-left:2px}
 
-  /* Neutral fields until explicitly flagged */
+  /* Fields */
   .field{
     background:var(--field-bg);
     border:1px solid var(--field-bd);
@@ -84,53 +85,36 @@
     height:40px;
     display:flex; align-items:center; min-width:0;
   }
-  tbody td:first-child{ padding-left:2px; } /* pull Name closer to left */
   .field.single-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:120px}
   .field.center{justify-content:center}
   .field.small{min-width:60px;justify-content:center;font-variant-numeric:tabular-nums}
 
-  /* Only add color when tagged */
-  .field.ok  { border-color:#94e6c0 }
-  .field.warn{ border-color:#f6c76a }
-  .field.bad { border-color:#f2a3a3 }
-
   /* Aggression circle */
-  .aggr{
-    display:flex; align-items:center; gap:8px; justify-content:center;
-  }
-  .aggr-dot{
-    width:26px; height:26px; border-radius:50%;
-    background:#10b981; /* default green */
-    border:2px solid rgba(15,23,42,.08);
-    flex:0 0 26px;
-  }
-  .aggr.ok   { --dot: var(--ok); }
-  .aggr.warn { --dot: var(--warn); }
-  .aggr.bad  { --dot: var(--bad); }
-  .aggr-dot{ background:var(--dot, var(--ok)); }
-  .aggr-val{ font-variant-numeric: tabular-nums; font-weight:600; }
+  .aggr{display:flex;align-items:center;gap:8px;justify-content:center}
+  .aggr-dot{width:26px;height:26px;border-radius:50%;background:#10b981;border:2px solid rgba(15,23,42,.08)}
+  .aggr.ok   .aggr-dot{background:var(--ok)}
+  .aggr.warn .aggr-dot{background:var(--warn)}
+  .aggr.bad  .aggr-dot{background:var(--bad)}
+  .aggr-val{font-variant-numeric:tabular-nums;font-weight:600}
 
   /* Icon circles for actions */
-  .actions{display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:nowrap}
+  .actions{display:flex;justify-content:flex-end;align-items:center;gap:8px}
   .circle{
-    width:36px; height:36px; border-radius:50%; display:inline-flex;
-    align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:18px;
-    border:none; cursor:pointer; box-shadow:0 2px 6px rgba(2,6,23,.14);
+    width:36px;height:36px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:900;font-size:18px;border:none;cursor:pointer;
+    box-shadow:0 2px 6px rgba(2,6,23,.14);
     transition:transform .06s ease, filter .15s ease;
   }
-  .circle:active{ transform: translateY(1px); }
-  .circle.minus{ background:var(--warn); }
-  .circle.minus:hover{ filter:brightness(.95); }
-  .circle.plus{ background:var(--ok); }
-  .circle.plus:hover{ filter:brightness(.95); }
-  .circle.trash{ background:var(--bad); width:36px; }
-  .circle svg{ width:18px; height:18px; fill:#fff; }
+  .circle:active{transform:translateY(1px)}
+  .circle.minus{background:var(--warn)}
+  .circle.plus{background:var(--ok)}
+  .circle.trash{background:var(--bad)}
+  .circle svg{width:18px;height:18px;fill:#fff}
 
-  /* Phone: stack neatly; never overflow card */
   @media (max-width:480px){
-    .actions{flex-wrap:wrap; gap:8px 10px;}
-    .circle.trash{ flex: 0 0 36px; }
-    thead th{ font-size:1rem; }
+    .actions{flex-wrap:wrap;gap:8px 10px}
+    .circle.trash{flex:0 0 36px}
   }
 
   /* Warnings list */
@@ -244,7 +228,6 @@
   <script src="js/aggression.js"></script>
   <script src="js/stocking_advisor.js"></script>
 
-  <!-- Safe, lightweight UI enhancement -->
   <script>
     (function(){
       const tbody = document.getElementById('tbody');
@@ -266,7 +249,7 @@
         return el;
       }
 
-      // Build aggression circle + % text
+      // Aggression: circle + %
       function enhanceAgg(td){
         if(!td || td.dataset.enhanced === '1') return;
         const field = wrapField(td, { center:true, small:true });
@@ -285,7 +268,6 @@
         td.appendChild(wrap);
         td.dataset.enhanced = '1';
 
-        // color
         const n = parseFloat(pct.replace('%',''));
         wrap.classList.remove('ok','warn','bad');
         if (!isNaN(n)){
@@ -297,7 +279,7 @@
         }
       }
 
-      // Group to icon circles
+      // Replace with icon circles
       function enhanceActions(td){
         if(!td || td.dataset.enhanced === '1') return;
 
@@ -307,12 +289,13 @@
         const wrap = document.createElement('div');
         wrap.className = 'actions';
 
-        // find by label
         let minusBtn = buttons.find(b => b.textContent.includes('-'));
         let plusBtn  = buttons.find(b => b.textContent.includes('+'));
         let delBtn   = buttons.find(b => /delete/i.test(b.textContent));
 
-        // - circle
+        // Hide old text buttons
+        buttons.forEach(b => b.style.display = 'none');
+
         if(minusBtn){
           const m = document.createElement('button');
           m.type = 'button';
@@ -322,7 +305,6 @@
           m.addEventListener('click', ()=> minusBtn.click());
           wrap.appendChild(m);
         }
-        // + circle
         if(plusBtn){
           const p = document.createElement('button');
           p.type = 'button';
@@ -332,7 +314,6 @@
           p.addEventListener('click', ()=> plusBtn.click());
           wrap.appendChild(p);
         }
-        // trash circle
         if(delBtn){
           const d = document.createElement('button');
           d.type = 'button';
@@ -371,10 +352,9 @@
           const fName = wrapField(tds[0], { single:true });
           const fQty  = wrapField(tds[1], { center:true, small:true });
 
-          enhanceAgg(tds[2]);     // colored circle + %
-          enhanceActions(tds[3]); // icon buttons
+          enhanceAgg(tds[2]);
+          enhanceActions(tds[3]);
 
-          // Color name/qty from warnings if present
           const key = (fName.textContent || '').trim().toLowerCase();
           [fName,fQty].forEach(el=> el && el.classList.remove('ok','warn','bad'));
           const info = warnMap.get(key);
@@ -383,7 +363,6 @@
             if (info.qty < redCut){ fName.classList.add('bad'); fQty.classList.add('bad'); }
             else { fName.classList.add('warn'); fQty.classList.add('warn'); }
           }
-          // else: stay neutral
 
           tr.dataset.styled = '1';
         });
@@ -393,10 +372,10 @@
       rowObs.observe(tbody, { childList:true, subtree:true });
 
       const warnObs = new MutationObserver(()=>{ tbody.querySelectorAll('tr').forEach(tr=> tr.dataset.styled=''); colorNameQty(); });
-      warnObs.observe(document.getElementById('aggression-warnings'), { childList:true, subtree:true });
+      warnObs.observe(warningsBox, { childList:true, subtree:true });
 
       window.addEventListener('load', colorNameQty);
     })();
   </script>
 </body>
-</html>
+</html
