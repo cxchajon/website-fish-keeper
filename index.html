@@ -35,40 +35,23 @@
   .bar-fill{ position:absolute; top:0; left:0; bottom:0; width:0%; background: linear-gradient(to right, #10b981, #f59e0b, #ef4444); transition: width .25s ease; }
   .bar-note{ display:flex; justify-content:space-between; font-size:0.9rem; color:#475569; margin-top:6px; }
 
-  /* Tooltip system */
-  small.note {
-    display:inline-block;
-    margin-top:4px;
+  /* Always-visible helper notes with icon */
+  small.note { 
+    color:#94a3b8; 
+    display:block; 
+    margin-top:4px; 
+    font-size:0.8rem; 
+    font-style:italic; 
     position:relative;
+    padding-left:20px;
   }
-  .note .info {
-    cursor:pointer;
-    font-style:normal;
-    user-select:none;
-    font-size:0.9rem;
-  }
-  .note .tip {
+  small.note::before {
+    content: "ℹ️";
     position:absolute;
     left:0;
-    top:100%;
-    margin-top:6px;
-    background:#111827; /* dark gray */
-    color:#fff;
-    font-size:0.75rem;
-    padding:6px 10px;
-    border-radius:6px;
-    white-space:nowrap;
-    box-shadow:0 4px 10px rgba(0,0,0,.18);
-    opacity:0;
-    pointer-events:none;
-    transform:translateY(-4px);
-    transition: opacity .15s ease, transform .15s ease;
-    z-index:20;
+    top:0;
+    font-style:normal;
   }
-  /* Desktop hover */
-  .note:hover .tip { opacity:1; pointer-events:auto; transform:translateY(0); }
-  /* Mobile tap toggle */
-  .note.show-tip .tip { opacity:1; pointer-events:auto; transform:translateY(0); }
 
   table{ width:100%; border-collapse:collapse; }
   th, td{ padding:10px; border-bottom:1px solid #e2e8f0; text-align:left; }
@@ -83,7 +66,6 @@
   @media (max-width: 540px){
     body{ padding:16px; }
     .row > *{ flex:1 1 100%; }
-    .note .tip { white-space:normal; max-width:calc(100vw - 64px); }
   }
 </style>
 </head>
@@ -115,26 +97,20 @@
     </div>
   </div>
 
-  <!-- Both meters with titles + icon tooltips -->
+  <!-- Both meters with titles + always-visible notes -->
   <div class="bars-wrap">
     <div class="bar-block">
       <h3>Bioload</h3>
       <div class="bar" aria-live="polite"><div id="barFill" class="bar-fill"></div></div>
       <div class="bar-note"><span>Low</span><span>High</span></div>
-      <small class="note">
-        <span class="info" tabindex="0" role="button" aria-label="Bioload info" aria-expanded="false">ℹ️</span>
-        <span class="tip" role="tooltip">Estimated load. Adjusted by filtration and planting.</span>
-      </small>
+      <small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small>
     </div>
 
     <div class="bar-block">
       <h3>Aggression Risk (Average conflicts)</h3>
       <div class="bar" aria-live="polite"><div id="aggBarFill" class="bar-fill"></div></div>
       <div class="bar-note"><span>Low</span><span>High</span></div>
-      <small class="note">
-        <span class="info" tabindex="0" role="button" aria-label="Aggression info" aria-expanded="false">ℹ️</span>
-        <span class="tip" role="tooltip">Warnings (e.g., fin-nippers, Betta conflicts) will max this bar.</span>
-      </small>
+      <small class="note">Serious conflicts automatically max this bar.</small>
     </div>
   </div>
 </section>
@@ -197,45 +173,5 @@
 <script src="js/fish-data.js"></script>
 <script src="js/aggression.js"></script>
 <script src="js/stocking_advisor.js"></script>
-
-<!-- Tooltip behavior for mobile tap -->
-<script>
-  (function(){
-    function closeAllNotes(except) {
-      document.querySelectorAll('small.note.show-tip').forEach(n => {
-        if (n !== except) {
-          n.classList.remove('show-tip');
-          const btn = n.querySelector('.info');
-          if (btn) btn.setAttribute('aria-expanded','false');
-        }
-      });
-    }
-
-    document.addEventListener('click', function(e){
-      const info = e.target.closest('.note .info');
-      const note = info ? info.closest('.note') : null;
-
-      if (note) {
-        const isOpen = note.classList.toggle('show-tip');
-        info.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        if (isOpen) closeAllNotes(note);
-        e.stopPropagation();
-        return;
-      }
-      closeAllNotes();
-    });
-
-    document.addEventListener('keydown', function(e){
-      const active = document.activeElement;
-      const isInfo = active && active.classList && active.classList.contains('info');
-      if (isInfo && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault();
-        active.click();
-      } else if (e.key === 'Escape') {
-        closeAllNotes();
-      }
-    });
-  })();
-</script>
 </body>
 </html>
