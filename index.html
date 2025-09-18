@@ -3,358 +3,371 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Stocking Calculator</title>
+<title>FishKeeper AI — Stocking Calculator</title>
+<meta name="description" content="Stocking Calculator with Bio-load & Aggression meters. SVG action icons for consistent rendering on iOS/Android/Desktop."/>
+
 <style>
   :root{
-    --gap:12px; --radius:14px;
-    --ink:#0f172a; --muted:#475569; --muted-2:#94a3b8;
-
-    /* Brand & UI */
-    --brand:#0284c7; --brand-2:#0369a1;
-    --ok:#10b981; --ok-2:#059669;
-    --warn:#f59e0b; --warn-2:#d97706;
-    --bad:#ef4444; --bad-2:#dc2626;
-
-    /* Background gradient */
-    --g1:#0ea5e9; --g2:#38bdf8; --g3:#7dd3fc;
-
-    /* Cards */
-    --card:rgba(224,242,254,0.92);
-    --card-border:rgba(15,23,42,0.06);
-
-    /* Fields */
-    --field-bg:#fff; --field-bd:#d2dbe6;
+    --ink:#0f172a;
+    --muted:#475569;
+    --muted-2:#94a3b8;
+    --bg:#0b1220;
+    --card:#0f1828cc; /* frosted-glass feel */
+    --ring:#1e293b;
+    --brand:#0284c7;
+    --good:#10b981;
+    --warn:#f59e0b;
+    --bad:#ef4444;
+    --radius:16px;
+    --gap:12px;
+    --shadow:0 8px 30px rgba(0,0,0,.25);
   }
 
-  *{box-sizing:border-box}
+  /* Page */
+  html,body{height:100%}
   body{
-    margin:0; color:var(--ink);
-    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:linear-gradient(180deg,var(--g1) 0%,var(--g2) 60%,var(--g3) 100%);
-    background-attachment:fixed;
+    margin:0;
+    color:#e5eef7;
+    background:
+      radial-gradient(1200px 700px at 15% 5%, #0c2438 0%, transparent 60%),
+      radial-gradient(1000px 600px at 85% 15%, #082235 0%, transparent 55%),
+      linear-gradient(180deg,#09111f 0%, #07101b 100%);
+    font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Helvetica Neue',Arial,'Apple Color Emoji','Segoe UI Emoji';
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:24px;
   }
-  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px}
-
-  /* Brand */
-  .brand{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-bottom:8px;color:#fff}
-  .brand-name{font-size:1.6rem;font-weight:700;line-height:1.2}
-  .brand-sub{font-size:1rem;opacity:.95}
-  header{margin-bottom:16px;text-align:left;color:#fff}
-  header h2{margin:0;font-size:1.2rem;font-weight:600;opacity:.95}
-
-  /* Cards */
+  .app{
+    max-width:1000px;
+    margin:0 auto;
+    display:grid;
+    gap:20px;
+  }
+  header{
+    display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;
+  }
+  .brand{
+    display:flex;align-items:center;gap:12px;
+  }
+  .brand .fishmark{
+    width:40px;height:40px;display:inline-block;
+  }
+  .title{
+    font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:.2px
+  }
+  .subtitle{color:var(--muted-2);font-size:14px}
   .card{
-    background:var(--card); border:1px solid var(--card-border);
-    border-radius:var(--radius); padding:20px; margin-bottom:20px;
-    box-shadow:0 8px 18px -10px rgba(2,6,23,.22);
-    backdrop-filter:blur(6px) saturate(140%); -webkit-backdrop-filter:blur(6px) saturate(140%);
-    overflow:hidden;
+    background:var(--card);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding:18px;
   }
-  .card h2,.card h3{margin:0 0 10px;font-weight:700}
+  .stack{display:grid;gap:14px}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 
-  /* Forms */
-  label{font-weight:700;margin-bottom:6px;display:block}
-  input,select{width:100%;padding:10px;border:1px solid var(--field-bd);border-radius:10px;background:#fff}
-  .row{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(220px,1fr));align-items:end}
-
-  /* Buttons */
-  .btn{border:none;color:#fff;cursor:pointer;font-weight:700;border-radius:10px;padding:10px 14px;background:var(--brand);transition:transform .06s,background .2s,box-shadow .2s;box-shadow:0 2px 8px rgba(2,6,23,.18)}
-  .btn:hover{background:var(--brand-2)} .btn:active{transform:translateY(1px)} .btn:disabled{opacity:.75;cursor:not-allowed}
-
-  /* Bars */
-  .bar{height:24px;background:#e2e8f0;border-radius:999px;overflow:hidden}
-  .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--ok),var(--warn),var(--bad));transition:width .25s}
-  .bar-note{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted)}
-  small.note{color:var(--muted-2);font-size:.8rem;font-style:italic;display:block;margin-top:6px;padding-left:20px;position:relative}
-  small.note::before{content:"ℹ️";position:absolute;left:0}
-
-  /* ===== Current Stock ===== */
-  table.stock{width:100%;border-collapse:collapse}
-  thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66}
-  thead th.qty{text-align:center;width:90px}
-  thead th.actions{text-align:right;width:150px}
-  tbody td{padding:10px 6px}
-  tbody td:first-child{padding-left:2px}
-
-  /* Fields */
-  .field{
-    background:var(--field-bg);
-    border:1px solid var(--field-bd);
-    border-radius:10px;
+  /* Controls */
+  select, input[type="number"]{
+    appearance:none;
+    background:#0b1220;
+    border:1px solid #1f2b3d;
+    color:#e7f0f9;
     padding:10px 12px;
-    height:40px;
-    display:flex; align-items:center; min-width:0;
+    border-radius:12px;
+    min-width:220px;
+    outline:none;
   }
-  .field.single-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:140px}
-  .field.center{justify-content:center}
-  .field.small{min-width:60px;justify-content:center;font-variant-numeric:tabular-nums}
-
-  /* Icon circles for actions */
-  .actions{display:flex;justify-content:flex-end;align-items:center;gap:10px}
-  .circle{
-    width:36px;height:36px;border-radius:50%;
-    display:inline-flex;align-items:center;justify-content:center;
-    color:#fff;font-weight:900;font-size:20px;border:none;cursor:pointer;
-    box-shadow:0 2px 6px rgba(2,6,23,.14);
-    transition:transform .06s ease, filter .15s ease;
-    line-height:1;
+  input[type="number"]{width:120px}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    background:#0b1726;
+    color:#e7f0f9;
+    border:1px solid #213045;
+    padding:10px 14px;
+    border-radius:12px;
+    cursor:pointer;
+    user-select:none;
+    transition:transform .06s ease, background .2s ease, border-color .2s ease;
+    touch-action:manipulation;
   }
-  .circle:active{transform:translateY(1px)}
-  .circle.minus{background:var(--warn)}
-  .circle.plus{background:var(--ok)}
-  .circle.trash{background:var(--bad)}
-  .circle svg{width:18px;height:18px;fill:#fff}
+  .btn:hover{background:#0d1d30;border-color:#2a405c}
+  .btn:active{transform:translateY(1px)}
+  .btn .ico{width:18px;height:18px;display:block}
+  .btn.primary{background:linear-gradient(180deg,#0e7db6,#066a99);border-color:#0a6a9e}
+  .btn.primary:hover{background:linear-gradient(180deg,#1088c4,#0975ab)}
 
-  @media (max-width:480px){
-    .actions{flex-wrap:wrap;gap:8px 10px}
-    .circle.trash{flex:0 0 36px}
+  /* Icon-only buttons for row items */
+  .icon-btn{
+    width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;
+    background:#0b1726;border:1px solid #213045;border-radius:10px;
+    color:#e7f0f9;cursor:pointer;touch-action:manipulation;transition:transform .06s ease,background .2s ease,border-color .2s ease;
   }
+  .icon-btn:hover{background:#0d1d30;border-color:#2a405c}
+  .icon-btn:active{transform:translateY(1px)}
+  .icon-btn .ico{width:18px;height:18px;display:block}
 
-  /* Warnings list */
-  #aggression-warnings>div{background:#fff7ed;border:2px solid #fdba74;color:#7a3419;padding:12px 14px;border-radius:12px;line-height:1.4;margin-bottom:8px}
+  /* List */
+  .list{display:grid;gap:10px}
+  .item{
+    display:grid;
+    grid-template-columns: 1fr auto;
+    align-items:center;
+    background:#0b1424;
+    border:1px solid #1b2637;
+    border-radius:12px;padding:12px 12px;
+  }
+  .item .meta{display:flex;flex-direction:column}
+  .item .name{font-weight:600}
+  .item .sub{font-size:12px;color:#a8c1d9}
+  .item .actions{display:flex;align-items:center;gap:8px}
+
+  /* Meters */
+  .meters{display:grid;gap:12px}
+  .meter{
+    background:#0b1424;border:1px solid #1b2637;border-radius:12px;padding:14px;
+  }
+  .meter .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .meter .label{font-weight:600}
+  .meter .range{
+    position:relative;height:14px;background:#0b1726;border:1px solid #1b2637;border-radius:999px;overflow:hidden;
+  }
+  .meter .fill{
+    position:absolute;inset:0 100% 0 0;background:linear-gradient(90deg,var(--good),#22c55e,#fbbf24,#f97316,#ef4444);
+    border-right:1px solid rgba(255,255,255,.2);
+    transition:width .35s ease;
+  }
+  .meter .caps{display:flex;justify-content:space-between;font-size:12px;color:var(--muted-2);margin-top:6px}
+
+  /* Warnings */
+  .warn{font-size:13px;color:#ffe4a3}
+  .error{font-size:13px;color:#ffc0c0}
+
+  /* Toast */
+  .toast{
+    position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+    background:#0b1726;border:1px solid #2a405c;border-radius:12px;padding:10px 14px;
+    color:#e7f0f9;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .25s ease, transform .25s ease;
+  }
+  .toast.show{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <!-- Brand -->
-    <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
-      <div class="brand-name">FishkeepingLifeCo</div>
-      <div class="brand-sub">Aquarium Education</div>
+<div class="app">
+  <header>
+    <div class="brand">
+      <!-- Simple fish mark (no bounding box) -->
+      <svg class="fishmark" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M8 32c8-10 18-15 28-15 5 0 9 1 13 3l7-6 0 32-7-6c-4 2-8 3-13 3-10 0-20-5-28-15z" fill="#1ea7ff"/>
+        <circle cx="38" cy="26" r="3" fill="#0b1220"/>
+      </svg>
+      <div>
+        <div class="title">FishKeeper AI — Stocking Calculator</div>
+        <div class="subtitle">SVG action icons • Consistent across iOS / Android / Desktop</div>
+      </div>
     </div>
-    <header><h2>Stocking Calculator</h2></header>
+  </header>
 
-    <!-- Tank Setup -->
-    <section class="card">
-      <h2>Tank Setup</h2>
-      <div class="row">
-        <div>
-          <label for="gallons">Tank size (US gallons)</label>
-          <input id="gallons" type="number" min="1" value="20">
-        </div>
-        <div>
-          <label for="filtration">Filtration</label>
-          <select id="filtration">
-            <option value="low">Low — Sponge filter (gentle flow)</option>
-            <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
-            <option value="high">High — Sump/Canister (oversized)</option>
-          </select>
-        </div>
-        <div>
-          <label>Planted?</label>
-          <input id="planted" type="checkbox"> <span>Yes</span>
-        </div>
+  <!-- Always-visible meters -->
+  <section class="meters">
+    <div class="meter" id="bioloadMeter">
+      <div class="head"><div class="label">Bio-load</div><div class="value" id="bioVal">0%</div></div>
+      <div class="range" aria-hidden="true"><div class="fill" id="bioFill" style="width:0%"></div></div>
+      <div class="caps"><span>Low</span><span>High</span></div>
+    </div>
+    <div class="meter" id="aggrMeter">
+      <div class="head"><div class="label">Aggression</div><div class="value" id="aggVal">0%</div></div>
+      <div class="range" aria-hidden="true"><div class="fill" id="aggFill" style="width:0%"></div></div>
+      <div class="caps"><span>Low</span><span>High</span></div>
+    </div>
+  </section>
+
+  <!-- Add panel -->
+  <section class="card stack" aria-labelledby="addLbl">
+    <h2 id="addLbl" class="sr-only">Add Fish</h2>
+    <div class="row">
+      <select id="fishSelect" aria-label="Species">
+        <!-- Options injected by JS -->
+      </select>
+      <input id="qtyInput" type="number" inputmode="numeric" min="1" step="1" value="1" aria-label="Quantity"/>
+      <button id="addBtn" class="btn primary" type="button">
+        <svg class="ico" viewBox="0 0 20 20" aria-hidden="true">
+          <!-- plus icon via two rectangles -->
+          <rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"></rect>
+          <rect x="9" y="4" width="2" height="12" rx="1" fill="currentColor"></rect>
+        </svg>
+        <span>Add to Stock</span>
+      </button>
+    </div>
+    <div class="row">
+      <div class="subtitle" id="minTxt">Recommended minimum: <span id="minGallons">—</span></div>
+    </div>
+    <div class="warn" id="compatWarning" role="status" aria-live="polite"></div>
+    <div class="error" id="errorMsg" role="status" aria-live="polite"></div>
+  </section>
+
+  <!-- Current Stock -->
+  <section class="card stack" aria-labelledby="stockLbl">
+    <h2 id="stockLbl">Current Stock</h2>
+    <div class="list" id="stockList" aria-live="polite" aria-relevant="additions removals">
+      <!-- Items injected by JS -->
+    </div>
+  </section>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* --------------------------- Data --------------------------- */
+const FISH_DB = [
+  // name, minGal, bioloadPerFish, aggression(0-100), tags
+  { id:'betta_m',  name:'Betta (male)',        min:5,  bio:8,  agg:90, tags:['anabantoid','solo','territorial'] },
+  { id:'betta_f',  name:'Betta (female)',      min:5,  bio:7,  agg:45, tags:['anabantoid'] },
+  { id:'cardinal', name:'Cardinal Tetra',      min:15, bio:2,  agg:10, tags:['school:6'] },
+  { id:'cherry',   name:'Cherry Barb',         min:20, bio:3,  agg:18, tags:['group:6'] },
+  { id:'kuhli',    name:'Kuhli Loach',         min:20, bio:4,  agg:12, tags:['group:6','bottom'] },
+  { id:'amano',    name:'Amano Shrimp',        min:10, bio:1,  agg:2,  tags:['invert'] },
+  { id:'nerite',   name:'Nerite Snail',        min:5,  bio:1,  agg:0,  tags:['invert'] },
+  { id:'honey_g',  name:'Honey Gourami (M/F)', min:15, bio:5,  agg:25, tags:['anabantoid'] },
+];
+
+// Approx tank capacity basis for meters (can make user-settable later)
+const TANK_CAPACITY = 100; // arbitrary capacity units to normalize 0-100%
+const AGG_MAX = 100;
+
+/* ------------------------ State --------------------------- */
+let stock = []; // [{id, name, qty, min, bio, agg}]
+
+/* ------------------------ Helpers ------------------------- */
+const $ = (sel) => document.querySelector(sel);
+function toast(msg, kind=''){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1800); }
+
+function renderFishOptions(){
+  const sel = $('#fishSelect');
+  sel.innerHTML = FISH_DB.map(f=>`<option value="${f.id}">${f.name}</option>`).join('');
+  updateMinText();
+}
+function currentHas(id){ return stock.find(x=>x.id===id); }
+
+function validateAdd(fish, qty){
+  // Disallow >1 male betta (common-sense hard guard)
+  if(fish.id==='betta_m'){
+    const existing = currentHas('betta_m');
+    if((existing?.qty||0) + qty > 1){
+      return 'You can’t keep more than one male Betta in the same tank.';
+    }
+  }
+  return '';
+}
+
+function updateMeters(){
+  const totalBio = stock.reduce((s,x)=>s + x.bio * x.qty, 0);
+  // Aggression: weighted avg by count; bias towards most aggressive species
+  const totalCount = stock.reduce((s,x)=>s + x.qty, 0);
+  let baseAgg = totalCount ? (stock.reduce((s,x)=>s + x.agg * x.qty, 0) / totalCount) : 0;
+  const topAgg  = stock.reduce((m,x)=>Math.max(m, x.agg), 0);
+  const agg = Math.min(AGG_MAX, Math.round( (baseAgg*0.7 + topAgg*0.3) ));
+
+  const bioPct = Math.max(0, Math.min(100, Math.round((totalBio / TANK_CAPACITY)*100)));
+  $('#bioFill').style.width = bioPct + '%';
+  $('#bioVal').textContent = bioPct + '%';
+
+  $('#aggFill').style.width = agg + '%';
+  $('#aggVal').textContent = agg + '%';
+}
+
+function renderStock(){
+  const list = $('#stockList');
+  if(stock.length===0){
+    list.innerHTML = '<div class="subtitle">No fish added yet.</div>';
+    updateMeters();
+    return;
+  }
+  list.innerHTML = stock.map(item=>{
+    return `<div class="item" data-id="${item.id}">
+      <div class="meta">
+        <div class="name">${item.name}</div>
+        <div class="sub">Qty: <strong>${item.qty}</strong> • Min: ${item.min} gal • Bio: ${item.bio}/ea • Agg: ${item.agg}</div>
       </div>
-      <div style="margin-top:16px">
-        <div class="bar-block">
-          <h3>Bioload</h3>
-          <div class="bar"><div id="barFill" class="bar-fill"></div></div>
-          <div class="bar-note"><span>Low</span><span>High</span></div>
-          <small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small>
-        </div>
-        <div class="bar-block" style="margin-top:14px">
-          <h3>Aggression Risk (Average conflicts)</h3>
-          <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
-          <div class="bar-note"><span>Low</span><span>High</span></div>
-          <small class="note">Serious conflicts automatically max this bar.</small>
-        </div>
+      <div class="actions">
+        <button class="icon-btn dec" type="button" aria-label="Decrease">
+          <svg class="ico" viewBox="0 0 20 20" aria-hidden="true">
+            <rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"></rect>
+          </svg>
+        </button>
+        <button class="icon-btn inc" type="button" aria-label="Increase">
+          <svg class="ico" viewBox="0 0 20 20" aria-hidden="true">
+            <rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"></rect>
+            <rect x="9" y="4" width="2" height="12" rx="1" fill="currentColor"></rect>
+          </svg>
+        </button>
+        <button class="icon-btn del" type="button" aria-label="Remove">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V7H4V5h4V4a1 1 0 0 1 1-1Zm8 6v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V9h10ZM9 5v0-1 1Zm2 4h2v9h-2V9Zm-4 0h2v9H7V9Zm8 0h2v9h-2V9Z"/>
+          </svg>
+        </button>
       </div>
-    </section>
+    </div>`;
+  }).join('');
+  updateMeters();
+}
 
-    <!-- Add Fish -->
-    <section class="card">
-      <h2>Add Fish</h2>
-      <div class="row">
-        <div style="flex:1 1 320px">
-          <label for="fishSearch">Search species</label>
-          <input id="fishSearch" type="text" placeholder="Type to filter the list">
-        </div>
-      </div>
-      <div class="row">
-        <div style="flex:1 1 320px">
-          <label for="fishSelect">Species</label>
-          <select id="fishSelect"></select>
-        </div>
-      </div>
-      <div class="row">
-        <div style="flex:1 1 200px">
-          <label for="recMin">Recommended minimum</label>
-          <input id="recMin" type="number" value="" disabled>
-        </div>
-      </div>
-      <div class="row">
-        <div style="flex:1 1 200px">
-          <label for="fQty">Quantity</label>
-          <input id="fQty" type="number" min="1">
-        </div>
-        <div><button id="addFish" class="btn">Add</button></div>
-      </div>
-    </section>
+function addToStock(id, qty){
+  const fish = FISH_DB.find(f=>f.id===id);
+  if(!fish) return;
+  const err = validateAdd(fish, qty);
+  if(err){ $('#errorMsg').textContent = err; toast(err, 'error'); return; }
+  $('#errorMsg').textContent = '';
 
-    <!-- Current Stock -->
-    <section class="card">
-      <h2>Current Stock</h2>
-      <table class="stock">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th class="qty">Qty</th>
-            <th class="actions">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-      <div class="row" style="margin-top:10px">
-        <div><button id="reset" class="btn" style="background:var(--bad)">Clear Stock</button></div>
-      </div>
-    </section>
+  const existing = stock.find(x=>x.id===fish.id);
+  if(existing){ existing.qty += qty; }
+  else{ stock.push({ id:fish.id, name:fish.name, qty:qty, min:fish.min, bio:fish.bio, agg:fish.agg }); }
+  renderStock();
+  toast('Added to stock');
+}
 
-    <!-- Warnings -->
-    <section class="card">
-      <h2>Aggression & Compatibility Warnings</h2>
-      <div id="aggression-warnings"></div>
-    </section>
-  </div>
+function updateMinText(){
+  const id = $('#fishSelect').value;
+  const f = FISH_DB.find(x=>x.id===id);
+  $('#minGallons').textContent = f ? (f.min + ' gallons') : '—';
+}
 
-  <!-- Data + Logic + Glue -->
-  <script src="js/fish-data.js"></script>
-  <script src="js/aggression.js"></script>
-  <script src="js/stocking_advisor.js"></script>
+/* ------------------------ Events -------------------------- */
+document.addEventListener('click', (e)=>{
+  const t = e.target.closest('button');
+  if(!t) return;
 
-  <!-- UI Enhancement Patch -->
-  <script>
-    (function(){
-      const tbody = document.getElementById('tbody');
-      const warningsBox = document.getElementById('aggression-warnings');
+  if(t.id === 'addBtn'){
+    const id = $('#fishSelect').value;
+    const qty = Math.max(1, parseInt($('#qtyInput').value || '1', 10));
+    addToStock(id, qty);
+    return;
+  }
 
-      function wrapField(td, opts={}){
-        if(!td) return null;
-        const existing = td.querySelector('.field');
-        if(existing) return existing;
-        const el = document.createElement('div');
-        el.className = 'field';
-        if (opts.single) el.classList.add('single-line');
-        if (opts.center) el.classList.add('center');
-        if (opts.small)  el.classList.add('small');
-        const text = td.textContent.trim();
-        td.textContent = '';
-        el.textContent = text;
-        td.appendChild(el);
-        return el;
-      }
+  const itemEl = t.closest('.item');
+  if(!itemEl) return;
+  const id = itemEl.getAttribute('data-id');
+  const rec = stock.find(x=>x.id===id);
+  if(!rec) return;
 
-      function enhanceActions(td){
-        if(!td || td.dataset.enhanced === '1') return;
+  if(t.classList.contains('inc')){ rec.qty += 1; toast('Quantity increased'); }
+  else if(t.classList.contains('dec')){
+    rec.qty = Math.max(0, rec.qty - 1);
+    toast('Quantity decreased');
+    if(rec.qty===0){ stock = stock.filter(x=>x.id!==id); toast('Removed'); }
+  }else if(t.classList.contains('del')){
+    stock = stock.filter(x=>x.id!==id); toast('Removed');
+  }
+  renderStock();
+});
 
-        const origButtons = [...td.querySelectorAll('button')];
-        // If this td doesn't have buttons, find the one that does (often the last cell)
-        let btnCell = td;
-        if(origButtons.length === 0){
-          const tr = td.closest('tr');
-          const withBtns = [...tr.children].find(c => c.querySelector && c.querySelector('button'));
-          if(withBtns) btnCell = withBtns;
-        }
-        const buttons = [...btnCell.querySelectorAll('button')];
-        if(buttons.length === 0){ td.dataset.enhanced='1'; return; }
+$('#fishSelect')?.addEventListener('change', updateMinText);
 
-        const wrap = document.createElement('div');
-        wrap.className = 'actions';
-
-        let minusBtn = buttons.find(b => /-\s*1?/.test(b.textContent));
-        let plusBtn  = buttons.find(b => /\+\s*1?/.test(b.textContent));
-        let delBtn   = buttons.find(b => /delete/i.test(b.textContent));
-
-        // Hide originals
-        buttons.forEach(b => b.style.display = 'none');
-
-        if(minusBtn){
-          const m = document.createElement('button');
-          m.type = 'button';
-          m.className = 'circle minus';
-          m.innerHTML = '<span aria-hidden="true">-</span>';
-          m.title = 'Decrease';
-          m.addEventListener('click', ()=> minusBtn.click());
-          wrap.appendChild(m);
-        }
-        if(plusBtn){
-          const p = document.createElement('button');
-          p.type = 'button';
-          p.className = 'circle plus';
-          p.innerHTML = '<span aria-hidden="true">+</span>';
-          p.title = 'Increase';
-          p.addEventListener('click', ()=> plusBtn.click());
-          wrap.appendChild(p);
-        }
-        if(delBtn){
-          const d = document.createElement('button');
-          d.type = 'button';
-          d.className = 'circle trash';
-          d.title = 'Delete';
-          d.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/></svg>';
-          d.addEventListener('click', ()=> delBtn.click());
-          wrap.appendChild(d);
-        }
-
-        btnCell.appendChild(wrap);
-        td.dataset.enhanced = '1';
-      }
-
-      function parseWarnings(){
-        const map = new Map();
-        if (!warningsBox) return map;
-        warningsBox.querySelectorAll('div').forEach(div=>{
-          const s = div.textContent || '';
-          const m = s.match(/^\s*([^:]+):.*\((\d+)\s*\/\s*(\d+)\)/i);
-          if (m) map.set(m[1].trim().toLowerCase(), { qty:+m[2], min:+m[3] });
-        });
-        return map;
-      }
-
-      function decorateRows(){
-        const warnMap = parseWarnings();
-        tbody.querySelectorAll('tr').forEach(tr=>{
-          if (tr.dataset.styled === '1') return;
-          const cells = [...tr.querySelectorAll('td')];
-          if (cells.length === 0) return;
-
-          // Remove legacy aggression % cell if it exists
-          const maybePct = cells.find(c => !c.querySelector('button') && /\d+\s*%$/.test(c.textContent.trim()));
-          if (maybePct) { maybePct.remove(); }
-
-          // Recollect after removal
-          const tds = [...tr.querySelectorAll('td')];
-          const nameTd = tds[0];
-          const qtyTd  = tds[1];
-          const actionsTd = tds[tds.length - 1];
-
-          const fName = wrapField(nameTd, { single:true });
-          const fQty  = wrapField(qtyTd,  { center:true, small:true });
-          enhanceActions(actionsTd);
-
-          // optional: name/qty color from warnings
-          const key = (fName.textContent || '').trim().toLowerCase();
-          [fName,fQty].forEach(el=> el && el.classList.remove('ok','warn','bad'));
-          const info = warnMap.get(key);
-          if (info){
-            const redCut = Math.max(1, Math.floor(info.min/2));
-            if (info.qty < redCut){ fName.classList.add('bad'); fQty.classList.add('bad'); }
-            else { fName.classList.add('warn'); fQty.classList.add('warn'); }
-          }
-
-          tr.dataset.styled = '1';
-        });
-      }
-
-      const rowObs = new MutationObserver(decorateRows);
-      rowObs.observe(tbody, { childList:true, subtree:true });
-
-      const warnObs = new MutationObserver(()=>{
-        tbody.querySelectorAll('tr').forEach(tr=> tr.dataset.styled='');
-        decorateRows();
-      });
-      warnObs.observe(warningsBox, { childList:true, subtree:true });
-
-      window.addEventListener('load', decorateRows);
-    })();
-  </script>
+/* ------------------------ Init ---------------------------- */
+renderFishOptions();
+renderStock();
+</script>
 </body>
 </html>
