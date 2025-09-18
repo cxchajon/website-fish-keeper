@@ -245,7 +245,6 @@
       function enhanceActions(td){
         if(!td || td.dataset.enhanced === '1') return;
 
-        // Find the cell with the original buttons
         let btnCell = td;
         if(!td.querySelector('button')){
           const tr = td.closest('tr');
@@ -258,12 +257,27 @@
         const wrap = document.createElement('div');
         wrap.className = 'actions';
 
-        // Recognize legacy buttons by text
-        const minusBtn = buttons.find(b => /-\s*1?/.test(b.textContent));
-        const plusBtn  = buttons.find(b => /\+\s*1?/.test(b.textContent));
-        const delBtn   = buttons.find(b => /delete/i.test(b.textContent));
+        // Match hyphen (-) OR Unicode minus (− U+2212)
+        const minusText = /(\u2212|-)\s*1?/;   // ← FIX
+        const plusText  = /\+\s*1?/;
+        const delText   = /delete/i;
 
-        // Hide originals, but keep their click behavior
+        let minusBtn = buttons.find(b => minusText.test(b.textContent));
+        let plusBtn  = buttons.find(b => plusText.test(b.textContent));
+        let delBtn   = buttons.find(b => delText.test(b.textContent));
+
+        // Fallback: assume [minus, plus, delete] order if not found by text
+        if(!minusBtn || !plusBtn){
+          if(buttons.length >= 2){
+            minusBtn = minusBtn || buttons[0];
+            plusBtn  = plusBtn  || buttons[1];
+          }
+        }
+        if(!delBtn && buttons.length >= 3){
+          delBtn = buttons[buttons.length - 1];
+        }
+
+        // Hide originals but keep their behavior via proxy clicks
         buttons.forEach(b => b.style.display = 'none');
 
         if(minusBtn){
@@ -272,7 +286,6 @@
           m.className = 'circle minus';
           m.title = 'Decrease';
           m.setAttribute('aria-label','Decrease');
-          /* SVG minus: a single horizontal rounded rectangle */
           m.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>';
           m.addEventListener('click', ()=> minusBtn.click());
           wrap.appendChild(m);
@@ -283,7 +296,6 @@
           p.className = 'circle plus';
           p.title = 'Increase';
           p.setAttribute('aria-label','Increase');
-          /* SVG plus: two rectangles */
           p.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/><rect x="9" y="4" width="2" height="12" rx="1" fill="currentColor"/></svg>';
           p.addEventListener('click', ()=> plusBtn.click());
           wrap.appendChild(p);
@@ -294,7 +306,6 @@
           d.className = 'circle trash';
           d.title = 'Delete';
           d.setAttribute('aria-label','Delete');
-          /* SVG trash bin */
           d.innerHTML = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/></svg>';
           d.addEventListener('click', ()=> delBtn.click());
           wrap.appendChild(d);
@@ -309,7 +320,6 @@
         if (!warningsBox) return map;
         warningsBox.querySelectorAll('div').forEach(div=>{
           const s = div.textContent || '';
-          // Expected: "Cardinal Tetra: needs 6 (2 / 6)"
           const m = s.match(/^\s*([^:]+):.*\((\d+)\s*\/\s*(\d+)\)/i);
           if (m) map.set(m[1].trim().toLowerCase(), { qty:+m[2], min:+m[3] });
         });
@@ -327,7 +337,6 @@
           const maybePct = cells.find(c => !c.querySelector('button') && /\d+\s*%$/.test(c.textContent.trim()));
           if (maybePct) { maybePct.remove(); }
 
-          // Re-evaluate after removal
           const tds = [...tr.querySelectorAll('td')];
           const nameTd = tds[0];
           const qtyTd  = tds[1];
