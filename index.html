@@ -71,8 +71,8 @@
   /* ===== Current Stock ===== */
   table.stock{width:100%;border-collapse:collapse}
   thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66}
-  thead th.qty{text-align:center; width:90px;}
-  thead th.actions{text-align:right; width:140px;}
+  thead th.qty{text-align:center;width:90px}
+  thead th.actions{text-align:right;width:150px}
   tbody td{padding:10px 6px}
   tbody td:first-child{padding-left:2px}
 
@@ -220,6 +220,7 @@
   <script src="js/aggression.js"></script>
   <script src="js/stocking_advisor.js"></script>
 
+  <!-- UI Enhancement Patch -->
   <script>
     (function(){
       const tbody = document.getElementById('tbody');
@@ -241,21 +242,28 @@
         return el;
       }
 
-      // Replace default row controls with icon circles
       function enhanceActions(td){
         if(!td || td.dataset.enhanced === '1') return;
 
-        const buttons = [...td.querySelectorAll('button')];
-        if(buttons.length === 0) return;
+        const origButtons = [...td.querySelectorAll('button')];
+        // If this td doesn't have buttons, find the one that does (often the last cell)
+        let btnCell = td;
+        if(origButtons.length === 0){
+          const tr = td.closest('tr');
+          const withBtns = [...tr.children].find(c => c.querySelector && c.querySelector('button'));
+          if(withBtns) btnCell = withBtns;
+        }
+        const buttons = [...btnCell.querySelectorAll('button')];
+        if(buttons.length === 0){ td.dataset.enhanced='1'; return; }
 
         const wrap = document.createElement('div');
         wrap.className = 'actions';
 
-        let minusBtn = buttons.find(b => b.textContent.includes('-'));
-        let plusBtn  = buttons.find(b => b.textContent.includes('+'));
+        let minusBtn = buttons.find(b => /-\s*1?/.test(b.textContent));
+        let plusBtn  = buttons.find(b => /\+\s*1?/.test(b.textContent));
         let delBtn   = buttons.find(b => /delete/i.test(b.textContent));
 
-        // Hide original text buttons
+        // Hide originals
         buttons.forEach(b => b.style.display = 'none');
 
         if(minusBtn){
@@ -281,15 +289,12 @@
           d.type = 'button';
           d.className = 'circle trash';
           d.title = 'Delete';
-          d.innerHTML = `
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/>
-            </svg>`;
+          d.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/></svg>';
           d.addEventListener('click', ()=> delBtn.click());
           wrap.appendChild(d);
         }
 
-        td.appendChild(wrap);
+        btnCell.appendChild(wrap);
         td.dataset.enhanced = '1';
       }
 
@@ -308,14 +313,24 @@
         const warnMap = parseWarnings();
         tbody.querySelectorAll('tr').forEach(tr=>{
           if (tr.dataset.styled === '1') return;
-          const tds = tr.querySelectorAll('td');
-          if (tds.length < 3) return;
+          const cells = [...tr.querySelectorAll('td')];
+          if (cells.length === 0) return;
 
-          const fName = wrapField(tds[0], { single:true });
-          const fQty  = wrapField(tds[1], { center:true, small:true });
-          enhanceActions(tds[2]);
+          // Remove legacy aggression % cell if it exists
+          const maybePct = cells.find(c => !c.querySelector('button') && /\d+\s*%$/.test(c.textContent.trim()));
+          if (maybePct) { maybePct.remove(); }
 
-          // Color name/qty from warnings if present
+          // Recollect after removal
+          const tds = [...tr.querySelectorAll('td')];
+          const nameTd = tds[0];
+          const qtyTd  = tds[1];
+          const actionsTd = tds[tds.length - 1];
+
+          const fName = wrapField(nameTd, { single:true });
+          const fQty  = wrapField(qtyTd,  { center:true, small:true });
+          enhanceActions(actionsTd);
+
+          // optional: name/qty color from warnings
           const key = (fName.textContent || '').trim().toLowerCase();
           [fName,fQty].forEach(el=> el && el.classList.remove('ok','warn','bad'));
           const info = warnMap.get(key);
@@ -332,7 +347,10 @@
       const rowObs = new MutationObserver(decorateRows);
       rowObs.observe(tbody, { childList:true, subtree:true });
 
-      const warnObs = new MutationObserver(()=>{ tbody.querySelectorAll('tr').forEach(tr=> tr.dataset.styled=''); decorateRows(); });
+      const warnObs = new MutationObserver(()=>{
+        tbody.querySelectorAll('tr').forEach(tr=> tr.dataset.styled='');
+        decorateRows();
+      });
       warnObs.observe(warningsBox, { childList:true, subtree:true });
 
       window.addEventListener('load', decorateRows);
