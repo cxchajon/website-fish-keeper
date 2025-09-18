@@ -13,151 +13,162 @@
     --muted: #475569;
     --muted-2: #94a3b8;
 
-    /* Brand & UI colors */
-    --brand: #026aa2;   /* default deep blue */
-    --brand-2: #015586;
-    --brand-3: #0ea5e9; /* header gradient start */
-    --brand-4: #38bdf8; /* header gradient mid */
-    --brand-5: #7dd3fc; /* header gradient end */
+    /* Brand & UI */
+    --brand:  #0284c7;  /* vivid blue */
+    --brand-2:#0369a1;
+    --ok:   #10b981;    /* green */
+    --ok-2: #059669;
+    --warn: #f59e0b;    /* amber */
+    --warn-2:#d97706;
+    --bad:  #ef4444;    /* red */
+    --bad-2:#dc2626;
 
-    --ok:   #10b981; /* green */
-    --warn: #f59e0b; /* amber */
-    --bad:  #ef4444; /* red */
+    /* Background gradient */
+    --g1:#0ea5e9; --g2:#38bdf8; --g3:#7dd3fc;
 
-    /* Cards (soft aqua tint) */
-    --card: rgba(224, 242, 254, 0.92);
-    --card-border: rgba(15, 23, 42, 0.06);
+    /* Cards */
+    --card: rgba(224,242,254,0.92);   /* soft aqua */
+    --card-border: rgba(15,23,42,0.06);
 
-    /* Table field boxes */
-    --field-bg: #ffffff;
-    --field-bd: #cbd5e1;
-    --field-shadow: 0 1px 2px rgba(2,6,23,.06);
+    /* Table “field boxes” */
+    --field-bg:#ffffff;
+    --field-bd:#cbd5e1;
+    --field-shadow:0 1px 2px rgba(2,6,23,.06);
   }
 
-  * { box-sizing: border-box; }
+  * { box-sizing:border-box; }
 
-  body {
-    margin: 0;
+  body{
+    margin:0;
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: var(--ink);
-
-    background: var(--brand-3); /* fallback */
-    background: linear-gradient(180deg, var(--brand-3) 0%, var(--brand-4) 60%, var(--brand-5) 100%);
+    color:var(--ink);
+    background: var(--g1);
+    background: linear-gradient(180deg,var(--g1) 0%,var(--g2) 60%,var(--g3) 100%);
     background-attachment: fixed;
   }
 
-  .wrap { max-width: 980px; margin: 0 auto; padding: 28px 20px 48px; }
+  .wrap{ max-width:980px; margin:0 auto; padding:28px 20px 48px; }
 
-  /* ===== Brand ===== */
-  .brand { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 8px; color: #fff; }
-  .brand-name { font-size: 1.6rem; font-weight: 700; line-height: 1.2; }
-  .brand-sub  { font-size: 1rem; opacity: 0.95; }
+  /* Brand (left) */
+  .brand{ display:flex; flex-direction:column; align-items:flex-start; gap:4px; margin-bottom:8px; color:#fff; }
+  .brand-name{ font-size:1.6rem; font-weight:700; line-height:1.2; }
+  .brand-sub{ font-size:1rem; opacity:.95; }
 
-  header { margin-bottom: 16px; text-align: left; color: white; }
-  header h2 { margin: 0; font-size: 1.2rem; font-weight: 600; opacity: 0.95; }
+  header{ margin-bottom:16px; text-align:left; color:#fff; }
+  header h2{ margin:0; font-size:1.2rem; font-weight:600; opacity:.95; }
 
-  /* ===== Cards ===== */
-  .card {
-    background: var(--card);
-    border-radius: var(--radius);
-    border: 1px solid var(--card-border);
-    box-shadow: 0 12px 24px -10px rgba(2,6,23,.25);
-    padding: 20px;
-    margin-bottom: 20px;
+  /* Cards */
+  .card{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 12px 24px -10px rgba(2,6,23,.25);
     backdrop-filter: blur(10px) saturate(160%);
     -webkit-backdrop-filter: blur(10px) saturate(160%);
+    overflow:hidden;                 /* keep content inside rounded edges */
   }
-  .card h2, .card h3 { margin-top: 0; margin-bottom: 10px; font-weight: 700; }
+  .card h2,.card h3{ margin:0 0 10px; font-weight:700; }
 
-  /* ===== Forms ===== */
-  label { font-weight: 700; margin-bottom: 6px; display: block; }
-  input, select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--field-bd);
-    border-radius: 10px;
-    background: #fff;
+  /* Form basics */
+  label{ font-weight:700; margin-bottom:6px; display:block; }
+  input,select{
+    width:100%; padding:10px; border:1px solid var(--field-bd); border-radius:10px; background:#fff;
   }
-  .row {
-    display: grid;
-    gap: var(--gap);
+
+  .row{
+    display:grid; gap:var(--gap);
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    align-items: end;
+    align-items:end;
   }
 
-  /* ===== Buttons ===== */
-  .btn {
-    font-weight: 700; cursor: pointer; border-radius: 8px;
-    transition: transform .06s ease, background .2s ease, box-shadow .2s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,.15);
-    border: none; color: #fff;
+  /* Buttons */
+  .btn{
+    position:relative;
+    border:none; border-radius:10px; color:#fff; cursor:pointer; font-weight:700;
+    box-shadow:0 3px 10px rgba(2,6,23,.18);
+    transition: transform .06s ease, filter .15s ease, box-shadow .2s ease, background .2s ease;
   }
-  .btn:active { transform: translateY(1px); }
-
-  /* ===== Current Stock Table ===== */
-  table { width: 100%; border-collapse: separate; border-spacing: 0 10px; } /* row gaps */
-  thead th { padding: 0 6px 4px; font-weight: 700; }
-  th.right, td.right { text-align: right; }
-
-  /* Field boxes inside cells */
-  .field {
-    background: var(--field-bg);
-    border: 1px solid var(--field-bd);
-    border-radius: 10px;
-    box-shadow: var(--field-shadow);
-    padding: 10px 12px;
-    height: 42px;
-    display: flex; align-items: center;
+  .btn:before{ /* subtle top gloss */
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,0));
+    pointer-events:none;
   }
-  .field.center { justify-content: center; }
-  .field.single-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .field.small { min-width: 64px; justify-content: center; font-variant-numeric: tabular-nums; }
+  .btn:active{ transform:translateY(1px); }
 
-  /* Status coloring for fields */
-  .field.ok   { border-color: var(--ok);   box-shadow: 0 0 0 3px rgba(16,185,129,.18); }
-  .field.warn { border-color: var(--warn); box-shadow: 0 0 0 3px rgba(245,158,11,.18); }
-  .field.bad  { border-color: var(--bad);  box-shadow: 0 0 0 3px rgba(239,68,68,.18); }
+  /* Add button (vivid) */
+  .btn.primary{ background:var(--brand); }
+  .btn.primary:hover{ background:var(--brand-2); filter:saturate(1.1); }
+
+  /* Table */
+  table{ width:100%; border-collapse:separate; border-spacing:0 10px; table-layout:fixed; }
+  /* Fixed column widths keep actions from pushing out */
+  col.name   { width:52%; }
+  col.qty    { width:12%; }
+  col.aggr   { width:16%; }
+  col.actions{ width:20%; }
+
+  thead th{ padding:0 6px 4px; font-weight:700; }
+  th.right, td.right{ text-align:right; }
+
+  /* Field boxes in cells */
+  .field{
+    background:var(--field-bg); border:1px solid var(--field-bd); border-radius:10px;
+    box-shadow:var(--field-shadow); padding:10px 12px; height:42px;
+    display:flex; align-items:center;
+    min-width:0; /* allow ellipsis */
+  }
+  .field.single-line{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .field.center{ justify-content:center; }
+  .field.small{ min-width:64px; justify-content:center; font-variant-numeric:tabular-nums; }
+
+  /* Status colors */
+  .field.ok   { border-color:var(--ok);   box-shadow:0 0 0 3px rgba(16,185,129,.18); }
+  .field.warn { border-color:var(--warn); box-shadow:0 0 0 3px rgba(245,158,11,.18); }
+  .field.bad  { border-color:var(--bad);  box-shadow:0 0 0 3px rgba(239,68,68,.18); }
 
   /* Actions cell */
-  td.actions { padding: 0 0 0 6px; }
-  .actions-wrap { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: nowrap; }
-
-  /* Compact action buttons with colors */
-  .btn.action { min-width: 50px; height: 36px; padding: 0 10px; font-size: 0.9rem; line-height: 1; }
-  .btn.minus { background: var(--warn); }  .btn.minus:hover { background: #d97706; }
-  .btn.plus  { background: var(--ok); }    .btn.plus:hover  { background: #059669; }
-  .btn.delete { background: var(--bad); min-width: 88px; height: 36px; }
-  .btn.delete:hover { background: #dc2626; }
-
-  /* Portrait adjustments */
-  @media (max-width: 480px) {
-    .actions-wrap { flex-wrap: wrap; gap: 8px 8px; }
-    .btn.action { flex: 0 0 58px; }
-    .btn.delete { flex: 1 1 100%; }
-    td.actions { padding-top: 6px; }
+  td.actions{ padding-left:6px; }
+  .actions-wrap{
+    display:flex; justify-content:flex-end; align-items:center; gap:8px;
+    max-width:100%; flex-wrap:nowrap;
   }
 
-  /* Clear Stock */
-  #reset.clear-danger { background: var(--bad); }
-  #reset.clear-danger:hover { background: #dc2626; }
+  /* Compact action buttons (brighter –1/+1) */
+  .btn.action{ height:36px; padding:0 12px; border-radius:8px; font-size:.95rem; }
+  .btn.minus{ background:var(--warn); }
+  .btn.minus:hover{ background:var(--warn-2); filter:saturate(1.1); }
+  .btn.plus{ background:var(--ok); }
+  .btn.plus:hover{ background:var(--ok-2); filter:saturate(1.1); }
+  .btn.delete{ background:var(--bad); border-radius:8px; min-width:88px; height:36px; }
+  .btn.delete:hover{ background:var(--bad-2); }
+
+  /* Disabled style (keep readable, not washed out) */
+  .btn:disabled{
+    opacity:.7; filter:grayscale(.05) saturate(.9);
+    cursor:not-allowed; box-shadow:0 2px 6px rgba(2,6,23,.12);
+  }
+
+  /* Portrait tweaks: wrap actions without overflow */
+  @media (max-width:480px){
+    .actions-wrap{ flex-wrap:wrap; gap:8px 8px; }
+    .btn.action{ flex:0 0 58px; }
+    .btn.delete{ flex:1 1 100%; }
+    td.actions{ padding-top:6px; }
+  }
 
   /* Bars */
-  .bar { height: 26px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
-  .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--ok), var(--warn), var(--bad)); transition: width .25s ease; }
-  .bar-note { display: flex; justify-content: space-between; font-size: .85rem; color: var(--muted); }
+  .bar{ height:26px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
+  .bar-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--ok), var(--warn), var(--bad)); transition:width .25s ease; }
+  .bar-note{ display:flex; justify-content:space-between; font-size:.85rem; color:var(--muted); }
 
-  small.note { color: var(--muted-2); font-size: .8rem; font-style: italic; display: block; margin-top: 6px; padding-left: 20px; position: relative; }
-  small.note::before { content:"ℹ️"; position:absolute; left:0; }
-
-  /* Warnings list style */
-  #aggression-warnings > div {
-    background: #fff7ed;
-    border: 2px solid #fdba74;
-    color: #7a3419;
-    padding: 14px 16px;
-    border-radius: 12px;
-    line-height: 1.4;
-    margin-bottom: 8px;
+  /* Notes & warnings */
+  small.note{ color:var(--muted-2); font-size:.8rem; font-style:italic; display:block; margin-top:6px; padding-left:20px; position:relative; }
+  small.note::before{ content:"ℹ️"; position:absolute; left:0; }
+  #aggression-warnings > div{
+    background:#fff7ed; border:2px solid #fdba74; color:#7a3419;
+    padding:14px 16px; border-radius:12px; line-height:1.4; margin-bottom:8px;
   }
 </style>
 </head>
@@ -171,7 +182,7 @@
 
     <header><h2>Stocking Calculator</h2></header>
 
-    <!-- Tank setup card -->
+    <!-- Tank setup -->
     <section class="card">
       <h2>Tank Setup</h2>
       <div class="row">
@@ -235,7 +246,7 @@
           <label for="fQty">Quantity</label>
           <input id="fQty" type="number" min="1"/>
         </div>
-        <div><button id="addFish" class="btn">Add</button></div>
+        <div><button id="addFish" class="btn primary">Add</button></div>
       </div>
     </section>
 
@@ -243,13 +254,16 @@
     <section class="card">
       <h2>Current Stock</h2>
       <table>
+        <colgroup>
+          <col class="name"><col class="qty"><col class="aggr"><col class="actions">
+        </colgroup>
         <thead>
           <tr><th>Name</th><th class="right">Qty</th><th class="right">Aggression</th><th class="right">Actions</th></tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
       <div class="row" style="margin-top:10px">
-        <div><button id="reset" class="btn clear-danger">Clear Stock</button></div>
+        <div><button id="reset" class="btn" style="background:var(--bad)"><span>Clear Stock</span></button></div>
       </div>
     </section>
 
@@ -263,18 +277,18 @@
   <script src="js/fish-data.js"></script>
   <script src="js/aggression.js"></script>
 
-  <!-- UI polish: field boxes + responsive actions + status colors -->
+  <!-- UI polish: fields, actions, and status colors -->
   <script>
     const tbody = document.getElementById('tbody');
     const warningsBox = document.getElementById('aggression-warnings');
 
-    function wrapIntoField(td, options = {}) {
-      if (!td || td.querySelector('.field')) return;
+    function wrapField(td, { single=false, center=false, small=false } = {}){
+      if(!td || td.querySelector('.field')) return td.querySelector('.field');
       const box = document.createElement('div');
       box.className = 'field';
-      if (options.center) box.classList.add('center');
-      if (options.singleLine) box.classList.add('single-line');
-      if (options.small) box.classList.add('small');
+      if(single) box.classList.add('single-line');
+      if(center) box.classList.add('center');
+      if(small)  box.classList.add('small');
       const text = td.textContent.trim();
       td.textContent = '';
       box.textContent = text;
@@ -282,101 +296,90 @@
       return box;
     }
 
-    function tidyActions(td) {
-      if (!td) return;
+    function tidyActions(td){
+      if(!td) return;
       td.classList.add('actions');
-      if (td.querySelector('.actions-wrap')) return;
+      if(td.querySelector('.actions-wrap')) return;
       const wrap = document.createElement('div');
       wrap.className = 'actions-wrap';
       const buttons = [...td.querySelectorAll('button')];
-      buttons.forEach(b => {
-        // classify buttons by text
-        if (/delete/i.test(b.textContent)) {
-          b.classList.add('btn', 'delete');
-        } else if (b.textContent.includes('-')) {
-          b.classList.add('btn', 'action', 'minus');
-        } else if (b.textContent.includes('+')) {
-          b.classList.add('btn', 'action', 'plus');
-        } else {
-          b.classList.add('btn', 'action');
-        }
+      buttons.forEach(b=>{
+        const t = b.textContent;
+        b.classList.add('btn','action');
+        if(/delete/i.test(t)){ b.classList.remove('action'); b.classList.add('delete'); }
+        else if(t.includes('-')){ b.classList.add('minus'); }
+        else if(t.includes('+')){ b.classList.add('plus'); }
         wrap.appendChild(b);
       });
       td.appendChild(wrap);
     }
 
-    function colorAggression(fieldEl, percentStr) {
-      if (!fieldEl) return;
-      const n = parseFloat(String(percentStr).replace('%','').trim());
+    function colorAggression(fieldEl, percentText){
+      if(!fieldEl) return;
+      const n = parseFloat(String(percentText).replace('%',''));
       fieldEl.classList.remove('ok','warn','bad');
-      if (isNaN(n)) return;
-      if (n <= 33) fieldEl.classList.add('ok');
-      else if (n <= 66) fieldEl.classList.add('warn');
+      if(Number.isNaN(n)) return;
+      if(n <= 33) fieldEl.classList.add('ok');
+      else if(n <= 66) fieldEl.classList.add('warn');
       else fieldEl.classList.add('bad');
     }
 
-    // Parse warnings like: "Neon tetra: schooling species below recommended group size (3/6)."
-    function parseWarnings() {
-      const map = new Map(); // species -> {qty, min}
-      const items = warningsBox ? [...warningsBox.querySelectorAll('div')] : [];
-      items.forEach(div => {
-        const text = div.textContent || '';
-        const m = text.match(/^\s*([^:]+):.*\((\d+)\s*\/\s*(\d+)\)/i);
-        if (m) {
-          const species = m[1].trim();
-          const qty = parseInt(m[2],10);
-          const min = parseInt(m[3],10);
-          map.set(species.toLowerCase(), { qty, min });
+    function parseWarnings(){
+      const map = new Map();
+      if(!warningsBox) return map;
+      [...warningsBox.querySelectorAll('div')].forEach(div=>{
+        const s = div.textContent || '';
+        // e.g. "White cloud...: ... (1/6)"
+        const m = s.match(/^\s*([^:]+):.*\((\d+)\s*\/\s*(\d+)\)/i);
+        if(m){
+          map.set(m[1].trim().toLowerCase(), { qty:+m[2], min:+m[3] });
         }
       });
       return map;
     }
 
-    function applyStatusColors() {
-      const warnMap = parseWarnings();
-      [...tbody.querySelectorAll('tr')].forEach(tr => {
-        const tds = tr.querySelectorAll('td');
-        if (tds.length < 4) return;
+    function applyRowColors(){
+      const wmap = parseWarnings();
+      [...tbody.querySelectorAll('tr')].forEach(tr=>{
+        const [tdName, tdQty, tdAgg, tdAct] = tr.querySelectorAll('td');
+        if(!tdAct) return;
 
-        // Wrap cells into fields if not already
-        const nameField = wrapIntoField(tds[0], { singleLine: true });
-        const qtyField  = wrapIntoField(tds[1], { center: true, small: true });
-        const aggField  = wrapIntoField(tds[2], { center: true, small: true });
-        tidyActions(tds[3]);
+        const fName = wrapField(tdName, { single:true });
+        const fQty  = wrapField(tdQty,  { center:true, small:true });
+        const fAgg  = wrapField(tdAgg,  { center:true, small:true });
+        tidyActions(tdAct);
 
-        // Aggression coloring
-        const aggText = aggField ? aggField.textContent : tds[2].textContent;
-        colorAggression(aggField, aggText);
+        // Aggression color
+        const aggText = fAgg ? fAgg.textContent : tdAgg.textContent;
+        colorAggression(fAgg, aggText);
 
-        // Group-size coloring based on warnings box
-        const speciesText = (nameField ? nameField.textContent : tds[0].textContent).trim().toLowerCase();
-        const info = warnMap.get(speciesText);
-        [nameField, qtyField].forEach(el => el && el.classList.remove('ok','warn','bad'));
-        if (info) {
-          const { qty, min } = info;
-          if (qty < Math.max(1, Math.floor(min / 2))) {
-            nameField && nameField.classList.add('bad');
-            qtyField  && qtyField.classList.add('bad');
+        // Group size color from warnings
+        const key = (fName ? fName.textContent : tdName.textContent).trim().toLowerCase();
+        [fName,fQty].forEach(el=> el && el.classList.remove('ok','warn','bad'));
+        const info = wmap.get(key);
+        if(info){
+          const redCutoff = Math.max(1, Math.floor(info.min/2)); // <50% of min = red
+          if(info.qty < redCutoff){
+            fName && fName.classList.add('bad');
+            fQty  && fQty.classList.add('bad');
           } else {
-            nameField && nameField.classList.add('warn');
-            qtyField  && qtyField.classList.add('warn');
+            fName && fName.classList.add('warn');
+            fQty  && fQty.classList.add('warn');
           }
         } else {
-          // No warning for this species — mark as ok
-          nameField && nameField.classList.add('ok');
-          qtyField  && qtyField.classList.add('ok');
+          fName && fName.classList.add('ok');
+          fQty  && fQty.classList.add('ok');
         }
       });
     }
 
-    const observer = new MutationObserver(() => applyStatusColors());
-    observer.observe(tbody, { childList: true, subtree: true });
-    if (warningsBox) {
-      const warnObserver = new MutationObserver(() => applyStatusColors());
-      warnObserver.observe(warningsBox, { childList: true, subtree: true });
-    }
-    // Initial paint
-    window.addEventListener('DOMContentLoaded', applyStatusColors);
+    const obs = new MutationObserver(applyRowColors);
+    obs.observe(tbody, { childList:true, subtree:true });
+
+    const warnObs = new MutationObserver(applyRowColors);
+    warnObs.observe(document.getElementById('aggression-warnings'), { childList:true, subtree:true });
+
+    window.addEventListener('DOMContentLoaded', applyRowColors);
   </script>
 
   <script src="js/stocking_advisor.js"></script>
