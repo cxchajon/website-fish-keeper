@@ -49,7 +49,7 @@
     border-radius:var(--radius); padding:20px; margin-bottom:20px;
     box-shadow:0 8px 18px -10px rgba(2,6,23,.22);
     backdrop-filter:blur(6px) saturate(140%); -webkit-backdrop-filter:blur(6px) saturate(140%);
-    overflow:visible; /* avoid clipping action buttons */
+    overflow:visible;
   }
   .card h2,.card h3{margin:0 0 10px;font-weight:700}
 
@@ -70,11 +70,30 @@
   small.note::before{content:"ℹ️";position:absolute;left:0}
 
   /* ===== Current Stock ===== */
-  table.stock{width:100%;border-collapse:collapse;table-layout:auto}
-  thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66;white-space:nowrap}
-  thead th.qty{text-align:center;width:90px}
-  thead th.actions{text-align:right;width:160px} /* wider actions col */
-  tbody td{padding:10px 6px;vertical-align:middle}
+  table.stock{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;          /* key for ellipsis control */
+  }
+  thead th{
+    padding:8px 6px 10px;
+    text-align:left;
+    font-weight:700;
+    border-bottom:1px solid #cfe7fb66;
+    white-space:nowrap;
+  }
+  thead th:first-child{          /* Name column */
+    width:auto;                  /* take remaining space */
+  }
+  thead th.qty{
+    text-align:center;
+    width:90px;                  /* fixed qty col */
+  }
+  thead th.actions{
+    text-align:right;
+    width:160px;                 /* fixed actions col */
+  }
+  tbody td{padding:10px 6px;vertical-align:middle;overflow:hidden}
   tbody td:first-child{padding-left:2px}
 
   /* Fields */
@@ -84,9 +103,17 @@
     border-radius:10px;
     padding:10px 12px;
     height:40px;
-    display:flex; align-items:center; min-width:0;
+    display:flex; align-items:center;
+    min-width:0;                 /* allow shrinking inside fixed table */
+    max-width:100%;
   }
-  .field.single-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:140px}
+  .field.single-line{
+    display:block;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;      /* "White cloud…" */
+    min-width:0;                 /* override earlier min width */
+  }
   .field.center{justify-content:center}
   .field.small{min-width:60px;justify-content:center;font-variant-numeric:tabular-nums}
 
@@ -112,19 +139,18 @@
   /* Footer */
   footer{margin-top:auto;padding:18px 20px;color:#0b2a40;opacity:.85;text-align:center;font-size:.9rem}
 
-  /* ===== Mobile tweaks: make cards full-bleed for more space ===== */
+  /* ===== Mobile tweaks ===== */
   @media (max-width: 640px){
     .wrap{padding:20px 8px 56px}
-    .card{border-radius:10px;margin-left:0;margin-right:0}
     thead th.actions{width:140px}
-    .field.single-line{min-width:110px}
+    thead th.qty{width:80px}
   }
   @media (max-width: 420px){
     thead th.actions{width:120px}
+    thead th.qty{width:70px}
     .actions{gap:8px}
     .circle{width:32px;height:32px}
     .circle .ico{width:16px;height:16px}
-    .field.single-line{min-width:95px}
   }
 </style>
 </head>
@@ -231,7 +257,7 @@
 
   <!-- Footer with simple version -->
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v3</strong> • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v4</strong> • Updated Sep 18, 2025
   </footer>
 
   <!-- Data + Logic + Glue -->
@@ -239,7 +265,7 @@
   <script src="js/aggression.js"></script>
   <script src="js/stocking_advisor.js"></script>
 
-  <!-- UI Enhancement Patch (warning-only; SVG icons for actions) -->
+  <!-- UI Enhancement Patch (warning-only; SVG icons for actions + truncation) -->
   <script>
     (function(){
       const tbody = document.getElementById('tbody');
@@ -251,7 +277,7 @@
         if(existing) return existing;
         const el = document.createElement('div');
         el.className = 'field';
-        if (opts.single) el.classList.add('single-line');
+        if (opts.single) el.classList.add('single-line');  // enables ellipsis
         if (opts.center) el.classList.add('center');
         if (opts.small)  el.classList.add('small');
         const text = td.textContent.trim();
@@ -352,7 +378,7 @@
           const cells = [...tr.querySelectorAll('td')];
           if (cells.length === 0) return;
 
-          // Remove any legacy aggression % cell
+        /* Remove any legacy aggression % cell if it exists */
           const maybePct = cells.find(c => !c.querySelector('button') && /\d+\s*%$/.test(c.textContent.trim()));
           if (maybePct) { maybePct.remove(); }
 
@@ -361,7 +387,7 @@
           const qtyTd  = tds[1];
           const actionsTd = tds[tds.length - 1];
 
-          const fName = wrapField(nameTd, { single:true });
+          const fName = wrapField(nameTd, { single:true });   // truncates long names
           const fQty  = wrapField(qtyTd,  { center:true, small:true });
           enhanceActions(actionsTd);
 
