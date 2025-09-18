@@ -71,8 +71,8 @@
   /* ===== Current Stock ===== */
   table.stock{width:100%;border-collapse:collapse}
   thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66}
-  thead th.qty{text-align:center}
-  .right{text-align:right}
+  thead th.qty{text-align:center; width:90px;}
+  thead th.actions{text-align:right; width:140px;}
   tbody td{padding:10px 6px}
   tbody td:first-child{padding-left:2px}
 
@@ -85,26 +85,19 @@
     height:40px;
     display:flex; align-items:center; min-width:0;
   }
-  .field.single-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:120px}
+  .field.single-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:140px}
   .field.center{justify-content:center}
   .field.small{min-width:60px;justify-content:center;font-variant-numeric:tabular-nums}
 
-  /* Aggression circle */
-  .aggr{display:flex;align-items:center;gap:8px;justify-content:center}
-  .aggr-dot{width:26px;height:26px;border-radius:50%;background:#10b981;border:2px solid rgba(15,23,42,.08)}
-  .aggr.ok   .aggr-dot{background:var(--ok)}
-  .aggr.warn .aggr-dot{background:var(--warn)}
-  .aggr.bad  .aggr-dot{background:var(--bad)}
-  .aggr-val{font-variant-numeric:tabular-nums;font-weight:600}
-
   /* Icon circles for actions */
-  .actions{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+  .actions{display:flex;justify-content:flex-end;align-items:center;gap:10px}
   .circle{
     width:36px;height:36px;border-radius:50%;
     display:inline-flex;align-items:center;justify-content:center;
-    color:#fff;font-weight:900;font-size:18px;border:none;cursor:pointer;
+    color:#fff;font-weight:900;font-size:20px;border:none;cursor:pointer;
     box-shadow:0 2px 6px rgba(2,6,23,.14);
     transition:transform .06s ease, filter .15s ease;
+    line-height:1;
   }
   .circle:active{transform:translateY(1px)}
   .circle.minus{background:var(--warn)}
@@ -205,8 +198,7 @@
           <tr>
             <th>Name</th>
             <th class="qty">Qty</th>
-            <th class="right">Aggression</th>
-            <th class="right">Actions</th>
+            <th class="actions">Actions</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
@@ -249,37 +241,7 @@
         return el;
       }
 
-      // Aggression: circle + %
-      function enhanceAgg(td){
-        if(!td || td.dataset.enhanced === '1') return;
-        const field = wrapField(td, { center:true, small:true });
-        const pct = (field.textContent || '').trim();
-        const wrap = document.createElement('div');
-        wrap.className = 'aggr';
-
-        const dot = document.createElement('span');
-        dot.className = 'aggr-dot';
-        const val = document.createElement('span');
-        val.className = 'aggr-val';
-        val.textContent = pct;
-
-        wrap.append(dot, val);
-        td.innerHTML = '';
-        td.appendChild(wrap);
-        td.dataset.enhanced = '1';
-
-        const n = parseFloat(pct.replace('%',''));
-        wrap.classList.remove('ok','warn','bad');
-        if (!isNaN(n)){
-          if (n <= 33) wrap.classList.add('ok');
-          else if (n <= 66) wrap.classList.add('warn');
-          else wrap.classList.add('bad');
-        } else {
-          wrap.classList.add('ok');
-        }
-      }
-
-      // Replace with icon circles
+      // Replace default row controls with icon circles
       function enhanceActions(td){
         if(!td || td.dataset.enhanced === '1') return;
 
@@ -293,14 +255,14 @@
         let plusBtn  = buttons.find(b => b.textContent.includes('+'));
         let delBtn   = buttons.find(b => /delete/i.test(b.textContent));
 
-        // Hide old text buttons
+        // Hide original text buttons
         buttons.forEach(b => b.style.display = 'none');
 
         if(minusBtn){
           const m = document.createElement('button');
           m.type = 'button';
           m.className = 'circle minus';
-          m.innerHTML = '<span aria-hidden="true">−</span>';
+          m.innerHTML = '<span aria-hidden="true">-</span>';
           m.title = 'Decrease';
           m.addEventListener('click', ()=> minusBtn.click());
           wrap.appendChild(m);
@@ -342,19 +304,18 @@
         return map;
       }
 
-      function colorNameQty(){
+      function decorateRows(){
         const warnMap = parseWarnings();
         tbody.querySelectorAll('tr').forEach(tr=>{
           if (tr.dataset.styled === '1') return;
           const tds = tr.querySelectorAll('td');
-          if (tds.length < 4) return;
+          if (tds.length < 3) return;
 
           const fName = wrapField(tds[0], { single:true });
           const fQty  = wrapField(tds[1], { center:true, small:true });
+          enhanceActions(tds[2]);
 
-          enhanceAgg(tds[2]);
-          enhanceActions(tds[3]);
-
+          // Color name/qty from warnings if present
           const key = (fName.textContent || '').trim().toLowerCase();
           [fName,fQty].forEach(el=> el && el.classList.remove('ok','warn','bad'));
           const info = warnMap.get(key);
@@ -368,13 +329,13 @@
         });
       }
 
-      const rowObs = new MutationObserver(colorNameQty);
+      const rowObs = new MutationObserver(decorateRows);
       rowObs.observe(tbody, { childList:true, subtree:true });
 
-      const warnObs = new MutationObserver(()=>{ tbody.querySelectorAll('tr').forEach(tr=> tr.dataset.styled=''); colorNameQty(); });
+      const warnObs = new MutationObserver(()=>{ tbody.querySelectorAll('tr').forEach(tr=> tr.dataset.styled=''); decorateRows(); });
       warnObs.observe(warningsBox, { childList:true, subtree:true });
 
-      window.addEventListener('load', colorNameQty);
+      window.addEventListener('load', decorateRows);
     })();
   </script>
 </body>
