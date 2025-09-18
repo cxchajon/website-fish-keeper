@@ -1,10 +1,5 @@
 /* js/aggression.js
-   Standalone aggression logic for the Stocking Advisor.
-   Usage (global):
-     const a = Aggression;
-     const overall = a.overallAverageConflict(stock, FISH, gallons);
-     const perRow  = a.speciesAggression({id, qty}, stock, FISH, gallons);
-     const issues  = a.checkIssues(stock, FISH, gallons);
+   Aggression logic for the Stocking Advisor.
 */
 (function (global) {
   const baseMap = {
@@ -23,26 +18,24 @@
     return Math.max(base || 0, boosted);
   }
 
-  /** Safe overlap helper for ranges like [[min,max], ...]
-      Returns [lo,hi] if overlap exists; true if not enough info; null if no overlap. */
+  /** Overlap helper: returns [lo,hi] if overlap exists; true if not enough info; null if no overlap. */
   function overlap(ranges) {
     if (!Array.isArray(ranges)) return null;
     const valid = ranges.filter(r =>
       Array.isArray(r) && r.length === 2 && Number.isFinite(r[0]) && Number.isFinite(r[1])
     );
-    if (valid.length < 2) return true; // not enough info to warn
+    if (valid.length < 2) return true;
     const lo = Math.max(...valid.map(r => Math.min(r[0], r[1])));
     const hi = Math.min(...valid.map(r => Math.max(r[0], r[1])));
     return (lo <= hi) ? [lo, hi] : null;
   }
 
-  /** Find fish metadata by id */
   function fishById(fishList, id) {
     return Array.isArray(fishList) ? fishList.find(f => f.id === id) : undefined;
   }
 
-  /** Per-entry conflict score (0–100). Mirrors warnings logic. */
-  function conflictForEntry(entry, stock, fishList, gallons) {
+  /** Per-entry conflict score (0–100). Set options.ignoreSchooling=true to omit the under-schooling bump. */
+  function conflictForEntry(entry, stock, fishList, gallons, options = {}) {
     const NIPPER_IDS   = new Set(['tiger_barb','black_skirt_tetra','zebra_danio','guppy']);
     const LONG_FIN_IDS = new Set(['betta_male','guppy','angelfish','pearl_gourami']);
     const GOURAMI_IDS  = new Set(['dwarf_gourami','honey_gourami','pearl_gourami']);
@@ -50,7 +43,6 @@
     let conflict = 0;
     const qty = Math.max(1, Math.floor(entry?.qty || 0));
     const id  = entry?.id;
-
     if (!id || !Array.isArray(stock)) return 0;
 
     const count = (findId) => (stock.find(s => s.id === findId)?.qty) || 0;
@@ -82,27 +74,28 @@
     if (id === 'angelfish' && g > 0 && g < 29)
       conflict = Math.max(conflict, 55);
 
-    if (isSchooling && qty < recMin)
+    // Under-schooling penalty — optionally ignored for overall meter
+    if (!options.ignoreSchooling && isSchooling && qty < recMin)
       conflict = Math.max(conflict, 40);
 
     return conflict;
   }
 
-  /** Per-species aggression (Option 2), 0–100 */
+  /** Per-species aggression (Option 2), 0–100 (includes schooling penalty) */
   function speciesAggression(entry, stock, fishList, gallons) {
     const id = entry?.id;
     const base = baseMap[id] ?? 0;
-    const conf = conflictForEntry(entry, stock, fishList, gallons);
+    const conf = conflictForEntry(entry, stock, fishList, gallons, { ignoreSchooling: false });
     return option2(base, conf);
   }
 
-  /** OVERALL METER: quantity-weighted average *conflict only* (+10, capped) */
+  /** OVERALL METER: quantity-weighted average of *conflicts only* (+10), ignoring the schooling penalty */
   function overallAverageConflict(stock, fishList, gallons) {
     if (!Array.isArray(stock) || stock.length === 0) return 0;
     let total = 0, totalQty = 0;
     stock.forEach(e => {
       const qty = Math.max(1, Math.floor(e.qty || 0));
-      const conf = conflictForEntry(e, stock, fishList, gallons);
+      const conf = conflictForEntry(e, stock, fishList, gallons, { ignoreSchooling: true });
       const boosted = Math.min(100, (conf || 0) + 10);
       total += boosted * qty;
       totalQty += qty;
@@ -110,7 +103,7 @@
     return totalQty ? Math.round(total / totalQty) : 0;
   }
 
-  /** Build warnings list using same rules as conflict model + env overlap */
+  /** Warnings list (still includes schooling mismatch) */
   function checkIssues(stock, fishList, gallons) {
     const issues = [];
     if (!Array.isArray(stock) || !Array.isArray(fishList)) return issues;
@@ -176,6 +169,15 @@
     if (t === null) issues.push({severity:'warning', message:'Selected species have non-overlapping temperature ranges.'});
     if (p === null) issues.push({severity:'warning', message:'Selected species have non-overlapping pH ranges.'});
 
+    // Schooling mismatch note remains here (for user guidance)
+    stock.forEach(e => {
+      const f = fishById(fishList, e.id);
+      if (!f) return;
+      if ((f.min ?? 1) >= 6 && e.qty < f.min) {
+        issues.push({severity:'caution', message:`${f.name}: schooling species below recommended group size (${e.qty}/${f.min}).`});
+      }
+    });
+
     return issues;
   }
 
@@ -189,7 +191,6 @@
     checkIssues
   };
 
-  // Export
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Aggression;
   } else {
