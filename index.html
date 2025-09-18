@@ -74,29 +74,36 @@
   .right{text-align:right}
   tbody td{padding:10px 6px}
 
+  /* Neutral fields until explicitly flagged */
   .field{
-    background:var(--field-bg); border:1px solid var(--field-bd); border-radius:10px;
-    padding:10px 12px; height:40px; display:flex; align-items:center; min-width:0;
+    background:var(--field-bg);
+    border:1px solid var(--field-bd);
+    border-radius:10px;
+    padding:10px 12px;
+    height:40px;
+    display:flex; align-items:center; min-width:0;
   }
-  .field.single-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .field.single-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:120px}
   .field.center{justify-content:center}
   .field.small{min-width:60px;justify-content:center;font-variant-numeric:tabular-nums}
 
-  /* Lightweight status */
-  .field.ok{border-color:#94e6c0}
-  .field.warn{border-color:#f6c76a}
-  .field.bad{border-color:#f2a3a3}
+  /* Only add color when tagged */
+  .field.ok  { border-color:#94e6c0 }
+  .field.warn{ border-color:#f6c76a }
+  .field.bad { border-color:#f2a3a3 }
 
-  .actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:nowrap}
-  .pill{height:34px;padding:0 10px;border-radius:999px;font-size:.95rem;color:#fff;border:none;box-shadow:0 2px 6px rgba(2,6,23,.14)}
+  /* Actions: pair (-/+) grouped, Delete separate */
+  .actions{display:flex;justify-content:flex-end;align-items:center;gap:6px}
+  .actions .group{display:flex;gap:6px}
+  .pill{height:34px;padding:0 12px;border-radius:999px;font-size:.9rem;color:#fff;border:none;box-shadow:0 2px 6px rgba(2,6,23,.14)}
   .pill.minus{background:var(--warn)} .pill.minus:hover{background:var(--warn-2)}
-  .pill.plus{background:var(--ok)} .pill.plus:hover{background:var(--ok-2)}
+  .pill.plus {background:var(--ok)}   .pill.plus:hover {background:var(--ok-2)}
   .pill.delete{background:var(--bad)} .pill.delete:hover{background:var(--bad-2)}
 
-  /* Phone: let actions wrap under without breaking card */
+  /* Phone: stack neatly */
   @media (max-width:480px){
     .actions{flex-wrap:wrap}
-    .pill.delete{min-width:96px}
+    .pill.delete{flex:1 1 100%;min-width:96px}
   }
 
   /* Warnings list */
@@ -112,7 +119,7 @@
     </div>
     <header><h2>Stocking Calculator</h2></header>
 
-    <!-- Tank Setup (RESTORED) -->
+    <!-- Tank Setup -->
     <section class="card">
       <h2>Tank Setup</h2>
       <div class="row">
@@ -210,7 +217,7 @@
   <script src="js/aggression.js"></script>
   <script src="js/stocking_advisor.js"></script>
 
-  <!-- Lightweight, safe UI enhancement -->
+  <!-- Safe, lightweight UI enhancement -->
   <script>
     (function(){
       const tbody = document.getElementById('tbody');
@@ -232,28 +239,39 @@
         return el;
       }
 
+      // Group (-/+) together, keep Delete separate
       function enhanceActions(td){
-        if(!td) return;
-        if (td.dataset.enhanced === '1') return;
+        if(!td || td.dataset.enhanced === '1') return;
+
         const wrap = document.createElement('div');
         wrap.className = 'actions';
-        const buttons = td.querySelectorAll('button');
+
+        const pair = document.createElement('div');
+        pair.className = 'group';
+
+        const buttons = [...td.querySelectorAll('button')];
         buttons.forEach(b=>{
-          const t=b.textContent;
+          const t = b.textContent;
           b.classList.add('pill');
-          if(/delete/i.test(t)) b.classList.add('delete');
-          else if(t.includes('-')) b.classList.add('minus');
-          else if(t.includes('+')) b.classList.add('plus');
-          wrap.appendChild(b);
+          if(/delete/i.test(t)){
+            b.classList.add('delete');
+            wrap.appendChild(b);         // delete sits on the right
+          } else {
+            if(t.includes('-')) b.classList.add('minus');
+            if(t.includes('+')) b.classList.add('plus');
+            pair.appendChild(b);         // -/+ stay together
+          }
         });
-        td.appendChild(wrap);           // append after existing nodes (no clearing)
+
+        wrap.prepend(pair);
+        td.appendChild(wrap);            // append wrapper without clearing cell
         td.dataset.enhanced = '1';
       }
 
       function aggressionColor(fieldEl, txt){
         const n = parseFloat(String(txt).replace('%',''));
         fieldEl.classList.remove('ok','warn','bad');
-        if (isNaN(n)) return;
+        if (isNaN(n)) return;            // stay neutral
         if (n <= 33) fieldEl.classList.add('ok');
         else if (n <= 66) fieldEl.classList.add('warn');
         else fieldEl.classList.add('bad');
@@ -270,7 +288,7 @@
         return map;
       }
 
-      function colorRowStatus(){
+      function colorRows(){
         const warnMap = parseWarnings();
         tbody.querySelectorAll('tr').forEach(tr=>{
           if (tr.dataset.styled === '1') return;
@@ -282,8 +300,10 @@
           const fAgg  = wrapField(tds[2], { center:true, small:true });
           enhanceActions(tds[3]);
 
+          // Aggression coloring
           aggressionColor(fAgg, fAgg.textContent);
 
+          // Group-size status from warnings (if present)
           const key = (fName.textContent || '').trim().toLowerCase();
           [fName,fQty].forEach(el=> el && el.classList.remove('ok','warn','bad'));
           const info = warnMap.get(key);
@@ -291,23 +311,20 @@
             const redCut = Math.max(1, Math.floor(info.min/2));
             if (info.qty < redCut){ fName.classList.add('bad'); fQty.classList.add('bad'); }
             else { fName.classList.add('warn'); fQty.classList.add('warn'); }
-          } else {
-            fName.classList.add('ok'); fQty.classList.add('ok');
           }
+          // else: remain neutral (no class)
 
           tr.dataset.styled = '1';
         });
       }
 
-      // Observe changes from stocking_advisor.js without removing anything
-      const obs = new MutationObserver(()=>{ colorRowStatus(); });
-      obs.observe(tbody, { childList:true, subtree:true });
-      if (warningsBox){
-        const wobs = new MutationObserver(()=>{ tbody.querySelectorAll('tr').forEach(tr=> tr.dataset.styled=''); colorRowStatus(); });
-        wobs.observe(warningsBox, { childList:true, subtree:true });
-      }
+      const rowObs = new MutationObserver(colorRows);
+      rowObs.observe(tbody, { childList:true, subtree:true });
 
-      window.addEventListener('load', colorRowStatus);
+      const warnObs = new MutationObserver(()=>{ tbody.querySelectorAll('tr').forEach(tr=> tr.dataset.styled=''); colorRows(); });
+      warnObs.observe(warningsBox, { childList:true, subtree:true });
+
+      window.addEventListener('load', colorRows);
     })();
   </script>
 </body>
