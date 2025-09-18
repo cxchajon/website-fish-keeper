@@ -4,15 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Stocking Calculator</title>
-
-<!-- Preload a common-size WebP; browser will choose best via srcset -->
-<link rel="preload"
-      as="image"
-      href="images/fishkeepinglifeco-logo-720.webp?v=2"
-      imagesrcset="images/fishkeepinglifeco-logo-360.webp?v=2 360w, images/fishkeepinglifeco-logo-720.webp?v=2 720w, images/fishkeepinglifeco-logo-1080.webp?v=2 1080w"
-      imagesizes="(max-width: 768px) 22vw, 96px"
-      fetchpriority="high">
-
 <style>
   :root {
     --gap: 12px;
@@ -32,7 +23,12 @@
     margin:0;
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: var(--ink);
-    background: linear-gradient(180deg, #0284c7, #0ea5e9, #38bdf8);
+    background: linear-gradient(
+      180deg, 
+      #0ea5e9 0%,     /* aqua blue (matches fish background) */
+      #38bdf8 60%,   /* lighter blue */
+      #7dd3fc 100%   /* very soft blue for bottom fade */
+    );
     background-attachment: fixed;
   }
 
@@ -42,56 +38,45 @@
     padding: 28px 20px 48px;
   }
 
-  /* ===== Brand (logo left, text right) ===== */
+  /* Brand */
   .brand {
-    margin-bottom: 20px;
-    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 24px;
   }
-  .brand-inner{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    justify-content:center; /* center whole block */
-    flex-wrap:wrap; /* keep tidy on small screens */
+
+  .brand img {
+    width: 60px;   /* balanced with text */
+    height: auto;
+    display: block;
   }
-  /* Logo sizing: small on phones, a bit larger on desktop */
-  .brand picture{
-    display:block;
-    width: clamp(60px, 18vw, 96px); /* 60–96px depending on screen */
-    flex: 0 0 auto;
+
+  .brand-text {
+    text-align: left;
   }
-  .brand img{
-    width:100%;
-    height:auto;
-    display:block;
-    border-radius: 14px;      /* keep the subtle rounding */
+
+  .brand-text h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: white;
   }
-  .brand-text{
-    line-height:1.15;
-    text-align:left;
-    flex: 1 1 auto;
-    min-width: 220px;
-  }
-  .brand-title{
-    font-weight:800;
-    font-size: clamp(1.1rem, 1.0rem + 1vw, 1.6rem);
-    letter-spacing:.2px;
-    margin:0;
-  }
-  .brand-sub{
-    margin:4px 0 0;
-    font-size: clamp(.9rem, .85rem + .4vw, 1.05rem);
-    opacity:.95;
+
+  .brand-text p {
+    margin: 2px 0 0;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.9);
   }
 
   header {
-    margin: 10px 0 18px;
+    margin-bottom: 18px;
     text-align: center;
     color: white;
   }
-  h1 {
-    font-size: clamp(1.35rem, 1.1rem + 1.2vw, 1.9rem);
-    margin: 0;
+  h2 {
+    margin-top: 0;
   }
 
   /* Frosted glass cards */
@@ -183,135 +168,51 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- ===== Brand: logo left, name right ===== -->
-    <div class="brand" aria-label="FishkeepingLifeCo">
-      <div class="brand-inner">
-        <picture>
-          <source type="image/webp"
-                  srcset="
-                    images/fishkeepinglifeco-logo-360.webp?v=2 360w,
-                    images/fishkeepinglifeco-logo-720.webp?v=2 720w,
-                    images/fishkeepinglifeco-logo-1080.webp?v=2 1080w"
-                  sizes="(max-width: 768px) 22vw, 96px">
-          <source type="image/jpeg"
-                  srcset="
-                    images/fishkeepinglifeco-logo-360.jpg?v=2 360w,
-                    images/fishkeepinglifeco-logo-720.jpg?v=2 720w,
-                    images/fishkeepinglifeco-logo-1080.jpg?v=2 1080w"
-                  sizes="(max-width: 768px) 22vw, 96px">
-          <img src="images/fishkeepinglifeco-logo-720.jpg?v=2"
-               alt="FishkeepingLifeCo logo"
-               decoding="async"
-               fetchpriority="high"
-               loading="eager">
-        </picture>
-
-        <div class="brand-text">
-          <p class="brand-title">FishkeepingLifeCo</p>
-          <p class="brand-sub">Aquarium Education</p>
-        </div>
+    <!-- Brand logo -->
+    <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
+      <img src="images/fish-logo.webp" alt="FishkeepingLifeCo logo"/>
+      <div class="brand-text">
+        <h1>FishkeepingLifeCo</h1>
+        <p>Aquarium Education</p>
       </div>
     </div>
 
-    <header><h1>Stocking Calculator</h1></header>
+    <header><h2>Stocking Calculator</h2></header>
 
     <!-- Tank setup card -->
     <section class="card">
       <div class="row">
-        <div>
-          <label for="gallons">Tank size (US gallons)</label>
-          <input id="gallons" type="number" min="1" value="20"/>
+        <div><label for="gallons">Tank size (US gallons)</label><input id="gallons" type="number" min="1" value="20"/></div>
+        <div><label for="filtration">Filtration</label>
+          <select id="filtration"><option value="low">Low — Sponge filter (gentle flow)</option><option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option><option value="high">High — Sump/Canister (oversized)</option></select>
         </div>
-        <div>
-          <label for="filtration">Filtration</label>
-          <select id="filtration">
-            <option value="low">Low — Sponge filter (gentle flow)</option>
-            <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
-            <option value="high">High — Sump/Canister (oversized)</option>
-          </select>
-        </div>
-        <div>
-          <label>Planted?</label>
-          <div class="switch">
-            <input id="planted" type="checkbox"/>
-            <span>Yes</span>
-          </div>
-        </div>
+        <div><label>Planted?</label><div class="switch"><input id="planted" type="checkbox"/><span>Yes</span></div></div>
       </div>
-
       <div class="bars-wrap">
-        <div class="bar-block">
-          <h3>Bioload</h3>
-          <div class="bar" aria-live="polite"><div id="barFill" class="bar-fill"></div></div>
-          <div class="bar-note"><span>Low</span><span>High</span></div>
-          <small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small>
-        </div>
-
-        <div class="bar-block">
-          <h3>Aggression Risk (Average conflicts)</h3>
-          <div class="bar" aria-live="polite"><div id="aggBarFill" class="bar-fill"></div></div>
-          <div class="bar-note"><span>Low</span><span>High</span></div>
-          <small class="note">Serious conflicts automatically max this bar.</small>
-        </div>
+        <div class="bar-block"><h3>Bioload</h3><div class="bar" aria-live="polite"><div id="barFill" class="bar-fill"></div></div><div class="bar-note"><span>Low</span><span>High</span></div><small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small></div>
+        <div class="bar-block"><h3>Aggression Risk (Average conflicts)</h3><div class="bar" aria-live="polite"><div id="aggBarFill" class="bar-fill"></div></div><div class="bar-note"><span>Low</span><span>High</span></div><small class="note">Serious conflicts automatically max this bar.</small></div>
       </div>
     </section>
 
     <!-- Add Fish -->
     <section class="card">
-      <h2 style="margin-top:0">Add Fish</h2>
-      <div class="row">
-        <div style="flex:1 1 320px">
-          <label for="fishSearch">Search species</label>
-          <input id="fishSearch" type="text" placeholder="Type to filter the list"/>
-        </div>
-      </div>
-      <div class="row">
-        <div style="flex:1 1 320px">
-          <label for="fishSelect">Species</label>
-          <select id="fishSelect"></select>
-        </div>
-      </div>
-      <div class="row">
-        <div style="flex:1 1 200px">
-          <label for="recMin">Recommended minimum</label>
-          <input id="recMin" type="number" value="" disabled/>
-        </div>
-      </div>
-      <div class="row" style="align-items:flex-end">
-        <div style="flex:1 1 200px">
-          <label for="fQty">Quantity</label>
-          <input id="fQty" type="number" min="1" placeholder=""/>
-        </div>
-        <div>
-          <button id="addFish">Add</button>
-        </div>
-      </div>
+      <h2>Add Fish</h2>
+      <div class="row"><div style="flex:1 1 320px"><label for="fishSearch">Search species</label><input id="fishSearch" type="text" placeholder="Type to filter the list"/></div></div>
+      <div class="row"><div style="flex:1 1 320px"><label for="fishSelect">Species</label><select id="fishSelect"></select></div></div>
+      <div class="row"><div style="flex:1 1 200px"><label for="recMin">Recommended minimum</label><input id="recMin" type="number" value="" disabled/></div></div>
+      <div class="row" style="align-items:flex-end"><div style="flex:1 1 200px"><label for="fQty">Quantity</label><input id="fQty" type="number" min="1" placeholder=""/></div><div><button id="addFish">Add</button></div></div>
     </section>
 
     <!-- Current Stock -->
     <section class="card">
-      <h2 style="margin-top:0">Current Stock</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th class="right">Qty</th>
-            <th class="right">Aggression</th>
-            <th class="right">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-      <div class="row" style="margin-top:8px">
-        <div style="flex:1 1 200px">
-          <button id="reset" class="clear-danger">Clear Stock</button>
-        </div>
-      </div>
+      <h2>Current Stock</h2>
+      <table><thead><tr><th>Name</th><th class="right">Qty</th><th class="right">Aggression</th><th class="right">Actions</th></tr></thead><tbody id="tbody"></tbody></table>
+      <div class="row" style="margin-top:8px"><div style="flex:1 1 200px"><button id="reset" class="clear-danger">Clear Stock</button></div></div>
     </section>
 
     <!-- Warnings -->
     <section class="card">
-      <h2 style="margin-top:0">Aggression & Compatibility Warnings</h2>
+      <h2>Aggression & Compatibility Warnings</h2>
       <div id="aggression-warnings"></div>
     </section>
   </div>
