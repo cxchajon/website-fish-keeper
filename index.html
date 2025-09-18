@@ -14,7 +14,7 @@
     --muted-2: #94a3b8;
 
     /* Brand & UI */
-    --brand:  #0284c7;  /* vivid blue */
+    --brand:  #0284c7;  /* blue */
     --brand-2:#0369a1;
     --ok:   #10b981;    /* green */
     --ok-2: #059669;
@@ -30,10 +30,9 @@
     --card: rgba(224,242,254,0.92);   /* soft aqua */
     --card-border: rgba(15,23,42,0.06);
 
-    /* Table “field boxes” */
+    /* Field boxes */
     --field-bg:#ffffff;
-    --field-bd:#cbd5e1;
-    --field-shadow:0 1px 2px rgba(2,6,23,.06);
+    --field-bd:#d2dbe6;
   }
 
   * { box-sizing:border-box; }
@@ -49,7 +48,7 @@
 
   .wrap{ max-width:980px; margin:0 auto; padding:28px 20px 48px; }
 
-  /* Brand (left) */
+  /* Brand */
   .brand{ display:flex; flex-direction:column; align-items:flex-start; gap:4px; margin-bottom:8px; color:#fff; }
   .brand-name{ font-size:1.6rem; font-weight:700; line-height:1.2; }
   .brand-sub{ font-size:1rem; opacity:.95; }
@@ -64,10 +63,10 @@
     border-radius:var(--radius);
     padding:20px;
     margin-bottom:20px;
-    box-shadow:0 12px 24px -10px rgba(2,6,23,.25);
-    backdrop-filter: blur(10px) saturate(160%);
-    -webkit-backdrop-filter: blur(10px) saturate(160%);
-    overflow:hidden;                 /* keep content inside rounded edges */
+    box-shadow:0 8px 18px -10px rgba(2,6,23,.22);
+    backdrop-filter: blur(6px) saturate(140%);
+    -webkit-backdrop-filter: blur(6px) saturate(140%);
+    overflow:hidden;
   }
   .card h2,.card h3{ margin:0 0 10px; font-weight:700; }
 
@@ -85,90 +84,103 @@
 
   /* Buttons */
   .btn{
-    position:relative;
-    border:none; border-radius:10px; color:#fff; cursor:pointer; font-weight:700;
-    box-shadow:0 3px 10px rgba(2,6,23,.18);
-    transition: transform .06s ease, filter .15s ease, box-shadow .2s ease, background .2s ease;
+    border:none; color:#fff; cursor:pointer; font-weight:700;
+    border-radius:10px; padding:10px 14px;
+    background:var(--brand);
+    transition: transform .06s ease, background .2s ease, box-shadow .2s ease;
+    box-shadow:0 2px 8px rgba(2,6,23,.18);
   }
-  .btn:before{ /* subtle top gloss */
-    content:""; position:absolute; inset:0; border-radius:inherit;
-    background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,0));
-    pointer-events:none;
-  }
+  .btn:hover{ background:var(--brand-2); }
   .btn:active{ transform:translateY(1px); }
+  .btn:disabled{ opacity:.7; cursor:not-allowed; }
 
-  /* Add button (vivid) */
-  .btn.primary{ background:var(--brand); }
-  .btn.primary:hover{ background:var(--brand-2); filter:saturate(1.1); }
+  /* ===== Current Stock ===== */
 
-  /* Table */
-  table{ width:100%; border-collapse:separate; border-spacing:0 10px; table-layout:fixed; }
-  /* Fixed column widths keep actions from pushing out */
-  col.name   { width:52%; }
-  col.qty    { width:12%; }
-  col.aggr   { width:16%; }
-  col.actions{ width:20%; }
+  /* Desktop/tablet table */
+  .stock-table{ width:100%; border-collapse:collapse; }
+  .stock-table thead th{
+    padding:8px 6px 10px;
+    text-align:left; font-weight:700;
+    border-bottom:1px solid #cfe7fb66;
+  }
+  .right{ text-align:right; }
 
-  thead th{ padding:0 6px 4px; font-weight:700; }
-  th.right, td.right{ text-align:right; }
+  .stock-table tbody td{ padding:10px 6px; }
 
-  /* Field boxes in cells */
   .field{
-    background:var(--field-bg); border:1px solid var(--field-bd); border-radius:10px;
-    box-shadow:var(--field-shadow); padding:10px 12px; height:42px;
+    background:var(--field-bg);
+    border:1px solid var(--field-bd);
+    border-radius:10px;
+    padding:10px 12px;
+    height:40px;
     display:flex; align-items:center;
-    min-width:0; /* allow ellipsis */
+    min-width:0;
   }
   .field.single-line{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .field.center{ justify-content:center; }
-  .field.small{ min-width:64px; justify-content:center; font-variant-numeric:tabular-nums; }
+  .field.small{ min-width:60px; justify-content:center; font-variant-numeric: tabular-nums; }
 
-  /* Status colors */
-  .field.ok   { border-color:var(--ok);   box-shadow:0 0 0 3px rgba(16,185,129,.18); }
-  .field.warn { border-color:var(--warn); box-shadow:0 0 0 3px rgba(245,158,11,.18); }
-  .field.bad  { border-color:var(--bad);  box-shadow:0 0 0 3px rgba(239,68,68,.18); }
+  /* Thin status bar instead of thick glow */
+  .field.ok   { border-color: #94e6c0; box-shadow: inset 0 0 0 2px #94e6c033; }
+  .field.warn { border-color: #f6c76a; box-shadow: inset 0 0 0 2px #f6c76a33; }
+  .field.bad  { border-color: #f2a3a3; box-shadow: inset 0 0 0 2px #f2a3a333; }
 
-  /* Actions cell */
-  td.actions{ padding-left:6px; }
-  .actions-wrap{
-    display:flex; justify-content:flex-end; align-items:center; gap:8px;
-    max-width:100%; flex-wrap:nowrap;
+  /* Actions */
+  .actions-wrap{ display:flex; justify-content:flex-end; align-items:center; gap:8px; }
+  .pill{ height:34px; padding:0 10px; border-radius:999px; font-size:.95rem; }
+  .pill.minus{ background:var(--warn); }
+  .pill.minus:hover{ background:var(--warn-2); }
+  .pill.plus{ background:var(--ok); }
+  .pill.plus:hover{ background:var(--ok-2); }
+  .pill.delete{ background:var(--bad); }
+  .pill.delete:hover{ background:var(--bad-2); }
+
+  /* ===== Mobile layout: turn each row into a mini-card ===== */
+  @media (max-width: 520px){
+    /* Hide thead on phones */
+    .stock-table thead{ display:none; }
+
+    .stock-table tbody tr{
+      display:grid;
+      grid-template-columns: 1fr auto; /* name spans, action column at right */
+      grid-template-rows: auto auto;   /* name row + meta row */
+      gap:8px 10px;
+      padding:10px 12px;
+      border:1px solid #cfe7fb66;
+      border-radius:12px;
+      background:#f0f9ffb3;
+      margin-bottom:12px;
+    }
+    .stock-table tbody td{ padding:0; border:0; }
+
+    /* Name takes full width on first row */
+    td.cell-name{ grid-column: 1 / -1; }
+    td.cell-name .field{ height:38px; }
+
+    /* Meta row: qty | aggression | actions */
+    td.cell-qty   { grid-column: 1 / 2; }
+    td.cell-agg   { grid-column: 2 / 3; }
+    td.cell-act   { grid-column: 1 / -1; }
+
+    /* Align qty & agg next to each other, actions below (saves width) */
+    .row-meta{ display:grid; grid-template-columns: 1fr 1fr; gap:8px; }
+    .actions-wrap{ justify-content:flex-start; flex-wrap:wrap; gap:8px; }
+    .pill{ height:34px; padding:0 12px; }
+    .pill.delete{ min-width:100px; }
   }
 
-  /* Compact action buttons (brighter –1/+1) */
-  .btn.action{ height:36px; padding:0 12px; border-radius:8px; font-size:.95rem; }
-  .btn.minus{ background:var(--warn); }
-  .btn.minus:hover{ background:var(--warn-2); filter:saturate(1.1); }
-  .btn.plus{ background:var(--ok); }
-  .btn.plus:hover{ background:var(--ok-2); filter:saturate(1.1); }
-  .btn.delete{ background:var(--bad); border-radius:8px; min-width:88px; height:36px; }
-  .btn.delete:hover{ background:var(--bad-2); }
-
-  /* Disabled style (keep readable, not washed out) */
-  .btn:disabled{
-    opacity:.7; filter:grayscale(.05) saturate(.9);
-    cursor:not-allowed; box-shadow:0 2px 6px rgba(2,6,23,.12);
-  }
-
-  /* Portrait tweaks: wrap actions without overflow */
-  @media (max-width:480px){
-    .actions-wrap{ flex-wrap:wrap; gap:8px 8px; }
-    .btn.action{ flex:0 0 58px; }
-    .btn.delete{ flex:1 1 100%; }
-    td.actions{ padding-top:6px; }
-  }
-
-  /* Bars */
-  .bar{ height:26px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
+  /* Bars & notes */
+  .bar{ height:24px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
   .bar-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--ok), var(--warn), var(--bad)); transition:width .25s ease; }
   .bar-note{ display:flex; justify-content:space-between; font-size:.85rem; color:var(--muted); }
 
-  /* Notes & warnings */
   small.note{ color:var(--muted-2); font-size:.8rem; font-style:italic; display:block; margin-top:6px; padding-left:20px; position:relative; }
   small.note::before{ content:"ℹ️"; position:absolute; left:0; }
+
+  /* Warnings */
   #aggression-warnings > div{
     background:#fff7ed; border:2px solid #fdba74; color:#7a3419;
-    padding:14px 16px; border-radius:12px; line-height:1.4; margin-bottom:8px;
+    padding:12px 14px; border-radius:12px; line-height:1.4; margin-bottom:8px;
   }
 </style>
 </head>
@@ -183,44 +195,6 @@
     <header><h2>Stocking Calculator</h2></header>
 
     <!-- Tank setup -->
-    <section class="card">
-      <h2>Tank Setup</h2>
-      <div class="row">
-        <div>
-          <label for="gallons">Tank size (US gallons)</label>
-          <input id="gallons" type="number" min="1" value="20"/>
-        </div>
-        <div>
-          <label for="filtration">Filtration</label>
-          <select id="filtration">
-            <option value="low">Low — Sponge filter (gentle flow)</option>
-            <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
-            <option value="high">High — Sump/Canister (oversized)</option>
-          </select>
-        </div>
-        <div>
-          <label>Planted?</label>
-          <input id="planted" type="checkbox"/> <span>Yes</span>
-        </div>
-      </div>
-
-      <div class="bars-wrap" style="margin-top:16px">
-        <div class="bar-block">
-          <h3>Bioload</h3>
-          <div class="bar"><div id="barFill" class="bar-fill"></div></div>
-          <div class="bar-note"><span>Low</span><span>High</span></div>
-          <small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small>
-        </div>
-        <div class="bar-block" style="margin-top:14px">
-          <h3>Aggression Risk</h3>
-          <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
-          <div class="bar-note"><span>Low</span><span>High</span></div>
-          <small class="note">Serious conflicts automatically max this bar.</small>
-        </div>
-      </div>
-    </section>
-
-    <!-- Add Fish -->
     <section class="card">
       <h2>Add Fish</h2>
       <div class="row">
@@ -246,28 +220,28 @@
           <label for="fQty">Quantity</label>
           <input id="fQty" type="number" min="1"/>
         </div>
-        <div><button id="addFish" class="btn primary">Add</button></div>
+        <div><button id="addFish" class="btn">Add</button></div>
       </div>
     </section>
 
-    <!-- Current Stock -->
     <section class="card">
       <h2>Current Stock</h2>
-      <table>
-        <colgroup>
-          <col class="name"><col class="qty"><col class="aggr"><col class="actions">
-        </colgroup>
+      <table class="stock-table">
         <thead>
-          <tr><th>Name</th><th class="right">Qty</th><th class="right">Aggression</th><th class="right">Actions</th></tr>
+          <tr>
+            <th>Name</th>
+            <th class="right">Qty</th>
+            <th class="right">Aggression</th>
+            <th class="right">Actions</th>
+          </tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
       <div class="row" style="margin-top:10px">
-        <div><button id="reset" class="btn" style="background:var(--bad)"><span>Clear Stock</span></button></div>
+        <div><button id="reset" class="btn" style="background:var(--bad)">Clear Stock</button></div>
       </div>
     </section>
 
-    <!-- Warnings -->
     <section class="card">
       <h2>Aggression & Compatibility Warnings</h2>
       <div id="aggression-warnings"></div>
@@ -277,13 +251,15 @@
   <script src="js/fish-data.js"></script>
   <script src="js/aggression.js"></script>
 
-  <!-- UI polish: fields, actions, and status colors -->
+  <!-- UI polish & responsive stock rows -->
   <script>
     const tbody = document.getElementById('tbody');
     const warningsBox = document.getElementById('aggression-warnings');
 
     function wrapField(td, { single=false, center=false, small=false } = {}){
-      if(!td || td.querySelector('.field')) return td.querySelector('.field');
+      if(!td) return;
+      const existing = td.querySelector('.field');
+      if(existing) return existing;
       const box = document.createElement('div');
       box.className = 'field';
       if(single) box.classList.add('single-line');
@@ -298,19 +274,19 @@
 
     function tidyActions(td){
       if(!td) return;
-      td.classList.add('actions');
       if(td.querySelector('.actions-wrap')) return;
       const wrap = document.createElement('div');
       wrap.className = 'actions-wrap';
       const buttons = [...td.querySelectorAll('button')];
       buttons.forEach(b=>{
         const t = b.textContent;
-        b.classList.add('btn','action');
-        if(/delete/i.test(t)){ b.classList.remove('action'); b.classList.add('delete'); }
+        b.classList.add('btn','pill');
+        if(/delete/i.test(t)){ b.classList.add('delete'); }
         else if(t.includes('-')){ b.classList.add('minus'); }
         else if(t.includes('+')){ b.classList.add('plus'); }
         wrap.appendChild(b);
       });
+      td.innerHTML = '';
       td.appendChild(wrap);
     }
 
@@ -329,57 +305,60 @@
       if(!warningsBox) return map;
       [...warningsBox.querySelectorAll('div')].forEach(div=>{
         const s = div.textContent || '';
-        // e.g. "White cloud...: ... (1/6)"
         const m = s.match(/^\s*([^:]+):.*\((\d+)\s*\/\s*(\d+)\)/i);
-        if(m){
-          map.set(m[1].trim().toLowerCase(), { qty:+m[2], min:+m[3] });
-        }
+        if(m){ map.set(m[1].trim().toLowerCase(), { qty:+m[2], min:+m[3] }); }
       });
       return map;
     }
 
-    function applyRowColors(){
-      const wmap = parseWarnings();
+    function applyRowEnhancements(){
+      const warnMap = parseWarnings();
+
       [...tbody.querySelectorAll('tr')].forEach(tr=>{
-        const [tdName, tdQty, tdAgg, tdAct] = tr.querySelectorAll('td');
-        if(!tdAct) return;
+        const tds = tr.querySelectorAll('td');
+        if(tds.length < 4) return;
 
-        const fName = wrapField(tdName, { single:true });
-        const fQty  = wrapField(tdQty,  { center:true, small:true });
-        const fAgg  = wrapField(tdAgg,  { center:true, small:true });
-        tidyActions(tdAct);
+        tds[0].classList.add('cell-name');
+        tds[1].classList.add('cell-qty');
+        tds[2].classList.add('cell-agg');
+        tds[3].classList.add('cell-act');
 
-        // Aggression color
-        const aggText = fAgg ? fAgg.textContent : tdAgg.textContent;
-        colorAggression(fAgg, aggText);
+        const fName = wrapField(tds[0], { single:true });
+        const fQty  = wrapField(tds[1], { center:true, small:true });
+        const fAgg  = wrapField(tds[2], { center:true, small:true });
+        tidyActions(tds[3]);
 
-        // Group size color from warnings
-        const key = (fName ? fName.textContent : tdName.textContent).trim().toLowerCase();
+        // Color aggression
+        colorAggression(fAgg, fAgg.textContent);
+
+        // Group-size status from warning list (if any)
+        const key = (fName.textContent || '').trim().toLowerCase();
         [fName,fQty].forEach(el=> el && el.classList.remove('ok','warn','bad'));
-        const info = wmap.get(key);
+        const info = warnMap.get(key);
         if(info){
-          const redCutoff = Math.max(1, Math.floor(info.min/2)); // <50% of min = red
-          if(info.qty < redCutoff){
-            fName && fName.classList.add('bad');
-            fQty  && fQty.classList.add('bad');
-          } else {
-            fName && fName.classList.add('warn');
-            fQty  && fQty.classList.add('warn');
-          }
+          const redCutoff = Math.max(1, Math.floor(info.min/2));
+          if(info.qty < redCutoff){ fName.classList.add('bad'); fQty.classList.add('bad'); }
+          else { fName.classList.add('warn'); fQty.classList.add('warn'); }
         } else {
-          fName && fName.classList.add('ok');
-          fQty  && fQty.classList.add('ok');
+          fName.classList.add('ok'); fQty.classList.add('ok');
+        }
+
+        /* On phones, build a compact second line for qty/agg/actions */
+        if (window.matchMedia('(max-width: 520px)').matches) {
+          // Ensure qty + agg share a row visually: we already rely on CSS grid,
+          // but we add a wrapper to actions so it sits on its own row.
+          if(!tds[3].querySelector('.actions-wrap')) tidyActions(tds[3]);
         }
       });
     }
 
-    const obs = new MutationObserver(applyRowColors);
+    const obs = new MutationObserver(applyRowEnhancements);
     obs.observe(tbody, { childList:true, subtree:true });
 
-    const warnObs = new MutationObserver(applyRowColors);
-    warnObs.observe(document.getElementById('aggression-warnings'), { childList:true, subtree:true });
+    const warnObs = new MutationObserver(applyRowEnhancements);
+    warnObs.observe(warningsBox, { childList:true, subtree:true });
 
-    window.addEventListener('DOMContentLoaded', applyRowColors);
+    window.addEventListener('DOMContentLoaded', applyRowEnhancements);
   </script>
 
   <script src="js/stocking_advisor.js"></script>
