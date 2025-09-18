@@ -73,7 +73,7 @@
   table.stock{
     width:100%;
     border-collapse:collapse;
-    table-layout:fixed;          /* key for ellipsis control */
+    table-layout:fixed;          /* enables ellipsis control */
   }
   thead th{
     padding:8px 6px 10px;
@@ -82,17 +82,9 @@
     border-bottom:1px solid #cfe7fb66;
     white-space:nowrap;
   }
-  thead th:first-child{          /* Name column */
-    width:auto;                  /* take remaining space */
-  }
-  thead th.qty{
-    text-align:center;
-    width:90px;                  /* fixed qty col */
-  }
-  thead th.actions{
-    text-align:right;
-    width:160px;                 /* fixed actions col */
-  }
+  thead th:first-child{ width:auto; }         /* Name */
+  thead th.qty{ text-align:center; width:90px; }
+  thead th.actions{ text-align:right; width:160px; }
   tbody td{padding:10px 6px;vertical-align:middle;overflow:hidden}
   tbody td:first-child{padding-left:2px}
 
@@ -104,16 +96,24 @@
     padding:10px 12px;
     height:40px;
     display:flex; align-items:center;
-    min-width:0;                 /* allow shrinking inside fixed table */
-    max-width:100%;
+    min-width:0; max-width:100%;
+    gap:8px;
   }
-  .field.single-line{
-    display:block;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;      /* "White cloud…" */
-    min-width:0;                 /* override earlier min width */
+  .field.single-line{ min-width:0; }
+  .name-text{
+    display:block; flex:1 1 auto; min-width:0;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;  /* “White cloud…” */
   }
+  .lvl-badge{
+    flex:0 0 auto;
+    font-size:.72rem; line-height:1; padding:3px 6px; border-radius:999px;
+    background:#e2e8f0; color:#0f172a; border:1px solid #d6dee8;
+    opacity:.95;
+  }
+  .lvl-top{ background:#dbeafe; border-color:#bfdbfe; }     /* soft blue */
+  .lvl-mid{ background:#dcfce7; border-color:#bbf7d0; }     /* soft green */
+  .lvl-bottom{ background:#fef9c3; border-color:#fde68a; }  /* soft yellow */
+
   .field.center{justify-content:center}
   .field.small{min-width:60px;justify-content:center;font-variant-numeric:tabular-nums}
 
@@ -134,7 +134,11 @@
   .circle .ico{width:18px;height:18px;display:block}
 
   /* Warnings list */
-  #aggression-warnings>div{background:#fff7ed;border:2px solid #fdba74;color:#7a3419;padding:12px 14px;border-radius:12px;line-height:1.4;margin-bottom:8px}
+  #aggression-warnings>div{
+    background:#fff7ed;border:2px solid #fdba74;color:#7a3419;
+    padding:12px 14px;border-radius:12px;line-height:1.4;margin-bottom:8px
+  }
+  .hi-sev{border-color:#f97316;background:#fffbeb;color:#7a2e0e}
 
   /* Footer */
   footer{margin-top:auto;padding:18px 20px;color:#0b2a40;opacity:.85;text-align:center;font-size:.9rem}
@@ -257,7 +261,7 @@
 
   <!-- Footer with simple version -->
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v4</strong> • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v7</strong> • Updated Sep 18, 2025
   </footer>
 
   <!-- Data + Logic + Glue -->
@@ -265,26 +269,87 @@
   <script src="js/aggression.js"></script>
   <script src="js/stocking_advisor.js"></script>
 
-  <!-- UI Enhancement Patch (warning-only; SVG icons for actions + truncation) -->
+  <!-- UI Enhancement Patch (badges + truncation + SVG icons + nippy rules + swim-level note) -->
   <script>
     (function(){
       const tbody = document.getElementById('tbody');
       const warningsBox = document.getElementById('aggression-warnings');
 
+      /* --- Swimming-level detection (lightweight heuristics) --- */
+      const RE = {
+        top: /(hatchet|killifish|guppy|halfbeak|surface)/i,
+        mid: /(tetra|barb|danio|rasbora|gourami|molly|platy|swordtail|rainbowfish)/i,
+        bottom: /(corydoras|cory|loach|kuhli|pleco|catfish|otocinclus|shrimp)/i
+      };
+      function detectLevel(name){
+        if (RE.bottom.test(name)) return 'bottom';
+        if (RE.top.test(name))    return 'top';
+        if (RE.mid.test(name))    return 'mid';
+        return null;
+      }
+      function levelLabel(level){
+        return level === 'top' ? 'top' : level === 'bottom' ? 'bottom' : level === 'mid' ? 'mid' : null;
+      }
+      function levelClass(level){
+        return level === 'top' ? 'lvl-top' : level === 'bottom' ? 'lvl-bottom' : level === 'mid' ? 'lvl-mid' : '';
+      }
+
       function wrapField(td, opts={}){
         if(!td) return null;
-        const existing = td.querySelector('.field');
-        if(existing) return existing;
-        const el = document.createElement('div');
-        el.className = 'field';
-        if (opts.single) el.classList.add('single-line');  // enables ellipsis
-        if (opts.center) el.classList.add('center');
-        if (opts.small)  el.classList.add('small');
-        const text = td.textContent.trim();
-        td.textContent = '';
-        el.textContent = text;
-        td.appendChild(el);
+        let el = td.querySelector('.field');
+        if(!el){
+          el = document.createElement('div');
+          el.className = 'field';
+          if (opts.single) el.classList.add('single-line');
+          if (opts.center) el.classList.add('center');
+          if (opts.small)  el.classList.add('small');
+
+          const raw = (td.textContent || '').trim();
+          td.textContent = '';
+
+          // Build name + badge structure
+          const nameSpan = document.createElement('span');
+          nameSpan.className = 'name-text';
+          nameSpan.textContent = raw;
+
+          const lvl = detectLevel(raw);
+          if(lvl){
+            const badge = document.createElement('span');
+            badge.className = `lvl-badge ${levelClass(lvl)}`;
+            badge.textContent = `(${levelLabel(lvl)})`;
+            el.appendChild(nameSpan);
+            el.appendChild(badge);
+          }else{
+            el.appendChild(nameSpan);
+          }
+
+          el.dataset.rawName = raw; // keep original for matching
+          td.appendChild(el);
+        }
         return el;
+      }
+
+      function ensureBadge(el){
+        // If field already exists, (re)apply badge based on stored raw name
+        const raw = el?.dataset?.rawName || '';
+        const existingName = el.querySelector('.name-text');
+        if(!existingName){
+          const span = document.createElement('span');
+          span.className = 'name-text';
+          span.textContent = raw;
+          el.prepend(span);
+        }else{
+          existingName.textContent = raw;
+        }
+        // Remove any existing badge and re-add from rule
+        el.querySelectorAll('.lvl-badge').forEach(b=>b.remove());
+        const lvl = detectLevel(raw);
+        if(lvl){
+          const badge = document.createElement('span');
+          badge.className = `lvl-badge ${levelClass(lvl)}`;
+          badge.textContent = `(${levelLabel(lvl)})`;
+          el.appendChild(badge);
+        }
       }
 
       function enhanceActions(td){
@@ -302,7 +367,6 @@
         const wrap = document.createElement('div');
         wrap.className = 'actions';
 
-        // Support hyphen (-) and Unicode minus (−), plus a fallback
         const minusText = /(\u2212|-)\s*1?/;
         const plusText  = /\+\s*1?/;
         const delText   = /delete/i;
@@ -311,7 +375,6 @@
         let plusBtn  = buttons.find(b => plusText.test(b.textContent));
         let delBtn   = buttons.find(b => delText.test(b.textContent));
 
-        // Fallback order if needed
         if(!minusBtn || !plusBtn){
           if(buttons.length >= 2){
             minusBtn = minusBtn || buttons[0];
@@ -322,7 +385,6 @@
           delBtn = buttons[buttons.length - 1];
         }
 
-        // Hide originals; proxy clicks to retain existing logic
         buttons.forEach(b => b.style.display = 'none');
 
         if(minusBtn){
@@ -360,6 +422,77 @@
         td.dataset.enhanced = '1';
       }
 
+      /* -------- Helpers to read current stock -------- */
+      function getStockSnapshot(){
+        const rows = [...tbody.querySelectorAll('tr')];
+        return rows.map(tr=>{
+          const tds = tr.querySelectorAll('td');
+          const field = tds[0]?.querySelector('.field');
+          const rawName = field?.dataset?.rawName || (tds[0]?.textContent || '').trim();
+          const input = tds[1]?.querySelector('input');
+          const qtyText = input ? input.value : (tds[1]?.textContent || '0');
+          const qty = parseInt(qtyText, 10) || 0;
+          return { name: rawName, qty };
+        }).filter(r=>r.name);
+      }
+
+      /* -------- High-severity nippy species rules -------- */
+      const NIPPY_SPECIES = [
+        { key: 'tiger barb',  re: /tiger\s*barb/i,  msg: 'Tiger barb: extremely nippy — best kept as a species-only group (keep 6+). Avoid slow/long-finned tankmates.' },
+        { key: 'serpae tetra',re: /serpae\s*tetra/i, msg: 'Serpae tetra: notoriously nippy — best as a species-only group (8+ recommended). Avoid slow/long-finned tankmates.' }
+      ];
+
+      function renderNippyWarnings(){
+        if(!warningsBox) return;
+        const stock = getStockSnapshot();
+        const speciesCount = new Set(stock.map(s => s.name.toLowerCase())).size;
+
+        NIPPY_SPECIES.forEach(({key,re,msg})=>{
+          const id = `hi-${key.replace(/\s+/g,'-')}`;
+          const exists = document.getElementById(id);
+          const present = stock.some(s => re.test(s.name));
+          const mixed = present && speciesCount > 1;
+
+          if(mixed){
+            const div = exists || document.createElement('div');
+            div.id = id;
+            div.classList.add('hi-sev');
+            div.innerHTML = `<strong>${msg}</strong>`;
+            if(!exists){ warningsBox.prepend(div); }
+          }else if(exists){
+            exists.remove();
+          }
+        });
+      }
+
+      /* -------- Context note: swimming levels & cover -------- */
+      const BOTTOM_DWELLERS_RE = /(corydoras|cory|loach|kuhli|pleco|catfish)/i;
+
+      function renderSwimmingLevelNote(){
+        if(!warningsBox) return;
+        const id = 'swim-level-note';
+        const exists = document.getElementById(id);
+        const stock = getStockSnapshot();
+
+        const hasNippy = NIPPY_SPECIES.some(x => stock.some(s => x.re.test(s.name)));
+        const hasBottom = stock.some(s => BOTTOM_DWELLERS_RE.test(s.name));
+        const needNote = hasNippy && hasBottom;
+
+        if(needNote){
+          const div = exists || document.createElement('div');
+          div.id = id;
+          div.innerHTML = `
+            <em>Note:</em> consider <strong>swimming levels</strong>. Mixing active mid-water nippers
+            (Tiger barbs / Serpae tetras) with bottom dwellers (e.g., <strong>Panda Corydoras</strong>)
+            can work in larger tanks. Provide <strong>lots of cover</strong> (plants, wood, rock) and
+            broken sight-lines to reduce chasing.`;
+          if(!exists){ warningsBox.append(div); }
+        }else if(exists){
+          exists.remove();
+        }
+      }
+
+      /* -------- Existing row styling / warning tinting -------- */
       function parseWarnings(){
         const map = new Map();
         if (!warningsBox) return map;
@@ -378,7 +511,6 @@
           const cells = [...tr.querySelectorAll('td')];
           if (cells.length === 0) return;
 
-        /* Remove any legacy aggression % cell if it exists */
           const maybePct = cells.find(c => !c.querySelector('button') && /\d+\s*%$/.test(c.textContent.trim()));
           if (maybePct) { maybePct.remove(); }
 
@@ -387,12 +519,13 @@
           const qtyTd  = tds[1];
           const actionsTd = tds[tds.length - 1];
 
-          const fName = wrapField(nameTd, { single:true });   // truncates long names
+          const fName = wrapField(nameTd, { single:true });
+          ensureBadge(fName); // (re)apply level badge on updates
           const fQty  = wrapField(qtyTd,  { center:true, small:true });
           enhanceActions(actionsTd);
 
-          // Optional color hint from warnings
-          const key = (fName.textContent || '').trim().toLowerCase();
+          // Optional color hint from existing warnings
+          const key = (fName.dataset.rawName || fName.textContent || '').trim().toLowerCase();
           [fName,fQty].forEach(el=> el && el.classList.remove('ok','warn','bad'));
           const info = warnMap.get(key);
           if (info){
@@ -405,16 +538,19 @@
         });
       }
 
-      const rowObs = new MutationObserver(decorateRows);
-      rowObs.observe(tbody, { childList:true, subtree:true });
-
-      const warnObs = new MutationObserver(()=>{
-        tbody.querySelectorAll('tr').forEach(tr=> tr.dataset.styled='');
+      function rerunAll(){
         decorateRows();
-      });
+        renderNippyWarnings();
+        renderSwimmingLevelNote();
+      }
+
+      const rowObs = new MutationObserver(rerunAll);
+      rowObs.observe(tbody, { childList:true, subtree:true, characterData:true });
+
+      const warnObs = new MutationObserver(rerunAll);
       warnObs.observe(warningsBox, { childList:true, subtree:true });
 
-      window.addEventListener('load', decorateRows);
+      window.addEventListener('load', rerunAll);
     })();
   </script>
 </body>
