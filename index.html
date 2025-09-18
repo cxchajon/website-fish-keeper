@@ -8,179 +8,106 @@
   :root {
     --gap: 12px;
     --radius: 14px;
-    --card-bg: #ffffff;
     --ink: #0f172a;
     --muted: #475569;
     --muted-2: #94a3b8;
-    --brand: #2563eb;
-    --brand-2: #1e40af;
+    --brand: #0284c7;
+    --brand-2: #0369a1;
     --ok: #10b981;
     --warn: #f59e0b;
     --bad: #ef4444;
   }
 
   * { box-sizing: border-box; }
-  html, body { height: 100%; }
-  body{
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  body {
     margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: var(--ink);
-    /* Soft, aquatic background */
-    background:
-      radial-gradient(1200px 800px at -10% -10%, #e0f2fe 0%, rgba(224,242,254,0) 60%),
-      radial-gradient(900px 700px at 110% -10%, #e9d5ff 0%, rgba(233,213,255,0) 60%),
-      linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
-    position: relative;
-  }
-  /* Subtle wave overlay */
-  body::before{
-    content:"";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: .09;
-    background-image:
-      radial-gradient(120px 6px at 0 20px, rgba(2,6,23,.25) 40%, transparent 41%),
-      radial-gradient(120px 6px at 120px 40px, rgba(2,6,23,.18) 35%, transparent 36%);
-    background-size: 120px 40px, 120px 40px;
-    background-repeat: repeat-x;
+    background: linear-gradient(180deg, #0284c7, #0ea5e9, #38bdf8);
+    background-attachment: fixed;
   }
 
-  /* Layout container */
-  .wrap{
+  .wrap {
     max-width: 980px;
     margin: 0 auto;
     padding: 28px 20px 48px;
   }
 
-  header{ margin-bottom: 18px; }
-  h1{
-    font-size: clamp(1.35rem, 1.1rem + 1.2vw, 1.9rem);
-    margin: 0 0 4px;
-    letter-spacing: .2px;
+  /* Logo + subtitle */
+  .brand {
+    text-align: center;
+    margin-bottom: 24px;
   }
-  header p{
-    margin: 4px 0 0;
-    color: var(--muted);
-    font-size: .95rem;
+  .brand img {
+    max-width: 320px;
+    height: auto;
+  }
+  .brand .subtitle {
+    margin-top: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: white;
   }
 
-  /* Card */
-  .card{
-    background: var(--card-bg);
+  header {
+    margin-bottom: 18px;
+    text-align: center;
+    color: white;
+  }
+  h1 {
+    font-size: clamp(1.35rem, 1.1rem + 1.2vw, 1.9rem);
+    margin: 0;
+  }
+
+  /* Frosted glass cards */
+  .card {
+    background: rgba(255, 255, 255, 0.75); /* semi-transparent white */
     border-radius: var(--radius);
-    border: 1px solid rgba(15,23,42,0.06);
-    box-shadow:
-      0 1px 0 rgba(15,23,42,0.04),
-      0 12px 30px -12px rgba(2,6,23,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 12px 24px -10px rgba(2,6,23,.25);
     padding: 16px;
     margin-bottom: 16px;
-    backdrop-filter: saturate(120%);
+    backdrop-filter: blur(10px) saturate(160%);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
   }
 
-  .row{ display:flex; flex-wrap:wrap; gap: var(--gap); }
-  .row > *{ flex: 1 1 220px; }
-
-  label{ display:block; font-weight:600; margin-bottom:6px; }
-  input[type="number"], input[type="text"], select{
-    width:100%; padding:12px 12px;
-    border:1px solid #cbd5e1; border-radius:12px; background:#fff;
-    transition: box-shadow .15s ease, border-color .15s ease, transform .02s ease;
-  }
-  input:focus, select:focus{
-    outline: none;
-    border-color: #93c5fd;
-    box-shadow: 0 0 0 3px rgba(147,197,253,.45);
-  }
-  button{
-    padding:11px 15px; border:0; border-radius:12px; cursor:pointer;
-    background: var(--brand); color:#fff; font-weight:700; letter-spacing:.2px;
-    box-shadow: 0 8px 18px -8px rgba(37,99,235,.55);
-    transition: transform .06s ease, box-shadow .2s ease, background .15s ease;
-  }
-  button:hover{ background: var(--brand-2); box-shadow: 0 10px 22px -8px rgba(30,64,175,.6); }
-  button:active{ transform: translateY(1px); }
-  button.ghost{
-    background:#eef2ff; color:#1e293b; box-shadow:none; font-weight:600;
-  }
-  button.ghost:hover{ background:#e0e7ff; }
-
-  .switch{ display:flex; align-items:center; gap:8px; }
-  .switch input{ width:18px; height:18px; }
-
-  /* Bars */
-  .bars-wrap{ margin-top:8px; display:flex; flex-direction:column; gap:16px; }
-  .bar-block h3{ margin:0 0 8px; font-size:1rem; color:#0f172a; }
-
-  .bar{
-    position:relative; height:26px; border-radius:999px; overflow:hidden; background:#e2e8f0;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -1px 0 rgba(2,6,23,.06);
-  }
-  .bar-fill{
-    position:absolute; inset:0 auto 0 0; width:0%;
-    background: linear-gradient(90deg, var(--ok), var(--warn) 55%, var(--bad));
-    transition: width .28s ease;
-    box-shadow: inset 0 -1px 0 rgba(0,0,0,.1);
-  }
-  .bar-note{
-    display:flex; justify-content:space-between; font-size:0.9rem; color:var(--muted); margin-top:6px;
+  label { font-weight:600; margin-bottom:6px; display:block; }
+  input, select {
+    width:100%; padding:10px;
+    border:1px solid #cbd5e1; border-radius:10px;
   }
 
-  /* Always-visible helper notes with icon */
+  button {
+    background: var(--brand); color:#fff; border:0;
+    padding: 10px 14px; border-radius:10px; cursor:pointer;
+    font-weight:600;
+  }
+  button:hover { background: var(--brand-2); }
+
+  .bar { height:26px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
+  .bar-fill { height:100%; width:0%; background: linear-gradient(90deg, var(--ok), var(--warn), var(--bad)); }
+  .bar-note { display:flex; justify-content:space-between; font-size:.85rem; color:var(--muted); }
+
   small.note {
-    color: var(--muted-2);
-    display:block;
-    margin-top:6px;
-    font-size:0.85rem;
-    font-style:italic;
-    position:relative;
-    padding-left:22px;
+    color: var(--muted-2); font-size:.8rem; font-style:italic;
+    display:block; margin-top:6px; padding-left:20px; position:relative;
   }
-  small.note::before {
-    content: "ℹ️";
-    position:absolute;
-    left:0; top:0;
-    font-style:normal;
-  }
-
-  /* Table */
-  table{ width:100%; border-collapse:separate; border-spacing:0; }
-  thead th{
-    font-size:.9rem; color:#0f172a; background:#f1f5f9; position:sticky; top:0; z-index:1;
-  }
-  th, td{ padding:12px 10px; border-bottom:1px solid #e2e8f0; text-align:left; }
-  tbody tr:hover{ background:#f8fafc; }
-  .right{ text-align:right; }
-  .controls{ display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap; }
-
-  /* Aggression mini bar in table */
-  .mini-bar {
-    width:140px; height:10px; background:#e2e8f0;
-    border-radius:999px; overflow:hidden; display:inline-block; vertical-align:middle;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
-  }
-  .mini-fill {
-    height:100%; width:0%;
-    transition:width .25s ease;
-    background:linear-gradient(90deg, var(--ok), var(--warn), var(--bad));
-  }
-  .mini-label { font-size:12px; color:#475569; margin-left:6px; vertical-align:middle; }
-
-  /* Footer spacing on mobile */
-  @media (max-width: 540px){
-    .wrap{ padding: 22px 14px 42px; }
-    .row > *{ flex:1 1 100%; }
-    .mini-bar{ width:120px; }
-  }
+  small.note::before { content:"ℹ️"; position:absolute; left:0; }
 </style>
 </head>
 <body>
   <div class="wrap">
+    <!-- Logo + subtitle -->
+    <div class="brand">
+      <img src="your-logo.png" alt="FishkeepingLifeCo logo"/>
+      <p class="subtitle">Aquarium Education &amp; Books for Beginners</p>
+    </div>
+
     <header>
       <h1>Stocking Calculator</h1>
-      <p>Plan your community, balance bioload, and avoid aggression conflicts.</p>
     </header>
 
+    <!-- Tank setup -->
     <section class="card">
       <div class="row">
         <div>
@@ -204,7 +131,7 @@
         </div>
       </div>
 
-      <!-- Both meters with titles + always-visible notes -->
+      <!-- Bars -->
       <div class="bars-wrap">
         <div class="bar-block">
           <h3>Bioload</h3>
@@ -222,6 +149,7 @@
       </div>
     </section>
 
+    <!-- Add Fish -->
     <section class="card">
       <h2 style="margin-top:0">Add Fish</h2>
       <div class="row">
@@ -253,6 +181,7 @@
       </div>
     </section>
 
+    <!-- Current Stock -->
     <section class="card">
       <h2 style="margin-top:0">Current Stock</h2>
       <table>
@@ -271,6 +200,7 @@
       </div>
     </section>
 
+    <!-- Warnings -->
     <section class="card">
       <h2 style="margin-top:0">Aggression & Compatibility Warnings</h2>
       <div id="aggression-warnings"></div>
