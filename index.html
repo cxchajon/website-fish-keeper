@@ -39,7 +39,7 @@
     margin-bottom: 24px;
   }
   .brand svg {
-    max-width: 420px;
+    max-width: 510px;           /* slightly larger, like the reference */
     width: 100%;
     height: auto;
     display: inline-block;
@@ -95,13 +95,13 @@
   }
   small.note::before { content:"ℹ️"; position:absolute; left:0; }
 
-  /* Simple layout helpers used in your markup */
+  /* Layout helpers */
   .row { display: grid; gap: var(--gap); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
   table { width: 100%; border-collapse: collapse; }
   th, td { padding: 8px 6px; border-bottom: 1px solid #e2e8f0; }
   th.right, td.right { text-align: right; }
 
-  /* Current Stock action buttons: spacing + solid look + individual colors */
+  /* Current Stock action buttons: spacing + solid look + per-action colors */
   tbody td:last-child {
     display:flex;
     justify-content:flex-end;
@@ -144,24 +144,28 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- Brand logo (inline SVG). Centered and baseline-aligned -->
+    <!-- Brand logo (inline SVG) rebuilt to match your reference fish -->
     <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 160" role="img" preserveAspectRatio="xMidYMid meet">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 200" role="img" preserveAspectRatio="xMidYMid meet">
         <title>FishkeepingLifeCo — Aquarium Education</title>
-        <!-- Fish icon -->
-        <g transform="translate(10,30)">
-          <!-- body -->
-          <path fill="#ffffff" d="M72 50c0-22 18-40 40-40 9 0 17.2 2.8 23.7 7.7l36.4-21.7c2.7-1.6 6.1 1 4.8 4l-12.6 28.9c4.5 6.1 6.9 13.1 6.9 20.8s-2.4 14.7-6.9 20.8l12.6 28.9c1.3 3-2.1 5.6-4.8 4l-36.4-21.7c-6.5 4.9-14.7 7.7-23.7 7.7-22 0-40-18-40-40z"/>
-          <!-- tail -->
-          <path fill="#ffffff" d="M58 18C44 26 28 46 28 60s16 34 30 42c3.7 2.2 8.4-0.7 8.4-4.9V22.9c0-4.1-4.7-7-8.4-4.9z"/>
-          <!-- eye -->
-          <circle cx="118" cy="50" r="6.2" fill="#0ea5e9"/>
+
+        <!-- Fish icon: round body + simple tail like your reference -->
+        <g transform="translate(30,25)" fill="#ffffff">
+          <!-- body as perfect circle -->
+          <circle cx="105" cy="75" r="55"></circle>
+          <!-- tail (triangle) -->
+          <path d="M45,35 L5,65 L45,95 Z"></path>
+          <!-- small dorsal fin (subtle like ref) -->
+          <path d="M100,20 L115,38 L85,38 Z"></path>
         </g>
+        <!-- eye -->
+        <circle cx="120" cy="88" r="7" fill="#0ea5e9"></circle>
 
         <!-- Wordmark -->
         <g font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial" fill="#ffffff">
-          <text x="240" y="78" font-size="54" font-weight="700" letter-spacing=".2">FishkeepingLifeCo</text>
-          <text x="240" y="118" font-size="26" opacity=".95">Aquarium Education</text>
+          <!-- aligned vertically with the fish centerline -->
+          <text x="260" y="95" font-size="58" font-weight="700" letter-spacing=".2">FishkeepingLifeCo</text>
+          <text x="260" y="135" font-size="28" opacity=".95">Aquarium Education</text>
         </g>
       </svg>
     </div>
