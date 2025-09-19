@@ -1,5 +1,5 @@
 // js/modules/stock.js
-import { canonName, safeQty } from './utils.js';
+import { canonName, safeQty, formatName } from './utils.js';
 
 // we'll call this after every change (to update bars/warnings).
 let _renderAll = () => {};
@@ -23,9 +23,9 @@ export function addRow(name, qty){
   const tbody = document.getElementById('tbody');
   const tr = document.createElement('tr');
 
-  // Name cell
+  // Name cell (pretty display)
   const tdName = document.createElement('td');
-  tdName.textContent = name;
+  tdName.textContent = formatName(name);
 
   // Qty cell with input
   const tdQty = document.createElement('td');
@@ -86,12 +86,9 @@ export function addRow(name, qty){
   tr.appendChild(tdQty);
   tr.appendChild(tdAct);
 
-  // add micro-interaction class for a quick fade+slide
+  // micro-interaction: fade+slide on add
   tr.classList.add('row-appear');
-
   tbody.appendChild(tr);
-
-  // remove the class after animation ends so re-adding can animate again
   tr.addEventListener('animationend', () => tr.classList.remove('row-appear'), { once:true });
 }
 
@@ -108,6 +105,11 @@ export function addOrUpdateRow(name, deltaQty){
       return;
     }
     qtyInput.value = v;
+
+    // ensure name cell stays nicely formatted even if original was raw
+    const nameTd = tr.querySelector('td:first-child');
+    if (nameTd) nameTd.textContent = formatName(name);
+
     _renderAll();
     return;
   }
@@ -121,7 +123,7 @@ export function readStock(){
   const tbody = document.getElementById('tbody');
   return Array.from(tbody.querySelectorAll('tr')).map(tr=>{
     const tds = tr.querySelectorAll('td');
-    const name = (tds[0]?.textContent || '').trim();
+    const name = (tds[0]?.textContent || '').trim(); // already formatted for display
     const qtyEl = tds[1]?.querySelector('input');
     const qty = safeQty(qtyEl && qtyEl.value ? qtyEl.value : '0');
     return name ? { name, qty } : null;
