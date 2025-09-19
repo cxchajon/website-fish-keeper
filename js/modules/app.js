@@ -1,54 +1,85 @@
 // js/modules/app.js
 import { populateSelectIfEmpty } from './species.js';
-import { addOrUpdateRow, readStock, registerRender } from './stock.js';
+import { addOrUpdateRow, registerRender } from './stock.js';
 import { renderAll } from './warnings.js';
 import { statusCheck } from './status.js';
 import { safeQty } from './utils.js';
 
-// Boot logic
+// utility: replace element with a fresh clone (removes any existing listeners)
+function replaceWithClone(el){
+  if(!el) return el;
+  const clone = el.cloneNode(true);
+  el.replaceWith(clone);
+  return clone;
+}
+
 window.addEventListener('load', () => {
-  // connect stock.js with warnings/bioload
+  // connect stock.js with warnings/bioload refresh
   registerRender(renderAll);
 
   populateSelectIfEmpty();
   statusCheck();
 
-  // Add Fish button
-  const addBtn = document.getElementById('addFish');
-  if (addBtn) {
-    addBtn.addEventListener('click', () => {
-      const sel   = document.getElementById('fishSelect');
-      const qtyEl = document.getElementById('fQty');
-      const recEl = document.getElementById('recMin');
+  // Clone buttons to remove any 3rd-party listeners
+  let addBtn   = document.getElementById('addFish');
+  let resetBtn = document.getElementById('reset');
+  addBtn   = replaceWithClone(addBtn);
+  resetBtn = replaceWithClone(resetBtn);
 
-      const name = sel && sel.value ? sel.value : '';
-      let raw = qtyEl?.value ? qtyEl.value.trim() : '';
-      let qty = parseInt(raw, 10);
+  const sel   = document.getElementById('fishSelect');
+  const qtyEl = document.getElementById('fQty');
+  const recEl = document.getElementById('recMin');
 
-      if (!qty || qty < 1) {
-        const rec = parseInt(recEl?.value || '0', 10) || 0;
-        qty = rec > 0 ? rec : 1;
-        if (qtyEl) qtyEl.value = qty;
-      }
+  function getQtyFromField(){
+    if (qtyEl && Number.isFinite(qtyEl.valueAsNumber)) return safeQty(qtyEl.valueAsNumber);
+    const raw = (qtyEl && typeof qtyEl.value==='string') ? qtyEl.value : '';
+    return safeQty(raw);
+  }
 
-      if (!name) return;
-      addOrUpdateRow(name, qty);
+  function handleAdd(e){
+    if(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+    }
+    const name = sel && sel.value ? sel.value : '';
+    if(!name) return;
+
+    const fieldRaw = qtyEl ? qtyEl.value : '';
+    const hasUserValue = fieldRaw != null && String(fieldRaw).trim().length > 0;
+    const qty = hasUserValue ? getQtyFromField()
+                             : safeQty(recEl && recEl.value ? recEl.value : '1');
+
+    addOrUpdateRow(name, qty);
+  }
+
+  // Use capture so our handler runs before any others
+  if(addBtn) addBtn.addEventListener('click', handleAdd, true);
+
+  // Enter key adds too
+  if(qtyEl){
+    qtyEl.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ handleAdd(e); }
     });
   }
 
-  // Clear stock
-  const resetBtn = document.getElementById('reset');
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      document.getElementById('tbody').innerHTML = '';
+  if(resetBtn){
+    resetBtn.addEventListener('click', function(e){
+      if(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+      }
+      const tbody=document.getElementById('tbody');
+      if (tbody) tbody.innerHTML='';
       renderAll();
-    });
+    }, true);
   }
 
   // Tank controls update bars
   ['gallons','planted','filtration'].forEach(id=>{
-    const el = document.getElementById(id);
-    if (!el) return;
+    const el=document.getElementById(id);
+    if(!el) return;
     el.addEventListener('input', renderAll);
     el.addEventListener('change', renderAll);
   });
