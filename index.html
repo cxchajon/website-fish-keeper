@@ -50,14 +50,13 @@
   input,select{width:100%;padding:10px;border:1px solid var(--field-bd);border-radius:10px;background:#fff}
   .row{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(220px,1fr));align-items:end}
 
-  table.stock{width:100%;border-collapse:collapse;table-layout:auto}
+  table.stock{width:100%;border-collapse:collapse}
   thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66;white-space:nowrap}
   thead th.qty{text-align:center;width:90px}
   thead th.actions{text-align:right;width:160px}
   tbody td{padding:10px 6px;vertical-align:middle}
 
   .btn{border:none;color:#fff;cursor:pointer;font-weight:700;border-radius:10px;padding:10px 14px;background:var(--brand);box-shadow:0 2px 8px rgba(2,6,23,.18)}
-  .btn:disabled{opacity:.75;cursor:not-allowed}
 
   /* tiny diag strip */
   #diag{position:sticky;top:0;z-index:9999;font:12px/1.2 ui-sans-serif,system-ui;display:none}
@@ -137,7 +136,7 @@
       <div class="row">
         <div style="flex:1 1 200px">
           <label for="fQty">Quantity</label>
-          <input id="fQty" type="number" min="1">
+          <input id="fQty" type="number" min="1" value="1">
         </div>
         <div><button id="addFish" class="btn">Add</button></div>
       </div>
@@ -169,44 +168,238 @@
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v8.2</strong> • Minimal safe load • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v8.3</strong> • Safety adapter on standby • Updated Sep 18, 2025
   </footer>
 
-  <!-- CORE SCRIPTS: keep simplest possible loading (no defer) -->
+  <!-- CORE SCRIPTS (originals) -->
   <script src="js/fish-data.js"></script>
   <script src="js/aggression.js"></script>
   <script src="js/stocking_advisor.js"></script>
 
-  <!-- Minimal diagnostics (shows if any core failed to load) -->
+  <!-- Minimal diagnostics -->
   <script>
     (function(){
       var diag = document.getElementById('diag');
       var box = diag.querySelector('div');
-      function show(ok,msg){
-        diag.className = ok ? 'ok' : 'err';
-        box.textContent = msg;
-      }
+      function show(ok,msg){ diag.className = ok ? 'ok' : 'err'; box.textContent = msg; }
 
-      // Check file paths & basics
       var fishSelect = document.getElementById('fishSelect');
       var tbody = document.getElementById('tbody');
 
       var issues = [];
-      if (!window.Aggression || typeof window.Aggression.compute !== 'function'){
-        issues.push('aggression.js not loaded or compute missing');
-      }
-      if (!fishSelect){ issues.push('#fishSelect missing'); }
-      if (!tbody){ issues.push('#tbody missing'); }
+      if (!window.Aggression || typeof window.Aggression.compute !== 'function') issues.push('aggression.js not loaded or compute missing');
+      if (!fishSelect) issues.push('#fishSelect missing');
+      if (!tbody) issues.push('#tbody missing');
 
-      // If stocking code attaches a global for data, quickly sanity-check it
-      var hasData = !!(window.FISH_DATA || window.fishData || window.fish_list);
-      if (!hasData){ issues.push('fish-data.js did not expose species list'); }
+      // Try to detect species data global
+      var fishData = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES || null;
+      if (!fishData) issues.push('No global species list found');
 
-      if (issues.length){
-        show(false, 'Issues: ' + issues.join(' | '));
-      } else {
-        show(true, 'Core OK. If Add still fails, check console for errors in stocking_advisor.js');
+      if (issues.length){ show(false, 'Issues: ' + issues.join(' | ')); }
+      else { show(true, 'Core OK • Safety adapter ready'); }
+    })();
+  </script>
+
+  <!-- SAFETY ADAPTER: only runs if normal add flow didn’t populate anything -->
+  <script>
+    (function(){
+      function toArray(x){ return Array.isArray(x) ? x : x ? [x] : []; }
+
+      function extractSpeciesList(src){
+        // Try common shapes from fish-data.js
+        // 1) Array of objects: [{name, min, ...}] or {species, recommendedMinimum}
+        if (Array.isArray(src)) {
+          return src.map(o=>{
+            var name = (o.name || o.species || o.common || '').toString();
+            var min  = parseInt(o.min || o.recommendedMinimum || o.minGroup || o.group || 1,10) || 1;
+            return name ? { name, min } : null;
+          }).filter(Boolean);
+        }
+        // 2) Object map: { "Neon tetra": {min:6}, ... }
+        if (src && typeof src === 'object') {
+          return Object.keys(src).map(k=>{
+            var v = src[k] || {};
+            var min = parseInt(v.min || v.recommendedMinimum || v.minGroup || 1,10) || 1;
+            return { name:k, min };
+          });
+        }
+        return [];
       }
+
+      function populateSelectIfEmpty(){
+        var sel = document.getElementById('fishSelect');
+        if (!sel || sel.options.length) return false;
+
+        var src = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES || null;
+        var list = extractSpeciesList(src);
+        if (!list.length){
+          // last resort: seed a few basics so user can test
+          list = [
+            { name:'Neon tetra', min:6 },
+            { name:'Tiger barb', min:6 },
+            { name:'Corydoras (small)', min:6 },
+            { name:'Betta (male)', min:1 }
+          ];
+        }
+
+        list.sort((a,b)=> a.name.localeCompare(b.name));
+        list.forEach(item=>{
+          var opt = document.createElement('option');
+          opt.value = item.name;
+          opt.textContent = item.name;
+          opt.dataset.min = item.min;
+          sel.appendChild(opt);
+        });
+
+        // Hook up search filter
+        var search = document.getElementById('fishSearch');
+        if (search){
+          search.addEventListener('input', function(){
+            var q = (this.value || '').toLowerCase();
+            Array.from(sel.options).forEach(o=>{
+              o.hidden = q && !o.textContent.toLowerCase().includes(q);
+            });
+            // focus first visible
+            var first = Array.from(sel.options).find(o=>!o.hidden);
+            if (first){ sel.value = first.value; updateRecMin(); }
+          });
+        }
+
+        updateRecMin();
+        sel.addEventListener('change', updateRecMin);
+
+        function updateRecMin(){
+          var opt = sel.selectedOptions[0];
+          var min = opt ? parseInt(opt.dataset.min || '1',10) : '';
+          var recMin = document.getElementById('recMin');
+          if (recMin) recMin.value = min || '';
+        }
+
+        return true;
+      }
+
+      function wireAddIfNeeded(){
+        var tbody = document.getElementById('tbody');
+        var addBtn = document.getElementById('addFish');
+        if (!tbody || !addBtn) return;
+
+        // If original script already added rows, do nothing
+        var already = !!tbody.querySelector('tr');
+        if (already) return;
+
+        // Provide our own safe add logic
+        addBtn.addEventListener('click', function(){
+          var sel = document.getElementById('fishSelect');
+          var qtyEl = document.getElementById('fQty');
+          var name = sel && sel.value ? sel.value : '';
+          var qty = parseInt(qtyEl && qtyEl.value ? qtyEl.value : '1',10) || 1;
+          if (!name) return;
+
+          addRow(name, qty);
+          renderWarnings();
+        });
+      }
+
+      function addRow(name, qty){
+        var tbody = document.getElementById('tbody');
+        var tr = document.createElement('tr');
+
+        var tdName = document.createElement('td');
+        tdName.textContent = name;
+
+        var tdQty = document.createElement('td');
+        var input = document.createElement('input');
+        input.type = 'number'; input.min = '0'; input.value = qty;
+        input.style.width = '64px';
+        tdQty.appendChild(input);
+
+        var tdAct = document.createElement('td');
+        tdAct.style.textAlign = 'right';
+
+        var bMinus = document.createElement('button');
+        bMinus.textContent = '−';
+        bMinus.className = 'btn';
+        bMinus.style.marginRight = '6px';
+
+        var bPlus = document.createElement('button');
+        bPlus.textContent = '+';
+        bPlus.className = 'btn';
+        bPlus.style.marginRight = '6px';
+
+        var bDel = document.createElement('button');
+        bDel.textContent = 'Delete';
+        bDel.className = 'btn';
+        bDel.style.background = 'var(--bad)';
+
+        bMinus.addEventListener('click', function(){
+          var v = parseInt(input.value || '0',10) || 0;
+          v = Math.max(0, v-1);
+          input.value = v;
+          if (v === 0) tr.remove();
+          renderWarnings();
+        });
+        bPlus.addEventListener('click', function(){
+          input.value = (parseInt(input.value||'0',10)||0) + 1;
+          renderWarnings();
+        });
+        bDel.addEventListener('click', function(){
+          tr.remove();
+          renderWarnings();
+        });
+
+        tdAct.appendChild(bMinus);
+        tdAct.appendChild(bPlus);
+        tdAct.appendChild(bDel);
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdQty);
+        tr.appendChild(tdAct);
+
+        tbody.appendChild(tr);
+      }
+
+      function readStock(){
+        var tbody = document.getElementById('tbody');
+        return Array.from(tbody.querySelectorAll('tr')).map(tr=>{
+          var tds = tr.querySelectorAll('td');
+          var name = (tds[0]?.textContent || '').trim();
+          var qtyEl = tds[1]?.querySelector('input');
+          var qty = parseInt(qtyEl && qtyEl.value ? qtyEl.value : '0',10) || 0;
+          return name ? { name, qty } : null;
+        }).filter(Boolean);
+      }
+
+      function renderWarnings(){
+        var box = document.getElementById('aggression-warnings') || document.getElementById('warnings');
+        if (!box) return;
+        box.innerHTML = '';
+        var stock = readStock();
+
+        // Call your aggression engine if available
+        var res = { warnings: [], score: 0 };
+        if (window.Aggression && typeof window.Aggression.compute === 'function'){
+          try { res = window.Aggression.compute(stock, {}); } catch(e){}
+        }
+        toArray(res.warnings).forEach(w=>{
+          var d = document.createElement('div');
+          d.textContent = w;
+          box.appendChild(d);
+        });
+
+        // very basic bar update if your core doesn’t handle it
+        var bar = document.getElementById('aggBarFill');
+        if (bar && typeof res.score === 'number'){
+          bar.style.width = Math.max(0, Math.min(100, res.score)) + '%';
+        }
+      }
+
+      // Run adapter AFTER originals had a chance
+      window.addEventListener('load', function(){
+        // 1) If species list looks empty, populate it
+        populateSelectIfEmpty();
+        // 2) If the table is still empty and Add isn’t wired, wire our own add
+        wireAddIfNeeded();
+      });
     })();
   </script>
 </body>
