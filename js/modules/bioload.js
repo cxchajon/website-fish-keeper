@@ -81,5 +81,16 @@ export function renderBioload(){
   const total = totalBioUnits();
   const cap   = capacityUnits();
   const pct = Math.max(0, Math.min(160, (total / cap) * 100));
+  const prev = parseFloat(bar.style.width || '0');
+
   bar.style.width = pct.toFixed(1) + '%';
+
+  // tiny pulse when value changes meaningfully
+  if (Math.abs(pct - prev) > 0.5) {
+    bar.classList.remove('pulse');
+    // force reflow to restart animation
+    void bar.offsetWidth;
+    bar.classList.add('pulse');
+    setTimeout(()=> bar.classList.remove('pulse'), 500);
+  }
 }
