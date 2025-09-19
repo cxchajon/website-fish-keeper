@@ -1,9 +1,9 @@
 // js/modules/app.js
-import { populateSelectIfEmpty } from './species.js?v=921';
-import { addOrUpdateRow, registerRender } from './stock.js?v=921';
-import { renderAll } from './warnings.js?v=921';
-import { statusCheck } from './status.js?v=921';
-import { safeQty } from './utils.js?v=921';
+import { populateSelectIfEmpty } from './species.js?v=923';
+import { addOrUpdateRow, registerRender } from './stock.js?v=923';
+import { renderAll } from './warnings.js?v=923';
+import { statusCheck } from './status.js?v=923';
+import { safeQty } from './utils.js?v=923';
 
 // utility: replace element with a fresh clone (removes any existing listeners)
 function replaceWithClone(el){
@@ -14,12 +14,13 @@ function replaceWithClone(el){
 }
 
 window.addEventListener('load', () => {
+  // wire stock updates to refresh bars/warnings
   registerRender(renderAll);
 
   populateSelectIfEmpty();
   statusCheck();
 
-  // Clone buttons to remove any 3rd-party listeners
+  // Clone buttons to clear any old listeners from legacy scripts
   let addBtn   = document.getElementById('addFish');
   let resetBtn = document.getElementById('reset');
   addBtn   = replaceWithClone(addBtn);
@@ -52,14 +53,17 @@ window.addEventListener('load', () => {
     addOrUpdateRow(name, qty);
   }
 
+  // Add via click (capture phase to win over any other handlers)
   if(addBtn) addBtn.addEventListener('click', handleAdd, true);
 
+  // Add via Enter key in the quantity field
   if(qtyEl){
     qtyEl.addEventListener('keydown', function(e){
       if(e.key === 'Enter'){ handleAdd(e); }
     });
   }
 
+  // Clear stock
   if(resetBtn){
     resetBtn.addEventListener('click', function(e){
       if(e){
@@ -67,18 +71,19 @@ window.addEventListener('load', () => {
         e.stopPropagation();
         if(e.stopImmediatePropagation) e.stopImmediatePropagation();
       }
-      const tbody=document.getElementById('tbody');
-      if (tbody) tbody.innerHTML='';
+      const tbody = document.getElementById('tbody');
+      if (tbody) tbody.innerHTML = '';
       renderAll();
     }, true);
   }
 
+  // Tank controls update bars
   ['gallons','planted','filtration'].forEach(id=>{
-    const el=document.getElementById(id);
+    const el = document.getElementById(id);
     if(!el) return;
     el.addEventListener('input', renderAll);
     el.addEventListener('change', renderAll);
   });
 
   renderAll();
-}); 
+});
