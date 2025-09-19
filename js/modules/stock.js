@@ -128,4 +128,4 @@ export function readStock(){
     const qty = safeQty(qtyEl && qtyEl.value ? qtyEl.value : '0');
     return name ? { name, qty } : null;
   }).filter(Boolean);
-}
+} 
