@@ -1,9 +1,9 @@
 // js/modules/app.js
-import { populateSelectIfEmpty } from './species.js?v=924';
-import { addOrUpdateRow, registerRender } from './stock.js?v=924';
-import { renderAll } from './warnings.js?v=924';
-import { statusCheck } from './status.js?v=924';
-import { safeQty } from './utils.js?v=924';
+import { populateSelectIfEmpty } from './species.js?v=926';
+import { addOrUpdateRow, registerRender } from './stock.js?v=926';
+import { renderAll } from './warnings.js?v=926';
+import { statusCheck } from './status.js?v=926';
+import { safeQty } from './utils.js?v=926';
 
 // utility: replace element with a fresh clone (removes any existing listeners)
 function replaceWithClone(el){
@@ -14,7 +14,7 @@ function replaceWithClone(el){
 }
 
 window.addEventListener('load', () => {
-  // when stock changes, re-render bars + warnings
+  // re-render bars & warnings whenever stock changes
   registerRender(renderAll);
 
   populateSelectIfEmpty();
@@ -58,7 +58,7 @@ window.addEventListener('load', () => {
   // Add via click (capture phase to win over any other handlers)
   if(addBtn) addBtn.addEventListener('click', handleAdd, true);
 
-  // Add via Enter key in the quantity field
+  // Add via Enter in the quantity field
   if(qtyEl){
     qtyEl.addEventListener('keydown', function(e){
       if(e.key === 'Enter'){ handleAdd(e); }
