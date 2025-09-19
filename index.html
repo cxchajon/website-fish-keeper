@@ -156,7 +156,7 @@
         <tbody id="tbody"></tbody>
       </table>
       <div class="row" style="margin-top:10px">
-        <div><button id="reset" class="btn" style="background:var(--bad)">Clear Stock</button></div>
+        <div><button id="reset" class="btn" id="resetBtn" style="background:var(--bad)">Clear Stock</button></div>
       </div>
     </section>
 
@@ -168,7 +168,7 @@
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v8.3</strong> • Safety adapter on standby • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v8.4</strong> • Single-row merge • Updated Sep 18, 2025
   </footer>
 
   <!-- CORE SCRIPTS (originals) -->
@@ -191,23 +191,21 @@
       if (!fishSelect) issues.push('#fishSelect missing');
       if (!tbody) issues.push('#tbody missing');
 
-      // Try to detect species data global
       var fishData = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES || null;
       if (!fishData) issues.push('No global species list found');
 
       if (issues.length){ show(false, 'Issues: ' + issues.join(' | ')); }
-      else { show(true, 'Core OK • Safety adapter ready'); }
+      else { show(true, 'Core OK • Safety adapter (merge) ready'); }
     })();
   </script>
 
-  <!-- SAFETY ADAPTER: only runs if normal add flow didn’t populate anything -->
+  <!-- SAFETY ADAPTER with row merge -->
   <script>
     (function(){
       function toArray(x){ return Array.isArray(x) ? x : x ? [x] : []; }
+      function norm(s){ return (s||'').toString().trim().toLowerCase(); }
 
       function extractSpeciesList(src){
-        // Try common shapes from fish-data.js
-        // 1) Array of objects: [{name, min, ...}] or {species, recommendedMinimum}
         if (Array.isArray(src)) {
           return src.map(o=>{
             var name = (o.name || o.species || o.common || '').toString();
@@ -215,7 +213,6 @@
             return name ? { name, min } : null;
           }).filter(Boolean);
         }
-        // 2) Object map: { "Neon tetra": {min:6}, ... }
         if (src && typeof src === 'object') {
           return Object.keys(src).map(k=>{
             var v = src[k] || {};
@@ -233,7 +230,6 @@
         var src = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES || null;
         var list = extractSpeciesList(src);
         if (!list.length){
-          // last resort: seed a few basics so user can test
           list = [
             { name:'Neon tetra', min:6 },
             { name:'Tiger barb', min:6 },
@@ -251,65 +247,61 @@
           sel.appendChild(opt);
         });
 
-        // Hook up search filter
         var search = document.getElementById('fishSearch');
-        if (search){
-          search.addEventListener('input', function(){
-            var q = (this.value || '').toLowerCase();
-            Array.from(sel.options).forEach(o=>{
-              o.hidden = q && !o.textContent.toLowerCase().includes(q);
-            });
-            // focus first visible
-            var first = Array.from(sel.options).find(o=>!o.hidden);
-            if (first){ sel.value = first.value; updateRecMin(); }
-          });
-        }
-
-        updateRecMin();
-        sel.addEventListener('change', updateRecMin);
-
         function updateRecMin(){
           var opt = sel.selectedOptions[0];
           var min = opt ? parseInt(opt.dataset.min || '1',10) : '';
           var recMin = document.getElementById('recMin');
           if (recMin) recMin.value = min || '';
         }
+        if (search){
+          search.addEventListener('input', function(){
+            var q = (this.value || '').toLowerCase();
+            Array.from(sel.options).forEach(o=>{
+              o.hidden = q && !o.textContent.toLowerCase().includes(q);
+            });
+            var first = Array.from(sel.options).find(o=>!o.hidden);
+            if (first){ sel.value = first.value; updateRecMin(); }
+          });
+        }
+        sel.addEventListener('change', updateRecMin);
+        updateRecMin();
 
         return true;
       }
 
-      function wireAddIfNeeded(){
-        var tbody = document.getElementById('tbody');
-        var addBtn = document.getElementById('addFish');
-        if (!tbody || !addBtn) return;
-
-        // If original script already added rows, do nothing
-        var already = !!tbody.querySelector('tr');
-        if (already) return;
-
-        // Provide our own safe add logic
-        addBtn.addEventListener('click', function(){
-          var sel = document.getElementById('fishSelect');
-          var qtyEl = document.getElementById('fQty');
-          var name = sel && sel.value ? sel.value : '';
-          var qty = parseInt(qtyEl && qtyEl.value ? qtyEl.value : '1',10) || 1;
-          if (!name) return;
-
-          addRow(name, qty);
-          renderWarnings();
-        });
+      function findRowByName(name){
+        var want = norm(name);
+        var rows = document.querySelectorAll('#tbody tr');
+        for (var i=0;i<rows.length;i++){
+          var n = norm(rows[i].querySelector('td')?.textContent || '');
+          if (n === want) return rows[i];
+        }
+        return null;
       }
 
-      function addRow(name, qty){
+      function addOrUpdateRow(name, deltaQty){
         var tbody = document.getElementById('tbody');
-        var tr = document.createElement('tr');
+        var tr = findRowByName(name);
+        if (tr){
+          var qtyInput = tr.querySelector('td:nth-child(2) input');
+          var v = parseInt(qtyInput.value || '0',10) || 0;
+          v = v + deltaQty;
+          if (v <= 0){ tr.remove(); renderWarnings(); return; }
+          qtyInput.value = v;
+          renderWarnings();
+          return;
+        }
+        // create new
+        if (deltaQty <= 0) return;
+        tr = document.createElement('tr');
 
         var tdName = document.createElement('td');
         tdName.textContent = name;
 
         var tdQty = document.createElement('td');
         var input = document.createElement('input');
-        input.type = 'number'; input.min = '0'; input.value = qty;
+        input.type = 'number'; input.min = '0'; input.value = deltaQty;
         input.style.width = '64px';
         tdQty.appendChild(input);
 
@@ -356,6 +348,36 @@
         tr.appendChild(tdAct);
 
         tbody.appendChild(tr);
+        renderWarnings();
+      }
+
+      function wireAddIfNeeded(){
+        var tbody = document.getElementById('tbody');
+        var addBtn = document.getElementById('addFish');
+        if (!tbody || !addBtn) return;
+
+        // If the original script already wired & populated, leave it
+        var already = !!tbody.querySelector('tr');
+        if (already) return;
+
+        addBtn.addEventListener('click', function(){
+          var sel = document.getElementById('fishSelect');
+          var qtyEl = document.getElementById('fQty');
+          var name = sel && sel.value ? sel.value : '';
+          var qty = parseInt(qtyEl && qtyEl.value ? qtyEl.value : '1',10) || 1;
+          if (!name) return;
+          // merge into single row
+          addOrUpdateRow(name, qty);
+        });
+
+        // Clear Stock support
+        var resetBtn = document.getElementById('reset') || document.getElementById('resetBtn');
+        if (resetBtn){
+          resetBtn.addEventListener('click', function(){
+            tbody.innerHTML = '';
+            renderWarnings();
+          });
+        }
       }
 
       function readStock(){
@@ -375,7 +397,6 @@
         box.innerHTML = '';
         var stock = readStock();
 
-        // Call your aggression engine if available
         var res = { warnings: [], score: 0 };
         if (window.Aggression && typeof window.Aggression.compute === 'function'){
           try { res = window.Aggression.compute(stock, {}); } catch(e){}
@@ -386,18 +407,14 @@
           box.appendChild(d);
         });
 
-        // very basic bar update if your core doesn’t handle it
         var bar = document.getElementById('aggBarFill');
         if (bar && typeof res.score === 'number'){
           bar.style.width = Math.max(0, Math.min(100, res.score)) + '%';
         }
       }
 
-      // Run adapter AFTER originals had a chance
       window.addEventListener('load', function(){
-        // 1) If species list looks empty, populate it
         populateSelectIfEmpty();
-        // 2) If the table is still empty and Add isn’t wired, wire our own add
         wireAddIfNeeded();
       });
     })();
