@@ -1,9 +1,9 @@
 // js/modules/app.js
-import { populateSelectIfEmpty } from './species.js';
-import { addOrUpdateRow, registerRender } from './stock.js';
-import { renderAll } from './warnings.js';
-import { statusCheck } from './status.js';
-import { safeQty } from './utils.js';
+import { populateSelectIfEmpty } from './species.js?v=921';
+import { addOrUpdateRow, registerRender } from './stock.js?v=921';
+import { renderAll } from './warnings.js?v=921';
+import { statusCheck } from './status.js?v=921';
+import { safeQty } from './utils.js?v=921';
 
 // utility: replace element with a fresh clone (removes any existing listeners)
 function replaceWithClone(el){
@@ -14,7 +14,6 @@ function replaceWithClone(el){
 }
 
 window.addEventListener('load', () => {
-  // connect stock.js with warnings/bioload refresh
   registerRender(renderAll);
 
   populateSelectIfEmpty();
@@ -53,10 +52,8 @@ window.addEventListener('load', () => {
     addOrUpdateRow(name, qty);
   }
 
-  // Use capture so our handler runs before any others
   if(addBtn) addBtn.addEventListener('click', handleAdd, true);
 
-  // Enter key adds too
   if(qtyEl){
     qtyEl.addEventListener('keydown', function(e){
       if(e.key === 'Enter'){ handleAdd(e); }
@@ -76,7 +73,6 @@ window.addEventListener('load', () => {
     }, true);
   }
 
-  // Tank controls update bars
   ['gallons','planted','filtration'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
