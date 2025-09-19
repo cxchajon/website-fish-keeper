@@ -1,11 +1,37 @@
 // js/modules/warnings.js
-// Aggression + environment warnings. Uses bioload.js for the bar.
+// Aggression + environment warnings, with Env Fit bar.
+// Uses bioload.js for bioload bar. Applies your chosen rules:
+//
+// • Edge-touching ranges → WARNING
+// • WARNING if overlap < 5.0 °F, or < 1.0 pH
+// • INFO if overlap within 5–7 °F, or 1.0–1.5 pH
+// • Temp shown as whole numbers; pH to 1 decimal
+// • Missing data: try built-in fallback, else log a console snippet (no UI noise)
+// • Quantities ignored (equal weight)
+// • If any species has { sensitive: true } → thresholds bumped by +2 °F and +0.2 pH
+// • Adds Environment Fit bar based on overlaps (0–100%)
 
 import { toArray } from './utils.js';
 import { readStock } from './stock.js';
 import { renderBioload } from './bioload.js';
 
-/* ===== Canon + dataset lookup ===== */
+/* ---------------- Config (defaults based on your answers) ---------------- */
+function cfg(key, def){
+  const root = (window.CONFIG && typeof window.CONFIG === 'object') ? window.CONFIG : {};
+  return (key in root) ? root[key] : def;
+}
+
+// Base thresholds
+const BASE_TEMP_WARN_LT   = cfg('TEMP_WARN_LT', 5.0);   // warn if width < 5°F
+const BASE_TEMP_INFO_MAX  = cfg('TEMP_INFO_MAX', 7.0);  // info if 5–7°F
+const BASE_PH_WARN_LT     = cfg('PH_WARN_LT', 1.0);     // warn if width < 1.0
+const BASE_PH_INFO_MAX    = cfg('PH_INFO_MAX', 1.5);    // info if 1.0–1.5
+
+// Sensitive species bumps
+const SENS_TEMP_BUMP = cfg('SENS_TEMP_BUMP', 2.0); // +2°F
+const SENS_PH_BUMP   = cfg('SENS_PH_BUMP', 0.2);   // +0.2
+
+/* ---------------- Helpers ---------------- */
 function canonNameLocal(s){
   return (s||'').toString().trim().toLowerCase()
     .replace(/[_-]+/g,' ')
@@ -13,6 +39,7 @@ function canonNameLocal(s){
     .replace(/\s*\([^)]*\)\s*/g,' ')
     .trim();
 }
+
 function firstNumber(...vals){
   for (const v of vals){
     if (v == null) continue;
@@ -23,6 +50,7 @@ function firstNumber(...vals){
   }
   return undefined;
 }
+
 function lookupDataFor(name){
   const key = canonNameLocal(name);
   const src = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
@@ -40,7 +68,16 @@ function lookupDataFor(name){
   return null;
 }
 
-/* ===== Temp & pH parsing ===== */
+/* ---------------- Fallback data for common species (used silently) ---------------- */
+const FALLBACK_DATA = {
+  'white cloud mountain minnow': { minTempF: 57, maxTempF: 72, minPH: 6.0, maxPH: 8.0 },
+  'tiger barb':                   { minTempF: 72, maxTempF: 82, minPH: 6.0, maxPH: 7.5 },
+  'neon tetra':                   { minTempF: 72, maxTempF: 80, minPH: 5.0, maxPH: 6.5 },
+  'ram cichlid':                  { minTempF: 78, maxTempF: 86, minPH: 5.0, maxPH: 7.0 },
+  'african cichlid':              { minTempF: 74, maxTempF: 82, minPH: 7.8, maxPH: 8.5 },
+};
+
+/* ---------------- Temp & pH parsing ---------------- */
 function cToF(c){ return (c*9/5)+32; }
 
 function parseTempToF(any){
@@ -58,8 +95,13 @@ function parseTempToF(any){
   return { min, max, assumedF: !hasC && !hasF };
 }
 
-function readTempRangeF(row){
-  if (!row || typeof row !== 'object') return null;
+function readTempRangeF(row, speciesName){
+  if (!row || typeof row !== 'object') {
+    // try fallback
+    const fb = FALLBACK_DATA[canonNameLocal(speciesName)];
+    if (fb) return { min: fb.minTempF, max: fb.maxTempF };
+    return null;
+  }
 
   // explicit °F
   let minF = firstNumber(row.minTempF, row.tempMinF, row.tMinF, row.temperatureMinF, row.tempFMin);
@@ -95,6 +137,11 @@ function readTempRangeF(row){
       return { min, max };
     }
   }
+
+  // try fallback and log snippet if not found
+  const fb = FALLBACK_DATA[canonNameLocal(speciesName)];
+  if (fb) return { min: fb.minTempF, max: fb.maxTempF };
+  console.log(`[fish-data] Add temp for "${speciesName}": { minTempF: X, maxTempF: Y }`);
   return null;
 }
 
@@ -108,8 +155,13 @@ function parsePh(any){
   if (min > max) [min, max] = [max, min];
   return { min, max };
 }
-function readPhRange(row){
-  if (!row || typeof row !== 'object') return null;
+
+function readPhRange(row, speciesName){
+  if (!row || typeof row !== 'object') {
+    const fb = FALLBACK_DATA[canonNameLocal(speciesName)];
+    if (fb) return { min: fb.minPH, max: fb.maxPH };
+    return null;
+  }
 
   const min = firstNumber(row.minPH, row.phMin, row.minPh, row.pHMin, row.min_pH, row.ph_low, row.pHL, row.pH_low);
   const max = firstNumber(row.maxPH, row.phMax, row.maxPh, row.pHMax, row.max_pH, row.ph_high, row.pHH, row.pH_high);
@@ -123,10 +175,14 @@ function readPhRange(row){
     const r = parsePh(row[key]);
     if (r) return r;
   }
+
+  const fb = FALLBACK_DATA[canonNameLocal(speciesName)];
+  if (fb) return { min: fb.minPH, max: fb.maxPH };
+  console.log(`[fish-data] Add pH for "${speciesName}": { minPH: A, maxPH: B }`);
   return null;
 }
 
-/* ===== Overlap ===== */
+/* ---------------- Overlap & formatting ---------------- */
 function overlap(ranges){
   const valid = ranges.filter(r=>r && r.min!=null && r.max!=null);
   if (!valid.length) return null;
@@ -134,16 +190,54 @@ function overlap(ranges){
   for (const r of valid){ lo = Math.max(lo, r.min); hi = Math.min(hi, r.max); }
   return { min: lo, max: hi, count: valid.length };
 }
+function spanWidth(r){ return (r ? r.max - r.min : -Infinity); }
 
-/* ===== Main renderer ===== */
+function fmtTemp(n){ return Math.round(n); }          // whole numbers
+function fmtPh(n){ return Number(n).toFixed(1); }      // 1 decimal
+
+/* ---------------- Sensitive detection ---------------- */
+function anySensitive(speciesNames){
+  for (const name of speciesNames){
+    const row = lookupDataFor(name);
+    if (row && (row.sensitive === true || row.sensitivity === 'high')) return true;
+  }
+  return false;
+}
+
+/* ---------------- Environment Fit bar score (0–100) ---------------- */
+function envFitScore(tempOv, phOv, tempInfoMax, phInfoMax){
+  // If no ranges (0 or 1 species), consider perfect fit for that metric.
+  const tempWidth = tempOv ? Math.max(0, spanWidth(tempOv)) : tempInfoMax;
+  const phWidth   = phOv   ? Math.max(0, spanWidth(phOv))   : phInfoMax;
+
+  function score(width, okMax){
+    if (width <= 0) return 0;
+    if (width >= okMax) return 100;
+    return Math.round((width / okMax) * 100);
+  }
+  const tScore = score(tempWidth, tempInfoMax);
+  const pScore = score(phWidth, phInfoMax);
+
+  // Conservative combine: take the lower of the two
+  return Math.min(tScore, pScore);
+}
+
+/* ---------------- Main renderer ---------------- */
 export function renderWarnings(){
   const box = document.getElementById('aggression-warnings') || document.getElementById('warnings');
   if (!box) return;
 
   box.innerHTML = '';
 
-  const stock = readStock(); // [{name, qty}]
+  const stock = readStock();          // [{name, qty}]
   const names = stock.map(s=>s.name);
+
+  // Sensitive bumps if any sensitive fish present
+  const sens = anySensitive(names);
+  const TEMP_WARN_LT  = BASE_TEMP_WARN_LT  + (sens ? SENS_TEMP_BUMP : 0);
+  const TEMP_INFO_MAX = BASE_TEMP_INFO_MAX + (sens ? SENS_TEMP_BUMP : 0);
+  const PH_WARN_LT    = BASE_PH_WARN_LT    + (sens ? SENS_PH_BUMP   : 0);
+  const PH_INFO_MAX   = BASE_PH_INFO_MAX   + (sens ? SENS_PH_BUMP   : 0);
 
   // A) Aggression (external module)
   let res = { warnings: [], score: 0 };
@@ -159,42 +253,48 @@ export function renderWarnings(){
   // B) Environment overlap
   const tempRanges = [];
   const phRanges   = [];
+
   for (const n of names){
     const row = lookupDataFor(n);
-    const t = readTempRangeF(row);
-    const p = readPhRange(row);
+    const t = readTempRangeF(row, n);
+    const p = readPhRange(row, n);
     if (t) tempRanges.push(t);
     if (p) phRanges.push(p);
   }
 
   const msgs = [];
+
+  // Temperature logic
   if (tempRanges.length >= 2){
     const ov = overlap(tempRanges);
     if (!ov || ov.max < ov.min){
-      msgs.push('⚠️ Temperature ranges do not overlap across selected species.');
+      msgs.push('⚠️ Temperature ranges do not overlap.');
     } else {
-      const span = ov.max - ov.min;
-      if (span <= 2){
-        msgs.push(`ℹ️ Temperature overlap is very tight: ${ov.min.toFixed(1)}–${ov.max.toFixed(1)} °F.`);
-      } else if (span <= 4){
-        msgs.push(`ℹ️ Temperature overlap is somewhat narrow: ${ov.min.toFixed(1)}–${ov.max.toFixed(1)} °F.`);
-      }
-    }
-  }
-  if (phRanges.length >= 2){
-    const ov = overlap(phRanges);
-    if (!ov || ov.max < ov.min){
-      msgs.push('⚠️ pH ranges do not overlap across selected species.');
-    } else {
-      const span = ov.max - ov.min;
-      if (span <= 0.2){
-        msgs.push(`ℹ️ pH overlap is very tight: ${ov.min.toFixed(1)}–${ov.max.toFixed(1)}.`);
-      } else if (span <= 0.4){
-        msgs.push(`ℹ️ pH overlap is somewhat narrow: ${ov.min.toFixed(1)}–${ov.max.toFixed(1)}.`);
+      const w = Math.max(0, spanWidth(ov)); // edge-touch → width 0
+      if (w < TEMP_WARN_LT){
+        msgs.push('⚠️ Temperature overlap too narrow.');
+      } else if (w <= TEMP_INFO_MAX){
+        msgs.push(`ℹ️ Temperature overlap is somewhat narrow: ${fmtTemp(ov.min)}–${fmtTemp(ov.max)} °F.`);
       }
     }
   }
 
+  // pH logic
+  if (phRanges.length >= 2){
+    const ov = overlap(phRanges);
+    if (!ov || ov.max < ov.min){
+      msgs.push('⚠️ pH ranges do not overlap.');
+    } else {
+      const w = Math.max(0, spanWidth(ov));
+      if (w < PH_WARN_LT){
+        msgs.push('⚠️ pH overlap too narrow.');
+      } else if (w <= PH_INFO_MAX){
+        msgs.push(`ℹ️ pH overlap is somewhat narrow: ${fmtPh(ov.min)}–${fmtPh(ov.max)}.`);
+      }
+    }
+  }
+
+  // Combine + render messages (short & direct)
   const allWarnings = [...toArray(res.warnings), ...msgs];
   allWarnings.forEach(w=>{
     const d = document.createElement('div');
@@ -203,9 +303,20 @@ export function renderWarnings(){
   });
 
   // Aggression bar
-  const bar = document.getElementById('aggBarFill');
-  if (bar && typeof res.score === 'number') {
-    bar.style.width = Math.min(100, Math.max(0, res.score)) + '%';
+  const aggBar = document.getElementById('aggBarFill');
+  if (aggBar && typeof res.score === 'number') {
+    aggBar.style.width = Math.min(100, Math.max(0, res.score)) + '%';
+  }
+
+  // Environment Fit bar
+  const envBar = document.getElementById('envBarFill');
+  if (envBar){
+    const tOv = (tempRanges.length >= 2) ? overlap(tempRanges) : null;
+    const pOv = (phRanges.length   >= 2) ? overlap(phRanges)   : null;
+    const fit = envFitScore(tOv, pOv, TEMP_INFO_MAX, PH_INFO_MAX);
+    envBar.style.width = Math.min(100, Math.max(0, fit)) + '%';
+    envBar.classList.remove('pulse'); void envBar.offsetWidth; envBar.classList.add('pulse');
+    setTimeout(()=> envBar.classList.remove('pulse'), 500);
   }
 }
 
