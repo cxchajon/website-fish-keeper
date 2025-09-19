@@ -63,7 +63,7 @@
   #diag.ok{display:block;background:#ecfdf5;color:#065f46;border-bottom:2px solid #a7f3d0}
   #diag.err{display:block;background:#fee2e2;color:#7f1d1d;border-bottom:2px solid #fecaca}
 
-  /* Bars (restored) */
+  /* Bars */
   .bar{height:22px;background:#e2e8f0;border-radius:999px;overflow:hidden}
   .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--ok),var(--warn),var(--bad));transition:width .25s}
   .bar-note{display:flex;justify-content:space-between;font-size:.9rem;color:var(--muted);margin-top:6px}
@@ -174,7 +174,7 @@
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v8.5</strong> • Bars restored & wired • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v8.6</strong> • Size-weighted Bioload • Updated Sep 18, 2025
   </footer>
 
   <!-- Core scripts -->
@@ -199,11 +199,14 @@
     })();
   </script>
 
-  <!-- Safety adapter + bars -->
+  <!-- Safety adapter + bars (size-weighted bioload) -->
   <script>
     (function(){
       function toArray(x){ return Array.isArray(x) ? x : x ? [x] : []; }
       function norm(s){ return (s||'').toString().trim().toLowerCase(); }
+      function canonName(s){
+        return norm(s).replace(/[_-]+/g,' ').replace(/\s+/g,' ').replace(/\s*\([^)]*\)\s*/g,' ').trim();
+      }
 
       /* ========== Species list helpers ========== */
       function extractSpeciesList(src){
@@ -268,10 +271,10 @@
 
       /* ========== Stock table helpers ========== */
       function findRowByName(name){
-        var want=norm(name);
+        var want=canonName(name);
         var rows=document.querySelectorAll('#tbody tr');
         for(var i=0;i<rows.length;i++){
-          var n=norm(rows[i].querySelector('td')?.textContent||'');
+          var n=canonName(rows[i].querySelector('td')?.textContent||'');
           if(n===want) return rows[i];
         }
         return null;
@@ -330,7 +333,110 @@
         }).filter(Boolean);
       }
 
-      /* ========== Bars & warnings ========== */
+      /* ========== Bioload (size-weighted) ========== */
+
+      // Pull per-species bio info from fish-data if available
+      function lookupDataFor(name){
+        const key = canonName(name);
+        const src = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
+        if (!src) return null;
+
+        if (Array.isArray(src)) {
+          for (let i=0;i<src.length;i++){
+            const row = src[i] || {};
+            const n = canonName(row.name || row.species || row.common || '');
+            if (n === key) return row;
+          }
+        } else if (typeof src === 'object') {
+          const row = src[name] || src[key] || null;
+          if (row) return row;
+        }
+        return null;
+      }
+
+      // Convert any inches-looking field to a number
+      function parseInches(val){
+        if (val == null) return 0;
+        const s = String(val);
+        const m = s.match(/(\d+(\.\d+)?)/);
+        return m ? parseFloat(m[1]) : 0;
+      }
+
+      // Heuristic size → bioload units
+      function heuristicUnits(name){
+        const n = canonName(name);
+        // very small inverts & nano
+        if (/(shrimp|snail|daphnia|microrasbora|celestial pearl|cpd)/i.test(n)) return 0.2;
+        // nano tetras/rasboras
+        if (/(ember tetra|neon tetra|cardinal tetra|harlequin rasbora|endlers?)/i.test(n)) return 0.6;
+        // common small community
+        if (/(guppy|platy|molly|danio|white cloud|corydoras|cory|kuhli)/i.test(n)) return 0.9;
+        // generic small/mid schooling
+        if (/(tetra|barb|rasbora)/i.test(n)) return 1.0;
+        // medium feature fish
+        if (/(gourami|angelfish|rainbowfish|kribensis|ram|apistogramma)/i.test(n)) return 1.8;
+        // larger plecos / swords, etc.
+        if (/(bristlenose|pleco|swordtail|larger rainbowfish)/i.test(n)) return 2.5;
+        // heavy hitters
+        if (/(goldfish|oscar|severum|jack dempsey|convict|flowerhorn|common pleco)/i.test(n)) return 5.0;
+        // default conservative small fish
+        return 1.0;
+      }
+
+      function unitsFor(name){
+        const row = lookupDataFor(name);
+        // priority 1: explicit bioload units if provided
+        const explicit = row && (row.bioUnits || row.bioload || row.bio_load);
+        if (explicit && !isNaN(Number(explicit))) return Number(explicit);
+
+        // priority 2: convert size inches to units
+        const maxIn = row && (row.maxInches || row.sizeInches || row.maxSizeIn || row.max_in);
+        const inches = parseInches(maxIn);
+        if (inches){
+          // piecewise mapping (smooth-ish curve)
+          if (inches <= 1.0) return 0.25;
+          if (inches <= 1.5) return 0.5;
+          if (inches <= 2.0) return 0.8;
+          if (inches <= 3.0) return 1.1;
+          if (inches <= 4.0) return 1.6;
+          if (inches <= 5.0) return 2.2;
+          if (inches <= 6.0) return 3.0;
+          if (inches <= 8.0) return 4.2;
+          return 5.5; // big fish
+        }
+
+        // priority 3: heuristics by name
+        return heuristicUnits(name);
+      }
+
+      function totalBioUnits(){
+        return readStock().reduce((sum, item)=> sum + unitsFor(item.name) * (item.qty||0), 0);
+      }
+
+      // Tank capacity model (units we can support)
+      function capacityUnits(){
+        const gallons = parseFloat(document.getElementById('gallons')?.value || '0') || 0;
+        const planted = !!document.getElementById('planted')?.checked;
+        const filtSel = document.getElementById('filtration');
+        const filt = (filtSel && filtSel.value) || 'standard';
+
+        const perGal = 0.9;                       // baseline capacity per gallon
+        const filtFactor = (filt==='low') ? 0.80 : (filt==='high') ? 1.25 : 1.0;
+        const plantedBonus = planted ? 1.10 : 1.0;
+
+        return Math.max(1, gallons * perGal) * filtFactor * plantedBonus;
+      }
+
+      function renderBioload(){
+        var bar=document.getElementById('bioBarFill');
+        if(!bar) return;
+        const total = totalBioUnits();
+        const cap   = capacityUnits();
+        const pct = Math.max(0, Math.min(160, (total / cap) * 100)); // clamp to 160% for gradient
+        bar.style.width = pct.toFixed(1) + '%';
+      }
+
+      /* ========== Warnings & Aggression ========== */
       function renderWarnings(){
         var box=document.getElementById('aggression-warnings')||document.getElementById('warnings');
         if(!box) return;
@@ -353,28 +459,6 @@
         });
         var bar=document.getElementById('aggBarFill');
         if(bar && typeof res.score==='number'){ bar.style.width=Math.min(100, Math.max(0,res.score))+'%'; }
-      }
-
-      function renderBioload(){
-        var bar=document.getElementById('bioBarFill');
-        if(!bar) return;
-
-        var gallons = parseFloat(document.getElementById('gallons')?.value || '0') || 0;
-        var planted = !!document.getElementById('planted')?.checked;
-        var filtSel = document.getElementById('filtration');
-        var filt = (filtSel && filtSel.value) || 'standard';
-
-        // crude but consistent: total fish count vs capacity scaled by tank & filtration
-        var total = readStock().reduce((a,b)=>a + (b.qty||0), 0);
-
-        var filtFactor = (filt==='low') ? 0.8 : (filt==='high') ? 1.2 : 1.0;
-        var plantedBonus = planted ? 1.15 : 1.0;
-
-        // "capacity units": more gallons & stronger filtration increase capacity
-        var capacity = Math.max(1, (gallons/2)) * filtFactor * plantedBonus;
-
-        var pct = Math.max(0, Math.min(100, (total / capacity) * 100));
-        bar.style.width = pct.toFixed(1) + '%';
       }
 
       function renderAll(){
@@ -406,7 +490,7 @@
           });
         }
 
-        // Tank controls should also update bars
+        // Tank controls update bars
         ['gallons','planted','filtration'].forEach(id=>{
           var el=document.getElementById(id);
           if(!el) return;
