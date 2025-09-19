@@ -1,9 +1,11 @@
 // js/modules/app.js
-import { populateSelectIfEmpty } from './species.js?v=926';
-import { addOrUpdateRow, registerRender } from './stock.js?v=926';
-import { renderAll } from './warnings.js?v=926';
-import { statusCheck } from './status.js?v=926';
-import { safeQty } from './utils.js?v=926';
+// App bootstrap & wiring. Cache-busted imports to ensure Safari pulls latest.
+
+import { populateSelectIfEmpty } from './species.js?v=930';
+import { addOrUpdateRow, registerRender } from './stock.js?v=930';
+import { renderAll } from './warnings.js?v=930';
+import { statusCheck } from './status.js?v=930';
+import { safeQty } from './utils.js?v=930';
 
 // utility: replace element with a fresh clone (removes any existing listeners)
 function replaceWithClone(el){
@@ -14,13 +16,13 @@ function replaceWithClone(el){
 }
 
 window.addEventListener('load', () => {
-  // re-render bars & warnings whenever stock changes
+  // Re-render bars & warnings whenever stock changes
   registerRender(renderAll);
 
   populateSelectIfEmpty();
   statusCheck();
 
-  // clone buttons to clear any legacy listeners
+  // Clone buttons to clear any legacy listeners
   let addBtn   = document.getElementById('addFish');
   let resetBtn = document.getElementById('reset');
   addBtn   = replaceWithClone(addBtn);
