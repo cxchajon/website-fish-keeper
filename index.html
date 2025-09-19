@@ -107,23 +107,19 @@
   /* Footer */
   footer{color:#0b3553; text-align:center; padding:14px 0 28px; font-weight:700}
 
-  /* ===== Micro-interactions (new) ===== */
+  /* Micro-interactions */
   @keyframes rowFadeSlideIn{
     0%{opacity:0; transform:translateY(6px)}
     100%{opacity:1; transform:translateY(0)}
   }
-  tbody tr.row-appear{
-    animation: rowFadeSlideIn .24s ease-out both;
-  }
+  tbody tr.row-appear{ animation: rowFadeSlideIn .24s ease-out both; }
 
   @keyframes barPulse{
     0%{ filter:brightness(1); }
     40%{ filter:brightness(1.08); }
     100%{ filter:brightness(1); }
   }
-  .bar-fill.pulse{
-    animation: barPulse .45s ease-out;
-  }
+  .bar-fill.pulse{ animation: barPulse .45s ease-out; }
 </style>
 </head>
 <body>
@@ -166,11 +162,20 @@
           <div class="bar-note"><span>Low</span><span>High</span></div>
           <small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small>
         </div>
+
         <div class="bar-block" style="margin-top:14px">
           <h3>Aggression Risk (Average conflicts)</h3>
           <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
           <div class="bar-note"><span>Low</span><span>High</span></div>
           <small class="note">Serious conflicts automatically max this bar.</small>
+        </div>
+
+        <!-- ✨ New: Environment Fit bar -->
+        <div class="bar-block" style="margin-top:14px">
+          <h3>Environment Fit (Temp & pH overlap)</h3>
+          <div class="bar"><div id="envBarFill" class="bar-fill"></div></div>
+          <div class="bar-note"><span>Poor</span><span>Great</span></div>
+          <small class="note">Edge-touch counts as tight. Warnings when overlap is too small.</small>
         </div>
       </div>
     </section>
@@ -232,13 +237,13 @@
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v9.2.0</strong> • Visual + micro-interactions • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v9.3.0</strong> • Env Fit bar added • Updated Sep 19, 2025
   </footer>
 
   <!-- keep order: data → logic → app -->
   <script src="js/fish-data.js" defer></script>
   <script src="js/aggression.js" defer></script>
   <script src="js/stocking_advisor.js" defer></script>
-  <script type="module" src="js/modules/app.js?v=9.2.5"></script>
+  <script type="module" src="js/modules/app.js?v=9.3.0"></script>
 </body>
 </html>
