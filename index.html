@@ -3,504 +3,350 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Stocking Calculator</title>
+<title>FishKeeper AI — Stocking Calculator</title>
 <style>
   :root{
     --gap:12px; --radius:14px;
     --ink:#0f172a; --muted:#475569; --muted-2:#94a3b8;
-
     --brand:#0284c7; --brand-2:#0369a1;
     --ok:#10b981; --ok-2:#059669;
     --warn:#f59e0b; --warn-2:#d97706;
-    --bad:#ef4444; --bad-2:#dc2626;
-
-    --g1:#0ea5e9; --g2:#38bdf8; --g3:#7dd3fc;
-
-    --card:rgba(224,242,254,0.92);
-    --card-border:rgba(15,23,42,0.06);
-
-    --field-bg:#fff; --field-bd:#d2dbe6;
+    --bg:#f8fafc; --card:#ffffff; --line:#e2e8f0;
   }
   *{box-sizing:border-box}
   body{
-    margin:0; color:var(--ink);
-    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:linear-gradient(180deg,var(--g1) 0%,var(--g2) 60%,var(--g3) 100%);
-    background-attachment:fixed;
-    min-height:100dvh; display:flex; flex-direction:column;
+    margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+    color:var(--ink); background:linear-gradient(180deg,#e6f3fb 0%, #f8fafc 40%) fixed;
   }
-  .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 56px;width:100%}
-
-  .brand{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-bottom:8px;color:#fff}
-  .brand-name{font-size:1.6rem;font-weight:700;line-height:1.2}
-  .brand-sub{font-size:1rem;opacity:.95}
-  header{margin-bottom:16px;text-align:left;color:#fff}
-  header h2{margin:0;font-size:1.2rem;font-weight:600;opacity:.95}
-
+  header{
+    padding:20px clamp(16px,3vw,32px);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  h1{font-size:clamp(20px,3.5vw,28px); margin:0;}
+  .wrap{
+    display:grid; gap:var(--gap);
+    grid-template-columns: 1fr;
+    padding:0 clamp(16px,3vw,32px) 48px;
+    max-width:1200px; margin:0 auto;
+  }
+  @media(min-width:960px){
+    .wrap{grid-template-columns:1.1fr .9fr}
+  }
   .card{
-    background:var(--card); border:1px solid var(--card-border);
-    border-radius:var(--radius); padding:20px; margin-bottom:20px;
-    box-shadow:0 8px 18px -10px rgba(2,6,23,.22);
-    backdrop-filter:blur(6px) saturate(140%); -webkit-backdrop-filter:blur(6px) saturate(140%);
+    background:var(--card); border:1px solid var(--line);
+    border-radius:var(--radius); padding:18px; box-shadow:0 10px 22px rgba(2,8,23,.04);
   }
-  .card h2,.card h3{margin:0 0 10px;font-weight:700}
-
-  label{font-weight:700;margin-bottom:6px;display:block}
-  input,select{width:100%;padding:10px;border:1px solid var(--field-bd);border-radius:10px;background:#fff}
-  .row{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(220px,1fr));align-items:end}
-
-  table.stock{width:100%;border-collapse:collapse}
-  thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66;white-space:nowrap}
-  thead th.qty{text-align:center;width:90px}
-  thead th.actions{text-align:right;width:160px}
-  tbody td{padding:10px 6px;vertical-align:middle}
-
-  .btn{border:none;color:#fff;cursor:pointer;font-weight:700;border-radius:10px;padding:10px 14px;background:var(--brand);box-shadow:0 2px 8px rgba(2,6,23,.18)}
-
-  /* status strip */
-  #diag{position:sticky;top:0;z-index:9999;font:12px/1.2 ui-sans-serif,system-ui;display:none}
-  #diag > div{padding:6px 10px}
-  #diag.ok{display:block;background:#ecfdf5;color:#065f46;border-bottom:2px solid #a7f3d0}
-  #diag.err{display:block;background:#fee2e2;color:#7f1d1d;border-bottom:2px solid #fecaca}
-
-  /* Bars */
-  .bar{height:22px;background:#e2e8f0;border-radius:999px;overflow:hidden}
-  .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--ok),var(--warn),var(--bad));transition:width .25s}
-  .bar-note{display:flex;justify-content:space-between;font-size:.9rem;color:var(--muted);margin-top:6px}
+  .title{display:flex; align-items:center; gap:10px; margin-bottom:12px; font-weight:700}
+  .muted{color:var(--muted)}
+  .row{display:flex; gap:var(--gap); flex-wrap:wrap; align-items:center}
+  select, input[type="number"]{
+    border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:14px; min-width:160px; background:#fff;
+  }
+  button{
+    border:0; border-radius:12px; padding:10px 14px; font-weight:600; cursor:pointer;
+  }
+  .btn{background:var(--brand); color:#fff}
+  .btn:hover{background:var(--brand-2)}
+  .btn-ghost{background:#eef6fb; color:var(--brand); border:1px solid #dbeafe}
+  .btn-ghost:hover{background:#e0f2fe}
+  .btn-warn{background:var(--warn); color:#111827}
+  .btn-warn:hover{background:var(--warn-2); color:#fff}
+  .stack{display:flex; flex-direction:column; gap:10px}
+  .list{display:flex; flex-direction:column; gap:8px}
+  .item{
+    display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:center;
+    border:1px solid var(--line); border-radius:12px; padding:10px 12px; background:#fff;
+  }
+  .item-title{font-weight:700}
+  .qty-controls{display:flex; align-items:center; gap:8px}
+  .icon-btn{
+    display:inline-grid; place-items:center; width:34px; height:34px;
+    border:1px solid var(--line); background:#fff; border-radius:10px; cursor:pointer;
+  }
+  .icon-btn:hover{background:#f1f5f9}
+  .pill{
+    font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid var(--line); background:#f8fafc; color:var(--muted);
+  }
+  .footer{
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between;
+    margin-top:10px; color:var(--muted);
+  }
+  .warning{
+    display:none; margin-top:10px; padding:10px 12px; border-radius:10px;
+    background:#fffbeb; border:1px solid #fde68a; color:#7c2d12;
+  }
+  .warning.show{display:block}
+  .totals{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
 </style>
 </head>
 <body>
-  <div id="diag"><div></div></div>
+<header>
+  <h1>FishKeeper AI — Stocking Calculator</h1>
+  <span class="pill">Sandbox build</span>
+</header>
 
-  <div class="wrap">
-    <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
-      <div class="brand-name">FishkeepingLifeCo</div>
-      <div class="brand-sub">Aquarium Education</div>
+<main class="wrap">
+  <!-- ADD FISH -->
+  <section class="card">
+    <div class="title">➕ Add Fish</div>
+    <div class="stack">
+      <div class="row">
+        <select id="speciesSelect" aria-label="Species">
+          <!-- Populated by JS -->
+        </select>
+        <input id="qtyInput" type="number" min="1" max="99" value="1" aria-label="Quantity"/>
+        <button id="addBtn" class="btn">Add to Stock</button>
+        <button id="clearBtn" class="btn-ghost" title="Clear current stock">Clear</button>
+      </div>
+      <small class="muted">Tip: Adding the same species again will increase its count.</small>
     </div>
-    <header><h2>Stocking Calculator</h2></header>
+  </section>
 
-    <!-- Tank Setup -->
-    <section class="card">
-      <h2>Tank Setup</h2>
-      <div class="row">
+  <!-- CURRENT STOCK -->
+  <section class="card">
+    <div class="title">🐟 Current Stock</div>
+    <div id="stockList" class="list"></div>
+    <div class="footer">
+      <div class="totals">
+        <strong>Total fish: <span id="totalCount">0</span></strong>
+        <span class="pill">Bio-load: <span id="bioloadScore">0</span></span>
+      </div>
+      <button id="exportBtn" class="btn-ghost">Export JSON</button>
+    </div>
+    <div id="warnBox" class="warning"></div>
+  </section>
+
+  <!-- QUICK RULES -->
+  <section class="card">
+    <div class="title">⚠️ Quick Warnings</div>
+    <ul class="stack muted" style="margin:0; padding-left:18px">
+      <li>Male Bettas should not be housed together (aggression risk).</li>
+      <li>Schooling fish (e.g., tetras, rasboras) do best in groups of 6+.</li>
+      <li>Increase slowly to avoid ammonia spikes during cycling.</li>
+    </ul>
+  </section>
+</main>
+
+<script>
+/** ---- Simple Species DB (extend as needed) ---- */
+const SPECIES = [
+  { id:'betta_male', name:'Betta (Male)', category:'betta', bio:3, aggression:'high' },
+  { id:'betta_female', name:'Betta (Female)', category:'betta', bio:3, aggression:'medium' },
+  { id:'cardinal_tetra', name:'Cardinal Tetra', category:'schooling', bio:1, aggression:'low' },
+  { id:'neon_tetra', name:'Neon Tetra', category:'schooling', bio:1, aggression:'low' },
+  { id:'cherry_barb', name:'Cherry Barb', category:'schooling', bio:1, aggression:'low' },
+  { id:'kuhli_loach', name:'Kuhli Loach', category:'bottom', bio:2, aggression:'low' },
+  { id:'panda_loach', name:'Panda Loach', category:'bottom', bio:2, aggression:'low' },
+  { id:'amano_shrimp', name:'Amano Shrimp', category:'invertebrate', bio:0.5, aggression:'low' },
+  { id:'nerite_snail', name:'Nerite Snail', category:'invertebrate', bio:0.4, aggression:'low' },
+];
+
+/** ---- State ----
+ * stockMap: Map<speciesId, {id, name, qty, bio, aggression, category}>
+ */
+const stockMap = new Map();
+
+/** ---- DOM ---- */
+const speciesSelect = document.getElementById('speciesSelect');
+const qtyInput = document.getElementById('qtyInput');
+const addBtn = document.getElementById('addBtn');
+const clearBtn = document.getElementById('clearBtn');
+const stockList = document.getElementById('stockList');
+const totalCountEl = document.getElementById('totalCount');
+const bioloadScoreEl = document.getElementById('bioloadScore');
+const warnBox = document.getElementById('warnBox');
+const exportBtn = document.getElementById('exportBtn');
+
+/** ---- Init ---- */
+function initSelect(){
+  speciesSelect.innerHTML = SPECIES
+    .map(s => `<option value="${s.id}">${s.name}</option>`)
+    .join('');
+}
+initSelect();
+render();
+
+/** ---- Helpers ---- */
+function safeQty(n){
+  const v = parseInt(n, 10);
+  if (isNaN(v)) return 1;
+  return Math.min(99, Math.max(1, v));
+}
+
+function getSpeciesById(id){
+  return SPECIES.find(s => s.id === id);
+}
+
+/** ---- Core Actions ---- */
+function addFish(id, qty){
+  const s = getSpeciesById(id);
+  if(!s) return;
+
+  const existing = stockMap.get(id);
+  if(existing){
+    existing.qty = safeQty(existing.qty + qty); // INCREMENT existing
+    stockMap.set(id, existing);
+  }else{
+    stockMap.set(id, { ...s, qty: safeQty(qty) });
+  }
+  render();
+}
+
+function setQty(id, qty){
+  const item = stockMap.get(id);
+  if(!item) return;
+  item.qty = safeQty(qty);
+  if(item.qty <= 0) stockMap.delete(id);
+  render();
+}
+
+function inc(id){
+  const item = stockMap.get(id); if(!item) return;
+  item.qty = safeQty(item.qty + 1);
+  render();
+}
+
+function dec(id){
+  const item = stockMap.get(id); if(!item) return;
+  item.qty = safeQty(item.qty - 1);
+  if(item.qty <= 0) stockMap.delete(id);
+  render();
+}
+
+function removeItem(id){
+  stockMap.delete(id);
+  render();
+}
+
+function clearAll(){
+  stockMap.clear();
+  render();
+}
+
+/** ---- Metrics & Warnings ---- */
+function computeTotals(){
+  let total = 0;
+  let bio = 0;
+  stockMap.forEach(v => {
+    total += v.qty;
+    bio += v.qty * v.bio;
+  });
+  return { total, bio: Math.round(bio * 10) / 10 };
+}
+
+function generateWarnings(){
+  const notes = [];
+  // Bettas: multiple males -> warn
+  const maleBettas = stockMap.get('betta_male')?.qty ?? 0;
+  if(maleBettas >= 2){
+    notes.push('Multiple male Bettas detected — high aggression risk.');
+  }
+  // Schooling rule: if any schooling species present with qty < 6 -> warn
+  stockMap.forEach(v => {
+    if(v.category === 'schooling' && v.qty > 0 && v.qty < 6){
+      notes.push(`${v.name}: recommended groups of 6 or more.`);
+    }
+  });
+  // Simple bioload heuristic
+  const { bio } = computeTotals();
+  if(bio >= 40){
+    notes.push('High bioload — consider slowing additions and boosting filtration.');
+  } else if(bio >= 25){
+    notes.push('Moderate bioload — add fish slowly and monitor ammonia/nitrite.');
+  }
+  return notes;
+}
+
+/** ---- Render ---- */
+function render(){
+  // List
+  const rows = [];
+  stockMap.forEach(v => {
+    rows.push(`
+      <div class="item" data-id="${v.id}">
         <div>
-          <label for="gallons">Tank size (US gallons)</label>
-          <input id="gallons" type="number" min="1" value="20">
+          <div class="item-title">${v.name}</div>
+          <div class="muted">Bio ${v.bio} • ${v.category} • ${v.aggression} aggression</div>
         </div>
-        <div>
-          <label for="filtration">Filtration</label>
-          <select id="filtration">
-            <option value="low">Low — Sponge filter (gentle flow)</option>
-            <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
-            <option value="high">High — Sump/Canister (oversized)</option>
-          </select>
-        </div>
-        <div>
-          <label>Planted?</label>
-          <input id="planted" type="checkbox"> <span>Yes</span>
-        </div>
-      </div>
-
-      <!-- Bars -->
-      <div style="margin-top:16px">
-        <div class="bar-block">
-          <h3>Bioload</h3>
-          <div class="bar"><div id="bioBarFill" class="bar-fill"></div></div>
-          <div class="bar-note"><span>Low</span><span>High</span></div>
-          <small class="note" style="color:#475569">Bioload is an estimate. Filtration and plants adjust capacity.</small>
-        </div>
-        <div class="bar-block" style="margin-top:14px">
-          <h3>Aggression Risk (Average conflicts)</h3>
-          <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
-          <div class="bar-note"><span>Low</span><span>High</span></div>
-          <small class="note" style="color:#475569">Serious conflicts automatically max this bar.</small>
+        <div class="qty-controls">
+          <button class="icon-btn" data-act="dec" title="Decrease">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12h14" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <input class="qty-field" type="number" min="1" max="99" value="${v.qty}" aria-label="Quantity for ${v.name}" />
+          <button class="icon-btn" data-act="inc" title="Increase">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="icon-btn" data-act="remove" title="Remove">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" stroke="#7f1d1d" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
         </div>
       </div>
-    </section>
+    `);
+  });
+  stockList.innerHTML = rows.join('') || `<div class="muted">No fish added yet.</div>`;
 
-    <!-- Add Fish -->
-    <section class="card">
-      <h2>Add Fish</h2>
-      <div class="row">
-        <div style="flex:1 1 320px">
-          <label for="fishSearch">Search species</label>
-          <input id="fishSearch" type="text" placeholder="Type to filter the list">
-        </div>
-      </div>
-      <div class="row">
-        <div style="flex:1 1 320px">
-          <label for="fishSelect">Species</label>
-          <select id="fishSelect"></select>
-        </div>
-      </div>
-      <div class="row">
-        <div style="flex:1 1 200px">
-          <label for="recMin">Recommended minimum</label>
-          <input id="recMin" type="number" value="" disabled>
-        </div>
-      </div>
-      <div class="row">
-        <div style="flex:1 1 200px">
-          <label for="fQty">Quantity</label>
-          <input id="fQty" type="number" min="1" value="1">
-        </div>
-        <div><button id="addFish" class="btn">Add</button></div>
-      </div>
-    </section>
+  // Totals
+  const { total, bio } = computeTotals();
+  totalCountEl.textContent = total;
+  bioloadScoreEl.textContent = bio;
 
-    <!-- Current Stock -->
-    <section class="card">
-      <h2>Current Stock</h2>
-      <table class="stock">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th class="qty">Qty</th>
-            <th class="actions">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-      <div class="row" style="margin-top:10px">
-        <div><button id="reset" class="btn" style="background:var(--bad)">Clear Stock</button></div>
-      </div>
-    </section>
+  // Warnings
+  const notes = generateWarnings();
+  if(notes.length){
+    warnBox.classList.add('show');
+    warnBox.innerHTML = `<strong>Heads up:</strong><br>${notes.map(n=>`• ${n}`).join('<br>')}`;
+  }else{
+    warnBox.classList.remove('show');
+    warnBox.textContent = '';
+  }
 
-    <!-- Warnings -->
-    <section class="card">
-      <h2>Aggression & Compatibility Warnings</h2>
-      <div id="aggression-warnings"></div>
-    </section>
-  </div>
+  wireListControls();
+}
 
-  <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v8.6</strong> • Size-weighted Bioload • Updated Sep 18, 2025
-  </footer>
+/** ---- Event Wiring ---- */
+addBtn.addEventListener('click', () => {
+  const id = speciesSelect.value;
+  const qty = safeQty(qtyInput.value);
+  addFish(id, qty);
+  // keep last qty typed; comment next line if you prefer reset to 1
+  // qtyInput.value = '1';
+});
 
-  <!-- Core scripts -->
-  <script src="js/fish-data.js"></script>
-  <script src="js/aggression.js"></script>
-  <script src="js/stocking_advisor.js"></script>
+clearBtn.addEventListener('click', clearAll);
 
-  <!-- Status strip -->
-  <script>
-    (function(){
-      var diag = document.getElementById('diag');
-      var box = diag.querySelector('div');
-      function show(ok,msg){ diag.className = ok ? 'ok' : 'err'; box.textContent = msg; }
-      var issues = [];
-      if (!window.Aggression || typeof window.Aggression.compute !== 'function') issues.push('aggression.js missing/invalid');
-      if (!document.getElementById('fishSelect')) issues.push('Species dropdown missing');
-      if (!document.getElementById('tbody')) issues.push('Table body missing');
-      var fishData = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
-      if (!fishData) issues.push('No global species list found');
-      if (issues.length) show(false, 'Issues: '+issues.join(' | '));
-      else show(true, 'Core OK • Safety adapter ready');
-    })();
-  </script>
+exportBtn.addEventListener('click', () => {
+  const payload = [];
+  stockMap.forEach(v => payload.push({ id:v.id, name:v.name, qty:v.qty, bio:v.bio, aggression:v.aggression, category:v.category }));
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'stock.json'; a.click();
+  URL.revokeObjectURL(url);
+});
 
-  <!-- Safety adapter + bars (size-weighted bioload) -->
-  <script>
-    (function(){
-      function toArray(x){ return Array.isArray(x) ? x : x ? [x] : []; }
-      function norm(s){ return (s||'').toString().trim().toLowerCase(); }
-      function canonName(s){
-        return norm(s).replace(/[_-]+/g,' ').replace(/\s+/g,' ').replace(/\s*\([^)]*\)\s*/g,' ').trim();
-      }
-
-      /* ========== Species list helpers ========== */
-      function extractSpeciesList(src){
-        if (Array.isArray(src)) {
-          return src.map(o=>{
-            const name = (o && (o.name||o.species||o.common)) || '';
-            const min  = parseInt((o && (o.min||o.recommendedMinimum||o.minGroup||o.group)) || '0',10) || 0;
-            return name ? { name, min } : null;
-          }).filter(Boolean);
-        }
-        if (src && typeof src==='object') {
-          return Object.keys(src).map(k=>{
-            const v = src[k]||{};
-            const min = parseInt(v.min || v.recommendedMinimum || v.minGroup || '0',10) || 0;
-            return { name:k, min };
-          });
-        }
-        return [];
-      }
-
-      function populateSelectIfEmpty(){
-        var sel = document.getElementById('fishSelect');
-        if (!sel || sel.options.length) return;
-        var src = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
-        var list = extractSpeciesList(src);
-        if (!list.length){
-          list = [
-            { name:'Neon tetra', min:6 },
-            { name:'Tiger barb', min:6 },
-            { name:'Corydoras (small)', min:6 },
-            { name:'Betta (male)', min:1 }
-          ];
-        }
-        list.sort((a,b)=> a.name.localeCompare(b.name));
-        list.forEach(item=>{
-          var opt = document.createElement('option');
-          opt.value = item.name;
-          opt.textContent = item.name;
-          opt.dataset.min = item.min;
-          sel.appendChild(opt);
-        });
-        var search = document.getElementById('fishSearch');
-        function updateRecMin(){
-          var opt=sel.selectedOptions[0];
-          var min=opt?parseInt(opt.dataset.min||'1',10):'';
-          var recMin=document.getElementById('recMin');
-          if(recMin)recMin.value=min||'';
-        }
-        if(search){
-          search.addEventListener('input', function(){
-            var q=(this.value||'').toLowerCase();
-            Array.from(sel.options).forEach(o=>{
-              o.hidden=q && !o.textContent.toLowerCase().includes(q);
-            });
-            var first = Array.from(sel.options).find(o=>!o.hidden);
-            if(first){ sel.value=first.value; updateRecMin(); }
-          });
-        }
-        sel.addEventListener('change', updateRecMin);
-        updateRecMin();
-      }
-
-      /* ========== Stock table helpers ========== */
-      function findRowByName(name){
-        var want=canonName(name);
-        var rows=document.querySelectorAll('#tbody tr');
-        for(var i=0;i<rows.length;i++){
-          var n=canonName(rows[i].querySelector('td')?.textContent||'');
-          if(n===want) return rows[i];
-        }
-        return null;
-      }
-
-      function addOrUpdateRow(name, deltaQty){
-        var tbody=document.getElementById('tbody');
-        var tr=findRowByName(name);
-        if(tr){
-          var qtyInput=tr.querySelector('td:nth-child(2) input');
-          var v=parseInt(qtyInput.value||'0',10)||0;
-          v=v+deltaQty;
-          if(v<=0){ tr.remove(); renderAll(); return; }
-          qtyInput.value=v;
-          renderAll(); return;
-        }
-        if(deltaQty<=0) return;
-        tr=document.createElement('tr');
-
-        var tdName=document.createElement('td');tdName.textContent=name;
-
-        var tdQty=document.createElement('td');
-        var input=document.createElement('input');
-        input.type='number';input.min='0';input.value=deltaQty;input.style.width='64px';
-        tdQty.appendChild(input);
-
-        var tdAct=document.createElement('td');tdAct.style.textAlign='right';
-        var bMinus=document.createElement('button');bMinus.textContent='−';bMinus.className='btn';bMinus.style.marginRight='6px';
-        var bPlus=document.createElement('button');bPlus.textContent='+';bPlus.className='btn';bPlus.style.marginRight='6px';
-        var bDel=document.createElement('button');bDel.textContent='Delete';bDel.className='btn';bDel.style.background='var(--bad)';
-
-        bMinus.addEventListener('click', function(){
-          var v=parseInt(input.value||'0',10)||0;
-          v=Math.max(0, v-1); input.value=v;
-          if(v===0) tr.remove();
-          renderAll();
-        });
-        bPlus.addEventListener('click', function(){ input.value=(parseInt(input.value||'0',10)||0)+1; renderAll(); });
-        bDel.addEventListener('click', function(){ tr.remove(); renderAll(); });
-
-        tdAct.appendChild(bMinus);tdAct.appendChild(bPlus);tdAct.appendChild(bDel);
-
-        tr.appendChild(tdName);tr.appendChild(tdQty);tr.appendChild(tdAct);
-        tbody.appendChild(tr);
-        renderAll();
-      }
-
-      function readStock(){
-        var tbody=document.getElementById('tbody');
-        return Array.from(tbody.querySelectorAll('tr')).map(tr=>{
-          var tds=tr.querySelectorAll('td');
-          var name=(tds[0]?.textContent||'').trim();
-          var qtyEl=tds[1]?.querySelector('input');
-          var qty=parseInt(qtyEl&&qtyEl.value?qtyEl.value:'0',10)||0;
-          return name ? {name, qty} : null;
-        }).filter(Boolean);
-      }
-
-      /* ========== Bioload (size-weighted) ========== */
-
-      // Pull per-species bio info from fish-data if available
-      function lookupDataFor(name){
-        const key = canonName(name);
-        const src = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
-        if (!src) return null;
-
-        if (Array.isArray(src)) {
-          for (let i=0;i<src.length;i++){
-            const row = src[i] || {};
-            const n = canonName(row.name || row.species || row.common || '');
-            if (n === key) return row;
-          }
-        } else if (typeof src === 'object') {
-          const row = src[name] || src[key] || null;
-          if (row) return row;
-        }
-        return null;
-      }
-
-      // Convert any inches-looking field to a number
-      function parseInches(val){
-        if (val == null) return 0;
-        const s = String(val);
-        const m = s.match(/(\d+(\.\d+)?)/);
-        return m ? parseFloat(m[1]) : 0;
-      }
-
-      // Heuristic size → bioload units
-      function heuristicUnits(name){
-        const n = canonName(name);
-        // very small inverts & nano
-        if (/(shrimp|snail|daphnia|microrasbora|celestial pearl|cpd)/i.test(n)) return 0.2;
-        // nano tetras/rasboras
-        if (/(ember tetra|neon tetra|cardinal tetra|harlequin rasbora|endlers?)/i.test(n)) return 0.6;
-        // common small community
-        if (/(guppy|platy|molly|danio|white cloud|corydoras|cory|kuhli)/i.test(n)) return 0.9;
-        // generic small/mid schooling
-        if (/(tetra|barb|rasbora)/i.test(n)) return 1.0;
-        // medium feature fish
-        if (/(gourami|angelfish|rainbowfish|kribensis|ram|apistogramma)/i.test(n)) return 1.8;
-        // larger plecos / swords, etc.
-        if (/(bristlenose|pleco|swordtail|larger rainbowfish)/i.test(n)) return 2.5;
-        // heavy hitters
-        if (/(goldfish|oscar|severum|jack dempsey|convict|flowerhorn|common pleco)/i.test(n)) return 5.0;
-        // default conservative small fish
-        return 1.0;
-      }
-
-      function unitsFor(name){
-        const row = lookupDataFor(name);
-        // priority 1: explicit bioload units if provided
-        const explicit = row && (row.bioUnits || row.bioload || row.bio_load);
-        if (explicit && !isNaN(Number(explicit))) return Number(explicit);
-
-        // priority 2: convert size inches to units
-        const maxIn = row && (row.maxInches || row.sizeInches || row.maxSizeIn || row.max_in);
-        const inches = parseInches(maxIn);
-        if (inches){
-          // piecewise mapping (smooth-ish curve)
-          if (inches <= 1.0) return 0.25;
-          if (inches <= 1.5) return 0.5;
-          if (inches <= 2.0) return 0.8;
-          if (inches <= 3.0) return 1.1;
-          if (inches <= 4.0) return 1.6;
-          if (inches <= 5.0) return 2.2;
-          if (inches <= 6.0) return 3.0;
-          if (inches <= 8.0) return 4.2;
-          return 5.5; // big fish
-        }
-
-        // priority 3: heuristics by name
-        return heuristicUnits(name);
-      }
-
-      function totalBioUnits(){
-        return readStock().reduce((sum, item)=> sum + unitsFor(item.name) * (item.qty||0), 0);
-      }
-
-      // Tank capacity model (units we can support)
-      function capacityUnits(){
-        const gallons = parseFloat(document.getElementById('gallons')?.value || '0') || 0;
-        const planted = !!document.getElementById('planted')?.checked;
-        const filtSel = document.getElementById('filtration');
-        const filt = (filtSel && filtSel.value) || 'standard';
-
-        const perGal = 0.9;                       // baseline capacity per gallon
-        const filtFactor = (filt==='low') ? 0.80 : (filt==='high') ? 1.25 : 1.0;
-        const plantedBonus = planted ? 1.10 : 1.0;
-
-        return Math.max(1, gallons * perGal) * filtFactor * plantedBonus;
-      }
-
-      function renderBioload(){
-        var bar=document.getElementById('bioBarFill');
-        if(!bar) return;
-        const total = totalBioUnits();
-        const cap   = capacityUnits();
-        const pct = Math.max(0, Math.min(160, (total / cap) * 100)); // clamp to 160% for gradient
-        bar.style.width = pct.toFixed(1) + '%';
-      }
-
-      /* ========== Warnings & Aggression ========== */
-      function renderWarnings(){
-        var box=document.getElementById('aggression-warnings')||document.getElementById('warnings');
-        if(!box) return;
-        box.innerHTML='';
-        var stock=readStock();
-
-        var opts = {
-          planted: !!document.getElementById('planted')?.checked,
-          gallons: parseFloat(document.getElementById('gallons')?.value || '0') || 0
-        };
-
-        var res={ warnings:[], score:0 };
-        if(window.Aggression && typeof window.Aggression.compute==='function'){
-          try{ res=window.Aggression.compute(stock, opts); } catch(e){}
-        }
-        toArray(res.warnings).forEach(w=>{
-          var d=document.createElement('div');
-          d.textContent=w;
-          box.appendChild(d);
-        });
-        var bar=document.getElementById('aggBarFill');
-        if(bar && typeof res.score==='number'){ bar.style.width=Math.min(100, Math.max(0,res.score))+'%'; }
-      }
-
-      function renderAll(){
-        renderWarnings();
-        renderBioload();
-      }
-
-      /* ========== Boot ========== */
-      window.addEventListener('load', function(){
-        populateSelectIfEmpty();
-
-        // Add button
-        var addBtn=document.getElementById('addFish');
-        addBtn.addEventListener('click', function(){
-          var sel=document.getElementById('fishSelect');
-          var qtyEl=document.getElementById('fQty');
-          var name=sel && sel.value ? sel.value : '';
-          var qty=parseInt(qtyEl && qtyEl.value ? qtyEl.value : '1',10) || 1;
-          if(!name) return;
-          addOrUpdateRow(name, qty);
-        });
-
-        // Clear stock
-        var resetBtn=document.getElementById('reset');
-        if(resetBtn){
-          resetBtn.addEventListener('click', function(){
-            document.getElementById('tbody').innerHTML='';
-            renderAll();
-          });
-        }
-
-        // Tank controls update bars
-        ['gallons','planted','filtration'].forEach(id=>{
-          var el=document.getElementById(id);
-          if(!el) return;
-          el.addEventListener('input', renderAll);
-          el.addEventListener('change', renderAll);
-        });
-
-        renderAll();
-      });
-    })();
-  </script>
+function wireListControls(){
+  // buttons
+  stockList.querySelectorAll('.item').forEach(row => {
+    const id = row.getAttribute('data-id');
+    row.querySelectorAll('button').forEach(btn => {
+      const act = btn.getAttribute('data-act');
+      if(act === 'inc') btn.onclick = () => inc(id);
+      if(act === 'dec') btn.onclick = () => dec(id);
+      if(act === 'remove') btn.onclick = () => removeItem(id);
+    });
+    // qty input direct edit
+    const qtyField = row.querySelector('.qty-field');
+    qtyField.addEventListener('change', (e) => {
+      setQty(id, safeQty(e.target.value));
+    });
+  });
+}
+</script>
 </body>
 </html>
