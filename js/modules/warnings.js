@@ -42,7 +42,7 @@ export function renderWarnings(){
     try { res = window.Aggression.compute(stock, { gallons, planted }); } catch(e){ /* noop */ }
   }
 
-  // Group warnings by category (and keep deterministic order)
+  // Group warnings by category
   const groups = Object.create(null);
   toArray(res.warnings).forEach(w=>{
     const cat = (w.category || 'other').toLowerCase();
@@ -68,14 +68,14 @@ export function renderWarnings(){
                                'Other considerations';
     sec.appendChild(title);
 
-    // Bubbles row
+    // Bubbles
     const wrap = document.createElement('div');
     wrap.className = 'warning-bubbles';
 
     arr.forEach(w=>{
       const b = document.createElement('div');
       b.className = 'warning-bubble ' + classForType(w.type);
-      // allow simple **bold** markdown in texts coming from the engine
+      // allow basic **bold** markdown in texts coming from the engine
       const html = String(w.text || '')
         .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
       b.innerHTML = html;
@@ -91,10 +91,10 @@ export function renderWarnings(){
   if (bar && typeof res.score === 'number'){
     const pct = Math.max(0, Math.min(100, res.score));
     bar.style.width = pct + '%';
-    bar.classList.remove('pulse'); // re-trigger micro animation
-    // force reflow to restart animation
+    bar.classList.remove('pulse'); // retrigger micro animation
+    // force reflow
     // eslint-disable-next-line no-unused-expressions
-    bar.offsetHeight; 
+    bar.offsetHeight;
     bar.classList.add('pulse');
   }
 }
