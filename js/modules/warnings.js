@@ -1,18 +1,21 @@
 // js/modules/warnings.js
-// Calculates temp / pH overlap warnings and a 0–100 "environment fit" score.
+// Environment Fit (Temp & pH overlap): warnings + a 0–100 score that
+// GROWS as you add species. Pairwise-quality scoring for 2+ species.
 
 import { toArray, canonName } from './utils.js';
 
-// === Tunables ===
-// Base "narrow overlap" thresholds (friendly to community fish)
-const BASE_TEMP_WARN = 5;    // degrees F of overlap considered "narrow"
-const BASE_PH_WARN   = 0.5;  // pH units of overlap considered "narrow"
+// ========= Tunables (friendly defaults) =========
+const BASE_TEMP_WARN = 5;    // °F — overlap < 5°F is "tight"
+const BASE_PH_WARN   = 0.5;  // pH — overlap < 0.5 is "tight"
 
 // Extra tightening only for sensitive species (scaleless + dwarf cichlids)
 const SENSITIVE_TEMP_PAD = 1;   // °F
 const SENSITIVE_PH_PAD   = 0.1; // pH units
 
-// --- Helpers ---
+// Single-species baseline (so bar "starts growing" at first add)
+const SINGLE_SPECIES_BASELINE = 30; // percent
+
+// ========= Helpers =========
 function findSpeciesByName(name) {
   const key = canonName(name);
   const src = window.FISH_DATA || [];
@@ -55,63 +58,91 @@ function speciesLabel(sp) {
   return (sp && sp.name) || 'Unknown';
 }
 
-// --- Core compute ---
+// Per-pair quality score in [0..1], plus warnings
+function scorePair(aSp, bSp, warnings) {
+  const aT = adjustedRange(aSp, 'temp');
+  const bT = adjustedRange(bSp, 'temp');
+  const aP = adjustedRange(aSp, 'ph');
+  const bP = adjustedRange(bSp, 'ph');
+
+  // Temperature component
+  let tScore = 0.8; // neutral default if data missing
+  const tW = overlapWidth(aT, bT);
+  if (tW != null) {
+    if (tW < 0) {
+      tScore = 0.0;
+      warnings.push(`No **temperature** overlap: ${speciesLabel(aSp)} ↔ ${speciesLabel(bSp)}.`);
+    } else if (tW < BASE_TEMP_WARN) {
+      tScore = 0.6;
+      warnings.push(`**Tight temperature window** (${tW.toFixed(1)}°F): ${speciesLabel(aSp)} ↔ ${speciesLabel(bSp)}.`);
+    } else {
+      tScore = 1.0;
+    }
+  }
+
+  // pH component
+  let pScore = 0.9; // neutral default if data missing
+  const pW = overlapWidth(aP, bP);
+  if (pW != null) {
+    if (pW < 0) {
+      pScore = 0.0;
+      warnings.push(`No **pH** overlap: ${speciesLabel(aSp)} ↔ ${speciesLabel(bSp)}.`);
+    } else if (pW < BASE_PH_WARN) {
+      pScore = 0.7;
+      warnings.push(`**Tight pH window** (${pW.toFixed(2)}): ${speciesLabel(aSp)} ↔ ${speciesLabel(bSp)}.`);
+    } else {
+      pScore = 1.0;
+    }
+  }
+
+  // Overall pair quality = average of temp & pH components
+  return (tScore + pScore) / 2;
+}
+
+// ========= Core compute =========
 export function computeEnvironmentWarnings(stock) {
   const items = toArray(stock).filter(r => r && r.name && (r.qty || 0) > 0);
 
-  // NEW: empty tank -> 0%
+  // 0 species -> 0%
   if (items.length === 0) {
     return { warnings: [], score: 0 };
   }
 
-  const warnings = [];
+  // 1 species -> small baseline so the bar "starts growing"
+  if (items.length === 1) {
+    return { warnings: [], score: SINGLE_SPECIES_BASELINE };
+  }
 
-  // pairwise compare all species in stock
+  // 2+ species -> score by average pairwise quality
+  const warnings = [];
+  let qualitySum = 0;
+  let pairCount = 0;
+
   for (let i = 0; i < items.length; i++) {
-    const aName = items[i].name;
-    const aSp = findSpeciesByName(aName);
-    const aTemp = adjustedRange(aSp, 'temp');
-    const aPh   = adjustedRange(aSp, 'ph');
+    const aSp = findSpeciesByName(items[i].name);
+    if (!aSp) continue;
 
     for (let j = i + 1; j < items.length; j++) {
-      const bName = items[j].name;
-      const bSp = findSpeciesByName(bName);
-      const bTemp = adjustedRange(bSp, 'temp');
-      const bPh   = adjustedRange(bSp, 'ph');
+      const bSp = findSpeciesByName(items[j].name);
+      if (!bSp) continue;
 
-      // Temperature checks
-      const tW = overlapWidth(aTemp, bTemp);
-      if (tW == null) continue; // skip if either missing data
-      if (tW < 0) {
-        warnings.push(`No **temperature** overlap: ${speciesLabel(aSp)} ↔ ${speciesLabel(bSp)}.`);
-      } else if (tW < BASE_TEMP_WARN) {
-        warnings.push(`**Tight temperature window** (${tW.toFixed(1)}°F): ${speciesLabel(aSp)} ↔ ${speciesLabel(bSp)}.`);
-      }
-
-      // pH checks (only if both have pH data)
-      const pW = overlapWidth(aPh, bPh);
-      if (pW != null) {
-        if (pW < 0) {
-          warnings.push(`No **pH** overlap: ${speciesLabel(aSp)} ↔ ${speciesLabel(bSp)}.`);
-        } else if (pW < BASE_PH_WARN) {
-          warnings.push(`**Tight pH window** (${pW.toFixed(2)}): ${speciesLabel(aSp)} ↔ ${speciesLabel(bSp)}.`);
-        }
-      }
+      const q = scorePair(aSp, bSp, warnings);
+      qualitySum += q;
+      pairCount++;
     }
   }
 
-  // Score: start at 100, subtract for issues (only if there is stock)
-  let score = 100;
-  const hardHits = warnings.filter(w => w.includes('No **temperature** overlap') || w.includes('No **pH** overlap')).length;
-  const softHits = warnings.length - hardHits;
+  // If somehow no valid pairs, fall back to baseline
+  if (pairCount === 0) {
+    return { warnings, score: SINGLE_SPECIES_BASELINE };
+  }
 
-  score -= hardHits * 25; // hard conflicts hurt a lot
-  score -= softHits * 7;  // narrow windows are lighter dings
-  if (score < 0) score = 0;
+  const avgQuality = qualitySum / pairCount; // 0..1
+  const score = Math.max(0, Math.min(100, Math.round(avgQuality * 100)));
 
   return { warnings, score };
 }
 
-// For convenience if someone attaches to window
+// Optional global handle
 export const Environment = { compute: computeEnvironmentWarnings };
 if (!window.Environment) window.Environment = Environment;
