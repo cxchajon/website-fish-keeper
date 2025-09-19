@@ -1,9 +1,9 @@
 // js/modules/app.js
-import { populateSelectIfEmpty } from './species.js?v=923';
-import { addOrUpdateRow, registerRender } from './stock.js?v=923';
-import { renderAll } from './warnings.js?v=923';
-import { statusCheck } from './status.js?v=923';
-import { safeQty } from './utils.js?v=923';
+import { populateSelectIfEmpty } from './species.js?v=924';
+import { addOrUpdateRow, registerRender } from './stock.js?v=924';
+import { renderAll } from './warnings.js?v=924';
+import { statusCheck } from './status.js?v=924';
+import { safeQty } from './utils.js?v=924';
 
 // utility: replace element with a fresh clone (removes any existing listeners)
 function replaceWithClone(el){
@@ -14,13 +14,13 @@ function replaceWithClone(el){
 }
 
 window.addEventListener('load', () => {
-  // wire stock updates to refresh bars/warnings
+  // when stock changes, re-render bars + warnings
   registerRender(renderAll);
 
   populateSelectIfEmpty();
   statusCheck();
 
-  // Clone buttons to clear any old listeners from legacy scripts
+  // clone buttons to clear any legacy listeners
   let addBtn   = document.getElementById('addFish');
   let resetBtn = document.getElementById('reset');
   addBtn   = replaceWithClone(addBtn);
@@ -47,8 +47,10 @@ window.addEventListener('load', () => {
 
     const fieldRaw = qtyEl ? qtyEl.value : '';
     const hasUserValue = fieldRaw != null && String(fieldRaw).trim().length > 0;
-    const qty = hasUserValue ? getQtyFromField()
-                             : safeQty(recEl && recEl.value ? recEl.value : '1');
+
+    const qty = hasUserValue
+      ? getQtyFromField()
+      : safeQty(recEl && recEl.value ? recEl.value : '1');
 
     addOrUpdateRow(name, qty);
   }
