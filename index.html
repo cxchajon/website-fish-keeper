@@ -165,11 +165,10 @@
     FishkeepingLifeCo • Build <strong id="appVersion">v8.7.0</strong> • Externalized JS • Updated Sep 18, 2025
   </footer>
 
-  <!-- Core data/logic (yours) -->
-  <script src="js/fish-data.js"></script>
-  <script src="js/aggression.js"></script>
-  <script src="js/stocking_advisor.js"></script>
-  <!-- Our single app bundle -->
-  <script src="js/app.js"></script>
+  <!-- keep order: data → logic → app -->
+  <script src="js/fish-data.js" defer></script>
+  <script src="js/aggression.js" defer></script>
+  <script src="js/stocking_advisor.js" defer></script>
+  <script src="js/app.js?v=8.7.0" defer></script>
 </body>
 </html>
