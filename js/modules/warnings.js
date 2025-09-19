@@ -4,7 +4,7 @@
 import { toArray, canonName } from './utils.js';
 
 // === Tunables ===
-// Base "narrow overlap" thresholds (still friendly to typical community fish)
+// Base "narrow overlap" thresholds (friendly to community fish)
 const BASE_TEMP_WARN = 5;    // degrees F of overlap considered "narrow"
 const BASE_PH_WARN   = 0.5;  // pH units of overlap considered "narrow"
 
@@ -57,8 +57,14 @@ function speciesLabel(sp) {
 
 // --- Core compute ---
 export function computeEnvironmentWarnings(stock) {
-  const warnings = [];
   const items = toArray(stock).filter(r => r && r.name && (r.qty || 0) > 0);
+
+  // NEW: empty tank -> 0%
+  if (items.length === 0) {
+    return { warnings: [], score: 0 };
+  }
+
+  const warnings = [];
 
   // pairwise compare all species in stock
   for (let i = 0; i < items.length; i++) {
@@ -94,8 +100,7 @@ export function computeEnvironmentWarnings(stock) {
     }
   }
 
-  // Compute a simple 0–100 "environment fit" score:
-  // Start high; subtract for conflicts and tight windows.
+  // Score: start at 100, subtract for issues (only if there is stock)
   let score = 100;
   const hardHits = warnings.filter(w => w.includes('No **temperature** overlap') || w.includes('No **pH** overlap')).length;
   const softHits = warnings.length - hardHits;
