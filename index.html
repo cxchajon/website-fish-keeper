@@ -9,20 +9,16 @@
     --gap:12px; --radius:14px;
     --ink:#0f172a; --muted:#475569; --muted-2:#94a3b8;
 
-    /* Brand & UI */
     --brand:#0284c7; --brand-2:#0369a1;
     --ok:#10b981; --ok-2:#059669;
     --warn:#f59e0b; --warn-2:#d97706;
     --bad:#ef4444; --bad-2:#dc2626;
 
-    /* Background gradient */
     --g1:#0ea5e9; --g2:#38bdf8; --g3:#7dd3fc;
 
-    /* Cards */
     --card:rgba(224,242,254,0.92);
     --card-border:rgba(15,23,42,0.06);
 
-    /* Fields */
     --field-bg:#fff; --field-bd:#d2dbe6;
   }
 
@@ -36,122 +32,44 @@
   }
   .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 56px;width:100%}
 
-  /* Brand */
   .brand{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-bottom:8px;color:#fff}
   .brand-name{font-size:1.6rem;font-weight:700;line-height:1.2}
   .brand-sub{font-size:1rem;opacity:.95}
   header{margin-bottom:16px;text-align:left;color:#fff}
   header h2{margin:0;font-size:1.2rem;font-weight:600;opacity:.95}
 
-  /* Cards */
   .card{
     background:var(--card); border:1px solid var(--card-border);
     border-radius:var(--radius); padding:20px; margin-bottom:20px;
     box-shadow:0 8px 18px -10px rgba(2,6,23,.22);
     backdrop-filter:blur(6px) saturate(140%); -webkit-backdrop-filter:blur(6px) saturate(140%);
-    overflow:visible;
   }
   .card h2,.card h3{margin:0 0 10px;font-weight:700}
 
-  /* Forms */
   label{font-weight:700;margin-bottom:6px;display:block}
   input,select{width:100%;padding:10px;border:1px solid var(--field-bd);border-radius:10px;background:#fff}
   .row{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(220px,1fr));align-items:end}
 
-  /* Buttons */
-  .btn{border:none;color:#fff;cursor:pointer;font-weight:700;border-radius:10px;padding:10px 14px;background:var(--brand);transition:transform .06s,background .2s,box-shadow .2s;box-shadow:0 2px 8px rgba(2,6,23,.18)}
-  .btn:hover{background:var(--brand-2)} .btn:active{transform:translateY(1px)} .btn:disabled{opacity:.75;cursor:not-allowed}
+  table.stock{width:100%;border-collapse:collapse;table-layout:auto}
+  thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66;white-space:nowrap}
+  thead th.qty{text-align:center;width:90px}
+  thead th.actions{text-align:right;width:160px}
+  tbody td{padding:10px 6px;vertical-align:middle}
 
-  /* Bars */
-  .bar{height:24px;background:#e2e8f0;border-radius:999px;overflow:hidden}
-  .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--ok),var(--warn),var(--bad));transition:width .25s}
-  .bar-note{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted)}
-  small.note{color:var(--muted-2);font-size:.8rem;font-style:italic;display:block;margin-top:6px;padding-left:20px;position:relative}
-  small.note::before{content:"ℹ️";position:absolute;left:0}
+  .btn{border:none;color:#fff;cursor:pointer;font-weight:700;border-radius:10px;padding:10px 14px;background:var(--brand);box-shadow:0 2px 8px rgba(2,6,23,.18)}
+  .btn:disabled{opacity:.75;cursor:not-allowed}
 
-  /* ===== Current Stock ===== */
-  table.stock{
-    width:100%;
-    border-collapse:collapse;
-    table-layout:fixed;          /* ellipsis control */
-  }
-  thead th{
-    padding:8px 6px 10px;
-    text-align:left;
-    font-weight:700;
-    border-bottom:1px solid #cfe7fb66;
-    white-space:nowrap;
-  }
-  thead th:first-child{ width:auto; }         /* Name */
-  thead th.qty{ text-align:center; width:90px; }
-  thead th.actions{ text-align:right; width:160px; }
-  tbody td{padding:10px 6px;vertical-align:middle;overflow:hidden}
-  tbody td:first-child{padding-left:2px}
-
-  /* Fields */
-  .field{
-    background:var(--field-bg);
-    border:1px solid var(--field-bd);
-    border-radius:10px;
-    padding:10px 12px;
-    height:40px;
-    display:flex; align-items:center;
-    min-width:0; max-width:100%;
-    gap:8px;
-  }
-  .field.single-line{ min-width:0; }
-  .name-text{
-    display:block; flex:1 1 auto; min-width:0;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;  /* “White cloud…” */
-  }
-  .lvl-badge{
-    flex:0 0 auto;
-    font-size:.72rem; line-height:1; padding:3px 6px; border-radius:999px;
-    background:#e2e8f0; color:#0f172a; border:1px solid #d6dee8;
-    opacity:.95;
-  }
-  .lvl-top{ background:#dbeafe; border-color:#bfdbfe; }
-  .lvl-mid{ background:#dcfce7; border-color:#bbf7d0; }
-  .lvl-bottom{ background:#fef9c3; border-color:#fde68a; }
-
-  .field.center{justify-content:center}
-  .field.small{min-width:60px;justify-content:center;font-variant-numeric:tabular-nums}
-
-  /* Icon circles for actions */
-  .actions{display:flex;justify-content:flex-end;align-items:center;gap:10px}
-  .circle{
-    width:36px;height:36px;border-radius:50%;
-    display:inline-flex;align-items:center;justify-content:center;
-    color:#fff;font-weight:900;font-size:20px;border:none;cursor:pointer;
-    box-shadow:0 2px 6px rgba(2,6,23,.14);
-    transition:transform .06s ease, filter .15s ease;
-    line-height:1;
-  }
-  .circle:active{transform:translateY(1px)}
-  .circle.minus{background:var(--warn)}
-  .circle.plus{background:var(--ok)}
-  .circle.trash{background:var(--bad)}
-  .circle .ico{width:18px;height:18px;display:block}
-
-  /* Warnings list container */
-  #aggression-warnings>div{
-    background:#fff7ed;border:2px solid #fdba74;color:#7a3419;
-    padding:12px 14px;border-radius:12px;line-height:1.4;margin-bottom:8px
-  }
-
-  /* Error banner (only shows if a core script failed) */
-  #err-banner{
-    display:none; position:fixed; z-index:9999; left:0; right:0; top:0;
-    background:#fee2e2; color:#7f1d1d; border-bottom:2px solid #fecaca;
-    padding:10px 14px; font-weight:700; text-align:center;
-  }
+  /* tiny diag strip */
+  #diag{position:sticky;top:0;z-index:9999;font:12px/1.2 ui-sans-serif,system-ui;display:none}
+  #diag > div{padding:6px 10px}
+  #diag.ok{display:block;background:#ecfdf5;color:#065f46;border-bottom:2px solid #a7f3d0}
+  #diag.err{display:block;background:#fee2e2;color:#7f1d1d;border-bottom:2px solid #fecaca}
 </style>
 </head>
 <body>
-  <div id="err-banner">One of the core scripts failed to load. Refresh or check file paths.</div>
+  <div id="diag"><div></div></div>
 
   <div class="wrap">
-    <!-- Brand -->
     <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
       <div class="brand-name">FishkeepingLifeCo</div>
       <div class="brand-sub">Aquarium Education</div>
@@ -250,188 +168,45 @@
     </section>
   </div>
 
-  <!-- Footer with simple version -->
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v8.1</strong> • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v8.2</strong> • Minimal safe load • Updated Sep 18, 2025
   </footer>
 
-  <!-- Data + Logic + Glue (load core scripts with defer to preserve order) -->
-  <script src="js/fish-data.js" defer></script>
-  <script src="js/aggression.js" defer></script>
-  <script src="js/stocking_advisor.js" defer></script>
+  <!-- CORE SCRIPTS: keep simplest possible loading (no defer) -->
+  <script src="js/fish-data.js"></script>
+  <script src="js/aggression.js"></script>
+  <script src="js/stocking_advisor.js"></script>
 
-  <!-- Core load check (shows a small banner if a core script failed) -->
-  <script>
-    window.addEventListener('load', function(){
-      var ok = true;
-      if (!window.Aggression || typeof window.Aggression.compute !== 'function') ok = false;
-      if (!document.getElementById('fishSelect')) ok = false;
-      if (!document.getElementById('tbody')) ok = false;
-      if (!ok) document.getElementById('err-banner').style.display = 'block';
-    });
-  </script>
-
-  <!-- UI Enhancement Patch — UI-only, sandboxed -->
+  <!-- Minimal diagnostics (shows if any core failed to load) -->
   <script>
     (function(){
-      function safe(fn){ try{ fn(); } catch(e){ /* protect core */ } }
-
-      function run(){
-        safe(function(){
-          const tbody = document.getElementById('tbody');
-          if(!tbody) return;
-
-          /* Badges only (top/mid/bottom) */
-          const RE = {
-            top: /(hatchet|killifish|guppy|halfbeak|surface)/i,
-            mid: /(tetra|barb|danio|rasbora|gourami|molly|platy|swordtail|rainbowfish)/i,
-            bottom: /(corydoras|cory|loach|kuhli|pleco|catfish|otocinclus|shrimp)/i
-          };
-          function detectLevel(name){
-            if (RE.bottom.test(name)) return 'bottom';
-            if (RE.top.test(name))    return 'top';
-            if (RE.mid.test(name))    return 'mid';
-            return null;
-          }
-          function levelClass(level){
-            return level === 'top' ? 'lvl-top' : level === 'bottom' ? 'lvl-bottom' : level === 'mid' ? 'lvl-mid' : '';
-          }
-
-          function wrapField(td, opts){
-            opts = opts || {};
-            if(!td) return null;
-            let el = td.querySelector('.field');
-            if(!el){
-              el = document.createElement('div');
-              el.className = 'field';
-              if (opts.single) el.classList.add('single-line');
-              if (opts.center) el.classList.add('center');
-              if (opts.small)  el.classList.add('small');
-
-              const raw = (td.textContent || '').trim();
-              td.textContent = '';
-
-              const nameSpan = document.createElement('span');
-              nameSpan.className = 'name-text';
-              nameSpan.textContent = raw;
-
-              const lvl = detectLevel(raw);
-              if(lvl){
-                const badge = document.createElement('span');
-                badge.className = 'lvl-badge ' + levelClass(lvl);
-                badge.textContent = '(' + lvl + ')';
-                el.appendChild(nameSpan);
-                el.appendChild(badge);
-              }else{
-                el.appendChild(nameSpan);
-              }
-
-              el.dataset.rawName = raw;
-              td.appendChild(el);
-            }
-            return el;
-          }
-
-          function enhanceActions(td){
-            if(!td || td.dataset.enhanced === '1') return;
-
-            let btnCell = td;
-            if(!td.querySelector('button')){
-              const tr = td.closest('tr');
-              const withBtns = tr ? Array.from(tr.children).find(c => c.querySelector && c.querySelector('button')) : null;
-              if(withBtns) btnCell = withBtns;
-            }
-            const buttons = Array.from(btnCell.querySelectorAll('button'));
-            if(buttons.length === 0){ td.dataset.enhanced='1'; return; }
-
-            const wrap = document.createElement('div');
-            wrap.className = 'actions';
-
-            const minusText = /(\u2212|-)\s*1?/;
-            const plusText  = /\+\s*1?/;
-            const delText   = /delete/i;
-
-            let minusBtn = buttons.find(b => minusText.test(b.textContent));
-            let plusBtn  = buttons.find(b => plusText.test(b.textContent));
-            let delBtn   = buttons.find(b => delText.test(b.textContent));
-
-            if(!minusBtn || !plusBtn){
-              if(buttons.length >= 2){
-                minusBtn = minusBtn || buttons[0];
-                plusBtn  = plusBtn  || buttons[1];
-              }
-            }
-            if(!delBtn && buttons.length >= 3){
-              delBtn = buttons[buttons.length - 1];
-            }
-
-            buttons.forEach(b => b.style.display = 'none');
-
-            if(minusBtn){
-              const m = document.createElement('button');
-              m.type = 'button';
-              m.className = 'circle minus';
-              m.title = 'Decrease';
-              m.setAttribute('aria-label','Decrease');
-              m.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>';
-              m.addEventListener('click', ()=> minusBtn.click());
-              wrap.appendChild(m);
-            }
-            if(plusBtn){
-              const p = document.createElement('button');
-              p.type = 'button';
-              p.className = 'circle plus';
-              p.title = 'Increase';
-              p.setAttribute('aria-label','Increase');
-              p.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/><rect x="9" y="4" width="2" height="12" rx="1" fill="currentColor"/></svg>';
-              p.addEventListener('click', ()=> plusBtn.click());
-              wrap.appendChild(p);
-            }
-            if(delBtn){
-              const d = document.createElement('button');
-              d.type = 'button';
-              d.className = 'circle trash';
-              d.title = 'Delete';
-              d.setAttribute('aria-label','Delete');
-              d.innerHTML = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/></svg>';
-              d.addEventListener('click', ()=> delBtn.click());
-              wrap.appendChild(d);
-            }
-
-            btnCell.appendChild(wrap);
-            td.dataset.enhanced = '1';
-          }
-
-          function decorateRows(){
-            const rows = Array.from(tbody.querySelectorAll('tr'));
-            rows.forEach(tr=>{
-              if (tr.dataset.styled === '1') return;
-              const tds = Array.from(tr.querySelectorAll('td'));
-              if (tds.length < 3) return;
-              wrapField(tds[0], { single:true });
-              const q = tds[1];
-              if(q && !q.querySelector('.field')){
-                const f=document.createElement('div');
-                f.className='field center small';
-                f.textContent=(q.textContent||'').trim();
-                q.textContent='';
-                q.appendChild(f);
-              }
-              enhanceActions(tds[tds.length-1]);
-              tr.dataset.styled = '1';
-            });
-          }
-
-          const rowObs = new MutationObserver(function(){ safe(decorateRows); });
-          rowObs.observe(tbody, { childList:true, subtree:true });
-
-          setTimeout(function(){ safe(decorateRows); }, 0);
-        });
+      var diag = document.getElementById('diag');
+      var box = diag.querySelector('div');
+      function show(ok,msg){
+        diag.className = ok ? 'ok' : 'err';
+        box.textContent = msg;
       }
 
-      window.addEventListener('DOMContentLoaded', function(){
-        setTimeout(run, 0);
-      });
+      // Check file paths & basics
+      var fishSelect = document.getElementById('fishSelect');
+      var tbody = document.getElementById('tbody');
+
+      var issues = [];
+      if (!window.Aggression || typeof window.Aggression.compute !== 'function'){
+        issues.push('aggression.js not loaded or compute missing');
+      }
+      if (!fishSelect){ issues.push('#fishSelect missing'); }
+      if (!tbody){ issues.push('#tbody missing'); }
+
+      // If stocking code attaches a global for data, quickly sanity-check it
+      var hasData = !!(window.FISH_DATA || window.fishData || window.fish_list);
+      if (!hasData){ issues.push('fish-data.js did not expose species list'); }
+
+      if (issues.length){
+        show(false, 'Issues: ' + issues.join(' | '));
+      } else {
+        show(true, 'Core OK. If Add still fails, check console for errors in stocking_advisor.js');
+      }
     })();
   </script>
 </body>
