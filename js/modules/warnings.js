@@ -137,4 +137,4 @@ export function computeEnvironmentWarnings(stock) {
 
 // Optional global handle
 export const Environment = { compute: computeEnvironmentWarnings };
-if (!window.Environment) window.Environment = Environment;
+if (!window.Environment) window.Environment = Environment; 
