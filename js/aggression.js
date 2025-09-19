@@ -1,47 +1,31 @@
-/* Aggression & Compatibility Engine — v8
+/* Aggression & Compatibility Engine — v9
    FishkeepingLifeCo (Sep 18, 2025)
 
    Public API:
      window.Aggression.compute(stock, opts?)
        - stock: [{ name: "Neon tetra", qty: 6 }, ...]
-       - opts (optional):
-           { planted: boolean, gallons: number }
+       - opts (optional): { planted: boolean, gallons: number }
        -> { score: number (0–100), warnings: string[] }
-
-   Notes:
-   • Reads optional global species data to get recommended minimums:
-       FISH_DATA | fishData | fish_list | SPECIES
-     Accepts either an array or a map. If none found, uses heuristics.
 */
 
 (function () {
-  if (window.Aggression && typeof window.Aggression.compute === "function") {
-    // Replace existing to ensure consistent behavior
-    // (If you prefer to keep old behavior, comment out this early return.)
-    // return;
-  }
-
+  // overwrite any previous export to guarantee consistent behavior
   const Aggression = {};
 
   /* ----------------------- Utilities ----------------------- */
   const norm = (s) => (s || "").toString().trim().toLowerCase();
-
-  function toArray(x) {
-    return Array.isArray(x) ? x : x ? [x] : [];
-  }
-
-  function clamp01(x) {
-    return Math.max(0, Math.min(1, x));
-  }
+  const toArray = (x) => (Array.isArray(x) ? x : x ? [x] : []);
+  const clamp01 = (x) => Math.max(0, Math.min(1, x));
+  const uniqPush = (arr, msg) => {
+    if (msg && !arr.includes(msg)) arr.push(msg);
+  };
 
   // Pull a normalized list of {name, min} from any fish-data global
   function readSpeciesMinList() {
     const src =
       window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
-
     if (!src) return [];
 
-    // Array form
     if (Array.isArray(src)) {
       return src
         .map((o) => {
@@ -52,12 +36,10 @@
                 "0",
               10
             ) || 0;
-        return name ? { name, min } : null;
+          return name ? { name, min } : null;
         })
         .filter(Boolean);
     }
-
-    // Map form { "Neon tetra": {min: 6}, ... }
     if (src && typeof src === "object") {
       return Object.keys(src).map((key) => {
         const v = src[key] || {};
@@ -69,60 +51,49 @@
         return { name: key, min };
       });
     }
-
     return [];
   }
 
-  // Build a quick lookup for recommended minimums
   function buildMinLookup() {
-    const minList = readSpeciesMinList();
     const map = new Map();
-    minList.forEach(({ name, min }) => {
-      if (name) map.set(norm(name), min || 0);
+    readSpeciesMinList().forEach(({ name, min }) => {
+      map.set(norm(name), min || 0);
     });
     return map;
   }
 
-  /* ----------------------- Heuristics ----------------------- */
+  /* ------------------- Species pattern sets ------------------- */
 
-  // Schooling/ shoaling patterns (fallback if no data found)
-  const SCHOOLING_RE =
-    /(tetra|barb|danio|rasbora|white\s*cloud|corydoras|cory|kuhli|ott?ocinclus|otocinclus|harlequin)/i;
-
-  // Bottom dwellers (for swim-level note)
-  const BOTTOM_RE =
-    /(corydoras|cory|loach|kuhli|pleco|catfish|otocinclus|shrimp)/i;
-
-  // Nippy/high-severity species
+  // Nippy/high-severity mid-water species
   const NIPPY = [
-    {
-      key: "tiger barb",
-      re: /tiger\s*barb/i,
-      min: 6,
-      msg:
-        "Tiger barb: extremely nippy — best kept as a species-only group (6+). Avoid slow or long-finned tankmates.",
-    },
-    {
-      key: "serpae tetra",
-      re: /serpae\s*tetra/i,
-      min: 8,
-      msg:
-        "Serpae tetra: notoriously nippy — best as a species-only group (8+). Avoid slow or long-finned tankmates.",
-    },
+    { key: "tiger barb", re: /tiger\s*barb/i, min: 6,
+      msg: "Tiger barb: extremely nippy — best kept as a species-only group (6+). Avoid slow/long-finned tankmates." },
+    { key: "serpae tetra", re: /serpae\s*tetra/i, min: 8,
+      msg: "Serpae tetra: notoriously nippy — best as a species-only group (8+). Avoid slow/long-finned tankmates." },
   ];
 
-  // Lightweight swim-level labels (used only for context rules)
-  const LEVEL = {
-    TOP: /(hatchet|killifish|guppy|halfbeak|surface)/i,
-    MID: /(tetra|barb|danio|rasbora|gourami|molly|platy|swordtail|rainbowfish)/i,
-    BOTTOM: BOTTOM_RE,
-  };
-  function detectLevel(name) {
-    if (LEVEL.BOTTOM.test(name)) return "bottom";
-    if (LEVEL.TOP.test(name)) return "top";
-    if (LEVEL.MID.test(name)) return "mid";
-    return null;
-  }
+  // Long-finned / flowing fins (targets for nippers)
+  const LONG_FIN_RE = /(betta|angelfish|guppy|veil|long[-\s]?fin|sailfin)/i;
+
+  // Betta male solitude and shrimp curiosity
+  const BETTA_M_RE = /\bbetta\b.*\b(male|plakat|halfmoon|crowntail|veil)\b|\bbetta\s*\(male\)/i;
+  const BETTA_ANY_RE = /\bbetta\b/i;
+
+  // Shrimp / inverts
+  const SHRIMP_RE = /(shrimp|cherry shrimp|neocaridina|caridina)/i;
+
+  // Generic cichlid bucket (aggression varies, we show cautious warning)
+  const CICHLID_RE =
+    /(cichlid|mbuna|oscar|jack dempsey|convict|auratus|midas|flowerhorn|peacock cichlid|rams?)/i;
+
+  // Schooling/ shoaling fallback detector
+  const SCHOOLING_RE =
+    /(tetra|barb|danio|rasbora|white\s*cloud|corydoras|cory|kuhli|ott?ocinclus|otocinclus|harlequin|rainbowfish)/i;
+
+  // Levels (for context note)
+  const BOTTOM_RE = /(corydoras|cory|loach|kuhli|pleco|catfish|otocinclus|shrimp)/i;
+  const MID_RE =
+    /(tetra|barb|danio|rasbora|gourami|molly|platy|swordtail|rainbowfish)/i;
 
   /* ----------------------- Core Compute ----------------------- */
 
@@ -132,7 +103,7 @@
     const gallons = Number(options.gallons) || 0;
 
     const warnings = [];
-    let score = 0; // 0–100
+    let score = 0; // 0–100 before clamp
 
     const items = toArray(stock)
       .map((s) => ({
@@ -144,73 +115,131 @@
 
     if (!items.length) return { score: 0, warnings };
 
-    const uniqueCount = new Set(items.map((x) => x.key)).size;
-
-    // Build min lookup from data; fallback to heuristics
     const minLookup = buildMinLookup();
+    const uniqueCount = new Set(items.map((i) => i.key)).size;
 
-    // 1) Nippy species: high-severity if mixed with other species
+    /* ---- 1) High-severity: Tiger barb & Serpae tetra ---- */
     let hasNippy = false;
+    let hasBottom = false;
+    let hasMidNippers = false;
+
+    items.forEach((i) => {
+      if (BOTTOM_RE.test(i.name)) hasBottom = true;
+      if (MID_RE.test(i.name)) hasMidNippers = true;
+    });
+
     NIPPY.forEach(({ re, msg, min }) => {
       const present = items.some((i) => re.test(i.name));
       if (!present) return;
-
       hasNippy = true;
 
-      // Species-only recommendation if mixed tank
+      // Mixed with other species? recommend species-only
       if (uniqueCount > 1) {
-        warnings.push(msg);
-        score = Math.max(score, 0.75 * 100); // bump to 75 immediately
+        uniqPush(warnings, msg);
+        score = Math.max(score, 75);
       }
 
-      // Group size reinforcement
+      // Group size shortfall
       const nz = items.find((i) => re.test(i.name));
       if (nz && nz.qty < min) {
-        warnings.push(
+        uniqPush(
+          warnings,
           `Group size: ${nz.name} below recommended group size (${nz.qty}/${min}).`
         );
-        score = Math.max(score, 0.55 * 100);
+        score = Math.max(score, 55);
       }
     });
 
-    // 2) Schooling group-size checks (light to medium severity)
+    /* ---- 2) Betta rules ---- */
+    const bettaMale = items.some((i) => BETTA_M_RE.test(i.name));
+    const bettaAny = bettaMale || items.some((i) => BETTA_ANY_RE.test(i.name));
+    if (bettaMale && uniqueCount > 1) {
+      uniqPush(
+        warnings,
+        "Betta (male): typically solitary — keep alone or with very cautious tankmates; avoid fin-nippers and bright/long-finned fish."
+      );
+      score = Math.max(score, 65);
+    }
+
+    /* ---- 3) Fin-nipping combos ---- */
+    const hasLongFin = items.some((i) => LONG_FIN_RE.test(i.name));
+    const hasNipperSpecies = hasNippy || items.some((i) => /(barb|serpae|tiger)/i.test(i.name));
+    if (hasLongFin && hasNipperSpecies && uniqueCount > 1) {
+      uniqPush(
+        warnings,
+        "Fin-nipping risk: long-finned species with known nippers (barbs/serpae/tiger) often leads to torn fins."
+      );
+      score += 18;
+    }
+
+    /* ---- 4) Shrimp mixing ---- */
+    const hasShrimp = items.some((i) => SHRIMP_RE.test(i.name));
+    const shrimpPredators = bettaAny ||
+      items.some((i) => /(barb|gourami|cichlid|angelfish)/i.test(i.name));
+    if (hasShrimp && shrimpPredators) {
+      uniqPush(
+        warnings,
+        "Shrimp may be hunted or harassed by Bettas, Barbs, Gouramis, Cichlids, or Angelfish. Provide dense cover or avoid mixing."
+      );
+      score += 22;
+    }
+
+    /* ---- 5) Generic cichlid caution in community mixes ---- */
+    const hasCichlid = items.some((i) => CICHLID_RE.test(i.name));
+    const mixingCommunity = hasCichlid && uniqueCount > 1;
+    if (mixingCommunity) {
+      uniqPush(
+        warnings,
+        "Cichlid mix: many cichlids are territorial or aggressive — research species compatibility carefully; avoid small or delicate community fish."
+      );
+      score = Math.max(score, 60);
+    }
+
+    /* ---- 6) Schooling/ shoaling minimum sizes ---- */
     items.forEach((i) => {
       const key = i.key;
       let rec = minLookup.get(key) || 0;
 
+      // fallback heuristic if not provided by data
       if (!rec && SCHOOLING_RE.test(i.name)) {
-        // fallback heuristic if not in data
         rec = /cory|corydoras|kuhli|otocinclus/i.test(i.name) ? 6 : 6;
       }
 
       if (rec && i.qty < rec) {
-        warnings.push(
+        uniqPush(
+          warnings,
           `${i.name}: schooling species below recommended group size (${i.qty}/${rec}).`
         );
-        score += 10; // additive, but overall capped later
+        score += 10;
       }
     });
 
-    // 3) Swim-level context note (only if nippy present + bottom dwellers)
-    const hasBottom = items.some((i) => BOTTOM_RE.test(i.name));
+    /* ---- 7) Swim-level + cover note ---- */
     if (hasNippy && hasBottom) {
-      warnings.push(
-        "Note: consider swimming levels. Mixing active mid-water nippers (e.g., Tiger barbs / Serpae tetras) with bottom dwellers (e.g., Panda Corydoras) can work in larger tanks — provide lots of cover (plants, wood, rock) and broken sight-lines."
+      uniqPush(
+        warnings,
+        "Note: consider swimming levels. Mixing active mid-water nippers (e.g., Tiger barbs / Serpae tetras) with bottom dwellers (e.g., Corydoras) can work in larger tanks — provide lots of cover and broken sight-lines."
       );
     }
 
-    // 4) Very rough baseline: more species variety can slightly raise risk
-    // (This is gentle; real conflicts should come from rules above.)
-    score += Math.max(0, (uniqueCount - 4) * 2); // +2 per species beyond 4
+    /* ---- 8) Light baseline variety factor ---- */
+    score += Math.max(0, (uniqueCount - 4) * 2);
 
-    // 5) Adjustments for planted tanks / large volume (minor reductions)
-    if (planted) score -= 5;
-    if (gallons >= 40) score -= 5;
+    /* ---- 9) Planted / volume reductions ---- */
+    if (planted) score -= 8;
+    if (gallons >= 40) score -= 6;
+    if (gallons >= 75) score -= 10;
 
-    // Clamp and return
-    score = Math.round(clamp01(score / 100) * 100); // normalize in case it went over
-    // If any high-severity was triggered, ensure a solid minimum
-    if (hasNippy && uniqueCount > 1) score = Math.max(score, 75);
+    /* ---- Final clamp ---- */
+    score = Math.round(clamp01(score / 100) * 100);
+
+    // Ensure meaningful floor for serious situations
+    if ((bettaMale && uniqueCount > 1) || (hasNippy && uniqueCount > 1)) {
+      score = Math.max(score, 65);
+    }
+    if (shrimpPredators && hasShrimp) {
+      score = Math.max(score, 55);
+    }
 
     return { score, warnings };
   };
