@@ -146,7 +146,7 @@
         </div>
         <div><button id="addFish" class="btn" type="button">Add</button></div>
       </div>
-      <small class="note">Tip: Leaving Quantity blank will add the <strong>recommended minimum</strong> for this species.</small>
+      <small class="note">If Quantity is left empty or invalid, we’ll use the Recommended minimum (or 1).</small>
     </section>
 
     <!-- Current Stock -->
@@ -175,7 +175,7 @@
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v8.6.2</strong> • Robust qty & smarter auto-fill • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v8.6.3</strong> • No auto-fill into Quantity • Updated Sep 18, 2025
   </footer>
 
   <!-- Core scripts -->
@@ -250,26 +250,14 @@
           sel.appendChild(opt);
         });
 
-        // keep recMin in sync + (smart) auto-fill Quantity on species change
-        var search = document.getElementById('fishSearch');
-        var qtyEl  = document.getElementById('fQty');
+        // keep Rec Min in sync (BUT DO NOT touch Quantity)
+        var search   = document.getElementById('fishSearch');
         var recMinEl = document.getElementById('recMin');
 
-        // track if user has typed a custom quantity (don't stomp it later)
-        var qtyWasEdited = false;
-        if(qtyEl){
-          qtyEl.addEventListener('input', function(){ qtyWasEdited = true; });
-          qtyEl.addEventListener('focus', function(){ qtyWasEdited = true; });
-        }
-
-        function updateRecMin(){
+        function updateRecMinOnly(){
           var opt = sel.selectedOptions[0];
           var min = opt ? parseInt(opt.dataset.min || '1', 10) || 1 : 1;
           if(recMinEl) recMinEl.value = min;
-          // Only auto-fill qty if user hasn't typed yet or the box is empty
-          if(qtyEl && (!qtyWasEdited || !qtyEl.value.trim())){
-            qtyEl.value = String(min);
-          }
         }
 
         if(search){
@@ -279,11 +267,11 @@
               o.hidden=q && !o.textContent.toLowerCase().includes(q);
             });
             var first = Array.from(sel.options).find(o=>!o.hidden);
-            if(first){ sel.value=first.value; updateRecMin(); }
+            if(first){ sel.value=first.value; updateRecMinOnly(); }
           });
         }
-        sel.addEventListener('change', updateRecMin);
-        updateRecMin();
+        sel.addEventListener('change', updateRecMinOnly);
+        updateRecMinOnly();
       }
 
       /* ========== Stock table helpers ========== */
@@ -358,12 +346,18 @@
 
       /* ========== Quantity parsing & clamp ========== */
       function safeQty(raw){
-        // Strip everything except digits. Handles '6 ', '6,', '  6', etc.
-        var s = (raw==null ? '' : String(raw)).replace(/[^\d]/g,'');
-        var n = parseInt(s,10);
-        if(isNaN(n) || n < 1) n = 1;
-        if(n > 999) n = 999;
-        return n;
+        // Prefer numeric path; supports mobile keyboards without blur
+        if (raw && typeof raw === 'number' && Number.isFinite(raw)) {
+          var n = Math.floor(raw);
+          if(n < 1) n = 1;
+          if(n > 999) n = 999;
+          return n;
+        }
+        var s = (raw==null ? '' : String(raw)).replace(/[^\d]/g,'').slice(0,3);
+        var n2 = parseInt(s,10);
+        if(isNaN(n2) || n2 < 1) n2 = 1;
+        if(n2 > 999) n2 = 999;
+        return n2;
       }
 
       /* ========== Bioload (size-weighted) ========== */
@@ -481,27 +475,37 @@
         var recEl=document.getElementById('recMin');
         var sel=document.getElementById('fishSelect');
 
-        // Add — robust qty & increment
+        function getQtyFromField(){
+          // Prefer the numeric path first (doesn't require blur on mobile)
+          if (qtyEl && Number.isFinite(qtyEl.valueAsNumber)) {
+            return safeQty(qtyEl.valueAsNumber);
+          }
+          // Fallback to string parsing
+          var raw = (qtyEl && typeof qtyEl.value==='string') ? qtyEl.value : '';
+          var n = safeQty(raw);
+          return n;
+        }
+
         function handleAdd(){
           var name = sel && sel.value ? sel.value : '';
           if(!name) return;
 
-          var raw = (qtyEl && typeof qtyEl.value==='string') ? qtyEl.value : '';
-          var qty = safeQty(raw);
+          var qty = getQtyFromField();
 
-          // If user left it blank, fallback to Rec Min (or 1)
-          if(!raw || !raw.trim()){
+          // If field is truly empty/invalid (e.g., ""), fall back to Rec Min (or 1)
+          var fieldEmpty = !(qtyEl && String(qtyEl.value || '').trim().length);
+          if (fieldEmpty) {
             var rec = safeQty(recEl && recEl.value ? recEl.value : '1');
             qty = rec || 1;
-            if(qtyEl) qtyEl.value = String(qty); // reflect what we used
           }
 
           addOrUpdateRow(name, qty);
         }
 
         addBtn.addEventListener('click', handleAdd);
-        // Enter key in qty triggers Add
+
         if(qtyEl){
+          // Enter key triggers Add
           qtyEl.addEventListener('keydown', function(e){
             if(e.key === 'Enter'){ e.preventDefault(); handleAdd(); }
           });
