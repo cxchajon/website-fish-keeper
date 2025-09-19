@@ -1,8 +1,7 @@
 // js/modules/stock.js
 import { canonName, safeQty } from './utils.js';
 
-// We'll call this after every change (to update bars/warnings).
-// For now it's a no-op; a later step will "register" the real one.
+// we'll call this after every change (to update bars/warnings).
 let _renderAll = () => {};
 export function registerRender(fn){
   if (typeof fn === 'function') _renderAll = fn;
@@ -86,7 +85,14 @@ export function addRow(name, qty){
   tr.appendChild(tdName);
   tr.appendChild(tdQty);
   tr.appendChild(tdAct);
+
+  // add micro-interaction class for a quick fade+slide
+  tr.classList.add('row-appear');
+
   tbody.appendChild(tr);
+
+  // remove the class after animation ends so re-adding can animate again
+  tr.addEventListener('animationend', () => tr.classList.remove('row-appear'), { once:true });
 }
 
 /** Add to an existing species' qty, or create a new row */
