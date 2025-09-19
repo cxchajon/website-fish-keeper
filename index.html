@@ -31,12 +31,7 @@
   .brand-sub{font-size:1rem;opacity:.95}
   header{margin-bottom:16px;text-align:left;color:#fff}
   header h2{margin:0;font-size:1.2rem;font-weight:600;opacity:.95}
-  .card{
-    background:var(--card); border:1px solid var(--card-border);
-    border-radius:var(--radius); padding:20px; margin-bottom:20px;
-    box-shadow:0 8px 18px -10px rgba(2,6,23,.22);
-    backdrop-filter:blur(6px) saturate(140%); -webkit-backdrop-filter:blur(6px) saturate(140%);
-  }
+  .card{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 8px 18px -10px rgba(2,6,23,.22);backdrop-filter:blur(6px) saturate(140%);-webkit-backdrop-filter:blur(6px) saturate(140%)}
   .card h2,.card h3{margin:0 0 10px;font-weight:700}
   label{font-weight:700;margin-bottom:6px;display:block}
   input,select{width:100%;padding:10px;border:1px solid var(--field-bd);border-radius:10px;background:#fff}
@@ -162,13 +157,15 @@
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v8.7.0</strong> • Externalized JS • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v9.0.0</strong> • Modular ES modules • Updated Sep 18, 2025
   </footer>
 
-  <!-- keep order: data → logic → app -->
+  <!-- Your existing globals (order matters) -->
   <script src="js/fish-data.js" defer></script>
   <script src="js/aggression.js" defer></script>
   <script src="js/stocking_advisor.js" defer></script>
-  <script src="js/app.js?v=8.7.0" defer></script>
+
+  <!-- Module entry -->
+  <script type="module" src="js/modules/app.js?v=9.0.0"></script>
 </body>
 </html>
