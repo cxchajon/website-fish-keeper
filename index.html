@@ -139,25 +139,17 @@
     padding:12px 14px;border-radius:12px;line-height:1.4;margin-bottom:8px
   }
 
-  /* Footer */
-  footer{margin-top:auto;padding:18px 20px;color:#0b2a40;opacity:.85;text-align:center;font-size:.9rem}
-
-  /* ===== Mobile tweaks ===== */
-  @media (max-width: 640px){
-    .wrap{padding:20px 8px 56px}
-    thead th.actions{width:140px}
-    thead th.qty{width:80px}
-  }
-  @media (max-width: 420px){
-    thead th.actions{width:120px}
-    thead th.qty{width:70px}
-    .actions{gap:8px}
-    .circle{width:32px;height:32px}
-    .circle .ico{width:16px;height:16px}
+  /* Error banner (only shows if a core script failed) */
+  #err-banner{
+    display:none; position:fixed; z-index:9999; left:0; right:0; top:0;
+    background:#fee2e2; color:#7f1d1d; border-bottom:2px solid #fecaca;
+    padding:10px 14px; font-weight:700; text-align:center;
   }
 </style>
 </head>
 <body>
+  <div id="err-banner">One of the core scripts failed to load. Refresh or check file paths.</div>
+
   <div class="wrap">
     <!-- Brand -->
     <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
@@ -260,167 +252,189 @@
 
   <!-- Footer with simple version -->
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v8</strong> • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v8.1</strong> • Updated Sep 18, 2025
   </footer>
 
-  <!-- Data + Logic + Glue -->
-  <script src="js/fish-data.js"></script>
-  <script src="js/aggression.js"></script>
-  <script src="js/stocking_advisor.js"></script>
+  <!-- Data + Logic + Glue (load core scripts with defer to keep order + avoid blocking) -->
+  <script src="js/fish-data.js" defer></script>
+  <script src="js/aggression.js" defer></script>
+  <script src="js/stocking_advisor.js" defer></script>
 
-  <!-- UI Enhancement Patch — UI-only, error-proofed -->
+  <!-- Core load check (shows a small banner if anything core failed) -->
+  <script>
+    window.addEventListener('load', function(){
+      var ok = true;
+      if (!window.Aggression || typeof window.Aggression.compute !== 'function') ok = false;
+      if (!document.getElementById('fishSelect')) ok = false;
+      if (!document.getElementById('tbody')) ok = false;
+      if (!ok) document.getElementById('err-banner').style.display = 'block';
+    });
+  </script>
+
+  <!-- UI Enhancement Patch — UI-only, sandboxed -->
   <script>
     (function(){
-      function safe(fn){ try{ fn(); } catch(e){ /* swallow UI errors */ } }
+      function safe(fn){ try{ fn(); } catch(e){ /* no-op to protect core */ } }
 
-      safe(function(){
-        const tbody = document.getElementById('tbody');
-        const warningsBox = document.getElementById('aggression-warnings');
-        if(!tbody) return;
+      function run(){
+        safe(function(){
+          const tbody = document.getElementById('tbody');
+          if(!tbody) return;
 
-        /* Swimming-level heuristics (for badges only) */
-        const RE = {
-          top: /(hatchet|killifish|guppy|halfbeak|surface)/i,
-          mid: /(tetra|barb|danio|rasbora|gourami|molly|platy|swordtail|rainbowfish)/i,
-          bottom: /(corydoras|cory|loach|kuhli|pleco|catfish|otocinclus|shrimp)/i
-        };
-        function detectLevel(name){
-          if (RE.bottom.test(name)) return 'bottom';
-          if (RE.top.test(name))    return 'top';
-          if (RE.mid.test(name))    return 'mid';
-          return null;
-        }
-        function levelLabel(level){ return level || ''; }
-        function levelClass(level){
-          return level === 'top' ? 'lvl-top' : level === 'bottom' ? 'lvl-bottom' : level === 'mid' ? 'lvl-mid' : '';
-        }
+          /* Swimming-level heuristics (for badges only) */
+          const RE = {
+            top: /(hatchet|killifish|guppy|halfbeak|surface)/i,
+            mid: /(tetra|barb|danio|rasbora|gourami|molly|platy|swordtail|rainbowfish)/i,
+            bottom: /(corydoras|cory|loach|kuhli|pleco|catfish|otocinclus|shrimp)/i
+          };
+          function detectLevel(name){
+            if (RE.bottom.test(name)) return 'bottom';
+            if (RE.top.test(name))    return 'top';
+            if (RE.mid.test(name))    return 'mid';
+            return null;
+          }
+          function levelClass(level){
+            return level === 'top' ? 'lvl-top' : level === 'bottom' ? 'lvl-bottom' : level === 'mid' ? 'lvl-mid' : '';
+          }
 
-        function wrapField(td, opts={}){
-          if(!td) return null;
-          let el = td.querySelector('.field');
-          if(!el){
-            el = document.createElement('div');
-            el.className = 'field';
-            if (opts.single) el.classList.add('single-line');
-            if (opts.center) el.classList.add('center');
-            if (opts.small)  el.classList.add('small');
+          function wrapField(td, opts){
+            opts = opts || {};
+            if(!td) return null;
+            let el = td.querySelector('.field');
+            if(!el){
+              el = document.createElement('div');
+              el.className = 'field';
+              if (opts.single) el.classList.add('single-line');
+              if (opts.center) el.classList.add('center');
+              if (opts.small)  el.classList.add('small');
 
-            const raw = (td.textContent || '').trim();
-            td.textContent = '';
+              const raw = (td.textContent || '').trim();
+              td.textContent = '';
 
-            const nameSpan = document.createElement('span');
-            nameSpan.className = 'name-text';
-            nameSpan.textContent = raw;
+              const nameSpan = document.createElement('span');
+              nameSpan.className = 'name-text';
+              nameSpan.textContent = raw;
 
-            const lvl = detectLevel(raw);
-            if(lvl){
-              const badge = document.createElement('span');
-              badge.className = `lvl-badge ${levelClass(lvl)}`;
-              badge.textContent = `(${levelLabel(lvl)})`;
-              el.appendChild(nameSpan);
-              el.appendChild(badge);
-            }else{
-              el.appendChild(nameSpan);
+              const lvl = detectLevel(raw);
+              if(lvl){
+                const badge = document.createElement('span');
+                badge.className = 'lvl-badge ' + levelClass(lvl);
+                badge.textContent = '(' + lvl + ')';
+                el.appendChild(nameSpan);
+                el.appendChild(badge);
+              }else{
+                el.appendChild(nameSpan);
+              }
+
+              el.dataset.rawName = raw;
+              td.appendChild(el);
+            }
+            return el;
+          }
+
+          function enhanceActions(td){
+            if(!td || td.dataset.enhanced === '1') return;
+
+            let btnCell = td;
+            if(!td.querySelector('button')){
+              const tr = td.closest('tr');
+              const withBtns = tr ? Array.from(tr.children).find(c => c.querySelector && c.querySelector('button')) : null;
+              if(withBtns) btnCell = withBtns;
+            }
+            const buttons = Array.from(btnCell.querySelectorAll('button'));
+            if(buttons.length === 0){ td.dataset.enhanced='1'; return; }
+
+            const wrap = document.createElement('div');
+            wrap.className = 'actions';
+
+            const minusText = /(\u2212|-)\s*1?/;
+            const plusText  = /\+\s*1?/;
+            const delText   = /delete/i;
+
+            let minusBtn = buttons.find(b => minusText.test(b.textContent));
+            let plusBtn  = buttons.find(b => plusText.test(b.textContent));
+            let delBtn   = buttons.find(b => delText.test(b.textContent));
+
+            if(!minusBtn || !plusBtn){
+              if(buttons.length >= 2){
+                minusBtn = minusBtn || buttons[0];
+                plusBtn  = plusBtn  || buttons[1];
+              }
+            }
+            if(!delBtn && buttons.length >= 3){
+              delBtn = buttons[buttons.length - 1];
             }
 
-            el.dataset.rawName = raw;
-            td.appendChild(el);
-          }
-          return el;
-        }
+            buttons.forEach(b => b.style.display = 'none');
 
-        function enhanceActions(td){
-          if(!td || td.dataset.enhanced === '1') return;
-
-          let btnCell = td;
-          if(!td.querySelector('button')){
-            const tr = td.closest('tr');
-            const withBtns = tr ? Array.from(tr.children).find(c => c.querySelector && c.querySelector('button')) : null;
-            if(withBtns) btnCell = withBtns;
-          }
-          const buttons = Array.from(btnCell.querySelectorAll('button'));
-          if(buttons.length === 0){ td.dataset.enhanced='1'; return; }
-
-          const wrap = document.createElement('div');
-          wrap.className = 'actions';
-
-          const minusText = /(\u2212|-)\s*1?/;
-          const plusText  = /\+\s*1?/;
-          const delText   = /delete/i;
-
-          let minusBtn = buttons.find(b => minusText.test(b.textContent));
-          let plusBtn  = buttons.find(b => plusText.test(b.textContent));
-          let delBtn   = buttons.find(b => delText.test(b.textContent));
-
-          if(!minusBtn || !plusBtn){
-            if(buttons.length >= 2){
-              minusBtn = minusBtn || buttons[0];
-              plusBtn  = plusBtn  || buttons[1];
+            if(minusBtn){
+              const m = document.createElement('button');
+              m.type = 'button';
+              m.className = 'circle minus';
+              m.title = 'Decrease';
+              m.setAttribute('aria-label','Decrease');
+              m.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>';
+              m.addEventListener('click', ()=> minusBtn.click());
+              wrap.appendChild(m);
             }
-          }
-          if(!delBtn && buttons.length >= 3){
-            delBtn = buttons[buttons.length - 1];
-          }
+            if(plusBtn){
+              const p = document.createElement('button');
+              p.type = 'button';
+              p.className = 'circle plus';
+              p.title = 'Increase';
+              p.setAttribute('aria-label','Increase');
+              p.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/><rect x="9" y="4" width="2" height="12" rx="1" fill="currentColor"/></svg>';
+              p.addEventListener('click', ()=> plusBtn.click());
+              wrap.appendChild(p);
+            }
+            if(delBtn){
+              const d = document.createElement('button');
+              d.type = 'button';
+              d.className = 'circle trash';
+              d.title = 'Delete';
+              d.setAttribute('aria-label','Delete');
+              d.innerHTML = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/></svg>';
+              d.addEventListener('click', ()=> delBtn.click());
+              wrap.appendChild(d);
+            }
 
-          buttons.forEach(b => b.style.display = 'none');
-
-          if(minusBtn){
-            const m = document.createElement('button');
-            m.type = 'button';
-            m.className = 'circle minus';
-            m.title = 'Decrease';
-            m.setAttribute('aria-label','Decrease');
-            m.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>';
-            m.addEventListener('click', ()=> minusBtn.click());
-            wrap.appendChild(m);
-          }
-          if(plusBtn){
-            const p = document.createElement('button');
-            p.type = 'button';
-            p.className = 'circle plus';
-            p.title = 'Increase';
-            p.setAttribute('aria-label','Increase');
-            p.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/><rect x="9" y="4" width="2" height="12" rx="1" fill="currentColor"/></svg>';
-            p.addEventListener('click', ()=> plusBtn.click());
-            wrap.appendChild(p);
-          }
-          if(delBtn){
-            const d = document.createElement('button');
-            d.type = 'button';
-            d.className = 'circle trash';
-            d.title = 'Delete';
-            d.setAttribute('aria-label','Delete');
-            d.innerHTML = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/></svg>';
-            d.addEventListener('click', ()=> delBtn.click());
-            wrap.appendChild(d);
+            btnCell.appendChild(wrap);
+            td.dataset.enhanced = '1';
           }
 
-          btnCell.appendChild(wrap);
-          td.dataset.enhanced = '1';
-        }
+          function decorateRows(){
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            rows.forEach(tr=>{
+              if (tr.dataset.styled === '1') return;
+              const tds = Array.from(tr.querySelectorAll('td'));
+              if (tds.length < 3) return;
+              wrapField(tds[0], { single:true });
+              // qty cell
+              const q = tds[1];
+              if(q && !q.querySelector('.field')){
+                const f=document.createElement('div');
+                f.className='field center small';
+                f.textContent=(q.textContent||'').trim();
+                q.textContent='';
+                q.appendChild(f);
+              }
+              enhanceActions(tds[tds.length-1]);
+              tr.dataset.styled = '1';
+            });
+          }
 
-        function decorateRows(){
-          const rows = Array.from(tbody.querySelectorAll('tr'));
-          rows.forEach(tr=>{
-            if (tr.dataset.styled === '1') return;
-            const tds = Array.from(tr.querySelectorAll('td'));
-            if (tds.length < 3) return;
+          const rowObs = new MutationObserver(function(){ safe(decorateRows); });
+          rowObs.observe(tbody, { childList:true, subtree:true });
 
-            // Name (ellipsis + badge)
-            wrapField(tds[0], { single:true });
-            // Qty
-            (function(){ const el = tds[1]; if(el){ if(!el.querySelector('.field')){ const f=document.createElement('div'); f.className='field center small'; f.textContent=(el.textContent||'').trim(); el.textContent=''; el.appendChild(f); }}})();
-            // Actions (SVG proxy)
-            enhanceActions(tds[tds.length-1]);
+          // Initial pass once core code has added any rows
+          setTimeout(function(){ safe(decorateRows); }, 0);
+        });
+      }
 
-            tr.dataset.styled = '1';
-          });
-        }
-
-        const rowObs = new MutationObserver(()=> safe(decorateRows));
-        rowObs.observe(tbody, { childList:true, subtree:true });
-
-        window.addEventListener('load', ()=> safe(decorateRows));
+      // Wait until after deferred core scripts have executed
+      window.addEventListener('DOMContentLoaded', function(){
+        // Defer one more tick to ensure deferred scripts ran
+        setTimeout(run, 0);
       });
     })();
   </script>
