@@ -1,34 +1,42 @@
 // js/modules/bioload.js
-import { canonName } from './utils.js';
+// Bioload math + bar rendering
+
 import { readStock } from './stock.js';
 
+/* ----- helpers for dataset lookup ----- */
+function canonNameLocal(s){
+  return (s||'').toString().trim().toLowerCase()
+    .replace(/[_-]+/g,' ')
+    .replace(/\s+/g,' ')
+    .replace(/\s*\([^)]*\)\s*/g,' ')
+    .trim();
+}
+
 function lookupDataFor(name){
-  const key = canonName(name);
+  const key = canonNameLocal(name);
   const src = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
   if (!src) return null;
 
   if (Array.isArray(src)) {
     for (let i=0;i<src.length;i++){
       const row = src[i] || {};
-      const n = canonName(row.name || row.species || row.common || '');
+      const n = canonNameLocal(row.name || row.species || row.common || '');
       if (n === key) return row;
     }
   } else if (typeof src === 'object') {
-    const row = src[name] || src[key] || null;
-    if (row) return row;
+    return src[name] || src[key] || null;
   }
   return null;
 }
 
+/* ----- unit heuristics ----- */
 function parseInches(val){
   if (val == null) return 0;
-  const s = String(val);
-  const m = s.match(/(\d+(\.\d+)?)/);
+  const m = String(val).match(/(\d+(\.\d+)?)/);
   return m ? parseFloat(m[1]) : 0;
 }
-
 function heuristicUnits(name){
-  const n = canonName(name);
+  const n = canonNameLocal(name);
   if (/(shrimp|snail|daphnia|microrasbora|celestial pearl|cpd)/i.test(n)) return 0.2;
   if (/(ember tetra|neon tetra|cardinal tetra|harlequin rasbora|endlers?)/i.test(n)) return 0.6;
   if (/(guppy|platy|molly|danio|white cloud|corydoras|cory|kuhli)/i.test(n)) return 0.9;
@@ -39,7 +47,8 @@ function heuristicUnits(name){
   return 1.0;
 }
 
-function unitsFor(name){
+/* ----- public bioload API ----- */
+export function unitsFor(name){
   const row = lookupDataFor(name);
   const explicit = row && (row.bioUnits || row.bioload || row.bio_load);
   if (explicit && !isNaN(Number(explicit))) return Number(explicit);
@@ -76,21 +85,14 @@ export function capacityUnits(){
 }
 
 export function renderBioload(){
-  const bar = document.getElementById('bioBarFill');
+  const bar=document.getElementById('bioBarFill');
   if(!bar) return;
   const total = totalBioUnits();
   const cap   = capacityUnits();
   const pct = Math.max(0, Math.min(160, (total / cap) * 100));
-  const prev = parseFloat(bar.style.width || '0');
-
   bar.style.width = pct.toFixed(1) + '%';
 
-  // tiny pulse when value changes meaningfully
-  if (Math.abs(pct - prev) > 0.5) {
-    bar.classList.remove('pulse');
-    // force reflow to restart animation
-    void bar.offsetWidth;
-    bar.classList.add('pulse');
-    setTimeout(()=> bar.classList.remove('pulse'), 500);
-  }
+  // subtle pulse
+  bar.classList.remove('pulse'); void bar.offsetWidth; bar.classList.add('pulse');
+  setTimeout(()=> bar.classList.remove('pulse'), 500);
 }
