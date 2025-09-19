@@ -3,17 +3,25 @@ import { toArray } from './utils.js';
 import { renderBioload } from './bioload.js';
 import { readStock } from './stock.js';
 
-/* -------- helpers to read species data -------- */
-
+/* ========== Helpers ========== */
 function canonNameLocal(s){
   return (s||'').toString().trim().toLowerCase()
-    .replace(/[_-]+/g,' ')
-    .replace(/\s+/g,' ')
-    .replace(/\s*\([^)]*\)\s*/g,' ')
-    .trim();
+    .replace(/[_-]+/g,' ').replace(/\s+/g,' ')
+    .replace(/\s*\([^)]*\)\s*/g,' ').trim();
+}
+function cToF(c){ return (c*9/5)+32; }
+function firstNumber(...vals){
+  for (const v of vals){
+    if (v==null) continue;
+    const m = String(v).match(/-?\d+(\.\d+)?/);
+    if (!m) continue;
+    const n = Number(m[0]);
+    if (!Number.isNaN(n)) return n;
+  }
+  return undefined;
 }
 
-// pull the species row out of the global dataset
+/** Try to pull the species row out of whatever global dataset you have */
 function lookupDataFor(name){
   const key = canonNameLocal(name);
   const src = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
@@ -26,72 +34,133 @@ function lookupDataFor(name){
       if (n === key) return row;
     }
   } else if (typeof src === 'object') {
-    // try exact keys first, then canonical
-    const row = src[name] || src[key] || null;
-    if (row) return row;
+    return src[name] || src[key] || null;
   }
   return null;
 }
 
-function firstNumber(...vals){
-  for(const v of vals){
-    if (v == null) continue;
-    const n = Number(String(v).match(/-?\d+(\.\d+)?/)?.[0]);
-    if (!Number.isNaN(n)) return n;
-  }
-  return undefined;
-}
+/** Parse a temperature range from MANY possible shapes; return {min,max} in °F or null */
+function parseTempToF(any){
+  if (any == null) return null;
+  const s = String(any);
 
-function cToF(c){
-  return (c * 9/5) + 32;
-}
+  // detect unit hints
+  const hasC = /(?:°?\s*C|celsius)/i.test(s);
+  const hasF = /(?:°?\s*F|fahrenheit)/i.test(s);
 
-function readTempRangeF(row){
-  if (!row || typeof row !== 'object') return null;
+  // get up to two numbers (range)
+  const nums = s.match(/-?\d+(?:\.\d+)?/g);
+  if (!nums || nums.length === 0) return null;
 
-  // Prefer explicit Fahrenheit if present
-  let minF = firstNumber(row.minTempF, row.tempMinF, row.minF, row.tMinF, row.tempFMin);
-  let maxF = firstNumber(row.maxTempF, row.tempMaxF, row.maxF, row.tMaxF, row.tempFMax);
+  let min = Number(nums[0]);
+  let max = (nums.length > 1) ? Number(nums[1]) : min;
 
-  // Fall back to Celsius, convert to F
-  let minC = firstNumber(row.minTempC, row.tempMinC, row.minC, row.tMinC, row.tempCMin);
-  let maxC = firstNumber(row.maxTempC, row.tempMaxC, row.maxC, row.tMaxC, row.tempCMax);
+  // Swap if reversed
+  if (min > max) [min, max] = [max, min];
 
-  if ((minF==null || maxF==null) && (minC!=null || maxC!=null)){
-    if (minC!=null) minF = cToF(minC);
-    if (maxC!=null) maxF = cToF(maxC);
+  // If Celsius, convert
+  if (hasC && !hasF) {
+    min = cToF(min); max = cToF(max);
   }
 
-  if (minF==null || maxF==null) return null;
-  if (minF > maxF) [minF, maxF] = [maxF, minF];
-  return { min: minF, max: maxF };
+  // If no explicit unit: we’ll try to infer later using field name; for now assume °F
+  return { min, max, assumedF: !hasC && !hasF };
 }
 
-function readPhRange(row){
-  if (!row || typeof row !== 'object') return null;
-  let min = firstNumber(row.minPH, row.phMin, row.minPh, row.pHMin, row.min_pH);
-  let max = firstNumber(row.maxPH, row.phMax, row.maxPh, row.pHMax, row.max_pH);
-  if (min==null || max==null) return null;
+/** Parse pH range from strings or numbers; return {min,max} or null */
+function parsePh(any){
+  if (any == null) return null;
+  const s = String(any);
+  const nums = s.match(/-?\d+(?:\.\d+)?/g);
+  if (!nums || nums.length === 0) return null;
+  let min = Number(nums[0]);
+  let max = (nums.length > 1) ? Number(nums[1]) : min;
   if (min > max) [min, max] = [max, min];
   return { min, max };
 }
 
-function overlap(ranges){
-  // ranges: [{min, max}, ...] → compute common overlap
-  if (!ranges.length) return null;
-  let lo = -Infinity, hi = Infinity, count = 0;
-  for (const r of ranges){
-    if (!r || r.min==null || r.max==null) continue;
-    lo = Math.max(lo, r.min);
-    hi = Math.min(hi, r.max);
-    count++;
+/** Read temp range in °F from a row with many possible field names */
+function readTempRangeF(row){
+  if (!row || typeof row !== 'object') return null;
+
+  // Candidate fields — add more here if your data uses different keys
+  const fields = [
+    // explicit F
+    'minTempF','maxTempF','tempMinF','tempMaxF','tMinF','tMaxF','temperatureMinF','temperatureMaxF',
+    // generic / strings, often include units
+    'temp','temperature','tempRange','temperatureRange','rangeTemp','temperatureF','temperatureC',
+    'minTemp','maxTemp','lowestTemp','highestTemp','temp_low','temp_high'
+  ];
+
+  // Try direct F first
+  let gotMinF, gotMaxF;
+  gotMinF = firstNumber(row.minTempF, row.tempMinF, row.tMinF, row.temperatureMinF, row.tempFMin);
+  gotMaxF = firstNumber(row.maxTempF, row.tempMaxF, row.tMaxF, row.temperatureMaxF, row.tempFMax);
+  if (gotMinF!=null && gotMaxF!=null) {
+    if (gotMinF > gotMaxF) [gotMinF, gotMaxF] = [gotMaxF, gotMinF];
+    return { min: gotMinF, max: gotMaxF };
   }
-  if (count === 0) return null;
-  return { min: lo, max: hi, count };
+
+  // Try C pairs
+  let minC = firstNumber(row.minTempC, row.tempMinC, row.tMinC, row.temperatureMinC, row.tempCMin);
+  let maxC = firstNumber(row.maxTempC, row.tempMaxC, row.tMaxC, row.temperatureMaxC, row.tempCMax);
+  if (minC!=null && maxC!=null){
+    if (minC > maxC) [minC, maxC] = [maxC, minC];
+    return { min: cToF(minC), max: cToF(maxC) };
+  }
+
+  // Try strings / generic fields
+  for (const key of fields){
+    if (!(key in row)) continue;
+    const r = parseTempToF(row[key]);
+    if (r){
+      // If we "assumedF" but field name suggests C, convert
+      const looksC = /c(elsius)?/i.test(key);
+      const looksF = /f(ahrenheit)?/i.test(key);
+      let {min,max} = r;
+      if (r.assumedF && looksC && !looksF){ min=cToF(min); max=cToF(max); }
+      if (min > max) [min,max] = [max,min];
+      return { min, max };
+    }
+  }
+  return null;
 }
 
-/* -------- main warnings render -------- */
+/** Read pH range from many possible fields */
+function readPhRange(row){
+  if (!row || typeof row !== 'object') return null;
 
+  // Common keys
+  const min = firstNumber(row.minPH, row.phMin, row.minPh, row.pHMin, row.min_pH, row.ph_low, row.pHL, row.pH_low);
+  const max = firstNumber(row.maxPH, row.phMax, row.maxPh, row.pHMax, row.max_pH, row.ph_high, row.pHH, row.pH_high);
+  if (min!=null && max!=null){
+    const a = Math.min(min, max), b = Math.max(min, max);
+    return { min:a, max:b };
+  }
+
+  // Strings
+  const fields = ['ph','pH','phRange','pHRange','water','chemistry','notes'];
+  for (const key of fields){
+    if (!(key in row)) continue;
+    const r = parsePh(row[key]);
+    if (r) return r;
+  }
+  return null;
+}
+
+/** Compute overlap (intersection) across many ranges */
+function overlap(ranges){
+  const valid = ranges.filter(r=>r && r.min!=null && r.max!=null);
+  if (!valid.length) return null;
+  let lo = -Infinity, hi = Infinity;
+  for (const r of valid){
+    lo = Math.max(lo, r.min);
+    hi = Math.min(hi, r.max);
+  }
+  return { min: lo, max: hi, count: valid.length };
+}
+
+/* ========== Main renderer ========== */
 export function renderWarnings(){
   const box = document.getElementById('aggression-warnings') || document.getElementById('warnings');
   if (!box) return;
@@ -101,7 +170,7 @@ export function renderWarnings(){
   const stock = readStock(); // [{name, qty}]
   const names = stock.map(s=>s.name);
 
-  // ---- A) Aggression (existing logic via global Aggression) ----
+  // A) Aggression (existing logic)
   let res = { warnings: [], score: 0 };
   if (window.Aggression && typeof window.Aggression.compute === 'function') {
     try {
@@ -112,7 +181,7 @@ export function renderWarnings(){
     } catch(e){}
   }
 
-  // ---- B) Environment overlap (Temperature & pH) ----
+  // B) Environment overlap (Temperature & pH)
   const tempRanges = [];
   const phRanges   = [];
 
@@ -126,11 +195,11 @@ export function renderWarnings(){
 
   const msgs = [];
 
-  // Temperature overlap in °F
+  // Temp °F overlap
   if (tempRanges.length >= 2){
     const ov = overlap(tempRanges);
     if (!ov || ov.max < ov.min){
-      msgs.push('⚠️ Temperature ranges do not overlap across selected species (conflict). Consider choosing species with closer temperature needs.');
+      msgs.push('⚠️ Temperature ranges do not overlap across selected species. Consider species with closer temperature needs.');
     } else {
       const span = ov.max - ov.min;
       if (span <= 2){
@@ -145,7 +214,7 @@ export function renderWarnings(){
   if (phRanges.length >= 2){
     const ov = overlap(phRanges);
     if (!ov || ov.max < ov.min){
-      msgs.push('⚠️ pH ranges do not overlap across selected species (conflict). Consider species with closer pH requirements.');
+      msgs.push('⚠️ pH ranges do not overlap across selected species. Consider species with closer pH requirements.');
     } else {
       const span = ov.max - ov.min;
       if (span <= 0.2){
@@ -156,33 +225,28 @@ export function renderWarnings(){
     }
   }
 
-  // merge: aggression messages first (as before), then env messages
+  // Combine aggression + environment warnings
   const allWarnings = [...toArray(res.warnings), ...msgs];
-
   allWarnings.forEach(w=>{
     const d = document.createElement('div');
     d.textContent = w;
     box.appendChild(d);
   });
 
-  // update aggression bar
+  // Aggression bar
   const bar = document.getElementById('aggBarFill');
   if (bar && typeof res.score === 'number') {
     const prev = parseFloat(bar.style.width || '0');
     const next = Math.min(100, Math.max(0, res.score));
     bar.style.width = next + '%';
-
-    // tiny pulse when value changes meaningfully
     if (Math.abs(next - prev) > 0.5) {
-      bar.classList.remove('pulse');
-      void bar.offsetWidth;
-      bar.classList.add('pulse');
+      bar.classList.remove('pulse'); void bar.offsetWidth; bar.classList.add('pulse');
       setTimeout(()=> bar.classList.remove('pulse'), 500);
     }
   }
 }
 
-// One call that refreshes everything UI-wise
+/** Refresh everything UI-wise */
 export function renderAll(){
   renderWarnings();
   renderBioload();
