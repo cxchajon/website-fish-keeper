@@ -8,17 +8,13 @@
   :root{
     --gap:12px; --radius:14px;
     --ink:#0f172a; --muted:#475569; --muted-2:#94a3b8;
-
     --brand:#0284c7; --brand-2:#0369a1;
     --ok:#10b981; --ok-2:#059669;
     --warn:#f59e0b; --warn-2:#d97706;
     --bad:#ef4444; --bad-2:#dc2626;
-
     --g1:#0ea5e9; --g2:#38bdf8; --g3:#7dd3fc;
-
     --card:rgba(224,242,254,0.92);
     --card-border:rgba(15,23,42,0.06);
-
     --field-bg:#fff; --field-bd:#d2dbe6;
   }
   *{box-sizing:border-box}
@@ -30,13 +26,11 @@
     min-height:100dvh; display:flex; flex-direction:column;
   }
   .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 56px;width:100%}
-
   .brand{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-bottom:8px;color:#fff}
   .brand-name{font-size:1.6rem;font-weight:700;line-height:1.2}
   .brand-sub{font-size:1rem;opacity:.95}
   header{margin-bottom:16px;text-align:left;color:#fff}
   header h2{margin:0;font-size:1.2rem;font-weight:600;opacity:.95}
-
   .card{
     background:var(--card); border:1px solid var(--card-border);
     border-radius:var(--radius); padding:20px; margin-bottom:20px;
@@ -44,26 +38,19 @@
     backdrop-filter:blur(6px) saturate(140%); -webkit-backdrop-filter:blur(6px) saturate(140%);
   }
   .card h2,.card h3{margin:0 0 10px;font-weight:700}
-
   label{font-weight:700;margin-bottom:6px;display:block}
   input,select{width:100%;padding:10px;border:1px solid var(--field-bd);border-radius:10px;background:#fff}
   .row{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(220px,1fr));align-items:end}
-
   table.stock{width:100%;border-collapse:collapse}
   thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66;white-space:nowrap}
   thead th.qty{text-align:center;width:90px}
   thead th.actions{text-align:right;width:160px}
   tbody td{padding:10px 6px;vertical-align:middle}
-
   .btn{border:none;color:#fff;cursor:pointer;font-weight:700;border-radius:10px;padding:10px 14px;background:var(--brand);box-shadow:0 2px 8px rgba(2,6,23,.18)}
-
-  /* status strip */
   #diag{position:sticky;top:0;z-index:9999;font:12px/1.2 ui-sans-serif,system-ui;display:none}
   #diag > div{padding:6px 10px}
   #diag.ok{display:block;background:#ecfdf5;color:#065f46;border-bottom:2px solid #a7f3d0}
   #diag.err{display:block;background:#fee2e2;color:#7f1d1d;border-bottom:2px solid #fecaca}
-
-  /* Bars */
   .bar{height:22px;background:#e2e8f0;border-radius:999px;overflow:hidden}
   .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--ok),var(--warn),var(--bad));transition:width .25s}
   .bar-note{display:flex;justify-content:space-between;font-size:.9rem;color:#475569;margin-top:6px}
@@ -175,364 +162,14 @@
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v8.6.4</strong> • Safari-safe qty & listener purge • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v8.7.0</strong> • Externalized JS • Updated Sep 18, 2025
   </footer>
 
-  <!-- Core scripts (may exist but our code will sandbox against them) -->
+  <!-- Core data/logic (yours) -->
   <script src="js/fish-data.js"></script>
   <script src="js/aggression.js"></script>
   <script src="js/stocking_advisor.js"></script>
-
-  <!-- Status strip -->
-  <script>
-    (function(){
-      var diag = document.getElementById('diag');
-      var box = diag.querySelector('div');
-      function show(ok,msg){ diag.className = ok ? 'ok' : 'err'; box.textContent = msg; }
-      var issues = [];
-      if (!document.getElementById('fishSelect')) issues.push('Species dropdown missing');
-      if (!document.getElementById('tbody')) issues.push('Table body missing');
-      var fishData = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
-      if (!fishData) issues.push('No global species list found');
-      if (issues.length) show(false, 'Issues: '+issues.join(' | '));
-      else show(true, 'Core OK • Safety adapter ready');
-    })();
-  </script>
-
-  <!-- Safety adapter + bars (size-weighted bioload) -->
-  <script>
-    (function(){
-      function toArray(x){ return Array.isArray(x) ? x : x ? [x] : []; }
-      function norm(s){ return (s||'').toString().trim().toLowerCase(); }
-      function canonName(s){
-        return norm(s).replace(/[_-]+/g,' ').replace(/\s+/g,' ').replace(/\s*\([^)]*\)\s*/g,' ').trim();
-      }
-
-      /* ========== Species list helpers ========== */
-      function extractSpeciesList(src){
-        if (Array.isArray(src)) {
-          return src.map(o=>{
-            const name = (o && (o.name||o.species||o.common)) || '';
-            const min  = parseInt((o && (o.min||o.recommendedMinimum||o.minGroup||o.group)) || '0',10) || 0;
-            return name ? { name, min } : null;
-          }).filter(Boolean);
-        }
-        if (src && typeof src==='object') {
-          return Object.keys(src).map(k=>{
-            const v = src[k]||{};
-            const min = parseInt(v.min || v.recommendedMinimum || v.minGroup || '0',10) || 0;
-            return { name:k, min };
-          });
-        }
-        return [];
-      }
-
-      function populateSelectIfEmpty(){
-        var sel = document.getElementById('fishSelect');
-        if (!sel || sel.options.length) return;
-        var src = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
-        var list = extractSpeciesList(src);
-        if (!list.length){
-          list = [
-            { name:'Neon tetra', min:6 },
-            { name:'Tiger barb', min:6 },
-            { name:'Corydoras (small)', min:6 },
-            { name:'Betta (male)', min:1 }
-          ];
-        }
-        list.sort((a,b)=> a.name.localeCompare(b.name));
-        list.forEach(item=>{
-          var opt = document.createElement('option');
-          opt.value = item.name;
-          opt.textContent = item.name;
-          opt.dataset.min = item.min || 1;
-          sel.appendChild(opt);
-        });
-
-        // keep Rec Min in sync (NEVER touch Quantity field)
-        var search   = document.getElementById('fishSearch');
-        var recMinEl = document.getElementById('recMin');
-
-        function updateRecMinOnly(){
-          var opt = sel.selectedOptions[0];
-          var min = opt ? parseInt(opt.dataset.min || '1', 10) || 1 : 1;
-          if(recMinEl) recMinEl.value = min;
-        }
-
-        if(search){
-          search.addEventListener('input', function(){
-            var q=(this.value||'').toLowerCase();
-            Array.from(sel.options).forEach(o=>{
-              o.hidden=q && !o.textContent.toLowerCase().includes(q);
-            });
-            var first = Array.from(sel.options).find(o=>!o.hidden);
-            if(first){ sel.value=first.value; updateRecMinOnly(); }
-          });
-        }
-        sel.addEventListener('change', updateRecMinOnly);
-        updateRecMinOnly();
-      }
-
-      /* ========== Stock table helpers ========== */
-      function findRowByName(name){
-        var want=canonName(name);
-        var rows=document.querySelectorAll('#tbody tr');
-        for(var i=0;i<rows.length;i++){
-          var n=canonName(rows[i].querySelector('td')?.textContent||'');
-          if(n===want) return rows[i];
-        }
-        return null;
-      }
-
-      function addRow(name, qty){
-        var tbody=document.getElementById('tbody');
-        var tr=document.createElement('tr');
-
-        var tdName=document.createElement('td');tdName.textContent=name;
-
-        var tdQty=document.createElement('td');
-        var input=document.createElement('input');
-        input.type='number';input.min='0';input.step='1';input.inputMode='numeric';input.style.width='64px';
-        input.value= qty;
-        input.addEventListener('change', renderAll);
-        input.addEventListener('input', renderAll);
-        tdQty.appendChild(input);
-
-        var tdAct=document.createElement('td');tdAct.style.textAlign='right';
-        var bMinus=document.createElement('button');bMinus.textContent='−';bMinus.className='btn';bMinus.style.marginRight='6px';bMinus.type='button';
-        var bPlus=document.createElement('button');bPlus.textContent='+';bPlus.className='btn';bPlus.style.marginRight='6px';bPlus.type='button';
-        var bDel=document.createElement('button');bDel.textContent='Delete';bDel.className='btn';bDel.style.background='var(--bad)';bDel.type='button';
-
-        bMinus.addEventListener('click', function(){
-          var v=safeQty(input.value); v=Math.max(0, v-1); input.value=v;
-          if(v===0) tr.remove();
-          renderAll();
-        });
-        bPlus.addEventListener('click', function(){ input.value=safeQty(input.value)+1; renderAll(); });
-        bDel.addEventListener('click', function(){ tr.remove(); renderAll(); });
-
-        tdAct.appendChild(bMinus);tdAct.appendChild(bPlus);tdAct.appendChild(bDel);
-
-        tr.appendChild(tdName);tr.appendChild(tdQty);tr.appendChild(tdAct);
-        tbody.appendChild(tr);
-      }
-
-      function addOrUpdateRow(name, deltaQty){
-        var tr=findRowByName(name);
-        if(tr){
-          var qtyInput=tr.querySelector('td:nth-child(2) input');
-          var v=safeQty(qtyInput.value);
-          v=v+deltaQty;
-          if(v<=0){ tr.remove(); renderAll(); return; }
-          qtyInput.value=v;
-          renderAll(); return;
-        }
-        if(deltaQty<=0) return;
-        addRow(name, deltaQty);
-        renderAll();
-      }
-
-      function readStock(){
-        var tbody=document.getElementById('tbody');
-        return Array.from(tbody.querySelectorAll('tr')).map(tr=>{
-          var tds=tr.querySelectorAll('td');
-          var name=(tds[0]?.textContent||'').trim();
-          var qtyEl=tds[1]?.querySelector('input');
-          var qty=safeQty(qtyEl && qtyEl.value ? qtyEl.value : '0');
-          return name ? {name, qty} : null;
-        }).filter(Boolean);
-      }
-
-      /* ========== Quantity parsing & clamp (Safari-safe) ========== */
-      function safeQty(raw){
-        // Numeric path
-        if (typeof raw === 'number' && Number.isFinite(raw)) {
-          var n = Math.floor(raw);
-          if(n < 1) n = 1;
-          if(n > 999) n = 999;
-          return n;
-        }
-        // String path (no blur needed on iOS)
-        var s = (raw==null ? '' : String(raw)).replace(/[^\d]/g,'').slice(0,3);
-        var n2 = parseInt(s,10);
-        if(isNaN(n2) || n2 < 1) n2 = 1;
-        if(n2 > 999) n2 = 999;
-        return n2;
-      }
-
-      /* ========== Bioload (size-weighted) ========== */
-      function lookupDataFor(name){
-        const key = canonName(name);
-        const src = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
-        if (!src) return null;
-
-        if (Array.isArray(src)) {
-          for (let i=0;i<src.length;i++){
-            const row = src[i] || {};
-            const n = canonName(row.name || row.species || row.common || '');
-            if (n === key) return row;
-          }
-        } else if (typeof src === 'object') {
-          const row = src[name] || src[key] || null;
-          if (row) return row;
-        }
-        return null;
-      }
-      function parseInches(val){
-        if (val == null) return 0;
-        const s = String(val);
-        const m = s.match(/(\d+(\.\d+)?)/);
-        return m ? parseFloat(m[1]) : 0;
-      }
-      function heuristicUnits(name){
-        const n = canonName(name);
-        if (/(shrimp|snail|daphnia|microrasbora|celestial pearl|cpd)/i.test(n)) return 0.2;
-        if (/(ember tetra|neon tetra|cardinal tetra|harlequin rasbora|endlers?)/i.test(n)) return 0.6;
-        if (/(guppy|platy|molly|danio|white cloud|corydoras|cory|kuhli)/i.test(n)) return 0.9;
-        if (/(tetra|barb|rasbora)/i.test(n)) return 1.0;
-        if (/(gourami|angelfish|rainbowfish|kribensis|ram|apistogramma)/i.test(n)) return 1.8;
-        if (/(bristlenose|pleco|swordtail|larger rainbowfish)/i.test(n)) return 2.5;
-        if (/(goldfish|oscar|severum|jack dempsey|convict|flowerhorn|common pleco)/i.test(n)) return 5.0;
-        return 1.0;
-      }
-      function unitsFor(name){
-        const row = lookupDataFor(name);
-        const explicit = row && (row.bioUnits || row.bioload || row.bio_load);
-        if (explicit && !isNaN(Number(explicit))) return Number(explicit);
-        const maxIn = row && (row.maxInches || row.sizeInches || row.maxSizeIn || row.max_in);
-        const inches = parseInches(maxIn);
-        if (inches){
-          if (inches <= 1.0) return 0.25;
-          if (inches <= 1.5) return 0.5;
-          if (inches <= 2.0) return 0.8;
-          if (inches <= 3.0) return 1.1;
-          if (inches <= 4.0) return 1.6;
-          if (inches <= 5.0) return 2.2;
-          if (inches <= 6.0) return 3.0;
-          if (inches <= 8.0) return 4.2;
-          return 5.5;
-        }
-        return heuristicUnits(name);
-      }
-      function totalBioUnits(){
-        return readStock().reduce((sum, item)=> sum + unitsFor(item.name) * (item.qty||0), 0);
-      }
-      function capacityUnits(){
-        const gallons = parseFloat(document.getElementById('gallons')?.value || '0') || 0;
-        const planted = !!document.getElementById('planted')?.checked;
-        const filtSel = document.getElementById('filtration');
-        const filt = (filtSel && filtSel.value) || 'standard';
-        const perGal = 0.9;
-        const filtFactor = (filt==='low') ? 0.80 : (filt==='high') ? 1.25 : 1.0;
-        const plantedBonus = planted ? 1.10 : 1.0;
-        return Math.max(1, gallons * perGal) * filtFactor * plantedBonus;
-      }
-      function renderBioload(){
-        var bar=document.getElementById('bioBarFill');
-        if(!bar) return;
-        const total = totalBioUnits();
-        const cap   = capacityUnits();
-        const pct = Math.max(0, Math.min(160, (total / cap) * 100));
-        bar.style.width = pct.toFixed(1) + '%';
-      }
-
-      /* ========== Warnings & Aggression ========== */
-      function renderWarnings(){
-        var box=document.getElementById('aggression-warnings')||document.getElementById('warnings');
-        if(!box) return;
-        box.innerHTML='';
-        var stock=readStock();
-
-        var opts = {
-          planted: !!document.getElementById('planted')?.checked,
-          gallons: parseFloat(document.getElementById('gallons')?.value || '0') || 0
-        };
-
-        var res={ warnings:[], score:0 };
-        if(window.Aggression && typeof window.Aggression.compute==='function'){
-          try{ res=window.Aggression.compute(stock, opts); } catch(e){}
-        }
-        toArray(res.warnings).forEach(w=>{
-          var d=document.createElement('div');
-          d.textContent=w;
-          box.appendChild(d);
-        });
-        var bar=document.getElementById('aggBarFill');
-        if(bar && typeof res.score==='number'){ bar.style.width=Math.min(100, Math.max(0,res.score))+'%'; }
-      }
-
-      function renderAll(){
-        renderWarnings();
-        renderBioload();
-      }
-
-      /* ========== Boot ========== */
-      window.addEventListener('load', function(){
-        populateSelectIfEmpty();
-
-        // SAFARI/CONFLICT PROOF: purge any other click handlers that external scripts added.
-        function replaceWithClone(el){
-          var clone = el.cloneNode(true);
-          el.replaceWith(clone);
-          return clone;
-        }
-
-        var addBtn = replaceWithClone(document.getElementById('addFish'));
-        var resetBtn = replaceWithClone(document.getElementById('reset'));
-        var qtyEl=document.getElementById('fQty');
-        var recEl=document.getElementById('recMin');
-        var sel=document.getElementById('fishSelect');
-
-        function getQtyFromField(){
-          // Prefer numeric path (no blur needed in Safari)
-          if (qtyEl && Number.isFinite(qtyEl.valueAsNumber)) {
-            return safeQty(qtyEl.valueAsNumber);
-          }
-          // String path
-          var raw = (qtyEl && typeof qtyEl.value==='string') ? qtyEl.value : '';
-          return safeQty(raw);
-        }
-
-        function handleAdd(e){
-          if(e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
-          var name = sel && sel.value ? sel.value : '';
-          if(!name) return;
-
-          var fieldRaw = qtyEl ? qtyEl.value : '';
-          var hasUserValue = fieldRaw != null && String(fieldRaw).trim().length > 0;
-          var qty = hasUserValue ? getQtyFromField()
-                                 : safeQty(recEl && recEl.value ? recEl.value : '1');
-
-          addOrUpdateRow(name, qty);
-        }
-
-        addBtn.addEventListener('click', handleAdd, true); // use capture to beat other listeners
-
-        if(qtyEl){
-          qtyEl.addEventListener('keydown', function(e){
-            if(e.key === 'Enter'){ handleAdd(e); }
-          });
-        }
-
-        if(resetBtn){
-          resetBtn.addEventListener('click', function(e){
-            if(e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
-            document.getElementById('tbody').innerHTML='';
-            renderAll();
-          }, true);
-        }
-
-        // Tank controls update bars
-        ['gallons','planted','filtration'].forEach(id=>{
-          var el=document.getElementById(id);
-          if(!el) return;
-          el.addEventListener('input', renderAll);
-          el.addEventListener('change', renderAll);
-        });
-
-        renderAll();
-      });
-    })();
-  </script>
+  <!-- Our single app bundle -->
+  <script src="js/app.js"></script>
 </body>
 </html>
