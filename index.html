@@ -146,7 +146,7 @@
         </div>
         <div><button id="addFish" class="btn" type="button">Add</button></div>
       </div>
-      <small class="note">If Quantity is left empty or invalid, we’ll use the Recommended minimum (or 1).</small>
+      <small class="note">If Quantity is empty/invalid, we’ll use the Recommended minimum (or 1). We never overwrite what you type.</small>
     </section>
 
     <!-- Current Stock -->
@@ -175,10 +175,10 @@
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v8.6.3</strong> • No auto-fill into Quantity • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v8.6.4</strong> • Safari-safe qty & listener purge • Updated Sep 18, 2025
   </footer>
 
-  <!-- Core scripts -->
+  <!-- Core scripts (may exist but our code will sandbox against them) -->
   <script src="js/fish-data.js"></script>
   <script src="js/aggression.js"></script>
   <script src="js/stocking_advisor.js"></script>
@@ -190,7 +190,6 @@
       var box = diag.querySelector('div');
       function show(ok,msg){ diag.className = ok ? 'ok' : 'err'; box.textContent = msg; }
       var issues = [];
-      if (!window.Aggression || typeof window.Aggression.compute !== 'function') issues.push('aggression.js missing/invalid');
       if (!document.getElementById('fishSelect')) issues.push('Species dropdown missing');
       if (!document.getElementById('tbody')) issues.push('Table body missing');
       var fishData = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
@@ -250,7 +249,7 @@
           sel.appendChild(opt);
         });
 
-        // keep Rec Min in sync (BUT DO NOT touch Quantity)
+        // keep Rec Min in sync (NEVER touch Quantity field)
         var search   = document.getElementById('fishSearch');
         var recMinEl = document.getElementById('recMin');
 
@@ -344,15 +343,16 @@
         }).filter(Boolean);
       }
 
-      /* ========== Quantity parsing & clamp ========== */
+      /* ========== Quantity parsing & clamp (Safari-safe) ========== */
       function safeQty(raw){
-        // Prefer numeric path; supports mobile keyboards without blur
-        if (raw && typeof raw === 'number' && Number.isFinite(raw)) {
+        // Numeric path
+        if (typeof raw === 'number' && Number.isFinite(raw)) {
           var n = Math.floor(raw);
           if(n < 1) n = 1;
           if(n > 999) n = 999;
           return n;
         }
+        // String path (no blur needed on iOS)
         var s = (raw==null ? '' : String(raw)).replace(/[^\d]/g,'').slice(0,3);
         var n2 = parseInt(s,10);
         if(isNaN(n2) || n2 < 1) n2 = 1;
@@ -470,54 +470,56 @@
       window.addEventListener('load', function(){
         populateSelectIfEmpty();
 
-        var addBtn=document.getElementById('addFish');
+        // SAFARI/CONFLICT PROOF: purge any other click handlers that external scripts added.
+        function replaceWithClone(el){
+          var clone = el.cloneNode(true);
+          el.replaceWith(clone);
+          return clone;
+        }
+
+        var addBtn = replaceWithClone(document.getElementById('addFish'));
+        var resetBtn = replaceWithClone(document.getElementById('reset'));
         var qtyEl=document.getElementById('fQty');
         var recEl=document.getElementById('recMin');
         var sel=document.getElementById('fishSelect');
 
         function getQtyFromField(){
-          // Prefer the numeric path first (doesn't require blur on mobile)
+          // Prefer numeric path (no blur needed in Safari)
           if (qtyEl && Number.isFinite(qtyEl.valueAsNumber)) {
             return safeQty(qtyEl.valueAsNumber);
           }
-          // Fallback to string parsing
+          // String path
           var raw = (qtyEl && typeof qtyEl.value==='string') ? qtyEl.value : '';
-          var n = safeQty(raw);
-          return n;
+          return safeQty(raw);
         }
 
-        function handleAdd(){
+        function handleAdd(e){
+          if(e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
           var name = sel && sel.value ? sel.value : '';
           if(!name) return;
 
-          var qty = getQtyFromField();
-
-          // If field is truly empty/invalid (e.g., ""), fall back to Rec Min (or 1)
-          var fieldEmpty = !(qtyEl && String(qtyEl.value || '').trim().length);
-          if (fieldEmpty) {
-            var rec = safeQty(recEl && recEl.value ? recEl.value : '1');
-            qty = rec || 1;
-          }
+          var fieldRaw = qtyEl ? qtyEl.value : '';
+          var hasUserValue = fieldRaw != null && String(fieldRaw).trim().length > 0;
+          var qty = hasUserValue ? getQtyFromField()
+                                 : safeQty(recEl && recEl.value ? recEl.value : '1');
 
           addOrUpdateRow(name, qty);
         }
 
-        addBtn.addEventListener('click', handleAdd);
+        addBtn.addEventListener('click', handleAdd, true); // use capture to beat other listeners
 
         if(qtyEl){
-          // Enter key triggers Add
           qtyEl.addEventListener('keydown', function(e){
-            if(e.key === 'Enter'){ e.preventDefault(); handleAdd(); }
+            if(e.key === 'Enter'){ handleAdd(e); }
           });
         }
 
-        // Clear stock
-        var resetBtn=document.getElementById('reset');
         if(resetBtn){
-          resetBtn.addEventListener('click', function(){
+          resetBtn.addEventListener('click', function(e){
+            if(e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
             document.getElementById('tbody').innerHTML='';
             renderAll();
-          });
+          }, true);
         }
 
         // Tank controls update bars
