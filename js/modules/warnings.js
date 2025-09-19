@@ -29,7 +29,17 @@ export function renderWarnings(){
 
   const bar = document.getElementById('aggBarFill');
   if (bar && typeof res.score === 'number') {
-    bar.style.width = Math.min(100, Math.max(0, res.score)) + '%';
+    const prev = parseFloat(bar.style.width || '0');
+    const next = Math.min(100, Math.max(0, res.score));
+    bar.style.width = next + '%';
+
+    // tiny pulse when value changes meaningfully
+    if (Math.abs(next - prev) > 0.5) {
+      bar.classList.remove('pulse');
+      void bar.offsetWidth;
+      bar.classList.add('pulse');
+      setTimeout(()=> bar.classList.remove('pulse'), 500);
+    }
   }
 }
 
