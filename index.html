@@ -79,7 +79,6 @@
   }
   .btn:hover{ filter:brightness(1.05); box-shadow:0 6px 14px -8px rgba(2,6,23,.26) }
   .btn:active{ transform:translateY(1px) }
-
   #reset.btn{ background:var(--bad) }
 
   /* status strip */
@@ -107,6 +106,24 @@
 
   /* Footer */
   footer{color:#0b3553; text-align:center; padding:14px 0 28px; font-weight:700}
+
+  /* ===== Micro-interactions (new) ===== */
+  @keyframes rowFadeSlideIn{
+    0%{opacity:0; transform:translateY(6px)}
+    100%{opacity:1; transform:translateY(0)}
+  }
+  tbody tr.row-appear{
+    animation: rowFadeSlideIn .24s ease-out both;
+  }
+
+  @keyframes barPulse{
+    0%{ filter:brightness(1); }
+    40%{ filter:brightness(1.08); }
+    100%{ filter:brightness(1); }
+  }
+  .bar-fill.pulse{
+    animation: barPulse .45s ease-out;
+  }
 </style>
 </head>
 <body>
@@ -215,13 +232,13 @@
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v9.1.0</strong> • Visual polish pack • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v9.2.0</strong> • Visual + micro-interactions • Updated Sep 18, 2025
   </footer>
 
   <!-- keep order: data → logic → app -->
   <script src="js/fish-data.js" defer></script>
   <script src="js/aggression.js" defer></script>
   <script src="js/stocking_advisor.js" defer></script>
-  <script type="module" src="js/modules/app.js?v=9.1.0"></script>
+  <script type="module" src="js/modules/app.js?v=9.2.0"></script>
 </body>
 </html>
