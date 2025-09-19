@@ -8,13 +8,17 @@
   :root{
     --gap:12px; --radius:14px;
     --ink:#0f172a; --muted:#475569; --muted-2:#94a3b8;
+
     --brand:#0284c7; --brand-2:#0369a1;
     --ok:#10b981; --ok-2:#059669;
     --warn:#f59e0b; --warn-2:#d97706;
     --bad:#ef4444; --bad-2:#dc2626;
+
     --g1:#0ea5e9; --g2:#38bdf8; --g3:#7dd3fc;
+
     --card:rgba(224,242,254,0.92);
     --card-border:rgba(15,23,42,0.06);
+
     --field-bg:#fff; --field-bd:#d2dbe6;
   }
   *{box-sizing:border-box}
@@ -26,26 +30,40 @@
     min-height:100dvh; display:flex; flex-direction:column;
   }
   .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 56px;width:100%}
+
   .brand{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-bottom:8px;color:#fff}
   .brand-name{font-size:1.6rem;font-weight:700;line-height:1.2}
   .brand-sub{font-size:1rem;opacity:.95}
   header{margin-bottom:16px;text-align:left;color:#fff}
   header h2{margin:0;font-size:1.2rem;font-weight:600;opacity:.95}
-  .card{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 8px 18px -10px rgba(2,6,23,.22);backdrop-filter:blur(6px) saturate(140%);-webkit-backdrop-filter:blur(6px) saturate(140%)}
+
+  .card{
+    background:var(--card); border:1px solid var(--card-border);
+    border-radius:var(--radius); padding:20px; margin-bottom:20px;
+    box-shadow:0 8px 18px -10px rgba(2,6,23,.22);
+    backdrop-filter:blur(6px) saturate(140%); -webkit-backdrop-filter:blur(6px) saturate(140%);
+  }
   .card h2,.card h3{margin:0 0 10px;font-weight:700}
+
   label{font-weight:700;margin-bottom:6px;display:block}
   input,select{width:100%;padding:10px;border:1px solid var(--field-bd);border-radius:10px;background:#fff}
   .row{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(220px,1fr));align-items:end}
+
   table.stock{width:100%;border-collapse:collapse}
   thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66;white-space:nowrap}
   thead th.qty{text-align:center;width:90px}
   thead th.actions{text-align:right;width:160px}
   tbody td{padding:10px 6px;vertical-align:middle}
+
   .btn{border:none;color:#fff;cursor:pointer;font-weight:700;border-radius:10px;padding:10px 14px;background:var(--brand);box-shadow:0 2px 8px rgba(2,6,23,.18)}
+
+  /* status strip */
   #diag{position:sticky;top:0;z-index:9999;font:12px/1.2 ui-sans-serif,system-ui;display:none}
   #diag > div{padding:6px 10px}
   #diag.ok{display:block;background:#ecfdf5;color:#065f46;border-bottom:2px solid #a7f3d0}
   #diag.err{display:block;background:#fee2e2;color:#7f1d1d;border-bottom:2px solid #fecaca}
+
+  /* Bars */
   .bar{height:22px;background:#e2e8f0;border-radius:999px;overflow:hidden}
   .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--ok),var(--warn),var(--bad));transition:width .25s}
   .bar-note{display:flex;justify-content:space-between;font-size:.9rem;color:#475569;margin-top:6px}
@@ -67,7 +85,7 @@
       <div class="row">
         <div>
           <label for="gallons">Tank size (US gallons)</label>
-          <input id="gallons" type="number" min="1" value="20" inputmode="numeric">
+          <input id="gallons" type="number" min="1" value="20">
         </div>
         <div>
           <label for="filtration">Filtration</label>
@@ -106,7 +124,7 @@
       <div class="row">
         <div style="flex:1 1 320px">
           <label for="fishSearch">Search species</label>
-          <input id="fishSearch" type="text" placeholder="Type to filter the list" autocomplete="off" autocapitalize="none">
+          <input id="fishSearch" type="text" placeholder="Type to filter the list">
         </div>
       </div>
       <div class="row">
@@ -126,9 +144,9 @@
           <label for="fQty">Quantity</label>
           <input id="fQty" type="number" min="1" step="1" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 6">
         </div>
-        <div><button id="addFish" class="btn" type="button">Add</button></div>
+        <div><button id="addFish" class="btn">Add</button></div>
       </div>
-      <small class="note">If Quantity is empty/invalid, we’ll use the Recommended minimum (or 1). We never overwrite what you type.</small>
+      <small class="note">Tip: Leaving Quantity blank will add the <strong>recommended minimum</strong> for this species.</small>
     </section>
 
     <!-- Current Stock -->
@@ -145,7 +163,7 @@
         <tbody id="tbody"></tbody>
       </table>
       <div class="row" style="margin-top:10px">
-        <div><button id="reset" class="btn" style="background:var(--bad)" type="button">Clear Stock</button></div>
+        <div><button id="reset" class="btn" style="background:var(--bad)">Clear Stock</button></div>
       </div>
     </section>
 
@@ -157,15 +175,15 @@
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v9.0.0</strong> • Modular ES modules • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v9.0.1</strong> • Modular JS • Updated Sep 18, 2025
   </footer>
 
-  <!-- Your existing globals (order matters) -->
+  <!-- Core scripts (data + logic) -->
   <script src="js/fish-data.js" defer></script>
   <script src="js/aggression.js" defer></script>
   <script src="js/stocking_advisor.js" defer></script>
 
-  <!-- Module entry -->
-  <script type="module" src="js/modules/app.js?v=9.0.0"></script>
+  <!-- Modular app entry -->
+  <script type="module" src="js/modules/app.js?v=9.0.1"></script>
 </body>
 </html>
