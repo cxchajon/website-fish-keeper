@@ -22,6 +22,7 @@
     --field-bg:#fff; --field-bd:#d2dbe6;
   }
   *{box-sizing:border-box}
+  html,body{height:100%}
   body{
     margin:0; color:var(--ink);
     font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -29,44 +30,83 @@
     background-attachment:fixed;
     min-height:100dvh; display:flex; flex-direction:column;
   }
-  .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 56px;width:100%}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 72px;width:100%}
 
   .brand{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-bottom:8px;color:#fff}
-  .brand-name{font-size:1.6rem;font-weight:700;line-height:1.2}
+  .brand-name{font-size:1.7rem;font-weight:800;line-height:1.2;letter-spacing:.2px;text-shadow:0 2px 14px rgba(2,6,23,.18)}
   .brand-sub{font-size:1rem;opacity:.95}
   header{margin-bottom:16px;text-align:left;color:#fff}
-  header h2{margin:0;font-size:1.2rem;font-weight:600;opacity:.95}
+  header h2{margin:0;font-size:1.22rem;font-weight:700;opacity:.98;text-shadow:0 2px 10px rgba(2,6,23,.12)}
 
   .card{
     background:var(--card); border:1px solid var(--card-border);
     border-radius:var(--radius); padding:20px; margin-bottom:20px;
-    box-shadow:0 8px 18px -10px rgba(2,6,23,.22);
+    box-shadow:0 10px 22px -12px rgba(2,6,23,.25);
     backdrop-filter:blur(6px) saturate(140%); -webkit-backdrop-filter:blur(6px) saturate(140%);
+    transition:transform .18s ease, box-shadow .18s ease;
   }
-  .card h2,.card h3{margin:0 0 10px;font-weight:700}
+  .card:hover{ transform:translateY(-1px); box-shadow:0 14px 28px -14px rgba(2,6,23,.32); }
+  .card h2,.card h3{margin:0 0 10px;font-weight:800;letter-spacing:.2px}
 
   label{font-weight:700;margin-bottom:6px;display:block}
-  input,select{width:100%;padding:10px;border:1px solid var(--field-bd);border-radius:10px;background:#fff}
+  input,select{
+    width:100%;padding:10px 12px;border:1px solid var(--field-bd);border-radius:10px;background:#fff;
+    outline:none; transition:border-color .18s, box-shadow .18s, transform .06s;
+  }
+  input:focus,select:focus{
+    border-color:#86bdf3; box-shadow:0 0 0 3px rgba(59,130,246,.18);
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+
   .row{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(220px,1fr));align-items:end}
 
-  table.stock{width:100%;border-collapse:collapse}
-  thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66;white-space:nowrap}
+  table.stock{width:100%;border-collapse:separate;border-spacing:0 6px}
+  thead th{padding:8px 6px 10px;text-align:left;font-weight:800;border-bottom:1px solid #cfe7fb66;white-space:nowrap}
   thead th.qty{text-align:center;width:90px}
-  thead th.actions{text-align:right;width:160px}
-  tbody td{padding:10px 6px;vertical-align:middle}
+  thead th.actions{text-align:right;width:200px}
+  tbody tr{background:#ffffff; border:1px solid #e7f1fb; box-shadow:0 4px 10px -6px rgba(2,6,23,.1)}
+  tbody td{padding:12px 10px;vertical-align:middle}
+  tbody tr:hover{box-shadow:0 6px 14px -8px rgba(2,6,23,.16)}
+  tbody td:first-child{border-radius:10px 0 0 10px}
+  tbody td:last-child{border-radius:0 10px 10px 0}
 
-  .btn{border:none;color:#fff;cursor:pointer;font-weight:700;border-radius:10px;padding:10px 14px;background:var(--brand);box-shadow:0 2px 8px rgba(2,6,23,.18)}
+  .btn{
+    border:none;color:#fff;cursor:pointer;font-weight:800;border-radius:10px;padding:10px 14px;background:var(--brand);
+    box-shadow:0 2px 8px rgba(2,6,23,.18);
+    transition:transform .06s ease, filter .18s ease, box-shadow .18s ease;
+    will-change:transform;
+  }
+  .btn:hover{ filter:brightness(1.05); box-shadow:0 6px 14px -8px rgba(2,6,23,.26) }
+  .btn:active{ transform:translateY(1px) }
+
+  #reset.btn{ background:var(--bad) }
 
   /* status strip */
   #diag{position:sticky;top:0;z-index:9999;font:12px/1.2 ui-sans-serif,system-ui;display:none}
-  #diag > div{padding:6px 10px}
+  #diag > div{padding:8px 12px}
   #diag.ok{display:block;background:#ecfdf5;color:#065f46;border-bottom:2px solid #a7f3d0}
   #diag.err{display:block;background:#fee2e2;color:#7f1d1d;border-bottom:2px solid #fecaca}
 
   /* Bars */
-  .bar{height:22px;background:#e2e8f0;border-radius:999px;overflow:hidden}
-  .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--ok),var(--warn),var(--bad));transition:width .25s}
+  .bar{height:22px;background:#e2e8f0;border-radius:999px;overflow:hidden; position:relative}
+  .bar-fill{
+    height:100%;width:0%;
+    background:linear-gradient(90deg,var(--ok),var(--warn) 60%,var(--bad));
+    transition:width .28s ease;
+  }
+  .bar::after{
+    content:''; position:absolute; inset:0;
+    background-image:radial-gradient(transparent 60%, rgba(255,255,255,.18) 61%);
+    background-size:12px 12px; opacity:.35; pointer-events:none;
+  }
   .bar-note{display:flex;justify-content:space-between;font-size:.9rem;color:#475569;margin-top:6px}
+
+  /* Micro badges */
+  .note{display:inline-block;color:#475569;background:rgba(255,255,255,.7);padding:6px 8px;border-radius:8px}
+
+  /* Footer */
+  footer{color:#0b3553; text-align:center; padding:14px 0 28px; font-weight:700}
 </style>
 </head>
 <body>
@@ -124,7 +164,7 @@
       <div class="row">
         <div style="flex:1 1 320px">
           <label for="fishSearch">Search species</label>
-          <input id="fishSearch" type="text" placeholder="Type to filter the list">
+          <input id="fishSearch" type="text" placeholder="Type to filter the list" autocomplete="off" autocapitalize="none">
         </div>
       </div>
       <div class="row">
@@ -144,9 +184,9 @@
           <label for="fQty">Quantity</label>
           <input id="fQty" type="number" min="1" step="1" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 6">
         </div>
-        <div><button id="addFish" class="btn">Add</button></div>
+        <div><button id="addFish" class="btn" type="button">Add</button></div>
       </div>
-      <small class="note">Tip: Leaving Quantity blank will add the <strong>recommended minimum</strong> for this species.</small>
+      <small class="note">If Quantity is empty/invalid, we’ll use the Recommended minimum (or 1). Your typed number is never overwritten.</small>
     </section>
 
     <!-- Current Stock -->
@@ -163,7 +203,7 @@
         <tbody id="tbody"></tbody>
       </table>
       <div class="row" style="margin-top:10px">
-        <div><button id="reset" class="btn" style="background:var(--bad)">Clear Stock</button></div>
+        <div><button id="reset" class="btn" style="background:var(--bad)" type="button">Clear Stock</button></div>
       </div>
     </section>
 
@@ -175,15 +215,13 @@
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v9.0.1</strong> • Modular JS • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v9.1.0</strong> • Visual polish pack • Updated Sep 18, 2025
   </footer>
 
-  <!-- Core scripts (data + logic) -->
+  <!-- keep order: data → logic → app -->
   <script src="js/fish-data.js" defer></script>
   <script src="js/aggression.js" defer></script>
   <script src="js/stocking_advisor.js" defer></script>
-
-  <!-- Modular app entry -->
-  <script type="module" src="js/modules/app.js?v=9.0.1"></script>
+  <script type="module" src="js/modules/app.js?v=9.1.0"></script>
 </body>
 </html>
