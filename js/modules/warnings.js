@@ -1,6 +1,6 @@
 // js/modules/warnings.js
-// Environment Fit (Temp & pH overlap): warnings + a 0–100 score that
-// GROWS as you add species. Pairwise-quality scoring for 2+ species.
+// Environment Fit (Temp & pH overlap) — warnings + score that only
+// starts growing once there are 2+ species.
 
 import { toArray, canonName } from './utils.js';
 
@@ -11,9 +11,6 @@ const BASE_PH_WARN   = 0.5;  // pH — overlap < 0.5 is "tight"
 // Extra tightening only for sensitive species (scaleless + dwarf cichlids)
 const SENSITIVE_TEMP_PAD = 1;   // °F
 const SENSITIVE_PH_PAD   = 0.1; // pH units
-
-// Single-species baseline (so bar "starts growing" at first add)
-const SINGLE_SPECIES_BASELINE = 30; // percent
 
 // ========= Helpers =========
 function findSpeciesByName(name) {
@@ -104,14 +101,10 @@ export function computeEnvironmentWarnings(stock) {
   const items = toArray(stock).filter(r => r && r.name && (r.qty || 0) > 0);
 
   // 0 species -> 0%
-  if (items.length === 0) {
-    return { warnings: [], score: 0 };
-  }
+  if (items.length === 0) return { warnings: [], score: 0 };
 
-  // 1 species -> small baseline so the bar "starts growing"
-  if (items.length === 1) {
-    return { warnings: [], score: SINGLE_SPECIES_BASELINE };
-  }
+  // 1 species -> 0% (no env comparison yet)
+  if (items.length === 1) return { warnings: [], score: 0 };
 
   // 2+ species -> score by average pairwise quality
   const warnings = [];
@@ -132,10 +125,8 @@ export function computeEnvironmentWarnings(stock) {
     }
   }
 
-  // If somehow no valid pairs, fall back to baseline
-  if (pairCount === 0) {
-    return { warnings, score: SINGLE_SPECIES_BASELINE };
-  }
+  // If somehow no valid pairs, keep it at 0
+  if (pairCount === 0) return { warnings, score: 0 };
 
   const avgQuality = qualitySum / pairCount; // 0..1
   const score = Math.max(0, Math.min(100, Math.round(avgQuality * 100)));
