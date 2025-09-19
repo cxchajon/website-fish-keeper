@@ -1,6 +1,7 @@
 // js/modules/warnings.js
 // Environment Fit (Temp & pH overlap) — warnings + score that only
-// starts growing once there are 2+ species.
+// starts growing once there are 2+ species. A hard no-overlap in temp/pH
+// now collapses the pair score to 0 (min of temp & pH).
 
 import { toArray, canonName } from './utils.js';
 
@@ -48,7 +49,7 @@ function overlapWidth(aRange, bRange) {
   const [bMin, bMax] = bRange;
   const lo = Math.max(aMin, bMin);
   const hi = Math.min(aMax, bMax);
-  return hi - lo; // negative => no overlap
+  return hi - lo; // negative => no overlap; 0 => edge-touch (counts as tight)
 }
 
 function speciesLabel(sp) {
@@ -56,6 +57,7 @@ function speciesLabel(sp) {
 }
 
 // Per-pair quality score in [0..1], plus warnings
+// IMPORTANT CHANGE: we return MIN(tempScore, phScore) so any hard miss -> 0.
 function scorePair(aSp, bSp, warnings) {
   const aT = adjustedRange(aSp, 'temp');
   const bT = adjustedRange(bSp, 'temp');
@@ -92,8 +94,8 @@ function scorePair(aSp, bSp, warnings) {
     }
   }
 
-  // Overall pair quality = average of temp & pH components
-  return (tScore + pScore) / 2;
+  // HARDENED: use worst side so any no-overlap collapses the pair score
+  return Math.min(tScore, pScore);
 }
 
 // ========= Core compute =========
@@ -125,7 +127,6 @@ export function computeEnvironmentWarnings(stock) {
     }
   }
 
-  // If somehow no valid pairs, keep it at 0
   if (pairCount === 0) return { warnings, score: 0 };
 
   const avgQuality = qualitySum / pairCount; // 0..1
