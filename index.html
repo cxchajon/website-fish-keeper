@@ -255,12 +255,12 @@
     FishkeepingLifeCo • Build <strong id="appVersion">v8.1</strong> • Updated Sep 18, 2025
   </footer>
 
-  <!-- Data + Logic + Glue (load core scripts with defer to keep order + avoid blocking) -->
+  <!-- Data + Logic + Glue (load core scripts with defer to preserve order) -->
   <script src="js/fish-data.js" defer></script>
   <script src="js/aggression.js" defer></script>
   <script src="js/stocking_advisor.js" defer></script>
 
-  <!-- Core load check (shows a small banner if anything core failed) -->
+  <!-- Core load check (shows a small banner if a core script failed) -->
   <script>
     window.addEventListener('load', function(){
       var ok = true;
@@ -274,14 +274,14 @@
   <!-- UI Enhancement Patch — UI-only, sandboxed -->
   <script>
     (function(){
-      function safe(fn){ try{ fn(); } catch(e){ /* no-op to protect core */ } }
+      function safe(fn){ try{ fn(); } catch(e){ /* protect core */ } }
 
       function run(){
         safe(function(){
           const tbody = document.getElementById('tbody');
           if(!tbody) return;
 
-          /* Swimming-level heuristics (for badges only) */
+          /* Badges only (top/mid/bottom) */
           const RE = {
             top: /(hatchet|killifish|guppy|halfbeak|surface)/i,
             mid: /(tetra|barb|danio|rasbora|gourami|molly|platy|swordtail|rainbowfish)/i,
@@ -409,7 +409,6 @@
               const tds = Array.from(tr.querySelectorAll('td'));
               if (tds.length < 3) return;
               wrapField(tds[0], { single:true });
-              // qty cell
               const q = tds[1];
               if(q && !q.querySelector('.field')){
                 const f=document.createElement('div');
@@ -426,14 +425,11 @@
           const rowObs = new MutationObserver(function(){ safe(decorateRows); });
           rowObs.observe(tbody, { childList:true, subtree:true });
 
-          // Initial pass once core code has added any rows
           setTimeout(function(){ safe(decorateRows); }, 0);
         });
       }
 
-      // Wait until after deferred core scripts have executed
       window.addEventListener('DOMContentLoaded', function(){
-        // Defer one more tick to ensure deferred scripts ran
         setTimeout(run, 0);
       });
     })();
