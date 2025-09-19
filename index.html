@@ -73,7 +73,7 @@
   table.stock{
     width:100%;
     border-collapse:collapse;
-    table-layout:fixed;          /* enables ellipsis control */
+    table-layout:fixed;          /* ellipsis control */
   }
   thead th{
     padding:8px 6px 10px;
@@ -110,9 +110,9 @@
     background:#e2e8f0; color:#0f172a; border:1px solid #d6dee8;
     opacity:.95;
   }
-  .lvl-top{ background:#dbeafe; border-color:#bfdbfe; }     /* soft blue */
-  .lvl-mid{ background:#dcfce7; border-color:#bbf7d0; }     /* soft green */
-  .lvl-bottom{ background:#fef9c3; border-color:#fde68a; }  /* soft yellow */
+  .lvl-top{ background:#dbeafe; border-color:#bfdbfe; }
+  .lvl-mid{ background:#dcfce7; border-color:#bbf7d0; }
+  .lvl-bottom{ background:#fef9c3; border-color:#fde68a; }
 
   .field.center{justify-content:center}
   .field.small{min-width:60px;justify-content:center;font-variant-numeric:tabular-nums}
@@ -133,12 +133,11 @@
   .circle.trash{background:var(--bad)}
   .circle .ico{width:18px;height:18px;display:block}
 
-  /* Warnings list */
+  /* Warnings list container */
   #aggression-warnings>div{
     background:#fff7ed;border:2px solid #fdba74;color:#7a3419;
     padding:12px 14px;border-radius:12px;line-height:1.4;margin-bottom:8px
   }
-  .hi-sev{border-color:#f97316;background:#fffbeb;color:#7a2e0e}
 
   /* Footer */
   footer{margin-top:auto;padding:18px 20px;color:#0b2a40;opacity:.85;text-align:center;font-size:.9rem}
@@ -261,7 +260,7 @@
 
   <!-- Footer with simple version -->
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v7</strong> • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v8</strong> • Updated Sep 18, 2025
   </footer>
 
   <!-- Data + Logic + Glue -->
@@ -269,288 +268,160 @@
   <script src="js/aggression.js"></script>
   <script src="js/stocking_advisor.js"></script>
 
-  <!-- UI Enhancement Patch (badges + truncation + SVG icons + nippy rules + swim-level note) -->
+  <!-- UI Enhancement Patch — UI-only, error-proofed -->
   <script>
     (function(){
-      const tbody = document.getElementById('tbody');
-      const warningsBox = document.getElementById('aggression-warnings');
+      function safe(fn){ try{ fn(); } catch(e){ /* swallow UI errors */ } }
 
-      /* --- Swimming-level detection (lightweight heuristics) --- */
-      const RE = {
-        top: /(hatchet|killifish|guppy|halfbeak|surface)/i,
-        mid: /(tetra|barb|danio|rasbora|gourami|molly|platy|swordtail|rainbowfish)/i,
-        bottom: /(corydoras|cory|loach|kuhli|pleco|catfish|otocinclus|shrimp)/i
-      };
-      function detectLevel(name){
-        if (RE.bottom.test(name)) return 'bottom';
-        if (RE.top.test(name))    return 'top';
-        if (RE.mid.test(name))    return 'mid';
-        return null;
-      }
-      function levelLabel(level){
-        return level === 'top' ? 'top' : level === 'bottom' ? 'bottom' : level === 'mid' ? 'mid' : null;
-      }
-      function levelClass(level){
-        return level === 'top' ? 'lvl-top' : level === 'bottom' ? 'lvl-bottom' : level === 'mid' ? 'lvl-mid' : '';
-      }
+      safe(function(){
+        const tbody = document.getElementById('tbody');
+        const warningsBox = document.getElementById('aggression-warnings');
+        if(!tbody) return;
 
-      function wrapField(td, opts={}){
-        if(!td) return null;
-        let el = td.querySelector('.field');
-        if(!el){
-          el = document.createElement('div');
-          el.className = 'field';
-          if (opts.single) el.classList.add('single-line');
-          if (opts.center) el.classList.add('center');
-          if (opts.small)  el.classList.add('small');
+        /* Swimming-level heuristics (for badges only) */
+        const RE = {
+          top: /(hatchet|killifish|guppy|halfbeak|surface)/i,
+          mid: /(tetra|barb|danio|rasbora|gourami|molly|platy|swordtail|rainbowfish)/i,
+          bottom: /(corydoras|cory|loach|kuhli|pleco|catfish|otocinclus|shrimp)/i
+        };
+        function detectLevel(name){
+          if (RE.bottom.test(name)) return 'bottom';
+          if (RE.top.test(name))    return 'top';
+          if (RE.mid.test(name))    return 'mid';
+          return null;
+        }
+        function levelLabel(level){ return level || ''; }
+        function levelClass(level){
+          return level === 'top' ? 'lvl-top' : level === 'bottom' ? 'lvl-bottom' : level === 'mid' ? 'lvl-mid' : '';
+        }
 
-          const raw = (td.textContent || '').trim();
-          td.textContent = '';
+        function wrapField(td, opts={}){
+          if(!td) return null;
+          let el = td.querySelector('.field');
+          if(!el){
+            el = document.createElement('div');
+            el.className = 'field';
+            if (opts.single) el.classList.add('single-line');
+            if (opts.center) el.classList.add('center');
+            if (opts.small)  el.classList.add('small');
 
-          // Build name + badge structure
-          const nameSpan = document.createElement('span');
-          nameSpan.className = 'name-text';
-          nameSpan.textContent = raw;
+            const raw = (td.textContent || '').trim();
+            td.textContent = '';
 
-          const lvl = detectLevel(raw);
-          if(lvl){
-            const badge = document.createElement('span');
-            badge.className = `lvl-badge ${levelClass(lvl)}`;
-            badge.textContent = `(${levelLabel(lvl)})`;
-            el.appendChild(nameSpan);
-            el.appendChild(badge);
-          }else{
-            el.appendChild(nameSpan);
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'name-text';
+            nameSpan.textContent = raw;
+
+            const lvl = detectLevel(raw);
+            if(lvl){
+              const badge = document.createElement('span');
+              badge.className = `lvl-badge ${levelClass(lvl)}`;
+              badge.textContent = `(${levelLabel(lvl)})`;
+              el.appendChild(nameSpan);
+              el.appendChild(badge);
+            }else{
+              el.appendChild(nameSpan);
+            }
+
+            el.dataset.rawName = raw;
+            td.appendChild(el);
+          }
+          return el;
+        }
+
+        function enhanceActions(td){
+          if(!td || td.dataset.enhanced === '1') return;
+
+          let btnCell = td;
+          if(!td.querySelector('button')){
+            const tr = td.closest('tr');
+            const withBtns = tr ? Array.from(tr.children).find(c => c.querySelector && c.querySelector('button')) : null;
+            if(withBtns) btnCell = withBtns;
+          }
+          const buttons = Array.from(btnCell.querySelectorAll('button'));
+          if(buttons.length === 0){ td.dataset.enhanced='1'; return; }
+
+          const wrap = document.createElement('div');
+          wrap.className = 'actions';
+
+          const minusText = /(\u2212|-)\s*1?/;
+          const plusText  = /\+\s*1?/;
+          const delText   = /delete/i;
+
+          let minusBtn = buttons.find(b => minusText.test(b.textContent));
+          let plusBtn  = buttons.find(b => plusText.test(b.textContent));
+          let delBtn   = buttons.find(b => delText.test(b.textContent));
+
+          if(!minusBtn || !plusBtn){
+            if(buttons.length >= 2){
+              minusBtn = minusBtn || buttons[0];
+              plusBtn  = plusBtn  || buttons[1];
+            }
+          }
+          if(!delBtn && buttons.length >= 3){
+            delBtn = buttons[buttons.length - 1];
           }
 
-          el.dataset.rawName = raw; // keep original for matching
-          td.appendChild(el);
-        }
-        return el;
-      }
+          buttons.forEach(b => b.style.display = 'none');
 
-      function ensureBadge(el){
-        // If field already exists, (re)apply badge based on stored raw name
-        const raw = el?.dataset?.rawName || '';
-        const existingName = el.querySelector('.name-text');
-        if(!existingName){
-          const span = document.createElement('span');
-          span.className = 'name-text';
-          span.textContent = raw;
-          el.prepend(span);
-        }else{
-          existingName.textContent = raw;
-        }
-        // Remove any existing badge and re-add from rule
-        el.querySelectorAll('.lvl-badge').forEach(b=>b.remove());
-        const lvl = detectLevel(raw);
-        if(lvl){
-          const badge = document.createElement('span');
-          badge.className = `lvl-badge ${levelClass(lvl)}`;
-          badge.textContent = `(${levelLabel(lvl)})`;
-          el.appendChild(badge);
-        }
-      }
-
-      function enhanceActions(td){
-        if(!td || td.dataset.enhanced === '1') return;
-
-        let btnCell = td;
-        if(!td.querySelector('button')){
-          const tr = td.closest('tr');
-          const withBtns = tr ? [...tr.children].find(c => c.querySelector && c.querySelector('button')) : null;
-          if(withBtns) btnCell = withBtns;
-        }
-        const buttons = [...btnCell.querySelectorAll('button')];
-        if(buttons.length === 0){ td.dataset.enhanced='1'; return; }
-
-        const wrap = document.createElement('div');
-        wrap.className = 'actions';
-
-        const minusText = /(\u2212|-)\s*1?/;
-        const plusText  = /\+\s*1?/;
-        const delText   = /delete/i;
-
-        let minusBtn = buttons.find(b => minusText.test(b.textContent));
-        let plusBtn  = buttons.find(b => plusText.test(b.textContent));
-        let delBtn   = buttons.find(b => delText.test(b.textContent));
-
-        if(!minusBtn || !plusBtn){
-          if(buttons.length >= 2){
-            minusBtn = minusBtn || buttons[0];
-            plusBtn  = plusBtn  || buttons[1];
+          if(minusBtn){
+            const m = document.createElement('button');
+            m.type = 'button';
+            m.className = 'circle minus';
+            m.title = 'Decrease';
+            m.setAttribute('aria-label','Decrease');
+            m.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>';
+            m.addEventListener('click', ()=> minusBtn.click());
+            wrap.appendChild(m);
           }
-        }
-        if(!delBtn && buttons.length >= 3){
-          delBtn = buttons[buttons.length - 1];
-        }
-
-        buttons.forEach(b => b.style.display = 'none');
-
-        if(minusBtn){
-          const m = document.createElement('button');
-          m.type = 'button';
-          m.className = 'circle minus';
-          m.title = 'Decrease';
-          m.setAttribute('aria-label','Decrease');
-          m.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>';
-          m.addEventListener('click', ()=> minusBtn.click());
-          wrap.appendChild(m);
-        }
-        if(plusBtn){
-          const p = document.createElement('button');
-          p.type = 'button';
-          p.className = 'circle plus';
-          p.title = 'Increase';
-          p.setAttribute('aria-label','Increase');
-          p.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/><rect x="9" y="4" width="2" height="12" rx="1" fill="currentColor"/></svg>';
-          p.addEventListener('click', ()=> plusBtn.click());
-          wrap.appendChild(p);
-        }
-        if(delBtn){
-          const d = document.createElement('button');
-          d.type = 'button';
-          d.className = 'circle trash';
-          d.title = 'Delete';
-          d.setAttribute('aria-label','Delete');
-          d.innerHTML = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/></svg>';
-          d.addEventListener('click', ()=> delBtn.click());
-          wrap.appendChild(d);
-        }
-
-        btnCell.appendChild(wrap);
-        td.dataset.enhanced = '1';
-      }
-
-      /* -------- Helpers to read current stock -------- */
-      function getStockSnapshot(){
-        const rows = [...tbody.querySelectorAll('tr')];
-        return rows.map(tr=>{
-          const tds = tr.querySelectorAll('td');
-          const field = tds[0]?.querySelector('.field');
-          const rawName = field?.dataset?.rawName || (tds[0]?.textContent || '').trim();
-          const input = tds[1]?.querySelector('input');
-          const qtyText = input ? input.value : (tds[1]?.textContent || '0');
-          const qty = parseInt(qtyText, 10) || 0;
-          return { name: rawName, qty };
-        }).filter(r=>r.name);
-      }
-
-      /* -------- High-severity nippy species rules -------- */
-      const NIPPY_SPECIES = [
-        { key: 'tiger barb',  re: /tiger\s*barb/i,  msg: 'Tiger barb: extremely nippy — best kept as a species-only group (keep 6+). Avoid slow/long-finned tankmates.' },
-        { key: 'serpae tetra',re: /serpae\s*tetra/i, msg: 'Serpae tetra: notoriously nippy — best as a species-only group (8+ recommended). Avoid slow/long-finned tankmates.' }
-      ];
-
-      function renderNippyWarnings(){
-        if(!warningsBox) return;
-        const stock = getStockSnapshot();
-        const speciesCount = new Set(stock.map(s => s.name.toLowerCase())).size;
-
-        NIPPY_SPECIES.forEach(({key,re,msg})=>{
-          const id = `hi-${key.replace(/\s+/g,'-')}`;
-          const exists = document.getElementById(id);
-          const present = stock.some(s => re.test(s.name));
-          const mixed = present && speciesCount > 1;
-
-          if(mixed){
-            const div = exists || document.createElement('div');
-            div.id = id;
-            div.classList.add('hi-sev');
-            div.innerHTML = `<strong>${msg}</strong>`;
-            if(!exists){ warningsBox.prepend(div); }
-          }else if(exists){
-            exists.remove();
+          if(plusBtn){
+            const p = document.createElement('button');
+            p.type = 'button';
+            p.className = 'circle plus';
+            p.title = 'Increase';
+            p.setAttribute('aria-label','Increase');
+            p.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/><rect x="9" y="4" width="2" height="12" rx="1" fill="currentColor"/></svg>';
+            p.addEventListener('click', ()=> plusBtn.click());
+            wrap.appendChild(p);
           }
-        });
-      }
-
-      /* -------- Context note: swimming levels & cover -------- */
-      const BOTTOM_DWELLERS_RE = /(corydoras|cory|loach|kuhli|pleco|catfish)/i;
-
-      function renderSwimmingLevelNote(){
-        if(!warningsBox) return;
-        const id = 'swim-level-note';
-        const exists = document.getElementById(id);
-        const stock = getStockSnapshot();
-
-        const hasNippy = NIPPY_SPECIES.some(x => stock.some(s => x.re.test(s.name)));
-        const hasBottom = stock.some(s => BOTTOM_DWELLERS_RE.test(s.name));
-        const needNote = hasNippy && hasBottom;
-
-        if(needNote){
-          const div = exists || document.createElement('div');
-          div.id = id;
-          div.innerHTML = `
-            <em>Note:</em> consider <strong>swimming levels</strong>. Mixing active mid-water nippers
-            (Tiger barbs / Serpae tetras) with bottom dwellers (e.g., <strong>Panda Corydoras</strong>)
-            can work in larger tanks. Provide <strong>lots of cover</strong> (plants, wood, rock) and
-            broken sight-lines to reduce chasing.`;
-          if(!exists){ warningsBox.append(div); }
-        }else if(exists){
-          exists.remove();
-        }
-      }
-
-      /* -------- Existing row styling / warning tinting -------- */
-      function parseWarnings(){
-        const map = new Map();
-        if (!warningsBox) return map;
-        warningsBox.querySelectorAll('div').forEach(div=>{
-          const s = div.textContent || '';
-          const m = s.match(/^\s*([^:]+):.*\((\d+)\s*\/\s*(\d+)\)/i);
-          if (m) map.set(m[1].trim().toLowerCase(), { qty:+m[2], min:+m[3] });
-        });
-        return map;
-      }
-
-      function decorateRows(){
-        const warnMap = parseWarnings();
-        tbody.querySelectorAll('tr').forEach(tr=>{
-          if (tr.dataset.styled === '1') return;
-          const cells = [...tr.querySelectorAll('td')];
-          if (cells.length === 0) return;
-
-          const maybePct = cells.find(c => !c.querySelector('button') && /\d+\s*%$/.test(c.textContent.trim()));
-          if (maybePct) { maybePct.remove(); }
-
-          const tds = [...tr.querySelectorAll('td')];
-          const nameTd = tds[0];
-          const qtyTd  = tds[1];
-          const actionsTd = tds[tds.length - 1];
-
-          const fName = wrapField(nameTd, { single:true });
-          ensureBadge(fName); // (re)apply level badge on updates
-          const fQty  = wrapField(qtyTd,  { center:true, small:true });
-          enhanceActions(actionsTd);
-
-          // Optional color hint from existing warnings
-          const key = (fName.dataset.rawName || fName.textContent || '').trim().toLowerCase();
-          [fName,fQty].forEach(el=> el && el.classList.remove('ok','warn','bad'));
-          const info = warnMap.get(key);
-          if (info){
-            const redCut = Math.max(1, Math.floor(info.min/2));
-            if (info.qty < redCut){ fName.classList.add('bad'); fQty.classList.add('bad'); }
-            else { fName.classList.add('warn'); fQty.classList.add('warn'); }
+          if(delBtn){
+            const d = document.createElement('button');
+            d.type = 'button';
+            d.className = 'circle trash';
+            d.title = 'Delete';
+            d.setAttribute('aria-label','Delete');
+            d.innerHTML = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/></svg>';
+            d.addEventListener('click', ()=> delBtn.click());
+            wrap.appendChild(d);
           }
 
-          tr.dataset.styled = '1';
-        });
-      }
+          btnCell.appendChild(wrap);
+          td.dataset.enhanced = '1';
+        }
 
-      function rerunAll(){
-        decorateRows();
-        renderNippyWarnings();
-        renderSwimmingLevelNote();
-      }
+        function decorateRows(){
+          const rows = Array.from(tbody.querySelectorAll('tr'));
+          rows.forEach(tr=>{
+            if (tr.dataset.styled === '1') return;
+            const tds = Array.from(tr.querySelectorAll('td'));
+            if (tds.length < 3) return;
 
-      const rowObs = new MutationObserver(rerunAll);
-      rowObs.observe(tbody, { childList:true, subtree:true, characterData:true });
+            // Name (ellipsis + badge)
+            wrapField(tds[0], { single:true });
+            // Qty
+            (function(){ const el = tds[1]; if(el){ if(!el.querySelector('.field')){ const f=document.createElement('div'); f.className='field center small'; f.textContent=(el.textContent||'').trim(); el.textContent=''; el.appendChild(f); }}})();
+            // Actions (SVG proxy)
+            enhanceActions(tds[tds.length-1]);
 
-      const warnObs = new MutationObserver(rerunAll);
-      warnObs.observe(warningsBox, { childList:true, subtree:true });
+            tr.dataset.styled = '1';
+          });
+        }
 
-      window.addEventListener('load', rerunAll);
+        const rowObs = new MutationObserver(()=> safe(decorateRows));
+        rowObs.observe(tbody, { childList:true, subtree:true });
+
+        window.addEventListener('load', ()=> safe(decorateRows));
+      });
     })();
   </script>
 </body>
