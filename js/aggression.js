@@ -1,184 +1,214 @@
-/* Aggression & Compatibility Engine — v9.1
-   FishkeepingLifeCo (Sep 18, 2025)
+// js/aggression.js
+// Aggression / compatibility engine
+// Returns { warnings: Array<{text, type: 'mild'|'moderate'|'severe'|'info', category: string}>, score: 0..100 }
 
-   Public API:
-     window.Aggression.compute(stock, opts?)
-       - stock: [{ name: "Neon tetra", qty: 6 }, ...]
-       - opts (optional): { planted: boolean, gallons: number }
-       -> { score: 0–100, warnings: string[] }
-*/
-
-(function () {
-  const Aggression = {};
-
-  /* ----------------------- Utilities ----------------------- */
-  const norm = (s) => (s || "").toString().trim().toLowerCase();
-  const toArray = (x) => (Array.isArray(x) ? x : x ? [x] : []);
-  const clamp01 = (x) => Math.max(0, Math.min(1, x));
-  const uniqPush = (arr, msg) => { if (msg && !arr.includes(msg)) arr.push(msg); };
-
-  // Normalize a display name for matching (handles underscores/dashes/extra spaces)
-  function canonName(s) {
+(function(){
+  /* ----------------- helpers ----------------- */
+  function norm(s){ return (s||'').toString().trim().toLowerCase(); }
+  function canonName(s){
     return norm(s)
-      .replace(/[_-]+/g, " ")        // tiger_barb -> tiger barb
-      .replace(/\s+/g, " ")          // collapse spaces
-      .replace(/\s*\([^)]*\)\s*/g, " ") // remove simple parenthetical qualifiers
+      .replace(/\s*\([^)]*\)\s*/g,' ')
+      .replace(/[_-]+/g,' ')
+      .replace(/\s+/g,' ')
       .trim();
   }
-  function nameMatch(name, re) {
-    return re.test(canonName(name));
-  }
-
-  // Species data -> {name,min}
-  function readSpeciesMinList() {
-    const src = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
-    if (!src) return [];
-    if (Array.isArray(src)) {
-      return src.map(o => {
-        const name = (o && (o.name || o.species || o.common)) || "";
-        const min  = parseInt((o && (o.min || o.recommendedMinimum || o.minGroup || o.group)) || "0", 10) || 0;
-        return name ? { name, min } : null;
-      }).filter(Boolean);
-    }
-    if (src && typeof src === "object") {
-      return Object.keys(src).map(key => {
-        const v = src[key] || {};
-        const min = parseInt(v.min || v.recommendedMinimum || v.minGroup || v.group || "0", 10) || 0;
-        return { name: key, min };
+  function getFishByName(name){
+    const key = canonName(name);
+    const data = Array.isArray(window.FISH_DATA) ? window.FISH_DATA : [];
+    let row = data.find(r => canonName(r.name || r.id || '') === key);
+    if (!row) {
+      row = data.find(r => {
+        const n = canonName(r.name || r.id || '');
+        return n.includes(key) || key.includes(n);
       });
     }
-    return [];
-  }
-  function buildMinLookup() {
-    const map = new Map();
-    readSpeciesMinList().forEach(({ name, min }) => map.set(canonName(name), min || 0));
-    return map;
+    return row || null;
   }
 
-  /* ------------------- Pattern sets (all regex run on canonName) ------------------- */
-  const NIPPY = [
-    { key: "tiger barb",   re: /(^| )tiger barb( |$)/i,  min: 6,
-      msg: "Tiger barb: extremely nippy — best kept as a species-only group (6+). Avoid slow/long-finned tankmates." },
-    { key: "serpae tetra", re: /(^| )serpae tetra( |$)/i, min: 8,
-      msg: "Serpae tetra: notoriously nippy — best as a species-only group (8+). Avoid slow/long-finned tankmates." },
-  ];
-  const LONG_FIN_RE   = /(betta|angelfish|guppy|veil|long fin|sailfin)/i;
-  const BETTA_M_RE    = /(betta .*male|betta \(male\)|betta .*halfmoon|betta .*crowntail|betta .*plakat|betta .*veil)/i;
-  const BETTA_ANY_RE  = /(^| )betta( |$)/i;
-  const SHRIMP_RE     = /(shrimp|neocaridina|caridina)/i;
-  const CICHLID_RE    = /(cichlid|mbuna|oscar|jack dempsey|convict|auratus|midas|flowerhorn|peacock cichlid|ram|rams)/i;
-  const SCHOOLING_RE  = /(tetra|barb|danio|rasbora|white cloud|corydoras|cory|kuhli|otocinclus|harlequin|rainbowfish)/i;
-  const BOTTOM_RE     = /(corydoras|cory|loach|kuhli|pleco|catfish|otocinclus|shrimp)/i;
-  const MID_RE        = /(tetra|barb|danio|rasbora|gourami|molly|platy|swordtail|rainbowfish)/i;
+  // Name checks
+  function isBettaMale(n){ const c = canonName(n); return c.includes('betta') && c.includes('male'); }
+  function isTigerBarb(n){ return canonName(n).includes('tiger barb'); }
 
-  /* ----------------------- Core Compute ----------------------- */
-  Aggression.compute = function compute(stock, opts) {
-    const options = opts || {};
-    const planted = !!options.planted;
-    const gallons = Number(options.gallons) || 0;
+  // Flags inferred from name when not present on FISH_DATA
+  function inferFlags(name){
+    const c = canonName(name);
 
+    // Fin nippers (expand as needed)
+    const nippers = [
+      'tiger barb','black skirt tetra','zebra danio','serpae tetra','red eye tetra'
+    ];
+    const isNipper = nippers.some(k => c.includes(k));
+
+    // Long-finned / slow targets
+    const longFins = [
+      'betta male','angelfish','pearl gourami','dwarf gourami','honey gourami','guppy'
+    ];
+    const isLong = longFins.some(k => c.includes(k));
+
+    // Semi-aggressive dwarf/angels (territorial)
+    const semiAgg = (
+      c.includes('angelfish') ||
+      c.includes('apistogramma') ||
+      c.includes('ram cichlid') || c.includes('german blue ram')
+    );
+
+    // Tankbusters / big growers
+    const tankbusters = [
+      'goldfish','common pleco','oscar','severum','jack dempsey','convict'
+    ];
+    const isTankbuster = tankbusters.some(k => c.includes(k)) ||
+                         c.includes('bristlenose pleco'); // smaller, but we still size-check
+
+    return { nipsFins: isNipper, longFins: isLong, semiAggressive: semiAgg, tankbuster: isTankbuster };
+  }
+
+  // Minimum gallons that trigger “too small” warnings
+  function minGallonsFor(name){
+    const c = canonName(name);
+    if (c.includes('bristlenose pleco')) return 30;
+    if (c.includes('angelfish'))         return 29;
+    if (c.includes('goldfish')) {
+      // If we ever distinguish fancy vs common, this can branch. Use 30 as safe baseline.
+      return 30;
+    }
+    if (c.includes('common pleco'))      return 75;
+    if (c.includes('oscar'))             return 75;
+    if (c.includes('severum'))           return 55;
+    if (c.includes('jack dempsey'))      return 55;
+    if (c.includes('convict'))           return 30;
+    // Semi-aggressive dwarfs — still need some space to avoid territorial pressure
+    if (c.includes('apistogramma') || c.includes('ram cichlid') || c.includes('german blue ram')) return 20;
+    return 0; // no special cutoff
+  }
+
+  /* ----------------- main compute ----------------- */
+  function compute(stock, opts){
+    const items = (Array.isArray(stock)?stock:[])
+      .filter(r => r && r.name && (r.qty||0) > 0)
+      .map(r => ({ name: r.name, qty: r.qty|0 }));
+
+    const gallons = (opts && Number.isFinite(+opts.gallons)) ? +opts.gallons : 0;
+
+    /** warnings we’ll return (structured) */
     const warnings = [];
-    let score = 0;
+    /** bar points — cautions add, severe forces max */
+    let points = 0;
+    let hasSevere = false;
 
-    const items = toArray(stock).map(s => {
-      const name = (s && s.name) || "";
+    // Enrich items with flags from data or inference
+    const enriched = items.map(it => {
+      const row = getFishByName(it.name) || {};
+      const inferred = inferFlags(it.name);
       return {
-        name,
-        qty: Math.max(0, parseInt((s && s.qty) || "0", 10) || 0),
-        key: canonName(name)
+        name: it.name,
+        qty:  it.qty,
+        nipsFins:   row.nipsFins   ?? inferred.nipsFins,
+        longFins:   row.longFins   ?? inferred.longFins,
+        semiAgg:    row.semiAggressive ?? inferred.semiAggressive,
+        tankbuster: row.tankbuster ?? inferred.tankbuster
       };
-    }).filter(s => s.name && s.qty > 0);
-
-    if (!items.length) return { score: 0, warnings };
-
-    const minLookup   = buildMinLookup();
-    const uniqueCount = new Set(items.map(i => i.key)).size;
-
-    let hasNippy = false;
-    let hasBottom = false;
-
-    items.forEach(i => { if (nameMatch(i.name, BOTTOM_RE)) hasBottom = true; });
-
-    // 1) Nippy species rules
-    NIPPY.forEach(({ re, msg, min }) => {
-      const present = items.some(i => nameMatch(i.name, re));
-      if (!present) return;
-      hasNippy = true;
-
-      if (uniqueCount > 1) {
-        uniqPush(warnings, msg);
-        score = Math.max(score, 75);
-      }
-      const nz = items.find(i => nameMatch(i.name, re));
-      if (nz && nz.qty < min) {
-        uniqPush(warnings, `Group size: ${nz.name} below recommended group size (${nz.qty}/${min}).`);
-        score = Math.max(score, 55);
-      }
     });
 
-    // 2) Betta
-    const bettaMale = items.some(i => nameMatch(i.name, BETTA_M_RE));
-    const bettaAny  = bettaMale || items.some(i => nameMatch(i.name, BETTA_ANY_RE));
-    if (bettaMale && uniqueCount > 1) {
-      uniqPush(warnings, "Betta (male): typically solitary — keep alone or with very cautious tankmates; avoid fin-nippers and long-finned/bright fish.");
-      score = Math.max(score, 65);
-    }
+    const distinct = Array.from(new Set(enriched.map(e => canonName(e.name))));
 
-    // 3) Fin-nipping combos (nippers + long-fin)
-    const hasLongFin = items.some(i => nameMatch(i.name, LONG_FIN_RE));
-    const hasNipperSpecies = hasNippy || items.some(i => /barb|serpae|tiger/.test(canonName(i.name)));
-    if (hasLongFin && hasNipperSpecies && uniqueCount > 1) {
-      uniqPush(warnings, "Fin-nipping risk: long-finned species with known nippers (barbs/serpae/tiger) often leads to torn fins.");
-      score += 18;
-    }
-
-    // 4) Shrimp mixing
-    const hasShrimp = items.some(i => nameMatch(i.name, SHRIMP_RE));
-    const shrimpPredators = bettaAny || items.some(i => /(barb|gourami|cichlid|angelfish)/i.test(canonName(i.name)));
-    if (hasShrimp && shrimpPredators) {
-      uniqPush(warnings, "Shrimp may be hunted or harassed by Bettas, Barbs, Gouramis, Cichlids, or Angelfish. Provide dense cover or avoid mixing.");
-      score += 22;
-    }
-
-    // 5) Cichlid caution
-    const hasCichlid = items.some(i => nameMatch(i.name, CICHLID_RE));
-    if (hasCichlid && uniqueCount > 1) {
-      uniqPush(warnings, "Cichlid mix: many cichlids are territorial or aggressive — research species compatibility carefully; avoid small/delicate community fish.");
-      score = Math.max(score, 60);
-    }
-
-    // 6) Schooling/ shoaling minimums (data first, heuristic fallback)
-    items.forEach(i => {
-      let rec = minLookup.get(i.key) || 0;
-      if (!rec && nameMatch(i.name, SCHOOLING_RE)) {
-        rec = /cory|corydoras|kuhli|otocinclus/.test(i.key) ? 6 : 6;
+    // ---------- Species-only tanks: no movement, except multiple male bettas ----------
+    if (distinct.length === 1) {
+      const only = enriched[0];
+      if (isBettaMale(only.name) && only.qty > 1) {
+        warnings.push({
+          text: 'Two or more **male bettas** will fight. Keep exactly **one male betta per tank**.',
+          type: 'severe',
+          category: 'territorial'
+        });
+        return { warnings, score: 100 };
       }
-      if (rec && i.qty < rec) {
-        uniqPush(warnings, `${i.name}: schooling species below recommended group size (${i.qty}/${rec}).`);
-        score += 10;
-      }
-    });
-
-    // 7) Swim-level + cover note
-    if (hasNippy && hasBottom) {
-      uniqPush(warnings, "Note: consider swimming levels. Mixing active mid-water nippers (e.g., Tiger barbs / Serpae tetras) with bottom dwellers (e.g., Corydoras) can work in larger tanks — provide lots of cover and broken sight-lines.");
+      return { warnings, score: 0 };
     }
 
-    // 8) Variety factor
-    score += Math.max(0, (uniqueCount - 4) * 2);
+    // ---------- Global hard rule: multiple male bettas anywhere = severe ----------
+    for (const it of enriched){
+      if (isBettaMale(it.name) && it.qty > 1){
+        warnings.push({
+          text: 'Multiple **male bettas** together is a **serious conflict**.',
+          type: 'severe',
+          category: 'territorial'
+        });
+        hasSevere = true;
+      }
+    }
 
-    // 9) Planted / volume reductions
-    if (planted) score -= 8;
-    if (gallons >= 40) score -= 6;
-    if (gallons >= 75) score -= 10;
+    // ---------- Fin-nippers vs long-fins across different species ----------
+    const anyNipper = enriched.find(e => e.nipsFins && e.qty>0);
+    const anyLong   = enriched.find(e => e.longFins && e.qty>0 && (!anyNipper || canonName(e.name) !== canonName(anyNipper.name)));
+    if (anyNipper && anyLong){
+      warnings.push({
+        text: `**Fin-nippers** (e.g., ${anyNipper.name}) will harass **long-finned/slow fish** (e.g., ${anyLong.name}).`,
+        type: 'severe',
+        category: 'fin-nipping'
+      });
+      hasSevere = true;
+    }
+    // Explicit: Tiger barbs + male betta
+    if (enriched.some(e => isTigerBarb(e.name)) && enriched.some(e => isBettaMale(e.name))){
+      warnings.push({
+        text: '**Tiger barbs** will shred **male bettas** — do not mix.',
+        type: 'severe',
+        category: 'fin-nipping'
+      });
+      hasSevere = true;
+    }
 
-    // Final clamp + floors
-    score = Math.round(clamp01(score / 100) * 100);
-    if ((bettaMale && uniqueCount > 1) || (hasNippy && uniqueCount > 1)) score = Math.max(score, 65);
-    if (hasShrimp && shrimpPredators) score = Math.max(score, 55);
+    // ---------- Tank size checks (tankbusters & semi-aggressive dwarfs) ----------
+    for (const it of enriched){
+      const need = minGallonsFor(it.name);
+      if (need && gallons && gallons < need){
+        // tank too small for this fish
+        const isSemi = inferFlags(it.name).semiAggressive;
+        const isBig  = inferFlags(it.name).tankbuster;
+        if (isBig || isSemi){
+          warnings.push({
+            text: `${it.name}: tank is **too small** (needs ~${need}g). In cramped space this species gets **pushy/territorial**.`,
+            type: 'severe',
+            category: 'tank-size'
+          });
+          hasSevere = true;
+        }
+      }
+    }
 
-    return { score, warnings };
-  };
+    // ---------- Semi-aggressive cichlids mixed (different species) => moderate ----------
+    const semiSet = Array.from(new Set(
+      enriched.filter(e => e.semiAgg && e.qty>0).map(e => canonName(e.name))
+    ));
+    if (semiSet.length >= 2){
+      warnings.push({
+        text: 'Mixing **semi-aggressive cichlids** (e.g., Angels, Apistos, Rams) can cause territorial spats. Provide space & cover.',
+        type: 'moderate',
+        category: 'territorial'
+      });
+      points += 40; // moderate weight
+    }
 
-  window.Aggression = Aggression;
+    // ---------- Soft/educational cautions (optional) ----------
+    // Example: zebra danio + guppy (minor nipping risk)
+    const hasZebra = enriched.some(e => canonName(e.name).includes('zebra danio'));
+    const hasGuppy = enriched.some(e => canonName(e.name).includes('guppy'));
+    if (hasZebra && hasGuppy){
+      warnings.push({
+        text: '⚠️ **Zebra danios** can occasionally nip **fancy guppy** tails. Keep danios in a good-sized group to reduce this.',
+        type: 'mild',
+        category: 'fin-nipping'
+      });
+      points += 25; // mild weight
+    }
+
+    // ---------- Score finalize ----------
+    let score = 0;
+    if (hasSevere) score = 100;
+    else score = Math.min(100, points);
+
+    return { warnings, score };
+  }
+
+  window.Aggression = { compute };
 })();
