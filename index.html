@@ -8,24 +8,15 @@
   :root{
     --gap:12px; --radius:14px;
     --ink:#0f172a; --muted:#475569; --muted-2:#94a3b8;
-
-    /* Brand & UI */
     --brand:#0284c7; --brand-2:#0369a1;
     --ok:#10b981; --ok-2:#059669;
     --warn:#f59e0b; --warn-2:#d97706;
     --bad:#ef4444; --bad-2:#dc2626;
-
-    /* Background gradient */
     --g1:#0ea5e9; --g2:#38bdf8; --g3:#7dd3fc;
-
-    /* Cards */
     --card:rgba(224,242,254,0.92);
     --card-border:rgba(15,23,42,0.06);
-
-    /* Fields */
     --field-bg:#fff; --field-bd:#d2dbe6;
   }
-
   *{box-sizing:border-box}
   body{
     margin:0; color:var(--ink);
@@ -34,100 +25,42 @@
     background-attachment:fixed;
     min-height:100dvh; display:flex; flex-direction:column;
   }
-  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px; width:100%;}
-
-  /* Brand */
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 56px;width:100%}
   .brand{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-bottom:8px;color:#fff}
   .brand-name{font-size:1.6rem;font-weight:700;line-height:1.2}
   .brand-sub{font-size:1rem;opacity:.95}
   header{margin-bottom:16px;text-align:left;color:#fff}
   header h2{margin:0;font-size:1.2rem;font-weight:600;opacity:.95}
-
-  /* Cards */
   .card{
     background:var(--card); border:1px solid var(--card-border);
     border-radius:var(--radius); padding:20px; margin-bottom:20px;
     box-shadow:0 8px 18px -10px rgba(2,6,23,.22);
     backdrop-filter:blur(6px) saturate(140%); -webkit-backdrop-filter:blur(6px) saturate(140%);
-    overflow:hidden;
   }
   .card h2,.card h3{margin:0 0 10px;font-weight:700}
-
-  /* Forms */
   label{font-weight:700;margin-bottom:6px;display:block}
   input,select{width:100%;padding:10px;border:1px solid var(--field-bd);border-radius:10px;background:#fff}
   .row{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(220px,1fr));align-items:end}
-
-  /* Buttons */
-  .btn{border:none;color:#fff;cursor:pointer;font-weight:700;border-radius:10px;padding:10px 14px;background:var(--brand);transition:transform .06s,background .2s,box-shadow .2s;box-shadow:0 2px 8px rgba(2,6,23,.18)}
-  .btn:hover{background:var(--brand-2)} .btn:active{transform:translateY(1px)} .btn:disabled{opacity:.75;cursor:not-allowed}
-
-  /* Bars */
-  .bar{height:24px;background:#e2e8f0;border-radius:999px;overflow:hidden}
-  .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--ok),var(--warn),var(--bad));transition:width .25s}
-  .bar-note{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted)}
-  small.note{color:var(--muted-2);font-size:.8rem;font-style:italic;display:block;margin-top:6px;padding-left:20px;position:relative}
-  small.note::before{content:"ℹ️";position:absolute;left:0}
-
-  /* ===== Current Stock ===== */
   table.stock{width:100%;border-collapse:collapse}
-  thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66}
+  thead th{padding:8px 6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #cfe7fb66;white-space:nowrap}
   thead th.qty{text-align:center;width:90px}
-  thead th.actions{text-align:right;width:150px}
-  tbody td{padding:10px 6px}
-  tbody td:first-child{padding-left:2px}
-
-  /* Fields */
-  .field{
-    background:var(--field-bg);
-    border:1px solid var(--field-bd);
-    border-radius:10px;
-    padding:10px 12px;
-    height:40px;
-    display:flex; align-items:center; min-width:0;
-  }
-  .field.single-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:140px}
-  .field.center{justify-content:center}
-  .field.small{min-width:60px;justify-content:center;font-variant-numeric:tabular-nums}
-
-  /* Icon circles for actions */
-  .actions{display:flex;justify-content:flex-end;align-items:center;gap:10px}
-  .circle{
-    width:36px;height:36px;border-radius:50%;
-    display:inline-flex;align-items:center;justify-content:center;
-    color:#fff;font-weight:900;font-size:20px;border:none;cursor:pointer;
-    box-shadow:0 2px 6px rgba(2,6,23,.14);
-    transition:transform .06s ease, filter .15s ease;
-    line-height:1;
-  }
-  .circle:active{transform:translateY(1px)}
-  .circle.minus{background:var(--warn)}
-  .circle.plus{background:var(--ok)}
-  .circle.trash{background:var(--bad)}
-  .circle .ico{width:18px;height:18px;display:block}
-
-  @media (max-width:480px){
-    .actions{flex-wrap:wrap;gap:8px 10px}
-    .circle.trash{flex:0 0 36px}
-  }
-
-  /* Warnings list */
-  #aggression-warnings>div{background:#fff7ed;border:2px solid #fdba74;color:#7a3419;padding:12px 14px;border-radius:12px;line-height:1.4;margin-bottom:8px}
-
-  /* Footer */
-  footer{margin-top:auto;padding:18px 20px;color:#0b2a40;opacity:.85;text-align:center;font-size:.9rem}
+  thead th.actions{text-align:right;width:160px}
+  tbody td{padding:10px 6px;vertical-align:middle}
+  .btn{border:none;color:#fff;cursor:pointer;font-weight:700;border-radius:10px;padding:10px 14px;background:var(--brand);box-shadow:0 2px 8px rgba(2,6,23,.18)}
+  #diag{position:sticky;top:0;z-index:9999;font:12px/1.2 ui-sans-serif,system-ui;display:none}
+  #diag > div{padding:6px 10px}
+  #diag.ok{display:block;background:#ecfdf5;color:#065f46;border-bottom:2px solid #a7f3d0}
+  #diag.err{display:block;background:#fee2e2;color:#7f1d1d;border-bottom:2px solid #fecaca}
 </style>
 </head>
 <body>
+  <div id="diag"><div></div></div>
   <div class="wrap">
-    <!-- Brand -->
     <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
       <div class="brand-name">FishkeepingLifeCo</div>
-      <div class="brand-sub">Aquarium Education</div>
+      <div class "brand-sub">Aquarium Education</div>
     </div>
     <header><h2>Stocking Calculator</h2></header>
-
-    <!-- Tank Setup -->
     <section class="card">
       <h2>Tank Setup</h2>
       <div class="row">
@@ -163,8 +96,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Add Fish -->
     <section class="card">
       <h2>Add Fish</h2>
       <div class="row">
@@ -188,13 +119,11 @@
       <div class="row">
         <div style="flex:1 1 200px">
           <label for="fQty">Quantity</label>
-          <input id="fQty" type="number" min="1">
+          <input id="fQty" type="number" min="1" value="1">
         </div>
         <div><button id="addFish" class="btn">Add</button></div>
       </div>
     </section>
-
-    <!-- Current Stock -->
     <section class="card">
       <h2>Current Stock</h2>
       <table class="stock">
@@ -211,174 +140,184 @@
         <div><button id="reset" class="btn" style="background:var(--bad)">Clear Stock</button></div>
       </div>
     </section>
-
-    <!-- Warnings -->
     <section class="card">
       <h2>Aggression & Compatibility Warnings</h2>
       <div id="aggression-warnings"></div>
     </section>
   </div>
-
-  <!-- Footer with version -->
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v1.1.0</strong> • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v8.4</strong> • Single-row merge • Updated Sep 18, 2025
   </footer>
-
-  <!-- Data + Logic + Glue -->
   <script src="js/fish-data.js"></script>
   <script src="js/aggression.js"></script>
   <script src="js/stocking_advisor.js"></script>
-
-  <!-- UI Enhancement Patch (warning-only; SVG icons for actions) -->
   <script>
     (function(){
-      const tbody = document.getElementById('tbody');
-      const warningsBox = document.getElementById('aggression-warnings');
-
-      function wrapField(td, opts={}){
-        if(!td) return null;
-        const existing = td.querySelector('.field');
-        if(existing) return existing;
-        const el = document.createElement('div');
-        el.className = 'field';
-        if (opts.single) el.classList.add('single-line');
-        if (opts.center) el.classList.add('center');
-        if (opts.small)  el.classList.add('small');
-        const text = td.textContent.trim();
-        td.textContent = '';
-        el.textContent = text;
-        td.appendChild(el);
-        return el;
+      var diag = document.getElementById('diag');
+      var box = diag.querySelector('div');
+      function show(ok,msg){ diag.className = ok ? 'ok' : 'err'; box.textContent = msg; }
+      var issues = [];
+      if (!window.Aggression || typeof window.Aggression.compute !== 'function') issues.push('aggression.js missing/invalid');
+      if (!window.fishSelect) issues.push('Species dropdown missing');
+      if (!document.getElementById('tbody')) issues.push('Table body missing');
+      var fishData = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
+      if (!fishData) issues.push('No global species list found');
+      if (issues.length) show(false, 'Issues: '+issues.join(' | '));
+      else show(true, 'Core OK • Safety adapter ready');
+    })();
+  </script>
+  <script>
+    (function(){
+      function toArray(x){ return Array.isArray(x) ? x : x ? [x] : []; }
+      function norm(s){ return (s||'').toString().trim().toLowerCase(); }
+      function extractSpeciesList(src){
+        if (Array.isArray(src)) {
+          return src.map(o=>{
+            const name = (o && (o.name||o.species||o.common)) || '';
+            const min  = parseInt((o && (o.min||o.recommendedMinimum||o.minGroup||o.group)) || '0',10) || 0;
+            return name ? { name, min } : null;
+          }).filter(Boolean);
+        }
+        if (src && typeof src==='object') {
+          return Object.keys(src).map(k=>{
+            const v = src[k]||{};
+            const min = parseInt(v.min || v.recommendedMinimum || v.minGroup || '0',10) || 0;
+            return { name:k, min };
+          });
+        }
+        return [];
       }
-
-      function enhanceActions(td){
-        if(!td || td.dataset.enhanced === '1') return;
-
-        let btnCell = td;
-        if(!td.querySelector('button')){
-          const tr = td.closest('tr');
-          const withBtns = tr ? [...tr.children].find(c => c.querySelector && c.querySelector('button')) : null;
-          if(withBtns) btnCell = withBtns;
+      function populateSelectIfEmpty(){
+        var sel = document.getElementById('fishSelect');
+        if (!sel || sel.options.length) return;
+        var src = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
+        var list = extractSpeciesList(src);
+        if (!list.length){
+          list = [
+            { name:'Neon tetra', min:6 },
+            { name:'Tiger barb', min:6 },
+            { name:'Corydoras (small)', min:6 },
+            { name:'Betta (male)', min:1 }
+          ];
         }
-        const buttons = [...btnCell.querySelectorAll('button')];
-        if(buttons.length === 0){ td.dataset.enhanced='1'; return; }
-
-        const wrap = document.createElement('div');
-        wrap.className = 'actions';
-
-        // Support hyphen (-) and Unicode minus (−), plus a fallback
-        const minusText = /(\u2212|-)\s*1?/;
-        const plusText  = /\+\s*1?/;
-        const delText   = /delete/i;
-
-        let minusBtn = buttons.find(b => minusText.test(b.textContent));
-        let plusBtn  = buttons.find(b => plusText.test(b.textContent));
-        let delBtn   = buttons.find(b => delText.test(b.textContent));
-
-        // Fallback order if needed
-        if(!minusBtn || !plusBtn){
-          if(buttons.length >= 2){
-            minusBtn = minusBtn || buttons[0];
-            plusBtn  = plusBtn  || buttons[1];
-          }
-        }
-        if(!delBtn && buttons.length >= 3){
-          delBtn = buttons[buttons.length - 1];
-        }
-
-        // Hide originals; proxy clicks to retain existing logic
-        buttons.forEach(b => b.style.display = 'none');
-
-        if(minusBtn){
-          const m = document.createElement('button');
-          m.type = 'button';
-          m.className = 'circle minus';
-          m.title = 'Decrease';
-          m.setAttribute('aria-label','Decrease');
-          m.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>';
-          m.addEventListener('click', ()=> minusBtn.click());
-          wrap.appendChild(m);
-        }
-        if(plusBtn){
-          const p = document.createElement('button');
-          p.type = 'button';
-          p.className = 'circle plus';
-          p.title = 'Increase';
-          p.setAttribute('aria-label','Increase');
-          p.innerHTML = '<svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/><rect x="9" y="4" width="2" height="12" rx="1" fill="currentColor"/></svg>';
-          p.addEventListener('click', ()=> plusBtn.click());
-          wrap.appendChild(p);
-        }
-        if(delBtn){
-          const d = document.createElement('button');
-          d.type = 'button';
-          d.className = 'circle trash';
-          d.title = 'Delete';
-          d.setAttribute('aria-label','Delete');
-          d.innerHTML = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7H4V5h4V4a1 1 0 0 1 1-1zm2 0v1h2V3h-2zM7 7l1 12h8l1-12H7zm3 3h2v8h-2v-8z"/></svg>';
-          d.addEventListener('click', ()=> delBtn.click());
-          wrap.appendChild(d);
-        }
-
-        btnCell.appendChild(wrap);
-        td.dataset.enhanced = '1';
-      }
-
-      function parseWarnings(){
-        const map = new Map();
-        if (!warningsBox) return map;
-        warningsBox.querySelectorAll('div').forEach(div=>{
-          const s = div.textContent || '';
-          const m = s.match(/^\s*([^:]+):.*\((\d+)\s*\/\s*(\d+)\)/i);
-          if (m) map.set(m[1].trim().toLowerCase(), { qty:+m[2], min:+m[3] });
+        list.sort((a,b)=> a.name.localeCompare(b.name));
+        list.forEach(item=>{
+          var opt = document.createElement('option');
+          opt.value = item.name;
+          opt.textContent = item.name;
+          opt.dataset.min = item.min;
+          sel.appendChild(opt);
         });
-        return map;
+        var search = document.getElementById('fishSearch');
+        function updateRecMin(){
+          var opt=sel.selectedOptions[0];
+          var min=opt?parseInt(opt.dataset.min||'1',10):'';
+          var recMin=document.getElementById('recMin');
+          if(recMin)recMin.value=min||'';
+        }
+        if(search){
+          search.addEventListener('input', function(){
+            var q=(this.value||'').toLowerCase();
+            Array.from(sel.options).forEach(o=>{
+              o.hidden=q && !o.textContent.toLowerCase().includes(q);
+            });
+            var first = Array.from(sel.options).find(o=>!o.hidden);
+            if(first){ sel.value=first.value; updateRecMin(); }
+          });
+        }
+        sel.addEventListener('change', updateRecMin);
+        updateRecMin();
       }
-
-      function decorateRows(){
-        const warnMap = parseWarnings();
-        tbody.querySelectorAll('tr').forEach(tr=>{
-          if (tr.dataset.styled === '1') return;
-          const cells = [...tr.querySelectorAll('td')];
-          if (cells.length === 0) return;
-
-          // Remove any legacy aggression % cell
-          const maybePct = cells.find(c => !c.querySelector('button') && /\d+\s*%$/.test(c.textContent.trim()));
-          if (maybePct) { maybePct.remove(); }
-
-          const tds = [...tr.querySelectorAll('td')];
-          const nameTd = tds[0];
-          const qtyTd  = tds[1];
-          const actionsTd = tds[tds.length - 1];
-
-          const fName = wrapField(nameTd, { single:true });
-          const fQty  = wrapField(qtyTd,  { center:true, small:true });
-          enhanceActions(actionsTd);
-
-          // Optional color hint from warnings
-          const key = (fName.textContent || '').trim().toLowerCase();
-          [fName,fQty].forEach(el=> el && el.classList.remove('ok','warn','bad'));
-          const info = warnMap.get(key);
-          if (info){
-            const redCut = Math.max(1, Math.floor(info.min/2));
-            if (info.qty < redCut){ fName.classList.add('bad'); fQty.classList.add('bad'); }
-            else { fName.classList.add('warn'); fQty.classList.add('warn'); }
-          }
-
-          tr.dataset.styled = '1';
+      function findRowByName(name){
+        var want=norm(name);
+        var rows=document.querySelectorAll('#tbody tr');
+        for(var i=0;i<rows.length;i++){
+          var n=norm(rows[i].querySelector('td')?.textContent||'');
+          if(n===want) return rows[i];
+        }
+        return null;
+      }
+      function addOrUpdateRow(name, deltaQty){
+        var tbody=document.getElementById('tbody');
+        var tr=findRowByName(name);
+        if(tr){
+          var qtyInput=tr.querySelector('td:nth-child(2) input');
+          var v=parseInt(qtyInput.value||'0',10)||0;
+          v=v+deltaQty;
+          if(v<=0){ tr.remove(); renderWarnings(); return; }
+          qtyInput.value=v;
+          renderWarnings(); return;
+        }
+        if(deltaQty<=0) return;
+        tr=document.createElement('tr');
+        var tdName=document.createElement('td');tdName.textContent=name;
+        var tdQty=document.createElement('td');
+        var input=document.createElement('input');
+        input.type='number';input.min='0';input.value=deltaQty;input.style.width='64px';
+        tdQty.appendChild(input);
+        var tdAct=document.createElement('td');tdAct.style.textAlign='right';
+        var bMinus=document.createElement('button');bMinus.textContent='−';bMinus.className='btn';bMinus.style.marginRight='6px';
+        var bPlus=document.createElement('button');bPlus.textContent='+';bPlus.className='btn';bPlus.style.marginRight='6px';
+        var bDel=document.createElement('button');bDel.textContent='Delete';bDel.className='btn';bDel.style.background='var(--bad)';
+        bMinus.addEventListener('click', function(){
+          var v=parseInt(input.value||'0',10)||0;
+          v=Math.max(0, v-1);input.value=v;
+          if(v===0) tr.remove();
+          renderWarnings();
         });
+        bPlus.addEventListener('click', function(){ input.value=(parseInt(input.value||'0',10)||0)+1; renderWarnings();});
+        bDel.addEventListener('click', function(){ tr.remove(); renderWarnings();});
+        tdAct.appendChild(bMinus);tdAct.appendChild(bPlus);tdAct.appendChild(bDel);
+        tr.appendChild(tdName);tr.appendChild(tdQty);tr.appendChild(tdAct);
+        tbody.appendChild(tr);
+        renderWarnings();
       }
-
-      const rowObs = new MutationObserver(decorateRows);
-      rowObs.observe(tbody, { childList:true, subtree:true });
-
-      const warnObs = new MutationObserver(()=>{
-        tbody.querySelectorAll('tr').forEach(tr=> tr.dataset.styled='');
-        decorateRows();
+      function readStock(){
+        var tbody=document.getElementById('tbody');
+        return Array.from(tbody.querySelectorAll('tr')).map(tr=>{
+          var tds=tr.querySelectorAll('td');
+          var name=(tds[0]?.textContent||'').trim();
+          var qtyEl=tds[1]?.querySelector('input');
+          var qty=parseInt(qtyEl&&qtyEl.value?qtyEl.value:'0',10)||0;
+          return name ? {name, qty} : null;
+        }).filter(Boolean);
+      }
+      function renderWarnings(){
+        var box=document.getElementById('aggression-warnings')||document.getElementById('warnings');
+        if(!box) return;
+        box.innerHTML='';
+        var stock=readStock();
+        var res={ warnings:[], score:0 };
+        if(window.Aggression && typeof window.Aggression.compute==='function'){
+          try{ res=window.Aggression.compute(stock, {}); } catch(e){}
+        }
+        toArray(res.warnings).forEach(w=>{
+          var d=document.createElement('div');
+          d.textContent=w;
+          box.appendChild(d);
+        });
+        var bar=document.getElementById('aggBarFill');
+        if(bar && typeof res.score==='number'){ bar.style.width=Math.min(100, Math.max(0,res.score))+'%'; }
+      }
+      window.addEventListener('load', function(){
+        populateSelectIfEmpty();
+        var addBtn=document.getElementById('addFish');
+        addBtn.addEventListener('click', function(){
+          var sel=document.getElementById('fishSelect');
+          var qtyEl=document.getElementById('fQty');
+          var name=sel && sel.value ? sel.value : '';
+          var qty=parseInt(qtyEl && qtyEl.value ? qtyEl.value : '1',10) || 1;
+          if(!name) return;
+          addOrUpdateRow(name, qty);
+        });
+        var resetBtn=document.getElementById('reset');
+        if(resetBtn){
+          resetBtn.addEventListener('click', function(){
+            document.getElementById('tbody').innerHTML='';
+            renderWarnings();
+          });
+        }
       });
-      warnObs.observe(warningsBox, { childList:true, subtree:true });
-
-      window.addEventListener('load', decorateRows);
     })();
   </script>
 </body>
