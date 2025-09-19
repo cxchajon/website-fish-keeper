@@ -3,9 +3,9 @@
 window.FISH_DATA = [
   // ---------- Tetras ----------
   { id:"neon_tetra",        name:"Neon tetra",                    points:1.0, min:6,  temp:[72,80], ph:[6.0,7.2] },
-  { id:"cardinal_tetra",    name:"Cardinal tetra",                points:1.2, min:6,  temp:[75,82], ph:[4.6,6.8] },
+  { id:"cardinal_tetra",    name:"Cardinal tetra",                points:1.2, min:6,  temp:[75,82], ph:[4.6,6.8], sensitive:true },
   { id:"ember_tetra",       name:"Ember tetra",                   points:0.9, min:8,  temp:[73,82], ph:[5.5,7.0] },
-  { id:"rummynose_tetra",   name:"Rummy-nose tetra",              points:1.4, min:8,  temp:[76,82], ph:[5.0,6.8] },
+  { id:"rummynose_tetra",   name:"Rummy-nose tetra",              points:1.4, min:8,  temp:[76,82], ph:[5.0,6.8], sensitive:true },
 
   { id:"black_skirt_tetra", name:"Black skirt tetra",             points:2.0, min:6,  temp:[70,82], ph:[6.0,7.5] },
 
@@ -31,9 +31,9 @@ window.FISH_DATA = [
 
   // ---------- Bottom-dwellers ----------
   { id:"cory_small",        name:"Corydoras (small)",             points:2.2, min:6,  temp:[72,79], ph:[6.2,7.4] },
-  { id:"cory_panda",        name:"Corydoras panda",               points:2.4, min:6,  temp:[68,77], ph:[6.0,7.4] },
+  { id:"cory_panda",        name:"Corydoras panda",               points:2.4, min:6,  temp:[68,77], ph:[6.0,7.4], sensitive:true },
   { id:"kuhli_loach",       name:"Kuhli loach",                   points:2.5, min:5,  temp:[75,82], ph:[5.5,7.0] },
-  { id:"otocinclus",        name:"Otocinclus",                    points:1.2, min:6,  temp:[72,82], ph:[6.0,7.5] },
+  { id:"otocinclus",        name:"Otocinclus",                    points:1.2, min:6,  temp:[72,82], ph:[6.0,7.5], sensitive:true },
   { id:"bristlenose_pleco", name:"Bristlenose pleco",             points:8.0, min:1,  temp:[72,80], ph:[6.5,7.5] },
 
   // ---------- Rainbowfish ----------
@@ -44,7 +44,7 @@ window.FISH_DATA = [
   { id:"apistogramma",      name:"Apistogramma (pair)",           points:6.0, min:1,  temp:[76,82], ph:[5.5,6.8], sensitive:true },
   { id:"ram_cichlid",       name:"Ram cichlid (German blue)",     points:5.0, min:1,  temp:[78,82], ph:[5.5,6.8], sensitive:true },
 
-  // ---------- Invertebrates (newly filled ranges) ----------
+  // ---------- Invertebrates ----------
   { id:"amano_shrimp",      name:"Amano shrimp",                  points:0.5, min:3,  temp:[64,80], ph:[6.5,7.5] },
   { id:"cherry_shrimp",     name:"Cherry shrimp",                 points:0.3, min:6,  temp:[65,78], ph:[6.5,7.5] },
   { id:"nerite_snail",      name:"Nerite snail",                  points:0.4, min:1,  temp:[68,85], ph:[7.0,8.5] },
