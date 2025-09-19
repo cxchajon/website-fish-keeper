@@ -33,3 +33,12 @@ export function safeQty(raw){
   if(n2 > 999) n2 = 999;
   return n2;
 }
+// Format species names nicely
+export function formatName(raw){
+  if(!raw) return '';
+  return raw
+    .replace(/[_-]+/g,' ')         // replace underscores/dashes with space
+    .replace(/\s+/g,' ')           // collapse multiple spaces
+    .trim()
+    .replace(/\b\w/g, c => c.toUpperCase()); // capitalize each word
+}
