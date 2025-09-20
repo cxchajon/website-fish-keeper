@@ -1,148 +1,78 @@
-/* js/modules/stock.js
- * Owns: adding/updating/removing rows in "Current Stock".
- * Exposes: window.Stock.addOrUpdateRow(name, qty), window.Stock.read()
- */
-(function(){
-  function $(id){ return document.getElementById(id); }
-  function norm(s){ return (s||'').toString().trim(); }
-  function canonName(s){
-    return norm(s).toLowerCase()
-      .replace(/[_-]+/g,' ')
-      .replace(/\s+/g,' ')
-      .replace(/\s*\([^)]*\)\s*/g,' ')
-      .trim();
+// js/modules/stock.js
+// Wires up: Species dropdown, Qty field, Add/Clear buttons, stock rows.
+// Guarantees: we ONLY use Rec Min when Qty is blank. Your typed number is never overwritten.
+
+import { safeQty } from './utils.js';
+import { addOrUpdateRow, clearAllRows, populateSpeciesSelect, readStock } from './species.js';
+import { renderAll } from './app.js'; // circular-safe: app only calls initStockUI after exports ready
+
+export function initStockUI () {
+  const sel   = document.getElementById('fishSelect');
+  const qtyEl = document.getElementById('fQty');
+  const recEl = document.getElementById('recMin');
+  const addBt = document.getElementById('addFish');
+  const clrBt = document.getElementById('reset');
+  const search= document.getElementById('fishSearch');
+
+  // Populate species list (and Rec Min), but NEVER touch the Qty field.
+  populateSpeciesSelect(sel, recEl, search);
+
+  // --- helpers ---
+  function hasUserQty() {
+    if (!qtyEl) return false;
+    // Treat any non-empty visible content as "user entered"
+    return String(qtyEl.value || '').trim().length > 0;
   }
-  function safeQty(raw){
-    if (typeof raw === 'number' && Number.isFinite(raw)){
-      let n = Math.floor(raw); if(n<1) n=1; if(n>999) n=999; return n;
+
+  function readQtyFromField() {
+    if (!qtyEl) return 1;
+    // Safari-safe: prefer valueAsNumber when finite, else parse string
+    if (Number.isFinite(qtyEl.valueAsNumber)) {
+      return safeQty(qtyEl.valueAsNumber);
     }
-    const s = (raw==null ? '' : String(raw)).replace(/[^\d]/g,'').slice(0,3);
-    let n = parseInt(s,10); if(isNaN(n)||n<1) n=1; if(n>999) n=999; return n;
-  }
-  function formatName(raw){
-    return (raw||'')
-      .replace(/[_-]+/g,' ')
-      .replace(/\s+/g,' ')
-      .trim()
-      .replace(/\b\w/g,c=>c.toUpperCase());
+    return safeQty(qtyEl.value);
   }
 
-  function findRowByName(name){
-    const want = canonName(name);
-    const rows = $('tbody')?.querySelectorAll('tr') || [];
-    for (let i=0;i<rows.length;i++){
-      const cellName = rows[i].querySelector('td')?.textContent || '';
-      if (canonName(cellName) === want) return rows[i];
+  function handleAdd(ev){
+    if (ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (ev.stopImmediatePropagation) ev.stopImmediatePropagation();
     }
-    return null;
+    const name = sel && sel.value ? sel.value : '';
+    if (!name) return;
+
+    // Use user's typed qty if present; otherwise fall back to Rec Min (or 1).
+    const qty = hasUserQty()
+      ? readQtyFromField()
+      : safeQty(recEl && recEl.value ? recEl.value : 1);
+
+    if (qty < 1) return;
+    addOrUpdateRow(name, qty);  // increments existing row or creates new
+    renderAll();
   }
 
-  function addRow(name, qty){
-    const tbody = $('tbody'); if(!tbody) return;
-    const tr = document.createElement('tr');
-    tr.className = 'row-appear';
+  // --- events ---
+  if (addBt) addBt.addEventListener('click', handleAdd, true);
 
-    // Name
-    const tdName = document.createElement('td');
-    tdName.textContent = formatName(name);
-
-    // Qty
-    const tdQty = document.createElement('td');
-    const input = document.createElement('input');
-    input.type='number'; input.min='0'; input.step='1'; input.inputMode='numeric';
-    input.style.width='72px'; input.value = qty;
-    input.addEventListener('input',   () => window.__renderAll__ && window.__renderAll__());
-    input.addEventListener('change',  () => window.__renderAll__ && window.__renderAll__());
-    tdQty.appendChild(input);
-
-    // Actions
-    const tdAct = document.createElement('td'); tdAct.style.textAlign='right';
-    const bMinus = document.createElement('button'); bMinus.type='button'; bMinus.className='btn'; bMinus.textContent='−'; bMinus.style.marginRight='6px';
-    const bPlus  = document.createElement('button'); bPlus.type='button';  bPlus.className='btn';  bPlus.textContent='+'; bPlus.style.marginRight='6px';
-    const bDel   = document.createElement('button'); bDel.type='button';   bDel.className='btn';   bDel.textContent='Delete'; bDel.style.background='var(--bad)';
-
-    bMinus.addEventListener('click', ()=>{
-      let v = safeQty(input.value) - 1; if (v<0) v=0;
-      input.value = v;
-      if (v===0) tr.remove();
-      window.__renderAll__ && window.__renderAll__();
+  if (qtyEl) {
+    // Pressing Enter in the qty field adds, without losing the typed number
+    qtyEl.addEventListener('keydown', (e)=>{
+      if (e.key === 'Enter') handleAdd(e);
     });
-    bPlus.addEventListener('click', ()=>{
-      input.value = safeQty(input.value) + 1;
-      window.__renderAll__ && window.__renderAll__();
-    });
-    bDel.addEventListener('click', ()=>{
-      tr.remove();
-      window.__renderAll__ && window.__renderAll__();
-    });
-
-    tdAct.appendChild(bMinus); tdAct.appendChild(bPlus); tdAct.appendChild(bDel);
-
-    tr.appendChild(tdName);
-    tr.appendChild(tdQty);
-    tr.appendChild(tdAct);
-    tbody.appendChild(tr);
+    // Do NOT auto-fill or change qty on species change anywhere in this file.
   }
 
-  function addOrUpdateRow(name, deltaQty){
-    if(!name) return;
-    const tr = findRowByName(name);
-    if (tr){
-      const qtyInput = tr.querySelector('td:nth-child(2) input');
-      let v = safeQty(qtyInput?.value || '0') + safeQty(deltaQty);
-      if (v<=0){ tr.remove(); window.__renderAll__ && window.__renderAll__(); return; }
-      qtyInput.value = v;
-      window.__renderAll__ && window.__renderAll__();
-      return;
-    }
-    if (safeQty(deltaQty) <= 0) return;
-    addRow(name, safeQty(deltaQty));
-    window.__renderAll__ && window.__renderAll__();
+  if (clrBt) {
+    clrBt.addEventListener('click', (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      clearAllRows();
+      renderAll();
+    }, true);
   }
+}
 
-  function read(){
-    const tbody = $('tbody'); if(!tbody) return [];
-    return Array.from(tbody.querySelectorAll('tr')).map(tr=>{
-      const tds = tr.querySelectorAll('td');
-      const name = (tds[0]?.textContent || '').trim();
-      const qtyEl = tds[1]?.querySelector('input');
-      const qty = safeQty(qtyEl && qtyEl.value);
-      return name ? { name, qty } : null;
-    }).filter(Boolean);
-  }
-
-  // Wire the Add and Clear buttons
-  window.addEventListener('load', ()=>{
-    const addBtn = $('addFish');
-    const qtyEl  = $('fQty');
-    const recEl  = $('recMin');
-    const sel    = $('fishSelect');
-    const reset  = $('reset');
-
-    function getQtyFromField(){
-      if (qtyEl && Number.isFinite(qtyEl.valueAsNumber)) return safeQty(qtyEl.valueAsNumber);
-      return safeQty(qtyEl?.value || '');
-    }
-
-    function onAdd(e){
-      e?.preventDefault();
-      const name = sel?.value || '';
-      if(!name) return;
-      const hasTyped = !!(qtyEl && String(qtyEl.value||'').trim().length);
-      const qty = hasTyped ? getQtyFromField()
-                           : safeQty(recEl?.value || '1');
-      addOrUpdateRow(name, qty);
-    }
-
-    addBtn && addBtn.addEventListener('click', onAdd);
-    qtyEl  && qtyEl.addEventListener('keydown', e=>{ if(e.key==='Enter') onAdd(e); });
-
-    reset && reset.addEventListener('click', ()=>{
-      if ($('tbody')) $('tbody').innerHTML = '';
-      window.__renderAll__ && window.__renderAll__();
-    });
-  });
-
-  // expose
-  window.Stock = { addOrUpdateRow, read };
-})();
+/* ========== Minimal exports that other modules may use ========== */
+// no-op here; stock row operations live in species.js (addOrUpdateRow, clearAllRows, readStock)
+export { readStock } from './species.js';
