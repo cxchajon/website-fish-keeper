@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- NOTE: your stylesheet is capitalized on GitHub -->
+  <!-- Your stylesheet is capitalized on GitHub -->
   <link rel="stylesheet" href="css/Style.css" />
 </head>
 <body>
@@ -38,7 +38,7 @@
       </div>
     </section>
 
-    <!-- Compatibility Overview (Bars + Warnings) -->
+    <!-- Compatibility Overview -->
     <section class="card" id="compat-card">
       <h2>Compatibility Overview</h2>
 
@@ -82,8 +82,8 @@
         </div>
       </div>
       <div style="margin-top:12px;display:flex;gap:12px">
-        <!-- inline onclick is a reliable fallback on iOS -->
-        <button id="addFish" class="btn" type="button" onclick="window.addSelectedFish()">Add</button>
+        <!-- Inline fallback + JS binding (both) -->
+        <button id="addFish" class="btn" type="button" onclick="window.addSelectedFish && window.addSelectedFish()">Add</button>
         <button id="reset" class="btn" type="button" style="background:var(--bad)">Clear Stock</button>
       </div>
       <small class="note" style="display:block;margin-top:10px">
@@ -109,8 +109,25 @@
     <footer>© 2025 FishkeepingLifeCo — For hobbyist use only</footer>
   </div>
 
-  <!-- Data first, then logic -->
+  <!-- Data first, then logic (NON-module, with defer) -->
   <script src="js/fish-data.js"></script>
-  <script type="module" src="js/modules/app.js?v=9.4.0"></script>
+  <script src="js/modules/app.js?v=9.4.2" defer></script>
+
+  <!-- Ultra-fallback: if addSelectedFish isn’t defined for any reason,
+       we synthesize an event that app.js listens for. -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      var btn = document.getElementById('addFish');
+      if (btn && !window.addSelectedFish) {
+        btn.addEventListener('click', function(){
+          var sel = document.getElementById('fishSelect');
+          var qtyRaw = (document.getElementById('fQty').value || '').trim();
+          var rec = document.getElementById('recMin').value || '1';
+          var qty = parseInt(qtyRaw, 10); if (!qty) qty = parseInt(rec, 10) || 1;
+          document.dispatchEvent(new CustomEvent('fk-add', { detail: { name: sel.value, qty: qty } }));
+        });
+      }
+    });
+  </script>
 </body>
-</html> 
+</html>
