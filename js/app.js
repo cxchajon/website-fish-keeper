@@ -1,8 +1,9 @@
 /* FishkeepingLifeCo — app.js (non-module)
-   Purpose: Populate species select, honor Quantity input, render stock & bars.
+   Purpose: Populate species select, honor Quantity input, render stock & bars,
+   and compute Aggression + warnings.
 */
 
-/* ------------------ Helpers (local, lightweight) ------------------ */
+/* ------------------ Helpers ------------------ */
 function toArray(x){ return Array.isArray(x) ? x : x ? [x] : []; }
 function norm(s){ return (s==null?'':String(s)).trim().toLowerCase(); }
 function canonName(s){
@@ -17,14 +18,12 @@ function formatName(raw){
     .replace(/\b\w/g, c => c.toUpperCase());
 }
 function safeQty(raw){
-  // numeric path
   if (typeof raw === 'number' && Number.isFinite(raw)) {
     let n = Math.floor(raw);
     if (n < 1) n = 1;
     if (n > 999) n = 999;
     return n;
   }
-  // string path
   const s = (raw==null?'':String(raw)).replace(/[^\d]/g,'').slice(0,3);
   let n2 = parseInt(s,10);
   if (isNaN(n2) || n2 < 1) n2 = 1;
@@ -34,7 +33,7 @@ function safeQty(raw){
 
 /* ------------------ Global refs ------------------ */
 var $select, $search, $recMin, $qty, $tbody;
-var $bioFill, $aggFill, $envFill;
+var $bioFill, $aggFill, $envFill, $warnBox;
 
 /* Quick index by canonical name for data lookups */
 var DATA = (function(){
@@ -49,11 +48,8 @@ var DATA = (function(){
 
 /* ------------------ Species dropdown ------------------ */
 function populateSelect(){
-  if (!$select) return;
-  // only if empty
-  if ($select.options.length) return;
+  if (!$select || $select.options.length) return;
 
-  // Build & sort by display name
   var items = DATA.list
     .map(function(o){
       return {
@@ -64,7 +60,6 @@ function populateSelect(){
     .filter(function(x){ return x.name; })
     .sort(function(a,b){ return a.name.localeCompare(b.name); });
 
-  // Add options
   var frag = document.createDocumentFragment();
   items.forEach(function(it){
     var opt = document.createElement('option');
@@ -75,7 +70,6 @@ function populateSelect(){
   });
   $select.appendChild(frag);
 
-  // Set initial rec min
   updateRecMin();
 }
 
@@ -189,8 +183,7 @@ function addOrUpdate(name, deltaQty){
   }
 }
 
-/* ------------------ Bars ------------------ */
-// Bioload = sum(points * qty) / capacity
+/* ------------------ Bars: Bioload ------------------ */
 function bioloadUnits(){
   var stock = readStock();
   var total = 0;
@@ -220,8 +213,7 @@ function renderBioload(){
   $bioFill.style.width = pct.toFixed(1) + '%';
 }
 
-// Environmental Fit (Temp & pH overlap across all selected species)
-// Simple heuristic: compute intersection width / union width for temp and for pH, average them.
+/* ------------------ Bars: Environmental Fit ------------------ */
 function getRange(obj, key){
   var r = obj && obj[key];
   if (!r || r.length !== 2) return null;
@@ -251,7 +243,6 @@ function span(r){ return (r[1]-r[0]); }
 function renderEnvFit(){
   if (!$envFill) return;
   var stock = readStock();
-  // if 0–1 species, don't “penalize”; show 0 fill to “build up” with additions
   if (stock.length <= 1){ $envFill.style.width = '0%'; return; }
 
   var temps = [], phs = [];
@@ -265,15 +256,12 @@ function renderEnvFit(){
   if (temps.length < 2 && phs.length < 2){ $envFill.style.width='0%'; return; }
 
   function fit(rs){
-    if (rs.length < 2) return 1; // treat missing data as fine
+    if (rs.length < 2) return 1;
     var uni = rangeUnion(rs);
     var inter = rangeIntersect(rs);
     var uniW = Math.max(0, span(uni));
     var interW = Math.max(0, span(inter));
-    // Edge-touch counts as “tight” overlap
-    if (inter[1] === inter[0] && rs.length >= 2){
-      interW = 0.25; // tiny sliver to indicate edge touch
-    }
+    if (inter[1] === inter[0] && rs.length >= 2){ interW = 0.25; }
     if (uniW <= 0) return 1;
     var ratio = interW / uniW;
     if (ratio < 0) ratio = 0;
@@ -284,16 +272,151 @@ function renderEnvFit(){
   var tFit = fit(temps);
   var pFit = fit(phs);
   var avg = (tFit + pFit) / 2;
-
-  var pct = Math.round(avg * 100); // 0–100
+  var pct = Math.round(avg * 100);
   $envFill.style.width = pct + '%';
 }
 
-// Aggression bar – placeholder (0) for now; we’ll plug rules in later
-function renderAggression(){
-  if ($aggFill) $aggFill.style.width = '0%';
+/* ------------------ Bars: Aggression + Warning bubbles ------------------ */
+/*
+  Simple rule engine (weights add up to form %):
+  - Species-only tank (single species), except male bettas: minimal movement (10%).
+  - Male betta with any other fish: high risk with long-finned/bright small fish.
+  - Known fin-nippers with long-finned fish: add medium/high.
+  - Under-schooling (qty < min): mild → moderate depending gap.
+  - Territorial large/semi-aggressive species in small tanks: mild→moderate.
+  - Stacking multiple warnings sums up; cap at 100.
+*/
+var FIN_NIPPERS = [
+  'tiger barb','serpae tetra','columbian tetra','black skirt tetra',
+  'skunk barb','sumatra barb','red tail shark'
+];
+var LONG_FINNED = [
+  'angelfish','guppy','betta','gourami','pearl gourami','dwarf gourami'
+];
+
+function hasAny(names, targets){
+  var set = targets.map(canonName);
+  for (var i=0;i<names.length;i++){
+    if (set.indexOf(canonName(names[i])) !== -1) return true;
+  }
+  return false;
 }
 
+function computeAggression(stock){
+  var warnings = []; // { text, severity: 'mild|moderate|severe', weight }
+  var score = 0;
+
+  if (stock.length === 0) return { score:0, warnings:[] };
+
+  // Names & map for quick lookups
+  var names = stock.map(function(s){ return s.name; });
+  var cset = names.map(canonName);
+
+  function addWarn(text, severity, weight){
+    warnings.push({ text, severity, weight });
+    score += weight;
+  }
+
+  // Species-only tank (single species) → light movement (unless male bettas)
+  if (stock.length === 1){
+    var only = canonName(stock[0].name);
+    if (only.indexOf('betta') !== -1){
+      addWarn('Male bettas are territorial, even alone.', 'moderate', 35);
+    } else {
+      // keep some motion so bar isn’t dead-flat, but very low
+      score = Math.min(score, 10);
+    }
+    return { score: Math.max(0, Math.min(100, score)), warnings };
+  }
+
+  // 1) Male betta + others
+  var hasBetta = cset.some(function(n){ return n.indexOf('betta') !== -1; });
+  if (hasBetta){
+    // long-finned or flashy small fish present?
+    var riskyLongFins = cset.some(function(n){
+      return LONG_FINNED.some(function(L){ return n.indexOf(canonName(L)) !== -1; }) && n.indexOf('betta') === -1;
+    });
+    if (riskyLongFins){
+      addWarn('Betta with long-finned/flashy tankmates can nip or be nipped.', 'severe', 60);
+    } else {
+      addWarn('Betta with community fish can be unpredictable.', 'moderate', 35);
+    }
+  }
+
+  // 2) Fin-nippers with long-finned species
+  var hasNippers = cset.some(function(n){
+    return FIN_NIPPERS.some(function(f){ return n.indexOf(canonName(f)) !== -1; });
+  });
+  var hasLongFins = cset.some(function(n){
+    return LONG_FINNED.some(function(f){ return n.indexOf(canonName(f)) !== -1; });
+  });
+  if (hasNippers && hasLongFins){
+    addWarn('Fin-nippers with long-finned fish — high nip risk.', 'severe', 50);
+  }
+
+  // 3) Under-schooling (qty < min)
+  for (var i=0;i<stock.length;i++){
+    var nm = canonName(stock[i].name);
+    var spec = DATA.byName[nm];
+    var min = spec && (spec.min || spec.recommendedMinimum || spec.group) || 1;
+    var qty = stock[i].qty || 0;
+    if (min > 1 && qty > 0 && qty < min){
+      var gap = min - qty;
+      if (gap >= 3){
+        addWarn(formatName(stock[i].name)+': under-schooled; stress & nipping likely.', 'moderate', 25);
+      } else {
+        addWarn(formatName(stock[i].name)+': consider adding to its recommended group size.', 'mild', 12);
+      }
+    }
+  }
+
+  // 4) Territorial large/semi-aggressive in small tanks (rough heuristic)
+  var gal = parseFloat(document.getElementById('gallons')?.value || '0') || 0;
+  var territorial = ['angelfish','bristlenose pleco','apistogramma','ram cichlid'];
+  var hasTerritorial = cset.some(function(n){
+    return territorial.some(function(t){ return n.indexOf(canonName(t)) !== -1; });
+  });
+  if (hasTerritorial && gal < 30){
+    addWarn('Territorial species in small tanks may chase/guard space.', 'moderate', 20);
+  }
+
+  // Cap and return
+  if (score > 100) score = 100;
+  if (score < 0) score = 0;
+  return { score, warnings };
+}
+
+function renderAggression(){
+  if (!$aggFill) return;
+  var stock = readStock();
+
+  var res = computeAggression(stock);
+  $aggFill.style.width = Math.round(res.score) + '%';
+
+  // Render warning bubbles
+  if ($warnBox){
+    $warnBox.innerHTML = '';
+    if (res.warnings.length){
+      var frag = document.createDocumentFragment();
+      var holder = document.createElement('div');
+      holder.className = 'warning-bubbles';
+      res.warnings.forEach(function(w){
+        var b = document.createElement('div');
+        var cls = 'warning-bubble ' +
+          (w.severity==='severe' ? 'warning-severe' :
+           w.severity==='moderate' ? 'warning-moderate' :
+           w.severity==='mild' ? 'warning-mild' : 'warning-info');
+        b.className = cls;
+        b.textContent = w.text;
+        holder.appendChild(b);
+      });
+      frag.appendChild(holder);
+      $warnBox.appendChild(frag);
+    }
+  }
+}
+
+/* ------------------ Render orchestration ------------------ */
 function renderAll(){
   renderBioload();
   renderAggression();
@@ -311,8 +434,9 @@ window.addEventListener('load', function(){
   $bioFill= document.getElementById('bioBarFill');
   $aggFill= document.getElementById('aggBarFill');
   $envFill= document.getElementById('envBarFill');
+  $warnBox= document.getElementById('aggression-warnings');
 
-  // Populate species list
+  // Populate species
   populateSelect();
 
   // Wire search & selection changes
