@@ -8,8 +8,8 @@
 </head>
 <body>
   <div class="wrap">
+    <div id="diag" class="ok"><div>Core OK • Safety adapter ready</div></div>
 
-    <!-- Brand -->
     <div class="brand">
       <div class="brand-name">FishkeepingLifeCo</div>
       <div class="brand-sub">Aquarium Education</div>
@@ -19,71 +19,60 @@
     <div class="card">
       <h2>Tank Setup</h2>
       <label for="tankSize">Tank size (US gallons)</label>
-      <input type="number" id="tankSize" value="20">
-
+      <input id="tankSize" type="number" value="20">
+      
       <label for="filtration">Filtration</label>
       <select id="filtration">
         <option value="low">Low — Sponge/UGF</option>
-        <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
+        <option value="std">Standard — Hang-on-back (≈4–10x turnover)</option>
         <option value="high">High — Sump/Canister (oversized)</option>
       </select>
 
-      <label>Planted?</label>
-      <input type="checkbox" id="planted"> Yes
+      <label><input type="checkbox" id="planted"> Planted?</label>
+      <div>Yes</div>
     </div>
 
     <!-- Bioload -->
     <div class="card">
       <h2>Bioload</h2>
-      <div class="bar">
-        <div id="bioBarFill" class="bar-fill"></div>
-      </div>
-      <div class="bar-note">
-        <span>Low</span><span>High</span>
-      </div>
+      <div class="bar"><div id="bioBar" class="bar-fill"></div></div>
+      <div class="bar-note"><span>Low</span><span>High</span></div>
       <p class="note">Bioload is an estimate. Filtration and plants adjust capacity.</p>
     </div>
 
-    <!-- Aggression Risk -->
+    <!-- Aggression -->
     <div class="card">
       <h2>Aggression Risk (Average conflicts)</h2>
-      <div class="bar">
-        <div id="aggBarFill" class="bar-fill"></div>
-      </div>
-      <div class="bar-note">
-        <span>Low</span><span>High</span>
-      </div>
+      <div class="bar"><div id="aggBar" class="bar-fill"></div></div>
+      <div class="bar-note"><span>Low</span><span>High</span></div>
       <p class="note">Serious conflicts automatically max this bar.</p>
+      <div id="aggWarnings"></div>
     </div>
 
-    <!-- Environmental Fit -->
+    <!-- Env Fit -->
     <div class="card">
-      <h2>Environmental Fit (Temp &amp; pH overlap)</h2>
-      <div class="bar">
-        <div id="envBarFill" class="bar-fill"></div>
-      </div>
-      <div class="bar-note">
-        <span>Compatible</span><span>Poor Fit</span>
-      </div>
-      <p class="note">Shows how well selected species match in temperature &amp; pH.</p>
+      <h2>Environmental Fit (Temp & pH overlap)</h2>
+      <div class="bar"><div id="fitBar" class="bar-fill"></div></div>
+      <div class="bar-note"><span>Compatible</span><span>Poor Fit</span></div>
+      <p class="note">Shows how well selected species match in temperature & pH.</p>
     </div>
 
     <!-- Add Fish -->
     <div class="card">
       <h2>Add Fish</h2>
-      <label for="fishSearch">Search species</label>
-      <input type="text" id="fishSearch" placeholder="Type to filter the list">
+      <label for="speciesSearch">Search species</label>
+      <input id="speciesSearch" placeholder="Type to filter the list">
 
       <label for="speciesSelect">Species</label>
       <select id="speciesSelect"></select>
 
-      <label for="minInput">Recommended minimum</label>
-      <input type="number" id="minInput" readonly>
+      <label for="recMin">Recommended minimum</label>
+      <input id="recMin" type="number" readonly>
 
-      <label for="qtyInput">Quantity</label>
-      <input type="number" id="qtyInput" placeholder="e.g., 6">
+      <label for="qty">Quantity</label>
+      <input id="qty" type="number" placeholder="e.g., 6">
 
-      <button id="addFishBtn" class="btn">Add</button>
+      <button id="addFish" class="btn">Add</button>
       <p class="note">If Quantity is empty/invalid, we’ll use the Recommended minimum (or 1). Your typed number is never overwritten.</p>
     </div>
 
@@ -92,31 +81,21 @@
       <h2>Current Stock</h2>
       <table class="stock">
         <thead>
-          <tr>
-            <th>Name</th>
-            <th class="qty">Qty</th>
-            <th class="actions">Actions</th>
-          </tr>
+          <tr><th>Name</th><th class="qty">Qty</th><th class="actions">Actions</th></tr>
         </thead>
-        <tbody id="stockTableBody"></tbody>
+        <tbody id="stockList"></tbody>
       </table>
       <button id="reset" class="btn">Clear Stock</button>
     </div>
 
-    <!-- Aggression & Compatibility Warnings -->
-    <div class="card">
-      <h2>Aggression &amp; Compatibility Warnings</h2>
-      <div id="warnings"></div>
-    </div>
-
     <footer>
-      FishkeepingLifeCo • Build v9.3.x • Updated
+      FishkeepingLifeCo • Build v9.3.x • Bars + EnvFit restored
     </footer>
   </div>
 
-  <!-- Scripts -->
+  <!-- Scripts in correct order -->
   <script src="js/fish-data.js"></script>
-  <script src="js/utils.js"></script>
+  <script src="js/modules/utils.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
