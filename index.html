@@ -2,110 +2,122 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FishkeepingLifeCo — Stocking Calculator</title>
-  <link rel="stylesheet" href="css/app.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- App styles -->
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-<div class="wrap">
+  <div class="wrap">
 
-  <!-- Brand -->
-  <div class="brand">
-    <div class="brand-name">FishkeepingLifeCo</div>
-    <div class="brand-sub">Aquarium Stocking Calculator</div>
+    <!-- Brand -->
+    <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
+      <div class="brand-name">FishkeepingLifeCo</div>
+      <div class="brand-sub">Aquarium Stocking Calculator</div>
+    </div>
+
+    <!-- Tank Setup -->
+    <section class="card">
+      <h2>Tank Setup</h2>
+      <div class="row">
+        <div>
+          <label for="gallons">Tank Size (gallons)</label>
+          <input id="gallons" type="number" min="1" value="20" />
+        </div>
+        <div>
+          <label for="filtration">Filtration</label>
+          <select id="filtration">
+            <option value="standard" selected>Standard</option>
+            <option value="low">Low</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <div>
+          <label><input id="planted" type="checkbox" /> Planted Tank</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Compatibility Overview -->
+    <section class="card" id="compat-card">
+      <h2>Compatibility Overview</h2>
+
+      <!-- Bioload -->
+      <div style="margin-bottom:12px">
+        <label>Bioload</label>
+        <div class="bar"><div id="bioBarFill" class="bar-fill"></div></div>
+      </div>
+
+      <!-- Environmental Fit -->
+      <div style="margin-bottom:12px">
+        <label>Environmental Fit (Temp &amp; pH)</label>
+        <div class="bar"><div id="envBarFill" class="bar-fill"></div></div>
+        <!-- NEW: warning bubbles container -->
+        <div id="compat-warnings" class="warning-bubbles" style="margin-top:10px"></div>
+      </div>
+
+      <!-- Aggression -->
+      <div>
+        <label>Aggression &amp; Compatibility</label>
+        <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
+        <div id="aggression-warnings" class="warning-bubbles" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <!-- Add Fish -->
+    <section class="card">
+      <h2>Add Fish</h2>
+      <div class="row">
+        <div>
+          <label for="fishSearch">Search</label>
+          <input id="fishSearch" type="text" placeholder="Type to filter…" autocomplete="off" />
+        </div>
+        <div>
+          <label for="fishSelect">Species</label>
+          <select id="fishSelect"></select>
+        </div>
+        <div>
+          <label for="fQty">Quantity</label>
+          <input id="fQty" type="number" min="1" step="1" inputmode="numeric" />
+        </div>
+        <div>
+          <label for="recMin">Rec Min</label>
+          <input id="recMin" type="number" disabled />
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:12px">
+        <button id="addFish" class="btn" type="button">Add</button>
+        <button id="reset" class="btn" type="button" style="background:var(--bad)">Clear Stock</button>
+      </div>
+      <small class="note" style="display:block;margin-top:10px">
+        If Quantity is empty/invalid, we’ll use the Recommended minimum (or 1). Your typed number is never overwritten.
+      </small>
+    </section>
+
+    <!-- Current Stock -->
+    <section class="card">
+      <h2>Current Stock</h2>
+      <table class="stock">
+        <thead>
+          <tr>
+            <th>Species</th>
+            <th class="qty">Qty</th>
+            <th class="actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </section>
+
+    <footer>
+      © 2025 FishkeepingLifeCo — For hobbyist use only
+    </footer>
   </div>
 
-  <!-- Tank Setup -->
-  <div class="card">
-    <h2>Tank Setup</h2>
-    <div class="row">
-      <div>
-        <label for="gallons">Tank Size (US gallons)</label>
-        <input id="gallons" type="number" min="1" value="20" />
-      </div>
-      <div>
-        <label for="filtration">Filtration</label>
-        <select id="filtration">
-          <option value="standard" selected>Standard — Hang-on-back (≈4–10×)</option>
-          <option value="low">Low — Sponge (gentle)</option>
-          <option value="high">High — Sump/Canister (oversized)</option>
-        </select>
-      </div>
-      <div>
-        <label><input type="checkbox" id="planted" /> Planted Tank</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Compatibility Overview (moved ABOVE Add Fish) -->
-  <div class="card">
-    <h2>Compatibility Overview</h2>
-
-    <div style="margin-bottom:10px">
-      <label>Bioload</label>
-      <div class="bar"><div id="bioBarFill" class="bar-fill"></div></div>
-    </div>
-
-    <div style="margin-bottom:10px">
-      <label>Environmental Fit (Temp &amp; pH)</label>
-      <div class="bar"><div id="envBarFill" class="bar-fill"></div></div>
-    </div>
-
-    <div>
-      <label>Aggression &amp; Compatibility</label>
-      <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
-      <div id="aggression-warnings" style="margin-top:10px"></div>
-    </div>
-  </div>
-
-  <!-- Add Fish -->
-  <div class="card">
-    <h2>Add Fish</h2>
-    <div class="row">
-      <div>
-        <label for="fishSearch">Search</label>
-        <input id="fishSearch" type="text" placeholder="Type to filter…" autocomplete="off" autocapitalize="none" />
-      </div>
-      <div>
-        <label for="fishSelect">Species</label>
-        <select id="fishSelect"></select>
-      </div>
-      <div>
-        <label for="fQty">Quantity</label>
-        <input id="fQty" type="number" min="1" step="1" inputmode="numeric" />
-      </div>
-      <div>
-        <label for="recMin">Rec Min</label>
-        <input id="recMin" type="number" disabled />
-      </div>
-    </div>
-
-    <div style="margin-top:12px;display:flex;gap:12px;">
-      <button id="addFish" class="btn" type="button">Add</button>
-      <button id="reset" class="btn" style="background:var(--bad)" type="button">Clear Stock</button>
-    </div>
-  </div>
-
-  <!-- Current Stock -->
-  <div class="card">
-    <h2>Current Stock</h2>
-    <table class="stock">
-      <thead>
-        <tr>
-          <th>Species</th>
-          <th class="qty">Qty</th>
-          <th class="actions">Actions</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </div>
-
-  <footer>© 2025 FishkeepingLifeCo — For hobbyist use only</footer>
-</div>
-
-<!-- Data first, then logic -->
-<script src="js/fish-data.js"></script>
-<script type="module" src="js/modules/app.js?v=9.3.4"></script>
+  <!-- Data first, then logic -->
+  <script src="js/fish-data.js"></script>
+  <!-- Optional: aggression rules module if you keep it separate -->
+  <!-- <script src="js/aggression.js"></script> -->
+  <script type="module" src="js/modules/app.js?v=9.3.5"></script>
 </body>
 </html>
