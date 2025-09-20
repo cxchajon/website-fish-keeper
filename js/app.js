@@ -1,91 +1,51 @@
-// js/modules/app.js
-import { populateSelectIfEmpty } from './species.js?v=924';
-import { addOrUpdateRow, registerRender } from './stock.js?v=924';
-import { renderAll } from './warnings.js?v=924';
-import { statusCheck } from './status.js?v=924';
-import { safeQty } from './utils.js?v=924';
+// js/app.js
 
-// utility: replace element with a fresh clone (removes any existing listeners)
-function replaceWithClone(el){
-  if(!el) return el;
-  const clone = el.cloneNode(true);
-  el.replaceWith(clone);
-  return clone;
-}
+import { stock } from "./stock.js";
+import { renderStock } from "./render.js";
+import { safeQty } from "./utils.js";
 
-window.addEventListener('load', () => {
-  // when stock changes, re-render bars + warnings
-  registerRender(renderAll);
+document.addEventListener("DOMContentLoaded", () => {
+  const speciesSelect = document.getElementById("fishSelect");
+  const qtyInput = document.getElementById("fQty");
+  const addBtn = document.getElementById("addFish");
+  const tbody = document.getElementById("tbody");
+  const resetBtn = document.getElementById("reset");
 
-  populateSelectIfEmpty();
-  statusCheck();
-
-  // clone buttons to clear any legacy listeners
-  let addBtn   = document.getElementById('addFish');
-  let resetBtn = document.getElementById('reset');
-  addBtn   = replaceWithClone(addBtn);
-  resetBtn = replaceWithClone(resetBtn);
-
-  const sel   = document.getElementById('fishSelect');
-  const qtyEl = document.getElementById('fQty');
-  const recEl = document.getElementById('recMin');
-
-  function getQtyFromField(){
-    if (qtyEl && Number.isFinite(qtyEl.valueAsNumber)) return safeQty(qtyEl.valueAsNumber);
-    const raw = (qtyEl && typeof qtyEl.value==='string') ? qtyEl.value : '';
-    return safeQty(raw);
-  }
-
-  function handleAdd(e){
-    if(e){
-      e.preventDefault();
-      e.stopPropagation();
-      if(e.stopImmediatePropagation) e.stopImmediatePropagation();
-    }
-    const name = sel && sel.value ? sel.value : '';
-    if(!name) return;
-
-    const fieldRaw = qtyEl ? qtyEl.value : '';
-    const hasUserValue = fieldRaw != null && String(fieldRaw).trim().length > 0;
-
-    const qty = hasUserValue
-      ? getQtyFromField()
-      : safeQty(recEl && recEl.value ? recEl.value : '1');
-
-    addOrUpdateRow(name, qty);
-  }
-
-  // Add via click (capture phase to win over any other handlers)
-  if(addBtn) addBtn.addEventListener('click', handleAdd, true);
-
-  // Add via Enter key in the quantity field
-  if(qtyEl){
-    qtyEl.addEventListener('keydown', function(e){
-      if(e.key === 'Enter'){ handleAdd(e); }
-    });
-  }
-
-  // Clear stock
-  if(resetBtn){
-    resetBtn.addEventListener('click', function(e){
-      if(e){
-        e.preventDefault();
-        e.stopPropagation();
-        if(e.stopImmediatePropagation) e.stopImmediatePropagation();
-      }
-      const tbody = document.getElementById('tbody');
-      if (tbody) tbody.innerHTML = '';
-      renderAll();
-    }, true);
-  }
-
-  // Tank controls update bars
-  ['gallons','planted','filtration'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.addEventListener('input', renderAll);
-    el.addEventListener('change', renderAll);
+  // populate dropdown
+  FISH_DATA.forEach(f => {
+    const opt = document.createElement("option");
+    opt.value = f.id;
+    opt.textContent = f.name;
+    speciesSelect.appendChild(opt);
   });
 
-  renderAll();
+  // add fish
+  addBtn.addEventListener("click", () => {
+    const id = speciesSelect.value;
+    const spec = FISH_DATA.find(f => f.id === id);
+    if (!spec) return;
+
+    // FIXED: respect entered value, fallback only if blank
+    let qty;
+    if (qtyInput.value.trim() === "") {
+      qty = spec.min || 1;
+    } else {
+      qty = safeQty(qtyInput.value);
+    }
+
+    stock.add(id, qty);
+    render();
+  });
+
+  // reset
+  resetBtn.addEventListener("click", () => {
+    stock.clear();
+    render();
+  });
+
+  function render() {
+    renderStock(tbody);
+  }
+
+  render();
 });
