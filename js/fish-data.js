@@ -1,52 +1,56 @@
-// js/fish-data.js
-// IMPORTANT: attach to window so other scripts can read it.
-window.FISH_DATA = [
-  // ---------- Tetras ----------
-  { id:"neon_tetra",        name:"Neon tetra",                    points:1.0, min:6,  temp:[72,80], ph:[6.0,7.2] },
-  { id:"cardinal_tetra",    name:"Cardinal tetra",                points:1.2, min:6,  temp:[75,82], ph:[4.6,6.8] }, // no sensitive flag
-  { id:"ember_tetra",       name:"Ember tetra",                   points:0.9, min:8,  temp:[73,82], ph:[5.5,7.0] },
-  { id:"rummynose_tetra",   name:"Rummy-nose tetra",              points:1.4, min:8,  temp:[76,82], ph:[5.0,6.8] }, // no sensitive flag
+/* Global species database for FishkeepingLifeCo calculator.
+   Exposes window.FISH_DB = [...]. Keep ids stable; adjust fields freely.
+   Fields:
+   - id, name
+   - aggression (0..1 higher = more aggressive)
+   - bioload (relative unit per fish)
+   - temp: [minF, maxF]
+   - pH: [min, max]
+   - schoolMin (recommended group size), soloOK (true for solitary)
+   - tags: ['anabantoid','longfin','shrimp','snail','predator', ...]
+   - aliases: search helpers
+*/
 
-  { id:"black_skirt_tetra", name:"Black skirt tetra",             points:2.0, min:6,  temp:[70,82], ph:[6.0,7.5] },
+(function () {
+  const DB = [
+    // Bettas & Gourami
+    { id:'betta_m', name:'Betta (male)', aggression:0.7, bioload:1.6, temp:[76,82], pH:[6.0,7.5], schoolMin:1, soloOK:true, tags:['anabantoid','longfin','predator'], aliases:['betta','siamese fighting fish','male betta'] },
+    { id:'betta_f', name:'Betta (female)', aggression:0.45, bioload:1.3, temp:[76,82], pH:[6.0,7.5], schoolMin:1, soloOK:true, tags:['anabantoid'], aliases:['female betta'] },
+    { id:'dgourami', name:'Dwarf Gourami', aggression:0.45, bioload:2.2, temp:[77,82], pH:[6.0,7.8], schoolMin:1, soloOK:true, tags:['anabantoid','longfin'], aliases:['colisa lalia'] },
+    { id:'pgourami', name:'Pearl Gourami', aggression:0.35, bioload:3.5, temp:[75,82], pH:[6.0,7.5], schoolMin:1, soloOK:true, tags:['anabantoid','longfin'], aliases:['trichopodus leerii'] },
 
-  // ---------- Rasboras / Danios / Barbs ----------
-  { id:"harlequin_rasbora", name:"Harlequin rasbora",             points:1.0, min:6,  temp:[72,80], ph:[6.0,7.8] },
-  { id:"chili_rasbora",     name:"Chili rasbora",                 points:0.6, min:10, temp:[72,82], ph:[4.0,7.0] },
-  { id:"zebra_danio",       name:"Zebra danio",                   points:1.2, min:6,  temp:[65,78], ph:[6.5,7.5] },
-  { id:"white_cloud",       name:"White cloud mountain minnow",   points:1.0, min:6,  temp:[60,72], ph:[6.5,7.5] },
-  { id:"cherry_barb",       name:"Cherry barb",                   points:2.0, min:6,  temp:[73,81], ph:[6.0,7.5] },
-  { id:"tiger_barb",        name:"Tiger barb",                    points:2.5, min:6,  temp:[74,79], ph:[6.0,7.0] },
+    // Tetras & Rasboras
+    { id:'cardinal', name:'Cardinal Tetra', aggression:0.2, bioload:0.25, temp:[75,82], pH:[5.5,7.0], schoolMin:6, soloOK:false, tags:['schooling','nano'], aliases:['paracheirodon axelrodi'] },
+    { id:'neon', name:'Neon Tetra', aggression:0.2, bioload:0.2, temp:[72,80], pH:[6.0,7.5], schoolMin:6, soloOK:false, tags:['schooling','nano'] },
+    { id:'ember', name:'Ember Tetra', aggression:0.15, bioload:0.15, temp:[73,82], pH:[5.5,7.5], schoolMin:8, soloOK:false, tags:['schooling','nano','tiny'] },
+    { id:'rummynose', name:'Rummy-nose Tetra', aggression:0.2, bioload:0.35, temp:[75,82], pH:[5.5,7.0], schoolMin:8, soloOK:false, tags:['schooling'] },
+    { id:'harlequin', name:'Harlequin Rasbora', aggression:0.2, bioload:0.3, temp:[72,80], pH:[6.0,7.8], schoolMin:6, soloOK:false, tags:['schooling'] },
+    { id:'chili', name:'Chili Rasbora', aggression:0.1, bioload:0.1, temp:[73,82], pH:[5.0,7.4], schoolMin:10, soloOK:false, tags:['schooling','nano','tiny'] },
 
-  // ---------- Livebearers ----------
-  { id:"guppy",             name:"Guppy (male)",                  points:1.6, min:3,  temp:[72,82], ph:[7.0,8.0] },
-  { id:"platy",             name:"Platy",                         points:3.0, min:3,  temp:[70,82], ph:[7.0,8.2] },
-  { id:"molly",             name:"Molly",                         points:4.0, min:3,  temp:[72,82], ph:[7.5,8.5] },
-  { id:"swordtail",         name:"Swordtail",                     points:4.5, min:3,  temp:[72,82], ph:[7.0,8.2] },
+    // Barbs, Danio
+    { id:'cherrybarb', name:'Cherry Barb', aggression:0.25, bioload:0.35, temp:[73,80], pH:[6.2,7.6], schoolMin:6, soloOK:false, tags:['schooling'] },
+    { id:'zebra', name:'Zebra Danio', aggression:0.25, bioload:0.4, temp:[65,78], pH:[6.0,8.0], schoolMin:6, soloOK:false, tags:['schooling','coolwater'] },
 
-  // ---------- Gouramis / Betta ----------
-  { id:"dwarf_gourami",     name:"Dwarf gourami",                 points:5.0, min:1,  temp:[77,82], ph:[6.0,7.5] },
-  { id:"honey_gourami",     name:"Honey gourami",                 points:3.5, min:1,  temp:[75,82], ph:[6.0,7.5] },
-  { id:"pearl_gourami",     name:"Pearl gourami",                 points:7.0, min:1,  temp:[77,82], ph:[6.0,8.0] },
-  { id:"betta_male",        name:"Betta (male)",                  points:6.0, min:1,  temp:[78,82], ph:[6.0,7.5] },
+    // Corydoras / bottom
+    { id:'cory_panda', name:'Corydoras (Panda)', aggression:0.05, bioload:0.5, temp:[68,77], pH:[6.0,7.5], schoolMin:6, soloOK:false, tags:['schooling','bottom'] },
+    { id:'cory_bronze', name:'Corydoras (Bronze)', aggression:0.05, bioload:0.6, temp:[72,82], pH:[5.8,7.8], schoolMin:6, soloOK:false, tags:['schooling','bottom'] },
+    { id:'otocinclus', name:'Otocinclus', aggression:0.05, bioload:0.15, temp:[72,80], pH:[6.0,7.5], schoolMin:6, soloOK:false, tags:['algae','schooling','bottom'] },
+    { id:'kuhli', name:'Kuhli Loach', aggression:0.1, bioload:0.6, temp:[75,82], pH:[5.5,7.5], schoolMin:6, soloOK:false, tags:['bottom'] },
 
-  // ---------- Bottom-dwellers ----------
-  { id:"cory_small",        name:"Corydoras (small)",             points:2.2, min:6,  temp:[72,79], ph:[6.2,7.4] },
-  { id:"cory_panda",        name:"Corydoras panda",               points:2.4, min:6,  temp:[68,77], ph:[6.0,7.4] }, // no sensitive flag
-  { id:"kuhli_loach",       name:"Kuhli loach",                   points:2.5, min:5,  temp:[75,82], ph:[5.5,7.0], sensitive:true },
-  { id:"otocinclus",        name:"Otocinclus",                    points:1.2, min:6,  temp:[72,82], ph:[6.0,7.5], sensitive:true },
-  { id:"bristlenose_pleco", name:"Bristlenose pleco",             points:8.0, min:1,  temp:[72,80], ph:[6.5,7.5] },
+    // Shrimp & snails
+    { id:'amano', name:'Amano Shrimp', aggression:0.05, bioload:0.05, temp:[68,78], pH:[6.2,7.8], schoolMin:6, soloOK:false, tags:['shrimp','algae'] },
+    { id:'neocaridina', name:'Cherry Shrimp (Neocaridina)', aggression:0.05, bioload:0.03, temp:[68,78], pH:[6.4,8.0], schoolMin:10, soloOK:false, tags:['shrimp','tiny'] },
+    { id:'nerite', name:'Nerite Snail', aggression:0.0, bioload:0.08, temp:[72,78], pH:[6.8,8.2], schoolMin:1, soloOK:true, tags:['snail','algae'] },
+    { id:'mysterysnail', name:'Mystery Snail', aggression:0.0, bioload:0.25, temp:[68,78], pH:[7.0,8.0], schoolMin:1, soloOK:true, tags:['snail'] },
 
-  // ---------- Rainbowfish ----------
-  { id:"praecox_rainbow",   name:"Dwarf rainbowfish (Praecox)",   points:4.5, min:6,  temp:[73,82], ph:[6.5,7.5] },
+    // Livebearers & others
+    { id:'guppy_m', name:'Guppy (male)', aggression:0.15, bioload:0.25, temp:[72,80], pH:[6.6,8.0], schoolMin:3, soloOK:false, tags:['livebearer','longfin','nano'] },
+    { id:'endlers', name:'Endler\'s Livebearer', aggression:0.15, bioload:0.2, temp:[72,80], pH:[6.6,8.0], schoolMin:6, soloOK:false, tags:['livebearer','nano'] },
 
-  // ---------- Cichlids ----------
-  { id:"angelfish",         name:"Angelfish",                     points:10.0, min:1, temp:[76,82], ph:[6.5,7.4] },
-  { id:"apistogramma",      name:"Apistogramma (pair)",           points:6.0, min:1,  temp:[76,82], ph:[5.5,6.8], sensitive:true },
-  { id:"ram_cichlid",       name:"Ram cichlid (German blue)",     points:5.0, min:1,  temp:[78,82], ph:[5.5,6.8], sensitive:true },
+    // Larger community markers
+    { id:'angelfish', name:'Angelfish', aggression:0.45, bioload:6.0, temp:[76,82], pH:[6.2,7.6], schoolMin:1, soloOK:true, tags:['cichlid','predator','longfin'] },
+  ];
 
-  // ---------- Invertebrates ----------
-  { id:"amano_shrimp",      name:"Amano shrimp",                  points:0.5, min:3,  temp:[64,80], ph:[6.5,7.5] },
-  { id:"cherry_shrimp",     name:"Cherry shrimp",                 points:0.3, min:6,  temp:[65,78], ph:[6.5,7.5] },
-  { id:"nerite_snail",      name:"Nerite snail",                  points:0.4, min:1,  temp:[68,85], ph:[7.0,8.5] },
-  { id:"mystery_snail",     name:"Mystery snail",                 points:0.8, min:1,  temp:[68,84], ph:[7.6,8.4] }
-];
+  // Expose
+  window.FISH_DB = DB;
+})();
