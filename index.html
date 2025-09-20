@@ -107,7 +107,7 @@
   /* Footer */
   footer{color:#0b3553; text-align:center; padding:14px 0 28px; font-weight:700}
 
-  /* ===== Micro-interactions (new) ===== */
+  /* ===== Micro-interactions ===== */
   @keyframes rowFadeSlideIn{
     0%{opacity:0; transform:translateY(6px)}
     100%{opacity:1; transform:translateY(0)}
@@ -121,38 +121,19 @@
   }
   .bar-fill.pulse{ animation: barPulse .45s ease-out; }
 
-  /* ===== Warning Bubbles (new) ===== */
+  /* Warning bubbles inside card */
   .warning-section + .warning-section { margin-top: 10px; }
-
-  .warning-title{
-    font-weight: 800;
-    color: #0f172a;
-    margin-bottom: 6px;
-  }
-
-  .warning-bubbles{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-  }
-
+  .warning-title{ font-weight:800;color:#0f172a;margin-bottom:6px; }
+  .warning-bubbles{ display:flex; flex-wrap:wrap; gap:8px; }
   .warning-bubble{
-    padding:6px 10px;
-    border-radius:12px;
-    font-size:.85rem;
-    font-weight:700;
-    color:#fff;
-    box-shadow:0 2px 6px rgba(2,6,23,.15);
-    background:#64748b; /* fallback */
+    padding:6px 10px; border-radius:12px; font-size:.85rem; font-weight:700;
+    color:#fff; box-shadow:0 2px 6px rgba(2,6,23,.15); background:#64748b;
   }
-
   .warning-bubble strong{ font-weight:800; }
-
-  /* Severity colors */
-  .warning-mild     { background:#facc15; color:#1a1a1a; } /* yellow */
-  .warning-moderate { background:#f97316; }               /* orange */
-  .warning-severe   { background:#dc2626; }               /* red */
-  .warning-info     { background:#3b82f6; }               /* blue */
+  .warning-mild     { background:#facc15; color:#1a1a1a; }
+  .warning-moderate { background:#f97316; }
+  .warning-severe   { background:#dc2626; }
+  .warning-info     { background:#3b82f6; }
 </style>
 </head>
 <body>
@@ -202,10 +183,10 @@
           <small class="note">Serious conflicts automatically max this bar.</small>
         </div>
         <div class="bar-block" style="margin-top:14px">
-          <h3>Environmental Fit (Temp & pH overlap)</h3>
+          <h3>Environment Fit (Temp & pH overlap)</h3>
           <div class="bar"><div id="envBarFill" class="bar-fill"></div></div>
           <div class="bar-note"><span>Compatible</span><span>Poor Fit</span></div>
-          <small class="note">Shows how well selected species match in temperature & pH.</small>
+          <small class="note">Shows how well selected species match in temperature &amp; pH.</small>
         </div>
       </div>
     </section>
@@ -267,13 +248,14 @@
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v9.2.0</strong> • Visual + micro-interactions • Updated Sep 18, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v9.3.0</strong> • Visual + micro-interactions • Updated Sep 19, 2025
   </footer>
 
   <!-- keep order: data → logic → app -->
   <script src="js/fish-data.js" defer></script>
   <script src="js/aggression.js" defer></script>
   <script src="js/stocking_advisor.js" defer></script>
-  <script type="module" src="js/modules/app.js?v=9.2.1"></script>
+  <script type="module" src="js/modules/app.js?v=9.3.0"></script>
+  <script type="module" src="js/modules/envfit.js?v=9.3.0"></script>
 </body>
 </html>
