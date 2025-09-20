@@ -1,23 +1,20 @@
-/* FishkeepingLifeCo — App module (v9.4.2) */
+/* FishkeepingLifeCo — App module (v9.4.3)
+   - Add button works on mobile Safari
+   - Quantities respected
+   - Bioload / Env Fit / Aggression bars + warnings
+*/
 
-const $ = (id) => document.getElementById(id);
-const toArray = (x) => (Array.isArray(x) ? x : x ? [x] : []);
-const norm = (s) => (s ?? '').toString().trim().toLowerCase();
-const canonName = (s) =>
-  norm(s).replace(/[_-]+/g, ' ')
-         .replace(/\s+/g, ' ')
-         .replace(/\s*\([^)]*\)\s*/g, '')
-         .trim();
+/* ---------------- Utilities ---------------- */
+const toArray = x => (Array.isArray(x) ? x : x ? [x] : []);
+const norm = s => (s ?? '').toString().trim().toLowerCase();
+const canonName = s =>
+  norm(s).replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').replace(/\s*\([^)]*\)\s*/g, '').trim();
 const titleCase = (s='') =>
   s.replace(/[_-]+/g,' ')
    .replace(/\s+/g,' ')
    .trim()
    .replace(/\b([a-z])/g, (_,c)=>c.toUpperCase());
-
 function safeQty(raw){
-  if (typeof raw === 'number' && Number.isFinite(raw)) {
-    return Math.min(999, Math.max(1, Math.floor(raw)));
-  }
   const s = (raw==null ? '' : String(raw)).replace(/[^\d]/g,'').slice(0,3);
   let n = parseInt(s,10);
   if (isNaN(n) || n < 1) n = 1;
@@ -25,7 +22,7 @@ function safeQty(raw){
   return n;
 }
 
-/* ---------- Data helpers ---------- */
+/* ---------------- Data helpers ---------------- */
 function byNameMap(list){
   const m = new Map();
   list.forEach(row=>{
@@ -36,276 +33,131 @@ function byNameMap(list){
   return m;
 }
 function getMinFromRow(row){ return row?.min ?? row?.recommendedMinimum ?? row?.minGroup ?? 1; }
-function getTempRange(row){ const t = row?.temp; return (Array.isArray(t)&&t.length===2)?[+t[0],+t[1]]:null; }
-function getPhRange(row){ const p = row?.ph; return (Array.isArray(p)&&p.length===2)?[+p[0],+p[1]]:null; }
+function getTempRange(r){ return (Array.isArray(r?.temp)&&r.temp.length===2)?r.temp.map(Number):null; }
+function getPhRange(r){ return (Array.isArray(r?.ph)&&r.ph.length===2)?r.ph.map(Number):null; }
 
-/* ---------- Select ---------- */
+/* ---------------- DOM ---------------- */
+function $(id){ return document.getElementById(id); }
+
+/* ---------------- Populate species ---------------- */
 function populateSelect(){
   const sel = $('fishSelect'), rec = $('recMin'), search = $('fishSearch');
   sel.innerHTML = '';
-  const list = Array.isArray(window.FISH_DATA) ? window.FISH_DATA.slice() : [];
-  list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-  for (const row of list){
-    const opt = document.createElement('option');
-    opt.value = row.name;
-    opt.textContent = row.name;
-    opt.dataset.min = String(getMinFromRow(row)||1);
+  const list = Array.isArray(window.FISH_DATA) ? [...window.FISH_DATA] : [];
+  list.sort((a,b)=> (a.name||'').localeCompare(b.name||''));
+  list.forEach(r=>{
+    const opt=document.createElement('option');
+    opt.value=r.name; opt.textContent=r.name;
+    opt.dataset.min = String(getMinFromRow(r)||1);
     sel.appendChild(opt);
-  }
+  });
   function updateRec(){
-    const opt = sel.selectedOptions[0];
-    rec.value = String(opt ? (parseInt(opt.dataset.min||'1',10)||1) : 1);
-  }
-  updateRec();
-
-  if (search){
-    search.addEventListener('input', function(){
-      const q = norm(this.value);
-      let first = null;
-      Array.from(sel.options).forEach(o=>{
-        const hit = !q || norm(o.textContent).includes(q);
-        o.hidden = !hit;
-        if (hit && !first) first = o;
-      });
-      if (first){ sel.value = first.value; updateRec(); }
-    });
+    const opt=sel.selectedOptions[0];
+    rec.value = opt ? opt.dataset.min||'1' : '1';
   }
   sel.addEventListener('change', updateRec);
+  if(search){
+    search.addEventListener('input', function(){
+      const q=norm(this.value); let first=null;
+      Array.from(sel.options).forEach(o=>{
+        const hit=!q||norm(o.textContent).includes(q);
+        o.hidden=!hit; if(hit&&!first) first=o;
+      });
+      if(first){ sel.value=first.value; updateRec(); }
+    });
+  }
+  updateRec();
 }
 
-/* ---------- Stock table ---------- */
+/* ---------------- Stock table ---------------- */
 function rowHTML(name, qty){
-  return `
-    <tr>
+  return `<tr>
       <td>${titleCase(name)}</td>
-      <td><input type="number" min="1" step="1" inputmode="numeric" value="${qty}" style="width:72px"/></td>
+      <td><input type="number" min="1" step="1" value="${qty}" style="width:72px"></td>
       <td style="text-align:right">
         <button class="btn btn-minus" type="button">−</button>
         <button class="btn btn-plus" type="button">+</button>
         <button class="btn btn-del" type="button" style="background:var(--bad)">Delete</button>
       </td>
-    </tr>
-  `.trim();
+    </tr>`;
 }
-function findRowByName(name){
-  const want = canonName(name);
-  for (const tr of $('#tbody').querySelectorAll('tr')){
-    const text = (tr.querySelector('td')?.textContent)||'';
-    if (canonName(text)===want) return tr;
+function addOrUpdateStock(name, qty){
+  const tbody=$('tbody');
+  let tr=[...tbody.querySelectorAll('tr')].find(tr=>canonName(tr.cells[0].textContent)===canonName(name));
+  if(tr){
+    const input=tr.querySelector('input');
+    input.value=safeQty((input.value||1))+qty;
+  } else {
+    const temp=document.createElement('tbody'); temp.innerHTML=rowHTML(name,qty);
+    tr=temp.firstElementChild; tbody.appendChild(tr); wireRow(tr);
   }
-  return null;
+  renderAll();
 }
 function wireRow(tr){
-  const input = tr.querySelector('input');
-  const minus = tr.querySelector('.btn-minus');
-  const plus  = tr.querySelector('.btn-plus');
-  const del   = tr.querySelector('.btn-del');
-
-  const rerender = () => renderAll();
-
-  input.addEventListener('input', rerender);
-  input.addEventListener('change', rerender);
-
-  minus.addEventListener('click', ()=>{
-    const v = safeQty(input.value) - 1;
-    if (v <= 0) tr.remove(); else input.value = String(v);
-    rerender();
-  });
-  plus.addEventListener('click', ()=>{
-    input.value = String(safeQty(input.value) + 1);
-    rerender();
-  });
-  del.addEventListener('click', ()=>{
-    tr.remove();
-    rerender();
-  });
-}
-function addOrUpdateStock(name, delta){
-  const tbody = $('#tbody');
-  let tr = findRowByName(name);
-  if (tr){
-    const input = tr.querySelector('input');
-    input.value = String(Math.max(1, safeQty((input && input.value) || 1) + delta));
-    renderAll();
-    return;
-  }
-  const w = document.createElement('tbody');
-  w.innerHTML = rowHTML(name, delta);
-  tr = w.firstElementChild;
-  tbody.appendChild(tr);
-  wireRow(tr);
-  renderAll();
+  const input=tr.querySelector('input');
+  tr.querySelector('.btn-minus').onclick=()=>{ let v=safeQty(input.value)-1; if(v<=0) tr.remove(); else input.value=v; renderAll(); };
+  tr.querySelector('.btn-plus').onclick=()=>{ input.value=safeQty(input.value)+1; renderAll(); };
+  tr.querySelector('.btn-del').onclick=()=>{ tr.remove(); renderAll(); };
+  input.oninput=renderAll; input.onchange=renderAll;
 }
 function readStock(){
-  const out = [];
-  $('#tbody').querySelectorAll('tr').forEach(tr=>{
-    const name = (tr.querySelector('td')?.textContent)||'';
-    const qty  = safeQty(tr.querySelector('input')?.value || 1);
-    if (name) out.push({ name, qty });
-  });
-  return out;
+  return [...$('tbody').querySelectorAll('tr')].map(tr=>({name:tr.cells[0].textContent, qty:safeQty(tr.querySelector('input').value)}));
 }
 
-/* ---------- Bars ---------- */
+/* ---------------- Bars ---------------- */
 function capacityUnits(){
-  const gallons = parseFloat($('gallons')?.value || '0') || 0;
-  const planted = !!$('planted')?.checked;
-  const filtVal = $('filtration')?.value || 'standard';
-  const filtFactor = (filtVal==='low') ? 0.8 : (filtVal==='high') ? 1.25 : 1.0;
-  const perGal = 0.9;
-  return Math.max(1, gallons * perGal) * filtFactor * (planted ? 1.10 : 1.0);
+  const g=parseFloat($('gallons')?.value||0)||0, planted=$('planted')?.checked, f=$('filtration')?.value;
+  const fFac=f==='low'?0.8:f==='high'?1.25:1, perGal=0.9;
+  return Math.max(1,g*perGal)*fFac*(planted?1.1:1);
 }
-function totalBioPoints(stock, nameMap){
-  let sum = 0;
-  stock.forEach(({name, qty})=>{
-    const row = nameMap.get(canonName(name));
-    const pts = Number(row?.points ?? 1);
-    sum += pts * (qty||0);
-  });
-  return sum;
+function totalBioPoints(stock,map){ return stock.reduce((s,{name,qty})=>s+(map.get(canonName(name))?.points||1)*qty,0); }
+function setBarFill(el,p){ if(el) el.style.width=Math.max(0,Math.min(100,p)).toFixed(1)+'%'; }
+function rangeOverlap(a,b){ if(!a||!b) return 0; const lo=Math.max(a[0],b[0]), hi=Math.min(a[1],b[1]), o=Math.max(0,hi-lo); return Math.max(0,Math.min(1,o/Math.max(b[1]-b[0],a[1]-a[0],1))); }
+function envFitResult(stock,map){
+  if(stock.length<2) return {fill:0,severe:false};
+  let t=1,p=1; const arr=[...new Set(stock.map(s=>canonName(s.name)))];
+  for(let i=0;i<arr.length;i++){const ri=map.get(arr[i]);
+    for(let j=i+1;j<arr.length;j++){const rj=map.get(arr[j]);
+      t=Math.min(t,rangeOverlap(getTempRange(ri),getTempRange(rj)));
+      p=Math.min(p,rangeOverlap(getPhRange(ri),getPhRange(rj)));
+    }}
+  const both=Math.min(t,p); return both<=0?{fill:100,severe:true}:{fill:(1-both)*100,severe:false};
 }
-function setBarFill(el, pct){
-  if (!el) return;
-  const p = Math.max(0, Math.min(100, pct));
-  el.style.width = p.toFixed(1) + '%';
-}
-
-/* Env fit */
-function rangeOverlap(a, b){
-  if (!a || !b) return 0;
-  const low  = Math.max(a[0], b[0]);
-  const high = Math.min(a[1], b[1]);
-  const widthA = Math.max(0, a[1]-a[0]);
-  const widthB = Math.max(0, b[1]-b[0]);
-  const widthO = Math.max(0, high - low);
-  const denom = Math.max(widthA, widthB, 1e-6);
-  return Math.max(0, Math.min(1, widthO / denom));
-}
-function envFitResult(stock, nameMap){
-  const uniq = new Set(stock.map(s=>canonName(s.name)));
-  if (uniq.size < 2) return { fill: 0, severe:false };
-  let tempScore = 1, phScore = 1;
-  const arr = Array.from(uniq);
-  for (let i=0;i<arr.length;i++){
-    const ri = nameMap.get(arr[i]);
-    const ti = getTempRange(ri), pi = getPhRange(ri);
-    for (let j=i+1;j<arr.length;j++){
-      const rj = nameMap.get(arr[j]);
-      const tj = getTempRange(rj), pj = getPhRange(rj);
-      tempScore = Math.min(tempScore, rangeOverlap(ti, tj));
-      phScore   = Math.min(phScore,   rangeOverlap(pi, pj));
-    }
-  }
-  const both = Math.min(tempScore, phScore);
-  if (both <= 0) return { fill: 100, severe:true };
-  return { fill: (1 - both) * 100, severe:false };
+function aggressionResult(stock,map){
+  const names=stock.map(s=>canonName(s.name)), warns=[]; let score=0;
+  const has=re=>names.some(n=>re.test(n)), pair=(a,b)=>has(a)&&has(b);
+  if(pair(/\bbetta\b/i,/\b(angelfish|gourami)\b/i)){score+=60;warns.push({txt:'Betta with Angelfish/Gourami = fin nipping risk.',sev:'severe'});}
+  if(has(/\btiger barb|serpae|skirt tetra|black skirt\b/i)&&has(/\b(betta|guppy|angelfish|gourami)\b/i)){score+=50;warns.push({txt:'Fin-nippers with long-finned fish.',sev:'moderate'});}
+  stock.forEach(s=>{const row=map.get(canonName(s.name));const min=getMinFromRow(row);if(min>=3&&s.qty<min){score+=10;warns.push({txt:`${titleCase(s.name)} prefer ${min}+ (have ${s.qty}).`,sev:'mild'});}});
+  return {score:Math.min(100,score),warns};
 }
 
-/* Aggression */
-function aggressionResult(stock, nameMap){
-  const names = stock.map(s=>canonName(s.name));
-  let score = 0;
-  const warns = [];
-
-  const has = re => names.some(n=>re.test(n));
-  const pair = (reA, reB) => has(reA) && has(reB);
-
-  if (pair(/\bbetta\b/i, /\b(angelfish|gourami)\b/i)) {
-    score += 60;
-    warns.push({txt:'Betta with long-finned fish (Angelfish/Gourami) can cause fin nipping and stress.', sev:'severe'});
-  }
-  const finNippers = /\b(tiger barb|serpae|skirt tetra|black skirt)\b/i;
-  if (has(finNippers) && has(/\b(betta|guppy|angelfish|gourami|molly|swordtail)\b/i)) {
-    score += 50;
-    warns.push({txt:'Known fin-nippers with long-finned or livebearers — monitor closely.', sev:'moderate'});
-  }
-  if (has(/\b(cichlid|apistogramma|kribensis|ram)\b/i) && names.length > 1){
-    score += 25;
-    warns.push({txt:'Cichlid mix can be territorial; ensure space and hiding spots.', sev:'mild'});
-  }
-  stock.forEach(s=>{
-    const row = nameMap.get(canonName(s.name));
-    const min = getMinFromRow(row) || 1;
-    if (min >= 3 && (s.qty||0) < min){
-      score += 10;
-      warns.push({txt:`${titleCase(s.name)} prefer groups of ${min}+ (stock is ${s.qty}).`, sev:'mild'});
-    }
-  });
-
-  score = Math.max(0, Math.min(100, score));
-  return { score, warns };
-}
-
-/* Warnings UI */
-function clearNode(el){ if(el) el.innerHTML=''; }
-function bubble(text, sev='info'){
-  const d = document.createElement('div');
-  d.className = `warning-bubble warning-${sev}`;
-  d.textContent = text;
-  return d;
-}
-
-/* Render */
-let nameMapCache = null;
+/* ---------------- Render ---------------- */
+let nameMap=null;
 function renderAll(){
-  if (!nameMapCache) nameMapCache = byNameMap(toArray(window.FISH_DATA||[]));
-  const stock = readStock();
+  if(!nameMap) nameMap=byNameMap(toArray(window.FISH_DATA));
+  const stock=readStock();
 
-  setBarFill($('bioBarFill'), Math.min(100, (totalBioPoints(stock, nameMapCache) / Math.max(1, capacityUnits())) * 100));
-
-  const env = envFitResult(stock, nameMapCache);
-  setBarFill($('envBarFill'), env.fill);
-  const compatBox = $('compat-warnings'); clearNode(compatBox);
-  if (env.severe) compatBox.appendChild(bubble('Temperature or pH ranges do not overlap.', 'severe'));
-
-  const agg = aggressionResult(stock, nameMapCache);
-  setBarFill($('aggBarFill'), agg.score);
-  const aggBox = $('aggression-warnings'); clearNode(aggBox);
-  agg.warns.forEach(w=> aggBox.appendChild(bubble(w.txt, w.sev)));
+  setBarFill($('bioBarFill'),(totalBioPoints(stock,nameMap)/capacityUnits())*100);
+  const env=envFitResult(stock,nameMap);
+  setBarFill($('envBarFill'),env.fill);
+  $('compat-warnings').innerHTML=''; if(env.severe)$('compat-warnings').appendChild(bubble('Temp or pH ranges incompatible','severe'));
+  const agg=aggressionResult(stock,nameMap);
+  setBarFill($('aggBarFill'),agg.score);
+  $('aggression-warnings').innerHTML=''; agg.warns.forEach(w=>$('aggression-warnings').appendChild(bubble(w.txt,w.sev)));
 }
+function bubble(txt,sev='info'){const d=document.createElement('div');d.className=`warning-bubble warning-${sev}`;d.textContent=txt;return d;}
 
-/* Global handler used by inline onclick */
-window.addSelectedFish = function(){
-  const sel = $('fishSelect'), qtyField = $('fQty'), recMin = $('recMin');
-  if (!sel || !sel.value) return;
-  const raw = (qtyField?.value ?? '').trim();
-  const qty = raw ? safeQty(raw) : safeQty(recMin?.value ?? '1');
-  addOrUpdateStock(sel.value, qty);
-};
-
-/* Listen to ultra-fallback event from index.html if needed */
-document.addEventListener('fk-add', (e)=>{
-  const d = e.detail||{};
-  if (!d.name) return;
-  addOrUpdateStock(d.name, safeQty(d.qty||1));
-});
-
-/* Boot */
+/* ---------------- Boot ---------------- */
 function boot(){
   populateSelect();
-
-  const addBtn = $('addFish');
-  if (addBtn && !addBtn._wired){
-    addBtn.addEventListener('click', window.addSelectedFish);
-    addBtn._wired = true;
-  }
-  const resetBtn = $('reset');
-  if (resetBtn && !resetBtn._wired){
-    resetBtn.addEventListener('click', ()=>{ $('tbody').innerHTML=''; renderAll(); });
-    resetBtn._wired = true;
-  }
-
-  $('tbody').querySelectorAll('tr').forEach(wireRow);
-  ['gallons','filtration','planted'].forEach(id=>{
-    const el = $(id); if (!el) return;
-    el.addEventListener('input', renderAll);
-    el.addEventListener('change', renderAll);
-  });
-
+  $('addFish').onclick=()=>{
+    const sel=$('fishSelect'); if(!sel||!sel.value)return;
+    const raw=$('fQty').value.trim(), qty=raw?safeQty(raw):safeQty($('recMin').value);
+    addOrUpdateStock(sel.value,qty);
+  };
+  $('reset').onclick=()=>{$('tbody').innerHTML='';renderAll();};
+  ['gallons','filtration','planted'].forEach(id=>$(id)?.addEventListener('input',renderAll));
   renderAll();
 }
-if (document.readyState === 'loading'){
-  document.addEventListener('DOMContentLoaded', boot);
-} else {
-  boot();
-}
+document.addEventListener('DOMContentLoaded', boot);
