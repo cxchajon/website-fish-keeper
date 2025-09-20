@@ -1,7 +1,8 @@
-/* FishkeepingLifeCo — App module (v9.3.6)
+/* FishkeepingLifeCo — App module (v9.3.7)
    - Quantities respected
    - Bars: Bioload, Env Fit, Aggression
    - Warning bubbles for Env & Aggression
+   - EnvFit ignores species with missing temp/pH (neutral)
 */
 
 /* ---------------- Utilities ---------------- */
@@ -128,24 +129,6 @@ function findRowByName(name){
   }
   return null;
 }
-function addOrUpdateStock(name, delta){
-  const tbody = $('#tbody');
-  let tr = findRowByName(name);
-  if (tr){
-    const input = tr.querySelector('input');
-    const next = Math.max(1, safeQty((input && input.value) || 1) + delta);
-    input.value = String(next);
-    renderAll();
-    return;
-  }
-  // create
-  const wrapper = document.createElement('tbody'); // temp to parse string
-  wrapper.innerHTML = rowHTML(name, delta);
-  tr = wrapper.firstElementChild;
-  tbody.appendChild(tr);
-  wireRow(tr);
-  renderAll();
-}
 function wireRow(tr){
   const input = tr.querySelector('input');
   const minus = tr.querySelector('.btn-minus');
@@ -169,6 +152,24 @@ function wireRow(tr){
     tr.remove();
     renderAll();
   });
+}
+function addOrUpdateStock(name, delta){
+  const tbody = $('#tbody');
+  let tr = findRowByName(name);
+  if (tr){
+    const input = tr.querySelector('input');
+    const next = Math.max(1, safeQty((input && input.value) || 1) + delta);
+    input.value = String(next);
+    renderAll();
+    return;
+  }
+  // create
+  const wrapper = document.createElement('tbody'); // temp to parse string
+  wrapper.innerHTML = rowHTML(name, delta);
+  tr = wrapper.firstElementChild;
+  tbody.appendChild(tr);
+  wireRow(tr);
+  renderAll();
 }
 function readStock(){
   const res = [];
@@ -202,13 +203,20 @@ function totalBioPoints(stock, nameMap){
 function setBarFill(el, pct){
   if (!el) return;
   const p = Math.max(0, Math.min(100, pct));
-  el.style.width = p.toFixed(1) + '%';
-  // pulse class could be toggled if you want micro animation
+  // micro pulse animation if CSS present
+  el.classList.remove('pulse');
+  // next frame to retrigger animation reliably
+  requestAnimationFrame(()=>{
+    el.style.width = p.toFixed(1) + '%';
+    el.classList.add('pulse');
+    setTimeout(()=>el.classList.remove('pulse'), 460);
+  });
 }
 
 /* ---------------- Bars: Environmental Fit ---------------- */
 function rangeOverlap(a, b){
-  if (!a || !b) return 0; // treat as no data → no overlap
+  // If either is missing, treat as neutral (ignore that pair)
+  if (!a || !b) return null;
   const low  = Math.max(a[0], b[0]);
   const high = Math.min(a[1], b[1]);
   const widthA = Math.max(0, a[1]-a[0]);
@@ -219,27 +227,36 @@ function rangeOverlap(a, b){
 }
 
 function envFitResult(stock, nameMap){
-  // With 0–1 species we show 0% fill and no warnings
-  const uniq = new Set(stock.map(s=>canonName(s.name)));
-  if (uniq.size < 2) return { fill: 0, severe:false };
+  // Build the set of *eligible* species (have BOTH temp and pH)
+  const uniq = Array.from(new Set(stock.map(s=>canonName(s.name))));
+  const eligible = uniq.filter(key=>{
+    const r = nameMap.get(key);
+    return !!getTempRange(r) && !!getPhRange(r);
+  });
+
+  // With fewer than 2 eligible species: show 0% fill, no warning
+  if (eligible.length < 2) return { fill: 0, severe:false };
 
   // Combine pairwise overlaps conservatively (take the minimum across pairs)
   let tempScore = 1, phScore = 1;
-  const arr = Array.from(uniq);
-  for (let i=0; i<arr.length; i++){
-    const ri = nameMap.get(arr[i]);
+  for (let i=0; i<eligible.length; i++){
+    const ri = nameMap.get(eligible[i]);
     const ti = getTempRange(ri), pi = getPhRange(ri);
-    for (let j=i+1; j<arr.length; j++){
-      const rj = nameMap.get(arr[j]);
+    for (let j=i+1; j<eligible.length; j++){
+      const rj = nameMap.get(eligible[j]);
       const tj = getTempRange(rj), pj = getPhRange(rj);
-      tempScore = Math.min(tempScore, rangeOverlap(ti, tj));
-      phScore   = Math.min(phScore,   rangeOverlap(pi, pj));
+
+      const to = rangeOverlap(ti, tj);
+      const po = rangeOverlap(pi, pj);
+
+      if (to != null) tempScore = Math.min(tempScore, to);
+      if (po != null) phScore   = Math.min(phScore,   po);
     }
   }
-  const both = Math.min(tempScore, phScore); // conservative
-  if (both <= 0) {
-    return { fill: 100, severe: true };
-  }
+
+  const both = Math.min(tempScore, phScore);
+  if (both <= 0) return { fill: 100, severe: true };
+
   // Fill grows as compatibility shrinks
   const fill = (1 - both) * 100;
   return { fill, severe:false };
