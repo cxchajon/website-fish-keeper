@@ -1,5 +1,5 @@
 /* =========================================================
-   FishkeepingLifeCo — modules/app.js  (v9.3.5)
+   FishkeepingLifeCo — modules/app.js  (v9.3.6)
    ========================================================= */
 
 /* ---------- tiny helpers ---------- */
@@ -53,7 +53,9 @@ function metaFor(name){
 /* ---------- UI state ---------- */
 let stock = []; // [{name, qty, min}]
 
-/* ---------- species select (self-healing + search) ---------- */
+/* =========================================================
+   Species dropdown (self-healing + search)
+   ========================================================= */
 function populateSpeciesSelect(){
   const sel = document.getElementById('fishSelect');
   if (!sel) return;
@@ -92,7 +94,9 @@ function populateSpeciesSelect(){
   }
 }
 
-/* ---------- stock table ---------- */
+/* =========================================================
+   Stock table
+   ========================================================= */
 function renderStock(){
   const tbody = document.getElementById('tbody');
   if (!tbody) return;
@@ -137,14 +141,15 @@ function renderStock(){
   });
 }
 
-/* ---------- bars ---------- */
+/* =========================================================
+   Bars + warnings helpers
+   ========================================================= */
 function setBar(id, pct){
   const fill = document.getElementById(id);
   if (!fill) return;
   fill.style.width = Math.max(0, Math.min(100, pct)) + '%';
 }
 
-/* ---------- warnings renderer ---------- */
 function bubble(cls, text){
   const d = document.createElement('div');
   d.className = 'warning-bubble ' + cls;
@@ -162,6 +167,9 @@ function banner(cls, text){
   return wrap;
 }
 
+/* =========================================================
+   Aggression warnings (schooling, fin-nippers, bettas)
+   ========================================================= */
 function renderWarningsAndAgg(aggScoreExtra = 0){
   const box = document.getElementById('aggression-warnings');
   if (!box) return;
@@ -169,7 +177,6 @@ function renderWarningsAndAgg(aggScoreExtra = 0){
 
   let risk = 0; // 0..100 for Aggression bar
 
-  // Schooling + fin nippers + betta rule
   for (const f of stock){
     const m = metaFor(f.name) || {};
     const min = Number(m.min || m.recommendedMinimum || f.min || 1) || 1;
@@ -199,12 +206,14 @@ function renderWarningsAndAgg(aggScoreExtra = 0){
   setBar('aggBarFill', risk);
 }
 
-/* ---------- environmental fit (Temp & pH) ---------- */
+/* =========================================================
+   Environmental fit (Temp & pH) → risk bar (0 good → 100 bad)
+   ========================================================= */
 /* Score logic:
    - For each dimension (temp, ph), compute intersection across all species.
    - Let union span be (maxHigh - minLow). Overlap ratio = max(0, interSpan)/unionSpan.
    - Combined fit = average of ratios (temp + pH)/2 * 100.
-   - Single species or missing data ⇒ no penalty (0% fill on Env bar).
+   - Single species or missing data ⇒ no penalty (0% risk on Env bar).
    - Env bar shows **risk**, so width = 100 - fit.
    - If either dimension has zero intersection ⇒ Severe banner + envRisk=100 and also max aggression.
 */
@@ -219,7 +228,6 @@ function computeEnvRisk(){
     };
   });
 
-  // If fewer than two with both datasets, treat as unknown ⇒ no penalty.
   const haveAny = ranges.some(r => r.t || r.p);
   if (!haveAny) return { risk: 0, severe: false, note: 'no-data' };
 
@@ -246,23 +254,50 @@ function computeEnvRisk(){
   const tempR = overlapRatio(r => r.t);
   const phR   = overlapRatio(r => r.p);
 
-  const fit = 0.5 * (tempR + phR);     // 0..1
+  const fit = 0.5 * (tempR + phR);             // 0..1
   const envRisk = Math.round(100 * (1 - fit)); // 0 good .. 100 bad
   const severe = (tempR === 0 || phR === 0);
 
   return { risk: envRisk, severe };
 }
 
-/* ---------- bioload (simple scalable placeholder) ---------- */
-function computeBioload(){
-  // Simple points: use qty sum scaled. (Your detailed units function can replace this.)
-  let total = 0;
-  for (const f of stock) total += f.qty;
-  // Each fish ~5% capacity (tunable)
-  return Math.min(100, total * 5);
+/* =========================================================
+   Bioload using fish-data "points"
+   ========================================================= */
+
+// read "points" per fish from fish-data; fall back to a tiny default if missing
+function pointsFor(name){
+  const m = metaFor(name) || {};
+  const v = Number(m.points ?? m.bioUnits ?? m.bioload ?? m.bio_load);
+  return Number.isFinite(v) && v > 0 ? v : 1; // safe fallback
 }
 
-/* ---------- render all ---------- */
+// capacity units scale with tank size, filtration, and plants
+function capacityUnits(){
+  const gallons = parseFloat(document.getElementById('gallons')?.value || '0') || 0;
+  const planted = !!document.getElementById('planted')?.checked;
+  const filtSel = document.getElementById('filtration');
+  const filt = (filtSel && filtSel.value) || 'standard';
+
+  // per-gallon capacity in “points”
+  const perGal = 0.9;                     // base capacity per gallon
+  const filtFactor   = (filt === 'low') ? 0.80 : (filt === 'high') ? 1.25 : 1.00;
+  const plantedBonus = planted ? 1.10 : 1.00;
+
+  return Math.max(1, gallons * perGal) * filtFactor * plantedBonus;
+}
+
+// turn total points into a 0–100% bar fill
+function computeBioload(){
+  const totalPoints = stock.reduce((sum, f) => sum + pointsFor(f.name) * (f.qty || 0), 0);
+  const cap = capacityUnits();
+  const pct = (totalPoints / cap) * 100;      // 100% == “at capacity”
+  return Math.max(0, Math.min(100, Math.round(pct)));
+}
+
+/* =========================================================
+   Render all
+   ========================================================= */
 function renderAll(){
   renderStock();
 
@@ -274,7 +309,6 @@ function renderAll(){
   setBar('envBarFill', env.risk);
 
   // Warnings + Aggression (add env severity weight)
-  const extra = env.severe ? 100 : Math.round(env.risk * 0.4); // mild coupling
   const warnBox = document.getElementById('aggression-warnings');
   if (warnBox){
     warnBox.innerHTML = '';
@@ -284,10 +318,15 @@ function renderAll(){
       warnBox.appendChild( banner('warning-moderate', 'Environment fit is tight — consider matching ranges better.') );
     }
   }
+
+  // Aggression score is decoupled; we just add a mild nudge from env risk, or max out if severe
+  const extra = env.severe ? 100 : Math.round(env.risk * 0.4);
   renderWarningsAndAgg(extra);
 }
 
-/* ---------- init ---------- */
+/* =========================================================
+   Init
+   ========================================================= */
 window.addEventListener('load', () => {
   populateSpeciesSelect();
 
@@ -319,7 +358,7 @@ window.addEventListener('load', () => {
     renderAll();
   });
 
-  // Tank controls (capacity hooks if you later add their effects)
+  // Tank controls (capacity hooks)
   ['gallons','planted','filtration'].forEach(id=>{
     const el = document.getElementById(id);
     el?.addEventListener('input', renderAll);
