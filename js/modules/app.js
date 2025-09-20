@@ -1,15 +1,18 @@
 /* FishkeepingLifeCo — App module (v9.3.7)
-   - Quantities respected
-   - Bars: Bioload, Env Fit, Aggression
-   - Warning bubbles for Env & Aggression
-   - EnvFit ignores species with missing temp/pH (neutral)
+   - Quantities respected (Safari-safe)
+   - Title-case names in Current Stock
+   - Bars: Bioload, Environmental Fit, Aggression (independent)
+   - Warning bubbles for Env Fit + Aggression (stacked, color-coded)
 */
 
 /* ---------------- Utilities ---------------- */
 const toArray = x => (Array.isArray(x) ? x : x ? [x] : []);
 const norm = s => (s ?? '').toString().trim().toLowerCase();
 const canonName = s =>
-  norm(s).replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').replace(/\s*\([^)]*\)\s*/g, '').trim();
+  norm(s).replace(/[_-]+/g, ' ')
+         .replace(/\s+/g, ' ')
+         .replace(/\s*\([^)]*\)\s*/g, '')
+         .trim();
 
 const titleCase = (s='') =>
   s.replace(/[_-]+/g,' ')
@@ -38,20 +41,14 @@ function byNameMap(list){
   });
   return m;
 }
-
-function getMinFromRow(row){
-  return row?.min ?? row?.recommendedMinimum ?? row?.minGroup ?? 1;
-}
-
+function getMinFromRow(row){ return row?.min ?? row?.recommendedMinimum ?? row?.minGroup ?? 1; }
 function getTempRange(row){
-  // Expect [low, high] in °F
   const t = row?.temp;
   if (Array.isArray(t) && t.length===2 && Number.isFinite(+t[0]) && Number.isFinite(+t[1])) {
     return [Number(t[0]), Number(t[1])];
   }
   return null;
 }
-
 function getPhRange(row){
   const p = row?.ph;
   if (Array.isArray(p) && p.length===2 && Number.isFinite(+p[0]) && Number.isFinite(+p[1])) {
@@ -60,7 +57,7 @@ function getPhRange(row){
   return null;
 }
 
-/* ---------------- DOM ---------------- */
+/* ---------------- DOM cache ---------------- */
 const els = {};
 function $(id){ return document.getElementById(id); }
 
@@ -77,8 +74,7 @@ function populateSelect(){
     const opt = document.createElement('option');
     opt.value = row.name;
     opt.textContent = row.name;
-    // stash rec min for quick read
-    opt.dataset.min = String(getMinFromRow(row) || 1);
+    opt.dataset.min = String(getMinFromRow(row) || 1); // rec min for fallback
     sel.appendChild(opt);
   });
 
@@ -129,6 +125,24 @@ function findRowByName(name){
   }
   return null;
 }
+function addOrUpdateStock(name, delta){
+  const tbody = $('#tbody');
+  let tr = findRowByName(name);
+  if (tr){
+    const input = tr.querySelector('input');
+    const next = Math.max(1, safeQty((input && input.value) || 1) + delta);
+    input.value = String(next);
+    renderAll();
+    return;
+  }
+  // create
+  const wrapper = document.createElement('tbody'); // temp to parse string
+  wrapper.innerHTML = rowHTML(name, delta);
+  tr = wrapper.firstElementChild;
+  tbody.appendChild(tr);
+  wireRow(tr);
+  renderAll();
+}
 function wireRow(tr){
   const input = tr.querySelector('input');
   const minus = tr.querySelector('.btn-minus');
@@ -152,24 +166,6 @@ function wireRow(tr){
     tr.remove();
     renderAll();
   });
-}
-function addOrUpdateStock(name, delta){
-  const tbody = $('#tbody');
-  let tr = findRowByName(name);
-  if (tr){
-    const input = tr.querySelector('input');
-    const next = Math.max(1, safeQty((input && input.value) || 1) + delta);
-    input.value = String(next);
-    renderAll();
-    return;
-  }
-  // create
-  const wrapper = document.createElement('tbody'); // temp to parse string
-  wrapper.innerHTML = rowHTML(name, delta);
-  tr = wrapper.firstElementChild;
-  tbody.appendChild(tr);
-  wireRow(tr);
-  renderAll();
 }
 function readStock(){
   const res = [];
@@ -203,66 +199,76 @@ function totalBioPoints(stock, nameMap){
 function setBarFill(el, pct){
   if (!el) return;
   const p = Math.max(0, Math.min(100, pct));
-  // micro pulse animation if CSS present
-  el.classList.remove('pulse');
-  // next frame to retrigger animation reliably
-  requestAnimationFrame(()=>{
-    el.style.width = p.toFixed(1) + '%';
-    el.classList.add('pulse');
-    setTimeout(()=>el.classList.remove('pulse'), 460);
-  });
+  el.style.width = p.toFixed(1) + '%';
 }
 
 /* ---------------- Bars: Environmental Fit ---------------- */
+// Overlap score: 1 = perfect; 0 = no overlap
 function rangeOverlap(a, b){
-  // If either is missing, treat as neutral (ignore that pair)
-  if (!a || !b) return null;
+  if (!a || !b) return 1; // missing data → neutral (don’t punish)
   const low  = Math.max(a[0], b[0]);
   const high = Math.min(a[1], b[1]);
   const widthA = Math.max(0, a[1]-a[0]);
   const widthB = Math.max(0, b[1]-b[0]);
   const widthO = Math.max(0, high - low);
   const denom = Math.max(widthA, widthB, 1e-6);
-  return Math.max(0, Math.min(1, widthO / denom)); // 1 = tightest species fully overlaps the other
+  return Math.max(0, Math.min(1, widthO / denom));
 }
 
+// Compute a conservative fit across all pairs; also return explicit warnings
 function envFitResult(stock, nameMap){
-  // Build the set of *eligible* species (have BOTH temp and pH)
-  const uniq = Array.from(new Set(stock.map(s=>canonName(s.name))));
-  const eligible = uniq.filter(key=>{
-    const r = nameMap.get(key);
-    return !!getTempRange(r) && !!getPhRange(r);
-  });
+  const uniq = new Set(stock.map(s=>canonName(s.name)));
+  if (uniq.size < 2) return { fill: 0, severe:false, warnings:[] };
 
-  // With fewer than 2 eligible species: show 0% fill, no warning
-  if (eligible.length < 2) return { fill: 0, severe:false };
-
-  // Combine pairwise overlaps conservatively (take the minimum across pairs)
   let tempScore = 1, phScore = 1;
-  for (let i=0; i<eligible.length; i++){
-    const ri = nameMap.get(eligible[i]);
+  const arr = Array.from(uniq);
+  const warns = [];
+
+  for (let i=0; i<arr.length; i++){
+    const ri = nameMap.get(arr[i]);
     const ti = getTempRange(ri), pi = getPhRange(ri);
-    for (let j=i+1; j<eligible.length; j++){
-      const rj = nameMap.get(eligible[j]);
+    for (let j=i+1; j<arr.length; j++){
+      const rj = nameMap.get(arr[j]);
       const tj = getTempRange(rj), pj = getPhRange(rj);
 
-      const to = rangeOverlap(ti, tj);
-      const po = rangeOverlap(pi, pj);
+      const tovl = rangeOverlap(ti, tj);
+      const povl = rangeOverlap(pi, pj);
 
-      if (to != null) tempScore = Math.min(tempScore, to);
-      if (po != null) phScore   = Math.min(phScore,   po);
+      tempScore = Math.min(tempScore, tovl);
+      phScore   = Math.min(phScore,   povl);
+
+      // If a pair fails (no overlap), emit explicit pair warning
+      if (tovl === 0 && ti && tj){
+        warns.push({
+          txt:`Temperature ranges don't overlap: ${ri.name} (${ti[0]}–${ti[1]}°F) vs ${rj.name} (${tj[0]}–${tj[1]}°F).`,
+          sev:'severe'
+        });
+      }
+      if (povl === 0 && pi && pj){
+        warns.push({
+          txt:`pH ranges don't overlap: ${ri.name} (${pi[0]}–${pi[1]}) vs ${rj.name} (${pj[0]}–${pj[1]}).`,
+          sev:'severe'
+        });
+      }
     }
   }
 
   const both = Math.min(tempScore, phScore);
-  if (both <= 0) return { fill: 100, severe: true };
-
+  if (both <= 0) {
+    return { fill: 100, severe:true, warnings: warns.length ? warns : [{txt:'Temperature or pH ranges do not overlap.', sev:'severe'}] };
+  }
   // Fill grows as compatibility shrinks
   const fill = (1 - both) * 100;
-  return { fill, severe:false };
+
+  // If overlap is small but not zero, issue a moderate caution
+  if (both < 0.35 && warns.length === 0){
+    warns.push({ txt:'Environmental ranges are tight — careful selection and acclimation advised.', sev:'moderate' });
+  }
+
+  return { fill, severe:false, warnings:warns };
 }
 
-/* ---------------- Bars: Aggression (simple rules) ---------------- */
+/* ---------------- Bars: Aggression (rule-based) ---------------- */
 function aggressionResult(stock){
   const names = stock.map(s=>canonName(s.name));
   let score = 0;
@@ -271,26 +277,32 @@ function aggressionResult(stock){
   const has = re => names.some(n=>re.test(n));
   const pair = (reA, reB) => has(reA) && has(reB);
 
-  // Betta vs long-fin gourami/angelfish/livebearers
+  // Species-only tanks (except male bettas): light baseline, we won’t add pair conflicts
+  if (new Set(names).size === 1 && !has(/\bbetta\b/i)) {
+    return { score: 10, warns: [] };
+  }
+
+  // Betta vs long-fin fish
   if (pair(/\bbetta\b/i, /\b(angelfish|gourami)\b/i)) {
     score += 60;
     warns.push({txt:'Betta with long-finned fish (Angelfish/Gourami) can cause fin nipping and stress.', sev:'severe'});
   }
 
-  // Fin-nippers vs long-fins/livebearers
+  // Fin-nippers with long fins / livebearers
   const finNippers = /\b(tiger barb|serpae|skirt tetra|black skirt)\b/i;
   if (has(finNippers) && has(/\b(betta|guppy|angelfish|gourami|molly|swordtail)\b/i)) {
     score += 50;
     warns.push({txt:'Known fin-nippers with long-finned or livebearers — monitor closely.', sev:'moderate'});
   }
 
-  // Cichlid mix (very broad, nudge only unless we detect rams/apsito + angels)
-  if (has(/\b(cichlid|apistogramma|kribensis|ram)\b/i) && names.length > 1){
-    score += 25;
-    warns.push({txt:'Cichlid mix can be territorial; ensure space and hiding spots.', sev:'mild'});
+  // Growing/territorial species in small tanks (generic nudge)
+  const territorial = /\b(bristlenose|pleco|cichlid|apistogramma|kribensis|ram)\b/i;
+  if (has(territorial)){
+    score += 15;
+    warns.push({txt:'Territorial tendencies — provide caves/line-of-sight breaks and adequate space.', sev:'mild'});
   }
 
-  // Schooling shortfall = social stress (mild)
+  // Schooling shortfall
   stock.forEach(s=>{
     const row = windowNameMap.get(canonName(s.name));
     const min = getMinFromRow(row) || 1;
@@ -301,10 +313,13 @@ function aggressionResult(stock){
   });
 
   score = Math.max(0, Math.min(100, score));
+  // If any severe warning exists, peg the bar at 100 for emphasis
+  if (warns.some(w=>w.sev==='severe')) score = 100;
+
   return { score, warns };
 }
 
-/* ---------------- Render warnings ---------------- */
+/* ---------------- Warning rendering ---------------- */
 function clearNode(el){ if(el) el.innerHTML = ''; }
 function bubble(text, sev='info'){
   const d = document.createElement('div');
@@ -329,23 +344,19 @@ function renderAll(){
   const bioPct = (bioPts / Math.max(1, cap)) * 100;
   setBarFill($('#bioBarFill'), Math.min(100, bioPct));
 
-  // ENV FIT
+  // ENV FIT (independent of aggression)
   const envRes = envFitResult(stock, windowNameMap);
   setBarFill($('#envBarFill'), envRes.fill);
   const compatBox = $('#compat-warnings');
   clearNode(compatBox);
-  if (envRes.severe){
-    compatBox.appendChild(bubble('Temperature or pH ranges do not overlap.', 'severe'));
-  }
+  envRes.warnings.forEach(w => compatBox.appendChild(bubble(w.txt, w.sev)));
 
   // AGGRESSION (independent of env)
   const agg = aggressionResult(stock);
   setBarFill($('#aggBarFill'), agg.score);
   const aggBox = $('#aggression-warnings');
   clearNode(aggBox);
-  agg.warns.forEach(w=>{
-    aggBox.appendChild(bubble(w.txt, w.sev));
-  });
+  agg.warns.forEach(w=> aggBox.appendChild(bubble(w.txt, w.sev)));
 }
 
 /* ---------------- Boot & events ---------------- */
@@ -368,7 +379,7 @@ function boot(){
                         : safeQty(els.recMin?.value ?? '1');
 
     addOrUpdateStock(name, qty);
-    // do not overwrite user input; leave it as-is
+    // don’t overwrite user input; leave it
   });
 
   // Reset
@@ -377,7 +388,7 @@ function boot(){
     renderAll();
   });
 
-  // Wire existing rows (none initially, but be safe)
+  // Wire existing rows (if any)
   $('#tbody').querySelectorAll('tr').forEach(wireRow);
 
   // Tank controls
