@@ -1,100 +1,47 @@
-/* js/modules/app.js
- * Small orchestrator: reads controls + table, updates bars,
- * asks Aggression + Warnings to render UI bubbles.
- */
-(function(){
-  // ---------- tiny utils ----------
-  function $(id){ return document.getElementById(id); }
-  function norm(s){ return (s||'').toString().trim(); }
-  function safeInt(s, def){ const n = parseInt(s,10); return Number.isFinite(n) ? n : (def||0); }
+// js/modules/app.js
+import { initStockUI } from './stock.js';
+import { renderAllBars } from './bioload.js';
 
-  // ---------- read stock from table ----------
-  function readStock(){
-    const tbody = $('tbody');
-    if(!tbody) return [];
-    return Array.from(tbody.querySelectorAll('tr')).map(tr=>{
-      const tds = tr.querySelectorAll('td');
-      const name = norm(tds[0]?.textContent||'');
-      const qtyEl = tds[1]?.querySelector('input');
-      const qty = safeInt(qtyEl && qtyEl.value, 0);
-      return name ? { name, qty } : null;
-    }).filter(Boolean);
-  }
+// Simple status strip so we know everything is wired
+(function statusCheck(){
+  const diag = document.getElementById('diag');
+  if (!diag) return;
+  const box = diag.querySelector('div');
+  const issues = [];
+  if (!document.getElementById('fishSelect')) issues.push('Species dropdown missing');
+  if (!document.getElementById('tbody')) issues.push('Table body missing');
+  const fishData = window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES;
+  if (!fishData) issues.push('No global species list found');
+  const ok = issues.length === 0;
+  diag.className = ok ? 'ok' : 'err';
+  box.textContent = ok ? 'Core OK • Safety adapter ready' : 'Issues: '+issues.join(' | ');
+})();
 
-  // ---------- capacity + bioload (already handled elsewhere) ----------
-  function renderBioload(){
-    if (typeof window.totalBioUnits !== 'function' ||
-        typeof window.capacityUnits !== 'function') return;
+function replaceWithClone(el){
+  if (!el) return el;
+  const clone = el.cloneNode(true);
+  el.replaceWith(clone);
+  return clone;
+}
 
-    const bar = $('bioBarFill'); if(!bar) return;
-    const total = window.totalBioUnits();
-    const cap   = window.capacityUnits();
-    const pct   = Math.max(0, Math.min(160, (total / cap) * 100));
-    bar.style.width = pct.toFixed(1) + '%';
-  }
+export function renderAll(){
+  renderAllBars();
+}
 
-  // ---------- environment fit (temp/pH) — already implemented in your env module ----------
-  function renderEnvFit(){
-    // keep your existing environment-fit logic; this function just calls it if present
-    if (window.EnvFit && typeof window.EnvFit.render === 'function'){
-      const stock = readStock();
-      const opts = {
-        planted: !!$('planted')?.checked,
-        gallons: parseFloat($('gallons')?.value || '0') || 0
-      };
-      window.EnvFit.render(stock, opts);
-    }
-  }
+window.addEventListener('load', () => {
+  // Nuke any legacy listeners that might still be attached by other scripts
+  replaceWithClone(document.getElementById('addFish'));
+  replaceWithClone(document.getElementById('reset'));
 
-  // ---------- aggression bubbles ----------
-  function renderAggression(){
-    const stock = readStock();
-    const opts = {
-      planted: !!$('planted')?.checked,
-      gallons: parseFloat($('gallons')?.value || '0') || 0
-    };
-    if (window.Warnings && typeof window.Warnings.render === 'function'){
-      window.Warnings.render(stock, opts);
-    } else if (window.Aggression && typeof window.Aggression.compute === 'function'){
-      // Fallback: just set bar if bubbles module missing
-      const res = window.Aggression.compute(stock, opts) || {score:0};
-      const bar = $('aggBarFill'); if(bar) bar.style.width = Math.max(0, Math.min(100, res.score||0)) + '%';
-    }
-  }
+  initStockUI();
 
-  // ---------- main render ----------
-  function renderAll(){
-    renderBioload();
-    renderAggression();
-    renderEnvFit();
-  }
-
-  // ---------- events ----------
-  window.addEventListener('load', function(){
-    // controls → re-render
-    ['gallons','planted','filtration','fishSearch','fishSelect','fQty'].forEach(id=>{
-      const el = $(id); if(!el) return;
-      el.addEventListener('input', renderAll);
-      el.addEventListener('change', renderAll);
-    });
-
-    // delegate changes in the stock table (qty +/- buttons)
-    const tbody = $('tbody');
-    if (tbody){
-      tbody.addEventListener('input', renderAll, true);
-      tbody.addEventListener('change', renderAll, true);
-      tbody.addEventListener('click', function(e){
-        const t = e.target;
-        if (t && (t.matches('button') || t.matches('input[type="number"]'))){
-          // give DOM a tick to update values
-          setTimeout(renderAll, 0);
-        }
-      }, true);
-    }
-
-    renderAll();
+  // Re-render on tank control changes
+  ['gallons','planted','filtration'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('input', renderAll);
+    el.addEventListener('change', renderAll);
   });
 
-  // Expose for other modules if needed
-  window.__renderAll__ = renderAll;
-})();
+  renderAll();
+});
