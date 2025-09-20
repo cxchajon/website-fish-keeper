@@ -1,62 +1,53 @@
-/* FishkeepingLifeCo — App bootstrap (module)
- * Purpose: wire up UI, preserve user-entered Quantity, pretty names,
- * and drive the 3 bars (Bioload delegated to existing code; EnvFit here).
- *
- * Assumes you already have:
- *   - window.FISH_DATA  (your species list)
- *   - (optional) window.Aggression.compute(...) for aggression + warnings
- *   - CSS in /css/app.css for visuals
+/* FishkeepingLifeCo — App module (hardening)
+ * - Respect user Quantity (Safari-safe)
+ * - Kill legacy listeners (clone buttons)
+ * - Pretty names in Current Stock
+ * - Bars: Bioload (delegated), Aggression (delegated), Env Fit (here)
  */
 
 import { safeQty, canonName, formatName } from './utils.js';
 
-/* ----------------------------- helpers ----------------------------- */
-
-// Map species by canonical name for fast lookup
-function getSpeciesMap() {
-  const src = (window.FISH_DATA || []);
+/* ---------------- utils for species lookup ---------------- */
+function speciesMap() {
   const map = new Map();
-  src.forEach(row => {
-    const key = canonName(row.name || row.species || row.common || row.id || '');
-    if (key) map.set(key, row);
+  (window.FISH_DATA || []).forEach(r => {
+    const key = canonName(r.name || r.species || r.common || r.id || '');
+    if (key) map.set(key, r);
   });
   return map;
 }
+function rangesFor(key, map) {
+  const row = map.get(key);
+  if (!row) return null;
+  return {
+    temp: Array.isArray(row.temp) ? row.temp : null,
+    ph:   Array.isArray(row.ph)   ? row.ph   : null,
+  };
+}
 
-function getRowFor(nameCanon) {
-  const tbody = document.getElementById('tbody');
-  if (!tbody) return null;
-  const rows = tbody.querySelectorAll('tr');
-  for (let i = 0; i < rows.length; i++) {
-    const cell = rows[i].querySelector('td');
-    const text = (cell?.textContent || '').trim();
-    if (canonName(text) === nameCanon) return rows[i];
+/* ---------------- Current Stock table ---------------- */
+function rowByCanon(nameCanon){
+  const rows = document.querySelectorAll('#tbody tr');
+  for (const tr of rows){
+    const txt = (tr.querySelector('td')?.textContent || '').trim();
+    if (canonName(txt) === nameCanon) return tr;
   }
   return null;
 }
 
-// Add or update a row in Current Stock (format name for display)
-function addOrUpdateRowUI(displayName, qtyDelta) {
-  const nameCanon = canonName(displayName);
-  const tbody = document.getElementById('tbody');
-  if (!tbody) return;
+function addOrUpdateRowUI(displayName, qtyDelta){
+  const tbody = document.getElementById('tbody'); if (!tbody) return;
+  const key = canonName(displayName);
 
-  // If row exists, bump quantity
-  const existing = getRowFor(nameCanon);
-  if (existing) {
-    const input = existing.querySelector('td:nth-child(2) input');
-    const current = safeQty(input?.value ?? 0);
-    const next = Math.max(0, current + safeQty(qtyDelta));
-    if (next <= 0) {
-      existing.remove();
-    } else {
-      input.value = next;
-    }
+  const exist = rowByCanon(key);
+  if (exist){
+    const inp = exist.querySelector('td:nth-child(2) input');
+    const next = Math.max(0, safeQty(inp?.value ?? 0) + safeQty(qtyDelta));
+    if (next === 0) exist.remove(); else inp.value = String(next);
     renderAll();
     return;
   }
 
-  // Create row
   if (safeQty(qtyDelta) <= 0) return;
 
   const tr = document.createElement('tr');
@@ -66,24 +57,18 @@ function addOrUpdateRowUI(displayName, qtyDelta) {
 
   const tdQty = document.createElement('td');
   const input = document.createElement('input');
-  input.type = 'number';
-  input.min = '0';
-  input.step = '1';
-  input.inputMode = 'numeric';
+  input.type = 'number'; input.min = '0'; input.step = '1'; input.inputMode = 'numeric';
   input.style.width = '64px';
   input.value = String(safeQty(qtyDelta));
   input.addEventListener('input', renderAll);
   input.addEventListener('change', renderAll);
   tdQty.appendChild(input);
 
-  const tdAct = document.createElement('td');
-  tdAct.style.textAlign = 'right';
+  const tdAct = document.createElement('td'); tdAct.style.textAlign = 'right';
+  const bMinus = document.createElement('button'); bMinus.textContent='−'; bMinus.className='btn'; bMinus.style.marginRight='6px'; bMinus.type='button';
+  const bPlus  = document.createElement('button'); bPlus.textContent = '+'; bPlus.className='btn'; bPlus.style.marginRight='6px'; bPlus.type='button';
+  const bDel   = document.createElement('button'); bDel.textContent  = 'Delete'; bDel.className='btn'; bDel.style.background='var(--bad)'; bDel.type='button';
 
-  const bMinus = document.createElement('button');
-  bMinus.textContent = '−';
-  bMinus.className = 'btn';
-  bMinus.style.marginRight = '6px';
-  bMinus.type = 'button';
   bMinus.addEventListener('click', () => {
     const curr = safeQty(input.value);
     const next = Math.max(0, curr - 1);
@@ -91,304 +76,191 @@ function addOrUpdateRowUI(displayName, qtyDelta) {
     if (next === 0) tr.remove();
     renderAll();
   });
+  bPlus.addEventListener('click', () => { input.value = String(safeQty(input.value) + 1); renderAll(); });
+  bDel.addEventListener('click', () => { tr.remove(); renderAll(); });
 
-  const bPlus = document.createElement('button');
-  bPlus.textContent = '+';
-  bPlus.className = 'btn';
-  bPlus.style.marginRight = '6px';
-  bPlus.type = 'button';
-  bPlus.addEventListener('click', () => {
-    input.value = String(safeQty(input.value) + 1);
-    renderAll();
-  });
-
-  const bDel = document.createElement('button');
-  bDel.textContent = 'Delete';
-  bDel.className = 'btn';
-  bDel.style.background = 'var(--bad)';
-  bDel.type = 'button';
-  bDel.addEventListener('click', () => {
-    tr.remove();
-    renderAll();
-  });
-
-  tdAct.appendChild(bMinus);
-  tdAct.appendChild(bPlus);
-  tdAct.appendChild(bDel);
-
-  tr.appendChild(tdName);
-  tr.appendChild(tdQty);
-  tr.appendChild(tdAct);
-
-  // cute pop-in
+  tdAct.appendChild(bMinus); tdAct.appendChild(bPlus); tdAct.appendChild(bDel);
+  tr.appendChild(tdName); tr.appendChild(tdQty); tr.appendChild(tdAct);
   tr.classList.add('row-appear');
   tbody.appendChild(tr);
   renderAll();
 }
 
-function readStockUI() {
+function readStockUI(){
   const tbody = document.getElementById('tbody');
   if (!tbody) return [];
   return Array.from(tbody.querySelectorAll('tr')).map(tr => {
-    const nameCell = tr.querySelector('td');
-    const qtyInput = tr.querySelector('td:nth-child(2) input');
-    const name = (nameCell?.textContent || '').trim();
-    const qty = safeQty(qtyInput?.value ?? 0);
+    const name = (tr.querySelector('td')?.textContent || '').trim();
+    const qty  = safeQty(tr.querySelector('td:nth-child(2) input')?.value ?? 0);
     return name ? { name, qty } : null;
   }).filter(Boolean);
 }
 
-/* ---------------------- bars: Bioload & Aggression ---------------------- */
-
-// Let your existing scripts handle these if present
-function renderBioloadBar() {
-  if (typeof window.renderBioload === 'function') {
-    window.renderBioload();
-    return;
-  }
-  // Fallback: leave as-is (no-op)
+/* ---------------- Bars: Bioload & Aggression ---------------- */
+function renderBioloadBar(){
+  if (typeof window.renderBioload === 'function') { window.renderBioload(); }
 }
-
-function renderAggressionAndWarnings() {
-  const box = document.getElementById('aggression-warnings');
+function renderAggressionAndWarnings(){
   const bar = document.getElementById('aggBarFill');
-  if (!box || !bar) return;
-
+  const box = document.getElementById('aggression-warnings');
+  if (!bar || !box) return;
   box.innerHTML = '';
 
-  const stock = readStockUI();
-
-  let score = 0;
-  let warnings = [];
-
-  if (window.Aggression && typeof window.Aggression.compute === 'function') {
-    try {
+  let score = 0, warnings = [];
+  if (window.Aggression?.compute){
+    try{
       const opts = {
         planted: !!document.getElementById('planted')?.checked,
         gallons: Number(document.getElementById('gallons')?.value || 0) || 0
       };
-      const res = window.Aggression.compute(stock, opts) || {};
+      const res = window.Aggression.compute(readStockUI(), opts) || {};
       score = Number(res.score || 0);
       warnings = Array.isArray(res.warnings) ? res.warnings : [];
-    } catch (_) {}
+    }catch{}
   }
-
-  // Bar: clamp 0–100, animate via CSS
-  const pct = Math.max(0, Math.min(100, score));
-  bar.style.width = pct.toFixed(1) + '%';
-
-  // Render warnings (simple list; your styled bubbles will pick up from CSS if present)
-  warnings.forEach(w => {
-    const d = document.createElement('div');
-    d.textContent = w;
-    box.appendChild(d);
-  });
+  bar.style.width = Math.max(0, Math.min(100, score)).toFixed(1) + '%';
+  warnings.forEach(w => { const d=document.createElement('div'); d.textContent=w; box.appendChild(d); });
 }
 
-/* -------------------------- Environment Fit bar -------------------------- */
-/* Based on temp & pH overlap across DISTINCT species
- * - 0 with 0–1 species
- * - builds as more compatible pairs exist
- * - edge-touch counts as tight (small positive)
- */
-
-function speciesRangesFor(nameCanon, map) {
-  const row = map.get(nameCanon);
-  if (!row) return null;
-  const temp = Array.isArray(row.temp) ? row.temp : null; // [low, high]
-  const ph   = Array.isArray(row.ph)   ? row.ph   : null;
-  return { temp, ph };
-}
-
-function pairOverlapRatio(a, b) {
-  // ratio 0..1 for temp, and for pH, then averaged (ignore missing fields)
-  let parts = [];
-  if (a.temp && b.temp) {
-    const [aL, aH] = a.temp;
-    const [bL, bH] = b.temp;
-    const overlap = Math.max(0, Math.min(aH, bH) - Math.max(aL, bL));
-    const denom = Math.max(0.01, Math.min(aH - aL, bH - bL)); // “tight” uses narrower band
-    const tempRatio = Math.max(0, Math.min(1, overlap / denom));
-    parts.push(tempRatio);
+/* ---------------- Environment Fit (Temp & pH) ---------------- */
+function pairOverlap(a, b){
+  const parts = [];
+  if (a.temp && b.temp){
+    const [aL,aH] = a.temp, [bL,bH] = b.temp;
+    const ov = Math.max(0, Math.min(aH,bH) - Math.max(aL,bL));
+    const denom = Math.max(0.01, Math.min(aH-aL, bH-bL));
+    parts.push(Math.max(0, Math.min(1, ov/denom)));
   }
-  if (a.ph && b.ph) {
-    const [aL, aH] = a.ph;
-    const [bL, bH] = b.ph;
-    const overlap = Math.max(0, Math.min(aH, bH) - Math.max(aL, bL));
-    const denom = Math.max(0.01, Math.min(aH - aL, bH - bL));
-    const phRatio = Math.max(0, Math.min(1, overlap / denom));
-    parts.push(phRatio);
+  if (a.ph && b.ph){
+    const [aL,aH] = a.ph, [bL,bH] = b.ph;
+    const ov = Math.max(0, Math.min(aH,bH) - Math.max(aL,bL));
+    const denom = Math.max(0.01, Math.min(aH-aL, bH-bL));
+    parts.push(Math.max(0, Math.min(1, ov/denom)));
   }
-  if (!parts.length) return 0.0;
-  return parts.reduce((s, x) => s + x, 0) / parts.length;
+  if (!parts.length) return 0;
+  return (parts[0] + (parts[1] ?? parts[0])) / (parts.length);
 }
-
-function renderEnvFitBar() {
-  const bar = document.getElementById('envBarFill') || document.getElementById('envBar') || document.getElementById('envBarFill');
+function renderEnvFitBar(){
+  const bar = document.getElementById('envBarFill'); // make sure index uses this id
   if (!bar) return;
 
-  const stock = readStockUI()
-    .filter(x => safeQty(x.qty) > 0)
-    .map(x => canonName(x.name));
+  const distinct = Array.from(new Set(
+    readStockUI().filter(x => x.qty > 0).map(x => canonName(x.name))
+  ));
+  if (distinct.length < 2){ bar.style.width = '0%'; return; }
 
-  // distinct species only
-  const distinct = Array.from(new Set(stock));
-  if (distinct.length < 2) {
-    bar.style.width = '0%'; // start from zero; builds as you mix
-    return;
-  }
-
-  const map = getSpeciesMap();
-  // build all unordered pairs
-  let sum = 0;
-  let count = 0;
-  for (let i = 0; i < distinct.length; i++) {
-    const a = speciesRangesFor(distinct[i], map);
-    if (!a) continue;
-    for (let j = i + 1; j < distinct.length; j++) {
-      const b = speciesRangesFor(distinct[j], map);
-      if (!b) continue;
-      sum += pairOverlapRatio(a, b);
-      count++;
+  const map = speciesMap();
+  let sum = 0, count = 0;
+  for (let i=0;i<distinct.length;i++){
+    const A = rangesFor(distinct[i], map); if (!A) continue;
+    for (let j=i+1;j<distinct.length;j++){
+      const B = rangesFor(distinct[j], map); if (!B) continue;
+      sum += pairOverlap(A,B); count++;
     }
   }
-
-  if (!count) {
-    bar.style.width = '0%';
-    return;
-  }
-
-  // Average compatibility across pairs → percentage
-  const avg = sum / count;              // 0..1
-  const pct = Math.max(0, Math.min(100, Math.round(avg * 100)));
-  bar.style.width = pct + '%';
+  const avg = count ? (sum / count) : 0;
+  bar.style.width = Math.round(avg * 100) + '%';
 }
 
-/* ----------------------------- species select ---------------------------- */
-
-function extractSpeciesListFromData() {
-  const src = window.FISH_DATA || [];
-  if (!Array.isArray(src)) return [];
-  return src.map(o => {
-    const name = o?.name || o?.species || o?.common || '';
-    const min = Number(o?.min || o?.recommendedMinimum || o?.minGroup || 0) || 0;
-    return name ? { name, min } : null;
-  }).filter(Boolean);
-}
-
-function populateSelectIfEmpty() {
-  const sel = document.getElementById('fishSelect');
-  if (!sel || sel.options.length) return;
-
-  let list = extractSpeciesListFromData();
-  if (!list.length) {
-    list = [
-      { name: 'Neon tetra', min: 6 },
-      { name: 'Harlequin rasbora', min: 6 },
-      { name: 'Corydoras (small)', min: 6 },
-      { name: 'Betta (male)', min: 1 },
-    ];
-  }
-  list.sort((a, b) => a.name.localeCompare(b.name));
-  list.forEach(item => {
+/* ---------------- Species select & search ---------------- */
+function buildSelect(){
+  const sel = document.getElementById('fishSelect'); if (!sel || sel.options.length) return;
+  let list = Array.isArray(window.FISH_DATA) ? window.FISH_DATA : [];
+  list = list.map(o => ({ name: o?.name || o?.species || o?.common || '', min: Number(o?.min || o?.recommendedMinimum || o?.minGroup || 0) || 0 }))
+             .filter(x => x.name);
+  list.sort((a,b)=>a.name.localeCompare(b.name));
+  for (const it of list){
     const opt = document.createElement('option');
-    opt.value = item.name;
-    opt.textContent = item.name;
-    opt.dataset.min = String(item.min || 1);
+    opt.value = it.name;
+    opt.textContent = it.name;
+    opt.dataset.min = String(it.min || 1);
     sel.appendChild(opt);
-  });
-
-  // keep "Recommended minimum" in sync — do NOT touch Quantity
-  const recMinEl = document.getElementById('recMin');
-  function syncRecMin() {
-    const opt = sel.selectedOptions[0];
-    const min = Number(opt?.dataset?.min || 1) || 1;
-    if (recMinEl) recMinEl.value = String(min);
   }
-  sel.addEventListener('change', syncRecMin);
 
-  // search filter
+  const rec = document.getElementById('recMin');
+  const syncRec = () => { const m = Number(sel.selectedOptions[0]?.dataset?.min || 1) || 1; if (rec) rec.value = String(m); };
+  sel.addEventListener('change', syncRec);
+  syncRec();
+
   const search = document.getElementById('fishSearch');
-  if (search) {
-    search.addEventListener('input', function () {
-      const q = (this.value || '').toLowerCase();
-      Array.from(sel.options).forEach(o => {
-        o.hidden = q && !o.textContent.toLowerCase().includes(q);
-      });
-      const firstVisible = Array.from(sel.options).find(o => !o.hidden);
-      if (firstVisible) {
-        sel.value = firstVisible.value;
-        syncRecMin();
-      }
+  if (search){
+    search.addEventListener('input', function(){
+      const q = (this.value||'').toLowerCase();
+      Array.from(sel.options).forEach(o => { o.hidden = q && !o.textContent.toLowerCase().includes(q); });
+      const first = Array.from(sel.options).find(o => !o.hidden);
+      if (first){ sel.value = first.value; syncRec(); }
     });
   }
-
-  syncRecMin();
 }
 
-/* --------------------------------- boot ---------------------------------- */
-
-function renderAll() {
+/* ---------------- render orchestrator ---------------- */
+function renderAll(){
   renderBioloadBar();
   renderAggressionAndWarnings();
   renderEnvFitBar();
 }
 
+/* ---------------- boot ---------------- */
 window.addEventListener('load', () => {
-  // status strip (if present from your status.js inline)
+  // status strip hinting
   const diag = document.getElementById('diag');
-  if (diag) {
-    const box = diag.querySelector('div');
+  if (diag){
     diag.className = 'ok';
-    if (box) box.textContent = 'Core OK • Safety adapter ready';
+    diag.querySelector('div').textContent = 'Core OK • Safety adapter ready';
   }
 
-  populateSelectIfEmpty();
+  buildSelect();
 
-  // wire Add (preserve user-entered Quantity)
-  const addBtn = document.getElementById('addFish');
-  const qtyEl  = document.getElementById('fQty');
-  const recEl  = document.getElementById('recMin');
-  const sel    = document.getElementById('fishSelect');
+  // *** KILL legacy handlers by cloning the buttons ***
+  function cloneReplace(el){ if (!el) return el; const c = el.cloneNode(true); el.replaceWith(c); return c; }
+  let addBtn   = document.getElementById('addFish');
+  let resetBtn = document.getElementById('reset');
+  addBtn   = cloneReplace(addBtn);
+  resetBtn = cloneReplace(resetBtn);
 
-  function currentQtyFromField() {
+  const qtyEl = document.getElementById('fQty');
+  const recEl = document.getElementById('recMin');
+  const sel   = document.getElementById('fishSelect');
+
+  function getTypedQty(){
+    // Prefer typed string; Safari sometimes delays valueAsNumber
     const raw = (qtyEl && typeof qtyEl.value === 'string') ? qtyEl.value.trim() : '';
-    return raw ? safeQty(raw) : NaN; // NaN means “user left blank”
+    if (raw.length) return safeQty(raw);
+    return NaN; // indicates “no user input”
   }
 
-  function handleAdd(e) {
-    if (e) { e.preventDefault(); e.stopPropagation(); }
-
+  function handleAdd(ev){
+    if (ev){ ev.preventDefault(); ev.stopPropagation(); if (ev.stopImmediatePropagation) ev.stopImmediatePropagation(); }
     const name = sel?.value || '';
     if (!name) return;
-
-    const typed = currentQtyFromField();                // user’s number if present
-    const fallback = safeQty(recEl?.value ?? 1) || 1;  // else Rec Min (or 1)
-    const qty = Number.isNaN(typed) ? fallback : typed;
-
+    const typed = getTypedQty();
+    const fallback = safeQty(recEl?.value ?? 1) || 1;
+    const qty = Number.isNaN(typed) ? fallback : typed; // only fall back if empty
     addOrUpdateRowUI(name, qty);
   }
 
-  addBtn?.addEventListener('click', handleAdd);
-  qtyEl?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') handleAdd(e);
-  });
+  addBtn?.addEventListener('click', handleAdd, true); // capture to beat any stray listeners
+  qtyEl?.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') handleAdd(e); });
 
-  // Clear stock
-  document.getElementById('reset')?.addEventListener('click', (e) => {
-    e.preventDefault();
+  resetBtn?.addEventListener('click', (e) => {
+    e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation();
     const tbody = document.getElementById('tbody');
     if (tbody) tbody.innerHTML = '';
     renderAll();
-  });
+  }, true);
 
-  // Tank controls drive bars
-  ['gallons', 'planted', 'filtration'].forEach(id => {
+  // tank controls
+  ['gallons','planted','filtration'].forEach(id=>{
     const el = document.getElementById(id);
     el?.addEventListener('input', renderAll);
     el?.addEventListener('change', renderAll);
   });
 
-  // Initial paint
   renderAll();
+
+  // quick diagnostics if Env bar element is wrong
+  if (!document.getElementById('envBarFill') && diag){
+    diag.className = 'err';
+    diag.querySelector('div').textContent = 'EnvFit bar element with id="envBarFill" not found in index.html';
+  }
 });
