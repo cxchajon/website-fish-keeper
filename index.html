@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/style.css">
+  <!-- Correct CSS filename -->
+  <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 <div class="wrap">
@@ -59,8 +60,8 @@
       </div>
     </div>
     <div style="margin-top:12px;display:flex;gap:12px;">
-      <button id="addFish" class="btn">Add</button>
-      <button id="reset" class="btn" style="background:var(--bad)">Clear Stock</button>
+      <button id="addFish" class="btn" type="button">Add</button>
+      <button id="reset" class="btn" style="background:var(--bad)" type="button">Clear Stock</button>
     </div>
   </div>
 
@@ -83,19 +84,16 @@
   <div class="card">
     <h2>Compatibility Overview</h2>
 
-    <!-- Bioload -->
     <div>
       <label>Bioload</label>
       <div class="bar"><div id="bioBarFill" class="bar-fill"></div></div>
     </div>
 
-    <!-- Environmental Fit -->
     <div style="margin-top:12px;">
       <label>Environmental Fit (Temp &amp; pH)</label>
       <div class="bar"><div id="envBarFill" class="bar-fill"></div></div>
     </div>
 
-    <!-- Aggression -->
     <div style="margin-top:12px;">
       <label>Aggression &amp; Compatibility</label>
       <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
@@ -110,6 +108,6 @@
 
 <!-- Data first, then app logic -->
 <script src="js/fish-data.js"></script>
-<script type="module" src="js/modules/app.js?v=9.3.1"></script>
+<script type="module" src="js/modules/app.js?v=9.3.2"></script>
 </body>
 </html>
