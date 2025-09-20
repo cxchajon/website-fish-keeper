@@ -4,8 +4,7 @@
   <meta charset="UTF-8" />
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- App styles (case-sensitive fix) -->
+  <!-- App styles -->
   <link rel="stylesheet" href="css/Style.css" />
 </head>
 <body>
@@ -86,6 +85,7 @@
         </div>
       </div>
       <div style="margin-top:12px;display:flex;gap:12px">
+        <!-- FIX: explicitly type="button" -->
         <button id="addFish" class="btn" type="button">Add</button>
         <button id="reset" class="btn" type="button" style="background:var(--bad)">Clear Stock</button>
       </div>
@@ -116,7 +116,6 @@
 
   <!-- Data first, then logic -->
   <script src="js/fish-data.js"></script>
-  <!-- Add cache-buster so browser doesn’t load old script -->
-  <script type="module" src="js/modules/app.js?v=9.4.4" defer></script>
+  <script type="module" src="js/modules/app.js?v=9.3.9"></script>
 </body>
 </html>
