@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FishkeepingLifeCo — Stocking Calculator</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Correct CSS filename -->
-  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
 <div class="wrap">
@@ -21,20 +20,41 @@
     <h2>Tank Setup</h2>
     <div class="row">
       <div>
-        <label for="gallons">Tank Size (gallons)</label>
-        <input id="gallons" type="number" min="1" value="20">
+        <label for="gallons">Tank Size (US gallons)</label>
+        <input id="gallons" type="number" min="1" value="20" />
       </div>
       <div>
         <label for="filtration">Filtration</label>
         <select id="filtration">
-          <option value="standard">Standard</option>
-          <option value="low">Low</option>
-          <option value="high">High</option>
+          <option value="standard" selected>Standard — Hang-on-back (≈4–10×)</option>
+          <option value="low">Low — Sponge (gentle)</option>
+          <option value="high">High — Sump/Canister (oversized)</option>
         </select>
       </div>
       <div>
-        <label><input type="checkbox" id="planted"> Planted Tank</label>
+        <label><input type="checkbox" id="planted" /> Planted Tank</label>
       </div>
+    </div>
+  </div>
+
+  <!-- Compatibility Overview (moved ABOVE Add Fish) -->
+  <div class="card">
+    <h2>Compatibility Overview</h2>
+
+    <div style="margin-bottom:10px">
+      <label>Bioload</label>
+      <div class="bar"><div id="bioBarFill" class="bar-fill"></div></div>
+    </div>
+
+    <div style="margin-bottom:10px">
+      <label>Environmental Fit (Temp &amp; pH)</label>
+      <div class="bar"><div id="envBarFill" class="bar-fill"></div></div>
+    </div>
+
+    <div>
+      <label>Aggression &amp; Compatibility</label>
+      <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
+      <div id="aggression-warnings" style="margin-top:10px"></div>
     </div>
   </div>
 
@@ -44,7 +64,7 @@
     <div class="row">
       <div>
         <label for="fishSearch">Search</label>
-        <input id="fishSearch" type="text" placeholder="Type to filter…">
+        <input id="fishSearch" type="text" placeholder="Type to filter…" autocomplete="off" autocapitalize="none" />
       </div>
       <div>
         <label for="fishSelect">Species</label>
@@ -52,13 +72,14 @@
       </div>
       <div>
         <label for="fQty">Quantity</label>
-        <input id="fQty" type="number" min="1" step="1" inputmode="numeric">
+        <input id="fQty" type="number" min="1" step="1" inputmode="numeric" />
       </div>
       <div>
         <label for="recMin">Rec Min</label>
-        <input id="recMin" type="number" disabled>
+        <input id="recMin" type="number" disabled />
       </div>
     </div>
+
     <div style="margin-top:12px;display:flex;gap:12px;">
       <button id="addFish" class="btn" type="button">Add</button>
       <button id="reset" class="btn" style="background:var(--bad)" type="button">Clear Stock</button>
@@ -80,34 +101,11 @@
     </table>
   </div>
 
-  <!-- Compatibility Overview -->
-  <div class="card">
-    <h2>Compatibility Overview</h2>
-
-    <div>
-      <label>Bioload</label>
-      <div class="bar"><div id="bioBarFill" class="bar-fill"></div></div>
-    </div>
-
-    <div style="margin-top:12px;">
-      <label>Environmental Fit (Temp &amp; pH)</label>
-      <div class="bar"><div id="envBarFill" class="bar-fill"></div></div>
-    </div>
-
-    <div style="margin-top:12px;">
-      <label>Aggression &amp; Compatibility</label>
-      <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
-      <div id="aggression-warnings" style="margin-top:10px;"></div>
-    </div>
-  </div>
-
-  <footer>
-    © 2025 FishkeepingLifeCo — For hobbyist use only
-  </footer>
+  <footer>© 2025 FishkeepingLifeCo — For hobbyist use only</footer>
 </div>
 
-<!-- Data first, then app logic -->
+<!-- Data first, then logic -->
 <script src="js/fish-data.js"></script>
-<script type="module" src="js/modules/app.js?v=9.3.2"></script>
+<script type="module" src="js/modules/app.js?v=9.3.4"></script>
 </body>
 </html>
