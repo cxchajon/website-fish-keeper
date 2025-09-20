@@ -5,8 +5,8 @@
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Case-sensitive path; update if your file is css/style.css -->
-  <link rel="stylesheet" href="css/Style.css?v=9.6.0" />
+  <!-- Case-sensitive path; change to css/style.css if that’s your filename -->
+  <link rel="stylesheet" href="css/Style.css?v=9.7.0" />
   <style>
     :root { --good:#1fbf75; --warn:#f5b301; --bad:#e25555; --card: rgba(255,255,255,.06); --line: rgba(255,255,255,.12) }
     * { box-sizing: border-box }
@@ -22,12 +22,14 @@
     input, select, button { width:100%; padding:10px; border-radius:10px; border:1px solid var(--line); background:rgba(255,255,255,.05); color:#eef3ff }
     button.btn { cursor:pointer; border:1px solid var(--line) }
     button.btn:disabled { opacity:.6; cursor:not-allowed }
+
     .bar { width:100%; height:12px; background:rgba(255,255,255,.08); border-radius:10px; overflow:hidden; border: 1px solid var(--line) }
-    .bar-fill { height:100%; width:0% }
+    .bar-fill { height:100%; width:0% } /* always starts at 0 */
     .bar-fill.bio { background: linear-gradient(90deg, var(--good), var(--warn), var(--bad)) }
     .bar-fill.env { background: linear-gradient(90deg, var(--bad), var(--warn), var(--good)) }
-    /* Aggression now shows COMPATIBILITY: full = good (low aggression) */
-    .bar-fill.agg { background: linear-gradient(90deg, var(--good), var(--warn)); }
+    /* Aggression shows COMPATIBILITY: full = better (low aggression) */
+    .bar-fill.agg { background: linear-gradient(90deg, var(--good), var(--warn)) }
+
     .warning-bubbles { display:flex; flex-wrap:wrap; gap:8px }
     .warning-bubble { background: rgba(229,85,85,.12); color:#ffdede; border:1px solid rgba(229,85,85,.35); padding:6px 10px; border-radius:999px; font-size:.8rem }
     table.stock { width:100%; border-collapse: collapse }
@@ -36,6 +38,7 @@
     table.stock th.actions, table.stock td.actions { width:180px; text-align:right }
     .actions .mini { width:auto; padding:6px 10px; margin-left:6px }
     footer { opacity:.7; margin: 18px 0 8px 0; font-size:.9rem }
+
     @media (max-width: 820px) {
       .row { grid-template-columns: repeat(2, minmax(0,1fr)) }
       table.stock th.actions, table.stock td.actions { width:160px }
@@ -80,23 +83,26 @@
     <section class="card" id="compat-card">
       <h2>Compatibility Overview</h2>
 
-      <!-- Bioload -->
       <div style="margin-bottom:12px">
         <label>Bioload</label>
-        <div class="bar"><div id="bioBarFill" class="bar-fill bio"></div></div>
+        <div class="bar" aria-label="Bioload">
+          <div id="bioBarFill" class="bar-fill bio"></div>
+        </div>
       </div>
 
-      <!-- Environmental Fit -->
       <div style="margin-bottom:12px">
         <label>Environmental Fit (Temp &amp; pH)</label>
-        <div class="bar"><div id="envBarFill" class="bar-fill env"></div></div>
+        <div class="bar" aria-label="Environmental Fit">
+          <div id="envBarFill" class="bar-fill env"></div>
+        </div>
         <div id="compat-warnings" class="warning-bubbles" style="margin-top:10px"></div>
       </div>
 
-      <!-- Aggression -->
       <div>
         <label>Aggression &amp; Compatibility (full = better)</label>
-        <div class="bar"><div id="aggBarFill" class="bar-fill agg"></div></div>
+        <div class="bar" aria-label="Aggression & Compatibility">
+          <div id="aggBarFill" class="bar-fill agg"></div>
+        </div>
         <div id="aggression-warnings" class="warning-bubbles" style="margin-top:10px"></div>
       </div>
     </section>
@@ -150,7 +156,7 @@
   </div>
 
   <!-- Data first, then logic -->
-  <script src="js/fish-data.js?v=9.6.0"></script>
-  <script type="module" src="js/modules/app.js?v=9.6.0"></script>
+  <script src="js/fish-data.js?v=9.7.0"></script>
+  <script type="module" src="js/modules/app.js?v=9.7.0"></script>
 </body>
-</html> 
+</html>
