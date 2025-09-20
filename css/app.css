@@ -111,7 +111,7 @@ tbody td:last-child{border-radius:0 10px 10px 0}
 /* Footer */
 footer{color:#0b3553; text-align:center; padding:14px 0 28px; font-weight:700}
 
-/* Warning bubble groups (used inside Aggression card) */
+/* Warning bubble groups */
 .warning-section + .warning-section { margin-top: 10px; }
 .warning-title{ font-weight:800; color:#0f172a; margin-bottom:6px; }
 .warning-bubbles{ display:flex; flex-wrap:wrap; gap:8px; }
@@ -124,3 +124,13 @@ footer{color:#0b3553; text-align:center; padding:14px 0 28px; font-weight:700}
 .warning-moderate{ background:#f97316; }
 .warning-severe{ background:#dc2626; }
 .warning-info{ background:#3b82f6; }
+
+/* Micro-interaction: bar pulse */
+@keyframes barPulse{
+  0%   { filter:brightness(1); }
+  40%  { filter:brightness(1.08); }
+  100% { filter:brightness(1); }
+}
+.bar-fill.pulse{
+  animation: barPulse .45s ease-out;
+}
