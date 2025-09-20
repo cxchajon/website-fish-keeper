@@ -4,9 +4,8 @@
   <meta charset="UTF-8" />
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- App styles (case-sensitive on GitHub Pages) -->
-  <link rel="stylesheet" href="css/Style.css" />
+  <!-- App styles -->
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div class="wrap">
@@ -86,7 +85,8 @@
         </div>
       </div>
       <div style="margin-top:12px;display:flex;gap:12px">
-        <button id="addFish" class="btn" type="button">Add</button>
+        <!-- Inline fallback calls global function defined in app.js -->
+        <button id="addFish" class="btn" type="button" onclick="window.addSelectedFish()">Add</button>
         <button id="reset" class="btn" type="button" style="background:var(--bad)">Clear Stock</button>
       </div>
       <small class="note" style="display:block;margin-top:10px">
@@ -116,6 +116,6 @@
 
   <!-- Data first, then logic -->
   <script src="js/fish-data.js"></script>
-  <script type="module" src="js/modules/app.js?v=9.3.7"></script>
+  <script type="module" src="js/modules/app.js?v=9.3.8"></script>
 </body>
 </html>
