@@ -1,16 +1,3 @@
-/* Global species database for FishkeepingLifeCo calculator.
-   Exposes window.FISH_DB = [...]. Keep ids stable; adjust fields freely.
-   Fields:
-   - id, name
-   - aggression (0..1 higher = more aggressive)
-   - bioload (relative unit per fish)
-   - temp: [minF, maxF]
-   - pH: [min, max]
-   - schoolMin (recommended group size), soloOK (true for solitary)
-   - tags: ['anabantoid','longfin','shrimp','snail','predator', ...]
-   - aliases: search helpers
-*/
-
 (function () {
   const DB = [
     // Bettas & Gourami
@@ -45,12 +32,10 @@
 
     // Livebearers & others
     { id:'guppy_m', name:'Guppy (male)', aggression:0.15, bioload:0.25, temp:[72,80], pH:[6.6,8.0], schoolMin:3, soloOK:false, tags:['livebearer','longfin','nano'] },
-    { id:'endlers', name:'Endler\'s Livebearer', aggression:0.15, bioload:0.2, temp:[72,80], pH:[6.6,8.0], schoolMin:6, soloOK:false, tags:['livebearer','nano'] },
+    { id:'endlers', name:"Endler's Livebearer", aggression:0.15, bioload:0.2, temp:[72,80], pH:[6.6,8.0], schoolMin:6, soloOK:false, tags:['livebearer','nano'] },
 
     // Larger community markers
     { id:'angelfish', name:'Angelfish', aggression:0.45, bioload:6.0, temp:[76,82], pH:[6.2,7.6], schoolMin:1, soloOK:true, tags:['cichlid','predator','longfin'] },
   ];
-
-  // Expose
   window.FISH_DB = DB;
 })();
