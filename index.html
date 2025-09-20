@@ -2,99 +2,101 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>FishkeepingLifeCo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="css/app.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FishkeepingLifeCo • Stocking Calculator</title>
+
+  <!-- External styles -->
+  <link rel="stylesheet" href="css/app.css?v=9.3.1">
 </head>
 <body>
-  <div class="wrap">
+  <!-- Status strip -->
+  <div id="diag"><div></div></div>
 
-    <!-- Brand Header -->
-    <div class="brand">
+  <div class="wrap">
+    <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
       <div class="brand-name">FishkeepingLifeCo</div>
       <div class="brand-sub">Aquarium Education</div>
     </div>
+    <header><h2>Stocking Calculator</h2></header>
 
     <!-- Tank Setup -->
-    <section class="card" id="setupCard">
+    <section class="card">
       <h2>Tank Setup</h2>
       <div class="row">
         <div>
-          <label for="tankSize">Tank size (US gallons)</label>
-          <input id="tankSize" type="number" min="1" value="20" />
+          <label for="gallons">Tank size (US gallons)</label>
+          <input id="gallons" type="number" min="1" value="20">
         </div>
         <div>
-          <label for="filter">Filtration</label>
-          <select id="filter">
-            <option value="low">Low — Sponge/UGF</option>
+          <label for="filtration">Filtration</label>
+          <select id="filtration">
+            <option value="low">Low — Sponge filter (gentle flow)</option>
             <option value="standard" selected>Standard — Hang-on-back (≈4–10× turnover)</option>
             <option value="high">High — Sump/Canister (oversized)</option>
           </select>
         </div>
         <div>
-          <label for="planted">Planted?</label>
-          <input id="planted" type="checkbox" />
-          <span>Yes</span>
+          <label>Planted?</label>
+          <input id="planted" type="checkbox"> <span>Yes</span>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div style="margin-top:16px">
+        <div class="bar-block">
+          <h3>Bioload</h3>
+          <div class="bar"><div id="bioBarFill" class="bar-fill"></div></div>
+          <div class="bar-note"><span>Low</span><span>High</span></div>
+          <small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small>
+        </div>
+        <div class="bar-block" style="margin-top:14px">
+          <h3>Aggression Risk (Average conflicts)</h3>
+          <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
+          <div class="bar-note"><span>Low</span><span>High</span></div>
+          <small class="note">Serious conflicts automatically max this bar.</small>
+        </div>
+        <div class="bar-block" style="margin-top:14px">
+          <h3>Environmental Fit (Temp &amp; pH overlap)</h3>
+          <div class="bar"><div id="envBarFill" class="bar-fill"></div></div>
+          <div class="bar-note"><span>Compatible</span><span>Poor Fit</span></div>
+          <small class="note">Shows how well selected species match in temperature &amp; pH.</small>
         </div>
       </div>
     </section>
 
-    <!-- Tank Health & Compatibility (combined meters) -->
-    <section class="card" id="healthCard">
-      <h2>Tank Health &amp; Compatibility</h2>
-      <small class="note">Live tank status based on your current stock.</small>
-
-      <!-- Bioload -->
-      <div style="margin:14px 0 16px">
-        <h3 style="margin:0 0 8px">Bioload</h3>
-        <div class="bar"><div id="bioBar" class="bar-fill"></div></div>
-        <div class="bar-note"><span>Low</span><span>High</span></div>
-        <small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small>
-      </div>
-
-      <!-- Aggression -->
-      <div style="margin:18px 0">
-        <h3 style="margin:0 0 8px">Aggression Risk (Average conflicts)</h3>
-        <div class="bar"><div id="aggBar" class="bar-fill"></div></div>
-        <div class="bar-note"><span>Low</span><span>High</span></div>
-        <small class="note">Serious conflicts automatically max this bar.</small>
-        <div id="aggWarnings" style="margin-top:10px"></div>
-      </div>
-
-      <!-- Environmental Fit -->
-      <div>
-        <h3 style="margin:0 0 8px">Environmental Fit (Temp &amp; pH overlap)</h3>
-        <div class="bar"><div id="fitBar" class="bar-fill"></div></div>
-        <div class="bar-note"><span>Compatible</span><span>Poor Fit</span></div>
-        <small class="note">Shows how well selected species match in temperature &amp; pH.</small>
-      </div>
-    </section>
-
     <!-- Add Fish -->
-    <section class="card" id="addCard">
+    <section class="card">
       <h2>Add Fish</h2>
-      <div>
-        <label for="search">Search species</label>
-        <input id="search" type="text" placeholder="Type to filter the list" />
+      <div class="row">
+        <div style="flex:1 1 320px">
+          <label for="fishSearch">Search species</label>
+          <input id="fishSearch" type="text" placeholder="Type to filter the list" autocomplete="off" autocapitalize="none">
+        </div>
       </div>
-      <div>
-        <label for="species">Species</label>
-        <select id="species"></select>
+      <div class="row">
+        <div style="flex:1 1 320px">
+          <label for="fishSelect">Species</label>
+          <select id="fishSelect"></select>
+        </div>
       </div>
-      <div>
-        <label for="minQty">Recommended minimum</label>
-        <input id="minQty" type="number" readonly />
+      <div class="row">
+        <div style="flex:1 1 200px">
+          <label for="recMin">Recommended minimum</label>
+          <input id="recMin" type="number" value="" disabled>
+        </div>
       </div>
-      <div>
-        <label for="qty">Quantity</label>
-        <input id="qty" type="number" placeholder="e.g., 6" />
+      <div class="row">
+        <div style="flex:1 1 200px">
+          <label for="fQty">Quantity</label>
+          <input id="fQty" type="number" min="1" step="1" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 6">
+        </div>
+        <div><button id="addFish" class="btn" type="button">Add</button></div>
       </div>
-      <button id="add" class="btn">Add</button>
-      <p>If Quantity is empty/invalid, we’ll use the Recommended minimum (or 1). Your typed number is never overwritten.</p>
+      <small class="note">If Quantity is empty/invalid, we’ll use the Recommended minimum (or 1). Your typed number is never overwritten.</small>
     </section>
 
     <!-- Current Stock -->
-    <section class="card" id="stockCard">
+    <section class="card">
       <h2>Current Stock</h2>
       <table class="stock">
         <thead>
@@ -104,26 +106,44 @@
             <th class="actions">Actions</th>
           </tr>
         </thead>
-        <tbody id="stock"></tbody>
+        <tbody id="tbody"></tbody>
       </table>
-      <button id="reset" class="btn" style="background:var(--bad)">Clear Stock</button>
+      <div class="row" style="margin-top:10px">
+        <div><button id="reset" class="btn" style="background:var(--bad)" type="button">Clear Stock</button></div>
+      </div>
     </section>
 
-    <!-- Aggression Warnings (bubbles render here if needed) -->
-    <section class="card" id="warnCard">
-      <h2>Aggression &amp; Compatibility Warnings</h2>
-      <div id="warnings"></div>
+    <!-- Warnings -->
+    <section class="card">
+      <h2>Aggression & Compatibility Warnings</h2>
+      <div id="aggression-warnings"></div>
     </section>
-
-    <footer>
-      FishkeepingLifeCo • Build v9.3.1 • Combined Meters • Updated Sep 19, 2025
-    </footer>
-
   </div>
 
-  <!-- Scripts -->
-  <script src="js/fish-data.js"></script>
-  <script src="js/modules/utils.js"></script>
-  <script src="js/app.js"></script>
+  <footer>
+    FishkeepingLifeCo • Build <strong id="appVersion">v9.3.1</strong> • External CSS • Updated Sep 19, 2025
+  </footer>
+
+  <!-- ===== SCRIPTS IN THIS ORDER (no modules, no defer) ===== -->
+  <script src="js/fish-data.js?v=9.3.1"></script>
+  <script src="js/modules/utils.js?v=9.3.1"></script>
+  <script src="js/app.js?v=9.3.1"></script>
+
+  <!-- Tiny diagnostic so we can verify fish data actually loaded -->
+  <script>
+    (function(){
+      var diag = document.getElementById('diag');
+      if (!diag) return;
+      var box = diag.firstElementChild || diag.appendChild(document.createElement('div'));
+      var count = (window.FISH_DATA && window.FISH_DATA.length) ? window.FISH_DATA.length : 0;
+      if (count > 0) {
+        diag.className = 'ok';
+        box.textContent = 'Core OK • Safety adapter ready • Species loaded: ' + count;
+      } else {
+        diag.className = 'err';
+        box.textContent = 'Problem: FISH_DATA not loaded. Check script order/paths.';
+      }
+    })();
+  </script>
 </body>
 </html>
