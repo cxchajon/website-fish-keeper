@@ -497,4 +497,4 @@ window.addEventListener('load', function(){
 
   // Initial bars
   renderAll();
-});
+}); 
