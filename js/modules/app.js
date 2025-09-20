@@ -1,369 +1,381 @@
-/* =========================================================
-   FishkeepingLifeCo — modules/app.js  (v9.3.6)
-   ========================================================= */
+/* FishkeepingLifeCo — App module (v9.3.6)
+   - Quantities respected
+   - Bars: Bioload, Env Fit, Aggression
+   - Warning bubbles for Env & Aggression
+*/
 
-/* ---------- tiny helpers ---------- */
-const tc = s => (s||'').toString()
-  .replace(/[_-]+/g,' ')
-  .replace(/\s+/g,' ')
-  .trim()
-  .replace(/\b\w/g, c => c.toUpperCase());
+/* ---------------- Utilities ---------------- */
+const toArray = x => (Array.isArray(x) ? x : x ? [x] : []);
+const norm = s => (s ?? '').toString().trim().toLowerCase();
+const canonName = s =>
+  norm(s).replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').replace(/\s*\([^)]*\)\s*/g, '').trim();
 
-const canon = s => (s||'').toString().trim().toLowerCase().replace(/[_-]+/g,' ');
+const titleCase = (s='') =>
+  s.replace(/[_-]+/g,' ')
+   .replace(/\s+/g,' ')
+   .trim()
+   .replace(/\b([a-z])/g, (_,c)=>c.toUpperCase());
 
-/* ---------- data access ---------- */
-function getSpeciesSource(){
-  return window.FISH_DATA || window.fishData || window.fish_list || window.SPECIES || [];
+function safeQty(raw){
+  if (typeof raw === 'number' && Number.isFinite(raw)) {
+    return Math.min(999, Math.max(1, Math.floor(raw)));
+  }
+  const s = (raw==null ? '' : String(raw)).replace(/[^\d]/g,'').slice(0,3);
+  let n = parseInt(s,10);
+  if (isNaN(n) || n < 1) n = 1;
+  if (n > 999) n = 999;
+  return n;
 }
 
-function getSpeciesList(){
-  const src = getSpeciesSource();
-  if (Array.isArray(src)) {
-    return src.map(r => ({
-      raw: r,
-      name: r?.name || r?.species || r?.common || '',
-      min : Number(r?.min || r?.recommendedMinimum || r?.group) || 1
-    })).filter(x => x.name);
-  }
-  if (src && typeof src === 'object') {
-    return Object.keys(src).map(k => ({
-      raw: src[k],
-      name: k,
-      min : Number(src[k]?.min || src[k]?.recommendedMinimum || 1) || 1
-    }));
-  }
-  return [];
+/* ---------------- Data helpers ---------------- */
+function byNameMap(list){
+  const m = new Map();
+  list.forEach(row=>{
+    if(!row) return;
+    const key = canonName(row.name || row.common || row.species || row.id);
+    if(key) m.set(key, row);
+  });
+  return m;
 }
 
-function metaFor(name){
-  const key = canon(name);
-  const src = getSpeciesSource();
+function getMinFromRow(row){
+  return row?.min ?? row?.recommendedMinimum ?? row?.minGroup ?? 1;
+}
 
-  if (Array.isArray(src)) {
-    for (const r of src){
-      const n = canon(r?.name || r?.species || r?.common || '');
-      if (n === key) return r || null;
-    }
-  } else if (src && typeof src === 'object'){
-    return src[name] || src[key] || null;
+function getTempRange(row){
+  // Expect [low, high] in °F
+  const t = row?.temp;
+  if (Array.isArray(t) && t.length===2 && Number.isFinite(+t[0]) && Number.isFinite(+t[1])) {
+    return [Number(t[0]), Number(t[1])];
   }
   return null;
 }
 
-/* ---------- UI state ---------- */
-let stock = []; // [{name, qty, min}]
-
-/* =========================================================
-   Species dropdown (self-healing + search)
-   ========================================================= */
-function populateSpeciesSelect(){
-  const sel = document.getElementById('fishSelect');
-  if (!sel) return;
-
-  const list = getSpeciesList().sort((a,b)=> a.name.localeCompare(b.name));
-  sel.innerHTML = '';
-  for (const {name, min} of list){
-    const o = document.createElement('option');
-    o.value = name;
-    o.textContent = tc(name);
-    o.dataset.min = String(min || 1);
-    sel.appendChild(o);
+function getPhRange(row){
+  const p = row?.ph;
+  if (Array.isArray(p) && p.length===2 && Number.isFinite(+p[0]) && Number.isFinite(+p[1])) {
+    return [Number(p[0]), Number(p[1])];
   }
+  return null;
+}
 
-  const rec = document.getElementById('recMin');
-  const updateRec = () => {
-    const o = sel.selectedOptions[0];
-    if (rec && o) rec.value = o.dataset.min || '';
-  };
-  sel.addEventListener('change', updateRec);
+/* ---------------- DOM ---------------- */
+const els = {};
+function $(id){ return document.getElementById(id); }
+
+/* ---------------- Select population ---------------- */
+function populateSelect(){
+  const sel = $('fishSelect');
+  const rec = $('recMin');
+  const search = $('fishSearch');
+
+  sel.innerHTML = '';
+  const list = Array.isArray(window.FISH_DATA) ? window.FISH_DATA.slice() : [];
+  list.sort((a,b)=> (a.name||'').localeCompare(b.name||''));
+  list.forEach(row=>{
+    const opt = document.createElement('option');
+    opt.value = row.name;
+    opt.textContent = row.name;
+    // stash rec min for quick read
+    opt.dataset.min = String(getMinFromRow(row) || 1);
+    sel.appendChild(opt);
+  });
+
+  function updateRec(){
+    const opt = sel.selectedOptions[0];
+    const min = opt ? parseInt(opt.dataset.min||'1',10)||1 : 1;
+    rec.value = String(min);
+  }
   updateRec();
 
-  const search = document.getElementById('fishSearch');
-  if (search && !search._wired){
-    search._wired = true;
-    search.addEventListener('input', ()=>{
-      const q = (search.value || '').toLowerCase();
-      let first = null;
+  if (search){
+    search.addEventListener('input', function(){
+      const q = norm(this.value);
+      let firstVisible = null;
       Array.from(sel.options).forEach(o=>{
-        const hit = o.textContent.toLowerCase().includes(q);
+        const hit = !q || norm(o.textContent).includes(q);
         o.hidden = !hit;
-        if (hit && !first) first = o;
+        if (hit && !firstVisible) firstVisible = o;
       });
-      if (first){ sel.value = first.value; updateRec(); }
+      if (firstVisible){ sel.value = firstVisible.value; updateRec(); }
     });
   }
+  sel.addEventListener('change', updateRec);
 }
 
-/* =========================================================
-   Stock table
-   ========================================================= */
-function renderStock(){
-  const tbody = document.getElementById('tbody');
-  if (!tbody) return;
-  tbody.innerHTML = '';
+/* ---------------- Current Stock table ---------------- */
+function rowHTML(name, qty){
+  return `
+    <tr>
+      <td>${titleCase(name)}</td>
+      <td>
+        <input type="number" min="1" step="1" inputmode="numeric" value="${qty}" style="width:72px" />
+      </td>
+      <td style="text-align:right">
+        <button class="btn btn-minus" type="button">−</button>
+        <button class="btn btn-plus" type="button">+</button>
+        <button class="btn btn-del" type="button" style="background:var(--bad)">Delete</button>
+      </td>
+    </tr>
+  `.trim();
+}
+function findRowByName(name){
+  const want = canonName(name);
+  const rows = $('#tbody').querySelectorAll('tr');
+  for (const tr of rows){
+    const text = (tr.querySelector('td')?.textContent)||'';
+    if (canonName(text)===want) return tr;
+  }
+  return null;
+}
+function addOrUpdateStock(name, delta){
+  const tbody = $('#tbody');
+  let tr = findRowByName(name);
+  if (tr){
+    const input = tr.querySelector('input');
+    const next = Math.max(1, safeQty((input && input.value) || 1) + delta);
+    input.value = String(next);
+    renderAll();
+    return;
+  }
+  // create
+  const wrapper = document.createElement('tbody'); // temp to parse string
+  wrapper.innerHTML = rowHTML(name, delta);
+  tr = wrapper.firstElementChild;
+  tbody.appendChild(tr);
+  wireRow(tr);
+  renderAll();
+}
+function wireRow(tr){
+  const input = tr.querySelector('input');
+  const minus = tr.querySelector('.btn-minus');
+  const plus  = tr.querySelector('.btn-plus');
+  const del   = tr.querySelector('.btn-del');
 
-  stock.forEach((f, i)=>{
-    const tr = document.createElement('tr');
+  input.addEventListener('input', renderAll);
+  input.addEventListener('change', renderAll);
 
-    const tdN = document.createElement('td');
-    tdN.textContent = tc(f.name);
-
-    const tdQ = document.createElement('td');
-    const inp = document.createElement('input');
-    inp.type = 'number';
-    inp.min = '1';
-    inp.value = f.qty;
-    inp.addEventListener('change', ()=>{
-      const n = parseInt(inp.value, 10);
-      if (!isNaN(n) && n >= 1){ f.qty = n; renderAll(); }
-      else { inp.value = f.qty; }
-    });
-    tdQ.appendChild(inp);
-
-    const tdA = document.createElement('td');
-    tdA.style.textAlign = 'right';
-    const minus = document.createElement('button');
-    minus.className = 'btn'; minus.textContent = '–';
-    minus.addEventListener('click', ()=>{ if (f.qty > 1){ f.qty--; renderAll(); } });
-
-    const plus = document.createElement('button');
-    plus.className = 'btn'; plus.textContent = '+';
-    plus.addEventListener('click', ()=>{ f.qty++; renderAll(); });
-
-    const del = document.createElement('button');
-    del.className = 'btn'; del.style.background='var(--bad)'; del.textContent = 'Delete';
-    del.addEventListener('click', ()=>{ stock.splice(i,1); renderAll(); });
-
-    tdA.append(minus, plus, del);
-
-    tr.append(tdN, tdQ, tdA);
-    tbody.appendChild(tr);
+  minus.addEventListener('click', ()=>{
+    const v = safeQty(input.value) - 1;
+    if (v <= 0) tr.remove();
+    else input.value = String(v);
+    renderAll();
+  });
+  plus.addEventListener('click', ()=>{
+    input.value = String(safeQty(input.value) + 1);
+    renderAll();
+  });
+  del.addEventListener('click', ()=>{
+    tr.remove();
+    renderAll();
   });
 }
-
-/* =========================================================
-   Bars + warnings helpers
-   ========================================================= */
-function setBar(id, pct){
-  const fill = document.getElementById(id);
-  if (!fill) return;
-  fill.style.width = Math.max(0, Math.min(100, pct)) + '%';
+function readStock(){
+  const res = [];
+  const rows = $('#tbody').querySelectorAll('tr');
+  rows.forEach(tr=>{
+    const name = (tr.querySelector('td')?.textContent)||'';
+    const qty  = safeQty(tr.querySelector('input')?.value || 1);
+    if (name) res.push({ name, qty });
+  });
+  return res;
 }
 
-function bubble(cls, text){
+/* ---------------- Bars: Bioload ---------------- */
+function capacityUnits(){
+  const gallons = parseFloat($('gallons')?.value || '0') || 0;
+  const planted = !!$('planted')?.checked;
+  const filtVal = $('filtration')?.value || 'standard';
+  const filtFactor = (filtVal==='low') ? 0.8 : (filtVal==='high') ? 1.25 : 1.0;
+  const perGal = 0.9; // unit per gallon baseline
+  return Math.max(1, gallons * perGal) * filtFactor * (planted ? 1.10 : 1.0);
+}
+function totalBioPoints(stock, nameMap){
+  let sum = 0;
+  stock.forEach(({name, qty})=>{
+    const row = nameMap.get(canonName(name));
+    const pts = Number(row?.points ?? 1);
+    sum += pts * (qty||0);
+  });
+  return sum;
+}
+function setBarFill(el, pct){
+  if (!el) return;
+  const p = Math.max(0, Math.min(100, pct));
+  el.style.width = p.toFixed(1) + '%';
+  // pulse class could be toggled if you want micro animation
+}
+
+/* ---------------- Bars: Environmental Fit ---------------- */
+function rangeOverlap(a, b){
+  if (!a || !b) return 0; // treat as no data → no overlap
+  const low  = Math.max(a[0], b[0]);
+  const high = Math.min(a[1], b[1]);
+  const widthA = Math.max(0, a[1]-a[0]);
+  const widthB = Math.max(0, b[1]-b[0]);
+  const widthO = Math.max(0, high - low);
+  const denom = Math.max(widthA, widthB, 1e-6);
+  return Math.max(0, Math.min(1, widthO / denom)); // 1 = tightest species fully overlaps the other
+}
+
+function envFitResult(stock, nameMap){
+  // With 0–1 species we show 0% fill and no warnings
+  const uniq = new Set(stock.map(s=>canonName(s.name)));
+  if (uniq.size < 2) return { fill: 0, severe:false };
+
+  // Combine pairwise overlaps conservatively (take the minimum across pairs)
+  let tempScore = 1, phScore = 1;
+  const arr = Array.from(uniq);
+  for (let i=0; i<arr.length; i++){
+    const ri = nameMap.get(arr[i]);
+    const ti = getTempRange(ri), pi = getPhRange(ri);
+    for (let j=i+1; j<arr.length; j++){
+      const rj = nameMap.get(arr[j]);
+      const tj = getTempRange(rj), pj = getPhRange(rj);
+      tempScore = Math.min(tempScore, rangeOverlap(ti, tj));
+      phScore   = Math.min(phScore,   rangeOverlap(pi, pj));
+    }
+  }
+  const both = Math.min(tempScore, phScore); // conservative
+  if (both <= 0) {
+    return { fill: 100, severe: true };
+  }
+  // Fill grows as compatibility shrinks
+  const fill = (1 - both) * 100;
+  return { fill, severe:false };
+}
+
+/* ---------------- Bars: Aggression (simple rules) ---------------- */
+function aggressionResult(stock){
+  const names = stock.map(s=>canonName(s.name));
+  let score = 0;
+  const warns = [];
+
+  const has = re => names.some(n=>re.test(n));
+  const pair = (reA, reB) => has(reA) && has(reB);
+
+  // Betta vs long-fin gourami/angelfish/livebearers
+  if (pair(/\bbetta\b/i, /\b(angelfish|gourami)\b/i)) {
+    score += 60;
+    warns.push({txt:'Betta with long-finned fish (Angelfish/Gourami) can cause fin nipping and stress.', sev:'severe'});
+  }
+
+  // Fin-nippers vs long-fins/livebearers
+  const finNippers = /\b(tiger barb|serpae|skirt tetra|black skirt)\b/i;
+  if (has(finNippers) && has(/\b(betta|guppy|angelfish|gourami|molly|swordtail)\b/i)) {
+    score += 50;
+    warns.push({txt:'Known fin-nippers with long-finned or livebearers — monitor closely.', sev:'moderate'});
+  }
+
+  // Cichlid mix (very broad, nudge only unless we detect rams/apsito + angels)
+  if (has(/\b(cichlid|apistogramma|kribensis|ram)\b/i) && names.length > 1){
+    score += 25;
+    warns.push({txt:'Cichlid mix can be territorial; ensure space and hiding spots.', sev:'mild'});
+  }
+
+  // Schooling shortfall = social stress (mild)
+  stock.forEach(s=>{
+    const row = windowNameMap.get(canonName(s.name));
+    const min = getMinFromRow(row) || 1;
+    if (min >= 3 && (s.qty||0) < min){
+      score += 10;
+      warns.push({txt:`${titleCase(s.name)} prefer groups of ${min}+ (stock is ${s.qty}).`, sev:'mild'});
+    }
+  });
+
+  score = Math.max(0, Math.min(100, score));
+  return { score, warns };
+}
+
+/* ---------------- Render warnings ---------------- */
+function clearNode(el){ if(el) el.innerHTML = ''; }
+function bubble(text, sev='info'){
   const d = document.createElement('div');
-  d.className = 'warning-bubble ' + cls;
+  d.className = `warning-bubble warning-${sev}`;
   d.textContent = text;
   return d;
 }
-function banner(cls, text){
-  const wrap = document.createElement('div');
-  wrap.className = 'warning-section';
-  const bubbles = document.createElement('div');
-  bubbles.className = 'warning-bubbles';
-  const b = bubble(cls, text);
-  bubbles.appendChild(b);
-  wrap.appendChild(bubbles);
-  return wrap;
-}
 
-/* =========================================================
-   Aggression warnings (schooling, fin-nippers, bettas)
-   ========================================================= */
-function renderWarningsAndAgg(aggScoreExtra = 0){
-  const box = document.getElementById('aggression-warnings');
-  if (!box) return;
-  box.innerHTML = '';
+/* ---------------- Main render ---------------- */
+let windowNameMap = null;
 
-  let risk = 0; // 0..100 for Aggression bar
-
-  for (const f of stock){
-    const m = metaFor(f.name) || {};
-    const min = Number(m.min || m.recommendedMinimum || f.min || 1) || 1;
-
-    if (f.qty < min){
-      box.appendChild( bubble('warning-moderate',
-        `${tc(f.name)}: Schooling minimum is ${min}`) );
-      risk += 18;
-    }
-
-    const n = canon(f.name);
-    if (/\bbarb\b/.test(n)){ // most barbs nip
-      box.appendChild( bubble('warning-mild',
-        `${tc(f.name)}: Known fin nipper`) );
-      risk += 22;
-    }
-
-    // Multiple male bettas → severe
-    if (/betta/.test(n) && f.qty > 1){
-      box.appendChild( bubble('warning-severe',
-        `Multiple male bettas will fight`) );
-      risk = 100;
-    }
-  }
-
-  risk = Math.min(100, risk + aggScoreExtra);
-  setBar('aggBarFill', risk);
-}
-
-/* =========================================================
-   Environmental fit (Temp & pH) → risk bar (0 good → 100 bad)
-   ========================================================= */
-/* Score logic:
-   - For each dimension (temp, ph), compute intersection across all species.
-   - Let union span be (maxHigh - minLow). Overlap ratio = max(0, interSpan)/unionSpan.
-   - Combined fit = average of ratios (temp + pH)/2 * 100.
-   - Single species or missing data ⇒ no penalty (0% risk on Env bar).
-   - Env bar shows **risk**, so width = 100 - fit.
-   - If either dimension has zero intersection ⇒ Severe banner + envRisk=100 and also max aggression.
-*/
-function computeEnvRisk(){
-  if (stock.length < 2) return { risk: 0, severe: false, note: 'single-or-empty' };
-
-  const ranges = stock.map(s => {
-    const m = metaFor(s.name) || {};
-    return {
-      t: Array.isArray(m.temp) && m.temp.length === 2 ? [Number(m.temp[0]), Number(m.temp[1])] : null,
-      p: Array.isArray(m.ph)   && m.ph.length   === 2 ? [Number(m.ph[0]),   Number(m.ph[1])]   : null
-    };
-  });
-
-  const haveAny = ranges.some(r => r.t || r.p);
-  if (!haveAny) return { risk: 0, severe: false, note: 'no-data' };
-
-  function overlapRatio(getRange){
-    const vals = ranges.map(getRange).filter(Boolean);
-    if (vals.length < 2) return 1; // not enough info to penalize
-    let minLow = +Infinity, maxHigh = -Infinity;
-    let interLow = -Infinity, interHigh = +Infinity;
-    for (const [lo, hi] of vals){
-      if (lo > hi) continue;
-      minLow  = Math.min(minLow, lo);
-      maxHigh = Math.max(maxHigh, hi);
-      interLow  = Math.max(interLow, lo);
-      interHigh = Math.min(interHigh, hi);
-    }
-    const unionSpan = Math.max(0, maxHigh - minLow);
-    const interSpan = Math.max(0, interHigh - interLow);
-    if (unionSpan <= 0) return 0;
-    // edge-touch counts as tight -> 0
-    if (interSpan <= 0) return 0;
-    return interSpan / unionSpan; // 0..1
-  }
-
-  const tempR = overlapRatio(r => r.t);
-  const phR   = overlapRatio(r => r.p);
-
-  const fit = 0.5 * (tempR + phR);             // 0..1
-  const envRisk = Math.round(100 * (1 - fit)); // 0 good .. 100 bad
-  const severe = (tempR === 0 || phR === 0);
-
-  return { risk: envRisk, severe };
-}
-
-/* =========================================================
-   Bioload using fish-data "points"
-   ========================================================= */
-
-// read "points" per fish from fish-data; fall back to a tiny default if missing
-function pointsFor(name){
-  const m = metaFor(name) || {};
-  const v = Number(m.points ?? m.bioUnits ?? m.bioload ?? m.bio_load);
-  return Number.isFinite(v) && v > 0 ? v : 1; // safe fallback
-}
-
-// capacity units scale with tank size, filtration, and plants
-function capacityUnits(){
-  const gallons = parseFloat(document.getElementById('gallons')?.value || '0') || 0;
-  const planted = !!document.getElementById('planted')?.checked;
-  const filtSel = document.getElementById('filtration');
-  const filt = (filtSel && filtSel.value) || 'standard';
-
-  // per-gallon capacity in “points”
-  const perGal = 0.9;                     // base capacity per gallon
-  const filtFactor   = (filt === 'low') ? 0.80 : (filt === 'high') ? 1.25 : 1.00;
-  const plantedBonus = planted ? 1.10 : 1.00;
-
-  return Math.max(1, gallons * perGal) * filtFactor * plantedBonus;
-}
-
-// turn total points into a 0–100% bar fill
-function computeBioload(){
-  const totalPoints = stock.reduce((sum, f) => sum + pointsFor(f.name) * (f.qty || 0), 0);
-  const cap = capacityUnits();
-  const pct = (totalPoints / cap) * 100;      // 100% == “at capacity”
-  return Math.max(0, Math.min(100, Math.round(pct)));
-}
-
-/* =========================================================
-   Render all
-   ========================================================= */
 function renderAll(){
-  renderStock();
-
-  // BIO
-  setBar('bioBarFill', computeBioload());
-
-  // ENV
-  const env = computeEnvRisk();
-  setBar('envBarFill', env.risk);
-
-  // Warnings + Aggression (add env severity weight)
-  const warnBox = document.getElementById('aggression-warnings');
-  if (warnBox){
-    warnBox.innerHTML = '';
-    if (env.severe){
-      warnBox.appendChild( banner('warning-severe', 'Temperature or pH ranges do not overlap.') );
-    } else if (env.risk >= 60){
-      warnBox.appendChild( banner('warning-moderate', 'Environment fit is tight — consider matching ranges better.') );
-    }
+  if (!windowNameMap){
+    windowNameMap = byNameMap(toArray(window.FISH_DATA));
   }
 
-  // Aggression score is decoupled; we just add a mild nudge from env risk, or max out if severe
-  const extra = env.severe ? 100 : Math.round(env.risk * 0.4);
-  renderWarningsAndAgg(extra);
+  const stock = readStock();
+
+  // BIOLOAD
+  const bioPts = totalBioPoints(stock, windowNameMap);
+  const cap    = capacityUnits();
+  const bioPct = (bioPts / Math.max(1, cap)) * 100;
+  setBarFill($('#bioBarFill'), Math.min(100, bioPct));
+
+  // ENV FIT
+  const envRes = envFitResult(stock, windowNameMap);
+  setBarFill($('#envBarFill'), envRes.fill);
+  const compatBox = $('#compat-warnings');
+  clearNode(compatBox);
+  if (envRes.severe){
+    compatBox.appendChild(bubble('Temperature or pH ranges do not overlap.', 'severe'));
+  }
+
+  // AGGRESSION (independent of env)
+  const agg = aggressionResult(stock);
+  setBarFill($('#aggBarFill'), agg.score);
+  const aggBox = $('#aggression-warnings');
+  clearNode(aggBox);
+  agg.warns.forEach(w=>{
+    aggBox.appendChild(bubble(w.txt, w.sev));
+  });
 }
 
-/* =========================================================
-   Init
-   ========================================================= */
-window.addEventListener('load', () => {
-  populateSpeciesSelect();
+/* ---------------- Boot & events ---------------- */
+function boot(){
+  // cache
+  ['gallons','filtration','planted','fishSearch','fishSelect','fQty','recMin','addFish','reset','tbody']
+    .forEach(id => els[id] = $(id));
 
-  const addBtn = document.getElementById('addFish');
-  const resetBtn = document.getElementById('reset');
+  populateSelect();
 
-  addBtn?.addEventListener('click', ()=>{
-    const sel = document.getElementById('fishSelect');
-    const qtyEl = document.getElementById('fQty');
-    const recEl = document.getElementById('recMin');
-
-    const name = sel?.value || '';
+  // Add button (respect typed quantity; fallback to recMin)
+  els.addFish.addEventListener('click', ()=>{
+    const sel = els.fishSelect;
+    const name = sel && sel.value ? sel.value : '';
     if (!name) return;
 
-    const userQty = parseInt(qtyEl?.value, 10);
-    const recMin  = parseInt(recEl?.value, 10) || 1;
-    const qty = (!isNaN(userQty) && userQty >= 1) ? userQty : recMin;
+    const raw = els.fQty?.value ?? '';
+    const hasUser = String(raw).trim().length > 0;
+    const qty = hasUser ? safeQty(raw)
+                        : safeQty(els.recMin?.value ?? '1');
 
-    const existing = stock.find(f => canon(f.name) === canon(name));
-    if (existing) existing.qty += qty;
-    else stock.push({ name, qty, min: recMin });
+    addOrUpdateStock(name, qty);
+    // do not overwrite user input; leave it as-is
+  });
 
-    if (qtyEl) qtyEl.value = '';
+  // Reset
+  els.reset.addEventListener('click', ()=>{
+    $('#tbody').innerHTML = '';
     renderAll();
   });
 
-  resetBtn?.addEventListener('click', ()=>{
-    stock = [];
-    renderAll();
-  });
+  // Wire existing rows (none initially, but be safe)
+  $('#tbody').querySelectorAll('tr').forEach(wireRow);
 
-  // Tank controls (capacity hooks)
-  ['gallons','planted','filtration'].forEach(id=>{
-    const el = document.getElementById(id);
-    el?.addEventListener('input', renderAll);
-    el?.addEventListener('change', renderAll);
+  // Tank controls
+  ['gallons','filtration','planted'].forEach(id=>{
+    const el = $(id); if (!el) return;
+    el.addEventListener('input', renderAll);
+    el.addEventListener('change', renderAll);
   });
 
   renderAll();
-});
+}
+
+// Start when DOM ready
+if (document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
