@@ -5,74 +5,103 @@
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Case-sensitive path; change to css/style.css if that’s your filename -->
+  <!-- Keep this link only if you still want the extra styling from Style.css -->
   <link rel="stylesheet" href="css/Style.css?v=9.7.1" />
   <style>
+    /* Core colour palette and layout */
     :root { --good:#1fbf75; --warn:#f5b301; --bad:#e25555; --card: rgba(255,255,255,.06); --line: rgba(255,255,255,.12) }
-    * { box-sizing: border-box }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#0b1020; color:#eef3ff }
-    .wrap { max-width: 1024px; margin: 0 auto; padding: 18px }
-    .brand { display:flex; align-items:flex-end; gap:10px; margin-bottom: 8px }
+    * { box-sizing:border-box }
+    body {
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:#0b1020;
+      color:#eef3ff;
+    }
+    .wrap { max-width:1024px; margin:0 auto; padding:18px }
+    .brand { display:flex; align-items:flex-end; gap:10px; margin-bottom:8px }
     .brand-name { font-weight:700; letter-spacing:.3px }
     .brand-sub { opacity:.8; font-size:.95rem }
-    h1,h2 { margin: 0 0 10px 0 }
+    h1,h2 { margin:0 0 10px 0 }
 
+    /* Card container */
     section.card {
       background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 14px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:14px;
+      margin-bottom:14px;
       backdrop-filter: blur(8px);
     }
 
-    .row { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px }
+    /* Grid for form sections */
+    .row { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:12px }
     label { display:block; font-size:.85rem; opacity:.9; margin-bottom:6px }
     input, select, button {
-      width:100%; padding:10px; border-radius:10px; border:1px solid var(--line);
-      background:rgba(255,255,255,.05); color:#eef3ff
+      width:100%;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:#eef3ff;
     }
     button.btn { cursor:pointer; border:1px solid var(--line) }
     button.btn:disabled { opacity:.6; cursor:not-allowed }
 
-    /* Bars */
-    .bar { width:100%; height:12px; background:rgba(255,255,255,.08); border-radius:10px; overflow:hidden; border: 1px solid var(--line) }
-    .bar-fill { height:100%; width:0% } /* always starts at 0 */
-    .bar-fill.bio { background: linear-gradient(90deg, var(--good), var(--warn), var(--bad)) }
-    .bar-fill.env { background: linear-gradient(90deg, var(--bad), var(--warn), var(--good)) }
-    /* Aggression shows COMPATIBILITY: full = better (low aggression) */
-    .bar-fill.agg { background: linear-gradient(90deg, var(--good), var(--warn)) }
+    /* Bars with always‑from‑zero animation (controlled in JS) */
+    .bar { width:100%; height:12px; background:rgba(255,255,255,.08); border-radius:10px; overflow:hidden; border:1px solid var(--line) }
+    .bar-fill { height:100%; width:0% }
+    .bar-fill.bio { background:linear-gradient(90deg,var(--good),var(--warn),var(--bad)) }
+    .bar-fill.env { background:linear-gradient(90deg,var(--bad),var(--warn),var(--good)) }
+    /* Aggression bar represents COMPATIBILITY: full=good */
+    .bar-fill.agg { background:linear-gradient(90deg,var(--good),var(--warn)) }
 
+    /* Warning bubbles */
     .warning-bubbles { display:flex; flex-wrap:wrap; gap:8px }
     .warning-bubble {
-      background: rgba(229,85,85,.12); color:#ffdede; border:1px solid rgba(229,85,85,.35);
-      padding:6px 10px; border-radius:999px; font-size:.8rem
+      background: rgba(229,85,85,.12);
+      color:#ffdede;
+      border:1px solid rgba(229,85,85,.35);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:.8rem;
     }
 
-    /* Table */
-    table.stock { width:100%; border-collapse: collapse; color:#eef3ff }
+    /* Stock table */
+    table.stock { width:100%; border-collapse:collapse; color:#eef3ff }
     table.stock th, table.stock td { border-bottom:1px solid var(--line); padding:10px; background:transparent }
     table.stock th.qty, table.stock td.qty { width:90px; text-align:center }
     table.stock th.actions, table.stock td.actions { width:180px; text-align:right }
 
-    /* Empty state cell is now readable on iOS */
+    /* Empty state row for better visibility */
     td.empty-cell {
       background: rgba(255,255,255,.05) !important;
-      color: #eef3ff; border: 1px dashed var(--line); border-radius: 10px;
+      color:#eef3ff;
+      border:1px dashed var(--line);
+      border-radius:10px;
     }
 
     .actions .mini { width:auto; padding:6px 10px; margin-left:6px }
-    footer { opacity:.7; margin: 18px 0 8px 0; font-size:.9rem }
+    footer { opacity:.7; margin:18px 0 8px 0; font-size:.9rem }
 
-    @media (max-width: 820px) {
-      .row { grid-template-columns: repeat(2, minmax(0,1fr)) }
+    /* Responsive adjustments */
+    @media (max-width:820px) {
+      .row { grid-template-columns:repeat(2, minmax(0,1fr)) }
       table.stock th.actions, table.stock td.actions { width:160px }
+    }
+
+    /* 🔧 Override the white row style in Style.css so fish rows are visible */
+    table.stock tbody tr {
+      background:transparent;
+      border:1px solid var(--line);
+      box-shadow:none;
+    }
+    table.stock tbody tr:hover {
+      box-shadow:none;
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <!-- Brand -->
     <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
       <div class="brand-name">FishkeepingLifeCo</div>
       <div class="brand-sub">Aquarium Stocking Calculator</div>
@@ -110,29 +139,23 @@
 
       <div style="margin-bottom:12px">
         <label>Bioload</label>
-        <div class="bar" aria-label="Bioload">
-          <div id="bioBarFill" class="bar-fill bio"></div>
-        </div>
+        <div class="bar" aria-label="Bioload"><div id="bioBarFill" class="bar-fill bio"></div></div>
       </div>
 
       <div style="margin-bottom:12px">
         <label>Environmental Fit (Temp &amp; pH)</label>
-        <div class="bar" aria-label="Environmental Fit">
-          <div id="envBarFill" class="bar-fill env"></div>
-        </div>
+        <div class="bar" aria-label="Environmental Fit"><div id="envBarFill" class="bar-fill env"></div></div>
         <div id="compat-warnings" class="warning-bubbles" style="margin-top:10px"></div>
       </div>
 
       <div>
         <label>Aggression &amp; Compatibility (full = better)</label>
-        <div class="bar" aria-label="Aggression & Compatibility">
-          <div id="aggBarFill" class="bar-fill agg"></div>
-        </div>
+        <div class="bar" aria-label="Aggression & Compatibility"><div id="aggBarFill" class="bar-fill agg"></div></div>
         <div id="aggression-warnings" class="warning-bubbles" style="margin-top:10px"></div>
       </div>
     </section>
 
-    <!-- Add Fish -->
+    <!-- Add Fish form -->
     <section class="card">
       <h2>Add Fish</h2>
       <div class="row">
@@ -167,11 +190,7 @@
       <h2>Current Stock</h2>
       <table class="stock">
         <thead>
-          <tr>
-            <th>Species</th>
-            <th class="qty">Qty</th>
-            <th class="actions">Actions</th>
-          </tr>
+          <tr><th>Species</th><th class="qty">Qty</th><th class="actions">Actions</th></tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
