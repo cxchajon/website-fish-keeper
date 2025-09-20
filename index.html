@@ -4,8 +4,7 @@
   <meta charset="UTF-8" />
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- NOTE: your stylesheet is capitalized -->
+  <!-- NOTE: your stylesheet is capitalized on GitHub -->
   <link rel="stylesheet" href="css/Style.css" />
 </head>
 <body>
@@ -43,20 +42,17 @@
     <section class="card" id="compat-card">
       <h2>Compatibility Overview</h2>
 
-      <!-- Bioload -->
       <div style="margin-bottom:12px">
         <label>Bioload</label>
         <div class="bar"><div id="bioBarFill" class="bar-fill"></div></div>
       </div>
 
-      <!-- Environmental Fit -->
       <div style="margin-bottom:12px">
         <label>Environmental Fit (Temp &amp; pH)</label>
         <div class="bar"><div id="envBarFill" class="bar-fill"></div></div>
         <div id="compat-warnings" class="warning-bubbles" style="margin-top:10px"></div>
       </div>
 
-      <!-- Aggression -->
       <div>
         <label>Aggression &amp; Compatibility</label>
         <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
@@ -86,7 +82,7 @@
         </div>
       </div>
       <div style="margin-top:12px;display:flex;gap:12px">
-        <!-- Inline fallback ensures Add works -->
+        <!-- inline onclick is a reliable fallback on iOS -->
         <button id="addFish" class="btn" type="button" onclick="window.addSelectedFish()">Add</button>
         <button id="reset" class="btn" type="button" style="background:var(--bad)">Clear Stock</button>
       </div>
@@ -110,13 +106,11 @@
       </table>
     </section>
 
-    <footer>
-      © 2025 FishkeepingLifeCo — For hobbyist use only
-    </footer>
+    <footer>© 2025 FishkeepingLifeCo — For hobbyist use only</footer>
   </div>
 
   <!-- Data first, then logic -->
   <script src="js/fish-data.js"></script>
-  <script type="module" src="js/modules/app.js?v=9.3.8"></script>
+  <script type="module" src="js/modules/app.js?v=9.4.0"></script>
 </body>
 </html>
