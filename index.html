@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- App styles -->
-  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- App styles (case-sensitive fix) -->
+  <link rel="stylesheet" href="css/Style.css" />
 </head>
 <body>
   <div class="wrap">
@@ -88,6 +89,9 @@
         <button id="addFish" class="btn" type="button">Add</button>
         <button id="reset" class="btn" type="button" style="background:var(--bad)">Clear Stock</button>
       </div>
+      <small class="note" style="display:block;margin-top:10px">
+        If Quantity is empty/invalid, we’ll use the Recommended minimum (or 1). Your typed number is never overwritten.
+      </small>
     </section>
 
     <!-- Current Stock -->
@@ -112,6 +116,7 @@
 
   <!-- Data first, then logic -->
   <script src="js/fish-data.js"></script>
-  <script src="js/modules/app.js?v=9.4.3" defer></script>
+  <!-- Add cache-buster so browser doesn’t load old script -->
+  <script type="module" src="js/modules/app.js?v=9.4.4" defer></script>
 </body>
-</html> 
+</html>
