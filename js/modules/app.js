@@ -1,8 +1,8 @@
-/* FishkeepingLifeCo — Stocking Calculator core (v9.7.0)
-   - Bars always start at 0 and then fill up with a smooth animation
+/* FishkeepingLifeCo — Stocking Calculator core (v9.7.1)
+   - Bars start at 0 and animate up
+   - When no fish: all bars resolve to 0 (no false fill)
+   - Current Stock empty-row is styled for readability
    - Aggression bar shows COMPATIBILITY (full = better)
-   - Mobile/Safari-safe Add button
-   - LocalStorage persistence
 */
 
 'use strict';
@@ -18,13 +18,9 @@ const load = (k, fallback) => { try { return JSON.parse(localStorage.getItem(k) 
 
 // Simple width animation that *always* starts from 0
 function animateBar(el, pct, ms = 700) {
-  // Reset to 0 with no transition
   el.style.transition = 'none';
   el.style.width = '0%';
-  // Force reflow so the browser acknowledges the 0% state
-  // eslint-disable-next-line no-unused-expressions
-  void el.offsetWidth;
-  // Animate to the target width
+  void el.offsetWidth; // force reflow
   el.style.transition = `width ${ms}ms ease`;
   el.style.width = `${clamp(pct, 0, 100)}%`;
 }
@@ -63,7 +59,7 @@ let filterQuery = '';
 // ---------- Setup ----------
 document.addEventListener('DOMContentLoaded', () => {
   populateSelect();
-  renderAll(); // will animate bars from 0
+  renderAll(); // animate from 0
 
   fishSearchEl.addEventListener('input', onSearch);
   fishSelectEl.addEventListener('change', onSpeciesChange);
@@ -135,7 +131,7 @@ function onAddClicked() {
   else stock.push({ id, qty: clamp(qty, 1, 999) });
 
   save(LS_KEY, stock);
-  renderAll(); // re-animate bars from 0
+  renderAll(); // re-animate from 0
 }
 
 function onReset() {
@@ -143,7 +139,7 @@ function onReset() {
   if (confirm('Clear all stocked species?')) {
     stock = [];
     save(LS_KEY, stock);
-    renderAll(); // re-animate bars from 0
+    renderAll(); // re-animate from 0
   }
 }
 
@@ -152,12 +148,12 @@ function inc(id, delta) {
   if (i < 0) return;
   stock[i].qty = clamp(toInt(stock[i].qty, 1) + delta, 1, 999);
   save(LS_KEY, stock);
-  renderAll(); // re-animate
+  renderAll();
 }
 function remove(id) {
   stock = stock.filter(x => x.id !== id);
   save(LS_KEY, stock);
-  renderAll(); // re-animate
+  renderAll();
 }
 
 // ---------- Rendering ----------
@@ -168,8 +164,12 @@ function renderTable() {
   if (!stock.length) {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 3; td.style.opacity = '.75'; td.textContent = 'No fish added yet.';
-    tr.appendChild(td); tbody.appendChild(tr); return;
+    td.colSpan = 3;
+    td.className = 'empty-cell';
+    td.textContent = 'No fish added yet.';
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    return;
   }
   for (const entry of stock) {
     const s = DB.find(x => x.id === entry.id);
@@ -209,29 +209,36 @@ function renderBarsAndWarnings() {
   if (filtration === 'high') capacity *= 1.25;
   if (planted) capacity *= 1.15;
 
-  const bioloadPct = capacity > 0 ? clamp((totalBioload / capacity) * 100, 0, 300) : 0;
+  const bioloadPct = (stock.length === 0) ? 0 : (capacity > 0 ? clamp((totalBioload / capacity) * 100, 0, 300) : 0);
   animateBar(bioBarFill, bioloadPct);
 
   // Environmental fit
   const ENV_TEMP = [76, 78];
   const ENV_PH = [6.6, 7.6];
-  const envScores = stock.map(e => {
-    const s = DB.find(x => x.id === e.id);
-    if (!s) return 0.5;
-    const tempOverlap = rangeOverlapRatio(ENV_TEMP, s.temp || [72, 82]);
-    const phOverlap   = rangeOverlapRatio(ENV_PH,   s.pH   || [6.0, 7.8]);
-    return (tempOverlap + phOverlap) / 2;
-  });
-  const envAvg = envScores.length ? avg(envScores) : 1.0;
-  animateBar(envBarFill, envAvg * 100);
+  let envPct = 0;
+  if (stock.length > 0) {
+    const envScores = stock.map(e => {
+      const s = DB.find(x => x.id === e.id);
+      if (!s) return 0.5;
+      const tempOverlap = rangeOverlapRatio(ENV_TEMP, s.temp || [72, 82]);
+      const phOverlap   = rangeOverlapRatio(ENV_PH,   s.pH   || [6.0, 7.8]);
+      return (tempOverlap + phOverlap) / 2;
+    });
+    envPct = clamp(avg(envScores) * 100, 0, 100);
+  }
+  animateBar(envBarFill, envPct);
 
-  // Aggression → Compatibility (invert)
-  const aggScores = stock.map(e => {
-    const s = DB.find(x => x.id === e.id);
-    return s ? clamp(toNum(s.aggression, 0.3), 0, 1) : 0.3;
-  });
-  const aggAvg = aggScores.length ? avg(aggScores) : 0.1;
-  animateBar(aggBarFill, (1 - aggAvg) * 100);
+  // Aggression → Compatibility (invert). When no fish, show 0.
+  let aggCompatPct = 0;
+  if (stock.length > 0) {
+    const aggScores = stock.map(e => {
+      const s = DB.find(x => x.id === e.id);
+      return s ? clamp(toNum(s.aggression, 0.3), 0, 1) : 0.3;
+    });
+    const aggAvg = avg(aggScores);
+    aggCompatPct = clamp((1 - aggAvg) * 100, 0, 100);
+  }
+  animateBar(aggBarFill, aggCompatPct);
 
   // Warnings
   compatWarningsEl.innerHTML = '';
