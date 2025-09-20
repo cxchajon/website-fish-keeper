@@ -1,8 +1,8 @@
-/* FishkeepingLifeCo — Stocking Calculator core (v9.5.0)
+/* FishkeepingLifeCo — Stocking Calculator core (v9.6.0)
+   - Aggression bar now shows COMPATIBILITY (full = better)
    - Mobile/Safari-safe Add button
    - LocalStorage persistence
    - Species DB via window.FISH_DB (see fish-data.js)
-   - Stronger Betta rules & shrimp risk notes
 */
 
 'use strict';
@@ -10,21 +10,11 @@
 // ---------- Helpers ----------
 const $ = (sel) => /** @type {HTMLElement} */(document.querySelector(sel));
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
-
 const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
-const toInt = (v, def = 0) => {
-  const n = Number.parseInt(String(v), 10);
-  return Number.isFinite(n) ? n : def;
-};
-const toNum = (v, def = 0) => {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : def;
-};
+const toInt = (v, def = 0) => { const n = Number.parseInt(String(v), 10); return Number.isFinite(n) ? n : def; };
+const toNum = (v, def = 0) => { const n = Number(v); return Number.isFinite(n) ? n : def; };
 const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
-const load = (k, fallback) => {
-  try { return JSON.parse(localStorage.getItem(k) || 'null') ?? fallback; }
-  catch { return fallback; }
-};
+const load = (k, fallback) => { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? fallback; } catch { return fallback; } };
 
 // ---------- Species DB ----------
 const FALLBACK_DB = [
@@ -33,28 +23,22 @@ const FALLBACK_DB = [
   { id:'amano', name:'Amano Shrimp', aggression:0.05, bioload:0.05, temp:[68,78], pH:[6.2,7.8], schoolMin:6, soloOK:false, tags:['shrimp'] },
 ];
 const DB = (globalThis.FISH_DB && Array.isArray(globalThis.FISH_DB) && globalThis.FISH_DB.length)
-  ? globalThis.FISH_DB
-  : FALLBACK_DB;
+  ? globalThis.FISH_DB : FALLBACK_DB;
 
 // ---------- DOM refs ----------
 const gallonsEl = $('#gallons');
 const filtrationEl = $('#filtration');
 const plantedEl = $('#planted');
-
 const fishSearchEl = $('#fishSearch');
 const fishSelectEl = $('#fishSelect');
 const qtyEl = $('#fQty');
 const recMinEl = $('#recMin');
-
 const addBtn = $('#addFish');
 const resetBtn = $('#reset');
-
 const tbody = $('#tbody');
-
 const bioBarFill = $('#bioBarFill');
 const envBarFill = $('#envBarFill');
 const aggBarFill = $('#aggBarFill');
-
 const compatWarningsEl = $('#compat-warnings');
 const aggressionWarningsEl = $('#aggression-warnings');
 
@@ -108,14 +92,11 @@ function onSearch(e) {
   filterQuery = String(e.target.value || '');
   const prevSel = fishSelectEl.value;
   populateSelect();
-  if ([...fishSelectEl.options].some(o => o.value === prevSel)) {
-    fishSelectEl.value = prevSel;
-  }
+  if ([...fishSelectEl.options].some(o => o.value === prevSel)) fishSelectEl.value = prevSel;
   updateRecMin();
 }
-
 function onSpeciesChange() { updateRecMin(); }
-function onQtyInput() { /* reserved */ }
+function onQtyInput() { /* kept for clarity */ }
 
 // ---------- Recommended minimum ----------
 function getRecMinFor(id) {
@@ -124,10 +105,7 @@ function getRecMinFor(id) {
   if (s.soloOK) return 1;
   return s.schoolMin ? clamp(toInt(s.schoolMin, 1), 1, 99) : 1;
 }
-function updateRecMin() {
-  const id = fishSelectEl.value;
-  recMinEl.value = getRecMinFor(id);
-}
+function updateRecMin() { recMinEl.value = getRecMinFor(fishSelectEl.value); }
 
 // ---------- Add / Remove ----------
 function onAddClicked() {
@@ -140,11 +118,9 @@ function onAddClicked() {
   const qty = Number.isFinite(qtyTyped) && qtyTyped > 0 ? qtyTyped : (recMin || 1);
 
   const idx = stock.findIndex(x => x.id === id);
-  if (idx >= 0) {
-    stock[idx].qty = clamp(toInt(stock[idx].qty, 0) + qty, 1, 999);
-  } else {
-    stock.push({ id, qty: clamp(qty, 1, 999) });
-  }
+  if (idx >= 0) stock[idx].qty = clamp(toInt(stock[idx].qty, 0) + qty, 1, 999);
+  else stock.push({ id, qty: clamp(qty, 1, 999) });
+
   save(LS_KEY, stock);
   renderAll();
 }
@@ -172,54 +148,29 @@ function remove(id) {
 }
 
 // ---------- Rendering ----------
-function renderAll() {
-  renderTable();
-  renderBarsAndWarnings();
-}
+function renderAll() { renderTable(); renderBarsAndWarnings(); }
 
 function renderTable() {
   tbody.innerHTML = '';
   if (!stock.length) {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 3;
-    td.style.opacity = '.75';
-    td.textContent = 'No fish added yet.';
-    tr.appendChild(td);
-    tbody.appendChild(tr);
-    return;
+    td.colSpan = 3; td.style.opacity = '.75'; td.textContent = 'No fish added yet.';
+    tr.appendChild(td); tbody.appendChild(tr); return;
   }
-
   for (const entry of stock) {
     const s = DB.find(x => x.id === entry.id);
     const tr = document.createElement('tr');
 
-    const nameTd = document.createElement('td');
-    nameTd.textContent = s ? s.name : entry.id;
+    const nameTd = document.createElement('td'); nameTd.textContent = s ? s.name : entry.id;
+    const qtyTd = document.createElement('td'); qtyTd.className = 'qty'; qtyTd.textContent = String(entry.qty);
 
-    const qtyTd = document.createElement('td');
-    qtyTd.className = 'qty';
-    qtyTd.textContent = String(entry.qty);
-
-    const actionsTd = document.createElement('td');
-    actionsTd.className = 'actions';
-
-    const minus = document.createElement('button');
-    minus.className = 'mini';
-    minus.type = 'button';
-    minus.textContent = '−';
+    const actionsTd = document.createElement('td'); actionsTd.className = 'actions';
+    const minus = document.createElement('button'); minus.className = 'mini'; minus.type = 'button'; minus.textContent = '−';
     minus.addEventListener('click', () => inc(entry.id, -1), { passive: true });
-
-    const plus = document.createElement('button');
-    plus.className = 'mini';
-    plus.type = 'button';
-    plus.textContent = '+';
+    const plus = document.createElement('button'); plus.className = 'mini'; plus.type = 'button'; plus.textContent = '+';
     plus.addEventListener('click', () => inc(entry.id, +1), { passive: true });
-
-    const del = document.createElement('button');
-    del.className = 'mini';
-    del.type = 'button';
-    del.textContent = 'Remove';
+    const del = document.createElement('button'); del.className = 'mini'; del.type = 'button'; del.textContent = 'Remove';
     del.addEventListener('click', () => remove(entry.id), { passive: true });
 
     actionsTd.append(minus, plus, del);
@@ -261,13 +212,15 @@ function renderBarsAndWarnings() {
   const envAvg = envScores.length ? avg(envScores) : 1.0;
   envBarFill.style.width = `${clamp(envAvg * 100, 0, 100)}%`;
 
-  // Aggression (higher = worse)
+  // Aggression → Compatibility (invert)
+  // aggAvg 0..1 (higher = worse). We convert to compatibility 1-aggAvg.
   const aggScores = stock.map(e => {
     const s = DB.find(x => x.id === e.id);
     return s ? clamp(toNum(s.aggression, 0.3), 0, 1) : 0.3;
   });
   const aggAvg = aggScores.length ? avg(aggScores) : 0.1;
-  aggBarFill.style.width = `${clamp(aggAvg * 100, 0, 100)}%`;
+  const aggCompatPct = clamp((1 - aggAvg) * 100, 0, 100);
+  aggBarFill.style.width = `${aggCompatPct}%`;
 
   // Warnings
   compatWarningsEl.innerHTML = '';
@@ -294,10 +247,7 @@ function addSchoolingWarnings() {
 
 function addBettaRules() {
   const bettaM = stock.find(e => e.id === 'betta_m');
-  if (bettaM && bettaM.qty > 1) {
-    bubble(aggressionWarningsEl, 'Multiple male Bettas can fight — keep only one male.');
-  }
-  // Betta with other anabantoids (gourami) or longfin livebearers (male guppies)
+  if (bettaM && bettaM.qty > 1) bubble(aggressionWarningsEl, 'Multiple male Bettas can fight — keep only one male.');
   if (bettaM) {
     const hasGourami = stock.some(e => ['dgourami','pgourami'].includes(e.id));
     const hasLongfinTargets = stock.some(e => {
@@ -315,14 +265,11 @@ function addShrimpRiskWarnings() {
     return s && (s.tags || []).includes('shrimp');
   });
   if (!hasShrimp) return;
-
   const riskyPredators = stock.filter(e => {
     const s = DB.find(x => x.id === e.id);
     return s && ((s.tags || []).includes('predator') || toNum(s.aggression,0.3) >= 0.5);
   });
-  if (riskyPredators.length) {
-    bubble(compatWarningsEl, 'Shrimp may be prey — dense plants and hides recommended.');
-  }
+  if (riskyPredators.length) bubble(compatWarningsEl, 'Shrimp may be prey — dense plants and hides recommended.');
 }
 
 function addLongfinNippingWarnings() {
@@ -331,14 +278,11 @@ function addLongfinNippingWarnings() {
     return s && (s.tags || []).includes('longfin');
   });
   if (!hasLongfin) return;
-  // Common nippers: some barbs/danios (here: cherry barb low, zebra danio moderate)
   const possibleNippers = stock.some(e => {
     const s = DB.find(x => x.id === e.id);
     return s && (['cherrybarb','zebra'].includes(e.id) || toNum(s.aggression,0.3) >= 0.45);
   });
-  if (possibleNippers) {
-    bubble(aggressionWarningsEl, 'Long-finned fish present — watch for fin-nipping behavior.');
-  }
+  if (possibleNippers) bubble(aggressionWarningsEl, 'Long-finned fish present — watch for fin-nipping behavior.');
 }
 
 function bubble(parent, text) {
