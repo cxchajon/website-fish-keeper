@@ -38,4 +38,4 @@
     { id:'angelfish', name:'Angelfish', aggression:0.45, bioload:6.0, temp:[76,82], pH:[6.2,7.6], schoolMin:1, soloOK:true, tags:['cichlid','predator','longfin'] },
   ];
   window.FISH_DB = DB;
-})();
+})(); 
