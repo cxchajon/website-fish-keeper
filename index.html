@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FishkeepingLifeCo • Stocking Calculator</title>
-<link rel="stylesheet" href="css/app.css?v=9.3.1">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FishkeepingLifeCo — Stocking Calculator</title>
+
+  <!-- All visuals live here -->
+  <link rel="stylesheet" href="css/app.css?v=9.3.0">
 </head>
 <body>
+  <!-- tiny diagnostics strip (can be hidden later) -->
   <div id="diag"><div></div></div>
 
   <div class="wrap">
+    <!-- Brand -->
     <div class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
       <div class="brand-name">FishkeepingLifeCo</div>
       <div class="brand-sub">Aquarium Education</div>
@@ -46,17 +50,20 @@
           <div class="bar-note"><span>Low</span><span>High</span></div>
           <small class="note">Bioload is an estimate. Filtration and plants adjust capacity.</small>
         </div>
+
         <div class="bar-block" style="margin-top:14px">
           <h3>Aggression Risk (Average conflicts)</h3>
           <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
           <div class="bar-note"><span>Low</span><span>High</span></div>
           <small class="note">Serious conflicts automatically max this bar.</small>
         </div>
+
         <div class="bar-block" style="margin-top:14px">
-          <h3>Environmental Fit (Temp & pH overlap)</h3>
+          <h3>Environmental Fit (Temp &amp; pH overlap)</h3>
+          <!-- IMPORTANT: this id must be exactly envBarFill -->
           <div class="bar"><div id="envBarFill" class="bar-fill"></div></div>
           <div class="bar-note"><span>Compatible</span><span>Poor Fit</span></div>
-          <small class="note">Shows how well selected species match in temperature & pH.</small>
+          <small class="note">Shows how well selected species match in temperature &amp; pH.</small>
         </div>
       </div>
     </section>
@@ -64,24 +71,28 @@
     <!-- Add Fish -->
     <section class="card">
       <h2>Add Fish</h2>
+
       <div class="row">
         <div style="flex:1 1 320px">
           <label for="fishSearch">Search species</label>
           <input id="fishSearch" type="text" placeholder="Type to filter the list" autocomplete="off" autocapitalize="none">
         </div>
       </div>
+
       <div class="row">
         <div style="flex:1 1 320px">
           <label for="fishSelect">Species</label>
           <select id="fishSelect"></select>
         </div>
       </div>
+
       <div class="row">
         <div style="flex:1 1 200px">
           <label for="recMin">Recommended minimum</label>
           <input id="recMin" type="number" value="" disabled>
         </div>
       </div>
+
       <div class="row">
         <div style="flex:1 1 200px">
           <label for="fQty">Quantity</label>
@@ -89,6 +100,7 @@
         </div>
         <div><button id="addFish" class="btn" type="button">Add</button></div>
       </div>
+
       <small class="note">If Quantity is empty/invalid, we’ll use the Recommended minimum (or 1). Your typed number is never overwritten.</small>
     </section>
 
@@ -110,21 +122,31 @@
       </div>
     </section>
 
-    <!-- Warnings -->
+    <!-- Aggression & Compatibility -->
     <section class="card">
-      <h2>Aggression & Compatibility Warnings</h2>
+      <h2>Aggression &amp; Compatibility Warnings</h2>
+
+      <!-- optional grouped bubble areas; JS will fill as needed -->
       <div id="aggression-warnings"></div>
+      <!-- Example structure JS may append:
+      <div class="warning-section">
+        <div class="warning-title">Fin-nipping</div>
+        <div class="warning-bubbles">
+          <span class="warning-bubble warning-moderate">Tiger Barb → <strong>Guppy</strong></span>
+        </div>
+      </div>
+      -->
     </section>
   </div>
 
   <footer>
-    FishkeepingLifeCo • Build <strong id="appVersion">v9.3.1</strong> • Visuals isolated • Updated Sep 19, 2025
+    FishkeepingLifeCo • Build <strong id="appVersion">v9.3.0</strong> • Visual + EnvFit restored • Updated Sep 19, 2025
   </footer>
 
-  <!-- data → logic → advisor (if used) → app -->
+  <!-- Load order: data → (legacy logic OK) → app module -->
   <script src="js/fish-data.js" defer></script>
   <script src="js/aggression.js" defer></script>
   <script src="js/stocking_advisor.js" defer></script>
-  <script type="module" src="js/modules/app.js?v=9.3.1"></script>
+  <script type="module" src="js/modules/app.js?v=9.3.0"></script>
 </body>
 </html>
