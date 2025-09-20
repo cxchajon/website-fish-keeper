@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Your stylesheet is capitalized on GitHub -->
-  <link rel="stylesheet" href="css/Style.css" />
+  <!-- App styles -->
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div class="wrap">
@@ -42,17 +42,20 @@
     <section class="card" id="compat-card">
       <h2>Compatibility Overview</h2>
 
+      <!-- Bioload -->
       <div style="margin-bottom:12px">
         <label>Bioload</label>
         <div class="bar"><div id="bioBarFill" class="bar-fill"></div></div>
       </div>
 
+      <!-- Environmental Fit -->
       <div style="margin-bottom:12px">
         <label>Environmental Fit (Temp &amp; pH)</label>
         <div class="bar"><div id="envBarFill" class="bar-fill"></div></div>
         <div id="compat-warnings" class="warning-bubbles" style="margin-top:10px"></div>
       </div>
 
+      <!-- Aggression -->
       <div>
         <label>Aggression &amp; Compatibility</label>
         <div class="bar"><div id="aggBarFill" class="bar-fill"></div></div>
@@ -82,13 +85,9 @@
         </div>
       </div>
       <div style="margin-top:12px;display:flex;gap:12px">
-        <!-- Inline fallback + JS binding (both) -->
-        <button id="addFish" class="btn" type="button" onclick="window.addSelectedFish && window.addSelectedFish()">Add</button>
+        <button id="addFish" class="btn" type="button">Add</button>
         <button id="reset" class="btn" type="button" style="background:var(--bad)">Clear Stock</button>
       </div>
-      <small class="note" style="display:block;margin-top:10px">
-        If Quantity is empty/invalid, we’ll use the Recommended minimum (or 1). Your typed number is never overwritten.
-      </small>
     </section>
 
     <!-- Current Stock -->
@@ -106,28 +105,13 @@
       </table>
     </section>
 
-    <footer>© 2025 FishkeepingLifeCo — For hobbyist use only</footer>
+    <footer>
+      © 2025 FishkeepingLifeCo — For hobbyist use only
+    </footer>
   </div>
 
-  <!-- Data first, then logic (NON-module, with defer) -->
+  <!-- Data first, then logic -->
   <script src="js/fish-data.js"></script>
-  <script src="js/modules/app.js?v=9.4.2" defer></script>
-
-  <!-- Ultra-fallback: if addSelectedFish isn’t defined for any reason,
-       we synthesize an event that app.js listens for. -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function(){
-      var btn = document.getElementById('addFish');
-      if (btn && !window.addSelectedFish) {
-        btn.addEventListener('click', function(){
-          var sel = document.getElementById('fishSelect');
-          var qtyRaw = (document.getElementById('fQty').value || '').trim();
-          var rec = document.getElementById('recMin').value || '1';
-          var qty = parseInt(qtyRaw, 10); if (!qty) qty = parseInt(rec, 10) || 1;
-          document.dispatchEvent(new CustomEvent('fk-add', { detail: { name: sel.value, qty: qty } }));
-        });
-      }
-    });
-  </script>
+  <script src="js/modules/app.js?v=9.4.3" defer></script>
 </body>
 </html>
