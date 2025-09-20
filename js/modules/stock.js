@@ -1,46 +1,96 @@
-// js/modules/stock.js
-import { safeQty } from './utils.js';
-import { addOrUpdateRow, clearAllRows, populateSpeciesSelect } from './species.js';
-import { renderAll } from './app.js';
+import { safeQty, canonName, formatName } from './utils.js';
 
-export function initStockUI () {
-  const sel   = document.getElementById('fishSelect');
-  const qtyEl = document.getElementById('fQty');
-  const recEl = document.getElementById('recMin');
-  const addBt = document.getElementById('addFish');
-  const clrBt = document.getElementById('reset');
-  const search= document.getElementById('fishSearch');
+function tbody(){ return document.getElementById('tbody'); }
 
-  populateSpeciesSelect(sel, recEl, search); // NEVER touches qty field
+/** Find an existing row by canonical name (row carries data-name key) */
+function findRowByName(rawName){
+  const want = canonName(rawName);
+  return Array.from(tbody().querySelectorAll('tr')).find(
+    tr => tr.dataset.name === want
+  ) || null;
+}
 
-  function hasUserQty() {
-    return String(qtyEl?.value ?? '').trim().length > 0;
+/** Add a new row (pretty name in UI, canonical key in data-name) */
+function addRow(rawName, qty){
+  const tr = document.createElement('tr');
+  tr.dataset.name = canonName(rawName);
+
+  const tdName = document.createElement('td');
+  tdName.textContent = formatName(rawName);
+  tr.appendChild(tdName);
+
+  const tdQty = document.createElement('td');
+  const input = document.createElement('input');
+  input.type = 'number'; input.min = '0'; input.step = '1';
+  input.inputMode = 'numeric'; input.style.width = '64px';
+  input.value = safeQty(qty);
+  input.addEventListener('input',  () => window.renderAll && window.renderAll());
+  input.addEventListener('change', () => window.renderAll && window.renderAll());
+  tdQty.appendChild(input);
+  tr.appendChild(tdQty);
+
+  const tdAct = document.createElement('td');
+  tdAct.style.textAlign = 'right';
+
+  const mkBtn = (label, bg) => {
+    const b = document.createElement('button');
+    b.type='button'; b.className='btn'; b.textContent=label;
+    if(bg) b.style.background = bg;
+    b.style.marginRight='6px';
+    return b;
+  };
+  const bMinus = mkBtn('−');
+  const bPlus  = mkBtn('+');
+  const bDel   = mkBtn('Delete', 'var(--bad)');
+
+  bMinus.addEventListener('click', ()=>{
+    const v = safeQty(input.value) - 1;
+    if (v <= 0) tr.remove(); else input.value = v;
+    window.renderAll && window.renderAll();
+  });
+  bPlus.addEventListener('click', ()=>{
+    input.value = safeQty(input.value) + 1;
+    window.renderAll && window.renderAll();
+  });
+  bDel.addEventListener('click', ()=>{
+    tr.remove();
+    window.renderAll && window.renderAll();
+  });
+
+  tdAct.appendChild(bMinus);
+  tdAct.appendChild(bPlus);
+  tdAct.appendChild(bDel);
+  tr.appendChild(tdAct);
+
+  tbody().appendChild(tr);
+}
+
+/** Add or bump a row by delta quantity */
+export function addOrUpdateRow(name, deltaQty){
+  const tr = findRowByName(name);
+  if (tr){
+    const input = tr.querySelector('td:nth-child(2) input');
+    let v = safeQty(input.value) + safeQty(deltaQty);
+    if (v <= 0){ tr.remove(); }
+    else input.value = v;
+  } else if (safeQty(deltaQty) > 0){
+    addRow(name, safeQty(deltaQty));
   }
-  function readQtyFromField() {
-    if (!qtyEl) return 1;
-    if (Number.isFinite(qtyEl.valueAsNumber)) return safeQty(qtyEl.valueAsNumber);
-    return safeQty(qtyEl.value);
-  }
-  function handleAdd(e){
-    if (e){ e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); }
-    const name = sel?.value || '';
-    if (!name) return;
+  window.renderAll && window.renderAll();
+}
 
-    // Use user's qty when present, else rec min
-    const qty = hasUserQty()
-      ? readQtyFromField()
-      : safeQty(recEl?.value || 1);
+/** Read current stock as raw names + qty (use data-name, not display text) */
+export function readStock(){
+  return Array.from(tbody().querySelectorAll('tr')).map(tr => {
+    const key = tr.dataset.name || '';
+    const qtyEl = tr.querySelector('td:nth-child(2) input');
+    const qty = safeQty(qtyEl && qtyEl.value ? qtyEl.value : '0');
+    return key ? { name: key, qty } : null;
+  }).filter(Boolean);
+}
 
-    if (qty < 1) return;
-    addOrUpdateRow(name, qty);
-    renderAll();
-  }
-
-  addBt?.addEventListener('click', handleAdd, true);
-  qtyEl?.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') handleAdd(e); });
-
-  clrBt?.addEventListener('click', (e)=>{
-    e.preventDefault(); e.stopPropagation();
-    clearAllRows(); renderAll();
-  }, true);
+/** Clear all stock rows */
+export function clearStock(){
+  tbody().innerHTML = '';
+  window.renderAll && window.renderAll();
 }
