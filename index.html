@@ -5,8 +5,8 @@
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Case-sensitive path: if your file is css/style.css, update this href -->
-  <link rel="stylesheet" href="css/Style.css" />
+  <!-- Case-sensitive path; update if your file is css/style.css -->
+  <link rel="stylesheet" href="css/Style.css?v=9.6.0" />
   <style>
     :root { --good:#1fbf75; --warn:#f5b301; --bad:#e25555; --card: rgba(255,255,255,.06); --line: rgba(255,255,255,.12) }
     * { box-sizing: border-box }
@@ -26,7 +26,8 @@
     .bar-fill { height:100%; width:0% }
     .bar-fill.bio { background: linear-gradient(90deg, var(--good), var(--warn), var(--bad)) }
     .bar-fill.env { background: linear-gradient(90deg, var(--bad), var(--warn), var(--good)) }
-    .bar-fill.agg { background: linear-gradient(90deg, var(--good), var(--warn), var(--bad)) }
+    /* Aggression now shows COMPATIBILITY: full = good (low aggression) */
+    .bar-fill.agg { background: linear-gradient(90deg, var(--good), var(--warn)); }
     .warning-bubbles { display:flex; flex-wrap:wrap; gap:8px }
     .warning-bubble { background: rgba(229,85,85,.12); color:#ffdede; border:1px solid rgba(229,85,85,.35); padding:6px 10px; border-radius:999px; font-size:.8rem }
     table.stock { width:100%; border-collapse: collapse }
@@ -94,7 +95,7 @@
 
       <!-- Aggression -->
       <div>
-        <label>Aggression &amp; Compatibility</label>
+        <label>Aggression &amp; Compatibility (full = better)</label>
         <div class="bar"><div id="aggBarFill" class="bar-fill agg"></div></div>
         <div id="aggression-warnings" class="warning-bubbles" style="margin-top:10px"></div>
       </div>
@@ -149,7 +150,7 @@
   </div>
 
   <!-- Data first, then logic -->
-  <script src="js/fish-data.js?v=9.5.0"></script>
-  <script type="module" src="js/modules/app.js?v=9.5.0"></script>
+  <script src="js/fish-data.js?v=9.6.0"></script>
+  <script type="module" src="js/modules/app.js?v=9.6.0"></script>
 </body>
 </html>
