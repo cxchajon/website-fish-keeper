@@ -1,8 +1,8 @@
-/* FishkeepingLifeCo — Stocking Calculator core (v9.6.0)
-   - Aggression bar now shows COMPATIBILITY (full = better)
+/* FishkeepingLifeCo — Stocking Calculator core (v9.7.0)
+   - Bars always start at 0 and then fill up with a smooth animation
+   - Aggression bar shows COMPATIBILITY (full = better)
    - Mobile/Safari-safe Add button
    - LocalStorage persistence
-   - Species DB via window.FISH_DB (see fish-data.js)
 */
 
 'use strict';
@@ -15,6 +15,19 @@ const toInt = (v, def = 0) => { const n = Number.parseInt(String(v), 10); return
 const toNum = (v, def = 0) => { const n = Number(v); return Number.isFinite(n) ? n : def; };
 const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 const load = (k, fallback) => { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? fallback; } catch { return fallback; } };
+
+// Simple width animation that *always* starts from 0
+function animateBar(el, pct, ms = 700) {
+  // Reset to 0 with no transition
+  el.style.transition = 'none';
+  el.style.width = '0%';
+  // Force reflow so the browser acknowledges the 0% state
+  // eslint-disable-next-line no-unused-expressions
+  void el.offsetWidth;
+  // Animate to the target width
+  el.style.transition = `width ${ms}ms ease`;
+  el.style.width = `${clamp(pct, 0, 100)}%`;
+}
 
 // ---------- Species DB ----------
 const FALLBACK_DB = [
@@ -50,7 +63,7 @@ let filterQuery = '';
 // ---------- Setup ----------
 document.addEventListener('DOMContentLoaded', () => {
   populateSelect();
-  renderAll();
+  renderAll(); // will animate bars from 0
 
   fishSearchEl.addEventListener('input', onSearch);
   fishSelectEl.addEventListener('change', onSpeciesChange);
@@ -96,7 +109,7 @@ function onSearch(e) {
   updateRecMin();
 }
 function onSpeciesChange() { updateRecMin(); }
-function onQtyInput() { /* kept for clarity */ }
+function onQtyInput() { /* reserved */ }
 
 // ---------- Recommended minimum ----------
 function getRecMinFor(id) {
@@ -122,7 +135,7 @@ function onAddClicked() {
   else stock.push({ id, qty: clamp(qty, 1, 999) });
 
   save(LS_KEY, stock);
-  renderAll();
+  renderAll(); // re-animate bars from 0
 }
 
 function onReset() {
@@ -130,7 +143,7 @@ function onReset() {
   if (confirm('Clear all stocked species?')) {
     stock = [];
     save(LS_KEY, stock);
-    renderAll();
+    renderAll(); // re-animate bars from 0
   }
 }
 
@@ -139,12 +152,12 @@ function inc(id, delta) {
   if (i < 0) return;
   stock[i].qty = clamp(toInt(stock[i].qty, 1) + delta, 1, 999);
   save(LS_KEY, stock);
-  renderAll();
+  renderAll(); // re-animate
 }
 function remove(id) {
   stock = stock.filter(x => x.id !== id);
   save(LS_KEY, stock);
-  renderAll();
+  renderAll(); // re-animate
 }
 
 // ---------- Rendering ----------
@@ -179,7 +192,7 @@ function renderTable() {
   }
 }
 
-// ---------- Bars & warnings ----------
+// ---------- Bars & warnings (with 0→target animation) ----------
 function renderBarsAndWarnings() {
   const gallons = clamp(toNum(gallonsEl.value, 20), 1, 9999);
   const filtration = filtrationEl.value; // 'low'|'standard'|'high'
@@ -197,7 +210,7 @@ function renderBarsAndWarnings() {
   if (planted) capacity *= 1.15;
 
   const bioloadPct = capacity > 0 ? clamp((totalBioload / capacity) * 100, 0, 300) : 0;
-  bioBarFill.style.width = `${bioloadPct}%`;
+  animateBar(bioBarFill, bioloadPct);
 
   // Environmental fit
   const ENV_TEMP = [76, 78];
@@ -210,25 +223,21 @@ function renderBarsAndWarnings() {
     return (tempOverlap + phOverlap) / 2;
   });
   const envAvg = envScores.length ? avg(envScores) : 1.0;
-  envBarFill.style.width = `${clamp(envAvg * 100, 0, 100)}%`;
+  animateBar(envBarFill, envAvg * 100);
 
   // Aggression → Compatibility (invert)
-  // aggAvg 0..1 (higher = worse). We convert to compatibility 1-aggAvg.
   const aggScores = stock.map(e => {
     const s = DB.find(x => x.id === e.id);
     return s ? clamp(toNum(s.aggression, 0.3), 0, 1) : 0.3;
   });
   const aggAvg = aggScores.length ? avg(aggScores) : 0.1;
-  const aggCompatPct = clamp((1 - aggAvg) * 100, 0, 100);
-  aggBarFill.style.width = `${aggCompatPct}%`;
+  animateBar(aggBarFill, (1 - aggAvg) * 100);
 
   // Warnings
   compatWarningsEl.innerHTML = '';
   aggressionWarningsEl.innerHTML = '';
-
   if (bioloadPct >= 100 && bioloadPct < 130) bubble(compatWarningsEl, 'Bioload near capacity. Monitor closely.');
   if (bioloadPct >= 130) bubble(compatWarningsEl, 'Bioload over capacity. Reduce stock or increase filtration.');
-
   addSchoolingWarnings();
   addBettaRules();
   addShrimpRiskWarnings();
