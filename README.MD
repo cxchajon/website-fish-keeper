@@ -26,4 +26,4 @@ Future releases will refine bio-math, expand aggression rules, and polish UI ali
 1. Clone the repo:
    ```bash
    git clone https://github.com/YourUser/YourRepo.git
-   cd YourRepo
+   cd YourRepo 
