@@ -1,29 +1,29 @@
-# Website Fish Keeper
+# 🐠 FishKeeper AI — Stocking Advisor
 
-A simple aquarium stocking capacity calculator.
+![Version](https://img.shields.io/badge/version-v9.1.0-blue.svg)
 
-## 🌐 Live Site
-[Visit the app here](https://cxchajon.github.io/website-fish-keeper/)  
-*(If the link doesn’t work yet, wait 1–2 minutes for GitHub Pages to finish building.)*
+FishKeeper AI is an interactive web app for aquarium hobbyists.  
+It helps you plan safe stocking, track bioload, check aggression compatibility, and visualize tank setups.
 
----
-
-## Features
-- Enter your **tank size**, choose **filtration type**, and toggle **planted or not**.
-- Select fish species from a **preloaded library** (25+ options).
-- See **recommended minimums** auto-fill for each species.
-- Add fish quantities and watch the **bio-load bar** fill in real time.
-- Adjust filtration or plant toggle to see available capacity update.
-- Manage stock with simple **+ / – / Delete** controls.
+> **Current Stable Release:** v9.1.0 — [Changelog](CHANGELOG.md)
 
 ---
 
-## How to run locally
-Download or clone the repository and just open `index.html` in any web browser — no server required.
+## 📌 Project Status
+This repo is currently at **Checkpoint Release v9.1.0**.  
+- ✅ Stocking logic and warnings are functional.  
+- ✅ Safari-safe quantity inputs confirmed.  
+- ✅ UI refined with a planted-tank checkbox and separated min/max fields.  
+- ⚠️ Bioload math still under refinement (edge cases may under-report).  
+- ⚠️ Aggression rules in progress (Betta conflicts improved, more species pending).  
+
+Future releases will refine bio-math, expand aggression rules, and polish UI alignment.
 
 ---
 
-## Future Ideas
-- Expand fish library via JSON/CSV upload.
-- Add gentle warnings when below recommended minimums.
-- Save multiple tanks for comparison.
+## 🚀 Quickstart
+
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/YourUser/YourRepo.git
+   cd YourRepo
