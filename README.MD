@@ -1,5 +1,6 @@
 # 🐠 FishKeeper AI — Stocking Advisor
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-brightgreen)](https://cxchajon.github.io/website-fish-keeper/)
 ![Version](https://img.shields.io/badge/version-v9.1.0-blue.svg)
 
 FishKeeper AI is an interactive web app for aquarium hobbyists.  
