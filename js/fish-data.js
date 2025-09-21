@@ -5,9 +5,9 @@
 
   const DB = [
     // Bettas & Gourami
-    { id:'betta_m', name:'Betta (male)', aggression:0.7, bioload:1.6, temp:[76,82], pH:[6.0,7.5], schoolMin:1, soloOK:true, tags:['anabantoid','longfin','predator'], advisory:'Territorial. Best kept solo or with carefully chosen tankmates; avoid fin-nippers and flashy long-fins.' },
-    { id:'betta_f', name:'Betta (female)', aggression:0.45, bioload:1.3, temp:[76,82], pH:[6.0,7.5], schoolMin:1, soloOK:true, tags:['anabantoid'], advisory:'Can be semi-aggressive. Monitor with similar-sized, peaceful tankmates.' },
-    { id:'dgourami', name:'Dwarf Gourami', aggression:0.45, bioload:2.2, temp:[77,82], pH:[6.0,7.8], schoolMin:1, soloOK:true, tags:['anabantoid','longfin'], advisory:'Peaceful to semi-aggressive; avoid nippy tankmates.' },
+    { id:'betta_m', name:'Betta (male)', aggression:0.7, bioload:1.6, temp:[76,82], pH:[6.0,7.5], schoolMin:1, soloOK:true, tags:['anabantoid','longfin','predator'], advisory:'Territorial. Best kept solo or with carefully chosen tankmates; avoid fin‑nippers and flashy long‑fins.' },
+    { id:'betta_f', name:'Betta (female)', aggression:0.45, bioload:1.3, temp:[76,82], pH:[6.0,7.5], schoolMin:1, soloOK:true, tags:['anabantoid'], advisory:'Can be semi‑aggressive. Monitor with similar-sized, peaceful tankmates.' },
+    { id:'dgourami', name:'Dwarf Gourami', aggression:0.45, bioload:2.2, temp:[77,82], pH:[6.0,7.8], schoolMin:1, soloOK:true, tags:['anabantoid','longfin'], advisory:'Peaceful to semi‑aggressive; avoid nippy tankmates.' },
     { id:'pgourami', name:'Pearl Gourami', aggression:0.35, bioload:3.5, temp:[75,82], pH:[6.0,7.5], schoolMin:1, soloOK:true, tags:['anabantoid','longfin'], advisory:'Generally peaceful; long fins vulnerable to nippers.' },
 
     // Tetras & Rasboras
@@ -19,7 +19,7 @@
     { id:'chili', name:'Chili Rasbora', aggression:0.1, bioload:0.1, temp:[73,82], pH:[5.0,7.4], schoolMin:10, soloOK:false, tags:['schooling','nano','tiny'], advisory:'Very small; keep 10+.' },
 
     // Barbs, Danios (Tiger Barb = classic nipper)
-    { id:'tigerbarb', name:'Tiger Barb', aggression:0.5, bioload:0.7, temp:[72,82], pH:[6.0,7.8], schoolMin:8, soloOK:false, tags:['schooling','nipper'], advisory:'Energetic fin-nipper. Keep in larger groups; avoid long-fins.' },
+    { id:'tigerbarb', name:'Tiger Barb', aggression:0.5, bioload:0.7, temp:[72,82], pH:[6.0,7.8], schoolMin:8, soloOK:false, tags:['schooling','nipper'], advisory:'Energetic fin‑nipper. Keep in larger groups; avoid long‑fins.' },
     { id:'cherrybarb', name:'Cherry Barb', aggression:0.25, bioload:0.35, temp:[73,80], pH:[6.2,7.6], schoolMin:6, soloOK:false, tags:['schooling'], advisory:'Peaceful barb; keep 6+.' },
     { id:'zebra', name:'Zebra Danio', aggression:0.25, bioload:0.4, temp:[65,78], pH:[6.0,8.0], schoolMin:6, soloOK:false, tags:['schooling','coolwater','nipper'], advisory:'Active; may nip long fins.' },
 
