@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Bump version for cache busting -->
-  <link rel="stylesheet" href="css/Style.css?v=1.0.2" />
+  <!-- Update versions to bust browser cache -->
+  <link rel="stylesheet" href="css/Style.css?v=1.0.3" />
 </head>
 <body>
   <div class="wrap">
@@ -93,7 +93,7 @@
           <input id="recMin" type="number" disabled />
         </div>
       </div>
-      <!-- Added margin-bottom via CSS -->
+      <!-- Extra margin now handled in CSS -->
       <div class="row row-actions">
         <button id="addFish" class="btn" type="button">Add</button>
         <button id="reset" class="btn danger" type="button">Clear Stock</button>
@@ -105,11 +105,7 @@
       <h2>Current Stock</h2>
       <table class="stock">
         <thead>
-        <tr>
-          <th>Species</th>
-          <th class="qty">Qty</th>
-          <th class="actions">Actions</th>
-        </tr>
+        <tr><th>Species</th><th class="qty">Qty</th><th class="actions">Actions</th></tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -137,8 +133,8 @@
     <footer>© 2025 FishkeepingLifeCo — For hobbyist use only</footer>
   </div>
 
-  <!-- Load data and logic with version bump -->
-  <script src="js/fish-data.js?v=1.0.2"></script>
-  <script type="module" src="js/modules/app.js?v=1.0.2"></script>
+  <!-- Load data and logic with updated version for cache busting -->
+  <script src="js/fish-data.js?v=1.0.3"></script>
+  <script type="module" src="js/modules/app.js?v=1.0.3"></script>
 </body>
 </html>
