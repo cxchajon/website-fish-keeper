@@ -1,11 +1,10 @@
-/* FishkeepingLifeCo — Core app (v1.0.0)
-   Rules locked from workshop:
-   - Bars always animate 0 -> target (slow 1.2s)
-   - Bioload: capacity multipliers kept; visual capped at 100; show OVER badge & warnings
-   - Environmental: recommend heater setpoint + safe pH band based on overlap/cluster; warnings for outliers
-   - Aggression: rule-driven (additive); severe cases jump to 100
-   - Warnings panel: 3 sections (Bioload, Aggression, Environmental); bubble style; visible even when empty
-   - Pre-baked advisories show when species added
+/* FishkeepingLifeCo — Core app (v1.0.1)
+   - Bars always animate 0 -> target (smooth 1.2s)
+   - Bioload: baseline capacity per gallon = 0.7; filtration/plants adjust; visual capped at 100; OVER badge
+   - Environmental: find overlap or compromise; compute heater & safe pH; mark outliers
+   - Aggression: rule-driven (additive); severe combos (multi-Betta, Betta+cichlid, Betta+longfin, Betta+nippers/TigerBarbs) push to 100
+   - Warnings: bubble style grouped by category; visible even with no stock
+   - Pre-baked advisories shown under species name in stock table
 */
 
 'use strict';
@@ -14,50 +13,52 @@
 const $ = (sel) => /** @type {HTMLElement} */(document.querySelector(sel));
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
-const toInt = (v, def = 0) => { const n = Number.parseInt(String(v), 10); return Number.isFinite(n) ? n : def; };
-const toNum = (v, def = 0) => { const n = Number(v); return Number.isFinite(n) ? n : def; };
-
+const toInt = (v, def = 0) => {
+  const n = Number.parseInt(String(v), 10);
+  return Number.isFinite(n) ? n : def;
+};
+const toNum = (v, def = 0) => {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : def;
+};
 const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 const load = (k, fallback) => { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? fallback; } catch { return fallback; } };
 
-function animateFromZero(el, pct){
-  // Force start at 0 then animate to pct (CSS handles timing)
+function animateFromZero(el, pct) {
   el.style.transition = 'none';
   el.style.width = '0%';
   void el.offsetWidth;
   el.style.transition = 'width 1.2s ease';
   el.style.width = `${clamp(pct, 0, 100)}%`;
-  // Color class
-  el.classList.remove('green','yellow','red');
+  el.classList.remove('green', 'yellow', 'red');
   if (pct < 60) el.classList.add('green');
   else if (pct < 85) el.classList.add('yellow');
   else el.classList.add('red');
 }
 
-function avg(arr){ return arr.reduce((s,x)=>s+x,0) / (arr.length || 1); }
-function intersectRange(a, b){
+function avg(arr) { return arr.reduce((s,x)=>s+x, 0) / (arr.length || 1); }
+function intersectRange(a, b) {
   const lo = Math.max(a[0], b[0]);
   const hi = Math.min(a[1], b[1]);
   return (lo <= hi) ? [lo, hi] : null;
 }
-function intersectionAll(ranges){
+function intersectionAll(ranges) {
   if (!ranges.length) return null;
   let cur = [...ranges[0]];
-  for (let i=1;i<ranges.length;i++){
+  for (let i=1; i<ranges.length; i++){
     const next = intersectRange(cur, ranges[i]);
     if (!next) return null;
     cur = next;
   }
   return cur;
 }
-function midpoint([a,b]){ return (a+b)/2; }
-function distanceToRange(x, [a,b]){
+function midpoint([a,b]) { return (a+b)/2; }
+function distanceToRange(x, [a,b]) {
   if (x < a) return a - x;
   if (x > b) return x - b;
   return 0;
 }
-function gapBetweenRanges([a1,a2],[b1,b2]){
-  // 0 if overlapping, else positive gap
+function gapBetweenRanges([a1,a2], [b1,b2]) {
   if (a2 < b1) return b1 - a2;
   if (b2 < a1) return a1 - b2;
   return 0;
@@ -120,21 +121,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ---------- UI: Species select / search ----------
-function filteredSpecies(){
+function filteredSpecies() {
   const q = filterQuery.trim().toLowerCase();
   if (!q) return DB;
   const list = DB.filter(s =>
     s.name.toLowerCase().includes(q) ||
-    (s.advisory||'').toLowerCase().includes(q)
+    (s.advisory || '').toLowerCase().includes(q)
   );
   return list;
 }
-function populateSelect(){
+function populateSelect() {
   const list = filteredSpecies();
   fishSelectEl.innerHTML = '';
   noMatchEl.hidden = true;
 
-  if (!list.length){
+  if (!list.length) {
     noMatchEl.hidden = false;
     return;
   }
@@ -146,26 +147,26 @@ function populateSelect(){
   }
   fishSelectEl.value = list[0].id;
 }
-function onSearch(e){
+function onSearch(e) {
   filterQuery = String(e.target.value || '');
   const prevSel = fishSelectEl.value;
   populateSelect();
   if ([...fishSelectEl.options].some(o => o.value === prevSel)) fishSelectEl.value = prevSel;
   updateRecMin();
 }
-function getRecMinFor(id){
+function getRecMinFor(id) {
   const s = DB.find(x => x.id === id);
   if (!s) return 1;
   if (s.soloOK) return 1;
   return s.schoolMin ? clamp(toInt(s.schoolMin, 1), 1, 99) : 1;
 }
-function updateRecMin(){
+function updateRecMin() {
   const id = fishSelectEl.value;
   recMinEl.value = getRecMinFor(id || '');
 }
 
 // ---------- Add / Remove / Modify ----------
-function onAdd(){
+function onAdd() {
   const id = fishSelectEl.value;
   if (!id) return;
   const typed = qtyEl.value;
@@ -180,34 +181,34 @@ function onAdd(){
   save(LS_KEY, stock);
   renderAll();
 }
-function onReset(){
+function onReset() {
   if (!stock.length) return;
-  if (confirm('Clear all stocked species?')){
+  if (confirm('Clear all stocked species?')) {
     stock = [];
     save(LS_KEY, stock);
     renderAll();
   }
 }
-function inc(id, delta){
+function inc(id, delta) {
   const i = stock.findIndex(x => x.id === id);
   if (i < 0) return;
   stock[i].qty = clamp(toInt(stock[i].qty, 1) + delta, 1, 999);
   save(LS_KEY, stock);
   renderAll();
 }
-function removeRow(id){
+function removeRow(id) {
   stock = stock.filter(x => x.id !== id);
   save(LS_KEY, stock);
   renderAll();
 }
 
 // ---------- Rendering ----------
-function renderAll(){
+function renderAll() {
   renderTable();
   renderMetricsAndWarnings();
 }
 
-function renderTable(){
+function renderTable() {
   tbody.innerHTML = '';
   if (!stock.length){
     const tr = document.createElement('tr');
@@ -225,7 +226,7 @@ function renderTable(){
 
     const nameTd = document.createElement('td');
     nameTd.textContent = s ? s.name : entry.id;
-    if (s?.advisory){
+    if (s?.advisory) {
       const small = document.createElement('div');
       small.className = 'help';
       small.textContent = s.advisory;
@@ -238,11 +239,11 @@ function renderTable(){
 
     const actionsTd = document.createElement('td');
     actionsTd.className = 'actions';
-    const minus = document.createElement('button'); minus.className='mini'; minus.type='button'; minus.textContent='−';
+    const minus = document.createElement('button'); minus.className = 'mini'; minus.type = 'button'; minus.textContent = '−';
     minus.addEventListener('click', () => inc(entry.id, -1));
-    const plus = document.createElement('button'); plus.className='mini'; plus.type='button'; plus.textContent='+';
+    const plus = document.createElement('button'); plus.className = 'mini'; plus.type = 'button'; plus.textContent = '+';
     plus.addEventListener('click', () => inc(entry.id, +1));
-    const del = document.createElement('button'); del.className='mini'; del.type='button'; del.textContent='Remove';
+    const del = document.createElement('button'); del.className = 'mini'; del.type = 'button'; del.textContent = 'Remove';
     del.addEventListener('click', () => removeRow(entry.id));
     actionsTd.append(minus, plus, del);
 
@@ -252,26 +253,23 @@ function renderTable(){
 }
 
 // ---------- Metrics & Warnings ----------
-function renderMetricsAndWarnings(){
-  // reset warnings
+function renderMetricsAndWarnings() {
   warnBio.innerHTML = '';
   warnAgg.innerHTML = '';
   warnEnv.innerHTML = '';
   bioBadge.hidden = true;
 
-  // Placeholders when empty
   if (!stock.length){
     bubble(warnBio, 'No stock yet — this is where bioload warnings will appear.', 'note');
     bubble(warnAgg, 'No stock yet — this is where compatibility warnings will appear.', 'note');
     bubble(warnEnv, 'No stock yet — this is where environmental fit warnings will appear.', 'note');
   }
 
-  // Gather handy lists
   const entries = stock.map(e => ({ ...e, s: DB.find(x => x.id === e.id) })).filter(e => e.s);
 
   // ---- Bioload ----
   const gallons = clamp(toNum(gallonsEl.value, 20), 1, 9999);
-  let capacity = gallons * 1.0;
+  let capacity = gallons * 0.7;  // baseline 0.7 per gallon
   const filtration = filtrationEl.value;
   if (filtration === 'low') capacity *= 0.75;
   if (filtration === 'high') capacity *= 1.25;
@@ -280,12 +278,10 @@ function renderMetricsAndWarnings(){
 
   const totalBioload = entries.reduce((sum, e) => sum + toNum(e.s.bioload, 0.3) * toInt(e.qty, 1), 0);
   const bioloadPctMath = capacity > 0 ? (totalBioload / capacity) * 100 : 0;
-  const bioloadPct = clamp(bioloadPctMath, 0, 999); // math value for warnings
-  const bioVisualPct = clamp(bioloadPct, 0, 100);   // visual capped at 100
+  const bioloadPct = clamp(bioloadPctMath, 0, 999);
+  const bioloadVisualPct = clamp(bioloadPct, 0, 100);
 
-  animateFromZero(bioBar, bioVisualPct);
-
-  // Bioload warnings (yellow >=75 & <100) (red >=100)
+  animateFromZero(bioBar, bioloadVisualPct);
   if (bioloadPct >= 75 && bioloadPct < 100){
     bubble(warnBio, `Bioload ${Math.round(bioloadPct)}% — keep ~25% buffer. Consider upgrading filtration${planted ? '' : ' or adding plants'}.`, 'warn');
   }
@@ -295,46 +291,38 @@ function renderMetricsAndWarnings(){
   }
 
   // ---- Environmental Fit ----
-  // Build arrays of ranges
-  const temps = entries.map(e => e.s.temp || [72,82]);
-  const phs   = entries.map(e => e.s.pH   || [6.0,7.8]);
+  const temps = entries.map(e => e.s.temp || [72, 82]);
+  const phs = entries.map(e => e.s.pH || [6.0, 7.8]);
 
-  // Temperature setpoint
   let tempSetpoint = null;
   let tempCompromise = false;
   const tempOverlap = intersectionAll(temps);
   if (entries.length && tempOverlap){
     tempSetpoint = midpoint(tempOverlap);
   } else if (entries.length){
-    // No global overlap: use median of midpoints as "majority cluster" proxy
     const mids = temps.map(r => midpoint(r)).sort((a,b)=>a-b);
     tempSetpoint = mids[Math.floor(mids.length/2)];
     tempCompromise = true;
   }
 
-  // Safe pH band
   let phBand = null;
   let phCompromise = false;
   const phOverlap = intersectionAll(phs);
   if (entries.length && phOverlap){
     phBand = phOverlap;
   } else if (entries.length){
-    // No overlap: compromise band around median midpoint (narrow band ±0.3)
     const mids = phs.map(r => midpoint(r)).sort((a,b)=>a-b);
     const m = mids[Math.floor(mids.length/2)];
     phBand = [m - 0.3, m + 0.3];
     phCompromise = true;
   }
 
-  // Show recommendations
   recTempEl.textContent = tempSetpoint ? `Heater: ${Math.round(tempSetpoint)}°F` : 'Heater: —';
-  recPHEl.textContent   = phBand ? `Safe pH: ${phBand[0].toFixed(1)}–${phBand[1].toFixed(1)}` : 'Safe pH: —';
+  recPHEl.textContent = phBand ? `Safe pH: ${phBand[0].toFixed(1)}–${phBand[1].toFixed(1)}` : 'Safe pH: —';
 
-  // Score Environmental Fit (0–100 per species, then average)
-  // Pass rules: temp includes setpoint ±2°F; pH overlaps band (expanded ±0.2)
   let envPct = 0;
   if (entries.length && tempSetpoint != null && phBand != null){
-    const bandExpanded = [phBand[0]-0.2, phBand[1]+0.2];
+    const bandExpanded = [phBand[0] - 0.2, phBand[1] + 0.2];
     const per = entries.map(e => {
       const tOK = distanceToRange(tempSetpoint, e.s.temp) <= 2;
       const pGap = gapBetweenRanges(bandExpanded, e.s.pH);
@@ -345,11 +333,9 @@ function renderMetricsAndWarnings(){
   }
   animateFromZero(envBar, envPct);
 
-  // Environmental warnings & outliers
   if (tempCompromise) bubble(warnEnv, 'Compromise temperature — not all species share a common temp window.', 'warn');
   if (phCompromise)   bubble(warnEnv, 'Compromise pH — not all species share a common pH window.', 'warn');
 
-  // Outlier rules: temp > 2°F outside → Not recommended; pH gap > 2.5 → not recommended; gap ≥3 → not compatible (stronger)
   if (entries.length && tempSetpoint != null){
     for (const e of entries){
       const tDist = distanceToRange(tempSetpoint, e.s.temp);
@@ -369,22 +355,22 @@ function renderMetricsAndWarnings(){
     }
   }
 
-  // ---- Aggression (rule-driven, additive from 0; severe pushes to 100) ----
+  // ---- Aggression (rule-driven) ----
   let aggScore = 0;
 
   const has = (id) => entries.some(e => e.s.id === id);
-  const qtyOf = (id) => entries.find(e => e.s.id === id)?.qty ?? 0;
-  const anyTag = (tag) => entries.some(e => (e.s.tags||[]).includes(tag));
   const countId = (id) => entries.reduce((acc,e)=> acc + (e.s.id===id ? e.qty : 0), 0);
+  const anyTag = (tag) => entries.some(e => (e.s.tags||[]).includes(tag));
 
   const bettaMales = countId('betta_m');
   const hasCichlid = anyTag('cichlid');
-  const hasLongfinTargets = entries.some(e => (e.s.tags||[]).includes('longfin') && e.s.id!=='betta_m');
+  const hasLongfinTargets = entries.some(e => (e.s.tags||[]).includes('longfin') && e.s.id !== 'betta_m');
   const hasShrimp = entries.some(e => (e.s.tags||[]).includes('shrimp'));
   const hasPredators = entries.some(e => (e.s.tags||[]).includes('predator'));
   const hasNippers = entries.some(e => (e.s.tags||[]).includes('nipper'));
   const tigerBarb = entries.find(e => e.s.id === 'tigerbarb');
   const hasLongfinsAny = entries.some(e => (e.s.tags||[]).includes('longfin'));
+  const planted = !!plantedEl.checked;
 
   // Severe rules (max out)
   if (bettaMales > 1){
@@ -399,16 +385,16 @@ function renderMetricsAndWarnings(){
     aggScore = 100;
     bubble(warnAgg, 'Betta with long-finned tankmates is not recommended.', 'bad');
   }
+  if (has('betta_m') && (hasNippers || has('tigerbarb'))) {
+    aggScore = 100;
+    bubble(warnAgg, 'Betta with fin-nippers or Tiger Barbs is not recommended.', 'bad');
+  }
 
-  // If not already maxed, add caution rules
   if (aggScore < 100){
-    // Fin-nippers + any long-fins → +50 (mitigations via Tiger Barb rule below)
     if (hasNippers && hasLongfinsAny){
       aggScore += 50;
       bubble(warnAgg, 'Fin-nippers present with long-finned fish — watch for nipping.', 'warn');
     }
-
-    // Schooling below minimum → +25
     for (const e of entries){
       const s = e.s;
       if (!s.soloOK && s.schoolMin && e.qty < s.schoolMin){
@@ -416,26 +402,19 @@ function renderMetricsAndWarnings(){
         bubble(warnAgg, `${s.name}: below recommended group of ${s.schoolMin}.`, 'warn');
       }
     }
-
-    // Shrimp + known predators → +15 (or +10 if planted)
     if (hasShrimp && hasPredators){
       aggScore += planted ? 10 : 15;
       bubble(warnAgg, 'Shrimp may become prey — dense plants and hides recommended.', 'warn');
     }
-
-    // Tiger Barb special rules
     if (tigerBarb){
       const tbQty = toInt(tigerBarb.qty, 1);
       const inMixed = entries.length > 1;
-
       if (!inMixed){
-        // Species-only Tiger Barb tank → +10
         aggScore += 10;
         bubble(warnAgg, 'Tiger Barbs are boisterous; species-only is fine.', 'warn');
       } else {
-        // If Betta present, already maxed above
+      // If Betta present, severe above covers
         if (!has('betta_m')){
-          // With peaceful/long-fin schooling fish → base +50 with mitigations
           if (hasLongfinsAny){
             let add = 50;
             if (tbQty >= 12) add -= 20;
@@ -444,12 +423,10 @@ function renderMetricsAndWarnings(){
             aggScore += add;
             bubble(warnAgg, `Tiger Barbs with long-fins — larger groups reduce nipping (qty ${tbQty}).`, 'warn');
           } else {
-            // Mixed community, no long-fins → +25
             aggScore += 25;
             bubble(warnAgg, 'Tiger Barbs in mixed community — active and nippy; monitor.', 'warn');
           }
         }
-        // Swimming levels advisory with bottom dwellers like pandas (yellow)
         if (entries.some(e => e.s.id==='cory_panda')){
           bubble(warnAgg, 'Consider swimming levels — Tiger Barbs (mid) + Panda Corydoras (bottom) are often OK.', 'warn');
         }
@@ -462,13 +439,13 @@ function renderMetricsAndWarnings(){
 }
 
 // ---------- UI helpers ----------
-function bubble(parentEl, text, kind='warn'){
+function bubble(parentEl, text, kind='warn') {
   const div = document.createElement('div');
   div.className = `bubble ${kind}`;
   div.textContent = text;
   parentEl.appendChild(div);
 }
-function showBadge(el, text, kind){
+function showBadge(el, text, kind) {
   el.textContent = text;
   el.hidden = false;
   el.classList.remove('bad','warn');
