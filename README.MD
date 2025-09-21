@@ -5,6 +5,8 @@
 FishKeeper AI is an interactive web app for aquarium hobbyists.  
 It helps you plan safe stocking, track bioload, check aggression compatibility, and visualize tank setups.
 
+🔗 **Live Demo:** [FishKeeper AI — Stocking Advisor](https://cxchajon.github.io/website-fish-keeper/)
+
 > **Current Stable Release:** v9.1.0 — [Changelog](CHANGELOG.md)
 
 ---
@@ -25,5 +27,5 @@ Future releases will refine bio-math, expand aggression rules, and polish UI ali
 
 1. Clone the repo:
    ```bash
-   git clone https://cxchajon.github.io/website-fish-keeper/
-   cd YourRepo 
+   git clone https://github.com/YourUser/website-fish-keeper.git
+   cd website-fish-keeper
