@@ -65,21 +65,20 @@
     }
 
     /* --- Featured Resource: Book cover image --- */
+/* Current — change these numbers only */
 .book img {
-  max-width: 300px;          /* default cap on most screens */
-  height: auto;
-  display: block;
-  margin: 0 auto;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: #fff;
+  max-width: 260px;   /* was 300px */
+  /* rest stays the same */
+}
+
+@media (min-width: 1000px) {
+  .book img {
+    max-width: 320px; /* was 400px */
+  }
 }
 
 /* Allow a bit larger on big desktops */
-@media (min-width: 1000px) {
-  .book img {
-    max-width: 400px;        /* grow to 400px on large screens */
-  }
+
 }
 
 /* Make the linked image look clean */
