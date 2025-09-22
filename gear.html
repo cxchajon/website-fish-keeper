@@ -421,21 +421,27 @@
     // Lighting catalog — length fit ranges (inches) + plant level
     // We'll "step up" one size: prioritize lights whose min length > tank length (next range).
     const lightsCatalog = [
-      { id:"nicrew18to24", model:"NICREW ClassicLED", fit:[18,24], plant:"low",  par12:40, control:"inline dimmer", power:18, price:39, link:"#"},
-      { id:"nicrew24to30", model:"NICREW ClassicLED", fit:[24,30], plant:"low",  par12:42, control:"inline dimmer", power:24, price:49, link:"#"},
-      { id:"nicrew30to36", model:"NICREW ClassicLED", fit:[30,36], plant:"low",  par12:45, control:"inline dimmer", power:28, price:59, link:"#"},
-      { id:"finnex24to30", model:"Finnex Stingray",   fit:[24,30], plant:"med",  par12:65, control:"3-mode", power:22, price:69, link:"#"},
-      { id:"finnex30to36", model:"Finnex Stingray",   fit:[30,36], plant:"med",  par12:70, control:"3-mode", power:26, price:79, link:"#"},
-      { id:"finnex36to48", model:"Finnex Planted+",   fit:[36,48], plant:"high", par12:95, control:"app",    power:32, price:129, link:"#"},
-      { id:"fluval48to60", model:"Fluval Plant 3.0",  fit:[48,60], plant:"high", par12:120,control:"app",    power:59, price:199, link:"#"},
-      { id:"fluval60to72", model:"Fluval Plant 3.0",  fit:[60,72], plant:"high", par12:120,control:"app",    power:69, price:229, link:"#"}
-    ];
+  { id:"nicrew18to24", model:"NICREW ClassicLED", ... },
+  { id:"fluval60to72", model:"Fluval Plant Spectrum", ... }
+];
 
-    /* ------------ State ------------ */
-    let selectedGallons = null;
+// Heaters catalog
+// type: glass/titanium; safety: auto-shutoff/dry-run (if stated)
+const heatersCatalog = [
+  { id:"htr50g",  model:"Aqueon Preset",       type:"glass",    watts:50,  rec:"10–20 gal", safety:"—",                 price:18, link:"#"},
+  { id:"htr100g", model:"Aqueon Preset",       type:"glass",    watts:100, rec:"20–30 gal", safety:"—",                 price:22, link:"#"},
+  { id:"htr150g", model:"Tetra HT",            type:"glass",    watts:150, rec:"30–55 gal", safety:"—",                 price:28, link:"#"},
+  { id:"htr200t", model:"Finnex HPS",          type:"titanium", watts:200, rec:"40–75 gal", safety:"auto shutoff",      price:49, link:"#"},
+  { id:"htr300t", model:"Hygger Digital",      type:"titanium", watts:300, rec:"55–100 gal", safety:"dry-run protect",  price:59, link:"#"},
+  { id:"htr500t", model:"Inkbird + 2×300W",    type:"titanium", watts:600, rec:"100–150 gal", safety:"controller",      price:119, link:"#"}
+];
+
+/* ------------ State ------------ */
+let selectedGallons = null;
     const tankCompare = [];
     const filterCompare = [];
     const lightCompare = [];
+const heaterCompare = [];
 
     /* ------------ Helpers ------------ */
     function galFromSelect() {
@@ -714,6 +720,107 @@
         wrap.style.display = "none";
       }
     }
+/* ------------ Heaters ------------ */
+function renderHeaters(){
+  const box = document.getElementById("heater-options");
+  const gallons = selectedGallons;
+  // --- targets & chips ---
+const chipTarget = document.getElementById("heater-target");
+const chipRedund = document.getElementById("heater-redundancy");
+
+if (!gallons) {
+  chipTarget.style.display = "none";
+  chipRedund.style.display = "none";
+} else {
+  const targetWatts = Math.round(gallons * 4);         // ~4 W/gal
+  const half = Math.round(targetWatts / 2);            // redundancy suggestion (2× half)
+  chipTarget.textContent = `Target: ~${targetWatts} W (≈4 W/gal)`;
+  chipRedund.textContent = `Redundancy: 2 × ${half} W`;
+  chipTarget.style.display = "inline-block";
+  chipRedund.style.display = "inline-block";
+}
+  box.innerHTML = "";
+
+  if(!gallons){
+    box.innerHTML = `<p class="muted">Choose a tank size first.</p>`;
+    return;
+  }
+
+  // pick heaters with rec >= selected gallons
+  let eligible = heatersCatalog.filter(h => {
+    const recMin = parseInt(h.rec.split("–")[0], 10); // parse min from "10–20 gal"
+    return recMin <= gallons;
+  });
+function toggleHeaterCompare(model, type, watts, rec, safety, price, el){
+  const idx = heaterCompare.findIndex(x => x.model === model);
+  if (el.checked) {
+    if (heaterCompare.length >= 3) { el.checked = false; return; }
+    heaterCompare.push({model, type, watts, rec, safety, price});
+  } else {
+    if (idx >= 0) heaterCompare.splice(idx,1);
+  }
+  renderHeaterCompare();
+}
+
+function renderHeaterCompare(){
+  const wrap = document.getElementById("heater-compare");
+  const tbody = document.getElementById("heater-compare-body");
+  tbody.innerHTML = "";
+  if (heaterCompare.length > 1){
+    wrap.style.display = "block";
+    heaterCompare.forEach(r=>{
+      tbody.innerHTML += `
+        <tr>
+          <td>${r.model}</td>
+          <td>${r.type}</td>
+          <td>${r.watts}W</td>
+          <td>${r.rec}</td>
+          <td>${r.safety}</td>
+          <td>${r.price}</td>
+        </tr>
+      `;
+    });
+  } else {
+    wrap.style.display = "none";
+  }
+}
+
+  // inside eligible.forEach(h => { ... })
+eligible.forEach(h => {
+  // compute badge vs target using ~4 W/gal
+  const targetWatts = Math.round(gallons * 4);
+  const meets = h.watts >= targetWatts;
+  const near  = !meets && (h.watts >= Math.round(targetWatts * 0.8));
+  const badge = meets
+    ? '<span class="badge ok">Meets target</span>'
+    : (near ? '<span class="badge warn">Near target</span>'
+            : '<span class="badge bad">Under target</span>');
+
+  const card = document.createElement("div");
+  card.className = "product";
+  card.innerHTML = `
+    <div class="thumb">${h.model}<br/>${h.watts} W<br/>placeholder</div>
+    <div class="title">${h.model}</div>
+    <div class="sub">${h.type.toUpperCase()} • ${h.watts}W</div>
+    <div class="sub">Safety: ${h.safety} ${badge}</div>
+    <div class="price" data-price="${h.price}">${priceFmt(h.price)}</div>
+    <div class="row" style="justify-content:space-between;">
+      <a class="btn" href="${h.link}" target="_blank" rel="noopener">View on Amazon</a>
+      <div class="row">
+        <button class="btn"
+          onclick="addToCart({id:'${h.id}',title:'${h.model}',category:'Heater',price:${h.price},affiliateUrl:'${h.link}'})">
+          Add to Cart
+        </button>
+        <label class="chk">
+          <input type="checkbox"
+            onchange="toggleHeaterCompare('${h.model.replace(/'/g,'&#39;')}','${h.type}', '${h.watts}','${h.rec}','${h.safety}','${priceFmt(h.price)}', this)">
+          Compare
+        </label>
+      </div>
+    </div>
+  `;
+  box.appendChild(card);
+});
 
     /* ------------ Cart (localStorage) ------------ */
     const CART_KEY = 'ttg_cart';
@@ -812,8 +919,9 @@
       renderLightCompare();
 
       renderTankOptions(String(selectedGallons));
-      renderFilters();
-      renderLights();
+renderFilters();
+renderLights();
+renderHeaters();  //
     });
 
     document.getElementById("plant-level").addEventListener("change", e=>{
@@ -821,9 +929,10 @@
     });
 
     // Initial state
-    renderFilters(); // shows the "choose tank size" hint
-    renderLights();  // same
-    renderCart();    // load saved cart if any
+renderFilters(); // shows the "choose tank size" hint
+renderLights();  // same
+renderHeaters(); // same
+renderCart();    // load saved cart if any
   </script>
 
   <!-- Buy All Modal -->
