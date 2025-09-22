@@ -64,14 +64,15 @@
       margin-bottom: 10px;
     }
 
-    .book { display:grid; gap:14px; align-items:center; grid-template-columns: 120px 1fr; }
     .book img {
-      width: 100%; height: auto; border-radius: 8px;
-      border: 1px solid var(--border); background:#fff;
-    }
-    @media (max-width: 560px) {
-      .book { grid-template-columns: 1fr; }
-    }
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
   </style>
 </head>
 <body>
