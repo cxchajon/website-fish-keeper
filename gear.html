@@ -554,30 +554,31 @@ const heaterCompare = [];
         return;
       }
 
-      eligible.forEach(f => {
-        const card = document.createElement("div");
-        card.className = "product";
-        const turnoverVal = parseFloat(turnover(f.gph, gallons));
-        const badge = turnoverVal < 7 ? `<span class="badge bad">Under</span>`
-                     : turnoverVal > 10 ? `<span class="badge warn">High</span>`
-                     : (turnoverVal >= 8 && turnoverVal <= 9) ? `<span class="badge ok">Sweet spot</span>`
-                     : `<span class="badge warn">OK</span>`;
-        card.innerHTML = `
-          <div class="thumb">${f.model}<br/>placeholder</div>
-          <div class="title">${f.model}</div>
-          <div class="sub">${f.type} • Rated ${f.rated[0]}–${f.rated[1]} gal • ${f.gph} GPH</div>
-          <div class="price" data-price="${f.price}">${priceFmt(f.price)}</div>
-          <div class="row" style="justify-content:space-between;">
-            <a class="btn" href="${f.link}" target="_blank" rel="noopener">View on Amazon</a>
-            <div class="row">
-              <button class="btn" onclick="addToCart({id:'${f.id}',title:'${f.model}',category:'Filter',price:${f.price},affiliateUrl:'${f.link}'})">Add to Cart</button>
-              <label class="chk"><input type="checkbox" onchange="toggleFilterCompare('${f.model.replace(/'/g,"&#39;")}', '${f.type}', '${f.rated[0]}–${f.rated[1]}', '${f.gph}', '${turnoverVal.toFixed(1)}', '${f.media}', '${f.maint}', '${priceFmt(f.price)}', this)"> Compare</label>
-            </div>
-          </div>
-          <div class="sub">Turnover: <b>${turnoverVal.toFixed(1)}×</b> ${badge}</div>
-        `;
-        box.appendChild(card);
-      });
+      eligible.forEach(h => {
+  const card = document.createElement("div");
+  card.className = "product";
+  card.innerHTML = `
+    <div class="thumb">${h.model}<br>${h.watts}W</div>
+    <div class="title">${h.model}</div>
+    <div class="sub">${h.type.toUpperCase()}</div>
+    <div class="sub">Safety: ${h.safety}</div>
+    <div class="price" data-price="${h.price}">${priceFmt(h.price)}</div>
+    <div class="row" style="justify-content:space-between;">
+      <a class="btn" href="${h.link}" target="_blank" rel="noopener">View on Amazon</a>
+      <div class="row">
+        <button class="btn" onclick="addToCart({id:'${h.id}',title:'${h.model}',category:'Heater',price:${h.price},affiliate:'${h.link}'})">
+          Add to Cart
+        </button>
+        <label class="chk">
+          <input type="checkbox"
+            onchange="toggleHeaterCompare('${h.model.replace(/'/g, '&#39;')}', '${h.type}', '${h.watts}', '${h.rec}', '${h.safety}', '${h.price}')">
+          Compare
+        </label>
+      </div>
+    </div>
+  `;
+  box.appendChild(card);
+});
     }
 
     function toggleFilterCompare(model, type, ratedRange, gph, turnoverVal, media, maint, price, el) {
