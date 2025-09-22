@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>The Tank Guide — Gear (Step-by-Step)</title>
+  <title>The Tank Guide — Gear (Hybrid Grid)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Build your aquarium setup step by step — tanks, filtration, lighting, and more." />
+  <meta name="description" content="Explore tanks, filters, lighting, and aquarium essentials in organized sections." />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" href="/favicon.ico" />
 
@@ -23,19 +23,17 @@
     .hero h1{margin:0 0 8px;}
     .hero p{margin:0;color:var(--muted);}
 
-    .section{margin:32px 0 26px;}
-    .section h2{margin:0 0 6px;}
+    .section{margin:30px 0 22px;}
+    .section h2{margin:0 0 8px;}
     .section .lead{margin:0 0 16px;color:var(--muted);}
 
-    .step{display:grid;gap:14px;}
-    .card{background:var(--card-bg);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:12px;padding:16px;}
-    .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));}
-    .product{display:grid;gap:10px;}
-    .thumb{width:100%;aspect-ratio:4/3;background:#eef2f6;border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--muted);}
+    .block{background:var(--card-bg);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:12px;padding:16px;}
+    .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+    .product{display:grid;gap:8px;border:1px solid var(--border);border-radius:10px;padding:12px;background:rgba(255,255,255,.85);}
+    .thumb{width:100%;aspect-ratio:4/3;background:#eef2f6;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);}
     .title{font-weight:700;}
     .price{color:var(--muted);}
-    .btn{display:inline-block;padding:9px 12px;border:1px solid var(--border);border-radius:10px;text-decoration:none;font-weight:600;}
-    .hint{color:var(--muted);font-size:.95rem;margin-top:6px;}
+    .btn{display:inline-block;padding:8px 12px;border:1px solid var(--border);border-radius:10px;text-decoration:none;font-weight:600;}
   </style>
 </head>
 <body>
@@ -57,17 +55,17 @@
   <!-- Hero -->
   <section class="hero">
     <div class="wrap">
-      <h1>Build Your Perfect Setup</h1>
-      <p>Based on your stocking, pick a tank, filter, lighting, and essentials — all in one flow.</p>
+      <h1>Explore Recommended Gear</h1>
+      <p>Browse tanks, filters, lighting, and essentials — curated for beginner-friendly builds.</p>
     </div>
   </section>
 
   <main class="wrap" id="content">
-    <!-- 1) Tank Size -->
+    <!-- Tanks -->
     <section class="section" id="tanks">
-      <h2>1) Tank Size</h2>
-      <p class="lead">Choose a tank that matches the space and bioload you planned in the Stocking Advisor.</p>
-      <div class="card">
+      <h2>Tanks</h2>
+      <p class="lead">Popular beginner sizes that balance footprint, budget, and stocking room.</p>
+      <div class="block">
         <div class="grid">
           <div class="product">
             <div class="thumb">20G Long — placeholder</div>
@@ -88,15 +86,14 @@
             <a class="btn" href="#" target="_blank" rel="noopener">View on Amazon</a>
           </div>
         </div>
-        <p class="hint">Tip: longer footprint > taller height for many community fish.</p>
       </div>
     </section>
 
-    <!-- 2) Filtration -->
+    <!-- Filtration -->
     <section class="section" id="filtration">
-      <h2>2) Filtration</h2>
-      <p class="lead">Match your filter to your tank size and stock’s waste load.</p>
-      <div class="card">
+      <h2>Filtration</h2>
+      <p class="lead">Pick per tank size and target turnover; sponge filters are great for breeding/QT.</p>
+      <div class="block">
         <div class="grid">
           <div class="product">
             <div class="thumb">HOB — placeholder</div>
@@ -117,15 +114,14 @@
             <a class="btn" href="#" target="_blank" rel="noopener">View on Amazon</a>
           </div>
         </div>
-        <p class="hint">Tip: aim 5–7x turnover/hr for most freshwater communities.</p>
       </div>
     </section>
 
-    <!-- 3) Lighting -->
+    <!-- Lighting -->
     <section class="section" id="lighting">
-      <h2>3) Lighting</h2>
-      <p class="lead">Pick lighting that fits your plant goals and tank depth.</p>
-      <div class="card">
+      <h2>Lighting</h2>
+      <p class="lead">Match light output to plant needs and tank depth; start with shorter photoperiods.</p>
+      <div class="block">
         <div class="grid">
           <div class="product">
             <div class="thumb">LED — placeholder</div>
@@ -140,15 +136,14 @@
             <a class="btn" href="#" target="_blank" rel="noopener">View on Amazon</a>
           </div>
         </div>
-        <p class="hint">Tip: start at 6–8 hours/day; increase slowly to avoid algae.</p>
       </div>
     </section>
 
-    <!-- 4) Substrate & Decor -->
+    <!-- Substrate & Decor -->
     <section class="section" id="substrate-decor">
-      <h2>4) Substrate &amp; Decor</h2>
-      <p class="lead">Choose a base and hardscape that support your livestock and plants.</p>
-      <div class="card">
+      <h2>Substrate &amp; Decor</h2>
+      <p class="lead">Choose an inert gravel/sand or an active soil for plants — then add wood/stone to suit.</p>
+      <div class="block">
         <div class="grid">
           <div class="product">
             <div class="thumb">Gravel — placeholder</div>
@@ -169,7 +164,6 @@
             <a class="btn" href="#" target="_blank" rel="noopener">View on Amazon</a>
           </div>
         </div>
-        <p class="hint">Tip: rinse inert substrates; pre-soak woods; test stones for pH impact.</p>
       </div>
     </section>
   </main>
