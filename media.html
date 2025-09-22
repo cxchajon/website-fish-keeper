@@ -64,8 +64,9 @@
       margin-bottom: 10px;
     }
 
-    .book img {
-  max-width: 300px;   /* caps the width */
+    /* --- Featured Resource: Book cover image --- */
+.book img {
+  max-width: 300px;          /* default cap on most screens */
   height: auto;
   display: block;
   margin: 0 auto;
@@ -73,6 +74,45 @@
   border: 1px solid var(--border);
   background: #fff;
 }
+
+/* Allow a bit larger on big desktops */
+@media (min-width: 1000px) {
+  .book img {
+    max-width: 400px;        /* grow to 400px on large screens */
+  }
+}
+
+/* Make the linked image look clean */
+.book a {
+  text-decoration: none;     /* no underline */
+  border: none;              /* no legacy link border */
+}
+
+.book a img {
+  outline: none;             /* prevent blue tap highlight on some browsers */
+}
+
+/* Desktop-only hover/press feedback */
+@media (hover: hover) and (pointer: fine) {
+  .book a:hover img {
+    cursor: pointer;
+    transform: scale(1.02);  /* gentle zoom on hover */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .book a:active img {
+    transform: scale(0.98);  /* slight shrink when pressed */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.20);
+  }
+}
+
+/* Mobile/touch press feedback (no hover) */
+@media (hover: none) and (pointer: coarse) {
+  .book a:active img {
+    transform: scale(0.98);  /* slight shrink on tap */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.20);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
   </style>
 </head>
 <body>
@@ -139,12 +179,13 @@
   <p class="lead">Discover the hidden magic of aquariums in our debut book.</p>
   <div class="card">
     <div class="book">
-      <img 
-        src="/assets/books/book-cover-web.jpg" 
-        srcset="/assets/books/book-cover-web.jpg 600w, /assets/books/book-cover-large.jpg 1200w" 
-        sizes="(max-width: 600px) 100vw, 600px" 
-        alt="Life in Balance: The Hidden Magic of Aquariums — book cover" />
-      <div>
+      <a href="https://amzn.to/423VkiA" target="_blank" rel="noopener">
+  <img 
+    src="/assets/books/book-cover-web.jpg" 
+    srcset="/assets/books/book-cover-web.jpg 600w, /assets/books/book-cover-large.jpg 1200w" 
+    sizes="(max-width: 600px) 100vw, 600px" 
+    alt="Life in Balance: The Hidden Magic of Aquariums — book cover" />
+</a>
         <p class="muted" style="margin-top:0;">An inviting blend of science and storytelling, this book helps beginners discover the magic behind the nitrogen cycle.</p>
         <a class="btn" href="https://amzn.to/423VkiA" target="_blank" rel="noopener">View on Amazon</a>
       </div>
