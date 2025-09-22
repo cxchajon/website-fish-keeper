@@ -227,15 +227,37 @@
     </section>
 
     <!-- 4) Heating -->
-    <section class="section" id="heating">
-      <h2>4) Heating</h2>
-      <div class="tip">
-        <strong>Tip:</strong> Plan for roughly <b>3–5 W per gallon</b>. Many hobbyists use <b>two smaller heaters</b> for redundancy.
-      </div>
-      <div class="card">
-        <p class="muted">Heater picks and wattage guidance will appear here, based on your selected gallons.</p>
-      </div>
-    </section>
+<section class="section" id="heating">
+  <h2>4) Heating</h2>
+  <div class="tip">
+    <strong>Tip:</strong> Freshwater guideline is <b>3–5 W per gallon</b>. We target ~<b>4 W/gal</b> and often suggest <b>two heaters</b> at half wattage each for redundancy.
+  </div>
+  <div class="card">
+    <div class="row">
+      <span class="chip" id="heater-target" style="display:none;"></span>
+      <span class="chip" id="heater-redundancy" style="display:none;"></span>
+    </div>
+
+    <div id="heater-options" class="grid"></div>
+
+    <div class="compare" id="heater-compare">
+      <table class="compare" aria-label="Compare selected heaters">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Type</th>
+            <th>Wattage</th>
+            <th>Rec. Range</th>
+            <th>Safety</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody id="heater-compare-body"></tbody>
+      </table>
+      <p class="hint">Select 2–3 heaters to compare. We highlight matches near the ~4 W/gal target.</p>
+    </div>
+  </div>
+</section>
 
     <!-- 5) Water Treatment -->
     <section class="section" id="water-treatment">
