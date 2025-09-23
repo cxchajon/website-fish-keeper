@@ -952,6 +952,15 @@ renderCart();    // load saved cart if any
       </div>
     </div>
   </div>
-
+  
+    <!-- Footer (dynamic include) -->
+  <footer id="site-footer"></footer>
+  <script>
+    fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("site-footer").innerHTML = data;
+      });
+  </script>
 </body>
 </html>
