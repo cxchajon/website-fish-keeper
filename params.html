@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cycling Coach — The Tank Guide</title>
+  <meta name="description" content="Cycling Coach is under construction — coming soon to help you master the nitrogen cycle." />
+
+  <style>
+    :root{
+      --bg:#0b1020;            /* dark lab vibe (matches stocking theme) */
+      --fg:#eef3ff;
+      --muted:rgba(255,255,255,.85);
+      --line:rgba(255,255,255,.14);
+      --chip:rgba(255,255,255,.10);
+      --btn-bg:#ffffff;
+      --btn-fg:#08324a;
+      --btn-line:rgba(0,0,0,.12);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+
+    /* Top nav (clickable) */
+    .site-nav{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(8px);
+      background: rgba(10,15,30,.46);
+      border-bottom:1px solid var(--line);
+    }
+    .wrap{max-width:1080px;margin:0 auto;padding:14px 18px;}
+    .nav-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .brand{display:flex;align-items:flex-end;gap:10px}
+    .brand-name{font-weight:800;letter-spacing:.2px}
+    .brand-sub{opacity:.85;font-size:.95rem}
+    .links{display:flex;gap:14px;flex-wrap:wrap}
+    .links a{padding:8px 10px;border-radius:10px;border:1px solid transparent;font-weight:600;opacity:.95}
+    .links a:hover{background:rgba(255,255,255,.06);border-color:var(--line)}
+    .links a[aria-current="page"]{background:rgba(255,255,255,.10);border-color:var(--line)}
+
+    /* Hero (gradient like your site vibe) */
+    .hero{
+      position:relative;
+      padding:90px 18px;
+      background:
+        radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54,194,204,0.0) 60%),
+        radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0,119,199,0.0) 60%),
+        linear-gradient(140deg,#0a3a57 0%, #0b2746 40%, #0b1020 100%);
+      overflow:hidden;
+      text-align:center;
+    }
+    .hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:2}
+    .headline{font-weight:800;font-size:clamp(2rem,4vw,3rem);line-height:1.08;margin:0 0 10px}
+    .sub{margin:0;color:var(--muted);font-size:1.125rem}
+
+    /* Flask silhouette (very subtle, behind text) */
+    .flask{
+      position:absolute;
+      left:50%; transform:translateX(-50%);
+      bottom:-60px; width:min(520px,90vw); height:auto;
+      opacity:.10; /* subtle */
+      z-index:1;
+      pointer-events:none; user-select:none;
+    }
+
+    /* Footer (loaded include will drop inside) */
+    #site-footer{border-top:1px solid var(--line); margin-top:40px;}
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="site-nav" role="banner">
+    <div class="wrap nav-row">
+      <a class="brand" href="/index.html" aria-label="The Tank Guide — Home">
+        <div class="brand-name">The Tank Guide</div>
+        <div class="brand-sub">a product of <strong>FishKeepingLifeCo</strong></div>
+      </a>
+      <nav class="links" role="navigation" aria-label="Primary">
+        <a href="/index.html">Home</a>
+        <a href="/stocking.html">Stocking Advisor</a>
+        <a href="/gear.html">Gear</a>
+        <a href="/params.html" aria-current="page">Cycling Coach</a>
+        <a href="/media.html">Media</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO Placeholder -->
+  <section class="hero">
+    <!-- Subtle lab flask silhouette (SVG) -->
+    <svg class="flask" viewBox="0 0 256 256" aria-hidden="true">
+      <!-- Outline of an Erlenmeyer flask with water/plants -->
+      <path d="M96 16v56L40 192c-10 24 6 48 32 48h112c26 0 42-24 32-48l-56-120V16" fill="none" stroke="white" stroke-opacity=".8" stroke-width="6"/>
+      <!-- Water line -->
+      <path d="M56 168c24-16 56-8 72 0s56 16 72-8" fill="none" stroke="white" stroke-opacity=".6" stroke-width="6"/>
+      <!-- Little plants/bubbles -->
+      <circle cx="92" cy="176" r="4" fill="white" fill-opacity=".6"/>
+      <circle cx="110" cy="186" r="3" fill="white" fill-opacity=".55"/>
+      <path d="M132 184c0 10 10 10 10 0" stroke="white" stroke-opacity=".55" stroke-width="4"/>
+      <path d="M74 182c0 8 8 8 8 0" stroke="white" stroke-opacity=".55" stroke-width="4"/>
+    </svg>
+
+    <div class="hero-inner">
+      <h1 class="headline">🧪 Cycling Coach</h1>
+      <p class="sub">Under construction — coming soon to help you master the nitrogen cycle.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER include -->
+  <footer id="site-footer"></footer>
+  <script>
+    // Load your shared footer (socials + copyright + Amazon disclaimer)
+    fetch("/footer.html").then(r => r.text()).then(html => {
+      document.getElementById("site-footer").innerHTML = html;
+    });
+  </script>
+
+</body>
+</html>
