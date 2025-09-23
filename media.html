@@ -20,19 +20,19 @@
       --muted: rgba(0,0,0,.65);
     }
 
-    /* NEW: site background to match homepage gradient + light text */
+    /* Background now matches the homepage gradient exactly */
     html,body{
       margin:0; padding:0;
       color:#eef3ff;
       background:
-        radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54,194,204,0) 60%),
-        radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0,119,199,0) 60%),
-        linear-gradient(140deg,#0a3a57 0%, #0b2746 40%, #0b1020 100%);
+        radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54,194,204,0.0) 60%),
+        radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0,119,199,0.0) 60%),
+        linear-gradient(140deg,#0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
     }
 
     .wrap { max-width: 1100px; margin: 0 auto; padding: 0 18px; }
 
-    /* Header / Nav (kept in case any global styles rely on it) */
+    /* Header / Nav (legacy page styles kept intact) */
     .site-header .nav { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 0; }
     .site-header .nav a { text-decoration:none; }
     .nav-links { list-style:none; display:flex; gap:14px; margin:0; padding:0; }
@@ -94,10 +94,10 @@
 </head>
 <body>
 
-  <!-- NEW: Global nav include (with initializer so hamburger works) -->
+  <!-- Global nav include -->
   <div id="site-nav"></div>
   <script>
-    // After injecting nav.html, initialize hamburger/drawer + current link
+    // Inject nav.html and initialize hamburger + current link underline
     function initNav(){
       const root = document.getElementById('global-nav');
       if (!root) return;
@@ -140,9 +140,7 @@
       closeBtn?.addEventListener('click', close);
       overlay?.addEventListener('click', close);
       drawer?.querySelectorAll('a').forEach(a=>a.addEventListener('click', close));
-      document.addEventListener('keydown', e=>{
-        if(e.key === 'Escape' && root.getAttribute('data-open')==='true') close();
-      });
+      document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && root.getAttribute('data-open')==='true') close(); });
     }
 
     fetch('/nav.html')
