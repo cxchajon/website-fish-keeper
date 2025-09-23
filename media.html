@@ -94,41 +94,64 @@
 </head>
 <body>
 
-  <!-- NEW: Global nav include (replaces page-local header) -->
-  <div id="site-nav"></div>
-  <script>
-    fetch('/nav.html')
-      .then(r => r.text())
-      .then(html => { document.getElementById('site-nav').outerHTML = html; });
-  </script>
+  <!-- Global nav include (shared across pages) -->
+<div id="site-nav"></div>
+<script>
+  // After injecting nav.html, initialize hamburger/drawer + current link
+  function initNav(){
+    const root = document.getElementById('global-nav');
+    if (!root) return;
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="wrap">
-      <h1>Media Hub</h1>
-      <p class="sub">Watch • Read • Explore — videos and blogs for every aquarist.</p>
-    </div>
-  </section>
+    // underline current (desktop & mobile)
+    const here = location.pathname.replace(/\/+$/,'');
+    const mark = (sel) => root.querySelectorAll(sel).forEach(a=>{
+      const href = (a.getAttribute('href')||'').replace(/\/+$/,'');
+      if (here === href || (here === '' && href === '/index.html')) {
+        a.setAttribute('aria-current','page');
+      }
+    });
+    mark('.links a');
+    mark('.drawer a');
 
-  <main class="wrap" id="content">
-    <!-- Featured Videos -->
-    <section class="section" aria-labelledby="videos">
-      <h2 id="videos">Featured Videos</h2>
-      <p class="lead">Catch our latest upload or explore the full channel for more.</p>
+    // drawer controls
+    const openBtn = root.querySelector('#ttg-nav-open');
+    const closeBtn= root.querySelector('#ttg-nav-close');
+    const overlay = root.querySelector('#ttg-overlay');
+    const drawer  = root.querySelector('#ttg-drawer');
 
-      <div class="stack">
-        <article class="card center" aria-label="Latest video">
-          <div class="media-thumb">Latest video thumbnail will appear here</div>
-          <a class="btn" href="https://www.youtube.com/@fishkeepinglifeco/videos" target="_blank" rel="noopener">▶ Watch Latest Video</a>
-          <p class="muted" style="margin:8px 0 0;">Auto-points to the newest upload once videos go live.</p>
-        </article>
+    const open = ()=>{
+      root.setAttribute('data-open','true');
+      overlay.hidden = false;
+      drawer.removeAttribute('aria-hidden');
+      document.documentElement.style.overflow = 'hidden';
+      openBtn.setAttribute('aria-expanded','true');
+      const first = drawer.querySelector('a'); first && first.focus();
+    };
+    const close = ()=>{
+      root.removeAttribute('data-open');
+      overlay.hidden = true;
+      drawer.setAttribute('aria-hidden','true');
+      document.documentElement.style.overflow = '';
+      openBtn.setAttribute('aria-expanded','false');
+      openBtn.focus();
+    };
 
-        <article class="card center" aria-label="Visit channel">
-          <div class="media-thumb">Visit our YouTube channel</div>
-          <a class="btn" href="https://youtube.com/@fishkeepinglifeco?si=MzPjoIowO-mXfvCW" target="_blank" rel="noopener">📺 Visit Our Channel</a>
-        </article>
-      </div>
-    </section>
+    openBtn?.addEventListener('click', open);
+    closeBtn?.addEventListener('click', close);
+    overlay?.addEventListener('click', close);
+    drawer?.querySelectorAll('a').forEach(a=>a.addEventListener('click', close));
+    document.addEventListener('keydown', e=>{
+      if(e.key === 'Escape' && root.getAttribute('data-open')==='true') close();
+    });
+  }
+
+  fetch('/nav.html')
+    .then(r => r.text())
+    .then(html => {
+      document.getElementById('site-nav').outerHTML = html;
+      initNav();
+    });
+</script>
 
     <!-- Deep Dives & Journals -->
     <section class="section" aria-labelledby="blogs">
