@@ -3,17 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FishkeepingLifeCo — Smart aquarium tools & guides</title>
+  <title>The Tank Guide — A product of FishKeepingLifeCo</title>
   <meta name="description" content="Smart tools and guides to plan, stock, and set up your aquarium — all in one place." />
 
   <style>
     :root{
-      --bg:#0c2740;               /* fallback */
+      --bg:#0c2740;               
       --fg:#ffffff;
       --muted:rgba(255,255,255,.85);
       --card-bg: rgba(255,255,255,.10);
       --card-line: rgba(255,255,255,.18);
-      --chip: rgba(255,255,255,.12);
       --btn-fg:#08324a;
       --btn-bg:#ffffff;
       --btn-bg-hover:#f3f6ff;
@@ -21,9 +20,9 @@
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    a{color:inherit}
+    a{color:inherit;text-decoration:none}
 
-    /* Hero gradient (Option 2 vibe) */
+    /* Hero gradient */
     .hero{
       min-height:100dvh;
       padding:28px 20px 38px;
@@ -36,25 +35,20 @@
     .wrap{max-width:1080px;margin:0 auto}
 
     /* Brand */
-    .brand{
-      display:flex;align-items:flex-end;gap:10px;margin-bottom:56px;
+    .site-brand{
+      margin-bottom:48px;
     }
-    .brand-name{font-weight:800;letter-spacing:.2px;font-size:1.15rem}
-    .brand-sub{opacity:.9;font-size:.95rem}
+    .brand-name{font-weight:800;font-size:1.4rem}
+    .brand-sub{font-size:1rem;opacity:.9}
+    .tagline{margin-top:6px;font-size:1.05rem;opacity:.85}
 
     /* Headline */
     .headline{
       max-width:900px;
       font-weight:800;
       font-size:clamp(2rem,4vw,3.2rem);
-      line-height:1.08;
-      margin:0 0 26px;
-    }
-    .subline{
-      max-width:820px;
-      margin:0 0 34px;
-      color:var(--muted);
-      font-size:1.05rem;
+      line-height:1.1;
+      margin:40px 0 26px;
     }
 
     /* Launch grid */
@@ -82,12 +76,11 @@
       border:1px solid var(--link-line);
       background:var(--btn-bg);
       color:var(--btn-fg);
-      text-decoration:none;
       font-weight:700;
     }
     .btn:hover{background:var(--btn-bg-hover)}
 
-    /* Follow strip (scoped; prevents giant SVGs on other pages) */
+    /* Follow strip */
     nav.follow-strip{
       display:flex;justify-content:center;align-items:center;gap:12px;
       padding:16px 0 8px;border-top:1px solid var(--card-line);margin-top:40px;
@@ -96,13 +89,13 @@
     nav.follow-strip .follow-label{margin-right:6px;font-weight:600}
     nav.follow-strip a.social{
       display:inline-flex;align-items:center;justify-content:center;
-      width:24px;height:24px;border-radius:50%;
+      width:26px;height:26px;border-radius:50%;
       background:#fff;border:1px solid rgba(0,0,0,.1);color:#0a3a57;
     }
-    nav.follow-strip a.social:hover{background:#f7f7f7}
     nav.follow-strip a.social svg{
-      width:16px !important;height:16px !important;display:block;fill:currentColor;
+      width:16px;height:16px;fill:currentColor;display:block;
     }
+    nav.follow-strip a.social:hover{background:#f7f7f7}
 
     /* Footer */
     footer{padding:10px 20px 28px;color:var(--muted)}
@@ -115,10 +108,12 @@
   <!-- HERO -->
   <header class="hero">
     <div class="wrap">
-      <!-- Brand (top-left) -->
-      <div class="brand">
-        <div class="brand-name">FishkeepingLifeCo</div>
-        <div class="brand-sub">Smart tools for aquarists</div>
+
+      <!-- Brand -->
+      <div class="site-brand">
+        <div class="brand-name"><strong>The Tank Guide</strong></div>
+        <div class="brand-sub">a product of <strong>FishKeepingLifeCo</strong></div>
+        <p class="tagline">Smart tools and guides to plan, stock, and set up your aquarium — all in one place.</p>
       </div>
 
       <!-- Headline -->
@@ -127,70 +122,43 @@
       <!-- Launchpad -->
       <section aria-label="Launchpad">
         <div class="grid">
-          <!-- Stocking Advisor -->
           <article class="card">
             <h3>Stocking Advisor</h3>
             <p>Smart stocking made simple — plan a thriving community with confidence.</p>
-            <div class="actions">
-              <a class="btn" href="/stocking.html">Launch</a>
-            </div>
+            <div class="actions"><a class="btn" href="/stocking.html">Launch</a></div>
           </article>
 
-          <!-- Gear -->
           <article class="card">
             <h3>Gear</h3>
             <p>The gear you need, matched to your tank and goals.</p>
-            <div class="actions">
-              <a class="btn" href="/gear.html">Launch</a>
-            </div>
+            <div class="actions"><a class="btn" href="/gear.html">Launch</a></div>
           </article>
 
-          <!-- Cycling Coach -->
           <article class="card">
             <h3>Cycling Coach</h3>
             <p>Master the nitrogen cycle with step-by-step guidance.</p>
-            <div class="actions">
-              <a class="btn" href="/params.html">Launch</a>
-            </div>
+            <div class="actions"><a class="btn" href="/params.html">Launch</a></div>
           </article>
 
-          <!-- Media -->
           <article class="card">
             <h3>Media</h3>
             <p>Watch • Read • Explore — videos and blogs for every aquarist.</p>
-            <div class="actions">
-              <a class="btn" href="/media.html">Discover</a>
-            </div>
+            <div class="actions"><a class="btn" href="/media.html">Discover</a></div>
           </article>
         </div>
       </section>
 
-      <!-- Social strip above footer -->
-      <nav class="follow-strip" aria-label="Follow FishkeepingLifeCo">
+      <!-- Social strip -->
+      <nav class="follow-strip" aria-label="Follow FishKeepingLifeCo">
         <span class="follow-label">Follow us</span>
-
-        <!-- Instagram -->
-        <a class="social" href="https://www.instagram.com/fishkeepinglifeco/" target="_blank" rel="noopener"
-           aria-label="Instagram — opens in a new tab">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.5 5.5 0 0 1 12 7.5zm0 2A3.5 3.5 0 1 0 15.5 13 3.5 3.5 0 0 0 12 9.5zm6.25-3.25a1.25 1.25 0 1 1-1.25 1.25 1.25 1.25 0 0 1 1.25-1.25z"/>
-          </svg>
+        <a class="social" href="https://www.instagram.com/fishkeepinglifeco/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 5.5A5.5 5.5 0 1 1 6.5 13 5.5 5.5 0 0 1 12 7.5z"/></svg>
         </a>
-
-        <!-- TikTok -->
-        <a class="social" href="https://www.tiktok.com/@fishkeepinglifeco?_t=ZT-8zxKp9sn7m3&_r=1" target="_blank" rel="noopener"
-           aria-label="TikTok — opens in a new tab">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M14.5 3h3c.2 2.3 1.9 4.2 4.5 4.5v3c-1.8 0-3.4-.6-4.5-1.6v6.8a6.9 6.9 0 1 1-6.9-6.9c.5 0 1 .1 1.5.2v3.1a3.9 3.9 0 1 0 2.4 3.6V3z"/>
-          </svg>
+        <a class="social" href="https://www.tiktok.com/@fishkeepinglifeco?_t=ZT-8zxKp9sn7m3&_r=1" target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24"><path d="M14.5 3h3c.2 2.3 1.9 4.2 4.5 4.5v3c-1.8 0-3.4-.6-4.5-1.6v6.8a6.9 6.9 0 1 1-6.9-6.9c.5 0 1 .1 1.5.2v3.1a3.9 3.9 0 1 0 2.4 3.6V3z"/></svg>
         </a>
-
-        <!-- YouTube -->
-        <a class="social" href="https://www.youtube.com/@fishkeepinglifeco" target="_blank" rel="noopener"
-           aria-label="YouTube — opens in a new tab">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.7 3.5 12 3.5 12 3.5s-7.7 0-9.4.6A3 3 0 0 0 .5 6.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.7.6 9.4.6 9.4.6s7.7 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-5.8zM9.8 15.5v-7l6.2 3.5z"/>
-          </svg>
+        <a class="social" href="https://www.youtube.com/@fishkeepinglifeco" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.7 3.5 12 3.5 12 3.5s-7.7 0-9.4.6A3 3 0 0 0 .5 6.2V17.8a3 3 0 0 0 2.1 2.1c1.7.6 9.4.6 9.4.6s7.7 0 9.4-.6a3 3 0 0 0 2.1-2.1V6.2zM9.8 15.5v-7l6.2 3.5z"/></svg>
         </a>
       </nav>
     </div>
@@ -199,7 +167,7 @@
   <!-- Footer -->
   <footer>
     <div class="foot-inner">
-      <p class="small">© 2025 FishkeepingLifeCo • <a href="https://thetankguide.com" target="_blank" rel="noopener">thetankguide.com</a></p>
+      <p class="small">© 2025 FishKeepingLifeCo • <a href="https://thetankguide.com" target="_blank" rel="noopener">thetankguide.com</a></p>
       <p class="small">As an Amazon Associate, I earn from qualifying purchases.</p>
     </div>
   </footer>
