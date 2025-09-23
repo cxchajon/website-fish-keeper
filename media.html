@@ -90,6 +90,16 @@
     @media (hover:none) and (pointer:coarse){
       .book a:active img{ transform:scale(.98); box-shadow:0 2px 6px rgba(0,0,0,.2); transition:transform .15s, box-shadow .15s; }
     }
+
+    /* FIX: keep footer social icons the correct size (prevents page CSS from enlarging them) */
+    nav.follow-strip a.social{
+      width:26px; height:26px; border-radius:50%;
+      display:inline-flex; align-items:center; justify-content:center;
+      background:#fff; border:1px solid rgba(0,0,0,.1); color:#0a3a57;
+    }
+    nav.follow-strip a.social svg{
+      width:16px; height:16px; display:block; fill:currentColor;
+    }
   </style>
 </head>
 <body>
