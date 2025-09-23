@@ -48,6 +48,16 @@
 
     /* Footer (loaded include will drop inside) */
     #site-footer{border-top:1px solid var(--line); margin-top:40px;}
+
+    /* FIX: keep footer social icons the correct small size */
+    nav.follow-strip a.social{
+      width:26px; height:26px; border-radius:50%;
+      display:inline-flex; align-items:center; justify-content:center;
+      background:#fff; border:1px solid rgba(0,0,0,.1); color:#0a3a57;
+    }
+    nav.follow-strip a.social svg{
+      width:16px; height:16px; display:block; fill:currentColor;
+    }
   </style>
 </head>
 <body>
