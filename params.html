@@ -55,9 +55,58 @@
   <!-- Global nav include (shared across pages) -->
   <div id="site-nav"></div>
   <script>
+    // After injecting nav.html, initialize hamburger/drawer + current link
+    function initNav(){
+      const root = document.getElementById('global-nav');
+      if (!root) return;
+
+      // underline current (desktop & mobile)
+      const here = location.pathname.replace(/\/+$/,'');
+      const mark = (sel) => root.querySelectorAll(sel).forEach(a=>{
+        const href = (a.getAttribute('href')||'').replace(/\/+$/,'');
+        if (here === href || (here === '' && href === '/index.html')) {
+          a.setAttribute('aria-current','page');
+        }
+      });
+      mark('.links a');
+      mark('.drawer a');
+
+      // drawer controls
+      const openBtn = root.querySelector('#ttg-nav-open');
+      const closeBtn= root.querySelector('#ttg-nav-close');
+      const overlay = root.querySelector('#ttg-overlay');
+      const drawer  = root.querySelector('#ttg-drawer');
+
+      const open = ()=>{
+        root.setAttribute('data-open','true');
+        overlay.hidden = false;
+        drawer.removeAttribute('aria-hidden');
+        document.documentElement.style.overflow = 'hidden';
+        openBtn.setAttribute('aria-expanded','true');
+        const first = drawer.querySelector('a'); first && first.focus();
+      };
+      const close = ()=>{
+        root.removeAttribute('data-open');
+        overlay.hidden = true;
+        drawer.setAttribute('aria-hidden','true');
+        document.documentElement.style.overflow = '';
+        openBtn.setAttribute('aria-expanded','false');
+        openBtn.focus();
+      };
+
+      openBtn?.addEventListener('click', open);
+      closeBtn?.addEventListener('click', close);
+      overlay?.addEventListener('click', close);
+      drawer?.querySelectorAll('a').forEach(a=>a.addEventListener('click', close));
+      document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && root.getAttribute('data-open')==='true') close(); });
+    }
+
     fetch('/nav.html')
       .then(r => r.text())
-      .then(html => { document.getElementById('site-nav').outerHTML = html; });
+      .then(html => {
+        document.getElementById('site-nav').outerHTML = html;
+        initNav(); // <-- new
+      });
   </script>
 
   <!-- HERO Placeholder -->
