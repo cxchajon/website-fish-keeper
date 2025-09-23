@@ -40,7 +40,7 @@
     .brand-sub{font-size:1rem;opacity:.9}
     .tagline{margin-top:6px;font-size:1.05rem;opacity:.85}
 
-    /* Headline */
+    /* Headline (unused placeholder for now) */
     .headline{max-width:900px;font-weight:800;font-size:clamp(2rem,4vw,3.2rem);line-height:1.1;margin:40px 0 26px}
 
     /* Launch grid */
@@ -52,7 +52,7 @@
     .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--link-line);background:var(--btn-bg);color:var(--btn-fg);font-weight:700}
     .btn:hover{background:var(--btn-bg-hover)}
 
-    /* Follow strip */
+    /* Follow strip (if included inside footer.html, you can keep these styles here) */
     nav.follow-strip{display:flex;justify-content:center;align-items:center;gap:12px;padding:16px 0 8px;border-top:1px solid var(--card-line);margin-top:40px;color:var(--muted);font-size:.95rem}
     nav.follow-strip .follow-label{margin-right:6px;font-weight:600}
     nav.follow-strip a.social{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid rgba(0,0,0,.1);color:#0a3a57}
@@ -64,19 +64,18 @@
     footer .foot-inner{max-width:1080px;margin:0 auto}
     .small{opacity:.9;font-size:.95rem}
 
-    /* SEO intro (subtle) */
-    .seo-intro {
-  max-width: 700px;
-  margin: 1rem auto 0;   /* closer to socials, no big gap */
-  padding: 0;
-  font-size: 0.8em;      /* smaller text */
-  line-height: 1.4;
-  color: var(--muted);
-  text-align: center;
-}
-.seo-intro strong {
-  color: var(--fg);
-}
+    /* SEO intro (subtle, ~25% smaller) */
+    .seo-intro{
+      max-width:700px;
+      margin:1rem auto 0;   /* sits close to socials */
+      padding:0;
+      font-size:0.75em;     /* ~25% smaller than body text */
+      line-height:1.4;
+      color:var(--muted);
+      text-align:center;
+    }
+    .seo-intro strong{color:var(--fg)}
+  </style>
 </head>
 <body>
 
@@ -121,7 +120,7 @@
     </div>
   </header>
 
-  <!-- SEO Intro — placed UNDER social strip and ABOVE footer -->
+  <!-- SEO Intro — under socials, above footer -->
   <section class="seo-intro">
     <div class="wrap">
       <p>Welcome to <strong>The Tank Guide</strong>, your trusted resource for aquarium care. Whether you’re setting up your first fish tank or fine-tuning a planted community aquarium, we make the process simple and enjoyable.</p>
