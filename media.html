@@ -19,9 +19,20 @@
       --border: rgba(0,0,0,.08);
       --muted: rgba(0,0,0,.65);
     }
+
+    /* NEW: site background to match homepage gradient + light text */
+    html,body{
+      margin:0; padding:0;
+      color:#eef3ff;
+      background:
+        radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54,194,204,0) 60%),
+        radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0,119,199,0) 60%),
+        linear-gradient(140deg,#0a3a57 0%, #0b2746 40%, #0b1020 100%);
+    }
+
     .wrap { max-width: 1100px; margin: 0 auto; padding: 0 18px; }
 
-    /* Header / Nav */
+    /* Header / Nav (kept in case any global styles rely on it) */
     .site-header .nav { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 0; }
     .site-header .nav a { text-decoration:none; }
     .nav-links { list-style:none; display:flex; gap:14px; margin:0; padding:0; }
@@ -44,11 +55,13 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 16px;
+      color:#0b1020; /* card copy stays dark on light card */
     }
     .stack { display: grid; gap: 14px; }
     .btn {
       display:inline-block; padding:10px 14px; border:1px solid var(--border);
       border-radius: 10px; text-decoration:none; font-weight:600;
+      background:#fff; color:#0b1020;
     }
     .muted { color: var(--muted); }
     .center { text-align:center; }
@@ -65,72 +78,29 @@
     }
 
     /* --- Featured Resource: Book cover image --- */
-/* Current — change these numbers only */
-.book img {
-  max-width: 260px;   /* was 300px */
-  /* rest stays the same */
-}
+    .book img { max-width: 260px; }
+    @media (min-width: 1000px) { .book img { max-width: 320px; } }
 
-@media (min-width: 1000px) {
-  .book img {
-    max-width: 320px; /* was 400px */
-  }
-}
-
-/* Allow a bit larger on big desktops */
-
-}
-
-/* Make the linked image look clean */
-.book a {
-  text-decoration: none;     /* no underline */
-  border: none;              /* no legacy link border */
-}
-
-.book a img {
-  outline: none;             /* prevent blue tap highlight on some browsers */
-}
-
-/* Desktop-only hover/press feedback */
-@media (hover: hover) and (pointer: fine) {
-  .book a:hover img {
-    cursor: pointer;
-    transform: scale(1.02);  /* gentle zoom on hover */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  .book a:active img {
-    transform: scale(0.98);  /* slight shrink when pressed */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.20);
-  }
-}
-
-/* Mobile/touch press feedback (no hover) */
-@media (hover: none) and (pointer: coarse) {
-  .book a:active img {
-    transform: scale(0.98);  /* slight shrink on tap */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.20);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
+    .book a { text-decoration:none; border:none; }
+    .book a img { outline:none; }
+    @media (hover:hover) and (pointer:fine){
+      .book a:hover img{ cursor:pointer; transform:scale(1.02); box-shadow:0 4px 12px rgba(0,0,0,.15); transition:transform .2s, box-shadow .2s; }
+      .book a:active img{ transform:scale(.98); box-shadow:0 2px 6px rgba(0,0,0,.2); }
+    }
+    @media (hover:none) and (pointer:coarse){
+      .book a:active img{ transform:scale(.98); box-shadow:0 2px 6px rgba(0,0,0,.2); transition:transform .15s, box-shadow .15s; }
+    }
   </style>
 </head>
 <body>
-  <!-- Header / Nav -->
-  <header class="site-header">
-    <div class="wrap nav">
-      <a class="brand" href="/" aria-label="The Tank Guide Home">
-        <span style="font-weight:700;">The Tank Guide</span>
-      </a>
-      <ul class="nav-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/index.html#calculator">Stocking Advisor</a></li>
-        <li><a href="/gear.html">Gear</a></li>
-        <li><a href="/media.html" aria-current="page">Media</a></li>
-        <li><a href="/about.html">About</a></li>
-        <li><a href="/contact.html">Contact</a></li>
-      </ul>
-    </div>
-  </header>
+
+  <!-- NEW: Global nav include (replaces page-local header) -->
+  <div id="site-nav"></div>
+  <script>
+    fetch('/nav.html')
+      .then(r => r.text())
+      .then(html => { document.getElementById('site-nav').outerHTML = html; });
+  </script>
 
   <!-- Hero -->
   <section class="hero">
@@ -173,24 +143,23 @@
     </section>
 
     <!-- Featured Resource -->
-<section class="section" aria-labelledby="resource">
-  <h2 id="resource">Featured Resource</h2>
-  <p class="lead">Discover the hidden magic of aquariums in our debut book.</p>
-  <div class="card">
-    <div class="book">
-      <a href="https://amzn.to/423VkiA" target="_blank" rel="noopener">
-  <img 
-    src="/assets/books/book-cover-web.jpg" 
-    srcset="/assets/books/book-cover-web.jpg 600w, /assets/books/book-cover-large.jpg 1200w" 
-    sizes="(max-width: 600px) 100vw, 600px" 
-    alt="Life in Balance: The Hidden Magic of Aquariums — book cover" />
-</a>
-        <p class="muted" style="margin-top:0;">An inviting blend of science and storytelling, this book helps beginners discover the magic behind the nitrogen cycle.</p>
-        <a class="btn" href="https://amzn.to/423VkiA" target="_blank" rel="noopener">View on Amazon</a>
+    <section class="section" aria-labelledby="resource">
+      <h2 id="resource">Featured Resource</h2>
+      <p class="lead">Discover the hidden magic of aquariums in our debut book.</p>
+      <div class="card">
+        <div class="book">
+          <a href="https://amzn.to/423VkiA" target="_blank" rel="noopener">
+            <img
+              src="/assets/books/book-cover-web.jpg"
+              srcset="/assets/books/book-cover-web.jpg 600w, /assets/books/book-cover-large.jpg 1200w"
+              sizes="(max-width: 600px) 100vw, 600px"
+              alt="Life in Balance: The Hidden Magic of Aquariums — book cover" />
+          </a>
+          <p class="muted" style="margin-top:0;">An inviting blend of science and storytelling, this book helps beginners discover the magic behind the nitrogen cycle.</p>
+          <a class="btn" href="https://amzn.to/423VkiA" target="_blank" rel="noopener">View on Amazon</a>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
     <!-- Stay Connected -->
     <section class="section" aria-labelledby="stay-connected">
@@ -206,10 +175,8 @@
   <footer id="site-footer"></footer>
   <script>
     fetch("footer.html")
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById("site-footer").innerHTML = data;
-      });
+      .then(r => r.text())
+      .then(html => { document.getElementById("site-footer").innerHTML = html; });
   </script>
 </body>
 </html>
