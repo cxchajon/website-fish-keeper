@@ -124,71 +124,42 @@ td.empty-cell{ background:rgba(255,255,255,.05); border:1px dashed var(--line); 
   appearance:none;
 }
 
-footer{ opacity:.7; margin:18px 0 8px; font-size:.9rem; }
-
-/* Improve spacing: raise Qty/RecMin fields above buttons */
-.row-actions{ margin-top:20px; }            /* Separates Add/Clear from fields */
-#fQty, #recMin{ margin-bottom:12px; }        /* Extra gap under Quantity and RecMin fields */
-
-@media(max-width:820px){
-  .row{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-  table.stock th.actions,table.stock td.actions{ width:160px; }
-}
-.disclaimer {
-  font-size: 0.85em;
-  color: #888;
-  margin-top: 10px;
-  text-align: center;
+/* Social strip */
+.follow-strip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  margin-top: 24px;
 }
 
-.follow-strip{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  justify-content:center;
-  padding:14px 12px;
-  border-top:1px solid rgba(0,0,0,.08);
-  background: #ffffff;
+.follow-strip span {
+  margin-right: 6px;
+  font-weight: 500;
 }
 
-.follow-strip .follow-label{
-  font-weight:700;
-  color: rgba(0,0,0,.75);
-  margin-right:4px;
-  white-space:nowrap;
+.follow-strip a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;   /* smaller */
+  height: 22px;  /* smaller */
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--border);
+  transition: background 0.2s ease;
 }
 
-.follow-strip .social{
-  display:inline-flex;
-  width:28px;
-  height:28px;
-  border-radius:50%;
-  align-items:center;
-  justify-content:center;
-  border:1px solid rgba(0,0,0,.08);
-  background:#fff;
-  text-decoration:none;
+.follow-strip a img {
+  width: 14px;   /* tighter icon size */
+  height: 14px;
+  display: block;
 }
 
-.follow-strip .social svg{
-  width:18px;
-  height:18px;
-  fill: rgba(0,0,0,.70);
-}
-
-/* Desktop-only hover affordance */
-@media (hover:hover) and (pointer:fine){
-  .follow-strip .social:hover svg{ fill: rgba(0,0,0,.9); }
-  .follow-strip .social:hover{ transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,.08); transition: .15s ease; }
-}
-
-/* Works on any page color — optional dark footer support */
-@media (prefers-color-scheme: dark){
-  .follow-strip{
-    background: rgba(255,255,255,0.06);
-    border-top-color: rgba(255,255,255,.15);
-  }
-  .follow-strip .follow-label{ color: rgba(255,255,255,.9); }
-  .follow-strip .social{ background: rgba(255,255,255,.08); border-color: transparent; }
-  .follow-strip .social svg{ fill: rgba(255,255,255,.85); }
+.follow-strip a:hover {
+  background: #f7f7f7;
 }
