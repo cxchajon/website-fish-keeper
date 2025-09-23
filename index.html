@@ -120,7 +120,8 @@
     </div>
   </header>
 
-  <!-- SEO Intro — under socials, above footer -->
+  <!-- Footer (dynamic include) -->
+<footer id="site-footer">
   <section class="seo-intro">
     <div class="wrap">
       <p>Welcome to <strong>The Tank Guide</strong>, your trusted resource for aquarium care. Whether you’re setting up your first fish tank or fine-tuning a planted community aquarium, we make the process simple and enjoyable.</p>
@@ -128,13 +129,7 @@
       <p>Whether you keep bettas, tetras, shrimp, or snails, The Tank Guide helps you plan, stock, and maintain a thriving aquarium with confidence.</p>
     </div>
   </section>
-
-  <!-- Footer (dynamic include) -->
-  <footer id="site-footer"></footer>
-  <script>
-    fetch("footer.html")
-      .then(r => r.text())
-      .then(html => { document.getElementById("site-footer").innerHTML = html; });
+</footer>
   </script>
 </body>
 </html>
