@@ -1,0 +1,7 @@
+# Robots.txt for TheTankGuide.com
+
+User-agent: *
+Allow: /
+
+# Point search engines to the sitemap
+Sitemap: https://thetankguide.com/sitemap.xml
