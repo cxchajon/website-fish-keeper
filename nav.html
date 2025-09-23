@@ -5,7 +5,7 @@
     #global-nav{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#fff}
     #global-nav .wrap{max-width:1080px;margin:0 auto;padding:12px 18px}
 
-    /* Hide nav on Home (handled by script by toggling data-visible) */
+    /* Let pages decide visibility (home can toggle data-visible) */
     #global-nav[data-visible="false"]{display:none}
 
     /* Bar container */
@@ -59,7 +59,7 @@
     #global-nav .drawer a[aria-current="page"]{outline:2px solid rgba(255,255,255,.8)}
     #global-nav .drawer a:hover{background:rgba(255,255,255,.10)}
 
-    /* Active drawer state */
+    /* Active drawer state (controlled by page JS) */
     #global-nav[data-open="true"] .overlay{opacity:1;pointer-events:auto}
     #global-nav[data-open="true"] .drawer{transform:none}
 
@@ -99,7 +99,7 @@
 
   <!-- Mobile overlay + drawer -->
   <div class="overlay" id="ttg-overlay" hidden></div>
-  <aside class="drawer" id="ttg-drawer" role="dialog" aria-modal="true" aria-label="Navigation">
+  <aside class="drawer" id="ttg-drawer" role="dialog" aria-modal="true" aria-label="Navigation" aria-hidden="true">
     <header>
       <div style="font-weight:800">Menu</div>
       <button class="close" id="ttg-nav-close" aria-label="Close menu">×</button>
@@ -114,66 +114,4 @@
       <a href="/feedback.html">Feedback</a>
     </nav>
   </aside>
-
-  <script>
-    (function(){
-      const root = document.getElementById('global-nav');
-
-      // 1) Hide nav on Home
-      const p = location.pathname.replace(/\/+$/,'');
-      const isHome = (p === '' || p === '/' || p === '/index.html');
-      if(isHome){ root.setAttribute('data-visible','false'); return; }
-
-      // 2) Auto-current underline (desktop & mobile)
-      const curr = (path)=> path.replace(/\/+$/,'');
-      const markCurrent = (links)=>{
-        const here = curr(location.pathname);
-        links.forEach(a=>{
-          const href = curr(a.getAttribute('href')||'');
-          if(!href) return;
-          // match exact, and also handle / vs /index.html
-          const match = (here === href) || (here === '' && href === '/index.html');
-          if(match) a.setAttribute('aria-current','page');
-        });
-      };
-      markCurrent(root.querySelectorAll('.links a'));
-      markCurrent(root.querySelectorAll('.drawer a'));
-
-      // 3) Drawer logic
-      const openBtn = document.getElementById('ttg-nav-open');
-      const closeBtn = document.getElementById('ttg-nav-close');
-      const overlay = document.getElementById('ttg-overlay');
-      const drawer = document.getElementById('ttg-drawer');
-
-      const open = ()=>{
-        root.setAttribute('data-open','true');
-        overlay.hidden = false;
-        openBtn.setAttribute('aria-expanded','true');
-        // lock scroll
-        document.documentElement.style.overflow = 'hidden';
-        // focus first link
-        const firstLink = drawer.querySelector('a');
-        firstLink && firstLink.focus();
-      };
-      const close = ()=>{
-        root.removeAttribute('data-open');
-        overlay.hidden = true;
-        openBtn.setAttribute('aria-expanded','false');
-        document.documentElement.style.overflow = '';
-        openBtn.focus();
-      };
-
-      openBtn.addEventListener('click', open);
-      closeBtn.addEventListener('click', close);
-      overlay.addEventListener('click', close);
-
-      // Close on ESC
-      document.addEventListener('keydown', (e)=>{
-        if(e.key === 'Escape' && root.getAttribute('data-open') === 'true'){ close(); }
-      });
-
-      // Close when clicking a link
-      drawer.querySelectorAll('a').forEach(a=> a.addEventListener('click', close));
-    })();
-  </script>
 </header>
