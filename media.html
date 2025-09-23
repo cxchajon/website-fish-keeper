@@ -220,12 +220,17 @@
     </section>
   </main>
 
-  <!-- Footer (dynamic include) -->
-  <footer id="site-footer"></footer>
-  <script>
-    fetch("footer.html")
-      .then(r => r.text())
-      .then(html => { document.getElementById("site-footer").innerHTML = html; });
-  </script>
+  <!-- Footer -->
+<footer id="site-footer"></footer>
+<script>
+  fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("site-footer").innerHTML = data;
+    });
+</script>
+  <!-- Load data and logic with updated version for cache busting -->
+  <script src="js/fish-data.js?v=1.0.3"></script>
+  <script type="module" src="js/modules/app.js?v=1.0.3"></script>
 </body>
 </html>
