@@ -1,50 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Tank Guide</title>
-  <meta name="description" content="The Tank Guide — your aquarium, made simple. Tools, guides, and gear for aquarists." />
-  <link rel="stylesheet" href="css/style.css" />
+  <title>FishkeepingLifeCo — Smart aquarium tools & guides</title>
+  <meta name="description" content="Smart tools and guides to plan, stock, and set up your aquarium — all in one place." />
+
+  <style>
+    :root{
+      --bg:#0c2740;               /* fallback */
+      --fg:#ffffff;
+      --muted:rgba(255,255,255,.85);
+      --card-bg: rgba(255,255,255,.10);
+      --card-line: rgba(255,255,255,.18);
+      --chip: rgba(255,255,255,.12);
+      --btn-fg:#08324a;
+      --btn-bg:#ffffff;
+      --btn-bg-hover:#f3f6ff;
+      --link-line: rgba(255,255,255,.22);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit}
+
+    /* Hero gradient (Option 2 vibe) */
+    .hero{
+      min-height:100dvh;
+      padding:28px 20px 38px;
+      background:
+        radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54,194,204,0.0) 60%),
+        radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0,119,199,0.0) 60%),
+        linear-gradient(140deg,#0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
+    }
+
+    .wrap{max-width:1080px;margin:0 auto}
+
+    /* Brand */
+    .brand{
+      display:flex;align-items:flex-end;gap:10px;margin-bottom:56px;
+    }
+    .brand-name{font-weight:800;letter-spacing:.2px;font-size:1.15rem}
+    .brand-sub{opacity:.9;font-size:.95rem}
+
+    /* Headline */
+    .headline{
+      max-width:900px;
+      font-weight:800;
+      font-size:clamp(2rem,4vw,3.2rem);
+      line-height:1.08;
+      margin:0 0 26px;
+    }
+    .subline{
+      max-width:820px;
+      margin:0 0 34px;
+      color:var(--muted);
+      font-size:1.05rem;
+    }
+
+    /* Launch grid */
+    .grid{
+      display:grid;
+      gap:14px;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    }
+    .card{
+      background:var(--card-bg);
+      border:1px solid var(--card-line);
+      border-radius:14px;
+      padding:16px;
+      backdrop-filter: blur(6px);
+      display:grid;
+      gap:10px;
+    }
+    .card h3{margin:2px 0 4px;font-size:1.1rem}
+    .card p{margin:0;color:var(--muted);min-height:3.2em}
+    .actions{margin-top:8px}
+    .btn{
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:10px;
+      border:1px solid var(--link-line);
+      background:var(--btn-bg);
+      color:var(--btn-fg);
+      text-decoration:none;
+      font-weight:700;
+    }
+    .btn:hover{background:var(--btn-bg-hover)}
+
+    /* Follow strip (scoped; prevents giant SVGs on other pages) */
+    nav.follow-strip{
+      display:flex;justify-content:center;align-items:center;gap:12px;
+      padding:16px 0 8px;border-top:1px solid var(--card-line);margin-top:40px;
+      color:var(--muted);font-size:.95rem;
+    }
+    nav.follow-strip .follow-label{margin-right:6px;font-weight:600}
+    nav.follow-strip a.social{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:24px;height:24px;border-radius:50%;
+      background:#fff;border:1px solid rgba(0,0,0,.1);color:#0a3a57;
+    }
+    nav.follow-strip a.social:hover{background:#f7f7f7}
+    nav.follow-strip a.social svg{
+      width:16px !important;height:16px !important;display:block;fill:currentColor;
+    }
+
+    /* Footer */
+    footer{padding:10px 20px 28px;color:var(--muted)}
+    footer .foot-inner{max-width:1080px;margin:0 auto}
+    .small{opacity:.9;font-size:.95rem}
+  </style>
 </head>
 <body>
-  <!-- Header / Navigation -->
+
+  <!-- HERO -->
   <header class="hero">
-    <div class="container">
-      <div class="brand-row">
-        <h1 class="site-title">The Tank Guide</h1>
-        <nav class="navbar">
-          <a href="index.html" class="active">Home</a>
-          <a href="stocking.html">Stocking</a>
-          <a href="build.html">Build</a>
-          <a href="params.html">Params</a>
-          <a href="gear.html">Gear</a>
-          <a href="media.html">Media</a>
-        </nav>
+    <div class="wrap">
+      <!-- Brand (top-left) -->
+      <div class="brand">
+        <div class="brand-name">FishkeepingLifeCo</div>
+        <div class="brand-sub">Smart tools for aquarists</div>
       </div>
-      <p class="tagline">Your aquarium, made simple.</p>
+
+      <!-- Headline -->
+      <h1 class="headline">Smart tools and guides to plan, stock, and set up your aquarium — all in one place.</h1>
+
+      <!-- Launchpad -->
+      <section aria-label="Launchpad">
+        <div class="grid">
+          <!-- Stocking Advisor -->
+          <article class="card">
+            <h3>Stocking Advisor</h3>
+            <p>Smart stocking made simple — plan a thriving community with confidence.</p>
+            <div class="actions">
+              <a class="btn" href="/stocking.html">Launch</a>
+            </div>
+          </article>
+
+          <!-- Gear -->
+          <article class="card">
+            <h3>Gear</h3>
+            <p>The gear you need, matched to your tank and goals.</p>
+            <div class="actions">
+              <a class="btn" href="/gear.html">Launch</a>
+            </div>
+          </article>
+
+          <!-- Cycling Coach -->
+          <article class="card">
+            <h3>Cycling Coach</h3>
+            <p>Master the nitrogen cycle with step-by-step guidance.</p>
+            <div class="actions">
+              <a class="btn" href="/params.html">Launch</a>
+            </div>
+          </article>
+
+          <!-- Media -->
+          <article class="card">
+            <h3>Media</h3>
+            <p>Watch • Read • Explore — videos and blogs for every aquarist.</p>
+            <div class="actions">
+              <a class="btn" href="/media.html">Discover</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Social strip above footer -->
+      <nav class="follow-strip" aria-label="Follow FishkeepingLifeCo">
+        <span class="follow-label">Follow us</span>
+
+        <!-- Instagram -->
+        <a class="social" href="https://www.instagram.com/fishkeepinglifeco/" target="_blank" rel="noopener"
+           aria-label="Instagram — opens in a new tab">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.5 5.5 0 0 1 12 7.5zm0 2A3.5 3.5 0 1 0 15.5 13 3.5 3.5 0 0 0 12 9.5zm6.25-3.25a1.25 1.25 0 1 1-1.25 1.25 1.25 1.25 0 0 1 1.25-1.25z"/>
+          </svg>
+        </a>
+
+        <!-- TikTok -->
+        <a class="social" href="https://www.tiktok.com/@fishkeepinglifeco?_t=ZT-8zxKp9sn7m3&_r=1" target="_blank" rel="noopener"
+           aria-label="TikTok — opens in a new tab">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M14.5 3h3c.2 2.3 1.9 4.2 4.5 4.5v3c-1.8 0-3.4-.6-4.5-1.6v6.8a6.9 6.9 0 1 1-6.9-6.9c.5 0 1 .1 1.5.2v3.1a3.9 3.9 0 1 0 2.4 3.6V3z"/>
+          </svg>
+        </a>
+
+        <!-- YouTube -->
+        <a class="social" href="https://www.youtube.com/@fishkeepinglifeco" target="_blank" rel="noopener"
+           aria-label="YouTube — opens in a new tab">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.7 3.5 12 3.5 12 3.5s-7.7 0-9.4.6A3 3 0 0 0 .5 6.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.7.6 9.4.6 9.4.6s7.7 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-5.8zM9.8 15.5v-7l6.2 3.5z"/>
+          </svg>
+        </a>
+      </nav>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="container">
-    <section class="menu">
-      <a href="stocking.html" class="card">Stocking Calculator</a>
-      <a href="build.html" class="card">Build My Aquarium</a>
-      <a href="params.html" class="card">Params &amp; Cycling</a>
-      <a href="gear.html" class="card">Gear</a>
-      <a href="media.html" class="card">Media</a>
-    </section>
-  </main>
-
   <!-- Footer -->
-<footer id="site-footer"></footer>
-<script>
-  fetch("footer.html")
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById("site-footer").innerHTML = data;
-    });
-</script>
+  <footer>
+    <div class="foot-inner">
+      <p class="small">© 2025 FishkeepingLifeCo • <a href="https://thetankguide.com" target="_blank" rel="noopener">thetankguide.com</a></p>
+      <p class="small">As an Amazon Associate, I earn from qualifying purchases.</p>
+    </div>
+  </footer>
+
 </body>
 </html>
