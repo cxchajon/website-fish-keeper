@@ -164,12 +164,16 @@
   </header>
 
   <!-- Footer -->
-  <footer>
-    <div class="foot-inner">
-      <p class="small">© 2025 FishKeepingLifeCo • <a href="https://thetankguide.com" target="_blank" rel="noopener">thetankguide.com</a></p>
-      <p class="small">As an Amazon Associate, I earn from qualifying purchases.</p>
-    </div>
-  </footer>
-
+<footer id="site-footer"></footer>
+<script>
+  fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("site-footer").innerHTML = data;
+    });
+</script>
+  <!-- Load data and logic with updated version for cache busting -->
+  <script src="js/fish-data.js?v=1.0.3"></script>
+  <script type="module" src="js/modules/app.js?v=1.0.3"></script>
 </body>
 </html>
