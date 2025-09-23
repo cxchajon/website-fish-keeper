@@ -10,14 +10,29 @@
 
   <style>
     :root{
-      --border: rgba(0,0,0,.10);
-      --muted: rgba(0,0,0,.65);
-      --card-bg: rgba(255,255,255,.72);
-      --chip: rgba(0,0,0,.06);
-      --ok: #0f9d58;
-      --warn: #f4b400;
-      --bad: #db4437;
+      /* switched to dark theme tokens to match params/stocking */
+      --fg:#eef3ff;
+      --muted:rgba(255,255,255,.85);
+      --border:rgba(255,255,255,.14);
+      --card-bg:rgba(255,255,255,.08);
+      --chip:rgba(255,255,255,.12);
+      --ok:#0f9d58;
+      --warn:#f4b400;
+      --bad:#db4437;
     }
+
+    /* gradient background + global text color */
+    html,body{
+      margin:0;
+      padding:0;
+      color:var(--fg);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54,194,204,0) 60%),
+        radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0,119,199,0) 60%),
+        linear-gradient(140deg,#0a3a57 0%, #0b2746 40%, #0b1020 100%);
+    }
+
     .wrap{max-width:1100px;margin:0 auto;padding:0 18px;}
     .hero{padding:56px 0 28px;text-align:center;}
     .hero h1{margin:0 0 8px;}
@@ -27,8 +42,11 @@
     .section .lead{margin:0 0 16px;color:var(--muted);}
     .card{background:var(--card-bg);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:12px;padding:16px;}
     .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));}
-    .product{display:grid;gap:8px;border:1px solid var(--border);border-radius:10px;padding:12px;background:#fff;}
-    .thumb{width:100%;aspect-ratio:4/3;background:#eef2f6;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.95rem;text-align:center;padding:6px;}
+
+    /* softened cards/thumbs for dark background */
+    .product{display:grid;gap:8px;border:1px solid var(--border);border-radius:10px;padding:12px;background:rgba(255,255,255,.06);}
+    .thumb{width:100%;aspect-ratio:4/3;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.95rem;text-align:center;padding:6px;}
+
     .title{font-weight:700;}
     .sub{color:var(--muted);font-size:.95rem;}
     .price{color:var(--muted);}
