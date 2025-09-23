@@ -163,3 +163,9 @@ td.empty-cell{ background:rgba(255,255,255,.05); border:1px dashed var(--line); 
 .follow-strip a:hover {
   background: #f7f7f7;
 }
+
+.follow-strip a svg {
+  width: 16px;   /* control final size */
+  height: 16px;
+  fill: currentColor; /* use text color */
+}
