@@ -13,7 +13,7 @@
     /* Keep the fixed nav above content */
     #global-nav{position:fixed;top:0;left:0;right:0;z-index:10000}
 
-    /* Left-aligned hamburger to match Media */
+    /* Put hamburger on the LEFT (match Media) */
     #global-nav .inner{display:flex;align-items:center;gap:12px}
     #ttg-nav-open{order:0;margin-right:10px}
     #global-nav .brand{order:1}
@@ -24,6 +24,20 @@
       #global-nav .links{display:none !important;}
       #ttg-nav-open{display:inline-flex !important;}
     }
+
+    /* Remove iOS giant focus ring at very top; keep good keyboard ring */
+    #global-nav a, #global-nav button{ -webkit-tap-highlight-color:transparent; }
+    #global-nav a:focus, #global-nav button:focus{ outline:none; }
+    @supports selector(:focus-visible){
+      #global-nav a:focus-visible, #global-nav button:focus-visible{
+        outline:2px solid rgba(255,255,255,.45);
+        outline-offset:2px; border-radius:10px;
+      }
+    }
+
+    /* Ensure drawer overlays content cleanly */
+    #ttg-overlay{ z-index:10001; }
+    #ttg-drawer { z-index:10002; }
   </style>
 </head>
 <body>
@@ -35,7 +49,7 @@
       const root = document.getElementById('global-nav');
       if (!root) return;
 
-      // underline current link
+      // underline current link (desktop & drawer)
       const here = location.pathname.replace(/\/+$/,'');
       const mark = sel => root.querySelectorAll(sel).forEach(a=>{
         const href = (a.getAttribute('href')||'').replace(/\/+$/,'');
@@ -44,7 +58,7 @@
         }
       });
       mark('.links a');
-      mark('.drawer a');
+      mark('.drawer a, #ttg-drawer a'); // support either class/id
 
       // drawer controls
       const openBtn = root.querySelector('#ttg-nav-open');
@@ -78,7 +92,12 @@
 
     fetch('/nav.html?v=1.0.5')
       .then(r=>r.text())
-      .then(html=>{ document.getElementById('site-nav').outerHTML = html; initNav(); });
+      .then(html=>{
+        document.getElementById('site-nav').outerHTML = html;
+        initNav();
+        // iOS sometimes leaves the brand link focused; blur it so no “input” bar appears
+        setTimeout(()=>{ if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); }, 0);
+      });
   </script>
 
   <!-- Spacer so fixed header doesn't overlap content -->
