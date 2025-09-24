@@ -5,7 +5,7 @@
   <title>The Tank Guide — Media Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Media Hub — Watch • Read • Explore. Aquarium videos and blogs for every aquarist." />
-  <link rel="stylesheet" href="css/style.css?v=1.0.5" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.6" />
   <link rel="icon" href="/favicon.ico" />
   <meta property="og:title" content="The Tank Guide — Media Hub" />
   <meta property="og:description" content="Watch • Read • Explore — videos and blogs for every aquarist." />
@@ -18,8 +18,8 @@
       --card-bg: rgba(255,255,255,.6);
       --border: rgba(0,0,0,.08);
       --muted: rgba(0,0,0,.65);
-      --ttg-nav-bg: linear-gradient(135deg, rgba(0, 119, 199, 0.88) 0%, rgba(10, 77, 135, 0.88) 100%);
-      --ttg-nav-border: rgba(255, 255, 255, 0.3);
+      --ttg-nav-bg: linear-gradient(135deg, rgba(0, 119, 199, 0.42) 0%, rgba(10, 77, 135, 0.42) 100%);
+      --ttg-nav-border: rgba(255, 255, 255, 0.26);
       --ttg-nav-text: #f2f6ff;
     }
 
@@ -162,7 +162,7 @@
         });
       }
 
-      fetch('/nav.html?v=1.0.5')
+      fetch('/nav.html?v=1.0.6')
         .then((response) => response.text())
         .then((html) => {
           const placeholder = document.getElementById('site-nav');
