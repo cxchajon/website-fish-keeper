@@ -6,7 +6,7 @@
   <title>Cycling Coach — The Tank Guide</title>
   <meta name="description" content="Cycling Coach is under construction — coming soon to help you master the nitrogen cycle." />
 
-  <link rel="stylesheet" href="css/style.css?v=1.2.0" />
+  <link rel="stylesheet" href="css/style.css?v=1.3.0" />
 
   <style>
     :root{
@@ -57,12 +57,19 @@
 
   <!-- Global nav include (shared across pages) -->
   <div id="site-nav"></div>
+  <script src="js/nav.js?v=1.1.0"></script>
   <script>
-    // Keep this exact version across all subpages; bump only if you must.
-    fetch('/nav.html?v=1.0.6').then(r => r.text()).then(html => {
-      const host = document.getElementById('site-nav');
-      host.outerHTML = html; // nav.html includes init code and runs itself
-    });
+    fetch('/nav.html?v=1.1.0')
+      .then(response => response.text())
+      .then(html => {
+        const host = document.getElementById('site-nav');
+        if (!host) return;
+        host.outerHTML = html;
+        if (typeof window.__initTTGNav === 'function') {
+          window.__initTTGNav();
+        }
+      })
+      .catch(error => console.error('Failed to load navigation', error));
   </script>
 
   <!-- HERO Placeholder -->
