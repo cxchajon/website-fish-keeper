@@ -60,7 +60,21 @@ header.site-header {
   width: min(1100px, 100%);
 }
 
-.site-header__inner > .hamburger {
+#global-nav .site-header__inner {
+  display: flex;
+  align-items: center;
+}
+
+#global-nav #ttg-nav-open {
+  order: 0;
+}
+
+#global-nav .site-brand {
+  order: 1;
+}
+
+#global-nav .site-links {
+  order: 2;
   margin-left: auto;
 }
 
