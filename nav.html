@@ -1,29 +1,40 @@
-<header class="site-header">
+<header id="global-nav" class="site-header">
   <div class="site-header__inner">
+    <button id="ttg-nav-open" class="hamburger" type="button" aria-controls="ttg-drawer" aria-expanded="false" aria-label="Open menu">
+      <span class="hamburger__bars" aria-hidden="true"></span>
+      <span class="visually-hidden">Open menu</span>
+    </button>
     <a class="site-brand" href="index.html" aria-label="The Tank Guide — Home">
       <span class="site-brand__title">The Tank Guide</span>
       <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
     </a>
     <nav class="site-links" aria-label="Primary">
       <a href="index.html" class="nav__link">Home</a>
-      <a href="stocking.html" class="nav__link">Stocking</a>
+      <a href="stocking.html" class="nav__link">Stocking Advisor</a>
       <a href="gear.html" class="nav__link">Gear</a>
       <a href="params.html" class="nav__link">Cycling Coach</a>
       <a href="media.html" class="nav__link">Media</a>
       <a href="about.html" class="nav__link">About</a>
+      <a href="https://thetankguide.com/feedback" class="nav__link" target="_blank" rel="noopener">Feedback</a>
     </nav>
-    <button class="hamburger" data-nav="hamburger" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu">
-      <span class="hamburger__bars" aria-hidden="true"></span>
-      <span class="visually-hidden">Open menu</span>
-    </button>
   </div>
-  <div class="nav-overlay" data-nav="overlay" hidden></div>
-  <nav id="site-drawer" class="nav-drawer" data-nav="drawer" aria-label="Site" tabindex="-1">
-    <a href="index.html" class="nav__link">Home</a>
-    <a href="stocking.html" class="nav__link">Stocking</a>
-    <a href="gear.html" class="nav__link">Gear</a>
-    <a href="params.html" class="nav__link">Cycling Coach</a>
-    <a href="media.html" class="nav__link">Media</a>
-    <a href="about.html" class="nav__link">About</a>
+  <div id="ttg-overlay" aria-hidden="true"></div>
+  <nav id="ttg-drawer" class="drawer" aria-label="Site">
+    <div class="drawer__header">
+      <span class="drawer__title">The Tank Guide</span>
+      <button id="ttg-nav-close" class="drawer-close" type="button" aria-label="Close menu">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <ul class="drawer-links">
+      <li><a href="index.html" class="nav__link">Home</a></li>
+      <li><a href="stocking.html" class="nav__link">Stocking Advisor</a></li>
+      <li><a href="gear.html" class="nav__link">Gear</a></li>
+      <li><a href="params.html" class="nav__link">Cycling Coach</a></li>
+      <li><a href="media.html" class="nav__link">Media</a></li>
+      <li><a href="about.html" class="nav__link">About</a></li>
+      <li><a href="https://thetankguide.com/feedback" class="nav__link" target="_blank" rel="noopener">Feedback</a></li>
+    </ul>
   </nav>
 </header>
+<div class="global-nav-spacer" aria-hidden="true"></div>
