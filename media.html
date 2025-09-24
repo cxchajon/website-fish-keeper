@@ -74,18 +74,98 @@
       margin-bottom: 10px;
     }
 
-    /* --- Featured Resource: Book cover image --- */
-    .book img { max-width: 260px; }
-    @media (min-width: 1000px) { .book img { max-width: 320px; } }
-
-    .book a { text-decoration:none; border:none; }
-    .book a img { outline:none; }
-    @media (hover:hover) and (pointer:fine){
-      .book a:hover img{ cursor:pointer; transform:scale(1.02); box-shadow:0 4px 12px rgba(0,0,0,.15); transition:transform .2s, box-shadow .2s; }
-      .book a:active img{ transform:scale(.98); box-shadow:0 2px 6px rgba(0,0,0,.2); }
+    /* --- Featured Resource --- */
+    #featured-resource {
+      padding: 16px;
     }
-    @media (hover:none) and (pointer:coarse){
-      .book a:active img{ transform:scale(.98); box-shadow:0 2px 6px rgba(0,0,0,.2); transition:transform .15s, box-shadow .15s; }
+
+    .resource-card {
+      background: #e9f4ff;
+      border-radius: 12px;
+      padding: 16px 16px 18px;
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      color: #0b1020;
+    }
+
+    .resource-cover-link {
+      display: inline-block;
+      line-height: 0;
+      text-decoration: none;
+    }
+
+    .resource-cover {
+      width: 40vw;
+      max-width: 280px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    .resource-cover-link:focus-visible {
+      outline: 3px solid rgba(0, 119, 199, 0.75);
+      outline-offset: 4px;
+      border-radius: 10px;
+    }
+
+    .resource-content {
+      margin-top: 12px;
+      padding: 0 8px;
+    }
+
+    #featured-resource-title {
+      margin-bottom: 4px;
+    }
+
+    .resource-title {
+      font-weight: 700;
+      font-size: 1.125rem;
+      margin: 4px 0 6px;
+      letter-spacing: 0.2px;
+    }
+
+    .resource-desc {
+      font-weight: 500;
+      line-height: 1.5;
+      margin: 0 auto 12px;
+      max-width: 60ch;
+    }
+
+    .btn.btn-amazon {
+      display: inline-block;
+      padding: 10px 16px;
+      font-weight: 700;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ffd569 0%, #ffb800 100%);
+      color: #1d1d1f;
+      text-decoration: none;
+      border: 1px solid #e3a400;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.12), 0 6px 12px rgba(0,0,0,0.08);
+      transition: transform 0.06s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    }
+
+    .btn.btn-amazon:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 0 rgba(0,0,0,0.12), 0 10px 16px rgba(0,0,0,0.12);
+      filter: saturate(1.05);
+    }
+
+    .btn.btn-amazon:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.12), 0 6px 10px rgba(0,0,0,0.10);
+    }
+
+    .btn.btn-amazon:focus-visible {
+      outline: 3px solid rgba(0, 119, 199, 0.75);
+      outline-offset: 3px;
+    }
+
+    @media (min-width: 768px) {
+      .resource-card { padding: 18px 20px 20px; }
+      .resource-cover { width: 30vw; max-width: 300px; }
+      .resource-desc { margin-bottom: 14px; }
     }
 
   </style>
@@ -150,20 +230,29 @@
     </section>
 
     <!-- Featured Resource -->
-    <section class="section" aria-labelledby="resource">
-      <h2 id="resource">Featured Resource</h2>
-      <p class="lead">Discover the hidden magic of aquariums in our debut book.</p>
-      <div class="card">
-        <div class="book">
-          <a href="https://amzn.to/423VkiA" target="_blank" rel="noopener">
-            <img
-              src="/assets/books/book-cover-web.jpg"
-              srcset="/assets/books/book-cover-web.jpg 600w, /assets/books/book-cover-large.jpg 1200w"
-              sizes="(max-width: 600px) 100vw, 600px"
-              alt="Life in Balance: The Hidden Magic of Aquariums — book cover" />
-          </a>
-          <p class="muted" style="margin-top:0;">An inviting blend of science and storytelling, this book helps beginners discover the magic behind the nitrogen cycle.</p>
-          <a class="btn" href="https://amzn.to/423VkiA" target="_blank" rel="noopener">View on Amazon</a>
+    <section class="section" id="featured-resource" aria-labelledby="featured-resource-title">
+      <div class="resource-card">
+        <a
+          class="resource-cover-link"
+          href="https://amzn.to/423VkiA"
+          target="_blank"
+          rel="noopener sponsored"
+          aria-label="Open book on Amazon"
+        >
+          <img
+            class="resource-cover"
+            src="/assets/books/book-cover-web.jpg"
+            srcset="/assets/books/book-cover-web.jpg 600w, /assets/books/book-cover-large.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 600px"
+            alt="Life in Balance: The Hidden Magic of Aquariums — book cover"
+            loading="lazy"
+          />
+        </a>
+        <div class="resource-content">
+          <h2 id="featured-resource-title">Featured Resource</h2>
+          <h3 class="resource-title">Discover the hidden magic of aquariums</h3>
+          <p class="resource-desc">An inviting blend of science and storytelling—perfect for beginners.</p>
+          <a class="btn btn-amazon" href="https://amzn.to/423VkiA" target="_blank" rel="noopener sponsored">View on Amazon</a>
         </div>
       </div>
     </section>
