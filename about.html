@@ -1,4 +1,3 @@
-<!-- Updated: Adopted shared nav/footer includes and unified translucent drawer usage on the About page. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,143 +6,55 @@
   <title>The Tank Guide — About</title>
   <meta name="description" content="Learn about The Tank Guide mission, story, and future vision." />
   <link rel="icon" href="/favicon.ico" />
-  <link rel="stylesheet" href="css/style.css?v=1.4.2" />
+  <link rel="stylesheet" href="css/style.css?v=1.5.0" />
   <style>
-    :root {
-      --ttg-nav-bg: rgba(10, 16, 30, 0.72);
-      --ttg-nav-link: rgba(243, 246, 255, 0.85);
-    }
-
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-      color: #f5f8ff;
-      background:
-        radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54, 194, 204, 0) 60%),
-        radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0, 119, 199, 0) 60%),
-        linear-gradient(140deg, #0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
-    }
-
-    a {
-      color: inherit;
-    }
-
-    main {
-      padding: 0 20px 80px;
-    }
-
-    .hero {
-      padding: 96px 0 40px;
-      text-align: center;
-    }
-
-    .hero h1 {
-      margin: 0;
-      font-size: clamp(2.4rem, 6vw, 3.6rem);
-      font-weight: 800;
-      letter-spacing: 0.03em;
-    }
-
-    .about-box {
-      max-width: 840px;
-      margin: 0 auto;
-      background: rgba(8, 21, 38, 0.32);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      border-radius: 18px;
-      padding: clamp(24px, 5vw, 40px);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      color: rgba(245, 248, 255, 0.92);
-      line-height: 1.65;
-      font-size: clamp(1rem, 1.1vw + 0.9rem, 1.1rem);
-      box-shadow: 0 22px 36px rgba(5, 16, 32, 0.28);
-    }
-
-    .about-box h1,
-    .about-box h2,
-    .about-box h3,
-    .about-box h4,
-    .about-box h5,
-    .about-box h6 {
-      color: #ffffff;
-      margin-top: 1.6em;
-      margin-bottom: 0.6em;
-      line-height: 1.25;
-    }
-
-    .about-box h1:first-child,
-    .about-box h2:first-child,
-    .about-box h3:first-child {
-      margin-top: 0;
-    }
-
-    .about-box p {
-      margin: 0 0 1.1em;
-    }
-
-    .about-box hr {
-      border: none;
-      border-top: 1px solid rgba(255, 255, 255, 0.28);
-      margin: 2.5em auto;
-      max-width: 120px;
-    }
-
-    .about-box strong {
-      color: #ffffff;
-    }
-
-    .about-box ul {
-      margin: 0.8em 0 1.1em 1.2em;
-      padding: 0;
-    }
-
-    .about-box li {
-      margin-bottom: 0.6em;
-    }
-
+    *, *::before, *::after { box-sizing: border-box; }
+    main { max-width: 960px; margin: 0 auto; padding: 0 20px 80px; }
+    .about-box a { color: #ffffff; text-decoration: underline; }
+    .about-box hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.28); margin: 2.5em auto; max-width: 120px; }
+    .about-box ul { margin: 0.8em 0 1.1em 1.2em; padding: 0; }
+    .about-box li { margin-bottom: 0.6em; }
     @media (min-width: 920px) {
-      main {
-        padding-bottom: 120px;
-      }
-
-      .hero {
-        padding-top: 120px;
-      }
+      main { padding-bottom: 120px; }
     }
   </style>
 </head>
-<body>
-  <div id="site-nav"></div>
-  <script src="js/nav.js?v=1.4.2"></script>
-  <script>
-    fetch('/nav.html?v=1.4.2')
-      .then((response) => response.text())
-      .then((html) => {
-        const host = document.getElementById('site-nav');
-        if (!host) return;
-        host.outerHTML = html;
-        if (typeof window.__initTTGNav === 'function') {
-          window.__initTTGNav();
-        }
-      })
-      .catch((error) => console.error('Failed to load navigation', error));
-  </script>
+<body class="page-background">
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-brand" href="index.html" aria-label="The Tank Guide — Home">
+        <span class="site-brand__title">The Tank Guide</span>
+        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
+      </a>
+      <nav class="site-links" aria-label="Primary">
+        <a href="index.html" class="nav__link">Home</a>
+        <a href="stocking.html" class="nav__link">Stocking</a>
+        <a href="gear.html" class="nav__link">Gear</a>
+        <a href="params.html" class="nav__link">Cycling Coach</a>
+        <a href="media.html" class="nav__link">Media</a>
+        <a href="about.html" class="nav__link" aria-current="page">About</a>
+      </nav>
+      <button class="hamburger" data-nav="hamburger" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu">
+        <span class="hamburger__bars" aria-hidden="true"></span>
+        <span class="visually-hidden">Open menu</span>
+      </button>
+    </div>
+    <div class="nav-overlay" data-nav="overlay" hidden></div>
+    <nav id="site-drawer" class="nav-drawer" data-nav="drawer" aria-label="Site" tabindex="-1">
+      <a href="index.html" class="nav__link">Home</a>
+      <a href="stocking.html" class="nav__link">Stocking</a>
+      <a href="gear.html" class="nav__link">Gear</a>
+      <a href="params.html" class="nav__link">Cycling Coach</a>
+      <a href="media.html" class="nav__link">Media</a>
+      <a href="about.html" class="nav__link" aria-current="page">About</a>
+    </nav>
+  </header>
 
   <main>
-    <section class="hero" aria-labelledby="about-hero-title">
-      <h1 id="about-hero-title">About</h1>
-    </section>
+    <h1 class="about-hero-title">About</h1>
 
-    <section class="about-box" aria-labelledby="about-section-title">
-      <h1 id="about-section-title">About</h1>
-
-      <h3>Owner Story</h3>
+    <section class="about-box" aria-labelledby="about-story">
+      <h2 id="about-story">Owner Story</h2>
       <p>Ever since I was a kid, I was drawn to aquariums. My uncle kept guppies for years, and whenever I visited my grandmother, I’d sit and stare at them. That fascination stuck with me.</p>
       <p>In 2011 or 2012, I caught a marathon of <em>Tanked</em> on Animal Planet. Their massive saltwater builds looked incredible, but freshwater seemed within reach. I decided it was finally time to try again—this time the right way.</p>
       <p>I picked up a 50-gallon kit from a chain store. Tank, stand, hang-on-back filter, gravel, lights—the whole package. After hours of assembling the stand upside down, it broke as I flipped it. I nearly gave up, but I exchanged it and started over.</p>
@@ -155,14 +66,14 @@
 
       <hr />
 
-      <h3>Teaching &amp; Inspiration</h3>
+      <h2>Teaching &amp; Inspiration</h2>
       <p>Outside of aquariums, I’ve also gotten to see the other side of how teachers prepare for their students—especially special education teachers. The sacrifice, patience, and dedication they show left a big impression on me.</p>
       <p>It made me realize that teaching, in any form, is hard work. But it’s also one of the most meaningful things you can do. That spirit drives The Tank Guide. We want every aquarist to feel confident, excited, and empowered to give their fish a healthy home.</p>
       <p>So whether you’re cycling your first tank, fine-tuning a high-tech planted setup, or getting advice before a big upgrade, we’re here to help you every step of the way.</p>
 
       <hr />
 
-      <h3>What’s Next</h3>
+      <h2>What’s Next</h2>
       <p>We’re working on new tooling, more dynamic stocking guidance, and better personalization to match aquarists with the right care plans. Expect more calculators, deeper editorial content, and a growing library of community-driven insights.</p>
       <p>If you’re interested in partnering, sharing feedback, or supporting the project, we’d love to hear from you.</p>
       <ul>
@@ -186,5 +97,6 @@
       })
       .catch((error) => console.error('Failed to load footer', error));
   </script>
+  <script src="js/nav.js?v=1.5.0"></script>
 </body>
 </html>
