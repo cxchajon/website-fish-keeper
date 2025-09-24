@@ -1,0 +1,42 @@
+Page: index -> PASS
+  nav_absent: ok
+Page: stocking -> PASS
+  aria_current: ok
+  width_ratio_45: ok
+  overlay_visible: ok
+  aria_open: ok
+  focus_first_link: ok
+  body_locked: ok
+  overlay_close: ok
+  escape_close: ok
+  link_close: ok
+Page: gear -> PASS
+  aria_current: ok
+  width_ratio_45: ok
+  overlay_visible: ok
+  aria_open: ok
+  focus_first_link: ok
+  body_locked: ok
+  overlay_close: ok
+  escape_close: ok
+  link_close: ok
+Page: params -> PASS
+  aria_current: ok
+  width_ratio_45: ok
+  overlay_visible: ok
+  aria_open: ok
+  focus_first_link: ok
+  body_locked: ok
+  overlay_close: ok
+  escape_close: ok
+  link_close: ok
+Page: media -> PASS
+  aria_current: ok
+  width_ratio_45: ok
+  overlay_visible: ok
+  aria_open: ok
+  focus_first_link: ok
+  body_locked: ok
+  overlay_close: ok
+  escape_close: ok
+  link_close: ok

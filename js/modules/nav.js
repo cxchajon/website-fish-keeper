@@ -1,14 +1,21 @@
-const NAV_VERSION = '1.1.0';
+const NAV_VERSION = '1.2.1';
 const NAV_ENDPOINT = `/nav.html?v=${NAV_VERSION}`;
-const SKIP_PATHS = new Set(['/', '/index.html']);
+const SKIP_PATHS = new Set(['index.html']);
 
 const normalizePath = (value) => {
   try {
     const url = new URL(value, window.location.origin);
-    const path = url.pathname.replace(/\/+$/, '') || '/';
-    return path === '/' ? '/index.html' : path;
+    let path = url.pathname.replace(/\/+$/, '');
+    if (!path || path === '/') {
+      return 'index.html';
+    }
+    const segments = path.split('/').filter(Boolean);
+    if (!segments.length) {
+      return 'index.html';
+    }
+    return segments[segments.length - 1].toLowerCase();
   } catch (error) {
-    return value;
+    return typeof value === 'string' ? value.toLowerCase() : value;
   }
 };
 
@@ -16,8 +23,11 @@ const markCurrentLinks = (root, current) => {
   root.querySelectorAll('.links a, #ttg-drawer a').forEach((link) => {
     const hrefAttr = link.getAttribute('href');
     if (!hrefAttr) return;
-    if (normalizePath(hrefAttr) === current) {
+    const normalized = normalizePath(hrefAttr);
+    if (normalized === current) {
       link.setAttribute('aria-current', 'page');
+    } else {
+      link.removeAttribute('aria-current');
     }
   });
 };
@@ -57,8 +67,8 @@ const attachInteractions = (root) => {
     drawer.setAttribute('aria-hidden', 'false');
     openBtn?.setAttribute('aria-expanded', 'true');
     lockBody();
-    const focusTarget = drawer.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
-    (focusTarget || closeBtn || drawer).focus?.({ preventScroll: true });
+    const firstLink = drawer.querySelector('nav a');
+    (firstLink || closeBtn || drawer).focus?.({ preventScroll: true });
   };
 
   const handleKeydown = (event) => {
@@ -79,7 +89,7 @@ const attachInteractions = (root) => {
 const placeholder = document.getElementById('site-nav');
 if (placeholder) {
   const currentPath = normalizePath(window.location.pathname || '/');
-  if (SKIP_PATHS.has(currentPath)) {
+  if (typeof currentPath === 'string' && SKIP_PATHS.has(currentPath)) {
     placeholder.remove();
   } else {
     fetch(NAV_ENDPOINT)
