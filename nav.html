@@ -1,3 +1,4 @@
+<!-- Updated: Restructured navigation markup to unify drawer grouping, overlay behavior, and translucent styling across subpages. -->
 <header id="global-nav" data-open="false">
   <div class="nav-bar">
     <button id="ttg-nav-open" type="button" aria-label="Open menu" aria-haspopup="dialog" aria-controls="ttg-drawer" aria-expanded="false">
@@ -33,19 +34,30 @@
     <nav class="drawer" aria-label="Primary navigation">
       <div class="drawer-section" role="group" aria-labelledby="drawer-group-start">
         <p class="drawer-section-label" id="drawer-group-start">Start Here</p>
-        <a href="/index.html">Home</a>
-        <a href="/stocking.html">Stocking Advisor</a>
-        <a href="/params.html">Cycling Coach</a>
+        <div class="drawer-links">
+          <a href="/index.html">Home</a>
+          <a href="/stocking.html">Stocking Advisor</a>
+        </div>
       </div>
-      <div class="drawer-section" role="group" aria-labelledby="drawer-group-gear">
-        <p class="drawer-section-label" id="drawer-group-gear">Gear &amp; Media</p>
-        <a href="/gear.html">Gear</a>
-        <a href="/media.html">Media</a>
+      <div class="drawer-section" role="group" aria-labelledby="drawer-group-tools">
+        <p class="drawer-section-label" id="drawer-group-tools">Tools</p>
+        <div class="drawer-links">
+          <a href="/gear.html">Gear</a>
+          <a href="/params.html">Cycling Coach</a>
+        </div>
       </div>
-      <div class="drawer-section" role="group" aria-labelledby="drawer-group-about">
-        <p class="drawer-section-label" id="drawer-group-about">About &amp; Support</p>
-        <a href="/about.html">About</a>
-        <a href="/feedback.html">Feedback</a>
+      <div class="drawer-section" role="group" aria-labelledby="drawer-group-explore">
+        <p class="drawer-section-label" id="drawer-group-explore">Explore</p>
+        <div class="drawer-links">
+          <a href="/media.html">Media</a>
+        </div>
+      </div>
+      <div class="drawer-section" role="group" aria-labelledby="drawer-group-support">
+        <p class="drawer-section-label" id="drawer-group-support">About &amp; Support</p>
+        <div class="drawer-links">
+          <a href="/about.html">About</a>
+          <a href="/feedback.html">Feedback</a>
+        </div>
       </div>
     </nav>
   </aside>
