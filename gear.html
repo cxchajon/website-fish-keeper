@@ -5,7 +5,7 @@
   <title>The Tank Guide — Gear (Guided)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Build your aquarium setup step by step — tanks, filtration, lighting, and more." />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.5" />
   <link rel="icon" href="/favicon.ico" />
 
   <style>
@@ -62,59 +62,85 @@
   <!-- Global nav include (shared across pages) -->
   <div id="site-nav"></div>
   <script>
-    // After injecting nav.html, initialize hamburger/drawer + current link
-    function initNav(){
-      const root = document.getElementById('global-nav');
-      if (!root) return;
+    (function(){
+      function initNav(){
+        const root = document.getElementById('global-nav');
+        if (!root) return;
 
-      // underline current (desktop & mobile)
-      const here = location.pathname.replace(/\/+$/,'');
-      const mark = (sel) => root.querySelectorAll(sel).forEach(a=>{
-        const href = (a.getAttribute('href')||'').replace(/\/+$/,'');
-        if (here === href || (here === '' && href === '/index.html')) {
-          a.setAttribute('aria-current','page');
-        }
-      });
-      mark('.links a');
-      mark('.drawer a');
+        const here = window.location.pathname.replace(/\/+$/,'') || '/';
+        const current = here === '/' ? '/index.html' : here;
+        const mark = (selector) => {
+          root.querySelectorAll(selector).forEach((link) => {
+            const hrefAttr = link.getAttribute('href');
+            if (!hrefAttr) return;
+            const target = new URL(hrefAttr, window.location.origin).pathname.replace(/\/+$/,'') || '/';
+            const normalized = target === '/' ? '/index.html' : target;
+            if (normalized === current) {
+              link.setAttribute('aria-current', 'page');
+            }
+          });
+        };
+        mark('.links a');
+        mark('#ttg-drawer a');
 
-      // drawer controls
-      const openBtn = root.querySelector('#ttg-nav-open');
-      const closeBtn= root.querySelector('#ttg-nav-close');
-      const overlay = root.querySelector('#ttg-overlay');
-      const drawer  = root.querySelector('#ttg-drawer');
+        const openBtn = root.querySelector('#ttg-nav-open');
+        const closeBtn = root.querySelector('#ttg-nav-close');
+        const overlay = root.querySelector('#ttg-overlay');
+        const drawer = root.querySelector('#ttg-drawer');
 
-      const open = ()=>{
-        root.setAttribute('data-open','true');
-        overlay.hidden = false;
-        drawer.removeAttribute('aria-hidden');
-        document.documentElement.style.overflow = 'hidden';
-        openBtn.setAttribute('aria-expanded','true');
-        const first = drawer.querySelector('a'); first && first.focus();
-      };
-      const close = ()=>{
-        root.removeAttribute('data-open');
-        overlay.hidden = true;
-        drawer.setAttribute('aria-hidden','true');
-        document.documentElement.style.overflow = '';
-        openBtn.setAttribute('aria-expanded','false');
-        openBtn.focus();
-      };
+        const lockBody = () => {
+          document.documentElement.classList.add('ttg-nav-locked');
+          document.body.classList.add('ttg-nav-locked');
+        };
+        const unlockBody = () => {
+          document.documentElement.classList.remove('ttg-nav-locked');
+          document.body.classList.remove('ttg-nav-locked');
+        };
 
-      openBtn?.addEventListener('click', open);
-      closeBtn?.addEventListener('click', close);
-      overlay?.addEventListener('click', close);
-      drawer?.querySelectorAll('a').forEach(a=>a.addEventListener('click', close));
-      document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && root.getAttribute('data-open')==='true') close(); });
-    }
+        const open = () => {
+          if (!root || root.getAttribute('data-open') === 'true') return;
+          root.setAttribute('data-open', 'true');
+          overlay?.removeAttribute('hidden');
+          drawer?.setAttribute('aria-hidden', 'false');
+          openBtn?.setAttribute('aria-expanded', 'true');
+          lockBody();
+          const firstLink = drawer?.querySelector('a');
+          (firstLink || closeBtn || drawer)?.focus({ preventScroll: true });
+        };
 
-    fetch('/nav.html')
-      .then(r => r.text())
-      .then(html => {
-        document.getElementById('site-nav').outerHTML = html;
-        initNav();
-      });
+        const close = () => {
+          if (!root || root.getAttribute('data-open') !== 'true') return;
+          root.setAttribute('data-open', 'false');
+          overlay?.setAttribute('hidden', '');
+          drawer?.setAttribute('aria-hidden', 'true');
+          openBtn?.setAttribute('aria-expanded', 'false');
+          unlockBody();
+          openBtn?.focus({ preventScroll: true });
+        };
+
+        openBtn?.addEventListener('click', open);
+        closeBtn?.addEventListener('click', close);
+        overlay?.addEventListener('click', close);
+        drawer?.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            close();
+          }
+        });
+      }
+
+      fetch('/nav.html?v=1.0.5')
+        .then((response) => response.text())
+        .then((html) => {
+          const placeholder = document.getElementById('site-nav');
+          if (!placeholder) return;
+          placeholder.outerHTML = html;
+          initNav();
+        });
+    })();
   </script>
+
+  <div class="nav-spacer" aria-hidden="true"></div>
 
   <!-- Hero -->
   <section class="hero">
