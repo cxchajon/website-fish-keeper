@@ -7,7 +7,7 @@
   <title>Cycling Coach — The Tank Guide</title>
   <meta name="description" content="Cycling Coach is under construction — coming soon to help you master the nitrogen cycle." />
 
-  <link rel="stylesheet" href="css/style.css?v=1.5.0" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
 
   <style>
     :root{
@@ -53,38 +53,24 @@
     #site-footer{border-top:1px solid var(--line); margin-top:40px;}
 
   </style>
+  <script defer src="js/nav.js?v=1.0.7"></script>
 </head>
-<body class="page-background">
+<body class="page-background theme-dark">
 
-  <header class="site-header">
-    <div class="site-header__inner">
-      <a class="site-brand" href="index.html" aria-label="The Tank Guide — Home">
-        <span class="site-brand__title">The Tank Guide</span>
-        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
-      </a>
-      <nav class="site-links" aria-label="Primary">
-        <a href="index.html" class="nav__link">Home</a>
-        <a href="stocking.html" class="nav__link">Stocking</a>
-        <a href="gear.html" class="nav__link">Gear</a>
-        <a href="params.html" class="nav__link" aria-current="page">Cycling Coach</a>
-        <a href="media.html" class="nav__link">Media</a>
-        <a href="about.html" class="nav__link">About</a>
-      </nav>
-      <button class="hamburger" data-nav="hamburger" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu">
-        <span class="hamburger__bars" aria-hidden="true"></span>
-        <span class="visually-hidden">Open menu</span>
-      </button>
-    </div>
-    <div class="nav-overlay" data-nav="overlay" hidden></div>
-    <nav id="site-drawer" class="nav-drawer" data-nav="drawer" aria-label="Site" tabindex="-1">
-      <a href="index.html" class="nav__link">Home</a>
-      <a href="stocking.html" class="nav__link">Stocking</a>
-      <a href="gear.html" class="nav__link">Gear</a>
-      <a href="params.html" class="nav__link" aria-current="page">Cycling Coach</a>
-      <a href="media.html" class="nav__link">Media</a>
-      <a href="about.html" class="nav__link">About</a>
-    </nav>
-  </header>
+  <div id="global-nav"></div>
+  <script>
+    fetch('nav.html?v=1.0.7')
+      .then(response => response.text())
+      .then(html => {
+        const mount = document.getElementById('global-nav');
+        if (mount) {
+          mount.outerHTML = html;
+          if (window.initTTGNav) {
+            window.initTTGNav();
+          }
+        }
+      });
+  </script>
 
   <!-- HERO Placeholder -->
   <section class="hero">
@@ -104,14 +90,17 @@
     </div>
   </section>
 
-  <!-- FOOTER include -->
-  <footer id="site-footer"></footer>
+  <div id="site-footer"></div>
   <script>
-    fetch('/footer.html')
-      .then(r => r.text())
-      .then(html => { document.getElementById('site-footer').innerHTML = html; });
+    fetch('footer.html?v=1.0.7')
+      .then(response => response.text())
+      .then(html => {
+        const footer = document.getElementById('site-footer');
+        if (footer) {
+          footer.outerHTML = html;
+        }
+      });
   </script>
-  <script src="js/nav.js?v=1.5.0"></script>
 
 </body>
 </html>

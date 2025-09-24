@@ -1,141 +1,161 @@
-(function () {
-  const btn = document.querySelector('[data-nav="hamburger"]');
-  const drawer = document.querySelector('[data-nav="drawer"]');
-  const overlay = document.querySelector('[data-nav="overlay"]');
-  const links = drawer ? drawer.querySelectorAll('a, button') : [];
-  const html = document.documentElement;
-  const body = document.body;
-  let previousFocus = null;
-  let overlayHideTimer = null;
-  const previousBodyStyles = {
-    overflow: '',
-    position: '',
-  };
+(() => {
+  const doc = document;
+  const docEl = doc.documentElement;
+  const state = { observer: null };
 
-  if (!btn || !drawer || !overlay) {
-    return;
-  }
-
-  const focusables = () => Array.from(links).filter((el) => !el.hasAttribute('disabled'));
-
-  function showOverlay() {
-    window.clearTimeout(overlayHideTimer);
-    overlay.hidden = false;
-    overlay.classList.add('is-open');
-  }
-
-  function hideOverlay() {
-    overlay.classList.remove('is-open');
-    overlayHideTimer = window.setTimeout(() => {
-      if (!drawer.classList.contains('is-open')) {
-        overlay.hidden = true;
-      }
-    }, 200);
-  }
-
-  function openDrawer() {
-    if (drawer.classList.contains('is-open')) {
-      return;
+  function normalizePath(pathname) {
+    if (!pathname) {
+      return '/';
     }
-
-    previousBodyStyles.overflow = body.style.overflow;
-    previousBodyStyles.position = body.style.position;
-
-    showOverlay();
-    drawer.classList.add('is-open');
-    btn.setAttribute('aria-expanded', 'true');
-    html.setAttribute('data-scroll-lock', 'on');
-    body.style.overflow = 'hidden';
-    if (!previousBodyStyles.position) {
-      body.style.position = 'relative';
+    let normalized = pathname;
+    if (!normalized.startsWith('/')) {
+      normalized = `/${normalized}`;
     }
+    normalized = normalized.replace(/index\.html$/i, '');
+    normalized = normalized.replace(/\/+$/, '');
+    if (normalized === '') {
+      normalized = '/';
+    }
+    return normalized.toLowerCase();
+  }
 
-    previousFocus = document.activeElement;
+  function markActiveLinks(root) {
+    const current = normalizePath(window.location.pathname);
+    const links = root.querySelectorAll('.nav__link');
 
-    const [firstFocusable] = focusables();
-    window.requestAnimationFrame(() => {
-      if (firstFocusable && typeof firstFocusable.focus === 'function') {
-        firstFocusable.focus({ preventScroll: true });
-      } else if (typeof drawer.focus === 'function') {
-        drawer.focus({ preventScroll: true });
+    links.forEach((link) => {
+      try {
+        const url = new URL(link.getAttribute('href'), window.location.href);
+        if (url.origin !== window.location.origin) {
+          link.removeAttribute('aria-current');
+          return;
+        }
+        const linkPath = normalizePath(url.pathname);
+        if (linkPath === current) {
+          link.setAttribute('aria-current', 'page');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      } catch (error) {
+        link.removeAttribute('aria-current');
       }
     });
   }
 
-  function closeDrawer() {
-    if (!drawer.classList.contains('is-open')) {
-      return;
+  function bindNav() {
+    const root = doc.getElementById('global-nav');
+    if (!root || root.dataset.navBound === 'true') {
+      return root && root.dataset.navBound === 'true';
     }
 
-    hideOverlay();
-    drawer.classList.remove('is-open');
-    btn.setAttribute('aria-expanded', 'false');
-    html.removeAttribute('data-scroll-lock');
-    body.style.overflow = previousBodyStyles.overflow;
-    body.style.position = previousBodyStyles.position;
+    const openBtn = root.querySelector('#ttg-nav-open');
+    const closeBtn = root.querySelector('#ttg-nav-close');
+    const overlay = root.querySelector('#ttg-overlay');
+    const drawer = root.querySelector('#ttg-drawer');
 
-    const focusTarget = previousFocus && typeof previousFocus.focus === 'function' ? previousFocus : btn;
-    previousFocus = null;
-    window.requestAnimationFrame(() => {
-      focusTarget.focus({ preventScroll: true });
-    });
-  }
-
-  function toggleDrawer() {
-    if (drawer.classList.contains('is-open')) {
-      closeDrawer();
-    } else {
-      openDrawer();
-    }
-  }
-
-  btn.addEventListener('click', (event) => {
-    event.preventDefault();
-    toggleDrawer();
-  });
-
-  overlay.addEventListener('click', () => {
-    closeDrawer();
-  });
-
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && drawer.classList.contains('is-open')) {
-      event.preventDefault();
-      closeDrawer();
-    }
-  });
-
-  drawer.addEventListener('click', (event) => {
-    const link = event.target.closest('a');
-    if (link) {
-      closeDrawer();
-    }
-  });
-
-  drawer.addEventListener('keydown', (event) => {
-    if (event.key !== 'Tab' || !drawer.classList.contains('is-open')) {
-      return;
+    if (!openBtn || !closeBtn || !overlay || !drawer) {
+      return false;
     }
 
-    const focusableItems = focusables();
-    if (focusableItems.length === 0) {
-      event.preventDefault();
-      drawer.focus({ preventScroll: true });
-      return;
+    root.dataset.navBound = 'true';
+    markActiveLinks(root);
+
+    let previousFocus = null;
+
+    function focusFirstLink() {
+      const first = drawer.querySelector('a, button');
+      if (!first) {
+        return;
+      }
+      requestAnimationFrame(() => {
+        if (typeof first.focus === 'function') {
+          first.focus({ preventScroll: true });
+        }
+      });
     }
 
-    const first = focusableItems[0];
-    const last = focusableItems[focusableItems.length - 1];
-    const active = document.activeElement;
+    function closeNav() {
+      if (!root.hasAttribute('data-open')) {
+        return;
+      }
+      root.removeAttribute('data-open');
+      openBtn.setAttribute('aria-expanded', 'false');
+      docEl.style.overflow = '';
+      if (previousFocus && typeof previousFocus.focus === 'function') {
+        previousFocus.focus({ preventScroll: true });
+      } else {
+        openBtn.focus({ preventScroll: true });
+      }
+      previousFocus = null;
+    }
 
-    if (event.shiftKey) {
-      if (active === first || active === drawer) {
+    function openNav() {
+      if (root.getAttribute('data-open') === 'true') {
+        return;
+      }
+      previousFocus = doc.activeElement;
+      root.setAttribute('data-open', 'true');
+      openBtn.setAttribute('aria-expanded', 'true');
+      docEl.style.overflow = 'hidden';
+      focusFirstLink();
+    }
+
+    function handleEscape(event) {
+      if (event.key === 'Escape' && root.getAttribute('data-open') === 'true') {
         event.preventDefault();
-        last.focus({ preventScroll: true });
+        closeNav();
       }
-    } else if (active === last) {
-      event.preventDefault();
-      first.focus({ preventScroll: true });
     }
-  });
+
+    openBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      openNav();
+    });
+
+    closeBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      closeNav();
+    });
+
+    overlay.addEventListener('click', () => {
+      closeNav();
+    });
+
+    doc.addEventListener('keydown', handleEscape);
+
+    drawer.addEventListener('click', (event) => {
+      const link = event.target.closest('a');
+      if (link) {
+        closeNav();
+      }
+    });
+
+    return true;
+  }
+
+  function watchForNav() {
+    if (bindNav()) {
+      return;
+    }
+
+    if (state.observer) {
+      return;
+    }
+
+    state.observer = new MutationObserver(() => {
+      if (bindNav()) {
+        state.observer.disconnect();
+        state.observer = null;
+      }
+    });
+
+    state.observer.observe(doc.documentElement, {
+      childList: true,
+      subtree: true,
+    });
+  }
+
+  watchForNav();
+  doc.addEventListener('DOMContentLoaded', bindNav);
+  window.initTTGNav = bindNav;
 })();
