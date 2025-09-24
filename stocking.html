@@ -6,7 +6,7 @@
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Global nav / shared styles (same versioning as Media) -->
-  <link rel="stylesheet" href="css/style.css?v=1.4.2" />
+  <link rel="stylesheet" href="css/style.css?v=1.5.0" />
   <!-- Page styles -->
   <link rel="stylesheet" href="css/Style.css?v=1.0.3" />
   <style>
@@ -16,24 +16,37 @@
     }
   </style>
 </head>
-<body>
+<body class="page-background">
 
-  <!-- Global nav include (same pattern as Media) -->
-  <div id="site-nav"></div>
-  <script src="js/nav.js?v=1.4.2"></script>
-  <script>
-    fetch('/nav.html?v=1.4.2')
-      .then(response => response.text())
-      .then(html => {
-        const host = document.getElementById('site-nav');
-        if (!host) return;
-        host.outerHTML = html;
-        if (typeof window.__initTTGNav === 'function') {
-          window.__initTTGNav();
-        }
-      })
-      .catch(error => console.error('Failed to load navigation', error));
-  </script>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-brand" href="index.html" aria-label="The Tank Guide — Home">
+        <span class="site-brand__title">The Tank Guide</span>
+        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
+      </a>
+      <nav class="site-links" aria-label="Primary">
+        <a href="index.html" class="nav__link">Home</a>
+        <a href="stocking.html" class="nav__link" aria-current="page">Stocking</a>
+        <a href="gear.html" class="nav__link">Gear</a>
+        <a href="params.html" class="nav__link">Cycling Coach</a>
+        <a href="media.html" class="nav__link">Media</a>
+        <a href="about.html" class="nav__link">About</a>
+      </nav>
+      <button class="hamburger" data-nav="hamburger" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu">
+        <span class="hamburger__bars" aria-hidden="true"></span>
+        <span class="visually-hidden">Open menu</span>
+      </button>
+    </div>
+    <div class="nav-overlay" data-nav="overlay" hidden></div>
+    <nav id="site-drawer" class="nav-drawer" data-nav="drawer" aria-label="Site" tabindex="-1">
+      <a href="index.html" class="nav__link">Home</a>
+      <a href="stocking.html" class="nav__link" aria-current="page">Stocking</a>
+      <a href="gear.html" class="nav__link">Gear</a>
+      <a href="params.html" class="nav__link">Cycling Coach</a>
+      <a href="media.html" class="nav__link">Media</a>
+      <a href="about.html" class="nav__link">About</a>
+    </nav>
+  </header>
 
   <div class="wrap">
     <!-- Tank Setup -->
@@ -156,9 +169,10 @@
         .then(response => response.text())
         .then(data => { document.getElementById("site-footer").innerHTML = data; });
     </script>
-    <!-- Load data and logic with updated version for cache busting -->
-    <script src="js/fish-data.js?v=1.0.3"></script>
-    <script type="module" src="js/modules/app.js?v=1.0.3"></script>
   </div>
+  <script src="js/nav.js?v=1.5.0"></script>
+  <!-- Load data and logic with updated version for cache busting -->
+  <script src="js/fish-data.js?v=1.0.3"></script>
+  <script type="module" src="js/modules/app.js?v=1.0.3"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
   <title>The Tank Guide — Gear (Guided)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Build your aquarium setup step by step — tanks, filtration, lighting, and more." />
-  <link rel="stylesheet" href="css/style.css?v=1.4.2" />
+  <link rel="stylesheet" href="css/style.css?v=1.5.0" />
   <link rel="icon" href="/favicon.ico" />
 
   <style>
@@ -30,10 +30,6 @@
       padding:0;
       color:var(--fg);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:
-        radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54,194,204,0) 60%),
-        radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0,119,199,0) 60%),
-        linear-gradient(140deg,#0a3a57 0%, #0b2746 40%, #0b1020 100%);
     }
 
     .wrap{max-width:1100px;margin:0 auto;padding:0 18px;}
@@ -60,24 +56,37 @@
     /* ... rest of your CSS unchanged ... */
   </style>
 </head>
-<body>
+<body class="page-background">
 
-  <!-- Global nav include (shared across pages) -->
-  <div id="site-nav"></div>
-  <script src="js/nav.js?v=1.4.2"></script>
-  <script>
-    fetch('/nav.html?v=1.4.2')
-      .then(response => response.text())
-      .then(html => {
-        const host = document.getElementById('site-nav');
-        if (!host) return;
-        host.outerHTML = html;
-        if (typeof window.__initTTGNav === 'function') {
-          window.__initTTGNav();
-        }
-      })
-      .catch(error => console.error('Failed to load navigation', error));
-  </script>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-brand" href="index.html" aria-label="The Tank Guide — Home">
+        <span class="site-brand__title">The Tank Guide</span>
+        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
+      </a>
+      <nav class="site-links" aria-label="Primary">
+        <a href="index.html" class="nav__link">Home</a>
+        <a href="stocking.html" class="nav__link">Stocking</a>
+        <a href="gear.html" class="nav__link" aria-current="page">Gear</a>
+        <a href="params.html" class="nav__link">Cycling Coach</a>
+        <a href="media.html" class="nav__link">Media</a>
+        <a href="about.html" class="nav__link">About</a>
+      </nav>
+      <button class="hamburger" data-nav="hamburger" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu">
+        <span class="hamburger__bars" aria-hidden="true"></span>
+        <span class="visually-hidden">Open menu</span>
+      </button>
+    </div>
+    <div class="nav-overlay" data-nav="overlay" hidden></div>
+    <nav id="site-drawer" class="nav-drawer" data-nav="drawer" aria-label="Site" tabindex="-1">
+      <a href="index.html" class="nav__link">Home</a>
+      <a href="stocking.html" class="nav__link">Stocking</a>
+      <a href="gear.html" class="nav__link" aria-current="page">Gear</a>
+      <a href="params.html" class="nav__link">Cycling Coach</a>
+      <a href="media.html" class="nav__link">Media</a>
+      <a href="about.html" class="nav__link">About</a>
+    </nav>
+  </header>
 
   <!-- Hero -->
   <section class="hero">
@@ -341,6 +350,7 @@
       });
   </script>
 
+  <script src="js/nav.js?v=1.5.0"></script>
   <script type="module" src="js/gear.js"></script>
 </body>
 </html>

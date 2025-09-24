@@ -7,7 +7,7 @@
   <title>Cycling Coach — The Tank Guide</title>
   <meta name="description" content="Cycling Coach is under construction — coming soon to help you master the nitrogen cycle." />
 
-  <link rel="stylesheet" href="css/style.css?v=1.4.2" />
+  <link rel="stylesheet" href="css/style.css?v=1.5.0" />
 
   <style>
     :root{
@@ -23,7 +23,7 @@
       --ttg-nav-link: rgba(243, 247, 255, 0.85);
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    html,body{margin:0;padding:0;color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
     a{color:inherit;text-decoration:none}
 
     /* Hero (now solid dark gradient, no cyan highlights) */
@@ -54,24 +54,37 @@
 
   </style>
 </head>
-<body>
+<body class="page-background">
 
-  <!-- Global nav include (shared across pages) -->
-  <div id="site-nav"></div>
-  <script src="js/nav.js?v=1.4.2"></script>
-  <script>
-    fetch('/nav.html?v=1.4.2')
-      .then(response => response.text())
-      .then(html => {
-        const host = document.getElementById('site-nav');
-        if (!host) return;
-        host.outerHTML = html;
-        if (typeof window.__initTTGNav === 'function') {
-          window.__initTTGNav();
-        }
-      })
-      .catch(error => console.error('Failed to load navigation', error));
-  </script>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-brand" href="index.html" aria-label="The Tank Guide — Home">
+        <span class="site-brand__title">The Tank Guide</span>
+        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
+      </a>
+      <nav class="site-links" aria-label="Primary">
+        <a href="index.html" class="nav__link">Home</a>
+        <a href="stocking.html" class="nav__link">Stocking</a>
+        <a href="gear.html" class="nav__link">Gear</a>
+        <a href="params.html" class="nav__link" aria-current="page">Cycling Coach</a>
+        <a href="media.html" class="nav__link">Media</a>
+        <a href="about.html" class="nav__link">About</a>
+      </nav>
+      <button class="hamburger" data-nav="hamburger" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu">
+        <span class="hamburger__bars" aria-hidden="true"></span>
+        <span class="visually-hidden">Open menu</span>
+      </button>
+    </div>
+    <div class="nav-overlay" data-nav="overlay" hidden></div>
+    <nav id="site-drawer" class="nav-drawer" data-nav="drawer" aria-label="Site" tabindex="-1">
+      <a href="index.html" class="nav__link">Home</a>
+      <a href="stocking.html" class="nav__link">Stocking</a>
+      <a href="gear.html" class="nav__link">Gear</a>
+      <a href="params.html" class="nav__link" aria-current="page">Cycling Coach</a>
+      <a href="media.html" class="nav__link">Media</a>
+      <a href="about.html" class="nav__link">About</a>
+    </nav>
+  </header>
 
   <!-- HERO Placeholder -->
   <section class="hero">
@@ -98,6 +111,7 @@
       .then(r => r.text())
       .then(html => { document.getElementById('site-footer').innerHTML = html; });
   </script>
+  <script src="js/nav.js?v=1.5.0"></script>
 
 </body>
 </html>
