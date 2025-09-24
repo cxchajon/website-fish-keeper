@@ -1,161 +1,124 @@
 (() => {
-  const doc = document;
-  const docEl = doc.documentElement;
-  const state = { observer: null };
-
-  function normalizePath(pathname) {
-    if (!pathname) {
-      return '/';
-    }
-    let normalized = pathname;
-    if (!normalized.startsWith('/')) {
-      normalized = `/${normalized}`;
-    }
-    normalized = normalized.replace(/index\.html$/i, '');
-    normalized = normalized.replace(/\/+$/, '');
-    if (normalized === '') {
-      normalized = '/';
-    }
-    return normalized.toLowerCase();
-  }
-
-  function markActiveLinks(root) {
-    const current = normalizePath(window.location.pathname);
-    const links = root.querySelectorAll('.nav__link');
-
-    links.forEach((link) => {
-      try {
-        const url = new URL(link.getAttribute('href'), window.location.href);
-        if (url.origin !== window.location.origin) {
-          link.removeAttribute('aria-current');
-          return;
-        }
-        const linkPath = normalizePath(url.pathname);
-        if (linkPath === current) {
-          link.setAttribute('aria-current', 'page');
-        } else {
-          link.removeAttribute('aria-current');
-        }
-      } catch (error) {
-        link.removeAttribute('aria-current');
-      }
-    });
-  }
-
-  function bindNav() {
-    const root = doc.getElementById('global-nav');
-    if (!root || root.dataset.navBound === 'true') {
-      return root && root.dataset.navBound === 'true';
-    }
-
-    const openBtn = root.querySelector('#ttg-nav-open');
-    const closeBtn = root.querySelector('#ttg-nav-close');
-    const overlay = root.querySelector('#ttg-overlay');
-    const drawer = root.querySelector('#ttg-drawer');
-
-    if (!openBtn || !closeBtn || !overlay || !drawer) {
-      return false;
-    }
-
-    root.dataset.navBound = 'true';
-    markActiveLinks(root);
-
+  function initNav() {
+    const btn = document.querySelector('[data-nav="hamburger"]');
+    const drawer = document.querySelector('[data-nav="drawer"]');
+    const overlay = document.querySelector('[data-nav="overlay"]');
+    const focusables = drawer ? drawer.querySelectorAll('a,button,[tabindex]:not([tabindex="-1"])') : [];
     let previousFocus = null;
 
-    function focusFirstLink() {
-      const first = drawer.querySelector('a, button');
-      if (!first) {
-        return;
-      }
-      requestAnimationFrame(() => {
-        if (typeof first.focus === 'function') {
-          first.focus({ preventScroll: true });
-        }
-      });
+    if (!btn || !drawer || !overlay) {
+      return;
     }
 
-    function closeNav() {
-      if (!root.hasAttribute('data-open')) {
+    function isOpen() {
+      return drawer.classList.contains('is-open');
+    }
+
+    function focusFirstItem() {
+      if (!focusables || focusables.length === 0) {
         return;
       }
-      root.removeAttribute('data-open');
-      openBtn.setAttribute('aria-expanded', 'false');
-      docEl.style.overflow = '';
-      if (previousFocus && typeof previousFocus.focus === 'function') {
-        previousFocus.focus({ preventScroll: true });
-      } else {
-        openBtn.focus({ preventScroll: true });
+      const first = focusables[0];
+      if (first && typeof first.focus === 'function') {
+        first.focus({ preventScroll: true });
+      }
+    }
+
+    function openDrawer() {
+      if (isOpen()) {
+        return;
+      }
+      previousFocus = document.activeElement;
+      drawer.classList.add('is-open');
+      overlay.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+      document.documentElement.dataset.scrollLock = 'on';
+      focusFirstItem();
+    }
+
+    function closeDrawer() {
+      if (!isOpen()) {
+        return;
+      }
+      drawer.classList.remove('is-open');
+      overlay.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+      delete document.documentElement.dataset.scrollLock;
+      if (btn && typeof btn.focus === 'function') {
+        btn.focus({ preventScroll: true });
+      } else if (previousFocus && typeof previousFocus.focus === 'function') {
+        previousFocus.focus();
       }
       previousFocus = null;
     }
 
-    function openNav() {
-      if (root.getAttribute('data-open') === 'true') {
+    function toggleDrawer() {
+      if (isOpen()) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    }
+
+    function handleKeydown(event) {
+      if (!isOpen()) {
         return;
       }
-      previousFocus = doc.activeElement;
-      root.setAttribute('data-open', 'true');
-      openBtn.setAttribute('aria-expanded', 'true');
-      docEl.style.overflow = 'hidden';
-      focusFirstLink();
-    }
 
-    function handleEscape(event) {
-      if (event.key === 'Escape' && root.getAttribute('data-open') === 'true') {
+      if (event.key === 'Escape') {
         event.preventDefault();
-        closeNav();
+        closeDrawer();
+        return;
+      }
+
+      if (event.key !== 'Tab') {
+        return;
+      }
+
+      if (!focusables || focusables.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey) {
+        if (!drawer.contains(active) || active === first) {
+          event.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (!drawer.contains(active) || active === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     }
 
-    openBtn.addEventListener('click', (event) => {
+    btn.addEventListener('click', (event) => {
       event.preventDefault();
-      openNav();
-    });
-
-    closeBtn.addEventListener('click', (event) => {
-      event.preventDefault();
-      closeNav();
+      toggleDrawer();
     });
 
     overlay.addEventListener('click', () => {
-      closeNav();
+      closeDrawer();
     });
 
-    doc.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleKeydown);
 
     drawer.addEventListener('click', (event) => {
       const link = event.target.closest('a');
       if (link) {
-        closeNav();
+        closeDrawer();
       }
-    });
-
-    return true;
-  }
-
-  function watchForNav() {
-    if (bindNav()) {
-      return;
-    }
-
-    if (state.observer) {
-      return;
-    }
-
-    state.observer = new MutationObserver(() => {
-      if (bindNav()) {
-        state.observer.disconnect();
-        state.observer = null;
-      }
-    });
-
-    state.observer.observe(doc.documentElement, {
-      childList: true,
-      subtree: true,
     });
   }
 
-  watchForNav();
-  doc.addEventListener('DOMContentLoaded', bindNav);
-  window.initTTGNav = bindNav;
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initNav);
+  } else {
+    initNav();
+  }
 })();

@@ -1,106 +1,111 @@
-<!-- Updated: Hooked Cycling Coach page into the refreshed nav assets and translucent styling. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
+  <title>The Tank Guide — Cycling Coach</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cycling Coach — The Tank Guide</title>
-  <meta name="description" content="Cycling Coach is under construction — coming soon to help you master the nitrogen cycle." />
-
-  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
-
-  <style>
-    :root{
-      --bg:#0b1020;            /* dark lab vibe */
-      --fg:#eef3ff;
-      --muted:rgba(255,255,255,.85);
-      --line:rgba(255,255,255,.14);
-      --chip:rgba(255,255,255,.10);
-      --btn-bg:#ffffff;
-      --btn-fg:#08324a;
-      --btn-line:rgba(0,0,0,.12);
-      --ttg-nav-bg: rgba(10, 16, 30, 0.72);
-      --ttg-nav-link: rgba(243, 247, 255, 0.85);
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    a{color:inherit;text-decoration:none}
-
-    /* Hero (now solid dark gradient, no cyan highlights) */
-    .hero{
-      position:relative;
-      padding:90px 18px;
-      background:
-        linear-gradient(140deg,#0b2746 0%, #0a3a57 50%, #0b1020 100%);
-      overflow:hidden;
-      text-align:center;
-    }
-    .hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:2}
-    .headline{font-weight:800;font-size:clamp(2rem,4vw,3rem);line-height:1.08;margin:0 0 10px}
-    .sub{margin:0;color:var(--muted);font-size:1.125rem}
-
-    /* Flask silhouette (very subtle, behind text) */
-    .flask{
-      position:absolute;
-      left:50%; transform:translateX(-50%);
-      bottom:-60px; width:min(520px,90vw); height:auto;
-      opacity:.10;
-      z-index:1;
-      pointer-events:none; user-select:none;
-    }
-
-    /* Footer (loaded include will drop inside) */
-    #site-footer{border-top:1px solid var(--line); margin-top:40px;}
-
-  </style>
-  <script defer src="js/nav.js?v=1.0.7"></script>
+  <meta name="description" content="Master the nitrogen cycle for your aquarium with detailed schedules and alerts." />
+  <link rel="stylesheet" href="css/style.css?v=1.0.8" />
+  <link rel="stylesheet" href="css/params.css?v=1.0.4" />
+  <script defer src="js/nav.js?v=1.1.0"></script>
 </head>
-<body class="page-background theme-dark">
+<body class="page-background bg--dark">
 
-  <div id="global-nav"></div>
-  <script>
-    fetch('nav.html?v=1.0.7')
-      .then(response => response.text())
-      .then(html => {
-        const mount = document.getElementById('global-nav');
-        if (mount) {
-          mount.outerHTML = html;
-          if (window.initTTGNav) {
-            window.initTTGNav();
-          }
-        }
-      });
-  </script>
-
-  <!-- HERO Placeholder -->
-  <section class="hero">
-    <!-- Subtle lab flask silhouette (SVG) -->
-    <svg class="flask" viewBox="0 0 256 256" aria-hidden="true">
-      <path d="M96 16v56L40 192c-10 24 6 48 32 48h112c26 0 42-24 32-48l-56-120V16" fill="none" stroke="white" stroke-opacity=".8" stroke-width="6"/>
-      <path d="M56 168c24-16 56-8 72 0s56 16 72-8" fill="none" stroke="white" stroke-opacity=".6" stroke-width="6"/>
-      <circle cx="92" cy="176" r="4" fill="white" fill-opacity=".6"/>
-      <circle cx="110" cy="186" r="3" fill="white" fill-opacity=".55"/>
-      <path d="M132 184c0 10 10 10 10 0" stroke="white" stroke-opacity=".55" stroke-width="4"/>
-      <path d="M74 182c0 8 8 8 8 0" stroke="white" stroke-opacity=".55" stroke-width="4"/>
-    </svg>
-
-    <div class="hero-inner">
-      <h1 class="headline">🧪 Cycling Coach</h1>
-      <p class="sub">Under construction — coming soon to help you master the nitrogen cycle.</p>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-brand" href="index.html" aria-label="The Tank Guide — Home">
+        <span class="site-brand__title">The Tank Guide</span>
+        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
+      </a>
+      <button class="hamburger" data-nav="hamburger" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu">
+        <span class="hamburger__bars" aria-hidden="true"></span>
+        <span class="visually-hidden">Menu</span>
+      </button>
     </div>
-  </section>
+  </header>
+  <div class="nav-overlay" data-nav="overlay"></div>
+  <nav id="site-drawer" class="nav-drawer" data-nav="drawer" aria-label="Site">
+    <a href="index.html" class="nav__link">Home</a>
+    <a href="stocking.html" class="nav__link">Stocking Advisor</a>
+    <a href="gear.html" class="nav__link">Gear</a>
+    <a href="params.html" class="nav__link" aria-current="page">Cycling Coach</a>
+    <a href="media.html" class="nav__link">Media</a>
+    <a href="about.html" class="nav__link">About</a>
+  </nav>
+
+  <main class="app">
+    <header class="hero">
+      <div class="hero__content">
+        <p class="hero__eyebrow">Cycling Coach</p>
+        <h1 class="hero__title">Master the Nitrogen Cycle</h1>
+        <p class="hero__lede">Track parameters, get alerts, and keep your aquarium safe for your fish — from day zero to fully cycled.</p>
+      </div>
+      <div class="hero__cta">
+        <button class="btn btn--primary" id="start-over">Start Over</button>
+        <button class="btn" id="load-session">Resume Session</button>
+      </div>
+    </header>
+
+    <section class="stepper" aria-label="Cycling timeline">
+      <ol class="stepper__list">
+        <li class="stepper__item is-active">
+          <button class="stepper__button" data-step="1">1. Prep Tank</button>
+        </li>
+        <li class="stepper__item">
+          <button class="stepper__button" data-step="2">2. Seed &amp; Dose</button>
+        </li>
+        <li class="stepper__item">
+          <button class="stepper__button" data-step="3">3. Monitor</button>
+        </li>
+        <li class="stepper__item">
+          <button class="stepper__button" data-step="4">4. Stocking Day</button>
+        </li>
+      </ol>
+    </section>
+
+    <section class="card" id="step-content" tabindex="-1">
+      <div class="card__content">
+        <h2>Welcome to your Cycling Coach</h2>
+        <p>This guided experience walks you through preparing your aquarium, seeding beneficial bacteria, dosing ammonia, and testing water parameters until your tank is fully cycled.</p>
+        <p>Select a step above to get started, or hit “Start Over” to reset your session.</p>
+      </div>
+      <aside class="card__aside">
+        <h3>Need to print?</h3>
+        <p>Use the “Export Schedule” option to get a printable PDF when you’re done.</p>
+      </aside>
+    </section>
+
+    <section class="card">
+      <header class="card__header">
+        <h2>Parameter Log</h2>
+        <button class="btn btn--ghost" id="export-log">Export Schedule</button>
+      </header>
+      <div class="card__content">
+        <table class="log" aria-label="Parameter log">
+          <thead>
+            <tr>
+              <th scope="col">Day</th>
+              <th scope="col">Ammonia</th>
+              <th scope="col">Nitrite</th>
+              <th scope="col">Nitrate</th>
+              <th scope="col">Notes</th>
+            </tr>
+          </thead>
+          <tbody id="log-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 
   <div id="site-footer"></div>
   <script>
-    fetch('footer.html?v=1.0.7')
-      .then(response => response.text())
-      .then(html => {
-        const footer = document.getElementById('site-footer');
-        if (footer) {
-          footer.outerHTML = html;
-        }
-      });
+    (async () => {
+      const host = document.getElementById('site-footer');
+      if (!host) return;
+      const res = await fetch('footer.html', { cache: 'no-cache' });
+      host.innerHTML = await res.text();
+    })();
   </script>
-
+  <script src="js/params.js?v=1.0.4" type="module"></script>
 </body>
 </html>

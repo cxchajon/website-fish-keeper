@@ -6,7 +6,7 @@
   <title>The Tank Guide — Gear (Guided)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Build your aquarium setup step by step — tanks, filtration, lighting, and more." />
-  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.8" />
   <link rel="icon" href="/favicon.ico" />
 
   <style>
@@ -55,24 +55,31 @@
     .muted{color:var(--muted);}
     /* ... rest of your CSS unchanged ... */
   </style>
-  <script defer src="js/nav.js?v=1.0.7"></script>
+  <script defer src="js/nav.js?v=1.1.0"></script>
 </head>
-<body class="page-background theme-dark">
+<body class="page-background bg--dark">
 
-  <div id="global-nav"></div>
-  <script>
-    fetch('nav.html?v=1.0.7')
-      .then(response => response.text())
-      .then(html => {
-        const mount = document.getElementById('global-nav');
-        if (mount) {
-          mount.outerHTML = html;
-          if (window.initTTGNav) {
-            window.initTTGNav();
-          }
-        }
-      });
-  </script>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-brand" href="index.html" aria-label="The Tank Guide — Home">
+        <span class="site-brand__title">The Tank Guide</span>
+        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
+      </a>
+      <button class="hamburger" data-nav="hamburger" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu">
+        <span class="hamburger__bars" aria-hidden="true"></span>
+        <span class="visually-hidden">Menu</span>
+      </button>
+    </div>
+  </header>
+  <div class="nav-overlay" data-nav="overlay"></div>
+  <nav id="site-drawer" class="nav-drawer" data-nav="drawer" aria-label="Site">
+    <a href="index.html" class="nav__link">Home</a>
+    <a href="stocking.html" class="nav__link">Stocking Advisor</a>
+    <a href="gear.html" class="nav__link" aria-current="page">Gear</a>
+    <a href="params.html" class="nav__link">Cycling Coach</a>
+    <a href="media.html" class="nav__link">Media</a>
+    <a href="about.html" class="nav__link">About</a>
+  </nav>
 
   <!-- Hero -->
   <section class="hero">
@@ -200,139 +207,34 @@
       </div>
     </section>
 
-    <!-- 4) Heating -->
-<section class="section" id="heating">
-  <h2>4) Heating</h2>
-  <div class="tip">
-    <strong>Tip:</strong> Freshwater guideline is <b>3–5 W per gallon</b>. We target ~<b>4 W/gal</b> and often suggest <b>two heaters</b> at half wattage each for redundancy.
-  </div>
-  <div class="card">
-    <div class="row">
-      <span class="chip" id="heater-target" style="display:none;"></span>
-      <span class="chip" id="heater-redundancy" style="display:none;"></span>
-    </div>
-
-    <div id="heater-options" class="grid"></div>
-
-    <div class="compare" id="heater-compare" hidden>
-      <table class="compare" aria-label="Compare selected heaters">
-        <thead>
-          <tr>
-            <th>Model</th>
-            <th>Type</th>
-            <th>Wattage</th>
-            <th>Rec. Range</th>
-            <th>Safety</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody id="heater-compare-body"></tbody>
-      </table>
-      <p class="hint">Select 2–3 heaters to compare. We highlight matches near the ~4 W/gal target.</p>
-    </div>
-  </div>
-</section>
-
-    <!-- 5) Water Treatment -->
-    <section class="section" id="water-treatment">
-      <h2>5) Water Treatment</h2>
-      <div class="note">
-        <strong>Note:</strong> <b>Chloramine-safe</b> dechlorinators neutralize both <b>chlorine</b> and the <b>ammonia</b> in chloramine. Using a chlorine-only product can leave ammonia behind.
-      </div>
+    <!-- 4) Heating &amp; Temperature -->
+    <section class="section" id="heating">
+      <h2>4) Heating &amp; Temperature</h2>
+      <p class="lead">Match wattage to your tank size and ambient temperature — and always use a separate thermometer.</p>
       <div class="card">
-        <p class="muted">Dechlorinator, beneficial bacteria, and conditioners will be listed here with dose guidance.</p>
+        <div id="heater-options" class="grid"></div>
+        <p class="hint">We include inline controllers and high-accuracy heaters for planted and reef-ready tanks.</p>
       </div>
     </section>
 
-    <!-- 6–9 placeholders -->
-    <section class="section" id="substrate">
-      <h2>6) Substrate</h2>
-      <div class="card"><p class="muted">Inert gravel/sand and planted soils — with coverage calculators.</p></div>
-    </section>
-    <section class="section" id="test-kits">
-      <h2>7) Test Kits &amp; Meters</h2>
-      <div class="card"><p class="muted">Liquid kits, strips, TDS meters, thermometers.</p></div>
-    </section>
-    <section class="section" id="hardscape">
-      <h2>8) Hardscape &amp; Decor</h2>
-      <div class="card"><p class="muted">Woods, stones, safe decor — with pH effect notes.</p></div>
-    </section>
-    <section class="section" id="maintenance">
-      <h2>9) Maintenance Tools</h2>
-      <div class="card"><p class="muted">Siphons, scrapers, nets, buckets — the weekly essentials.</p></div>
-    </section>
-
-    <!-- 10) Stands & Lids -->
-    <section class="section" id="stands-lids">
-      <h2>10) Stand &amp; Lid</h2>
-      <div class="warning">
-        <strong>Warning:</strong> Always choose a <b>stand rated for at least one size larger</b> than your aquarium (e.g., 20 gal tank → 30 gal rated stand). This ensures stability and safety.
-      </div>
+    <!-- 5) Essential Accessories -->
+    <section class="section" id="accessories">
+      <h2>5) Essential Accessories</h2>
+      <p class="lead">Conditioners, test kits, aquascaping tools, and maintenance gear to keep your tank thriving.</p>
       <div class="card">
-        <p class="muted">We’ll auto-filter stands by footprint and show only those rated above your selected tank size. Lids will be suggested by length fit.</p>
-      </div>
-    </section>
-
-    <!-- 11) Optional Add-ons -->
-    <section class="section" id="add-ons">
-      <h2>11) Optional Add-ons</h2>
-      <div class="note">
-        <strong>Note:</strong> <b>Flow baffles</b> can calm strong filters for fish that prefer gentle water (like bettas). This keeps healthy filtration without stressing your livestock.
-      </div>
-      <div class="card">
-        <div id="addon-options" class="grid"></div>
-      </div>
-    </section>
-
-    <!-- Cart -->
-    <section class="section" id="cart">
-      <h2>🛒 Your Cart</h2>
-      <div class="card">
-        <div class="cart-summary">
-          <div><span id="cart-count">0</span> item(s) selected</div>
-          <div class="total">Estimated total: $<span id="cart-total">0.00</span></div>
-        </div>
-        <div class="cart-actions" style="margin-bottom:12px;">
-          <button class="ghost-btn" id="cart-buy-all">Buy all</button>
-          <button class="ghost-btn" id="cart-clear">Clear cart</button>
-        </div>
-        <div class="cart-items" id="cart-items"></div>
-        <p class="hint">“Buy all” opens each Amazon link in new tabs (some browsers may block popups — please allow them). You can also copy all links.</p>
+        <div id="accessory-options" class="grid"></div>
       </div>
     </section>
   </main>
 
-  <div class="modal-backdrop" id="cart-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="cart-modal-title" hidden>
-    <div class="modal">
-      <header>
-        <h3 id="cart-modal-title">Buy All — Open or Copy Links</h3>
-        <button class="ghost-btn" id="cart-modal-close">Close</button>
-      </header>
-      <div class="list" id="cart-modal-list"></div>
-      <p class="hint">Browsers may block multiple popups. Use “Copy all links” if any tabs are prevented from opening.</p>
-      <textarea id="cart-modal-textarea" style="width:100%;height:120px;margin-top:8px;" readonly></textarea>
-      <p class="muted" id="cart-modal-copy-status" aria-live="polite"></p>
-      <div class="actions">
-        <button class="btn" id="cart-open-all">Open all</button>
-        <button class="btn" id="cart-copy">Copy all links</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="gear-error" class="warning" role="alert" hidden></div>
-
   <div id="site-footer"></div>
   <script>
-    fetch('footer.html?v=1.0.7')
-      .then(response => response.text())
-      .then(html => {
-        const footer = document.getElementById('site-footer');
-        if (footer) {
-          footer.outerHTML = html;
-        }
-      });
+    (async () => {
+      const host = document.getElementById('site-footer');
+      if (!host) return;
+      const res = await fetch('footer.html', { cache: 'no-cache' });
+      host.innerHTML = await res.text();
+    })();
   </script>
-
-  <script type="module" src="js/gear.js"></script>
 </body>
 </html>

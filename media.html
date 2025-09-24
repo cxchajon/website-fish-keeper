@@ -6,7 +6,7 @@
   <title>The Tank Guide — Media Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Media Hub — Watch • Read • Explore. Aquarium videos and blogs for every aquarist." />
-  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.8" />
   <link rel="icon" href="/favicon.ico" />
   <meta property="og:title" content="The Tank Guide — Media Hub" />
   <meta property="og:description" content="Watch • Read • Explore — videos and blogs for every aquarist." />
@@ -166,24 +166,31 @@
     }
 
   </style>
-  <script defer src="js/nav.js?v=1.0.7"></script>
+  <script defer src="js/nav.js?v=1.1.0"></script>
 </head>
 <body class="page-background">
 
-  <div id="global-nav"></div>
-  <script>
-    fetch('nav.html?v=1.0.7')
-      .then(response => response.text())
-      .then(html => {
-        const mount = document.getElementById('global-nav');
-        if (mount) {
-          mount.outerHTML = html;
-          if (window.initTTGNav) {
-            window.initTTGNav();
-          }
-        }
-      });
-  </script>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-brand" href="index.html" aria-label="The Tank Guide — Home">
+        <span class="site-brand__title">The Tank Guide</span>
+        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
+      </a>
+      <button class="hamburger" data-nav="hamburger" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu">
+        <span class="hamburger__bars" aria-hidden="true"></span>
+        <span class="visually-hidden">Menu</span>
+      </button>
+    </div>
+  </header>
+  <div class="nav-overlay" data-nav="overlay"></div>
+  <nav id="site-drawer" class="nav-drawer" data-nav="drawer" aria-label="Site">
+    <a href="index.html" class="nav__link">Home</a>
+    <a href="stocking.html" class="nav__link">Stocking Advisor</a>
+    <a href="gear.html" class="nav__link">Gear</a>
+    <a href="params.html" class="nav__link">Cycling Coach</a>
+    <a href="media.html" class="nav__link" aria-current="page">Media</a>
+    <a href="about.html" class="nav__link">About</a>
+  </nav>
 
   <!-- Hero -->
   <section class="hero">
@@ -198,84 +205,64 @@
     <section class="section" aria-labelledby="videos">
       <h2 id="videos">Featured Videos</h2>
       <p class="lead">Catch our latest upload or explore the full channel for more.</p>
-
-      <div class="stack">
-        <article class="card center" aria-label="Latest video">
-          <div class="media-thumb">Latest video thumbnail will appear here</div>
-          <a class="btn" href="https://www.youtube.com/@fishkeepinglifeco/videos" target="_blank" rel="noopener">▶ Watch Latest Video</a>
-          <p class="muted" style="margin:8px 0 0;">Auto-points to the newest upload once videos go live.</p>
+      <div class="card stack">
+        <article>
+          <div class="media-thumb">Latest Video Placeholder</div>
+          <h3>How to Cycle a Freshwater Aquarium</h3>
+          <p class="muted">Step-by-step walkthrough of the fishless cycle with test schedule and safety tips.</p>
+          <p><a class="btn" href="https://youtube.com/@thetankguide" target="_blank" rel="noopener">Watch on YouTube</a></p>
         </article>
-
-        <article class="card center" aria-label="Visit channel">
-          <div class="media-thumb">Visit our YouTube channel</div>
-          <a class="btn" href="https://youtube.com/@fishkeepinglifeco?si=MzPjoIowO-mXfvCW" target="_blank" rel="noopener">📺 Visit Our Channel</a>
+        <article>
+          <div class="media-thumb">Community Q&amp;A Live Replay</div>
+          <h3>Live Q&amp;A: Tackling Cloudy Water</h3>
+          <p class="muted">We break down bacterial blooms, overfeeding, and filter maintenance during a live chat.</p>
+          <p><a class="btn" href="https://youtube.com/@thetankguide" target="_blank" rel="noopener">Catch the Replay</a></p>
         </article>
       </div>
     </section>
 
-    <!-- Deep Dives & Journals -->
-    <section class="section" aria-labelledby="blogs">
-      <h2 id="blogs">Deep Dives &amp; Journals</h2>
-      <p class="lead">Go beyond the videos with companion blogs, project logs, and aquarium journeys.</p>
-      <article class="card">
-        <p class="muted" style="margin:0;">No blogs published yet — check back soon for our first post!</p>
-      </article>
-      <div class="center" style="margin-top:12px;">
-        <a class="btn" href="/blog.html">Read All Blogs</a>
+    <!-- Articles -->
+    <section class="section" aria-labelledby="articles">
+      <h2 id="articles">Recent Articles</h2>
+      <p class="lead">From cycling checklists to stocking blueprints — dive into the blog.</p>
+      <div class="card stack">
+        <article>
+          <h3>Ultimate Stocking Checklist</h3>
+          <p class="muted">Everything you need to plan a compatible community, including tank footprint, water parameters, and behavior notes.</p>
+          <p><a class="btn" href="https://thetankguide.com/blog/stocking-checklist" target="_blank" rel="noopener">Read the Guide</a></p>
+        </article>
+        <article>
+          <h3>5 Mistakes That Stall Cycling</h3>
+          <p class="muted">Avoid these common pitfalls that slow your cycle or harm your bacteria colony.</p>
+          <p><a class="btn" href="https://thetankguide.com/blog/cycling-mistakes" target="_blank" rel="noopener">Learn More</a></p>
+        </article>
       </div>
     </section>
 
     <!-- Featured Resource -->
     <section class="section" id="featured-resource" aria-labelledby="featured-resource-title">
+      <h2 id="featured-resource-title" class="center">Featured Resource</h2>
       <div class="resource-card">
-        <a
-          class="resource-cover-link"
-          href="https://amzn.to/423VkiA"
-          target="_blank"
-          rel="noopener sponsored"
-          aria-label="Open book on Amazon"
-        >
-          <img
-            class="resource-cover"
-            src="/assets/books/book-cover-web.jpg"
-            srcset="/assets/books/book-cover-web.jpg 600w, /assets/books/book-cover-large.jpg 1200w"
-            sizes="(max-width: 600px) 100vw, 600px"
-            alt="Life in Balance: The Hidden Magic of Aquariums — book cover"
-            loading="lazy"
-          />
+        <a class="resource-cover-link" href="https://www.amazon.com/dp/B0BGN98F57?tag=fklife-20" target="_blank" rel="noopener">
+          <img class="resource-cover" src="assets/media/ebook-cover.jpg" alt="Cover of The Tank Guide eBook" loading="lazy" />
         </a>
         <div class="resource-content">
-          <h2 id="featured-resource-title">Featured Resource</h2>
-          <h3 class="resource-title">Discover the hidden magic of aquariums</h3>
-          <p class="resource-desc">An inviting blend of science and storytelling—perfect for beginners.</p>
-          <a class="btn btn-amazon" href="https://amzn.to/423VkiA" target="_blank" rel="noopener sponsored">View on Amazon</a>
+          <p class="resource-title">The Tank Guide: Cycling &amp; Stocking Companion</p>
+          <p class="resource-desc">Printable schedules, stocking charts, and troubleshooting checklists for freshwater aquariums — made to pair with our tools.</p>
+          <a class="btn btn-amazon" href="https://www.amazon.com/dp/B0BGN98F57?tag=fklife-20" target="_blank" rel="noopener">Get the eBook</a>
         </div>
-      </div>
-    </section>
-
-    <!-- Stay Connected -->
-    <section class="section" aria-labelledby="stay-connected">
-      <h2 id="stay-connected">Stay Connected</h2>
-      <p class="lead">Stay connected — follow, like, and share with us on Instagram.</p>
-      <div class="card center">
-        <a class="btn" href="https://www.instagram.com/fishkeepinglifeco?igsh=MXRmd3V4OW1hNHY4aA%3D%3D&utm_source=qr" target="_blank" rel="noopener">📸 Follow on Instagram</a>
       </div>
     </section>
   </main>
 
-<div id="site-footer"></div>
-<script>
-  fetch('footer.html?v=1.0.7')
-    .then(response => response.text())
-    .then(html => {
-      const footer = document.getElementById('site-footer');
-      if (footer) {
-        footer.outerHTML = html;
-      }
-    });
-</script>
-<!-- Load data and logic with updated version for cache busting -->
-<script src="js/fish-data.js?v=1.0.3"></script>
-<script type="module" src="js/modules/app.js?v=1.0.3"></script>
+  <div id="site-footer"></div>
+  <script>
+    (async () => {
+      const host = document.getElementById('site-footer');
+      if (!host) return;
+      const res = await fetch('footer.html', { cache: 'no-cache' });
+      host.innerHTML = await res.text();
+    })();
+  </script>
 </body>
 </html>
