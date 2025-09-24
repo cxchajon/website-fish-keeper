@@ -62,7 +62,7 @@ header.site-header {
 
 #global-nav .site-header__inner {
   display: flex;
-  align-items: center;
+  align-items: left;
 }
 
 #global-nav #ttg-nav-open {
