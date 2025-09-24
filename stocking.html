@@ -5,9 +5,15 @@
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Global nav / shared styles (same versioning as Media) -->
-  <link rel="stylesheet" href="css/style.css?v=1.0.6" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
   <!-- Page styles -->
   <link rel="stylesheet" href="css/Style.css?v=1.0.3" />
+  <style>
+    :root {
+      --ttg-nav-bg: linear-gradient(140deg, rgba(10, 58, 87, 0.42) 0%, rgba(11, 16, 32, 0.42) 100%);
+      --ttg-nav-link: rgba(243, 247, 255, 0.85);
+    }
+  </style>
 </head>
 <body>
 
@@ -81,7 +87,7 @@
         });
       }
 
-      fetch('/nav.html?v=1.0.6')
+      fetch('/nav.html?v=1.0.7')
         .then((response) => response.text())
         .then((html) => {
           const placeholder = document.getElementById('site-nav');

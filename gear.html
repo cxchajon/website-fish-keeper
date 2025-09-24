@@ -5,7 +5,7 @@
   <title>The Tank Guide — Gear (Guided)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Build your aquarium setup step by step — tanks, filtration, lighting, and more." />
-  <link rel="stylesheet" href="css/style.css?v=1.0.6" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
   <link rel="icon" href="/favicon.ico" />
 
   <style>
@@ -19,6 +19,8 @@
       --ok:#0f9d58;
       --warn:#f4b400;
       --bad:#db4437;
+      --ttg-nav-bg: linear-gradient(140deg, rgba(10, 58, 87, 0.42) 0%, rgba(11, 16, 32, 0.42) 100%);
+      --ttg-nav-link: rgba(243, 247, 255, 0.85);
     }
 
     /* gradient background + global text color */
@@ -129,7 +131,7 @@
         });
       }
 
-      fetch('/nav.html?v=1.0.6')
+      fetch('/nav.html?v=1.0.7')
         .then((response) => response.text())
         .then((html) => {
           const placeholder = document.getElementById('site-nav');
