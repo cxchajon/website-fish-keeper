@@ -9,6 +9,16 @@
       <span class="brand-title">The Tank Guide</span>
       <span class="brand-sub">a product of <span class="brand-sub-em">FishKeepingLifeCo</span></span>
     </a>
+
+    <nav class="links" aria-label="Primary">
+      <a href="/index.html">Home</a>
+      <a href="/stocking.html">Stocking Advisor</a>
+      <a href="/gear.html">Gear</a>
+      <a href="/params.html">Cycling Coach</a>
+      <a href="/media.html">Media</a>
+      <a href="/about.html">About</a>
+      <a href="/feedback.html">Feedback</a>
+    </nav>
   </div>
 
   <div id="ttg-overlay" hidden></div>
@@ -20,7 +30,7 @@
         <span aria-hidden="true">×</span>
       </button>
     </div>
-    <nav>
+    <nav class="drawer" aria-label="Primary navigation">
       <a href="/index.html">Home</a>
       <a href="/stocking.html">Stocking Advisor</a>
       <a href="/gear.html">Gear</a>
@@ -30,112 +40,5 @@
       <a href="/feedback.html">Feedback</a>
     </nav>
   </aside>
-
-  <script>
-    (function () {
-      const root = document.getElementById('global-nav');
-      if (!root) return;
-
-      const overlay = root.querySelector('#ttg-overlay');
-      const drawer = root.querySelector('#ttg-drawer');
-      const openBtn = root.querySelector('#ttg-nav-open');
-      const closeBtn = root.querySelector('#ttg-nav-close');
-      const drawerLinks = Array.from(drawer.querySelectorAll('a'));
-      const docEl = document.documentElement;
-      const body = document.body;
-      let previousFocus = null;
-      let prevDocOverflow = docEl.style.overflow || '';
-      let prevBodyOverflow = body.style.overflow || '';
-      let overlayHideTimer = null;
-
-      function normalize(path) {
-        try {
-          path = new URL(path, window.location.origin).pathname;
-        } catch (err) {
-          path = path || '/';
-        }
-
-        path = path.replace(/index\.html$/i, '');
-        path = path.replace(/\/+$/g, '');
-        if (!path) {
-          return '/';
-        }
-        return path;
-      }
-
-      function syncActive() {
-        const current = normalize(window.location.pathname);
-        drawerLinks.forEach((link) => {
-          const target = normalize(link.getAttribute('href') || '');
-          if (target === current) {
-            link.setAttribute('aria-current', 'page');
-          } else {
-            link.removeAttribute('aria-current');
-          }
-        });
-      }
-
-      function openDrawer() {
-        if (root.dataset.open === 'true') return;
-        window.clearTimeout(overlayHideTimer);
-        overlay.hidden = false;
-        previousFocus = document.activeElement;
-        prevDocOverflow = docEl.style.overflow || '';
-        prevBodyOverflow = body.style.overflow || '';
-        root.dataset.open = 'true';
-        drawer.setAttribute('aria-hidden', 'false');
-        openBtn.setAttribute('aria-expanded', 'true');
-        docEl.style.overflow = 'hidden';
-        body.style.overflow = 'hidden';
-        if (drawerLinks.length) {
-          window.requestAnimationFrame(() => {
-            drawerLinks[0].focus();
-          });
-        }
-      }
-
-      function closeDrawer(options = {}) {
-        if (root.dataset.open !== 'true') return;
-        const { returnFocus = true } = options;
-        root.dataset.open = 'false';
-        drawer.setAttribute('aria-hidden', 'true');
-        openBtn.setAttribute('aria-expanded', 'false');
-        docEl.style.overflow = prevDocOverflow;
-        body.style.overflow = prevBodyOverflow;
-        overlayHideTimer = window.setTimeout(() => {
-          if (root.dataset.open !== 'true') {
-            overlay.hidden = true;
-          }
-        }, 280);
-        if (returnFocus && previousFocus) {
-          window.requestAnimationFrame(() => {
-            if (typeof previousFocus.focus === 'function') {
-              previousFocus.focus();
-            } else {
-              openBtn.focus();
-            }
-          });
-        }
-      }
-
-      openBtn.addEventListener('click', openDrawer);
-      closeBtn.addEventListener('click', () => closeDrawer());
-      overlay.addEventListener('click', () => closeDrawer());
-      drawer.addEventListener('click', (event) => {
-        const link = event.target.closest('a');
-        if (link) {
-          closeDrawer({ returnFocus: false });
-        }
-      });
-
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && root.dataset.open === 'true') {
-          event.preventDefault();
-          closeDrawer();
-        }
-      });
-
-      syncActive();
-    })();
-  </script>
 </header>
+<div id="global-nav-spacer" aria-hidden="true"></div>
