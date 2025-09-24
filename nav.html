@@ -1,35 +1,26 @@
 <header id="global-nav" data-open="false">
-  <div class="nav-inner">
-    <div class="nav-primary">
-      <button id="ttg-nav-open" type="button" aria-label="Open menu" aria-haspopup="dialog" aria-controls="ttg-drawer" aria-expanded="false">
-        <span class="hamburger-bars" aria-hidden="true"></span>
-        <span class="visually-hidden">Menu</span>
-      </button>
+  <div class="nav-bar">
+    <button id="ttg-nav-open" type="button" aria-label="Open menu" aria-haspopup="dialog" aria-controls="ttg-drawer" aria-expanded="false">
+      <span class="hamburger-bars" aria-hidden="true"></span>
+      <span class="visually-hidden">Open menu</span>
+    </button>
 
-      <a class="brand" href="/index.html" aria-label="The Tank Guide — Home">
-        <span class="brand-title">The Tank Guide</span>
-        <span class="brand-sub">a product of <span class="brand-sub-em">FishKeepingLifeCo</span></span>
-      </a>
-    </div>
-
-    <nav class="links" aria-label="Primary">
-      <a href="/index.html">Home</a>
-      <a href="/stocking.html">Stocking Advisor</a>
-      <a href="/gear.html">Gear</a>
-      <a href="/params.html">Cycling Coach</a>
-      <a href="/media.html">Media</a>
-      <a href="/about.html">About</a>
-      <a href="/feedback.html">Feedback</a>
-    </nav>
+    <a class="brand" href="/index.html" aria-label="The Tank Guide — Home">
+      <span class="brand-title">The Tank Guide</span>
+      <span class="brand-sub">a product of <span class="brand-sub-em">FishKeepingLifeCo</span></span>
+    </a>
   </div>
 
   <div id="ttg-overlay" hidden></div>
-  <aside id="ttg-drawer" role="dialog" aria-modal="true" aria-label="Navigation" aria-hidden="true" tabindex="-1">
-    <header>
-      <strong>Menu</strong>
-      <button id="ttg-nav-close" type="button" aria-label="Close menu">×</button>
-    </header>
-    <nav aria-label="Mobile">
+
+  <aside id="ttg-drawer" role="dialog" aria-modal="true" aria-label="Primary navigation" aria-hidden="true" tabindex="-1">
+    <div class="drawer-header">
+      <p class="drawer-label">Menu</p>
+      <button id="ttg-nav-close" type="button" aria-label="Close menu">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <nav>
       <a href="/index.html">Home</a>
       <a href="/stocking.html">Stocking Advisor</a>
       <a href="/gear.html">Gear</a>
@@ -39,4 +30,112 @@
       <a href="/feedback.html">Feedback</a>
     </nav>
   </aside>
+
+  <script>
+    (function () {
+      const root = document.getElementById('global-nav');
+      if (!root) return;
+
+      const overlay = root.querySelector('#ttg-overlay');
+      const drawer = root.querySelector('#ttg-drawer');
+      const openBtn = root.querySelector('#ttg-nav-open');
+      const closeBtn = root.querySelector('#ttg-nav-close');
+      const drawerLinks = Array.from(drawer.querySelectorAll('a'));
+      const docEl = document.documentElement;
+      const body = document.body;
+      let previousFocus = null;
+      let prevDocOverflow = docEl.style.overflow || '';
+      let prevBodyOverflow = body.style.overflow || '';
+      let overlayHideTimer = null;
+
+      function normalize(path) {
+        try {
+          path = new URL(path, window.location.origin).pathname;
+        } catch (err) {
+          path = path || '/';
+        }
+
+        path = path.replace(/index\.html$/i, '');
+        path = path.replace(/\/+$/g, '');
+        if (!path) {
+          return '/';
+        }
+        return path;
+      }
+
+      function syncActive() {
+        const current = normalize(window.location.pathname);
+        drawerLinks.forEach((link) => {
+          const target = normalize(link.getAttribute('href') || '');
+          if (target === current) {
+            link.setAttribute('aria-current', 'page');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+
+      function openDrawer() {
+        if (root.dataset.open === 'true') return;
+        window.clearTimeout(overlayHideTimer);
+        overlay.hidden = false;
+        previousFocus = document.activeElement;
+        prevDocOverflow = docEl.style.overflow || '';
+        prevBodyOverflow = body.style.overflow || '';
+        root.dataset.open = 'true';
+        drawer.setAttribute('aria-hidden', 'false');
+        openBtn.setAttribute('aria-expanded', 'true');
+        docEl.style.overflow = 'hidden';
+        body.style.overflow = 'hidden';
+        if (drawerLinks.length) {
+          window.requestAnimationFrame(() => {
+            drawerLinks[0].focus();
+          });
+        }
+      }
+
+      function closeDrawer(options = {}) {
+        if (root.dataset.open !== 'true') return;
+        const { returnFocus = true } = options;
+        root.dataset.open = 'false';
+        drawer.setAttribute('aria-hidden', 'true');
+        openBtn.setAttribute('aria-expanded', 'false');
+        docEl.style.overflow = prevDocOverflow;
+        body.style.overflow = prevBodyOverflow;
+        overlayHideTimer = window.setTimeout(() => {
+          if (root.dataset.open !== 'true') {
+            overlay.hidden = true;
+          }
+        }, 280);
+        if (returnFocus && previousFocus) {
+          window.requestAnimationFrame(() => {
+            if (typeof previousFocus.focus === 'function') {
+              previousFocus.focus();
+            } else {
+              openBtn.focus();
+            }
+          });
+        }
+      }
+
+      openBtn.addEventListener('click', openDrawer);
+      closeBtn.addEventListener('click', () => closeDrawer());
+      overlay.addEventListener('click', () => closeDrawer());
+      drawer.addEventListener('click', (event) => {
+        const link = event.target.closest('a');
+        if (link) {
+          closeDrawer({ returnFocus: false });
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && root.dataset.open === 'true') {
+          event.preventDefault();
+          closeDrawer();
+        }
+      });
+
+      syncActive();
+    })();
+  </script>
 </header>

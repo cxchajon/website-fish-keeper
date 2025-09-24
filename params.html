@@ -57,7 +57,13 @@
 
   <!-- Global nav include (shared across pages) -->
   <div id="site-nav"></div>
-  <script type="module" src="/js/modules/nav.js?v=1.2.0"></script>
+  <script>
+    // Keep this exact version across all subpages; bump only if you must.
+    fetch('/nav.html?v=1.0.6').then(r => r.text()).then(html => {
+      const host = document.getElementById('site-nav');
+      host.outerHTML = html; // nav.html includes init code and runs itself
+    });
+  </script>
 
   <!-- HERO Placeholder -->
   <section class="hero">
