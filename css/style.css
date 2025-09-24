@@ -8,11 +8,7 @@
 }
 
 #global-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10000;
+  position: static;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   color: var(--ttg-nav-text, #eef3ff);
   background: var(--ttg-nav-bg, transparent);
@@ -122,42 +118,28 @@
 }
 
 #global-nav .links a {
-  position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 10px 0;
+  padding-block: 10px;
   color: var(--ttg-nav-link, rgba(243, 246, 255, 0.82));
   font-size: 0.98rem;
   font-weight: 500;
   transition: color 0.2s ease;
-}
-
-#global-nav .links a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 2px;
-  background: transparent;
-  transform-origin: left;
-  transform: scaleX(0);
-  transition: background 0.2s ease, transform 0.2s ease;
+  text-decoration: none;
+  text-underline-offset: 6px;
 }
 
 #global-nav .links a:hover,
 #global-nav .links a:focus-visible {
   color: #ffffff;
+  text-decoration: underline;
 }
 
 #global-nav .links a[aria-current="page"] {
   color: #ffffff;
   font-weight: 600;
-}
-
-#global-nav .links a[aria-current="page"]::after {
-  background: currentColor;
-  transform: scaleX(1);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
 
@@ -232,31 +214,57 @@
 #ttg-drawer .drawer {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 24px;
+}
+
+#ttg-drawer .drawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+#ttg-drawer .drawer-section:first-of-type {
+  padding-top: 0;
+  border-top: none;
+}
+
+#ttg-drawer .drawer-section-label {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(243, 246, 255, 0.65);
 }
 
 #ttg-drawer .drawer a {
   display: block;
-  padding: 16px 20px;
-  border-radius: 12px;
+  padding-block: 12px;
   color: var(--ttg-nav-link, rgba(243, 246, 255, 0.82));
   text-decoration: none;
   font-size: 1rem;
-  line-height: 1.2;
+  line-height: 1.4;
   font-weight: 500;
-  transition: color 0.2s ease, background 0.2s ease;
   min-height: 44px;
+  transition: color 0.2s ease;
 }
 
-#ttg-drawer .drawer a:hover {
+#ttg-drawer .drawer a:hover,
+#ttg-drawer .drawer a:focus-visible {
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.14);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
 }
 
 #ttg-drawer .drawer a[aria-current="page"] {
   color: #ffffff;
   font-weight: 600;
-  box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.7);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
 }
 
 #global-nav[data-open="true"] #ttg-overlay {
@@ -276,12 +284,7 @@
 }
 
 #ttg-drawer .drawer a:focus-visible {
-  border-radius: 12px;
-}
-
-#global-nav-spacer {
-  width: 100%;
-  height: 0;
+  outline-offset: 4px;
 }
 
 .visually-hidden {
