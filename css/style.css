@@ -1,5 +1,5 @@
 :root {
-  --ttg-nav-bg: rgba(8, 20, 36, 0.45);
+  --ttg-nav-bg: rgba(8, 22, 38, 0.32);
   --ttg-nav-text: #f3f6ff;
   --ttg-nav-link: rgba(243, 246, 255, 0.82);
   --ttg-nav-overlay: rgba(4, 15, 26, 0.58);
@@ -10,10 +10,10 @@
   z-index: 4000;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   color: var(--ttg-nav-text, #f3f6ff);
-  background: var(--ttg-nav-bg, rgba(8, 20, 36, 0.45));
-  backdrop-filter: blur(18px) saturate(135%);
-  -webkit-backdrop-filter: blur(18px) saturate(135%);
-  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.28);
+  background: var(--ttg-nav-bg, rgba(8, 22, 38, 0.32));
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: 0 12px 36px rgba(6, 18, 36, 0.18);
 }
 
 #global-nav a {
@@ -25,7 +25,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 14px;
+  gap: 12px;
   margin: 0 auto;
   width: min(100%, 1100px);
   padding: 16px 20px 18px;
@@ -36,7 +36,7 @@
 
 #global-nav .nav-primary {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   column-gap: 16px;
 }
@@ -93,19 +93,25 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: 2px;
   line-height: 1.1;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.38);
 }
 
 #global-nav .brand-title {
   font-weight: 800;
-  font-size: 1.15rem;
+  font-size: 1.12rem;
 }
 
 #global-nav .brand-sub {
   opacity: 0.9;
-  font-size: 0.94rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+#global-nav .brand-sub-em {
+  font-weight: 600;
 }
 
 #global-nav .links {
@@ -138,6 +144,7 @@
   text-decoration: underline;
   text-underline-offset: 0.4em;
   text-decoration-thickness: 0.16em;
+  font-weight: 600;
 }
 
 @media (min-width: 900px) {
@@ -185,18 +192,6 @@
   overflow-y: auto;
 }
 
-@media (min-width: 768px) {
-  #ttg-drawer {
-    width: clamp(320px, 32vw, 400px);
-  }
-}
-
-@media (min-width: 1100px) {
-  #ttg-drawer {
-    width: clamp(360px, 28vw, 420px);
-  }
-}
-
 #ttg-drawer header {
   display: flex;
   align-items: center;
@@ -236,7 +231,7 @@
 
 #ttg-drawer a {
   display: block;
-  padding: 12px 0;
+  padding: 10px 0;
   border-radius: 10px;
   color: inherit;
   text-decoration: none;
@@ -250,6 +245,7 @@
 }
 
 #ttg-drawer a[aria-current="page"] {
+  font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 0.4em;
   text-decoration-thickness: 0.16em;
