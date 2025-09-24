@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Tank Guide — About</title>
+  <meta name="description" content="Learn about The Tank Guide mission, story, and future vision." />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    :root {
+      --ttg-nav-bg: transparent;
+      --ttg-nav-text: #f3f6ff;
+      --ttg-nav-link: rgba(243, 246, 255, 0.82);
+      --ttg-nav-overlay: rgba(0, 0, 0, 0.35);
+      --ttg-drawer-bg: rgba(5, 12, 22, 0.86);
+      --ttg-drawer-shadow: 16px 0 32px rgba(5, 12, 22, 0.55);
+      --page-max: 800px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color: #f5f8ff;
+      background:
+        radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54, 194, 204, 0) 60%),
+        radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0, 119, 199, 0) 60%),
+        linear-gradient(140deg, #0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    /* Navigation */
+    #global-nav {
+      position: static;
+      font-family: inherit;
+      color: var(--ttg-nav-text, #eef3ff);
+      background: var(--ttg-nav-bg, transparent);
+      backdrop-filter: blur(8px) saturate(120%);
+      -webkit-backdrop-filter: blur(8px) saturate(120%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    #global-nav a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    #global-nav .nav-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 0 auto;
+      width: min(100%, 1100px);
+      padding: 16px 20px;
+      padding-block-start: calc(16px + env(safe-area-inset-top));
+      padding-inline-start: calc(20px + env(safe-area-inset-left));
+      padding-inline-end: calc(20px + env(safe-area-inset-right));
+      box-sizing: border-box;
+    }
+
+    #ttg-nav-open {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      border: none;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    #ttg-nav-open:hover,
+    #ttg-nav-open:focus-visible {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    #ttg-nav-open .hamburger-bars {
+      position: relative;
+      display: block;
+      width: 20px;
+      height: 2px;
+      border-radius: 2px;
+      background: currentColor;
+    }
+
+    #ttg-nav-open .hamburger-bars::before,
+    #ttg-nav-open .hamburger-bars::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 20px;
+      height: 2px;
+      border-radius: 2px;
+      background: currentColor;
+    }
+
+    #ttg-nav-open .hamburger-bars::before {
+      top: -6px;
+    }
+
+    #ttg-nav-open .hamburger-bars::after {
+      top: 6px;
+    }
+
+    #global-nav .brand {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 4px;
+      line-height: 1.15;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.38);
+    }
+
+    #global-nav .brand-title {
+      font-weight: 800;
+      font-size: 1.12rem;
+    }
+
+    #global-nav .brand-sub {
+      opacity: 0.9;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+
+    #global-nav .brand-sub-em {
+      font-weight: 600;
+    }
+
+    #global-nav .links {
+      display: none;
+      align-items: center;
+      gap: 20px;
+      margin-left: auto;
+    }
+
+    #global-nav .links a {
+      display: inline-flex;
+      align-items: center;
+      padding-block: 10px;
+      color: var(--ttg-nav-link, rgba(243, 246, 255, 0.82));
+      font-size: 0.98rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      text-decoration: none;
+      text-underline-offset: 6px;
+    }
+
+    #global-nav .links a:hover,
+    #global-nav .links a:focus-visible {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    #global-nav .links a[aria-current="page"] {
+      color: #ffffff;
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+    }
+
+    #ttg-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--ttg-nav-overlay, rgba(0, 0, 0, 0.35));
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+      z-index: 10001;
+    }
+
+    #ttg-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: min(45vw, 360px);
+      height: 100dvh;
+      transform: translateX(-100%);
+      transition: transform 0.32s ease;
+      background: var(--ttg-drawer-bg, rgba(5, 12, 22, 0.86));
+      color: #f8fbff;
+      box-shadow: var(--ttg-drawer-shadow, 16px 0 32px rgba(5, 12, 22, 0.55));
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      padding-top: calc(24px + env(safe-area-inset-top));
+      padding-left: calc(24px + env(safe-area-inset-left));
+      padding-right: calc(24px + env(safe-area-inset-right));
+      z-index: 10002;
+      overflow-y: auto;
+      box-sizing: border-box;
+      backdrop-filter: blur(28px) saturate(130%);
+      -webkit-backdrop-filter: blur(28px) saturate(130%);
+    }
+
+    #ttg-drawer .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    #ttg-drawer .drawer-label {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    #ttg-nav-close {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, 0.16);
+      color: inherit;
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    #ttg-nav-close:hover,
+    #ttg-nav-close:focus-visible {
+      background: rgba(255, 255, 255, 0.26);
+    }
+
+    #ttg-drawer .drawer {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    #ttg-drawer .drawer-section {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    #ttg-drawer .drawer-section:first-of-type {
+      padding-top: 0;
+      border-top: none;
+    }
+
+    #ttg-drawer .drawer-section-label {
+      margin: 0 0 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(243, 246, 255, 0.65);
+    }
+
+    #ttg-drawer .drawer a {
+      display: block;
+      padding-block: 12px;
+      color: var(--ttg-nav-link, rgba(243, 246, 255, 0.82));
+      text-decoration: none;
+      font-size: 1rem;
+      line-height: 1.4;
+      font-weight: 500;
+      min-height: 44px;
+      transition: color 0.2s ease;
+    }
+
+    #ttg-drawer .drawer a:hover,
+    #ttg-drawer .drawer a:focus-visible {
+      color: #ffffff;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 6px;
+    }
+
+    #ttg-drawer .drawer a[aria-current="page"] {
+      color: #ffffff;
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 6px;
+    }
+
+    #global-nav[data-open="true"] #ttg-overlay {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #global-nav[data-open="true"] #ttg-drawer {
+      transform: translateX(0);
+    }
+
+    #global-nav button:focus-visible,
+    #global-nav a:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.65);
+      outline-offset: 4px;
+      border-radius: 12px;
+    }
+
+    #ttg-drawer .drawer a:focus-visible {
+      outline-offset: 4px;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (min-width: 920px) {
+      #ttg-nav-open {
+        display: none;
+      }
+
+      #global-nav .links {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 919.98px) {
+      #global-nav .links {
+        display: none;
+      }
+    }
+
+    /* Layout */
+    main {
+      padding: 0 20px 80px;
+    }
+
+    .hero {
+      padding: 72px 0 40px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+
+    .about-box {
+      max-width: var(--page-max);
+      margin: 0 auto;
+      background: rgba(8, 21, 38, 0.32);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 18px;
+      padding: clamp(24px, 5vw, 40px);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: rgba(245, 248, 255, 0.92);
+      line-height: 1.65;
+      font-size: clamp(1rem, 1.1vw + 0.9rem, 1.1rem);
+      box-shadow: 0 22px 36px rgba(5, 16, 32, 0.28);
+    }
+
+    .about-box h1,
+    .about-box h2,
+    .about-box h3,
+    .about-box h4,
+    .about-box h5,
+    .about-box h6 {
+      color: #ffffff;
+      margin-top: 1.6em;
+      margin-bottom: 0.6em;
+      line-height: 1.25;
+    }
+
+    .about-box h1:first-child,
+    .about-box h2:first-child,
+    .about-box h3:first-child {
+      margin-top: 0;
+    }
+
+    .about-box p {
+      margin: 0 0 1.1em;
+    }
+
+    .about-box hr {
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.28);
+      margin: 2.5em auto;
+      max-width: 120px;
+    }
+
+    .about-box strong {
+      color: #ffffff;
+    }
+
+    .about-box ul {
+      margin: 0.8em 0 1.1em 1.2em;
+      padding: 0;
+    }
+
+    .about-box li {
+      margin-bottom: 0.6em;
+    }
+
+    footer {
+      padding: 40px 20px 60px;
+      text-align: center;
+      color: rgba(243, 247, 255, 0.78);
+      font-size: 0.95rem;
+    }
+
+    footer a {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+  </style>
+</head>
+<body>
+  <header id="global-nav" data-open="false">
+    <div class="nav-bar">
+      <button id="ttg-nav-open" type="button" aria-label="Open menu" aria-haspopup="dialog" aria-controls="ttg-drawer" aria-expanded="false">
+        <span class="hamburger-bars" aria-hidden="true"></span>
+        <span class="visually-hidden">Open menu</span>
+      </button>
+
+      <a class="brand" href="/index.html" aria-label="The Tank Guide — Home">
+        <span class="brand-title">The Tank Guide</span>
+        <span class="brand-sub">a product of <span class="brand-sub-em">FishKeepingLifeCo</span></span>
+      </a>
+
+      <nav class="links" aria-label="Primary">
+        <a href="/index.html">Home</a>
+        <a href="/stocking.html">Stocking Advisor</a>
+        <a href="/gear.html">Gear</a>
+        <a href="/params.html">Cycling Coach</a>
+        <a href="/media.html">Media</a>
+        <a href="/about.html" aria-current="page">About</a>
+        <a href="/feedback.html">Feedback</a>
+      </nav>
+    </div>
+
+    <div id="ttg-overlay" hidden></div>
+
+    <aside id="ttg-drawer" role="dialog" aria-modal="true" aria-label="Primary navigation" aria-hidden="true" tabindex="-1">
+      <div class="drawer-header">
+        <p class="drawer-label">Menu</p>
+        <button id="ttg-nav-close" type="button" aria-label="Close menu">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <nav class="drawer" aria-label="Primary navigation">
+        <div class="drawer-section" role="group" aria-labelledby="drawer-group-start">
+          <p class="drawer-section-label" id="drawer-group-start">Start Here</p>
+          <a href="/index.html">Home</a>
+          <a href="/stocking.html">Stocking Advisor</a>
+          <a href="/params.html">Cycling Coach</a>
+        </div>
+        <div class="drawer-section" role="group" aria-labelledby="drawer-group-gear">
+          <p class="drawer-section-label" id="drawer-group-gear">Gear &amp; Media</p>
+          <a href="/gear.html">Gear</a>
+          <a href="/media.html">Media</a>
+        </div>
+        <div class="drawer-section" role="group" aria-labelledby="drawer-group-about">
+          <p class="drawer-section-label" id="drawer-group-about">About &amp; Support</p>
+          <a href="/about.html" aria-current="page">About</a>
+          <a href="/feedback.html">Feedback</a>
+        </div>
+      </nav>
+    </aside>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="about-hero-title">
+      <h1 id="about-hero-title">About</h1>
+    </section>
+
+    <section class="about-box" aria-labelledby="about-section-title">
+      <h1 id="about-section-title">About</h1>
+
+      <h3>Owner Story</h3>
+      <p>Ever since I was a kid, I was drawn to aquariums. My uncle kept guppies for years, and whenever I visited my grandmother, I’d sit and stare at them. That fascination stuck with me.</p>
+      <p>In 2011 or 2012, I caught a marathon of <em>Tanked</em> on Animal Planet. Their massive saltwater builds looked incredible, but freshwater seemed within reach. I decided it was finally time to try again—this time the right way.</p>
+      <p>I picked up a 50-gallon kit from a chain store. Tank, stand, hang-on-back filter, gravel, lights—the whole package. After hours of assembling the stand upside down, it broke as I flipped it. I nearly gave up, but I exchanged it and started over.</p>
+      <p>I filled the tank, added conditioner and “bacteria in a bottle,” and waited. A week later, nothing. Forums and YouTube became my lifeline. I tried a fishless cycle, then researched the safest way to do a fish-in cycle and chose hardy rasboras. Watching them school was amazing. Losing my first fish to a bad water change was crushing.</p>
+      <p>From there, it was nonstop learning—daily water changes, ammonia battles, flooded kitchens from siphon hoses. When I discovered planted aquariums, everything changed. Plants balanced the tank, the cycle completed, and I was hooked.</p>
+      <p>I experimented with stocking, filtration, lighting, and eventually DIY builds. Life forced me to downsize, but I kept going—bettas, shrimp, CO₂, dirted tanks, even custom sumps. Along the way I borrowed smart tricks from saltwater, like random-flow nozzles, and found pride in doing things myself.</p>
+      <p>I went from having no one to talk to about the hobby, to meeting local fishkeepers with tank-filled rooms, and eventually meeting creators I once watched on YouTube at Aquashella.</p>
+      <p>What hasn’t changed is why I keep at it: I love learning, I love tinkering, and I want to help new fishkeepers skip the mistakes I made and find the joy faster.</p>
+
+      <hr />
+
+      <h3>Teaching &amp; Inspiration</h3>
+      <p>Outside of aquariums, I’ve also gotten to see the other side of how teachers prepare for their students—especially special education teachers. The sacrifice, patience, and dedication they show left a big impression on me.</p>
+      <p>It made me realize that teaching, in any form, is hard work. But it’s also one of the most meaningful things you can do: passing on what you’ve learned so someone else can grow. That’s the attitude I want to bring into fishkeeping—doing the work, sharing my struggles, and breaking things down so others can succeed.</p>
+      <p>That’s why I dedicated my first book to teachers. They inspired me to see this hobby not just as a passion, but as something I can teach in a way that makes a real difference.</p>
+
+      <hr />
+
+      <h3>Mission &amp; Values</h3>
+      <p><strong>Mission:</strong><br />
+      To make fishkeeping approachable for beginners and inspiring for hobbyists by breaking down the complex parts into simple, practical steps—so anyone can build a thriving aquarium with confidence.</p>
+      <p><strong>Values:</strong></p>
+      <ul>
+        <li><strong>Clarity over confusion</strong> — Straightforward answers, no gatekeeping, no overcomplication.</li>
+        <li><strong>Learn by doing</strong> — Encourage DIY, experimentation, and resourcefulness.</li>
+        <li><strong>Respect for life</strong> — Promote responsible stocking, proper care, and long-term success.</li>
+        <li><strong>Community first</strong> — Share knowledge, highlight other hobbyists, and lift the whole community.</li>
+        <li><strong>Keep it fun</strong> — At its heart, fishkeeping should bring joy, curiosity, and wonder.</li>
+      </ul>
+
+      <hr />
+
+      <h3>Future Vision</h3>
+      <p>The Tank Guide is just the beginning. My vision is to turn this into a launching pad for future hobbyists—a place where newcomers can skip the frustration, find clear answers, and get inspired to keep going. I want to grow a community that shares knowledge openly, highlights the work of other hobbyists, and builds confidence through learning and DIY.</p>
+      <p>Looking ahead, I see this project expanding in a few key ways:</p>
+      <ul>
+        <li><strong>Website growth</strong> — adding more tools and resources like advanced stocking guides, gear recommendations, and water cycle coaches.</li>
+        <li><strong>Books</strong> — creating more titles that take complex aquarium topics and turn them into easy-to-understand stories, making learning fun for kids, families, and beginners.</li>
+        <li><strong>Community features</strong> — building a space where hobbyists can connect, exchange ideas, and learn from each other.</li>
+      </ul>
+      <p>Whether it’s through guides, stories, or hands-on tools, my goal is to make fishkeeping easier to understand and more fun to explore—for anyone at any stage of the journey.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; <span id="year"></span> The Tank Guide. All rights reserved.</p>
+    <p><a href="/feedback.html">Share feedback</a> or explore more resources across The Tank Guide network.</p>
+  </footer>
+
+  <script>
+    (function () {
+      const OVERLAY_HIDE_DELAY = 320;
+      const FOCUSABLE_SELECTOR = [
+        'a[href]',
+        'button:not([disabled])',
+        'input:not([disabled])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        '[tabindex]:not([tabindex="-1"])'
+      ].join(', ');
+
+      function getFocusableElements(container) {
+        if (!container) return [];
+        const elements = container.querySelectorAll(FOCUSABLE_SELECTOR);
+        return Array.from(elements).filter((element) => {
+          if (element.hasAttribute('disabled')) return false;
+          if (element.getAttribute('aria-hidden') === 'true') return false;
+          if (element.tabIndex === -1) return false;
+          return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
+        });
+      }
+
+      function initNav() {
+        const root = document.getElementById('global-nav');
+        if (!root || root.dataset.ttgNavReady === 'true') {
+          return;
+        }
+
+        const overlay = root.querySelector('#ttg-overlay');
+        const drawer = root.querySelector('#ttg-drawer');
+        const openBtn = root.querySelector('#ttg-nav-open');
+        const closeBtn = root.querySelector('#ttg-nav-close');
+        const docEl = document.documentElement;
+        const body = document.body;
+        let previousFocus = null;
+        let prevDocOverflow = docEl.style.overflow || '';
+        let prevBodyOverflow = body.style.overflow || '';
+        let overlayHideTimer = null;
+        let focusableElements = [];
+
+        if (!overlay || !drawer || !openBtn) {
+          return;
+        }
+
+        root.dataset.ttgNavReady = 'true';
+        openBtn.setAttribute('aria-expanded', 'false');
+        drawer.setAttribute('aria-hidden', 'true');
+        overlay.hidden = true;
+
+        function openDrawer() {
+          if (root.dataset.open === 'true') return;
+          window.clearTimeout(overlayHideTimer);
+          overlay.hidden = false;
+          previousFocus = document.activeElement;
+          prevDocOverflow = docEl.style.overflow || '';
+          prevBodyOverflow = body.style.overflow || '';
+          root.dataset.open = 'true';
+          drawer.setAttribute('aria-hidden', 'false');
+          openBtn.setAttribute('aria-expanded', 'true');
+          docEl.style.overflow = 'hidden';
+          body.style.overflow = 'hidden';
+          window.requestAnimationFrame(() => {
+            focusableElements = getFocusableElements(drawer);
+            const preferred = drawer.querySelector('.drawer a');
+            const target = (preferred && focusableElements.includes(preferred) && preferred) || focusableElements[0] || drawer;
+            if (typeof target.focus === 'function') {
+              target.focus({ preventScroll: true });
+            }
+          });
+        }
+
+        function closeDrawer(options = {}) {
+          if (root.dataset.open !== 'true') return;
+          const { returnFocus = true } = options;
+          root.dataset.open = 'false';
+          drawer.setAttribute('aria-hidden', 'true');
+          openBtn.setAttribute('aria-expanded', 'false');
+          docEl.style.overflow = prevDocOverflow;
+          body.style.overflow = prevBodyOverflow;
+          overlayHideTimer = window.setTimeout(() => {
+            if (root.dataset.open !== 'true') {
+              overlay.hidden = true;
+            }
+          }, OVERLAY_HIDE_DELAY);
+          focusableElements = [];
+          if (returnFocus && previousFocus) {
+            window.requestAnimationFrame(() => {
+              if (typeof previousFocus.focus === 'function') {
+                previousFocus.focus({ preventScroll: true });
+              } else {
+                openBtn.focus({ preventScroll: true });
+              }
+            });
+          } else if (returnFocus) {
+            window.requestAnimationFrame(() => openBtn.focus({ preventScroll: true }));
+          }
+          previousFocus = null;
+        }
+
+        openBtn.addEventListener('click', () => {
+          openDrawer();
+        });
+
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => closeDrawer());
+        }
+
+        overlay.addEventListener('click', () => closeDrawer());
+
+        document.addEventListener('keydown', (event) => {
+          if (root.dataset.open === 'true' && event.key === 'Escape') {
+            event.preventDefault();
+            closeDrawer();
+            return;
+          }
+
+          if (root.dataset.open === 'true' && event.key === 'Tab') {
+            focusableElements = getFocusableElements(drawer);
+            if (focusableElements.length === 0) {
+              event.preventDefault();
+              drawer.focus({ preventScroll: true });
+              return;
+            }
+
+            const first = focusableElements[0];
+            const last = focusableElements[focusableElements.length - 1];
+            const active = document.activeElement;
+
+            if (event.shiftKey) {
+              if (active === first || !drawer.contains(active)) {
+                event.preventDefault();
+                last.focus({ preventScroll: true });
+              }
+            } else if (active === last) {
+              event.preventDefault();
+              first.focus({ preventScroll: true });
+            }
+          }
+        });
+
+        document.addEventListener('focusin', (event) => {
+          if (root.dataset.open !== 'true') return;
+          if (!drawer.contains(event.target)) {
+            focusableElements = getFocusableElements(drawer);
+            const target = focusableElements[0] || drawer;
+            if (typeof target.focus === 'function') {
+              target.focus({ preventScroll: true });
+            }
+          }
+        });
+
+        drawer.addEventListener('click', (event) => {
+          const link = event.target.closest('a');
+          if (link) {
+            closeDrawer({ returnFocus: true });
+          }
+        });
+
+        document.addEventListener('pointerdown', (event) => {
+          if (root.dataset.open !== 'true') return;
+          const isInsideDrawer = drawer.contains(event.target);
+          const isTrigger = event.target === openBtn;
+          if (!isInsideDrawer && !isTrigger) {
+            closeDrawer();
+          }
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        initNav();
+        const yearEl = document.getElementById('year');
+        if (yearEl) {
+          yearEl.textContent = new Date().getFullYear();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
