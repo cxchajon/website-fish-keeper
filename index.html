@@ -6,6 +6,8 @@
   <title>The Tank Guide — A product of FishKeepingLifeCo</title>
   <meta name="description" content="Smart tools and guides to plan, stock, and set up your aquarium — all in one place." />
 
+  <link rel="stylesheet" href="css/style.css?v=1.0.5" />
+
   <style>
     :root{
       --bg:#0c2740;
@@ -78,6 +80,88 @@
   </style>
 </head>
 <body>
+
+  <div id="site-nav"></div>
+  <script>
+    (function(){
+      function initNav(){
+        const root = document.getElementById('global-nav');
+        if (!root) return;
+
+        const here = window.location.pathname.replace(/\/+$/,'') || '/';
+        const current = here === '/' ? '/index.html' : here;
+        const mark = (selector) => {
+          root.querySelectorAll(selector).forEach((link) => {
+            const hrefAttr = link.getAttribute('href');
+            if (!hrefAttr) return;
+            const target = new URL(hrefAttr, window.location.origin).pathname.replace(/\/+$/,'') || '/';
+            const normalized = target === '/' ? '/index.html' : target;
+            if (normalized === current) {
+              link.setAttribute('aria-current', 'page');
+            }
+          });
+        };
+        mark('.links a');
+        mark('#ttg-drawer a');
+
+        const openBtn = root.querySelector('#ttg-nav-open');
+        const closeBtn = root.querySelector('#ttg-nav-close');
+        const overlay = root.querySelector('#ttg-overlay');
+        const drawer = root.querySelector('#ttg-drawer');
+
+        const lockBody = () => {
+          document.documentElement.classList.add('ttg-nav-locked');
+          document.body.classList.add('ttg-nav-locked');
+        };
+        const unlockBody = () => {
+          document.documentElement.classList.remove('ttg-nav-locked');
+          document.body.classList.remove('ttg-nav-locked');
+        };
+
+        const open = () => {
+          if (!root || root.getAttribute('data-open') === 'true') return;
+          root.setAttribute('data-open', 'true');
+          overlay?.removeAttribute('hidden');
+          drawer?.setAttribute('aria-hidden', 'false');
+          openBtn?.setAttribute('aria-expanded', 'true');
+          lockBody();
+          const firstLink = drawer?.querySelector('a');
+          (firstLink || closeBtn || drawer)?.focus({ preventScroll: true });
+        };
+
+        const close = () => {
+          if (!root || root.getAttribute('data-open') !== 'true') return;
+          root.setAttribute('data-open', 'false');
+          overlay?.setAttribute('hidden', '');
+          drawer?.setAttribute('aria-hidden', 'true');
+          openBtn?.setAttribute('aria-expanded', 'false');
+          unlockBody();
+          openBtn?.focus({ preventScroll: true });
+        };
+
+        openBtn?.addEventListener('click', open);
+        closeBtn?.addEventListener('click', close);
+        overlay?.addEventListener('click', close);
+        drawer?.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            close();
+          }
+        });
+      }
+
+      fetch('/nav.html?v=1.0.5')
+        .then((response) => response.text())
+        .then((html) => {
+          const placeholder = document.getElementById('site-nav');
+          if (!placeholder) return;
+          placeholder.outerHTML = html;
+          initNav();
+        });
+    })();
+  </script>
+
+  <div class="nav-spacer" aria-hidden="true"></div>
 
   <!-- HERO -->
   <header class="hero">

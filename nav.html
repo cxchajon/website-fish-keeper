@@ -1,108 +1,31 @@
-<!-- nav.html -->
-<header id="global-nav" data-visible="true">
-  <style>
-    /* Scoped to #global-nav to avoid leaking styles */
-    #global-nav{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#fff}
-    #global-nav .wrap{max-width:1080px;margin:0 auto;padding:12px 18px}
+<header id="global-nav" data-visible="true" data-open="false">
+  <div class="nav-inner">
+    <button id="ttg-nav-open" aria-label="Open menu" aria-controls="ttg-drawer" aria-expanded="false">
+      <span class="hamburger-bars" aria-hidden="true"></span>
+      <span class="visually-hidden">Menu</span>
+    </button>
 
-    /* Let pages decide visibility (home can toggle data-visible) */
-    #global-nav[data-visible="false"]{display:none}
+    <a class="brand" href="/index.html" aria-label="The Tank Guide — Home">
+      <span class="brand-title">The Tank Guide</span>
+      <span class="brand-sub">a product of <strong>FishKeepingLifeCo</strong></span>
+    </a>
 
-    /* Bar container */
-    #global-nav .bar{display:flex;align-items:flex-start;gap:12px}
-
-    /* Brand block (top-left) */
-    #global-nav .brand{display:flex;flex-direction:column;gap:2px}
-    #global-nav .brand a{color:inherit;text-decoration:none}
-    #global-nav .brand-title{font-weight:800;font-size:1.05rem;line-height:1}
-    #global-nav .brand-sub{opacity:.9;font-size:.9rem;line-height:1.1}
-
-    /* Desktop nav (right) */
-    #global-nav .links{margin-left:auto;display:flex;gap:14px;align-items:center}
-    #global-nav .links a{color:inherit;text-decoration:none;padding:6px 2px;border-bottom:2px solid transparent}
-    #global-nav .links a[aria-current="page"]{border-bottom-color:rgba(255,255,255,.9)}
-    #global-nav .links a:hover{border-bottom-color:rgba(255,255,255,.6)}
-
-    /* Hamburger (top-left under brand on mobile) */
-    #global-nav .hamburger{
-      display:none; /* desktop hidden */
-      margin-top:10px;
-      width:36px;height:36px;border:1px solid rgba(255,255,255,.25);
-      border-radius:10px;background:rgba(255,255,255,.10);
-      align-items:center;justify-content:center;cursor:pointer
-    }
-    #global-nav .hamburger .bars{position:relative;width:18px;height:2px;background:#fff;border-radius:2px}
-    #global-nav .hamburger .bars:before,
-    #global-nav .hamburger .bars:after{content:"";position:absolute;left:0;width:18px;height:2px;background:#fff;border-radius:2px}
-    #global-nav .hamburger .bars:before{top:-6px}
-    #global-nav .hamburger .bars:after{top:6px}
-
-    /* Drawer & overlay */
-    #global-nav .overlay{
-      position:fixed;inset:0;background:rgba(0,0,0,.45);
-      opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:998
-    }
-    #global-nav .drawer{
-      position:fixed;top:0;left:0;height:100dvh;width:42vw;max-width:340px;min-width:260px;
-      background:rgba(10,20,38,.95);backdrop-filter:blur(8px);
-      border-right:1px solid rgba(255,255,255,.15);
-      transform:translateX(-100%);transition:transform .25s ease;z-index:999;
-      display:flex;flex-direction:column;padding:14px
-    }
-    #global-nav .drawer header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-    #global-nav .drawer .close{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;cursor:pointer}
-    #global-nav .drawer nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
-    #global-nav .drawer a{
-      color:#fff;text-decoration:none;border-radius:10px;padding:12px 10px;
-      border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06)
-    }
-    #global-nav .drawer a[aria-current="page"]{outline:2px solid rgba(255,255,255,.8)}
-    #global-nav .drawer a:hover{background:rgba(255,255,255,.10)}
-
-    /* Active drawer state (controlled by page JS) */
-    #global-nav[data-open="true"] .overlay{opacity:1;pointer-events:auto}
-    #global-nav[data-open="true"] .drawer{transform:none}
-
-    /* Responsive */
-    @media (max-width: 768px){
-      #global-nav .links{display:none}           /* hide desktop links */
-      #global-nav .hamburger{display:inline-flex}/* show hamburger */
-    }
-  </style>
-
-  <div class="wrap">
-    <div class="bar">
-      <!-- Brand -->
-      <div class="brand">
-        <a href="/index.html" aria-label="The Tank Guide — Home">
-          <div class="brand-title">The Tank Guide</div>
-          <div class="brand-sub">a product of <strong>FishKeepingLifeCo</strong></div>
-        </a>
-        <!-- Hamburger sits under brand on mobile -->
-        <button class="hamburger" id="ttg-nav-open" aria-label="Open menu" aria-controls="ttg-drawer" aria-expanded="false">
-          <span class="bars" aria-hidden="true"></span>
-        </button>
-      </div>
-
-      <!-- Desktop links (right) -->
-      <nav class="links" aria-label="Primary">
-        <a href="/index.html">Home</a>
-        <a href="/stocking.html">Stocking Advisor</a>
-        <a href="/gear.html">Gear</a>
-        <a href="/params.html">Cycling Coach</a>
-        <a href="/media.html">Media</a>
-        <a href="/about.html">About</a>
-        <a href="/feedback.html">Feedback</a>
-      </nav>
-    </div>
+    <nav class="links" aria-label="Primary">
+      <a href="/index.html">Home</a>
+      <a href="/stocking.html">Stocking Advisor</a>
+      <a href="/gear.html">Gear</a>
+      <a href="/params.html">Cycling Coach</a>
+      <a href="/media.html">Media</a>
+      <a href="/about.html">About</a>
+      <a href="/feedback.html">Feedback</a>
+    </nav>
   </div>
 
-  <!-- Mobile overlay + drawer -->
-  <div class="overlay" id="ttg-overlay" hidden></div>
-  <aside class="drawer" id="ttg-drawer" role="dialog" aria-modal="true" aria-label="Navigation" aria-hidden="true">
+  <div id="ttg-overlay" hidden></div>
+  <aside id="ttg-drawer" role="dialog" aria-modal="true" aria-label="Navigation" aria-hidden="true" tabindex="-1">
     <header>
-      <div style="font-weight:800">Menu</div>
-      <button class="close" id="ttg-nav-close" aria-label="Close menu">×</button>
+      <strong>Menu</strong>
+      <button id="ttg-nav-close" aria-label="Close menu">×</button>
     </header>
     <nav aria-label="Mobile">
       <a href="/index.html">Home</a>
