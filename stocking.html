@@ -1,3 +1,4 @@
+<!-- Updated: Pointed stocking page to the refined nav include and translucent styling. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,12 +6,12 @@
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Global nav / shared styles (same versioning as Media) -->
-  <link rel="stylesheet" href="css/style.css?v=1.4.1" />
+  <link rel="stylesheet" href="css/style.css?v=1.4.2" />
   <!-- Page styles -->
   <link rel="stylesheet" href="css/Style.css?v=1.0.3" />
   <style>
     :root {
-      --ttg-nav-bg: linear-gradient(140deg, rgba(10, 58, 87, 0.42) 0%, rgba(11, 16, 32, 0.42) 100%);
+      --ttg-nav-bg: rgba(10, 16, 30, 0.72);
       --ttg-nav-link: rgba(243, 247, 255, 0.85);
     }
   </style>
@@ -19,9 +20,9 @@
 
   <!-- Global nav include (same pattern as Media) -->
   <div id="site-nav"></div>
-  <script src="js/nav.js?v=1.3.0"></script>
+  <script src="js/nav.js?v=1.4.2"></script>
   <script>
-    fetch('/nav.html?v=1.3.0')
+    fetch('/nav.html?v=1.4.2')
       .then(response => response.text())
       .then(html => {
         const host = document.getElementById('site-nav');

@@ -1,20 +1,22 @@
+/* Updated: Refined nav and drawer styling for translucent overlay, unified spacing, and width rules. */
 :root {
-  --ttg-nav-bg: transparent;
+  --ttg-nav-bg: rgba(10, 16, 30, 0.72);
   --ttg-nav-text: #f3f6ff;
   --ttg-nav-link: rgba(243, 246, 255, 0.82);
   --ttg-nav-overlay: rgba(0, 0, 0, 0.35);
-  --ttg-drawer-bg: rgba(5, 12, 22, 0.86);
-  --ttg-drawer-shadow: 16px 0 32px rgba(5, 12, 22, 0.55);
+  --ttg-drawer-bg: rgba(10, 16, 30, 0.88);
+  --ttg-drawer-shadow: 18px 0 36px rgba(5, 12, 22, 0.58);
 }
 
 #global-nav {
   position: static;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   color: var(--ttg-nav-text, #eef3ff);
-  background: var(--ttg-nav-bg, transparent);
-  backdrop-filter: blur(8px) saturate(120%);
-  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  background: var(--ttg-nav-bg, rgba(10, 16, 30, 0.72));
+  backdrop-filter: blur(6px) saturate(115%);
+  -webkit-backdrop-filter: blur(6px) saturate(115%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 9000;
 }
 
 #global-nav a {
@@ -150,14 +152,16 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.28s ease;
-  z-index: 10001;
+  z-index: 10010;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
 #ttg-drawer {
   position: fixed;
   top: 0;
   left: 0;
-  width: min(45vw, 360px);
+  width: clamp(280px, 45vw, 360px);
   height: 100dvh;
   transform: translateX(-100%);
   transition: transform 0.32s ease;
@@ -170,11 +174,11 @@
   padding-top: calc(24px + env(safe-area-inset-top));
   padding-left: calc(24px + env(safe-area-inset-left));
   padding-right: calc(24px + env(safe-area-inset-right));
-  z-index: 10002;
+  z-index: 10011;
   overflow-y: auto;
   box-sizing: border-box;
-  backdrop-filter: blur(28px) saturate(130%);
-  -webkit-backdrop-filter: blur(28px) saturate(130%);
+  backdrop-filter: blur(6px) saturate(115%);
+  -webkit-backdrop-filter: blur(6px) saturate(115%);
 }
 
 #ttg-drawer .drawer-header {
@@ -214,34 +218,34 @@
 #ttg-drawer .drawer {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 28px;
 }
 
 #ttg-drawer .drawer-section {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
-}
-
-#ttg-drawer .drawer-section:first-of-type {
-  padding-top: 0;
-  border-top: none;
+  gap: 12px;
 }
 
 #ttg-drawer .drawer-section-label {
-  margin: 0 0 6px;
-  font-size: 0.82rem;
+  margin: 0;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(243, 246, 255, 0.65);
+  font-variant: small-caps;
+  color: rgba(243, 246, 255, 0.62);
+}
+
+#ttg-drawer .drawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 #ttg-drawer .drawer a {
   display: block;
-  padding-block: 12px;
+  padding-block: 0;
   color: var(--ttg-nav-link, rgba(243, 246, 255, 0.82));
   text-decoration: none;
   font-size: 1rem;

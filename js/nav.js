@@ -1,13 +1,6 @@
+// Updated: Streamlined navigation initialization for consistent drawer behavior, focus handoff, and scroll locking.
 (function () {
   const OVERLAY_HIDE_DELAY = 320;
-  const FOCUSABLE_SELECTOR = [
-    'a[href]',
-    'button:not([disabled])',
-    'input:not([disabled])',
-    'select:not([disabled])',
-    'textarea:not([disabled])',
-    '[tabindex]:not([tabindex="-1"])',
-  ].join(', ');
 
   function normalizePath(path) {
     try {
@@ -40,21 +33,6 @@
     });
   }
 
-  function getFocusableElements(container) {
-    if (!container) return [];
-    const elements = container.querySelectorAll(FOCUSABLE_SELECTOR);
-    return Array.from(elements).filter((element) => {
-      if (element.hasAttribute('disabled')) return false;
-      if (element.getAttribute('aria-hidden') === 'true') return false;
-      if (element.tabIndex === -1) return false;
-      return !!(
-        element.offsetWidth ||
-        element.offsetHeight ||
-        element.getClientRects().length
-      );
-    });
-  }
-
   window.__initTTGNav = function __initTTGNav() {
     const root = document.getElementById('global-nav');
     if (!root || root.dataset.ttgNavReady === 'true') {
@@ -65,13 +43,18 @@
     const drawer = root.querySelector('#ttg-drawer');
     const openBtn = root.querySelector('#ttg-nav-open');
     const closeBtn = root.querySelector('#ttg-nav-close');
-    const docEl = document.documentElement;
     const body = document.body;
     let previousFocus = null;
-    let prevDocOverflow = docEl.style.overflow || '';
-    let prevBodyOverflow = body.style.overflow || '';
     let overlayHideTimer = null;
-    let focusableElements = [];
+    let scrollPosition = 0;
+    const prevBodyStyles = {
+      position: '',
+      top: '',
+      width: '',
+      left: '',
+      right: '',
+      overflow: '',
+    };
 
     if (!overlay || !drawer || !openBtn) {
       return;
@@ -82,25 +65,43 @@
     drawer.setAttribute('aria-hidden', 'true');
     overlay.hidden = true;
 
+    function lockBodyScroll() {
+      scrollPosition = window.scrollY || window.pageYOffset || 0;
+      prevBodyStyles.position = body.style.position || '';
+      prevBodyStyles.top = body.style.top || '';
+      prevBodyStyles.left = body.style.left || '';
+      prevBodyStyles.right = body.style.right || '';
+      prevBodyStyles.width = body.style.width || '';
+      prevBodyStyles.overflow = body.style.overflow || '';
+      body.style.position = 'fixed';
+      body.style.top = `-${scrollPosition}px`;
+      body.style.left = '0';
+      body.style.right = '0';
+      body.style.width = '100%';
+      body.style.overflow = 'hidden';
+    }
+
+    function unlockBodyScroll() {
+      body.style.position = prevBodyStyles.position;
+      body.style.top = prevBodyStyles.top;
+      body.style.left = prevBodyStyles.left;
+      body.style.right = prevBodyStyles.right;
+      body.style.width = prevBodyStyles.width;
+      body.style.overflow = prevBodyStyles.overflow;
+      window.scrollTo(0, scrollPosition);
+    }
+
     function openDrawer() {
       if (root.dataset.open === 'true') return;
       window.clearTimeout(overlayHideTimer);
       overlay.hidden = false;
       previousFocus = document.activeElement;
-      prevDocOverflow = docEl.style.overflow || '';
-      prevBodyOverflow = body.style.overflow || '';
       root.dataset.open = 'true';
       drawer.setAttribute('aria-hidden', 'false');
       openBtn.setAttribute('aria-expanded', 'true');
-      docEl.style.overflow = 'hidden';
-      body.style.overflow = 'hidden';
+      lockBodyScroll();
       window.requestAnimationFrame(() => {
-        focusableElements = getFocusableElements(drawer);
-        const preferred = drawer.querySelector('.drawer a');
-        const target =
-          (preferred && focusableElements.includes(preferred) && preferred) ||
-          focusableElements[0] ||
-          drawer;
+        const target = drawer.querySelector('.drawer a') || drawer;
         if (typeof target.focus === 'function') {
           target.focus({ preventScroll: true });
         }
@@ -113,14 +114,12 @@
       root.dataset.open = 'false';
       drawer.setAttribute('aria-hidden', 'true');
       openBtn.setAttribute('aria-expanded', 'false');
-      docEl.style.overflow = prevDocOverflow;
-      body.style.overflow = prevBodyOverflow;
+      unlockBodyScroll();
       overlayHideTimer = window.setTimeout(() => {
         if (root.dataset.open !== 'true') {
           overlay.hidden = true;
         }
       }, OVERLAY_HIDE_DELAY);
-      focusableElements = [];
       if (returnFocus && previousFocus) {
         window.requestAnimationFrame(() => {
           if (typeof previousFocus.focus === 'function') {
@@ -150,40 +149,6 @@
         event.preventDefault();
         closeDrawer();
         return;
-      }
-
-      if (root.dataset.open === 'true' && event.key === 'Tab') {
-        focusableElements = getFocusableElements(drawer);
-        if (focusableElements.length === 0) {
-          event.preventDefault();
-          drawer.focus({ preventScroll: true });
-          return;
-        }
-
-        const first = focusableElements[0];
-        const last = focusableElements[focusableElements.length - 1];
-        const active = document.activeElement;
-
-        if (event.shiftKey) {
-          if (active === first || !drawer.contains(active)) {
-            event.preventDefault();
-            last.focus({ preventScroll: true });
-          }
-        } else if (active === last) {
-          event.preventDefault();
-          first.focus({ preventScroll: true });
-        }
-      }
-    });
-
-    document.addEventListener('focusin', (event) => {
-      if (root.dataset.open !== 'true') return;
-      if (!drawer.contains(event.target)) {
-        focusableElements = getFocusableElements(drawer);
-        const target = focusableElements[0] || drawer;
-        if (typeof target.focus === 'function') {
-          target.focus({ preventScroll: true });
-        }
       }
     });
 
