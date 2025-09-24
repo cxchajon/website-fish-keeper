@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Global navigation now loads consistently across non-home pages with a translucent bar, left-drawer menu, and safe-area aware overlay refresh.
+- Slide-out navigation drawer unified across Stocking, Gear, Cycling Coach, and Media pages with consistent styling/behavior, and removed the drawer from the homepage.
 
 ---
 
