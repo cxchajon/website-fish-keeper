@@ -6,7 +6,7 @@
   <title>The Tank Guide — About</title>
   <meta name="description" content="Learn about The Tank Guide mission, story, and future vision." />
   <link rel="icon" href="/favicon.ico" />
-  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.8" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     main { max-width: 960px; margin: 0 auto; padding: 0 20px 80px; }
@@ -18,23 +18,30 @@
       main { padding-bottom: 120px; }
     }
   </style>
-  <script defer src="js/nav.js?v=1.0.7"></script>
+  <script defer src="js/nav.js?v=1.1.0"></script>
 </head>
 <body class="page-background">
-  <div id="global-nav"></div>
-  <script>
-    fetch('nav.html?v=1.0.7')
-      .then(response => response.text())
-      .then(html => {
-        const mount = document.getElementById('global-nav');
-        if (mount) {
-          mount.outerHTML = html;
-          if (window.initTTGNav) {
-            window.initTTGNav();
-          }
-        }
-      });
-  </script>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-brand" href="index.html" aria-label="The Tank Guide — Home">
+        <span class="site-brand__title">The Tank Guide</span>
+        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
+      </a>
+      <button class="hamburger" data-nav="hamburger" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu">
+        <span class="hamburger__bars" aria-hidden="true"></span>
+        <span class="visually-hidden">Menu</span>
+      </button>
+    </div>
+  </header>
+  <div class="nav-overlay" data-nav="overlay"></div>
+  <nav id="site-drawer" class="nav-drawer" data-nav="drawer" aria-label="Site">
+    <a href="index.html" class="nav__link">Home</a>
+    <a href="stocking.html" class="nav__link">Stocking Advisor</a>
+    <a href="gear.html" class="nav__link">Gear</a>
+    <a href="params.html" class="nav__link">Cycling Coach</a>
+    <a href="media.html" class="nav__link">Media</a>
+    <a href="about.html" class="nav__link" aria-current="page">About</a>
+  </nav>
 
   <main>
     <h1 class="about-hero-title">About</h1>
@@ -73,14 +80,12 @@
 
   <div id="site-footer"></div>
   <script>
-    fetch('footer.html?v=1.0.7')
-      .then(response => response.text())
-      .then(html => {
-        const footer = document.getElementById('site-footer');
-        if (footer) {
-          footer.outerHTML = html;
-        }
-      });
+    (async () => {
+      const host = document.getElementById('site-footer');
+      if (!host) return;
+      const res = await fetch('footer.html', { cache: 'no-cache' });
+      host.innerHTML = await res.text();
+    })();
   </script>
 </body>
 </html>
