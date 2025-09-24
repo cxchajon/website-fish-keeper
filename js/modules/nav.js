@@ -1,4 +1,4 @@
-const NAV_VERSION = '1.1.0';
+const NAV_VERSION = '1.2.0';
 const NAV_ENDPOINT = `/nav.html?v=${NAV_VERSION}`;
 const SKIP_PATHS = new Set(['/', '/index.html']);
 
@@ -57,8 +57,8 @@ const attachInteractions = (root) => {
     drawer.setAttribute('aria-hidden', 'false');
     openBtn?.setAttribute('aria-expanded', 'true');
     lockBody();
-    const focusTarget = drawer.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
-    (focusTarget || closeBtn || drawer).focus?.({ preventScroll: true });
+    const firstLink = drawer.querySelector('nav a');
+    (firstLink || closeBtn || drawer).focus?.({ preventScroll: true });
   };
 
   const handleKeydown = (event) => {

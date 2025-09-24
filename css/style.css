@@ -142,8 +142,8 @@
 #global-nav .links a[aria-current="page"] {
   color: #ffffff;
   text-decoration: underline;
-  text-underline-offset: 0.4em;
-  text-decoration-thickness: 0.16em;
+  text-underline-offset: 0.35em;
+  text-decoration-thickness: 2px;
   font-weight: 600;
 }
 
@@ -174,7 +174,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: clamp(280px, 45vw, 360px);
+  width: 45vw;
   height: 100dvh;
   transform: translateX(-100%);
   transition: transform 0.25s ease;
@@ -184,12 +184,13 @@
   box-shadow: 18px 0 40px rgba(0, 0, 0, 0.38);
   display: flex;
   flex-direction: column;
-  padding: 24px;
-  padding-top: calc(24px + env(safe-area-inset-top));
-  padding-left: calc(24px + env(safe-area-inset-left));
-  padding-right: calc(24px + env(safe-area-inset-right));
+  padding: 28px;
+  padding-top: calc(28px + env(safe-area-inset-top));
+  padding-left: calc(28px + env(safe-area-inset-left));
+  padding-right: calc(28px + env(safe-area-inset-right));
   z-index: 5100;
   overflow-y: auto;
+  box-sizing: border-box;
 }
 
 #ttg-drawer header {
@@ -197,6 +198,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  margin-bottom: 24px;
 }
 
 #ttg-drawer header strong {
@@ -215,6 +217,7 @@
   line-height: 1;
   cursor: pointer;
   transition: background 0.2s ease;
+  flex-shrink: 0;
 }
 
 #ttg-nav-close:hover,
@@ -225,13 +228,12 @@
 #ttg-drawer nav {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 24px;
+  gap: 10px;
 }
 
 #ttg-drawer a {
   display: block;
-  padding: 10px 0;
+  padding: 12px 4px;
   border-radius: 10px;
   color: inherit;
   text-decoration: none;
@@ -247,8 +249,8 @@
 #ttg-drawer a[aria-current="page"] {
   font-weight: 600;
   text-decoration: underline;
-  text-underline-offset: 0.4em;
-  text-decoration-thickness: 0.16em;
+  text-underline-offset: 0.35em;
+  text-decoration-thickness: 2px;
 }
 
 #global-nav[data-open="true"] #ttg-overlay {
