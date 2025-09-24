@@ -13,7 +13,7 @@
     /* Keep the fixed nav above content */
     #global-nav{position:fixed;top:0;left:0;right:0;z-index:10000}
 
-    /* Force left-aligned hamburger like Media */
+    /* Left-aligned hamburger to match Media */
     #global-nav .inner{display:flex;align-items:center;gap:12px}
     #ttg-nav-open{order:0;margin-right:10px}
     #global-nav .brand{order:1}
@@ -31,12 +31,11 @@
   <!-- Global nav include (same pattern as Media) -->
   <div id="site-nav"></div>
   <script>
-    // identical init used on Media (underline current link + working drawer)
     function initNav(){
       const root = document.getElementById('global-nav');
       if (!root) return;
 
-      // underline current link on desktop & drawer
+      // underline current link
       const here = location.pathname.replace(/\/+$/,'');
       const mark = sel => root.querySelectorAll(sel).forEach(a=>{
         const href = (a.getAttribute('href')||'').replace(/\/+$/,'');
@@ -86,12 +85,6 @@
   <div style="height:64px"></div>
 
   <div class="wrap">
-    <!-- Brand -->
-    <header class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
-      <div class="brand-name">FishkeepingLifeCo</div>
-      <div class="brand-sub">Aquarium Stocking Calculator</div>
-    </header>
-
     <!-- Tank Setup -->
     <section class="card">
       <h2>Tank Setup</h2>
