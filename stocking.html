@@ -10,8 +10,20 @@
   <link rel="stylesheet" href="css/Style.css?v=1.0.3" />
 
   <style>
-    /* Keep the fixed nav above content; no layout overrides */
+    /* Keep the fixed nav above content */
     #global-nav{position:fixed;top:0;left:0;right:0;z-index:10000}
+
+    /* Force left-aligned hamburger like Media */
+    #global-nav .inner{display:flex;align-items:center;gap:12px}
+    #ttg-nav-open{order:0;margin-right:10px}
+    #global-nav .brand{order:1}
+    #global-nav .links{order:2}
+
+    /* Mobile: hide desktop links, show hamburger */
+    @media (max-width: 920px){
+      #global-nav .links{display:none !important;}
+      #ttg-nav-open{display:inline-flex !important;}
+    }
   </style>
 </head>
 <body>
@@ -32,7 +44,7 @@
           a.setAttribute('aria-current','page');
         }
       });
-      mark('.links a'); 
+      mark('.links a');
       mark('.drawer a');
 
       // drawer controls
