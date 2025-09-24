@@ -5,7 +5,7 @@
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Global nav / shared styles (same versioning as Media) -->
-  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.8" />
   <!-- Page styles -->
   <link rel="stylesheet" href="css/Style.css?v=1.0.3" />
   <style>
@@ -20,86 +20,94 @@
   <!-- Global nav include (same pattern as Media) -->
   <div id="site-nav"></div>
   <script>
-    (function(){
-      function initNav(){
-        const root = document.getElementById('global-nav');
-        if (!root) return;
+    (function () {
+      const NAV_VERSION = '1.0.8';
+      const placeholder = document.getElementById('site-nav');
+      if (!placeholder) return;
 
-        const here = window.location.pathname.replace(/\/+$/,'') || '/';
-        const current = here === '/' ? '/index.html' : here;
-        const mark = (selector) => {
-          root.querySelectorAll(selector).forEach((link) => {
-            const hrefAttr = link.getAttribute('href');
-            if (!hrefAttr) return;
-            const target = new URL(hrefAttr, window.location.origin).pathname.replace(/\/+$/,'') || '/';
-            const normalized = target === '/' ? '/index.html' : target;
-            if (normalized === current) {
-              link.setAttribute('aria-current', 'page');
-            }
-          });
-        };
-        mark('.links a');
-        mark('#ttg-drawer a');
+      const normalizePath = (value) => {
+        try {
+          const url = new URL(value, window.location.origin);
+          const path = url.pathname.replace(/\/+$/, '') || '/';
+          return path === '/' ? '/index.html' : path;
+        } catch (error) {
+          return value;
+        }
+      };
 
+      const markCurrentLinks = (root) => {
+        const current = normalizePath(window.location.pathname || '/');
+        root.querySelectorAll('.links a, #ttg-drawer a').forEach((link) => {
+          const hrefAttr = link.getAttribute('href');
+          if (!hrefAttr) return;
+          if (normalizePath(hrefAttr) === current) {
+            link.setAttribute('aria-current', 'page');
+          }
+        });
+      };
+
+      const attachInteractions = (root) => {
         const openBtn = root.querySelector('#ttg-nav-open');
         const closeBtn = root.querySelector('#ttg-nav-close');
         const overlay = root.querySelector('#ttg-overlay');
         const drawer = root.querySelector('#ttg-drawer');
 
+        if (!drawer) return;
+
         const lockBody = () => {
           document.documentElement.classList.add('ttg-nav-locked');
           document.body.classList.add('ttg-nav-locked');
         };
+
         const unlockBody = () => {
           document.documentElement.classList.remove('ttg-nav-locked');
           document.body.classList.remove('ttg-nav-locked');
         };
 
-        const open = () => {
-          if (!root || root.getAttribute('data-open') === 'true') return;
-          root.setAttribute('data-open', 'true');
-          overlay?.removeAttribute('hidden');
-          drawer?.setAttribute('aria-hidden', 'false');
-          openBtn?.setAttribute('aria-expanded', 'true');
-          lockBody();
-          const firstLink = drawer?.querySelector('a');
-          (firstLink || closeBtn || drawer)?.focus({ preventScroll: true });
-        };
-
         const close = () => {
-          if (!root || root.getAttribute('data-open') !== 'true') return;
+          if (root.getAttribute('data-open') !== 'true') return;
           root.setAttribute('data-open', 'false');
           overlay?.setAttribute('hidden', '');
-          drawer?.setAttribute('aria-hidden', 'true');
+          drawer.setAttribute('aria-hidden', 'true');
           openBtn?.setAttribute('aria-expanded', 'false');
           unlockBody();
           openBtn?.focus({ preventScroll: true });
         };
 
-        openBtn?.addEventListener('click', open);
-        closeBtn?.addEventListener('click', close);
-        overlay?.addEventListener('click', close);
-        drawer?.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
-        document.addEventListener('keydown', (event) => {
+        const open = () => {
+          if (root.getAttribute('data-open') === 'true') return;
+          root.setAttribute('data-open', 'true');
+          overlay?.removeAttribute('hidden');
+          drawer.setAttribute('aria-hidden', 'false');
+          openBtn?.setAttribute('aria-expanded', 'true');
+          lockBody();
+          const focusTarget = drawer.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
+          (focusTarget || closeBtn || drawer).focus?.({ preventScroll: true });
+        };
+
+        const handleKeydown = (event) => {
           if (event.key === 'Escape') {
             close();
           }
-        });
-      }
+        };
 
-      fetch('/nav.html?v=1.0.7')
+        openBtn?.addEventListener('click', open);
+        closeBtn?.addEventListener('click', close);
+        overlay?.addEventListener('click', close);
+        drawer.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
+        document.addEventListener('keydown', handleKeydown);
+      };
+
+      fetch(`/nav.html?v=${NAV_VERSION}`)
         .then((response) => response.text())
         .then((html) => {
-          const placeholder = document.getElementById('site-nav');
-          if (!placeholder) return;
           placeholder.outerHTML = html;
-          initNav();
-          setTimeout(() => {
-            if (document.activeElement && document.activeElement.blur) {
-              document.activeElement.blur();
-            }
-          }, 0);
-        });
+          const root = document.getElementById('global-nav');
+          if (!root) return;
+          markCurrentLinks(root);
+          attachInteractions(root);
+        })
+        .catch(() => {});
     })();
   </script>
 

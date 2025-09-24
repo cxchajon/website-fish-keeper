@@ -167,8 +167,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: min(45vw, 360px);
-  max-width: 360px;
+  width: clamp(280px, 45vw, 360px);
   height: 100dvh;
   transform: translateX(-100%);
   transition: transform 0.25s ease;
@@ -184,6 +183,18 @@
   padding-right: calc(24px + env(safe-area-inset-right));
   z-index: 5100;
   overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  #ttg-drawer {
+    width: clamp(320px, 32vw, 400px);
+  }
+}
+
+@media (min-width: 1100px) {
+  #ttg-drawer {
+    width: clamp(360px, 28vw, 420px);
+  }
 }
 
 #ttg-drawer header {
