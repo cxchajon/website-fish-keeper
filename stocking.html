@@ -9,11 +9,14 @@
   <!-- Update versions to bust browser cache -->
   <link rel="stylesheet" href="css/Style.css?v=1.0.3" />
 
-  <!-- NAV FIX: keep the header above content and ensure hamburger is visible -->
+  <!-- NAV FIX: keep header above content; ensure hamburger shows on mobile -->
   <style>
     #global-nav{position:fixed;top:0;left:0;right:0;z-index:9999}
-    /* make sure the hamburger is visible on dark pages */
-    #ttg-nav-open{display:inline-flex;align-items:center;justify-content:center;visibility:visible;opacity:1}
+    /* mobile: hide desktop links and force hamburger visible */
+    @media (max-width: 920px){
+      #global-nav .links{display:none !important;}
+      #ttg-nav-open{display:inline-flex !important;visibility:visible !important;opacity:1 !important;}
+    }
   </style>
 </head>
 <body>
