@@ -4,16 +4,15 @@
   <meta charset="UTF-8" />
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- NEW: load global nav styles (cache-busted so the hamburger rules apply) -->
-  <link rel="stylesheet" href="css/style.css?v=1.0.4" />
-  <!-- Update versions to bust browser cache -->
+  <!-- Global nav styles (cache-busted) -->
+  <link rel="stylesheet" href="css/style.css?v=1.0.5" />
+  <!-- Page styles -->
   <link rel="stylesheet" href="css/Style.css?v=1.0.3" />
 
-  <!-- NAV FIX: keep header above content; ensure hamburger shows on mobile -->
+  <!-- Ensure the fixed header sits above content and hamburger shows on phones -->
   <style>
     #global-nav{position:fixed;top:0;left:0;right:0;z-index:9999}
-    /* mobile: hide desktop links and force hamburger visible */
-    @media (max-width: 920px){
+    @media (max-width:920px){
       #global-nav .links{display:none !important;}
       #ttg-nav-open{display:inline-flex !important;visibility:visible !important;opacity:1 !important;}
     }
@@ -24,23 +23,17 @@
   <!-- Global nav include (fixed header) -->
   <div id="site-nav"></div>
   <script>
-    // After injecting nav.html, initialize hamburger/drawer + current link
     function initNav(){
       const root = document.getElementById('global-nav');
       if (!root) return;
 
-      // underline current (desktop & mobile)
       const here = location.pathname.replace(/\/+$/,'');
-      const mark = (sel) => root.querySelectorAll(sel).forEach(a=>{
+      const mark = sel => root.querySelectorAll(sel).forEach(a=>{
         const href = (a.getAttribute('href')||'').replace(/\/+$/,'');
-        if (here === href || (here === '' && href === '/index.html')) {
-          a.setAttribute('aria-current','page');
-        }
+        if (here === href || (here === '' && href === '/index.html')) a.setAttribute('aria-current','page');
       });
-      mark('.links a');
-      mark('.drawer a');
+      mark('.links a'); mark('.drawer a');
 
-      // drawer controls
       const openBtn = root.querySelector('#ttg-nav-open');
       const closeBtn= root.querySelector('#ttg-nav-close');
       const overlay = root.querySelector('#ttg-overlay');
@@ -52,7 +45,7 @@
         drawer.removeAttribute('aria-hidden');
         document.documentElement.style.overflow = 'hidden';
         openBtn.setAttribute('aria-expanded','true');
-        const first = drawer.querySelector('a'); first && first.focus();
+        (drawer.querySelector('a')||openBtn).focus();
       };
       const close = ()=>{
         root.removeAttribute('data-open');
@@ -67,23 +60,18 @@
       closeBtn?.addEventListener('click', close);
       overlay?.addEventListener('click', close);
       drawer?.querySelectorAll('a').forEach(a=>a.addEventListener('click', close));
-      document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && root.getAttribute('data-open')==='true') close(); });
+      document.addEventListener('keydown', e=>{ if(e.key==='Escape' && root.getAttribute('data-open')==='true') close(); });
     }
 
-    fetch('/nav.html')
-      .then(r => r.text())
-      .then(html => {
-        document.getElementById('site-nav').outerHTML = html;
-        initNav();
-      });
+    fetch('/nav.html?v=1.0.5')
+      .then(r=>r.text())
+      .then(html=>{ document.getElementById('site-nav').outerHTML = html; initNav(); });
   </script>
 
   <!-- Spacer so fixed header doesn't overlap content -->
   <div style="height:64px"></div>
 
-  <div class="wrap">
-
-    <!-- Brand -->
+  <!-- Brand -->
     <header class="brand" aria-label="FishkeepingLifeCo — Aquarium Education">
       <div class="brand-name">FishkeepingLifeCo</div>
       <div class="brand-sub">Aquarium Stocking Calculator</div>
