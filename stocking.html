@@ -5,9 +5,16 @@
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- NEW: load global nav styles (cache-busted so the hamburger rules apply) -->
-  <link rel="stylesheet" href="css/style.css?v=1.0.3" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.4" />
   <!-- Update versions to bust browser cache -->
   <link rel="stylesheet" href="css/Style.css?v=1.0.3" />
+
+  <!-- NAV FIX: keep the header above content and ensure hamburger is visible -->
+  <style>
+    #global-nav{position:fixed;top:0;left:0;right:0;z-index:9999}
+    /* make sure the hamburger is visible on dark pages */
+    #ttg-nav-open{display:inline-flex;align-items:center;justify-content:center;visibility:visible;opacity:1}
+  </style>
 </head>
 <body>
 
