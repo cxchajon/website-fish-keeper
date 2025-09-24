@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Accessibility**: keyboard navigation and input hints for number fields.
 - **Docs**: add species rulebook and contributor guidelines.
 
+### Changed
+- Global navigation now loads consistently across non-home pages with a translucent bar, left-drawer menu, and safe-area aware overlay refresh.
+
 ---
 
 ## [9.1.0] — 2025-09-21

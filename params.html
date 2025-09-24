@@ -6,7 +6,7 @@
   <title>Cycling Coach — The Tank Guide</title>
   <meta name="description" content="Cycling Coach is under construction — coming soon to help you master the nitrogen cycle." />
 
-  <link rel="stylesheet" href="css/style.css?v=1.0.6" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
 
   <style>
     :root{
@@ -18,6 +18,8 @@
       --btn-bg:#ffffff;
       --btn-fg:#08324a;
       --btn-line:rgba(0,0,0,.12);
+      --ttg-nav-bg: linear-gradient(140deg, rgba(11, 39, 70, 0.42) 0%, rgba(11, 16, 32, 0.42) 100%);
+      --ttg-nav-link: rgba(243, 247, 255, 0.85);
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -123,7 +125,7 @@
         });
       }
 
-      fetch('/nav.html?v=1.0.6')
+      fetch('/nav.html?v=1.0.7')
         .then((response) => response.text())
         .then((html) => {
           const placeholder = document.getElementById('site-nav');

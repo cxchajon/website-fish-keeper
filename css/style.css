@@ -1,17 +1,19 @@
 :root {
-  --ttg-nav-bg: rgba(8, 26, 45, 0.38);
-  --ttg-nav-border: rgba(255, 255, 255, 0.18);
-  --ttg-nav-text: #f2f6ff;
+  --ttg-nav-bg: rgba(8, 20, 36, 0.45);
+  --ttg-nav-text: #f3f6ff;
+  --ttg-nav-link: rgba(243, 246, 255, 0.82);
+  --ttg-nav-overlay: rgba(4, 15, 26, 0.58);
 }
 
 #global-nav {
   position: relative;
+  z-index: 4000;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  color: var(--ttg-nav-text);
-  background: var(--ttg-nav-bg);
+  color: var(--ttg-nav-text, #f3f6ff);
+  background: var(--ttg-nav-bg, rgba(8, 20, 36, 0.45));
   backdrop-filter: blur(18px) saturate(135%);
-  border-bottom: 1px solid var(--ttg-nav-border);
-  box-shadow: 0 24px 54px rgba(0, 0, 0, 0.22);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.28);
 }
 
 #global-nav a {
@@ -22,27 +24,41 @@
 #global-nav .nav-inner {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: stretch;
+  gap: 14px;
   margin: 0 auto;
-  max-width: 1100px;
-  padding: 18px 20px;
+  width: min(100%, 1100px);
+  padding: 16px 20px 18px;
+  padding-block-start: calc(16px + env(safe-area-inset-top));
+  padding-inline-start: calc(20px + env(safe-area-inset-left));
+  padding-inline-end: calc(20px + env(safe-area-inset-right));
+}
+
+#global-nav .nav-primary {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 16px;
 }
 
 #ttg-nav-open {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  background: rgba(255, 255, 255, 0.12);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  border: none;
+  background: transparent;
   color: inherit;
   cursor: pointer;
   padding: 0;
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(12px);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+#ttg-nav-open:hover,
+#ttg-nav-open:focus-visible {
+  background: rgba(255, 255, 255, 0.16);
 }
 
 #ttg-nav-open .hamburger-bars {
@@ -78,8 +94,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
-  line-height: 1.08;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+  line-height: 1.1;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.38);
 }
 
 #global-nav .brand-title {
@@ -92,33 +108,82 @@
   font-size: 0.94rem;
 }
 
+#global-nav .links {
+  display: none;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+#global-nav .links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  color: var(--ttg-nav-link, rgba(243, 246, 255, 0.82));
+  text-decoration: none;
+  transition: color 0.2s ease, background 0.2s ease;
+  min-height: 44px;
+}
+
+#global-nav .links a:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+#global-nav .links a[aria-current="page"] {
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 0.4em;
+  text-decoration-thickness: 0.16em;
+}
+
+@media (min-width: 900px) {
+  #global-nav .nav-inner {
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+  }
+
+  #global-nav .links {
+    display: flex;
+    margin-left: auto;
+  }
+}
+
 #ttg-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--ttg-nav-overlay, rgba(4, 15, 26, 0.58));
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
-  z-index: 4100;
+  z-index: 5000;
 }
 
 #ttg-drawer {
   position: fixed;
   top: 0;
   left: 0;
-  width: min(45vw, 420px);
-  max-width: 420px;
+  width: min(45vw, 360px);
+  max-width: 360px;
   height: 100dvh;
   transform: translateX(-100%);
   transition: transform 0.25s ease;
-  background: rgba(8, 26, 45, 0.97);
+  background: rgba(6, 20, 34, 0.94);
   color: #f8fbff;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 18px 0 40px rgba(0, 0, 0, 0.35);
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 18px 0 40px rgba(0, 0, 0, 0.38);
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  z-index: 4200;
+  padding: 24px;
+  padding-top: calc(24px + env(safe-area-inset-top));
+  padding-left: calc(24px + env(safe-area-inset-left));
+  padding-right: calc(24px + env(safe-area-inset-right));
+  z-index: 5100;
+  overflow-y: auto;
 }
 
 #ttg-drawer header {
@@ -137,29 +202,36 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  background: rgba(255, 255, 255, 0.14);
   color: inherit;
   font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#ttg-nav-close:hover,
+#ttg-nav-close:focus-visible {
+  background: rgba(255, 255, 255, 0.24);
 }
 
 #ttg-drawer nav {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 18px;
+  gap: 6px;
+  margin-top: 24px;
 }
 
 #ttg-drawer a {
   display: block;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.06);
+  padding: 12px 0;
+  border-radius: 10px;
   color: inherit;
-  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease, background 0.2s ease;
+  min-height: 44px;
 }
 
 #ttg-drawer a:hover {
@@ -167,8 +239,9 @@
 }
 
 #ttg-drawer a[aria-current="page"] {
-  border-color: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.45);
+  text-decoration: underline;
+  text-underline-offset: 0.4em;
+  text-decoration-thickness: 0.16em;
 }
 
 #global-nav[data-open="true"] #ttg-overlay {
@@ -188,9 +261,13 @@ body.ttg-nav-locked {
 
 #global-nav button:focus-visible,
 #global-nav a:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.6);
-  outline-offset: 2px;
+  outline: 2px solid rgba(255, 255, 255, 0.65);
+  outline-offset: 4px;
   border-radius: 12px;
+}
+
+#global-nav .links a:focus-visible {
+  border-radius: 999px;
 }
 
 .visually-hidden {
