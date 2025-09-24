@@ -106,7 +106,7 @@
 
         <div id="tank-options" class="grid"></div>
 
-        <div class="compare" id="tank-compare">
+        <div class="compare" id="tank-compare" hidden>
           <table class="compare" aria-label="Compare selected tanks">
             <thead>
               <tr>
@@ -143,7 +143,7 @@
       <div class="card">
         <div id="filter-options" class="grid"></div>
 
-        <div class="compare" id="filter-compare">
+        <div class="compare" id="filter-compare" hidden>
           <table class="compare" aria-label="Compare selected filters">
             <thead>
               <tr>
@@ -184,7 +184,7 @@
         </div>
         <div id="light-options" class="grid"></div>
 
-        <div class="compare" id="light-compare">
+        <div class="compare" id="light-compare" hidden>
           <table class="compare" aria-label="Compare selected lights">
             <thead>
               <tr>
@@ -218,7 +218,7 @@
 
     <div id="heater-options" class="grid"></div>
 
-    <div class="compare" id="heater-compare">
+    <div class="compare" id="heater-compare" hidden>
       <table class="compare" aria-label="Compare selected heaters">
         <thead>
           <tr>
@@ -284,38 +284,7 @@
         <strong>Note:</strong> <b>Flow baffles</b> can calm strong filters for fish that prefer gentle water (like bettas). This keeps healthy filtration without stressing your livestock.
       </div>
       <div class="card">
-        <div class="grid">
-          <div class="product">
-            <div class="thumb">Timer — placeholder</div>
-            <div class="title">Digital Timer</div>
-            <div class="sub">Automate lights/photoperiod</div>
-            <div class="price" data-price="12.99">$12.99</div>
-            <div class="row" style="justify-content:space-between;">
-              <a class="btn" href="#" target="_blank" rel="noopener">View on Amazon</a>
-              <button class="btn" onclick="addToCart({id:'timer1',title:'Digital Timer',category:'Add-ons',price:12.99,affiliateUrl:'#'})">Add to Cart</button>
-            </div>
-          </div>
-          <div class="product">
-            <div class="thumb">Baffle — placeholder</div>
-            <div class="title">HOB Flow Baffle</div>
-            <div class="sub">Fits common HOBs, reduces flow</div>
-            <div class="price" data-price="9.99">$9.99</div>
-            <div class="row" style="justify-content:space-between;">
-              <a class="btn" href="#" target="_blank" rel="noopener">View on Amazon</a>
-              <button class="btn" onclick="addToCart({id:'baffle1',title:'HOB Flow Baffle',category:'Add-ons',price:9.99,affiliateUrl:'#'})">Add to Cart</button>
-            </div>
-          </div>
-          <div class="product">
-            <div class="thumb">GFCI — placeholder</div>
-            <div class="title">Surge Strip w/ GFCI</div>
-            <div class="sub">Safety for wet environments</div>
-            <div class="price" data-price="24.99">$24.99</div>
-            <div class="row" style="justify-content:space-between;">
-              <a class="btn" href="#" target="_blank" rel="noopener">View on Amazon</a>
-              <button class="btn" onclick="addToCart({id:'gfci1',title:'Surge Strip w/ GFCI',category:'Add-ons',price:24.99,affiliateUrl:'#'})">Add to Cart</button>
-            </div>
-          </div>
-        </div>
+        <div id="addon-options" class="grid"></div>
       </div>
     </section>
 
@@ -328,8 +297,8 @@
           <div class="total">Estimated total: $<span id="cart-total">0.00</span></div>
         </div>
         <div class="cart-actions" style="margin-bottom:12px;">
-          <button class="ghost-btn" onclick="openCartModal()">Buy all</button>
-          <button class="ghost-btn" onclick="clearCart()">Clear cart</button>
+          <button class="ghost-btn" id="cart-buy-all">Buy all</button>
+          <button class="ghost-btn" id="cart-clear">Clear cart</button>
         </div>
         <div class="cart-items" id="cart-items"></div>
         <p class="hint">“Buy all” opens each Amazon link in new tabs (some browsers may block popups — please allow them). You can also copy all links.</p>
@@ -337,608 +306,40 @@
     </section>
   </main>
 
-  <!-- Footer include -->
-  <footer id="site-footer"></footer>
-  <script>
-    fetch("footer.html").then(r=>r.text()).then(html=>{
-      document.getElementById("site-footer").innerHTML = html;
-    });
-
-    /* ------------ Data (placeholder content; swap titles/links w/ your affiliate URLs) ------------ */
-    const tankVariantsBySize = {
-      "10": [
-        { id:"tank10std", model:"10 Gallon Standard", type:"Standard", dims:[20,10,12], includes:"—", price:69, link:"#"},
-        { id:"tank10rim", model:"10 Gallon Rimless",  type:"Rimless",  dims:[20,10,12], includes:"mat", price:119, link:"#"}
-      ],
-      "20": [
-        { id:"tank20std", model:"20 Gallon Standard", type:"Standard", dims:[24,12,16], includes:"—", price:129, link:"#"},
-        { id:"tank20long",model:"20 Gallon Long",     type:"Long",     dims:[30,12,12], includes:"—", price:139, link:"#"},
-        { id:"tank20rim", model:"20 Gallon Rimless",  type:"Rimless",  dims:[24,14,14], includes:"mat", price:199, link:"#"},
-        { id:"tank20aio", model:"20 Gallon AIO",      type:"All-in-One", dims:[24,15,16], includes:"pump, media", price:249, link:"#"}
-      ],
-      "29": [
-        { id:"tank29std", model:"29 Gallon Standard", type:"Standard", dims:[30,12,18], includes:"—", price:179, link:"#"},
-        { id:"tank29rim", model:"29 Gallon Rimless",  type:"Rimless",  dims:[30,14,18], includes:"mat", price:279, link:"#"}
-      ],
-      "40": [
-        { id:"tank40bre", model:"40 Gallon Breeder", type:"Breeder", dims:[36,18,16], includes:"—", price:249, link:"#"},
-        { id:"tank40rim", model:"40 Gallon Rimless", type:"Rimless", dims:[36,18,16], includes:"mat", price:349, link:"#"}
-      ],
-      "50": [
-        { id:"tank50std", model:"50 Gallon Standard", type:"Standard", dims:[36,18,19], includes:"—", price:299, link:"#"}
-      ],
-      "55": [
-        { id:"tank55std", model:"55 Gallon Standard", type:"Standard", dims:[48,13,21], includes:"—", price:329, link:"#"}
-      ],
-      "75": [
-        { id:"tank75std", model:"75 Gallon Standard", type:"Standard", dims:[48,18,21], includes:"—", price:399, link:"#"}
-      ],
-      "90": [
-        { id:"tank90std", model:"90 Gallon Standard", type:"Standard", dims:[48,18,24], includes:"—", price:499, link:"#"}
-      ],
-      "120": [
-        { id:"tank120std", model:"120 Gallon Standard", type:"Standard", dims:[48,24,24], includes:"—", price:699, link:"#"}
-      ],
-      "125": [
-        { id:"tank125std", model:"125 Gallon Standard", type:"Standard", dims:[72,18,21], includes:"—", price:799, link:"#"}
-      ]
-    };
-
-    // Filters catalog (min→max gallons) so we can filter by selected size
-    const filtersCatalog = [
-      { id:"ac50",   model:"AquaClear 50", type:"HOB", gph:200, rated:[20,50], media:"Medium", maint:"Easy",    price:49, link:"#"},
-      { id:"ac70",   model:"AquaClear 70", type:"HOB", gph:300, rated:[40,70], media:"High",   maint:"Easy",    price:79, link:"#"},
-      { id:"fl107",  model:"Fluval 107",   type:"Canister", gph:145, rated:[10,30], media:"Medium", maint:"Moderate", price:99, link:"#"},
-      { id:"fl207",  model:"Fluval 207",   type:"Canister", gph:206, rated:[20,45], media:"Medium", maint:"Moderate", price:129, link:"#"},
-      { id:"fl307",  model:"Fluval 307",   type:"Canister", gph:303, rated:[40,70], media:"High",   maint:"Moderate", price:179, link:"#"},
-      { id:"fl407",  model:"Fluval 407",   type:"Canister", gph:383, rated:[50,100], media:"High",  maint:"Moderate", price:229, link:"#"},
-      { id:"spongeL",model:"Large Sponge", type:"Sponge", gph:120, rated:[10,40], media:"Low",    maint:"Easy",    price:15, link:"#"},
-      { id:"aioMed", model:"AIO Chamber",  type:"AIO/Media Basket", gph:200, rated:[20,40], media:"Low", maint:"Easy", price:29, link:"#"}
-    ];
-
-    // Lighting catalog — length fit ranges (inches) + plant level
-    // We'll "step up" one size: prioritize lights whose min length > tank length (next range).
-    const lightsCatalog = [
-  { id:"nicrew18to24", model:"NICREW ClassicLED", ... },
-  { id:"fluval60to72", model:"Fluval Plant Spectrum", ... }
-];
-
-// Heaters catalog
-// type: glass/titanium; safety: auto-shutoff/dry-run (if stated)
-const heatersCatalog = [
-  { id:"htr50g",  model:"Aqueon Preset",       type:"glass",    watts:50,  rec:"10–20 gal", safety:"—",                 price:18, link:"#"},
-  { id:"htr100g", model:"Aqueon Preset",       type:"glass",    watts:100, rec:"20–30 gal", safety:"—",                 price:22, link:"#"},
-  { id:"htr150g", model:"Tetra HT",            type:"glass",    watts:150, rec:"30–55 gal", safety:"—",                 price:28, link:"#"},
-  { id:"htr200t", model:"Finnex HPS",          type:"titanium", watts:200, rec:"40–75 gal", safety:"auto shutoff",      price:49, link:"#"},
-  { id:"htr300t", model:"Hygger Digital",      type:"titanium", watts:300, rec:"55–100 gal", safety:"dry-run protect",  price:59, link:"#"},
-  { id:"htr500t", model:"Inkbird + 2×300W",    type:"titanium", watts:600, rec:"100–150 gal", safety:"controller",      price:119, link:"#"}
-];
-
-/* ------------ State ------------ */
-let selectedGallons = null;
-    const tankCompare = [];
-    const filterCompare = [];
-    const lightCompare = [];
-const heaterCompare = [];
-
-    /* ------------ Helpers ------------ */
-    function galFromSelect() {
-      const val = document.getElementById("tank-size").value;
-      return val ? parseInt(val, 10) : null;
-    }
-    function dimsToText([L,W,H]){ return `${L}×${W}×${H}`; }
-    function footprint([L,W]){ return (L*W).toFixed(0); }
-    function heightVal([, ,H]){ return H; }
-    function volFromDims([L,W,H]){ return Math.round((L*W*H)/231); } // in³ / 231 = gallons
-    function turnover(gph, gallons){ return (gph / gallons).toFixed(1); }
-    function priceFmt(n){ return '$' + (Number(n||0)).toFixed(2); }
-
-    // infer a reasonable tank length for the selected size by taking the max L among variants (covers "long/breeder")
-    function inferredTankLengthForSize(size){
-      const list = tankVariantsBySize[size] || [];
-      if(!list.length) return null;
-      return Math.max(...list.map(t => t.dims[0]));
-    }
-
-    /* ------------ Tanks ------------ */
-    function renderTankOptions(size) {
-      const box = document.getElementById("tank-options");
-      const chip = document.getElementById("size-chip");
-      box.innerHTML = "";
-      if (!size || !tankVariantsBySize[size]) { chip.style.display="none"; return; }
-      chip.textContent = `${size} Gallon`;
-      chip.style.display = "inline-block";
-
-      tankVariantsBySize[size].forEach(t => {
-        const vol = volFromDims(t.dims);
-        const card = document.createElement("div");
-        card.className = "product";
-        card.innerHTML = `
-          <div class="thumb">${t.model}<br/>placeholder</div>
-          <div class="title">${t.model}</div>
-          <div class="sub">${t.type} • ${dimsToText(t.dims)} • ~${vol} gal</div>
-          <div class="price" data-price="${t.price}">${priceFmt(t.price)}</div>
-          <div class="row" style="justify-content:space-between;">
-            <a class="btn" href="${t.link}" target="_blank" rel="noopener">View on Amazon</a>
-            <div class="row">
-              <button class="btn" onclick="addToCart({id:'${t.id}',title:'${t.model}',category:'Tank',price:${t.price},affiliateUrl:'${t.link}'})">Add to Cart</button>
-              <label class="chk"><input type="checkbox" onchange="toggleTankCompare('${t.model.replace(/'/g,"&#39;")}', '${t.type}', '${dimsToText(t.dims)}', '${footprint([t.dims[0],t.dims[1]])}', '${heightVal(t.dims)}', '${vol}', '${t.includes}', '${priceFmt(t.price)}', this)"> Compare</label>
-            </div>
-          </div>
-        `;
-        box.appendChild(card);
-      });
-
-      // after tanks render, re-render lights with inferred length
-      renderLights();
-    }
-
-    function toggleTankCompare(model, type, dims, footprintIn2, heightIn, volume, includes, price, el) {
-      const idx = tankCompare.findIndex(x => x.model === model);
-      if (el.checked) {
-        if (tankCompare.length >= 3) { el.checked = false; return; }
-        tankCompare.push({model, type, dims, footprintIn2, heightIn, volume, includes, price});
-      } else {
-        if (idx >= 0) tankCompare.splice(idx,1);
-      }
-      renderTankCompare();
-      renderFilters(); // update turnover calcs contextually
-    }
-
-    function renderTankCompare() {
-      const wrap = document.getElementById("tank-compare");
-      const tbody = document.getElementById("tank-compare-body");
-      tbody.innerHTML = "";
-      if (tankCompare.length > 1) {
-        wrap.style.display = "block";
-        tankCompare.forEach(r => {
-          tbody.innerHTML += `
-            <tr>
-              <td>${r.model}</td>
-              <td>${r.type}</td>
-              <td>${r.dims}</td>
-              <td>${r.footprintIn2}</td>
-              <td>${r.heightIn}</td>
-              <td>${r.volume}</td>
-              <td>${r.includes}</td>
-              <td>${r.price}</td>
-            </tr>
-          `;
-        });
-      } else {
-        wrap.style.display = "none";
-      }
-    }
-
-    /* ------------ Filters ------------ */
-    function renderFilters() {
-      const box = document.getElementById("filter-options");
-      box.innerHTML = "";
-      const gallons = selectedGallons;
-      if (!gallons) {
-        box.innerHTML = `<p class="muted">Choose a tank size above to see filters rated for that volume.</p>`;
-        document.getElementById("filter-compare").style.display = "none";
-        return;
-      }
-
-      const eligible = filtersCatalog.filter(f => {
-        const [min,max] = f.rated;
-        return max >= gallons && (min ? min <= gallons : true);
-      });
-
-      if (!eligible.length) {
-        box.innerHTML = `<p class="muted">No filters match this volume yet. We’ll add picks soon.</p>`;
-        document.getElementById("filter-compare").style.display = "none";
-        return;
-      }
-
-      eligible.forEach(h => {
-  const card = document.createElement("div");
-  card.className = "product";
-  card.innerHTML = `
-    <div class="thumb">${h.model}<br>${h.watts}W</div>
-    <div class="title">${h.model}</div>
-    <div class="sub">${h.type.toUpperCase()}</div>
-    <div class="sub">Safety: ${h.safety}</div>
-    <div class="price" data-price="${h.price}">${priceFmt(h.price)}</div>
-    <div class="row" style="justify-content:space-between;">
-      <a class="btn" href="${h.link}" target="_blank" rel="noopener">View on Amazon</a>
-      <div class="row">
-        <button class="btn" onclick="addToCart({id:'${h.id}',title:'${h.model}',category:'Heater',price:${h.price},affiliate:'${h.link}'})">
-          Add to Cart
-        </button>
-        <label class="chk">
-          <input type="checkbox"
-            onchange="toggleHeaterCompare('${h.model.replace(/'/g, '&#39;')}', '${h.type}', '${h.watts}', '${h.rec}', '${h.safety}', '${h.price}')">
-          Compare
-        </label>
-      </div>
-    </div>
-  `;
-  box.appendChild(card);
-});
-    }
-
-    function toggleFilterCompare(model, type, ratedRange, gph, turnoverVal, media, maint, price, el) {
-      const idx = filterCompare.findIndex(x => x.model === model);
-      if (el.checked) {
-        if (filterCompare.length >= 3) { el.checked = false; return; }
-        filterCompare.push({model, type, ratedRange, gph, turnoverVal, media, maint, price});
-      } else {
-        if (idx >= 0) filterCompare.splice(idx,1);
-      }
-      renderFilterCompare();
-    }
-
-    function renderFilterCompare() {
-      const wrap = document.getElementById("filter-compare");
-      const tbody = document.getElementById("filter-compare-body");
-      tbody.innerHTML = "";
-      if (filterCompare.length > 1) {
-        wrap.style.display = "block";
-        filterCompare.forEach(r => {
-          tbody.innerHTML += `
-            <tr>
-              <td>${r.model}</td>
-              <td>${r.type}</td>
-              <td>${r.ratedRange}</td>
-              <td>${r.gph}</td>
-              <td>${r.turnoverVal}×</td>
-              <td>${r.media}</td>
-              <td>${r.maint}</td>
-              <td>${r.price}</td>
-            </tr>
-          `;
-        });
-      } else {
-        wrap.style.display = "none";
-      }
-    }
-
-    /* ------------ Lighting ------------ */
-    function renderLights(){
-      const box = document.getElementById("light-options");
-      const gallons = selectedGallons;
-      const level = (document.getElementById("plant-level").value || "med");
-      box.innerHTML = "";
-      if(!gallons){
-        box.innerHTML = `<p class="muted">Choose a tank size above (and plant level) to see matching lights.</p>`;
-        document.getElementById("light-compare").style.display = "none";
-        document.getElementById("length-chip").style.display = "none";
-        return;
-      }
-
-      const tankLength = inferredTankLengthForSize(String(gallons));
-      const chip = document.getElementById("length-chip");
-      if(tankLength){
-        chip.textContent = `Tank length: ~${tankLength}"`;
-        chip.style.display = "inline-block";
-      } else {
-        chip.style.display = "none";
-      }
-
-      // First filter by plant level (allow equal or higher capability; high can serve med/low too)
-      const levelRank = {low:1, med:2, high:3};
-      const desiredRank = levelRank[level];
-
-      let eligible = lightsCatalog.filter(l => levelRank[l.plant] >= desiredRank);
-
-      // Partition by fit range: those that "fit" (range includes tankLength) vs "step-up" (min > tankLength)
-      const fits = [];
-      const stepUps = [];
-      eligible.forEach(l => {
-        const [min,max] = l.fit;
-        if (tankLength == null){ fits.push(l); return; }
-        if (tankLength >= min && tankLength <= max) { fits.push(l); }
-        else if (tankLength < min) { stepUps.push(l); } // recommended one-size-up for coverage
-      });
-
-      // Show step-ups first (our recommendation)
-      const ordered = [...stepUps, ...fits];
-      if (!ordered.length){
-        box.innerHTML = `<p class="muted">No lights match this configuration yet — we’ll add picks soon.</p>`;
-        document.getElementById("light-compare").style.display = "none";
-        return;
-      }
-
-      ordered.forEach(l => {
-        const tag = (tankLength && tankLength < l.fit[0]) ? `<span class="badge ok">Recommended (size up)</span>` :
-                    (tankLength && (tankLength >= l.fit[0] && tankLength <= l.fit[1])) ? `<span class="badge warn">Fits exact</span>` :
-                    ``;
-        const card = document.createElement("div");
-        card.className = "product";
-        card.innerHTML = `
-          <div class="thumb">${l.model}<br/>${l.fit[0]}–${l.fit[1]}" range<br/>placeholder</div>
-          <div class="title">${l.model}</div>
-          <div class="sub">Length fit: ${l.fit[0]}–${l.fit[1]}" • Plant: ${l.plant.toUpperCase()} • PAR @12": ${l.par12}</div>
-          <div class="sub">Control: ${l.control} • Power: ${l.power} W ${tag}</div>
-          <div class="price" data-price="${l.price}">${priceFmt(l.price)}</div>
-          <div class="row" style="justify-content:space-between;">
-            <a class="btn" href="${l.link}" target="_blank" rel="noopener">View on Amazon</a>
-            <div class="row">
-              <button class="btn" onclick="addToCart({id:'${l.id}',title:'${l.model}',category:'Light',price:${l.price},affiliateUrl:'${l.link}'})">Add to Cart</button>
-              <label class="chk"><input type="checkbox" onchange="toggleLightCompare('${l.model.replace(/'/g,"&#39;")}', '${l.fit[0]}–${l.fit[1]}"', '${l.plant}', '${l.par12}', '${l.control}', '${l.power}', '${priceFmt(l.price)}', this)"> Compare</label>
-            </div>
-          </div>
-        `;
-        box.appendChild(card);
-      });
-    }
-
-    function toggleLightCompare(model, fit, plant, par12, control, power, price, el){
-      const idx = lightCompare.findIndex(x => x.model === model);
-      if (el.checked) {
-        if (lightCompare.length >= 3) { el.checked = false; return; }
-        lightCompare.push({model,fit,plant,par12,control,power,price});
-      } else {
-        if (idx >= 0) lightCompare.splice(idx,1);
-      }
-      renderLightCompare();
-    }
-
-    function renderLightCompare(){
-      const wrap = document.getElementById("light-compare");
-      const tbody = document.getElementById("light-compare-body");
-      tbody.innerHTML = "";
-      if (lightCompare.length > 1){
-        wrap.style.display = "block";
-        lightCompare.forEach(r=>{
-          tbody.innerHTML += `
-            <tr>
-              <td>${r.model}</td>
-              <td>${r.fit}</td>
-              <td>${r.plant.toUpperCase()}</td>
-              <td>${r.par12}</td>
-              <td>${r.control}</td>
-              <td>${r.power}</td>
-              <td>${r.price}</td>
-            </tr>
-          `;
-        });
-      } else {
-        wrap.style.display = "none";
-      }
-    }
-/* ------------ Heaters ------------ */
-function renderHeaters(){
-  const box = document.getElementById("heater-options");
-  const gallons = selectedGallons;
-  // --- targets & chips ---
-const chipTarget = document.getElementById("heater-target");
-const chipRedund = document.getElementById("heater-redundancy");
-
-if (!gallons) {
-  chipTarget.style.display = "none";
-  chipRedund.style.display = "none";
-} else {
-  const targetWatts = Math.round(gallons * 4);         // ~4 W/gal
-  const half = Math.round(targetWatts / 2);            // redundancy suggestion (2× half)
-  chipTarget.textContent = `Target: ~${targetWatts} W (≈4 W/gal)`;
-  chipRedund.textContent = `Redundancy: 2 × ${half} W`;
-  chipTarget.style.display = "inline-block";
-  chipRedund.style.display = "inline-block";
-}
-  box.innerHTML = "";
-
-  if(!gallons){
-    box.innerHTML = `<p class="muted">Choose a tank size first.</p>`;
-    return;
-  }
-
-  // pick heaters with rec >= selected gallons
-  let eligible = heatersCatalog.filter(h => {
-    const recMin = parseInt(h.rec.split("–")[0], 10); // parse min from "10–20 gal"
-    return recMin <= gallons;
-  });
-function toggleHeaterCompare(model, type, watts, rec, safety, price, el){
-  const idx = heaterCompare.findIndex(x => x.model === model);
-  if (el.checked) {
-    if (heaterCompare.length >= 3) { el.checked = false; return; }
-    heaterCompare.push({model, type, watts, rec, safety, price});
-  } else {
-    if (idx >= 0) heaterCompare.splice(idx,1);
-  }
-  renderHeaterCompare();
-}
-
-function renderHeaterCompare(){
-  const wrap = document.getElementById("heater-compare");
-  const tbody = document.getElementById("heater-compare-body");
-  tbody.innerHTML = "";
-  if (heaterCompare.length > 1){
-    wrap.style.display = "block";
-    heaterCompare.forEach(r=>{
-      tbody.innerHTML += `
-        <tr>
-          <td>${r.model}</td>
-          <td>${r.type}</td>
-          <td>${r.watts}W</td>
-          <td>${r.rec}</td>
-          <td>${r.safety}</td>
-          <td>${r.price}</td>
-        </tr>
-      `;
-    });
-  } else {
-    wrap.style.display = "none";
-  }
-}
-
-  // inside eligible.forEach(h => { ... })
-eligible.forEach(h => {
-  // compute badge vs target using ~4 W/gal
-  const targetWatts = Math.round(gallons * 4);
-  const meets = h.watts >= targetWatts;
-  const near  = !meets && (h.watts >= Math.round(targetWatts * 0.8));
-  const badge = meets
-    ? '<span class="badge ok">Meets target</span>'
-    : (near ? '<span class="badge warn">Near target</span>'
-            : '<span class="badge bad">Under target</span>');
-
-  const card = document.createElement("div");
-  card.className = "product";
-  card.innerHTML = `
-    <div class="thumb">${h.model}<br/>${h.watts} W<br/>placeholder</div>
-    <div class="title">${h.model}</div>
-    <div class="sub">${h.type.toUpperCase()} • ${h.watts}W</div>
-    <div class="sub">Safety: ${h.safety} ${badge}</div>
-    <div class="price" data-price="${h.price}">${priceFmt(h.price)}</div>
-    <div class="row" style="justify-content:space-between;">
-      <a class="btn" href="${h.link}" target="_blank" rel="noopener">View on Amazon</a>
-      <div class="row">
-        <button class="btn"
-          onclick="addToCart({id:'${h.id}',title:'${h.model}',category:'Heater',price:${h.price},affiliateUrl:'${h.link}'})">
-          Add to Cart
-        </button>
-        <label class="chk">
-          <input type="checkbox"
-            onchange="toggleHeaterCompare('${h.model.replace(/'/g,'&#39;')}','${h.type}', '${h.watts}','${h.rec}','${h.safety}','${priceFmt(h.price)}', this)">
-          Compare
-        </label>
-      </div>
-    </div>
-  `;
-  box.appendChild(card);
-});
-
-    /* ------------ Cart (localStorage) ------------ */
-    const CART_KEY = 'ttg_cart';
-    function loadCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY)||'[]'); }catch(_){ return []; } }
-    function saveCart(items){ localStorage.setItem(CART_KEY, JSON.stringify(items)); renderCart(); }
-    function addToCart(item){
-      const cart = loadCart();
-      const existing = cart.find(x => x.id === item.id);
-      if (existing){ existing.qty = (existing.qty||1)+1; }
-      else { cart.push({...item, qty:1}); }
-      saveCart(cart);
-    }
-    function removeFromCart(id){
-      const cart = loadCart().filter(x => x.id !== id);
-      saveCart(cart);
-    }
-    function changeQty(id, delta){
-      const cart = loadCart();
-      const it = cart.find(x => x.id === id);
-      if (!it) return;
-      it.qty = Math.max(1, (it.qty||1) + delta);
-      saveCart(cart);
-    }
-    function clearCart(){ saveCart([]); }
-
-    function renderCart(){
-      const items = loadCart();
-      const box = document.getElementById('cart-items');
-      const countEl = document.getElementById('cart-count');
-      const totalEl = document.getElementById('cart-total');
-      box.innerHTML = "";
-      let total = 0, count = 0;
-
-      items.forEach(it=>{
-        total += (Number(it.price)||0) * (it.qty||1);
-        count += (it.qty||1);
-        const line = document.createElement('div');
-        line.className = 'cart-line';
-        line.innerHTML = `
-          <div class="title">${it.title}</div>
-          <div class="sub">${it.category} • Qty: ${it.qty}</div>
-          <div class="row">
-            <a class="btn" href="${it.affiliateUrl}" target="_blank" rel="noopener">View on Amazon</a>
-            <div class="cart-actions">
-              <button class="ghost-btn" onclick="changeQty('${it.id}', -1)">−</button>
-              <button class="ghost-btn" onclick="changeQty('${it.id}', 1)">+</button>
-              <button class="ghost-btn" onclick="removeFromCart('${it.id}')">Remove</button>
-            </div>
-          </div>
-        `;
-        box.appendChild(line);
-      });
-
-      countEl.textContent = String(count);
-      totalEl.textContent = total.toFixed(2);
-    }
-
-    /* ------------ Buy All Modal ------------ */
-    function openCartModal(){
-      const items = loadCart();
-      const backdrop = document.getElementById('cart-modal-backdrop');
-      const list = document.getElementById('cart-modal-list');
-      const copyBox = document.getElementById('cart-modal-textarea');
-      list.innerHTML = "";
-      let links = [];
-      items.forEach(it=>{
-        list.innerHTML += `<div class="row"><div>${it.title} × ${it.qty}</div><a href="${it.affiliateUrl}" target="_blank" rel="noopener">Open</a></div>`;
-        for(let i=0;i<(it.qty||1);i++){ links.push(it.affiliateUrl); }
-      });
-      copyBox.value = links.join('\n');
-      backdrop.style.display = 'flex';
-    }
-    function closeCartModal(){ document.getElementById('cart-modal-backdrop').style.display='none'; }
-    function copyAllLinks(){
-      const ta = document.getElementById('cart-modal-textarea');
-      ta.select(); ta.setSelectionRange(0,99999);
-      document.execCommand('copy');
-      alert('All links copied. If popups are blocked, you can paste into new tabs.');
-    }
-    function openAllLinks(){
-      const ta = document.getElementById('cart-modal-textarea');
-      const links = ta.value.split('\n').filter(Boolean);
-      links.forEach(url=> window.open(url, '_blank'));
-    }
-
-    /* ------------ Events ------------ */
-    document.getElementById("tank-size").addEventListener("change", e => {
-      selectedGallons = galFromSelect();
-
-      // Clear compares when size changes (keeps UX clean)
-      tankCompare.splice(0, tankCompare.length);
-      filterCompare.splice(0, filterCompare.length);
-      lightCompare.splice(0, lightCompare.length);
-      renderTankCompare();
-      renderFilterCompare();
-      renderLightCompare();
-
-      renderTankOptions(String(selectedGallons));
-renderFilters();
-renderLights();
-renderHeaters();  //
-    });
-
-    document.getElementById("plant-level").addEventListener("change", e=>{
-      renderLights();
-    });
-
-    // Initial state
-renderFilters(); // shows the "choose tank size" hint
-renderLights();  // same
-renderHeaters(); // same
-renderCart();    // load saved cart if any
-  </script>
-
-  <!-- Buy All Modal -->
-  <div class="modal-backdrop" id="cart-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="cart-modal-title">
+  <div class="modal-backdrop" id="cart-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="cart-modal-title" hidden>
     <div class="modal">
       <header>
         <h3 id="cart-modal-title">Buy All — Open or Copy Links</h3>
-        <button class="ghost-btn" onclick="closeCartModal()">Close</button>
+        <button class="ghost-btn" id="cart-modal-close">Close</button>
       </header>
       <div class="list" id="cart-modal-list"></div>
-      <p class="hint">Browsers may block multiple popups. If that happens, click “Copy all links,” allow popups, then “Open all.”</p>
-      <textarea id="cart-modal-textarea" style="width:100%;height:120px;margin-top:8px;"></textarea>
+      <p class="hint">Browsers may block multiple popups. Use “Copy all links” if any tabs are prevented from opening.</p>
+      <textarea id="cart-modal-textarea" style="width:100%;height:120px;margin-top:8px;" readonly></textarea>
+      <p class="muted" id="cart-modal-copy-status" aria-live="polite"></p>
       <div class="actions">
-        <button class="btn" onclick="openAllLinks()">Open all</button>
-        <button class="btn" onclick="copyAllLinks()">Copy all links</button>
+        <button class="btn" id="cart-open-all">Open all</button>
+        <button class="btn" id="cart-copy">Copy all links</button>
       </div>
     </div>
   </div>
-  
-    <!-- Footer (dynamic include) -->
+
+  <div id="gear-error" class="warning" role="alert" hidden></div>
+
+  <!-- Footer include -->
   <footer id="site-footer"></footer>
   <script>
     fetch("footer.html")
       .then(response => response.text())
-      .then(data => {
-        document.getElementById("site-footer").innerHTML = data;
+      .then(html => {
+        const host = document.getElementById("site-footer");
+        if (host) host.innerHTML = html;
+      })
+      .catch(() => {
+        const diag = (window.__gearDiag = window.__gearDiag || { scriptsLoaded: true, dataLoaded: false, errors: [] });
+        diag.errors.push("footer_fetch_failed");
       });
   </script>
+
+  <script type="module" src="js/gear.js"></script>
 </body>
 </html>
