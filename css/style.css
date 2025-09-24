@@ -2,12 +2,14 @@
   --ttg-nav-bg: rgba(8, 22, 38, 0.32);
   --ttg-nav-text: #f3f6ff;
   --ttg-nav-link: rgba(243, 246, 255, 0.82);
-  --ttg-nav-overlay: rgba(4, 15, 26, 0.58);
+  --ttg-nav-overlay: rgba(0, 0, 0, 0.35);
+  --ttg-drawer-bg: rgba(5, 12, 22, 0.86);
+  --ttg-drawer-shadow: 16px 0 32px rgba(5, 12, 22, 0.55);
 }
 
 #global-nav {
   position: relative;
-  z-index: 4000;
+  z-index: 2;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   color: var(--ttg-nav-text, #f3f6ff);
   background: var(--ttg-nav-bg, rgba(8, 22, 38, 0.32));
@@ -21,24 +23,16 @@
   text-decoration: none;
 }
 
-#global-nav .nav-inner {
+#global-nav .nav-bar {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
+  align-items: center;
+  gap: 16px;
   margin: 0 auto;
   width: min(100%, 1100px);
-  padding: 16px 20px 18px;
+  padding: 16px 20px;
   padding-block-start: calc(16px + env(safe-area-inset-top));
   padding-inline-start: calc(20px + env(safe-area-inset-left));
   padding-inline-end: calc(20px + env(safe-area-inset-right));
-}
-
-#global-nav .nav-primary {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  column-gap: 16px;
 }
 
 #ttg-nav-open {
@@ -114,96 +108,54 @@
   font-weight: 600;
 }
 
-#global-nav .links {
-  display: none;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  font-size: 0.95rem;
-}
-
-#global-nav .links a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 14px;
-  border-radius: 999px;
-  color: var(--ttg-nav-link, rgba(243, 246, 255, 0.82));
-  text-decoration: none;
-  transition: color 0.2s ease, background 0.2s ease;
-  min-height: 44px;
-}
-
-#global-nav .links a:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
-}
-
-#global-nav .links a[aria-current="page"] {
-  color: #ffffff;
-  text-decoration: underline;
-  text-underline-offset: 0.35em;
-  text-decoration-thickness: 2px;
-  font-weight: 600;
-}
-
-@media (min-width: 900px) {
-  #global-nav .nav-inner {
-    flex-direction: row;
-    align-items: center;
-    gap: 32px;
-  }
-
-  #global-nav .links {
-    display: flex;
-    margin-left: auto;
-  }
-}
 
 #ttg-overlay {
   position: fixed;
   inset: 0;
-  background: var(--ttg-nav-overlay, rgba(4, 15, 26, 0.58));
+  background: var(--ttg-nav-overlay, rgba(0, 0, 0, 0.35));
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.25s ease;
-  z-index: 5000;
+  transition: opacity 0.28s ease;
+  z-index: 10000;
 }
 
 #ttg-drawer {
   position: fixed;
   top: 0;
   left: 0;
-  width: 45vw;
+  width: min(45vw, 360px);
   height: 100dvh;
   transform: translateX(-100%);
-  transition: transform 0.25s ease;
-  background: rgba(6, 20, 34, 0.94);
+  transition: transform 0.32s ease;
+  background: var(--ttg-drawer-bg, rgba(5, 12, 22, 0.86));
   color: #f8fbff;
-  border-right: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 18px 0 40px rgba(0, 0, 0, 0.38);
+  box-shadow: var(--ttg-drawer-shadow, 16px 0 32px rgba(5, 12, 22, 0.55));
   display: flex;
   flex-direction: column;
-  padding: 28px;
-  padding-top: calc(28px + env(safe-area-inset-top));
-  padding-left: calc(28px + env(safe-area-inset-left));
-  padding-right: calc(28px + env(safe-area-inset-right));
-  z-index: 5100;
+  padding: 24px;
+  padding-top: calc(24px + env(safe-area-inset-top));
+  padding-left: calc(24px + env(safe-area-inset-left));
+  padding-right: calc(24px + env(safe-area-inset-right));
+  z-index: 10001;
   overflow-y: auto;
   box-sizing: border-box;
+  backdrop-filter: blur(28px) saturate(130%);
+  -webkit-backdrop-filter: blur(28px) saturate(130%);
 }
 
-#ttg-drawer header {
+#ttg-drawer .drawer-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 
-#ttg-drawer header strong {
+#ttg-drawer .drawer-label {
+  margin: 0;
   font-size: 1rem;
-  letter-spacing: 0.3px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 #ttg-nav-close {
@@ -211,7 +163,7 @@
   height: 40px;
   border-radius: 12px;
   border: none;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.16);
   color: inherit;
   font-size: 1.5rem;
   line-height: 1;
@@ -222,35 +174,37 @@
 
 #ttg-nav-close:hover,
 #ttg-nav-close:focus-visible {
-  background: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.26);
 }
 
 #ttg-drawer nav {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 #ttg-drawer a {
   display: block;
-  padding: 12px 4px;
-  border-radius: 10px;
-  color: inherit;
+  padding: 16px 20px;
+  border-radius: 12px;
+  color: var(--ttg-nav-link, rgba(243, 246, 255, 0.82));
   text-decoration: none;
+  font-size: 1rem;
+  line-height: 1.2;
   font-weight: 500;
   transition: color 0.2s ease, background 0.2s ease;
   min-height: 44px;
 }
 
 #ttg-drawer a:hover {
-  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
 }
 
 #ttg-drawer a[aria-current="page"] {
+  color: #ffffff;
   font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 0.35em;
-  text-decoration-thickness: 2px;
+  box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.7);
 }
 
 #global-nav[data-open="true"] #ttg-overlay {
@@ -262,12 +216,6 @@
   transform: translateX(0);
 }
 
-html.ttg-nav-locked,
-body.ttg-nav-locked {
-  overflow: hidden;
-  touch-action: none;
-}
-
 #global-nav button:focus-visible,
 #global-nav a:focus-visible {
   outline: 2px solid rgba(255, 255, 255, 0.65);
@@ -275,8 +223,8 @@ body.ttg-nav-locked {
   border-radius: 12px;
 }
 
-#global-nav .links a:focus-visible {
-  border-radius: 999px;
+#ttg-drawer a:focus-visible {
+  border-radius: 12px;
 }
 
 .visually-hidden {
