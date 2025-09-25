@@ -432,6 +432,28 @@
             margin-top: 6px !important; /* tiny gap under Subject */
         }
     </style>
+
+    <style>
+        /* small status pill next to consent labels */
+        .consent-pill {
+            display: inline-block;
+            min-width: 28px;
+            padding: 2px 8px;
+            margin-right: 8px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            text-align: center;
+            background: #d3d9e1; /* gray “No” */
+            color: #1c2733;
+            vertical-align: middle;
+        }
+
+        .consent-pill.is-yes {
+            background: #39b385; /* green “Yes” – matches button theme */
+            color: #ffffff;
+        }
+    </style>
 </head>
 <body>
     <header id="global-nav">
@@ -589,10 +611,12 @@
                     </div>
                     <label class="checkbox-item" for="consent">
                         <input type="checkbox" id="consent" name="consent" required />
+                        <span class="consent-pill" id="pill_consent" aria-live="polite" aria-atomic="true">No</span>
                         <span>I agree that The Tank Guide may contact me about my submission.</span>
                     </label>
                     <label class="checkbox-item" for="newsletter">
                         <input type="checkbox" id="newsletter" name="newsletter" />
+                        <span class="consent-pill" id="pill_newsletter" aria-live="polite" aria-atomic="true">No</span>
                         <span>Yes, I’d like to receive The Tank Guide newsletter/updates.</span>
                     </label>
                     <p class="privacy-note">
@@ -607,6 +631,8 @@
                 </div>
 
                 <input type="text" id="honeypot" name="honeypot" class="hidden" autocomplete="off" tabindex="-1" aria-hidden="true" />
+                <input type="hidden" name="can_contact" id="can_contact_hidden" value="No" />
+                <input type="hidden" name="newsletter_opt_in" id="newsletter_hidden" value="No" />
                 <input type="hidden" name="_subject" id="hiddenSubject" />
                 <input type="hidden" name="timestamp" id="timestamp" />
 
@@ -822,6 +848,53 @@
         document.addEventListener('DOMContentLoaded', () => {
             window.ttgInitNav?.();
         });
+    </script>
+    <script>
+        (function () {
+            const consent = document.getElementById('consent');
+            const newsletter = document.getElementById('newsletter');
+            const pillConsent = document.getElementById('pill_consent');
+            const pillNewsletter = document.getElementById('pill_newsletter');
+            const hidConsent = document.getElementById('can_contact_hidden');
+            const hidNewsletter = document.getElementById('newsletter_hidden');
+
+            function setPill(pill, checked) {
+                if (!pill) return;
+                pill.textContent = checked ? 'Yes' : 'No';
+                pill.classList.toggle('is-yes', !!checked);
+            }
+
+            function syncHidden(input, checked) {
+                if (!input) return;
+                input.value = checked ? 'Yes' : 'No';
+            }
+
+            function syncAll() {
+                setPill(pillConsent, consent?.checked);
+                syncHidden(hidConsent, consent?.checked);
+                setPill(pillNewsletter, newsletter?.checked);
+                syncHidden(hidNewsletter, newsletter?.checked);
+            }
+
+            // Initialize
+            syncAll();
+
+            // Live updates
+            consent?.addEventListener('change', () => {
+                // If consent is turned off while newsletter is checked, uncheck newsletter to keep logic consistent
+                if (!consent.checked && newsletter?.checked) {
+                    newsletter.checked = false;
+                }
+                syncAll();
+            });
+            newsletter?.addEventListener('change', () => {
+                // If newsletter is turned on without consent, auto-enable consent
+                if (newsletter.checked && consent && !consent.checked) {
+                    consent.checked = true;
+                }
+                syncAll();
+            });
+        })();
     </script>
 </body>
 </html>
