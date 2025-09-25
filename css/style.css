@@ -2,17 +2,32 @@
   --nav-text: #f3f6ff;
   --nav-muted: rgba(243, 246, 255, 0.78);
   --nav-inline-gap: 20px;
+  --bg: #0b1020;
+  --fg: #eef3ff;
+  --card: rgba(255, 255, 255, 0.06);
+  --line: rgba(255, 255, 255, 0.12);
+  --good: #1fbf75;
+  --warn: #f5b301;
+  --bad: #e25555;
+  --bubble-warn-bg: rgba(245, 179, 1, 0.18);
+  --bubble-warn-line: rgba(245, 179, 1, 0.5);
+  --bubble-warn-text: #fff5d6;
+  --bubble-bad-bg: rgba(226, 85, 85, 0.2);
+  --bubble-bad-line: rgba(226, 85, 85, 0.55);
+  --bubble-bad-text: #ffe3e3;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 html,
 body {
   margin: 0;
   padding: 0;
-}
-
-body {
+  background: var(--bg);
+  color: var(--fg);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  color: var(--nav-text);
 }
 
 .visually-hidden {
@@ -263,4 +278,218 @@ html[data-scroll-lock="on"] body {
   width: 24px;
   height: 24px;
   display: block;
+}
+
+/* Stocking Advisor layout */
+.wrap {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
+  backdrop-filter: blur(8px);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.row-actions {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-bottom: 6px;
+}
+
+input,
+select,
+button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--fg);
+  appearance: none;
+}
+
+input[disabled] {
+  opacity: 0.8;
+}
+
+button.btn {
+  cursor: pointer;
+  border: 1px solid var(--line);
+}
+
+button.danger {
+  background: rgba(226, 85, 85, 0.16);
+}
+
+.planted-wrap label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  appearance: auto;
+  -webkit-appearance: checkbox;
+  accent-color: var(--good);
+}
+
+.tip {
+  opacity: 0.8;
+  font-size: 0.9rem;
+  align-self: end;
+}
+
+.help {
+  margin-top: 6px;
+  opacity: 0.85;
+  font-size: 0.85rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.metric {
+  margin-bottom: 14px;
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+
+.env-recs {
+  opacity: 0.85;
+  font-size: 0.9rem;
+}
+
+.env-recs .dot {
+  opacity: 0.6;
+  margin: 0 6px;
+}
+
+.bar {
+  width: 100%;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.bar-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 1.2s ease;
+  background: linear-gradient(90deg, var(--good), var(--warn), var(--bad));
+}
+
+.bar-fill.green {
+  background: linear-gradient(90deg, var(--good), var(--good));
+}
+
+.bar-fill.yellow {
+  background: linear-gradient(90deg, var(--warn), var(--warn));
+}
+
+.bar-fill.red {
+  background: linear-gradient(90deg, var(--bad), var(--bad));
+}
+
+.warnings-section {
+  margin-top: 8px;
+}
+
+.warning-bubbles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bubble {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.bubble.warn {
+  background: var(--bubble-warn-bg);
+  border-color: var(--bubble-warn-line);
+  color: var(--bubble-warn-text);
+}
+
+.bubble.bad {
+  background: var(--bubble-bad-bg);
+  border-color: var(--bubble-bad-line);
+  color: var(--bubble-bad-text);
+}
+
+.bubble.note {
+  opacity: 0.9;
+}
+
+table.stock {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--fg);
+}
+
+table.stock th,
+table.stock td {
+  border-bottom: 1px solid var(--line);
+  padding: 10px;
+  background: transparent;
+}
+
+table.stock th.qty,
+table.stock td.qty {
+  width: 90px;
+  text-align: center;
+}
+
+table.stock th.actions,
+table.stock td.actions {
+  width: 180px;
+  text-align: right;
+}
+
+td.empty-cell {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+}
+
+.actions .mini {
+  width: auto;
+  padding: 6px 10px;
+  margin-left: 6px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--fg);
+  cursor: pointer;
+  appearance: none;
 }
