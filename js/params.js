@@ -358,6 +358,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateNH3Estimate();
   }
 
+  updatePlantedVisual();
+
   checkButton.addEventListener('click', () => {
     hasAssessed = true;
     handleAssessment();

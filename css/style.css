@@ -658,3 +658,33 @@ td.empty-cell {
   cursor: pointer;
   appearance: none;
 }
+#cycling-coach .planted-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 16px;
+}
+#cycling-coach input[type="checkbox"]#planted {
+  appearance: checkbox;
+  -webkit-appearance: checkbox;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  vertical-align: middle;
+  accent-color: currentColor; /* use theme text color; preserves native tick */
+}
+#cycling-coach label[for="planted"] {
+  line-height: 1.2;
+  cursor: pointer;     /* make label a large tap target */
+  user-select: none;
+}
+#cycling-coach input[type="checkbox"]#planted::before,
+#cycling-coach input[type="checkbox"]#planted::after {
+  content: none !important;  /* defeat any global faux-checkbox art */
+}
+/* Guard against global resets forcing custom pills */
+#cycling-coach input[type="checkbox"]#planted,
+#cycling-coach .planted-row input[type="checkbox"] {
+  border: initial;
+  background: initial;
+}
