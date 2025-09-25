@@ -6,7 +6,7 @@
   <title>The Tank Guide — About</title>
   <meta name="description" content="Learn about The Tank Guide mission, story, and future vision." />
   <link rel="icon" href="/favicon.ico" />
-  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.8" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     main { max-width: 960px; margin: 0 auto; padding: 0 20px 80px; }
@@ -18,7 +18,7 @@
       main { padding-bottom: 120px; }
     }
   </style>
-  <script defer src="js/nav.js?v=1.0.7"></script>
+  <script defer src="js/nav.js?v=1.0.8"></script>
 </head>
 <body class="theme-light">
   <div id="site-nav"></div>
@@ -63,7 +63,7 @@
     (async () => {
       const host = document.getElementById('site-footer');
       if (!host) return;
-      const res = await fetch('footer.html?v=1.0.7', { cache: 'no-cache' });
+      const res = await fetch('footer.html?v=1.0.8', { cache: 'no-cache' });
       host.outerHTML = await res.text();
     })();
   </script>

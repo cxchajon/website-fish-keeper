@@ -1,5 +1,5 @@
 (() => {
-  const NAV_VERSION = '1.0.7';
+  const NAV_VERSION = '1.0.8';
   const NAV_PLACEHOLDER_ID = 'site-nav';
   const HOME_PATH = '/index.html';
 

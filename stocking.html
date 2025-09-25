@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <title>FishkeepingLifeCo — Stocking Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
-  <script src="js/nav.js?v=1.0.7" defer></script>
+  <link rel="stylesheet" href="css/style.css?v=1.0.8" />
+  <script src="js/nav.js?v=1.0.8" defer></script>
 </head>
 <body class="theme-dark">
   <div id="site-nav"></div>
@@ -130,7 +130,7 @@
       (async () => {
         const host = document.getElementById('site-footer');
         if (!host) return;
-        const res = await fetch('footer.html?v=1.0.7', { cache: 'no-cache' });
+        const res = await fetch('footer.html?v=1.0.8', { cache: 'no-cache' });
         host.outerHTML = await res.text();
       })();
     </script>
