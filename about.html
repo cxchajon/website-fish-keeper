@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="css/style.css?v=1.0.8" />
 
   <style>
-    /* Layout + local tweaks that complement css/style.css */
     *, *::before, *::after { box-sizing: border-box; }
     main { max-width: 960px; margin: 0 auto; padding: 0 20px 80px; }
     .about-box a { color: #ffffff; text-decoration: underline; }
@@ -23,7 +22,7 @@
 
   <script defer src="js/nav.js?v=1.0.8"></script>
 
-  <!-- Organization JSON-LD -->
+  <!-- JSON-LD -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -34,30 +33,16 @@
     "image": "https://thetankguide.com/logo.png",
     "slogan": "Educational Aquarium Books & Tools",
     "description": "FishKeepingLifeCo publishes educational aquarium books and interactive online tools like The Tank Guide to help beginners and hobbyists set up, stock, and maintain thriving aquariums.",
-    "brand": {
-      "@type": "Brand",
-      "name": "The Tank Guide"
-    },
+    "brand": { "@type": "Brand", "name": "The Tank Guide" },
     "foundingDate": "2025-09-12",
     "publishingPrinciples": "https://thetankguide.com/about.html",
     "areaServed": "US",
     "knowsAbout": [
-      "Aquariums",
-      "Fishkeeping",
-      "Nitrogen Cycle",
-      "Freshwater Aquariums",
-      "Planted Tanks",
-      "Beginner Aquarium Setup",
-      "Water Parameters",
-      "Aquarium Cycling"
+      "Aquariums","Fishkeeping","Nitrogen Cycle","Freshwater Aquariums",
+      "Planted Tanks","Beginner Aquarium Setup","Water Parameters","Aquarium Cycling"
     ],
     "contactPoint": [
-      {
-        "@type": "ContactPoint",
-        "contactType": "customer support",
-        "email": "info@thetankguide.com",
-        "availableLanguage": ["en"]
-      }
+      { "@type": "ContactPoint", "contactType": "customer support", "email": "info@thetankguide.com", "availableLanguage": ["en"] }
     ],
     "sameAs": [
       "https://www.instagram.com/fishkeepinglifeco/",
@@ -70,13 +55,11 @@
   </script>
 </head>
 <body class="theme-light">
-  <!-- Site nav placeholder (populated by js/nav.js) -->
   <div id="site-nav"></div>
 
   <main>
     <h1 class="about-hero-title">About</h1>
 
-    <!-- Owner Story -->
     <section class="about-box" aria-labelledby="about-story">
       <h2 id="about-story">Owner Story</h2>
       <p>Ever since I was a kid, I was drawn to aquariums. My uncle kept guppies for years, and whenever I visited my grandmother, I’d sit and stare at them. That fascination stuck with me.</p>
@@ -90,7 +73,6 @@
 
       <hr />
 
-      <!-- Teaching & Inspiration -->
       <h2>Teaching &amp; Inspiration</h2>
       <p>Outside of aquariums, I’ve also gotten to see the other side of how teachers prepare for their students—especially special education teachers. The sacrifice, patience, and dedication they show left a big impression on me.</p>
       <p>It made me realize that teaching, in any form, is hard work. But it’s also one of the most meaningful things you can do. That spirit drives The Tank Guide. We want every aquarist to feel confident, excited, and empowered to give their fish a healthy home.</p>
@@ -98,52 +80,40 @@
 
       <hr />
 
-      <!-- Mission / Values / Vision (NEWLY ADDED) -->
-      <section aria-labelledby="mission-heading">
-        <h2 id="mission-heading">Our Mission</h2>
-        <p>
-          Our mission is to make aquariums accessible, educational, and inspiring for everyone.
-          Through books, digital tools, and community resources, we simplify the science of
-          fishkeeping while keeping the joy and wonder at the heart of the hobby.
-        </p>
+      <h2>Our Mission</h2>
+      <p>Our mission is to make aquariums accessible, educational, and inspiring for everyone. Through books, digital tools, and community resources, we simplify the science of fishkeeping while keeping the joy and wonder at the heart of the hobby.</p>
 
-        <h2>Our Values</h2>
-        <ul>
-          <li><strong>Education First</strong> — simplify complex science into clear, fun, and practical lessons.</li>
-          <li><strong>Beginner Friendly</strong> — create resources that welcome newcomers without overwhelming them.</li>
-          <li><strong>Family Oriented</strong> — design content parents and kids can enjoy together.</li>
-          <li><strong>Inspiration Through Storytelling</strong> — use characters, stories, and visuals to make learning memorable.</li>
-          <li><strong>Responsible Fishkeeping</strong> — promote ethical care and respect for aquatic life.</li>
-          <li><strong>Continuous Growth</strong> — expand tools, books, and resources to meet the evolving needs of hobbyists.</li>
-        </ul>
-
-        <h2>Future Vision</h2>
-        <ul>
-          <li><strong>Expand Books</strong> — grow the catalog beyond the nitrogen cycle story into prequels, sequels, puzzle/activity books, and more science-based aquarium stories.</li>
-          <li><strong>Build Website Tools</strong> — turn TheTankGuide.com into a full hub with stocking advisors, cycling coaches, gear recommendations, and parameter tracking.</li>
-          <li><strong>Interactive Learning</strong> — introduce apps and digital features that gamify aquarium care and teach through hands-on exploration.</li>
-          <li><strong>Community Growth</strong> — create resources for teachers, parents, and hobbyists to share, learn, and connect.</li>
-          <li><strong>Broader Ecosystem</strong> — eventually branch into related hobbies (plants, shrimp, snails, community aquariums), with interconnected books and tools.</li>
-          <li><strong>Global Reach</strong> — make educational aquarium content available worldwide, across languages and platforms.</li>
-        </ul>
-      </section>
-
-      <hr />
-
-      <!-- What's Next (kept from your current page) -->
-      <h2>What’s Next</h2>
-      <p>We’re working on new tooling, more dynamic stocking guidance, and better personalization to match aquarists with the right care plans. Expect more calculators, deeper editorial content, and a growing library of community-driven insights.</p>
-      <p>If you’re interested in partnering, sharing feedback, or supporting the project, we’d love to hear from you.</p>
+      <h2>Our Values</h2>
       <ul>
-        <li>Have an idea to improve the experience? <a href="https://thetankguide.com/feedback" target="_blank" rel="noopener">Send feedback</a>.</li>
+        <li><strong>Education First</strong> — simplify complex science into clear, fun, and practical lessons.</li>
+        <li><strong>Beginner Friendly</strong> — create resources that welcome newcomers without overwhelming them.</li>
+        <li><strong>Family Oriented</strong> — design content parents and kids can enjoy together.</li>
+        <li><strong>Inspiration Through Storytelling</strong> — use characters, stories, and visuals to make learning memorable.</li>
+        <li><strong>Responsible Fishkeeping</strong> — promote ethical care and respect for aquatic life.</li>
+        <li><strong>Continuous Growth</strong> — expand tools, books, and resources to meet the evolving needs of hobbyists.</li>
+      </ul>
+
+      <h2>Future Vision</h2>
+      <ul>
+        <li><strong>Expand Books</strong> — grow the catalog beyond the nitrogen cycle story into prequels, puzzle/activity books, and more science-based aquarium stories.</li>
+        <li><strong>Build Website Tools</strong> — turn TheTankGuide.com into a full hub with stocking advisors, cycling coaches, gear recommendations, and parameter tracking.</li>
+        <li><strong>Interactive Learning</strong> — introduce apps and digital features that gamify aquarium care and teach through hands-on exploration.</li>
+        <li><strong>Community Growth</strong> — create resources for teachers, parents, and hobbyists to share, learn, and connect.</li>
+        <li><strong>Broader Ecosystem</strong> — eventually branch into related hobbies (plants, shrimp, snails, community aquariums), with interconnected books and tools.</li>
+        <li><strong>Global Reach</strong> — make educational aquarium content available worldwide, across languages and platforms.</li>
+      </ul>
+
+      <p>If you’re interested in partnering, sharing feedback, or supporting the project, we’d love to hear from you:</p>
+      <ul>
+        <li>Have an idea to improve the experience? <a href="/feedback.html">Send feedback</a>.</li>
         <li>Curious about updates? Follow along on social or bookmark this page.</li>
         <li>Want to collaborate? Reach out—we’re building this for the community.</li>
       </ul>
-      <p>Thanks for being here, and happy fishkeeping!</p>
+
+      <p><strong>Thanks for being here, and happy fishkeeping!</strong></p>
     </section>
   </main>
 
-  <!-- Footer (fetched dynamically to stay consistent site-wide) -->
   <div id="site-footer"></div>
   <script>
     (async () => {
