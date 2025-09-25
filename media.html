@@ -6,7 +6,7 @@
   <title>The Tank Guide — Media Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Media Hub — Watch • Read • Explore. Aquarium videos and blogs for every aquarist." />
-  <link rel="stylesheet" href="css/style.css?v=1.0.8" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
   <link rel="icon" href="/favicon.ico" />
   <meta property="og:title" content="The Tank Guide — Media Hub" />
   <meta property="og:description" content="Watch • Read • Explore — videos and blogs for every aquarist." />
@@ -166,31 +166,10 @@
     }
 
   </style>
-  <script defer src="js/nav.js?v=1.1.0"></script>
+  <script defer src="js/nav.js?v=1.0.7"></script>
 </head>
-<body class="page-background">
-
-  <header class="site-header">
-    <div class="site-header__inner">
-      <a class="site-brand" href="index.html" aria-label="The Tank Guide — Home">
-        <span class="site-brand__title">The Tank Guide</span>
-        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
-      </a>
-      <button class="hamburger" data-nav="hamburger" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu">
-        <span class="hamburger__bars" aria-hidden="true"></span>
-        <span class="visually-hidden">Menu</span>
-      </button>
-    </div>
-  </header>
-  <div class="nav-overlay" data-nav="overlay"></div>
-  <nav id="site-drawer" class="nav-drawer" data-nav="drawer" aria-label="Site">
-    <a href="index.html" class="nav__link">Home</a>
-    <a href="stocking.html" class="nav__link">Stocking Advisor</a>
-    <a href="gear.html" class="nav__link">Gear</a>
-    <a href="params.html" class="nav__link">Cycling Coach</a>
-    <a href="media.html" class="nav__link" aria-current="page">Media</a>
-    <a href="about.html" class="nav__link">About</a>
-  </nav>
+<body class="theme-light">
+  <div id="site-nav"></div>
 
   <!-- Hero -->
   <section class="hero">
@@ -260,8 +239,8 @@
     (async () => {
       const host = document.getElementById('site-footer');
       if (!host) return;
-      const res = await fetch('footer.html', { cache: 'no-cache' });
-      host.innerHTML = await res.text();
+      const res = await fetch('footer.html?v=1.0.7', { cache: 'no-cache' });
+      host.outerHTML = await res.text();
     })();
   </script>
 </body>
