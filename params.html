@@ -30,21 +30,24 @@
             <label for="ammonia">Ammonia (NH₃/NH₄⁺)</label>
             <div class="field__controls">
               <input type="number" id="ammonia" name="ammonia" step="0.01" min="0" inputmode="decimal" />
-              <button type="button" class="tooltip" data-tooltip="Waste from fish/food. Even tiny amounts are toxic." aria-label="Waste from fish and food. Even tiny amounts are toxic.">?</button>
+              <button type="button" class="tooltip" data-tooltip="Waste from fish/food. Even tiny amounts are toxic." aria-label="More information about ammonia" aria-describedby="tip-ammonia">?</button>
+              <span class="visually-hidden" id="tip-ammonia">Waste from fish/food. Even tiny amounts are toxic.</span>
             </div>
           </div>
           <div class="field">
             <label for="nitrite">Nitrite (NO₂⁻)</label>
             <div class="field__controls">
               <input type="number" id="nitrite" name="nitrite" step="0.01" min="0" inputmode="decimal" />
-              <button type="button" class="tooltip" data-tooltip="Mid-stage of the cycle; also toxic." aria-label="Mid-stage of the cycle; also toxic.">?</button>
+              <button type="button" class="tooltip" data-tooltip="Mid-stage of the cycle; also toxic." aria-label="More information about nitrite" aria-describedby="tip-nitrite">?</button>
+              <span class="visually-hidden" id="tip-nitrite">Mid-stage of the cycle; also toxic.</span>
             </div>
           </div>
           <div class="field">
             <label for="nitrate">Nitrate (NO₃⁻)</label>
             <div class="field__controls">
               <input type="number" id="nitrate" name="nitrate" step="0.1" min="0" inputmode="decimal" />
-              <button type="button" class="tooltip" data-tooltip="End product; safer but must be controlled with water changes." aria-label="End product; safer but must be controlled with water changes.">?</button>
+              <button type="button" class="tooltip" data-tooltip="End product; safer but must be controlled with water changes." aria-label="More information about nitrate" aria-describedby="tip-nitrate">?</button>
+              <span class="visually-hidden" id="tip-nitrate">End product; safer but must be controlled with water changes.</span>
             </div>
           </div>
           <div class="field">
@@ -54,7 +57,8 @@
                 <option value="fishless" selected>Fishless</option>
                 <option value="fish-in">Fish-in</option>
               </select>
-              <button type="button" class="tooltip" data-tooltip="Fishless = add ammonia without fish. Fish-in = cycle with fish; requires extra care." aria-label="Fishless means add ammonia without fish. Fish-in means cycling with fish and requires extra care.">?</button>
+              <button type="button" class="tooltip" data-tooltip="Fishless = add ammonia without fish. Fish-in = cycle with fish; requires extra care." aria-label="More information about cycle methods" aria-describedby="tip-method">?</button>
+              <span class="visually-hidden" id="tip-method">Fishless means add ammonia without fish. Fish-in means cycling with fish and requires extra care.</span>
             </div>
           </div>
           <div class="field field--checkbox">
@@ -74,7 +78,8 @@
     <section class="panel panel--results" aria-labelledby="results-heading">
       <div class="panel__header">
         <h2 class="panel__title" id="results-heading">Results</h2>
-        <button type="button" class="tooltip tooltip--inline" data-tooltip="High-level snapshot of where your tank stands." aria-label="High-level snapshot of where your tank stands.">?</button>
+        <button type="button" class="tooltip tooltip--inline" data-tooltip="High-level snapshot of where your tank stands." aria-label="More information about the results summary" aria-describedby="tip-results">?</button>
+        <span class="visually-hidden" id="tip-results">High-level snapshot of where your tank stands.</span>
       </div>
       <div class="panel__body" id="results" aria-live="polite">
         <div class="status-row">
@@ -82,22 +87,23 @@
         </div>
         <p class="results__summary" id="summary">Ammonia: — ppm • Nitrite: — ppm • Nitrate: — ppm • Method: Fishless • Planted: No</p>
         <div class="results__actions" id="actions-container" hidden>
-          <p class="actions__intro">Action steps <button type="button" class="tooltip tooltip--inline" data-tooltip="Quick, practical steps based on your readings." aria-label="Quick, practical steps based on your readings.">?</button></p>
+          <p class="actions__intro">Action steps <button type="button" class="tooltip tooltip--inline" data-tooltip="Quick, practical steps based on your readings." aria-label="More information about the action steps" aria-describedby="tip-actions">?</button></p>
+          <span class="visually-hidden" id="tip-actions">Quick, practical steps based on your readings.</span>
           <ul class="actions__list" id="action-list"></ul>
         </div>
       </div>
     </section>
 
     <section class="panel panel--challenge" id="challenge-panel" aria-labelledby="challenge-heading" hidden>
-      <div class="panel__header panel__header--toggle">
+      <div class="panel__header">
         <h2 class="panel__title" id="challenge-heading">24-hour challenge</h2>
-        <button type="button" class="panel__toggle" id="challenge-toggle" aria-expanded="false" aria-controls="challenge-content">Open</button>
       </div>
-      <div class="panel__body challenge" id="challenge-content" hidden>
+      <div class="panel__body challenge" id="challenge-content">
         <div class="challenge__header">
           <h3>Start 24-hour challenge</h3>
           <button type="button" class="btn btn--ghost" id="challenge-start">Start 24-hour challenge</button>
-          <button type="button" class="tooltip tooltip--inline" data-tooltip="Shows your filter can process 2 ppm ammonia to 0 ammonia and 0 nitrite in 24 hours." aria-label="The challenge shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.">?</button>
+          <button type="button" class="tooltip tooltip--inline" data-tooltip="Shows your filter can process 2 ppm ammonia to 0 ammonia and 0 nitrite in 24 hours." aria-label="More information about the 24-hour challenge" aria-describedby="tip-challenge">?</button>
+          <span class="visually-hidden" id="tip-challenge">The challenge shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</span>
         </div>
         <p class="challenge__subtext">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
         <div class="challenge__form" id="challenge-form" hidden>
@@ -143,7 +149,8 @@
           <span class="advanced__label">Estimated toxic NH₃:</span>
           <span class="advanced__value" id="nh3-value">—</span>
           <span class="advanced__badge" id="nh3-badge"></span>
-          <button type="button" class="tooltip tooltip--inline" data-tooltip="Test kits read TAN (NH₃ + NH₄⁺). Only NH₃ is toxic and increases with pH and temperature." aria-label="Test kits read TAN, which is NH3 plus NH4. Only NH3 is toxic and it increases with pH and temperature.">?</button>
+          <button type="button" class="tooltip tooltip--inline" data-tooltip="Test kits read TAN (NH₃ + NH₄⁺). Only NH₃ is toxic and increases with pH and temperature." aria-label="More information about toxic ammonia" aria-describedby="tip-advanced">?</button>
+          <span class="visually-hidden" id="tip-advanced">Test kits read TAN, which is NH3 plus NH4. Only NH3 is toxic and it increases with pH and temperature.</span>
         </div>
         <p class="advanced__note"><a href="/media.html" target="_blank" rel="noopener">See Media page for Sources &amp; Further Reading.</a></p>
       </div>

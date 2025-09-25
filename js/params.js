@@ -11,7 +11,6 @@ const summaryLine = document.getElementById('summary');
 const actionsContainer = document.getElementById('actions-container');
 const actionList = document.getElementById('action-list');
 const challengePanel = document.getElementById('challenge-panel');
-const challengeToggle = document.getElementById('challenge-toggle');
 const challengeContent = document.getElementById('challenge-content');
 const challengeStartBtn = document.getElementById('challenge-start');
 const challengeForm = document.getElementById('challenge-form');
@@ -118,6 +117,30 @@ const challengeState = {
 };
 
 let tempUnit = 'F';
+let challengeVisible = false;
+
+function ensureNavClosed() {
+  const drawerSelectors = '#sidebar, .sidenav, .nav-drawer, [data-drawer], [data-nav-drawer]';
+  document.querySelectorAll(drawerSelectors).forEach((drawer) => {
+    ['open', 'active', 'is-open', 'is-visible'].forEach((cls) => drawer.classList.remove(cls));
+    if (drawer.getAttribute('aria-hidden') === 'false') {
+      drawer.setAttribute('aria-hidden', 'true');
+    }
+  });
+  document.querySelectorAll('#menuToggle, .nav-toggle, [data-nav-toggle]').forEach((toggle) => {
+    toggle.setAttribute('aria-expanded', 'false');
+  });
+  const { body } = document;
+  if (body) {
+    ['drawer-open', 'has-drawer', 'app--with-drawer'].forEach((cls) => body.classList.remove(cls));
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', ensureNavClosed, { once: true });
+} else {
+  ensureNavClosed();
+}
 
 function clampNumber(value, min = 0, max = Number.POSITIVE_INFINITY) {
   if (Number.isNaN(value)) return Number.NaN;
@@ -270,18 +293,42 @@ function setSectionExpanded(button, content, expanded) {
   button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
   button.textContent = expanded ? 'Close' : 'Open';
   content.hidden = !expanded;
+  if ('inert' in content) {
+    content.inert = !expanded;
+  } else if (!expanded) {
+    content.setAttribute('aria-hidden', 'true');
+  } else {
+    content.removeAttribute('aria-hidden');
+  }
 }
 
 function toggleChallenge(visible) {
   if (!challengePanel) return;
   if (!visible) {
-    challengePanel.hidden = true;
     resetChallenge();
-    setSectionExpanded(challengeToggle, challengeContent, false);
+    challengePanel.hidden = true;
+    if (challengeContent) {
+      if ('inert' in challengeContent) {
+        challengeContent.inert = true;
+      } else {
+        challengeContent.setAttribute('aria-hidden', 'true');
+      }
+    }
+    challengeVisible = false;
     return;
   }
   challengePanel.hidden = false;
-  setSectionExpanded(challengeToggle, challengeContent, false);
+  if (challengeContent) {
+    if ('inert' in challengeContent) {
+      challengeContent.inert = false;
+    } else {
+      challengeContent.removeAttribute('aria-hidden');
+    }
+  }
+  if (!challengeVisible) {
+    resetChallenge();
+  }
+  challengeVisible = true;
 }
 
 function setChallengeResult(passed, planted) {
@@ -353,9 +400,6 @@ function handleCheck() {
 
   const showChallenge = status === STATUS.CYCLED && inputs.method === 'fishless';
   toggleChallenge(showChallenge);
-  if (!showChallenge) {
-    resetChallenge();
-  }
 }
 
 function handleClear() {
@@ -365,6 +409,7 @@ function handleClear() {
   updateStatusBadge(STATUS.INCOMPLETE);
   renderActions([]);
   toggleChallenge(false);
+  setSectionExpanded(advancedToggle, advancedContent, false);
   nh3Value.textContent = '—';
   nh3Badge.textContent = '';
   nh3Badge.className = 'advanced__badge';
@@ -381,15 +426,6 @@ function handlePlantedToggle() {
 function handleAdvancedToggle() {
   const isOpen = advancedToggle.getAttribute('aria-expanded') === 'true';
   setSectionExpanded(advancedToggle, advancedContent, !isOpen);
-}
-
-function handleChallengeToggle() {
-  const isOpen = challengeToggle.getAttribute('aria-expanded') === 'true';
-  const nextState = !isOpen;
-  setSectionExpanded(challengeToggle, challengeContent, nextState);
-  if (!nextState) {
-    resetChallenge();
-  }
 }
 
 function handleTempUnitToggle() {
@@ -454,9 +490,6 @@ plantedCheckbox.addEventListener('change', handlePlantedToggle);
 if (advancedToggle) {
   advancedToggle.addEventListener('click', handleAdvancedToggle);
 }
-if (challengeToggle) {
-  challengeToggle.addEventListener('click', handleChallengeToggle);
-}
 if (tempUnitBtn) {
   tempUnitBtn.addEventListener('click', handleTempUnitToggle);
 }
@@ -474,5 +507,4 @@ handlePlantedToggle();
 updateAdvanced();
 updateStatusBadge(STATUS.INCOMPLETE);
 setSectionExpanded(advancedToggle, advancedContent, false);
-setSectionExpanded(challengeToggle, challengeContent, false);
 toggleChallenge(false);
