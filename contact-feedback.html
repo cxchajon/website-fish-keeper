@@ -24,6 +24,9 @@
             --shadow-top: 0 -18px 36px rgba(15, 28, 44, 0.35), 0 22px 40px rgba(15, 28, 44, 0.08);
             --shadow-mobile: 0 12px 24px rgba(15, 28, 44, 0.18);
             --transition-duration: 450ms;
+            --gap-tight: 12px;
+            --gap-subject: 14px;
+            --gap-between: 16px;
         }
 
         * {
@@ -91,7 +94,15 @@
         form {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 0;
+        }
+
+        form > .field-group {
+            margin-bottom: var(--gap-between);
+        }
+
+        form > .field-group.subject-group {
+            margin-bottom: 0;
         }
 
         .field-group {
@@ -194,10 +205,46 @@
         }
 
         .subject-panel.active {
-            margin-top: 8px;
-            margin-bottom: 4px;
+            margin-top: 0;
+            margin-bottom: 0;
             max-height: 800px;
             opacity: 1;
+        }
+
+        .stay-in-touch {
+            margin-bottom: var(--gap-between);
+        }
+
+        .js-spacing-state .stay-in-touch {
+            margin-top: var(--gap-subject);
+        }
+
+        .accordion-panel {
+            margin-top: var(--gap-tight);
+        }
+
+        .accordion-panel:not(.active) {
+            margin-top: 0;
+        }
+
+        .js-spacing-state.has-subject .stay-in-touch {
+            margin-top: var(--gap-between);
+        }
+
+        #panel-fish,
+        #panel-logic,
+        #panel-questions,
+        #panel-reviews,
+        #panel-general {
+            margin-top: var(--gap-tight);
+        }
+
+        #panel-fish:not(.active),
+        #panel-logic:not(.active),
+        #panel-questions:not(.active),
+        #panel-reviews:not(.active),
+        #panel-general:not(.active) {
+            margin-top: 0;
         }
 
         .subject-panel .field-group {
@@ -248,6 +295,7 @@
         .actions {
             display: flex;
             justify-content: flex-end;
+            margin-top: var(--gap-between);
         }
 
         .actions button {
@@ -331,7 +379,7 @@
         <section class="contact-card">
             <h1>Contact &amp; Feedback</h1>
             <!-- TODO: Insert your Formspree endpoint in the form action attribute below -->
-            <form id="contactForm" method="POST" action="https://formspree.io/f/XXXXXXXX">
+            <form id="feedbackForm" class="js-spacing-state" method="POST" action="https://formspree.io/f/XXXXXXXX">
                 <div class="field-group">
                     <label for="name">Name <span class="required-asterisk">*</span></label>
                     <p class="required-note">*Required</p>
@@ -344,7 +392,7 @@
                     <input type="email" id="email" name="email" autocomplete="email" required />
                 </div>
 
-                <div class="field-group">
+                <div class="field-group subject-group">
                     <label for="subject">Subject <span class="required-asterisk">*</span></label>
                     <p class="required-note">*Required</p>
                     <div class="subject-wrapper">
@@ -360,7 +408,7 @@
                     </div>
                 </div>
 
-                <div class="subject-panel" id="panel-recommend">
+                <div class="subject-panel accordion-panel" id="panel-fish">
                     <div class="field-group">
                         <label for="fishName">Fish Name <span class="required-asterisk">*</span></label>
                         <p class="required-note">*Required</p>
@@ -381,7 +429,7 @@
                     </div>
                 </div>
 
-                <div class="subject-panel" id="panel-logic">
+                <div class="subject-panel accordion-panel" id="panel-logic">
                     <div class="field-group">
                         <label for="logicPage">Page Selector</label>
                         <select id="logicPage" name="logicPage">
@@ -398,14 +446,14 @@
                     </div>
                 </div>
 
-                <div class="subject-panel" id="panel-questions">
+                <div class="subject-panel accordion-panel" id="panel-questions">
                     <div class="field-group">
                         <label for="generalQuestion">Your Question</label>
                         <textarea id="generalQuestion" name="generalQuestion" placeholder="Ask us anything — we’ll get back to you."></textarea>
                     </div>
                 </div>
 
-                <div class="subject-panel" id="panel-reviews">
+                <div class="subject-panel accordion-panel" id="panel-reviews">
                     <div class="field-group">
                         <label for="productName">Product Name <span class="required-asterisk">*</span></label>
                         <p class="required-note">*Required</p>
@@ -422,14 +470,14 @@
                     </div>
                 </div>
 
-                <div class="subject-panel" id="panel-general">
+                <div class="subject-panel accordion-panel" id="panel-general">
                     <div class="field-group">
                         <label for="generalIdeas">Share Your Ideas</label>
                         <textarea id="generalIdeas" name="generalIdeas" placeholder="Share your idea — YouTube, article, event, forum, or anything aquarium related."></textarea>
                     </div>
                 </div>
 
-                <div class="checkbox-block" role="group" aria-labelledby="consentHeading">
+                <div class="checkbox-block stay-in-touch" role="group" aria-labelledby="consentHeading">
                     <div class="field-group">
                         <label id="consentHeading">Stay in touch</label>
                     </div>
@@ -471,14 +519,14 @@
         (function () {
             const subjectSelect = document.getElementById('subject');
             const panels = {
-                'Recommend a Fish': document.getElementById('panel-recommend'),
+                'Recommend a Fish': document.getElementById('panel-fish'),
                 'Logic Issues': document.getElementById('panel-logic'),
                 'Questions?': document.getElementById('panel-questions'),
                 'Product Reviews': document.getElementById('panel-reviews'),
                 'General (YouTube, article ideas, events, forums, anything related to aquariums)': document.getElementById('panel-general')
             };
             const chevron = document.querySelector('.chevron');
-            const form = document.getElementById('contactForm');
+            const form = document.getElementById('feedbackForm');
             const formStatus = document.getElementById('formStatus');
             const fishNameInput = document.getElementById('fishName');
             const fishNameError = document.getElementById('fishNameError');
@@ -488,6 +536,9 @@
             const timestampField = document.getElementById('timestamp');
             const captchaError = document.getElementById('captchaError');
             const textareas = Array.from(document.querySelectorAll('textarea'));
+
+            form.classList.add('js-spacing-state');
+            form.classList.remove('has-subject');
 
             function closeAllPanels() {
                 Object.values(panels).forEach(panel => {
@@ -510,6 +561,11 @@
                 const value = subjectSelect.value;
                 openPanel(value);
                 hiddenSubject.value = value ? `[Contact & Feedback] – ${value}` : '';
+                if (value) {
+                    form.classList.add('has-subject');
+                } else {
+                    form.classList.remove('has-subject');
+                }
             });
 
             function autoResizeTextarea(el) {
@@ -569,6 +625,7 @@
                 chevron.classList.remove('up');
                 hiddenSubject.value = '';
                 timestampField.value = '';
+                form.classList.remove('has-subject');
                 textareas.forEach(textarea => {
                     textarea.style.height = '';
                     autoResizeTextarea(textarea);
