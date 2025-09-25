@@ -405,6 +405,33 @@
             margin-top: var(--gap-s) !important;
         }
     </style>
+
+    <style>
+        /* Collapsed panels should occupy no vertical space */
+        #feedbackForm .subject-panel {
+            /* remove any spacing while collapsed */
+            padding: 0 !important;
+            border-width: 0 !important;
+            margin: 0 !important;
+            max-height: 0 !important;
+            opacity: 0 !important;
+            overflow: hidden !important;
+        }
+
+        /* Active panel: restore look and tight attachment to Subject */
+        #feedbackForm .subject-panel.active {
+            padding: 20px 20px 24px !important; /* restore interior */
+            border-width: 2px !important; /* restore border */
+            margin-top: 6px !important; /* tight gap under Subject */
+            opacity: 1 !important;
+            max-height: 1000px !important; /* allow content to expand */
+        }
+
+        /* Keep the “Stay in touch” card snug when no Subject is selected */
+        #feedbackForm.js-spacing-state:not(.has-subject) .stay-in-touch {
+            margin-top: 6px !important; /* tiny gap under Subject */
+        }
+    </style>
 </head>
 <body>
     <header id="global-nav">
