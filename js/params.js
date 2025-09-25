@@ -163,6 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const challengeNitrite = document.getElementById('challenge-nitrite');
   const challengeAmmoniaError = document.getElementById('challenge-ammonia-error');
   const challengeNitriteError = document.getElementById('challenge-nitrite-error');
+  const challengeInstructions = document.getElementById('challenge-instructions');
+  const defaultChallengeInstructions = challengeInstructions ? challengeInstructions.textContent : '';
   const advancedPanel = document.getElementById('advanced-panel');
   const advancedSummary = advancedPanel ? advancedPanel.querySelector('summary') : null;
   const phInput = document.getElementById('ph');
@@ -204,12 +206,31 @@ document.addEventListener('DOMContentLoaded', () => {
     challengeNitrite.value = '';
     hideFieldError(challengeAmmoniaError);
     hideFieldError(challengeNitriteError);
+    if (challengeStart) {
+      challengeStart.disabled = false;
+    }
+    if (challengeCheck) {
+      challengeCheck.disabled = false;
+    }
+    if (challengeInstructions) {
+      challengeInstructions.textContent = defaultChallengeInstructions;
+      const warnClasses = Array.from(challengeInstructions.classList).filter((cls) => cls.toLowerCase().includes('warn'));
+      warnClasses.forEach((cls) => challengeInstructions.classList.remove(cls));
+      if (challengeInstructions.hasAttribute('data-state')) {
+        challengeInstructions.removeAttribute('data-state');
+      }
+    }
   }
 
   function setChallengeVisibility(shouldShow) {
-    resetChallenge();
-    if (challengeCard) {
-      challengeCard.hidden = !shouldShow;
+    if (!challengeCard) {
+      return;
+    }
+    if (shouldShow) {
+      challengeCard.hidden = false;
+    } else {
+      resetChallenge();
+      challengeCard.hidden = true;
     }
   }
 
@@ -389,6 +410,8 @@ document.addEventListener('DOMContentLoaded', () => {
   methodSelect.addEventListener('change', () => {
     if (hasAssessed) {
       handleAssessment();
+    } else {
+      setChallengeVisibility(false);
     }
   });
 
