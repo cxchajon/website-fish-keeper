@@ -4,110 +4,594 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Tank Guide — Cycling Coach</title>
-  <meta name="description" content="Check today’s aquarium readings, see your cycling status, and get guidance tailored to fishless or fish-in methods." />
+  <meta name="description" content="Cycling Coach interprets your ammonia, nitrite, and nitrate readings to show cycling progress and next steps." />
   <link rel="stylesheet" href="css/style.css?v=1.0.8" />
-  <link rel="stylesheet" href="css/params.css?v=1.1.1" />
+  <link rel="icon" href="/favicon.ico" />
   <script defer src="js/nav.js?v=1.0.8"></script>
+  <style>
+    :root {
+      --card-surface: rgba(14, 22, 36, 0.72);
+      --card-border: rgba(255, 255, 255, 0.16);
+      --muted: rgba(240, 246, 255, 0.78);
+      --input-bg: rgba(8, 12, 20, 0.6);
+      --input-border: rgba(255, 255, 255, 0.18);
+      --chip-warn: rgba(245, 179, 1, 0.18);
+      --chip-warn-text: #ffe8b5;
+      --chip-warn-border: rgba(245, 179, 1, 0.4);
+      --chip-plain: rgba(255, 255, 255, 0.08);
+      --transition-speed: 220ms;
+    }
+
+    body.cycling-coach {
+      position: relative;
+      min-height: 100vh;
+      padding-bottom: 120px;
+    }
+
+    .planted-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(160deg, rgba(46, 140, 90, 0.3), rgba(46, 140, 90, 0.16));
+      opacity: 0;
+      transition: opacity var(--transition-speed) ease;
+      z-index: 0;
+    }
+
+    body.planted-active .planted-overlay {
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .planted-overlay,
+      .page-title__leaf {
+        transition-duration: 0ms;
+      }
+    }
+
+    #site-nav {
+      position: relative;
+      z-index: 20;
+    }
+
+    main {
+      position: relative;
+      z-index: 10;
+      padding: 32px 20px 64px;
+    }
+
+    .page-wrap {
+      width: min(960px, 100%);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .page-header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .page-header p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .page-title {
+      margin: 0;
+      font-size: clamp(2.4rem, 3vw + 1.6rem, 3rem);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .page-title__leaf {
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+      font-size: 1.4rem;
+    }
+
+    body.planted-active .page-title__leaf {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card {
+      background: var(--card-surface);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 24px;
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card__title {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .info-btn {
+      appearance: none;
+      background: var(--chip-plain);
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      color: inherit;
+      font-size: 0.85rem;
+      line-height: 1;
+      padding: 6px 8px;
+      cursor: pointer;
+      transition: transform 160ms ease;
+    }
+
+    .info-btn:focus-visible {
+      outline: 2px solid #8cc4ff;
+      outline-offset: 2px;
+    }
+
+    .info-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .info-btn[data-tooltip] {
+      position: relative;
+    }
+
+    .info-btn[data-tooltip]:focus::after,
+    .info-btn[data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 10px);
+      transform: translateX(-50%);
+      min-width: 220px;
+      background: rgba(8, 12, 20, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      color: #f8fbff;
+      line-height: 1.35;
+      z-index: 30;
+      pointer-events: none;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .info-btn[data-tooltip]:focus::before,
+    .info-btn[data-tooltip]:hover::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 3px);
+      transform: translateX(-50%);
+      border-width: 6px;
+      border-style: solid;
+      border-color: rgba(255, 255, 255, 0.22) transparent transparent transparent;
+      z-index: 29;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .field label {
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+
+    .field input[type="number"],
+    .field select {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: inherit;
+      font-size: 1rem;
+    }
+
+    .field input[type="number"]:focus-visible,
+    .field select:focus-visible,
+    .checkbox input:focus-visible {
+      outline: 2px solid #8cc4ff;
+      outline-offset: 2px;
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    .checkbox input {
+      width: 20px;
+      height: 20px;
+    }
+
+    .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-start;
+    }
+
+    .btn {
+      appearance: none;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      padding: 12px 22px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #06121e;
+      background: #f3f7ff;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(3, 10, 22, 0.35);
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid #8cc4ff;
+      outline-offset: 2px;
+    }
+
+    .btn--secondary {
+      background: transparent;
+      border-color: rgba(255, 255, 255, 0.28);
+      color: inherit;
+      box-shadow: none;
+    }
+
+    .status-row {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .status-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      align-self: flex-start;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .results-summary {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .actions-block {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .actions-block header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    .actions-list {
+      margin: 0;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .actions-list li {
+      line-height: 1.45;
+    }
+
+    .challenge-card {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .challenge-card h3 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .challenge-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .chip-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--chip-warn);
+      color: var(--chip-warn-text);
+      border: 1px solid var(--chip-warn-border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 600;
+    }
+
+    details.advanced {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      padding: 0;
+      background: rgba(10, 16, 28, 0.6);
+      overflow: hidden;
+    }
+
+    details.advanced > summary {
+      list-style: none;
+      margin: 0;
+      padding: 18px 20px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    details.advanced > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .advanced-body {
+      padding: 0 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .advanced-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .temp-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .temp-toggle button {
+      appearance: none;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      background: transparent;
+      color: inherit;
+      padding: 8px 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .temp-toggle button:focus-visible {
+      outline: 2px solid #8cc4ff;
+      outline-offset: 2px;
+    }
+
+    .advanced-output {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      font-weight: 600;
+    }
+
+    .advanced-output .value {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .nh3-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(226, 85, 85, 0.18);
+      border: 1px solid rgba(226, 85, 85, 0.46);
+      color: #ffe3e3;
+      font-size: 0.85rem;
+    }
+
+    .advanced-note {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .advanced-note a {
+      color: inherit;
+    }
+
+    .disclaimer,
+    .coach-blurb {
+      background: rgba(8, 12, 20, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px 24px;
+      line-height: 1.5;
+    }
+
+    .disclaimer {
+      font-weight: 600;
+    }
+
+    footer {
+      margin-top: 40px;
+    }
+
+    @media (max-width: 640px) {
+      .card {
+        padding: 20px;
+      }
+
+      .info-btn[data-tooltip]:focus::after,
+      .info-btn[data-tooltip]:hover::after {
+        left: auto;
+        right: 0;
+        transform: none;
+      }
+
+      .info-btn[data-tooltip]:focus::before,
+      .info-btn[data-tooltip]:hover::before {
+        left: auto;
+        right: 12px;
+        transform: none;
+      }
+    }
+  </style>
 </head>
 <body class="theme-dark cycling-coach">
   <div id="site-nav"></div>
   <div class="planted-overlay" aria-hidden="true"></div>
 
-  <main class="coach" id="main-content">
-    <header class="coach__header">
-      <p class="coach__eyebrow">Cycling Coach</p>
-      <h1 class="coach__title" id="coach-title">Cycling Coach <span class="coach__leaf" id="coach-leaf" aria-hidden="true">🍃</span></h1>
-      <p class="coach__lede">Enter today’s parameters to understand your cycle progress and next steps.</p>
-    </header>
+  <main id="main-content">
+    <div class="page-wrap">
+      <header class="page-header">
+        <p class="eyebrow">Self-check your aquarium cycle</p>
+        <h1 class="page-title">Cycling Coach <span class="page-title__leaf" aria-hidden="true">🍃</span></h1>
+        <p>Enter today’s readings to see where your cycle stands and what to do next.</p>
+      </header>
 
-    <section class="panel panel--inputs" aria-labelledby="inputs-heading">
-      <div class="panel__header">
-        <h2 class="panel__title" id="inputs-heading">Today’s readings</h2>
-      </div>
-      <form id="coach-form" class="panel__body" novalidate>
-        <div class="field-grid">
-          <div class="field">
-            <label for="ammonia">Ammonia (NH₃/NH₄⁺)</label>
-            <div class="field__controls">
+      <section class="card" aria-labelledby="inputs-heading">
+        <div class="card__header">
+          <h2 class="card__title" id="inputs-heading">Inputs</h2>
+        </div>
+        <form id="coach-form" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <div class="label-row">
+                <label for="ammonia">Ammonia (NH₃/NH₄⁺)</label>
+                <button type="button" class="info-btn" data-tooltip="Waste from fish/food. Even tiny amounts are toxic." aria-label="Ammonia info" aria-describedby="tip-ammonia">ⓘ</button>
+              </div>
               <input type="number" id="ammonia" name="ammonia" step="0.01" min="0" inputmode="decimal" />
-              <button type="button" class="tooltip" data-tooltip="Waste from fish/food. Even tiny amounts are toxic." aria-label="More information about ammonia" aria-describedby="tip-ammonia">?</button>
-              <span class="visually-hidden" id="tip-ammonia">Waste from fish/food. Even tiny amounts are toxic.</span>
+              <span id="tip-ammonia" class="visually-hidden">Waste from fish/food. Even tiny amounts are toxic.</span>
             </div>
-          </div>
-          <div class="field">
-            <label for="nitrite">Nitrite (NO₂⁻)</label>
-            <div class="field__controls">
+            <div class="field">
+              <div class="label-row">
+                <label for="nitrite">Nitrite (NO₂⁻)</label>
+                <button type="button" class="info-btn" data-tooltip="Mid-stage of the cycle; also toxic." aria-label="Nitrite info" aria-describedby="tip-nitrite">ⓘ</button>
+              </div>
               <input type="number" id="nitrite" name="nitrite" step="0.01" min="0" inputmode="decimal" />
-              <button type="button" class="tooltip" data-tooltip="Mid-stage of the cycle; also toxic." aria-label="More information about nitrite" aria-describedby="tip-nitrite">?</button>
-              <span class="visually-hidden" id="tip-nitrite">Mid-stage of the cycle; also toxic.</span>
+              <span id="tip-nitrite" class="visually-hidden">Mid-stage of the cycle; also toxic.</span>
             </div>
-          </div>
-          <div class="field">
-            <label for="nitrate">Nitrate (NO₃⁻)</label>
-            <div class="field__controls">
+            <div class="field">
+              <div class="label-row">
+                <label for="nitrate">Nitrate (NO₃⁻)</label>
+                <button type="button" class="info-btn" data-tooltip="End product; safer but must be controlled with water changes." aria-label="Nitrate info" aria-describedby="tip-nitrate">ⓘ</button>
+              </div>
               <input type="number" id="nitrate" name="nitrate" step="0.1" min="0" inputmode="decimal" />
-              <button type="button" class="tooltip" data-tooltip="End product; safer but must be controlled with water changes." aria-label="More information about nitrate" aria-describedby="tip-nitrate">?</button>
-              <span class="visually-hidden" id="tip-nitrate">End product; safer but must be controlled with water changes.</span>
+              <span id="tip-nitrate" class="visually-hidden">End product; safer but must be controlled with water changes.</span>
             </div>
-          </div>
-          <div class="field">
-            <label for="cycle-method">Cycle Method</label>
-            <div class="field__controls">
+            <div class="field">
+              <div class="label-row">
+                <label for="cycle-method">Cycle Method</label>
+                <button type="button" class="info-btn" data-tooltip="Fishless = add ammonia without fish. Fish-in = cycle with fish; requires extra care." aria-label="Cycle method info" aria-describedby="tip-method">ⓘ</button>
+              </div>
               <select id="cycle-method" name="cycle-method">
                 <option value="fishless" selected>Fishless</option>
                 <option value="fish-in">Fish-in</option>
               </select>
-              <button type="button" class="tooltip" data-tooltip="Fishless = add ammonia without fish. Fish-in = cycle with fish; requires extra care." aria-label="More information about cycle methods" aria-describedby="tip-method">?</button>
-              <span class="visually-hidden" id="tip-method">Fishless means add ammonia without fish. Fish-in means cycling with fish and requires extra care.</span>
+              <span id="tip-method" class="visually-hidden">Fishless equals adding ammonia without fish. Fish-in means cycling with fish and requires extra care.</span>
+            </div>
+            <div class="field">
+              <label class="checkbox" for="planted">
+                <input type="checkbox" id="planted" name="planted" />
+                <span>This is a planted tank.</span>
+              </label>
             </div>
           </div>
-          <div class="field field--checkbox">
-            <label class="checkbox">
-              <input type="checkbox" id="planted" name="planted" />
-              <span>This is a planted tank.</span>
-            </label>
+          <div class="form-actions">
+            <button type="button" class="btn" id="check-button">Check</button>
+            <button type="button" class="btn btn--secondary" id="clear-button">Clear</button>
           </div>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn btn--primary" id="check">Check</button>
-          <button type="button" class="btn" id="clear">Clear</button>
-        </div>
-      </form>
-    </section>
+        </form>
+      </section>
 
-    <section class="panel panel--results" aria-labelledby="results-heading">
-      <div class="panel__header">
-        <h2 class="panel__title" id="results-heading">Results</h2>
-        <button type="button" class="tooltip tooltip--inline" data-tooltip="High-level snapshot of where your tank stands." aria-label="More information about the results summary" aria-describedby="tip-results">?</button>
-        <span class="visually-hidden" id="tip-results">High-level snapshot of where your tank stands.</span>
-      </div>
-      <div class="panel__body" id="results" aria-live="polite">
-        <div class="status-row">
-          <span class="status-badge" id="status-badge">Incomplete</span>
+      <section class="card" aria-labelledby="results-heading">
+        <div class="card__header">
+          <div class="status-label">
+            <h2 class="card__title" id="results-heading">Results</h2>
+            <button type="button" class="info-btn" data-tooltip="High-level snapshot of where your tank stands." aria-label="Status info" aria-describedby="tip-status">ⓘ</button>
+          </div>
+          <span id="tip-status" class="visually-hidden">High-level snapshot of where your tank stands.</span>
         </div>
-        <p class="results__summary" id="summary">Ammonia: — ppm • Nitrite: — ppm • Nitrate: — ppm • Method: Fishless • Planted: No</p>
-        <div class="results__actions" id="actions-container" hidden>
-          <p class="actions__intro">Action steps <button type="button" class="tooltip tooltip--inline" data-tooltip="Quick, practical steps based on your readings." aria-label="More information about the action steps" aria-describedby="tip-actions">?</button></p>
-          <span class="visually-hidden" id="tip-actions">Quick, practical steps based on your readings.</span>
-          <ul class="actions__list" id="action-list"></ul>
+        <div class="status-row" aria-live="polite">
+          <span class="status-badge" id="status-badge">⚪ Incomplete</span>
+          <p class="results-summary" id="results-summary">Ammonia: — ppm • Nitrite: — ppm • Nitrate: — ppm • Method: Fishless • Planted: No</p>
         </div>
-      </div>
-    </section>
+        <div class="actions-block" id="actions-block" hidden>
+          <header>
+            <span>Action steps</span>
+            <button type="button" class="info-btn" data-tooltip="Quick, practical steps based on your readings." aria-label="Action steps info" aria-describedby="tip-actions">ⓘ</button>
+          </header>
+          <span id="tip-actions" class="visually-hidden">Quick, practical steps based on your readings.</span>
+          <ul class="actions-list" id="actions-list"></ul>
+        </div>
+      </section>
 
-    <section class="panel panel--challenge" id="challenge-panel" aria-labelledby="challenge-heading" hidden>
-      <div class="panel__header">
-        <h2 class="panel__title" id="challenge-heading">24-hour challenge</h2>
-      </div>
-      <div class="panel__body challenge" id="challenge-content">
-        <div class="challenge__header">
-          <h3>Start 24-hour challenge</h3>
-          <button type="button" class="btn btn--ghost" id="challenge-start">Start 24-hour challenge</button>
-          <button type="button" class="tooltip tooltip--inline" data-tooltip="Shows your filter can process 2 ppm ammonia to 0 ammonia and 0 nitrite in 24 hours." aria-label="More information about the 24-hour challenge" aria-describedby="tip-challenge">?</button>
-          <span class="visually-hidden" id="tip-challenge">The challenge shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</span>
+      <section class="card" id="challenge-section" aria-labelledby="challenge-heading" hidden>
+        <div class="card__header">
+          <h2 class="card__title" id="challenge-heading">24-hour challenge</h2>
+          <button type="button" class="info-btn" data-tooltip="Shows your filter can process 2 ppm ammonia to 0 ammonia and 0 nitrite in 24 hours." aria-label="Challenge info" aria-describedby="tip-challenge">ⓘ</button>
+          <span id="tip-challenge" class="visually-hidden">Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</span>
         </div>
-        <p class="challenge__subtext">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
-        <div class="challenge__form" id="challenge-form" hidden>
-          <div class="field-grid field-grid--compact">
+        <div class="challenge-card">
+          <button type="button" class="btn" id="challenge-start">Start 24-hour challenge</button>
+          <p class="chip-note">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
+          <div class="challenge-grid" id="challenge-form" hidden>
             <div class="field">
               <label for="challenge-ammonia">Ammonia after 24h</label>
               <input type="number" id="challenge-ammonia" step="0.01" min="0" inputmode="decimal" />
@@ -117,50 +601,48 @@
               <input type="number" id="challenge-nitrite" step="0.01" min="0" inputmode="decimal" />
             </div>
           </div>
-          <button type="button" class="btn btn--primary" id="challenge-check">Check results</button>
-        </div>
-        <div class="challenge__result" id="challenge-result" hidden>
-          <p class="challenge__status" id="challenge-status"></p>
-          <ul class="challenge__actions" id="challenge-actions"></ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel panel--advanced" aria-labelledby="advanced-heading">
-      <div class="panel__header panel__header--toggle">
-        <h2 class="panel__title" id="advanced-heading">Advanced (optional)</h2>
-        <button type="button" class="panel__toggle" id="advanced-toggle" aria-expanded="false" aria-controls="advanced-content">Open</button>
-      </div>
-      <div class="panel__body panel__body--advanced" id="advanced-content" hidden>
-        <div class="advanced-grid">
-          <div class="field">
-            <label for="ph">pH</label>
-            <input type="number" id="ph" name="ph" step="0.1" inputmode="decimal" />
+          <button type="button" class="btn" id="challenge-check" hidden>Check results</button>
+          <div class="actions-block" id="challenge-results" hidden>
+            <header>
+              <span>Challenge test</span>
+              <button type="button" class="info-btn" data-tooltip="Shows your filter can process 2 ppm ammonia to 0 ammonia and 0 nitrite in 24 hours." aria-label="Challenge test info" aria-describedby="tip-challenge-inline">ⓘ</button>
+            </header>
+            <span id="tip-challenge-inline" class="visually-hidden">Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</span>
+            <ul class="actions-list" id="challenge-list"></ul>
           </div>
-          <div class="field">
-            <label for="temperature">Temperature</label>
-            <div class="field__controls field__controls--temp">
-              <input type="number" id="temperature" name="temperature" step="0.1" inputmode="decimal" />
-              <button type="button" class="unit-toggle" id="temp-unit" aria-label="Switch temperature unit">°F</button>
+        </div>
+      </section>
+
+      <details class="advanced" id="advanced-panel">
+        <summary aria-controls="advanced-content" aria-expanded="false">Advanced (optional)</summary>
+        <div class="advanced-body" id="advanced-content">
+          <div class="advanced-grid">
+            <div class="field">
+              <label for="ph">pH</label>
+              <input type="number" id="ph" name="ph" step="0.1" inputmode="decimal" />
+            </div>
+            <div class="field">
+              <label for="temperature">Temperature</label>
+              <div class="temp-toggle">
+                <input type="number" id="temperature" name="temperature" step="0.1" inputmode="decimal" />
+                <button type="button" id="temp-toggle" aria-label="Switch temperature unit">°F</button>
+              </div>
             </div>
           </div>
+          <div class="advanced-output" aria-live="polite">
+            <span>Estimated toxic NH₃:</span>
+            <span class="value" id="nh3-value">—</span>
+            <span class="nh3-badge" id="nh3-badge" hidden>⚠️ Caution</span>
+            <button type="button" class="info-btn" data-tooltip="Test kits read TAN (NH₃ + NH₄⁺). Only NH₃ is toxic and increases with pH/temperature." aria-label="Advanced NH3 info" aria-describedby="tip-advanced">ⓘ</button>
+            <span id="tip-advanced" class="visually-hidden">Test kits read TAN, which is NH3 plus NH4. Only NH3 is toxic and increases with pH and temperature.</span>
+          </div>
+          <p class="advanced-note"><a href="/media.html" target="_blank" rel="noopener">See Media page for Sources &amp; Further Reading.</a></p>
         </div>
-        <div class="advanced__result" id="advanced-result" aria-live="polite">
-          <span class="advanced__label">Estimated toxic NH₃:</span>
-          <span class="advanced__value" id="nh3-value">—</span>
-          <span class="advanced__badge" id="nh3-badge"></span>
-          <button type="button" class="tooltip tooltip--inline" data-tooltip="Test kits read TAN (NH₃ + NH₄⁺). Only NH₃ is toxic and increases with pH and temperature." aria-label="More information about toxic ammonia" aria-describedby="tip-advanced">?</button>
-          <span class="visually-hidden" id="tip-advanced">Test kits read TAN, which is NH3 plus NH4. Only NH3 is toxic and it increases with pH and temperature.</span>
-        </div>
-        <p class="advanced__note"><a href="/media.html" target="_blank" rel="noopener">See Media page for Sources &amp; Further Reading.</a></p>
-      </div>
-    </section>
+      </details>
 
-    <div class="disclaimer" role="note">Cycling Coach is an educational tool. Always confirm with your own testing and judgment before making aquarium decisions.</div>
-    <section class="about" aria-labelledby="about-coach">
-      <h2 class="about__title" id="about-coach">About Cycling Coach</h2>
-      <p class="about__text">Cycling Coach combines aquarium science with simple guidance. By breaking down your test results, it shows how your tank is progressing through the cycle and offers guidance along the way.</p>
-    </section>
+      <div class="disclaimer" role="note">Cycling Coach is an educational tool. Always confirm with your own testing and judgment before making aquarium decisions.</div>
+      <div class="coach-blurb">Cycling Coach combines aquarium science with simple guidance. By breaking down your test results, it shows how your tank is progressing through the cycle and offers guidance along the way.</div>
+    </div>
   </main>
 
   <div id="site-footer"></div>
@@ -168,10 +650,10 @@
     (async () => {
       const host = document.getElementById('site-footer');
       if (!host) return;
-      const res = await fetch('footer.html', { cache: 'no-cache' });
-      host.innerHTML = await res.text();
+      const res = await fetch('footer.html?v=1.0.8', { cache: 'no-cache' });
+      host.outerHTML = await res.text();
     })();
   </script>
-  <script type="module" src="js/params.js?v=1.1.1"></script>
+  <script type="module" src="js/params.js?v=2.0.0"></script>
 </body>
 </html>
