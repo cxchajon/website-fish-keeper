@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultsSummary = document.getElementById('results-summary');
   const actionsBlock = document.getElementById('actions-block');
   const actionsList = document.getElementById('actions-list');
-  const challengeSection = document.getElementById('challenge-section');
+  const challengeCard = document.getElementById('challengeCard');
   const challengeStart = document.getElementById('challenge-start');
   const challengeForm = document.getElementById('challenge-form');
   const challengeCheck = document.getElementById('challenge-check');
@@ -161,6 +161,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const challengeList = document.getElementById('challenge-list');
   const challengeAmmonia = document.getElementById('challenge-ammonia');
   const challengeNitrite = document.getElementById('challenge-nitrite');
+  const challengeAmmoniaError = document.getElementById('challenge-ammonia-error');
+  const challengeNitriteError = document.getElementById('challenge-nitrite-error');
   const advancedPanel = document.getElementById('advanced-panel');
   const advancedSummary = advancedPanel ? advancedPanel.querySelector('summary') : null;
   const phInput = document.getElementById('ph');
@@ -172,26 +174,42 @@ document.addEventListener('DOMContentLoaded', () => {
   let hasAssessed = false;
   let tempUnit = 'F';
   let currentAmmonia = null;
+  let challengeActive = false;
 
   function updatePlantedVisual() {
     document.body.classList.toggle('planted-active', plantedCheckbox.checked);
   }
 
+  function hideFieldError(element) {
+    if (element) {
+      element.textContent = '';
+      element.hidden = true;
+    }
+  }
+
+  function showFieldError(element, message) {
+    if (element) {
+      element.textContent = message;
+      element.hidden = false;
+    }
+  }
+
   function resetChallenge() {
+    challengeActive = false;
     challengeForm.hidden = true;
     challengeCheck.hidden = true;
     challengeResults.hidden = true;
     challengeList.innerHTML = '';
     challengeAmmonia.value = '';
     challengeNitrite.value = '';
+    hideFieldError(challengeAmmoniaError);
+    hideFieldError(challengeNitriteError);
   }
 
-  function showChallengeSection(show) {
-    if (show) {
-      challengeSection.hidden = false;
-    } else {
-      challengeSection.hidden = true;
-      resetChallenge();
+  function setChallengeVisibility(shouldShow) {
+    resetChallenge();
+    if (challengeCard) {
+      challengeCard.hidden = !shouldShow;
     }
   }
 
@@ -270,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
     statusBadge.textContent = `${symbol} ${status}`;
     updateActions(actionKey, planted, showActions);
     const showChallenge = status === 'Cycled (likely)' && method === 'fishless';
-    showChallengeSection(showChallenge);
+    setChallengeVisibility(showChallenge);
   }
 
   function computeNH3Estimate(tan, ph, tempCelsius) {
@@ -335,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
     resultsSummary.textContent = 'Ammonia: — ppm • Nitrite: — ppm • Nitrate: — ppm • Method: Fishless • Planted: No';
     actionsBlock.hidden = true;
     actionsList.innerHTML = '';
-    showChallengeSection(false);
+    setChallengeVisibility(false);
     currentAmmonia = null;
     updateNH3Estimate();
   }
@@ -402,21 +420,45 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   challengeStart.addEventListener('click', () => {
+    challengeActive = true;
     challengeForm.hidden = false;
     challengeCheck.hidden = false;
     challengeResults.hidden = true;
     challengeList.innerHTML = '';
+    hideFieldError(challengeAmmoniaError);
+    hideFieldError(challengeNitriteError);
     challengeAmmonia.focus();
   });
 
+  function readChallengeValue(input, settings, errorElement) {
+    const raw = input.value.trim();
+    if (raw === '') {
+      showFieldError(errorElement, 'Enter a value.');
+      return null;
+    }
+    const sanitized = sanitizeField(input, settings);
+    if (sanitized === null) {
+      showFieldError(errorElement, 'Enter a number.');
+      return null;
+    }
+    hideFieldError(errorElement);
+    return sanitized;
+  }
+
   challengeCheck.addEventListener('click', () => {
-    const ammonia = sanitizeField(challengeAmmonia, FIELD_SETTINGS.ammonia);
-    const nitrite = sanitizeField(challengeNitrite, FIELD_SETTINGS.nitrite);
+    if (!challengeActive) {
+      return;
+    }
+
+    const ammonia = readChallengeValue(challengeAmmonia, FIELD_SETTINGS.ammonia, challengeAmmoniaError);
+    const nitrite = readChallengeValue(challengeNitrite, FIELD_SETTINGS.nitrite, challengeNitriteError);
+
     if (ammonia === null || nitrite === null) {
       challengeResults.hidden = true;
       challengeList.innerHTML = '';
       return;
     }
+
     const outcome = isZero(ammonia) && isZero(nitrite) ? 'challengePass' : 'challengeFail';
     renderList(challengeList, ACTION_SETS[outcome]);
     challengeResults.hidden = false;

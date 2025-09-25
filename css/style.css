@@ -520,6 +520,30 @@ button.danger {
   gap: 8px;
 }
 
+body.cycling-coach input[type='checkbox'] {
+  appearance: checkbox;
+  -webkit-appearance: checkbox;
+  width: auto;
+  height: auto;
+  margin: 0;
+}
+
+body.cycling-coach .field--checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+body.cycling-coach .field--checkbox label {
+  margin: 0;
+}
+
+body.cycling-coach .field-error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #ffb5b5;
+}
+
 .env-recs {
   opacity: 0.85;
   font-size: 0.9rem;

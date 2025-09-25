@@ -590,11 +590,9 @@
               </select>
               <span id="tip-method" class="visually-hidden">Fishless equals adding ammonia without fish. Fish-in means cycling with fish and requires extra care.</span>
             </div>
-            <div class="field">
-              <label class="checkbox" for="planted">
-                <input type="checkbox" id="planted" name="planted" />
-                <span>This is a planted tank.</span>
-              </label>
+            <div class="field field--checkbox">
+              <input type="checkbox" id="planted" name="planted" />
+              <label for="planted">This is a planted tank.</label>
             </div>
           </div>
           <div class="form-actions">
@@ -626,23 +624,25 @@
         </div>
       </section>
 
-      <section class="card" id="challenge-section" aria-labelledby="challenge-heading" hidden>
+      <section class="card" id="challengeCard" aria-labelledby="challenge-heading" hidden>
         <div class="card__header">
           <h2 class="card__title" id="challenge-heading">24-hour challenge</h2>
           <button type="button" class="info-btn" data-tooltip="Shows your filter can process 2 ppm ammonia to 0 ammonia and 0 nitrite in 24 hours." aria-label="Challenge info" aria-describedby="tip-challenge">ⓘ</button>
           <span id="tip-challenge" class="visually-hidden">Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</span>
         </div>
         <div class="challenge-card">
+          <p class="challenge-instructions" id="challenge-instructions">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
           <button type="button" class="btn" id="challenge-start">Start 24-hour challenge</button>
-          <p class="chip-note">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
           <div class="challenge-grid" id="challenge-form" hidden>
             <div class="field">
               <label for="challenge-ammonia">Ammonia after 24h</label>
               <input type="number" id="challenge-ammonia" step="0.01" min="0" inputmode="decimal" />
+              <p class="field-error" id="challenge-ammonia-error" hidden></p>
             </div>
             <div class="field">
               <label for="challenge-nitrite">Nitrite after 24h</label>
               <input type="number" id="challenge-nitrite" step="0.01" min="0" inputmode="decimal" />
+              <p class="field-error" id="challenge-nitrite-error" hidden></p>
             </div>
           </div>
           <button type="button" class="btn" id="challenge-check" hidden>Check results</button>
