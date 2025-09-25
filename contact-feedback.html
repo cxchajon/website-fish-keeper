@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact &amp; Feedback | The Tank Guide</title>
+    <style>
+        :root {
+            --background-dark: #0e1a29;
+            --background-light: #f3f6fb;
+            --card-bg: #f9f9f6;
+            --panel-bg: #eef1f5;
+            --checkbox-bg: #e3e8ef;
+            --border: #c7ced7;
+            --text: #1c2733;
+            --accent: #3aa098;
+            --accent-focus: #2f8f83;
+            --error: #c23a2b;
+            --success: #1f6b57;
+            --shadow-desktop: 0 -18px 34px rgba(14, 26, 41, 0.35), 0 26px 46px rgba(14, 26, 41, 0.12);
+            --shadow-mobile: 0 16px 26px rgba(14, 26, 41, 0.16);
+            --card-radius: 18px;
+            --panel-radius: 14px;
+            --field-radius: 10px;
+            --button-start: #39b385;
+            --button-end: #2e8a68;
+            --transition-duration: 450ms;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(to bottom, var(--background-dark) 0%, var(--background-dark) 50%, var(--background-light) 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .page-wrapper {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: column;
+            padding: 48px 20px 96px;
+            gap: 32px;
+        }
+
+        @media (min-width: 1280px) {
+            .page-wrapper {
+                justify-content: center;
+                padding-top: 72px;
+                padding-bottom: 120px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: 32px 16px 72px;
+            }
+        }
+
+        .contact-card {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--card-bg);
+            border-radius: var(--card-radius);
+            padding: 52px 60px 60px;
+            box-shadow: var(--shadow-desktop);
+        }
+
+        @media (max-width: 900px) {
+            .contact-card {
+                padding: 40px 32px 48px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .contact-card {
+                padding: 32px 20px 40px;
+                box-shadow: var(--shadow-mobile);
+            }
+        }
+
+        h1 {
+            margin: 0 0 32px;
+            font-size: clamp(2.4rem, 2.2vw + 1.2rem, 3.2rem);
+            font-weight: 700;
+            text-align: left;
+            color: var(--text);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .required-asterisk {
+            color: var(--error);
+            font-weight: 700;
+        }
+
+        .required-note {
+            font-size: 0.84rem;
+            color: var(--error);
+            margin: 0;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="url"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--field-radius);
+            background: #ffffff;
+            color: var(--text);
+            font-size: 1rem;
+            transition: border-color 180ms ease, box-shadow 180ms ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="url"]:focus,
+        textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(58, 160, 152, 0.18);
+            outline: none;
+        }
+
+        select {
+            appearance: none;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            padding-right: 48px;
+        }
+
+        select:focus {
+            border-color: var(--border);
+            box-shadow: none;
+            outline: none;
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: none;
+        }
+
+        textarea::placeholder {
+            color: rgba(28, 39, 51, 0.55);
+        }
+
+        .subject-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .chevron {
+            position: absolute;
+            right: 16px;
+            pointer-events: none;
+            font-size: 1.1rem;
+            color: #8d96a2;
+        }
+
+        .subject-panel {
+            border: 2px solid #d2d8e0;
+            border-radius: var(--panel-radius);
+            background: var(--panel-bg);
+            padding: 22px 22px 26px;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: max-height var(--transition-duration) ease, transform var(--transition-duration) ease;
+            margin: 0;
+        }
+
+        .subject-panel.active {
+            margin-top: 12px;
+            max-height: 900px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .panel-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .field-error {
+            font-size: 0.9rem;
+            color: var(--error);
+            margin: -4px 0 0;
+            display: none;
+        }
+
+        .field-error.active {
+            display: block;
+        }
+
+        .checkbox-block {
+            background: var(--checkbox-bg);
+            border-radius: var(--panel-radius);
+            padding: 18px 20px 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .checkbox-field {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .checkbox-field input[type="checkbox"] {
+            margin-top: 3px;
+        }
+
+        .checkbox-label {
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .privacy-note {
+            font-size: 0.88rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .privacy-note a {
+            text-decoration: underline;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .send-button {
+            border: none;
+            border-radius: 12px;
+            background-image: linear-gradient(135deg, var(--button-start), var(--button-end));
+            color: #ffffff;
+            font-size: clamp(1rem, 1vw + 0.7rem, 1.12rem);
+            font-weight: 600;
+            padding: 14px 34px;
+            cursor: pointer;
+            transition: filter 160ms ease;
+        }
+
+        .send-button:hover,
+        .send-button:focus-visible {
+            filter: brightness(0.92);
+        }
+
+        .status-divider {
+            margin: 12px 0 16px;
+            border: none;
+            height: 1px;
+            background: #d1d6dd;
+        }
+
+        .status-message {
+            text-align: center;
+            font-size: 1.02rem;
+            font-weight: 600;
+            min-height: 1.4em;
+        }
+
+        .status-message.success {
+            color: var(--success);
+        }
+
+        .status-message.error {
+            color: var(--error);
+        }
+
+        .captcha-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .captcha-error {
+            color: var(--error);
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .captcha-error.active {
+            display: block;
+        }
+
+        .honeypot-field {
+            display: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .subject-panel {
+                transition: none;
+            }
+
+            .send-button,
+            input,
+            textarea,
+            select {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Include site nav here (non-sticky, as on other pages) -->
+    <main class="page-wrapper">
+        <section class="contact-card" aria-labelledby="contact-title">
+            <h1 id="contact-title">Contact &amp; Feedback</h1>
+            <form id="contact-form" method="POST" action="https://formspree.io/f/XXXXXXXX">
+                <!-- TODO: Insert your Formspree endpoint in the form action (e.g., https://formspree.io/f/XXXXXXXX) -->
+                <div class="honeypot-field">
+                    <label for="website-url">Website</label>
+                    <input type="text" name="website" id="website-url" tabindex="-1" autocomplete="off" />
+                </div>
+                <div class="field-group">
+                    <label for="name">Name <span class="required-asterisk">*</span></label>
+                    <p class="required-note">*Required</p>
+                    <input type="text" id="name" name="name" autocomplete="name" required />
+                </div>
+                <div class="field-group">
+                    <label for="email">Email <span class="required-asterisk">*</span></label>
+                    <p class="required-note">*Required</p>
+                    <input type="email" id="email" name="email" autocomplete="email" required />
+                </div>
+                <div class="field-group">
+                    <label for="subject">Subject <span class="required-asterisk">*</span></label>
+                    <p class="required-note">*Required</p>
+                    <div class="subject-wrapper">
+                        <select id="subject" name="subject" required>
+                            <option value="">Select one...</option>
+                            <option value="recommend">Recommend a Fish</option>
+                            <option value="logic">Logic Issues</option>
+                            <option value="questions">Questions?</option>
+                            <option value="reviews">Product Reviews</option>
+                            <option value="general">General (YouTube, article ideas, events, forums, anything related to aquariums)</option>
+                        </select>
+                        <span class="chevron" aria-hidden="true" id="subject-chevron">▾</span>
+                    </div>
+                </div>
+                <div class="subject-panel" id="panel-recommend">
+                    <div class="panel-content">
+                        <div class="field-group">
+                            <label for="fish-name">Fish Name <span class="required-asterisk">*</span></label>
+                            <p class="required-note">*Required</p>
+                            <input type="text" id="fish-name" name="fish_name" />
+                            <p class="field-error" id="fish-name-error">Fish name is required.</p>
+                        </div>
+                        <div class="field-group">
+                            <label for="scientific-name">Scientific Name</label>
+                            <input type="text" id="scientific-name" name="scientific_name" />
+                        </div>
+                        <div class="field-group">
+                            <label for="range">pH / Temp Range</label>
+                            <input type="text" id="range" name="range" />
+                        </div>
+                        <div class="field-group">
+                            <label for="fish-notes">Other Notes</label>
+                            <textarea id="fish-notes" name="fish_notes"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="subject-panel" id="panel-logic">
+                    <div class="panel-content">
+                        <div class="field-group">
+                            <label for="logic-page">Page Selector</label>
+                            <select id="logic-page" name="logic_page">
+                                <option value="Stocking Advisor">Stocking Advisor</option>
+                                <option value="Cycling Coach">Cycling Coach</option>
+                                <option value="Parameters">Parameters</option>
+                                <option value="Media">Media</option>
+                                <option value="Contact &amp; Feedback">Contact &amp; Feedback</option>
+                            </select>
+                        </div>
+                        <div class="field-group">
+                            <label for="logic-description">Describe the Issue</label>
+                            <textarea id="logic-description" name="logic_description"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="subject-panel" id="panel-questions">
+                    <div class="panel-content">
+                        <div class="field-group">
+                            <label for="question">Your Question</label>
+                            <textarea id="question" name="question" placeholder="Ask us anything — we’ll get back to you."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="subject-panel" id="panel-reviews">
+                    <div class="panel-content">
+                        <div class="field-group">
+                            <label for="product-name">Product Name <span class="required-asterisk">*</span></label>
+                            <p class="required-note">*Required</p>
+                            <input type="text" id="product-name" name="product_name" />
+                            <p class="field-error" id="product-name-error">Product name is required.</p>
+                        </div>
+                        <div class="field-group">
+                            <label for="product-link">Product Link</label>
+                            <input type="url" id="product-link" name="product_link" />
+                        </div>
+                        <div class="field-group">
+                            <label for="review-notes">What would you like us to cover?</label>
+                            <textarea id="review-notes" name="review_notes" placeholder="Features, pros/cons, ease of use, etc."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="subject-panel" id="panel-general">
+                    <div class="panel-content">
+                        <div class="field-group">
+                            <label for="general-idea">Share Your Idea</label>
+                            <textarea id="general-idea" name="general_idea" placeholder="Share your idea — YouTube, article, event, forum, or anything aquarium related."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="checkbox-block">
+                    <div class="checkbox-field">
+                        <input type="checkbox" id="consent" name="consent" required />
+                        <label class="checkbox-label" for="consent">I agree that The Tank Guide may contact me about my submission. <span class="required-asterisk">*</span></label>
+                    </div>
+                    <div class="checkbox-field">
+                        <input type="checkbox" id="newsletter" name="newsletter" />
+                        <label class="checkbox-label" for="newsletter">Yes, I’d like to receive The Tank Guide newsletter/updates.</label>
+                    </div>
+                    <p class="privacy-note">
+                        We value your privacy. Your information will never be sold to third parties. We’ll use it only to reply to your message and—if you opt in—to send occasional newsletters. You can unsubscribe anytime. See our <a href="https://thetankguide.com/privacy.html">Privacy Policy</a>.
+                    </p>
+                </div>
+                <div class="captcha-wrapper">
+                    <div class="g-recaptcha" data-sitekey="TODO_RECAPTCHA_SITE_KEY"></div>
+                    <!-- TODO: Insert your reCAPTCHA v2 SITE KEY in the script tag and data-sitekey attribute -->
+                    <p class="captcha-error" id="captcha-error">Please confirm you’re not a robot.</p>
+                </div>
+                <div class="button-row">
+                    <button type="submit" class="send-button">Send</button>
+                </div>
+                <hr class="status-divider" />
+                <p class="status-message" id="form-status" aria-live="polite"></p>
+                <input type="hidden" name="_subject" id="hidden-subject" />
+                <input type="hidden" name="timestamp" id="timestamp" />
+            </form>
+        </section>
+    </main>
+    <!-- Include footer.html via site include system here -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script>
+        // TODO: Insert your reCAPTCHA v2 SITE KEY in the script tag and data-sitekey attribute
+        (function () {
+            const form = document.getElementById('contact-form');
+            const subjectSelect = document.getElementById('subject');
+            const chevron = document.getElementById('subject-chevron');
+            const panels = {
+                recommend: document.getElementById('panel-recommend'),
+                logic: document.getElementById('panel-logic'),
+                questions: document.getElementById('panel-questions'),
+                reviews: document.getElementById('panel-reviews'),
+                general: document.getElementById('panel-general')
+            };
+            const fishName = document.getElementById('fish-name');
+            const fishError = document.getElementById('fish-name-error');
+            const productName = document.getElementById('product-name');
+            const productError = document.getElementById('product-name-error');
+            const statusMessage = document.getElementById('form-status');
+            const captchaError = document.getElementById('captcha-error');
+            const hiddenSubject = document.getElementById('hidden-subject');
+            const timestampField = document.getElementById('timestamp');
+            const textareaList = Array.from(document.querySelectorAll('textarea'));
+
+            function resetPanels() {
+                Object.values(panels).forEach(panel => {
+                    panel.classList.remove('active');
+                });
+                chevron.textContent = '▾';
+            }
+
+            subjectSelect.addEventListener('change', () => {
+                resetPanels();
+                const value = subjectSelect.value;
+                if (value && panels[value]) {
+                    panels[value].classList.add('active');
+                    chevron.textContent = '▴';
+                }
+            });
+
+            function autoResize(textarea) {
+                textarea.style.height = 'auto';
+                textarea.style.height = `${textarea.scrollHeight}px`;
+            }
+
+            textareaList.forEach(textarea => {
+                autoResize(textarea);
+                textarea.addEventListener('input', () => autoResize(textarea));
+            });
+
+            function validateDynamicFields() {
+                let valid = true;
+                fishError.classList.remove('active');
+                productError.classList.remove('active');
+                fishName.removeAttribute('aria-invalid');
+                productName.removeAttribute('aria-invalid');
+
+                if (subjectSelect.value === 'recommend') {
+                    if (!fishName.value.trim()) {
+                        fishError.classList.add('active');
+                        fishName.setAttribute('aria-invalid', 'true');
+                        valid = false;
+                    }
+                }
+
+                if (subjectSelect.value === 'reviews') {
+                    if (!productName.value.trim()) {
+                        productError.classList.add('active');
+                        productName.setAttribute('aria-invalid', 'true');
+                        valid = false;
+                    }
+                }
+
+                return valid;
+            }
+
+            function clearDynamicErrors() {
+                fishError.classList.remove('active');
+                productError.classList.remove('active');
+                fishName.removeAttribute('aria-invalid');
+                productName.removeAttribute('aria-invalid');
+            }
+
+            fishName.addEventListener('input', clearDynamicErrors);
+            productName.addEventListener('input', clearDynamicErrors);
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                statusMessage.textContent = '';
+                statusMessage.classList.remove('success', 'error');
+                captchaError.classList.remove('active');
+
+                if (form.website && form.website.value) {
+                    return;
+                }
+
+                if (!form.reportValidity() || !validateDynamicFields()) {
+                    return;
+                }
+
+                if (subjectSelect.value === '') {
+                    return;
+                }
+
+                const captchaResponse = window.grecaptcha ? window.grecaptcha.getResponse() : '';
+                if (!captchaResponse) {
+                    captchaError.classList.add('active');
+                    return;
+                }
+
+                const subjectText = subjectSelect.options[subjectSelect.selectedIndex].text;
+                hiddenSubject.value = `[Contact & Feedback] – ${subjectText}`;
+                const timestamp = new Date().toLocaleString(undefined, {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                });
+                timestampField.value = timestamp;
+
+                const formData = new FormData(form);
+                formData.set('g-recaptcha-response', captchaResponse);
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: { Accept: 'application/json' },
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        statusMessage.textContent = 'Thank you — message sent. Please check your inbox (and spam folder just in case) for our reply.';
+                        statusMessage.classList.add('success');
+                        form.reset();
+                        resetPanels();
+                        hiddenSubject.value = '';
+                        timestampField.value = '';
+                        textareaList.forEach(textarea => autoResize(textarea));
+                        if (window.grecaptcha) {
+                            window.grecaptcha.reset();
+                        }
+                    } else {
+                        throw new Error('Request failed');
+                    }
+                } catch (error) {
+                    statusMessage.textContent = 'Sorry — your message could not be sent. Please try again later.';
+                    statusMessage.classList.add('error');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
