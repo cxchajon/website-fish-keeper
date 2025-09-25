@@ -117,14 +117,18 @@ const challengeState = {
 
 let tempUnit = 'F';
 
-function clampNumber(value, min = 0) {
+function clampNumber(value, min = 0, max = Number.POSITIVE_INFINITY) {
   if (Number.isNaN(value)) return Number.NaN;
-  return value < min ? min : value;
+  if (value < min) return min;
+  if (value > max) return max;
+  return value;
 }
 
-function parseInput(input) {
+function parseInput(input, { min = 0, max = Number.POSITIVE_INFINITY } = {}) {
   if (!input) return Number.NaN;
-  const value = clampNumber(parseFloat(input.value), 0);
+  const raw = parseFloat(input.value);
+  if (Number.isNaN(raw)) return Number.NaN;
+  const value = clampNumber(raw, min, max);
   return Number.isFinite(value) ? value : Number.NaN;
 }
 
@@ -135,9 +139,9 @@ function formatNumber(value, decimals) {
 
 function getInputs() {
   return {
-    ammonia: parseInput(ammoniaInput),
-    nitrite: parseInput(nitriteInput),
-    nitrate: parseInput(nitrateInput),
+    ammonia: parseInput(ammoniaInput, { max: 8 }),
+    nitrite: parseInput(nitriteInput, { max: 5 }),
+    nitrate: parseInput(nitrateInput, { max: 200 }),
     method: methodSelect.value === 'fish-in' ? 'fishIn' : 'fishless',
     planted: plantedCheckbox.checked,
   };
@@ -162,7 +166,7 @@ function determineStatus(inputs) {
     return STATUS.URGENT;
   }
 
-  if (isZero(ammonia) && isZero(nitrite) && nitrate > 0) {
+  if (method === 'fishless' && isZero(ammonia) && isZero(nitrite) && nitrate > 0) {
     return STATUS.CYCLED;
   }
 
@@ -203,11 +207,7 @@ function buildActions(inputs, status) {
     items = [];
   }
 
-  if (items.length > 0) {
-    items = [...items, nitrateLine];
-  }
-
-  return items;
+  return [...items, nitrateLine];
 }
 
 function renderActions(items) {
@@ -296,9 +296,9 @@ function calculateNh3(ammonia, ph, tempC) {
 }
 
 function updateAdvanced() {
-  const ammonia = parseInput(ammoniaInput);
-  const ph = parseInput(phInput);
-  const temperatureRaw = parseInput(tempInput);
+  const ammonia = parseInput(ammoniaInput, { max: 8 });
+  const ph = parseInput(phInput, { min: 0, max: 14 });
+  const temperatureRaw = parseInput(tempInput, { min: 0 });
   if (Number.isNaN(temperatureRaw)) {
     nh3Value.textContent = '—';
     nh3Badge.textContent = '';
@@ -412,8 +412,8 @@ function handleChallengeCheck() {
   if (!challengeState.active) {
     return;
   }
-  const ammonia = parseInput(challengeAmmonia);
-  const nitrite = parseInput(challengeNitrite);
+  const ammonia = parseInput(challengeAmmonia, { max: 8 });
+  const nitrite = parseInput(challengeNitrite, { max: 5 });
   if (Number.isNaN(ammonia) || Number.isNaN(nitrite)) {
     challengeStatus.textContent = 'Please enter both readings to continue.';
     challengeResult.hidden = false;
