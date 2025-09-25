@@ -269,14 +269,19 @@
         }
 
         .checkbox-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             font-size: 1rem;
         }
 
+        .checkbox-item::before {
+            content: none !important;
+        }
+
         .checkbox-item input[type="checkbox"] {
-            margin-top: 4px;
+            margin: 0;
+            flex-shrink: 0;
         }
 
         .privacy-note {
@@ -438,7 +443,7 @@
         .consent-pill {
             display: inline-block;
             min-width: 28px;
-            padding: 2px 8px;
+            padding: 2px 10px;
             margin-right: 8px;
             border-radius: 999px;
             font-size: 0.85rem;
@@ -447,6 +452,7 @@
             background: #d3d9e1; /* gray “No” */
             color: #1c2733;
             vertical-align: middle;
+            flex-shrink: 0;
         }
 
         .consent-pill.is-yes {
@@ -857,6 +863,14 @@
             const pillNewsletter = document.getElementById('pill_newsletter');
             const hidConsent = document.getElementById('can_contact_hidden');
             const hidNewsletter = document.getElementById('newsletter_hidden');
+
+            const allowedPills = new Set(['pill_consent', 'pill_newsletter']);
+
+            document.querySelectorAll('.consent-pill').forEach((pill) => {
+                if (!allowedPills.has(pill.id)) {
+                    pill.remove();
+                }
+            });
 
             function setPill(pill, checked) {
                 if (!pill) return;
