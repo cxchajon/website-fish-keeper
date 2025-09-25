@@ -90,7 +90,7 @@ async function gotoAndVerify(page, route, theme) {
   });
 
   const cssResponsePromise = page.waitForResponse((response) =>
-    response.url().includes('css/style.css?v=1.0.7')
+    response.url().includes('css/style.css?v=1.0.8')
   );
 
   await page.goto(`${baseURL}${route}`);
@@ -100,7 +100,7 @@ async function gotoAndVerify(page, route, theme) {
   const nav = page.locator('#global-nav');
   await expect(nav, `${route} should render the shared nav`).toBeVisible();
   const navPosition = await nav.evaluate((element) => window.getComputedStyle(element).position);
-  expect(navPosition).toBe('fixed');
+  expect(navPosition).toBe('relative');
 
   const hamburger = page.locator('#ttg-nav-open');
   const brand = page.locator('#global-nav .brand');
@@ -157,7 +157,7 @@ test('stocking, gear, and media share the nav layout', async ({ page }) => {
 
 test('index page remains free of the global nav', async ({ page }) => {
   const cssResponsePromise = page.waitForResponse((response) =>
-    response.url().includes('css/style.css?v=1.0.7')
+    response.url().includes('css/style.css?v=1.0.8')
   );
   await page.goto(`${baseURL}/index.html`);
   const cssResponse = await cssResponsePromise;

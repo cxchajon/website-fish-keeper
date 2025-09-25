@@ -6,7 +6,7 @@
   <title>The Tank Guide — Gear (Guided)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Build your aquarium setup step by step — tanks, filtration, lighting, and more." />
-  <link rel="stylesheet" href="css/style.css?v=1.0.7" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.8" />
   <link rel="icon" href="/favicon.ico" />
 
   <style>
@@ -55,7 +55,7 @@
     .muted{color:var(--muted);}
     /* ... rest of your CSS unchanged ... */
   </style>
-  <script defer src="js/nav.js?v=1.0.7"></script>
+  <script defer src="js/nav.js?v=1.0.8"></script>
 </head>
 <body class="theme-dark">
   <div id="site-nav"></div>
@@ -211,7 +211,7 @@
     (async () => {
       const host = document.getElementById('site-footer');
       if (!host) return;
-      const res = await fetch('footer.html?v=1.0.7', { cache: 'no-cache' });
+        const res = await fetch('footer.html?v=1.0.8', { cache: 'no-cache' });
       host.outerHTML = await res.text();
     })();
   </script>
