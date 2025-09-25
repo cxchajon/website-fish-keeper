@@ -2,98 +2,155 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>The Tank Guide — Cycling Coach</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Master the nitrogen cycle for your aquarium with detailed schedules and alerts." />
+  <title>The Tank Guide — Cycling Coach</title>
+  <meta name="description" content="Check today’s aquarium readings, see your cycling status, and get guidance tailored to fishless or fish-in methods." />
   <link rel="stylesheet" href="css/style.css?v=1.0.8" />
-  <link rel="stylesheet" href="css/params.css?v=1.0.4" />
+  <link rel="stylesheet" href="css/params.css?v=1.1.0" />
   <script defer src="js/nav.js?v=1.0.8"></script>
 </head>
-<body class="page-background bg--dark">
+<body class="theme-dark cycling-coach">
+  <div id="site-nav"></div>
+  <div class="planted-overlay" aria-hidden="true"></div>
 
-  <header class="site-header">
-    <div class="site-header__inner">
-      <a class="site-brand" href="index.html" aria-label="The Tank Guide — Home">
-        <span class="site-brand__title">The Tank Guide</span>
-        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
-      </a>
-      <button class="hamburger" data-nav="hamburger" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu">
-        <span class="hamburger__bars" aria-hidden="true"></span>
-        <span class="visually-hidden">Menu</span>
-      </button>
-    </div>
-  </header>
-  <div class="nav-overlay" data-nav="overlay"></div>
-  <nav id="site-drawer" class="nav-drawer" data-nav="drawer" aria-label="Site">
-    <a href="index.html" class="nav__link">Home</a>
-    <a href="stocking.html" class="nav__link">Stocking Advisor</a>
-    <a href="gear.html" class="nav__link">Gear</a>
-    <a href="params.html" class="nav__link" aria-current="page">Cycling Coach</a>
-    <a href="media.html" class="nav__link">Media</a>
-    <a href="about.html" class="nav__link">About</a>
-  </nav>
-
-  <main class="app">
-    <header class="hero">
-      <div class="hero__content">
-        <p class="hero__eyebrow">Cycling Coach</p>
-        <h1 class="hero__title">Master the Nitrogen Cycle</h1>
-        <p class="hero__lede">Track parameters, get alerts, and keep your aquarium safe for your fish — from day zero to fully cycled.</p>
-      </div>
-      <div class="hero__cta">
-        <button class="btn btn--primary" id="start-over">Start Over</button>
-        <button class="btn" id="load-session">Resume Session</button>
-      </div>
+  <main class="coach" id="main-content">
+    <header class="coach__header">
+      <p class="coach__eyebrow">Cycling Coach</p>
+      <h1 class="coach__title" id="coach-title">Cycling Coach <span class="coach__leaf" id="coach-leaf" aria-hidden="true">🍃</span></h1>
+      <p class="coach__lede">Enter today’s parameters to understand your cycle progress and next steps.</p>
     </header>
 
-    <section class="stepper" aria-label="Cycling timeline">
-      <ol class="stepper__list">
-        <li class="stepper__item is-active">
-          <button class="stepper__button" data-step="1">1. Prep Tank</button>
-        </li>
-        <li class="stepper__item">
-          <button class="stepper__button" data-step="2">2. Seed &amp; Dose</button>
-        </li>
-        <li class="stepper__item">
-          <button class="stepper__button" data-step="3">3. Monitor</button>
-        </li>
-        <li class="stepper__item">
-          <button class="stepper__button" data-step="4">4. Stocking Day</button>
-        </li>
-      </ol>
+    <section class="panel panel--inputs" aria-labelledby="inputs-heading">
+      <div class="panel__header">
+        <h2 class="panel__title" id="inputs-heading">Today’s readings</h2>
+      </div>
+      <form id="coach-form" class="panel__body" novalidate>
+        <div class="field-grid">
+          <div class="field">
+            <label for="ammonia">Ammonia (NH₃/NH₄⁺)</label>
+            <div class="field__controls">
+              <input type="number" id="ammonia" name="ammonia" step="0.01" min="0" inputmode="decimal" />
+              <button type="button" class="tooltip" data-tooltip="Waste from fish/food. Even tiny amounts are toxic." aria-label="Waste from fish and food. Even tiny amounts are toxic.">?</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="nitrite">Nitrite (NO₂⁻)</label>
+            <div class="field__controls">
+              <input type="number" id="nitrite" name="nitrite" step="0.01" min="0" inputmode="decimal" />
+              <button type="button" class="tooltip" data-tooltip="Mid-stage of the cycle; also toxic." aria-label="Mid-stage of the cycle; also toxic.">?</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="nitrate">Nitrate (NO₃⁻)</label>
+            <div class="field__controls">
+              <input type="number" id="nitrate" name="nitrate" step="0.1" min="0" inputmode="decimal" />
+              <button type="button" class="tooltip" data-tooltip="End product; safer but must be controlled with water changes." aria-label="End product; safer but must be controlled with water changes.">?</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="cycle-method">Cycle Method</label>
+            <div class="field__controls">
+              <select id="cycle-method" name="cycle-method">
+                <option value="fishless" selected>Fishless</option>
+                <option value="fish-in">Fish-in</option>
+              </select>
+              <button type="button" class="tooltip" data-tooltip="Fishless = add ammonia without fish. Fish-in = cycle with fish; requires extra care." aria-label="Fishless means add ammonia without fish. Fish-in means cycling with fish and requires extra care.">?</button>
+            </div>
+          </div>
+          <div class="field field--checkbox">
+            <label class="checkbox">
+              <input type="checkbox" id="planted" name="planted" />
+              <span>This is a planted tank.</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn--primary" id="assess">Assess</button>
+          <button type="button" class="btn" id="clear">Clear</button>
+        </div>
+      </form>
     </section>
 
-    <section class="card" id="step-content" tabindex="-1">
-      <div class="card__content">
-        <h2>Welcome to your Cycling Coach</h2>
-        <p>This guided experience walks you through preparing your aquarium, seeding beneficial bacteria, dosing ammonia, and testing water parameters until your tank is fully cycled.</p>
-        <p>Select a step above to get started, or hit “Start Over” to reset your session.</p>
+    <section class="panel panel--advanced" aria-labelledby="advanced-heading">
+      <div class="panel__header panel__header--toggle">
+        <h2 class="panel__title" id="advanced-heading">Advanced (optional)</h2>
+        <button type="button" class="panel__toggle" id="advanced-toggle" aria-expanded="false" aria-controls="advanced-content">Open</button>
       </div>
-      <aside class="card__aside">
-        <h3>Need to print?</h3>
-        <p>Use the “Export Schedule” option to get a printable PDF when you’re done.</p>
-      </aside>
+      <div class="panel__body panel__body--advanced" id="advanced-content" hidden>
+        <div class="advanced-grid">
+          <div class="field">
+            <label for="ph">pH</label>
+            <input type="number" id="ph" name="ph" step="0.1" inputmode="decimal" />
+          </div>
+          <div class="field">
+            <label for="temperature">Temperature</label>
+            <div class="field__controls field__controls--temp">
+              <input type="number" id="temperature" name="temperature" step="0.1" inputmode="decimal" />
+              <button type="button" class="unit-toggle" id="temp-unit" aria-label="Switch temperature unit">°F</button>
+            </div>
+          </div>
+        </div>
+        <div class="advanced__result" id="advanced-result" aria-live="polite">
+          <span class="advanced__label">Estimated toxic NH₃:</span>
+          <span class="advanced__value" id="nh3-value">—</span>
+          <span class="advanced__badge" id="nh3-badge"></span>
+          <button type="button" class="tooltip tooltip--inline" data-tooltip="Test kits read TAN (NH₃ + NH₄⁺). Only NH₃ is toxic and increases with pH and temperature." aria-label="Test kits read TAN, which is NH3 plus NH4. Only NH3 is toxic and it increases with pH and temperature.">?</button>
+        </div>
+        <p class="advanced__note">References: <a href="https://floridadep.gov/sites/default/files/SOP-001-1_0.pdf" target="_blank" rel="noopener noreferrer">Florida Department of Environmental Protection — Calculation on Un-ionized Ammonia in Fresh Water</a>; <a href="https://edis.ifas.ufl.edu/publication/FA16" target="_blank" rel="noopener noreferrer">University of Florida IFAS — How to calculate un-ionized ammonia levels</a></p>
+      </div>
     </section>
 
-    <section class="card">
-      <header class="card__header">
-        <h2>Parameter Log</h2>
-        <button class="btn btn--ghost" id="export-log">Export Schedule</button>
-      </header>
-      <div class="card__content">
-        <table class="log" aria-label="Parameter log">
-          <thead>
-            <tr>
-              <th scope="col">Day</th>
-              <th scope="col">Ammonia</th>
-              <th scope="col">Nitrite</th>
-              <th scope="col">Nitrate</th>
-              <th scope="col">Notes</th>
-            </tr>
-          </thead>
-          <tbody id="log-body"></tbody>
-        </table>
+    <section class="panel panel--results" aria-labelledby="results-heading">
+      <div class="panel__header">
+        <h2 class="panel__title" id="results-heading">Results</h2>
+        <button type="button" class="tooltip tooltip--inline" data-tooltip="High-level snapshot of where your tank stands." aria-label="High-level snapshot of where your tank stands.">?</button>
       </div>
+      <div class="panel__body" id="results" aria-live="polite">
+        <div class="status-row">
+          <span class="status-badge" id="status-badge">Incomplete</span>
+        </div>
+        <p class="results__summary" id="summary">TAN: — ppm • NO₂⁻: — ppm • NO₃⁻: — ppm • Method: Fishless • Planted: No</p>
+        <div class="results__actions" id="actions-container" hidden>
+          <p class="actions__intro">Action steps <button type="button" class="tooltip tooltip--inline" data-tooltip="Quick, practical steps based on your readings." aria-label="Quick, practical steps based on your readings.">?</button></p>
+          <ul class="actions__list" id="action-list"></ul>
+          <p class="actions__note">Water conditioner <button type="button" class="tooltip tooltip--inline" data-tooltip="Temporarily detoxifies ammonia/nitrite. Not a substitute for water changes." aria-label="A water conditioner temporarily detoxifies ammonia and nitrite but is not a substitute for water changes.">?</button></p>
+        </div>
+        <div class="challenge" id="challenge" hidden>
+          <div class="challenge__header">
+            <h3>Start 24-hour challenge</h3>
+            <button type="button" class="btn btn--ghost" id="challenge-start">Start 24-hour challenge</button>
+            <button type="button" class="tooltip tooltip--inline" data-tooltip="Shows your filter can process 2 ppm ammonia to 0 ammonia and 0 nitrite in 24 hours." aria-label="The challenge shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.">?</button>
+          </div>
+          <p class="challenge__subtext">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
+          <div class="challenge__timer" aria-hidden="true">
+            <span class="timer__label">24-hour window</span>
+            <div class="timer__track"><span class="timer__fill"></span></div>
+          </div>
+          <div class="challenge__form" id="challenge-form" hidden>
+            <div class="field-grid field-grid--compact">
+              <div class="field">
+                <label for="challenge-ammonia">Ammonia after 24h</label>
+                <input type="number" id="challenge-ammonia" step="0.01" min="0" inputmode="decimal" />
+              </div>
+              <div class="field">
+                <label for="challenge-nitrite">Nitrite after 24h</label>
+                <input type="number" id="challenge-nitrite" step="0.01" min="0" inputmode="decimal" />
+              </div>
+            </div>
+            <button type="button" class="btn btn--primary" id="challenge-check">Check results</button>
+          </div>
+          <div class="challenge__result" id="challenge-result" hidden>
+            <p class="challenge__status" id="challenge-status"></p>
+            <ul class="challenge__actions" id="challenge-actions"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="disclaimer" role="note">Cycling Coach is an educational tool. Always confirm with your own testing and judgment before making aquarium decisions.</div>
+    <section class="about" aria-labelledby="about-coach">
+      <h2 class="about__title" id="about-coach">About Cycling Coach</h2>
+      <p class="about__text">Cycling Coach combines aquarium science with simple guidance. By breaking down your test results, it shows how your tank is progressing through the cycle and offers guidance along the way.</p>
     </section>
   </main>
 
@@ -106,6 +163,6 @@
       host.innerHTML = await res.text();
     })();
   </script>
-  <script src="js/params.js?v=1.0.4" type="module"></script>
+  <script type="module" src="js/params.js?v=1.1.0"></script>
 </body>
 </html>
