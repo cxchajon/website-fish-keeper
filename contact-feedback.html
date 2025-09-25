@@ -220,10 +220,6 @@
             margin-bottom: var(--gap-between);
         }
 
-        .js-spacing-state .stay-in-touch {
-            margin-top: var(--gap-xs) !important;
-        }
-
         .accordion-panel,
         #panel-fish,
         #panel-logic,
@@ -242,18 +238,10 @@
             margin-top: 0 !important;
         }
 
-        .js-spacing-state.has-subject .stay-in-touch {
-            margin-top: var(--gap-s) !important;
-        }
-
         .form-card .field,
         .form-card .group,
         .stay-in-touch {
             margin-top: 0;
-        }
-
-        .stay-in-touch {
-            padding-top: 12px;
         }
 
         .subject-panel .field-group {
@@ -379,6 +367,42 @@
             .contact-card {
                 padding: 56px 64px 64px;
             }
+        }
+    </style>
+
+    <style>
+        :root {
+            --gap-under-subject-when-empty: 6px; /* adjust if you want even tighter/looser */
+        }
+
+        /* Ensure the form carries the spacing-state class (JS below will add it if missing) */
+        #feedbackForm.js-spacing-state:not(.has-subject) .stay-in-touch {
+            margin-top: var(--gap-under-subject-when-empty) !important; /* hug Subject */
+        }
+
+        /* Kill any big bottom margin on the Subject control itself to prevent a gap */
+        #feedbackForm #subject {
+            margin-bottom: var(--gap-under-subject-when-empty) !important;
+            display: block; /* ensure margin-bottom applies consistently */
+        }
+
+        /* Safety: if your Subject sits in a wrapper group that adds spacing, neutralize just its bottom gap */
+        #feedbackForm .subject,
+        #feedbackForm .subject-group,
+        #feedbackForm .field-subject,
+        #feedbackForm .form-group-subject {
+            margin-bottom: var(--gap-under-subject-when-empty) !important;
+        }
+
+        /* Also make sure the Stay-in-touch card itself isn’t adding excess top spacing */
+        #feedbackForm .stay-in-touch {
+            margin-top: var(--gap-under-subject-when-empty) !important;
+            padding-top: 12px; /* keep internal breathing room */
+        }
+
+        /* When a subject is selected, restore the standard spacing */
+        #feedbackForm.js-spacing-state.has-subject .stay-in-touch {
+            margin-top: var(--gap-s) !important;
         }
     </style>
 </head>
@@ -592,8 +616,19 @@
             const captchaError = document.getElementById('captchaError');
             const textareas = Array.from(document.querySelectorAll('textarea'));
 
-            form.classList.add('js-spacing-state');
-            form.classList.remove('has-subject');
+            if (form && !form.classList.contains('js-spacing-state')) {
+                form.classList.add('js-spacing-state');
+            }
+
+            function syncSubjectState() {
+                if (!form || !subjectSelect) {
+                    return;
+                }
+                const has = subjectSelect.value && subjectSelect.value.trim() !== '';
+                form.classList.toggle('has-subject', has);
+            }
+
+            syncSubjectState();
 
             function closeAllPanels() {
                 Object.values(panels).forEach(panel => {
@@ -616,11 +651,7 @@
                 const value = subjectSelect.value;
                 openPanel(value);
                 hiddenSubject.value = value ? `[Contact & Feedback] – ${value}` : '';
-                if (value) {
-                    form.classList.add('has-subject');
-                } else {
-                    form.classList.remove('has-subject');
-                }
+                syncSubjectState();
             });
 
             function autoResizeTextarea(el) {
@@ -680,7 +711,7 @@
                 chevron.classList.remove('up');
                 hiddenSubject.value = '';
                 timestampField.value = '';
-                form.classList.remove('has-subject');
+                syncSubjectState();
                 textareas.forEach(textarea => {
                     textarea.style.height = '';
                     autoResizeTextarea(textarea);
