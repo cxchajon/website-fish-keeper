@@ -688,3 +688,5 @@ td.empty-cell {
   border: initial;
   background: initial;
 }
+
+#challengeCard[hidden] { display: none !important; }

@@ -138,6 +138,64 @@ function renderList(listEl, items) {
   });
 }
 
+let challengeActive = false;
+let defaultChallengeInstruction = '';
+
+function resetChallenge({ soft }) {
+  const a = document.getElementById('challengeAmmonia');
+  const n = document.getElementById('challengeNitrite');
+  const msg = document.getElementById('challengeMessage');
+  const tip = document.getElementById('challengeInstruction');
+  const start = document.getElementById('challenge-start');
+  const form = document.getElementById('challenge-form');
+  const check = document.getElementById('challenge-check');
+  const results = document.getElementById('challenge-results');
+  const list = document.getElementById('challenge-list');
+  const ammoniaError = document.getElementById('challenge-ammonia-error');
+  const nitriteError = document.getElementById('challenge-nitrite-error');
+
+  if (!soft) {
+    challengeActive = false;
+    if (a) a.value = '';
+    if (n) n.value = '';
+    if (start) start.disabled = false;
+    if (form) form.hidden = true;
+    if (check) {
+      check.hidden = true;
+      check.disabled = false;
+    }
+    if (results) results.hidden = true;
+    if (list) list.innerHTML = '';
+    if (ammoniaError) {
+      ammoniaError.textContent = '';
+      ammoniaError.hidden = true;
+    }
+    if (nitriteError) {
+      nitriteError.textContent = '';
+      nitriteError.hidden = true;
+    }
+    if (tip) {
+      tip.textContent = defaultChallengeInstruction;
+    }
+  }
+
+  if (msg) msg.textContent = '';
+  if (tip) tip.classList.remove('is-warning', 'is-success');
+}
+
+function updateChallengeVisibility({ method, status }) {
+  const card = document.getElementById('challengeCard');
+  if (!card) return;
+  const ready = method === 'Fishless' && status === 'Cycled (likely)';
+  if (ready) {
+    card.removeAttribute('hidden');
+    resetChallenge({ soft: true });
+  } else {
+    card.setAttribute('hidden', '');
+    resetChallenge({ soft: false });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   ensureNavClosed();
 
@@ -145,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ammoniaInput = document.getElementById('ammonia');
   const nitriteInput = document.getElementById('nitrite');
   const nitrateInput = document.getElementById('nitrate');
-  const methodSelect = document.getElementById('cycle-method');
+  const methodSelect = document.getElementById('method') || document.getElementById('cycle-method');
   const plantedCheckbox = document.getElementById('planted');
   const checkButton = document.getElementById('check-button');
   const clearButton = document.getElementById('clear-button');
@@ -159,12 +217,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const challengeCheck = document.getElementById('challenge-check');
   const challengeResults = document.getElementById('challenge-results');
   const challengeList = document.getElementById('challenge-list');
-  const challengeAmmonia = document.getElementById('challenge-ammonia');
-  const challengeNitrite = document.getElementById('challenge-nitrite');
+  const challengeAmmonia = document.getElementById('challengeAmmonia');
+  const challengeNitrite = document.getElementById('challengeNitrite');
   const challengeAmmoniaError = document.getElementById('challenge-ammonia-error');
   const challengeNitriteError = document.getElementById('challenge-nitrite-error');
-  const challengeInstructions = document.getElementById('challenge-instructions');
-  const defaultChallengeInstructions = challengeInstructions ? challengeInstructions.textContent : '';
+  const challengeInstruction = document.getElementById('challengeInstruction');
+  const challengeMessage = document.getElementById('challengeMessage');
+  if (challengeInstruction && !defaultChallengeInstruction) {
+    defaultChallengeInstruction = challengeInstruction.textContent || '';
+  }
+  if (challengeCard) {
+    challengeCard.setAttribute('hidden', '');
+  }
   const advancedPanel = document.getElementById('advanced-panel');
   const advancedSummary = advancedPanel ? advancedPanel.querySelector('summary') : null;
   const phInput = document.getElementById('ph');
@@ -176,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let hasAssessed = false;
   let tempUnit = 'F';
   let currentAmmonia = null;
-  let challengeActive = false;
 
   function updatePlantedVisual() {
     document.body.classList.toggle('planted-active', plantedCheckbox.checked);
@@ -196,47 +259,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function resetChallenge() {
-    challengeActive = false;
-    challengeForm.hidden = true;
-    challengeCheck.hidden = true;
-    challengeResults.hidden = true;
-    challengeList.innerHTML = '';
-    challengeAmmonia.value = '';
-    challengeNitrite.value = '';
-    hideFieldError(challengeAmmoniaError);
-    hideFieldError(challengeNitriteError);
-    if (challengeStart) {
-      challengeStart.disabled = false;
-    }
-    if (challengeCheck) {
-      challengeCheck.disabled = false;
-    }
-    if (challengeInstructions) {
-      challengeInstructions.textContent = defaultChallengeInstructions;
-      const warnClasses = Array.from(challengeInstructions.classList).filter((cls) => cls.toLowerCase().includes('warn'));
-      warnClasses.forEach((cls) => challengeInstructions.classList.remove(cls));
-      if (challengeInstructions.hasAttribute('data-state')) {
-        challengeInstructions.removeAttribute('data-state');
-      }
-    }
-  }
-
-  function setChallengeVisibility(shouldShow) {
-    if (!challengeCard) {
-      return;
-    }
-    if (shouldShow) {
-      challengeCard.hidden = false;
-    } else {
-      resetChallenge();
-      challengeCard.hidden = true;
-    }
-  }
-
-  function updateSummary(ammonia, nitrite, nitrate, method, planted) {
-    const summary = `Ammonia: ${formatNumber(ammonia, 2)} ppm • Nitrite: ${formatNumber(nitrite, 2)} ppm • Nitrate: ${formatNumber(nitrate, 1)} ppm • Method: ${method === 'fish-in' ? 'Fish-in' : 'Fishless'} • Planted: ${planted ? 'Yes' : 'No'}`;
+  function updateSummary(ammonia, nitrite, nitrate, methodLabel, planted) {
+    const summary = `Ammonia: ${formatNumber(ammonia, 2)} ppm • Nitrite: ${formatNumber(nitrite, 2)} ppm • Nitrate: ${formatNumber(nitrate, 1)} ppm • Method: ${methodLabel} • Planted: ${planted ? 'Yes' : 'No'}`;
     resultsSummary.textContent = summary;
+  }
+
+  function getMethodValue() {
+    if (!methodSelect) {
+      return 'fishless';
+    }
+    return methodSelect.value === 'fish-in' ? 'fish-in' : 'fishless';
+  }
+
+  function getMethodLabelFromValue(value) {
+    return value === 'fish-in' ? 'Fish-in' : 'Fishless';
+  }
+
+  function getCurrentStatusLabel() {
+    const raw = statusBadge.textContent || '';
+    const cleaned = raw.replace(/^[^A-Za-z0-9]+\s*/, '').trim();
+    return cleaned || 'Incomplete';
   }
 
   function updateActions(statusKey, planted, forceShow = false) {
@@ -259,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function updateStatus(ammonia, nitrite, nitrate, method, planted) {
+  function updateStatus(ammonia, nitrite, nitrate, methodValue, methodLabel, planted) {
     const missing = ammonia === null || nitrite === null || nitrate === null;
     let status = 'Incomplete';
     let symbol = '⚪';
@@ -267,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let showActions = false;
 
     if (!missing) {
-      if (method === 'fish-in' && (ammonia >= 0.25 || nitrite >= 0.25)) {
+      if (methodValue === 'fish-in' && (ammonia >= 0.25 || nitrite >= 0.25)) {
         status = 'Urgent';
         symbol = '🔴';
         actionKey = 'fishinUrgent';
@@ -277,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         symbol = '🟢';
         actionKey = 'fishlessCycled';
         showActions = true;
-      } else if (method === 'fishless') {
+      } else if (methodValue === 'fishless') {
         if (isZero(nitrite) && isZero(nitrate)) {
           status = 'In Progress';
           symbol = '🟡';
@@ -308,8 +350,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     statusBadge.textContent = `${symbol} ${status}`;
     updateActions(actionKey, planted, showActions);
-    const showChallenge = status === 'Cycled (likely)' && method === 'fishless';
-    setChallengeVisibility(showChallenge);
+    updateChallengeVisibility({ method: methodLabel, status });
+    return status;
   }
 
   function computeNH3Estimate(tan, ph, tempCelsius) {
@@ -360,12 +402,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const ammonia = sanitizeField(ammoniaInput, FIELD_SETTINGS.ammonia);
     const nitrite = sanitizeField(nitriteInput, FIELD_SETTINGS.nitrite);
     const nitrate = sanitizeField(nitrateInput, FIELD_SETTINGS.nitrate);
-    const method = methodSelect.value === 'fish-in' ? 'fish-in' : 'fishless';
+    const methodValue = getMethodValue();
+    const methodLabel = getMethodLabelFromValue(methodValue);
     const planted = plantedCheckbox.checked;
 
     currentAmmonia = ammonia;
-    updateSummary(ammonia, nitrite, nitrate, method, planted);
-    updateStatus(ammonia, nitrite, nitrate, method, planted);
+    updateSummary(ammonia, nitrite, nitrate, methodLabel, planted);
+    updateStatus(ammonia, nitrite, nitrate, methodValue, methodLabel, planted);
     updateNH3Estimate();
   }
 
@@ -374,7 +417,10 @@ document.addEventListener('DOMContentLoaded', () => {
     resultsSummary.textContent = 'Ammonia: — ppm • Nitrite: — ppm • Nitrate: — ppm • Method: Fishless • Planted: No';
     actionsBlock.hidden = true;
     actionsList.innerHTML = '';
-    setChallengeVisibility(false);
+    updateChallengeVisibility({
+      method: getMethodLabelFromValue(getMethodValue()),
+      status: 'Incomplete',
+    });
     currentAmmonia = null;
     updateNH3Estimate();
   }
@@ -408,10 +454,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   methodSelect.addEventListener('change', () => {
+    const methodValue = getMethodValue();
+    const methodLabel = getMethodLabelFromValue(methodValue);
+    const statusNow = hasAssessed ? getCurrentStatusLabel() : 'Incomplete';
+    updateChallengeVisibility({ method: methodLabel, status: statusNow });
     if (hasAssessed) {
       handleAssessment();
-    } else {
-      setChallengeVisibility(false);
     }
   });
 
@@ -452,7 +500,15 @@ document.addEventListener('DOMContentLoaded', () => {
     challengeList.innerHTML = '';
     hideFieldError(challengeAmmoniaError);
     hideFieldError(challengeNitriteError);
-    challengeAmmonia.focus();
+    if (challengeMessage) {
+      challengeMessage.textContent = '';
+    }
+    if (challengeInstruction) {
+      challengeInstruction.classList.remove('is-warning', 'is-success');
+    }
+    if (challengeAmmonia) {
+      challengeAmmonia.focus();
+    }
   });
 
   function readChallengeValue(input, settings, errorElement) {
@@ -481,11 +537,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ammonia === null || nitrite === null) {
       challengeResults.hidden = true;
       challengeList.innerHTML = '';
+      if (challengeMessage) {
+        challengeMessage.textContent = '';
+      }
       return;
     }
 
     const outcome = isZero(ammonia) && isZero(nitrite) ? 'challengePass' : 'challengeFail';
     renderList(challengeList, ACTION_SETS[outcome]);
+    if (challengeMessage) {
+      challengeMessage.textContent =
+        outcome === 'challengePass'
+          ? 'PASS — ammonia and nitrite both reached 0 within 24 hours.'
+          : 'Keep cycling — ammonia or nitrite is still above 0 after 24 hours.';
+    }
     challengeResults.hidden = false;
   });
 
