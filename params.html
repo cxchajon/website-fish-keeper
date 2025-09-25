@@ -6,7 +6,7 @@
   <title>The Tank Guide — Cycling Coach</title>
   <meta name="description" content="Check today’s aquarium readings, see your cycling status, and get guidance tailored to fishless or fish-in methods." />
   <link rel="stylesheet" href="css/style.css?v=1.0.8" />
-  <link rel="stylesheet" href="css/params.css?v=1.1.0" />
+  <link rel="stylesheet" href="css/params.css?v=1.1.1" />
   <script defer src="js/nav.js?v=1.0.8"></script>
 </head>
 <body class="theme-dark cycling-coach">
@@ -65,10 +65,59 @@
           </div>
         </div>
         <div class="form-actions">
-          <button type="button" class="btn btn--primary" id="assess">Assess</button>
+          <button type="button" class="btn btn--primary" id="check">Check</button>
           <button type="button" class="btn" id="clear">Clear</button>
         </div>
       </form>
+    </section>
+
+    <section class="panel panel--results" aria-labelledby="results-heading">
+      <div class="panel__header">
+        <h2 class="panel__title" id="results-heading">Results</h2>
+        <button type="button" class="tooltip tooltip--inline" data-tooltip="High-level snapshot of where your tank stands." aria-label="High-level snapshot of where your tank stands.">?</button>
+      </div>
+      <div class="panel__body" id="results" aria-live="polite">
+        <div class="status-row">
+          <span class="status-badge" id="status-badge">Incomplete</span>
+        </div>
+        <p class="results__summary" id="summary">Ammonia: — ppm • Nitrite: — ppm • Nitrate: — ppm • Method: Fishless • Planted: No</p>
+        <div class="results__actions" id="actions-container" hidden>
+          <p class="actions__intro">Action steps <button type="button" class="tooltip tooltip--inline" data-tooltip="Quick, practical steps based on your readings." aria-label="Quick, practical steps based on your readings.">?</button></p>
+          <ul class="actions__list" id="action-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel panel--challenge" id="challenge-panel" aria-labelledby="challenge-heading" hidden>
+      <div class="panel__header panel__header--toggle">
+        <h2 class="panel__title" id="challenge-heading">24-hour challenge</h2>
+        <button type="button" class="panel__toggle" id="challenge-toggle" aria-expanded="false" aria-controls="challenge-content">Open</button>
+      </div>
+      <div class="panel__body challenge" id="challenge-content" hidden>
+        <div class="challenge__header">
+          <h3>Start 24-hour challenge</h3>
+          <button type="button" class="btn btn--ghost" id="challenge-start">Start 24-hour challenge</button>
+          <button type="button" class="tooltip tooltip--inline" data-tooltip="Shows your filter can process 2 ppm ammonia to 0 ammonia and 0 nitrite in 24 hours." aria-label="The challenge shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.">?</button>
+        </div>
+        <p class="challenge__subtext">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
+        <div class="challenge__form" id="challenge-form" hidden>
+          <div class="field-grid field-grid--compact">
+            <div class="field">
+              <label for="challenge-ammonia">Ammonia after 24h</label>
+              <input type="number" id="challenge-ammonia" step="0.01" min="0" inputmode="decimal" />
+            </div>
+            <div class="field">
+              <label for="challenge-nitrite">Nitrite after 24h</label>
+              <input type="number" id="challenge-nitrite" step="0.01" min="0" inputmode="decimal" />
+            </div>
+          </div>
+          <button type="button" class="btn btn--primary" id="challenge-check">Check results</button>
+        </div>
+        <div class="challenge__result" id="challenge-result" hidden>
+          <p class="challenge__status" id="challenge-status"></p>
+          <ul class="challenge__actions" id="challenge-actions"></ul>
+        </div>
+      </div>
     </section>
 
     <section class="panel panel--advanced" aria-labelledby="advanced-heading">
@@ -96,54 +145,7 @@
           <span class="advanced__badge" id="nh3-badge"></span>
           <button type="button" class="tooltip tooltip--inline" data-tooltip="Test kits read TAN (NH₃ + NH₄⁺). Only NH₃ is toxic and increases with pH and temperature." aria-label="Test kits read TAN, which is NH3 plus NH4. Only NH3 is toxic and it increases with pH and temperature.">?</button>
         </div>
-        <p class="advanced__note">References: <a href="https://floridadep.gov/sites/default/files/SOP-001-1_0.pdf" target="_blank" rel="noopener noreferrer">Florida Department of Environmental Protection — “Calculation on Un-ionized Ammonia in Fresh Water”</a>; <a href="https://edis.ifas.ufl.edu/publication/FA16" target="_blank" rel="noopener noreferrer">University of Florida / IFAS — “How to calculate un-ionized ammonia levels”</a></p>
-      </div>
-    </section>
-
-    <section class="panel panel--results" aria-labelledby="results-heading">
-      <div class="panel__header">
-        <h2 class="panel__title" id="results-heading">Results</h2>
-        <button type="button" class="tooltip tooltip--inline" data-tooltip="High-level snapshot of where your tank stands." aria-label="High-level snapshot of where your tank stands.">?</button>
-      </div>
-      <div class="panel__body" id="results" aria-live="polite">
-        <div class="status-row">
-          <span class="status-badge" id="status-badge">Incomplete</span>
-        </div>
-        <p class="results__summary" id="summary">TAN: — ppm • NO₂⁻: — ppm • NO₃⁻: — ppm • Method: Fishless • Planted: No</p>
-        <div class="results__actions" id="actions-container" hidden>
-          <p class="actions__intro">Action steps <button type="button" class="tooltip tooltip--inline" data-tooltip="Quick, practical steps based on your readings." aria-label="Quick, practical steps based on your readings.">?</button></p>
-          <ul class="actions__list" id="action-list"></ul>
-          <p class="actions__note">Water conditioner <button type="button" class="tooltip tooltip--inline" data-tooltip="Temporarily detoxifies ammonia/nitrite. Not a substitute for water changes." aria-label="A water conditioner temporarily detoxifies ammonia and nitrite but is not a substitute for water changes.">?</button></p>
-        </div>
-        <div class="challenge" id="challenge" hidden>
-          <div class="challenge__header">
-            <h3>Start 24-hour challenge</h3>
-            <button type="button" class="btn btn--ghost" id="challenge-start">Start 24-hour challenge</button>
-            <button type="button" class="tooltip tooltip--inline" data-tooltip="Shows your filter can process 2 ppm ammonia to 0 ammonia and 0 nitrite in 24 hours." aria-label="The challenge shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.">?</button>
-          </div>
-          <p class="challenge__subtext">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
-          <div class="challenge__timer" aria-hidden="true">
-            <span class="timer__label">24-hour window</span>
-            <div class="timer__track"><span class="timer__fill"></span></div>
-          </div>
-          <div class="challenge__form" id="challenge-form" hidden>
-            <div class="field-grid field-grid--compact">
-              <div class="field">
-                <label for="challenge-ammonia">Ammonia after 24h</label>
-                <input type="number" id="challenge-ammonia" step="0.01" min="0" inputmode="decimal" />
-              </div>
-              <div class="field">
-                <label for="challenge-nitrite">Nitrite after 24h</label>
-                <input type="number" id="challenge-nitrite" step="0.01" min="0" inputmode="decimal" />
-              </div>
-            </div>
-            <button type="button" class="btn btn--primary" id="challenge-check">Check results</button>
-          </div>
-          <div class="challenge__result" id="challenge-result" hidden>
-            <p class="challenge__status" id="challenge-status"></p>
-            <ul class="challenge__actions" id="challenge-actions"></ul>
-          </div>
-        </div>
+        <p class="advanced__note"><a href="/media.html" target="_blank" rel="noopener">See Media page for Sources &amp; Further Reading.</a></p>
       </div>
     </section>
 
@@ -163,6 +165,6 @@
       host.innerHTML = await res.text();
     })();
   </script>
-  <script type="module" src="js/params.js?v=1.1.0"></script>
+  <script type="module" src="js/params.js?v=1.1.1"></script>
 </body>
 </html>

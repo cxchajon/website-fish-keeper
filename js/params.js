@@ -4,13 +4,15 @@ const nitriteInput = document.getElementById('nitrite');
 const nitrateInput = document.getElementById('nitrate');
 const methodSelect = document.getElementById('cycle-method');
 const plantedCheckbox = document.getElementById('planted');
-const assessBtn = document.getElementById('assess');
+const checkBtn = document.getElementById('check');
 const clearBtn = document.getElementById('clear');
 const statusBadge = document.getElementById('status-badge');
 const summaryLine = document.getElementById('summary');
 const actionsContainer = document.getElementById('actions-container');
 const actionList = document.getElementById('action-list');
-const challengeBlock = document.getElementById('challenge');
+const challengePanel = document.getElementById('challenge-panel');
+const challengeToggle = document.getElementById('challenge-toggle');
+const challengeContent = document.getElementById('challenge-content');
 const challengeStartBtn = document.getElementById('challenge-start');
 const challengeForm = document.getElementById('challenge-form');
 const challengeCheckBtn = document.getElementById('challenge-check');
@@ -232,7 +234,7 @@ function updateSummary(inputs) {
   const nitrateText = formatNumber(inputs.nitrate, 1);
   const methodText = inputs.method === 'fishless' ? 'Fishless' : 'Fish-in';
   const plantedText = inputs.planted ? 'Yes' : 'No';
-  summaryLine.textContent = `TAN: ${ammoniaText} ppm • NO₂⁻: ${nitriteText} ppm • NO₃⁻: ${nitrateText} ppm • Method: ${methodText} • Planted: ${plantedText}`;
+  summaryLine.textContent = `Ammonia: ${ammoniaText} ppm • Nitrite: ${nitriteText} ppm • Nitrate: ${nitrateText} ppm • Method: ${methodText} • Planted: ${plantedText}`;
 }
 
 function updateStatusBadge(status) {
@@ -254,21 +256,32 @@ function resetChallenge() {
   challengeState.result = null;
   challengeForm.hidden = true;
   challengeResult.hidden = true;
-  challengeStartBtn.hidden = false;
+  if (challengeStartBtn) {
+    challengeStartBtn.hidden = false;
+  }
   challengeStatus.textContent = '';
   challengeActions.innerHTML = '';
-  challengeAmmonia.value = '';
-  challengeNitrite.value = '';
+  if (challengeAmmonia) challengeAmmonia.value = '';
+  if (challengeNitrite) challengeNitrite.value = '';
+}
+
+function setSectionExpanded(button, content, expanded) {
+  if (!button || !content) return;
+  button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  button.textContent = expanded ? 'Close' : 'Open';
+  content.hidden = !expanded;
 }
 
 function toggleChallenge(visible) {
-  if (!challengeBlock) return;
+  if (!challengePanel) return;
   if (!visible) {
-    challengeBlock.hidden = true;
+    challengePanel.hidden = true;
     resetChallenge();
+    setSectionExpanded(challengeToggle, challengeContent, false);
     return;
   }
-  challengeBlock.hidden = false;
+  challengePanel.hidden = false;
+  setSectionExpanded(challengeToggle, challengeContent, false);
 }
 
 function setChallengeResult(passed, planted) {
@@ -323,7 +336,7 @@ function updateAdvanced() {
   }
 }
 
-function handleAssess() {
+function handleCheck() {
   const inputs = getInputs();
   updateSummary(inputs);
   const status = determineStatus(inputs);
@@ -348,7 +361,7 @@ function handleAssess() {
 function handleClear() {
   form.reset();
   plantedCheckbox.dispatchEvent(new Event('change'));
-  summaryLine.textContent = 'TAN: — ppm • NO₂⁻: — ppm • NO₃⁻: — ppm • Method: Fishless • Planted: No';
+  summaryLine.textContent = 'Ammonia: — ppm • Nitrite: — ppm • Nitrate: — ppm • Method: Fishless • Planted: No';
   updateStatusBadge(STATUS.INCOMPLETE);
   renderActions([]);
   toggleChallenge(false);
@@ -366,15 +379,16 @@ function handlePlantedToggle() {
 }
 
 function handleAdvancedToggle() {
-  const isOpen = advancedContent.hidden === false;
-  if (isOpen) {
-    advancedContent.hidden = true;
-    advancedToggle.setAttribute('aria-expanded', 'false');
-    advancedToggle.textContent = 'Open';
-  } else {
-    advancedContent.hidden = false;
-    advancedToggle.setAttribute('aria-expanded', 'true');
-    advancedToggle.textContent = 'Close';
+  const isOpen = advancedToggle.getAttribute('aria-expanded') === 'true';
+  setSectionExpanded(advancedToggle, advancedContent, !isOpen);
+}
+
+function handleChallengeToggle() {
+  const isOpen = challengeToggle.getAttribute('aria-expanded') === 'true';
+  const nextState = !isOpen;
+  setSectionExpanded(challengeToggle, challengeContent, nextState);
+  if (!nextState) {
+    resetChallenge();
   }
 }
 
@@ -400,12 +414,16 @@ function handleTempUnitToggle() {
 
 function handleChallengeStart() {
   challengeState.active = true;
-  challengeStartBtn.hidden = true;
+  if (challengeStartBtn) {
+    challengeStartBtn.hidden = true;
+  }
   challengeForm.hidden = false;
   challengeResult.hidden = true;
   challengeStatus.textContent = '';
   challengeActions.innerHTML = '';
-  challengeAmmonia.focus();
+  if (challengeAmmonia) {
+    challengeAmmonia.focus();
+  }
 }
 
 function handleChallengeCheck() {
@@ -426,11 +444,22 @@ function handleChallengeCheck() {
   setChallengeResult(passed, mainInputs.planted);
 }
 
-assessBtn.addEventListener('click', handleAssess);
-clearBtn.addEventListener('click', handleClear);
+if (checkBtn) {
+  checkBtn.addEventListener('click', handleCheck);
+}
+if (clearBtn) {
+  clearBtn.addEventListener('click', handleClear);
+}
 plantedCheckbox.addEventListener('change', handlePlantedToggle);
-advancedToggle.addEventListener('click', handleAdvancedToggle);
-tempUnitBtn.addEventListener('click', handleTempUnitToggle);
+if (advancedToggle) {
+  advancedToggle.addEventListener('click', handleAdvancedToggle);
+}
+if (challengeToggle) {
+  challengeToggle.addEventListener('click', handleChallengeToggle);
+}
+if (tempUnitBtn) {
+  tempUnitBtn.addEventListener('click', handleTempUnitToggle);
+}
 [ammoniaInput, phInput, tempInput].forEach((input) => {
   input?.addEventListener('input', updateAdvanced);
 });
@@ -444,3 +473,6 @@ if (challengeCheckBtn) {
 handlePlantedToggle();
 updateAdvanced();
 updateStatusBadge(STATUS.INCOMPLETE);
+setSectionExpanded(advancedToggle, advancedContent, false);
+setSectionExpanded(challengeToggle, challengeContent, false);
+toggleChallenge(false);
