@@ -1,510 +1,435 @@
-const form = document.getElementById('coach-form');
-const ammoniaInput = document.getElementById('ammonia');
-const nitriteInput = document.getElementById('nitrite');
-const nitrateInput = document.getElementById('nitrate');
-const methodSelect = document.getElementById('cycle-method');
-const plantedCheckbox = document.getElementById('planted');
-const checkBtn = document.getElementById('check');
-const clearBtn = document.getElementById('clear');
-const statusBadge = document.getElementById('status-badge');
-const summaryLine = document.getElementById('summary');
-const actionsContainer = document.getElementById('actions-container');
-const actionList = document.getElementById('action-list');
-const challengePanel = document.getElementById('challenge-panel');
-const challengeContent = document.getElementById('challenge-content');
-const challengeStartBtn = document.getElementById('challenge-start');
-const challengeForm = document.getElementById('challenge-form');
-const challengeCheckBtn = document.getElementById('challenge-check');
-const challengeResult = document.getElementById('challenge-result');
-const challengeStatus = document.getElementById('challenge-status');
-const challengeActions = document.getElementById('challenge-actions');
-const challengeAmmonia = document.getElementById('challenge-ammonia');
-const challengeNitrite = document.getElementById('challenge-nitrite');
-const coachLeaf = document.getElementById('coach-leaf');
-const advancedToggle = document.getElementById('advanced-toggle');
-const advancedContent = document.getElementById('advanced-content');
-const phInput = document.getElementById('ph');
-const tempInput = document.getElementById('temperature');
-const tempUnitBtn = document.getElementById('temp-unit');
-const nh3Value = document.getElementById('nh3-value');
-const nh3Badge = document.getElementById('nh3-badge');
-
-const STATUS = {
-  INCOMPLETE: 'Incomplete',
-  IN_PROGRESS: 'In Progress',
-  URGENT: 'Urgent',
-  CYCLED: 'Cycled (likely)',
-  MIXED: 'Mixed',
-};
-
-const STATUS_ICON = {
-  [STATUS.CYCLED]: '🟢',
-  [STATUS.IN_PROGRESS]: '🟡',
-  [STATUS.URGENT]: '🔴',
-  [STATUS.INCOMPLETE]: '⚪',
-  [STATUS.MIXED]: '⚪',
+const ZERO_EPS = 0.02;
+const FIELD_SETTINGS = {
+  ammonia: { max: 8, decimals: 2 },
+  nitrite: { max: 5, decimals: 2 },
+  nitrate: { max: 200, decimals: 1 },
 };
 
 const ACTION_SETS = {
-  fishless: {
-    inProgress: {
-      early: [
-        'Keep ammonia at ~1–2 ppm to feed bacteria',
-        'Test daily or every other day',
-        'Watch for nitrite to start appearing',
-        'Maintain good aeration and stable temperature',
-      ],
-      spike: [
-        'Keep ammonia at ~1–2 ppm',
-        'Test daily or every other day',
-        'Expect nitrite to stay high for a while — this is normal',
-        'Nitrates will begin to appear; keep them under 40 ppm with water changes',
-      ],
-      nearly: [
-        'Keep ammonia at ~1–2 ppm',
-        'Test daily or every other day',
-        'Watch for nitrite to drop to 0',
-        'Keep nitrates under 40 ppm with water changes',
-      ],
-    },
-    cycled: [
-      'Dose ammonia up to ~2 ppm',
-      'Start the 24-hour challenge below',
-      'Do not add fish yet',
-      'Keep nitrates under 40 ppm with a large water change before stocking',
-    ],
-    challenge: {
-      pass: [
-        'Your tank processed 2 ppm of ammonia in 24 hours (ammonia and nitrite both 0)',
-        'Do a large water change to reduce nitrates under 40 ppm',
-        'You are ready to begin stocking responsibly — congratulations on building a stable cycle',
-      ],
-      fail: [
-        'Ammonia or nitrite did not drop to 0 in 24 hours',
-        'Keep dosing ammonia at ~1–2 ppm',
-        'Test daily or every other day',
-        'Don’t worry — this is normal, try the challenge again in a few days',
-      ],
-    },
-  },
-  fishIn: {
-    inProgress: [
-      'Test ammonia and nitrite daily',
-      'Feed lightly — don’t overfeed during cycling',
-      'Hold off on adding new fish until cycle is complete',
-      'Keep nitrates under 40 ppm with regular water changes',
-      'You may use a water conditioner that temporarily detoxifies ammonia/nitrite (supportive, not a substitute for water changes)',
-    ],
-    urgent: [
-      'Do a 25–50% water change now',
-      'Recommended: test every 12 hours, especially after water changes',
-      'Feed lightly until levels improve',
-      'Pause adding new fish until cycle is stable',
-      'Keep nitrates under 40 ppm with regular water changes',
-      'Optionally dose a water conditioner to temporarily detoxify ammonia/nitrite — still perform water changes as the main fix',
-    ],
-  },
+  fishlessEarly: [
+    'Keep ammonia at ~1–2 ppm to feed bacteria',
+    'Test daily or every other day',
+    'Watch for nitrite to start appearing',
+    'Maintain good aeration and stable temperature',
+  ],
+  fishlessSpike: [
+    'Keep ammonia at ~1–2 ppm',
+    'Test daily or every other day',
+    'Expect nitrite to stay high for a while — this is normal',
+    'Nitrates will begin to appear; keep them under 40 ppm with water changes',
+  ],
+  fishlessNearly: [
+    'Keep ammonia at ~1–2 ppm',
+    'Test daily or every other day',
+    'Watch for nitrite to drop to 0',
+    'Keep nitrates under 40 ppm with water changes',
+  ],
+  fishlessCycled: [
+    'Dose ammonia up to ~2 ppm',
+    'Start the 24-hour challenge below',
+    'Do not add fish yet',
+    'Keep nitrates under 40 ppm with a large water change before stocking',
+  ],
+  fishinProgress: [
+    'Test ammonia and nitrite daily',
+    'Feed lightly — don’t overfeed during cycling',
+    'Hold off on adding new fish until cycle is complete',
+    'Keep nitrates under 40 ppm with regular water changes',
+    'You may use a water conditioner that temporarily detoxifies ammonia/nitrite (supportive, not a substitute for water changes)',
+  ],
+  fishinUrgent: [
+    'Do a 25–50% water change now',
+    'Recommended: test every 12 hours, especially after water changes',
+    'Feed lightly until levels improve',
+    'Pause adding new fish until cycle is stable',
+    'Keep nitrates under 40 ppm with regular water changes',
+    'Optionally dose a water conditioner to temporarily detoxify ammonia/nitrite — still perform water changes as the main fix',
+  ],
+  challengePass: [
+    'Your tank processed 2 ppm of ammonia in 24 hours (ammonia and nitrite both 0)',
+    'Do a large water change to reduce nitrates under 40 ppm',
+    'You are ready to begin stocking responsibly — congratulations on building a stable cycle',
+  ],
+  challengeFail: [
+    'Ammonia or nitrite did not drop to 0 in 24 hours',
+    'Keep dosing ammonia at ~1–2 ppm',
+    'Test daily or every other day',
+    'Don’t worry — this is normal, try the challenge again in a few days',
+  ],
 };
 
-const NITRATE_HYGIENE = {
+const NITRATE_LINES = {
   planted: 'Keep nitrates under 40 ppm for fish safety, but don’t chase zero — plants need some nitrate to grow.',
-  standard: 'Keep nitrates under 40 ppm with regular water changes. Many aquarists aim for 20 ppm or less for extra safety.',
+  notPlanted: 'Keep nitrates under 40 ppm with regular water changes. Many aquarists aim for 20 ppm or less for extra safety.',
 };
-
-const challengeState = {
-  active: false,
-  result: null,
-};
-
-let tempUnit = 'F';
-let challengeVisible = false;
 
 function ensureNavClosed() {
-  const drawerSelectors = '#sidebar, .sidenav, .nav-drawer, [data-drawer], [data-nav-drawer]';
-  document.querySelectorAll(drawerSelectors).forEach((drawer) => {
-    ['open', 'active', 'is-open', 'is-visible'].forEach((cls) => drawer.classList.remove(cls));
-    if (drawer.getAttribute('aria-hidden') === 'false') {
-      drawer.setAttribute('aria-hidden', 'true');
+  const drawerSelectors = ['#ttg-drawer', '#sidebar', '.sidenav', '.nav-drawer', '[data-drawer]'];
+  const classNames = ['open', 'active', 'is-open', 'is-visible'];
+
+  drawerSelectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((drawer) => {
+      classNames.forEach((cls) => drawer.classList.remove(cls));
+      if (drawer.hasAttribute('aria-hidden')) {
+        drawer.setAttribute('aria-hidden', 'true');
+      }
+    });
+  });
+
+  document.body.classList.remove('drawer-open', 'has-drawer', 'app--with-drawer');
+
+  const toggles = document.querySelectorAll('[aria-controls], [data-drawer-toggle], #ttg-nav-open, #ttg-nav-close');
+  toggles.forEach((toggle) => {
+    if (toggle instanceof HTMLElement && toggle.hasAttribute('aria-expanded')) {
+      toggle.setAttribute('aria-expanded', 'false');
     }
   });
-  document.querySelectorAll('#menuToggle, .nav-toggle, [data-nav-toggle]').forEach((toggle) => {
-    toggle.setAttribute('aria-expanded', 'false');
-  });
-  const { body } = document;
-  if (body) {
-    ['drawer-open', 'has-drawer', 'app--with-drawer'].forEach((cls) => body.classList.remove(cls));
+}
+
+function sanitizeField(input, settings) {
+  const raw = parseFloat(input.value);
+  if (Number.isNaN(raw)) {
+    return null;
   }
-}
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', ensureNavClosed, { once: true });
-} else {
-  ensureNavClosed();
-}
-
-function clampNumber(value, min = 0, max = Number.POSITIVE_INFINITY) {
-  if (Number.isNaN(value)) return Number.NaN;
-  if (value < min) return min;
-  if (value > max) return max;
+  let value = Math.max(0, raw);
+  if (typeof settings.max === 'number') {
+    value = Math.min(value, settings.max);
+  }
+  if (typeof settings.decimals === 'number') {
+    const formatted = parseFloat(value.toFixed(settings.decimals));
+    input.value = Number.isNaN(formatted) ? '' : formatted.toString();
+    return formatted;
+  }
+  input.value = value.toString();
   return value;
 }
 
-function parseInput(input, { min = 0, max = Number.POSITIVE_INFINITY } = {}) {
-  if (!input) return Number.NaN;
+function readClampedValue(input, settings) {
   const raw = parseFloat(input.value);
-  if (Number.isNaN(raw)) return Number.NaN;
-  const value = clampNumber(raw, min, max);
-  return Number.isFinite(value) ? value : Number.NaN;
+  if (Number.isNaN(raw)) {
+    return null;
+  }
+  let value = Math.max(0, raw);
+  if (typeof settings.max === 'number') {
+    value = Math.min(value, settings.max);
+  }
+  return value;
 }
 
 function formatNumber(value, decimals) {
-  if (Number.isNaN(value)) return '—';
-  return Number(value.toFixed(decimals)).toString();
-}
-
-function getInputs() {
-  return {
-    ammonia: parseInput(ammoniaInput, { max: 8 }),
-    nitrite: parseInput(nitriteInput, { max: 5 }),
-    nitrate: parseInput(nitrateInput, { max: 200 }),
-    method: methodSelect.value === 'fish-in' ? 'fishIn' : 'fishless',
-    planted: plantedCheckbox.checked,
-  };
-}
-
-function allProvided({ ammonia, nitrite, nitrate }) {
-  return ![ammonia, nitrite, nitrate].some((value) => Number.isNaN(value));
+  if (value === null || Number.isNaN(value)) {
+    return '—';
+  }
+  const precision = typeof decimals === 'number' ? decimals : value >= 10 ? 1 : 2;
+  const fixed = value.toFixed(precision);
+  return fixed.replace(/\.0+$|(?<=\.[0-9]*?)0+$/g, '').replace(/\.$/, '');
 }
 
 function isZero(value) {
-  return Math.abs(value) < 0.00001;
+  return Math.abs(value) <= ZERO_EPS;
 }
 
-function determineStatus(inputs) {
-  if (!allProvided(inputs)) {
-    return STATUS.INCOMPLETE;
-  }
-
-  const { ammonia, nitrite, nitrate, method } = inputs;
-
-  if (method === 'fishIn' && (ammonia >= 0.25 || nitrite >= 0.25)) {
-    return STATUS.URGENT;
-  }
-
-  if (method === 'fishless' && isZero(ammonia) && isZero(nitrite) && nitrate > 0) {
-    return STATUS.CYCLED;
-  }
-
-  if (isZero(ammonia) && isZero(nitrite) && isZero(nitrate)) {
-    return STATUS.MIXED;
-  }
-
-  return STATUS.IN_PROGRESS;
-}
-
-function fishlessStage({ ammonia, nitrite, nitrate }) {
-  if (nitrite >= 1 || nitrate >= 80) {
-    return 'spike';
-  }
-  if (nitrite > 0) {
-    return 'nearly';
-  }
-  return 'early';
-}
-
-function buildActions(inputs, status) {
-  const { method, planted } = inputs;
-  const nitrateLine = planted ? NITRATE_HYGIENE.planted : NITRATE_HYGIENE.standard;
-  let items = [];
-
-  if (status === STATUS.IN_PROGRESS) {
-    if (method === 'fishless') {
-      const stage = fishlessStage(inputs);
-      items = ACTION_SETS.fishless.inProgress[stage];
-    } else {
-      items = ACTION_SETS.fishIn.inProgress;
-    }
-  } else if (status === STATUS.URGENT) {
-    items = ACTION_SETS.fishIn.urgent;
-  } else if (status === STATUS.CYCLED && method === 'fishless') {
-    items = ACTION_SETS.fishless.cycled;
-  } else {
-    items = [];
-  }
-
-  return [...items, nitrateLine];
-}
-
-function renderActions(items) {
-  actionList.innerHTML = '';
-  if (!items.length) {
-    actionsContainer.hidden = true;
-    return;
-  }
-  const fragment = document.createDocumentFragment();
-  items.forEach((text) => {
+function renderList(listEl, items) {
+  listEl.innerHTML = '';
+  items.forEach((item) => {
     const li = document.createElement('li');
-    li.textContent = text;
-    fragment.appendChild(li);
+    li.textContent = item;
+    listEl.appendChild(li);
   });
-  actionList.appendChild(fragment);
-  actionsContainer.hidden = false;
 }
 
-function updateSummary(inputs) {
-  const ammoniaText = formatNumber(inputs.ammonia, 2);
-  const nitriteText = formatNumber(inputs.nitrite, 2);
-  const nitrateText = formatNumber(inputs.nitrate, 1);
-  const methodText = inputs.method === 'fishless' ? 'Fishless' : 'Fish-in';
-  const plantedText = inputs.planted ? 'Yes' : 'No';
-  summaryLine.textContent = `Ammonia: ${ammoniaText} ppm • Nitrite: ${nitriteText} ppm • Nitrate: ${nitrateText} ppm • Method: ${methodText} • Planted: ${plantedText}`;
-}
+document.addEventListener('DOMContentLoaded', () => {
+  ensureNavClosed();
 
-function updateStatusBadge(status) {
-  statusBadge.textContent = `${STATUS_ICON[status] ?? '⚪'} ${status}`;
-  statusBadge.dataset.state = '';
-  if (status === STATUS.CYCLED) {
-    statusBadge.dataset.state = 'good';
-  } else if (status === STATUS.URGENT) {
-    statusBadge.dataset.state = 'bad';
-  } else if (status === STATUS.IN_PROGRESS) {
-    statusBadge.dataset.state = 'warn';
-  } else {
-    statusBadge.dataset.state = 'neutral';
+  const form = document.getElementById('coach-form');
+  const ammoniaInput = document.getElementById('ammonia');
+  const nitriteInput = document.getElementById('nitrite');
+  const nitrateInput = document.getElementById('nitrate');
+  const methodSelect = document.getElementById('cycle-method');
+  const plantedCheckbox = document.getElementById('planted');
+  const checkButton = document.getElementById('check-button');
+  const clearButton = document.getElementById('clear-button');
+  const statusBadge = document.getElementById('status-badge');
+  const resultsSummary = document.getElementById('results-summary');
+  const actionsBlock = document.getElementById('actions-block');
+  const actionsList = document.getElementById('actions-list');
+  const challengeSection = document.getElementById('challenge-section');
+  const challengeStart = document.getElementById('challenge-start');
+  const challengeForm = document.getElementById('challenge-form');
+  const challengeCheck = document.getElementById('challenge-check');
+  const challengeResults = document.getElementById('challenge-results');
+  const challengeList = document.getElementById('challenge-list');
+  const challengeAmmonia = document.getElementById('challenge-ammonia');
+  const challengeNitrite = document.getElementById('challenge-nitrite');
+  const advancedPanel = document.getElementById('advanced-panel');
+  const advancedSummary = advancedPanel ? advancedPanel.querySelector('summary') : null;
+  const phInput = document.getElementById('ph');
+  const tempInput = document.getElementById('temperature');
+  const tempToggle = document.getElementById('temp-toggle');
+  const nh3Value = document.getElementById('nh3-value');
+  const nh3Badge = document.getElementById('nh3-badge');
+
+  let hasAssessed = false;
+  let tempUnit = 'F';
+  let currentAmmonia = null;
+
+  function updatePlantedVisual() {
+    document.body.classList.toggle('planted-active', plantedCheckbox.checked);
   }
-}
 
-function resetChallenge() {
-  challengeState.active = false;
-  challengeState.result = null;
-  challengeForm.hidden = true;
-  challengeResult.hidden = true;
-  if (challengeStartBtn) {
-    challengeStartBtn.hidden = false;
+  function resetChallenge() {
+    challengeForm.hidden = true;
+    challengeCheck.hidden = true;
+    challengeResults.hidden = true;
+    challengeList.innerHTML = '';
+    challengeAmmonia.value = '';
+    challengeNitrite.value = '';
   }
-  challengeStatus.textContent = '';
-  challengeActions.innerHTML = '';
-  if (challengeAmmonia) challengeAmmonia.value = '';
-  if (challengeNitrite) challengeNitrite.value = '';
-}
 
-function setSectionExpanded(button, content, expanded) {
-  if (!button || !content) return;
-  button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-  button.textContent = expanded ? 'Close' : 'Open';
-  content.hidden = !expanded;
-  if ('inert' in content) {
-    content.inert = !expanded;
-  } else if (!expanded) {
-    content.setAttribute('aria-hidden', 'true');
-  } else {
-    content.removeAttribute('aria-hidden');
+  function showChallengeSection(show) {
+    if (show) {
+      challengeSection.hidden = false;
+    } else {
+      challengeSection.hidden = true;
+      resetChallenge();
+    }
   }
-}
 
-function toggleChallenge(visible) {
-  if (!challengePanel) return;
-  if (!visible) {
-    resetChallenge();
-    challengePanel.hidden = true;
-    if (challengeContent) {
-      if ('inert' in challengeContent) {
-        challengeContent.inert = true;
+  function updateSummary(ammonia, nitrite, nitrate, method, planted) {
+    const summary = `Ammonia: ${formatNumber(ammonia, 2)} ppm • Nitrite: ${formatNumber(nitrite, 2)} ppm • Nitrate: ${formatNumber(nitrate, 1)} ppm • Method: ${method === 'fish-in' ? 'Fish-in' : 'Fishless'} • Planted: ${planted ? 'Yes' : 'No'}`;
+    resultsSummary.textContent = summary;
+  }
+
+  function updateActions(statusKey, planted, forceShow = false) {
+    const nitrateLine = planted ? NITRATE_LINES.planted : NITRATE_LINES.notPlanted;
+    const actions = [];
+
+    if (statusKey && ACTION_SETS[statusKey]) {
+      actions.push(...ACTION_SETS[statusKey]);
+    }
+
+    if (forceShow || actions.length > 0) {
+      if (!actions.includes(nitrateLine)) {
+        actions.push(nitrateLine);
+      }
+      renderList(actionsList, actions);
+      actionsBlock.hidden = false;
+    } else {
+      actionsBlock.hidden = true;
+      actionsList.innerHTML = '';
+    }
+  }
+
+  function updateStatus(ammonia, nitrite, nitrate, method, planted) {
+    const missing = ammonia === null || nitrite === null || nitrate === null;
+    let status = 'Incomplete';
+    let symbol = '⚪';
+    let actionKey = null;
+    let showActions = false;
+
+    if (!missing) {
+      if (method === 'fish-in' && (ammonia >= 0.25 || nitrite >= 0.25)) {
+        status = 'Urgent';
+        symbol = '🔴';
+        actionKey = 'fishinUrgent';
+        showActions = true;
+      } else if (isZero(ammonia) && isZero(nitrite) && nitrate > 0) {
+        status = 'Cycled (likely)';
+        symbol = '🟢';
+        actionKey = 'fishlessCycled';
+        showActions = true;
+      } else if (method === 'fishless') {
+        if (isZero(nitrite) && isZero(nitrate)) {
+          status = 'In Progress';
+          symbol = '🟡';
+          actionKey = 'fishlessEarly';
+          showActions = true;
+        } else if (!isZero(nitrite) && !isZero(ammonia)) {
+          status = 'In Progress';
+          symbol = '🟡';
+          actionKey = 'fishlessSpike';
+          showActions = true;
+        } else if (!isZero(nitrite) && isZero(ammonia)) {
+          status = 'In Progress';
+          symbol = '🟡';
+          actionKey = 'fishlessNearly';
+          showActions = true;
+        } else {
+          status = 'Mixed';
+          symbol = '⚪';
+          showActions = true;
+        }
       } else {
-        challengeContent.setAttribute('aria-hidden', 'true');
+        status = 'In Progress';
+        symbol = '🟡';
+        actionKey = 'fishinProgress';
+        showActions = true;
       }
     }
-    challengeVisible = false;
-    return;
+
+    statusBadge.textContent = `${symbol} ${status}`;
+    updateActions(actionKey, planted, showActions);
+    const showChallenge = status === 'Cycled (likely)' && method === 'fishless';
+    showChallengeSection(showChallenge);
   }
-  challengePanel.hidden = false;
-  if (challengeContent) {
-    if ('inert' in challengeContent) {
-      challengeContent.inert = false;
+
+  function computeNH3Estimate(tan, ph, tempCelsius) {
+    if (tan === null || tan === undefined || Number.isNaN(tan)) {
+      return null;
+    }
+    if (ph === null || Number.isNaN(ph)) {
+      return null;
+    }
+    if (tempCelsius === null || Number.isNaN(tempCelsius)) {
+      return null;
+    }
+    const pKa = 0.0901821 + 2729.92 / (273.15 + tempCelsius);
+    const fraction = 1 / (Math.pow(10, pKa - ph) + 1);
+    const estimate = tan * fraction;
+    return Number.isFinite(estimate) ? estimate : null;
+  }
+
+  function updateNH3Estimate() {
+    const tan = currentAmmonia;
+    const phRaw = parseFloat(phInput.value);
+    const phValue = Number.isNaN(phRaw) ? null : phRaw;
+    const tempRaw = parseFloat(tempInput.value);
+    const tempValue = Number.isNaN(tempRaw) ? null : tempRaw;
+
+    let tempC = null;
+    if (tempValue !== null) {
+      tempC = tempUnit === 'F' ? ((tempValue - 32) * 5) / 9 : tempValue;
+    }
+
+    const estimate = computeNH3Estimate(tan, phValue, tempC);
+    if (estimate === null) {
+      nh3Value.textContent = '—';
+      nh3Badge.hidden = true;
+      return;
+    }
+
+    const display = estimate >= 1 ? estimate.toFixed(2) : estimate >= 0.1 ? estimate.toFixed(3) : estimate.toFixed(4);
+    nh3Value.textContent = display.replace(/\.0+$/, '').replace(/(?<=\.[0-9]*?)0+$/, '').replace(/\.$/, '') + ' ppm';
+    if (estimate >= 0.02) {
+      nh3Badge.hidden = false;
     } else {
-      challengeContent.removeAttribute('aria-hidden');
+      nh3Badge.hidden = true;
     }
   }
-  if (!challengeVisible) {
-    resetChallenge();
-  }
-  challengeVisible = true;
-}
 
-function setChallengeResult(passed, planted) {
-  const entries = passed ? ACTION_SETS.fishless.challenge.pass : ACTION_SETS.fishless.challenge.fail;
-  const nitrateLine = planted ? NITRATE_HYGIENE.planted : NITRATE_HYGIENE.standard;
-  challengeStatus.textContent = passed ? 'PASS' : 'FAIL';
-  challengeActions.innerHTML = '';
-  const fragment = document.createDocumentFragment();
-  entries.concat([nitrateLine]).forEach((text) => {
-    const li = document.createElement('li');
-    li.textContent = text;
-    fragment.appendChild(li);
+  function handleAssessment() {
+    const ammonia = sanitizeField(ammoniaInput, FIELD_SETTINGS.ammonia);
+    const nitrite = sanitizeField(nitriteInput, FIELD_SETTINGS.nitrite);
+    const nitrate = sanitizeField(nitrateInput, FIELD_SETTINGS.nitrate);
+    const method = methodSelect.value === 'fish-in' ? 'fish-in' : 'fishless';
+    const planted = plantedCheckbox.checked;
+
+    currentAmmonia = ammonia;
+    updateSummary(ammonia, nitrite, nitrate, method, planted);
+    updateStatus(ammonia, nitrite, nitrate, method, planted);
+    updateNH3Estimate();
+  }
+
+  function resetOutputs() {
+    statusBadge.textContent = '⚪ Incomplete';
+    resultsSummary.textContent = 'Ammonia: — ppm • Nitrite: — ppm • Nitrate: — ppm • Method: Fishless • Planted: No';
+    actionsBlock.hidden = true;
+    actionsList.innerHTML = '';
+    showChallengeSection(false);
+    currentAmmonia = null;
+    updateNH3Estimate();
+  }
+
+  checkButton.addEventListener('click', () => {
+    hasAssessed = true;
+    handleAssessment();
   });
-  challengeActions.appendChild(fragment);
-  challengeResult.hidden = false;
-}
 
-function calculateNh3(ammonia, ph, tempC) {
-  if (Number.isNaN(ammonia) || Number.isNaN(ph) || Number.isNaN(tempC)) {
-    return Number.NaN;
-  }
-  const pKa = 0.0901821 + 2729.92 / (273.15 + tempC);
-  const fraction = 1 / (Math.pow(10, pKa - ph) + 1);
-  return ammonia * fraction;
-}
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    hasAssessed = true;
+    handleAssessment();
+  });
 
-function updateAdvanced() {
-  const ammonia = parseInput(ammoniaInput, { max: 8 });
-  const ph = parseInput(phInput, { min: 0, max: 14 });
-  const temperatureRaw = parseInput(tempInput, { min: 0 });
-  if (Number.isNaN(temperatureRaw)) {
-    nh3Value.textContent = '—';
-    nh3Badge.textContent = '';
-    nh3Badge.className = 'advanced__badge';
-    return;
-  }
-  const tempC = tempUnit === 'F' ? ((temperatureRaw - 32) * 5) / 9 : temperatureRaw;
-  const nh3 = calculateNh3(ammonia, ph, tempC);
-  if (Number.isNaN(nh3)) {
-    nh3Value.textContent = '—';
-    nh3Badge.textContent = '';
-    nh3Badge.className = 'advanced__badge';
-    return;
-  }
-  nh3Value.textContent = Number(nh3.toFixed(3)).toString();
-  if (nh3 >= 0.02) {
-    nh3Badge.textContent = 'Caution';
-    nh3Badge.className = 'advanced__badge advanced__badge--warn';
-  } else {
-    nh3Badge.textContent = '';
-    nh3Badge.className = 'advanced__badge';
-  }
-}
+  clearButton.addEventListener('click', () => {
+    form.reset();
+    methodSelect.value = 'fishless';
+    hasAssessed = false;
+    updatePlantedVisual();
+    resetOutputs();
+  });
 
-function handleCheck() {
-  const inputs = getInputs();
-  updateSummary(inputs);
-  const status = determineStatus(inputs);
-  updateStatusBadge(status);
-
-  if (status === STATUS.INCOMPLETE) {
-    renderActions([]);
-    toggleChallenge(false);
-    return;
-  }
-
-  const actions = buildActions(inputs, status);
-  renderActions(actions);
-
-  const showChallenge = status === STATUS.CYCLED && inputs.method === 'fishless';
-  toggleChallenge(showChallenge);
-}
-
-function handleClear() {
-  form.reset();
-  plantedCheckbox.dispatchEvent(new Event('change'));
-  summaryLine.textContent = 'Ammonia: — ppm • Nitrite: — ppm • Nitrate: — ppm • Method: Fishless • Planted: No';
-  updateStatusBadge(STATUS.INCOMPLETE);
-  renderActions([]);
-  toggleChallenge(false);
-  setSectionExpanded(advancedToggle, advancedContent, false);
-  nh3Value.textContent = '—';
-  nh3Badge.textContent = '';
-  nh3Badge.className = 'advanced__badge';
-}
-
-function handlePlantedToggle() {
-  const planted = plantedCheckbox.checked;
-  document.body.classList.toggle('planted-mode', planted);
-  if (coachLeaf) {
-    coachLeaf.style.display = '';
-  }
-}
-
-function handleAdvancedToggle() {
-  const isOpen = advancedToggle.getAttribute('aria-expanded') === 'true';
-  setSectionExpanded(advancedToggle, advancedContent, !isOpen);
-}
-
-function handleTempUnitToggle() {
-  const current = parseInput(tempInput);
-  if (tempUnit === 'F') {
-    tempUnit = 'C';
-    tempUnitBtn.textContent = '°C';
-    if (!Number.isNaN(current)) {
-      const converted = ((current - 32) * 5) / 9;
-      tempInput.value = Number(converted.toFixed(2));
+  plantedCheckbox.addEventListener('change', () => {
+    updatePlantedVisual();
+    if (hasAssessed) {
+      handleAssessment();
     }
-  } else {
-    tempUnit = 'F';
-    tempUnitBtn.textContent = '°F';
-    if (!Number.isNaN(current)) {
-      const converted = current * (9 / 5) + 32;
-      tempInput.value = Number(converted.toFixed(2));
-    }
-  }
-  updateAdvanced();
-}
+  });
 
-function handleChallengeStart() {
-  challengeState.active = true;
-  if (challengeStartBtn) {
-    challengeStartBtn.hidden = true;
-  }
-  challengeForm.hidden = false;
-  challengeResult.hidden = true;
-  challengeStatus.textContent = '';
-  challengeActions.innerHTML = '';
-  if (challengeAmmonia) {
+  methodSelect.addEventListener('change', () => {
+    if (hasAssessed) {
+      handleAssessment();
+    }
+  });
+
+  ammoniaInput.addEventListener('input', () => {
+    currentAmmonia = readClampedValue(ammoniaInput, FIELD_SETTINGS.ammonia);
+    updateNH3Estimate();
+  });
+
+  phInput.addEventListener('input', () => {
+    updateNH3Estimate();
+  });
+
+  tempInput.addEventListener('input', () => {
+    updateNH3Estimate();
+  });
+
+  tempToggle.addEventListener('click', () => {
+    const raw = parseFloat(tempInput.value);
+    if (!Number.isNaN(raw)) {
+      if (tempUnit === 'F') {
+        const converted = ((raw - 32) * 5) / 9;
+        tempInput.value = parseFloat(converted.toFixed(1)).toString();
+      } else {
+        const converted = raw * 9 / 5 + 32;
+        tempInput.value = parseFloat(converted.toFixed(1)).toString();
+      }
+    }
+    tempUnit = tempUnit === 'F' ? 'C' : 'F';
+    tempToggle.textContent = `°${tempUnit}`;
+    updateNH3Estimate();
+  });
+
+  challengeStart.addEventListener('click', () => {
+    challengeForm.hidden = false;
+    challengeCheck.hidden = false;
+    challengeResults.hidden = true;
+    challengeList.innerHTML = '';
     challengeAmmonia.focus();
-  }
-}
+  });
 
-function handleChallengeCheck() {
-  if (!challengeState.active) {
-    return;
-  }
-  const ammonia = parseInput(challengeAmmonia, { max: 8 });
-  const nitrite = parseInput(challengeNitrite, { max: 5 });
-  if (Number.isNaN(ammonia) || Number.isNaN(nitrite)) {
-    challengeStatus.textContent = 'Please enter both readings to continue.';
-    challengeResult.hidden = false;
-    challengeActions.innerHTML = '';
-    return;
-  }
-  const passed = isZero(ammonia) && isZero(nitrite);
-  challengeState.result = passed ? 'pass' : 'fail';
-  const mainInputs = getInputs();
-  setChallengeResult(passed, mainInputs.planted);
-}
+  challengeCheck.addEventListener('click', () => {
+    const ammonia = sanitizeField(challengeAmmonia, FIELD_SETTINGS.ammonia);
+    const nitrite = sanitizeField(challengeNitrite, FIELD_SETTINGS.nitrite);
+    if (ammonia === null || nitrite === null) {
+      challengeResults.hidden = true;
+      challengeList.innerHTML = '';
+      return;
+    }
+    const outcome = isZero(ammonia) && isZero(nitrite) ? 'challengePass' : 'challengeFail';
+    renderList(challengeList, ACTION_SETS[outcome]);
+    challengeResults.hidden = false;
+  });
 
-if (checkBtn) {
-  checkBtn.addEventListener('click', handleCheck);
-}
-if (clearBtn) {
-  clearBtn.addEventListener('click', handleClear);
-}
-plantedCheckbox.addEventListener('change', handlePlantedToggle);
-if (advancedToggle) {
-  advancedToggle.addEventListener('click', handleAdvancedToggle);
-}
-if (tempUnitBtn) {
-  tempUnitBtn.addEventListener('click', handleTempUnitToggle);
-}
-[ammoniaInput, phInput, tempInput].forEach((input) => {
-  input?.addEventListener('input', updateAdvanced);
+  if (advancedPanel) {
+    advancedPanel.addEventListener('toggle', () => {
+      if (advancedSummary) {
+        advancedSummary.setAttribute('aria-expanded', advancedPanel.open ? 'true' : 'false');
+      }
+    });
+  }
+
+  updatePlantedVisual();
+  resetOutputs();
 });
-if (challengeStartBtn) {
-  challengeStartBtn.addEventListener('click', handleChallengeStart);
-}
-if (challengeCheckBtn) {
-  challengeCheckBtn.addEventListener('click', handleChallengeCheck);
-}
-
-handlePlantedToggle();
-updateAdvanced();
-updateStatusBadge(STATUS.INCOMPLETE);
-setSectionExpanded(advancedToggle, advancedContent, false);
-toggleChallenge(false);
