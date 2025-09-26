@@ -18,6 +18,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Contact & Feedback v1.0] — 2025-09-26
+### Added
+- Initial launch of Contact & Feedback page (`/contact-feedback.html`)
+- Integrated **Formspree** endpoint `/f/xnngnwld`
+- Added **reCAPTCHA v2 site key** (front-end protection)
+- Introduced **consent + newsletter opt-in toggles**; values delivered in submission emails
+- Verified successful email delivery to inbox
+
+### Known Issues / To Do
+- reCAPTCHA **secret key** not yet added in Formspree → live validation pending
+- Minor spacing polish required for toggle pill alignment
+- GitHub release pending after full validation
+
+---
+
 ## [9.1.0] — 2025-09-21
 **Stable Checkpoint Release**
 
