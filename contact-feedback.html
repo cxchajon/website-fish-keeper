@@ -1,931 +1,464 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contact &amp; Feedback | The Tank Guide</title>
-    <link rel="stylesheet" href="css/style.css?v=1.0.8" />
-    <script defer src="js/nav.js?v=1.0.8"></script>
-    <style>
-        :root {
-            --background-dark: #0f1c2c;
-            --background-light: #f4f7fb;
-            --card-bg: #f9f9f6;
-            --border-color: #c8ced6;
-            --accordion-bg: #eef1f5;
-            --checkbox-bg: #e5e9ef;
-            --text-color: #1c2733;
-            --accent: #2f8f83;
-            --accent-focus: #38a3a0;
-            --error: #c0392b;
-            --button-gradient-start: #39b385;
-            --button-gradient-end: #2e8a68;
-            --button-gradient-hover-start: #2f9c74;
-            --button-gradient-hover-end: #267256;
-            --shadow-top: 0 -18px 36px rgba(15, 28, 44, 0.35), 0 22px 40px rgba(15, 28, 44, 0.08);
-            --shadow-mobile: 0 12px 24px rgba(15, 28, 44, 0.18);
-            --transition-duration: 450ms;
-            --gap-tight: 12px;
-            --gap-subject: 14px;
-            --gap-between: 16px;
-            --gap-xxs: 6px;
-            --gap-xs: 8px;
-            --gap-s: 10px;
-        }
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        * {
-            box-sizing: border-box;
-        }
+  <title>Contact & Feedback | The Tank Guide</title>
 
-        body {
-            margin: 0;
-            font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-            color: var(--text-color);
-            background: linear-gradient(to bottom, var(--background-dark) 0%, var(--background-dark) 50%, var(--background-light) 100%);
-            min-height: 100vh;
-        }
+  <!-- SEO / robots (as previously used) -->
+  <link rel="canonical" href="https://thetankguide.com/contact-feedback.html" />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+  <meta name="googlebot" content="index,follow" />
+  <meta name="description" content="Contact The Tank Guide — recommend a fish, report logic issues, ask questions, suggest reviews, or share general ideas. We value your privacy." />
+  <meta property="og:title" content="Contact & Feedback | The Tank Guide" />
+  <meta property="og:site_name" content="The Tank Guide" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://thetankguide.com/contact-feedback.html" />
+  <meta property="og:description" content="Recommend a fish, report logic issues, ask questions, suggest reviews, or share general ideas." />
+  <meta name="twitter:card" content="summary" />
 
-        a {
-            color: inherit;
-        }
+  <!-- Site styles / nav JS -->
+  <link rel="stylesheet" href="css/style.css?v=1.0.9" />
+  <script defer src="js/nav.js?v=1.0.9"></script>
 
-        .page-wrapper {
-            min-height: calc(100vh - 80px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px 80px;
-        }
+  <style>
+    :root{
+      --background-dark:#0f1c2c;
+      --background-light:#f4f7fb;
+      --card-bg:#f9f9f6;
+      --border-color:#c8ced6;
+      --accordion-bg:#eef1f5;
+      --checkbox-bg:#e5e9ef;
+      --text:#1c2733;
+      --accent:#2f8f83;
+      --accent-focus:#38a3a0;
+      --error:#c0392b;
+      --btnA:#39b385; --btnB:#2e8a68; --btnAH:#2f9c74; --btnBH:#267256;
+      --gap-xxs:6px; --gap-xs:8px; --gap-s:10px; --gap-m:16px; --gap-l:24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text);
+      font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
+      background: linear-gradient(to bottom, var(--background-dark) 0%, var(--background-dark) 50%, var(--background-light) 100%);
+      min-height:100vh;
+    }
+    a{color:inherit}
 
-        @media (min-width: 1280px) {
-            .page-wrapper {
-                justify-content: center;
-                padding-top: 60px;
-                padding-bottom: 120px;
-            }
-        }
+    /* --- layout --- */
+    .page-wrapper{
+      min-height:calc(100vh - 80px);
+      display:flex; flex-direction:column; align-items:center;
+      padding:40px 20px 80px;
+    }
+    .contact-card{
+      width:100%; max-width:1000px;
+      background:var(--card-bg);
+      border-radius:18px;
+      padding:48px 56px 56px;
+      box-shadow:0 -18px 36px rgba(15,28,44,.35), 0 22px 40px rgba(15,28,44,.08);
+    }
+    @media (max-width:768px){
+      .contact-card{padding:32px 24px 40px; box-shadow:0 12px 24px rgba(15,28,44,.18)}
+    }
+    h1{margin:0 0 28px; font-size:clamp(2.2rem,2.2vw + 1rem,3rem); font-weight:700; text-align:left}
 
-        @media (max-width: 1024px) {
-            .page-wrapper {
-                padding-top: 32px;
-            }
-        }
+    /* --- form base --- */
+    form{display:flex; flex-direction:column}
+    .field-group{display:flex; flex-direction:column; gap:6px; margin:0 0 var(--gap-m)}
+    .subject-group{margin-bottom:0}
+    label{font-weight:600; display:inline-flex; align-items:center; gap:6px}
+    .required-asterisk{color:var(--error); font-weight:700}
+    .required-note{margin:0; font-size:.85rem; color:var(--error)}
 
-        .contact-card {
-            width: 100%;
-            max-width: 1000px;
-            background: var(--card-bg);
-            border-radius: 18px;
-            padding: 48px 56px 56px;
-            box-shadow: var(--shadow-top);
-        }
+    input[type="text"],input[type="email"],input[type="url"],select,textarea{
+      width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border-color); background:#fff;
+      font-size:1rem; color:var(--text);
+      transition:border-color .18s ease, box-shadow .18s ease;
+    }
+    input[type="text"]:focus,input[type="email"]:focus,input[type="url"]:focus,textarea:focus{
+      border-color:var(--accent-focus); box-shadow:0 0 0 3px rgba(56,163,160,.15); outline:none;
+    }
+    select:focus{outline:none}
+    textarea{min-height:140px; resize:none}
+    textarea::placeholder{color:rgba(28,39,51,.55)}
 
-        @media (max-width: 768px) {
-            .contact-card {
-                padding: 32px 24px 40px;
-                box-shadow: var(--shadow-mobile);
-            }
-        }
+    .subject-wrapper{position:relative; display:flex; align-items:center}
+    .subject-wrapper select{appearance:none; padding-right:44px}
+    .chevron{position:absolute; right:16px; pointer-events:none; font-size:1.1rem; color:#9099a4}
 
-        h1 {
-            margin: 0 0 28px;
-            font-size: clamp(2.3rem, 2.5vw + 1rem, 3rem);
-            font-weight: 700;
-            color: var(--text-color);
-            text-align: left;
-        }
+    /* --- subject panels --- */
+    .panel{border:2px solid #d3d9e1; border-radius:14px; background:var(--accordion-bg);
+      padding:20px 20px 24px; margin:0; overflow:hidden;
+      max-height:0; opacity:0; transition:max-height .45s ease, opacity .12s ease}
+    .panel.active{margin-top:6px; max-height:1000px; opacity:1}
+    .panel .field-group{margin:0 0 16px}
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
+    /* --- spacing logic around Stay in touch --- */
+    #feedbackForm:not(.has-subject) #stay-in-touch{ margin-top:6px }       /* when empty, hug subject */
+    #feedbackForm.has-subject #stay-in-touch{ margin-top:10px }            /* when panel is open, small gap */
 
-        form > .field-group {
-            margin-bottom: var(--gap-between);
-        }
+    /* --- stay in touch (bulletproof) --- */
+    #stay-in-touch{
+      background:var(--checkbox-bg); border-radius:14px; padding:18px 20px; margin-bottom:var(--gap-m);
+    }
+    #stay-in-touch *::before, #stay-in-touch *::after{content:none !important; display:none !important}
+    #stay-in-touch .title{margin:0 0 8px; font-weight:600}
+    /* Grid: checkbox | pill | sentence */
+    #stay-in-touch .row{
+      display:grid; grid-template-columns:auto auto 1fr; align-items:center; column-gap:10px;
+      margin:8px 0; background:transparent !important;
+    }
+    #stay-in-touch .row input[type="checkbox"]{margin:0; align-self:center}
+    #stay-in-touch .pill{
+      display:inline-grid; place-items:center;
+      white-space:nowrap; min-width:28px; padding:2px 10px; border-radius:999px;
+      font-size:.85rem; line-height:1.4; color:#1c2733; background:#d3d9e1;
+    }
+    #stay-in-touch .pill.yes{background:#39b385; color:#fff}
+    #stay-in-touch .text{
+      display:block; background:transparent !important; border:0 !important; border-radius:0 !important; min-width:0;
+    }
+    #stay-in-touch .note{margin:8px 0 0; font-size:.88rem; line-height:1.5}
+    #stay-in-touch a{text-decoration:underline}
 
-        form > .field-group.subject-group {
-            margin-bottom: 0;
-        }
+    /* --- actions --- */
+    .actions{display:flex; justify-content:flex-end; margin-top:var(--gap-m)}
+    .actions button{
+      padding:12px 32px; font-size:1rem; border-radius:12px; border:none; cursor:pointer; color:#fff; font-weight:600;
+      background-image:linear-gradient(135deg,var(--btnA),var(--btnB));
+      transition:background-image .16s ease, box-shadow .16s ease
+    }
+    .actions button:hover,.actions button:focus{background-image:linear-gradient(135deg,var(--btnAH),var(--btnBH))}
+    .actions button:focus{outline:3px solid rgba(47,156,116,.35)}
+    @media (max-width:600px){ .actions{justify-content:center} .actions button{width:100%} }
 
-        .field-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+    .divider{margin:24px 0 16px; border:0; border-top:1px solid #d7dce3}
+    .form-status{text-align:center; font-size:1.02rem; font-weight:600; min-height:1.2em; color:var(--accent)}
+    .form-status.error{color:var(--error)}
 
-        label {
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .required-asterisk {
-            color: var(--error);
-            font-weight: 600;
-        }
-
-        .required-note {
-            font-size: 0.85rem;
-            color: var(--error);
-            margin: 0;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="url"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            background: #ffffff;
-            font-size: 1rem;
-            transition: border-color 180ms ease, box-shadow 180ms ease;
-            color: var(--text-color);
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="url"]:focus,
-        textarea:focus {
-            border-color: var(--accent-focus);
-            box-shadow: 0 0 0 3px rgba(56, 163, 160, 0.15);
-            outline: none;
-        }
-
-        select:focus {
-            outline: none;
-        }
-
-        textarea {
-            min-height: 140px;
-            resize: none;
-        }
-
-        textarea::placeholder {
-            color: rgba(28, 39, 51, 0.55);
-        }
-
-        .subject-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .subject-wrapper select {
-            appearance: none;
-            -moz-appearance: none;
-            -webkit-appearance: none;
-            padding-right: 44px;
-        }
-
-        .chevron {
-            position: absolute;
-            right: 16px;
-            pointer-events: none;
-            font-size: 1.1rem;
-            color: #9099a4;
-            transition: transform 0ms;
-        }
-
-        .chevron.up {
-            transform: rotate(180deg);
-        }
-
-        .subject-panel {
-            border: 2px solid #d3d9e1;
-            border-radius: 14px;
-            background: var(--accordion-bg);
-            padding: 20px 20px 24px;
-            overflow: hidden;
-            max-height: 0;
-            opacity: 0;
-            margin: 0;
-            transition: max-height var(--transition-duration) ease, opacity 120ms ease;
-        }
-
-        .subject-panel.active {
-            margin-top: 0;
-            margin-bottom: 0;
-            max-height: 800px;
-            opacity: 1;
-        }
-
-        .stay-in-touch {
-            margin-bottom: var(--gap-between);
-        }
-
-        .accordion-panel,
-        #panel-fish,
-        #panel-logic,
-        #panel-questions,
-        #panel-reviews,
-        #panel-general {
-            margin-top: var(--gap-xs) !important;
-        }
-
-        .accordion-panel:not(.active),
-        #panel-fish:not(.active),
-        #panel-logic:not(.active),
-        #panel-questions:not(.active),
-        #panel-reviews:not(.active),
-        #panel-general:not(.active) {
-            margin-top: 0 !important;
-        }
-
-        .form-card .field,
-        .form-card .group,
-        .stay-in-touch {
-            margin-top: 0;
-        }
-
-        .subject-panel .field-group {
-            margin-bottom: 16px;
-        }
-
-        .inline-error {
-            color: var(--error);
-            font-size: 0.9rem;
-            margin: 4px 0 0;
-            display: none;
-        }
-
-        .inline-error.visible {
-            display: block;
-        }
-
-        .checkbox-block {
-            background: var(--checkbox-bg);
-            border-radius: 14px;
-            padding: 18px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .checkbox-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-        }
-
-        .checkbox-item::before {
-            content: none !important;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            margin: 0;
-            flex-shrink: 0;
-        }
-
-        .privacy-note {
-            font-size: 0.88rem;
-            line-height: 1.5;
-            color: var(--text-color);
-        }
-
-        .privacy-note a {
-            text-decoration: underline;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: var(--gap-between);
-        }
-
-        .actions button {
-            padding: 12px 32px;
-            font-size: 1rem;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            background-image: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
-            color: #ffffff;
-            font-weight: 600;
-            transition: transform 160ms ease, box-shadow 160ms ease, background-image 160ms ease;
-        }
-
-        .actions button:hover,
-        .actions button:focus {
-            background-image: linear-gradient(135deg, var(--button-gradient-hover-start), var(--button-gradient-hover-end));
-        }
-
-        .actions button:focus {
-            outline: 3px solid rgba(47, 156, 116, 0.35);
-        }
-
-        @media (max-width: 600px) {
-            .actions button {
-                width: 100%;
-            }
-            .actions {
-                justify-content: center;
-            }
-        }
-
-        .divider {
-            margin: 24px 0 16px;
-            border: 0;
-            border-top: 1px solid #d7dce3;
-        }
-
-        .form-status {
-            text-align: center;
-            font-size: 1.02rem;
-            font-weight: 600;
-            min-height: 1.2em;
-            color: var(--accent);
-        }
-
-        .form-status.error {
-            color: var(--error);
-        }
-
-        .captcha-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .captcha-error {
-            color: var(--error);
-            font-size: 0.9rem;
-            display: none;
-        }
-
-        .captcha-error.visible {
-            display: block;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        @media (min-width: 1440px) {
-            .contact-card {
-                padding: 56px 64px 64px;
-            }
-        }
-    </style>
-
-    <style>
-        :root {
-            --gap-under-subject-when-empty: 6px; /* adjust if you want even tighter/looser */
-        }
-
-        /* Ensure the form carries the spacing-state class (JS below will add it if missing) */
-        #feedbackForm.js-spacing-state:not(.has-subject) .stay-in-touch {
-            margin-top: var(--gap-under-subject-when-empty) !important; /* hug Subject */
-        }
-
-        /* Kill any big bottom margin on the Subject control itself to prevent a gap */
-        #feedbackForm #subject {
-            margin-bottom: var(--gap-under-subject-when-empty) !important;
-            display: block; /* ensure margin-bottom applies consistently */
-        }
-
-        /* Safety: if your Subject sits in a wrapper group that adds spacing, neutralize just its bottom gap */
-        #feedbackForm .subject,
-        #feedbackForm .subject-group,
-        #feedbackForm .field-subject,
-        #feedbackForm .form-group-subject {
-            margin-bottom: var(--gap-under-subject-when-empty) !important;
-        }
-
-        /* Also make sure the Stay-in-touch card itself isn’t adding excess top spacing */
-        #feedbackForm .stay-in-touch {
-            margin-top: var(--gap-under-subject-when-empty) !important;
-            padding-top: 12px; /* keep internal breathing room */
-        }
-
-        /* When a subject is selected, restore the standard spacing */
-        #feedbackForm.js-spacing-state.has-subject .stay-in-touch {
-            margin-top: var(--gap-s) !important;
-        }
-    </style>
-
-    <style>
-        /* Collapsed panels should occupy no vertical space */
-        #feedbackForm .subject-panel {
-            /* remove any spacing while collapsed */
-            padding: 0 !important;
-            border-width: 0 !important;
-            margin: 0 !important;
-            max-height: 0 !important;
-            opacity: 0 !important;
-            overflow: hidden !important;
-        }
-
-        /* Active panel: restore look and tight attachment to Subject */
-        #feedbackForm .subject-panel.active {
-            padding: 20px 20px 24px !important; /* restore interior */
-            border-width: 2px !important; /* restore border */
-            margin-top: 6px !important; /* tight gap under Subject */
-            opacity: 1 !important;
-            max-height: 1000px !important; /* allow content to expand */
-        }
-
-        /* Keep the “Stay in touch” card snug when no Subject is selected */
-        #feedbackForm.js-spacing-state:not(.has-subject) .stay-in-touch {
-            margin-top: 6px !important; /* tiny gap under Subject */
-        }
-    </style>
-
+    /* --- captcha --- */
+    .captcha-wrapper{display:flex; flex-direction:column; gap:6px}
+    .captcha-error{display:none; color:var(--error); font-size:.9rem}
+    .captcha-error.visible{display:block}
+    .hidden{display:none !important}
+  </style>
 </head>
 <body>
-    <header id="global-nav">
-        <div class="inner">
-            <button
-                id="ttg-nav-open"
-                class="hamburger"
-                type="button"
-                aria-controls="ttg-drawer"
-                aria-expanded="false"
-                aria-label="Open menu"
-                data-nav="hamburger"
-            >
-                <span class="hamburger__bars" aria-hidden="true"></span>
-                <span class="visually-hidden">Open menu</span>
-            </button>
-            <a class="site-brand brand" href="index.html" aria-label="The Tank Guide — Home">
-                <span class="site-brand__title">The Tank Guide</span>
-                <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
-            </a>
-            <nav class="site-links links" aria-label="Primary">
-                <a href="index.html" class="nav__link">Home</a>
-                <a href="stocking.html" class="nav__link">Stocking Advisor</a>
-                <a href="gear.html" class="nav__link">Gear</a>
-                <a href="params.html" class="nav__link">Cycling Coach</a>
-                <a href="media.html" class="nav__link">Media</a>
-                <a href="contact-feedback.html" class="nav__link">Contact &amp; Feedback</a>
-                <a href="about.html" class="nav__link">About</a>
-            </nav>
+  <!-- NAV (uniform) -->
+  <header id="global-nav">
+    <div class="inner">
+      <button id="ttg-nav-open" class="hamburger" type="button" aria-controls="ttg-drawer" aria-expanded="false" aria-label="Open menu" data-nav="hamburger">
+        <span class="hamburger__bars" aria-hidden="true"></span><span class="visually-hidden">Open menu</span>
+      </button>
+      <a class="site-brand brand" href="index.html" aria-label="The Tank Guide — Home">
+        <span class="site-brand__title">The Tank Guide</span>
+        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
+      </a>
+      <nav class="site-links links" aria-label="Primary">
+        <a href="index.html" class="nav__link">Home</a>
+        <a href="stocking.html" class="nav__link">Stocking Advisor</a>
+        <a href="gear.html" class="nav__link">Gear</a>
+        <a href="params.html" class="nav__link">Cycling Coach</a>
+        <a href="media.html" class="nav__link">Media</a>
+        <a href="contact-feedback.html" class="nav__link">Contact &amp; Feedback</a>
+        <a href="about.html" class="nav__link">About</a>
+      </nav>
+    </div>
+    <aside id="ttg-drawer" aria-label="Site" data-nav="drawer" aria-hidden="true">
+      <div class="drawer-head">
+        <span class="drawer-title">The Tank Guide</span>
+        <button id="ttg-nav-close" class="drawer-close" type="button" aria-label="Close menu"><span aria-hidden="true">×</span></button>
+      </div>
+      <nav class="drawer-links" aria-label="Mobile">
+        <a href="index.html" class="nav__link">Home</a>
+        <a href="stocking.html" class="nav__link">Stocking Advisor</a>
+        <a href="gear.html" class="nav__link">Gear</a>
+        <a href="params.html" class="nav__link">Cycling Coach</a>
+        <a href="media.html" class="nav__link">Media</a>
+        <a href="contact-feedback.html" class="nav__link">Feedback</a>
+        <a href="about.html" class="nav__link">About</a>
+      </nav>
+    </aside>
+    <div id="ttg-overlay" data-nav="overlay" aria-hidden="true"></div>
+  </header>
+
+  <main class="page-wrapper">
+    <section class="contact-card">
+      <h1>Contact &amp; Feedback</h1>
+
+      <!-- Replace with your Formspree endpoint -->
+      <form id="feedbackForm" method="POST" action="https://formspree.io/f/XXXXXXXX">
+        <div class="field-group">
+          <label for="name">Name <span class="required-asterisk">*</span></label>
+          <p class="required-note">*Required</p>
+          <input type="text" id="name" name="name" autocomplete="name" required />
         </div>
-        <aside id="ttg-drawer" aria-label="Site" data-nav="drawer" aria-hidden="true">
-            <div class="drawer-head">
-                <span class="drawer-title">The Tank Guide</span>
-                <button id="ttg-nav-close" class="drawer-close" type="button" aria-label="Close menu">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <nav class="drawer-links" aria-label="Mobile">
-                <a href="index.html" class="nav__link">Home</a>
-                <a href="stocking.html" class="nav__link">Stocking Advisor</a>
-                <a href="gear.html" class="nav__link">Gear</a>
-                <a href="params.html" class="nav__link">Cycling Coach</a>
-                <a href="media.html" class="nav__link">Media</a>
-                <a href="contact-feedback.html" class="nav__link" target="_blank" rel="noopener">Feedback</a>
-                <a href="about.html" class="nav__link">About</a>
-            </nav>
-        </aside>
-        <div id="ttg-overlay" data-nav="overlay" aria-hidden="true"></div>
-    </header>
-    <main class="page-wrapper">
-        <section class="contact-card">
-            <h1>Contact &amp; Feedback</h1>
-            <!-- TODO: Insert your Formspree endpoint in the form action attribute below -->
-            <form id="feedbackForm" class="js-spacing-state" method="POST" action="https://formspree.io/f/XXXXXXXX">
-                <div class="field-group">
-                    <label for="name">Name <span class="required-asterisk">*</span></label>
-                    <p class="required-note">*Required</p>
-                    <input type="text" id="name" name="name" autocomplete="name" required />
-                </div>
 
-                <div class="field-group">
-                    <label for="email">Email <span class="required-asterisk">*</span></label>
-                    <p class="required-note">*Required</p>
-                    <input type="email" id="email" name="email" autocomplete="email" required />
-                </div>
+        <div class="field-group">
+          <label for="email">Email <span class="required-asterisk">*</span></label>
+          <p class="required-note">*Required</p>
+          <input type="email" id="email" name="email" autocomplete="email" required />
+        </div>
 
-                <div class="field-group subject-group">
-                    <label for="subject">Subject <span class="required-asterisk">*</span></label>
-                    <p class="required-note">*Required</p>
-                    <div class="subject-wrapper">
-                        <select id="subject" name="subject" required>
-                            <option value="">Select one…</option>
-                            <option value="Recommend a Fish">Recommend a Fish</option>
-                            <option value="Logic Issues">Logic Issues</option>
-                            <option value="Questions?">Questions?</option>
-                            <option value="Product Reviews">Product Reviews</option>
-                            <option value="General (YouTube, article ideas, events, forums, anything related to aquariums)">General (YouTube, article ideas, events, forums, anything related to aquariums)</option>
-                        </select>
-                        <span class="chevron" aria-hidden="true">⌄</span>
-                    </div>
-                </div>
+        <div class="field-group subject-group">
+          <label for="subject">Subject <span class="required-asterisk">*</span></label>
+          <p class="required-note">*Required</p>
+          <div class="subject-wrapper">
+            <select id="subject" name="subject" required>
+              <option value="">Select one…</option>
+              <option value="Recommend a Fish">Recommend a Fish</option>
+              <option value="Logic Issues">Logic Issues</option>
+              <option value="Questions?">Questions?</option>
+              <option value="Product Reviews">Product Reviews</option>
+              <option value="General (YouTube, article ideas, events, forums, anything related to aquariums)">General (YouTube, article ideas, events, forums, anything related to aquariums)</option>
+            </select>
+            <span class="chevron" aria-hidden="true">⌄</span>
+          </div>
+        </div>
 
-                <div class="subject-panel accordion-panel" id="panel-fish">
-                    <div class="field-group">
-                        <label for="fishName">Fish Name <span class="required-asterisk">*</span></label>
-                        <p class="required-note">*Required</p>
-                        <input type="text" id="fishName" name="fishName" />
-                        <p class="inline-error" id="fishNameError">Please provide a fish name.</p>
-                    </div>
-                    <div class="field-group">
-                        <label for="scientificName">Scientific Name</label>
-                        <input type="text" id="scientificName" name="scientificName" />
-                    </div>
-                    <div class="field-group">
-                        <label for="phTempRange">pH / Temp Range</label>
-                        <input type="text" id="phTempRange" name="phTempRange" />
-                    </div>
-                    <div class="field-group">
-                        <label for="fishNotes">Other Notes</label>
-                        <textarea id="fishNotes" name="fishNotes"></textarea>
-                    </div>
-                </div>
+        <!-- PANELS -->
+        <div class="panel" id="panel-fish">
+          <div class="field-group">
+            <label for="fishName">Fish Name <span class="required-asterisk">*</span></label>
+            <p class="required-note">*Required</p>
+            <input type="text" id="fishName" name="fishName" />
+            <p class="inline-error hidden" id="fishNameError">Please provide a fish name.</p>
+          </div>
+          <div class="field-group">
+            <label for="scientificName">Scientific Name</label>
+            <input type="text" id="scientificName" name="scientificName" />
+          </div>
+          <div class="field-group">
+            <label for="phTempRange">pH / Temp Range</label>
+            <input type="text" id="phTempRange" name="phTempRange" />
+          </div>
+          <div class="field-group">
+            <label for="fishNotes">Other Notes</label>
+            <textarea id="fishNotes" name="fishNotes"></textarea>
+          </div>
+        </div>
 
-                <div class="subject-panel accordion-panel" id="panel-logic">
-                    <div class="field-group">
-                        <label for="logicPage">Page Selector</label>
-                        <select id="logicPage" name="logicPage">
-                            <option value="Stocking Advisor">Stocking Advisor</option>
-                            <option value="Cycling Coach">Cycling Coach</option>
-                            <option value="Parameters">Parameters</option>
-                            <option value="Media">Media</option>
-                            <option value="Contact &amp; Feedback">Contact &amp; Feedback</option>
-                        </select>
-                    </div>
-                    <div class="field-group">
-                        <label for="logicIssue">Describe the Issue</label>
-                        <textarea id="logicIssue" name="logicIssue"></textarea>
-                    </div>
-                </div>
+        <div class="panel" id="panel-logic">
+          <div class="field-group">
+            <label for="logicPage">Page Selector</label>
+            <select id="logicPage" name="logicPage">
+              <option value="Stocking Advisor">Stocking Advisor</option>
+              <option value="Cycling Coach">Cycling Coach</option>
+              <option value="Parameters">Parameters</option>
+              <option value="Media">Media</option>
+              <option value="Contact &amp; Feedback">Contact &amp; Feedback</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="logicIssue">Describe the Issue</label>
+            <textarea id="logicIssue" name="logicIssue"></textarea>
+          </div>
+        </div>
 
-                <div class="subject-panel accordion-panel" id="panel-questions">
-                    <div class="field-group">
-                        <label for="generalQuestion">Your Question</label>
-                        <textarea id="generalQuestion" name="generalQuestion" placeholder="Ask us anything — we’ll get back to you."></textarea>
-                    </div>
-                </div>
+        <div class="panel" id="panel-questions">
+          <div class="field-group">
+            <label for="generalQuestion">Your Question</label>
+            <textarea id="generalQuestion" name="generalQuestion" placeholder="Ask us anything — we’ll get back to you."></textarea>
+          </div>
+        </div>
 
-                <div class="subject-panel accordion-panel" id="panel-reviews">
-                    <div class="field-group">
-                        <label for="productName">Product Name <span class="required-asterisk">*</span></label>
-                        <p class="required-note">*Required</p>
-                        <input type="text" id="productName" name="productName" />
-                        <p class="inline-error" id="productNameError">Please provide the product name.</p>
-                    </div>
-                    <div class="field-group">
-                        <label for="productLink">Product Link</label>
-                        <input type="url" id="productLink" name="productLink" />
-                    </div>
-                    <div class="field-group">
-                        <label for="productCoverage">What would you like us to cover?</label>
-                        <textarea id="productCoverage" name="productCoverage" placeholder="Features, pros/cons, ease of use, etc."></textarea>
-                    </div>
-                </div>
+        <div class="panel" id="panel-reviews">
+          <div class="field-group">
+            <label for="productName">Product Name <span class="required-asterisk">*</span></label>
+            <p class="required-note">*Required</p>
+            <input type="text" id="productName" name="productName" />
+            <p class="inline-error hidden" id="productNameError">Please provide the product name.</p>
+          </div>
+          <div class="field-group">
+            <label for="productLink">Product Link</label>
+            <input type="url" id="productLink" name="productLink" />
+          </div>
+          <div class="field-group">
+            <label for="productCoverage">What would you like us to cover?</label>
+            <textarea id="productCoverage" name="productCoverage" placeholder="Features, pros/cons, ease of use, etc."></textarea>
+          </div>
+        </div>
 
-                <div class="subject-panel accordion-panel" id="panel-general">
-                    <div class="field-group">
-                        <label for="generalIdeas">Share Your Ideas</label>
-                        <textarea id="generalIdeas" name="generalIdeas" placeholder="Share your idea — YouTube, article, event, forum, or anything aquarium related."></textarea>
-                    </div>
-                </div>
+        <div class="panel" id="panel-general">
+          <div class="field-group">
+            <label for="generalIdeas">Share Your Ideas</label>
+            <textarea id="generalIdeas" name="generalIdeas" placeholder="Share your idea — YouTube, article, event, forum, or anything aquarium related."></textarea>
+          </div>
+        </div>
 
-                <!-- BEGIN: Stay in touch (rewritten, scoped, stable) -->
-                <section id="stay-in-touch" class="ttg-stay">
-                  <h3 class="ttg-stay__title">Stay in touch</h3>
+        <!-- STAY IN TOUCH (grid, no ghosts) -->
+        <section id="stay-in-touch">
+          <h3 class="title">Stay in touch</h3>
 
-                  <label class="ttg-stay__row" for="consent">
-                    <input class="ttg-stay__chk" type="checkbox" id="consent" name="consent" required />
-                    <span class="ttg-stay__pill" id="pill_consent" aria-live="polite" aria-atomic="true">No</span>
-                    <span class="ttg-stay__text">I agree that The Tank Guide may contact me about my submission.</span>
-                  </label>
+          <label class="row" for="consent">
+            <input type="checkbox" id="consent" name="consent" required />
+            <span class="pill" id="pill_consent" aria-live="polite" aria-atomic="true">No</span>
+            <span class="text">I agree that The Tank Guide may contact me about my submission.</span>
+          </label>
 
-                  <label class="ttg-stay__row" for="newsletter">
-                    <input class="ttg-stay__chk" type="checkbox" id="newsletter" name="newsletter" />
-                    <span class="ttg-stay__pill" id="pill_newsletter" aria-live="polite" aria-atomic="true">No</span>
-                    <span class="ttg-stay__text">Yes, I’d like to receive The Tank Guide newsletter/updates.</span>
-                  </label>
+          <label class="row" for="newsletter">
+            <input type="checkbox" id="newsletter" name="newsletter" />
+            <span class="pill" id="pill_newsletter" aria-live="polite" aria-atomic="true">No</span>
+            <span class="text">Yes, I’d like to receive The Tank Guide newsletter/updates.</span>
+          </label>
 
-                  <p class="ttg-stay__note">
-                    We value your privacy. Your information will never be sold to third parties. We’ll use it only to
-                    reply to your message and—if you opt in—to send occasional newsletters. You can unsubscribe anytime.
-                    See our <a href="https://thetankguide.com/privacy.html">Privacy Policy</a>.
-                  </p>
-                </section>
-                <!-- END: Stay in touch -->
-
-                <div class="captcha-wrapper">
-                    <!-- TODO: Insert your reCAPTCHA v2 SITE KEY in the data-sitekey attribute below -->
-                    <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY"></div>
-                    <p class="captcha-error" id="captchaError">Please confirm you’re not a robot.</p>
-                </div>
-
-                <input type="text" id="honeypot" name="honeypot" class="hidden" autocomplete="off" tabindex="-1" aria-hidden="true" />
-                <input type="hidden" name="can_contact" id="can_contact_hidden" value="No" />
-                <input type="hidden" name="newsletter_opt_in" id="newsletter_hidden" value="No" />
-                <input type="hidden" name="_subject" id="hiddenSubject" />
-                <input type="hidden" name="timestamp" id="timestamp" />
-
-                <div class="actions">
-                    <button type="submit" id="submitButton">Send</button>
-                </div>
-                <hr class="divider" />
-                <p class="form-status" id="formStatus" aria-live="polite"></p>
-            </form>
+          <p class="note">
+            We value your privacy. Your information will never be sold to third parties.
+            We’ll use it only to reply to your message and—if you opt in—to send occasional newsletters.
+            You can unsubscribe anytime. See our <a href="https://thetankguide.com/privacy.html">Privacy Policy</a>.
+          </p>
         </section>
-    </main>
-    <!-- // Include footer.html here when integrating with the site build -->
 
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script>
-        (function () {
-            const subjectSelect = document.getElementById('subject');
-            const panels = {
-                'Recommend a Fish': document.getElementById('panel-fish'),
-                'Logic Issues': document.getElementById('panel-logic'),
-                'Questions?': document.getElementById('panel-questions'),
-                'Product Reviews': document.getElementById('panel-reviews'),
-                'General (YouTube, article ideas, events, forums, anything related to aquariums)': document.getElementById('panel-general')
-            };
-            const chevron = document.querySelector('.chevron');
-            const form = document.getElementById('feedbackForm');
-            const formStatus = document.getElementById('formStatus');
-            const fishNameInput = document.getElementById('fishName');
-            const fishNameError = document.getElementById('fishNameError');
-            const productNameInput = document.getElementById('productName');
-            const productNameError = document.getElementById('productNameError');
-            const hiddenSubject = document.getElementById('hiddenSubject');
-            const timestampField = document.getElementById('timestamp');
-            const captchaError = document.getElementById('captchaError');
-            const textareas = Array.from(document.querySelectorAll('textarea'));
+        <!-- CAPTCHA + hidden fields -->
+        <div class="captcha-wrapper">
+          <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY"></div>
+          <p class="captcha-error" id="captchaError">Please confirm you’re not a robot.</p>
+        </div>
 
-            if (form && !form.classList.contains('js-spacing-state')) {
-                form.classList.add('js-spacing-state');
-            }
+        <input type="text" id="honeypot" name="honeypot" class="hidden" autocomplete="off" tabindex="-1" aria-hidden="true" />
+        <input type="hidden" name="can_contact" id="can_contact_hidden" value="No" />
+        <input type="hidden" name="newsletter_opt_in" id="newsletter_hidden" value="No" />
+        <input type="hidden" name="_subject" id="hiddenSubject" />
+        <input type="hidden" name="timestamp" id="timestamp" />
 
-            function syncSubjectState() {
-                if (!form || !subjectSelect) {
-                    return;
-                }
-                const has = subjectSelect.value && subjectSelect.value.trim() !== '';
-                form.classList.toggle('has-subject', has);
-            }
+        <div class="actions"><button type="submit" id="submitButton">Send</button></div>
+        <hr class="divider" />
+        <p class="form-status" id="formStatus" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
 
-            syncSubjectState();
+  <!-- FOOTER (uniform) -->
+  <footer class="site-footer">
+    <div class="inner">
+      <p>&copy; <span id="year"></span> The Tank Guide · <a href="privacy.html">Privacy</a> · <a href="about.html">About</a></p>
+    </div>
+  </footer>
 
-            function closeAllPanels() {
-                Object.values(panels).forEach(panel => {
-                    panel.classList.remove('active');
-                });
-            }
+  <!-- Scripts -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script>
+    // Year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-            function openPanel(value) {
-                closeAllPanels();
-                const panel = panels[value];
-                if (panel) {
-                    panel.classList.add('active');
-                    chevron.classList.add('up');
-                } else {
-                    chevron.classList.remove('up');
-                }
-            }
+    // Initialize nav if available
+    document.addEventListener('DOMContentLoaded', () => { window.ttgInitNav?.(); });
 
-            subjectSelect.addEventListener('change', () => {
-                const value = subjectSelect.value;
-                openPanel(value);
-                hiddenSubject.value = value ? `[Contact & Feedback] – ${value}` : '';
-                syncSubjectState();
-            });
+    (function(){
+      const form = document.getElementById('feedbackForm');
+      const subjectSelect = document.getElementById('subject');
+      const hiddenSubject = document.getElementById('hiddenSubject');
+      const timestampField = document.getElementById('timestamp');
+      const formStatus = document.getElementById('formStatus');
+      const captchaError = document.getElementById('captchaError');
 
-            function autoResizeTextarea(el) {
-                el.style.height = 'auto';
-                el.style.height = `${el.scrollHeight + 2}px`;
-            }
+      const panels = {
+        'Recommend a Fish': document.getElementById('panel-fish'),
+        'Logic Issues': document.getElementById('panel-logic'),
+        'Questions?': document.getElementById('panel-questions'),
+        'Product Reviews': document.getElementById('panel-reviews'),
+        'General (YouTube, article ideas, events, forums, anything related to aquariums)': document.getElementById('panel-general')
+      };
 
-            textareas.forEach(textarea => {
-                autoResizeTextarea(textarea);
-                textarea.addEventListener('input', () => autoResizeTextarea(textarea));
-            });
+      const fishNameInput = document.getElementById('fishName');
+      const fishNameError = document.getElementById('fishNameError');
+      const productNameInput = document.getElementById('productName');
+      const productNameError = document.getElementById('productNameError');
 
-            function validateDynamicFields() {
-                let valid = true;
-                if (subjectSelect.value === 'Recommend a Fish') {
-                    if (!fishNameInput.value.trim()) {
-                        fishNameError.classList.add('visible');
-                        fishNameInput.setAttribute('aria-invalid', 'true');
-                        valid = false;
-                    } else {
-                        fishNameError.classList.remove('visible');
-                        fishNameInput.removeAttribute('aria-invalid');
-                    }
-                } else {
-                    fishNameError.classList.remove('visible');
-                    fishNameInput.removeAttribute('aria-invalid');
-                }
+      function setHasSubject(flag){ form.classList.toggle('has-subject', !!flag); }
+      function closeAll(){ Object.values(panels).forEach(p=>p.classList.remove('active')); }
+      function openPanel(val){ closeAll(); if(panels[val]) panels[val].classList.add('active'); }
 
-                if (subjectSelect.value === 'Product Reviews') {
-                    if (!productNameInput.value.trim()) {
-                        productNameError.classList.add('visible');
-                        productNameInput.setAttribute('aria-invalid', 'true');
-                        valid = false;
-                    } else {
-                        productNameError.classList.remove('visible');
-                        productNameInput.removeAttribute('aria-invalid');
-                    }
-                } else {
-                    productNameError.classList.remove('visible');
-                    productNameInput.removeAttribute('aria-invalid');
-                }
+      subjectSelect.addEventListener('change', ()=>{
+        const v = subjectSelect.value;
+        openPanel(v);
+        hiddenSubject.value = v ? `[Contact & Feedback] – ${v}` : '';
+        setHasSubject(!!v);
+      });
 
-                return valid;
-            }
+      function validateDynamic(){
+        let ok = true;
+        if (subjectSelect.value === 'Recommend a Fish'){
+          if(!fishNameInput.value.trim()){ fishNameError.classList.remove('hidden'); ok = false; }
+          else fishNameError.classList.add('hidden');
+        } else fishNameError.classList.add('hidden');
 
-            function resetDynamicErrors() {
-                fishNameError.classList.remove('visible');
-                fishNameInput.removeAttribute('aria-invalid');
-                productNameError.classList.remove('visible');
-                productNameInput.removeAttribute('aria-invalid');
-                captchaError.classList.remove('visible');
-            }
+        if (subjectSelect.value === 'Product Reviews'){
+          if(!productNameInput.value.trim()){ productNameError.classList.remove('hidden'); ok = false; }
+          else productNameError.classList.add('hidden');
+        } else productNameError.classList.add('hidden');
 
-            function clearForm() {
-                form.reset();
-                closeAllPanels();
-                chevron.classList.remove('up');
-                hiddenSubject.value = '';
-                timestampField.value = '';
-                syncSubjectState();
-                textareas.forEach(textarea => {
-                    textarea.style.height = '';
-                    autoResizeTextarea(textarea);
-                });
-                if (window.grecaptcha) {
-                    grecaptcha.reset();
-                }
-            }
+        return ok;
+      }
 
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                resetDynamicErrors();
+      // Auto-grow textareas
+      document.querySelectorAll('textarea').forEach(t=>{
+        const grow=()=>{ t.style.height='auto'; t.style.height=(t.scrollHeight+2)+'px'; };
+        grow(); t.addEventListener('input',grow);
+      });
 
-                if (!validateDynamicFields()) {
-                    return;
-                }
+      // Stay in touch sync
+      const consent = document.getElementById('consent');
+      const newsletter = document.getElementById('newsletter');
+      const pillConsent = document.getElementById('pill_consent');
+      const pillNews = document.getElementById('pill_newsletter');
+      const hidConsent = document.getElementById('can_contact_hidden');
+      const hidNews = document.getElementById('newsletter_hidden');
 
-                if (!subjectSelect.value) {
-                    subjectSelect.focus();
-                    return;
-                }
+      function setPill(pill,on){ pill.textContent = on?'Yes':'No'; pill.classList.toggle('yes',on); }
+      function setHidden(i,on){ i.value = on?'Yes':'No'; }
+      function syncPills(){
+        setPill(pillConsent, consent.checked);
+        setPill(pillNews, newsletter.checked);
+        setHidden(hidConsent, consent.checked);
+        setHidden(hidNews, newsletter.checked);
+      }
+      consent.addEventListener('change', ()=>{
+        if(!consent.checked && newsletter.checked) newsletter.checked = false;
+        syncPills();
+      });
+      newsletter.addEventListener('change', ()=>{
+        if(newsletter.checked && !consent.checked) consent.checked = true;
+        syncPills();
+      });
+      syncPills();
 
-                const honeypot = document.getElementById('honeypot');
-                if (honeypot.value) {
-                    return;
-                }
+      // Submit
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        formStatus.textContent=''; formStatus.classList.remove('error');
 
-                const captchaResponse = grecaptcha.getResponse();
-                if (!captchaResponse) {
-                    captchaError.classList.add('visible');
-                    return;
-                }
+        if(!validateDynamic()) return;
 
-                captchaError.classList.remove('visible');
+        if(!subjectSelect.value){ subjectSelect.focus(); return; }
 
-                const subjectValue = subjectSelect.value;
-                hiddenSubject.value = subjectValue ? `[Contact & Feedback] – ${subjectValue}` : '';
-                timestampField.value = new Date().toLocaleString();
+        // Honeypot
+        if(document.getElementById('honeypot').value) return;
 
-                const formData = new FormData(form);
+        // Captcha
+        const token = grecaptcha.getResponse?.() || '';
+        if(!token){ captchaError.classList.add('visible'); return; }
+        captchaError.classList.remove('visible');
 
-                try {
-                    const response = await fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
+        // Stamp
+        timestampField.value = new Date().toLocaleString();
 
-                    if (response.ok) {
-                        formStatus.textContent = 'Thank you — message sent. Please check your inbox (and spam folder just in case) for our reply.';
-                        formStatus.classList.remove('error');
-                        clearForm();
-                    } else {
-                        throw new Error('Network response was not ok');
-                    }
-                } catch (error) {
-                    formStatus.textContent = 'Sorry — your message could not be sent. Please try again later.';
-                    formStatus.classList.add('error');
-                }
-            });
-
-            form.addEventListener('input', (event) => {
-                if (event.target === fishNameInput && fishNameError.classList.contains('visible')) {
-                    if (fishNameInput.value.trim()) {
-                        fishNameError.classList.remove('visible');
-                        fishNameInput.removeAttribute('aria-invalid');
-                    }
-                }
-                if (event.target === productNameInput && productNameError.classList.contains('visible')) {
-                    if (productNameInput.value.trim()) {
-                        productNameError.classList.remove('visible');
-                        productNameInput.removeAttribute('aria-invalid');
-                    }
-                }
-            });
-        })();
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            window.ttgInitNav?.();
-        });
-    </script>
-
-    <style>
-        /* ===== Stay in touch (scoped rewrite) ===== */
-        #stay-in-touch.ttg-stay{
-          background: var(--checkbox-bg);
-          border-radius: 14px;
-          padding: 18px 20px;
-          display: block;
+        const fd = new FormData(form);
+        try{
+          const r = await fetch(form.action, { method:'POST', body:fd, headers:{Accept:'application/json'} });
+          if(!r.ok) throw new Error('Network');
+          formStatus.textContent='Thank you — message sent. Please check your inbox (and spam folder just in case) for our reply.';
+          form.reset(); closeAll(); setHasSubject(false); syncPills(); hiddenSubject.value=''; timestampField.value='';
+          grecaptcha.reset?.();
+        }catch(err){
+          formStatus.textContent='Sorry — your message could not be sent. Please try again later.';
+          formStatus.classList.add('error');
         }
-        #stay-in-touch *::before,
-        #stay-in-touch *::after{ content: none !important; display: none !important; }
-        #stay-in-touch .ttg-stay__title{
-          margin: 0 0 8px 0; font-weight: 600;
-        }
-        #stay-in-touch .ttg-stay__row{
-          /* strict inline row: checkbox ▸ pill ▸ sentence */
-          display: flex !important;
-          align-items: center !important;
-          gap: 10px !important;
-          margin: 8px 0;
-          background: transparent !important;
-        }
-        #stay-in-touch .ttg-stay__chk{
-          flex: 0 0 auto; margin: 0; position: static !important; float: none !important;
-        }
-        #stay-in-touch .ttg-stay__pill{
-          flex: 0 0 auto !important;
-          display: inline-flex !important; align-items: center; justify-content: center;
-          min-width: 28px; width: auto !important;
-          padding: 2px 10px; border-radius: 999px;
-          font-size: 0.85rem; line-height: 1.4;
-          background: #d3d9e1; color: #1c2733;
-          white-space: nowrap;
-        }
-        #stay-in-touch .ttg-stay__pill.is-yes{ background: #39b385; color: #fff; }
-        #stay-in-touch .ttg-stay__text{
-          flex: 1 1 auto; min-width: 0; display: block;
-          background: transparent !important; border: 0 !important; border-radius: 0 !important;
-          color: inherit;
-        }
-        #stay-in-touch .ttg-stay__note{
-          margin: 8px 0 0 0; font-size: 0.88rem; line-height: 1.5;
-        }
-        #stay-in-touch a{ text-decoration: underline; }
-
-        /* hard reset of any stray spans that previously drew rounded “bars” */
-        #stay-in-touch span:not(.ttg-stay__pill):not(.ttg-stay__text){ background: transparent !important; box-shadow: none !important; }
-    </style>
-
-    <script>
-        /* ===== Stay in touch sync ===== */
-        (function () {
-            const consent = document.getElementById('consent');
-            const newsletter = document.getElementById('newsletter');
-            const pillConsent = document.getElementById('pill_consent');
-            const pillNews = document.getElementById('pill_newsletter');
-            const hidConsent = document.getElementById('can_contact_hidden');
-            const hidNews = document.getElementById('newsletter_hidden');
-
-            function setPill(pill, on) {
-                if (pill) {
-                    pill.textContent = on ? 'Yes' : 'No';
-                    pill.classList.toggle('is-yes', !!on);
-                }
-            }
-            function setHidden(inp, on) {
-                if (inp) {
-                    inp.value = on ? 'Yes' : 'No';
-                }
-            }
-            function sync() {
-                setPill(pillConsent, consent?.checked);
-                setPill(pillNews, newsletter?.checked);
-                setHidden(hidConsent, consent?.checked);
-                setHidden(hidNews, newsletter?.checked);
-            }
-            consent?.addEventListener('change', () => {
-                if (!consent.checked && newsletter?.checked) newsletter.checked = false;
-                sync();
-            });
-            newsletter?.addEventListener('change', () => {
-                if (newsletter.checked && consent && !consent.checked) consent.checked = true;
-                sync();
-            });
-            // init
-            sync();
-        })();
-    </script>
-    
+      });
+    })();
+  </script>
 </body>
 </html>
