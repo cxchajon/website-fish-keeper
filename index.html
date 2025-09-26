@@ -148,14 +148,13 @@
     <div class="wrap">
       <!-- Brand -->
       <div class="site-brand">
-        <div class="brand-name"><strong>The Tank Guide</strong></div>
+        <h1 class="brand-name">The Tank Guide</h1>
         <div class="brand-sub">a product of <strong>FishKeepingLifeCo</strong></div>
-        <p class="tagline">Smart tools and guides to plan, stock, and set up your aquarium — all in one place.</p>
+        <p class="tagline" id="hero-blurb">Smart tools and guides to plan, stock, and set up your aquarium — all in one place.</p>
       </div>
 
       <!-- Launchpad -->
       <section id="features" aria-labelledby="features-title">
-        <h1>The Tank Guide — Aquarium Stocking Advisor &amp; Fishkeeping Guides</h1>
         <h2 id="features-title" class="visually-hidden">Tools &amp; Sections</h2>
         <div class="features-grid">
           <article class="card" aria-labelledby="card-stocking-title">
@@ -228,5 +227,223 @@
 <!-- Load data and logic with updated version for cache busting -->
 <script src="js/fish-data.js?v=1.0.3"></script>
 <script type="module" src="js/modules/app.js?v=1.0.3"></script>
+<style>
+  /* TTG Popup Theme v1 — High-Contrast Minimal (scoped to #ttg-howitworks) */
+  .ttg-visually-hidden{position:absolute!important;left:-9999px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important}
+
+  /* Info (i) button — INLINE variant (sit flush with title baseline + subtle pop) */
+  .ttg-info-btn--inline{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:22px;height:22px; /* tighter, closer to cap height of H1 */
+    margin-left:.35rem; /* snug to “Guide” */
+    vertical-align:baseline; /* align to text baseline */
+    transform:translateY(2px); /* fine-tune baseline alignment */
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.22);
+    background:linear-gradient(180deg,#1a1a1a,#101010);
+    color:#f0f0f0;
+    font:600 13px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing:.2px;
+    cursor:pointer;
+    box-shadow:0 0 0 2px rgba(255,255,255,.14); /* subtle ring for pop */
+  }
+  .ttg-info-btn--inline:hover{color:#ffffff;border-color:rgba(255,255,255,.32);box-shadow:0 0 0 2px rgba(155,220,255,.28)}
+  .ttg-info-btn--inline:focus{outline:2px solid #9bdcff;outline-offset:2px}
+  .ttg-info-btn--inline:active{transform:translateY(3px)} /* keep the +1px from hover baseline */
+
+  /* Under-hero text link (subtle, text-only, snug to blurb) */
+  .ttg-howitworks-link{
+    appearance:none;border:0;background:none;padding:0;margin:.4rem 0 0 0;
+    font:inherit;font-size:.95rem;line-height:1;cursor:pointer;
+    text-decoration:underline;text-underline-offset:2px;color:inherit;
+  }
+  .ttg-howitworks-link:hover{opacity:.9}
+  .ttg-howitworks-link:focus{outline:2px solid currentColor;outline-offset:2px}
+
+  /* Overlay + Dialog */
+  #ttg-howitworks .ttg-overlay{
+    position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9999;
+    background:rgba(0,0,0,.5);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)
+  }
+  #ttg-howitworks .ttg-dialog{
+    background:#0b0b0b;color:#f4f4f4;width:calc(100% - 2rem);max-width:560px;
+    border:1px solid rgba(255,255,255,.14);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);
+    padding:1.25rem 1.25rem 1rem;position:relative
+  }
+
+  /* Motion (respect reduced motion) */
+  @media (prefers-reduced-motion:no-preference){
+    #ttg-howitworks .ttg-overlay[data-state="open"] .ttg-dialog{transform:translateY(0);opacity:1;transition:transform 220ms ease,opacity 220ms ease}
+    #ttg-howitworks .ttg-overlay[data-state="closed"] .ttg-dialog{transform:translateY(10px);opacity:0;transition:transform 140ms ease,opacity 140ms ease}
+  }
+
+  /* Mobile bottom sheet */
+  @media (max-width:600px){
+    #ttg-howitworks .ttg-overlay{align-items:flex-end}
+    #ttg-howitworks .ttg-dialog{width:100%;max-width:none;border-radius:16px 16px 0 0;padding-bottom:env(safe-area-inset-bottom,16px)}
+    .ttg-info-btn--inline{width:20px;height:20px;transform:translateY(2px)}
+  }
+
+  #ttg-howitworks .ttg-title{margin:0 2rem .75rem 0;font-size:1.35rem;line-height:1.2;font-weight:800}
+  #ttg-howitworks .ttg-close{
+    position:absolute;top:10px;right:10px;border:none;background:transparent;color:inherit;font-size:1.25rem;line-height:1;cursor:pointer
+  }
+  #ttg-howitworks .ttg-close:focus{outline:2px solid currentColor;outline-offset:2px}
+
+  #ttg-howitworks .ttg-list{margin:.25rem 0 .75rem 1.15rem;padding:0}
+  #ttg-howitworks .ttg-list li{margin:.4rem 0}
+  #ttg-howitworks .ttg-list a{color:#9bdcff;text-decoration:underline;text-underline-offset:2px}
+  #ttg-howitworks .ttg-footnote{margin-top:.75rem;font-size:.95rem;color:#d7d7d7}
+  #ttg-howitworks .ttg-footnote a{color:#9bdcff}
+
+  #ttg-howitworks .ttg-actions{margin-top:1rem;display:flex;justify-content:flex-end}
+  #ttg-howitworks .ttg-primary{
+    border:none;background:#2279b5;color:#fff;padding:.6rem 1rem;border-radius:8px;font-weight:700;cursor:pointer;min-height:44px
+  }
+  #ttg-howitworks .ttg-primary:focus{outline:2px solid #9bdcff;outline-offset:2px}
+
+  /* Show helper */
+  #ttg-howitworks .ttg-overlay[aria-hidden="false"]{display:flex}
+</style>
+
+<!-- TTG How It Works (scoped) -->
+<div id="ttg-howitworks">
+  <div class="ttg-overlay" aria-hidden="true" data-state="closed">
+    <div class="ttg-dialog" role="dialog" aria-modal="true" aria-labelledby="ttg-howitworks-title" aria-describedby="ttg-howitworks-desc" tabindex="-1">
+      <button class="ttg-close" type="button" aria-label="Close">×</button>
+      <h2 id="ttg-howitworks-title" class="ttg-title">How The Tank Guide Works</h2>
+      <div id="ttg-howitworks-desc">
+        <ol class="ttg-list">
+          <li><strong>Plan what you keep in the <a href="/stocking.html">Stocking Advisor</a>.</strong><br/>Start with your ideas — we’ll help check if the fish are compatible.</li>
+          <li><strong>Gear up in the <a href="/gear.html">Aquarium Gear Guide</a>.</strong><br/>Find the right equipment for the tank you’re building.</li>
+          <li><strong>Get your water ready with the <a href="/params.html">Cycling Coach</a>.</strong><br/>Build a healthy environment for your tank.</li>
+        </ol>
+        <div class="ttg-footnote">Prefer reading or videos? Explore guides and videos in the <a href="/media.html">Media Hub</a>.</div>
+      </div>
+      <div class="ttg-actions">
+        <button class="ttg-primary" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* TTG How It Works — inline (i) button near title + subtle link; accessible modal */
+(function(){
+  const overlay = document.querySelector('#ttg-howitworks .ttg-overlay');
+  const dialog  = document.querySelector('#ttg-howitworks .ttg-dialog');
+  const btnClose= document.querySelector('#ttg-howitworks .ttg-close');
+  const btnPrimary = document.querySelector('#ttg-howitworks .ttg-primary');
+
+  // 1) Ensure an inline (i) button sits INSIDE the main H1 (after "The Tank Guide")
+  (function attachInlineInfoButton(){
+    const h1 = document.querySelector('h1');
+    if(!h1) return;
+    // Create once if not present
+    if(!h1.querySelector('.ttg-info-btn--inline')){
+      const btn = document.createElement('button');
+      btn.type='button';
+      btn.className='ttg-info-btn--inline';
+      btn.setAttribute('aria-label','Open How it works');
+      btn.title='How it works';
+      btn.textContent='i';
+      // Insert after the word "Guide" when possible; otherwise append at end
+      // Try to split the first text node
+      const tn = Array.from(h1.childNodes).find(n=>n.nodeType===Node.TEXT_NODE && n.textContent.includes('The Tank Guide'));
+      if(tn){
+        const parts = tn.textContent.split('The Tank Guide');
+        tn.textContent = parts[0] + 'The Tank Guide';
+        const rest = document.createTextNode(parts.slice(1).join('The Tank Guide'));
+        h1.insertBefore(btn, tn.nextSibling);
+        h1.insertBefore(rest, btn.nextSibling);
+      } else {
+        h1.appendChild(btn);
+      }
+      btn.addEventListener('click', ()=>openModal(btn));
+    }
+  })();
+
+  // 2) Insert a subtle text-only "How it works" link directly under the hero blurb
+  function insertUnderHero() {
+    // Avoid duplicates
+    if (document.getElementById('ttg-howitworks-opener')) return;
+    const link = document.createElement('button');
+    link.type='button';
+    link.className='ttg-howitworks-link';
+    link.id='ttg-howitworks-opener';
+    link.setAttribute('aria-haspopup','dialog');
+    link.textContent='How it works';
+
+    // 1) Preferred anchor: <p id="hero-blurb">
+    let target = document.getElementById('hero-blurb');
+
+    // 2) If no explicit id, find the first <p> whose text starts with
+    //    “Smart tools and guides to plan, stock,” (the hero blurb).
+    if (!target) {
+      const candidate = Array.from((document.querySelector('main')||document.body).querySelectorAll('p'))
+        .find(p => (p.textContent || '').trim().toLowerCase().startsWith('smart tools and guides to plan'));
+      if (candidate) target = candidate;
+    }
+
+    // 3) Fallback: first <p> inside <main>
+    if (!target) {
+      const main = document.querySelector('main') || document.body;
+      target = main.querySelector('p');
+    }
+
+    // Insert directly after the blurb paragraph
+    if (target && target.parentNode) {
+      target.parentNode.insertBefore(link, target.nextSibling);
+      return link;
+    }
+
+    // Last resort: top of <main>
+    const main = document.querySelector('main') || document.body;
+    main.insertBefore(link, main.firstChild);
+    return link;
+  }
+  const linkOpener = insertUnderHero();
+
+  // Focus trap
+  let focusables=[];
+  function refreshFocusables(){
+    focusables = dialog.querySelectorAll('a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])');
+  }
+  function trapFocus(e){
+    if(e.key!=='Tab'||focusables.length===0) return;
+    const first=focusables[0], last=focusables[focusables.length-1];
+    if(e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
+    else if(!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
+  }
+
+  let lastOpener=null;
+  function openModal(opener){
+    lastOpener = opener || document.activeElement;
+    overlay.setAttribute('aria-hidden','false');
+    overlay.setAttribute('data-state','open');
+    refreshFocusables();
+    dialog.focus({preventScroll:true});
+    document.addEventListener('keydown', onKeydown);
+    dialog.addEventListener('keydown', trapFocus);
+  }
+  function closeModal(){
+    overlay.setAttribute('aria-hidden','true');
+    overlay.setAttribute('data-state','closed');
+    document.removeEventListener('keydown', onKeydown);
+    dialog.removeEventListener('keydown', trapFocus);
+    setTimeout(()=>{ if(overlay.getAttribute('aria-hidden')==='true'){ overlay.style.display='none'; overlay.style.display=''; } }, 150);
+    if(lastOpener && lastOpener.focus) lastOpener.focus({preventScroll:true});
+  }
+  function onKeydown(e){ if(e.key==='Escape') closeModal(); }
+
+  // Click handlers
+  btnClose&&btnClose.addEventListener('click', closeModal);
+  btnPrimary&&btnPrimary.addEventListener('click', closeModal);
+  overlay&&overlay.addEventListener('click',(e)=>{ if(!dialog.contains(e.target)) closeModal(); });
+  // Link openers
+  document.getElementById('ttg-howitworks-opener')?.addEventListener('click', (e)=>openModal(e.currentTarget));
+  // If inline (i) exists, its click handler was bound during creation
+})();
+</script>
 </body>
 </html>
