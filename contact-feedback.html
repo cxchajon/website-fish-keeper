@@ -952,6 +952,56 @@
             window.ttgInitNav?.();
         });
     </script>
+    <style>
+  /* 1) Nuke anything that draws the “ghost bars” */
+  .stay-in-touch .checkbox-item,
+  .stay-in-touch .checkbox-item * {
+    background: none !important;
+    box-shadow: none !important;
+    position: static !important;
+    float: none !important;
+    margin-left: 0 !important; /* stop auto-push to the right */
+  }
+  .stay-in-touch .checkbox-item::before,
+  .stay-in-touch .checkbox-item::after,
+  .stay-in-touch .checkbox-item *::before,
+  .stay-in-touch .checkbox-item *::after { content: none !important; display: none !important; }
+
+  /* 2) Strict flex layout: checkbox ▸ pill ▸ text */
+  .stay-in-touch .checkbox-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    flex-wrap: nowrap !important;
+    width: 100%;
+  }
+  .stay-in-touch .checkbox-item input[type="checkbox"] {
+    order: 1; flex: 0 0 auto;
+  }
+
+  /* 3) Only keep the two real pills; hide any other accidental spans */
+  .stay-in-touch .checkbox-item span:not(.consent-pill):not(.checkbox-text) { display: none !important; }
+
+  /* 4) Pill is a small auto-sized chip — NEVER width:100% */
+  .stay-in-touch .checkbox-item .consent-pill {
+    order: 2; flex: 0 0 auto !important;
+    display: inline-flex !important; align-items: center; justify-content: center;
+    white-space: nowrap;
+    min-width: 28px; width: auto !important; max-width: none !important;
+    padding: 2px 10px; border-radius: 999px;
+    font-size: 0.85rem; line-height: 1.4; text-align: center;
+    background: #d3d9e1; color: #1c2733;
+  }
+  .stay-in-touch .checkbox-item .consent-pill.is-yes { background: #39b385; color: #fff; }
+
+  /* 5) Sentence text occupies remaining space, no rounded background */
+  .stay-in-touch .checkbox-item .checkbox-text {
+    order: 3; flex: 1 1 auto; min-width: 0; display: block;
+    border: 0 !important; border-radius: 0 !important; background: transparent !important;
+    color: inherit;
+  }
+</style>
+
     <script>
 (function(){
   const consent = document.getElementById('consent');
@@ -961,16 +1011,12 @@
   const hidConsent = document.getElementById('can_contact_hidden');
   const hidNewsletter = document.getElementById('newsletter_hidden');
 
-  // Remove any stray pills that aren’t the two official ones
+  // Remove any stray pills except the two official ones
   document.querySelectorAll('.stay-in-touch .consent-pill').forEach(p => {
     if (p !== pillConsent && p !== pillNewsletter) p.remove();
   });
 
-  function setPill(pill, checked){
-    if (!pill) return;
-    pill.textContent = checked ? 'Yes' : 'No';
-    pill.classList.toggle('is-yes', !!checked);
-  }
+  function setPill(pill, checked){ if (pill){ pill.textContent = checked ? 'Yes' : 'No'; pill.classList.toggle('is-yes', !!checked); } }
   function syncHidden(input, checked){ if (input) input.value = checked ? 'Yes' : 'No'; }
   function syncAll(){
     setPill(pillConsent, consent?.checked);
@@ -978,11 +1024,10 @@
     syncHidden(hidConsent, consent?.checked);
     syncHidden(hidNewsletter, newsletter?.checked);
   }
-  // Newsletter requires consent; toggling newsletter on auto-enables consent; unchecking consent auto-unchecks newsletter.
   consent?.addEventListener('change', () => { if (!consent.checked && newsletter?.checked) newsletter.checked = false; syncAll(); });
   newsletter?.addEventListener('change', () => { if (newsletter.checked && consent && !consent.checked) consent.checked = true; syncAll(); });
   syncAll();
 })();
-</script>
+    </script>
 </body>
 </html>
