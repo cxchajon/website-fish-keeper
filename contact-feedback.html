@@ -459,6 +459,57 @@
             background: #39b385; /* green “Yes” – matches button theme */
             color: #ffffff;
         }
+
+        /* Consent row = checkbox ▸ pill ▸ text */
+        .stay-in-touch .checkbox-item{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            flex-wrap:nowrap;
+        }
+        .stay-in-touch .checkbox-item input[type="checkbox"]{
+            order:1;
+            flex:0 0 auto;
+            margin:0;
+        }
+        .stay-in-touch .checkbox-item .consent-pill{
+            order:2;
+            flex:0 0 auto;
+            white-space:nowrap;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-width:28px;
+            padding:2px 8px;
+            border-radius:999px;
+            font-size:0.85rem;
+            line-height:1.4;
+            background:#d3d9e1;    /* No */
+            color:#1c2733;
+            position:static !important;  /* ensure not absolute */
+            float:none !important;       /* ensure not floating */
+        }
+        .stay-in-touch .checkbox-item .consent-pill.is-yes{
+            background:#39b385;          /* Yes */
+            color:#fff;
+        }
+        .stay-in-touch .checkbox-item .checkbox-text{
+            order:3;
+            flex:1 1 auto;
+            min-width:0;                  /* prevents overflow pushing siblings */
+            display:block;
+        }
+
+        /* Hard-stop any pseudo “ghosts” that might be adding shapes */
+        .stay-in-touch .checkbox-item::before,
+        .stay-in-touch .checkbox-item::after{
+            content:none !important;
+            display:none !important;
+        }
+
+        /* If any earlier rules tried to shove the pill to the far edge via flex:1, undo that */
+        .stay-in-touch .checkbox-item .consent-pill[style*="flex: 1"],
+        .stay-in-touch .checkbox-item .consent-pill{ flex:0 0 auto !important; }
     </style>
 </head>
 <body>
@@ -618,12 +669,12 @@
                     <label class="checkbox-item" for="consent">
                         <input type="checkbox" id="consent" name="consent" required />
                         <span class="consent-pill" id="pill_consent" aria-live="polite" aria-atomic="true">No</span>
-                        <span>I agree that The Tank Guide may contact me about my submission.</span>
+                        <span class="checkbox-text">I agree that The Tank Guide may contact me about my submission.</span>
                     </label>
                     <label class="checkbox-item" for="newsletter">
                         <input type="checkbox" id="newsletter" name="newsletter" />
                         <span class="consent-pill" id="pill_newsletter" aria-live="polite" aria-atomic="true">No</span>
-                        <span>Yes, I’d like to receive The Tank Guide newsletter/updates.</span>
+                        <span class="checkbox-text">Yes, I’d like to receive The Tank Guide newsletter/updates.</span>
                     </label>
                     <p class="privacy-note">
                         We value your privacy. Your information will never be sold to third parties. We’ll use it only to reply to your message and—if you opt in—to send occasional newsletters. You can unsubscribe anytime. See our <a href="https://thetankguide.com/privacy.html">Privacy Policy</a>.
