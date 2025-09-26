@@ -197,6 +197,8 @@
   "name": "FishKeepingLifeCo",
   "alternateName": "The Tank Guide",
   "url": "https://thetankguide.com",
+  "addressCountry": "US",
+  "addressRegion": "NY",
   "logo": "https://thetankguide.com/logo.png",
   "image": "https://thetankguide.com/logo.png",
   "slogan": "Educational Aquarium Books & Tools",
@@ -423,19 +425,19 @@
     </section>
   </main>
 
-  <!-- FOOTER (uniform) -->
-  <footer class="site-footer">
-    <div class="inner">
-      <p>&copy; <span id="year"></span> The Tank Guide · <a href="privacy.html">Privacy</a> · <a href="about.html">About</a></p>
-    </div>
-  </footer>
+  <div id="site-footer"></div>
+  <script>
+    (async () => {
+      const host = document.getElementById('site-footer');
+      if (!host) return;
+      const res = await fetch('footer.html?v=1.0.8', { cache: 'no-cache' });
+      host.outerHTML = await res.text();
+    })();
+  </script>
 
   <!-- Scripts -->
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <script>
-    // Year in footer
-    document.getElementById('year').textContent = new Date().getFullYear();
-
     // Initialize nav if available
     document.addEventListener('DOMContentLoaded', () => { window.ttgInitNav?.(); });
 

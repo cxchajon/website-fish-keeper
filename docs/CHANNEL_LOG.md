@@ -3,7 +3,10 @@
 ## 2025-09-26 — Contact & Feedback v1.1 (reCAPTCHA secret key added)
 **Owner:** FishKeepingLifeCo (CXLXC LLC)
 
-**Summary:** reCAPTCHA secret key configured in Formspree; front-end site key already live; next step is live challenge test and ship release/contact-form-v1.1. No UI changes.
+**Summary:**
+- Configured the reCAPTCHA secret key in the Formspree dashboard (external)
+- Front-end site key already live; validation confirmed via challenge and green badge
+- No UI changes shipped with this release
 
 **Evidence / Links:** Formspree dashboard https://formspree.io ; Page https://thetankguide.com/contact-feedback.html
 
@@ -17,12 +20,14 @@
 ## 2025-09-25 — SEO Schema Refresh (Sitewide) + Media Page Book Data
 **Owner:** FishKeepingLifeCo (CXLXC LLC)
 
-**Summary:** Added/updated Organization JSON-LD across pages (name=FishKeepingLifeCo; url=https://thetankguide.com; logo/image=https://thetankguide.com/logo.png; addressLocality=New York; addressCountry=United States). Media page book details updated (ISBN: 979-8263446215; softcover).
+**Summary:**
+- Organization JSON-LD now includes addressCountry "US" and addressRegion "NY" across Home, About, Media, Gear, Params, and Contact
+- Media page retains Book schema (ISBN: 979-8263446215) and aligns the Amazon URL with the on-page CTA
 
 ## 2025-09-25 — Footer Links: Privacy & Legal, Accessibility, Contact
 **Owner:** FishKeepingLifeCo (CXLXC LLC)
 
-**Summary:** Footer text/links standardized: © 2025 FishKeepingLifeCo • Privacy & Legal • Accessibility • Contact. Links resolve sitewide.
+**Summary:** Standardized the shared footer links (social strip, legal/contact row, Amazon disclosure) and updated the Contact page to load footer.html for parity with the rest of the site.
 
 ## 2025-09-25 — Privacy & Legal Page: Structure + Link Integration
 **Owner:** FishKeepingLifeCo (CXLXC LLC)
