@@ -438,125 +438,6 @@
         }
     </style>
 
-    <style>
-        /* small status pill next to consent labels */
-        .consent-pill {
-            display: inline-block;
-            min-width: 28px;
-            padding: 2px 10px;
-            margin-right: 8px;
-            border-radius: 999px;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            text-align: center;
-            background: #d3d9e1; /* gray “No” */
-            color: #1c2733;
-            vertical-align: middle;
-            flex-shrink: 0;
-        }
-
-        .consent-pill.is-yes {
-            background: #39b385; /* green “Yes” – matches button theme */
-            color: #ffffff;
-        }
-
-        /* Consent row = checkbox ▸ pill ▸ text */
-        .stay-in-touch .checkbox-item{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            flex-wrap:nowrap;
-        }
-        .stay-in-touch .checkbox-item input[type="checkbox"]{
-            order:1;
-            flex:0 0 auto;
-            margin:0;
-        }
-        .stay-in-touch .checkbox-item .consent-pill{
-            order:2;
-            flex:0 0 auto;
-            white-space:nowrap;
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            min-width:28px;
-            padding:2px 8px;
-            border-radius:999px;
-            font-size:0.85rem;
-            line-height:1.4;
-            background:#d3d9e1;    /* No */
-            color:#1c2733;
-            position:static !important;  /* ensure not absolute */
-            float:none !important;       /* ensure not floating */
-        }
-        .stay-in-touch .checkbox-item .consent-pill.is-yes{
-            background:#39b385;          /* Yes */
-            color:#fff;
-        }
-        .stay-in-touch .checkbox-item .checkbox-text{
-            order:3;
-            flex:1 1 auto;
-            min-width:0;                  /* prevents overflow pushing siblings */
-            display:block;
-        }
-
-        /* Hard-stop any pseudo “ghosts” that might be adding shapes */
-        .stay-in-touch .checkbox-item::before,
-        .stay-in-touch .checkbox-item::after{
-            content:none !important;
-            display:none !important;
-        }
-
-        /* If any earlier rules tried to shove the pill to the far edge via flex:1, undo that */
-        .stay-in-touch .checkbox-item .consent-pill[style*="flex: 1"],
-        .stay-in-touch .checkbox-item .consent-pill{ flex:0 0 auto !important; }
-    </style>
-
-    <style>
-      /* Reset anything that could draw the ghost bars */
-      .stay-in-touch .checkbox-item,
-      .stay-in-touch .checkbox-item *,
-      .stay-in-touch .checkbox-item *::before,
-      .stay-in-touch .checkbox-item *::after{
-        background: none !important;
-        box-shadow: none !important;
-      }
-      .stay-in-touch .checkbox-item::before,
-      .stay-in-touch .checkbox-item::after{ content: none !important; display: none !important; }
-
-      /* Layout: checkbox ▸ pill ▸ text */
-      .stay-in-touch .checkbox-item{
-        display: flex !important;
-        align-items: center !important;
-        gap: 10px !important;
-        flex-wrap: nowrap !important;
-      }
-      .stay-in-touch .checkbox-item input[type="checkbox"]{
-        order: 1; flex: 0 0 auto; margin: 0;
-        position: static !important; float: none !important;
-      }
-
-      /* 🔒 Only allow these two pills; hide any other spans that slipped in */
-      .stay-in-touch .checkbox-item span:not(.consent-pill):not(.checkbox-text){ display: none !important; }
-
-      /* Pill must be a small, auto-sized chip — never full width */
-      .stay-in-touch .checkbox-item .consent-pill{
-        order: 2; flex: 0 0 auto !important; white-space: nowrap;
-        display: inline-flex !important; align-items: center; justify-content: center;
-        min-width: 28px; max-width: none !important; width: auto !important;
-        padding: 2px 10px; border-radius: 999px;
-        font-size: 0.85rem; line-height: 1.4; text-align: center;
-        background: #d3d9e1; color: #1c2733;
-        position: static !important; float: none !important;
-      }
-      .stay-in-touch .checkbox-item .consent-pill.is-yes{ background:#39b385; color:#fff; }
-
-      /* Sentence text: takes remaining space, never creates a “bar” */
-      .stay-in-touch .checkbox-item .checkbox-text{
-        order: 3; flex: 1 1 auto; min-width: 0; display: block;
-        background: transparent !important; border: 0 !important; border-radius: 0 !important;
-      }
-    </style>
 </head>
 <body>
     <header id="global-nav">
@@ -708,24 +589,29 @@
                     </div>
                 </div>
 
-                <div class="checkbox-block stay-in-touch" role="group" aria-labelledby="consentHeading">
-                    <div class="field-group">
-                        <label id="consentHeading">Stay in touch</label>
-                    </div>
-                    <label class="checkbox-item" for="consent">
-                        <input type="checkbox" id="consent" name="consent" required />
-                        <span class="consent-pill" id="pill_consent" aria-live="polite" aria-atomic="true">No</span>
-                        <span class="checkbox-text">I agree that The Tank Guide may contact me about my submission.</span>
-                    </label>
-                    <label class="checkbox-item" for="newsletter">
-                        <input type="checkbox" id="newsletter" name="newsletter" />
-                        <span class="consent-pill" id="pill_newsletter" aria-live="polite" aria-atomic="true">No</span>
-                        <span class="checkbox-text">Yes, I’d like to receive The Tank Guide newsletter/updates.</span>
-                    </label>
-                    <p class="privacy-note">
-                        We value your privacy. Your information will never be sold to third parties. We’ll use it only to reply to your message and—if you opt in—to send occasional newsletters. You can unsubscribe anytime. See our <a href="https://thetankguide.com/privacy.html">Privacy Policy</a>.
-                    </p>
-                </div>
+                <!-- BEGIN: Stay in touch (rewritten, scoped, stable) -->
+                <section id="stay-in-touch" class="ttg-stay">
+                  <h3 class="ttg-stay__title">Stay in touch</h3>
+
+                  <label class="ttg-stay__row" for="consent">
+                    <input class="ttg-stay__chk" type="checkbox" id="consent" name="consent" required />
+                    <span class="ttg-stay__pill" id="pill_consent" aria-live="polite" aria-atomic="true">No</span>
+                    <span class="ttg-stay__text">I agree that The Tank Guide may contact me about my submission.</span>
+                  </label>
+
+                  <label class="ttg-stay__row" for="newsletter">
+                    <input class="ttg-stay__chk" type="checkbox" id="newsletter" name="newsletter" />
+                    <span class="ttg-stay__pill" id="pill_newsletter" aria-live="polite" aria-atomic="true">No</span>
+                    <span class="ttg-stay__text">Yes, I’d like to receive The Tank Guide newsletter/updates.</span>
+                  </label>
+
+                  <p class="ttg-stay__note">
+                    We value your privacy. Your information will never be sold to third parties. We’ll use it only to
+                    reply to your message and—if you opt in—to send occasional newsletters. You can unsubscribe anytime.
+                    See our <a href="https://thetankguide.com/privacy.html">Privacy Policy</a>.
+                  </p>
+                </section>
+                <!-- END: Stay in touch -->
 
                 <div class="captcha-wrapper">
                     <!-- TODO: Insert your reCAPTCHA v2 SITE KEY in the data-sitekey attribute below -->
@@ -952,82 +838,94 @@
             window.ttgInitNav?.();
         });
     </script>
+
     <style>
-  /* 1) Nuke anything that draws the “ghost bars” */
-  .stay-in-touch .checkbox-item,
-  .stay-in-touch .checkbox-item * {
-    background: none !important;
-    box-shadow: none !important;
-    position: static !important;
-    float: none !important;
-    margin-left: 0 !important; /* stop auto-push to the right */
-  }
-  .stay-in-touch .checkbox-item::before,
-  .stay-in-touch .checkbox-item::after,
-  .stay-in-touch .checkbox-item *::before,
-  .stay-in-touch .checkbox-item *::after { content: none !important; display: none !important; }
+        /* ===== Stay in touch (scoped rewrite) ===== */
+        #stay-in-touch.ttg-stay{
+          background: var(--checkbox-bg);
+          border-radius: 14px;
+          padding: 18px 20px;
+          display: block;
+        }
+        #stay-in-touch *::before,
+        #stay-in-touch *::after{ content: none !important; display: none !important; }
+        #stay-in-touch .ttg-stay__title{
+          margin: 0 0 8px 0; font-weight: 600;
+        }
+        #stay-in-touch .ttg-stay__row{
+          /* strict inline row: checkbox ▸ pill ▸ sentence */
+          display: flex !important;
+          align-items: center !important;
+          gap: 10px !important;
+          margin: 8px 0;
+          background: transparent !important;
+        }
+        #stay-in-touch .ttg-stay__chk{
+          flex: 0 0 auto; margin: 0; position: static !important; float: none !important;
+        }
+        #stay-in-touch .ttg-stay__pill{
+          flex: 0 0 auto !important;
+          display: inline-flex !important; align-items: center; justify-content: center;
+          min-width: 28px; width: auto !important;
+          padding: 2px 10px; border-radius: 999px;
+          font-size: 0.85rem; line-height: 1.4;
+          background: #d3d9e1; color: #1c2733;
+          white-space: nowrap;
+        }
+        #stay-in-touch .ttg-stay__pill.is-yes{ background: #39b385; color: #fff; }
+        #stay-in-touch .ttg-stay__text{
+          flex: 1 1 auto; min-width: 0; display: block;
+          background: transparent !important; border: 0 !important; border-radius: 0 !important;
+          color: inherit;
+        }
+        #stay-in-touch .ttg-stay__note{
+          margin: 8px 0 0 0; font-size: 0.88rem; line-height: 1.5;
+        }
+        #stay-in-touch a{ text-decoration: underline; }
 
-  /* 2) Strict flex layout: checkbox ▸ pill ▸ text */
-  .stay-in-touch .checkbox-item {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    flex-wrap: nowrap !important;
-    width: 100%;
-  }
-  .stay-in-touch .checkbox-item input[type="checkbox"] {
-    order: 1; flex: 0 0 auto;
-  }
-
-  /* 3) Only keep the two real pills; hide any other accidental spans */
-  .stay-in-touch .checkbox-item span:not(.consent-pill):not(.checkbox-text) { display: none !important; }
-
-  /* 4) Pill is a small auto-sized chip — NEVER width:100% */
-  .stay-in-touch .checkbox-item .consent-pill {
-    order: 2; flex: 0 0 auto !important;
-    display: inline-flex !important; align-items: center; justify-content: center;
-    white-space: nowrap;
-    min-width: 28px; width: auto !important; max-width: none !important;
-    padding: 2px 10px; border-radius: 999px;
-    font-size: 0.85rem; line-height: 1.4; text-align: center;
-    background: #d3d9e1; color: #1c2733;
-  }
-  .stay-in-touch .checkbox-item .consent-pill.is-yes { background: #39b385; color: #fff; }
-
-  /* 5) Sentence text occupies remaining space, no rounded background */
-  .stay-in-touch .checkbox-item .checkbox-text {
-    order: 3; flex: 1 1 auto; min-width: 0; display: block;
-    border: 0 !important; border-radius: 0 !important; background: transparent !important;
-    color: inherit;
-  }
-</style>
+        /* hard reset of any stray spans that previously drew rounded “bars” */
+        #stay-in-touch span:not(.ttg-stay__pill):not(.ttg-stay__text){ background: transparent !important; box-shadow: none !important; }
+    </style>
 
     <script>
-(function(){
-  const consent = document.getElementById('consent');
-  const newsletter = document.getElementById('newsletter');
-  const pillConsent = document.getElementById('pill_consent');
-  const pillNewsletter = document.getElementById('pill_newsletter');
-  const hidConsent = document.getElementById('can_contact_hidden');
-  const hidNewsletter = document.getElementById('newsletter_hidden');
+        /* ===== Stay in touch sync ===== */
+        (function () {
+            const consent = document.getElementById('consent');
+            const newsletter = document.getElementById('newsletter');
+            const pillConsent = document.getElementById('pill_consent');
+            const pillNews = document.getElementById('pill_newsletter');
+            const hidConsent = document.getElementById('can_contact_hidden');
+            const hidNews = document.getElementById('newsletter_hidden');
 
-  // Remove any stray pills except the two official ones
-  document.querySelectorAll('.stay-in-touch .consent-pill').forEach(p => {
-    if (p !== pillConsent && p !== pillNewsletter) p.remove();
-  });
-
-  function setPill(pill, checked){ if (pill){ pill.textContent = checked ? 'Yes' : 'No'; pill.classList.toggle('is-yes', !!checked); } }
-  function syncHidden(input, checked){ if (input) input.value = checked ? 'Yes' : 'No'; }
-  function syncAll(){
-    setPill(pillConsent, consent?.checked);
-    setPill(pillNewsletter, newsletter?.checked);
-    syncHidden(hidConsent, consent?.checked);
-    syncHidden(hidNewsletter, newsletter?.checked);
-  }
-  consent?.addEventListener('change', () => { if (!consent.checked && newsletter?.checked) newsletter.checked = false; syncAll(); });
-  newsletter?.addEventListener('change', () => { if (newsletter.checked && consent && !consent.checked) consent.checked = true; syncAll(); });
-  syncAll();
-})();
+            function setPill(pill, on) {
+                if (pill) {
+                    pill.textContent = on ? 'Yes' : 'No';
+                    pill.classList.toggle('is-yes', !!on);
+                }
+            }
+            function setHidden(inp, on) {
+                if (inp) {
+                    inp.value = on ? 'Yes' : 'No';
+                }
+            }
+            function sync() {
+                setPill(pillConsent, consent?.checked);
+                setPill(pillNews, newsletter?.checked);
+                setHidden(hidConsent, consent?.checked);
+                setHidden(hidNews, newsletter?.checked);
+            }
+            consent?.addEventListener('change', () => {
+                if (!consent.checked && newsletter?.checked) newsletter.checked = false;
+                sync();
+            });
+            newsletter?.addEventListener('change', () => {
+                if (newsletter.checked && consent && !consent.checked) consent.checked = true;
+                sync();
+            });
+            // init
+            sync();
+        })();
     </script>
+    
 </body>
 </html>
