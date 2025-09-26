@@ -511,6 +511,52 @@
         .stay-in-touch .checkbox-item .consent-pill[style*="flex: 1"],
         .stay-in-touch .checkbox-item .consent-pill{ flex:0 0 auto !important; }
     </style>
+
+    <style>
+      /* Reset anything that could draw the ghost bars */
+      .stay-in-touch .checkbox-item,
+      .stay-in-touch .checkbox-item *,
+      .stay-in-touch .checkbox-item *::before,
+      .stay-in-touch .checkbox-item *::after{
+        background: none !important;
+        box-shadow: none !important;
+      }
+      .stay-in-touch .checkbox-item::before,
+      .stay-in-touch .checkbox-item::after{ content: none !important; display: none !important; }
+
+      /* Layout: checkbox ▸ pill ▸ text */
+      .stay-in-touch .checkbox-item{
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        flex-wrap: nowrap !important;
+      }
+      .stay-in-touch .checkbox-item input[type="checkbox"]{
+        order: 1; flex: 0 0 auto; margin: 0;
+        position: static !important; float: none !important;
+      }
+
+      /* 🔒 Only allow these two pills; hide any other spans that slipped in */
+      .stay-in-touch .checkbox-item span:not(.consent-pill):not(.checkbox-text){ display: none !important; }
+
+      /* Pill must be a small, auto-sized chip — never full width */
+      .stay-in-touch .checkbox-item .consent-pill{
+        order: 2; flex: 0 0 auto !important; white-space: nowrap;
+        display: inline-flex !important; align-items: center; justify-content: center;
+        min-width: 28px; max-width: none !important; width: auto !important;
+        padding: 2px 10px; border-radius: 999px;
+        font-size: 0.85rem; line-height: 1.4; text-align: center;
+        background: #d3d9e1; color: #1c2733;
+        position: static !important; float: none !important;
+      }
+      .stay-in-touch .checkbox-item .consent-pill.is-yes{ background:#39b385; color:#fff; }
+
+      /* Sentence text: takes remaining space, never creates a “bar” */
+      .stay-in-touch .checkbox-item .checkbox-text{
+        order: 3; flex: 1 1 auto; min-width: 0; display: block;
+        background: transparent !important; border: 0 !important; border-radius: 0 !important;
+      }
+    </style>
 </head>
 <body>
     <header id="global-nav">
@@ -907,59 +953,36 @@
         });
     </script>
     <script>
-        (function () {
-            const consent = document.getElementById('consent');
-            const newsletter = document.getElementById('newsletter');
-            const pillConsent = document.getElementById('pill_consent');
-            const pillNewsletter = document.getElementById('pill_newsletter');
-            const hidConsent = document.getElementById('can_contact_hidden');
-            const hidNewsletter = document.getElementById('newsletter_hidden');
+(function(){
+  const consent = document.getElementById('consent');
+  const newsletter = document.getElementById('newsletter');
+  const pillConsent = document.getElementById('pill_consent');
+  const pillNewsletter = document.getElementById('pill_newsletter');
+  const hidConsent = document.getElementById('can_contact_hidden');
+  const hidNewsletter = document.getElementById('newsletter_hidden');
 
-            const allowedPills = new Set(['pill_consent', 'pill_newsletter']);
+  // Remove any stray pills that aren’t the two official ones
+  document.querySelectorAll('.stay-in-touch .consent-pill').forEach(p => {
+    if (p !== pillConsent && p !== pillNewsletter) p.remove();
+  });
 
-            document.querySelectorAll('.consent-pill').forEach((pill) => {
-                if (!allowedPills.has(pill.id)) {
-                    pill.remove();
-                }
-            });
-
-            function setPill(pill, checked) {
-                if (!pill) return;
-                pill.textContent = checked ? 'Yes' : 'No';
-                pill.classList.toggle('is-yes', !!checked);
-            }
-
-            function syncHidden(input, checked) {
-                if (!input) return;
-                input.value = checked ? 'Yes' : 'No';
-            }
-
-            function syncAll() {
-                setPill(pillConsent, consent?.checked);
-                syncHidden(hidConsent, consent?.checked);
-                setPill(pillNewsletter, newsletter?.checked);
-                syncHidden(hidNewsletter, newsletter?.checked);
-            }
-
-            // Initialize
-            syncAll();
-
-            // Live updates
-            consent?.addEventListener('change', () => {
-                // If consent is turned off while newsletter is checked, uncheck newsletter to keep logic consistent
-                if (!consent.checked && newsletter?.checked) {
-                    newsletter.checked = false;
-                }
-                syncAll();
-            });
-            newsletter?.addEventListener('change', () => {
-                // If newsletter is turned on without consent, auto-enable consent
-                if (newsletter.checked && consent && !consent.checked) {
-                    consent.checked = true;
-                }
-                syncAll();
-            });
-        })();
-    </script>
+  function setPill(pill, checked){
+    if (!pill) return;
+    pill.textContent = checked ? 'Yes' : 'No';
+    pill.classList.toggle('is-yes', !!checked);
+  }
+  function syncHidden(input, checked){ if (input) input.value = checked ? 'Yes' : 'No'; }
+  function syncAll(){
+    setPill(pillConsent, consent?.checked);
+    setPill(pillNewsletter, newsletter?.checked);
+    syncHidden(hidConsent, consent?.checked);
+    syncHidden(hidNewsletter, newsletter?.checked);
+  }
+  // Newsletter requires consent; toggling newsletter on auto-enables consent; unchecking consent auto-unchecks newsletter.
+  consent?.addEventListener('change', () => { if (!consent.checked && newsletter?.checked) newsletter.checked = false; syncAll(); });
+  newsletter?.addEventListener('change', () => { if (newsletter.checked && consent && !consent.checked) consent.checked = true; syncAll(); });
+  syncAll();
+})();
+</script>
 </body>
 </html>
