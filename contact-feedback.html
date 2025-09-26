@@ -280,7 +280,7 @@
       <h1>Contact &amp; Feedback</h1>
 
       <!-- Replace with your Formspree endpoint -->
-      <form id="feedbackForm" method="POST" action="https://formspree.io/f/XXXXXXXX">
+      <form id="feedbackForm" method="POST" action="https://formspree.io/f/xnngnwld">
         <div class="field-group">
           <label for="name">Name <span class="required-asterisk">*</span></label>
           <p class="required-note">*Required</p>
@@ -291,6 +291,7 @@
           <label for="email">Email <span class="required-asterisk">*</span></label>
           <p class="required-note">*Required</p>
           <input type="email" id="email" name="email" autocomplete="email" required />
+          <input type="hidden" name="_replyto" id="replyToProxy" value="" />
         </div>
 
         <div class="field-group subject-group">
@@ -444,6 +445,8 @@
       const timestampField = document.getElementById('timestamp');
       const formStatus = document.getElementById('formStatus');
       const captchaError = document.getElementById('captchaError');
+      const emailField = document.getElementById('email');
+      const replyToProxy = document.getElementById('replyToProxy');
 
       // Ensure the form carries the spacing state class and toggles based on subject value
       if (form && !form.classList.contains('js-spacing-state')) {
@@ -547,6 +550,10 @@
 
         // Stamp
         timestampField.value = new Date().toLocaleString();
+
+        if(replyToProxy && emailField){
+          replyToProxy.value = emailField.value;
+        }
 
         const fd = new FormData(form);
         try{
