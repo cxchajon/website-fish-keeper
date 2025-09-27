@@ -108,11 +108,28 @@
       resize: vertical;
     }
 
-    .panel input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      margin-top: 4px;
+    #feature-tank-consent .consent-checkbox {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      -webkit-appearance: checkbox;
+      appearance: checkbox;
       accent-color: #39b385;
+      cursor: pointer;
+      outline: none;
+      transform: scale(1.15);
+      transform-origin: top left;
+    }
+
+    #feature-tank-consent .consent-checkbox:focus-visible {
+      box-shadow: 0 0 0 3px rgba(57, 179, 133, 0.35);
+    }
+
+    #feature-tank-consent .consent-label {
+      user-select: none;
+      cursor: pointer;
+      line-height: 1.4;
+      margin-left: 2px;
     }
 
     .consent-field .consent-control {
@@ -270,10 +287,10 @@
         </div>
 
         <!-- Consent -->
-        <div class="field-group consent-field" style="margin-top:8px;">
+        <div class="field-group consent-field" id="feature-tank-consent" style="margin-top:8px;">
           <div class="consent-control">
-            <input id="consent_feature" type="checkbox" name="consent_feature" value="yes" required aria-describedby="consent_feature_help">
-            <label for="consent_feature">I confirm I own these photos/videos and give The Tank Guide permission to showcase them (with credit).</label>
+            <input id="consent_feature" class="consent-checkbox" type="checkbox" name="consent_feature" value="yes" required aria-describedby="consent_feature_help">
+            <label for="consent_feature" class="consent-label">I confirm I own these photos/videos and give The Tank Guide permission to showcase them (with credit).</label>
           </div>
           <p id="consent_feature_help" class="tiny consent-help">Tick this box to enable submission and let us share your media with credit.</p>
         </div>
