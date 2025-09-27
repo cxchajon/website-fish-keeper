@@ -445,48 +445,75 @@
     }
 
     .stock-list {
-      margin: 0;
-      padding: 0;
-      list-style: none;
       display: grid;
       gap: 12px;
     }
 
-    .stock-item {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
+    .stock-entry {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
       padding: 12px 14px;
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.09);
+      background: rgba(255, 255, 255, 0.08);
     }
 
-    .stock-item .meta {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .stock-item .name {
+    .stock-entry__name {
       font-weight: 600;
       font-size: 1rem;
     }
 
-    .stock-item button {
+    .stock-entry__meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .stock-entry__remove {
+      appearance: none;
+      border: 0;
       border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 8px 12px;
       background: rgba(255, 255, 255, 0.12);
-      color: var(--fg);
-      padding: 6px 12px;
-      cursor: pointer;
+      color: inherit;
       font-weight: 600;
+      cursor: pointer;
+      justify-self: start;
+    }
+
+    .stock-entry__remove:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    @media (min-width: 640px) {
+      .stock-entry {
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        align-items: center;
+      }
+
+      .stock-entry__meta {
+        justify-self: end;
+      }
+
+      .stock-entry__remove {
+        justify-self: end;
+      }
+    }
+
+    .stock-empty {
+      padding: 10px 2px;
+      color: var(--muted);
+      font-size: 0.95rem;
     }
 
     .secondary-text {
       color: var(--muted);
       font-size: 0.92rem;
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 0.95rem;
     }
 
     .popover {
@@ -630,6 +657,40 @@
       <div id="tank-summary" aria-live="polite"></div>
     </section>
 
+    <section class="panel" aria-labelledby="stock-title">
+      <h2 id="stock-title">Plan Your Stock</h2>
+      <div class="stock-grid">
+        <div class="stock-row" role="group" aria-labelledby="candidate-label">
+          <div class="control-field">
+            <label id="candidate-label" for="plan-species">Species</label>
+            <select id="plan-species" class="control"></select>
+          </div>
+          <div class="control-field">
+            <label for="plan-qty">Quantity</label>
+            <input class="control" id="plan-qty" type="number" min="1" max="999" step="1" value="1" />
+          </div>
+          <div class="control-field">
+            <label for="plan-stage">Life Stage</label>
+            <select id="plan-stage" class="control">
+              <option value="juvenile">Juvenile</option>
+              <option value="adult" selected>Adult</option>
+            </select>
+          </div>
+          <button id="plan-add" class="see-gear" type="button">Add to Stock</button>
+        </div>
+        <div class="chips" id="candidate-chips"></div>
+        <div id="candidate-banner" class="status-strip" data-state="bad" style="display:none;">Beginner safeguards: fix highlighted issues before adding.</div>
+      </div>
+    </section>
+
+    <section class="card" id="stock-list-card" aria-live="polite">
+      <div class="card__hd">
+        <h2>Current Stock</h2>
+        <p class="subtle">Your selected fish and inverts appear here.</p>
+      </div>
+      <div id="stock-list" class="stock-list"></div>
+    </section>
+
     <section class="card tank-env-card" aria-live="polite" id="env-card">
       <div class="card__hd">
         <h2>Environmental Recommendations</h2>
@@ -675,33 +736,6 @@
       </div>
       <div class="status-strip" id="status-strip" data-state="ok" role="status" aria-live="polite">Loading…</div>
       <div class="chips" id="chip-row"></div>
-    </section>
-
-    <section class="panel" aria-labelledby="stock-title">
-      <h2 id="stock-title">Plan Your Stock</h2>
-      <div class="stock-grid">
-        <div class="stock-row" role="group" aria-labelledby="candidate-label">
-          <div class="control-field">
-            <label id="candidate-label" for="plan-species">Species</label>
-            <select id="plan-species" class="control"></select>
-          </div>
-          <div class="control-field">
-            <label for="plan-qty">Quantity</label>
-            <input class="control" id="plan-qty" type="number" min="1" max="999" step="1" value="1" />
-          </div>
-          <div class="control-field">
-            <label for="plan-stage">Life Stage</label>
-            <select id="plan-stage" class="control">
-              <option value="juvenile">Juvenile</option>
-              <option value="adult" selected>Adult</option>
-            </select>
-          </div>
-          <button id="plan-add" class="see-gear" type="button">Add to Stock</button>
-        </div>
-        <div class="chips" id="candidate-chips"></div>
-        <div id="candidate-banner" class="status-strip" data-state="bad" style="display:none;">Beginner safeguards: fix highlighted issues before adding.</div>
-      </div>
-      <ul class="stock-list" id="stock-list" aria-live="polite"></ul>
     </section>
 
     <button class="see-gear" id="btn-gear" type="button">See Gear Suggestions</button>
