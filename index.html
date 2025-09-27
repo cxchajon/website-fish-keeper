@@ -231,34 +231,57 @@
   /* TTG Popup Theme v1 — High-Contrast Minimal (scoped to #ttg-howitworks) */
   .ttg-visually-hidden{position:absolute!important;left:-9999px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important}
 
-  /* Info (i) button — INLINE variant (sit flush with title baseline + subtle pop) */
+  /* Inline (i) — crisp baseline, subtle pop, better tap target via invisible hitbox */
   .ttg-info-btn--inline{
+    position:relative;
     display:inline-flex;align-items:center;justify-content:center;
-    width:22px;height:22px; /* tighter, closer to cap height of H1 */
-    margin-left:.35rem; /* snug to “Guide” */
-    vertical-align:baseline; /* align to text baseline */
-    transform:translateY(2px); /* fine-tune baseline alignment */
+    width:20px;height:20px;           /* slightly tighter */
+    margin-left:.35rem;
+    vertical-align:baseline;
+    transform:translateY(1px);        /* tiny nudge for baseline */
     border-radius:999px;
     border:1px solid rgba(255,255,255,.22);
-    background:linear-gradient(180deg,#1a1a1a,#101010);
-    color:#f0f0f0;
-    font:600 13px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background:linear-gradient(180deg,#1a1a1a,#0f0f0f);
+    color:#f2f2f2;
+    font:600 12px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     letter-spacing:.2px;
     cursor:pointer;
-    box-shadow:0 0 0 2px rgba(255,255,255,.14); /* subtle ring for pop */
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.14),    /* subtle outer ring */
+      inset 0 1px 0 rgba(255,255,255,.06);/* inner highlight */
   }
-  .ttg-info-btn--inline:hover{color:#ffffff;border-color:rgba(255,255,255,.32);box-shadow:0 0 0 2px rgba(155,220,255,.28)}
-  .ttg-info-btn--inline:focus{outline:2px solid #9bdcff;outline-offset:2px}
-  .ttg-info-btn--inline:active{transform:translateY(3px)} /* keep the +1px from hover baseline */
+  /* Larger invisible hit area for mobile without changing visual size */
+  .ttg-info-btn--inline::after{
+    content:""; position:absolute; inset:-10px; border-radius:999px;
+  }
+  .ttg-info-btn--inline:hover{
+    color:#ffffff;
+    border-color:rgba(255,255,255,.32);
+    box-shadow:
+      0 0 0 1px rgba(155,220,255,.28),
+      inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  .ttg-info-btn--inline:focus{ outline:2px solid #9bdcff; outline-offset:2px; }
+  .ttg-info-btn--inline:active{ transform:translateY(2px); }
 
-  /* Under-hero text link (subtle, text-only, snug to blurb) */
+  /* Under-hero "How it works" — TEXT ONLY (hard reset vs global button styles) */
   .ttg-howitworks-link{
-    appearance:none;border:0;background:none;padding:0;margin:.4rem 0 0 0;
-    font:inherit;font-size:.95rem;line-height:1;cursor:pointer;
-    text-decoration:underline;text-underline-offset:2px;color:inherit;
+    all: unset;                 /* wipe inherited button styles */
+    display: inline;            /* no block box, no pill */
+    cursor: pointer;
+    margin-left: 0; margin-right: 0;
+    /* Typography */
+    font: inherit;
+    font-size: .95rem;
+    line-height: 1;
+    /* Link look */
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
-  .ttg-howitworks-link:hover{opacity:.9}
-  .ttg-howitworks-link:focus{outline:2px solid currentColor;outline-offset:2px}
+  .ttg-howitworks-link:hover{ opacity: .9; }
+  .ttg-howitworks-link:focus{ outline: 2px solid currentColor; outline-offset: 2px; }
+  /* tighten spacing under hero blurb */
+  .ttg-howitworks-link-wrap{ margin-top: .35rem; }
 
   /* Overlay + Dialog */
   #ttg-howitworks .ttg-overlay{
@@ -281,7 +304,7 @@
   @media (max-width:600px){
     #ttg-howitworks .ttg-overlay{align-items:flex-end}
     #ttg-howitworks .ttg-dialog{width:100%;max-width:none;border-radius:16px 16px 0 0;padding-bottom:env(safe-area-inset-bottom,16px)}
-    .ttg-info-btn--inline{width:20px;height:20px;transform:translateY(2px)}
+    .ttg-info-btn--inline{ width:20px;height:20px;transform:translateY(1px); }
   }
 
   #ttg-howitworks .ttg-title{margin:0 2rem .75rem 0;font-size:1.35rem;line-height:1.2;font-weight:800}
@@ -365,41 +388,46 @@
 
   // 2) Insert a subtle text-only "How it works" link directly under the hero blurb
   function insertUnderHero() {
-    // Avoid duplicates
-    if (document.getElementById('ttg-howitworks-opener')) return;
-    const link = document.createElement('button');
-    link.type='button';
-    link.className='ttg-howitworks-link';
-    link.id='ttg-howitworks-opener';
-    link.setAttribute('aria-haspopup','dialog');
-    link.textContent='How it works';
+    // Remove any previous button version so we don't inherit global styles
+    document.getElementById('ttg-howitworks-opener')?.remove();
 
-    // 1) Preferred anchor: <p id="hero-blurb">
+    const link = document.createElement('a');
+    link.href = '#how-it-works';
+    link.className = 'ttg-howitworks-link';
+    link.id = 'ttg-howitworks-opener';
+    link.setAttribute('role','button');
+    link.setAttribute('aria-haspopup','dialog');
+    link.textContent = 'How it works';
+
+    // Wrap for controlled spacing (prevents full-width pill look)
+    const wrap = document.createElement('div');
+    wrap.className = 'ttg-howitworks-link-wrap';
+    wrap.appendChild(link);
+
+    // Preferred anchor: <p id="hero-blurb">
     let target = document.getElementById('hero-blurb');
 
-    // 2) If no explicit id, find the first <p> whose text starts with
-    //    “Smart tools and guides to plan, stock,” (the hero blurb).
+    // If no explicit id, match the blurb text
     if (!target) {
       const candidate = Array.from((document.querySelector('main')||document.body).querySelectorAll('p'))
         .find(p => (p.textContent || '').trim().toLowerCase().startsWith('smart tools and guides to plan'));
       if (candidate) target = candidate;
     }
 
-    // 3) Fallback: first <p> inside <main>
+    // Fallback: first <p> inside <main>
     if (!target) {
       const main = document.querySelector('main') || document.body;
       target = main.querySelector('p');
     }
 
-    // Insert directly after the blurb paragraph
     if (target && target.parentNode) {
-      target.parentNode.insertBefore(link, target.nextSibling);
-      return link;
+      target.parentNode.insertBefore(wrap, target.nextSibling);
+    } else {
+      (document.querySelector('main') || document.body).insertBefore(wrap, (document.querySelector('main') || document.body).firstChild);
     }
 
-    // Last resort: top of <main>
-    const main = document.querySelector('main') || document.body;
-    main.insertBefore(link, main.firstChild);
+    // Click → open modal
+    link.addEventListener('click', (e)=>{ e.preventDefault(); openModal(link); });
     return link;
   }
   const linkOpener = insertUnderHero();
@@ -440,8 +468,8 @@
   btnClose&&btnClose.addEventListener('click', closeModal);
   btnPrimary&&btnPrimary.addEventListener('click', closeModal);
   overlay&&overlay.addEventListener('click',(e)=>{ if(!dialog.contains(e.target)) closeModal(); });
-  // Link openers
-  document.getElementById('ttg-howitworks-opener')?.addEventListener('click', (e)=>openModal(e.currentTarget));
+  // Link opener added in insertUnderHero()
+  
   // If inline (i) exists, its click handler was bound during creation
 })();
 </script>
