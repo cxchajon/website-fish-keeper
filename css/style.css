@@ -929,3 +929,7 @@ html {
   .hero-title{ margin-bottom: 8px; }
   .hero-header + *{ margin-top: 20px !important; }
 }
+
+/* Gear page blurb */
+.gear-blurb{ max-width:60ch; margin:0 auto 16px; line-height:1.5; opacity:.95; text-align:center; }
+@media (min-width:768px){ .gear-blurb{ margin-bottom:20px; } }
