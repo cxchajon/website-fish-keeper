@@ -160,11 +160,14 @@ body.theme-light {
   gap: 2px;
   min-width: 0;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+  justify-content: center;
+  min-height: 48px;
 }
 
 .site-brand__title {
   font-weight: 800;
   font-size: 1.12rem;
+  line-height: 1;
 }
 
 .site-brand__subtitle {
@@ -928,4 +931,49 @@ html {
   }
   .hero-title{ margin-bottom: 8px; }
   .hero-header + *{ margin-top: 20px !important; }
+}
+
+/* --- Nav restoration / normalization --- */
+.site-nav,
+header.site-header,
+nav[role="navigation"]{
+  position: static !important;   /* ensure non-sticky, non-fixed */
+  top: auto !important;
+  z-index: auto !important;
+  display: block !important;     /* visible at all breakpoints */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Remove accidental hidden states on small screens */
+@media (max-width: 767.98px){
+  .site-nav,
+  header.site-header,
+  nav[role="navigation"]{
+    display: block !important;
+  }
+}
+
+/* Ensure the hero does not overlap nav; keep normal flow */
+.site-nav + .hero-header,
+header.site-header + .hero-header,
+nav[role="navigation"] + .hero-header{
+  margin-top: 0; /* hero already has internal padding; do not add extra gap */
+}
+
+/* If the nav previously had a sticky class, neutralize it */
+.is-sticky,
+.sticky,
+.nav-sticky{
+  position: static !important;
+}
+
+/* Guard against negative margins pushing content under the nav */
+.site-nav, header.site-header, nav[role="navigation"]{
+  margin-bottom: 0 !important;
+}
+
+/* Optional: ensure tap target comfort on mobile without changing layout */
+.site-nav a, header.site-header a, nav[role="navigation"] a{
+  -webkit-tap-highlight-color: rgba(0,0,0,0.1);
 }
