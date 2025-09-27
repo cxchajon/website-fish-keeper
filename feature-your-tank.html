@@ -115,6 +115,17 @@
       accent-color: #39b385;
     }
 
+    .consent-field .consent-control {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .consent-field .consent-help {
+      margin: 6px 0 0 28px;
+      color: rgba(233, 240, 251, 0.75);
+    }
+
     .actions {
       display: flex;
       flex-wrap: wrap;
@@ -259,18 +270,19 @@
         </div>
 
         <!-- Consent -->
-        <div class="field-group" style="margin-top:8px;">
-          <label style="display:flex;gap:10px;align-items:flex-start;">
-            <input type="checkbox" name="consent_feature" value="yes" required>
-            <span>I confirm I own these photos/videos and give The Tank Guide permission to showcase them (with credit).</span>
-          </label>
+        <div class="field-group consent-field" style="margin-top:8px;">
+          <div class="consent-control">
+            <input id="consent_feature" type="checkbox" name="consent_feature" value="yes" required aria-describedby="consent_feature_help">
+            <label for="consent_feature">I confirm I own these photos/videos and give The Tank Guide permission to showcase them (with credit).</label>
+          </div>
+          <p id="consent_feature_help" class="tiny consent-help">Tick this box to enable submission and let us share your media with credit.</p>
         </div>
 
         <!-- reCAPTCHA v2 -->
         <div class="g-recaptcha" data-sitekey="6LecjNUrAAAAACdwiRIn1KvR21x_gP8_hdOrtXA3" style="margin:12px 0;"></div>
 
         <div class="actions" style="display:flex;gap:10px;align-items:center;margin-top:8px;">
-          <button type="submit" class="btn">Submit Tank</button>
+          <button type="submit" class="btn" id="submit_feature" disabled aria-disabled="true">Submit Tank</button>
           <p class="tiny" style="opacity:.8;margin:0;">We’ll contact you at the email provided if selected.</p>
         </div>
       </form>
@@ -291,5 +303,6 @@
     })();
   </script>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script defer src="js/feature-tank.js?v=1.0.0"></script>
 </body>
 </html>
