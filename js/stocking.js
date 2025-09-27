@@ -3,36 +3,6 @@ import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderBioloadBar, renderAggressionBar, renderStatus, renderChips, renderStockList, bindPopoverHandlers } from './logic/ui.js';
 
-const sel = document.querySelector('#species-select');
-
-function populateSpeciesDropdown() {
-  if (!sel) return;
-  const items = Array.isArray(SPECIES) ? SPECIES.slice() : [];
-  items.sort((a, b) => a.common_name.localeCompare(b.common_name));
-  sel.innerHTML = `<option value="">Add species…</option>` +
-    items.map((s) => `<option value="${s.id}">${s.common_name} — ${s.scientific_name}</option>`).join('');
-}
-
-sel?.addEventListener('change', (e) => {
-  const target = e.target;
-  if (!(target instanceof HTMLSelectElement)) return;
-  const id = target.value;
-  if (!id) return;
-  const list = Array.isArray(SPECIES) ? SPECIES : [];
-  const s = list.find((x) => x.id === id);
-  if (!s) return;
-  document.dispatchEvent(new CustomEvent('advisor:addCandidate', { detail: { species: s, qty: 1 } }));
-  target.value = '';
-});
-
-sel?.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-  }
-});
-
-document.addEventListener('DOMContentLoaded', populateSpeciesDropdown);
-
 const state = createDefaultState();
 let computed = null;
 let variantSelectorOpen = false;
