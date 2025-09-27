@@ -25,6 +25,12 @@ sel?.addEventListener('change', (e) => {
   target.value = '';
 });
 
+sel?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+  }
+});
+
 document.addEventListener('DOMContentLoaded', populateSpeciesDropdown);
 
 const state = createDefaultState();
