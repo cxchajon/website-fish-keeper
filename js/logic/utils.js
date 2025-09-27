@@ -176,6 +176,10 @@ export function byCommonName(a, b) {
   return a.common_name.localeCompare(b.common_name);
 }
 
+export function qs(sel, root = document) {
+  return root.querySelector(sel);
+}
+
 export function unique(arr) {
   return Array.from(new Set(arr));
 }

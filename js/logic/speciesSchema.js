@@ -8,19 +8,19 @@ export function validateSpeciesRecord(s) {
     for (const k of REQUIRED_FIELDS) if (!(k in s)) return `missing ${k}`;
     if (!/^[a-z0-9_]+$/.test(s.id)) return "invalid id";
     if (!["fish","shrimp","snail"].includes(s.category)) return "bad category";
-    const num = (v)=>typeof v==="number" && isFinite(v);
-    const pick = (r, keys)=>{
-      if (!r) return undefined;
-      for (const key of keys){
+    const num = v => typeof v === "number" && isFinite(v);
+    const pick = (r, keys) => {
+      if (!r) return NaN;
+      for (const key of keys) {
         if (num(r[key])) return r[key];
       }
-      return undefined;
+      return NaN;
     };
-    const rng = (r)=>{
+    const rng = r => {
       if (!r) return false;
-      const minVal = pick(r, ["min","min_f","min_dGH","min_dKH"]);
-      const maxVal = pick(r, ["max","max_f","max_dGH","max_dKH"]);
-      return num(minVal) && num(maxVal) && minVal < maxVal;
+      const min = pick(r, ["min","min_f","min_dGH","min_dKH"]);
+      const max = pick(r, ["max","max_f","max_dGH","max_dKH"]);
+      return num(min) && num(max) && min < max;
     };
     if (!rng(s.temperature)) return "bad temperature";
     if (!rng(s.ph))          return "bad ph";
@@ -32,5 +32,5 @@ export function validateSpeciesRecord(s) {
     if (!(num(s.adult_size_in) && num(s.min_tank_length_in) && num(s.aggression))) return "bad numbers";
     if (!Array.isArray(s.tags)) return "bad tags";
     return true;
-  } catch(e){ return e.message||"unknown"; }
+  } catch (e) { return e.message || "unknown"; }
 }

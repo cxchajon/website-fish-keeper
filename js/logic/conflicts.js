@@ -1,8 +1,8 @@
 // ensure any hard rules reference IDs that exist above
 export const HARD_CONFLICTS = new Set([
-  'betta_male|guppy_male',
   'betta_male|betta_male',
-  'tigerbarb|betta_male',
+  'betta_male|guppy_male',
+  'betta_male|tigerbarb',
 ]);
 
 // helper to build symmetric keys: a|b in alpha order
