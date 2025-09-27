@@ -41,7 +41,17 @@ function normalizeSpecies(record) {
   return Object.freeze(normalized);
 }
 
-export const SPECIES = Object.freeze(FISH_DB.filter((s) => validateSpeciesRecord(s) === true));
+const SUPPORTED_SALINITY = new Set(['fresh', 'brackish-low', 'brackish-high', 'dual']);
+const SALINITY_LABEL = {
+  fresh: 'Freshwater',
+  'brackish-low': 'Brackish-low',
+  'brackish-high': 'Brackish-high',
+  dual: 'Dual',
+};
+
+export const SPECIES = Object.freeze(
+  FISH_DB.filter((s) => validateSpeciesRecord(s) === true && s.salinity !== 'marine')
+);
 
 const NORMALIZED_SPECIES = SPECIES.map(normalizeSpecies);
 const SPECIES_MAP = new Map(NORMALIZED_SPECIES.map((species) => [species.id, species]));
@@ -315,11 +325,14 @@ function computeConditions(state, entries, candidate, water, showMore) {
 
   const optional = [];
   optional.push(createConditionItem({ key: 'kH', label: 'kH', range: khRange, actual: `${formatNumber(water.kH, { maximumFractionDigits: 1 })} dKH`, infoKey: 'kh', severity: khSeverity }));
+  const salinityActual = SUPPORTED_SALINITY.has(water.salinity)
+    ? (SALINITY_LABEL[water.salinity] ?? water.salinity)
+    : '— (See warning)';
   optional.push({
     key: 'salinity',
     label: 'Salinity',
     range: [NaN, NaN],
-    actual: water.salinity,
+    actual: salinityActual,
     infoKey: 'salinity',
     severity: salinityCheck.severity,
     hint: salinityCheck.severity === 'ok' ? '✔ Matching category' : salinityCheck.reason,
@@ -488,7 +501,11 @@ function sanitizeWater(state) {
     pH: Number(state.pH) || 7,
     gH: Number(state.gH) || 6,
     kH: Number(state.kH) || 3,
-    salinity: state.salinity || 'fresh',
+    salinity: (() => {
+      const raw = typeof state.salinity === 'string' ? state.salinity : 'fresh';
+      if (raw === 'marine') return 'marine';
+      return SUPPORTED_SALINITY.has(raw) ? raw : 'fresh';
+    })(),
     flow: state.flow || 'moderate',
     blackwater: Boolean(state.blackwater),
   };

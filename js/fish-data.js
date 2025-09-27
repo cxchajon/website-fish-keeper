@@ -91,11 +91,17 @@ export const FISH_DB = [
 
 // one-time validation; console-warn any rejects
 (function auditDB(){
-  let ok=0, bad=[];
+  let ok = 0;
+  const bad = [];
+  let marine = 0;
   for (const s of FISH_DB){
+    if (s.salinity === 'marine') {
+      marine += 1;
+    }
     const r = validateSpeciesRecord(s);
-    if (r===true) ok++; else bad.push({id:s.id, reason:r});
+    if (r === true) ok += 1; else bad.push({ id: s.id, reason: r });
   }
-  console.info(`[StockingAdvisor] Species loaded: ${ok}/${FISH_DB.length}`);
-  if (bad.length) console.warn("Species schema rejects:", bad);
+  console.info(`[StockingAdvisor] Species loaded: ${ok}/${FISH_DB.length}; marine excluded`);
+  if (marine > 0) console.warn('Marine entries skipped:', marine);
+  if (bad.length) console.warn('Species schema rejects:', bad);
 })();
