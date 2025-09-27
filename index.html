@@ -147,10 +147,10 @@
   <header class="hero">
     <div class="wrap">
       <!-- Brand -->
-      <div class="site-brand">
-        <h1 class="brand-name">The Tank Guide</h1>
-        <div class="brand-sub">a product of <strong>FishKeepingLifeCo</strong></div>
-        <p class="tagline" id="hero-blurb">Smart tools and guides to plan, stock, and set up your aquarium — all in one place.</p>
+      <div class="hero-header">
+        <h1 class="brand-name hero-title">The Tank Guide</h1>
+        <p class="brand-sub hero-subline">a product of <strong>FishKeepingLifeCo</strong></p>
+        <p class="tagline hero-tagline" id="hero-blurb">Smart tools and guides to plan, stock, and set up your aquarium — all in one place.</p>
       </div>
 
       <!-- Launchpad -->
@@ -360,10 +360,10 @@
     const h1 = document.querySelector('h1');
     if(!h1) return;
     // Create once if not present
-    if(!h1.querySelector('.ttg-info-btn--inline')){
+    if(!h1.querySelector('.info-btn')){
       const btn = document.createElement('button');
       btn.type='button';
-      btn.className='ttg-info-btn--inline';
+      btn.className='info-btn';
       btn.setAttribute('aria-label','Open How it works');
       btn.title='How it works';
       btn.textContent='i';
@@ -390,7 +390,7 @@
 
     const link = document.createElement('a');
     link.href = '#how-it-works';
-    link.className = 'ttg-howitworks-link';
+    link.className = 'ttg-howitworks-link hero-how';
     link.id = 'ttg-howitworks-opener';
     link.setAttribute('role','button');
     link.setAttribute('aria-haspopup','dialog');
@@ -399,6 +399,7 @@
     // Wrap for controlled spacing (prevents full-width pill look)
     const wrap = document.createElement('div');
     wrap.className = 'ttg-howitworks-link-wrap';
+    wrap.style.marginTop = '0';
     wrap.appendChild(link);
 
     // Preferred anchor: <p id="hero-blurb">

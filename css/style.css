@@ -866,3 +866,66 @@ html {
 .warn-reason { opacity:.9; margin-bottom:4px; }
 .warn-detail { opacity:.8; font-size:.95rem; margin-bottom:4px; }
 .warn-reco { font-size:.95rem; }
+
+/* --- Hero grouping & spacing --- */
+.hero-header{
+  max-width: 30rem;
+  padding: 16px 0 14px;
+  margin: 0;            /* keep left-aligned; parent handles overall layout */
+}
+.hero-title{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;             /* gap between title text and the info button */
+  margin: 0 0 6px 0;    /* compact space under H1 */
+}
+.hero-subline{
+  font-size: 12px;
+  opacity: 0.85;
+  margin: 0 0 4px 0;
+}
+.hero-tagline{
+  line-height: 1.35;
+  margin: 0 0 8px 0;
+}
+.hero-how{
+  display: inline-block;
+  margin-top: 2px;      /* tuck the link right under the tagline */
+}
+
+/* Info button aligned to title baseline */
+.info-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  line-height: 1;
+  /* Use existing icon or letter “i”; this styles the container */
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  border: 0;
+  padding: 0;
+  transform: translateY(1px);  /* subtle vertical nudge to align with text baseline */
+  cursor: pointer;
+}
+.info-btn:hover{ background: rgba(0,0,0,0.5); }
+
+/* Remove default paragraph spacing INSIDE hero to keep tight control */
+.hero-header p{ margin-top: 0; }
+
+/* Ensure the cards stack doesn’t float too far below the hero */
+.hero-header + *{
+  margin-top: 16px !important;   /* tighten the gap below hero on mobile */
+}
+
+/* --- Tablet and up --- */
+@media (min-width: 768px){
+  .hero-header{
+    max-width: 40rem;
+    padding: 24px 0 18px;
+  }
+  .hero-title{ margin-bottom: 8px; }
+  .hero-header + *{ margin-top: 20px !important; }
+}
