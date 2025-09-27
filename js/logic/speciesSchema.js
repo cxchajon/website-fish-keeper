@@ -3,6 +3,12 @@ export const REQUIRED_FIELDS = [
   "temperature","ph","gH","kH","salinity","flow","blackwater","aggression","tags"
 ];
 
+const ALLOWED_TAGS = new Set([
+  "betta","livebearer","labyrinth","algae_specialist","nano",
+  "shoaler","bottom_dweller","fast_swimmer","nocturnal","territorial",
+  "fin_nipper","fin_sensitive","predator_shrimp","predator_snail","invert_safe","cichlid"
+]);
+
 export function validateSpeciesRecord(s) {
   try {
     for (const k of REQUIRED_FIELDS) if (!(k in s)) return `missing ${k}`;
@@ -31,6 +37,9 @@ export function validateSpeciesRecord(s) {
     if (!["requires","prefers","neutral"].includes(s.blackwater)) return "bad blackwater";
     if (!(num(s.adult_size_in) && num(s.min_tank_length_in) && num(s.aggression))) return "bad numbers";
     if (!Array.isArray(s.tags)) return "bad tags";
+    for (const t of s.tags) {
+      if (!ALLOWED_TAGS.has(t)) return `bad tag:${t}`;
+    }
     return true;
   } catch (e) { return e.message || "unknown"; }
 }
