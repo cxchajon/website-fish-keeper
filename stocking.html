@@ -412,8 +412,36 @@
     .stock-row {
       display: grid;
       gap: 10px;
-      grid-template-columns: minmax(140px, 1fr) repeat(2, minmax(110px, 150px)) auto;
-      align-items: end;
+      grid-template-columns: 1fr;
+    }
+
+    .stock-row .see-gear {
+      width: 100%;
+      justify-content: center;
+      margin-top: 0;
+    }
+
+    @media (min-width: 540px) {
+      .stock-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: end;
+      }
+
+      .stock-row .see-gear {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (min-width: 780px) {
+      .stock-row {
+        grid-template-columns: minmax(160px, 1.4fr) repeat(2, minmax(120px, 1fr)) auto;
+      }
+
+      .stock-row .see-gear {
+        grid-column: auto;
+        width: auto;
+        justify-self: end;
+      }
     }
 
     .stock-list {
@@ -719,7 +747,7 @@
               <option value="adult" selected>Adult</option>
             </select>
           </div>
-          <button id="btn-add" class="see-gear" type="button" style="justify-self:flex-end;">Add to Plan</button>
+          <button id="btn-add" class="see-gear" type="button">Add to Plan</button>
         </div>
         <div class="chips" id="candidate-chips"></div>
         <div id="candidate-banner" class="status-strip" data-state="bad" style="display:none;">Beginner safeguards: fix highlighted issues before adding.</div>
