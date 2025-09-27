@@ -1,4 +1,4 @@
-import { createDefaultState, buildComputedState, runSanitySuite, runStressSuite, SPECIES } from './logic/compute.js';
+import { createDefaultState, buildComputedState, runSanitySuite, runStressSuite, SPECIES, getDefaultSpeciesId } from './logic/compute.js';
 import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderBioloadBar, renderAggressionBar, renderStatus, renderChips, renderStockList, bindPopoverHandlers } from './logic/ui.js';
@@ -45,6 +45,41 @@ const refs = {
   diagnosticsContent: document.getElementById('diagnostics-content'),
 };
 
+const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
+const warnedMarineIds = new Set();
+
+function pruneMarineEntries() {
+  if (!Array.isArray(state.stock)) {
+    state.stock = [];
+  }
+  state.stock = state.stock.filter((entry) => {
+    if (entry && supportedSpeciesIds.has(entry.id)) {
+      return true;
+    }
+    if (entry?.id && !warnedMarineIds.has(entry.id)) {
+      warnedMarineIds.add(entry.id);
+      console.warn('Marine species not supported:', entry.id);
+    }
+    return false;
+  });
+
+  if (!state.candidate) {
+    state.candidate = { id: getDefaultSpeciesId(), qty: 1, stage: 'adult' };
+    return;
+  }
+
+  if (state.candidate.id && !supportedSpeciesIds.has(state.candidate.id)) {
+    if (!warnedMarineIds.has(state.candidate.id)) {
+      warnedMarineIds.add(state.candidate.id);
+      console.warn('Marine species not supported:', state.candidate.id);
+    }
+    state.candidate.id = getDefaultSpeciesId();
+    if (refs.speciesSelect) {
+      refs.speciesSelect.value = state.candidate.id ?? '';
+    }
+  }
+}
+
 function updateToggle(button, value) {
   button.dataset.active = value ? 'true' : 'false';
   button.setAttribute('aria-checked', value ? 'true' : 'false');
@@ -73,7 +108,7 @@ function syncStateFromInputs() {
 
 function populateSpecies() {
   refs.speciesSelect.innerHTML = '';
-  const options = SPECIES.slice().sort(byCommonName);
+  const options = SPECIES.filter((species) => species.salinity !== 'marine').slice().sort(byCommonName);
   for (const species of options) {
     const option = document.createElement('option');
     option.value = species.id;
@@ -211,6 +246,7 @@ function buildStatusChips() {
 
 const scheduleUpdate = debounce(() => {
   syncStateFromInputs();
+  pruneMarineEntries();
   renderAll();
 });
 
@@ -353,6 +389,7 @@ function buildGearPayload() {
 
 function init() {
   bindPopoverHandlers(document.body);
+  pruneMarineEntries();
   populateSpecies();
   refs.qty.value = String(state.candidate.qty);
   syncToggles();

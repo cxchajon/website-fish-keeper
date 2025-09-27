@@ -11,7 +11,7 @@ const INFO_COPY = {
   },
   salinity: {
     title: 'Salinity categories',
-    body: 'Freshwater has negligible salt, brackish mixes fresh and marine, and marine is full strength seawater. Avoid mixing extremes.',
+    body: 'Freshwater has negligible salt, while low and high brackish carry increasing minerals. Dual-tolerant species bridge fresh and light brackish mixes—avoid spanning extremes without them.',
   },
   blackwater: {
     title: 'Blackwater & tannins',

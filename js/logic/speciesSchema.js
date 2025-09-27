@@ -9,6 +9,8 @@ const ALLOWED_TAGS = new Set([
   "fin_nipper","fin_sensitive","predator_shrimp","predator_snail","invert_safe","cichlid"
 ]);
 
+const SUPPORTED_SALINITY = new Set(["fresh", "brackish-low", "brackish-high", "dual"]);
+
 export function validateSpeciesRecord(s) {
   try {
     for (const k of REQUIRED_FIELDS) if (!(k in s)) return `missing ${k}`;
@@ -32,7 +34,7 @@ export function validateSpeciesRecord(s) {
     if (!rng(s.ph))          return "bad ph";
     if (!rng(s.gH))          return "bad gH";
     if (!rng(s.kH))          return "bad kH";
-    if (!["fresh","brackish-low","brackish-high","dual","marine"].includes(s.salinity)) return "bad salinity";
+    if (!SUPPORTED_SALINITY.has(s.salinity)) return "bad salinity";
     if (!["low","moderate","high"].includes(s.flow)) return "bad flow";
     if (!["requires","prefers","neutral"].includes(s.blackwater)) return "bad blackwater";
     if (!(num(s.adult_size_in) && num(s.min_tank_length_in) && num(s.aggression))) return "bad numbers";

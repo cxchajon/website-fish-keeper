@@ -135,37 +135,38 @@ export function beginnerInvertBlock(candidate, existingList, beginnerMode) {
   return { severity: 'ok', reason: '' };
 }
 
-const SALINITY_INDEX = new Map([
-  ['fresh', 0],
-  ['dual', 0.5],
-  ['brackish-low', 1],
-  ['brackish-high', 2],
-  ['marine', 3],
-]);
+const SUPPORTED_SALINITY = new Set(['fresh', 'brackish-low', 'brackish-high', 'dual']);
+const SALINITY_MARINE_REASON = 'Not compatible – Salinity (Marine not supported)';
+const SALINITY_MIX_REASON = 'Mixed fresh/brackish stock—target brackish-low or use dual-tolerant species.';
 
 export function evaluateSalinity(candidate, tank) {
-  if (!candidate?.species) return { severity: 'ok', reason: '' };
-  const preference = candidate.species.salinity ?? 'fresh';
   const current = tank?.water?.salinity ?? 'fresh';
-  if (preference === 'dual' && (current === 'fresh' || current === 'brackish-low')) {
-    return { severity: 'ok', reason: '' };
+  if (current === 'marine') {
+    return { severity: 'bad', reason: SALINITY_MARINE_REASON, code: 'marine' };
+  }
+  if (!candidate?.species) {
+    if (!SUPPORTED_SALINITY.has(current)) {
+      return { severity: 'bad', reason: SALINITY_MARINE_REASON, code: 'marine' };
+    }
+    return { severity: 'ok', reason: '', code: 'match' };
+  }
+  const preference = candidate.species.salinity ?? 'fresh';
+  if (preference === 'marine') {
+    return { severity: 'bad', reason: SALINITY_MARINE_REASON, code: 'marine' };
+  }
+  if (!SUPPORTED_SALINITY.has(preference) || !SUPPORTED_SALINITY.has(current)) {
+    return { severity: 'bad', reason: SALINITY_MARINE_REASON, code: 'marine' };
   }
   if (preference === current) {
-    return { severity: 'ok', reason: '' };
+    return { severity: 'ok', reason: '', code: 'match' };
   }
-  const prefIndex = SALINITY_INDEX.get(preference);
-  const currentIndex = SALINITY_INDEX.get(current);
-  if (!Number.isFinite(prefIndex) || !Number.isFinite(currentIndex)) {
-    return { severity: 'ok', reason: '' };
+  if (preference === 'dual' && (current === 'fresh' || current === 'brackish-low' || current === 'dual')) {
+    return { severity: 'ok', reason: '', code: 'match' };
   }
-  const diff = Math.abs(prefIndex - currentIndex);
-  if (diff >= 2) {
-    return { severity: 'bad', reason: 'Salinity mismatch' };
+  if (current === 'dual' && (preference === 'fresh' || preference === 'brackish-low' || preference === 'dual')) {
+    return { severity: 'ok', reason: '', code: 'match' };
   }
-  if (diff >= 1) {
-    return { severity: 'warn', reason: 'Borderline salinity mix' };
-  }
-  return { severity: 'ok', reason: '' };
+  return { severity: 'warn', reason: SALINITY_MIX_REASON, code: 'mixed' };
 }
 
 export function evaluateFlow(candidate, water) {
