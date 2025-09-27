@@ -6,11 +6,11 @@ import { validateSpeciesRecord } from "./logic/speciesSchema.js";
    "fin_nipper","fin_sensitive","predator_shrimp","predator_snail","invert_safe","cichlid"
 */
 export const FISH_DB = [
-  { id:"betta_male", common_name:"Siamese Fighting Fish (Male Betta)", scientific_name:"Betta splendens", category:"fish",
+  { id:"betta_male", common_name:"Betta (Male)", scientific_name:"Betta splendens", category:"fish",
     adult_size_in:2.6, min_tank_length_in:16, temperature:{min_f:75,max_f:82}, ph:{min:6.0,max:8.0},
     gH:{min_dGH:5,max_dGH:19}, kH:{min_dKH:2,max_dKH:10}, salinity:"fresh", flow:"low", blackwater:"neutral",
     aggression:70, tags:["betta","labyrinth","fin_sensitive"], invert_safe:false, mouth_size_in:0.3, bioload_unit:0.5 },
-  { id:"betta_female", common_name:"Siamese Fighting Fish (Female Betta)", scientific_name:"Betta splendens", category:"fish",
+  { id:"betta_female", common_name:"Betta (Female)", scientific_name:"Betta splendens", category:"fish",
     adult_size_in:2.25, min_tank_length_in:16, temperature:{min_f:75,max_f:82}, ph:{min:6.0,max:8.0},
     gH:{min_dGH:5,max_dGH:19}, kH:{min_dKH:2,max_dKH:10}, salinity:"fresh", flow:"low", blackwater:"neutral",
     aggression:40, tags:["betta","labyrinth","fin_sensitive"], invert_safe:false, mouth_size_in:0.25,

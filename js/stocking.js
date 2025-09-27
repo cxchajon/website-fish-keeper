@@ -36,10 +36,10 @@ const refs = {
   chipRow: document.getElementById('chip-row'),
   candidateChips: document.getElementById('candidate-chips'),
   candidateBanner: document.getElementById('candidate-banner'),
-  speciesSelect: document.getElementById('select-species'),
-  qty: document.getElementById('input-qty'),
-  stage: document.getElementById('input-stage'),
-  addBtn: document.getElementById('btn-add'),
+  speciesSelect: document.getElementById('plan-species'),
+  qty: document.getElementById('plan-qty'),
+  stage: document.getElementById('plan-stage'),
+  addBtn: document.getElementById('plan-add'),
   stockList: document.getElementById('stock-list'),
   seeGear: document.getElementById('btn-gear'),
   diagnostics: document.getElementById('diagnostics'),
@@ -49,7 +49,18 @@ const refs = {
 };
 
 const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
+const speciesById = new Map(SPECIES.map((species) => [species.id, species]));
 const warnedMarineIds = new Set();
+
+function sanitizeQty(value, fallback = 1) {
+  const parsed = Math.round(Number(value));
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(999, Math.max(1, parsed));
+}
+
+function normalizeStage(stage, fallback = 'adult') {
+  return stage === 'juvenile' ? 'juvenile' : stage === 'adult' ? 'adult' : fallback;
+}
 
 function pruneMarineEntries() {
   if (!Array.isArray(state.stock)) {
@@ -286,36 +297,90 @@ const scheduleUpdate = debounce(() => {
 document.addEventListener('advisor:addCandidate', (event) => {
   const detail = event.detail ?? {};
   const species = detail.species;
-  if (!species) return;
+  if (!species?.id || !speciesById.has(species.id)) return;
+  const stage = normalizeStage(detail.stage, state.candidate?.stage ?? 'adult');
+  const qty = sanitizeQty(detail.qty, state.candidate?.qty ?? 1);
   state.candidate = {
     id: species.id,
-    qty: detail.qty ?? 1,
-    stage: state.candidate?.stage ?? 'adult',
+    qty,
+    stage,
   };
   if (refs.speciesSelect) {
     refs.speciesSelect.value = species.id;
   }
-  if (refs.qty && Number.isFinite(detail.qty)) {
-    refs.qty.value = String(detail.qty);
+  if (refs.qty) {
+    refs.qty.value = String(qty);
+  }
+  if (refs.stage) {
+    refs.stage.value = stage;
   }
   scheduleUpdate();
 });
 
 function handleAdd() {
-  if (!computed) return;
-  const candidate = computed.candidate;
-  if (!candidate) return;
-  if (state.beginnerMode && computed.blockReasons.length > 0) {
+  if (!refs.speciesSelect) return;
+  const speciesId = refs.speciesSelect.value;
+  if (!speciesId) return;
+  const species = speciesById.get(speciesId);
+  if (!species) return;
+
+  const qtyValue = refs.qty ? sanitizeQty(refs.qty.value, 1) : 1;
+  if (refs.qty) {
+    refs.qty.value = String(qtyValue);
+  }
+
+  const currentStage = refs.stage ? refs.stage.value : state.candidate?.stage;
+  const stageValue = normalizeStage(currentStage, 'adult');
+  if (refs.stage) {
+    refs.stage.value = stageValue;
+  }
+
+  if (state.beginnerMode && computed && computed.blockReasons.length > 0) {
     return;
   }
-  const existing = state.stock.find((entry) => entry.id === candidate.id && entry.stage === candidate.stage);
+
+  document.dispatchEvent(
+    new CustomEvent('advisor:addCandidate', {
+      detail: { species, qty: qtyValue, stage: stageValue },
+    })
+  );
+
+  const existing = state.stock.find(
+    (entry) => entry.id === speciesId && normalizeStage(entry.stage, 'adult') === stageValue
+  );
   if (existing) {
-    existing.qty += candidate.qty;
+    const combined = (Number(existing.qty) || 0) + qtyValue;
+    existing.qty = sanitizeQty(combined, qtyValue);
   } else {
-    state.stock.push({ id: candidate.id, qty: candidate.qty, stage: candidate.stage });
+    state.stock.push({ id: speciesId, qty: qtyValue, stage: stageValue });
   }
-  state.candidate.qty = 1;
-  refs.qty.value = '1';
+
+  const defaultId = getDefaultSpeciesId();
+  const firstOptionId =
+    refs.speciesSelect && refs.speciesSelect.options.length > 0
+      ? refs.speciesSelect.options[0].value
+      : null;
+  const normalizedFirst = firstOptionId && speciesById.has(firstOptionId) ? firstOptionId : null;
+  const normalizedDefault = defaultId && speciesById.has(defaultId) ? defaultId : null;
+  const nextId = normalizedFirst ?? normalizedDefault ?? speciesId;
+  state.candidate = {
+    id: nextId,
+    qty: 1,
+    stage: stageValue,
+  };
+  if (refs.speciesSelect) {
+    if (normalizedFirst) {
+      refs.speciesSelect.selectedIndex = 0;
+    } else {
+      refs.speciesSelect.value = nextId;
+    }
+  }
+  if (refs.qty) {
+    refs.qty.value = '1';
+  }
+  if (refs.stage) {
+    refs.stage.value = stageValue;
+  }
   scheduleUpdate();
 }
 
@@ -366,13 +431,22 @@ function bindInputs() {
   });
 
   refs.qty.addEventListener('input', () => {
-    state.candidate.qty = Math.max(1, Math.round(Number(refs.qty.value) || 1));
-    refs.qty.value = String(state.candidate.qty);
+    const qty = sanitizeQty(refs.qty.value, state.candidate?.qty ?? 1);
+    state.candidate.qty = qty;
+    refs.qty.value = String(qty);
     scheduleUpdate();
+  });
+  refs.qty.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleAdd();
+    }
   });
 
   refs.stage.addEventListener('change', () => {
-    state.candidate.stage = refs.stage.value;
+    const stage = normalizeStage(refs.stage.value, state.candidate?.stage ?? 'adult');
+    state.candidate.stage = stage;
+    refs.stage.value = stage;
     scheduleUpdate();
   });
 
