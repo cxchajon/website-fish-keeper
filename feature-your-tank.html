@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Feature Your Tank — The Tank Guide</title>
+  <meta name="description" content="Submit your aquarium’s Quick Facts to be featured on The Tank Guide: size, stock, substrate, filtration, lighting, and more." />
+  <link rel="stylesheet" href="css/style.css?v=1.0.9" />
+  <script defer src="js/nav.js?v=1.0.9"></script>
+  <style>
+    body.page-gradient {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #0b0f12 0%, #111820 60%, #101418 100%);
+      color: #e9f0fb;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background-attachment: fixed;
+    }
+
+    .feature-main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 16px 96px;
+    }
+
+    .panel {
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 32px 28px 40px;
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .panel h1 {
+      margin: 0;
+      font-size: clamp(2rem, 2.4vw + 1rem, 3rem);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, rgba(192, 192, 192, 0.6), rgba(192, 192, 192, 0.2));
+      margin: 12px 0 20px;
+    }
+
+    .tiny {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin: 0;
+      color: rgba(233, 240, 251, 0.85);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .field-group label {
+      font-weight: 600;
+      color: rgba(241, 246, 255, 0.9);
+    }
+
+    .panel input[type="text"],
+    .panel input[type="email"],
+    .panel input[type="url"],
+    .panel textarea,
+    .panel select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(6, 10, 16, 0.65);
+      color: #f4f8ff;
+      font-size: 1rem;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .panel input[type="text"]::placeholder,
+    .panel input[type="email"]::placeholder,
+    .panel input[type="url"]::placeholder,
+    .panel textarea::placeholder {
+      color: rgba(244, 248, 255, 0.55);
+    }
+
+    .panel input[type="text"]:focus,
+    .panel input[type="email"]:focus,
+    .panel input[type="url"]:focus,
+    .panel textarea:focus,
+    .panel select:focus {
+      outline: none;
+      border-color: rgba(118, 198, 255, 0.8);
+      box-shadow: 0 0 0 3px rgba(118, 198, 255, 0.25);
+    }
+
+    .panel textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .panel input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 4px;
+      accent-color: #39b385;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .actions .btn {
+      width: auto;
+      padding: 12px 28px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 720px) {
+      .panel {
+        padding: 28px 22px 36px;
+      }
+
+      .feature-main {
+        padding-top: 32px;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .actions .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="page-gradient">
+  <div id="site-nav"></div>
+
+  <main class="feature-main">
+    <section class="panel" aria-labelledby="feature-tank-title">
+      <h1 id="feature-tank-title">Feature Your Tank — Quick Facts</h1>
+      <div class="divider" aria-hidden="true"></div>
+      <p class="tiny" style="opacity:.9;">
+        Want your setup featured on <strong>The Tank Guide</strong>? Fill out the Quick Facts below.
+        We’ll review submissions and reach out if selected.<br>
+        <em>Features are only accepted through this website form.</em>
+      </p>
+
+      <form id="tank-feature-form" action="https://formspree.io/f/xnngnwld" method="POST" style="margin-top:16px;">
+        <input type="hidden" name="form_name" value="Tank Feature Submission" />
+        <input type="hidden" name="_subject" value="Tank Feature Submission — The Tank Guide" />
+        <!-- Optional success redirect TODO: enable after /thanks.html is published -->
+        <!-- <input type="hidden" name="_redirect" value="https://thetankguide.com/thanks.html"> -->
+
+        <!-- Honeypot -->
+        <label style="display:none;">Don’t fill this out if you’re human:
+          <input name="_gotcha" type="text" tabindex="-1" autocomplete="off">
+        </label>
+
+        <!-- Contact -->
+        <div class="field-group">
+          <label for="name">Name / Username *</label>
+          <input id="name" name="name" type="text" required>
+        </div>
+
+        <div class="field-group">
+          <label for="email">Email (contact if selected) *</label>
+          <input id="email" name="email" type="email" required>
+        </div>
+
+        <!-- Quick Facts -->
+        <div class="grid" style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+          <div class="field-group">
+            <label for="tank_size">Tank Size *</label>
+            <input id="tank_size" name="tank_size" type="text" placeholder="e.g., 10g, 20 long, 29g, 75g" required>
+          </div>
+
+          <div class="field-group">
+            <label for="planted">Planted? *</label>
+            <select id="planted" name="planted" required>
+              <option value="" disabled selected>Select</option>
+              <option>Yes</option>
+              <option>No</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="substrate">Substrate *</label>
+            <input id="substrate" name="substrate" type="text" placeholder="e.g., sand, gravel, dirt + sand cap" required>
+          </div>
+
+          <div class="field-group">
+            <label for="filtration">Filtration *</label>
+            <input id="filtration" name="filtration" type="text" placeholder="e.g., HOB, canister, sump, sponge, UGF" required>
+          </div>
+
+          <div class="field-group">
+            <label for="lighting">Lighting Setup</label>
+            <input id="lighting" name="lighting" type="text" placeholder="brand/model + schedule (if custom)">
+          </div>
+
+          <div class="field-group">
+            <label for="nitrates">Typical Nitrate Range</label>
+            <input id="nitrates" name="nitrates" type="text" placeholder="e.g., ~20 ppm">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="stock">Stock / Livestock *</label>
+          <textarea id="stock" name="stock" rows="3" placeholder="Fish, shrimp, snails…" required></textarea>
+        </div>
+
+        <div class="grid" style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+          <div class="field-group">
+            <label for="cleanup">Cleanup Crew?</label>
+            <input id="cleanup" name="cleanup" type="text" placeholder="Shrimp, snails, bottom feeders, none">
+          </div>
+          <div class="field-group">
+            <label for="media">Media / Additives</label>
+            <input id="media" name="media" type="text" placeholder="e.g., Purigen, carbon, etc.">
+          </div>
+        </div>
+
+        <!-- Story -->
+        <div class="field-group">
+          <label for="love">What you love about this tank *</label>
+          <textarea id="love" name="love" rows="3" required></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="improve">What you’d improve or change *</label>
+          <textarea id="improve" name="improve" rows="3" required></textarea>
+        </div>
+
+        <!-- Media -->
+        <div class="field-group">
+          <label for="media_link">Photos / Video Link</label>
+          <input id="media_link" name="media_link" type="url" placeholder="YouTube, Google Drive, Instagram, etc.">
+        </div>
+
+        <div class="field-group">
+          <label for="notes">Other Notes</label>
+          <textarea id="notes" name="notes" rows="3" placeholder="Anything else we should know"></textarea>
+        </div>
+
+        <!-- Consent -->
+        <div class="field-group" style="margin-top:8px;">
+          <label style="display:flex;gap:10px;align-items:flex-start;">
+            <input type="checkbox" name="consent_feature" value="yes" required>
+            <span>I confirm I own these photos/videos and give The Tank Guide permission to showcase them (with credit).</span>
+          </label>
+        </div>
+
+        <!-- reCAPTCHA v2 -->
+        <div class="g-recaptcha" data-sitekey="6LecjNUrAAAAACdwiRIn1KvR21x_gP8_hdOrtXA3" style="margin:12px 0;"></div>
+
+        <div class="actions" style="display:flex;gap:10px;align-items:center;margin-top:8px;">
+          <button type="submit" class="btn">Submit Tank</button>
+          <p class="tiny" style="opacity:.8;margin:0;">We’ll contact you at the email provided if selected.</p>
+        </div>
+      </form>
+
+      <p class="tiny" style="margin-top:12px;opacity:.75;">
+        📌 Features are <strong>only</strong> accepted through this website. We don’t take submissions via YouTube comments or social DMs.
+      </p>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script>
+    (async () => {
+      const host = document.getElementById('site-footer');
+      if (!host) return;
+      const res = await fetch('footer.html?v=1.0.8', { cache: 'no-cache' });
+      host.outerHTML = await res.text();
+    })();
+  </script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</body>
+</html>
