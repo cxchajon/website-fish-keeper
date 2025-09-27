@@ -978,15 +978,20 @@ nav[role="navigation"] + .hero-header{
   -webkit-tap-highlight-color: rgba(0,0,0,0.1);
 }
 
-/* Gear page — footer blurb centered above footer */
-.gear-footer-blurb{
+/* Gear page — footer blurb centered above footer (homepage match) */
+.gear-footer-blurb {
   max-width: 60ch;
-  margin: 24px auto 16px;  /* space above footer; centered */
+  margin: 16px auto 12px;   /* closer to footer */
   text-align: center;
-  line-height: 1.5;
+  font-size: 14px;
+  line-height: 1.4;
   opacity: .95;
-  padding: 0 12px;         /* light side breathing room on mobile */
+  font-weight: 400;
+  padding: 0 10px;
 }
-@media (min-width: 768px){
-  .gear-footer-blurb{ margin: 32px auto 20px; }
+@media (min-width: 768px) {
+  .gear-footer-blurb {
+    font-size: 15px;
+    margin: 20px auto 14px;
+  }
 }
