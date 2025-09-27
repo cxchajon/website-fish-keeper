@@ -631,6 +631,11 @@
             <button class="micro-info" type="button" data-popover="beginner-info" aria-label="What is Beginner mode?">i</button>
           </div>
         </div>
+
+        <div class="control">
+          <label class="sr-only" for="species-select">Add species</label>
+          <select id="species-select" aria-label="Add species to tank"></select>
+        </div>
       </div>
     </section>
 
@@ -661,7 +666,8 @@
         <div class="control">
           <label for="select-salinity">Salinity</label>
           <select id="select-salinity">
-            <option value="freshwater" selected>Freshwater</option>
+            <option value="fresh" selected>Freshwater</option>
+            <option value="dual">Fresh or Low Brackish</option>
             <option value="brackish-low">Brackish (low)</option>
             <option value="brackish-high">Brackish (high)</option>
             <option value="marine">Marine</option>

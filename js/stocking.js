@@ -1,7 +1,30 @@
-import { createDefaultState, buildComputedState, runSanitySuite, runStressSuite, ALL_SPECIES } from './logic/compute.js';
+import { createDefaultState, buildComputedState, runSanitySuite, runStressSuite, SPECIES } from './logic/compute.js';
 import { getTankVariants, describeVariant } from './logic/sizeMap.js';
-import { debounce, getQueryFlag, roundCapacity, nowTimestamp } from './logic/utils.js';
+import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderBioloadBar, renderAggressionBar, renderStatus, renderChips, renderStockList, bindPopoverHandlers } from './logic/ui.js';
+
+const dd = document.querySelector('#species-select');
+
+function populateSpeciesDropdown() {
+  if (!dd) return;
+  const opts = SPECIES.slice().sort(byCommonName);
+  dd.innerHTML = `<option value="">Add species…</option>` +
+    opts.map((s) => `<option value="${s.id}" data-cat="${s.category}">${s.common_name} — <i>${s.scientific_name}</i></option>`).join('');
+}
+
+dd?.addEventListener('change', (e) => {
+  const id = e.target.value;
+  if (!id) return;
+  const s = SPECIES.find((x) => x.id === id);
+  if (!s) return;
+  document.dispatchEvent(new CustomEvent('advisor:addCandidate', { detail: { species: s, qty: 1 } }));
+  dd.value = '';
+});
+
+document.addEventListener('DOMContentLoaded', populateSpeciesDropdown);
+if (document.readyState !== 'loading') {
+  populateSpeciesDropdown();
+}
 
 const state = createDefaultState();
 let computed = null;
@@ -73,10 +96,11 @@ function syncStateFromInputs() {
 
 function populateSpecies() {
   refs.speciesSelect.innerHTML = '';
-  for (const species of ALL_SPECIES) {
+  const options = SPECIES.slice().sort(byCommonName);
+  for (const species of options) {
     const option = document.createElement('option');
     option.value = species.id;
-    option.textContent = species.name;
+    option.textContent = species.common_name;
     refs.speciesSelect.appendChild(option);
   }
   if (state.candidate?.id) {
@@ -211,6 +235,24 @@ function buildStatusChips() {
 const scheduleUpdate = debounce(() => {
   syncStateFromInputs();
   renderAll();
+});
+
+document.addEventListener('advisor:addCandidate', (event) => {
+  const detail = event.detail ?? {};
+  const species = detail.species;
+  if (!species) return;
+  state.candidate = {
+    id: species.id,
+    qty: detail.qty ?? 1,
+    stage: state.candidate?.stage ?? 'adult',
+  };
+  if (refs.speciesSelect) {
+    refs.speciesSelect.value = species.id;
+  }
+  if (refs.qty && Number.isFinite(detail.qty)) {
+    refs.qty.value = String(detail.qty);
+  }
+  scheduleUpdate();
 });
 
 function handleAdd() {
