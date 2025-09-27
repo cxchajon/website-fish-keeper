@@ -682,21 +682,21 @@
       <div class="stock-grid">
         <div class="stock-row" role="group" aria-labelledby="candidate-label">
           <div class="control-field">
-            <label id="candidate-label" for="select-species">Species</label>
-            <select id="select-species" class="control"></select>
+            <label id="candidate-label" for="plan-species">Species</label>
+            <select id="plan-species" class="control"></select>
           </div>
           <div class="control-field">
-            <label for="input-qty">Quantity</label>
-            <input class="control" id="input-qty" type="number" min="1" step="1" value="1" />
+            <label for="plan-qty">Quantity</label>
+            <input class="control" id="plan-qty" type="number" min="1" max="999" step="1" value="1" />
           </div>
           <div class="control-field">
-            <label for="input-stage">Life Stage</label>
-            <select id="input-stage" class="control">
+            <label for="plan-stage">Life Stage</label>
+            <select id="plan-stage" class="control">
               <option value="juvenile">Juvenile</option>
               <option value="adult" selected>Adult</option>
             </select>
           </div>
-          <button id="btn-add" class="see-gear" type="button">Add to Plan</button>
+          <button id="plan-add" class="see-gear" type="button">Add to Stock</button>
         </div>
         <div class="chips" id="candidate-chips"></div>
         <div id="candidate-banner" class="status-strip" data-state="bad" style="display:none;">Beginner safeguards: fix highlighted issues before adding.</div>
