@@ -803,3 +803,31 @@ html {
 }
 
 #challengeCard[hidden] { display: none !important; }
+/* Environmental Recommendations */
+.env-list { display:grid; gap:10px; }
+.env-row {
+  display:grid; grid-template-columns: 1fr; gap:2px;
+  padding:10px 12px; border-radius:10px;
+  background: rgba(255,255,255,.04);
+}
+.env-row__label { font-weight:600; letter-spacing:.02em; opacity:.9; }
+.env-row__value { font-size:1rem; }
+.env-row__sub   { font-size:.9rem; opacity:.7; }
+.env-advisories { margin-top:6px; display:flex; flex-wrap:wrap; gap:6px; }
+.chip { padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.08); font-size:.85rem; }
+
+@media (min-width: 720px){
+  .env-row { grid-template-columns: 240px 1fr; align-items:center; }
+  .env-row__label { grid-column:1; }
+  .env-row__value { grid-column:2; }
+  .env-row__sub   { grid-column:2; }
+}
+
+/* Warnings card */
+.warn-card .card__hd h2 { margin:0 0 6px 0; }
+.warn-list { display:grid; gap:10px; }
+.warn-row { padding:12px; border-radius:10px; background:rgba(255,140,0,.08); }
+.warn-title { font-weight:700; margin-bottom:2px; }
+.warn-reason { opacity:.9; margin-bottom:4px; }
+.warn-detail { opacity:.8; font-size:.95rem; margin-bottom:4px; }
+.warn-reco { font-size:.95rem; }

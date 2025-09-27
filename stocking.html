@@ -630,58 +630,15 @@
       <div id="tank-summary" aria-live="polite"></div>
     </section>
 
-    <section class="panel" aria-labelledby="water-title">
-      <div class="conditions-header">
-        <h2 id="water-title">Set Your Tank Profile</h2>
-        <p class="secondary-text">Adjust these to match your current parameters.</p>
+    <section class="card tank-env-card" aria-live="polite" id="env-card">
+      <div class="card__hd">
+        <h2>Environmental Recommendations</h2>
+        <p class="subtle">Derived from your selected stock.</p>
       </div>
-      <div class="water-grid">
-        <div class="control-field">
-          <label for="input-temp">Temperature (°F)</label>
-          <input class="control" id="input-temp" type="number" min="60" max="90" step="0.5" value="78" />
-        </div>
-        <div class="control-field">
-          <label for="input-ph">pH</label>
-          <input class="control" id="input-ph" type="number" min="4" max="9" step="0.1" value="7.2" />
-        </div>
-        <div class="control-field">
-          <label for="input-gh">gH (dGH)</label>
-          <input class="control" id="input-gh" type="number" min="0" max="30" step="0.5" value="6" />
-        </div>
-        <div class="control-field">
-          <label for="input-kh">kH (dKH)</label>
-          <input class="control" id="input-kh" type="number" min="0" max="20" step="0.5" value="3" />
-        </div>
-        <div class="control-field">
-          <label for="select-salinity">Salinity</label>
-          <select id="select-salinity" class="control">
-            <option value="fresh" selected>Freshwater</option>
-            <option value="dual">Fresh or Low Brackish</option>
-            <option value="brackish-low">Brackish (low)</option>
-            <option value="brackish-high">Brackish (high)</option>
-          </select>
-        </div>
-        <div class="control-field">
-          <label for="select-flow">Flow Preference</label>
-          <select id="select-flow" class="control">
-            <option value="low">Low</option>
-            <option value="moderate" selected>Moderate</option>
-            <option value="high">High</option>
-          </select>
-        </div>
-        <div class="control-field">
-          <label for="toggle-blackwater">Blackwater / Tannins</label>
-          <button class="toggle" type="button" id="toggle-blackwater" role="switch" aria-checked="false" aria-label="Toggle blackwater preference">
-            <span class="slider" aria-hidden="true"></span>
-            <span>Off</span>
-          </button>
-        </div>
-        <div class="control-field">
-          <label for="input-turnover">Turnover (×/hr)</label>
-          <input class="control" id="input-turnover" type="number" min="1" max="15" step="0.1" value="5" />
-        </div>
-      </div>
+      <div id="env-reco" class="env-list"></div>
     </section>
+
+    <section class="card warn-card" id="warnings-card" hidden></section>
 
     <section class="panel" aria-labelledby="conditions-title">
       <div class="conditions-header">
