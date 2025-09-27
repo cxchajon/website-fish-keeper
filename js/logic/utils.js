@@ -171,3 +171,11 @@ export function nowTimestamp() {
 export function roundCapacity(value) {
   return Math.max(0, roundTo(value, 3));
 }
+
+export function byCommonName(a, b) {
+  return a.common_name.localeCompare(b.common_name);
+}
+
+export function unique(arr) {
+  return Array.from(new Set(arr));
+}

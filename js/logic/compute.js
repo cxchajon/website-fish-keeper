@@ -1,10 +1,5 @@
-import {
-  autoBioloadUnit,
-  getDefaultSpeciesId,
-  getSpeciesById,
-  SPECIES_LIST,
-  listSensitiveSpecies,
-} from './speciesSchema.js';
+import { FISH_DB } from '../fish-data.js';
+import { validateSpeciesRecord } from './speciesSchema.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import {
   clamp,
@@ -26,6 +21,66 @@ import {
   evaluateBlackwater,
   checkGroupRule,
 } from './conflicts.js';
+
+function toRange(source, minKey, maxKey) {
+  if (!source) return [NaN, NaN];
+  const min = Number(source[minKey]);
+  const max = Number(source[maxKey]);
+  return [Number.isFinite(min) ? min : NaN, Number.isFinite(max) ? max : NaN];
+}
+
+function normalizeSpecies(record) {
+  const normalized = {
+    ...record,
+    temperature: toRange(record.temperature, 'min_f', 'max_f'),
+    pH: toRange(record.ph, 'min', 'max'),
+    gH: toRange(record.gH, 'min_dGH', 'max_dGH'),
+    kH: toRange(record.kH, 'min_dKH', 'max_dKH'),
+    pH_sensitive: Boolean(record.ph_sensitive),
+  };
+  return Object.freeze(normalized);
+}
+
+const VALID_SPECIES = FISH_DB.filter((item) => validateSpeciesRecord(item) === true).map(normalizeSpecies);
+
+const SPECIES_MAP = new Map(VALID_SPECIES.map((species) => [species.id, species]));
+
+export const SPECIES = Object.freeze(VALID_SPECIES);
+
+export function getSpeciesById(id) {
+  return SPECIES_MAP.get(id) ?? null;
+}
+
+export const SPECIES_LIST = SPECIES.map((species) => ({
+  id: species.id,
+  name: species.common_name,
+}));
+
+export function getDefaultSpeciesId() {
+  return SPECIES[0]?.id ?? null;
+}
+
+export function autoBioloadUnit(species) {
+  if (!species) return 0;
+  if (Number.isFinite(species.bioload_unit)) {
+    return species.bioload_unit;
+  }
+  const size = Number.isFinite(species.adult_size_in) ? species.adult_size_in : 2.5;
+  const density = Number.isFinite(species.density_factor) ? species.density_factor : 0.01;
+  return size ** 3 * density;
+}
+
+export function listSensitiveSpecies(speciesEntries, parameter) {
+  const results = [];
+  for (const entry of speciesEntries) {
+    const { species } = entry;
+    if (!species) continue;
+    if (parameter === 'pH' && (species.pH_sensitive || species.ph_sensitive)) {
+      results.push(species.common_name);
+    }
+  }
+  return results;
+}
 
 const TURNOVER_POINTS = [
   { x: 0, m: 0.85 },
@@ -433,7 +488,7 @@ function sanitizeWater(state) {
     pH: Number(state.pH) || 7,
     gH: Number(state.gH) || 6,
     kH: Number(state.kH) || 3,
-    salinity: state.salinity || 'freshwater',
+    salinity: state.salinity || 'fresh',
     flow: state.flow || 'moderate',
     blackwater: Boolean(state.blackwater),
   };
@@ -509,7 +564,7 @@ export function runSanitySuite(baseState) {
     gallons: 20,
     turnover: 5,
     planted: false,
-    stock: [{ id: 'cardinal_tetra', qty: 12, stage: 'adult' }],
+    stock: [{ id: 'cardinal', qty: 12, stage: 'adult' }],
   });
   results.push(`1) 20g, 12 cardinal tetras → Load ${roundTo(scenario1.bioload.proposed, 3)} | Usage ${formatPercent(scenario1.bioload.proposedPercent)}`);
 
@@ -518,7 +573,7 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: false,
     stock: [
-      { id: 'cardinal_tetra', qty: 12, stage: 'adult' },
+      { id: 'cardinal', qty: 12, stage: 'adult' },
       { id: 'betta_male', qty: 1, stage: 'adult' },
     ],
   });
@@ -529,7 +584,7 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: true,
     stock: [
-      { id: 'cardinal_tetra', qty: 12, stage: 'adult' },
+      { id: 'cardinal', qty: 12, stage: 'adult' },
       { id: 'betta_male', qty: 1, stage: 'adult' },
     ],
   });
@@ -540,9 +595,9 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: false,
     stock: [
-      { id: 'cardinal_tetra', qty: 12, stage: 'adult' },
+      { id: 'cardinal', qty: 12, stage: 'adult' },
       { id: 'betta_male', qty: 1, stage: 'adult' },
-      { id: 'panda_cory', qty: 6, stage: 'adult' },
+      { id: 'cory_panda', qty: 6, stage: 'adult' },
     ],
   });
   results.push(`3) +6 panda corys → Load ${roundTo(scenario3.bioload.proposed, 3)} | Usage ${formatPercent(scenario3.bioload.proposedPercent)}`);
@@ -552,9 +607,9 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: true,
     stock: [
-      { id: 'cardinal_tetra', qty: 12, stage: 'adult' },
+      { id: 'cardinal', qty: 12, stage: 'adult' },
       { id: 'betta_male', qty: 1, stage: 'adult' },
-      { id: 'panda_cory', qty: 6, stage: 'adult' },
+      { id: 'cory_panda', qty: 6, stage: 'adult' },
     ],
   });
   results.push(`   Planted → Usage ${formatPercent(scenario3p.bioload.proposedPercent)}`);
@@ -564,12 +619,12 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: false,
     stock: [
-      { id: 'cardinal_tetra', qty: 12, stage: 'adult' },
-      { id: 'panda_cory', qty: 6, stage: 'adult' },
+      { id: 'cardinal', qty: 12, stage: 'adult' },
+      { id: 'cory_panda', qty: 6, stage: 'adult' },
     ],
-    candidate: { id: 'dwarf_cichlid', qty: 2, stage: 'adult' },
+    candidate: { id: 'tigerbarb', qty: 2, stage: 'adult' },
   });
-  results.push(`4) +2 dwarf cichlids → ${scenario4.status.status.label}`);
+  results.push(`4) +2 tiger barbs → ${scenario4.status.status.label}`);
 
   const scenario5 = runScenario(base, {
     gallons: 10,
@@ -583,8 +638,8 @@ export function runSanitySuite(baseState) {
     gallons: 20,
     turnover: 5,
     planted: false,
-    water: { temperature: 78, pH: 7.6, gH: 6, kH: 3, salinity: 'freshwater', flow: 'moderate', blackwater: false },
-    stock: [{ id: 'cardinal_tetra', qty: 10, stage: 'adult' }],
+    water: { temperature: 78, pH: 7.6, gH: 6, kH: 3, salinity: 'fresh', flow: 'moderate', blackwater: false },
+    stock: [{ id: 'cardinal', qty: 10, stage: 'adult' }],
   });
   results.push(`6) pH 7.6 vs Cardinal → ${scenario6a.conditions.conditions.find((c) => c.key === 'pH')?.hint ?? ''}`);
   const scenario6b = runScenario(base, {
@@ -592,16 +647,16 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: false,
     water: { temperature: 78, pH: 7.6, gH: 12, kH: 5, salinity: 'brackish-low', flow: 'moderate', blackwater: false },
-    stock: [{ id: 'molly', qty: 4, stage: 'adult' }],
+    stock: [{ id: 'nerite', qty: 2, stage: 'adult' }],
   });
-  results.push(`   Molly → ${scenario6b.conditions.conditions.find((c) => c.key === 'pH')?.hint ?? ''}`);
+  results.push(`   Nerite snail → ${scenario6b.conditions.conditions.find((c) => c.key === 'pH')?.hint ?? ''}`);
 
   const scenario7a = runScenario(base, {
     gallons: 10,
     turnover: 4,
     planted: true,
     beginnerMode: true,
-    stock: [{ id: 'cherry_shrimp', qty: 12, stage: 'adult' }],
+    stock: [{ id: 'neocaridina', qty: 12, stage: 'adult' }],
     candidate: { id: 'betta_male', qty: 1, stage: 'adult' },
   });
   results.push(`7) Shrimp + Betta (Beginner) → ${scenario7a.blockReasons.join('; ') || scenario7a.status.status.label}`);
@@ -610,7 +665,7 @@ export function runSanitySuite(baseState) {
     turnover: 4,
     planted: true,
     beginnerMode: false,
-    stock: [{ id: 'cherry_shrimp', qty: 12, stage: 'adult' }],
+    stock: [{ id: 'neocaridina', qty: 12, stage: 'adult' }],
     candidate: { id: 'betta_male', qty: 1, stage: 'adult' },
   });
   results.push(`   Advanced → ${scenario7b.status.status.label}`);
@@ -624,7 +679,7 @@ export function runStressSuite(baseState) {
     gallons: 40,
     turnover: 9.5,
     planted: false,
-    stock: [{ id: 'cardinal_tetra', qty: 30, stage: 'adult' }],
+    stock: [{ id: 'cardinal', qty: 30, stage: 'adult' }],
   });
   results.push(`40g heavy stock → Delivered ${roundTo(scenario.tank.deliveredGph, 1)} gph | Rated ${roundTo(scenario.tank.ratedGph, 1)} gph | Mult ${roundTo(scenario.tank.multiplier, 3)}`);
   return results;
@@ -642,7 +697,7 @@ export function createDefaultState() {
     variantId: null,
     stock: [],
     candidate: { id: getDefaultSpeciesId(), qty: 1, stage: 'adult' },
-    water: { temperature: 78, pH: 7.2, gH: 6, kH: 3, salinity: 'freshwater', flow: 'moderate', blackwater: false },
+    water: { temperature: 78, pH: 7.2, gH: 6, kH: 3, salinity: 'fresh', flow: 'moderate', blackwater: false },
   };
 }
 
