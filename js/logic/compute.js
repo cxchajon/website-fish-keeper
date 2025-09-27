@@ -1,5 +1,5 @@
-import { FISH_DB } from '../fish-data.js';
-import { validateSpeciesRecord } from './speciesSchema.js';
+import { FISH_DB } from "../fish-data.js";
+import { validateSpeciesRecord } from "./speciesSchema.js";
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import {
   clamp,
@@ -41,23 +41,23 @@ function normalizeSpecies(record) {
   return Object.freeze(normalized);
 }
 
-const VALID_SPECIES = FISH_DB.filter((item) => validateSpeciesRecord(item) === true).map(normalizeSpecies);
+export const SPECIES = Object.freeze(FISH_DB.filter((item) => validateSpeciesRecord(item) === true));
 
-const SPECIES_MAP = new Map(VALID_SPECIES.map((species) => [species.id, species]));
-
-export const SPECIES = Object.freeze(VALID_SPECIES);
+const NORMALIZED_SPECIES = SPECIES.map(normalizeSpecies);
+const SPECIES_MAP = new Map(NORMALIZED_SPECIES.map((species) => [species.id, species]));
+const ENGINE_SPECIES = Object.freeze(NORMALIZED_SPECIES);
 
 export function getSpeciesById(id) {
   return SPECIES_MAP.get(id) ?? null;
 }
 
-export const SPECIES_LIST = SPECIES.map((species) => ({
+export const SPECIES_LIST = ENGINE_SPECIES.map((species) => ({
   id: species.id,
   name: species.common_name,
 }));
 
 export function getDefaultSpeciesId() {
-  return SPECIES[0]?.id ?? null;
+  return ENGINE_SPECIES[0]?.id ?? null;
 }
 
 export function autoBioloadUnit(species) {
