@@ -689,4 +689,91 @@ td.empty-cell {
   background: initial;
 }
 
+/* Shared control styles */
+.control {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  font: inherit;
+  line-height: 1.25;
+  border-radius: 12px;
+  border: 1px solid var(--control-border, rgba(255, 255, 255, 0.12));
+  background: var(--control-bg, rgba(255, 255, 255, 0.06));
+  color: var(--control-fg, #e6e8ea);
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+/* Select: ensure text is visible in dark theme and not clipped */
+select.control {
+  background-image:
+    linear-gradient(transparent, transparent),
+    url("data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 20 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 2l8 8 8-8' stroke='%23E6E8EA' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, no-repeat;
+  background-position: right 12px center;
+  background-size: 20px 12px;
+  padding-right: 42px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* High-contrast focus */
+.control:focus {
+  border-color: var(--accent, #30e1a1);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent, #30e1a1) 35%, transparent);
+}
+
+/* Disabled/placeholder option style */
+select.control option[disabled],
+select.control option[value=""] {
+  color: rgba(230, 232, 234, 0.55);
+}
+
+/* iOS Safari zoom/size quirks */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+@supports (-webkit-touch-callout: none) {
+  select.control {
+    font-size: 16px;
+  }
+}
+
+/* Container layout guard so controls don’t get clipped by overflow */
+.controls-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 720px) {
+  .controls-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .controls-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.control-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.control-field label {
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted, rgba(235, 239, 251, 0.86));
+}
+
 #challengeCard[hidden] { display: none !important; }

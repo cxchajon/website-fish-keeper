@@ -1,25 +1,28 @@
 import { createDefaultState, buildComputedState, runSanitySuite, runStressSuite, SPECIES } from './logic/compute.js';
 import { getTankVariants, describeVariant } from './logic/sizeMap.js';
-import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName, qs } from './logic/utils.js';
+import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderBioloadBar, renderAggressionBar, renderStatus, renderChips, renderStockList, bindPopoverHandlers } from './logic/ui.js';
 
-const speciesSelect = qs('#species-select');
+const sel = document.querySelector('#species-select');
 
 function populateSpeciesDropdown() {
-  if (!speciesSelect) return;
-  const opts = SPECIES.slice().sort(byCommonName);
-  speciesSelect.innerHTML =
-    `<option value="">Add species…</option>` +
-    opts.map((s) => `<option value="${s.id}">${s.common_name} — ${s.scientific_name}</option>`).join('');
+  if (!sel) return;
+  const items = Array.isArray(SPECIES) ? SPECIES.slice() : [];
+  items.sort((a, b) => a.common_name.localeCompare(b.common_name));
+  sel.innerHTML = `<option value="">Add species…</option>` +
+    items.map((s) => `<option value="${s.id}">${s.common_name} — ${s.scientific_name}</option>`).join('');
 }
 
-speciesSelect?.addEventListener('change', (e) => {
-  const id = e.target.value;
+sel?.addEventListener('change', (e) => {
+  const target = e.target;
+  if (!(target instanceof HTMLSelectElement)) return;
+  const id = target.value;
   if (!id) return;
-  const s = SPECIES.find((x) => x.id === id);
+  const list = Array.isArray(SPECIES) ? SPECIES : [];
+  const s = list.find((x) => x.id === id);
   if (!s) return;
   document.dispatchEvent(new CustomEvent('advisor:addCandidate', { detail: { species: s, qty: 1 } }));
-  speciesSelect.value = '';
+  target.value = '';
 });
 
 document.addEventListener('DOMContentLoaded', populateSpeciesDropdown);
