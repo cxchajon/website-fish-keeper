@@ -2,187 +2,800 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>FishkeepingLifeCo — Stocking Calculator</title>
+  <title>The Tank Guide — Stocking Advisor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="css/style.css?v=1.0.8" />
-  <script src="js/nav.js?v=1.0.8" defer></script>
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": "https://thetankguide.com/#organization",
-  "name": "FishKeepingLifeCo",
-  "alternateName": "The Tank Guide",
-  "url": "https://thetankguide.com",
-  "logo": "https://thetankguide.com/logo.png",
-  "image": "https://thetankguide.com/logo.png",
-  "slogan": "Educational Aquarium Books & Tools",
-  "description": "FishKeepingLifeCo publishes educational aquarium books and interactive online tools like The Tank Guide to help beginners and hobbyists set up, stock, and maintain thriving aquariums.",
-  "brand": {
-    "@type": "Brand",
-    "name": "The Tank Guide"
-  },
-  "foundingDate": "2025-09-12",
-  "publishingPrinciples": "https://thetankguide.com/about.html",
-  "areaServed": ["United States", "New York"],
-  "knowsAbout": [
-    "Aquariums",
-    "Fishkeeping",
-    "Nitrogen Cycle",
-    "Freshwater Aquariums",
-    "Planted Tanks",
-    "Beginner Aquarium Setup",
-    "Water Parameters",
-    "Aquarium Cycling"
-  ],
-  "contactPoint": [
-    {
-      "@type": "ContactPoint",
-      "contactType": "customer support",
-      "email": "info@thetankguide.com",
-      "availableLanguage": ["en"]
+  <link rel="icon" href="/favicon.ico" />
+  <script defer src="js/nav.js?v=1.0.8"></script>
+  <style>
+    :root {
+      --fg: #eef3ff;
+      --muted: rgba(235, 239, 251, 0.86);
+      --panel: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.14);
+      --chip: rgba(255, 255, 255, 0.12);
+      --ok: #12c278;
+      --warn: #f4b400;
+      --bad: #ff645c;
+      --bar-bg: rgba(255, 255, 255, 0.12);
+      --ghost: rgba(255, 255, 255, 0.25);
+      --shadow: rgba(18, 30, 56, 0.18);
+      --popover-bg: rgba(6, 12, 24, 0.96);
     }
-  ],
-  "sameAs": [
-    "https://www.instagram.com/fishkeepinglifeco/",
-    "https://www.tiktok.com/@fishkeepinglifeco",
-    "https://www.youtube.com/@fishkeepinglifeco",
-    "https://amazon.com/author/fishkeepinglifeco",
-    "https://www.facebook.com/fishkeepinglifeco"
-  ]
-}
-  </script>
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      color: var(--fg);
+      background: radial-gradient(circle at 12% 18%, rgba(66, 110, 255, 0.35), transparent 40%),
+        radial-gradient(circle at 78% 12%, rgba(20, 215, 170, 0.28), transparent 45%),
+        linear-gradient(180deg, rgba(10, 16, 32, 0.94), rgba(4, 8, 18, 0.98));
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      min-height: 100vh;
+    }
+
+    a {
+      color: #a3c8ff;
+    }
+
+    .wrap {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 18px 96px;
+    }
+
+    .hero {
+      padding: 68px 0 36px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 3vw, 2.9rem);
+      letter-spacing: -0.01em;
+    }
+
+    #plant-icon {
+      margin-left: 8px;
+      font-size: 1.7rem;
+      vertical-align: middle;
+      color: #3ddc84;
+      display: none;
+    }
+
+    .hero p {
+      max-width: 640px;
+      margin: 12px auto 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px 20px 22px;
+      box-shadow: 0 18px 36px -24px var(--shadow);
+      margin-bottom: 20px;
+      backdrop-filter: blur(8px);
+    }
+
+    .controls-row {
+      display: grid;
+      gap: 14px;
+    }
+
+    .controls-row .control {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .control label {
+      font-size: 0.92rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .control input[type="number"],
+    .control input[type="text"],
+    .control select {
+      appearance: none;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--fg);
+      font-size: 1.05rem;
+      padding: 10px 14px;
+      min-width: 0;
+      width: 100%;
+      transition: border-color 120ms ease;
+    }
+
+    .control input:focus,
+    .control select:focus {
+      outline: none;
+      border-color: rgba(163, 200, 255, 0.8);
+      box-shadow: 0 0 0 2px rgba(163, 200, 255, 0.26);
+    }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 6px 14px 6px 8px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.08);
+      transition: box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .toggle[data-active="true"] {
+      border-color: rgba(72, 202, 156, 0.6);
+      box-shadow: 0 0 0 2px rgba(72, 202, 156, 0.25);
+    }
+
+    .toggle input {
+      display: none;
+    }
+
+    .toggle .slider {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.24);
+      transition: background 160ms ease;
+    }
+
+    .toggle[data-active="true"] .slider {
+      background: rgba(61, 220, 132, 0.85);
+    }
+
+    .slider::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #0b1228;
+      transition: transform 140ms ease;
+    }
+
+    .toggle[data-active="true"] .slider::after {
+      transform: translateX(18px);
+    }
+
+    .toggle span {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .micro-info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: var(--fg);
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .micro-info:focus-visible,
+    .link-like:focus-visible,
+    button:focus-visible,
+    .toggle:focus-visible {
+      outline: 2px solid rgba(163, 200, 255, 0.7);
+      outline-offset: 3px;
+    }
+
+    .link-like {
+      background: none;
+      border: none;
+      color: #a3c8ff;
+      font: inherit;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .link-like:hover {
+      text-decoration: underline;
+    }
+
+    .tank-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .variant-selector {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .variant-selector button {
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--fg);
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 0.92rem;
+    }
+
+    .variant-selector button[data-active="true"] {
+      border-color: rgba(163, 200, 255, 0.9);
+      background: rgba(163, 200, 255, 0.16);
+    }
+
+    .conditions-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .conditions-header h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: 0.02em;
+    }
+
+    .conditions-list {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .condition-item {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .condition-item .label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .condition-item .value {
+      color: var(--muted);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .condition-item[data-state="ok"] {
+      border-color: rgba(54, 211, 153, 0.55);
+    }
+
+    .condition-item[data-state="warn"] {
+      border-color: rgba(244, 180, 0, 0.6);
+    }
+
+    .condition-item[data-state="bad"] {
+      border-color: rgba(255, 100, 92, 0.7);
+    }
+
+    .condition-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .condition-item[data-state="ok"] .condition-icon {
+      background: rgba(54, 211, 153, 0.25);
+      color: #3ddc84;
+    }
+
+    .condition-item[data-state="warn"] .condition-icon {
+      background: rgba(244, 180, 0, 0.22);
+      color: #f4b400;
+    }
+
+    .condition-item[data-state="bad"] .condition-icon {
+      background: rgba(255, 100, 92, 0.26);
+      color: #ff645c;
+    }
+
+    .bars {
+      display: grid;
+      gap: 18px;
+    }
+
+    .bar-card {
+      display: grid;
+      gap: 10px;
+    }
+
+    .bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bar-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .bar-wrapper {
+      position: relative;
+      height: 22px;
+      border-radius: 999px;
+      background: var(--bar-bg);
+      overflow: hidden;
+    }
+
+    .bar-fill,
+    .bar-ghost {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      border-radius: 999px;
+      transition: width 140ms ease;
+    }
+
+    .bar-fill {
+      background: var(--ok);
+    }
+
+    .bar-ghost {
+      background: var(--ghost);
+      pointer-events: none;
+    }
+
+    .bar-text {
+      font-size: 0.96rem;
+      color: var(--muted);
+    }
+
+    .status-strip {
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.02rem;
+      color: #0b1228;
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    .status-strip[data-state="ok"] {
+      background: rgba(61, 220, 132, 0.92);
+    }
+
+    .status-strip[data-state="warn"] {
+      background: rgba(244, 180, 0, 0.92);
+    }
+
+    .status-strip[data-state="bad"] {
+      background: rgba(255, 100, 92, 0.92);
+    }
+
+    .chips {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      background: var(--chip);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.92rem;
+      color: var(--fg);
+    }
+
+    .chip[data-tone="warn"] {
+      border-color: rgba(244, 180, 0, 0.6);
+      color: #f4d48a;
+    }
+
+    .chip[data-tone="bad"] {
+      border-color: rgba(255, 100, 92, 0.7);
+      color: #ffb3b0;
+    }
+
+    .stock-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .stock-row {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: minmax(140px, 1fr) repeat(2, minmax(110px, 150px)) auto;
+      align-items: end;
+    }
+
+    .stock-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .stock-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .stock-item .meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stock-item .name {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .stock-item button {
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--fg);
+      padding: 6px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .secondary-text {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .popover {
+      position: absolute;
+      inset: auto auto auto auto;
+      z-index: 40;
+      max-width: 320px;
+      background: var(--popover-bg);
+      color: var(--fg);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      box-shadow: 0 20px 48px -28px rgba(4, 8, 18, 0.7);
+    }
+
+    .popover[data-hidden="true"] {
+      display: none;
+    }
+
+    .see-gear {
+      margin-top: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(90deg, rgba(77, 140, 255, 0.9), rgba(77, 200, 255, 0.88));
+      color: #0b1228;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 1.02rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 16px 28px -20px rgba(52, 120, 255, 0.8);
+    }
+
+    .diagnostics {
+      margin-top: 18px;
+      background: rgba(10, 16, 32, 0.82);
+      border: 1px dashed rgba(163, 200, 255, 0.4);
+      border-radius: 14px;
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .diagnostics h3 {
+      margin: 0 0 4px;
+      font-size: 1.05rem;
+      color: var(--fg);
+    }
+
+    .diagnostics ul {
+      margin: 0;
+      padding-left: 20px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .water-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (min-width: 720px) {
+      .controls-row {
+        grid-template-columns: repeat(4, minmax(160px, 1fr));
+        align-items: end;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
 </head>
 <body class="theme-dark">
   <div id="site-nav"></div>
+  <main class="wrap" id="stocking-app">
+    <header class="hero">
+      <h1 id="page-title">Stocking Advisor <span id="plant-icon" aria-hidden="true">🌱</span></h1>
+      <p>
+        Build a balanced community by checking bioload, compatibility, and environmental needs before you add new tankmates.
+        Tune your inputs and get live guidance as you plan your next stock.
+      </p>
+    </header>
 
-  <div class="wrap">
-    <!-- Tank Setup -->
-    <section class="card">
-      <h2>Tank Setup</h2>
-      <div class="row">
-        <div>
-          <label for="gallons">Tank Size (gallons)</label>
-          <input id="gallons" type="number" min="1" value="20" inputmode="numeric" />
+    <section class="panel" aria-labelledby="controls-title">
+      <h2 id="controls-title" class="sr-only">Tank Controls</h2>
+      <div class="controls-row">
+        <div class="control">
+          <label for="input-gallons">Gallons</label>
+          <input id="input-gallons" type="number" inputmode="numeric" min="1" step="1" value="20" aria-describedby="gallons-hint" />
+          <span id="gallons-hint" class="secondary-text">Common footprint variants will auto-adjust.</span>
         </div>
-        <div>
-          <label for="filtration">Filtration</label>
-          <select id="filtration">
-            <option value="standard" selected>Standard</option>
+
+        <div class="control">
+          <label for="toggle-planted">Planted</label>
+          <button class="toggle" type="button" id="toggle-planted" role="switch" aria-checked="false" aria-label="Toggle planted tank">
+            <span class="slider" aria-hidden="true"></span>
+            <span>Off</span>
+          </button>
+        </div>
+
+        <div class="control">
+          <label for="toggle-tips">Show More Tips</label>
+          <button class="toggle" type="button" id="toggle-tips" role="switch" aria-checked="false" aria-label="Toggle expanded guidance">
+            <span class="slider" aria-hidden="true"></span>
+            <span>Off</span>
+          </button>
+        </div>
+
+        <div class="control">
+          <label for="toggle-beginner">Beginner Mode</label>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button class="toggle" type="button" id="toggle-beginner" role="switch" aria-checked="true" aria-label="Toggle beginner safeguards">
+              <span class="slider" aria-hidden="true"></span>
+              <span>On</span>
+            </button>
+            <button class="micro-info" type="button" data-popover="beginner-info" aria-label="What is Beginner mode?">i</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="tank-summary" aria-live="polite"></section>
+
+    <section class="panel" aria-labelledby="water-title">
+      <div class="conditions-header">
+        <h2 id="water-title">Set Your Tank Profile</h2>
+        <p class="secondary-text">Adjust these to match your current parameters.</p>
+      </div>
+      <div class="water-grid">
+        <div class="control">
+          <label for="input-temp">Temperature (°F)</label>
+          <input id="input-temp" type="number" min="60" max="90" step="0.5" value="78" />
+        </div>
+        <div class="control">
+          <label for="input-ph">pH</label>
+          <input id="input-ph" type="number" min="4" max="9" step="0.1" value="7.2" />
+        </div>
+        <div class="control">
+          <label for="input-gh">gH (dGH)</label>
+          <input id="input-gh" type="number" min="0" max="30" step="0.5" value="6" />
+        </div>
+        <div class="control">
+          <label for="input-kh">kH (dKH)</label>
+          <input id="input-kh" type="number" min="0" max="20" step="0.5" value="3" />
+        </div>
+        <div class="control">
+          <label for="select-salinity">Salinity</label>
+          <select id="select-salinity">
+            <option value="freshwater" selected>Freshwater</option>
+            <option value="brackish-low">Brackish (low)</option>
+            <option value="brackish-high">Brackish (high)</option>
+            <option value="marine">Marine</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="select-flow">Flow Preference</label>
+          <select id="select-flow">
             <option value="low">Low</option>
+            <option value="moderate" selected>Moderate</option>
             <option value="high">High</option>
           </select>
         </div>
-        <div class="planted-wrap">
-          <label><input id="planted" type="checkbox" /> Planted Tank</label>
+        <div class="control">
+          <label for="toggle-blackwater">Blackwater / Tannins</label>
+          <button class="toggle" type="button" id="toggle-blackwater" role="switch" aria-checked="false" aria-label="Toggle blackwater preference">
+            <span class="slider" aria-hidden="true"></span>
+            <span>Off</span>
+          </button>
         </div>
-        <div class="tip">
-          The more you stock, the more bioload grows. Bars animate from 0 each time.
-        </div>
-      </div>
-    </section>
-
-    <!-- Overview -->
-    <section class="card">
-      <h2>Overview</h2>
-      <div class="metric">
-        <div class="metric-header">
-          <span>Bioload</span>
-          <span id="bioBadge" class="badge" hidden></span>
-        </div>
-        <div class="bar"><div id="bioBar" class="bar-fill"></div></div>
-      </div>
-      <div class="metric">
-        <div class="metric-header">
-          <span>Environmental Fit</span>
-          <span id="envRecs" class="env-recs">
-            <span id="recTemp"></span>
-            <span class="dot">•</span>
-            <span id="recPH"></span>
-          </span>
-        </div>
-        <div class="bar"><div id="envBar" class="bar-fill"></div></div>
-      </div>
-      <div class="metric">
-        <div class="metric-header">
-          <span>Aggression &amp; Compatibility</span>
-        </div>
-        <div class="bar"><div id="aggBar" class="bar-fill"></div></div>
-      </div>
-    </section>
-
-    <!-- Add Fish -->
-    <section class="card">
-      <h2>Add Fish</h2>
-      <div class="row">
-        <div>
-          <label for="fishSearch">Search</label>
-          <input id="fishSearch" type="text" placeholder="Type to filter…" autocomplete="off" />
-        </div>
-        <div>
-          <label for="fishSelect">Species</label>
-          <select id="fishSelect"></select>
-          <div class="help">Tip: Try typing common names (e.g., “Cardinal Tetra”) or scientific names.</div>
-          <div id="noMatch" class="bubble warn" hidden>This species isn’t in our list yet. Research is recommended before stocking.</div>
-        </div>
-        <div>
-          <label for="fQty">Quantity</label>
-          <input id="fQty" type="number" min="1" step="1" inputmode="numeric" />
-        </div>
-        <div>
-          <label for="recMin">Rec Min</label>
-          <input id="recMin" type="number" disabled />
-        </div>
-      </div>
-      <div class="row row-actions">
-        <button id="addFish" class="btn" type="button">Add</button>
-        <button id="reset" class="btn danger" type="button">Clear Stock</button>
-      </div>
-    </section>
-
-    <!-- Current Stock -->
-    <section class="card">
-      <h2>Current Stock</h2>
-      <table class="stock">
-        <thead>
-          <tr><th>Species</th><th class="qty">Qty</th><th class="actions">Actions</th></tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </section>
-
-    <!-- Warnings Panel -->
-    <section class="card">
-      <h2>Warnings</h2>
-      <div class="warnings">
-        <div class="warnings-section">
-          <h3>Bioload</h3>
-          <div id="warn-bio" class="warning-bubbles"></div>
-        </div>
-        <div class="warnings-section">
-          <h3>Aggression &amp; Compatibility</h3>
-          <div id="warn-agg" class="warning-bubbles"></div>
-        </div>
-        <div class="warnings-section">
-          <h3>Environmental Fit</h3>
-          <div id="warn-env" class="warning-bubbles"></div>
+        <div class="control">
+          <label for="input-turnover">Turnover (×/hr)</label>
+          <input id="input-turnover" type="number" min="1" max="15" step="0.1" value="5" />
         </div>
       </div>
     </section>
 
-    <!-- Footer -->
-    <div id="site-footer"></div>
-    <script>
-      (async () => {
-        const host = document.getElementById('site-footer');
-        if (!host) return;
-        const res = await fetch('footer.html?v=1.0.8', { cache: 'no-cache' });
+    <section class="panel" aria-labelledby="conditions-title">
+      <div class="conditions-header">
+        <h2 id="conditions-title">Recommended Environmental Conditions</h2>
+        <button class="link-like" type="button" id="toggle-tips-inline">Show More Tips</button>
+      </div>
+      <ul class="conditions-list" id="conditions-list"></ul>
+    </section>
+
+    <section class="panel" aria-labelledby="capacity-title">
+      <div class="bars">
+        <div class="bar-card">
+          <div class="bar-header">
+            <h3 id="capacity-title">Bioload Capacity</h3>
+            <button class="micro-info" type="button" data-popover="bioload-why" aria-label="Why does bioload capacity change?">?</button>
+          </div>
+          <div class="bar-wrapper" aria-hidden="true">
+            <div class="bar-ghost" id="bioload-ghost"></div>
+            <div class="bar-fill" id="bioload-fill"></div>
+          </div>
+          <p class="bar-text" id="bioload-text">—</p>
+        </div>
+
+        <div class="bar-card">
+          <div class="bar-header">
+            <h3>Aggression &amp; Compatibility</h3>
+            <button class="micro-info" type="button" data-popover="aggression-why" aria-label="Why do aggression warnings show?">?</button>
+          </div>
+          <div class="bar-wrapper" aria-hidden="true">
+            <div class="bar-fill" id="agg-fill" style="background: var(--ghost);"></div>
+          </div>
+          <p class="bar-text" id="agg-text">—</p>
+        </div>
+      </div>
+      <div class="status-strip" id="status-strip" data-state="ok" role="status" aria-live="polite">Loading…</div>
+      <div class="chips" id="chip-row"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="stock-title">
+      <h2 id="stock-title">Plan Your Stock</h2>
+      <div class="stock-grid">
+        <div class="stock-row" role="group" aria-labelledby="candidate-label">
+          <div class="control">
+            <label id="candidate-label" for="select-species">Species</label>
+            <select id="select-species"></select>
+          </div>
+          <div class="control">
+            <label for="input-qty">Quantity</label>
+            <input id="input-qty" type="number" min="1" step="1" value="1" />
+          </div>
+          <div class="control">
+            <label for="input-stage">Life Stage</label>
+            <select id="input-stage">
+              <option value="juvenile">Juvenile</option>
+              <option value="adult" selected>Adult</option>
+            </select>
+          </div>
+          <button id="btn-add" class="see-gear" type="button" style="justify-self:flex-end;">Add to Plan</button>
+        </div>
+        <div class="chips" id="candidate-chips"></div>
+        <div id="candidate-banner" class="status-strip" data-state="bad" style="display:none;">Beginner safeguards: fix highlighted issues before adding.</div>
+      </div>
+      <ul class="stock-list" id="stock-list" aria-live="polite"></ul>
+    </section>
+
+    <button class="see-gear" id="btn-gear" type="button">See Gear Suggestions</button>
+
+    <section class="diagnostics" id="diagnostics" hidden>
+      <h3>Diagnostics</h3>
+      <div id="diagnostics-content"></div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script>
+    (async () => {
+      const host = document.getElementById('site-footer');
+      if (!host) return;
+      const res = await fetch('footer.html?v=1.0.8', { cache: 'no-cache' });
+      if (res.ok) {
         host.outerHTML = await res.text();
-      })();
-    </script>
-    <!-- Load data and logic with updated version for cache busting -->
-    <script src="js/fish-data.js?v=1.0.3"></script>
-    <script type="module" src="js/modules/app.js?v=1.0.3"></script>
+      }
+    })();
+  </script>
+  <script type="module" src="js/stocking.js"></script>
+
+  <div id="beginner-info" class="popover" data-hidden="true" role="dialog" aria-modal="false">
+    <strong>Beginner safeguards</strong>
+    <p style="margin:8px 0 0;">
+      Beginner mode enforces conservative limits: risky pairings, salinity mismatches, and high bioload overages block the add
+      button. Switch to Advanced to accept higher risk with caution banners.
+    </p>
+  </div>
+
+  <div id="bioload-why" class="popover" data-hidden="true" role="dialog" aria-modal="false">
+    <strong>How capacity is calculated</strong>
+    <p style="margin:8px 0 0;">
+      Effective volume considers sump capacity, filtration turnover, and whether the tank is planted. Beginner mode keeps a 15%
+      safety buffer so new keepers have extra margin.
+    </p>
+  </div>
+
+  <div id="aggression-why" class="popover" data-hidden="true" role="dialog" aria-modal="false">
+    <strong>Compatibility checks</strong>
+    <p style="margin:8px 0 0;">
+      We compare temperament scores, territorial tags, and known conflict pairs. Longer tanks reduce tension by giving fish room
+      to establish territories.
+    </p>
   </div>
 </body>
 </html>
