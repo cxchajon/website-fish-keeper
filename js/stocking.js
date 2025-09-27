@@ -1,4 +1,5 @@
 import { createDefaultState, buildComputedState, runSanitySuite, runStressSuite, SPECIES, getDefaultSpeciesId } from './logic/compute.js';
+import { computeEnv, renderEnvInto, renderWarningsInto } from './logic/envRecommend.js';
 import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderBioloadBar, renderAggressionBar, renderStatus, renderChips, renderStockList, bindPopoverHandlers } from './logic/ui.js';
@@ -43,6 +44,8 @@ const refs = {
   seeGear: document.getElementById('btn-gear'),
   diagnostics: document.getElementById('diagnostics'),
   diagnosticsContent: document.getElementById('diagnostics-content'),
+  envReco: document.getElementById('env-reco'),
+  warningsCard: document.getElementById('warnings-card'),
 };
 
 const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
@@ -81,6 +84,7 @@ function pruneMarineEntries() {
 }
 
 function updateToggle(button, value) {
+  if (!button) return;
   button.dataset.active = value ? 'true' : 'false';
   button.setAttribute('aria-checked', value ? 'true' : 'false');
   const label = button.querySelector('span:last-of-type');
@@ -91,13 +95,27 @@ function updateToggle(button, value) {
 
 function syncStateFromInputs() {
   state.gallons = Number(refs.gallons.value) || state.gallons;
-  state.turnover = Number(refs.turnover.value) || state.turnover;
-  state.water.temperature = Number(refs.temp.value) || state.water.temperature;
-  state.water.pH = Number(refs.ph.value) || state.water.pH;
-  state.water.gH = Number(refs.gh.value) || state.water.gH;
-  state.water.kH = Number(refs.kh.value) || state.water.kH;
-  state.water.salinity = refs.salinity.value;
-  state.water.flow = refs.flow.value;
+  if (refs.turnover) {
+    state.turnover = Number(refs.turnover.value) || state.turnover;
+  }
+  if (refs.temp) {
+    state.water.temperature = Number(refs.temp.value) || state.water.temperature;
+  }
+  if (refs.ph) {
+    state.water.pH = Number(refs.ph.value) || state.water.pH;
+  }
+  if (refs.gh) {
+    state.water.gH = Number(refs.gh.value) || state.water.gH;
+  }
+  if (refs.kh) {
+    state.water.kH = Number(refs.kh.value) || state.water.kH;
+  }
+  if (refs.salinity) {
+    state.water.salinity = refs.salinity.value;
+  }
+  if (refs.flow) {
+    state.water.flow = refs.flow.value;
+  }
   if (state.variantId) {
     const valid = getTankVariants(state.gallons).some((variant) => variant.id === state.variantId);
     if (!valid) {
@@ -226,6 +244,7 @@ function renderAll() {
     scheduleUpdate();
   });
   renderDiagnostics();
+  renderEnvironmentPanels();
 }
 
 function buildStatusChips() {
@@ -242,6 +261,20 @@ function buildStatusChips() {
     chips.push({ tone: condition.severity === 'bad' ? 'bad' : 'warn', text: `${condition.label}: ${condition.hint}` });
   }
   return chips;
+}
+
+function renderEnvironmentPanels() {
+  if (!computed) return;
+  const envEl = refs.envReco;
+  const warnEl = refs.warningsCard;
+  if (!envEl || !warnEl) return;
+  const speciesList = computed.entries.map((entry) => entry.species);
+  const env = computeEnv({ speciesList, planted: state.planted });
+  renderEnvInto(envEl, env);
+  renderWarningsInto(warnEl, env);
+  if (env.rows?.temperature?.setpoint) {
+    state.water.temperature = env.rows.temperature.setpoint;
+  }
 }
 
 const scheduleUpdate = debounce(() => {
@@ -288,13 +321,13 @@ function handleAdd() {
 
 function bindInputs() {
   refs.gallons.addEventListener('input', scheduleUpdate);
-  refs.turnover.addEventListener('input', scheduleUpdate);
-  refs.temp.addEventListener('input', scheduleUpdate);
-  refs.ph.addEventListener('input', scheduleUpdate);
-  refs.gh.addEventListener('input', scheduleUpdate);
-  refs.kh.addEventListener('input', scheduleUpdate);
-  refs.salinity.addEventListener('change', scheduleUpdate);
-  refs.flow.addEventListener('change', scheduleUpdate);
+  if (refs.turnover) refs.turnover.addEventListener('input', scheduleUpdate);
+  if (refs.temp) refs.temp.addEventListener('input', scheduleUpdate);
+  if (refs.ph) refs.ph.addEventListener('input', scheduleUpdate);
+  if (refs.gh) refs.gh.addEventListener('input', scheduleUpdate);
+  if (refs.kh) refs.kh.addEventListener('input', scheduleUpdate);
+  if (refs.salinity) refs.salinity.addEventListener('change', scheduleUpdate);
+  if (refs.flow) refs.flow.addEventListener('change', scheduleUpdate);
 
   refs.planted.addEventListener('click', () => {
     state.planted = !state.planted;
@@ -319,11 +352,13 @@ function bindInputs() {
     scheduleUpdate();
   });
 
-  refs.blackwater.addEventListener('click', () => {
-    state.water.blackwater = !state.water.blackwater;
-    syncToggles();
-    scheduleUpdate();
-  });
+  if (refs.blackwater) {
+    refs.blackwater.addEventListener('click', () => {
+      state.water.blackwater = !state.water.blackwater;
+      syncToggles();
+      scheduleUpdate();
+    });
+  }
 
   refs.speciesSelect.addEventListener('change', () => {
     state.candidate.id = refs.speciesSelect.value;
