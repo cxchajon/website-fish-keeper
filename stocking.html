@@ -82,45 +82,18 @@
       backdrop-filter: blur(8px);
     }
 
-    .controls-row {
-      display: grid;
-      gap: 14px;
-    }
-
-    .controls-row .control {
+    .controls-row .control-field {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       gap: 6px;
     }
 
-    .control label {
+    .control-field label {
       font-size: 0.92rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--muted);
-    }
-
-    .control input[type="number"],
-    .control input[type="text"],
-    .control select {
-      appearance: none;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: var(--fg);
-      font-size: 1.05rem;
-      padding: 10px 14px;
-      min-width: 0;
-      width: 100%;
-      transition: border-color 120ms ease;
-    }
-
-    .control input:focus,
-    .control select:focus {
-      outline: none;
-      border-color: rgba(163, 200, 255, 0.8);
-      box-shadow: 0 0 0 2px rgba(163, 200, 255, 0.26);
     }
 
     .toggle {
@@ -439,8 +412,36 @@
     .stock-row {
       display: grid;
       gap: 10px;
-      grid-template-columns: minmax(140px, 1fr) repeat(2, minmax(110px, 150px)) auto;
-      align-items: end;
+      grid-template-columns: 1fr;
+    }
+
+    .stock-row .see-gear {
+      width: 100%;
+      justify-content: center;
+      margin-top: 0;
+    }
+
+    @media (min-width: 540px) {
+      .stock-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: end;
+      }
+
+      .stock-row .see-gear {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (min-width: 780px) {
+      .stock-row {
+        grid-template-columns: minmax(160px, 1.4fr) repeat(2, minmax(120px, 1fr)) auto;
+      }
+
+      .stock-row .see-gear {
+        grid-column: auto;
+        width: auto;
+        justify-self: end;
+      }
     }
 
     .stock-list {
@@ -566,13 +567,6 @@
       border: 0;
     }
 
-    @media (min-width: 720px) {
-      .controls-row {
-        grid-template-columns: repeat(4, minmax(160px, 1fr));
-        align-items: end;
-      }
-    }
-
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
@@ -599,13 +593,13 @@
     <section class="panel" aria-labelledby="controls-title">
       <h2 id="controls-title" class="sr-only">Tank Controls</h2>
       <div class="controls-row">
-        <div class="control">
+        <div class="control-field">
           <label for="input-gallons">Gallons</label>
-          <input id="input-gallons" type="number" inputmode="numeric" min="1" step="1" value="20" aria-describedby="gallons-hint" />
+          <input class="control" id="input-gallons" type="number" inputmode="numeric" min="1" step="1" value="20" aria-describedby="gallons-hint" />
           <span id="gallons-hint" class="secondary-text">Common footprint variants will auto-adjust.</span>
         </div>
 
-        <div class="control">
+        <div class="control-field">
           <label for="toggle-planted">Planted</label>
           <button class="toggle" type="button" id="toggle-planted" role="switch" aria-checked="false" aria-label="Toggle planted tank">
             <span class="slider" aria-hidden="true"></span>
@@ -613,7 +607,7 @@
           </button>
         </div>
 
-        <div class="control">
+        <div class="control-field">
           <label for="toggle-tips">Show More Tips</label>
           <button class="toggle" type="button" id="toggle-tips" role="switch" aria-checked="false" aria-label="Toggle expanded guidance">
             <span class="slider" aria-hidden="true"></span>
@@ -621,7 +615,7 @@
           </button>
         </div>
 
-        <div class="control">
+        <div class="control-field">
           <label for="toggle-beginner">Beginner Mode</label>
           <div style="display:flex;align-items:center;gap:10px;">
             <button class="toggle" type="button" id="toggle-beginner" role="switch" aria-checked="true" aria-label="Toggle beginner safeguards">
@@ -632,9 +626,11 @@
           </div>
         </div>
 
-        <div class="control">
+        <div class="control-field">
           <label class="sr-only" for="species-select">Add species</label>
-          <select id="species-select" aria-label="Add species to tank"></select>
+          <select id="species-select" class="control" aria-label="Add species to tank">
+            <option value="">Add species…</option>
+          </select>
         </div>
       </div>
     </section>
@@ -647,25 +643,25 @@
         <p class="secondary-text">Adjust these to match your current parameters.</p>
       </div>
       <div class="water-grid">
-        <div class="control">
+        <div class="control-field">
           <label for="input-temp">Temperature (°F)</label>
-          <input id="input-temp" type="number" min="60" max="90" step="0.5" value="78" />
+          <input class="control" id="input-temp" type="number" min="60" max="90" step="0.5" value="78" />
         </div>
-        <div class="control">
+        <div class="control-field">
           <label for="input-ph">pH</label>
-          <input id="input-ph" type="number" min="4" max="9" step="0.1" value="7.2" />
+          <input class="control" id="input-ph" type="number" min="4" max="9" step="0.1" value="7.2" />
         </div>
-        <div class="control">
+        <div class="control-field">
           <label for="input-gh">gH (dGH)</label>
-          <input id="input-gh" type="number" min="0" max="30" step="0.5" value="6" />
+          <input class="control" id="input-gh" type="number" min="0" max="30" step="0.5" value="6" />
         </div>
-        <div class="control">
+        <div class="control-field">
           <label for="input-kh">kH (dKH)</label>
-          <input id="input-kh" type="number" min="0" max="20" step="0.5" value="3" />
+          <input class="control" id="input-kh" type="number" min="0" max="20" step="0.5" value="3" />
         </div>
-        <div class="control">
+        <div class="control-field">
           <label for="select-salinity">Salinity</label>
-          <select id="select-salinity">
+          <select id="select-salinity" class="control">
             <option value="fresh" selected>Freshwater</option>
             <option value="dual">Fresh or Low Brackish</option>
             <option value="brackish-low">Brackish (low)</option>
@@ -673,24 +669,24 @@
             <option value="marine">Marine</option>
           </select>
         </div>
-        <div class="control">
+        <div class="control-field">
           <label for="select-flow">Flow Preference</label>
-          <select id="select-flow">
+          <select id="select-flow" class="control">
             <option value="low">Low</option>
             <option value="moderate" selected>Moderate</option>
             <option value="high">High</option>
           </select>
         </div>
-        <div class="control">
+        <div class="control-field">
           <label for="toggle-blackwater">Blackwater / Tannins</label>
           <button class="toggle" type="button" id="toggle-blackwater" role="switch" aria-checked="false" aria-label="Toggle blackwater preference">
             <span class="slider" aria-hidden="true"></span>
             <span>Off</span>
           </button>
         </div>
-        <div class="control">
+        <div class="control-field">
           <label for="input-turnover">Turnover (×/hr)</label>
-          <input id="input-turnover" type="number" min="1" max="15" step="0.1" value="5" />
+          <input class="control" id="input-turnover" type="number" min="1" max="15" step="0.1" value="5" />
         </div>
       </div>
     </section>
@@ -736,22 +732,22 @@
       <h2 id="stock-title">Plan Your Stock</h2>
       <div class="stock-grid">
         <div class="stock-row" role="group" aria-labelledby="candidate-label">
-          <div class="control">
+          <div class="control-field">
             <label id="candidate-label" for="select-species">Species</label>
-            <select id="select-species"></select>
+            <select id="select-species" class="control"></select>
           </div>
-          <div class="control">
+          <div class="control-field">
             <label for="input-qty">Quantity</label>
-            <input id="input-qty" type="number" min="1" step="1" value="1" />
+            <input class="control" id="input-qty" type="number" min="1" step="1" value="1" />
           </div>
-          <div class="control">
+          <div class="control-field">
             <label for="input-stage">Life Stage</label>
-            <select id="input-stage">
+            <select id="input-stage" class="control">
               <option value="juvenile">Juvenile</option>
               <option value="adult" selected>Adult</option>
             </select>
           </div>
-          <button id="btn-add" class="see-gear" type="button" style="justify-self:flex-end;">Add to Plan</button>
+          <button id="btn-add" class="see-gear" type="button">Add to Plan</button>
         </div>
         <div class="chips" id="candidate-chips"></div>
         <div id="candidate-banner" class="status-strip" data-state="bad" style="display:none;">Beginner safeguards: fix highlighted issues before adding.</div>
@@ -778,6 +774,10 @@
       }
     })();
   </script>
+  <script type="module" src="js/logic/speciesSchema.js"></script>
+  <script type="module" src="js/fish-data.js"></script>
+  <script type="module" src="js/logic/compute.js"></script>
+  <script type="module" src="js/logic/conflicts.js"></script>
   <script type="module" src="js/stocking.js"></script>
 
   <div id="beginner-info" class="popover" data-hidden="true" role="dialog" aria-modal="false">

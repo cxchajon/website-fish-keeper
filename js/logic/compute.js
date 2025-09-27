@@ -41,7 +41,7 @@ function normalizeSpecies(record) {
   return Object.freeze(normalized);
 }
 
-export const SPECIES = Object.freeze(FISH_DB.filter((item) => validateSpeciesRecord(item) === true));
+export const SPECIES = Object.freeze(FISH_DB.filter((s) => validateSpeciesRecord(s) === true));
 
 const NORMALIZED_SPECIES = SPECIES.map(normalizeSpecies);
 const SPECIES_MAP = new Map(NORMALIZED_SPECIES.map((species) => [species.id, species]));
