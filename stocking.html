@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <title>The Tank Guide — Stocking Advisor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="css/style.css?v=1.0.8" />
+  <script>
+    window.__APP_BUILD__ = new Date();
+  </script>
+  <link rel="stylesheet" id="css-main" href="css/style.css" />
   <link rel="icon" href="/favicon.ico" />
   <script defer src="js/nav.js?v=1.0.8"></script>
   <style>
@@ -738,7 +741,7 @@
   <script type="module" src="js/fish-data.js"></script>
   <script type="module" src="js/logic/compute.js"></script>
   <script type="module" src="js/logic/conflicts.js"></script>
-  <script type="module" src="js/stocking.js"></script>
+  <script type="module" src="js/stocking.js" id="js-stocking"></script>
 
   <div id="beginner-info" class="popover" data-hidden="true" role="dialog" aria-modal="false">
     <strong>Beginner safeguards</strong>
