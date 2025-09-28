@@ -38,7 +38,6 @@ const refs = {
   candidateBanner: document.getElementById('candidate-banner'),
   speciesSelect: document.getElementById('plan-species'),
   qty: document.getElementById('plan-qty'),
-  stage: document.getElementById('plan-stage'),
   addBtn: document.getElementById('plan-add'),
   stockList: document.getElementById('stock-list'),
   seeGear: document.getElementById('btn-gear'),
@@ -57,16 +56,10 @@ const warnedMarineIds = new Set();
 const elAdd = document.querySelector('#plan-add, .plan-add');
 const elSpec = document.querySelector('#plan-species, .plan-species');
 const elQty = document.querySelector('#plan-qty, .plan-qty');
-const elStage = document.querySelector('#plan-stage, .plan-stage');
 
 function getQty() {
   const n = parseInt(elQty?.value ?? '1', 10);
   return Number.isFinite(n) && n > 0 ? Math.min(n, 999) : 1;
-}
-
-function getStageValue() {
-  const raw = elStage?.value;
-  return normalizeStage(raw, state.candidate?.stage ?? 'adult');
 }
 
 function findSpeciesById(id) {
@@ -91,13 +84,12 @@ function addCurrentSelection() {
     return;
   }
   const qty = getQty();
-  const stage = getStageValue();
   if (state.beginnerMode && computed && computed.blockReasons.length > 0) {
     console.warn('[StockingAdvisor] Beginner safeguards block add:', computed.blockReasons.join(', '));
     return;
   }
   document.dispatchEvent(
-    new CustomEvent('advisor:addCandidate', { detail: { species, qty, stage } })
+    new CustomEvent('advisor:addCandidate', { detail: { species, qty } })
   );
   try {
     if (elSpec) {
@@ -136,7 +128,6 @@ document.addEventListener('advisor:addCandidate', (event) => {
   if (!species?.id || !speciesById.has(species.id)) {
     return;
   }
-  const stage = normalizeStage(detail.stage, state.candidate?.stage ?? 'adult');
   const qty = sanitizeQty(detail.qty, state.candidate?.qty ?? 1);
 
   if (state.beginnerMode && computed && computed.blockReasons.length > 0) {
@@ -144,14 +135,12 @@ document.addEventListener('advisor:addCandidate', (event) => {
     return;
   }
 
-  const existing = state.stock.find(
-    (entry) => entry.id === species.id && normalizeStage(entry.stage, 'adult') === stage
-  );
+  const existing = state.stock.find((entry) => entry.id === species.id);
   if (existing) {
     const combined = (Number(existing.qty) || 0) + qty;
     existing.qty = sanitizeQty(combined, qty);
   } else {
-    state.stock.push({ id: species.id, qty, stage });
+    state.stock.push({ id: species.id, qty });
   }
 
   const defaultId = getDefaultSpeciesId();
@@ -166,7 +155,6 @@ document.addEventListener('advisor:addCandidate', (event) => {
   state.candidate = {
     id: nextId,
     qty: 1,
-    stage,
   };
 
   if (refs.speciesSelect) {
@@ -179,12 +167,9 @@ document.addEventListener('advisor:addCandidate', (event) => {
   if (refs.qty) {
     refs.qty.value = '1';
   }
-  if (refs.stage) {
-    refs.stage.value = stage;
-  }
 
   syncSelectedFromState();
-  console.log('[StockingAdvisor] Added:', species.id, 'x', qty, 'stage:', stage);
+  console.log('[StockingAdvisor] Added:', species.id, 'x', qty);
   scheduleUpdate();
 });
 
@@ -193,12 +178,9 @@ document.addEventListener('advisor:removeCandidate', (event) => {
   if (!id) {
     return;
   }
-  const stage = normalizeStage(event.detail?.stage, 'adult');
-  state.stock = state.stock.filter(
-    (entry) => !(entry.id === id && normalizeStage(entry.stage, 'adult') === stage)
-  );
+  state.stock = state.stock.filter((entry) => entry.id !== id);
   syncSelectedFromState();
-  console.log('[StockingAdvisor] Removed:', id, 'stage:', stage);
+  console.log('[StockingAdvisor] Removed:', id);
   scheduleUpdate();
 });
 
@@ -216,14 +198,15 @@ function syncSelectedFromState() {
     if (!entry?.id) continue;
     const species = speciesById.get(entry.id);
     if (!species) continue;
-    const stage = normalizeStage(entry.stage, 'adult');
     const qty = sanitizeQty(entry.qty, 1);
     entry.qty = qty;
-    entry.stage = stage;
-    const key = `${species.id}::${stage}`;
+    if ('stage' in entry) {
+      delete entry.stage;
+    }
+    const key = species.id;
     const current = SELECTED.get(key);
     const nextQty = (current?.qty || 0) + qty;
-    SELECTED.set(key, { species, qty: nextQty, stage });
+    SELECTED.set(key, { species, qty: nextQty });
   }
   renderStockList();
 }
@@ -236,32 +219,27 @@ function renderStockList() {
     return;
   }
   const rows = [];
-  for (const { species, qty, stage } of SELECTED.values()) {
-    rows.push(stockRow(species, qty, stage));
+  for (const { species, qty } of SELECTED.values()) {
+    rows.push(stockRow(species, qty));
   }
   root.innerHTML = rows.join('');
   root.querySelectorAll('[data-remove-id]').forEach((button) => {
     button.addEventListener('click', () => {
       const removeId = button.getAttribute('data-remove-id');
-      const removeStage = button.getAttribute('data-remove-stage') || 'adult';
-      document.dispatchEvent(
-        new CustomEvent('advisor:removeCandidate', { detail: { id: removeId, stage: removeStage } })
-      );
+      document.dispatchEvent(new CustomEvent('advisor:removeCandidate', { detail: { id: removeId } }));
     });
   });
 }
 
-function stockRow(species, qty, stage) {
+function stockRow(species, qty) {
   const name = escapeHtml(species.common_name || species.id);
   const id = escapeHtml(species.id);
-  const stageLabel = stage === 'juvenile' ? 'Juvenile' : 'Adult';
   const qtyLabel = `Qty: ${qty}`;
-  const stageSuffix = stage === 'adult' ? '' : ` (${stageLabel})`;
   return `
     <div class="stock-entry">
       <div class="stock-entry__name">${name}</div>
-      <div class="stock-entry__meta">${qtyLabel}${stageSuffix}</div>
-      <button class="stock-entry__remove" data-remove-id="${id}" data-remove-stage="${escapeHtml(stage)}" aria-label="Remove ${name}">Remove</button>
+      <div class="stock-entry__meta">${qtyLabel}</div>
+      <button class="stock-entry__remove" data-remove-id="${id}" aria-label="Remove ${name}">Remove</button>
     </div>
   `;
 }
@@ -291,10 +269,6 @@ function sanitizeQty(value, fallback = 1) {
   return Math.min(999, Math.max(1, parsed));
 }
 
-function normalizeStage(stage, fallback = 'adult') {
-  return stage === 'juvenile' ? 'juvenile' : stage === 'adult' ? 'adult' : fallback;
-}
-
 function pruneMarineEntries() {
   if (!Array.isArray(state.stock)) {
     state.stock = [];
@@ -311,7 +285,7 @@ function pruneMarineEntries() {
   });
 
   if (!state.candidate) {
-    state.candidate = { id: getDefaultSpeciesId(), qty: 1, stage: 'adult' };
+    state.candidate = { id: getDefaultSpeciesId(), qty: 1 };
     return;
   }
 
@@ -600,13 +574,6 @@ function bindInputs() {
     const qty = sanitizeQty(refs.qty.value, state.candidate?.qty ?? 1);
     state.candidate.qty = qty;
     refs.qty.value = String(qty);
-    scheduleUpdate();
-  });
-
-  refs.stage.addEventListener('change', () => {
-    const stage = normalizeStage(refs.stage.value, state.candidate?.stage ?? 'adult');
-    state.candidate.stage = stage;
-    refs.stage.value = stage;
     scheduleUpdate();
   });
 

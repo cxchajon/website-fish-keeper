@@ -264,7 +264,7 @@ export function renderStockList(list, entries, onRemove) {
     name.textContent = entry.species.common_name;
     const qty = document.createElement('span');
     qty.className = 'secondary-text';
-    qty.textContent = `${entry.qty} × ${entry.stage === 'juvenile' ? 'juvenile' : 'adult'}`;
+    qty.textContent = `Qty: ${entry.qty}`;
     meta.append(name, qty);
     const remove = document.createElement('button');
     remove.type = 'button';
