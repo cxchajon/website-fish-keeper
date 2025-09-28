@@ -25,6 +25,7 @@ const INFO_COPY = {
 
 let dynamicPopover = null;
 let activeButton = null;
+let dynamicEscListener = null;
 
 function ensureDynamicPopover() {
   if (dynamicPopover) return dynamicPopover;
@@ -33,6 +34,7 @@ function ensureDynamicPopover() {
   dynamicPopover.setAttribute('data-hidden', 'true');
   dynamicPopover.setAttribute('role', 'dialog');
   dynamicPopover.setAttribute('aria-modal', 'false');
+  dynamicPopover.dataset.testid = 'info-popover';
   document.body.appendChild(dynamicPopover);
   return dynamicPopover;
 }
@@ -42,6 +44,13 @@ function hideDynamicPopover() {
   dynamicPopover.setAttribute('data-hidden', 'true');
   dynamicPopover.innerHTML = '';
   activeButton?.setAttribute('aria-expanded', 'false');
+  if (dynamicEscListener) {
+    document.removeEventListener('keydown', dynamicEscListener);
+    dynamicEscListener = null;
+  }
+  if (activeButton) {
+    activeButton.focus();
+  }
   activeButton = null;
 }
 
@@ -55,7 +64,23 @@ function positionPopover(popover, trigger) {
 
 function showInfoPopover(button, info) {
   const pop = ensureDynamicPopover();
-  pop.innerHTML = `<strong>${info.title}</strong><p style="margin:8px 0 0;">${info.body}</p>`;
+  pop.innerHTML = '';
+  const title = document.createElement('strong');
+  title.textContent = info.title;
+  const body = document.createElement('p');
+  body.style.margin = '8px 0 0';
+  body.textContent = info.body;
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'link-like';
+  close.textContent = 'Close';
+  close.setAttribute('data-popover-close', '');
+  close.dataset.testid = 'info-popover-close';
+  close.addEventListener('click', (event) => {
+    event.preventDefault();
+    hideDynamicPopover();
+  });
+  pop.append(title, body, close);
   positionPopover(pop, button);
   pop.setAttribute('data-hidden', 'false');
   button.setAttribute('aria-expanded', 'true');
@@ -70,11 +95,16 @@ function togglePopoverFromButton(button) {
   const popover = document.getElementById(id);
   if (!popover) return;
   const hidden = popover.getAttribute('data-hidden') !== 'false';
+  let closeButton = null;
   const hide = () => {
     popover.setAttribute('data-hidden', 'true');
     button.setAttribute('aria-expanded', 'false');
     document.removeEventListener('keydown', escHandler);
     document.removeEventListener('click', outsideHandler, true);
+    if (closeButton) {
+      closeButton.removeEventListener('click', closeHandler);
+    }
+    button.focus();
   };
   const escHandler = (event) => {
     if (event.key === 'Escape') {
@@ -86,6 +116,10 @@ function togglePopoverFromButton(button) {
       hide();
     }
   };
+  const closeHandler = (event) => {
+    event.preventDefault();
+    hide();
+  };
   if (hidden) {
     const rect = button.getBoundingClientRect();
     popover.style.top = `${rect.bottom + window.scrollY + 12}px`;
@@ -94,6 +128,10 @@ function togglePopoverFromButton(button) {
     button.setAttribute('aria-expanded', 'true');
     document.addEventListener('keydown', escHandler);
     document.addEventListener('click', outsideHandler, true);
+    closeButton = popover.querySelector('[data-popover-close]');
+    if (closeButton) {
+      closeButton.addEventListener('click', closeHandler);
+    }
   } else {
     hide();
   }
@@ -118,13 +156,15 @@ export function bindPopoverHandlers(root) {
     }
     hideDynamicPopover();
     showInfoPopover(button, info);
-    const escHandler = (event) => {
+    if (dynamicEscListener) {
+      document.removeEventListener('keydown', dynamicEscListener);
+    }
+    dynamicEscListener = (event) => {
       if (event.key === 'Escape') {
         hideDynamicPopover();
-        document.removeEventListener('keydown', escHandler);
       }
     };
-    document.addEventListener('keydown', escHandler);
+    document.addEventListener('keydown', dynamicEscListener);
   });
 
   document.addEventListener('click', (event) => {
@@ -173,6 +213,7 @@ export function renderConditions(list, items) {
       infoBtn.setAttribute('data-info-key', item.infoKey);
       infoBtn.setAttribute('aria-label', `${item.label} info`);
       infoBtn.textContent = 'i';
+      infoBtn.dataset.testid = 'info-popover-trigger';
       label.appendChild(infoBtn);
     }
 
