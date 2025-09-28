@@ -14,6 +14,7 @@
   <meta property="og:image" content="https://thetankguide.com/logo.png" />
   <link rel="icon" href="/favicon.ico" />
   <link rel="stylesheet" href="css/style.css?v=1.0.8" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script defer src="js/nav.js?v=1.0.8"></script>
   <style>
     *, *::before, *::after {
@@ -353,7 +354,7 @@
   <script>
     (async () => {
       const el = document.getElementById('site-footer');
-      if (el) el.innerHTML = await (await fetch('footer.html', { cache: 'no-cache' })).text();
+      if (el) el.innerHTML = await (await fetch('footer.html?v=1.1.0', { cache: 'no-cache' })).text();
     })();
   </script>
   <script>
