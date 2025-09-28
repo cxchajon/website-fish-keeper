@@ -208,8 +208,33 @@
     </div>
   </header>
 
+  <!-- Index-only: tighten the gap above the hero on mobile -->
+  <style>
+    /* HERO GAP FIX (index only) */
+    @media (max-width: 768px){
+      /* Remove any extra offset above hero */
+      .hero{ margin-top:0 !important; padding-top:8px !important; }
+      /* Ensure the first hero child doesn't push down content */
+      .hero > *:first-child{ margin-top:0 !important; }
+      /* Bring headline and sublines closer */
+      .hero h1{ margin-top:6px !important; }
+      .hero .brandline,
+      .hero .subtitle,
+      .hero p{ margin-top:4px !important; }
+      /* Hide or neutralize decorative swoosh/wave on small screens */
+      .hero .wave,
+      .hero .swoosh,
+      .hero .divider,
+      .hero img[alt*="wave" i]{ display:none !important; }
+      /* If the decoration must remain in DOM, collapse its footprint */
+      .hero .wave, .hero .swoosh, .hero .divider{
+        margin:0 !important; padding:0 !important; height:0 !important;
+      }
+    }
+  </style>
+
   <!-- SEO Intro (blurb, sits above footer) -->
-<section class="seo-intro">
+  <section class="seo-intro">
   <div class="wrap">
     <p>Welcome to The Tank Guide by FishKeepingLifeCo — your trusted resource for healthy freshwater aquariums.</p>
     <p>Our free tools include the Stocking Advisor, Cycling Coach, and Gear Guide, giving hobbyists clear answers without confusion.</p>
