@@ -191,11 +191,56 @@ export function deriveEnv(stock = [], options = {}) {
     notes.bioload.push(computed.bioload.message);
   }
 
-  const aggressionPct = computeAggressionScore(computed);
-  const aggressionLabel = computed?.aggression?.label ?? 'No conflicts detected.';
-  const aggressionSeverity = computed?.aggression?.severity ?? 'ok';
+  let aggressionPct = computeAggressionScore(computed);
+  let aggressionLabel = computed?.aggression?.label ?? 'No conflicts detected.';
+  let aggressionSeverity = computed?.aggression?.severity ?? 'ok';
   if (Array.isArray(computed?.aggression?.reasons)) {
     notes.aggression.push(...computed.aggression.reasons);
+  }
+
+  const maleBettaCount = entries.reduce((total, entry) => {
+    if (!entry || !entry.species) return total;
+    const qty = Number(entry.qty) || 0;
+    if (qty <= 0) return total;
+    const species = entry.species;
+    if (species.id === 'betta_male') {
+      return total + qty;
+    }
+    const commonName = (species.common_name ?? species.commonName ?? '').toLowerCase();
+    if (commonName === 'betta (male)') {
+      return total + qty;
+    }
+    if (Array.isArray(species.tags)) {
+      const tags = species.tags.map((tag) => String(tag).toLowerCase());
+      if (tags.includes('betta') && tags.includes('male')) {
+        return total + qty;
+      }
+    }
+    return total;
+  }, 0);
+
+  if (maleBettaCount >= 2) {
+    aggressionPct = 100;
+    aggressionLabel = '100%';
+    aggressionSeverity = 'critical';
+    const warningTitle = 'Multiple Male Bettas Detected';
+    const warningMessage = 'Two or more male bettas should NOT be kept together. They will fight, often to injury or death. Keep only one male betta per tank.';
+    const warningActions = [
+      'Reduce male betta count to 1',
+      'Use a separate, fully cycled tank for additional males',
+    ];
+    const warningText = `${warningTitle}. ${warningMessage} Actions: ${warningActions.join('; ')}.`;
+    warnings.push({
+      id: 'warn_betta_male_conflict',
+      severity: 'critical',
+      type: 'hard',
+      title: warningTitle,
+      message: warningMessage,
+      actions: warningActions,
+      docs: { ref: 'betta_male_conflict' },
+      text: warningText,
+    });
+    notes.aggression.push('Multiple male bettas detected — keep only one male betta per tank.');
   }
 
   return {
@@ -322,7 +367,7 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   const aggressionNotes = isEmpty ? '' : renderChips(env.barNotes?.aggression ?? []);
   const generalChips = isEmpty ? '' : renderChips(env.detailChips ?? []);
   const bioloadLabel = isEmpty ? '0% → 0% of capacity' : env.bioloadLabel;
-  const aggressionLabel = isEmpty ? '0%' : env.aggressionLabel;
+  const aggressionLabel = isEmpty ? '0%' : (aggressionPct >= 100 ? '100%' : env.aggressionLabel);
 
   if (isMobile) {
     root.classList.add('env-bars--xl');
@@ -851,7 +896,7 @@ function formatRangeNumber(value, digits = 0) {
 }
 
 function colorForSeverity(severity) {
-  if (severity === 'bad') return 'var(--bad)';
+  if (severity === 'critical' || severity === 'bad') return 'var(--bad)';
   if (severity === 'warn') return '#f4b400';
   return 'rgba(255,255,255,0.35)';
 }
