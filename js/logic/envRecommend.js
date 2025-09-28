@@ -198,10 +198,12 @@ export function deriveEnv(stock = [], options = {}) {
     notes.aggression.push(...computed.aggression.reasons);
   }
 
+  let totalIndividuals = 0;
   const maleBettaCount = entries.reduce((total, entry) => {
     if (!entry || !entry.species) return total;
     const qty = Number(entry.qty) || 0;
     if (qty <= 0) return total;
+    totalIndividuals += qty;
     const species = entry.species;
     if (species.id === 'betta_male') {
       return total + qty;
@@ -241,6 +243,10 @@ export function deriveEnv(stock = [], options = {}) {
       text: warningText,
     });
     notes.aggression.push('Multiple male bettas detected — keep only one male betta per tank.');
+  } else if (maleBettaCount === 1 && totalIndividuals === 1) {
+    aggressionPct = 0;
+    aggressionLabel = '0%';
+    aggressionSeverity = 'ok';
   }
 
   return {
