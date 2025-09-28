@@ -4,7 +4,46 @@
   <meta charset="UTF-8" />
   <title>The Tank Guide — Stocking Advisor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="css/style.css?v=1.0.8" />
+  <script>
+    (function () {
+      const coerceDate = (value) => {
+        if (value instanceof Date && !Number.isNaN(value.valueOf())) {
+          return value;
+        }
+        if (typeof value === 'string' || typeof value === 'number') {
+          const parsed = new Date(value);
+          if (!Number.isNaN(parsed.valueOf())) {
+            return parsed;
+          }
+        }
+        return null;
+      };
+
+      const pad = (n) => String(n).padStart(2, '0');
+      const existingBuild = coerceDate(window.__APP_BUILD__);
+      const build = existingBuild || new Date();
+      const version = `${build.getFullYear()}${pad(build.getMonth() + 1)}${pad(build.getDate())}${pad(build.getHours())}${pad(
+        build.getMinutes(),
+      )}`;
+
+      window.__APP_BUILD__ = build;
+      if (typeof window.__APP_VERSION__ !== 'string' || window.__APP_VERSION__.trim() === '') {
+        window.__APP_VERSION__ = version;
+      }
+    })();
+  </script>
+  <link rel="stylesheet" id="css-main" href="css/style.css" data-base-href="css/style.css" />
+  <script>
+    (function () {
+      const version = typeof window.__APP_VERSION__ === 'string' ? window.__APP_VERSION__.trim() : '';
+      if (!version) return;
+      const cssEl = document.getElementById('css-main');
+      if (!cssEl) return;
+      const baseHref = cssEl.getAttribute('data-base-href') || cssEl.getAttribute('href');
+      if (!baseHref || baseHref.includes('?v=')) return;
+      cssEl.setAttribute('href', `${baseHref}?v=${version}`);
+    })();
+  </script>
   <link rel="icon" href="/favicon.ico" />
   <script defer src="js/nav.js?v=1.0.8"></script>
   <style>
@@ -738,7 +777,23 @@
   <script type="module" src="js/fish-data.js"></script>
   <script type="module" src="js/logic/compute.js"></script>
   <script type="module" src="js/logic/conflicts.js"></script>
-  <script type="module" src="js/stocking.js"></script>
+  <script id="js-stocking-loader">
+    (function () {
+      const version = typeof window.__APP_VERSION__ === 'string' ? window.__APP_VERSION__.trim() : '';
+      const suffix = version ? `?v=${version}` : '';
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.id = 'js-stocking';
+      script.src = `js/stocking.js${suffix}`;
+      script.setAttribute('data-base-src', 'js/stocking.js');
+      const current = document.currentScript;
+      if (current && current.parentNode) {
+        current.parentNode.replaceChild(script, current);
+      } else {
+        document.body.appendChild(script);
+      }
+    })();
+  </script>
 
   <div id="beginner-info" class="popover" data-hidden="true" role="dialog" aria-modal="false">
     <strong>Beginner safeguards</strong>

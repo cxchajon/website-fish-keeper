@@ -1,56 +1,92 @@
+import { APP_VERSION } from './utils/version.js';
 import { createDefaultState, buildComputedState, runSanitySuite, runStressSuite, SPECIES, getDefaultSpeciesId } from './logic/compute.js';
 import { computeEnv, renderEnvInto, renderWarningsInto } from './logic/envRecommend.js';
 import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderBioloadBar, renderAggressionBar, renderStatus, renderChips, bindPopoverHandlers } from './logic/ui.js';
 
-const state = createDefaultState();
-let computed = null;
-let variantSelectorOpen = false;
-const debugMode = getQueryFlag('debug');
+const versionSuffix = `?v=${APP_VERSION}`;
 
-const refs = {
-  pageTitle: document.getElementById('page-title'),
-  plantIcon: document.getElementById('plant-icon'),
-  gallons: document.getElementById('input-gallons'),
-  planted: document.getElementById('toggle-planted'),
-  tips: document.getElementById('toggle-tips'),
-  tipsInline: document.getElementById('env-tips-toggle'),
-  beginner: document.getElementById('toggle-beginner'),
-  blackwater: document.getElementById('toggle-blackwater'),
-  turnover: document.getElementById('input-turnover'),
-  temp: document.getElementById('input-temp'),
-  ph: document.getElementById('input-ph'),
-  gh: document.getElementById('input-gh'),
-  kh: document.getElementById('input-kh'),
-  salinity: document.getElementById('select-salinity'),
-  flow: document.getElementById('select-flow'),
-  tankSummary: document.getElementById('tank-summary'),
-  conditions: document.getElementById('conditions-list'),
-  bioloadFill: document.getElementById('bioload-fill'),
-  bioloadGhost: document.getElementById('bioload-ghost'),
-  bioloadText: document.getElementById('bioload-text'),
-  aggFill: document.getElementById('agg-fill'),
-  aggText: document.getElementById('agg-text'),
-  statusStrip: document.getElementById('status-strip'),
-  chipRow: document.getElementById('chip-row'),
-  candidateChips: document.getElementById('candidate-chips'),
-  candidateBanner: document.getElementById('candidate-banner'),
-  speciesSelect: document.getElementById('plan-species'),
-  qty: document.getElementById('plan-qty'),
-  addBtn: document.getElementById('plan-add'),
-  stockList: document.getElementById('stock-list'),
-  seeGear: document.getElementById('btn-gear'),
-  diagnostics: document.getElementById('diagnostics'),
-  diagnosticsContent: document.getElementById('diagnostics-content'),
-  envReco: document.getElementById('env-reco'),
-  envTips: document.getElementById('env-tips'),
-  warningsCard: document.getElementById('warnings-card'),
+const bumpVersionedAsset = (el) => {
+  if (!el) return;
+  const tag = el.tagName;
+  const attr = tag === 'LINK' ? 'href' : tag === 'SCRIPT' ? 'src' : null;
+  if (!attr) return;
+  const current = el.getAttribute(attr);
+  if (!current || current.includes('?v=')) {
+    return;
+  }
+  const base = el.getAttribute(`data-base-${attr}`) || current;
+  el.setAttribute(attr, `${base}${versionSuffix}`);
 };
 
-const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
-const speciesById = new Map(SPECIES.map((species) => [species.id, species]));
-const warnedMarineIds = new Set();
+document.addEventListener('DOMContentLoaded', () => {
+  bumpVersionedAsset(document.querySelector('#css-main'));
+  bumpVersionedAsset(document.querySelector('#js-stocking'));
+});
+
+console.log(`[TheTankGuide] APP_VERSION = ${APP_VERSION}`);
+
+window.addEventListener('keydown', (e) => {
+  // Use ⌘/Ctrl + Shift + L to force cache-bust reload.
+  const platform = typeof navigator !== 'undefined' ? navigator.platform : '';
+  const isMac = platform.toUpperCase().includes('MAC');
+  if ((isMac ? e.metaKey : e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'l') {
+    e.preventDefault();
+    const u = new URL(location.href);
+    u.searchParams.set('v', `${APP_VERSION}-${Date.now()}`);
+    location.replace(u.toString());
+  }
+});
+
+function bootstrapStocking() {
+  const state = createDefaultState();
+  let computed = null;
+  let variantSelectorOpen = false;
+  const debugMode = getQueryFlag('debug');
+
+  const refs = {
+    pageTitle: document.getElementById('page-title'),
+    plantIcon: document.getElementById('plant-icon'),
+    gallons: document.getElementById('input-gallons'),
+    planted: document.getElementById('toggle-planted'),
+    tips: document.getElementById('toggle-tips'),
+    tipsInline: document.getElementById('env-tips-toggle'),
+    beginner: document.getElementById('toggle-beginner'),
+    blackwater: document.getElementById('toggle-blackwater'),
+    turnover: document.getElementById('input-turnover'),
+    temp: document.getElementById('input-temp'),
+    ph: document.getElementById('input-ph'),
+    gh: document.getElementById('input-gh'),
+    kh: document.getElementById('input-kh'),
+    salinity: document.getElementById('select-salinity'),
+    flow: document.getElementById('select-flow'),
+    tankSummary: document.getElementById('tank-summary'),
+    conditions: document.getElementById('conditions-list'),
+    bioloadFill: document.getElementById('bioload-fill'),
+    bioloadGhost: document.getElementById('bioload-ghost'),
+    bioloadText: document.getElementById('bioload-text'),
+    aggFill: document.getElementById('agg-fill'),
+    aggText: document.getElementById('agg-text'),
+    statusStrip: document.getElementById('status-strip'),
+    chipRow: document.getElementById('chip-row'),
+    candidateChips: document.getElementById('candidate-chips'),
+    candidateBanner: document.getElementById('candidate-banner'),
+    speciesSelect: document.getElementById('plan-species'),
+    qty: document.getElementById('plan-qty'),
+    addBtn: document.getElementById('plan-add'),
+    stockList: document.getElementById('stock-list'),
+    seeGear: document.getElementById('btn-gear'),
+    diagnostics: document.getElementById('diagnostics'),
+    diagnosticsContent: document.getElementById('diagnostics-content'),
+    envReco: document.getElementById('env-reco'),
+    envTips: document.getElementById('env-tips'),
+    warningsCard: document.getElementById('warnings-card'),
+  };
+
+  const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
+  const speciesById = new Map(SPECIES.map((species) => [species.id, species]));
+  const warnedMarineIds = new Set();
 
 // ---- Add-to-Stock button wiring ----
 const elAdd = document.querySelector('#plan-add, .plan-add');
@@ -668,15 +704,20 @@ function buildGearPayload() {
   };
 }
 
-function init() {
-  bindPopoverHandlers(document.body);
-  pruneMarineEntries();
-  populateSpecies();
-  refs.qty.value = String(state.candidate.qty);
-  syncToggles();
-  bindInputs();
-  syncStateFromInputs();
-  renderAll();
+  function init() {
+    bindPopoverHandlers(document.body);
+    pruneMarineEntries();
+    populateSpecies();
+    refs.qty.value = String(state.candidate.qty);
+    syncToggles();
+    bindInputs();
+    syncStateFromInputs();
+    renderAll();
+  }
+
+  init();
 }
 
-init();
+if (readyForBootstrap) {
+  bootstrapStocking();
+}
