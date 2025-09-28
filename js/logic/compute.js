@@ -705,7 +705,7 @@ export function createDefaultState() {
     gallons: 20,
     planted: false,
     showTips: false,
-    beginnerMode: true,
+    beginnerMode: false,
     turnover: 5,
     sumpGallons: 0,
     tankAgeWeeks: 12,
