@@ -628,40 +628,14 @@
         <h2 id="controls-title" class="sr-only">Tank Controls</h2>
         <div class="controls-row">
           <div class="control-field control-field--full">
-            <label for="input-gallons">Tank Size</label>
-            <div class="tank-accordion" id="tank-size-accordion">
-              <details class="tank-accordion__item" open>
-                <summary class="tank-accordion__summary">
-                  <span>Preset Sizes</span>
-                  <span class="tank-accordion__icon" aria-hidden="true"></span>
-                </summary>
-                <div class="tank-accordion__panel">
-                  <fieldset id="tank-preset-fieldset" class="tank-preset-fieldset">
-                    <legend class="sr-only">Choose a preset tank size</legend>
-                    <div id="tank-preset-list" class="tank-preset-list"></div>
-                  </fieldset>
-                </div>
-              </details>
-              <details class="tank-accordion__item" id="tank-custom-details">
-                <summary class="tank-accordion__summary">
-                  <span>Custom Size</span>
-                  <span class="tank-accordion__icon" aria-hidden="true"></span>
-                </summary>
-                <div class="tank-accordion__panel">
-                  <input
-                    class="control tank-custom-input"
-                    id="input-gallons"
-                    type="number"
-                    inputmode="decimal"
-                    min="1"
-                    step="0.1"
-                    aria-describedby="gallons-hint"
-                  />
-                </div>
-              </details>
+            <label for="tank-size-select">Tank Size</label>
+            <div class="tank-size-group">
+              <select id="tank-size-select" name="tankSize" class="control" aria-describedby="tank-facts">
+                <option value="" disabled selected>Select a tank size…</option>
+              </select>
+              <span id="tank-footprint" class="tank-footprint" aria-live="polite" hidden></span>
             </div>
-            <span id="gallons-hint" class="secondary-text">Pick a preset or enter your own gallons.</span>
-            <p id="tank-facts" class="tank-facts subtle" aria-live="polite"></p>
+            <p id="tank-facts" class="tank-facts subtle" aria-live="polite">Select a tank size to begin.</p>
           </div>
 
           <div class="control-field">
