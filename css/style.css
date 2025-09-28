@@ -757,7 +757,7 @@ html {
   max-width: 320px;
 }
 
-.tank-footprint {
+.tank-size-card .footprint-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -772,7 +772,7 @@ html {
   min-height: 32px;
 }
 
-.tank-facts {
+.tank-size-card .facts-line {
   margin: 0;
   font-size: 0.95rem;
   padding-top: 4px;
