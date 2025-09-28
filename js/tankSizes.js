@@ -48,7 +48,11 @@ export function getTankById(id) {
 }
 
 export function listTanks() {
-  return TANK_SIZES.slice();
+  return TANK_SIZES.slice().sort((a, b) => {
+    const gallonDiff = (a?.gallons ?? 0) - (b?.gallons ?? 0);
+    if (gallonDiff !== 0) return gallonDiff;
+    return String(a?.label ?? '').localeCompare(String(b?.label ?? ''));
+  });
 }
 
 export default TANK_SIZES;
