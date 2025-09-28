@@ -24,7 +24,8 @@ function bootstrapStocking() {
   let variantSelectorOpen = false;
   let shouldRestoreVariantFocus = false;
   const debugMode = getQueryFlag('debug');
-  const CATEGORY_ORDER = ['Pico', 'Nano', 'Small', 'Medium', 'Large', 'XL', 'XXL'];
+  const POPULAR_GALLON_MIN = 5;
+  const POPULAR_GALLON_MAX = 125;
 
   const refs = {
     pageTitle: document.getElementById('page-title'),
@@ -101,6 +102,13 @@ function bootstrapStocking() {
     return option;
   }
 
+  function isPopularTank(tank) {
+    if (!tank || tank.popular !== true) return false;
+    const gallons = Number(tank.gallons);
+    if (!Number.isFinite(gallons)) return false;
+    return gallons >= POPULAR_GALLON_MIN && gallons <= POPULAR_GALLON_MAX;
+  }
+
   function renderTankSizeOptions() {
     if (!refs.tankSelect) return;
     refs.tankSelect.innerHTML = '';
@@ -112,54 +120,16 @@ function bootstrapStocking() {
       placeholder.selected = true;
     }
     refs.tankSelect.appendChild(placeholder);
-    const tanks = listTanks();
+    const tanks = listTanks().filter(isPopularTank);
     tanks.sort((a, b) => {
       const gallonDiff = (a?.gallons ?? 0) - (b?.gallons ?? 0);
       if (gallonDiff !== 0) return gallonDiff;
       return String(a?.label ?? '').localeCompare(String(b?.label ?? ''));
     });
 
-    const useGroups = tanks.some((tank) => Boolean(tank?.category));
     const fragment = document.createDocumentFragment();
-
-    if (useGroups) {
-      const grouped = new Map();
-      const uncategorized = [];
-      for (const tank of tanks) {
-        const category = typeof tank?.category === 'string' ? tank.category.trim() : '';
-        if (category) {
-          if (!grouped.has(category)) {
-            grouped.set(category, []);
-          }
-          grouped.get(category).push(tank);
-        } else {
-          uncategorized.push(tank);
-        }
-      }
-
-      for (const tank of uncategorized) {
-        fragment.appendChild(createTankOption(tank));
-      }
-
-      const groupedCategories = Array.from(grouped.keys());
-      const orderedCategories = CATEGORY_ORDER.filter((category) => grouped.has(category));
-
-      const remainingCategories = groupedCategories.filter((category) => !CATEGORY_ORDER.includes(category));
-      remainingCategories.sort((a, b) => a.localeCompare(b));
-      orderedCategories.push(...remainingCategories);
-
-      for (const category of orderedCategories) {
-        const optgroup = document.createElement('optgroup');
-        optgroup.label = category;
-        for (const tank of grouped.get(category)) {
-          optgroup.appendChild(createTankOption(tank));
-        }
-        fragment.appendChild(optgroup);
-      }
-    } else {
-      for (const tank of tanks) {
-        fragment.appendChild(createTankOption(tank));
-      }
+    for (const tank of tanks) {
+      fragment.appendChild(createTankOption(tank));
     }
 
     refs.tankSelect.appendChild(fragment);
@@ -222,7 +192,7 @@ function bootstrapStocking() {
     if (!refs.tankFacts) return;
     if (state.selectedTankId) {
       const tank = getTankById(state.selectedTankId);
-      if (tank) {
+      if (isPopularTank(tank)) {
         const dimsIn = formatDimensionList(tank.dimensions_in, 0);
         const dimsCm = formatDimensionList(tank.dimensions_cm, 1);
         const filled = Math.round(tank.filled_weight_lbs);
@@ -231,12 +201,14 @@ function bootstrapStocking() {
         return;
       }
     }
-    refs.tankFacts.textContent = 'Select a tank size to begin.';
+    refs.tankFacts.textContent = 'Choose a popular tank size to begin.';
   }
 
   function applyTankSelection(id, { shouldPersist = true, skipRecompute = false } = {}) {
     const tank = getTankById(id);
-    if (!tank) return;
+    if (!isPopularTank(tank)) {
+      return;
+    }
     state.selectedTankId = tank.id;
     state.gallons = tank.gallons;
     state.liters = tank.liters;
@@ -256,7 +228,7 @@ function bootstrapStocking() {
     const storedId = loadPersistedTankId();
     if (storedId) {
       const tank = getTankById(storedId);
-      if (tank) {
+      if (isPopularTank(tank)) {
         applyTankSelection(tank.id, { shouldPersist: false, skipRecompute: true });
         return;
       }
