@@ -488,7 +488,7 @@ function computeDiagnostics({ tank, bioload, aggression, status, candidate, entr
   lines.push(`Bioload %: ${formatPercent(bioload.currentPercent)} → ${formatPercent(bioload.proposedPercent)}`);
   lines.push(`Aggression: ${aggression.label} (${aggression.severity})`);
   lines.push(`Entries: ${entries.length}${candidate ? ` + candidate ${candidate.species.common_name}` : ''}`);
-  lines.push(status.status.label);
+  lines.push(status.label);
   return lines;
 }
 

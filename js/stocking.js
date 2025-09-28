@@ -543,9 +543,18 @@ const tipsPane = document.querySelector('#env-tips');
 
 if (tipsBtn && tipsPane) {
   tipsBtn.addEventListener('click', () => {
-    state.showTips = !state.showTips;
+    const open = !tipsPane.hasAttribute('hidden');
+    if (open) {
+      tipsPane.setAttribute('hidden', '');
+      tipsBtn.setAttribute('aria-pressed', 'false');
+      tipsBtn.textContent = 'Show More Tips';
+    } else {
+      tipsPane.removeAttribute('hidden');
+      tipsBtn.setAttribute('aria-pressed', 'true');
+      tipsBtn.textContent = 'Hide Tips';
+    }
+    state.showTips = !open;
     syncToggles();
-    scheduleUpdate();
   });
 }
 
