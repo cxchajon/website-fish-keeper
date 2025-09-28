@@ -1013,18 +1013,27 @@ nav[role="navigation"] + .hero-header{
 
 /* conditions grid */
 
-/* Scoped fallbacks for Cycling Coach only (used only if homepage styles aren’t global) */
+/* Cycling Coach blurbs — fallback to match homepage sizing exactly */
 #cc-blurbs .home-subtext {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  opacity: 0.8;
-  color: var(--text-muted, rgba(255, 255, 255, 0.8));
-  margin: 0 0 10px;
+  font: inherit;
+  font-size: var(--home-subtext-size, 0.95rem);
+  line-height: var(--home-subtext-leading, 1.5);
+  color: var(--text-muted, rgba(255,255,255,0.8));
+  margin: 12px 0 10px;
 }
-
 #cc-blurbs .home-blurb {
-  font-size: 1.05rem;
-  line-height: 1.7;
+  font: inherit;
+  font-size: var(--home-blurb-size, 1.05rem);
+  line-height: var(--home-blurb-leading, 1.7);
   color: var(--text-primary, #fff);
-  margin: 0;
+  margin: 0 0 18px;
+}
+/* Neutralize any accidental oversized styles coming from cards/containers */
+#cc-blurbs .home-subtext,
+#cc-blurbs .home-blurb {
+  font-weight: var(--home-blurb-weight, 400);
+}
+@media (min-width: 768px) {
+  #cc-blurbs .home-subtext { font-size: var(--home-subtext-size-md, 1rem); }
+  #cc-blurbs .home-blurb { font-size: var(--home-blurb-size-md, 1.1rem); }
 }
