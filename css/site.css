@@ -31,6 +31,17 @@
 .env-xl-value { font-size:1.06rem; font-weight:650; line-height:1.2; }
 .env-xl-nowrap { white-space:nowrap; }
 
+/* Environmental recommendations card refinements */
+#env-card .card__hd { margin-bottom:12px; }
+#env-card .card__hd--split { align-items:flex-start; }
+#env-card .card__title-stack { display:flex; flex-direction:column; gap:4px; min-width:0; }
+#env-card .card__title-stack h2 { margin:0; }
+#env-card .card__subtitle { margin:0; }
+#env-card .env-grid-xl { margin-top:12px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+#env-card .env-grid-xl .env-xl-table { min-width:520px; }
+#env-card .env-grid-xl::-webkit-scrollbar { height:6px; }
+#env-card .env-grid-xl::-webkit-scrollbar-thumb { background:rgba(255,255,255,.24); border-radius:999px; }
+
 /* Chips row inside "Notes" value cell */
 .env-notes { display:flex; gap:6px; overflow-x:auto; padding:2px 0; }
 .env-chip { flex:0 0 auto; font-size:.8rem; padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); }
@@ -69,9 +80,10 @@
   /* Subtle zebra only on value rows for readability */
   .env-xl-rowB .env-xl-cell { background:rgba(255,255,255,.035); }
 
-  /* Compact header/subtitle spacing */
-  #env-card .card__hd--split { align-items:baseline; }
-  #env-card .subtle { margin:2px 0 8px; }
+  /* Mobile typography and spacing */
+  #env-card .env-grid-xl { padding-bottom:4px; }
+  #env-card .env-grid-xl .env-xl-cell { padding:8px 12px; font-size:0.9rem; line-height:1.35; }
+  #env-card .env-grid-xl .env-xl-value { font-size:0.95rem; }
 
   /* Bars block uses the compact style */
   #env-bars.env-bars--xl { margin-top:10px; }
