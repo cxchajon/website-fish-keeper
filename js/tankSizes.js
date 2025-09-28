@@ -38,6 +38,7 @@ export const TANK_SIZES = [
     empty_weight_lbs: 7,
     footprint_in: '16.2 × 8.4',
     category: 'Nano',
+    popular: true,
     notes: 'Typical 5.5g rect.; dims ~16×8×10 in; values vary by brand.',
   },
   {
@@ -51,6 +52,7 @@ export const TANK_SIZES = [
     empty_weight_lbs: 11,
     footprint_in: '20.3 × 10.5',
     category: 'Nano',
+    popular: true,
     notes: 'Common starter size; fits many beginner species.',
   },
   {
@@ -64,6 +66,7 @@ export const TANK_SIZES = [
     empty_weight_lbs: 21,
     footprint_in: '20.3 × 10.5',
     category: 'Small',
+    popular: true,
     notes: 'Tall 15g column footprint used for planted displays.',
   },
   {
@@ -77,6 +80,7 @@ export const TANK_SIZES = [
     empty_weight_lbs: 25,
     footprint_in: '24.3 × 12.5',
     category: 'Small',
+    popular: true,
     notes: 'Standard 20g high profile (24×12 footprint).',
   },
   {
@@ -90,6 +94,7 @@ export const TANK_SIZES = [
     empty_weight_lbs: 25,
     footprint_in: '30.3 × 12.5',
     category: 'Small',
+    popular: true,
     notes: 'Popular long footprint for aquascaping and breeding.',
   },
   {
@@ -103,6 +108,7 @@ export const TANK_SIZES = [
     empty_weight_lbs: 40,
     footprint_in: '30.3 × 12.5',
     category: 'Small',
+    popular: true,
     notes: 'Versatile 30×12 footprint with additional height.',
   },
   {
@@ -168,6 +174,7 @@ export const TANK_SIZES = [
     empty_weight_lbs: 58,
     footprint_in: '36.3 × 18.3',
     category: 'Medium',
+    popular: true,
     notes: 'Wide breeder footprint; sturdy 36×18 stand needed.',
   },
   {
@@ -220,6 +227,7 @@ export const TANK_SIZES = [
     empty_weight_lbs: 78,
     footprint_in: '48.3 × 12.8',
     category: 'Medium',
+    popular: true,
     notes: 'Standard 4-foot long aquarium.',
   },
   {
@@ -246,6 +254,7 @@ export const TANK_SIZES = [
     empty_weight_lbs: 126,
     footprint_in: '36.4 × 18.4',
     category: 'Medium',
+    popular: true,
     notes: 'Tall 36-inch footprint with internal overflow option.',
   },
   {
@@ -259,6 +268,7 @@ export const TANK_SIZES = [
     empty_weight_lbs: 140,
     footprint_in: '48.5 × 18.5',
     category: 'Medium',
+    popular: true,
     notes: 'Staple 4-foot tank for freshwater and reef builds.',
   },
   {
@@ -272,6 +282,7 @@ export const TANK_SIZES = [
     empty_weight_lbs: 160,
     footprint_in: '48 × 18',
     category: 'Large',
+    popular: true,
     notes: 'Common 90g dimensions; check stand/floor ratings.',
   },
   {
@@ -311,6 +322,7 @@ export const TANK_SIZES = [
     empty_weight_lbs: 206,
     footprint_in: '72 × 18',
     category: 'XL',
+    popular: true,
     notes: 'Standard 125g long; some manufacturers list 22" height and slightly different weights.',
   },
   {
