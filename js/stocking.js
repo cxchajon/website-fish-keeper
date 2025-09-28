@@ -3,9 +3,7 @@ import { renderEnvCard } from './logic/envRecommend.js';
 import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderChips, bindPopoverHandlers } from './logic/ui.js';
-import { listTanks, getTankById } from './tankSizes.js';
 
-console.debug('tankSizes count:', listTanks().length, listTanks().map((t) => t.id));
 window.addEventListener('keydown', (e) => {
   const platform = typeof navigator !== 'undefined' ? navigator.platform : '';
   const isMac = platform.toUpperCase().includes('MAC');
@@ -18,21 +16,36 @@ window.addEventListener('keydown', (e) => {
 });
 
 function bootstrapStocking() {
-  const TANK_STORAGE_KEY = 'ttg.selectedTank';
-  const state = createDefaultState();
+  let state = window.appState;
+  if (!state || typeof state !== 'object') {
+    state = createDefaultState();
+  } else {
+    const defaults = createDefaultState();
+    for (const [key, value] of Object.entries(defaults)) {
+      if (!(key in state)) {
+        state[key] = value;
+        continue;
+      }
+      if (value && typeof value === 'object') {
+        if (Array.isArray(value)) {
+          if (!Array.isArray(state[key])) {
+            state[key] = value.slice();
+          }
+        } else {
+          state[key] = { ...value, ...state[key] };
+        }
+      }
+    }
+  }
+  window.appState = state;
   let computed = null;
   let variantSelectorOpen = false;
   let shouldRestoreVariantFocus = false;
   const debugMode = getQueryFlag('debug');
-  const POPULAR_GALLON_MIN = 5;
-  const POPULAR_GALLON_MAX = 125;
 
   const refs = {
     pageTitle: document.getElementById('page-title'),
     plantIcon: document.getElementById('plant-icon'),
-    tankSelect: document.getElementById('tank-size-select'),
-    tankFootprint: document.getElementById('tank-footprint'),
-    tankFacts: document.getElementById('tank-facts'),
     planted: document.getElementById('toggle-planted'),
     tips: document.getElementById('toggle-tips'),
     tipsInline: document.getElementById('env-tips-toggle'),
@@ -59,188 +72,6 @@ function bootstrapStocking() {
     envReco: document.getElementById('env-reco'),
     envTips: document.getElementById('env-tips'),
   };
-
-  function formatWithPrecision(value, decimals = 1) {
-    if (!Number.isFinite(value)) return '0';
-    const factor = 10 ** decimals;
-    const rounded = Math.round(value * factor) / factor;
-    if (decimals === 0) {
-      return String(Math.round(rounded));
-    }
-    if (Number.isInteger(rounded)) {
-      return String(Math.trunc(rounded));
-    }
-    return rounded.toFixed(decimals).replace(/0+$/, '').replace(/\.$/, '');
-  }
-
-  function formatGallonsLabel(value) {
-    if (!Number.isFinite(value) || value <= 0) {
-      return '0g';
-    }
-    const rounded = Math.round(value * 10) / 10;
-    if (Number.isInteger(rounded)) {
-      return `${Math.trunc(rounded)}g`;
-    }
-    return `${rounded.toFixed(1).replace(/0+$/, '').replace(/\.$/, '')}g`;
-  }
-
-  function formatDimensionList(dimensions, decimals = 0) {
-    if (!dimensions) return '';
-    const keys = ['l', 'w', 'h'];
-    return keys
-      .map((key) => formatWithPrecision(dimensions[key], decimals))
-      .join(' × ');
-  }
-
-  function createTankOption(tank) {
-    const option = document.createElement('option');
-    option.value = tank.id;
-    option.textContent = tank.label;
-    if (tank.id === state.selectedTankId) {
-      option.selected = true;
-    }
-    return option;
-  }
-
-  function isPopularTank(tank) {
-    if (!tank || tank.popular !== true) return false;
-    const gallons = Number(tank.gallons);
-    if (!Number.isFinite(gallons)) return false;
-    return gallons >= POPULAR_GALLON_MIN && gallons <= POPULAR_GALLON_MAX;
-  }
-
-  function renderTankSizeOptions() {
-    if (!refs.tankSelect) return;
-    refs.tankSelect.innerHTML = '';
-    const placeholder = document.createElement('option');
-    placeholder.value = '';
-    placeholder.textContent = 'Select a tank size…';
-    placeholder.disabled = true;
-    if (!state.selectedTankId) {
-      placeholder.selected = true;
-    }
-    refs.tankSelect.appendChild(placeholder);
-    const tanks = listTanks().filter(isPopularTank);
-    tanks.sort((a, b) => {
-      const gallonDiff = (a?.gallons ?? 0) - (b?.gallons ?? 0);
-      if (gallonDiff !== 0) return gallonDiff;
-      return String(a?.label ?? '').localeCompare(String(b?.label ?? ''));
-    });
-
-    const fragment = document.createDocumentFragment();
-    for (const tank of tanks) {
-      fragment.appendChild(createTankOption(tank));
-    }
-
-    refs.tankSelect.appendChild(fragment);
-    console.debug('rendered options:', document.querySelectorAll('#tank-size-select option').length);
-  }
-
-  function updateTankFootprint(tank) {
-    if (!refs.tankFootprint) return;
-    if (tank) {
-      const dimsIn = tank.dimensions_in;
-      const dimsCm = tank.dimensions_cm;
-      const footprintIn = tank.footprint_in
-        ? `${tank.footprint_in} in`
-        : dimsIn
-        ? `${formatWithPrecision(dimsIn.l, 0)} × ${formatWithPrecision(dimsIn.w, 0)} in`
-        : '';
-      const footprintCm = dimsCm
-        ? `${formatWithPrecision(dimsCm.l, 1)} × ${formatWithPrecision(dimsCm.w, 1)} cm`
-        : '';
-      const pieces = [];
-      if (footprintIn) pieces.push(footprintIn);
-      if (footprintCm) pieces.push(`(${footprintCm})`);
-      const combined = pieces.join(' ');
-      if (combined) {
-        refs.tankFootprint.textContent = `Footprint: ${combined}`;
-        refs.tankFootprint.removeAttribute('hidden');
-      } else {
-        refs.tankFootprint.textContent = '';
-        refs.tankFootprint.setAttribute('hidden', '');
-      }
-    } else {
-      refs.tankFootprint.textContent = '';
-      refs.tankFootprint.setAttribute('hidden', '');
-    }
-  }
-
-  function persistSelectedTank(id) {
-    try {
-      if (!('localStorage' in window)) return;
-      if (id) {
-        window.localStorage.setItem(TANK_STORAGE_KEY, id);
-      } else {
-        window.localStorage.removeItem(TANK_STORAGE_KEY);
-      }
-    } catch (error) {
-      // ignore persistence failures (private browsing, etc.)
-    }
-  }
-
-  function loadPersistedTankId() {
-    try {
-      if (!('localStorage' in window)) return null;
-      return window.localStorage.getItem(TANK_STORAGE_KEY);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  function renderTankFacts() {
-    if (!refs.tankFacts) return;
-    if (state.selectedTankId) {
-      const tank = getTankById(state.selectedTankId);
-      if (isPopularTank(tank)) {
-        const dimsIn = formatDimensionList(tank.dimensions_in, 0);
-        const dimsCm = formatDimensionList(tank.dimensions_cm, 1);
-        const filled = Math.round(tank.filled_weight_lbs);
-        const litersRounded = Math.round(tank.liters);
-        refs.tankFacts.textContent = `${formatGallonsLabel(tank.gallons)} • ${litersRounded} L • ${dimsIn} in (${dimsCm} cm) • ~${filled} lbs filled`;
-        return;
-      }
-    }
-    refs.tankFacts.textContent = 'Choose a popular tank size to begin.';
-  }
-
-  function applyTankSelection(id, { shouldPersist = true, skipRecompute = false } = {}) {
-    const tank = getTankById(id);
-    if (!isPopularTank(tank)) {
-      return;
-    }
-    state.selectedTankId = tank.id;
-    state.gallons = tank.gallons;
-    state.liters = tank.liters;
-    renderTankSizeOptions();
-    updateTankFootprint(tank);
-    if (shouldPersist) {
-      persistSelectedTank(tank.id);
-    }
-    if (skipRecompute) {
-      renderTankFacts();
-    } else {
-      runRecompute({ skipInputSync: true });
-    }
-  }
-
-  function hydrateTankSelection() {
-    const storedId = loadPersistedTankId();
-    if (storedId) {
-      const tank = getTankById(storedId);
-      if (isPopularTank(tank)) {
-        applyTankSelection(tank.id, { shouldPersist: false, skipRecompute: true });
-        return;
-      }
-      persistSelectedTank(null);
-    }
-    state.selectedTankId = null;
-    state.gallons = 0;
-    state.liters = 0;
-    renderTankSizeOptions();
-    updateTankFootprint(null);
-    renderTankFacts();
-  }
 
 const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
 const speciesById = new Map(SPECIES.map((species) => [species.id, species]));
@@ -545,13 +376,23 @@ function pruneMarineEntries() {
   }
 }
 
-function updateToggle(button, value) {
-  if (!button) return;
-  button.dataset.active = value ? 'true' : 'false';
-  button.setAttribute('aria-checked', value ? 'true' : 'false');
-  const label = button.querySelector('span:last-of-type');
+function updateToggle(control, value) {
+  if (!control) return;
+  const active = Boolean(value);
+  if (control instanceof HTMLInputElement && control.type === 'checkbox') {
+    control.checked = active;
+    control.setAttribute('aria-checked', active ? 'true' : 'false');
+    const wrapper = control.closest('.switch');
+    if (wrapper) {
+      wrapper.setAttribute('data-active', active ? 'true' : 'false');
+    }
+    return;
+  }
+  control.dataset.active = active ? 'true' : 'false';
+  control.setAttribute('aria-checked', active ? 'true' : 'false');
+  const label = control.querySelector('span:last-of-type');
   if (label) {
-    label.textContent = value ? 'On' : 'Off';
+    label.textContent = active ? 'On' : 'Off';
   }
 }
 
@@ -669,7 +510,9 @@ function renderTankSummaryView() {
 
 function syncToggles() {
   updateToggle(refs.planted, state.planted);
-  updateToggle(refs.tips, state.showTips);
+  if (refs.tips) {
+    updateToggle(refs.tips, state.showTips);
+  }
   updateToggle(refs.beginner, state.beginnerMode);
   updateToggle(refs.blackwater, state.water.blackwater);
   if (refs.tipsInline) {
@@ -683,7 +526,9 @@ function syncToggles() {
       refs.envTips.setAttribute('hidden', '');
     }
   }
-  refs.plantIcon.style.display = state.planted ? 'inline-flex' : 'none';
+  if (refs.plantIcon) {
+    refs.plantIcon.style.display = state.planted ? 'inline-flex' : 'none';
+  }
 }
 
 function renderCandidateState() {
@@ -772,11 +617,19 @@ function runRecompute({ skipInputSync = false } = {}) {
   }
   pruneMarineEntries();
   renderAll();
-  renderTankFacts();
 }
 
 const scheduleUpdate = debounce(() => {
   runRecompute();
+});
+
+window.recomputeAll = (options = {}) => {
+  const opts = typeof options === 'object' && options !== null ? options : {};
+  runRecompute({ skipInputSync: true, ...opts });
+};
+
+window.addEventListener('ttg:recompute', () => {
+  runRecompute({ skipInputSync: true });
 });
 
 const tipsBtn = document.querySelector('#env-tips-toggle');
@@ -800,14 +653,6 @@ if (tipsBtn && tipsPane) {
 }
 
 function bindInputs() {
-  if (refs.tankSelect) {
-    refs.tankSelect.addEventListener('change', (event) => {
-      const selectedId = event.target.value;
-      if (selectedId) {
-        applyTankSelection(selectedId);
-      }
-    });
-  }
   if (refs.turnover) refs.turnover.addEventListener('input', scheduleUpdate);
   if (refs.temp) refs.temp.addEventListener('input', scheduleUpdate);
   if (refs.ph) refs.ph.addEventListener('input', scheduleUpdate);
@@ -816,23 +661,35 @@ function bindInputs() {
   if (refs.salinity) refs.salinity.addEventListener('change', scheduleUpdate);
   if (refs.flow) refs.flow.addEventListener('change', scheduleUpdate);
 
-  refs.planted.addEventListener('click', () => {
-    state.planted = !state.planted;
-    syncToggles();
-    scheduleUpdate();
-  });
+  if (refs.planted) {
+    refs.planted.addEventListener('change', () => {
+      state.planted = Boolean(refs.planted.checked);
+      syncToggles();
+      scheduleUpdate();
+    });
+  }
 
-  refs.tips.addEventListener('click', () => {
-    state.showTips = !state.showTips;
-    syncToggles();
-    scheduleUpdate();
-  });
+  if (refs.tips) {
+    refs.tips.addEventListener('click', () => {
+      state.showTips = !state.showTips;
+      syncToggles();
+      scheduleUpdate();
+    });
+  }
 
-  refs.beginner.addEventListener('click', () => {
-    state.beginnerMode = !state.beginnerMode;
-    syncToggles();
-    scheduleUpdate();
-  });
+  if (refs.beginner) {
+    const handleBeginnerChange = () => {
+      const next = refs.beginner instanceof HTMLInputElement ? refs.beginner.checked : !state.beginnerMode;
+      state.beginnerMode = Boolean(next);
+      syncToggles();
+      scheduleUpdate();
+    };
+    if (refs.beginner instanceof HTMLInputElement) {
+      refs.beginner.addEventListener('change', handleBeginnerChange);
+    } else {
+      refs.beginner.addEventListener('click', handleBeginnerChange);
+    }
+  }
 
   if (refs.blackwater) {
     refs.blackwater.addEventListener('click', () => {
@@ -900,12 +757,12 @@ function buildGearPayload() {
 }
 
   function init() {
-    renderTankSizeOptions();
-    hydrateTankSelection();
     bindPopoverHandlers(document.body);
     pruneMarineEntries();
     populateSpecies();
-    refs.qty.value = String(state.candidate.qty);
+    if (refs.qty) {
+      refs.qty.value = String(state.candidate.qty);
+    }
     syncToggles();
     bindInputs();
     runRecompute({ skipInputSync: true });
