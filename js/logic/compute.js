@@ -550,6 +550,7 @@ export function buildComputedState(state) {
     blockReasons,
     diagnostics,
     turnover: turnoverBand(tank),
+    stockCount: entries.length,
   };
 }
 
