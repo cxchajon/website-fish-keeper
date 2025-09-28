@@ -3,26 +3,192 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>About The Tank Guide — FishKeepingLifeCo Story & Mission</title>
+  <title>About The Tank Guide — FishKeepingLifeCo Story &amp; Mission</title>
   <meta name="description" content="Learn how The Tank Guide by FishKeepingLifeCo began — our story, mission, and vision to make fishkeeping simple, inspiring, and educational for every aquarist." />
   <link rel="icon" href="/favicon.ico" />
   <link rel="stylesheet" href="css/style.css?v=1.0.8" />
-
+  <script defer src="js/nav.js?v=1.0.8"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    main { max-width: 960px; margin: 0 auto; padding: 0 20px 80px; }
-    .about-box a { color: #ffffff; text-decoration: underline; }
-    .about-box hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.28); margin: 2.5em auto; max-width: 120px; }
-    .about-box ul { margin: 0.8em 0 1.1em 1.2em; padding: 0; }
-    .about-box li { margin-bottom: 0.6em; }
-    @media (min-width: 920px) {
-      main { padding-bottom: 120px; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body.theme-light {
+      background-attachment: fixed;
+    }
+
+    body > .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 16px;
+      padding: 10px 16px;
+      background: rgba(13, 25, 45, 0.85);
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: top 0.2s ease;
+      z-index: 9999;
+    }
+
+    body > .skip-link:focus {
+      top: 12px;
+    }
+
+    main {
+      padding: 72px 20px 120px;
+    }
+
+    .about-wrapper {
+      width: min(960px, 100%);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    .hero {
+      text-align: center;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-size: clamp(2.25rem, 4vw + 1rem, 3.5rem);
+      color: #ffffff;
+      letter-spacing: 0.02em;
+      text-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
+    }
+
+    .accordion-section {
+      background: rgba(5, 18, 32, 0.45);
+      border: 1px solid rgba(231, 241, 255, 0.35);
+      border-radius: 18px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 36px 80px rgba(6, 20, 44, 0.28);
+      overflow: hidden;
+    }
+
+    .accordion {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .accordion-item + .accordion-item {
+      border-top: 1px solid rgba(231, 241, 255, 0.25);
+    }
+
+    .accordion-item:first-child .accordion-trigger {
+      border-top-left-radius: 18px;
+      border-top-right-radius: 18px;
+    }
+
+    .accordion-item:last-child .accordion-trigger[aria-expanded="true"] {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .accordion-trigger {
+      width: 100%;
+      text-align: left;
+      padding: 22px clamp(20px, 3vw, 32px);
+      background: transparent;
+      color: rgba(255, 255, 255, 0.95);
+      font-size: clamp(1.25rem, 1vw + 1rem, 1.65rem);
+      font-weight: 700;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .accordion-trigger:hover,
+    .accordion-trigger:focus-visible {
+      background: rgba(231, 241, 255, 0.08);
+    }
+
+    .accordion-trigger:focus-visible {
+      outline: 3px solid rgba(255, 255, 255, 0.75);
+      outline-offset: -3px;
+    }
+
+    .accordion-trigger::after {
+      content: "";
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      border-top: 0;
+      border-left: 0;
+      transform: rotate(45deg);
+      transition: transform 0.25s ease;
+    }
+
+    .accordion-trigger[aria-expanded="true"]::after {
+      transform: rotate(-135deg);
+    }
+
+    .accordion-panel {
+      padding: 0 clamp(20px, 3vw, 32px) clamp(26px, 4vw, 40px);
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      background: linear-gradient(180deg, rgba(15, 28, 49, 0.6) 0%, rgba(8, 18, 32, 0.4) 100%);
+    }
+
+    .accordion-panel p {
+      margin: 0 0 1.15em;
+    }
+
+    .accordion-panel p:last-child {
+      margin-bottom: 0;
+    }
+
+    .accordion-panel ul {
+      margin: 0 0 1.2em 1.2em;
+      padding: 0;
+    }
+
+    .accordion-panel li {
+      margin-bottom: 0.65em;
+    }
+
+    .accordion-panel strong {
+      color: rgba(255, 255, 255, 0.98);
+    }
+
+    @media (max-width: 599px) {
+      main {
+        padding: 56px 16px 96px;
+      }
+
+      .hero-title {
+        font-size: clamp(2rem, 8vw, 2.5rem);
+      }
+
+      .accordion-trigger {
+        padding: 20px 18px;
+        font-size: 1.1rem;
+      }
+
+      .accordion-panel {
+        padding: 0 18px 26px;
+        font-size: 1rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .accordion-trigger,
+      .accordion-trigger::after {
+        transition: none;
+      }
     }
   </style>
 
-  <script defer src="js/nav.js?v=1.0.8"></script>
-
-  <!-- JSON-LD -->
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -73,65 +239,84 @@
   </script>
 </head>
 <body class="theme-light">
+  <a class="skip-link" href="#main-content">Skip to content</a>
   <div id="site-nav"></div>
 
-  <main>
-    <h1 class="about-hero-title">About The Tank Guide — FishKeepingLifeCo Mission &amp; Story</h1>
+  <main id="main-content">
+    <div class="about-wrapper">
+      <section class="hero" aria-labelledby="about-page-title">
+        <h1 id="about-page-title" class="hero-title">About</h1>
+      </section>
 
-    <section class="about-box" aria-labelledby="about-story">
-      <h2 id="about-story">Owner Story</h2>
-      <p>Ever since I was a kid, I was drawn to aquariums. My uncle kept guppies for years, and whenever I visited my grandmother, I’d sit and stare at them. That fascination stuck with me.</p>
-      <p>In 2011 or 2012, I caught a marathon of <em>Tanked</em> on Animal Planet. Their massive saltwater builds looked incredible, but freshwater seemed within reach. I decided it was finally time to try again—this time the right way.</p>
-      <p>I picked up a 50-gallon kit from a chain store. Tank, stand, hang-on-back filter, gravel, lights—the whole package. After hours of assembling the stand upside down, it broke as I flipped it. I nearly gave up, but I exchanged it and started over.</p>
-      <p>I filled the tank, added conditioner and “bacteria in a bottle,” and waited. A week later, nothing. Forums and YouTube became my lifeline. I tried a fishless cycle, then researched the safest way to do a fish-in cycle and chose hardy rasboras. Watching them school was amazing. Losing my first fish to a bad water change was crushing.</p>
-      <p>From there, it was nonstop learning—daily water changes, ammonia battles, flooded kitchens from siphon hoses. When I discovered planted aquariums, everything changed. Plants balanced the tank, the cycle completed, and I was hooked.</p>
-      <p>I experimented with stocking, filtration, lighting, and eventually DIY builds. Life forced me to downsize, but I kept going—bettas, shrimp, CO₂, dirted tanks, even custom sumps. Along the way I borrowed smart tricks from saltwater, like random-flow nozzles, and found pride in doing things myself.</p>
-      <p>I went from having no one to talk to about the hobby, to meeting local fishkeepers with tank-filled rooms, and eventually meeting creators I once watched on YouTube at Aquashella.</p>
-      <p>What hasn’t changed is why I keep at it: I love learning, I love tinkering, and I want to help new fishkeepers skip the mistakes I made and find the joy faster.</p>
+      <section class="accordion-section" aria-label="About The Tank Guide">
+        <div class="accordion" id="about-accordion">
+          <div class="accordion-item">
+            <h3>
+              <button class="accordion-trigger" aria-expanded="false" aria-controls="sec-owner" id="trg-owner">Owner Story</button>
+            </h3>
+            <div id="sec-owner" class="accordion-panel" role="region" aria-labelledby="trg-owner" hidden>
+              <p>Ever since I was a kid, I was drawn to aquariums. My uncle kept guppies for years, and whenever I visited my grandmother, I’d sit and stare at them. That fascination stuck with me.</p>
+              <p>In 2011 or 2012, I caught a marathon of <em>Tanked</em> on Animal Planet. Their massive saltwater builds looked incredible, but freshwater seemed within reach. I decided it was finally time to try again—this time the right way.</p>
+              <p>I picked up a 50-gallon kit from a chain store. Tank, stand, hang-on-back filter, gravel, lights—the whole package. After hours of assembling the stand upside down, it broke as I flipped it. I nearly gave up, but I exchanged it and started over.</p>
+              <p>I filled the tank, added conditioner and “bacteria in a bottle,” and waited. A week later, nothing. Forums and YouTube became my lifeline. I tried a fishless cycle, then researched the safest way to do a fish-in cycle and chose hardy rasboras. Watching them school was amazing. Losing my first fish to a bad water change was crushing.</p>
+              <p>From there, it was nonstop learning—daily water changes, ammonia battles, flooded kitchens from siphon hoses. When I discovered planted aquariums, everything changed. Plants balanced the tank, the cycle completed, and I was hooked.</p>
+              <p>I experimented with stocking, filtration, lighting, and eventually DIY builds. Life forced me to downsize, but I kept going—bettas, shrimp, CO₂, dirted tanks, even custom sumps. Along the way I borrowed smart tricks from saltwater, like random-flow nozzles, and found pride in doing things myself.</p>
+              <p>I went from having no one to talk to about the hobby, to meeting local fishkeepers with tank-filled rooms, and eventually meeting creators I once watched on YouTube at Aquashella.</p>
+              <p>What hasn’t changed is why I keep at it: I love learning, I love tinkering, and I want to help new fishkeepers skip the mistakes I made and find the joy faster.</p>
+            </div>
+          </div>
 
-      <hr />
+          <div class="accordion-item">
+            <h3>
+              <button class="accordion-trigger" aria-expanded="false" aria-controls="sec-teaching" id="trg-teaching">Teaching &amp; Inspiration</button>
+            </h3>
+            <div id="sec-teaching" class="accordion-panel" role="region" aria-labelledby="trg-teaching" hidden>
+              <p>Outside of aquariums, I’ve also gotten to see the other side of how teachers prepare for their students—especially special education teachers. The sacrifice, patience, and dedication they show left a big impression on me.</p>
+              <p>It made me realize that teaching, in any form, is hard work. But it’s also one of the most meaningful things you can do: passing on what you’ve learned so someone else can grow. That’s the attitude I want to bring into fishkeeping—doing the work, sharing my struggles, and breaking things down so others can succeed.</p>
+              <p>That’s why I dedicated my first book to teachers. They inspired me to see this hobby not just as a passion, but as something I can teach in a way that makes a real difference.</p>
+            </div>
+          </div>
 
-      <h2>Teaching &amp; Inspiration</h2>
-      <p>Outside of aquariums, I’ve also gotten to see the other side of how teachers prepare for their students—especially special education teachers. The sacrifice, patience, and dedication they show left a big impression on me.</p>
-      <p>It made me realize that teaching, in any form, is hard work. But it’s also one of the most meaningful things you can do. That spirit drives The Tank Guide. We want every aquarist to feel confident, excited, and empowered to give their fish a healthy home.</p>
-      <p>So whether you’re cycling your first tank, fine-tuning a high-tech planted setup, or getting advice before a big upgrade, we’re here to help you every step of the way.</p>
+          <div class="accordion-item">
+            <h3>
+              <button class="accordion-trigger" aria-expanded="false" aria-controls="sec-mission" id="trg-mission">Mission &amp; Values</button>
+            </h3>
+            <div id="sec-mission" class="accordion-panel" role="region" aria-labelledby="trg-mission" hidden>
+              <p><strong>Mission:</strong><br />
+              To make fishkeeping approachable for beginners and inspiring for hobbyists by breaking down the complex parts into simple, practical steps—so anyone can build a thriving aquarium with confidence.</p>
+              <p><strong>Values:</strong></p>
+              <ul>
+                <li><strong>Clarity over confusion</strong> — Straightforward answers, no gatekeeping, no overcomplication.</li>
+                <li><strong>Learn by doing</strong> — Encourage DIY, experimentation, and resourcefulness.</li>
+                <li><strong>Respect for life</strong> — Promote responsible stocking, proper care, and long-term success.</li>
+                <li><strong>Community first</strong> — Share knowledge, highlight other hobbyists, and lift the whole community.</li>
+                <li><strong>Keep it fun</strong> — At its heart, fishkeeping should bring joy, curiosity, and wonder.</li>
+              </ul>
+            </div>
+          </div>
 
-      <hr />
-
-      <h2>Our Mission</h2>
-      <p>FishKeepingLifeCo’s mission is to make aquariums accessible, educational, and inspiring for everyone. Through books, digital tools, and community resources, we simplify the science of fishkeeping while keeping the joy and wonder at the heart of the hobby.</p>
-
-      <h2>Our Values</h2>
-      <ul>
-        <li><strong>Education First</strong> — simplify complex science into clear, fun, and practical lessons.</li>
-        <li><strong>Beginner Friendly</strong> — create resources that welcome newcomers without overwhelming them.</li>
-        <li><strong>Family Oriented</strong> — design content parents and kids can enjoy together.</li>
-        <li><strong>Inspiration Through Storytelling</strong> — use characters, stories, and visuals to make learning memorable.</li>
-        <li><strong>Responsible Fishkeeping</strong> — promote ethical care and respect for aquatic life.</li>
-      </ul>
-
-      <h2>Future Vision</h2>
-      <ul>
-        <li><strong>Expand Books</strong> — grow the catalog beyond the nitrogen cycle story into prequels, puzzle/activity books, and more science-based aquarium stories.</li>
-        <li><strong>Build Website Tools</strong> — turn TheTankGuide.com into a full hub with stocking advisors, cycling coaches, gear recommendations, and parameter tracking.</li>
-        <li><strong>Interactive Learning</strong> — introduce apps and digital features that gamify aquarium care and teach through hands-on exploration.</li>
-        <li><strong>Community Growth</strong> — create resources for teachers, parents, and hobbyists to share, learn, and connect.</li>
-        <li><strong>Broader Ecosystem</strong> — eventually branch into related hobbies (plants, shrimp, snails, community aquariums), with interconnected books and tools.</li>
-        <li><strong>Global Reach</strong> — make educational aquarium content available worldwide, across languages and platforms.</li>
-      </ul>
-
-      <p>If you’re interested in partnering, sharing feedback, or supporting the project, we’d love to hear from you:</p>
-      <ul>
-        <li>Have an idea to improve the experience? <a href="contact-feedback.html">Send feedback</a>.</li>
-        <li>Curious about updates? Follow along on social or bookmark this page.</li>
-        <li>Want to collaborate? Reach out—we’re building this for the community.</li>
-      </ul>
-
-      <p><strong>Thanks for being here, and happy fishkeeping!</strong></p>
-    </section>
+          <div class="accordion-item">
+            <h3>
+              <button class="accordion-trigger" aria-expanded="false" aria-controls="sec-future" id="trg-future">Future Vision</button>
+            </h3>
+            <div id="sec-future" class="accordion-panel" role="region" aria-labelledby="trg-future" hidden>
+              <p>The Tank Guide is just the beginning. My vision is to turn this into a launching pad for future hobbyists—a place where newcomers can skip the frustration, find clear answers, and get inspired to keep going. I want to grow a community that shares knowledge openly, highlights the work of other hobbyists, and builds confidence through learning and DIY.</p>
+              <p>Looking ahead, I see this project expanding in a few key ways:</p>
+              <ul>
+                <li><strong>Website growth</strong> — adding more tools and resources like advanced stocking guides, gear recommendations, and water cycle coaches.</li>
+                <li><strong>Books</strong> — creating more titles that take complex aquarium topics and turn them into easy-to-understand stories, making learning fun for kids, families, and beginners.</li>
+                <li><strong>Community features</strong> — building a space where hobbyists can connect, exchange ideas, and learn from each other.</li>
+              </ul>
+              <p>Whether it’s through guides, stories, or hands-on tools, my goal is to make fishkeeping easier to understand and more fun to explore—for anyone at any stage of the journey.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
 
   <div id="site-footer"></div>
+
   <script>
     (async () => {
       const host = document.getElementById('site-footer');
@@ -140,5 +325,81 @@
       host.outerHTML = await res.text();
     })();
   </script>
+  <script>
+    (() => {
+      const accordion = document.getElementById('about-accordion');
+      if (!accordion) {
+        return;
+      }
+
+      const triggers = Array.from(accordion.querySelectorAll('.accordion-trigger'));
+
+      const togglePanel = (trigger, expand) => {
+        if (!trigger) return;
+        const controls = trigger.getAttribute('aria-controls');
+        if (!controls) return;
+        const panel = document.getElementById(controls);
+        if (!panel) return;
+        const isExpanded = typeof expand === 'boolean' ? expand : trigger.getAttribute('aria-expanded') === 'true';
+        const nextState = typeof expand === 'boolean' ? expand : !isExpanded;
+        trigger.setAttribute('aria-expanded', String(nextState));
+        panel.hidden = !nextState;
+      };
+
+      accordion.addEventListener('click', (event) => {
+        const trigger = event.target instanceof HTMLElement ? event.target.closest('.accordion-trigger') : null;
+        if (!trigger) {
+          return;
+        }
+        event.preventDefault();
+        togglePanel(trigger);
+      });
+
+      accordion.addEventListener('keydown', (event) => {
+        const trigger = event.target instanceof HTMLElement ? event.target.closest('.accordion-trigger') : null;
+        if (!trigger) {
+          return;
+        }
+
+        const currentIndex = triggers.indexOf(trigger);
+        if (currentIndex === -1) {
+          return;
+        }
+
+        switch (event.key) {
+          case 'Enter':
+          case ' ':
+            event.preventDefault();
+            togglePanel(trigger);
+            break;
+          case 'ArrowDown': {
+            event.preventDefault();
+            const next = triggers[(currentIndex + 1) % triggers.length];
+            next?.focus();
+            break;
+          }
+          case 'ArrowUp': {
+            event.preventDefault();
+            const prevIndex = (currentIndex - 1 + triggers.length) % triggers.length;
+            const prev = triggers[prevIndex];
+            prev?.focus();
+            break;
+          }
+          case 'Home': {
+            event.preventDefault();
+            triggers[0]?.focus();
+            break;
+          }
+          case 'End': {
+            event.preventDefault();
+            triggers[triggers.length - 1]?.focus();
+            break;
+          }
+          default:
+            break;
+        }
+      });
+    })();
+  </script>
 </body>
-</html> 
+</html>
