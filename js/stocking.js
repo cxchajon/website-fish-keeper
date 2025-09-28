@@ -1,15 +1,78 @@
+import { APP_VERSION } from './utils/version.js';
 import { createDefaultState, buildComputedState, runSanitySuite, runStressSuite, SPECIES, getDefaultSpeciesId } from './logic/compute.js';
 import { computeEnv, renderEnvInto, renderWarningsInto } from './logic/envRecommend.js';
 import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderBioloadBar, renderAggressionBar, renderStatus, renderChips, bindPopoverHandlers } from './logic/ui.js';
 
-const state = createDefaultState();
-let computed = null;
-let variantSelectorOpen = false;
-const debugMode = getQueryFlag('debug');
+const versionSuffix = `?v=${APP_VERSION}`;
 
-const refs = {
+const ensureVersionedAssets = () => {
+  const cssEl = document.querySelector('#css-main');
+  if (cssEl) {
+    const href = cssEl.getAttribute('href');
+    if (href && !href.includes('?v=')) {
+      cssEl.href = href + versionSuffix;
+    }
+  }
+
+  const scriptEl = document.querySelector('#js-stocking');
+  if (scriptEl) {
+    const src = scriptEl.getAttribute('src');
+    if (src && !src.includes('?v=')) {
+      scriptEl.src = src + versionSuffix;
+      return false;
+    }
+  }
+
+  return true;
+};
+
+const readyForBootstrap = ensureVersionedAssets();
+
+if (readyForBootstrap) {
+  console.log(`[TheTankGuide] APP_VERSION = ${APP_VERSION}`);
+} else {
+  console.log(`[TheTankGuide] Bootstrapping APP_VERSION = ${APP_VERSION}`);
+}
+
+if (readyForBootstrap) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const bump = (el) => {
+      if (!el) return;
+      const href = el.getAttribute('href') || el.getAttribute('src');
+      if (!href || href.includes('?v=')) return;
+      const withV = href + versionSuffix;
+      if (el.tagName === 'LINK') {
+        el.href = withV;
+      } else if (el.tagName === 'SCRIPT') {
+        el.src = withV;
+      }
+    };
+    bump(document.querySelector('#css-main'));
+    bump(document.querySelector('#js-stocking'));
+  });
+
+  window.addEventListener('keydown', (e) => {
+    // Use ⌘/Ctrl + Shift + L to force cache-bust reload.
+    const platform = typeof navigator !== 'undefined' ? navigator.platform : '';
+    const isMac = platform.toUpperCase().includes('MAC');
+    if ((isMac ? e.metaKey : e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'l') {
+      e.preventDefault();
+      const u = new URL(location.href);
+      u.searchParams.set('v', `${APP_VERSION}-${Date.now()}`);
+      location.replace(u.toString());
+    }
+  });
+}
+
+function bootstrapStocking() {
+  const state = createDefaultState();
+  let computed = null;
+  let variantSelectorOpen = false;
+  const debugMode = getQueryFlag('debug');
+
+  const refs = {
   pageTitle: document.getElementById('page-title'),
   plantIcon: document.getElementById('plant-icon'),
   gallons: document.getElementById('input-gallons'),
@@ -668,15 +731,20 @@ function buildGearPayload() {
   };
 }
 
-function init() {
-  bindPopoverHandlers(document.body);
-  pruneMarineEntries();
-  populateSpecies();
-  refs.qty.value = String(state.candidate.qty);
-  syncToggles();
-  bindInputs();
-  syncStateFromInputs();
-  renderAll();
+  function init() {
+    bindPopoverHandlers(document.body);
+    pruneMarineEntries();
+    populateSpecies();
+    refs.qty.value = String(state.candidate.qty);
+    syncToggles();
+    bindInputs();
+    syncStateFromInputs();
+    renderAll();
+  }
+
+  init();
 }
 
-init();
+if (readyForBootstrap) {
+  bootstrapStocking();
+}
