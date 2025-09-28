@@ -92,6 +92,7 @@
     }
     .seo-intro strong{color:var(--fg)}
   </style>
+  <script defer src="js/nav.js?v=1.0.8"></script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -142,59 +143,7 @@
   </script>
 </head>
 <body class="page-background">
-
-  <!-- NAV -->
-  <header id="global-nav" class="site-header">
-    <div class="site-header__inner inner">
-      <a class="site-brand brand" href="/" aria-label="The Tank Guide — Home">
-        <span class="site-brand__title">The Tank Guide</span>
-        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
-      </a>
-      <button
-        id="ttg-nav-open"
-        class="nav-toggle hamburger"
-        type="button"
-        aria-controls="primary-nav"
-        aria-expanded="false"
-        aria-label="Open menu"
-        data-nav="hamburger"
-      >
-        <span class="hamburger__bars nav-toggle__bars" aria-hidden="true"></span>
-        <span class="visually-hidden">Open menu</span>
-      </button>
-      <nav id="primary-nav" class="nav site-links links" aria-label="Primary navigation">
-        <ul class="nav__list">
-          <li class="nav__item"><a href="/" class="nav__link">Home</a></li>
-          <li class="nav__item"><a href="/stocking.html" class="nav__link">Stocking Advisor</a></li>
-          <li class="nav__item"><a href="/gear.html" class="nav__link">Gear</a></li>
-          <li class="nav__item"><a href="/params.html" class="nav__link">Cycling Coach</a></li>
-          <li class="nav__item"><a href="/media.html" class="nav__link">Media</a></li>
-          <li class="nav__item"><a href="/contact-feedback.html" class="nav__link">Contact &amp; Feedback</a></li>
-          <li class="nav__item"><a href="/about.html" class="nav__link">About</a></li>
-        </ul>
-      </nav>
-    </div>
-    <aside id="ttg-drawer" class="nav-panel" aria-label="Site" data-nav="drawer" aria-hidden="true">
-      <div class="drawer-head nav-panel__header">
-        <span class="drawer-title nav-panel__title">The Tank Guide</span>
-        <button id="ttg-nav-close" class="drawer-close nav-close" type="button" aria-label="Close menu">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <nav class="drawer-links nav-panel__nav" aria-label="Mobile">
-        <ul class="nav__list">
-          <li class="nav__item"><a href="/" class="nav__link">Home</a></li>
-          <li class="nav__item"><a href="/stocking.html" class="nav__link">Stocking Advisor</a></li>
-          <li class="nav__item"><a href="/gear.html" class="nav__link">Gear</a></li>
-          <li class="nav__item"><a href="/params.html" class="nav__link">Cycling Coach</a></li>
-          <li class="nav__item"><a href="/media.html" class="nav__link">Media</a></li>
-          <li class="nav__item"><a href="/contact-feedback.html" class="nav__link">Contact &amp; Feedback</a></li>
-          <li class="nav__item"><a href="/about.html" class="nav__link">About</a></li>
-        </ul>
-      </nav>
-    </aside>
-    <div id="ttg-overlay" class="nav-backdrop" data-nav="overlay" aria-hidden="true"></div>
-  </header>
+  <div id="site-nav"></div>
 
   <main>
   <!-- HERO -->
