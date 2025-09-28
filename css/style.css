@@ -1029,3 +1029,31 @@ nav[role="navigation"] + .hero-header{
     margin: 20px auto 14px;
   }
 }
+/* Inline qty controls inside Current Stock */
+.stock-list { display: grid; gap: 10px; }
+.stock-list .stock-row {
+  display: grid; grid-template-columns: 1fr auto auto; gap: 10px;
+  align-items: center; padding: 10px 12px; border-radius: 10px;
+  background: rgba(255,255,255,.04);
+}
+.stock-list .stock-row__name { font-weight: 600; min-width: 0; }
+.stock-list .stock-row__qtyctrl {
+  display: grid; grid-auto-flow: column; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.06); border-radius: 999px; padding: 4px 8px;
+}
+.stock-list .qtybtn {
+  appearance: none; border: 0; border-radius: 8px; padding: 4px 10px;
+  background: rgba(255,255,255,.12); color: inherit; cursor: pointer;
+  line-height: 1; font-size: 1rem; min-width: 34px;
+}
+.stock-list .qtybtn:focus { outline: 2px solid rgba(255,255,255,.35); outline-offset: 2px; }
+.stock-list .qtyval { min-width: 1.5ch; text-align: center; font-variant-numeric: tabular-nums; }
+.stock-list .stock-row__remove {
+  appearance: none; border: 0; border-radius: 8px; padding: 6px 10px;
+  background: rgba(255,255,255,.08); color: inherit; cursor: pointer;
+}
+
+@media (max-width: 420px){
+  .stock-list .stock-row { grid-template-columns: 1fr auto; }
+  .stock-list .stock-row__remove { grid-column: 1 / -1; justify-self: end; }
+}
