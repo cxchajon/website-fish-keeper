@@ -698,7 +698,7 @@ html {
   }
 }
 
-#stocking-app > section[aria-labelledby="controls-title"] {
+#stocking-app section[aria-labelledby="controls-title"] {
   margin-bottom: 16px;
 }
 
@@ -706,12 +706,12 @@ html {
   margin-top: 16px;
 }
 
-#stocking-app > section[aria-labelledby="water-title"] {
+#stocking-app section[aria-labelledby="water-title"] {
   margin-top: 16px;
 }
 
 @media (min-width: 720px) {
-  #stocking-app > section[aria-labelledby="controls-title"] {
+  #stocking-app section[aria-labelledby="controls-title"] {
     margin-bottom: 20px;
   }
 
@@ -719,7 +719,7 @@ html {
     margin-top: 20px;
   }
 
-  #stocking-app > section[aria-labelledby="water-title"] {
+  #stocking-app section[aria-labelledby="water-title"] {
     margin-top: 20px;
   }
 }

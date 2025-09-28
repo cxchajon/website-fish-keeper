@@ -44,18 +44,31 @@
     .wrap {
       max-width: 1160px;
       margin: 0 auto;
-      padding: 0 18px 96px;
+      padding: 0 18px;
+    }
+
+    .page-content {
+      padding-bottom: 96px;
     }
 
     .hero {
-      padding: 68px 0 36px;
-      text-align: center;
+      padding: 56px 0 32px;
     }
 
-    .hero h1 {
-      margin: 0;
+    .brand-name {
+      font-weight: 800;
       font-size: clamp(2.4rem, 3vw, 2.9rem);
       letter-spacing: -0.01em;
+    }
+
+    .brand-sub {
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    .tagline {
+      font-size: 1.05rem;
+      opacity: 0.85;
     }
 
     #plant-icon {
@@ -66,12 +79,12 @@
       display: none;
     }
 
-    .hero p {
-      max-width: 640px;
-      margin: 12px auto 0;
+    .hero .lead {
+      max-width: 36rem;
+      margin: 12px 0 0;
       color: var(--muted);
       font-size: 1.05rem;
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
     .panel {
@@ -597,112 +610,166 @@
 </head>
 <body class="theme-dark">
   <div id="site-nav"></div>
-  <main class="wrap" id="stocking-app">
+  <main id="stocking-app">
     <header class="hero">
-      <h1 id="page-title">Stocking Advisor <span id="plant-icon" aria-hidden="true">🌱</span></h1>
-      <p>
-        Build a balanced community by checking bioload, compatibility, and environmental needs before you add new tankmates.
-        Tune your inputs and get live guidance as you plan your next stock.
-      </p>
+      <div class="wrap">
+        <div class="hero-header">
+          <h1 class="brand-name hero-title" id="page-title">
+            Stocking Advisor <span id="plant-icon" aria-hidden="true">🌱</span>
+          </h1>
+          <p class="brand-sub hero-subline">a product of <strong>FishKeepingLifeCo</strong></p>
+          <p class="tagline hero-tagline lead">Plan a healthy community by checking bioload, compatibility — and get recommended water parameters for your tank.</p>
+        </div>
+      </div>
     </header>
 
-    <section class="panel" aria-labelledby="controls-title">
-      <h2 id="controls-title" class="sr-only">Tank Controls</h2>
-      <div class="controls-row">
-        <div class="control-field">
-          <label for="input-gallons">Gallons</label>
-          <input class="control" id="input-gallons" type="number" inputmode="numeric" min="1" step="1" value="20" aria-describedby="gallons-hint" />
-          <span id="gallons-hint" class="secondary-text">Common footprint variants will auto-adjust.</span>
-        </div>
+    <div class="wrap page-content">
+      <section class="panel" aria-labelledby="controls-title">
+        <h2 id="controls-title" class="sr-only">Tank Controls</h2>
+        <div class="controls-row">
+          <div class="control-field">
+            <label for="input-gallons">Gallons</label>
+            <input
+              class="control"
+              id="input-gallons"
+              type="number"
+              inputmode="numeric"
+              min="1"
+              step="1"
+              value="20"
+              aria-describedby="gallons-hint"
+            />
+            <span id="gallons-hint" class="secondary-text">Common footprint variants will auto-adjust.</span>
+          </div>
 
-        <div class="control-field">
-          <label for="toggle-planted">Planted</label>
-          <button class="toggle" type="button" id="toggle-planted" role="switch" aria-checked="false" aria-label="Toggle planted tank">
-            <span class="slider" aria-hidden="true"></span>
-            <span>Off</span>
-          </button>
-        </div>
-
-        <div class="control-field">
-          <label for="toggle-tips">Show More Tips</label>
-          <button class="toggle" type="button" id="toggle-tips" role="switch" aria-checked="false" aria-label="Toggle expanded guidance">
-            <span class="slider" aria-hidden="true"></span>
-            <span>Off</span>
-          </button>
-        </div>
-
-        <div class="control-field">
-          <label for="toggle-beginner">Beginner Mode</label>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <button class="toggle" type="button" id="toggle-beginner" role="switch" aria-checked="true" aria-label="Toggle beginner safeguards">
+          <div class="control-field">
+            <label for="toggle-planted">Planted</label>
+            <button
+              class="toggle"
+              type="button"
+              id="toggle-planted"
+              role="switch"
+              aria-checked="false"
+              aria-label="Toggle planted tank"
+            >
               <span class="slider" aria-hidden="true"></span>
-              <span>On</span>
+              <span>Off</span>
             </button>
-            <button class="micro-info" type="button" data-popover="beginner-info" aria-label="What is Beginner mode?">i</button>
+          </div>
+
+          <div class="control-field">
+            <label for="toggle-tips">Show More Tips</label>
+            <button
+              class="toggle"
+              type="button"
+              id="toggle-tips"
+              role="switch"
+              aria-checked="false"
+              aria-label="Toggle expanded guidance"
+            >
+              <span class="slider" aria-hidden="true"></span>
+              <span>Off</span>
+            </button>
+          </div>
+
+          <div class="control-field">
+            <label for="toggle-beginner">Beginner Mode</label>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <button
+                class="toggle"
+                type="button"
+                id="toggle-beginner"
+                role="switch"
+                aria-checked="true"
+                aria-label="Toggle beginner safeguards"
+              >
+                <span class="slider" aria-hidden="true"></span>
+                <span>On</span>
+              </button>
+              <button
+                class="micro-info"
+                type="button"
+                data-popover="beginner-info"
+                aria-label="What is Beginner mode?"
+              >
+                i
+              </button>
+            </div>
           </div>
         </div>
+        <div id="tank-summary" aria-live="polite"></div>
+      </section>
 
-      </div>
-      <div id="tank-summary" aria-live="polite"></div>
-    </section>
-
-    <section class="card" id="stock-list-card" aria-live="polite">
-      <div class="card__hd">
-        <h2>Current Stock</h2>
-        <p class="subtle">Your selected fish and inverts appear here.</p>
-      </div>
-      <div id="stock-list" class="stock-list"></div>
-    </section>
-
-    <section class="card tank-env-card" id="env-card" aria-live="polite">
-      <div class="card__hd card__hd--split">
-        <h2>Environmental Recommendations</h2>
-        <button type="button" id="env-tips-toggle" class="linklike" aria-pressed="false">Show More Tips</button>
-      </div>
-
-      <p class="subtle">Derived from your selected stock.</p>
-
-      <h3 class="h-subtle">Recommended Environmental Conditions</h3>
-      <div id="env-warnings" class="env-warnings" hidden></div>
-      <div id="env-reco" class="env-list" role="list"></div>
-      <div id="env-reco-xl" class="env-grid-xl" hidden></div>
-
-      <hr class="env-divider" aria-hidden="true" />
-
-      <div id="env-bars" class="env-bars">
-        <!-- populated by JS: Bioload Capacity + Aggression & Compatibility -->
-      </div>
-
-      <div id="env-tips" class="env-tips" hidden>
-        <!-- brief bullets about GH/KH, salinity, blackwater, flow zones, and Beginner Mode -->
-      </div>
-    </section>
-
-    <section class="panel" aria-labelledby="stock-title">
-      <h2 id="stock-title">Plan Your Stock</h2>
-      <div class="stock-grid">
-        <div class="stock-row" role="group" aria-labelledby="candidate-label">
-          <div class="control-field">
-            <label id="candidate-label" for="plan-species">Species</label>
-            <select id="plan-species" class="control"></select>
-          </div>
-          <div class="control-field">
-            <label for="plan-qty">Quantity</label>
-            <input class="control" id="plan-qty" type="number" min="1" max="999" step="1" value="1" />
-          </div>
-          <button id="plan-add" class="see-gear" type="button">Add to Stock</button>
+      <section class="card" id="stock-list-card" aria-live="polite">
+        <div class="card__hd">
+          <h2>Current Stock</h2>
+          <p class="subtle">Your selected fish and inverts appear here.</p>
         </div>
-        <div class="chips" id="candidate-chips"></div>
-        <div id="candidate-banner" class="status-strip" data-state="bad" style="display:none;">Beginner safeguards: fix highlighted issues before adding.</div>
-      </div>
-    </section>
+        <div id="stock-list" class="stock-list"></div>
+      </section>
 
-    <button class="see-gear" id="btn-gear" type="button">See Gear Suggestions</button>
+      <section class="card tank-env-card" id="env-card" aria-live="polite">
+        <div class="card__hd card__hd--split">
+          <h2>Environmental Recommendations</h2>
+          <button type="button" id="env-tips-toggle" class="linklike" aria-pressed="false">Show More Tips</button>
+        </div>
 
-    <section class="diagnostics" id="diagnostics" hidden>
-      <h3>Diagnostics</h3>
-      <div id="diagnostics-content"></div>
-    </section>
+        <p class="subtle">Derived from your selected stock.</p>
+
+        <h3 class="h-subtle">Recommended Environmental Conditions</h3>
+        <div id="env-warnings" class="env-warnings" hidden></div>
+        <div id="env-reco" class="env-list" role="list"></div>
+        <div id="env-reco-xl" class="env-grid-xl" hidden></div>
+
+        <hr class="env-divider" aria-hidden="true" />
+
+        <div id="env-bars" class="env-bars">
+          <!-- populated by JS: Bioload Capacity + Aggression & Compatibility -->
+        </div>
+
+        <div id="env-tips" class="env-tips" hidden>
+          <!-- brief bullets about GH/KH, salinity, blackwater, flow zones, and Beginner Mode -->
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="stock-title">
+        <h2 id="stock-title">Plan Your Stock</h2>
+        <div class="stock-grid">
+          <div
+            class="stock-row"
+            role="group"
+            aria-labelledby="candidate-label"
+          >
+            <div class="control-field">
+              <label id="candidate-label" for="plan-species">Species</label>
+              <select id="plan-species" class="control"></select>
+            </div>
+            <div class="control-field">
+              <label for="plan-qty">Quantity</label>
+              <input
+                class="control"
+                id="plan-qty"
+                type="number"
+                min="1"
+                max="999"
+                step="1"
+                value="1"
+              />
+            </div>
+            <button id="plan-add" class="see-gear" type="button">Add to Stock</button>
+          </div>
+          <div class="chips" id="candidate-chips"></div>
+          <div id="candidate-banner" class="status-strip" data-state="bad" style="display:none;">Beginner safeguards: fix highlighted issues before adding.</div>
+        </div>
+      </section>
+
+      <button class="see-gear" id="btn-gear" type="button">See Gear Suggestions</button>
+
+      <section class="diagnostics" id="diagnostics" hidden>
+        <h3>Diagnostics</h3>
+        <div id="diagnostics-content"></div>
+      </section>
+    </div>
   </main>
 
   <div id="site-footer"></div>
