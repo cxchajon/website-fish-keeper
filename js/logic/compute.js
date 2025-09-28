@@ -129,14 +129,11 @@ function resolveEntry(entry) {
   if (!species) return null;
   const qty = clamp(Number(entry.qty) || 0, 0, 999);
   if (qty <= 0) return null;
-  const stage = entry.stage === 'juvenile' ? 'juvenile' : 'adult';
-  const stageMultiplier = stage === 'juvenile' ? 0.6 : 1;
-  const unit = autoBioloadUnit(species) * stageMultiplier;
+  const unit = autoBioloadUnit(species);
   const bioload = unit * qty;
   return {
     id: species.id,
     qty,
-    stage,
     species,
     bioloadUnit: unit,
     bioload,
@@ -581,7 +578,7 @@ export function runSanitySuite(baseState) {
     gallons: 20,
     turnover: 5,
     planted: false,
-    stock: [{ id: 'cardinal', qty: 12, stage: 'adult' }],
+    stock: [{ id: 'cardinal', qty: 12 }],
   });
   results.push(`1) 20g, 12 cardinal tetras → Load ${roundTo(scenario1.bioload.proposed, 3)} | Usage ${formatPercent(scenario1.bioload.proposedPercent)}`);
 
@@ -590,8 +587,8 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: false,
     stock: [
-      { id: 'cardinal', qty: 12, stage: 'adult' },
-      { id: 'betta_male', qty: 1, stage: 'adult' },
+      { id: 'cardinal', qty: 12 },
+      { id: 'betta_male', qty: 1 },
     ],
   });
   results.push(`2) + Betta → Load ${roundTo(scenario2.bioload.proposed, 3)} | Usage ${formatPercent(scenario2.bioload.proposedPercent)}`);
@@ -601,8 +598,8 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: true,
     stock: [
-      { id: 'cardinal', qty: 12, stage: 'adult' },
-      { id: 'betta_male', qty: 1, stage: 'adult' },
+      { id: 'cardinal', qty: 12 },
+      { id: 'betta_male', qty: 1 },
     ],
   });
   results.push(`   Planted → Usage ${formatPercent(scenario2p.bioload.proposedPercent)}`);
@@ -612,9 +609,9 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: false,
     stock: [
-      { id: 'cardinal', qty: 12, stage: 'adult' },
-      { id: 'betta_male', qty: 1, stage: 'adult' },
-      { id: 'cory_panda', qty: 6, stage: 'adult' },
+      { id: 'cardinal', qty: 12 },
+      { id: 'betta_male', qty: 1 },
+      { id: 'cory_panda', qty: 6 },
     ],
   });
   results.push(`3) +6 panda corys → Load ${roundTo(scenario3.bioload.proposed, 3)} | Usage ${formatPercent(scenario3.bioload.proposedPercent)}`);
@@ -624,9 +621,9 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: true,
     stock: [
-      { id: 'cardinal', qty: 12, stage: 'adult' },
-      { id: 'betta_male', qty: 1, stage: 'adult' },
-      { id: 'cory_panda', qty: 6, stage: 'adult' },
+      { id: 'cardinal', qty: 12 },
+      { id: 'betta_male', qty: 1 },
+      { id: 'cory_panda', qty: 6 },
     ],
   });
   results.push(`   Planted → Usage ${formatPercent(scenario3p.bioload.proposedPercent)}`);
@@ -636,10 +633,10 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: false,
     stock: [
-      { id: 'cardinal', qty: 12, stage: 'adult' },
-      { id: 'cory_panda', qty: 6, stage: 'adult' },
+      { id: 'cardinal', qty: 12 },
+      { id: 'cory_panda', qty: 6 },
     ],
-    candidate: { id: 'tigerbarb', qty: 2, stage: 'adult' },
+    candidate: { id: 'tigerbarb', qty: 2 },
   });
   results.push(`4) +2 tiger barbs → ${scenario4.status.status.label}`);
 
@@ -647,7 +644,7 @@ export function runSanitySuite(baseState) {
     gallons: 10,
     turnover: 4,
     planted: false,
-    stock: [{ id: 'betta_male', qty: 1, stage: 'adult' }],
+    stock: [{ id: 'betta_male', qty: 1 }],
   });
   results.push(`5) 10g solo betta → Bioload ${formatPercent(scenario5.bioload.proposedPercent)} | Agg ${scenario5.aggression.label}`);
 
@@ -656,7 +653,7 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: false,
     water: { temperature: 78, pH: 7.6, gH: 6, kH: 3, salinity: 'fresh', flow: 'moderate', blackwater: false },
-    stock: [{ id: 'cardinal', qty: 10, stage: 'adult' }],
+    stock: [{ id: 'cardinal', qty: 10 }],
   });
   results.push(`6) pH 7.6 vs Cardinal → ${scenario6a.conditions.conditions.find((c) => c.key === 'pH')?.hint ?? ''}`);
   const scenario6b = runScenario(base, {
@@ -664,7 +661,7 @@ export function runSanitySuite(baseState) {
     turnover: 5,
     planted: false,
     water: { temperature: 78, pH: 7.6, gH: 12, kH: 5, salinity: 'brackish-low', flow: 'moderate', blackwater: false },
-    stock: [{ id: 'nerite', qty: 2, stage: 'adult' }],
+    stock: [{ id: 'nerite', qty: 2 }],
   });
   results.push(`   Nerite snail → ${scenario6b.conditions.conditions.find((c) => c.key === 'pH')?.hint ?? ''}`);
 
@@ -673,8 +670,8 @@ export function runSanitySuite(baseState) {
     turnover: 4,
     planted: true,
     beginnerMode: true,
-    stock: [{ id: 'neocaridina', qty: 12, stage: 'adult' }],
-    candidate: { id: 'betta_male', qty: 1, stage: 'adult' },
+    stock: [{ id: 'neocaridina', qty: 12 }],
+    candidate: { id: 'betta_male', qty: 1 },
   });
   results.push(`7) Shrimp + Betta (Beginner) → ${scenario7a.blockReasons.join('; ') || scenario7a.status.status.label}`);
   const scenario7b = runScenario(base, {
@@ -682,8 +679,8 @@ export function runSanitySuite(baseState) {
     turnover: 4,
     planted: true,
     beginnerMode: false,
-    stock: [{ id: 'neocaridina', qty: 12, stage: 'adult' }],
-    candidate: { id: 'betta_male', qty: 1, stage: 'adult' },
+    stock: [{ id: 'neocaridina', qty: 12 }],
+    candidate: { id: 'betta_male', qty: 1 },
   });
   results.push(`   Advanced → ${scenario7b.status.status.label}`);
 
@@ -696,7 +693,7 @@ export function runStressSuite(baseState) {
     gallons: 40,
     turnover: 9.5,
     planted: false,
-    stock: [{ id: 'cardinal', qty: 30, stage: 'adult' }],
+    stock: [{ id: 'cardinal', qty: 30 }],
   });
   results.push(`40g heavy stock → Delivered ${roundTo(scenario.tank.deliveredGph, 1)} gph | Rated ${roundTo(scenario.tank.ratedGph, 1)} gph | Mult ${roundTo(scenario.tank.multiplier, 3)}`);
   return results;
@@ -713,7 +710,7 @@ export function createDefaultState() {
     tankAgeWeeks: 12,
     variantId: null,
     stock: [],
-    candidate: { id: getDefaultSpeciesId(), qty: 1, stage: 'adult' },
+    candidate: { id: getDefaultSpeciesId(), qty: 1 },
     water: { temperature: 78, pH: 7.2, gH: 6, kH: 3, salinity: 'fresh', flow: 'moderate', blackwater: false },
   };
 }
