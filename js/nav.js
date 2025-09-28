@@ -105,6 +105,20 @@
       });
     };
 
+    const handleOutsidePointer = (event) => {
+      if (root.getAttribute('data-open') !== 'true') {
+        return;
+      }
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (!target) {
+        return;
+      }
+      if (drawer.contains(target) || (openBtn instanceof HTMLElement && openBtn.contains(target))) {
+        return;
+      }
+      closeDrawer();
+    };
+
     const handleKeydown = (event) => {
       if (event.key === 'Escape') {
         closeDrawer();
@@ -135,6 +149,12 @@
     if (!root.__ttgEscHandler) {
       document.addEventListener('keydown', handleKeydown);
       root.__ttgEscHandler = handleKeydown;
+    }
+
+    if (!root.__ttgOutsideHandler) {
+      document.addEventListener('pointerdown', handleOutsidePointer, true);
+      document.addEventListener('click', handleOutsidePointer, true);
+      root.__ttgOutsideHandler = handleOutsidePointer;
     }
 
     markActiveLinks(root);
