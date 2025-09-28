@@ -937,7 +937,7 @@ html {
 .site-nav,
 header.site-header,
 nav[role="navigation"]{
-  position: static !important;   /* ensure non-sticky, non-fixed */
+  position: relative !important;   /* ensure non-sticky, non-fixed */
   top: auto !important;
   z-index: auto !important;
   display: block !important;     /* visible at all breakpoints */
@@ -994,4 +994,112 @@ nav[role="navigation"] + .hero-header{
     font-size: 15px;
     margin: 20px auto 14px;
   }
+}
+/* ===== Nav baseline (non-sticky) ===== */
+.site-header { position: relative; z-index: 50; }
+.site-header.is-open { z-index: 9999; }
+.site-header__inner {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:12px 16px;
+}
+
+/* Hamburger */
+.nav-toggle {
+  display:inline-flex; flex-direction:column; gap:4px;
+  width:40px; height:40px; align-items:center; justify-content:center;
+  border:0; border-radius:10px; background:rgba(15,15,15,.4);
+  backdrop-filter:saturate(120%) blur(2px); color:#fff; cursor:pointer;
+}
+.nav-toggle__bar { width:20px; height:2px; background:#fff; display:block; }
+
+/* Menu list */
+.nav {
+  position:absolute; left:0; right:0; top:100%;
+  background:rgba(10,10,10,.92);
+  border-bottom:1px solid rgba(255,255,255,.12);
+  transform: translateY(-8px);
+  opacity:0; visibility:hidden;
+  transition: opacity .18s ease, transform .18s ease, visibility .18s linear;
+}
+.nav__list { list-style:none; margin:0; padding:12px 16px; display:flex; flex-direction:column; gap:12px; }
+.nav__list a { color:#e8f3ff; text-decoration:none; }
+.nav__list a:hover { text-decoration:underline; }
+
+/* Open state */
+.site-header.is-open .nav {
+  opacity:1; visibility:visible; transform: translateY(0);
+}
+
+/* Backdrop */
+.nav-backdrop {
+  position:fixed; inset:0; background:rgba(0,0,0,.45);
+  backdrop-filter:blur(2px);
+}
+.site-header:not(.is-open) .nav-backdrop,
+.nav-backdrop[hidden] { display:none; }
+
+/* Desktop */
+@media (min-width: 768px){
+  .nav-toggle { display:none; }
+  .nav { position:static; opacity:1; visibility:visible; transform:none;
+         background:transparent; border:0; }
+  .nav__list { flex-direction:row; gap:18px; padding:0; }
+.nav-backdrop { display:none !important; }
+}
+
+/* ===== Base header (non-sticky) ===== */
+.site-header { position: relative !important; z-index: 60; }
+.site-header__inner {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:12px 16px;
+}
+
+/* Brand (leave existing brand styles if present) */
+.brand__text { font-weight: 800; }
+
+/* Desktop nav defaults */
+.nav { display: none; }
+.nav__list { list-style:none; margin:0; padding:0; display:flex; gap:18px; }
+.nav__list a { text-decoration:none; color:#eaf3ff; }
+.nav__list a:hover { text-decoration:underline; }
+
+/* Hamburger */
+.nav-toggle {
+  display:inline-flex; flex-direction:column; gap:4px;
+  width:40px; height:40px; align-items:center; justify-content:center;
+  border:0; border-radius:10px; background:rgba(15,15,15,.4);
+  backdrop-filter:saturate(120%) blur(2px); color:#fff; cursor:pointer;
+}
+.nav-toggle__bar { width:20px; height:2px; background:#fff; }
+
+/* Mobile overlay elements (hidden by default) */
+.mnav-backdrop {
+  position:fixed; inset:0; background:rgba(0,0,0,.48);
+  backdrop-filter:blur(2px);
+  z-index: 9998;
+}
+.mnav-panel {
+  position:fixed; left:0; right:0; top:0;
+  background:rgba(10,10,10,.96);
+  border-bottom:1px solid rgba(255,255,255,.12);
+  transform: translateY(-12px);
+  opacity:0; visibility:hidden;
+  transition: opacity .18s ease, transform .18s ease, visibility .18s linear;
+  z-index: 9999;
+  padding-top: 60px; /* space for header area */
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+.mnav-list { list-style:none; margin:0; padding:16px; display:flex; flex-direction:column; gap:14px; }
+.mnav-list a { color:#eaf3ff; text-decoration:none; font-size:1.05rem; }
+.mnav-list a:hover { text-decoration:underline; }
+
+/* OPEN state */
+.site-header.is-open .mnav-panel { opacity:1; visibility:visible; transform: translateY(0); }
+.site-header.is-open .mnav-backdrop[hidden] { display:block; } /* show backdrop */
+
+/* Desktop breakpoint */
+@media (min-width: 768px){
+  .nav-toggle { display:none; }
+  .nav { display:block; }
+  .mnav-backdrop, .mnav-panel { display:none !important; }
 }

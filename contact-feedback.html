@@ -21,7 +21,7 @@
 
   <!-- Site styles / nav JS -->
   <link rel="stylesheet" href="css/style.css?v=1.0.9" />
-  <script defer src="js/nav.js?v=1.0.9"></script>
+  <script defer src="js/nav.js?v=1.1.0"></script>
 
   <style>
     :root{
@@ -240,42 +240,39 @@
 </head>
 <body>
   <!-- NAV (uniform) -->
-  <header id="global-nav">
-    <div class="inner">
-      <button id="ttg-nav-open" class="hamburger" type="button" aria-controls="ttg-drawer" aria-expanded="false" aria-label="Open menu" data-nav="hamburger">
-        <span class="hamburger__bars" aria-hidden="true"></span><span class="visually-hidden">Open menu</span>
-      </button>
-      <a class="site-brand brand" href="index.html" aria-label="The Tank Guide — Home">
-        <span class="site-brand__title">The Tank Guide</span>
-        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
-      </a>
-      <nav class="site-links links" aria-label="Primary">
-        <a href="index.html" class="nav__link">Home</a>
-        <a href="stocking.html" class="nav__link">Stocking Advisor</a>
-        <a href="gear.html" class="nav__link">Gear</a>
-        <a href="params.html" class="nav__link">Cycling Coach</a>
-        <a href="media.html" class="nav__link">Media</a>
-        <a href="contact-feedback.html" class="nav__link">Contact &amp; Feedback</a>
-        <a href="about.html" class="nav__link">About</a>
-      </nav>
-    </div>
-    <aside id="ttg-drawer" aria-label="Site" data-nav="drawer" aria-hidden="true">
-      <div class="drawer-head">
-        <span class="drawer-title">The Tank Guide</span>
-        <button id="ttg-nav-close" class="drawer-close" type="button" aria-label="Close menu"><span aria-hidden="true">×</span></button>
-      </div>
-      <nav class="drawer-links" aria-label="Mobile">
-        <a href="index.html" class="nav__link">Home</a>
-        <a href="stocking.html" class="nav__link">Stocking Advisor</a>
-        <a href="gear.html" class="nav__link">Gear</a>
-        <a href="params.html" class="nav__link">Cycling Coach</a>
-        <a href="media.html" class="nav__link">Media</a>
-        <a href="contact-feedback.html" class="nav__link">Feedback</a>
-        <a href="about.html" class="nav__link">About</a>
-      </nav>
-    </aside>
-    <div id="ttg-overlay" data-nav="overlay" aria-hidden="true"></div>
-  </header>
+  <!-- BEGIN: Site Header / Nav -->
+<header class="site-header" role="banner">
+  <div class="site-header__inner">
+    <a class="brand" href="/" aria-label="The Tank Guide Home">
+      <span class="brand__text">The Tank Guide</span>
+    </a>
+
+    <button class="nav-toggle" type="button"
+            aria-controls="primary-nav"
+            aria-expanded="false"
+            aria-label="Open menu">
+      <span class="nav-toggle__bar" aria-hidden="true"></span>
+      <span class="nav-toggle__bar" aria-hidden="true"></span>
+      <span class="nav-toggle__bar" aria-hidden="true"></span>
+    </button>
+
+    <nav id="primary-nav" class="nav" aria-label="Primary">
+      <ul class="nav__list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/stocking.html">Stocking Advisor</a></li>
+        <li><a href="/gear.html">Gear</a></li>
+        <li><a href="/params.html">Cycling Coach</a></li>
+        <li><a href="/media.html">Media</a></li>
+        <li><a href="/contact-feedback.html">Contact &amp; Feedback</a></li>
+        <li><a href="/about.html">About</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Backdrop for mobile menu -->
+  <div class="nav-backdrop" hidden></div>
+</header>
+<!-- END: Site Header / Nav -->
 
   <main class="page-wrapper">
     <section class="contact-card">
