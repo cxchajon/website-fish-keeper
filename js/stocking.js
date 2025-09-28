@@ -527,6 +527,7 @@ function renderEnvironmentPanels() {
   if (!computed) return;
   renderEnvCard({
     stock: currentStockArray(),
+    stockCount: computed?.stockCount ?? 0,
     beginner: state.beginnerMode,
     computed,
   });

@@ -1,5 +1,36 @@
 import { clamp, getBandColor } from './utils.js';
 
+const dash = '—';
+const showRange = (range) => {
+  if (!range) return dash;
+  const { min, max } = range;
+  if (min == null || max == null || min === '' || max === '') {
+    return dash;
+  }
+  return `${min}–${max}`;
+};
+const showText = (value) => {
+  if (value == null || value === '') {
+    return dash;
+  }
+  return value;
+};
+
+// Returns the neutral env model used when no stock is present
+export function defaultEnvModel() {
+  return {
+    temperature: null,
+    pH: null,
+    gH: null,
+    kH: null,
+    salinity: null,
+    flow: null,
+    blackwater: null,
+    brackishYes: null,
+    chips: [],
+  };
+}
+
 const FLOW_LABEL = { low: 'Low', moderate: 'Moderate', high: 'High' };
 const BLACK_LABEL = { off: 'Off', neutral: 'Off', prefers: 'Recommended', recommended: 'Recommended', required: 'Required' };
 const SALINITY_LABEL = {
@@ -16,8 +47,10 @@ const RANGE_KEYS = {
   kH: ['kH', 'min_dKH', 'max_dKH'],
 };
 
-export function renderEnvCard({ stock = [], beginner = false, computed = null } = {}) {
+export function renderEnvCard({ stock = [], stockCount = null, beginner = false, computed = null } = {}) {
   const env = deriveEnv(stock, { beginner, computed });
+  const derivedCount = typeof stockCount === 'number' ? stockCount : env.stockLength ?? (Array.isArray(stock) ? stock.length : 0);
+  const isEmpty = derivedCount === 0;
   if (typeof document === 'undefined') {
     return env;
   }
@@ -30,7 +63,7 @@ export function renderEnvCard({ stock = [], beginner = false, computed = null } 
   const tipsEl = document.getElementById('env-tips');
 
   if (listEl) {
-    renderConditions(listEl, env.conditions);
+    renderConditions(listEl, env.conditions, { isEmpty });
     if (isMobile) {
       listEl.setAttribute('hidden', '');
     } else {
@@ -39,14 +72,14 @@ export function renderEnvCard({ stock = [], beginner = false, computed = null } 
   }
   if (excelEl) {
     if (isMobile) {
-      renderConditionsExcel(env);
+      renderConditionsExcel(env, { isEmpty });
     } else {
       excelEl.innerHTML = '';
       excelEl.setAttribute('hidden', '');
     }
   }
   if (barsEl) {
-    renderBars(barsEl, env, { isMobile });
+    renderBars(barsEl, env, { isMobile, isEmpty });
   }
   if (warnEl) {
     renderWarnings(warnEl, env.warnings);
@@ -61,8 +94,9 @@ export function renderEnvCard({ stock = [], beginner = false, computed = null } 
 export function deriveEnv(stock = [], options = {}) {
   const { beginner = false, computed = null } = options ?? {};
   const entries = normalizeStock(stock);
-  if (!entries.length) {
-    return buildDefaultEnv({ beginner, computed });
+  const stockLength = entries.length;
+  if (!stockLength) {
+    return buildDefaultEnv({ beginner, stockLength });
   }
 
   const conditions = [];
@@ -188,43 +222,45 @@ export function deriveEnv(stock = [], options = {}) {
     flow: flowCode,
     blackwater: blackwaterStatusToAbbrev(blackwaterStatus),
     brackishYes: Boolean(salinityResult.brackish),
+    stockLength,
   };
 }
 
-function renderConditions(root, conditions) {
+function renderConditions(root, conditions, { isEmpty = false } = {}) {
   const html = conditions
     .map((condition) => {
       const badges = (condition.badges ?? [])
         .map((badge) => `<span class="env-item__badge">${escapeHtml(badge)}</span>`)
         .join('');
+      const valueText = isEmpty ? dash : showText(condition.value);
       return `<div class="env-item" role="listitem">
         <div class="env-item__label">${escapeHtml(condition.label)}</div>
-        <div class="env-item__value">${escapeHtml(condition.value)}${badges}</div>
+        <div class="env-item__value">${escapeHtml(valueText)}${badges}</div>
       </div>`;
     })
     .join('');
   root.innerHTML = html;
 }
 
-function renderConditionsExcel(env) {
+function renderConditionsExcel(env, { isEmpty = false } = {}) {
   const root = document.getElementById('env-reco-xl');
   if (!root) return;
 
-  const chipsHtml = env.chips?.length
+  const chipsHtml = !isEmpty && env.chips?.length
     ? `<div class="env-notes">${env.chips.map((c) => `<span class="env-chip">${esc(c)}</span>`).join('')}</div>`
-    : '—';
+    : dash;
 
-  const range = (o) => {
-    if (!o) return '—';
-    const { min, max } = o;
-    if ((min ?? '') === '' || (max ?? '') === '') return '—';
-    if (!Number.isFinite(Number(min)) && !Number.isFinite(Number(max))) return '—';
+  const renderRange = (range) => {
+    if (isEmpty) return dash;
+    const result = showRange(range);
+    if (result === dash || !range || typeof range !== 'object') return dash;
+    const { min, max } = range;
     return `${formatExcelValue(min)}–${formatExcelValue(max)}`;
   };
 
-  const valOr = (value, fallback = '—') => {
-    if (value == null || value === '') return fallback;
-    return value;
+  const renderText = (value) => {
+    if (isEmpty) return dash;
+    return showText(value);
   };
 
   const html = `
@@ -237,9 +273,9 @@ function renderConditionsExcel(env) {
           <td class="env-xl-cell env-xl-label">gH (dGH)</td>
         </tr>
         <tr class="env-xl-rowB">
-          <td class="env-xl-cell env-xl-value env-xl-nowrap">${range(env.temperature)}</td>
-          <td class="env-xl-cell env-xl-value env-xl-nowrap">${range(env.pH)}</td>
-          <td class="env-xl-cell env-xl-value env-xl-nowrap">${range(env.gH)}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${renderRange(env.temperature)}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${renderRange(env.pH)}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${renderRange(env.gH)}</td>
         </tr>
 
         <tr class="env-xl-rowA">
@@ -248,9 +284,9 @@ function renderConditionsExcel(env) {
           <td class="env-xl-cell env-xl-label">Flow</td>
         </tr>
         <tr class="env-xl-rowB">
-          <td class="env-xl-cell env-xl-value env-xl-nowrap">${range(env.kH)}</td>
-          <td class="env-xl-cell env-xl-value env-xl-nowrap">${valOr(env.salinity, '—')}</td>
-          <td class="env-xl-cell env-xl-value env-xl-nowrap">${valOr(env.flow, '—')}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${renderRange(env.kH)}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${renderText(env.salinity)}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${renderText(env.flow)}</td>
         </tr>
 
         <tr class="env-xl-rowA">
@@ -259,8 +295,8 @@ function renderConditionsExcel(env) {
           <td class="env-xl-cell env-xl-label">Notes</td>
         </tr>
         <tr class="env-xl-rowB">
-          <td class="env-xl-cell env-xl-value env-xl-nowrap">${env.brackishYes ? 'Yes' : 'No'}</td>
-          <td class="env-xl-cell env-xl-value env-xl-nowrap">${valOr(env.blackwater, '—')}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${isEmpty ? dash : env.brackishYes == null ? dash : env.brackishYes ? 'Yes' : 'No'}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${renderText(env.blackwater)}</td>
           <td class="env-xl-cell env-xl-value">${chipsHtml}</td>
         </tr>
       </tbody>
@@ -271,15 +307,17 @@ function renderConditionsExcel(env) {
   root.removeAttribute('hidden');
 }
 
-function renderBars(root, env, { isMobile = false } = {}) {
+function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   if (!root) return;
-  const bioloadPct = sanitizePercent(env.bioloadPct);
-  const aggressionPct = sanitizePercent(env.aggressionPct);
+  const bioloadPct = isEmpty ? 0 : sanitizePercent(env.bioloadPct);
+  const aggressionPct = isEmpty ? 0 : sanitizePercent(env.aggressionPct);
   const bioloadColor = getBandColor(bioloadPct / 100);
-  const aggressionColor = colorForSeverity(env.aggressionSeverity);
-  const bioloadNotes = renderChips(env.barNotes?.bioload ?? []);
-  const aggressionNotes = renderChips(env.barNotes?.aggression ?? []);
-  const generalChips = renderChips(env.detailChips ?? []);
+  const aggressionColor = colorForSeverity(isEmpty ? 'ok' : env.aggressionSeverity);
+  const bioloadNotes = isEmpty ? '' : renderChips(env.barNotes?.bioload ?? []);
+  const aggressionNotes = isEmpty ? '' : renderChips(env.barNotes?.aggression ?? []);
+  const generalChips = isEmpty ? '' : renderChips(env.detailChips ?? []);
+  const bioloadLabel = isEmpty ? '0% → 0% of capacity' : env.bioloadLabel;
+  const aggressionLabel = isEmpty ? '0%' : env.aggressionLabel;
 
   if (isMobile) {
     root.classList.add('env-bars--xl');
@@ -311,7 +349,7 @@ function renderBars(root, env, { isMobile = false } = {}) {
     <div class="env-bar">
       <div class="env-bar__hd">
         <span>Bioload Capacity</span>
-        <span>${escapeHtml(env.bioloadLabel)}</span>
+        <span>${escapeHtml(bioloadLabel)}</span>
       </div>
       <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(bioloadPct)}">
         <div class="env-bar__fill" style="width:${bioloadPct}%; background:${bioloadColor};"></div>
@@ -321,7 +359,7 @@ function renderBars(root, env, { isMobile = false } = {}) {
     <div class="env-bar">
       <div class="env-bar__hd">
         <span>Aggression &amp; Compatibility</span>
-        <span>${escapeHtml(env.aggressionLabel)}</span>
+        <span>${escapeHtml(aggressionLabel)}</span>
       </div>
       <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
         <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
@@ -393,37 +431,32 @@ function ensureTips(el) {
   el.dataset.bound = 'true';
 }
 
-function buildDefaultEnv({ beginner, computed }) {
+function buildDefaultEnv({ beginner, stockLength = 0 }) {
+  const model = defaultEnvModel();
   const conditions = [
-    { label: 'Temperature (°F)', value: '74–78' },
-    { label: 'pH', value: '6.5–7.5' },
-    { label: 'gH (dGH)', value: '4–12' },
-    { label: 'kH (dKH)', value: '2–8' },
-    { label: 'Salinity', value: 'Freshwater' },
-    { label: 'Flow', value: 'Moderate' },
-    { label: 'Blackwater / Tannins', value: 'Off' },
+    { label: 'Temperature (°F)', value: dash },
+    { label: 'pH', value: dash },
+    { label: 'gH (dGH)', value: dash },
+    { label: 'kH (dKH)', value: dash },
+    { label: 'Salinity', value: dash },
+    { label: 'Flow', value: dash },
+    { label: 'Blackwater / Tannins', value: dash },
   ];
   return {
+    ...model,
     beginner,
     conditions,
     warnings: [],
     chips: [],
     detailChips: [],
     barNotes: { bioload: [], aggression: [] },
-    bioloadPct: computeBioloadPct(computed),
-    bioloadLabel: computeBioloadLabel(computed, 0),
-    bioloadSeverity: computed?.bioload?.severity ?? 'ok',
-    aggressionPct: computeAggressionScore(computed),
-    aggressionLabel: computed?.aggression?.label ?? 'No conflicts detected.',
-    aggressionSeverity: computed?.aggression?.severity ?? 'ok',
-    temperature: { min: 74, max: 78 },
-    pH: { min: 6.5, max: 7.5 },
-    gH: { min: 4, max: 12 },
-    kH: { min: 2, max: 8 },
-    salinity: 'FW',
-    flow: 'M',
-    blackwater: 'Off',
-    brackishYes: false,
+    bioloadPct: 0,
+    bioloadLabel: '0% → 0% of capacity',
+    bioloadSeverity: 'ok',
+    aggressionPct: 0,
+    aggressionLabel: '0%',
+    aggressionSeverity: 'ok',
+    stockLength,
   };
 }
 
