@@ -307,7 +307,10 @@
   "foundingLocation": "United States, New York",
   "sameAs": [
     "https://www.instagram.com/fishkeepinglifeco/",
-    "https://youtube.com/@fishkeepinglifeco"
+    "https://www.tiktok.com/@fishkeepinglifeco",
+    "https://www.youtube.com/@fishkeepinglifeco",
+    "https://www.facebook.com/fishkeepinglifeco",
+    "https://www.amazon.com/author/fishkeepinglifeco"
   ]
 }
   </script>
@@ -460,7 +463,7 @@
       const host = document.getElementById('site-footer');
       if (!host) return;
       try {
-        const res = await fetch('footer.html?v=1.1.0', { cache: 'no-cache' });
+        const res = await fetch('footer.html?v=1.1.2', { cache: 'no-cache' });
         if (!res.ok) throw new Error('Footer failed to load');
         host.outerHTML = await res.text();
       } catch (error) {

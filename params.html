@@ -523,8 +523,8 @@
     "https://www.instagram.com/fishkeepinglifeco/",
     "https://www.tiktok.com/@fishkeepinglifeco",
     "https://www.youtube.com/@fishkeepinglifeco",
-    "https://amazon.com/author/fishkeepinglifeco",
-    "https://www.facebook.com/fishkeepinglifeco"
+    "https://www.facebook.com/fishkeepinglifeco",
+    "https://www.amazon.com/author/fishkeepinglifeco"
   ]
 }
   </script>
@@ -689,7 +689,7 @@
     (async () => {
       const host = document.getElementById('site-footer');
       if (!host) return;
-      const res = await fetch('footer.html?v=1.1.0', { cache: 'no-cache' });
+      const res = await fetch('footer.html?v=1.1.2', { cache: 'no-cache' });
       host.outerHTML = await res.text();
     })();
   </script>
