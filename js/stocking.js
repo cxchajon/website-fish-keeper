@@ -119,8 +119,135 @@ elQty?.addEventListener('keydown', (event) => {
   }
 });
 
-// ---- Selected stock state & renderer ----
-const SELECTED = new Map();
+/* ==== Current Stock state + renderer with +/- controls ==== */
+const STOCK = new Map(); // id -> { species, qty }
+
+document.addEventListener('advisor:addCandidate', (e) => {
+  const s = e.detail?.species; const addQty = Math.max(1, e.detail?.qty || 1);
+  if (!s || !s.id) return;
+  const cur = STOCK.get(s.id)?.qty || 0;
+  const next = Math.min(999, cur + addQty);
+  STOCK.set(s.id, { species: s, qty: next });
+  renderStockList();
+});
+
+document.addEventListener('advisor:removeCandidate', (e) => {
+  const id = e.detail?.id;
+  if (!id) return;
+  STOCK.delete(id);
+  renderStockList();
+});
+
+document.addEventListener('DOMContentLoaded', renderStockList);
+
+function renderStockList() {
+  const root = document.querySelector('#stock-list');
+  if (!root) return;
+
+  if (STOCK.size === 0) {
+    root.innerHTML = `<div class="stock-empty subtle">No stock yet. Add species to begin.</div>`;
+    return;
+  }
+
+  const rows = [];
+  for (const { species, qty } of STOCK.values()) {
+    rows.push(stockRow(species, qty));
+  }
+  root.innerHTML = rows.join('');
+
+  // Event delegation for +/- and remove
+  root.addEventListener('click', onRowClick, { once: true });
+}
+
+function onRowClick(e) {
+  const plus  = e.target.closest('[data-qty-plus]');
+  const minus = e.target.closest('[data-qty-minus]');
+  const rem   = e.target.closest('[data-remove-id]');
+  if (!plus && !minus && !rem) return;
+
+  if (plus) {
+    const id = plus.getAttribute('data-qty-plus');
+    const entry = STOCK.get(id);
+    if (!entry) return;
+    entry.qty = Math.min(999, entry.qty + 1);
+    STOCK.set(id, entry);
+    renderStockList();
+    syncStateFromStock();
+    return;
+  }
+
+  if (minus) {
+    const id = minus.getAttribute('data-qty-minus');
+    const entry = STOCK.get(id);
+    if (!entry) return;
+    entry.qty = Math.max(0, entry.qty - 1);
+    if (entry.qty === 0) STOCK.delete(id); else STOCK.set(id, entry);
+    renderStockList();
+    syncStateFromStock();
+    return;
+  }
+
+  if (rem) {
+    const id = rem.getAttribute('data-remove-id');
+    STOCK.delete(id);
+    renderStockList();
+    syncStateFromStock();
+  }
+}
+
+function stockRow(s, qty) {
+  const name = esc(s.common_name || s.id);
+  const id   = esc(s.id);
+  const qStr = `${qty}`;
+  return `
+    <div class="stock-row">
+      <div class="stock-row__name">${name}</div>
+      <div class="stock-row__qtyctrl" role="group" aria-label="Quantity for ${name}">
+        <button class="qtybtn" data-qty-minus="${id}" aria-label="Decrease ${name}">–</button>
+        <div class="qtyval" aria-live="polite" aria-atomic="true">${qStr}</div>
+        <button class="qtybtn" data-qty-plus="${id}" aria-label="Increase ${name}">+</button>
+      </div>
+      <button class="stock-row__remove" data-remove-id="${id}" aria-label="Remove ${name}">Remove</button>
+    </div>
+  `;
+}
+
+function esc(x){ return String(x).replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
+/* ==== end renderer ==== */
+
+function sanitizeQty(value, fallback = 1) {
+  const parsed = Math.round(Number(value));
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(999, Math.max(1, parsed));
+}
+
+function syncStockFromState() {
+  STOCK.clear();
+  if (!Array.isArray(state.stock)) {
+    renderStockList();
+    return;
+  }
+  for (const entry of state.stock) {
+    if (!entry?.id) continue;
+    const species = speciesById.get(entry.id);
+    if (!species) continue;
+    const qty = sanitizeQty(entry.qty, 1);
+    entry.qty = qty;
+    if ('stage' in entry) {
+      delete entry.stage;
+    }
+    STOCK.set(species.id, { species, qty });
+  }
+  renderStockList();
+}
+
+function syncStateFromStock() {
+  state.stock = Array.from(STOCK.values()).map(({ species, qty }) => ({
+    id: species.id,
+    qty: sanitizeQty(qty, 1),
+  }));
+  scheduleUpdate();
+}
 
 document.addEventListener('advisor:addCandidate', (event) => {
   const detail = event.detail ?? {};
@@ -168,7 +295,7 @@ document.addEventListener('advisor:addCandidate', (event) => {
     refs.qty.value = '1';
   }
 
-  syncSelectedFromState();
+  syncStockFromState();
   console.log('[StockingAdvisor] Added:', species.id, 'x', qty);
   scheduleUpdate();
 });
@@ -179,95 +306,14 @@ document.addEventListener('advisor:removeCandidate', (event) => {
     return;
   }
   state.stock = state.stock.filter((entry) => entry.id !== id);
-  syncSelectedFromState();
+  syncStockFromState();
   console.log('[StockingAdvisor] Removed:', id);
   scheduleUpdate();
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  syncSelectedFromState();
+  syncStockFromState();
 });
-
-function syncSelectedFromState() {
-  SELECTED.clear();
-  if (!Array.isArray(state.stock)) {
-    renderStockList();
-    return;
-  }
-  for (const entry of state.stock) {
-    if (!entry?.id) continue;
-    const species = speciesById.get(entry.id);
-    if (!species) continue;
-    const qty = sanitizeQty(entry.qty, 1);
-    entry.qty = qty;
-    if ('stage' in entry) {
-      delete entry.stage;
-    }
-    const key = species.id;
-    const current = SELECTED.get(key);
-    const nextQty = (current?.qty || 0) + qty;
-    SELECTED.set(key, { species, qty: nextQty });
-  }
-  renderStockList();
-}
-
-function renderStockList() {
-  const root = document.querySelector('#stock-list');
-  if (!root) return;
-  if (SELECTED.size === 0) {
-    root.innerHTML = `<div class="stock-empty subtle">No stock yet. Add species to begin.</div>`;
-    return;
-  }
-  const rows = [];
-  for (const { species, qty } of SELECTED.values()) {
-    rows.push(stockRow(species, qty));
-  }
-  root.innerHTML = rows.join('');
-  root.querySelectorAll('[data-remove-id]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const removeId = button.getAttribute('data-remove-id');
-      document.dispatchEvent(new CustomEvent('advisor:removeCandidate', { detail: { id: removeId } }));
-    });
-  });
-}
-
-function stockRow(species, qty) {
-  const name = escapeHtml(species.common_name || species.id);
-  const id = escapeHtml(species.id);
-  const qtyLabel = `Qty: ${qty}`;
-  return `
-    <div class="stock-entry">
-      <div class="stock-entry__name">${name}</div>
-      <div class="stock-entry__meta">${qtyLabel}</div>
-      <button class="stock-entry__remove" data-remove-id="${id}" aria-label="Remove ${name}">Remove</button>
-    </div>
-  `;
-}
-
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, (char) => {
-    switch (char) {
-      case '&':
-        return '&amp;';
-      case '<':
-        return '&lt;';
-      case '>':
-        return '&gt;';
-      case '"':
-        return '&quot;';
-      case "'":
-        return '&#39;';
-      default:
-        return char;
-    }
-  });
-}
-
-function sanitizeQty(value, fallback = 1) {
-  const parsed = Math.round(Number(value));
-  if (!Number.isFinite(parsed)) return fallback;
-  return Math.min(999, Math.max(1, parsed));
-}
 
 function pruneMarineEntries() {
   if (!Array.isArray(state.stock)) {
@@ -467,7 +513,7 @@ function renderAll() {
   renderStatus(refs.statusStrip, computed.status);
   renderChips(refs.chipRow, buildStatusChips());
   renderCandidateState();
-  syncSelectedFromState();
+  syncStockFromState();
   renderDiagnostics();
   renderEnvironmentPanels();
 }
