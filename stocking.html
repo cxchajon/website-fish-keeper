@@ -710,13 +710,13 @@
 
       <section class="card tank-env-card" id="env-card" aria-live="polite">
         <div class="card__hd card__hd--split">
-          <h2>Environmental Recommendations</h2>
+          <div class="card__title-stack">
+            <h2>Environmental Recommendations</h2>
+            <p class="subtle card__subtitle">Derived from your selected stock.</p>
+          </div>
           <button type="button" id="env-tips-toggle" class="linklike" aria-pressed="false">Show More Tips</button>
         </div>
 
-        <p class="subtle">Derived from your selected stock.</p>
-
-        <h3 class="h-subtle">Recommended Environmental Conditions</h3>
         <div id="env-warnings" class="env-warnings" hidden></div>
         <div id="env-reco" class="env-list" role="list"></div>
         <div id="env-reco-xl" class="env-grid-xl" hidden></div>
