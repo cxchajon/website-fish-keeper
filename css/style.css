@@ -1010,3 +1010,100 @@ nav[role="navigation"] + .hero-header{
   #cc-blurbs .home-subtext { font-size: var(--home-subtext-size-md, 1rem); }
   #cc-blurbs .home-blurb { font-size: var(--home-blurb-size-md, 1.1rem); }
 }
+
+/* Cycling Coach — compact left-aligned title block */
+#cycling-coach .cc-title {
+  /* Tucked top-left: adjust margins to match your site spacing scale */
+  padding-top: 12px;
+  margin: 0 0 12px 0;
+}
+#cycling-coach .cc-title__h1 {
+  /* Smaller than homepage hero; strong, left-aligned */
+  font-weight: 700;
+  color: #ffffff;
+  margin: 10px 0 6px 0;
+  line-height: 1.2;
+  /* Responsive, compact scale */
+  font-size: 1.9rem;            /* desktop base */
+}
+@media (max-width: 768px) {
+  #cycling-coach .cc-title__h1 {
+    font-size: 1.6rem;          /* mobile compact */
+  }
+}
+/* Leaf icon placeholder—existing JS can toggle content or a class on this span */
+#cycling-coach .cc-title__leaf {
+  display: inline-block;
+  margin-left: 8px;
+  opacity: 0;                   /* JS will reveal when planted is checked */
+  transform: translateY(1px);
+}
+/* Provide a simple fade-in if JS adds a class like .is-visible; respect reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  #cycling-coach .cc-title__leaf {
+    transition: opacity 200ms ease;
+  }
+}
+#cycling-coach .cc-title__leaf.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Eyebrow: normal case, lighter than body but readable */
+#cycling-coach .cc-title__eyebrow {
+  color: #e0e0e0;               /* light gray, still bright */
+  font-weight: 400;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+  /* ~70% of H1 size visually */
+  font-size: 1.33rem;
+}
+@media (max-width: 768px) {
+  #cycling-coach .cc-title__eyebrow {
+    font-size: 1.15rem;
+  }
+}
+
+/* Subline: a shade darker than eyebrow for a fade-down hierarchy */
+#cycling-coach .cc-title__subline {
+  color: #c0c0c0;               /* slightly more muted gray */
+  font-weight: 400;
+  margin: 0;
+  line-height: 1.6;
+  /* About ~90% of body size (adjust if your base is different) */
+  font-size: 0.95rem;
+}
+@media (min-width: 768px) {
+  #cycling-coach .cc-title__subline {
+    font-size: 1rem;
+  }
+}
+
+/* Ensure no card/container inflates title fonts inadvertently */
+#cycling-coach .cc-title,
+#cycling-coach .cc-title * {
+  text-rendering: optimizeLegibility;
+}
+
+/* If any global hero/heading styles are larger, neutralize them here */
+#cycling-coach .cc-title__h1,
+#cycling-coach .cc-title__eyebrow,
+#cycling-coach .cc-title__subline {
+  letter-spacing: normal;
+}
+
+/* Optional: keep the title area snug to the left content edge if a grid is used */
+#cycling-coach .cc-title {
+  /* If your layout uses a container class, you can align to it instead */
+  /* max-width: var(--content-max, 1100px); */
+  /* padding-left: var(--content-pad, 16px); */
+}
+
+#cycling-coach .cc-title__leaf::before {
+  content: '\1F343';
+}
+
+body.planted-active #cycling-coach .cc-title__leaf {
+  opacity: 1;
+  transform: translateY(0);
+}
