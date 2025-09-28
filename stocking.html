@@ -630,7 +630,13 @@
           <div class="control-field control-field--full">
             <label for="tank-size-select">Tank Size</label>
             <div class="tank-size-group">
-              <select id="tank-size-select" name="tankSize" class="control" aria-describedby="tank-facts">
+              <select
+                id="tank-size-select"
+                name="tankSize"
+                class="control"
+                aria-describedby="tank-facts"
+                data-testid="tank-gallons"
+              >
                 <option value="" disabled selected>Select a tank size…</option>
               </select>
               <span id="tank-footprint" class="tank-footprint" aria-live="polite" hidden></span>
@@ -647,6 +653,7 @@
               role="switch"
               aria-checked="false"
               aria-label="Toggle planted tank"
+              data-testid="toggle-planted"
             >
               <span class="slider" aria-hidden="true"></span>
               <span>Off</span>
@@ -678,6 +685,7 @@
                 role="switch"
                 aria-checked="false"
                 aria-label="Toggle beginner safeguards"
+                data-testid="toggle-beginner"
               >
                 <span class="slider" aria-hidden="true"></span>
                 <span>Off</span>
@@ -687,13 +695,14 @@
                 type="button"
                 data-popover="beginner-info"
                 aria-label="What is Beginner mode?"
+                data-testid="info-popover-trigger"
               >
                 i
               </button>
             </div>
           </div>
         </div>
-        <div id="tank-summary" aria-live="polite"></div>
+        <div id="tank-summary" aria-live="polite" data-testid="tank-summary"></div>
       </section>
 
       <section class="card" id="stock-list-card" aria-live="polite">
@@ -701,7 +710,7 @@
           <h2>Current Stock</h2>
           <p class="subtle">Your selected fish and inverts appear here.</p>
         </div>
-        <div id="stock-list" class="stock-list"></div>
+        <div id="stock-list" class="stock-list" data-testid="species-list"></div>
       </section>
 
       <section class="card tank-env-card env-card" id="env-card" aria-live="polite">
@@ -719,7 +728,7 @@
 
         <hr class="env-divider" aria-hidden="true" />
 
-        <div id="env-bars" class="env-bars">
+        <div id="env-bars" class="env-bars" data-testid="stock-bars">
           <!-- populated by JS: Bioload Capacity + Aggression & Compatibility -->
         </div>
 
@@ -738,7 +747,7 @@
           >
             <div class="control-field">
               <label id="candidate-label" for="plan-species">Species</label>
-              <select id="plan-species" class="control"></select>
+              <select id="plan-species" class="control" data-testid="species-search"></select>
             </div>
             <div class="control-field">
               <label for="plan-qty">Quantity</label>
@@ -752,14 +761,22 @@
                 value="1"
               />
             </div>
-            <button id="plan-add" class="see-gear" type="button">Add to Stock</button>
+            <button id="plan-add" class="see-gear" type="button" data-testid="btn-add-species">Add to Stock</button>
           </div>
           <div class="chips" id="candidate-chips"></div>
-          <div id="candidate-banner" class="status-strip" data-state="bad" style="display:none;">Beginner safeguards: fix highlighted issues before adding.</div>
+          <div
+            id="candidate-banner"
+            class="status-strip"
+            data-state="bad"
+            style="display:none;"
+            data-testid="status-banner"
+          >
+            Beginner safeguards: fix highlighted issues before adding.
+          </div>
         </div>
       </section>
 
-      <button class="see-gear" id="btn-gear" type="button">See Gear Suggestions</button>
+      <button class="see-gear" id="btn-gear" type="button" data-testid="btn-gear">See Gear Suggestions</button>
 
       <section class="diagnostics" id="diagnostics" hidden>
         <h3>Diagnostics</h3>
@@ -785,28 +802,52 @@
   <script type="module" src="js/logic/conflicts.js"></script>
   <script type="module" src="js/stocking.js?v=2024-06-05a" id="js-stocking"></script>
 
-  <div id="beginner-info" class="popover" data-hidden="true" role="dialog" aria-modal="false">
+  <div
+    id="beginner-info"
+    class="popover"
+    data-hidden="true"
+    role="dialog"
+    aria-modal="false"
+    data-testid="info-popover"
+  >
     <strong>Beginner safeguards</strong>
     <p style="margin:8px 0 0;">
       Beginner mode enforces conservative limits: risky pairings, salinity mismatches, and high bioload overages block the add
       button. Switch to Advanced to accept higher risk with caution banners.
     </p>
+    <button type="button" class="link-like" data-popover-close data-testid="info-popover-close">Close</button>
   </div>
 
-  <div id="bioload-why" class="popover" data-hidden="true" role="dialog" aria-modal="false">
+  <div
+    id="bioload-why"
+    class="popover"
+    data-hidden="true"
+    role="dialog"
+    aria-modal="false"
+    data-testid="info-popover"
+  >
     <strong>How capacity is calculated</strong>
     <p style="margin:8px 0 0;">
       Effective volume considers sump capacity, filtration turnover, and whether the tank is planted. Beginner mode keeps a 15%
       safety buffer so new keepers have extra margin.
     </p>
+    <button type="button" class="link-like" data-popover-close data-testid="info-popover-close">Close</button>
   </div>
 
-  <div id="aggression-why" class="popover" data-hidden="true" role="dialog" aria-modal="false">
+  <div
+    id="aggression-why"
+    class="popover"
+    data-hidden="true"
+    role="dialog"
+    aria-modal="false"
+    data-testid="info-popover"
+  >
     <strong>Compatibility checks</strong>
     <p style="margin:8px 0 0;">
       We compare temperament scores, territorial tags, and known conflict pairs. Longer tanks reduce tension by giving fish room
       to establish territories.
     </p>
+    <button type="button" class="link-like" data-popover-close data-testid="info-popover-close">Close</button>
   </div>
 </body>
 </html>

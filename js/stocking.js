@@ -22,6 +22,7 @@ function bootstrapStocking() {
   const state = createDefaultState();
   let computed = null;
   let variantSelectorOpen = false;
+  let shouldRestoreVariantFocus = false;
   const debugMode = getQueryFlag('debug');
   const CATEGORY_ORDER = ['Pico', 'Nano', 'Small', 'Medium', 'Large', 'XL', 'XXL'];
 
@@ -425,14 +426,14 @@ function stockRow(s, qty) {
   const id   = esc(s.id);
   const qStr = `${qty}`;
   return `
-    <div class="stock-row">
+    <div class="stock-row" data-testid="species-row">
       <div class="stock-row__name">${name}</div>
       <div class="stock-row__qtyctrl" role="group" aria-label="Quantity for ${name}">
         <button class="qtybtn" data-qty-minus="${id}" aria-label="Decrease ${name}">–</button>
         <div class="qtyval" aria-live="polite" aria-atomic="true">${qStr}</div>
         <button class="qtybtn" data-qty-plus="${id}" aria-label="Increase ${name}">+</button>
       </div>
-      <button class="stock-row__remove" data-remove-id="${id}" aria-label="Remove ${name}">Remove</button>
+      <button class="stock-row__remove" data-remove-id="${id}" aria-label="Remove ${name}" data-testid="btn-remove-species">Remove</button>
     </div>
   `;
 }
@@ -654,6 +655,7 @@ function renderTankSummaryView() {
     toggle.type = 'button';
     toggle.className = 'link-like';
     toggle.textContent = variantSelectorOpen ? 'Close' : 'Change';
+    toggle.dataset.testid = 'variant-toggle';
     toggle.addEventListener('click', () => {
       variantSelectorOpen = !variantSelectorOpen;
       renderTankSummaryView();
@@ -664,19 +666,29 @@ function renderTankSummaryView() {
     if (variantSelectorOpen) {
       const selector = document.createElement('div');
       selector.className = 'variant-selector';
+      selector.dataset.testid = 'variant-selector';
       for (const option of variants) {
         const button = document.createElement('button');
         button.type = 'button';
         button.textContent = describeVariant(option);
         button.dataset.active = option.id === computed.tank.variant?.id ? 'true' : 'false';
+        button.dataset.testid = 'variant-option';
         button.addEventListener('click', () => {
           state.variantId = option.id;
           variantSelectorOpen = false;
+          shouldRestoreVariantFocus = true;
           scheduleUpdate();
         });
         selector.appendChild(button);
       }
       container.appendChild(selector);
+    }
+
+    if (shouldRestoreVariantFocus) {
+      queueMicrotask(() => {
+        toggle.focus();
+        shouldRestoreVariantFocus = false;
+      });
     }
   }
 
