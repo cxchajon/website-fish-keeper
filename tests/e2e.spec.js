@@ -147,3 +147,235 @@ test.describe('TheTankGuide core UX flows', () => {
   });
 
 });
+
+test.describe('Stocking Advisor UI interactions', () => {
+  const STOCKING_PATH = '/stocking.html';
+
+  async function loadStockingApp(page) {
+    await page.goto(BASE + STOCKING_PATH);
+    await expect(page.locator('#stocking-app')).toBeVisible();
+    await page.waitForFunction(() => {
+      const select = document.querySelector('#tank-size-select');
+      return select && select.options.length > 1;
+    });
+  }
+
+  async function setGallons(page, gallons) {
+    const explicitInput = page.locator('input[name="gallons"], input#gallons').first();
+    if (await explicitInput.count()) {
+      await explicitInput.fill(String(gallons));
+      await explicitInput.press('Tab');
+      return;
+    }
+
+    await selectTankByGallons(page, gallons);
+  }
+
+  async function selectTankByGallons(page, gallons) {
+    const select = page.locator('#tank-size-select');
+    await expect(select).toBeVisible();
+    const option = select.locator('option', { hasText: new RegExp(`\\b${gallons}\\b`) }).first();
+    if (!(await option.count())) {
+      throw new Error(`Tank option containing ${gallons} not found`);
+    }
+    const value = await option.getAttribute('value');
+    await select.selectOption(value || undefined);
+    await expect(page.locator('#tank-summary')).toContainText(String(gallons));
+  }
+
+  async function ensureBarsHydrated(page) {
+    const bars = page.locator('#env-bars .env-bar__fill').first();
+    await expect(bars).toHaveAttribute('style', /width:/);
+    return bars;
+  }
+
+  async function tabUntil(page, selector, maxPresses = 12) {
+    for (let i = 0; i < maxPresses; i++) {
+      const isActive = await page.evaluate((sel) => {
+        const active = document.activeElement;
+        return active ? active.matches(sel) : false;
+      }, selector);
+      if (isActive) return;
+      await page.keyboard.press('Tab');
+    }
+    throw new Error(`Unable to focus element matching ${selector}`);
+  }
+
+  test('Gallons input updates tank summary', async ({ page }) => {
+    await loadStockingApp(page);
+
+    const summary = page.locator('#tank-summary');
+    await expect(summary).toContainText('Select a tank size', { timeout: 4000 });
+
+    await setGallons(page, 29);
+
+    await expect(summary).toContainText('29', { timeout: 4000 });
+  });
+
+  test('Planted toggle shows and hides leaf icon', async ({ page }) => {
+    await loadStockingApp(page);
+    await selectTankByGallons(page, 40);
+
+    const toggle = page.locator('#toggle-planted, button[aria-label="Toggle planted tank"], label:has-text("Planted")');
+    const plantIcon = page.locator('#plant-icon');
+
+    await expect(toggle.first()).toHaveAttribute('aria-checked', 'false');
+    await toggle.first().click();
+    await expect(plantIcon).toBeVisible();
+
+    await toggle.first().click();
+    await expect(plantIcon).toBeHidden();
+  });
+
+  test('Show More Tips toggle reveals extended guidance', async ({ page }) => {
+    await loadStockingApp(page);
+    await selectTankByGallons(page, 40);
+
+    const toggle = page.locator('#toggle-tips, button[aria-label="Toggle expanded guidance"], label:has-text("Show More Tips")');
+    const tips = page.locator('#env-tips');
+
+    await expect(tips).toBeHidden();
+    await toggle.first().click();
+    await expect(tips).toBeVisible();
+
+    await toggle.first().click();
+    await expect(tips).toBeHidden();
+  });
+
+  test('Beginner Mode toggle and popover behavior', async ({ page }) => {
+    await loadStockingApp(page);
+    await selectTankByGallons(page, 29);
+
+    const toggle = page.locator('#toggle-beginner, button[aria-label="Toggle beginner safeguards"], label:has-text("Beginner Mode")').first();
+    const infoButton = page.locator('button[data-popover="beginner-info"], button[aria-label="What is Beginner mode?"]').first();
+    const popover = page.locator('#beginner-info');
+
+    await expect(toggle).toHaveAttribute('aria-checked', 'false');
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-checked', 'true');
+
+    await infoButton.click();
+    await expect(popover).toHaveAttribute('data-hidden', 'false');
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-checked', 'false');
+    await expect(popover).not.toHaveAttribute('data-hidden', 'false');
+  });
+
+  test('Change tank variant toggles between variants', async ({ page }) => {
+    await loadStockingApp(page);
+    await selectTankByGallons(page, 40);
+
+    const summary = page.locator('#tank-summary');
+    let changeLink = summary.locator('button:has-text("Change"), button:has-text("Change tank variant")').first();
+    await expect(changeLink).toBeVisible();
+
+    const before = await summary.textContent();
+    await changeLink.click();
+    const variantSelector = summary.locator('.variant-selector button');
+    const optionCount = await variantSelector.count();
+    expect(optionCount).toBeGreaterThan(1);
+
+    let alternate = variantSelector.nth(0);
+    const activeIndex = await variantSelector.evaluateAll((buttons) => buttons.findIndex((btn) => btn.dataset.active === 'true'));
+    if (activeIndex >= 0) {
+      const count = await variantSelector.count();
+      const nextIndex = (activeIndex + 1) % count;
+      alternate = variantSelector.nth(nextIndex);
+    }
+    const altText = await alternate.textContent();
+    await alternate.click();
+
+    await expect(summary).toContainText(altText ?? '', { timeout: 4000 });
+
+    const after = await summary.textContent();
+    expect(after && before && after.trim() !== before.trim()).toBeTruthy();
+
+    changeLink = summary.locator('button:has-text("Change"), button:has-text("Change tank variant")').first();
+    await changeLink.click();
+    await expect(summary.locator('.variant-selector')).toHaveCount(0);
+  });
+
+  test('See Gear CTA stores stocking state in sessionStorage', async ({ page }) => {
+    await loadStockingApp(page);
+    await selectTankByGallons(page, 40);
+
+    const seeGear = page.locator('#btn-gear, button:has-text("See Gear")').first();
+    await expect(seeGear).toBeVisible();
+
+    await seeGear.click();
+    await page.waitForLoadState('networkidle').catch(() => {});
+
+    await expect.poll(async () => page.evaluate(() => sessionStorage.getItem('ttg_stocking_state'))).not.toBeNull();
+  });
+
+  test('Adding species row updates bars and beginner safeguards', async ({ page }) => {
+    await loadStockingApp(page);
+    await selectTankByGallons(page, 40);
+
+    const bars = await ensureBarsHydrated(page);
+    const baselineWidth = await bars.evaluate((el) => el.style.width);
+
+    const speciesSelect = page.locator('#plan-species');
+    await expect(speciesSelect).toBeVisible();
+    await page.waitForFunction(() => {
+      const el = document.querySelector('#plan-species');
+      return el && el.options && el.options.length > 0;
+    });
+    const firstOption = speciesSelect.locator('option').first();
+    const firstValue = await firstOption.getAttribute('value');
+    const firstLabel = (await firstOption.textContent())?.trim();
+    await speciesSelect.selectOption(firstValue || undefined);
+
+    const addButton = page.locator('#plan-add, button:has-text("Add to Stock"), button:has-text("Add")').first();
+    await expect(addButton).not.toBeDisabled();
+
+    await addButton.click();
+    await expect(page.locator('#stock-list')).toContainText(firstLabel || '', { timeout: 4000 });
+
+    await expect.poll(async () => page.locator('#env-bars .env-bar__fill').first().evaluate((el) => el.style.width)).not.toBe(baselineWidth);
+
+    const qtyInput = page.locator('#plan-qty');
+    await qtyInput.fill('200');
+    await qtyInput.press('Tab');
+
+    const beginnerToggle = page.locator('#toggle-beginner').first();
+    await beginnerToggle.click();
+    await expect(beginnerToggle).toHaveAttribute('aria-checked', 'true');
+
+    if (await addButton.isDisabled()) {
+      const banner = page.locator('#candidate-banner');
+      await expect(banner).toBeVisible();
+      await expect(banner).toContainText('Beginner safeguards');
+    } else {
+      test.info().log('Beginner safeguards did not block Add for current selection.');
+    }
+  });
+
+  test('Keyboard interactions for toggles and popovers', async ({ page }) => {
+    await loadStockingApp(page);
+    await selectTankByGallons(page, 29);
+
+    await page.locator('body').click();
+    await tabUntil(page, '#toggle-planted');
+    await page.keyboard.press('Space');
+    await expect(page.locator('#toggle-planted')).toHaveAttribute('aria-checked', 'true');
+
+    await tabUntil(page, '#toggle-beginner');
+    await page.keyboard.press('Space');
+    const beginnerToggle = page.locator('#toggle-beginner');
+    await expect(beginnerToggle).toHaveAttribute('aria-checked', 'true');
+
+    await tabUntil(page, 'button[data-popover="beginner-info"]');
+    await page.keyboard.press('Space');
+    const popover = page.locator('#beginner-info');
+    await expect(popover).toHaveAttribute('data-hidden', 'false');
+
+    await page.keyboard.press('Escape');
+    await expect(popover).not.toHaveAttribute('data-hidden', 'false');
+
+    await tabUntil(page, '#toggle-beginner');
+    await page.keyboard.press('Space');
+    await expect(beginnerToggle).toHaveAttribute('aria-checked', 'false');
+  });
+});
