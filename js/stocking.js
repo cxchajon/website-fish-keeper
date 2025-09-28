@@ -1,8 +1,8 @@
 import { createDefaultState, buildComputedState, runSanitySuite, runStressSuite, SPECIES, getDefaultSpeciesId } from './logic/compute.js';
-import { computeEnv, renderEnvInto, renderWarningsInto } from './logic/envRecommend.js';
+import { renderEnvCard } from './logic/envRecommend.js';
 import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
-import { renderConditions, renderBioloadBar, renderAggressionBar, renderStatus, renderChips, bindPopoverHandlers } from './logic/ui.js';
+import { renderConditions, renderChips, bindPopoverHandlers } from './logic/ui.js';
 window.addEventListener('keydown', (e) => {
   const platform = typeof navigator !== 'undefined' ? navigator.platform : '';
   const isMac = platform.toUpperCase().includes('MAC');
@@ -38,13 +38,6 @@ function bootstrapStocking() {
   flow: document.getElementById('select-flow'),
   tankSummary: document.getElementById('tank-summary'),
   conditions: document.getElementById('conditions-list'),
-  bioloadFill: document.getElementById('bioload-fill'),
-  bioloadGhost: document.getElementById('bioload-ghost'),
-  bioloadText: document.getElementById('bioload-text'),
-  aggFill: document.getElementById('agg-fill'),
-  aggText: document.getElementById('agg-text'),
-  statusStrip: document.getElementById('status-strip'),
-  chipRow: document.getElementById('chip-row'),
   candidateChips: document.getElementById('candidate-chips'),
   candidateBanner: document.getElementById('candidate-banner'),
   speciesSelect: document.getElementById('plan-species'),
@@ -56,7 +49,6 @@ function bootstrapStocking() {
   diagnosticsContent: document.getElementById('diagnostics-content'),
   envReco: document.getElementById('env-reco'),
   envTips: document.getElementById('env-tips'),
-  warningsCard: document.getElementById('warnings-card'),
 };
 
 const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
@@ -132,6 +124,10 @@ elQty?.addEventListener('keydown', (event) => {
 
 /* ==== Current Stock state + renderer with +/- controls ==== */
 const STOCK = new Map(); // id -> { species, qty }
+
+function currentStockArray() {
+  return Array.from(STOCK.values()).map(({ species, qty }) => ({ species, qty }));
+}
 
 document.addEventListener('advisor:addCandidate', (e) => {
   const s = e.detail?.species; const addQty = Math.max(1, e.detail?.qty || 1);
@@ -518,45 +514,22 @@ function renderDiagnostics() {
 function renderAll() {
   computed = buildComputedState(state);
   renderTankSummaryView();
-  renderConditions(refs.conditions, computed.conditions.conditions);
-  renderBioloadBar(refs.bioloadFill, refs.bioloadGhost, refs.bioloadText, computed.bioload);
-  renderAggressionBar(refs.aggFill, refs.aggText, computed.aggression);
-  renderStatus(refs.statusStrip, computed.status);
-  renderChips(refs.chipRow, buildStatusChips());
+  if (refs.conditions) {
+    renderConditions(refs.conditions, computed.conditions.conditions);
+  }
   renderCandidateState();
   syncStockFromState();
   renderDiagnostics();
   renderEnvironmentPanels();
 }
 
-function buildStatusChips() {
-  if (!computed) return [];
-  const chips = [];
-  if (computed.bioload.severity !== 'ok') {
-    chips.push({ tone: computed.bioload.severity === 'bad' ? 'bad' : 'warn', text: computed.bioload.text });
-  }
-  if (computed.aggression.severity !== 'ok') {
-    chips.push({ tone: computed.aggression.severity === 'bad' ? 'bad' : 'warn', text: computed.aggression.label });
-  }
-  const condition = computed.conditions.conditions.find((item) => item.severity !== 'ok');
-  if (condition) {
-    chips.push({ tone: condition.severity === 'bad' ? 'bad' : 'warn', text: `${condition.label}: ${condition.hint}` });
-  }
-  return chips;
-}
-
 function renderEnvironmentPanels() {
   if (!computed) return;
-  const envEl = refs.envReco;
-  const warnEl = refs.warningsCard;
-  if (!envEl || !warnEl) return;
-  const speciesList = computed.entries.map((entry) => entry.species);
-  const env = computeEnv({ speciesList, planted: state.planted });
-  renderEnvInto(envEl, env);
-  renderWarningsInto(warnEl, env);
-  if (env.rows?.temperature?.setpoint) {
-    state.water.temperature = env.rows.temperature.setpoint;
-  }
+  renderEnvCard({
+    stock: currentStockArray(),
+    beginner: state.beginnerMode,
+    computed,
+  });
 }
 
 const scheduleUpdate = debounce(() => {
@@ -570,17 +543,7 @@ const tipsPane = document.querySelector('#env-tips');
 
 if (tipsBtn && tipsPane) {
   tipsBtn.addEventListener('click', () => {
-    const open = tipsPane.hasAttribute('hidden') ? false : true;
-    if (open) {
-      tipsPane.setAttribute('hidden', '');
-      tipsBtn.setAttribute('aria-pressed', 'false');
-      tipsBtn.textContent = 'Show More Tips';
-    } else {
-      tipsPane.removeAttribute('hidden');
-      tipsBtn.setAttribute('aria-pressed', 'true');
-      tipsBtn.textContent = 'Hide Tips';
-    }
-    state.showTips = !open;
+    state.showTips = !state.showTips;
     syncToggles();
     scheduleUpdate();
   });

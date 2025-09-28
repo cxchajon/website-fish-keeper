@@ -671,48 +671,28 @@
       <div id="stock-list" class="stock-list"></div>
     </section>
 
-    <section class="card tank-env-card" aria-live="polite" id="env-card">
+    <section class="card tank-env-card" id="env-card" aria-live="polite">
       <div class="card__hd card__hd--split">
         <h2>Environmental Recommendations</h2>
         <button type="button" id="env-tips-toggle" class="linklike" aria-pressed="false">Show More Tips</button>
       </div>
+
       <p class="subtle">Derived from your selected stock.</p>
-      <div id="env-reco" class="env-list"></div>
+
+      <h3 class="h-subtle">Recommended Environmental Conditions</h3>
+      <div id="env-reco" class="env-list" role="list"></div>
+
+      <hr class="env-divider" aria-hidden="true" />
+
+      <div id="env-bars" class="env-bars">
+        <!-- populated by JS: Bioload Capacity + Aggression & Compatibility -->
+      </div>
+
+      <div id="env-warnings" class="env-warnings" hidden></div>
+
       <div id="env-tips" class="env-tips" hidden>
-        <h3 class="env-tips__title" id="conditions-title">Recommended Environmental Conditions</h3>
-        <ul class="conditions-list" id="conditions-list"></ul>
+        <!-- brief bullets about GH/KH, salinity, blackwater, flow zones, and Beginner Mode -->
       </div>
-    </section>
-
-    <section class="card warn-card" id="warnings-card" hidden></section>
-
-    <section class="panel" aria-labelledby="capacity-title">
-      <div class="bars">
-        <div class="bar-card">
-          <div class="bar-header">
-            <h3 id="capacity-title">Bioload Capacity</h3>
-            <button class="micro-info" type="button" data-popover="bioload-why" aria-label="Why does bioload capacity change?">?</button>
-          </div>
-          <div class="bar-wrapper" aria-hidden="true">
-            <div class="bar-ghost" id="bioload-ghost"></div>
-            <div class="bar-fill" id="bioload-fill"></div>
-          </div>
-          <p class="bar-text" id="bioload-text">—</p>
-        </div>
-
-        <div class="bar-card">
-          <div class="bar-header">
-            <h3>Aggression &amp; Compatibility</h3>
-            <button class="micro-info" type="button" data-popover="aggression-why" aria-label="Why do aggression warnings show?">?</button>
-          </div>
-          <div class="bar-wrapper" aria-hidden="true">
-            <div class="bar-fill" id="agg-fill" style="background: var(--ghost);"></div>
-          </div>
-          <p class="bar-text" id="agg-text">—</p>
-        </div>
-      </div>
-      <div class="status-strip" id="status-strip" data-state="ok" role="status" aria-live="polite">Loading…</div>
-      <div class="chips" id="chip-row"></div>
     </section>
 
     <button class="see-gear" id="btn-gear" type="button">See Gear Suggestions</button>
