@@ -3,6 +3,7 @@ import { renderEnvCard } from './logic/envRecommend.js';
 import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderChips, bindPopoverHandlers } from './logic/ui.js';
+import { listTanks, getTankById } from './tankSizes.js';
 window.addEventListener('keydown', (e) => {
   const platform = typeof navigator !== 'undefined' ? navigator.platform : '';
   const isMac = platform.toUpperCase().includes('MAC');
@@ -15,6 +16,8 @@ window.addEventListener('keydown', (e) => {
 });
 
 function bootstrapStocking() {
+  const LITERS_PER_GALLON = 3.78541;
+  const TANK_STORAGE_KEY = 'ttg.selectedTank';
   const state = createDefaultState();
   let computed = null;
   let variantSelectorOpen = false;
@@ -24,6 +27,10 @@ function bootstrapStocking() {
   pageTitle: document.getElementById('page-title'),
   plantIcon: document.getElementById('plant-icon'),
   gallons: document.getElementById('input-gallons'),
+  tankPresetFieldset: document.getElementById('tank-preset-fieldset'),
+  tankPresetList: document.getElementById('tank-preset-list'),
+  tankFacts: document.getElementById('tank-facts'),
+  tankCustomDetails: document.getElementById('tank-custom-details'),
   planted: document.getElementById('toggle-planted'),
   tips: document.getElementById('toggle-tips'),
   tipsInline: document.getElementById('env-tips-toggle'),
@@ -50,6 +57,249 @@ function bootstrapStocking() {
   envReco: document.getElementById('env-reco'),
   envTips: document.getElementById('env-tips'),
 };
+
+  const tanksCatalog = listTanks();
+
+  function formatWithPrecision(value, decimals = 1) {
+    if (!Number.isFinite(value)) return '0';
+    const factor = 10 ** decimals;
+    const rounded = Math.round(value * factor) / factor;
+    if (decimals === 0) {
+      return String(Math.round(rounded));
+    }
+    if (Number.isInteger(rounded)) {
+      return String(Math.trunc(rounded));
+    }
+    return rounded.toFixed(decimals).replace(/0+$/, '').replace(/\.$/, '');
+  }
+
+  function formatGallonsLabel(value) {
+    if (!Number.isFinite(value) || value <= 0) {
+      return '0g';
+    }
+    const rounded = Math.round(value * 10) / 10;
+    if (Number.isInteger(rounded)) {
+      return `${Math.trunc(rounded)}g`;
+    }
+    return `${rounded.toFixed(1).replace(/0+$/, '').replace(/\.$/, '')}g`;
+  }
+
+  function formatLitersLabel(value) {
+    if (!Number.isFinite(value) || value <= 0) {
+      return '0 L';
+    }
+    return `${formatWithPrecision(value, 1)} L`;
+  }
+
+  function formatDimensionList(dimensions, decimals = 0) {
+    if (!dimensions) return '';
+    const keys = ['l', 'w', 'h'];
+    return keys
+      .map((key) => formatWithPrecision(dimensions[key], decimals))
+      .join('×');
+  }
+
+  function renderTankPresetOptions() {
+    if (!refs.tankPresetList) return;
+    const fragment = document.createDocumentFragment();
+    for (const tank of tanksCatalog) {
+      const option = document.createElement('label');
+      option.className = 'tank-preset-option';
+      option.dataset.tankId = tank.id;
+
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'tankPreset';
+      input.value = tank.id;
+      input.id = `tank-preset-${tank.id}`;
+      input.className = 'tank-preset-option__control';
+
+      const content = document.createElement('span');
+      content.className = 'tank-preset-option__content';
+
+      const row = document.createElement('span');
+      row.className = 'tank-preset-option__row';
+
+      const labelEl = document.createElement('span');
+      labelEl.className = 'tank-preset-option__label';
+      labelEl.textContent = tank.label;
+
+      const footprint = document.createElement('span');
+      footprint.className = 'tank-preset-option__footprint';
+      footprint.textContent = tank.footprint_in;
+
+      row.append(labelEl, footprint);
+
+      const sub = document.createElement('span');
+      sub.className = 'tank-preset-option__sub';
+      sub.textContent = `≈${formatWithPrecision(tank.liters, 1)} L • ${formatDimensionList(tank.dimensions_in, 0)} in`;
+
+      content.append(row, sub);
+      option.append(input, content);
+      fragment.append(option);
+    }
+    refs.tankPresetList.innerHTML = '';
+    refs.tankPresetList.append(fragment);
+  }
+
+  function updatePresetRadios(selectedId) {
+    if (!refs.tankPresetFieldset) return;
+    const radios = refs.tankPresetFieldset.querySelectorAll('input[name="tankPreset"]');
+    radios.forEach((radio) => {
+      radio.checked = radio.value === selectedId;
+    });
+  }
+
+  function setCustomInputDisabled(disabled) {
+    if (!refs.gallons) return;
+    refs.gallons.disabled = disabled;
+    if (disabled) {
+      refs.gallons.classList.add('tank-custom-input--disabled');
+      refs.gallons.setAttribute('aria-disabled', 'true');
+    } else {
+      refs.gallons.classList.remove('tank-custom-input--disabled');
+      refs.gallons.removeAttribute('aria-disabled');
+    }
+  }
+
+  function persistSelectedTank(id) {
+    try {
+      if (!('localStorage' in window)) return;
+      if (id) {
+        window.localStorage.setItem(TANK_STORAGE_KEY, id);
+      } else {
+        window.localStorage.removeItem(TANK_STORAGE_KEY);
+      }
+    } catch (error) {
+      // ignore persistence failures (private browsing, etc.)
+    }
+  }
+
+  function loadPersistedTankId() {
+    try {
+      if (!('localStorage' in window)) return null;
+      return window.localStorage.getItem(TANK_STORAGE_KEY);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function renderTankFacts() {
+    if (!refs.tankFacts) return;
+    if (state.selectedTankId) {
+      const tank = getTankById(state.selectedTankId);
+      if (tank) {
+        const dimsIn = formatDimensionList(tank.dimensions_in, 0);
+        const dimsCm = formatDimensionList(tank.dimensions_cm, 1);
+        const filled = Math.round(tank.filled_weight_lbs);
+        refs.tankFacts.textContent = `${formatGallonsLabel(tank.gallons)} • ${formatWithPrecision(tank.liters, 1)} L • ${dimsIn} in (${dimsCm} cm) • ~${filled} lbs filled`;
+        return;
+      }
+    }
+    if (state.gallons > 0) {
+      const liters = state.liters > 0 ? state.liters : state.gallons * LITERS_PER_GALLON;
+      refs.tankFacts.textContent = `${formatGallonsLabel(state.gallons)} • ${formatLitersLabel(liters)}`;
+      return;
+    }
+    refs.tankFacts.textContent = 'Select a preset or enter custom gallons to get started.';
+  }
+
+  function applyPresetSelection(id, { shouldPersist = true, skipRecompute = false } = {}) {
+    const tank = getTankById(id);
+    if (!tank) return;
+    state.selectedTankId = tank.id;
+    state.gallons = tank.gallons;
+    state.liters = tank.liters;
+    if (refs.gallons) {
+      refs.gallons.value = '';
+    }
+    setCustomInputDisabled(true);
+    updatePresetRadios(tank.id);
+    if (refs.tankCustomDetails) {
+      refs.tankCustomDetails.open = false;
+    }
+    if (shouldPersist) {
+      persistSelectedTank(tank.id);
+    }
+    if (skipRecompute) {
+      renderTankFacts();
+    } else {
+      runRecompute({ skipInputSync: true });
+    }
+  }
+
+  function enterCustomMode({ resetValue = false, fromToggle = false } = {}) {
+    setCustomInputDisabled(false);
+    const hadPreset = Boolean(state.selectedTankId);
+    if (hadPreset) {
+      state.selectedTankId = null;
+      persistSelectedTank(null);
+    }
+    updatePresetRadios(null);
+    if (resetValue && refs.gallons) {
+      refs.gallons.value = '';
+      state.gallons = 0;
+      state.liters = 0;
+    }
+    if (hadPreset || resetValue) {
+      renderTankFacts();
+    }
+    if (hadPreset && fromToggle) {
+      runRecompute({ skipInputSync: true });
+    }
+  }
+
+  function hydrateTankSelection() {
+    const storedId = loadPersistedTankId();
+    if (storedId) {
+      const tank = getTankById(storedId);
+      if (tank) {
+        applyPresetSelection(tank.id, { shouldPersist: false, skipRecompute: true });
+        return;
+      }
+      persistSelectedTank(null);
+    }
+    enterCustomMode({ resetValue: true });
+  }
+
+  function handlePresetChange(event) {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement) || target.name !== 'tankPreset') {
+      return;
+    }
+    applyPresetSelection(target.value);
+  }
+
+  function handleCustomToggle() {
+    if (!refs.tankCustomDetails || !refs.tankCustomDetails.open) {
+      return;
+    }
+    enterCustomMode({ resetValue: true, fromToggle: true });
+    if (refs.gallons) {
+      requestAnimationFrame(() => {
+        try {
+          refs.gallons.focus({ preventScroll: true });
+        } catch (error) {
+          // focus failures are non-fatal
+        }
+      });
+    }
+  }
+
+  function handleCustomGallonsInput() {
+    if (!refs.gallons) return;
+    enterCustomMode();
+    const value = Number.parseFloat(refs.gallons.value);
+    if (Number.isFinite(value) && value > 0) {
+      state.gallons = value;
+      state.liters = value * LITERS_PER_GALLON;
+    } else {
+      state.gallons = 0;
+      state.liters = 0;
+    }
+    renderTankFacts();
+    scheduleUpdate();
+  }
 
 const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
 const speciesById = new Map(SPECIES.map((species) => [species.id, species]));
@@ -365,7 +615,16 @@ function updateToggle(button, value) {
 }
 
 function syncStateFromInputs() {
-  state.gallons = Number(refs.gallons.value) || state.gallons;
+  if (refs.gallons && !refs.gallons.disabled) {
+    const manualGallons = Number.parseFloat(refs.gallons.value);
+    if (Number.isFinite(manualGallons) && manualGallons > 0) {
+      state.gallons = manualGallons;
+      state.liters = manualGallons * LITERS_PER_GALLON;
+    } else {
+      state.gallons = 0;
+      state.liters = 0;
+    }
+  }
   if (refs.turnover) {
     state.turnover = Number(refs.turnover.value) || state.turnover;
   }
@@ -413,6 +672,14 @@ function renderTankSummaryView() {
   refs.tankSummary.innerHTML = '';
   const container = document.createElement('div');
   container.className = 'tank-summary';
+  if (!computed) {
+    const text = document.createElement('p');
+    text.className = 'subtle';
+    text.textContent = 'Select a preset tank size or enter custom gallons to unlock recommendations.';
+    container.appendChild(text);
+    refs.tankSummary.appendChild(container);
+    return;
+  }
   const variant = computed.tank.variant;
   const dims = variant ? `${variant.length}″×${variant.width}″×${variant.height}″` : '—';
   const text = document.createElement('p');
@@ -491,7 +758,14 @@ function renderCandidateState() {
 }
 
 function renderDiagnostics() {
-  if (!debugMode) return;
+  if (!debugMode || !refs.diagnostics) return;
+  if (!computed) {
+    refs.diagnostics.hidden = true;
+    if (refs.diagnosticsContent) {
+      refs.diagnosticsContent.innerHTML = '';
+    }
+    return;
+  }
   refs.diagnostics.hidden = false;
   const sanity = runSanitySuite(state);
   const stress = runStressSuite(state);
@@ -503,7 +777,9 @@ function renderDiagnostics() {
     '<strong>Stress Tests</strong>',
     ...stress.map((line) => `<span>${line}</span>`),
   ];
-  refs.diagnosticsContent.innerHTML = `<ul>${lines.map((line) => `<li>${line}</li>`).join('')}</ul>`;
+  if (refs.diagnosticsContent) {
+    refs.diagnosticsContent.innerHTML = `<ul>${lines.map((line) => `<li>${line}</li>`).join('')}</ul>`;
+  }
   console.groupCollapsed('[Stocking] Diagnostics');
   computed.diagnostics.forEach((line) => console.log(line));
   sanity.forEach((line) => console.log(line));
@@ -512,6 +788,18 @@ function renderDiagnostics() {
 }
 
 function renderAll() {
+  if (!state.gallons) {
+    computed = null;
+    renderTankSummaryView();
+    if (refs.conditions) {
+      refs.conditions.innerHTML = '';
+    }
+    renderCandidateState();
+    syncStockFromState();
+    renderDiagnostics();
+    renderEnvironmentPanels();
+    return;
+  }
   computed = buildComputedState(state);
   renderTankSummaryView();
   if (refs.conditions) {
@@ -524,7 +812,10 @@ function renderAll() {
 }
 
 function renderEnvironmentPanels() {
-  if (!computed) return;
+  if (!computed) {
+    renderEnvCard({ stock: [], stockCount: 0, beginner: state.beginnerMode, computed: null });
+    return;
+  }
   renderEnvCard({
     stock: currentStockArray(),
     stockCount: computed?.stockCount ?? 0,
@@ -533,10 +824,17 @@ function renderEnvironmentPanels() {
   });
 }
 
-const scheduleUpdate = debounce(() => {
-  syncStateFromInputs();
+function runRecompute({ skipInputSync = false } = {}) {
+  if (!skipInputSync) {
+    syncStateFromInputs();
+  }
   pruneMarineEntries();
   renderAll();
+  renderTankFacts();
+}
+
+const scheduleUpdate = debounce(() => {
+  runRecompute();
 });
 
 const tipsBtn = document.querySelector('#env-tips-toggle');
@@ -560,7 +858,20 @@ if (tipsBtn && tipsPane) {
 }
 
 function bindInputs() {
-  refs.gallons.addEventListener('input', scheduleUpdate);
+  if (refs.tankPresetFieldset) {
+    refs.tankPresetFieldset.addEventListener('change', handlePresetChange);
+  }
+  if (refs.tankCustomDetails) {
+    refs.tankCustomDetails.addEventListener('toggle', handleCustomToggle);
+  }
+  if (refs.gallons) {
+    refs.gallons.addEventListener('focus', () => {
+      if (state.selectedTankId) {
+        enterCustomMode();
+      }
+    });
+    refs.gallons.addEventListener('input', handleCustomGallonsInput);
+  }
   if (refs.turnover) refs.turnover.addEventListener('input', scheduleUpdate);
   if (refs.temp) refs.temp.addEventListener('input', scheduleUpdate);
   if (refs.ph) refs.ph.addEventListener('input', scheduleUpdate);
@@ -653,14 +964,15 @@ function buildGearPayload() {
 }
 
   function init() {
+    renderTankPresetOptions();
+    hydrateTankSelection();
     bindPopoverHandlers(document.body);
     pruneMarineEntries();
     populateSpecies();
     refs.qty.value = String(state.candidate.qty);
     syncToggles();
     bindInputs();
-    syncStateFromInputs();
-    renderAll();
+    runRecompute({ skipInputSync: true });
   }
 
   init();
