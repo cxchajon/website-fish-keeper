@@ -4,6 +4,8 @@ import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderChips, bindPopoverHandlers } from './logic/ui.js';
 import { listTanks, getTankById } from './tankSizes.js';
+
+console.debug('tankSizes count:', listTanks().length, listTanks().map((t) => t.id));
 window.addEventListener('keydown', (e) => {
   const platform = typeof navigator !== 'undefined' ? navigator.platform : '';
   const isMac = platform.toUpperCase().includes('MAC');
@@ -21,7 +23,7 @@ function bootstrapStocking() {
   let computed = null;
   let variantSelectorOpen = false;
   const debugMode = getQueryFlag('debug');
-  const CATEGORY_ORDER = ['Nano', 'Small', 'Medium', 'Large', 'XL'];
+  const CATEGORY_ORDER = ['Pico', 'Nano', 'Small', 'Medium', 'Large', 'XL', 'XXL'];
 
   const refs = {
     pageTitle: document.getElementById('page-title'),
@@ -55,14 +57,6 @@ function bootstrapStocking() {
     envReco: document.getElementById('env-reco'),
     envTips: document.getElementById('env-tips'),
   };
-
-  const tanksCatalog = listTanks()
-    .slice()
-    .sort((a, b) => {
-      const gallonDiff = (a?.gallons ?? 0) - (b?.gallons ?? 0);
-      if (gallonDiff !== 0) return gallonDiff;
-      return String(a?.label ?? '').localeCompare(String(b?.label ?? ''));
-    });
 
   function formatWithPrecision(value, decimals = 1) {
     if (!Number.isFinite(value)) return '0';
@@ -117,13 +111,20 @@ function bootstrapStocking() {
       placeholder.selected = true;
     }
     refs.tankSelect.appendChild(placeholder);
-    const useGroups = tanksCatalog.some((tank) => Boolean(tank?.category));
+    const tanks = listTanks();
+    tanks.sort((a, b) => {
+      const gallonDiff = (a?.gallons ?? 0) - (b?.gallons ?? 0);
+      if (gallonDiff !== 0) return gallonDiff;
+      return String(a?.label ?? '').localeCompare(String(b?.label ?? ''));
+    });
+
+    const useGroups = tanks.some((tank) => Boolean(tank?.category));
     const fragment = document.createDocumentFragment();
 
     if (useGroups) {
       const grouped = new Map();
       const uncategorized = [];
-      for (const tank of tanksCatalog) {
+      for (const tank of tanks) {
         const category = typeof tank?.category === 'string' ? tank.category.trim() : '';
         if (category) {
           if (!grouped.has(category)) {
@@ -139,14 +140,10 @@ function bootstrapStocking() {
         fragment.appendChild(createTankOption(tank));
       }
 
-      const orderedCategories = [];
-      for (const category of CATEGORY_ORDER) {
-        if (grouped.has(category)) {
-          orderedCategories.push(category);
-        }
-      }
+      const groupedCategories = Array.from(grouped.keys());
+      const orderedCategories = CATEGORY_ORDER.filter((category) => grouped.has(category));
 
-      const remainingCategories = Array.from(grouped.keys()).filter((category) => !CATEGORY_ORDER.includes(category));
+      const remainingCategories = groupedCategories.filter((category) => !CATEGORY_ORDER.includes(category));
       remainingCategories.sort((a, b) => a.localeCompare(b));
       orderedCategories.push(...remainingCategories);
 
@@ -159,12 +156,13 @@ function bootstrapStocking() {
         fragment.appendChild(optgroup);
       }
     } else {
-      for (const tank of tanksCatalog) {
+      for (const tank of tanks) {
         fragment.appendChild(createTankOption(tank));
       }
     }
 
     refs.tankSelect.appendChild(fragment);
+    console.debug('rendered options:', document.querySelectorAll('#tank-size-select option').length);
   }
 
   function updateTankFootprint(tank) {
