@@ -1,70 +1,18 @@
-import { APP_VERSION } from './utils/version.js';
 import { createDefaultState, buildComputedState, runSanitySuite, runStressSuite, SPECIES, getDefaultSpeciesId } from './logic/compute.js';
 import { computeEnv, renderEnvInto, renderWarningsInto } from './logic/envRecommend.js';
 import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderBioloadBar, renderAggressionBar, renderStatus, renderChips, bindPopoverHandlers } from './logic/ui.js';
-
-const versionSuffix = `?v=${APP_VERSION}`;
-
-const ensureVersionedAssets = () => {
-  const cssEl = document.querySelector('#css-main');
-  if (cssEl) {
-    const href = cssEl.getAttribute('href');
-    if (href && !href.includes('?v=')) {
-      cssEl.href = href + versionSuffix;
-    }
+window.addEventListener('keydown', (e) => {
+  const platform = typeof navigator !== 'undefined' ? navigator.platform : '';
+  const isMac = platform.toUpperCase().includes('MAC');
+  if ((isMac ? e.metaKey : e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'l') {
+    e.preventDefault();
+    const u = new URL(location.href);
+    u.searchParams.set('v', Date.now().toString(36));
+    location.replace(u.toString());
   }
-
-  const scriptEl = document.querySelector('#js-stocking');
-  if (scriptEl) {
-    const src = scriptEl.getAttribute('src');
-    if (src && !src.includes('?v=')) {
-      scriptEl.src = src + versionSuffix;
-      return false;
-    }
-  }
-
-  return true;
-};
-
-const readyForBootstrap = ensureVersionedAssets();
-
-if (readyForBootstrap) {
-  console.log(`[TheTankGuide] APP_VERSION = ${APP_VERSION}`);
-} else {
-  console.log(`[TheTankGuide] Bootstrapping APP_VERSION = ${APP_VERSION}`);
-}
-
-if (readyForBootstrap) {
-  document.addEventListener('DOMContentLoaded', () => {
-    const bump = (el) => {
-      if (!el) return;
-      const href = el.getAttribute('href') || el.getAttribute('src');
-      if (!href || href.includes('?v=')) return;
-      const withV = href + versionSuffix;
-      if (el.tagName === 'LINK') {
-        el.href = withV;
-      } else if (el.tagName === 'SCRIPT') {
-        el.src = withV;
-      }
-    };
-    bump(document.querySelector('#css-main'));
-    bump(document.querySelector('#js-stocking'));
-  });
-
-  window.addEventListener('keydown', (e) => {
-    // Use ⌘/Ctrl + Shift + L to force cache-bust reload.
-    const platform = typeof navigator !== 'undefined' ? navigator.platform : '';
-    const isMac = platform.toUpperCase().includes('MAC');
-    if ((isMac ? e.metaKey : e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'l') {
-      e.preventDefault();
-      const u = new URL(location.href);
-      u.searchParams.set('v', `${APP_VERSION}-${Date.now()}`);
-      location.replace(u.toString());
-    }
-  });
-}
+});
 
 function bootstrapStocking() {
   const state = createDefaultState();
@@ -745,6 +693,4 @@ function buildGearPayload() {
   init();
 }
 
-if (readyForBootstrap) {
-  bootstrapStocking();
-}
+bootstrapStocking();
