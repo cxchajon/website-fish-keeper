@@ -702,7 +702,9 @@ export function runStressSuite(baseState) {
 
 export function createDefaultState() {
   return {
-    gallons: 20,
+    gallons: 0,
+    liters: 0,
+    selectedTankId: null,
     planted: false,
     showTips: false,
     beginnerMode: false,
