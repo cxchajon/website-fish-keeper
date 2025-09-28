@@ -647,86 +647,68 @@
     </header>
 
     <div class="wrap page-content">
-      <section class="panel" aria-labelledby="controls-title">
-        <h2 id="controls-title" class="sr-only">Tank Controls</h2>
-        <div class="controls-row">
-          <div class="control-field control-field--full">
-            <label for="tank-size-select">Tank Size</label>
-            <div class="tank-size-group">
-              <select
-                id="tank-size-select"
-                name="tankSize"
-                class="control"
-                aria-describedby="tank-facts"
-                data-testid="tank-gallons"
-              >
-                <option value="" disabled selected>Select a tank size…</option>
-              </select>
-              <span id="tank-footprint" class="tank-footprint" aria-live="polite" hidden></span>
-            </div>
-            <p id="tank-facts" class="tank-facts subtle" aria-live="polite">Choose a popular tank size to begin.</p>
-          </div>
+      <!-- TANK SIZE CARD (Show More Tips removed) -->
+      <div class="card tank-size-card" id="tank-size-card">
+        <h2 class="card-title">Tank Size</h2>
 
-          <div class="control-field">
-            <label for="toggle-planted">Planted</label>
-            <button
-              class="toggle"
-              type="button"
-              id="toggle-planted"
-              role="switch"
-              aria-checked="false"
-              aria-label="Toggle planted tank"
-              data-testid="toggle-planted"
-            >
-              <span class="slider" aria-hidden="true"></span>
-              <span>Off</span>
-            </button>
-          </div>
-
-          <div class="control-field">
-            <label for="toggle-tips">Show More Tips</label>
-            <button
-              class="toggle"
-              type="button"
-              id="toggle-tips"
-              role="switch"
-              aria-checked="false"
-              aria-label="Toggle expanded guidance"
-            >
-              <span class="slider" aria-hidden="true"></span>
-              <span>Off</span>
-            </button>
-          </div>
-
-          <div class="control-field">
-            <label for="toggle-beginner">Beginner Mode</label>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <button
-                class="toggle"
-                type="button"
-                id="toggle-beginner"
-                role="switch"
-                aria-checked="false"
-                aria-label="Toggle beginner safeguards"
-                data-testid="toggle-beginner"
-              >
-                <span class="slider" aria-hidden="true"></span>
-                <span>Off</span>
-              </button>
-              <button
-                class="micro-info"
-                type="button"
-                data-popover="beginner-info"
-                aria-label="What is Beginner mode?"
-                data-testid="info-popover-trigger"
-              >
-                i
-              </button>
-            </div>
-          </div>
+        <!-- Tank size select -->
+        <div class="form-row">
+          <label for="tank-size-select" class="label">Select a tank size…</label>
+          <select id="tank-size-select" name="tankSize" aria-label="Tank size">
+            <option value="" disabled selected>Select a tank size…</option>
+            <!-- Options injected by JS from tankSizes.js -->
+          </select>
         </div>
-        <div id="tank-summary" aria-live="polite" data-testid="tank-summary"></div>
-      </section>
+
+        <!-- Tank footprint pill -->
+        <div id="tank-footprint" class="footprint-pill muted-text" aria-live="polite"></div>
+
+        <!-- Tank facts line -->
+        <div id="tank-facts" class="facts-line muted-text" aria-live="polite"></div>
+
+        <!-- Planted toggle -->
+        <div class="toggle-row">
+          <label for="toggle-planted">Planted</label>
+          <label class="switch">
+            <input type="checkbox" id="toggle-planted" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+
+        <!-- Beginner Mode toggle (now directly follows Planted) -->
+        <div class="toggle-row">
+          <label for="toggle-beginner">Beginner Mode</label>
+          <label class="switch">
+            <input type="checkbox" id="toggle-beginner" />
+            <span class="slider round"></span>
+          </label>
+          <button
+            type="button"
+            class="info-icon"
+            title="Simplifies recommendations for beginners."
+            aria-label="About Beginner Mode"
+          >
+            i
+          </button>
+        </div>
+      </div>
+
+      <!-- SCOPED CSS: tighten spacing since Show More Tips row was removed -->
+      <style>
+        .tank-size-card .toggle-row + .toggle-row {
+          margin-top: 10px;
+        }
+        .tank-size-card .facts-line,
+        .tank-size-card .footprint-pill {
+          margin-top: 10px;
+        }
+        .tank-size-card .label {
+          display: block;
+          margin-bottom: 6px;
+        }
+      </style>
+
+      <div id="tank-summary" aria-live="polite" data-testid="tank-summary"></div>
 
       <section class="card" id="stock-list-card" aria-live="polite">
         <div class="card__hd">
@@ -824,6 +806,7 @@
   <script type="module" src="js/logic/compute.js"></script>
   <script type="module" src="js/logic/conflicts.js"></script>
   <script type="module" src="js/stocking.js?v=2024-06-05a" id="js-stocking"></script>
+  <script type="module" src="js/tank-size-card.js"></script>
 
   <div
     id="beginner-info"
