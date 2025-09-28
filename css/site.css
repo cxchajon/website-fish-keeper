@@ -19,18 +19,74 @@
 .env-bars { display:grid; gap:14px; }
 .env-bar { background:rgba(255,255,255,.04); padding:12px; border-radius:12px; }
 .env-bar__hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.env-bar__label { font-weight:600; }
 .env-bar__track { height:14px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; }
 .env-bar__fill { height:100%; width:0%; background:linear-gradient(90deg, #6aa9ff, #6effb1); }
 .env-bar__chips { margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; }
 
-/* warnings block */
-.env-warnings { background:rgba(255,0,0,.08); border:1px solid rgba(255,0,0,.25); border-radius:12px; padding:12px; }
-.env-warn-title { font-weight:700; margin-bottom:6px; }
-.env-warn-list { margin:0; padding-left:18px; }
-.env-warn-hard { color:#ff8a8a; font-weight:700; }
+/* Shared small utilities */
+.env-xl-table { width:100%; border-collapse:separate; border-spacing:0; }
+.env-xl-cell { padding:6px 10px; border:1px solid rgba(255,255,255,.09); }
+.env-xl-label { font-size:.88rem; opacity:.8; line-height:1.1; }
+.env-xl-value { font-size:1.06rem; font-weight:650; line-height:1.2; }
+.env-xl-nowrap { white-space:nowrap; }
+
+/* Chips row inside "Notes" value cell */
+.env-notes { display:flex; gap:6px; overflow-x:auto; padding:2px 0; }
+.env-chip { flex:0 0 auto; font-size:.8rem; padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); }
+
+/* Warnings: slim, inline */
+.env-warnings { margin:6px 0 8px; padding:8px 10px; border-left:3px solid #ff8a8a; background:rgba(255,0,0,.06); border-radius:8px; font-size:.92rem; }
+.env-warn-primary { margin:0; }
+.env-warn-list { margin:6px 0 0; padding-left:16px; }
+.env-warn-list li { margin:2px 0; }
+.env-warn-hard { color:#ff8a8a; font-weight:600; }
+.env-warn-more { margin-left:8px; font-size:.9rem; }
+
+/* Bars: one-line compact */
+.env-bars--xl { display:grid; gap:8px; }
+.env-bar--xl { display:grid; gap:6px; padding:8px 10px; border-radius:10px; background:rgba(255,255,255,.04); }
+.env-bar--xl .env-bar__hd { margin:0; }
+.env-bar--xl .env-bar__track { height:10px; border-radius:999px; background:rgba(255,255,255,.10); }
+.env-bar--xl .env-bar__fill { background:linear-gradient(90deg,#6aa9ff,#6effb1); }
+.env-bar__value { font-weight:600; }
+
+/* MOBILE EXCEL MODE (applies under 768px) */
+@media (max-width: 767.98px){
+
+  /* Hide the tile/grid presentation; show the Excel table instead */
+  #env-card .env-list { display:none !important; }
+  #env-card .env-grid-xl { display:block !important; }
+
+  /* Table layout: 3 columns; each parameter uses two stacked rows */
+  .env-xl-table { table-layout:fixed; }
+  .env-xl-table col { width:33.333%; }
+
+  /* Row heights: keep touch-safe density (40–44px per row) */
+  .env-xl-rowA .env-xl-cell { min-height:40px; }
+  .env-xl-rowB .env-xl-cell { min-height:44px; }
+
+  /* Subtle zebra only on value rows for readability */
+  .env-xl-rowB .env-xl-cell { background:rgba(255,255,255,.035); }
+
+  /* Compact header/subtitle spacing */
+  #env-card .card__hd--split { align-items:baseline; }
+  #env-card .subtle { margin:2px 0 8px; }
+
+  /* Bars block uses the compact style */
+  #env-bars.env-bars--xl { margin-top:10px; }
+}
+
+@media (min-width: 768px){
+  /* Desktop keeps existing tile/grid; hide Excel table wrapper */
+  #env-card .env-grid-xl { display:none !important; }
+}
 
 /* tips */
 .env-tips { margin-top:10px; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,.04); }
+.env-tip-legend { font-size:.85rem; color:rgba(255,255,255,.75); margin-bottom:8px; }
+.env-tip-legend strong { display:block; font-size:.9rem; margin-bottom:4px; }
+.env-tip-legend p { margin:0; line-height:1.4; }
 
 /* chips */
 .chip { padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.08); font-size:.85rem; }

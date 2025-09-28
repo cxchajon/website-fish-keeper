@@ -22,16 +22,31 @@ export function renderEnvCard({ stock = [], beginner = false, computed = null } 
     return env;
   }
 
+  const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767.98px)').matches;
   const listEl = document.getElementById('env-reco');
+  const excelEl = document.getElementById('env-reco-xl');
   const barsEl = document.getElementById('env-bars');
   const warnEl = document.getElementById('env-warnings');
   const tipsEl = document.getElementById('env-tips');
 
   if (listEl) {
     renderConditions(listEl, env.conditions);
+    if (isMobile) {
+      listEl.setAttribute('hidden', '');
+    } else {
+      listEl.removeAttribute('hidden');
+    }
+  }
+  if (excelEl) {
+    if (isMobile) {
+      renderConditionsExcel(env);
+    } else {
+      excelEl.innerHTML = '';
+      excelEl.setAttribute('hidden', '');
+    }
   }
   if (barsEl) {
-    renderBars(barsEl, env);
+    renderBars(barsEl, env, { isMobile });
   }
   if (warnEl) {
     renderWarnings(warnEl, env.warnings);
@@ -52,7 +67,8 @@ export function deriveEnv(stock = [], options = {}) {
 
   const conditions = [];
   const warnings = [];
-  const chips = [];
+  const detailChips = [];
+  const noteCodes = new Set();
   const notes = { bioload: [], aggression: [] };
 
   const tempRanges = collectRanges(entries, 'temperature');
@@ -65,11 +81,16 @@ export function deriveEnv(stock = [], options = {}) {
       `Not compatible: ${formatRangeGroup(cool, '°F')} vs ${formatRangeGroup(warm, '°F')}.`,
   });
   appendConditionResult(conditions, warnings, tempCondition);
+  const temperatureRange = excelRangeFromRanges(tempRanges, 0);
 
   const phRanges = collectRanges(entries, 'pH');
   const sensitiveSpecies = entries.filter((entry) => entry.species.pH_sensitive || entry.species.ph_sensitive);
   const phCondition = buildPhCondition(phRanges, sensitiveSpecies);
   appendConditionResult(conditions, warnings, phCondition);
+  if (Array.isArray(phCondition.notes)) {
+    for (const code of phCondition.notes) noteCodes.add(code);
+  }
+  const pHRange = excelRangeFromRanges(phRanges, 1);
 
   const gRanges = collectRanges(entries, 'gH');
   const gCondition = buildRangeCondition({
@@ -81,6 +102,7 @@ export function deriveEnv(stock = [], options = {}) {
       `Hardness mismatch: ${formatRangeGroup(low, ' dGH')} vs ${formatRangeGroup(high, ' dGH')}.`,
   });
   appendConditionResult(conditions, warnings, gCondition);
+  const gHRange = excelRangeFromRanges(gRanges, 0);
 
   const kRanges = collectRanges(entries, 'kH');
   const kCondition = buildRangeCondition({
@@ -92,28 +114,41 @@ export function deriveEnv(stock = [], options = {}) {
       `Buffering mismatch: ${formatRangeGroup(low, ' dKH')} vs ${formatRangeGroup(high, ' dKH')}.`,
   });
   appendConditionResult(conditions, warnings, kCondition);
+  const kHRange = excelRangeFromRanges(kRanges, 0);
 
   const salinityResult = buildSalinity(entries);
   conditions.push(salinityResult.condition);
   warnings.push(...salinityResult.warnings);
-  chips.push(...salinityResult.chips);
+  detailChips.push(...salinityResult.chips);
+  if (Array.isArray(salinityResult.noteCodes)) {
+    for (const code of salinityResult.noteCodes) noteCodes.add(code);
+  }
+  const salinityCode = salinityResult.code ?? 'FW';
 
   const flowResult = buildFlow(entries);
   conditions.push(flowResult.condition);
-  chips.push(...flowResult.chips);
+  detailChips.push(...flowResult.chips);
+  if (Array.isArray(flowResult.noteCodes)) {
+    for (const code of flowResult.noteCodes) noteCodes.add(code);
+  }
+  const flowCode = flowResult.code ?? 'M';
 
   const blackResult = buildBlackwater(entries);
   conditions.push(blackResult.condition);
+  if (Array.isArray(blackResult.noteCodes)) {
+    for (const code of blackResult.noteCodes) noteCodes.add(code);
+  }
+  const blackwaterStatus = blackResult.status ?? 'off';
 
   const invertResult = evaluateInvertSafety(entries);
   warnings.push(...invertResult.warnings);
-  chips.push(...invertResult.chips);
+  detailChips.push(...invertResult.chips);
 
   const groupResult = evaluateGroupNeeds(entries);
-  chips.push(...groupResult.chips);
+  detailChips.push(...groupResult.chips);
 
   const tankResult = evaluateTankFit(entries, computed);
-  chips.push(...tankResult.chips);
+  detailChips.push(...tankResult.chips);
 
   const bioloadPct = computeBioloadPct(computed);
   const bioloadLabel = computeBioloadLabel(computed, entries.length);
@@ -133,7 +168,8 @@ export function deriveEnv(stock = [], options = {}) {
     beginner,
     conditions,
     warnings: dedupeWarnings(warnings),
-    chips: dedupeStrings(chips),
+    chips: dedupeStrings(Array.from(noteCodes)),
+    detailChips: dedupeStrings(detailChips),
     barNotes: {
       bioload: dedupeStrings(notes.bioload),
       aggression: dedupeStrings(notes.aggression),
@@ -144,6 +180,14 @@ export function deriveEnv(stock = [], options = {}) {
     aggressionPct,
     aggressionLabel,
     aggressionSeverity,
+    temperature: temperatureRange,
+    pH: pHRange,
+    gH: gHRange,
+    kH: kHRange,
+    salinity: salinityCode,
+    flow: flowCode,
+    blackwater: blackwaterStatusToAbbrev(blackwaterStatus),
+    brackishYes: Boolean(salinityResult.brackish),
   };
 }
 
@@ -162,15 +206,107 @@ function renderConditions(root, conditions) {
   root.innerHTML = html;
 }
 
-function renderBars(root, env) {
+function renderConditionsExcel(env) {
+  const root = document.getElementById('env-reco-xl');
+  if (!root) return;
+
+  const chipsHtml = env.chips?.length
+    ? `<div class="env-notes">${env.chips.map((c) => `<span class="env-chip">${esc(c)}</span>`).join('')}</div>`
+    : '—';
+
+  const range = (o) => {
+    if (!o) return '—';
+    const { min, max } = o;
+    if ((min ?? '') === '' || (max ?? '') === '') return '—';
+    if (!Number.isFinite(Number(min)) && !Number.isFinite(Number(max))) return '—';
+    return `${formatExcelValue(min)}–${formatExcelValue(max)}`;
+  };
+
+  const valOr = (value, fallback = '—') => {
+    if (value == null || value === '') return fallback;
+    return value;
+  };
+
+  const html = `
+    <table class="env-xl-table" role="table" aria-label="Recommended Environmental Conditions (mobile)">
+      <col><col><col>
+      <tbody>
+        <tr class="env-xl-rowA">
+          <td class="env-xl-cell env-xl-label">Temp °F</td>
+          <td class="env-xl-cell env-xl-label">pH</td>
+          <td class="env-xl-cell env-xl-label">gH (dGH)</td>
+        </tr>
+        <tr class="env-xl-rowB">
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${range(env.temperature)}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${range(env.pH)}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${range(env.gH)}</td>
+        </tr>
+
+        <tr class="env-xl-rowA">
+          <td class="env-xl-cell env-xl-label">kH (dKH)</td>
+          <td class="env-xl-cell env-xl-label">Sal</td>
+          <td class="env-xl-cell env-xl-label">Flow</td>
+        </tr>
+        <tr class="env-xl-rowB">
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${range(env.kH)}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${valOr(env.salinity, '—')}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${valOr(env.flow, '—')}</td>
+        </tr>
+
+        <tr class="env-xl-rowA">
+          <td class="env-xl-cell env-xl-label">Brackish</td>
+          <td class="env-xl-cell env-xl-label">Dark water / tannins</td>
+          <td class="env-xl-cell env-xl-label">Notes</td>
+        </tr>
+        <tr class="env-xl-rowB">
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${env.brackishYes ? 'Yes' : 'No'}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap">${valOr(env.blackwater, '—')}</td>
+          <td class="env-xl-cell env-xl-value">${chipsHtml}</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+
+  root.innerHTML = html;
+  root.removeAttribute('hidden');
+}
+
+function renderBars(root, env, { isMobile = false } = {}) {
+  if (!root) return;
   const bioloadPct = sanitizePercent(env.bioloadPct);
   const aggressionPct = sanitizePercent(env.aggressionPct);
   const bioloadColor = getBandColor(bioloadPct / 100);
   const aggressionColor = colorForSeverity(env.aggressionSeverity);
   const bioloadNotes = renderChips(env.barNotes?.bioload ?? []);
   const aggressionNotes = renderChips(env.barNotes?.aggression ?? []);
-  const generalChips = renderChips(env.chips ?? []);
+  const generalChips = renderChips(env.detailChips ?? []);
 
+  if (isMobile) {
+    root.classList.add('env-bars--xl');
+    root.innerHTML = `
+      <div class="env-bar env-bar--xl">
+        <div class="env-bar__hd">
+          <div class="env-bar__label">Bioload</div>
+          <div class="env-bar__value">${Math.round(bioloadPct)}%</div>
+        </div>
+        <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(bioloadPct)}">
+          <div class="env-bar__fill" style="width:${bioloadPct}%; background:${bioloadColor};"></div>
+        </div>
+      </div>
+      <div class="env-bar env-bar--xl">
+        <div class="env-bar__hd">
+          <div class="env-bar__label">Aggression</div>
+          <div class="env-bar__value">${Math.round(aggressionPct)}%</div>
+        </div>
+        <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
+          <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  root.classList.remove('env-bars--xl');
   root.innerHTML = `
     <div class="env-bar">
       <div class="env-bar__hd">
@@ -196,24 +332,57 @@ function renderBars(root, env) {
 }
 
 function renderWarnings(root, warnings) {
+  if (!root) return;
   if (!warnings.length) {
     root.hidden = true;
     root.innerHTML = '';
     return;
   }
   root.hidden = false;
-  const list = warnings
-    .map((warning) => {
-      const cls = warning.type === 'hard' ? ' class="env-warn-hard"' : '';
-      return `<li${cls}>${escapeHtml(warning.text)}</li>`;
-    })
-    .join('');
-  root.innerHTML = `<div class="env-warn-title">Warnings</div><ul class="env-warn-list">${list}</ul>`;
+  const [first, ...rest] = warnings;
+  const firstClass = first.type === 'hard' ? ' env-warn-hard' : '';
+  let html = `<p class="env-warn-primary${firstClass}">${escapeHtml(first.text)}</p>`;
+  if (rest.length) {
+    const items = rest
+      .map((warning) => {
+        const cls = warning.type === 'hard' ? ' class="env-warn-hard"' : '';
+        return `<li${cls}>${escapeHtml(warning.text)}</li>`;
+      })
+      .join('');
+    html += ` <button type="button" class="linklike env-warn-more" data-expanded="false" aria-expanded="false">(+${rest.length} more)</button>`;
+    html += `<ul class="env-warn-list" hidden>${items}</ul>`;
+  }
+  root.innerHTML = html;
+
+  if (rest.length) {
+    const toggle = root.querySelector('.env-warn-more');
+    const list = root.querySelector('.env-warn-list');
+    if (toggle && list) {
+      toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('data-expanded') === 'true';
+        if (expanded) {
+          list.setAttribute('hidden', '');
+          toggle.setAttribute('data-expanded', 'false');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.textContent = `(+${rest.length} more)`;
+        } else {
+          list.removeAttribute('hidden');
+          toggle.setAttribute('data-expanded', 'true');
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.textContent = 'Hide';
+        }
+      });
+    }
+  }
 }
 
 function ensureTips(el) {
   if (el.dataset.bound === 'true') return;
   el.innerHTML = `
+    <div class="env-tip-legend">
+      <strong>Legend</strong>
+      <p>Sal: FW (freshwater), Br-L (low brackish), Br-H (high brackish). Flow: L (low), M (moderate), H (high). Dark water: Off, Pref, Rec, Req. Notes chips: zones (mixed flow), sens (pH sensitive), req (blackwater required), mix (fresh+brackish).</p>
+    </div>
     <ul>
       <li>Match general hardness (gH) and carbonate hardness (kH) to the tightest species range— remineralize slowly when using RO.</li>
       <li>Lock in one salinity profile; avoid mixing freshwater and brackish species unless they are noted as dual-tolerant.</li>
@@ -239,6 +408,7 @@ function buildDefaultEnv({ beginner, computed }) {
     conditions,
     warnings: [],
     chips: [],
+    detailChips: [],
     barNotes: { bioload: [], aggression: [] },
     bioloadPct: computeBioloadPct(computed),
     bioloadLabel: computeBioloadLabel(computed, 0),
@@ -246,6 +416,14 @@ function buildDefaultEnv({ beginner, computed }) {
     aggressionPct: computeAggressionScore(computed),
     aggressionLabel: computed?.aggression?.label ?? 'No conflicts detected.',
     aggressionSeverity: computed?.aggression?.severity ?? 'ok',
+    temperature: { min: 74, max: 78 },
+    pH: { min: 6.5, max: 7.5 },
+    gH: { min: 4, max: 12 },
+    kH: { min: 2, max: 8 },
+    salinity: 'FW',
+    flow: 'M',
+    blackwater: 'Off',
+    brackishYes: false,
   };
 }
 
@@ -315,16 +493,18 @@ function buildRangeCondition({ label, ranges, digits, conflictPrefix, warningBui
 function buildPhCondition(ranges, sensitiveSpecies) {
   const label = 'pH';
   if (!ranges.length) {
-    return { condition: { label, value: '—', badges: [] }, warnings: [] };
+    return { condition: { label, value: '—', badges: [] }, warnings: [], notes: sensitiveSpecies.length ? ['sens'] : [] };
   }
   const intersection = intersectRanges(ranges);
   const badges = [];
+  const notes = [];
   if (sensitiveSpecies.length) {
     badges.push('sensitive species');
+    notes.push('sens');
   }
   if (intersection.ok) {
     const value = formatRange(intersection.min, intersection.max, 1);
-    return { condition: { label, value, badges }, warnings: [] };
+    return { condition: { label, value, badges }, warnings: [], notes };
   }
   if (sensitiveSpecies.length) {
     const conflict = analyzeConflict(ranges);
@@ -335,6 +515,7 @@ function buildPhCondition(ranges, sensitiveSpecies) {
     return {
       condition: { label, value: 'No shared band (see warnings)', badges },
       warnings: [warning],
+      notes,
     };
   }
   const unionMin = Math.min(...ranges.map((range) => range.min));
@@ -345,6 +526,7 @@ function buildPhCondition(ranges, sensitiveSpecies) {
   return {
     condition: { label, value: formatRange(paddedMin, paddedMax, 1), badges },
     warnings: [],
+    notes,
   };
 }
 
@@ -356,24 +538,39 @@ function buildSalinity(entries) {
   const hasDual = salinities.has('dual');
   const warnings = [];
   const chips = [];
-  let value = 'Freshwater';
-  if (hasHigh) value = SALINITY_LABEL['brackish-high'];
-  else if (hasLow) value = SALINITY_LABEL['brackish-low'];
-  else if (hasDual) value = SALINITY_LABEL.dual;
-  else if (hasFresh) value = SALINITY_LABEL.fresh;
+  const noteCodes = [];
+  let value = SALINITY_LABEL.fresh;
+  let code = 'FW';
+  let brackish = false;
+  if (hasHigh) {
+    value = SALINITY_LABEL['brackish-high'];
+    code = 'Br-H';
+    brackish = true;
+  } else if (hasLow) {
+    value = SALINITY_LABEL['brackish-low'];
+    code = 'Br-L';
+    brackish = true;
+  } else if (hasDual) {
+    value = SALINITY_LABEL.dual;
+    code = 'FW';
+  } else if (hasFresh) {
+    value = SALINITY_LABEL.fresh;
+    code = 'FW';
+  }
 
   if (!hasDual && hasFresh && (hasLow || hasHigh)) {
     warnings.push({ type: 'soft', text: 'Salinity mix (fresh + brackish) not advised.' });
     chips.push('fresh + brackish mix');
+    noteCodes.push('mix');
   }
 
-  return { condition: { label: 'Salinity', value }, warnings, chips };
+  return { condition: { label: 'Salinity', value }, warnings, chips, noteCodes, code, brackish };
 }
 
 function buildFlow(entries) {
   const flows = entries.map((entry) => entry.species.flow).filter(Boolean);
   if (!flows.length) {
-    return { condition: { label: 'Flow', value: 'Moderate' }, chips: [] };
+    return { condition: { label: 'Flow', value: 'Moderate' }, chips: [], noteCodes: [], code: 'M' };
   }
   const flowSet = new Set(flows);
   const hasLow = flowSet.has('low');
@@ -381,35 +578,48 @@ function buildFlow(entries) {
   const hasModerate = flowSet.has('moderate');
   const badges = [];
   const chips = [];
+  const noteCodes = [];
   let value = 'Moderate';
+  let code = 'M';
   if (hasLow && hasHigh) {
     value = 'Moderate';
     badges.push('create zones');
+    noteCodes.push('zones');
   } else if (hasHigh) {
     value = FLOW_LABEL.high;
+    code = 'H';
   } else if (hasLow && !hasModerate) {
     value = FLOW_LABEL.low;
+    code = 'L';
   } else if (hasModerate) {
     value = FLOW_LABEL.moderate;
   }
   if (hasLow && hasHigh) {
     chips.push('flow zones needed');
   }
-  return { condition: { label: 'Flow', value, badges }, chips };
+  return { condition: { label: 'Flow', value, badges }, chips, noteCodes, code };
 }
 
 function buildBlackwater(entries) {
   const flags = entries.map((entry) => entry.species.blackwater).filter(Boolean);
   if (!flags.length) {
-    return { condition: { label: 'Blackwater / Tannins', value: 'Off' } };
+    return { condition: { label: 'Blackwater / Tannins', value: 'Off' }, status: 'off', noteCodes: [] };
   }
   let value = 'Off';
+  let status = 'off';
+  const noteCodes = [];
   if (flags.includes('required')) {
     value = BLACK_LABEL.required;
-  } else if (flags.includes('recommended') || flags.includes('prefers')) {
+    status = 'req';
+    noteCodes.push('req');
+  } else if (flags.includes('prefers')) {
     value = BLACK_LABEL.recommended;
+    status = 'pref';
+  } else if (flags.includes('recommended')) {
+    value = BLACK_LABEL.recommended;
+    status = 'rec';
   }
-  return { condition: { label: 'Blackwater / Tannins', value } };
+  return { condition: { label: 'Blackwater / Tannins', value }, status, noteCodes };
 }
 
 function evaluateInvertSafety(entries) {
@@ -569,6 +779,39 @@ function renderChips(items) {
     .join('')}</div>`;
 }
 
+function formatExcelValue(value) {
+  if (value == null || value === '') return '—';
+  if (typeof value === 'number') {
+    if (Number.isInteger(value)) return String(value);
+    return String(Number(value));
+  }
+  return String(value);
+}
+
+function excelRangeFromRanges(ranges, digits = 0) {
+  if (!Array.isArray(ranges) || !ranges.length) {
+    return null;
+  }
+  const intersection = intersectRanges(ranges);
+  const format = (val) => formatRangeNumber(val, digits);
+  if (intersection.ok) {
+    return { min: format(intersection.min), max: format(intersection.max) };
+  }
+  const conflict = analyzeConflict(ranges);
+  if (Number.isFinite(conflict.band?.min) && Number.isFinite(conflict.band?.max)) {
+    return { min: format(conflict.band.min), max: format(conflict.band.max) };
+  }
+  return null;
+}
+
+function formatRangeNumber(value, digits = 0) {
+  if (!Number.isFinite(value)) return '';
+  if (digits <= 0) {
+    return String(Math.round(value));
+  }
+  return Number(value).toFixed(digits);
+}
+
 function colorForSeverity(severity) {
   if (severity === 'bad') return 'var(--bad)';
   if (severity === 'warn') return '#f4b400';
@@ -576,6 +819,14 @@ function colorForSeverity(severity) {
 }
 
 function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function esc(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -613,4 +864,17 @@ function sanitizePercent(value) {
     return 0;
   }
   return Math.min(100, Math.max(0, Number(value)));
+}
+
+function blackwaterStatusToAbbrev(status) {
+  switch (status) {
+    case 'req':
+      return 'Req';
+    case 'pref':
+      return 'Pref';
+    case 'rec':
+      return 'Rec';
+    default:
+      return 'Off';
+  }
 }
