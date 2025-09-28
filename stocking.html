@@ -644,25 +644,6 @@
       <div id="tank-summary" aria-live="polite"></div>
     </section>
 
-    <section class="panel" aria-labelledby="stock-title">
-      <h2 id="stock-title">Plan Your Stock</h2>
-      <div class="stock-grid">
-        <div class="stock-row" role="group" aria-labelledby="candidate-label">
-          <div class="control-field">
-            <label id="candidate-label" for="plan-species">Species</label>
-            <select id="plan-species" class="control"></select>
-          </div>
-          <div class="control-field">
-            <label for="plan-qty">Quantity</label>
-            <input class="control" id="plan-qty" type="number" min="1" max="999" step="1" value="1" />
-          </div>
-          <button id="plan-add" class="see-gear" type="button">Add to Stock</button>
-        </div>
-        <div class="chips" id="candidate-chips"></div>
-        <div id="candidate-banner" class="status-strip" data-state="bad" style="display:none;">Beginner safeguards: fix highlighted issues before adding.</div>
-      </div>
-    </section>
-
     <section class="card" id="stock-list-card" aria-live="polite">
       <div class="card__hd">
         <h2>Current Stock</h2>
@@ -692,6 +673,25 @@
 
       <div id="env-tips" class="env-tips" hidden>
         <!-- brief bullets about GH/KH, salinity, blackwater, flow zones, and Beginner Mode -->
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="stock-title">
+      <h2 id="stock-title">Plan Your Stock</h2>
+      <div class="stock-grid">
+        <div class="stock-row" role="group" aria-labelledby="candidate-label">
+          <div class="control-field">
+            <label id="candidate-label" for="plan-species">Species</label>
+            <select id="plan-species" class="control"></select>
+          </div>
+          <div class="control-field">
+            <label for="plan-qty">Quantity</label>
+            <input class="control" id="plan-qty" type="number" min="1" max="999" step="1" value="1" />
+          </div>
+          <button id="plan-add" class="see-gear" type="button">Add to Stock</button>
+        </div>
+        <div class="chips" id="candidate-chips"></div>
+        <div id="candidate-banner" class="status-strip" data-state="bad" style="display:none;">Beginner safeguards: fix highlighted issues before adding.</div>
       </div>
     </section>
 
