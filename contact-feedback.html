@@ -239,43 +239,8 @@
   </script>
 </head>
 <body>
-  <!-- NAV (uniform) -->
-  <header id="global-nav">
-    <div class="inner">
-      <button id="ttg-nav-open" class="hamburger" type="button" aria-controls="ttg-drawer" aria-expanded="false" aria-label="Open menu" data-nav="hamburger">
-        <span class="hamburger__bars" aria-hidden="true"></span><span class="visually-hidden">Open menu</span>
-      </button>
-      <a class="site-brand brand" href="index.html" aria-label="The Tank Guide — Home">
-        <span class="site-brand__title">The Tank Guide</span>
-        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
-      </a>
-      <nav class="site-links links" aria-label="Primary">
-        <a href="index.html" class="nav__link">Home</a>
-        <a href="stocking.html" class="nav__link">Stocking Advisor</a>
-        <a href="gear.html" class="nav__link">Gear</a>
-        <a href="params.html" class="nav__link">Cycling Coach</a>
-        <a href="media.html" class="nav__link">Media</a>
-        <a href="contact-feedback.html" class="nav__link">Contact &amp; Feedback</a>
-        <a href="about.html" class="nav__link">About</a>
-      </nav>
-    </div>
-    <aside id="ttg-drawer" aria-label="Site" data-nav="drawer" aria-hidden="true">
-      <div class="drawer-head">
-        <span class="drawer-title">The Tank Guide</span>
-        <button id="ttg-nav-close" class="drawer-close" type="button" aria-label="Close menu"><span aria-hidden="true">×</span></button>
-      </div>
-      <nav class="drawer-links" aria-label="Mobile">
-        <a href="index.html" class="nav__link">Home</a>
-        <a href="stocking.html" class="nav__link">Stocking Advisor</a>
-        <a href="gear.html" class="nav__link">Gear</a>
-        <a href="params.html" class="nav__link">Cycling Coach</a>
-        <a href="media.html" class="nav__link">Media</a>
-        <a href="contact-feedback.html" class="nav__link">Feedback</a>
-        <a href="about.html" class="nav__link">About</a>
-      </nav>
-    </aside>
-    <div id="ttg-overlay" data-nav="overlay" aria-hidden="true"></div>
-  </header>
+  <!-- NAV (shared include) -->
+  <div id="site-nav"></div>
 
   <main class="page-wrapper">
     <section class="contact-card">
