@@ -1107,3 +1107,59 @@ body.planted-active #cycling-coach .cc-title__leaf {
   opacity: 1;
   transform: translateY(0);
 }
+/* Cycling Coach — tuck title to top-left and tighten grouping */
+#cycling-coach .cc-title {
+  /* Remove hero-like spacing; rely on the container’s own padding */
+  margin: 4px 0 8px 0;     /* very small gap above & below */
+  padding: 0;              /* no internal padding so it hugs the inner corner */
+}
+#cycling-coach .cc-title__h1 {
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+  margin: 6px 0 2px 0;     /* tight: little top, 2px to eyebrow */
+  font-size: 1.6rem;       /* compact (smaller than homepage hero) */
+}
+@media (min-width: 768px) {
+  #cycling-coach .cc-title__h1 { font-size: 1.8rem; }
+}
+
+/* Eyebrow: light gray, very close to H1 */
+#cycling-coach .cc-title__eyebrow {
+  color: #e0e0e0;
+  font-weight: 400;
+  line-height: 1.35;
+  margin: 0 0 4px 0;       /* tight gap to subline */
+  font-size: 1.05rem;      /* ~70%–75% of H1 */
+}
+
+/* Subline: slightly darker gray, final line in the group */
+#cycling-coach .cc-title__subline {
+  color: #c0c0c0;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0 0 6px 0;       /* small gap before Inputs card */
+  font-size: 0.95rem;      /* ~90% of body */
+}
+
+/* Leaf icon next to H1 (shown when planted is checked by existing JS) */
+#cycling-coach .cc-title__leaf {
+  display: inline-block;
+  margin-left: 6px;
+  opacity: 0;              /* JS toggles visibility */
+  transform: translateY(1px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  #cycling-coach .cc-title__leaf { transition: opacity 200ms ease; }
+}
+#cycling-coach .cc-title__leaf.is-visible { opacity: 1; }
+
+/* Safety: prevent any global hero/section rules from adding extra spacing */
+#cycling-coach .cc-title,
+#cycling-coach .cc-title * { letter-spacing: normal; }
+
+/* Optional: if a global “card” adds top margin before the Inputs card, trim it slightly */
+#cycling-coach .cc-title + .card,
+#cycling-coach .cc-title + section.card {
+  margin-top: 8px;
+}
