@@ -25,10 +25,14 @@
 .env-bar__chips { margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; }
 
 /* Shared small utilities */
+.env-card .env-table { width:100%; }
+.env-card .env-table table { width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; }
+.env-card .env-table td { padding:0.5rem 0.625rem; line-height:1.25; vertical-align:middle; overflow-wrap:anywhere; }
 .env-xl-table { width:100%; border-collapse:separate; border-spacing:0; }
-.env-xl-cell { padding:6px 10px; border:1px solid rgba(255,255,255,.09); }
-.env-xl-label { font-size:.88rem; opacity:.8; line-height:1.1; }
-.env-xl-value { font-size:1.06rem; font-weight:650; line-height:1.2; }
+.env-xl-cell { padding:0.5rem 0.625rem; border:1px solid rgba(255,255,255,.09); line-height:1.25; }
+.env-xl-label { font-size:.75rem; letter-spacing:.02em; opacity:.8; text-transform:none; }
+.env-xl-rowB .env-xl-cell { font-size:.875rem; font-weight:600; }
+.env-xl-value { font-size:.875rem; font-weight:600; line-height:1.25; }
 .env-xl-nowrap { white-space:nowrap; }
 
 /* Environmental recommendations card refinements */
@@ -38,7 +42,7 @@
 #env-card .card__title-stack h2 { margin:0; }
 #env-card .card__subtitle { margin:0; }
 #env-card .env-grid-xl { margin-top:12px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
-#env-card .env-grid-xl .env-xl-table { min-width:520px; }
+#env-card .env-grid-xl .env-xl-table { min-width:100%; }
 #env-card .env-grid-xl::-webkit-scrollbar { height:6px; }
 #env-card .env-grid-xl::-webkit-scrollbar-thumb { background:rgba(255,255,255,.24); border-radius:999px; }
 
@@ -82,11 +86,23 @@
 
   /* Mobile typography and spacing */
   #env-card .env-grid-xl { padding-bottom:4px; }
-  #env-card .env-grid-xl .env-xl-cell { padding:8px 12px; font-size:0.9rem; line-height:1.35; }
-  #env-card .env-grid-xl .env-xl-value { font-size:0.95rem; }
-
   /* Bars block uses the compact style */
   #env-bars.env-bars--xl { margin-top:10px; }
+}
+
+@media (max-width: 420px){
+  .env-card { padding-left:14px; padding-right:14px; }
+  .env-card .env-table td { padding:0.5rem; }
+  .env-card .env-table colgroup col:nth-child(1),
+  .env-card .env-table colgroup col:nth-child(2),
+  .env-card .env-table colgroup col:nth-child(3) { width:33.333%; }
+  .env-card .env-table .env-xl-nowrap { white-space:normal; }
+}
+
+@media (max-width: 340px){
+  .env-card { padding-left:12px; padding-right:12px; }
+  .env-card .env-table .env-xl-rowA .env-xl-cell { font-size:0.72rem; }
+  .env-card .env-table .env-xl-rowB .env-xl-cell { font-size:0.84rem; }
 }
 
 @media (min-width: 768px){

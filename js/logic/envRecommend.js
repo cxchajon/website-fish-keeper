@@ -245,6 +245,7 @@ function renderConditions(root, conditions, { isEmpty = false } = {}) {
 function renderConditionsExcel(env, { isEmpty = false } = {}) {
   const root = document.getElementById('env-reco-xl');
   if (!root) return;
+  root.classList.add('env-table');
 
   const chipsHtml = !isEmpty && env.chips?.length
     ? `<div class="env-notes">${env.chips.map((c) => `<span class="env-chip">${esc(c)}</span>`).join('')}</div>`
@@ -265,7 +266,11 @@ function renderConditionsExcel(env, { isEmpty = false } = {}) {
 
   const html = `
     <table class="env-xl-table" role="table" aria-label="Recommended Environmental Conditions (mobile)">
-      <col><col><col>
+      <colgroup>
+        <col />
+        <col />
+        <col />
+      </colgroup>
       <tbody>
         <tr class="env-xl-rowA">
           <td class="env-xl-cell env-xl-label">Temp °F</td>
