@@ -1,32 +1,49 @@
-# 🐠 FishKeeper AI — Stocking Advisor
+# The Tank Guide — FishKeepingLifeCo  
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-brightgreen)](https://cxchajon.github.io/website-fish-keeper/)
-![Version](https://img.shields.io/badge/version-v9.1.0-blue.svg)
-
-FishKeeper AI is an interactive web app for aquarium hobbyists.  
-It helps you plan safe stocking, track bioload, check aggression compatibility, and visualize tank setups.
-
-🔗 **Live Demo:** [FishKeeper AI — Stocking Advisor](https://cxchajon.github.io/website-fish-keeper/)
-
-> **Current Stable Release:** v9.1.0 — [Changelog](CHANGELOG.md)
+**Live site:** [thetankguide.com](https://thetankguide.com)  
+**Owner:** FishKeepingLifeCo (CXLXC LLC)  
 
 ---
 
-## 📌 Project Status
-This repo is currently at **Checkpoint Release v9.1.0**.  
-- ✅ Stocking logic and warnings are functional.  
-- ✅ Safari-safe quantity inputs confirmed.  
-- ✅ UI refined with a planted-tank checkbox and separated min/max fields.  
-- ⚠️ Bioload math still under refinement (edge cases may under-report).  
-- ⚠️ Aggression rules in progress (Betta conflicts improved, more species pending).  
-
-Future releases will refine bio-math, expand aggression rules, and polish UI alignment.
+## 📂 Project Overview  
+This repository powers **The Tank Guide**, a static website with aquarium tools and educational resources. The project is structured for clarity, SEO, and tracked updates through Channel Log and GitHub Releases.  
 
 ---
 
-## 🚀 Quickstart
+## 🔑 Core Pages  
+- **Home (`/index.html`)** — Brand block, tagline, feature grid (Stocking Advisor, Gear, Cycling Coach, Media)  
+- **About (`/about.html`)** — Company story, mission, and vision  
+- **Media (`/media.html`)** — Video hub, book promotion, blog/article links  
+- **Gear (`/gear.html`)** — Aquarium gear recommendations and guides  
+- **Cycling Coach (`/params.html`)** — Interactive cycle tracker & 24-Hour Challenge  
+- **Contact & Feedback (`/contact-feedback.html`)** — Formspree integration, reCAPTCHA, feedback options  
 
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/YourUser/website-fish-keeper.git
-   cd website-fish-keeper
+---
+
+## 🛠️ Development Notes  
+- Pure **HTML/CSS/JavaScript** (no frameworks)  
+- Shared footer (`footer.html`) loaded across pages for consistency  
+- SEO optimized: titles, meta descriptions, headings, JSON-LD schema  
+- Release notes managed in:  
+  - [Channel Log](/docs/CHANNEL_LOG.md)  
+  - [GitHub Releases](../../releases)  
+
+---
+
+## 📌 Release Management  
+All production changes are logged:  
+1. **Channel Log** — `/docs/CHANNEL_LOG.md` (source of truth, reverse-chronological)  
+2. **GitHub Releases** — synced with Channel Log entries, tagged for versioning  
+
+---
+
+## 🚦 Status  
+- ✅ Core pages live  
+- ✅ SEO metadata updated (Sept 2025)  
+- ✅ Headings + keyword alignment  
+- ✅ Contact form v1.1 with reCAPTCHA secret key  
+- 🔄 Ongoing: bi-weekly release/channel log reviews  
+
+---
+
+⚠️ **Note:** This project has no open-source license. All rights reserved to **FishKeepingLifeCo (CXLXC LLC)**.  
