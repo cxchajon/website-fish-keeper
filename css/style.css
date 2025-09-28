@@ -813,6 +813,40 @@ html {
   padding:10px 12px; border-radius:10px;
   background: rgba(255,255,255,.04);
 }
+.card__hd--split {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+.linklike {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--link, #87b4ff);
+  font: inherit;
+  cursor: pointer;
+}
+.linklike:hover {
+  text-decoration: underline;
+}
+.linklike:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.env-tips {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  display: grid;
+  gap: 14px;
+}
+.env-tips__title {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
 .env-row__label { font-weight:600; letter-spacing:.02em; opacity:.9; }
 .env-row__value { font-size:1rem; }
 .env-row__sub   { font-size:.9rem; opacity:.7; }

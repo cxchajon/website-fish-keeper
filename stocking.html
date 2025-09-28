@@ -215,19 +215,6 @@
       background: rgba(163, 200, 255, 0.16);
     }
 
-    .conditions-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .conditions-header h2 {
-      margin: 0;
-      font-size: 1.2rem;
-      letter-spacing: 0.02em;
-    }
-
     .conditions-list {
       display: grid;
       gap: 10px;
@@ -692,22 +679,19 @@
     </section>
 
     <section class="card tank-env-card" aria-live="polite" id="env-card">
-      <div class="card__hd">
+      <div class="card__hd card__hd--split">
         <h2>Environmental Recommendations</h2>
-        <p class="subtle">Derived from your selected stock.</p>
+        <button type="button" id="env-tips-toggle" class="linklike" aria-pressed="false">Show More Tips</button>
       </div>
+      <p class="subtle">Derived from your selected stock.</p>
       <div id="env-reco" class="env-list"></div>
+      <div id="env-tips" class="env-tips" hidden>
+        <h3 class="env-tips__title" id="conditions-title">Recommended Environmental Conditions</h3>
+        <ul class="conditions-list" id="conditions-list"></ul>
+      </div>
     </section>
 
     <section class="card warn-card" id="warnings-card" hidden></section>
-
-    <section class="panel" aria-labelledby="conditions-title">
-      <div class="conditions-header">
-        <h2 id="conditions-title">Recommended Environmental Conditions</h2>
-        <button class="link-like" type="button" id="toggle-tips-inline">Show More Tips</button>
-      </div>
-      <ul class="conditions-list" id="conditions-list"></ul>
-    </section>
 
     <section class="panel" aria-labelledby="capacity-title">
       <div class="bars">

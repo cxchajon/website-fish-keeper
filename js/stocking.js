@@ -15,7 +15,7 @@ const refs = {
   gallons: document.getElementById('input-gallons'),
   planted: document.getElementById('toggle-planted'),
   tips: document.getElementById('toggle-tips'),
-  tipsInline: document.getElementById('toggle-tips-inline'),
+  tipsInline: document.getElementById('env-tips-toggle'),
   beginner: document.getElementById('toggle-beginner'),
   blackwater: document.getElementById('toggle-blackwater'),
   turnover: document.getElementById('input-turnover'),
@@ -45,6 +45,7 @@ const refs = {
   diagnostics: document.getElementById('diagnostics'),
   diagnosticsContent: document.getElementById('diagnostics-content'),
   envReco: document.getElementById('env-reco'),
+  envTips: document.getElementById('env-tips'),
   warningsCard: document.getElementById('warnings-card'),
 };
 
@@ -435,7 +436,17 @@ function syncToggles() {
   updateToggle(refs.tips, state.showTips);
   updateToggle(refs.beginner, state.beginnerMode);
   updateToggle(refs.blackwater, state.water.blackwater);
-  refs.tipsInline.textContent = state.showTips ? 'Hide Tips' : 'Show More Tips';
+  if (refs.tipsInline) {
+    refs.tipsInline.textContent = state.showTips ? 'Hide Tips' : 'Show More Tips';
+    refs.tipsInline.setAttribute('aria-pressed', state.showTips ? 'true' : 'false');
+  }
+  if (refs.envTips) {
+    if (state.showTips) {
+      refs.envTips.removeAttribute('hidden');
+    } else {
+      refs.envTips.setAttribute('hidden', '');
+    }
+  }
   refs.plantIcon.style.display = state.planted ? 'inline-flex' : 'none';
 }
 
@@ -523,6 +534,27 @@ const scheduleUpdate = debounce(() => {
   renderAll();
 });
 
+const tipsBtn = document.querySelector('#env-tips-toggle');
+const tipsPane = document.querySelector('#env-tips');
+
+if (tipsBtn && tipsPane) {
+  tipsBtn.addEventListener('click', () => {
+    const open = tipsPane.hasAttribute('hidden') ? false : true;
+    if (open) {
+      tipsPane.setAttribute('hidden', '');
+      tipsBtn.setAttribute('aria-pressed', 'false');
+      tipsBtn.textContent = 'Show More Tips';
+    } else {
+      tipsPane.removeAttribute('hidden');
+      tipsBtn.setAttribute('aria-pressed', 'true');
+      tipsBtn.textContent = 'Hide Tips';
+    }
+    state.showTips = !open;
+    syncToggles();
+    scheduleUpdate();
+  });
+}
+
 function bindInputs() {
   refs.gallons.addEventListener('input', scheduleUpdate);
   if (refs.turnover) refs.turnover.addEventListener('input', scheduleUpdate);
@@ -540,11 +572,6 @@ function bindInputs() {
   });
 
   refs.tips.addEventListener('click', () => {
-    state.showTips = !state.showTips;
-    syncToggles();
-    scheduleUpdate();
-  });
-  refs.tipsInline.addEventListener('click', () => {
     state.showTips = !state.showTips;
     syncToggles();
     scheduleUpdate();
