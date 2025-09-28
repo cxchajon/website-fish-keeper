@@ -8,6 +8,7 @@
   <meta name="description" content="The Tank Guide by FishKeepingLifeCo: beginner-friendly aquarium tools including a stocking advisor, cycling coach, and gear tips to build healthy freshwater aquariums.">
 
   <link rel="stylesheet" href="css/style.css?v=1.0.8" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
     :root{
@@ -66,18 +67,6 @@
     .actions{margin-top:8px}
     .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--link-line);background:var(--btn-bg);color:var(--btn-fg);font-weight:700;text-decoration:none}
     .btn:hover{background:var(--btn-bg-hover)}
-
-    /* Follow strip (if included inside footer.html, you can keep these styles here) */
-    nav.follow-strip{display:flex;justify-content:center;align-items:center;gap:12px;padding:16px 0 8px;border-top:1px solid var(--card-line);margin-top:40px;color:var(--muted);font-size:.95rem}
-    nav.follow-strip .follow-label{margin-right:6px;font-weight:600}
-    nav.follow-strip a.social{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid rgba(0,0,0,.1);color:#0a3a57}
-    nav.follow-strip a.social svg{width:16px;height:16px;fill:currentColor;display:block}
-    nav.follow-strip a.social:hover{background:#f7f7f7}
-
-    /* Footer */
-    footer{padding:10px 20px 28px;color:var(--muted)}
-    footer .foot-inner{max-width:1080px;margin:0 auto}
-    .small{opacity:.9;font-size:.95rem}
 
     /* SEO intro (subtle, ~25% smaller) */
     .seo-intro{
@@ -249,7 +238,7 @@
   (async () => {
     const host = document.getElementById('site-footer');
     if (!host) return;
-    const res = await fetch('footer.html?v=1.0.8', { cache: 'no-cache' });
+    const res = await fetch('footer.html?v=1.1.0', { cache: 'no-cache' });
     host.outerHTML = await res.text();
   })();
 </script>

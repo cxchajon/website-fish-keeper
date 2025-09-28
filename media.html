@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Watch aquarium videos and tutorials, read articles, and discover our children’s book on the nitrogen cycle—buy on Amazon—curated by FishKeepingLifeCo." />
   <link rel="stylesheet" href="css/style.css?v=1.0.8" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" href="/favicon.ico" />
   <meta property="og:title" content="The Tank Guide — Media Hub" />
   <meta property="og:description" content="Watch • Read • Explore — videos and blogs for every aquarist." />
@@ -307,7 +308,7 @@
     (async () => {
       const host = document.getElementById('site-footer');
       if (!host) return;
-      const res = await fetch('footer.html?v=1.0.8', { cache: 'no-cache' });
+      const res = await fetch('footer.html?v=1.1.0', { cache: 'no-cache' });
       host.outerHTML = await res.text();
     })();
   </script>

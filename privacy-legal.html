@@ -18,6 +18,7 @@
   <meta name="twitter:image" content="https://thetankguide.com/logo.png" />
   <link rel="icon" href="/favicon.ico" />
   <link rel="stylesheet" href="css/style.css?v=1.0.9" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script defer src="js/nav.js?v=1.0.9"></script>
   <style>
     :root {
@@ -459,7 +460,7 @@
       const host = document.getElementById('site-footer');
       if (!host) return;
       try {
-        const res = await fetch('footer.html?v=1.0.9', { cache: 'no-cache' });
+        const res = await fetch('footer.html?v=1.1.0', { cache: 'no-cache' });
         if (!res.ok) throw new Error('Footer failed to load');
         host.outerHTML = await res.text();
       } catch (error) {
