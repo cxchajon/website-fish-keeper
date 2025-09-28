@@ -58,7 +58,7 @@
     /* ABOUT — HERO (LEFT-ALIGNED, professional/minimal) */
     .about-hero {
       max-width: 1100px;
-      margin: clamp(28px, 6vw, 56px) auto clamp(8px, 3vw, 20px);
+      margin: clamp(24px, 6vw, 48px) auto clamp(8px, 2.5vw, 16px);
       padding: 0 16px;
     }
     .about-title {
@@ -71,19 +71,11 @@
       text-align: left;
     }
     .about-title-underline {
-      width: 68px;
+      width: 72px;
       height: 2px;
-      margin: 10px 0 14px;
+      margin: 10px 0 10px;
       background: rgba(255,255,255,.9);
       border-radius: 2px;
-    }
-    .about-intro {
-      max-width: 640px;
-      margin: 0;
-      color: rgba(233,240,251,.92);
-      font-size: clamp(0.98rem, 0.3vw + 0.95rem, 1.08rem);
-      line-height: 1.62;
-      text-align: left;
     }
 
     .accordion-section {
@@ -98,7 +90,7 @@
     /* Keep accordion centered; tighten rhythm to remove gaps */
     .accordion {
       max-width: 800px;
-      margin: clamp(16px, 3.5vw, 28px) auto clamp(40px, 8vw, 72px);
+      margin: 12px auto clamp(40px, 8vw, 72px);
       padding: 0 16px;
       display: grid;
       gap: 12px;
@@ -271,27 +263,24 @@
 
   <main id="main-content">
     <div class="about-wrapper">
+      <!-- HERO -->
       <section class="about-hero">
-        <h1 class="about-title">About</h1>
+        <h1 class="about-title">Our Story &amp; Mission</h1>
         <div class="about-title-underline" aria-hidden="true"></div>
-        <p class="about-intro">
-          At The Tank Guide, our mission is simple: make fishkeeping clear, safe, and accessible for everyone. Whether you’re
-          setting up your very first tank or a returning hobbyist, we focus on guidance that puts aquarium health and fish welfare first.
-        </p>
-        <p class="about-intro">
-          We design every tool with one priority in mind: healthy aquariums and thriving fish. Our recommendations are careful by design,
-          leaning toward safety and welfare first, so beginners and experts alike have a trustworthy foundation to build on.
-        </p>
-        <p class="about-intro">
-          We believe the aquarium community is full of amazing voices and beautiful tanks that deserve the spotlight. Giving recognition to creativity and
-          passion, no matter the size of the aquarium. Whether you’re just starting your first tank, trying your first planted setup, or proud of a longtime
-          display — we’ll feature it in our <a href="/feature-your-tank.html"><em>Feature Your Tank</em></a> community showcase. We invite you to share your
-          aquarium and inspire others in the hobby.
-        </p>
       </section>
 
+      <!-- ACCORDION -->
       <section class="accordion-section" aria-label="About The Tank Guide">
         <div class="accordion" id="about-accordion">
+          <div class="accordion-item">
+            <h3>
+              <button class="accordion-trigger" aria-expanded="false" aria-controls="sec-overview" id="trg-overview">About The Tank Guide</button>
+            </h3>
+            <div id="sec-overview" class="accordion-panel" role="region" aria-labelledby="trg-overview" hidden>
+              <p>The Tank Guide helps beginners and hobbyists make clear, safe, and confident choices in fishkeeping. We focus on practical steps—cycling, stocking, plants, and gear—designed around aquarium health and fish welfare first. Our tools and guides are tested in real setups and refined by community feedback.</p>
+              <p>Whether you’re setting up your first nano tank or dialing in a planted display, you’ll find straightforward advice without gatekeeping. Want to spotlight your setup and inspire others? Share it in our <a href="https://thetankguide.com/feature-your-tank.html">Feature Your Tank</a> community showcase.</p>
+            </div>
+          </div>
           <div class="accordion-item">
             <h3>
               <button class="accordion-trigger" aria-expanded="false" aria-controls="sec-owner" id="trg-owner">Owner Story</button>
