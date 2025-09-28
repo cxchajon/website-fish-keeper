@@ -1029,3 +1029,72 @@ nav[role="navigation"] + .hero-header{
     margin: 20px auto 14px;
   }
 }
+:root{
+  --nav-h-mobile: 56px;
+  --nav-h-desktop: 64px;
+}
+
+/* Ensure the header row centers its children vertically and uses a consistent height */
+.site-header{
+  position: relative !important;
+}
+.site-header__inner{
+  display:flex;
+  align-items:center;               /* vertical centering */
+  justify-content:space-between;
+  gap:12px;
+  padding-left:16px;
+  padding-right:16px;
+  min-height: var(--nav-h-mobile);  /* consistent bar height */
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+/* Brand block aligns to center line; kill stray margins/line-height issues */
+.brand,
+.brand *{
+  line-height: 1.1;
+}
+.brand{
+  display:flex;
+  align-items:center;               /* align text to center */
+  gap:10px;
+  margin:0;
+}
+
+/* Hamburger gets exact box + no vertical offset */
+.nav-toggle{
+  display:inline-flex;
+  align-items:center;               /* center bars */
+  justify-content:center;
+  width:40px;
+  height:40px;
+  margin:0;                         /* remove odd offsets */
+  transform:none;                   /* cancel translate tweaks */
+  border:0;
+  border-radius:10px;
+  background:rgba(15,15,15,.4);
+  backdrop-filter:saturate(120%) blur(2px);
+  cursor:pointer;
+}
+.nav-toggle__bar{ width:20px; height:2px; background:#fff; display:block; }
+
+/* Desktop header height */
+@media (min-width:768px){
+  .site-header__inner{
+    min-height: var(--nav-h-desktop);
+  }
+}
+
+/* Safety: remove any legacy vertical offsets that could push things off-center */
+.site-header .brand,
+.site-header .nav-toggle{
+  position: relative;
+  top: 0;
+}
+
+/* If any page applied extra top padding to the hero to “fix” an old sticky header, normalize it */
+.hero{ margin-top: 0; }
+
+/* (Optional but safe) reduce default top/bottom padding on the hero heading area so the nav and hero feel consistent */
+.hero .brandline,
+.hero h1{ margin-top: 0; }
