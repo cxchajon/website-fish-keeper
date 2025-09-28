@@ -18,6 +18,10 @@ const RANGE_KEYS = {
 
 export function renderEnvCard({ stock = [], beginner = false, computed = null } = {}) {
   const env = deriveEnv(stock, { beginner, computed });
+  if (typeof document === 'undefined') {
+    return env;
+  }
+
   const listEl = document.getElementById('env-reco');
   const barsEl = document.getElementById('env-bars');
   const warnEl = document.getElementById('env-warnings');
@@ -35,6 +39,8 @@ export function renderEnvCard({ stock = [], beginner = false, computed = null } 
   if (tipsEl) {
     ensureTips(tipsEl);
   }
+
+  return env;
 }
 
 export function deriveEnv(stock = [], options = {}) {
@@ -157,7 +163,9 @@ function renderConditions(root, conditions) {
 }
 
 function renderBars(root, env) {
-  const bioloadColor = getBandColor((env.bioloadPct || 0) / 100);
+  const bioloadPct = sanitizePercent(env.bioloadPct);
+  const aggressionPct = sanitizePercent(env.aggressionPct);
+  const bioloadColor = getBandColor(bioloadPct / 100);
   const aggressionColor = colorForSeverity(env.aggressionSeverity);
   const bioloadNotes = renderChips(env.barNotes?.bioload ?? []);
   const aggressionNotes = renderChips(env.barNotes?.aggression ?? []);
@@ -169,8 +177,8 @@ function renderBars(root, env) {
         <span>Bioload Capacity</span>
         <span>${escapeHtml(env.bioloadLabel)}</span>
       </div>
-      <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.min(100, Math.max(0, Math.round(env.bioloadPct)))}">
-        <div class="env-bar__fill" style="width:${Math.min(100, Math.max(0, env.bioloadPct))}%; background:${bioloadColor};"></div>
+      <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(bioloadPct)}">
+        <div class="env-bar__fill" style="width:${bioloadPct}%; background:${bioloadColor};"></div>
       </div>
       ${bioloadNotes}
     </div>
@@ -179,8 +187,8 @@ function renderBars(root, env) {
         <span>Aggression &amp; Compatibility</span>
         <span>${escapeHtml(env.aggressionLabel)}</span>
       </div>
-      <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.min(100, Math.max(0, Math.round(env.aggressionPct)))}">
-        <div class="env-bar__fill" style="width:${Math.min(100, Math.max(0, env.aggressionPct))}%; background:${aggressionColor};"></div>
+      <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
+        <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
       </div>
       ${aggressionNotes}
     </div>
@@ -598,4 +606,11 @@ function dedupeStrings(list) {
     result.push(item);
   }
   return result;
+}
+
+function sanitizePercent(value) {
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
+  return Math.min(100, Math.max(0, Number(value)));
 }

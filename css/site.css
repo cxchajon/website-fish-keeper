@@ -1,0 +1,36 @@
+/* unified header with right-aligned toggle */
+.card__hd--split { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.linklike { background:none; border:0; padding:0; color:var(--link, #87b4ff); font:inherit; cursor:pointer; }
+.linklike:focus { outline:2px solid rgba(255,255,255,.35); outline-offset:2px; border-radius:6px; }
+.linklike:hover { text-decoration:underline; }
+
+/* conditions grid */
+.env-list { display:grid; grid-template-columns: 1fr 1fr; gap:10px 16px; margin-top:6px; }
+.env-item { background:rgba(255,255,255,.04); border-radius:10px; padding:10px 12px; }
+.env-item__label { opacity:.9; font-size:.9rem; }
+.env-item__value { font-weight:600; margin-top:2px; }
+.env-item__badge { display:inline-block; font-size:.75rem; padding:2px 6px; border-radius:999px; background:rgba(255,255,255,.10); margin-left:6px; }
+@media (max-width: 680px){ .env-list { grid-template-columns: 1fr; } }
+
+/* divider */
+.env-divider { border:0; height:1px; background:rgba(255,255,255,.08); margin:14px 0; }
+
+/* bars inside this card */
+.env-bars { display:grid; gap:14px; }
+.env-bar { background:rgba(255,255,255,.04); padding:12px; border-radius:12px; }
+.env-bar__hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.env-bar__track { height:14px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; }
+.env-bar__fill { height:100%; width:0%; background:linear-gradient(90deg, #6aa9ff, #6effb1); }
+.env-bar__chips { margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; }
+
+/* warnings block */
+.env-warnings { background:rgba(255,0,0,.08); border:1px solid rgba(255,0,0,.25); border-radius:12px; padding:12px; }
+.env-warn-title { font-weight:700; margin-bottom:6px; }
+.env-warn-list { margin:0; padding-left:18px; }
+.env-warn-hard { color:#ff8a8a; font-weight:700; }
+
+/* tips */
+.env-tips { margin-top:10px; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,.04); }
+
+/* chips */
+.chip { padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.08); font-size:.85rem; }
