@@ -21,6 +21,7 @@ function bootstrapStocking() {
   let computed = null;
   let variantSelectorOpen = false;
   const debugMode = getQueryFlag('debug');
+  const CATEGORY_ORDER = ['Nano', 'Small', 'Medium', 'Large', 'XL'];
 
   const refs = {
     pageTitle: document.getElementById('page-title'),
@@ -55,7 +56,13 @@ function bootstrapStocking() {
     envTips: document.getElementById('env-tips'),
   };
 
-  const tanksCatalog = listTanks();
+  const tanksCatalog = listTanks()
+    .slice()
+    .sort((a, b) => {
+      const gallonDiff = (a?.gallons ?? 0) - (b?.gallons ?? 0);
+      if (gallonDiff !== 0) return gallonDiff;
+      return String(a?.label ?? '').localeCompare(String(b?.label ?? ''));
+    });
 
   function formatWithPrecision(value, decimals = 1) {
     if (!Number.isFinite(value)) return '0';
@@ -89,6 +96,16 @@ function bootstrapStocking() {
       .join(' × ');
   }
 
+  function createTankOption(tank) {
+    const option = document.createElement('option');
+    option.value = tank.id;
+    option.textContent = tank.label;
+    if (tank.id === state.selectedTankId) {
+      option.selected = true;
+    }
+    return option;
+  }
+
   function renderTankSizeOptions() {
     if (!refs.tankSelect) return;
     refs.tankSelect.innerHTML = '';
@@ -100,22 +117,80 @@ function bootstrapStocking() {
       placeholder.selected = true;
     }
     refs.tankSelect.appendChild(placeholder);
-    for (const tank of tanksCatalog) {
-      const option = document.createElement('option');
-      option.value = tank.id;
-      option.textContent = tank.label;
-      if (tank.id === state.selectedTankId) {
-        option.selected = true;
+    const useGroups = tanksCatalog.some((tank) => Boolean(tank?.category));
+    const fragment = document.createDocumentFragment();
+
+    if (useGroups) {
+      const grouped = new Map();
+      const uncategorized = [];
+      for (const tank of tanksCatalog) {
+        const category = typeof tank?.category === 'string' ? tank.category.trim() : '';
+        if (category) {
+          if (!grouped.has(category)) {
+            grouped.set(category, []);
+          }
+          grouped.get(category).push(tank);
+        } else {
+          uncategorized.push(tank);
+        }
       }
-      refs.tankSelect.appendChild(option);
+
+      for (const tank of uncategorized) {
+        fragment.appendChild(createTankOption(tank));
+      }
+
+      const orderedCategories = [];
+      for (const category of CATEGORY_ORDER) {
+        if (grouped.has(category)) {
+          orderedCategories.push(category);
+        }
+      }
+
+      const remainingCategories = Array.from(grouped.keys()).filter((category) => !CATEGORY_ORDER.includes(category));
+      remainingCategories.sort((a, b) => a.localeCompare(b));
+      orderedCategories.push(...remainingCategories);
+
+      for (const category of orderedCategories) {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = category;
+        for (const tank of grouped.get(category)) {
+          optgroup.appendChild(createTankOption(tank));
+        }
+        fragment.appendChild(optgroup);
+      }
+    } else {
+      for (const tank of tanksCatalog) {
+        fragment.appendChild(createTankOption(tank));
+      }
     }
+
+    refs.tankSelect.appendChild(fragment);
   }
 
   function updateTankFootprint(tank) {
     if (!refs.tankFootprint) return;
     if (tank) {
-      refs.tankFootprint.textContent = `Footprint: ${tank.footprint_in} in`;
-      refs.tankFootprint.removeAttribute('hidden');
+      const dimsIn = tank.dimensions_in;
+      const dimsCm = tank.dimensions_cm;
+      const footprintIn = tank.footprint_in
+        ? `${tank.footprint_in} in`
+        : dimsIn
+        ? `${formatWithPrecision(dimsIn.l, 0)} × ${formatWithPrecision(dimsIn.w, 0)} in`
+        : '';
+      const footprintCm = dimsCm
+        ? `${formatWithPrecision(dimsCm.l, 1)} × ${formatWithPrecision(dimsCm.w, 1)} cm`
+        : '';
+      const pieces = [];
+      if (footprintIn) pieces.push(footprintIn);
+      if (footprintCm) pieces.push(`(${footprintCm})`);
+      const combined = pieces.join(' ');
+      if (combined) {
+        refs.tankFootprint.textContent = `Footprint: ${combined}`;
+        refs.tankFootprint.removeAttribute('hidden');
+      } else {
+        refs.tankFootprint.textContent = '';
+        refs.tankFootprint.setAttribute('hidden', '');
+      }
     } else {
       refs.tankFootprint.textContent = '';
       refs.tankFootprint.setAttribute('hidden', '');
