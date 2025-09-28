@@ -1012,3 +1012,19 @@ nav[role="navigation"] + .hero-header{
 .linklike:focus { outline:2px solid rgba(255,255,255,.35); outline-offset:2px; border-radius:6px; }
 
 /* conditions grid */
+
+/* Scoped fallbacks for Cycling Coach only (used only if homepage styles aren’t global) */
+#cc-blurbs .home-subtext {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  opacity: 0.8;
+  color: var(--text-muted, rgba(255, 255, 255, 0.8));
+  margin: 0 0 10px;
+}
+
+#cc-blurbs .home-blurb {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-primary, #fff);
+  margin: 0;
+}
