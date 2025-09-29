@@ -82,16 +82,51 @@ import { listTanks, getTankById } from './tankSizes.js';
   const btn   = document.getElementById('bm-info-button');
   const pop   = document.getElementById('bm-info-popover');
   const close = document.getElementById('bm-info-close');
-  if (!btn || !pop) return;
+  const label = document.querySelector('.tank-size-card .toggle-head .toggle-title[for="toggle-beginner"]');
+  if (!btn || !pop || !label) return;
+
+  function getOffsets(){
+    const vv = window.visualViewport;
+    return {
+      x: (vv && 'pageLeft' in vv ? vv.pageLeft : window.pageXOffset || document.documentElement.scrollLeft || 0),
+      y: (vv && 'pageTop'  in vv ? vv.pageTop  : window.pageYOffset || document.documentElement.scrollTop  || 0),
+    };
+  }
 
   function placePopover(){
-    // Viewport-relative positioning for fixed element
-    const br = btn.getBoundingClientRect();
+    const rect = label.getBoundingClientRect();
     const gap = 8;
-    let left = Math.max(8, Math.min(br.left, window.innerWidth - 8 - pop.offsetWidth));
-    let top  = Math.max(8, Math.min(br.bottom + gap, window.innerHeight - 8 - pop.offsetHeight));
+    const prevHidden = pop.hidden;
+    const prevVisibility = pop.style.visibility;
+
+    if (prevHidden){
+      pop.hidden = false;
+      pop.style.visibility = 'hidden';
+    }
+
+    const pw = pop.offsetWidth || 280;
+    const ph = pop.offsetHeight || 120;
+
+    if (prevHidden){
+      pop.hidden = true;
+      pop.style.visibility = prevVisibility || '';
+    } else {
+      pop.style.visibility = prevVisibility || '';
+    }
+
+    const { x: sx, y: sy } = getOffsets();
+
+    let left = Math.round(rect.left + sx);
+    let top = Math.round(rect.bottom + sy + gap);
+
+    const maxLeft = Math.max(8, window.innerWidth - pw - 8);
+    const maxTop = Math.max(8, window.innerHeight - ph - 8) + sy;
+
+    left = Math.min(Math.max(8 + sx, left), maxLeft + sx);
+    top = Math.min(Math.max(8 + sy, top), maxTop);
+
     pop.style.left = `${left}px`;
-    pop.style.top  = `${top}px`;
+    pop.style.top = `${top}px`;
   }
 
   function openPop(){
@@ -126,6 +161,8 @@ import { listTanks, getTankById } from './tankSizes.js';
   close?.addEventListener('click', closePop);
   window.addEventListener('resize', onReflow, { passive:true });
   window.addEventListener('scroll', onReflow, { passive:true });
+  window.visualViewport?.addEventListener?.('scroll', onReflow, { passive:true });
+  window.visualViewport?.addEventListener?.('resize', onReflow, { passive:true });
 })();
 
 (function wirePlantedOverlay(){
