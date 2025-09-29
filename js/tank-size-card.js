@@ -7,23 +7,27 @@
 
 import { listTanks, getTankById } from './tankSizes.js';
 
-(function initTankSizeCard(){
+(function initTankSizeCard() {
   const selectEl = document.getElementById('tank-size-select');
-  const factsEl  = document.getElementById('tank-facts');
+  const factsEl = document.getElementById('tank-facts');
+  const labelEl = document.querySelector('#tank-size-card .tank-size-label');
 
   if (!selectEl || !factsEl) return;
 
   const state = (window.appState = window.appState || {});
-  const STORAGE_KEY = 'ttg.selectedTank';
-  const round1 = (n) => Math.round(n * 10) / 10;
+  const format = (value, precision = 1) => {
+    if (typeof value !== 'number' || Number.isNaN(value)) return '';
+    const fixed = value.toFixed(precision);
+    return fixed.replace(/\.0+$/, '').replace(/(\.\d*[1-9])0+$/, '$1');
+  };
 
   function renderOptions() {
     const tanks = listTanks()
-      .filter(t => typeof t.gallons === 'number' && t.gallons >= 5 && t.gallons <= 125)
-      .sort((a,b) => (a.gallons - b.gallons) || a.label.localeCompare(b.label));
+      .filter((t) => typeof t.gallons === 'number' && t.gallons >= 5 && t.gallons <= 125)
+      .sort((a, b) => (a.gallons - b.gallons) || a.label.localeCompare(b.label));
 
     // clear non-placeholder options
-    [...selectEl.querySelectorAll('option:not([disabled])')].forEach(o => o.remove());
+    [...selectEl.querySelectorAll('option:not([disabled])')].forEach((o) => o.remove());
 
     for (const t of tanks) {
       const opt = document.createElement('option');
@@ -35,33 +39,33 @@ import { listTanks, getTankById } from './tankSizes.js';
 
   function setFacts(tank) {
     if (!tank) {
-      factsEl.textContent = 'Select a tank size to begin.';
+      factsEl.textContent = '';
       return;
     }
-    const dimsIn = `${tank.dimensions_in.l} × ${tank.dimensions_in.w} × ${tank.dimensions_in.h} in`;
-    const dimsCm = `${round1(tank.dimensions_cm.l)} × ${round1(tank.dimensions_cm.w)} × ${round1(tank.dimensions_cm.h)} cm`;
-    factsEl.textContent = `${tank.gallons}g • ${round1(tank.liters)} L • ${dimsIn} (${dimsCm}) • ~${tank.filled_weight_lbs} lbs filled`;
+
+    const dimsIn = `${format(tank.dimensions_in.l, 2)} × ${format(tank.dimensions_in.w, 2)} × ${format(tank.dimensions_in.h, 2)} in`;
+    const dimsCm = `${format(tank.dimensions_cm.l)} × ${format(tank.dimensions_cm.w)} × ${format(tank.dimensions_cm.h)} cm`;
+    const filled = typeof tank.filled_weight_lbs === 'number' ? ` • ~${tank.filled_weight_lbs} lbs filled` : '';
+    factsEl.textContent = `${tank.gallons} gal • ${format(tank.liters)} L • ${dimsIn} (${dimsCm})${filled}`;
   }
 
   function applySelection(id) {
     const t = id ? getTankById(id) : null;
     if (!t) {
-      selectEl.value = '';
+      selectEl.selectedIndex = 0;
       state.selectedTankId = null;
       state.gallons = undefined;
-      state.liters  = undefined;
+      state.liters = undefined;
       setFacts(null);
       return;
     }
 
     state.selectedTankId = t.id;
     state.gallons = t.gallons;
-    state.liters  = t.liters;
+    state.liters = t.liters;
 
     selectEl.value = t.id;
     setFacts(t);
-
-    try { localStorage.setItem(STORAGE_KEY, t.id); } catch (_) {}
 
     if (typeof window.recomputeAll === 'function') {
       window.recomputeAll();
@@ -70,15 +74,25 @@ import { listTanks, getTankById } from './tankSizes.js';
     }
   }
 
+  function toggleChevron(open) {
+    if (!labelEl) return;
+    labelEl.classList.toggle('is-open', Boolean(open));
+  }
+
   // events
-  selectEl.addEventListener('change', (e) => applySelection(e.target.value));
+  selectEl.addEventListener('change', (e) => {
+    applySelection(e.target.value);
+    toggleChevron(false);
+  });
+  selectEl.addEventListener('focus', () => toggleChevron(true));
+  selectEl.addEventListener('blur', () => toggleChevron(false));
+  selectEl.addEventListener('mousedown', () => toggleChevron(true));
+  selectEl.addEventListener('touchstart', () => toggleChevron(true), { passive: true });
 
   // init
   renderOptions();
-  let savedId = null;
-  try { savedId = localStorage.getItem(STORAGE_KEY) || null; } catch (_) {}
-  if (savedId && getTankById(savedId)) applySelection(savedId);
-  else setFacts(null);
+  selectEl.selectedIndex = 0;
+  setFacts(null);
 
   // keep Beginner Mode default OFF
   const beginnerToggle = document.getElementById('toggle-beginner');
