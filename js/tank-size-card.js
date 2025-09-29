@@ -25,13 +25,23 @@ import { listTanks, getTankById } from './tankSizes.js';
   const STORAGE_KEY = 'ttg.selectedTank';
 
   // ----- Helpers
-  const round1 = (n) => Math.round(n * 10) / 10;
+  const formatNumber = (value, decimals = 1) => {
+    if (typeof value !== 'number' || Number.isNaN(value)) return '';
+    const factor = 10 ** decimals;
+    const rounded = Math.round(value * factor) / factor;
+    let str = rounded.toFixed(decimals);
+    str = str.replace(/\.0+$/, '').replace(/(\.\d*[1-9])0+$/, '$1');
+    return str;
+  };
+
+  const formatDimensionIn = (value) => formatNumber(value, 2);
+  const formatDimensionCm = (value) => formatNumber(value, 1);
 
   function renderOptions() {
-    // Expect dataset already curated to popular sizes (5–125g). No hardcoding.
+    // Limit to the popular 5–125g sizes requested for this card.
     const tanks = listTanks()
-      .filter(t => typeof t.gallons === 'number' && t.gallons >= 5 && t.gallons <= 125)
-      .sort((a,b) => (a.gallons - b.gallons) || a.label.localeCompare(b.label));
+      .filter((t) => typeof t.gallons === 'number' && t.gallons >= 5 && t.gallons <= 125)
+      .sort((a, b) => (a.gallons - b.gallons) || a.label.localeCompare(b.label));
 
     // Clear existing (keep placeholder)
     [...selectEl.querySelectorAll('option:not([disabled])')].forEach(o => o.remove());
@@ -47,15 +57,20 @@ import { listTanks, getTankById } from './tankSizes.js';
   function updateFactsUI(tank) {
     if (!tank) {
       footprintEl.textContent = '';
-      factsEl.textContent = '';
+      footprintEl.hidden = true;
+      factsEl.textContent = 'Select a tank size to begin.';
       return;
     }
-    const inches = `${tank.dimensions_in.l} × ${tank.dimensions_in.w} in (${round1(tank.dimensions_cm.l)} × ${round1(tank.dimensions_cm.w)} cm)`;
-    footprintEl.textContent = `Footprint: ${tank.footprint_in} in (${round1(tank.dimensions_cm.l)} × ${round1(tank.dimensions_cm.w)} cm)`;
 
-    const dimsIn  = `${tank.dimensions_in.l} × ${tank.dimensions_in.w} × ${tank.dimensions_in.h} in`;
-    const dimsCm  = `${round1(tank.dimensions_cm.l)} × ${round1(tank.dimensions_cm.w)} × ${round1(tank.dimensions_cm.h)} cm`;
-    const line    = `${tank.gallons}g • ${round1(tank.liters)} L • ${dimsIn} (${dimsCm}) • ~${tank.filled_weight_lbs} lbs filled`;
+    const footprintIn = `${formatDimensionIn(tank.dimensions_in.l)} × ${formatDimensionIn(tank.dimensions_in.w)} in`;
+    const footprintCm = `${formatDimensionCm(tank.dimensions_cm.l)} × ${formatDimensionCm(tank.dimensions_cm.w)} cm`;
+    footprintEl.textContent = `Footprint: ${footprintIn} (${footprintCm})`;
+    footprintEl.hidden = false;
+
+    const dimsIn = `${formatDimensionIn(tank.dimensions_in.l)} × ${formatDimensionIn(tank.dimensions_in.w)} × ${formatDimensionIn(tank.dimensions_in.h)} in`;
+    const dimsCm = `${formatDimensionCm(tank.dimensions_cm.l)} × ${formatDimensionCm(tank.dimensions_cm.w)} × ${formatDimensionCm(tank.dimensions_cm.h)} cm`;
+    const liters = formatNumber(tank.liters, 1);
+    const line = `${tank.gallons}g • ${liters} L • ${dimsIn} (${dimsCm}) • ~${tank.filled_weight_lbs} lbs filled`;
     factsEl.textContent = line;
   }
 
@@ -68,6 +83,7 @@ import { listTanks, getTankById } from './tankSizes.js';
       state.gallons = undefined;
       state.liters  = undefined;
       updateFactsUI(null);
+      try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
       return;
     }
 
