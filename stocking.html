@@ -839,8 +839,8 @@
         }
 
         /* Popover above everything: fixed + high z-index; positioned by JS via top/left */
-        .tank-size-card .bm-popover{
-          position: fixed; z-index: 2147483646;
+        #bm-info-popover{
+          position: fixed; z-index: 2147483647;
           pointer-events: auto;
           min-width: 240px; max-width: 320px;
           padding: 12px 12px 10px;
@@ -853,22 +853,22 @@
           opacity: 0; transform: scale(0.98);
           transition: opacity .14s ease, transform .14s ease;
         }
-        .tank-size-card .bm-popover.is-open{ opacity: 1; transform: scale(1); }
+        #bm-info-popover.is-open{ opacity: 1; transform: scale(1); }
 
-        .tank-size-card .bm-popover-title{ font-size:14px; margin:0 0 6px; font-weight:600; }
-        .tank-size-card .bm-popover-text{ font-size:13px; margin:0 0 10px; line-height:1.4; }
+        #bm-info-popover .bm-popover-title{ font-size:14px; margin:0 0 6px; font-weight:600; }
+        #bm-info-popover .bm-popover-text{ font-size:13px; margin:0 0 10px; line-height:1.4; }
 
-        .tank-size-card .bm-popover-close{
+        #bm-info-popover .bm-popover-close{
           display:inline-flex; align-items:center; justify-content:center;
           height:30px; padding:0 10px; border-radius:8px;
           background: rgba(255,255,255,0.08);
           border:1px solid rgba(255,255,255,0.12);
           color:inherit; cursor:pointer;
         }
-        .tank-size-card .bm-popover-close:focus{ outline:2px solid rgba(20,203,168,0.55); outline-offset:2px; }
+        #bm-info-popover .bm-popover-close:focus{ outline:2px solid rgba(20,203,168,0.55); outline-offset:2px; }
 
         @media (prefers-reduced-motion: reduce){
-          .tank-size-card .bm-popover{ transition:none; }
+          #bm-info-popover{ transition:none; }
         }
       </style>
 
