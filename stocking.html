@@ -665,17 +665,43 @@
           </div>
         </div>
 
-        <!-- Beginner Mode (stacked + info icon) -->
+        <!-- BEGINNER MODE (stacked + working info popover) -->
         <div class="toggle-group">
           <div class="toggle-head">
             <label class="toggle-title" for="toggle-beginner">Beginner Mode</label>
-            <button type="button" class="info-icon" aria-label="About Beginner Mode" title="Simplifies recommendations for beginners.">i</button>
+            <button
+              type="button"
+              class="info-icon"
+              id="bm-info-button"
+              aria-label="What is Beginner Mode?"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+              aria-controls="bm-info-popover"
+            >i</button>
           </div>
+
           <div class="toggle-control">
             <label class="switch">
-              <input type="checkbox" id="toggle-beginner" data-testid="toggle-beginner" />
+              <input type="checkbox" id="toggle-beginner" />
               <span class="slider" aria-hidden="true"></span>
             </label>
+          </div>
+
+          <!-- Popover is rendered inside the card, anchored to the button -->
+          <div
+            id="bm-info-popover"
+            class="bm-popover"
+            role="dialog"
+            aria-modal="false"
+            aria-labelledby="bm-info-title"
+            hidden
+          >
+            <h3 id="bm-info-title" class="bm-popover-title">Beginner Mode</h3>
+            <p class="bm-popover-text">
+              Beginner Mode simplifies recommendations by favoring hardy, easy-care species and safer parameter ranges.
+              Turn it off to see the full catalog and advanced options.
+            </p>
+            <button type="button" class="bm-popover-close" id="bm-info-close" aria-label="Close">OK</button>
           </div>
         </div>
       </div>
@@ -824,6 +850,55 @@
         .tank-size-card .switch {
           pointer-events: auto;
         }
+
+        /* Ensure the info button is always clickable */
+        .tank-size-card #bm-info-button { position: relative; z-index: 1; pointer-events: auto; }
+
+        /* Popover container */
+        .tank-size-card .bm-popover{
+          position: absolute;
+          top: 0; left: 0;                    /* will be positioned by JS near the button */
+          min-width: 240px;
+          max-width: 320px;
+          padding: 12px 12px 10px;
+          border-radius: 10px;
+          background: rgba(20, 22, 25, 0.96);
+          border: 1px solid rgba(255,255,255,0.12);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+          color: inherit;
+          transform-origin: top left;
+          opacity: 0;
+          transform: scale(0.98);
+          transition: opacity .14s ease, transform .14s ease;
+        }
+
+        /* Visible state toggled by JS */
+        .tank-size-card .bm-popover.is-open{
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        /* Title + text */
+        .tank-size-card .bm-popover-title{ font-size: 14px; margin: 0 0 6px 0; font-weight: 600; }
+        .tank-size-card .bm-popover-text{ font-size: 13px; margin: 0 0 10px 0; line-height: 1.4; }
+
+        /* Close button */
+        .tank-size-card .bm-popover-close{
+          display: inline-flex; align-items:center; justify-content:center;
+          height: 30px; padding: 0 10px; border-radius: 8px;
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.12);
+          color: inherit; cursor: pointer;
+        }
+        .tank-size-card .bm-popover-close:focus{ outline: 2px solid rgba(20,203,168,0.55); outline-offset: 2px; }
+
+        /* Reduce motion support */
+        @media (prefers-reduced-motion: reduce){
+          .tank-size-card .bm-popover{ transition: none; }
+        }
+
+        /* Make the card a positioned ancestor so the popover can anchor correctly */
+        .tank-size-card{ position: relative; }
       </style>
 
       <div id="tank-summary" aria-live="polite" data-testid="tank-summary"></div>
