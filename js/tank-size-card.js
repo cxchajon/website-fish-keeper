@@ -1,5 +1,24 @@
 import { listTanks, getTankById } from './tankSizes.js';
 
+(function wireTankSizeChevron(){
+  const wrap = document.getElementById('tank-size-select-wrap');
+  const sel  = document.getElementById('tank-size-select');
+  if (!wrap || !sel) return;
+
+  // On desktop browsers, focus/blur is enough. On iOS, change is the reliable signal.
+  const setOpen = (on) => wrap.classList.toggle('open', !!on);
+
+  sel.addEventListener('focus', () => setOpen(true));
+  sel.addEventListener('blur',  () => setOpen(false));
+
+  // iOS Safari sometimes doesn't fire focus the same way when picker opens; use click/change as hints.
+  sel.addEventListener('click',  () => setOpen(true));
+  sel.addEventListener('change', () => setOpen(false));
+
+  // Safety: if the element becomes disabled/enabled or page hides, ensure state resets
+  document.addEventListener('visibilitychange', () => { if (document.hidden) setOpen(false); });
+})();
+
 (function initTankSizeCard(){
   const selectEl   = document.getElementById('tank-size-select');
   const factsEl    = document.getElementById('tank-facts');
