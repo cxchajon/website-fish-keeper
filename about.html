@@ -350,11 +350,17 @@
   <div id="site-footer"></div>
 
   <script>
-    (async () => {
-      const el = document.getElementById('site-footer');
-      if (el) el.innerHTML = await (await fetch('footer.html?v=1.1.2', { cache: 'no-cache' })).text();
-    })();
-  </script>
+  (async () => {
+    try {
+      const res = await fetch('footer.html?v=1.2.0', { cache: 'no-cache' });
+      const html = await res.text();
+      const host = document.getElementById('site-footer');
+      if (host) host.outerHTML = html;
+    } catch (e) {
+      console.error('Footer load failed:', e);
+    }
+  })();
+</script>
   <script>
     (() => {
       const accordion = document.getElementById('about-accordion');
