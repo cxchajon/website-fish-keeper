@@ -647,135 +647,123 @@
     </header>
 
     <div class="wrap page-content">
-      <!-- TANK SIZE CARD (Show More Tips removed) -->
+      <!-- TANK SIZE CARD (footprint removed, stacked toggles) -->
       <div class="card tank-size-card" id="tank-size-card">
         <h2 class="card-title">Tank Size</h2>
 
-        <!-- Tank size select -->
+        <!-- Select -->
         <div class="form-row">
           <label for="tank-size-select" class="label">Tank size</label>
           <select id="tank-size-select" name="tankSize" aria-label="Tank size">
             <option value="" disabled selected>Select a tank size…</option>
-            <!-- Options injected by JS from tankSizes.js -->
+            <!-- Options injected by JS -->
           </select>
         </div>
 
-        <!-- Tank footprint pill -->
-        <div
-          id="tank-footprint"
-          class="footprint-pill muted-text"
-          aria-live="polite"
-          hidden
-        ></div>
+        <!-- Facts line (kept) -->
+        <div id="tank-facts" class="facts-line muted-text" aria-live="polite"></div>
 
-        <!-- Tank facts line -->
-        <div
-          id="tank-facts"
-          class="facts-line muted-text"
-          aria-live="polite"
-        >Select a tank size to begin.</div>
-
-        <!-- Planted toggle -->
-        <div class="toggle-row">
-          <label for="toggle-planted">Planted</label>
-          <label class="switch">
-            <input type="checkbox" id="toggle-planted" />
-            <span class="slider round"></span>
-          </label>
+        <!-- Planted (stacked) -->
+        <div class="toggle-group">
+          <div class="toggle-head">
+            <label class="toggle-title" for="toggle-planted">Planted</label>
+          </div>
+          <div class="toggle-control">
+            <label class="switch">
+              <input type="checkbox" id="toggle-planted" />
+              <span class="slider round"></span>
+            </label>
+          </div>
         </div>
 
-        <!-- Beginner Mode toggle (now directly follows Planted) -->
-        <div class="toggle-row">
-          <label for="toggle-beginner">Beginner Mode</label>
-          <label class="switch">
-            <input type="checkbox" id="toggle-beginner" />
-            <span class="slider round"></span>
-          </label>
-          <button
-            type="button"
-            class="info-icon"
-            title="Simplifies recommendations for beginners."
-            aria-label="About Beginner Mode"
-          >
-            i
-          </button>
+        <!-- Beginner Mode (stacked, with info icon beside title) -->
+        <div class="toggle-group">
+          <div class="toggle-head">
+            <label class="toggle-title" for="toggle-beginner">Beginner Mode</label>
+            <button
+              type="button"
+              class="info-icon"
+              aria-label="About Beginner Mode"
+              title="Simplifies recommendations for beginners."
+            >
+              i
+            </button>
+          </div>
+          <div class="toggle-control">
+            <label class="switch">
+              <input type="checkbox" id="toggle-beginner" />
+              <span class="slider round"></span>
+            </label>
+          </div>
         </div>
       </div>
 
-      <!-- SCOPED CSS: Tank Size card layout + interactions -->
+      <!-- SCOPED CSS (append near this card or your page stylesheet) -->
       <style>
+        /* Layout tightening for card */
         .tank-size-card .form-row {
-          margin-bottom: 10px;
+          margin-bottom: 8px;
         }
-
         .tank-size-card .label {
           display: block;
           margin-bottom: 6px;
         }
 
-        .tank-size-card select {
-          width: 100%;
-        }
-
-        .tank-size-card select:focus-visible {
-          outline: 2px solid var(--focus, rgba(0, 200, 255, 0.6));
-          outline-offset: 2px;
-        }
-
-        .tank-size-card .footprint-pill {
-          margin-top: 8px;
-        }
-
-        .tank-size-card .footprint-pill[hidden] {
-          display: none;
+        /* Remove any leftover space where the footprint pill used to be */
+        .tank-size-card #tank-footprint {
+          display: none !important;
         }
 
         .tank-size-card .facts-line {
-          margin-top: 8px;
+          margin-top: 6px;
         }
 
-        .tank-size-card .toggle-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-          min-height: 44px;
-          flex-wrap: nowrap;
+        /* Stacked toggle groups */
+        .tank-size-card .toggle-group {
+          margin-top: 12px;
         }
-
-        .tank-size-card .toggle-row + .toggle-row {
+        .tank-size-card .toggle-group + .toggle-group {
           margin-top: 10px;
         }
 
-        .tank-size-card .toggle-row > label:first-of-type {
-          flex: 1;
-          font-weight: 600;
+        .tank-size-card .toggle-head {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 8px;
+          margin-bottom: 6px;
+        }
+        .tank-size-card .toggle-title {
+          font-weight: 500;
         }
 
+        .tank-size-card .toggle-control {
+          /* ensure big tap target beneath the label */
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+        }
+
+        /* Switch (kept from prior style; include if not global) */
         .tank-size-card .switch {
           position: relative;
           display: inline-block;
           width: 54px;
           height: 30px;
-          flex-shrink: 0;
-          cursor: pointer;
         }
-
         .tank-size-card .switch input {
           opacity: 0;
           width: 0;
           height: 0;
         }
-
         .tank-size-card .slider {
           position: absolute;
           inset: 0;
           border-radius: 9999px;
-          background: var(--switch-off, rgba(255, 255, 255, 0.15));
-          transition: transform 0.2s ease, background 0.2s ease;
+          background: rgba(255, 255, 255, 0.15);
+          transition: transform 0.2s, background 0.2s;
         }
-
-        .tank-size-card .slider::before {
+        .tank-size-card .slider:before {
           content: '';
           position: absolute;
           height: 24px;
@@ -783,45 +771,36 @@
           left: 3px;
           top: 3px;
           border-radius: 50%;
-          background: var(--thumb, #fff);
-          transition: transform 0.2s ease;
+          background: #fff;
+          transition: transform 0.2s;
         }
-
         .tank-size-card .switch input:checked + .slider {
-          background: var(--switch-on, rgba(0, 200, 150, 0.9));
+          background: rgba(0, 200, 150, 0.9);
         }
-
-        .tank-size-card .switch input:checked + .slider::before {
+        .tank-size-card .switch input:checked + .slider:before {
           transform: translateX(24px);
         }
-
         .tank-size-card .switch:focus-within .slider {
-          outline: 2px solid var(--focus, rgba(0, 200, 255, 0.6));
+          outline: 2px solid rgba(0, 200, 255, 0.6);
           outline-offset: 2px;
         }
 
+        /* Info icon beside title */
         .tank-size-card .info-icon {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 28px;
-          height: 28px;
+          width: 24px;
+          height: 24px;
           border-radius: 50%;
-          border: 1px solid rgba(255, 255, 255, 0.12);
           background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.12);
           font-weight: 600;
           line-height: 1;
-          color: inherit;
           cursor: pointer;
-          flex-shrink: 0;
         }
-
-        .tank-size-card .info-icon:hover {
-          background: rgba(255, 255, 255, 0.16);
-        }
-
-        .tank-size-card .info-icon:focus-visible {
-          outline: 2px solid var(--focus, rgba(0, 200, 255, 0.6));
+        .tank-size-card .info-icon:focus {
+          outline: 2px solid rgba(0, 200, 255, 0.6);
           outline-offset: 2px;
         }
       </style>
