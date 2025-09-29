@@ -115,26 +115,6 @@ export function evaluateInvertSafety(species, tankContext) {
   return { severity: 'ok', reason: '' };
 }
 
-export function beginnerInvertBlock(candidate, existingList, beginnerMode) {
-  if (!beginnerMode) {
-    return { severity: 'ok', reason: '' };
-  }
-  if (!candidate?.species) {
-    return { severity: 'ok', reason: '' };
-  }
-  const mouth = candidate.species.mouth_size_in ?? candidate.species.adult_size_in ?? 0;
-  if (mouth >= 4 && candidate.species.invert_safe === false) {
-    return { severity: 'bad', reason: 'Large predator unsafe with inverts' };
-  }
-  if (mouth >= 2.5 && candidate.species.invert_safe === false) {
-    const hasShrimp = existingList.some((entry) => entry.species?.category === 'shrimp');
-    if (hasShrimp) {
-      return { severity: 'bad', reason: 'Shrimp risk due to mouth size' };
-    }
-  }
-  return { severity: 'ok', reason: '' };
-}
-
 const SUPPORTED_SALINITY = new Set(['fresh', 'brackish-low', 'brackish-high', 'dual']);
 const SALINITY_MARINE_REASON = 'Not compatible – Salinity (Marine not supported)';
 const SALINITY_MIX_REASON = 'Mixed fresh/brackish stock—target brackish-low or use dual-tolerant species.';

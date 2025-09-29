@@ -86,30 +86,6 @@ test.describe('Stocking Advisor accessibility flows', () => {
     await capture(page, testInfo, 'stocking-load.png');
   });
 
-  test('Beginner mode toggle responds to pointer and keyboard', async ({ page }, testInfo) => {
-    const toggle = page.getByTestId('toggle-beginner');
-    await expect(toggle).toBeVisible();
-
-    await test.step('toggle with pointer', async () => {
-      await toggle.click();
-      await expect(toggle).toHaveAttribute('aria-checked', 'true');
-      await expect(toggle).toHaveAttribute('data-active', 'true');
-      await capture(page, testInfo, 'toggle-beginner-pointer.png');
-    });
-
-    await test.step('toggle with keyboard', async () => {
-      await focusByTab(page, 'toggle-beginner');
-      await expect(toggle).toBeFocused();
-      const focusVisible = await toggle.evaluate((el) => el.matches(':focus-visible'));
-      expect(focusVisible).toBeTruthy();
-      await page.keyboard.press('Space');
-      await expect(toggle).toHaveAttribute('aria-checked', 'false');
-      await page.keyboard.press('Enter');
-      await expect(toggle).toHaveAttribute('aria-checked', 'true');
-      await capture(page, testInfo, 'toggle-beginner-keyboard.png');
-    });
-  });
-
   test('Planted mode toggle supports mouse and keyboard', async ({ page }, testInfo) => {
     const toggle = page.getByTestId('toggle-planted');
     await expect(toggle).toBeVisible();
@@ -205,35 +181,62 @@ test.describe('Stocking Advisor accessibility flows', () => {
     await capture(page, testInfo, 'species-removed.png');
   });
 
-  test('Information popovers close via ESC, outside click, and close control', async ({ page }, testInfo) => {
-    const trigger = page.getByTestId('info-popover-trigger').first();
-    await expect(trigger).toBeVisible();
+  test('Contextual info buttons reveal guidance on demand', async ({ page }) => {
+    await selectTank(page, 29);
 
-    const panel = page.locator('#beginner-info');
+    const popover = page.locator('.ttg-popover');
+    await expect(popover).not.toBeVisible();
 
-    await trigger.click();
-    await expect(panel).toHaveAttribute('data-hidden', 'false');
-    await capture(page, testInfo, 'popover-open.png');
+    const targets = [
+      {
+        name: 'Tank Size header',
+        locator: page.locator('#tank-size-card .card-title .info-btn'),
+        text: 'Pick a standard tank size to get accurate capacity, footprint, and weight.',
+      },
+      {
+        name: 'Planted toggle',
+        locator: page.locator('#tank-size-card .toggle-title .info-btn'),
+        text: 'Planted tanks allow higher bioload and provide stability. Toggle ON if you keep live plants.',
+      },
+      {
+        name: 'Current Stock header',
+        locator: page.locator('#stock-list-card .card__hd .info-btn'),
+        text: 'This list shows species you’ve added and their quantities. Use +/− to adjust and Remove to clear.',
+      },
+      {
+        name: 'Environmental Recommendations header',
+        locator: page.locator('#env-card .card__title-stack .info-btn'),
+        text: 'Derived from your selected stock. Ranges reflect compatible overlaps across all species.',
+      },
+      {
+        name: 'Bioload bar',
+        locator: page.locator('#env-bars .env-bar__label .info-btn').first(),
+        text: 'Approximate stocking level for your tank size. Stay in green for better stability.',
+      },
+      {
+        name: 'Aggression bar',
+        locator: page.locator('#env-bars .env-bar__label .info-btn').nth(1),
+        text: 'Estimated compatibility risk. Adding aggressive or territorial species will raise this.',
+      },
+    ];
 
-    await page.keyboard.press('Escape');
-    await expect(panel).not.toHaveAttribute('data-hidden', 'false');
-    await expect(trigger).toBeFocused();
+    for (const target of targets) {
+      await expect.soft(target.locator, `${target.name} info button`).toBeVisible();
 
-    await trigger.click();
-    await expect(panel).toHaveAttribute('data-hidden', 'false');
-    await page.mouse.click(10, 10);
-    await expect(panel).not.toHaveAttribute('data-hidden', 'false');
-    await expect(trigger).toBeFocused();
+      await target.locator.click();
+      await expect(popover).toBeVisible();
+      await expect(popover).toContainText(target.text);
 
-    await trigger.focus();
-    await page.keyboard.press('Enter');
-    await expect(panel).toHaveAttribute('data-hidden', 'false');
-    await focusByTab(page, 'info-popover-close', { reset: false });
-    const closeButton = page.getByTestId('info-popover-close').first();
-    await expect(closeButton).toBeFocused();
-    await page.keyboard.press('Enter');
-    await expect(panel).not.toHaveAttribute('data-hidden', 'false');
-    await expect(trigger).toBeFocused();
+      await page.keyboard.press('Escape');
+      await expect(popover).not.toBeVisible();
+
+      await target.locator.click();
+      await expect(popover).toBeVisible();
+      await expect(popover).toContainText(target.text);
+
+      await page.locator('body').click({ position: { x: 4, y: 4 } });
+      await expect(popover).not.toBeVisible();
+    }
   });
 
   test('Gear CTA navigates with keyboard activation', async ({ page }) => {
@@ -254,7 +257,7 @@ test.describe('Stocking Advisor accessibility flows', () => {
       contentType: 'application/json',
     });
     const normalized = sequence.filter(Boolean);
-    const expected = ['toggle-beginner', 'toggle-planted', 'tank-gallons', 'species-search', 'btn-add-species', 'btn-gear'];
+    const expected = ['toggle-planted', 'tank-gallons', 'species-search', 'btn-add-species', 'btn-gear'];
     for (const id of expected) {
       expect(normalized).toContain(id);
     }

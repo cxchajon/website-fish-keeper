@@ -49,7 +49,6 @@ function bootstrapStocking() {
     planted: document.getElementById('toggle-planted'),
     tips: document.getElementById('toggle-tips'),
     tipsInline: document.getElementById('env-tips-toggle'),
-    beginner: document.getElementById('toggle-beginner'),
     blackwater: document.getElementById('toggle-blackwater'),
     turnover: document.getElementById('input-turnover'),
     temp: document.getElementById('input-temp'),
@@ -109,10 +108,6 @@ function addCurrentSelection() {
     return;
   }
   const qty = getQty();
-  if (state.beginnerMode && computed && computed.blockReasons.length > 0) {
-    console.warn('[StockingAdvisor] Beginner safeguards block add:', computed.blockReasons.join(', '));
-    return;
-  }
   document.dispatchEvent(
     new CustomEvent('advisor:addCandidate', { detail: { species, qty } })
   );
@@ -285,11 +280,6 @@ document.addEventListener('advisor:addCandidate', (event) => {
     return;
   }
   const qty = sanitizeQty(detail.qty, state.candidate?.qty ?? 1);
-
-  if (state.beginnerMode && computed && computed.blockReasons.length > 0) {
-    console.warn('[StockingAdvisor] Beginner safeguards block add:', computed.blockReasons.join(', '));
-    return;
-  }
 
   const existing = state.stock.find((entry) => entry.id === species.id);
   if (existing) {
@@ -510,7 +500,6 @@ function syncToggles() {
   if (refs.tips) {
     updateToggle(refs.tips, state.showTips);
   }
-  updateToggle(refs.beginner, state.beginnerMode);
   updateToggle(refs.blackwater, state.water.blackwater);
   if (refs.tipsInline) {
     refs.tipsInline.textContent = state.showTips ? 'Hide Tips' : 'Show More Tips';
@@ -531,14 +520,8 @@ function syncToggles() {
 function renderCandidateState() {
   if (!computed) return;
   renderChips(refs.candidateChips, computed.chips);
-  const blocked = state.beginnerMode && computed.blockReasons.length > 0;
-  refs.addBtn.disabled = blocked;
-  if (blocked) {
-    refs.candidateBanner.style.display = 'flex';
-    refs.candidateBanner.textContent = `Beginner safeguards: ${computed.blockReasons.join('; ')}`;
-  } else {
-    refs.candidateBanner.style.display = 'none';
-  }
+  refs.addBtn.disabled = false;
+  refs.candidateBanner.style.display = 'none';
 }
 
 function renderDiagnostics() {
@@ -597,13 +580,12 @@ function renderAll() {
 
 function renderEnvironmentPanels() {
   if (!computed) {
-    renderEnvCard({ stock: [], stockCount: 0, beginner: state.beginnerMode, computed: null });
+    renderEnvCard({ stock: [], stockCount: 0, computed: null });
     return;
   }
   renderEnvCard({
     stock: currentStockArray(),
     stockCount: computed?.stockCount ?? 0,
-    beginner: state.beginnerMode,
     computed,
   });
 }
@@ -674,20 +656,6 @@ function bindInputs() {
     });
   }
 
-  if (refs.beginner) {
-    const handleBeginnerChange = () => {
-      const next = refs.beginner instanceof HTMLInputElement ? refs.beginner.checked : !state.beginnerMode;
-      state.beginnerMode = Boolean(next);
-      syncToggles();
-      scheduleUpdate();
-    };
-    if (refs.beginner instanceof HTMLInputElement) {
-      refs.beginner.addEventListener('change', handleBeginnerChange);
-    } else {
-      refs.beginner.addEventListener('click', handleBeginnerChange);
-    }
-  }
-
   if (refs.blackwater) {
     refs.blackwater.addEventListener('click', () => {
       state.water.blackwater = !state.water.blackwater;
@@ -746,7 +714,6 @@ function buildGearPayload() {
       watts_range: [Math.max(25, Math.round(watts * 0.8)), Math.round(watts * 1.2)],
     },
     flags: {
-      beginner_mode: state.beginnerMode,
       heavy_stock: bioload.proposedPercent > 0.9,
       low_flow_species: computed.entries.some((entry) => entry.species.flow === 'low'),
     },
@@ -769,3 +736,114 @@ function buildGearPayload() {
 }
 
 bootstrapStocking();
+
+(function infoPopovers(){
+  const page = document.getElementById('stocking-page');
+  if(!page) return;
+
+  let portal = document.getElementById('ui-portal');
+  if(!portal){
+    portal = document.createElement('div');
+    portal.id = 'ui-portal';
+    portal.style.position = 'static';
+    portal.style.isolation = 'auto';
+    document.body.appendChild(portal);
+  }
+
+  const pop = document.createElement('div');
+  pop.className = 'ttg-popover';
+  pop.setAttribute('role','dialog');
+  pop.setAttribute('aria-modal','false');
+  pop.hidden = true;
+  pop.innerHTML = `
+    <h3 id="ttg-popover-title">Info</h3>
+    <p id="ttg-popover-text"></p>
+    <button type="button" class="close" aria-label="Close">OK</button>
+  `;
+  portal.appendChild(pop);
+  const titleEl = pop.querySelector('#ttg-popover-title');
+  const textEl  = pop.querySelector('#ttg-popover-text');
+  const closeEl = pop.querySelector('.close');
+
+  let currentBtn = null;
+
+  function offsets(){
+    const vv = window.visualViewport;
+    return {
+      x: vv && 'pageLeft' in vv ? vv.pageLeft : (window.pageXOffset || document.documentElement.scrollLeft || 0),
+      y: vv && 'pageTop'  in vv ? vv.pageTop  : (window.pageYOffset || document.documentElement.scrollTop  || 0),
+    };
+  }
+
+  function placeUnder(el){
+    const target = el.closest('label') || el;
+    const r = target.getBoundingClientRect();
+    const wasHidden = pop.hidden;
+    if (wasHidden) pop.hidden = false;
+    pop.style.visibility = 'hidden';
+
+    const pw = pop.offsetWidth || 280;
+    const ph = pop.offsetHeight || 140;
+    const gap = 8;
+    const { x:sx, y:sy } = offsets();
+
+    let left = Math.round(r.left + sx);
+    let top  = Math.round(r.bottom + sy + gap);
+    left = Math.min(Math.max(8 + sx, left), (window.innerWidth - pw - 8) + sx);
+    top  = Math.min(Math.max(8 + sy, top),  (window.innerHeight - ph - 8) + sy);
+
+    pop.style.left = `${left}px`;
+    pop.style.top  = `${top}px`;
+
+    pop.style.visibility = '';
+    pop.hidden = wasHidden;
+  }
+
+  function openFor(btn){
+    currentBtn = btn;
+    const info = btn.getAttribute('data-info') || 'Additional information.';
+    titleEl.textContent = 'Info';
+    textEl.textContent  = info;
+
+    placeUnder(btn);
+    pop.hidden = false;
+    requestAnimationFrame(()=> pop.classList.add('is-open'));
+
+    document.addEventListener('mousedown', onDoc, { capture:true });
+    document.addEventListener('touchstart', onDoc, { capture:true });
+    document.addEventListener('keydown', onEsc, { capture:true });
+
+    window.addEventListener('scroll', onReflow, { passive:true });
+    window.addEventListener('resize', onReflow, { passive:true });
+    window.visualViewport?.addEventListener?.('scroll', onReflow, { passive:true });
+    window.visualViewport?.addEventListener?.('resize', onReflow, { passive:true });
+  }
+
+  function closePop(){
+    pop.classList.remove('is-open');
+    setTimeout(()=>{ pop.hidden = true; }, 140);
+    currentBtn = null;
+
+    document.removeEventListener('mousedown', onDoc, { capture:true });
+    document.removeEventListener('touchstart', onDoc, { capture:true });
+    document.removeEventListener('keydown', onEsc, { capture:true });
+
+    window.removeEventListener('scroll', onReflow);
+    window.removeEventListener('resize', onReflow);
+    window.visualViewport?.removeEventListener?.('scroll', onReflow);
+    window.visualViewport?.removeEventListener?.('resize', onReflow);
+  }
+
+  function onDoc(e){ if (!pop.contains(e.target) && e.target !== currentBtn) closePop(); }
+  function onEsc(e){ if (e.key === 'Escape') closePop(); }
+  function onReflow(){ if (!pop.hidden && currentBtn) placeUnder(currentBtn); }
+
+  page.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.info-btn');
+    if(!btn) return;
+    e.preventDefault();
+    if(pop.hidden || currentBtn !== btn) openFor(btn);
+    else closePop();
+  });
+  closeEl.addEventListener('click', closePop);
+})();

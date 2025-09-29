@@ -47,8 +47,8 @@ const RANGE_KEYS = {
   kH: ['kH', 'min_dKH', 'max_dKH'],
 };
 
-export function renderEnvCard({ stock = [], stockCount = null, beginner = false, computed = null } = {}) {
-  const env = deriveEnv(stock, { beginner, computed });
+export function renderEnvCard({ stock = [], stockCount = null, computed = null } = {}) {
+  const env = deriveEnv(stock, { computed });
   const derivedCount = typeof stockCount === 'number' ? stockCount : env.stockLength ?? (Array.isArray(stock) ? stock.length : 0);
   const isEmpty = derivedCount === 0;
   if (typeof document === 'undefined') {
@@ -92,11 +92,11 @@ export function renderEnvCard({ stock = [], stockCount = null, beginner = false,
 }
 
 export function deriveEnv(stock = [], options = {}) {
-  const { beginner = false, computed = null } = options ?? {};
+  const { computed = null } = options ?? {};
   const entries = normalizeStock(stock);
   const stockLength = entries.length;
   if (!stockLength) {
-    return buildDefaultEnv({ beginner, stockLength });
+    return buildDefaultEnv({ stockLength });
   }
 
   const conditions = [];
@@ -250,7 +250,6 @@ export function deriveEnv(stock = [], options = {}) {
   }
 
   return {
-    beginner,
     conditions,
     warnings: dedupeWarnings(warnings),
     chips: dedupeStrings(Array.from(noteCodes)),
@@ -374,13 +373,15 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   const generalChips = isEmpty ? '' : renderChips(env.detailChips ?? []);
   const bioloadLabel = isEmpty ? '0% → 0% of capacity' : env.bioloadLabel;
   const aggressionLabel = isEmpty ? '0%' : (aggressionPct >= 100 ? '100%' : env.aggressionLabel);
+  const bioloadInfoBtn = '<button type="button" class="info-btn" data-info="Approximate stocking level for your tank size. Stay in green for better stability.">i</button>';
+  const aggressionInfoBtn = '<button type="button" class="info-btn" data-info="Estimated compatibility risk. Adding aggressive or territorial species will raise this.">i</button>';
 
   if (isMobile) {
     root.classList.add('env-bars--xl');
     root.innerHTML = `
       <div class="env-bar env-bar--xl">
         <div class="env-bar__hd">
-          <div class="env-bar__label">Bioload</div>
+          <div class="env-bar__label">Bioload ${bioloadInfoBtn}</div>
           <div class="env-bar__value">${Math.round(bioloadPct)}%</div>
         </div>
         <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(bioloadPct)}">
@@ -389,7 +390,7 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
       </div>
       <div class="env-bar env-bar--xl">
         <div class="env-bar__hd">
-          <div class="env-bar__label">Aggression</div>
+          <div class="env-bar__label">Aggression ${aggressionInfoBtn}</div>
           <div class="env-bar__value">${Math.round(aggressionPct)}%</div>
         </div>
         <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
@@ -404,7 +405,7 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   root.innerHTML = `
     <div class="env-bar">
       <div class="env-bar__hd">
-        <span>Bioload Capacity</span>
+        <span class="env-bar__label">Bioload ${bioloadInfoBtn}</span>
         <span>${escapeHtml(bioloadLabel)}</span>
       </div>
       <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(bioloadPct)}">
@@ -414,7 +415,7 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
     </div>
     <div class="env-bar">
       <div class="env-bar__hd">
-        <span>Aggression &amp; Compatibility</span>
+        <span class="env-bar__label">Aggression ${aggressionInfoBtn}</span>
         <span>${escapeHtml(aggressionLabel)}</span>
       </div>
       <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
@@ -482,12 +483,12 @@ function ensureTips(el) {
       <li>Lock in one salinity profile; avoid mixing freshwater and brackish species unless they are noted as dual-tolerant.</li>
       <li>Blackwater lovers appreciate botanicals and tinted water; only mark it required when tannin-dependent species are present.</li>
       <li>Blend flow zones when low- and high-flow species are mixed—use spray bars or directional pumps to create calm refuges.</li>
-      <li>Beginner Mode keeps a conservative buffer on capacity and compatibility. Switch to Advanced only when you can monitor closely.</li>
+      <li>Stay within the green bioload zone for stability and increase filtration or planting before pushing higher loads.</li>
     </ul>`;
   el.dataset.bound = 'true';
 }
 
-function buildDefaultEnv({ beginner, stockLength = 0 }) {
+function buildDefaultEnv({ stockLength = 0 }) {
   const model = defaultEnvModel();
   const conditions = [
     { label: 'Temperature (°F)', value: dash },
@@ -500,7 +501,6 @@ function buildDefaultEnv({ beginner, stockLength = 0 }) {
   ];
   return {
     ...model,
-    beginner,
     conditions,
     warnings: [],
     chips: [],

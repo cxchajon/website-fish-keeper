@@ -15,7 +15,6 @@ import {
 import {
   evaluatePair,
   evaluateInvertSafety,
-  beginnerInvertBlock,
   evaluateSalinity,
   evaluateFlow,
   evaluateBlackwater,
@@ -170,7 +169,7 @@ function calcTank(state, entries, overrideVariant) {
   const plantedMultiplier = planted ? (state.tankAgeWeeks && state.tankAgeWeeks < 6 ? 1.05 : 1.15) : 1;
   const baseCapacity = volume * 0.06;
   const capacity = baseCapacity * multiplier * plantedMultiplier;
-  const recommendedCapacity = state.beginnerMode ? capacity * 0.85 : capacity;
+  const recommendedCapacity = capacity;
   const deliveredGph = turnover * volume;
   const ratedGph = deliveredGph / 0.78;
 
@@ -365,7 +364,7 @@ function computeConditions(state, entries, candidate, water, showMore) {
   return { conditions: [...conditions, ...filteredOptional], salinityCheck, flowCheck, blackwaterCheck, phSeverity, tempSeverity, ghSeverity, khSeverity };
 }
 
-function computeBioload(tank, entries, candidate, beginnerMode) {
+function computeBioload(tank, entries, candidate) {
   const currentLoad = sum(entries, (entry) => entry.bioload);
   const candidateLoad = candidate?.bioload ?? 0;
   const proposed = currentLoad + candidateLoad;
@@ -442,7 +441,7 @@ function computeChips({ tank, candidate, entries, groupRule, salinityCheck, flow
   return chips;
 }
 
-function computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck, flowCheck, blackwaterCheck }, beginnerMode) {
+function computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck, flowCheck, blackwaterCheck }) {
   const issues = [];
   issues.push({ severity: bioload.severity, message: bioload.severity === 'bad' ? 'Bioload exceeds recommended capacity' : 'Bioload nearing limit' });
   issues.push({ severity: aggression.severity, message: aggression.label });
@@ -463,21 +462,7 @@ function computeStatus({ bioload, aggression, conditions, groupRule, salinityChe
     issues.push({ severity: blackwaterCheck.severity, message: blackwaterCheck.reason });
   }
   const filtered = gatherIssues(...issues);
-  const status = statusFromIssues(filtered);
-
-  const blockReasons = [];
-  if (beginnerMode) {
-    if (bioload.proposedPercent > 1.1) {
-      blockReasons.push('Bioload exceeds beginner buffer');
-    }
-    if (salinityCheck?.severity === 'bad') {
-      blockReasons.push('Salinity mismatch');
-    }
-    if (conditions.conditions.some((item) => item.severity === 'bad')) {
-      blockReasons.push('Water parameters outside safe range');
-    }
-  }
-  return { status, blockReasons };
+  return statusFromIssues(filtered);
 }
 
 function computeDiagnostics({ tank, bioload, aggression, status, candidate, entries }) {
@@ -514,25 +499,16 @@ export function buildComputedState(state) {
   const tank = calcTank(state, entries, state.variantId);
   const water = sanitizeWater(state.water ?? {});
   const conditions = computeConditions(state, entries, candidate, water, state.showTips);
-  const bioload = computeBioload(tank, entries, candidate, state.beginnerMode);
+  const bioload = computeBioload(tank, entries, candidate);
   const aggression = computeAggression(tank, entries, candidate);
   const invertCheck = candidate ? evaluateInvertSafety(candidate.species, { water }) : { severity: 'ok' };
-  const beginnerInvert = candidate ? beginnerInvertBlock(candidate, entries, state.beginnerMode) : { severity: 'ok' };
   const groupRule = candidate ? checkGroupRule(candidate, entries) : null;
 
   const chips = computeChips({ tank, candidate, entries, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck, bioload, conditions });
   if (invertCheck.severity !== 'ok') {
     chips.push({ tone: invertCheck.severity === 'bad' ? 'bad' : 'warn', text: invertCheck.reason });
   }
-  if (beginnerInvert.severity === 'bad') {
-    chips.push({ tone: 'bad', text: beginnerInvert.reason });
-  }
-
-  const { status, blockReasons } = computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck }, state.beginnerMode);
-
-  if (beginnerInvert.severity === 'bad') {
-    blockReasons.push(beginnerInvert.reason);
-  }
+  const status = computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck });
 
   const diagnostics = computeDiagnostics({ tank, bioload, aggression, status, candidate, entries });
 
@@ -547,7 +523,6 @@ export function buildComputedState(state) {
     chips,
     invertCheck,
     status,
-    blockReasons,
     diagnostics,
     turnover: turnoverBand(tank),
     stockCount: entries.length,
@@ -639,7 +614,7 @@ export function runSanitySuite(baseState) {
     ],
     candidate: { id: 'tigerbarb', qty: 2 },
   });
-  results.push(`4) +2 tiger barbs → ${scenario4.status.status.label}`);
+  results.push(`4) +2 tiger barbs → ${scenario4.status.label}`);
 
   const scenario5 = runScenario(base, {
     gallons: 10,
@@ -666,25 +641,6 @@ export function runSanitySuite(baseState) {
   });
   results.push(`   Nerite snail → ${scenario6b.conditions.conditions.find((c) => c.key === 'pH')?.hint ?? ''}`);
 
-  const scenario7a = runScenario(base, {
-    gallons: 10,
-    turnover: 4,
-    planted: true,
-    beginnerMode: true,
-    stock: [{ id: 'neocaridina', qty: 12 }],
-    candidate: { id: 'betta_male', qty: 1 },
-  });
-  results.push(`7) Shrimp + Betta (Beginner) → ${scenario7a.blockReasons.join('; ') || scenario7a.status.status.label}`);
-  const scenario7b = runScenario(base, {
-    gallons: 10,
-    turnover: 4,
-    planted: true,
-    beginnerMode: false,
-    stock: [{ id: 'neocaridina', qty: 12 }],
-    candidate: { id: 'betta_male', qty: 1 },
-  });
-  results.push(`   Advanced → ${scenario7b.status.status.label}`);
-
   return results;
 }
 
@@ -707,7 +663,6 @@ export function createDefaultState() {
     selectedTankId: null,
     planted: false,
     showTips: false,
-    beginnerMode: false,
     turnover: 5,
     sumpGallons: 0,
     tankAgeWeeks: 12,
