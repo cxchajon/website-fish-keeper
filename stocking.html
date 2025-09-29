@@ -597,16 +597,8 @@
         <h2 class="card-title">Tank Size</h2>
 
         <div class="form-row">
-          <!-- New label WITH chevron; label replaces the old 'Tank size' text -->
-          <label for="tank-size-select" class="label with-chevron" id="tank-size-label">
-            <span>Select a tank size to begin</span>
-            <svg class="chev" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </label>
-
-          <!-- Compact single-line native select -->
-          <select id="tank-size-select" name="tankSize" aria-label="Tank size">
+          <label for="tank-size-select" class="sr-only">Tank size</label>
+          <select id="tank-size-select" name="tankSize">
             <option value="" disabled selected>Select a tank size…</option>
             <!-- Options injected by JS -->
           </select>
@@ -646,31 +638,7 @@
       <style>
         /* Layout tightening */
         .tank-size-card .form-row {
-          margin-bottom: 10px;
-        }
-        .tank-size-card .label {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
           margin-bottom: 8px;
-          padding: 8px 12px;
-          border-radius: 999px;
-          border: 1px solid rgba(255, 255, 255, 0.14);
-          background: var(--chip);
-          color: var(--fg);
-          font-size: 0.95rem;
-          font-weight: 500;
-          line-height: 1.2;
-          cursor: pointer;
-          width: fit-content;
-          align-self: flex-start;
-        }
-        .tank-size-card .label span {
-          display: inline-flex;
-          align-items: center;
-        }
-        .tank-size-card .label.with-chevron.open {
-          background: rgba(255, 255, 255, 0.18);
         }
 
         /* Compact single-line select (avoid textarea look) */
@@ -692,17 +660,6 @@
         .tank-size-card select:focus {
           outline: 2px solid rgba(20, 203, 168, 0.55);
           outline-offset: 2px;
-        }
-
-        /* Chevron at label; rotate when select is open/focused */
-        .tank-size-card .with-chevron .chev {
-          flex-shrink: 0;
-          opacity: 0.75;
-          transition: transform 0.18s ease, opacity 0.18s ease;
-        }
-        .tank-size-card .with-chevron.open .chev {
-          transform: rotate(180deg);
-          opacity: 0.95;
         }
 
         /* Facts line (empty when none selected) */

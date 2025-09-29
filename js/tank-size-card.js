@@ -3,10 +3,9 @@ import { listTanks, getTankById } from './tankSizes.js';
 (function initTankSizeCard(){
   const selectEl   = document.getElementById('tank-size-select');
   const factsEl    = document.getElementById('tank-facts');
-  const labelWrap  = document.getElementById('tank-size-label');
   const beginnerEl = document.getElementById('toggle-beginner');
 
-  if (!selectEl || !factsEl || !labelWrap) return;
+  if (!selectEl || !factsEl) return;
 
   const state = (window.appState = window.appState || {});
   const STORAGE_KEY = 'ttg.selectedTank';
@@ -64,14 +63,7 @@ import { listTanks, getTankById } from './tankSizes.js';
   }
 
   // 5) Events
-  const openChevron = () => labelWrap.classList.add('open');
-  const closeChevron = () => labelWrap.classList.remove('open');
-
   selectEl.addEventListener('change', (e)=>applySelection(e.target.value));
-  selectEl.addEventListener('focus', openChevron);
-  selectEl.addEventListener('blur',  closeChevron);
-  selectEl.addEventListener('mousedown', openChevron);
-  selectEl.addEventListener('touchstart', openChevron, { passive: true });
 
   // 6) Init
   renderOptions();
