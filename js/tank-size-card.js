@@ -77,3 +77,17 @@ import { listTanks, getTankById } from './tankSizes.js';
   if (savedId && getTankById(savedId)) applySelection(savedId);
   else setFacts(null);
 })();
+
+(function wirePlantedOverlay(){
+  const page = document.getElementById('stocking-page');
+  const planted = document.getElementById('toggle-planted');
+  if (!page || !planted) return;
+
+  const apply = () => {
+    page.classList.toggle('is-planted', !!planted.checked);
+  };
+
+  apply();
+
+  planted.addEventListener('change', apply, { passive: true });
+})();

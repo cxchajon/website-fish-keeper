@@ -698,28 +698,28 @@ html {
   }
 }
 
-#stocking-app section[aria-labelledby="controls-title"] {
+#stocking-page section[aria-labelledby="controls-title"] {
   margin-bottom: 16px;
 }
 
-#stocking-app #tank-summary {
+#stocking-page #tank-summary {
   margin-top: 16px;
 }
 
-#stocking-app section[aria-labelledby="water-title"] {
+#stocking-page section[aria-labelledby="water-title"] {
   margin-top: 16px;
 }
 
 @media (min-width: 720px) {
-  #stocking-app section[aria-labelledby="controls-title"] {
+  #stocking-page section[aria-labelledby="controls-title"] {
     margin-bottom: 20px;
   }
 
-  #stocking-app #tank-summary {
+  #stocking-page #tank-summary {
     margin-top: 20px;
   }
 
-  #stocking-app section[aria-labelledby="water-title"] {
+  #stocking-page section[aria-labelledby="water-title"] {
     margin-top: 20px;
   }
 }

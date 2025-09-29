@@ -23,6 +23,13 @@
       --ghost: rgba(255, 255, 255, 0.25);
       --shadow: rgba(18, 30, 56, 0.18);
       --popover-bg: rgba(6, 12, 24, 0.96);
+      --sa-plant-r: 20;
+      --sa-plant-g: 203;
+      --sa-plant-b: 168;
+      --sa-plant-wash-soft: 0.12;
+      --sa-plant-wash-strong: 0.18;
+      --sa-plant-border: rgba(20, 203, 168, 0.35);
+      --sa-plant-glow: 0 0 0 1px rgba(20, 203, 168, 0.25), 0 6px 24px rgba(20, 203, 168, 0.18);
     }
 
     html,
@@ -45,6 +52,44 @@
       max-width: 1160px;
       margin: 0 auto;
       padding: 0 18px;
+    }
+
+    .stocking-page {
+      position: relative;
+      isolation: isolate;
+    }
+
+    .stocking-page::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(1200px 800px at 20% -10%,
+          rgba(var(--sa-plant-r), var(--sa-plant-g), var(--sa-plant-b), var(--sa-plant-wash-strong)) 0%,
+          rgba(var(--sa-plant-r), var(--sa-plant-g), var(--sa-plant-b), 0) 60%),
+        linear-gradient(180deg,
+          rgba(var(--sa-plant-r), var(--sa-plant-g), var(--sa-plant-b), var(--sa-plant-wash-soft)) 0%,
+          rgba(var(--sa-plant-r), var(--sa-plant-g), var(--sa-plant-b), 0) 60%);
+      opacity: 0;
+      transition: opacity 0.28s ease;
+      will-change: opacity;
+    }
+
+    .stocking-page.is-planted::before {
+      opacity: 1;
+    }
+
+    .stocking-page.is-planted .tank-size-card {
+      border-color: var(--sa-plant-border);
+      box-shadow: var(--sa-plant-glow);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .stocking-page::before {
+        transition: none;
+      }
     }
 
     .page-content {
@@ -578,7 +623,7 @@
 </head>
 <body class="theme-dark">
   <div id="site-nav"></div>
-  <main id="stocking-app">
+  <main id="stocking-page" class="stocking-page">
     <header class="hero">
       <div class="wrap">
         <div class="hero-header">
