@@ -97,91 +97,143 @@ import { listTanks, getTankById } from './tankSizes.js';
   else setFacts(null);
 })();
 
-(function initBeginnerInfoPopover(){
-  const btn   = document.getElementById('bm-info-button');
-  const pop   = document.getElementById('bm-info-popover');
-  const close = document.getElementById('bm-info-close');
-  const label = document.querySelector('.tank-size-card .toggle-head .toggle-title[for="toggle-beginner"]');
-  if (!btn || !pop || !label) return;
+(function beginnerInfoInit(){
+  try{
+    const btn   = document.getElementById('bm-info-button');
+    const pop   = document.getElementById('bm-info-popover');
+    const close = document.getElementById('bm-info-close');
+    const label = document.querySelector('.tank-size-card .toggle-title[for="toggle-beginner"]');
 
-  function getOffsets(){
-    const vv = window.visualViewport;
-    return {
-      x: (vv && 'pageLeft' in vv ? vv.pageLeft : window.pageXOffset || document.documentElement.scrollLeft || 0),
-      y: (vv && 'pageTop'  in vv ? vv.pageTop  : window.pageYOffset || document.documentElement.scrollTop  || 0),
+    if(!btn || !pop || !label){
+      console.error('[BeginnerInfo] Missing element(s):', { btn:!!btn, pop:!!pop, label:!!label });
+      return;
+    }
+
+    // Create portal once (top of body, no new stacking context)
+    let portal = document.getElementById('ui-portal');
+    if(!portal){
+      portal = document.createElement('div');
+      portal.id = 'ui-portal';
+      portal.style.position = 'static';
+      portal.style.isolation = 'auto';
+      document.body.appendChild(portal);
+    }
+
+    const getOffsets = () => {
+      const vv = window.visualViewport;
+      return {
+        x: vv && 'pageLeft' in vv ? vv.pageLeft : (window.pageXOffset || document.documentElement.scrollLeft || 0),
+        y: vv && 'pageTop'  in vv ? vv.pageTop  : (window.pageYOffset || document.documentElement.scrollTop  || 0),
+      };
     };
-  }
 
-  function placePopover(){
-    const rect = label.getBoundingClientRect();
-    const gap = 8;
-    const prevHidden = pop.hidden;
-    const prevVisibility = pop.style.visibility;
+    const getAnchorRect = () => {
+      const targetWord = 'Mode';
+      const textNode = label.firstChild;
+      if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+        const raw = textNode.textContent || '';
+        const startIdx = raw.lastIndexOf(targetWord);
+        if (startIdx !== -1) {
+          try {
+            const range = document.createRange();
+            range.setStart(textNode, startIdx);
+            range.setEnd(textNode, startIdx + targetWord.length);
+            const rects = range.getClientRects();
+            const rect = rects && rects.length ? rects[0] : range.getBoundingClientRect();
+            range.detach?.();
+            if (rect) return rect;
+          } catch (err) {
+            console.warn('[BeginnerInfo] Unable to measure "Mode" text span:', err);
+          }
+        }
+      }
+      return label.getBoundingClientRect();
+    };
 
-    if (prevHidden){
+    function place(){
+      // Reveal to measure natural size
+      const wasHidden = pop.hidden;
       pop.hidden = false;
+      const oldVis = pop.style.visibility;
       pop.style.visibility = 'hidden';
+
+      const r  = getAnchorRect();
+      const pw = pop.offsetWidth || 280;
+      const ph = pop.offsetHeight || 140;
+      const gap = 8;
+      const { x:sx, y:sy } = getOffsets();
+
+      let left = Math.round(r.left + sx);
+      let top  = Math.round(r.bottom + sy + gap);
+
+      left = Math.min(Math.max(8 + sx, left), (window.innerWidth - pw - 8) + sx);
+      top  = Math.min(Math.max(8 + sy, top),  (window.innerHeight - ph - 8) + sy);
+
+      pop.style.left = `${left}px`;
+      pop.style.top  = `${top}px`;
+
+      pop.style.visibility = oldVis;
+      pop.hidden = wasHidden;
     }
 
-    const pw = pop.offsetWidth || 280;
-    const ph = pop.offsetHeight || 120;
+    function open(){
+      // Move into portal (escapes any card stacking contexts)
+      if(pop.parentElement !== portal) portal.appendChild(pop);
 
-    if (prevHidden){
-      pop.hidden = true;
-      pop.style.visibility = prevVisibility || '';
-    } else {
-      pop.style.visibility = prevVisibility || '';
+      // Position & show
+      place();
+      pop.hidden = false;
+      requestAnimationFrame(()=> pop.classList.add('is-open'));
+      btn.setAttribute('aria-expanded','true');
+
+      // TEMP debug outline (auto remove) so we can SEE it for sure
+      const oldOutline = pop.style.outline;
+      pop.style.outline = '2px solid red';
+      setTimeout(()=>{ pop.style.outline = oldOutline; }, 1000);
+
+      // listeners
+      document.addEventListener('mousedown', onDoc, { capture:true });
+      document.addEventListener('touchstart', onDoc, { capture:true });
+      document.addEventListener('keydown', onEsc, { capture:true });
+
+      window.addEventListener('scroll', onReflow, { passive:true });
+      window.addEventListener('resize', onReflow, { passive:true });
+      window.visualViewport?.addEventListener?.('scroll', onReflow, { passive:true });
+      window.visualViewport?.addEventListener?.('resize', onReflow, { passive:true });
     }
 
-    const { x: sx, y: sy } = getOffsets();
+    function closePop(){
+      pop.classList.remove('is-open');
+      btn.setAttribute('aria-expanded','false');
+      setTimeout(()=>{ pop.hidden = true; }, 140);
 
-    let left = Math.round(rect.left + sx);
-    let top = Math.round(rect.bottom + sy + gap);
+      document.removeEventListener('mousedown', onDoc, { capture:true });
+      document.removeEventListener('touchstart', onDoc, { capture:true });
+      document.removeEventListener('keydown', onEsc, { capture:true });
 
-    const maxLeft = Math.max(8, window.innerWidth - pw - 8);
-    const maxTop = Math.max(8, window.innerHeight - ph - 8) + sy;
+      window.removeEventListener('scroll', onReflow);
+      window.removeEventListener('resize', onReflow);
+      window.visualViewport?.removeEventListener?.('scroll', onReflow);
+      window.visualViewport?.removeEventListener?.('resize', onReflow);
+    }
 
-    left = Math.min(Math.max(8 + sx, left), maxLeft + sx);
-    top = Math.min(Math.max(8 + sy, top), maxTop);
+    function toggle(){ pop.hidden ? open() : closePop(); }
+    function onDoc(e){ if(!pop.contains(e.target) && e.target !== btn) closePop(); }
+    function onEsc(e){ if(e.key === 'Escape') closePop(); }
+    function onReflow(){ if(!pop.hidden) place(); }
 
-    pop.style.left = `${left}px`;
-    pop.style.top = `${top}px`;
+    // Bind (idempotent)
+    btn.addEventListener('click', (e)=>{ e.preventDefault(); toggle(); });
+    close?.addEventListener('click', closePop);
+
+    // Final visibility sanity checks (log if something still hides it)
+    const cs = getComputedStyle(pop);
+    if(cs.display === 'none') console.warn('[BeginnerInfo] CSS sets display:none; [hidden] toggling will override with !important.');
+    if(cs.opacity === '0') console.warn('[BeginnerInfo] CSS opacity is 0 until .is-open is applied (expected).');
+    if(parseInt(cs.zIndex || '0',10) < 9999) console.warn('[BeginnerInfo] z-index looks low; ensured via CSS to 2147483647.');
+  } catch(err){
+    console.error('[BeginnerInfo] Init failed:', err);
   }
-
-  function openPop(){
-    if (!pop.hidden) return;
-    pop.hidden = false;
-    placePopover();
-    requestAnimationFrame(() => pop.classList.add('is-open'));
-    btn.setAttribute('aria-expanded','true');
-    document.addEventListener('mousedown', onDoc, { capture:true });
-    document.addEventListener('touchstart', onDoc, { capture:true });
-    document.addEventListener('keydown', onEsc, { capture:true });
-    close?.focus?.();
-  }
-
-  function closePop(){
-    if (pop.hidden) return;
-    pop.classList.remove('is-open');
-    btn.setAttribute('aria-expanded','false');
-    setTimeout(() => { pop.hidden = true; }, 140);
-    document.removeEventListener('mousedown', onDoc, { capture:true });
-    document.removeEventListener('touchstart', onDoc, { capture:true });
-    document.removeEventListener('keydown', onEsc, { capture:true });
-    btn.focus();
-  }
-
-  function toggle(){ pop.hidden ? openPop() : closePop(); }
-  function onDoc(e){ if (!pop.contains(e.target) && e.target !== btn) closePop(); }
-  function onEsc(e){ if (e.key === 'Escape') closePop(); }
-  function onReflow(){ if (!pop.hidden){ placePopover(); } }
-
-  btn.addEventListener('click', toggle);
-  close?.addEventListener('click', closePop);
-  window.addEventListener('resize', onReflow, { passive:true });
-  window.addEventListener('scroll', onReflow, { passive:true });
-  window.visualViewport?.addEventListener?.('scroll', onReflow, { passive:true });
-  window.visualViewport?.addEventListener?.('resize', onReflow, { passive:true });
 })();
 
 (function wirePlantedOverlay(){
