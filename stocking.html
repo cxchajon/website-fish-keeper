@@ -597,48 +597,45 @@
         <h2 class="card-title">Tank Size</h2>
 
         <div class="form-row">
-          <label for="tank-size-select" class="tank-size-label">
-            <span class="tank-size-label__text">Select a tank size to begin</span>
-            <span class="tank-size-label__icon" aria-hidden="true">
-              <svg viewBox="0 0 12 8" xmlns="http://www.w3.org/2000/svg" focusable="false">
-                <path d="M1.41.59 6 5.17l4.59-4.58L12 2 6 8 0 2z" fill="currentColor" />
-              </svg>
-            </span>
+          <!-- New label WITH chevron; label replaces the old 'Tank size' text -->
+          <label for="tank-size-select" class="label with-chevron" id="tank-size-label">
+            <span>Select a tank size to begin</span>
+            <svg class="chev" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
           </label>
+
+          <!-- Compact single-line native select -->
           <select id="tank-size-select" name="tankSize" aria-label="Tank size">
             <option value="" disabled selected>Select a tank size…</option>
-            <!-- options injected by JS -->
+            <!-- Options injected by JS -->
           </select>
         </div>
 
+        <!-- Facts line stays; starts EMPTY to avoid duplicate helper text -->
         <div id="tank-facts" class="facts-line muted-text" aria-live="polite"></div>
 
+        <!-- Planted (stacked) -->
         <div class="toggle-group">
-          <div class="toggle-label">
+          <div class="toggle-head">
             <label class="toggle-title" for="toggle-planted">Planted</label>
           </div>
           <div class="toggle-control">
-            <label class="switch" role="switch">
+            <label class="switch">
               <input type="checkbox" id="toggle-planted" data-testid="toggle-planted" />
               <span class="slider" aria-hidden="true"></span>
             </label>
           </div>
         </div>
 
+        <!-- Beginner Mode (stacked + info icon) -->
         <div class="toggle-group">
-          <div class="toggle-label toggle-label--info">
+          <div class="toggle-head">
             <label class="toggle-title" for="toggle-beginner">Beginner Mode</label>
-            <button
-              type="button"
-              class="info-icon"
-              aria-label="About Beginner Mode"
-              title="Simplifies recommendations for beginners."
-            >
-              i
-            </button>
+            <button type="button" class="info-icon" aria-label="About Beginner Mode" title="Simplifies recommendations for beginners.">i</button>
           </div>
           <div class="toggle-control">
-            <label class="switch" role="switch">
+            <label class="switch">
               <input type="checkbox" id="toggle-beginner" data-testid="toggle-beginner" />
               <span class="slider" aria-hidden="true"></span>
             </label>
@@ -647,92 +644,109 @@
       </div>
 
       <style>
+        /* Layout tightening */
         .tank-size-card .form-row {
-          margin-bottom: 12px;
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
+          margin-bottom: 10px;
         }
-        .tank-size-card .tank-size-label {
-          display: flex;
+        .tank-size-card .label {
+          display: inline-flex;
           align-items: center;
-          justify-content: space-between;
-          gap: 12px;
+          gap: 6px;
+          margin-bottom: 8px;
+          padding: 8px 12px;
+          border-radius: 999px;
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          background: var(--chip);
+          color: var(--fg);
+          font-size: 0.95rem;
           font-weight: 500;
+          line-height: 1.2;
           cursor: pointer;
+          width: fit-content;
+          align-self: flex-start;
         }
-        .tank-size-card .tank-size-label__text {
+        .tank-size-card .label span {
           display: inline-flex;
           align-items: center;
-          gap: 6px;
         }
-        .tank-size-card .tank-size-label__icon {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 18px;
-          height: 18px;
-          color: currentColor;
-          transition: transform 0.2s ease;
-        }
-        .tank-size-card .tank-size-label__icon svg {
-          width: 100%;
-          height: 100%;
-        }
-        .tank-size-card .tank-size-label.is-open .tank-size-label__icon {
-          transform: rotate(180deg);
-        }
-        .tank-size-card .facts-line {
-          margin-top: 4px;
-          min-height: 1.4em;
+        .tank-size-card .label.with-chevron.open {
+          background: rgba(255, 255, 255, 0.18);
         }
 
-        .tank-size-card .toggle-group {
-          margin-top: 16px;
+        /* Compact single-line select (avoid textarea look) */
+        .tank-size-card select {
+          display: block;
+          width: 100%;
+          height: 44px;
+          line-height: 44px;
+          padding: 0 14px;
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          background: rgba(255, 255, 255, 0.06);
+          color: inherit;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          appearance: none;
+          /* keep native on iOS but remove textarea vibe */
         }
-        .tank-size-card .toggle-group + .toggle-group {
+        .tank-size-card select:focus {
+          outline: 2px solid rgba(20, 203, 168, 0.55);
+          outline-offset: 2px;
+        }
+
+        /* Chevron at label; rotate when select is open/focused */
+        .tank-size-card .with-chevron .chev {
+          flex-shrink: 0;
+          opacity: 0.75;
+          transition: transform 0.18s ease, opacity 0.18s ease;
+        }
+        .tank-size-card .with-chevron.open .chev {
+          transform: rotate(180deg);
+          opacity: 0.95;
+        }
+
+        /* Facts line (empty when none selected) */
+        .tank-size-card .facts-line {
+          margin-top: 8px;
+        }
+
+        /* Spacing for stacked toggles */
+        .tank-size-card .toggle-group {
           margin-top: 14px;
         }
-
-        .tank-size-card .toggle-label {
+        .tank-size-card .toggle-group + .toggle-group {
+          margin-top: 12px;
+        }
+        .tank-size-card .toggle-head {
           display: flex;
           align-items: center;
           gap: 8px;
           margin-bottom: 6px;
         }
         .tank-size-card .toggle-title {
-          font-weight: 600;
+          font-weight: 500;
         }
-
         .tank-size-card .toggle-control {
           display: flex;
           align-items: center;
-          justify-content: flex-start;
           min-height: 44px;
         }
 
+        /* Switch visuals (scoped) */
         .tank-size-card .switch {
           position: relative;
-          display: inline-flex;
-          width: 62px;
-          height: 44px;
+          display: inline-block;
+          width: 54px;
+          height: 30px;
         }
         .tank-size-card .switch input {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          margin: 0;
           opacity: 0;
-          cursor: pointer;
-          appearance: none;
+          width: 0;
+          height: 0;
         }
         .tank-size-card .switch .slider {
           position: absolute;
-          top: 7px;
-          bottom: 7px;
-          left: 0;
-          right: 0;
+          inset: 0;
           border-radius: 9999px;
           background: rgba(255, 255, 255, 0.16);
           transition: background 0.18s ease, box-shadow 0.18s ease;
@@ -740,52 +754,46 @@
         .tank-size-card .switch .slider::before {
           content: '';
           position: absolute;
-          top: 50%;
-          left: 6px;
-          width: 26px;
-          height: 26px;
+          left: 3px;
+          top: 3px;
+          width: 24px;
+          height: 24px;
           border-radius: 50%;
           background: #fff;
           box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-          transform: translate(0, -50%);
           transition: transform 0.18s ease;
-        }
-        .tank-size-card .switch input:focus-visible + .slider {
-          box-shadow: 0 0 0 3px rgba(163, 200, 255, 0.45);
         }
         .tank-size-card .switch input:checked + .slider {
           background: var(--brand-on, #14cba8);
         }
         .tank-size-card .switch input:checked + .slider::before {
-          transform: translate(30px, -50%);
+          transform: translateX(24px);
         }
-        .tank-size-card .switch input:checked:focus-visible + .slider {
-          box-shadow: 0 0 0 3px rgba(20, 203, 168, 0.4);
+        @media (min-width: 1024px) {
+          .tank-size-card .switch {
+            width: 56px;
+            height: 32px;
+          }
+          .tank-size-card .switch .slider::before {
+            width: 26px;
+            height: 26px;
+          }
+          .tank-size-card .switch input:checked + .slider::before {
+            transform: translateX(26px);
+          }
         }
-
-        @media (hover:hover) {
+        @media (hover: hover) {
           .tank-size-card .switch:hover .slider {
             filter: brightness(1.05);
             cursor: pointer;
           }
         }
-
-        .tank-size-card .switch input:disabled + .slider {
-          opacity: 0.45;
-          cursor: not-allowed;
-        }
-        .tank-size-card .switch input:disabled + .slider::before {
-          opacity: 0.9;
+        .tank-size-card .switch:focus-within .slider {
+          outline: 2px solid rgba(20, 203, 168, 0.55);
+          outline-offset: 2px;
         }
 
-        @media (prefers-reduced-motion: reduce) {
-          .tank-size-card .switch .slider,
-          .tank-size-card .switch .slider::before,
-          .tank-size-card .tank-size-label__icon {
-            transition: none;
-          }
-        }
-
+        /* Info icon beside Beginner Mode title */
         .tank-size-card .info-icon {
           display: inline-flex;
           align-items: center;
@@ -802,6 +810,17 @@
         .tank-size-card .info-icon:focus {
           outline: 2px solid rgba(20, 203, 168, 0.55);
           outline-offset: 2px;
+        }
+
+        /* Ensure no overlay blocks inputs */
+        .tank-size-card .toggle-group,
+        .tank-size-card select {
+          position: relative;
+          z-index: 0;
+        }
+        .tank-size-card .toggle-control,
+        .tank-size-card .switch {
+          pointer-events: auto;
         }
       </style>
 

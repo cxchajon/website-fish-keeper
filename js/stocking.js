@@ -444,16 +444,11 @@ function populateSpecies() {
 
 function renderTankSummaryView() {
   refs.tankSummary.innerHTML = '';
-  const container = document.createElement('div');
-  container.className = 'tank-summary';
   if (!computed) {
-    const text = document.createElement('p');
-    text.className = 'subtle';
-    text.textContent = 'Select a tank size to unlock recommendations.';
-    container.appendChild(text);
-    refs.tankSummary.appendChild(container);
     return;
   }
+  const container = document.createElement('div');
+  container.className = 'tank-summary';
   const variant = computed.tank.variant;
   const dims = variant ? `${variant.length}″×${variant.width}″×${variant.height}″` : '—';
   const text = document.createElement('p');
