@@ -643,10 +643,15 @@
 
         <div class="form-row">
           <label for="tank-size-select" class="sr-only">Tank size</label>
-          <select id="tank-size-select" name="tankSize">
-            <option value="" disabled selected>Select a tank size…</option>
-            <!-- Options injected by JS -->
-          </select>
+          <div class="select-wrap" id="tank-size-select-wrap">
+            <select id="tank-size-select" name="tankSize" aria-label="Tank size">
+              <option value="" disabled selected>Select a tank size…</option>
+              <!-- Options injected by JS -->
+            </select>
+            <svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+              <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
         </div>
 
         <!-- Facts line stays; starts EMPTY to avoid duplicate helper text -->
@@ -712,13 +717,16 @@
           margin-bottom: 8px;
         }
 
-        /* Compact single-line select (avoid textarea look) */
-        .tank-size-card select {
+        /* --- Tank Size chevron styles (scoped) --- */
+        .tank-size-card .select-wrap {
+          position: relative;
+        }
+        .tank-size-card .select-wrap select {
           display: block;
           width: 100%;
           height: 44px;
           line-height: 44px;
-          padding: 0 14px;
+          padding: 0 44px 0 14px;
           border-radius: 12px;
           border: 1px solid rgba(255, 255, 255, 0.12);
           background: rgba(255, 255, 255, 0.06);
@@ -726,11 +734,34 @@
           -webkit-appearance: none;
           -moz-appearance: none;
           appearance: none;
-          /* keep native on iOS but remove textarea vibe */
+          /* iOS: keeps native picker while allowing custom icon */
         }
-        .tank-size-card select:focus {
+        .tank-size-card .select-wrap .chevron {
+          position: absolute;
+          right: 14px;
+          top: 50%;
+          width: 16px;
+          height: 16px;
+          transform: translateY(-50%);
+          opacity: 0.8;
+          pointer-events: none;
+          /* IMPORTANT: never block taps on the select */
+          transition: transform 0.18s ease, opacity 0.18s ease;
+        }
+        .tank-size-card .select-wrap:hover .chevron {
+          opacity: 0.95;
+        }
+        .tank-size-card .select-wrap.open .chevron {
+          transform: translateY(-50%) rotate(180deg);
+        }
+        .tank-size-card .select-wrap select:focus {
           outline: 2px solid rgba(20, 203, 168, 0.55);
           outline-offset: 2px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .tank-size-card .select-wrap .chevron {
+            transition: none;
+          }
         }
 
         /* Facts line (empty when none selected) */
