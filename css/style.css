@@ -1135,3 +1135,41 @@ body.planted-active #cycling-coach .cc-title__leaf {
 #cycling-coach .cc-title + section.card {
   margin-top: 8px;
 }
+
+.site-footer {
+  text-align: center;
+  padding: 20px;
+  background: #111;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.social-strip {
+  margin-bottom: 10px;
+}
+
+.social-strip a {
+  margin: 0 8px;
+  color: #fff;
+  font-size: 1.4rem;
+  transition: color 0.3s;
+}
+
+.social-strip a:hover,
+.footer-note a:hover {
+  color: #1e90ff; /* hover highlight */
+}
+
+.footer-note {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.footer-note .amazon-cta {
+  color: #1e90ff;
+  text-decoration: none;
+  font-weight: 500;
+}
+.footer-note .amazon-cta:hover {
+  text-decoration: underline;
+}

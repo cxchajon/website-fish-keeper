@@ -236,10 +236,14 @@
 <div id="site-footer"></div>
 <script>
   (async () => {
-    const host = document.getElementById('site-footer');
-    if (!host) return;
-    const res = await fetch('footer.html?v=1.1.2', { cache: 'no-cache' });
-    host.outerHTML = await res.text();
+    try {
+      const res = await fetch('footer.html?v=1.2.0', { cache: 'no-cache' });
+      const html = await res.text();
+      const host = document.getElementById('site-footer');
+      if (host) host.outerHTML = html;
+    } catch (e) {
+      console.error('Footer load failed:', e);
+    }
   })();
 </script>
 <style>
