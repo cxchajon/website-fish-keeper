@@ -1,35 +1,26 @@
-/*
-  tank-size-card.js — stacked toggles, no footprint pill
-  - Populates select from tankSizes.js
-  - Updates state and the facts line
-  - Triggers recompute
-*/
-
 import { listTanks, getTankById } from './tankSizes.js';
 
-(function initTankSizeCard() {
-  const selectEl = document.getElementById('tank-size-select');
-  const factsEl = document.getElementById('tank-facts');
-  const labelEl = document.querySelector('#tank-size-card .tank-size-label');
+(function initTankSizeCard(){
+  const selectEl   = document.getElementById('tank-size-select');
+  const factsEl    = document.getElementById('tank-facts');
+  const labelWrap  = document.getElementById('tank-size-label');
+  const beginnerEl = document.getElementById('toggle-beginner');
 
-  if (!selectEl || !factsEl) return;
+  if (!selectEl || !factsEl || !labelWrap) return;
 
   const state = (window.appState = window.appState || {});
-  const format = (value, precision = 1) => {
-    if (typeof value !== 'number' || Number.isNaN(value)) return '';
-    const fixed = value.toFixed(precision);
-    return fixed.replace(/\.0+$/, '').replace(/(\.\d*[1-9])0+$/, '$1');
-  };
+  const STORAGE_KEY = 'ttg.selectedTank';
+  const round1 = (n) => Math.round(n*10)/10;
 
-  function renderOptions() {
+  // 1) Populate select from curated dataset (5–125g)
+  function renderOptions(){
     const tanks = listTanks()
-      .filter((t) => typeof t.gallons === 'number' && t.gallons >= 5 && t.gallons <= 125)
-      .sort((a, b) => (a.gallons - b.gallons) || a.label.localeCompare(b.label));
+      .filter(t => typeof t.gallons==='number' && t.gallons>=5 && t.gallons<=125)
+      .sort((a,b)=> (a.gallons-b.gallons) || a.label.localeCompare(b.label));
 
-    // clear non-placeholder options
-    [...selectEl.querySelectorAll('option:not([disabled])')].forEach((o) => o.remove());
-
-    for (const t of tanks) {
+    // Clear non-placeholder options
+    [...selectEl.querySelectorAll('option:not([disabled])')].forEach(o=>o.remove());
+    for (const t of tanks){
       const opt = document.createElement('option');
       opt.value = t.id;
       opt.textContent = t.label;
@@ -37,64 +28,60 @@ import { listTanks, getTankById } from './tankSizes.js';
     }
   }
 
-  function setFacts(tank) {
-    if (!tank) {
-      factsEl.textContent = '';
-      return;
-    }
-
-    const dimsIn = `${format(tank.dimensions_in.l, 2)} × ${format(tank.dimensions_in.w, 2)} × ${format(tank.dimensions_in.h, 2)} in`;
-    const dimsCm = `${format(tank.dimensions_cm.l)} × ${format(tank.dimensions_cm.w)} × ${format(tank.dimensions_cm.h)} cm`;
-    const filled = typeof tank.filled_weight_lbs === 'number' ? ` • ~${tank.filled_weight_lbs} lbs filled` : '';
-    factsEl.textContent = `${tank.gallons} gal • ${format(tank.liters)} L • ${dimsIn} (${dimsCm})${filled}`;
+  // 2) Facts line
+  function setFacts(tank){
+    if (!tank){ factsEl.textContent = ''; return; }
+    const dimsIn = `${tank.dimensions_in.l} × ${tank.dimensions_in.w} × ${tank.dimensions_in.h} in`;
+    const dimsCm = `${round1(tank.dimensions_cm.l)} × ${round1(tank.dimensions_cm.w)} × ${round1(tank.dimensions_cm.h)} cm`;
+    factsEl.textContent = `${tank.gallons}g • ${round1(tank.liters)} L • ${dimsIn} (${dimsCm}) • ~${tank.filled_weight_lbs} lbs filled`;
   }
 
-  function applySelection(id) {
+  // 3) Recompute hook
+  function recompute(){
+    if (typeof window.recomputeAll === 'function') window.recomputeAll();
+    else window.dispatchEvent?.(new CustomEvent('ttg:recompute'));
+  }
+
+  // 4) Apply selection
+  function applySelection(id){
     const t = id ? getTankById(id) : null;
-    if (!t) {
-      selectEl.selectedIndex = 0;
+    if (!t){
+      selectEl.value = '';
       state.selectedTankId = null;
       state.gallons = undefined;
-      state.liters = undefined;
+      state.liters  = undefined;
       setFacts(null);
+      recompute();
       return;
     }
-
     state.selectedTankId = t.id;
     state.gallons = t.gallons;
-    state.liters = t.liters;
-
+    state.liters  = t.liters;
     selectEl.value = t.id;
     setFacts(t);
-
-    if (typeof window.recomputeAll === 'function') {
-      window.recomputeAll();
-    } else {
-      window.dispatchEvent?.(new CustomEvent('ttg:recompute'));
-    }
+    try { localStorage.setItem(STORAGE_KEY, t.id); } catch(_){}
+    recompute();
   }
 
-  function toggleChevron(open) {
-    if (!labelEl) return;
-    labelEl.classList.toggle('is-open', Boolean(open));
-  }
+  // 5) Events
+  const openChevron = () => labelWrap.classList.add('open');
+  const closeChevron = () => labelWrap.classList.remove('open');
 
-  // events
-  selectEl.addEventListener('change', (e) => {
-    applySelection(e.target.value);
-    toggleChevron(false);
-  });
-  selectEl.addEventListener('focus', () => toggleChevron(true));
-  selectEl.addEventListener('blur', () => toggleChevron(false));
-  selectEl.addEventListener('mousedown', () => toggleChevron(true));
-  selectEl.addEventListener('touchstart', () => toggleChevron(true), { passive: true });
+  selectEl.addEventListener('change', (e)=>applySelection(e.target.value));
+  selectEl.addEventListener('focus', openChevron);
+  selectEl.addEventListener('blur',  closeChevron);
+  selectEl.addEventListener('mousedown', openChevron);
+  selectEl.addEventListener('touchstart', openChevron, { passive: true });
 
-  // init
+  // 6) Init
   renderOptions();
-  selectEl.selectedIndex = 0;
-  setFacts(null);
 
-  // keep Beginner Mode default OFF
-  const beginnerToggle = document.getElementById('toggle-beginner');
-  if (beginnerToggle) beginnerToggle.checked = false;
+  // Beginner Mode defaults OFF
+  if (beginnerEl) beginnerEl.checked = false;
+
+  // Hydrate persisted tank choice
+  let savedId = null;
+  try { savedId = localStorage.getItem(STORAGE_KEY) || null; } catch(_){ }
+  if (savedId && getTankById(savedId)) applySelection(savedId);
+  else setFacts(null);
 })();
