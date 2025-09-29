@@ -98,90 +98,136 @@ import { listTanks, getTankById } from './tankSizes.js';
 })();
 
 (function initBeginnerInfoPopover(){
-  const btn   = document.getElementById('bm-info-button');
-  const pop   = document.getElementById('bm-info-popover');
-  const close = document.getElementById('bm-info-close');
-  const label = document.querySelector('.tank-size-card .toggle-head .toggle-title[for="toggle-beginner"]');
-  if (!btn || !pop || !label) return;
+  const infoBtn  = document.getElementById('bm-info-button');
+  const pop      = document.getElementById('bm-info-popover');
+  const closeBtn = document.getElementById('bm-info-close');
+  if (!infoBtn || !pop) return;
+
+  let portal = document.getElementById('ui-portal');
+  if (!portal){
+    portal = document.createElement('div');
+    portal.id = 'ui-portal';
+    portal.style.position = 'static';
+    portal.style.isolation = 'auto';
+    document.body.appendChild(portal);
+  }
+
+  const originalParent = pop.parentElement;
+  const originalNextSibling = pop.nextSibling;
 
   function getOffsets(){
     const vv = window.visualViewport;
     return {
-      x: (vv && 'pageLeft' in vv ? vv.pageLeft : window.pageXOffset || document.documentElement.scrollLeft || 0),
-      y: (vv && 'pageTop'  in vv ? vv.pageTop  : window.pageYOffset || document.documentElement.scrollTop  || 0),
+      x: vv && 'pageLeft' in vv ? vv.pageLeft : (window.pageXOffset || document.documentElement.scrollLeft || 0),
+      y: vv && 'pageTop' in vv ? vv.pageTop : (window.pageYOffset || document.documentElement.scrollTop || 0),
     };
   }
 
   function placePopover(){
-    const rect = label.getBoundingClientRect();
-    const gap = 8;
-    const prevHidden = pop.hidden;
+    const wasHidden = pop.hidden;
     const prevVisibility = pop.style.visibility;
-
-    if (prevHidden){
+    if (wasHidden){
       pop.hidden = false;
+      pop.style.visibility = 'hidden';
+    } else {
       pop.style.visibility = 'hidden';
     }
 
+    const rect = infoBtn.getBoundingClientRect();
+    const gap = 8;
     const pw = pop.offsetWidth || 280;
-    const ph = pop.offsetHeight || 120;
-
-    if (prevHidden){
-      pop.hidden = true;
-      pop.style.visibility = prevVisibility || '';
-    } else {
-      pop.style.visibility = prevVisibility || '';
-    }
-
+    const ph = pop.offsetHeight || 140;
     const { x: sx, y: sy } = getOffsets();
 
-    let left = Math.round(rect.left + sx);
+    let left = Math.round(rect.left + (rect.width / 2) + sx - (pw / 2));
     let top = Math.round(rect.bottom + sy + gap);
 
-    const maxLeft = Math.max(8, window.innerWidth - pw - 8);
-    const maxTop = Math.max(8, window.innerHeight - ph - 8) + sy;
-
-    left = Math.min(Math.max(8 + sx, left), maxLeft + sx);
-    top = Math.min(Math.max(8 + sy, top), maxTop);
+    left = Math.min(Math.max(8 + sx, left), (window.innerWidth - pw - 8) + sx);
+    top = Math.min(Math.max(8 + sy, top), (window.innerHeight - ph - 8) + sy);
 
     pop.style.left = `${left}px`;
     pop.style.top = `${top}px`;
+
+    pop.style.visibility = prevVisibility || '';
+    if (wasHidden) pop.hidden = true;
   }
 
-  function openPop(){
+  function openPopover(){
     if (!pop.hidden) return;
-    pop.hidden = false;
+
+    if (pop.parentElement !== portal) portal.appendChild(pop);
+
     placePopover();
-    requestAnimationFrame(() => pop.classList.add('is-open'));
-    btn.setAttribute('aria-expanded','true');
-    document.addEventListener('mousedown', onDoc, { capture:true });
-    document.addEventListener('touchstart', onDoc, { capture:true });
-    document.addEventListener('keydown', onEsc, { capture:true });
-    close?.focus?.();
+    pop.hidden = false;
+    requestAnimationFrame(() => {
+      pop.classList.add('is-open');
+      closeBtn?.focus?.();
+    });
+
+    infoBtn.setAttribute('aria-expanded', 'true');
+
+    document.addEventListener('mousedown', onDoc, { capture: true });
+    document.addEventListener('touchstart', onDoc, { capture: true });
+    document.addEventListener('keydown', onEsc, { capture: true });
+
+    window.addEventListener('scroll', onReflow, { passive: true });
+    window.addEventListener('resize', onReflow, { passive: true });
+    window.visualViewport?.addEventListener?.('scroll', onReflow, { passive: true });
+    window.visualViewport?.addEventListener?.('resize', onReflow, { passive: true });
   }
 
-  function closePop(){
+  function closePopover(){
     if (pop.hidden) return;
+
     pop.classList.remove('is-open');
-    btn.setAttribute('aria-expanded','false');
-    setTimeout(() => { pop.hidden = true; }, 140);
-    document.removeEventListener('mousedown', onDoc, { capture:true });
-    document.removeEventListener('touchstart', onDoc, { capture:true });
-    document.removeEventListener('keydown', onEsc, { capture:true });
-    btn.focus();
+    infoBtn.setAttribute('aria-expanded', 'false');
+
+    document.removeEventListener('mousedown', onDoc, { capture: true });
+    document.removeEventListener('touchstart', onDoc, { capture: true });
+    document.removeEventListener('keydown', onEsc, { capture: true });
+
+    window.removeEventListener('scroll', onReflow);
+    window.removeEventListener('resize', onReflow);
+    window.visualViewport?.removeEventListener?.('scroll', onReflow);
+    window.visualViewport?.removeEventListener?.('resize', onReflow);
+
+    setTimeout(() => {
+      pop.hidden = true;
+      if (originalParent){
+        if (originalNextSibling && originalNextSibling.parentNode === originalParent){
+          originalParent.insertBefore(pop, originalNextSibling);
+        } else {
+          originalParent.appendChild(pop);
+        }
+      }
+    }, 140);
+
+    infoBtn.focus();
   }
 
-  function toggle(){ pop.hidden ? openPop() : closePop(); }
-  function onDoc(e){ if (!pop.contains(e.target) && e.target !== btn) closePop(); }
-  function onEsc(e){ if (e.key === 'Escape') closePop(); }
-  function onReflow(){ if (!pop.hidden){ placePopover(); } }
+  function togglePopover(){ pop.hidden ? openPopover() : closePopover(); }
 
-  btn.addEventListener('click', toggle);
-  close?.addEventListener('click', closePop);
-  window.addEventListener('resize', onReflow, { passive:true });
-  window.addEventListener('scroll', onReflow, { passive:true });
-  window.visualViewport?.addEventListener?.('scroll', onReflow, { passive:true });
-  window.visualViewport?.addEventListener?.('resize', onReflow, { passive:true });
+  function onDoc(e){
+    if (!pop.contains(e.target) && e.target !== infoBtn) closePopover();
+  }
+
+  function onEsc(e){
+    if (e.key === 'Escape') closePopover();
+  }
+
+  function onReflow(){
+    if (!pop.hidden) placePopover();
+  }
+
+  infoBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    togglePopover();
+  });
+
+  closeBtn?.addEventListener('click', (event) => {
+    event.preventDefault();
+    closePopover();
+  });
 })();
 
 (function wirePlantedOverlay(){
