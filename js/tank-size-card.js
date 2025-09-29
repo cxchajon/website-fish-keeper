@@ -79,70 +79,53 @@ import { listTanks, getTankById } from './tankSizes.js';
 })();
 
 (function initBeginnerInfoPopover(){
-  const card   = document.querySelector('.tank-size-card');
-  const btn    = document.getElementById('bm-info-button');
-  const pop    = document.getElementById('bm-info-popover');
-  const close  = document.getElementById('bm-info-close');
-  if (!card || !btn || !pop) return;
+  const btn   = document.getElementById('bm-info-button');
+  const pop   = document.getElementById('bm-info-popover');
+  const close = document.getElementById('bm-info-close');
+  if (!btn || !pop) return;
 
-  const open = () => {
-    // Position popover just below/right of the button
+  function placePopover(){
+    // Viewport-relative positioning for fixed element
     const br = btn.getBoundingClientRect();
-    const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
-    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+    const gap = 8;
+    let left = Math.max(8, Math.min(br.left, window.innerWidth - 8 - pop.offsetWidth));
+    let top  = Math.max(8, Math.min(br.bottom + gap, window.innerHeight - 8 - pop.offsetHeight));
+    pop.style.left = `${left}px`;
+    pop.style.top  = `${top}px`;
+  }
 
-    pop.style.top  = `${br.bottom + scrollY + 8}px`;
-    pop.style.left = `${Math.min(br.left + scrollX, window.innerWidth - pop.offsetWidth - 16)}px`;
-
+  function openPop(){
+    if (!pop.hidden) return;
     pop.hidden = false;
+    placePopover();
     requestAnimationFrame(() => pop.classList.add('is-open'));
-    btn.setAttribute('aria-expanded', 'true');
-
-    // Basic outside-click handler
-    document.addEventListener('mousedown', onDocClick, { capture: true });
-    document.addEventListener('touchstart', onDocClick, { capture: true });
-    document.addEventListener('keydown', onEsc, { capture: true });
-    // Move focus to the close button for accessibility
+    btn.setAttribute('aria-expanded','true');
+    document.addEventListener('mousedown', onDoc, { capture:true });
+    document.addEventListener('touchstart', onDoc, { capture:true });
+    document.addEventListener('keydown', onEsc, { capture:true });
     close?.focus?.();
-  };
+  }
 
-  const closeIt = () => {
-    pop.classList.remove('is-open');
-    btn.setAttribute('aria-expanded', 'false');
-    // Delay hiding to allow transition (if any)
-    setTimeout(() => { pop.hidden = true; }, 140);
-    document.removeEventListener('mousedown', onDocClick, { capture: true });
-    document.removeEventListener('touchstart', onDocClick, { capture: true });
-    document.removeEventListener('keydown', onEsc, { capture: true });
-    btn.focus();
-  };
-
-  const toggle = () => (pop.hidden ? open() : closeIt());
-
-  const onDocClick = (e) => {
-    // Close if clicking outside the popover and button
-    if (!pop.contains(e.target) && e.target !== btn) closeIt();
-  };
-
-  const onEsc = (e) => {
-    if (e.key === 'Escape') closeIt();
-  };
-
-  // Wire events
-  btn.addEventListener('click', toggle);
-  close?.addEventListener?.('click', closeIt);
-
-  // Reposition on resize/scroll while open
-  const onReposition = () => {
+  function closePop(){
     if (pop.hidden) return;
-    const br = btn.getBoundingClientRect();
-    const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
-    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-    pop.style.top  = `${br.bottom + scrollY + 8}px`;
-    pop.style.left = `${Math.min(br.left + scrollX, window.innerWidth - pop.offsetWidth - 16)}px`;
-  };
-  window.addEventListener('resize', onReposition, { passive: true });
-  window.addEventListener('scroll', onReposition, { passive: true });
+    pop.classList.remove('is-open');
+    btn.setAttribute('aria-expanded','false');
+    setTimeout(() => { pop.hidden = true; }, 140);
+    document.removeEventListener('mousedown', onDoc, { capture:true });
+    document.removeEventListener('touchstart', onDoc, { capture:true });
+    document.removeEventListener('keydown', onEsc, { capture:true });
+    btn.focus();
+  }
+
+  function toggle(){ pop.hidden ? openPop() : closePop(); }
+  function onDoc(e){ if (!pop.contains(e.target) && e.target !== btn) closePop(); }
+  function onEsc(e){ if (e.key === 'Escape') closePop(); }
+  function onReflow(){ if (!pop.hidden){ placePopover(); } }
+
+  btn.addEventListener('click', toggle);
+  close?.addEventListener('click', closePop);
+  window.addEventListener('resize', onReflow, { passive:true });
+  window.addEventListener('scroll', onReflow, { passive:true });
 })();
 
 (function wirePlantedOverlay(){
