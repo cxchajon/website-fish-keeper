@@ -870,21 +870,25 @@
         }
 
         /* Popover above everything: fixed + high z-index; positioned by JS via top/left */
-        .tank-size-card .bm-popover{
-          position: fixed; z-index: 2147483646;
+        :is(.tank-size-card, #ui-portal) .bm-popover{
+          position: fixed;
+          z-index: 2147483647;
           pointer-events: auto;
-          min-width: 240px; max-width: 320px;
+          min-width: 240px;
+          max-width: 320px;
           padding: 12px 12px 10px;
           border-radius: 10px;
           background: rgba(20, 22, 25, 0.96);
-          border: 1px solid rgba(255,255,255,0.12);
-          box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
           color: inherit;
           transform-origin: top left;
-          opacity: 0; transform: scale(0.98);
-          transition: opacity .14s ease, transform .14s ease;
+          opacity: 0;
+          transform: scale(0.98);
+          transition: opacity 0.14s ease, transform 0.14s ease;
         }
-        .tank-size-card .bm-popover.is-open{ opacity: 1; transform: scale(1); }
+        :is(.tank-size-card, #ui-portal) .bm-popover.is-open{ opacity: 1; transform: scale(1); }
+        :is(.tank-size-card, #ui-portal) .bm-popover[hidden]{ display:none !important; }
 
         .tank-size-card .bm-popover-title{ font-size:14px; margin:0 0 6px; font-weight:600; }
         .tank-size-card .bm-popover-text{ font-size:13px; margin:0 0 10px; line-height:1.4; }
