@@ -647,36 +647,32 @@
     </header>
 
     <div class="wrap page-content">
-      <!-- TANK SIZE CARD (footprint removed, stacked toggles) -->
+      <!-- Tank Size card -->
       <div class="card tank-size-card" id="tank-size-card">
         <h2 class="card-title">Tank Size</h2>
 
-        <!-- Select -->
         <div class="form-row">
           <label for="tank-size-select" class="label">Tank size</label>
           <select id="tank-size-select" name="tankSize" aria-label="Tank size">
             <option value="" disabled selected>Select a tank size…</option>
-            <!-- Options injected by JS -->
+            <!-- options injected by JS -->
           </select>
         </div>
 
-        <!-- Facts line (kept) -->
-        <div id="tank-facts" class="facts-line muted-text" aria-live="polite"></div>
+        <div id="tank-facts" class="facts-line muted-text" aria-live="polite">Select a tank size to begin.</div>
 
-        <!-- Planted (stacked) -->
         <div class="toggle-group">
           <div class="toggle-head">
             <label class="toggle-title" for="toggle-planted">Planted</label>
           </div>
           <div class="toggle-control">
-            <label class="switch">
-              <input type="checkbox" id="toggle-planted" />
-              <span class="slider round"></span>
+            <label class="switch" role="switch">
+              <input type="checkbox" id="toggle-planted" data-testid="toggle-planted" />
+              <span class="slider" aria-hidden="true"></span>
             </label>
           </div>
         </div>
 
-        <!-- Beginner Mode (stacked, with info icon beside title) -->
         <div class="toggle-group">
           <div class="toggle-head">
             <label class="toggle-title" for="toggle-beginner">Beginner Mode</label>
@@ -690,46 +686,36 @@
             </button>
           </div>
           <div class="toggle-control">
-            <label class="switch">
-              <input type="checkbox" id="toggle-beginner" />
-              <span class="slider round"></span>
+            <label class="switch" role="switch">
+              <input type="checkbox" id="toggle-beginner" data-testid="toggle-beginner" />
+              <span class="slider" aria-hidden="true"></span>
             </label>
           </div>
         </div>
       </div>
 
-      <!-- SCOPED CSS (append near this card or your page stylesheet) -->
       <style>
-        /* Layout tightening for card */
         .tank-size-card .form-row {
-          margin-bottom: 8px;
+          margin-bottom: 10px;
         }
         .tank-size-card .label {
           display: block;
           margin-bottom: 6px;
         }
-
-        /* Remove any leftover space where the footprint pill used to be */
-        .tank-size-card #tank-footprint {
-          display: none !important;
-        }
-
         .tank-size-card .facts-line {
           margin-top: 6px;
         }
 
-        /* Stacked toggle groups */
         .tank-size-card .toggle-group {
-          margin-top: 12px;
+          margin-top: 14px;
         }
         .tank-size-card .toggle-group + .toggle-group {
-          margin-top: 10px;
+          margin-top: 12px;
         }
 
         .tank-size-card .toggle-head {
           display: flex;
           align-items: center;
-          justify-content: flex-start;
           gap: 8px;
           margin-bottom: 6px;
         }
@@ -738,13 +724,12 @@
         }
 
         .tank-size-card .toggle-control {
-          /* ensure big tap target beneath the label */
           display: flex;
           align-items: center;
           justify-content: flex-start;
+          min-height: 44px;
         }
 
-        /* Switch (kept from prior style; include if not global) */
         .tank-size-card .switch {
           position: relative;
           display: inline-block;
@@ -752,40 +737,82 @@
           height: 30px;
         }
         .tank-size-card .switch input {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          margin: 0;
           opacity: 0;
-          width: 0;
-          height: 0;
+          cursor: pointer;
         }
-        .tank-size-card .slider {
+        .tank-size-card .switch .slider {
           position: absolute;
           inset: 0;
           border-radius: 9999px;
-          background: rgba(255, 255, 255, 0.15);
-          transition: transform 0.2s, background 0.2s;
+          background: rgba(255, 255, 255, 0.16);
+          transition: background 0.18s ease, box-shadow 0.18s ease;
         }
-        .tank-size-card .slider:before {
+        .tank-size-card .switch .slider::before {
           content: '';
           position: absolute;
-          height: 24px;
-          width: 24px;
           left: 3px;
           top: 3px;
+          width: 24px;
+          height: 24px;
           border-radius: 50%;
           background: #fff;
-          transition: transform 0.2s;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+          transition: transform 0.18s ease;
         }
         .tank-size-card .switch input:checked + .slider {
-          background: rgba(0, 200, 150, 0.9);
+          background: var(--brand-on, #14cba8);
         }
-        .tank-size-card .switch input:checked + .slider:before {
+        .tank-size-card .switch input:checked + .slider::before {
           transform: translateX(24px);
         }
+
+        @media (min-width: 1024px) {
+          .tank-size-card .switch {
+            width: 56px;
+            height: 32px;
+          }
+          .tank-size-card .switch .slider::before {
+            width: 26px;
+            height: 26px;
+            top: 3px;
+            left: 3px;
+          }
+          .tank-size-card .switch input:checked + .slider::before {
+            transform: translateX(26px);
+          }
+        }
+
+        @media (hover:hover) {
+          .tank-size-card .switch:hover .slider {
+            filter: brightness(1.05);
+            cursor: pointer;
+          }
+        }
         .tank-size-card .switch:focus-within .slider {
-          outline: 2px solid rgba(0, 200, 255, 0.6);
+          outline: 2px solid rgba(20, 203, 168, 0.55);
           outline-offset: 2px;
         }
 
-        /* Info icon beside title */
+        .tank-size-card .switch input:disabled + .slider {
+          opacity: 0.45;
+          cursor: not-allowed;
+        }
+        .tank-size-card .switch input:disabled + .slider::before {
+          opacity: 0.9;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .tank-size-card .switch .slider,
+          .tank-size-card .switch .slider::before {
+            transition: none;
+          }
+        }
+
         .tank-size-card .info-icon {
           display: inline-flex;
           align-items: center;
@@ -800,7 +827,7 @@
           cursor: pointer;
         }
         .tank-size-card .info-icon:focus {
-          outline: 2px solid rgba(0, 200, 255, 0.6);
+          outline: 2px solid rgba(20, 203, 168, 0.55);
           outline-offset: 2px;
         }
       </style>
