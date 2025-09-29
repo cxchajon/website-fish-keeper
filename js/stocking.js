@@ -381,10 +381,12 @@ function updateToggle(control, value) {
   const active = Boolean(value);
   if (control instanceof HTMLInputElement && control.type === 'checkbox') {
     control.checked = active;
+    control.setAttribute('data-active', active ? 'true' : 'false');
     control.setAttribute('aria-checked', active ? 'true' : 'false');
     const wrapper = control.closest('.switch');
     if (wrapper) {
       wrapper.setAttribute('data-active', active ? 'true' : 'false');
+      wrapper.setAttribute('aria-checked', active ? 'true' : 'false');
     }
     return;
   }
