@@ -652,12 +652,12 @@
     <div class="wrap page-content">
       <!-- Tank Size card -->
       <div class="card tank-size-card" id="tank-size-card">
-        <h2 class="card-title">Tank Size</h2>
+        <h2 class="card-title">Tank Size <button type="button" class="info-btn" data-info="Pick a standard tank size to get accurate capacity, footprint, and weight.">i</button></h2>
 
         <div class="form-row">
           <label for="tank-size-select" class="sr-only">Tank size</label>
           <div class="select-wrap" id="tank-size-select-wrap">
-            <select id="tank-size-select" name="tankSize" aria-label="Tank size">
+            <select id="tank-size-select" name="tankSize" aria-label="Tank size" data-testid="tank-gallons">
               <option value="" disabled selected>Select a tank size…</option>
               <!-- Options injected by JS -->
             </select>
@@ -673,53 +673,13 @@
         <!-- Planted (stacked) -->
         <div class="toggle-group">
           <div class="toggle-head">
-            <label class="toggle-title" for="toggle-planted">Planted</label>
+            <label class="toggle-title" for="toggle-planted">Planted <button type="button" class="info-btn" data-info="Planted tanks allow higher bioload and provide stability. Toggle ON if you keep live plants.">i</button></label>
           </div>
           <div class="toggle-control">
             <label class="switch">
               <input type="checkbox" id="toggle-planted" data-testid="toggle-planted" />
               <span class="slider" aria-hidden="true"></span>
             </label>
-          </div>
-        </div>
-
-        <!-- BEGINNER MODE (stacked + working popover above all cards) -->
-        <div class="toggle-group">
-          <div class="toggle-head">
-            <label class="toggle-title" for="toggle-beginner">Beginner Mode</label>
-            <button
-              type="button"
-              class="info-icon"
-              id="bm-info-button"
-              aria-label="What is Beginner Mode?"
-              aria-haspopup="dialog"
-              aria-expanded="false"
-              aria-controls="bm-info-popover"
-            >i</button>
-          </div>
-
-          <div class="toggle-control">
-            <label class="switch">
-              <input type="checkbox" id="toggle-beginner" />
-              <span class="slider" aria-hidden="true"></span>
-            </label>
-          </div>
-
-          <!-- Popover rendered once; JS positions it near the button -->
-          <div
-            id="bm-info-popover"
-            class="bm-popover"
-            role="dialog"
-            aria-modal="false"
-            aria-labelledby="bm-info-title"
-            hidden
-          >
-            <h3 id="bm-info-title" class="bm-popover-title">Beginner Mode</h3>
-            <p class="bm-popover-text">
-              Beginner Mode simplifies recommendations by favoring hardy, easy-care species and safer parameter ranges.
-              Turn it off to see the full catalog and advanced options.
-            </p>
-            <button type="button" class="bm-popover-close" id="bm-info-close" aria-label="Close">OK</button>
           </div>
         </div>
       </div>
@@ -868,55 +828,49 @@
         /* Ensure the card can host positioned children safely */
         .tank-size-card{ position: relative; }
 
-        /* Info icon base (neutral when closed) */
-        .tank-size-card #bm-info-button{
-          position: relative; z-index: 2; pointer-events: auto;
+        /* Info button (small neutral pill) */
+        #stocking-page .info-btn{
           display:inline-flex; align-items:center; justify-content:center;
-          width:24px; height:24px; border-radius:50%;
-          background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12);
+          width:22px; height:22px; margin-left:.5rem;
+          border-radius:50%;
+          background: rgba(255,255,255,.08);
+          border:1px solid rgba(255,255,255,.12);
           font-weight:600; line-height:1; cursor:pointer;
+          color:inherit;
         }
-        /* Highlight ONLY when popover is open (aria-expanded=true) */
-        .tank-size-card #bm-info-button[aria-expanded="true"]{
-          background: rgba(20,203,168,0.9); color:#0b1b18; border-color: rgba(20,203,168,0.95);
-          box-shadow: 0 0 0 2px rgba(20,203,168,0.25);
-        }
+        #stocking-page .info-btn:focus{ outline:2px solid rgba(20,203,168,.55); outline-offset:2px; }
 
-        /* Popover above everything: fixed + high z-index; positioned by JS via top/left */
-        :is(.tank-size-card, #ui-portal) .bm-popover{
+        /* Shared popover for all info buttons (portal) */
+        #stocking-page .ttg-popover{
           position: fixed;
           z-index: 2147483647;
           pointer-events: auto;
-          min-width: 240px;
-          max-width: 320px;
+          min-width: 240px; max-width: 320px;
           padding: 12px 12px 10px;
           border-radius: 10px;
-          background: rgba(20, 22, 25, 0.96);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-          color: inherit;
+          background: rgba(20,22,25,.96);
+          border: 1px solid rgba(255,255,255,.12);
+          box-shadow: 0 10px 30px rgba(0,0,0,.35);
+          color:inherit;
           transform-origin: top left;
-          opacity: 0;
-          transform: scale(0.98);
-          transition: opacity 0.14s ease, transform 0.14s ease;
+          opacity: 0; transform: scale(.98);
+          transition: opacity .14s ease, transform .14s ease;
         }
-        :is(.tank-size-card, #ui-portal) .bm-popover.is-open{ opacity: 1; transform: scale(1); }
-        :is(.tank-size-card, #ui-portal) .bm-popover[hidden]{ display:none !important; }
+        #stocking-page .ttg-popover.is-open{ opacity:1; transform:scale(1); }
+        #stocking-page .ttg-popover[hidden]{ display:none !important; }
 
-        .tank-size-card .bm-popover-title{ font-size:14px; margin:0 0 6px; font-weight:600; }
-        .tank-size-card .bm-popover-text{ font-size:13px; margin:0 0 10px; line-height:1.4; }
-
-        .tank-size-card .bm-popover-close{
+        #stocking-page .ttg-popover h3{ font-size:14px; margin:0 0 6px; font-weight:600; }
+        #stocking-page .ttg-popover p{ font-size:13px; margin:0 0 10px; line-height:1.4; }
+        #stocking-page .ttg-popover .close{
           display:inline-flex; align-items:center; justify-content:center;
           height:30px; padding:0 10px; border-radius:8px;
-          background: rgba(255,255,255,0.08);
-          border:1px solid rgba(255,255,255,0.12);
+          background: rgba(255,255,255,.08);
+          border:1px solid rgba(255,255,255,.12);
           color:inherit; cursor:pointer;
         }
-        .tank-size-card .bm-popover-close:focus{ outline:2px solid rgba(20,203,168,0.55); outline-offset:2px; }
 
         @media (prefers-reduced-motion: reduce){
-          .tank-size-card .bm-popover{ transition:none; }
+          #stocking-page .ttg-popover{ transition:none; }
         }
       </style>
 
@@ -924,7 +878,7 @@
 
       <section class="card" id="stock-list-card" aria-live="polite">
         <div class="card__hd">
-          <h2>Current Stock</h2>
+          <h2>Current Stock <button type="button" class="info-btn" data-info="This list shows species you’ve added and their quantities. Use +/− to adjust and Remove to clear.">i</button></h2>
           <p class="subtle">Your selected fish and inverts appear here.</p>
         </div>
         <div id="stock-list" class="stock-list" data-testid="species-list"></div>
@@ -933,7 +887,7 @@
       <section class="card tank-env-card env-card" id="env-card" aria-live="polite">
         <div class="card__hd card__hd--split">
           <div class="card__title-stack">
-            <h2>Environmental Recommendations</h2>
+            <h2>Environmental Recommendations <button type="button" class="info-btn" data-info="Derived from your selected stock. Ranges reflect compatible overlaps across all species.">i</button></h2>
             <p class="subtle card__subtitle">Derived from your selected stock.</p>
           </div>
           <button type="button" id="env-tips-toggle" class="linklike" aria-pressed="false">Show More Tips</button>
@@ -950,7 +904,7 @@
         </div>
 
         <div id="env-tips" class="env-tips" hidden>
-          <!-- brief bullets about GH/KH, salinity, blackwater, flow zones, and Beginner Mode -->
+          <!-- brief bullets about GH/KH, salinity, blackwater, and flow zones -->
         </div>
       </section>
 
@@ -988,7 +942,7 @@
             style="display:none;"
             data-testid="status-banner"
           >
-            Beginner safeguards: fix highlighted issues before adding.
+            Stocking safeguards: fix highlighted issues before adding.
           </div>
         </div>
       </section>
@@ -1022,52 +976,5 @@
   <script type="module" src="js/stocking.js?v=2024-06-05a" id="js-stocking"></script>
   <script type="module" src="js/tank-size-card.js"></script>
 
-  <div
-    id="beginner-info"
-    class="popover"
-    data-hidden="true"
-    role="dialog"
-    aria-modal="false"
-    data-testid="info-popover"
-  >
-    <strong>Beginner safeguards</strong>
-    <p style="margin:8px 0 0;">
-      Beginner mode enforces conservative limits: risky pairings, salinity mismatches, and high bioload overages block the add
-      button. Switch to Advanced to accept higher risk with caution banners.
-    </p>
-    <button type="button" class="link-like" data-popover-close data-testid="info-popover-close">Close</button>
-  </div>
-
-  <div
-    id="bioload-why"
-    class="popover"
-    data-hidden="true"
-    role="dialog"
-    aria-modal="false"
-    data-testid="info-popover"
-  >
-    <strong>How capacity is calculated</strong>
-    <p style="margin:8px 0 0;">
-      Effective volume considers sump capacity, filtration turnover, and whether the tank is planted. Beginner mode keeps a 15%
-      safety buffer so new keepers have extra margin.
-    </p>
-    <button type="button" class="link-like" data-popover-close data-testid="info-popover-close">Close</button>
-  </div>
-
-  <div
-    id="aggression-why"
-    class="popover"
-    data-hidden="true"
-    role="dialog"
-    aria-modal="false"
-    data-testid="info-popover"
-  >
-    <strong>Compatibility checks</strong>
-    <p style="margin:8px 0 0;">
-      We compare temperament scores, territorial tags, and known conflict pairs. Longer tanks reduce tension by giving fish room
-      to establish territories.
-    </p>
-    <button type="button" class="link-like" data-popover-close data-testid="info-popover-close">Close</button>
-  </div>
 </body>
 </html>
