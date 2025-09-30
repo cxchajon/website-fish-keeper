@@ -1145,22 +1145,24 @@
 
       <section class="card ttg-card tank-env-card env-card" id="env-card" aria-live="polite">
         <div class="card__hd card__hd--split">
-          <div class="row title-row between env-header" id="env-header">
-            <h2 class="card-title">Environmental Recommendations</h2>
-            <!-- SINGLE unified icon: shows popover on first click, toggles tips on next clicks -->
-            <button
-              type="button"
-              id="env-info-toggle"
-              class="info-btn"
-              aria-controls="env-more-tips"
-              aria-expanded="false"
-              aria-label="More info and tips about Environmental Recommendations"
-              data-info="Derived from your selected stock. Ranges reflect compatible overlaps across all species."
-            >
-              i
-            </button>
+          <div class="env-header" id="env-header">
+            <div class="row title-row between">
+              <h2 class="card-title">Environmental Recommendations</h2>
+              <!-- SINGLE unified icon: shows popover on first click, toggles tips on next clicks -->
+              <button
+                type="button"
+                id="env-info-toggle"
+                class="info-btn"
+                aria-controls="env-more-tips"
+                aria-expanded="false"
+                aria-label="More info and tips about Environmental Recommendations"
+                data-info="Derived from your selected stock. Ranges reflect compatible overlaps across all species."
+              >
+                i
+              </button>
+            </div>
+            <p class="env-subtitle">Derived from your selected stock.</p>
           </div>
-          <p class="subtle card__subtitle">Derived from your selected stock.</p>
         </div>
 
         <div id="env-warnings" class="env-warnings" hidden></div>
