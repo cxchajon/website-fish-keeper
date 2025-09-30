@@ -834,6 +834,47 @@
       margin-bottom: 0;
     }
 
+    /* ----- Compact card defaults ----- */
+    #stocking-page #bioagg-card.is-compact{
+      padding-top: 8px;
+      padding-bottom: 10px;
+    }
+
+    /* Tighter spacing for meter rows in compact state */
+    #stocking-page #bioagg-card.is-compact .metric-row,
+    #stocking-page #bioagg-card.is-compact .bar-row{
+      margin-top: 6px;
+      margin-bottom: 6px;
+    }
+
+    /* Slightly shorter progress bar track when compact */
+    #stocking-page #bioagg-card.is-compact .progress-track,
+    #stocking-page #bioagg-card.is-compact .meter-track{
+      height: 8px;           /* keep touch target via surrounding row, not the track */
+    }
+
+    /* Labels + info badge area: small gap */
+    #stocking-page #bioagg-card.is-compact .metric-label{
+      margin-bottom: 4px;
+    }
+
+    /* Normal (expanded) state remains your existing styling; we only add a min expansion baseline */
+    #stocking-page #bioagg-card:not(.is-compact){
+      padding-top: 12px;
+      padding-bottom: 14px;
+    }
+
+    /* Ensure popovers render above the card after tightening */
+    #stocking-page .ttg-popover{ z-index: 2147483647; }
+
+    /* Mobile micro-tweak */
+    @media (max-width: 480px){
+      #stocking-page #bioagg-card.is-compact{
+        padding-top: 6px;
+        padding-bottom: 8px;
+      }
+    }
+
     #stocking-page button:not(.info-btn),
     #stocking-page select {
       min-height: 44px;

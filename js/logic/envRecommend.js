@@ -379,22 +379,24 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   if (isMobile) {
     root.classList.add('env-bars--xl');
     root.innerHTML = `
-      <div class="env-bar env-bar--xl">
-        <div class="env-bar__hd">
-          <div class="env-bar__label">Bioload ${bioloadInfoBtn}</div>
-          <div class="env-bar__value">${Math.round(bioloadPct)}%</div>
+      <div id="bioagg-card" class="ttg-card bioagg-card is-compact">
+        <div class="env-bar env-bar--xl bar-row">
+          <div class="env-bar__hd">
+            <div class="env-bar__label metric-label">Bioload ${bioloadInfoBtn}</div>
+            <div class="env-bar__value">${Math.round(bioloadPct)}%</div>
+          </div>
+          <div class="env-bar__track meter-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(bioloadPct)}">
+            <div class="env-bar__fill" style="width:${bioloadPct}%; background:${bioloadColor};"></div>
+          </div>
         </div>
-        <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(bioloadPct)}">
-          <div class="env-bar__fill" style="width:${bioloadPct}%; background:${bioloadColor};"></div>
-        </div>
-      </div>
-      <div class="env-bar env-bar--xl">
-        <div class="env-bar__hd">
-          <div class="env-bar__label">Aggression ${aggressionInfoBtn}</div>
-          <div class="env-bar__value">${Math.round(aggressionPct)}%</div>
-        </div>
-        <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
-          <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
+        <div class="env-bar env-bar--xl bar-row">
+          <div class="env-bar__hd">
+            <div class="env-bar__label metric-label">Aggression ${aggressionInfoBtn}</div>
+            <div class="env-bar__value">${Math.round(aggressionPct)}%</div>
+          </div>
+          <div class="env-bar__track meter-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
+            <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
+          </div>
         </div>
       </div>
     `;
@@ -403,27 +405,29 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
 
   root.classList.remove('env-bars--xl');
   root.innerHTML = `
-    <div class="env-bar">
-      <div class="env-bar__hd">
-        <span class="env-bar__label">Bioload ${bioloadInfoBtn}</span>
-        <span>${escapeHtml(bioloadLabel)}</span>
+    <div id="bioagg-card" class="ttg-card bioagg-card is-compact">
+      <div class="env-bar metric-row">
+        <div class="env-bar__hd">
+          <span class="env-bar__label metric-label">Bioload ${bioloadInfoBtn}</span>
+          <span>${escapeHtml(bioloadLabel)}</span>
+        </div>
+        <div class="env-bar__track progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(bioloadPct)}">
+          <div class="env-bar__fill" style="width:${bioloadPct}%; background:${bioloadColor};"></div>
+        </div>
+        ${bioloadNotes}
       </div>
-      <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(bioloadPct)}">
-        <div class="env-bar__fill" style="width:${bioloadPct}%; background:${bioloadColor};"></div>
+      <div class="env-bar metric-row">
+        <div class="env-bar__hd">
+          <span class="env-bar__label metric-label">Aggression ${aggressionInfoBtn}</span>
+          <span>${escapeHtml(aggressionLabel)}</span>
+        </div>
+        <div class="env-bar__track progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
+          <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
+        </div>
+        ${aggressionNotes}
       </div>
-      ${bioloadNotes}
-    </div>
-    <div class="env-bar">
-      <div class="env-bar__hd">
-        <span class="env-bar__label">Aggression ${aggressionInfoBtn}</span>
-        <span>${escapeHtml(aggressionLabel)}</span>
-      </div>
-      <div class="env-bar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
-        <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
-      </div>
-      ${aggressionNotes}
-    </div>
-    ${generalChips}`;
+      ${generalChips}
+    </div>`;
 }
 
 function renderWarnings(root, warnings) {
