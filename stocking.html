@@ -623,6 +623,177 @@
       }
     }
 
+    /* --- Compact vertical rhythm for Stocking Advisor --- */
+    #stocking-page {
+      --space-xxs: 4px;
+      --space-xs: 6px;
+      --space-sm: 10px;
+      --space-md: 14px;
+      --space-lg: 18px;
+    }
+
+    #stocking-page .card,
+    #stocking-page .panel {
+      padding: var(--space-md) var(--space-md) calc(var(--space-md) + 2px);
+      margin-bottom: var(--space-lg);
+    }
+
+    #stocking-page .card + .card,
+    #stocking-page .panel + .card,
+    #stocking-page .card + .panel,
+    #stocking-page .panel + .panel {
+      margin-top: 0;
+    }
+
+    #stocking-page .card-title,
+    #stocking-page .card__hd h2,
+    #stocking-page .panel > h2 {
+      margin-top: 0;
+      margin-bottom: var(--space-sm);
+      line-height: 1.15;
+    }
+
+    #stocking-page .card-title .info-btn,
+    #stocking-page .card__hd h2 .info-btn {
+      margin-left: var(--space-xs);
+      vertical-align: middle;
+    }
+
+    #stocking-page .card__hd {
+      margin-bottom: var(--space-sm);
+      gap: var(--space-sm);
+    }
+
+    #stocking-page .card__title-stack {
+      gap: var(--space-xs);
+    }
+
+    #stocking-page .card__subtitle,
+    #stocking-page .card__hd p,
+    #stocking-page .card p,
+    #stocking-page .panel p {
+      margin-top: var(--space-xs);
+      margin-bottom: var(--space-sm);
+    }
+
+    #stocking-page .tank-size-card .form-row {
+      margin-bottom: var(--space-xs);
+    }
+
+    #stocking-page .tank-size-card .select-wrap {
+      margin-top: var(--space-xs);
+      margin-bottom: var(--space-xs);
+    }
+
+    #stocking-page .tank-size-card .select-wrap select {
+      min-height: 44px;
+    }
+
+    #stocking-page .tank-size-card .toggle-group,
+    #stocking-page .tank-size-card .toggle-control,
+    #stocking-page .tank-size-card .toggle-head {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    #stocking-page .tank-size-card .toggle-group {
+      margin-top: var(--space-xs);
+      margin-bottom: var(--space-xs);
+    }
+
+    #stocking-page .tank-size-card .toggle-head {
+      margin-bottom: var(--space-xxs);
+    }
+
+    #stocking-page .tank-size-card .facts-line {
+      margin-top: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    #stocking-page #stock-list-card .card__hd p {
+      margin-top: var(--space-xs);
+    }
+
+    #stocking-page #stock-list {
+      gap: var(--space-sm);
+    }
+
+    #stocking-page #stock-list .stock-entry {
+      padding: var(--space-sm) var(--space-md);
+      gap: var(--space-xs);
+    }
+
+    #stocking-page #stock-list .stock-entry__meta {
+      margin-top: var(--space-xxs);
+    }
+
+    #stocking-page #stock-list .stock-entry__remove {
+      min-height: 44px;
+    }
+
+    #stocking-page #stock-list .stock-entry + .stock-entry {
+      margin-top: 0;
+    }
+
+    #stocking-page #stock-list-card .stock-empty {
+      padding: var(--space-sm) var(--space-xs);
+    }
+
+    #stocking-page .env-card .section-lead,
+    #stocking-page .env-card .card__subtitle {
+      margin-bottom: var(--space-sm);
+    }
+
+    #stocking-page .env-card .env-divider {
+      margin: var(--space-sm) 0;
+    }
+
+    #stocking-page .env-card table {
+      border-spacing: 0;
+    }
+
+    #stocking-page .env-card table th,
+    #stocking-page .env-card table td {
+      padding: 10px 12px;
+      line-height: 1.25;
+    }
+
+    #stocking-page .env-bars {
+      row-gap: var(--space-sm);
+      margin-top: var(--space-sm);
+    }
+
+    #stocking-page .env-bars .env-bar,
+    #stocking-page .env-bars .bar-row {
+      margin-bottom: var(--space-xs);
+      padding-top: var(--space-xs);
+      padding-bottom: var(--space-xs);
+    }
+
+    #stocking-page .env-bars .env-bar:last-child,
+    #stocking-page .env-bars .bar-row:last-child {
+      margin-bottom: 0;
+    }
+
+    #stocking-page button,
+    #stocking-page .switch .slider,
+    #stocking-page select {
+      min-height: 44px;
+    }
+
+    @media (max-width: 480px) {
+      #stocking-page {
+        --space-sm: 8px;
+        --space-md: 12px;
+        --space-lg: 16px;
+      }
+
+      #stocking-page .env-card table th,
+      #stocking-page .env-card table td {
+        padding: 8px 10px;
+      }
+    }
+
     @media (min-width: 1024px) {
       .hero {
         padding-top: 16px;
