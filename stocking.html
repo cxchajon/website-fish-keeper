@@ -648,15 +648,40 @@
     #stocking-page .card-title,
     #stocking-page .card__hd h2,
     #stocking-page .panel > h2 {
-      margin-top: 0;
-      margin-bottom: var(--space-sm);
+      margin: 0;
       line-height: 1.15;
     }
 
-    #stocking-page .card-title .info-btn,
-    #stocking-page .card__hd h2 .info-btn {
-      margin-left: var(--space-xs);
-      vertical-align: middle;
+    #stocking-page .panel > h2 {
+      margin-bottom: var(--space-sm);
+    }
+
+    #stocking-page .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #stocking-page .row.title-row {
+      align-items: baseline;
+      justify-content: flex-start;
+      margin: 6px 0 8px;
+    }
+
+    #stocking-page .row.toggle-row {
+      justify-content: space-between;
+      margin: 8px 0;
+    }
+
+    #stocking-page .row.toggle-row .row-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #stocking-page .row.toggle-row .toggle-title {
+      flex: 1;
+      margin: 0;
     }
 
     #stocking-page .card__hd {
@@ -681,28 +706,11 @@
     }
 
     #stocking-page .tank-size-card .select-wrap {
-      margin-top: var(--space-xs);
-      margin-bottom: var(--space-xs);
+      margin: 8px 0 10px;
     }
 
     #stocking-page .tank-size-card .select-wrap select {
       min-height: 44px;
-    }
-
-    #stocking-page .tank-size-card .toggle-group,
-    #stocking-page .tank-size-card .toggle-control,
-    #stocking-page .tank-size-card .toggle-head {
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-
-    #stocking-page .tank-size-card .toggle-group {
-      margin-top: var(--space-xs);
-      margin-bottom: var(--space-xs);
-    }
-
-    #stocking-page .tank-size-card .toggle-head {
-      margin-bottom: var(--space-xxs);
     }
 
     #stocking-page .tank-size-card .facts-line {
@@ -775,8 +783,7 @@
       margin-bottom: 0;
     }
 
-    #stocking-page button,
-    #stocking-page .switch .slider,
+    #stocking-page button:not(.info-btn),
     #stocking-page select {
       min-height: 44px;
     }
@@ -823,7 +830,10 @@
     <div class="wrap page-content">
       <!-- Tank Size card -->
       <div class="card tank-size-card" id="tank-size-card">
-        <h2 class="card-title">Tank Size <button type="button" class="info-btn" data-info="Pick a standard tank size to get accurate capacity, footprint, and weight.">i</button></h2>
+        <div class="row title-row">
+          <h2 class="card-title">Tank Size</h2>
+          <button type="button" class="info-btn" data-info="Pick a standard tank size to get accurate capacity, footprint, and weight." aria-label="About Tank Size">i</button>
+        </div>
 
         <div class="form-row">
           <label for="tank-size-select" class="sr-only">Tank size</label>
@@ -842,12 +852,11 @@
         <div id="tank-facts" class="facts-line muted-text" aria-live="polite"></div>
 
         <!-- Planted (stacked) -->
-        <div class="toggle-group">
-          <div class="toggle-head">
-            <label class="toggle-title" for="toggle-planted">Planted <button type="button" class="info-btn" data-info="Planted tanks allow higher bioload and provide stability. Toggle ON if you keep live plants.">i</button></label>
-          </div>
-          <div class="toggle-control">
-            <label class="switch">
+        <div class="row toggle-row">
+          <label class="toggle-title" for="toggle-planted">Planted</label>
+          <div class="row-right">
+            <button type="button" class="info-btn" data-info="Planted tanks allow higher bioload and provide stability. Toggle ON if you keep live plants." aria-label="About Planted">i</button>
+            <label class="switch" aria-label="Planted">
               <input type="checkbox" id="toggle-planted" data-testid="toggle-planted" />
               <span class="slider" aria-hidden="true"></span>
             </label>
@@ -913,103 +922,99 @@
           margin-top: 8px;
         }
 
-        /* Spacing for stacked toggles */
-        .tank-size-card .toggle-group {
+        /* Ensure the card can host positioned children safely */
+        .tank-size-card { position: relative; }
+
+        .tank-size-card .row.toggle-row {
           margin-top: 14px;
         }
-        .tank-size-card .toggle-group + .toggle-group {
-          margin-top: 12px;
-        }
-        .tank-size-card .toggle-head {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 6px;
-        }
+
         .tank-size-card .toggle-title {
-          font-weight: 500;
-        }
-        .tank-size-card .toggle-control {
-          display: flex;
-          align-items: center;
-          min-height: 44px;
+          font-weight: 600;
         }
 
-        /* Switch visuals (scoped) */
-        .tank-size-card .switch {
+        /* Info button (compact circle) */
+        #stocking-page .info-btn {
           position: relative;
-          display: inline-block;
-          width: 54px;
-          height: 30px;
-        }
-        .tank-size-card .switch input {
-          opacity: 0;
-          width: 0;
-          height: 0;
-        }
-        .tank-size-card .switch .slider {
-          position: absolute;
-          inset: 0;
-          border-radius: 9999px;
-          background: rgba(255, 255, 255, 0.16);
-          transition: background 0.18s ease, box-shadow 0.18s ease;
-        }
-        .tank-size-card .switch .slider::before {
-          content: '';
-          position: absolute;
-          left: 3px;
-          top: 3px;
-          width: 24px;
-          height: 24px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 22px;
+          height: 22px;
+          min-width: 22px;
+          min-height: 22px;
           border-radius: 50%;
-          background: #fff;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-          transition: transform 0.18s ease;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          color: inherit;
+          font-weight: 600;
+          line-height: 1;
+          cursor: pointer;
+          padding: 0;
+          font-size: 13px;
         }
-        .tank-size-card .switch input:checked + .slider {
-          background: var(--brand-on, #14cba8);
+        #stocking-page .info-btn:hover {
+          background: rgba(255, 255, 255, 0.12);
         }
-        .tank-size-card .switch input:checked + .slider::before {
-          transform: translateX(24px);
-        }
-        @media (min-width: 1024px) {
-          .tank-size-card .switch {
-            width: 56px;
-            height: 32px;
-          }
-          .tank-size-card .switch .slider::before {
-            width: 26px;
-            height: 26px;
-          }
-          .tank-size-card .switch input:checked + .slider::before {
-            transform: translateX(26px);
-          }
-        }
-        @media (hover: hover) {
-          .tank-size-card .switch:hover .slider {
-            filter: brightness(1.05);
-            cursor: pointer;
-          }
-        }
-        .tank-size-card .switch:focus-within .slider {
+        #stocking-page .info-btn:focus {
           outline: 2px solid rgba(20, 203, 168, 0.55);
           outline-offset: 2px;
         }
 
-        /* Ensure the card can host positioned children safely */
-        .tank-size-card{ position: relative; }
-
-        /* Info button (small neutral pill) */
-        #stocking-page .info-btn{
-          display:inline-flex; align-items:center; justify-content:center;
-          width:22px; height:22px; margin-left:.5rem;
-          border-radius:50%;
-          background: rgba(255,255,255,.08);
-          border:1px solid rgba(255,255,255,.12);
-          font-weight:600; line-height:1; cursor:pointer;
-          color:inherit;
+        /* Toggle (switch) alignment */
+        #stocking-page .switch {
+          --track-w: 54px;
+          --track-h: 32px;
+          --thumb: 26px;
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          width: var(--track-w);
+          min-height: 44px;
+          cursor: pointer;
         }
-        #stocking-page .info-btn:focus{ outline:2px solid rgba(20,203,168,.55); outline-offset:2px; }
+        #stocking-page .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        #stocking-page .switch .slider {
+          position: relative;
+          display: block;
+          width: 100%;
+          height: var(--track-h);
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.12);
+          transition: background 0.18s ease;
+        }
+        #stocking-page .switch .slider::before {
+          content: '';
+          position: absolute;
+          left: 3px;
+          top: 50%;
+          width: var(--thumb);
+          height: var(--thumb);
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.9);
+          transform: translate(0, -50%);
+          transition: transform 0.18s ease;
+        }
+        #stocking-page .switch input:checked + .slider {
+          background: rgba(20, 203, 168, 0.6);
+        }
+        #stocking-page .switch input:checked + .slider::before {
+          transform: translate(calc(var(--track-w) - var(--thumb) - 6px), -50%);
+        }
+        #stocking-page .switch:focus-within .slider {
+          outline: 2px solid rgba(20, 203, 168, 0.55);
+          outline-offset: 2px;
+        }
+        @media (hover: hover) {
+          #stocking-page .switch:hover .slider {
+            cursor: pointer;
+            filter: brightness(1.05);
+          }
+        }
 
         /* Shared popover for all info buttons (portal) */
         #stocking-page .ttg-popover{
@@ -1049,7 +1054,10 @@
 
       <section class="card" id="stock-list-card" aria-live="polite">
         <div class="card__hd">
-          <h2>Current Stock <button type="button" class="info-btn" data-info="This list shows species you’ve added and their quantities. Use +/− to adjust and Remove to clear.">i</button></h2>
+          <div class="row title-row">
+            <h2 class="card-title">Current Stock</h2>
+            <button type="button" class="info-btn" data-info="This list shows species you’ve added and their quantities. Use +/− to adjust and Remove to clear." aria-label="About Current Stock">i</button>
+          </div>
           <p class="subtle">Your selected fish and inverts appear here.</p>
         </div>
         <div id="stock-list" class="stock-list" data-testid="species-list"></div>
@@ -1058,7 +1066,10 @@
       <section class="card tank-env-card env-card" id="env-card" aria-live="polite">
         <div class="card__hd card__hd--split">
           <div class="card__title-stack">
-            <h2>Environmental Recommendations <button type="button" class="info-btn" data-info="Derived from your selected stock. Ranges reflect compatible overlaps across all species.">i</button></h2>
+            <div class="row title-row">
+              <h2 class="card-title">Environmental Recommendations</h2>
+              <button type="button" class="info-btn" data-info="Derived from your selected stock. Ranges reflect compatible overlaps across all species." aria-label="About Environmental Recommendations">i</button>
+            </div>
             <p class="subtle card__subtitle">Derived from your selected stock.</p>
           </div>
           <button type="button" id="env-tips-toggle" class="linklike" aria-pressed="false">Show More Tips</button>
