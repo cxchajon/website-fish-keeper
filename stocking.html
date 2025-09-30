@@ -683,6 +683,45 @@
       justify-content: space-between;
     }
 
+    #stocking-page .env-header .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    @media (orientation: portrait) and (max-width: 480px) {
+      #stocking-page .env-header {
+        position: relative;
+      }
+
+      #stocking-page .env-header .title-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto;
+        align-items: center;
+        column-gap: 10px;
+        justify-content: initial;
+      }
+
+      #stocking-page .env-header .title-row .card-title {
+        grid-column: 1 / 2;
+        margin: 0;
+        line-height: 1.15;
+      }
+
+      #stocking-page #env-info-toggle {
+        grid-column: 2 / 3;
+        align-self: start;
+        margin-top: 2px;
+      }
+
+      #stocking-page .env-header .card-subtitle {
+        margin-top: 4px;
+        grid-column: 1 / -1;
+      }
+    }
+
     #stocking-page .card-header {
       margin-bottom: 8px;
     }
@@ -1139,7 +1178,7 @@
       </section>
 
       <section class="card ttg-card tank-env-card env-card" id="env-card" aria-live="polite">
-        <div class="card-header">
+        <div class="card-header env-header">
           <div class="row title-row">
             <h2 class="card-title">Environmental Recommendations</h2>
             <!-- SINGLE unified icon: shows popover on first click, toggles tips on next clicks -->
