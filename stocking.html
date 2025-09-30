@@ -909,33 +909,12 @@
       }
     }
 
-    /* Tank assumption duplicate safeguards */
-    #stocking-page #tank-assumption-outside,
-    #stocking-page #tank-summary:not(.in-card),
-    #stocking-page #tank-assumption:not(.in-card),
-    #stocking-page .tank-assumption.outside,
-    #stocking-page [data-role="tank-assumption"].outside {
+    /* Hide assumption fragments defensively */
+    #stocking-page .ttg-card.tank-size .tank-assumption {
       display: none !important;
       height: 0 !important;
       margin: 0 !important;
       padding: 0 !important;
-      border: 0 !important;
-    }
-
-    /* Hide any assumption fragments if they slip through */
-    #stocking-page .ttg-card.tank-size .tank-assumption,
-    #stocking-page .ttg-card.tank-size #tank-assumption,
-    #stocking-page .ttg-card.tank-size [data-role="tank-assumption"],
-    #stocking-page .ttg-card.tank-size [data-test="tank-assumption"],
-    #stocking-page .ttg-card.tank-size-card .tank-assumption,
-    #stocking-page .ttg-card.tank-size-card #tank-assumption,
-    #stocking-page .ttg-card.tank-size-card [data-role="tank-assumption"],
-    #stocking-page .ttg-card.tank-size-card [data-test="tank-assumption"] {
-      display: none !important;
-      height: 0 !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      border: 0 !important;
     }
 
     #stocking-page .tank-size-card + .card-spacer:empty {
@@ -1326,60 +1305,6 @@
     const host = document.getElementById('site-footer');
     if (host) host.outerHTML = html;
   } catch (e) { console.error('[Footer] load failed:', e); }
-})();
-</script>
-<script>
-(function removeRedundantTankAssumption(){
-  const tankCard = document.querySelector(
-    [
-      '#stocking-page .ttg-card.tank-size',
-      '#stocking-page .ttg-card.tank-size-card',
-      '#stocking-page [data-card="tank-size"]',
-      '#tank-size-card',
-    ].join(', '),
-  );
-  if(!tankCard) return;
-
-  const selectors = [
-    '.tank-assumption', '#tank-assumption',
-    '[data-role="tank-assumption"]', '[data-test="tank-assumption"]'
-  ];
-
-  function isAssumptionText(el){
-    const txt = (el.textContent || '').trim();
-    // Matches “Tank: 32 gal — assumed: … Best fit …”
-    return /^Tank:\s*\d+(\.\d+)?\s*gal\s*—\s*assumed:/i.test(txt);
-  }
-
-  function sweep(){
-    // Remove any known-labeled nodes inside the Tank Size card
-    tankCard.querySelectorAll(selectors.join(',')).forEach((n) => n.remove());
-    // Heuristic fallback: any direct child paragraphs matching the pattern
-    Array.from(tankCard.querySelectorAll('p, div')).forEach((el) => {
-      if (isAssumptionText(el)) el.remove();
-    });
-    // Remove now-empty spacers immediately following the main details block
-    Array.from(tankCard.children).forEach((ch) => {
-      if (ch.textContent && !ch.textContent.trim()) ch.remove();
-    });
-  }
-
-  // Initial sweep
-  sweep();
-
-  // Prevent re-insertion by observing the Tank Size card only
-  const mo = new MutationObserver((muts) => {
-    let changed = false;
-    for (const m of muts){
-      if (m.type === 'childList' && (m.addedNodes?.length || m.removedNodes?.length)){
-        changed = true;
-      } else if (m.type === 'attributes' && m.attributeName === 'data-assumption') {
-        changed = true;
-      }
-    }
-    if (changed) sweep();
-  });
-  mo.observe(tankCard, { childList:true, subtree:true, attributes:true, attributeFilter:['data-assumption'] });
 })();
 </script>
   <script type="module" src="js/logic/speciesSchema.js"></script>
