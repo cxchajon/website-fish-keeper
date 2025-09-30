@@ -1148,6 +1148,32 @@ body.planted-active #cycling-coach .cc-title__leaf {
   margin-bottom: 10px;
 }
 
+.footer-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 0 auto 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+}
+
+.footer-links a {
+  color: #d5ddff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-links a:hover {
+  color: #7dd3fc;
+  text-decoration: underline;
+}
+
+.footer-links span {
+  color: rgba(255, 255, 255, 0.35);
+}
+
 .social-strip a {
   margin: 0 8px;
   color: #fff;
