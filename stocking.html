@@ -937,6 +937,23 @@
         margin-top: 14px;
       }
     }
+
+    /* Tank assumption duplicate safeguards */
+    #stocking-page #tank-assumption-outside,
+    #stocking-page #tank-summary:not(.in-card),
+    #stocking-page #tank-assumption:not(.in-card),
+    #stocking-page .tank-assumption.outside,
+    #stocking-page [data-role="tank-assumption"].outside {
+      display: none !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+    }
+
+    #stocking-page .tank-size-card + .card-spacer:empty {
+      display: none !important;
+    }
   </style>
 </head>
 <body class="theme-dark">
@@ -979,6 +996,9 @@
 
         <!-- Facts line stays; starts EMPTY to avoid duplicate helper text -->
         <div id="tank-facts" class="facts-line muted-text" aria-live="polite"></div>
+
+        <!-- Tank summary rendered inside the card -->
+        <div id="tank-summary" aria-live="polite" data-testid="tank-summary"></div>
 
         <!-- Planted (stacked) -->
         <div class="row toggle-row">
@@ -1217,8 +1237,6 @@
         }
       </style>
 
-      <div id="tank-summary" aria-live="polite" data-testid="tank-summary"></div>
-
       <section class="card ttg-card" id="stock-list-card" aria-live="polite">
         <div class="card-header">
           <div class="row title-row between">
@@ -1321,6 +1339,124 @@
     const host = document.getElementById('site-footer');
     if (host) host.outerHTML = html;
   } catch (e) { console.error('[Footer] load failed:', e); }
+})();
+</script>
+<script>
+(function squashDuplicateTankSummary() {
+  const card = document.querySelector('#stocking-page .ttg-card.tank-size-card, #stocking-page [data-card="tank-size"]');
+  if (!card) return;
+
+  const docFragmentNode = typeof Node !== 'undefined' ? Node.DOCUMENT_FRAGMENT_NODE : 11;
+
+  const ensureInCardSummary = () => {
+    let summary = card.querySelector('.tank-assumption, #tank-summary, [data-role="tank-assumption"]');
+    if (!summary) {
+      summary = document.createElement('div');
+      summary.id = 'tank-summary';
+      summary.setAttribute('aria-live', 'polite');
+      summary.dataset.testid = 'tank-summary';
+      const anchor = card.querySelector('.row.toggle-row') || card.lastElementChild;
+      if (anchor) {
+        card.insertBefore(summary, anchor);
+      } else {
+        card.appendChild(summary);
+      }
+    }
+    summary.classList.add('in-card');
+    return summary;
+  };
+
+  const inCardSummary = ensureInCardSummary();
+
+  const selectors = [
+    '#tank-summary',
+    '#tank-assumption',
+    '[data-role="tank-assumption"]',
+    '.tank-assumption',
+    '.tank-assumption-note',
+    '[data-test="tank-assumption"]',
+    '[id^="tank-assumption-"]'
+  ];
+
+  const selectorString = selectors.join(',');
+
+  const removeIfOutside = (node) => {
+    if (!node) return;
+    if (node.nodeType === docFragmentNode) {
+      node.querySelectorAll?.(selectorString).forEach((el) => {
+        if (!card.contains(el)) {
+          el.remove();
+        }
+      });
+      Array.from(node.childNodes || []).forEach((child) => removeIfOutside(child));
+      return;
+    }
+    if (node.nodeType !== 1) return;
+    if (!card.contains(node)) {
+      if (node.matches?.(selectorString)) {
+        node.remove();
+        return;
+      }
+      const txt = (node.textContent || '').trim();
+      if (/^Tank:\s*\d+(\.\d+)?\s*gal\s*—\s*assumed:/i.test(txt)) {
+        node.remove();
+        return;
+      }
+    }
+    node.querySelectorAll?.(selectorString).forEach((el) => {
+      if (!card.contains(el)) {
+        el.remove();
+      }
+    });
+  };
+
+  document.querySelectorAll(selectorString).forEach((node) => {
+    if (!card.contains(node)) {
+      node.remove();
+    }
+  });
+
+  if (card.parentElement) {
+    const siblings = Array.from(card.parentElement.children);
+    const index = siblings.indexOf(card);
+    if (index > -1) {
+      for (let i = index + 1; i < Math.min(index + 3, siblings.length); i += 1) {
+        const el = siblings[i];
+        if (!el) continue;
+        const text = (el.textContent || '').trim();
+        if (/^Tank:\s*\d+(\.\d+)?\s*gal\s*—\s*assumed:/i.test(text)) {
+          el.remove();
+          continue;
+        }
+        if (!text) {
+          el.remove();
+        }
+      }
+    }
+  }
+
+  const inCardMatches = card.querySelectorAll('.tank-assumption, #tank-summary, [data-role="tank-assumption"]');
+  if (inCardMatches.length > 1) {
+    inCardMatches.forEach((el, idx) => {
+      if (idx > 0) {
+        el.remove();
+      }
+    });
+  }
+
+  const root = document.getElementById('stocking-page') || document.body;
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      Array.from(mutation.addedNodes || []).forEach((node) => {
+        removeIfOutside(node);
+      });
+    });
+  });
+  observer.observe(root, { childList: true, subtree: true });
+
+  if (inCardSummary) {
+    removeIfOutside(inCardSummary);
+  }
 })();
 </script>
   <script type="module" src="js/logic/speciesSchema.js"></script>
