@@ -249,18 +249,11 @@
 <script>
 (async () => {
   try {
-    const res = await fetch('footer.v1.2.2.html?v=' + Date.now(), { cache: 'no-cache' });
+    const res = await fetch('footer.v1.2.2.html?v=1.2.2', { cache: 'no-cache' });
     const html = await res.text();
     const host = document.getElementById('site-footer');
-    if (host) {
-      host.outerHTML = html;
-      console.log('[Footer] injected v1.2.2 with socials row');
-    } else {
-      console.warn('[Footer] #site-footer placeholder not found on this page');
-    }
-  } catch (e) {
-    console.error('[Footer] load failed:', e);
-  }
+    if (host) host.outerHTML = html;
+  } catch (e) { console.error('[Footer] load failed:', e); }
 })();
 </script>
 <style>
