@@ -691,14 +691,14 @@
     }
 
     #stocking-page .row.toggle-row {
-      justify-content: space-between;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
       margin: 8px 0;
     }
 
     #stocking-page .row.toggle-row .row-left {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 8px;
+      display: block;
     }
 
     #stocking-page .row.toggle-row .row-right {
@@ -903,10 +903,12 @@
         <!-- Planted (stacked) -->
         <div class="row toggle-row">
           <div class="row-left">
-            <label class="toggle-title" for="toggle-planted">Planted</label>
+            <div class="toggle-label">
+              <label class="toggle-title" for="toggle-planted">Planted</label>
+              <button type="button" class="info-btn" data-info="Planted tanks allow higher bioload and provide stability. Toggle ON if you keep live plants." aria-label="About Planted">i</button>
+            </div>
           </div>
           <div class="row-right">
-            <button type="button" class="info-btn" data-info="Planted tanks allow higher bioload and provide stability. Toggle ON if you keep live plants." aria-label="About Planted">i</button>
             <label class="switch" aria-label="Planted">
               <input type="checkbox" id="toggle-planted" data-testid="toggle-planted" />
               <span class="slider" aria-hidden="true"></span>
@@ -978,6 +980,16 @@
 
         .tank-size-card .row.toggle-row {
           margin-top: 14px;
+        }
+
+        .tank-size-card .toggle-label {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .tank-size-card .row.toggle-row .row-right {
+          padding-left: 6px;
         }
 
         .tank-size-card .toggle-title {
