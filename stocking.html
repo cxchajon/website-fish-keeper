@@ -638,6 +638,10 @@
       margin-bottom: var(--space-lg);
     }
 
+    #stocking-page .ttg-card {
+      padding: 12px 14px 14px;
+    }
+
     #stocking-page .card + .card,
     #stocking-page .panel + .card,
     #stocking-page .card + .panel,
@@ -656,6 +660,10 @@
       margin-bottom: var(--space-sm);
     }
 
+    #stocking-page .toggle-title {
+      margin: 0;
+    }
+
     #stocking-page .row {
       display: flex;
       align-items: center;
@@ -663,14 +671,34 @@
     }
 
     #stocking-page .row.title-row {
-      align-items: baseline;
-      justify-content: flex-start;
       margin: 6px 0 8px;
+    }
+
+    #stocking-page .row.title-row.between {
+      justify-content: space-between;
+    }
+
+    #stocking-page .row .title-left {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    #stocking-page .row .title-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
     }
 
     #stocking-page .row.toggle-row {
       justify-content: space-between;
       margin: 8px 0;
+    }
+
+    #stocking-page .row.toggle-row .row-left {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
     }
 
     #stocking-page .row.toggle-row .row-right {
@@ -679,9 +707,15 @@
       gap: 10px;
     }
 
-    #stocking-page .row.toggle-row .toggle-title {
-      flex: 1;
-      margin: 0;
+    #stocking-page .title-right .more-tips {
+      color: #8bb4ff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    #stocking-page .title-right .more-tips:focus {
+      outline: 2px solid rgba(20, 203, 168, 0.55);
+      outline-offset: 2px;
     }
 
     #stocking-page .card__hd {
@@ -705,12 +739,13 @@
       margin-bottom: var(--space-xs);
     }
 
-    #stocking-page .tank-size-card .select-wrap {
+    #stocking-page .select-wrap {
       margin: 8px 0 10px;
     }
 
-    #stocking-page .tank-size-card .select-wrap select {
+    #stocking-page .select-wrap select {
       min-height: 44px;
+      padding-right: 44px;
     }
 
     #stocking-page .tank-size-card .facts-line {
@@ -767,8 +802,8 @@
     }
 
     #stocking-page .env-bars {
-      row-gap: var(--space-sm);
-      margin-top: var(--space-sm);
+      margin-top: 10px;
+      row-gap: 10px;
     }
 
     #stocking-page .env-bars .env-bar,
@@ -793,6 +828,18 @@
         --space-sm: 8px;
         --space-md: 12px;
         --space-lg: 16px;
+      }
+
+      #stocking-page .ttg-card {
+        padding: 10px 12px 12px;
+      }
+
+      #stocking-page .row {
+        gap: 8px;
+      }
+
+      #stocking-page .row.toggle-row .row-right {
+        gap: 8px;
       }
 
       #stocking-page .env-card table th,
@@ -829,10 +876,12 @@
 
     <div class="wrap page-content">
       <!-- Tank Size card -->
-      <div class="card tank-size-card" id="tank-size-card">
-        <div class="row title-row">
-          <h2 class="card-title">Tank Size</h2>
-          <button type="button" class="info-btn" data-info="Pick a standard tank size to get accurate capacity, footprint, and weight." aria-label="About Tank Size">i</button>
+      <div class="card ttg-card tank-size-card" id="tank-size-card">
+        <div class="row title-row between">
+          <div class="title-left">
+            <h2 class="card-title">Tank Size</h2>
+            <button type="button" class="info-btn" data-info="Pick a standard tank size to get accurate capacity, footprint, and weight." aria-label="About Tank Size">i</button>
+          </div>
         </div>
 
         <div class="form-row">
@@ -853,7 +902,9 @@
 
         <!-- Planted (stacked) -->
         <div class="row toggle-row">
-          <label class="toggle-title" for="toggle-planted">Planted</label>
+          <div class="row-left">
+            <label class="toggle-title" for="toggle-planted">Planted</label>
+          </div>
           <div class="row-right">
             <button type="button" class="info-btn" data-info="Planted tanks allow higher bioload and provide stability. Toggle ON if you keep live plants." aria-label="About Planted">i</button>
             <label class="switch" aria-label="Planted">
@@ -935,7 +986,6 @@
 
         /* Info button (compact circle) */
         #stocking-page .info-btn {
-          position: relative;
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -944,14 +994,15 @@
           min-width: 22px;
           min-height: 22px;
           border-radius: 50%;
+          padding: 0;
+          font-size: 13px;
+          line-height: 1;
           background: rgba(255, 255, 255, 0.08);
           border: 1px solid rgba(255, 255, 255, 0.12);
           color: inherit;
-          font-weight: 600;
-          line-height: 1;
           cursor: pointer;
-          padding: 0;
-          font-size: 13px;
+          vertical-align: middle;
+          font-weight: 600;
         }
         #stocking-page .info-btn:hover {
           background: rgba(255, 255, 255, 0.12);
@@ -961,17 +1012,16 @@
           outline-offset: 2px;
         }
 
-        /* Toggle (switch) alignment */
+        /* Toggle (switch) alignment and size */
         #stocking-page .switch {
           --track-w: 54px;
           --track-h: 32px;
           --thumb: 26px;
           position: relative;
-          display: inline-flex;
-          align-items: center;
+          display: inline-block;
           width: var(--track-w);
+          height: var(--track-h);
           min-height: 44px;
-          cursor: pointer;
         }
         #stocking-page .switch input {
           opacity: 0;
@@ -979,10 +1029,13 @@
           height: 0;
         }
         #stocking-page .switch .slider {
-          position: relative;
-          display: block;
-          width: 100%;
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 50%;
           height: var(--track-h);
+          min-height: 44px;
+          transform: translateY(-50%);
           border-radius: 999px;
           background: rgba(255, 255, 255, 0.12);
           transition: background 0.18s ease;
@@ -995,8 +1048,8 @@
           width: var(--thumb);
           height: var(--thumb);
           border-radius: 50%;
-          background: rgba(255, 255, 255, 0.9);
-          transform: translate(0, -50%);
+          background: rgba(255, 255, 255, 0.92);
+          transform: translateY(-50%);
           transition: transform 0.18s ease;
         }
         #stocking-page .switch input:checked + .slider {
@@ -1005,19 +1058,19 @@
         #stocking-page .switch input:checked + .slider::before {
           transform: translate(calc(var(--track-w) - var(--thumb) - 6px), -50%);
         }
-        #stocking-page .switch:focus-within .slider {
+        #stocking-page .switch input:focus-visible + .slider {
           outline: 2px solid rgba(20, 203, 168, 0.55);
           outline-offset: 2px;
         }
         @media (hover: hover) {
-          #stocking-page .switch:hover .slider {
+          #stocking-page .switch .slider:hover {
             cursor: pointer;
             filter: brightness(1.05);
           }
         }
 
         /* Shared popover for all info buttons (portal) */
-        #stocking-page .ttg-popover{
+        #stocking-page .ttg-popover {
           position: fixed;
           z-index: 2147483647;
           pointer-events: auto;
@@ -1032,12 +1085,12 @@
           opacity: 0; transform: scale(.98);
           transition: opacity .14s ease, transform .14s ease;
         }
-        #stocking-page .ttg-popover.is-open{ opacity:1; transform:scale(1); }
-        #stocking-page .ttg-popover[hidden]{ display:none !important; }
+        #stocking-page .ttg-popover.is-open { opacity:1; transform:scale(1); }
+        #stocking-page .ttg-popover[hidden] { display:none !important; }
 
-        #stocking-page .ttg-popover h3{ font-size:14px; margin:0 0 6px; font-weight:600; }
-        #stocking-page .ttg-popover p{ font-size:13px; margin:0 0 10px; line-height:1.4; }
-        #stocking-page .ttg-popover .close{
+        #stocking-page .ttg-popover h3 { font-size:14px; margin:0 0 6px; font-weight:600; }
+        #stocking-page .ttg-popover p { font-size:13px; margin:0 0 10px; line-height:1.4; }
+        #stocking-page .ttg-popover .close {
           display:inline-flex; align-items:center; justify-content:center;
           height:30px; padding:0 10px; border-radius:8px;
           background: rgba(255,255,255,.08);
@@ -1045,34 +1098,40 @@
           color:inherit; cursor:pointer;
         }
 
-        @media (prefers-reduced-motion: reduce){
-          #stocking-page .ttg-popover{ transition:none; }
+        @media (prefers-reduced-motion: reduce) {
+          #stocking-page .ttg-popover { transition:none; }
         }
       </style>
 
       <div id="tank-summary" aria-live="polite" data-testid="tank-summary"></div>
 
-      <section class="card" id="stock-list-card" aria-live="polite">
+      <section class="card ttg-card" id="stock-list-card" aria-live="polite">
         <div class="card__hd">
-          <div class="row title-row">
-            <h2 class="card-title">Current Stock</h2>
-            <button type="button" class="info-btn" data-info="This list shows species you’ve added and their quantities. Use +/− to adjust and Remove to clear." aria-label="About Current Stock">i</button>
+          <div class="row title-row between">
+            <div class="title-left">
+              <h2 class="card-title">Current Stock</h2>
+              <button type="button" class="info-btn" data-info="This list shows species you’ve added and their quantities. Use +/− to adjust and Remove to clear." aria-label="About Current Stock">i</button>
+            </div>
           </div>
           <p class="subtle">Your selected fish and inverts appear here.</p>
         </div>
         <div id="stock-list" class="stock-list" data-testid="species-list"></div>
       </section>
 
-      <section class="card tank-env-card env-card" id="env-card" aria-live="polite">
+      <section class="card ttg-card tank-env-card env-card" id="env-card" aria-live="polite">
         <div class="card__hd card__hd--split">
           <div class="card__title-stack">
-            <div class="row title-row">
-              <h2 class="card-title">Environmental Recommendations</h2>
-              <button type="button" class="info-btn" data-info="Derived from your selected stock. Ranges reflect compatible overlaps across all species." aria-label="About Environmental Recommendations">i</button>
+            <div class="row title-row between">
+              <div class="title-left">
+                <h2 class="card-title">Environmental Recommendations</h2>
+                <button type="button" class="info-btn" data-info="Derived from your selected stock. Ranges reflect compatible overlaps across all species." aria-label="About Environmental Recommendations">i</button>
+              </div>
+              <div class="title-right">
+                <a id="env-tips-toggle" class="more-tips linklike" href="#" role="button" aria-pressed="false">Show More Tips</a>
+              </div>
             </div>
             <p class="subtle card__subtitle">Derived from your selected stock.</p>
           </div>
-          <button type="button" id="env-tips-toggle" class="linklike" aria-pressed="false">Show More Tips</button>
         </div>
 
         <div id="env-warnings" class="env-warnings" hidden></div>

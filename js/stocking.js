@@ -615,7 +615,8 @@ const tipsBtn = document.querySelector('#env-tips-toggle');
 const tipsPane = document.querySelector('#env-tips');
 
 if (tipsBtn && tipsPane) {
-  tipsBtn.addEventListener('click', () => {
+  tipsBtn.addEventListener('click', (event) => {
+    event.preventDefault();
     const open = !tipsPane.hasAttribute('hidden');
     if (open) {
       tipsPane.setAttribute('hidden', '');
