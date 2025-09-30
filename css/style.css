@@ -1141,7 +1141,7 @@ body.planted-active #cycling-coach .cc-title__leaf {
   padding: 20px;
   background: #111;
   color: #fff;
-  font-size: 0.9rem;
+  font-size: .9rem;
 }
 
 .social-strip {
@@ -1153,7 +1153,7 @@ body.planted-active #cycling-coach .cc-title__leaf {
   margin: 0 8px;
   color: #fff;
   font-size: 1.4rem;
-  transition: color 0.3s, transform 0.15s ease-out;
+  transition: color .3s, transform .15s ease-out;
 }
 
 .social-strip a:hover {
@@ -1163,7 +1163,7 @@ body.planted-active #cycling-coach .cc-title__leaf {
 
 .footer-links {
   margin: 4px 0 12px 0;
-  font-size: 0.95rem;
+  font-size: .95rem;
 }
 
 .footer-links a {
@@ -1177,8 +1177,8 @@ body.planted-active #cycling-coach .cc-title__leaf {
 }
 
 .footer-links .dot {
-  opacity: 0.6;
-  margin: 0 0.5ch;
+  opacity: .6;
+  margin: 0 .5ch;
 }
 
 .footer-note {
