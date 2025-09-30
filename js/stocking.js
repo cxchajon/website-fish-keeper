@@ -651,91 +651,12 @@ window.addEventListener('ttg:recompute', () => {
   runRecompute({ skipInputSync: true });
 });
 
-  const envInfoBtn = refs.envInfoToggle;
-  const envTipsPane = refs.envTips;
-
-  if (envInfoBtn && envTipsPane) {
-    const scheduleMicrotask = typeof queueMicrotask === 'function'
-      ? queueMicrotask
-      : (fn) => Promise.resolve().then(fn);
-    let infoShownOnce = false;
-    let forwardingSynthetic = false;
-
-    function showGenericPopover(anchor, text) {
-      const prev = anchor.getAttribute('data-info');
-      const message = text || prev || 'Additional information.';
-      if (message !== prev) {
-        anchor.setAttribute('data-info', message);
-      }
-      forwardingSynthetic = true;
-      anchor.dispatchEvent(
-        new MouseEvent('click', { bubbles: true, cancelable: true, view: window })
-      );
-      scheduleMicrotask(() => {
-        forwardingSynthetic = false;
-        if (message !== prev) {
-          if (prev == null) {
-            anchor.removeAttribute('data-info');
-          } else {
-            anchor.setAttribute('data-info', prev);
-          }
-        }
-      });
-    }
-
-    function showFallbackPopover(anchor, text) {
-      const pop = document.createElement('div');
-      pop.style.position = 'fixed';
-      pop.style.zIndex = '2147483647';
-      pop.style.maxWidth = '320px';
-      pop.style.padding = '10px 12px';
-      pop.style.borderRadius = '10px';
-      pop.style.background = 'rgba(20,22,25,.96)';
-      pop.style.border = '1px solid rgba(255,255,255,.12)';
-      pop.style.boxShadow = '0 10px 30px rgba(0,0,0,.35)';
-      pop.style.fontSize = '13px';
-      pop.style.color = 'inherit';
-      pop.textContent = text || 'Additional information.';
-      document.body.appendChild(pop);
-
-      const rect = anchor.getBoundingClientRect();
-      const left = Math.max(8, Math.min(window.innerWidth - pop.offsetWidth - 8, rect.left));
-      const top = Math.max(8, Math.min(window.innerHeight - pop.offsetHeight - 8, rect.bottom + 8));
-      pop.style.left = `${left}px`;
-      pop.style.top = `${top}px`;
-
-      envTipsTimeout(() => {
-        pop.remove();
-      }, 2200);
-    }
-
-    function showInfoFirst() {
-      const message = envInfoBtn.getAttribute('data-info') ||
-        'Derived from your selected stock. Ranges reflect compatible overlaps across all species.';
-      showGenericPopover(envInfoBtn, message);
-      envTipsTimeout(() => {
-        const openPopover = document.querySelector('.ttg-popover.is-open');
-        if (!openPopover) {
-          showFallbackPopover(envInfoBtn, message);
-        }
-      }, 20);
-    }
-
-    envInfoBtn.addEventListener('click', (event) => {
-      if (forwardingSynthetic) {
-        forwardingSynthetic = false;
-        return;
-      }
-      event.preventDefault();
-      if (!infoShownOnce) {
-        infoShownOnce = true;
-        showInfoFirst();
-        return;
-      }
-      state.showTips = !state.showTips;
-      syncToggles();
-    });
-  }
+  document.addEventListener('ttg:envTips:state', (event) => {
+    const desired = Boolean(event?.detail?.open);
+    if (state.showTips === desired) return;
+    state.showTips = desired;
+    syncToggles();
+  });
 
 function bindInputs() {
   if (refs.turnover) refs.turnover.addEventListener('input', scheduleUpdate);
@@ -842,6 +763,91 @@ function buildGearPayload() {
 }
 
 bootstrapStocking();
+
+(function envUnifiedInfoToggleSafe(){
+  const btn   = document.getElementById('env-info-toggle');
+  const panel = document.getElementById('env-more-tips');
+  if(!btn || !panel) return;
+
+  let infoShownOnce = false;
+  let busy = false; // re-entrancy guard
+
+  // Try to call a generic popover API if it exists, otherwise fallback
+  function callGenericPopover(anchor, text){
+    // If page exposes a global popover open function, use it once.
+    if (window.TTG && typeof TTG.openInfoPopover === 'function'){
+      TTG.openInfoPopover(anchor, text);
+      return true;
+    }
+    // If there’s a delegated handler looking for a custom event, use that
+    const ev = new CustomEvent('ttg:open-popover', { bubbles:true, detail:{ anchor, text }});
+    anchor.dispatchEvent(ev);
+    // Consumer may or may not exist; we’ll still fallback
+    return false;
+  }
+
+  function fallbackPopover(anchor, text){
+    // Create a lightweight, auto-dismissed popover without rebubbling events
+    let pop = document.createElement('div');
+    pop.className = 'ttg-popover is-open';
+    Object.assign(pop.style, {
+      position: 'fixed',
+      zIndex: 2147483647,
+      maxWidth: '320px',
+      padding: '10px 12px',
+      borderRadius: '10px',
+      background: 'rgba(20,22,25,.96)',
+      border: '1px solid rgba(255,255,255,.12)',
+      boxShadow: '0 10px 30px rgba(0,0,0,.35)',
+      fontSize: '13px'
+    });
+    pop.textContent = text || 'Additional information.';
+    document.body.appendChild(pop);
+    const r = anchor.getBoundingClientRect();
+    const left = Math.max(8, Math.min(window.innerWidth - pop.offsetWidth - 8, r.left));
+    const top  = Math.max(8, Math.min(window.innerHeight - pop.offsetHeight - 8, r.bottom + 8));
+    pop.style.left = `${left}px`;
+    pop.style.top  = `${top}px`;
+    setTimeout(()=>{ pop.remove(); }, 2200);
+  }
+
+  function openPanel(){
+    btn.setAttribute('aria-expanded','true');
+    panel.hidden = false;
+    panel.classList.add('is-open');
+    document.dispatchEvent(new CustomEvent('ttg:envTips:state', { detail: { open: true, source: 'env-toggle' } }));
+  }
+  function closePanel(){
+    btn.setAttribute('aria-expanded','false');
+    panel.classList.remove('is-open');
+    setTimeout(()=>{ panel.hidden = true; }, 180);
+    document.dispatchEvent(new CustomEvent('ttg:envTips:state', { detail: { open: false, source: 'env-toggle' } }));
+  }
+
+  btn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    if (busy) return;
+    busy = true;
+    try{
+      if (!infoShownOnce){
+        infoShownOnce = true;
+        const message = btn.getAttribute('data-info') ||
+          'Derived from your selected stock. Ranges reflect compatible overlaps across all species.';
+        const used = callGenericPopover(btn, message);
+        if (!used){
+          // If no consumer handled it, show fallback
+          fallbackPopover(btn, message);
+        }
+        return;
+      }
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      isOpen ? closePanel() : openPanel();
+    } finally {
+      // release lock on next tick to avoid double-firing in same event loop
+      setTimeout(()=>{ busy = false; }, 0);
+    }
+  });
+})();
 
 (function infoPopovers(){
   const page = document.getElementById('stocking-page');
@@ -958,76 +964,68 @@ bootstrapStocking();
   closeEl.addEventListener('click', closePop);
 })();
 
-(function enforceBioAggCompact(){
-  let card = null;
-  let cardObserver = null;
+(function enforceBioAggCompactSafe(){
+  const card = document.getElementById('bioagg-card');
+  if(!card) return;
 
-  function stripHeights(el){
-    if (!el) return;
-    const { style } = el;
-    if (style.minHeight) style.minHeight = '';
-    if (style.height && style.height !== 'auto') style.height = '';
-  }
+  // collapse by default
+  card.classList.add('is-compact');
 
-  function ensureCard(){
-    const next = document.getElementById('bioagg-card');
-    if (!next) {
-      if (cardObserver) {
-        cardObserver.disconnect();
-        cardObserver = null;
-      }
-      card = null;
-      return null;
+  // Remove dangerous inline heights once; don’t fight the browser on every tick
+  function stripHeightsOnce(){
+    card.style.minHeight = '';
+    if (card.style.height && card.style.height !== 'auto') card.style.height = '';
+    const body = card.querySelector('.bioagg-body');
+    if (body){
+      body.style.minHeight = '';
+      if (body.style.height && body.style.height !== 'auto') body.style.height = '';
     }
-
-    if (next !== card) {
-      card = next;
-      card.classList.add('is-compact');
-      stripHeights(card);
-
-      if (cardObserver) cardObserver.disconnect();
-      cardObserver = new MutationObserver(()=> update());
-      cardObserver.observe(card, { attributes: true, attributeFilter: ['style', 'class'], subtree: false });
-    }
-
-    return card;
   }
+  stripHeightsOnce();
 
-  function infoVisible(current){
-    if (!current) return false;
-    if (document.querySelector('.ttg-popover.is-open[data-bioagg="1"]')) return true;
-
-    const active = document.activeElement;
-    if (active && current.contains(active) && active.classList.contains('info-btn')) return true;
-
-    if (current.querySelector('[aria-expanded="true"]')) return true;
+  function infoVisible(){
+    // A portal popover anchored to an info button inside this card?
+    const ae = document.activeElement;
+    if (ae && card.contains(ae) && ae.classList && ae.classList.contains('info-btn')){
+      const pop = document.querySelector('.ttg-popover.is-open');
+      if (pop) return true;
+    }
+    // Any in-card expanded ARIA content?
+    if (card.querySelector('[aria-expanded="true"]')) return true;
     return false;
   }
 
-  function update(){
-    const current = ensureCard();
-    if (!current) return;
-    stripHeights(current);
-    if (infoVisible(current)) {
-      current.classList.remove('is-compact');
-    } else {
-      current.classList.add('is-compact');
+  // Debounced update (avoid thrash)
+  let raf = 0;
+  function scheduleUpdate(){
+    if (raf) return;
+    raf = requestAnimationFrame(()=>{
+      raf = 0;
+      const expand = infoVisible();
+      // Don’t toggle class if it’s already correct (prevents attribute MutationObserver storms)
+      const has = card.classList.contains('is-compact');
+      if (expand && has){ card.classList.remove('is-compact'); }
+      else if (!expand && !has){ card.classList.add('is-compact'); }
+    });
+  }
+
+  // Observe only STYLE changes we don’t control; never observe CLASS (we mutate it)
+  const mo = new MutationObserver((muts)=>{
+    for (const m of muts){
+      if (m.type === 'attributes' && m.attributeName === 'style'){
+        scheduleUpdate();
+      }
     }
-  }
+  });
+  mo.observe(card, { attributes:true, attributeFilter:['style'] });
 
-  const envBars = document.getElementById('env-bars');
-  if (envBars) {
-    const envObserver = new MutationObserver(()=> setTimeout(update, 0));
-    envObserver.observe(envBars, { childList: true, subtree: true });
-  }
+  // Lightweight listeners (debounced)
+  ['click','keydown','resize','orientationchange'].forEach(evt=>{
+    window.addEventListener(evt, ()=> scheduleUpdate(), { passive:true, capture:true });
+  });
+  window.visualViewport?.addEventListener?.('resize', ()=> scheduleUpdate(), { passive:true });
+  window.visualViewport?.addEventListener?.('scroll', ()=> scheduleUpdate(), { passive:true });
 
-  document.addEventListener('click', ()=> setTimeout(update, 0), true);
-  document.addEventListener('keydown', (e)=>{
-    if (e.key === 'Escape') setTimeout(update, 0);
-  }, true);
-  window.addEventListener('resize', ()=> setTimeout(update, 0));
-  window.visualViewport?.addEventListener?.('resize', ()=> setTimeout(update, 0));
-  window.visualViewport?.addEventListener?.('scroll', ()=> setTimeout(update, 0));
-
-  update();
+  // Initial pass
+  scheduleUpdate();
 })();
