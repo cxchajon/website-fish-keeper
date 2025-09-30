@@ -19,7 +19,7 @@
   <meta name="twitter:image" content="https://thetankguide.com/logo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="css/style.css?v=1.0.8" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha384-OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="icon" href="/favicon.ico" />
   <!-- Page-scoped styles -->
   <style>
@@ -312,16 +312,21 @@
 
   <div id="site-footer"></div>
   <script>
-  (async () => {
-    try {
-      const res = await fetch('footer.html?v=1.2.1', { cache: 'no-cache' });
-      const html = await res.text();
-      const host = document.getElementById('site-footer');
-      if (host) host.outerHTML = html;
-    } catch (e) {
-      console.error('Footer load failed:', e);
+(async () => {
+  try {
+    const res = await fetch('footer.v1.2.2.html?v=' + Date.now(), { cache: 'no-cache' });
+    const html = await res.text();
+    const host = document.getElementById('site-footer');
+    if (host) {
+      host.outerHTML = html;
+      console.log('[Footer] injected v1.2.2 with socials row');
+    } else {
+      console.warn('[Footer] #site-footer placeholder not found on this page');
     }
-  })();
+  } catch (e) {
+    console.error('[Footer] load failed:', e);
+  }
+})();
 </script>
 </body>
 </html>
