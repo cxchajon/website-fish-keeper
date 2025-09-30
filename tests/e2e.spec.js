@@ -30,7 +30,7 @@ async function selectTank(page, gallons) {
     await control.selectOption(optionValue);
   }
   await page.keyboard.press('Tab');
-  await expect(page.getByTestId('tank-summary')).toContainText(`${gallons}`, { timeout: 6000 });
+  await expect(page.locator('#tank-facts')).toContainText(`${gallons}`, { timeout: 6000 });
   return control;
 }
 
@@ -106,8 +106,8 @@ test.describe('Stocking Advisor accessibility flows', () => {
   test('Tank selection updates summary and stock meters', async ({ page }, testInfo) => {
     await selectTank(page, 40);
 
-    const summary = page.getByTestId('tank-summary');
-    await expect(summary).toContainText(/40/);
+    const facts = page.locator('#tank-facts');
+    await expect(facts).toContainText(/40/);
 
     const bars = page.locator('[data-testid="stock-bars"] .env-bar__fill').first();
     await expect(bars).toBeVisible();
@@ -133,11 +133,12 @@ test.describe('Stocking Advisor accessibility flows', () => {
         break;
       }
     }
-    const targetText = (await target.textContent())?.trim() || '';
+    const targetVariantId = await target.getAttribute('data-variant-id');
+    expect(targetVariantId).toBeTruthy();
     await target.click();
 
     await expect(toggle).toBeFocused();
-    await expect(page.getByTestId('tank-summary')).toContainText(targetText, { timeout: 6000 });
+    await expect.poll(async () => page.evaluate(() => window.appState?.variantId || null)).toBe(targetVariantId);
     await expect(page.getByTestId('variant-selector')).toHaveCount(0);
     await capture(page, testInfo, 'variant-selector.png');
   });
