@@ -836,7 +836,6 @@
 
     /* ----- Compact Bioload/Aggression card adjustments ----- */
     #stocking-page #bioagg-card {
-      display: block;
       min-height: 0 !important;
       height: auto !important;
       flex: 0 0 auto !important;
@@ -845,38 +844,6 @@
     #stocking-page #bioagg-card.is-compact {
       padding-top: 8px;
       padding-bottom: 10px;
-      margin-bottom: 12px;
-    }
-
-    #stocking-page #bioagg-card.is-compact .metric-row,
-    #stocking-page #bioagg-card.is-compact .bar-row {
-      margin-top: 6px;
-      margin-bottom: 6px;
-    }
-
-    #stocking-page #bioagg-card.is-compact .progress-track,
-    #stocking-page #bioagg-card.is-compact .meter-track {
-      height: 8px;
-    }
-
-    #stocking-page #bioagg-card .card-spacer:empty,
-    #stocking-page #bioagg-card .card-footer:empty {
-      display: none !important;
-    }
-
-    #stocking-page #bioagg-card.is-compact::after,
-    #stocking-page #bioagg-card.is-compact::before {
-      height: 0 !important;
-    }
-
-    #stocking-page #bioagg-card .bioagg-body {
-      min-height: 0 !important;
-      height: auto !important;
-    }
-
-    /* Ensure popovers render above the card after tightening */
-    #stocking-page .ttg-popover {
-      z-index: 2147483647;
     }
 
     @media (orientation: portrait) and (max-width: 480px) {
@@ -884,6 +851,10 @@
         padding-top: 6px;
         padding-bottom: 8px;
       }
+    }
+
+    #stocking-page .ttg-popover {
+      z-index: 2147483647;
     }
 
     #stocking-page button:not(.info-btn),
