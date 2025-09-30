@@ -1145,45 +1145,40 @@ body.planted-active #cycling-coach .cc-title__leaf {
 }
 
 .social-strip {
-  margin-bottom: 10px;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin: 0 auto 12px;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.85rem;
-}
-
-.footer-links a {
-  color: #d5ddff;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.footer-links a:hover {
-  color: #7dd3fc;
-  text-decoration: underline;
-}
-
-.footer-links span {
-  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 12px;
 }
 
 .social-strip a {
+  display: inline-block;
   margin: 0 8px;
   color: #fff;
   font-size: 1.4rem;
-  transition: color 0.3s;
+  transition: color 0.3s, transform 0.15s ease-out;
 }
 
-.social-strip a:hover,
-.footer-note a:hover {
-  color: #1e90ff; /* hover highlight */
+.social-strip a:hover {
+  color: #1e90ff;
+  transform: translateY(-1px);
+}
+
+.footer-links {
+  margin: 4px 0 12px 0;
+  font-size: 0.95rem;
+}
+
+.footer-links a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: #1e90ff;
+  text-decoration: underline;
+}
+
+.footer-links .dot {
+  opacity: 0.6;
+  margin: 0 0.5ch;
 }
 
 .footer-note {
@@ -1196,6 +1191,14 @@ body.planted-active #cycling-coach .cc-title__leaf {
   text-decoration: none;
   font-weight: 500;
 }
+
 .footer-note .amazon-cta:hover {
   text-decoration: underline;
+}
+
+/* Small screens: allow icons to wrap neatly */
+@media (max-width: 420px) {
+  .social-strip a {
+    margin: 6px 10px;
+  }
 }

@@ -249,7 +249,7 @@
 <script>
   (async () => {
     try {
-      const res = await fetch('footer.html?v=1.2.0', { cache: 'no-cache' });
+      const res = await fetch('footer.html?v=1.2.1', { cache: 'no-cache' });
       const html = await res.text();
       const host = document.getElementById('site-footer');
       if (host) host.outerHTML = html;
