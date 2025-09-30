@@ -4,6 +4,43 @@ import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderChips, bindPopoverHandlers } from './logic/ui.js';
 
+function rafDebounce(fn){
+  let raf = 0;
+  return function debounced(...args){
+    if (raf) return;
+    raf = requestAnimationFrame(()=>{
+      raf = 0;
+      fn.apply(this, args);
+    });
+  };
+}
+
+function withObserverPaused(observer, target, config, fn){
+  try {
+    observer && observer.disconnect();
+  } catch (error) {
+    // ignore disconnect errors
+  }
+  try {
+    fn();
+  } finally {
+    try {
+      observer && observer.observe(target, config);
+    } catch (error) {
+      // ignore observe errors
+    }
+  }
+}
+
+function passiveable(type){
+  return ['scroll','touchstart','touchmove','touchend','wheel','resize','orientationchange'].includes(type);
+}
+
+function on(target, type, handler, opts){
+  const options = passiveable(type) ? { passive: true, ...(opts || {}) } : { ...(opts || {}) };
+  target.addEventListener(type, handler, options);
+}
+
 window.addEventListener('keydown', (e) => {
   const platform = typeof navigator !== 'undefined' ? navigator.platform : '';
   const isMac = platform.toUpperCase().includes('MAC');
@@ -765,42 +802,32 @@ function buildGearPayload() {
 
 bootstrapStocking();
 
-(function envUnifiedInfoToggleSafe(){
+(function envInfoToggleSafe(){
   const btn   = document.getElementById('env-info-toggle');
   const panel = document.getElementById('env-more-tips');
-  if(!btn || !panel) return;
+  if(!btn) return;
 
-  let infoShownOnce = false;
-  let busy = false; // re-entrancy guard
+  let busy = false;
+  let shownOnce = false;
 
-  // Try to call a generic popover API if it exists, otherwise fallback
-  function callGenericPopover(anchor, text){
-    // If page exposes a global popover open function, use it once.
+  function trySharedPopover(anchor, text){
     if (window.TTG && typeof TTG.openInfoPopover === 'function'){
       TTG.openInfoPopover(anchor, text);
       return true;
     }
-    // If there’s a delegated handler looking for a custom event, use that
     const ev = new CustomEvent('ttg:open-popover', { bubbles:true, detail:{ anchor, text }});
     anchor.dispatchEvent(ev);
-    // Consumer may or may not exist; we’ll still fallback
     return false;
   }
 
   function fallbackPopover(anchor, text){
-    // Create a lightweight, auto-dismissed popover without rebubbling events
-    let pop = document.createElement('div');
+    const pop = document.createElement('div');
     pop.className = 'ttg-popover is-open';
     Object.assign(pop.style, {
-      position: 'fixed',
-      zIndex: 2147483647,
-      maxWidth: '320px',
-      padding: '10px 12px',
-      borderRadius: '10px',
-      background: 'rgba(20,22,25,.96)',
-      border: '1px solid rgba(255,255,255,.12)',
-      boxShadow: '0 10px 30px rgba(0,0,0,.35)',
-      fontSize: '13px'
+      position:'fixed', zIndex:2147483647, maxWidth:'320px',
+      padding:'10px 12px', borderRadius:'10px',
+      background:'rgba(20,22,25,.96)', border:'1px solid rgba(255,255,255,.12)',
+      boxShadow:'0 10px 30px rgba(0,0,0,.35)', fontSize:'13px'
     });
     pop.textContent = text || 'Additional information.';
     document.body.appendChild(pop);
@@ -809,43 +836,40 @@ bootstrapStocking();
     const top  = Math.max(8, Math.min(window.innerHeight - pop.offsetHeight - 8, r.bottom + 8));
     pop.style.left = `${left}px`;
     pop.style.top  = `${top}px`;
-    setTimeout(()=>{ pop.remove(); }, 2200);
+    setTimeout(()=> pop.remove(), 2200);
   }
 
   function openPanel(){
+    if (!panel) return;
     btn.setAttribute('aria-expanded','true');
     panel.hidden = false;
     panel.classList.add('is-open');
-    document.dispatchEvent(new CustomEvent('ttg:envTips:state', { detail: { open: true, source: 'env-toggle' } }));
+    window.dispatchEvent(new CustomEvent('ttg:envTips:state', {detail:{open:true}}));
   }
   function closePanel(){
+    if (!panel) return;
     btn.setAttribute('aria-expanded','false');
     panel.classList.remove('is-open');
-    setTimeout(()=>{ panel.hidden = true; }, 180);
-    document.dispatchEvent(new CustomEvent('ttg:envTips:state', { detail: { open: false, source: 'env-toggle' } }));
+    setTimeout(()=>{ panel.hidden = true; }, 150);
+    window.dispatchEvent(new CustomEvent('ttg:envTips:state', {detail:{open:false}}));
   }
 
   btn.addEventListener('click', (e)=>{
     e.preventDefault();
-    if (busy) return;
-    busy = true;
+    if (busy) return; busy = true;
     try{
-      if (!infoShownOnce){
-        infoShownOnce = true;
+      if (!shownOnce){
+        shownOnce = true;
         const message = btn.getAttribute('data-info') ||
-          'Derived from your selected stock. Ranges reflect compatible overlaps across all species.';
-        const used = callGenericPopover(btn, message);
-        if (!used){
-          // If no consumer handled it, show fallback
-          fallbackPopover(btn, message);
-        }
+          'Derived from your selected stock. Ranges reflect compatible overlaps.';
+        const used = trySharedPopover(btn, message);
+        if (!used) fallbackPopover(btn, message);
         return;
       }
       const isOpen = btn.getAttribute('aria-expanded') === 'true';
       isOpen ? closePanel() : openPanel();
     } finally {
-      // release lock on next tick to avoid double-firing in same event loop
-      setTimeout(()=>{ busy = false; }, 0);
+      setTimeout(()=> busy=false, 0);
     }
   });
 })();
@@ -965,68 +989,96 @@ bootstrapStocking();
   closeEl.addEventListener('click', closePop);
 })();
 
-(function enforceBioAggCompactSafe(){
+(function compactBioAggSafe(){
   const card = document.getElementById('bioagg-card');
   if(!card) return;
 
-  // collapse by default
-  card.classList.add('is-compact');
+  const config = { attributes:true, attributeFilter:['style'] };
+  const update = rafDebounce(()=>{
+    const ae = document.activeElement;
+    const infoOpen = !!document.querySelector('.ttg-popover.is-open');
+    const anchorInside = ae && card.contains(ae) && ae.classList?.contains('info-btn');
+    const expanded = card.querySelector('[aria-expanded="true"]');
 
-  // Remove dangerous inline heights once; don’t fight the browser on every tick
-  function stripHeightsOnce(){
-    card.style.minHeight = '';
+    const shouldExpand = (infoOpen && anchorInside) || !!expanded;
+    const hasCompact = card.classList.contains('is-compact');
+
+    if (shouldExpand && hasCompact){
+      withObserverPaused(mo, card, config, ()=> card.classList.remove('is-compact'));
+    } else if (!shouldExpand && !hasCompact){
+      withObserverPaused(mo, card, config, ()=> card.classList.add('is-compact'));
+    }
+
+    if (card.style.minHeight) card.style.minHeight = '';
     if (card.style.height && card.style.height !== 'auto') card.style.height = '';
     const body = card.querySelector('.bioagg-body');
     if (body){
-      body.style.minHeight = '';
+      if (body.style.minHeight) body.style.minHeight = '';
       if (body.style.height && body.style.height !== 'auto') body.style.height = '';
     }
-  }
-  stripHeightsOnce();
+  });
 
-  function infoVisible(){
-    // A portal popover anchored to an info button inside this card?
-    const ae = document.activeElement;
-    if (ae && card.contains(ae) && ae.classList && ae.classList.contains('info-btn')){
-      const pop = document.querySelector('.ttg-popover.is-open');
-      if (pop) return true;
-    }
-    // Any in-card expanded ARIA content?
-    if (card.querySelector('[aria-expanded="true"]')) return true;
-    return false;
-  }
+  const mo = new MutationObserver(()=> update());
+  mo.observe(card, config);
 
-  // Debounced update (avoid thrash)
-  let raf = 0;
-  function scheduleUpdate(){
-    if (raf) return;
-    raf = requestAnimationFrame(()=>{
-      raf = 0;
-      const expand = infoVisible();
-      // Don’t toggle class if it’s already correct (prevents attribute MutationObserver storms)
-      const has = card.classList.contains('is-compact');
-      if (expand && has){ card.classList.remove('is-compact'); }
-      else if (!expand && !has){ card.classList.add('is-compact'); }
+  card.classList.add('is-compact');
+
+  ['click','keydown','resize','orientationchange'].forEach((t)=> on(window, t, update, {capture:true}));
+  window.visualViewport?.addEventListener?.('resize', update, {passive:true});
+  window.visualViewport?.addEventListener?.('scroll', update, {passive:true});
+
+  update();
+})();
+
+(function killRedundantTankAssumption(){
+  const card = document.querySelector('#stocking-page .ttg-card.tank-size, #stocking-page [data-card="tank-size"]');
+  if(!card) return;
+
+  const isAssumption = (el) => {
+    const t = (el.textContent || '').trim();
+    return /^Tank:\s*\d+(\.\d+)?\s*gal\s*—\s*assumed:/i.test(t);
+  };
+
+  const config = { childList:true, subtree:true };
+  const sweep = ()=>{
+    const targets = card.querySelectorAll('.tank-assumption,#tank-assumption,[data-role="tank-assumption"],[data-test="tank-assumption"],p,div');
+    let changed = false;
+    targets.forEach((el)=>{
+      if (el && isAssumption(el)){
+        el.remove();
+        changed = true;
+      }
     });
-  }
+    Array.from(card.children).forEach((child)=>{
+      if (!child.textContent || !child.textContent.trim()){
+        child.remove();
+        changed = true;
+      }
+    });
+    return changed;
+  };
 
-  // Observe only STYLE changes we don’t control; never observe CLASS (we mutate it)
-  const mo = new MutationObserver((muts)=>{
-    for (const m of muts){
-      if (m.type === 'attributes' && m.attributeName === 'style'){
-        scheduleUpdate();
+  const debounced = rafDebounce(()=>{
+    withObserverPaused(mo, card, config, ()=> sweep());
+  });
+
+  sweep();
+
+  const mo = new MutationObserver((mutations)=>{
+    for (const mut of mutations){
+      for (const node of mut.addedNodes || []){
+        if (node.nodeType === 1 && isAssumption(node)){
+          debounced();
+          return;
+        }
       }
     }
   });
-  mo.observe(card, { attributes:true, attributeFilter:['style'] });
-
-  // Lightweight listeners (debounced)
-  ['click','keydown','resize','orientationchange'].forEach(evt=>{
-    window.addEventListener(evt, ()=> scheduleUpdate(), { passive:true, capture:true });
-  });
-  window.visualViewport?.addEventListener?.('resize', ()=> scheduleUpdate(), { passive:true });
-  window.visualViewport?.addEventListener?.('scroll', ()=> scheduleUpdate(), { passive:true });
-
-  // Initial pass
-  scheduleUpdate();
+  mo.observe(card, config);
 })();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations)=>{
+    registrations.forEach((registration)=> registration.update());
+  });
+}
