@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 const DEFAULT_PORT = process.env.PORT || 4173;
 const DEFAULT_BASE = `http://localhost:${DEFAULT_PORT}`;
@@ -19,6 +19,21 @@ export default defineConfig({
     video: 'retain-on-failure',
     trace: 'on-first-retry',
   },
+  projects: [
+    {
+      name: 'chromium-desktop',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 1280, height: 720 },
+      },
+    },
+    {
+      name: 'iphone-12',
+      use: {
+        ...devices['iPhone 12'],
+      },
+    },
+  ],
   webServer: shouldStartServer
     ? {
         command: `node scripts/dev-server.mjs`,

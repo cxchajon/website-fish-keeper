@@ -60,7 +60,7 @@ export function renderEnvCard({ stock = [], stockCount = null, computed = null }
   const excelEl = document.getElementById('env-reco-xl');
   const barsEl = document.getElementById('env-bars');
   const warnEl = document.getElementById('env-warnings');
-  const tipsEl = document.getElementById('env-tips');
+  const tipsEl = document.getElementById('env-more-tips');
 
   if (listEl) {
     renderConditions(listEl, env.conditions, { isEmpty });
