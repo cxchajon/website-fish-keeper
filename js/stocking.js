@@ -958,35 +958,67 @@ bootstrapStocking();
   closeEl.addEventListener('click', closePop);
 })();
 
-(function compactBioAggController(){
-  function getCard(){
-    return document.getElementById('bioagg-card');
+(function enforceBioAggCompact(){
+  let card = null;
+  let cardObserver = null;
+
+  function stripHeights(el){
+    if (!el) return;
+    const { style } = el;
+    if (style.minHeight) style.minHeight = '';
+    if (style.height && style.height !== 'auto') style.height = '';
   }
 
-  function infoVisible(card){
-    if (!card) return false;
-    const openPop = document.querySelector('.ttg-popover.is-open[data-bioagg="1"]');
-    if (openPop) return true;
-
-    const activeEl = document.activeElement;
-    if (activeEl && card.contains(activeEl) && activeEl.classList.contains('info-btn')) {
-      return true;
+  function ensureCard(){
+    const next = document.getElementById('bioagg-card');
+    if (!next) {
+      if (cardObserver) {
+        cardObserver.disconnect();
+        cardObserver = null;
+      }
+      card = null;
+      return null;
     }
 
-    const expanded = card.querySelector('[aria-expanded="true"]');
-    if (expanded) return true;
+    if (next !== card) {
+      card = next;
+      card.classList.add('is-compact');
+      stripHeights(card);
 
+      if (cardObserver) cardObserver.disconnect();
+      cardObserver = new MutationObserver(()=> update());
+      cardObserver.observe(card, { attributes: true, attributeFilter: ['style', 'class'], subtree: false });
+    }
+
+    return card;
+  }
+
+  function infoVisible(current){
+    if (!current) return false;
+    if (document.querySelector('.ttg-popover.is-open[data-bioagg="1"]')) return true;
+
+    const active = document.activeElement;
+    if (active && current.contains(active) && active.classList.contains('info-btn')) return true;
+
+    if (current.querySelector('[aria-expanded="true"]')) return true;
     return false;
   }
 
   function update(){
-    const card = getCard();
-    if (!card) return;
-    if (infoVisible(card)) {
-      card.classList.remove('is-compact');
+    const current = ensureCard();
+    if (!current) return;
+    stripHeights(current);
+    if (infoVisible(current)) {
+      current.classList.remove('is-compact');
     } else {
-      card.classList.add('is-compact');
+      current.classList.add('is-compact');
     }
+  }
+
+  const envBars = document.getElementById('env-bars');
+  if (envBars) {
+    const envObserver = new MutationObserver(()=> setTimeout(update, 0));
+    envObserver.observe(envBars, { childList: true, subtree: true });
   }
 
   document.addEventListener('click', ()=> setTimeout(update, 0), true);
@@ -996,12 +1028,6 @@ bootstrapStocking();
   window.addEventListener('resize', ()=> setTimeout(update, 0));
   window.visualViewport?.addEventListener?.('resize', ()=> setTimeout(update, 0));
   window.visualViewport?.addEventListener?.('scroll', ()=> setTimeout(update, 0));
-
-  const envBars = document.getElementById('env-bars');
-  if (envBars) {
-    const observer = new MutationObserver(()=> setTimeout(update, 0));
-    observer.observe(envBars, { childList: true });
-  }
 
   update();
 })();
