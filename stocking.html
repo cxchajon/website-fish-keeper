@@ -656,7 +656,6 @@
     }
 
     #stocking-page .card-title,
-    #stocking-page .card__hd h2,
     #stocking-page .panel > h2 {
       margin: 0;
       line-height: 1.15;
@@ -677,23 +676,22 @@
     }
 
     #stocking-page .row.title-row {
-      margin: 6px 0 8px;
+      margin: 4px 0 4px;
     }
 
     #stocking-page .row.title-row.between {
       justify-content: space-between;
     }
 
-    #stocking-page .row .title-left {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 10px;
+    #stocking-page .card-header {
+      margin-bottom: 8px;
     }
 
-    #stocking-page .row .title-right {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
+    #stocking-page .card-header .card-subtitle {
+      margin: 2px 0 0;
+      font-size: 13px;
+      line-height: 1.35;
+      color: rgba(255, 255, 255, 0.72);
     }
 
     #stocking-page .row.toggle-row {
@@ -713,17 +711,6 @@
       gap: 10px;
     }
 
-    #stocking-page .card__hd {
-      margin-bottom: var(--space-sm);
-      gap: var(--space-sm);
-    }
-
-    #stocking-page .card__title-stack {
-      gap: var(--space-xs);
-    }
-
-    #stocking-page .card__subtitle,
-    #stocking-page .card__hd p,
     #stocking-page .card p,
     #stocking-page .panel p {
       margin-top: var(--space-xs);
@@ -746,10 +733,6 @@
     #stocking-page .tank-size-card .facts-line {
       margin-top: var(--space-sm);
       margin-bottom: var(--space-sm);
-    }
-
-    #stocking-page #stock-list-card .card__hd p {
-      margin-top: var(--space-xs);
     }
 
     #stocking-page #stock-list {
@@ -777,8 +760,7 @@
       padding: var(--space-sm) var(--space-xs);
     }
 
-    #stocking-page .env-card .section-lead,
-    #stocking-page .env-card .card__subtitle {
+    #stocking-page .env-card .section-lead {
       margin-bottom: var(--space-sm);
     }
 
@@ -833,6 +815,18 @@
         gap: 8px;
       }
 
+      #stocking-page .row.title-row {
+        margin: 2px 0 2px;
+      }
+
+      #stocking-page .card-header {
+        margin-bottom: 6px;
+      }
+
+      #stocking-page .card-header .card-subtitle {
+        font-size: 12.5px;
+      }
+
       #stocking-page .row.toggle-row .row-right {
         gap: 8px;
       }
@@ -872,10 +866,11 @@
     <div class="wrap page-content">
       <!-- Tank Size card -->
       <div class="card ttg-card tank-size-card" id="tank-size-card">
-        <div class="row title-row between">
-          <div class="title-left">
+        <div class="card-header">
+          <div class="row title-row between">
             <h2 class="card-title">Tank Size</h2>
           </div>
+          <p class="card-subtitle">Select a tank size to begin.</p>
         </div>
 
         <div class="form-row">
@@ -990,7 +985,7 @@
           font-weight: 600;
         }
 
-        /* Compact circular info button */
+        /* Keep info icon visual language consistent (already present) */
         #stocking-page .info-btn {
           display: inline-flex;
           align-items: center;
@@ -1003,9 +998,9 @@
           padding: 0;
           font-size: 13px;
           line-height: 1;
-          color: inherit;
           background: rgba(255, 255, 255, 0.08);
           border: 1px solid rgba(255, 255, 255, 0.12);
+          color: inherit;
           cursor: pointer;
         }
         #stocking-page .info-btn:hover {
@@ -1016,6 +1011,7 @@
           outline-offset: 2px;
         }
 
+        /* Env. Recommendations single icon “expanded” state (if present) */
         #stocking-page #env-info-toggle[aria-expanded="true"] {
           background: rgba(20, 203, 168, 0.9);
           color: #0b1b18;
@@ -1023,6 +1019,7 @@
           box-shadow: 0 0 0 2px rgba(20, 203, 168, 0.25);
         }
 
+        /* Collapsible tips panel (unchanged) */
         #stocking-page .env-more-tips {
           overflow: clip;
           display: grid;
@@ -1132,37 +1129,33 @@
       <div id="tank-summary" aria-live="polite" data-testid="tank-summary"></div>
 
       <section class="card ttg-card" id="stock-list-card" aria-live="polite">
-        <div class="card__hd">
+        <div class="card-header">
           <div class="row title-row between">
-            <div class="title-left">
-              <h2 class="card-title">Current Stock</h2>
-            </div>
+            <h2 class="card-title">Current Stock</h2>
           </div>
-          <p class="subtle">Your selected fish and inverts appear here.</p>
+          <p class="card-subtitle">Your selected fish and inverts appear here. No stock yet. Add species to begin.</p>
         </div>
         <div id="stock-list" class="stock-list" data-testid="species-list"></div>
       </section>
 
       <section class="card ttg-card tank-env-card env-card" id="env-card" aria-live="polite">
-        <div class="card__hd card__hd--split">
-          <div class="env-header" id="env-header">
-            <div class="row title-row between">
-              <h2 class="card-title">Environmental Recommendations</h2>
-              <!-- SINGLE unified icon: shows popover on first click, toggles tips on next clicks -->
-              <button
-                type="button"
-                id="env-info-toggle"
-                class="info-btn"
-                aria-controls="env-more-tips"
-                aria-expanded="false"
-                aria-label="More info and tips about Environmental Recommendations"
-                data-info="Derived from your selected stock. Ranges reflect compatible overlaps across all species."
-              >
-                i
-              </button>
-            </div>
-            <p class="env-subtitle">Derived from your selected stock.</p>
+        <div class="card-header">
+          <div class="row title-row">
+            <h2 class="card-title">Environmental Recommendations</h2>
+            <!-- SINGLE unified icon: shows popover on first click, toggles tips on next clicks -->
+            <button
+              type="button"
+              id="env-info-toggle"
+              class="info-btn"
+              aria-controls="env-more-tips"
+              aria-expanded="false"
+              aria-label="More info and tips about Environmental Recommendations"
+              data-info="Derived from your selected stock. Ranges reflect compatible overlaps across all species."
+            >
+              i
+            </button>
           </div>
+          <p class="card-subtitle">Derived from your selected stock.</p>
         </div>
 
         <div id="env-warnings" class="env-warnings" hidden></div>

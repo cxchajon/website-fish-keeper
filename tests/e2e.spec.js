@@ -190,7 +190,7 @@ test.describe('Stocking Advisor accessibility flows', () => {
     const targets = [
       {
         name: 'Tank Size header',
-        locator: page.locator('#tank-size-card .card-title .info-btn'),
+        locator: page.locator('#tank-size-card .card-header .info-btn'),
         text: 'Pick a standard tank size to get accurate capacity, footprint, and weight.',
       },
       {
@@ -200,12 +200,12 @@ test.describe('Stocking Advisor accessibility flows', () => {
       },
       {
         name: 'Current Stock header',
-        locator: page.locator('#stock-list-card .card__hd .info-btn'),
+        locator: page.locator('#stock-list-card .card-header .info-btn'),
         text: 'This list shows species you’ve added and their quantities. Use +/− to adjust and Remove to clear.',
       },
       {
         name: 'Environmental Recommendations header',
-        locator: page.locator('#env-card .card__title-stack .info-btn'),
+        locator: page.locator('#env-card .card-header .info-btn'),
         text: 'Derived from your selected stock. Ranges reflect compatible overlaps across all species.',
       },
       {
