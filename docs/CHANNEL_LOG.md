@@ -1,5 +1,14 @@
 # Channel Log
 
+## 2025-09-30 — Footer v1.2.2
+
+Footer v1.2.2 (Sept 30, 2025)
+- Restored socials row above legal links; order IG → TikTok → FB → X → YouTube → Amazon
+- Kept Amazon CTA link under disclaimer
+- Normalized loader to stable version param (?v=1.2.2); removed cache-bust timestamp
+- Verified single Font Awesome include and global CSS styling
+- Mobile/desktop alignment confirmed
+
 ## 2025-09-26 — Contact & Feedback v1.1 (reCAPTCHA secret key added)
 **Owner:** FishKeepingLifeCo (CXLXC LLC)
 
