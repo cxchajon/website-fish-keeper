@@ -1,0 +1,88 @@
+{
+  "timestamp_utc": "2025-09-30T20:57:49Z",
+  "hosts_tested": ["thetankguide.com", "www.thetankguide.com"],
+  "ssl_tls": {
+    "edge_cert": { "issuer": null, "sans": [], "valid_from": null, "valid_to": null },
+    "protocols_offered": [],
+    "legacy_protocols_blocked": null,
+    "redirects": {
+      "http_apex_to_https": {"status": null, "to": null},
+      "http_www_to_https":  {"status": null, "to": null}
+    },
+    "external_grade": { "service": "SSL Labs API (attempt)", "grade": "unverified", "notes": "Outbound HTTPS blocked by execution environment (CONNECT 403 from envoy proxy)." }
+  },
+  "dns_proxy": {
+    "apex": { "A": ["172.67.194.228", "104.21.12.139"], "AAAA": [], "proxied": true },
+    "www":  { "CNAME_to": null, "proxied": true },
+    "mx": ["unverified — outbound DNS queries for MX blocked (status NOTIMP)"],
+    "txt": ["unverified — outbound DNS queries for TXT blocked (status NOTIMP)"],
+    "findings": ["Cloudflare Anycast A records observed for apex and www; unable to confirm additional DNS records due to network restrictions."]
+  },
+  "headers": {
+    "apex_https": {
+      "strict-transport-security": null,
+      "content-security-policy": null,
+      "referrer-policy": null,
+      "permissions-policy": null,
+      "x-content-type-options": null,
+      "x-frame-options_or_frame-ancestors": null,
+      "cross-origin-opener-policy": null,
+      "cross-origin-embedder-policy": null,
+      "cross-origin-resource-policy": null,
+      "cache-control": null,
+      "server": null
+    },
+    "www_https": {
+      "strict-transport-security": null,
+      "content-security-policy": null,
+      "referrer-policy": null,
+      "permissions-policy": null,
+      "x-content-type-options": null,
+      "x-frame-options_or_frame-ancestors": null,
+      "cross-origin-opener-policy": null,
+      "cross-origin-embedder-policy": null,
+      "cross-origin-resource-policy": null,
+      "cache-control": null,
+      "server": null
+    }
+  },
+  "mixed_content_sri": {
+    "pages_checked": [],
+    "mixed_content_found": null,
+    "sri_on_third_party": [],
+    "open_directory_listings": []
+  },
+  "forms_bots": {
+    "endpoints": [
+      {"page": "https://thetankguide.com/contact-feedback.html", "endpoint": "https://formspree.io/f/xnngnwld", "method": "POST", "behind_cloudflare": false}
+    ],
+    "rate_limit_recommendations": [
+      {"endpoint": "https://formspree.io/f/xnngnwld", "suggested_limit": "60 req/min", "notes": "Apply Cloudflare WAF managed rules and rate limiting to mitigate automated abuse of the public feedback form."}
+    ],
+    "bot_fight_mode_observation": "unclear — interactive access blocked (CONNECT 403)"
+  },
+  "robots_sitemap": {
+    "robots_txt": {"status": null, "last_modified": null, "notable": ["Disallow: /admin/", "Disallow: /drafts/", "Allow: /"]},
+    "sitemap": {"url": "https://thetankguide.com/sitemap.xml", "status": null}
+  },
+  "canonical_seo": {
+    "homepage_canonical": "https://thetankguide.com/",
+    "subpage_canonical": [
+      {"url": "https://thetankguide.com/stocking.html", "canonical": "https://thetankguide.com/stocking.html"}
+    ],
+    "www_vs_apex": "unclear — unable to reach hosts over HTTP/HTTPS from restricted environment"
+  },
+  "summary_findings": [
+    "Unable to verify new TLS/redirect settings — outbound HTTPS connections blocked by execution environment (403 from envoy proxy).",
+    "DNS A records resolve to Cloudflare Anycast IPs, suggesting proxying is active; MX/TXT records unverified due to DNS egress restrictions.",
+    "Header posture, HSTS, and security controls remain unverified; schedule on-platform retest once outbound access restored.",
+    "Contact feedback form posts directly to Formspree; ensure Cloudflare protections and rate limits applied when service reachable."
+  ],
+  "priority_fixes_for_tomorrow": [
+    "Re-run TLS and redirect validation from a network with outbound HTTPS access to confirm Full(Strict), TLS 1.2+, and redirect behavior.",
+    "Enable HSTS and additional response headers (CSP, Referrer-Policy, Permissions-Policy, X-Content-Type-Options, Frame-Ancestors, COOP/COEP/CORP) via Cloudflare Rules once verification possible.",
+    "Enable Cloudflare WAF Managed Rules and Bot Fight Mode on proxied hostnames.",
+    "Add rate limit (e.g., 60 req/min) protecting POST submissions to the Formspree feedback endpoint once traffic observations available.",
+    "Assess and disable any directory listings or mixed-content issues during the follow-up verification session."
+  ]
+}
