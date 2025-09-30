@@ -484,32 +484,32 @@ function renderTankSummaryView() {
   if (!computed) {
     return;
   }
-  const container = document.createElement('div');
-  container.className = 'tank-summary';
-  const variant = computed.tank.variant;
-  const dims = variant ? `${variant.length}″×${variant.width}″×${variant.height}″` : '—';
-  const text = document.createElement('p');
-  const assumed = variant ? `${variant.name} (${dims})` : 'custom footprint';
-  text.innerHTML = `Tank: ${computed.tank.gallons} gal — assumed: ${assumed}. Best fit for your current species.`;
-  container.appendChild(text);
-
   const variants = getTankVariants(computed.tank.gallons);
   if (variants.length <= 1) {
     variantSelectorOpen = false;
+    shouldRestoreVariantFocus = false;
+    return;
   }
+  const container = document.createElement('div');
+  container.className = 'tank-summary';
+  const controls = document.createElement('div');
+  controls.className = 'tank-summary__controls';
+  container.appendChild(controls);
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'link-like';
+  toggle.textContent = variantSelectorOpen ? 'Close' : 'Change';
+  toggle.dataset.testid = 'variant-toggle';
+  toggle.setAttribute(
+    'aria-label',
+    variantSelectorOpen ? 'Close tank variant options' : 'Change tank dimensions variant',
+  );
+  toggle.addEventListener('click', () => {
+    variantSelectorOpen = !variantSelectorOpen;
+    renderTankSummaryView();
+  });
+  controls.appendChild(toggle);
   if (variants.length > 1) {
-    const toggle = document.createElement('button');
-    toggle.type = 'button';
-    toggle.className = 'link-like';
-    toggle.textContent = variantSelectorOpen ? 'Close' : 'Change';
-    toggle.dataset.testid = 'variant-toggle';
-    toggle.addEventListener('click', () => {
-      variantSelectorOpen = !variantSelectorOpen;
-      renderTankSummaryView();
-    });
-    text.append(' ');
-    text.appendChild(toggle);
-
     if (variantSelectorOpen) {
       const selector = document.createElement('div');
       selector.className = 'variant-selector';
@@ -519,6 +519,7 @@ function renderTankSummaryView() {
         button.type = 'button';
         button.textContent = describeVariant(option);
         button.dataset.active = option.id === computed.tank.variant?.id ? 'true' : 'false';
+        button.dataset.variantId = option.id;
         button.dataset.testid = 'variant-option';
         button.addEventListener('click', () => {
           state.variantId = option.id;

@@ -951,6 +951,22 @@
       border: 0 !important;
     }
 
+    /* Hide any assumption fragments if they slip through */
+    #stocking-page .ttg-card.tank-size .tank-assumption,
+    #stocking-page .ttg-card.tank-size #tank-assumption,
+    #stocking-page .ttg-card.tank-size [data-role="tank-assumption"],
+    #stocking-page .ttg-card.tank-size [data-test="tank-assumption"],
+    #stocking-page .ttg-card.tank-size-card .tank-assumption,
+    #stocking-page .ttg-card.tank-size-card #tank-assumption,
+    #stocking-page .ttg-card.tank-size-card [data-role="tank-assumption"],
+    #stocking-page .ttg-card.tank-size-card [data-test="tank-assumption"] {
+      display: none !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+    }
+
     #stocking-page .tank-size-card + .card-spacer:empty {
       display: none !important;
     }
@@ -1342,121 +1358,57 @@
 })();
 </script>
 <script>
-(function squashDuplicateTankSummary() {
-  const card = document.querySelector('#stocking-page .ttg-card.tank-size-card, #stocking-page [data-card="tank-size"]');
-  if (!card) return;
-
-  const docFragmentNode = typeof Node !== 'undefined' ? Node.DOCUMENT_FRAGMENT_NODE : 11;
-
-  const ensureInCardSummary = () => {
-    let summary = card.querySelector('.tank-assumption, #tank-summary, [data-role="tank-assumption"]');
-    if (!summary) {
-      summary = document.createElement('div');
-      summary.id = 'tank-summary';
-      summary.setAttribute('aria-live', 'polite');
-      summary.dataset.testid = 'tank-summary';
-      const anchor = card.querySelector('.row.toggle-row') || card.lastElementChild;
-      if (anchor) {
-        card.insertBefore(summary, anchor);
-      } else {
-        card.appendChild(summary);
-      }
-    }
-    summary.classList.add('in-card');
-    return summary;
-  };
-
-  const inCardSummary = ensureInCardSummary();
+(function removeRedundantTankAssumption(){
+  const tankCard = document.querySelector(
+    [
+      '#stocking-page .ttg-card.tank-size',
+      '#stocking-page .ttg-card.tank-size-card',
+      '#stocking-page [data-card="tank-size"]',
+      '#tank-size-card',
+    ].join(', '),
+  );
+  if(!tankCard) return;
 
   const selectors = [
-    '#tank-summary',
-    '#tank-assumption',
-    '[data-role="tank-assumption"]',
-    '.tank-assumption',
-    '.tank-assumption-note',
-    '[data-test="tank-assumption"]',
-    '[id^="tank-assumption-"]'
+    '.tank-assumption', '#tank-assumption',
+    '[data-role="tank-assumption"]', '[data-test="tank-assumption"]'
   ];
 
-  const selectorString = selectors.join(',');
+  function isAssumptionText(el){
+    const txt = (el.textContent || '').trim();
+    // Matches “Tank: 32 gal — assumed: … Best fit …”
+    return /^Tank:\s*\d+(\.\d+)?\s*gal\s*—\s*assumed:/i.test(txt);
+  }
 
-  const removeIfOutside = (node) => {
-    if (!node) return;
-    if (node.nodeType === docFragmentNode) {
-      node.querySelectorAll?.(selectorString).forEach((el) => {
-        if (!card.contains(el)) {
-          el.remove();
-        }
-      });
-      Array.from(node.childNodes || []).forEach((child) => removeIfOutside(child));
-      return;
-    }
-    if (node.nodeType !== 1) return;
-    if (!card.contains(node)) {
-      if (node.matches?.(selectorString)) {
-        node.remove();
-        return;
-      }
-      const txt = (node.textContent || '').trim();
-      if (/^Tank:\s*\d+(\.\d+)?\s*gal\s*—\s*assumed:/i.test(txt)) {
-        node.remove();
-        return;
-      }
-    }
-    node.querySelectorAll?.(selectorString).forEach((el) => {
-      if (!card.contains(el)) {
-        el.remove();
-      }
+  function sweep(){
+    // Remove any known-labeled nodes inside the Tank Size card
+    tankCard.querySelectorAll(selectors.join(',')).forEach((n) => n.remove());
+    // Heuristic fallback: any direct child paragraphs matching the pattern
+    Array.from(tankCard.querySelectorAll('p, div')).forEach((el) => {
+      if (isAssumptionText(el)) el.remove();
     });
-  };
+    // Remove now-empty spacers immediately following the main details block
+    Array.from(tankCard.children).forEach((ch) => {
+      if (ch.textContent && !ch.textContent.trim()) ch.remove();
+    });
+  }
 
-  document.querySelectorAll(selectorString).forEach((node) => {
-    if (!card.contains(node)) {
-      node.remove();
+  // Initial sweep
+  sweep();
+
+  // Prevent re-insertion by observing the Tank Size card only
+  const mo = new MutationObserver((muts) => {
+    let changed = false;
+    for (const m of muts){
+      if (m.type === 'childList' && (m.addedNodes?.length || m.removedNodes?.length)){
+        changed = true;
+      } else if (m.type === 'attributes' && m.attributeName === 'data-assumption') {
+        changed = true;
+      }
     }
+    if (changed) sweep();
   });
-
-  if (card.parentElement) {
-    const siblings = Array.from(card.parentElement.children);
-    const index = siblings.indexOf(card);
-    if (index > -1) {
-      for (let i = index + 1; i < Math.min(index + 3, siblings.length); i += 1) {
-        const el = siblings[i];
-        if (!el) continue;
-        const text = (el.textContent || '').trim();
-        if (/^Tank:\s*\d+(\.\d+)?\s*gal\s*—\s*assumed:/i.test(text)) {
-          el.remove();
-          continue;
-        }
-        if (!text) {
-          el.remove();
-        }
-      }
-    }
-  }
-
-  const inCardMatches = card.querySelectorAll('.tank-assumption, #tank-summary, [data-role="tank-assumption"]');
-  if (inCardMatches.length > 1) {
-    inCardMatches.forEach((el, idx) => {
-      if (idx > 0) {
-        el.remove();
-      }
-    });
-  }
-
-  const root = document.getElementById('stocking-page') || document.body;
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      Array.from(mutation.addedNodes || []).forEach((node) => {
-        removeIfOutside(node);
-      });
-    });
-  });
-  observer.observe(root, { childList: true, subtree: true });
-
-  if (inCardSummary) {
-    removeIfOutside(inCardSummary);
-  }
+  mo.observe(tankCard, { childList:true, subtree:true, attributes:true, attributeFilter:['data-assumption'] });
 })();
 </script>
   <script type="module" src="js/logic/speciesSchema.js"></script>
