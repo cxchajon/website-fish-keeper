@@ -48,7 +48,7 @@ function bootstrapStocking() {
     plantIcon: document.getElementById('plant-icon'),
     planted: document.getElementById('toggle-planted'),
     tips: document.getElementById('toggle-tips'),
-    tipsInline: document.getElementById('env-tips-toggle'),
+    envInfoToggle: document.getElementById('env-info-toggle'),
     blackwater: document.getElementById('toggle-blackwater'),
     turnover: document.getElementById('input-turnover'),
     temp: document.getElementById('input-temp'),
@@ -69,8 +69,17 @@ function bootstrapStocking() {
     diagnostics: document.getElementById('diagnostics'),
     diagnosticsContent: document.getElementById('diagnostics-content'),
     envReco: document.getElementById('env-reco'),
-    envTips: document.getElementById('env-tips'),
+    envTips: document.getElementById('env-more-tips'),
   };
+
+  let envTipsInitialized = false;
+  let envTipsHideTimer = null;
+  const envTipsFrame = typeof requestAnimationFrame === 'function'
+    ? requestAnimationFrame
+    : (fn) => setTimeout(fn, 0);
+  const envTipsTimeout = typeof window !== 'undefined' && typeof window.setTimeout === 'function'
+    ? window.setTimeout.bind(window)
+    : (fn, ms) => setTimeout(fn, ms);
 
 const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
 const speciesById = new Map(SPECIES.map((species) => [species.id, species]));
@@ -388,6 +397,44 @@ function updateToggle(control, value) {
   }
 }
 
+  function applyEnvTipsState(open, { animate = true } = {}) {
+    if (envTipsHideTimer) {
+      clearTimeout(envTipsHideTimer);
+      envTipsHideTimer = null;
+    }
+    const panel = refs.envTips;
+    if (!panel) {
+      if (refs.envInfoToggle) {
+        refs.envInfoToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      return;
+    }
+    if (open) {
+      panel.hidden = false;
+      const activate = () => panel.classList.add('is-open');
+      if (animate) {
+        envTipsFrame(activate);
+      } else {
+        activate();
+      }
+    } else {
+      panel.classList.remove('is-open');
+      if (animate) {
+        envTipsHideTimer = envTipsTimeout(() => {
+          if (!state.showTips && refs.envTips) {
+            refs.envTips.hidden = true;
+          }
+          envTipsHideTimer = null;
+        }, 180);
+      } else {
+        panel.hidden = true;
+      }
+    }
+    if (refs.envInfoToggle) {
+      refs.envInfoToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+  }
+
 function syncStateFromInputs() {
   if (refs.turnover) {
     state.turnover = Number(refs.turnover.value) || state.turnover;
@@ -501,16 +548,9 @@ function syncToggles() {
     updateToggle(refs.tips, state.showTips);
   }
   updateToggle(refs.blackwater, state.water.blackwater);
-  if (refs.tipsInline) {
-    refs.tipsInline.textContent = state.showTips ? 'Hide Tips' : 'Show More Tips';
-    refs.tipsInline.setAttribute('aria-pressed', state.showTips ? 'true' : 'false');
-  }
-  if (refs.envTips) {
-    if (state.showTips) {
-      refs.envTips.removeAttribute('hidden');
-    } else {
-      refs.envTips.setAttribute('hidden', '');
-    }
+  if (refs.envTips || refs.envInfoToggle) {
+    applyEnvTipsState(state.showTips, { animate: envTipsInitialized });
+    envTipsInitialized = true;
   }
   if (refs.plantIcon) {
     refs.plantIcon.style.display = state.planted ? 'inline-flex' : 'none';
@@ -611,26 +651,91 @@ window.addEventListener('ttg:recompute', () => {
   runRecompute({ skipInputSync: true });
 });
 
-const tipsBtn = document.querySelector('#env-tips-toggle');
-const tipsPane = document.querySelector('#env-tips');
+  const envInfoBtn = refs.envInfoToggle;
+  const envTipsPane = refs.envTips;
 
-if (tipsBtn && tipsPane) {
-  tipsBtn.addEventListener('click', (event) => {
-    event.preventDefault();
-    const open = !tipsPane.hasAttribute('hidden');
-    if (open) {
-      tipsPane.setAttribute('hidden', '');
-      tipsBtn.setAttribute('aria-pressed', 'false');
-      tipsBtn.textContent = 'Show More Tips';
-    } else {
-      tipsPane.removeAttribute('hidden');
-      tipsBtn.setAttribute('aria-pressed', 'true');
-      tipsBtn.textContent = 'Hide Tips';
+  if (envInfoBtn && envTipsPane) {
+    const scheduleMicrotask = typeof queueMicrotask === 'function'
+      ? queueMicrotask
+      : (fn) => Promise.resolve().then(fn);
+    let infoShownOnce = false;
+    let forwardingSynthetic = false;
+
+    function showGenericPopover(anchor, text) {
+      const prev = anchor.getAttribute('data-info');
+      const message = text || prev || 'Additional information.';
+      if (message !== prev) {
+        anchor.setAttribute('data-info', message);
+      }
+      forwardingSynthetic = true;
+      anchor.dispatchEvent(
+        new MouseEvent('click', { bubbles: true, cancelable: true, view: window })
+      );
+      scheduleMicrotask(() => {
+        forwardingSynthetic = false;
+        if (message !== prev) {
+          if (prev == null) {
+            anchor.removeAttribute('data-info');
+          } else {
+            anchor.setAttribute('data-info', prev);
+          }
+        }
+      });
     }
-    state.showTips = !open;
-    syncToggles();
-  });
-}
+
+    function showFallbackPopover(anchor, text) {
+      const pop = document.createElement('div');
+      pop.style.position = 'fixed';
+      pop.style.zIndex = '2147483647';
+      pop.style.maxWidth = '320px';
+      pop.style.padding = '10px 12px';
+      pop.style.borderRadius = '10px';
+      pop.style.background = 'rgba(20,22,25,.96)';
+      pop.style.border = '1px solid rgba(255,255,255,.12)';
+      pop.style.boxShadow = '0 10px 30px rgba(0,0,0,.35)';
+      pop.style.fontSize = '13px';
+      pop.style.color = 'inherit';
+      pop.textContent = text || 'Additional information.';
+      document.body.appendChild(pop);
+
+      const rect = anchor.getBoundingClientRect();
+      const left = Math.max(8, Math.min(window.innerWidth - pop.offsetWidth - 8, rect.left));
+      const top = Math.max(8, Math.min(window.innerHeight - pop.offsetHeight - 8, rect.bottom + 8));
+      pop.style.left = `${left}px`;
+      pop.style.top = `${top}px`;
+
+      envTipsTimeout(() => {
+        pop.remove();
+      }, 2200);
+    }
+
+    function showInfoFirst() {
+      const message = envInfoBtn.getAttribute('data-info') ||
+        'Derived from your selected stock. Ranges reflect compatible overlaps across all species.';
+      showGenericPopover(envInfoBtn, message);
+      envTipsTimeout(() => {
+        const openPopover = document.querySelector('.ttg-popover.is-open');
+        if (!openPopover) {
+          showFallbackPopover(envInfoBtn, message);
+        }
+      }, 20);
+    }
+
+    envInfoBtn.addEventListener('click', (event) => {
+      if (forwardingSynthetic) {
+        forwardingSynthetic = false;
+        return;
+      }
+      event.preventDefault();
+      if (!infoShownOnce) {
+        infoShownOnce = true;
+        showInfoFirst();
+        return;
+      }
+      state.showTips = !state.showTips;
+      syncToggles();
+    });
+  }
 
 function bindInputs() {
   if (refs.turnover) refs.turnover.addEventListener('input', scheduleUpdate);
