@@ -36,6 +36,8 @@
 .env-xl-nowrap { white-space:nowrap; }
 
 /* Environmental recommendations card refinements */
+#stocking-page .env-header { margin-bottom:6px; }
+#stocking-page .env-subtitle { margin:2px 0 0; font-size:13px; color:rgba(255,255,255,.7); line-height:1.3; }
 #env-card .card__hd { margin-bottom:12px; }
 #env-card .card__hd--split { align-items:flex-start; }
 #env-card .card__title-stack { display:flex; flex-direction:column; gap:4px; min-width:0; }
