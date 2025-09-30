@@ -1,0 +1,31 @@
+# Force HTTPS and add security headers for Apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+  Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self' https://formspree.io https://www.google.com/recaptcha/; frame-ancestors 'none'; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set X-Content-Type-Options "nosniff"
+  Header set Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), cross-origin-isolated=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(self), publickey-credentials-get=(), screen-wake-lock=(), usb=(), web-share=()"
+  Header set X-Frame-Options "DENY"
+  Header set Cross-Origin-Opener-Policy "same-origin"
+  Header set Cross-Origin-Embedder-Policy "credentialless"
+  Header set Cross-Origin-Resource-Policy "same-origin"
+  Header set X-Permitted-Cross-Domain-Policies "none"
+</IfModule>
+
+# Long cache for static assets
+<FilesMatch "\.(ico|css|js|gif|jpe?g|png|svg|webp|woff2?)$">
+  <IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 year"
+  </IfModule>
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+
+# Disable directory listings
+Options -Indexes
