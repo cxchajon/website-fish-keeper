@@ -911,6 +911,9 @@ bootstrapStocking();
     titleEl.textContent = 'Info';
     textEl.textContent  = info;
 
+    if (btn.closest('#bioagg-card')) pop.dataset.bioagg = '1';
+    else delete pop.dataset.bioagg;
+
     placeUnder(btn);
     pop.hidden = false;
     requestAnimationFrame(()=> pop.classList.add('is-open'));
@@ -928,6 +931,7 @@ bootstrapStocking();
   function closePop(){
     pop.classList.remove('is-open');
     setTimeout(()=>{ pop.hidden = true; }, 140);
+    delete pop.dataset.bioagg;
     currentBtn = null;
 
     document.removeEventListener('mousedown', onDoc, { capture:true });
@@ -952,4 +956,52 @@ bootstrapStocking();
     else closePop();
   });
   closeEl.addEventListener('click', closePop);
+})();
+
+(function compactBioAggController(){
+  function getCard(){
+    return document.getElementById('bioagg-card');
+  }
+
+  function infoVisible(card){
+    if (!card) return false;
+    const openPop = document.querySelector('.ttg-popover.is-open[data-bioagg="1"]');
+    if (openPop) return true;
+
+    const activeEl = document.activeElement;
+    if (activeEl && card.contains(activeEl) && activeEl.classList.contains('info-btn')) {
+      return true;
+    }
+
+    const expanded = card.querySelector('[aria-expanded="true"]');
+    if (expanded) return true;
+
+    return false;
+  }
+
+  function update(){
+    const card = getCard();
+    if (!card) return;
+    if (infoVisible(card)) {
+      card.classList.remove('is-compact');
+    } else {
+      card.classList.add('is-compact');
+    }
+  }
+
+  document.addEventListener('click', ()=> setTimeout(update, 0), true);
+  document.addEventListener('keydown', (e)=>{
+    if (e.key === 'Escape') setTimeout(update, 0);
+  }, true);
+  window.addEventListener('resize', ()=> setTimeout(update, 0));
+  window.visualViewport?.addEventListener?.('resize', ()=> setTimeout(update, 0));
+  window.visualViewport?.addEventListener?.('scroll', ()=> setTimeout(update, 0));
+
+  const envBars = document.getElementById('env-bars');
+  if (envBars) {
+    const observer = new MutationObserver(()=> setTimeout(update, 0));
+    observer.observe(envBars, { childList: true });
+  }
+
+  update();
 })();
