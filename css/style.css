@@ -778,10 +778,6 @@ html {
   margin-bottom: 16px;
 }
 
-#stocking-page #tank-summary {
-  margin-top: 16px;
-}
-
 #stocking-page section[aria-labelledby="water-title"] {
   margin-top: 16px;
 }
@@ -789,10 +785,6 @@ html {
 @media (min-width: 720px) {
   #stocking-page section[aria-labelledby="controls-title"] {
     margin-bottom: 20px;
-  }
-
-  #stocking-page #tank-summary {
-    margin-top: 20px;
   }
 
   #stocking-page section[aria-labelledby="water-title"] {

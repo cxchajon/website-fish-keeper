@@ -72,16 +72,17 @@ if (!immediateSelect) {
 })();
 
 (function initTankSizeCard(){
-  const selectEl   = findTankSelect();
-  const factsEl    = document.getElementById('tank-facts');
+  const selectEl = findTankSelect();
 
   if (!selectEl) return;
-  if (!factsEl) return;
+  const specEl = document.querySelector('[data-role="tank-spec"]');
+
+  if (!specEl) return;
 
   const state = (window.appState = window.appState || {});
   const presetCache = new Map();
   const STORAGE_KEY = 'ttg.selectedTank';
-  const round1 = (n) => Math.round(n*10)/10;
+  const round1 = (n) => Math.round(n * 10) / 10;
 
   function cachePreset(preset){
     const normalized = normalizeTankPreset(preset);
@@ -115,13 +116,85 @@ if (!immediateSelect) {
   }
 
   // 2) Facts line
-  function setFacts(tank){
-    if (!tank){ factsEl.textContent = ''; return; }
-    const dimsIn = `${formatDim(tank.lengthIn)} × ${formatDim(tank.widthIn)} × ${formatDim(tank.heightIn)} in`;
-    const dimsCm = `${formatDim(tank.dimensionsCm.l)} × ${formatDim(tank.dimensionsCm.w)} × ${formatDim(tank.dimensionsCm.h)} cm`;
-    const weight = Number.isFinite(tank.filledWeightLbs) && tank.filledWeightLbs > 0 ? ` • ~${Math.round(tank.filledWeightLbs)} lbs filled` : '';
-    factsEl.textContent = `${tank.gallons}g • ${round1(tank.liters)} L • ${dimsIn} (${dimsCm})${weight}`;
+  function updateTankSpecLine(selectedTank){
+    specEl.setAttribute('role', 'note');
+    if (!selectedTank){
+      specEl.textContent = '';
+      return;
+    }
+
+    const gallons = Number.isFinite(selectedTank.gallons) ? `${selectedTank.gallons}g` : '';
+    const liters = Number.isFinite(selectedTank.liters) ? `${round1(selectedTank.liters)} L` : '';
+    const dimsIn = selectedTank.dimensionsIn ?? {
+      l: selectedTank.lengthIn,
+      w: selectedTank.widthIn,
+      h: selectedTank.heightIn,
+    };
+    const dimsCm = selectedTank.dimensionsCm ?? null;
+    const inches = dimsIn
+      ? `${formatDim(dimsIn.l)} × ${formatDim(dimsIn.w)} × ${formatDim(dimsIn.h)} in`
+      : '';
+    const centimeters = dimsCm
+      ? `(${formatDim(dimsCm.l)} × ${formatDim(dimsCm.w)} × ${formatDim(dimsCm.h)} cm)`
+      : '';
+    const weight = Number.isFinite(selectedTank.filledWeightLbs) && selectedTank.filledWeightLbs > 0
+      ? ` • ~${Math.round(selectedTank.filledWeightLbs)} lbs filled`
+      : '';
+
+    const segments = [gallons, liters, inches, centimeters].filter(Boolean);
+    specEl.textContent = `${segments.join(' • ')}${weight}`.trim();
   }
+
+  (function preventVariantUI(){
+    const forbiddenSelectors = [
+      "[data-role='tank-variant-chooser']",
+      '.tank-variant-chooser',
+      '.size-detail',
+      '.variant-drawer',
+      '.popover',
+      '.bottom-sheet',
+    ];
+
+    const shouldRemove = (node) => {
+      if (!node) return false;
+      const role = typeof node.getAttribute === 'function' ? node.getAttribute('data-role') : null;
+      const id = typeof node.id === 'string' ? node.id : '';
+      const classList = node.classList || { contains: () => false };
+      if (role === 'tank-variant-chooser') return true;
+      if (classList.contains('tank-variant-chooser') || classList.contains('variant-drawer') || classList.contains('size-detail') || classList.contains('bottom-sheet')) {
+        return true;
+      }
+      const withinTankCard = typeof node.closest === 'function' ? Boolean(node.closest('#tank-size-card')) : false;
+      if (withinTankCard) return true;
+      const text = typeof node.textContent === 'string' ? node.textContent : '';
+      if (/tank\s*variant/i.test(text) || /\b20\s+gallon\b/i.test(text)) {
+        return true;
+      }
+      if (classList.contains('popover')) {
+        if (withinTankCard) return true;
+        if (/tank/i.test(role || '') || /tank/i.test(id)) return true;
+        return false;
+      }
+      return false;
+    };
+
+    const removeAll = () => {
+      const selector = forbiddenSelectors.join(',');
+      document.querySelectorAll(selector).forEach((node) => {
+        if (shouldRemove(node)) {
+          node.remove();
+        }
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', removeAll, { once: true });
+    }
+    removeAll();
+
+    const observer = new MutationObserver(() => removeAll());
+    observer.observe(document.body, { childList: true, subtree: true });
+  })();
 
   // 3) Recompute hook
   function recompute(){
@@ -145,7 +218,7 @@ if (!immediateSelect) {
       selectEl.value = '';
       const snapshot = setTank(null);
       syncStateFromSnapshot(snapshot);
-      setFacts(null);
+      updateTankSpecLine(null);
       try { localStorage.removeItem(STORAGE_KEY); } catch (_){ }
       recompute();
       return;
@@ -155,7 +228,7 @@ if (!immediateSelect) {
     selectEl.value = tank.id;
     syncStateFromSnapshot(snapshot);
     state.variantId = null;
-    setFacts(snapshot);
+    updateTankSpecLine(snapshot);
     try { localStorage.setItem(STORAGE_KEY, tank.id); } catch(_){}
     recompute();
   }

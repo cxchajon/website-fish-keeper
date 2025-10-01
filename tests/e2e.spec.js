@@ -30,7 +30,7 @@ async function selectTank(page, gallons) {
     await control.selectOption(optionValue);
   }
   await page.keyboard.press('Tab');
-  await expect(page.locator('#tank-facts')).toContainText(`${gallons}`, { timeout: 6000 });
+  await expect(page.locator('[data-role="tank-spec"]')).toContainText(`${gallons}`, { timeout: 6000 });
   return control;
 }
 
@@ -106,7 +106,7 @@ test.describe('Stocking Advisor accessibility flows', () => {
   test('Tank selection updates summary and stock meters', async ({ page }, testInfo) => {
     await selectTank(page, 40);
 
-    const facts = page.locator('#tank-facts');
+    const facts = page.locator('[data-role="tank-spec"]');
     await expect(facts).toContainText(/40/);
 
     const bars = page.locator('[data-testid="stock-bars"] .env-bar__fill').first();
