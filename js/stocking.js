@@ -172,7 +172,8 @@ function bootstrapStocking() {
     pageTitle: document.getElementById('page-title'),
     plantIcon: document.getElementById('plant-icon'),
     planted: document.getElementById('toggle-planted'),
-    envInfoToggle: document.getElementById('env-info-toggle'),
+    envCard: document.querySelector('#env-card, [data-role="env-card"]'),
+    envInfoToggle: document.querySelector('#env-info-btn, #env-info-toggle, [data-role="env-info"]'),
     conditions: document.getElementById('conditions-list'),
     candidateChips: document.getElementById('candidate-chips'),
     candidateBanner: document.getElementById('candidate-banner'),
@@ -184,7 +185,7 @@ function bootstrapStocking() {
     diagnostics: document.getElementById('diagnostics'),
     diagnosticsContent: document.getElementById('diagnostics-content'),
     envReco: document.getElementById('env-reco'),
-    envTips: document.getElementById('env-more-tips'),
+    envTips: document.querySelector('#env-legend, #env-more-tips, [data-role="env-legend"]'),
   };
 
   const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
@@ -276,15 +277,6 @@ function bootstrapStocking() {
       lastScrubbedGallons = gallons;
     }
   }
-
-  let envTipsInitialized = false;
-  let envTipsHideTimer = null;
-  const envTipsFrame = typeof requestAnimationFrame === 'function'
-    ? requestAnimationFrame
-    : (fn) => setTimeout(fn, 0);
-  const envTipsTimeout = typeof window !== 'undefined' && typeof window.setTimeout === 'function'
-    ? window.setTimeout.bind(window)
-    : (fn, ms) => setTimeout(fn, ms);
 
 // ---- Add-to-Stock button wiring ----
 const elAdd = document.querySelector('#plan-add, .plan-add');
@@ -609,38 +601,15 @@ function updateToggle(control, value) {
   }
 }
 
-  function applyEnvTipsState(open, { animate = true } = {}) {
-    if (envTipsHideTimer) {
-      clearTimeout(envTipsHideTimer);
-      envTipsHideTimer = null;
-    }
+  function applyEnvTipsState(open) {
     const panel = refs.envTips;
-    if (!panel) {
-      if (refs.envInfoToggle) {
-        refs.envInfoToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      }
-      return;
+    const card = refs.envCard;
+    if (panel) {
+      panel.hidden = !open;
+      panel.setAttribute('aria-hidden', open ? 'false' : 'true');
     }
-    if (open) {
-      panel.hidden = false;
-      const activate = () => panel.classList.add('is-open');
-      if (animate) {
-        envTipsFrame(activate);
-      } else {
-        activate();
-      }
-    } else {
-      panel.classList.remove('is-open');
-      if (animate) {
-        envTipsHideTimer = envTipsTimeout(() => {
-          if (!state.showTips && refs.envTips) {
-            refs.envTips.hidden = true;
-          }
-          envTipsHideTimer = null;
-        }, 180);
-      } else {
-        panel.hidden = true;
-      }
+    if (card) {
+      card.classList.toggle('info-open', Boolean(open));
     }
     if (refs.envInfoToggle) {
       refs.envInfoToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -677,9 +646,8 @@ function populateSpecies() {
 
 function syncToggles() {
   updateToggle(refs.planted, state.planted);
-  if (refs.envTips || refs.envInfoToggle) {
-    applyEnvTipsState(state.showTips, { animate: envTipsInitialized });
-    envTipsInitialized = true;
+  if (refs.envTips || refs.envInfoToggle || refs.envCard) {
+    applyEnvTipsState(state.showTips);
   }
   if (refs.plantIcon) {
     refs.plantIcon.style.display = state.planted ? 'inline-flex' : 'none';
@@ -884,21 +852,45 @@ function buildGearPayload() {
 
 bootstrapStocking();
 
-(function envInfoToggleSafe(){
-  const infoBtn = document.getElementById('env-info-toggle');
-  const tipsPanel = document.getElementById('env-more-tips');
-  if (!infoBtn) return;
+(function initEnvInfoToggle(){
+  const card = document.querySelector('#env-card, [data-role="env-card"]');
+  const infoBtn = document.querySelector('#env-info-btn, #env-info-toggle, [data-role="env-info"]');
+  const legend = document.querySelector('#env-legend, #env-more-tips, [data-role="env-legend"]');
+  if (!card || !infoBtn || !legend) return;
 
-  infoBtn.addEventListener('click', guarded((e)=>{
+  const setOpen = (open, { emit = false } = {}) => {
+    card.classList.toggle('info-open', Boolean(open));
+    legend.hidden = !open;
+    legend.setAttribute('aria-hidden', open ? 'false' : 'true');
+    infoBtn.setAttribute('aria-expanded', String(open));
+    if (emit) {
+      document.dispatchEvent(
+        new CustomEvent('ttg:envTips:state', { detail: { open: Boolean(open) } })
+      );
+    }
+  };
+
+  const initialOpen = card.classList.contains('info-open');
+  setOpen(initialOpen);
+
+  document.addEventListener('ttg:envTips:state', (event) => {
+    const desired = Boolean(event?.detail?.open);
+    setOpen(desired);
+  });
+
+  infoBtn.addEventListener('click', guarded((e) => {
     e.preventDefault();
+    const willOpen = !card.classList.contains('info-open');
     const message = infoBtn.getAttribute('data-info') || 'Derived from your selected stock. Ranges reflect compatible overlaps.';
-    const usedShared = (window.TTG && typeof TTG.openInfoPopover === 'function')
-      ? (TTG.openInfoPopover(infoBtn, message), true)
-      : false;
 
-    if (!usedShared){
-      if (!infoBtn.dataset.popShown){
-        infoBtn.dataset.popShown = '1';
+    if (willOpen && !infoBtn.dataset.popShown) {
+      let usedShared = false;
+      if (window.TTG && typeof TTG.openInfoPopover === 'function') {
+        TTG.openInfoPopover(infoBtn, message);
+        usedShared = true;
+      }
+
+      if (!usedShared) {
         const pop = document.createElement('div');
         pop.className = 'ttg-popover is-open';
         Object.assign(pop.style, {
@@ -917,22 +909,13 @@ bootstrapStocking();
         const r = infoBtn.getBoundingClientRect();
         pop.style.left = `${Math.max(8, Math.min(window.innerWidth - pop.offsetWidth - 8, r.left))}px`;
         pop.style.top = `${Math.max(8, Math.min(window.innerHeight - pop.offsetHeight - 8, r.bottom + 8))}px`;
-        setTimeout(()=> pop.remove(), 2000);
-        infoBtn.setAttribute('aria-expanded', 'false');
-        return;
+        setTimeout(() => pop.remove(), 2000);
       }
 
-      if (tipsPanel){
-        const open = tipsPanel.classList.contains('is-open');
-        const next = !open;
-        tipsPanel.classList.toggle('is-open', next);
-        tipsPanel.hidden = !next;
-        infoBtn.setAttribute('aria-expanded', String(next));
-      }
-      return;
+      infoBtn.dataset.popShown = '1';
     }
 
-    infoBtn.setAttribute('aria-expanded', 'false');
+    setOpen(willOpen, { emit: true });
   }));
 })();
 

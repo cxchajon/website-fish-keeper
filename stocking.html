@@ -1051,27 +1051,41 @@
         }
 
         /* Env. Recommendations single icon “expanded” state (if present) */
-        #stocking-page #env-info-toggle[aria-expanded="true"] {
+        #stocking-page #env-info-toggle[aria-expanded="true"],
+        #stocking-page [data-role="env-info"][aria-expanded="true"] {
           background: rgba(20, 203, 168, 0.9);
           color: #0b1b18;
           border-color: rgba(20, 203, 168, 0.95);
           box-shadow: 0 0 0 2px rgba(20, 203, 168, 0.25);
         }
 
-        /* Collapsible tips panel (unchanged) */
-        #stocking-page .env-more-tips {
-          overflow: clip;
-          display: grid;
-          grid-template-rows: 0fr;
+        /* Environmental legend collapsed by default */
+        #stocking-page #env-card [data-role="env-legend"] {
+          display: none;
+          margin: 0;
+          padding-top: 0;
           opacity: 0;
-          transition: grid-template-rows 0.18s ease, opacity 0.18s ease;
+          transition: opacity 160ms ease;
         }
-        #stocking-page .env-more-tips > * {
-          min-height: 0;
-        }
-        #stocking-page .env-more-tips.is-open {
-          grid-template-rows: 1fr;
+
+        #stocking-page #env-card.info-open [data-role="env-legend"] {
+          display: block;
           opacity: 1;
+        }
+
+        #stocking-page #env-card .env-bars .env-bar,
+        #stocking-page #env-card .env-bars .bar-row {
+          margin-bottom: 0;
+        }
+
+        #stocking-page #env-card.info-open .env-bars .env-bar,
+        #stocking-page #env-card.info-open .env-bars .bar-row {
+          margin-bottom: var(--space-xs);
+        }
+
+        #stocking-page #env-card.info-open .env-bars .env-bar:last-child,
+        #stocking-page #env-card.info-open .env-bars .bar-row:last-child {
+          margin-bottom: 0;
         }
 
         /* Toggle (switch) alignment and size */
@@ -1184,6 +1198,7 @@
               type="button"
               id="env-info-toggle"
               class="info-btn"
+              data-role="env-info"
               aria-controls="env-more-tips"
               aria-expanded="false"
               aria-label="More info and tips about Environmental Recommendations"
@@ -1209,7 +1224,7 @@
             <!-- populated by JS: Bioload Capacity + Aggression & Compatibility -->
           </div>
 
-          <div id="env-more-tips" class="env-more-tips env-tips" hidden>
+          <div id="env-more-tips" class="env-more-tips env-tips" data-role="env-legend" hidden>
             <!-- brief bullets about GH/KH, salinity, blackwater, and flow zones -->
           </div>
         </div>
