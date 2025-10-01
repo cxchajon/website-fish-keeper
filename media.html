@@ -138,6 +138,37 @@
       font-weight: 600;
     }
 
+    #community .card .video-embed {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      margin-top: 12px;
+    }
+
+    #community .card .video-embed iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    #community .card .community-video-title {
+      margin: 16px 0 0;
+    }
+
+    #community .card .community-video-attribution {
+      margin: 4px 0 0;
+    }
+
+    #community .card .community-video-cta {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
     .resource-card {
       background: #e9f4ff;
       border-radius: 12px;
@@ -375,8 +406,33 @@
               Curated how-to videos and inspiration from creators we trust — and from folks who use and follow The Tank Guide.
               We rotate a featured pick regularly and keep an archive of favorites you can explore anytime.
             </p>
-            <div class="media-thumb" aria-label="Community video placeholder">Feature video thumbnail (placeholder)</div>
-            <a class="btn" href="/community-videos.html">View More Videos</a>
+            <div class="video-embed">
+              <iframe
+                src="https://www.youtube.com/embed/zX3wGQpC4eE"
+                title="Make a Freshwater Aquarium Sump — @SerpaDesign"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+                loading="lazy"
+              ></iframe>
+            </div>
+            <h3 class="card-subtitle community-video-title">Make a Freshwater Aquarium Sump</h3>
+            <p class="muted community-video-attribution">by <a href="https://youtube.com/@serpadesign" target="_blank" rel="noopener">@SerpaDesign</a></p>
+            <hr class="media-divider" />
+            <p>
+              Recommended by a community member: I chose this video because I used it as a bible to create my sump. I watched it
+              for hours, section by section, and copied the baffle design for my 5-gallon sump. The creator explains things simply
+              and clearly, making it easy to follow. This video gave me the direction to start more DIY projects.
+            </p>
+            <p>
+              If you’re looking for DIY aquarium builds, sump setup tutorials, or beginner-friendly fishkeeping tips, this video is
+              a fantastic place to start.
+            </p>
+            <div class="community-video-cta">
+              <a class="yt-cta" href="https://www.youtube.com/watch?v=zX3wGQpC4eE" target="_blank" rel="noopener" title="Watch Make a Freshwater Aquarium Sump on YouTube" aria-label="Watch Make a Freshwater Aquarium Sump on YouTube">
+                <span class="yt-icon" aria-hidden="true"></span>
+                <span class="yt-label">Watch on YouTube</span>
+              </a>
+            </div>
           </article>
         </div>
 
