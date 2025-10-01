@@ -94,7 +94,7 @@ test('gear page loads without console errors', async ({ page }) => {
 
 test('filter list renders for 29 gallons and computes turnover', async ({ page }) => {
   await gotoGear(page);
-  await tankSizeOption(page, '29');
+  await tankSizeOption(page, '29g');
   const filterCards = page.locator('#filter-options .product');
   await expect(filterCards).toHaveCountGreaterThan(0);
   const first = filterCards.first();
@@ -107,7 +107,7 @@ test('filter list renders for 29 gallons and computes turnover', async ({ page }
 
 test('medium plant level suggests one size up lighting', async ({ page }) => {
   await gotoGear(page);
-  await tankSizeOption(page, '29');
+  await tankSizeOption(page, '29g');
   await page.selectOption('#plant-level', 'med');
   const suggestion = page.locator('#light-options .product:has-text("One size up for even coverage")');
   await expect(suggestion.first()).toBeVisible();
@@ -115,7 +115,7 @@ test('medium plant level suggests one size up lighting', async ({ page }) => {
 
 test('adding items updates cart count and total', async ({ page }) => {
   await gotoGear(page);
-  await tankSizeOption(page, '29');
+  await tankSizeOption(page, '29g');
   await page.locator('#tank-options .product button.add-cart').first().click();
   await page.locator('#filter-options .product button.add-cart').first().click();
   await expect(page.locator('#cart-count')).toHaveText('2');
@@ -127,7 +127,7 @@ test('adding items updates cart count and total', async ({ page }) => {
 
 test('copy all links produces newline separated URLs', async ({ page }) => {
   await gotoGear(page);
-  await tankSizeOption(page, '29');
+  await tankSizeOption(page, '29g');
   await page.locator('#tank-options .product button.add-cart').first().click();
   await page.locator('#filter-options .product button.add-cart').first().click();
   await page.click('#cart-buy-all');

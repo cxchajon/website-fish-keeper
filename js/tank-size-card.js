@@ -1,4 +1,5 @@
 import { listTanks, getTankById } from './tankSizes.js';
+import { normalizeLegacyTankSelection } from './utils.js';
 import { setTank, normalizeTankPreset, getTankSnapshot } from './stocking/tankStore.js';
 
 (function wireTankSizeChevron(){
@@ -53,7 +54,6 @@ import { setTank, normalizeTankPreset, getTankSnapshot } from './stocking/tankSt
   function renderOptions(){
     presetCache.clear();
     const tanks = listTanks()
-      .filter((tank) => typeof tank.gallons === 'number' && tank.gallons >= 5 && tank.gallons <= 125)
       .map((tank) => cachePreset(tank))
       .filter(Boolean)
       .sort((a, b) => (a.gallons - b.gallons) || a.label.localeCompare(b.label));
@@ -125,8 +125,9 @@ import { setTank, normalizeTankPreset, getTankSnapshot } from './stocking/tankSt
   // Hydrate persisted tank choice
   let savedId = null;
   try { savedId = localStorage.getItem(STORAGE_KEY) || null; } catch(_){ }
-  if (savedId && getNormalizedById(savedId)) {
-    applySelection(savedId);
+  const normalizedSavedId = normalizeLegacyTankSelection(savedId);
+  if (normalizedSavedId && getNormalizedById(normalizedSavedId)) {
+    applySelection(normalizedSavedId);
   } else {
     const snapshot = getTankSnapshot();
     if (snapshot && snapshot.id) {
