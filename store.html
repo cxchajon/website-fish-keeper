@@ -1,0 +1,155 @@
+<!-- FILE: /store.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Meta -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Store — The Tank Guide</title>
+  <meta name="description" content="Shop books by FishKeepingLifeCo. Purchase Life in Balance: The Hidden Magic of Aquariums on Amazon." />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="canonical" href="https://thetankguide.com/store.html" />
+
+  <!-- Site CSS (keep your current version number) -->
+  <link rel="stylesheet" href="/css/style.css?v=1.0.8" />
+
+  <!-- Page-scoped styles (do not affect other pages) -->
+  <style>
+    .store-page { --gap: 1.25rem; --radius: 14px; --wrap: 1040px; }
+    .store-wrap { max-width: var(--wrap); margin: 0 auto; padding: 24px 16px 64px; }
+
+    /* Breadcrumbs */
+    .breadcrumbs { font-size: 13px; color: #8a94a3; margin-bottom: 8px; }
+    .breadcrumbs a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(138,148,163,.3); }
+    .breadcrumbs a:hover { border-bottom-color: currentColor; }
+
+    /* Header */
+    .store-hero .title { font-size: clamp(26px, 3.2vw, 40px); line-height: 1.1; margin: 6px 0; }
+    .store-hero .sub { color: #7a8390; font-size: clamp(14px, 1.6vw, 16px); margin: 0 0 18px; }
+
+    /* Shelf + Product card */
+    .shelf { display: grid; gap: var(--gap); }
+    .product {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--gap);
+      background: rgba(255,255,255,0.08);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .product .media {
+      aspect-ratio: 3/4;
+      border-radius: calc(var(--radius) - 4px);
+      overflow: hidden;
+      background: #0e1116;
+      display: grid;
+      place-items: center;
+    }
+    .product .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .product .details { display: grid; gap: 10px; align-content: start; }
+    .product .kicker { letter-spacing: .08em; text-transform: uppercase; font-size: 12px; color: #9aa3af; }
+    .product h2 { font-size: clamp(20px, 2.8vw, 28px); margin: 0; line-height: 1.2; }
+    .product .desc { color: #c8d0da; font-size: 15px; }
+    .product .bullets { margin: 6px 0 0; padding-left: 18px; color: #c8d0da; }
+    .product .meta { color: #9aa3af; font-size: 13px; }
+
+    .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 11px 16px; border-radius: 12px; font-weight: 600; text-decoration: none;
+      border: 1px solid transparent; cursor: pointer;
+    }
+    .btn.primary { background: #2dd4bf; color: #0b0f14; }
+    .btn.primary:hover { filter: brightness(0.95); }
+    .btn.secondary { background: transparent; color: #c8d0da; border-color: rgba(255,255,255,0.18); }
+    .note { color: #9aa3af; font-size: 12px; margin-top: 4px; }
+
+    /* Responsive: two columns on medium+ */
+    @media (min-width: 760px) {
+      .product { grid-template-columns: 360px 1fr; padding: 20px; }
+    }
+    /* Slightly wider wrap on XL */
+    @media (min-width: 1200px) { .store-wrap { max-width: 1080px; } }
+  </style>
+
+  <!-- JSON-LD (WebPage + Breadcrumbs) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebPage",
+    "name":"Store — The Tank Guide",
+    "url":"https://thetankguide.com/store.html",
+    "breadcrumb":{
+      "@type":"BreadcrumbList",
+      "itemListElement":[
+        {"@type":"ListItem","position":1,"name":"Home","item":"https://thetankguide.com/"},
+        {"@type":"ListItem","position":2,"name":"Store","item":"https://thetankguide.com/store.html"}
+      ]
+    }
+  }
+  </script>
+</head>
+
+<body class="store-page">
+  <div class="store-wrap">
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a> › <span aria-current="page">Store</span>
+    </nav>
+
+    <!-- Header -->
+    <header class="store-hero">
+      <h1 class="title">Store</h1>
+      <p class="sub">Books by FishKeepingLifeCo</p>
+    </header>
+
+    <!-- Shelf -->
+    <main class="shelf" id="books" aria-label="Books">
+      <!-- Product: Life in Balance -->
+      <article class="product" itemscope itemtype="https://schema.org/Book">
+        <div class="media">
+          <!-- Replace src with your actual image path if different -->
+          <img
+            src="/img/life-in-balance-cover.jpg"
+            alt="Book cover: Life in Balance — The Hidden Magic of Aquariums"
+            loading="eager" width="1200" height="1600" itemprop="image">
+        </div>
+
+        <div class="details">
+          <div class="kicker">Hardcover • Ages 6–12</div>
+          <h2 itemprop="name">Life in Balance: The Hidden Magic of Aquariums</h2>
+
+          <p class="desc" itemprop="description">
+            A friendly, science-meets-story tour of the nitrogen cycle, guided by Benny the Betta.
+            Perfect for young readers, classrooms, and new hobbyists.
+          </p>
+
+          <ul class="bullets">
+            <li>7×10 hardcover • educational & family-friendly</li>
+            <li>Explains water, bacteria, and balance in simple language</li>
+            <li>Pairs with our activity book (coming soon)</li>
+          </ul>
+
+          <div class="meta">Category: Aquariums • Science • Family &amp; Education</div>
+
+          <div class="cta-row">
+            <!-- TODO: replace href with the real Amazon product link -->
+            <a class="btn primary" href="https://www.amazon.com/dp/XXXXXXXXXX" target="_blank" rel="noopener noreferrer">
+              Buy on Amazon
+            </a>
+            <a class="btn secondary" href="/media.html#books">
+              See it in action
+            </a>
+          </div>
+
+          <div class="note">Purchases may earn us a small commission at no extra cost to you.</div>
+        </div>
+      </article>
+    </main>
+  </div>
+</body>
+</html>
