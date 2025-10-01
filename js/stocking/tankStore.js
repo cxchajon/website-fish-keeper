@@ -61,17 +61,40 @@ function freezeRecord(record) {
 export function normalizeTankPreset(preset) {
   if (!preset) return null;
   const gallons = ensureNumber(preset.gallons);
-  const liters = ensureNumber(preset.liters);
-  const lengthIn = ensureNumber(preset.lengthIn ?? preset.dimensions_in?.l);
-  const widthIn = ensureNumber(preset.widthIn ?? preset.dimensions_in?.w);
-  const heightIn = ensureNumber(preset.heightIn ?? preset.dimensions_in?.h);
+  let liters = ensureNumber(preset.liters);
+
+  const rawDims = preset.dims ?? {};
+  const dimLength = ensureNumber(rawDims.l ?? rawDims.length ?? rawDims.long ?? rawDims.w);
+  const dimWidth = ensureNumber(rawDims.w ?? rawDims.width);
+  const dimDepth = ensureNumber(rawDims.d ?? rawDims.depth);
+  const dimHeight = ensureNumber(rawDims.h ?? rawDims.height);
+
+  let lengthIn = ensureNumber(preset.lengthIn ?? preset.dimensions_in?.l ?? dimLength ?? dimWidth);
+  let widthIn = ensureNumber(preset.widthIn ?? preset.dimensions_in?.w ?? dimDepth ?? dimWidth);
+  let heightIn = ensureNumber(preset.heightIn ?? preset.dimensions_in?.h ?? dimHeight);
+
+  if (widthIn == null && dimDepth != null) {
+    widthIn = dimDepth;
+  }
+  if (heightIn == null && dimHeight != null) {
+    heightIn = dimHeight;
+  }
+  if (lengthIn == null && dimLength != null) {
+    lengthIn = dimLength;
+  }
 
   if (
-    gallons == null || liters == null ||
-    lengthIn == null || widthIn == null || heightIn == null
+    gallons == null ||
+    lengthIn == null ||
+    widthIn == null ||
+    heightIn == null
   ) {
     console.error('[TankStore] Tank preset missing numeric dimensions:', preset?.id ?? preset?.label ?? preset);
     return null;
+  }
+
+  if (liters == null) {
+    liters = roundTo(gallons * 3.78541, 1);
   }
 
   const filledWeight = ensureNumber(preset.filled_weight_lbs) ?? 0;

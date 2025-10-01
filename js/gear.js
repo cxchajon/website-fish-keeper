@@ -1,3 +1,6 @@
+import { TANK_SIZES, getTankById } from './tankSizes.js';
+import { normalizeLegacyTankSelection } from './utils.js';
+
 const diag = (globalThis.__gearDiag = globalThis.__gearDiag || {
   scriptsLoaded: false,
   dataLoaded: false,
@@ -13,37 +16,35 @@ if (!Array.isArray(diag.errors)) {
 }
 
 const tankVariantsBySize = {
-  '10': [
+  '5g': [],
+  '10g': [
     { id: 'tank10std', model: 'Aqueon 10 Gallon Standard', type: 'Standard', dims: [20, 10, 12], includes: '—', price: 69.99, link: 'https://amzn.to/3QLb10g' },
     { id: 'tank10rim', model: 'Lifegard Low Iron 10G', type: 'Rimless', dims: [20, 10, 12], includes: 'mat', price: 129.99, link: 'https://amzn.to/3QKx2c4' },
   ],
-  '20': [
+  '15g': [],
+  '20h': [
     { id: 'tank20std', model: 'Aqueon 20 Gallon High', type: 'Standard', dims: [24, 12, 16], includes: '—', price: 139.99, link: 'https://amzn.to/3wZqYxp' },
-    { id: 'tank20long', model: 'Aqueon 20 Gallon Long', type: 'Long', dims: [30, 12, 12], includes: '—', price: 149.99, link: 'https://amzn.to/4gl6i4z' },
     { id: 'tank20aio', model: 'Fluval Flex 23G', type: 'All-in-One', dims: [24, 15, 16], includes: 'pump, media', price: 279.99, link: 'https://amzn.to/3QK2hVj' },
   ],
-  '29': [
+  '20l': [
+    { id: 'tank20long', model: 'Aqueon 20 Gallon Long', type: 'Long', dims: [30, 12, 12], includes: '—', price: 149.99, link: 'https://amzn.to/4gl6i4z' },
+  ],
+  '29g': [
     { id: 'tank29std', model: 'Aqueon 29 Gallon', type: 'Standard', dims: [30, 12, 18], includes: '—', price: 179.99, link: 'https://amzn.to/3QQgB2C' },
     { id: 'tank29rim', model: 'Seapora 29 Rimless', type: 'Rimless', dims: [30, 14, 18], includes: 'mat', price: 279.99, link: 'https://amzn.to/4hJmfZb' },
     { id: 'tank29kit', model: 'Marineland Portrait 20G Kit', type: 'Kit (tall)', dims: [17, 11, 24], includes: 'LED, filter', price: 189.99, link: 'https://amzn.to/3W35lTI' },
   ],
-  '40': [
+  '40b': [
     { id: 'tank40bre', model: 'Aqueon 40 Breeder', type: 'Breeder', dims: [36, 18, 16], includes: '—', price: 239.99, link: 'https://amzn.to/4gkKd99' },
     { id: 'tank40rim', model: 'Innovative Marine NUVO 40', type: 'All-in-One', dims: [36, 18, 16], includes: 'media baskets', price: 449.99, link: 'https://amzn.to/3y8d18G' },
   ],
-  '55': [
+  '55g': [
     { id: 'tank55std', model: 'Aqueon 55 Gallon', type: 'Standard', dims: [48, 13, 21], includes: '—', price: 329.99, link: 'https://amzn.to/4gkLzT7' },
   ],
-  '75': [
+  '75g': [
     { id: 'tank75std', model: 'Aqueon 75 Gallon', type: 'Standard', dims: [48, 18, 21], includes: '—', price: 409.99, link: 'https://amzn.to/3y8h30d' },
   ],
-  '90': [
-    { id: 'tank90std', model: 'Aqueon 90 Gallon', type: 'Standard', dims: [48, 18, 24], includes: '—', price: 499.99, link: 'https://amzn.to/3wxXOTF' },
-  ],
-  '120': [
-    { id: 'tank120std', model: 'Aqueon 120 Gallon', type: 'Standard', dims: [48, 24, 24], includes: '—', price: 699.99, link: 'https://amzn.to/4hJFCgk' },
-  ],
-  '125': [
+  '125g': [
     { id: 'tank125std', model: 'Marineland 125 Gallon', type: 'Standard', dims: [72, 18, 21], includes: '—', price: 799.99, link: 'https://amzn.to/3W3JBjZ' },
   ],
 };
@@ -118,15 +119,88 @@ function dimsToText(dims) {
   return `${dims[0]}×${dims[1]}×${dims[2]}`;
 }
 
-function inferTankLength(size) {
+function inferTankLength(size, tankFallback = null) {
   const variants = tankVariantsBySize[size];
-  if (!variants || !variants.length) return null;
-  return Math.max(...variants.map((variant) => variant.dims[0]));
+  if (variants && variants.length) {
+    return Math.max(...variants.map((variant) => variant.dims[0]));
+  }
+  const tank = tankFallback ?? getTankById(size);
+  const dims = tank?.dims;
+  if (dims && typeof dims.w === 'number' && Number.isFinite(dims.w)) {
+    return Number(dims.w);
+  }
+  return null;
 }
 
 function ensureArrayOfObjects(list) {
   if (!Array.isArray(list)) return [];
   return list.filter((item) => item && typeof item === 'object');
+}
+
+function populateTankSelect() {
+  const select = els.tankSelect;
+  if (!select) return;
+  const current = normalizeLegacyTankSelection(select.value);
+  const fragment = document.createDocumentFragment();
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '-- Select --';
+  placeholder.disabled = true;
+  if (!current) {
+    placeholder.selected = true;
+  }
+  fragment.appendChild(placeholder);
+  TANK_SIZES.forEach(({ id, label }) => {
+    const option = document.createElement('option');
+    option.value = id;
+    option.textContent = label;
+    if (current === id) {
+      option.selected = true;
+    }
+    fragment.appendChild(option);
+  });
+  select.innerHTML = '';
+  select.appendChild(fragment);
+  if (current && getTankById(current)) {
+    select.value = current;
+  }
+}
+
+function syncStateFromSelect() {
+  const rawValue = els.tankSelect ? els.tankSelect.value : '';
+  const normalized = normalizeLegacyTankSelection(rawValue);
+  const tank = normalized ? getTankById(normalized) : null;
+  if (tank) {
+    if (els.tankSelect && els.tankSelect.value !== tank.id) {
+      els.tankSelect.value = tank.id;
+    }
+    state.size = tank.id;
+    state.gallons = tank.gallons;
+    state.tankLength = inferTankLength(tank.id, tank);
+  } else {
+    state.size = '';
+    state.gallons = 0;
+    state.tankLength = null;
+    if (els.tankSelect) {
+      els.tankSelect.value = '';
+    }
+  }
+}
+
+function handleTankSelectionChange() {
+  syncStateFromSelect();
+  state.tankCompare = [];
+  state.filterCompare = [];
+  state.lightCompare = [];
+  state.heaterCompare = [];
+  renderTankOptions();
+  renderTankCompare();
+  renderFilters();
+  renderFilterCompare();
+  renderLights();
+  renderLightCompare();
+  renderHeaters();
+  renderHeaterCompare();
 }
 
 function gatherCartLinks() {
@@ -219,15 +293,20 @@ function renderTankOptions() {
     return;
   }
 
-  const variants = tankVariantsBySize[state.size];
-  if (!variants || !variants.length) {
+  const activeTank = getTankById(state.size);
+  const variants = tankVariantsBySize[state.size] ?? [];
+
+  if (activeTank) {
+    els.sizeChip.textContent = activeTank.label;
+    els.sizeChip.hidden = false;
+  } else {
     els.sizeChip.hidden = true;
+  }
+
+  if (!variants.length) {
     container.innerHTML = '<p class="muted">No tank data yet for this size.</p>';
     return;
   }
-
-  els.sizeChip.textContent = `${state.size} Gallon`;
-  els.sizeChip.hidden = false;
 
   variants.forEach((tank) => {
     const volume = Math.round((tank.dims[0] * tank.dims[1] * tank.dims[2]) / 231);
@@ -760,23 +839,7 @@ async function copyAllLinks() {
 }
 
 function bindEvents() {
-  els.tankSelect.addEventListener('change', () => {
-    state.size = els.tankSelect.value;
-    state.gallons = state.size ? Number(state.size) : 0;
-    state.tankLength = state.size ? inferTankLength(state.size) : null;
-    state.tankCompare = [];
-    state.filterCompare = [];
-    state.lightCompare = [];
-    state.heaterCompare = [];
-    renderTankOptions();
-    renderTankCompare();
-    renderFilters();
-    renderFilterCompare();
-    renderLights();
-    renderLightCompare();
-    renderHeaters();
-    renderHeaterCompare();
-  });
+  els.tankSelect.addEventListener('change', handleTankSelectionChange);
 
   els.plantSelect.addEventListener('change', () => {
     state.plantLevel = els.plantSelect.value;
@@ -860,6 +923,8 @@ function cacheElements() {
 function initialise() {
   try {
     cacheElements();
+    populateTankSelect();
+    syncStateFromSelect();
     state.plantLevel = els.plantSelect.value || 'med';
     renderAddOns();
     loadCartFromStorage();

@@ -139,10 +139,7 @@
         <div class="row">
           <label for="tank-size"><strong>Choose size:</strong></label>
           <select id="tank-size" aria-label="Tank size">
-            <option value="">-- Select --</option>
-            <option>10</option><option>20</option><option>29</option><option>40</option>
-            <option>50</option><option>55</option><option>75</option><option>90</option>
-            <option>120</option><option>125</option>
+            <option value="" selected>-- Select --</option>
           </select>
           <span class="chip" id="size-chip" style="display:none;"></span>
         </div>
@@ -271,6 +268,7 @@
     Not sure what gear you really need for your aquarium? The Gear Guide by FishKeepingLifeCo helps aquarists choose the right equipment — from filters and heaters to lighting and water care supplies. Clear recommendations are matched to your tank size, goals, and fish community, making it easy to build a healthy freshwater aquarium setup. And if your goal is a planted aquarium, our guidance helps you select the right lighting, substrate, and tools to keep your plants thriving alongside your fish.
   </p>
   <div id="site-footer"></div>
+  <script type="module" src="js/gear.js"></script>
   <script>
 (async () => {
   try {
