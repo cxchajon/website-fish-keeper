@@ -2,12 +2,14 @@ import { TANK_SIZES, getTankById, normalizeLegacyTankSelection } from './utils.j
 import { setTank, normalizeTankPreset, getTankSnapshot } from './stocking/tankStore.js';
 
 const TANK_SELECT_QUERY = "#tank-size, [data-role='tank-size'], select[name='tank-size'], select[name='tankSize'], #tank-size-select";
+const ALLOWED_TANK_IDS = new Set(TANK_SIZES.map((tank) => tank.id));
 
 function findTankSelect() {
   return document.querySelector(TANK_SELECT_QUERY);
 }
 
 function renderTankSizeOptions(selectEl) {
+  if (!selectEl) return;
   selectEl.innerHTML = '';
   TANK_SIZES.forEach(({ id, label }) => {
     const opt = document.createElement('option');
@@ -15,6 +17,31 @@ function renderTankSizeOptions(selectEl) {
     opt.textContent = label;
     selectEl.appendChild(opt);
   });
+  enforceTankWhitelist(selectEl);
+}
+
+function enforceTankWhitelist(selectEl) {
+  if (!selectEl) return;
+  [...selectEl.options].forEach((option) => {
+    if (!ALLOWED_TANK_IDS.has(option.value)) {
+      option.remove();
+    }
+  });
+}
+
+function installTankMutationGuard(selectEl) {
+  if (!selectEl) return;
+  if (selectEl.dataset.tankWhitelistGuard === '1') {
+    enforceTankWhitelist(selectEl);
+    return;
+  }
+
+  const prune = () => enforceTankWhitelist(selectEl);
+  const observer = new MutationObserver(prune);
+  observer.observe(selectEl, { childList: true });
+  prune();
+  selectEl.dataset.tankWhitelistGuard = '1';
+  selectEl.__tankWhitelistObserver = observer;
 }
 
 const immediateSelect = findTankSelect();
@@ -22,6 +49,7 @@ if (!immediateSelect) {
   console.error('Tank size <select> not found on Stocking Advisor page.');
 } else {
   renderTankSizeOptions(immediateSelect);
+  installTankMutationGuard(immediateSelect);
 }
 
 (function wireTankSizeChevron(){
@@ -137,6 +165,7 @@ if (!immediateSelect) {
 
   // 6) Init
   renderOptions();
+  installTankMutationGuard(selectEl);
 
   // Hydrate persisted tank choice
   let savedId = null;
