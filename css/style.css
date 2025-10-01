@@ -114,7 +114,19 @@ body.theme-light {
   margin-left: auto;
   display: flex;
   align-items: center;
+}
+
+#global-nav .links .nav__list {
+  display: flex;
+  align-items: center;
   gap: var(--nav-inline-gap);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#global-nav .links .nav__item {
+  display: flex;
 }
 
 #global-nav .links .nav__link {
@@ -374,10 +386,20 @@ body.theme-light {
 }
 
 #global-nav #ttg-drawer .drawer-links {
-  display: flex;
-  flex-direction: column;
   padding: 12px 0 24px;
   overflow-y: auto;
+}
+
+#global-nav #ttg-drawer .drawer-links .nav__list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#global-nav #ttg-drawer .drawer-links .nav__item {
+  display: block;
 }
 
 #global-nav #ttg-drawer .drawer-links .nav__link {
