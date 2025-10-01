@@ -1325,4 +1325,14 @@ body.planted-active #cycling-coach .cc-title__leaf {
 }
 
 /* Ensure spacing looks good inside the card only */
-.featured-videos-card .video-meta{ padding-top:.25rem; }
+.featured-videos-card .now-playing{ margin:12px 0 4px; }
+.featured-videos-card .media-divider{
+  border:0;
+  border-top:1px solid var(--border);
+  width:100%;
+  margin:4px 0 4px;
+}
+.featured-videos-card .video-meta{
+  padding-top:.25rem;
+  margin-top:0;
+}
