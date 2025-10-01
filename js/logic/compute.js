@@ -1,12 +1,12 @@
 import { FISH_DB } from "../fish-data.js";
 import { validateSpeciesRecord } from "./speciesSchema.js";
 import { EMPTY_TANK } from '../stocking/tankStore.js';
+import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent, PLANTED_CAPACITY_BONUS } from '../bioload.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import {
   clamp,
   formatNumber,
   formatPercent,
-  percentLabel,
   sum,
   roundTo,
   getBandColor,
@@ -72,6 +72,9 @@ export function getDefaultSpeciesId() {
 
 export function autoBioloadUnit(species) {
   if (!species) return 0;
+  if (Number.isFinite(species.bioloadGE)) {
+    return species.bioloadGE;
+  }
   if (Number.isFinite(species.bioload_unit)) {
     return species.bioload_unit;
   }
@@ -170,10 +173,11 @@ function calcTank(state, entries, overrideVariant) {
   const volume = gallons + 0.7 * sump;
   const turnover = clamp(Number(state.turnover) || 5, 0.5, 20);
   const multiplier = interpolateMultiplier(turnover);
-  const plantedMultiplier = planted ? (state.tankAgeWeeks && state.tankAgeWeeks < 6 ? 1.05 : 1.15) : 1;
-  const baseCapacity = volume * 0.06;
-  const capacity = baseCapacity * multiplier * plantedMultiplier;
-  const recommendedCapacity = capacity;
+  const plantedMultiplier = planted ? (1 + PLANTED_CAPACITY_BONUS) : 1;
+  const effectiveGallons = getEffectiveGallons(gallons, { planted });
+  const baseCapacity = effectiveGallons;
+  const capacity = effectiveGallons;
+  const recommendedCapacity = effectiveGallons;
   const deliveredGph = turnover * volume;
   const ratedGph = deliveredGph / 0.78;
 
@@ -194,6 +198,7 @@ function calcTank(state, entries, overrideVariant) {
     baseCapacity,
     capacity,
     recommendedCapacity,
+    effectiveGallons,
     deliveredGph,
     ratedGph,
   };
@@ -370,24 +375,47 @@ function computeConditions(state, entries, candidate, water, showMore) {
   return { conditions: [...conditions, ...filteredOptional], salinityCheck, flowCheck, blackwaterCheck, phSeverity, tempSeverity, ghSeverity, khSeverity };
 }
 
+function mapEntriesToStock(entries = []) {
+  return entries.map((entry) => ({ speciesId: entry.id, count: entry.qty }));
+}
+
 function computeBioload(tank, entries, candidate) {
-  const currentLoad = sum(entries, (entry) => entry.bioload);
-  const candidateLoad = candidate?.bioload ?? 0;
-  const proposed = currentLoad + candidateLoad;
-  const capacity = Math.max(tank.recommendedCapacity, 0.0001);
-  const currentPercent = currentLoad / capacity;
-  const proposedPercent = proposed / capacity;
+  const currentStock = mapEntriesToStock(entries);
+  const candidateStock = candidate ? [{ speciesId: candidate.id, count: candidate.qty }] : [];
+  const proposedStock = candidate ? [...currentStock, ...candidateStock] : currentStock;
+
+  const currentLoad = getTotalGE(currentStock, SPECIES_MAP);
+  const candidateLoad = getTotalGE(candidateStock, SPECIES_MAP);
+  const proposed = getTotalGE(proposedStock, SPECIES_MAP);
+
+  const effectiveGallons = getEffectiveGallons(tank.gallons, { planted: tank.planted });
+  const capacity = Math.max(effectiveGallons, 0.0001);
+  const currentPercentValue = computeBioloadPercent({
+    gallons: tank.gallons,
+    planted: tank.planted,
+    currentStock,
+    speciesMap: SPECIES_MAP,
+  });
+  const proposedPercentValue = computeBioloadPercent({
+    gallons: tank.gallons,
+    planted: tank.planted,
+    currentStock: proposedStock,
+    speciesMap: SPECIES_MAP,
+  });
+  const currentPercent = currentPercentValue / 100;
+  const proposedPercent = proposedPercentValue / 100;
   const color = getBandColor(proposedPercent);
   const turnoverIssue = tank.turnover < 2;
   const severity = proposedPercent > 1.1 ? 'bad' : proposedPercent > 0.9 ? 'warn' : turnoverIssue ? 'warn' : 'ok';
-  const text = `${percentLabel(currentPercent, proposedPercent)} of capacity`;
+  const text = `${formatBioloadPercent(currentPercentValue)} → ${formatBioloadPercent(proposedPercentValue)} of capacity`;
   const message = turnoverIssue ? 'Turnover below 2× — upgrade filtration' : undefined;
-  const badge = candidate && !Number.isFinite(candidate.species.bioload_unit) ? 'estimated' : null;
+  const badge = candidate && !Number.isFinite(candidate.species.bioloadGE) ? 'estimated' : null;
   return {
     currentLoad,
     candidateLoad,
     proposed,
     capacity,
+    effectiveGallons,
     currentPercent,
     proposedPercent,
     color,
@@ -471,9 +499,14 @@ function computeStatus({ bioload, aggression, conditions, groupRule, salinityChe
 function computeDiagnostics({ tank, bioload, aggression, status, candidate, entries }) {
   const lines = [];
   lines.push(`Tank variant: ${tank.variant ? tank.variant.name : 'n/a'} (${tank.length}″)`);
-  lines.push(`Capacity (recommended): ${roundTo(tank.recommendedCapacity, 3)} units`);
-  lines.push(`Current load: ${roundTo(bioload.currentLoad, 3)} | Proposed: ${roundTo(bioload.proposed, 3)}`);
-  lines.push(`Bioload %: ${formatPercent(bioload.currentPercent)} → ${formatPercent(bioload.proposedPercent)}`);
+  const effectiveGallons = Number.isFinite(bioload.effectiveGallons)
+    ? bioload.effectiveGallons
+    : Number.isFinite(tank.effectiveGallons)
+      ? tank.effectiveGallons
+      : 0;
+  lines.push(`Effective gallons: ${roundTo(effectiveGallons, 3)}`);
+  lines.push(`Current GE: ${roundTo(bioload.currentLoad, 3)} | Proposed GE: ${roundTo(bioload.proposed, 3)}`);
+  lines.push(`Bioload %: ${formatBioloadPercent(bioload.currentPercent * 100)} → ${formatBioloadPercent(bioload.proposedPercent * 100)}`);
   lines.push(`Aggression: ${aggression.label} (${aggression.severity})`);
   lines.push(`Entries: ${entries.length}${candidate ? ` + candidate ${candidate.species.common_name}` : ''}`);
   lines.push(status.label);
