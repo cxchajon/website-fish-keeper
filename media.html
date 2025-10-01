@@ -72,6 +72,26 @@
       background:#fff; color:#0b1020;
     }
     .muted { color: var(--muted); }
+    .now-playing {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+    .now-playing-label {
+      font-weight: 700;
+      color: #ff0000;
+      transition: color 0.2s ease;
+      cursor: default;
+      text-shadow: -1px 0 0 #000, 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000;
+    }
+    .now-playing-label:hover {
+      color: #cc0000;
+    }
+    .now-playing-title {
+      padding-left: 6px;
+      font-weight: 400;
+      color: inherit;
+    }
     .center { text-align:center; }
 
     /* --- Featured Resource --- */
@@ -269,7 +289,7 @@
             style="position:absolute;inset:0;width:100%;height:100%;border:0;">
           </iframe>
         </div>
-        <p class="muted now-playing">Now playing: <strong>FishKeepingLifeCo Official Intro</strong></p>
+        <p class="muted now-playing"><span class="now-playing-label">Now Playing:</span><span class="now-playing-title">FishKeepingLifeCo Official Intro</span></p>
         <hr class="media-divider" />
         <div class="video-meta">
           <p class="video-blurb">
