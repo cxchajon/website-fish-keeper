@@ -1,5 +1,6 @@
 import { FISH_DB } from "../fish-data.js";
 import { validateSpeciesRecord } from "./speciesSchema.js";
+import { EMPTY_TANK } from '../stocking/tankStore.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import {
   clamp,
@@ -151,7 +152,10 @@ function buildCandidate(candidate) {
 }
 
 function calcTank(state, entries, overrideVariant) {
-  const gallons = clamp(Number(state.gallons) || 0, 1, 999);
+  const tankState = state?.tank ?? EMPTY_TANK;
+  const hasTankGallons = Number.isFinite(tankState.gallons) && tankState.gallons > 0;
+  const gallonsSource = hasTankGallons ? tankState.gallons : Number(state.gallons) || 0;
+  const gallons = clamp(gallonsSource, 0, 999);
   const sump = clamp(Number(state.sumpGallons) || 0, 0, 400);
   const planted = Boolean(state.planted);
   const manualVariant = overrideVariant ?? state.variantId ?? null;
@@ -160,9 +164,9 @@ function calcTank(state, entries, overrideVariant) {
     ?? getTankVariants(gallons)[0]
     ?? null;
 
-  const length = variant?.length ?? 0;
-  const width = variant?.width ?? 0;
-  const height = variant?.height ?? 0;
+  const length = Number.isFinite(tankState.lengthIn) && tankState.lengthIn > 0 ? tankState.lengthIn : variant?.length ?? 0;
+  const width = Number.isFinite(tankState.widthIn) && tankState.widthIn > 0 ? tankState.widthIn : variant?.width ?? 0;
+  const height = Number.isFinite(tankState.heightIn) && tankState.heightIn > 0 ? tankState.heightIn : variant?.height ?? 0;
   const volume = gallons + 0.7 * sump;
   const turnover = clamp(Number(state.turnover) || 5, 0.5, 20);
   const multiplier = interpolateMultiplier(turnover);
@@ -178,6 +182,8 @@ function calcTank(state, entries, overrideVariant) {
     sump,
     planted,
     variant,
+    presetId: tankState.id ?? null,
+    presetLabel: tankState.label ?? '',
     length,
     width,
     height,
@@ -416,9 +422,6 @@ function computeAggression(tank, entries, candidate) {
 function computeChips({ tank, candidate, entries, groupRule, salinityCheck, flowCheck, blackwaterCheck, bioload, conditions }) {
   const chips = [];
   if (!candidate) return chips;
-  if (candidate.species.min_tank_length_in && candidate.species.min_tank_length_in > tank.length) {
-    chips.push({ tone: 'bad', text: `Needs ${candidate.species.min_tank_length_in}″ tank length (yours ${tank.length}″)` });
-  }
   if (groupRule) {
     chips.push({ tone: groupRule.severity === 'bad' ? 'bad' : 'warn', text: groupRule.message });
   }
@@ -661,6 +664,7 @@ export function createDefaultState() {
     gallons: 0,
     liters: 0,
     selectedTankId: null,
+    tank: EMPTY_TANK,
     planted: false,
     showTips: false,
     turnover: 5,
