@@ -1,4 +1,5 @@
 import { clamp, getBandColor } from './utils.js';
+import { formatBioloadPercent } from '../bioload.js';
 
 const dash = '—';
 const showRange = (range) => {
@@ -364,9 +365,12 @@ function renderConditionsExcel(env, { isEmpty = false } = {}) {
 
 function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   if (!root) return;
-  const bioloadPct = isEmpty ? 0 : sanitizePercent(env.bioloadPct);
+  const rawBioloadPct = isEmpty ? 0 : Number(env.bioloadPct) || 0;
+  const bioloadPct = isEmpty ? 0 : sanitizePercent(rawBioloadPct);
   const aggressionPct = isEmpty ? 0 : sanitizePercent(env.aggressionPct);
   const bioloadColor = getBandColor(bioloadPct / 100);
+  const bioloadDisplay = formatBioloadPercent(Math.max(0, Math.min(200, rawBioloadPct)));
+  const bioloadAria = Number.isFinite(bioloadPct) ? Number(bioloadPct.toFixed(2)) : 0;
   const aggressionColor = colorForSeverity(isEmpty ? 'ok' : env.aggressionSeverity);
   const bioloadNotes = isEmpty ? '' : renderChips(env.barNotes?.bioload ?? []);
   const aggressionNotes = isEmpty ? '' : renderChips(env.barNotes?.aggression ?? []);
@@ -383,9 +387,9 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
         <div class="env-bar env-bar--xl bar-row">
           <div class="env-bar__hd">
             <div class="env-bar__label metric-label">Bioload ${bioloadInfoBtn}</div>
-            <div class="env-bar__value">${Math.round(bioloadPct)}%</div>
+            <div class="env-bar__value">${bioloadDisplay}</div>
           </div>
-          <div class="env-bar__track meter-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(bioloadPct)}">
+          <div class="env-bar__track meter-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${bioloadAria}">
             <div class="env-bar__fill" style="width:${bioloadPct}%; background:${bioloadColor};"></div>
           </div>
         </div>
@@ -411,7 +415,7 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
           <span class="env-bar__label metric-label">Bioload ${bioloadInfoBtn}</span>
           <span>${escapeHtml(bioloadLabel)}</span>
         </div>
-        <div class="env-bar__track progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(bioloadPct)}">
+        <div class="env-bar__track progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${bioloadAria}">
           <div class="env-bar__fill" style="width:${bioloadPct}%; background:${bioloadColor};"></div>
         </div>
         ${bioloadNotes}
