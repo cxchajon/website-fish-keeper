@@ -910,6 +910,50 @@ html {
 }
 .info-btn:hover{ background: rgba(0,0,0,0.5); }
 
+.icon-button.info{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  line-height: 1;
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  border: 0;
+  padding: 0;
+  transform: translateY(1px);
+  cursor: pointer;
+}
+.icon-button.info:hover{ background: rgba(0,0,0,0.5); }
+.icon-button.info:focus-visible{ outline:2px solid rgba(20,203,168,0.55); outline-offset:2px; }
+
+[data-role="env-info-tip"][hidden]{
+  display: none;
+}
+
+[data-role="env-info-tip"]{
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  right: 0;
+  max-width: 280px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(6,12,24,0.96);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 18px 36px -24px rgba(0,0,0,0.35);
+  color: rgba(235,239,251,0.95);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.icon-button.info.is-open + [data-role="env-info-tip"]{
+  opacity: 1;
+}
+
 /* Remove default paragraph spacing INSIDE hero to keep tight control */
 .hero-header p{ margin-top: 0; }
 
