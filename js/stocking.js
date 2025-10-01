@@ -81,7 +81,8 @@ function createLengthValidator(container) {
     chip = document.createElement('span');
     chip.className = 'chip';
     chip.dataset.tone = 'bad';
-    chip.dataset.role = 'tank-length-warning';
+    chip.dataset.role = 'stock-warning-length';
+    chip.dataset.field = 'length-warning';
     chip.setAttribute('data-testid', 'tank-length-warning');
     return chip;
   };
