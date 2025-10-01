@@ -1,9 +1,32 @@
-import { listTanks, getTankById } from './tankSizes.js';
+import { TANK_SIZES, getTankById, normalizeLegacyTankSelection } from './utils.js';
 import { setTank, normalizeTankPreset, getTankSnapshot } from './stocking/tankStore.js';
+
+const TANK_SELECT_QUERY = "#tank-size, [data-role='tank-size'], select[name='tank-size'], select[name='tankSize'], #tank-size-select";
+
+function findTankSelect() {
+  return document.querySelector(TANK_SELECT_QUERY);
+}
+
+function renderTankSizeOptions(selectEl) {
+  selectEl.innerHTML = '';
+  TANK_SIZES.forEach(({ id, label }) => {
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = label;
+    selectEl.appendChild(opt);
+  });
+}
+
+const immediateSelect = findTankSelect();
+if (!immediateSelect) {
+  console.error('Tank size <select> not found on Stocking Advisor page.');
+} else {
+  renderTankSizeOptions(immediateSelect);
+}
 
 (function wireTankSizeChevron(){
   const wrap = document.getElementById('tank-size-select-wrap');
-  const sel  = document.getElementById('tank-size-select');
+  const sel  = findTankSelect();
   if (!wrap || !sel) return;
 
   // On desktop browsers, focus/blur is enough. On iOS, change is the reliable signal.
@@ -21,10 +44,11 @@ import { setTank, normalizeTankPreset, getTankSnapshot } from './stocking/tankSt
 })();
 
 (function initTankSizeCard(){
-  const selectEl   = document.getElementById('tank-size-select');
+  const selectEl   = findTankSelect();
   const factsEl    = document.getElementById('tank-facts');
 
-  if (!selectEl || !factsEl) return;
+  if (!selectEl) return;
+  if (!factsEl) return;
 
   const state = (window.appState = window.appState || {});
   const presetCache = new Map();
@@ -49,22 +73,11 @@ import { setTank, normalizeTankPreset, getTankSnapshot } from './stocking/tankSt
     return cachePreset(preset);
   }
 
-  // 1) Populate select from curated dataset (5–125g)
+  // 1) Populate select from canonical dataset
   function renderOptions(){
     presetCache.clear();
-    const tanks = listTanks()
-      .filter((tank) => typeof tank.gallons === 'number' && tank.gallons >= 5 && tank.gallons <= 125)
-      .map((tank) => cachePreset(tank))
-      .filter(Boolean)
-      .sort((a, b) => (a.gallons - b.gallons) || a.label.localeCompare(b.label));
-
-    [...selectEl.querySelectorAll('option:not([disabled])')].forEach((option) => option.remove());
-    for (const tank of tanks) {
-      const opt = document.createElement('option');
-      opt.value = tank.id;
-      opt.textContent = tank.label;
-      selectEl.appendChild(opt);
-    }
+    renderTankSizeOptions(selectEl);
+    TANK_SIZES.forEach((tank) => cachePreset(tank));
   }
 
   function formatDim(value){
@@ -96,8 +109,10 @@ import { setTank, normalizeTankPreset, getTankSnapshot } from './stocking/tankSt
   }
 
   // 4) Apply selection
-  function applySelection(id){
-    const tank = id ? getNormalizedById(id) : null;
+  function applySelection(rawId){
+    const normalizedId = normalizeLegacyTankSelection(rawId);
+    const tank = normalizedId ? getNormalizedById(normalizedId) : null;
+
     if (!tank){
       selectEl.value = '';
       const snapshot = setTank(null);
@@ -107,6 +122,7 @@ import { setTank, normalizeTankPreset, getTankSnapshot } from './stocking/tankSt
       recompute();
       return;
     }
+
     const snapshot = setTank(tank);
     selectEl.value = tank.id;
     syncStateFromSnapshot(snapshot);
@@ -125,17 +141,14 @@ import { setTank, normalizeTankPreset, getTankSnapshot } from './stocking/tankSt
   // Hydrate persisted tank choice
   let savedId = null;
   try { savedId = localStorage.getItem(STORAGE_KEY) || null; } catch(_){ }
-  if (savedId && getNormalizedById(savedId)) {
-    applySelection(savedId);
-  } else {
-    const snapshot = getTankSnapshot();
-    if (snapshot && snapshot.id) {
-      selectEl.value = snapshot.id;
-      setFacts(snapshot);
-    } else {
-      setFacts(null);
-    }
-  }
+
+  const initialId = (() => {
+    const candidate = savedId ?? getTankSnapshot()?.id ?? null;
+    const normalized = normalizeLegacyTankSelection(candidate);
+    return getNormalizedById(normalized) ? normalized : normalizeLegacyTankSelection('');
+  })();
+
+  applySelection(initialId);
 })();
 
 (function wirePlantedOverlay(){
