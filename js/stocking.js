@@ -860,6 +860,8 @@ bootstrapStocking();
   const freshBtn = btn.cloneNode(true);
   btn.replaceWith(freshBtn);
 
+  const card = freshBtn.closest('#env-card, .env-card, [data-role="env-card"]') || null;
+
   let open = !tip.hidden;
   let outsideHandler = null;
   let escHandler = null;
@@ -869,6 +871,9 @@ bootstrapStocking();
     freshBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     tip.hidden = !open;
     tip.setAttribute('aria-hidden', open ? 'false' : 'true');
+    if (card) {
+      card.classList.toggle('is-tooltip-open', open);
+    }
   };
 
   const closeTip = () => {
