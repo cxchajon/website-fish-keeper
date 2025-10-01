@@ -153,7 +153,7 @@ test.describe('Stocking Advisor accessibility flows', () => {
     await capture(page, testInfo, 'species-removed.png');
   });
 
-  test('Contextual info buttons reveal guidance on demand', async ({ page }) => {
+test('Contextual info buttons reveal guidance on demand', async ({ page }) => {
     await selectTank(page, 29);
 
     const popover = page.locator('.ttg-popover');
@@ -251,5 +251,108 @@ test.describe('Stocking Advisor accessibility flows', () => {
     for (const id of expected) {
       expect(normalized).toContain(id);
     }
+  });
+});
+
+test.describe('Contact & Feedback page', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/contact-feedback.html');
+    await expect(page.getByRole('main')).toBeVisible();
+  });
+
+  test('Page surface matches naming and exposes hooks', async ({ page }) => {
+    await expect(page).toHaveTitle('Contact & Feedback');
+    await expect(page.getByRole('heading', { level: 1, name: 'Contact & Feedback' })).toBeVisible();
+
+    const form = page.getByTestId('contact-form');
+    await expect(form).toBeVisible();
+
+    const nameInput = page.getByTestId('contact-name');
+    const emailInput = page.getByTestId('contact-email');
+    const subjectSelect = page.getByTestId('contact-subject');
+    const messageInput = page.getByTestId('contact-message');
+    const submit = page.getByTestId('contact-submit');
+
+    await expect(nameInput).toBeVisible();
+    await expect(emailInput).toBeVisible();
+    await expect(subjectSelect).toBeVisible();
+    await expect(messageInput).toBeVisible();
+    await expect(submit).toBeVisible();
+
+    await expect(nameInput).toHaveAttribute('aria-describedby', /help-name/);
+    await expect(emailInput).toHaveAttribute('aria-describedby', /help-email/);
+    await expect(subjectSelect).toHaveAttribute('aria-describedby', /help-subject/);
+    await expect(messageInput).toHaveAttribute('aria-describedby', /help-message/);
+
+    const successBanner = page.getByTestId('contact-success');
+    await expect(successBanner).toHaveAttribute('role', 'status');
+    await expect(successBanner).toBeHidden();
+
+    const errorSummary = page.getByTestId('contact-errors');
+    await expect(errorSummary).toHaveAttribute('role', 'alert');
+    await expect(errorSummary).toBeHidden();
+  });
+
+  test('Keyboard tab order follows form inputs then submit', async ({ page }) => {
+    await focusByTab(page, 'contact-name');
+    await expect(page.getByTestId('contact-name')).toBeFocused();
+
+    await page.keyboard.press('Tab');
+    let active = await page.evaluate(() => document.activeElement?.getAttribute('data-testid'));
+    expect(active).toBe('contact-email');
+
+    await page.keyboard.press('Tab');
+    active = await page.evaluate(() => document.activeElement?.getAttribute('data-testid'));
+    expect(active).toBe('contact-subject');
+
+    await page.keyboard.press('Tab');
+    active = await page.evaluate(() => document.activeElement?.getAttribute('data-testid'));
+    expect(active).toBe('contact-message');
+
+    await page.keyboard.press('Tab');
+    active = await page.evaluate(() => document.activeElement?.getAttribute('data-testid'));
+    expect(active).toBe('contact-submit');
+  });
+
+  test('Invalid submission surfaces helpers and aria-invalid state', async ({ page }) => {
+    await page.getByTestId('contact-submit').click();
+
+    await expect(page.getByTestId('contact-errors')).toBeVisible();
+    await expect(page.getByTestId('contact-name')).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByTestId('contact-email')).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByTestId('contact-subject')).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByTestId('contact-message')).toHaveAttribute('aria-invalid', 'true');
+
+    await expect(page.locator('#help-name')).toHaveClass(/visible/);
+    await expect(page.locator('#help-email')).toHaveClass(/visible/);
+    await expect(page.locator('#help-subject')).toHaveClass(/visible/);
+    await expect(page.locator('#help-message')).toHaveClass(/visible/);
+    await expect(page.getByTestId('contact-name')).toBeFocused();
+  });
+
+  test('Successful submission resets form and shows confirmation', async ({ page }) => {
+    await page.getByTestId('contact-name').fill('Jordan Tester');
+    await page.getByTestId('contact-email').fill('jordan@example.com');
+    await page.getByTestId('contact-subject').selectOption('logic');
+    await page.getByTestId('contact-message').fill('Found a small logic issue in the stocking advisor.');
+
+    await page.getByTestId('contact-submit').click();
+
+    const successBanner = page.getByTestId('contact-success');
+    await expect(successBanner).toBeVisible();
+    await expect(successBanner).toBeFocused();
+    await expect(successBanner).toHaveText('Thanks—your message has been sent.');
+
+    await expect(page.getByTestId('contact-errors')).toBeHidden();
+
+    await expect(page.getByTestId('contact-name')).toHaveValue('');
+    await expect(page.getByTestId('contact-email')).toHaveValue('');
+    await expect(page.getByTestId('contact-subject')).toHaveValue('');
+    await expect(page.getByTestId('contact-message')).toHaveValue('');
+
+    await expect(page.getByTestId('contact-name')).not.toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByTestId('contact-email')).not.toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByTestId('contact-subject')).not.toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByTestId('contact-message')).not.toHaveAttribute('aria-invalid', 'true');
   });
 });
