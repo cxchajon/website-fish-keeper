@@ -1,32 +1,31 @@
 const SIZE_MAP = new Map([
+  [5, [
+    { id: '5-standard', name: '5 Gallon Standard', length: 16.2, width: 8.4, height: 10.5, profile: 'standard', default: true },
+  ]],
   [10, [
-    { id: '10-standard', name: '10 Gallon Standard', length: 20, width: 10, height: 12, profile: 'standard', default: true },
+    { id: '10-standard', name: '10 Gallon Standard', length: 20.25, width: 10.5, height: 12.6, profile: 'standard', default: true },
+  ]],
+  [15, [
+    { id: '15-standard', name: '15 Gallon', length: 20.25, width: 10.5, height: 18.75, profile: 'standard', default: true },
   ]],
   [20, [
-    { id: '20-high', name: '20 Gallon High', length: 24, width: 12, height: 16, profile: 'standard', default: true },
-    { id: '20-long', name: '20 Gallon Long', length: 30, width: 12, height: 12, profile: 'long' },
+    { id: '20-high', name: '20 Gallon High', length: 24.25, width: 12.5, height: 16.75, profile: 'standard', default: true },
+    { id: '20-long', name: '20 Gallon Long', length: 30.25, width: 12.5, height: 12.75, profile: 'long' },
   ]],
   [29, [
-    { id: '29-standard', name: '29 Gallon', length: 30, width: 12, height: 18, profile: 'standard', default: true },
-  ]],
-  [30, [
-    { id: '30-breeder', name: '30 Gallon Breeder', length: 36, width: 18, height: 12, profile: 'breeder', default: true },
-  ]],
-  [37, [
-    { id: '37-portrait', name: '37 Gallon Tall', length: 36, width: 12.5, height: 20, profile: 'tall', default: true },
-  ]],
-  [38, [
-    { id: '38-portrait', name: '38 Gallon Tall', length: 36, width: 13, height: 22, profile: 'tall', default: true },
+    { id: '29-standard', name: '29 Gallon', length: 30.25, width: 12.5, height: 18.75, profile: 'standard', default: true },
   ]],
   [40, [
-    { id: '40-breeder', name: '40 Gallon Breeder', length: 36, width: 18, height: 16, profile: 'breeder', default: true },
-    { id: '40-long', name: '40 Gallon Long', length: 48, width: 12, height: 16.5, profile: 'long' },
+    { id: '40-breeder', name: '40 Gallon Breeder', length: 36.25, width: 18.25, height: 16.75, profile: 'breeder', default: true },
   ]],
   [55, [
-    { id: '55-standard', name: '55 Gallon', length: 48, width: 13, height: 21, profile: 'standard', default: true },
+    { id: '55-standard', name: '55 Gallon', length: 48.25, width: 12.75, height: 21, profile: 'standard', default: true },
   ]],
   [75, [
-    { id: '75-standard', name: '75 Gallon', length: 48, width: 18, height: 21, profile: 'standard', default: true },
+    { id: '75-standard', name: '75 Gallon', length: 48.5, width: 18.5, height: 21.25, profile: 'standard', default: true },
+  ]],
+  [125, [
+    { id: '125-standard', name: '125 Gallon', length: 72, width: 18, height: 21, profile: 'standard', default: true },
   ]],
 ]);
 

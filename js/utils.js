@@ -1,11 +1,8 @@
 // Canonical tank size helpers shared across pages.
 // Each entry represents a common freshwater aquarium with standard manufacturer specs.
+// Liter values are intentionally rounded to the public-facing canonical numbers used in the UI.
 
 const INCH_TO_CM = 2.54;
-
-function liters(gallons) {
-  return Math.round(gallons * 3.78541 * 1000) / 1000;
-}
 
 function cm(valueInInches) {
   return Math.round(valueInInches * INCH_TO_CM * 100) / 100;
@@ -16,7 +13,7 @@ export const TANK_SIZES = [
     id: '5g',
     label: '5 Gallon (19 L)',
     gallons: 5,
-    liters: liters(5),
+    liters: 19,
     lengthIn: 16.2,
     widthIn: 8.4,
     heightIn: 10.5,
@@ -29,7 +26,7 @@ export const TANK_SIZES = [
     id: '10g',
     label: '10 Gallon (38 L)',
     gallons: 10,
-    liters: liters(10),
+    liters: 38,
     lengthIn: 20.25,
     widthIn: 10.5,
     heightIn: 12.6,
@@ -40,9 +37,9 @@ export const TANK_SIZES = [
   },
   {
     id: '15g',
-    label: '15 Gallon High (57 L)',
+    label: '15 Gallon (57 L)',
     gallons: 15,
-    liters: liters(15),
+    liters: 57,
     lengthIn: 20.25,
     widthIn: 10.5,
     heightIn: 18.75,
@@ -53,9 +50,9 @@ export const TANK_SIZES = [
   },
   {
     id: '20h',
-    label: '20 Gallon High (76 L)',
+    label: '20 Gallon High (75 L)',
     gallons: 20,
-    liters: liters(20),
+    liters: 75,
     lengthIn: 24.25,
     widthIn: 12.5,
     heightIn: 16.75,
@@ -66,9 +63,9 @@ export const TANK_SIZES = [
   },
   {
     id: '20l',
-    label: '20 Gallon Long (76 L)',
+    label: '20 Gallon Long (75 L)',
     gallons: 20,
-    liters: liters(20),
+    liters: 75,
     lengthIn: 30.25,
     widthIn: 12.5,
     heightIn: 12.75,
@@ -81,7 +78,7 @@ export const TANK_SIZES = [
     id: '29g',
     label: '29 Gallon (110 L)',
     gallons: 29,
-    liters: liters(29),
+    liters: 110,
     lengthIn: 30.25,
     widthIn: 12.5,
     heightIn: 18.75,
@@ -94,7 +91,7 @@ export const TANK_SIZES = [
     id: '40b',
     label: '40 Gallon Breeder (151 L)',
     gallons: 40,
-    liters: liters(40),
+    liters: 151,
     lengthIn: 36.25,
     widthIn: 18.25,
     heightIn: 16.75,
@@ -107,7 +104,7 @@ export const TANK_SIZES = [
     id: '55g',
     label: '55 Gallon (208 L)',
     gallons: 55,
-    liters: liters(55),
+    liters: 208,
     lengthIn: 48.25,
     widthIn: 12.75,
     heightIn: 21,
@@ -120,7 +117,7 @@ export const TANK_SIZES = [
     id: '75g',
     label: '75 Gallon (284 L)',
     gallons: 75,
-    liters: liters(75),
+    liters: 284,
     lengthIn: 48.5,
     widthIn: 18.5,
     heightIn: 21.25,
@@ -133,7 +130,7 @@ export const TANK_SIZES = [
     id: '125g',
     label: '125 Gallon (473 L)',
     gallons: 125,
-    liters: liters(125),
+    liters: 473,
     lengthIn: 72,
     widthIn: 18,
     heightIn: 21,
