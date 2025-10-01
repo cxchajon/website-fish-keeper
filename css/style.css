@@ -1370,3 +1370,38 @@ body.planted-active #cycling-coach .cc-title__leaf {
 #env-card {
   transition: padding 180ms ease;
 }
+/* Cycling Coach — compact bottom disclaimer + blurb */
+#cc-bottom {
+  margin: 8px 0 10px;
+  padding: 0;
+  max-width: 68ch;
+}
+#cc-bottom .home-subtext {
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--text-muted, rgba(255,255,255,0.8));
+  margin: 0 0 6px 0;
+}
+#cc-bottom .home-blurb {
+  font: inherit;
+  font-size: 0.98rem;
+  line-height: 1.45;
+  color: var(--text-primary, #fff);
+  margin: 0;
+}
+/* Desktop slight scale up without adding height */
+@media (min-width: 768px) {
+  #cc-bottom .home-subtext { font-size: 0.95rem; }
+  #cc-bottom .home-blurb   { font-size: 1.02rem; }
+}
+/* Neutralize any card/section styles that inflate spacing in this zone */
+#cc-bottom p { padding: 0; }
+#cc-bottom .home-subtext,
+#cc-bottom .home-blurb { font-weight: 400; }
+
+/* Ensure the block hugs the same left content line as cards */
+#cycling-coach #cc-bottom { /* if a container/grid is used, it will inherit alignment */ }
+
+/* Guard against large margins from preceding sections */
+#cc-bottom:where(*) { scroll-margin-top: 24px; }
