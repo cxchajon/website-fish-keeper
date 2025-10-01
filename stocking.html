@@ -217,33 +217,9 @@
       text-decoration: underline;
     }
 
-    .tank-summary {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 0.98rem;
-    }
-
-    .variant-selector {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .variant-selector button {
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(255, 255, 255, 0.12);
-      color: var(--fg);
-      padding: 6px 12px;
-      cursor: pointer;
-      font-size: 0.92rem;
-    }
-
-    .variant-selector button[data-active="true"] {
-      border-color: rgba(163, 200, 255, 0.9);
-      background: rgba(163, 200, 255, 0.16);
+    [data-role="tank-spec"] {
+      pointer-events: none;
+      text-decoration: none;
     }
 
     .conditions-list {
@@ -949,11 +925,8 @@
           </div>
         </div>
 
-        <!-- Facts line stays; starts EMPTY to avoid duplicate helper text -->
-        <div id="tank-facts" class="facts-line muted-text" aria-live="polite"></div>
-
-        <!-- Tank summary rendered inside the card -->
-        <div id="tank-summary" aria-live="polite" data-testid="tank-summary"></div>
+          <!-- Facts line stays; starts EMPTY to avoid duplicate helper text -->
+          <div class="facts-line muted-text" data-role="tank-spec" aria-live="polite"></div>
 
         <!-- Planted (stacked) -->
         <div class="row toggle-row">
@@ -1300,8 +1273,8 @@
   <script type="module" src="js/fish-data.js"></script>
   <script type="module" src="js/logic/compute.js"></script>
   <script type="module" src="js/logic/conflicts.js"></script>
-  <script type="module" src="js/stocking.js?v=2024-07-09a" id="js-stocking"></script>
-  <script type="module" src="js/tank-size-card.js?v=2024-07-09a"></script>
+  <script type="module" src="js/stocking.js?v=2024-07-09b" id="js-stocking"></script>
+  <script type="module" src="js/tank-size-card.js?v=2024-07-09b"></script>
 
 </body>
 </html>

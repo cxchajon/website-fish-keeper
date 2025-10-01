@@ -1,6 +1,6 @@
 import { createDefaultState, buildComputedState, runSanitySuite, runStressSuite, SPECIES, getDefaultSpeciesId } from './logic/compute.js';
 import { renderEnvCard } from './logic/envRecommend.js';
-import { getTankVariants, describeVariant } from './logic/sizeMap.js';
+import { getTankVariants } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderChips, bindPopoverHandlers } from './logic/ui.js';
 import { getTankSnapshot, EMPTY_TANK } from './stocking/tankStore.js';
@@ -164,8 +164,6 @@ function bootstrapStocking() {
   state.liters = initialTank.liters ?? 0;
   state.selectedTankId = initialTank.id ?? null;
   let computed = null;
-  let variantSelectorOpen = false;
-  let shouldRestoreVariantFocus = false;
   const debugMode = getQueryFlag('debug');
   let assumptionScrubInitialized = false;
   let lastScrubbedGallons = null;
@@ -175,7 +173,6 @@ function bootstrapStocking() {
     plantIcon: document.getElementById('plant-icon'),
     planted: document.getElementById('toggle-planted'),
     envInfoToggle: document.getElementById('env-info-toggle'),
-    tankSummary: document.getElementById('tank-summary'),
     conditions: document.getElementById('conditions-list'),
     candidateChips: document.getElementById('candidate-chips'),
     candidateBanner: document.getElementById('candidate-banner'),
@@ -245,7 +242,6 @@ function bootstrapStocking() {
     state.liters = snapshot.liters ?? 0;
     state.selectedTankId = snapshot.id ?? null;
     state.variantId = null;
-    variantSelectorOpen = false;
     shouldRestoreVariantFocus = false;
     updateLengthValidator();
     if (isBootstrapped) {
@@ -678,70 +674,6 @@ function populateSpecies() {
   emitSpeciesChange(selectedSpeciesId);
 }
 
-function renderTankSummaryView() {
-  refs.tankSummary.innerHTML = '';
-  if (!computed) {
-    return;
-  }
-  const variants = getTankVariants(computed.tank.gallons);
-  if (variants.length <= 1) {
-    variantSelectorOpen = false;
-    shouldRestoreVariantFocus = false;
-    return;
-  }
-  const container = document.createElement('div');
-  container.className = 'tank-summary';
-  const controls = document.createElement('div');
-  controls.className = 'tank-summary__controls';
-  container.appendChild(controls);
-  const toggle = document.createElement('button');
-  toggle.type = 'button';
-  toggle.className = 'link-like';
-  toggle.textContent = variantSelectorOpen ? 'Close' : 'Change';
-  toggle.dataset.testid = 'variant-toggle';
-  toggle.setAttribute(
-    'aria-label',
-    variantSelectorOpen ? 'Close tank variant options' : 'Change tank dimensions variant',
-  );
-  toggle.addEventListener('click', () => {
-    variantSelectorOpen = !variantSelectorOpen;
-    renderTankSummaryView();
-  });
-  controls.appendChild(toggle);
-  if (variants.length > 1) {
-    if (variantSelectorOpen) {
-      const selector = document.createElement('div');
-      selector.className = 'variant-selector';
-      selector.dataset.testid = 'variant-selector';
-      for (const option of variants) {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.textContent = describeVariant(option);
-        button.dataset.active = option.id === computed.tank.variant?.id ? 'true' : 'false';
-        button.dataset.variantId = option.id;
-        button.dataset.testid = 'variant-option';
-        button.addEventListener('click', () => {
-          state.variantId = option.id;
-          variantSelectorOpen = false;
-          shouldRestoreVariantFocus = true;
-          scheduleUpdate();
-        });
-        selector.appendChild(button);
-      }
-      container.appendChild(selector);
-    }
-
-    if (shouldRestoreVariantFocus) {
-      queueMicrotask(() => {
-        toggle.focus();
-        shouldRestoreVariantFocus = false;
-      });
-    }
-  }
-
-  refs.tankSummary.appendChild(container);
-}
-
 function syncToggles() {
   updateToggle(refs.planted, state.planted);
   if (refs.envTips || refs.envInfoToggle) {
@@ -805,7 +737,6 @@ function renderAll() {
   const activeTank = state.tank ?? EMPTY_TANK;
   if (!Number.isFinite(activeTank.gallons) || activeTank.gallons <= 0) {
     computed = null;
-    renderTankSummaryView();
     if (refs.conditions) {
       refs.conditions.innerHTML = '';
     }
@@ -817,7 +748,6 @@ function renderAll() {
     return;
   }
   computed = buildComputedState(state);
-  renderTankSummaryView();
   if (refs.conditions) {
     renderConditions(refs.conditions, computed.conditions.conditions);
   }
