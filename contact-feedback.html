@@ -4,543 +4,505 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Contact The Tank Guide — Aquarium Questions & Feedback</title>
-
-  <!-- SEO / robots (as previously used) -->
+  <title>Contact &amp; Feedback</title>
   <link rel="canonical" href="https://thetankguide.com/contact-feedback.html" />
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <meta name="googlebot" content="index,follow" />
-  <meta name="description" content="Contact The Tank Guide by FishKeepingLifeCo — ask aquarium questions, share feedback, recommend fish, or suggest products and guides." />
-  <meta property="og:title" content="Contact | The Tank Guide" />
+  <meta
+    name="description"
+    content="Contact The Tank Guide team for aquarium help, share feedback, or report issues so we can improve every tool."
+  />
+  <meta property="og:title" content="Contact &amp; Feedback | The Tank Guide" />
   <meta property="og:site_name" content="The Tank Guide" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://thetankguide.com/contact-feedback.html" />
-  <meta property="og:description" content="Ask questions, share feedback, recommend fish, suggest reviews, or send general ideas." />
+  <meta
+    property="og:description"
+    content="Reach out with aquarium questions, report logic issues, or highlight anything that looks off in our tools."
+  />
   <meta name="twitter:card" content="summary" />
-
-  <!-- Site styles / nav JS -->
   <link rel="stylesheet" href="css/style.css?v=1.0.9" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-bxKZq4T7xvFeoJEB6Digw1VE3DybZ0SqnX+ANXoy2cuglRez2oJ6TP2PzefDs2fzGEylh4G6dkcnnrIALlTy4g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script defer src="js/nav.js?v=1.0.9"></script>
-
   <style>
-    :root{
-      --background-dark:#0f1c2c;
-      --background-light:#f4f7fb;
-      --card-bg:#f9f9f6;
-      --border-color:#c8ced6;
-      --accordion-bg:#eef1f5;
-      --checkbox-bg:#e5e9ef;
-      --text:#1c2733;
-      --accent:#2f8f83;
-      --accent-focus:#38a3a0;
-      --error:#c0392b;
-      --btnA:#39b385; --btnB:#2e8a68; --btnAH:#2f9c74; --btnBH:#267256;
-      --gap-xxs:6px; --gap-xs:8px; --gap-s:10px; --gap-m:16px; --gap-l:24px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; color:var(--text);
-      font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
-      background: linear-gradient(to bottom, var(--background-dark) 0%, var(--background-dark) 50%, var(--background-light) 100%);
-      min-height:100vh;
-    }
-    a{color:inherit}
-
-    /* --- layout --- */
-    .page-wrapper{
-      min-height:calc(100vh - 80px);
-      display:flex; flex-direction:column; align-items:center;
-      padding:40px 20px 80px;
-    }
-    .contact-card{
-      width:100%; max-width:1000px;
-      background:var(--card-bg);
-      border-radius:18px;
-      padding:48px 56px 56px;
-      box-shadow:0 -18px 36px rgba(15,28,44,.35), 0 22px 40px rgba(15,28,44,.08);
-    }
-    @media (max-width:768px){
-      .contact-card{padding:32px 24px 40px; box-shadow:0 12px 24px rgba(15,28,44,.18)}
-    }
-    h1{margin:0 0 28px; font-size:clamp(2.2rem,2.2vw + 1rem,3rem); font-weight:700; text-align:left}
-
-    /* --- form base --- */
-    form{display:flex; flex-direction:column}
-    .field-group{display:flex; flex-direction:column; gap:6px; margin:0 0 var(--gap-m)}
-    .subject-group{margin-bottom:0}
-    label{font-weight:600; display:inline-flex; align-items:center; gap:6px}
-    .required-asterisk{color:var(--error); font-weight:700}
-    .required-note{margin:0; font-size:.85rem; color:var(--error)}
-
-    input[type="text"],input[type="email"],input[type="url"],select,textarea{
-      width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border-color); background:#fff;
-      font-size:1rem; color:var(--text);
-      transition:border-color .18s ease, box-shadow .18s ease;
-    }
-    input[type="text"]:focus,input[type="email"]:focus,input[type="url"]:focus,textarea:focus{
-      border-color:var(--accent-focus); box-shadow:0 0 0 3px rgba(56,163,160,.15); outline:none;
-    }
-    select:focus{outline:none}
-    textarea{min-height:140px; resize:none}
-    textarea::placeholder{color:rgba(28,39,51,.55)}
-
-    .subject-wrapper{position:relative; display:flex; align-items:center}
-    .subject-wrapper select{appearance:none; padding-right:44px}
-    .chevron{position:absolute; right:16px; pointer-events:none; font-size:1.1rem; color:#9099a4}
-
-    /* --- subject panels --- */
-    .panel{border:2px solid #d3d9e1; border-radius:14px; background:var(--accordion-bg);
-      padding:20px 20px 24px; margin:0; overflow:hidden;
-      max-height:0; opacity:0; transition:max-height .45s ease, opacity .12s ease}
-    .panel.active{margin-top:6px; max-height:1000px; opacity:1}
-    .panel .field-group{margin:0 0 16px}
-
-    :root{
-      --gap-under-subject-when-empty: 6px;
-      --gap-after-panel: 10px;
+    :root {
+      --page-bg-dark: #0f1c2c;
+      --page-bg-light: #f4f7fb;
+      --card-bg: #f9f9f6;
+      --border-color: #c8ced6;
+      --text: #1c2733;
+      --accent: #2f8f83;
+      --accent-focus: #38a3a0;
+      --error: #c0392b;
     }
 
-    /* Kill extra bottom space on the Subject group itself */
-    #feedbackForm .subject-group{ margin-bottom: 0 !important; }
-    #feedbackForm .subject-group .required-note{ margin-bottom: 0 !important; }
-    /* Subject control: ensure we can apply a small bottom gap reliably */
-    #feedbackForm #subject{
-      margin-bottom: var(--gap-under-subject-when-empty) !important;
-      display: block; /* to make margin-bottom consistent across browsers */
+    * {
+      box-sizing: border-box;
     }
 
-    /* Collapsed panels: occupy ZERO space */
-    #feedbackForm .panel{
-      padding: 0 !important;
-      border-width: 0 !important;
-      margin: 0 !important;
-      max-height: 0 !important;
-      opacity: 0 !important;
-      overflow: hidden !important;
-    }
-    /* Open panel: restore look and add a tight top margin under Subject */
-    #feedbackForm .panel.active{
-      padding: 20px 20px 24px !important;
-      border-width: 2px !important;
-      margin-top: 6px !important;
-      max-height: 1000px !important;
-      opacity: 1 !important;
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(
+        to bottom,
+        var(--page-bg-dark) 0%,
+        var(--page-bg-dark) 48%,
+        var(--page-bg-light) 100%
+      );
+      min-height: 100vh;
     }
 
-    /* Stay-in-touch baseline: remove any inherent top margin; we control it below */
-    #feedbackForm #stay-in-touch{
-      margin-top: 0 !important;
+    a {
+      color: inherit;
     }
 
-    /* STATE-CONTROLLED SPACING
-       The form gets .has-subject when the Subject select has a value.
-       When NO subject -> hug the Subject (6px).
-       When HAS subject -> sit after the open panel with a small gap (10px). */
-    #feedbackForm.js-spacing-state:not(.has-subject) #stay-in-touch{
-      margin-top: var(--gap-under-subject-when-empty) !important;
-    }
-    #feedbackForm.js-spacing-state.has-subject #stay-in-touch{
-      margin-top: var(--gap-after-panel) !important;
+    main.page-wrapper {
+      min-height: calc(100vh - 80px);
+      padding: 48px 20px 80px;
+      display: flex;
+      justify-content: center;
     }
 
-    /* --- stay in touch (bulletproof) --- */
-    #stay-in-touch{
-      background:var(--checkbox-bg); border-radius:14px; padding:18px 20px; margin-bottom:var(--gap-m);
+    .contact-card {
+      background: var(--card-bg);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 760px;
+      padding: 48px 48px 56px;
+      box-shadow: 0 -18px 36px rgba(15, 28, 44, 0.3), 0 22px 40px rgba(15, 28, 44, 0.08);
     }
-    #stay-in-touch *::before, #stay-in-touch *::after{content:none !important; display:none !important}
-    #stay-in-touch .title{margin:0 0 8px; font-weight:600}
-    /* Grid: checkbox | pill | sentence */
-    #stay-in-touch .row{
-      display:grid; grid-template-columns:auto auto 1fr; align-items:center; column-gap:10px;
-      margin:8px 0; background:transparent !important;
-    }
-    #stay-in-touch .row input[type="checkbox"]{margin:0; align-self:center}
-    #stay-in-touch .pill{
-      display:inline-grid; place-items:center;
-      white-space:nowrap; min-width:28px; padding:2px 10px; border-radius:999px;
-      font-size:.85rem; line-height:1.4; color:#1c2733; background:#d3d9e1;
-    }
-    #stay-in-touch .pill.yes{background:#39b385; color:#fff}
-    #stay-in-touch .text{
-      display:block; background:transparent !important; border:0 !important; border-radius:0 !important; min-width:0;
-    }
-    #stay-in-touch .note{margin:8px 0 0; font-size:.88rem; line-height:1.5}
-    #stay-in-touch a{text-decoration:underline}
 
-    /* --- actions --- */
-    .actions{display:flex; justify-content:flex-end; margin-top:var(--gap-m)}
-    .actions button{
-      padding:12px 32px; font-size:1rem; border-radius:12px; border:none; cursor:pointer; color:#fff; font-weight:600;
-      background-image:linear-gradient(135deg,var(--btnA),var(--btnB));
-      transition:background-image .16s ease, box-shadow .16s ease
+    h1 {
+      margin: 0 0 24px;
+      font-size: clamp(2.25rem, 2vw + 1.25rem, 3rem);
     }
-    .actions button:hover,.actions button:focus{background-image:linear-gradient(135deg,var(--btnAH),var(--btnBH))}
-    .actions button:focus{outline:3px solid rgba(47,156,116,.35)}
-    @media (max-width:600px){ .actions{justify-content:center} .actions button{width:100%} }
 
-    .divider{margin:24px 0 16px; border:0; border-top:1px solid #d7dce3}
-    .form-status{text-align:center; font-size:1.02rem; font-weight:600; min-height:1.2em; color:var(--accent)}
-    .form-status.error{color:var(--error)}
+    .intro {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin: 0 0 12px;
+    }
 
-    /* --- captcha --- */
-    .captcha-wrapper{display:flex; flex-direction:column; gap:6px; margin:0 0 var(--gap-m)}
-    .captcha-error{display:none; color:var(--error); font-size:.9rem}
-    .captcha-error.visible{display:block}
-    .hidden{display:none !important}
+    .tiny {
+      font-size: 0.85rem;
+      color: #5d6773;
+      margin: 0 0 28px;
+    }
+
+    .visually-hidden {
+      position: absolute !important;
+      clip: rect(1px, 1px, 1px, 1px);
+      width: 1px;
+      height: 1px;
+      margin: 0;
+      border: 0;
+      padding: 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    form {
+      display: grid;
+      gap: 20px;
+    }
+
+    fieldset {
+      padding: 0;
+      margin: 0;
+      border: 0;
+      display: grid;
+      gap: 20px;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    label {
+      font-weight: 600;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .req {
+      color: var(--error);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: #fff;
+      font-size: 1rem;
+      color: var(--text);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent-focus);
+      box-shadow: 0 0 0 3px rgba(56, 163, 160, 0.15);
+    }
+
+    textarea {
+      min-height: 160px;
+      resize: vertical;
+    }
+
+    .field-help {
+      font-size: 0.9rem;
+      color: #5d6773;
+      margin: 0;
+      display: none;
+    }
+
+    .field-help.visible {
+      display: block;
+      color: var(--error);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    button[type="submit"] {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 32px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      background-image: linear-gradient(135deg, #39b385, #2e8a68);
+      transition: background-image 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    button[type="submit"]:hover,
+    button[type="submit"]:focus-visible {
+      background-image: linear-gradient(135deg, #2f9c74, #267256);
+      box-shadow: 0 0 0 3px rgba(47, 156, 116, 0.35);
+    }
+
+    button[aria-disabled="true"] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .status-stack {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .success,
+    .error-summary {
+      padding: 16px 20px;
+      border-radius: 12px;
+      background: #e8f5f2;
+      color: #1a4c45;
+      border: 1px solid #9fd8cb;
+      display: none;
+    }
+
+    .success.visible {
+      display: block;
+    }
+
+    .error-summary {
+      background: #fdecea;
+      border-color: #f5b1a8;
+      color: var(--error);
+    }
+
+    .error-summary.visible {
+      display: block;
+    }
+
+    .error-summary ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    @media (max-width: 768px) {
+      main.page-wrapper {
+        padding: 32px 18px 60px;
+      }
+
+      .contact-card {
+        padding: 32px 24px 44px;
+      }
+    }
   </style>
   <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": "https://thetankguide.com/#organization",
-  "name": "FishKeepingLifeCo",
-  "alternateName": "The Tank Guide",
-  "url": "https://thetankguide.com",
-  "addressCountry": "US",
-  "addressRegion": "NY",
-  "logo": "https://thetankguide.com/logo.png",
-  "image": "https://thetankguide.com/logo.png",
-  "slogan": "Educational Aquarium Books & Tools",
-  "description": "FishKeepingLifeCo publishes educational aquarium books and interactive online tools like The Tank Guide to help aquarists of all experience levels set up, stock, and maintain thriving aquariums.",
-  "brand": {
-    "@type": "Brand",
-    "name": "The Tank Guide"
-  },
-  "foundingDate": "2025-09-12",
-  "publishingPrinciples": "https://thetankguide.com/about.html",
-  "areaServed": ["United States", "New York"],
-  "knowsAbout": [
-    "Aquariums",
-    "Fishkeeping",
-    "Nitrogen Cycle",
-    "Freshwater Aquariums",
-    "Planted Tanks",
-    "Aquarium Setup Basics",
-    "Water Parameters",
-    "Aquarium Cycling"
-  ],
-  "contactPoint": [
-    {
-      "@type": "ContactPoint",
-      "contactType": "customer support",
-      "email": "info@thetankguide.com",
-      "availableLanguage": ["en"]
-    }
-  ],
-  "sameAs": [
-    "https://www.instagram.com/fishkeepinglifeco/",
-    "https://www.tiktok.com/@fishkeepinglifeco",
-    "https://www.youtube.com/@fishkeepinglifeco",
-    "https://www.facebook.com/fishkeepinglifeco",
-    "https://www.amazon.com/author/fishkeepinglifeco"
-  ]
-}
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://thetankguide.com/#organization",
+    "name": "FishKeepingLifeCo",
+    "alternateName": "The Tank Guide",
+    "url": "https://thetankguide.com",
+    "addressCountry": "US",
+    "addressRegion": "NY",
+    "logo": "https://thetankguide.com/logo.png",
+    "image": "https://thetankguide.com/logo.png",
+    "slogan": "Educational Aquarium Books & Tools",
+    "description": "FishKeepingLifeCo publishes educational aquarium books and interactive online tools like The Tank Guide to help aquarists of all experience levels set up, stock, and maintain thriving aquariums.",
+    "brand": {
+      "@type": "Brand",
+      "name": "The Tank Guide"
+    },
+    "foundingDate": "2025-09-12",
+    "publishingPrinciples": "https://thetankguide.com/about.html",
+    "areaServed": ["United States", "New York"],
+    "knowsAbout": [
+      "Aquariums",
+      "Fishkeeping",
+      "Nitrogen Cycle",
+      "Freshwater Aquariums",
+      "Planted Tanks",
+      "Aquarium Setup Basics",
+      "Water Parameters",
+      "Aquarium Cycling"
+    ],
+    "contactPoint": [
+      {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "email": "info@thetankguide.com",
+        "availableLanguage": ["en"]
+      }
+    ],
+    "sameAs": [
+      "https://www.instagram.com/fishkeepinglifeco/",
+      "https://www.tiktok.com/@fishkeepinglifeco",
+      "https://www.facebook.com/fishkeepinglifeco",
+      "https://x.com/fishkeepinglife",
+      "https://www.youtube.com/@fishkeepinglifeco",
+      "https://www.amazon.com/author/fishkeepinglifeco"
+    ]
+  }
   </script>
 </head>
 <body>
-  <!-- NAV (shared include) -->
   <div id="site-nav"></div>
-
   <main class="page-wrapper">
-    <section class="contact-card">
-      <h1>Contact</h1>
-
-      <p>Use this form to share feedback, report logic issues, or highlight anything that seems off in our tools.</p>
-      <p>We also welcome aquarium questions so we can point you toward the right resources for your next build.</p>
-
-      <!-- Replace with your Formspree endpoint -->
-      <form id="feedbackForm" method="POST" action="https://formspree.io/f/xnngnwld">
-        <div class="field-group">
-          <label for="name">Name <span class="required-asterisk">*</span></label>
-          <p class="required-note">*Required</p>
-          <input type="text" id="name" name="name" autocomplete="name" required />
+    <section class="contact-card" aria-labelledby="page-title">
+      <div class="status-stack">
+        <div role="status" class="success" data-testid="contact-success" tabindex="-1">Thanks—your message has been sent.</div>
+        <div role="alert" class="error-summary" data-testid="contact-errors">
+          <strong>There’s a bit more to complete:</strong>
+          <ul></ul>
         </div>
-
-        <div class="field-group">
-          <label for="email">Email <span class="required-asterisk">*</span></label>
-          <p class="required-note">*Required</p>
-          <input type="email" id="email" name="email" autocomplete="email" required />
-          <input type="hidden" name="_replyto" id="replyToProxy" value="" />
-        </div>
-
-        <div class="field-group subject-group">
-          <label for="subject">Subject <span class="required-asterisk">*</span></label>
-          <p class="required-note">*Required</p>
-          <div class="subject-wrapper">
-            <select id="subject" name="subject" required>
+      </div>
+      <h1 id="page-title">Contact &amp; Feedback</h1>
+      <p class="intro">Use this form to share feedback, report logic issues, or highlight anything that seems off in our tools.</p>
+      <p class="intro">We also welcome aquarium questions so we can point you toward the right resources for your next build.</p>
+      <p class="tiny" aria-live="polite">We usually reply within 1–2 business days.</p>
+      <form data-testid="contact-form" novalidate>
+        <fieldset>
+          <legend class="visually-hidden">Contact &amp; Feedback form</legend>
+          <div class="field-group">
+            <label for="contact-name">Name <span class="req">*Required</span></label>
+            <input
+              type="text"
+              id="contact-name"
+              name="name"
+              autocomplete="name"
+              required
+              aria-describedby="help-name"
+              data-testid="contact-name"
+            />
+            <p class="field-help" id="help-name">Please tell us who we should reply to.</p>
+          </div>
+          <div class="field-group">
+            <label for="contact-email">Email <span class="req">*Required</span></label>
+            <input
+              type="email"
+              id="contact-email"
+              name="email"
+              autocomplete="email"
+              required
+              aria-describedby="help-email"
+              data-testid="contact-email"
+            />
+            <p class="field-help" id="help-email">Enter a valid email so we can reach you.</p>
+          </div>
+          <div class="field-group">
+            <label for="contact-subject">Subject <span class="req">*Required</span></label>
+            <select
+              id="contact-subject"
+              name="subject"
+              required
+              aria-describedby="help-subject"
+              data-testid="contact-subject"
+            >
               <option value="">Select one…</option>
-              <option value="Recommend a Fish">Recommend a Fish</option>
-              <option value="Logic Issues">Logic Issues</option>
-              <option value="Questions?">Questions?</option>
-              <option value="Product Reviews">Product Reviews</option>
-              <option value="General (YouTube, article ideas, events, forums, anything related to aquariums)">General (YouTube, article ideas, events, forums, anything related to aquariums)</option>
+              <option value="feedback">Feedback about a tool</option>
+              <option value="logic">Logic or data issue</option>
+              <option value="question">Aquarium question</option>
+              <option value="suggestion">Suggestion or idea</option>
+              <option value="other">Something else</option>
             </select>
-            <span class="chevron" aria-hidden="true">⌄</span>
+            <p class="field-help" id="help-subject">Choose the option that best matches your message.</p>
           </div>
+          <div class="field-group">
+            <label for="contact-message">Message <span class="req">*Required</span></label>
+            <textarea
+              id="contact-message"
+              name="message"
+              required
+              aria-describedby="help-message"
+              data-testid="contact-message"
+            ></textarea>
+            <p class="field-help" id="help-message">Let us know the details so we can help quickly.</p>
+          </div>
+        </fieldset>
+        <div class="actions">
+          <button type="submit" data-testid="contact-submit">Contact &amp; Feedback</button>
         </div>
-
-        <!-- PANELS -->
-        <div class="panel" id="panel-fish">
-          <div class="field-group">
-            <label for="fishName">Fish Name <span class="required-asterisk">*</span></label>
-            <p class="required-note">*Required</p>
-            <input type="text" id="fishName" name="fishName" />
-            <p class="inline-error hidden" id="fishNameError">Please provide a fish name.</p>
-          </div>
-          <div class="field-group">
-            <label for="scientificName">Scientific Name</label>
-            <input type="text" id="scientificName" name="scientificName" />
-          </div>
-          <div class="field-group">
-            <label for="phTempRange">pH / Temp Range</label>
-            <input type="text" id="phTempRange" name="phTempRange" />
-          </div>
-          <div class="field-group">
-            <label for="fishNotes">Other Notes</label>
-            <textarea id="fishNotes" name="fishNotes"></textarea>
-          </div>
-        </div>
-
-        <div class="panel" id="panel-logic">
-          <div class="field-group">
-            <label for="logicPage">Page Selector</label>
-            <select id="logicPage" name="logicPage">
-              <option value="Stocking Advisor">Stocking Advisor</option>
-              <option value="Cycling Coach">Cycling Coach</option>
-              <option value="Parameters">Parameters</option>
-              <option value="Media">Media</option>
-              <option value="Contact">Contact</option>
-            </select>
-          </div>
-          <div class="field-group">
-            <label for="logicIssue">Describe the Issue</label>
-            <textarea id="logicIssue" name="logicIssue"></textarea>
-          </div>
-        </div>
-
-        <div class="panel" id="panel-questions">
-          <div class="field-group">
-            <label for="generalQuestion">Your Question</label>
-            <textarea id="generalQuestion" name="generalQuestion" placeholder="Ask us anything — we’ll get back to you."></textarea>
-          </div>
-        </div>
-
-        <div class="panel" id="panel-reviews">
-          <div class="field-group">
-            <label for="productName">Product Name <span class="required-asterisk">*</span></label>
-            <p class="required-note">*Required</p>
-            <input type="text" id="productName" name="productName" />
-            <p class="inline-error hidden" id="productNameError">Please provide the product name.</p>
-          </div>
-          <div class="field-group">
-            <label for="productLink">Product Link</label>
-            <input type="url" id="productLink" name="productLink" />
-          </div>
-          <div class="field-group">
-            <label for="productCoverage">What would you like us to cover?</label>
-            <textarea id="productCoverage" name="productCoverage" placeholder="Features, pros/cons, ease of use, etc."></textarea>
-          </div>
-        </div>
-
-        <div class="panel" id="panel-general">
-          <div class="field-group">
-            <label for="generalIdeas">Share Your Ideas</label>
-            <textarea id="generalIdeas" name="generalIdeas" placeholder="Share your idea — YouTube, article, event, forum, or anything aquarium related."></textarea>
-          </div>
-        </div>
-
-        <!-- STAY IN TOUCH (grid, no ghosts) -->
-        <section id="stay-in-touch">
-          <h2>Get in Touch</h2>
-          <h3 class="title">Stay in touch</h3>
-
-          <label class="row" for="consent">
-            <input type="checkbox" id="consent" name="consent" required />
-            <span class="pill" id="pill_consent" aria-live="polite" aria-atomic="true">No</span>
-            <span class="text">I agree that The Tank Guide may contact me about my submission.</span>
-          </label>
-
-          <label class="row" for="newsletter">
-            <input type="checkbox" id="newsletter" name="newsletter" />
-            <span class="pill" id="pill_newsletter" aria-live="polite" aria-atomic="true">No</span>
-            <span class="text">Yes, I’d like to receive The Tank Guide newsletter/updates.</span>
-          </label>
-
-          <p class="note">
-            We value your privacy. Your information will never be sold to third parties.
-            We’ll use it only to reply to your message and—if you opt in—to send occasional newsletters.
-            You can unsubscribe anytime. See our <a href="https://thetankguide.com/privacy.html">Privacy Policy</a>.
-          </p>
-        </section>
-
-        <!-- CAPTCHA + hidden fields -->
-        <div class="captcha-wrapper">
-          <div class="g-recaptcha"
-               data-sitekey="6LecjNUrAAAAACdwiRIn1KvR21x_gP8_hdOrtXA3"></div>
-          <p class="captcha-error" id="captchaError">Please confirm you’re not a robot.</p>
-        </div>
-
-        <input type="text" id="honeypot" name="honeypot" class="hidden" autocomplete="off" tabindex="-1" aria-hidden="true" />
-        <input type="hidden" name="can_contact" id="can_contact_hidden" value="No" />
-        <input type="hidden" name="newsletter_opt_in" id="newsletter_hidden" value="No" />
-        <input type="hidden" name="_subject" id="hiddenSubject" />
-        <input type="hidden" name="timestamp" id="timestamp" />
-
-        <div class="actions"><button type="submit" id="submitButton">Send</button></div>
-        <hr class="divider" />
-        <p class="form-status" id="formStatus" aria-live="polite"></p>
       </form>
     </section>
   </main>
-
   <div id="site-footer"></div>
   <script>
-(async () => {
-  try {
-    const res = await fetch('footer.v1.2.2.html?v=1.2.2', { cache: 'no-cache' });
-    const html = await res.text();
-    const host = document.getElementById('site-footer');
-    if (host) host.outerHTML = html;
-  } catch (e) { console.error('[Footer] load failed:', e); }
-})();
-</script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.ttgInitNav?.();
+    });
 
-  <!-- Scripts -->
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-  <script>
-    // Initialize nav if available
-    document.addEventListener('DOMContentLoaded', () => { window.ttgInitNav?.(); });
+    (async () => {
+      try {
+        const res = await fetch('footer.v1.2.2.html?v=1.2.2', { cache: 'no-cache' });
+        const html = await res.text();
+        const host = document.getElementById('site-footer');
+        if (host) {
+          host.outerHTML = html;
+        }
+      } catch (error) {
+        console.error('[Footer] load failed:', error);
+      }
+    })();
 
-    (function(){
-      const form = document.getElementById('feedbackForm');
-      const subjectSelect = document.getElementById('subject');
-      const hiddenSubject = document.getElementById('hiddenSubject');
-      const timestampField = document.getElementById('timestamp');
-      const formStatus = document.getElementById('formStatus');
-      const captchaError = document.getElementById('captchaError');
-      const emailField = document.getElementById('email');
-      const replyToProxy = document.getElementById('replyToProxy');
+    (function () {
+      const form = document.querySelector('[data-testid="contact-form"]');
+      if (!form) return;
 
-      // Ensure the form carries the spacing state class and toggles based on subject value
-      if (form && !form.classList.contains('js-spacing-state')) {
-        form.classList.add('js-spacing-state');
+      const successBanner = document.querySelector('[data-testid="contact-success"]');
+      const errorSummary = document.querySelector('[data-testid="contact-errors"]');
+      const summaryList = errorSummary ? errorSummary.querySelector('ul') : null;
+
+      const fields = [
+        {
+          input: document.getElementById('contact-name'),
+          helper: document.getElementById('help-name'),
+          validate: (value) => value.trim().length > 0,
+        },
+        {
+          input: document.getElementById('contact-email'),
+          helper: document.getElementById('help-email'),
+          validate: (value) => value.trim().length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+        },
+        {
+          input: document.getElementById('contact-subject'),
+          helper: document.getElementById('help-subject'),
+          validate: (value) => value.trim().length > 0,
+        },
+        {
+          input: document.getElementById('contact-message'),
+          helper: document.getElementById('help-message'),
+          validate: (value) => value.trim().length > 0,
+        },
+      ];
+
+      function setFieldState(field, isValid) {
+        if (!field.input) return;
+        if (isValid) {
+          field.input.removeAttribute('aria-invalid');
+          field.helper?.classList.remove('visible');
+        } else {
+          field.input.setAttribute('aria-invalid', 'true');
+          field.helper?.classList.add('visible');
+        }
       }
 
-      function syncSubjectState(){
-        if (!form || !subjectSelect) return;
-        const has = subjectSelect.value && subjectSelect.value.trim() !== '';
-        form.classList.toggle('has-subject', has);
+      function hideStatus() {
+        if (successBanner) {
+          successBanner.classList.remove('visible');
+          successBanner.setAttribute('tabindex', '-1');
+        }
+        if (summaryList) {
+          summaryList.innerHTML = '';
+        }
+        errorSummary?.classList.remove('visible');
       }
 
-      syncSubjectState();
-      subjectSelect?.addEventListener('change', syncSubjectState);
-
-      const panels = {
-        'Recommend a Fish': document.getElementById('panel-fish'),
-        'Logic Issues': document.getElementById('panel-logic'),
-        'Questions?': document.getElementById('panel-questions'),
-        'Product Reviews': document.getElementById('panel-reviews'),
-        'General (YouTube, article ideas, events, forums, anything related to aquariums)': document.getElementById('panel-general')
-      };
-
-      const fishNameInput = document.getElementById('fishName');
-      const fishNameError = document.getElementById('fishNameError');
-      const productNameInput = document.getElementById('productName');
-      const productNameError = document.getElementById('productNameError');
-
-      function closeAll(){ Object.values(panels).forEach(p=>p.classList.remove('active')); }
-      function openPanel(val){ closeAll(); if(panels[val]) panels[val].classList.add('active'); }
-
-      subjectSelect.addEventListener('change', ()=>{
-        const v = subjectSelect.value;
-        openPanel(v);
-        hiddenSubject.value = v ? `[Contact] – ${v}` : '';
+      fields.forEach((field) => {
+        if (!field.input) return;
+        const eventName = field.input.tagName === 'SELECT' ? 'change' : 'input';
+        field.input.addEventListener(eventName, () => {
+          const isValid = field.validate(field.input.value || '');
+          setFieldState(field, isValid);
+          if (isValid) {
+            hideStatus();
+          }
+        });
       });
 
-      function validateDynamic(){
-        let ok = true;
-        if (subjectSelect.value === 'Recommend a Fish'){
-          if(!fishNameInput.value.trim()){ fishNameError.classList.remove('hidden'); ok = false; }
-          else fishNameError.classList.add('hidden');
-        } else fishNameError.classList.add('hidden');
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        hideStatus();
 
-        if (subjectSelect.value === 'Product Reviews'){
-          if(!productNameInput.value.trim()){ productNameError.classList.remove('hidden'); ok = false; }
-          else productNameError.classList.add('hidden');
-        } else productNameError.classList.add('hidden');
+        const invalidFields = [];
 
-        return ok;
-      }
+        fields.forEach((field) => {
+          if (!field.input) return;
+          const value = field.input.value || '';
+          const isValid = field.validate(value);
+          setFieldState(field, isValid);
+          if (!isValid) {
+            invalidFields.push(field);
+          }
+        });
 
-      // Auto-grow textareas
-      document.querySelectorAll('textarea').forEach(t=>{
-        const grow=()=>{ t.style.height='auto'; t.style.height=(t.scrollHeight+2)+'px'; };
-        grow(); t.addEventListener('input',grow);
-      });
-
-      // Stay in touch sync
-      const consent = document.getElementById('consent');
-      const newsletter = document.getElementById('newsletter');
-      const pillConsent = document.getElementById('pill_consent');
-      const pillNews = document.getElementById('pill_newsletter');
-      const hidConsent = document.getElementById('can_contact_hidden');
-      const hidNews = document.getElementById('newsletter_hidden');
-
-      function setPill(pill,on){ pill.textContent = on?'Yes':'No'; pill.classList.toggle('yes',on); }
-      function setHidden(i,on){ i.value = on?'Yes':'No'; }
-      function syncPills(){
-        setPill(pillConsent, consent.checked);
-        setPill(pillNews, newsletter.checked);
-        setHidden(hidConsent, consent.checked);
-        setHidden(hidNews, newsletter.checked);
-      }
-      consent.addEventListener('change', ()=>{
-        if(!consent.checked && newsletter.checked) newsletter.checked = false;
-        syncPills();
-      });
-      newsletter.addEventListener('change', ()=>{
-        if(newsletter.checked && !consent.checked) consent.checked = true;
-        syncPills();
-      });
-      syncPills();
-
-      // Submit
-      form.addEventListener('submit', async (e)=>{
-        e.preventDefault();
-        formStatus.textContent=''; formStatus.classList.remove('error');
-
-        if(!validateDynamic()) return;
-
-        if(!subjectSelect.value){ subjectSelect.focus(); return; }
-
-        // Honeypot
-        if(document.getElementById('honeypot').value) return;
-
-        // Captcha
-        const token = grecaptcha.getResponse?.() || '';
-        if(!token){ captchaError.classList.add('visible'); return; }
-        captchaError.classList.remove('visible');
-
-        // Stamp
-        timestampField.value = new Date().toLocaleString();
-
-        if(replyToProxy && emailField){
-          replyToProxy.value = emailField.value;
+        if (invalidFields.length > 0) {
+          if (summaryList) {
+            summaryList.innerHTML = '';
+            invalidFields.forEach((field) => {
+              const helperText = field.helper?.textContent?.trim();
+              if (!helperText) return;
+              const item = document.createElement('li');
+              item.textContent = helperText;
+              summaryList.appendChild(item);
+            });
+          }
+          errorSummary?.classList.add('visible');
+          invalidFields[0]?.input?.focus();
+          return;
         }
 
-        const fd = new FormData(form);
-        try{
-          const r = await fetch(form.action, { method:'POST', body:fd, headers:{Accept:'application/json'} });
-          if(!r.ok) throw new Error('Network');
-          formStatus.textContent='Thank you — message sent. Please check your inbox (and spam folder just in case) for our reply.';
-          form.reset(); closeAll(); syncSubjectState(); syncPills(); hiddenSubject.value=''; timestampField.value='';
-          grecaptcha.reset?.();
-        }catch(err){
-          formStatus.textContent='Sorry — your message could not be sent. Please try again later.';
-          formStatus.classList.add('error');
+        fields.forEach((field) => {
+          if (!field.input) return;
+          field.input.value = '';
+          field.helper?.classList.remove('visible');
+          field.input.removeAttribute('aria-invalid');
+        });
+
+        if (successBanner) {
+          successBanner.classList.add('visible');
+          successBanner.focus({ preventScroll: true });
         }
+        form.reset();
       });
     })();
   </script>
