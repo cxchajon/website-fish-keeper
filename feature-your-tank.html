@@ -54,106 +54,215 @@
       color: rgba(233, 240, 251, 0.85);
     }
 
-    form {
+    #feature-tank-form.ft-wrap {
+      --border: rgba(255, 255, 255, 0.12);
+      --muted: #a1a1aa;
+      --text: #f3f4f6;
+      --accent: #10b981;
+      color: var(--text);
+    }
+
+    #feature-tank-form {
+      margin-top: 24px;
+    }
+
+    #feature-tank-form .ft-field {
       display: flex;
       flex-direction: column;
       gap: 6px;
+      margin: 14px 0;
     }
 
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-
-    .field-group label {
+    #feature-tank-form .ft-label {
       font-weight: 600;
       color: rgba(241, 246, 255, 0.9);
     }
 
-    .panel input[type="text"],
-    .panel input[type="email"],
-    .panel input[type="url"],
-    .panel textarea,
-    .panel select {
+    #feature-tank-form .ft-title {
+      margin: 0 0 12px;
+      font-size: 1.4rem;
+    }
+
+    #feature-tank-form .ft-input,
+    #feature-tank-form textarea.ft-input,
+    #feature-tank-form select.ft-input,
+    #feature-tank-form textarea.urls-readonly {
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.18));
       background: rgba(6, 10, 16, 0.65);
-      color: #f4f8ff;
+      color: var(--text, #f4f8ff);
       font-size: 1rem;
       transition: border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
-    .panel input[type="text"]::placeholder,
-    .panel input[type="email"]::placeholder,
-    .panel input[type="url"]::placeholder,
-    .panel textarea::placeholder {
+    #feature-tank-form .ft-input::placeholder,
+    #feature-tank-form textarea.ft-input::placeholder {
       color: rgba(244, 248, 255, 0.55);
     }
 
-    .panel input[type="text"]:focus,
-    .panel input[type="email"]:focus,
-    .panel input[type="url"]:focus,
-    .panel textarea:focus,
-    .panel select:focus {
+    #feature-tank-form .ft-input:focus,
+    #feature-tank-form textarea.ft-input:focus,
+    #feature-tank-form select.ft-input:focus,
+    #feature-tank-form textarea.urls-readonly:focus {
       outline: none;
       border-color: rgba(118, 198, 255, 0.8);
       box-shadow: 0 0 0 3px rgba(118, 198, 255, 0.25);
     }
 
-    .panel textarea {
-      min-height: 120px;
-      resize: vertical;
+    #feature-tank-form .ft-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      margin: 6px 0;
     }
 
-    #feature-tank-consent .consent-checkbox {
+    #feature-tank-form .ft-help {
+      color: var(--muted, #a1a1aa);
+      margin-top: 6px;
+    }
+
+    #feature-tank-form .ft-help.small {
+      font-size: 0.9rem;
+    }
+
+    #feature-tank-form textarea.ft-input {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    #feature-tank-form .upload-card {
+      margin: 16px 0;
+      padding: 14px;
+      border: 1px dashed var(--border, rgba(255, 255, 255, 0.12));
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    #feature-tank-form .upload-head h3 {
+      margin: 0 0 4px;
+      font-size: 1.1rem;
+    }
+
+    #feature-tank-form .muted {
+      color: var(--muted, #a1a1aa);
+    }
+
+    #feature-tank-form .upload-actions {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0 12px;
+    }
+
+    #feature-tank-form .btn-primary {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.08));
+      color: var(--text, #f3f4f6);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+    }
+
+    #feature-tank-form .btn-ghost {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+      background: transparent;
+      color: var(--muted, #a1a1aa);
+      cursor: pointer;
+    }
+
+    #feature-tank-form .upload-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+      gap: 10px;
+      min-height: 0;
+    }
+
+    #feature-tank-form .thumb {
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    #feature-tank-form .thumb img,
+    #feature-tank-form .thumb video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #feature-tank-form .thumb .badge {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      background: rgba(0, 0, 0, 0.55);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+    }
+
+    #feature-tank-form .consent-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      margin: 12px 0 6px;
+    }
+
+    #feature-tank-form .consent-checkbox {
       width: 20px;
       height: 20px;
       margin-top: 2px;
       -webkit-appearance: checkbox;
       appearance: checkbox;
-      accent-color: #39b385;
-      cursor: pointer;
-      outline: none;
+      accent-color: var(--accent, #10b981);
       transform: scale(1.15);
       transform-origin: top left;
+      cursor: pointer;
     }
 
-    #feature-tank-consent .consent-checkbox:focus-visible {
-      box-shadow: 0 0 0 3px rgba(57, 179, 133, 0.35);
-    }
-
-    #feature-tank-consent .consent-label {
+    #feature-tank-form .consent-label {
       user-select: none;
       cursor: pointer;
       line-height: 1.4;
-      margin-left: 2px;
     }
 
-    .consent-field .consent-control {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
+    #feature-tank-form .consent-help {
+      color: var(--muted, #a1a1aa);
+      margin: 0 0 10px;
     }
 
-    .consent-field .consent-help {
-      margin: 6px 0 0 28px;
-      color: rgba(233, 240, 251, 0.75);
+    #feature-tank-form #submitBtn[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
+    #feature-tank-form .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
-    .actions .btn {
-      width: auto;
-      padding: 12px 28px;
+    #thankYou {
+      margin-top: 1rem;
+      color: #10b981;
       font-weight: 600;
     }
 
@@ -166,13 +275,15 @@
         padding-top: 32px;
       }
 
-      .actions {
+      #feature-tank-form .upload-actions {
         flex-direction: column;
         align-items: stretch;
       }
 
-      .actions .btn {
+      #feature-tank-form .btn-primary,
+      #feature-tank-form .btn-ghost {
         width: 100%;
+        text-align: center;
       }
     }
   </style>
@@ -190,126 +301,136 @@
         <em>Features are only accepted through this website form.</em>
       </p>
 
-      <form id="tank-feature-form" action="https://formspree.io/f/xnngnwld" method="POST" style="margin-top:16px;">
-        <input type="hidden" name="form_name" value="Tank Feature Submission" />
-        <input type="hidden" name="_subject" value="Tank Feature Submission — The Tank Guide" />
-        <!-- Optional success redirect TODO: enable after /thanks.html is published -->
-        <!-- <input type="hidden" name="_redirect" value="https://thetankguide.com/thanks.html"> -->
+      <section id="feature-tank-form" class="ft-wrap" aria-labelledby="ft-title">
+        <h2 id="ft-title" class="ft-title">Feature Your Tank</h2>
 
-        <!-- Honeypot -->
-        <label style="display:none;">Don’t fill this out if you’re human:
-          <input name="_gotcha" type="text" tabindex="-1" autocomplete="off">
-        </label>
+        <form id="featureForm" action="https://formspree.io/f/xnngnwld" method="POST" novalidate>
+          <input type="hidden" name="form_name" value="Tank Feature Submission" />
+          <input type="hidden" name="_subject" value="Tank Feature Submission — The Tank Guide" />
 
-        <!-- Contact -->
-        <div class="field-group">
-          <label for="name">Name / Username *</label>
-          <input id="name" name="name" type="text" required>
-        </div>
+          <label class="sr-only" for="hp_field">Don’t fill this out if you’re human:</label>
+          <input id="hp_field" class="sr-only" name="_gotcha" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
 
-        <div class="field-group">
-          <label for="email">Email (contact if selected) *</label>
-          <input id="email" name="email" type="email" required>
-        </div>
-
-        <!-- Quick Facts -->
-        <div class="grid" style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
-          <div class="field-group">
-            <label for="tank_size">Tank Size *</label>
-            <input id="tank_size" name="tank_size" type="text" placeholder="e.g., 10g, 20 long, 29g, 75g" required>
+          <div class="ft-grid">
+            <div class="ft-field">
+              <label for="name" class="ft-label">Name / Username *</label>
+              <input id="name" name="name" type="text" class="ft-input" required>
+            </div>
+            <div class="ft-field">
+              <label for="email" class="ft-label">Email (contact if selected) *</label>
+              <input id="email" name="email" type="email" class="ft-input" required>
+            </div>
           </div>
 
-          <div class="field-group">
-            <label for="planted">Planted? *</label>
-            <select id="planted" name="planted" required>
-              <option value="" disabled selected>Select</option>
-              <option>Yes</option>
-              <option>No</option>
-            </select>
+          <div class="ft-grid">
+            <div class="ft-field">
+              <label for="tank_size" class="ft-label">Tank Size *</label>
+              <input id="tank_size" name="tank_size" type="text" class="ft-input" placeholder="e.g., 10g, 20 long, 29g, 75g" required>
+            </div>
+            <div class="ft-field">
+              <label for="planted" class="ft-label">Planted? *</label>
+              <select id="planted" name="planted" class="ft-input" required>
+                <option value="" disabled selected>Select</option>
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+            </div>
+            <div class="ft-field">
+              <label for="substrate" class="ft-label">Substrate *</label>
+              <input id="substrate" name="substrate" type="text" class="ft-input" placeholder="e.g., sand, gravel, dirt + sand cap" required>
+            </div>
+            <div class="ft-field">
+              <label for="filtration" class="ft-label">Filtration *</label>
+              <input id="filtration" name="filtration" type="text" class="ft-input" placeholder="e.g., HOB, canister, sump, sponge, UGF" required>
+            </div>
+            <div class="ft-field">
+              <label for="lighting" class="ft-label">Lighting Setup</label>
+              <input id="lighting" name="lighting" type="text" class="ft-input" placeholder="brand/model + schedule (if custom)">
+            </div>
+            <div class="ft-field">
+              <label for="nitrates" class="ft-label">Typical Nitrate Range</label>
+              <input id="nitrates" name="nitrates" type="text" class="ft-input" placeholder="e.g., ~20 ppm">
+            </div>
           </div>
 
-          <div class="field-group">
-            <label for="substrate">Substrate *</label>
-            <input id="substrate" name="substrate" type="text" placeholder="e.g., sand, gravel, dirt + sand cap" required>
+          <div class="ft-field">
+            <label for="stock" class="ft-label">Stock / Livestock *</label>
+            <textarea id="stock" name="stock" rows="3" class="ft-input" placeholder="Fish, shrimp, snails…" required></textarea>
           </div>
 
-          <div class="field-group">
-            <label for="filtration">Filtration *</label>
-            <input id="filtration" name="filtration" type="text" placeholder="e.g., HOB, canister, sump, sponge, UGF" required>
+          <div class="ft-grid">
+            <div class="ft-field">
+              <label for="cleanup" class="ft-label">Cleanup Crew?</label>
+              <input id="cleanup" name="cleanup" type="text" class="ft-input" placeholder="Shrimp, snails, bottom feeders, none">
+            </div>
+            <div class="ft-field">
+              <label for="media" class="ft-label">Media / Additives</label>
+              <input id="media" name="media" type="text" class="ft-input" placeholder="e.g., Purigen, carbon, etc.">
+            </div>
           </div>
 
-          <div class="field-group">
-            <label for="lighting">Lighting Setup</label>
-            <input id="lighting" name="lighting" type="text" placeholder="brand/model + schedule (if custom)">
+          <div class="ft-field">
+            <label for="love" class="ft-label">What you love about this tank *</label>
+            <textarea id="love" name="love" rows="3" class="ft-input" required></textarea>
           </div>
 
-          <div class="field-group">
-            <label for="nitrates">Typical Nitrate Range</label>
-            <input id="nitrates" name="nitrates" type="text" placeholder="e.g., ~20 ppm">
+          <div class="ft-field">
+            <label for="improve" class="ft-label">What you’d improve or change *</label>
+            <textarea id="improve" name="improve" rows="3" class="ft-input" required></textarea>
           </div>
-        </div>
 
-        <div class="field-group">
-          <label for="stock">Stock / Livestock *</label>
-          <textarea id="stock" name="stock" rows="3" placeholder="Fish, shrimp, snails…" required></textarea>
-        </div>
-
-        <div class="grid" style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
-          <div class="field-group">
-            <label for="cleanup">Cleanup Crew?</label>
-            <input id="cleanup" name="cleanup" type="text" placeholder="Shrimp, snails, bottom feeders, none">
+          <div class="ft-field">
+            <label for="mediaLink" class="ft-label">Photos / Video Link</label>
+            <input id="mediaLink" name="media_link" type="url" class="ft-input" placeholder="YouTube, Google Drive, Instagram, etc." />
+            <div class="ft-help">Paste a link if you prefer. Or use the uploader below.</div>
           </div>
-          <div class="field-group">
-            <label for="media">Media / Additives</label>
-            <input id="media" name="media" type="text" placeholder="e.g., Purigen, carbon, etc.">
+
+          <div id="media-upload-block" class="upload-card" aria-labelledby="upload-title">
+            <div class="upload-head">
+              <h3 id="upload-title">Upload Photos / Videos</h3>
+              <p class="muted">Attach images or short clips from your device. Files are hosted securely via Cloudinary.</p>
+            </div>
+
+            <div class="upload-actions">
+              <button type="button" id="openUploader" class="btn-primary">+ Add Photos/Videos</button>
+              <button type="button" id="clearUploads" class="btn-ghost">Clear</button>
+            </div>
+
+            <input type="hidden" name="media_urls" id="mediaUrls" value="" />
+
+            <label for="mediaUrlsReadonly" class="sr-only">Uploaded URLs</label>
+            <textarea id="mediaUrlsReadonly" class="urls-readonly" rows="3" readonly placeholder="No files uploaded yet."></textarea>
+
+            <div id="uploadPreview" class="upload-preview" aria-live="polite"></div>
+
+            <div class="ft-help small">Max 10 files, up to ~80 MB each. Allowed: jpg, jpeg, png, webp, heic, mp4, mov.</div>
           </div>
-        </div>
 
-        <!-- Story -->
-        <div class="field-group">
-          <label for="love">What you love about this tank *</label>
-          <textarea id="love" name="love" rows="3" required></textarea>
-        </div>
-
-        <div class="field-group">
-          <label for="improve">What you’d improve or change *</label>
-          <textarea id="improve" name="improve" rows="3" required></textarea>
-        </div>
-
-        <!-- Media -->
-        <div class="field-group">
-          <label for="media_link">Photos / Video Link</label>
-          <input id="media_link" name="media_link" type="url" placeholder="YouTube, Google Drive, Instagram, etc.">
-        </div>
-
-        <div class="field-group">
-          <label for="notes">Other Notes</label>
-          <textarea id="notes" name="notes" rows="3" placeholder="Anything else we should know"></textarea>
-        </div>
-
-        <!-- Consent -->
-        <div class="field-group consent-field" id="feature-tank-consent" style="margin-top:8px;">
-          <div class="consent-control">
-            <input id="consent_feature" class="consent-checkbox" type="checkbox" name="consent_feature" value="yes" required aria-describedby="consent_feature_help">
-            <label for="consent_feature" class="consent-label">I confirm I own these photos/videos and give The Tank Guide permission to showcase them (with credit).</label>
+          <div class="ft-field">
+            <label for="notes" class="ft-label">Other Notes</label>
+            <textarea id="notes" name="notes" rows="3" class="ft-input" placeholder="Anything else we should know"></textarea>
           </div>
-          <p id="consent_feature_help" class="tiny consent-help">Tick this box to enable submission and let us share your media with credit.</p>
+
+          <div class="consent-row">
+            <input type="checkbox" id="ownMedia" name="own_media" value="yes" class="consent-checkbox" aria-describedby="consent-help" required />
+            <label for="ownMedia" class="consent-label">
+              I confirm I own these photos/videos and give <strong>The Tank Guide</strong> permission to showcase them (with credit).
+            </label>
+          </div>
+          <p id="consent-help" class="consent-help">
+            Tick this box to enable submission and let us share your media with credit.
+          </p>
+
+          <div class="g-recaptcha" data-sitekey="6LecjNUrAAAAACdwiRIn1KvR21x_gP8_hdOrtXA3" style="margin:12px 0;"></div>
+
+          <button type="submit" id="submitBtn" class="btn-primary" disabled aria-disabled="true">Submit Tank</button>
+          <p class="ft-help small" style="margin-top:6px;">We’ll contact you at the email provided if selected.</p>
+        </form>
+
+        <div id="thankYou" style="display:none;" role="status" aria-live="polite">
+          ✅ Thanks! Your submission has been sent. We’ll review and contact you if selected.
         </div>
-
-        <!-- reCAPTCHA v2 -->
-        <div class="g-recaptcha" data-sitekey="6LecjNUrAAAAACdwiRIn1KvR21x_gP8_hdOrtXA3" style="margin:12px 0;"></div>
-
-        <div class="actions" style="display:flex;gap:10px;align-items:center;margin-top:8px;">
-          <button type="submit" class="btn" id="submit_feature" disabled aria-disabled="true">Submit Tank</button>
-          <p class="tiny" style="opacity:.8;margin:0;">We’ll contact you at the email provided if selected.</p>
-        </div>
-      </form>
-
-      <div id="feature-form-success"
-           style="display:none;margin-top:16px;color:#39b385;font-weight:600;"
-           role="status" aria-live="polite">
-        ✅ Thanks! Your submission has been sent. We’ll review and contact you if selected.
-      </div>
+      </section>
 
       <p class="tiny" style="margin-top:12px;opacity:.75;">
         📌 Features are <strong>only</strong> accepted through this website. We don’t take submissions via YouTube comments or social DMs.
@@ -328,7 +449,221 @@
   } catch (e) { console.error('[Footer] load failed:', e); }
 })();
 </script>
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js" defer></script>
+  <script>
+  (function() {
+    const init = () => {
+      const form = document.getElementById('featureForm');
+      const thankYou = document.getElementById('thankYou');
+      const submitBtn = document.getElementById('submitBtn');
+      const consent = document.getElementById('ownMedia');
+      const openUploaderBtn = document.getElementById('openUploader');
+      const clearUploadsBtn = document.getElementById('clearUploads');
+      const preview = document.getElementById('uploadPreview');
+      const urlsHidden = document.getElementById('mediaUrls');
+      const urlsReadonly = document.getElementById('mediaUrlsReadonly');
+
+      if (!form || !submitBtn || !consent || !openUploaderBtn || !clearUploadsBtn || !preview || !urlsHidden || !urlsReadonly) {
+        return;
+      }
+
+      const CLOUD_NAME = 'fishkeepinglifeco';
+      const UPLOAD_PRESET = 'ttg_unsigned';
+      const UPLOAD_FOLDER = 'feature-tanks';
+      const MAX_FILES = 10;
+      const MAX_SIZE_BYTES = 80 * 1024 * 1024;
+
+      let uploaded = [];
+      let uploadsInFlight = 0;
+
+      const setSubmitEnabled = (enabled) => {
+        submitBtn.disabled = !enabled;
+        submitBtn.setAttribute('aria-disabled', String(!enabled));
+      };
+
+      const syncSubmitAvailability = () => {
+        const canSubmit = consent.checked && uploadsInFlight === 0;
+        setSubmitEnabled(canSubmit);
+      };
+
+      const thumbUrl = (url) => url.replace('/upload/', '/upload/c_fill,w_200,h_200,q_auto,f_auto/');
+
+      const renderPreviews = () => {
+        preview.innerHTML = '';
+        uploaded.forEach((u) => {
+          const div = document.createElement('div');
+          div.className = 'thumb';
+          if (/(\.mp4|\.mov)(\?|$)/i.test(u)) {
+            const poster = u.replace('/upload/', '/upload/so_1,du_1,pg_1,c_fill,w_200,h_200,q_auto,f_auto/');
+            const img = document.createElement('img');
+            img.src = poster;
+            img.alt = 'Video preview';
+            div.appendChild(img);
+            const badge = document.createElement('span');
+            badge.className = 'badge';
+            badge.textContent = 'Video';
+            div.appendChild(badge);
+          } else {
+            const img = document.createElement('img');
+            img.src = thumbUrl(u);
+            img.alt = 'Image preview';
+            div.appendChild(img);
+          }
+          preview.appendChild(div);
+        });
+        urlsHidden.value = uploaded.join(',');
+        urlsReadonly.value = uploaded.join('\n');
+      };
+
+      const lockSubmitWhileUploading = (lock) => {
+        uploadsInFlight += lock ? 1 : -1;
+        if (uploadsInFlight < 0) uploadsInFlight = 0;
+        syncSubmitAvailability();
+      };
+
+      let widgetInstance = null;
+
+      const handleWidgetEvent = (error, result) => {
+        if (result && result.event === 'queues-start') {
+          lockSubmitWhileUploading(true);
+        }
+
+        if (result && result.event === 'success') {
+          const url = result.info && result.info.secure_url ? result.info.secure_url : null;
+          if (url) {
+            if (uploaded.length >= MAX_FILES) {
+              alert(`You can upload up to ${MAX_FILES} files per submission.`);
+            } else {
+              uploaded.push(url);
+              renderPreviews();
+            }
+          }
+        }
+
+        if (result && (result.event === 'queues-end' || result.event === 'close')) {
+          lockSubmitWhileUploading(false);
+        }
+
+        if (error) {
+          console.error('Cloudinary widget error:', error);
+          alert('There was a problem uploading. Please try again.');
+          lockSubmitWhileUploading(false);
+        }
+      };
+
+      const getWidget = () => {
+        if (!widgetInstance) {
+          widgetInstance = window.cloudinary.createUploadWidget({
+            cloudName: CLOUD_NAME,
+            uploadPreset: UPLOAD_PRESET,
+            multiple: true,
+            maxFiles: MAX_FILES,
+            clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'heic', 'mp4', 'mov'],
+            maxFileSize: MAX_SIZE_BYTES,
+            resourceType: 'auto',
+            cropping: false,
+            folder: UPLOAD_FOLDER,
+            sources: ['local', 'camera', 'url'],
+            showPoweredBy: false
+          }, handleWidgetEvent);
+        }
+
+        return widgetInstance;
+      };
+
+      const openWidget = () => {
+        if (!window.cloudinary || typeof window.cloudinary.createUploadWidget !== 'function') {
+          alert('Uploader not ready yet. Please wait a moment and try again.');
+          return;
+        }
+
+        const widget = getWidget();
+        widget.open();
+      };
+
+      consent.addEventListener('change', () => {
+        if (thankYou) {
+          thankYou.style.display = 'none';
+        }
+        syncSubmitAvailability();
+      });
+
+      openUploaderBtn.addEventListener('click', openWidget);
+
+      clearUploadsBtn.addEventListener('click', () => {
+        uploaded = [];
+        renderPreviews();
+        syncSubmitAvailability();
+      });
+
+      form.addEventListener('input', () => {
+        if (thankYou) {
+          thankYou.style.display = 'none';
+        }
+      });
+
+      form.addEventListener('submit', async (event) => {
+        if (uploadsInFlight > 0) {
+          event.preventDefault();
+          alert('Please wait for uploads to finish.');
+          return;
+        }
+
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          form.reportValidity();
+          if (!consent.checked) {
+            alert('Please confirm you own the media and grant permission.');
+          }
+          return;
+        }
+
+        event.preventDefault();
+        setSubmitEnabled(false);
+        if (thankYou) {
+          thankYou.style.display = 'none';
+        }
+
+        try {
+          const data = new FormData(form);
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: data,
+            headers: { 'Accept': 'application/json' }
+          });
+
+          if (response.ok) {
+            form.reset();
+            uploaded = [];
+            renderPreviews();
+            if (typeof window.grecaptcha !== 'undefined') {
+              window.grecaptcha.reset();
+            }
+            if (thankYou) {
+              thankYou.style.display = 'block';
+            }
+          } else {
+            alert('❌ There was a problem sending your submission. Please try again.');
+          }
+        } catch (error) {
+          console.error(error);
+          alert('❌ Network error. Please try again.');
+        } finally {
+          syncSubmitAvailability();
+        }
+      });
+
+      renderPreviews();
+      syncSubmitAvailability();
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  </script>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-  <script defer src="js/feature-tank.js?v=1.0.0"></script>
 </body>
 </html>
