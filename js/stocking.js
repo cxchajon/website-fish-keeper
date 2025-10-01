@@ -4,6 +4,29 @@ import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderChips, bindPopoverHandlers } from './logic/ui.js';
 
+function isAssumptionText(el){
+  const t = (el?.textContent || '').trim();
+  return /^Tank:\s*\d+(\.\d+)?\s*gal\s*—\s*assumed:/i.test(t);
+}
+
+function scrubAssumptionOnce(scope){
+  const root = scope || document;
+  const card = root.querySelector('#stocking-page .ttg-card.tank-size, #stocking-page [data-card="tank-size"]');
+  if (!card) return;
+  card.querySelectorAll('p,div,.tank-assumption,#tank-assumption,[data-role="tank-assumption"],[data-test="tank-assumption"]').forEach((node) => {
+    if (isAssumptionText(node)) {
+      node.remove();
+    }
+  });
+  Array.from(card.children).forEach((child) => {
+    if (!child.textContent || !child.textContent.trim()) {
+      child.remove();
+    }
+  });
+}
+
+scrubAssumptionOnce();
+
 (function initStockingFlags(){
   window.TTG = window.TTG || {};
   const ua = navigator.userAgent || '';
@@ -77,6 +100,8 @@ function bootstrapStocking() {
   let variantSelectorOpen = false;
   let shouldRestoreVariantFocus = false;
   const debugMode = getQueryFlag('debug');
+  let assumptionScrubInitialized = false;
+  let lastScrubbedGallons = null;
 
   const refs = {
     pageTitle: document.getElementById('page-title'),
@@ -106,6 +131,20 @@ function bootstrapStocking() {
     envReco: document.getElementById('env-reco'),
     envTips: document.getElementById('env-more-tips'),
   };
+
+  function ensureTankAssumptionScrubbed(){
+    const gallons = computed?.tank?.gallons ?? state?.gallons ?? null;
+    if (!assumptionScrubInitialized){
+      scrubAssumptionOnce();
+      assumptionScrubInitialized = true;
+      lastScrubbedGallons = gallons;
+      return;
+    }
+    if (gallons !== lastScrubbedGallons){
+      scrubAssumptionOnce();
+      lastScrubbedGallons = gallons;
+    }
+  }
 
   let envTipsInitialized = false;
   let envTipsHideTimer = null;
@@ -641,6 +680,7 @@ function renderAll() {
     syncStockFromState();
     renderDiagnostics();
     renderEnvironmentPanels();
+    ensureTankAssumptionScrubbed();
     return;
   }
   computed = buildComputedState(state);
@@ -652,6 +692,7 @@ function renderAll() {
   syncStockFromState();
   renderDiagnostics();
   renderEnvironmentPanels();
+  ensureTankAssumptionScrubbed();
 }
 
 function renderEnvironmentPanels() {
