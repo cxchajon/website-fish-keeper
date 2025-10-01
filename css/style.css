@@ -252,9 +252,6 @@ body.theme-light {
   border-radius: 4px / 6px;
 }
 
-.video-card a.yt-cta .yt-icon .yt-cta-svg {
-  display: block;
-}
 
 .video-card a.yt-cta .yt-label {
   white-space: nowrap;
@@ -1370,15 +1367,20 @@ body.planted-active #cycling-coach .cc-title__leaf {
 .yt-cta:hover { filter: brightness(1.08); }
 .yt-cta:active { transform: translateY(1px); }
 
-/* Red play icon (SVG via CSS background) */
+/* Red play icon wrapper */
 .yt-icon {
-  width: 22px; height: 16px; flex: 0 0 22px;
-  background:
-    /* white play triangle */
-    conic-gradient(from 330deg at 9px 8px, #fff 0 60deg, transparent 0) no-repeat 7px 3px / 8px 10px,
-    /* red rounded rect */
-    #FF0033;
+  width: 28px;
+  height: 20px;
+  flex: 0 0 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ff0033;
   border-radius: 4px / 6px;
+}
+
+.yt-cta .yt-icon .yt-cta-svg {
+  display: block;
 }
 
 .video-card > iframe,
@@ -1408,6 +1410,12 @@ body.planted-active #cycling-coach .cc-title__leaf {
   border-top:1px solid var(--border);
   width:100%;
   margin:4px 0 4px;
+}
+.card-sep {
+  border: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.25);
+  margin: 12px 0 16px;
 }
 .featured-videos-card .video-meta{
   padding-top:.25rem;
