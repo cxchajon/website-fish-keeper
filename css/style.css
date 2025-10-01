@@ -255,6 +255,27 @@ body.theme-light {
   color: #fff;
 }
 
+.video-card .video-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.video-card .video-blurb {
+  flex: 1 1 auto;
+}
+
+.video-card .video-blurb p {
+  margin: 0;
+}
+
+.video-card .video-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
 .hamburger__bars {
   position: relative;
   display: block;
