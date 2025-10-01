@@ -108,12 +108,6 @@ function bootstrapStocking() {
     plantIcon: document.getElementById('plant-icon'),
     planted: document.getElementById('toggle-planted'),
     envInfoToggle: document.getElementById('env-info-toggle'),
-    temp: document.getElementById('input-temp'),
-    ph: document.getElementById('input-ph'),
-    gh: document.getElementById('input-gh'),
-    kh: document.getElementById('input-kh'),
-    salinity: document.getElementById('select-salinity'),
-    flow: document.getElementById('select-flow'),
     tankSummary: document.getElementById('tank-summary'),
     conditions: document.getElementById('conditions-list'),
     candidateChips: document.getElementById('candidate-chips'),
@@ -507,24 +501,6 @@ function updateToggle(control, value) {
   }
 
 function syncStateFromInputs() {
-  if (refs.temp) {
-    state.water.temperature = Number(refs.temp.value) || state.water.temperature;
-  }
-  if (refs.ph) {
-    state.water.pH = Number(refs.ph.value) || state.water.pH;
-  }
-  if (refs.gh) {
-    state.water.gH = Number(refs.gh.value) || state.water.gH;
-  }
-  if (refs.kh) {
-    state.water.kH = Number(refs.kh.value) || state.water.kH;
-  }
-  if (refs.salinity) {
-    state.water.salinity = refs.salinity.value;
-  }
-  if (refs.flow) {
-    state.water.flow = refs.flow.value;
-  }
   if (state.variantId) {
     const valid = getTankVariants(state.gallons).some((variant) => variant.id === state.variantId);
     if (!valid) {
@@ -726,13 +702,6 @@ window.addEventListener('ttg:recompute', () => {
   });
 
 function bindInputs() {
-  if (refs.temp) refs.temp.addEventListener('input', scheduleUpdate);
-  if (refs.ph) refs.ph.addEventListener('input', scheduleUpdate);
-  if (refs.gh) refs.gh.addEventListener('input', scheduleUpdate);
-  if (refs.kh) refs.kh.addEventListener('input', scheduleUpdate);
-  if (refs.salinity) refs.salinity.addEventListener('change', scheduleUpdate);
-  if (refs.flow) refs.flow.addEventListener('change', scheduleUpdate);
-
   if (refs.planted) {
     refs.planted.addEventListener('change', () => {
       state.planted = Boolean(refs.planted.checked);
