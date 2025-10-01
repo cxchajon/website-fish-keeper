@@ -198,6 +198,55 @@
       outline-offset: 3px;
     }
 
+    /* Fishkeeping Inspirations */
+    .inspiration-card h2 {
+      margin: 0 0 6px;
+    }
+
+    .inspiration-card .tagline {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .inspiration-card .blurb {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .inspiration-card hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 0 0 14px;
+    }
+
+    .community-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+    }
+
+    .community-thumb {
+      aspect-ratio: 16 / 9;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #e9eef3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px;
+      color: rgba(11, 16, 32, 0.75);
+      font-weight: 600;
+    }
+
+    @media (min-width: 600px) {
+      .community-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
     @media (min-width: 768px) {
       .resource-card { padding: 18px 20px 20px; }
       .resource-cover { width: 30vw; max-width: 300px; }
@@ -321,6 +370,19 @@
               <span class="yt-label">Visit Our Channel</span>
             </a>
           </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="section" aria-labelledby="inspirations">
+      <article class="card inspiration-card">
+        <h2 id="inspirations">Fishkeeping Inspirations</h2>
+        <p class="tagline">From the Fish keeping Community</p>
+        <p class="blurb">We’re not the only place to learn — here are some community-driven videos worth your time.</p>
+        <hr role="presentation" />
+        <div class="community-grid">
+          <div class="community-thumb">Community video — placeholder</div>
+          <div class="community-thumb">Community video — placeholder</div>
         </div>
       </article>
     </section>
