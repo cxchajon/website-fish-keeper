@@ -65,6 +65,27 @@
       padding: 16px;
       color:#0b1020; /* card copy stays dark on light card */
     }
+    .aquarium-library-card {
+      display: flex;
+      flex-direction: column;
+    }
+    .aquarium-library-card h2 {
+      margin: 0 0 4px;
+    }
+    .aquarium-library-card .subline {
+      margin: 0;
+      color: var(--muted);
+    }
+    .aquarium-library-card .media-divider {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 8px 0 12px;
+    }
+    .aquarium-library-card .library-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
     .stack { display: grid; gap: 14px; }
     .btn {
       display:inline-block; padding:10px 14px; border:1px solid var(--border);
@@ -306,25 +327,16 @@
 
     <!-- Articles -->
     <section class="section" aria-labelledby="articles">
-      <div class="card stack">
+      <article class="card aquarium-library-card">
         <h2 id="articles">Aquarium Library</h2>
         <p class="subline">Explore a collection of guides, research articles, transcripts, and more.</p>
-        <article>
+        <hr class="media-divider" />
+        <div class="library-item">
           <h3>Mission &amp; Values</h3>
           <p class="muted">Explore the values behind FishKeepingLifeCo: clear guidance, hands-on learning, responsible care, and a supportive fishkeeping community.</p>
           <p><a class="btn" href="/about.html#mission">Read Our Mission</a></p>
-        </article>
-        <article>
-          <h3>Ultimate Stocking Checklist</h3>
-          <p class="muted">Everything you need to plan a compatible community, including tank footprint, water parameters, and behavior notes.</p>
-          <p><a class="btn" href="https://thetankguide.com/blog/stocking-checklist" target="_blank" rel="noopener">Read the Guide</a></p>
-        </article>
-        <article>
-          <h3>5 Mistakes That Stall Cycling</h3>
-          <p class="muted">Avoid these common pitfalls that slow your cycle or harm your bacteria colony.</p>
-          <p><a class="btn" href="https://thetankguide.com/blog/cycling-mistakes" target="_blank" rel="noopener">Learn More</a></p>
-        </article>
-      </div>
+        </div>
+      </article>
     </section>
 
     <!-- Featured Resource -->
