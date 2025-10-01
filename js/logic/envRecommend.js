@@ -454,7 +454,7 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
         <div class="env-bar env-bar--xl bar-row">
           <div class="env-bar__hd">
             <div class="env-bar__label metric-label">Bioload ${bioloadInfoBtn}</div>
-            <div class="env-bar__value">${bioloadDisplay}</div>
+            <div class="env-bar__value" data-role="bioload-percent" data-field="bioload-percent" data-env="bioload">${bioloadDisplay}</div>
           </div>
           <div class="env-bar__track meter-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${bioloadAria}">
             <div class="env-bar__fill" style="width:${bioloadPct}%; background:${bioloadColor};"></div>
@@ -480,7 +480,7 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
       <div class="env-bar metric-row">
         <div class="env-bar__hd">
           <span class="env-bar__label metric-label">Bioload ${bioloadInfoBtn}</span>
-          <span>${escapeHtml(bioloadLabel)}</span>
+          <span data-role="bioload-percent" data-field="bioload-percent" data-env="bioload">${escapeHtml(bioloadLabel)}</span>
         </div>
         <div class="env-bar__track progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${bioloadAria}">
           <div class="env-bar__fill" style="width:${bioloadPct}%; background:${bioloadColor};"></div>

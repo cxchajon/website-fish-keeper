@@ -202,6 +202,12 @@ export function renderConditions(list, items) {
     const li = document.createElement('li');
     li.className = 'condition-item';
     li.dataset.state = item.severity;
+    const rawKey = typeof item.key === 'string' ? item.key.trim() : '';
+    const normalizedKey = rawKey.toLowerCase();
+    if (normalizedKey) {
+      const envField = `env-${normalizedKey}`;
+      li.dataset.field = envField;
+    }
 
     const label = document.createElement('div');
     label.className = 'label';
@@ -219,6 +225,12 @@ export function renderConditions(list, items) {
 
     const value = document.createElement('div');
     value.className = 'value';
+    if (normalizedKey) {
+      const envField = `env-${normalizedKey}`;
+      value.dataset.field = envField;
+      value.dataset.role = envField;
+      value.dataset.env = normalizedKey;
+    }
     const rangeText = formatRangeForKey(item.key, item.range);
     const icon = document.createElement('span');
     icon.className = 'condition-icon';
@@ -231,6 +243,12 @@ export function renderConditions(list, items) {
     bullet.style.opacity = '0.6';
     const actualSpan = document.createElement('span');
     actualSpan.textContent = item.actual ?? '—';
+    if (normalizedKey) {
+      const envField = `env-${normalizedKey}`;
+      actualSpan.dataset.field = envField;
+      actualSpan.dataset.role = envField;
+      actualSpan.dataset.env = normalizedKey;
+    }
     const hintSpan = document.createElement('span');
     hintSpan.textContent = item.hint;
     value.append(rangeSpan, bullet, actualSpan, icon, hintSpan);
@@ -298,6 +316,7 @@ export function renderStockList(list, entries, onRemove) {
   for (const entry of entries) {
     const li = document.createElement('li');
     li.className = 'stock-item';
+    li.dataset.role = 'stock-row';
     const meta = document.createElement('div');
     meta.className = 'meta';
     const name = document.createElement('span');
@@ -310,6 +329,8 @@ export function renderStockList(list, entries, onRemove) {
     const remove = document.createElement('button');
     remove.type = 'button';
     remove.textContent = 'Remove';
+    remove.dataset.action = 'remove';
+    remove.dataset.role = 'remove-stock';
     remove.addEventListener('click', () => onRemove(entry));
     li.append(meta, remove);
     list.appendChild(li);
