@@ -1,117 +1,167 @@
-const SIZE_MAP = new Map([
-  [5, [
-    { id: '5-standard', name: '5 Gallon Standard', length: 16.2, width: 8.4, height: 10.5, profile: 'standard', default: true },
-  ]],
-  [10, [
-    { id: '10-standard', name: '10 Gallon Standard', length: 20.25, width: 10.5, height: 12.6, profile: 'standard', default: true },
-  ]],
-  [15, [
-    { id: '15-standard', name: '15 Gallon', length: 20.25, width: 10.5, height: 18.75, profile: 'standard', default: true },
-  ]],
-  [20, [
-    { id: '20-high', name: '20 Gallon High', length: 24.25, width: 12.5, height: 16.75, profile: 'standard', default: true },
-    { id: '20-long', name: '20 Gallon Long', length: 30.25, width: 12.5, height: 12.75, profile: 'long' },
-  ]],
-  [29, [
-    { id: '29-standard', name: '29 Gallon', length: 30.25, width: 12.5, height: 18.75, profile: 'standard', default: true },
-  ]],
-  [40, [
-    { id: '40-breeder', name: '40 Gallon Breeder', length: 36.25, width: 18.25, height: 16.75, profile: 'breeder', default: true },
-  ]],
-  [55, [
-    { id: '55-standard', name: '55 Gallon', length: 48.25, width: 12.75, height: 21, profile: 'standard', default: true },
-  ]],
-  [75, [
-    { id: '75-standard', name: '75 Gallon', length: 48.5, width: 18.5, height: 21.25, profile: 'standard', default: true },
-  ]],
-  [125, [
-    { id: '125-standard', name: '125 Gallon', length: 72, width: 18, height: 21, profile: 'standard', default: true },
-  ]],
+import { TANK_SIZES, getTankById, normalizeLegacyTankSelection } from '../utils.js';
+
+const LEGACY_VARIANT_IDS = new Map([
+  ['5-standard', '5g'],
+  ['10-standard', '10g'],
+  ['15-standard', '15g'],
+  ['20-high', '20h'],
+  ['20-long', '20l'],
+  ['29-standard', '29g'],
+  ['40-breeder', '40b'],
+  ['55-standard', '55g'],
+  ['75-standard', '75g'],
+  ['125-standard', '125g'],
 ]);
 
-function getDefaultVariant(gallons) {
-  const variants = SIZE_MAP.get(gallons);
-  if (!variants) return null;
-  return variants.find((variant) => variant.default) ?? variants[0];
+const GALLON_TO_ID = (() => {
+  const map = new Map();
+  for (const tank of TANK_SIZES) {
+    if (!map.has(tank.gallons)) {
+      map.set(tank.gallons, tank.id);
+    }
+  }
+  if (map.has(20)) {
+    map.set(20, '20l');
+  }
+  return map;
+})();
+
+function getDimensionsIn(tank) {
+  if (!tank) return { l: 0, w: 0, h: 0 };
+  const dims =
+    tank.dimensionsIn ??
+    tank.dimensions_in ?? {
+      l: tank.lengthIn,
+      w: tank.widthIn,
+      h: tank.heightIn,
+    };
+  return {
+    l: Number.isFinite(dims?.l) ? dims.l : Number.isFinite(tank.lengthIn) ? tank.lengthIn : 0,
+    w: Number.isFinite(dims?.w) ? dims.w : Number.isFinite(tank.widthIn) ? tank.widthIn : 0,
+    h: Number.isFinite(dims?.h) ? dims.h : Number.isFinite(tank.heightIn) ? tank.heightIn : 0,
+  };
 }
 
-export function getTankVariants(gallons) {
-  return SIZE_MAP.get(gallons) ?? [];
+function createVariantFromTank(tank) {
+  if (!tank) return null;
+  const dims = getDimensionsIn(tank);
+  return {
+    id: tank.id,
+    name: tank.label,
+    gallons: Number.isFinite(tank.gallons) ? tank.gallons : 0,
+    liters: Number.isFinite(tank.liters) ? tank.liters : 0,
+    length: dims.l,
+    width: dims.w,
+    height: dims.h,
+    profile: 'standard',
+    default: true,
+  };
 }
 
-function pickVariantForBehavior(variants, context) {
-  if (!variants.length) return null;
-  const {
-    maxLengthRequirement = 0,
-    wantsLong = false,
-    wantsBreeder = false,
-    manualSelection,
-  } = context;
-
-  if (manualSelection) {
-    const manual = variants.find((item) => item.id === manualSelection);
-    if (manual) {
-      return manual;
-    }
-  }
-
-  let candidate = variants.find((variant) => variant.default) ?? variants[0];
-
-  if (maxLengthRequirement && candidate.length < maxLengthRequirement) {
-    const longer = [...variants]
-      .filter((variant) => variant.length >= maxLengthRequirement)
-      .sort((a, b) => a.length - b.length)[0];
-    if (longer) {
-      candidate = longer;
-    }
-  }
-
-  if (wantsLong) {
-    const longVariant = variants.find((variant) => variant.profile === 'long');
-    if (longVariant) {
-      candidate = longVariant;
-    }
-  }
-
-  if (wantsBreeder) {
-    const breeder = variants.find((variant) => variant.profile === 'breeder');
-    if (breeder) {
-      candidate = breeder;
-    }
-  }
-
-  return candidate;
-}
-
-export function pickTankVariant({ gallons, speciesEntries = [], manualSelection = null }) {
-  const variants = getTankVariants(gallons);
-  if (!variants.length) {
+function normalizeTankId(raw) {
+  if (raw == null) {
     return null;
   }
 
-  let maxLengthRequirement = 0;
-  let wantsLong = false;
-  let wantsBreeder = false;
+  if (typeof raw === 'string') {
+    const trimmed = raw.trim();
+    if (!trimmed) {
+      return null;
+    }
+    if (LEGACY_VARIANT_IDS.has(trimmed)) {
+      return LEGACY_VARIANT_IDS.get(trimmed);
+    }
+    const normalized = normalizeLegacyTankSelection(trimmed);
+    return normalized ?? null;
+  }
 
-  for (const entry of speciesEntries) {
-    const { species, qty = 1 } = entry;
-    if (!species) continue;
-    if (species.min_tank_length_in) {
-      maxLengthRequirement = Math.max(maxLengthRequirement, species.min_tank_length_in);
+  if (typeof raw === 'number' && Number.isFinite(raw)) {
+    if (GALLON_TO_ID.has(raw)) {
+      return GALLON_TO_ID.get(raw);
     }
-    const tags = new Set(species.tags ?? []);
-    if (tags.has('shoaler') || tags.has('nippy') || tags.has('fast_swimmer')) {
-      wantsLong = true;
+    return normalizeLegacyTankSelection(String(raw));
+  }
+
+  return null;
+}
+
+function resolveTank(raw) {
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    if (typeof raw.tankId === 'string') {
+      const idFromTank = normalizeTankId(raw.tankId);
+      if (idFromTank) {
+        const tank = getTankById(idFromTank);
+        if (tank) {
+          return tank;
+        }
+      }
     }
-    if (tags.has('bottom_territorial') || tags.has('floor_spreader')) {
-      wantsBreeder = true;
+
+    if (typeof raw.id === 'string') {
+      const idFromId = normalizeTankId(raw.id);
+      if (idFromId) {
+        const tank = getTankById(idFromId);
+        if (tank) {
+          return tank;
+        }
+      }
     }
-    if (qty >= 6 && tags.has('shoaler')) {
-      wantsLong = true;
+
+    if ('gallons' in raw) {
+      const fromGallons = resolveTank(raw.gallons);
+      if (fromGallons) {
+        return fromGallons;
+      }
+    }
+
+    if ('value' in raw) {
+      const fromValue = resolveTank(raw.value);
+      if (fromValue) {
+        return fromValue;
+      }
+    }
+
+    return null;
+  }
+
+  const normalizedId = normalizeTankId(raw);
+  if (!normalizedId) {
+    return null;
+  }
+  return getTankById(normalizedId);
+}
+
+export function getTankVariants(input) {
+  const tank = resolveTank(input);
+  if (!tank) {
+    return [];
+  }
+  const variant = createVariantFromTank(tank);
+  return variant ? [variant] : [];
+}
+
+export function pickTankVariant({ tankId = null, gallons = null, speciesEntries = [], manualSelection = null } = {}) {
+  const manualTank = resolveTank(manualSelection);
+  if (manualTank) {
+    return createVariantFromTank(manualTank);
+  }
+
+  const resolved = resolveTank({ tankId, gallons });
+  if (resolved) {
+    return createVariantFromTank(resolved);
+  }
+
+  // Legacy behaviour expected a fallback variant; attempt to infer from gallons when provided.
+  if (Number.isFinite(gallons)) {
+    const fallback = resolveTank(gallons);
+    if (fallback) {
+      return createVariantFromTank(fallback);
     }
   }
 
-  return pickVariantForBehavior(variants, { maxLengthRequirement, wantsLong, wantsBreeder, manualSelection });
+  // speciesEntries no longer influence variant selection, but keep signature stable.
+  void speciesEntries;
+  return null;
 }
 
 export function formatVariant(variant) {
@@ -121,10 +171,11 @@ export function formatVariant(variant) {
   if (!dims.length) {
     return '—';
   }
-  return `${length}″ × ${width}″ × ${height}″`;
+  return `${dims[0]}″ × ${dims[1]}″ × ${dims[2]}″`;
 }
 
 export function describeVariant(variant) {
   if (!variant) return '—';
   return `${variant.name} (${formatVariant(variant)})`;
 }
+

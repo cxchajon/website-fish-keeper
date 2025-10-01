@@ -159,12 +159,13 @@ function calcTank(state, entries, overrideVariant) {
   const hasTankGallons = Number.isFinite(tankState.gallons) && tankState.gallons > 0;
   const gallonsSource = hasTankGallons ? tankState.gallons : Number(state.gallons) || 0;
   const gallons = clamp(gallonsSource, 0, 999);
+  const tankId = tankState?.id ?? null;
   const sump = clamp(Number(state.sumpGallons) || 0, 0, 400);
   const planted = Boolean(state.planted);
   const manualVariant = overrideVariant ?? state.variantId ?? null;
-  const variant = pickTankVariant({ gallons, speciesEntries: entries, manualSelection: manualVariant })
-    ?? pickTankVariant({ gallons, speciesEntries: [], manualSelection: manualVariant })
-    ?? getTankVariants(gallons)[0]
+  const variant = pickTankVariant({ tankId, gallons, speciesEntries: entries, manualSelection: manualVariant })
+    ?? pickTankVariant({ tankId, gallons, speciesEntries: [], manualSelection: manualVariant })
+    ?? getTankVariants({ tankId, gallons })[0]
     ?? null;
 
   const length = Number.isFinite(tankState.lengthIn) && tankState.lengthIn > 0 ? tankState.lengthIn : variant?.length ?? 0;
