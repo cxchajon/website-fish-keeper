@@ -65,6 +65,31 @@
       padding: 16px;
       color:#0b1020; /* card copy stays dark on light card */
     }
+    .card-media {
+      margin-bottom: 12px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .card-media img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .card-body {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+    .card-title {
+      margin: 0;
+      font-size: 1.2rem;
+      line-height: 1.2;
+    }
+    .card-text {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
     .aquarium-library-card {
       display: flex;
       flex-direction: column;
@@ -91,6 +116,15 @@
       display:inline-block; padding:10px 14px; border:1px solid var(--border);
       border-radius: 10px; text-decoration:none; font-weight:600;
       background:#fff; color:#0b1020;
+    }
+    .btn.primary {
+      background: #0b1020;
+      color: #f3f6ff;
+      border-color: rgba(11, 16, 32, 0.4);
+    }
+    .btn.primary:hover,
+    .btn.primary:focus-visible {
+      filter: brightness(0.92);
     }
     .muted { color: var(--muted); }
     .now-playing {
@@ -383,6 +417,19 @@
         <div class="community-grid">
           <div class="community-thumb">Community video — placeholder</div>
           <div class="community-thumb">Community video — placeholder</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="section" aria-labelledby="shop-the-book-title">
+      <article class="card" id="shop-the-book">
+        <div class="card-media" style="aspect-ratio: 3/2; overflow: hidden; border-radius: 12px;">
+          <img src="/img/life-in-balance-cover.jpg" alt="Life in Balance book cover" style="width:100%; height:100%; object-fit: cover;">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title" id="shop-the-book-title">Shop the Book</h3>
+          <p class="card-text">Grab <em>Life in Balance: The Hidden Magic of Aquariums</em> and follow along with our videos.</p>
+          <a class="btn primary" href="/store.html">Visit Store</a>
         </div>
       </article>
     </section>
