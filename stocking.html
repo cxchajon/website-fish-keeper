@@ -659,6 +659,10 @@
       justify-content: space-between;
     }
 
+    #stocking-page .env-header {
+      position: relative;
+    }
+
     #stocking-page .env-header .title-row {
       display: flex;
       align-items: center;
@@ -686,7 +690,7 @@
         line-height: 1.15;
       }
 
-      #stocking-page #env-info-toggle {
+      #stocking-page #env-info-btn {
         grid-column: 2 / 3;
         align-self: start;
         margin-top: 2px;
@@ -1025,7 +1029,8 @@
         }
 
         /* Keep info icon visual language consistent (already present) */
-        #stocking-page .info-btn {
+        #stocking-page .info-btn,
+        #stocking-page .icon-button.info {
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -1042,16 +1047,17 @@
           color: inherit;
           cursor: pointer;
         }
-        #stocking-page .info-btn:hover {
+        #stocking-page .info-btn:hover,
+        #stocking-page .icon-button.info:hover {
           background: rgba(255, 255, 255, 0.12);
         }
-        #stocking-page .info-btn:focus {
+        #stocking-page .info-btn:focus,
+        #stocking-page .icon-button.info:focus {
           outline: 2px solid rgba(20, 203, 168, 0.55);
           outline-offset: 2px;
         }
 
         /* Env. Recommendations single icon “expanded” state (if present) */
-        #stocking-page #env-info-toggle[aria-expanded="true"],
         #stocking-page [data-role="env-info"][aria-expanded="true"] {
           background: rgba(20, 203, 168, 0.9);
           color: #0b1b18;
@@ -1193,19 +1199,24 @@
         <div class="card-header env-header">
           <div class="row title-row">
             <h2 class="card-title">Environmental Recommendations</h2>
-            <!-- SINGLE unified icon: shows popover on first click, toggles tips on next clicks -->
             <button
               type="button"
-              id="env-info-toggle"
-              class="info-btn"
+              class="icon-button info"
+              id="env-info-btn"
               data-role="env-info"
-              aria-controls="env-more-tips"
               aria-expanded="false"
+              aria-controls="env-info-tip"
+              title="More info"
               aria-label="More info and tips about Environmental Recommendations"
-              data-info="Derived from your selected stock. Ranges reflect compatible overlaps across all species."
+            >i</button>
+            <div
+              id="env-info-tip"
+              data-role="env-info-tip"
+              role="tooltip"
+              hidden
             >
-              i
-            </button>
+              Derived from your selected stock. Ranges reflect compatible overlaps across all species.
+            </div>
           </div>
           <p class="card-subtitle">Derived from your selected stock.</p>
           <div class="env-compact-summary" data-role="env-compact-summary" aria-hidden="true" hidden>

@@ -611,9 +611,6 @@ function updateToggle(control, value) {
     if (card) {
       card.classList.toggle('info-open', Boolean(open));
     }
-    if (refs.envInfoToggle) {
-      refs.envInfoToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    }
   }
 
 function syncStateFromInputs() {
@@ -852,71 +849,76 @@ function buildGearPayload() {
 
 bootstrapStocking();
 
-(function initEnvInfoToggle(){
-  const card = document.querySelector('#env-card, [data-role="env-card"]');
-  const infoBtn = document.querySelector('#env-info-btn, #env-info-toggle, [data-role="env-info"]');
-  const legend = document.querySelector('#env-legend, #env-more-tips, [data-role="env-legend"]');
-  if (!card || !infoBtn || !legend) return;
+(function initEnvInfoTooltip() {
+  const btn = document.querySelector('#env-info-btn,[data-role="env-info"]');
+  const tip = document.querySelector('#env-info-tip,[data-role="env-info-tip"]');
+  if (!btn || !tip) {
+    console.warn('Env info tooltip: hooks missing');
+    return;
+  }
 
-  const setOpen = (open, { emit = false } = {}) => {
-    card.classList.toggle('info-open', Boolean(open));
-    legend.hidden = !open;
-    legend.setAttribute('aria-hidden', open ? 'false' : 'true');
-    infoBtn.setAttribute('aria-expanded', String(open));
-    if (emit) {
-      document.dispatchEvent(
-        new CustomEvent('ttg:envTips:state', { detail: { open: Boolean(open) } })
-      );
+  const freshBtn = btn.cloneNode(true);
+  btn.replaceWith(freshBtn);
+
+  let open = !tip.hidden;
+  let outsideHandler = null;
+  let escHandler = null;
+
+  const syncState = () => {
+    freshBtn.classList.toggle('is-open', open);
+    freshBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    tip.hidden = !open;
+    tip.setAttribute('aria-hidden', open ? 'false' : 'true');
+  };
+
+  const closeTip = () => {
+    if (!open) return;
+    open = false;
+    syncState();
+
+    if (outsideHandler) {
+      document.removeEventListener('click', outsideHandler, true);
+      outsideHandler = null;
+    }
+    if (escHandler) {
+      document.removeEventListener('keydown', escHandler, true);
+      escHandler = null;
     }
   };
 
-  const initialOpen = card.classList.contains('info-open');
-  setOpen(initialOpen);
+  const openTip = () => {
+    if (open) return;
+    open = true;
+    syncState();
 
-  document.addEventListener('ttg:envTips:state', (event) => {
-    const desired = Boolean(event?.detail?.open);
-    setOpen(desired);
-  });
+    outsideHandler = (ev) => {
+      if (freshBtn.contains(ev.target) || tip.contains(ev.target)) return;
+      closeTip();
+    };
+    setTimeout(() => document.addEventListener('click', outsideHandler, true), 0);
 
-  infoBtn.addEventListener('click', guarded((e) => {
+    escHandler = (ev) => {
+      if (ev.key === 'Escape') {
+        closeTip();
+      }
+    };
+    document.addEventListener('keydown', escHandler, true);
+  };
+
+  syncState();
+
+  freshBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    const willOpen = !card.classList.contains('info-open');
-    const message = infoBtn.getAttribute('data-info') || 'Derived from your selected stock. Ranges reflect compatible overlaps.';
+    e.stopPropagation();
+    open ? closeTip() : openTip();
+  }, { passive: false });
 
-    if (willOpen && !infoBtn.dataset.popShown) {
-      let usedShared = false;
-      if (window.TTG && typeof TTG.openInfoPopover === 'function') {
-        TTG.openInfoPopover(infoBtn, message);
-        usedShared = true;
-      }
-
-      if (!usedShared) {
-        const pop = document.createElement('div');
-        pop.className = 'ttg-popover is-open';
-        Object.assign(pop.style, {
-          position: 'fixed',
-          zIndex: 2147483647,
-          maxWidth: '320px',
-          padding: '10px 12px',
-          borderRadius: '10px',
-          background: 'rgba(20,22,25,.96)',
-          border: '1px solid rgba(255,255,255,.12)',
-          boxShadow: '0 10px 30px rgba(0,0,0,.35)',
-          fontSize: '13px',
-        });
-        pop.textContent = message;
-        document.body.appendChild(pop);
-        const r = infoBtn.getBoundingClientRect();
-        pop.style.left = `${Math.max(8, Math.min(window.innerWidth - pop.offsetWidth - 8, r.left))}px`;
-        pop.style.top = `${Math.max(8, Math.min(window.innerHeight - pop.offsetHeight - 8, r.bottom + 8))}px`;
-        setTimeout(() => pop.remove(), 2000);
-      }
-
-      infoBtn.dataset.popShown = '1';
+  const obs = new MutationObserver(() => {
+    if (!document.contains(tip) || tip.hasAttribute('data-destroyed')) {
+      closeTip();
     }
-
-    setOpen(willOpen, { emit: true });
-  }));
+  });
+  obs.observe(document.body, { childList: true, subtree: true });
 })();
 
 (function infoPopovers(){
