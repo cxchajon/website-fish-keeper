@@ -3,6 +3,9 @@ import { renderEnvCard } from './logic/envRecommend.js';
 import { getTankVariants, describeVariant } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderChips, bindPopoverHandlers } from './logic/ui.js';
+import { getTankSnapshot, EMPTY_TANK } from './stocking/tankStore.js';
+import { EVENTS, dispatchEvent as dispatchStockingEvent } from './stocking/events.js';
+import { tankLengthStatus } from './stocking/validators.js';
 
 function isAssumptionText(el){
   const t = (el?.textContent || '').trim();
@@ -62,6 +65,65 @@ function guarded(handler){
   };
 }
 
+function createLengthValidator(container) {
+  if (!container) {
+    return {
+      evaluate() {},
+      sync() {},
+    };
+  }
+  let chip = null;
+  let visible = false;
+  let text = '';
+
+  const ensureChip = () => {
+    if (chip) return chip;
+    chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.dataset.tone = 'bad';
+    chip.dataset.role = 'tank-length-warning';
+    chip.setAttribute('data-testid', 'tank-length-warning');
+    return chip;
+  };
+
+  const attach = () => {
+    if (!visible) return;
+    const node = ensureChip();
+    node.textContent = text;
+    if (!node.isConnected) {
+      container.prepend(node);
+    }
+  };
+
+  const detach = () => {
+    if (chip && chip.isConnected) {
+      chip.remove();
+    }
+  };
+
+  return {
+    evaluate({ tank, species }) {
+      const result = tankLengthStatus({ tank, species });
+      if (!result.show) {
+        visible = false;
+        text = '';
+        detach();
+        return;
+      }
+      visible = true;
+      text = result.message;
+      attach();
+    },
+    sync() {
+      if (visible) {
+        attach();
+      } else {
+        detach();
+      }
+    },
+  };
+}
+
 window.addEventListener('keydown', (e) => {
   const platform = typeof navigator !== 'undefined' ? navigator.platform : '';
   const isMac = platform.toUpperCase().includes('MAC');
@@ -96,6 +158,11 @@ function bootstrapStocking() {
     }
   }
   window.appState = state;
+  const initialTank = getTankSnapshot() ?? EMPTY_TANK;
+  state.tank = initialTank;
+  state.gallons = initialTank.gallons ?? 0;
+  state.liters = initialTank.liters ?? 0;
+  state.selectedTankId = initialTank.id ?? null;
   let computed = null;
   let variantSelectorOpen = false;
   let shouldRestoreVariantFocus = false;
@@ -123,8 +190,85 @@ function bootstrapStocking() {
     envTips: document.getElementById('env-more-tips'),
   };
 
+  const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
+  const speciesById = new Map(SPECIES.map((species) => [species.id, species]));
+  const warnedMarineIds = new Set();
+
+  const lengthValidator = createLengthValidator(refs.candidateChips);
+  let selectedSpeciesId = state.candidate?.id ?? null;
+  let lastStockSignature = '';
+  let isBootstrapped = false;
+
+  const updateLengthValidator = () => {
+    const tank = state.tank ?? EMPTY_TANK;
+    const species = selectedSpeciesId ? speciesById.get(selectedSpeciesId) ?? null : null;
+    lengthValidator.evaluate({ tank, species });
+  };
+
+  const emitSpeciesChange = (id) => {
+    const normalized = typeof id === 'string' ? id : id ? String(id) : null;
+    dispatchStockingEvent(EVENTS.SPECIES_CHANGED, { speciesId: normalized });
+  };
+
+  const computeStockSignature = (entries) => {
+    if (!entries.length) return 'empty';
+    return entries
+      .map((entry) => `${entry.id}:${sanitizeQty(entry.qty, 0)}`)
+      .sort()
+      .join('|');
+  };
+
+  const emitStockChange = () => {
+    const entries = Array.isArray(state.stock) ? state.stock.slice() : [];
+    const signature = computeStockSignature(entries);
+    if (signature === lastStockSignature) {
+      return;
+    }
+    lastStockSignature = signature;
+    const normalized = entries.map((entry) => ({
+      id: entry.id,
+      qty: sanitizeQty(entry.qty, 0),
+    }));
+    const totalQty = normalized.reduce((sum, entry) => sum + entry.qty, 0);
+    dispatchStockingEvent(EVENTS.STOCK_CHANGED, {
+      stock: normalized,
+      totals: { items: normalized.length, quantity: totalQty },
+    });
+  };
+
+  const requestEventRecompute = guarded(() => runRecompute({ skipInputSync: true }));
+
+  window.addEventListener(EVENTS.TANK_CHANGED, (event) => {
+    const snapshot = event.detail?.tank ?? EMPTY_TANK;
+    state.tank = snapshot;
+    state.gallons = snapshot.gallons ?? 0;
+    state.liters = snapshot.liters ?? 0;
+    state.selectedTankId = snapshot.id ?? null;
+    state.variantId = null;
+    variantSelectorOpen = false;
+    shouldRestoreVariantFocus = false;
+    updateLengthValidator();
+    if (isBootstrapped) {
+      requestEventRecompute();
+    }
+  });
+
+  window.addEventListener(EVENTS.SPECIES_CHANGED, (event) => {
+    const nextId = event.detail?.speciesId ?? null;
+    selectedSpeciesId = typeof nextId === 'string' && nextId ? nextId : null;
+    updateLengthValidator();
+  });
+
+  window.addEventListener(EVENTS.STOCK_CHANGED, () => {
+    if (isBootstrapped) {
+      requestEventRecompute();
+    }
+  });
+
+  updateLengthValidator();
+
   function ensureTankAssumptionScrubbed(){
-    const gallons = computed?.tank?.gallons ?? state?.gallons ?? null;
+    const gallons = computed?.tank?.gallons ?? state?.tank?.gallons ?? null;
     if (!assumptionScrubInitialized){
       scrubAssumptionOnce();
       assumptionScrubInitialized = true;
@@ -145,10 +289,6 @@ function bootstrapStocking() {
   const envTipsTimeout = typeof window !== 'undefined' && typeof window.setTimeout === 'function'
     ? window.setTimeout.bind(window)
     : (fn, ms) => setTimeout(fn, ms);
-
-const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
-const speciesById = new Map(SPECIES.map((species) => [species.id, species]));
-const warnedMarineIds = new Set();
 
 // ---- Add-to-Stock button wiring ----
 const elAdd = document.querySelector('#plan-add, .plan-add');
@@ -323,6 +463,7 @@ function syncStockFromState() {
   STOCK.clear();
   if (!Array.isArray(state.stock)) {
     renderStockList();
+    emitStockChange();
     return;
   }
   for (const entry of state.stock) {
@@ -337,6 +478,7 @@ function syncStockFromState() {
     STOCK.set(species.id, { species, qty });
   }
   renderStockList();
+  emitStockChange();
 }
 
 function syncStateFromStock() {
@@ -344,6 +486,7 @@ function syncStateFromStock() {
     id: species.id,
     qty: sanitizeQty(qty, 1),
   }));
+  emitStockChange();
   scheduleUpdate();
 }
 
@@ -388,6 +531,8 @@ document.addEventListener('advisor:addCandidate', (event) => {
     refs.qty.value = '1';
   }
 
+  selectedSpeciesId = state.candidate.id || null;
+  emitSpeciesChange(selectedSpeciesId);
   syncStockFromState();
   console.log('[StockingAdvisor] Added:', species.id, 'x', qty);
   scheduleUpdate();
@@ -425,6 +570,8 @@ function pruneMarineEntries() {
 
   if (!state.candidate) {
     state.candidate = { id: getDefaultSpeciesId(), qty: 1 };
+    selectedSpeciesId = state.candidate.id || null;
+    emitSpeciesChange(selectedSpeciesId);
     return;
   }
 
@@ -437,7 +584,11 @@ function pruneMarineEntries() {
     if (refs.speciesSelect) {
       refs.speciesSelect.value = state.candidate.id ?? '';
     }
+    selectedSpeciesId = state.candidate.id || null;
+    emitSpeciesChange(selectedSpeciesId);
   }
+
+  emitStockChange();
 }
 
 function updateToggle(control, value) {
@@ -502,7 +653,8 @@ function updateToggle(control, value) {
 
 function syncStateFromInputs() {
   if (state.variantId) {
-    const valid = getTankVariants(state.gallons).some((variant) => variant.id === state.variantId);
+    const gallons = state.tank?.gallons ?? 0;
+    const valid = getTankVariants(gallons).some((variant) => variant.id === state.variantId);
     if (!valid) {
       state.variantId = null;
     }
@@ -521,6 +673,9 @@ function populateSpecies() {
   if (state.candidate?.id) {
     refs.speciesSelect.value = state.candidate.id;
   }
+  const initialSelection = refs.speciesSelect ? refs.speciesSelect.value : state.candidate?.id;
+  selectedSpeciesId = initialSelection || state.candidate?.id || null;
+  emitSpeciesChange(selectedSpeciesId);
 }
 
 function renderTankSummaryView() {
@@ -599,10 +754,21 @@ function syncToggles() {
 }
 
 function renderCandidateState() {
-  if (!computed) return;
-  renderChips(refs.candidateChips, computed.chips);
-  refs.addBtn.disabled = false;
-  refs.candidateBanner.style.display = 'none';
+  const chips = computed ? computed.chips : [];
+  renderChips(refs.candidateChips, chips);
+  lengthValidator.sync();
+  if (!computed) {
+    if (refs.candidateBanner) {
+      refs.candidateBanner.style.display = 'none';
+    }
+    return;
+  }
+  if (refs.addBtn) {
+    refs.addBtn.disabled = false;
+  }
+  if (refs.candidateBanner) {
+    refs.candidateBanner.style.display = 'none';
+  }
 }
 
 function renderDiagnostics() {
@@ -636,7 +802,8 @@ function renderDiagnostics() {
 }
 
 function renderAll() {
-  if (!state.gallons) {
+  const activeTank = state.tank ?? EMPTY_TANK;
+  if (!Number.isFinite(activeTank.gallons) || activeTank.gallons <= 0) {
     computed = null;
     renderTankSummaryView();
     if (refs.conditions) {
@@ -712,6 +879,8 @@ function bindInputs() {
 
   refs.speciesSelect.addEventListener('change', () => {
     state.candidate.id = refs.speciesSelect.value;
+    selectedSpeciesId = state.candidate.id || null;
+    emitSpeciesChange(selectedSpeciesId);
     scheduleUpdate();
   });
 
@@ -776,6 +945,7 @@ function buildGearPayload() {
     syncToggles();
     bindInputs();
     runRecompute({ skipInputSync: true });
+    isBootstrapped = true;
   }
 
   init();

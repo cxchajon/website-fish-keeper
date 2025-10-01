@@ -1,4 +1,5 @@
 import { listTanks, getTankById } from './tankSizes.js';
+import { setTank, normalizeTankPreset, getTankSnapshot } from './stocking/tankStore.js';
 
 (function wireTankSizeChevron(){
   const wrap = document.getElementById('tank-size-select-wrap');
@@ -26,31 +27,59 @@ import { listTanks, getTankById } from './tankSizes.js';
   if (!selectEl || !factsEl) return;
 
   const state = (window.appState = window.appState || {});
+  const presetCache = new Map();
   const STORAGE_KEY = 'ttg.selectedTank';
   const round1 = (n) => Math.round(n*10)/10;
 
+  function cachePreset(preset){
+    const normalized = normalizeTankPreset(preset);
+    if (normalized) {
+      presetCache.set(normalized.id, normalized);
+    }
+    return normalized;
+  }
+
+  function getNormalizedById(id){
+    if (!id) return null;
+    if (presetCache.has(id)) {
+      return presetCache.get(id);
+    }
+    const preset = getTankById(id);
+    if (!preset) return null;
+    return cachePreset(preset);
+  }
+
   // 1) Populate select from curated dataset (5–125g)
   function renderOptions(){
+    presetCache.clear();
     const tanks = listTanks()
-      .filter(t => typeof t.gallons==='number' && t.gallons>=5 && t.gallons<=125)
-      .sort((a,b)=> (a.gallons-b.gallons) || a.label.localeCompare(b.label));
+      .filter((tank) => typeof tank.gallons === 'number' && tank.gallons >= 5 && tank.gallons <= 125)
+      .map((tank) => cachePreset(tank))
+      .filter(Boolean)
+      .sort((a, b) => (a.gallons - b.gallons) || a.label.localeCompare(b.label));
 
-    // Clear non-placeholder options
-    [...selectEl.querySelectorAll('option:not([disabled])')].forEach(o=>o.remove());
-    for (const t of tanks){
+    [...selectEl.querySelectorAll('option:not([disabled])')].forEach((option) => option.remove());
+    for (const tank of tanks) {
       const opt = document.createElement('option');
-      opt.value = t.id;
-      opt.textContent = t.label;
+      opt.value = tank.id;
+      opt.textContent = tank.label;
       selectEl.appendChild(opt);
     }
+  }
+
+  function formatDim(value){
+    if (!Number.isFinite(value)) return '0';
+    if (Number.isInteger(value)) return String(value);
+    return (Math.round(value * 100) / 100).toString();
   }
 
   // 2) Facts line
   function setFacts(tank){
     if (!tank){ factsEl.textContent = ''; return; }
-    const dimsIn = `${tank.dimensions_in.l} × ${tank.dimensions_in.w} × ${tank.dimensions_in.h} in`;
-    const dimsCm = `${round1(tank.dimensions_cm.l)} × ${round1(tank.dimensions_cm.w)} × ${round1(tank.dimensions_cm.h)} cm`;
-    factsEl.textContent = `${tank.gallons}g • ${round1(tank.liters)} L • ${dimsIn} (${dimsCm}) • ~${tank.filled_weight_lbs} lbs filled`;
+    const dimsIn = `${formatDim(tank.lengthIn)} × ${formatDim(tank.widthIn)} × ${formatDim(tank.heightIn)} in`;
+    const dimsCm = `${formatDim(tank.dimensionsCm.l)} × ${formatDim(tank.dimensionsCm.w)} × ${formatDim(tank.dimensionsCm.h)} cm`;
+    const weight = Number.isFinite(tank.filledWeightLbs) && tank.filledWeightLbs > 0 ? ` • ~${Math.round(tank.filledWeightLbs)} lbs filled` : '';
+    factsEl.textContent = `${tank.gallons}g • ${round1(tank.liters)} L • ${dimsIn} (${dimsCm})${weight}`;
   }
 
   // 3) Recompute hook
@@ -59,24 +88,31 @@ import { listTanks, getTankById } from './tankSizes.js';
     else window.dispatchEvent?.(new CustomEvent('ttg:recompute'));
   }
 
+  function syncStateFromSnapshot(snapshot){
+    state.selectedTankId = snapshot.id;
+    state.gallons = snapshot.gallons;
+    state.liters = snapshot.liters;
+    state.tank = snapshot;
+  }
+
   // 4) Apply selection
   function applySelection(id){
-    const t = id ? getTankById(id) : null;
-    if (!t){
+    const tank = id ? getNormalizedById(id) : null;
+    if (!tank){
       selectEl.value = '';
-      state.selectedTankId = null;
-      state.gallons = undefined;
-      state.liters  = undefined;
+      const snapshot = setTank(null);
+      syncStateFromSnapshot(snapshot);
       setFacts(null);
+      try { localStorage.removeItem(STORAGE_KEY); } catch (_){ }
       recompute();
       return;
     }
-    state.selectedTankId = t.id;
-    state.gallons = t.gallons;
-    state.liters  = t.liters;
-    selectEl.value = t.id;
-    setFacts(t);
-    try { localStorage.setItem(STORAGE_KEY, t.id); } catch(_){}
+    const snapshot = setTank(tank);
+    selectEl.value = tank.id;
+    syncStateFromSnapshot(snapshot);
+    state.variantId = null;
+    setFacts(snapshot);
+    try { localStorage.setItem(STORAGE_KEY, tank.id); } catch(_){}
     recompute();
   }
 
@@ -89,8 +125,17 @@ import { listTanks, getTankById } from './tankSizes.js';
   // Hydrate persisted tank choice
   let savedId = null;
   try { savedId = localStorage.getItem(STORAGE_KEY) || null; } catch(_){ }
-  if (savedId && getTankById(savedId)) applySelection(savedId);
-  else setFacts(null);
+  if (savedId && getNormalizedById(savedId)) {
+    applySelection(savedId);
+  } else {
+    const snapshot = getTankSnapshot();
+    if (snapshot && snapshot.id) {
+      selectEl.value = snapshot.id;
+      setFacts(snapshot);
+    } else {
+      setFacts(null);
+    }
+  }
 })();
 
 (function wirePlantedOverlay(){
