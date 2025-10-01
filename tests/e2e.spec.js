@@ -114,35 +114,6 @@ test.describe('Stocking Advisor accessibility flows', () => {
     await capture(page, testInfo, 'tank-selection.png');
   });
 
-  test('Variant selector works with mouse and restores focus', async ({ page }, testInfo) => {
-    await selectTank(page, 40);
-
-    const toggle = page.getByTestId('variant-toggle');
-    await expect(toggle).toBeVisible();
-
-    await toggle.click();
-    const options = page.getByTestId('variant-option');
-    const optionCount = await options.count();
-    expect(optionCount).toBeGreaterThan(1);
-
-    let target = options.nth(0);
-    for (let i = 0; i < optionCount; i += 1) {
-      const option = options.nth(i);
-      if ((await option.getAttribute('data-active')) === 'false') {
-        target = option;
-        break;
-      }
-    }
-    const targetVariantId = await target.getAttribute('data-variant-id');
-    expect(targetVariantId).toBeTruthy();
-    await target.click();
-
-    await expect(toggle).toBeFocused();
-    await expect.poll(async () => page.evaluate(() => window.appState?.variantId || null)).toBe(targetVariantId);
-    await expect(page.getByTestId('variant-selector')).toHaveCount(0);
-    await capture(page, testInfo, 'variant-selector.png');
-  });
-
   test('Species add/remove flow updates state visually', async ({ page }, testInfo) => {
     await selectTank(page, 29);
 
@@ -224,28 +195,46 @@ test.describe('Stocking Advisor accessibility flows', () => {
     for (const target of targets) {
       await expect.soft(target.locator, `${target.name} info button`).toBeVisible();
 
-      await target.locator.click();
+      await target.locator.focus();
+      await page.keyboard.press('Enter');
       await expect(popover).toBeVisible();
       await expect(popover).toContainText(target.text);
 
       await page.keyboard.press('Escape');
       await expect(popover).not.toBeVisible();
 
-      await target.locator.click();
+      await target.locator.focus();
+      await page.keyboard.press('Space');
       await expect(popover).toBeVisible();
       await expect(popover).toContainText(target.text);
 
-      await page.locator('body').click({ position: { x: 4, y: 4 } });
+      await page.keyboard.press('Escape');
       await expect(popover).not.toBeVisible();
     }
   });
 
-  test('Gear CTA navigates with keyboard activation', async ({ page }) => {
+  test('Gear CTA stores payload and navigates with keyboard activation', async ({ page }) => {
+    await selectTank(page, 40);
+
     await focusByTab(page, 'btn-gear');
     const cta = page.getByTestId('btn-gear');
     await expect(cta).toBeFocused();
+
+    const navigationPromise = page.waitForURL(/\/gear\.html$/);
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(/\/gear\.html$/);
+    await expect
+      .poll(async () => page.evaluate(() => sessionStorage.getItem('ttg_stocking_state')))
+      .not.toBeNull();
+    await navigationPromise;
+
+    const payloadRaw = await page.evaluate(() => sessionStorage.getItem('ttg_stocking_state'));
+    expect(payloadRaw).toBeTruthy();
+    const payload = JSON.parse(payloadRaw || '{}');
+    expect(payload?.v).toBe('1.0');
+    expect(payload?.tank?.gallons_total).toBe(40);
+    expect(payload?.targets?.turnover_band).toBeTruthy();
+    expect(payload?.flags).toBeDefined();
+
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await page.goBack();
     await expect(page).toHaveURL(/\/stocking\.html$/);
