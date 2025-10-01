@@ -200,6 +200,56 @@ body.theme-light {
   border-color: rgba(255, 255, 255, 0.32);
 }
 
+/* Featured Videos CTA */
+.video-card a.yt-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #000;
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  text-decoration: none;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.video-card a.yt-cta:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.video-card a.yt-cta:hover {
+  filter: brightness(1.08);
+}
+
+.video-card a.yt-cta:active {
+  transform: translateY(1px);
+}
+
+.video-card a.yt-cta .yt-icon {
+  width: 22px;
+  height: 16px;
+  flex: 0 0 22px;
+  background:
+    conic-gradient(from 330deg at 9px 8px, #fff 0 60deg, transparent 0) no-repeat 7px 3px / 8px 10px,
+    #ff0033;
+  border-radius: 4px / 6px;
+}
+
+.video-card a.yt-cta .yt-label {
+  white-space: nowrap;
+}
+
+.video-card a.yt-cta,
+.video-card a.yt-cta:link,
+.video-card a.yt-cta:visited {
+  background-color: #000;
+  color: #fff;
+}
+
 .hamburger__bars {
   position: relative;
   display: block;
