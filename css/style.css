@@ -1315,3 +1315,22 @@ body.planted-active #cycling-coach .cc-title__leaf {
 .video-card > iframe,
 .video-card .embed-wrapper { margin-top: 12px; }
 .video-card .now-playing { margin: 12px 0 10px; }
+
+/* Featured video meta layout */
+.video-meta{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-top:.5rem;
+}
+.video-blurb{
+  margin:0;
+  line-height:1.4;
+}
+.video-actions{
+  display:flex;
+  justify-content:flex-end;
+}
+
+/* Ensure spacing looks good inside the card only */
+.featured-videos-card .video-meta{ padding-top:.25rem; }
