@@ -650,7 +650,8 @@ function updateToggle(control, value) {
 function syncStateFromInputs() {
   if (state.variantId) {
     const gallons = state.tank?.gallons ?? 0;
-    const valid = getTankVariants(gallons).some((variant) => variant.id === state.variantId);
+    const tankId = state.tank?.id ?? null;
+    const valid = getTankVariants({ tankId, gallons }).some((variant) => variant.id === state.variantId);
     if (!valid) {
       state.variantId = null;
     }

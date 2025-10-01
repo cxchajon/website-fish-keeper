@@ -176,6 +176,12 @@ export function getTankById(id) {
   return TANK_SIZES.find((tank) => tank.id === id) ?? null;
 }
 
+export function getTankLabel(id) {
+  if (!id) return '';
+  const tank = getTankById(id);
+  return tank?.label ?? '';
+}
+
 export function normalizeLegacyTankSelection(oldValue) {
   const fallback = '29g';
   if (!oldValue) {
