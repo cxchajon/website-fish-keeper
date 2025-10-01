@@ -1175,7 +1175,7 @@
         <div id="stock-list" class="stock-list" data-testid="species-list"></div>
       </section>
 
-      <section class="card ttg-card tank-env-card env-card" id="env-card" aria-live="polite">
+      <section class="card ttg-card tank-env-card env-card" id="env-card" data-role="env-card" aria-live="polite">
         <div class="card-header env-header">
           <div class="row title-row">
             <h2 class="card-title">Environmental Recommendations</h2>
@@ -1193,20 +1193,25 @@
             </button>
           </div>
           <p class="card-subtitle">Derived from your selected stock.</p>
+          <div class="env-compact-summary" data-role="env-compact-summary" aria-hidden="true" hidden>
+            <span data-field="summary-text">Add species to see recommendations.</span>
+          </div>
         </div>
 
-        <div id="env-warnings" class="env-warnings" hidden></div>
-        <div id="env-reco" class="env-list" role="list"></div>
-        <div id="env-reco-xl" class="env-grid-xl env-table" hidden></div>
+        <div class="card-body" data-role="env-body">
+          <div id="env-warnings" class="env-warnings" hidden></div>
+          <div id="env-reco" class="env-list" role="list" data-role="env-table"></div>
+          <div id="env-reco-xl" class="env-grid-xl env-table" hidden data-role="env-table"></div>
 
-        <hr class="env-divider" aria-hidden="true" />
+          <hr class="env-divider" aria-hidden="true" />
 
-        <div id="env-bars" class="env-bars" data-testid="stock-bars">
-          <!-- populated by JS: Bioload Capacity + Aggression & Compatibility -->
-        </div>
+          <div id="env-bars" class="env-bars" data-testid="stock-bars">
+            <!-- populated by JS: Bioload Capacity + Aggression & Compatibility -->
+          </div>
 
-        <div id="env-more-tips" class="env-more-tips env-tips" hidden>
-          <!-- brief bullets about GH/KH, salinity, blackwater, and flow zones -->
+          <div id="env-more-tips" class="env-more-tips env-tips" hidden>
+            <!-- brief bullets about GH/KH, salinity, blackwater, and flow zones -->
+          </div>
         </div>
       </section>
 

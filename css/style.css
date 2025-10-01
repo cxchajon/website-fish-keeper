@@ -1347,3 +1347,26 @@ body.planted-active #cycling-coach .cc-title__leaf {
   padding-top:.25rem;
   margin-top:0;
 }
+
+/* Card compact state */
+#env-card.compact {
+  padding-block: 8px;
+}
+#env-card.compact .card-body {
+  display: none;
+}
+#env-card.compact .env-compact-summary[hidden] {
+  display: inline;
+}
+#env-card .env-compact-summary {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+#env-card .env-compact-summary[hidden] {
+  display: none;
+}
+
+/* (optional) smooth transitions */
+#env-card {
+  transition: padding 180ms ease;
+}

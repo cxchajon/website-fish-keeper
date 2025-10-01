@@ -48,6 +48,67 @@ const RANGE_KEYS = {
   kH: ['kH', 'min_dKH', 'max_dKH'],
 };
 
+function hasFiniteNumber(value) {
+  const num = Number(value);
+  return Number.isFinite(num);
+}
+
+function hasMeaningfulRange(range) {
+  if (!range) return false;
+  if (Array.isArray(range)) {
+    return range.some((value) => hasFiniteNumber(value));
+  }
+  if (typeof range === 'object') {
+    const keys = ['min', 'max', 'min_f', 'max_f', 'min_dGH', 'max_dGH', 'min_dKH', 'max_dKH'];
+    return keys.some((key) => hasFiniteNumber(range?.[key]));
+  }
+  return false;
+}
+
+function hasMeaningfulText(value) {
+  if (value == null) return false;
+  const text = String(value).trim();
+  return text !== '' && text !== dash;
+}
+
+function isEnvDataMeaningful(env) {
+  if (!env) return false;
+  const hasRange = [env.temperature, env.pH, env.gH, env.kH].some((range) => hasMeaningfulRange(range));
+  const hasText = [env.salinity, env.flow, env.blackwater].some((value) => hasMeaningfulText(value));
+  const hasBrackishInfo = env.brackishYes != null;
+  const hasChips = Array.isArray(env.chips) && env.chips.length > 0;
+  const hasDetailChips = Array.isArray(env.detailChips) && env.detailChips.length > 0;
+  return hasRange || hasText || hasBrackishInfo || hasChips || hasDetailChips;
+}
+
+function toggleEnvCompact({ env, bioloadPercent, aggressionPercent }) {
+  if (typeof document === 'undefined') return;
+  const card = document.querySelector('#env-card');
+  const body = card?.querySelector('[data-role="env-body"]');
+  const summary = card?.querySelector('[data-role="env-compact-summary"]');
+  if (!card || !body || !summary) return;
+
+  const hasEnv = isEnvDataMeaningful(env);
+  const bio = Number(bioloadPercent);
+  const agg = Number(aggressionPercent);
+  const hasMeters = (Number.isFinite(bio) && bio > 0) || (Number.isFinite(agg) && agg > 0);
+  const shouldCompact = !(hasEnv || hasMeters);
+
+  if (shouldCompact) {
+    card.classList.add('compact');
+    summary.hidden = false;
+    summary.setAttribute('aria-hidden', 'false');
+    const messageEl = summary.querySelector('[data-field="summary-text"]');
+    if (messageEl) {
+      messageEl.textContent = 'Add species to see recommendations.';
+    }
+  } else {
+    card.classList.remove('compact');
+    summary.hidden = true;
+    summary.setAttribute('aria-hidden', 'true');
+  }
+}
+
 export function renderEnvCard({ stock = [], stockCount = null, computed = null } = {}) {
   const env = deriveEnv(stock, { computed });
   const derivedCount = typeof stockCount === 'number' ? stockCount : env.stockLength ?? (Array.isArray(stock) ? stock.length : 0);
@@ -88,6 +149,12 @@ export function renderEnvCard({ stock = [], stockCount = null, computed = null }
   if (tipsEl) {
     ensureTips(tipsEl);
   }
+
+  toggleEnvCompact({
+    env,
+    bioloadPercent: env?.bioloadPct ?? 0,
+    aggressionPercent: env?.aggressionPct ?? 0,
+  });
 
   return env;
 }
