@@ -661,6 +661,16 @@
 
     #stocking-page .env-header {
       position: relative;
+      overflow: visible;
+    }
+
+    #stocking-page #env-card {
+      overflow: visible;
+      position: relative;
+    }
+
+    #stocking-page #env-card.is-tooltip-open {
+      z-index: 30;
     }
 
     #stocking-page .env-header .title-row {
@@ -668,6 +678,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      position: relative;
     }
 
     @media (orientation: portrait) and (max-width: 480px) {

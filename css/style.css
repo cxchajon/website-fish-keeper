@@ -934,7 +934,7 @@ html {
 
 [data-role="env-info-tip"]{
   position: absolute;
-  z-index: 20;
+  z-index: 9999;
   top: calc(100% + 8px);
   right: 0;
   max-width: 280px;
