@@ -380,11 +380,20 @@
           </div>
 
           <div class="ft-field">
+            <label for="notes" class="ft-label">Other Notes</label>
+            <textarea id="notes" name="notes" rows="3" class="ft-input" placeholder="Anything else we should know"></textarea>
+          </div>
+
+          <!-- Example fields above (keep your existing ones) -->
+          <!-- Photos / Video Link (legacy, optional) -->
+          <div class="ft-field">
             <label for="mediaLink" class="ft-label">Photos / Video Link</label>
-            <input id="mediaLink" name="media_link" type="url" class="ft-input" placeholder="YouTube, Google Drive, Instagram, etc." />
+            <input id="mediaLink" name="media_link" type="url" class="ft-input"
+                   placeholder="YouTube, Google Drive, Instagram, etc." />
             <div class="ft-help">Paste a link if you prefer. Or use the uploader below.</div>
           </div>
 
+          <!-- DIRECT UPLOADS — Cloudinary -->
           <div id="media-upload-block" class="upload-card" aria-labelledby="upload-title">
             <div class="upload-head">
               <h3 id="upload-title">Upload Photos / Videos</h3>
@@ -396,23 +405,25 @@
               <button type="button" id="clearUploads" class="btn-ghost">Clear</button>
             </div>
 
+            <!-- Hidden fields sent to Formspree -->
             <input type="hidden" name="media_urls" id="mediaUrls" value="" />
+            <input type="hidden" name="media_playable_urls" id="mediaPlayableUrls" value="" />
+            <input type="hidden" name="media_preview_urls" id="mediaPreviewUrls" value="" />
 
+            <!-- Optional: show users the URLs that will be submitted -->
             <label for="mediaUrlsReadonly" class="sr-only">Uploaded URLs</label>
-            <textarea id="mediaUrlsReadonly" class="urls-readonly" rows="3" readonly placeholder="No files uploaded yet."></textarea>
+            <textarea id="mediaUrlsReadonly" class="urls-readonly ft-input" rows="3" readonly
+              placeholder="No files uploaded yet."></textarea>
 
+            <!-- Preview grid -->
             <div id="uploadPreview" class="upload-preview" aria-live="polite"></div>
 
             <div class="ft-help small">Max 10 files, up to ~80 MB each. Allowed: jpg, jpeg, png, webp, heic, mp4, mov.</div>
           </div>
 
-          <div class="ft-field">
-            <label for="notes" class="ft-label">Other Notes</label>
-            <textarea id="notes" name="notes" rows="3" class="ft-input" placeholder="Anything else we should know"></textarea>
-          </div>
-
+          <!-- CONSENT -->
           <div class="consent-row">
-            <input type="checkbox" id="ownMedia" name="own_media" value="yes" class="consent-checkbox" aria-describedby="consent-help" required />
+            <input type="checkbox" id="ownMedia" name="own_media" value="yes" class="consent-checkbox" aria-describedby="consent-help" />
             <label for="ownMedia" class="consent-label">
               I confirm I own these photos/videos and give <strong>The Tank Guide</strong> permission to showcase them (with credit).
             </label>
@@ -421,16 +432,274 @@
             Tick this box to enable submission and let us share your media with credit.
           </p>
 
-          <div class="g-recaptcha" data-sitekey="6LecjNUrAAAAACdwiRIn1KvR21x_gP8_hdOrtXA3" style="margin:12px 0;"></div>
+          <!-- reCAPTCHA (keep your site key) -->
+          <div class="g-recaptcha" data-sitekey="6LecjNUrAAAAACdwiRIn1KvR21x_gP8_hdOrtXA3"></div>
 
+          <!-- SUBMIT -->
           <button type="submit" id="submitBtn" class="btn-primary" disabled aria-disabled="true">Submit Tank</button>
-          <p class="ft-help small" style="margin-top:6px;">We’ll contact you at the email provided if selected.</p>
         </form>
 
-        <div id="thankYou" style="display:none;" role="status" aria-live="polite">
+        <!-- Inline thank-you message -->
+        <div id="thankYou" style="display:none; margin-top:1rem; color:#10b981; font-weight:600;">
           ✅ Thanks! Your submission has been sent. We’ll review and contact you if selected.
         </div>
       </section>
+
+      <!-- ======= Scoped Styles (minimal) ======= -->
+      <style>
+        #feature-tank-form.ft-wrap {
+          --border: rgba(255,255,255,0.12);
+          --muted: #a1a1aa;
+          --text: #f3f4f6;
+          --accent: #10b981;
+          --accent-weak: rgba(16,185,129,0.35);
+          color: var(--text);
+        }
+        #feature-tank-form .ft-title { margin: 0 0 12px; font-size: 1.4rem; }
+        #feature-tank-form .ft-field { margin: 14px 0; }
+        #feature-tank-form .ft-label { display:block; margin-bottom:6px; }
+        #feature-tank-form .ft-input,
+        #feature-tank-form textarea.urls-readonly {
+          width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border);
+          background: rgba(255,255,255,0.05); color: var(--text);
+        }
+        #feature-tank-form .ft-help { color: var(--muted); margin-top: 6px; }
+        #feature-tank-form .ft-help.small { font-size: .9rem; }
+
+        /* Upload card */
+        #feature-tank-form .upload-card {
+          margin: 16px 0; padding: 14px; border: 1px dashed var(--border); border-radius: 12px;
+          background: rgba(255,255,255,0.03);
+        }
+        #feature-tank-form .upload-head h3 { margin: 0 0 4px; font-size: 1.1rem; }
+        #feature-tank-form .muted { color: var(--muted); }
+        #feature-tank-form .upload-actions { display:flex; gap:10px; margin:10px 0 12px; }
+        #feature-tank-form .btn-primary {
+          padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
+          background: linear-gradient(180deg, rgba(16,185,129,0.18), rgba(16,185,129,0.08));
+          color: var(--text); font-weight:600; letter-spacing:.2px; cursor:pointer;
+        }
+        #feature-tank-form .btn-ghost {
+          padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
+          background: transparent; color: var(--muted); cursor:pointer;
+        }
+        #feature-tank-form .upload-preview {
+          display:grid; grid-template-columns: repeat(auto-fill, minmax(96px,1fr));
+          gap: 10px; min-height: 0;
+        }
+        #feature-tank-form .thumb {
+          border: 1px solid var(--border); border-radius: 10px; overflow: hidden; position: relative;
+          aspect-ratio: 1/1; display:grid; place-items:center; font-size:.8rem;
+          background: rgba(255,255,255,0.04);
+        }
+        #feature-tank-form .thumb img { width: 100%; height: 100%; object-fit: cover; display:block; }
+        #feature-tank-form .thumb .badge {
+          position:absolute; bottom:6px; right:6px; background: rgba(0,0,0,0.55);
+          padding: 2px 6px; border-radius: 6px; font-size:.7rem;
+        }
+
+        /* Consent checkbox — native + accent-color (iOS-safe) */
+        #feature-tank-form .consent-row { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start; margin: 12px 0 6px; }
+        #feature-tank-form .consent-checkbox {
+          width: 20px; height: 20px; margin-top:2px;
+          -webkit-appearance: checkbox; appearance: checkbox; accent-color: var(--accent);
+          transform: scale(1.15); transform-origin: top left; cursor:pointer;
+        }
+        #feature-tank-form .consent-label { user-select:none; cursor:pointer; line-height:1.4; }
+        #feature-tank-form .consent-help { color: var(--muted); margin: 0 0 10px; }
+
+        /* Disabled submit look */
+        #feature-tank-form #submitBtn[disabled] { opacity: .5; cursor: not-allowed; }
+
+        /* A11y helpers */
+        #feature-tank-form .sr-only {
+          position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;
+        }
+      </style>
+
+      <!-- Cloudinary Upload Widget -->
+      <script src="https://widget.cloudinary.com/v2.0/global/all.js" defer></script>
+
+      <script>
+      (function() {
+        // ======= Config (Cloudinary + limits) =======
+        const CLOUD_NAME = 'fishkeepinglifeco';
+        const UPLOAD_PRESET = 'ttg_unsigned';
+        const UPLOAD_FOLDER = 'feature-tanks';
+        const MAX_FILES = 10;
+        const MAX_SIZE_BYTES = 80 * 1024 * 1024; // 80 MB
+
+        // ======= Elements =======
+        const form = document.getElementById('featureForm');
+        const thankYou = document.getElementById('thankYou');
+        const submitBtn = document.getElementById('submitBtn');
+        const consent = document.getElementById('ownMedia');
+
+        const openUploaderBtn = document.getElementById('openUploader');
+        const clearUploadsBtn = document.getElementById('clearUploads');
+        const preview = document.getElementById('uploadPreview');
+        const urlsHidden = document.getElementById('mediaUrls');
+        const playableHidden = document.getElementById('mediaPlayableUrls');
+        const previewsHidden = document.getElementById('mediaPreviewUrls');
+        const urlsReadonly = document.getElementById('mediaUrlsReadonly');
+
+        // ======= State =======
+        let uploaded = [];  // originals (secure_url)
+        let playable = [];  // safe-to-play links
+        let previews = [];  // thumbnails/posters
+        let uploadsInFlight = 0;
+
+        // ======= Helpers =======
+        function setSubmitEnabled(enabled) {
+          submitBtn.disabled = !enabled;
+          submitBtn.setAttribute('aria-disabled', String(!enabled));
+        }
+        function syncSubmitAvailability() {
+          const canSubmit = consent.checked && uploadsInFlight === 0; // reCAPTCHA gate handled by widget
+          setSubmitEnabled(canSubmit);
+        }
+        function isVideoUrl(url) {
+          return url.includes('/video/upload/') || /\.(mp4|mov)(\?|$)/i.test(url);
+        }
+        function makePreviewUrl(url) {
+          // A small, square jpg/webp that renders in most clients (pg_1 picks first frame for video)
+          return url.replace('/upload/', '/upload/pg_1,c_fill,w_600,h_600,q_auto,f_auto/');
+        }
+        function makePlayableUrl(url) {
+          // For videos: force MP4/H.264 + AAC; for images: deliver f_auto
+          if (isVideoUrl(url)) {
+            return url.replace('/upload/', '/upload/f_mp4,vc_h264,ac_aac/');
+          }
+          return url.replace('/upload/', '/upload/q_auto,f_auto/');
+        }
+        function renderPreviews() {
+          preview.innerHTML = '';
+          uploaded.forEach((u, i) => {
+            const div = document.createElement('div');
+            div.className = 'thumb';
+
+            const p = previews[i] || makePreviewUrl(u);
+            const img = document.createElement('img');
+            img.src = p;
+            img.alt = isVideoUrl(u) ? 'Video preview' : 'Image preview';
+            div.appendChild(img);
+
+            if (isVideoUrl(u)) {
+              const badge = document.createElement('span');
+              badge.className = 'badge';
+              badge.textContent = 'Video';
+              div.appendChild(badge);
+            }
+            preview.appendChild(div);
+          });
+
+          // Sync hidden fields for Formspree
+          urlsHidden.value = uploaded.join(',');
+          playableHidden.value = playable.join(',');
+          previewsHidden.value = previews.join(',');
+          urlsReadonly.value = uploaded.join('
+');
+        }
+        function lockSubmitWhileUploading(lock) {
+          uploadsInFlight += lock ? 1 : -1;
+          if (uploadsInFlight < 0) uploadsInFlight = 0;
+          syncSubmitAvailability();
+        }
+        function openWidget() {
+          if (!window.cloudinary) {
+            alert('Uploader not ready yet. Please wait a moment and try again.');
+            return;
+          }
+          const widget = cloudinary.createUploadWidget({
+            cloudName: CLOUD_NAME,
+            uploadPreset: UPLOAD_PRESET,
+            multiple: true,
+            maxFiles: MAX_FILES,
+            clientAllowedFormats: ['jpg','jpeg','png','webp','heic','mp4','mov'],
+            maxFileSize: MAX_SIZE_BYTES,
+            resourceType: 'auto',
+            cropping: false,
+            folder: UPLOAD_FOLDER,
+            sources: ['local', 'camera', 'url'],
+            showPoweredBy: false
+          }, (error, result) => {
+            if (result && result.event === 'queues-start') {
+              lockSubmitWhileUploading(true);
+            }
+            if (result && result.event === 'success') {
+              const url = result.info && result.info.secure_url ? result.info.secure_url : null;
+              if (url) {
+                if (uploaded.length >= MAX_FILES) {
+                  alert(`You can upload up to ${MAX_FILES} files per submission.`);
+                } else {
+                  uploaded.push(url);
+                  playable.push(makePlayableUrl(url));
+                  previews.push(makePreviewUrl(url));
+                  renderPreviews();
+                }
+              }
+            }
+            if (result && (result.event === 'queues-end' || result.event === 'close')) {
+              lockSubmitWhileUploading(false);
+            }
+            if (error) {
+              console.error('Cloudinary widget error:', error);
+              alert('There was a problem uploading. Please try again.');
+              lockSubmitWhileUploading(false);
+            }
+          });
+          widget.open();
+        }
+
+        // ======= Wire events =======
+        consent.addEventListener('change', syncSubmitAvailability);
+        openUploaderBtn.addEventListener('click', openWidget);
+        clearUploadsBtn.addEventListener('click', function() {
+          uploaded = []; playable = []; previews = [];
+          renderPreviews();
+          syncSubmitAvailability();
+        });
+
+        // Initial state
+        syncSubmitAvailability();
+
+        // ======= AJAX Submit to Formspree (no redirect) =======
+        form.addEventListener('submit', async function(e) {
+          if (!consent.checked || uploadsInFlight > 0) {
+            e.preventDefault();
+            if (!consent.checked) alert('Please confirm you own the media and grant permission.');
+            if (uploadsInFlight > 0) alert('Please wait for uploads to finish.');
+            return false;
+          }
+
+          e.preventDefault();
+          setSubmitEnabled(false);
+
+          try {
+            const data = new FormData(form);
+            const resp = await fetch(form.action, {
+              method: 'POST',
+              body: data,
+              headers: { 'Accept': 'application/json' }
+            });
+
+            if (resp.ok) {
+              form.reset();
+              uploaded = []; playable = []; previews = [];
+              renderPreviews();
+              thankYou.style.display = 'block';
+            } else {
+              alert('❌ There was a problem sending your submission. Please try again.');
+            }
+          } catch (err) {
+            console.error(err);
+            alert('❌ Network error. Please try again.');
+          } finally {
+            syncSubmitAvailability();
+          }
+        });
+      })();
+      </script>
 
       <p class="tiny" style="margin-top:12px;opacity:.75;">
         📌 Features are <strong>only</strong> accepted through this website. We don’t take submissions via YouTube comments or social DMs.
@@ -449,221 +718,6 @@
   } catch (e) { console.error('[Footer] load failed:', e); }
 })();
 </script>
-  <script src="https://widget.cloudinary.com/v2.0/global/all.js" defer></script>
-  <script>
-  (function() {
-    const init = () => {
-      const form = document.getElementById('featureForm');
-      const thankYou = document.getElementById('thankYou');
-      const submitBtn = document.getElementById('submitBtn');
-      const consent = document.getElementById('ownMedia');
-      const openUploaderBtn = document.getElementById('openUploader');
-      const clearUploadsBtn = document.getElementById('clearUploads');
-      const preview = document.getElementById('uploadPreview');
-      const urlsHidden = document.getElementById('mediaUrls');
-      const urlsReadonly = document.getElementById('mediaUrlsReadonly');
-
-      if (!form || !submitBtn || !consent || !openUploaderBtn || !clearUploadsBtn || !preview || !urlsHidden || !urlsReadonly) {
-        return;
-      }
-
-      const CLOUD_NAME = 'fishkeepinglifeco';
-      const UPLOAD_PRESET = 'ttg_unsigned';
-      const UPLOAD_FOLDER = 'feature-tanks';
-      const MAX_FILES = 10;
-      const MAX_SIZE_BYTES = 80 * 1024 * 1024;
-
-      let uploaded = [];
-      let uploadsInFlight = 0;
-
-      const setSubmitEnabled = (enabled) => {
-        submitBtn.disabled = !enabled;
-        submitBtn.setAttribute('aria-disabled', String(!enabled));
-      };
-
-      const syncSubmitAvailability = () => {
-        const canSubmit = consent.checked && uploadsInFlight === 0;
-        setSubmitEnabled(canSubmit);
-      };
-
-      const thumbUrl = (url) => url.replace('/upload/', '/upload/c_fill,w_200,h_200,q_auto,f_auto/');
-
-      const renderPreviews = () => {
-        preview.innerHTML = '';
-        uploaded.forEach((u) => {
-          const div = document.createElement('div');
-          div.className = 'thumb';
-          if (/(\.mp4|\.mov)(\?|$)/i.test(u)) {
-            const poster = u.replace('/upload/', '/upload/so_1,du_1,pg_1,c_fill,w_200,h_200,q_auto,f_auto/');
-            const img = document.createElement('img');
-            img.src = poster;
-            img.alt = 'Video preview';
-            div.appendChild(img);
-            const badge = document.createElement('span');
-            badge.className = 'badge';
-            badge.textContent = 'Video';
-            div.appendChild(badge);
-          } else {
-            const img = document.createElement('img');
-            img.src = thumbUrl(u);
-            img.alt = 'Image preview';
-            div.appendChild(img);
-          }
-          preview.appendChild(div);
-        });
-        urlsHidden.value = uploaded.join(',');
-        urlsReadonly.value = uploaded.join('\n');
-      };
-
-      const lockSubmitWhileUploading = (lock) => {
-        uploadsInFlight += lock ? 1 : -1;
-        if (uploadsInFlight < 0) uploadsInFlight = 0;
-        syncSubmitAvailability();
-      };
-
-      let widgetInstance = null;
-
-      const handleWidgetEvent = (error, result) => {
-        if (result && result.event === 'queues-start') {
-          lockSubmitWhileUploading(true);
-        }
-
-        if (result && result.event === 'success') {
-          const url = result.info && result.info.secure_url ? result.info.secure_url : null;
-          if (url) {
-            if (uploaded.length >= MAX_FILES) {
-              alert(`You can upload up to ${MAX_FILES} files per submission.`);
-            } else {
-              uploaded.push(url);
-              renderPreviews();
-            }
-          }
-        }
-
-        if (result && (result.event === 'queues-end' || result.event === 'close')) {
-          lockSubmitWhileUploading(false);
-        }
-
-        if (error) {
-          console.error('Cloudinary widget error:', error);
-          alert('There was a problem uploading. Please try again.');
-          lockSubmitWhileUploading(false);
-        }
-      };
-
-      const getWidget = () => {
-        if (!widgetInstance) {
-          widgetInstance = window.cloudinary.createUploadWidget({
-            cloudName: CLOUD_NAME,
-            uploadPreset: UPLOAD_PRESET,
-            multiple: true,
-            maxFiles: MAX_FILES,
-            clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'heic', 'mp4', 'mov'],
-            maxFileSize: MAX_SIZE_BYTES,
-            resourceType: 'auto',
-            cropping: false,
-            folder: UPLOAD_FOLDER,
-            sources: ['local', 'camera', 'url'],
-            showPoweredBy: false
-          }, handleWidgetEvent);
-        }
-
-        return widgetInstance;
-      };
-
-      const openWidget = () => {
-        if (!window.cloudinary || typeof window.cloudinary.createUploadWidget !== 'function') {
-          alert('Uploader not ready yet. Please wait a moment and try again.');
-          return;
-        }
-
-        const widget = getWidget();
-        widget.open();
-      };
-
-      consent.addEventListener('change', () => {
-        if (thankYou) {
-          thankYou.style.display = 'none';
-        }
-        syncSubmitAvailability();
-      });
-
-      openUploaderBtn.addEventListener('click', openWidget);
-
-      clearUploadsBtn.addEventListener('click', () => {
-        uploaded = [];
-        renderPreviews();
-        syncSubmitAvailability();
-      });
-
-      form.addEventListener('input', () => {
-        if (thankYou) {
-          thankYou.style.display = 'none';
-        }
-      });
-
-      form.addEventListener('submit', async (event) => {
-        if (uploadsInFlight > 0) {
-          event.preventDefault();
-          alert('Please wait for uploads to finish.');
-          return;
-        }
-
-        if (!form.checkValidity()) {
-          event.preventDefault();
-          form.reportValidity();
-          if (!consent.checked) {
-            alert('Please confirm you own the media and grant permission.');
-          }
-          return;
-        }
-
-        event.preventDefault();
-        setSubmitEnabled(false);
-        if (thankYou) {
-          thankYou.style.display = 'none';
-        }
-
-        try {
-          const data = new FormData(form);
-          const response = await fetch(form.action, {
-            method: 'POST',
-            body: data,
-            headers: { 'Accept': 'application/json' }
-          });
-
-          if (response.ok) {
-            form.reset();
-            uploaded = [];
-            renderPreviews();
-            if (typeof window.grecaptcha !== 'undefined') {
-              window.grecaptcha.reset();
-            }
-            if (thankYou) {
-              thankYou.style.display = 'block';
-            }
-          } else {
-            alert('❌ There was a problem sending your submission. Please try again.');
-          }
-        } catch (error) {
-          console.error(error);
-          alert('❌ Network error. Please try again.');
-        } finally {
-          syncSubmitAvailability();
-        }
-      });
-
-      renderPreviews();
-      syncSubmitAvailability();
-    };
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
-    }
-  })();
-  </script>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 </html>
