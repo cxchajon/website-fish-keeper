@@ -53,7 +53,7 @@ export const TANK_SIZES = [
     footprint_in: '20.3 × 10.5',
     category: 'Nano',
     popular: true,
-    notes: 'Common starter size; fits many beginner species.',
+    notes: 'Common starter size; fits many hardy community species.',
   },
   {
     id: 'g15h',
