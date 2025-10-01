@@ -182,8 +182,6 @@ function bootstrapStocking() {
     addBtn: document.getElementById('plan-add'),
     stockList: document.getElementById('stock-list'),
     seeGear: document.getElementById('btn-gear'),
-    diagnostics: document.getElementById('diagnostics'),
-    diagnosticsContent: document.getElementById('diagnostics-content'),
     envReco: document.getElementById('env-reco'),
     envTips: document.querySelector('#env-legend, #env-more-tips, [data-role="env-legend"]'),
   };
@@ -670,31 +668,21 @@ function renderCandidateState() {
 }
 
 function renderDiagnostics() {
-  if (!debugMode || !refs.diagnostics) return;
+  if (!debugMode) return;
+  const groupLabel = computed ? '[Stocking] Diagnostics' : '[Stocking] Diagnostics (inactive)';
+  console.groupCollapsed(groupLabel);
   if (!computed) {
-    refs.diagnostics.hidden = true;
-    if (refs.diagnosticsContent) {
-      refs.diagnosticsContent.innerHTML = '';
-    }
+    console.log('Diagnostics unavailable: select a tank to generate state.');
+    console.groupEnd();
     return;
   }
-  refs.diagnostics.hidden = false;
   const sanity = runSanitySuite(state);
   const stress = runStressSuite(state);
-  const lines = [
-    '<strong>Live Snapshot</strong>',
-    ...computed.diagnostics.map((line) => `<span>${line}</span>`),
-    '<strong>Sanity Tests</strong>',
-    ...sanity.map((line) => `<span>${line}</span>`),
-    '<strong>Stress Tests</strong>',
-    ...stress.map((line) => `<span>${line}</span>`),
-  ];
-  if (refs.diagnosticsContent) {
-    refs.diagnosticsContent.innerHTML = `<ul>${lines.map((line) => `<li>${line}</li>`).join('')}</ul>`;
-  }
-  console.groupCollapsed('[Stocking] Diagnostics');
+  console.log('Live Snapshot');
   computed.diagnostics.forEach((line) => console.log(line));
+  console.log('Sanity Tests');
   sanity.forEach((line) => console.log(line));
+  console.log('Stress Tests');
   stress.forEach((line) => console.log(line));
   console.groupEnd();
 }
