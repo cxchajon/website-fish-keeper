@@ -1370,3 +1370,35 @@ body.planted-active #cycling-coach .cc-title__leaf {
 #env-card {
   transition: padding 180ms ease;
 }
+
+/* Environmental legend toggle */
+#env-card [data-role="env-legend"][hidden] {
+  display: none;
+}
+
+#env-card.info-open [data-role="env-legend"] {
+  display: block;
+}
+
+#env-card [data-role="env-legend"] {
+  transition: opacity 160ms ease;
+  opacity: 0;
+}
+
+#env-card.info-open [data-role="env-legend"] {
+  opacity: 1;
+}
+
+#env-card .meter-row {
+  margin-bottom: 0;
+}
+
+#env-card.info-open .meter-row {
+  margin-bottom: var(--space-4, 16px);
+}
+
+#env-info-btn {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+}

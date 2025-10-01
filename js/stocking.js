@@ -172,8 +172,6 @@ function bootstrapStocking() {
     pageTitle: document.getElementById('page-title'),
     plantIcon: document.getElementById('plant-icon'),
     planted: document.getElementById('toggle-planted'),
-    envCard: document.querySelector('#env-card, [data-role="env-card"]'),
-    envInfoToggle: document.querySelector('#env-info-btn, #env-info-toggle, [data-role="env-info"]'),
     conditions: document.getElementById('conditions-list'),
     candidateChips: document.getElementById('candidate-chips'),
     candidateBanner: document.getElementById('candidate-banner'),
@@ -185,7 +183,6 @@ function bootstrapStocking() {
     diagnostics: document.getElementById('diagnostics'),
     diagnosticsContent: document.getElementById('diagnostics-content'),
     envReco: document.getElementById('env-reco'),
-    envTips: document.querySelector('#env-legend, #env-more-tips, [data-role="env-legend"]'),
   };
 
   const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
@@ -601,21 +598,6 @@ function updateToggle(control, value) {
   }
 }
 
-  function applyEnvTipsState(open) {
-    const panel = refs.envTips;
-    const card = refs.envCard;
-    if (panel) {
-      panel.hidden = !open;
-      panel.setAttribute('aria-hidden', open ? 'false' : 'true');
-    }
-    if (card) {
-      card.classList.toggle('info-open', Boolean(open));
-    }
-    if (refs.envInfoToggle) {
-      refs.envInfoToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    }
-  }
-
 function syncStateFromInputs() {
   if (state.variantId) {
     const gallons = state.tank?.gallons ?? 0;
@@ -646,9 +628,6 @@ function populateSpecies() {
 
 function syncToggles() {
   updateToggle(refs.planted, state.planted);
-  if (refs.envTips || refs.envInfoToggle || refs.envCard) {
-    applyEnvTipsState(state.showTips);
-  }
   if (refs.plantIcon) {
     refs.plantIcon.style.display = state.planted ? 'inline-flex' : 'none';
   }
@@ -760,13 +739,6 @@ window.addEventListener('ttg:recompute', () => {
   runRecompute({ skipInputSync: true });
 });
 
-  document.addEventListener('ttg:envTips:state', (event) => {
-    const desired = Boolean(event?.detail?.open);
-    if (state.showTips === desired) return;
-    state.showTips = desired;
-    syncToggles();
-  });
-
 function bindInputs() {
   if (refs.planted) {
     refs.planted.addEventListener('change', () => {
@@ -852,71 +824,41 @@ function buildGearPayload() {
 
 bootstrapStocking();
 
-(function initEnvInfoToggle(){
-  const card = document.querySelector('#env-card, [data-role="env-card"]');
-  const infoBtn = document.querySelector('#env-info-btn, #env-info-toggle, [data-role="env-info"]');
-  const legend = document.querySelector('#env-legend, #env-more-tips, [data-role="env-legend"]');
-  if (!card || !infoBtn || !legend) return;
 
-  const setOpen = (open, { emit = false } = {}) => {
-    card.classList.toggle('info-open', Boolean(open));
+(function initEnvInfoToggle(){
+  const card   = document.querySelector('#env-card,[data-role="env-card"]');
+  const btn    = document.querySelector('#env-info-btn,[data-role="env-info"]');
+  const legend = document.querySelector('#env-legend,[data-role="env-legend"]');
+  if (!card || !btn || !legend) {
+    console.warn('Env info toggle: missing hooks');
+    return;
+  }
+
+  btn.replaceWith(btn.cloneNode(true));
+  const freshBtn = document.querySelector('#env-info-btn,[data-role="env-info"]');
+
+  const setOpen = (open) => {
+    card.classList.toggle('info-open', open);
+    freshBtn.setAttribute('aria-expanded', String(open));
     legend.hidden = !open;
-    legend.setAttribute('aria-hidden', open ? 'false' : 'true');
-    infoBtn.setAttribute('aria-expanded', String(open));
-    if (emit) {
-      document.dispatchEvent(
-        new CustomEvent('ttg:envTips:state', { detail: { open: Boolean(open) } })
-      );
-    }
   };
 
-  const initialOpen = card.classList.contains('info-open');
-  setOpen(initialOpen);
+  setOpen(false);
 
-  document.addEventListener('ttg:envTips:state', (event) => {
-    const desired = Boolean(event?.detail?.open);
-    setOpen(desired);
-  });
-
-  infoBtn.addEventListener('click', guarded((e) => {
+  freshBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    const willOpen = !card.classList.contains('info-open');
-    const message = infoBtn.getAttribute('data-info') || 'Derived from your selected stock. Ranges reflect compatible overlaps.';
+    e.stopPropagation();
+    const open = !card.classList.contains('info-open');
+    setOpen(open);
+  });
+})();
 
-    if (willOpen && !infoBtn.dataset.popShown) {
-      let usedShared = false;
-      if (window.TTG && typeof TTG.openInfoPopover === 'function') {
-        TTG.openInfoPopover(infoBtn, message);
-        usedShared = true;
-      }
-
-      if (!usedShared) {
-        const pop = document.createElement('div');
-        pop.className = 'ttg-popover is-open';
-        Object.assign(pop.style, {
-          position: 'fixed',
-          zIndex: 2147483647,
-          maxWidth: '320px',
-          padding: '10px 12px',
-          borderRadius: '10px',
-          background: 'rgba(20,22,25,.96)',
-          border: '1px solid rgba(255,255,255,.12)',
-          boxShadow: '0 10px 30px rgba(0,0,0,.35)',
-          fontSize: '13px',
-        });
-        pop.textContent = message;
-        document.body.appendChild(pop);
-        const r = infoBtn.getBoundingClientRect();
-        pop.style.left = `${Math.max(8, Math.min(window.innerWidth - pop.offsetWidth - 8, r.left))}px`;
-        pop.style.top = `${Math.max(8, Math.min(window.innerHeight - pop.offsetHeight - 8, r.bottom + 8))}px`;
-        setTimeout(() => pop.remove(), 2000);
-      }
-
-      infoBtn.dataset.popShown = '1';
-    }
-
-    setOpen(willOpen, { emit: true });
-  }));
+(function verifyEnvInfoOnce(){
+  const btn = document.querySelector('#env-info-btn,[data-role="env-info"]');
+  const legend = document.querySelector('#env-legend,[data-role="env-legend"]');
+  if (!btn || !legend) return;
+  legend.hidden = true;
+  btn.setAttribute('aria-expanded','false');
 })();
 
 (function infoPopovers(){

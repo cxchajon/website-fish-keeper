@@ -9,8 +9,8 @@ test.describe('Stocking Advisor — Env. Recommendations unified info icon', () 
   test('desktop: single icon toggles environmental legend', async ({ page }) => {
     await page.goto(url, { waitUntil: 'networkidle' });
 
-    const icon = page.locator('#env-info-toggle');
-    const panel = page.locator('#env-more-tips');
+    const icon = page.locator('#env-info-btn');
+    const panel = page.locator('#env-legend');
 
     await expect(icon).toBeVisible();
     await expect(panel).toBeHidden();
@@ -40,8 +40,8 @@ test.describe('Stocking Advisor — Env. Recommendations unified info icon (mobi
   test('mobile: single icon works and aligns', async ({ page }) => {
     await page.goto(url, { waitUntil: 'networkidle' });
 
-    const icon = page.locator('#env-info-toggle');
-    const panel = page.locator('#env-more-tips');
+    const icon = page.locator('#env-info-btn');
+    const panel = page.locator('#env-legend');
 
     await expect(icon).toBeVisible();
     await expect(icon).toHaveAttribute('aria-expanded', 'false');

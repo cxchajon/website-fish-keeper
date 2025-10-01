@@ -686,7 +686,7 @@
         line-height: 1.15;
       }
 
-      #stocking-page #env-info-toggle {
+      #stocking-page #env-info-btn {
         grid-column: 2 / 3;
         align-self: start;
         margin-top: 2px;
@@ -1051,7 +1051,7 @@
         }
 
         /* Env. Recommendations single icon “expanded” state (if present) */
-        #stocking-page #env-info-toggle[aria-expanded="true"],
+        #stocking-page #env-info-btn[aria-expanded="true"],
         #stocking-page [data-role="env-info"][aria-expanded="true"] {
           background: rgba(20, 203, 168, 0.9);
           color: #0b1b18;
@@ -1196,12 +1196,13 @@
             <!-- SINGLE unified icon: shows popover on first click, toggles tips on next clicks -->
             <button
               type="button"
-              id="env-info-toggle"
-              class="info-btn"
+              id="env-info-btn"
               data-role="env-info"
-              aria-controls="env-more-tips"
+              class="info-btn icon-button info"
               aria-expanded="false"
+              aria-controls="env-legend"
               aria-label="More info and tips about Environmental Recommendations"
+              title="Show details"
               data-info="Derived from your selected stock. Ranges reflect compatible overlaps across all species."
             >
               i
@@ -1224,7 +1225,7 @@
             <!-- populated by JS: Bioload Capacity + Aggression & Compatibility -->
           </div>
 
-          <div id="env-more-tips" class="env-more-tips env-tips" data-role="env-legend" hidden>
+          <div id="env-legend" class="env-more-tips env-tips" data-role="env-legend" hidden>
             <!-- brief bullets about GH/KH, salinity, blackwater, and flow zones -->
           </div>
         </div>

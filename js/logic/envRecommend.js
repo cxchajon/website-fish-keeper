@@ -122,7 +122,7 @@ export function renderEnvCard({ stock = [], stockCount = null, computed = null }
   const excelEl = document.getElementById('env-reco-xl');
   const barsEl = document.getElementById('env-bars');
   const warnEl = document.getElementById('env-warnings');
-  const tipsEl = document.getElementById('env-more-tips');
+  const tipsEl = document.getElementById('env-legend');
 
   if (listEl) {
     renderConditions(listEl, env.conditions, { isEmpty });
