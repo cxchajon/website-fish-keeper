@@ -1202,3 +1202,40 @@ body.planted-active #cycling-coach .cc-title__leaf {
     margin: 6px 10px;
   }
 }
+
+/* Featured Videos card heading moved inside */
+.video-card h2 { margin: 0 0 8px; }
+.video-card .subline { margin: 0 0 12px; opacity: .9; }
+
+/* Pill CTA based on YouTube brand (black background) */
+.yt-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #000;
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 16px;
+  text-decoration: none;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgba(0,0,0,.25);
+}
+.yt-cta:focus { outline: 2px solid #ffffff; outline-offset: 2px; }
+.yt-cta:hover { filter: brightness(1.08); }
+.yt-cta:active { transform: translateY(1px); }
+
+/* Red play icon (SVG via CSS background) */
+.yt-icon {
+  width: 22px; height: 16px; flex: 0 0 22px;
+  background:
+    /* white play triangle */
+    conic-gradient(from 330deg at 9px 8px, #fff 0 60deg, transparent 0) no-repeat 7px 3px / 8px 10px,
+    /* red rounded rect */
+    #FF0033;
+  border-radius: 4px / 6px;
+}
+
+.video-card > iframe,
+.video-card .embed-wrapper { margin-top: 12px; }
+.video-card .now-playing { margin: 12px 0 10px; }
