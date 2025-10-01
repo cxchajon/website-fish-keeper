@@ -1,4 +1,4 @@
-const NAV_VERSION = '1.3.1';
+const NAV_VERSION = '1.3.2';
 const NAV_ENDPOINT = `/nav.html?v=${NAV_VERSION}`;
 const SKIP_PATHS = new Set(['/', '/index.html']);
 const OVERLAY_HIDE_DELAY = 320;
