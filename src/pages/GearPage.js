@@ -7,7 +7,6 @@ import { RecommendedRow } from '../components/gear/RecommendedRow.js';
 import { CategoryAccordion } from '../components/gear/CategoryAccordion.js';
 import { WhyPickDrawer } from '../components/gear/WhyPickDrawer.js';
 import { TankSmartModal } from '../components/gear/TankSmartModal.js';
-import { FooterMeta } from '../components/gear/FooterMeta.js';
 
 const state = {
   loading: true,
@@ -19,9 +18,6 @@ const state = {
   selectedItem: null,
   showModal: false,
   alternatives: { Budget: null, Mid: null, Premium: null },
-  sources: [],
-  generatedAt: null,
-  auditLink: null,
 };
 
 const root = document.getElementById('gear-root');
@@ -95,20 +91,21 @@ function render() {
 
   const groups = groupRows(state.rows, state.context);
 
-  root.append(
+  const page = createElement('div', { className: 'gear-wrap' });
+  const contextBar = ContextBar(state.context, (context) => setState({ context }));
+  const actions = createElement('div', { className: 'context-actions' });
+  const modalButton = createElement('button', {
+    className: 'btn tertiary',
+    text: 'How to Buy a Tank Smart',
+    attrs: { type: 'button' },
+  });
+  modalButton.addEventListener('click', () => setState({ showModal: true }));
+  actions.appendChild(modalButton);
+
+  page.append(
     TransparencyBanner(),
-    ContextBar(state.context, (context) => setState({ context })),
-    (() => {
-      const barActions = createElement('div', { className: 'context-actions' });
-      const modalButton = createElement('button', {
-        className: 'btn tertiary',
-        text: 'How to Buy a Tank Smart',
-        attrs: { type: 'button' },
-      });
-      modalButton.addEventListener('click', () => setState({ showModal: true }));
-      barActions.appendChild(modalButton);
-      return barActions;
-    })(),
+    contextBar,
+    actions,
     RecommendedRow(state.rows, state.context, {
       onSelect: handleSelectItem,
       onAdd: () => {
@@ -147,36 +144,15 @@ function render() {
       open: state.showModal,
       onClose: () => setState({ showModal: false }),
     }),
-    FooterMeta({
-      sources: state.sources,
-      generatedAt: state.generatedAt,
-      auditLink: state.auditLink,
-    }),
   );
-}
 
-async function detectAuditReport() {
-  try {
-    const response = await fetch('/reports/link_audit.txt', { method: 'HEAD' });
-    if (response.ok) {
-      return '/reports/link_audit.txt';
-    }
-  } catch (error) {
-    // ignore
-  }
-  return null;
+  root.appendChild(page);
 }
 
 async function init() {
   try {
-    const [{ rows, sources, generatedAt }, auditLink] = await Promise.all([
-      loadGear(),
-      detectAuditReport(),
-    ]);
+    const { rows } = await loadGear();
     state.rows = rows;
-    state.sources = sources;
-    state.generatedAt = generatedAt;
-    state.auditLink = auditLink;
     state.loading = false;
     render();
   } catch (error) {
