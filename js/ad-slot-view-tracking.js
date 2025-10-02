@@ -1,0 +1,58 @@
+(function(){
+  if (!('IntersectionObserver' in window)) {
+    return;
+  }
+
+  function initObserver(el, label) {
+    if (!el) {
+      return false;
+    }
+
+    var seen = false;
+    var observer = new IntersectionObserver(function(entries, obs){
+      entries.forEach(function(entry){
+        if (!seen && entry.isIntersecting) {
+          seen = true;
+          obs.disconnect();
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', 'ad_slot_view', {
+              slot_id: el.id,
+              label: label
+            });
+          }
+        }
+      });
+    }, { threshold: 0.25 });
+
+    observer.observe(el);
+    return true;
+  }
+
+  function track(id, label) {
+    if (initObserver(document.getElementById(id), label)) {
+      return;
+    }
+
+    var attempts = 0;
+    var timer = setInterval(function(){
+      attempts += 1;
+      if (initObserver(document.getElementById(id), label) || attempts > 40) {
+        clearInterval(timer);
+      }
+    }, 250);
+  }
+
+  var slots = [
+    { id: 'ad-top-1', label: 'StockingTop' },
+    { id: 'ad-bottom-1', label: 'StockingBottom' },
+    { id: 'ad-top-params', label: 'ParamsTop' },
+    { id: 'ad-bottom-params', label: 'ParamsBottom' },
+    { id: 'ad-top-gear', label: 'GearTop' },
+    { id: 'ad-bottom-gear', label: 'GearBottom' },
+    { id: 'ad-media-bottom-1', label: 'MediaBottom' }
+  ];
+
+  slots.forEach(function(slot){
+    track(slot.id, slot.label);
+  });
+})();
