@@ -440,7 +440,9 @@
             <!-- Preview grid -->
             <div id="uploadPreview" class="upload-preview" aria-live="polite"></div>
 
-            <div class="ft-help small">Max 10 files, up to ~80 MB each. Allowed: jpg, jpeg, png, webp, heic, mp4, mov.</div>
+            <div class="ft-help small">Max 10 files, up to ~80 MB each. Allowed: jpg, jpeg, png, webp, heic, mp4, mov.<br>
+              <em>If uploads take a while, your reCAPTCHA may expire—just re-check it before submitting.</em>
+            </div>
           </div>
 
           <!-- ===== CONSENT ===== -->
@@ -454,8 +456,12 @@
             Tick this box to enable submission and let us share your media with credit.
           </p>
 
-          <!-- ===== reCAPTCHA (keep your site key) ===== -->
-          <div class="g-recaptcha" data-sitekey="6LecjNUrAAAAACdwiRIn1KvR21x_gP8_hdOrtXA3"></div>
+          <!-- ===== reCAPTCHA (with callbacks to detect expiration) ===== -->
+          <div class="g-recaptcha"
+               data-sitekey="6LecjNUrAAAAACdwiRIn1KvR21x_gP8_hdOrtXA3"
+               data-callback="onRecaptchaSuccess"
+               data-expired-callback="onRecaptchaExpired"
+               data-error-callback="onRecaptchaExpired"></div>
 
           <!-- ===== SUBMIT ===== -->
           <button type="submit" id="submitBtn" class="btn-primary" disabled aria-disabled="true">Submit Tank</button>
@@ -592,28 +598,23 @@
         const previewsHidden = document.getElementById('mediaPreviewUrls');
         const urlsReadonly = document.getElementById('mediaUrlsReadonly');
 
-        // DEBUG tray (shows upload events/errors). Remove after validation.
-        let dbg = document.getElementById('uploadDebug');
-        if (!dbg) {
-          dbg = document.createElement('pre');
-          dbg.id = 'uploadDebug';
-          dbg.style.cssText = 'margin-top:8px;padding:8px;border:1px dashed rgba(255,255,255,0.2);border-radius:8px;background:rgba(255,255,255,0.05);color:#bbb;font-size:12px;max-height:180px;overflow:auto;';
-          dbg.setAttribute('aria-live','polite');
-          const card = document.getElementById('media-upload-block');
-          if (card) card.appendChild(dbg);
-        }
-        function log(msg, obj) {
-          if (!dbg) return;
-          const time = new Date().toLocaleTimeString();
-          dbg.textContent += `[${time}] ${msg}` + (obj ? `: ${JSON.stringify(obj)}` : '') + '\n';
-          dbg.scrollTop = dbg.scrollHeight;
-        }
-
         // ======= State =======
         let uploaded = [];   // originals (secure_url)
         let playable = [];   // safe-to-play links
         let previews = [];   // thumbnails/posters
         let uploadsInFlight = 0;
+
+        // ======= reCAPTCHA State =======
+        let recaptchaOk = false;
+        window.onRecaptchaSuccess = function(){ recaptchaOk = true; syncSubmitAvailability(); };
+        window.onRecaptchaExpired = function(){
+          recaptchaOk = false;
+          alert('reCAPTCHA expired — please check the box again before submitting.');
+          syncSubmitAvailability();
+        };
+        function recaptchaHasToken(){
+          return (window.grecaptcha && typeof grecaptcha.getResponse === 'function' && grecaptcha.getResponse().length > 0);
+        }
 
         // ======= Helpers: Socials =======
         function normHandle(val){
@@ -679,8 +680,8 @@
           submitBtn.setAttribute('aria-disabled', String(!enabled));
         }
         function syncSubmitAvailability() {
-          // Note: socials are validated at submit; consent + uploads gate interactively
-          const canSubmit = consent.checked && uploadsInFlight === 0;
+          // Submit allowed only when: consent checked, uploads finished, and reCAPTCHA token is active
+          const canSubmit = consent.checked && uploadsInFlight === 0 && (recaptchaOk || recaptchaHasToken());
           setSubmitEnabled(canSubmit);
         }
         function isVideoUrl(url) {
@@ -747,12 +748,10 @@
           }, (error, result) => {
             if (result && result.event === 'queues-start') {
               lockSubmitWhileUploading(true);
-              log('Queue started', { files_queued: (result.info && result.info.files) ? result.info.files.length : 'n/a' });
             }
             if (result && result.event === 'success') {
               const info = result.info || {};
               const url = info && info.secure_url ? info.secure_url : null;
-              log('Upload success', { resource_type: info.resource_type, format: info.format, bytes: info.bytes, url });
               if (url) {
                 if (uploaded.length >= MAX_FILES) {
                   alert(`You can upload up to ${MAX_FILES} files per submission.`);
@@ -766,11 +765,9 @@
             }
             if (result && (result.event === 'queues-end' || result.event === 'close')) {
               lockSubmitWhileUploading(false);
-              log('Queue ended/closed');
             }
             if (error) {
               console.error('Cloudinary widget error:', error);
-              log('ERROR', error);
               const code = (error && (error.statusText || error.message || error.http_code)) || 'unknown';
               if (/max file size/i.test(code) || error.http_code === 400) {
                 alert('Your video is too large. Please keep files at or under ~80 MB.');
@@ -813,6 +810,13 @@
             return false;
           }
 
+          // Ensure reCAPTCHA is still valid (tokens can expire during long uploads)
+          if (!(recaptchaOk || recaptchaHasToken())) {
+            e.preventDefault();
+            alert('Please complete the reCAPTCHA before submitting.');
+            return false;
+          }
+
           e.preventDefault();
           setSubmitEnabled(false);
 
@@ -829,6 +833,10 @@
               uploaded = []; playable = []; previews = [];
               renderPreviews();
               thankYou.style.display = 'block';
+              if (window.grecaptcha && typeof grecaptcha.reset === 'function') {
+                grecaptcha.reset();
+              }
+              recaptchaOk = false;
             } else {
               alert('❌ There was a problem sending your submission. Please try again.');
             }
