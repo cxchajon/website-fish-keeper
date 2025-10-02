@@ -1616,3 +1616,14 @@ html:not([data-ad-consent]) .ttg-adunit,
   .ttg-adunit{max-width:900px;margin-left:auto;margin-right:auto;}
 }
 /* === TTG Ads v2 END === */
+/* === TTG Ads: Media Bottom START === */
+.ttg-adunit{min-height:250px;border:1px dashed rgba(255,255,255,.18);border-radius:12px;display:flex;align-items:center;justify-content:center;opacity:.7;margin:16px 0;}
+.ttg-adunit--media-bottom{margin-top:28px;margin-bottom:20px;}
+/* hide until consent explicitly granted */
+html[data-ad-consent="denied"] .ttg-adunit,
+html:not([data-ad-consent]) .ttg-adunit,
+.is-ads-disabled .ttg-adunit{display:none !important;}
+@media (min-width: 900px){
+  .ttg-adunit{max-width: 1000px;margin-left:auto;margin-right:auto;}
+}
+/* === TTG Ads: Media Bottom END === */
