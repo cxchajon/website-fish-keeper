@@ -14,6 +14,102 @@ if (!Array.isArray(diag.errors)) {
   diag.errors = [];
 }
 
+const AMAZON_ASSOCIATE_TAG = 'thetankguide-20';
+const AMAZON_REF_PARAM = 'ttg_gear';
+
+const gearItemIndex = new Map();
+let amazonClickBound = false;
+
+function registerGearItem(item) {
+  if (!item || !item.id) {
+    return item;
+  }
+  const next = { ...item };
+  gearItemIndex.set(next.id, next);
+  return next;
+}
+
+function withAmazonVendor(item, vendor = {}) {
+  const amazonVendor = {
+    ...vendor,
+  };
+  const next = {
+    ...item,
+    vendor: {
+      ...(item.vendor || {}),
+      amazon: amazonVendor,
+    },
+  };
+  return registerGearItem(next);
+}
+
+function getGearItem(itemId) {
+  if (!itemId) return null;
+  return gearItemIndex.get(itemId) ?? null;
+}
+
+function resolveAmazonVariant(item, variantId) {
+  if (!item) return null;
+  if (!variantId) return item.vendor?.amazon ?? null;
+  const variants = Array.isArray(item.variants) ? item.variants : [];
+  const variant = variants.find((entry) => entry && entry.id === variantId);
+  if (!variant) {
+    return item.vendor?.amazon ?? null;
+  }
+  if (variant.vendor?.amazon) {
+    return variant.vendor.amazon;
+  }
+  const { asin, url } = variant;
+  if (!asin && !url) {
+    return item.vendor?.amazon ?? null;
+  }
+  return { asin, url };
+}
+
+function applyAmazonTracking(url) {
+  if (!url) return null;
+  let parsed;
+  try {
+    parsed = new URL(url, 'https://www.amazon.com');
+  } catch (error) {
+    recordError('amazon_url_parse', error);
+    return null;
+  }
+
+  if (AMAZON_ASSOCIATE_TAG) {
+    parsed.searchParams.set('tag', AMAZON_ASSOCIATE_TAG);
+  }
+  if (AMAZON_REF_PARAM) {
+    parsed.searchParams.set('ref', AMAZON_REF_PARAM);
+  }
+
+  return parsed.toString();
+}
+
+export function buildAmazonUrl(itemId, variantId, region = 'US') {
+  void region; // Region support placeholder
+  const item = getGearItem(itemId);
+  if (!item) return null;
+  const vendor = resolveAmazonVariant(item, variantId);
+  if (!vendor) return null;
+
+  if (vendor.url) {
+    return applyAmazonTracking(vendor.url);
+  }
+
+  if (!vendor.asin) {
+    return null;
+  }
+
+  const asin = String(vendor.asin).trim();
+  if (!asin) {
+    return null;
+  }
+
+  const baseUrl = `https://www.amazon.com/dp/${encodeURIComponent(asin)}`;
+  return applyAmazonTracking(baseUrl);
+}
+
 const CANONICAL_TANK_IDS = new Set(TANK_SIZES.map((tank) => tank.id));
 
 const tankProductCatalog = new Map([
@@ -21,54 +117,90 @@ const tankProductCatalog = new Map([
   [
     '10g',
     [
-      { id: 'tank10std', model: 'Aqueon 10 Gallon Standard', type: 'Standard', includes: '—', price: 69.99, link: 'https://amzn.to/3QLb10g' },
-      { id: 'tank10rim', model: 'Lifegard Low Iron 10G', type: 'Rimless', includes: 'mat', price: 129.99, link: 'https://amzn.to/3QKx2c4' },
+      withAmazonVendor(
+        { id: 'tank10std', model: 'Aqueon 10 Gallon Standard', type: 'Standard', includes: '—', price: 69.99 },
+        { url: 'https://amzn.to/3QLb10g' },
+      ),
+      withAmazonVendor(
+        { id: 'tank10rim', model: 'Lifegard Low Iron 10G', type: 'Rimless', includes: 'mat', price: 129.99 },
+        { url: 'https://amzn.to/3QKx2c4' },
+      ),
     ],
   ],
   ['15g', []],
   [
     '20h',
     [
-      { id: 'tank20std', model: 'Aqueon 20 Gallon High', type: 'Standard', includes: '—', price: 139.99, link: 'https://amzn.to/3wZqYxp' },
-      { id: 'tank20aio', model: 'Fluval Flex 23G', type: 'All-in-One', includes: 'pump, media', price: 279.99, link: 'https://amzn.to/3QK2hVj' },
+      withAmazonVendor(
+        { id: 'tank20std', model: 'Aqueon 20 Gallon High', type: 'Standard', includes: '—', price: 139.99 },
+        { url: 'https://amzn.to/3wZqYxp' },
+      ),
+      withAmazonVendor(
+        { id: 'tank20aio', model: 'Fluval Flex 23G', type: 'All-in-One', includes: 'pump, media', price: 279.99 },
+        { url: 'https://amzn.to/3QK2hVj' },
+      ),
     ],
   ],
   [
     '20l',
     [
-      { id: 'tank20long', model: 'Aqueon 20 Gallon Long', type: 'Long', includes: '—', price: 149.99, link: 'https://amzn.to/4gl6i4z' },
+      withAmazonVendor(
+        { id: 'tank20long', model: 'Aqueon 20 Gallon Long', type: 'Long', includes: '—', price: 149.99 },
+        { url: 'https://amzn.to/4gl6i4z' },
+      ),
     ],
   ],
   [
     '29g',
     [
-      { id: 'tank29std', model: 'Aqueon 29 Gallon', type: 'Standard', includes: '—', price: 179.99, link: 'https://amzn.to/3QQgB2C' },
-      { id: 'tank29rim', model: 'Seapora 29 Rimless', type: 'Rimless', includes: 'mat', price: 279.99, link: 'https://amzn.to/4hJmfZb' },
+      withAmazonVendor(
+        { id: 'tank29std', model: 'Aqueon 29 Gallon', type: 'Standard', includes: '—', price: 179.99 },
+        { url: 'https://amzn.to/3QQgB2C' },
+      ),
+      withAmazonVendor(
+        { id: 'tank29rim', model: 'Seapora 29 Rimless', type: 'Rimless', includes: 'mat', price: 279.99 },
+        { url: 'https://amzn.to/4hJmfZb' },
+      ),
     ],
   ],
   [
     '40b',
     [
-      { id: 'tank40bre', model: 'Aqueon 40 Breeder', type: 'Breeder', includes: '—', price: 239.99, link: 'https://amzn.to/4gkKd99' },
-      { id: 'tank40rim', model: 'Innovative Marine NUVO 40', type: 'All-in-One', includes: 'media baskets', price: 449.99, link: 'https://amzn.to/3y8d18G' },
+      withAmazonVendor(
+        { id: 'tank40bre', model: 'Aqueon 40 Breeder', type: 'Breeder', includes: '—', price: 239.99 },
+        { url: 'https://amzn.to/4gkKd99' },
+      ),
+      withAmazonVendor(
+        { id: 'tank40rim', model: 'Innovative Marine NUVO 40', type: 'All-in-One', includes: 'media baskets', price: 449.99 },
+        { url: 'https://amzn.to/3y8d18G' },
+      ),
     ],
   ],
   [
     '55g',
     [
-      { id: 'tank55std', model: 'Aqueon 55 Gallon', type: 'Standard', includes: '—', price: 329.99, link: 'https://amzn.to/4gkLzT7' },
+      withAmazonVendor(
+        { id: 'tank55std', model: 'Aqueon 55 Gallon', type: 'Standard', includes: '—', price: 329.99 },
+        { url: 'https://amzn.to/4gkLzT7' },
+      ),
     ],
   ],
   [
     '75g',
     [
-      { id: 'tank75std', model: 'Aqueon 75 Gallon', type: 'Standard', includes: '—', price: 409.99, link: 'https://amzn.to/3y8h30d' },
+      withAmazonVendor(
+        { id: 'tank75std', model: 'Aqueon 75 Gallon', type: 'Standard', includes: '—', price: 409.99 },
+        { url: 'https://amzn.to/3y8h30d' },
+      ),
     ],
   ],
   [
     '125g',
     [
-      { id: 'tank125std', model: 'Marineland 125 Gallon', type: 'Standard', includes: '—', price: 799.99, link: 'https://amzn.to/3W3JBjZ' },
+      withAmazonVendor(
+        { id: 'tank125std', model: 'Marineland 125 Gallon', type: 'Standard', includes: '—', price: 799.99 },
+        { url: 'https://amzn.to/3W3JBjZ' },
+      ),
     ],
   ],
 ]);
@@ -140,36 +272,99 @@ function populateTankSelectOptions(select) {
 }
 
 const filtersCatalog = [
-  { id: 'ac50', model: 'AquaClear 50', type: 'HOB', gph: 200, rated: [20, 50], media: 'Medium', maint: 'Easy', price: 54.99, link: 'https://amzn.to/3QHWkvF' },
-  { id: 'ac70', model: 'AquaClear 70', type: 'HOB', gph: 300, rated: [40, 70], media: 'High', maint: 'Easy', price: 79.99, link: 'https://amzn.to/3wZl3fy' },
-  { id: 'fl107', model: 'Fluval 107 Canister', type: 'Canister', gph: 145, rated: [10, 30], media: 'Medium', maint: 'Moderate', price: 99.99, link: 'https://amzn.to/3QMv5yC' },
-  { id: 'fl207', model: 'Fluval 207 Canister', type: 'Canister', gph: 206, rated: [20, 45], media: 'Medium', maint: 'Moderate', price: 139.99, link: 'https://amzn.to/3wXlzgL' },
-  { id: 'fl307', model: 'Fluval 307 Canister', type: 'Canister', gph: 303, rated: [40, 70], media: 'High', maint: 'Moderate', price: 189.99, link: 'https://amzn.to/4hKiCKz' },
-  { id: 'tidal55', model: 'Seachem Tidal 55', type: 'HOB', gph: 250, rated: [35, 55], media: 'High', maint: 'Easy', price: 94.99, link: 'https://amzn.to/3W1fG1v' },
-  { id: 'spongeL', model: 'Aquaneat Dual Sponge', type: 'Sponge', gph: 120, rated: [10, 40], media: 'Low', maint: 'Easy', price: 19.99, link: 'https://amzn.to/3QLfLRo' },
+  withAmazonVendor(
+    { id: 'ac50', model: 'AquaClear 50', type: 'HOB', gph: 200, rated: [20, 50], media: 'Medium', maint: 'Easy', price: 54.99 },
+    { url: 'https://amzn.to/3QHWkvF' },
+  ),
+  withAmazonVendor(
+    { id: 'ac70', model: 'AquaClear 70', type: 'HOB', gph: 300, rated: [40, 70], media: 'High', maint: 'Easy', price: 79.99 },
+    { url: 'https://amzn.to/3wZl3fy' },
+  ),
+  withAmazonVendor(
+    { id: 'fl107', model: 'Fluval 107 Canister', type: 'Canister', gph: 145, rated: [10, 30], media: 'Medium', maint: 'Moderate', price: 99.99 },
+    { url: 'https://amzn.to/3QMv5yC' },
+  ),
+  withAmazonVendor(
+    { id: 'fl207', model: 'Fluval 207 Canister', type: 'Canister', gph: 206, rated: [20, 45], media: 'Medium', maint: 'Moderate', price: 139.99 },
+    { url: 'https://amzn.to/3wXlzgL' },
+  ),
+  withAmazonVendor(
+    { id: 'fl307', model: 'Fluval 307 Canister', type: 'Canister', gph: 303, rated: [40, 70], media: 'High', maint: 'Moderate', price: 189.99 },
+    { url: 'https://amzn.to/4hKiCKz' },
+  ),
+  withAmazonVendor(
+    { id: 'tidal55', model: 'Seachem Tidal 55', type: 'HOB', gph: 250, rated: [35, 55], media: 'High', maint: 'Easy', price: 94.99 },
+    { url: 'https://amzn.to/3W1fG1v' },
+  ),
+  withAmazonVendor(
+    { id: 'spongeL', model: 'Aquaneat Dual Sponge', type: 'Sponge', gph: 120, rated: [10, 40], media: 'Low', maint: 'Easy', price: 19.99 },
+    { url: 'https://amzn.to/3QLfLRo' },
+  ),
 ];
 
 const lightsCatalog = [
-  { id: 'nicrew24', model: 'NICREW ClassicLED Plus 24"', coverage: [24, 30], levels: ['low', 'med'], par12: 45, control: 'Inline dimmer', power: 24, price: 62.99, link: 'https://amzn.to/3y7XcV0' },
-  { id: 'nicrew30', model: 'NICREW ClassicLED Plus 30"', coverage: [30, 36], levels: ['low', 'med'], par12: 48, control: 'Inline dimmer', power: 27, price: 66.99, link: 'https://amzn.to/3QLh3nU' },
-  { id: 'finnex24', model: 'Finnex Planted+ 24/7 30"', coverage: [30, 36], levels: ['med', 'high'], par12: 70, control: 'Programmable', power: 33, price: 139.99, link: 'https://amzn.to/3QK6oNg' },
-  { id: 'fluval24', model: 'Fluval Plant 3.0 24"', coverage: [24, 30], levels: ['med', 'high'], par12: 110, control: 'App', power: 32, price: 224.99, link: 'https://amzn.to/4gkcc5A' },
-  { id: 'fluval36', model: 'Fluval Plant 3.0 36"', coverage: [36, 42], levels: ['med', 'high'], par12: 123, control: 'App', power: 46, price: 279.99, link: 'https://amzn.to/3QLhrc6' },
-  { id: 'chihiros30', model: 'Chihiros WRGB II 30"', coverage: [30, 36], levels: ['high'], par12: 150, control: 'App', power: 67, price: 199.99, link: 'https://amzn.to/3y9e5ob' },
+  withAmazonVendor(
+    { id: 'nicrew24', model: 'NICREW ClassicLED Plus 24"', coverage: [24, 30], levels: ['low', 'med'], par12: 45, control: 'Inline dimmer', power: 24, price: 62.99 },
+    { url: 'https://amzn.to/3y7XcV0' },
+  ),
+  withAmazonVendor(
+    { id: 'nicrew30', model: 'NICREW ClassicLED Plus 30"', coverage: [30, 36], levels: ['low', 'med'], par12: 48, control: 'Inline dimmer', power: 27, price: 66.99 },
+    { url: 'https://amzn.to/3QLh3nU' },
+  ),
+  withAmazonVendor(
+    { id: 'finnex24', model: 'Finnex Planted+ 24/7 30"', coverage: [30, 36], levels: ['med', 'high'], par12: 70, control: 'Programmable', power: 33, price: 139.99 },
+    { url: 'https://amzn.to/3QK6oNg' },
+  ),
+  withAmazonVendor(
+    { id: 'fluval24', model: 'Fluval Plant 3.0 24"', coverage: [24, 30], levels: ['med', 'high'], par12: 110, control: 'App', power: 32, price: 224.99 },
+    { url: 'https://amzn.to/4gkcc5A' },
+  ),
+  withAmazonVendor(
+    { id: 'fluval36', model: 'Fluval Plant 3.0 36"', coverage: [36, 42], levels: ['med', 'high'], par12: 123, control: 'App', power: 46, price: 279.99 },
+    { url: 'https://amzn.to/3QLhrc6' },
+  ),
+  withAmazonVendor(
+    { id: 'chihiros30', model: 'Chihiros WRGB II 30"', coverage: [30, 36], levels: ['high'], par12: 150, control: 'App', power: 67, price: 199.99 },
+    { url: 'https://amzn.to/3y9e5ob' },
+  ),
 ];
 
 const heatersCatalog = [
-  { id: 'aq50', model: 'Aqueon Preset 50W', type: 'Glass', watts: 50, range: [10, 20], safety: '—', price: 24.99, link: 'https://amzn.to/3W1kP4R' },
-  { id: 'aq100', model: 'Aqueon Preset 100W', type: 'Glass', watts: 100, range: [20, 30], safety: '—', price: 29.99, link: 'https://amzn.to/3W1lVb9' },
-  { id: 'tetra150', model: 'Tetra HT 150W', type: 'Glass', watts: 150, range: [30, 55], safety: 'Indicator light', price: 32.99, link: 'https://amzn.to/4hJGkKC' },
-  { id: 'finnex200', model: 'Finnex HPS 200W', type: 'Titanium', watts: 200, range: [40, 75], safety: 'Auto shutoff', price: 59.99, link: 'https://amzn.to/3wZU8i4' },
-  { id: 'hygger300', model: 'Hygger Digital 300W', type: 'Titanium', watts: 300, range: [55, 100], safety: 'Dry-run protect', price: 72.99, link: 'https://amzn.to/3y7ZauA' },
+  withAmazonVendor(
+    { id: 'aq50', model: 'Aqueon Preset 50W', type: 'Glass', watts: 50, range: [10, 20], safety: '—', price: 24.99 },
+    { url: 'https://amzn.to/3W1kP4R' },
+  ),
+  withAmazonVendor(
+    { id: 'aq100', model: 'Aqueon Preset 100W', type: 'Glass', watts: 100, range: [20, 30], safety: '—', price: 29.99 },
+    { url: 'https://amzn.to/3W1lVb9' },
+  ),
+  withAmazonVendor(
+    { id: 'tetra150', model: 'Tetra HT 150W', type: 'Glass', watts: 150, range: [30, 55], safety: 'Indicator light', price: 32.99 },
+    { url: 'https://amzn.to/4hJGkKC' },
+  ),
+  withAmazonVendor(
+    { id: 'finnex200', model: 'Finnex HPS 200W', type: 'Titanium', watts: 200, range: [40, 75], safety: 'Auto shutoff', price: 59.99 },
+    { url: 'https://amzn.to/3wZU8i4' },
+  ),
+  withAmazonVendor(
+    { id: 'hygger300', model: 'Hygger Digital 300W', type: 'Titanium', watts: 300, range: [55, 100], safety: 'Dry-run protect', price: 72.99 },
+    { url: 'https://amzn.to/3y7ZauA' },
+  ),
 ];
 
 const addOnCatalog = [
-  { id: 'timer1', title: 'BN-LINK WiFi Timer', blurb: 'Automate lights and other gear', price: 18.99, link: 'https://amzn.to/4gkJb6Z' },
-  { id: 'baffle1', title: 'Fluval Spray Bar Kit', blurb: 'Diffuse flow from canisters', price: 21.99, link: 'https://amzn.to/4gp5AyQ' },
-  { id: 'gfci1', title: 'GE 6-Outlet GFCI Strip', blurb: 'Safety for humid fish rooms', price: 34.99, link: 'https://amzn.to/3QLfXef' },
+  withAmazonVendor(
+    { id: 'timer1', title: 'BN-LINK WiFi Timer', blurb: 'Automate lights and other gear', price: 18.99 },
+    { url: 'https://amzn.to/4gkJb6Z' },
+  ),
+  withAmazonVendor(
+    { id: 'baffle1', title: 'Fluval Spray Bar Kit', blurb: 'Diffuse flow from canisters', price: 21.99 },
+    { url: 'https://amzn.to/4gp5AyQ' },
+  ),
+  withAmazonVendor(
+    { id: 'gfci1', title: 'GE 6-Outlet GFCI Strip', blurb: 'Safety for humid fish rooms', price: 34.99 },
+    { url: 'https://amzn.to/3QLfXef' },
+  ),
 ];
 
 diag.dataLoaded = true;
@@ -225,12 +420,47 @@ function ensureArrayOfObjects(list) {
   return list.filter((item) => item && typeof item === 'object');
 }
 
+function resolveCartItemUrl(item) {
+  if (!item) return null;
+  const url = buildAmazonUrl(item.itemId || item.id, item.variantId || null);
+  if (url) {
+    return url;
+  }
+  if (typeof item.legacyLink === 'string' && item.legacyLink) {
+    return item.legacyLink;
+  }
+  return null;
+}
+
+function handleAmazonLinkClick(event) {
+  const anchor = event.target.closest('a.btn-gear');
+  if (!anchor) return;
+  const itemId = anchor.dataset.itemId || anchor.getAttribute('data-item-id');
+  const variantId = anchor.dataset.variantId || anchor.getAttribute('data-variant-id') || null;
+  const url = buildAmazonUrl(itemId, variantId || null);
+  if (!url) {
+    event.preventDefault();
+    anchor.removeAttribute('href');
+    anchor.classList.add('is-disabled');
+    anchor.setAttribute('aria-disabled', 'true');
+    return;
+  }
+  if (anchor.href !== url) {
+    anchor.href = url;
+  }
+  anchor.classList.remove('is-disabled');
+  anchor.removeAttribute('aria-disabled');
+}
+
 function gatherCartLinks() {
   const urls = [];
   state.cart.forEach((item) => {
     const count = Math.max(1, Number(item.qty) || 1);
     for (let i = 0; i < count; i += 1) {
-      urls.push(item.link);
+      const url = resolveCartItemUrl(item);
+      if (url) {
+        urls.push(url);
+      }
     }
   });
   return urls;
@@ -248,7 +478,8 @@ function createCard({
   subtitle,
   detail,
   price,
-  link,
+  itemId,
+  variantId = null,
   thumb,
   badges = [],
   dataset = {},
@@ -268,10 +499,32 @@ function createCard({
     ${detail ? `<div class="sub">${detail}</div>` : ''}
     <div class="price">${formatPrice(price)}</div>
     <div class="row" style="justify-content:space-between;">
-      <a class="btn" href="${link}" target="_blank" rel="noopener">View on Amazon</a>
+      <a class="btn btn-gear" target="_blank" rel="noopener noreferrer">View on Amazon</a>
       <div class="row"></div>
     </div>
   `;
+
+  const anchor = card.querySelector('.btn-gear');
+  if (anchor) {
+    if (itemId) {
+      anchor.dataset.itemId = itemId;
+    }
+    if (variantId) {
+      anchor.dataset.variantId = variantId;
+    } else {
+      anchor.dataset.variantId = '';
+    }
+    const url = buildAmazonUrl(itemId, variantId || null);
+    if (url) {
+      anchor.href = url;
+      anchor.removeAttribute('aria-disabled');
+      anchor.classList.remove('is-disabled');
+    } else {
+      anchor.removeAttribute('href');
+      anchor.setAttribute('aria-disabled', 'true');
+      anchor.classList.add('is-disabled');
+    }
+  }
 
   const buttonRow = card.querySelector('.row:last-child .row');
   const addButton = document.createElement('button');
@@ -333,13 +586,20 @@ function renderTankOptions() {
 
   products.forEach((product) => {
     const card = createCard({
+      itemId: product.id,
       title: product.model,
       subtitle: `${product.type} • ${dimsToText(dims)} • ${gallonsText}`,
       detail: `Includes: ${product.includes}`,
       price: product.price,
-      link: product.link,
       thumb: `${product.model}\n${product.type}`,
-      addToCart: () => addItemToCart({ id: product.id, title: product.model, category: 'Tank', price: product.price, link: product.link }),
+      addToCart: () =>
+        addItemToCart({
+          id: product.id,
+          itemId: product.id,
+          title: product.model,
+          category: 'Tank',
+          price: product.price,
+        }),
       compare: {
         checked: state.tankCompare.some((entry) => entry.id === product.id),
         onToggle: (checked) =>
@@ -430,14 +690,21 @@ function renderFilters() {
     else if (turnover > 10.5) badgeText += ' • throttle if needed';
 
     const card = createCard({
+      itemId: filter.id,
       title: filter.model,
       subtitle: `${filter.type.toUpperCase()} • Rated ${filter.rated[0]}–${filter.rated[1]} gal`,
       detail: `Flow ${filter.gph} GPH (${badgeText}) • Media: ${filter.media} • Maintenance: ${filter.maint}`,
       price: filter.price,
-      link: filter.link,
       thumb: `${filter.model}\n${filter.type}`,
       dataset: { gph: filter.gph, turnover },
-      addToCart: () => addItemToCart({ id: filter.id, title: filter.model, category: 'Filter', price: filter.price, link: filter.link }),
+      addToCart: () =>
+        addItemToCart({
+          id: filter.id,
+          itemId: filter.id,
+          title: filter.model,
+          category: 'Filter',
+          price: filter.price,
+        }),
       compare: {
         checked: state.filterCompare.some((entry) => entry.id === filter.id),
         onToggle: (checked) => toggleFilterCompare(filter, checked),
@@ -526,15 +793,22 @@ function renderLights() {
     }
     const badge = `${coverageText} • PAR @12\": ${light.par12}`;
     const card = createCard({
+      itemId: light.id,
       title: light.model,
       subtitle: `${coverageText} • Supports ${light.levels.map((level) => level.toUpperCase()).join('/')}`,
       detail: `${hint} • Control: ${light.control} • Power: ${light.power}W`,
       price: light.price,
-      link: light.link,
       thumb: `${light.model}\nLighting`,
       badges: [badge, hint],
       dataset: { coverage: `${light.coverage[0]}-${light.coverage[1]}`, plant: light.levels.join(',') },
-      addToCart: () => addItemToCart({ id: light.id, title: light.model, category: 'Light', price: light.price, link: light.link }),
+      addToCart: () =>
+        addItemToCart({
+          id: light.id,
+          itemId: light.id,
+          title: light.model,
+          category: 'Light',
+          price: light.price,
+        }),
       compare: {
         checked: state.lightCompare.some((entry) => entry.id === light.id),
         onToggle: (checked) => toggleLightCompare(light, checked),
@@ -617,14 +891,21 @@ function renderHeaters() {
     const nearTarget = !meetsTarget && heater.watts >= Math.round(targetWatts * 0.8);
     const badge = meetsTarget ? 'Meets ~4 W/gal target' : nearTarget ? 'Near target — consider dual heaters' : 'Below target — use two units';
     const card = createCard({
+      itemId: heater.id,
       title: heater.model,
       subtitle: `${heater.type.toUpperCase()} • ${heater.watts}W • Rated ${heater.range[0]}–${heater.range[1]} gal`,
       detail: `Safety: ${heater.safety}`,
       price: heater.price,
-      link: heater.link,
       thumb: `${heater.model}\n${heater.watts} W`,
       badges: [badge],
-      addToCart: () => addItemToCart({ id: heater.id, title: heater.model, category: 'Heater', price: heater.price, link: heater.link }),
+      addToCart: () =>
+        addItemToCart({
+          id: heater.id,
+          itemId: heater.id,
+          title: heater.model,
+          category: 'Heater',
+          price: heater.price,
+        }),
       compare: {
         checked: state.heaterCompare.some((entry) => entry.id === heater.id),
         onToggle: (checked) => toggleHeaterCompare(heater, checked),
@@ -680,13 +961,20 @@ function renderAddOns() {
   container.innerHTML = '';
   addOnCatalog.forEach((item) => {
     const card = createCard({
+      itemId: item.id,
       title: item.title,
       subtitle: item.blurb,
       detail: '',
       price: item.price,
-      link: item.link,
       thumb: item.title,
-      addToCart: () => addItemToCart({ id: item.id, title: item.title, category: 'Add-on', price: item.price, link: item.link }),
+      addToCart: () =>
+        addItemToCart({
+          id: item.id,
+          itemId: item.id,
+          title: item.title,
+          category: 'Add-on',
+          price: item.price,
+        }),
     });
     container.appendChild(card);
   });
@@ -707,8 +995,16 @@ function loadCartFromStorage() {
       title: item.title,
       category: item.category,
       price: Number(item.price) || 0,
-      link: item.link,
       qty: Math.max(1, Number(item.qty) || 1),
+      key: item.key || item.cartKey || item.id,
+      itemId: item.itemId || item.id,
+      variantId: item.variantId || null,
+      legacyLink:
+        typeof item.link === 'string' && item.link
+          ? item.link
+          : typeof item.legacyLink === 'string' && item.legacyLink
+            ? item.legacyLink
+            : null,
     }));
   } catch (error) {
     recordError('cart_load', error);
@@ -726,18 +1022,40 @@ function saveCartToStorage() {
 }
 
 function addItemToCart(item) {
-  const existing = state.cart.find((entry) => entry.id === item.id);
+  if (!item || !item.id) return;
+  const itemId = item.itemId || item.id;
+  const variantId = item.variantId || null;
+  const legacyLink = item.link || item.legacyLink || null;
+  const key = item.key || item.cartKey || (variantId ? `${item.id}::${variantId}` : item.id);
+  const existing = state.cart.find((entry) => entry.key === key || entry.id === key);
   if (existing) {
     existing.qty = Math.max(1, Number(existing.qty) || 1) + 1;
+    existing.itemId = existing.itemId || itemId;
+    existing.variantId = existing.variantId || variantId;
+    existing.legacyLink = existing.legacyLink || legacyLink;
+    existing.title = existing.title || item.title;
+    existing.category = existing.category || item.category;
+    existing.price = Number(existing.price) || Number(item.price) || 0;
+    existing.key = existing.key || key;
   } else {
-    state.cart.push({ ...item, qty: 1 });
+    state.cart.push({
+      id: item.id,
+      title: item.title,
+      category: item.category,
+      price: Number(item.price) || 0,
+      qty: 1,
+      itemId,
+      variantId,
+      legacyLink,
+      key,
+    });
   }
   saveCartToStorage();
   renderCart();
 }
 
-function changeCartQty(id, delta) {
-  const item = state.cart.find((entry) => entry.id === id);
+function changeCartQty(key, delta) {
+  const item = state.cart.find((entry) => entry.key === key || entry.id === key);
   if (!item) return;
   const next = Math.max(1, (Number(item.qty) || 1) + delta);
   item.qty = next;
@@ -745,8 +1063,8 @@ function changeCartQty(id, delta) {
   renderCart();
 }
 
-function removeCartItem(id) {
-  state.cart = state.cart.filter((entry) => entry.id !== id);
+function removeCartItem(key) {
+  state.cart = state.cart.filter((entry) => entry.key !== key && entry.id !== key);
   saveCartToStorage();
   renderCart();
 }
@@ -773,7 +1091,7 @@ function renderCart() {
       <div class="title">${item.title}</div>
       <div class="sub">${item.category} • Qty: ${qty}</div>
       <div class="row">
-        <a class="btn" href="${item.link}" target="_blank" rel="noopener">View on Amazon</a>
+        <a class="btn btn-gear" target="_blank" rel="noopener noreferrer">View on Amazon</a>
         <div class="cart-actions">
           <button class="ghost-btn" type="button" data-action="dec">−</button>
           <button class="ghost-btn" type="button" data-action="inc">+</button>
@@ -781,10 +1099,32 @@ function renderCart() {
         </div>
       </div>
     `;
+    const anchor = line.querySelector('.btn-gear');
+    if (anchor) {
+      if (item.itemId || item.id) {
+        anchor.dataset.itemId = item.itemId || item.id;
+      }
+      if (item.variantId) {
+        anchor.dataset.variantId = item.variantId;
+      } else {
+        anchor.dataset.variantId = '';
+      }
+      const url = resolveCartItemUrl(item);
+      if (url) {
+        anchor.href = url;
+        anchor.classList.remove('is-disabled');
+        anchor.removeAttribute('aria-disabled');
+      } else {
+        anchor.removeAttribute('href');
+        anchor.classList.add('is-disabled');
+        anchor.setAttribute('aria-disabled', 'true');
+      }
+    }
     const actions = line.querySelector('.cart-actions');
-    actions.querySelector('[data-action="dec"]').addEventListener('click', () => changeCartQty(item.id, -1));
-    actions.querySelector('[data-action="inc"]').addEventListener('click', () => changeCartQty(item.id, 1));
-    actions.querySelector('[data-action="remove"]').addEventListener('click', () => removeCartItem(item.id));
+    const cartKey = item.key || item.id;
+    actions.querySelector('[data-action="dec"]').addEventListener('click', () => changeCartQty(cartKey, -1));
+    actions.querySelector('[data-action="inc"]').addEventListener('click', () => changeCartQty(cartKey, 1));
+    actions.querySelector('[data-action="remove"]').addEventListener('click', () => removeCartItem(cartKey));
     list.appendChild(line);
   });
 
@@ -808,7 +1148,28 @@ function updateCartModalContent() {
   items.forEach((item) => {
     const line = document.createElement('div');
     line.className = 'row';
-    line.innerHTML = `<div>${item.title} × ${item.qty}</div><a href="${item.link}" target="_blank" rel="noopener">Open</a>`;
+    line.innerHTML = `<div>${item.title} × ${item.qty}</div><a class="btn-gear" target="_blank" rel="noopener noreferrer">Open</a>`;
+    const anchor = line.querySelector('.btn-gear');
+    if (anchor) {
+      if (item.itemId || item.id) {
+        anchor.dataset.itemId = item.itemId || item.id;
+      }
+      if (item.variantId) {
+        anchor.dataset.variantId = item.variantId;
+      } else {
+        anchor.dataset.variantId = '';
+      }
+      const url = resolveCartItemUrl(item);
+      if (url) {
+        anchor.href = url;
+        anchor.classList.remove('is-disabled');
+        anchor.removeAttribute('aria-disabled');
+      } else {
+        anchor.removeAttribute('href');
+        anchor.classList.add('is-disabled');
+        anchor.setAttribute('aria-disabled', 'true');
+      }
+    }
     list.appendChild(line);
   });
   textarea.value = urls.join('\n');
@@ -923,6 +1284,11 @@ function bindEvents() {
   els.modalCopy.addEventListener('click', () => {
     copyAllLinks();
   });
+
+  if (!amazonClickBound) {
+    document.addEventListener('click', handleAmazonLinkClick);
+    amazonClickBound = true;
+  }
 }
 
 function cacheElements() {
