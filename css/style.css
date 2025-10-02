@@ -1499,7 +1499,10 @@ body.planted-active #cycling-coach .cc-title__leaf {
 .ttg-consent-modal__panel h3{margin:0 0 8px 0}
 .ttg-row{display:flex;gap:10px;align-items:flex-start;margin:8px 0}
 .ttg-consent-modal__actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
-/* === TTG Cookie Consent PATCH START === */
+/* === TTG Cookie Consent: visibility & sizing PATCH START === */
+/* Ensure anything with [hidden] is actually not rendered (some resets override it) */
+[hidden] { display: none !important; }
+
 /* Smaller checkboxes and alignment */
 .ttg-row input[type="checkbox"] {
   width: 16px;
@@ -1507,5 +1510,5 @@ body.planted-active #cycling-coach .cc-title__leaf {
   margin-top: 3px;
   flex-shrink: 0;
 }
-/* === TTG Cookie Consent PATCH END === */
+/* === TTG Cookie Consent: visibility & sizing PATCH END === */
 /* === TTG Cookie Consent END === */
