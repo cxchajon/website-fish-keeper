@@ -79,7 +79,10 @@ main {
 
 .context-actions {
   margin: 20px 0;
-  text-align: right;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
 .btn {
@@ -154,6 +157,19 @@ main {
   gap: 6px;
 }
 
+.recommended-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.recommended-card__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
 .badge {
   border-radius: 999px;
   padding: 4px 10px;
@@ -202,6 +218,19 @@ main {
   flex-wrap: wrap;
 }
 
+.product-card__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.product-card__link {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
 .badges {
   display: flex;
   flex-wrap: wrap;
@@ -222,24 +251,47 @@ main {
 }
 
 .category-panel__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  cursor: pointer;
-}
-
-.category-panel__header h2 {
-  margin: 0;
+  padding: 0;
 }
 
 .category-panel__count {
   color: var(--muted);
   font-size: 0.9rem;
+  margin-left: auto;
+}
+
+.category-panel__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  border: none;
+  color: var(--fg);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.category-panel__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.category-panel__icon {
+  font-size: 1.4rem;
+  line-height: 1;
 }
 
 .category-panel__body {
+  display: none;
   padding: 0 16px 18px;
+}
+
+.category-panel.is-open .category-panel__body {
+  display: block;
 }
 
 .sub-tabs {
@@ -368,6 +420,44 @@ main {
 
 .footer-links a {
   color: var(--accent);
+}
+
+.gear-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 999px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+  font-weight: 600;
+  z-index: 90;
+  animation: gear-toast-in 0.2s ease-out, gear-toast-out 0.2s ease-in forwards;
+  animation-delay: 0s, 2.1s;
+}
+
+@keyframes gear-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes gear-toast-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
 }
 
 @media (min-width: 768px) {
