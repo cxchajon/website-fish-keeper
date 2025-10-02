@@ -521,80 +521,104 @@
   </div>
 </div>
 
-<!-- === TTG Cookie Consent SCRIPT START === -->
+<!-- === TTG Cookie Consent SCRIPT (stable) START === -->
 <script>
 (function(){
   const KEY = 'ttg.consent.v1';
+
   const $banner = document.getElementById('ttg-consent');
-  const $modal = document.getElementById('ttg-consent-modal');
-  const $panel = $modal.querySelector('.ttg-consent-modal__panel');
+  const $modal  = document.getElementById('ttg-consent-modal');
+  const $panel  = $modal ? $modal.querySelector('.ttg-consent-modal__panel') : null;
+
   const $btnAccept = document.getElementById('ttg-consent-accept');
   const $btnReject = document.getElementById('ttg-consent-reject');
   const $btnManage = document.getElementById('ttg-consent-manage');
   const $btnCancel = document.getElementById('ttg-consent-cancel');
-  const $form = document.getElementById('ttg-consent-form');
-  const $ckAnalytics = document.getElementById('ttg-c-analytics');
-  const $ckAds = document.getElementById('ttg-c-ads');
 
+  const $form        = document.getElementById('ttg-consent-form');
+  const $ckAnalytics = document.getElementById('ttg-c-analytics');
+  const $ckAds       = document.getElementById('ttg-c-ads');
+
+  // --- helpers ---
   function save(state){
     localStorage.setItem(KEY, JSON.stringify(state));
     document.documentElement.setAttribute('data-ad-consent', state.ads ? 'granted' : 'denied');
   }
   function load(){
-    try { return JSON.parse(localStorage.getItem(KEY)||''); } catch(e){ return null; }
+    try { return JSON.parse(localStorage.getItem(KEY) || ''); } catch(e){ return null; }
   }
-  function openBanner(){ $banner.hidden = false; }
-  function closeBanner(){ $banner.hidden = true; }
+  function openBanner(){ if ($banner) $banner.hidden = false; }
+  function closeBanner(){ if ($banner) $banner.hidden = true; }
   function openModal(){
-    $modal.hidden = false;
-    const s = load() || {analytics:false, ads:false};
-    $ckAnalytics.checked = !!s.analytics;
-    $ckAds.checked = !!s.ads;
+    if ($modal) {
+      $modal.hidden = false;
+      const s = load() || {analytics:false, ads:false};
+      if ($ckAnalytics) $ckAnalytics.checked = !!s.analytics;
+      if ($ckAds)       $ckAds.checked = !!s.ads;
+    }
   }
-  function closeModal(){ $modal.hidden = true; }
+  function closeModal(){ if ($modal) $modal.hidden = true; }
+
+  // --- hard safety on initial state: modal should NEVER auto-open ---
+  closeModal(); // ensure hidden even before any logic runs
+
+  const state = load();
+  if (!state) {
+    // first visit => show only the banner
+    openBanner();
+  } else {
+    // existing choice => persist flag and keep everything hidden
+    save(state);
+    closeBanner();
+    closeModal();
+  }
+
+  // --- wire actions ---
+  if ($btnAccept) $btnAccept.addEventListener('click', function(){
+    save({ essential:true, analytics:true, ads:true, ts:Date.now() });
+    closeModal(); closeBanner();
+  });
+  if ($btnReject) $btnReject.addEventListener('click', function(){
+    save({ essential:true, analytics:false, ads:false, ts:Date.now() });
+    closeModal(); closeBanner();
+  });
+  if ($btnManage) $btnManage.addEventListener('click', openModal);
+  if ($btnCancel) $btnCancel.addEventListener('click', closeModal);
+
+  if ($form) $form.addEventListener('submit', function(e){
+    e.preventDefault();
+    save({
+      essential: true,
+      analytics: $ckAnalytics ? !!$ckAnalytics.checked : false,
+      ads:       $ckAds ? !!$ckAds.checked : false,
+      ts: Date.now()
+    });
+    closeModal(); closeBanner();
+  });
+
+  // close modal on outside click
+  if ($modal) $modal.addEventListener('click', function(e){
+    if (e.target === $modal) closeModal();
+  });
+
+  // close modal on Escape key
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && $modal && !$modal.hidden) closeModal();
+  });
+
+  // Guard: don’t load ads if not consented
+  if (document.documentElement.getAttribute('data-ad-consent') !== 'granted') {
+    window.__TTG_ADS_DISABLED__ = true;
+  }
 
   // Public API for footer link
   window.cookieConsent = {
     open: function(){ openModal(); },
-    reset: function(){ localStorage.removeItem(KEY); openBanner(); }
+    reset: function(){ localStorage.removeItem(KEY); closeModal(); openBanner(); }
   };
-
-  const state = load();
-  if(!state){ openBanner(); } else { save(state); }
-
-  $btnAccept.addEventListener('click', function(){
-    save({ essential:true, analytics:true, ads:true, ts:Date.now() });
-    closeModal(); closeBanner();
-  });
-  $btnReject.addEventListener('click', function(){
-    save({ essential:true, analytics:false, ads:false, ts:Date.now() });
-    closeModal(); closeBanner();
-  });
-  $btnManage.addEventListener('click', openModal);
-  $btnCancel.addEventListener('click', closeModal);
-  $form.addEventListener('submit', function(e){
-    e.preventDefault();
-    save({ essential:true, analytics:$ckAnalytics.checked, ads:$ckAds.checked, ts:Date.now() });
-    closeModal(); closeBanner();
-  });
-
-  // Close on outside click
-  $modal.addEventListener('click', function(e){
-    if(e.target === $modal) closeModal();
-  });
-
-  // Close on Escape key
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape' && !$modal.hidden){ closeModal(); }
-  });
-
-  // Guard: don’t load ads if not consented
-  if(document.documentElement.getAttribute('data-ad-consent') !== 'granted'){
-    window.__TTG_ADS_DISABLED__ = true;
-  }
 })();
 </script>
-<!-- === TTG Cookie Consent SCRIPT END === -->
+<!-- === TTG Cookie Consent SCRIPT (stable) END === -->
 <!-- === TTG Cookie Consent END === -->
 
 </body>
