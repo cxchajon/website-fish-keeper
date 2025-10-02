@@ -1269,11 +1269,13 @@
               <input
                 class="control"
                 id="plan-qty"
-                type="number"
-                min="1"
-                max="999"
-                step="1"
-                value="1"
+                name="quantity"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                placeholder="Qty"
+                autocomplete="off"
+                enterkeyhint="done"
               />
             </div>
             <button id="plan-add" class="see-gear" type="button" data-testid="btn-add-species">Add to Stock</button>

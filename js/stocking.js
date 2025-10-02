@@ -196,6 +196,51 @@ function bootstrapStocking() {
   let lastStockSignature = '';
   let isBootstrapped = false;
 
+  if (!state.candidate || typeof state.candidate !== 'object') {
+    state.candidate = { id: getDefaultSpeciesId(), qty: '1' };
+  } else {
+    if (!state.candidate.id) {
+      state.candidate.id = getDefaultSpeciesId();
+    }
+    if (state.candidate.qty === null || state.candidate.qty === undefined) {
+      state.candidate.qty = '1';
+    } else if (typeof state.candidate.qty !== 'string') {
+      state.candidate.qty = String(state.candidate.qty);
+    }
+  }
+
+  function toDigits(value) {
+    return String(value ?? '').replace(/\D+/g, '');
+  }
+
+  function normalizeCandidateQtyValue(value) {
+    const parsed = Math.floor(Number(value));
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      return '1';
+    }
+    return String(Math.min(999, parsed));
+  }
+
+  function syncQtyInputFromState({ force = false } = {}) {
+    if (!refs.qty) return;
+    if (!force && document.activeElement === refs.qty) {
+      return;
+    }
+    const value = typeof state.candidate?.qty === 'string'
+      ? state.candidate.qty
+      : String(state.candidate?.qty ?? '');
+    refs.qty.value = value;
+  }
+
+  function commitCandidateQty() {
+    const normalized = normalizeCandidateQtyValue(state.candidate?.qty ?? '');
+    state.candidate.qty = normalized;
+    if (refs.qty) {
+      refs.qty.value = normalized;
+    }
+    return normalized;
+  }
+
   const updateLengthValidator = () => {
     const tank = state.tank ?? EMPTY_TANK;
     const species = selectedSpeciesId ? speciesById.get(selectedSpeciesId) ?? null : null;
@@ -283,8 +328,19 @@ const elSpec = document.querySelector('#plan-species, .plan-species');
 const elQty = document.querySelector('#plan-qty, .plan-qty');
 
 function getQty() {
-  const n = parseInt(elQty?.value ?? '1', 10);
-  return Number.isFinite(n) && n > 0 ? Math.min(n, 999) : 1;
+  if (!elQty) return 1;
+  const rawDigits = (elQty.value || '').replace(/\D+/g, '');
+  if (rawDigits !== elQty.value) {
+    elQty.value = rawDigits;
+  }
+  const numeric = Math.floor(Number(rawDigits));
+  const clamped = Number.isFinite(numeric) && numeric > 0 ? Math.min(numeric, 999) : 1;
+  const normalized = String(clamped);
+  if (elQty.value !== normalized) {
+    elQty.value = normalized;
+    elQty.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  return clamped;
 }
 
 function findSpeciesById(id) {
@@ -336,6 +392,7 @@ elAdd?.addEventListener('click', (event) => {
 elQty?.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
     event.preventDefault();
+    elQty.blur();
     addCurrentSelection();
   }
 });
@@ -483,7 +540,8 @@ document.addEventListener('advisor:addCandidate', (event) => {
   if (!species?.id || !speciesById.has(species.id)) {
     return;
   }
-  const qty = sanitizeQty(detail.qty, state.candidate?.qty ?? 1);
+  const fallbackQty = Number(state.candidate?.qty ?? 1) || 1;
+  const qty = sanitizeQty(detail.qty, fallbackQty);
 
   const existing = state.stock.find((entry) => entry.id === species.id);
   if (existing) {
@@ -504,7 +562,7 @@ document.addEventListener('advisor:addCandidate', (event) => {
 
   state.candidate = {
     id: nextId,
-    qty: 1,
+    qty: '1',
   };
 
   if (refs.speciesSelect) {
@@ -514,9 +572,7 @@ document.addEventListener('advisor:addCandidate', (event) => {
       refs.speciesSelect.value = nextId;
     }
   }
-  if (refs.qty) {
-    refs.qty.value = '1';
-  }
+  syncQtyInputFromState({ force: true });
 
   selectedSpeciesId = state.candidate.id || null;
   emitSpeciesChange(selectedSpeciesId);
@@ -556,7 +612,7 @@ function pruneMarineEntries() {
   });
 
   if (!state.candidate) {
-    state.candidate = { id: getDefaultSpeciesId(), qty: 1 };
+    state.candidate = { id: getDefaultSpeciesId(), qty: '1' };
     selectedSpeciesId = state.candidate.id || null;
     emitSpeciesChange(selectedSpeciesId);
     return;
@@ -700,6 +756,7 @@ function renderAll() {
     renderDiagnostics();
     renderEnvironmentPanels();
     ensureTankAssumptionScrubbed();
+    syncQtyInputFromState();
     return;
   }
   computed = buildComputedState(state);
@@ -711,6 +768,7 @@ function renderAll() {
   renderDiagnostics();
   renderEnvironmentPanels();
   ensureTankAssumptionScrubbed();
+  syncQtyInputFromState();
 }
 
 function renderEnvironmentPanels() {
@@ -769,11 +827,21 @@ function bindInputs() {
     scheduleUpdate();
   });
 
-  refs.qty.addEventListener('input', () => {
-    const qty = sanitizeQty(refs.qty.value, state.candidate?.qty ?? 1);
-    state.candidate.qty = qty;
-    refs.qty.value = String(qty);
-    scheduleUpdate();
+  refs.qty.addEventListener('input', (event) => {
+    const target = event.target;
+    const raw = toDigits(target.value);
+    if (target.value !== raw) {
+      target.value = raw;
+    }
+    state.candidate.qty = raw;
+  });
+
+  refs.qty.addEventListener('blur', () => {
+    const previous = state.candidate?.qty;
+    const normalized = commitCandidateQty();
+    if (previous !== normalized) {
+      scheduleUpdate();
+    }
   });
 
   refs.seeGear.addEventListener('click', () => {
@@ -824,9 +892,7 @@ function buildGearPayload() {
     bindPopoverHandlers(document.body);
     pruneMarineEntries();
     populateSpecies();
-    if (refs.qty) {
-      refs.qty.value = String(state.candidate.qty);
-    }
+    syncQtyInputFromState({ force: true });
     syncToggles();
     bindInputs();
     runRecompute({ skipInputSync: true });
