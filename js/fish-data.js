@@ -1,4 +1,5 @@
 import { validateSpeciesRecord } from "./logic/speciesSchema.js";
+import { BEHAVIOR_TAGS } from "./logic/behaviorTags.js";
 
 /* Tag enums recognized by logic:
    "betta","livebearer","labyrinth","algae_specialist","nano",
@@ -9,7 +10,11 @@ export const FISH_DB = [
   { id:"betta_male", common_name:"Betta (Male)", scientific_name:"Betta splendens", category:"fish",
     adult_size_in:2.6, min_tank_length_in:16, temperature:{min_f:75,max_f:82}, ph:{min:6.0,max:8.0},
     gH:{min_dGH:5,max_dGH:19}, kH:{min_dKH:2,max_dKH:10}, salinity:"fresh", flow:"low", blackwater:"neutral",
-    aggression:70, tags:["betta","labyrinth","fin_sensitive"], invert_safe:false, mouth_size_in:0.3, bioloadGE:2.5 },
+    aggression:70, tags:["betta","labyrinth","fin_sensitive"], behavior:[
+      BEHAVIOR_TAGS.LONG_FIN_VULNERABLE,
+      BEHAVIOR_TAGS.SLOW_SWIMMER,
+      BEHAVIOR_TAGS.TERRITORIAL,
+    ], min_group:1, invert_safe:false, mouth_size_in:0.3, bioloadGE:2.5 },
   { id:"betta_female", common_name:"Betta (Female)", scientific_name:"Betta splendens", category:"fish",
     adult_size_in:2.25, min_tank_length_in:16, temperature:{min_f:75,max_f:82}, ph:{min:6.0,max:8.0},
     gH:{min_dGH:5,max_dGH:19}, kH:{min_dKH:2,max_dKH:10}, salinity:"fresh", flow:"low", blackwater:"neutral",
@@ -46,7 +51,11 @@ export const FISH_DB = [
   { id:"tigerbarb", common_name:"Tiger Barb", scientific_name:"Puntigrus tetrazona", category:"fish",
     adult_size_in:3.0, min_tank_length_in:36, temperature:{min_f:72,max_f:82}, ph:{min:6.0,max:8.0},
     gH:{min_dGH:5,max_dGH:19}, kH:{min_dKH:4,max_dKH:15}, salinity:"fresh", flow:"high", blackwater:"neutral",
-    aggression:55, tags:["shoaler","fast_swimmer","fin_nipper"], group:{type:"shoal",min:8}, invert_safe:false, mouth_size_in:0.3, bioloadGE:1.6 },
+    aggression:55, tags:["shoaler","fast_swimmer","fin_nipper"], behavior:[
+      BEHAVIOR_TAGS.FIN_NIPPER,
+      BEHAVIOR_TAGS.FAST_ACTIVE,
+      BEHAVIOR_TAGS.SHOALING,
+    ], group:{type:"shoal",min:6}, min_group:6, invert_safe:false, mouth_size_in:0.3, bioloadGE:1.6 },
   { id:"cherrybarb", common_name:"Cherry Barb", scientific_name:"Puntius titteya", category:"fish",
     adult_size_in:2.0, min_tank_length_in:30, temperature:{min_f:73,max_f:80}, ph:{min:6.0,max:7.5},
     gH:{min_dGH:5,max_dGH:15}, kH:{min_dKH:2,max_dKH:10}, salinity:"fresh", flow:"moderate", blackwater:"neutral",

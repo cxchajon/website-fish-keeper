@@ -3,11 +3,15 @@ export const REQUIRED_FIELDS = [
   "temperature","ph","gH","kH","salinity","flow","blackwater","aggression","tags"
 ];
 
+import { BEHAVIOR_TAG_VALUES } from "./behaviorTags.js";
+
 const ALLOWED_TAGS = new Set([
   "betta","livebearer","labyrinth","algae_specialist","nano",
   "shoaler","bottom_dweller","fast_swimmer","nocturnal","territorial",
   "fin_nipper","fin_sensitive","predator_shrimp","predator_snail","invert_safe","cichlid"
 ]);
+
+const ALLOWED_BEHAVIOR_TAGS = new Set(BEHAVIOR_TAG_VALUES);
 
 const SUPPORTED_SALINITY = new Set(["fresh", "brackish-low", "brackish-high", "dual"]);
 
@@ -41,6 +45,16 @@ export function validateSpeciesRecord(s) {
     if (!Array.isArray(s.tags)) return "bad tags";
     for (const t of s.tags) {
       if (!ALLOWED_TAGS.has(t)) return `bad tag:${t}`;
+    }
+    if (s.behavior != null) {
+      if (!Array.isArray(s.behavior)) return "bad behavior";
+      for (const tag of s.behavior) {
+        if (!ALLOWED_BEHAVIOR_TAGS.has(tag)) return `bad behavior tag:${tag}`;
+      }
+    }
+    if (s.min_group != null) {
+      const mg = Number(s.min_group);
+      if (!Number.isFinite(mg) || mg < 0) return "bad min_group";
     }
     return true;
   } catch (e) { return e.message || "unknown"; }

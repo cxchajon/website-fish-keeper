@@ -439,11 +439,12 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   const bioloadDisplay = formatBioloadPercent(Math.max(0, Math.min(200, rawBioloadPct)));
   const bioloadAria = Number.isFinite(bioloadPct) ? Number(bioloadPct.toFixed(2)) : 0;
   const aggressionColor = colorForSeverity(isEmpty ? 'ok' : env.aggressionSeverity);
+  const aggressionPercentDisplay = `${Math.round(aggressionPct)}%`;
   const bioloadNotes = isEmpty ? '' : renderChips(env.barNotes?.bioload ?? []);
   const aggressionNotes = isEmpty ? '' : renderChips(env.barNotes?.aggression ?? []);
   const generalChips = isEmpty ? '' : renderChips(env.detailChips ?? []);
   const bioloadLabel = isEmpty ? '0% → 0% of capacity' : env.bioloadLabel;
-  const aggressionLabel = isEmpty ? '0%' : (aggressionPct >= 100 ? '100%' : env.aggressionLabel);
+  const aggressionLabel = isEmpty ? '0%' : env.aggressionLabel;
   const bioloadInfoBtn = '<button type="button" class="info-btn" data-info="Approximate stocking level for your tank size. Stay in green for better stability.">i</button>';
   const aggressionInfoBtn = '<button type="button" class="info-btn" data-info="Estimated compatibility risk. Adding aggressive or territorial species will raise this.">i</button>';
 
@@ -463,7 +464,7 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
         <div class="env-bar env-bar--xl bar-row">
           <div class="env-bar__hd">
             <div class="env-bar__label metric-label">Aggression ${aggressionInfoBtn}</div>
-            <div class="env-bar__value">${Math.round(aggressionPct)}%</div>
+            <div class="env-bar__value" data-role="aggression-percent">${aggressionPercentDisplay}</div>
           </div>
           <div class="env-bar__track meter-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
             <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
@@ -490,12 +491,12 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
       <div class="env-bar metric-row">
         <div class="env-bar__hd">
           <span class="env-bar__label metric-label">Aggression ${aggressionInfoBtn}</span>
-          <span>${escapeHtml(aggressionLabel)}</span>
+          <span data-role="aggression-percent">${escapeHtml(aggressionPercentDisplay)}</span>
         </div>
         <div class="env-bar__track progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
           <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
         </div>
-        ${aggressionNotes}
+        ${aggressionNotes || escapeHtml(aggressionLabel)}
       </div>
       ${generalChips}
     </div>`;
@@ -939,7 +940,7 @@ function formatRangeGroup(ranges, unit) {
 function renderChips(items) {
   if (!items.length) return '';
   return `<div class="env-bar__chips">${items
-    .map((item) => `<span class="chip">${escapeHtml(item)}</span>`)
+    .map((item) => `<span class="chip" data-role="conflict-chip">${escapeHtml(item)}</span>`)
     .join('')}</div>`;
 }
 
