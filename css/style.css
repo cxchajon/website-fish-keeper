@@ -1530,4 +1530,53 @@ body.planted-active #cycling-coach .cc-title__leaf {
 /* Small, subtle status text */
 .ttg-consent-status{ margin-top:8px; opacity:.8; font-size:.9rem; }
 /* === TTG Cookie Consent: checkbox visibility PATCH END === */
+/* === TTG Cookie Consent: forced visible checkboxes START === */
+.ttg-row input[type="checkbox"]{
+  /* wipe any global resets and draw our own box */
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 2px solid rgba(232, 237, 243, 0.55);   /* light border */
+  background: transparent;
+  position: relative;
+  outline: none;
+}
+
+.ttg-row input[type="checkbox"]:focus{
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.18);
+}
+
+/* checked state: white fill + dark tick */
+.ttg-row input[type="checkbox"]:checked{
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.ttg-row input[type="checkbox"]:checked::after{
+  content: "";
+  position: absolute;
+  left: 5px;     /* positions the tick */
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border-right: 2px solid #0b1526;  /* dark tick to match theme */
+  border-bottom: 2px solid #0b1526;
+  transform: rotate(45deg);
+}
+
+/* disabled (Essential) stays checked and muted */
+.ttg-row input[type="checkbox"]:disabled{
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Make the whole row tappable on mobile */
+.ttg-row{ cursor: pointer; }
+.ttg-row span{ user-select: none; }
+/* === TTG Cookie Consent: forced visible checkboxes END === */
 /* === TTG Cookie Consent END === */
