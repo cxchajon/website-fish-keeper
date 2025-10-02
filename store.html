@@ -114,11 +114,11 @@
       <!-- Product: Life in Balance -->
       <article class="product" itemscope itemtype="https://schema.org/Book">
         <div class="media">
-          <!-- Replace src with your actual image path if different -->
           <img
-            src="/img/life-in-balance-cover.jpg"
+            src="assets/books/book-cover-web.jpg"
             alt="Book cover: Life in Balance — The Hidden Magic of Aquariums"
-            loading="eager" width="1200" height="1600" itemprop="image">
+            loading="eager" decoding="async" width="1200" height="1600" itemprop="image"
+            onerror="this.onerror=null; this.src='assets/books/book-cover-large.jpg';">
         </div>
 
         <div class="details">
@@ -139,8 +139,7 @@
           <div class="meta">Category: Aquariums • Science • Family &amp; Education</div>
 
           <div class="cta-row">
-            <!-- TODO: replace href with the real Amazon product link -->
-            <a class="btn primary" href="https://www.amazon.com/dp/XXXXXXXXXX" target="_blank" rel="noopener noreferrer">
+            <a class="btn primary" href="https://amzn.to/3Kh34I1" target="_blank" rel="sponsored noopener noreferrer">
               Buy on Amazon
             </a>
             <a class="btn secondary" href="/media.html#books">
@@ -153,5 +152,17 @@
       </article>
     </main>
   </div>
+
+  <div id="site-footer"></div>
+<script>
+(async () => {
+  try {
+    const res = await fetch('footer.v1.2.3.html?v=1.2.3', { cache: 'no-cache' });
+    const html = await res.text();
+    const host = document.getElementById('site-footer');
+    if (host) host.outerHTML = html;
+  } catch (e) { console.error('[Footer] load failed:', e); }
+})();
+</script>
 </body>
 </html>
