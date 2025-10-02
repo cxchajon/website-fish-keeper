@@ -115,6 +115,18 @@ export function RecommendedRow(rows, context, handlers) {
   const lightItem = selectTopItem(rows.filter((row) => row.Category === 'Lighting'), context);
   const heaterItem = selectTopItem(rows.filter((row) => row.Category === 'Heating'), context);
 
+  if (!filterItem && !lightItem && !heaterItem) {
+    container.append(
+      createElement('div', {
+        className: 'recommended-card recommended-card--empty recommended-card--solo',
+      }, [
+        createElement('h3', { text: 'Recommendations coming soon.' }),
+        createElement('p', { text: 'We’re refreshing our top picks—check back soon.' }),
+      ]),
+    );
+    return container;
+  }
+
   container.append(
     createRecommendedCard('Filter', filterItem, context, onSelect, onAdd),
     createRecommendedCard('Light', lightItem, context, onSelect, onAdd),

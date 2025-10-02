@@ -12,9 +12,9 @@ const FILTRATION_TABS = [
   { label: 'Internal', value: 'Internal' },
 ];
 
-function createGrid(items, context, onSelect, onAdd) {
+function createGrid(items, context, onSelect, onAdd, emptyMessage = 'No matches found. Try adjusting your filters.') {
   if (!items.length) {
-    return EmptyState('No matches found. Try adjusting your filters.');
+    return EmptyState(emptyMessage);
   }
   const grid = createElement('div', { className: 'product-grid' });
   items.forEach((item) => {
@@ -99,18 +99,28 @@ function createCategorySection(options) {
     body.setAttribute('hidden', '');
   }
 
+  const emptyCategoryMessage = 'No items yet. We’re refreshing recommendations—check back soon.';
+  const hasItems = items.length > 0;
+
   if (key === 'Filtration') {
-    body.appendChild(
-      SubTabs({
-        tabs: FILTRATION_TABS,
-        active: filtrationTab,
-        onChange: onTabChange,
-      }),
-    );
+    if (hasItems) {
+      body.appendChild(
+        SubTabs({
+          tabs: FILTRATION_TABS,
+          active: filtrationTab,
+          onChange: onTabChange,
+        }),
+      );
+    }
     const filtered = filterFiltration(items, filtrationTab);
-    body.appendChild(createGrid(filtered, context, onSelect, onAdd));
-  } else if (!items.length && key === 'Substrate') {
+    const emptyMessage = hasItems
+      ? 'No matches found. Try adjusting your filters.'
+      : emptyCategoryMessage;
+    body.appendChild(createGrid(filtered, context, onSelect, onAdd, emptyMessage));
+  } else if (!hasItems && key === 'Substrate') {
     body.appendChild(EmptyState('Substrate recommendations coming soon.'));
+  } else if (!hasItems) {
+    body.appendChild(EmptyState(emptyCategoryMessage));
   } else {
     body.appendChild(createGrid(items, context, onSelect, onAdd));
   }
