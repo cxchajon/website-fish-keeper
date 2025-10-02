@@ -6,6 +6,7 @@ import { renderConditions, renderChips, bindPopoverHandlers } from './logic/ui.j
 import { getTankSnapshot, EMPTY_TANK } from './stocking/tankStore.js';
 import { EVENTS, dispatchEvent as dispatchStockingEvent } from './stocking/events.js';
 import { tankLengthStatus } from './stocking/validators.js';
+import { initInfoTooltips } from './ui/tooltip.js';
 
 function isAssumptionText(el){
   const t = (el?.textContent || '').trim();
@@ -774,6 +775,7 @@ function renderAll() {
 function renderEnvironmentPanels() {
   if (!computed) {
     renderEnvCard({ stock: [], stockCount: 0, computed: null });
+    initInfoTooltips();
     return;
   }
   renderEnvCard({
@@ -781,6 +783,7 @@ function renderEnvironmentPanels() {
     stockCount: computed?.stockCount ?? 0,
     computed,
   });
+  initInfoTooltips();
 }
 
 function runRecompute({ skipInputSync = false } = {}) {
@@ -981,121 +984,7 @@ bootstrapStocking();
   obs.observe(document.body, { childList: true, subtree: true });
 })();
 
-(function infoPopovers(){
-  const page = document.getElementById('stocking-page');
-  if(!page) return;
-
-  let portal = document.getElementById('ui-portal');
-  if(!portal){
-    portal = document.createElement('div');
-    portal.id = 'ui-portal';
-    portal.style.position = 'static';
-    portal.style.isolation = 'auto';
-    document.body.appendChild(portal);
-  }
-
-  const pop = document.createElement('div');
-  pop.className = 'ttg-popover';
-  pop.setAttribute('role','dialog');
-  pop.setAttribute('aria-modal','false');
-  pop.hidden = true;
-  pop.innerHTML = `
-    <h3 id="ttg-popover-title">Info</h3>
-    <p id="ttg-popover-text"></p>
-    <button type="button" class="close" aria-label="Close">OK</button>
-  `;
-  portal.appendChild(pop);
-  const titleEl = pop.querySelector('#ttg-popover-title');
-  const textEl  = pop.querySelector('#ttg-popover-text');
-  const closeEl = pop.querySelector('.close');
-
-  let currentBtn = null;
-
-  function offsets(){
-    const vv = window.visualViewport;
-    return {
-      x: vv && 'pageLeft' in vv ? vv.pageLeft : (window.pageXOffset || document.documentElement.scrollLeft || 0),
-      y: vv && 'pageTop'  in vv ? vv.pageTop  : (window.pageYOffset || document.documentElement.scrollTop  || 0),
-    };
-  }
-
-  function placeUnder(el){
-    const target = el.closest('label') || el;
-    const r = target.getBoundingClientRect();
-    const wasHidden = pop.hidden;
-    if (wasHidden) pop.hidden = false;
-    pop.style.visibility = 'hidden';
-
-    const pw = pop.offsetWidth || 280;
-    const ph = pop.offsetHeight || 140;
-    const gap = 8;
-    const { x:sx, y:sy } = offsets();
-
-    let left = Math.round(r.left + sx);
-    let top  = Math.round(r.bottom + sy + gap);
-    left = Math.min(Math.max(8 + sx, left), (window.innerWidth - pw - 8) + sx);
-    top  = Math.min(Math.max(8 + sy, top),  (window.innerHeight - ph - 8) + sy);
-
-    pop.style.left = `${left}px`;
-    pop.style.top  = `${top}px`;
-
-    pop.style.visibility = '';
-    pop.hidden = wasHidden;
-  }
-
-  function openFor(btn){
-    currentBtn = btn;
-    const info = btn.getAttribute('data-info') || 'Additional information.';
-    titleEl.textContent = 'Info';
-    textEl.textContent  = info;
-
-    if (btn.closest('#bioagg-card')) pop.dataset.bioagg = '1';
-    else delete pop.dataset.bioagg;
-
-    placeUnder(btn);
-    pop.hidden = false;
-    requestAnimationFrame(()=> pop.classList.add('is-open'));
-
-    document.addEventListener('mousedown', onDoc, { capture:true });
-    document.addEventListener('touchstart', onDoc, { capture:true });
-    document.addEventListener('keydown', onEsc, { capture:true });
-
-    window.addEventListener('scroll', onReflow, { passive:true });
-    window.addEventListener('resize', onReflow, { passive:true });
-    window.visualViewport?.addEventListener?.('scroll', onReflow, { passive:true });
-    window.visualViewport?.addEventListener?.('resize', onReflow, { passive:true });
-  }
-
-  function closePop(){
-    pop.classList.remove('is-open');
-    setTimeout(()=>{ pop.hidden = true; }, 140);
-    delete pop.dataset.bioagg;
-    currentBtn = null;
-
-    document.removeEventListener('mousedown', onDoc, { capture:true });
-    document.removeEventListener('touchstart', onDoc, { capture:true });
-    document.removeEventListener('keydown', onEsc, { capture:true });
-
-    window.removeEventListener('scroll', onReflow);
-    window.removeEventListener('resize', onReflow);
-    window.visualViewport?.removeEventListener?.('scroll', onReflow);
-    window.visualViewport?.removeEventListener?.('resize', onReflow);
-  }
-
-  function onDoc(e){ if (!pop.contains(e.target) && e.target !== currentBtn) closePop(); }
-  function onEsc(e){ if (e.key === 'Escape') closePop(); }
-  function onReflow(){ if (!pop.hidden && currentBtn) placeUnder(currentBtn); }
-
-  page.addEventListener('click', (e)=>{
-    const btn = e.target.closest('.info-btn');
-    if(!btn) return;
-    e.preventDefault();
-    if(pop.hidden || currentBtn !== btn) openFor(btn);
-    else closePop();
-  });
-  closeEl.addEventListener('click', closePop);
-})();
-
+// Legacy info popover removed in favor of dedicated tooltip utility.
 (function compactBioAggSafe(){
   const bioAgg = document.getElementById('bioagg-card');
   if (!bioAgg) return;
@@ -1106,9 +995,10 @@ bootstrapStocking();
       if (raf) return;
       raf = requestAnimationFrame(()=>{
         raf = 0;
-        const popOpen = !!document.querySelector('.ttg-popover.is-open');
+        const tipOpen = !!document.querySelector('.ui-tip[data-role="info-tip"]:not([hidden])');
+        const legacyPopOpen = !!document.querySelector('.ttg-popover.is-open');
         const expanded = bioAgg.querySelector('[aria-expanded="true"]');
-        const shouldExpand = popOpen || !!expanded;
+        const shouldExpand = tipOpen || legacyPopOpen || !!expanded;
         bioAgg.classList.toggle('is-compact', !shouldExpand);
 
         if (bioAgg.dataset.heightsStripped !== '1'){
