@@ -7,15 +7,65 @@
 import csv, os, sys, time, re, argparse, json
 from urllib.parse import urlparse
 from pathlib import Path
+from types import SimpleNamespace
+from html import unescape
+import urllib.request
+import urllib.error
 
-# Optional deps: requests + bs4. If unavailable, instruct user.
+# Optional deps: requests + bs4. Fall back to stdlib when unavailable.
 try:
-    import requests
-    from bs4 import BeautifulSoup
-except Exception as e:
-    sys.stderr.write("This script requires 'requests' and 'beautifulsoup4' packages.\n")
-    sys.stderr.write("Install with:  pip install requests beautifulsoup4\n")
-    sys.exit(1)
+    import requests  # type: ignore
+except Exception:  # pragma: no cover - network sandbox lacks pip
+    requests = None
+
+try:
+    from bs4 import BeautifulSoup  # type: ignore
+except Exception:  # pragma: no cover - network sandbox lacks pip
+    BeautifulSoup = None
+
+
+class _UrlLibResponse(SimpleNamespace):
+    """Lightweight response object for urllib fallback."""
+
+
+class _UrlLibSession:
+    def __init__(self):
+        self.headers = {}
+
+    def get(self, url, headers=None, allow_redirects=True, timeout=15):
+        req_headers = dict(self.headers)
+        if headers:
+            req_headers.update(headers)
+        request = urllib.request.Request(url, headers=req_headers)
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as resp:
+                final_url = resp.geturl()
+                raw = resp.read()
+                encoding = resp.headers.get_content_charset() or "utf-8"
+                text = raw.decode(encoding, errors="replace")
+                return _UrlLibResponse(url=final_url, text=text)
+        except urllib.error.HTTPError as e:
+            # mimic requests raising for non-2xx
+            raise RuntimeError(f"HTTPError:{e.code}") from e
+        except urllib.error.URLError as e:
+            raise RuntimeError(f"URLError:{e.reason}") from e
+
+
+def _get_session():
+    if requests is not None:
+        return requests.Session()
+    return _UrlLibSession()
+
+
+def _extract_title(html):
+    if BeautifulSoup is not None:
+        soup = BeautifulSoup(html, "html.parser")
+        tag = soup.find("title")
+        return tag.get_text(strip=True) if tag else ""
+    match = re.search(r"<title[^>]*>(.*?)</title>", html, re.IGNORECASE | re.DOTALL)
+    if not match:
+        return ""
+    return unescape(match.group(1)).strip()
 
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 
@@ -58,7 +108,7 @@ def read_from_master_or_nav(master_csv="gear_master.csv", nav_json="data/master_
         return combined, "list:" + ",".join(used)
     raise FileNotFoundError("No input found. Provide --input CSV or ensure gear_master.csv or data/master_nav.json exists.")
 
-def expand_url(url, session, timeout=15):
+def expand_url(url, session, timeout=2):
     if not url:
         return "", "", "NO_URL"
     try:
@@ -68,24 +118,24 @@ def expand_url(url, session, timeout=15):
         domain = urlparse(final_url).netloc.lower()
         return final_url, domain, "OK"
     except Exception as e:
-        return "", "", f"EXPAND_ERR:{e.__class__.__name__}"
+        msg = str(e) or e.__class__.__name__
+        return "", "", f"EXPAND_ERR:{msg}"
 
-def fetch_title(url, session, timeout=20):
+def fetch_title(url, session, timeout=3):
     if not url:
         return "", "NO_URL"
     try:
         resp = session.get(url, headers={"User-Agent": UA}, allow_redirects=True, timeout=timeout)
         html = resp.text
         # Amazon sometimes includes very long titles; <title> is still present.
-        soup = BeautifulSoup(html, "html.parser")
-        title_tag = soup.find("title")
-        title = title_tag.get_text(strip=True) if title_tag else ""
+        title = _extract_title(html)
         # Clean common suffix noise
         title = re.sub(r"Amazon\\.com\\s*:\\s*", "", title, flags=re.I)
         title = re.sub(r"\\s*:\\s*Amazon\\.com.*$", "", title, flags=re.I)
         return title, "OK"
     except Exception as e:
-        return "", f"TITLE_ERR:{e.__class__.__name__}"
+        msg = str(e) or e.__class__.__name__
+        return "", f"TITLE_ERR:{msg}"
 
 def normalize(s):
     return re.sub(r"\\s+", " ", (s or "")).strip().casefold()
@@ -136,8 +186,9 @@ def main():
     out_csv = "reports/link_audit.csv"
     out_txt = "reports/link_audit.txt"
 
-    session = requests.Session()
+    session = _get_session()
     session.headers.update({"User-Agent": UA})
+    sleep_between = 0 if isinstance(session, _UrlLibSession) else max(args.sleep, 0)
 
     audited = []
     count = 0
@@ -166,7 +217,8 @@ def main():
             "Notes": notes
         })
         count += 1
-        time.sleep(args.sleep)
+        if sleep_between:
+            time.sleep(sleep_between)
 
     # write CSV
     with open(out_csv, "w", newline="", encoding="utf-8") as f:
