@@ -720,7 +720,7 @@ export function createDefaultState() {
     tankAgeWeeks: 12,
     variantId: null,
     stock: [],
-    candidate: { id: getDefaultSpeciesId(), qty: 1 },
+    candidate: { id: getDefaultSpeciesId(), qty: '1' },
     water: { temperature: 78, pH: 7.2, gH: 6, kH: 3, salinity: 'fresh', flow: 'moderate', blackwater: false },
   };
 }
