@@ -1603,27 +1603,35 @@ body.planted-active #cycling-coach .cc-title__leaf {
 .ttg-row span{ user-select: none; }
 /* === TTG Cookie Consent: forced visible checkboxes END === */
 /* === TTG Cookie Consent END === */
-/* === TTG Ads v2 (Top + Post-Results) START === */
-.ttg-adunit{min-height:250px;border:1px dashed rgba(255,255,255,.18);border-radius:12px;display:flex;align-items:center;justify-content:center;opacity:.7;margin:16px 0;}
-.ttg-adunit--top{margin-top:12px;margin-bottom:20px;}
-.ttg-adunit--bottom{margin-top:24px;margin-bottom:16px;}
-/* keep ads out of sight until allowed */
+/* === TTG Ads (behavior fix) START === */
+.ttg-adunit{
+  /* Reserve a smaller safe area; will expand when a real ad renders */
+  min-height: 96px;
+  border: 1px dashed rgba(255,255,255,.18);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: .7;
+  margin: 16px 0;
+}
+.ttg-adunit--top{ margin-top: 12px; margin-bottom: 20px; }
+.ttg-adunit--bottom{ margin-top: 24px; margin-bottom: 16px; }
+.ttg-adunit--media-bottom{ margin-top: 28px; margin-bottom: 20px; }
+
+/* Hide ad placeholders until consent is expressly granted */
 html[data-ad-consent="denied"] .ttg-adunit,
 html:not([data-ad-consent]) .ttg-adunit,
-.is-ads-disabled .ttg-adunit{display:none !important;}
-/* Small screens: full width; Large screens: constrain for balance */
-@media (min-width: 900px){
-  .ttg-adunit{max-width:900px;margin-left:auto;margin-right:auto;}
+.is-ads-disabled .ttg-adunit{
+  display: none !important;
 }
-/* === TTG Ads v2 END === */
-/* === TTG Ads: Media Bottom START === */
-.ttg-adunit{min-height:250px;border:1px dashed rgba(255,255,255,.18);border-radius:12px;display:flex;align-items:center;justify-content:center;opacity:.7;margin:16px 0;}
-.ttg-adunit--media-bottom{margin-top:28px;margin-bottom:20px;}
-/* hide until consent explicitly granted */
-html[data-ad-consent="denied"] .ttg-adunit,
-html:not([data-ad-consent]) .ttg-adunit,
-.is-ads-disabled .ttg-adunit{display:none !important;}
+
+/* Large screens: center and constrain */
 @media (min-width: 900px){
-  .ttg-adunit{max-width: 1000px;margin-left:auto;margin-right:auto;}
+  .ttg-adunit{
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
-/* === TTG Ads: Media Bottom END === */
+/* === TTG Ads (behavior fix) END === */
