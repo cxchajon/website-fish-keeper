@@ -17,6 +17,7 @@ export const TANK_SIZES = [
     lengthIn: 16.2,
     widthIn: 8.4,
     heightIn: 10.5,
+    dims: { w: 16.2, d: 8.4, h: 10.5 },
     dimensions_in: { l: 16.2, w: 8.4, h: 10.5 },
     dimensions_cm: { l: cm(16.2), w: cm(8.4), h: cm(10.5) },
     filled_weight_lbs: 62,
@@ -30,6 +31,7 @@ export const TANK_SIZES = [
     lengthIn: 20.25,
     widthIn: 10.5,
     heightIn: 12.6,
+    dims: { w: 20.25, d: 10.5, h: 12.6 },
     dimensions_in: { l: 20.25, w: 10.5, h: 12.6 },
     dimensions_cm: { l: cm(20.25), w: cm(10.5), h: cm(12.6) },
     filled_weight_lbs: 111,
@@ -43,6 +45,7 @@ export const TANK_SIZES = [
     lengthIn: 20.25,
     widthIn: 10.5,
     heightIn: 18.75,
+    dims: { w: 20.25, d: 10.5, h: 18.75 },
     dimensions_in: { l: 20.25, w: 10.5, h: 18.75 },
     dimensions_cm: { l: cm(20.25), w: cm(10.5), h: cm(18.75) },
     filled_weight_lbs: 170,
@@ -56,6 +59,7 @@ export const TANK_SIZES = [
     lengthIn: 24.25,
     widthIn: 12.5,
     heightIn: 16.75,
+    dims: { w: 24.25, d: 12.5, h: 16.75 },
     dimensions_in: { l: 24.25, w: 12.5, h: 16.75 },
     dimensions_cm: { l: cm(24.25), w: cm(12.5), h: cm(16.75) },
     filled_weight_lbs: 225,
@@ -69,6 +73,7 @@ export const TANK_SIZES = [
     lengthIn: 30.25,
     widthIn: 12.5,
     heightIn: 12.75,
+    dims: { w: 30.25, d: 12.5, h: 12.75 },
     dimensions_in: { l: 30.25, w: 12.5, h: 12.75 },
     dimensions_cm: { l: cm(30.25), w: cm(12.5), h: cm(12.75) },
     filled_weight_lbs: 225,
@@ -82,6 +87,7 @@ export const TANK_SIZES = [
     lengthIn: 30.25,
     widthIn: 12.5,
     heightIn: 18.75,
+    dims: { w: 30.25, d: 12.5, h: 18.75 },
     dimensions_in: { l: 30.25, w: 12.5, h: 18.75 },
     dimensions_cm: { l: cm(30.25), w: cm(12.5), h: cm(18.75) },
     filled_weight_lbs: 330,
@@ -95,6 +101,7 @@ export const TANK_SIZES = [
     lengthIn: 36.25,
     widthIn: 18.25,
     heightIn: 16.75,
+    dims: { w: 36.25, d: 18.25, h: 16.75 },
     dimensions_in: { l: 36.25, w: 18.25, h: 16.75 },
     dimensions_cm: { l: cm(36.25), w: cm(18.25), h: cm(16.75) },
     filled_weight_lbs: 458,
@@ -108,6 +115,7 @@ export const TANK_SIZES = [
     lengthIn: 48.25,
     widthIn: 12.75,
     heightIn: 21,
+    dims: { w: 48.25, d: 12.75, h: 21 },
     dimensions_in: { l: 48.25, w: 12.75, h: 21 },
     dimensions_cm: { l: cm(48.25), w: cm(12.75), h: cm(21) },
     filled_weight_lbs: 625,
@@ -121,6 +129,7 @@ export const TANK_SIZES = [
     lengthIn: 48.5,
     widthIn: 18.5,
     heightIn: 21.25,
+    dims: { w: 48.5, d: 18.5, h: 21.25 },
     dimensions_in: { l: 48.5, w: 18.5, h: 21.25 },
     dimensions_cm: { l: cm(48.5), w: cm(18.5), h: cm(21.25) },
     filled_weight_lbs: 850,
@@ -134,6 +143,7 @@ export const TANK_SIZES = [
     lengthIn: 72,
     widthIn: 18,
     heightIn: 21,
+    dims: { w: 72, d: 18, h: 21 },
     dimensions_in: { l: 72, w: 18, h: 21 },
     dimensions_cm: { l: cm(72), w: cm(18), h: cm(21) },
     filled_weight_lbs: 1206,
@@ -174,6 +184,13 @@ let legacyWarningShown = false;
 export function getTankById(id) {
   if (!id) return null;
   return TANK_SIZES.find((tank) => tank.id === id) ?? null;
+}
+
+export function getTankLengthIn(id) {
+  if (!id) return null;
+  const raw = getTankById(id)?.dims?.w;
+  const length = typeof raw === 'number' ? raw : Number(raw);
+  return Number.isFinite(length) && length > 0 ? length : null;
 }
 
 export function getTankLabel(id) {

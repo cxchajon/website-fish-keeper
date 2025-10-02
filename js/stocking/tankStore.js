@@ -1,20 +1,26 @@
 import { EVENTS, dispatchEvent } from './events.js';
+import { getTankById } from '../utils.js';
 
 const roundTo = (value, precision) => {
   const factor = 10 ** precision;
   return Math.round(value * factor) / factor;
 };
 
+const EMPTY_DIMENSIONS_IN = Object.freeze({ l: null, w: null, h: null });
+const EMPTY_DIMENSIONS_CM = Object.freeze({ l: null, w: null, h: null });
+const EMPTY_DIMS = Object.freeze({ w: null, d: null, h: null });
+
 const EMPTY = Object.freeze({
   id: null,
   label: '',
   gallons: 0,
   liters: 0,
-  lengthIn: 0,
-  widthIn: 0,
-  heightIn: 0,
-  dimensionsIn: Object.freeze({ l: 0, w: 0, h: 0 }),
-  dimensionsCm: Object.freeze({ l: 0, w: 0, h: 0 }),
+  lengthIn: null,
+  widthIn: null,
+  heightIn: null,
+  dims: EMPTY_DIMS,
+  dimensionsIn: EMPTY_DIMENSIONS_IN,
+  dimensionsCm: EMPTY_DIMENSIONS_CM,
   filledWeightLbs: 0,
   emptyWeightLbs: 0,
 });
@@ -31,6 +37,11 @@ function ensureNumber(value) {
     return Number.isFinite(parsed) ? parsed : null;
   }
   return null;
+}
+
+function ensurePositiveNumber(value) {
+  const num = ensureNumber(value);
+  return Number.isFinite(num) && num > 0 ? num : null;
 }
 
 function formatCentimeters(inches) {
@@ -53,18 +64,28 @@ function hasChanged(next) {
 function freezeRecord(record) {
   return Object.freeze({
     ...record,
-    dimensionsIn: Object.freeze({ ...record.dimensionsIn }),
-    dimensionsCm: Object.freeze({ ...record.dimensionsCm }),
+    dims: Object.freeze({ ...EMPTY_DIMS, ...(record.dims ?? {}) }),
+    dimensionsIn: Object.freeze({ ...EMPTY_DIMENSIONS_IN, ...(record.dimensionsIn ?? {}) }),
+    dimensionsCm: Object.freeze({ ...EMPTY_DIMENSIONS_CM, ...(record.dimensionsCm ?? {}) }),
   });
 }
 
 export function normalizeTankPreset(preset) {
   if (!preset) return null;
-  const gallons = ensureNumber(preset.gallons);
-  const liters = ensureNumber(preset.liters);
-  const lengthIn = ensureNumber(preset.lengthIn ?? preset.dimensions_in?.l);
-  const widthIn = ensureNumber(preset.widthIn ?? preset.dimensions_in?.w);
-  const heightIn = ensureNumber(preset.heightIn ?? preset.dimensions_in?.h);
+  const canonical = preset.id ? getTankById(preset.id) : null;
+  const gallons = ensureNumber(preset.gallons ?? canonical?.gallons);
+  const liters = ensureNumber(preset.liters ?? canonical?.liters);
+  const dims = preset.dims ?? canonical?.dims ?? null;
+  const legacyDims = preset.dimensions_in ?? preset.dimensionsIn ?? null;
+  const lengthIn = ensurePositiveNumber(
+    preset.lengthIn ?? dims?.w ?? legacyDims?.l ?? canonical?.lengthIn
+  );
+  const widthIn = ensurePositiveNumber(
+    preset.widthIn ?? dims?.d ?? legacyDims?.w ?? canonical?.widthIn
+  );
+  const heightIn = ensurePositiveNumber(
+    preset.heightIn ?? dims?.h ?? legacyDims?.h ?? canonical?.heightIn
+  );
 
   if (
     gallons == null || liters == null ||
@@ -74,8 +95,8 @@ export function normalizeTankPreset(preset) {
     return null;
   }
 
-  const filledWeight = ensureNumber(preset.filled_weight_lbs) ?? 0;
-  const emptyWeight = ensureNumber(preset.empty_weight_lbs) ?? 0;
+  const filledWeight = ensureNumber(preset.filled_weight_lbs ?? canonical?.filled_weight_lbs) ?? 0;
+  const emptyWeight = ensureNumber(preset.empty_weight_lbs ?? canonical?.empty_weight_lbs) ?? 0;
 
   const dimensionsIn = {
     l: lengthIn,
@@ -83,19 +104,25 @@ export function normalizeTankPreset(preset) {
     h: heightIn,
   };
   const dimensionsCm = {
-    l: formatCentimeters(lengthIn) ?? 0,
-    w: formatCentimeters(widthIn) ?? 0,
-    h: formatCentimeters(heightIn) ?? 0,
+    l: formatCentimeters(lengthIn),
+    w: formatCentimeters(widthIn),
+    h: formatCentimeters(heightIn),
+  };
+  const dimsRecord = {
+    w: lengthIn,
+    d: widthIn,
+    h: heightIn,
   };
 
   return freezeRecord({
-    id: preset.id ?? null,
-    label: String(preset.label ?? ''),
+    id: preset.id ?? canonical?.id ?? null,
+    label: String(preset.label ?? canonical?.label ?? ''),
     gallons,
     liters,
     lengthIn,
     widthIn,
     heightIn,
+    dims: dimsRecord,
     dimensionsIn,
     dimensionsCm,
     filledWeightLbs: filledWeight,
@@ -107,8 +134,23 @@ export function getTankSnapshot() {
   return currentTank;
 }
 
+function resolvePresetCandidate(preset) {
+  if (!preset) return null;
+  if (typeof preset === 'string') {
+    return getTankById(preset);
+  }
+  if (preset && typeof preset === 'object' && preset.id) {
+    const canonical = getTankById(preset.id);
+    if (canonical) {
+      return { ...canonical, ...preset };
+    }
+  }
+  return preset;
+}
+
 export function setTank(preset) {
-  const normalized = preset ? normalizeTankPreset(preset) : EMPTY;
+  const resolved = resolvePresetCandidate(preset);
+  const normalized = resolved ? normalizeTankPreset(resolved) : null;
   const next = normalized ?? EMPTY;
   if (!hasChanged(next)) {
     return currentTank;
