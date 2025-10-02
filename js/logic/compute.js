@@ -3,6 +3,7 @@ import { validateSpeciesRecord } from "./speciesSchema.js";
 import { EMPTY_TANK } from '../stocking/tankStore.js';
 import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent, PLANTED_CAPACITY_BONUS } from '../bioload.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
+import { BEHAVIOR_TAGS } from './behaviorTags.js';
 import {
   clamp,
   formatNumber,
@@ -14,12 +15,13 @@ import {
   calcSeverityIcon,
 } from './utils.js';
 import {
-  evaluatePair,
   evaluateInvertSafety,
   evaluateSalinity,
   evaluateFlow,
   evaluateBlackwater,
   checkGroupRule,
+  HARD_CONFLICTS,
+  keyPair,
 } from './conflicts.js';
 
 function toRange(source, minKey, maxKey) {
@@ -441,25 +443,203 @@ function computeBioload(tank, entries, candidate) {
   };
 }
 
-function computeAggression(tank, entries, candidate) {
-  if (!candidate) {
-    return { severity: 'ok', reasons: [], score: 0, label: 'No conflicts' };
+const {
+  FIN_NIPPER,
+  LONG_FIN_VULNERABLE,
+  SLOW_SWIMMER,
+  TERRITORIAL,
+  FAST_ACTIVE,
+  SHOALING,
+} = BEHAVIOR_TAGS;
+
+const UNDERSTOCK_SEVERITY = 35;
+const TERRITORIAL_CROWDING_SEVERITY = 80;
+
+function toBehaviorSet(species) {
+  if (!species) return new Set();
+  const raw = Array.isArray(species.behavior) ? species.behavior : [];
+  return new Set(raw.map((tag) => String(tag)));
+}
+
+function resolveMinGroup(species) {
+  if (!species) return 0;
+  const direct = Number(species.min_group);
+  if (Number.isFinite(direct) && direct > 0) {
+    return Math.floor(direct);
   }
-  const reasons = [];
-  let severity = 'ok';
+  const fallback = Number(species.group?.min);
+  if (Number.isFinite(fallback) && fallback > 0) {
+    return Math.floor(fallback);
+  }
+  return 0;
+}
+
+function aggressionSeverity(score) {
+  if (!Number.isFinite(score) || score <= 0) return 'ok';
+  if (score >= 75) return 'bad';
+  return 'warn';
+}
+
+function selectPairRule(aGroup, bGroup) {
+  const matches = [];
+  let priority = 0;
+  const add = (severity, message) => {
+    if (!message) return;
+    const existing = matches.find((item) => item.message === message);
+    if (existing) {
+      existing.severity = Math.max(existing.severity, severity);
+      return;
+    }
+    matches.push({ severity, message, priority });
+    priority += 1;
+  };
+
+  const aName = aGroup.species.common_name;
+  const bName = bGroup.species.common_name;
+  const aTags = aGroup.behavior;
+  const bTags = bGroup.behavior;
+
+  if (aTags.has(FIN_NIPPER) && bTags.has(LONG_FIN_VULNERABLE)) {
+    add(100, `Fin-nipping risk: ${aName} ↔ ${bName} (long fins).`);
+  }
+  if (bTags.has(FIN_NIPPER) && aTags.has(LONG_FIN_VULNERABLE)) {
+    add(100, `Fin-nipping risk: ${bName} ↔ ${aName} (long fins).`);
+  }
+  if (aTags.has(FIN_NIPPER) && bTags.has(SLOW_SWIMMER)) {
+    add(90, `Nips slow swimmers: ${aName} ↔ ${bName}.`);
+  }
+  if (bTags.has(FIN_NIPPER) && aTags.has(SLOW_SWIMMER)) {
+    add(90, `Nips slow swimmers: ${bName} ↔ ${aName}.`);
+  }
+  if (aTags.has(TERRITORIAL) && bTags.has(LONG_FIN_VULNERABLE) && aGroup.species.id !== bGroup.species.id) {
+    add(75, `Territorial disputes likely: ${aName} ↔ ${bName}.`);
+  }
+  if (bTags.has(TERRITORIAL) && aTags.has(LONG_FIN_VULNERABLE) && aGroup.species.id !== bGroup.species.id) {
+    add(75, `Territorial disputes likely: ${bName} ↔ ${aName}.`);
+  }
+  const aSize = Number(aGroup.species.adult_size_in);
+  const bSize = Number(bGroup.species.adult_size_in);
+  if (aTags.has(FAST_ACTIVE) && bTags.has(SLOW_SWIMMER) && Number.isFinite(aSize) && Number.isFinite(bSize) && aSize >= bSize * 2) {
+    add(70, `Stress from chasing/activity: ${aName} ↔ ${bName}.`);
+  }
+  if (bTags.has(FAST_ACTIVE) && aTags.has(SLOW_SWIMMER) && Number.isFinite(aSize) && Number.isFinite(bSize) && bSize >= aSize * 2) {
+    add(70, `Stress from chasing/activity: ${bName} ↔ ${aName}.`);
+  }
+  if (HARD_CONFLICTS.has(keyPair(aGroup.species.id, bGroup.species.id))) {
+    add(100, `Known conflict pairing: ${aName} ↔ ${bName}.`);
+  }
+
+  if (!matches.length) {
+    return null;
+  }
+
+  matches.sort((left, right) => {
+    if (right.severity !== left.severity) {
+      return right.severity - left.severity;
+    }
+    return left.priority - right.priority;
+  });
+  return matches[0];
+}
+
+function computeAggression(tank, entries, candidate) {
+  const combined = [];
   for (const entry of entries) {
-    const result = evaluatePair(candidate, entry, { length: tank.length });
-    severity = severity === 'bad' ? 'bad' : (severity === 'warn' && result.severity === 'bad' ? 'bad' : severity);
-    if (result.severity === 'bad' || result.severity === 'warn') {
-      severity = severity === 'bad' ? 'bad' : result.severity;
-      if (result.reasons.length) {
-        reasons.push(result.reasons[0]);
+    if (entry?.species && entry.qty > 0) {
+      combined.push(entry);
+    }
+  }
+  if (candidate?.species && candidate.qty > 0) {
+    combined.push(candidate);
+  }
+  if (!combined.length) {
+    return { severity: 'ok', reasons: [], score: 0, label: 'No conflicts detected.' };
+  }
+
+  const groupsById = new Map();
+  for (const entry of combined) {
+    const id = entry.species.id;
+    if (!groupsById.has(id)) {
+      groupsById.set(id, {
+        species: entry.species,
+        qty: 0,
+        behavior: toBehaviorSet(entry.species),
+        contextBoost: 0,
+      });
+    }
+    const group = groupsById.get(id);
+    group.qty += Number(entry.qty) || 0;
+  }
+
+  const groups = Array.from(groupsById.values());
+  if (!groups.length) {
+    return { severity: 'ok', reasons: [], score: 0, label: 'No conflicts detected.' };
+  }
+
+  const contextIssues = [];
+  const contextSeverities = [];
+  const tankLength = Number.isFinite(tank?.length) && tank.length > 0
+    ? tank.length
+    : Number(tank?.lengthIn) || 0;
+
+  for (const group of groups) {
+    const { species, behavior, qty } = group;
+    if (behavior.has(SHOALING)) {
+      const minGroup = resolveMinGroup(species);
+      if (minGroup > 0 && qty > 0 && qty < minGroup) {
+        group.contextBoost += UNDERSTOCK_SEVERITY;
+        const message = `${species.common_name} understocked (needs ${minGroup}+). Under-grouping increases nipping/aggression.`;
+        contextIssues.push({ severity: UNDERSTOCK_SEVERITY, message });
+        contextSeverities.push(UNDERSTOCK_SEVERITY);
+      }
+    }
+    if (behavior.has(TERRITORIAL) && qty >= 2) {
+      const required = Number(species.min_tank_length_in);
+      if (Number.isFinite(required) && required > 0 && (!Number.isFinite(tankLength) || tankLength < required)) {
+        group.contextBoost += TERRITORIAL_CROWDING_SEVERITY;
+        const message = `Territory crowding among ${species.common_name}.`;
+        contextIssues.push({ severity: TERRITORIAL_CROWDING_SEVERITY, message });
+        contextSeverities.push(TERRITORIAL_CROWDING_SEVERITY);
       }
     }
   }
-  const label = reasons.length ? reasons[0] : 'No conflicts';
-  const score = severity === 'bad' ? 90 : severity === 'warn' ? 45 : 0;
-  return { severity, reasons, score, label };
+
+  const pairIssues = [];
+  const severityPool = [];
+
+  for (let index = 0; index < groups.length; index += 1) {
+    const aGroup = groups[index];
+    for (let otherIndex = index + 1; otherIndex < groups.length; otherIndex += 1) {
+      const bGroup = groups[otherIndex];
+      const match = selectPairRule(aGroup, bGroup);
+      const contextSum = (aGroup.contextBoost || 0) + (bGroup.contextBoost || 0);
+      if (match) {
+        const combinedSeverity = Math.min(100, match.severity + contextSum);
+        severityPool.push(combinedSeverity);
+        pairIssues.push({ severity: combinedSeverity, message: match.message });
+      } else if (contextSum > 0) {
+        severityPool.push(Math.min(100, contextSum));
+      }
+    }
+  }
+
+  const maxSeverity = Math.max(0, ...severityPool, ...contextSeverities);
+  const severity = aggressionSeverity(maxSeverity);
+
+  const dedupedIssues = new Map();
+  for (const issue of [...pairIssues, ...contextIssues]) {
+    if (!issue?.message) continue;
+    const existing = dedupedIssues.get(issue.message);
+    if (!existing || existing.severity < issue.severity) {
+      dedupedIssues.set(issue.message, issue);
+    }
+  }
+  const sortedIssues = Array.from(dedupedIssues.values()).sort((a, b) => b.severity - a.severity);
+  const topIssues = sortedIssues.slice(0, 3);
+  const reasons = topIssues.map((issue) => issue.message);
+  const label = topIssues[0]?.message ?? 'No conflicts detected.';
+
+  return { severity, reasons, score: maxSeverity, label };
 }
 
 function computeChips({ tank, candidate, entries, groupRule, salinityCheck, flowCheck, blackwaterCheck, bioload, conditions }) {
