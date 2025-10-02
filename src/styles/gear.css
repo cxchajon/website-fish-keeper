@@ -140,6 +140,21 @@ main {
   gap: 10px;
 }
 
+.recommended-card--empty h3 {
+  margin: 0;
+}
+
+.recommended-card--empty p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.recommended-card--solo {
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
 .recommended-card__header {
   display: grid;
   gap: 6px;
