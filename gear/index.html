@@ -14,21 +14,19 @@
   <script defer src="/js/nav.js?v=1.1.0"></script>
 </head>
 <body class="theme-light">
+  <!-- GLOBAL NAV -->
   <div id="site-nav"></div>
+  <script>
+    (function(){
+      fetch('/nav.html')
+        .then(r => r.text())
+        .then(html => { document.getElementById('site-nav').innerHTML = html; })
+        .catch(console.error);
+    })();
+  </script>
   <main id="gear-main">
     <div id="gear-root" data-testid="gear-root"></div>
   </main>
-  <div id="site-footer"></div>
-  <script>
-(async () => {
-  try {
-    const res = await fetch('/footer.v1.3.0.html?v=1.3.0', { cache: 'no-cache' });
-    const html = await res.text();
-    const host = document.getElementById('site-footer');
-    if (host) host.outerHTML = html;
-  } catch (e) { console.error('[Footer] load failed:', e); }
-})();
-  </script>
   <script type="module" src="/src/pages/GearPage.js"></script>
 <!-- === TTG Cookie Consent START === -->
 <div id="ttg-consent" class="ttg-consent" hidden>
@@ -211,6 +209,16 @@
     });
     if (navs.length > 0) console.warn('Duplicate navs detected on /gear:', navs.length);
   } catch(e){}
+</script>
+<!-- GLOBAL FOOTER v1.3.0 -->
+<div id="site-footer"></div>
+<script>
+  (function(){
+    fetch('/footer.v1.3.0.html')
+      .then(r => r.text())
+      .then(html => { document.getElementById('site-footer').innerHTML = html; })
+      .catch(console.error);
+  })();
 </script>
 </body>
 </html>
