@@ -445,8 +445,8 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   const generalChips = isEmpty ? '' : renderChips(env.detailChips ?? []);
   const bioloadLabel = isEmpty ? '0% → 0% of capacity' : env.bioloadLabel;
   const aggressionLabel = isEmpty ? '0%' : env.aggressionLabel;
-  const bioloadInfoBtn = '<button type="button" class="info-btn" data-info="Approximate stocking level for your tank size. Stay in green for better stability.">i</button>';
-  const aggressionInfoBtn = '<button type="button" class="info-btn" data-info="Estimated compatibility risk. Adding aggressive or territorial species will raise this.">i</button>';
+  const bioloadInfoBtn = '<button type="button" class="icon-button info info-btn" data-role="info-btn" data-info-id="bioload-tip" aria-expanded="false" aria-controls="bioload-tip" title="More info">i</button>';
+  const aggressionInfoBtn = '<button type="button" class="icon-button info info-btn" data-role="info-btn" data-info-id="aggression-tip" aria-expanded="false" aria-controls="aggression-tip" title="More info">i</button>';
 
   if (isMobile) {
     root.classList.add('env-bars--xl');
