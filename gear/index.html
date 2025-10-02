@@ -4,17 +4,213 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gear Guide | The Tank Guide</title>
+  <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/src/styles/gear.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="/favicon.ico" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
 </head>
-<body>
+<body class="theme-light">
   <div id="site-nav"></div>
   <main id="gear-main">
     <div id="gear-root" data-testid="gear-root"></div>
   </main>
+  <div id="site-footer"></div>
+  <script>
+(async () => {
+  try {
+    const res = await fetch('/footer.v1.2.3.html?v=1.2.3', { cache: 'no-cache' });
+    const html = await res.text();
+    const host = document.getElementById('site-footer');
+    if (host) host.outerHTML = html;
+  } catch (e) { console.error('[Footer] load failed:', e); }
+})();
+  </script>
   <script type="module" src="/src/pages/GearPage.js"></script>
+<!-- === TTG Cookie Consent START === -->
+<div id="ttg-consent" class="ttg-consent" hidden>
+  <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
+    <h3 id="ttg-consent-title">Cookies & Advertising</h3>
+    <p id="ttg-consent-desc">
+      We use cookies to run this site and (if you allow) to show relevant ads from Google AdSense. You can accept all cookies, reject personalized ads, or manage preferences anytime.
+    </p>
+    <div class="ttg-consent__actions">
+      <button type="button" class="ttg-btn ttg-btn--secondary" id="ttg-consent-reject">Reject (Non-personalized)</button>
+      <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-manage">Manage</button>
+      <button type="button" class="ttg-btn ttg-btn--primary" id="ttg-consent-accept">Accept All</button>
+    </div>
+  </div>
+</div>
+
+<div id="ttg-consent-modal" class="ttg-consent-modal" hidden aria-modal="true" role="dialog" aria-labelledby="ttg-consent-modal-title">
+  <div class="ttg-consent-modal__panel">
+    <h3 id="ttg-consent-modal-title">Cookie Preferences</h3>
+    <form id="ttg-consent-form">
+      <label class="ttg-row">
+        <input type="checkbox" checked disabled />
+        <span><strong>Essential</strong> — required for core site functions.</span>
+      </label>
+      <label class="ttg-row">
+        <input type="checkbox" id="ttg-c-analytics" />
+        <span><strong>Analytics</strong> — understand usage (if enabled later).</span>
+      </label>
+      <label class="ttg-row">
+        <input type="checkbox" id="ttg-c-ads" />
+        <span><strong>Advertising</strong> — allow personalized ads (Google AdSense).</span>
+      </label>
+      <div class="ttg-consent-modal__actions">
+        <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-cancel">Cancel</button>
+        <button type="submit" class="ttg-btn ttg-btn--primary">Save Preferences</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- === TTG Cookie Consent SCRIPT (checkbox fix + status) START === -->
+<script>
+(function(){
+  const KEY = 'ttg.consent.v1';
+
+  const $banner = document.getElementById('ttg-consent');
+  const $modal  = document.getElementById('ttg-consent-modal');
+  const $btnAccept = document.getElementById('ttg-consent-accept');
+  const $btnReject = document.getElementById('ttg-consent-reject');
+  const $btnManage = document.getElementById('ttg-consent-manage');
+  const $btnCancel = document.getElementById('ttg-consent-cancel');
+  const $form = document.getElementById('ttg-consent-form');
+
+  // Checkboxes
+  const $rows        = $form ? $form.querySelectorAll('.ttg-row') : [];
+  const $ckEssential = $rows[0] ? $rows[0].querySelector('input[type="checkbox"]') : null;
+  const $ckAnalytics = document.getElementById('ttg-c-analytics');
+  const $ckAds       = document.getElementById('ttg-c-ads');
+
+  // Add a small status line so you can verify state visually
+  let $status = $form ? $form.querySelector('.ttg-consent-status') : null;
+  if ($form && !$status){
+    $status = document.createElement('p');
+    $status.className = 'ttg-consent-status';
+    $form.appendChild($status);
+  }
+
+  function updateStatus(){
+    if(!$status) return;
+    const a = $ckAnalytics && $ckAnalytics.checked ? 'ON' : 'OFF';
+    const d = $ckAds && $ckAds.checked ? 'ON' : 'OFF';
+    $status.textContent = `Current: Analytics ${a} • Advertising ${d}`;
+  }
+
+  function save(state){
+    localStorage.setItem(KEY, JSON.stringify(state));
+    document.documentElement.setAttribute('data-ad-consent', state.ads ? 'granted' : 'denied');
+  }
+  function load(){
+    try { return JSON.parse(localStorage.getItem(KEY) || ''); } catch(e){ return null; }
+  }
+  function openBanner(){ if ($banner) $banner.hidden = false; }
+  function closeBanner(){ if ($banner) $banner.hidden = true; }
+  function openModal(){
+    if(!$modal) return;
+    $modal.hidden = false;
+
+    // Essential MUST be checked & disabled
+    if ($ckEssential){
+      $ckEssential.checked = true;
+      $ckEssential.disabled = true;
+    }
+
+    const s = load() || {analytics:false, ads:false};
+    if ($ckAnalytics) $ckAnalytics.checked = !!s.analytics;
+    if ($ckAds)       $ckAds.checked = !!s.ads;
+    updateStatus();
+  }
+  function closeModal(){ if($modal) $modal.hidden = true; }
+
+  // Ensure modal hidden initially
+  closeModal();
+
+  const state = load();
+  if (!state){
+    // First visit: banner only
+    openBanner();
+  } else {
+    save(state);
+    closeBanner(); closeModal();
+  }
+
+  // Wire up clicks on the whole row to toggle the checkbox (except Essential)
+  $rows.forEach(function(row, idx){
+    row.addEventListener('click', function(e){
+      const cb = row.querySelector('input[type="checkbox"]');
+      if (!cb) return;
+      if (idx === 0) return; // Essential: no toggle
+      if (e.target.tagName.toLowerCase() !== 'input'){
+        cb.checked = !cb.checked;
+        updateStatus();
+      }
+    });
+  });
+  if ($ckAnalytics) $ckAnalytics.addEventListener('change', updateStatus);
+  if ($ckAds)       $ckAds.addEventListener('change', updateStatus);
+
+  // Buttons
+  if ($btnAccept) $btnAccept.addEventListener('click', function(){
+    save({ essential:true, analytics:true, ads:true, ts:Date.now() });
+    closeModal(); closeBanner();
+  });
+  if ($btnReject) $btnReject.addEventListener('click', function(){
+    save({ essential:true, analytics:false, ads:false, ts:Date.now() });
+    closeModal(); closeBanner();
+  });
+  if ($btnManage) $btnManage.addEventListener('click', openModal);
+  if ($btnCancel) $btnCancel.addEventListener('click', closeModal);
+
+  if ($form) $form.addEventListener('submit', function(e){
+    e.preventDefault();
+    save({
+      essential: true,
+      analytics: $ckAnalytics ? !!$ckAnalytics.checked : false,
+      ads:       $ckAds ? !!$ckAds.checked : false,
+      ts: Date.now()
+    });
+    closeModal(); closeBanner();
+  });
+
+  // Close modal on outside click
+  if ($modal) $modal.addEventListener('click', function(e){
+    if (e.target === $modal) closeModal();
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && $modal && !$modal.hidden) closeModal();
+  });
+
+  // Guard for ad scripts
+  if (document.documentElement.getAttribute('data-ad-consent') !== 'granted'){
+    window.__TTG_ADS_DISABLED__ = true;
+  }
+
+  // Public API for footer link
+  window.cookieConsent = {
+    open: function(){ openModal(); },
+    reset: function(){ localStorage.removeItem(KEY); closeModal(); openBanner(); }
+  };
+})();
+</script>
+<!-- === TTG Cookie Consent SCRIPT (checkbox fix + status) END === -->
+
+<!-- === TTG Cookie Consent END === -->
+<script>
+  try {
+    var navs = Array.from(document.querySelectorAll('nav')).filter(function(node){
+      return !node.closest('#global-nav');
+    });
+    if (navs.length > 0) console.warn('Duplicate navs detected on /gear:', navs.length);
+  } catch(e){}
+</script>
 </body>
 </html>
