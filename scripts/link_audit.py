@@ -97,7 +97,14 @@ def read_from_master_or_nav(master_csv="gear_master.csv", nav_json="data/master_
                 combined.extend(read_csv_rows(p_path))
         return combined, f"nav:{nav_json}"
     # else, try common per-category files in ./ (optional)
-    candidates = ["gear_filtration.csv", "gear_lighting.csv", "gear_heating.csv"]
+    candidates = [
+        "gear_filtration.csv",
+        "gear_lighting.csv",
+        "gear_heating.csv",
+        "data/gear_filtration.csv",
+        "data/gear_lighting.csv",
+        "data/gear_heating.csv",
+    ]
     combined = []
     used = []
     for c in candidates:

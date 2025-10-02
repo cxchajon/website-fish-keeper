@@ -21,54 +21,60 @@ const __dirname = dirname(__filename);
 let baseURL = '';
 let server: http.Server;
 
-test.beforeAll(async () => {
-  const root = resolve(__dirname, '..');
-  server = http.createServer(async (req, res) => {
-    try {
-      const requestUrl = new URL(req.url ?? '/', 'http://127.0.0.1');
-      let filePath = requestUrl.pathname;
-      if (filePath.endsWith('/')) {
-        filePath = join(filePath, 'index.html');
-      }
-      if (filePath === '/' || filePath === '') {
-        filePath = '/index.html';
-      }
-      const normalised = normalize(filePath)
-        .replace(/^([/\\])+/u, '')
-        .replace(/^\.\.(?:[/\\]|$)/gu, '');
-      const diskPath = join(root, normalised);
-      let fileStat: ReturnType<typeof statSync> | undefined;
-      try {
-        fileStat = statSync(diskPath);
-      } catch {
-        fileStat = undefined;
-      }
-      if (!fileStat || fileStat.isDirectory()) {
-        res.statusCode = 404;
-        res.end('Not found');
-        return;
-      }
-      const data = await readFile(diskPath);
-      const contentType = mimeTypes[extname(diskPath).toLowerCase()] ?? 'application/octet-stream';
-      res.setHeader('Content-Type', contentType);
-      res.end(data);
-    } catch (error) {
-      res.statusCode = 500;
-      res.end(String(error));
+async function serveStatic(req: http.IncomingMessage, res: http.ServerResponse) {
+  try {
+    const requestUrl = new URL(req.url ?? '/', 'http://127.0.0.1');
+    let filePath = requestUrl.pathname;
+    if (filePath.endsWith('/')) {
+      filePath = join(filePath, 'index.html');
     }
-  });
-
-  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
-  const address = server.address();
-  if (address && typeof address === 'object') {
-    baseURL = `http://127.0.0.1:${address.port}`;
-  } else {
-    throw new Error('Failed to start static server');
+    if (filePath === '/' || filePath === '') {
+      filePath = '/index.html';
+    }
+    const normalised = normalize(filePath)
+      .replace(/^([/\\])+/u, '')
+      .replace(/^\.\.(?:[/\\]|$)/gu, '');
+    const root = resolve(__dirname, '..');
+    const diskPath = join(root, normalised);
+    let fileStat: ReturnType<typeof statSync> | undefined;
+    try {
+      fileStat = statSync(diskPath);
+    } catch {
+      fileStat = undefined;
+    }
+    if (!fileStat || fileStat.isDirectory()) {
+      res.statusCode = 404;
+      res.end('Not found');
+      return;
+    }
+    const data = await readFile(diskPath);
+    const contentType = mimeTypes[extname(diskPath).toLowerCase()] ?? 'application/octet-stream';
+    res.setHeader('Content-Type', contentType);
+    res.end(data);
+  } catch (error) {
+    res.statusCode = 500;
+    res.end(String(error));
   }
+}
+
+async function startServer() {
+  return new Promise<string>((resolveServer) => {
+    server = http.createServer(serveStatic);
+    server.listen(0, '127.0.0.1', () => {
+      const address = server.address();
+      if (address && typeof address === 'object') {
+        resolveServer(`http://127.0.0.1:${address.port}`);
+      }
+    });
+  });
+}
+
+test.beforeAll(async () => {
+  baseURL = await startServer();
 });
 
 test.afterAll(async () => {
-  await new Promise<void>((resolve) => server.close(() => resolve()));
+  await new Promise<void>((resolveClose) => server.close(() => resolveClose()));
 });
 
 async function gotoGear(page) {
@@ -79,62 +85,46 @@ async function gotoGear(page) {
       consoleErrors.push(message.text());
     }
   });
-  await page.goto(`${baseURL}/gear.html`);
+  await page.goto(`${baseURL}/gear/`);
   return consoleErrors;
 }
 
-const tankSizeOption = async (page, value: string) => {
-  await page.selectOption('#tank-size', value);
+const selectTankSize = async (page, value: string) => {
+  await page.selectOption('#context-tank-size', value);
 };
 
-test('gear page loads without console errors', async ({ page }) => {
+test('gear guide loads without console errors', async ({ page }) => {
   const errors = await gotoGear(page);
-  await expect(errors, 'No console errors expected on load').toEqual([]);
+  await expect(errors).toEqual([]);
+  await expect(page.locator('[data-testid="context-bar"]')).toBeVisible();
+  await expect(page.locator('[data-testid="recommended-stack"] .recommended-card')).toHaveCount(4);
 });
 
-test('filter list renders for 29 gallons and computes turnover', async ({ page }) => {
+test('context changes update filtration list', async ({ page }) => {
   await gotoGear(page);
-  await tankSizeOption(page, '29');
-  const filterCards = page.locator('#filter-options .product');
-  await expect(filterCards).toHaveCountGreaterThan(0);
-  const first = filterCards.first();
-  const gph = Number(await first.getAttribute('data-gph'));
-  const turnover = Number(await first.getAttribute('data-turnover'));
-  expect(gph).toBeGreaterThan(0);
-  expect(turnover).toBeGreaterThan(0);
-  expect(Math.abs(turnover - gph / 29)).toBeLessThan(0.2);
+  await selectTankSize(page, '75g');
+  await page.selectOption('#context-bio-load', 'Heavy');
+  const filtrationAccordion = page.locator('[data-testid="accordion-filtration"]');
+  await expect(filtrationAccordion).toBeVisible();
+  const cards = filtrationAccordion.locator('.product-card');
+  await expect(cards.first()).toBeVisible();
 });
 
-test('medium plant level suggests one size up lighting', async ({ page }) => {
+test('why this pick drawer opens from recommended card', async ({ page }) => {
   await gotoGear(page);
-  await tankSizeOption(page, '29');
-  await page.selectOption('#plant-level', 'med');
-  const suggestion = page.locator('#light-options .product:has-text("One size up for even coverage")');
-  await expect(suggestion.first()).toBeVisible();
+  await page.locator('[data-testid="recommended-stack"] .recommended-card .btn.secondary').first().click();
+  const drawer = page.locator('[data-testid="why-pick-drawer"]');
+  await expect(drawer).toBeVisible();
+  await expect(drawer).not.toHaveClass(/is-hidden/);
+  await drawer.locator('button', { hasText: 'Close' }).click();
+  await expect(drawer).toHaveClass(/is-hidden/);
 });
 
-test('adding items updates cart count and total', async ({ page }) => {
+test('tank smart modal toggles from CTA', async ({ page }) => {
   await gotoGear(page);
-  await tankSizeOption(page, '29');
-  await page.locator('#tank-options .product button.add-cart').first().click();
-  await page.locator('#filter-options .product button.add-cart').first().click();
-  await expect(page.locator('#cart-count')).toHaveText('2');
-  const totalText = await page.locator('#cart-total').textContent();
-  expect(totalText).not.toBeNull();
-  const total = Number(totalText);
-  expect(total).toBeCloseTo(234.98, 2);
-});
-
-test('copy all links produces newline separated URLs', async ({ page }) => {
-  await gotoGear(page);
-  await tankSizeOption(page, '29');
-  await page.locator('#tank-options .product button.add-cart').first().click();
-  await page.locator('#filter-options .product button.add-cart').first().click();
-  await page.click('#cart-buy-all');
-  await expect(page.locator('#cart-modal-backdrop')).toBeVisible();
-  const textarea = page.locator('#cart-modal-textarea');
-  await expect(textarea).toHaveValue(/\n/);
-  await page.click('#cart-copy');
-  const status = await page.locator('#cart-modal-copy-status').innerText();
-  expect(status.trim().length).toBeGreaterThan(0);
+  await page.click('text=How to Buy a Tank Smart');
+  const modal = page.locator('[data-testid="tank-smart-modal"]');
+  await expect(modal).toHaveClass(/is-open/);
+  await modal.locator('button', { hasText: 'Close' }).click();
+  await expect(modal).not.toHaveClass(/is-open/);
 });
