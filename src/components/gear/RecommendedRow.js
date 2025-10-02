@@ -54,6 +54,39 @@ function createRecommendedCard(slot, item, context, onSelect, onAdd) {
   actions.append(detailButton, addButton);
   card.append(actions);
 
+  const amazonLink = (item.Amazon_Link ?? '').trim();
+  const chewyLink = (item.Chewy_Link ?? '').trim();
+  if (amazonLink || chewyLink) {
+    const linkGroup = createElement('div', { className: 'recommended-card__links' });
+    if (amazonLink) {
+      linkGroup.appendChild(
+        createElement('a', {
+          className: 'btn link',
+          text: 'Buy on Amazon',
+          attrs: {
+            href: amazonLink,
+            target: '_blank',
+            rel: 'noopener noreferrer',
+          },
+        }),
+      );
+    }
+    if (chewyLink) {
+      linkGroup.appendChild(
+        createElement('a', {
+          className: 'btn link',
+          text: 'Buy on Chewy',
+          attrs: {
+            href: chewyLink,
+            target: '_blank',
+            rel: 'noopener noreferrer',
+          },
+        }),
+      );
+    }
+    card.append(linkGroup);
+  }
+
   return card;
 }
 

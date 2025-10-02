@@ -54,22 +54,51 @@ function createCategorySection(options) {
     onTabChange,
   } = options;
 
-  const details = createElement('details', {
-    className: 'category-panel',
-    attrs: { 'data-testid': `accordion-${key.toLowerCase()}` },
-  });
-  details.open = open;
-  details.addEventListener('toggle', () => {
-    onToggle(key, details.open);
+  const slug = key.toLowerCase();
+  const panelId = `category-panel-${slug}`;
+  const triggerId = `${panelId}-trigger`;
+  const section = createElement('section', {
+    className: `category-panel ${open ? 'is-open' : ''}`,
+    attrs: { 'data-testid': `accordion-${slug}` },
   });
 
-  const summary = createElement('summary', { className: 'category-panel__header' }, [
-    createElement('h2', { text: label }),
+  const header = createElement('div', { className: 'category-panel__header' });
+  const trigger = createElement('button', {
+    className: 'category-panel__trigger',
+    attrs: {
+      type: 'button',
+      id: triggerId,
+      'aria-controls': panelId,
+      'aria-expanded': String(open),
+    },
+  });
+  trigger.append(
+    createElement('span', { className: 'category-panel__title', text: label }),
     createElement('span', { className: 'category-panel__count', text: `${items.length} picks` }),
-  ]);
-  details.appendChild(summary);
+    createElement('span', { className: 'category-panel__icon', attrs: { 'aria-hidden': 'true' }, text: open ? '−' : '+' }),
+  );
 
-  const body = createElement('div', { className: 'category-panel__body' });
+  trigger.addEventListener('click', () => {
+    const willOpen = trigger.getAttribute('aria-expanded') !== 'true';
+    onToggle(key, willOpen);
+  });
+
+  header.appendChild(trigger);
+  section.appendChild(header);
+
+  const body = createElement('div', {
+    className: 'category-panel__body',
+    attrs: {
+      id: panelId,
+      role: 'region',
+      'aria-labelledby': triggerId,
+      'aria-hidden': String(!open),
+    },
+  });
+  if (!open) {
+    body.setAttribute('hidden', '');
+  }
+
   if (key === 'Filtration') {
     body.appendChild(
       SubTabs({
@@ -86,8 +115,8 @@ function createCategorySection(options) {
     body.appendChild(createGrid(items, context, onSelect, onAdd));
   }
 
-  details.appendChild(body);
-  return details;
+  section.appendChild(body);
+  return section;
 }
 
 export function CategoryAccordion(groups, context, state, handlers) {

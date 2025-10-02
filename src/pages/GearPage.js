@@ -8,19 +8,58 @@ import { CategoryAccordion } from '../components/gear/CategoryAccordion.js';
 import { WhyPickDrawer } from '../components/gear/WhyPickDrawer.js';
 import { TankSmartModal } from '../components/gear/TankSmartModal.js';
 
+const OPEN_CATEGORY_STORAGE_KEY = 'ttg.gear.openCategory';
+
+function readStoredOpenCategory() {
+  try {
+    return sessionStorage.getItem(OPEN_CATEGORY_STORAGE_KEY) || '';
+  } catch (error) {
+    return '';
+  }
+}
+
+function persistOpenCategory(value) {
+  try {
+    if (value) {
+      sessionStorage.setItem(OPEN_CATEGORY_STORAGE_KEY, value);
+    } else {
+      sessionStorage.removeItem(OPEN_CATEGORY_STORAGE_KEY);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('Unable to persist open category state', error);
+  }
+}
+
 const state = {
   loading: true,
   error: null,
   rows: [],
   context: { ...CONTEXT_DEFAULTS },
-  openCategory: 'Filtration',
+  openCategory: readStoredOpenCategory(),
   filtrationTab: 'All',
   selectedItem: null,
   showModal: false,
   alternatives: { Budget: null, Mid: null, Premium: null },
+  build: [],
+  toast: null,
 };
 
 const root = document.getElementById('gear-root');
+let toastTimeout = null;
+
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') {
+    return;
+  }
+  if (state.showModal) {
+    event.preventDefault();
+    setState({ showModal: false });
+  } else if (state.selectedItem) {
+    event.preventDefault();
+    setState({ selectedItem: null });
+  }
+});
 
 function groupRows(rows, context) {
   const categories = {
@@ -43,7 +82,11 @@ function groupRows(rows, context) {
 }
 
 function setState(patch) {
+  const previousCategory = state.openCategory;
   Object.assign(state, patch);
+  if (patch.openCategory !== undefined && previousCategory !== state.openCategory) {
+    persistOpenCategory(state.openCategory);
+  }
   if (patch.context && state.selectedItem) {
     state.alternatives = computeAlternatives(state.selectedItem);
   }
@@ -53,6 +96,40 @@ function setState(patch) {
 function handleSelectItem(item) {
   const alternatives = computeAlternatives(item);
   setState({ selectedItem: item, alternatives });
+}
+
+function handleAddToBuild(item) {
+  if (!item) {
+    return;
+  }
+
+  const entry = {
+    name: item.Product_Name ?? 'Unnamed product',
+    category: item.Category ?? '',
+    specs: item.Recommended_Specs ?? '',
+    link: item.Amazon_Link ?? item.Chewy_Link ?? '',
+  };
+
+  window.__build = window.__build || [];
+  window.__build.push(entry);
+
+  const nextBuild = [...state.build, entry];
+  setState({ build: nextBuild });
+  showToast('Added to Build');
+}
+
+function showToast(message) {
+  if (!message) {
+    return;
+  }
+
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
+    setState({ toast: null });
+    toastTimeout = null;
+  }, 2400);
+
+  setState({ toast: message });
 }
 
 function computeAlternatives(item) {
@@ -71,6 +148,30 @@ function computeAlternatives(item) {
     }
   });
   return alt;
+}
+
+function buildStockingAdvisorUrl(context) {
+  const params = new URLSearchParams();
+  if (context.tankSize) {
+    params.set('size', context.tankSize);
+  }
+  params.set('planted', context.planted ? '1' : '0');
+  if (context.bioLoad) {
+    params.set('bio', context.bioLoad);
+  }
+  if (context.budget && context.budget !== 'Any') {
+    params.set('budget', context.budget);
+  }
+  const search = params.toString();
+  return `/stocking-advisor${search ? `?${search}` : ''}`;
+}
+
+function Toast(message) {
+  return createElement('div', {
+    className: 'gear-toast',
+    text: message,
+    attrs: { role: 'status', 'aria-live': 'polite' },
+  });
 }
 
 function render() {
@@ -94,6 +195,13 @@ function render() {
   const page = createElement('div', { className: 'gear-wrap' });
   const contextBar = ContextBar(state.context, (context) => setState({ context }));
   const actions = createElement('div', { className: 'context-actions' });
+  const stockingAdvisorUrl = buildStockingAdvisorUrl(state.context);
+  const stockingButton = createElement('a', {
+    className: 'btn secondary',
+    text: 'Open Stocking Advisor',
+    attrs: { href: stockingAdvisorUrl },
+  });
+  actions.appendChild(stockingButton);
   const modalButton = createElement('button', {
     className: 'btn tertiary',
     text: 'How to Buy a Tank Smart',
@@ -108,10 +216,7 @@ function render() {
     actions,
     RecommendedRow(state.rows, state.context, {
       onSelect: handleSelectItem,
-      onAdd: () => {
-        // eslint-disable-next-line no-console
-        console.info('Add to Build clicked - feature coming soon');
-      },
+      onAdd: handleAddToBuild,
     }),
     CategoryAccordion(
       groups,
@@ -126,10 +231,7 @@ function render() {
           }
         },
         onSelect: handleSelectItem,
-        onAdd: () => {
-          // eslint-disable-next-line no-console
-          console.info('Add to Build clicked - feature coming soon');
-        },
+        onAdd: handleAddToBuild,
         onFiltrationTab: (tab) => setState({ filtrationTab: tab }),
       },
     ),
@@ -146,7 +248,19 @@ function render() {
     }),
   );
 
+  if (state.toast) {
+    page.appendChild(Toast(state.toast));
+  }
+
   root.appendChild(page);
+
+  if (state.selectedItem) {
+    const drawer = page.querySelector('[data-testid="why-pick-drawer"]');
+    const focusTarget = drawer?.querySelector('[data-focus-default]') ?? drawer?.querySelector('button');
+    if (focusTarget) {
+      focusTarget.focus();
+    }
+  }
 }
 
 async function init() {

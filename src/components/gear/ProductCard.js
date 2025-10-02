@@ -50,5 +50,41 @@ export function ProductCard(item, options = {}) {
   actions.append(detailsButton, addButton);
   card.append(actions);
 
+  const links = [];
+  const amazonLink = (item.Amazon_Link ?? '').trim();
+  const chewyLink = (item.Chewy_Link ?? '').trim();
+  if (amazonLink) {
+    links.push(
+      createElement('a', {
+        className: 'product-card__link',
+        text: 'Buy on Amazon',
+        attrs: {
+          href: amazonLink,
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        },
+      }),
+    );
+  }
+  if (chewyLink) {
+    links.push(
+      createElement('a', {
+        className: 'product-card__link',
+        text: 'Buy on Chewy',
+        attrs: {
+          href: chewyLink,
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        },
+      }),
+    );
+  }
+
+  if (links.length) {
+    const linkGroup = createElement('div', { className: 'product-card__links' });
+    links.forEach((link) => linkGroup.appendChild(link));
+    card.append(linkGroup);
+  }
+
   return card;
 }

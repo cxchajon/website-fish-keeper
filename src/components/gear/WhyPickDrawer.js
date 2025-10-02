@@ -49,23 +49,27 @@ function alternativeList(alternatives, onSelect) {
 
 export function WhyPickDrawer(options) {
   const { item, context, alternatives, onClose, onSelectAlternative } = options;
+  const isOpen = Boolean(item);
   const drawer = createElement('aside', {
     className: 'why-pick-drawer',
-    attrs: { 'data-testid': 'why-pick-drawer', 'aria-hidden': 'true' },
+    attrs: {
+      'data-testid': 'why-pick-drawer',
+      'aria-hidden': String(!isOpen),
+      role: 'dialog',
+      'aria-modal': 'true',
+      tabindex: '-1',
+    },
   });
 
-  if (!item) {
+  if (!isOpen) {
     drawer.classList.add('is-hidden');
-    drawer.setAttribute('aria-hidden', 'true');
     return drawer;
   }
-
-  drawer.setAttribute('aria-hidden', 'false');
 
   const closeButton = createElement('button', {
     className: 'btn icon',
     text: 'Close',
-    attrs: { type: 'button', 'aria-label': 'Close drawer' },
+    attrs: { type: 'button', 'aria-label': 'Close drawer', 'data-focus-default': 'true' },
   });
   closeButton.addEventListener('click', onClose);
 
@@ -85,6 +89,8 @@ export function WhyPickDrawer(options) {
     list,
     alternativeList(alternatives, onSelectAlternative),
   );
+
+  drawer.classList.add('is-open');
 
   return drawer;
 }
