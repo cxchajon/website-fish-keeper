@@ -1428,6 +1428,7 @@
   function save(state){
     localStorage.setItem(KEY, JSON.stringify(state));
     document.documentElement.setAttribute('data-ad-consent', state.ads ? 'granted' : 'denied');
+    window.dispatchEvent(new CustomEvent('ttg:consent-change'));
   }
   function load(){
     try { return JSON.parse(localStorage.getItem(KEY) || ''); } catch(e){ return null; }
@@ -1525,15 +1526,49 @@
 </script>
 <!-- === TTG Cookie Consent SCRIPT (checkbox fix + status) END === -->
 
+<!-- === TTG Consent → Ad Visibility Controller START === -->
 <script>
 (function(){
-  var denied = document.documentElement.getAttribute('data-ad-consent') !== 'granted';
-  if (window.__TTG_ADS_DISABLED__ || denied){
-    document.documentElement.classList.add('is-ads-disabled');
+  var KEY = 'ttg.consent.v1';
+
+  function hasGranted(){
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY) || '');
+      return !!(s && s.ads === true);
+    } catch(e){ return false; }
   }
+
+  function applyConsentToDOM(){
+    var granted = hasGranted();
+    document.documentElement.setAttribute('data-ad-consent', granted ? 'granted' : 'denied');
+    document.documentElement.classList.toggle('is-ads-disabled', !granted);
+
+    // If we’re only showing placeholders (no AdSense yet),
+    // simply un-hide or keep hidden via the CSS above.
+    // (When you later enable the AdSense loader, mount units here if granted.)
+  }
+
+  // Run now
+  applyConsentToDOM();
+
+  // Listen for same-page consent changes (buttons & form), then update immediately
+  ['ttg-consent-accept','ttg-consent-reject'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('click', function(){ setTimeout(applyConsentToDOM, 0); });
+  });
+  var form = document.getElementById('ttg-consent-form');
+  if (form) form.addEventListener('submit', function(){ setTimeout(applyConsentToDOM, 0); });
+
+  // If your cookie script dispatches a custom event, react to it too
+  window.addEventListener('ttg:consent-change', applyConsentToDOM);
+
+  // Cross-tab changes (Storage event)
+  window.addEventListener('storage', function(e){
+    if (e.key === KEY) applyConsentToDOM();
+  });
 })();
 </script>
-
+<!-- === TTG Consent → Ad Visibility Controller END === -->
 <!-- === TTG Cookie Consent END === -->
 
 </body>
