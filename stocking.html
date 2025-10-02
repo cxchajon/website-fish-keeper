@@ -921,6 +921,13 @@
     </header>
 
     <div class="wrap page-content">
+      <!-- === TTG AD: TOP START === -->
+      <div class="ttg-adunit ttg-adunit--top" id="ad-top-1" data-ad-slot="top-1" aria-label="Advertisement">
+        <!-- AdSense will mount here when approved -->
+        <span>Ad — Top placeholder</span>
+      </div>
+      <!-- === TTG AD: TOP END === -->
+
       <!-- Tank Size card -->
       <div class="card ttg-card tank-size-card" id="tank-size-card">
         <div class="card-header">
@@ -1306,6 +1313,13 @@
         </div>
       </section>
 
+      <!-- === TTG AD: POST-RESULTS START === -->
+      <div class="ttg-adunit ttg-adunit--bottom" id="ad-bottom-1" data-ad-slot="post-results-1" aria-label="Advertisement">
+        <!-- AdSense will mount here when approved -->
+        <span>Ad — Post-results placeholder</span>
+      </div>
+      <!-- === TTG AD: POST-RESULTS END === -->
+
       <button class="see-gear" id="btn-gear" type="button" data-testid="btn-gear">See Gear Suggestions</button>
 
       <div id="bioload-tip" class="ui-tip" data-role="info-tip" role="tooltip" hidden>
@@ -1508,6 +1522,15 @@
 })();
 </script>
 <!-- === TTG Cookie Consent SCRIPT (checkbox fix + status) END === -->
+
+<script>
+(function(){
+  var denied = document.documentElement.getAttribute('data-ad-consent') !== 'granted';
+  if (window.__TTG_ADS_DISABLED__ || denied){
+    document.documentElement.classList.add('is-ads-disabled');
+  }
+})();
+</script>
 
 <!-- === TTG Cookie Consent END === -->
 
