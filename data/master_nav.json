@@ -1,0 +1,8 @@
+{
+  "generated_at": "2024-05-01",
+  "files": [
+    { "category": "Filtration", "path": "/data/gear_filtration.csv" },
+    { "category": "Lighting", "path": "/data/gear_lighting.csv" },
+    { "category": "Heating", "path": "/data/gear_heating.csv" }
+  ]
+}

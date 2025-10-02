@@ -169,7 +169,7 @@
       return;
     }
     try {
-      const response = await fetch(`nav.html?v=${NAV_VERSION}`, { cache: 'no-cache' });
+      const response = await fetch(`/nav.html?v=${NAV_VERSION}`, { cache: 'no-cache' });
       if (!response.ok) {
         throw new Error(`Failed to fetch nav: ${response.status}`);
       }

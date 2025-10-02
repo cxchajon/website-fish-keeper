@@ -14,7 +14,7 @@ This repository powers **The Tank Guide**, a static website with aquarium tools 
 - **Home (`/index.html`)** — Brand block, tagline, feature grid (Stocking Advisor, Gear, Cycling Coach, Media)  
 - **About (`/about.html`)** — Company story, mission, and vision  
 - **Media (`/media.html`)** — Video hub, book promotion, blog/article links  
-- **Gear (`/gear.html`)** — Aquarium gear recommendations and guides  
+- **Gear (`/gear/`)** — Aquarium gear recommendations and guides
 - **Cycling Coach (`/params.html`)** — Interactive cycle tracker & 24-Hour Challenge  
 - **Contact (`/contact-feedback.html`)** — Formspree integration, reCAPTCHA, feedback options
 

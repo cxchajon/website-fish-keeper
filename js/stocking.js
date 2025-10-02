@@ -848,7 +848,7 @@ function bindInputs() {
     if (!computed) return;
     const payload = buildGearPayload();
     sessionStorage.setItem('ttg_stocking_state', JSON.stringify(payload));
-    window.location.href = '/gear.html';
+    window.location.href = '/gear/';
   });
 }
 
