@@ -1511,4 +1511,23 @@ body.planted-active #cycling-coach .cc-title__leaf {
   flex-shrink: 0;
 }
 /* === TTG Cookie Consent: visibility & sizing PATCH END === */
+/* === TTG Cookie Consent: checkbox visibility PATCH START === */
+/* Force native checkbox UI (some resets hide it) */
+.ttg-row input[type="checkbox"]{
+  -webkit-appearance: checkbox;
+  appearance: checkbox;
+  width:16px;
+  height:16px;
+  margin-top:3px;
+  flex-shrink:0;
+  cursor:pointer;
+  accent-color:#ffffff; /* uses your light theme; change if you want */
+}
+/* Make the whole row clickable */
+.ttg-row{ cursor:pointer; }
+/* Prevent text-selection when tapping labels on mobile */
+.ttg-row span{ user-select:none; }
+/* Small, subtle status text */
+.ttg-consent-status{ margin-top:8px; opacity:.8; font-size:.9rem; }
+/* === TTG Cookie Consent: checkbox visibility PATCH END === */
 /* === TTG Cookie Consent END === */

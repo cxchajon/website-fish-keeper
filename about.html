@@ -479,25 +479,40 @@
   </div>
 </div>
 
-<!-- === TTG Cookie Consent SCRIPT (stable) START === -->
+<!-- === TTG Cookie Consent SCRIPT (checkbox fix + status) START === -->
 <script>
 (function(){
   const KEY = 'ttg.consent.v1';
 
   const $banner = document.getElementById('ttg-consent');
   const $modal  = document.getElementById('ttg-consent-modal');
-  const $panel  = $modal ? $modal.querySelector('.ttg-consent-modal__panel') : null;
-
   const $btnAccept = document.getElementById('ttg-consent-accept');
   const $btnReject = document.getElementById('ttg-consent-reject');
   const $btnManage = document.getElementById('ttg-consent-manage');
   const $btnCancel = document.getElementById('ttg-consent-cancel');
+  const $form = document.getElementById('ttg-consent-form');
 
-  const $form        = document.getElementById('ttg-consent-form');
+  // Checkboxes
+  const $rows        = $form ? $form.querySelectorAll('.ttg-row') : [];
+  const $ckEssential = $rows[0] ? $rows[0].querySelector('input[type="checkbox"]') : null;
   const $ckAnalytics = document.getElementById('ttg-c-analytics');
   const $ckAds       = document.getElementById('ttg-c-ads');
 
-  // --- helpers ---
+  // Add a small status line so you can verify state visually
+  let $status = $form ? $form.querySelector('.ttg-consent-status') : null;
+  if ($form && !$status){
+    $status = document.createElement('p');
+    $status.className = 'ttg-consent-status';
+    $form.appendChild($status);
+  }
+
+  function updateStatus(){
+    if(!$status) return;
+    const a = $ckAnalytics && $ckAnalytics.checked ? 'ON' : 'OFF';
+    const d = $ckAds && $ckAds.checked ? 'ON' : 'OFF';
+    $status.textContent = `Current: Analytics ${a} • Advertising ${d}`;
+  }
+
   function save(state){
     localStorage.setItem(KEY, JSON.stringify(state));
     document.documentElement.setAttribute('data-ad-consent', state.ads ? 'granted' : 'denied');
@@ -508,30 +523,50 @@
   function openBanner(){ if ($banner) $banner.hidden = false; }
   function closeBanner(){ if ($banner) $banner.hidden = true; }
   function openModal(){
-    if ($modal) {
-      $modal.hidden = false;
-      const s = load() || {analytics:false, ads:false};
-      if ($ckAnalytics) $ckAnalytics.checked = !!s.analytics;
-      if ($ckAds)       $ckAds.checked = !!s.ads;
-    }
-  }
-  function closeModal(){ if ($modal) $modal.hidden = true; }
+    if(!$modal) return;
+    $modal.hidden = false;
 
-  // --- hard safety on initial state: modal should NEVER auto-open ---
-  closeModal(); // ensure hidden even before any logic runs
+    // Essential MUST be checked & disabled
+    if ($ckEssential){
+      $ckEssential.checked = true;
+      $ckEssential.disabled = true;
+    }
+
+    const s = load() || {analytics:false, ads:false};
+    if ($ckAnalytics) $ckAnalytics.checked = !!s.analytics;
+    if ($ckAds)       $ckAds.checked = !!s.ads;
+    updateStatus();
+  }
+  function closeModal(){ if($modal) $modal.hidden = true; }
+
+  // Ensure modal hidden initially
+  closeModal();
 
   const state = load();
-  if (!state) {
-    // first visit => show only the banner
+  if (!state){
+    // First visit: banner only
     openBanner();
   } else {
-    // existing choice => persist flag and keep everything hidden
     save(state);
-    closeBanner();
-    closeModal();
+    closeBanner(); closeModal();
   }
 
-  // --- wire actions ---
+  // Wire up clicks on the whole row to toggle the checkbox (except Essential)
+  $rows.forEach(function(row, idx){
+    row.addEventListener('click', function(e){
+      const cb = row.querySelector('input[type="checkbox"]');
+      if (!cb) return;
+      if (idx === 0) return; // Essential: no toggle
+      if (e.target.tagName.toLowerCase() !== 'input'){
+        cb.checked = !cb.checked;
+        updateStatus();
+      }
+    });
+  });
+  if ($ckAnalytics) $ckAnalytics.addEventListener('change', updateStatus);
+  if ($ckAds)       $ckAds.addEventListener('change', updateStatus);
+
+  // Buttons
   if ($btnAccept) $btnAccept.addEventListener('click', function(){
     save({ essential:true, analytics:true, ads:true, ts:Date.now() });
     closeModal(); closeBanner();
@@ -554,18 +589,18 @@
     closeModal(); closeBanner();
   });
 
-  // close modal on outside click
+  // Close modal on outside click
   if ($modal) $modal.addEventListener('click', function(e){
     if (e.target === $modal) closeModal();
   });
 
-  // close modal on Escape key
+  // Close on Escape
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape' && $modal && !$modal.hidden) closeModal();
   });
 
-  // Guard: don’t load ads if not consented
-  if (document.documentElement.getAttribute('data-ad-consent') !== 'granted') {
+  // Guard for ad scripts
+  if (document.documentElement.getAttribute('data-ad-consent') !== 'granted'){
     window.__TTG_ADS_DISABLED__ = true;
   }
 
@@ -576,7 +611,8 @@
   };
 })();
 </script>
-<!-- === TTG Cookie Consent SCRIPT (stable) END === -->
+<!-- === TTG Cookie Consent SCRIPT (checkbox fix + status) END === -->
+
 <!-- === TTG Cookie Consent END === -->
 
 </body>
