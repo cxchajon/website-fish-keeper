@@ -2,6 +2,18 @@
   const NAV_VERSION = '1.1.0';
   const NAV_PLACEHOLDER_ID = 'site-nav';
   const HOME_PATH = '/index.html';
+  const PRIVACY_SECTION_IDS = [
+    'privacy-policy',
+    'cookies-tracking',
+    'affiliate-disclosure',
+    'adsense-disclaimer',
+    'terms-of-use',
+    'disclaimer',
+    'copyright-dmca',
+    'accessibility',
+    'contact',
+    'effective-date'
+  ];
 
   if (window.__TTG_NAV_LOADER__) {
     return;
@@ -188,4 +200,5 @@
   }
 
   window.ttgInitNav = initNav;
+  window.__TTG_PRIVACY_SECTION_IDS__ = PRIVACY_SECTION_IDS;
 })();
