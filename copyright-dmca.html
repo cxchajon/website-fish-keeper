@@ -40,6 +40,27 @@
   </style>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
     crossorigin="anonymous"></script>
+  <!-- --- Google CMP (Funding Choices) START --- -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
+  <script>
+    // Required bootstrap per Google; signals CMP presence
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
+  <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
 <body>
   <div id="site-nav"></div>
@@ -221,7 +242,7 @@
   function load(){
     try { return JSON.parse(localStorage.getItem(KEY) || ''); } catch(e){ return null; }
   }
-  function openBanner(){ if ($banner) $banner.hidden = false; }
+  function openBanner(){ if (typeof window.__tcfapi === 'function') { return; } if ($banner) $banner.hidden = false; }
   function closeBanner(){ if ($banner) $banner.hidden = true; }
   function openModal(){
     if(!$modal) return;
@@ -357,6 +378,75 @@
 })();
 </script>
 <!-- === TTG Consent → Ad Visibility Controller END === -->
+<!-- === TTG CMP Consent Bridge START === -->
+<script>
+(function(){
+  // Helper: map TCF consent to our single "ads granted" flag.
+  // We consider "granted" only when Purpose 1 (storage) AND Purpose 4 (select personalised ads)
+  // are consented. If you want to allow NON-personalised ads when only Purpose 1 is granted,
+  // set allowNPA=true below.
+  var allowNPA = true; // if true, we’ll treat Purpose 1 only as "granted" for showing slots (Google will serve NPA ads).
+
+  function setAdConsent(granted){
+    document.documentElement.setAttribute('data-ad-consent', granted ? 'granted' : 'denied');
+    document.documentElement.classList.toggle('is-ads-disabled', !granted);
+    // Inform any listeners (our ad loader later)
+    window.dispatchEvent(new CustomEvent('ttg:consent-change', {detail:{granted}}));
+  }
+
+  // If Google CMP is present, it defines __tcfapi.
+  function hookTCF(){
+    if (typeof window.__tcfapi !== 'function') return false;
+
+    // Hide our local cookie banner when Google CMP is running (EEA users).
+    try{
+      var banner = document.getElementById('ttg-consent');
+      var modal  = document.getElementById('ttg-consent-modal');
+      if (banner) banner.hidden = true;
+      if (modal)  modal.hidden  = true;
+    }catch(e){}
+
+    // Listen for consent changes
+    window.__tcfapi('addEventListener', 2, function(tcData, ok){
+      if(!ok || !tcData) return;
+      // Purpose 1 = storage; Purpose 4 = personalised ads
+      var p = (tcData.purpose && tcData.purpose.consents) || {};
+      var hasP1 = !!p[1];
+      var hasP4 = !!p[4];
+
+      var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
+      setAdConsent(granted);
+    });
+
+    // Also fetch current state once
+    window.__tcfapi('getTCData', 2, function(tcData, ok){
+      if(!ok || !tcData) return;
+      var p = (tcData.purpose && tcData.purpose.consents) || {};
+      var hasP1 = !!p[1];
+      var hasP4 = !!p[4];
+      var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
+      setAdConsent(granted);
+    });
+
+    return true;
+  }
+
+  // Try to hook immediately; if CMP loads a bit later, poll briefly
+  if (!hookTCF()){
+    var tries = 0, t = setInterval(function(){
+      tries++;
+      if (hookTCF() || tries > 40) clearInterval(t); // up to ~4s
+    }, 100);
+  }
+
+  // Fallback for non-EEA visitors (no __tcfapi): keep using our local preference
+  // Our existing local banner writes ttg.consent.v1 with {ads:true|false}.
+  // If CMP absent, keep existing behavior (do not force-show anything here).
+
+})();
+</script>
+<!-- === TTG CMP Consent Bridge END === -->
+
 <!-- === TTG Cookie Consent END === -->
 
 </body>
