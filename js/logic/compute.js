@@ -168,9 +168,20 @@ function calcTank(state, entries, overrideVariant) {
     ?? getTankVariants({ tankId, gallons })[0]
     ?? null;
 
-  const length = Number.isFinite(tankState.lengthIn) && tankState.lengthIn > 0 ? tankState.lengthIn : variant?.length ?? 0;
-  const width = Number.isFinite(tankState.widthIn) && tankState.widthIn > 0 ? tankState.widthIn : variant?.width ?? 0;
-  const height = Number.isFinite(tankState.heightIn) && tankState.heightIn > 0 ? tankState.heightIn : variant?.height ?? 0;
+  const resolveDimension = (value, fallback) => {
+    if (Number.isFinite(value) && value > 0) {
+      return value;
+    }
+    return Number.isFinite(fallback) && fallback > 0 ? fallback : null;
+  };
+
+  const lengthIn = resolveDimension(tankState.lengthIn, variant?.length);
+  const widthIn = resolveDimension(tankState.widthIn, variant?.width);
+  const heightIn = resolveDimension(tankState.heightIn, variant?.height);
+
+  const length = Number.isFinite(lengthIn) ? lengthIn : 0;
+  const width = Number.isFinite(widthIn) ? widthIn : 0;
+  const height = Number.isFinite(heightIn) ? heightIn : 0;
   const volume = gallons + 0.7 * sump;
   const turnover = clamp(Number(state.turnover) || 5, 0.5, 20);
   const multiplier = interpolateMultiplier(turnover);
@@ -190,8 +201,11 @@ function calcTank(state, entries, overrideVariant) {
     presetId: tankState.id ?? null,
     presetLabel: tankState.label ?? '',
     length,
+    lengthIn,
     width,
+    widthIn,
     height,
+    heightIn,
     volume,
     turnover,
     multiplier,
