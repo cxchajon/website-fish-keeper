@@ -61,6 +61,12 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://thetankguide.com/cookie-settings.html</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://thetankguide.com/terms.html</loc>
     <lastmod>2025-09-30</lastmod>
     <changefreq>yearly</changefreq>
