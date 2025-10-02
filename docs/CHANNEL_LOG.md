@@ -1,5 +1,24 @@
 # Channel Log
 
+## 2025-09-30 — Developer-Focused README.md Refresh
+- Replaced minimal README with full developer-focused overview.
+- Sections: Overview, Core Pages, Dev Notes, Release Management, Status.
+- Clarified ownership and “no license” (all rights reserved).
+- **Owner:** FishKeepingLifeCo (CXLXC LLC)
+
+## 2025-09-30 — On-Page SEO Fixes (Headings & Keywords)
+- Added missing `<h1>` to Home; improved About H1 to include brand/mission.
+- Corrected heading hierarchy (Contact: added `<h2>`).
+- Fixed capitalization: “24-Hour Challenge.”
+- Inserted missing keywords (“fishkeeping guides,” “FishKeepingLifeCo,” “aquarium guides,” “report logic issues,” “aquarium questions”).
+- **Owner:** FishKeepingLifeCo (CXLXC LLC)
+
+## 2025-09-30 — SEO Metadata Overhaul (Sitewide)
+- Updated `<title>` and `<meta name="description">` across 6 core pages: Home, About, Media, Gear, Params, Contact.
+- Aligned metadata with branding, keywords, and FishKeepingLifeCo ownership.
+- Descriptions expanded to ~160 chars for SEO visibility.
+- **Owner:** FishKeepingLifeCo (CXLXC LLC)
+
 ## 2025-09-30 — Footer v1.2.2
 
 Footer v1.2.2 (Sept 30, 2025)
