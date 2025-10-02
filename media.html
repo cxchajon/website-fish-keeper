@@ -471,6 +471,13 @@
     </section>
   </main>
 
+  <!-- === TTG AD: MEDIA BOTTOM START === -->
+  <div class="ttg-adunit ttg-adunit--media-bottom" id="ad-media-bottom-1" data-ad-slot="media-bottom-1" aria-label="Advertisement">
+    <!-- AdSense will mount here when approved -->
+    <span>Ad — Media bottom placeholder</span>
+  </div>
+  <!-- === TTG AD: MEDIA BOTTOM END === -->
+
   <div id="site-footer"></div>
   <script>
 (async () => {
@@ -654,6 +661,15 @@
 })();
 </script>
 <!-- === TTG Cookie Consent SCRIPT (checkbox fix + status) END === -->
+
+<script>
+(function(){
+  var denied = document.documentElement.getAttribute('data-ad-consent') !== 'granted';
+  if (window.__TTG_ADS_DISABLED__ || denied){
+    document.documentElement.classList.add('is-ads-disabled');
+  }
+})();
+</script>
 
 <!-- === TTG Cookie Consent END === -->
 
