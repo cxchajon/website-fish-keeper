@@ -19,6 +19,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://thetankguide.com/store.html</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
     <loc>https://thetankguide.com/params.html</loc>
     <lastmod>2025-09-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -65,11 +71,5 @@
     <lastmod>2025-09-30</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://thetankguide.com/store.html</loc>
-    <lastmod>2025-10-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
   </url>
 </urlset>
