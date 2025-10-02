@@ -174,6 +174,35 @@ function Toast(message) {
   });
 }
 
+function GearTopAd() {
+  const fragment = document.createDocumentFragment();
+  fragment.appendChild(document.createComment(' === TTG_GearTop (under hero/blurb) === '));
+
+  const container = createElement('div', {
+    className: 'ttg-adunit ttg-adunit--top',
+    attrs: { id: 'ad-top-gear', 'aria-label': 'Advertisement' },
+  });
+
+  const slot = createElement('ins', {
+    className: 'adsbygoogle',
+    attrs: {
+      style: 'display:block',
+      'data-ad-client': 'ca-pub-9905718149811880',
+      'data-ad-slot': '7692943403',
+      'data-ad-format': 'auto',
+      'data-full-width-responsive': 'true',
+    },
+  });
+
+  const script = createElement('script', {
+    text: '(adsbygoogle = window.adsbygoogle || []).push({});',
+  });
+
+  container.append(slot, script);
+  fragment.appendChild(container);
+  return fragment;
+}
+
 function render() {
   if (!root) {
     return;
@@ -212,6 +241,7 @@ function render() {
 
   page.append(
     TransparencyBanner(),
+    GearTopAd(),
     contextBar,
     actions,
     RecommendedRow(state.rows, state.context, {
