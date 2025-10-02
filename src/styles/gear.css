@@ -37,9 +37,12 @@ main {
   margin: 0;
 }
 
-.context-bar {
-  position: sticky;
-  top: 0;
+.context-bar,
+.build-context,
+[data-testid='context-bar'] {
+  position: static;
+  top: auto;
+  inset-block-start: auto;
   background: rgba(10, 16, 30, 0.92);
   backdrop-filter: blur(8px);
   padding: 12px;
@@ -48,7 +51,22 @@ main {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   border: 1px solid var(--border);
-  z-index: 4;
+  z-index: auto;
+  margin: 12px 0 16px;
+}
+
+.context-bar.is-sticky,
+.context-bar.is-stuck,
+.build-context.is-sticky,
+.build-context.is-stuck,
+[data-testid='context-bar'].is-sticky,
+[data-testid='context-bar'].is-stuck,
+.is-sticky,
+.is-stuck {
+  position: static !important;
+  top: auto !important;
+  inset-block-start: auto !important;
+  z-index: auto !important;
 }
 
 .context-field {
