@@ -305,95 +305,117 @@
         <h2 id="ft-title" class="ft-title">Feature Your Tank</h2>
 
         <form id="featureForm" action="https://formspree.io/f/xnngnwld" method="POST" novalidate>
-          <input type="hidden" name="form_name" value="Tank Feature Submission" />
-          <input type="hidden" name="_subject" value="Tank Feature Submission — The Tank Guide" />
-
-          <label class="sr-only" for="hp_field">Don’t fill this out if you’re human:</label>
-          <input id="hp_field" class="sr-only" name="_gotcha" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
-
-          <div class="ft-grid">
+          <!-- ===== BASICS (keep minimal) ===== -->
+          <div class="grid-2">
             <div class="ft-field">
-              <label for="name" class="ft-label">Name / Username *</label>
-              <input id="name" name="name" type="text" class="ft-input" required>
+              <label for="name" class="ft-label">Name</label>
+              <input id="name" name="name" type="text" class="ft-input" placeholder="Your name" required />
             </div>
             <div class="ft-field">
-              <label for="email" class="ft-label">Email (contact if selected) *</label>
-              <input id="email" name="email" type="email" class="ft-input" required>
+              <label for="email" class="ft-label">Email</label>
+              <input id="email" name="email" type="email" class="ft-input" placeholder="you@example.com" required />
             </div>
           </div>
 
-          <div class="ft-grid">
+          <!-- ===== ELIGIBILITY NOTICE ===== -->
+          <div class="notice-card" aria-label="Eligibility notice">
+            <strong>Eligibility — Please Read First</strong>
+            <ul>
+              <li>You must be subscribed to our <strong>YouTube channel (@FishKeepingLifeCo)</strong> AND follow at least one other social (Instagram or TikTok).</li>
+              <li>Provide your actual account handle(s) so we can verify before approval.</li>
+              <li>If selected, post a story or short mention announcing your upcoming feature and <strong>tag @FishKeepingLifeCo</strong>. We’ll provide official hashtags to include.</li>
+              <li>When your feature goes live, we’ll add it to our website and socials. You agree to let us tag you and keep handles taggable/visible.</li>
+            </ul>
+          </div>
+
+          <!-- ===== SOCIALS (YouTube + one other required) ===== -->
+          <div id="socials-block" class="socials-wrap">
+            <label class="socials-title">Social Media (YouTube + one other required)</label>
+
+            <!-- Row 1 (REQUIRED) -->
+            <div class="social-row" data-row="1">
+              <select class="social-select" aria-label="Platform (required)">
+                <option value="YouTube" selected>YouTube</option>
+                <option value="Instagram">Instagram</option>
+                <option value="TikTok">TikTok</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Other">Other</option>
+              </select>
+              <input class="social-handle" type="text" inputmode="text"
+                     placeholder="e.g., @YourChannel or full URL"
+                     aria-label="Handle or URL (required)" required>
+            </div>
+
+            <!-- Row 2 (OPTIONAL) -->
+            <div class="social-row" data-row="2">
+              <select class="social-select" aria-label="Platform (optional)">
+                <option value="" selected disabled>Choose platform (optional)</option>
+                <option value="YouTube">YouTube</option>
+                <option value="Instagram">Instagram</option>
+                <option value="TikTok">TikTok</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Other">Other</option>
+              </select>
+              <input class="social-handle" type="text" inputmode="text"
+                     placeholder="e.g., @YourHandle or full URL"
+                     aria-label="Handle or URL (optional)">
+            </div>
+
+            <!-- Row 3 (OPTIONAL) -->
+            <div class="social-row" data-row="3">
+              <select class="social-select" aria-label="Platform (optional)">
+                <option value="" selected disabled>Choose platform (optional)</option>
+                <option value="YouTube">YouTube</option>
+                <option value="Instagram">Instagram</option>
+                <option value="TikTok">TikTok</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Other">Other</option>
+              </select>
+              <input class="social-handle" type="text" inputmode="text"
+                     placeholder="e.g., @YourHandle or full URL"
+                     aria-label="Handle or URL (optional)">
+            </div>
+
+            <small class="field-note">
+              Paste a full profile URL or just your handle. We’ll normalize it. Eligibility requires <strong>YouTube + Instagram or TikTok</strong>.
+            </small>
+
+            <!-- Hidden structured payload for Formspree -->
+            <input type="hidden" name="socials_structured" id="socialsStructured" value="">
+          </div>
+
+          <!-- ===== TANK BASICS (condensed) ===== -->
+          <div class="grid-3">
             <div class="ft-field">
-              <label for="tank_size" class="ft-label">Tank Size *</label>
-              <input id="tank_size" name="tank_size" type="text" class="ft-input" placeholder="e.g., 10g, 20 long, 29g, 75g" required>
+              <label for="tank_size" class="ft-label">Tank Size</label>
+              <input id="tank_size" name="tank_size" type="text" class="ft-input" placeholder="e.g., 29G" />
             </div>
             <div class="ft-field">
-              <label for="planted" class="ft-label">Planted? *</label>
-              <select id="planted" name="planted" class="ft-input" required>
-                <option value="" disabled selected>Select</option>
-                <option>Yes</option>
-                <option>No</option>
+              <label for="planted" class="ft-label">Planted?</label>
+              <select id="planted" name="planted" class="ft-input">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Low-tech">Low-tech</option>
+                <option value="High-tech">High-tech</option>
               </select>
             </div>
             <div class="ft-field">
-              <label for="substrate" class="ft-label">Substrate *</label>
-              <input id="substrate" name="substrate" type="text" class="ft-input" placeholder="e.g., sand, gravel, dirt + sand cap" required>
-            </div>
-            <div class="ft-field">
-              <label for="filtration" class="ft-label">Filtration *</label>
-              <input id="filtration" name="filtration" type="text" class="ft-input" placeholder="e.g., HOB, canister, sump, sponge, UGF" required>
-            </div>
-            <div class="ft-field">
-              <label for="lighting" class="ft-label">Lighting Setup</label>
-              <input id="lighting" name="lighting" type="text" class="ft-input" placeholder="brand/model + schedule (if custom)">
-            </div>
-            <div class="ft-field">
-              <label for="nitrates" class="ft-label">Typical Nitrate Range</label>
-              <input id="nitrates" name="nitrates" type="text" class="ft-input" placeholder="e.g., ~20 ppm">
+              <label for="filtration" class="ft-label">Filtration</label>
+              <input id="filtration" name="filtration" type="text" class="ft-input" placeholder="e.g., canister + sponge" />
             </div>
           </div>
 
           <div class="ft-field">
-            <label for="stock" class="ft-label">Stock / Livestock *</label>
-            <textarea id="stock" name="stock" rows="3" class="ft-input" placeholder="Fish, shrimp, snails…" required></textarea>
-          </div>
-
-          <div class="ft-grid">
-            <div class="ft-field">
-              <label for="cleanup" class="ft-label">Cleanup Crew?</label>
-              <input id="cleanup" name="cleanup" type="text" class="ft-input" placeholder="Shrimp, snails, bottom feeders, none">
-            </div>
-            <div class="ft-field">
-              <label for="media" class="ft-label">Media / Additives</label>
-              <input id="media" name="media" type="text" class="ft-input" placeholder="e.g., Purigen, carbon, etc.">
-            </div>
+            <label for="livestock" class="ft-label">Livestock & Cleanup Crew</label>
+            <textarea id="livestock" name="livestock" class="ft-input" rows="3" placeholder="List your fish, inverts, and cleanup crew…"></textarea>
           </div>
 
           <div class="ft-field">
-            <label for="love" class="ft-label">What you love about this tank *</label>
-            <textarea id="love" name="love" rows="3" class="ft-input" required></textarea>
+            <label for="notes" class="ft-label">Other Notes (optional)</label>
+            <textarea id="notes" name="notes" class="ft-input" rows="3" placeholder="What you love, what you’d improve, anything we should know…"></textarea>
           </div>
 
-          <div class="ft-field">
-            <label for="improve" class="ft-label">What you’d improve or change *</label>
-            <textarea id="improve" name="improve" rows="3" class="ft-input" required></textarea>
-          </div>
-
-          <div class="ft-field">
-            <label for="notes" class="ft-label">Other Notes</label>
-            <textarea id="notes" name="notes" rows="3" class="ft-input" placeholder="Anything else we should know"></textarea>
-          </div>
-
-          <!-- Example fields above (keep your existing ones) -->
-          <!-- Photos / Video Link (legacy, optional) -->
-          <div class="ft-field">
-            <label for="mediaLink" class="ft-label">Photos / Video Link</label>
-            <input id="mediaLink" name="media_link" type="url" class="ft-input"
-                   placeholder="YouTube, Google Drive, Instagram, etc." />
-            <div class="ft-help">Paste a link if you prefer. Or use the uploader below.</div>
-          </div>
-
-          <!-- DIRECT UPLOADS — Cloudinary -->
+          <!-- ===== DIRECT UPLOADS — Cloudinary ===== -->
           <div id="media-upload-block" class="upload-card" aria-labelledby="upload-title">
             <div class="upload-head">
               <h3 id="upload-title">Upload Photos / Videos</h3>
@@ -410,7 +432,7 @@
             <input type="hidden" name="media_playable_urls" id="mediaPlayableUrls" value="" />
             <input type="hidden" name="media_preview_urls" id="mediaPreviewUrls" value="" />
 
-            <!-- Optional: show users the URLs that will be submitted -->
+            <!-- Optional: show users the originals list -->
             <label for="mediaUrlsReadonly" class="sr-only">Uploaded URLs</label>
             <textarea id="mediaUrlsReadonly" class="urls-readonly ft-input" rows="3" readonly
               placeholder="No files uploaded yet."></textarea>
@@ -421,7 +443,7 @@
             <div class="ft-help small">Max 10 files, up to ~80 MB each. Allowed: jpg, jpeg, png, webp, heic, mp4, mov.</div>
           </div>
 
-          <!-- CONSENT -->
+          <!-- ===== CONSENT ===== -->
           <div class="consent-row">
             <input type="checkbox" id="ownMedia" name="own_media" value="yes" class="consent-checkbox" aria-describedby="consent-help" />
             <label for="ownMedia" class="consent-label">
@@ -432,10 +454,10 @@
             Tick this box to enable submission and let us share your media with credit.
           </p>
 
-          <!-- reCAPTCHA (keep your site key) -->
+          <!-- ===== reCAPTCHA (keep your site key) ===== -->
           <div class="g-recaptcha" data-sitekey="6LecjNUrAAAAACdwiRIn1KvR21x_gP8_hdOrtXA3"></div>
 
-          <!-- SUBMIT -->
+          <!-- ===== SUBMIT ===== -->
           <button type="submit" id="submitBtn" class="btn-primary" disabled aria-disabled="true">Submit Tank</button>
         </form>
 
@@ -455,64 +477,88 @@
           --accent-weak: rgba(16,185,129,0.35);
           color: var(--text);
         }
-        #feature-tank-form .ft-title { margin: 0 0 12px; font-size: 1.4rem; }
-        #feature-tank-form .ft-field { margin: 14px 0; }
-        #feature-tank-form .ft-label { display:block; margin-bottom:6px; }
-        #feature-tank-form .ft-input,
-        #feature-tank-form textarea.urls-readonly {
-          width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border);
+        .ft-title { margin: 0 0 12px; font-size: 1.4rem; }
+        .ft-field { margin: 12px 0; }
+        .ft-label { display:block; margin-bottom:6px; }
+        .ft-input, textarea.ft-input {
+          width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
           background: rgba(255,255,255,0.05); color: var(--text);
         }
-        #feature-tank-form .ft-help { color: var(--muted); margin-top: 6px; }
-        #feature-tank-form .ft-help.small { font-size: .9rem; }
+        .ft-help { color: var(--muted); margin-top: 6px; }
+        .ft-help.small { font-size: .9rem; }
+        .grid-2 { display:grid; gap:10px; grid-template-columns: 1fr 1fr; }
+        .grid-3 { display:grid; gap:10px; grid-template-columns: 1fr 1fr 1fr; }
+        @media (max-width: 680px){ .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
-        /* Upload card */
-        #feature-tank-form .upload-card {
+        /* Notice */
+        .notice-card{
+          margin:12px 0 14px; padding:12px 14px;
+          border-radius:12px; border:1px solid var(--border);
+          background: rgba(255,255,255,0.06);
+        }
+        .notice-card ul{ margin:8px 0 0 18px; padding:0; }
+        .notice-card li{ margin:6px 0; line-height:1.35; }
+
+        /* Socials */
+        .socials-wrap{ margin:12px 0 6px; }
+        .socials-title{ display:block; margin-bottom:8px; font-weight:600; }
+        .social-row{
+          display:grid; grid-template-columns: 160px 1fr; gap:10px; align-items:center; margin-bottom:10px;
+        }
+        .social-select, .social-handle{
+          padding:10px 12px; border-radius:10px; border:1px solid var(--border);
+          background:rgba(255,255,255,0.05); color:var(--text); width:100%;
+        }
+        .field-note{ display:block; margin-top:6px; color:var(--muted); font-size:.9rem; }
+        @media (max-width: 480px){ .social-row{ grid-template-columns: 1fr; } }
+
+        /* Upload */
+        .upload-card {
           margin: 16px 0; padding: 14px; border: 1px dashed var(--border); border-radius: 12px;
           background: rgba(255,255,255,0.03);
         }
-        #feature-tank-form .upload-head h3 { margin: 0 0 4px; font-size: 1.1rem; }
-        #feature-tank-form .muted { color: var(--muted); }
-        #feature-tank-form .upload-actions { display:flex; gap:10px; margin:10px 0 12px; }
-        #feature-tank-form .btn-primary {
+        .upload-head h3 { margin: 0 0 4px; font-size: 1.1rem; }
+        .muted { color: var(--muted); }
+        .upload-actions { display:flex; gap:10px; margin:10px 0 12px; }
+        .btn-primary {
           padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
           background: linear-gradient(180deg, rgba(16,185,129,0.18), rgba(16,185,129,0.08));
           color: var(--text); font-weight:600; letter-spacing:.2px; cursor:pointer;
         }
-        #feature-tank-form .btn-ghost {
+        .btn-ghost {
           padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
           background: transparent; color: var(--muted); cursor:pointer;
         }
-        #feature-tank-form .upload-preview {
+        .upload-preview {
           display:grid; grid-template-columns: repeat(auto-fill, minmax(96px,1fr));
           gap: 10px; min-height: 0;
         }
-        #feature-tank-form .thumb {
+        .thumb {
           border: 1px solid var(--border); border-radius: 10px; overflow: hidden; position: relative;
           aspect-ratio: 1/1; display:grid; place-items:center; font-size:.8rem;
           background: rgba(255,255,255,0.04);
         }
-        #feature-tank-form .thumb img { width: 100%; height: 100%; object-fit: cover; display:block; }
-        #feature-tank-form .thumb .badge {
+        .thumb img { width: 100%; height: 100%; object-fit: cover; display:block; }
+        .thumb .badge {
           position:absolute; bottom:6px; right:6px; background: rgba(0,0,0,0.55);
           padding: 2px 6px; border-radius: 6px; font-size:.7rem;
         }
 
-        /* Consent checkbox — native + accent-color (iOS-safe) */
-        #feature-tank-form .consent-row { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start; margin: 12px 0 6px; }
-        #feature-tank-form .consent-checkbox {
+        /* Consent — native iOS-safe */
+        .consent-row { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start; margin: 12px 0 6px; }
+        .consent-checkbox {
           width: 20px; height: 20px; margin-top:2px;
           -webkit-appearance: checkbox; appearance: checkbox; accent-color: var(--accent);
           transform: scale(1.15); transform-origin: top left; cursor:pointer;
         }
-        #feature-tank-form .consent-label { user-select:none; cursor:pointer; line-height:1.4; }
-        #feature-tank-form .consent-help { color: var(--muted); margin: 0 0 10px; }
+        .consent-label { user-select:none; cursor:pointer; line-height:1.4; }
+        .consent-help { color: var(--muted); margin: 0 0 10px; }
 
         /* Disabled submit look */
-        #feature-tank-form #submitBtn[disabled] { opacity: .5; cursor: not-allowed; }
+        #submitBtn[disabled] { opacity: .5; cursor: not-allowed; }
 
         /* A11y helpers */
-        #feature-tank-form .sr-only {
+        .sr-only {
           position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;
         }
       </style>
@@ -535,6 +581,9 @@
         const submitBtn = document.getElementById('submitBtn');
         const consent = document.getElementById('ownMedia');
 
+        const socialsBlock = document.getElementById('socials-block');
+        const socialsStructured = document.getElementById('socialsStructured');
+
         const openUploaderBtn = document.getElementById('openUploader');
         const clearUploadsBtn = document.getElementById('clearUploads');
         const preview = document.getElementById('uploadPreview');
@@ -544,25 +593,84 @@
         const urlsReadonly = document.getElementById('mediaUrlsReadonly');
 
         // ======= State =======
-        let uploaded = [];  // originals (secure_url)
-        let playable = [];  // safe-to-play links
-        let previews = [];  // thumbnails/posters
+        let uploaded = [];   // originals (secure_url)
+        let playable = [];   // safe-to-play links
+        let previews = [];   // thumbnails/posters
         let uploadsInFlight = 0;
 
-        // ======= Helpers =======
+        // ======= Helpers: Socials =======
+        function normHandle(val){
+          if (!val) return '';
+          let v = (''+val).trim();
+          if (/^https?:\/\//i.test(v)) return v; // full URL
+          v = v.replace(/^@+/, '').trim();       // strip leading @
+          return v;
+        }
+        function collectSocials(){
+          const rows = socialsBlock.querySelectorAll('.social-row');
+          const items = [];
+          rows.forEach((row) => {
+            const sel = row.querySelector('.social-select');
+            const inp = row.querySelector('.social-handle');
+            const platform = (sel && sel.value) ? sel.value : '';
+            const raw = (inp && inp.value) ? inp.value : '';
+            const handle = normHandle(raw);
+            if (platform && handle){
+              let url = handle;
+              if (!/^https?:\/\//i.test(handle)){
+                if (platform === 'Instagram') url = 'https://instagram.com/' + handle;
+                else if (platform === 'TikTok') url = 'https://tiktok.com/@' + handle;
+                else if (platform === 'YouTube') url = 'https://youtube.com/@' + handle;
+                else if (platform === 'Facebook') url = 'https://facebook.com/' + handle;
+              }
+              items.push({ platform, handle, url });
+            }
+          });
+          return items;
+        }
+        function hasPlatform(list, name){
+          return list.some((i) => i.platform === name);
+        }
+        function validateSocials(){
+          const firstRow = socialsBlock.querySelector('[data-row="1"]');
+          const sel1 = firstRow.querySelector('.social-select');
+          const inp1 = firstRow.querySelector('.social-handle');
+          if (!sel1.value || !inp1.value.trim()){
+            alert('Please provide at least one social — the first row is required.');
+            inp1.focus();
+            return false;
+          }
+          const items = collectSocials();
+          if (items.length === 0){
+            alert('Please provide at least one social handle.');
+            inp1.focus();
+            return false;
+          }
+          const hasYT = hasPlatform(items, 'YouTube');
+          const hasIGorTT = hasPlatform(items, 'Instagram') || hasPlatform(items, 'TikTok');
+          if (!hasYT || !hasIGorTT){
+            alert('Eligibility requires YouTube plus at least one of Instagram or TikTok.');
+            return false;
+          }
+          socialsStructured.value = JSON.stringify(items);
+          return true;
+        }
+
+        // ======= Helpers: Uploads =======
         function setSubmitEnabled(enabled) {
           submitBtn.disabled = !enabled;
           submitBtn.setAttribute('aria-disabled', String(!enabled));
         }
         function syncSubmitAvailability() {
-          const canSubmit = consent.checked && uploadsInFlight === 0; // reCAPTCHA gate handled by widget
+          // Note: socials are validated at submit; consent + uploads gate interactively
+          const canSubmit = consent.checked && uploadsInFlight === 0;
           setSubmitEnabled(canSubmit);
         }
         function isVideoUrl(url) {
           return url.includes('/video/upload/') || /\.(mp4|mov)(\?|$)/i.test(url);
         }
         function makePreviewUrl(url) {
-          // A small, square jpg/webp that renders in most clients (pg_1 picks first frame for video)
+          // A small, square jpg/webp; for video, pg_1 grabs the first frame
           return url.replace('/upload/', '/upload/pg_1,c_fill,w_600,h_600,q_auto,f_auto/');
         }
         function makePlayableUrl(url) {
@@ -577,13 +685,11 @@
           uploaded.forEach((u, i) => {
             const div = document.createElement('div');
             div.className = 'thumb';
-
             const p = previews[i] || makePreviewUrl(u);
             const img = document.createElement('img');
             img.src = p;
             img.alt = isVideoUrl(u) ? 'Video preview' : 'Image preview';
             div.appendChild(img);
-
             if (isVideoUrl(u)) {
               const badge = document.createElement('span');
               badge.className = 'badge';
@@ -592,13 +698,10 @@
             }
             preview.appendChild(div);
           });
-
-          // Sync hidden fields for Formspree
           urlsHidden.value = uploaded.join(',');
           playableHidden.value = playable.join(',');
           previewsHidden.value = previews.join(',');
-          urlsReadonly.value = uploaded.join('
-');
+          urlsReadonly.value = uploaded.join('\n');
         }
         function lockSubmitWhileUploading(lock) {
           uploadsInFlight += lock ? 1 : -1;
@@ -653,8 +756,8 @@
 
         // ======= Wire events =======
         consent.addEventListener('change', syncSubmitAvailability);
-        openUploaderBtn.addEventListener('click', openWidget);
-        clearUploadsBtn.addEventListener('click', function() {
+        if (openUploaderBtn) openUploaderBtn.addEventListener('click', openWidget);
+        if (clearUploadsBtn) clearUploadsBtn.addEventListener('click', function() {
           uploaded = []; playable = []; previews = [];
           renderPreviews();
           syncSubmitAvailability();
@@ -665,6 +768,13 @@
 
         // ======= AJAX Submit to Formspree (no redirect) =======
         form.addEventListener('submit', async function(e) {
+          // Validate socials first
+          if (!validateSocials()){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+          }
+          // Gate on consent + uploads
           if (!consent.checked || uploadsInFlight > 0) {
             e.preventDefault();
             if (!consent.checked) alert('Please confirm you own the media and grant permission.');
@@ -698,9 +808,9 @@
             syncSubmitAvailability();
           }
         });
+
       })();
       </script>
-
       <p class="tiny" style="margin-top:12px;opacity:.75;">
         📌 Features are <strong>only</strong> accepted through this website. We don’t take submissions via YouTube comments or social DMs.
       </p>
