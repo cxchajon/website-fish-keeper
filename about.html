@@ -479,11 +479,13 @@
   </div>
 </div>
 
+<!-- === TTG Cookie Consent SCRIPT START === -->
 <script>
 (function(){
   const KEY = 'ttg.consent.v1';
   const $banner = document.getElementById('ttg-consent');
   const $modal = document.getElementById('ttg-consent-modal');
+  const $panel = $modal.querySelector('.ttg-consent-modal__panel');
   const $btnAccept = document.getElementById('ttg-consent-accept');
   const $btnReject = document.getElementById('ttg-consent-reject');
   const $btnManage = document.getElementById('ttg-consent-manage');
@@ -509,19 +511,14 @@
   }
   function closeModal(){ $modal.hidden = true; }
 
-  // public API for footer link
+  // Public API for footer link
   window.cookieConsent = {
     open: function(){ openModal(); },
     reset: function(){ localStorage.removeItem(KEY); openBanner(); }
   };
 
   const state = load();
-  if(!state){
-    document.documentElement.setAttribute('data-ad-consent', 'denied');
-    openBanner();
-  } else {
-    save(state);
-  }
+  if(!state){ openBanner(); } else { save(state); }
 
   $btnAccept.addEventListener('click', function(){
     save({ essential:true, analytics:true, ads:true, ts:Date.now() });
@@ -539,12 +536,23 @@
     closeModal(); closeBanner();
   });
 
-  // If consent not granted, set guard flag so ad code can check before loading.
+  // Close on outside click
+  $modal.addEventListener('click', function(e){
+    if(e.target === $modal) closeModal();
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && !$modal.hidden){ closeModal(); }
+  });
+
+  // Guard: don’t load ads if not consented
   if(document.documentElement.getAttribute('data-ad-consent') !== 'granted'){
     window.__TTG_ADS_DISABLED__ = true;
   }
 })();
 </script>
+<!-- === TTG Cookie Consent SCRIPT END === -->
 <!-- === TTG Cookie Consent END === -->
 
 </body>
