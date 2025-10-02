@@ -592,6 +592,23 @@
         const previewsHidden = document.getElementById('mediaPreviewUrls');
         const urlsReadonly = document.getElementById('mediaUrlsReadonly');
 
+        // DEBUG tray (shows upload events/errors). Remove after validation.
+        let dbg = document.getElementById('uploadDebug');
+        if (!dbg) {
+          dbg = document.createElement('pre');
+          dbg.id = 'uploadDebug';
+          dbg.style.cssText = 'margin-top:8px;padding:8px;border:1px dashed rgba(255,255,255,0.2);border-radius:8px;background:rgba(255,255,255,0.05);color:#bbb;font-size:12px;max-height:180px;overflow:auto;';
+          dbg.setAttribute('aria-live','polite');
+          const card = document.getElementById('media-upload-block');
+          if (card) card.appendChild(dbg);
+        }
+        function log(msg, obj) {
+          if (!dbg) return;
+          const time = new Date().toLocaleTimeString();
+          dbg.textContent += `[${time}] ${msg}` + (obj ? `: ${JSON.stringify(obj)}` : '') + '\n';
+          dbg.scrollTop = dbg.scrollHeight;
+        }
+
         // ======= State =======
         let uploaded = [];   // originals (secure_url)
         let playable = [];   // safe-to-play links
@@ -667,7 +684,8 @@
           setSubmitEnabled(canSubmit);
         }
         function isVideoUrl(url) {
-          return url.includes('/video/upload/') || /\.(mp4|mov)(\?|$)/i.test(url);
+          // Cloudinary videos come from /video/upload/, but extensions can vary
+          return /\/video\/upload\//.test(url) || /\.(mp4|mov|m4v)(\?|$)/i.test(url);
         }
         function makePreviewUrl(url) {
           // A small, square jpg/webp; for video, pg_1 grabs the first frame
@@ -718,7 +736,8 @@
             uploadPreset: UPLOAD_PRESET,
             multiple: true,
             maxFiles: MAX_FILES,
-            clientAllowedFormats: ['jpg','jpeg','png','webp','heic','mp4','mov'],
+            // Allow both generic types and explicit extensions (some devices report generically)
+            clientAllowedFormats: ['image','video','jpg','jpeg','png','webp','heic','mp4','mov'],
             maxFileSize: MAX_SIZE_BYTES,
             resourceType: 'auto',
             cropping: false,
@@ -728,9 +747,12 @@
           }, (error, result) => {
             if (result && result.event === 'queues-start') {
               lockSubmitWhileUploading(true);
+              log('Queue started', { files_queued: (result.info && result.info.files) ? result.info.files.length : 'n/a' });
             }
             if (result && result.event === 'success') {
-              const url = result.info && result.info.secure_url ? result.info.secure_url : null;
+              const info = result.info || {};
+              const url = info && info.secure_url ? info.secure_url : null;
+              log('Upload success', { resource_type: info.resource_type, format: info.format, bytes: info.bytes, url });
               if (url) {
                 if (uploaded.length >= MAX_FILES) {
                   alert(`You can upload up to ${MAX_FILES} files per submission.`);
@@ -744,10 +766,19 @@
             }
             if (result && (result.event === 'queues-end' || result.event === 'close')) {
               lockSubmitWhileUploading(false);
+              log('Queue ended/closed');
             }
             if (error) {
               console.error('Cloudinary widget error:', error);
-              alert('There was a problem uploading. Please try again.');
+              log('ERROR', error);
+              const code = (error && (error.statusText || error.message || error.http_code)) || 'unknown';
+              if (/max file size/i.test(code) || error.http_code === 400) {
+                alert('Your video is too large. Please keep files at or under ~80 MB.');
+              } else if (/invalid format/i.test(code)) {
+                alert('Unsupported format. Allowed: jpg, jpeg, png, webp, heic, mp4, mov.');
+              } else {
+                alert('There was a problem uploading. Please try again.');
+              }
               lockSubmitWhileUploading(false);
             }
           });
