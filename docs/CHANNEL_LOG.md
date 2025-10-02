@@ -77,7 +77,7 @@ Footer v1.2.2 (Sept 30, 2025)
 ## 2025-09-21 — Media Page: Amazon Book Link + CTA + Blurb
 **Owner:** FishKeepingLifeCo (CXLXC LLC)
 
-**Summary:** Amazon book link updated to https://amzn.to/3Kh34I1; CTA text = “Buy Book On Amazon”; blurb restored/updated.
+**Summary:** Amazon book link updated to https://amzn.to/3IRKvK0; CTA text = “Buy Book On Amazon”; blurb restored/updated.
 
 ## 2025-09-20 — Amazon Associate Disclaimer (Sitewide)
 **Owner:** FishKeepingLifeCo (CXLXC LLC)

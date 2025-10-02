@@ -2,7 +2,7 @@
 
 ## Summary
 - Commerce link + copy polish.
-- Updated book link to: https://amzn.to/3Kh34I1
+- Updated book link to: https://amzn.to/3IRKvK0
 - Button label changed from “Get the eBook” to “Buy Book On Amazon”
 - Restored/updated short blurb under the book image
 
