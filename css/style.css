@@ -1483,3 +1483,20 @@ body.planted-active #cycling-coach .cc-title__leaf {
 
 /* Guard against large margins from preceding sections */
 #cc-bottom:where(*) { scroll-margin-top: 24px; }
+
+/* === TTG Cookie Consent START === */
+.ttg-consent{position:fixed;left:0;right:0;bottom:0;z-index:9999;display:block;background:rgba(10,14,22,.96);backdrop-filter:saturate(120%) blur(6px);border-top:1px solid rgba(255,255,255,.08);}
+.ttg-consent__inner{max-width:1100px;margin:0 auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;color:#e8edf3;}
+.ttg-consent__inner h3{margin:0 0 4px 0;font-size:1rem;line-height:1.2}
+.ttg-consent__actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.ttg-btn{padding:8px 12px;border-radius:8px;border:1px solid transparent;font:inherit;cursor:pointer}
+.ttg-btn--primary{background:#ffffff;color:#0b1526}
+.ttg-btn--secondary{background:#0b1526;color:#e8edf3;border-color:rgba(255,255,255,.18)}
+.ttg-btn--ghost{background:transparent;color:#e8edf3;border-color:rgba(255,255,255,.18)}
+/* Modal */
+.ttg-consent-modal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:24px}
+.ttg-consent-modal__panel{max-width:560px;width:100%;background:#0b1526;color:#e8edf3;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:18px}
+.ttg-consent-modal__panel h3{margin:0 0 8px 0}
+.ttg-row{display:flex;gap:10px;align-items:flex-start;margin:8px 0}
+.ttg-consent-modal__actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+/* === TTG Cookie Consent END === */

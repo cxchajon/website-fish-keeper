@@ -277,5 +277,112 @@
 })();
 </script>
   <script type="module" src="js/gear.js?v=2024-09-01"></script>
+<!-- === TTG Cookie Consent START === -->
+<div id="ttg-consent" class="ttg-consent" hidden>
+  <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
+    <h3 id="ttg-consent-title">Cookies & Advertising</h3>
+    <p id="ttg-consent-desc">
+      We use cookies to run this site and (if you allow) to show relevant ads from Google AdSense. You can accept all cookies, reject personalized ads, or manage preferences anytime.
+    </p>
+    <div class="ttg-consent__actions">
+      <button type="button" class="ttg-btn ttg-btn--secondary" id="ttg-consent-reject">Reject (Non-personalized)</button>
+      <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-manage">Manage</button>
+      <button type="button" class="ttg-btn ttg-btn--primary" id="ttg-consent-accept">Accept All</button>
+    </div>
+  </div>
+</div>
+
+<div id="ttg-consent-modal" class="ttg-consent-modal" hidden aria-modal="true" role="dialog" aria-labelledby="ttg-consent-modal-title">
+  <div class="ttg-consent-modal__panel">
+    <h3 id="ttg-consent-modal-title">Cookie Preferences</h3>
+    <form id="ttg-consent-form">
+      <label class="ttg-row">
+        <input type="checkbox" checked disabled />
+        <span><strong>Essential</strong> — required for core site functions.</span>
+      </label>
+      <label class="ttg-row">
+        <input type="checkbox" id="ttg-c-analytics" />
+        <span><strong>Analytics</strong> — understand usage (if enabled later).</span>
+      </label>
+      <label class="ttg-row">
+        <input type="checkbox" id="ttg-c-ads" />
+        <span><strong>Advertising</strong> — allow personalized ads (Google AdSense).</span>
+      </label>
+      <div class="ttg-consent-modal__actions">
+        <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-cancel">Cancel</button>
+        <button type="submit" class="ttg-btn ttg-btn--primary">Save Preferences</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+  const KEY = 'ttg.consent.v1';
+  const $banner = document.getElementById('ttg-consent');
+  const $modal = document.getElementById('ttg-consent-modal');
+  const $btnAccept = document.getElementById('ttg-consent-accept');
+  const $btnReject = document.getElementById('ttg-consent-reject');
+  const $btnManage = document.getElementById('ttg-consent-manage');
+  const $btnCancel = document.getElementById('ttg-consent-cancel');
+  const $form = document.getElementById('ttg-consent-form');
+  const $ckAnalytics = document.getElementById('ttg-c-analytics');
+  const $ckAds = document.getElementById('ttg-c-ads');
+
+  function save(state){
+    localStorage.setItem(KEY, JSON.stringify(state));
+    document.documentElement.setAttribute('data-ad-consent', state.ads ? 'granted' : 'denied');
+  }
+  function load(){
+    try { return JSON.parse(localStorage.getItem(KEY)||''); } catch(e){ return null; }
+  }
+  function openBanner(){ $banner.hidden = false; }
+  function closeBanner(){ $banner.hidden = true; }
+  function openModal(){
+    $modal.hidden = false;
+    const s = load() || {analytics:false, ads:false};
+    $ckAnalytics.checked = !!s.analytics;
+    $ckAds.checked = !!s.ads;
+  }
+  function closeModal(){ $modal.hidden = true; }
+
+  // public API for footer link
+  window.cookieConsent = {
+    open: function(){ openModal(); },
+    reset: function(){ localStorage.removeItem(KEY); openBanner(); }
+  };
+
+  const state = load();
+  if(!state){
+    document.documentElement.setAttribute('data-ad-consent', 'denied');
+    openBanner();
+  } else {
+    save(state);
+  }
+
+  $btnAccept.addEventListener('click', function(){
+    save({ essential:true, analytics:true, ads:true, ts:Date.now() });
+    closeModal(); closeBanner();
+  });
+  $btnReject.addEventListener('click', function(){
+    save({ essential:true, analytics:false, ads:false, ts:Date.now() });
+    closeModal(); closeBanner();
+  });
+  $btnManage.addEventListener('click', openModal);
+  $btnCancel.addEventListener('click', closeModal);
+  $form.addEventListener('submit', function(e){
+    e.preventDefault();
+    save({ essential:true, analytics:$ckAnalytics.checked, ads:$ckAds.checked, ts:Date.now() });
+    closeModal(); closeBanner();
+  });
+
+  // If consent not granted, set guard flag so ad code can check before loading.
+  if(document.documentElement.getAttribute('data-ad-consent') !== 'granted'){
+    window.__TTG_ADS_DISABLED__ = true;
+  }
+})();
+</script>
+<!-- === TTG Cookie Consent END === -->
+
 </body>
 </html>
