@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "npx playwright test",
+    "pw:install": "playwright install --with-deps",
+    "test": "playwright test",
+    "test:consent": "playwright test tests/consent-ads.spec.ts --project=chromium",
+    "serve:static": "npx http-server -p 8080 -c-1 .",
     "test:headed": "npx playwright test --headed",
     "test:debug": "npx playwright test --debug",
     "test:report": "npx playwright show-report"
