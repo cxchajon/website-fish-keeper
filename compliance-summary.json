@@ -1,0 +1,47 @@
+{
+  "pages": {
+    "/stocking.html": {
+      "loader_once_head": true,
+      "slots_match": true,
+      "consent_hooks": true,
+      "legal_free": true,
+      "cls_guard": true,
+      "ready": true
+    },
+    "/params.html": {
+      "loader_once_head": true,
+      "slots_match": true,
+      "consent_hooks": true,
+      "legal_free": true,
+      "cls_guard": true,
+      "ready": true
+    },
+    "/gear/index.html": {
+      "loader_once_head": true,
+      "slots_match": true,
+      "consent_hooks": true,
+      "legal_free": true,
+      "cls_guard": true,
+      "ready": true
+    },
+    "/media.html": {
+      "loader_once_head": true,
+      "slots_match": true,
+      "consent_hooks": true,
+      "legal_free": true,
+      "cls_guard": true,
+      "ready": true
+    },
+    "/privacy-legal.html": {
+      "loader_once_head": true,
+      "slots_match": true,
+      "consent_hooks": true,
+      "legal_free": true,
+      "cls_guard": true,
+      "ready": true
+    }
+  },
+  "ads_txt_ok": true,
+  "legal_sections_ok": true,
+  "ready_for_submission": true
+}
