@@ -1044,7 +1044,7 @@ export function runSanitySuite(baseState) {
       { id: 'cardinal', qty: 12 },
       { id: 'cory_panda', qty: 6 },
     ],
-    candidate: { id: 'tigerbarb', qty: 2 },
+    candidate: { id: 'tiger_barb', qty: 2 },
   });
   results.push(`4) +2 tiger barbs → ${scenario4.status.label}`);
 
