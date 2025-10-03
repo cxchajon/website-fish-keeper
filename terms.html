@@ -36,6 +36,10 @@
       h1{font-size:2rem;}
     }
   </style>
+  <!-- Consent Mode defaults (load FIRST) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
+
+  <!-- AdSense loader (keep one global instance only) -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
     crossorigin="anonymous"></script>
   <!-- --- Google CMP (Funding Choices) START --- -->
@@ -148,9 +152,9 @@
       We use cookies to run this site and (if you allow) to show relevant ads from Google AdSense. You can accept all cookies, reject personalized ads, or manage preferences anytime.
     </p>
     <div class="ttg-consent__actions">
-      <button type="button" class="ttg-btn ttg-btn--secondary" id="ttg-consent-reject">Reject (Non-personalized)</button>
+      <button type="button" class="ttg-btn ttg-btn--secondary js-consent-reject" id="ttg-consent-reject">Reject (Non-personalized)</button>
       <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-manage">Manage</button>
-      <button type="button" class="ttg-btn ttg-btn--primary" id="ttg-consent-accept">Accept All</button>
+      <button type="button" class="ttg-btn ttg-btn--primary js-consent-accept" id="ttg-consent-accept">Accept All</button>
     </div>
   </div>
 </div>
