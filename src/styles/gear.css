@@ -45,14 +45,14 @@ main {
   inset-block-start: auto;
   background: rgba(10, 16, 30, 0.92);
   backdrop-filter: blur(8px);
-  padding: 12px;
+  padding: 10px 12px;
   border-radius: 14px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   border: 1px solid var(--border);
   z-index: auto;
-  margin: 12px 0 16px;
+  margin: 8px 0 16px;
 }
 
 .context-bar.is-sticky,

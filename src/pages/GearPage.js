@@ -1,7 +1,6 @@
 import { loadGear } from '../utils/csvLoader.js';
 import { CONTEXT_DEFAULTS, scoreItem, getNormalizedBudget } from '../utils/rankers.js';
 import { clearElement, createElement } from '../components/gear/helpers.js';
-import { TransparencyBanner } from '../components/gear/TransparencyBanner.js';
 import { ContextBar } from '../components/gear/ContextBar.js';
 import { RecommendedRow } from '../components/gear/RecommendedRow.js';
 import { CategoryAccordion } from '../components/gear/CategoryAccordion.js';
@@ -150,22 +149,6 @@ function computeAlternatives(item) {
   return alt;
 }
 
-function buildStockingAdvisorUrl(context) {
-  const params = new URLSearchParams();
-  if (context.tankSize) {
-    params.set('size', context.tankSize);
-  }
-  params.set('planted', context.planted ? '1' : '0');
-  if (context.bioLoad) {
-    params.set('bio', context.bioLoad);
-  }
-  if (context.budget && context.budget !== 'Any') {
-    params.set('budget', context.budget);
-  }
-  const search = params.toString();
-  return `/stocking-advisor${search ? `?${search}` : ''}`;
-}
-
 function Toast(message) {
   return createElement('div', {
     className: 'gear-toast',
@@ -224,13 +207,6 @@ function render() {
   const page = createElement('div', { className: 'gear-wrap' });
   const contextBar = ContextBar(state.context, (context) => setState({ context }));
   const actions = createElement('div', { className: 'context-actions' });
-  const stockingAdvisorUrl = buildStockingAdvisorUrl(state.context);
-  const stockingButton = createElement('a', {
-    className: 'btn secondary',
-    text: 'Open Stocking Advisor',
-    attrs: { href: stockingAdvisorUrl },
-  });
-  actions.appendChild(stockingButton);
   const modalButton = createElement('button', {
     className: 'btn tertiary',
     text: 'How to Buy a Tank Smart',
@@ -240,7 +216,6 @@ function render() {
   actions.appendChild(modalButton);
 
   page.append(
-    TransparencyBanner(),
     GearTopAd(),
     contextBar,
     actions,
