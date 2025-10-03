@@ -478,7 +478,8 @@ function resolveAggressionTraits(species) {
   const aggressionScore = Number(species.aggression) || 0;
   const finNipper = tags.has('fin_nipper') || behavior.has(FIN_NIPPER);
   const longFins = tags.has('long_fins') || behavior.has(LONG_FIN_VULNERABLE);
-  const slowLongFins = tags.has('slow_long_fins') || (longFins && behavior.has(SLOW_SWIMMER));
+  const slowSwimmer = tags.has('slow_swimmer') || behavior.has(SLOW_SWIMMER);
+  const slowLongFins = tags.has('slow_long_fins') || (longFins && slowSwimmer);
   const aggressive = tags.has('aggressive') || tags.has('territorial') || behavior.has(TERRITORIAL) || aggressionScore >= 70;
   const semiAggressive = tags.has('semi_aggressive');
   const bettaMale = species.id === 'betta_male' || tags.has('betta_male');
@@ -487,6 +488,7 @@ function resolveAggressionTraits(species) {
     finNipper,
     longFins,
     slowLongFins,
+    slowSwimmer,
     aggressive,
     semiAggressive,
     bettaMale,
@@ -538,13 +540,13 @@ function evaluateAggressionConflict(aGroup, bGroup) {
     addRule('fin_nip', 'error', 'fin-nipping risk', 0);
   }
   if (traitsA.aggressive && traitsB.aggressive && speciesA.id !== speciesB.id) {
-    addRule('aggressive_pair', 'error', 'territorial conflict', 1);
+    addRule('aggressive_pair', 'warn', 'territorial conflict', 4);
   }
   if (traitsA.aggressive && traitsB.slowLongFins) {
-    addRule('agg_vs_slow_long', 'error', 'targets slow long-finned fish', 2);
+    addRule('agg_vs_slow_long', 'error', 'targets slow, long-finned fish', 2);
   }
   if (traitsB.aggressive && traitsA.slowLongFins) {
-    addRule('agg_vs_slow_long', 'error', 'targets slow long-finned fish', 2);
+    addRule('agg_vs_slow_long', 'error', 'targets slow, long-finned fish', 2);
   }
   if (traitsA.semiAggressive && traitsB.longFins) {
     addRule('semi_vs_long', 'warn', 'may nip long fins', 3);
@@ -552,11 +554,11 @@ function evaluateAggressionConflict(aGroup, bGroup) {
   if (traitsB.semiAggressive && traitsA.longFins) {
     addRule('semi_vs_long', 'warn', 'may nip long fins', 3);
   }
-  if (traitsA.bettaMale && (traitsB.finNipper || traitsB.aggressive || traitsB.semiAggressive || traitsB.fastActive)) {
-    addRule('betta_conflict', 'error', 'betta males clash with nippy or aggressive tankmates', 0);
+  if (traitsA.bettaMale && (traitsB.finNipper || traitsB.aggressive || traitsB.semiAggressive)) {
+    addRule('betta_conflict', 'error', 'betta targeted / provokes retaliation', 1);
   }
-  if (traitsB.bettaMale && (traitsA.finNipper || traitsA.aggressive || traitsA.semiAggressive || traitsA.fastActive)) {
-    addRule('betta_conflict', 'error', 'betta males clash with nippy or aggressive tankmates', 0);
+  if (traitsB.bettaMale && (traitsA.finNipper || traitsA.aggressive || traitsA.semiAggressive)) {
+    addRule('betta_conflict', 'error', 'betta targeted / provokes retaliation', 1);
   }
 
   if (!rules.length) {
@@ -875,6 +877,17 @@ function computeStatus({ bioload, aggression, conditions, groupRule, salinityChe
       });
     }
   }
+
+  const severityRank = { danger: 2, bad: 2, warn: 1, warning: 1 };
+  warnings.sort((left, right) => {
+    const diff = (severityRank[right.severity] ?? 0) - (severityRank[left.severity] ?? 0);
+    if (diff !== 0) return diff;
+    const leftText = (left.text || '').toLowerCase();
+    const rightText = (right.text || '').toLowerCase();
+    if (leftText < rightText) return -1;
+    if (leftText > rightText) return 1;
+    return 0;
+  });
 
   return { ...status, warnings };
 }
