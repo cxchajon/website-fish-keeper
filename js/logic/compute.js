@@ -810,7 +810,7 @@ function computeAggression(tank, entries, candidate) {
   };
 }
 
-function computeChips({ tank, candidate, entries, groupRule, salinityCheck, flowCheck, blackwaterCheck, bioload, conditions }) {
+function computeChips({ tank, candidate, entries, groupRule, salinityCheck, flowCheck, blackwaterCheck, bioload, conditions, aggression }) {
   const chips = [];
   if (!candidate) return chips;
   if (groupRule) {
@@ -827,6 +827,19 @@ function computeChips({ tank, candidate, entries, groupRule, salinityCheck, flow
   }
   if (bioload.severity !== 'ok') {
     chips.push({ tone: bioload.severity === 'bad' ? 'bad' : 'warn', text: bioload.severity === 'bad' ? 'Capacity exceeded' : 'High capacity use' });
+  }
+  const aggressionState = aggression ?? candidate?.aggression ?? null;
+  if (aggressionState && Array.isArray(aggressionState.conflicts) && aggressionState.conflicts.length) {
+    for (const conflict of aggressionState.conflicts) {
+      if (!conflict || !conflict.message) continue;
+      const severity = typeof conflict.severity === 'string' ? conflict.severity.toLowerCase() : '';
+      const tone = (severity === 'error' || severity === 'high' || severity === 'danger' || severity === 'bad') ? 'bad' : 'warn';
+      const message = conflict.message || conflict.label || conflict.id;
+      if (!message) continue;
+      const text = `Aggression conflict: ${message}`;
+      const id = conflict.id || `aggr:${conflict.aId ?? ''}:${conflict.bId ?? ''}:${conflict.rule ?? message}`;
+      chips.push({ tone, text, kind: 'aggression', id });
+    }
   }
   const conditionIssues = conditions.conditions.filter((item) => item.severity !== 'ok');
   for (const condition of conditionIssues) {
@@ -936,7 +949,7 @@ export function buildComputedState(state) {
   const invertCheck = candidate ? evaluateInvertSafety(candidate.species, { water }) : { severity: 'ok' };
   const groupRule = candidate ? checkGroupRule(candidate, entries) : null;
 
-  const chips = computeChips({ tank, candidate, entries, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck, bioload, conditions });
+  const chips = computeChips({ tank, candidate, entries, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck, bioload, conditions, aggression });
   if (invertCheck.severity !== 'ok') {
     chips.push({ tone: invertCheck.severity === 'bad' ? 'bad' : 'warn', text: invertCheck.reason });
   }
