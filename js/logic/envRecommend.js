@@ -172,6 +172,8 @@ export function deriveEnv(stock = [], options = {}) {
   const detailChips = [];
   const noteCodes = new Set();
   const notes = { bioload: [], aggression: [] };
+  const nameMap = new Map();
+  const conflictIds = new Set();
 
   const tempRanges = collectRanges(entries, 'temperature');
   const tempCondition = buildRangeCondition({
@@ -252,6 +254,17 @@ export function deriveEnv(stock = [], options = {}) {
   const tankResult = evaluateTankFit(entries, computed);
   detailChips.push(...tankResult.chips);
 
+  for (const entry of entries) {
+    if (!entry?.species?.id) continue;
+    nameMap.set(entry.species.id, entry.species.common_name ?? entry.species.commonName ?? entry.species.id);
+  }
+  if (computed?.candidate?.species?.id) {
+    nameMap.set(
+      computed.candidate.species.id,
+      computed.candidate.species.common_name ?? computed.candidate.species.commonName ?? computed.candidate.species.id
+    );
+  }
+
   const bioloadPct = computeBioloadPct(computed);
   const bioloadLabel = computeBioloadLabel(computed, entries.length);
   const bioloadSeverity = computed?.bioload?.severity ?? 'ok';
@@ -264,6 +277,22 @@ export function deriveEnv(stock = [], options = {}) {
   let aggressionSeverity = computed?.aggression?.severity ?? 'ok';
   if (Array.isArray(computed?.aggression?.reasons)) {
     notes.aggression.push(...computed.aggression.reasons);
+  }
+
+  const aggressionConflicts = Array.isArray(computed?.aggression?.conflicts)
+    ? computed.aggression.conflicts
+    : [];
+  for (const conflict of aggressionConflicts) {
+    if (!conflict || !conflict.aId || !conflict.bId || !conflict.message) continue;
+    const conflictId = conflict.id || `aggr:${conflict.aId}:${conflict.bId}:${conflict.rule ?? 'rule'}`;
+    if (conflictIds.has(conflictId)) continue;
+    conflictIds.add(conflictId);
+    const aName = nameMap.get(conflict.aId) ?? conflict.aId;
+    const bName = nameMap.get(conflict.bId) ?? conflict.bId;
+    const text = `Aggression conflict: ${aName} vs ${bName} — ${conflict.message}`;
+    const severity = conflict.severity === 'error' ? 'danger' : 'warn';
+    detailChips.push({ id: conflictId, text, severity, icon: 'alert', kind: 'aggression' });
+    warnings.push({ id: `warn:${conflictId}`, type: severity === 'danger' ? 'hard' : 'soft', text });
   }
 
   let totalIndividuals = 0;
@@ -938,10 +967,51 @@ function formatRangeGroup(ranges, unit) {
 }
 
 function renderChips(items) {
-  if (!items.length) return '';
-  return `<div class="env-bar__chips">${items
-    .map((item) => `<span class="chip" data-role="conflict-chip">${escapeHtml(item)}</span>`)
-    .join('')}</div>`;
+  if (!Array.isArray(items) || !items.length) return '';
+  const chipHtml = items
+    .map((item) => {
+      if (!item) return '';
+      if (typeof item === 'string') {
+        return `<span class="chip">${escapeHtml(item)}</span>`;
+      }
+      const text = String(item.text ?? '').trim();
+      if (!text) return '';
+      const severity = String(item.severity ?? '').toLowerCase();
+      let tone = '';
+      let toneClass = '';
+      if (severity === 'danger' || severity === 'bad' || severity === 'critical') {
+        tone = 'bad';
+        toneClass = 'danger';
+      } else if (severity === 'warn' || severity === 'warning') {
+        tone = 'warn';
+        toneClass = 'warning';
+      }
+      const attrs = [];
+      const classes = ['chip'];
+      if (toneClass) {
+        classes.push(toneClass);
+      }
+      attrs.push(`class="${classes.join(' ')}"`);
+      if (tone) {
+        attrs.push(`data-tone="${tone}"`);
+      }
+      if (item.id) {
+        attrs.push(`data-id="${escapeHtml(String(item.id))}"`);
+      }
+      if (item.kind) {
+        attrs.push(`data-kind="${escapeHtml(String(item.kind))}"`);
+      }
+      if (tone) {
+        attrs.push('data-role="warning-chip"');
+      }
+      const iconName = item.icon === 'alert' ? '⚠' : item.icon ? String(item.icon) : '';
+      const icon = iconName ? `<span class="chip__icon" aria-hidden="true">${escapeHtml(iconName)}</span>` : '';
+      return `<span ${attrs.join(' ')}>${icon}<span class="chip__text">${escapeHtml(text)}</span></span>`;
+    })
+    .filter(Boolean)
+    .join('');
+  if (!chipHtml) return '';
+  return `<div class="env-bar__chips">${chipHtml}</div>`;
 }
 
 function formatExcelValue(value) {
@@ -1016,10 +1086,21 @@ function dedupeStrings(list) {
   const result = [];
   for (const item of list) {
     if (!item) continue;
-    const key = item.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    result.push(item);
+    if (typeof item === 'string') {
+      const key = item.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      result.push(item);
+      continue;
+    }
+    if (typeof item === 'object') {
+      const text = String(item.text ?? '').trim();
+      if (!text) continue;
+      const key = text.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      result.push({ ...item, text });
+    }
   }
   return result;
 }

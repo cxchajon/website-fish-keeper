@@ -461,6 +461,133 @@ function toBehaviorSet(species) {
   return new Set(raw.map((tag) => String(tag)));
 }
 
+function resolveAggressionTraits(species) {
+  if (!species) {
+    return {
+      finNipper: false,
+      longFins: false,
+      slowLongFins: false,
+      aggressive: false,
+      semiAggressive: false,
+      bettaMale: false,
+      fastActive: false,
+    };
+  }
+  const tags = new Set((Array.isArray(species.tags) ? species.tags : []).map((tag) => String(tag).toLowerCase()));
+  const behavior = toBehaviorSet(species);
+  const aggressionScore = Number(species.aggression) || 0;
+  const finNipper = tags.has('fin_nipper') || behavior.has(FIN_NIPPER);
+  const longFins = tags.has('long_fins') || behavior.has(LONG_FIN_VULNERABLE);
+  const slowLongFins = tags.has('slow_long_fins') || (longFins && behavior.has(SLOW_SWIMMER));
+  const aggressive = tags.has('aggressive') || tags.has('territorial') || behavior.has(TERRITORIAL) || aggressionScore >= 70;
+  const semiAggressive = tags.has('semi_aggressive');
+  const bettaMale = species.id === 'betta_male' || tags.has('betta_male');
+  const fastActive = behavior.has(FAST_ACTIVE) || tags.has('fast_swimmer');
+  return {
+    finNipper,
+    longFins,
+    slowLongFins,
+    aggressive,
+    semiAggressive,
+    bettaMale,
+    fastActive,
+  };
+}
+
+function normalizePairOrder(aGroup, bGroup) {
+  const list = [aGroup, bGroup].filter((group) => group?.species);
+  list.sort((left, right) => {
+    const leftName = (left.species.common_name || left.species.commonName || left.species.id || '').toLowerCase();
+    const rightName = (right.species.common_name || right.species.commonName || right.species.id || '').toLowerCase();
+    if (leftName === rightName) {
+      return (left.species.id || '').localeCompare(right.species.id || '');
+    }
+    return leftName.localeCompare(rightName);
+  });
+  return list;
+}
+
+function evaluateAggressionConflict(aGroup, bGroup) {
+  if (!aGroup?.species || !bGroup?.species) {
+    return null;
+  }
+  const [first, second] = normalizePairOrder(aGroup, bGroup);
+  if (!first || !second) {
+    return null;
+  }
+  const speciesA = first.species;
+  const speciesB = second.species;
+  const traitsA = resolveAggressionTraits(speciesA);
+  const traitsB = resolveAggressionTraits(speciesB);
+  const pairKey = keyPair(speciesA.id, speciesB.id);
+
+  const rules = [];
+  const severityRank = { error: 2, warn: 1 };
+  const addRule = (rule, severity, message, priority) => {
+    if (!rule || !message) return;
+    rules.push({ rule, severity, message, priority });
+  };
+
+  if (HARD_CONFLICTS.has(pairKey)) {
+    addRule('hard_pair', 'error', 'known conflict pairing', -1);
+  }
+  if (traitsA.finNipper && traitsB.longFins) {
+    addRule('fin_nip', 'error', 'fin-nipping risk', 0);
+  }
+  if (traitsB.finNipper && traitsA.longFins) {
+    addRule('fin_nip', 'error', 'fin-nipping risk', 0);
+  }
+  if (traitsA.aggressive && traitsB.aggressive && speciesA.id !== speciesB.id) {
+    addRule('aggressive_pair', 'error', 'territorial conflict', 1);
+  }
+  if (traitsA.aggressive && traitsB.slowLongFins) {
+    addRule('agg_vs_slow_long', 'error', 'targets slow long-finned fish', 2);
+  }
+  if (traitsB.aggressive && traitsA.slowLongFins) {
+    addRule('agg_vs_slow_long', 'error', 'targets slow long-finned fish', 2);
+  }
+  if (traitsA.semiAggressive && traitsB.longFins) {
+    addRule('semi_vs_long', 'warn', 'may nip long fins', 3);
+  }
+  if (traitsB.semiAggressive && traitsA.longFins) {
+    addRule('semi_vs_long', 'warn', 'may nip long fins', 3);
+  }
+  if (traitsA.bettaMale && (traitsB.finNipper || traitsB.aggressive || traitsB.semiAggressive || traitsB.fastActive)) {
+    addRule('betta_conflict', 'error', 'betta males clash with nippy or aggressive tankmates', 0);
+  }
+  if (traitsB.bettaMale && (traitsA.finNipper || traitsA.aggressive || traitsA.semiAggressive || traitsA.fastActive)) {
+    addRule('betta_conflict', 'error', 'betta males clash with nippy or aggressive tankmates', 0);
+  }
+
+  if (!rules.length) {
+    return null;
+  }
+
+  rules.sort((left, right) => {
+    const diff = (severityRank[right.severity] ?? 0) - (severityRank[left.severity] ?? 0);
+    if (diff !== 0) return diff;
+    return (left.priority ?? 0) - (right.priority ?? 0);
+  });
+
+  const best = rules[0];
+  const highestSeverity = best.severity;
+  const messageSet = new Set();
+  for (const rule of rules) {
+    if (rule.severity === highestSeverity) {
+      messageSet.add(rule.message);
+    }
+  }
+  const combinedMessage = Array.from(messageSet).join('; ');
+
+  return {
+    aId: speciesA.id,
+    bId: speciesB.id,
+    rule: best.rule,
+    severity: highestSeverity === 'error' ? 'error' : 'warn',
+    message: combinedMessage || best.message,
+  };
+}
+
 function resolveMinGroup(species) {
   if (!species) return 0;
   const direct = Number(species.min_group);
@@ -553,7 +680,7 @@ function computeAggression(tank, entries, candidate) {
     combined.push(candidate);
   }
   if (!combined.length) {
-    return { severity: 'ok', reasons: [], score: 0, label: 'No conflicts detected.' };
+    return { severity: 'ok', reasons: [], score: 0, percent: 0, label: 'No conflicts detected.', conflicts: [] };
   }
 
   const groupsById = new Map();
@@ -573,7 +700,7 @@ function computeAggression(tank, entries, candidate) {
 
   const groups = Array.from(groupsById.values());
   if (!groups.length) {
-    return { severity: 'ok', reasons: [], score: 0, label: 'No conflicts detected.' };
+    return { severity: 'ok', reasons: [], score: 0, percent: 0, label: 'No conflicts detected.', conflicts: [] };
   }
 
   const contextIssues = [];
@@ -605,6 +732,7 @@ function computeAggression(tank, entries, candidate) {
   }
 
   const pairIssues = [];
+  const pairConflicts = [];
   const severityPool = [];
 
   for (let index = 0; index < groups.length; index += 1) {
@@ -617,14 +745,45 @@ function computeAggression(tank, entries, candidate) {
         const combinedSeverity = Math.min(100, match.severity + contextSum);
         severityPool.push(combinedSeverity);
         pairIssues.push({ severity: combinedSeverity, message: match.message });
+        const conflict = evaluateAggressionConflict(aGroup, bGroup);
+        if (conflict) {
+          pairConflicts.push(conflict);
+        }
       } else if (contextSum > 0) {
         severityPool.push(Math.min(100, contextSum));
+        const conflict = evaluateAggressionConflict(aGroup, bGroup);
+        if (conflict) {
+          pairConflicts.push(conflict);
+        }
+      } else {
+        const conflict = evaluateAggressionConflict(aGroup, bGroup);
+        if (conflict) {
+          pairConflicts.push(conflict);
+        }
       }
     }
   }
 
   const maxSeverity = Math.max(0, ...severityPool, ...contextSeverities);
   const severity = aggressionSeverity(maxSeverity);
+
+  const severityOrder = { error: 2, warn: 1 };
+  const conflicts = pairConflicts
+    .filter((item) => item && item.aId && item.bId && item.message)
+    .reduce((acc, item) => {
+      const id = `aggr:${item.aId}:${item.bId}:${item.rule}`;
+      if (acc.map.has(id)) {
+        return acc;
+      }
+      acc.map.set(id, { ...item, id });
+      acc.list.push({ ...item, id });
+      return acc;
+    }, { map: new Map(), list: [] }).list
+    .sort((left, right) => {
+      const diff = (severityOrder[right.severity] ?? 0) - (severityOrder[left.severity] ?? 0);
+      if (diff !== 0) return diff;
+      return (left.message || '').localeCompare(right.message || '');
+    });
 
   const dedupedIssues = new Map();
   for (const issue of [...pairIssues, ...contextIssues]) {
@@ -639,7 +798,14 @@ function computeAggression(tank, entries, candidate) {
   const reasons = topIssues.map((issue) => issue.message);
   const label = topIssues[0]?.message ?? 'No conflicts detected.';
 
-  return { severity, reasons, score: maxSeverity, label };
+  return {
+    severity,
+    reasons,
+    score: maxSeverity,
+    percent: maxSeverity,
+    label,
+    conflicts,
+  };
 }
 
 function computeChips({ tank, candidate, entries, groupRule, salinityCheck, flowCheck, blackwaterCheck, bioload, conditions }) {
@@ -688,7 +854,29 @@ function computeStatus({ bioload, aggression, conditions, groupRule, salinityChe
     issues.push({ severity: blackwaterCheck.severity, message: blackwaterCheck.reason });
   }
   const filtered = gatherIssues(...issues);
-  return statusFromIssues(filtered);
+  const status = statusFromIssues(filtered);
+
+  const warnings = [];
+  const seen = new Set();
+  if (Array.isArray(aggression?.conflicts)) {
+    for (const conflict of aggression.conflicts) {
+      if (!conflict?.aId || !conflict?.bId || !conflict?.message) continue;
+      const id = conflict.id || `aggr:${conflict.aId}:${conflict.bId}:${conflict.rule ?? 'rule'}`;
+      if (seen.has(id)) continue;
+      seen.add(id);
+      const aName = getSpeciesById(conflict.aId)?.common_name ?? conflict.aId;
+      const bName = getSpeciesById(conflict.bId)?.common_name ?? conflict.bId;
+      warnings.push({
+        id,
+        severity: conflict.severity === 'error' ? 'danger' : 'warn',
+        icon: 'alert',
+        kind: 'aggression',
+        text: `Aggression conflict: ${aName} vs ${bName} — ${conflict.message}`,
+      });
+    }
+  }
+
+  return { ...status, warnings };
 }
 
 function computeDiagnostics({ tank, bioload, aggression, status, candidate, entries }) {
