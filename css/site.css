@@ -1,4 +1,5 @@
 /* unified header with right-aligned toggle */
+.adsbygoogle { margin: 20px auto; display: block; }
 .card__hd--split { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .linklike { background:none; border:0; padding:0; color:var(--link, #87b4ff); font:inherit; cursor:pointer; }
 .linklike:focus { outline:2px solid rgba(255,255,255,.35); outline-offset:2px; border-radius:6px; }
