@@ -1,8 +1,14 @@
 /* TEMP: debug placeholder for AdSense slots */
-ins.adsbygoogle{
+ins.adsbygoogle,
+.ttg-adunit {
+  display:block;
   min-height:250px;             /* CLS guard & visible space */
-  display:block !important;     /* ensure it doesn’t collapse */
   outline:1px dashed rgba(255,255,255,.25);
   background:rgba(255,255,255,.04);
   border-radius:10px;
+}
+
+.is-ads-disabled ins.adsbygoogle,
+.is-ads-disabled .ttg-adunit {
+  display:none !important;
 }
