@@ -1390,7 +1390,7 @@
   <script type="module" src="js/tank-size-card.js?v=2024-09-01"></script>
 
 <!-- === TTG Cookie Consent START === -->
-<div id="ttg-consent" class="ttg-consent" hidden>
+<div id="ttg-consent" class="ttg-consent" data-consent-banner>
   <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
     <h3 id="ttg-consent-title">Cookies & Advertising</h3>
     <p id="ttg-consent-desc">
@@ -1428,184 +1428,11 @@
   </div>
 </div>
 
-<!-- === TTG Cookie Consent SCRIPT (checkbox fix + status) START === -->
-<script>
-(function(){
-  const KEY = 'ttg.consent.v1';
+<!-- === TTG Consent Banner Controller START === -->
+  <script defer src="/assets/js/consent-banner.js"></script>
+<!-- === TTG Consent Banner Controller END === -->
 
-  const $banner = document.getElementById('ttg-consent');
-  const $modal  = document.getElementById('ttg-consent-modal');
-  const $btnAccept = document.getElementById('ttg-consent-accept');
-  const $btnReject = document.getElementById('ttg-consent-reject');
-  const $btnManage = document.getElementById('ttg-consent-manage');
-  const $btnCancel = document.getElementById('ttg-consent-cancel');
-  const $form = document.getElementById('ttg-consent-form');
 
-  // Checkboxes
-  const $rows        = $form ? $form.querySelectorAll('.ttg-row') : [];
-  const $ckEssential = $rows[0] ? $rows[0].querySelector('input[type="checkbox"]') : null;
-  const $ckAnalytics = document.getElementById('ttg-c-analytics');
-  const $ckAds       = document.getElementById('ttg-c-ads');
-
-  // Add a small status line so you can verify state visually
-  let $status = $form ? $form.querySelector('.ttg-consent-status') : null;
-  if ($form && !$status){
-    $status = document.createElement('p');
-    $status.className = 'ttg-consent-status';
-    $form.appendChild($status);
-  }
-
-  function updateStatus(){
-    if(!$status) return;
-    const a = $ckAnalytics && $ckAnalytics.checked ? 'ON' : 'OFF';
-    const d = $ckAds && $ckAds.checked ? 'ON' : 'OFF';
-    $status.textContent = `Current: Analytics ${a} • Advertising ${d}`;
-  }
-
-  function save(state){
-    localStorage.setItem(KEY, JSON.stringify(state));
-    document.documentElement.setAttribute('data-ad-consent', state.ads ? 'granted' : 'denied');
-    window.dispatchEvent(new CustomEvent('ttg:consent-change'));
-  }
-  function load(){
-    try { return JSON.parse(localStorage.getItem(KEY) || ''); } catch(e){ return null; }
-  }
-  function openBanner(){ if (typeof window.__tcfapi === 'function') { return; } if ($banner) $banner.hidden = false; }
-  function closeBanner(){ if ($banner) $banner.hidden = true; }
-  function openModal(){
-    if(!$modal) return;
-    $modal.hidden = false;
-
-    // Essential MUST be checked & disabled
-    if ($ckEssential){
-      $ckEssential.checked = true;
-      $ckEssential.disabled = true;
-    }
-
-    const s = load() || {analytics:false, ads:false};
-    if ($ckAnalytics) $ckAnalytics.checked = !!s.analytics;
-    if ($ckAds)       $ckAds.checked = !!s.ads;
-    updateStatus();
-  }
-  function closeModal(){ if($modal) $modal.hidden = true; }
-
-  // Ensure modal hidden initially
-  closeModal();
-
-  const state = load();
-  if (!state){
-    // First visit: banner only
-    openBanner();
-  } else {
-    save(state);
-    closeBanner(); closeModal();
-  }
-
-  // Wire up clicks on the whole row to toggle the checkbox (except Essential)
-  $rows.forEach(function(row, idx){
-    row.addEventListener('click', function(e){
-      const cb = row.querySelector('input[type="checkbox"]');
-      if (!cb) return;
-      if (idx === 0) return; // Essential: no toggle
-      if (e.target.tagName.toLowerCase() !== 'input'){
-        cb.checked = !cb.checked;
-        updateStatus();
-      }
-    });
-  });
-  if ($ckAnalytics) $ckAnalytics.addEventListener('change', updateStatus);
-  if ($ckAds)       $ckAds.addEventListener('change', updateStatus);
-
-  // Buttons
-  if ($btnAccept) $btnAccept.addEventListener('click', function(){
-    save({ essential:true, analytics:true, ads:true, ts:Date.now() });
-    closeModal(); closeBanner();
-  });
-  if ($btnReject) $btnReject.addEventListener('click', function(){
-    save({ essential:true, analytics:false, ads:false, ts:Date.now() });
-    closeModal(); closeBanner();
-  });
-  if ($btnManage) $btnManage.addEventListener('click', openModal);
-  if ($btnCancel) $btnCancel.addEventListener('click', closeModal);
-
-  if ($form) $form.addEventListener('submit', function(e){
-    e.preventDefault();
-    save({
-      essential: true,
-      analytics: $ckAnalytics ? !!$ckAnalytics.checked : false,
-      ads:       $ckAds ? !!$ckAds.checked : false,
-      ts: Date.now()
-    });
-    closeModal(); closeBanner();
-  });
-
-  // Close modal on outside click
-  if ($modal) $modal.addEventListener('click', function(e){
-    if (e.target === $modal) closeModal();
-  });
-
-  // Close on Escape
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape' && $modal && !$modal.hidden) closeModal();
-  });
-
-  // Guard for ad scripts
-  if (document.documentElement.getAttribute('data-ad-consent') !== 'granted'){
-    window.__TTG_ADS_DISABLED__ = true;
-  }
-
-  // Public API for footer link
-  window.cookieConsent = {
-    open: function(){ openModal(); },
-    reset: function(){ localStorage.removeItem(KEY); closeModal(); openBanner(); }
-  };
-})();
-</script>
-<!-- === TTG Cookie Consent SCRIPT (checkbox fix + status) END === -->
-
-<!-- === TTG Consent → Ad Visibility Controller START === -->
-<script>
-(function(){
-  var KEY = 'ttg.consent.v1';
-
-  function hasGranted(){
-    try {
-      var s = JSON.parse(localStorage.getItem(KEY) || '');
-      return !!(s && s.ads === true);
-    } catch(e){ return false; }
-  }
-
-  function applyConsentToDOM(){
-    var granted = hasGranted();
-    document.documentElement.setAttribute('data-ad-consent', granted ? 'granted' : 'denied');
-    document.documentElement.classList.toggle('is-ads-disabled', !granted);
-
-    // If we’re only showing placeholders (no AdSense yet),
-    // simply un-hide or keep hidden via the CSS above.
-    // (When you later enable the AdSense loader, mount units here if granted.)
-  }
-
-  // Run now
-  applyConsentToDOM();
-
-  // Listen for same-page consent changes (buttons & form), then update immediately
-  ['ttg-consent-accept','ttg-consent-reject'].forEach(function(id){
-    var el = document.getElementById(id);
-    if (el) el.addEventListener('click', function(){ setTimeout(applyConsentToDOM, 0); });
-  });
-  var form = document.getElementById('ttg-consent-form');
-  if (form) form.addEventListener('submit', function(){ setTimeout(applyConsentToDOM, 0); });
-
-  // If your cookie script dispatches a custom event, react to it too
-  window.addEventListener('ttg:consent-change', applyConsentToDOM);
-
-  // Cross-tab changes (Storage event)
-  window.addEventListener('storage', function(e){
-    if (e.key === KEY) applyConsentToDOM();
-  });
-})();
-</script>
-<!-- === TTG Consent → Ad Visibility Controller END === -->
 <!-- === TTG CMP Consent Bridge START === -->
 <script>
 (function(){
@@ -1618,6 +1445,7 @@
   function setAdConsent(granted){
     document.documentElement.setAttribute('data-ad-consent', granted ? 'granted' : 'denied');
     document.documentElement.classList.toggle('is-ads-disabled', !granted);
+    window.__TTG_ADS_DISABLED__ = !granted;
     // Inform any listeners (our ad loader later)
     window.dispatchEvent(new CustomEvent('ttg:consent-change', {detail:{granted}}));
   }
@@ -1630,7 +1458,7 @@
     try{
       var banner = document.getElementById('ttg-consent');
       var modal  = document.getElementById('ttg-consent-modal');
-      if (banner) banner.hidden = true;
+      if (banner){ banner.hidden = true; banner.classList.remove('is-open'); }
       if (modal)  modal.hidden  = true;
     }catch(e){}
 
@@ -1668,7 +1496,7 @@
   }
 
   // Fallback for non-EEA visitors (no __tcfapi): keep using our local preference
-  // Our existing local banner writes ttg.consent.v1 with {ads:true|false}.
+  // Our existing local banner writes ttgConsentV2 with {ads:true|false}.
   // If CMP absent, keep existing behavior (do not force-show anything here).
 
 })();
