@@ -74,7 +74,8 @@
   })();
 
   var saved = ON_LEGAL_PAGE ? null : loadConsent();
-  var defaultGranted = !inEEA && !ON_LEGAL_PAGE;
+  // Default = DENIED for everyone until explicit accept
+  var defaultGranted = false;
 
   gtag('consent', 'default', {
     ad_storage:         (saved ? saved.ad_storage         : (defaultGranted ? 'granted' : 'denied')),
