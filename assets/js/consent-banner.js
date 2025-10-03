@@ -33,7 +33,8 @@
   var tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || '').toLowerCase();
   var tzHintsEU = /(europe\/|gmt|bst|cet|cest)/.test(tz);
   var inEEA = regionParam ? ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH'].indexOf(regionParam.toUpperCase()) !== -1 : tzHintsEU;
-  var defaultGranted = !inEEA;
+  // Mirror consent-mode.js: default = DENIED until accepted
+  var defaultGranted = false;
 
   var banner = document.querySelector('[data-consent-banner]');
   var modal = document.getElementById('ttg-consent-modal');
