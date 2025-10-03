@@ -1,0 +1,90 @@
+{
+  "publisher": "ca-pub-9905718149811880",
+  "ads_txt_ok": true,
+  "ads_txt_line": "google.com, pub-9905718149811880, DIRECT, f08c47fec0942fa0",
+  "pages": {
+    "/stocking.html": {
+      "loader_once_head": true,
+      "slots_match": true,
+      "placement_looks_ok": true,
+      "cls_guard": true,
+      "banner_initial": true,
+      "accept_ads": true,
+      "accept_persist": true,
+      "reject_ads_non_personalized": true,
+      "reject_persist": true,
+      "legal_pages_adfree": false
+    },
+    "/params.html": {
+      "loader_once_head": true,
+      "slots_match": true,
+      "placement_looks_ok": true,
+      "cls_guard": true,
+      "banner_initial": true,
+      "accept_ads": true,
+      "accept_persist": true,
+      "reject_ads_non_personalized": true,
+      "reject_persist": true,
+      "legal_pages_adfree": false
+    },
+    "/gear.html": {
+      "loader_once_head": true,
+      "slots_match": true,
+      "placement_looks_ok": true,
+      "cls_guard": true,
+      "banner_initial": true,
+      "accept_ads": true,
+      "accept_persist": true,
+      "reject_ads_non_personalized": true,
+      "reject_persist": true,
+      "legal_pages_adfree": false
+    },
+    "/media.html": {
+      "loader_once_head": true,
+      "slots_match": true,
+      "placement_looks_ok": true,
+      "cls_guard": true,
+      "banner_initial": true,
+      "accept_ads": true,
+      "accept_persist": true,
+      "reject_ads_non_personalized": true,
+      "reject_persist": true,
+      "legal_pages_adfree": false
+    },
+    "/privacy-legal.html": {
+      "loader_once_head": false,
+      "slots_match": false,
+      "placement_looks_ok": false,
+      "cls_guard": false,
+      "banner_initial": true,
+      "accept_ads": true,
+      "accept_persist": true,
+      "reject_ads_non_personalized": true,
+      "reject_persist": true,
+      "legal_pages_adfree": true
+    }
+  },
+  "slot_map": {
+    "stocking_top": "8419879326",
+    "stocking_bottom": "8979116676",
+    "params_top": "8136808291",
+    "params_bottom": "5754828160",
+    "gear_top": "7692943403",
+    "gear_bottom": "1762971638",
+    "media_bottom": "9522042154"
+  },
+  "artifacts": {
+    "static_ads_md": "/static-qa-ads.md",
+    "static_ads_json": "/static-qa-ads.json",
+    "static_consent_md": "/static-qa-consent.md",
+    "static_consent_json": "/static-qa-consent.json",
+    "screenshots_dir": "/tests/screenshots"
+  },
+  "ready_for_submission": true,
+  "notes": [
+    "Static QA confirms loader present once per monetized template head.",
+    "Slot IDs on stocking/params/gear/media match provided inventory map.",
+    "Consent banner hooks accept and reject paths with persistence verified in QA.",
+    "Legal disclosures remain free of ad markup as required."
+  ]
+}
