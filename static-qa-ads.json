@@ -1,0 +1,27 @@
+{
+  "/stocking.html": {
+    "loader_once_head": true,
+    "slots_match": true,
+    "placement_looks_ok": true,
+    "cls_guard": true
+  },
+  "/params.html": {
+    "loader_once_head": true,
+    "slots_match": true,
+    "placement_looks_ok": true,
+    "cls_guard": true
+  },
+  "/gear.html": {
+    "loader_once_head": true,
+    "slots_match": true,
+    "placement_looks_ok": true,
+    "cls_guard": true
+  },
+  "/media.html": {
+    "loader_once_head": true,
+    "slots_match": true,
+    "placement_looks_ok": true,
+    "cls_guard": true
+  },
+  "legal_pages_adfree": true
+}
