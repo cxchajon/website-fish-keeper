@@ -37,19 +37,53 @@
     }
   }
 
+  function toCanonicalPath(path) {
+    const normalized = normalizePath(path);
+    const map = {
+      '/': HOME_PATH,
+      '/index.html': HOME_PATH,
+      '/index': HOME_PATH,
+      '/stocking.html': '/stocking.html',
+      '/stocking-advisor': '/stocking.html',
+      '/stocking-advisor.html': '/stocking.html',
+      '/gear': '/gear/index.html',
+      '/gear/': '/gear/index.html',
+      '/gear/index.html': '/gear/index.html',
+      '/media': '/media.html',
+      '/media.html': '/media.html',
+      '/feature-your-tank': '/feature-your-tank.html',
+      '/feature-your-tank.html': '/feature-your-tank.html',
+      '/contact': '/contact-feedback.html',
+      '/contact-feedback': '/contact-feedback.html',
+      '/contact-feedback.html': '/contact-feedback.html',
+      '/about': '/about.html',
+      '/about.html': '/about.html',
+      '/privacy-legal': '/privacy-legal.html',
+      '/privacy-legal.html': '/privacy-legal.html',
+      '/terms': '/terms.html',
+      '/terms.html': '/terms.html',
+      '/copyright-dmca': '/copyright-dmca.html',
+      '/copyright-dmca.html': '/copyright-dmca.html',
+      '/store': '/store.html',
+      '/store.html': '/store.html'
+    };
+    return map[normalized] ?? normalized;
+  }
+
   function markActiveLinks(root) {
-    const here = normalizePath(window.location.pathname);
+    const here = toCanonicalPath(window.location.pathname);
     const links = root.querySelectorAll('.links a, #ttg-drawer a');
+    links.forEach((link) => {
+      link.removeAttribute('aria-current');
+    });
     links.forEach((link) => {
       const href = link.getAttribute('href');
       if (!href) {
         return;
       }
-      const target = normalizePath(href);
-      if (target === here || (target === HOME_PATH && here === HOME_PATH)) {
+      const target = toCanonicalPath(href);
+      if (target === here) {
         link.setAttribute('aria-current', 'page');
-      } else {
-        link.removeAttribute('aria-current');
       }
     });
   }
@@ -61,16 +95,46 @@
     }
 
     const openBtn = root.querySelector('#ttg-nav-open');
-    const closeBtn = root.querySelector('#ttg-nav-close');
+    const closeBtn = root.querySelector('#drawer-close');
     const overlay = root.querySelector('#ttg-overlay');
     const drawer = root.querySelector('#ttg-drawer');
-    const focusTargets = drawer ? drawer.querySelectorAll('a, button, [tabindex]:not([tabindex="-1"])') : null;
 
     if (!openBtn || !overlay || !drawer) {
       return;
     }
 
     let previousFocus = null;
+    let drawerFocusables = [];
+
+    const getDrawerFocusables = () => {
+      if (!drawer) {
+        return [];
+      }
+      const nodes = Array.from(
+        drawer.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((node) => node instanceof HTMLElement && !node.hasAttribute('disabled'));
+      const firstIndex = nodes.findIndex((node) => node.id === 'drawer-first');
+      if (firstIndex > 0) {
+        const [firstNode] = nodes.splice(firstIndex, 1);
+        nodes.unshift(firstNode);
+      }
+      return nodes;
+    };
+
+    const focusFirstInDrawer = () => {
+      drawerFocusables = getDrawerFocusables();
+      const target = drawer.querySelector('#drawer-first');
+      if (target instanceof HTMLElement) {
+        target.focus({ preventScroll: true });
+        return;
+      }
+      const first = drawerFocusables[0];
+      if (first instanceof HTMLElement) {
+        first.focus({ preventScroll: true });
+      }
+    };
 
     const closeDrawer = () => {
       if (root.getAttribute('data-open') !== 'true') {
@@ -78,6 +142,7 @@
       }
       root.removeAttribute('data-open');
       drawer.classList.remove('is-open');
+      drawer.removeAttribute('data-open');
       overlay.classList.remove('is-open');
       overlay.setAttribute('aria-hidden', 'true');
       drawer.setAttribute('aria-hidden', 'true');
@@ -99,6 +164,7 @@
       previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       root.setAttribute('data-open', 'true');
       drawer.classList.add('is-open');
+      drawer.setAttribute('data-open', 'true');
       overlay.classList.add('is-open');
       overlay.setAttribute('aria-hidden', 'false');
       drawer.setAttribute('aria-hidden', 'false');
@@ -107,13 +173,7 @@
       document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
       window.requestAnimationFrame(() => {
-        if (!focusTargets || focusTargets.length === 0) {
-          return;
-        }
-        const first = focusTargets[0];
-        if (first instanceof HTMLElement) {
-          first.focus({ preventScroll: true });
-        }
+        focusFirstInDrawer();
       });
     };
 
@@ -132,8 +192,45 @@
     };
 
     const handleKeydown = (event) => {
+      if (root.getAttribute('data-open') !== 'true') {
+        return;
+      }
       if (event.key === 'Escape') {
+        event.preventDefault();
         closeDrawer();
+        return;
+      }
+      if (event.key !== 'Tab') {
+        return;
+      }
+      drawerFocusables = getDrawerFocusables();
+      if (drawerFocusables.length === 0) {
+        return;
+      }
+      const first = drawerFocusables[0];
+      const last = drawerFocusables[drawerFocusables.length - 1];
+      const active = document.activeElement;
+      if (event.shiftKey) {
+        if (active === first || !drawer.contains(active)) {
+          event.preventDefault();
+          if (last instanceof HTMLElement) {
+            last.focus({ preventScroll: true });
+          }
+        }
+        return;
+      }
+      if (active === last) {
+        event.preventDefault();
+        if (first instanceof HTMLElement) {
+          first.focus({ preventScroll: true });
+        }
+        return;
+      }
+      if (!drawer.contains(active)) {
+        event.preventDefault();
+        if (first instanceof HTMLElement) {
+          first.focus({ preventScroll: true });
+        }
       }
     };
 
@@ -158,9 +255,9 @@
       }
     });
 
-    if (!root.__ttgEscHandler) {
+    if (!root.__ttgKeyHandler) {
       document.addEventListener('keydown', handleKeydown);
-      root.__ttgEscHandler = handleKeydown;
+      root.__ttgKeyHandler = handleKeydown;
     }
 
     if (!root.__ttgOutsideHandler) {

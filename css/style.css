@@ -134,7 +134,7 @@ body.theme-light {
   text-decoration: none;
   font-weight: 600;
   font-size: 0.95rem;
-  padding: 10px 0;
+  padding: 12px 0;
   position: relative;
 }
 
@@ -145,17 +145,9 @@ body.theme-light {
 
 #global-nav .links .nav__link[aria-current="page"] {
   color: #ffffff;
-}
-
-#global-nav .links .nav__link[aria-current="page"]::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 6px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 999px;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
 }
 
 @media (max-width: 920px) {
@@ -366,8 +358,8 @@ body.theme-light {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.08);
@@ -418,7 +410,13 @@ body.theme-light {
 
 #global-nav #ttg-drawer .drawer-links .nav__link[aria-current="page"] {
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.18);
+  background: none;
+  text-decoration: underline;
+}
+
+#global-nav #ttg-drawer .drawer-links .nav__link[aria-current="page"]:hover,
+#global-nav #ttg-drawer .drawer-links .nav__link[aria-current="page"]:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 #global-nav a:focus-visible,
