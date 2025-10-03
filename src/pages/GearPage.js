@@ -174,7 +174,6 @@ function GearTopAd() {
       'data-ad-slot': '7692943403',
       'data-ad-format': 'auto',
       'data-full-width-responsive': 'true',
-      'data-adtest': 'on',
     },
   });
 
