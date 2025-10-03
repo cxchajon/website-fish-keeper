@@ -10,7 +10,7 @@ export const FISH_DB = [
   { id:"betta_male", common_name:"Betta (Male)", scientific_name:"Betta splendens", category:"fish",
     adult_size_in:2.6, min_tank_length_in:16, temperature:{min_f:75,max_f:82}, ph:{min:6.0,max:8.0},
     gH:{min_dGH:5,max_dGH:19}, kH:{min_dKH:2,max_dKH:10}, salinity:"fresh", flow:"low", blackwater:"neutral",
-    aggression:70, tags:["betta","labyrinth","fin_sensitive"], behavior:[
+    aggression:70, tags:["betta","betta_male","labyrinth","fin_sensitive","long_fins","slow_long_fins","aggressive"], behavior:[
       BEHAVIOR_TAGS.LONG_FIN_VULNERABLE,
       BEHAVIOR_TAGS.SLOW_SWIMMER,
       BEHAVIOR_TAGS.TERRITORIAL,
@@ -51,7 +51,7 @@ export const FISH_DB = [
   { id:"tigerbarb", common_name:"Tiger Barb", scientific_name:"Puntigrus tetrazona", category:"fish",
     adult_size_in:3.0, min_tank_length_in:36, temperature:{min_f:72,max_f:82}, ph:{min:6.0,max:8.0},
     gH:{min_dGH:5,max_dGH:19}, kH:{min_dKH:4,max_dKH:15}, salinity:"fresh", flow:"high", blackwater:"neutral",
-    aggression:55, tags:["shoaler","fast_swimmer","fin_nipper"], behavior:[
+    aggression:55, tags:["shoaler","schooling_shoaler","fast_swimmer","fin_nipper","semi_aggressive"], behavior:[
       BEHAVIOR_TAGS.FIN_NIPPER,
       BEHAVIOR_TAGS.FAST_ACTIVE,
       BEHAVIOR_TAGS.SHOALING,
