@@ -180,6 +180,7 @@ function bootstrapStocking() {
     candidateChips: document.getElementById('candidate-chips'),
     candidateBanner: document.getElementById('candidate-banner'),
     speciesSelect: document.getElementById('plan-species'),
+    speciesSearch: document.querySelector('#species-search, input[type="search"][name="species"]'),
     qty: document.getElementById('plan-qty'),
     addBtn: document.getElementById('plan-add'),
     stockList: document.getElementById('stock-list'),
@@ -191,6 +192,151 @@ function bootstrapStocking() {
   const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
   const speciesById = new Map(SPECIES.map((species) => [species.id, species]));
   const warnedMarineIds = new Set();
+
+  const canonicalSpeciesList = SPECIES.slice();
+
+  const SALINITY_ALIASES = new Map([
+    ['fw', 'fresh'],
+    ['freshwater', 'fresh'],
+    ['fresh', 'fresh'],
+    ['br', 'brackish-low'],
+    ['brackish', 'brackish-low'],
+    ['brackish_low', 'brackish-low'],
+    ['brackish-low', 'brackish-low'],
+    ['brackish-high', 'brackish-high'],
+    ['dual', 'dual'],
+    ['sw', 'marine'],
+    ['saltwater', 'marine'],
+    ['marine', 'marine'],
+  ]);
+
+  const SALINITY_GROUPS = {
+    fresh: new Set(['fresh', 'dual']),
+    'brackish-low': new Set(['brackish-low', 'dual']),
+    'brackish-high': new Set(['brackish-high', 'dual']),
+    dual: new Set(['fresh', 'brackish-low', 'brackish-high', 'dual']),
+    marine: new Set(['marine']),
+  };
+
+  let speciesSearchTerm = '';
+  let manualSalinityFilter = null;
+
+  function sanitizeSearchTerm(value) {
+    if (typeof value !== 'string') return '';
+    let normalized = value;
+    if (typeof normalized.normalize === 'function') {
+      try {
+        normalized = normalized.normalize('NFKD');
+      } catch (error) {
+        // ignore normalization errors in unsupported environments
+      }
+    }
+    return normalized.replace(/\s+/g, ' ').trim();
+  }
+
+  function normalizeSalinityPreference(value) {
+    if (typeof value !== 'string') return null;
+    const key = value.trim().toLowerCase();
+    if (!key) return null;
+    if (SALINITY_ALIASES.has(key)) {
+      return SALINITY_ALIASES.get(key);
+    }
+    if (Object.prototype.hasOwnProperty.call(SALINITY_GROUPS, key)) {
+      return key;
+    }
+    return null;
+  }
+
+  function resolveActiveSalinityFilter() {
+    if (manualSalinityFilter && Object.prototype.hasOwnProperty.call(SALINITY_GROUPS, manualSalinityFilter)) {
+      return manualSalinityFilter;
+    }
+    const fromState = normalizeSalinityPreference(state?.water?.salinity);
+    if (fromState && Object.prototype.hasOwnProperty.call(SALINITY_GROUPS, fromState)) {
+      return fromState;
+    }
+    return 'fresh';
+  }
+
+  function isSpeciesFeatureBlocked(species) {
+    if (!species) return false;
+    if (species.hide_from_stocking === true || species.hidden_from_stocking === true || species.stockingHidden === true) {
+      return true;
+    }
+    if (species.hidden === true || species.hide_from_planner === true) {
+      return true;
+    }
+    const featureFlags = Array.isArray(species.featureFlags) ? species.featureFlags : [];
+    if (!featureFlags.length) {
+      return false;
+    }
+    const featureConfig = window?.TTG?.features ?? window?.TTG?.featureFlags ?? null;
+    if (!featureConfig) {
+      return false;
+    }
+    return featureFlags.some((flag) => flag && featureConfig[flag] === false);
+  }
+
+  function matchesSearchTerm(species, term) {
+    if (!term) return true;
+    const needle = term.toLowerCase();
+    const fields = [
+      species.common_name,
+      species.scientific_name,
+      species.id,
+    ];
+    if (Array.isArray(species.aliases)) {
+      fields.push(...species.aliases);
+    }
+    if (Array.isArray(species.tags)) {
+      fields.push(species.tags.join(' '));
+    }
+    return fields.some((field) => typeof field === 'string' && field.toLowerCase().includes(needle));
+  }
+
+  function isSalinityAllowed(speciesSalinity, filter) {
+    const normalized = normalizeSalinityPreference(speciesSalinity) ?? 'fresh';
+    const active = Object.prototype.hasOwnProperty.call(SALINITY_GROUPS, filter) ? filter : 'fresh';
+    const allowed = SALINITY_GROUPS[active] ?? SALINITY_GROUPS.fresh;
+    return allowed.has(normalized);
+  }
+
+  function shouldIncludeSpecies(species, { searchTerm, salinity } = {}) {
+    if (!species) return false;
+    if (isSpeciesFeatureBlocked(species)) {
+      return false;
+    }
+    const effectiveSalinity = salinity ?? resolveActiveSalinityFilter();
+    if (!isSalinityAllowed(species.salinity, effectiveSalinity)) {
+      return false;
+    }
+    if (searchTerm && !matchesSearchTerm(species, searchTerm)) {
+      return false;
+    }
+    return true;
+  }
+
+  function buildSpeciesOptionsList() {
+    const filters = {
+      salinity: resolveActiveSalinityFilter(),
+      searchTerm: speciesSearchTerm,
+    };
+    return canonicalSpeciesList
+      .filter((species) => shouldIncludeSpecies(species, filters))
+      .sort(byCommonName);
+  }
+
+  function resetSpeciesFilters({ salinity } = {}) {
+    speciesSearchTerm = '';
+    if (refs.speciesSearch) {
+      refs.speciesSearch.value = '';
+    }
+    if (salinity !== undefined) {
+      manualSalinityFilter = normalizeSalinityPreference(salinity);
+    } else {
+      manualSalinityFilter = null;
+    }
+  }
 
   const lengthValidator = createLengthValidator(refs.candidateChips);
   let selectedSpeciesId = state.candidate?.id ?? null;
@@ -289,6 +435,8 @@ function bootstrapStocking() {
     state.selectedTankId = snapshot.id ?? null;
     state.variantId = null;
     shouldRestoreVariantFocus = false;
+    resetSpeciesFilters();
+    populateSpecies();
     updateLengthValidator();
     if (isBootstrapped) {
       requestEventRecompute();
@@ -680,22 +828,91 @@ function syncStateFromInputs() {
   }
 }
 
-function populateSpecies() {
-  refs.speciesSelect.innerHTML = '';
-  const options = SPECIES.filter((species) => species.salinity !== 'marine').slice().sort(byCommonName);
+function populateSpecies({ preserveSelection = false } = {}) {
+  if (!refs.speciesSelect) return;
+
+  const previousSelection = preserveSelection
+    ? (refs.speciesSelect.value || state.candidate?.id || null)
+    : (state.candidate?.id || refs.speciesSelect.value || null);
+
+  const options = buildSpeciesOptionsList();
+  const fragment = document.createDocumentFragment();
   for (const species of options) {
     const option = document.createElement('option');
     option.value = species.id;
     option.textContent = species.common_name;
-    refs.speciesSelect.appendChild(option);
+    fragment.appendChild(option);
   }
-  if (state.candidate?.id) {
-    refs.speciesSelect.value = state.candidate.id;
+
+  refs.speciesSelect.innerHTML = '';
+  refs.speciesSelect.appendChild(fragment);
+
+  let nextSelection = null;
+  if (previousSelection && options.some((item) => item.id === previousSelection)) {
+    nextSelection = previousSelection;
+  } else if (options.length) {
+    nextSelection = options[0].id;
   }
-  const initialSelection = refs.speciesSelect ? refs.speciesSelect.value : state.candidate?.id;
-  selectedSpeciesId = initialSelection || state.candidate?.id || null;
+
+  if (nextSelection) {
+    refs.speciesSelect.value = nextSelection;
+  } else {
+    refs.speciesSelect.value = '';
+  }
+
+  if (!state.candidate || typeof state.candidate !== 'object') {
+    state.candidate = { id: nextSelection ?? getDefaultSpeciesId(), qty: '1' };
+  } else {
+    state.candidate.id = nextSelection ?? null;
+  }
+
+  if (refs.addBtn) {
+    refs.addBtn.disabled = options.length === 0;
+  }
+
+  selectedSpeciesId = nextSelection ?? null;
   emitSpeciesChange(selectedSpeciesId);
 }
+
+function rebuildSpecies(options = {}) {
+  const opts = typeof options === 'object' && options !== null ? options : {};
+  const hasCustomOptions = Object.keys(opts).length > 0;
+
+  if (!hasCustomOptions) {
+    resetSpeciesFilters();
+  } else {
+    if (opts.resetSearch) {
+      speciesSearchTerm = '';
+    }
+
+    const providedSearch = opts.search ?? opts.searchTerm ?? opts.term ?? opts.query;
+    if (providedSearch !== undefined) {
+      speciesSearchTerm = sanitizeSearchTerm(providedSearch);
+    }
+
+    if (refs.speciesSearch) {
+      refs.speciesSearch.value = speciesSearchTerm;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(opts, 'salinity')) {
+      manualSalinityFilter = normalizeSalinityPreference(opts.salinity);
+    }
+  }
+
+  const preserveSelection = opts.preserveSelection ?? true;
+  populateSpecies({ preserveSelection });
+  scheduleUpdate();
+}
+
+const advisorApi = window.advisor ? { ...window.advisor } : {};
+advisorApi.rebuildSpecies = (options) => {
+  rebuildSpecies(options);
+};
+advisorApi.getVisibleSpecies = () => buildSpeciesOptionsList().map((species) => ({
+  id: species.id,
+  name: species.common_name,
+}));
+window.advisor = advisorApi;
 
 function syncToggles() {
   updateToggle(refs.planted, state.planted);
@@ -823,6 +1040,16 @@ function bindInputs() {
     });
   }
 
+  if (refs.speciesSearch) {
+    const handleSearchInput = (event) => {
+      speciesSearchTerm = sanitizeSearchTerm(event.target.value);
+      populateSpecies({ preserveSelection: true });
+      scheduleUpdate();
+    };
+    refs.speciesSearch.addEventListener('input', handleSearchInput);
+    refs.speciesSearch.addEventListener('change', handleSearchInput);
+  }
+
   refs.speciesSelect.addEventListener('change', () => {
     state.candidate.id = refs.speciesSelect.value;
     selectedSpeciesId = state.candidate.id || null;
@@ -894,6 +1121,7 @@ function buildGearPayload() {
   function init() {
     bindPopoverHandlers(document.body);
     pruneMarineEntries();
+    resetSpeciesFilters();
     populateSpecies();
     syncQtyInputFromState({ force: true });
     syncToggles();

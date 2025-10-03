@@ -2,7 +2,7 @@
 export const HARD_CONFLICTS = new Set([
   'betta_male|betta_male',
   'betta_male|guppy_male',
-  'betta_male|tigerbarb',
+  'betta_male|tiger_barb',
 ]);
 
 // helper to build symmetric keys: a|b in alpha order

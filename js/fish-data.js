@@ -48,7 +48,7 @@ export const FISH_DB = [
     adult_size_in:0.8, min_tank_length_in:18, temperature:{min_f:72,max_f:80}, ph:{min:5.0,max:7.0},
     gH:{min_dGH:0,max_dGH:8}, kH:{min_dKH:0,max_dKH:4}, salinity:"fresh", flow:"low", blackwater:"prefers",
     aggression:0, tags:["shoaler","nano"], group:{type:"shoal",min:8}, invert_safe:true, mouth_size_in:0.05, ph_sensitive:true, bioloadGE:0.3 },
-  { id:"tigerbarb", common_name:"Tiger Barb", scientific_name:"Puntigrus tetrazona", category:"fish",
+  { id:"tiger_barb", common_name:"Tiger Barb", scientific_name:"Puntigrus tetrazona", category:"fish",
     adult_size_in:3.0, min_tank_length_in:36, temperature:{min_f:72,max_f:82}, ph:{min:6.0,max:8.0},
     gH:{min_dGH:5,max_dGH:19}, kH:{min_dKH:4,max_dKH:15}, salinity:"fresh", flow:"high", blackwater:"neutral",
     aggression:55, tags:["shoaler","schooling_shoaler","fast_swimmer","fin_nipper","semi_aggressive"], behavior:[
