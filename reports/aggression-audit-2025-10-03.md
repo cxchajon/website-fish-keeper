@@ -1,0 +1,1 @@
+- Hooked aggression conflicts into candidate warning chips in js/logic/compute.js (computeChips, ~L813-L845).
