@@ -6,9 +6,10 @@ export const REQUIRED_FIELDS = [
 import { BEHAVIOR_TAG_VALUES } from "./behaviorTags.js";
 
 const ALLOWED_TAGS = new Set([
-  "betta","livebearer","labyrinth","algae_specialist","nano",
-  "shoaler","bottom_dweller","fast_swimmer","nocturnal","territorial",
-  "fin_nipper","fin_sensitive","predator_shrimp","predator_snail","invert_safe","cichlid"
+  "betta","betta_male","livebearer","labyrinth","algae_specialist","nano",
+  "shoaler","schooling_shoaler","bottom_dweller","fast_swimmer","nocturnal","territorial",
+  "fin_nipper","fin_sensitive","predator_shrimp","predator_snail","invert_safe","cichlid",
+  "long_fins","slow_long_fins","aggressive","semi_aggressive"
 ]);
 
 const ALLOWED_BEHAVIOR_TAGS = new Set(BEHAVIOR_TAG_VALUES);
