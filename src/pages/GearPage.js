@@ -8,6 +8,7 @@ import { WhyPickDrawer } from '../components/gear/WhyPickDrawer.js';
 import { TankSmartModal } from '../components/gear/TankSmartModal.js';
 
 const OPEN_CATEGORY_STORAGE_KEY = 'ttg.gear.openCategory';
+const STOCKING_STORAGE_KEY = 'ttg_stocking_state';
 
 function readStoredOpenCategory() {
   try {
@@ -28,6 +29,107 @@ function persistOpenCategory(value) {
     // eslint-disable-next-line no-console
     console.warn('Unable to persist open category state', error);
   }
+}
+
+function deriveTankSizeFromStocking(tank = {}) {
+  const gallons = Number.parseFloat(tank.gallons_total);
+  if (!Number.isFinite(gallons)) {
+    return '';
+  }
+  if (gallons >= 18 && gallons <= 22) {
+    if (typeof tank.length_in === 'number' && tank.length_in >= 28) {
+      return '20 Long';
+    }
+    return '20g';
+  }
+  const options = [
+    { label: '5g', value: 5 },
+    { label: '10g', value: 10 },
+    { label: '20g', value: 20 },
+    { label: '29g', value: 29 },
+    { label: '40 Breeder', value: 40 },
+    { label: '55g', value: 55 },
+    { label: '75g', value: 75 },
+    { label: '90g', value: 90 },
+    { label: '110g', value: 110 },
+    { label: '125g', value: 125 },
+  ];
+  let closest = '';
+  let diff = Number.POSITIVE_INFINITY;
+  options.forEach((option) => {
+    const delta = Math.abs(option.value - gallons);
+    if (delta < diff) {
+      diff = delta;
+      closest = option.label;
+    }
+  });
+  return closest;
+}
+
+function deriveBioLoadFromStocking(stock = {}) {
+  if (stock.flags?.heavy_stock) {
+    return 'Heavy';
+  }
+  const band = String(stock.targets?.turnover_band || '').toLowerCase();
+  if (band.includes('low')) {
+    return 'Light';
+  }
+  if (band.includes('high')) {
+    return 'Heavy';
+  }
+  return '';
+}
+
+function deriveContextFromStocking(stock) {
+  if (!stock || typeof stock !== 'object') {
+    return null;
+  }
+  const next = {};
+  const tankSize = deriveTankSizeFromStocking(stock.tank);
+  if (tankSize) {
+    next.tankSize = tankSize;
+  }
+  if (typeof stock.tank?.planted === 'boolean') {
+    next.planted = Boolean(stock.tank.planted);
+  }
+  const bioLoad = deriveBioLoadFromStocking(stock);
+  if (bioLoad) {
+    next.bioLoad = bioLoad;
+  }
+  return Object.keys(next).length ? next : null;
+}
+
+function hydrateFromStocking() {
+  let raw = null;
+  try {
+    raw = sessionStorage.getItem(STOCKING_STORAGE_KEY);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('Stocking state unreadable', error);
+    return null;
+  }
+  if (!raw) {
+    return null;
+  }
+  let snapshot = null;
+  try {
+    snapshot = JSON.parse(raw);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('Stocking state unreadable', error);
+    return null;
+  }
+  const contextPatch = deriveContextFromStocking(snapshot);
+  if (contextPatch) {
+    setState({ context: { ...state.context, ...contextPatch } });
+  }
+  try {
+    sessionStorage.removeItem(STOCKING_STORAGE_KEY);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('Unable to clear stocking state', error);
+  }
+  return snapshot;
 }
 
 const state = {
@@ -269,6 +371,7 @@ function render() {
 }
 
 async function init() {
+  hydrateFromStocking();
   try {
     const { rows } = await loadGear();
     state.rows = rows;
