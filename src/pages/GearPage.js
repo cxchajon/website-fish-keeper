@@ -120,9 +120,11 @@ function hydrateFromStocking() {
     return null;
   }
   const contextPatch = deriveContextFromStocking(snapshot);
+  const patch = { stocking: snapshot };
   if (contextPatch) {
-    setState({ context: { ...state.context, ...contextPatch } });
+    patch.context = { ...state.context, ...contextPatch };
   }
+  setState(patch);
   try {
     sessionStorage.removeItem(STOCKING_STORAGE_KEY);
   } catch (error) {
@@ -144,6 +146,7 @@ const state = {
   alternatives: { Budget: null, Mid: null, Premium: null },
   build: [],
   toast: null,
+  stocking: null,
 };
 
 const root = document.getElementById('gear-root');
@@ -294,19 +297,23 @@ function render() {
   }
   clearElement(root);
 
+  const page = createElement('div', { className: 'gear-wrap' });
+  page.appendChild(GearTopAd());
+
   if (state.loading) {
-    root.appendChild(createElement('p', { text: 'Loading gear recommendations...' }));
+    page.appendChild(createElement('p', { text: 'Loading gear recommendations...' }));
+    root.appendChild(page);
     return;
   }
 
   if (state.error) {
-    root.appendChild(createElement('p', { text: state.error }));
+    page.appendChild(createElement('p', { text: state.error }));
+    root.appendChild(page);
     return;
   }
 
   const groups = groupRows(state.rows, state.context);
 
-  const page = createElement('div', { className: 'gear-wrap' });
   const contextBar = ContextBar(state.context, (context) => setState({ context }));
   const actions = createElement('div', { className: 'context-actions' });
   const modalButton = createElement('button', {
@@ -318,7 +325,6 @@ function render() {
   actions.appendChild(modalButton);
 
   page.append(
-    GearTopAd(),
     contextBar,
     actions,
     RecommendedRow(state.rows, state.context, {
