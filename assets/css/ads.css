@@ -2,16 +2,21 @@
 ins.adsbygoogle,
 .ttg-adunit {
   display:block;
-  min-height:250px;             /* CLS guard & visible space */
+  min-height:90px;
   outline:1px dashed rgba(255,255,255,.25);
   background:rgba(255,255,255,.04);
   border-radius:10px;
   margin:16px 0;
 }
 
-.is-ads-disabled ins.adsbygoogle,
-.is-ads-disabled .ttg-adunit {
+.ttg-adunit {
+  min-height:90px;
+}
+
+.is-ads-disabled .ttg-adunit,
+.is-ads-disabled .adsbygoogle {
   opacity:0.35;
   pointer-events:none;
+  min-height:90px;
   filter:grayscale(0.3);
 }
