@@ -155,6 +155,7 @@
         target.focus({ preventScroll: true });
       }
       previousFocus = null;
+      drawerFocusables = [];
     };
 
     const openDrawer = () => {

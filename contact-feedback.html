@@ -335,7 +335,7 @@
   <main class="page-wrapper">
     <section class="contact-card" aria-labelledby="page-title">
       <div class="status-stack">
-        <div role="status" class="success" data-testid="contact-success" tabindex="-1">Message captured locally. TODO: wire submission endpoint.</div>
+        <div role="status" class="success" data-testid="contact-success" tabindex="-1">Thanks! Your message was sent to the team.</div>
         <div role="alert" class="error-summary" data-testid="contact-errors">
           <strong>There’s a bit more to complete:</strong>
           <ul></ul>
@@ -345,7 +345,6 @@
       <p class="intro">Use this form to share feedback, report logic issues, or highlight anything that seems off in our tools.</p>
       <p class="intro">We also welcome aquarium questions so we can point you toward the right resources for your next build.</p>
       <p class="tiny" aria-live="polite">We usually reply within 1–2 business days.</p>
-      <p class="todo-note" role="note">TODO: Wire the external submission endpoint so these messages send to the team automatically.</p>
       <form data-testid="contact-form" novalidate>
         <fieldset>
           <legend class="visually-hidden">Contact &amp; Feedback form</legend>
@@ -437,7 +436,11 @@
       const successBanner = document.querySelector('[data-testid="contact-success"]');
       const errorSummary = document.querySelector('[data-testid="contact-errors"]');
       const summaryList = errorSummary ? errorSummary.querySelector('ul') : null;
+      const errorHeading = errorSummary ? errorSummary.querySelector('strong') : null;
+      const defaultErrorHeading = errorHeading?.textContent ?? '';
+      const submitButton = form.querySelector('[data-testid="contact-submit"]');
       const LOCAL_STORAGE_KEY = 'ttg.contact.localQueue';
+      const FORM_ENDPOINT = 'https://formspree.io/f/xnngnwld';
 
       const fields = [
         {
@@ -482,6 +485,10 @@
           summaryList.innerHTML = '';
         }
         errorSummary?.classList.remove('visible');
+        errorSummary?.setAttribute('tabindex', '-1');
+        if (errorHeading) {
+          errorHeading.textContent = defaultErrorHeading;
+        }
       }
 
       function captureSubmission(entry) {
@@ -513,6 +520,22 @@
         window.__ttgContactQueue = queue;
       }
 
+      function showSubmissionError() {
+        if (errorHeading) {
+          errorHeading.textContent = "We couldn’t send your message right now.";
+        }
+        if (summaryList) {
+          summaryList.innerHTML = '';
+          const item = document.createElement('li');
+          item.textContent = 'Your message was saved locally. Please try again shortly or email info@thetankguide.com.';
+          summaryList.appendChild(item);
+        }
+        if (errorSummary) {
+          errorSummary.classList.add('visible');
+          errorSummary.focus({ preventScroll: true });
+        }
+      }
+
       fields.forEach((field) => {
         if (!field.input) return;
         const eventName = field.input.tagName === 'SELECT' ? 'change' : 'input';
@@ -525,11 +548,12 @@
         });
       });
 
-      form.addEventListener('submit', (event) => {
+      form.addEventListener('submit', async (event) => {
         event.preventDefault();
         hideStatus();
 
         const invalidFields = [];
+        const payload = {};
 
         fields.forEach((field) => {
           if (!field.input) return;
@@ -539,6 +563,8 @@
           if (!isValid) {
             invalidFields.push(field);
           }
+          const key = field.input.name || field.input.id || 'field';
+          payload[key] = value.trim();
         });
 
         if (invalidFields.length > 0) {
@@ -557,24 +583,51 @@
           return;
         }
 
-        const submission = { submittedAt: new Date().toISOString(), source: 'contact-feedback.html', data: {} };
+        const submission = {
+          submittedAt: new Date().toISOString(),
+          source: 'contact-feedback.html',
+          data: payload,
+        };
 
-        fields.forEach((field) => {
-          if (!field.input) return;
-          const key = field.input.name || field.input.id || 'field';
-          submission.data[key] = field.input.value?.trim() ?? '';
-          field.input.value = '';
-          field.helper?.classList.remove('visible');
-          field.input.removeAttribute('aria-invalid');
-        });
-
-        captureSubmission(submission);
-
-        if (successBanner) {
-          successBanner.classList.add('visible');
-          successBanner.focus({ preventScroll: true });
+        if (submitButton instanceof HTMLButtonElement) {
+          submitButton.setAttribute('aria-disabled', 'true');
+          submitButton.disabled = true;
         }
-        form.reset();
+
+        try {
+          const response = await fetch(FORM_ENDPOINT, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Contact submit failed with status ${response.status}`);
+          }
+
+          if (successBanner) {
+            successBanner.classList.add('visible');
+            successBanner.focus({ preventScroll: true });
+          }
+          form.reset();
+          fields.forEach((field) => {
+            if (!field.input) return;
+            field.helper?.classList.remove('visible');
+            field.input.removeAttribute('aria-invalid');
+          });
+        } catch (error) {
+          console.error('Contact submission failed', error);
+          captureSubmission(submission);
+          showSubmissionError();
+        } finally {
+          if (submitButton instanceof HTMLButtonElement) {
+            submitButton.disabled = false;
+            submitButton.removeAttribute('aria-disabled');
+          }
+        }
       });
     })();
   </script>
