@@ -19,7 +19,7 @@ export const FISH_DB = [
     adult_size_in:2.25, min_tank_length_in:16, temperature:{min_f:75,max_f:82}, ph:{min:6.0,max:8.0},
     gH:{min_dGH:5,max_dGH:19}, kH:{min_dKH:2,max_dKH:10}, salinity:"fresh", flow:"low", blackwater:"neutral",
     aggression:40, tags:["betta","labyrinth","fin_sensitive"], invert_safe:false, mouth_size_in:0.25,
-    group:{type:"colony",min:5}, bioloadGE:2.0 },
+    bioloadGE:2.0 },
   { id:"dgourami", common_name:"Dwarf Gourami", scientific_name:"Trichogaster lalius", category:"fish",
     adult_size_in:3.5, min_tank_length_in:24, temperature:{min_f:72,max_f:82}, ph:{min:6.0,max:7.5},
     gH:{min_dGH:4,max_dGH:15}, kH:{min_dKH:2,max_dKH:8}, salinity:"fresh", flow:"low", blackwater:"neutral",
