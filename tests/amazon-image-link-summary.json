@@ -1,0 +1,23 @@
+{
+  "scannedFiles": 63,
+  "anchorsChecked": 1,
+  "violations": [],
+  "compliant": 1,
+  "shortLinks": [
+    {
+      "file": "/workspace/website-fish-keeper/media.html",
+      "href": "https://amzn.to/3IRKvK0"
+    }
+  ],
+  "report": [
+    {
+      "file": "/workspace/website-fish-keeper/media.html",
+      "href": "https://amzn.to/3IRKvK0",
+      "hasImg": true,
+      "rel": "sponsored noopener noreferrer",
+      "target": "_blank",
+      "shortLink": true,
+      "ok": true
+    }
+  ]
+}

@@ -10,7 +10,8 @@
     "serve:static": "npx http-server -p 8080 -c-1 .",
     "test:headed": "npx playwright test --headed",
     "test:debug": "npx playwright test --debug",
-    "test:report": "npx playwright show-report"
+    "test:report": "npx playwright show-report",
+    "audit:amazon:img": "node tests/verify-amazon-image-links.cjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.0"
