@@ -1,0 +1,7 @@
+node_modules/
+*.log
+backups/
+docs/screens/
+static-qa-*.*
+playwright-report/
+test-results/
