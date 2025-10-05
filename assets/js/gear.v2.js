@@ -291,6 +291,7 @@
     console.log("[Gear] Heaters g-60-90 options:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-60-90")?.options?.length || 0);
     console.log("[Gear] Heaters g-90-125 options:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-90-125")?.options?.length || 0);
     console.log("[Gear] Heading language normalized to 'Recommended' for all categories.");
+    console.log("[Gear] Filters g-5-10 options:", (GEAR.filters?.ranges||[]).find(r=>r.id==="g-5-10")?.options?.length || 0);
   }
 
   if (document.readyState !== 'loading') init();
