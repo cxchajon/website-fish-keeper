@@ -1,0 +1,36 @@
+{
+  "status": "failed",
+  "timestamp": "2025-10-04T00:00:00Z",
+  "tested_endpoints": [
+    {
+      "url": "https://thetankguide.com",
+      "result": "CONNECT tunnel failed (HTTP 403 from envoy proxy)",
+      "observed_headers": {}
+    },
+    {
+      "url": "https://www.thetankguide.com",
+      "result": "CONNECT tunnel failed (HTTP 403 from envoy proxy)",
+      "observed_headers": {}
+    }
+  ],
+  "expected_headers": {
+    "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "geolocation=(), camera=(), microphone=()"
+  },
+  "verification_grade": "unverified",
+  "missing_or_mismatched_headers": [
+    "Strict-Transport-Security",
+    "X-Frame-Options",
+    "X-Content-Type-Options",
+    "Referrer-Policy",
+    "Permissions-Policy"
+  ],
+  "notes": "Outbound HTTPS requests blocked by proxy (HTTP 403). No response headers captured.",
+  "suggested_cloudflare_corrections": [
+    "Confirm that the Security Headers rule remains active in Cloudflare and re-run verification from an environment with outbound HTTPS access.",
+    "If headers are missing when connectivity is restored, ensure the transform rule sets each header exactly to the expected syntax before cache and WAF layers."
+  ]
+}
