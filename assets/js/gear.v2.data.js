@@ -79,7 +79,28 @@ const GEAR = {
         ]
       },
       { id:"g-20-40",  label:"Best Heaters for 20–40 Gallons",  tip:"Aim 100–200W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] },
-      { id:"g-40-60",  label:"Best Heaters for 40–60 Gallons",  tip:"Aim 150–300W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] },
+      {
+        id: "g-40-60",
+        label: "Best Heaters for 40–60 Gallons",
+        tip: "For 40–60 gal tanks, aim for ~200–300W and place the heater in steady flow for even temperature. (Full placement/safety details are in the Heater Tip popup.)",
+        options: [
+          {
+            label: "Option 1",
+            title: "Hitop 300W Aquarium Heater, Submersible Glass Water Heater (35–70 Gallon Fish Tank)",
+            href: "https://amzn.to/46Qv3ps"
+          },
+          {
+            label: "Option 2",
+            title: "hygger Aquarium Heater 300W, Fish Tank Heater with Digital LED Controller, Overheating & Auto Shut Off Protection, Memory Function, Submersible Fish Heater for Saltwater & Freshwater Fish Tank 25–80 Gallon",
+            href: "https://amzn.to/4nF3vuv"
+          },
+          {
+            label: "Option 3",
+            title: "AQQA Aquarium Heater 500W for 55–130 Gallon Fish Tank Heater Quartz Glass Submersible Betta Fish Heater for Aquarium Thermostat Heater with External Digital Controller (AQ136-500W for 55–130Gal)",
+            href: "https://amzn.to/3WsfsHG"
+          }
+        ]
+      },
       { id:"g-60-90",  label:"Best Heaters for 60–90 Gallons",  tip:"Aim 300–500W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] },
       { id:"g-90-125", label:"Best Heaters for 90–125 Gallons", tip:"Aim 500–800W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] }
     ]

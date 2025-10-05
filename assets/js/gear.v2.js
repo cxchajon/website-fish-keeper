@@ -287,6 +287,7 @@
     initTankSelect();
     console.log("[Gear] Heaters g-5-10 options:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-5-10")?.options?.length || 0);
     console.log("[Gear] Added heaters 10–20 range:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-10-20")?.options?.length || 0);
+    console.log("[Gear] Heaters g-40-60 options:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-40-60")?.options?.length || 0);
   }
 
   if (document.readyState !== 'loading') init();
