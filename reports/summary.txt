@@ -1,5 +1,5 @@
-Rows read: 12
-Rows written: 12
-Duplicates removed: 0
-Missing ASINs: 0
-Price strings stripped: 0
+Rows read: 13
+Rows written: 11
+Duplicate ASINs removed: 1
+Missing ASINs: 1
+Price/availability phrases stripped: 4
