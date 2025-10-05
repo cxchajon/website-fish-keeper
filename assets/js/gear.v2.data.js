@@ -56,7 +56,28 @@ const GEAR = {
           }
         ]
       },
-      { id:"g-10-20",  label:"Best Heaters for 10–20 Gallons",  tip:"Aim 50–100W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] },
+      {
+        id: "g-10-20",
+        label: "Best Heaters for 10–20 Gallons",
+        tip: "For 10–20 gal, aim for 50–100W. When placing your heater, account for tank height, how thick your substrate is, and whether the heater has a water line mark. Most should not touch substrate, and not all are fully submersible. Place near gentle flow for even heat.",
+        options: [
+          {
+            label: "Option 1",
+            title: "Hitop 100w Adjustable Aquarium Heater, Submersible Glass Water Heater for 10 – 30 Gallon Fish Tank",
+            href: "https://amzn.to/4nXCmT2"
+          },
+          {
+            label: "Option 2",
+            title: "Fluval M 50-Watt Submersible Aquarium Heater – Compact, Reliable Heating with Mirror Technology for Fresh & Saltwater Tanks Up to 15 Gallons",
+            href: "https://amzn.to/4pTvtnA"
+          },
+          {
+            label: "Option 3",
+            title: "hygger Aquarium Heater, Submersible Fish Tank Heater 100W with Digital LED Controller, Memory Function, Auto Shut Off Protection, Heater for Saltwater Freshwater Fish Tank",
+            href: "https://amzn.to/46DNSxo"
+          }
+        ]
+      },
       { id:"g-20-40",  label:"Best Heaters for 20–40 Gallons",  tip:"Aim 100–200W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] },
       { id:"g-40-60",  label:"Best Heaters for 40–60 Gallons",  tip:"Aim 150–300W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] },
       { id:"g-60-90",  label:"Best Heaters for 60–90 Gallons",  tip:"Aim 300–500W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] },
