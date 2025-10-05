@@ -123,7 +123,28 @@ const GEAR = {
           }
         ]
       },
-      { id:"g-90-125", label:"Recommended Heaters for 90–125 Gallons", tip:"Aim 500–800W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] }
+      {
+        id: "g-90-125",
+        label: "Recommended Heaters for 90–125 Gallons",
+        tip: "For 90–125 gal tanks, aim for 500–800W total heating power. For large aquariums, use multiple heaters for balanced temperature and redundancy. (Full placement/safety details in the Heater Tip popup.)",
+        options: [
+          {
+            label: "Option 1",
+            title: "hygger 500W Aquarium Heater with Controller, Adjustable & Submersible Fish Tank Heater with Digital Display Safety Triple Protection Beeping Alarm for Saltwater and Freshwater 65–135 Gallon",
+            href: "https://amzn.to/46ROYo5"
+          },
+          {
+            label: "Option 2",
+            title: "hygger Aquarium Heater with Intelligent Temperature Controller, 500W for 66–135 Gallon Submersible Fish Tank Heater with Leaving Water Automatically Stop Heating System, for Freshwater Saltwater",
+            href: "https://amzn.to/3KWN91y"
+          },
+          {
+            label: "Option 3",
+            title: "AQQA Aquarium Heater 500W for 55–130 Gallon Fish Tank Heater Quartz Glass Submersible Betta Fish Heater for Aquarium Thermostat Heater with External Digital Controller (AQ136-500W for 55–130Gal)",
+            href: "https://amzn.to/3WocVON"
+          }
+        ]
+      }
     ]
   },
 
