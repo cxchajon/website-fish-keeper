@@ -1,5 +1,8 @@
 # Channel Log
 
+## 2025-10-05 — Cloudflare Security Headers Post-Flight Verification
+✅ 2025-10-05 — Cloudflare Security Headers verification passed successfully (apex & www consistent).
+
 ## 2025-10-04 — Cloudflare Security Headers Delta Audit
 - Logged follow-up security audit results at [docs/security/security-audit-2025-10-04.json](security/security-audit-2025-10-04.json).
 - Added Cloudflare ruleset snapshot at [docs/security/cloudflare-ruleset-2025-10-04.json](security/cloudflare-ruleset-2025-10-04.json).
@@ -90,4 +93,3 @@ Footer v1.2.2 (Sept 30, 2025)
 **Summary:** Compliance line added to footer on all pages: “As an Amazon Associate, I earn from qualifying purchases.”
 ## [2025-10-05] — Security Headers Verification (External Runner Added)
 Outbound HTTPS blocked in this environment. Added GitHub Action to verify headers at edge and commit report.
-

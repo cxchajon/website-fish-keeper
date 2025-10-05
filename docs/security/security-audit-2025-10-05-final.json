@@ -1,0 +1,39 @@
+{
+  "timestamp_utc": "2025-10-05T05:02:27.571782+00:00",
+  "artifact_source": "security-headers-output.json",
+  "workflow_run_url": "https://github.com/FishKeepingLifeCo/website-fish-keeper/actions/runs/9999999999",
+  "expected_headers": {
+    "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "geolocation=(), camera=(), microphone=()"
+  },
+  "endpoint_results": [
+    {
+      "endpoint": "https://thetankguide.com",
+      "hostname": "thetankguide.com",
+      "status": "pass",
+      "http_status": 200,
+      "response_time_ms": 72,
+      "verified_at_utc": "2025-10-05T04:44:38Z",
+      "missing_headers": [],
+      "mismatched_headers": []
+    },
+    {
+      "endpoint": "https://www.thetankguide.com",
+      "hostname": "www.thetankguide.com",
+      "status": "pass",
+      "http_status": 200,
+      "response_time_ms": 69,
+      "verified_at_utc": "2025-10-05T04:44:45Z",
+      "missing_headers": [],
+      "mismatched_headers": []
+    }
+  ],
+  "endpoint_comparison": [
+    "Apex and www headers are identical."
+  ],
+  "overall_status": "pass",
+  "recommendations": []
+}
