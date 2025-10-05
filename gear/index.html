@@ -8,8 +8,7 @@
   <link rel="stylesheet" href="/assets/css/gear.v2.css">
 </head>
 <body>
-  <!-- Global Nav Include -->
-  <div data-include="/nav.html"></div>
+  <header id="site-nav" data-include="/partials/nav.html"></header>
 
   <!-- Sticky Tank Reference -->
   <section id="tank-ref" class="tank-ref" aria-label="Tank reference">
@@ -83,11 +82,9 @@
     <div id="substrate-body" class="gear-card__body" hidden></div>
   </section>
 
-  <!-- Global Footer Include -->
-  <div data-include="/footer.v1.3.0.html"></div>
-
   <script src="/assets/js/gear.v2.data.js" defer></script>
   <script src="/assets/js/gear.v2.js" defer></script>
-  <script src="/assets/js/includes.js" defer></script>
+  <footer id="site-footer" data-include="/partials/footer.html"></footer>
+  <script src="/assets/js/include-partials.js" defer></script>
 </body>
 </html>
