@@ -23,6 +23,64 @@ main {
   position: relative;
 }
 
+.gear-page__title {
+  margin: 0 0 12px;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.gear-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 16px 0 28px;
+}
+
+.gear-controls__label {
+  font-weight: 600;
+}
+
+.gear-controls__select {
+  font-size: 1rem;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--fg);
+}
+
+.gear-sections {
+  display: grid;
+  gap: 24px;
+}
+
+.gear-category {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(9, 15, 30, 0.78);
+  padding: 20px;
+}
+
+.gear-category__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.gear-category__title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.gear-category__empty {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-style: italic;
+}
+
 .transparency-banner {
   background: rgba(255, 255, 255, 0.12);
   border-radius: 14px;
@@ -270,6 +328,32 @@ main {
   gap: 6px;
 }
 
+.badge--plant {
+  background: rgba(91, 140, 255, 0.4);
+}
+
+.gear-card {
+  position: relative;
+}
+
+.gear-card__meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.gear-card__cta.is-disabled {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.gear-error {
+  margin-top: 16px;
+  color: #ff9c9c;
+  font-weight: 600;
+}
+
 .category-accordion {
   display: grid;
   gap: 18px;
@@ -398,6 +482,56 @@ main {
 
 .drawer-alternative__tier {
   font-weight: 600;
+}
+
+.gear-devtester {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  background: rgba(10, 16, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: var(--fg);
+  font-size: 0.9rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  z-index: 1000;
+  max-width: 280px;
+}
+
+.gear-devtester h3 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.gear-devtester__counts {
+  margin: 0 0 8px;
+}
+
+.gear-devtester__copy {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.gear-devtester__copy:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gear-devtester--error {
+  outline: 3px solid #ff6b6b;
+  outline-offset: 2px;
+}
+
+.gear-devtester--warning {
+  outline: 3px solid #ffb347;
+  outline-offset: 2px;
 }
 
 .tank-smart-modal {

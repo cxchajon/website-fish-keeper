@@ -1,1 +1,11 @@
-Category,Tank_Size,Product_Type,Product_Name,Use_Case,Recommended_Specs,Plant_Ready,Price_Range,Notes,Amazon_Link,Chewy_Link
+Category,Product_Type,Product_Name,Use_Case,Recommended_Specs,Plant_Ready,Price_Range,Notes,Amazon_Link,Chewy_Link,ASIN,Source_List
+Lighting,Bar Light,Aqueon OptiBright MAX LED Aquarium Light Fixture 48 Inch,,,,,,https://www.amazon.com/dp/B0LGT00010/?tag=fishkeepingli-20,,B0LGT00010,LIGHTS.csv
+Lighting,Bar Light,Aqueon Planted Aquarium Clip-On LED Light,,,,,,https://www.amazon.com/dp/B0LGT00007/?tag=fishkeepingli-20,,B0LGT00007,LIGHTS.csv
+Lighting,Bar Light,Beamswork DA FSPEC LED Aquarium Light 36 Inch,,,,,,https://www.amazon.com/dp/B0LGT00009/?tag=fishkeepingli-20,,B0LGT00009,LIGHTS.csv
+Lighting,Bar Light,Current USA Satellite Freshwater Plus PRO LED Light 48 Inch,,,,,,https://www.amazon.com/dp/B0LGT00008/?tag=fishkeepingli-20,,B0LGT00008,LIGHTS.csv
+Lighting,Bar Light,Finnex Planted+ 24/7 HLC Aquarium LED 30 Inch,,,,,,https://www.amazon.com/dp/B0LGT00006/?tag=fishkeepingli-20,,B0LGT00006,LIGHTS.csv
+Lighting,Bar Light,Fluval Plant 3.0 LED Planted Aquarium Light 24-34 Inch,,,,,,https://www.amazon.com/dp/B0LGT00003/?tag=fishkeepingli-20,,B0LGT00003,LIGHTS.csv
+Lighting,Bar Light,Fluval Plant 3.0 LED Planted Aquarium Light 36-46 Inch,,,,,,https://www.amazon.com/dp/B0LGT00004/?tag=fishkeepingli-20,,B0LGT00004,LIGHTS.csv
+Lighting,Bar Light,Hygger Advanced Full Spectrum LED Aquarium Light 24-30 Inch,,,,,,https://www.amazon.com/dp/B0LGT00005/?tag=fishkeepingli-20,,B0LGT00005,LIGHTS.csv
+Lighting,Bar Light,NICREW ClassicLED Plus Planted Aquarium Light 18-24 Inch,,,,,,https://www.amazon.com/dp/B0LGT00001/?tag=fishkeepingli-20,,B0LGT00001,LIGHTS.csv
+Lighting,Bar Light,NICREW ClassicLED Plus Planted Aquarium Light 24-30 Inch,,,,,,https://www.amazon.com/dp/B0LGT00002/?tag=fishkeepingli-20,,B0LGT00002,LIGHTS.csv
