@@ -1,5 +1,16 @@
-Rows read: 13
-Rows written: 11
-Duplicate ASINs removed: 1
-Missing ASINs: 1
-Price/availability phrases stripped: 4
+Gear conversion summary
+======================
+
+LIGHTS.csv:
+  Rows read: 13
+  Duplicates: 1
+
+exportedList_1K6C25CO6ESSX.csv:
+  Rows read: 12
+  Duplicates: 0
+
+Total rows written: 22
+Total duplicates removed: 1
+Missing ASIN rows: 2
+
+Affiliate tag enforced: fishkeepingli-20

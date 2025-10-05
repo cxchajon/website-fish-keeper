@@ -1,1 +1,13 @@
-Category,Tank_Size,Product_Type,Product_Name,Use_Case,Recommended_Specs,Plant_Ready,Price_Range,Notes,Amazon_Link,Chewy_Link
+Category,Product_Type,Product_Name,Use_Case,Recommended_Specs,Plant_Ready,Price_Range,Notes,Amazon_Link,Chewy_Link,ASIN,Source_List
+Filtration,,AquaClear 50 Power Filter,,,,,,https://www.amazon.com/dp/B0002566WY/?tag=fishkeepingli-20,,B0002566WY,exportedList_1K6C25CO6ESSX.csv
+Filtration,Canister Filter,Aqueon QuietFlow Canister Filter 200,,,,,,https://www.amazon.com/dp/B08N4G6GRH/?tag=fishkeepingli-20,,B08N4G6GRH,exportedList_1K6C25CO6ESSX.csv
+Filtration,Canister Filter,Cascade 1500 Canister Filter,,,,,,https://www.amazon.com/dp/B0BR8HH7ND/?tag=fishkeepingli-20,,B0BR8HH7ND,exportedList_1K6C25CO6ESSX.csv
+Filtration,Canister Filter,Eheim Classic External Canister Filter 2213,,,,,,https://www.amazon.com/dp/B005QRDCP2/?tag=fishkeepingli-20,,B005QRDCP2,exportedList_1K6C25CO6ESSX.csv
+Filtration,Canister Filter,Fluval 107 Performance Canister Filter,,,,,,https://www.amazon.com/dp/B07KXJGDLT/?tag=fishkeepingli-20,,B07KXJGDLT,exportedList_1K6C25CO6ESSX.csv
+Filtration,Canister Filter,Fluval FX4 High Performance Canister Filter,,,,,,https://www.amazon.com/dp/B09R7MDG8M/?tag=fishkeepingli-20,,B09R7MDG8M,exportedList_1K6C25CO6ESSX.csv
+Filtration,,Hygger Quiet Aquarium Power Filter,,,,,,https://www.amazon.com/dp/B08F2Z4M6W/?tag=fishkeepingli-20,,B08F2Z4M6W,exportedList_1K6C25CO6ESSX.csv
+Filtration,,MarineLand Penguin 350 BIO-Wheel Filter,,,,,,https://www.amazon.com/dp/B07PHLZYRZ/?tag=fishkeepingli-20,,B07PHLZYRZ,exportedList_1K6C25CO6ESSX.csv
+Filtration,Canister Filter,Polar Aurora External Canister Filter,,,,,,https://www.amazon.com/dp/B0834K1LXB/?tag=fishkeepingli-20,,B0834K1LXB,exportedList_1K6C25CO6ESSX.csv
+Filtration,Hang-On-Back Filter,Seachem Tidal 55 Hang On Back Filter,,,,,,https://www.amazon.com/dp/B01M0N8FPT/?tag=fishkeepingli-20,,B01M0N8FPT,exportedList_1K6C25CO6ESSX.csv
+Filtration,Canister Filter,SunSun HW-3000 Canister Filter,,,,,,https://www.amazon.com/dp/B081V6B7LN/?tag=fishkeepingli-20,,B081V6B7LN,exportedList_1K6C25CO6ESSX.csv
+Filtration,,Tetra Whisper IQ Power Filter 45,,,,,,https://www.amazon.com/dp/B0B3QFMG6M/?tag=fishkeepingli-20,,B0B3QFMG6M,exportedList_1K6C25CO6ESSX.csv
