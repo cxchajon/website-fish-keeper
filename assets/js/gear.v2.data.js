@@ -21,7 +21,7 @@ const RANGES_LIGHTS = [
 
 /* Category tips shown on the “i” buttons */
 const TIPS = {
-  heaters: "Choose a heater whose printed range starts at (or just above) your tank size. Example: for a 40-gallon tank, prefer 40–60 gal over 20–40. Bonus safety: use a temp controller.",
+  heaters: "Choose a heater whose printed range starts at (or just above) your tank size. Example: for a 40-gallon tank, prefer 40–60 gal over 20–40. Bonus safety: use a temp controller. When placing your heater, account for tank height, how thick your substrate is, and whether the heater has a water line mark. Most should not touch substrate, and not all are fully submersible. Place near gentle flow for even heat.",
   filters: "Oversize your filter. A 40–60 gal filter on a 40-gal tank keeps water clearer. Keep biomedia; replace only mechanical floss.",
   lights:  "Match your light to tank length, not wattage. Look for plant-ready if you keep live plants. A little overhang is OK; avoid dark spots.",
   substrate:"Depth matters: 1–2\" for most tanks; 2+\" for planted. Rinse inert gravels. For planted, consider root tabs with inert substrates."
@@ -59,7 +59,7 @@ const GEAR = {
       {
         id: "g-10-20",
         label: "Best Heaters for 10–20 Gallons",
-        tip: "For 10–20 gal, aim for 50–100W. When placing your heater, account for tank height, how thick your substrate is, and whether the heater has a water line mark. Most should not touch substrate, and not all are fully submersible. Place near gentle flow for even heat.",
+        tip: "For 10–20 gal, aim for 50–100W.",
         options: [
           {
             label: "Option 1",
