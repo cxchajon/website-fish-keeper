@@ -182,8 +182,9 @@
   function createCard(row) {
     const card = document.createElement('article');
     card.className = 'product-card gear-card';
+    card.setAttribute('data-card', '');
     if (row.ASIN) {
-      card.dataset.asin = row.ASIN;
+      card.dataset.asin = row.ASIN.trim().toUpperCase();
     }
     if (row.Category) {
       card.dataset.category = row.Category;
@@ -233,6 +234,8 @@
     links.className = 'product-card__links';
     const button = document.createElement('a');
     button.className = 'btn primary gear-card__cta';
+    button.classList.add('buy-amazon');
+    button.setAttribute('data-action', 'buy-amazon');
     button.textContent = 'View on Amazon';
     if (row.Amazon_Link) {
       button.href = row.Amazon_Link;

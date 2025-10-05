@@ -1,0 +1,7 @@
+Affiliate Link Fix Summary
+===========================
+Rows processed: 22
+Rows with valid ASIN: 22
+Rows missing/invalid ASIN: 0
+
+No link updates were required; all links were already canonical.
