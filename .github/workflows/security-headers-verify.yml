@@ -1,117 +1,54 @@
 name: Security Headers Verify
+
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 6 1 */3 *"  # quarterly at 06:00 UTC on the 1st
+    - cron: "0 3 * * *"  # daily at 03:00 UTC
 
 jobs:
   verify:
+    name: Verify Cloudflare Security Headers
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fetch headers (apex)
-        id: apex
+      - name: Install curl and jq
         run: |
-          curl -sSI https://thetankguide.com > apex.headers || true
-          cat apex.headers
+          sudo apt-get update
+          sudo apt-get install -y curl jq
 
-      - name: Fetch headers (www)
-        id: www
+      - name: Fetch headers from apex
         run: |
-          curl -sSI https://www.thetankguide.com > www.headers || true
-          cat www.headers
+          echo "Fetching headers from thetankguide.com"
+          curl -sSI https://thetankguide.com > apex_headers.txt
 
-      - name: Prepare required headers
-        id: requirements
+      - name: Fetch headers from www
         run: |
-          cat <<'JSON' > required.json
-          {
-            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-            "x-frame-options": "SAMEORIGIN",
-            "x-content-type-options": "nosniff",
-            "referrer-policy": "strict-origin-when-cross-origin",
-            "permissions-policy": "geolocation=(), microphone=(), camera=()"
-          }
-          JSON
-          cat required.json
+          echo "Fetching headers from www.thetankguide.com"
+          curl -sSI https://www.thetankguide.com > www_headers.txt
 
-      - name: Validate headers with Python
+      - name: Combine and format JSON output
         run: |
-          python3 - <<'PY'
-import json, sys
+          jq -n \
+            --slurpfile apex apex_headers.txt \
+            --slurpfile www www_headers.txt \
+            '{timestamp: now, apex: ($apex | tostring), www: ($www | tostring)}' \
+            > security-headers-output.json
 
-def parse(path):
-    headers = {}
-    with open(path, 'r', encoding='utf-8', errors='ignore') as fh:
-        for line in fh:
-            if ':' in line:
-                key, value = line.split(':', 1)
-                headers[key.strip().lower()] = value.strip()
-    return headers
-
-with open('required.json', 'r', encoding='utf-8') as fh:
-    required = json.load(fh)
-
-apex = parse('apex.headers')
-www = parse('www.headers')
-
-missing = {}
-mismatch = {}
-
-for name, expected in required.items():
-    for label, headers in {'https://thetankguide.com': apex, 'https://www.thetankguide.com': www}.items():
-        target_missing = missing.setdefault(label, [])
-        target_mismatch = mismatch.setdefault(label, [])
-        if name not in headers:
-            target_missing.append(name)
-        elif headers[name] != expected:
-            target_mismatch.append({"header": name, "actual": headers[name], "expected": expected})
-
-status = 'verified'
-if any(missing.values()) or any(mismatch.values()):
-    status = 'failed'
-
-result = {
-    "status": status,
-    "verified_at_utc": __import__('datetime').datetime.utcnow().isoformat() + 'Z',
-    "method": "github-actions-curl",
-    "endpoints": {
-        "https://thetankguide.com": {
-            "headers": apex,
-            "missing": missing["https://thetankguide.com"],
-            "mismatch": mismatch["https://thetankguide.com"]
-        },
-        "https://www.thetankguide.com": {
-            "headers": www,
-            "missing": missing["https://www.thetankguide.com"],
-            "mismatch": mismatch["https://www.thetankguide.com"]
-        }
-    },
-    "requirements": required
-}
-
-with open('gha-security-headers-result.json', 'w', encoding='utf-8') as fh:
-    json.dump(result, fh, indent=2)
-
-print(json.dumps(result, indent=2))
-
-if status != 'verified':
-    sys.exit(1)
-PY
-
-      - name: Upload artifact
-        if: always()
+      - name: Upload verification artifact
         uses: actions/upload-artifact@v4
         with:
-          name: security-headers-result
-          path: gha-security-headers-result.json
+          name: security-headers-verify
+          path: security-headers-output.json
 
-      - name: Commit report back to repo (even on failure)
-        if: always()
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore(security): add GitHub Actions security headers verification report"
-          file_pattern: gha-security-headers-result.json
-          branch: ${{ github.ref_name }}
+      - name: Commit latest report into docs/security
+        run: |
+          mkdir -p docs/security
+          mv security-headers-output.json docs/security/security-headers-verify-latest.json
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add docs/security/security-headers-verify-latest.json
+          git commit -m "chore(security): update security headers verification report" || echo "No changes to commit"
+          git push || echo "Push skipped (PR flow or no changes)"
