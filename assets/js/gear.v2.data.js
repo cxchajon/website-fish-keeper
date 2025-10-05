@@ -200,6 +200,31 @@ const GEAR = {
         };
       }
 
+      if (r.id === "g-20-40") {
+        return {
+          id: "g-20-40",
+          label: "Recommended Filters for 20–40 Gallons",
+          tip: "",  // all educational text handled by the Filter Tip popup
+          options: [
+            {
+              label: "Option 1",
+              title: "hygger Aquarium Double Sponge Filter for Fresh Water and Salt-Water Fish Tank (M)",
+              href: "https://amzn.to/46XUzsV"
+            },
+            {
+              label: "Option 2",
+              title: "Seachem Tidal Power Aquarium Filter - 35 Gallon Large Fish Tank Filter, black",
+              href: "https://amzn.to/3IUy1RL"
+            },
+            {
+              label: "Option 3",
+              title: "Fluval C2 Power Filter, Fish Tank Filter for Aquariums up to 30 Gal.",
+              href: "https://amzn.to/4mSXsRP"
+            }
+          ]
+        };
+      }
+
       return {
         id: r.id,
         label: `Recommended Filters for ${r.label}`,
