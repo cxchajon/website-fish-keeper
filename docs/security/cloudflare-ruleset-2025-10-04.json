@@ -1,0 +1,14 @@
+{
+  "date_verified": "2025-10-04T00:00:00Z",
+  "rule_name": "Security Headers",
+  "applies_to": ["thetankguide.com", "www.thetankguide.com"],
+  "headers": {
+    "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "geolocation=(), camera=(), microphone=()"
+  },
+  "status": "active",
+  "validated_by": "codex-delta-audit"
+}
