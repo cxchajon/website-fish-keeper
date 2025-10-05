@@ -1,2 +1,1 @@
-LIGHTS.csv: row 13 (Chihiros WRGB II Pro 60 Aquarium Light)
-LIGHTS.csv: row 14 (Chihiros WRGB II Slim Aquarium Light)
+All rows contain a valid ASIN.

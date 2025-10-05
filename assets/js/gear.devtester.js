@@ -4,21 +4,27 @@
     return;
   }
 
-  const AMAZON_PATTERN = /^https:\/\/www\.amazon\.com\/dp\/[A-Z0-9]{10}\/\?tag=fishkeepingli-20$/;
+  const STATUS_LABELS = {
+    ok: 'OK',
+    warn: 'WARN',
+    error: 'ERROR',
+  };
+
   let panel;
   let countsNode;
   let copyButton;
-  let reportData = [];
+  let latestResults = [];
 
   function ensurePanel() {
     if (panel) {
       return;
     }
+
     panel = document.createElement('aside');
     panel.className = 'gear-devtester';
 
     const title = document.createElement('h3');
-    title.textContent = 'Gear Dev Tester';
+    title.textContent = 'Gear Link Validator';
     panel.appendChild(title);
 
     countsNode = document.createElement('p');
@@ -30,13 +36,15 @@
     copyButton.className = 'gear-devtester__copy';
     copyButton.textContent = 'Copy report';
     copyButton.addEventListener('click', () => {
-      if (!reportData.length) {
+      if (!latestResults.length) {
         return;
       }
-      const lines = reportData
-        .map((item) => `${item.Category} | ${item.Product_Name} | ${item.ASIN} | ${item.Issue}`)
+      const lines = latestResults
+        .map((item) => {
+          return `${item.status.toUpperCase()} | ${item.category} | ${item.name} | ${item.asin || '—'} | ${item.href || '—'}`;
+        })
         .join('\n');
-      if (navigator.clipboard && navigator.clipboard.writeText) {
+      if (navigator.clipboard?.writeText) {
         navigator.clipboard.writeText(lines).catch(() => {});
       } else {
         const textarea = document.createElement('textarea');
@@ -49,7 +57,7 @@
         try {
           document.execCommand('copy');
         } catch (error) {
-          // no-op
+          // Ignore copy failures.
         }
         textarea.remove();
       }
@@ -59,85 +67,79 @@
     document.body.appendChild(panel);
   }
 
-  function updateCounts(summary) {
-    if (!countsNode) {
-      return;
-    }
-    countsNode.textContent = `Total: ${summary.total} | OK: ${summary.ok} | Warnings: ${summary.warnings} | Errors: ${summary.errors}`;
+  function updateCounts(results) {
+    ensurePanel();
+    const summary = results.reduce(
+      (acc, item) => {
+        acc.total += 1;
+        acc[item.status] = (acc[item.status] || 0) + 1;
+        return acc;
+      },
+      { total: 0, ok: 0, warn: 0, error: 0 }
+    );
+    countsNode.textContent = `Total: ${summary.total} | OK: ${summary.ok} | WARN: ${summary.warn} | ERROR: ${summary.error}`;
     copyButton.disabled = summary.total === 0;
   }
 
-  function evaluate(cards) {
-    ensurePanel();
-    const cardArray = Array.isArray(cards) ? cards : Array.from(cards || []);
-    const summary = { total: cardArray.length, ok: 0, warnings: 0, errors: 0 };
-    reportData = [];
-
-    cardArray.forEach((card) => {
+  function applyHighlights(results) {
+    results.forEach((item) => {
+      const card = item.card;
+      if (!card) {
+        return;
+      }
       card.classList.remove('gear-devtester--error', 'gear-devtester--warning');
-      const category = card.dataset.category || 'Unknown';
-      const name = card.querySelector('h3')?.textContent?.trim() || 'Unnamed';
-      const asin = card.dataset.asin || '';
-      const link = card.querySelector('.gear-card__cta');
-      const href = link ? link.getAttribute('href') || '' : '';
-
-      const issues = [];
-      let hasError = false;
-      let hasWarning = false;
-
-      if (!asin) {
-        issues.push('Missing ASIN');
-        hasError = true;
-      }
-
-      if (!href) {
-        issues.push('Missing Amazon link');
-        hasError = true;
-      } else if (!AMAZON_PATTERN.test(href)) {
-        issues.push('Non-canonical Amazon link');
-        hasWarning = true;
-      }
-
-      if (hasError) {
+      if (item.status === 'error') {
         card.classList.add('gear-devtester--error');
-        summary.errors += 1;
-      } else if (hasWarning) {
+      } else if (item.status === 'warn') {
         card.classList.add('gear-devtester--warning');
-        summary.warnings += 1;
-      } else {
-        summary.ok += 1;
       }
-
-      reportData.push({
-        Category: category,
-        Product_Name: name,
-        ASIN: asin || '—',
-        Amazon_Link: href || '—',
-        Issue: issues.length ? issues.join('; ') : 'OK',
-      });
     });
+  }
 
-    updateCounts(summary);
-    if (reportData.length) {
-      // eslint-disable-next-line no-console
-      console.table(reportData, ['Category', 'Product_Name', 'ASIN', 'Amazon_Link', 'Issue']);
+  function logResults(results) {
+    if (!results.length) {
+      return;
     }
+    const table = results.map((item) => ({
+      Category: item.category,
+      Product_Name: item.name,
+      ASIN: item.asin || '—',
+      Amazon_Link: item.href || '—',
+      Status: STATUS_LABELS[item.status] || item.status,
+      Notes: item.message || '',
+    }));
+    // eslint-disable-next-line no-console
+    console.table(table);
   }
 
-  function handleRender(event) {
-    const detailCards = event?.detail?.cards;
-    evaluate(detailCards || document.querySelectorAll('[data-testid="gear-card"]'));
+  function handleReport(results) {
+    latestResults = results;
+    updateCounts(results);
+    applyHighlights(results);
+    logResults(results);
   }
 
-  document.addEventListener('gear:rendered', handleRender);
+  function handleEvent(event) {
+    const results = event?.detail?.results;
+    if (!Array.isArray(results)) {
+      return;
+    }
+    handleReport(results);
+  }
+
+  document.addEventListener('gear:links-hardened', handleEvent);
 
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    setTimeout(() => {
-      evaluate(document.querySelectorAll('[data-testid="gear-card"]'));
-    }, 0);
+    const preload = window.__gearLinkHardenerReport;
+    if (Array.isArray(preload)) {
+      handleReport(preload);
+    }
   } else {
     document.addEventListener('DOMContentLoaded', () => {
-      evaluate(document.querySelectorAll('[data-testid="gear-card"]'));
+      const preload = window.__gearLinkHardenerReport;
+      if (Array.isArray(preload)) {
+        handleReport(preload);
+      }
     });
   }
 })();
