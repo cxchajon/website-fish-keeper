@@ -1,0 +1,5 @@
+Rows read: 12
+Rows written: 12
+Duplicates removed: 0
+Missing ASINs: 0
+Price strings stripped: 0
