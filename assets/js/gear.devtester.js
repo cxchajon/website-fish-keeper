@@ -1,139 +1,43 @@
-(function () {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('dev') !== 'true') {
-    return;
-  }
-
-  let panel;
-  let countsNode;
-  let copyButton;
-  let latestResults = [];
-
-  function ensurePanel() {
-    if (panel) {
-      return;
-    }
-
-    panel = document.createElement('aside');
-    panel.className = 'gear-devtester';
-
-    const title = document.createElement('h3');
-    title.textContent = 'Gear Link Validator';
-    panel.appendChild(title);
-
-    countsNode = document.createElement('p');
-    countsNode.className = 'gear-devtester__counts';
-    panel.appendChild(countsNode);
-
-    copyButton = document.createElement('button');
-    copyButton.type = 'button';
-    copyButton.className = 'gear-devtester__copy';
-    copyButton.textContent = 'Copy report';
-    copyButton.addEventListener('click', () => {
-      if (!latestResults.length) {
-        return;
-      }
-      const lines = latestResults
-        .map((item) => {
-          return `${item.status.toUpperCase()} | ${item.category} | ${item.name} | ${item.asin || '—'} | ${item.href || '—'}`;
-        })
-        .join('\n');
-      if (navigator.clipboard?.writeText) {
-        navigator.clipboard.writeText(lines).catch(() => {});
-      } else {
-        const textarea = document.createElement('textarea');
-        textarea.value = lines;
-        textarea.setAttribute('aria-hidden', 'true');
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
-        try {
-          document.execCommand('copy');
-        } catch (error) {
-          // Ignore copy failures.
-        }
-        textarea.remove();
-      }
+(function(){
+  function devMode(){ return new URLSearchParams(location.search).has('dev'); }
+  function summarize(){
+    const cards = Array.from(document.querySelectorAll('[data-card]'));
+    let ok=0, warn=0, err=0;
+    const rows = cards.map(c=>{
+      const btn = c.querySelector('[data-action="buy-amazon"]');
+      const href = btn ? (btn.getAttribute('href')||"") : "";
+      const asin = c.getAttribute('data-asin')||"";
+      let status = "OK";
+      if(!asin || !/^[A-Z0-9]{10}$/.test(asin)) status = "ERROR";
+      else if(!window.AffiliateLinkBuilder.isCanonical(href)) status = "WARN";
+      if(status==="OK") ok++; else if(status==="WARN") warn++; else err++;
+      const title = (c.querySelector('.gear-card__title')||{}).textContent||"";
+      return {Category:"Heating", Product_Name:title, ASIN:asin, href, status};
     });
-    panel.appendChild(copyButton);
-
-    document.body.appendChild(panel);
+    return {ok,warn,err,rows};
   }
-
-  function updateCounts(results) {
-    ensurePanel();
-    const summary = results.reduce(
-      (acc, item) => {
-        acc.total += 1;
-        acc[item.status] = (acc[item.status] || 0) + 1;
-        return acc;
-      },
-      { total: 0, ok: 0, warn: 0, error: 0 }
-    );
-    countsNode.textContent = `Total: ${summary.total} | OK: ${summary.ok} | WARN: ${summary.warn} | ERROR: ${summary.error}`;
-    copyButton.disabled = summary.total === 0;
-  }
-
-  function applyHighlights(results) {
-    results.forEach((item) => {
-      const card = item.card;
-      if (!card) {
-        return;
-      }
-      card.classList.remove('gear-devtester--error', 'gear-devtester--warning');
-      if (item.status === 'error') {
-        card.classList.add('gear-devtester--error');
-      } else if (item.status === 'warn') {
-        card.classList.add('gear-devtester--warning');
-      }
-    });
-  }
-
-  function logResults(results) {
-    if (!results.length) {
-      return;
+  function panel(){
+    const wrap = document.createElement('div');
+    wrap.style.cssText = "position:fixed;right:12px;bottom:12px;z-index:9999;background:#0b1220;color:#fff;border:1px solid #2b3a55;border-radius:8px;padding:10px 12px;font:12px/1.3 system-ui;box-shadow:0 6px 20px rgba(0,0,0,.35)";
+    wrap.id = "devtester-panel";
+    document.body.appendChild(wrap);
+    function render(){
+      const {ok,warn,err,rows} = summarize();
+      wrap.innerHTML = `<strong>Dev Tester</strong><br>OK: ${ok} &nbsp; WARN: ${warn} &nbsp; ERROR: ${err} &nbsp; <button id="dev-copy" style="margin-left:8px">Copy</button>`;
+      const btn = wrap.querySelector('#dev-copy');
+      btn.onclick = () => {
+        const text = rows.map(r=>`${r.status}\t${r.Category}\t${r.Product_Name}\t${r.ASIN}\t${r.href}`).join('\n');
+        navigator.clipboard.writeText(text);
+      };
+      console.table(rows);
     }
-    const table = results.map((item) => ({
-      Category: item.category,
-      Product_Name: item.name,
-      ASIN: item.asin || '—',
-      href: item.href || '—',
-      status: item.status || 'error',
-      Notes: item.message || '',
-    }));
-    // eslint-disable-next-line no-console
-    console.table(table);
+    render();
+    return {render};
   }
-
-  function handleReport(results) {
-    latestResults = results;
-    updateCounts(results);
-    applyHighlights(results);
-    logResults(results);
+  function init(){
+    if(!devMode()) return;
+    const p = panel();
+    window.__devTesterInit = p.render;
   }
-
-  function handleEvent(event) {
-    const results = event?.detail?.results;
-    if (!Array.isArray(results)) {
-      return;
-    }
-    handleReport(results);
-  }
-
-  document.addEventListener('gear:links-hardened', handleEvent);
-
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    const preload = window.__gearLinkHardenerReport;
-    if (Array.isArray(preload)) {
-      handleReport(preload);
-    }
-  } else {
-    document.addEventListener('DOMContentLoaded', () => {
-      const preload = window.__gearLinkHardenerReport;
-      if (Array.isArray(preload)) {
-        handleReport(preload);
-      }
-    });
-  }
+  if(document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
 })();
