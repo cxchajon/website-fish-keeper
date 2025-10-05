@@ -1,209 +1,93 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gear Guide | The Tank Guide</title>
-  <meta name="description" content="Gear suggestions matched to your tank size and stocking plan—filters, heaters, lights, and more.">
-  <link rel="canonical" href="https://thetankguide.com/gear/index.html">
-  <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="/src/styles/gear.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <meta charset="utf-8" />
+  <title>The Tank Guide — Gear</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" href="/favicon.ico" />
-  <script defer src="/js/nav.js?v=1.1.0"></script>
-  <!-- Consent Mode defaults (load FIRST) -->
-  <script src="/assets/js/consent-mode.js" defer></script>
-
-  <!-- AdSense loader (keep one global instance only) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
-    crossorigin="anonymous"></script>
-  <!-- --- Google CMP (Funding Choices) START --- -->
-  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
-  <script>
-    // Required bootstrap per Google; signals CMP presence
-    (function() {
-      function signalGooglefcPresent() {
-        if (!window.frames['googlefcPresent']) {
-          if (document.body) {
-            const iframe = document.createElement('iframe');
-            iframe.style.cssText = 'display:none';
-            iframe.name = 'googlefcPresent';
-            document.body.appendChild(iframe);
-          } else {
-            setTimeout(signalGooglefcPresent, 0);
-          }
-        }
-      }
-      signalGooglefcPresent();
-    })();
-  </script>
-  <!-- --- Google CMP (Funding Choices) END --- -->
+  <link rel="stylesheet" href="/assets/css/gear.v2.css">
 </head>
-<body class="theme-light">
-  <!-- GLOBAL NAV -->
-  <div id="site-nav"></div>
-  <main id="gear-main">
-    <div id="gear-root" data-testid="gear-root">
-      <h1 id="gear-title" class="visually-hidden">Gear Guide</h1>
-      <section id="gear-heating" data-gear-section="Heating"></section>
-    </div>
-    <!-- === TTG_GearBottom (before footer) === -->
-    <div class="ttg-adunit ttg-adunit--bottom" id="ad-bottom-gear" aria-label="Advertisement">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-9905718149811880"
-           data-ad-slot="1762971638"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-           (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
-    </div>
-  </main>
-  <script src="/assets/js/affiliate.link.builder.js" defer></script>
-  <script src="/assets/js/gear.render.js" defer></script>
-  <script src="/assets/js/gear.link_hardener.js" defer></script>
-  <script src="/assets/js/gear.devtester.js" defer></script>
-<!-- === TTG Cookie Consent START === -->
-<div id="ttg-consent" class="ttg-consent" data-consent-banner>
-  <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
-    <h3 id="ttg-consent-title">Cookies & Advertising</h3>
-    <p id="ttg-consent-desc">
-      We use cookies to run this site and (if you allow) to show relevant ads from Google AdSense. You can accept all cookies, reject personalized ads, or manage preferences anytime.
-    </p>
-    <div class="ttg-consent__actions">
-      <button type="button" class="ttg-btn ttg-btn--secondary js-consent-reject" id="ttg-consent-reject">Reject (Non-personalized)</button>
-      <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-manage">Manage</button>
-      <button type="button" class="ttg-btn ttg-btn--primary js-consent-accept" id="ttg-consent-accept">Accept All</button>
-    </div>
-  </div>
-</div>
+<body>
+  <!-- Global Nav Include -->
+  <div data-include="/nav.html"></div>
 
-<div id="ttg-consent-modal" class="ttg-consent-modal" hidden aria-modal="true" role="dialog" aria-labelledby="ttg-consent-modal-title">
-  <div class="ttg-consent-modal__panel">
-    <h3 id="ttg-consent-modal-title">Cookie Preferences</h3>
-    <form id="ttg-consent-form">
-      <label class="ttg-row">
-        <input type="checkbox" checked disabled />
-        <span><strong>Essential</strong> — required for core site functions.</span>
-      </label>
-      <label class="ttg-row">
-        <input type="checkbox" id="ttg-c-analytics" />
-        <span><strong>Analytics</strong> — understand usage (if enabled later).</span>
-      </label>
-      <label class="ttg-row">
-        <input type="checkbox" id="ttg-c-ads" />
-        <span><strong>Advertising</strong> — allow personalized ads (Google AdSense).</span>
-      </label>
-      <div class="ttg-consent-modal__actions">
-        <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-cancel">Cancel</button>
-        <button type="submit" class="ttg-btn ttg-btn--primary">Save Preferences</button>
+  <!-- Sticky Tank Reference -->
+  <section id="tank-ref" class="tank-ref" aria-label="Tank reference">
+    <div class="tank-ref__row">
+      <div class="tank-ref__field">
+        <label for="ref-gallons">Gallons</label>
+        <input id="ref-gallons" type="number" min="1" step="1" placeholder="e.g., 40">
       </div>
-    </form>
-  </div>
-</div>
+      <div class="tank-ref__field">
+        <label for="ref-length">Length (inches)</label>
+        <input id="ref-length" type="number" min="6" step="1" placeholder="e.g., 30">
+      </div>
+      <div class="tank-ref__field">
+        <label for="ref-preset">Preset</label>
+        <select id="ref-preset">
+          <option value="">Select common size…</option>
+          <option value='{"g":10,"l":20}'>10g (20")</option>
+          <option value='{"g":20,"l":24}'>20 High (24")</option>
+          <option value='{"g":20,"l":30}'>20 Long (30")</option>
+          <option value='{"g":29,"l":30}'>29g (30")</option>
+          <option value='{"g":40,"l":36}'>40 Breeder (36")</option>
+          <option value='{"g":55,"l":48}'>55g (48")</option>
+          <option value='{"g":75,"l":48}'>75g (48")</option>
+          <option value='{"g":90,"l":48}'>90g (48")</option>
+          <option value='{"g":125,"l":72}'>125g (72")</option>
+        </select>
+      </div>
+      <div class="tank-ref__info" role="note" aria-live="polite">
+        Set your tank once; matching ranges highlight below.
+      </div>
+    </div>
+  </section>
 
-<!-- === TTG Consent Banner Controller START === -->
-  <script defer src="/assets/js/consent-banner.js"></script>
-<!-- === TTG Consent Banner Controller END === -->
+  <!-- Accordion: Heaters -->
+  <section class="gear-card" data-gear="heaters">
+    <header class="gear-card__header" data-accordion="toggle" tabindex="0" aria-controls="heaters-body" aria-expanded="false">
+      <h2>Heaters</h2>
+      <button class="info-btn" type="button" aria-label="Heater tip" data-tip="heaters">i</button>
+      <span class="chevron" aria-hidden="true">▸</span>
+    </header>
+    <div id="heaters-body" class="gear-card__body" hidden></div>
+  </section>
 
+  <!-- Accordion: Filters -->
+  <section class="gear-card" data-gear="filters">
+    <header class="gear-card__header" data-accordion="toggle" tabindex="0" aria-controls="filters-body" aria-expanded="false">
+      <h2>Filters</h2>
+      <button class="info-btn" type="button" aria-label="Filter tip" data-tip="filters">i</button>
+      <span class="chevron" aria-hidden="true">▸</span>
+    </header>
+    <div id="filters-body" class="gear-card__body" hidden></div>
+  </section>
 
-<!-- === TTG CMP Consent Bridge START === -->
-<script>
-(function(){
-  // Helper: map TCF consent to our single "ads granted" flag.
-  // We consider "granted" only when Purpose 1 (storage) AND Purpose 4 (select personalised ads)
-  // are consented. If you want to allow NON-personalised ads when only Purpose 1 is granted,
-  // set allowNPA=true below.
-  var allowNPA = true; // if true, we’ll treat Purpose 1 only as "granted" for showing slots (Google will serve NPA ads).
+  <!-- Accordion: Lights -->
+  <section class="gear-card" data-gear="lights">
+    <header class="gear-card__header" data-accordion="toggle" tabindex="0" aria-controls="lights-body" aria-expanded="false">
+      <h2>Lights</h2>
+      <button class="info-btn" type="button" aria-label="Light tip" data-tip="lights">i</button>
+      <span class="chevron" aria-hidden="true">▸</span>
+    </header>
+    <div id="lights-body" class="gear-card__body" hidden></div>
+  </section>
 
-  function setAdConsent(granted){
-    document.documentElement.setAttribute('data-ad-consent', granted ? 'granted' : 'denied');
-    document.documentElement.classList.toggle('is-ads-disabled', !granted);
-    window.__TTG_ADS_DISABLED__ = !granted;
-    // Inform any listeners (our ad loader later)
-    window.dispatchEvent(new CustomEvent('ttg:consent-change', {detail:{granted}}));
-  }
+  <!-- Accordion: Substrate -->
+  <section class="gear-card" data-gear="substrate">
+    <header class="gear-card__header" data-accordion="toggle" tabindex="0" aria-controls="substrate-body" aria-expanded="false">
+      <h2>Substrate</h2>
+      <button class="info-btn" type="button" aria-label="Substrate tip" data-tip="substrate">i</button>
+      <span class="chevron" aria-hidden="true">▸</span>
+    </header>
+    <div id="substrate-body" class="gear-card__body" hidden></div>
+  </section>
 
-  // If Google CMP is present, it defines __tcfapi.
-  function hookTCF(){
-    if (typeof window.__tcfapi !== 'function') return false;
+  <!-- Global Footer Include -->
+  <div data-include="/footer.v1.3.0.html"></div>
 
-    // Hide our local cookie banner when Google CMP is running (EEA users).
-    try{
-      var banner = document.getElementById('ttg-consent');
-      var modal  = document.getElementById('ttg-consent-modal');
-      if (banner){ banner.hidden = true; banner.classList.remove('is-open'); }
-      if (modal)  modal.hidden  = true;
-    }catch(e){}
-
-    // Listen for consent changes
-    window.__tcfapi('addEventListener', 2, function(tcData, ok){
-      if(!ok || !tcData) return;
-      // Purpose 1 = storage; Purpose 4 = personalised ads
-      var p = (tcData.purpose && tcData.purpose.consents) || {};
-      var hasP1 = !!p[1];
-      var hasP4 = !!p[4];
-
-      var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
-      setAdConsent(granted);
-    });
-
-    // Also fetch current state once
-    window.__tcfapi('getTCData', 2, function(tcData, ok){
-      if(!ok || !tcData) return;
-      var p = (tcData.purpose && tcData.purpose.consents) || {};
-      var hasP1 = !!p[1];
-      var hasP4 = !!p[4];
-      var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
-      setAdConsent(granted);
-    });
-
-    return true;
-  }
-
-  // Try to hook immediately; if CMP loads a bit later, poll briefly
-  if (!hookTCF()){
-    var tries = 0, t = setInterval(function(){
-      tries++;
-      if (hookTCF() || tries > 40) clearInterval(t); // up to ~4s
-    }, 100);
-  }
-
-  // Fallback for non-EEA visitors (no __tcfapi): keep using our local preference
-  // Our existing local banner writes ttgConsentV2 with {ads:true|false}.
-  // If CMP absent, keep existing behavior (do not force-show anything here).
-
-})();
-</script>
-<!-- === TTG CMP Consent Bridge END === -->
-
-<!-- === TTG Cookie Consent END === -->
-<script>
-  try {
-    var navs = Array.from(document.querySelectorAll('nav')).filter(function(node){
-      return !node.closest('#global-nav');
-    });
-    if (navs.length > 0) console.warn('Duplicate navs detected on /gear:', navs.length);
-  } catch(e){}
-</script>
-<!-- GLOBAL FOOTER v1.3.0 -->
-<div id="site-footer"></div>
-<script>
-(async () => {
-  try {
-    const res = await fetch('/footer.v1.3.0.html?v=1.3.0', { cache: 'no-cache' });
-    const html = await res.text();
-    const host = document.getElementById('site-footer');
-    if (host) host.outerHTML = html;
-  } catch (e) { console.error('[Footer] load failed:', e); }
-})();
-</script>
-<!-- === TTG Ad Slot View Tracking START === -->
-<script src="/js/ad-slot-view-tracking.js"></script>
-<!-- === TTG Ad Slot View Tracking END === -->
+  <script src="/assets/js/gear.v2.data.js" defer></script>
+  <script src="/assets/js/gear.v2.js" defer></script>
+  <script src="/assets/js/includes.js" defer></script>
 </body>
 </html>
