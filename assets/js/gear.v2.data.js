@@ -175,6 +175,31 @@ const GEAR = {
         };
       }
 
+      if (r.id === "g-10-20") {
+        return {
+          id: "g-10-20",
+          label: "Recommended Filters for 10–20 Gallons",
+          tip: "",  // keep empty — all education lives in the Filter Tip popup
+          options: [
+            {
+              label: "Option 1",
+              title: "AC30 Power Filter, 10–30 US Gal / 38–114 L – Fluval USA (fluvalaquatics.com)",
+              href: "https://amzn.to/4n9MXK9"
+            },
+            {
+              label: "Option 2",
+              title: "hygger Aquarium Double Sponge Filter for Fresh Water and Salt-Water Fish Tank (M)",
+              href: "https://amzn.to/3VTKSXo"
+            },
+            {
+              label: "Option 3",
+              title: "AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Middle up to 20Gal)",
+              href: "https://amzn.to/4mTK28f"
+            }
+          ]
+        };
+      }
+
       return {
         id: r.id,
         label: `Recommended Filters for ${r.label}`,
