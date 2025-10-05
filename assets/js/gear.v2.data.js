@@ -36,7 +36,7 @@ const GEAR = {
     ranges: [
       {
         id: "g-5-10",
-        label: "Best Heaters for 5–10 Gallons",
+        label: "Recommended Heaters for 5–10 Gallons",
         tip: "For 5–10 gal, target 25–50W. Place near gentle flow for even heat.",
         options: [
           {
@@ -58,7 +58,7 @@ const GEAR = {
       },
       {
         id: "g-10-20",
-        label: "Best Heaters for 10–20 Gallons",
+        label: "Recommended Heaters for 10–20 Gallons",
         tip: "For 10–20 gal, aim for 50–100W.",
         options: [
           {
@@ -78,10 +78,10 @@ const GEAR = {
           }
         ]
       },
-      { id:"g-20-40",  label:"Best Heaters for 20–40 Gallons",  tip:"Aim 100–200W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] },
+      { id:"g-20-40",  label:"Recommended Heaters for 20–40 Gallons",  tip:"Aim 100–200W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] },
       {
         id: "g-40-60",
-        label: "Best Heaters for 40–60 Gallons",
+        label: "Recommended Heaters for 40–60 Gallons",
         tip: "For 40–60 gal tanks, aim for ~200–300W and place the heater in steady flow for even temperature. (Full placement/safety details are in the Heater Tip popup.)",
         options: [
           {
@@ -103,7 +103,7 @@ const GEAR = {
       },
       {
         id: "g-60-90",
-        label: "Best Heaters for 60–90 Gallons",
+        label: "Recommended Heaters for 60–90 Gallons",
         tip: "For 60–90 gal tanks, aim for ~300–500W total heating. Consider splitting across two smaller heaters for even coverage and redundancy. (Full placement/safety guidance is in the Heater Tip popup.)",
         options: [
           {
@@ -123,14 +123,14 @@ const GEAR = {
           }
         ]
       },
-      { id:"g-90-125", label:"Best Heaters for 90–125 Gallons", tip:"Aim 500–800W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] }
+      { id:"g-90-125", label:"Recommended Heaters for 90–125 Gallons", tip:"Aim 500–800W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] }
     ]
   },
 
   filters: {
     ranges: RANGES_FILTERS.map(r => ({
       id: r.id,
-      label: `Best Filters for ${r.label}`,
+      label: `Recommended Filters for ${r.label}`,
       tip: "Oversize rating for clearer water; clean mechanical media often, preserve bio.",
       options: [ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ]
     }))
@@ -139,7 +139,7 @@ const GEAR = {
   lights: {
     ranges: RANGES_LIGHTS.map(r => ({
       id: r.id,
-      label: `Best Lights for ${r.label}`,
+      label: `Recommended Lights for ${r.label}`,
       tip: "Match fixture length to tank. Choose plant-ready if keeping live plants.",
       options: [ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ]
     }))
