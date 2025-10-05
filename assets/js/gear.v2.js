@@ -66,6 +66,10 @@
     document.body.appendChild(wrap);
   }
 
+  function escapeHTML(s){
+    return String(s || '').replace(/[&<>"']/g, (m) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;' }[m]));
+  }
+
   function renderRangeBlock(range){
     const wrap = el('div',{class:'range','data-range-id':range.id});
     wrap.appendChild(el('p',{class:'range__title'}, range.label));
@@ -73,8 +77,16 @@
     const list = el('div',{class:'range__list'});
     (range.options || []).forEach((opt) => {
       const row = el('div',{class:'option'});
-      const hasLink = !!opt.href;
-      row.innerHTML = `<strong>${opt.label} — ${opt.title || '(add title)'}</strong><br>${hasLink ? `<a href="${opt.href}" target="_blank" rel="noopener noreferrer">Buy on Amazon</a>` : '<span style="color:#94a3b8;">Add link</span>'}`;
+      row.innerHTML = `
+    <div class="option__title"><strong>${escapeHTML(opt.label)} — ${escapeHTML(opt.title)}</strong></div>
+    <div class="option__actions">
+      ${
+        opt.href
+          ? `<a class="btn btn-amazon" href="${opt.href}" target="_blank" rel="noopener noreferrer" aria-label="Buy ${escapeHTML(opt.title)} on Amazon">Buy on Amazon</a>`
+          : `<span class="muted">Add link</span>`
+      }
+    </div>
+  `;
       list.appendChild(row);
     });
     wrap.appendChild(list);
@@ -273,6 +285,7 @@
     buildCategory('substrate', document.getElementById('substrate-body'));
     wireAccordions();
     initTankSelect();
+    console.log("[Gear] Heaters g-5-10 options:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-5-10")?.options?.length || 0);
   }
 
   if (document.readyState !== 'loading') init();

@@ -39,9 +39,21 @@ const GEAR = {
         label: "Best Heaters for 5–10 Gallons",
         tip: "For 5–10 gal, target 25–50W. Place near gentle flow for even heat.",
         options: [
-          { label:"Option 1", title:"Hitop 50W Adjustable Aquarium Heater, Submersible Glass Water Heater for 5–15 Gallon Fish Tank", href:"https://amzn.to/3KFMlOx" },
-          { label:"Option 2", title:"(add title)", href:"" },  // TODO
-          { label:"Option 3", title:"(add title)", href:"" }   // TODO
+          {
+            label: "Option 1",
+            title: "Hitop 50W Adjustable Aquarium Heater, Submersible Glass Water Heater for 5–15 Gallon Fish Tank",
+            href: "https://amzn.to/3KFMlOx"
+          },
+          {
+            label: "Option 2",
+            title: "hygger Mini Fish Tank Submersible Heater 50W for 5–10 Gallons Small Betta Aquarium Heater with Digital Display Controller Adjustable Temperature",
+            href: "https://amzn.to/479AuRA"
+          },
+          {
+            label: "Option 3",
+            title: "hygger Aquarium Heater, Upgraded Ceramic 50W Small Fish Tank Heater with Digital LED Controller, Fast Heating, Precise Temperature Control, Turtle Tank Heater for Freshwater/Saltwater",
+            href: "https://amzn.to/3KBKiLp"
+          }
         ]
       },
       { id:"g-10-20",  label:"Best Heaters for 10–20 Gallons",  tip:"Aim 50–100W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] },
