@@ -5,10 +5,81 @@
   <title>The Tank Guide — Gear</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css?v=2024-06-05a">
+  <link rel="stylesheet" href="/css/site.css?v=2024-07-05a">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/assets/css/gear.v2.css">
+  <script defer src="/js/nav.js?v=1.1.0"></script>
 </head>
 <body>
-  <header id="site-nav" data-include="/partials/nav.html"></header>
+  <header id="global-nav">
+    <div class="inner">
+      <button
+        id="ttg-nav-open"
+        class="hamburger"
+        type="button"
+        aria-controls="ttg-drawer"
+        aria-expanded="false"
+        aria-label="Open menu"
+        data-nav="hamburger"
+      >
+        <span class="hamburger__bars" aria-hidden="true"></span>
+        <span class="visually-hidden">Open menu</span>
+      </button>
+      <a class="site-brand brand" href="/" aria-label="The Tank Guide — Home">
+        <span class="site-brand__title">The Tank Guide</span>
+        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
+      </a>
+      <nav class="site-links links" aria-label="Primary">
+        <ul class="nav__list">
+          <li class="nav__item"><a href="/index.html" class="nav__link" data-nav="home">Home</a></li>
+          <li class="nav__item"><a href="/stocking.html" class="nav__link" data-nav="stocking">Stocking Advisor</a></li>
+          <li class="nav__item"><a href="/gear/index.html" class="nav__link" data-nav="gear">Gear</a></li>
+          <li class="nav__item"><a href="/media.html" class="nav__link" data-nav="media">Media</a></li>
+          <li class="nav__item"><a href="/feature-your-tank.html" class="nav__link" data-nav="feature-your-tank">Feature Your Tank</a></li>
+          <li class="nav__item"><a href="/store.html" class="nav__link" data-nav="store">Store</a></li>
+          <li class="nav__item"><a href="/contact-feedback.html" class="nav__link" data-nav="contact-feedback">Contact &amp; Feedback</a></li>
+          <li class="nav__item"><a href="/about.html" class="nav__link" data-nav="about">About</a></li>
+          <li class="nav__item"><a href="/privacy-legal.html" class="nav__link" data-nav="privacy-legal">Privacy &amp; Legal</a></li>
+          <li class="nav__item"><a href="/terms.html" class="nav__link" data-nav="terms">Terms of Use</a></li>
+          <li class="nav__item"><a href="/copyright-dmca.html" class="nav__link" data-nav="copyright-dmca">Copyright &amp; DMCA</a></li>
+        </ul>
+      </nav>
+    </div>
+    <aside
+      id="ttg-drawer"
+      aria-label="Site"
+      data-nav="drawer"
+      aria-hidden="true"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="drawer-title"
+    >
+      <h2 id="drawer-title" class="ttg-visually-hidden">Site navigation</h2>
+      <div class="drawer-head">
+        <span class="drawer-title">The Tank Guide</span>
+        <button id="drawer-close" class="drawer-close" type="button" aria-label="Close menu" data-nav="drawer-close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <nav class="drawer-links" aria-label="Mobile">
+        <ul class="nav__list nav__list--drawer">
+          <li class="nav__item"><a id="drawer-first" href="/index.html" class="nav__link" data-nav="home">Home</a></li>
+          <li class="nav__item"><a href="/stocking.html" class="nav__link" data-nav="stocking">Stocking Advisor</a></li>
+          <li class="nav__item"><a href="/gear/index.html" class="nav__link" data-nav="gear">Gear</a></li>
+          <li class="nav__item"><a href="/media.html" class="nav__link" data-nav="media">Media</a></li>
+          <li class="nav__item"><a href="/feature-your-tank.html" class="nav__link" data-nav="feature-your-tank">Feature Your Tank</a></li>
+          <li class="nav__item"><a href="/store.html" class="nav__link" data-nav="store">Store</a></li>
+          <li class="nav__item"><a href="/contact-feedback.html" class="nav__link" data-nav="contact-feedback">Contact &amp; Feedback</a></li>
+          <li class="nav__item"><a href="/about.html" class="nav__link" data-nav="about">About</a></li>
+          <li class="nav__item"><a href="/privacy-legal.html" class="nav__link" data-nav="privacy-legal">Privacy &amp; Legal</a></li>
+          <li class="nav__item"><a href="/terms.html" class="nav__link" data-nav="terms">Terms of Use</a></li>
+          <li class="nav__item"><a href="/copyright-dmca.html" class="nav__link" data-nav="copyright-dmca">Copyright &amp; DMCA</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <div id="ttg-overlay" data-nav="overlay" aria-hidden="true"></div>
+  </header>
 
   <!-- Sticky Tank Reference -->
   <section id="tank-ref" class="tank-ref" aria-label="Tank reference">
@@ -82,9 +153,66 @@
     <div id="substrate-body" class="gear-card__body" hidden></div>
   </section>
 
+  <!-- FOOTER v1.3.0 — unified -->
+  <footer class="site-footer">
+    <!-- SOCIALS -->
+    <div class="social-strip" role="navigation" aria-label="Social links">
+      <a href="https://www.instagram.com/FishKeepingLifeCo" target="_blank" rel="noopener noreferrer" aria-label="The Tank Guide on Instagram">
+        <i class="fab fa-instagram" aria-hidden="true"></i>
+      </a>
+      <a href="https://www.tiktok.com/@FishKeepingLifeCo" target="_blank" rel="noopener noreferrer" aria-label="The Tank Guide on TikTok">
+        <i class="fab fa-tiktok" aria-hidden="true"></i>
+      </a>
+      <a href="https://www.facebook.com/fishkeepinglifeco" target="_blank" rel="noopener noreferrer" aria-label="The Tank Guide on Facebook">
+        <i class="fab fa-facebook" aria-hidden="true"></i>
+      </a>
+      <a href="https://x.com/fishkeepinglife?s=21" target="_blank" rel="noopener noreferrer" aria-label="The Tank Guide on X (Twitter)">
+        <i class="fab fa-x-twitter" aria-hidden="true"></i>
+      </a>
+      <a href="https://www.youtube.com/@fishkeepinglifeco" target="_blank" rel="noopener noreferrer" aria-label="The Tank Guide on YouTube">
+        <i class="fab fa-youtube" aria-hidden="true"></i>
+      </a>
+      <a href="https://www.amazon.com/author/fishkeepinglifeco" target="_blank" rel="noopener noreferrer" aria-label="The Tank Guide on Amazon">
+        <i class="fab fa-amazon" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <!-- LEGAL LINKS (exact order) -->
+    <nav class="footer-links" aria-label="Footer links">
+      <a href="/privacy-legal.html">Privacy &amp; Legal</a>
+      <span class="dot">·</span>
+      <a href="/terms.html">Terms of Use</a>
+      <span class="dot">·</span>
+      <a href="/cookie-settings.html">Cookie Settings</a>
+      <span class="dot">·</span>
+      <a href="/cookie-settings.html">Do Not Sell or Share My Personal Information</a>
+      <span class="dot">·</span>
+      <a href="/contact-feedback.html">Contact &amp; Feedback</a>
+      <span class="dot">·</span>
+      <a href="/store.html">Store</a>
+      <span class="dot">·</span>
+      <a href="/copyright-dmca.html">Copyright &amp; DMCA</a>
+    </nav>
+
+    <!-- COPYRIGHT + AMAZON CTA -->
+    <p class="footer-note">
+      © 2025 The Tank Guide • FishKeepingLifeCo
+      <br>
+      As an Amazon Associate, we earn from qualifying purchases.
+      <br>
+      <a class="amazon-cta" href="https://www.amazon.com/author/fishkeepinglifeco" target="_blank" rel="noopener noreferrer">
+        Shop our books on Amazon »
+      </a>
+    </p>
+  </footer>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (typeof window.ttgInitNav === 'function') {
+        window.ttgInitNav();
+      }
+    });
+  </script>
   <script src="/assets/js/gear.v2.data.js" defer></script>
   <script src="/assets/js/gear.v2.js" defer></script>
-  <footer id="site-footer" data-include="/partials/footer.html"></footer>
-  <script src="/assets/js/include-partials.js" defer></script>
 </body>
 </html>
