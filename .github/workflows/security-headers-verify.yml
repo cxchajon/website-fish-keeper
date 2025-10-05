@@ -31,10 +31,9 @@ jobs:
 
       - name: Combine and format JSON output
         run: |
-          jq -n \
-            --slurpfile apex apex_headers.txt \
-            --slurpfile www www_headers.txt \
-            '{timestamp: now, apex: ($apex | tostring), www: ($www | tostring)}' \
+          jq -n --rawfile apex apex_headers.txt --rawfile www www_headers.txt \
+            --arg now "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+            '{timestamp: $now, apex: $apex, www: $www}' \
             > security-headers-output.json
 
       - name: Upload verification artifact
