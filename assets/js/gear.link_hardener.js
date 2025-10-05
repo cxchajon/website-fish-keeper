@@ -1,15 +1,5 @@
 (function () {
-  const params = new URLSearchParams(window.location.search);
-  const devMode = params.get('dev') === 'true';
-  const ASIN_PATTERN = /^[A-Z0-9]{10}$/;
-
-  function logWarning(message, extra) {
-    if (!devMode) {
-      return;
-    }
-    // eslint-disable-next-line no-console
-    console.warn('[gear.link_hardener]', message, extra || '');
-  }
+  const builder = () => window.AffiliateLinkBuilder || null;
 
   function disableAnchor(anchor) {
     if (!anchor) {
@@ -17,9 +7,9 @@
     }
     anchor.removeAttribute('href');
     anchor.setAttribute('disabled', '');
-    anchor.classList.add('is-disabled');
     anchor.setAttribute('aria-disabled', 'true');
     anchor.setAttribute('title', 'Link unavailable');
+    anchor.classList.add('is-disabled');
     anchor.tabIndex = -1;
   }
 
@@ -28,87 +18,103 @@
       return;
     }
     anchor.removeAttribute('disabled');
-    anchor.classList.remove('is-disabled');
     anchor.removeAttribute('aria-disabled');
+    anchor.classList.remove('is-disabled');
     anchor.removeAttribute('title');
     anchor.tabIndex = 0;
   }
 
+  function setStatus(card, anchor, status) {
+    if (card) {
+      card.dataset.status = status;
+    }
+    if (anchor) {
+      anchor.dataset.status = status;
+    }
+  }
+
+  function findAnchor(card) {
+    return (
+      card.querySelector('[data-action="buy-amazon"]') ||
+      card.querySelector('a.buy-amazon') ||
+      null
+    );
+  }
+
   function processCard(card) {
+    const helper = builder();
     const result = {
       card,
-      status: 'ok',
+      status: 'error',
       asin: '',
+      href: '',
       rebuilt: false,
       message: '',
-      href: '',
-      category: card.dataset.category || 'Unknown',
-      name: card.querySelector('h3')?.textContent?.trim() || 'Unnamed product',
+      category: card?.dataset?.category || 'Unknown',
+      name: card?.querySelector('h3')?.textContent?.trim() || 'Unnamed product',
     };
 
-    const asin = (card.dataset.asin || '').trim().toUpperCase();
-    result.asin = asin;
-    if (asin) {
-      card.dataset.asin = asin;
-    }
-
-    const anchor =
-      card.querySelector('[data-action="buy-amazon"]') ||
-      card.querySelector('a.buy-amazon');
-
-    if (!anchor) {
+    if (!card || !helper) {
+      result.message = helper ? 'Missing card' : 'AffiliateLinkBuilder unavailable';
       result.status = 'error';
-      result.message = 'Missing Amazon anchor';
-      card.dataset.linkState = result.status;
-      logWarning('Missing Amazon anchor on card', card);
+      setStatus(card, null, 'error');
       return result;
     }
 
-    const hasValidAsin = ASIN_PATTERN.test(asin);
-    if (!hasValidAsin) {
+    const anchor = findAnchor(card);
+    if (!anchor) {
+      result.message = 'Missing Amazon anchor';
+      result.status = 'error';
+      setStatus(card, null, 'error');
+      return result;
+    }
+
+    const rawAsin = helper.cleanASIN(card.dataset.asin);
+    card.dataset.asin = rawAsin;
+    result.asin = rawAsin;
+
+    const isValid = helper.isValidASIN(rawAsin);
+    let href = (anchor.getAttribute('href') || '').trim();
+
+    if (!isValid) {
+      disableAnchor(anchor);
+      setStatus(card, anchor, 'error');
       result.status = 'error';
       result.message = 'Missing or invalid ASIN';
-      disableAnchor(anchor);
-      logWarning('Disabled Amazon link due to missing/invalid ASIN', { asin, card });
-      card.dataset.linkState = result.status;
-      result.href = '';
       return result;
     }
 
-    const builder = window.AffiliateLinkBuilder;
-    if (!builder || typeof builder.buildFromASIN !== 'function') {
-      result.status = 'error';
-      result.message = 'AffiliateLinkBuilder unavailable';
-      card.dataset.linkState = result.status;
-      logWarning('AffiliateLinkBuilder missing from window', window.AffiliateLinkBuilder);
-      return result;
-    }
-
-    const canonicalHref = builder.buildFromASIN(asin);
-    const currentHref = anchor.getAttribute('href') || '';
-
-    if (!builder.isCanonical(currentHref)) {
-      anchor.href = canonicalHref;
-      result.status = 'warn';
+    const canonical = helper.buildFromASIN(rawAsin);
+    if (!helper.isCanonical(href)) {
+      href = canonical;
       result.rebuilt = true;
-      result.message = 'Link rebuilt to canonical format';
-      logWarning('Rebuilt Amazon link to canonical', { asin, from: currentHref, to: canonicalHref });
-    } else {
-      result.status = 'ok';
-      result.message = 'Canonical link verified';
     }
 
-    enableAnchor(anchor);
+    if (!href) {
+      disableAnchor(anchor);
+      setStatus(card, anchor, 'error');
+      result.status = 'error';
+      result.message = 'Unable to build canonical link';
+      return result;
+    }
+
+    anchor.href = href;
     anchor.target = '_blank';
     anchor.rel = 'noopener noreferrer';
-    result.href = anchor.getAttribute('href') || canonicalHref;
-    card.dataset.linkState = result.status;
+    enableAnchor(anchor);
+    setStatus(card, anchor, result.rebuilt ? 'warn' : 'ok');
+
+    result.status = result.rebuilt ? 'warn' : 'ok';
+    result.href = href;
+    result.message = result.rebuilt
+      ? 'Link rebuilt to canonical format'
+      : 'Canonical link verified';
     return result;
   }
 
   function normalizeCards(cards) {
-    const list = Array.isArray(cards) ? cards : Array.from(cards || []);
-    const results = list.map(processCard);
+    const collection = Array.from(cards || []);
+    const results = collection.map(processCard);
     window.__gearLinkHardenerReport = results;
     document.dispatchEvent(
       new CustomEvent('gear:links-hardened', { detail: { results } })
@@ -116,7 +122,7 @@
     return results;
   }
 
-  function initialRun() {
+  function runInitial() {
     normalizeCards(document.querySelectorAll('[data-card]'));
   }
 
@@ -126,9 +132,9 @@
   });
 
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    initialRun();
+    runInitial();
   } else {
-    document.addEventListener('DOMContentLoaded', initialRun);
+    document.addEventListener('DOMContentLoaded', runInitial);
   }
 
   window.__rehardenLinks = function __rehardenLinks() {
