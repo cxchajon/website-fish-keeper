@@ -149,12 +149,39 @@ const GEAR = {
   },
 
   filters: {
-    ranges: RANGES_FILTERS.map(r => ({
-      id: r.id,
-      label: `Recommended Filters for ${r.label}`,
-      tip: "Oversize rating for clearer water; clean mechanical media often, preserve bio.",
-      options: [ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ]
-    }))
+    ranges: RANGES_FILTERS.map(r => {
+      if (r.id === "g-5-10") {
+        return {
+          id: "g-5-10",
+          label: "Recommended Filters for 5–10 Gallons",
+          tip: "For 5–10 gal tanks, use gentle filtration — sponge or low-flow HOB filters. Clean sponges monthly and avoid replacing biomedia to preserve beneficial bacteria. (Full maintenance and sizing guidance available in the Filter Tip popup.)",
+          options: [
+            {
+              label: "Option 1",
+              title: "Pawfly Aquarium Nano Bio Sponge Filter Quiet Betta Fry Shrimp and Small Fish Foam Filter for Tiny Fish Tank up to 10 Gallon",
+              href: "https://amzn.to/3IXHtns"
+            },
+            {
+              label: "Option 2",
+              title: "hygger Aquarium Double Sponge Filter, Comes with 2 Spare Sponges (S)",
+              href: "https://amzn.to/46Qxf0a"
+            },
+            {
+              label: "Option 3",
+              title: "AC30 Power Filter, 10–30 US Gal / 38–114 L – Fluval USA (fluvalaquatics.com)",
+              href: "https://amzn.to/4pXb0hE"
+            }
+          ]
+        };
+      }
+
+      return {
+        id: r.id,
+        label: `Recommended Filters for ${r.label}`,
+        tip: "Oversize rating for clearer water; clean mechanical media often, preserve bio.",
+        options: [ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ]
+      };
+    })
   },
 
   lights: {
