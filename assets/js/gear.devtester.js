@@ -4,12 +4,6 @@
     return;
   }
 
-  const STATUS_LABELS = {
-    ok: 'OK',
-    warn: 'WARN',
-    error: 'ERROR',
-  };
-
   let panel;
   let countsNode;
   let copyButton;
@@ -104,8 +98,8 @@
       Category: item.category,
       Product_Name: item.name,
       ASIN: item.asin || '—',
-      Amazon_Link: item.href || '—',
-      Status: STATUS_LABELS[item.status] || item.status,
+      href: item.href || '—',
+      status: item.status || 'error',
       Notes: item.message || '',
     }));
     // eslint-disable-next-line no-console

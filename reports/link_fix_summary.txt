@@ -1,7 +1,16 @@
-Affiliate Link Fix Summary
-===========================
-Rows processed: 22
-Rows with valid ASIN: 22
-Rows missing/invalid ASIN: 0
+Amazon Link Hardening Summary
+==============================
 
-No link updates were required; all links were already canonical.
+File: data/gear_master.csv
+  Rows read: 22
+  Rows written: 22
+  Duplicates removed: 0
+  Links fixed: 22
+  Invalid/missing ASINs: 0
+
+Totals
+  Rows read: 22
+  Rows written: 22
+  Duplicates removed: 0
+  Links fixed: 22
+  Invalid/missing ASINs: 0
