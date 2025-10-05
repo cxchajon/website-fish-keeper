@@ -30,17 +30,22 @@ This repository powers **The Tank Guide**, a static website with aquarium tools 
 
 ---
 
-## 📌 Release Management  
-All production changes are logged:  
-1. **Channel Log** — `/docs/CHANNEL_LOG.md` (source of truth, reverse-chronological)  
-2. **GitHub Releases** — synced with Channel Log entries, tagged for versioning  
+## 📌 Release Management
+All production changes are logged:
+1. **Channel Log** — `/docs/CHANNEL_LOG.md` (source of truth, reverse-chronological)
+2. **GitHub Releases** — synced with Channel Log entries, tagged for versioning
 
 ---
 
-## 🚦 Status  
-- ✅ Core pages live  
-- ✅ SEO metadata updated (Sept 2025)  
-- ✅ Headings + keyword alignment  
+## 🔐 Security
+[![Security Headers Verify](https://github.com/FishKeepingLifeCo/website-fish-keeper/actions/workflows/security-headers-verify.yml/badge.svg)](https://github.com/FishKeepingLifeCo/website-fish-keeper/actions/workflows/security-headers-verify.yml)
+
+---
+
+## 🚦 Status
+- ✅ Core pages live
+- ✅ SEO metadata updated (Sept 2025)
+- ✅ Headings + keyword alignment
 - ✅ Contact form v1.1 with reCAPTCHA secret key  
 - 🔄 Ongoing: bi-weekly release/channel log reviews  
 

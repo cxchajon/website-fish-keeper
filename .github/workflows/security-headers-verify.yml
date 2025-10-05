@@ -1,9 +1,9 @@
 name: Security Headers Verify
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "0 3 * * *"  # daily at 03:00 UTC
+    - cron: "15 9 * * 0"   # Sundays 09:15 UTC
+  workflow_dispatch: {}
 
 jobs:
   verify:
@@ -42,12 +42,18 @@ jobs:
           name: security-headers-verify
           path: security-headers-output.json
 
+      - name: Append scheduled run entry to channel log
+        if: github.event_name == 'schedule'
+        run: |
+          timestamp="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          echo "✅ ${timestamp} — Scheduled security headers verification completed. Artifact: security-headers-verify" >> docs/CHANNEL_LOG.md
+
       - name: Commit latest report into docs/security
         run: |
           mkdir -p docs/security
           mv security-headers-output.json docs/security/security-headers-verify-latest.json
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add docs/security/security-headers-verify-latest.json
+          git add docs/security/security-headers-verify-latest.json docs/CHANNEL_LOG.md
           git commit -m "chore(security): update security headers verification report" || echo "No changes to commit"
           git push || echo "Push skipped (PR flow or no changes)"
