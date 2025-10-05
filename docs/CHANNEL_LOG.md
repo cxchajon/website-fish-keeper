@@ -1,5 +1,10 @@
 # Channel Log
 
+## 2025-10-04 — Cloudflare Security Headers Delta Audit
+- Logged follow-up security audit results at [docs/security/security-audit-2025-10-04.json](security/security-audit-2025-10-04.json).
+- Added Cloudflare ruleset snapshot at [docs/security/cloudflare-ruleset-2025-10-04.json](security/cloudflare-ruleset-2025-10-04.json).
+- Audit attempted to verify new Security Headers rule; outbound HTTPS restrictions blocked confirmation. Pending retest from unrestricted network.
+
 ## 2025-09-30 — Developer-Focused README.md Refresh
 - Replaced minimal README with full developer-focused overview.
 - Sections: Overview, Core Pages, Dev Notes, Release Management, Status.
