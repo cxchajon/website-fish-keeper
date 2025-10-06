@@ -13,6 +13,7 @@ const RANGES_FILTERS = RANGES_HEATERS.slice(); // same gallon buckets
 const RANGES_LIGHTS = [
   { id:"l-12-20",  label:"12–20 inches",  min:12, max:20 },
   { id:"l-20-24",  label:"20–24 inches",  min:20, max:24 },
+  { id:"l-24-30",  label:"24–30 inches",  min:24, max:30 },
   { id:"l-30-36",  label:"30–36 inches",  min:30, max:36 },
   { id:"l-40-48",  label:"40–48 inches",  min:40, max:48 },
   { id:"l-55-60",  label:"55–60 inches",  min:55, max:60 },
@@ -385,6 +386,31 @@ const GEAR = {
               label: "Option 3",
               title: "hygger Auto On Off LED Aquarium Light 18-24 Inches Dimmable 7 Colors Full Spectrum Fish Tank Light Fixture for Freshwater Planted Tank Build in Timer Sunrise Sunset",
               href: "https://amzn.to/4gWRH45"
+            }
+          ]
+        };
+      }
+
+      if (r.id === "l-24-30") {
+        return {
+          id: "l-24-30",
+          label: "Recommended Lights for 24–30 Inch Tanks",
+          tip: "",
+          options: [
+            {
+              label: "Option 1",
+              title: "hygger 16W Full Spectrum Aquarium Light with Aluminum Alloy Shell Extendable Brackets, White Blue Red LEDs, External Controller, for Freshwater Fish Tank (24-30 inch)",
+              href: "https://amzn.to/42oWCVx"
+            },
+            {
+              label: "Option 2",
+              title: "AQQA Aquarium Light, Multi-Function Fish Tank Led Light 24/7 DIY Auto On Off + Night Mode + Day Mode + Full Spectrum + 7 Colors, Adjustable Brightness Waterproof with Timer for Freshwater 24W",
+              href: "https://amzn.to/4gU5ZlU"
+            },
+            {
+              label: "Option 3",
+              title: "hygger Advanced Remote Control Aquarium Light Customizable Full Spectrum Fish Tank LED with DIY, Default & Weather Mode Freshwater Planted Tank",
+              href: "https://amzn.to/4h3Ob8k"
             }
           ]
         };
