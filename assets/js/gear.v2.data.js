@@ -31,7 +31,12 @@ const TIPS = {
   For <strong>long tanks</strong>, consider two fixtures or one high-output unit to ensure even coverage end to end.<br>
   For <strong>tall tanks</strong>, look for higher lumen or PAR ratings since light intensity drops quickly with depth — especially if you’re keeping rooted or carpet plants.
 `,
-  substrate:"Depth matters: 1–2\" for most tanks; 2+\" for planted. Rinse inert gravels. For planted, consider root tabs with inert substrates."
+  substrate:`
+  <strong>Dirted Tank Basics</strong><br>
+  A dirted tank uses a base layer of organic soil capped with sand or gravel to deliver nutrients straight to plant roots.<br>
+  Stick to about 1" of soil with a 1–2" cap, and choose aquarium-safe soils to avoid ammonia spikes.<br>
+  Depth still matters: 1–2" for most tanks; 2"+ for planted setups. Rinse inert gravels and add root tabs if you skip nutrient-rich bases.
+`
 };
 
 /* Seed data — text links only. 
@@ -516,6 +521,18 @@ const GEAR = {
         label:"Planted Substrate",
         tip:"Nutrient-rich base for root feeders.",
         options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ]
+      },
+      {
+        id:"sub-dirted",
+        label:"Recommended Substrates for Dirted Planted Tanks",
+        tip:"These substrates are ideal for dirted or fully planted aquariums, providing the nutrients and mineral balance needed for strong root systems and lush growth. They also help stabilize pH and improve plant health over time.",
+        options:[
+          { label:"Option 1", title:"Fluval 12695 Plant and Shrimp Stratum for Freshwater Fish Tanks, 17.6 lbs. – Aquarium Substrate for Strong Plant Growth, Supports Neutral to Slightly Acidic pH", href:"https://amzn.to/4gXDMuF" },
+          { label:"Option 2", title:"Upgraded Aquarium Soil Water Grass Mud, Ideal for Fish Tank Aquascaping Aquarium Substrate Soil for Plants and Shrimps, No Need to Wash (17.6 Pounds)", href:"https://amzn.to/3KvbaNk" },
+          { label:"Option 3", title:"Fluval 12698 Natural Mineral-Rich Volcanic Soil Bio Stratum for Planted Tanks, 17.6 lbs. - Aquarium Substrate for Healthy Plant Development, Growth, and Color", href:"https://amzn.to/3WtUCHW" },
+          { label:"Option 4", title:"Seachem Flourite Black Clay Gravel - Stable Porous Natural Planted Aquarium Substrate 15.4 lbs", href:"https://amzn.to/4mVTEiK" },
+          { label:"Option 5", title:"Flourite, 7 kg / 15.4 lbs", href:"https://amzn.to/48SfvUL" }
+        ]
       },
       {
         id:"sub-specialty",
