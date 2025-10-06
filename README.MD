@@ -1,7 +1,7 @@
 # The Tank Guide — FishKeepingLifeCo  
 
 **Live site:** [thetankguide.com](https://thetankguide.com)  
-**Owner:** FishKeepingLifeCo (CXLXC LLC)  
+**Owner:** FishKeepingLifeCo (CXLXC)  
 
 ---
 
