@@ -23,7 +23,14 @@ const RANGES_LIGHTS = [
 const TIPS = {
   heaters: "Choose a heater whose printed range starts at (or just above) your tank size. Example: for a 40-gallon tank, prefer 40–60 gal over 20–40. Bonus safety: use a temp controller. Remember to account for tank height, substrate thickness, and whether the heater has a water level mark — most are not fully submersible.",
   filters: "Oversize your filter. A 40–60 gal filter on a 40-gal tank keeps water clearer. Keep biomedia; replace only mechanical floss.",
-  lights:  "Match your light to tank length, not wattage. Look for plant-ready if you keep live plants. A little overhang is OK; avoid dark spots.",
+  lights: `
+  <strong>Lighting Tips</strong><br>
+  Match your light to your <strong>tank length</strong>, not just gallons.<br>
+  It’s often better to go <strong>slightly longer</strong> than your tank to prevent dark corners and dead spots.<br>
+  For <strong>planted tanks</strong>, check PAR and spectrum ratings — high PAR supports carpet plants, while moderate PAR works for most setups.<br>
+  For <strong>long tanks</strong>, consider two fixtures or one high-output unit to ensure even coverage end to end.<br>
+  For <strong>tall tanks</strong>, look for higher lumen or PAR ratings since light intensity drops quickly with depth — especially if you’re keeping rooted or carpet plants.
+`,
   substrate:"Depth matters: 1–2\" for most tanks; 2+\" for planted. Rinse inert gravels. For planted, consider root tabs with inert substrates."
 };
 
