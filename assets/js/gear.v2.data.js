@@ -444,6 +444,31 @@ const GEAR = {
         };
       }
 
+      if (r.id === "l-40-48") {
+        return {
+          id: "l-40-48",
+          label: "Recommended Lights for 40–48 Inch Tanks",
+          tip: "For 36–48 in. tanks, choose lights with adjustable brackets or slight overhang. Longer tanks may benefit from dual fixtures or higher wattage to maintain even brightness.",
+          options: [
+            {
+              label: "Option 1",
+              title: "hygger 36W 24/7 Lighting Aquarium LED Light, Sunrise-Daylight-Moonlight Mode and DIY Mode, Adjustable Timer Adjustable Brightness Fish Tank Light with Extendable Bracket 7 Colors for Planted Tank",
+              href: "https://www.amazon.com/s?k=hygger+36W+24%2F7+Lighting+Aquarium+LED+Light&tag=fishkeepingli-20"
+            },
+            {
+              label: "Option 2",
+              title: "AQQA Aquarium Light, Multi-Function Fish Tank Led Light 24/7 DIY Auto On Off + Night Mode + Day Mode + Full Spectrum + 7 Colors, Adjustable Brightness Waterproof with Timer for Freshwater 36W",
+              href: "https://www.amazon.com/s?k=AQQA+Aquarium+Light+36W+Multi-Function+Fish+Tank+LED+Light&tag=fishkeepingli-20"
+            },
+            {
+              label: "Option 3",
+              title: "hygger Advanced Remote Control Aquarium Light Customizable Full Spectrum Fish Tank LED with DIY, Default & Weather Mode Freshwater Planted Tank",
+              href: "https://www.amazon.com/s?k=hygger+Advanced+Remote+Control+Aquarium+Light&tag=fishkeepingli-20"
+            }
+          ]
+        };
+      }
+
       return {
         id: r.id,
         label: `Recommended Lights for ${r.label}`,
