@@ -41,6 +41,7 @@ const TIPS = {
 */
 const GEAR = {
   heaters: {
+    match: "gallons",
     ranges: [
       {
         id: "g-5-10",
@@ -178,6 +179,7 @@ const GEAR = {
   },
 
   filters: {
+    match: "gallons",
     ranges: RANGES_FILTERS.map(r => {
       if (r.id === "g-5-10") {
         return {
@@ -340,6 +342,7 @@ const GEAR = {
   },
 
   lights: {
+    match: "length",
     ranges: RANGES_LIGHTS.map(r => {
       if (r.id === "l-12-20") {
         return {
@@ -451,6 +454,7 @@ const GEAR = {
   },
 
   substrate: {
+    match: "gallons",
     groups: [
       {
         id:"sub-fish-only",
