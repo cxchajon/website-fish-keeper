@@ -133,6 +133,7 @@ body{
   border-radius:18px;
   box-shadow:var(--shadow);
   overflow:hidden;
+  transition:background-color .25s ease,box-shadow .25s ease,transform .25s ease,border-color .25s ease;
 }
 
 .gear-card__header{
@@ -281,44 +282,53 @@ body{
 @media (prefers-reduced-motion: reduce) {
   .btn { transition: none; }
 }
-/* ===== Matched-range active effect ===== */
-:root{
-  /* Use existing success/accent if present; fallback emerald */
-  --match-green: var(--accent-green, var(--ok, #34d399));
+
+/* ===== Active match: full outline around card ===== */
+:root {
+  --match-green: var(--accent-green, #34d399);
   --card-bg-lift: rgba(255,255,255,0.02);
   --card-lift-shadow: 0 6px 12px rgba(0,0,0,.35);
-  --card-glow: 0 0 10px color-mix(in srgb, var(--match-green) 40%, transparent);
+  --card-glow: 0 0 10px rgba(52,211,153,.40); /* faint emerald glow */
 }
 
-/* Base gear card hook: already present on range panels; if not, we’ll add it in Step 2 */
-.gear-card {
-  transition: background-color .25s ease, box-shadow .25s ease, transform .25s ease, border-color .25s ease;
-}
-
-/* ACTIVE: solid green bar + glow + slight lift */
-.gear-card--active{
+/* Base card already has transition via earlier step */
+.gear-card--active {
   background-color: var(--card-bg-lift);
-  border-left: 4px solid var(--match-green);
-  box-shadow: var(--card-lift-shadow), var(--card-glow);
+  /* Draw a full, solid outline without changing layout: */
+  box-shadow:
+    var(--card-lift-shadow),           /* depth */
+    var(--card-glow),                  /* ambient glow */
+    0 0 0 2px var(--match-green);      /* FULL outline around card */
+  transform: translateY(-2px);
+  border-left: none !important;        /* remove left-only accent while active */
+}
+
+/* Ensure radius looks crisp with the outline */
+.gear-card,
+.gear-card--active {
+  border-radius: 14px;
+}
+
+/* Remove any dashed “match” styles from older CSS */
+.gear-card[data-match="1"] {
+  box-shadow:
+    var(--card-lift-shadow),
+    var(--card-glow),
+    0 0 0 2px var(--match-green);
+  background-color: var(--card-bg-lift);
+  border-left: none !important;
   transform: translateY(-2px);
 }
 
-/* Ensure old dashed outlines don’t show when active */
+/* Kill any residual dashed borders */
 .gear-card--active,
-.gear-card--active * {
+.gear-card[data-match="1"] {
+  border: none !important;
   outline: none !important;
 }
 
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce){
-  .gear-card{ transition:none; }
-  .gear-card--active{ transform:none; }
-}
-
-/* Hard override for any previous dashed “match” rule (keep this last for specificity) */
-.gear-card[data-match="1"]{
-  border-left: 4px solid var(--match-green);
-  box-shadow: var(--card-lift-shadow), var(--card-glow);
-  background-color: var(--card-bg-lift);
-  transform: translateY(-2px);
+/* Reduced motion: keep the look but stop movement */
+@media (prefers-reduced-motion: reduce) {
+  .gear-card--active,
+  .gear-card[data-match="1"] { transform: none; }
 }
