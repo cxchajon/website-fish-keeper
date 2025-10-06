@@ -204,7 +204,8 @@ const GEAR = {
         return {
           id: "g-20-40",
           label: "Recommended Filters for 20–40 Gallons",
-          tip: "",  // all educational text handled by the Filter Tip popup
+          // all educational text handled by the Filter Tip popup
+          tip: "",
           options: [
             {
               label: "Option 1",
