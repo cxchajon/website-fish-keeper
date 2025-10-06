@@ -275,6 +275,31 @@ const GEAR = {
         };
       }
 
+      if (r.id === "g-90-125") {
+        return {
+          id: "g-90-125",
+          label: "Recommended Filters for 90–125 Gallons",
+          tip: "",  // all education lives in the Filter Tip popup
+          options: [
+            {
+              label: "Option 1",
+              title: "Fluval FX2 High Performance Canister Aquarium Filter - Multi-Stage Filtration, Built-in Powered Water Change System, and Basket-in-Basket Tray Design",
+              href: "https://amzn.to/48QPCEJ"
+            },
+            {
+              label: "Option 2",
+              title: "Fluval 407 Perfomance Canister Filter - for Aquariums Up to 100 Gallons - Aquarium Canister Filter",
+              href: "https://amzn.to/3KBqqs4"
+            },
+            {
+              label: "Option 3",
+              title: "SeaChem – Large Aquarium Fish Tank Filter, Tidal 110 Gallon (400 Liters) by Sicce",
+              href: "https://amzn.to/48gPNZP"
+            }
+          ]
+        };
+      }
+
       return {
         id: r.id,
         label: `Recommended Filters for ${r.label}`,
