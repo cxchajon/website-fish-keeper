@@ -250,6 +250,31 @@ const GEAR = {
         };
       }
 
+      if (r.id === "g-60-90") {
+        return {
+          id: "g-60-90",
+          label: "Recommended Filters for 60–90 Gallons",
+          tip: "",  // all education lives in the Filter Tip popup
+          options: [
+            {
+              label: "Option 1",
+              title: "Aqueon QuietFlow 75 LED PRO Aquarium Fish Tank Power Filter For Up To 90 Gallon Aquariums",
+              href: "https://amzn.to/48hBMeC"
+            },
+            {
+              label: "Option 2",
+              title: "Fluval 407 Perfomance Canister Filter - for Aquariums Up to 100 Gallons - Aquarium Canister Filter",
+              href: "https://amzn.to/47bXnUA"
+            },
+            {
+              label: "Option 3",
+              title: "Marineland Penguin Bio-Wheel Power Filter, Multi-Stage Aquarium Filtration",
+              href: "https://amzn.to/4h0gsMT"
+            }
+          ]
+        };
+      }
+
       return {
         id: r.id,
         label: `Recommended Filters for ${r.label}`,
