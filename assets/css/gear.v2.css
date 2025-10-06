@@ -124,7 +124,15 @@ body{
   padding:28px 16px 120px;
   display:flex;
   flex-direction:column;
-  gap:20px;
+  gap:0;
+}
+
+.gear-shell> .gear-card{
+  margin-bottom:1rem;
+}
+
+.gear-shell> .gear-card:last-child{
+  margin-bottom:0;
 }
 
 .gear-card{
@@ -140,7 +148,7 @@ body{
   display:flex;
   align-items:center;
   gap:12px;
-  padding:18px 20px;
+  padding:1rem 1.25rem;
   cursor:pointer;
   user-select:none;
 }
@@ -150,6 +158,7 @@ body{
   font-size:1.25rem;
   font-weight:600;
   flex:1;
+  line-height:1.25;
 }
 
 .info-btn{
@@ -171,40 +180,47 @@ body{
 }
 
 .gear-card__header .chevron{
-  transition:transform 0.2s ease;
+  transition:transform 0.25s ease-in-out;
 }
 
 .gear-card__body{
-  padding:12px 20px 20px;
+  padding:1rem 1.25rem;
   display:grid;
-  gap:14px;
+  gap:1rem;
 }
 
 .range{
-  border:1px dashed rgba(148,163,184,0.45);
-  border-radius:12px;
-  padding:12px 14px;
+  border:1px solid rgba(148,163,184,0.35);
+  border-radius:14px;
+  padding:1rem 1.25rem;
   background:rgba(15,23,42,0.45);
+  transition:border-color .25s ease-in-out,box-shadow .25s ease-in-out,transform .25s ease-in-out,background-color .25s ease-in-out;
 }
 
 .range.is-active{
-  border-color:var(--active);
-  box-shadow:0 0 0 2px rgba(34,197,94,0.25) inset;
+  border-color:#3bf97b;
+  box-shadow:0 4px 8px rgba(0,0,0,0.3),0 0 0 2px rgba(59,249,123,0.25);
+  transform:translateY(-2px);
+  background:rgba(15,23,42,0.6);
 }
 
 .range__title{
   font-weight:600;
-  margin:0 0 6px;
+  margin:0 0 0.5rem;
 }
 
 .range__tip{
   color:var(--muted);
   font-size:0.9rem;
-  margin:0 0 10px;
+  margin:0 0 0.75rem;
 }
 
+
 .option{
-  margin:4px 0;
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  gap:0.75rem;
 }
 
 .option a{
@@ -223,57 +239,73 @@ body{
   }
 
   .gear-card__header{
-    padding:16px;
+    padding:0.9rem 1.1rem;
   }
 
   .gear-card__body{
-    padding:12px 16px 18px;
+    padding:0.9rem 1.1rem;
   }
 }
 
 .btn{
-  display:inline-block; padding:8px 12px; border-radius:8px;
-  border:1px solid var(--line); background:#0b1220; color:var(--ink);
-  text-decoration:none; font-weight:600; line-height:1.2;
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:#0b1220;
+  color:var(--ink);
+  text-decoration:none;
+  font-weight:600;
+  line-height:1.2;
 }
 .btn:focus{ outline:2px solid var(--accent); outline-offset:2px; }
 .btn-amazon{ background:#111827; }
 .btn-amazon:hover{ filter:brightness(1.15); }
-.option__title{ margin:2px 0 6px; }
-.option__actions{ margin:0 0 8px; }
+.option__title{ margin:0; }
+.option__actions{
+  margin:0;
+  background:rgba(255, 255, 255, 0.03);
+  border-radius:10px;
+  padding:0.75rem;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:0.75rem;
+  text-align:left;
+}
 .muted{ color:var(--muted); }
 /* --- Step 2: Option separators + raised button slab --- */
 
 /* Between sibling options, add a very subtle top divider and rhythm */
 .option + .option {
-  border-top: 1px dashed rgba(255, 255, 255, 0.08);
-  margin-top: 14px;
-  padding-top: 14px;
+  border-top:1px dashed rgba(255, 255, 255, 0.08);
+  margin-top:1rem;
+  padding-top:1rem;
 }
 
 /* Compact spacing from title → actions slab */
-.option__title { 
-  margin: 2px 0 6px;
+.option__title {
+  margin:0;
 }
 
 /* Raised slab behind the button row (gentle lift on dark bg) */
 .option__actions {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 10px;
-  padding: 10px;
+  background:rgba(255, 255, 255, 0.03);
+  border-radius:10px;
+  padding:0.75rem;
 }
 
 /* Keep buttons readable and accessible within the slab */
 .btn {
-  display: inline-block;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: #0b1220;
-  color: var(--ink);
-  text-decoration: none;
-  font-weight: 600;
-  line-height: 1.2;
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:#0b1220;
+  color:var(--ink);
+  text-decoration:none;
+  font-weight:600;
+  line-height:1.2;
 }
 .btn:hover { text-decoration: underline; }
 .btn:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -285,50 +317,30 @@ body{
 
 /* ===== Active match: full outline around card ===== */
 :root {
-  --match-green: var(--accent-green, #34d399);
-  --card-bg-lift: rgba(255,255,255,0.02);
-  --card-lift-shadow: 0 6px 12px rgba(0,0,0,.35);
-  --card-glow: 0 0 10px rgba(52,211,153,.40); /* faint emerald glow */
+  --match-green:#3bf97b;
+  --card-bg-lift:rgba(255,255,255,0.02);
+  --card-lift-shadow:0 4px 8px rgba(0,0,0,0.3);
+  --card-glow:0 0 0 2px rgba(59,249,123,0.25);
 }
 
-/* Base card already has transition via earlier step */
-.gear-card--active {
-  background-color: var(--card-bg-lift);
-  /* Draw a full, solid outline without changing layout: */
-  box-shadow:
-    var(--card-lift-shadow),           /* depth */
-    var(--card-glow),                  /* ambient glow */
-    0 0 0 2px var(--match-green);      /* FULL outline around card */
-  transform: translateY(-2px);
-  border-left: none !important;        /* remove left-only accent while active */
-}
-
-/* Ensure radius looks crisp with the outline */
-.gear-card,
-.gear-card--active {
-  border-radius: 14px;
-}
-
-/* Remove any dashed “match” styles from older CSS */
-.gear-card[data-match="1"] {
-  box-shadow:
-    var(--card-lift-shadow),
-    var(--card-glow),
-    0 0 0 2px var(--match-green);
-  background-color: var(--card-bg-lift);
-  border-left: none !important;
-  transform: translateY(-2px);
-}
-
-/* Kill any residual dashed borders */
 .gear-card--active,
 .gear-card[data-match="1"] {
-  border: none !important;
-  outline: none !important;
+  background-color:var(--card-bg-lift);
+  border-color:var(--match-green);
+  box-shadow:var(--card-lift-shadow),var(--card-glow);
+  transform:translateY(-2px);
+}
+
+.gear-card--active,
+.gear-card[data-match="1"] {
+  border-left:none;
 }
 
 /* Reduced motion: keep the look but stop movement */
 @media (prefers-reduced-motion: reduce) {
   .gear-card--active,
-  .gear-card[data-match="1"] { transform: none; }
+  .gear-card[data-match="1"],
+  .range.is-active {
+    transform:none;
+  }
 }

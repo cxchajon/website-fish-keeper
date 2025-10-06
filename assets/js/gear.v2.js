@@ -127,9 +127,23 @@
 
   function showTip(kind){
     const msg = TIPS[kind] || 'No tip available.';
-    const wrap = el('div',{class:'tip-wrap',style:'position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:120'});
-    const card = el('div',{style:'max-width:520px;background:#0b1220;color:#e5e7eb;border:1px solid #1f2937;border-radius:14px;padding:18px;box-shadow:0 18px 36px -24px rgba(0,0,0,0.6)'});
-    card.innerHTML = `<h3 style="margin:0 0 10px;font-size:1.1rem;">Tip</h3><p style="margin:0 0 16px;color:#cbd5f5;line-height:1.45;">${msg}</p><button style="padding:8px 14px;background:#111827;color:#e5e7eb;border:1px solid #1f2937;border-radius:8px;cursor:pointer;">Close</button>`;
+    const wrap = el('div',{class:'tip-wrap',style:'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:120'});
+    const cardStyles = [
+      'width:min(340px,calc(100vw - 32px))',
+      'max-width:340px',
+      'background:rgba(15,23,42,0.88)',
+      'backdrop-filter:blur(8px)',
+      '-webkit-backdrop-filter:blur(8px)',
+      'color:#e5e7eb',
+      'border:1px solid rgba(148,163,184,0.3)',
+      'border-radius:10px',
+      'padding:18px 20px',
+      'box-shadow:0 18px 36px -24px rgba(0,0,0,0.6)',
+      'font-size:0.9rem',
+      'line-height:1.5'
+    ].join(';');
+    const card = el('div',{style:cardStyles});
+    card.innerHTML = `<h3 style="margin:0 0 0.75rem;font-size:1.1rem;font-weight:600;">Tip</h3><p style="margin:0 0 1rem;color:#cbd5f5;font-size:0.9rem;line-height:1.5;">${msg}</p><button style="padding:0.5rem 0.875rem;background:#111827;color:#e5e7eb;border:1px solid rgba(148,163,184,0.4);border-radius:8px;cursor:pointer;font-size:0.9rem;font-weight:600;">Close</button>`;
     card.querySelector('button').onclick = () => wrap.remove();
     wrap.onclick = (event) => { if (event.target === wrap) wrap.remove(); };
     wrap.appendChild(card);
@@ -202,23 +216,104 @@
     blocks.forEach((block) => container.appendChild(block));
   }
 
+  const ACCORDION_DURATION = 250;
+  const ACCORDION_EASING = 'ease-in-out';
+
+  function animateAccordion(body, expanded, animate){
+    if (!body) return;
+    const shouldAnimate = animate && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    if (!shouldAnimate){
+      body.hidden = !expanded;
+      body.style.height = '';
+      body.style.opacity = '';
+      body.style.transition = '';
+      body.style.overflow = '';
+      delete body.__accordionState;
+      return;
+    }
+
+    if (body.__accordionState){
+      const prev = body.__accordionState;
+      if (prev.handleEnd) body.removeEventListener('transitionend', prev.handleEnd);
+      if (prev.fallback) clearTimeout(prev.fallback);
+      if (typeof prev.cleanup === 'function') prev.cleanup(true);
+    }
+
+    const cleanup = (skipHide = false) => {
+      body.style.transition = '';
+      body.style.height = '';
+      body.style.overflow = '';
+      body.style.opacity = '';
+      if (!expanded && !skipHide) body.hidden = true;
+      delete body.__accordionState;
+    };
+
+    if (expanded){
+      body.hidden = false;
+      const targetHeight = body.scrollHeight;
+      body.style.overflow = 'hidden';
+      body.style.height = '0px';
+      body.style.opacity = '0';
+      requestAnimationFrame(() => {
+        body.style.transition = `height ${ACCORDION_DURATION}ms ${ACCORDION_EASING}, opacity ${ACCORDION_DURATION}ms ${ACCORDION_EASING}`;
+        body.style.height = `${targetHeight}px`;
+        body.style.opacity = '1';
+      });
+      const handleEnd = (event) => {
+        if (event.target !== body) return;
+        cleanup();
+        clearTimeout(fallback);
+        body.removeEventListener('transitionend', handleEnd);
+      };
+      const fallback = setTimeout(() => {
+        cleanup();
+        body.removeEventListener('transitionend', handleEnd);
+      }, ACCORDION_DURATION + 50);
+      body.addEventListener('transitionend', handleEnd);
+      body.__accordionState = { handleEnd, fallback, cleanup };
+    } else {
+      const startHeight = body.scrollHeight;
+      body.style.overflow = 'hidden';
+      body.style.height = `${startHeight}px`;
+      body.style.opacity = '1';
+      requestAnimationFrame(() => {
+        body.style.transition = `height ${ACCORDION_DURATION}ms ${ACCORDION_EASING}, opacity ${ACCORDION_DURATION}ms ${ACCORDION_EASING}`;
+        body.style.height = '0px';
+        body.style.opacity = '0';
+      });
+      const handleEnd = (event) => {
+        if (event.target !== body) return;
+        cleanup();
+        clearTimeout(fallback);
+        body.removeEventListener('transitionend', handleEnd);
+      };
+      const fallback = setTimeout(() => {
+        cleanup();
+        body.removeEventListener('transitionend', handleEnd);
+      }, ACCORDION_DURATION + 50);
+      body.addEventListener('transitionend', handleEnd);
+      body.__accordionState = { handleEnd, fallback, cleanup };
+    }
+  }
+
   function wireAccordions(){
     document.querySelectorAll('[data-accordion="toggle"]').forEach((header) => {
       const controls = header.getAttribute('aria-controls');
       const body = controls ? document.getElementById(controls) : null;
       const chevron = header.querySelector('.chevron');
 
-      const setExpanded = (expanded) => {
+      const setExpanded = (expanded, options = {}) => {
+        const { animate = true } = options;
         if (!body) return;
-        body.hidden = !expanded;
+        animateAccordion(body, expanded, animate);
         header.setAttribute('aria-expanded', String(expanded));
         if (chevron) {
           chevron.style.transform = expanded ? 'rotate(90deg)' : 'rotate(0deg)';
         }
       };
 
-      header.__setExpanded = setExpanded;
-      setExpanded(header.getAttribute('aria-expanded') === 'true');
+      header.__setExpanded = (expanded, options) => setExpanded(expanded, options);
+      setExpanded(header.getAttribute('aria-expanded') === 'true', { animate: false });
 
       header.addEventListener('click', (event) => {
         event.preventDefault();
