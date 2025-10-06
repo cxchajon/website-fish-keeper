@@ -86,17 +86,17 @@ const GEAR = {
           {
             label: "Option 1",
             title: "Hitop 300W Aquarium Heater, Submersible Glass Water Heater 35–70 Gallon Fish Tank",
-            href: "https://www.amazon.com/s?k=Hitop+300W+Aquarium+Heater+Submersible+Glass+Water+Heater+35-70+Gallon+Fish+Tank&tag=fishkeepingli-20"
+            href: "https://amzn.to/4n9U4lP"
           },
           {
             label: "Option 2",
             title: "hygger 802 Aquarium Titanium Heater Tube Heating Element Replacement Heater Rod (Controller Excluded) (200W)",
-            href: "https://www.amazon.com/s?k=hygger+802+Aquarium+Titanium+Heater+Tube+Heating+Element+Replacement+Heater+Rod+200W&tag=fishkeepingli-20"
+            href: "https://amzn.to/42Zj6wn"
           },
           {
             label: "Option 3",
             title: "hygger Aquarium Heater 200W, Submersible Fish Tank Heater with Digital LED Controller, Overheating & Auto Shut Off Protection, Betta Turtle Tank Heater, for Saltwater & Freshwater Fish Tank 20–55 Gallon",
-            href: "https://www.amazon.com/s?k=hygger+Aquarium+Heater+200W+Submersible+Fish+Tank+Heater+with+Digital+LED+Controller+Overheating+Auto+Shut+Off+Protection&tag=fishkeepingli-20"
+            href: "https://amzn.to/4mORQry"
           }
         ]
       },
