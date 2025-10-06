@@ -11,7 +11,7 @@ const RANGES_HEATERS = [
 const RANGES_FILTERS = RANGES_HEATERS.slice(); // same gallon buckets
 
 const RANGES_LIGHTS = [
-  { id:"l-12-18",  label:"12–18 inches",  min:12, max:18 },
+  { id:"l-12-20",  label:"12–20 inches",  min:12, max:20 },
   { id:"l-20-24",  label:"20–24 inches",  min:20, max:24 },
   { id:"l-30-36",  label:"30–36 inches",  min:30, max:36 },
   { id:"l-40-48",  label:"40–48 inches",  min:40, max:48 },
@@ -339,12 +339,39 @@ const GEAR = {
   },
 
   lights: {
-    ranges: RANGES_LIGHTS.map(r => ({
-      id: r.id,
-      label: `Recommended Lights for ${r.label}`,
-      tip: "Match fixture length to tank. Choose plant-ready if keeping live plants.",
-      options: [ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ]
-    }))
+    ranges: RANGES_LIGHTS.map(r => {
+      if (r.id === "l-12-20") {
+        return {
+          id: "l-12-20",
+          label: "Recommended Lights for 12–20 Inch Tanks",
+          tip: "",
+          options: [
+            {
+              label: "Option 1",
+              title: "NICREW C10 Plants LED Aquarium Light, 12-18 in, 9 Watts, Full Spectrum Fish Tank Light with Timer, Day and Night Cycle, Brightness Adjustable",
+              href: "https://amzn.to/4mP0Sow"
+            },
+            {
+              label: "Option 2",
+              title: "hygger New Mode 24/7 Timer LED Aquarium Light, Auto On Off Full Spectrum Fish Tank Light Fish Colorful/Sun/Nightlight/Wrgb Cycle Mode for Freshwater Plants Tank (for 12in~18in Long Tank)",
+              href: "https://amzn.to/3VS4co0"
+            },
+            {
+              label: "Option 3",
+              title: "hygger Fish Aquarium LED Light, 14W 24/7 Lighting Sunrise-Daylight-Moonlight Mode DIY , Adjustable Timer/Brightness with Extendable Bracket 7 Colors for Planted Tank",
+              href: "https://amzn.to/4h3wUvY"
+            }
+          ]
+        };
+      }
+
+      return {
+        id: r.id,
+        label: `Recommended Lights for ${r.label}`,
+        tip: "Match fixture length to tank. Choose plant-ready if keeping live plants.",
+        options: [ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ]
+      };
+    })
   },
 
   substrate: {
