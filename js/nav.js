@@ -273,6 +273,23 @@
     overlay.setAttribute('aria-hidden', 'true');
   }
 
+  function extractNav(markup) {
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(markup, 'text/html');
+      const nav = doc.querySelector('#global-nav');
+      if (nav) {
+        return nav;
+      }
+    } catch (error) {
+      console.warn('Nav parser fallback', error);
+    }
+
+    const template = document.createElement('template');
+    template.innerHTML = markup;
+    return template.content.querySelector('#global-nav');
+  }
+
   async function mountNav() {
     const host = document.getElementById(NAV_PLACEHOLDER_ID);
     if (!host) {
@@ -284,6 +301,13 @@
         throw new Error(`Failed to fetch nav: ${response.status}`);
       }
       const markup = await response.text();
+      const nav = extractNav(markup);
+      if (nav) {
+        host.replaceWith(nav);
+        initNav();
+        return;
+      }
+
       host.outerHTML = markup;
       initNav();
     } catch (error) {
