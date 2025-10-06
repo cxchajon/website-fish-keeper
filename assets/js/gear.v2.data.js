@@ -15,9 +15,8 @@ const RANGES_LIGHTS = [
   { id:"l-20-24",  label:"20–24 inches",  min:20, max:24 },
   { id:"l-24-30",  label:"24–30 inches",  min:24, max:30 },
   { id:"l-30-36",  label:"30–36 inches",  min:30, max:36 },
-  { id:"l-36-48",  label:"36–48 inches",  min:36, max:48 },
-  { id:"l-55-60",  label:"55–60 inches",  min:55, max:60 },
-  { id:"l-72-up",  label:"72 inches +",   min:72, max:999 }
+  { id:"l-36-48",  label:"36–48 inches",  min:36, max:47.99 },
+  { id:"l-48-up",  label:"48 inches and up",  min:48, max:999 }
 ];
 
 /* Category tips shown on the “i” buttons */
@@ -464,6 +463,31 @@ const GEAR = {
               label: "Option 3",
               title: "hygger Advanced Remote Control Aquarium Light Customizable Full Spectrum Fish Tank LED with DIY, Default & Weather Mode Freshwater Planted Tank",
               href: "https://amzn.to/3ISKOEg"
+            }
+          ]
+        };
+      }
+
+      if (r.id === "l-48-up") {
+        return {
+          id: "l-48-up",
+          label: "Recommended Lights for 48 Inches and Up",
+          tip: "For tanks 48 inches and longer, use extended-length fixtures or dual lights for even coverage. Longer tanks benefit from high-output full-spectrum LEDs with strong PAR and deeper penetration to support planted setups. Dual fixtures can also help eliminate dark zones and maintain even brightness from end to end.",
+          options: [
+            {
+              label: "Option 1",
+              title: "AQQA Aquarium Light, Multi-Function Fish Tank Led Light 24/7 DIY Auto On Off + Night Mode + Day Mode + Full Spectrum + 7 Colors, Adjustable Brightness Waterproof with Timer for Freshwater 44W",
+              href: "https://amzn.to/3VVjRCW"
+            },
+            {
+              label: "Option 2",
+              title: "hygger Sun Moon LED Aquarium Light, Full Spectrum Fish Tank Light Day-Night Dual Timer, Adjustable 6 Timer 10 Brightness 8 Colors for Planted Freshwater Tank",
+              href: "https://amzn.to/4gWbLUp"
+            },
+            {
+              label: "Option 3",
+              title: "hygger Auto On Off 48-55 Inch LED Aquarium Light Extendable Dimable 7 Colors Full Spectrum Light Fixture for Freshwater Planted Tank Build in Timer Sunrise Sunset",
+              href: "https://amzn.to/4h1IbwH"
             }
           ]
         };
