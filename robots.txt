@@ -1,7 +1,3 @@
-# Robots.txt for TheTankGuide.com
 User-agent: *
-Disallow: /admin/
-Disallow: /drafts/
 Allow: /
-
 Sitemap: https://thetankguide.com/sitemap.xml
