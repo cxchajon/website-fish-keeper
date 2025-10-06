@@ -512,18 +512,6 @@ const GEAR = {
     match: "gallons",
     groups: [
       {
-        id:"sub-fish-only",
-        label:"Fish-Only Gravel",
-        tip:"Easy clean, neutral look.",
-        options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ]
-      },
-      {
-        id:"sub-planted",
-        label:"Planted Substrate",
-        tip:"Nutrient-rich base for root feeders.",
-        options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ]
-      },
-      {
         id:"sub-dirted",
         label:"Recommended Substrates for Dirted Planted Tanks",
         tip:"These substrates are ideal for dirted or fully planted aquariums, providing the nutrients and mineral balance needed for strong root systems and lush growth. They also help stabilize pH and improve plant health over time.",
@@ -545,12 +533,6 @@ const GEAR = {
           { label:"Option 3", title:"Carib Sea ACS05820 Super Natural Moonlight Sand for Aquarium, 5-Pound", href:"https://amzn.to/3IxxGVd" },
           { label:"Option 4", title:"Aqua Natural Diamond Black 10lb, Premium Gravel and Substrate for Aquariums, Fish Tanks and Terrariums, 1-2mm", href:"https://amzn.to/3IJ16jd" }
         ]
-      },
-      {
-        id:"sub-specialty",
-        label:"Specialty (Shrimp / Aquascape)",
-        tip:"Stabilizes pH for shrimp, or aesthetic aquascapes.",
-        options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ]
       }
     ]
   }
