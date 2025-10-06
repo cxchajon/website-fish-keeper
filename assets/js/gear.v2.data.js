@@ -32,10 +32,11 @@ const TIPS = {
   For <strong>tall tanks</strong>, look for higher lumen or PAR ratings since light intensity drops quickly with depth — especially if you’re keeping rooted or carpet plants.
 `,
   substrate:`
-  <strong>Dirted Tank Basics</strong><br>
-  A dirted tank uses a base layer of organic soil capped with sand or gravel to deliver nutrients straight to plant roots.<br>
-  Stick to about 1" of soil with a 1–2" cap, and choose aquarium-safe soils to avoid ammonia spikes.<br>
-  Depth still matters: 1–2" for most tanks; 2"+ for planted setups. Rinse inert gravels and add root tabs if you skip nutrient-rich bases.
+  <strong>What Is a Dirt Cap?</strong><br>
+  A <strong>dirt cap</strong> is a protective top layer — typically gravel or sand — placed over nutrient-rich soil in planted tanks.<br>
+  It keeps organic material in place, prevents clouding, and stops fish from disturbing the base soil.<br>
+  Caps also improve appearance and create a natural gradient between planted and open areas.<br>
+  Typical thickness: <strong>1–2 inches</strong> of gravel or sand above the soil layer.
 `
 };
 
@@ -532,6 +533,17 @@ const GEAR = {
           { label:"Option 3", title:"Fluval 12698 Natural Mineral-Rich Volcanic Soil Bio Stratum for Planted Tanks, 17.6 lbs. - Aquarium Substrate for Healthy Plant Development, Growth, and Color", href:"https://amzn.to/3WtUCHW" },
           { label:"Option 4", title:"Seachem Flourite Black Clay Gravel - Stable Porous Natural Planted Aquarium Substrate 15.4 lbs", href:"https://amzn.to/4mVTEiK" },
           { label:"Option 5", title:"Flourite, 7 kg / 15.4 lbs", href:"https://amzn.to/48SfvUL" }
+        ]
+      },
+      {
+        id:"sub-dirt-cap",
+        label:"Recommended Gravel / Sand / Dirt Cap Substrates",
+        tip:"These substrates are ideal for unplanted tanks, layered setups, or as a cap over dirted bases. They provide stability, aesthetic variety, and protection for plant roots and fish alike. Choose finer sand for bottom dwellers, or medium gravel for easier cleaning and water flow.",
+        options:[
+          { label:"Option 1", title:"20LB Decorative River Rocks Gravel - 2/5\" Mixed Color Gravel for Vase Filling, Flower Pot Paving. Gravel for Garden Decoration, Landscaping, Aquarium Aquascape Gravel, Fish Tanks Gravel (8-12MM)", href:"https://amzn.to/3KH29k6" },
+          { label:"Option 2", title:"Sandtastik Sparkling White Play Sand, 25 lb (11.3 kg)", href:"https://amzn.to/4h8dp5h" },
+          { label:"Option 3", title:"Carib Sea ACS05820 Super Natural Moonlight Sand for Aquarium, 5-Pound", href:"https://amzn.to/3IxxGVd" },
+          { label:"Option 4", title:"Aqua Natural Diamond Black 10lb, Premium Gravel and Substrate for Aquariums, Fish Tanks and Terrariums, 1-2mm", href:"https://amzn.to/3IJ16jd" }
         ]
       },
       {
