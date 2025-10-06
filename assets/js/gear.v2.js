@@ -18,6 +18,17 @@
 
   const PRESET_MAP = new Map(TANK_PRESETS.map((preset) => [preset.id, preset]));
 
+  const state = {
+    selectedGallons: 0,
+    selectedLengthIn: 0
+  };
+
+  const RANGE_LOOKUP = {
+    heaters: new Map((Array.isArray(RANGES_HEATERS) ? RANGES_HEATERS : []).map((range) => [range.id, range])),
+    filters: new Map((Array.isArray(RANGES_FILTERS) ? RANGES_FILTERS : []).map((range) => [range.id, range])),
+    lights: new Map((Array.isArray(RANGES_LIGHTS) ? RANGES_LIGHTS : []).map((range) => [range.id, range]))
+  };
+
   function el(tag, attrs = {}, html = ''){
     const node = document.createElement(tag);
     Object.entries(attrs).forEach(([key, value]) => {
@@ -45,25 +56,62 @@
     return String(round(value, 2));
   }
 
-  function parseRangeId(id){
-    const m = /^g-(\d+)-(\d+)$/.exec(id);
-    if (!m) return null;
-    return { min: Number(m[1]), max: Number(m[2]) };
+  function getSelectedGallons(){
+    return state.selectedGallons ?? 0;
   }
 
-  function gallonsInRange(g, range){
-    return typeof g === 'number' && range && g >= range.min && g <= range.max;
+  function getSelectedLengthInches(){
+    return state.selectedLengthIn ?? 0;
   }
 
-  function updateGearHighlights(selectedGallons){
-    const cards = document.querySelectorAll('.gear-card[data-range-id]');
-    cards.forEach((card) => {
-      const id = card.dataset.rangeId || '';
-      const r = parseRangeId(id);
-      const match = r ? gallonsInRange(selectedGallons, r) : false;
-      card.classList.toggle('gear-card--active', !!match);
-      if (match) card.setAttribute('data-match', '1');
+  function isWithinGallons(rangeIdOrLabel, gallons){
+    const el = document.querySelector(`[data-range-id="${rangeIdOrLabel}"]`);
+    if (el && el.dataset.minG && el.dataset.maxG) {
+      const min = Number(el.dataset.minG);
+      const max = Number(el.dataset.maxG);
+      return gallons >= min && gallons <= max;
+    }
+    const m = String(rangeIdOrLabel).match(/(\d+)[^\d]+(\d+)/);
+    if (!m) return false;
+    const min = Number(m[1]);
+    const max = Number(m[2]);
+    return gallons >= min && gallons <= max;
+  }
+
+  function isWithinLength(rangeIdOrLabel, inches){
+    const el = document.querySelector(`[data-range-id="${rangeIdOrLabel}"]`);
+    if (el && el.dataset.minL && el.dataset.maxL) {
+      const min = Number(el.dataset.minL);
+      const max = Number(el.dataset.maxL);
+      return inches >= min && inches <= max;
+    }
+    const m = String(rangeIdOrLabel).match(/(\d+)[^\d]+(\d+)/);
+    if (!m) return false;
+    const min = Number(m[1]);
+    const max = Number(m[2]);
+    return inches >= min && inches <= max;
+  }
+
+  function sectionMatchesRange(sectionKey, rangeIdOrLabel, gallons, lengthIn){
+    const matchMode = (GEAR[sectionKey]?.match || 'gallons').toLowerCase();
+    if (matchMode === 'length') {
+      return isWithinLength(rangeIdOrLabel, lengthIn);
+    }
+    return isWithinGallons(rangeIdOrLabel, gallons);
+  }
+
+  function updateGearHighlights(){
+    const g = getSelectedGallons();
+    const l = getSelectedLengthInches();
+
+    document.querySelectorAll('.gear-card').forEach((card) => {
+      const section = card.dataset.section || '';
+      const rangeId = card.dataset.rangeId || '';
+      const isMatch = sectionMatchesRange(section, rangeId, g, l);
+
+      if (isMatch) card.setAttribute('data-match', '1');
       else card.removeAttribute('data-match');
+      card.classList.toggle('gear-card--active', isMatch);
     });
   }
 
@@ -92,10 +140,24 @@
     return String(s || '').replace(/[&<>"']/g, (m) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;' }[m]));
   }
 
-  function renderRangeBlock(range){
+  function renderRangeBlock(range, sectionKey){
     const wrap = el('div',{class:'range'});
     wrap.classList.add('gear-card');
-    if (range?.id) wrap.dataset.rangeId = range.id;
+    if (sectionKey) wrap.dataset.section = sectionKey;
+    if (range?.id) {
+      wrap.dataset.rangeId = range.id;
+      const matchMode = (GEAR[sectionKey]?.match || 'gallons').toLowerCase();
+      const meta = RANGE_LOOKUP[sectionKey]?.get(range.id);
+      if (meta) {
+        if (matchMode === 'length') {
+          if (Number.isFinite(meta.min)) wrap.dataset.minL = String(meta.min);
+          if (Number.isFinite(meta.max)) wrap.dataset.maxL = String(meta.max);
+        } else {
+          if (Number.isFinite(meta.min)) wrap.dataset.minG = String(meta.min);
+          if (Number.isFinite(meta.max)) wrap.dataset.maxG = String(meta.max);
+        }
+      }
+    }
     wrap.appendChild(el('p',{class:'range__title'}, range.label));
     if (range.tip) wrap.appendChild(el('p',{class:'range__tip'}, range.tip));
     const list = el('div',{class:'range__list'});
@@ -121,10 +183,10 @@
     if (!container) return;
     container.innerHTML = '';
     let blocks = [];
-    if (kind === 'heaters') blocks = (GEAR.heaters?.ranges || []).map(renderRangeBlock);
-    else if (kind === 'filters') blocks = (GEAR.filters?.ranges || []).map(renderRangeBlock);
-    else if (kind === 'lights') blocks = (GEAR.lights?.ranges || []).map(renderRangeBlock);
-    else if (kind === 'substrate') blocks = (GEAR.substrate?.groups || []).map(renderRangeBlock);
+    if (kind === 'heaters') blocks = (GEAR.heaters?.ranges || []).map((range) => renderRangeBlock(range, 'heaters'));
+    else if (kind === 'filters') blocks = (GEAR.filters?.ranges || []).map((range) => renderRangeBlock(range, 'filters'));
+    else if (kind === 'lights') blocks = (GEAR.lights?.ranges || []).map((range) => renderRangeBlock(range, 'lights'));
+    else if (kind === 'substrate') blocks = (GEAR.substrate?.groups || []).map((range) => renderRangeBlock(range, 'substrate'));
     blocks.forEach((block) => container.appendChild(block));
   }
 
@@ -167,6 +229,7 @@
   }
 
   function matchRange(value, ranges){
+    if (value === null || typeof value === 'undefined') return null;
     const numeric = toNumber(value);
     if (!Number.isFinite(numeric)) return null;
     const exact = ranges.find((range) => numeric >= range.min && numeric <= range.max);
@@ -202,11 +265,17 @@
   }
 
   function applyHighlights(gallons, length){
-    updateGearHighlights(gallons);
+    const gallonsNumeric = toNumber(gallons);
+    const lengthNumeric = toNumber(length);
+
+    state.selectedGallons = Number.isFinite(gallonsNumeric) ? gallonsNumeric : 0;
+    state.selectedLengthIn = Number.isFinite(lengthNumeric) ? lengthNumeric : 0;
+
+    updateGearHighlights();
     clearHighlights();
-    const heaterId = matchRange(gallons, RANGES_HEATERS);
-    const filterId = matchRange(gallons, RANGES_FILTERS);
-    const lightId = matchRange(length, RANGES_LIGHTS);
+    const heaterId = matchRange(gallonsNumeric, RANGES_HEATERS);
+    const filterId = matchRange(gallonsNumeric, RANGES_FILTERS);
+    const lightId = matchRange(lengthNumeric, RANGES_LIGHTS);
     const matches = {};
     if (setActiveRange('#heaters-body', heaterId)) matches.heaters = heaterId;
     if (setActiveRange('#filters-body', filterId)) matches.filters = filterId;
@@ -319,6 +388,17 @@
     console.log("[Gear] Filters g-5-10 options:", (GEAR.filters?.ranges||[]).find(r=>r.id==="g-5-10")?.options?.length || 0);
     console.log("[Gear] Filters g-10-20 options:", (GEAR.filters?.ranges||[]).find(r=>r.id==="g-10-20")?.options?.length || 0);
     console.log("[Gear] Lights l-12-20 options:", (GEAR.lights?.ranges||[]).find(r=>r.id==="l-12-20")?.options?.length || 0);
+  }
+
+  if (typeof window !== 'undefined') {
+    window.ttgGear = Object.assign({}, window.ttgGear, {
+      applyHighlights: (gallons, lengthIn) => applyHighlights(gallons, lengthIn),
+      getSelection: () => ({
+        gallons: getSelectedGallons(),
+        lengthIn: getSelectedLengthInches()
+      }),
+      updateGearHighlights
+    });
   }
 
   if (document.readyState !== 'loading') init();
