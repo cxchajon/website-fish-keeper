@@ -225,6 +225,31 @@ const GEAR = {
         };
       }
 
+      if (r.id === "g-40-60") {
+        return {
+          id: "g-40-60",
+          label: "Recommended Filters for 40–60 Gallons",
+          tip: "",  // tips moved to Filter info popup
+          options: [
+            {
+              label: "Option 1",
+              title: "AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Large up to 60Gal)",
+              href: "https://amzn.to/3KTUjUi"
+            },
+            {
+              label: "Option 2",
+              title: "SeaChem Large Aquarium Fish Tank Filter, Tidal 55 Gallon (200 Liters) by Sicce",
+              href: "https://amzn.to/3VRpXV0"
+            },
+            {
+              label: "Option 3",
+              title: "AquaClear 70 Power Filter, Fish Tank Filter for 40- to 70-Gallon Aquariums, Black",
+              href: "https://amzn.to/3IVD0BO"
+            }
+          ]
+        };
+      }
+
       return {
         id: r.id,
         label: `Recommended Filters for ${r.label}`,
