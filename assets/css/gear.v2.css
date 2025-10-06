@@ -281,3 +281,44 @@ body{
 @media (prefers-reduced-motion: reduce) {
   .btn { transition: none; }
 }
+/* ===== Matched-range active effect ===== */
+:root{
+  /* Use existing success/accent if present; fallback emerald */
+  --match-green: var(--accent-green, var(--ok, #34d399));
+  --card-bg-lift: rgba(255,255,255,0.02);
+  --card-lift-shadow: 0 6px 12px rgba(0,0,0,.35);
+  --card-glow: 0 0 10px color-mix(in srgb, var(--match-green) 40%, transparent);
+}
+
+/* Base gear card hook: already present on range panels; if not, we’ll add it in Step 2 */
+.gear-card {
+  transition: background-color .25s ease, box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+}
+
+/* ACTIVE: solid green bar + glow + slight lift */
+.gear-card--active{
+  background-color: var(--card-bg-lift);
+  border-left: 4px solid var(--match-green);
+  box-shadow: var(--card-lift-shadow), var(--card-glow);
+  transform: translateY(-2px);
+}
+
+/* Ensure old dashed outlines don’t show when active */
+.gear-card--active,
+.gear-card--active * {
+  outline: none !important;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .gear-card{ transition:none; }
+  .gear-card--active{ transform:none; }
+}
+
+/* Hard override for any previous dashed “match” rule (keep this last for specificity) */
+.gear-card[data-match="1"]{
+  border-left: 4px solid var(--match-green);
+  box-shadow: var(--card-lift-shadow), var(--card-glow);
+  background-color: var(--card-bg-lift);
+  transform: translateY(-2px);
+}

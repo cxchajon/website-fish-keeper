@@ -45,6 +45,28 @@
     return String(round(value, 2));
   }
 
+  function parseRangeId(id){
+    const m = /^g-(\d+)-(\d+)$/.exec(id);
+    if (!m) return null;
+    return { min: Number(m[1]), max: Number(m[2]) };
+  }
+
+  function gallonsInRange(g, range){
+    return typeof g === 'number' && range && g >= range.min && g <= range.max;
+  }
+
+  function updateGearHighlights(selectedGallons){
+    const cards = document.querySelectorAll('.gear-card[data-range-id]');
+    cards.forEach((card) => {
+      const id = card.dataset.rangeId || '';
+      const r = parseRangeId(id);
+      const match = r ? gallonsInRange(selectedGallons, r) : false;
+      card.classList.toggle('gear-card--active', !!match);
+      if (match) card.setAttribute('data-match', '1');
+      else card.removeAttribute('data-match');
+    });
+  }
+
   function buildInfoLine(preset){
     if (!preset) return '';
     const gallons = Number.isFinite(preset.gallons) ? `${formatNumber(preset.gallons)}g` : '';
@@ -71,7 +93,9 @@
   }
 
   function renderRangeBlock(range){
-    const wrap = el('div',{class:'range','data-range-id':range.id});
+    const wrap = el('div',{class:'range'});
+    wrap.classList.add('gear-card');
+    if (range?.id) wrap.dataset.rangeId = range.id;
     wrap.appendChild(el('p',{class:'range__title'}, range.label));
     if (range.tip) wrap.appendChild(el('p',{class:'range__tip'}, range.tip));
     const list = el('div',{class:'range__list'});
@@ -178,6 +202,7 @@
   }
 
   function applyHighlights(gallons, length){
+    updateGearHighlights(gallons);
     clearHighlights();
     const heaterId = matchRange(gallons, RANGES_HEATERS);
     const filterId = matchRange(gallons, RANGES_FILTERS);
