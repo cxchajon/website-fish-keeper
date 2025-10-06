@@ -15,7 +15,7 @@ const RANGES_LIGHTS = [
   { id:"l-20-24",  label:"20–24 inches",  min:20, max:24 },
   { id:"l-24-30",  label:"24–30 inches",  min:24, max:30 },
   { id:"l-30-36",  label:"30–36 inches",  min:30, max:36 },
-  { id:"l-40-48",  label:"40–48 inches",  min:40, max:48 },
+  { id:"l-36-48",  label:"36–48 inches",  min:36, max:48 },
   { id:"l-55-60",  label:"55–60 inches",  min:55, max:60 },
   { id:"l-72-up",  label:"72 inches +",   min:72, max:999 }
 ];
@@ -444,26 +444,26 @@ const GEAR = {
         };
       }
 
-      if (r.id === "l-40-48") {
+      if (r.id === "l-36-48") {
         return {
-          id: "l-40-48",
-          label: "Recommended Lights for 40–48 Inch Tanks",
-          tip: "For 36–48 in. tanks, choose lights with adjustable brackets or slight overhang. Longer tanks may benefit from dual fixtures or higher wattage to maintain even brightness.",
+          id: "l-36-48",
+          label: "Recommended Lights for 36–48 Inches",
+          tip: "For 36–48 inch tanks, choose lights with adjustable brackets or a slight overhang. Longer tanks may benefit from dual fixtures or higher wattage to maintain even brightness and plant growth.",
           options: [
             {
               label: "Option 1",
               title: "hygger 36W 24/7 Lighting Aquarium LED Light, Sunrise-Daylight-Moonlight Mode and DIY Mode, Adjustable Timer Adjustable Brightness Fish Tank Light with Extendable Bracket 7 Colors for Planted Tank",
-              href: "https://www.amazon.com/s?k=hygger+36W+24%2F7+Lighting+Aquarium+LED+Light&tag=fishkeepingli-20"
+              href: "https://amzn.to/4nAAekl"
             },
             {
               label: "Option 2",
               title: "AQQA Aquarium Light, Multi-Function Fish Tank Led Light 24/7 DIY Auto On Off + Night Mode + Day Mode + Full Spectrum + 7 Colors, Adjustable Brightness Waterproof with Timer for Freshwater 36W",
-              href: "https://www.amazon.com/s?k=AQQA+Aquarium+Light+36W+Multi-Function+Fish+Tank+LED+Light&tag=fishkeepingli-20"
+              href: "https://amzn.to/4mS1bz0"
             },
             {
               label: "Option 3",
               title: "hygger Advanced Remote Control Aquarium Light Customizable Full Spectrum Fish Tank LED with DIY, Default & Weather Mode Freshwater Planted Tank",
-              href: "https://www.amazon.com/s?k=hygger+Advanced+Remote+Control+Aquarium+Light&tag=fishkeepingli-20"
+              href: "https://amzn.to/3ISKOEg"
             }
           ]
         };
