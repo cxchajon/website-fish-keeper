@@ -21,7 +21,7 @@ const RANGES_LIGHTS = [
 
 /* Category tips shown on the “i” buttons */
 const TIPS = {
-  heaters: "Choose a heater whose printed range starts at (or just above) your tank size. Example: for a 40-gallon tank, prefer 40–60 gal over 20–40. Bonus safety: use a temp controller. When placing your heater, account for tank height, how thick your substrate is, and whether the heater has a water line mark. Most should not touch substrate, and not all are fully submersible. Place near gentle flow for even heat.",
+  heaters: "Choose a heater whose printed range starts at (or just above) your tank size. Example: for a 40-gallon tank, prefer 40–60 gal over 20–40. Bonus safety: use a temp controller. Remember to account for tank height, substrate thickness, and whether the heater has a water level mark — most are not fully submersible.",
   filters: "Oversize your filter. A 40–60 gal filter on a 40-gal tank keeps water clearer. Keep biomedia; replace only mechanical floss.",
   lights:  "Match your light to tank length, not wattage. Look for plant-ready if you keep live plants. A little overhang is OK; avoid dark spots.",
   substrate:"Depth matters: 1–2\" for most tanks; 2+\" for planted. Rinse inert gravels. For planted, consider root tabs with inert substrates."
@@ -78,7 +78,28 @@ const GEAR = {
           }
         ]
       },
-      { id:"g-20-40",  label:"Recommended Heaters for 20–40 Gallons",  tip:"Aim 100–200W.", options:[ {label:"Option 1",title:"(add)",href:""}, {label:"Option 2",title:"(add)",href:""}, {label:"Option 3",title:"(add)",href:""} ] },
+      {
+        id: "g-20-40",
+        label: "Recommended Heaters for 20–40 Gallons",
+        tip: "For 20–40 gal tanks, aim for 100–200W. When placing your heater, account for tank height, substrate depth, and water line markings. Most shouldn’t touch the substrate, and not all are fully submersible. Place near gentle flow for even heat.",
+        options: [
+          {
+            label: "Option 1",
+            title: "Hitop 300W Aquarium Heater, Submersible Glass Water Heater 35–70 Gallon Fish Tank",
+            href: "https://www.amazon.com/s?k=Hitop+300W+Aquarium+Heater+Submersible+Glass+Water+Heater+35-70+Gallon+Fish+Tank&tag=fishkeepingli-20"
+          },
+          {
+            label: "Option 2",
+            title: "hygger 802 Aquarium Titanium Heater Tube Heating Element Replacement Heater Rod (Controller Excluded) (200W)",
+            href: "https://www.amazon.com/s?k=hygger+802+Aquarium+Titanium+Heater+Tube+Heating+Element+Replacement+Heater+Rod+200W&tag=fishkeepingli-20"
+          },
+          {
+            label: "Option 3",
+            title: "hygger Aquarium Heater 200W, Submersible Fish Tank Heater with Digital LED Controller, Overheating & Auto Shut Off Protection, Betta Turtle Tank Heater, for Saltwater & Freshwater Fish Tank 20–55 Gallon",
+            href: "https://www.amazon.com/s?k=hygger+Aquarium+Heater+200W+Submersible+Fish+Tank+Heater+with+Digital+LED+Controller+Overheating+Auto+Shut+Off+Protection&tag=fishkeepingli-20"
+          }
+        ]
+      },
       {
         id: "g-40-60",
         label: "Recommended Heaters for 40–60 Gallons",
