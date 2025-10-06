@@ -318,6 +318,7 @@
     console.log("[Gear] Heading language normalized to 'Recommended' for all categories.");
     console.log("[Gear] Filters g-5-10 options:", (GEAR.filters?.ranges||[]).find(r=>r.id==="g-5-10")?.options?.length || 0);
     console.log("[Gear] Filters g-10-20 options:", (GEAR.filters?.ranges||[]).find(r=>r.id==="g-10-20")?.options?.length || 0);
+    console.log("[Gear] Lights l-12-20 options:", (GEAR.lights?.ranges||[]).find(r=>r.id==="l-12-20")?.options?.length || 0);
   }
 
   if (document.readyState !== 'loading') init();
