@@ -420,7 +420,7 @@ const GEAR = {
         return {
           id: "l-30-36",
           label: "Recommended Lights for 30–36 Inch Tanks",
-          tip: "",
+          tip: "", // Lighting guidance lives in the global Lighting info popup
           options: [
             {
               label: "Option 1",
