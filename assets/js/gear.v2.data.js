@@ -416,6 +416,31 @@ const GEAR = {
         };
       }
 
+      if (r.id === "l-30-36") {
+        return {
+          id: "l-30-36",
+          label: "Recommended Lights for 30–36 Inch Tanks",
+          tip: "",
+          options: [
+            {
+              label: "Option 1",
+              title: "hygger 20W Full Spectrum Aquarium Light with Aluminum Alloy Shell Extendable Brackets, White Blue Red LEDs, External Controller, for Freshwater Fish Tank (30-36 inch)",
+              href: "https://amzn.to/3Wo63Rt"
+            },
+            {
+              label: "Option 2",
+              title: "hygger 20W Full Spectrum Aquarium Light with Aluminum Alloy Shell Extendable Brackets, White Blue Red LEDs, External Controller, for Freshwater Fish Tank (30-36 inch)",
+              href: "https://amzn.to/4q2HWWo"
+            },
+            {
+              label: "Option 3",
+              title: "hygger Advanced Remote Control Aquarium Light Customizable Full Spectrum Fish Tank LED with DIY, Default & Weather Mode Freshwater Planted Tank",
+              href: "https://amzn.to/46L2CZS"
+            }
+          ]
+        };
+      }
+
       return {
         id: r.id,
         label: `Recommended Lights for ${r.label}`,
