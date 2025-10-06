@@ -179,6 +179,14 @@
     return wrap;
   }
 
+  function hasLiveOptions(range){
+    if (!range || !Array.isArray(range.options)) return false;
+    return range.options.some((option) => {
+      const href = (option?.href || '').trim();
+      return href.length > 0;
+    });
+  }
+
   function buildCategory(kind, container){
     if (!container) return;
     container.innerHTML = '';
@@ -186,7 +194,11 @@
     if (kind === 'heaters') blocks = (GEAR.heaters?.ranges || []).map((range) => renderRangeBlock(range, 'heaters'));
     else if (kind === 'filters') blocks = (GEAR.filters?.ranges || []).map((range) => renderRangeBlock(range, 'filters'));
     else if (kind === 'lights') blocks = (GEAR.lights?.ranges || []).map((range) => renderRangeBlock(range, 'lights'));
-    else if (kind === 'substrate') blocks = (GEAR.substrate?.groups || []).map((range) => renderRangeBlock(range, 'substrate'));
+    else if (kind === 'substrate') {
+      blocks = (GEAR.substrate?.groups || [])
+        .filter((range) => hasLiveOptions(range))
+        .map((range) => renderRangeBlock(range, 'substrate'));
+    }
     blocks.forEach((block) => container.appendChild(block));
   }
 
