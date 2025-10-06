@@ -365,6 +365,31 @@ const GEAR = {
         };
       }
 
+      if (r.id === "l-20-24") {
+        return {
+          id: "l-20-24",
+          label: "Recommended Lights for 20–24 Inch Tanks",
+          tip: "",
+          options: [
+            {
+              label: "Option 1",
+              title: "NICREW C10 Plants LED Aquarium Light, 18-24 in, 13 Watts, Full Spectrum Fish Tank Light with Timer, Day and Night Cycle, Brightness Adjustable",
+              href: "https://amzn.to/3WpCKxX"
+            },
+            {
+              label: "Option 2",
+              title: "hygger 14W Full Spectrum Aquarium Light with Aluminum Alloy Shell Extendable Brackets, White Blue Red LEDs, External Controller, for Freshwater Fish Tank (18-24 inch)",
+              href: "https://amzn.to/3VRUYIs"
+            },
+            {
+              label: "Option 3",
+              title: "hygger Auto On Off LED Aquarium Light 18-24 Inches Dimmable 7 Colors Full Spectrum Fish Tank Light Fixture for Freshwater Planted Tank Build in Timer Sunrise Sunset",
+              href: "https://amzn.to/4gWRH45"
+            }
+          ]
+        };
+      }
+
       return {
         id: r.id,
         label: `Recommended Lights for ${r.label}`,
