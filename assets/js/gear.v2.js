@@ -23,6 +23,44 @@
     selectedLengthIn: 0
   };
 
+  const DATA_SECTION_ALIASES = {
+    heaters: 'heaters',
+    filters: 'filters',
+    lights: 'lights',
+    substrate: 'substrate',
+    waterTreatments: 'water_treatments',
+    'water-treatments': 'water_treatments',
+    water_treatments: 'water_treatments',
+    food: 'food',
+    maintenanceTools: 'maintenance_tools',
+    'maintenance-tools': 'maintenance_tools',
+    maintenance_tools: 'maintenance_tools'
+  };
+
+  const GEAR_SECTION_ALIASES = {
+    heaters: 'heaters',
+    filters: 'filters',
+    lights: 'lights',
+    substrate: 'substrate',
+    water_treatments: 'waterTreatments',
+    'water-treatments': 'waterTreatments',
+    waterTreatments: 'waterTreatments',
+    food: 'food',
+    maintenance_tools: 'maintenanceTools',
+    'maintenance-tools': 'maintenanceTools',
+    maintenanceTools: 'maintenanceTools'
+  };
+
+  function toDataSectionKey(sectionKey){
+    const key = String(sectionKey || '');
+    return DATA_SECTION_ALIASES[key] || key;
+  }
+
+  function toGearSectionKey(sectionKey){
+    const key = String(sectionKey || '');
+    return GEAR_SECTION_ALIASES[key] || key;
+  }
+
   const RANGE_LOOKUP = {
     heaters: new Map((Array.isArray(RANGES_HEATERS) ? RANGES_HEATERS : []).map((range) => [range.id, range])),
     filters: new Map((Array.isArray(RANGES_FILTERS) ? RANGES_FILTERS : []).map((range) => [range.id, range])),
@@ -93,7 +131,9 @@
   }
 
   function sectionMatchesRange(sectionKey, rangeIdOrLabel, gallons, lengthIn){
-    const matchMode = (GEAR[sectionKey]?.match || 'gallons').toLowerCase();
+    const gearSectionKey = toGearSectionKey(sectionKey);
+    if (!gearSectionKey) return false;
+    const matchMode = (GEAR[gearSectionKey]?.match || 'gallons').toLowerCase();
     if (matchMode === 'none') return false;
     if (matchMode === 'length') {
       return isWithinLength(rangeIdOrLabel, lengthIn);
@@ -107,7 +147,7 @@
 
     document.querySelectorAll('.gear-card').forEach((card) => {
       if (card.dataset.ignoreMatch === '1') return;
-      const section = card.dataset.section || '';
+      const section = toGearSectionKey(card.dataset.section || '');
       const rangeId = card.dataset.rangeId || '';
       const isMatch = sectionMatchesRange(section, rangeId, g, l);
 
@@ -190,12 +230,14 @@
     const wrap = el('div',{class:'range'});
     if (includeGearCard) wrap.classList.add('gear-card');
     if (ignoreMatch) wrap.dataset.ignoreMatch = '1';
-    if (sectionKey) wrap.dataset.section = sectionKey;
+    const dataSectionKey = toDataSectionKey(sectionKey);
+    const gearSectionKey = toGearSectionKey(sectionKey);
+    if (sectionKey) wrap.dataset.section = dataSectionKey;
     if (range?.id) {
       wrap.dataset.rangeId = range.id;
-      if (!ignoreMatch && sectionKey) {
-        const matchMode = (GEAR[sectionKey]?.match || 'gallons').toLowerCase();
-        const meta = RANGE_LOOKUP[sectionKey]?.get(range.id);
+      if (!ignoreMatch && gearSectionKey) {
+        const matchMode = (GEAR[gearSectionKey]?.match || 'gallons').toLowerCase();
+        const meta = RANGE_LOOKUP[gearSectionKey]?.get(range.id);
         if (meta) {
           if (matchMode === 'length') {
             if (Number.isFinite(meta.min)) wrap.dataset.minL = String(meta.min);
@@ -236,6 +278,7 @@
     section.classList.add('gear-card');
     section.dataset.ignoreMatch = '1';
     if (group?.id) section.dataset.subgroupId = group.id;
+    section.dataset.section = toDataSectionKey('maintenanceTools');
     const safeId = (group?.id ? String(group.id) : `maintenance-${index}`).replace(/[^a-z0-9-_]/gi, '-');
     const bodyId = `${safeId}-body`;
     const header = el('header',{
@@ -422,11 +465,54 @@
     const block = body.querySelector(`[data-range-id="${rangeId}"]`);
     if (!block) return false;
     block.classList.add('is-active');
-    const header = body.previousElementSibling;
-    if (header && typeof header.__setExpanded === 'function') {
-      header.__setExpanded(true);
-    }
     return true;
+  }
+
+  function setAccordionOpen(panelEl, open, options = {}){
+    if (!panelEl) return;
+    const shouldOpen = !!open;
+    if (panelEl.tagName === 'DETAILS') {
+      if (shouldOpen) panelEl.setAttribute('open', '');
+      else panelEl.removeAttribute('open');
+      return;
+    }
+    const header = panelEl.querySelector('[data-accordion="toggle"]');
+    if (header && typeof header.__setExpanded === 'function') {
+      header.__setExpanded(shouldOpen, options);
+      return;
+    }
+    panelEl.classList.toggle('is-open', shouldOpen);
+    const body = panelEl.querySelector('.accordion__body, .gear-card__body');
+    if (body) {
+      if ('hidden' in body) body.hidden = !shouldOpen;
+      else body.style.display = shouldOpen ? '' : 'none';
+    }
+  }
+
+  function closeAllExcept(sectionKey){
+    const panels = document.querySelectorAll('.gear-shell > .gear-card.accordion[data-section]');
+    panels.forEach((panel) => {
+      const dataSection = panel.getAttribute('data-section');
+      const shouldStayOpen = sectionKey && dataSection === sectionKey;
+      if (!shouldStayOpen) setAccordionOpen(panel, false);
+    });
+  }
+
+  function openMatchingHeaterOnSelection(selectedGallons, matchingRangeId){
+    const heaterPanel = document.querySelector('.gear-shell > .gear-card.accordion[data-section="heaters"]');
+    const gallons = Number(selectedGallons);
+    const hasValidSelection = Number.isFinite(gallons) && gallons > 0 && !!matchingRangeId;
+    if (!heaterPanel) {
+      if (!hasValidSelection) closeAllExcept();
+      return;
+    }
+    if (!hasValidSelection) {
+      setAccordionOpen(heaterPanel, false);
+      closeAllExcept();
+      return;
+    }
+    setAccordionOpen(heaterPanel, true);
+    closeAllExcept('heaters');
   }
 
   function clearHighlights(){
@@ -449,7 +535,18 @@
     if (setActiveRange('#heaters-body', heaterId)) matches.heaters = heaterId;
     if (setActiveRange('#filters-body', filterId)) matches.filters = filterId;
     if (setActiveRange('#lights-body', lightId)) matches.lights = lightId;
+    openMatchingHeaterOnSelection(gallonsNumeric, matches.heaters);
     return matches;
+  }
+
+  function ensurePanelHooks(){
+    const panels = document.querySelectorAll('.gear-shell > .gear-card[data-gear]');
+    panels.forEach((panel) => {
+      const gearKey = panel.getAttribute('data-gear');
+      panel.classList.add('accordion');
+      const dataSectionKey = toDataSectionKey(gearKey);
+      if (dataSectionKey) panel.setAttribute('data-section', dataSectionKey);
+    });
   }
 
   function initTankSelect(){
@@ -542,6 +639,7 @@
   }
 
   function init(){
+    ensurePanelHooks();
     buildCategory('heaters', document.getElementById('heaters-body'));
     buildCategory('filters', document.getElementById('filters-body'));
     buildCategory('lights', document.getElementById('lights-body'));
