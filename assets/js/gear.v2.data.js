@@ -146,7 +146,14 @@ const STAND_ALLOWED_GROUPS = new Map([
       infoButtonText: TIPS.stands_55_75_info
     }
   ],
-  ["75-125", { min: 75, max: 125, label: "Recommended Stands for 75–125 Gallons" }]
+  [
+    "75-up",
+    {
+      min: 75,
+      max: 999,
+      label: "Recommended Stands for 75+ Gallons"
+    }
+  ]
 ]);
 const STAND_RANGE_ORDER = Array.from(STAND_ALLOWED_GROUPS.keys());
 
