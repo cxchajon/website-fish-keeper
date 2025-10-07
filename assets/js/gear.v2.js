@@ -258,9 +258,13 @@
     }
 
     const list = el('div',{class:'range__list'});
-    (range.options || []).forEach((opt) => {
+    const optionList = Array.isArray(range.options) ? range.options : [];
+    optionList.forEach((opt) => {
       list.appendChild(createOptionRow(opt, options));
     });
+    if (!optionList.length && range.placeholder) {
+      list.appendChild(el('p',{class:'range__placeholder'}, range.placeholder));
+    }
     wrap.appendChild(list);
     return wrap;
   }
@@ -346,6 +350,10 @@
         })
       );
     } else if (kind === 'maintenance-tools') {
+      if (GEAR.maintenanceTools?.intro) {
+        const intro = el('div',{ class:'gear-card__intro' }, GEAR.maintenanceTools.intro);
+        container.appendChild(intro);
+      }
       blocks = (GEAR.maintenanceTools?.accordions || []).map((group, index) =>
         renderAccordionGroup(group, index, {
           sectionKey: 'maintenanceTools',

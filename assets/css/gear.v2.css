@@ -229,6 +229,48 @@ body{
   box-shadow:none;
 }
 
+.range--maintenance .range__list{
+  display:grid;
+  gap:1rem;
+}
+
+.range--maintenance .option{
+  border:1px solid rgba(148,163,184,0.4);
+  border-radius:12px;
+  padding:1rem 1.1rem;
+  background:rgba(13,20,34,0.7);
+  transition:border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.range--maintenance .option + .option{
+  border-top:none;
+  margin-top:0;
+  padding-top:0;
+}
+
+.range--maintenance .option:hover,
+.range--maintenance .option:focus-within{
+  border-color:#3bf97b;
+  box-shadow:0 0 0 1px rgba(59,249,123,0.35),0 6px 14px -10px rgba(59,249,123,0.45);
+  transform:translateY(-1px);
+}
+
+.range--maintenance .option__actions{
+  margin-top:0.75rem;
+  background:transparent;
+  padding:0;
+}
+
+.range--maintenance .range__placeholder{
+  margin:0;
+  padding:1rem 1.1rem;
+  border-radius:12px;
+  border:1px dashed rgba(148,163,184,0.35);
+  color:var(--muted);
+  line-height:1.55;
+  background:rgba(15,23,42,0.35);
+}
+
 .range--maintenance .range__tip{
   margin-top:0;
 }
