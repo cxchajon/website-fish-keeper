@@ -198,6 +198,13 @@
 
   function createOptionRow(option = {}, options = {}){
     const row = el('div',{class:'option'});
+    row.dataset.category = option.category || '';
+    row.dataset.subgroup = option.subgroup || '';
+    row.dataset.tanksize = option.tanksize || '';
+    row.dataset.length = option.length || '';
+    row.dataset.depth = (option.depth ?? '').toString();
+    row.dataset.affiliate = option.affiliate || 'amazon';
+    row.dataset.tag = option.tag || 'fishkeepingli-20';
     const href = (option?.href || '').trim();
     const labelText = (option?.label || '').trim();
     const titleText = (option?.title || '').trim();
@@ -714,6 +721,18 @@
     });
   }
 
-  if (document.readyState !== 'loading') init();
-  else document.addEventListener('DOMContentLoaded', init);
+  async function start(){
+    if (typeof window !== 'undefined' && window.ttgGearDataPromise) {
+      try {
+        await window.ttgGearDataPromise;
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('[Gear] Data promise rejected:', error);
+      }
+    }
+    init();
+  }
+
+  if (document.readyState !== 'loading') start();
+  else document.addEventListener('DOMContentLoaded', start);
 })();
