@@ -222,14 +222,26 @@
       ? `<strong>${escapeHTML(labelText)} — ${escapeHTML(titleText)}</strong>`
       : `<strong>${escapeHTML(displayTitle)}</strong>`;
     const noteText = (option?.note ?? option?.notes ?? '').trim();
+    const context = String(options.context || '').toLowerCase();
     const buttonLabel = options.buttonLabel || 'Buy on Amazon';
+    const hasHref = href.length > 0;
     const hasValidHref = /^https?:\/\//i.test(href);
-    if (href && !hasValidHref && typeof console !== 'undefined' && typeof console.warn === 'function') {
+    if (context === 'stands') {
+      if ((!hasHref || !hasValidHref) && typeof console !== 'undefined' && typeof console.warn === 'function') {
+        const detail = option?.id || displayTitle || '[stand item]';
+        const reason = hasHref ? 'invalid link' : 'missing link';
+        console.warn(`[Gear] Skipping stand button (${reason}):`, detail, href || '(none)');
+      }
+    } else if (hasHref && !hasValidHref && typeof console !== 'undefined' && typeof console.warn === 'function') {
       console.warn('[Gear] Skipping stand link without http(s):', href);
     }
     const actionsHtml = hasValidHref
-      ? `<a class="btn btn-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
-      : `<span class="muted">Add link</span>`;
+      ? context === 'stands'
+        ? `<a class="btn btn-amazon buy-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer">Buy on Amazon</a>`
+        : `<a class="btn btn-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
+      : context === 'stands'
+        ? ''
+        : `<span class="muted">Add link</span>`;
     row.innerHTML = `
       <div class="option__title">${headingHtml}</div>
       ${noteText ? `<p class="option__note">${escapeHTML(noteText)}</p>` : ''}
@@ -399,7 +411,8 @@
               includeGearCard: false,
               ignoreMatch: true,
               showTitle: false,
-              headingTag: 'h4'
+              headingTag: 'h4',
+              context: 'stands'
             }
           })
         );
