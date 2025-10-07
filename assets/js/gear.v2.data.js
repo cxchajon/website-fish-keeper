@@ -55,8 +55,8 @@ const TIPS = {
   Use timers or smart plugs for consistent light cycles and to reduce wear on equipment.
 `,
   stands: `
-  Choose a stand rated for at least your tank size; for extra safety pick the next size up (e.g., a 30-gal rated stand for a 20-gal tank).<br>
-  Level the stand and confirm full-frame support of the tank’s base.
+  Choose a stand rated above your tank size. Example: for a 40-gallon tank, a stand rated for 50–65 gallons gives margin for aquascape weight and long-term stability.<br>
+  Always level and pad per manufacturer instructions.
 `
 };
 
@@ -118,7 +118,17 @@ const STAND_ALLOWED_GROUPS = new Map([
   ["5-10", { min: 5, max: 10, label: "Recommended Stands for 5–10 Gallons" }],
   ["10-20", { min: 10, max: 20, label: "Recommended Stands for 10–20 Gallons" }],
   ["20-40", { min: 20, max: 40, label: "Recommended Stands for 20–40 Gallons" }],
-  ["40-55", { min: 40, max: 55, label: "Recommended Stands for 40–55 Gallons" }],
+  [
+    "40-55",
+    {
+      id: "stands_40_55",
+      min: 40,
+      max: 55,
+      label: "Recommended Stands for 40–55 Gallons",
+      tip:
+        "For 40–55 gal tanks, pick a stand rated for at least your tank’s full weight when filled (~8.3 lbs/gal plus substrate/rock). We suggest sizing up when possible for extra safety."
+    }
+  ],
   ["55-75", { min: 55, max: 75, label: "Recommended Stands for 55–75 Gallons" }],
   ["75-125", { min: 75, max: 125, label: "Recommended Stands for 75–125 Gallons" }]
 ]);
@@ -382,12 +392,16 @@ function buildStandRanges(items = []) {
   const ensureGroup = (key, source) => {
     if (!groups.has(key)) {
       const meta = STAND_ALLOWED_GROUPS.get(key) || {};
-      const safeId = normalizeStandRangeId(key || 'stands');
+      const safeKey = normalizeStandRangeId(key || 'stands');
+      const requestedId = String(source?.groupId || meta.id || '').trim();
+      const sanitizedRequestedId = requestedId
+        ? requestedId.replace(/[^a-z0-9-_]/gi, '-').replace(/-{2,}/g, '-').replace(/^-+|-+$/g, '').toLowerCase()
+        : '';
       const label = (source?.groupLabel || '').trim() || meta.label || formatStandRangeLabel(key);
       groups.set(key, {
-        id: `stands-${safeId}`,
+        id: sanitizedRequestedId || `stands-${safeKey}`,
         label,
-        tip: '',
+        tip: (source?.groupTip || meta.tip || '').trim(),
         placeholder: 'No stand recommendations yet. Check back soon.',
         options: [],
         minGallons: Number.isFinite(source?.minGallons) ? source.minGallons : meta.min,
@@ -397,6 +411,13 @@ function buildStandRanges(items = []) {
     const group = groups.get(key);
     if (source?.groupLabel && !group.label) {
       group.label = source.groupLabel;
+    }
+    const meta = STAND_ALLOWED_GROUPS.get(key) || {};
+    const sourceTip = (source?.groupTip || '').trim();
+    if (sourceTip) {
+      group.tip = sourceTip;
+    } else if (!group.tip && meta.tip) {
+      group.tip = meta.tip;
     }
     if (Number.isFinite(source?.minGallons)) {
       group.minGallons = source.minGallons;
