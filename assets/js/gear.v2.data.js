@@ -55,8 +55,8 @@ const TIPS = {
   Use timers or smart plugs for consistent light cycles and to reduce wear on equipment.
 `,
   stands: `
-  Choose a stand rated above your tank’s water weight (8.34 lb per gallon) plus substrate and decor.<br>
-  Always match footprint dimensions, use a level before filling, and avoid exposing wood stands to prolonged moisture.
+  Choose a stand rated for at least your tank size; for extra safety pick the next size up (e.g., a 30-gal rated stand for a 20-gal tank).<br>
+  Level the stand and confirm full-frame support of the tank’s base.
 `
 };
 
@@ -113,32 +113,16 @@ const CSV_SOURCES = [
   { path: "/data/gear_water_food_tools.csv", category: "" }
 ];
 
-const STANDS_CSV_PATH = "/data/gear_stands.csv";
-const STAND_SUBGROUPS = ["Metal_Frame", "Cabinet", "Solid_Wood", "Leveling_Support", "Hybrid"];
-const STAND_RANGE_ORDER = ["5-10", "10-20", "20-40", "30-plus"];
-const STAND_RANGE_META = new Map([
-  [
-    "5-10",
-    {
-      label: "Recommended Stands for 5–10 Gallons",
-      tip: "For small tanks, pick a stand rated for the next size up (10–20 gal). Extra strength ensures better leveling and stability.",
-    }
-  ],
-  [
-    "10-20",
-    {
-      label: "Recommended Stands for 10–20 Gallons",
-      tip: "For a 10–20 gallon setup, select a stand rated for at least 30 gallons for added safety and leveling support.",
-    }
-  ],
-  [
-    "20-40",
-    {
-      label: "Recommended Stands for 20–40 Gallon Tanks",
-      tip: "For tanks in this range, pick a stand rated for <strong>at least 40–60 gallons</strong> to ensure proper support, especially if adding rockwork or a sump. Always check total dimensions (length × width) to match your tank’s footprint.",
-    }
-  ],
+const STANDS_JSON_PATH = "/assets/js/generated/gear-stands.json";
+const STAND_ALLOWED_GROUPS = new Map([
+  ["5-10", { min: 5, max: 10, label: "Recommended Stands for 5–10 Gallons" }],
+  ["10-20", { min: 10, max: 20, label: "Recommended Stands for 10–20 Gallons" }],
+  ["20-40", { min: 20, max: 40, label: "Recommended Stands for 20–40 Gallons" }],
+  ["40-55", { min: 40, max: 55, label: "Recommended Stands for 40–55 Gallons" }],
+  ["55-75", { min: 55, max: 75, label: "Recommended Stands for 55–75 Gallons" }],
+  ["75-125", { min: 75, max: 125, label: "Recommended Stands for 75–125 Gallons" }]
 ]);
+const STAND_RANGE_ORDER = Array.from(STAND_ALLOWED_GROUPS.keys());
 
 function normaliseHeader(header) {
   return String(header || "").trim();
@@ -211,48 +195,38 @@ function toNumberOrBlank(value) {
   return Number.isFinite(num) ? num : "";
 }
 
-function normalizeStandRow(row) {
-  const get = (key) => {
-    if (key in row) return row[key];
-    const lower = key.toLowerCase();
-    if (lower in row) return row[lower];
-    const upper = key.toUpperCase();
-    if (upper in row) return row[upper];
-    return "";
-  };
+function normalizeStandItem(item = {}) {
+  const id = (item.id || "").toString().trim();
+  const group = (item.group || "").toString().trim().toLowerCase();
+  const meta = STAND_ALLOWED_GROUPS.get(group);
+  const title = (item.title || "").toString().trim();
+  if (!id || !meta || !title) {
+    return null;
+  }
 
-  const id = (get('product_id') || "").toString().trim();
-  const tankRange = (get('tank_range') || get('tankRange') || get('range') || "").toString().trim();
-  const subgroup = (get('subgroup') || "").toString().trim();
-  const title = (get('title') || "").toString().trim();
-  const notes = (get('notes') || "").toString().trim();
-  const href = (get('amazon_url') || get('href') || "").toString().trim();
-  const image = (get('image_url') || get('image') || "").toString().trim();
-  const lengthIn = toNumberOrBlank((get('length_in') || get('length') || "").toString().trim());
-  const widthIn = toNumberOrBlank((get('width_in') || get('width') || "").toString().trim());
-  const heightIn = toNumberOrBlank((get('height_in') || get('height') || "").toString().trim());
-  const capacityLbs = toNumberOrBlank((get('capacity_lbs') || get('capacity') || "").toString().trim());
-  const material = (get('material') || "").toString().trim();
-  const color = (get('color') || "").toString().trim();
-  const affiliate = (get('affiliate') || "").toString().trim() || "amazon";
-  const tag = (get('tag') || "").toString().trim() || "fishkeepingli-20";
+  const notes = (item.notes || "").toString().trim();
+  const rawUrl = (item.amazonUrl || item.href || "").toString().trim();
+  const amazonUrl = /^https?:\/\//i.test(rawUrl) ? rawUrl : '';
+  const groupLabel = (item.groupLabel || "").toString().trim();
+  const dimensionsIn = (item.dimensionsIn || "").toString().trim();
+  const brand = (item.brand || "").toString().trim();
+  const capacityRaw = item.capacityLbs;
+  const capacityLbs = Number.isFinite(capacityRaw) ? capacityRaw : "";
+  const minGallons = Number.isFinite(item.minGallons) ? item.minGallons : meta.min;
+  const maxGallons = Number.isFinite(item.maxGallons) ? item.maxGallons : meta.max;
 
   return {
     id,
-    tank_range: tankRange,
-    subgroup,
+    group,
+    groupLabel,
     title,
     notes,
-    href,
-    image,
-    length_in: lengthIn,
-    width_in: widthIn,
-    height_in: heightIn,
-    capacity_lbs: capacityLbs,
-    material,
-    color,
-    affiliate,
-    tag
+    amazonUrl,
+    dimensionsIn,
+    capacityLbs,
+    brand,
+    minGallons,
+    maxGallons
   };
 }
 
@@ -404,24 +378,41 @@ function formatStandRangeLabel(range = '') {
 
 function buildStandRanges(items = []) {
   const groups = new Map();
-  const ensureGroup = (key) => {
+
+  const ensureGroup = (key, source) => {
     if (!groups.has(key)) {
-      const meta = STAND_RANGE_META.get(key) || {};
+      const meta = STAND_ALLOWED_GROUPS.get(key) || {};
       const safeId = normalizeStandRangeId(key || 'stands');
+      const label = (source?.groupLabel || '').trim() || meta.label || formatStandRangeLabel(key);
       groups.set(key, {
-        id: meta.id || `stands-${safeId}`,
-        label: meta.label || formatStandRangeLabel(key),
-        tip: meta.tip || '',
+        id: `stands-${safeId}`,
+        label,
+        tip: '',
         placeholder: 'No stand recommendations yet. Check back soon.',
         options: [],
+        minGallons: Number.isFinite(source?.minGallons) ? source.minGallons : meta.min,
+        maxGallons: Number.isFinite(source?.maxGallons) ? source.maxGallons : meta.max
       });
     }
-    return groups.get(key);
+    const group = groups.get(key);
+    if (source?.groupLabel && !group.label) {
+      group.label = source.groupLabel;
+    }
+    if (Number.isFinite(source?.minGallons)) {
+      group.minGallons = source.minGallons;
+    }
+    if (Number.isFinite(source?.maxGallons)) {
+      group.maxGallons = source.maxGallons;
+    }
+    return group;
   };
 
   items.forEach((item) => {
-    const key = (item.tank_range || '').trim() || 'other';
-    const group = ensureGroup(key);
+    const key = (item.group || '').trim();
+    if (!STAND_ALLOWED_GROUPS.has(key)) {
+      return;
+    }
+    const group = ensureGroup(key, item);
     const optionId = item.id || `${group.id}-option-${group.options.length + 1}`;
     group.options.push({
       id: optionId,
@@ -429,30 +420,22 @@ function buildStandRanges(items = []) {
       title: item.title || '',
       note: item.notes || '',
       notes: item.notes || '',
-      href: item.href || '',
+      href: item.amazonUrl || '',
       category: 'stands',
-      subgroup: item.subgroup || '',
-      affiliate: item.affiliate || 'amazon',
-      tag: item.tag || 'fishkeepingli-20',
+      subgroup: '',
+      affiliate: 'amazon',
+      tag: 'fishkeepingli-20',
       tanksize: key,
-      length: item.length_in === '' ? '' : item.length_in,
-      depth: item.width_in === '' ? '' : item.width_in,
+      dimensionsLite: item.dimensionsIn || '',
+      capacityLbs: item.capacityLbs || '',
+      brand: item.brand || '',
+      minGallons: item.minGallons,
+      maxGallons: item.maxGallons
     });
   });
 
-  const order = [];
-  STAND_RANGE_ORDER.forEach((key) => {
-    if (groups.has(key)) {
-      order.push(key);
-    }
-  });
-  Array.from(groups.keys()).forEach((key) => {
-    if (!order.includes(key)) {
-      order.push(key);
-    }
-  });
-
-  return order.map((key) => groups.get(key));
+  const orderedKeys = STAND_RANGE_ORDER.filter((key) => groups.has(key));
+  return orderedKeys.map((key) => groups.get(key));
 }
 
 function getItemsByCategory(normalized, category) {
@@ -502,8 +485,7 @@ function buildGear(normalized, standsItems = []) {
       accordions: buildGroups(maintenance, MAINTENANCE_GROUP_TIPS, 'maintenance_tools')
     },
     stands: {
-      match: 'none',
-      subgroups: STAND_SUBGROUPS.slice(),
+      match: 'gallons',
       items: stands,
       ranges: standRanges
     }
@@ -545,24 +527,17 @@ async function loadGearData() {
 
 async function loadStandsData() {
   try {
-    const text = await fetchCsv(STANDS_CSV_PATH);
-    const sanitized = text.replace(/\\"/g, '""');
-    const rows = parseCSV(sanitized);
-    return rows
-      .filter((row) => {
-        const rawId = (row.product_id || row.Product_ID || row.ProductId || "").toString().trim();
-        const title = (row.title || row.Title || "").toString().trim();
-        const link = (row.amazon_url || row.Amazon_URL || row.href || "").toString().trim();
-        const range = (row.tank_range || row.Tank_Range || row.tankRange || "").toString().trim();
-        if (rawId.startsWith('#') || range.startsWith('#')) {
-          return false;
-        }
-        if (!rawId && !title && !link) {
-          return false;
-        }
-        return true;
-      })
-      .map((row) => normalizeStandRow(row));
+    const response = await fetch(STANDS_JSON_PATH, { cache: 'no-cache' });
+    if (!response.ok) {
+      throw new Error(`Failed to load ${STANDS_JSON_PATH}: ${response.status}`);
+    }
+    const data = await response.json();
+    if (!Array.isArray(data)) {
+      return [];
+    }
+    return data
+      .map((item) => normalizeStandItem(item))
+      .filter((item) => item !== null);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[Gear] Stands data load failed:', error);
