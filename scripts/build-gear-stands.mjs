@@ -43,7 +43,14 @@ const GROUP_METADATA = new Map([
       infoButtonLabel: 'Stand safety guidance for 55–75 gallon tanks'
     }
   ],
-  ['75-125', { min: 75, max: 125 }]
+  [
+    '75-up',
+    {
+      min: 75,
+      max: 999,
+      label: 'Recommended Stands for 75+ Gallons'
+    }
+  ]
 ]);
 
 const ALLOWED_GROUPS = GROUP_METADATA;
