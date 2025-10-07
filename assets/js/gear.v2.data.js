@@ -557,22 +557,31 @@ const GEAR = {
       {
         id: "wt-core",
         label: "Recommended Water Treatments",
-        tip: "Conditioners and cycle boosters that keep tap water fish-safe and biofilters stable.",
+        tip: "Conditioners and bacterial starters help make tap water safe and maintain tank stability. Always dose for total tank volume, not just refill water.",
         options: [
           {
-            title: "Seachem Prime Water Conditioner",
-            notes: "Concentrated dechlorinator that detoxifies chlorine, chloramine, and ammonia instantly.",
-            href: "https://www.amazon.com/s?k=Seachem+Prime+Water+Conditioner&tag=fishkeepingli-20"
+            label: "Option 1",
+            title: "Seachem 437 Prime Fresh and Saltwater Conditioner – Chemical Remover and Detoxifier 1 L",
+            notes: "Highly concentrated dechlorinator that binds chlorine, chloramine, and ammonia in seconds.",
+            href: "https://amzn.to/4h8EfKz"
           },
           {
-            title: "Fritz Complete Water Conditioner",
-            notes: "One-step conditioner that handles chlorine, chloramine, and heavy metals while supporting slime coat.",
-            href: "https://www.amazon.com/s?k=Fritz+Complete+Water+Conditioner&tag=fishkeepingli-20"
+            label: "Option 2",
+            title: "Seachem Stability Fish Tank Stabilizer – For Freshwater and Marine Aquariums, 16.9 Fl Oz (Pack of 1)",
+            notes: "Robust nitrifying bacteria culture that quickly establishes and supports biofilters.",
+            href: "https://amzn.to/4gYNUDf"
           },
           {
-            title: "Seachem Stability Biological Starter",
-            notes: "Live bacteria blend that seeds filters quickly and steadies tanks after cleanings or medications.",
-            href: "https://www.amazon.com/s?k=Seachem+Stability+Biological+Starter&tag=fishkeepingli-20"
+            label: "Option 3",
+            title: "API TAP WATER CONDITIONER Aquarium Water Conditioner 16-Ounce Bottle",
+            notes: "Instantly detoxifies tap water while protecting beneficial bacteria and slime coats.",
+            href: "https://amzn.to/48d12T7"
+          },
+          {
+            label: "Option 4",
+            title: "Tetra AquaSafe Plus – Aquarium Water Conditioner and Dechlorinator, 33.8 Ounces",
+            notes: "Neutralizes chlorine, chloramine, and heavy metals with added vitamins for stress relief.",
+            href: "https://amzn.to/4q3itMw"
           }
         ]
       }
