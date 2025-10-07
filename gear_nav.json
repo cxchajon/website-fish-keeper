@@ -1,0 +1,12 @@
+{
+  "files": [
+    {
+      "category": "stands",
+      "path": "data/gear_stands.csv",
+      "product_field": "title",
+      "url_field": "amazon_url",
+      "notes_field": "notes",
+      "id_field": "product_id"
+    }
+  ]
+}

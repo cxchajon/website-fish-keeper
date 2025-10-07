@@ -196,6 +196,15 @@
     return String(s || '').replace(/[&<>"']/g, (m) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;' }[m]));
   }
 
+  const URL_PATTERN = /https?:\/\/\S+/gi;
+
+  function stripUrls(text = ''){
+    return String(text || '')
+      .replace(URL_PATTERN, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   function createOptionRow(option = {}, options = {}){
     const row = el('div',{class:'option'});
     row.dataset.category = option.category || '';
@@ -206,15 +215,19 @@
     row.dataset.affiliate = option.affiliate || 'amazon';
     row.dataset.tag = option.tag || 'fishkeepingli-20';
     const href = (option?.href || '').trim();
-    const labelText = (option?.label || '').trim();
-    const titleText = (option?.title || '').trim();
+    const labelText = stripUrls(option?.label || '').trim();
+    const titleText = stripUrls(option?.title || '').trim();
     const displayTitle = titleText || labelText || 'this item';
     const headingHtml = labelText && titleText
       ? `<strong>${escapeHTML(labelText)} — ${escapeHTML(titleText)}</strong>`
       : `<strong>${escapeHTML(displayTitle)}</strong>`;
     const noteText = (option?.note ?? option?.notes ?? '').trim();
     const buttonLabel = options.buttonLabel || 'Buy on Amazon';
-    const actionsHtml = href
+    const hasValidHref = /^https?:\/\//i.test(href);
+    if (href && !hasValidHref && typeof console !== 'undefined' && typeof console.warn === 'function') {
+      console.warn('[Gear] Skipping stand link without http(s):', href);
+    }
+    const actionsHtml = hasValidHref
       ? `<a class="btn btn-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
       : `<span class="muted">Add link</span>`;
     row.innerHTML = `

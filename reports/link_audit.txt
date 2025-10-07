@@ -1,1 +1,13 @@
-Link Audit Source: master:gear_master.csv\nTotal audited: 116\n  Filtration: 51\n  Heating: 27\n  Lighting: 38\n\nMISMATCH rows: 0\n\nNO_TITLE rows: 116\n\nUNKNOWN rows: 0\n\nNotes: EXPAND_ERR = redirect/resolve failed; TITLE_ERR = fetch or parse title failed.\n
+Link Audit Source: manifest:gear_nav.json (category=stands)
+Total audited: 15
+Missing sponsored: 0
+HTTP 404 errors: 0
+  stands: 15
+
+MISMATCH rows: 0
+
+NO_TITLE rows: 15
+
+UNKNOWN rows: 0
+
+Notes: EXPAND_ERR = redirect/resolve failed; TITLE_ERR = fetch or parse title failed.
