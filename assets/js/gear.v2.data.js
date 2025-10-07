@@ -60,6 +60,9 @@ const TIPS = {
 `
 };
 
+TIPS.stands_55_75_info =
+  'A filled 55-gallon tank can weigh over 600 lbs; a 75-gallon can exceed 900 lbs. Choose a stand whose capacity is greater than the full tank weight, match the footprint exactly, and confirm the stand is level before filling.';
+
 const HEATER_RANGE_META = new Map([
   ["g-5-10", { label: "Recommended Heaters for 5–10 Gallons", tip: "For 5–10 gal, target 25–50W. Place near gentle flow for even heat." }],
   ["g-10-20", { label: "Recommended Heaters for 10–20 Gallons", tip: "For 10–20 gal, aim for 50–100W." }],
@@ -129,7 +132,20 @@ const STAND_ALLOWED_GROUPS = new Map([
         "For 40–55 gal tanks, pick a stand rated for at least your tank’s full weight when filled (~8.3 lbs/gal plus substrate/rock). We suggest sizing up when possible for extra safety."
     }
   ],
-  ["55-75", { min: 55, max: 75, label: "Recommended Stands for 55–75 Gallons" }],
+  [
+    "55-75",
+    {
+      id: "stands_55_75",
+      min: 55,
+      max: 75,
+      label: "Recommended Stands for 55–75 Gallon Tanks",
+      intro:
+        'For 55–75 gallon tanks, choose a stand rated for at least 75 gallons. Larger setups with substrate, décor, and rockwork can exceed 900 lbs—always add a safety margin.',
+      infoButtonKey: 'stands_55_75_info',
+      infoButtonLabel: 'Stand safety guidance for 55–75 gallon tanks',
+      infoButtonText: TIPS.stands_55_75_info
+    }
+  ],
   ["75-125", { min: 75, max: 125, label: "Recommended Stands for 75–125 Gallons" }]
 ]);
 const STAND_RANGE_ORDER = Array.from(STAND_ALLOWED_GROUPS.keys());
@@ -218,8 +234,21 @@ function normalizeStandItem(item = {}) {
   const rawUrl = (item.amazonUrl || item.href || "").toString().trim();
   const amazonUrl = /^https?:\/\//i.test(rawUrl) ? rawUrl : '';
   const groupLabel = (item.groupLabel || "").toString().trim();
+  const groupTip = (item.groupTip || "").toString().trim();
+  const introText = (item.introText || item.intro || meta.intro || "").toString().trim();
+  const infoButtonKey = (item.infoButtonKey || meta.infoButtonKey || "").toString().trim();
+  const infoButtonText = (item.infoButtonText || meta.infoButtonText || "").toString().trim();
+  const infoButtonLabel = (item.infoButtonLabel || meta.infoButtonLabel || "").toString().trim();
+  const subgroup = (item.subgroup || "").toString().trim();
   const dimensionsIn = (item.dimensionsIn || "").toString().trim();
   const brand = (item.brand || "").toString().trim();
+  const material = (item.material || "").toString().trim();
+  const color = (item.color || "").toString().trim();
+  const affiliate = (item.affiliate || "").toString().trim() || 'amazon';
+  const tag = (item.tag || "").toString().trim() || 'fishkeepingli-20';
+  const lengthIn = Number.isFinite(item.lengthIn) ? Number(item.lengthIn) : '';
+  const widthIn = Number.isFinite(item.widthIn) ? Number(item.widthIn) : '';
+  const heightIn = Number.isFinite(item.heightIn) ? Number(item.heightIn) : '';
   const capacityRaw = item.capacityLbs;
   const capacityLbs = Number.isFinite(capacityRaw) ? capacityRaw : "";
   const minGallons = Number.isFinite(item.minGallons) ? item.minGallons : meta.min;
@@ -229,12 +258,25 @@ function normalizeStandItem(item = {}) {
     id,
     group,
     groupLabel,
+    groupTip,
+    introText,
+    infoButtonKey,
+    infoButtonText,
+    infoButtonLabel,
+    subgroup,
     title,
     notes,
     amazonUrl,
     dimensionsIn,
     capacityLbs,
     brand,
+    material,
+    color,
+    affiliate,
+    tag,
+    lengthIn,
+    widthIn,
+    heightIn,
     minGallons,
     maxGallons
   };
@@ -398,10 +440,15 @@ function buildStandRanges(items = []) {
         ? requestedId.replace(/[^a-z0-9-_]/gi, '-').replace(/-{2,}/g, '-').replace(/^-+|-+$/g, '').toLowerCase()
         : '';
       const label = (source?.groupLabel || '').trim() || meta.label || formatStandRangeLabel(key);
+      const intro = (source?.introText || source?.groupTip || meta.intro || meta.tip || '').trim();
       groups.set(key, {
         id: sanitizedRequestedId || `stands-${safeKey}`,
         label,
         tip: (source?.groupTip || meta.tip || '').trim(),
+        intro,
+        infoButtonKey: (source?.infoButtonKey || meta.infoButtonKey || '').trim(),
+        infoButtonLabel: (source?.infoButtonLabel || meta.infoButtonLabel || '').trim(),
+        infoButtonText: (source?.infoButtonText || meta.infoButtonText || '').trim(),
         placeholder: 'No stand recommendations yet. Check back soon.',
         options: [],
         minGallons: Number.isFinite(source?.minGallons) ? source.minGallons : meta.min,
@@ -418,6 +465,30 @@ function buildStandRanges(items = []) {
       group.tip = sourceTip;
     } else if (!group.tip && meta.tip) {
       group.tip = meta.tip;
+    }
+    const sourceIntro = (source?.introText || source?.intro || '').trim();
+    if (sourceIntro) {
+      group.intro = sourceIntro;
+    } else if (!group.intro && meta.intro) {
+      group.intro = meta.intro;
+    }
+    const sourceInfoKey = (source?.infoButtonKey || '').trim();
+    if (sourceInfoKey) {
+      group.infoButtonKey = sourceInfoKey;
+    } else if (!group.infoButtonKey && meta.infoButtonKey) {
+      group.infoButtonKey = meta.infoButtonKey;
+    }
+    const sourceInfoLabel = (source?.infoButtonLabel || '').trim();
+    if (sourceInfoLabel) {
+      group.infoButtonLabel = sourceInfoLabel;
+    } else if (!group.infoButtonLabel && meta.infoButtonLabel) {
+      group.infoButtonLabel = meta.infoButtonLabel;
+    }
+    const sourceInfoText = (source?.infoButtonText || '').trim();
+    if (sourceInfoText) {
+      group.infoButtonText = sourceInfoText;
+    } else if (!group.infoButtonText && meta.infoButtonText) {
+      group.infoButtonText = meta.infoButtonText;
     }
     if (Number.isFinite(source?.minGallons)) {
       group.minGallons = source.minGallons;
@@ -443,13 +514,18 @@ function buildStandRanges(items = []) {
       notes: item.notes || '',
       href: item.amazonUrl || '',
       category: 'stands',
-      subgroup: '',
-      affiliate: 'amazon',
-      tag: 'fishkeepingli-20',
+      subgroup: item.subgroup || '',
+      affiliate: item.affiliate || 'amazon',
+      tag: item.tag || 'fishkeepingli-20',
       tanksize: key,
       dimensionsLite: item.dimensionsIn || '',
       capacityLbs: item.capacityLbs || '',
       brand: item.brand || '',
+      material: item.material || '',
+      color: item.color || '',
+      length: item.lengthIn || '',
+      depth: item.widthIn || '',
+      height: item.heightIn || '',
       minGallons: item.minGallons,
       maxGallons: item.maxGallons
     });

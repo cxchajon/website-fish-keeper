@@ -199,9 +199,12 @@ body{
 
 .gear-subcard__header{
   padding:0.9rem 1.1rem;
+  display:flex;
+  align-items:center;
+  gap:0.65rem;
 }
 
-.gear-subcard__header h3{
+.gear-subcard__header .gear-subcard__title{
   margin:0;
   font-size:1.05rem;
   font-weight:600;
@@ -213,6 +216,12 @@ body{
   padding:0.9rem 1.1rem 1.1rem;
   display:grid;
   gap:0.85rem;
+}
+
+.gear-subcard__intro{
+  font-size:0.95rem;
+  line-height:1.6;
+  color:var(--muted);
 }
 
 .gear-card__intro{

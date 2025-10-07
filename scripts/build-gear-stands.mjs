@@ -9,14 +9,44 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 const INPUT_PATH = path.join(ROOT_DIR, 'data', 'gear_stands.csv');
 const OUTPUT_PATH = path.join(ROOT_DIR, 'assets', 'js', 'generated', 'gear-stands.json');
 
-const ALLOWED_GROUPS = new Map([
+const GROUP_METADATA = new Map([
   ['5-10', { min: 5, max: 10 }],
   ['10-20', { min: 10, max: 20 }],
   ['20-40', { min: 20, max: 40 }],
-  ['40-55', { min: 40, max: 55 }],
-  ['55-75', { min: 55, max: 75 }],
+  [
+    '40-55',
+    {
+      min: 40,
+      max: 55,
+      id: 'stands_40_55',
+      label: 'Recommended Stands for 40–55 Gallons',
+      intro:
+        'Choose a stand rated for your filled tank weight (~8.3 lbs/gal) plus your aquascape. Opt for reinforced frames and confirm everything is level before filling.',
+      introText:
+        'Choose a stand rated for your filled tank weight (~8.3 lbs/gal) plus your aquascape. Opt for reinforced frames and confirm everything is level before filling.'
+    }
+  ],
+  [
+    '55-75',
+    {
+      min: 55,
+      max: 75,
+      id: 'stands_55_75',
+      label: 'Recommended Stands for 55–75 Gallon Tanks',
+      intro:
+        'For 55–75 gallon tanks, choose a stand rated for at least 75 gallons. Larger setups with substrate, décor, and rockwork can exceed 900 lbs—always add a safety margin.',
+      introText:
+        'For 55–75 gallon tanks, choose a stand rated for at least 75 gallons. Larger setups with substrate, décor, and rockwork can exceed 900 lbs—always add a safety margin.',
+      infoButtonKey: 'stands_55_75_info',
+      infoButtonText:
+        'A filled 55-gallon tank can weigh over 600 lbs; a 75-gallon can exceed 900 lbs. Choose a stand whose capacity is greater than the full tank weight, match the footprint exactly, and confirm the stand is level before filling.',
+      infoButtonLabel: 'Stand safety guidance for 55–75 gallon tanks'
+    }
+  ],
   ['75-125', { min: 75, max: 125 }]
 ]);
+
+const ALLOWED_GROUPS = GROUP_METADATA;
 
 const URL_PATTERN = /https?:\/\/\S+/gi;
 
@@ -100,51 +130,122 @@ function parseCapacity(value) {
   return Number.isFinite(numeric) ? numeric : null;
 }
 
+function getField(row, ...keys) {
+  for (const key of keys) {
+    if (key in row && row[key] !== undefined) return row[key];
+    const lower = key.toLowerCase();
+    if (lower in row && row[lower] !== undefined) return row[lower];
+    const upper = key.toUpperCase();
+    if (upper in row && row[upper] !== undefined) return row[upper];
+  }
+  return '';
+}
+
+function toNumber(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const numeric = Number(String(value).replace(/[^0-9.\-]/g, ''));
+  return Number.isFinite(numeric) ? numeric : null;
+}
+
+function formatDimensions(length, width, height) {
+  const parts = [length, width, height]
+    .map((value) => (Number.isFinite(value) ? Number(value).toFixed(2).replace(/\.00$/, '') : ''))
+    .filter((value) => value !== '');
+  return parts.length === 3 ? parts.join('×') : '';
+}
+
+function createStandId(range, title, existingIds) {
+  const safeRange = sanitizeText(range || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const baseTitle = sanitizeText(title || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/-{2,}/g, '-')
+    .replace(/^-+|-+$/g, '') || 'stand';
+  const base = [safeRange || 'stand', baseTitle].filter(Boolean).join('-');
+  let candidate = base;
+  let suffix = 1;
+  while (existingIds.has(candidate) || !candidate) {
+    candidate = `${base}-${suffix += 1}`;
+  }
+  existingIds.add(candidate);
+  return candidate;
+}
+
 async function build() {
   const csvRaw = await fs.readFile(INPUT_PATH, 'utf8');
   const rows = parseCSV(csvRaw);
   const items = [];
+  const seenIds = new Set();
 
   rows.forEach((row) => {
-    const id = sanitizeText(row.id || row.ID || '');
-    const group = sanitizeText(row.group || row.Group || '').toLowerCase();
-    const normalizedGroup = group;
-    const meta = ALLOWED_GROUPS.get(normalizedGroup);
-    const skipReason = (!id && !sanitizeText(row.title)) ? 'missing id/title' : !meta ? 'invalid group' : null;
-    if (skipReason) {
-      console.warn(`[build-gear-stands] Skipping row (${skipReason}):`, id || sanitizeText(row.title || ''));
+    const range = sanitizeText(
+      getField(row, 'tank_range', 'range', 'group', 'Group', 'Tank_Range')
+    ).toLowerCase();
+    const meta = ALLOWED_GROUPS.get(range);
+    const title = sanitizeText(getField(row, 'title', 'Product_Name', 'product', 'Title'));
+    if (!title || !meta) {
+      const reason = !title ? 'missing title' : 'invalid group';
+      console.warn(`[build-gear-stands] Skipping row (${reason}):`, title || range || '');
       return;
     }
 
-    const title = sanitizeText(row.title || row.Title || '');
-    if (!title) {
-      console.warn('[build-gear-stands] Skipping row (missing title):', id);
-      return;
-    }
+    const metaConfig = meta || {};
+    const groupLabel = sanitizeText(getField(row, 'group_label', 'Group_Label', 'header')) || metaConfig.label || '';
+    const groupTip = sanitizeText(getField(row, 'group_tip', 'Group_Tip')) || metaConfig.tip || '';
+    const introText = sanitizeText(getField(row, 'intro_text', 'Intro_Text')) || metaConfig.introText || '';
+    const infoButtonKey = sanitizeText(getField(row, 'info_button_key')) || metaConfig.infoButtonKey || '';
+    const infoButtonText = sanitizeText(getField(row, 'info_button_text')) || metaConfig.infoButtonText || '';
+    const infoButtonLabel = sanitizeText(getField(row, 'info_button_label')) || metaConfig.infoButtonLabel || '';
+    const subgroup = sanitizeText(getField(row, 'subgroup', 'Subgroup'));
+    const notes = sanitizeText(getField(row, 'notes', 'Notes', 'benefit'));
+    const material = sanitizeText(getField(row, 'material', 'Material'));
+    const color = sanitizeText(getField(row, 'color', 'Color'));
+    const brand = sanitizeText(getField(row, 'brand', 'Brand'));
+    const affiliate = sanitizeText(getField(row, 'affiliate')) || 'amazon';
+    const tag = sanitizeText(getField(row, 'tag')) || 'fishkeepingli-20';
 
-    const groupLabel = sanitizeText(row.group_label || row.groupLabel || '');
-    const notes = sanitizeText(row.notes || row.Notes || '');
-    const dimensionsIn = sanitizeDimensions(row.dimensions_in || row.dimensions || '');
-    const capacityLbs = parseCapacity(row.capacity_lbs || row.capacity || '');
-    const brand = sanitizeText(row.brand || row.Brand || '');
-    const rawUrl = String(row.amazon_url || row.url || '').trim();
+    const lengthIn = toNumber(getField(row, 'length_in', 'Length_in', 'length'));
+    const widthIn = toNumber(getField(row, 'width_in', 'Width_in', 'width'));
+    const heightIn = toNumber(getField(row, 'height_in', 'Height_in', 'height'));
+    const dimensionsIn = sanitizeDimensions(
+      getField(row, 'dimensions_in', 'Dimensions_in', 'dimensions') || formatDimensions(lengthIn, widthIn, heightIn)
+    );
+    const capacityLbs = parseCapacity(getField(row, 'capacity_lbs', 'Capacity_Lbs', 'capacity'));
+
+    const rawUrl = String(getField(row, 'amazon_url', 'Amazon_Link', 'url') || '').trim();
     const amazonUrl = rawUrl && /^https?:\/\//i.test(rawUrl) ? rawUrl : '';
     if (rawUrl && !amazonUrl) {
-      console.warn('[build-gear-stands] Dropping invalid Amazon URL for', id || title, rawUrl);
+      console.warn('[build-gear-stands] Dropping invalid Amazon URL for', title, rawUrl);
     }
+
+    const rawId = sanitizeText(getField(row, 'id', 'ID'));
+    const id = rawId || createStandId(range, title, seenIds);
 
     items.push({
       id,
-      group: normalizedGroup,
+      group: range,
       groupLabel,
+      groupTip,
+      introText,
+      infoButtonKey,
+      infoButtonText,
+      infoButtonLabel,
+      subgroup,
       title,
       notes,
       amazonUrl,
       dimensionsIn,
       capacityLbs,
       brand,
-      minGallons: meta.min,
-      maxGallons: meta.max
+      material,
+      color,
+      affiliate,
+      tag,
+      lengthIn,
+      widthIn,
+      heightIn,
+      minGallons: metaConfig.min,
+      maxGallons: metaConfig.max
     });
   });
 
