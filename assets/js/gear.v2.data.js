@@ -55,9 +55,8 @@ const TIPS = {
   Use timers or smart plugs for consistent light cycles and to reduce wear on equipment.
 `,
   stands: `
-  <strong>Stand Sizing Tip</strong><br>
-  For small tanks, pick a stand rated for the next size up (10–20 gal).<br>
-  Extra strength ensures better leveling and long-term stability.
+  Choose a stand rated above your tank’s water weight (8.34 lb per gallon) plus substrate and decor.<br>
+  Always match footprint dimensions, use a level before filling, and avoid exposing wood stands to prolonged moisture.
 `
 };
 
@@ -115,8 +114,8 @@ const CSV_SOURCES = [
 ];
 
 const STANDS_CSV_PATH = "/data/gear_stands.csv";
-const STAND_SUBGROUPS = ["Metal_Frame", "Cabinet", "Solid_Wood", "Leveling_Support"];
-const STAND_RANGE_ORDER = ["5-10", "10-20", "20-29", "30-plus"];
+const STAND_SUBGROUPS = ["Metal_Frame", "Cabinet", "Solid_Wood", "Leveling_Support", "Hybrid"];
+const STAND_RANGE_ORDER = ["5-10", "10-20", "20-40", "30-plus"];
 const STAND_RANGE_META = new Map([
   [
     "5-10",
@@ -130,6 +129,13 @@ const STAND_RANGE_META = new Map([
     {
       label: "Recommended Stands for 10–20 Gallon Tanks",
       tip: "For a 10–20 gallon setup, select a stand rated for at least 30 gallons for added safety and leveling support.",
+    }
+  ],
+  [
+    "20-40",
+    {
+      label: "Recommended Stands for 20–40 Gallon Tanks",
+      tip: "For tanks in this range, pick a stand rated for <strong>at least 40–60 gallons</strong> to ensure proper support, especially if adding rockwork or a sump. Always check total dimensions (length × width) to match your tank’s footprint.",
     }
   ],
 ]);
@@ -546,7 +552,8 @@ async function loadStandsData() {
         const rawId = (row.product_id || row.Product_ID || row.ProductId || "").toString().trim();
         const title = (row.title || row.Title || "").toString().trim();
         const link = (row.amazon_url || row.Amazon_URL || row.href || "").toString().trim();
-        if (rawId.startsWith('#')) {
+        const range = (row.tank_range || row.Tank_Range || row.tankRange || "").toString().trim();
+        if (rawId.startsWith('#') || range.startsWith('#')) {
           return false;
         }
         if (!rawId && !title && !link) {
