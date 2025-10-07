@@ -45,7 +45,7 @@
           </p>
           ${notes ? `<p class="gear-card__notes">${notes}</p>`:``}
           <div class="gear-card__actions">
-            <a class="btn buy-amazon" data-action="buy-amazon" href="${href}" target="_blank" rel="sponsored noopener noreferrer">Buy on Amazon</a>
+            <a class="btn btn-amazon buy-amazon" data-action="buy-amazon" href="${href}" target="_blank" rel="sponsored noopener noreferrer">Buy on Amazon</a>
           </div>
         </div>
       </article>
