@@ -49,10 +49,10 @@ const TIPS = {
   Overfeeding → ammonia → nitrates → algae.
 `,
   'maintenance-tools': `
-  Weekly 25–50% water change; match temperature and dechlorinate first.<br>
-  Use microfiber + distilled water + vinegar to wipe glass; avoid harsh cleaners.<br>
-  Test weekly; consistency matters more than chasing perfect numbers.<br>
-  Always use drip loops and GFCI outlets for safety.
+  <strong>Safety &amp; Power Tips</strong><br>
+  GFCI outlets and drip loops prevent electrical hazards.<br>
+  Keep power strips dry and elevated.<br>
+  Use timers or smart plugs for consistent light cycles and to reduce wear on equipment.
 `
 };
 
@@ -751,8 +751,33 @@ const GEAR = {
       {
         id: "maintenance-safety",
         label: "Safety & Power",
-        options: [],
-        placeholder: "Safety gear like surge-protected power strips, GFCI adapters, and outlet timers will live here soon. Until then, build drip loops and keep cords elevated above potential splashes."
+        tip: "Use GFCI protection and surge-protected strips to keep your aquarium gear safe. Always create drip loops on cords, label plugs for quick shutoff, and keep outlets above water level.",
+        options: [
+          {
+            label: "Option 1",
+            title: "Power Strip, ALESTOR Surge Protector with 12 Outlets and 4 USB Ports, 6 Feet Extension Cord (1875W/15A), 2700 Joules, ETL Listed, Black",
+            notes: "High-capacity surge protector keeps multiple aquarium devices powered while taming cord clutter.",
+            href: "https://amzn.to/3J22Ynb"
+          },
+          {
+            label: "Option 2",
+            title: "meross Smart Plug Power Strip, WiFi Flat Outlet 15A Compatible with Apple HomeKit, Siri, Alexa, Google Assistant & SmartThings, with 4 AC Outlets & 4 USB Ports, 6 Feet Surge Protector Extender",
+            notes: "App-connected strip adds remote control and scheduling plus built-in surge protection for core gear.",
+            href: "https://amzn.to/437noBU"
+          },
+          {
+            label: "Option 3",
+            title: "Meross Smart Water Sensor Alarm 3 Pack, WiFi Water Leak Detector Support Apple HomeKit, SmartThings, IP67 Waterproof with App Alerts, Alarm, 100M Range for Home Basement Kitchen (Meross Hub Included)",
+            notes: "Linked leak sensors send instant alerts so you can shut off equipment before water reaches outlets.",
+            href: "https://amzn.to/42sP4ky"
+          },
+          {
+            label: "Option 4",
+            title: "Linkind Matter Smart Plug, Works with Apple Home, Siri, Alexa, Google, SmartThings, Smart Outlet 15A/1800W Max, Smart Home Automation, App Remote Control, Timer & Schedule, 2.4G Wi-Fi Only (4 Pack)",
+            notes: "Matter-ready smart plugs label critical gear and enable quick shutoffs without unplugging cords.",
+            href: "https://amzn.to/3KDGMQT"
+          }
+        ]
       }
     ]
   }
