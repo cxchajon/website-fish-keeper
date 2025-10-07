@@ -49,8 +49,10 @@ const TIPS = {
   Overfeeding → ammonia → nitrates → algae.
 `,
   'maintenance-tools': `
-  Keep a dedicated kit for testing, cleaning, and safety so gear is ready for every water change.<br>
-  Expand each subgroup for best-practice reminders and trusted tools.
+  Weekly 25–50% water change; match temperature and dechlorinate first.<br>
+  Use microfiber + distilled water + vinegar to wipe glass; avoid harsh cleaners.<br>
+  Test weekly; consistency matters more than chasing perfect numbers.<br>
+  Always use drip loops and GFCI outlets for safety.
 `
 };
 
@@ -678,77 +680,79 @@ const GEAR = {
 
   maintenanceTools: {
     match: "none",
+    intro: "Keep your aquarium healthy and clear with the right tools for testing, water changes, and glass maintenance. Consistent care prevents algae, stress, and equipment issues.",
     accordions: [
       {
         id: "maintenance-testing",
         label: "Testing & Monitoring",
-        tip: "Test weekly; consistency matters more than chasing perfect numbers.",
         options: [
           {
-            title: "API Freshwater Master Test Kit",
-            notes: "Liquid test kit covering ammonia, nitrite, nitrate, and pH for precise tracking.",
-            href: "https://www.amazon.com/s?k=API+Freshwater+Master+Test+Kit&tag=fishkeepingli-20"
+            label: "Option 1",
+            title: "VIVOSUN Digital pH and TDS Meter Kits, 0.01 pH High Accuracy Pen Type pH Meter ±2% Readout Accuracy 3-in-1 TDS EC Temperature Meter for Hydroponics, Pool, and Aquarium, Yellow Blue, UL Certified",
+            notes: "Dual meters read pH, EC, TDS, and temperature so you can catch swings before livestock feel stress.",
+            href: "https://amzn.to/46F70el"
           },
           {
-            title: "Digital TDS Meter",
-            notes: "Pocket meter to spot mineral creep or dilution after remineralizing top-offs.",
-            href: "https://www.amazon.com/s?k=Digital+TDS+Meter&tag=fishkeepingli-20"
-          },
-          {
-            title: "Floating Thermometer",
-            notes: "Simple glass backup thermometer to verify heater and controller accuracy.",
-            href: "https://www.amazon.com/s?k=Floating+Aquarium+Thermometer&tag=fishkeepingli-20"
+            label: "Option 2",
+            title: "API FRESHWATER MASTER TEST KIT 800-Test Freshwater Aquarium Water Master Test Kit, White, Single, Multi-colored",
+            notes: "Liquid ammonia, nitrite, nitrate, and pH tests deliver precise water chemistry tracking for weekly logs.",
+            href: "https://amzn.to/3KDF7L9"
           }
         ]
       },
       {
         id: "maintenance-cleaning",
         label: "Water Change & Cleaning",
-        tip: "Weekly 25–50% water change; match temperature and dechlorinate first. Use microfiber + distilled water + vinegar to wipe glass; avoid harsh cleaners.",
         options: [
           {
-            title: "Python Gravel Vacuum",
-            notes: "Hooks to a faucet for no-bucket gravel cleaning and refills on medium to large tanks.",
-            href: "https://www.amazon.com/s?k=Python+Gravel+Vacuum&tag=fishkeepingli-20"
+            label: "Option 1",
+            title: "Tetra Water Cleaner Gravel Siphon for Aquariums, Easily Clean Freshwater Aquariums",
+            notes: "Starter siphon removes waste from substrate while keeping fish safe with a debris guard and priming bulb.",
+            href: "https://amzn.to/4pPCA0m"
           },
           {
-            title: "Aqueon Water Changer Kit",
-            notes: "Faucet-driven siphon with flow control ideal for apartments and smaller sinks.",
-            href: "https://www.amazon.com/s?k=Aqueon+Water+Changer&tag=fishkeepingli-20"
+            label: "Option 2",
+            title: "Gravel Vacuum for Aquarium Water Changer Fish Tank Cleaning Tools, Siphon Universal Quick Pump Aquarium Water Changing (50 ft)",
+            notes: "50-foot hose reaches sinks with ease so you can drain and refill without lugging heavy buckets.",
+            href: "https://amzn.to/4nEtZw1"
           },
           {
-            title: "Microfiber Towel Pack",
-            notes: "Lint-free cloths dedicated to aquarium use so glass dries streak-free.",
-            href: "https://www.amazon.com/s?k=Microfiber+Towel+Pack&tag=fishkeepingli-20"
+            label: "Option 3",
+            title: "Aquarium Coral Feeder Fish Feeder Waste Clean Tool Manual Cleaner Water Changer Fish Tank Cleaning Tool Siphon Dropper Waste Remover Aquatic Bottom Pipette (25 in)",
+            notes: "Target-feed corals or spot-clean debris in tight spaces using this precise squeeze dropper.",
+            href: "https://amzn.to/3KCBLYK"
           },
           {
-            title: "Algae Scraper Pad",
-            notes: "Non-scratch pad to clear film algae from glass or acrylic panels.",
-            href: "https://www.amazon.com/s?k=Aquarium+Algae+Scraper+Pad&tag=fishkeepingli-20"
+            label: "Option 4",
+            title: "Flipper Magnetic Aquarium Glass Cleaner & Fish Tank Accessories | Effortless Algae Remover for Fish Tank (Nano)",
+            notes: "Compact magnetic cleaner glides around corners on nano tanks without scratching glass.",
+            href: "https://amzn.to/3KXWUMZ"
+          },
+          {
+            label: "Option 5",
+            title: "Flipper Magnetic Aquarium Glass Cleaner & Fish Tank Accessories | Effortless Algae Remover for Fish Tank (Standard)",
+            notes: "Standard Flipper handles thicker glass on mid-sized tanks and flips between scrubber and blade instantly.",
+            href: "https://amzn.to/46Ml1Wc"
+          },
+          {
+            label: "Option 6",
+            title: "25\" Glass Aquariums Algae Scraper – Durable Stainless Steel, Powerfully Remove Stubborn Algae, Professional Fish Tank Cleaner Tools, Includes Sheath, Long Tweezers & 10 Replaceable Blades",
+            notes: "Stainless handle with replaceable blades powers through stubborn algae on tall panels.",
+            href: "https://amzn.to/4nySNFL"
+          },
+          {
+            label: "Option 7",
+            title: "API ALGAE SCRAPER For Glass Aquariums 1-Count Container",
+            notes: "Handheld scraper keeps front glass clear between deep cleans and tucks easily into a maintenance kit.",
+            href: "https://amzn.to/3Wqbmjr"
           }
         ]
       },
       {
         id: "maintenance-safety",
         label: "Safety & Power",
-        tip: "Use GFCI outlets and drip loops on all cords. Keep power strips above floor level.",
-        options: [
-          {
-            title: "Surge Protected Power Strip",
-            notes: "Mount high to protect gear from splashes while guarding against voltage spikes.",
-            href: "https://www.amazon.com/s?k=Surge+Protected+Power+Strip&tag=fishkeepingli-20"
-          },
-          {
-            title: "Outlet Timer for Lights",
-            notes: "Automates light cycles for stable photoperiods that keep fish and plants on schedule.",
-            href: "https://www.amazon.com/s?k=Outlet+Timer+for+Aquarium+Lights&tag=fishkeepingli-20"
-          },
-          {
-            title: "GFCI Safety Adapter Plug",
-            notes: "Adds ground-fault protection without rewiring, ideal for rental setups.",
-            href: "https://www.amazon.com/s?k=GFCI+Safety+Adapter+Plug&tag=fishkeepingli-20"
-          }
-        ]
+        options: [],
+        placeholder: "Safety gear like surge-protected power strips, GFCI adapters, and outlet timers will live here soon. Until then, build drip loops and keep cords elevated above potential splashes."
       }
     ]
   }
