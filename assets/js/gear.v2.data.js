@@ -53,6 +53,11 @@ const TIPS = {
   GFCI outlets and drip loops prevent electrical hazards.<br>
   Keep power strips dry and elevated.<br>
   Use timers or smart plugs for consistent light cycles and to reduce wear on equipment.
+`,
+  stands: `
+  <strong>Stand Sizing Tip</strong><br>
+  For small tanks, pick a stand rated for the next size up (10–20 gal).<br>
+  Extra strength ensures better leveling and long-term stability.
 `
 };
 
@@ -111,6 +116,16 @@ const CSV_SOURCES = [
 
 const STANDS_CSV_PATH = "/data/gear_stands.csv";
 const STAND_SUBGROUPS = ["Metal_Frame", "Cabinet", "Solid_Wood", "Leveling_Support"];
+const STAND_RANGE_ORDER = ["5-10", "10-20", "20-29", "30-plus"];
+const STAND_RANGE_META = new Map([
+  [
+    "5-10",
+    {
+      label: "Recommended Stands for 5–10 Gallon Tanks",
+      tip: "For small tanks, pick a stand rated for the next size up (10–20 gal). Extra strength ensures better leveling and stability.",
+    }
+  ],
+]);
 
 function normaliseHeader(header) {
   return String(header || "").trim();
@@ -194,6 +209,7 @@ function normalizeStandRow(row) {
   };
 
   const id = (get('product_id') || "").toString().trim();
+  const tankRange = (get('tank_range') || get('tankRange') || get('range') || "").toString().trim();
   const subgroup = (get('subgroup') || "").toString().trim();
   const title = (get('title') || "").toString().trim();
   const notes = (get('notes') || "").toString().trim();
@@ -210,6 +226,7 @@ function normalizeStandRow(row) {
 
   return {
     id,
+    tank_range: tankRange,
     subgroup,
     title,
     notes,
@@ -353,6 +370,78 @@ function buildGroups(items, tipsMap, category) {
   return order.map((id) => map.get(id));
 }
 
+function normalizeStandRangeId(range = '') {
+  return String(range || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^0-9a-z+-]/g, '-');
+}
+
+function formatStandRangeLabel(range = '') {
+  const value = String(range || '').trim();
+  if (!value || value.toLowerCase() === 'other') {
+    return 'Stand Options';
+  }
+  if (/plus$/i.test(value)) {
+    const base = value.replace(/-?plus$/i, '+');
+    return `Stand Options for ${base} Gallons`;
+  }
+  return `Stand Options for ${value.replace(/-/g, '–')} Gallons`;
+}
+
+function buildStandRanges(items = []) {
+  const groups = new Map();
+  const ensureGroup = (key) => {
+    if (!groups.has(key)) {
+      const meta = STAND_RANGE_META.get(key) || {};
+      const safeId = normalizeStandRangeId(key || 'stands');
+      groups.set(key, {
+        id: meta.id || `stands-${safeId}`,
+        label: meta.label || formatStandRangeLabel(key),
+        tip: meta.tip || '',
+        placeholder: 'No stand recommendations yet. Check back soon.',
+        options: [],
+      });
+    }
+    return groups.get(key);
+  };
+
+  items.forEach((item) => {
+    const key = (item.tank_range || '').trim() || 'other';
+    const group = ensureGroup(key);
+    const optionId = item.id || `${group.id}-option-${group.options.length + 1}`;
+    group.options.push({
+      id: optionId,
+      label: '',
+      title: item.title || '',
+      note: item.notes || '',
+      notes: item.notes || '',
+      href: item.href || '',
+      category: 'stands',
+      subgroup: item.subgroup || '',
+      affiliate: item.affiliate || 'amazon',
+      tag: item.tag || 'fishkeepingli-20',
+      tanksize: key,
+      length: item.length_in === '' ? '' : item.length_in,
+      depth: item.width_in === '' ? '' : item.width_in,
+    });
+  });
+
+  const order = [];
+  STAND_RANGE_ORDER.forEach((key) => {
+    if (groups.has(key)) {
+      order.push(key);
+    }
+  });
+  Array.from(groups.keys()).forEach((key) => {
+    if (!order.includes(key)) {
+      order.push(key);
+    }
+  });
+
+  return order.map((key) => groups.get(key));
+}
+
 function getItemsByCategory(normalized, category) {
   return normalized.get(category) || [];
 }
@@ -366,6 +455,7 @@ function buildGear(normalized, standsItems = []) {
   const food = getItemsByCategory(normalized, 'food');
   const maintenance = getItemsByCategory(normalized, 'maintenance_tools');
   const stands = Array.isArray(standsItems) ? standsItems : [];
+  const standRanges = buildStandRanges(stands);
 
   const gear = {
     heaters: {
@@ -401,7 +491,8 @@ function buildGear(normalized, standsItems = []) {
     stands: {
       match: 'none',
       subgroups: STAND_SUBGROUPS.slice(),
-      items: stands
+      items: stands,
+      ranges: standRanges
     }
   };
 
