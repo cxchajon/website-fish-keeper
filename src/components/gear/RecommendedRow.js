@@ -66,7 +66,7 @@ function createRecommendedCard(slot, item, context, onSelect, onAdd) {
           attrs: {
             href: amazonLink,
             target: '_blank',
-            rel: 'noopener noreferrer',
+            rel: 'sponsored noopener noreferrer',
           },
         }),
       );

@@ -61,7 +61,7 @@ export function ProductCard(item, options = {}) {
         attrs: {
           href: amazonLink,
           target: '_blank',
-          rel: 'noopener noreferrer',
+          rel: 'sponsored noopener noreferrer',
         },
       }),
     );

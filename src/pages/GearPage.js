@@ -141,6 +141,7 @@ const state = {
   context: { ...CONTEXT_DEFAULTS },
   openCategory: readStoredOpenCategory(),
   filtrationTab: 'All',
+  lightingFilter: '',
   selectedItem: null,
   showModal: false,
   alternatives: { Budget: null, Mid: null, Premium: null },
@@ -195,6 +196,18 @@ function setState(patch) {
     state.alternatives = computeAlternatives(state.selectedItem);
   }
   render();
+}
+
+function scrollToAnchor(anchor) {
+  if (!anchor) {
+    return;
+  }
+  requestAnimationFrame(() => {
+    const target = document.getElementById(anchor);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
 }
 
 function handleSelectItem(item) {
@@ -334,7 +347,11 @@ function render() {
     CategoryAccordion(
       groups,
       state.context,
-      { openCategory: state.openCategory, filtrationTab: state.filtrationTab },
+      {
+        openCategory: state.openCategory,
+        filtrationTab: state.filtrationTab,
+        lightingFilter: state.lightingFilter,
+      },
       {
         onToggleCategory: (key, open) => {
           if (open) {
@@ -346,6 +363,15 @@ function render() {
         onSelect: handleSelectItem,
         onAdd: handleAddToBuild,
         onFiltrationTab: (tab) => setState({ filtrationTab: tab }),
+        onLightingFilter: (groupId, anchor) => {
+          const nextFilter = state.lightingFilter === groupId ? '' : groupId;
+          const patch = { lightingFilter: nextFilter };
+          if (state.openCategory !== 'Lighting') {
+            patch.openCategory = 'Lighting';
+          }
+          setState(patch);
+          scrollToAnchor(anchor);
+        },
       },
     ),
     WhyPickDrawer({
