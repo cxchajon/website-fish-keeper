@@ -362,6 +362,12 @@ body{
   font-size:0.95rem;
   line-height:1.45;
 }
+.option__meta{
+  margin:0.35rem 0 0;
+  color:var(--muted);
+  font-size:0.9rem;
+  line-height:1.35;
+}
 .option__actions{
   margin:0.75rem 0 0;
   background:rgba(255, 255, 255, 0.03);

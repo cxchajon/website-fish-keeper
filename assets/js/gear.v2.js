@@ -222,6 +222,7 @@
       ? `<strong>${escapeHTML(labelText)} — ${escapeHTML(titleText)}</strong>`
       : `<strong>${escapeHTML(displayTitle)}</strong>`;
     const noteText = (option?.note ?? option?.notes ?? '').trim();
+    const dimensionsLite = (option?.dimensionsLite || '').toString().trim();
     const context = String(options.context || '').toLowerCase();
     const buttonLabel = options.buttonLabel || 'Buy on Amazon';
     const hasHref = href.length > 0;
@@ -245,6 +246,7 @@
     row.innerHTML = `
       <div class="option__title">${headingHtml}</div>
       ${noteText ? `<p class="option__note">${escapeHTML(noteText)}</p>` : ''}
+      ${context === 'stands' && dimensionsLite ? `<p class="option__meta">Dimensions: ${escapeHTML(dimensionsLite)}</p>` : ''}
       <div class="option__actions">${actionsHtml}</div>
     `;
     return row;
@@ -269,14 +271,30 @@
       wrap.dataset.rangeId = range.id;
       if (!ignoreMatch && gearSectionKey) {
         const matchMode = (GEAR[gearSectionKey]?.match || 'gallons').toLowerCase();
-        const meta = RANGE_LOOKUP[gearSectionKey]?.get(range.id);
+        const lookup = typeof RANGE_LOOKUP !== 'undefined' ? RANGE_LOOKUP : null;
+        const rangeLookup = lookup && lookup[gearSectionKey] && typeof lookup[gearSectionKey].get === 'function'
+          ? lookup[gearSectionKey]
+          : null;
+        const meta = rangeLookup ? rangeLookup.get(range.id) || {} : {};
         if (meta) {
           if (matchMode === 'length') {
-            if (Number.isFinite(meta.min)) wrap.dataset.minL = String(meta.min);
-            if (Number.isFinite(meta.max)) wrap.dataset.maxL = String(meta.max);
+            const min = Number.isFinite(meta.min) ? meta.min : Number.isFinite(range.minL) ? range.minL : undefined;
+            const max = Number.isFinite(meta.max) ? meta.max : Number.isFinite(range.maxL) ? range.maxL : undefined;
+            if (Number.isFinite(min)) wrap.dataset.minL = String(min);
+            if (Number.isFinite(max)) wrap.dataset.maxL = String(max);
           } else if (matchMode === 'gallons') {
-            if (Number.isFinite(meta.min)) wrap.dataset.minG = String(meta.min);
-            if (Number.isFinite(meta.max)) wrap.dataset.maxG = String(meta.max);
+            const min = Number.isFinite(meta.min)
+              ? meta.min
+              : Number.isFinite(range.minGallons)
+                ? range.minGallons
+                : undefined;
+            const max = Number.isFinite(meta.max)
+              ? meta.max
+              : Number.isFinite(range.maxGallons)
+                ? range.maxGallons
+                : undefined;
+            if (Number.isFinite(min)) wrap.dataset.minG = String(min);
+            if (Number.isFinite(max)) wrap.dataset.maxG = String(max);
           }
         }
       }
@@ -317,14 +335,18 @@
       headerClass = 'gear-card__header gear-subcard__header',
       bodyClass = 'gear-card__body gear-subcard__body',
       rangeClass = '',
-      rangeOptions = {}
+      rangeOptions = {},
+      matchable = false
     } = options;
 
     const classList = new Set(String(sectionClass || '').split(/\s+/).filter(Boolean));
     classList.add('gear-card');
     const section = el('section',{ class: Array.from(classList).join(' ') });
-    section.dataset.ignoreMatch = '1';
-    if (group?.id) section.dataset.subgroupId = group.id;
+    section.dataset.ignoreMatch = matchable ? '0' : '1';
+    if (group?.id) {
+      section.dataset.subgroupId = group.id;
+      section.dataset.rangeId = group.id;
+    }
     if (sectionKey) section.dataset.section = toDataSectionKey(sectionKey);
 
     const baseId = group?.id ? String(group.id) : `${sectionKey || 'group'}-${index}`;
@@ -346,7 +368,7 @@
     const body = el('div',{ class: bodyClass || 'gear-card__body', id: bodyId, hidden:true });
     const renderOptions = {
       includeGearCard: false,
-      ignoreMatch: true,
+      ignoreMatch: matchable ? false : true,
       showTitle: false,
       ...rangeOptions
     };
@@ -407,9 +429,9 @@
             sectionKey: 'stands',
             sectionClass: 'gear-subcard gear-subcard--stands',
             rangeClass: 'range--stands',
+            matchable: true,
             rangeOptions: {
               includeGearCard: false,
-              ignoreMatch: true,
               showTitle: false,
               headingTag: 'h4',
               context: 'stands'
