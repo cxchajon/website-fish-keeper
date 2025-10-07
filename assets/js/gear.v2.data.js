@@ -120,14 +120,14 @@ const STAND_RANGE_META = new Map([
   [
     "5-10",
     {
-      label: "Recommended Stands for 5–10 Gallon Tanks",
+      label: "Recommended Stands for 5–10 Gallons",
       tip: "For small tanks, pick a stand rated for the next size up (10–20 gal). Extra strength ensures better leveling and stability.",
     }
   ],
   [
     "10-20",
     {
-      label: "Recommended Stands for 10–20 Gallon Tanks",
+      label: "Recommended Stands for 10–20 Gallons",
       tip: "For a 10–20 gallon setup, select a stand rated for at least 30 gallons for added safety and leveling support.",
     }
   ],
@@ -546,7 +546,8 @@ async function loadGearData() {
 async function loadStandsData() {
   try {
     const text = await fetchCsv(STANDS_CSV_PATH);
-    const rows = parseCSV(text);
+    const sanitized = text.replace(/\\"/g, '""');
+    const rows = parseCSV(sanitized);
     return rows
       .filter((row) => {
         const rawId = (row.product_id || row.Product_ID || row.ProductId || "").toString().trim();
