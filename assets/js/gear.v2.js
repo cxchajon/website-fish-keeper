@@ -212,8 +212,13 @@
     row.dataset.tanksize = option.tanksize || '';
     row.dataset.length = option.length || '';
     row.dataset.depth = (option.depth ?? '').toString();
+    if (option.height !== undefined) {
+      row.dataset.height = (option.height ?? '').toString();
+    }
     row.dataset.affiliate = option.affiliate || 'amazon';
     row.dataset.tag = option.tag || 'fishkeepingli-20';
+    if (option.material) row.dataset.material = option.material;
+    if (option.color) row.dataset.color = option.color;
     const href = (option?.href || '').trim();
     const labelText = stripUrls(option?.label || '').trim();
     const titleText = stripUrls(option?.title || '').trim();
@@ -230,12 +235,13 @@
     if (context !== 'stands' && hasHref && !hasValidHref && typeof console !== 'undefined' && typeof console.warn === 'function') {
       console.warn('[Gear] Skipping stand link without http(s):', href);
     }
+    const standAria = `Buy on Amazon – ${escapeHTML(displayTitle)}`;
     const actionsHtml = hasValidHref
       ? context === 'stands'
-        ? `<a class="btn btn-amazon buy-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer">Buy on Amazon</a>`
+        ? `<a class="btn btn-amazon buy-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="${standAria}">Buy on Amazon</a>`
         : `<a class="btn btn-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
       : context === 'stands'
-        ? `<button class="btn btn-amazon buy-amazon" type="button" disabled aria-disabled="true" title="Link coming soon">${buttonLabel}</button><span class="option__cta-note">(link coming soon)</span>`
+        ? `<a class="btn btn-amazon buy-amazon disabled" aria-disabled="true" tabindex="-1">Buy on Amazon</a>`
         : `<span class="muted">Add link</span>`;
     row.innerHTML = `
       <div class="option__title">${headingHtml}</div>
@@ -355,11 +361,33 @@
       'aria-expanded':'false'
     });
     const headingTag = String(headerLevel || 'h3').toLowerCase();
-    header.appendChild(el(headingTag,{}, group?.label || 'Options'));
+    const headingEl = el(headingTag,{ class:'gear-subcard__title' }, group?.label || 'Options');
+    header.appendChild(headingEl);
+
+    if (group?.infoButtonKey || group?.infoButtonText) {
+      const tipKey = (group.infoButtonKey || '').trim() || `${safeId}-info`;
+      const tipText = (group.infoButtonText || '').trim();
+      if (tipText && typeof TIPS === 'object' && !TIPS[tipKey]) {
+        TIPS[tipKey] = tipText;
+      }
+      const ariaLabel = (group.infoButtonLabel || `${group.label || 'Stand'} details`).trim();
+      const infoBtn = el('button', {
+        class: 'info-btn',
+        type: 'button',
+        'data-tip': tipKey,
+        'aria-label': ariaLabel,
+        'aria-haspopup': 'dialog'
+      }, 'i');
+      header.appendChild(infoBtn);
+    }
+
     header.appendChild(el('span',{class:'chevron','aria-hidden':'true'},'▸'));
     section.appendChild(header);
 
     const body = el('div',{ class: bodyClass || 'gear-card__body', id: bodyId, hidden:true });
+    if (group?.intro) {
+      body.appendChild(el('p',{ class:'gear-subcard__intro' }, group.intro));
+    }
     const renderOptions = {
       includeGearCard: false,
       ignoreMatch: matchable ? false : true,
@@ -427,6 +455,7 @@
             rangeOptions: {
               includeGearCard: false,
               showTitle: false,
+              showTip: false,
               headingTag: 'h4',
               context: 'stands'
             }
