@@ -109,6 +109,9 @@ const CSV_SOURCES = [
   { path: "/data/gear_water_food_tools.csv", category: "" }
 ];
 
+const STANDS_CSV_PATH = "/data/gear_stands.csv";
+const STAND_SUBGROUPS = ["Metal_Frame", "Cabinet", "Solid_Wood", "Leveling_Support"];
+
 function normaliseHeader(header) {
   return String(header || "").trim();
 }
@@ -178,6 +181,49 @@ function toNumberOrBlank(value) {
   if (value === null || value === undefined || value === "") return "";
   const num = Number(value);
   return Number.isFinite(num) ? num : "";
+}
+
+function normalizeStandRow(row) {
+  const get = (key) => {
+    if (key in row) return row[key];
+    const lower = key.toLowerCase();
+    if (lower in row) return row[lower];
+    const upper = key.toUpperCase();
+    if (upper in row) return row[upper];
+    return "";
+  };
+
+  const id = (get('product_id') || "").toString().trim();
+  const subgroup = (get('subgroup') || "").toString().trim();
+  const title = (get('title') || "").toString().trim();
+  const notes = (get('notes') || "").toString().trim();
+  const href = (get('amazon_url') || get('href') || "").toString().trim();
+  const image = (get('image_url') || get('image') || "").toString().trim();
+  const lengthIn = toNumberOrBlank((get('length_in') || get('length') || "").toString().trim());
+  const widthIn = toNumberOrBlank((get('width_in') || get('width') || "").toString().trim());
+  const heightIn = toNumberOrBlank((get('height_in') || get('height') || "").toString().trim());
+  const capacityLbs = toNumberOrBlank((get('capacity_lbs') || get('capacity') || "").toString().trim());
+  const material = (get('material') || "").toString().trim();
+  const color = (get('color') || "").toString().trim();
+  const affiliate = (get('affiliate') || "").toString().trim() || "amazon";
+  const tag = (get('tag') || "").toString().trim() || "fishkeepingli-20";
+
+  return {
+    id,
+    subgroup,
+    title,
+    notes,
+    href,
+    image,
+    length_in: lengthIn,
+    width_in: widthIn,
+    height_in: heightIn,
+    capacity_lbs: capacityLbs,
+    material,
+    color,
+    affiliate,
+    tag
+  };
 }
 
 function normalizeRow(row, fallbackCategory) {
@@ -311,7 +357,7 @@ function getItemsByCategory(normalized, category) {
   return normalized.get(category) || [];
 }
 
-function buildGear(normalized) {
+function buildGear(normalized, standsItems = []) {
   const heaters = getItemsByCategory(normalized, 'heaters');
   const filters = getItemsByCategory(normalized, 'filters');
   const lights = getItemsByCategory(normalized, 'lights');
@@ -319,6 +365,7 @@ function buildGear(normalized) {
   const waterTreatments = getItemsByCategory(normalized, 'water_treatments');
   const food = getItemsByCategory(normalized, 'food');
   const maintenance = getItemsByCategory(normalized, 'maintenance_tools');
+  const stands = Array.isArray(standsItems) ? standsItems : [];
 
   const gear = {
     heaters: {
@@ -350,6 +397,11 @@ function buildGear(normalized) {
       match: 'none',
       intro: MAINTENANCE_INTRO,
       accordions: buildGroups(maintenance, MAINTENANCE_GROUP_TIPS, 'maintenance_tools')
+    },
+    stands: {
+      match: 'none',
+      subgroups: STAND_SUBGROUPS.slice(),
+      items: stands
     }
   };
 
@@ -387,9 +439,34 @@ async function loadGearData() {
   return normalized;
 }
 
+async function loadStandsData() {
+  try {
+    const text = await fetchCsv(STANDS_CSV_PATH);
+    const rows = parseCSV(text);
+    return rows
+      .filter((row) => {
+        const rawId = (row.product_id || row.Product_ID || row.ProductId || "").toString().trim();
+        const title = (row.title || row.Title || "").toString().trim();
+        const link = (row.amazon_url || row.Amazon_URL || row.href || "").toString().trim();
+        if (rawId.startsWith('#')) {
+          return false;
+        }
+        if (!rawId && !title && !link) {
+          return false;
+        }
+        return true;
+      })
+      .map((row) => normalizeStandRow(row));
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[Gear] Stands data load failed:', error);
+    return [];
+  }
+}
+
 const gearDataPromise = (async () => {
-  const normalized = await loadGearData();
-  const gear = buildGear(normalized);
+  const [normalized, stands] = await Promise.all([loadGearData(), loadStandsData()]);
+  const gear = buildGear(normalized, stands);
   if (typeof window !== 'undefined') {
     window.GEAR = gear;
     window.ttgGearNormalized = normalized;
@@ -398,7 +475,7 @@ const gearDataPromise = (async () => {
 })().catch((error) => {
   // eslint-disable-next-line no-console
   console.error('[Gear] Initialization failed:', error);
-  const fallback = buildGear(new Map());
+  const fallback = buildGear(new Map(), []);
   if (typeof window !== 'undefined') {
     window.GEAR = fallback;
     window.ttgGearNormalized = new Map();

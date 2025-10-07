@@ -1,0 +1,3 @@
+product_id,subgroup,title,notes,amazon_url,image_url,length_in,width_in,height_in,capacity_lbs,material,color,affiliate,tag
+# subgroup one of: Metal_Frame | Cabinet | Solid_Wood | Leveling_Support
+# notes (1–2 lines, optional); dimensions in inches; capacity lbs numeric; affiliate default amazon; tag default fishkeepingli-20
