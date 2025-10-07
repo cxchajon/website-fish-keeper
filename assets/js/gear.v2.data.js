@@ -125,6 +125,13 @@ const STAND_RANGE_META = new Map([
       tip: "For small tanks, pick a stand rated for the next size up (10–20 gal). Extra strength ensures better leveling and stability.",
     }
   ],
+  [
+    "10-20",
+    {
+      label: "Recommended Stands for 10–20 Gallon Tanks",
+      tip: "For a 10–20 gallon setup, select a stand rated for at least 30 gallons for added safety and leveling support.",
+    }
+  ],
 ]);
 
 function normaliseHeader(header) {
