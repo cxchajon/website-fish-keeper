@@ -273,28 +273,49 @@
     });
   }
 
-  function renderMaintenanceAccordion(group = {}, index = 0){
-    const section = el('section',{class:'gear-subcard'});
-    section.classList.add('gear-card');
+  function renderAccordionGroup(group = {}, index = 0, options = {}){
+    const {
+      sectionKey = '',
+      headerLevel = 'h3',
+      sectionClass = 'gear-subcard',
+      headerClass = 'gear-card__header gear-subcard__header',
+      bodyClass = 'gear-card__body gear-subcard__body',
+      rangeClass = '',
+      rangeOptions = {}
+    } = options;
+
+    const classList = new Set(String(sectionClass || '').split(/\s+/).filter(Boolean));
+    classList.add('gear-card');
+    const section = el('section',{ class: Array.from(classList).join(' ') });
     section.dataset.ignoreMatch = '1';
     if (group?.id) section.dataset.subgroupId = group.id;
-    section.dataset.section = toDataSectionKey('maintenanceTools');
-    const safeId = (group?.id ? String(group.id) : `maintenance-${index}`).replace(/[^a-z0-9-_]/gi, '-');
+    if (sectionKey) section.dataset.section = toDataSectionKey(sectionKey);
+
+    const baseId = group?.id ? String(group.id) : `${sectionKey || 'group'}-${index}`;
+    const safeId = baseId.replace(/[^a-z0-9-_]/gi, '-');
     const bodyId = `${safeId}-body`;
+
     const header = el('header',{
-      class:'gear-card__header gear-subcard__header',
+      class: headerClass || 'gear-card__header',
       'data-accordion':'toggle',
       tabindex:'0',
       'aria-controls': bodyId,
       'aria-expanded':'false'
     });
-    header.appendChild(el('h3',{}, group?.label || 'Maintenance Group'));
+    const headingTag = String(headerLevel || 'h3').toLowerCase();
+    header.appendChild(el(headingTag,{}, group?.label || 'Options'));
     header.appendChild(el('span',{class:'chevron','aria-hidden':'true'},'▸'));
     section.appendChild(header);
 
-    const body = el('div',{class:'gear-card__body gear-subcard__body',id:bodyId,hidden:true});
-    const rangeBlock = renderRangeBlock(group, '', { includeGearCard: false, ignoreMatch: true, showTitle: false });
-    rangeBlock.classList.add('range--maintenance');
+    const body = el('div',{ class: bodyClass || 'gear-card__body', id: bodyId, hidden:true });
+    const renderOptions = {
+      includeGearCard: false,
+      ignoreMatch: true,
+      showTitle: false,
+      ...rangeOptions
+    };
+    const rangeBlock = renderRangeBlock(group, sectionKey, renderOptions);
+    if (rangeClass && rangeBlock) rangeBlock.classList.add(rangeClass);
     body.appendChild(rangeBlock);
     section.appendChild(body);
     return section;
@@ -314,9 +335,23 @@
     } else if (kind === 'water-treatments') {
       blocks = (GEAR.waterTreatments?.ranges || []).map((range) => renderRangeBlock(range, 'waterTreatments', { ignoreMatch: true }));
     } else if (kind === 'food') {
-      blocks = (GEAR.food?.ranges || []).map((range) => renderRangeBlock(range, 'food', { ignoreMatch: true }));
+      if (GEAR.food?.intro) {
+        const intro = el('div',{ class:'gear-card__intro' }, GEAR.food.intro);
+        container.appendChild(intro);
+      }
+      blocks = (GEAR.food?.accordions || []).map((group, index) =>
+        renderAccordionGroup(group, index, {
+          sectionKey: 'food',
+          rangeClass: 'range--food'
+        })
+      );
     } else if (kind === 'maintenance-tools') {
-      blocks = (GEAR.maintenanceTools?.accordions || []).map((group, index) => renderMaintenanceAccordion(group, index));
+      blocks = (GEAR.maintenanceTools?.accordions || []).map((group, index) =>
+        renderAccordionGroup(group, index, {
+          sectionKey: 'maintenanceTools',
+          rangeClass: 'range--maintenance'
+        })
+      );
     }
     blocks.forEach((block) => container.appendChild(block));
   }
