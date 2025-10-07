@@ -215,6 +215,12 @@ body{
   gap:0.85rem;
 }
 
+.gear-card__intro{
+  font-size:0.95rem;
+  line-height:1.6;
+  color:var(--muted);
+}
+
 .range--maintenance{
   border-radius:12px;
   border:1px solid rgba(148,163,184,0.28);
@@ -224,6 +230,10 @@ body{
 }
 
 .range--maintenance .range__tip{
+  margin-top:0;
+}
+
+.range--food .range__tip{
   margin-top:0;
 }
 

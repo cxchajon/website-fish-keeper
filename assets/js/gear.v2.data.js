@@ -45,7 +45,7 @@ const TIPS = {
 `,
   food: `
   <strong>Rotate 2–3 foods</strong>; feed only what’s eaten within ~30–60 seconds.<br>
-  For bottom dwellers, use sinking foods; for shrimp, use micron foods.<br>
+  For bottom dwellers, use sinking foods; for shrimp, micron foods.<br>
   Overfeeding → ammonia → nitrates → algae.
 `,
   'maintenance-tools': `
@@ -581,31 +581,80 @@ const GEAR = {
 
   food: {
     match: "none",
-    ranges: [
+    intro: "A balanced rotation keeps fish healthy. Mix a staple (flake/pellet) with a protein treat and a veggie/algae option. Feed what’s eaten within ~ 2–3 minutes to avoid waste.",
+    accordions: [
       {
-        id: "food-community",
-        label: "Staple & Specialty Foods",
-        tip: "Mix different formats to cover herbivore, omnivore, and treat rotation needs across community tanks.",
+        id: "food-staple",
+        label: "Staple (Daily Flake/Pellet)",
+        tip: "Daily flakes and pellets that cover most community tanks.",
         options: [
           {
-            title: "Tetra Min Tropical Flakes",
-            notes: "Classic daily staple flake that breaks down easily for small and mid-size community fish.",
-            href: "https://www.amazon.com/s?k=Tetra+Min+Tropical+Flakes&tag=fishkeepingli-20"
+            label: "Option 1",
+            title: "Fluval Bug Bites Tropical Fish Food, Micro Granules for Small Fish, 1.6 oz (45 g)",
+            notes: "Insect-based granules that sink slowly so top and mid-water fish can graze.",
+            href: "https://www.amazon.com/dp/B06XX5VYC1?tag=fishkeepingli-20"
           },
           {
-            title: "Hikari Micro Pellets",
-            notes: "Slow-sinking micro pellets sized for nano fish, rasboras, and picky mid-water feeders.",
-            href: "https://www.amazon.com/s?k=Hikari+Micro+Pellets&tag=fishkeepingli-20"
+            label: "Option 2",
+            title: "Tetra TetraMin Tropical Flakes Fish Food, Cleaner & Clearer Water, 7.06 Ounce (2000 ml)",
+            notes: "Classic multi-species flake that disperses quickly for easy community feedings.",
+            href: "https://www.amazon.com/dp/B00025KH2C?tag=fishkeepingli-20"
           },
           {
-            title: "Omega One Freeze-Dried Bloodworms",
-            notes: "Protein-rich treat that boosts color—offer sparingly once or twice per week.",
-            href: "https://www.amazon.com/s?k=Omega+One+Freeze+Dried+Bloodworms&tag=fishkeepingli-20"
+            label: "Option 3",
+            title: "Hikari Tropical Micro Pellets Fish Food, 1.58 oz (45 g)",
+            notes: "Slow-sinking micro pellets sized for nano fish, rasboras, and picky feeders.",
+            href: "https://www.amazon.com/dp/B000QJBIBS?tag=fishkeepingli-20"
+          }
+        ]
+      },
+      {
+        id: "food-protein",
+        label: "Protein Treats (Frozen/Dried)",
+        tip: "Offer 1–2x weekly to boost protein and keep diets varied.",
+        options: [
+          {
+            label: "Option 1",
+            title: "Omega One Freeze Dried Blood Worms, 0.96 oz",
+            notes: "High-protein treat that brightens color—ideal for community and betta tanks.",
+            href: "https://www.amazon.com/dp/B0002DKD78?tag=fishkeepingli-20"
           },
           {
-            title: "Hikari Algae Wafers",
-            notes: "Long-lasting sinking wafers that hold shape for plecos, otos, and other bottom grazers.",
-            href: "https://www.amazon.com/s?k=Hikari+Algae+Wafers&tag=fishkeepingli-20"
+            label: "Option 2",
+            title: "Hikari Bio-Pure FD Daphnia Fish Food, 0.42 oz",
+            notes: "Small-bodied crustaceans perfect for nano fish or conditioning picky eaters.",
+            href: "https://www.amazon.com/dp/B00025K0L2?tag=fishkeepingli-20"
+          },
+          {
+            label: "Option 3",
+            title: "San Francisco Bay Brand Freeze Dried Brine Shrimp, 0.98 oz",
+            notes: "Shell-free brine shrimp that rehydrate quickly and entice even finicky fish.",
+            href: "https://www.amazon.com/dp/B0002ASGJY?tag=fishkeepingli-20"
+          }
+        ]
+      },
+      {
+        id: "food-veggie",
+        label: "Veggie/Algae & Bottom Feeders",
+        tip: "Sinking wafers and gels that keep plecos, shrimp, and snails nourished.",
+        options: [
+          {
+            label: "Option 1",
+            title: "Hikari Tropical Algae Wafers Fish Food, 8.8 oz (250 g)",
+            notes: "Firm wafers that hold shape for grazing plecos and otocinclus.",
+            href: "https://www.amazon.com/dp/B00025J3MI?tag=fishkeepingli-20"
+          },
+          {
+            label: "Option 2",
+            title: "Fluval Bug Bites Bottom Feeder Fish Food, Pleco Formula, 3.53 oz",
+            notes: "Protein-rich discs fortified with spirulina for nocturnal bottom dwellers.",
+            href: "https://www.amazon.com/dp/B071DWBX7K?tag=fishkeepingli-20"
+          },
+          {
+            label: "Option 3",
+            title: "Repashy Superfoods Soilent Green Fish Food, 6 oz Jar",
+            notes: "Gel premix you pour into molds for herbivores, shrimp, and grazers.",
+            href: "https://www.amazon.com/dp/B00IR56ERI?tag=fishkeepingli-20"
           }
         ]
       }
