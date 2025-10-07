@@ -37,6 +37,20 @@ const TIPS = {
   It keeps organic material in place, prevents clouding, and stops fish from disturbing the base soil.<br>
   Caps also improve appearance and create a natural gradient between planted and open areas.<br>
   Typical thickness: <strong>1–2 inches</strong> of gravel or sand above the soil layer.
+`,
+  'water-treatments': `
+  Dose for <strong>total tank volume</strong>, not just replacement water.<br>
+  Avoid mixing brands of cycle boosters at once.<br>
+  If your city uses chloramine, choose a conditioner that binds ammonia.
+`,
+  food: `
+  <strong>Rotate 2–3 foods</strong>; feed only what’s eaten within ~30–60 seconds.<br>
+  For bottom dwellers, use sinking foods; for shrimp, use micron foods.<br>
+  Overfeeding → ammonia → nitrates → algae.
+`,
+  'maintenance-tools': `
+  Keep a dedicated kit for testing, cleaning, and safety so gear is ready for every water change.<br>
+  Expand each subgroup for best-practice reminders and trusted tools.
 `
 };
 
@@ -532,6 +546,144 @@ const GEAR = {
           { label:"Option 2", title:"Sandtastik Sparkling White Play Sand, 25 lb (11.3 kg)", href:"https://amzn.to/4h8dp5h" },
           { label:"Option 3", title:"Carib Sea ACS05820 Super Natural Moonlight Sand for Aquarium, 5-Pound", href:"https://amzn.to/3IxxGVd" },
           { label:"Option 4", title:"Aqua Natural Diamond Black 10lb, Premium Gravel and Substrate for Aquariums, Fish Tanks and Terrariums, 1-2mm", href:"https://amzn.to/3IJ16jd" }
+        ]
+      }
+    ]
+  },
+
+  waterTreatments: {
+    match: "none",
+    ranges: [
+      {
+        id: "wt-core",
+        label: "Recommended Water Treatments",
+        tip: "Conditioners and cycle boosters that keep tap water fish-safe and biofilters stable.",
+        options: [
+          {
+            title: "Seachem Prime Water Conditioner",
+            notes: "Concentrated dechlorinator that detoxifies chlorine, chloramine, and ammonia instantly.",
+            href: "https://www.amazon.com/s?k=Seachem+Prime+Water+Conditioner&tag=fishkeepingli-20"
+          },
+          {
+            title: "Fritz Complete Water Conditioner",
+            notes: "One-step conditioner that handles chlorine, chloramine, and heavy metals while supporting slime coat.",
+            href: "https://www.amazon.com/s?k=Fritz+Complete+Water+Conditioner&tag=fishkeepingli-20"
+          },
+          {
+            title: "Seachem Stability Biological Starter",
+            notes: "Live bacteria blend that seeds filters quickly and steadies tanks after cleanings or medications.",
+            href: "https://www.amazon.com/s?k=Seachem+Stability+Biological+Starter&tag=fishkeepingli-20"
+          }
+        ]
+      }
+    ]
+  },
+
+  food: {
+    match: "none",
+    ranges: [
+      {
+        id: "food-community",
+        label: "Staple & Specialty Foods",
+        tip: "Mix different formats to cover herbivore, omnivore, and treat rotation needs across community tanks.",
+        options: [
+          {
+            title: "Tetra Min Tropical Flakes",
+            notes: "Classic daily staple flake that breaks down easily for small and mid-size community fish.",
+            href: "https://www.amazon.com/s?k=Tetra+Min+Tropical+Flakes&tag=fishkeepingli-20"
+          },
+          {
+            title: "Hikari Micro Pellets",
+            notes: "Slow-sinking micro pellets sized for nano fish, rasboras, and picky mid-water feeders.",
+            href: "https://www.amazon.com/s?k=Hikari+Micro+Pellets&tag=fishkeepingli-20"
+          },
+          {
+            title: "Omega One Freeze-Dried Bloodworms",
+            notes: "Protein-rich treat that boosts color—offer sparingly once or twice per week.",
+            href: "https://www.amazon.com/s?k=Omega+One+Freeze+Dried+Bloodworms&tag=fishkeepingli-20"
+          },
+          {
+            title: "Hikari Algae Wafers",
+            notes: "Long-lasting sinking wafers that hold shape for plecos, otos, and other bottom grazers.",
+            href: "https://www.amazon.com/s?k=Hikari+Algae+Wafers&tag=fishkeepingli-20"
+          }
+        ]
+      }
+    ]
+  },
+
+  maintenanceTools: {
+    match: "none",
+    accordions: [
+      {
+        id: "maintenance-testing",
+        label: "Testing & Monitoring",
+        tip: "Test weekly; consistency matters more than chasing perfect numbers.",
+        options: [
+          {
+            title: "API Freshwater Master Test Kit",
+            notes: "Liquid test kit covering ammonia, nitrite, nitrate, and pH for precise tracking.",
+            href: "https://www.amazon.com/s?k=API+Freshwater+Master+Test+Kit&tag=fishkeepingli-20"
+          },
+          {
+            title: "Digital TDS Meter",
+            notes: "Pocket meter to spot mineral creep or dilution after remineralizing top-offs.",
+            href: "https://www.amazon.com/s?k=Digital+TDS+Meter&tag=fishkeepingli-20"
+          },
+          {
+            title: "Floating Thermometer",
+            notes: "Simple glass backup thermometer to verify heater and controller accuracy.",
+            href: "https://www.amazon.com/s?k=Floating+Aquarium+Thermometer&tag=fishkeepingli-20"
+          }
+        ]
+      },
+      {
+        id: "maintenance-cleaning",
+        label: "Water Change & Cleaning",
+        tip: "Weekly 25–50% water change; match temperature and dechlorinate first. Use microfiber + distilled water + vinegar to wipe glass; avoid harsh cleaners.",
+        options: [
+          {
+            title: "Python Gravel Vacuum",
+            notes: "Hooks to a faucet for no-bucket gravel cleaning and refills on medium to large tanks.",
+            href: "https://www.amazon.com/s?k=Python+Gravel+Vacuum&tag=fishkeepingli-20"
+          },
+          {
+            title: "Aqueon Water Changer Kit",
+            notes: "Faucet-driven siphon with flow control ideal for apartments and smaller sinks.",
+            href: "https://www.amazon.com/s?k=Aqueon+Water+Changer&tag=fishkeepingli-20"
+          },
+          {
+            title: "Microfiber Towel Pack",
+            notes: "Lint-free cloths dedicated to aquarium use so glass dries streak-free.",
+            href: "https://www.amazon.com/s?k=Microfiber+Towel+Pack&tag=fishkeepingli-20"
+          },
+          {
+            title: "Algae Scraper Pad",
+            notes: "Non-scratch pad to clear film algae from glass or acrylic panels.",
+            href: "https://www.amazon.com/s?k=Aquarium+Algae+Scraper+Pad&tag=fishkeepingli-20"
+          }
+        ]
+      },
+      {
+        id: "maintenance-safety",
+        label: "Safety & Power",
+        tip: "Use GFCI outlets and drip loops on all cords. Keep power strips above floor level.",
+        options: [
+          {
+            title: "Surge Protected Power Strip",
+            notes: "Mount high to protect gear from splashes while guarding against voltage spikes.",
+            href: "https://www.amazon.com/s?k=Surge+Protected+Power+Strip&tag=fishkeepingli-20"
+          },
+          {
+            title: "Outlet Timer for Lights",
+            notes: "Automates light cycles for stable photoperiods that keep fish and plants on schedule.",
+            href: "https://www.amazon.com/s?k=Outlet+Timer+for+Aquarium+Lights&tag=fishkeepingli-20"
+          },
+          {
+            title: "GFCI Safety Adapter Plug",
+            notes: "Adds ground-fault protection without rewiring, ideal for rental setups.",
+            href: "https://www.amazon.com/s?k=GFCI+Safety+Adapter+Plug&tag=fishkeepingli-20"
+          }
         ]
       }
     ]

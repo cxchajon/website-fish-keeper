@@ -94,6 +94,7 @@
 
   function sectionMatchesRange(sectionKey, rangeIdOrLabel, gallons, lengthIn){
     const matchMode = (GEAR[sectionKey]?.match || 'gallons').toLowerCase();
+    if (matchMode === 'none') return false;
     if (matchMode === 'length') {
       return isWithinLength(rangeIdOrLabel, lengthIn);
     }
@@ -105,6 +106,7 @@
     const l = getSelectedLengthInches();
 
     document.querySelectorAll('.gear-card').forEach((card) => {
+      if (card.dataset.ignoreMatch === '1') return;
       const section = card.dataset.section || '';
       const rangeId = card.dataset.rangeId || '';
       const isMatch = sectionMatchesRange(section, rangeId, g, l);
@@ -154,40 +156,68 @@
     return String(s || '').replace(/[&<>"']/g, (m) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;' }[m]));
   }
 
-  function renderRangeBlock(range, sectionKey){
+  function createOptionRow(option = {}, options = {}){
+    const row = el('div',{class:'option'});
+    const href = (option?.href || '').trim();
+    const labelText = (option?.label || '').trim();
+    const titleText = (option?.title || '').trim();
+    const displayTitle = titleText || labelText || 'this item';
+    const headingHtml = labelText && titleText
+      ? `<strong>${escapeHTML(labelText)} — ${escapeHTML(titleText)}</strong>`
+      : `<strong>${escapeHTML(displayTitle)}</strong>`;
+    const noteText = (option?.note ?? option?.notes ?? '').trim();
+    const buttonLabel = options.buttonLabel || 'Buy on Amazon';
+    const actionsHtml = href
+      ? `<a class="btn btn-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
+      : `<span class="muted">Add link</span>`;
+    row.innerHTML = `
+      <div class="option__title">${headingHtml}</div>
+      ${noteText ? `<p class="option__note">${escapeHTML(noteText)}</p>` : ''}
+      <div class="option__actions">${actionsHtml}</div>
+    `;
+    return row;
+  }
+
+  function renderRangeBlock(range = {}, sectionKey, options = {}){
+    const {
+      includeGearCard = true,
+      ignoreMatch = false,
+      showTitle = true,
+      showTip = true,
+      headingTag = 'p'
+    } = options;
+
     const wrap = el('div',{class:'range'});
-    wrap.classList.add('gear-card');
+    if (includeGearCard) wrap.classList.add('gear-card');
+    if (ignoreMatch) wrap.dataset.ignoreMatch = '1';
     if (sectionKey) wrap.dataset.section = sectionKey;
     if (range?.id) {
       wrap.dataset.rangeId = range.id;
-      const matchMode = (GEAR[sectionKey]?.match || 'gallons').toLowerCase();
-      const meta = RANGE_LOOKUP[sectionKey]?.get(range.id);
-      if (meta) {
-        if (matchMode === 'length') {
-          if (Number.isFinite(meta.min)) wrap.dataset.minL = String(meta.min);
-          if (Number.isFinite(meta.max)) wrap.dataset.maxL = String(meta.max);
-        } else {
-          if (Number.isFinite(meta.min)) wrap.dataset.minG = String(meta.min);
-          if (Number.isFinite(meta.max)) wrap.dataset.maxG = String(meta.max);
+      if (!ignoreMatch && sectionKey) {
+        const matchMode = (GEAR[sectionKey]?.match || 'gallons').toLowerCase();
+        const meta = RANGE_LOOKUP[sectionKey]?.get(range.id);
+        if (meta) {
+          if (matchMode === 'length') {
+            if (Number.isFinite(meta.min)) wrap.dataset.minL = String(meta.min);
+            if (Number.isFinite(meta.max)) wrap.dataset.maxL = String(meta.max);
+          } else if (matchMode === 'gallons') {
+            if (Number.isFinite(meta.min)) wrap.dataset.minG = String(meta.min);
+            if (Number.isFinite(meta.max)) wrap.dataset.maxG = String(meta.max);
+          }
         }
       }
     }
-    wrap.appendChild(el('p',{class:'range__title'}, range.label));
-    if (range.tip) wrap.appendChild(el('p',{class:'range__tip'}, range.tip));
+
+    if (showTitle && range.label) {
+      wrap.appendChild(el(headingTag,{class:'range__title'}, range.label));
+    }
+    if (range.tip && showTip !== false) {
+      wrap.appendChild(el('p',{class:'range__tip'}, range.tip));
+    }
+
     const list = el('div',{class:'range__list'});
     (range.options || []).forEach((opt) => {
-      const row = el('div',{class:'option'});
-      row.innerHTML = `
-    <div class="option__title"><strong>${escapeHTML(opt.label)} — ${escapeHTML(opt.title)}</strong></div>
-    <div class="option__actions">
-      ${
-        opt.href
-          ? `<a class="btn btn-amazon" href="${opt.href}" target="_blank" rel="noopener noreferrer" aria-label="Buy ${escapeHTML(opt.title)} on Amazon">Buy on Amazon</a>`
-          : `<span class="muted">Add link</span>`
-      }
-    </div>
-  `;
-      list.appendChild(row);
+      list.appendChild(createOptionRow(opt, options));
     });
     wrap.appendChild(list);
     return wrap;
@@ -201,6 +231,32 @@
     });
   }
 
+  function renderMaintenanceAccordion(group = {}, index = 0){
+    const section = el('section',{class:'gear-subcard'});
+    section.classList.add('gear-card');
+    section.dataset.ignoreMatch = '1';
+    if (group?.id) section.dataset.subgroupId = group.id;
+    const safeId = (group?.id ? String(group.id) : `maintenance-${index}`).replace(/[^a-z0-9-_]/gi, '-');
+    const bodyId = `${safeId}-body`;
+    const header = el('header',{
+      class:'gear-card__header gear-subcard__header',
+      'data-accordion':'toggle',
+      tabindex:'0',
+      'aria-controls': bodyId,
+      'aria-expanded':'false'
+    });
+    header.appendChild(el('h3',{}, group?.label || 'Maintenance Group'));
+    header.appendChild(el('span',{class:'chevron','aria-hidden':'true'},'▸'));
+    section.appendChild(header);
+
+    const body = el('div',{class:'gear-card__body gear-subcard__body',id:bodyId,hidden:true});
+    const rangeBlock = renderRangeBlock(group, '', { includeGearCard: false, ignoreMatch: true, showTitle: false });
+    rangeBlock.classList.add('range--maintenance');
+    body.appendChild(rangeBlock);
+    section.appendChild(body);
+    return section;
+  }
+
   function buildCategory(kind, container){
     if (!container) return;
     container.innerHTML = '';
@@ -212,6 +268,12 @@
       blocks = (GEAR.substrate?.groups || [])
         .filter((range) => hasLiveOptions(range))
         .map((range) => renderRangeBlock(range, 'substrate'));
+    } else if (kind === 'water-treatments') {
+      blocks = (GEAR.waterTreatments?.ranges || []).map((range) => renderRangeBlock(range, 'waterTreatments', { ignoreMatch: true }));
+    } else if (kind === 'food') {
+      blocks = (GEAR.food?.ranges || []).map((range) => renderRangeBlock(range, 'food', { ignoreMatch: true }));
+    } else if (kind === 'maintenance-tools') {
+      blocks = (GEAR.maintenanceTools?.accordions || []).map((group, index) => renderMaintenanceAccordion(group, index));
     }
     blocks.forEach((block) => container.appendChild(block));
   }
@@ -484,6 +546,9 @@
     buildCategory('filters', document.getElementById('filters-body'));
     buildCategory('lights', document.getElementById('lights-body'));
     buildCategory('substrate', document.getElementById('substrate-body'));
+    buildCategory('water-treatments', document.getElementById('water-treatments-body'));
+    buildCategory('food', document.getElementById('food-body'));
+    buildCategory('maintenance-tools', document.getElementById('maintenance-tools-body'));
     wireAccordions();
     initTankSelect();
     console.log("[Gear] Heaters g-5-10 options:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-5-10")?.options?.length || 0);
