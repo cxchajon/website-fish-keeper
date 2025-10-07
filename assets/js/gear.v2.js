@@ -367,6 +367,30 @@
           rangeClass: 'range--maintenance'
         })
       );
+    } else if (kind === 'stands') {
+      const groups = Array.isArray(GEAR.stands?.ranges) ? GEAR.stands.ranges : [];
+      if (!groups.length) {
+        blocks = [
+          el('p', {
+            class: 'range__placeholder',
+            html: 'No stand recommendations yet. Check back soon.',
+          })
+        ];
+      } else {
+        blocks = groups.map((group, index) =>
+          renderAccordionGroup(group, index, {
+            sectionKey: 'stands',
+            sectionClass: 'gear-subcard gear-subcard--stands',
+            rangeClass: 'range--stands',
+            rangeOptions: {
+              includeGearCard: false,
+              ignoreMatch: true,
+              showTitle: false,
+              headingTag: 'h4'
+            }
+          })
+        );
+      }
     }
     blocks.forEach((block) => container.appendChild(block));
   }
@@ -697,6 +721,7 @@
     buildCategory('water-treatments', document.getElementById('water-treatments-body'));
     buildCategory('food', document.getElementById('food-body'));
     buildCategory('maintenance-tools', document.getElementById('maintenance-tools-body'));
+    buildCategory('stands', document.getElementById('stands-body'));
     wireAccordions();
     initTankSelect();
     console.log("[Gear] Heaters g-5-10 options:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-5-10")?.options?.length || 0);
