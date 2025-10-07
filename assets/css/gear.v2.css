@@ -355,6 +355,19 @@ body{
 .btn:focus{ outline:2px solid var(--accent); outline-offset:2px; }
 .btn-amazon{ background:#111827; }
 .btn-amazon:hover{ filter:brightness(1.15); }
+.btn[disabled],
+.btn[aria-disabled="true"]{
+  opacity:0.6;
+  cursor:not-allowed;
+  pointer-events:none;
+  filter:none;
+}
+.option__cta-note{
+  display:inline-block;
+  font-size:0.85rem;
+  color:var(--muted);
+  margin-left:0.5rem;
+}
 .option__title{ margin:0; }
 .option__note{
   margin:0.5rem 0 0;
