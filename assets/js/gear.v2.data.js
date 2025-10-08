@@ -376,6 +376,98 @@ const MAINTENANCE_SUBGROUP_ORDER = [
   'maintenance_aquascaping_tools'
 ];
 
+const SUBSTRATE_DEFAULT_GROUP_ID = 'substrate-all';
+const SUBSTRATE_DEFAULT_GROUP_LABEL = 'Substrate & Aquascaping Picks';
+const SUBSTRATE_SUBGROUP_DEFINITIONS = [
+  {
+    id: 'substrate-base-layers-soil',
+    label: 'Base Layers & Soil',
+    aliases: [
+      'base-layers-soil',
+      'base-layers-and-soil',
+      'base-layer',
+      'base-layers',
+      'soil',
+      'soils',
+      'nutrient-rich-soils',
+      'enriched-substrates',
+      'root-tabs',
+      'plant-substrates',
+      'clay-based-materials'
+    ]
+  },
+  {
+    id: 'substrate-gravel-sand',
+    label: 'Gravel & Sand',
+    aliases: [
+      'gravel-sand',
+      'gravel-and-sand',
+      'gravel',
+      'sand',
+      'dirt-cap',
+      'pea-gravel',
+      'decorative-sand',
+      'aragonite'
+    ]
+  },
+  {
+    id: 'substrate-rock-hardscape',
+    label: 'Rock & Hardscape',
+    aliases: [
+      'rock-hardscape',
+      'rocks',
+      'stone',
+      'stones',
+      'hardscape',
+      'dragonstone',
+      'seiryu',
+      'lava-rock',
+      'slate'
+    ]
+  },
+  {
+    id: 'substrate-wood-driftwood',
+    label: 'Wood & Driftwood',
+    aliases: [
+      'wood-driftwood',
+      'wood',
+      'driftwood',
+      'branches',
+      'spiderwood',
+      'malaysian-driftwood',
+      'natural-branches'
+    ]
+  }
+].map((definition) => {
+  const slug = slugifyKey(definition.label);
+  const aliases = new Set(
+    [slug, definition.id, ...(definition.aliases || [])].map((value) => slugifyKey(value))
+  );
+  return {
+    ...definition,
+    slug,
+    aliases: Array.from(aliases).filter(Boolean)
+  };
+});
+
+const SUBSTRATE_SUBGROUP_LOOKUP = new Map();
+SUBSTRATE_SUBGROUP_DEFINITIONS.forEach((definition) => {
+  definition.aliases.forEach((alias) => {
+    if (!SUBSTRATE_SUBGROUP_LOOKUP.has(alias)) {
+      SUBSTRATE_SUBGROUP_LOOKUP.set(alias, definition);
+    }
+  });
+});
+
+const SUBSTRATE_SUBGROUP_ORDER = SUBSTRATE_SUBGROUP_DEFINITIONS.map((definition) => definition.id);
+
+const SUBSTRATE_DEFAULT_SUBGROUP = {
+  id: 'substrate-general',
+  label: 'General Substrate',
+  slug: slugifyKey('General Substrate'),
+  aliases: [slugifyKey('General Substrate')]
+};
+
 function normalizeCategoryKey(value) {
   const key = String(value || '').trim().toLowerCase();
   if (!key) return '';
@@ -710,6 +802,24 @@ function normalizeStandItem(item = {}) {
   };
 }
 
+function resolveSubstrateSubgroup(rawValue) {
+  const value = String(rawValue || '').trim();
+  const slug = slugifyKey(value);
+  if (!slug) {
+    return SUBSTRATE_DEFAULT_SUBGROUP;
+  }
+  const match = SUBSTRATE_SUBGROUP_LOOKUP.get(slug);
+  if (match) {
+    return match;
+  }
+  return {
+    id: `substrate-${slug}`,
+    label: value || SUBSTRATE_DEFAULT_SUBGROUP.label,
+    slug,
+    aliases: [slug]
+  };
+}
+
 function normalizeRow(row, fallbackCategory) {
   const get = (key) => {
     if (key in row) return row[key];
@@ -726,6 +836,7 @@ function normalizeRow(row, fallbackCategory) {
   let rangeId = (get('Range_ID') || get('range_id') || "").toString().trim();
   let groupId = (get('Group_ID') || get('group_id') || rangeId || "").toString().trim();
   const subgroup = (get('subgroup') || get('Subgroup') || "").toString().trim();
+  const tankRange = (get('tank_range') || get('Tank_Range') || "").toString().trim();
   const tanksize = (get('tanksize') || get('Tank_Size') || "").toString().trim();
   const length = (get('length') || get('Length') || "").toString().trim();
   const depth = toNumberOrBlank(get('depth') || get('depth_in'));
@@ -743,6 +854,9 @@ function normalizeRow(row, fallbackCategory) {
   const bucketLabel = (get('bucket_label') || get('Bucket_Label') || "").toString().trim();
   const bucketSortValue = toNumberOrBlank(get('bucket_sort') || get('Bucket_Sort'));
   const lengthRangeRaw = (get('length_range') || get('Length_Range') || get('lengthRange') || "").toString().trim();
+  const material = (get('material') || get('Material') || "").toString().trim();
+  const color = (get('color') || get('Color') || "").toString().trim();
+  const source = (get('source') || get('Source') || "").toString().trim();
 
   if (!category && fallbackCategoryNormalized) {
     category = fallbackCategoryNormalized;
@@ -766,6 +880,16 @@ function normalizeRow(row, fallbackCategory) {
     groupLabel = groupAlias.label;
   }
 
+  if (!rangeId && tankRange) {
+    rangeId = tankRange;
+  }
+  if (!groupId && tankRange) {
+    groupId = tankRange;
+  }
+  if (!groupLabel && tankRange) {
+    groupLabel = tankRange;
+  }
+
   if (!groupId && subgroup) {
     const categorySlug = slugifyKey(category || fallbackCategoryNormalized || 'group');
     const subgroupSlug = slugifyKey(subgroup);
@@ -786,6 +910,7 @@ function normalizeRow(row, fallbackCategory) {
     image,
     category,
     subgroup,
+    subgroupId: '',
     tanksize,
     length,
     depth,
@@ -795,6 +920,10 @@ function normalizeRow(row, fallbackCategory) {
     groupId,
     groupLabel,
     groupTip,
+    tankRange,
+    material,
+    color,
+    source,
     bucketKey: bucketKeyRaw,
     bucketLabel,
     bucketSort: bucketSortValue
@@ -836,6 +965,21 @@ function normalizeRow(row, fallbackCategory) {
     }
   }
 
+  if (normalized.category === 'substrate') {
+    const subgroupMeta = resolveSubstrateSubgroup(normalized.subgroup || normalized.subgroupId);
+    normalized.subgroup = subgroupMeta.label;
+    normalized.subgroupId = subgroupMeta.id;
+    const desiredRangeId = slugifyKey(
+      normalized.rangeId || normalized.groupId || normalized.tankRange || SUBSTRATE_DEFAULT_GROUP_ID
+    );
+    const rangeSlug = desiredRangeId ? `substrate-${desiredRangeId}` : SUBSTRATE_DEFAULT_GROUP_ID;
+    normalized.rangeId = rangeSlug;
+    normalized.groupId = rangeSlug;
+    if (!normalized.groupLabel || normalized.groupLabel === normalized.groupId || normalized.groupLabel === normalized.tankRange) {
+      normalized.groupLabel = SUBSTRATE_DEFAULT_GROUP_LABEL;
+    }
+  }
+
   return normalized;
 }
 
@@ -849,11 +993,15 @@ function ensureOptionDefaults(item, index, fallbackCategory, fallbackKey) {
     id: item.id || "",
     category: item.category || fallbackCategory || "",
     subgroup: item.subgroup || "",
+    subgroupId: item.subgroupId || "",
     tanksize: item.tanksize || "",
     length: item.length || "",
     depth: item.depth === "" ? "" : item.depth,
     affiliate: item.affiliate || "amazon",
-    tag: item.tag || "fishkeepingli-20"
+    tag: item.tag || "fishkeepingli-20",
+    material: item.material || "",
+    color: item.color || "",
+    source: item.source || ""
   };
 
   if (!option.label) {
@@ -1089,12 +1237,14 @@ function buildGroups(items, tipsMap, category, metaMap) {
         id: finalId,
         originalId: id,
         label: item.groupLabel || staticMeta.label || id,
+        rangeLabel: staticMeta.label || item.groupLabel || id,
         tip,
         intro: staticMeta.intro || "",
         infoButtonKey: staticMeta.infoButtonKey || "",
         infoButtonLabel: staticMeta.infoButtonLabel || "",
         infoButtonText: staticMeta.infoButtonText || "",
-        options: []
+        options: [],
+        placeholder: ''
       });
       order.push(id);
     }
@@ -1102,7 +1252,12 @@ function buildGroups(items, tipsMap, category, metaMap) {
     if (!group.label && staticMeta.label) {
       group.label = staticMeta.label;
     }
-    if (item.groupLabel) group.label = item.groupLabel;
+    if (item.groupLabel) {
+      group.label = item.groupLabel;
+      group.rangeLabel = item.groupLabel;
+    } else if (!group.rangeLabel && group.label) {
+      group.rangeLabel = group.label;
+    }
     if (item.groupTip) group.tip = item.groupTip;
     if (tipsMap?.get(id)) group.tip = tipsMap.get(id);
     if (!group.tip && staticMeta.tip) {
@@ -1144,6 +1299,56 @@ function buildGroups(items, tipsMap, category, metaMap) {
       if (subgroupOrder.length) {
         group.subgroups = subgroupOrder.map((name) => subgroupMap.get(name)).filter(Boolean);
         group.options = [];
+      }
+    });
+  }
+
+  if ((category || '').toLowerCase() === 'substrate') {
+    map.forEach((group) => {
+      if (!group.label || group.label === group.originalId) {
+        group.label = SUBSTRATE_DEFAULT_GROUP_LABEL;
+      }
+      if (!group.rangeLabel) {
+        group.rangeLabel = group.label;
+      }
+      const subgroupMap = new Map();
+      const subgroupOrder = [];
+      (group.options || []).forEach((option) => {
+        const meta = resolveSubstrateSubgroup(option.subgroup || option.subgroupId);
+        const key = meta.id || option.subgroupId || `substrate-${subgroupOrder.length + 1}`;
+        if (!subgroupMap.has(key)) {
+          subgroupMap.set(key, {
+            id: key,
+            label: meta.label,
+            slug: meta.slug,
+            options: [],
+            placeholder: ''
+          });
+          subgroupOrder.push(key);
+        }
+        const subgroup = subgroupMap.get(key);
+        if (meta.label && !subgroup.label) {
+          subgroup.label = meta.label;
+        }
+        subgroup.options.push(option);
+      });
+
+      if (subgroupOrder.length) {
+        const prioritized = SUBSTRATE_SUBGROUP_ORDER.map((id) => subgroupMap.get(id)).filter(Boolean);
+        const prioritizedSet = new Set(prioritized.map((item) => item?.id));
+        const remainder = subgroupOrder
+          .map((id) => subgroupMap.get(id))
+          .filter((subgroup) => subgroup && !prioritizedSet.has(subgroup.id))
+          .sort((a, b) => (a.label || '').localeCompare(b.label || ''));
+        const ordered = [...prioritized, ...remainder].filter(Boolean);
+        group.subgroups = ordered.map((subgroup) => ({
+          ...subgroup,
+          placeholder: subgroup.options.length ? '' : 'Substrate picks coming soon.'
+        }));
+        group.options = [];
+        if (!group.placeholder) {
+          group.placeholder = 'Substrate picks coming soon.';
+        }
       }
     });
   }
