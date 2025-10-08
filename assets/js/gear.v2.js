@@ -1274,9 +1274,45 @@
         .filter(Boolean);
     }
     else if (kind === 'substrate') {
-      blocks = (GEAR.substrate?.groups || [])
-        .filter((range) => hasLiveOptions(range))
-        .map((range) => renderRangeBlock(range, 'substrate'));
+      const groups = (GEAR.substrate?.groups || []).filter((range) => hasLiveOptions(range));
+      const defaultLabel = typeof SUBSTRATE_DEFAULT_GROUP_LABEL !== 'undefined'
+        ? (SUBSTRATE_DEFAULT_GROUP_LABEL || '')
+        : 'Substrate & Aquascaping Picks';
+      const normalizeLabel = (value) => String(value || '').trim().toLowerCase();
+      const isDefaultLabel = (value) => {
+        const normalized = normalizeLabel(value);
+        return normalized && normalized === normalizeLabel(defaultLabel);
+      };
+
+      if (groups.length === 1 && isDefaultLabel(groups[0]?.rangeLabel || groups[0]?.label)) {
+        const [primaryGroup] = groups;
+        const parentRangeId = primaryGroup?.id || primaryGroup?.rangeId || '';
+        const subgroups = Array.isArray(primaryGroup?.subgroups)
+          ? primaryGroup.subgroups.filter(Boolean)
+          : [];
+        const subgroupBlocks = subgroups
+          .map((subgroup, index) =>
+            renderSubstrateSubgroupAccordion(subgroup, index, {
+              optionContext: 'substrate',
+              parentRangeId
+            })
+          )
+          .filter(Boolean);
+
+        if (subgroupBlocks.length) {
+          const tipText = String(primaryGroup?.tip || '').trim();
+          const nextBlocks = [];
+          if (tipText) {
+            nextBlocks.push(el('p', { class: 'range__tip range-intro' }, tipText));
+          }
+          nextBlocks.push(...subgroupBlocks);
+          blocks = nextBlocks;
+        } else {
+          blocks = groups.map((range) => renderRangeBlock(range, 'substrate')).filter(Boolean);
+        }
+      } else {
+        blocks = groups.map((range) => renderRangeBlock(range, 'substrate')).filter(Boolean);
+      }
     } else if (kind === 'water-treatments' || kind === 'water-treatments-fertilizers') {
       blocks = (GEAR.waterTreatments?.ranges || []).map((range) => renderRangeBlock(range, 'waterTreatments', { ignoreMatch: true }));
     } else if (kind === 'food') {
