@@ -66,9 +66,9 @@ const TIPS = {
   For liquid carbon (e.g., Excel), start with reduced dosing and watch for sensitive species like Vallisneria.
 `,
   food: `
-  Rotate 2–3 foods; feed only what’s eaten within ~30–60 seconds.<br>
-  For bottom dwellers, use sinking foods; for shrimp, micron foods.<br>
-  Overfeeding → ammonia → nitrates → algae.
+  Feed 1–2× daily and ensure everything is eaten within about 2 minutes.<br>
+  Rotate staple flakes or pellets with protein treats and bottom-feeder wafers.<br>
+  Cut back feeding during cycling or whenever ammonia/nitrite register.
 `,
   'maintenance-tools': `
   <strong>Safety &amp; Power Tips</strong><br>
@@ -245,12 +245,14 @@ const WATER_TREATMENT_TIPS = new Map([
   ]
 ]);
 
-const FOOD_INTRO = "A balanced rotation keeps fish vibrant and healthy. Combine a daily staple with a protein treat and a veggie/algae option. Feed only what’s eaten within 30–60 seconds to maintain good water quality.";
+const FOOD_INTRO =
+  "Feed small amounts 1–2× daily; aim for all food to be eaten within ~1–2 minutes. Rotate staples with protein treats and bottom-feeder wafers as appropriate. Reduce feeding when cycling or if ammonia/nitrite appear.";
 
 const FOOD_GROUP_TIPS = new Map([
-  ["food-staple", "Daily flakes and pellets that anchor your rotation for community tanks."],
-  ["food-protein", "Offer 1–2x weekly to boost protein and keep diets varied."],
-  ["food-veggie", "Sinking wafers that keep plecos, shrimp, and bottom grazers nourished."]
+  ["food-staples-daily", "Core daily flakes and pellets that cover most community tanks."],
+  ["food-bottom-feeders-and-algae", "Sinking wafers and algae-rich diets for plecos, shrimp, and catfish."],
+  ["food-high-protein-treats", "Offer sparingly 1–2× weekly to boost protein and entice picky fish."],
+  ["food-color-and-specialty", "Supplement to enhance color or target niche feeding needs."]
 ]);
 
 const MAINTENANCE_INTRO = "Keep your aquarium healthy and clear with the right tools for testing, water changes, and glass maintenance. Consistent care prevents algae, stress, and equipment issues.";
@@ -350,6 +352,7 @@ const CSV_SOURCES = [
   { path: "/data/gear_lighting.csv", category: "lights" },
   { path: "/data/gear_substrate.csv", category: "substrate" },
   { path: "/data/gear_treatments.csv", category: "water_treatments" },
+  { path: "/data/gear_food.csv", category: "food" },
   { path: "/data/gear_water_food_tools.csv", category: "" },
   { path: "/data/gear_maintenance.csv", category: "maintenance_tools" },
   { path: "/data/gear_extras.csv", category: "extras" }
