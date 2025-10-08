@@ -806,7 +806,7 @@
       matchable: true,
       rangeOptions: {
         includeGearCard: false,
-        showTitle: true
+        showTitle: false
       }
     });
     if (!section) return null;
@@ -882,7 +882,7 @@
 
     const rangeBlock = renderRangeBlock(group, 'filters', {
       includeGearCard: false,
-      showTitle: true,
+      showTitle: false,
       context: 'filters'
     });
     if (rangeBlock) {
@@ -1096,7 +1096,11 @@
         }
       }
     }
-    else if (kind === 'lights') blocks = (GEAR.lights?.ranges || []).map((range) => renderRangeBlock(range, 'lights'));
+    else if (kind === 'lights') {
+      blocks = (GEAR.lights?.ranges || []).map((range) =>
+        renderRangeBlock(range, 'lights', { showTitle: false })
+      );
+    }
     else if (kind === 'substrate') {
       blocks = (GEAR.substrate?.groups || [])
         .filter((range) => hasLiveOptions(range))

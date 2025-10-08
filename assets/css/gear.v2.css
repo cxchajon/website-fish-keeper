@@ -49,6 +49,11 @@ body{
   font-size:0.9rem;
 }
 
+.card--tank .tank-summary{
+  width:100%;
+  margin:12px 0 0;
+}
+
 .tank-summary__label{
   font-weight:600;
   text-transform:uppercase;
