@@ -1,10 +1,10 @@
 const LENGTH_BUCKETS = [
-  { id: 'l-12-20', label: 'Recommended Lights for 12–20 inch Tanks', items: [] },
-  { id: 'l-20-24', label: 'Recommended Lights for 20–24 inch Tanks', items: [] },
-  { id: 'l-24-30', label: 'Recommended Lights for 24–30 inch Tanks', items: [] },
-  { id: 'l-30-36', label: 'Recommended Lights for 30–36 inch Tanks', items: [] },
-  { id: 'l-36-48', label: 'Recommended Lights for 36–48 inch Tanks', items: [] },
-  { id: 'l-48-up', label: 'Recommended Lights for 48 inch and Up', items: [] },
+  { id: 'l-12-18', label: 'Recommended Lights for 12–18 in Tanks', items: [] },
+  { id: 'l-18-24', label: 'Recommended Lights for 18–24 in Tanks', items: [] },
+  { id: 'l-24-30', label: 'Recommended Lights for 24–30 in Tanks', items: [] },
+  { id: 'l-30-36', label: 'Recommended Lights for 30–36 in Tanks', items: [] },
+  { id: 'l-36-48', label: 'Recommended Lights for 36–48 in Tanks', items: [] },
+  { id: 'l-48-up', label: 'Recommended Lights for 48 in and Up', items: [] },
 ];
 
 export const LENGTH_BUCKET_SET = new Set(LENGTH_BUCKETS.map((bucket) => bucket.id));
@@ -36,7 +36,14 @@ const LENGTH_RANGE_ALIAS_ENTRIES = LENGTH_BUCKETS.flatMap((bucket) => {
   return entries;
 });
 
-const LENGTH_RANGE_TO_BUCKET = new Map(LENGTH_RANGE_ALIAS_ENTRIES);
+const LEGACY_RANGE_ALIASES = [
+  ['l-12-20', 'l-12-18'],
+  ['12-20', 'l-12-18'],
+  ['l-20-24', 'l-18-24'],
+  ['20-24', 'l-18-24'],
+];
+
+const LENGTH_RANGE_TO_BUCKET = new Map([...LENGTH_RANGE_ALIAS_ENTRIES, ...LEGACY_RANGE_ALIASES]);
 
 function normalizeLengthRange(value = '') {
   let next = value

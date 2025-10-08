@@ -13,8 +13,6 @@ const FILTRATION_TABS = [
   { label: 'Internal', value: 'Internal' },
 ];
 
-const LIGHT_EMPTY_MESSAGE = 'No items yet.';
-
 function createGrid(items, context, onSelect, onAdd, emptyMessage = 'No matches found. Try adjusting your filters.') {
   if (!items.length) {
     return EmptyState(emptyMessage);
@@ -63,17 +61,19 @@ function normaliseLight(item) {
 }
 
 function createLightingPanel(bucket, context, onSelect, onAdd) {
-  const triggerId = `${bucket.id}-trigger`;
-  const panelId = `${bucket.id}-panel`;
+  const baseId = `lights-${bucket.id}`;
+  const triggerId = `${baseId}-trigger`;
+  const panelId = `${baseId}-panel`;
+  const anchorId = `lights-length-${bucket.id}`;
   const wrapper = createElement('div', {
     className: 'lighting-group category-panel lighting-length__item',
-    attrs: { 'data-range-id': bucket.id, id: bucket.id },
+    attrs: { 'data-range-id': bucket.id, id: anchorId },
   });
 
   const trigger = createElement(
     'button',
     {
-      className: 'lighting-length__trigger category-panel__trigger',
+      className: 'lighting-length__trigger category-panel__trigger accordion-header',
       attrs: {
         type: 'button',
         id: triggerId,
@@ -91,7 +91,7 @@ function createLightingPanel(bucket, context, onSelect, onAdd) {
   );
 
   const panel = createElement('div', {
-    className: 'lighting-length__panel category-panel__body',
+    className: 'lighting-length__panel category-panel__body accordion-panel',
     attrs: {
       id: panelId,
       role: 'region',
@@ -101,28 +101,19 @@ function createLightingPanel(bucket, context, onSelect, onAdd) {
     },
   });
 
-  let content;
-  if (bucket.items.length) {
-    const grid = createElement('div', { className: 'product-grid' });
-    bucket.items.forEach((light) => {
-      const cardData = { ...light, Use_Case: bucket.label };
-      grid.appendChild(
-        ProductCard(cardData, {
-          badges: inferBadges(light, context),
-          onViewDetails: onSelect,
-          onAdd,
-        }),
-      );
-    });
-    content = grid;
-  } else {
-    content = createElement('p', {
-      className: 'lighting-length__empty',
-      text: LIGHT_EMPTY_MESSAGE,
-    });
-  }
+  const grid = createElement('div', { className: 'product-grid' });
+  bucket.items.forEach((light) => {
+    const cardData = { ...light, Use_Case: bucket.label };
+    grid.appendChild(
+      ProductCard(cardData, {
+        badges: inferBadges(light, context),
+        onViewDetails: onSelect,
+        onAdd,
+      }),
+    );
+  });
 
-  panel.appendChild(content);
+  panel.appendChild(grid);
 
   trigger.addEventListener('click', () => {
     const expanded = trigger.getAttribute('aria-expanded') === 'true';
@@ -146,12 +137,14 @@ function createLightingSection(options) {
   const { items, context, onSelect, onAdd } = options;
   const container = createElement('div', { className: 'lighting-section lighting-section--length' });
   const normalizedLights = items.map((item) => normaliseLight(item));
-  const buckets = bucketizeByLength(normalizedLights);
+  const buckets = bucketizeByLength(normalizedLights).filter((bucket) => bucket.items.length > 0);
 
   const stack = createElement('div', { className: 'lighting-length lighting-groups' });
-  buckets.forEach((bucket) => {
-    stack.appendChild(createLightingPanel(bucket, context, onSelect, onAdd));
-  });
+  if (buckets.length) {
+    buckets.forEach((bucket) => {
+      stack.appendChild(createLightingPanel(bucket, context, onSelect, onAdd));
+    });
+  }
 
   container.appendChild(stack);
   return container;

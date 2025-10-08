@@ -1,5 +1,5 @@
 import { parseCSV } from '../utils/csvLoader.js';
-import { LENGTH_RANGE_VALUES } from './grouping.js';
+import { bucketizeByLength, resolveBucketId } from './grouping.js';
 
 const DEFAULT_REL = 'sponsored noopener noreferrer';
 const CSV_URL = new URL('../../data/gear_lighting.csv', import.meta.url);
@@ -11,17 +11,9 @@ function normaliseCell(value) {
   return String(value).trim();
 }
 
-function normaliseLengthRange(value) {
-  return normaliseCell(value)
-    .toLowerCase()
-    .replace(/[\u2012-\u2015\u2212]/g, '-')
-    .replace(/\s+/g, '')
-    .replace(/\+$/, '-up');
-}
-
 function adaptRow(entry) {
-  const lengthRange = normaliseLengthRange(entry.length_range ?? entry.lengthRange ?? '');
-  if (!LENGTH_RANGE_VALUES.includes(lengthRange)) {
+  const lengthRange = resolveBucketId(entry.length_range ?? entry.lengthRange ?? '');
+  if (!lengthRange) {
     return null;
   }
   const light = {
@@ -63,4 +55,9 @@ export async function loadLights() {
     return parseLights(text);
   }
   throw new Error('Unable to load lights CSV in this environment.');
+}
+
+export async function loadLightsByLength() {
+  const lights = await loadLights();
+  return bucketizeByLength(lights);
 }
