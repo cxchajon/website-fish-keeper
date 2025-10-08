@@ -805,115 +805,82 @@
     return section;
   }
 
-  function renderFilterCard(option = {}, bucketKey = '', optionIndex = 0){
-    const wrapper = document.createElement('article');
-    wrapper.className = 'filter-card';
-    wrapper.dataset.category = option.category || 'filters';
-    if (bucketKey) {
-      wrapper.dataset.bucket = bucketKey;
-    }
-    wrapper.dataset.optionIndex = String(optionIndex);
-    wrapper.dataset.affiliate = option.affiliate || 'amazon';
-    wrapper.dataset.tag = option.tag || 'fishkeepingli-20';
-    if (option.subgroup) wrapper.dataset.subgroup = option.subgroup;
-    if (option.tanksize) wrapper.dataset.tanksize = option.tanksize;
-    if (option.length) wrapper.dataset.length = option.length;
-    if (option.depth !== undefined) wrapper.dataset.depth = (option.depth ?? '').toString();
-
-    const title = document.createElement('h4');
-    title.className = 'filter-card__title';
-    const rawTitle = stripUrls(option.title || option.label || 'Recommended option');
-    title.textContent = rawTitle || 'Recommended option';
-    wrapper.appendChild(title);
-
-    const notesText = stripUrls(option.notes || option.note || '');
-    if (notesText) {
-      const notes = document.createElement('p');
-      notes.className = 'filter-card__notes';
-      notes.textContent = notesText;
-      wrapper.appendChild(notes);
-    }
-
-    const href = String(option.href || '').trim();
-    let action = null;
-    if (href) {
-      const anchor = document.createElement('a');
-      anchor.className = 'btn btn-amazon';
-      anchor.href = href;
-      anchor.target = '_blank';
-      anchor.rel = 'sponsored noopener noreferrer';
-      anchor.textContent = 'Buy on Amazon';
-      if (rawTitle) {
-        anchor.setAttribute('aria-label', `Buy ${rawTitle} on Amazon`);
-      }
-      action = anchor;
-    } else {
-      const button = document.createElement('button');
-      button.className = 'btn btn-disabled';
-      button.type = 'button';
-      button.disabled = true;
-      button.setAttribute('aria-disabled', 'true');
-      button.textContent = 'Link coming soon';
-      action = button;
-    }
-    wrapper.appendChild(action);
-
-    return wrapper;
-  }
-
   function renderFilterBucket(bucket = {}, index = 0){
     const bucketKey = bucket.key || bucket.bucketKey || bucket.rangeKey || bucket.id || `bucket-${index}`;
     const normalizedBucket = normalizeBucketId(bucketKey);
     const label = (bucket.label || bucket.rangeLabel || bucket.bucketLabel || bucketKey || '').trim();
     const placeholder = (bucket.placeholder || '').trim() || 'No items yet.';
     const options = Array.isArray(bucket.options) ? bucket.options : [];
+    const groupId = bucket.id || bucket.rangeId || bucket.bucketId || normalizedBucket || bucketKey || `bucket-${index}`;
+    const minGallons = Number.isFinite(bucket.minGallons) ? Number(bucket.minGallons) : undefined;
+    const maxGallons = Number.isFinite(bucket.maxGallons) ? Number(bucket.maxGallons) : undefined;
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'sub-accordion';
-    wrapper.dataset.bucket = bucketKey;
-    if (normalizedBucket) {
-      wrapper.dataset.bucketId = normalizedBucket;
-    }
-    if (bucket.id) {
-      wrapper.dataset.rangeId = bucket.id;
-    }
-    if (Number.isFinite(bucket.minGallons)) {
-      wrapper.dataset.minG = String(bucket.minGallons);
-    }
-    if (Number.isFinite(bucket.maxGallons)) {
-      wrapper.dataset.maxG = String(bucket.maxGallons);
-    }
+    const group = {
+      ...bucket,
+      id: groupId,
+      key: bucketKey,
+      label,
+      rangeLabel: bucket.rangeLabel || label,
+      tip: bucket.tip || '',
+      options,
+      placeholder,
+      minGallons,
+      maxGallons,
+    };
 
-    const header = document.createElement('button');
-    header.type = 'button';
-    header.className = 'accordion-header';
-    header.setAttribute('aria-expanded', 'false');
-    header.textContent = label || bucketKey || 'Filters';
-
-    const panel = document.createElement('div');
-    panel.className = 'accordion-panel';
-    panel.hidden = true;
-
-    header.addEventListener('click', () => {
-      const expanded = header.getAttribute('aria-expanded') === 'true';
-      header.setAttribute('aria-expanded', String(!expanded));
-      panel.hidden = expanded;
+    const section = renderAccordionGroup(group, index, {
+      sectionKey: 'filters',
+      sectionClass: 'gear-subcard gear-subcard--heaters',
+      rangeClass: 'range--heaters',
+      matchable: true,
+      rangeOptions: {
+        includeGearCard: false,
+        showTitle: true,
+        context: 'filters',
+      },
     });
 
-    if (options.length) {
-      options.forEach((option, optionIndex) => {
-        panel.appendChild(renderFilterCard(option, bucketKey, optionIndex));
-      });
-    } else {
-      const empty = document.createElement('p');
-      empty.className = 'filters-placeholder';
-      empty.textContent = placeholder;
-      panel.appendChild(empty);
+    if (!section) return null;
+
+    section.dataset.filterBucket = '1';
+    section.dataset.bucket = bucketKey;
+    if (normalizedBucket) {
+      section.dataset.bucketId = normalizedBucket;
+    }
+    if (!section.dataset.rangeId && groupId) {
+      section.dataset.rangeId = groupId;
+    }
+    if (Number.isFinite(minGallons)) {
+      section.dataset.minG = String(minGallons);
+    }
+    if (Number.isFinite(maxGallons)) {
+      section.dataset.maxG = String(maxGallons);
     }
 
-    wrapper.append(header, panel);
-    wrapper.dataset.filterBucket = '1';
-    return wrapper;
+    const rangeEl = section.querySelector('.range');
+    if (rangeEl) {
+      if (normalizedBucket) {
+        rangeEl.dataset.bucketId = normalizedBucket;
+      }
+      if (Number.isFinite(minGallons)) {
+        rangeEl.dataset.minG = String(minGallons);
+      }
+      if (Number.isFinite(maxGallons)) {
+        rangeEl.dataset.maxG = String(maxGallons);
+      }
+      if (!rangeEl.dataset.rangeId && groupId) {
+        rangeEl.dataset.rangeId = groupId;
+      }
+    }
+
+    if (!options.length) {
+      const placeholderEl = section.querySelector('.range__placeholder');
+      if (placeholderEl) {
+        placeholderEl.textContent = placeholder;
+      }
+    }
+
+    return section;
   }
 
   function renderFilterMediaGroup(group = {}, index = 0){
