@@ -198,6 +198,23 @@
     return String(s || '').replace(/[&<>"']/g, (m) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;' }[m]));
   }
 
+  function renderAddonCard(addon = {}){
+    if (!addon || addon.enabled === false) return null;
+    const title = String(addon.title || '').trim();
+    const href = String(addon.amazonUrl || addon.href || '').trim();
+    if (!title || !href) return null;
+    const notes = String(addon.notes || '').trim();
+    const eyebrow = String(addon.eyebrow || 'Recommended add-on').trim() || 'Recommended add-on';
+    const card = el('div',{ class:'gear-addon' });
+    card.innerHTML = `
+      <p class="gear-addon__eyebrow">${escapeHTML(eyebrow)}</p>
+      <h3 class="gear-addon__title">${escapeHTML(title)}</h3>
+      ${notes ? `<p class="gear-addon__notes">${escapeHTML(notes)}</p>` : ''}
+      <a href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" class="btn btn-sm" aria-label="Buy on Amazon – ${escapeHTML(title)}">Buy on Amazon</a>
+    `;
+    return card;
+  }
+
   const URL_PATTERN = /https?:\/\/\S+/gi;
 
   function stripUrls(text = ''){
@@ -535,8 +552,11 @@
     if (!container) return;
     container.innerHTML = '';
     let blocks = [];
-    if (kind === 'heaters') blocks = (GEAR.heaters?.ranges || []).map((range) => renderRangeBlock(range, 'heaters'));
-    else if (kind === 'filters') blocks = (GEAR.filters?.ranges || []).map((range) => renderRangeBlock(range, 'filters'));
+    if (kind === 'heaters') {
+      const addonCard = renderAddonCard(GEAR.heaters?.addon);
+      if (addonCard) container.appendChild(addonCard);
+      blocks = (GEAR.heaters?.ranges || []).map((range) => renderRangeBlock(range, 'heaters'));
+    } else if (kind === 'filters') blocks = (GEAR.filters?.ranges || []).map((range) => renderRangeBlock(range, 'filters'));
     else if (kind === 'lights') blocks = (GEAR.lights?.ranges || []).map((range) => renderRangeBlock(range, 'lights'));
     else if (kind === 'substrate') {
       blocks = (GEAR.substrate?.groups || [])
