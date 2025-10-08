@@ -1477,7 +1477,8 @@
   }
 
   function initTankSelect(){
-    const select = document.getElementById('gear-tank-size');
+    const select =
+      document.getElementById('tank-size') || document.getElementById('gear-tank-size');
     const wrap = document.getElementById('gear-tank-select-wrap');
     const meta = document.getElementById('gear-tank-meta');
     const summary = document.getElementById('tank-summary-value');
