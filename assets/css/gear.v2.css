@@ -456,6 +456,16 @@ body{
   background:rgba(15,23,42,0.6);
 }
 
+/* When a matched range is nested inside a highlighted gear card, drop the inner border */
+.gear-card.is-active .range.is-active,
+.gear-card--active .range.is-active,
+.gear-card[data-match="1"] .range.is-active,
+.sub-accordion.is-active .range.is-active{
+  border:0;
+  box-shadow:none;
+  background:var(--surface-2, #121823);
+}
+
 .range__title{
   font-weight:600;
   margin:0 0 0.5rem;
