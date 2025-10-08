@@ -34,7 +34,8 @@
     food: 'food',
     maintenanceTools: 'maintenance_tools',
     'maintenance-tools': 'maintenance_tools',
-    maintenance_tools: 'maintenance_tools'
+    maintenance_tools: 'maintenance_tools',
+    extras: 'extras'
   };
 
   const GEAR_SECTION_ALIASES = {
@@ -48,7 +49,8 @@
     food: 'food',
     maintenance_tools: 'maintenanceTools',
     'maintenance-tools': 'maintenanceTools',
-    maintenanceTools: 'maintenanceTools'
+    maintenanceTools: 'maintenanceTools',
+    extras: 'extras'
   };
 
   function toDataSectionKey(sectionKey){
@@ -401,6 +403,134 @@
     return section;
   }
 
+  function createExtrasItem(item = {}){
+    const option = el('div',{ class:'option extras-item' });
+    const title = (item?.title || '').trim();
+    const notes = (item?.notes || '').trim();
+    if (title){
+      option.appendChild(el('div',{ class:'option__title' }, escapeHTML(title)));
+    }
+    if (notes){
+      option.appendChild(el('p',{ class:'option__note extras-item__note' }, escapeHTML(notes)));
+    }
+    const actions = el('div',{ class:'option__actions extras-item__actions' });
+    const href = (item?.href || '').trim();
+    const hasValidHref = /^https?:\/\//i.test(href);
+    if (hasValidHref){
+      actions.appendChild(
+        el('a',{
+          class:'btn btn-amazon',
+          href:href,
+          target:'_blank',
+          rel:'sponsored noopener noreferrer'
+        },'Buy on Amazon')
+      );
+    } else {
+      actions.appendChild(
+        el('span',{
+          class:'btn btn-disabled',
+          'aria-disabled':'true',
+          role:'button',
+          title:'Link coming soon'
+        },'Buy on Amazon')
+      );
+    }
+    option.appendChild(actions);
+    return option;
+  }
+
+  function renderExtrasAccordion(group = {}, index = 0, options = {}){
+    const {
+      sectionKey = 'extras',
+      headerLevel = 'h3'
+    } = options;
+
+    const classList = new Set(['gear-subcard','gear-subcard--extras','gear-card']);
+    const section = el('section',{ class:Array.from(classList).join(' ') });
+    section.dataset.ignoreMatch = '1';
+    const dataSectionKey = toDataSectionKey(sectionKey);
+    if (dataSectionKey) section.dataset.section = dataSectionKey;
+
+    const baseId = group?.id || `extras-${index}`;
+    const safeId = String(baseId)
+      .replace(/[^a-z0-9-_]/gi, '-')
+      .replace(/-{2,}/g, '-')
+      .replace(/^-+|-+$/g, '') || `extras-${index}`;
+    const sectionId = group?.id || safeId;
+    section.id = sectionId;
+    section.dataset.rangeId = sectionId;
+    section.dataset.subgroupId = sectionId;
+
+    const bodyId = `${safeId}-body`;
+    const header = el('header',{
+      class:'gear-card__header gear-subcard__header',
+      'data-accordion':'toggle',
+      tabindex:'0',
+      'aria-controls': bodyId,
+      'aria-expanded':'false'
+    });
+    const headingTag = String(headerLevel || 'h3').toLowerCase();
+    header.appendChild(el(headingTag,{ class:'gear-subcard__title' }, escapeHTML(group?.label || 'Cleanup & Extras')));
+
+    if (group?.infoButtonKey || group?.infoButtonText){
+      const tipKey = (group.infoButtonKey || '').trim();
+      const tipText = (group.infoButtonText || '').trim();
+      if (tipKey && tipText && typeof TIPS === 'object' && !TIPS[tipKey]){
+        TIPS[tipKey] = tipText;
+      }
+      const ariaLabel = (group.infoButtonLabel || `${group.label || 'Extras'} tip`).trim();
+      const infoBtn = el('button',{
+        class:'info-btn',
+        type:'button',
+        'data-tip': tipKey || sectionId,
+        'aria-label': ariaLabel || 'Extras tip',
+        'aria-haspopup':'dialog'
+      },'i');
+      header.appendChild(infoBtn);
+    }
+
+    header.appendChild(el('span',{ class:'chevron','aria-hidden':'true' },'▸'));
+    section.appendChild(header);
+
+    const body = el('div',{
+      class:'gear-card__body gear-subcard__body extras-body',
+      id: bodyId,
+      hidden:true
+    });
+
+    if (group?.intro){
+      body.appendChild(el('p',{ class:'gear-subcard__intro extras-intro' }, escapeHTML(group.intro)));
+    }
+
+    const listWrap = el('div',{ class:'extras-groups' });
+    const subgroups = Array.isArray(group?.subgroups) ? group.subgroups : [];
+    if (subgroups.length){
+      subgroups.forEach((subgroup) => {
+        if (!subgroup || !Array.isArray(subgroup.items) || !subgroup.items.length) return;
+        const subgroupWrap = el('div',{ class:'extras-group' });
+        const subgroupTitle = (subgroup.label || subgroup.name || '').trim();
+        if (subgroupTitle){
+          subgroupWrap.appendChild(el('h4',{ class:'extras-group__title' }, escapeHTML(subgroupTitle)));
+        }
+        const itemsWrap = el('div',{ class:'extras-group__items' });
+        subgroup.items.forEach((item) => {
+          itemsWrap.appendChild(createExtrasItem(item));
+        });
+        subgroupWrap.appendChild(itemsWrap);
+        listWrap.appendChild(subgroupWrap);
+      });
+    }
+
+    if (!listWrap.childNodes.length){
+      const placeholder = (group?.placeholder || 'Links coming soon.').trim();
+      listWrap.appendChild(el('p',{ class:'range__placeholder extras-placeholder' }, escapeHTML(placeholder)));
+    }
+
+    body.appendChild(listWrap);
+    section.appendChild(body);
+    return section;
+  }
+
   function buildCategory(kind, container){
     if (!container) return;
     container.innerHTML = '';
@@ -430,12 +560,50 @@
         const intro = el('div',{ class:'gear-card__intro' }, GEAR.maintenanceTools.intro);
         container.appendChild(intro);
       }
-      blocks = (GEAR.maintenanceTools?.accordions || []).map((group, index) =>
-        renderAccordionGroup(group, index, {
+      const maintenanceGroups = Array.isArray(GEAR.maintenanceTools?.accordions)
+        ? [...GEAR.maintenanceTools.accordions]
+        : [];
+      const extrasGroups = Array.isArray(GEAR.extras?.accordions)
+        ? GEAR.extras.accordions.filter(Boolean)
+        : [];
+      const combined = [];
+      let extrasInserted = false;
+      const normalizeLabel = (value) =>
+        String(value || '')
+          .toLowerCase()
+          .replace(/&/g, 'and')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+      maintenanceGroups.forEach((group) => {
+        combined.push({ type: 'maintenance', group });
+        if (!extrasInserted && extrasGroups.length) {
+          const label = normalizeLabel(group?.label);
+          if (label === 'safety and power') {
+            extrasGroups.forEach((extrasGroup) => {
+              combined.push({ type: 'extras', group: extrasGroup });
+            });
+            extrasGroups.length = 0;
+            extrasInserted = true;
+          }
+        }
+      });
+
+      if (extrasGroups.length) {
+        extrasGroups.forEach((extrasGroup) => {
+          combined.push({ type: 'extras', group: extrasGroup });
+        });
+      }
+
+      blocks = combined.map((entry, index) => {
+        if (entry.type === 'extras') {
+          return renderExtrasAccordion(entry.group, index, { sectionKey: 'extras' });
+        }
+        return renderAccordionGroup(entry.group, index, {
           sectionKey: 'maintenanceTools',
           rangeClass: 'range--maintenance'
-        })
-      );
+        });
+      });
     } else if (kind === 'stands') {
       const groups = Array.isArray(GEAR.stands?.ranges) ? GEAR.stands.ranges : [];
       if (!groups.length) {

@@ -20,6 +20,8 @@ const RANGES_LIGHTS = [
 ];
 
 /* Category tips shown on the “i” buttons */
+const EXTRAS_TIP_KEY = 'extras_cleanup_tip';
+
 const TIPS = {
   heaters: "Choose a heater whose printed range starts at (or just above) your tank size. Example: for a 40-gallon tank, prefer 40–60 gal over 20–40. Bonus safety: use a temp controller. Remember to account for tank height, substrate thickness, and whether the heater has a water level mark — most are not fully submersible.",
   filters: "Oversize your filter. A 40–60 gal filter on a 40-gal tank keeps water clearer. Keep biomedia; replace only mechanical floss.",
@@ -59,6 +61,8 @@ const TIPS = {
   Always level and pad per manufacturer instructions.
 `
 };
+
+TIPS[EXTRAS_TIP_KEY] = 'Use microfiber towels and paper towels for drips. Avoid harsh glass cleaners near aquariums. For exterior glass, use distilled water + white vinegar mix on a cloth and wipe dry. Keep a dedicated bucket and gloves for tank work only to prevent cross-contamination.';
 
 TIPS.stands_55_75_info =
   'A filled 55-gallon tank can weigh over 600 lbs; a 75-gallon can exceed 900 lbs. Choose a stand whose capacity is greater than the full tank weight, match the footprint exactly, and confirm the stand is level before filling.';
@@ -108,12 +112,26 @@ const MAINTENANCE_GROUP_TIPS = new Map([
   ["maintenance-safety", "Use GFCI protection and surge-protected strips to keep your aquarium gear safe. Always create drip loops on cords, label plugs for quick shutoff, and keep outlets above water level."]
 ]);
 
+const EXTRAS_INTRO =
+  'Handy everyday supplies to keep your setup tidy and maintenance smooth. These are optional, but convenient.';
+
+const EXTRAS_ACCORDION_META = {
+  id: 'extras_cleanup',
+  label: 'Cleanup & Extras',
+  infoButtonKey: EXTRAS_TIP_KEY,
+  infoButtonLabel: 'Cleanup & Extras tip'
+};
+
+const EXTRAS_DEFAULT_SUBGROUP = 'Misc';
+const EXTRAS_PLACEHOLDER = 'Links coming soon.';
+
 const CSV_SOURCES = [
   { path: "/data/gear_heaters.csv", category: "heaters" },
   { path: "/data/gear_filters.csv", category: "filters" },
   { path: "/data/gear_lighting.csv", category: "lights" },
   { path: "/data/gear_substrate.csv", category: "substrate" },
-  { path: "/data/gear_water_food_tools.csv", category: "" }
+  { path: "/data/gear_water_food_tools.csv", category: "" },
+  { path: "/data/gear_extras.csv", category: "extras" }
 ];
 
 const STANDS_JSON_PATH = "/assets/js/generated/gear-stands.json";
@@ -416,6 +434,70 @@ function buildGroups(items, tipsMap, category) {
   return order.map((id) => map.get(id));
 }
 
+function slugifyExtrasKey(value, fallback = 'group') {
+  const base = String(value || '').trim();
+  if (!base) return fallback;
+  const normalized = base
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return normalized || fallback;
+}
+
+function buildExtrasGroup(items = []) {
+  const order = [];
+  const map = new Map();
+  let total = 0;
+
+  items.forEach((item) => {
+    const subgroupName = (item.subgroup || '').trim() || EXTRAS_DEFAULT_SUBGROUP;
+    if (!map.has(subgroupName)) {
+      const slug = slugifyExtrasKey(subgroupName, EXTRAS_DEFAULT_SUBGROUP.toLowerCase());
+      map.set(subgroupName, {
+        id: `extras-${slug}`,
+        label: subgroupName,
+        items: []
+      });
+      order.push(subgroupName);
+    }
+
+    const group = map.get(subgroupName);
+    const title = (item.title || item.label || '').trim();
+    if (!title) return;
+
+    group.items.push({
+      title,
+      notes: (item.notes || '').trim(),
+      href: (item.href || '').trim()
+    });
+    total += 1;
+  });
+
+  const subgroups = order
+    .map((key) => map.get(key))
+    .filter((group) => group && group.items.length > 0);
+
+  return {
+    id: EXTRAS_ACCORDION_META.id,
+    label: EXTRAS_ACCORDION_META.label,
+    intro: EXTRAS_INTRO,
+    infoButtonKey: EXTRAS_ACCORDION_META.infoButtonKey,
+    infoButtonLabel: EXTRAS_ACCORDION_META.infoButtonLabel,
+    infoButtonText: TIPS[EXTRAS_ACCORDION_META.infoButtonKey] || '',
+    placeholder: EXTRAS_PLACEHOLDER,
+    subgroups,
+    itemsCount: total,
+    type: 'extras'
+  };
+}
+
+function buildExtras(items = []) {
+  const group = buildExtrasGroup(items);
+  if (!group) return [];
+  return [group];
+}
+
 function normalizeStandRangeId(range = '') {
   return String(range || '')
     .trim()
@@ -554,6 +636,7 @@ function buildGear(normalized, standsItems = []) {
   const waterTreatments = getItemsByCategory(normalized, 'water_treatments');
   const food = getItemsByCategory(normalized, 'food');
   const maintenance = getItemsByCategory(normalized, 'maintenance_tools');
+  const extras = getItemsByCategory(normalized, 'extras');
   const stands = Array.isArray(standsItems) ? standsItems : [];
   const standRanges = buildStandRanges(stands);
 
@@ -587,6 +670,10 @@ function buildGear(normalized, standsItems = []) {
       match: 'none',
       intro: MAINTENANCE_INTRO,
       accordions: buildGroups(maintenance, MAINTENANCE_GROUP_TIPS, 'maintenance_tools')
+    },
+    extras: {
+      match: 'none',
+      accordions: buildExtras(extras)
     },
     stands: {
       match: 'gallons',
