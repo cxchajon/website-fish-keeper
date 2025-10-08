@@ -1,0 +1,53 @@
+{
+  "generated_at": "2025-10-08T14:00:04Z",
+  "entries": [
+    {
+      "name": "Homepage",
+      "path": "index.html",
+      "last_modified": "2025-10-08T12:49:34Z",
+      "size_bytes": 28608
+    },
+    {
+      "name": "Gear",
+      "path": "gear/index.html",
+      "last_modified": "2025-10-08T12:49:34Z",
+      "size_bytes": 7526
+    },
+    {
+      "name": "Stocking",
+      "path": "stocking.html",
+      "last_modified": "2025-10-08T12:49:34Z",
+      "size_bytes": 43999
+    },
+    {
+      "name": "Params",
+      "path": "params.html",
+      "last_modified": "2025-10-08T12:49:34Z",
+      "size_bytes": 30341
+    },
+    {
+      "name": "Media",
+      "path": "media.html",
+      "last_modified": "2025-10-08T12:49:34Z",
+      "size_bytes": 25407
+    },
+    {
+      "name": "Feature Tank",
+      "path": "feature-your-tank.html",
+      "last_modified": "2025-10-08T12:49:34Z",
+      "size_bytes": 40579
+    },
+    {
+      "name": "About",
+      "path": "about.html",
+      "last_modified": "2025-10-08T12:49:34Z",
+      "size_bytes": 25336
+    },
+    {
+      "name": "Feedback",
+      "path": "contact-feedback.html",
+      "last_modified": "2025-10-08T12:49:34Z",
+      "size_bytes": 24631
+    }
+  ]
+}
