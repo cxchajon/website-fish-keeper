@@ -828,58 +828,68 @@
       maxGallons,
     };
 
-    const section = renderAccordionGroup(group, index, {
-      sectionKey: 'filters',
-      sectionClass: 'gear-subcard gear-subcard--heaters',
-      rangeClass: 'range--heaters',
-      matchable: true,
-      rangeOptions: {
-        includeGearCard: false,
-        showTitle: true,
-        context: 'filters',
-      },
-    });
+    const suffixSource = normalizedBucket || normalizeBucketId(groupId) || `bucket-${index}`;
+    const safeSuffix = String(suffixSource)
+      .replace(/[^a-z0-9-_]/gi, '-')
+      .replace(/-{2,}/g, '-')
+      .replace(/^-+|-+$/g, '') || `bucket-${index}`;
+    const headerId = `filters-${safeSuffix}-header`;
+    const panelId = `filters-${safeSuffix}-panel`;
 
-    if (!section) return null;
-
+    const section = el('section',{ class:'gear-subcard gear-subcard--filters gear-card sub-accordion' });
+    section.dataset.ignoreMatch = '0';
+    section.dataset.section = toDataSectionKey('filters');
     section.dataset.filterBucket = '1';
     section.dataset.bucket = bucketKey;
-    if (normalizedBucket) {
-      section.dataset.bucketId = normalizedBucket;
-    }
-    if (!section.dataset.rangeId && groupId) {
+    if (normalizedBucket) section.dataset.bucketId = normalizedBucket;
+    if (groupId) {
       section.dataset.rangeId = groupId;
+      section.dataset.subgroupId = groupId;
     }
-    if (Number.isFinite(minGallons)) {
-      section.dataset.minG = String(minGallons);
-    }
-    if (Number.isFinite(maxGallons)) {
-      section.dataset.maxG = String(maxGallons);
-    }
+    if (Number.isFinite(minGallons)) section.dataset.minG = String(minGallons);
+    if (Number.isFinite(maxGallons)) section.dataset.maxG = String(maxGallons);
 
-    const rangeEl = section.querySelector('.range');
-    if (rangeEl) {
-      if (normalizedBucket) {
-        rangeEl.dataset.bucketId = normalizedBucket;
-      }
-      if (Number.isFinite(minGallons)) {
-        rangeEl.dataset.minG = String(minGallons);
-      }
-      if (Number.isFinite(maxGallons)) {
-        rangeEl.dataset.maxG = String(maxGallons);
-      }
-      if (!rangeEl.dataset.rangeId && groupId) {
-        rangeEl.dataset.rangeId = groupId;
-      }
+    const header = el('button',{
+      class:'gear-card__header gear-subcard__header accordion-header',
+      type:'button',
+      id: headerId,
+      'data-accordion':'toggle',
+      'aria-controls': panelId,
+      'aria-expanded':'false'
+    });
+    header.appendChild(el('span',{ class:'gear-subcard__title' }, label || 'Options'));
+    header.appendChild(el('span',{ class:'chevron','aria-hidden':'true' },'▸'));
+
+    const panel = el('div',{
+      class:'gear-card__body gear-subcard__body accordion-panel',
+      id: panelId,
+      role:'region',
+      'aria-labelledby': headerId,
+      hidden:true,
+      'aria-hidden':'true'
+    });
+
+    const rangeBlock = renderRangeBlock(group, 'filters', {
+      includeGearCard: false,
+      showTitle: true,
+      context: 'filters'
+    });
+    if (rangeBlock) {
+      rangeBlock.classList.add('range--filters');
+      if (normalizedBucket) rangeBlock.dataset.bucketId = normalizedBucket;
+      if (Number.isFinite(minGallons)) rangeBlock.dataset.minG = String(minGallons);
+      if (Number.isFinite(maxGallons)) rangeBlock.dataset.maxG = String(maxGallons);
+      if (!rangeBlock.dataset.rangeId && groupId) rangeBlock.dataset.rangeId = groupId;
+      panel.appendChild(rangeBlock);
     }
 
     if (!options.length) {
-      const placeholderEl = section.querySelector('.range__placeholder');
-      if (placeholderEl) {
-        placeholderEl.textContent = placeholder;
-      }
+      const placeholderEl = panel.querySelector('.range__placeholder');
+      if (placeholderEl) placeholderEl.textContent = placeholder;
     }
 
+    section.appendChild(header);
+    section.appendChild(panel);
     return section;
   }
 
@@ -1191,6 +1201,7 @@
   function animateAccordion(body, expanded, animate){
     if (!body) return;
     const shouldAnimate = animate && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    body.setAttribute('aria-hidden', String(!expanded));
     if (!shouldAnimate){
       body.hidden = !expanded;
       body.style.height = '';

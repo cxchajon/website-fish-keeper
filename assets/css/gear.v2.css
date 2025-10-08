@@ -183,6 +183,14 @@ body{
   padding:1rem 1.25rem;
   cursor:pointer;
   user-select:none;
+  background:none;
+  border:0;
+  width:100%;
+  color:inherit;
+  text-align:left;
+  font:inherit;
+  -webkit-appearance:none;
+  appearance:none;
 }
 
 .gear-card__header:focus-visible{
