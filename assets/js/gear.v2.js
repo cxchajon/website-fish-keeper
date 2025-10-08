@@ -278,9 +278,14 @@
     const standAria = `Buy on Amazon – ${escapeHTML(displayTitle)}`;
     const useSimpleButton = normalizedContext === 'substrate' || normalizedContext === 'maintenancetools';
     const isWaterTreatments = normalizedContext === 'watertreatments' || normalizedContext === 'watertreatmentsfertilizers';
-    const disabledSimpleButtonHtml = normalizedContext === 'substrate'
-      ? `<button class="btn" type="button" aria-disabled="true" title="Link coming soon" disabled>${buttonLabel}</button>`
-      : `<span class="btn btn-disabled" aria-disabled="true" role="button" tabindex="-1" title="Link coming soon">${buttonLabel}</span>`;
+    let disabledSimpleButtonHtml;
+    if (normalizedContext === 'substrate') {
+      disabledSimpleButtonHtml = `<button class="btn" type="button" aria-disabled="true" title="Link coming soon" disabled>${buttonLabel}</button>`;
+    } else if (normalizedContext === 'maintenancetools') {
+      disabledSimpleButtonHtml = `<button class="btn" aria-disabled="true" title="Link coming soon">${buttonLabel}</button>`;
+    } else {
+      disabledSimpleButtonHtml = `<span class="btn btn-disabled" aria-disabled="true" role="button" tabindex="-1" title="Link coming soon">${buttonLabel}</span>`;
+    }
     let actionsHtml = '';
     if (hasValidHref) {
       if (context === 'stands') {
