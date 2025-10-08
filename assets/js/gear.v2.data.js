@@ -27,12 +27,13 @@ const RANGES_FILTERS = FILTER_BUCKETS.map((bucket) => ({
 }));
 
 const RANGES_LIGHTS = [
-  { id: "l-12-20", label: "12–20 inches", min: 12, max: 20 },
-  { id: "l-20-24", label: "20–24 inches", min: 20, max: 24 },
-  { id: "l-24-30", label: "24–30 inches", min: 24, max: 30 },
-  { id: "l-30-36", label: "30–36 inches", min: 30, max: 36 },
-  { id: "l-36-48", label: "36–48 inches", min: 36, max: 47.99 },
-  { id: "l-48-up", label: "48 inches and up", min: 48, max: 999 }
+  { id: "l-12-18", label: "12–18 inches", min: 12, max: 18, sort: 18 },
+  { id: "l-18-24", label: "18–24 inches", min: 18, max: 24, sort: 24 },
+  { id: "l-24-36", label: "24–36 inches", min: 24, max: 36, sort: 36 },
+  { id: "l-36-48", label: "36–48 inches", min: 36, max: 48, sort: 48 },
+  { id: "l-48-55", label: "48–55 inches", min: 48, max: 55, sort: 55 },
+  { id: "l-55-75", label: "55–75 inches", min: 55, max: 75, sort: 75 },
+  { id: "l-75-up", label: "75 inches and up", min: 75, max: 999, sort: 999 }
 ];
 
 const LIGHT_RANGE_IDS = RANGES_LIGHTS.map((range) => range.id);
@@ -63,7 +64,33 @@ const LIGHT_RANGE_ALIAS_ENTRIES = LIGHT_RANGE_IDS.flatMap((id) => {
   }
   return entries;
 });
-const LIGHT_RANGE_ALIAS_MAP = new Map(LIGHT_RANGE_ALIAS_ENTRIES);
+
+const LEGACY_LIGHT_RANGE_ALIASES = [
+  ['l-12-20', 'l-12-18'],
+  ['12-20', 'l-12-18'],
+  ['l-20-24', 'l-18-24'],
+  ['20-24', 'l-18-24'],
+  ['l-24-30', 'l-24-36'],
+  ['24-30', 'l-24-36'],
+  ['l-30-36', 'l-24-36'],
+  ['30-36', 'l-24-36'],
+  ['l-36-48', 'l-36-48'],
+  ['36-48', 'l-36-48'],
+  ['l-48-up', 'l-48-55'],
+  ['48-up', 'l-48-55'],
+  ['l-48-60', 'l-48-55'],
+  ['48-60', 'l-48-55'],
+  ['l-60-75', 'l-55-75'],
+  ['60-75', 'l-55-75'],
+  ['l-55-75', 'l-55-75'],
+  ['55-75', 'l-55-75'],
+  ['l-75-125', 'l-75-up'],
+  ['75-125', 'l-75-up'],
+  ['125+', 'l-75-up'],
+  ['75+', 'l-75-up']
+];
+
+const LIGHT_RANGE_ALIAS_MAP = new Map([...LIGHT_RANGE_ALIAS_ENTRIES, ...LEGACY_LIGHT_RANGE_ALIASES]);
 
 /* Category tips shown on the “i” buttons */
 const EXTRAS_TIP_KEY = 'extras_cleanup_tip';
@@ -237,12 +264,13 @@ const FILTER_BUCKET_ALIASES = new Map([
 ]);
 
 const LIGHT_RANGE_META = new Map([
-  ["l-12-20", { label: "Recommended Lights for 12–20 inch Tanks", tip: "" }],
-  ["l-20-24", { label: "Recommended Lights for 20–24 inch Tanks", tip: "" }],
-  ["l-24-30", { label: "Recommended Lights for 24–30 inch Tanks", tip: "" }],
-  ["l-30-36", { label: "Recommended Lights for 30–36 inch Tanks", tip: "" }],
+  ["l-12-18", { label: "Recommended Lights for 12–18 inch Tanks", tip: "" }],
+  ["l-18-24", { label: "Recommended Lights for 18–24 inch Tanks", tip: "" }],
+  ["l-24-36", { label: "Recommended Lights for 24–36 inch Tanks", tip: "" }],
   ["l-36-48", { label: "Recommended Lights for 36–48 inch Tanks", tip: "For 36–48 inch tanks, choose lights with adjustable brackets or a slight overhang. Longer tanks may benefit from dual fixtures or higher wattage to maintain even brightness and plant growth." }],
-  ["l-48-up", { label: "Recommended Lights for 48 inch and Up", tip: "For tanks 48 inches and longer, use extended-length fixtures or dual lights for even coverage. Longer tanks benefit from high-output full-spectrum LEDs with strong PAR and deeper penetration to support planted setups. Dual fixtures can also help eliminate dark zones and maintain even brightness from end to end." }]
+  ["l-48-55", { label: "Recommended Lights for 48–55 inch Tanks", tip: "For 48–55 inch tanks, look for extendable arms or brackets to cover the full span. Consider pairing fixtures or upgrading output for dense planting." }],
+  ["l-55-75", { label: "Recommended Lights for 55–75 inch Tanks", tip: "For 55–75 inch tanks, plan on dual fixtures or one high-output unit with strong PAR to avoid dim corners." }],
+  ["l-75-up", { label: "Recommended Lights for 75+ inch Tanks", tip: "For tanks 75 inches and longer, combine multiple fixtures or use modular systems to maintain even intensity from end to end." }]
 ]);
 
 const HEATERS_ADDON = {
@@ -843,11 +871,20 @@ function buildRange(collection, metaMap, items, category) {
     const meta = metaMap.get(range.id) || { label: `Recommended ${category} for ${range.label}`, tip: "" };
     const matches = items.filter((item) => (item.rangeId || "").toLowerCase() === range.id.toLowerCase());
     const options = matches.map((item, index) => ensureOptionDefaults(item, index, category, range.id));
+    const minLength = Number.isFinite(range.min) ? range.min : undefined;
+    const maxLength = Number.isFinite(range.max) ? range.max : undefined;
+    const sort = Number.isFinite(range.sort) ? range.sort : undefined;
+    const placeholder = meta.placeholder || (options.length ? '' : 'Lights coming soon.');
     return {
       id: range.id,
       label: meta.label,
+      rangeLabel: meta.label,
       tip: meta.tip || "",
-      options
+      options,
+      placeholder,
+      minL: minLength,
+      maxL: maxLength,
+      sort
     };
   });
 }
