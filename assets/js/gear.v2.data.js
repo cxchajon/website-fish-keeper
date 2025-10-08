@@ -73,9 +73,9 @@ TIPS.stands_55_75_info =
 const HEATER_RANGE_META = new Map([
   ["g-5-10", { label: "Recommended Heaters for 5–10 Gallons", tip: "For 5–10 gal, target 25–50W. Place near gentle flow for even heat." }],
   ["g-10-20", { label: "Recommended Heaters for 10–20 Gallons", tip: "For 10–20 gal, aim for 50–100W." }],
-  ["g-20-40", { label: "Recommended Heaters for 20–40 Gallons", tip: "For 20–40 gal tanks, aim for 100–200W. When placing your heater, account for tank height, substrate depth, and water line markings. Most shouldn’t touch the substrate, and not all are fully submersible. Place near gentle flow for even heat." }],
-  ["g-40-60", { label: "Recommended Heaters for 40–60 Gallons", tip: "For 40–60 gal tanks, aim for ~200–300W and place the heater in steady flow for even temperature. (Full placement/safety details are in the Heater Tip popup.)" }],
-  ["g-60-90", { label: "Recommended Heaters for 60–90 Gallons", tip: "For 60–90 gal tanks, aim for ~300–500W total heating. Consider splitting across two smaller heaters for even coverage and redundancy. (Full placement/safety guidance is in the Heater Tip popup.)" }],
+  ["g-20-40", { label: "Recommended Heaters for 20–40 Gallons", tip: "For 20–40 gal tanks, aim for 100–200W. See the Heater tip for placement and safety guidance." }],
+  ["g-40-60", { label: "Recommended Heaters for 40–60 Gallons", tip: "For 40–60 gal tanks, aim for ~200–300W. The Heater tip covers placement and safety details." }],
+  ["g-60-90", { label: "Recommended Heaters for 60–90 Gallons", tip: "For 60–90 gal tanks, aim for ~300–500W total heating. Consider splitting across two smaller heaters for even coverage and redundancy (placement and safety details live in the Heater tip)." }],
   ["g-90-125", { label: "Recommended Heaters for 90–125 Gallons", tip: "For 90–125 gal tanks, aim for 500–800W total heating power. For large aquariums, use multiple heaters for balanced temperature and redundancy. (Full placement/safety details in the Heater Tip popup.)" }]
 ]);
 

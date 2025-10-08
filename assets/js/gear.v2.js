@@ -173,6 +173,17 @@
     return [gallons, liters, dimsIn, dimsCm].filter(Boolean).join(' • ') + weight;
   }
 
+  function buildSummaryLine(preset){
+    if (!preset) return '';
+    const gallons = Number.isFinite(preset.gallons) ? `${formatNumber(preset.gallons)} gal` : '';
+    const dims = [preset.lengthIn, preset.widthIn, preset.heightIn]
+      .map((value) => formatNumber(value))
+      .filter(Boolean)
+      .join(' × ');
+    const dimsText = dims ? `${dims} in` : '';
+    return [gallons, dimsText].filter(Boolean).join(' • ');
+  }
+
   function showTip(kind){
     const msg = TIPS[kind] || 'No tip available.';
     const wrap = el('div',{class:'tip-wrap',style:'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:120'});
@@ -205,16 +216,20 @@
   function renderAddonCard(addon = {}){
     if (!addon || addon.enabled === false) return null;
     const title = String(addon.title || '').trim();
+    if (!title) return null;
     const href = String(addon.amazonUrl || addon.href || '').trim();
-    if (!title || !href) return null;
     const notes = String(addon.notes || '').trim();
     const eyebrow = String(addon.eyebrow || 'Recommended add-on').trim() || 'Recommended add-on';
+    const hasValidHref = /^https?:\/\//i.test(href);
+    const cta = hasValidHref
+      ? `<a href=\"${escapeHTML(href)}\" target=\"_blank\" rel=\"sponsored noopener noreferrer\" class=\"btn\" aria-label=\"Buy ${escapeHTML(title)} on Amazon\">Buy on Amazon</a>`
+      : '<button class=\"btn\" type=\"button\" aria-disabled=\"true\" title=\"Link coming soon\">Buy on Amazon</button>';
     const card = el('div',{ class:'gear-addon' });
     card.innerHTML = `
-      <p class="gear-addon__eyebrow">${escapeHTML(eyebrow)}</p>
-      <h3 class="gear-addon__title">${escapeHTML(title)}</h3>
-      ${notes ? `<p class="gear-addon__notes">${escapeHTML(notes)}</p>` : ''}
-      <a href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" class="btn btn-sm" aria-label="Buy on Amazon – ${escapeHTML(title)}">Buy on Amazon</a>
+      <p class=\"gear-addon__eyebrow\">${escapeHTML(eyebrow)}</p>
+      <h3 class=\"gear-addon__title\">${escapeHTML(title)}</h3>
+      ${notes ? `<p class=\"gear-addon__notes\">${escapeHTML(notes)}</p>` : ''}
+      ${cta}
     `;
     return card;
   }
@@ -268,51 +283,11 @@
     const dimensionsLite = (option?.dimensionsLite || '').toString().trim();
     const rawContext = options.context ?? '';
     const context = String(rawContext).toLowerCase();
-    const normalizedContext = context.replace(/[^a-z0-9]/g, '');
-    const buttonLabel = options.buttonLabel || 'Buy on Amazon';
-    const hasHref = href.length > 0;
     const hasValidHref = /^https?:\/\//i.test(href);
-    if (context !== 'stands' && hasHref && !hasValidHref && typeof console !== 'undefined' && typeof console.warn === 'function') {
-      console.warn('[Gear] Skipping stand link without http(s):', href);
-    }
-    const standAria = `Buy on Amazon – ${escapeHTML(displayTitle)}`;
-    const isFilterContext = normalizedContext === 'filters';
-    const useSimpleButton = normalizedContext === 'substrate' || normalizedContext === 'maintenancetools';
-    const isWaterTreatments = normalizedContext === 'watertreatments' || normalizedContext === 'watertreatmentsfertilizers';
-    let disabledSimpleButtonHtml;
-    if (normalizedContext === 'substrate') {
-      disabledSimpleButtonHtml = `<button class="btn" type="button" aria-disabled="true" title="Link coming soon" disabled>${buttonLabel}</button>`;
-    } else if (normalizedContext === 'maintenancetools') {
-      disabledSimpleButtonHtml = `<button class="btn" aria-disabled="true" title="Link coming soon">${buttonLabel}</button>`;
-    } else if (isFilterContext) {
-      disabledSimpleButtonHtml = `<button class="btn" aria-disabled="true" title="Link coming soon">${buttonLabel}</button>`;
-    } else {
-      disabledSimpleButtonHtml = `<span class="btn btn-disabled" aria-disabled="true" role="button" tabindex="-1" title="Link coming soon">${buttonLabel}</span>`;
-    }
-    let actionsHtml = '';
-    if (hasValidHref) {
-      if (context === 'stands') {
-        actionsHtml = `<a class="btn btn-amazon buy-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="${standAria}">Buy on Amazon</a>`;
-      } else if (isFilterContext) {
-        actionsHtml = `<a class="btn" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`;
-      } else if (isWaterTreatments) {
-        actionsHtml = `<a class="btn" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`;
-      } else if (useSimpleButton) {
-        actionsHtml = `<a class="btn" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`;
-      } else {
-        actionsHtml = `<a class="btn btn-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`;
-      }
-    } else if (context === 'stands') {
-      actionsHtml = `<a class="btn btn-amazon buy-amazon disabled" aria-disabled="true" tabindex="-1">Buy on Amazon</a>`;
-    } else if (isWaterTreatments) {
-      actionsHtml = `<button class="btn" type="button" aria-disabled="true" title="Link coming soon">${buttonLabel}</button>`;
-    } else if (isFilterContext) {
-      actionsHtml = disabledSimpleButtonHtml;
-    } else if (useSimpleButton) {
-      actionsHtml = disabledSimpleButtonHtml;
-    } else {
-      actionsHtml = `<span class="muted">Add link</span>`;
-    }
+    const buyLabel = `Buy ${escapeHTML(displayTitle)} on Amazon`;
+    const actionsHtml = hasValidHref
+      ? `<a class=\"btn\" href=\"${escapeHTML(href)}\" target=\"_blank\" rel=\"sponsored noopener noreferrer\" aria-label=\"${buyLabel}\">Buy on Amazon</a>`
+      : '<button class=\"btn\" type=\"button\" aria-disabled=\"true\" title=\"Link coming soon\">Buy on Amazon</button>';
     row.innerHTML = `
       <div class="option__title">${headingHtml}</div>
       ${noteText ? `<p class="option__note">${escapeHTML(noteText)}</p>` : ''}
@@ -444,6 +419,7 @@
     const header = el('header',{
       class: headerClass || 'gear-card__header',
       'data-accordion':'toggle',
+      role:'button',
       tabindex:'0',
       'aria-controls': bodyId,
       'aria-expanded':'false'
@@ -505,18 +481,19 @@
     if (hasValidHref){
       actions.appendChild(
         el('a',{
-          class:'btn btn-amazon',
+          class:'btn',
           href:href,
           target:'_blank',
-          rel:'sponsored noopener noreferrer'
+          rel:'sponsored noopener noreferrer',
+          'aria-label':`Buy ${escapeHTML(title || 'this item')} on Amazon`
         },'Buy on Amazon')
       );
     } else {
       actions.appendChild(
-        el('span',{
-          class:'btn btn-disabled',
+        el('button',{
+          class:'btn',
+          type:'button',
           'aria-disabled':'true',
-          role:'button',
           title:'Link coming soon'
         },'Buy on Amazon')
       );
@@ -551,6 +528,7 @@
     const header = el('header',{
       class:'gear-card__header gear-subcard__header',
       'data-accordion':'toggle',
+      role:'button',
       tabindex:'0',
       'aria-controls': bodyId,
       'aria-expanded':'false'
@@ -836,6 +814,9 @@
       const controls = header.getAttribute('aria-controls');
       const body = controls ? document.getElementById(controls) : null;
       const chevron = header.querySelector('.chevron');
+      if (!header.getAttribute('role')) {
+        header.setAttribute('role', 'button');
+      }
 
       const setExpanded = (expanded, options = {}) => {
         const { animate = true } = options;
@@ -983,7 +964,10 @@
     const select = document.getElementById('gear-tank-size');
     const wrap = document.getElementById('gear-tank-select-wrap');
     const meta = document.getElementById('gear-tank-meta');
+    const summary = document.getElementById('tank-summary-value');
+    const defaultSummary = 'Select a tank size to see gallons and dimensions.';
     if (!select || !meta) return;
+    if (summary) summary.textContent = defaultSummary;
 
     const existingBlank = select.querySelector('option[value=""]');
     if (!existingBlank) {
@@ -1002,15 +986,26 @@
     });
     select.appendChild(fragment);
 
+    const updateSummary = (preset) => {
+      if (!summary) return;
+      if (!preset) {
+        summary.textContent = defaultSummary;
+        return;
+      }
+      summary.textContent = buildSummaryLine(preset) || defaultSummary;
+    };
+
     const setInfo = (preset) => {
       if (!preset) {
         meta.textContent = '';
         meta.hidden = true;
+        updateSummary(null);
         return;
       }
       meta.textContent = buildInfoLine(preset);
       meta.hidden = false;
       meta.setAttribute('role', 'note');
+      updateSummary(preset);
     };
 
     const persistSelection = (id) => {
@@ -1064,6 +1059,7 @@
     } else {
       select.value = '';
       setInfo(null);
+      updateSummary(null);
       applyHighlights();
     }
   }
@@ -1074,21 +1070,11 @@
     buildCategory('filters', document.getElementById('filters-body'));
     buildCategory('lights', document.getElementById('lights-body'));
     buildCategory('substrate', document.getElementById('substrate-body'));
-    buildCategory('water-treatments-fertilizers', document.getElementById('water-treatments-fertilizers-body'));
-    buildCategory('food', document.getElementById('food-body'));
-    buildCategory('maintenance-tools', document.getElementById('maintenance-tools-body'));
     buildCategory('stands', document.getElementById('stands-body'));
+    buildCategory('water-treatments-fertilizers', document.getElementById('water-treatments-fertilizers-body'));
+    buildCategory('maintenance-tools', document.getElementById('maintenance-tools-body'));
     wireAccordions();
     initTankSelect();
-    console.log("[Gear] Heaters g-5-10 options:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-5-10")?.options?.length || 0);
-    console.log("[Gear] Added heaters 10–20 range:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-10-20")?.options?.length || 0);
-    console.log("[Gear] Heaters g-40-60 options:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-40-60")?.options?.length || 0);
-    console.log("[Gear] Heaters g-60-90 options:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-60-90")?.options?.length || 0);
-    console.log("[Gear] Heaters g-90-125 options:", (GEAR.heaters?.ranges||[]).find(r=>r.id==="g-90-125")?.options?.length || 0);
-    console.log("[Gear] Heading language normalized to 'Recommended' for all categories.");
-    console.log("[Gear] Filters g-5-10 options:", (GEAR.filters?.ranges||[]).find(r=>r.id==="g-5-10")?.options?.length || 0);
-    console.log("[Gear] Filters g-10-20 options:", (GEAR.filters?.ranges||[]).find(r=>r.id==="g-10-20")?.options?.length || 0);
-    console.log("[Gear] Lights l-12-20 options:", (GEAR.lights?.ranges||[]).find(r=>r.id==="l-12-20")?.options?.length || 0);
   }
 
   if (typeof window !== 'undefined') {

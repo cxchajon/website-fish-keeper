@@ -1,0 +1,167 @@
+{
+  "missing_url": [
+    {
+      "file": "data/gear_filters.csv",
+      "row": 2,
+      "title": "Reusable Sponge Blocks (Cut-to-Fit) \u2014 Mechanical Stage",
+      "subgroup": "Filter Media"
+    },
+    {
+      "file": "data/gear_filters.csv",
+      "row": 3,
+      "title": "Poly Filter Floss Roll \u2014 Fine Mechanical Polishing",
+      "subgroup": "Filter Media"
+    },
+    {
+      "file": "data/gear_filters.csv",
+      "row": 4,
+      "title": "Ceramic Bio Rings / Sintered Media \u2014 Biological",
+      "subgroup": "Filter Media"
+    },
+    {
+      "file": "data/gear_filters.csv",
+      "row": 5,
+      "title": "Bio Balls \u2014 Biological Aerobic Media",
+      "subgroup": "Filter Media"
+    },
+    {
+      "file": "data/gear_filters.csv",
+      "row": 6,
+      "title": "Seachem Purigen \u2014 Chemical Polishing Resin",
+      "subgroup": "Filter Media"
+    },
+    {
+      "file": "data/gear_filters.csv",
+      "row": 7,
+      "title": "Activated Carbon \u2014 Chemical (Granular)",
+      "subgroup": "Filter Media"
+    },
+    {
+      "file": "data/gear_filters.csv",
+      "row": 8,
+      "title": "Phosphate Remover (GFO) \u2014 Chemical",
+      "subgroup": "Filter Media"
+    },
+    {
+      "file": "data/gear_substrate.csv",
+      "row": 12,
+      "title": "Seiryu Stone \u2013 Assorted Sizes",
+      "subgroup": "Stones & Wood"
+    },
+    {
+      "file": "data/gear_substrate.csv",
+      "row": 15,
+      "title": "Rock/Driftwood Soaking Tub",
+      "subgroup": "Stones & Wood"
+    },
+    {
+      "file": "data/gear_treatments.csv",
+      "row": 6,
+      "title": "Seachem Flourish Excel \u2014 Liquid Carbon Supplement",
+      "subgroup": "Fertilizers & Nutrients"
+    },
+    {
+      "file": "data/gear_maintenance.csv",
+      "row": 11,
+      "title": "CO\u2082 Ceramic Diffuser (Small, Nano\u201320G)",
+      "subgroup": "Air & Aeration"
+    },
+    {
+      "file": "data/gear_maintenance.csv",
+      "row": 12,
+      "title": "CO\u2082 Ceramic Diffuser (Large, 20\u201355G)",
+      "subgroup": "Air & Aeration"
+    },
+    {
+      "file": "data/gear_maintenance.csv",
+      "row": 13,
+      "title": "Inline CO\u2082 Atomizer (12/16 mm)",
+      "subgroup": "Air & Aeration"
+    },
+    {
+      "file": "data/gear_maintenance.csv",
+      "row": 14,
+      "title": "Inline CO\u2082 Atomizer (16/22 mm)",
+      "subgroup": "Air & Aeration"
+    },
+    {
+      "file": "data/gear_maintenance.csv",
+      "row": 15,
+      "title": "CO\u2082 Bubble Counter (with Check Valve)",
+      "subgroup": "Air & Aeration"
+    },
+    {
+      "file": "data/gear_maintenance.csv",
+      "row": 16,
+      "title": "CO\u2082-Rated Check Valves (2\u20134 pack)",
+      "subgroup": "Air & Aeration"
+    }
+  ],
+  "bad_domain": [],
+  "missing_tag": [],
+  "dup_titles": [
+    {
+      "file": "data/gear_heaters.csv",
+      "title": "AQQA Aquarium Heater 500W for 55\u2013130 Gallon Fish Tank Heater Quartz Glass Submersible Betta Fish Heater for Aquarium Thermostat Heater with External Digital Controller (AQ136-500W for 55\u2013130Gal)",
+      "subgroup": "__all__",
+      "count": 3,
+      "locations": [
+        {
+          "row": 13
+        },
+        {
+          "row": 14
+        },
+        {
+          "row": 19
+        }
+      ]
+    },
+    {
+      "file": "data/gear_heaters.csv",
+      "title": "hygger Aquarium Heater with Intelligent Temperature Controller, 500W for 66\u2013135 Gallon Submersible Fish Tank Heater with Leaving Water Automatically Stop Heating System, for Freshwater Saltwater",
+      "subgroup": "__all__",
+      "count": 2,
+      "locations": [
+        {
+          "row": 15
+        },
+        {
+          "row": 18
+        }
+      ]
+    },
+    {
+      "file": "data/gear_lighting.csv",
+      "title": "hygger Advanced Remote Control Aquarium Light Customizable Full Spectrum Fish Tank LED with DIY, Default & Weather Mode Freshwater Planted Tank",
+      "subgroup": "__all__",
+      "count": 3,
+      "locations": [
+        {
+          "row": 10
+        },
+        {
+          "row": 13
+        },
+        {
+          "row": 16
+        }
+      ]
+    },
+    {
+      "file": "data/gear_lighting.csv",
+      "title": "hygger 20W Full Spectrum Aquarium Light with Aluminum Alloy Shell Extendable Brackets, White Blue Red LEDs, External Controller, for Freshwater Fish Tank (30-36 inch)",
+      "subgroup": "__all__",
+      "count": 2,
+      "locations": [
+        {
+          "row": 11
+        },
+        {
+          "row": 12
+        }
+      ]
+    }
+  ],
+  "fixed_urls": []
+}

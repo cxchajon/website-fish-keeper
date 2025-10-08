@@ -16,9 +16,11 @@
   <link rel="stylesheet" href="/assets/css/gear.v2.css">
   <style>
     .affiliate-disclaimer {
-      margin: 1rem 0;
+      margin: 1.25rem auto 0;
       font-size: 0.9em;
       color: #c8d0da;
+      max-width: min(960px, 100%);
+      padding: 0 16px;
     }
   </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
@@ -26,6 +28,11 @@
 <body class="theme-dark">
   <div id="site-nav"></div>
   <main id="gear-page" class="gear-page" aria-labelledby="gear-title">
+    <aside id="tank-summary" class="tank-summary" aria-live="polite" role="status">
+      <span class="tank-summary__label">Tank info</span>
+      <span id="tank-summary-value" class="tank-summary__value">Select a tank size to see gallons and dimensions.</span>
+    </aside>
+
     <section id="tank-ref" class="tank-ref" aria-label="Tank reference">
       <div class="card card--tank">
         <h1 id="gear-title" class="card-title">Tank Gear Guide</h1>
@@ -51,71 +58,63 @@
 
     <div class="gear-shell">
       <section class="gear-card" data-gear="heaters">
-        <header class="gear-card__header" data-accordion="toggle" tabindex="0" aria-controls="heaters-body" aria-expanded="false">
+        <header class="gear-card__header" data-accordion="toggle" role="button" tabindex="0" aria-controls="heaters-body" aria-expanded="false">
           <h2>Heaters</h2>
-          <button class="info-btn" type="button" aria-label="Heater tip" data-tip="heaters">i</button>
+          <button class="info-btn" type="button" aria-label="Heater tip" aria-haspopup="dialog" data-tip="heaters">i</button>
           <span class="chevron" aria-hidden="true">▸</span>
         </header>
         <div id="heaters-body" class="gear-card__body" hidden></div>
       </section>
 
       <section class="gear-card" data-gear="filters">
-        <header class="gear-card__header" data-accordion="toggle" tabindex="0" aria-controls="filters-body" aria-expanded="false">
+        <header class="gear-card__header" data-accordion="toggle" role="button" tabindex="0" aria-controls="filters-body" aria-expanded="false">
           <h2>Filters</h2>
-          <button class="info-btn" type="button" aria-label="Filter tip" data-tip="filters">i</button>
+          <button class="info-btn" type="button" aria-label="Filter tip" aria-haspopup="dialog" data-tip="filters">i</button>
           <span class="chevron" aria-hidden="true">▸</span>
         </header>
         <div id="filters-body" class="gear-card__body" hidden></div>
       </section>
 
       <section class="gear-card" data-gear="lights">
-        <header class="gear-card__header" data-accordion="toggle" tabindex="0" aria-controls="lights-body" aria-expanded="false">
+        <header class="gear-card__header" data-accordion="toggle" role="button" tabindex="0" aria-controls="lights-body" aria-expanded="false">
           <h2>Lights</h2>
-          <button class="info-btn" type="button" aria-label="Light tip" data-tip="lights">i</button>
+          <button class="info-btn" type="button" aria-label="Light tip" aria-haspopup="dialog" data-tip="lights">i</button>
           <span class="chevron" aria-hidden="true">▸</span>
         </header>
         <div id="lights-body" class="gear-card__body" hidden></div>
       </section>
 
       <section class="gear-card" data-gear="substrate">
-        <header class="gear-card__header" data-accordion="toggle" tabindex="0" aria-controls="substrate-body" aria-expanded="false">
+        <header class="gear-card__header" data-accordion="toggle" role="button" tabindex="0" aria-controls="substrate-body" aria-expanded="false">
           <h2>Substrate &amp; Aquascaping</h2>
-          <button class="info-btn" type="button" aria-label="Substrate and aquascaping tip" data-tip="substrate">i</button>
+          <button class="info-btn" type="button" aria-label="Substrate and aquascaping tip" aria-haspopup="dialog" data-tip="substrate">i</button>
           <span class="chevron" aria-hidden="true">▸</span>
         </header>
         <div id="substrate-body" class="gear-card__body" hidden></div>
       </section>
       <section class="gear-card" data-gear="stands">
-        <header class="gear-card__header" data-accordion="toggle" tabindex="0" aria-controls="stands-body" aria-expanded="false">
+        <header class="gear-card__header" data-accordion="toggle" role="button" tabindex="0" aria-controls="stands-body" aria-expanded="false">
           <h2>Stands &amp; Cabinets</h2>
-          <button class="info-btn" type="button" aria-label="Stand sizing tip" data-tip="stands">i</button>
+          <button class="info-btn" type="button" aria-label="Stand sizing tip" aria-haspopup="dialog" data-tip="stands">i</button>
           <span class="chevron" aria-hidden="true">▸</span>
         </header>
         <div id="stands-body" class="gear-card__body" hidden></div>
       </section>
       <section class="gear-card" data-gear="water-treatments-fertilizers">
-        <header class="gear-card__header" data-accordion="toggle" tabindex="0" aria-controls="water-treatments-fertilizers-body" aria-expanded="false">
+        <header class="gear-card__header" data-accordion="toggle" role="button" tabindex="0" aria-controls="water-treatments-fertilizers-body" aria-expanded="false">
           <h2>Water Treatments &amp; Fertilizers</h2>
-          <button class="info-btn" type="button" aria-label="Water treatments and fertilizers tip" data-tip="water-treatments-fertilizers">i</button>
+          <button class="info-btn" type="button" aria-label="Water treatments and fertilizers tip" aria-haspopup="dialog" data-tip="water-treatments-fertilizers">i</button>
           <span class="chevron" aria-hidden="true">▸</span>
         </header>
         <div id="water-treatments-fertilizers-body" class="gear-card__body" hidden></div>
       </section>
       <section class="gear-card" data-gear="maintenance-tools">
-        <header class="gear-card__header" data-accordion="toggle" tabindex="0" aria-controls="maintenance-tools-body" aria-expanded="false">
+        <header class="gear-card__header" data-accordion="toggle" role="button" tabindex="0" aria-controls="maintenance-tools-body" aria-expanded="false">
           <h2>Maintenance &amp; Tools</h2>
-          <button class="info-btn" type="button" aria-label="Maintenance and tools tip" data-tip="maintenance-tools">i</button>
+          <button class="info-btn" type="button" aria-label="Maintenance and tools tip" aria-haspopup="dialog" data-tip="maintenance-tools">i</button>
           <span class="chevron" aria-hidden="true">▸</span>
         </header>
         <div id="maintenance-tools-body" class="gear-card__body" hidden></div>
-      </section>
-      <section class="gear-card" data-gear="food">
-        <header class="gear-card__header" data-accordion="toggle" tabindex="0" aria-controls="food-body" aria-expanded="false">
-          <h2>Recommended Foods</h2>
-          <button class="info-btn" type="button" aria-label="Food tip" data-tip="food">i</button>
-          <span class="chevron" aria-hidden="true">▸</span>
-        </header>
-        <div id="food-body" class="gear-card__body" hidden></div>
       </section>
     </div>
   </main>
