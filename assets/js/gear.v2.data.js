@@ -34,13 +34,8 @@ const TIPS = {
   For <strong>long tanks</strong>, consider two fixtures or one high-output unit to ensure even coverage end to end.<br>
   For <strong>tall tanks</strong>, look for higher lumen or PAR ratings since light intensity drops quickly with depth — especially if you’re keeping rooted or carpet plants.
 `,
-  substrate: `
-  <strong>What Is a Dirt Cap?</strong><br>
-  A <strong>dirt cap</strong> is a protective top layer — typically gravel or sand — placed over nutrient-rich soil in planted tanks.<br>
-  It keeps organic material in place, prevents clouding, and stops fish from disturbing the base soil.<br>
-  Caps also improve appearance and create a natural gradient between planted and open areas.<br>
-  Typical thickness: <strong>1–2 inches</strong> of gravel or sand above the soil layer.
-`,
+  substrate:
+    'Planted tanks do best with nutrient-rich soils. Unplanted/community tanks often prefer inert gravel or sand. For décor: rinse stones thoroughly; test for carbonate fizz if you keep soft-water species. Pre-soak driftwood to reduce tannins and weigh down until waterlogged.',
   'water-treatments': `
   Dose for <strong>total tank volume</strong>, not just replacement water.<br>
   Avoid mixing brands of cycle boosters at once.<br>
@@ -129,6 +124,13 @@ const MAINTENANCE_GROUP_META = new Map([
       intro:
         'Keep your workspace clean and safe. Use microfiber towels, paper towels, and a distilled water + vinegar mix for exterior glass. Avoid harsh household cleaners near your tank. Dedicate buckets and tools to aquarium use only.'
     }
+  ],
+  [
+    'maintenance_air',
+    {
+      intro:
+        'Use a check valve on every airline to prevent back-siphon. Size your pump to the devices you’ll run (sponge filters, airstones). Consider a battery backup or UPS for outages.'
+    }
   ]
 ]);
 
@@ -153,7 +155,8 @@ const CATEGORY_ALIASES = new Map([
 
 const GROUP_ALIAS_LOOKUP = new Map([
   ['maintenance_tools::testing & monitoring', { id: 'maintenance-testing', label: 'Testing & Monitoring' }],
-  ['maintenance_tools::cleanup & extras', { id: 'maintenance_cleanup_extras', label: 'Cleanup & Extras' }]
+  ['maintenance_tools::cleanup & extras', { id: 'maintenance_cleanup_extras', label: 'Cleanup & Extras' }],
+  ['maintenance_tools::air & aeration', { id: 'maintenance_air', label: 'Air & Aeration' }]
 ]);
 
 function normalizeCategoryKey(value) {
