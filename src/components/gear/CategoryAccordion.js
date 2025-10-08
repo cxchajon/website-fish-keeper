@@ -61,13 +61,15 @@ function normaliseLight(item) {
 }
 
 function createLightingPanel(bucket, context, onSelect, onAdd) {
-  const baseId = `lights-${bucket.id}`;
+  const bucketId = bucket.bucket_id ?? bucket.id;
+  const bucketLabel = bucket.bucket_label ?? bucket.label ?? '';
+  const baseId = `lights-${bucketId}`;
   const triggerId = `${baseId}-trigger`;
   const panelId = `${baseId}-panel`;
-  const anchorId = `lights-length-${bucket.id}`;
+  const anchorId = `lights-length-${bucketId}`;
   const wrapper = createElement('div', {
     className: 'lighting-group category-panel lighting-length__item',
-    attrs: { 'data-range-id': bucket.id, id: anchorId },
+    attrs: { 'data-range-id': bucketId, id: anchorId },
   });
 
   const trigger = createElement(
@@ -82,10 +84,15 @@ function createLightingPanel(bucket, context, onSelect, onAdd) {
       },
     },
     [
-      createElement('span', { className: 'lighting-length__label', text: bucket.label }),
+      createElement('span', { className: 'lighting-length__label', text: bucketLabel }),
       createElement('span', {
         className: 'lighting-length__count',
         text: `${bucket.items.length} ${bucket.items.length === 1 ? 'pick' : 'picks'}`,
+      }),
+      createElement('span', {
+        className: 'lighting-length__icon',
+        attrs: { 'aria-hidden': 'true' },
+        text: '▸',
       }),
     ],
   );
@@ -122,10 +129,18 @@ function createLightingPanel(bucket, context, onSelect, onAdd) {
       panel.setAttribute('hidden', '');
       panel.setAttribute('aria-hidden', 'true');
       wrapper.classList?.remove('is-open');
+      const icon = trigger.querySelector('.lighting-length__icon');
+      if (icon) {
+        icon.textContent = '▸';
+      }
     } else {
       panel.removeAttribute('hidden');
       panel.setAttribute('aria-hidden', 'false');
       wrapper.classList?.add('is-open');
+      const icon = trigger.querySelector('.lighting-length__icon');
+      if (icon) {
+        icon.textContent = '▾';
+      }
     }
   });
 
@@ -139,7 +154,7 @@ function createLightingSection(options) {
   const normalizedLights = items.map((item) => normaliseLight(item));
   const buckets = bucketizeByLength(normalizedLights).filter((bucket) => bucket.items.length > 0);
 
-  const stack = createElement('div', { className: 'lighting-length lighting-groups' });
+  const stack = createElement('div', { className: 'lighting-length' });
   if (buckets.length) {
     buckets.forEach((bucket) => {
       stack.appendChild(createLightingPanel(bucket, context, onSelect, onAdd));
