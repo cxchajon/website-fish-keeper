@@ -15,8 +15,7 @@ const FILTER_BUCKETS = [
   { id: "g_20_40", label: "20–40 Gallons", min: 20, max: 40, sort: 40 },
   { id: "g_40_55", label: "40–55 Gallons", min: 40, max: 55, sort: 55 },
   { id: "g_55_75", label: "55–75 Gallons", min: 55, max: 75, sort: 75 },
-  { id: "g_75_125", label: "75–125 Gallons", min: 75, max: 125, sort: 125 },
-  { id: "g_125p", label: "125+ Gallons", min: 125, max: 999, sort: 999 }
+  { id: "g_75_125", label: "75–125 Gallons", min: 75, max: 125, sort: 125 }
 ];
 
 const RANGES_FILTERS = FILTER_BUCKETS.map((bucket) => ({
@@ -146,8 +145,7 @@ const FILTER_RANGE_META = new Map([
   ["g_20_40", { label: "Recommended Filters for 20–40 Gallons", tip: "" }],
   ["g_40_55", { label: "Recommended Filters for 40–55 Gallons", tip: "" }],
   ["g_55_75", { label: "Recommended Filters for 55–75 Gallons", tip: "" }],
-  ["g_75_125", { label: "Recommended Filters for 75–125 Gallons", tip: "" }],
-  ["g_125p", { label: "Recommended Filters for 125+ Gallons", tip: "" }]
+  ["g_75_125", { label: "Recommended Filters for 75–125 Gallons", tip: "" }]
 ]);
 
 const FILTER_GROUP_META = new Map([
@@ -205,19 +203,7 @@ const FILTER_BUCKET_ALIASES = new Map([
   ['g_90_125', 'g_75_125'],
   ['90-125', 'g_75_125'],
   ['90_125', 'g_75_125'],
-  ['gump_75_125', 'g_75_125'],
-  ['g125+', 'g_125p'],
-  ['g-125+', 'g_125p'],
-  ['125+', 'g_125p'],
-  ['125p', 'g_125p'],
-  ['g_125_plus', 'g_125p'],
-  ['g-125-150', 'g_125p'],
-  ['g_125_150', 'g_125p'],
-  ['g_125_200', 'g_125p'],
-  ['g_125_175', 'g_125p'],
-  ['gump_125', 'g_125p'],
-  ['gump_125p', 'g_125p'],
-  ['g_125p_01', 'g_125p']
+  ['gump_75_125', 'g_75_125']
 ]);
 
 const LIGHT_RANGE_META = new Map([
@@ -526,7 +512,7 @@ function normalizeFilterBucketKey(value) {
   if (match) {
     const [, min, max, plus] = match;
     if (plus || (!max && (key.includes('125') || key.includes('150') || key.endsWith('p') || key.includes('plus')))) {
-      return 'g_125p';
+      return "";
     }
     if (min && max) {
       const candidate = `g_${min}_${max}`;
@@ -536,7 +522,7 @@ function normalizeFilterBucketKey(value) {
   }
 
   if (key === 'g_125p') {
-    return 'g_125p';
+    return "";
   }
 
   return "";

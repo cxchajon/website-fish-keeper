@@ -77,14 +77,19 @@
       .toLowerCase();
   }
 
+  function shouldSkipFilterBucket(value){
+    const normalized = normalizeBucketId(value);
+    if (!normalized) return false;
+    return /(125p|125\+|125_plus)/.test(normalized);
+  }
+
   const FILTER_BUCKETS = [
     { key: '5-10', label: 'Recommended Filters for 5–10 Gallons', id: 'g_5_10', min: 5, max: 10, sort: 10 },
     { key: '10-20', label: 'Recommended Filters for 10–20 Gallons', id: 'g_10_20', min: 10, max: 20, sort: 20 },
     { key: '20-40', label: 'Recommended Filters for 20–40 Gallons', id: 'g_20_40', min: 20, max: 40, sort: 40 },
     { key: '40-55', label: 'Recommended Filters for 40–55 Gallons', id: 'g_40_55', min: 40, max: 55, sort: 55 },
     { key: '55-75', label: 'Recommended Filters for 55–75 Gallons', id: 'g_55_75', min: 55, max: 75, sort: 75 },
-    { key: '75-125', label: 'Recommended Filters for 75–125 Gallons', id: 'g_75_125', min: 75, max: 125, sort: 125 },
-    { key: '125+', label: 'Recommended Filters for 125+ Gallons', id: 'g_125p', min: 125, max: 999, sort: 999 }
+    { key: '75-125', label: 'Recommended Filters for 75–125 Gallons', id: 'g_75_125', min: 75, max: 125, sort: 125 }
   ];
 
   function normalizeFilterValue(value){
@@ -359,11 +364,17 @@
     const extraKeys = new Set([...primaryMap.keys(), ...fallbackMap.keys()]);
     extraKeys.forEach((key) => {
       if (used.has(key)) return;
+      if (shouldSkipFilterBucket(key)) {
+        return;
+      }
       const source = primaryMap.get(key) || fallbackMap.get(key);
       if (!source) return;
       const options = Array.isArray(source.options) ? source.options : [];
       const placeholder = options.length ? source.placeholder || '' : source.placeholder || 'No items yet.';
       const resolvedKey = source.key || source.bucketKey || source.id || '';
+      if (shouldSkipFilterBucket(resolvedKey)) {
+        return;
+      }
       merged.push({
         ...source,
         options,
