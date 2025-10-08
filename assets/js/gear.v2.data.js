@@ -95,7 +95,7 @@ const FILTER_GROUP_META = new Map([
       id: 'filters_media',
       label: 'Filter Media',
       intro:
-        'Stack media from mechanical → biological → chemical (flow direction). Rinse sponges/floss in tank water, never tap. Never replace all bio media at once to preserve bacteria.'
+        'Stack media in flow order: mechanical → biological → chemical. Rinse sponges/floss in tank water, not tap. Never replace all bio media at once. Remove carbon when medicating.'
     }
   ]
 ]);
