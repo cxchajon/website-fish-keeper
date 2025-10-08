@@ -10,3 +10,9 @@ Next: Run “Codex Pre-Flight” to verify integrity.
 Scope: Initial handshake between ChatGPT and Codex established.
 Result: All sync files verified.
 Next: Enable auto-logging on next task.
+
+Snapshot Cleanup — 2025-10-08 14:08:01Z
+
+Removed obsolete diffs:
+
+• None

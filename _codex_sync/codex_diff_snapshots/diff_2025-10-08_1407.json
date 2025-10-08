@@ -1,0 +1,152 @@
+{
+  "generated_at": "2025-10-08T14:07:54Z",
+  "previous_snapshot": "sync_20251008T140004Z.json",
+  "entry_count": 12,
+  "differences_detected": 12,
+  "entries": [
+    {
+      "path": "index.html",
+      "description": "Homepage entry",
+      "exists": true,
+      "is_directory": false,
+      "last_modified": "2025-10-08T12:58:22Z",
+      "size_bytes": 28608,
+      "differs_from_previous": true,
+      "diff_reasons": [
+        "timestamp_changed"
+      ]
+    },
+    {
+      "path": "gear/index.html",
+      "description": "Gear recommendations",
+      "exists": true,
+      "is_directory": false,
+      "last_modified": "2025-10-08T12:58:22Z",
+      "size_bytes": 7526,
+      "differs_from_previous": true,
+      "diff_reasons": [
+        "timestamp_changed"
+      ]
+    },
+    {
+      "path": "stocking.html",
+      "description": "Stocking Advisor",
+      "exists": true,
+      "is_directory": false,
+      "last_modified": "2025-10-08T12:58:22Z",
+      "size_bytes": 43999,
+      "differs_from_previous": true,
+      "diff_reasons": [
+        "timestamp_changed"
+      ]
+    },
+    {
+      "path": "params.html",
+      "description": "Cycling Coach",
+      "exists": true,
+      "is_directory": false,
+      "last_modified": "2025-10-08T12:58:22Z",
+      "size_bytes": 30341,
+      "differs_from_previous": true,
+      "diff_reasons": [
+        "timestamp_changed"
+      ]
+    },
+    {
+      "path": "media.html",
+      "description": "Media hub",
+      "exists": true,
+      "is_directory": false,
+      "last_modified": "2025-10-08T12:58:22Z",
+      "size_bytes": 25407,
+      "differs_from_previous": true,
+      "diff_reasons": [
+        "timestamp_changed"
+      ]
+    },
+    {
+      "path": "feature-your-tank.html",
+      "description": "Community submission form",
+      "exists": true,
+      "is_directory": false,
+      "last_modified": "2025-10-08T12:58:22Z",
+      "size_bytes": 40579,
+      "differs_from_previous": true,
+      "diff_reasons": [
+        "timestamp_changed"
+      ]
+    },
+    {
+      "path": "about.html",
+      "description": "About & mission",
+      "exists": true,
+      "is_directory": false,
+      "last_modified": "2025-10-08T12:58:22Z",
+      "size_bytes": 25336,
+      "differs_from_previous": true,
+      "diff_reasons": [
+        "timestamp_changed"
+      ]
+    },
+    {
+      "path": "contact-feedback.html",
+      "description": "Contact & feedback form",
+      "exists": true,
+      "is_directory": false,
+      "last_modified": "2025-10-08T12:58:22Z",
+      "size_bytes": 24631,
+      "differs_from_previous": true,
+      "diff_reasons": [
+        "timestamp_changed"
+      ]
+    },
+    {
+      "path": "assets/js/",
+      "description": "Scripts (nav, consent, app logic)",
+      "exists": true,
+      "is_directory": true,
+      "last_modified": "2025-10-08T14:06:50Z",
+      "size_bytes": 4096,
+      "differs_from_previous": true,
+      "diff_reasons": [
+        "no_previous_snapshot"
+      ]
+    },
+    {
+      "path": "assets/css/",
+      "description": "Stylesheets and responsive design",
+      "exists": true,
+      "is_directory": true,
+      "last_modified": "2025-10-08T12:58:22Z",
+      "size_bytes": 4096,
+      "differs_from_previous": true,
+      "diff_reasons": [
+        "no_previous_snapshot"
+      ]
+    },
+    {
+      "path": "sitemap.xml",
+      "description": "SEO and crawl manifest",
+      "exists": true,
+      "is_directory": false,
+      "last_modified": "2025-10-08T12:58:22Z",
+      "size_bytes": 1475,
+      "differs_from_previous": true,
+      "diff_reasons": [
+        "no_previous_snapshot"
+      ]
+    },
+    {
+      "path": "robots.txt",
+      "description": "Crawler rules",
+      "exists": true,
+      "is_directory": false,
+      "last_modified": "2025-10-08T12:58:22Z",
+      "size_bytes": 69,
+      "differs_from_previous": true,
+      "diff_reasons": [
+        "no_previous_snapshot"
+      ]
+    }
+  ]
+}
