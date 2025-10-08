@@ -39,12 +39,14 @@ const TIPS = {
   'water-treatments': `
   Use water conditioners to remove chlorine/chloramine before adding fish.<br>
   Bacteria starters jumpstart your cycle.<br>
-  Fertilizers support plant growth—dose based on lighting, plant type, and water changes.
+  Fertilizers support plant growth—dose based on lighting, plant type, and water changes.<br>
+  For liquid carbon (e.g., Excel), start with reduced dosing and watch for sensitive species like Vallisneria.
 `,
   'water-treatments-fertilizers': `
   Use water conditioners to remove chlorine/chloramine before adding fish.<br>
   Bacteria starters jumpstart your cycle.<br>
-  Fertilizers support plant growth—dose based on lighting, plant type, and water changes.
+  Fertilizers support plant growth—dose based on lighting, plant type, and water changes.<br>
+  For liquid carbon (e.g., Excel), start with reduced dosing and watch for sensitive species like Vallisneria.
 `,
   food: `
   Rotate 2–3 foods; feed only what’s eaten within ~30–60 seconds.<br>
@@ -84,6 +86,18 @@ const FILTER_RANGE_META = new Map([
   ["g-40-60", { label: "Recommended Filters for 40–60 Gallons", tip: "" }],
   ["g-60-90", { label: "Recommended Filters for 60–90 Gallons", tip: "" }],
   ["g-90-125", { label: "Recommended Filters for 90–125 Gallons", tip: "" }]
+]);
+
+const FILTER_GROUP_META = new Map([
+  [
+    'filters-filter-media',
+    {
+      id: 'filters_media',
+      label: 'Filter Media',
+      intro:
+        'Stack media from mechanical → biological → chemical (flow direction). Rinse sponges/floss in tank water, never tap. Never replace all bio media at once to preserve bacteria.'
+    }
+  ]
 ]);
 
 const LIGHT_RANGE_META = new Map([
@@ -211,6 +225,7 @@ function slugifyKey(value) {
 
 const CSV_SOURCES = [
   { path: "/data/gear_heaters.csv", category: "heaters" },
+  { path: "/data/gear_filters_ranges.csv", category: "filters" },
   { path: "/data/gear_filters.csv", category: "filters" },
   { path: "/data/gear_lighting.csv", category: "lights" },
   { path: "/data/gear_substrate.csv", category: "substrate" },
@@ -529,9 +544,11 @@ function buildGroups(items, tipsMap, category, metaMap) {
     const id = item.groupId || item.rangeId || `${category}-group`;
     const staticMeta = metaMap?.get(id) || {};
     if (!map.has(id)) {
+      const finalId = staticMeta.id || id;
       const tip = tipsMap?.get(id) || item.groupTip || staticMeta.tip || "";
       map.set(id, {
-        id,
+        id: finalId,
+        originalId: id,
         label: item.groupLabel || staticMeta.label || id,
         tip,
         intro: staticMeta.intro || "",
@@ -803,6 +820,16 @@ function getItemsByCategory(normalized, category) {
 function buildGear(normalized, standsItems = []) {
   const heaters = getItemsByCategory(normalized, 'heaters');
   const filters = getItemsByCategory(normalized, 'filters');
+  const filterMediaItems = filters.filter((item) =>
+    String(item.subgroup || '')
+      .toLowerCase()
+      .trim() === 'filter media'
+  );
+  const filterRangeItems = filters.filter((item) => {
+    const subgroup = String(item.subgroup || '').toLowerCase().trim();
+    if (subgroup === 'filter media') return false;
+    return Boolean((item.rangeId || '').trim());
+  });
   const lights = getItemsByCategory(normalized, 'lights');
   const substrate = getItemsByCategory(normalized, 'substrate');
   const waterTreatments = getItemsByCategory(normalized, 'water_treatments');
@@ -820,7 +847,8 @@ function buildGear(normalized, standsItems = []) {
     },
     filters: {
       match: 'gallons',
-      ranges: buildRange(RANGES_FILTERS, FILTER_RANGE_META, filters, 'filters')
+      ranges: buildRange(RANGES_FILTERS, FILTER_RANGE_META, filterRangeItems, 'filters'),
+      accordions: buildGroups(filterMediaItems, undefined, 'filters', FILTER_GROUP_META)
     },
     lights: {
       match: 'length',
