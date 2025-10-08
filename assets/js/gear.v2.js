@@ -586,6 +586,19 @@
       const extrasGroups = Array.isArray(GEAR.extras?.accordions)
         ? GEAR.extras.accordions.filter(Boolean)
         : [];
+      const hasCleanupExtrasGroup = maintenanceGroups.some((group) => {
+        const id = String(group?.id || '').trim().toLowerCase();
+        if (id === 'maintenance_cleanup_extras') return true;
+        const normalizedLabel = String(group?.label || '')
+          .toLowerCase()
+          .replace(/&/g, 'and')
+          .replace(/\s+/g, ' ')
+          .trim();
+        return normalizedLabel === 'cleanup and extras';
+      });
+      if (hasCleanupExtrasGroup) {
+        extrasGroups.length = 0;
+      }
       const combined = [];
       let extrasInserted = false;
       const normalizeLabel = (value) =>
