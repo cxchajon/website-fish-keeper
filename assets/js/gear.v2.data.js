@@ -122,6 +122,16 @@ const MAINTENANCE_GROUP_TIPS = new Map([
   ["maintenance-safety", "Use GFCI protection and surge-protected strips to keep your aquarium gear safe. Always create drip loops on cords, label plugs for quick shutoff, and keep outlets above water level."]
 ]);
 
+const MAINTENANCE_GROUP_META = new Map([
+  [
+    'maintenance_cleanup_extras',
+    {
+      intro:
+        'Keep your workspace clean and safe. Use microfiber towels, paper towels, and a distilled water + vinegar mix for exterior glass. Avoid harsh household cleaners near your tank. Dedicate buckets and tools to aquarium use only.'
+    }
+  ]
+]);
+
 const EXTRAS_INTRO =
   'Handy everyday supplies to keep your setup tidy and maintenance smooth. These are optional, but convenient.';
 
@@ -142,7 +152,8 @@ const CATEGORY_ALIASES = new Map([
 ]);
 
 const GROUP_ALIAS_LOOKUP = new Map([
-  ['maintenance_tools::testing & monitoring', { id: 'maintenance-testing', label: 'Testing & Monitoring' }]
+  ['maintenance_tools::testing & monitoring', { id: 'maintenance-testing', label: 'Testing & Monitoring' }],
+  ['maintenance_tools::cleanup & extras', { id: 'maintenance_cleanup_extras', label: 'Cleanup & Extras' }]
 ]);
 
 function normalizeCategoryKey(value) {
@@ -472,25 +483,48 @@ function buildRange(collection, metaMap, items, category) {
   });
 }
 
-function buildGroups(items, tipsMap, category) {
+function buildGroups(items, tipsMap, category, metaMap) {
   const order = [];
   const map = new Map();
   items.forEach((item) => {
     const id = item.groupId || item.rangeId || `${category}-group`;
+    const staticMeta = metaMap?.get(id) || {};
     if (!map.has(id)) {
-      const tip = tipsMap?.get(id) || item.groupTip || "";
+      const tip = tipsMap?.get(id) || item.groupTip || staticMeta.tip || "";
       map.set(id, {
         id,
-        label: item.groupLabel || id,
+        label: item.groupLabel || staticMeta.label || id,
         tip,
+        intro: staticMeta.intro || "",
+        infoButtonKey: staticMeta.infoButtonKey || "",
+        infoButtonLabel: staticMeta.infoButtonLabel || "",
+        infoButtonText: staticMeta.infoButtonText || "",
         options: []
       });
       order.push(id);
     }
     const group = map.get(id);
+    if (!group.label && staticMeta.label) {
+      group.label = staticMeta.label;
+    }
     if (item.groupLabel) group.label = item.groupLabel;
     if (item.groupTip) group.tip = item.groupTip;
     if (tipsMap?.get(id)) group.tip = tipsMap.get(id);
+    if (!group.tip && staticMeta.tip) {
+      group.tip = staticMeta.tip;
+    }
+    if (!group.intro && staticMeta.intro) {
+      group.intro = staticMeta.intro;
+    }
+    if (!group.infoButtonKey && staticMeta.infoButtonKey) {
+      group.infoButtonKey = staticMeta.infoButtonKey;
+    }
+    if (!group.infoButtonLabel && staticMeta.infoButtonLabel) {
+      group.infoButtonLabel = staticMeta.infoButtonLabel;
+    }
+    if (!group.infoButtonText && staticMeta.infoButtonText) {
+      group.infoButtonText = staticMeta.infoButtonText;
+    }
     group.options.push(ensureOptionDefaults(item, group.options.length, category, id));
   });
   return order.map((id) => map.get(id));
@@ -732,7 +766,7 @@ function buildGear(normalized, standsItems = []) {
     maintenanceTools: {
       match: 'none',
       intro: MAINTENANCE_INTRO,
-      accordions: buildGroups(maintenance, MAINTENANCE_GROUP_TIPS, 'maintenance_tools')
+      accordions: buildGroups(maintenance, MAINTENANCE_GROUP_TIPS, 'maintenance_tools', MAINTENANCE_GROUP_META)
     },
     extras: {
       match: 'none',
