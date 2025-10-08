@@ -1181,6 +1181,7 @@
     buildCategory('lights', document.getElementById('lights-body'));
     buildCategory('substrate', document.getElementById('substrate-body'));
     buildCategory('stands', document.getElementById('stands-body'));
+    buildCategory('food', document.getElementById('food-body'));
     buildCategory('water-treatments-fertilizers', document.getElementById('water-treatments-fertilizers-body'));
     buildCategory('maintenance-tools', document.getElementById('maintenance-tools-body'));
     wireAccordions();
