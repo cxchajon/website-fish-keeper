@@ -37,9 +37,14 @@ const TIPS = {
   substrate:
     'Planted tanks do best with nutrient-rich soils. Unplanted/community tanks often prefer inert gravel or sand. For décor: rinse stones thoroughly; test for carbonate fizz if you keep soft-water species. Pre-soak driftwood to reduce tannins and weigh down until waterlogged.',
   'water-treatments': `
-  Dose for <strong>total tank volume</strong>, not just replacement water.<br>
-  Avoid mixing brands of cycle boosters at once.<br>
-  If your city uses chloramine, choose a conditioner that binds ammonia.
+  Use water conditioners to remove chlorine/chloramine before adding fish.<br>
+  Bacteria starters jumpstart your cycle.<br>
+  Fertilizers support plant growth—dose based on lighting, plant type, and water changes.
+`,
+  'water-treatments-fertilizers': `
+  Use water conditioners to remove chlorine/chloramine before adding fish.<br>
+  Bacteria starters jumpstart your cycle.<br>
+  Fertilizers support plant growth—dose based on lighting, plant type, and water changes.
 `,
   food: `
   Rotate 2–3 foods; feed only what’s eaten within ~30–60 seconds.<br>
@@ -100,7 +105,10 @@ const HEATERS_ADDON = {
 };
 
 const WATER_TREATMENT_TIPS = new Map([
-  ["wt-core", "Conditioners and bacterial starters help make tap water safe and maintain tank stability. Always dose for total tank volume, not just refill water."]
+  [
+    "wt-core",
+    "Conditioners, beneficial bacteria, and fertilizers each play a role: detoxify tap water, seed your biofilter, and feed your plants."
+  ]
 ]);
 
 const FOOD_INTRO = "A balanced rotation keeps fish vibrant and healthy. Combine a daily staple with a protein treat and a veggie/algae option. Feed only what’s eaten within 30–60 seconds to maintain good water quality.";
@@ -165,7 +173,9 @@ const CATEGORY_ALIASES = new Map([
   ['substrate & aquascaping', 'substrate'],
   ['maintenance & tools', 'maintenance_tools'],
   ['maintenance tools', 'maintenance_tools'],
-  ['maintenance-tools', 'maintenance_tools']
+  ['maintenance-tools', 'maintenance_tools'],
+  ['water treatments & fertilizers', 'water_treatments'],
+  ['water treatments and fertilizers', 'water_treatments']
 ]);
 
 const GROUP_ALIAS_LOOKUP = new Map([
@@ -555,6 +565,32 @@ function buildGroups(items, tipsMap, category, metaMap) {
     }
     group.options.push(ensureOptionDefaults(item, group.options.length, category, id));
   });
+  if ((category || '').toLowerCase() === 'water_treatments') {
+    map.forEach((group) => {
+      const subgroupOrder = [];
+      const subgroupMap = new Map();
+      group.options.forEach((option) => {
+        const rawName = (option.subgroup || '').trim();
+        const name = rawName || 'General';
+        if (!subgroupMap.has(name)) {
+          const slug = slugifyKey(name) || `subgroup-${subgroupOrder.length + 1}`;
+          subgroupMap.set(name, {
+            id: `water-treatments-${slug}`,
+            label: name,
+            options: []
+          });
+          subgroupOrder.push(name);
+        }
+        const subgroup = subgroupMap.get(name);
+        subgroup.options.push(option);
+      });
+      if (subgroupOrder.length) {
+        group.subgroups = subgroupOrder.map((name) => subgroupMap.get(name)).filter(Boolean);
+        group.options = [];
+      }
+    });
+  }
+
   const defaultOrder = order.map((id) => map.get(id));
   if ((category || '').toLowerCase() === 'maintenance_tools') {
     const seen = new Set();

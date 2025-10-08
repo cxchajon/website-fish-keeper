@@ -31,6 +31,8 @@
     waterTreatments: 'water_treatments',
     'water-treatments': 'water_treatments',
     water_treatments: 'water_treatments',
+    'water-treatments-fertilizers': 'water_treatments',
+    water_treatments_fertilizers: 'water_treatments',
     food: 'food',
     maintenanceTools: 'maintenance_tools',
     'maintenance-tools': 'maintenance_tools',
@@ -46,6 +48,8 @@
     water_treatments: 'waterTreatments',
     'water-treatments': 'waterTreatments',
     waterTreatments: 'waterTreatments',
+    'water-treatments-fertilizers': 'waterTreatments',
+    water_treatments_fertilizers: 'waterTreatments',
     food: 'food',
     maintenance_tools: 'maintenanceTools',
     'maintenance-tools': 'maintenanceTools',
@@ -258,20 +262,30 @@
     }
     const standAria = `Buy on Amazon – ${escapeHTML(displayTitle)}`;
     const useSimpleButton = normalizedContext === 'substrate' || normalizedContext === 'maintenancetools';
+    const isWaterTreatments = normalizedContext === 'watertreatments' || normalizedContext === 'watertreatmentsfertilizers';
     const disabledSimpleButtonHtml = normalizedContext === 'substrate'
       ? `<button class="btn" type="button" aria-disabled="true" title="Link coming soon" disabled>${buttonLabel}</button>`
       : `<span class="btn btn-disabled" aria-disabled="true" role="button" tabindex="-1" title="Link coming soon">${buttonLabel}</span>`;
-    const actionsHtml = hasValidHref
-      ? context === 'stands'
-        ? `<a class="btn btn-amazon buy-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="${standAria}">Buy on Amazon</a>`
-        : useSimpleButton
-          ? `<a class="btn" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
-        : `<a class="btn btn-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
-      : context === 'stands'
-        ? `<a class="btn btn-amazon buy-amazon disabled" aria-disabled="true" tabindex="-1">Buy on Amazon</a>`
-        : useSimpleButton
-          ? disabledSimpleButtonHtml
-          : `<span class="muted">Add link</span>`;
+    let actionsHtml = '';
+    if (hasValidHref) {
+      if (context === 'stands') {
+        actionsHtml = `<a class="btn btn-amazon buy-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="${standAria}">Buy on Amazon</a>`;
+      } else if (isWaterTreatments) {
+        actionsHtml = `<a class="btn" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`;
+      } else if (useSimpleButton) {
+        actionsHtml = `<a class="btn" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`;
+      } else {
+        actionsHtml = `<a class="btn btn-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`;
+      }
+    } else if (context === 'stands') {
+      actionsHtml = `<a class="btn btn-amazon buy-amazon disabled" aria-disabled="true" tabindex="-1">Buy on Amazon</a>`;
+    } else if (isWaterTreatments) {
+      actionsHtml = `<button class="btn" type="button" aria-disabled="true" title="Link coming soon">${buttonLabel}</button>`;
+    } else if (useSimpleButton) {
+      actionsHtml = disabledSimpleButtonHtml;
+    } else {
+      actionsHtml = `<span class="muted">Add link</span>`;
+    }
     row.innerHTML = `
       <div class="option__title">${headingHtml}</div>
       ${noteText ? `<p class="option__note">${escapeHTML(noteText)}</p>` : ''}
@@ -337,13 +351,32 @@
     }
 
     const list = el('div',{class:'range__list'});
-    const optionList = Array.isArray(range.options) ? range.options : [];
     const optionContext = options.context || sectionKey || '';
-    optionList.forEach((opt) => {
-      list.appendChild(createOptionRow(opt, { ...options, context: optionContext }));
-    });
-    if (!optionList.length && range.placeholder) {
-      list.appendChild(el('p',{class:'range__placeholder'}, range.placeholder));
+    const subgroups = Array.isArray(range.subgroups)
+      ? range.subgroups.filter((group) => group && Array.isArray(group.options) && group.options.length)
+      : [];
+    if (subgroups.length) {
+      subgroups.forEach((subgroup) => {
+        const subgroupWrap = el('div',{ class:'range__subgroup' });
+        const subgroupTitle = (subgroup.label || '').trim();
+        if (subgroupTitle) {
+          subgroupWrap.appendChild(el('h3',{ class:'range__subgroup-title' }, subgroupTitle));
+        }
+        const subgroupList = el('div',{ class:'range__subgroup-items' });
+        subgroup.options.forEach((opt) => {
+          subgroupList.appendChild(createOptionRow(opt, { ...options, context: optionContext }));
+        });
+        subgroupWrap.appendChild(subgroupList);
+        list.appendChild(subgroupWrap);
+      });
+    } else {
+      const optionList = Array.isArray(range.options) ? range.options : [];
+      optionList.forEach((opt) => {
+        list.appendChild(createOptionRow(opt, { ...options, context: optionContext }));
+      });
+      if (!optionList.length && range.placeholder) {
+        list.appendChild(el('p',{class:'range__placeholder'}, range.placeholder));
+      }
     }
     wrap.appendChild(list);
     return wrap;
@@ -571,7 +604,7 @@
       blocks = (GEAR.substrate?.groups || [])
         .filter((range) => hasLiveOptions(range))
         .map((range) => renderRangeBlock(range, 'substrate'));
-    } else if (kind === 'water-treatments') {
+    } else if (kind === 'water-treatments' || kind === 'water-treatments-fertilizers') {
       blocks = (GEAR.waterTreatments?.ranges || []).map((range) => renderRangeBlock(range, 'waterTreatments', { ignoreMatch: true }));
     } else if (kind === 'food') {
       if (GEAR.food?.intro) {
@@ -999,7 +1032,7 @@
     buildCategory('filters', document.getElementById('filters-body'));
     buildCategory('lights', document.getElementById('lights-body'));
     buildCategory('substrate', document.getElementById('substrate-body'));
-    buildCategory('water-treatments', document.getElementById('water-treatments-body'));
+    buildCategory('water-treatments-fertilizers', document.getElementById('water-treatments-fertilizers-body'));
     buildCategory('food', document.getElementById('food-body'));
     buildCategory('maintenance-tools', document.getElementById('maintenance-tools-body'));
     buildCategory('stands', document.getElementById('stands-body'));

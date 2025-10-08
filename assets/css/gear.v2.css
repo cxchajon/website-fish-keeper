@@ -406,6 +406,31 @@ body{
   margin:0 0 0.75rem;
 }
 
+.range__subgroup{
+  margin-top:1.5rem;
+}
+
+.range__subgroup:first-child{
+  margin-top:0;
+}
+
+.range__subgroup + .range__subgroup{
+  padding-top:1.5rem;
+  border-top:1px dashed rgba(148,163,184,0.25);
+}
+
+.range__subgroup-title{
+  margin:0 0 0.75rem;
+  font-size:1.05rem;
+  font-weight:600;
+}
+
+.range__subgroup-items{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+
 
 .option{
   margin:0;
