@@ -138,6 +138,13 @@ const MAINTENANCE_GROUP_META = new Map([
       intro:
         'Match net size to fish; use soft or silicone nets for delicate fins. Wet the net first to reduce slime-coat damage. For planted tanks, choose snag-free mesh.'
     }
+  ],
+  [
+    'maintenance_aquascaping_tools',
+    {
+      intro:
+        'Use long tweezers for planting stems and carpeting species, curved scissors for trimming, and a spatula to level substrate. Rinse and dry tools after use to prevent corrosion.'
+    }
   ]
 ]);
 
@@ -165,14 +172,16 @@ const GROUP_ALIAS_LOOKUP = new Map([
   ['maintenance_tools::testing & monitoring', { id: 'maintenance-testing', label: 'Testing & Monitoring' }],
   ['maintenance_tools::cleanup & extras', { id: 'maintenance_cleanup_extras', label: 'Cleanup & Extras' }],
   ['maintenance_tools::air & aeration', { id: 'maintenance_air', label: 'Air & Aeration' }],
-  ['maintenance_tools::nets & handling', { id: 'maintenance_nets_handling', label: 'Nets & Handling' }]
+  ['maintenance_tools::nets & handling', { id: 'maintenance_nets_handling', label: 'Nets & Handling' }],
+  ['maintenance_tools::aquascaping tools', { id: 'maintenance_aquascaping_tools', label: 'Aquascaping Tools' }]
 ]);
 
 const MAINTENANCE_SUBGROUP_ORDER = [
   'maintenance-testing',
   'maintenance_air',
   'maintenance_cleanup_extras',
-  'maintenance_nets_handling'
+  'maintenance_nets_handling',
+  'maintenance_aquascaping_tools'
 ];
 
 function normalizeCategoryKey(value) {
