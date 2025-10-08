@@ -228,6 +228,19 @@
       .trim();
   }
 
+  const OPTION_PREFIX_WITH_DASH = /^\s*(?:recommended\s+option|option)\s*\d*\s*[—–-]\s*/i;
+  const OPTION_PREFIX_GENERAL = /^\s*(?:recommended\s+option|option)\s*\d+\s*/i;
+
+  function normalizeOptionTitle(rawTitle = ''){
+    const value = String(rawTitle || '').trim();
+    if (!value) return '';
+    const withoutDashPrefix = value.replace(OPTION_PREFIX_WITH_DASH, '').trim();
+    if (withoutDashPrefix !== value) return withoutDashPrefix;
+    const withoutGeneralPrefix = value.replace(OPTION_PREFIX_GENERAL, '').trim();
+    if (withoutGeneralPrefix !== value) return withoutGeneralPrefix;
+    return value;
+  }
+
   function createOptionRow(option = {}, options = {}){
     const row = el('div',{class:'option'});
     row.dataset.category = option.category || '';
@@ -243,8 +256,10 @@
     if (option.material) row.dataset.material = option.material;
     if (option.color) row.dataset.color = option.color;
     const href = (option?.href || '').trim();
-    const labelText = stripUrls(option?.label || '').trim();
-    const titleText = stripUrls(option?.title || '').trim();
+    const rawLabelText = stripUrls(option?.label || '').trim();
+    const rawTitleText = stripUrls(option?.title || '').trim();
+    const labelText = normalizeOptionTitle(rawLabelText);
+    const titleText = normalizeOptionTitle(rawTitleText);
     const displayTitle = titleText || labelText || 'this item';
     const headingHtml = labelText && titleText
       ? `<strong>${escapeHTML(labelText)} — ${escapeHTML(titleText)}</strong>`
