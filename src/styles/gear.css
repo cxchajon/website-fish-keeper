@@ -464,6 +464,13 @@ main {
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
+.lighting-length__empty {
+  margin: 0;
+  padding: 12px 0 18px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .lighting-group.is-highlighted {
   border-color: rgba(91, 140, 255, 0.6);
   box-shadow: 0 0 0 1px rgba(91, 140, 255, 0.45);
