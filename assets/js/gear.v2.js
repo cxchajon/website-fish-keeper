@@ -499,6 +499,51 @@
     return section;
   }
 
+  function renderFilterBucket(bucket = {}, index = 0){
+    const group = {
+      ...bucket,
+      label: bucket.label || '',
+      rangeLabel: bucket.rangeLabel || bucket.label || ''
+    };
+    const section = renderAccordionGroup(group, index, {
+      sectionKey: 'filters',
+      sectionClass: 'gear-subcard gear-subcard--filters',
+      rangeClass: 'range--filters',
+      rangeOptions: {
+        includeGearCard: false,
+        showTitle: false,
+        context: 'filters'
+      },
+      matchable: true
+    });
+    if (!section) return null;
+    section.dataset.filterBucket = '1';
+    const bucketId = normalizeBucketId(bucket.id || bucket.bucketKey || `bucket-${index}`);
+    if (bucketId) {
+      section.dataset.bucketId = bucketId;
+    }
+    if (Number.isFinite(bucket.minGallons)) {
+      section.dataset.minG = String(bucket.minGallons);
+    }
+    if (Number.isFinite(bucket.maxGallons)) {
+      section.dataset.maxG = String(bucket.maxGallons);
+    }
+    return section;
+  }
+
+  function renderFilterMediaGroup(group = {}, index = 0){
+    const section = renderAccordionGroup(group, index, {
+      sectionKey: 'filters',
+      sectionClass: 'gear-subcard gear-subcard--filters',
+      rangeClass: 'range--filters',
+      rangeOptions: { context: 'filters' },
+      matchable: false
+    });
+    if (!section) return null;
+    section.dataset.filterMedia = '1';
+    return section;
+  }
+
   function createExtrasItem(item = {}){
     const option = el('div',{ class:'option extras-item' });
     const title = (item?.title || '').trim();
@@ -641,20 +686,17 @@
         .map((bucket, index) => renderHeaterBucket(bucket, index))
         .filter(Boolean);
     } else if (kind === 'filters') {
-      const filterRanges = Array.isArray(GEAR.filters?.ranges) ? GEAR.filters.ranges : [];
-      blocks = filterRanges.map((range) => renderRangeBlock(range, 'filters'));
-      const filterAccordions = Array.isArray(GEAR.filters?.accordions) ? GEAR.filters.accordions : [];
-      filterAccordions.forEach((group, index) => {
-        const accordion = renderAccordionGroup(group, filterRanges.length + index, {
-          sectionKey: 'filters',
-          sectionClass: 'gear-subcard gear-subcard--filters',
-          rangeClass: 'range--filters',
-          rangeOptions: { context: 'filters' }
-        });
-        if (accordion) {
-          blocks.push(accordion);
+      const filterBuckets = Array.isArray(GEAR.filters?.buckets) ? GEAR.filters.buckets : [];
+      blocks = filterBuckets
+        .map((bucket, index) => renderFilterBucket(bucket, index))
+        .filter(Boolean);
+      const mediaGroup = GEAR.filters?.mediaGroup;
+      if (mediaGroup) {
+        const mediaAccordion = renderFilterMediaGroup({ ...mediaGroup }, filterBuckets.length);
+        if (mediaAccordion) {
+          blocks.push(mediaAccordion);
         }
-      });
+      }
     }
     else if (kind === 'lights') blocks = (GEAR.lights?.ranges || []).map((range) => renderRangeBlock(range, 'lights'));
     else if (kind === 'substrate') {
@@ -910,9 +952,11 @@
     if (!rangeId) return false;
     const body = document.querySelector(bodyId);
     if (!body) return false;
-    const block = body.querySelector(`[data-range-id="${rangeId}"]`);
-    if (!block) return false;
-    block.classList.add('is-active');
+    const rangeBlock = body.querySelector(`.range[data-range-id="${rangeId}"]`);
+    const cardBlock = body.querySelector(`.gear-card[data-range-id="${rangeId}"]`);
+    if (!rangeBlock && !cardBlock) return false;
+    if (rangeBlock) rangeBlock.classList.add('is-active');
+    if (cardBlock) cardBlock.classList.add('is-active');
     return true;
   }
 
@@ -993,6 +1037,7 @@
 
   function clearHighlights(){
     document.querySelectorAll('.range.is-active').forEach((node) => node.classList.remove('is-active'));
+    document.querySelectorAll('.gear-card.is-active').forEach((node) => node.classList.remove('is-active'));
   }
 
   function applyHighlights(gallons, length){

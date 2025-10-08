@@ -1,20 +1,20 @@
-category,subgroup,title,notes,amazon_url
-Filters,Filter Media,"Reusable Sponge Blocks (Cut-to-Fit) — Mechanical Stage","Primary mechanical media; trim to fit HOB/canisters; rinse in tank water.",
-Filters,Filter Media,"Poly Filter Floss Roll — Fine Mechanical Polishing","Fine particulate polishing; replace as it clogs; improves clarity.",
-Filters,Filter Media,"Ceramic Bio Rings / Sintered Media — Biological","High surface area for nitrifying bacteria; never fully replace at once.",
-Filters,Filter Media,"Bio Balls — Biological Aerobic Media","Durable aerobic media; great oxygen exposure; rinse gently in tank water.",
-Filters,Filter Media,"Seachem Purigen — Chemical Polishing Resin","Removes organics; polishes water; can be regenerated with bleach and Prime.",
-Filters,Filter Media,"Activated Carbon — Chemical (Granular)","Adsorbs meds/tannins/odors; replace regularly; remove when medicating.",
-Filters,Filter Media,"Phosphate Remover (GFO) — Chemical","Targets phosphates to help manage algae; monitor PO₄ to avoid bottoming out.",
-Filters,Filter Media,"Seachem Purigen Organic Filtration Resin - Fresh and Saltwater 500 ml (116016308)","Chemical polishing resin; removes dissolved organics and clarifies water.",https://amzn.to/4o7x07V
-Filters,Filter Media,"Seachem Matrix Bio Media 1 Liter","Porous biological media; high surface area for nitrifying bacteria.",https://amzn.to/435usiz
-Filters,Filter Media,"Aquarium Filter Media Pad Cut to Fit Roll, 12"" x 72"" (6 ft)","Cut-to-fit mechanical floss; place first in flow path for debris trapping.",https://amzn.to/3IDHzAK
-Filters,Filter Media,"Fluval BioMax Biological Material Remover, 500 g - Biological Filter Media for Aquariums","Sintered biomedia rings; stable home for beneficial bacteria.",https://amzn.to/48Ryajp
-Filters,Filter Media,"Aquatic Experts Bio Balls Filter Media Bulk, 1.5 Inch (300 Count with 14"" x 20"" Mesh Bag)","Durable aerobic bio media; great oxygen exposure; rinse gently.",https://amzn.to/4o8Pipq
-Filters,Filter Media,"Fluval Spec/Evo/Flex Activated Carbon, Replacement Aquarium Filter Media, 3-Pack, A1377, Black","Granular carbon packs; adsorb odors/tannins/meds (remove during medication).",https://amzn.to/430JHJA
-Filters,Filter Media,"Big Kahuna Aquarium Filter Floss Rolls – 12-inch x 6 ft – 1-inch Thick Bonded Media","Thick mechanical polishing pad; cut-to-fit HOB/canister trays.",https://amzn.to/4o2R9vQ
-Filters,Filter Media,"Penn-Plax Undergravel Aquarium Filter for 20 (Long) - 29 Gallon Tanks (Two 14"" x 11.1"" Plates)","Undergravel plate system (mechanical/biological base) — pair with powerhead or airlift.",https://amzn.to/435uUgL
-Filters,Filter Media,"Aquarium Filter Pad - Media Roll 39.4 x 11.8 in (White)","Fine mechanical pad for polishing; replace as it clogs.",https://amzn.to/4h4N5sO
-Filters,Filter Media,"Aquatic Experts Classic Bonded Aquarium Filter Pad - 24"" x 12 ft x 0.75"" (Blue/White)","Bonded mechanical pad; cut-to-fit; place before bio media.",https://amzn.to/3ICU7s5
-Filters,Filter Media,"AQUANEAT Aquarium Bio Sponge Foam Filter Media Pad Cut-to-Fit (17"" x 11"" x 1/2""–1"")","Reusable sponge sheets; primary mechanical stage; rinse in tank water.",https://amzn.to/46YC4Vc
-Filters,Filter Media,"Geiserailie 15 Pieces Aquarium Filter Media Bags, 150 Micron, Zipper, 5.5"" x 7.9""","Reusable media bags for carbon/resins/biomedia; secure fine media.",https://amzn.to/4mQHNCj
+category,subgroup,title,notes,amazon_url,bucket_key,bucket_label,bucket_sort
+Filters,Filter Media,Reusable Sponge Blocks (Cut-to-Fit) — Mechanical Stage,Primary mechanical media; trim to fit HOB/canisters; rinse in tank water.,,,,
+Filters,Filter Media,Poly Filter Floss Roll — Fine Mechanical Polishing,Fine particulate polishing; replace as it clogs; improves clarity.,,,,
+Filters,Filter Media,Ceramic Bio Rings / Sintered Media — Biological,High surface area for nitrifying bacteria; never fully replace at once.,,,,
+Filters,Filter Media,Bio Balls — Biological Aerobic Media,Durable aerobic media; great oxygen exposure; rinse gently in tank water.,,,,
+Filters,Filter Media,Seachem Purigen — Chemical Polishing Resin,Removes organics; polishes water; can be regenerated with bleach and Prime.,,,,
+Filters,Filter Media,Activated Carbon — Chemical (Granular),Adsorbs meds/tannins/odors; replace regularly; remove when medicating.,,,,
+Filters,Filter Media,Phosphate Remover (GFO) — Chemical,Targets phosphates to help manage algae; monitor PO₄ to avoid bottoming out.,,,,
+Filters,Filter Media,Seachem Purigen Organic Filtration Resin - Fresh and Saltwater 500 ml (116016308),Chemical polishing resin; removes dissolved organics and clarifies water.,https://amzn.to/4o7x07V,,,
+Filters,Filter Media,Seachem Matrix Bio Media 1 Liter,Porous biological media; high surface area for nitrifying bacteria.,https://amzn.to/435usiz,,,
+Filters,Filter Media,"Aquarium Filter Media Pad Cut to Fit Roll, 12"" x 72"" (6 ft)",Cut-to-fit mechanical floss; place first in flow path for debris trapping.,https://amzn.to/3IDHzAK,,,
+Filters,Filter Media,"Fluval BioMax Biological Material Remover, 500 g - Biological Filter Media for Aquariums",Sintered biomedia rings; stable home for beneficial bacteria.,https://amzn.to/48Ryajp,,,
+Filters,Filter Media,"Aquatic Experts Bio Balls Filter Media Bulk, 1.5 Inch (300 Count with 14"" x 20"" Mesh Bag)",Durable aerobic bio media; great oxygen exposure; rinse gently.,https://amzn.to/4o8Pipq,,,
+Filters,Filter Media,"Fluval Spec/Evo/Flex Activated Carbon, Replacement Aquarium Filter Media, 3-Pack, A1377, Black",Granular carbon packs; adsorb odors/tannins/meds (remove during medication).,https://amzn.to/430JHJA,,,
+Filters,Filter Media,Big Kahuna Aquarium Filter Floss Rolls – 12-inch x 6 ft – 1-inch Thick Bonded Media,Thick mechanical polishing pad; cut-to-fit HOB/canister trays.,https://amzn.to/4o2R9vQ,,,
+Filters,Filter Media,"Penn-Plax Undergravel Aquarium Filter for 20 (Long) - 29 Gallon Tanks (Two 14"" x 11.1"" Plates)",Undergravel plate system (mechanical/biological base) — pair with powerhead or airlift.,https://amzn.to/435uUgL,,,
+Filters,Filter Media,Aquarium Filter Pad - Media Roll 39.4 x 11.8 in (White),Fine mechanical pad for polishing; replace as it clogs.,https://amzn.to/4h4N5sO,,,
+Filters,Filter Media,"Aquatic Experts Classic Bonded Aquarium Filter Pad - 24"" x 12 ft x 0.75"" (Blue/White)",Bonded mechanical pad; cut-to-fit; place before bio media.,https://amzn.to/3ICU7s5,,,
+Filters,Filter Media,"AQUANEAT Aquarium Bio Sponge Foam Filter Media Pad Cut-to-Fit (17"" x 11"" x 1/2""–1"")",Reusable sponge sheets; primary mechanical stage; rinse in tank water.,https://amzn.to/46YC4Vc,,,
+Filters,Filter Media,"Geiserailie 15 Pieces Aquarium Filter Media Bags, 150 Micron, Zipper, 5.5"" x 7.9""",Reusable media bags for carbon/resins/biomedia; secure fine media.,https://amzn.to/4mQHNCj,,,
