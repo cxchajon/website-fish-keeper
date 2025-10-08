@@ -3,7 +3,7 @@ import { ProductCard } from './ProductCard.js';
 import { SubTabs } from './SubTabs.js';
 import { EmptyState } from './EmptyState.js';
 import { inferBadges } from '../../utils/rankers.js';
-import { bucketizeByLength } from '../../lib/grouping.js';
+import { bucketizeByLength, resolveBucketId } from '../../lib/grouping.js';
 
 const FILTRATION_TABS = [
   { label: 'All', value: 'All' },
@@ -13,7 +13,7 @@ const FILTRATION_TABS = [
   { label: 'Internal', value: 'Internal' },
 ];
 
-const LIGHT_EMPTY_MESSAGE = 'No lights yet for this length range. Check back soon.';
+const LIGHT_EMPTY_MESSAGE = 'No items yet.';
 
 function createGrid(items, context, onSelect, onAdd, emptyMessage = 'No matches found. Try adjusting your filters.') {
   if (!items.length) {
@@ -43,15 +43,6 @@ function filterFiltration(items, tab) {
   });
 }
 
-function normaliseLengthRange(value) {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/[\u2012-\u2015\u2212]/g, '-')
-    .replace(/\s+/g, '')
-    .replace(/\+$/, '-up');
-}
-
 function normaliseLight(item) {
   const next = {
     ...item,
@@ -61,7 +52,13 @@ function normaliseLight(item) {
   next.Amazon_Link = next.Amazon_Link ?? next.amazon_url ?? '';
   next.rel = (next.rel ?? '').trim() || 'sponsored noopener noreferrer';
   next.product_id = next.product_id ?? next.Product_ID ?? next.Item_ID ?? '';
-  next.length_range = normaliseLengthRange(next.length_range ?? next.lengthRange ?? '');
+  const bucketId = resolveBucketId(next.length_range ?? next.lengthRange ?? next.Range_ID ?? next.rangeId ?? '');
+  if (bucketId) {
+    next.length_range = bucketId;
+    next.rangeId = bucketId;
+  } else {
+    delete next.length_range;
+  }
   return next;
 }
 
@@ -119,7 +116,10 @@ function createLightingPanel(bucket, context, onSelect, onAdd) {
     });
     content = grid;
   } else {
-    content = EmptyState(LIGHT_EMPTY_MESSAGE);
+    content = createElement('p', {
+      className: 'lighting-length__empty',
+      text: LIGHT_EMPTY_MESSAGE,
+    });
   }
 
   panel.appendChild(content);

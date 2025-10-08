@@ -35,6 +35,36 @@ const RANGES_LIGHTS = [
   { id: "l-48-up", label: "48 inches and up", min: 48, max: 999 }
 ];
 
+const LIGHT_RANGE_IDS = RANGES_LIGHTS.map((range) => range.id);
+const LIGHT_RANGE_ID_SET = new Set(LIGHT_RANGE_IDS);
+const LIGHT_RANGE_ALIAS_ENTRIES = LIGHT_RANGE_IDS.flatMap((id) => {
+  const base = id.replace(/^l-/, '');
+  const baseNoDash = base.replace(/-/g, '');
+  const entries = [
+    [id, id],
+    [base, id],
+    [base.replace(/-/g, '_'), id],
+    [baseNoDash, id],
+    [`l${base}`, id],
+    [`l_${base}`, id],
+    [`l${baseNoDash}`, id],
+  ];
+  if (base.endsWith('-up')) {
+    const start = base.replace('-up', '');
+    entries.push(
+      [`${start}up`, id],
+      [`${start}+`, id],
+      [`${start}-up`, id],
+      [`${start}_up`, id],
+      [`l${start}up`, id],
+      [`l${start}+`, id],
+      [`l-${start}up`, id]
+    );
+  }
+  return entries;
+});
+const LIGHT_RANGE_ALIAS_MAP = new Map(LIGHT_RANGE_ALIAS_ENTRIES);
+
 /* Category tips shown on the “i” buttons */
 const EXTRAS_TIP_KEY = 'extras_cleanup_tip';
 
@@ -207,12 +237,12 @@ const FILTER_BUCKET_ALIASES = new Map([
 ]);
 
 const LIGHT_RANGE_META = new Map([
-  ["l-12-20", { label: "Recommended Lights for 12–20 Inch Tanks", tip: "" }],
-  ["l-20-24", { label: "Recommended Lights for 20–24 Inch Tanks", tip: "" }],
-  ["l-24-30", { label: "Recommended Lights for 24–30 Inch Tanks", tip: "" }],
-  ["l-30-36", { label: "Recommended Lights for 30–36 Inch Tanks", tip: "" }],
-  ["l-36-48", { label: "Recommended Lights for 36–48 Inches", tip: "For 36–48 inch tanks, choose lights with adjustable brackets or a slight overhang. Longer tanks may benefit from dual fixtures or higher wattage to maintain even brightness and plant growth." }],
-  ["l-48-up", { label: "Recommended Lights for 48 Inches and Up", tip: "For tanks 48 inches and longer, use extended-length fixtures or dual lights for even coverage. Longer tanks benefit from high-output full-spectrum LEDs with strong PAR and deeper penetration to support planted setups. Dual fixtures can also help eliminate dark zones and maintain even brightness from end to end." }]
+  ["l-12-20", { label: "Recommended Lights for 12–20 inch Tanks", tip: "" }],
+  ["l-20-24", { label: "Recommended Lights for 20–24 inch Tanks", tip: "" }],
+  ["l-24-30", { label: "Recommended Lights for 24–30 inch Tanks", tip: "" }],
+  ["l-30-36", { label: "Recommended Lights for 30–36 inch Tanks", tip: "" }],
+  ["l-36-48", { label: "Recommended Lights for 36–48 inch Tanks", tip: "For 36–48 inch tanks, choose lights with adjustable brackets or a slight overhang. Longer tanks may benefit from dual fixtures or higher wattage to maintain even brightness and plant growth." }],
+  ["l-48-up", { label: "Recommended Lights for 48 inch and Up", tip: "For tanks 48 inches and longer, use extended-length fixtures or dual lights for even coverage. Longer tanks benefit from high-output full-spectrum LEDs with strong PAR and deeper penetration to support planted setups. Dual fixtures can also help eliminate dark zones and maintain even brightness from end to end." }]
 ]);
 
 const HEATERS_ADDON = {
@@ -461,6 +491,69 @@ function rangeBand(rangeId) {
   return "";
 }
 
+function normalizeLightRangeId(value) {
+  if (value === null || value === undefined) return "";
+  let next = String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/[\u2012-\u2015\u2212]/g, '-')
+    .replace(/[“”"′″]/g, '')
+    .replace(/inches?$/g, '')
+    .replace(/inch$/g, '')
+    .replace(/in$/g, '')
+    .replace(/tanks?$/g, '')
+    .replace(/^lights?[-_]?/, '')
+    .replace(/^light[-_]?/, '')
+    .replace(/^range[-_]?/, '')
+    .replace(/^bucket[-_]?/, '')
+    .replace(/^group[-_]?/, '')
+    .replace(/\s+/g, '')
+    .replace(/_/g, '-')
+    .replace(/\+$/, 'up');
+
+  if (!next) {
+    return '';
+  }
+
+  if (LIGHT_RANGE_ALIAS_MAP.has(next)) {
+    next = LIGHT_RANGE_ALIAS_MAP.get(next) || '';
+  }
+
+  if (next.startsWith('l') && !next.startsWith('l-')) {
+    next = `l-${next.slice(1)}`;
+  }
+  if (next.startsWith('-')) {
+    next = `l${next}`;
+  }
+
+  if (LIGHT_RANGE_ALIAS_MAP.has(next)) {
+    next = LIGHT_RANGE_ALIAS_MAP.get(next) || '';
+  }
+
+  if (LIGHT_RANGE_ID_SET.has(next)) {
+    return next;
+  }
+
+  const standardMatch = next.match(/^(\d{2})-(\d{2})$/);
+  if (standardMatch) {
+    const candidate = `l-${standardMatch[1]}-${standardMatch[2]}`;
+    return LIGHT_RANGE_ID_SET.has(candidate) ? candidate : '';
+  }
+
+  const upMatch = next.match(/^(\d{2})(?:-)?(?:up)$/);
+  if (upMatch) {
+    const candidate = `l-${upMatch[1]}-up`;
+    return LIGHT_RANGE_ID_SET.has(candidate) ? candidate : '';
+  }
+
+  const prefixedMatch = next.match(/^l-(\d{2})-(\d{2})$/);
+  if (prefixedMatch) {
+    return LIGHT_RANGE_ID_SET.has(next) ? next : '';
+  }
+
+  return '';
+}
+
 function toNumberOrBlank(value) {
   if (value === null || value === undefined || value === "") return "";
   const num = Number(value);
@@ -602,7 +695,7 @@ function normalizeRow(row, fallbackCategory) {
   const fallbackCategoryNormalized = normalizeCategoryKey(fallbackCategory);
   const categoryRaw = (get('category') || fallbackCategory || "").toString().trim();
   let category = normalizeCategoryKey(categoryRaw);
-  const rangeId = (get('Range_ID') || get('range_id') || "").toString().trim();
+  let rangeId = (get('Range_ID') || get('range_id') || "").toString().trim();
   let groupId = (get('Group_ID') || get('group_id') || rangeId || "").toString().trim();
   const subgroup = (get('subgroup') || get('Subgroup') || "").toString().trim();
   const tanksize = (get('tanksize') || get('Tank_Size') || "").toString().trim();
@@ -621,9 +714,18 @@ function normalizeRow(row, fallbackCategory) {
   const bucketKeyRaw = (get('bucket_key') || get('Bucket_Key') || "").toString().trim();
   const bucketLabel = (get('bucket_label') || get('Bucket_Label') || "").toString().trim();
   const bucketSortValue = toNumberOrBlank(get('bucket_sort') || get('Bucket_Sort'));
+  const lengthRangeRaw = (get('length_range') || get('Length_Range') || get('lengthRange') || "").toString().trim();
 
   if (!category && fallbackCategoryNormalized) {
     category = fallbackCategoryNormalized;
+  }
+
+  if (category === 'lights') {
+    const normalizedRange = normalizeLightRangeId(lengthRangeRaw || rangeId || bucketKeyRaw);
+    if (normalizedRange) {
+      rangeId = normalizedRange;
+      groupId = groupId || normalizedRange;
+    }
   }
 
   const categoryKeyForAlias = category || fallbackCategoryNormalized || '';
@@ -691,6 +793,19 @@ function normalizeRow(row, fallbackCategory) {
   }
   if (!normalized.length && normalized.rangeId && normalized.category === 'lights') {
     normalized.length = rangeBand(normalized.rangeId);
+  }
+
+  if (normalized.category === 'lights') {
+    const canonicalRange = normalizeLightRangeId(
+      normalized.rangeId || lengthRangeRaw || rangeId || normalized.bucketKey || ''
+    );
+    if (canonicalRange) {
+      normalized.rangeId = canonicalRange;
+      normalized.bucketKey = canonicalRange;
+      if (!normalized.length) {
+        normalized.length = rangeBand(canonicalRange);
+      }
+    }
   }
 
   return normalized;
