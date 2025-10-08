@@ -113,6 +113,7 @@ body{
 
 .select-wrap{
   position:relative;
+  z-index:120;
 }
 
 .select-wrap select{
@@ -703,9 +704,9 @@ body{
 /* Base control */
 #tank-size.select-tank-size,
 select#tank-size {
-  background-color: var(--surface-2, #121823);
-  color: var(--text-1, #E5E7EB);
-  border: 1px solid var(--border-1, #2A3240);
+  background-color: var(--tank-bar-bg, rgba(15,23,42,0.92));
+  color: var(--ink, #E5E7EB);
+  border: 1px solid var(--tank-bar-border, rgba(148,163,184,0.35));
   border-radius: 14px;
   padding: 12px 42px 12px 16px;
   line-height: 1.25;
@@ -717,16 +718,16 @@ select#tank-size {
 
 /* Dropdown list options (Chrome/Safari/Firefox honor this) */
 select#tank-size option {
-  background-color: var(--surface-2, #121823);
-  color: var(--text-1, #E5E7EB);
+  background-color: var(--tank-bar-bg, rgba(15,23,42,0.92));
+  color: var(--ink, #E5E7EB);
 }
 
 /* Hover/active/selected states inside the popup list */
 select#tank-size option:hover,
 select#tank-size option:checked,
 select#tank-size option:focus {
-  background-color: var(--surface-3, #0F1420);
-  color: var(--text-1, #E5E7EB);
+  background-color: rgba(15,23,42,0.85);
+  color: var(--ink, #E5E7EB);
 }
 
 /* Focus ring for accessibility */

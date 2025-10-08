@@ -904,6 +904,69 @@
     return section;
   }
 
+  function renderLightRangeGroup(range = {}, index = 0){
+    const rangeId = range.id || `lights-${index}`;
+    const suffixSource = rangeId || `lights-${index}`;
+    const safeSuffix = String(suffixSource)
+      .replace(/[^a-z0-9-_]/gi, '-')
+      .replace(/-{2,}/g, '-')
+      .replace(/^-+|-+$/g, '') || `lights-${index}`;
+    const headerId = `lights-${safeSuffix}-header`;
+    const panelId = `lights-${safeSuffix}-panel`;
+
+    const section = el('section',{ class:'gear-subcard gear-subcard--lights gear-card sub-accordion' });
+    section.dataset.ignoreMatch = '0';
+    section.dataset.section = toDataSectionKey('lights');
+    if (rangeId) {
+      section.dataset.rangeId = rangeId;
+      section.dataset.subgroupId = rangeId;
+    }
+
+    const minLength = firstFiniteNumber(range.minL, range.min, range.minLength);
+    const maxLength = firstFiniteNumber(range.maxL, range.max, range.maxLength);
+    if (Number.isFinite(minLength)) section.dataset.minL = String(minLength);
+    if (Number.isFinite(maxLength)) section.dataset.maxL = String(maxLength);
+
+    const header = el('button',{
+      class:'gear-card__header gear-subcard__header accordion-header',
+      type:'button',
+      id: headerId,
+      'data-accordion':'toggle',
+      'aria-controls': panelId,
+      'aria-expanded':'false'
+    });
+
+    header.appendChild(el('span',{ class:'gear-subcard__title' }, range.label || range.rangeLabel || 'Recommended Lights'));
+    header.appendChild(el('span',{ class:'chevron','aria-hidden':'true' },'▸'));
+
+    const panel = el('div',{
+      class:'gear-card__body gear-subcard__body accordion-panel',
+      id: panelId,
+      role:'region',
+      'aria-labelledby': headerId,
+      hidden:true,
+      'aria-hidden':'true'
+    });
+
+    const renderOptions = {
+      includeGearCard: false,
+      showTitle: false,
+      context: 'lights'
+    };
+    const rangeBlock = renderRangeBlock(range, 'lights', renderOptions);
+    if (rangeBlock) {
+      rangeBlock.classList.add('range--lights');
+      if (!rangeBlock.dataset.rangeId && rangeId) rangeBlock.dataset.rangeId = rangeId;
+      if (Number.isFinite(minLength)) rangeBlock.dataset.minL = String(minLength);
+      if (Number.isFinite(maxLength)) rangeBlock.dataset.maxL = String(maxLength);
+      panel.appendChild(rangeBlock);
+    }
+
+    section.appendChild(header);
+    section.appendChild(panel);
+    return section;
+  }
+
   function renderFilterMediaGroup(group = {}, index = 0){
     const section = renderAccordionGroup(group, index, {
       sectionKey: 'filters',
@@ -1097,9 +1160,23 @@
       }
     }
     else if (kind === 'lights') {
-      blocks = (GEAR.lights?.ranges || []).map((range) =>
-        renderRangeBlock(range, 'lights', { showTitle: false })
-      );
+      const ranges = Array.isArray(GEAR.lights?.ranges) ? [...GEAR.lights.ranges] : [];
+      const sortRanges = (list) => {
+        const getSortValue = (range) => {
+          const candidates = [range?.sort, range?.maxL, range?.max, range?.maxLength];
+          for (const candidate of candidates) {
+            const numeric = Number(candidate);
+            if (Number.isFinite(numeric)) {
+              return numeric;
+            }
+          }
+          return Number.POSITIVE_INFINITY;
+        };
+        return list.sort((a, b) => getSortValue(a) - getSortValue(b));
+      };
+      blocks = sortRanges(ranges)
+        .map((range, index) => renderLightRangeGroup(range, index))
+        .filter(Boolean);
     }
     else if (kind === 'substrate') {
       blocks = (GEAR.substrate?.groups || [])
@@ -1486,13 +1563,12 @@
     if (!select || !meta) return;
     if (summary) summary.textContent = defaultSummary;
 
-    const existingBlank = select.querySelector('option[value=""]');
-    if (!existingBlank) {
-      const blank = document.createElement('option');
-      blank.value = '';
-      blank.textContent = 'Select a tank size…';
-      select.appendChild(blank);
-    }
+    select.innerHTML = '';
+    const placeholderOption = document.createElement('option');
+    placeholderOption.value = '';
+    placeholderOption.textContent = 'Select a tank size…';
+    placeholderOption.setAttribute('data-placeholder', '1');
+    select.appendChild(placeholderOption);
 
     const fragment = document.createDocumentFragment();
     TANK_PRESETS.forEach((preset) => {
