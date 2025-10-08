@@ -56,8 +56,7 @@ export function ProductCard(item, options = {}) {
   const amazonLink = (item.Amazon_Link ?? item.amazon_url ?? '').trim();
   const chewyLink = (item.Chewy_Link ?? '').trim();
   if (amazonLink) {
-    const rel = (item.rel ?? '').trim();
-    const amazonRel = rel && rel.includes('sponsored') ? rel : 'sponsored noopener noreferrer';
+    const amazonRel = (item.rel ?? '').trim() || 'sponsored noopener noreferrer';
     links.push(
       createElement('a', {
         className: 'product-card__link',
