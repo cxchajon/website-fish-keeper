@@ -137,7 +137,7 @@ const MAINTENANCE_GROUP_META = new Map([
     'maintenance_air',
     {
       intro:
-        'Use a check valve on every airline to prevent back-siphon. Size your pump to the devices you’ll run (sponge filters, airstones). Consider a battery backup or UPS for outages.'
+        'Use a check valve on every airline to prevent back-siphon. Size your pump to the devices you’ll run (sponge filters, airstones). Consider a battery backup or UPS for outages. For CO₂, place diffusers under outflow for better circulation; use CO₂-rated check valves to protect your regulator.'
     }
   ],
   [
