@@ -1,7 +1,8 @@
 {
-  "last_sync": "2025-10-08T14:08:06Z",
+  "last_sync": "2025-10-08T14:42:55Z",
   "status": "live",
   "notes": "Daily maintenance sync completed successfully. Snapshots older than 3 days pruned.",
   "active_tasks": [],
-  "last_result": "PASS"
+  "last_result": "PASS",
+  "ready": true
 }

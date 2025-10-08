@@ -141,7 +141,6 @@ const state = {
   context: { ...CONTEXT_DEFAULTS },
   openCategory: readStoredOpenCategory(),
   filtrationTab: 'All',
-  lightingFilter: '',
   selectedItem: null,
   showModal: false,
   alternatives: { Budget: null, Mid: null, Premium: null },
@@ -350,7 +349,6 @@ function render() {
       {
         openCategory: state.openCategory,
         filtrationTab: state.filtrationTab,
-        lightingFilter: state.lightingFilter,
       },
       {
         onToggleCategory: (key, open) => {
@@ -363,15 +361,6 @@ function render() {
         onSelect: handleSelectItem,
         onAdd: handleAddToBuild,
         onFiltrationTab: (tab) => setState({ filtrationTab: tab }),
-        onLightingFilter: (groupId, anchor) => {
-          const nextFilter = state.lightingFilter === groupId ? '' : groupId;
-          const patch = { lightingFilter: nextFilter };
-          if (state.openCategory !== 'Lighting') {
-            patch.openCategory = 'Lighting';
-          }
-          setState(patch);
-          scrollToAnchor(anchor);
-        },
       },
     ),
     WhyPickDrawer({
