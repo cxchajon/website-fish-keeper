@@ -67,6 +67,16 @@
     return GEAR_SECTION_ALIASES[key] || key;
   }
 
+  function normalizeBucketId(value){
+    if (value === null || value === undefined) return '';
+    const key = String(value).trim();
+    if (!key) return '';
+    return key
+      .replace(/-/g, '_')
+      .replace(/__+/g, '_')
+      .toLowerCase();
+  }
+
   const RANGE_LOOKUP = {
     heaters: new Map((Array.isArray(RANGES_HEATERS) ? RANGES_HEATERS : []).map((range) => [range.id, range])),
     filters: new Map((Array.isArray(RANGES_FILTERS) ? RANGES_FILTERS : []).map((range) => [range.id, range])),
@@ -345,8 +355,9 @@
       }
     }
 
-    if (showTitle && range.label) {
-      wrap.appendChild(el(headingTag,{class:'range__title'}, range.label));
+    const rangeTitle = range.rangeLabel || range.label;
+    if (showTitle && rangeTitle) {
+      wrap.appendChild(el(headingTag,{class:'range__title'}, rangeTitle));
     }
     if (range.tip && showTip !== false) {
       wrap.appendChild(el('p',{class:'range__tip'}, range.tip));
@@ -462,6 +473,29 @@
     if (rangeClass && rangeBlock) rangeBlock.classList.add(rangeClass);
     body.appendChild(rangeBlock);
     section.appendChild(body);
+    return section;
+  }
+
+  function renderHeaterBucket(bucket = {}, index = 0){
+    const group = {
+      ...bucket,
+      label: bucket.label || '',
+      rangeLabel: bucket.rangeLabel || bucket.label || ''
+    };
+    const section = renderAccordionGroup(group, index, {
+      sectionKey: 'heaters',
+      sectionClass: 'gear-subcard gear-subcard--heaters',
+      rangeClass: 'range--heaters',
+      matchable: true,
+      rangeOptions: {
+        includeGearCard: false,
+        showTitle: true
+      }
+    });
+    if (!section) return null;
+    const bucketId = normalizeBucketId(bucket.id || bucket.bucketKey || `bucket-${index}`);
+    section.dataset.heaterBucket = '1';
+    section.dataset.bucketId = bucketId;
     return section;
   }
 
@@ -602,7 +636,10 @@
     if (kind === 'heaters') {
       const addonCard = renderAddonCard(GEAR.heaters?.addon);
       if (addonCard) container.appendChild(addonCard);
-      blocks = (GEAR.heaters?.ranges || []).map((range) => renderRangeBlock(range, 'heaters'));
+      const heaterBuckets = Array.isArray(GEAR.heaters?.buckets) ? GEAR.heaters.buckets : [];
+      blocks = heaterBuckets
+        .map((bucket, index) => renderHeaterBucket(bucket, index))
+        .filter(Boolean);
     } else if (kind === 'filters') {
       const filterRanges = Array.isArray(GEAR.filters?.ranges) ? GEAR.filters.ranges : [];
       blocks = filterRanges.map((range) => renderRangeBlock(range, 'filters'));
@@ -909,10 +946,35 @@
     });
   }
 
+  function getHeaterBucketSections(){
+    return Array.from(document.querySelectorAll('#heaters-body [data-heater-bucket="1"]'));
+  }
+
+  function setHeaterBucketOpen(bucketId, open, options = {}){
+    const normalizedId = normalizeBucketId(bucketId);
+    if (!normalizedId) return false;
+    const selector = `#heaters-body [data-heater-bucket="1"][data-bucket-id="${normalizedId}"]`;
+    const section = document.querySelector(selector);
+    if (!section) return false;
+    setAccordionOpen(section, open, options);
+    return true;
+  }
+
+  function closeHeaterBucketsExcept(bucketId){
+    const normalizedId = normalizeBucketId(bucketId);
+    getHeaterBucketSections().forEach((section) => {
+      const sectionId = normalizeBucketId(section.dataset.bucketId || '');
+      if (!normalizedId || sectionId !== normalizedId) {
+        setAccordionOpen(section, false);
+      }
+    });
+  }
+
   function openMatchingHeaterOnSelection(selectedGallons, matchingRangeId){
     const heaterPanel = document.querySelector('.gear-shell > .gear-card.accordion[data-section="heaters"]');
     const gallons = Number(selectedGallons);
-    const hasValidSelection = Number.isFinite(gallons) && gallons > 0 && !!matchingRangeId;
+    const bucketId = normalizeBucketId(matchingRangeId);
+    const hasValidSelection = Number.isFinite(gallons) && gallons > 0 && !!bucketId;
     if (!heaterPanel) {
       if (!hasValidSelection) closeAllExcept();
       return;
@@ -920,10 +982,13 @@
     if (!hasValidSelection) {
       setAccordionOpen(heaterPanel, false);
       closeAllExcept();
+      closeHeaterBucketsExcept('');
       return;
     }
     setAccordionOpen(heaterPanel, true);
     closeAllExcept('heaters');
+    closeHeaterBucketsExcept(bucketId);
+    setHeaterBucketOpen(bucketId, true);
   }
 
   function clearHighlights(){

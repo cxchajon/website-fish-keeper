@@ -1,5 +1,15 @@
 /* Ranges used for matching/highlighting */
 const RANGES_HEATERS = [
+  { id: "g_5_10", label: "5–10 Gallons", min: 5, max: 10, sort: 10 },
+  { id: "g_10_20", label: "10–20 Gallons", min: 10, max: 20, sort: 20 },
+  { id: "g_20_40", label: "20–40 Gallons", min: 20, max: 40, sort: 40 },
+  { id: "g_40_55", label: "40–55 Gallons", min: 40, max: 55, sort: 55 },
+  { id: "g_55_75", label: "55–75 Gallons", min: 55, max: 75, sort: 75 },
+  { id: "g_75_125", label: "75–125 Gallons", min: 75, max: 125, sort: 125 },
+  { id: "g_125p", label: "125+ Gallons", min: 125, max: 999, sort: 999 }
+];
+
+const RANGES_FILTERS = [
   { id: "g-5-10", label: "5–10 gallons", min: 5, max: 10 },
   { id: "g-10-20", label: "10–20 gallons", min: 10, max: 20 },
   { id: "g-20-40", label: "20–40 gallons", min: 20, max: 40 },
@@ -7,8 +17,6 @@ const RANGES_HEATERS = [
   { id: "g-60-90", label: "60–90 gallons", min: 60, max: 90 },
   { id: "g-90-125", label: "90–125 gallons", min: 90, max: 125 }
 ];
-
-const RANGES_FILTERS = RANGES_HEATERS.slice(); // same gallon buckets
 
 const RANGES_LIGHTS = [
   { id: "l-12-20", label: "12–20 inches", min: 12, max: 20 },
@@ -71,12 +79,49 @@ TIPS.stands_55_75_info =
   'A filled 55-gallon tank can weigh over 600 lbs; a 75-gallon can exceed 900 lbs. Choose a stand whose capacity is greater than the full tank weight, match the footprint exactly, and confirm the stand is level before filling.';
 
 const HEATER_RANGE_META = new Map([
-  ["g-5-10", { label: "Recommended Heaters for 5–10 Gallons", tip: "For 5–10 gal, target 25–50W. Place near gentle flow for even heat." }],
-  ["g-10-20", { label: "Recommended Heaters for 10–20 Gallons", tip: "For 10–20 gal, aim for 50–100W." }],
-  ["g-20-40", { label: "Recommended Heaters for 20–40 Gallons", tip: "For 20–40 gal tanks, aim for 100–200W. See the Heater tip for placement and safety guidance." }],
-  ["g-40-60", { label: "Recommended Heaters for 40–60 Gallons", tip: "For 40–60 gal tanks, aim for ~200–300W. The Heater tip covers placement and safety details." }],
-  ["g-60-90", { label: "Recommended Heaters for 60–90 Gallons", tip: "For 60–90 gal tanks, aim for ~300–500W total heating. Consider splitting across two smaller heaters for even coverage and redundancy (placement and safety details live in the Heater tip)." }],
-  ["g-90-125", { label: "Recommended Heaters for 90–125 Gallons", tip: "For 90–125 gal tanks, aim for 500–800W total heating power. For large aquariums, use multiple heaters for balanced temperature and redundancy. (Full placement/safety details in the Heater Tip popup.)" }]
+  [
+    "g_5_10",
+    {
+      label: "Recommended Heaters for 5–10 Gallons",
+      tip: "For 5–10 gal, target 25–50W. Place near gentle flow for even heat."
+    }
+  ],
+  ["g_10_20", { label: "Recommended Heaters for 10–20 Gallons", tip: "For 10–20 gal, aim for 50–100W." }],
+  [
+    "g_20_40",
+    {
+      label: "Recommended Heaters for 20–40 Gallons",
+      tip: "For 20–40 gal tanks, aim for 100–200W. See the Heater tip for placement and safety guidance."
+    }
+  ],
+  [
+    "g_40_55",
+    {
+      label: "Recommended Heaters for 40–55 Gallons",
+      tip: "For 40–55 gal tanks, aim for roughly 200–300W total. Consider using dual heaters for redundancy and more even heating."
+    }
+  ],
+  [
+    "g_55_75",
+    {
+      label: "Recommended Heaters for 55–75 Gallons",
+      tip: "For 55–75 gal tanks, plan on ~300–500W total. Splitting wattage across two heaters improves coverage and safety."
+    }
+  ],
+  [
+    "g_75_125",
+    {
+      label: "Recommended Heaters for 75–125 Gallons",
+      tip: "For 75–125 gal tanks, aim for 500–800W total heating power. Use multiple heaters for balanced temperature and redundancy."
+    }
+  ],
+  [
+    "g_125p",
+    {
+      label: "Recommended Heaters for 125+ Gallons",
+      tip: "For 125+ gal systems, scale to 800W+ across multiple heaters and controllers. Position heaters near flow for even distribution."
+    }
+  ]
 ]);
 
 const FILTER_RANGE_META = new Map([
@@ -337,14 +382,33 @@ function parseCSV(text) {
 
 function rangeBand(rangeId) {
   if (!rangeId) return "";
-  const parts = String(rangeId).split('-').slice(1);
-  return parts.length ? parts.join('-') : "";
+  const value = String(rangeId).trim();
+  if (!value) return "";
+  const hyphenParts = value.split('-');
+  if (hyphenParts.length > 1 && hyphenParts[0]) {
+    return hyphenParts.slice(1).join('-');
+  }
+  const underscoreParts = value.split('_');
+  if (underscoreParts.length > 1 && underscoreParts[0]) {
+    return underscoreParts.slice(1).join('-');
+  }
+  return "";
 }
 
 function toNumberOrBlank(value) {
   if (value === null || value === undefined || value === "") return "";
   const num = Number(value);
   return Number.isFinite(num) ? num : "";
+}
+
+function normalizeHeaterBucketKey(value) {
+  if (value === null || value === undefined) return "";
+  const key = String(value).trim();
+  if (!key) return "";
+  return key
+    .replace(/-/g, '_')
+    .replace(/__+/g, '_')
+    .toLowerCase();
 }
 
 function normalizeStandItem(item = {}) {
@@ -437,6 +501,9 @@ function normalizeRow(row, fallbackCategory) {
   let groupLabel = (get('Group_Label') || get('group_label') || "").toString().trim();
   const groupTip = (get('Group_Tip') || get('group_tip') || "").toString().trim();
   const id = (get('Item_ID') || get('id') || "").toString().trim();
+  const bucketKeyRaw = (get('bucket_key') || get('Bucket_Key') || "").toString().trim();
+  const bucketLabel = (get('bucket_label') || get('Bucket_Label') || "").toString().trim();
+  const bucketSortValue = toNumberOrBlank(get('bucket_sort') || get('Bucket_Sort'));
 
   if (!category && fallbackCategoryNormalized) {
     category = fallbackCategoryNormalized;
@@ -480,11 +547,17 @@ function normalizeRow(row, fallbackCategory) {
     rangeId,
     groupId,
     groupLabel,
-    groupTip
+    groupTip,
+    bucketKey: bucketKeyRaw,
+    bucketLabel,
+    bucketSort: bucketSortValue
   };
 
   if (!normalized.category && fallbackCategory) {
     normalized.category = normalizeCategoryKey(fallbackCategory);
+  }
+  if (!normalized.rangeId && bucketKeyRaw) {
+    normalized.rangeId = bucketKeyRaw;
   }
   if (!normalized.tanksize && normalized.rangeId && (normalized.category === 'heaters' || normalized.category === 'filters')) {
     normalized.tanksize = rangeBand(normalized.rangeId);
@@ -535,6 +608,64 @@ function buildRange(collection, metaMap, items, category) {
       options
     };
   });
+}
+
+function buildHeaterBuckets(items = []) {
+  const bucketStore = new Map();
+
+  items.forEach((item) => {
+    const rawKey = item.bucketKey || item.rangeId || '';
+    const key = normalizeHeaterBucketKey(rawKey);
+    if (!key) return;
+    if (!bucketStore.has(key)) {
+      const sortValue = Number.isFinite(item.bucketSort) ? Number(item.bucketSort) : '';
+      bucketStore.set(key, {
+        id: key,
+        label: (item.bucketLabel || '').trim(),
+        sort: sortValue,
+        options: []
+      });
+    }
+    const bucket = bucketStore.get(key);
+    if (!bucket.label && item.bucketLabel) {
+      bucket.label = item.bucketLabel;
+    }
+    if (!Number.isFinite(bucket.sort)) {
+      const numericSort = Number(item.bucketSort);
+      if (Number.isFinite(numericSort)) {
+        bucket.sort = numericSort;
+      }
+    }
+    bucket.options.push(ensureOptionDefaults(item, bucket.options.length, 'heaters', key));
+  });
+
+  const orderedBuckets = RANGES_HEATERS.map((bucket) => {
+    const key = normalizeHeaterBucketKey(bucket.id);
+    const stored = bucketStore.get(key);
+    const meta = HEATER_RANGE_META.get(bucket.id) || {};
+    const label = stored?.label || bucket.label || meta.label || '';
+    const sortValue = Number.isFinite(stored?.sort)
+      ? stored.sort
+      : Number.isFinite(bucket.sort)
+        ? bucket.sort
+        : Number.isFinite(meta.sort)
+          ? meta.sort
+          : undefined;
+    const options = stored ? stored.options : [];
+    return {
+      id: bucket.id,
+      label,
+      rangeLabel: meta.label || label,
+      tip: meta.tip || '',
+      options,
+      minGallons: bucket.min,
+      maxGallons: bucket.max,
+      sort: Number.isFinite(sortValue) ? sortValue : bucket.sort || 0,
+      placeholder: options.length ? '' : 'Links coming soon.'
+    };
+  });
+
+  return orderedBuckets.sort((a, b) => (a.sort || 0) - (b.sort || 0));
 }
 
 function buildGroups(items, tipsMap, category, metaMap) {
@@ -842,7 +973,7 @@ function buildGear(normalized, standsItems = []) {
   const gear = {
     heaters: {
       match: 'gallons',
-      ranges: buildRange(RANGES_HEATERS, HEATER_RANGE_META, heaters, 'heaters'),
+      buckets: buildHeaterBuckets(heaters),
       addon: { ...HEATERS_ADDON }
     },
     filters: {
