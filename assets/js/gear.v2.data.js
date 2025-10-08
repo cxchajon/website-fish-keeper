@@ -23,7 +23,8 @@ const RANGES_LIGHTS = [
 const EXTRAS_TIP_KEY = 'extras_cleanup_tip';
 
 const TIPS = {
-  heaters: "Choose a heater whose printed range starts at (or just above) your tank size. Example: for a 40-gallon tank, prefer 40–60 gal over 20–40. Bonus safety: use a temp controller. Remember to account for tank height, substrate thickness, and whether the heater has a water level mark — most are not fully submersible.",
+  heaters:
+    "Choose a heater whose printed range starts at (or just above) your tank size. Example: for a 40-gallon tank, prefer 40–60 gal over 20–40. Bonus safety: pair your heater with a controller (see the Inkbird add-on above). Remember to account for tank height, substrate thickness, and whether the heater has a water level mark — most are not fully submersible.",
   filters: "Oversize your filter. A 40–60 gal filter on a 40-gal tank keeps water clearer. Keep biomedia; replace only mechanical floss.",
   lights: `
   <strong>Lighting Tips</strong><br>
@@ -94,6 +95,15 @@ const LIGHT_RANGE_META = new Map([
   ["l-48-up", { label: "Recommended Lights for 48 Inches and Up", tip: "For tanks 48 inches and longer, use extended-length fixtures or dual lights for even coverage. Longer tanks benefit from high-output full-spectrum LEDs with strong PAR and deeper penetration to support planted setups. Dual fixtures can also help eliminate dark zones and maintain even brightness from end to end." }]
 ]);
 
+const HEATERS_ADDON = {
+  enabled: true,
+  eyebrow: 'Recommended add-on',
+  title:
+    'Inkbird ITC-306A WiFi Temperature Controller, Wi-Fi Aquarium Thermostat Heater Controller 120V~1200W Temperature Control with Two Probes only for Heater Aquarium Breeding Reptiles Hatching.',
+  notes: 'Recommended add-on: external controller that shuts off heater on faults; Wi-Fi notifications.',
+  amazonUrl: 'https://amzn.to/46QJSd3'
+};
+
 const WATER_TREATMENT_TIPS = new Map([
   ["wt-core", "Conditioners and bacterial starters help make tap water safe and maintain tank stability. Always dose for total tank volume, not just refill water."]
 ]);
@@ -125,12 +135,38 @@ const EXTRAS_ACCORDION_META = {
 const EXTRAS_DEFAULT_SUBGROUP = 'Misc';
 const EXTRAS_PLACEHOLDER = 'Links coming soon.';
 
+const CATEGORY_ALIASES = new Map([
+  ['maintenance & tools', 'maintenance_tools'],
+  ['maintenance tools', 'maintenance_tools'],
+  ['maintenance-tools', 'maintenance_tools']
+]);
+
+const GROUP_ALIAS_LOOKUP = new Map([
+  ['maintenance_tools::testing & monitoring', { id: 'maintenance-testing', label: 'Testing & Monitoring' }]
+]);
+
+function normalizeCategoryKey(value) {
+  const key = String(value || '').trim().toLowerCase();
+  if (!key) return '';
+  return CATEGORY_ALIASES.get(key) || key;
+}
+
+function slugifyKey(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 const CSV_SOURCES = [
   { path: "/data/gear_heaters.csv", category: "heaters" },
   { path: "/data/gear_filters.csv", category: "filters" },
   { path: "/data/gear_lighting.csv", category: "lights" },
   { path: "/data/gear_substrate.csv", category: "substrate" },
   { path: "/data/gear_water_food_tools.csv", category: "" },
+  { path: "/data/gear_maintenance.csv", category: "maintenance_tools" },
   { path: "/data/gear_extras.csv", category: "extras" }
 ];
 
@@ -317,10 +353,11 @@ function normalizeRow(row, fallbackCategory) {
     return "";
   };
 
+  const fallbackCategoryNormalized = normalizeCategoryKey(fallbackCategory);
   const categoryRaw = (get('category') || fallbackCategory || "").toString().trim();
-  const category = categoryRaw ? categoryRaw.toLowerCase() : "";
+  let category = normalizeCategoryKey(categoryRaw);
   const rangeId = (get('Range_ID') || get('range_id') || "").toString().trim();
-  const groupId = (get('Group_ID') || get('group_id') || rangeId || "").toString().trim();
+  let groupId = (get('Group_ID') || get('group_id') || rangeId || "").toString().trim();
   const subgroup = (get('subgroup') || get('Subgroup') || "").toString().trim();
   const tanksize = (get('tanksize') || get('Tank_Size') || "").toString().trim();
   const length = (get('length') || get('Length') || "").toString().trim();
@@ -332,9 +369,34 @@ function normalizeRow(row, fallbackCategory) {
   const image = (get('Image_URL') || get('image_url') || get('image') || "").toString().trim();
   const affiliate = (get('affiliate') || "").toString().trim() || "amazon";
   const tag = (get('tag') || "").toString().trim() || "fishkeepingli-20";
-  const groupLabel = (get('Group_Label') || get('group_label') || "").toString().trim();
+  let groupLabel = (get('Group_Label') || get('group_label') || "").toString().trim();
   const groupTip = (get('Group_Tip') || get('group_tip') || "").toString().trim();
   const id = (get('Item_ID') || get('id') || "").toString().trim();
+
+  if (!category && fallbackCategoryNormalized) {
+    category = fallbackCategoryNormalized;
+  }
+
+  const categoryKeyForAlias = category || fallbackCategoryNormalized || '';
+  const normalizedSubgroupKey = subgroup ? `${categoryKeyForAlias}::${subgroup.trim().toLowerCase()}` : '';
+  const groupAlias = normalizedSubgroupKey ? GROUP_ALIAS_LOOKUP.get(normalizedSubgroupKey) : null;
+  if (!groupId && groupAlias?.id) {
+    groupId = groupAlias.id;
+  }
+  if (!groupLabel && groupAlias?.label) {
+    groupLabel = groupAlias.label;
+  }
+
+  if (!groupId && subgroup) {
+    const categorySlug = slugifyKey(category || fallbackCategoryNormalized || 'group');
+    const subgroupSlug = slugifyKey(subgroup);
+    const combined = [categorySlug, subgroupSlug].filter(Boolean).join('-');
+    groupId = combined || subgroupSlug || categorySlug || "";
+  }
+
+  if (!groupLabel && subgroup) {
+    groupLabel = subgroup;
+  }
 
   const normalized = {
     id,
@@ -357,7 +419,7 @@ function normalizeRow(row, fallbackCategory) {
   };
 
   if (!normalized.category && fallbackCategory) {
-    normalized.category = fallbackCategory.toLowerCase();
+    normalized.category = normalizeCategoryKey(fallbackCategory);
   }
   if (!normalized.tanksize && normalized.rangeId && (normalized.category === 'heaters' || normalized.category === 'filters')) {
     normalized.tanksize = rangeBand(normalized.rangeId);
@@ -643,7 +705,8 @@ function buildGear(normalized, standsItems = []) {
   const gear = {
     heaters: {
       match: 'gallons',
-      ranges: buildRange(RANGES_HEATERS, HEATER_RANGE_META, heaters, 'heaters')
+      ranges: buildRange(RANGES_HEATERS, HEATER_RANGE_META, heaters, 'heaters'),
+      addon: { ...HEATERS_ADDON }
     },
     filters: {
       match: 'gallons',
