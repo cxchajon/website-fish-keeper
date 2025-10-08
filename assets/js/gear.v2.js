@@ -587,6 +587,9 @@
     const row = el('div',{class:'option'});
     row.dataset.category = option.category || '';
     row.dataset.subgroup = option.subgroup || '';
+    if (option.subgroupId) {
+      row.dataset.subgroupId = option.subgroupId;
+    }
     row.dataset.tanksize = option.tanksize || '';
     row.dataset.length = option.length || '';
     row.dataset.depth = (option.depth ?? '').toString();
@@ -597,6 +600,7 @@
     row.dataset.tag = option.tag || 'fishkeepingli-20';
     if (option.material) row.dataset.material = option.material;
     if (option.color) row.dataset.color = option.color;
+    if (option.source) row.dataset.source = option.source;
     const href = (option?.href || '').trim();
     const rawLabelText = stripUrls(option?.label || '').trim();
     const rawTitleText = stripUrls(option?.title || '').trim();
@@ -624,6 +628,70 @@
     return row;
   }
 
+  function renderSubstrateSubgroupAccordion(subgroup = {}, index = 0, options = {}){
+    const { optionContext = '', parentRangeId = '' } = options;
+    const label = (subgroup.label || '').trim() || 'Substrate Picks';
+    const suffixSource = subgroup.id || subgroup.slug || label || `substrate-${index + 1}`;
+    const safeSuffix = String(suffixSource)
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9-_]+/g, '-')
+      .replace(/-{2,}/g, '-')
+      .replace(/^-+|-+$/g, '') || `substrate-${index + 1}`;
+    const headerId = `substrate-${safeSuffix}-header`;
+    const panelId = `substrate-${safeSuffix}-panel`;
+
+    const section = el('section',{ class:'gear-subcard gear-subcard--substrate gear-card sub-accordion' });
+    section.dataset.ignoreMatch = '1';
+    section.dataset.section = toDataSectionKey('substrate');
+    if (parentRangeId) section.dataset.parentRangeId = parentRangeId;
+    if (subgroup.slug) section.dataset.subgroup = subgroup.slug;
+    if (subgroup.id) {
+      section.dataset.subgroupId = subgroup.id;
+      section.dataset.rangeId = subgroup.id;
+    }
+
+    const header = el('button',{
+      class:'gear-card__header gear-subcard__header accordion-header',
+      type:'button',
+      id: headerId,
+      'data-accordion':'toggle',
+      'aria-controls': panelId,
+      'aria-expanded':'false'
+    });
+    header.appendChild(el('span',{ class:'gear-subcard__title' }, label));
+    header.appendChild(el('span',{ class:'chevron','aria-hidden':'true' },'▸'));
+
+    const panel = el('div',{
+      class:'gear-card__body gear-subcard__body accordion-panel',
+      id: panelId,
+      role:'region',
+      'aria-labelledby': headerId,
+      hidden:true,
+      'aria-hidden':'true'
+    });
+
+    const range = el('div',{ class:'range range--substrate-subgroup' });
+    range.dataset.section = toDataSectionKey('substrate');
+    if (subgroup.id) range.dataset.subgroupId = subgroup.id;
+    if (parentRangeId) range.dataset.parentRangeId = parentRangeId;
+    const list = el('div',{ class:'range__list range__list--flat' });
+    const optionList = Array.isArray(subgroup.options) ? subgroup.options : [];
+    if (optionList.length) {
+      optionList.forEach((opt) => {
+        list.appendChild(createOptionRow(opt, { ...options, context: optionContext }));
+      });
+    } else {
+      const placeholderText = (subgroup.placeholder || '').trim() || 'Substrate picks coming soon.';
+      list.appendChild(el('p',{ class:'range__placeholder' }, placeholderText));
+    }
+    range.appendChild(list);
+    panel.appendChild(range);
+    section.appendChild(header);
+    section.appendChild(panel);
+    return section;
+  }
+
   function renderRangeBlock(range = {}, sectionKey, options = {}){
     const {
       includeGearCard = true,
@@ -639,6 +707,9 @@
     const dataSectionKey = toDataSectionKey(sectionKey);
     const gearSectionKey = toGearSectionKey(sectionKey);
     if (sectionKey) wrap.dataset.section = dataSectionKey;
+    if (dataSectionKey === 'substrate') {
+      wrap.classList.add('range--substrate');
+    }
     if (range?.id) {
       wrap.dataset.rangeId = range.id;
       if (!ignoreMatch && gearSectionKey) {
@@ -682,23 +753,42 @@
 
     const list = el('div',{class:'range__list'});
     const optionContext = options.context || sectionKey || '';
-    const subgroups = Array.isArray(range.subgroups)
-      ? range.subgroups.filter((group) => group && Array.isArray(group.options) && group.options.length)
+    const rawSubgroups = Array.isArray(range.subgroups)
+      ? range.subgroups.filter((group) => group && Array.isArray(group.options))
       : [];
-    if (subgroups.length) {
-      subgroups.forEach((subgroup) => {
-        const subgroupWrap = el('div',{ class:'range__subgroup' });
-        const subgroupTitle = (subgroup.label || '').trim();
-        if (subgroupTitle) {
-          subgroupWrap.appendChild(el('h3',{ class:'range__subgroup-title' }, subgroupTitle));
-        }
-        const subgroupList = el('div',{ class:'range__subgroup-items' });
-        subgroup.options.forEach((opt) => {
-          subgroupList.appendChild(createOptionRow(opt, { ...options, context: optionContext }));
+    if (dataSectionKey === 'substrate' && rawSubgroups.length) {
+      list.classList.add('range__list--subgroups');
+      const parentRangeId = range.id || range.rangeId || '';
+      rawSubgroups.forEach((subgroup, index) => {
+        const accordion = renderSubstrateSubgroupAccordion(subgroup, index, {
+          ...options,
+          optionContext,
+          parentRangeId
         });
-        subgroupWrap.appendChild(subgroupList);
-        list.appendChild(subgroupWrap);
+        if (accordion) {
+          list.appendChild(accordion);
+        }
       });
+      if (!list.childElementCount) {
+        const placeholderText = (range.placeholder || '').trim() || 'Substrate picks coming soon.';
+        list.appendChild(el('p',{ class:'range__placeholder' }, placeholderText));
+      }
+    } else if (rawSubgroups.length) {
+      rawSubgroups
+        .filter((subgroup) => Array.isArray(subgroup.options) && subgroup.options.length)
+        .forEach((subgroup) => {
+          const subgroupWrap = el('div',{ class:'range__subgroup' });
+          const subgroupTitle = (subgroup.label || '').trim();
+          if (subgroupTitle) {
+            subgroupWrap.appendChild(el('h3',{ class:'range__subgroup-title' }, subgroupTitle));
+          }
+          const subgroupList = el('div',{ class:'range__subgroup-items' });
+          subgroup.options.forEach((opt) => {
+            subgroupList.appendChild(createOptionRow(opt, { ...options, context: optionContext }));
+          });
+          subgroupWrap.appendChild(subgroupList);
+          list.appendChild(subgroupWrap);
+        });
     } else {
       const optionList = Array.isArray(range.options) ? range.options : [];
       optionList.forEach((opt) => {
@@ -713,8 +803,13 @@
   }
 
   function hasLiveOptions(range){
-    if (!range || !Array.isArray(range.options)) return false;
-    if (range.options.length > 0) return true;
+    if (!range) return false;
+    const directOptions = Array.isArray(range.options) ? range.options : [];
+    if (directOptions.length > 0) return true;
+    const subgroupHasOptions = Array.isArray(range.subgroups)
+      ? range.subgroups.some((subgroup) => Array.isArray(subgroup?.options) && subgroup.options.length > 0)
+      : false;
+    if (subgroupHasOptions) return true;
     return Boolean((range?.placeholder || '').trim());
   }
 
