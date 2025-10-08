@@ -131,6 +131,13 @@ const MAINTENANCE_GROUP_META = new Map([
       intro:
         'Use a check valve on every airline to prevent back-siphon. Size your pump to the devices you’ll run (sponge filters, airstones). Consider a battery backup or UPS for outages.'
     }
+  ],
+  [
+    'maintenance_nets_handling',
+    {
+      intro:
+        'Match net size to fish; use soft or silicone nets for delicate fins. Wet the net first to reduce slime-coat damage. For planted tanks, choose snag-free mesh.'
+    }
   ]
 ]);
 
@@ -157,8 +164,16 @@ const CATEGORY_ALIASES = new Map([
 const GROUP_ALIAS_LOOKUP = new Map([
   ['maintenance_tools::testing & monitoring', { id: 'maintenance-testing', label: 'Testing & Monitoring' }],
   ['maintenance_tools::cleanup & extras', { id: 'maintenance_cleanup_extras', label: 'Cleanup & Extras' }],
-  ['maintenance_tools::air & aeration', { id: 'maintenance_air', label: 'Air & Aeration' }]
+  ['maintenance_tools::air & aeration', { id: 'maintenance_air', label: 'Air & Aeration' }],
+  ['maintenance_tools::nets & handling', { id: 'maintenance_nets_handling', label: 'Nets & Handling' }]
 ]);
+
+const MAINTENANCE_SUBGROUP_ORDER = [
+  'maintenance-testing',
+  'maintenance_air',
+  'maintenance_cleanup_extras',
+  'maintenance_nets_handling'
+];
 
 function normalizeCategoryKey(value) {
   const key = String(value || '').trim().toLowerCase();
@@ -531,7 +546,18 @@ function buildGroups(items, tipsMap, category, metaMap) {
     }
     group.options.push(ensureOptionDefaults(item, group.options.length, category, id));
   });
-  return order.map((id) => map.get(id));
+  const defaultOrder = order.map((id) => map.get(id));
+  if ((category || '').toLowerCase() === 'maintenance_tools') {
+    const seen = new Set();
+    const prioritized = MAINTENANCE_SUBGROUP_ORDER.filter((id) => {
+      if (!map.has(id)) return false;
+      seen.add(id);
+      return true;
+    }).map((id) => map.get(id));
+    const remainder = defaultOrder.filter((group) => group && !seen.has(group.id));
+    return [...prioritized, ...remainder];
+  }
+  return defaultOrder;
 }
 
 function slugifyExtrasKey(value, fallback = 'group') {
