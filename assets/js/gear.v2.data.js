@@ -9,14 +9,23 @@ const RANGES_HEATERS = [
   { id: "g_125p", label: "125+ Gallons", min: 125, max: 999, sort: 999 }
 ];
 
-const RANGES_FILTERS = [
-  { id: "g-5-10", label: "5–10 gallons", min: 5, max: 10 },
-  { id: "g-10-20", label: "10–20 gallons", min: 10, max: 20 },
-  { id: "g-20-40", label: "20–40 gallons", min: 20, max: 40 },
-  { id: "g-40-60", label: "40–60 gallons", min: 40, max: 60 },
-  { id: "g-60-90", label: "60–90 gallons", min: 60, max: 90 },
-  { id: "g-90-125", label: "90–125 gallons", min: 90, max: 125 }
+const FILTER_BUCKETS = [
+  { id: "g_5_10", label: "5–10 Gallons", min: 5, max: 10, sort: 10 },
+  { id: "g_10_20", label: "10–20 Gallons", min: 10, max: 20, sort: 20 },
+  { id: "g_20_40", label: "20–40 Gallons", min: 20, max: 40, sort: 40 },
+  { id: "g_40_55", label: "40–55 Gallons", min: 40, max: 55, sort: 55 },
+  { id: "g_55_75", label: "55–75 Gallons", min: 55, max: 75, sort: 75 },
+  { id: "g_75_125", label: "75–125 Gallons", min: 75, max: 125, sort: 125 },
+  { id: "g_125p", label: "125+ Gallons", min: 125, max: 999, sort: 999 }
 ];
+
+const RANGES_FILTERS = FILTER_BUCKETS.map((bucket) => ({
+  id: bucket.id,
+  label: bucket.label,
+  min: bucket.min,
+  max: bucket.max,
+  sort: bucket.sort
+}));
 
 const RANGES_LIGHTS = [
   { id: "l-12-20", label: "12–20 inches", min: 12, max: 20 },
@@ -125,12 +134,20 @@ const HEATER_RANGE_META = new Map([
 ]);
 
 const FILTER_RANGE_META = new Map([
-  ["g-5-10", { label: "Recommended Filters for 5–10 Gallons", tip: "For 5–10 gal tanks, use gentle filtration — sponge or low-flow HOB filters. Clean sponges monthly and avoid replacing biomedia to preserve beneficial bacteria. (Full maintenance and sizing guidance available in the Filter Tip popup.)" }],
-  ["g-10-20", { label: "Recommended Filters for 10–20 Gallons", tip: "" }],
-  ["g-20-40", { label: "Recommended Filters for 20–40 Gallons", tip: "" }],
-  ["g-40-60", { label: "Recommended Filters for 40–60 Gallons", tip: "" }],
-  ["g-60-90", { label: "Recommended Filters for 60–90 Gallons", tip: "" }],
-  ["g-90-125", { label: "Recommended Filters for 90–125 Gallons", tip: "" }]
+  [
+    "g_5_10",
+    {
+      label: "Recommended Filters for 5–10 Gallons",
+      tip:
+        "For 5–10 gal tanks, use gentle filtration — sponge or low-flow HOB filters. Clean sponges monthly and avoid replacing biomedia to preserve beneficial bacteria. (Full maintenance and sizing guidance available in the Filter Tip popup.)"
+    }
+  ],
+  ["g_10_20", { label: "Recommended Filters for 10–20 Gallons", tip: "" }],
+  ["g_20_40", { label: "Recommended Filters for 20–40 Gallons", tip: "" }],
+  ["g_40_55", { label: "Recommended Filters for 40–55 Gallons", tip: "" }],
+  ["g_55_75", { label: "Recommended Filters for 55–75 Gallons", tip: "" }],
+  ["g_75_125", { label: "Recommended Filters for 75–125 Gallons", tip: "" }],
+  ["g_125p", { label: "Recommended Filters for 125+ Gallons", tip: "" }]
 ]);
 
 const FILTER_GROUP_META = new Map([
@@ -143,6 +160,64 @@ const FILTER_GROUP_META = new Map([
         'Stack media in flow order: mechanical → biological → chemical. Rinse sponges/floss in tank water, not tap. Never replace all bio media at once. Remove carbon when medicating.'
     }
   ]
+]);
+
+const FILTER_BUCKET_META = new Map(FILTER_BUCKETS.map((bucket) => [bucket.id, { ...bucket }]));
+
+const FILTER_BUCKET_ALIASES = new Map([
+  ['g-5-10', 'g_5_10'],
+  ['g5-10', 'g_5_10'],
+  ['g5_10', 'g_5_10'],
+  ['5-10', 'g_5_10'],
+  ['5_10', 'g_5_10'],
+  ['g_5_10_01', 'g_5_10'],
+  ['g_5_10_02', 'g_5_10'],
+  ['g_5_10_03', 'g_5_10'],
+  ['g-10-20', 'g_10_20'],
+  ['g10-20', 'g_10_20'],
+  ['g10_20', 'g_10_20'],
+  ['10-20', 'g_10_20'],
+  ['10_20', 'g_10_20'],
+  ['g_10_20_01', 'g_10_20'],
+  ['g-20-40', 'g_20_40'],
+  ['g20-40', 'g_20_40'],
+  ['g20_40', 'g_20_40'],
+  ['20-40', 'g_20_40'],
+  ['20_40', 'g_20_40'],
+  ['g_20_40_01', 'g_20_40'],
+  ['g-40-60', 'g_40_55'],
+  ['g40-60', 'g_40_55'],
+  ['g40_60', 'g_40_55'],
+  ['40-60', 'g_40_55'],
+  ['40_60', 'g_40_55'],
+  ['g_40_60', 'g_40_55'],
+  ['gump_40_55', 'g_40_55'],
+  ['g-60-90', 'g_55_75'],
+  ['g60-90', 'g_55_75'],
+  ['g60_90', 'g_55_75'],
+  ['g_60_90', 'g_55_75'],
+  ['60-90', 'g_55_75'],
+  ['60_90', 'g_55_75'],
+  ['gump_55_75', 'g_55_75'],
+  ['g-90-125', 'g_75_125'],
+  ['g90-125', 'g_75_125'],
+  ['g90_125', 'g_75_125'],
+  ['g_90_125', 'g_75_125'],
+  ['90-125', 'g_75_125'],
+  ['90_125', 'g_75_125'],
+  ['gump_75_125', 'g_75_125'],
+  ['g125+', 'g_125p'],
+  ['g-125+', 'g_125p'],
+  ['125+', 'g_125p'],
+  ['125p', 'g_125p'],
+  ['g_125_plus', 'g_125p'],
+  ['g-125-150', 'g_125p'],
+  ['g_125_150', 'g_125p'],
+  ['g_125_200', 'g_125p'],
+  ['g_125_175', 'g_125p'],
+  ['gump_125', 'g_125p'],
+  ['gump_125p', 'g_125p'],
+  ['g_125p_01', 'g_125p']
 ]);
 
 const LIGHT_RANGE_META = new Map([
@@ -411,6 +486,57 @@ function normalizeHeaterBucketKey(value) {
     .toLowerCase();
 }
 
+function normalizeFilterBucketKey(value) {
+  if (value === null || value === undefined) return "";
+  let key = String(value).trim().toLowerCase();
+  if (!key) return "";
+  key = key
+    .replace(/filters?[-_]?/g, '')
+    .replace(/range[-_]?/g, '')
+    .replace(/bucket[-_]?/g, '')
+    .replace(/option[-_a-z0-9]*/g, '')
+    .replace(/[^a-z0-9+]+/g, '_')
+    .replace(/__+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .replace(/_(?:0+)?\d+$/, (match) => (match.includes('p') ? match : ''));
+
+  if (!key) return "";
+  if (FILTER_BUCKET_ALIASES.has(key)) {
+    return FILTER_BUCKET_ALIASES.get(key) || "";
+  }
+
+  if (FILTER_BUCKET_META.has(key)) {
+    return key;
+  }
+
+  const direct = key.replace(/-/g, '_');
+  if (FILTER_BUCKET_META.has(direct)) {
+    return direct;
+  }
+  if (FILTER_BUCKET_ALIASES.has(direct)) {
+    return FILTER_BUCKET_ALIASES.get(direct) || "";
+  }
+
+  const match = key.match(/g(?:ump)?_?(\d+)(?:_?(\d+))?(p|\+)?/);
+  if (match) {
+    const [, min, max, plus] = match;
+    if (plus || (!max && (key.includes('125') || key.includes('150') || key.endsWith('p') || key.includes('plus')))) {
+      return 'g_125p';
+    }
+    if (min && max) {
+      const candidate = `g_${min}_${max}`;
+      if (FILTER_BUCKET_META.has(candidate)) return candidate;
+      if (FILTER_BUCKET_ALIASES.has(candidate)) return FILTER_BUCKET_ALIASES.get(candidate) || "";
+    }
+  }
+
+  if (key === 'g_125p') {
+    return 'g_125p';
+  }
+
+  return "";
+}
+
 function normalizeStandItem(item = {}) {
   const id = (item.id || "").toString().trim();
   const group = (item.group || "").toString().trim().toLowerCase();
@@ -553,8 +679,18 @@ function normalizeRow(row, fallbackCategory) {
     bucketSort: bucketSortValue
   };
 
+  if (category === 'filters') {
+    const normalizedBucketKey = normalizeFilterBucketKey(bucketKeyRaw || rangeId || groupId || tanksize);
+    if (normalizedBucketKey) {
+      normalized.bucketKey = normalizedBucketKey;
+    }
+  }
+
   if (!normalized.category && fallbackCategory) {
     normalized.category = normalizeCategoryKey(fallbackCategory);
+  }
+  if (!normalized.rangeId && normalized.bucketKey) {
+    normalized.rangeId = normalized.bucketKey;
   }
   if (!normalized.rangeId && bucketKeyRaw) {
     normalized.rangeId = bucketKeyRaw;
@@ -666,6 +802,135 @@ function buildHeaterBuckets(items = []) {
   });
 
   return orderedBuckets.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+}
+
+function getFilterBucketId(item = {}) {
+  const subgroup = String(item.subgroup || '').trim().toLowerCase();
+  if (subgroup === 'filter media') return '';
+  const candidates = [
+    item.bucketKey,
+    item.rangeId,
+    item.groupId,
+    item.tanksize,
+    item.id,
+    item.label,
+    item.title
+  ];
+  for (const candidate of candidates) {
+    const normalized = normalizeFilterBucketKey(candidate);
+    if (normalized) return normalized;
+  }
+  return '';
+}
+
+function buildFilterBuckets(items = []) {
+  const bucketStore = new Map();
+
+  const ensureBucket = (id) => {
+    if (!bucketStore.has(id)) {
+      const meta = FILTER_BUCKET_META.get(id) || {};
+      const rangeMeta = FILTER_RANGE_META.get(id) || {};
+      bucketStore.set(id, {
+        id,
+        label: rangeMeta.label || meta.label || id,
+        rangeLabel: rangeMeta.label || meta.label || id,
+        tip: rangeMeta.tip || '',
+        sort: Number.isFinite(meta.sort) ? meta.sort : undefined,
+        minGallons: Number.isFinite(meta.min) ? meta.min : undefined,
+        maxGallons: Number.isFinite(meta.max) ? meta.max : undefined,
+        options: [],
+        bucketLabel: '',
+        bucketSort: undefined
+      });
+    }
+    return bucketStore.get(id);
+  };
+
+  items.forEach((item) => {
+    const bucketId = getFilterBucketId(item);
+    if (!bucketId) return;
+    const bucket = ensureBucket(bucketId);
+    if (!bucket.bucketLabel && item.bucketLabel) {
+      bucket.bucketLabel = item.bucketLabel;
+    }
+    const sortValue = Number(item.bucketSort);
+    if (Number.isFinite(sortValue)) {
+      bucket.bucketSort = sortValue;
+    }
+    if (!bucket.minGallons && Number.isFinite(item.minGallons)) {
+      bucket.minGallons = item.minGallons;
+    }
+    if (!bucket.maxGallons && Number.isFinite(item.maxGallons)) {
+      bucket.maxGallons = item.maxGallons;
+    }
+    bucket.options.push(ensureOptionDefaults(item, bucket.options.length, 'filters', bucketId));
+  });
+
+  const orderedBuckets = FILTER_BUCKETS.map((definition) => {
+    const stored = bucketStore.get(definition.id);
+    const meta = FILTER_BUCKET_META.get(definition.id) || {};
+    const rangeMeta = FILTER_RANGE_META.get(definition.id) || {};
+    const options = stored ? stored.options : [];
+    const sort = Number.isFinite(stored?.bucketSort)
+      ? stored.bucketSort
+      : Number.isFinite(meta.sort)
+        ? meta.sort
+        : Number.isFinite(definition.sort)
+          ? definition.sort
+          : 0;
+    const minGallons = Number.isFinite(stored?.minGallons)
+      ? stored.minGallons
+      : Number.isFinite(meta.min)
+        ? meta.min
+        : Number.isFinite(definition.min)
+          ? definition.min
+          : undefined;
+    const maxGallons = Number.isFinite(stored?.maxGallons)
+      ? stored.maxGallons
+      : Number.isFinite(meta.max)
+        ? meta.max
+        : Number.isFinite(definition.max)
+          ? definition.max
+          : undefined;
+    const labelFromData = stored?.bucketLabel || stored?.label;
+    const label = labelFromData || rangeMeta.label || meta.label || definition.label || definition.id;
+    return {
+      id: definition.id,
+      label,
+      rangeLabel: rangeMeta.label || label,
+      tip: rangeMeta.tip || '',
+      sort: Number.isFinite(sort) ? sort : 0,
+      minGallons: Number.isFinite(minGallons) ? minGallons : undefined,
+      maxGallons: Number.isFinite(maxGallons) ? maxGallons : undefined,
+      options,
+      placeholder: options.length ? '' : 'Links coming soon.'
+    };
+  });
+
+  const extraBuckets = Array.from(bucketStore.keys()).filter((key) => !FILTER_BUCKET_META.has(key));
+  const extraBucketDefs = extraBuckets.map((key, index) => {
+    const stored = bucketStore.get(key);
+    if (!stored) return null;
+    const rangeMeta = FILTER_RANGE_META.get(key) || {};
+    const sort = Number.isFinite(stored.bucketSort)
+      ? stored.bucketSort
+      : Number.isFinite(stored.sort)
+        ? stored.sort
+        : FILTER_BUCKETS.length + index;
+    return {
+      id: key,
+      label: stored.bucketLabel || stored.label || rangeMeta.label || key,
+      rangeLabel: rangeMeta.label || stored.rangeLabel || stored.bucketLabel || stored.label || key,
+      tip: rangeMeta.tip || stored.tip || '',
+      sort: Number.isFinite(sort) ? sort : FILTER_BUCKETS.length + index,
+      minGallons: Number.isFinite(stored.minGallons) ? stored.minGallons : undefined,
+      maxGallons: Number.isFinite(stored.maxGallons) ? stored.maxGallons : undefined,
+      options: stored.options,
+      placeholder: stored.options.length ? '' : 'Links coming soon.'
+    };
+  }).filter(Boolean);
+
+  return [...orderedBuckets, ...extraBucketDefs].sort((a, b) => (a.sort || 0) - (b.sort || 0));
 }
 
 function buildGroups(items, tipsMap, category, metaMap) {
@@ -961,6 +1226,9 @@ function buildGear(normalized, standsItems = []) {
     if (subgroup === 'filter media') return false;
     return Boolean((item.rangeId || '').trim());
   });
+  const filterBuckets = buildFilterBuckets(filterRangeItems);
+  const filterMediaGroups = buildGroups(filterMediaItems, undefined, 'filters', FILTER_GROUP_META);
+  const filterMediaGroup = filterMediaGroups.find((group) => group && group.options && group.options.length);
   const lights = getItemsByCategory(normalized, 'lights');
   const substrate = getItemsByCategory(normalized, 'substrate');
   const waterTreatments = getItemsByCategory(normalized, 'water_treatments');
@@ -978,8 +1246,8 @@ function buildGear(normalized, standsItems = []) {
     },
     filters: {
       match: 'gallons',
-      ranges: buildRange(RANGES_FILTERS, FILTER_RANGE_META, filterRangeItems, 'filters'),
-      accordions: buildGroups(filterMediaItems, undefined, 'filters', FILTER_GROUP_META)
+      buckets: filterBuckets,
+      mediaGroup: filterMediaGroup || filterMediaGroups[0] || null
     },
     lights: {
       match: 'length',
