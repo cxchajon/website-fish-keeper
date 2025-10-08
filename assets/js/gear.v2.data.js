@@ -122,7 +122,7 @@ const MAINTENANCE_GROUP_META = new Map([
     'maintenance_cleanup_extras',
     {
       intro:
-        'Keep your workspace clean and safe. Use microfiber towels, paper towels, and a distilled water + vinegar mix for exterior glass. Avoid harsh household cleaners near your tank. Dedicate buckets and tools to aquarium use only.'
+        'Keep aquarium-safe supplies separate from household products. Use only 100% silicone labeled for aquariums when sealing glass or attaching dividers.'
     }
   ],
   [
