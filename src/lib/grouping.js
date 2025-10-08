@@ -1,46 +1,74 @@
-const LENGTH_BUCKETS = [
-  { id: 'l-12-18', label: 'Recommended Lights for 12–18 in Tanks', items: [] },
-  { id: 'l-18-24', label: 'Recommended Lights for 18–24 in Tanks', items: [] },
-  { id: 'l-24-30', label: 'Recommended Lights for 24–30 in Tanks', items: [] },
-  { id: 'l-30-36', label: 'Recommended Lights for 30–36 in Tanks', items: [] },
-  { id: 'l-36-48', label: 'Recommended Lights for 36–48 in Tanks', items: [] },
-  { id: 'l-48-up', label: 'Recommended Lights for 48 in and Up', items: [] },
+const ORDERED_LENGTH_BUCKET_IDS = [
+  '12-18',
+  '18-24',
+  '24-30',
+  '30-36',
+  '36-48',
+  '48-55',
+  '55-75',
+  '75-up',
 ];
 
-export const LENGTH_BUCKET_SET = new Set(LENGTH_BUCKETS.map((bucket) => bucket.id));
+function formatRangeLabel(rangeId) {
+  if (!rangeId) {
+    return '';
+  }
+  if (rangeId.endsWith('-up')) {
+    const start = rangeId.replace('-up', '');
+    return `Recommended Lights for ${start}+ inch Tanks`;
+  }
+  const [start, end] = rangeId.split('-');
+  const dash = '\u2013';
+  return `Recommended Lights for ${start}${dash}${end} inch Tanks`;
+}
+
+const LENGTH_BUCKETS = ORDERED_LENGTH_BUCKET_IDS.map((bucketId) => ({
+  id: bucketId,
+  bucket_id: bucketId,
+  label: formatRangeLabel(bucketId),
+  bucket_label: formatRangeLabel(bucketId),
+  items: [],
+}));
+
+export const LENGTH_BUCKET_SET = new Set(ORDERED_LENGTH_BUCKET_IDS);
 
 const LENGTH_RANGE_ALIAS_ENTRIES = LENGTH_BUCKETS.flatMap((bucket) => {
-  const base = bucket.id.replace(/^l-/, '');
+  const base = bucket.bucket_id;
   const baseNoDash = base.replace(/-/g, '');
   const entries = [
-    [bucket.id, bucket.id],
-    [base, bucket.id],
-    [base.replace(/-/g, '_'), bucket.id],
-    [baseNoDash, bucket.id],
-    [`l${base}`, bucket.id],
-    [`l_${base}`, bucket.id],
-    [`l${baseNoDash}`, bucket.id],
+    [bucket.bucket_id, bucket.bucket_id],
+    [base, bucket.bucket_id],
+    [base.replace(/-/g, '_'), bucket.bucket_id],
+    [baseNoDash, bucket.bucket_id],
+    [`l-${base}`, bucket.bucket_id],
+    [`l_${base}`, bucket.bucket_id],
+    [`l${base}`, bucket.bucket_id],
+    [`l${baseNoDash}`, bucket.bucket_id],
   ];
   if (base.endsWith('-up')) {
     const start = base.replace('-up', '');
     entries.push(
-      [`${start}up`, bucket.id],
-      [`${start}+`, bucket.id],
-      [`${start}-up`, bucket.id],
-      [`${start}_up`, bucket.id],
-      [`l${start}up`, bucket.id],
-      [`l${start}+`, bucket.id],
-      [`l-${start}up`, bucket.id],
+      [`${start}up`, bucket.bucket_id],
+      [`${start}+`, bucket.bucket_id],
+      [`${start}-up`, bucket.bucket_id],
+      [`${start}_up`, bucket.bucket_id],
+      [`l${start}up`, bucket.bucket_id],
+      [`l${start}+`, bucket.bucket_id],
+      [`l-${start}up`, bucket.bucket_id],
     );
   }
   return entries;
 });
 
 const LEGACY_RANGE_ALIASES = [
-  ['l-12-20', 'l-12-18'],
-  ['12-20', 'l-12-18'],
-  ['l-20-24', 'l-18-24'],
-  ['20-24', 'l-18-24'],
+  ['l-12-20', '12-18'],
+  ['12-20', '12-18'],
+  ['l-20-24', '18-24'],
+  ['20-24', '18-24'],
+  ['l-24-32', '24-30'],
+  ['24-32', '24-30'],
+  ['l-48-up', '48-55'],
+  ['48-up', '48-55'],
 ];
 
 const LENGTH_RANGE_TO_BUCKET = new Map([...LENGTH_RANGE_ALIAS_ENTRIES, ...LEGACY_RANGE_ALIASES]);
@@ -73,31 +101,28 @@ function normalizeLengthRange(value = '') {
     next = LENGTH_RANGE_TO_BUCKET.get(next);
   }
 
-  if (next.startsWith('l') && !next.startsWith('l-')) {
-    next = `l-${next.slice(1)}`;
-  }
-  if (next.startsWith('-')) {
-    next = `l${next}`;
+  const stripped = next.replace(/^l[-_]?/, '');
+  if (LENGTH_RANGE_TO_BUCKET.has(stripped)) {
+    return LENGTH_RANGE_TO_BUCKET.get(stripped);
   }
 
-  if (LENGTH_RANGE_TO_BUCKET.has(next)) {
-    next = LENGTH_RANGE_TO_BUCKET.get(next);
+  if (LENGTH_BUCKET_SET.has(stripped)) {
+    return stripped;
   }
 
-  const standardMatch = next.match(/^l-(\d{2})-(\d{2})$/);
-  if (standardMatch) {
-    return LENGTH_BUCKET_SET.has(next) ? next : '';
+  if (LENGTH_BUCKET_SET.has(next)) {
+    return next;
   }
 
-  const shortMatch = next.match(/^(\d{2})-(\d{2})$/);
+  const shortMatch = next.match(/^(\d{2})(?:-|to)?(\d{2})$/);
   if (shortMatch) {
-    const candidate = `l-${shortMatch[1]}-${shortMatch[2]}`;
+    const candidate = `${shortMatch[1]}-${shortMatch[2]}`;
     return LENGTH_BUCKET_SET.has(candidate) ? candidate : '';
   }
 
   const upMatch = next.match(/^(?:l-)?(\d{2})(?:-)?(?:up)$/);
   if (upMatch) {
-    const candidate = `l-${upMatch[1]}-up`;
+    const candidate = `${upMatch[1]}-up`;
     return LENGTH_BUCKET_SET.has(candidate) ? candidate : '';
   }
 
@@ -106,7 +131,7 @@ function normalizeLengthRange(value = '') {
 
 export function bucketizeByLength(lights = []) {
   const buckets = LENGTH_BUCKETS.map((bucket) => ({ ...bucket, items: [] }));
-  const bucketMap = new Map(buckets.map((bucket) => [bucket.id, bucket]));
+  const bucketMap = new Map(buckets.map((bucket) => [bucket.bucket_id, bucket]));
 
   lights.forEach((light) => {
     if (!light) {
@@ -127,20 +152,20 @@ export function resolveBucketId(lengthRange = '') {
   return LENGTH_BUCKET_SET.has(normalized) ? normalized : '';
 }
 
-export const LENGTH_RANGE_VALUES = Array.from(LENGTH_BUCKET_SET);
+export const LENGTH_RANGE_VALUES = Array.from(ORDERED_LENGTH_BUCKET_IDS);
 
 export function getLightsByLength(lights = []) {
   const buckets = bucketizeByLength(lights);
   const initial = LENGTH_BUCKETS.reduce(
     (acc, bucket) => {
-      acc[bucket.id] = [];
+      acc[bucket.bucket_id] = [];
       return acc;
     },
     {},
   );
 
   return buckets.reduce((acc, bucket) => {
-    acc[bucket.id] = bucket.items.slice();
+    acc[bucket.bucket_id] = bucket.items.slice();
     return acc;
   }, initial);
 }

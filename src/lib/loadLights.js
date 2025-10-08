@@ -12,25 +12,29 @@ function normaliseCell(value) {
 }
 
 function adaptRow(entry) {
-  const lengthRange = resolveBucketId(entry.length_range ?? entry.lengthRange ?? '');
+  const lengthRange = resolveBucketId(entry.length_range ?? entry.lengthRange ?? entry.range_id ?? '');
   if (!lengthRange) {
     return null;
   }
-  const light = {
-    product_id: normaliseCell(entry.product_id ?? entry.Product_ID ?? entry.Item_ID ?? ''),
-    title: normaliseCell(entry.title ?? entry.Product_Name ?? entry.Option_Label ?? ''),
-    notes: normaliseCell(entry.notes ?? entry.Notes ?? ''),
-    amazon_url: normaliseCell(entry.amazon_url ?? entry.Amazon_Link ?? entry.amazonUrl ?? ''),
+
+  const productId = normaliseCell(entry.product_id ?? entry.Product_ID ?? entry.Item_ID ?? '');
+  const title = normaliseCell(entry.title ?? entry.Product_Name ?? entry.Option_Label ?? '');
+  if (!productId || !title) {
+    return null;
+  }
+
+  const notes = normaliseCell(entry.notes ?? entry.Notes ?? '');
+  const amazonUrl = normaliseCell(entry.amazon_url ?? entry.Amazon_Link ?? entry.amazonUrl ?? '');
+  const rel = normaliseCell(entry.rel ?? entry.Rel ?? DEFAULT_REL) || DEFAULT_REL;
+
+  return {
+    product_id: productId,
+    title,
+    notes,
+    amazon_url: amazonUrl,
     length_range: lengthRange,
-    rel: normaliseCell(entry.rel ?? entry.Rel ?? DEFAULT_REL) || DEFAULT_REL,
+    rel,
   };
-  if (!light.amazon_url) {
-    delete light.amazon_url;
-  }
-  if (!light.notes) {
-    delete light.notes;
-  }
-  return light;
 }
 
 export function parseLights(text) {

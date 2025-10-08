@@ -85,8 +85,8 @@ test('bucketizeByLength groups lights by range', () => {
   ];
   const buckets = bucketizeByLength(sample);
   assert.strictEqual(buckets.length, LENGTH_BUCKETS.length);
-  const shortBucket = buckets.find((bucket) => bucket.id === 'l-12-18');
-  const longBucket = buckets.find((bucket) => bucket.id === 'l-48-up');
+  const shortBucket = buckets.find((bucket) => (bucket.bucket_id ?? bucket.id) === '12-18');
+  const longBucket = buckets.find((bucket) => (bucket.bucket_id ?? bucket.id) === '48-55');
   assert.ok(shortBucket);
   assert.ok(longBucket);
   assert.deepEqual(shortBucket.items.map((item) => item.product_id), ['a']);
