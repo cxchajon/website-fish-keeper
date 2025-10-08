@@ -633,64 +633,44 @@
   function renderSubstrateSubgroupAccordion(subgroup = {}, index = 0, options = {}){
     const { optionContext = '', parentRangeId = '' } = options;
     const label = (subgroup.label || '').trim() || 'Substrate Picks';
-    const suffixSource = subgroup.id || subgroup.slug || label || `substrate-${index + 1}`;
-    const safeSuffix = String(suffixSource)
-      .toLowerCase()
-      .replace(/&/g, 'and')
-      .replace(/[^a-z0-9-_]+/g, '-')
-      .replace(/-{2,}/g, '-')
-      .replace(/^-+|-+$/g, '') || `substrate-${index + 1}`;
-    const headerId = `substrate-${safeSuffix}-header`;
-    const panelId = `substrate-${safeSuffix}-panel`;
+    const groupId = subgroup.id || subgroup.slug || `substrate-${index + 1}`;
+    const group = {
+      ...subgroup,
+      id: groupId,
+      label,
+      options: Array.isArray(subgroup.options) ? subgroup.options : [],
+      placeholder: (subgroup.placeholder || '').trim() || 'Substrate picks coming soon.'
+    };
 
-    const section = el('section',{ class:'gear-subcard gear-subcard--substrate gear-card sub-accordion' });
+    const section = renderAccordionGroup(group, index, {
+      sectionKey: 'substrate',
+      sectionClass: 'gear-subcard gear-subcard--substrate sub-accordion',
+      headerClass: 'gear-card__header gear-subcard__header accordion-header',
+      bodyClass: 'gear-card__body gear-subcard__body accordion-panel',
+      rangeClass: 'range--substrate-subgroup',
+      rangeOptions: {
+        includeGearCard: false,
+        showTitle: false,
+        context: optionContext || 'substrate',
+        listClass: 'range__list--flat'
+      },
+      matchable: false
+    });
+
+    if (!section) return null;
+
     section.dataset.ignoreMatch = '1';
-    section.dataset.section = toDataSectionKey('substrate');
     if (parentRangeId) section.dataset.parentRangeId = parentRangeId;
     if (subgroup.slug) section.dataset.subgroup = subgroup.slug;
-    if (subgroup.id) {
-      section.dataset.subgroupId = subgroup.id;
-      section.dataset.rangeId = subgroup.id;
+    if (subgroup.id) section.dataset.subgroupId = subgroup.id;
+
+    const rangeBlock = section.querySelector('.range');
+    if (rangeBlock) {
+      rangeBlock.classList.add('range--substrate-subgroup');
+      if (parentRangeId) rangeBlock.dataset.parentRangeId = parentRangeId;
+      if (subgroup.id && !rangeBlock.dataset.subgroupId) rangeBlock.dataset.subgroupId = subgroup.id;
     }
 
-    const header = el('button',{
-      class:'gear-card__header gear-subcard__header accordion-header',
-      type:'button',
-      id: headerId,
-      'data-accordion':'toggle',
-      'aria-controls': panelId,
-      'aria-expanded':'false'
-    });
-    header.appendChild(el('span',{ class:'gear-subcard__title' }, label));
-    header.appendChild(el('span',{ class:'chevron','aria-hidden':'true' },'▸'));
-
-    const panel = el('div',{
-      class:'gear-card__body gear-subcard__body accordion-panel',
-      id: panelId,
-      role:'region',
-      'aria-labelledby': headerId,
-      hidden:true,
-      'aria-hidden':'true'
-    });
-
-    const range = el('div',{ class:'range range--substrate-subgroup' });
-    range.dataset.section = toDataSectionKey('substrate');
-    if (subgroup.id) range.dataset.subgroupId = subgroup.id;
-    if (parentRangeId) range.dataset.parentRangeId = parentRangeId;
-    const list = el('div',{ class:'range__list range__list--flat' });
-    const optionList = Array.isArray(subgroup.options) ? subgroup.options : [];
-    if (optionList.length) {
-      optionList.forEach((opt) => {
-        list.appendChild(createOptionRow(opt, { ...options, context: optionContext }));
-      });
-    } else {
-      const placeholderText = (subgroup.placeholder || '').trim() || 'Substrate picks coming soon.';
-      list.appendChild(el('p',{ class:'range__placeholder' }, placeholderText));
-    }
-    range.appendChild(list);
-    panel.appendChild(range);
-    section.appendChild(header);
-    section.appendChild(panel);
     return section;
   }
 
@@ -700,7 +680,8 @@
       ignoreMatch = false,
       showTitle = true,
       showTip = true,
-      headingTag = 'p'
+      headingTag = 'p',
+      listClass = ''
     } = options;
 
     const wrap = el('div',{class:'range'});
@@ -754,6 +735,12 @@
     }
 
     const list = el('div',{class:'range__list'});
+    if (listClass) {
+      String(listClass)
+        .split(/\s+/)
+        .filter(Boolean)
+        .forEach((cls) => list.classList.add(cls));
+    }
     const optionContext = options.context || sectionKey || '';
     const rawSubgroups = Array.isArray(range.subgroups)
       ? range.subgroups.filter((group) => group && Array.isArray(group.options))
@@ -819,9 +806,9 @@
     const {
       sectionKey = '',
       headerLevel = 'h3',
-      sectionClass = 'gear-subcard',
-      headerClass = 'gear-card__header gear-subcard__header',
-      bodyClass = 'gear-card__body gear-subcard__body',
+      sectionClass = 'gear-subcard sub-accordion',
+      headerClass = 'gear-card__header gear-subcard__header accordion-header',
+      bodyClass = 'gear-card__body gear-subcard__body accordion-panel',
       rangeClass = '',
       rangeOptions = {},
       matchable = false
@@ -829,6 +816,7 @@
 
     const classList = new Set(String(sectionClass || '').split(/\s+/).filter(Boolean));
     classList.add('gear-card');
+    classList.add('sub-accordion');
     const section = el('section',{ class: Array.from(classList).join(' ') });
     section.dataset.ignoreMatch = matchable ? '0' : '1';
     if (group?.id) {
@@ -839,13 +827,14 @@
 
     const baseId = group?.id ? String(group.id) : `${sectionKey || 'group'}-${index}`;
     const safeId = baseId.replace(/[^a-z0-9-_]/gi, '-');
+    const headerId = `${safeId}-header`;
     const bodyId = `${safeId}-body`;
 
-    const header = el('header',{
+    const header = el('button',{
       class: headerClass || 'gear-card__header',
+      type:'button',
+      id: headerId,
       'data-accordion':'toggle',
-      role:'button',
-      tabindex:'0',
       'aria-controls': bodyId,
       'aria-expanded':'false'
     });
@@ -873,7 +862,14 @@
     header.appendChild(el('span',{class:'chevron','aria-hidden':'true'},'▸'));
     section.appendChild(header);
 
-    const body = el('div',{ class: bodyClass || 'gear-card__body', id: bodyId, hidden:true });
+    const body = el('div',{
+      class: bodyClass || 'gear-card__body',
+      id: bodyId,
+      role:'region',
+      'aria-labelledby': headerId,
+      hidden:true,
+      'aria-hidden':'true'
+    });
     if (group?.intro) {
       body.appendChild(el('p',{ class:'gear-subcard__intro' }, group.intro));
     }
@@ -884,8 +880,10 @@
       ...rangeOptions
     };
     const rangeBlock = renderRangeBlock(group, sectionKey, renderOptions);
-    if (rangeClass && rangeBlock) rangeBlock.classList.add(rangeClass);
-    body.appendChild(rangeBlock);
+    if (rangeBlock) {
+      if (rangeClass) rangeBlock.classList.add(rangeClass);
+      body.appendChild(rangeBlock);
+    }
     section.appendChild(body);
     return section;
   }
@@ -936,131 +934,87 @@
       maxGallons,
     };
 
-    const suffixSource = normalizedBucket || normalizeBucketId(groupId) || `bucket-${index}`;
-    const safeSuffix = String(suffixSource)
-      .replace(/[^a-z0-9-_]/gi, '-')
-      .replace(/-{2,}/g, '-')
-      .replace(/^-+|-+$/g, '') || `bucket-${index}`;
-    const headerId = `filters-${safeSuffix}-header`;
-    const panelId = `filters-${safeSuffix}-panel`;
+    const section = renderAccordionGroup(group, index, {
+      sectionKey: 'filters',
+      sectionClass: 'gear-subcard gear-subcard--filters sub-accordion',
+      headerClass: 'gear-card__header gear-subcard__header accordion-header',
+      bodyClass: 'gear-card__body gear-subcard__body accordion-panel',
+      rangeClass: 'range--filters',
+      rangeOptions: {
+        includeGearCard: false,
+        showTitle: false,
+        context: 'filters'
+      },
+      matchable: true
+    });
 
-    const section = el('section',{ class:'gear-subcard gear-subcard--filters gear-card sub-accordion' });
-    section.dataset.ignoreMatch = '0';
+    if (!section) return null;
+
     section.dataset.section = toDataSectionKey('filters');
     section.dataset.filterBucket = '1';
     section.dataset.bucket = bucketKey;
     if (normalizedBucket) section.dataset.bucketId = normalizedBucket;
-    if (groupId) {
-      section.dataset.rangeId = groupId;
-      section.dataset.subgroupId = groupId;
-    }
     if (Number.isFinite(minGallons)) section.dataset.minG = String(minGallons);
     if (Number.isFinite(maxGallons)) section.dataset.maxG = String(maxGallons);
 
-    const header = el('button',{
-      class:'gear-card__header gear-subcard__header accordion-header',
-      type:'button',
-      id: headerId,
-      'data-accordion':'toggle',
-      'aria-controls': panelId,
-      'aria-expanded':'false'
-    });
-    header.appendChild(el('span',{ class:'gear-subcard__title' }, label || 'Options'));
-    header.appendChild(el('span',{ class:'chevron','aria-hidden':'true' },'▸'));
-
-    const panel = el('div',{
-      class:'gear-card__body gear-subcard__body accordion-panel',
-      id: panelId,
-      role:'region',
-      'aria-labelledby': headerId,
-      hidden:true,
-      'aria-hidden':'true'
-    });
-
-    const rangeBlock = renderRangeBlock(group, 'filters', {
-      includeGearCard: false,
-      showTitle: false,
-      context: 'filters'
-    });
+    const rangeBlock = section.querySelector('.range');
     if (rangeBlock) {
       rangeBlock.classList.add('range--filters');
       if (normalizedBucket) rangeBlock.dataset.bucketId = normalizedBucket;
       if (Number.isFinite(minGallons)) rangeBlock.dataset.minG = String(minGallons);
       if (Number.isFinite(maxGallons)) rangeBlock.dataset.maxG = String(maxGallons);
       if (!rangeBlock.dataset.rangeId && groupId) rangeBlock.dataset.rangeId = groupId;
-      panel.appendChild(rangeBlock);
+      if (!options.length) {
+        const placeholderEl = rangeBlock.querySelector('.range__placeholder');
+        if (placeholderEl) placeholderEl.textContent = placeholder;
+      }
     }
 
-    if (!options.length) {
-      const placeholderEl = panel.querySelector('.range__placeholder');
-      if (placeholderEl) placeholderEl.textContent = placeholder;
-    }
-
-    section.appendChild(header);
-    section.appendChild(panel);
     return section;
   }
 
   function renderLightRangeGroup(range = {}, index = 0){
+    if (!hasLiveOptions(range)) return null;
+
     const rangeId = range.id || `lights-${index}`;
-    const suffixSource = rangeId || `lights-${index}`;
-    const safeSuffix = String(suffixSource)
-      .replace(/[^a-z0-9-_]/gi, '-')
-      .replace(/-{2,}/g, '-')
-      .replace(/^-+|-+$/g, '') || `lights-${index}`;
-    const headerId = `lights-${safeSuffix}-header`;
-    const panelId = `lights-${safeSuffix}-panel`;
-
-    const section = el('section',{ class:'gear-subcard gear-subcard--lights gear-card sub-accordion' });
-    section.dataset.ignoreMatch = '0';
-    section.dataset.section = toDataSectionKey('lights');
-    if (rangeId) {
-      section.dataset.rangeId = rangeId;
-      section.dataset.subgroupId = rangeId;
-    }
-
     const minLength = firstFiniteNumber(range.minL, range.min, range.minLength);
     const maxLength = firstFiniteNumber(range.maxL, range.max, range.maxLength);
+
+    const section = renderAccordionGroup(
+      {
+        ...range,
+        id: rangeId,
+        label: (range.rangeLabel || range.label || '').trim() || 'Recommended Lights'
+      },
+      index,
+      {
+        sectionKey: 'lights',
+        sectionClass: 'gear-subcard gear-subcard--lights sub-accordion',
+        headerClass: 'gear-card__header gear-subcard__header accordion-header',
+        bodyClass: 'gear-card__body gear-subcard__body accordion-panel',
+        rangeClass: 'range--lights',
+        rangeOptions: {
+          includeGearCard: false,
+          showTitle: false,
+          context: 'lights'
+        },
+        matchable: true
+      }
+    );
+
+    if (!section) return null;
+
     if (Number.isFinite(minLength)) section.dataset.minL = String(minLength);
     if (Number.isFinite(maxLength)) section.dataset.maxL = String(maxLength);
 
-    const header = el('button',{
-      class:'gear-card__header gear-subcard__header accordion-header',
-      type:'button',
-      id: headerId,
-      'data-accordion':'toggle',
-      'aria-controls': panelId,
-      'aria-expanded':'false'
-    });
-
-    header.appendChild(el('span',{ class:'gear-subcard__title' }, range.label || range.rangeLabel || 'Recommended Lights'));
-    header.appendChild(el('span',{ class:'chevron','aria-hidden':'true' },'▸'));
-
-    const panel = el('div',{
-      class:'gear-card__body gear-subcard__body accordion-panel',
-      id: panelId,
-      role:'region',
-      'aria-labelledby': headerId,
-      hidden:true,
-      'aria-hidden':'true'
-    });
-
-    const renderOptions = {
-      includeGearCard: false,
-      showTitle: false,
-      context: 'lights'
-    };
-    const rangeBlock = renderRangeBlock(range, 'lights', renderOptions);
+    const rangeBlock = section.querySelector('.range');
     if (rangeBlock) {
       rangeBlock.classList.add('range--lights');
       if (!rangeBlock.dataset.rangeId && rangeId) rangeBlock.dataset.rangeId = rangeId;
       if (Number.isFinite(minLength)) rangeBlock.dataset.minL = String(minLength);
       if (Number.isFinite(maxLength)) rangeBlock.dataset.maxL = String(maxLength);
-      panel.appendChild(rangeBlock);
     }
 
-    section.appendChild(header);
-    section.appendChild(panel);
     return section;
   }
 

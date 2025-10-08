@@ -448,6 +448,20 @@ body{
   transition:border-color .25s ease-in-out,box-shadow .25s ease-in-out,transform .25s ease-in-out,background-color .25s ease-in-out;
 }
 
+.sub-accordion .gear-subcard__body > .range{
+  border:0;
+  padding:0;
+  background:transparent;
+  box-shadow:none;
+  border-radius:0;
+  display:grid;
+  gap:0.85rem;
+}
+
+.sub-accordion .gear-subcard__body > .range .range__tip{
+  margin:0;
+}
+
 .range.is-active{
   border-color:var(--active);
   border-width:2px;
@@ -760,10 +774,17 @@ select#tank-size {
   -webkit-appearance: none;
   -moz-appearance: none;
   outline: none;
+  color-scheme: dark;
 }
 
 /* Dropdown list options (Chrome/Safari/Firefox honor this) */
 select#tank-size option {
+  background-color: var(--tank-bar-bg, rgba(15,23,42,0.92));
+  color: var(--ink, #E5E7EB);
+}
+
+select#tank-size:hover,
+select#tank-size:focus {
   background-color: var(--tank-bar-bg, rgba(15,23,42,0.92));
   color: var(--ink, #E5E7EB);
 }
