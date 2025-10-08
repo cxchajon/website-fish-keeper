@@ -214,6 +214,7 @@ const CSV_SOURCES = [
   { path: "/data/gear_filters.csv", category: "filters" },
   { path: "/data/gear_lighting.csv", category: "lights" },
   { path: "/data/gear_substrate.csv", category: "substrate" },
+  { path: "/data/gear_treatments.csv", category: "water_treatments" },
   { path: "/data/gear_water_food_tools.csv", category: "" },
   { path: "/data/gear_maintenance.csv", category: "maintenance_tools" },
   { path: "/data/gear_extras.csv", category: "extras" }
