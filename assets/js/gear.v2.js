@@ -77,14 +77,14 @@
       .toLowerCase();
   }
 
-  const FILTER_BUCKETS_UI = [
-    { key: '5-10', label: 'Recommended Filters for 5–10 Gallons', id: 'g_5_10' },
-    { key: '10-20', label: 'Recommended Filters for 10–20 Gallons', id: 'g_10_20' },
-    { key: '20-40', label: 'Recommended Filters for 20–40 Gallons', id: 'g_20_40' },
-    { key: '40-55', label: 'Recommended Filters for 40–55 Gallons', id: 'g_40_55' },
-    { key: '55-75', label: 'Recommended Filters for 55–75 Gallons', id: 'g_55_75' },
-    { key: '75-125', label: 'Recommended Filters for 75–125 Gallons', id: 'g_75_125' },
-    { key: '125+', label: 'Recommended Filters for 125+ Gallons', id: 'g_125p' }
+  const FILTER_BUCKETS = [
+    { key: '5-10', label: 'Recommended Filters for 5–10 Gallons', id: 'g_5_10', min: 5, max: 10, sort: 10 },
+    { key: '10-20', label: 'Recommended Filters for 10–20 Gallons', id: 'g_10_20', min: 10, max: 20, sort: 20 },
+    { key: '20-40', label: 'Recommended Filters for 20–40 Gallons', id: 'g_20_40', min: 20, max: 40, sort: 40 },
+    { key: '40-55', label: 'Recommended Filters for 40–55 Gallons', id: 'g_40_55', min: 40, max: 55, sort: 55 },
+    { key: '55-75', label: 'Recommended Filters for 55–75 Gallons', id: 'g_55_75', min: 55, max: 75, sort: 75 },
+    { key: '75-125', label: 'Recommended Filters for 75–125 Gallons', id: 'g_75_125', min: 75, max: 125, sort: 125 },
+    { key: '125+', label: 'Recommended Filters for 125+ Gallons', id: 'g_125p', min: 125, max: 999, sort: 999 }
   ];
 
   function normalizeFilterValue(value){
@@ -134,6 +134,14 @@
       if (normalized) return normalized;
     }
     return '';
+  }
+
+  function norm(value){
+    return normalizeFilterValue(value);
+  }
+
+  function pickRange(row = {}){
+    return pickFilterRange(row);
   }
 
   function firstFiniteNumber(...values){
@@ -212,25 +220,13 @@
   function buildFallbackFilterBuckets(rows = []){
     const data = Array.isArray(rows) ? rows : [];
     const byBucket = {};
-    const fallbackBuckets = FILTER_BUCKETS_UI.map((bucketDef, index) => {
-      const key = normalizeFilterValue(bucketDef.key);
-      let matches = data.filter((row) => normalizeFilterValue(pickFilterRange(row)) === key);
+    const fallbackBuckets = FILTER_BUCKETS.map((bucketDef, index) => {
+      const targetKey = norm(bucketDef.key);
+      let matches = data.filter((row) => norm(pickRange(row)) === targetKey);
       if (!matches.length) {
         matches = data.filter((row) => {
-          const candidate = normalizeFilterValue(
-            row.tank_range ||
-              row.tankRange ||
-              row.tanksize ||
-              row.range ||
-              row.bucket_key ||
-              row.bucketKey ||
-              row.bucket ||
-              row.rangeId ||
-              row.range_id ||
-              row.gallons ||
-              row.gallon_range
-          );
-          return candidate && candidate.includes(key);
+          const candidate = norm(pickRange(row));
+          return candidate && candidate.includes(targetKey);
         });
       }
       if (typeof console !== 'undefined') {
@@ -244,7 +240,7 @@
       );
       const meta = typeof FILTER_BUCKET_META !== 'undefined' ? FILTER_BUCKET_META.get(bucketDef.id) : null;
       const rangeMeta = typeof FILTER_RANGE_META !== 'undefined' ? FILTER_RANGE_META.get(bucketDef.id) : null;
-      const baseDefs = typeof FILTER_BUCKETS !== 'undefined' ? FILTER_BUCKETS : [];
+      const baseDefs = Array.isArray(FILTER_BUCKETS) ? FILTER_BUCKETS : [];
       const baseDef = baseDefs.find((def) => normalizeBucketId(def.id) === normalizeBucketId(bucketDef.id));
 
       const label = bucketDef.label || rangeMeta?.label || meta?.label || baseDef?.label || bucketDef.key;
@@ -265,6 +261,7 @@
 
       return {
         id: bucketDef.id || bucketDef.key,
+        key: bucketDef.key || bucketDef.id || '',
         label,
         rangeLabel: rangeMeta?.label || label,
         tip,
@@ -295,9 +292,9 @@
 
     const used = new Set();
     const merged = [];
-    const baseDefs = typeof FILTER_BUCKETS !== 'undefined' ? FILTER_BUCKETS : [];
+    const baseDefs = Array.isArray(FILTER_BUCKETS) ? FILTER_BUCKETS : [];
 
-    FILTER_BUCKETS_UI.forEach((bucketDef, index) => {
+    FILTER_BUCKETS.forEach((bucketDef, index) => {
       const normKey = normalizeBucketId(bucketDef.id || bucketDef.key);
       used.add(normKey);
       const primary = primaryMap.get(normKey) || null;
@@ -346,6 +343,7 @@
       merged.push({
         ...(fallback || {}),
         ...(primary || {}),
+        key: primary?.key || fallback?.key || bucketDef.key || bucketDef.id || '',
         id: primary?.id || fallback?.id || bucketDef.id || bucketDef.key,
         label,
         rangeLabel,
@@ -365,11 +363,13 @@
       if (!source) return;
       const options = Array.isArray(source.options) ? source.options : [];
       const placeholder = options.length ? source.placeholder || '' : source.placeholder || 'No items yet.';
+      const resolvedKey = source.key || source.bucketKey || source.id || '';
       merged.push({
         ...source,
         options,
         placeholder,
-        sort: firstFiniteNumber(source.sort, source.bucketSort, merged.length + FILTER_BUCKETS_UI.length + 1)
+        key: resolvedKey,
+        sort: firstFiniteNumber(source.sort, source.bucketSort, merged.length + FILTER_BUCKETS.length + 1)
       });
     });
 
@@ -805,36 +805,115 @@
     return section;
   }
 
+  function renderFilterCard(option = {}, bucketKey = '', optionIndex = 0){
+    const wrapper = document.createElement('article');
+    wrapper.className = 'filter-card';
+    wrapper.dataset.category = option.category || 'filters';
+    if (bucketKey) {
+      wrapper.dataset.bucket = bucketKey;
+    }
+    wrapper.dataset.optionIndex = String(optionIndex);
+    wrapper.dataset.affiliate = option.affiliate || 'amazon';
+    wrapper.dataset.tag = option.tag || 'fishkeepingli-20';
+    if (option.subgroup) wrapper.dataset.subgroup = option.subgroup;
+    if (option.tanksize) wrapper.dataset.tanksize = option.tanksize;
+    if (option.length) wrapper.dataset.length = option.length;
+    if (option.depth !== undefined) wrapper.dataset.depth = (option.depth ?? '').toString();
+
+    const title = document.createElement('h4');
+    title.className = 'filter-card__title';
+    const rawTitle = stripUrls(option.title || option.label || 'Recommended option');
+    title.textContent = rawTitle || 'Recommended option';
+    wrapper.appendChild(title);
+
+    const notesText = stripUrls(option.notes || option.note || '');
+    if (notesText) {
+      const notes = document.createElement('p');
+      notes.className = 'filter-card__notes';
+      notes.textContent = notesText;
+      wrapper.appendChild(notes);
+    }
+
+    const href = String(option.href || '').trim();
+    let action = null;
+    if (href) {
+      const anchor = document.createElement('a');
+      anchor.className = 'btn btn-amazon';
+      anchor.href = href;
+      anchor.target = '_blank';
+      anchor.rel = 'sponsored noopener noreferrer';
+      anchor.textContent = 'Buy on Amazon';
+      if (rawTitle) {
+        anchor.setAttribute('aria-label', `Buy ${rawTitle} on Amazon`);
+      }
+      action = anchor;
+    } else {
+      const button = document.createElement('button');
+      button.className = 'btn btn-disabled';
+      button.type = 'button';
+      button.disabled = true;
+      button.setAttribute('aria-disabled', 'true');
+      button.textContent = 'Link coming soon';
+      action = button;
+    }
+    wrapper.appendChild(action);
+
+    return wrapper;
+  }
+
   function renderFilterBucket(bucket = {}, index = 0){
-    const group = {
-      ...bucket,
-      label: bucket.label || '',
-      rangeLabel: bucket.rangeLabel || bucket.label || ''
-    };
-    const section = renderAccordionGroup(group, index, {
-      sectionKey: 'filters',
-      sectionClass: 'gear-subcard gear-subcard--filters',
-      rangeClass: 'range--filters',
-      rangeOptions: {
-        includeGearCard: false,
-        showTitle: false,
-        context: 'filters'
-      },
-      matchable: true
-    });
-    if (!section) return null;
-    section.dataset.filterBucket = '1';
-    const bucketId = normalizeBucketId(bucket.id || bucket.bucketKey || `bucket-${index}`);
-    if (bucketId) {
-      section.dataset.bucketId = bucketId;
+    const bucketKey = bucket.key || bucket.bucketKey || bucket.rangeKey || bucket.id || `bucket-${index}`;
+    const normalizedBucket = normalizeBucketId(bucketKey);
+    const label = (bucket.label || bucket.rangeLabel || bucket.bucketLabel || bucketKey || '').trim();
+    const placeholder = (bucket.placeholder || '').trim() || 'No items yet.';
+    const options = Array.isArray(bucket.options) ? bucket.options : [];
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'sub-accordion';
+    wrapper.dataset.bucket = bucketKey;
+    if (normalizedBucket) {
+      wrapper.dataset.bucketId = normalizedBucket;
+    }
+    if (bucket.id) {
+      wrapper.dataset.rangeId = bucket.id;
     }
     if (Number.isFinite(bucket.minGallons)) {
-      section.dataset.minG = String(bucket.minGallons);
+      wrapper.dataset.minG = String(bucket.minGallons);
     }
     if (Number.isFinite(bucket.maxGallons)) {
-      section.dataset.maxG = String(bucket.maxGallons);
+      wrapper.dataset.maxG = String(bucket.maxGallons);
     }
-    return section;
+
+    const header = document.createElement('button');
+    header.type = 'button';
+    header.className = 'accordion-header';
+    header.setAttribute('aria-expanded', 'false');
+    header.textContent = label || bucketKey || 'Filters';
+
+    const panel = document.createElement('div');
+    panel.className = 'accordion-panel';
+    panel.hidden = true;
+
+    header.addEventListener('click', () => {
+      const expanded = header.getAttribute('aria-expanded') === 'true';
+      header.setAttribute('aria-expanded', String(!expanded));
+      panel.hidden = expanded;
+    });
+
+    if (options.length) {
+      options.forEach((option, optionIndex) => {
+        panel.appendChild(renderFilterCard(option, bucketKey, optionIndex));
+      });
+    } else {
+      const empty = document.createElement('p');
+      empty.className = 'filters-placeholder';
+      empty.textContent = placeholder;
+      panel.appendChild(empty);
+    }
+
+    wrapper.append(header, panel);
+    wrapper.dataset.filterBucket = '1';
+    return wrapper;
   }
 
   function renderFilterMediaGroup(group = {}, index = 0){
@@ -1285,9 +1364,11 @@
     if (!body) return false;
     const rangeBlock = body.querySelector(`.range[data-range-id="${rangeId}"]`);
     const cardBlock = body.querySelector(`.gear-card[data-range-id="${rangeId}"]`);
-    if (!rangeBlock && !cardBlock) return false;
+    const filterBucket = body.querySelector(`.sub-accordion[data-range-id="${rangeId}"]`);
+    if (!rangeBlock && !cardBlock && !filterBucket) return false;
     if (rangeBlock) rangeBlock.classList.add('is-active');
     if (cardBlock) cardBlock.classList.add('is-active');
+    if (filterBucket) filterBucket.classList.add('is-active');
     return true;
   }
 
@@ -1369,6 +1450,7 @@
   function clearHighlights(){
     document.querySelectorAll('.range.is-active').forEach((node) => node.classList.remove('is-active'));
     document.querySelectorAll('.gear-card.is-active').forEach((node) => node.classList.remove('is-active'));
+    document.querySelectorAll('.sub-accordion.is-active').forEach((node) => node.classList.remove('is-active'));
   }
 
   function applyHighlights(gallons, length){
