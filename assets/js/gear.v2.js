@@ -677,7 +677,7 @@
       wrap.appendChild(el(headingTag,{class:'range__title'}, rangeTitle));
     }
     if (range.tip && showTip !== false) {
-      wrap.appendChild(el('p',{class:'range__tip'}, range.tip));
+      wrap.appendChild(el('p',{class:'range__tip range-intro'}, range.tip));
     }
 
     const list = el('div',{class:'range__list'});
