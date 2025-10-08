@@ -77,6 +77,312 @@
       .toLowerCase();
   }
 
+  const FILTER_BUCKETS_UI = [
+    { key: '5-10', label: 'Recommended Filters for 5–10 Gallons', id: 'g_5_10' },
+    { key: '10-20', label: 'Recommended Filters for 10–20 Gallons', id: 'g_10_20' },
+    { key: '20-40', label: 'Recommended Filters for 20–40 Gallons', id: 'g_20_40' },
+    { key: '40-55', label: 'Recommended Filters for 40–55 Gallons', id: 'g_40_55' },
+    { key: '55-75', label: 'Recommended Filters for 55–75 Gallons', id: 'g_55_75' },
+    { key: '75-125', label: 'Recommended Filters for 75–125 Gallons', id: 'g_75_125' },
+    { key: '125+', label: 'Recommended Filters for 125+ Gallons', id: 'g_125p' }
+  ];
+
+  function normalizeFilterValue(value){
+    if (value === null || value === undefined) return '';
+    let next = String(value)
+      .trim()
+      .replace(/[\u2013\u2014\u2015\u2212]/g, '-')
+      .replace(/\s+/g, '')
+      .toLowerCase();
+    if (!next) return '';
+    next = next
+      .replace(/^filters?[-_]?/, '')
+      .replace(/^filter[-_]?/, '')
+      .replace(/^range[-_]?/, '')
+      .replace(/^bucket[-_]?/, '')
+      .replace(/^g(?:ump)?[-_]?/, '')
+      .replace(/^g/, '')
+      .replace(/gallons?$/, '')
+      .replace(/gal$/, '')
+      .replace(/plus$/, '+')
+      .replace(/p$/, '+');
+    next = next
+      .replace(/[^0-9+]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .replace(/-{2,}/g, '-');
+    return next;
+  }
+
+  function pickFilterRange(row = {}){
+    const candidates = [
+      row.tank_range,
+      row.tankRange,
+      row.tanksize,
+      row.tankSize,
+      row.range,
+      row.rangeId,
+      row.range_id,
+      row.bucket_key,
+      row.bucketKey,
+      row.bucket,
+      row.bucketId,
+      row.gallons,
+      row.gallon_range
+    ];
+    for (const candidate of candidates) {
+      const normalized = normalizeFilterValue(candidate);
+      if (normalized) return normalized;
+    }
+    return '';
+  }
+
+  function firstFiniteNumber(...values){
+    for (const value of values) {
+      const num = Number(value);
+      if (Number.isFinite(num)) return num;
+    }
+    return undefined;
+  }
+
+  function toNormalizedBucketKey(bucket){
+    if (!bucket) return '';
+    if (typeof bucket === 'string') return normalizeBucketId(bucket) || normalizeBucketId(normalizeFilterValue(bucket));
+    return normalizeBucketId(
+      bucket.id || bucket.bucketId || bucket.bucketKey || bucket.bucket_key || bucket.rangeId || bucket.range_id || ''
+    );
+  }
+
+  function getFilterRows(){
+    if (typeof window === 'undefined') return [];
+    const source = window.ttgGearNormalized;
+    if (source && typeof source.get === 'function') {
+      try {
+        const rows = source.get('filters');
+        if (Array.isArray(rows)) return rows;
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.warn('[filters] unable to read normalized rows', error);
+      }
+    }
+    if (Array.isArray(window.__filtersRows)) return window.__filtersRows;
+    return [];
+  }
+
+  function createFallbackFilterOption(item = {}, index = 0, bucketId = ''){
+    const title =
+      item.title ||
+      item.Product_Name ||
+      item.product_name ||
+      item.product_title ||
+      item.Product_Title ||
+      item.name ||
+      item.label ||
+      `Option ${index + 1}`;
+    const label = item.label || item.Option_Label || title;
+    const notes = item.notes || item.note || item.Notes || '';
+    const href =
+      item.href ||
+      item.amazon_url ||
+      item.amazonUrl ||
+      item.Amazon_Link ||
+      item.url ||
+      item.link ||
+      '';
+    const affiliate = item.affiliate || 'amazon';
+    const tag = item.tag || 'fishkeepingli-20';
+    const baseId =
+      item.id ||
+      item.Item_ID ||
+      `${bucketId || 'filters'}-${String(index + 1).padStart(2, '0')}`;
+    return {
+      label: label || title || `Option ${index + 1}`,
+      title: title || label || `Option ${index + 1}`,
+      notes,
+      note: notes,
+      href,
+      category: 'filters',
+      subgroup: item.subgroup || item.Subgroup || '',
+      tanksize: item.tanksize || item.tank_range || item.Tank_Size || '',
+      affiliate,
+      tag,
+      id: baseId
+    };
+  }
+
+  function buildFallbackFilterBuckets(rows = []){
+    const data = Array.isArray(rows) ? rows : [];
+    const byBucket = {};
+    const fallbackBuckets = FILTER_BUCKETS_UI.map((bucketDef, index) => {
+      const key = normalizeFilterValue(bucketDef.key);
+      let matches = data.filter((row) => normalizeFilterValue(pickFilterRange(row)) === key);
+      if (!matches.length) {
+        matches = data.filter((row) => {
+          const candidate = normalizeFilterValue(
+            row.tank_range ||
+              row.tankRange ||
+              row.tanksize ||
+              row.range ||
+              row.bucket_key ||
+              row.bucketKey ||
+              row.bucket ||
+              row.rangeId ||
+              row.range_id ||
+              row.gallons ||
+              row.gallon_range
+          );
+          return candidate && candidate.includes(key);
+        });
+      }
+      if (typeof console !== 'undefined') {
+        // eslint-disable-next-line no-console
+        console.info(`[filters] ${bucketDef.key} → ${matches.length} items`);
+      }
+      byBucket[bucketDef.key] = matches;
+
+      const options = matches.map((item, itemIndex) =>
+        createFallbackFilterOption(item, itemIndex, bucketDef.id || bucketDef.key)
+      );
+      const meta = typeof FILTER_BUCKET_META !== 'undefined' ? FILTER_BUCKET_META.get(bucketDef.id) : null;
+      const rangeMeta = typeof FILTER_RANGE_META !== 'undefined' ? FILTER_RANGE_META.get(bucketDef.id) : null;
+      const baseDefs = typeof FILTER_BUCKETS !== 'undefined' ? FILTER_BUCKETS : [];
+      const baseDef = baseDefs.find((def) => normalizeBucketId(def.id) === normalizeBucketId(bucketDef.id));
+
+      const label = bucketDef.label || rangeMeta?.label || meta?.label || baseDef?.label || bucketDef.key;
+      const tip = rangeMeta?.tip || meta?.tip || '';
+      const minGallons = firstFiniteNumber(
+        meta?.min,
+        baseDef?.min,
+        matches[0]?.minGallons,
+        matches[0]?.min_gallons
+      );
+      const maxGallons = firstFiniteNumber(
+        meta?.max,
+        baseDef?.max,
+        matches[0]?.maxGallons,
+        matches[0]?.max_gallons
+      );
+      const sort = firstFiniteNumber(meta?.sort, baseDef?.sort, index + 1);
+
+      return {
+        id: bucketDef.id || bucketDef.key,
+        label,
+        rangeLabel: rangeMeta?.label || label,
+        tip,
+        sort,
+        minGallons: Number.isFinite(minGallons) ? minGallons : undefined,
+        maxGallons: Number.isFinite(maxGallons) ? maxGallons : undefined,
+        options,
+        placeholder: options.length ? '' : 'No items yet.'
+      };
+    });
+
+    return { buckets: fallbackBuckets, byBucket };
+  }
+
+  function mergeFilterBuckets(primaryBuckets = [], fallbackBuckets = []){
+    const primaryMap = new Map();
+    const fallbackMap = new Map();
+
+    primaryBuckets.forEach((bucket) => {
+      const key = toNormalizedBucketKey(bucket);
+      if (key) primaryMap.set(key, bucket);
+    });
+
+    fallbackBuckets.forEach((bucket) => {
+      const key = toNormalizedBucketKey(bucket);
+      if (key) fallbackMap.set(key, bucket);
+    });
+
+    const used = new Set();
+    const merged = [];
+    const baseDefs = typeof FILTER_BUCKETS !== 'undefined' ? FILTER_BUCKETS : [];
+
+    FILTER_BUCKETS_UI.forEach((bucketDef, index) => {
+      const normKey = normalizeBucketId(bucketDef.id || bucketDef.key);
+      used.add(normKey);
+      const primary = primaryMap.get(normKey) || null;
+      const fallback = fallbackMap.get(normKey) || null;
+      const meta = typeof FILTER_BUCKET_META !== 'undefined' ? FILTER_BUCKET_META.get(bucketDef.id) : null;
+      const rangeMeta = typeof FILTER_RANGE_META !== 'undefined' ? FILTER_RANGE_META.get(bucketDef.id) : null;
+      const baseDef = baseDefs.find((def) => normalizeBucketId(def.id) === normKey) || {};
+
+      const options = Array.isArray(primary?.options) && primary.options.length
+        ? primary.options
+        : Array.isArray(fallback?.options)
+          ? fallback.options
+          : [];
+
+      const placeholder = options.length
+        ? ''
+        : primary?.placeholder || fallback?.placeholder || 'No items yet.';
+
+      const sort = firstFiniteNumber(
+        primary?.sort,
+        primary?.bucketSort,
+        fallback?.sort,
+        fallback?.bucketSort,
+        meta?.sort,
+        baseDef?.sort,
+        index + 1
+      );
+
+      const minGallons = firstFiniteNumber(
+        primary?.minGallons,
+        fallback?.minGallons,
+        meta?.min,
+        baseDef?.min
+      );
+      const maxGallons = firstFiniteNumber(
+        primary?.maxGallons,
+        fallback?.maxGallons,
+        meta?.max,
+        baseDef?.max
+      );
+
+      const label = primary?.label || fallback?.label || bucketDef.label || rangeMeta?.label || meta?.label || '';
+      const rangeLabel = primary?.rangeLabel || fallback?.rangeLabel || rangeMeta?.label || label;
+      const tip = primary?.tip || fallback?.tip || rangeMeta?.tip || meta?.tip || '';
+
+      merged.push({
+        ...(fallback || {}),
+        ...(primary || {}),
+        id: primary?.id || fallback?.id || bucketDef.id || bucketDef.key,
+        label,
+        rangeLabel,
+        tip,
+        sort,
+        minGallons: Number.isFinite(minGallons) ? minGallons : undefined,
+        maxGallons: Number.isFinite(maxGallons) ? maxGallons : undefined,
+        options,
+        placeholder
+      });
+    });
+
+    const extraKeys = new Set([...primaryMap.keys(), ...fallbackMap.keys()]);
+    extraKeys.forEach((key) => {
+      if (used.has(key)) return;
+      const source = primaryMap.get(key) || fallbackMap.get(key);
+      if (!source) return;
+      const options = Array.isArray(source.options) ? source.options : [];
+      const placeholder = options.length ? source.placeholder || '' : source.placeholder || 'No items yet.';
+      merged.push({
+        ...source,
+        options,
+        placeholder,
+        sort: firstFiniteNumber(source.sort, source.bucketSort, merged.length + FILTER_BUCKETS_UI.length + 1)
+      });
+    });
+
+    return merged.sort((a, b) => {
+      const sortA = firstFiniteNumber(a.sort, a.bucketSort);
+      const sortB = firstFiniteNumber(b.sort, b.bucketSort);
+      if (sortA === undefined && sortB === undefined) return 0;
+      if (sortA === undefined) return 1;
+      if (sortB === undefined) return -1;
+      return sortA - sortB;
+    });
+  }
+
   const RANGE_LOOKUP = {
     heaters: new Map((Array.isArray(RANGES_HEATERS) ? RANGES_HEATERS : []).map((range) => [range.id, range])),
     filters: new Map((Array.isArray(RANGES_FILTERS) ? RANGES_FILTERS : []).map((range) => [range.id, range])),
@@ -686,13 +992,38 @@
         .map((bucket, index) => renderHeaterBucket(bucket, index))
         .filter(Boolean);
     } else if (kind === 'filters') {
-      const filterBuckets = Array.isArray(GEAR.filters?.buckets) ? GEAR.filters.buckets : [];
-      blocks = filterBuckets
+      const filtersData = getFilterRows();
+      if (typeof console !== 'undefined') {
+        // eslint-disable-next-line no-console
+        console.info('[filters] rows:', Array.isArray(filtersData) ? filtersData.length : 0);
+        if (Array.isArray(filtersData) && typeof console.table === 'function') {
+          // eslint-disable-next-line no-console
+          console.table(filtersData.slice(0, 5));
+        }
+        if (Array.isArray(filtersData) && filtersData.length) {
+          // eslint-disable-next-line no-console
+          console.info('[filters] cols:', Object.keys(filtersData[0]));
+        }
+      }
+
+      const { buckets: fallbackBuckets, byBucket } = buildFallbackFilterBuckets(filtersData);
+      if (typeof window !== 'undefined') {
+        window.__filtersDebug = { rows: Array.isArray(filtersData) ? filtersData.length : 0, byBucket };
+      }
+
+      const primaryBuckets = Array.isArray(GEAR.filters?.buckets) ? GEAR.filters.buckets : [];
+      const mergedBuckets = mergeFilterBuckets(primaryBuckets, fallbackBuckets);
+      if (GEAR.filters) {
+        GEAR.filters.buckets = mergedBuckets;
+      }
+
+      blocks = mergedBuckets
         .map((bucket, index) => renderFilterBucket(bucket, index))
         .filter(Boolean);
+
       const mediaGroup = GEAR.filters?.mediaGroup;
       if (mediaGroup) {
-        const mediaAccordion = renderFilterMediaGroup({ ...mediaGroup }, filterBuckets.length);
+        const mediaAccordion = renderFilterMediaGroup({ ...mediaGroup }, mergedBuckets.length);
         if (mediaAccordion) {
           blocks.push(mediaAccordion);
         }
