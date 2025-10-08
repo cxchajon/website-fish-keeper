@@ -111,14 +111,12 @@ const TIPS = {
     'Planted tanks do best with nutrient-rich soils. Unplanted/community tanks often prefer inert gravel or sand. For décor: rinse stones thoroughly; test for carbonate fizz if you keep soft-water species. Pre-soak driftwood to reduce tannins and weigh down until waterlogged.',
   'water-treatments': `
   Use water conditioners to remove chlorine/chloramine before adding fish.<br>
-  Bacteria starters jumpstart your cycle.<br>
-  Fertilizers support plant growth—dose based on lighting, plant type, and water changes.<br>
-  For liquid carbon (e.g., Excel), start with reduced dosing and watch for sensitive species like Vallisneria.
+  Bacteria starters jumpstart your cycle and stabilize biofilters.<br>
+  Detoxifiers bind ammonia temporarily—still address the root cause and retest often.
 `,
-  'water-treatments-fertilizers': `
-  Use water conditioners to remove chlorine/chloramine before adding fish.<br>
-  Bacteria starters jumpstart your cycle.<br>
+  fertilizers: `
   Fertilizers support plant growth—dose based on lighting, plant type, and water changes.<br>
+  Pair root tabs for heavy root feeders with liquid dosing for stems and fast growers.<br>
   For liquid carbon (e.g., Excel), start with reduced dosing and watch for sensitive species like Vallisneria.
 `,
   food: `
@@ -285,7 +283,18 @@ const HEATERS_ADDON = {
 const WATER_TREATMENT_TIPS = new Map([
   [
     "wt-core",
-    "Conditioners, beneficial bacteria, and fertilizers each play a role: detoxify tap water, seed your biofilter, and feed your plants."
+    "Conditioners and beneficial bacteria each play a role: detoxify tap water and seed your biofilter so livestock stay protected."
+  ]
+]);
+
+const FERTILIZER_TIPS = new Map([
+  [
+    'fertilizers-fertilizers',
+    'Balance macro and micro nutrients, and adjust dosing to match lighting intensity and plant growth.'
+  ],
+  [
+    'fertilizers',
+    'Balance macro and micro nutrients, and adjust dosing to match lighting intensity and plant growth.'
   ]
 ]);
 
@@ -860,6 +869,11 @@ function normalizeRow(row, fallbackCategory) {
 
   if (!category && fallbackCategoryNormalized) {
     category = fallbackCategoryNormalized;
+  }
+
+  const subgroupKey = subgroup.toLowerCase();
+  if (category === 'water_treatments' && subgroupKey === 'fertilizers') {
+    category = 'fertilizers';
   }
 
   if (category === 'lights') {
@@ -1579,6 +1593,7 @@ function buildGear(normalized, standsItems = []) {
   const filterMediaGroup = filterMediaGroups.find((group) => group && group.options && group.options.length);
   const lights = getItemsByCategory(normalized, 'lights');
   const substrate = getItemsByCategory(normalized, 'substrate');
+  const fertilizers = getItemsByCategory(normalized, 'fertilizers');
   const waterTreatments = getItemsByCategory(normalized, 'water_treatments');
   const food = getItemsByCategory(normalized, 'food');
   const maintenance = getItemsByCategory(normalized, 'maintenance_tools');
@@ -1604,6 +1619,10 @@ function buildGear(normalized, standsItems = []) {
     substrate: {
       match: 'gallons',
       groups: buildGroups(substrate, undefined, 'substrate')
+    },
+    fertilizers: {
+      match: 'none',
+      ranges: buildGroups(fertilizers, FERTILIZER_TIPS, 'fertilizers')
     },
     waterTreatments: {
       match: 'none',

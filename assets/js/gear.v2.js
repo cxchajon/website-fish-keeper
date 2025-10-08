@@ -28,6 +28,7 @@
     filters: 'filters',
     lights: 'lights',
     substrate: 'substrate',
+    fertilizers: 'fertilizers',
     waterTreatments: 'water_treatments',
     'water-treatments': 'water_treatments',
     water_treatments: 'water_treatments',
@@ -45,6 +46,7 @@
     filters: 'filters',
     lights: 'lights',
     substrate: 'substrate',
+    fertilizers: 'fertilizers',
     water_treatments: 'waterTreatments',
     'water-treatments': 'waterTreatments',
     waterTreatments: 'waterTreatments',
@@ -1313,6 +1315,8 @@
       } else {
         blocks = groups.map((range) => renderRangeBlock(range, 'substrate')).filter(Boolean);
       }
+    } else if (kind === 'fertilizers') {
+      blocks = (GEAR.fertilizers?.ranges || []).map((range) => renderRangeBlock(range, 'fertilizers', { ignoreMatch: true }));
     } else if (kind === 'water-treatments' || kind === 'water-treatments-fertilizers') {
       blocks = (GEAR.waterTreatments?.ranges || []).map((range) => renderRangeBlock(range, 'waterTreatments', { ignoreMatch: true }));
     } else if (kind === 'food') {
@@ -1794,9 +1798,10 @@
     buildCategory('filters', document.getElementById('filters-body'));
     buildCategory('lights', document.getElementById('lights-body'));
     buildCategory('substrate', document.getElementById('substrate-body'));
+    buildCategory('fertilizers', document.getElementById('fertilizers-body'));
+    buildCategory('water-treatments', document.getElementById('water-treatments-body'));
     buildCategory('stands', document.getElementById('stands-body'));
     buildCategory('food', document.getElementById('food-body'));
-    buildCategory('water-treatments-fertilizers', document.getElementById('water-treatments-fertilizers-body'));
     buildCategory('maintenance-tools', document.getElementById('maintenance-tools-body'));
     wireAccordions();
     initTankSelect();
