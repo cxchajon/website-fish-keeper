@@ -7,24 +7,26 @@ function slugify(value = '') {
 
 export function ProductCard(item, options = {}) {
   const { badges = [], onViewDetails, onAdd } = options;
+  const slugSource = item.product_id ?? item.Product_ID ?? item.Item_ID ?? item.Product_Name ?? item.title ?? 'item';
   const card = createElement('article', {
     className: 'product-card',
     attrs: {
-      'data-testid': `card-${slugify(item.Product_Name ?? 'item')}`,
+      'data-testid': `card-${slugify(slugSource)}`,
     },
   });
 
   card.append(
     createElement('header', { className: 'product-card__header' }, [
-      createElement('h3', { text: item.Product_Name ?? 'Unnamed product' }),
-      createElement('p', { className: 'product-card__use', text: item.Use_Case ?? '' }),
+      createElement('h3', { text: item.Product_Name ?? item.title ?? 'Unnamed product' }),
+      createElement('p', { className: 'product-card__use', text: item.Use_Case ?? item.use_case ?? '' }),
     ]),
     createElement('p', { className: 'product-card__spec', text: item.Recommended_Specs ?? '' }),
     Badges(badges),
   );
 
-  if (item.Notes) {
-    card.append(createElement('p', { className: 'product-card__notes', text: item.Notes }));
+  const notes = item.Notes ?? item.notes;
+  if (notes) {
+    card.append(createElement('p', { className: 'product-card__notes', text: notes }));
   }
 
   const actions = createElement('div', { className: 'product-card__actions' });
@@ -51,9 +53,11 @@ export function ProductCard(item, options = {}) {
   card.append(actions);
 
   const links = [];
-  const amazonLink = (item.Amazon_Link ?? '').trim();
+  const amazonLink = (item.Amazon_Link ?? item.amazon_url ?? '').trim();
   const chewyLink = (item.Chewy_Link ?? '').trim();
   if (amazonLink) {
+    const rel = (item.rel ?? '').trim();
+    const amazonRel = rel && rel.includes('sponsored') ? rel : 'sponsored noopener noreferrer';
     links.push(
       createElement('a', {
         className: 'product-card__link',
@@ -61,7 +65,7 @@ export function ProductCard(item, options = {}) {
         attrs: {
           href: amazonLink,
           target: '_blank',
-          rel: 'sponsored noopener noreferrer',
+          rel: amazonRel,
         },
       }),
     );

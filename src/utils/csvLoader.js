@@ -107,6 +107,25 @@ export async function loadGear(navUrl = '/data/master_nav.json') {
         if (!entry.Category && file.category) {
           entry.Category = file.category;
         }
+        if ((entry.Category ?? file.category) === 'Lighting') {
+          const title = entry.Product_Name || entry.title || entry.Title || entry.Option_Label || '';
+          const notes = entry.Notes || entry.notes || '';
+          const amazon = entry.Amazon_Link || entry.amazon_link || entry.amazon_url || entry.amazonUrl || '';
+          const rel = entry.rel || entry.Rel || '';
+          entry.product_id = entry.product_id || entry.Product_ID || entry.Item_ID || '';
+          entry.title = title;
+          entry.Product_Name = title;
+          entry.Notes = notes;
+          entry.amazon_url = amazon;
+          entry.Amazon_Link = amazon;
+          entry.rel = rel || 'sponsored noopener noreferrer';
+          entry.length_range = (entry.length_range || entry.lengthRange || entry.Range_ID || '')
+            .toString()
+            .trim()
+            .replace(/[\u2012-\u2015\u2212]/g, '-')
+            .replace(/\s+/g, '')
+            .replace(/\+$/, '-up');
+        }
         rows.push(entry);
       });
       sources.push({ category: file.category ?? 'Unknown', path: file.path });
