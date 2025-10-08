@@ -148,6 +148,7 @@ const EXTRAS_DEFAULT_SUBGROUP = 'Misc';
 const EXTRAS_PLACEHOLDER = 'Links coming soon.';
 
 const CATEGORY_ALIASES = new Map([
+  ['substrate & aquascaping', 'substrate'],
   ['maintenance & tools', 'maintenance_tools'],
   ['maintenance tools', 'maintenance_tools'],
   ['maintenance-tools', 'maintenance_tools']

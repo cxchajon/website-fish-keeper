@@ -258,16 +258,19 @@
     }
     const standAria = `Buy on Amazon – ${escapeHTML(displayTitle)}`;
     const useSimpleButton = normalizedContext === 'substrate' || normalizedContext === 'maintenancetools';
+    const disabledSimpleButtonHtml = normalizedContext === 'substrate'
+      ? `<button class="btn" type="button" aria-disabled="true" title="Link coming soon" disabled>${buttonLabel}</button>`
+      : `<span class="btn btn-disabled" aria-disabled="true" role="button" tabindex="-1" title="Link coming soon">${buttonLabel}</span>`;
     const actionsHtml = hasValidHref
       ? context === 'stands'
         ? `<a class="btn btn-amazon buy-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="${standAria}">Buy on Amazon</a>`
         : useSimpleButton
           ? `<a class="btn" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
-          : `<a class="btn btn-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
+        : `<a class="btn btn-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
       : context === 'stands'
         ? `<a class="btn btn-amazon buy-amazon disabled" aria-disabled="true" tabindex="-1">Buy on Amazon</a>`
         : useSimpleButton
-          ? `<span class="btn btn-disabled" aria-disabled="true" role="button" tabindex="-1" title="Link coming soon">${buttonLabel}</span>`
+          ? disabledSimpleButtonHtml
           : `<span class="muted">Add link</span>`;
     row.innerHTML = `
       <div class="option__title">${headingHtml}</div>
