@@ -247,7 +247,9 @@
       : `<strong>${escapeHTML(displayTitle)}</strong>`;
     const noteText = (option?.note ?? option?.notes ?? '').trim();
     const dimensionsLite = (option?.dimensionsLite || '').toString().trim();
-    const context = String(options.context || '').toLowerCase();
+    const rawContext = options.context ?? '';
+    const context = String(rawContext).toLowerCase();
+    const normalizedContext = context.replace(/[^a-z0-9]/g, '');
     const buttonLabel = options.buttonLabel || 'Buy on Amazon';
     const hasHref = href.length > 0;
     const hasValidHref = /^https?:\/\//i.test(href);
@@ -255,13 +257,18 @@
       console.warn('[Gear] Skipping stand link without http(s):', href);
     }
     const standAria = `Buy on Amazon – ${escapeHTML(displayTitle)}`;
+    const useSimpleButton = normalizedContext === 'substrate' || normalizedContext === 'maintenancetools';
     const actionsHtml = hasValidHref
       ? context === 'stands'
         ? `<a class="btn btn-amazon buy-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="${standAria}">Buy on Amazon</a>`
-        : `<a class="btn btn-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
+        : useSimpleButton
+          ? `<a class="btn" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
+          : `<a class="btn btn-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`
       : context === 'stands'
         ? `<a class="btn btn-amazon buy-amazon disabled" aria-disabled="true" tabindex="-1">Buy on Amazon</a>`
-        : `<span class="muted">Add link</span>`;
+        : useSimpleButton
+          ? `<span class="btn btn-disabled" aria-disabled="true" role="button" tabindex="-1" title="Link coming soon">${buttonLabel}</span>`
+          : `<span class="muted">Add link</span>`;
     row.innerHTML = `
       <div class="option__title">${headingHtml}</div>
       ${noteText ? `<p class="option__note">${escapeHTML(noteText)}</p>` : ''}
@@ -328,8 +335,9 @@
 
     const list = el('div',{class:'range__list'});
     const optionList = Array.isArray(range.options) ? range.options : [];
+    const optionContext = options.context || sectionKey || '';
     optionList.forEach((opt) => {
-      list.appendChild(createOptionRow(opt, options));
+      list.appendChild(createOptionRow(opt, { ...options, context: optionContext }));
     });
     if (!optionList.length && range.placeholder) {
       list.appendChild(el('p',{class:'range__placeholder'}, range.placeholder));
@@ -340,10 +348,8 @@
 
   function hasLiveOptions(range){
     if (!range || !Array.isArray(range.options)) return false;
-    return range.options.some((option) => {
-      const href = (option?.href || '').trim();
-      return href.length > 0;
-    });
+    if (range.options.length > 0) return true;
+    return Boolean((range?.placeholder || '').trim());
   }
 
   function renderAccordionGroup(group = {}, index = 0, options = {}){
