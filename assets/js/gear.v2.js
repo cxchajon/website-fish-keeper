@@ -276,12 +276,15 @@
       console.warn('[Gear] Skipping stand link without http(s):', href);
     }
     const standAria = `Buy on Amazon – ${escapeHTML(displayTitle)}`;
+    const isFilterContext = normalizedContext === 'filters';
     const useSimpleButton = normalizedContext === 'substrate' || normalizedContext === 'maintenancetools';
     const isWaterTreatments = normalizedContext === 'watertreatments' || normalizedContext === 'watertreatmentsfertilizers';
     let disabledSimpleButtonHtml;
     if (normalizedContext === 'substrate') {
       disabledSimpleButtonHtml = `<button class="btn" type="button" aria-disabled="true" title="Link coming soon" disabled>${buttonLabel}</button>`;
     } else if (normalizedContext === 'maintenancetools') {
+      disabledSimpleButtonHtml = `<button class="btn" aria-disabled="true" title="Link coming soon">${buttonLabel}</button>`;
+    } else if (isFilterContext) {
       disabledSimpleButtonHtml = `<button class="btn" aria-disabled="true" title="Link coming soon">${buttonLabel}</button>`;
     } else {
       disabledSimpleButtonHtml = `<span class="btn btn-disabled" aria-disabled="true" role="button" tabindex="-1" title="Link coming soon">${buttonLabel}</span>`;
@@ -290,6 +293,8 @@
     if (hasValidHref) {
       if (context === 'stands') {
         actionsHtml = `<a class="btn btn-amazon buy-amazon" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="${standAria}">Buy on Amazon</a>`;
+      } else if (isFilterContext) {
+        actionsHtml = `<a class="btn" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`;
       } else if (isWaterTreatments) {
         actionsHtml = `<a class="btn" href="${escapeHTML(href)}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Buy ${escapeHTML(displayTitle)} on Amazon">${buttonLabel}</a>`;
       } else if (useSimpleButton) {
@@ -301,6 +306,8 @@
       actionsHtml = `<a class="btn btn-amazon buy-amazon disabled" aria-disabled="true" tabindex="-1">Buy on Amazon</a>`;
     } else if (isWaterTreatments) {
       actionsHtml = `<button class="btn" type="button" aria-disabled="true" title="Link coming soon">${buttonLabel}</button>`;
+    } else if (isFilterContext) {
+      actionsHtml = disabledSimpleButtonHtml;
     } else if (useSimpleButton) {
       actionsHtml = disabledSimpleButtonHtml;
     } else {
@@ -618,7 +625,22 @@
       const addonCard = renderAddonCard(GEAR.heaters?.addon);
       if (addonCard) container.appendChild(addonCard);
       blocks = (GEAR.heaters?.ranges || []).map((range) => renderRangeBlock(range, 'heaters'));
-    } else if (kind === 'filters') blocks = (GEAR.filters?.ranges || []).map((range) => renderRangeBlock(range, 'filters'));
+    } else if (kind === 'filters') {
+      const filterRanges = Array.isArray(GEAR.filters?.ranges) ? GEAR.filters.ranges : [];
+      blocks = filterRanges.map((range) => renderRangeBlock(range, 'filters'));
+      const filterAccordions = Array.isArray(GEAR.filters?.accordions) ? GEAR.filters.accordions : [];
+      filterAccordions.forEach((group, index) => {
+        const accordion = renderAccordionGroup(group, filterRanges.length + index, {
+          sectionKey: 'filters',
+          sectionClass: 'gear-subcard gear-subcard--filters',
+          rangeClass: 'range--filters',
+          rangeOptions: { context: 'filters' }
+        });
+        if (accordion) {
+          blocks.push(accordion);
+        }
+      });
+    }
     else if (kind === 'lights') blocks = (GEAR.lights?.ranges || []).map((range) => renderRangeBlock(range, 'lights'));
     else if (kind === 'substrate') {
       blocks = (GEAR.substrate?.groups || [])

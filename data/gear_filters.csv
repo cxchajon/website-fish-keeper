@@ -1,19 +1,8 @@
-Category,Tank_Size,Product_Type,Product_Name,Use_Case,Recommended_Specs,Plant_Ready,Price_Range,Notes,Amazon_Link,Chewy_Link,Option_Label,Item_ID,Image_URL,Range_ID,tanksize,length,depth,category,subgroup,affiliate,tag
-Filtration,5–10 Gallons,,Pawfly Aquarium Nano Bio Sponge Filter Quiet Betta Fry Shrimp and Small Fish Foam Filter for Tiny Fish Tank up to 10 Gallon,,,,,,https://amzn.to/3IXHtns,,Option 1,filters-g-5-10-01,,g-5-10,5-10,,,filters,,amazon,fishkeepingli-20
-Filtration,5–10 Gallons,,"hygger Aquarium Double Sponge Filter, Comes with 2 Spare Sponges (S)",,,,,,https://amzn.to/46Qxf0a,,Option 2,filters-g-5-10-02,,g-5-10,5-10,,,filters,,amazon,fishkeepingli-20
-Filtration,5–10 Gallons,,"AC30 Power Filter, 10–30 US Gal / 38–114 L – Fluval USA (fluvalaquatics.com)",,,,,,https://amzn.to/4pXb0hE,,Option 3,filters-g-5-10-03,,g-5-10,5-10,,,filters,,amazon,fishkeepingli-20
-Filtration,10–20 Gallons,,"AC30 Power Filter, 10–30 US Gal / 38–114 L – Fluval USA (fluvalaquatics.com)",,,,,,https://amzn.to/4n9MXK9,,Option 1,filters-g-10-20-01,,g-10-20,10-20,,,filters,,amazon,fishkeepingli-20
-Filtration,10–20 Gallons,,hygger Aquarium Double Sponge Filter for Fresh Water and Salt-Water Fish Tank (M),,,,,,https://amzn.to/3VTKSXo,,Option 2,filters-g-10-20-02,,g-10-20,10-20,,,filters,,amazon,fishkeepingli-20
-Filtration,10–20 Gallons,,AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Middle up to 20Gal),,,,,,https://amzn.to/4mTK28f,,Option 3,filters-g-10-20-03,,g-10-20,10-20,,,filters,,amazon,fishkeepingli-20
-Filtration,20–40 Gallons,,hygger Aquarium Double Sponge Filter for Fresh Water and Salt-Water Fish Tank (M),,,,,,https://amzn.to/46XUzsV,,Option 1,filters-g-20-40-01,,g-20-40,20-40,,,filters,,amazon,fishkeepingli-20
-Filtration,20–40 Gallons,,"Seachem Tidal Power Aquarium Filter - 35 Gallon Large Fish Tank Filter, black",,,,,,https://amzn.to/3IUy1RL,,Option 2,filters-g-20-40-02,,g-20-40,20-40,,,filters,,amazon,fishkeepingli-20
-Filtration,20–40 Gallons,,"Fluval C2 Power Filter, Fish Tank Filter for Aquariums up to 30 Gal.",,,,,,https://amzn.to/4mSXsRP,,Option 3,filters-g-20-40-03,,g-20-40,20-40,,,filters,,amazon,fishkeepingli-20
-Filtration,40–60 Gallons,,AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Large up to 60Gal),,,,,,https://amzn.to/3KTUjUi,,Option 1,filters-g-40-60-01,,g-40-60,40-60,,,filters,,amazon,fishkeepingli-20
-Filtration,40–60 Gallons,,"SeaChem Large Aquarium Fish Tank Filter, Tidal 55 Gallon (200 Liters) by Sicce",,,,,,https://amzn.to/3VRpXV0,,Option 2,filters-g-40-60-02,,g-40-60,40-60,,,filters,,amazon,fishkeepingli-20
-Filtration,40–60 Gallons,,"AquaClear 70 Power Filter, Fish Tank Filter for 40- to 70-Gallon Aquariums, Black",,,,,,https://amzn.to/3IVD0BO,,Option 3,filters-g-40-60-03,,g-40-60,40-60,,,filters,,amazon,fishkeepingli-20
-Filtration,60–90 Gallons,,Aqueon QuietFlow 75 LED PRO Aquarium Fish Tank Power Filter For Up To 90 Gallon Aquariums,,,,,,https://amzn.to/48hBMeC,,Option 1,filters-g-60-90-01,,g-60-90,60-90,,,filters,,amazon,fishkeepingli-20
-Filtration,60–90 Gallons,,Fluval 407 Perfomance Canister Filter - for Aquariums Up to 100 Gallons - Aquarium Canister Filter,,,,,,https://amzn.to/47bXnUA,,Option 2,filters-g-60-90-02,,g-60-90,60-90,,,filters,,amazon,fishkeepingli-20
-Filtration,60–90 Gallons,,"Marineland Penguin Bio-Wheel Power Filter, Multi-Stage Aquarium Filtration",,,,,,https://amzn.to/4h0gsMT,,Option 3,filters-g-60-90-03,,g-60-90,60-90,,,filters,,amazon,fishkeepingli-20
-Filtration,90–125 Gallons,,"Fluval FX2 High Performance Canister Aquarium Filter - Multi-Stage Filtration, Built-in Powered Water Change System, and Basket-in-Basket Tray Design",,,,,,https://amzn.to/48QPCEJ,,Option 1,filters-g-90-125-01,,g-90-125,90-125,,,filters,,amazon,fishkeepingli-20
-Filtration,90–125 Gallons,,Fluval 407 Perfomance Canister Filter - for Aquariums Up to 100 Gallons - Aquarium Canister Filter,,,,,,https://amzn.to/3KBqqs4,,Option 2,filters-g-90-125-02,,g-90-125,90-125,,,filters,,amazon,fishkeepingli-20
-Filtration,90–125 Gallons,,"SeaChem – Large Aquarium Fish Tank Filter, Tidal 110 Gallon (400 Liters) by Sicce",,,,,,https://amzn.to/48gPNZP,,Option 3,filters-g-90-125-03,,g-90-125,90-125,,,filters,,amazon,fishkeepingli-20
+category,subgroup,title,notes,amazon_url
+Filters,Filter Media,"Reusable Sponge Blocks (Cut-to-Fit) — Mechanical Stage","Primary mechanical media; trim to fit HOB/canisters; rinse in tank water.",
+Filters,Filter Media,"Poly Filter Floss Roll — Fine Mechanical Polishing","Fine particulate polishing; replace as it clogs; improves clarity.",
+Filters,Filter Media,"Ceramic Bio Rings / Sintered Media — Biological","High surface area for nitrifying bacteria; never fully replace at once.",
+Filters,Filter Media,"Bio Balls — Biological Aerobic Media","Durable aerobic media; great oxygen exposure; rinse gently in tank water.",
+Filters,Filter Media,"Seachem Purigen — Chemical Polishing Resin","Removes organics; polishes water; can be regenerated with bleach and Prime.",
+Filters,Filter Media,"Activated Carbon — Chemical (Granular)","Adsorbs meds/tannins/odors; replace regularly; remove when medicating.",
+Filters,Filter Media,"Phosphate Remover (GFO) — Chemical","Targets phosphates to help manage algae; monitor PO₄ to avoid bottoming out.",
