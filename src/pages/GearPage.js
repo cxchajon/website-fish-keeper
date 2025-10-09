@@ -167,9 +167,10 @@ document.addEventListener('keydown', (event) => {
 
 function groupRows(rows, context) {
   const categories = {
-    Filtration: [],
-    Lighting: [],
     Heating: [],
+    Filtration: [],
+    Aeration: [],
+    Lighting: [],
     Substrate: [],
   };
   rows.forEach((row) => {
