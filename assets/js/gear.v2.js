@@ -27,6 +27,9 @@
     heaters: 'heaters',
     filters: 'filters',
     lights: 'lights',
+    air: 'air',
+    aeration: 'air',
+    'air-aeration': 'air',
     substrate: 'substrate',
     fertilizers: 'fertilizers',
     waterTreatments: 'water_treatments',
@@ -45,6 +48,9 @@
     heaters: 'heaters',
     filters: 'filters',
     lights: 'lights',
+    air: 'air',
+    aeration: 'air',
+    'air-aeration': 'air',
     substrate: 'substrate',
     fertilizers: 'fertilizers',
     water_treatments: 'waterTreatments',
@@ -1278,6 +1284,17 @@
         }
       }
     }
+    else if (kind === 'air') {
+      const groups = Array.isArray(GEAR.air?.accordions)
+        ? GEAR.air.accordions.filter(Boolean)
+        : [];
+      blocks = groups.map((group, index) =>
+        renderAccordionGroup(group, index, {
+          sectionKey: 'air',
+          rangeClass: 'range--maintenance'
+        })
+      );
+    }
     else if (kind === 'lights') {
       const ranges = Array.isArray(GEAR.lights?.ranges) ? [...GEAR.lights.ranges] : [];
       const sortRanges = (list) => {
@@ -1824,6 +1841,7 @@
     ensurePanelHooks();
     buildCategory('heaters', document.getElementById('heaters-body'));
     buildCategory('filters', document.getElementById('filters-body'));
+    buildCategory('air', document.getElementById('air-body'));
     buildCategory('lights', document.getElementById('lights-body'));
     buildCategory('substrate', document.getElementById('substrate-body'));
     buildCategory('fertilizers', document.getElementById('fertilizers-body'));

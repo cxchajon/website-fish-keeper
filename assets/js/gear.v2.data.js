@@ -115,6 +115,8 @@ const TIPS = {
   We recommend using multiple smaller lights spaced evenly across the top of the aquarium.<br>
   Combining two 24–36&quot; lights or a mix of 36–48&quot; units provides more balanced coverage and prevents dim corners in longer tanks.
 `,
+  air:
+    'Increase surface agitation to boost oxygen exchange during heavy stocking, warmer temps, or medication use. Always add check valves on airlines and pair pumps with diffusers or stones to spread flow and protect against back-siphons.',
   substrate:
     'Planted tanks do best with nutrient-rich soils. Unplanted/community tanks often prefer inert gravel or sand. For décor: rinse stones thoroughly; test for carbonate fizz if you keep soft-water species. Pre-soak driftwood to reduce tannins and weigh down until waterlogged.',
   'water-treatments': `
@@ -325,6 +327,9 @@ const FOOD_GROUP_ORDER = [
 
 const MAINTENANCE_INTRO = "Keep your aquarium healthy and clear with the right tools for testing, water changes, and glass maintenance. Consistent care prevents algae, stress, and equipment issues.";
 
+const AERATION_SECTION_INTRO =
+  'Use a check valve on every airline to prevent back-siphon. Size your pump to the devices you’ll run (sponge filters, airstones). Consider a battery backup or UPS for outages. For CO₂, place diffusers under outflow for better circulation; use CO₂-rated check valves to protect your regulator.';
+
 const MAINTENANCE_GROUP_TIPS = new Map([
   ["maintenance-safety", "Use GFCI protection and surge-protected strips to keep your aquarium gear safe. Always create drip loops on cords, label plugs for quick shutoff, and keep outlets above water level."]
 ]);
@@ -335,13 +340,6 @@ const MAINTENANCE_GROUP_META = new Map([
     {
       intro:
         'Keep aquarium-safe supplies separate from household products. Use only 100% silicone labeled for aquariums when sealing glass or attaching dividers.'
-    }
-  ],
-  [
-    'maintenance_air',
-    {
-      intro:
-        'Use a check valve on every airline to prevent back-siphon. Size your pump to the devices you’ll run (sponge filters, airstones). Consider a battery backup or UPS for outages. For CO₂, place diffusers under outflow for better circulation; use CO₂-rated check valves to protect your regulator.'
     }
   ],
   [
@@ -377,6 +375,10 @@ const CATEGORY_ALIASES = new Map([
   ['filtration', 'filters'],
   ['filter', 'filters'],
   ['substrate & aquascaping', 'substrate'],
+  ['air & aeration', 'air'],
+  ['air and aeration', 'air'],
+  ['aeration', 'air'],
+  ['air', 'air'],
   ['maintenance & tools', 'maintenance_tools'],
   ['maintenance tools', 'maintenance_tools'],
   ['maintenance-tools', 'maintenance_tools'],
@@ -394,11 +396,19 @@ const GROUP_ALIAS_LOOKUP = new Map([
 
 const MAINTENANCE_SUBGROUP_ORDER = [
   'maintenance-testing',
-  'maintenance_air',
   'maintenance_cleanup_extras',
   'maintenance_nets_handling',
   'maintenance_aquascaping_tools'
 ];
+
+const AIR_GROUP_META = new Map([
+  [
+    'maintenance_air',
+    {
+      intro: AERATION_SECTION_INTRO
+    }
+  ]
+]);
 
 const SUBSTRATE_DEFAULT_GROUP_ID = 'substrate-all';
 const SUBSTRATE_DEFAULT_GROUP_LABEL = 'Substrate & Aquascaping Picks';
@@ -1679,7 +1689,26 @@ function buildGear(normalized, standsItems = []) {
   const fertilizers = getItemsByCategory(normalized, 'fertilizers');
   const waterTreatments = getItemsByCategory(normalized, 'water_treatments');
   const food = getItemsByCategory(normalized, 'food');
-  const maintenance = getItemsByCategory(normalized, 'maintenance_tools');
+  const maintenanceSource = getItemsByCategory(normalized, 'maintenance_tools');
+  const maintenance = [];
+  const airItems = [];
+  const normalizeAirKey = (value = '') =>
+    String(value || '')
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  maintenanceSource.forEach((item) => {
+    const subgroupKey = normalizeAirKey(item.subgroup);
+    const groupKey = normalizeAirKey(item.groupId || item.rangeId);
+    const isAir = subgroupKey === 'air and aeration' || groupKey === 'maintenance_air';
+    if (isAir) {
+      airItems.push({ ...item, category: 'air' });
+    } else {
+      maintenance.push(item);
+    }
+  });
   const extras = getItemsByCategory(normalized, 'extras');
   const stands = Array.isArray(standsItems) ? standsItems : [];
   const standRanges = buildStandRanges(stands);
@@ -1698,6 +1727,10 @@ function buildGear(normalized, standsItems = []) {
     lights: {
       match: 'length',
       ranges: buildRange(RANGES_LIGHTS, LIGHT_RANGE_META, lights, 'lights')
+    },
+    air: {
+      match: 'none',
+      accordions: buildGroups(airItems, undefined, 'air', AIR_GROUP_META)
     },
     substrate: {
       match: 'gallons',
