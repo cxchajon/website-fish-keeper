@@ -299,8 +299,7 @@ const FOOD_INTRO =
 const FOOD_GROUP_TIPS = new Map([
   ["food-staples-daily", "Core daily flakes and pellets that cover most community tanks."],
   ["food-bottom-feeders-and-algae", "Sinking wafers and algae-rich diets for plecos, shrimp, and catfish."],
-  ["food-high-protein-treats", "Offer sparingly 1–2× weekly to boost protein and entice picky fish."],
-  ["food-color-and-specialty", "Supplement to enhance color or target niche feeding needs."]
+  ["food-high-protein-treats", "Offer sparingly 1–2× weekly to boost protein and entice picky fish."]
 ]);
 
 function normalizeFoodGroupKey(value) {
@@ -322,8 +321,7 @@ const FOOD_GROUP_ALIASES = new Map([
 const FOOD_GROUP_ORDER = [
   'food-staples-daily',
   'food-bottom-feeders-and-algae',
-  'food-high-protein-treats',
-  'food-color-and-specialty'
+  'food-high-protein-treats'
 ];
 
 const MAINTENANCE_INTRO = "Keep your aquarium healthy and clear with the right tools for testing, water changes, and glass maintenance. Consistent care prevents algae, stress, and equipment issues.";
