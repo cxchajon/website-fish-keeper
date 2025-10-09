@@ -1272,7 +1272,9 @@
     } else if (kind === 'fertilizers') {
       blocks = (GEAR.fertilizers?.ranges || []).map((range) => renderRangeBlock(range, 'fertilizers', { ignoreMatch: true }));
     } else if (kind === 'water-treatments' || kind === 'water-treatments-fertilizers') {
-      blocks = (GEAR.waterTreatments?.ranges || []).map((range) => renderRangeBlock(range, 'waterTreatments', { ignoreMatch: true }));
+      blocks = (GEAR.waterTreatments?.ranges || []).map((range) =>
+        renderRangeBlock(range, 'waterTreatments', { ignoreMatch: true, showTitle: false })
+      );
     } else if (kind === 'food') {
       if (GEAR.food?.intro) {
         const intro = el('div',{ class:'gear-card__intro' }, GEAR.food.intro);
