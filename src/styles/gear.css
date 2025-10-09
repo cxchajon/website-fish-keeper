@@ -411,6 +411,13 @@ main {
   display: block;
 }
 
+.category-panel__info {
+  margin: 12px 0 18px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 .sub-tabs {
   display: flex;
   gap: 8px;
@@ -421,6 +428,68 @@ main {
 .lighting-section {
   display: grid;
   gap: 20px;
+}
+
+.bucket-section {
+  display: grid;
+  gap: 20px;
+}
+
+.bucket-list {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--border);
+}
+
+.bucket-list__item {
+  border-bottom: 1px solid var(--border);
+}
+
+.bucket-list__item:last-child {
+  border-bottom: none;
+}
+
+.bucket-list__trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.bucket-list__trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.bucket-list__label {
+  font-weight: 600;
+  flex: 1 1 auto;
+}
+
+.bucket-list__count {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.bucket-list__icon {
+  margin-left: auto;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.bucket-list__panel[hidden] {
+  display: none;
+}
+
+.bucket-list__panel {
+  padding-bottom: 16px;
 }
 
 .lighting-length {

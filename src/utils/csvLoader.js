@@ -1,5 +1,6 @@
 const DEFAULT_FILES = [
   { category: 'Filtration', path: '/data/gear_filtration.csv' },
+  { category: 'Aeration', path: '/data/gear_aeration.csv' },
   { category: 'Lighting', path: '/data/gear_lighting.csv' },
   { category: 'Heating', path: '/data/gear_heating.csv' },
 ];

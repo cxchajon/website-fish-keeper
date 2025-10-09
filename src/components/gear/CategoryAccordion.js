@@ -13,6 +13,17 @@ const FILTRATION_TABS = [
   { label: 'Internal', value: 'Internal' },
 ];
 
+const AERATION_INFO =
+  'Air pumps and airstones boost oxygenation, stabilize gas exchange, and provide gentle circulation. Use check valves to prevent back-siphon, splitters/manifolds for multiple lines, and consider battery backup for power outages.';
+
+const AERATION_BUCKETS = [
+  { id: 'air-pumps', label: 'Air Pumps' },
+  { id: 'airstones-diffusers', label: 'Airstones & Diffusers' },
+  { id: 'check-valves-backflow', label: 'Check Valves & Backflow' },
+  { id: 'airline-manifolds', label: 'Airline & Manifolds' },
+  { id: 'backup-power-accessories', label: 'Backup Power & Accessories' },
+];
+
 function createGrid(items, context, onSelect, onAdd, emptyMessage = 'No matches found. Try adjusting your filters.') {
   if (!items.length) {
     return EmptyState(emptyMessage);
@@ -39,6 +50,124 @@ function filterFiltration(items, tab) {
     const type = item.Filter_Type ?? item.Product_Type ?? '';
     return new RegExp(tab, 'i').test(type);
   });
+}
+
+function normaliseAerationItem(item) {
+  const next = { ...item };
+  next.Product_Name = next.Product_Name ?? next.title ?? next.Title ?? 'Unnamed product';
+  next.Use_Case = next.Use_Case ?? next.use_case ?? '';
+  next.Recommended_Specs = next.Recommended_Specs ?? next.recommended_specs ?? '';
+  next.Notes = next.Notes ?? next.notes ?? '';
+  next.Amazon_Link = next.Amazon_Link ?? next.amazon_url ?? '';
+  next.rel = (next.rel ?? '').trim() || 'sponsored noopener noreferrer';
+  next.product_id = next.product_id ?? next.Product_ID ?? next.Item_ID ?? '';
+  const bucketRaw = next.Bucket ?? next.bucket ?? next.Subcategory ?? next.subcategory ?? '';
+  const bucketMatch = AERATION_BUCKETS.find(
+    (bucket) => bucket.label.toLowerCase() === String(bucketRaw).trim().toLowerCase(),
+  );
+  if (!bucketMatch) {
+    return null;
+  }
+  next.bucket = bucketMatch.label;
+  next.bucketId = bucketMatch.id;
+  return next;
+}
+
+function createAerationBucketPanel(bucket, context, onSelect, onAdd) {
+  const { id, label, items } = bucket;
+  const baseId = `aeration-${id}`;
+  const triggerId = `${baseId}-trigger`;
+  const panelId = `${baseId}-panel`;
+
+  const wrapper = createElement('div', {
+    className: 'bucket-list__item',
+    attrs: { id: baseId },
+  });
+
+  const trigger = createElement(
+    'button',
+    {
+      className: 'bucket-list__trigger accordion-header',
+      attrs: {
+        type: 'button',
+        id: triggerId,
+        'aria-controls': panelId,
+        'aria-expanded': 'false',
+      },
+    },
+    [
+      createElement('span', { className: 'bucket-list__label', text: label }),
+      createElement('span', {
+        className: 'bucket-list__count',
+        text: `${items.length} ${items.length === 1 ? 'pick' : 'picks'}`,
+      }),
+      createElement('span', {
+        className: 'bucket-list__icon',
+        attrs: { 'aria-hidden': 'true' },
+        text: '▸',
+      }),
+    ],
+  );
+
+  const panel = createElement('div', {
+    className: 'bucket-list__panel accordion-panel',
+    attrs: {
+      id: panelId,
+      role: 'region',
+      'aria-labelledby': triggerId,
+      hidden: '',
+      'aria-hidden': 'true',
+    },
+  });
+
+  panel.appendChild(createGrid(items, context, onSelect, onAdd));
+
+  trigger.addEventListener('click', () => {
+    const expanded = trigger.getAttribute('aria-expanded') === 'true';
+    trigger.setAttribute('aria-expanded', String(!expanded));
+    if (expanded) {
+      panel.setAttribute('hidden', '');
+      panel.setAttribute('aria-hidden', 'true');
+      wrapper.classList?.remove('is-open');
+      const icon = trigger.querySelector('.bucket-list__icon');
+      if (icon) {
+        icon.textContent = '▸';
+      }
+    } else {
+      panel.removeAttribute('hidden');
+      panel.setAttribute('aria-hidden', 'false');
+      wrapper.classList?.add('is-open');
+      const icon = trigger.querySelector('.bucket-list__icon');
+      if (icon) {
+        icon.textContent = '▾';
+      }
+    }
+  });
+
+  wrapper.append(trigger, panel);
+  return wrapper;
+}
+
+function createAerationSection(options) {
+  const { items, context, onSelect, onAdd } = options;
+  const container = createElement('div', { className: 'bucket-section aeration-section' });
+  const normalized = items
+    .map((item) => normaliseAerationItem(item))
+    .filter((item) => item !== null);
+
+  const buckets = AERATION_BUCKETS.map((bucket) => ({
+    ...bucket,
+    items: normalized.filter((item) => item.bucketId === bucket.id),
+  })).filter((bucket) => bucket.items.length > 0);
+
+  const stack = createElement('div', { className: 'bucket-list' });
+
+  buckets.forEach((bucket) => {
+    stack.appendChild(createAerationBucketPanel(bucket, context, onSelect, onAdd));
+  });
+
+  container.appendChild(stack);
+  return container;
 }
 
 function normaliseLight(item) {
@@ -166,7 +295,19 @@ function createLightingSection(options) {
 }
 
 function createCategorySection(options) {
-  const { key, label, items, context, open, onToggle, onSelect, onAdd, filtrationTab, onTabChange } = options;
+  const {
+    key,
+    label,
+    info,
+    items,
+    context,
+    open,
+    onToggle,
+    onSelect,
+    onAdd,
+    filtrationTab,
+    onTabChange,
+  } = options;
 
   const slug = key.toLowerCase();
   const panelId = `category-panel-${slug}`;
@@ -216,6 +357,10 @@ function createCategorySection(options) {
   const emptyCategoryMessage = 'No items yet. We’re refreshing recommendations—check back soon.';
   const hasItems = items.length > 0;
 
+  if (info) {
+    body.appendChild(createElement('p', { className: 'category-panel__info', text: info }));
+  }
+
   if (key === 'Filtration') {
     if (hasItems) {
       body.appendChild(
@@ -240,6 +385,15 @@ function createCategorySection(options) {
         onAdd,
       }),
     );
+  } else if (key === 'Aeration' && hasItems) {
+    body.appendChild(
+      createAerationSection({
+        items,
+        context,
+        onSelect,
+        onAdd,
+      }),
+    );
   } else if (!hasItems && key === 'Substrate') {
     body.appendChild(EmptyState('Substrate recommendations coming soon.'));
   } else if (!hasItems) {
@@ -258,18 +412,23 @@ export function CategoryAccordion(groups, context, state, handlers) {
   });
 
   const categories = [
-    { key: 'Filtration', label: 'Filtration' },
-    { key: 'Lighting', label: 'Lighting' },
-    { key: 'Heating', label: 'Heating' },
+    { key: 'Heating', label: 'Heaters' },
+    { key: 'Filtration', label: 'Filters' },
+    { key: 'Aeration', label: 'Air & Aeration', info: AERATION_INFO },
+    { key: 'Lighting', label: 'Lights' },
     { key: 'Substrate', label: 'Substrate' },
   ];
 
-  categories.forEach(({ key, label }) => {
+  categories.forEach(({ key, label, info: categoryInfo }) => {
     const items = groups[key] ?? [];
+    if (key === 'Aeration' && items.length === 0) {
+      return;
+    }
     container.appendChild(
       createCategorySection({
         key,
         label,
+        info: categoryInfo,
         items,
         context,
         open: state.openCategory === key,
