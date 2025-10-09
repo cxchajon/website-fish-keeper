@@ -503,7 +503,24 @@
   }
 
   function showTip(kind){
-    const msg = TIPS[kind] || 'No tip available.';
+    const defaultTitle = 'Tip';
+    const tip = TIPS[kind];
+    let title = defaultTitle;
+    let message = 'No tip available.';
+
+    if (typeof tip === 'string') {
+      message = tip || message;
+    } else if (tip && typeof tip === 'object') {
+      if (typeof tip.title === 'string' && tip.title.trim()) {
+        title = tip.title.trim();
+      }
+      if (typeof tip.body === 'string' && tip.body.trim()) {
+        message = tip.body;
+      }
+    } else if (tip !== undefined && tip !== null) {
+      message = String(tip);
+    }
+
     const wrap = el('div',{class:'tip-wrap',style:'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:120'});
     const cardStyles = [
       'width:min(340px,calc(100vw - 32px))',
@@ -520,7 +537,7 @@
       'line-height:1.5'
     ].join(';');
     const card = el('div',{style:cardStyles});
-    card.innerHTML = `<h3 style="margin:0 0 0.75rem;font-size:1.1rem;font-weight:600;">Tip</h3><p style="margin:0 0 1rem;color:#cbd5f5;font-size:0.9rem;line-height:1.5;">${msg}</p><button style="padding:0.5rem 0.875rem;background:#111827;color:#e5e7eb;border:1px solid rgba(148,163,184,0.4);border-radius:8px;cursor:pointer;font-size:0.9rem;font-weight:600;">Close</button>`;
+    card.innerHTML = `<h3 style="margin:0 0 0.75rem;font-size:1.1rem;font-weight:600;">${escapeHTML(title)}</h3><p style="margin:0 0 1rem;color:#cbd5f5;font-size:0.9rem;line-height:1.5;">${message}</p><button style="padding:0.5rem 0.875rem;background:#111827;color:#e5e7eb;border:1px solid rgba(148,163,184,0.4);border-radius:8px;cursor:pointer;font-size:0.9rem;font-weight:600;">Close</button>`;
     card.querySelector('button').onclick = () => wrap.remove();
     wrap.onclick = (event) => { if (event.target === wrap) wrap.remove(); };
     wrap.appendChild(card);

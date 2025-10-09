@@ -84,6 +84,9 @@ const LIGHT_RANGE_ALIAS_MAP = new Map([...LIGHT_RANGE_ALIAS_ENTRIES, ...LEGACY_L
 /* Category tips shown on the “i” buttons */
 const EXTRAS_TIP_KEY = 'extras_cleanup_tip';
 
+const FOOD_INTRO =
+  "Feed small amounts 1–2× daily; aim for all food to be eaten within ~1–2 minutes. Rotate staples with protein treats and bottom-feeder wafers as appropriate. Reduce feeding when cycling or if ammonia/nitrite appear.";
+
 const TIPS = {
   heaters: [
     "Choose a heater whose printed range starts at (or just above) your tank size. Example: for a 40-gallon tank, prefer 40–60 gal over 20–40. Bonus safety: pair your heater with a controller (see the Inkbird add-on above). Remember to account for tank height, substrate thickness, and whether the heater has a water level mark — most are not fully submersible.",
@@ -124,11 +127,10 @@ const TIPS = {
   Pair root tabs for heavy root feeders with liquid dosing for stems and fast growers.<br>
   For liquid carbon (e.g., Excel), start with reduced dosing and watch for sensitive species like Vallisneria.
 `,
-  food: `
-  Feed 1–2× daily and ensure everything is eaten within about 2 minutes.<br>
-  Rotate staple flakes or pellets with protein treats and bottom-feeder wafers.<br>
-  Cut back feeding during cycling or whenever ammonia/nitrite register.
-`,
+  food: {
+    title: 'Feeding Guidance',
+    body: FOOD_INTRO
+  },
   'maintenance-tools': `
   <strong>Safety &amp; Power Tips</strong><br>
   GFCI outlets and drip loops prevent electrical hazards.<br>
@@ -292,9 +294,6 @@ const FERTILIZER_TIPS = new Map([
     'Balance macro and micro nutrients, and adjust dosing to match lighting intensity and plant growth.'
   ]
 ]);
-
-const FOOD_INTRO =
-  "Feed small amounts 1–2× daily; aim for all food to be eaten within ~1–2 minutes. Rotate staples with protein treats and bottom-feeder wafers as appropriate. Reduce feeding when cycling or if ammonia/nitrite appear.";
 
 const FOOD_GROUP_TIPS = new Map([
   ["food-staples-daily", "Core daily flakes and pellets that cover most community tanks."],
@@ -1714,7 +1713,6 @@ function buildGear(normalized, standsItems = []) {
     },
     food: {
       match: 'none',
-      intro: FOOD_INTRO,
       accordions: buildGroups(food, FOOD_GROUP_TIPS, 'food')
     },
     maintenanceTools: {
