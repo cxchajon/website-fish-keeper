@@ -502,17 +502,6 @@
     return [gallons, liters, dimsIn, dimsCm].filter(Boolean).join(' • ') + weight;
   }
 
-  function buildSummaryLine(preset){
-    if (!preset) return '';
-    const gallons = Number.isFinite(preset.gallons) ? `${formatNumber(preset.gallons)} gal` : '';
-    const dims = [preset.lengthIn, preset.widthIn, preset.heightIn]
-      .map((value) => formatNumber(value))
-      .filter(Boolean)
-      .join(' × ');
-    const dimsText = dims ? `${dims} in` : '';
-    return [gallons, dimsText].filter(Boolean).join(' • ');
-  }
-
   function showTip(kind){
     const msg = TIPS[kind] || 'No tip available.';
     const wrap = el('div',{class:'tip-wrap',style:'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:120'});
@@ -1729,10 +1718,7 @@
       document.getElementById('tank-size') || document.getElementById('gear-tank-size');
     const wrap = document.getElementById('gear-tank-select-wrap');
     const meta = document.getElementById('gear-tank-meta');
-    const summary = document.getElementById('tank-summary-value');
-    const defaultSummary = 'Select a tank size to see gallons and dimensions.';
     if (!select || !meta) return;
-    if (summary) summary.textContent = defaultSummary;
 
     select.innerHTML = '';
     const placeholderOption = document.createElement('option');
@@ -1750,26 +1736,16 @@
     });
     select.appendChild(fragment);
 
-    const updateSummary = (preset) => {
-      if (!summary) return;
-      if (!preset) {
-        summary.textContent = defaultSummary;
-        return;
-      }
-      summary.textContent = buildSummaryLine(preset) || defaultSummary;
-    };
-
     const setInfo = (preset) => {
       if (!preset) {
         meta.textContent = '';
         meta.hidden = true;
-        updateSummary(null);
+        meta.removeAttribute('role');
         return;
       }
       meta.textContent = buildInfoLine(preset);
       meta.hidden = false;
       meta.setAttribute('role', 'note');
-      updateSummary(preset);
     };
 
     const persistSelection = (id) => {
@@ -1823,7 +1799,6 @@
     } else {
       select.value = '';
       setInfo(null);
-      updateSummary(null);
       applyHighlights();
     }
   }
