@@ -95,9 +95,21 @@ const LIGHT_RANGE_ALIAS_MAP = new Map([...LIGHT_RANGE_ALIAS_ENTRIES, ...LEGACY_L
 const EXTRAS_TIP_KEY = 'extras_cleanup_tip';
 
 const TIPS = {
-  heaters:
+  heaters: [
     "Choose a heater whose printed range starts at (or just above) your tank size. Example: for a 40-gallon tank, prefer 40–60 gal over 20–40. Bonus safety: pair your heater with a controller (see the Inkbird add-on above). Remember to account for tank height, substrate thickness, and whether the heater has a water level mark — most are not fully submersible.",
-  filters: "Oversize your filter. A 40–60 gal filter on a 40-gal tank keeps water clearer. Keep biomedia; replace only mechanical floss.",
+    '',
+    '• <strong>5–10 Gallons —</strong> For 5–10 gal, target 25–50W. Place near gentle flow for even heat.',
+    '• <strong>10–20 Gallons —</strong> For 10–20 gal, aim for 50–100W.',
+    '• <strong>20–40 Gallons —</strong> For 20–40 gal tanks, aim for 100–200W. See the Heater tip for placement and safety guidance.',
+    '• <strong>40–55 Gallons —</strong> For 40–55 gal tanks, aim for roughly 200–300W total. Consider using dual heaters for redundancy and more even heating.',
+    '• <strong>55–75 Gallons —</strong> For 55–75 gal tanks, plan on ~300–500W total. Splitting wattage across two heaters improves coverage and safety.',
+    '• <strong>75–125 Gallons —</strong> For 75–125 gal tanks, aim for 500–800W total heating power. Use multiple heaters for balanced temperature and redundancy.'
+  ].join('<br>'),
+  filters: [
+    'Oversize your filter. A 40–60 gal filter on a 40-gal tank keeps water clearer. Keep biomedia; replace only mechanical floss.',
+    '',
+    '• <strong>5–10 Gallons —</strong> For 5–10 gal tanks, use gentle filtration — sponge or low-flow HOB filters. Clean sponges monthly and avoid replacing biomedia to preserve beneficial bacteria. (Full maintenance and sizing guidance available in the Filter Tip popup.)'
+  ].join('<br>'),
   lights: `
   <strong>Lighting Tips</strong><br>
   Match your light to your <strong>tank length</strong>, not just gallons.<br>
@@ -145,36 +157,36 @@ const HEATER_RANGE_META = new Map([
     "g_5_10",
     {
       label: "Recommended Heaters for 5–10 Gallons",
-      tip: "For 5–10 gal, target 25–50W. Place near gentle flow for even heat."
+      tip: ""
     }
   ],
-  ["g_10_20", { label: "Recommended Heaters for 10–20 Gallons", tip: "For 10–20 gal, aim for 50–100W." }],
+  ["g_10_20", { label: "Recommended Heaters for 10–20 Gallons", tip: "" }],
   [
     "g_20_40",
     {
       label: "Recommended Heaters for 20–40 Gallons",
-      tip: "For 20–40 gal tanks, aim for 100–200W. See the Heater tip for placement and safety guidance."
+      tip: ""
     }
   ],
   [
     "g_40_55",
     {
       label: "Recommended Heaters for 40–55 Gallons",
-      tip: "For 40–55 gal tanks, aim for roughly 200–300W total. Consider using dual heaters for redundancy and more even heating."
+      tip: ""
     }
   ],
   [
     "g_55_75",
     {
       label: "Recommended Heaters for 55–75 Gallons",
-      tip: "For 55–75 gal tanks, plan on ~300–500W total. Splitting wattage across two heaters improves coverage and safety."
+      tip: ""
     }
   ],
   [
     "g_75_125",
     {
       label: "Recommended Heaters for 75–125 Gallons",
-      tip: "For 75–125 gal tanks, aim for 500–800W total heating power. Use multiple heaters for balanced temperature and redundancy."
+      tip: ""
     }
   ]
 ]);
@@ -184,8 +196,7 @@ const FILTER_RANGE_META = new Map([
     "g_5_10",
     {
       label: "Recommended Filters for 5–10 Gallons",
-      tip:
-        "For 5–10 gal tanks, use gentle filtration — sponge or low-flow HOB filters. Clean sponges monthly and avoid replacing biomedia to preserve beneficial bacteria. (Full maintenance and sizing guidance available in the Filter Tip popup.)"
+      tip: ""
     }
   ],
   ["g_10_20", { label: "Recommended Filters for 10–20 Gallons", tip: "" }],
