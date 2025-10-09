@@ -950,6 +950,26 @@
 
     if (!section) return null;
 
+    const count = options.length;
+    section.dataset.optionCount = String(count);
+    if (!count) section.dataset.empty = '1';
+    else section.removeAttribute('data-empty');
+
+    const headerEl = section.querySelector('.gear-card__header');
+    if (headerEl) {
+      headerEl.setAttribute('data-count', String(count));
+      if (!count && typeof console !== 'undefined') {
+        // eslint-disable-next-line no-console
+        console.warn(`[filters] bucket "${bucketKey}" rendered with 0 items.`);
+      }
+    }
+
+    const titleEl = section.querySelector('.gear-subcard__title');
+    if (titleEl) {
+      const countNode = el('span', { class: 'gear-subcard__count' }, ` (${count})`);
+      titleEl.appendChild(countNode);
+    }
+
     section.dataset.section = toDataSectionKey('filters');
     section.dataset.filterBucket = '1';
     section.dataset.bucket = bucketKey;
