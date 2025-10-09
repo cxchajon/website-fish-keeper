@@ -5,8 +5,7 @@ const RANGES_HEATERS = [
   { id: "g_20_40", label: "20–40 Gallons", min: 20, max: 40, sort: 40 },
   { id: "g_40_55", label: "40–55 Gallons", min: 40, max: 55, sort: 55 },
   { id: "g_55_75", label: "55–75 Gallons", min: 55, max: 75, sort: 75 },
-  { id: "g_75_125", label: "75–125 Gallons", min: 75, max: 125, sort: 125 },
-  { id: "g_125p", label: "125+ Gallons", min: 125, max: 999, sort: 999 }
+  { id: "g_75_125", label: "75–125 Gallons", min: 75, max: 125, sort: 125 }
 ];
 
 const FILTER_BUCKETS = [
@@ -176,13 +175,6 @@ const HEATER_RANGE_META = new Map([
     {
       label: "Recommended Heaters for 75–125 Gallons",
       tip: "For 75–125 gal tanks, aim for 500–800W total heating power. Use multiple heaters for balanced temperature and redundancy."
-    }
-  ],
-  [
-    "g_125p",
-    {
-      label: "Recommended Heaters for 125+ Gallons",
-      tip: "For 125+ gal systems, scale to 800W+ across multiple heaters and controllers. Position heaters near flow for even distribution."
     }
   ]
 ]);
