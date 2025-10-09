@@ -268,7 +268,7 @@ const HEATERS_ADDON = {
   eyebrow: 'Recommended add-on',
   title:
     'Inkbird ITC-306A WiFi Temperature Controller, Wi-Fi Aquarium Thermostat Heater Controller 120V~1200W Temperature Control with Two Probes only for Heater Aquarium Breeding Reptiles Hatching.',
-  notes: 'Recommended add-on: external controller that shuts off heater on faults; Wi-Fi notifications.',
+  notes: '',
   amazonUrl: 'https://amzn.to/46QJSd3'
 };
 
