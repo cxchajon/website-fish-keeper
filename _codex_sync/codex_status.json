@@ -1,7 +1,7 @@
 {
-  "last_sync": "2025-10-09T14:22:00Z",
+  "last_sync": "2025-10-09T14:46:00Z",
   "status": "PASS",
-  "notes": "Desktop QA screenshot: browser:/invocations/nskbwbqz/artifacts/artifacts/gear-heater-desktop.png; Mobile QA screenshot: browser:/invocations/auqekmdl/artifacts/artifacts/gear-heater-mobile.png.",
+  "notes": "Post-flight sync complete. Proofs captured: heaters-mobile-open.png, heaters-mobile-info.png, filters-mobile-open.png, filters-mobile-info.png, heaters-desktop-open.png, heaters-desktop-info.png, filters-desktop-open.png, filters-desktop-info.png.",
   "active_tasks": [],
   "last_result": "PASS",
   "ready": true
