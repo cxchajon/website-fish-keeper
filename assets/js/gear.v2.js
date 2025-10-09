@@ -819,14 +819,29 @@
     classList.add('sub-accordion');
     const section = el('section',{ class: Array.from(classList).join(' ') });
     section.dataset.ignoreMatch = matchable ? '0' : '1';
+    const resolvedSectionKey = String(sectionKey || '').trim();
+    const baseIdSource =
+      (group && (group.domId || group.domID || group.dom_id)) ||
+      (group && group.id) ||
+      '';
+    const fallbackToken = `${resolvedSectionKey || 'group'}-${index + 1}`;
+    const baseIdRaw = baseIdSource ? String(baseIdSource) : fallbackToken;
+    const shouldPrefix =
+      resolvedSectionKey &&
+      !baseIdRaw.toLowerCase().startsWith(`${resolvedSectionKey.toLowerCase()}-`);
+    const prefixedBaseId = shouldPrefix ? `${resolvedSectionKey}-${baseIdRaw}` : baseIdRaw;
+    const safeId = prefixedBaseId
+      .replace(/[^a-z0-9-_]/gi, '-')
+      .replace(/-{2,}/g, '-')
+      .replace(/^-+|-+$/g, '') || fallbackToken;
+    if (safeId) section.id = safeId;
     if (group?.id) {
       section.dataset.subgroupId = group.id;
       section.dataset.rangeId = group.id;
+      section.dataset.sourceId = group.id;
     }
     if (sectionKey) section.dataset.section = toDataSectionKey(sectionKey);
 
-    const baseId = group?.id ? String(group.id) : `${sectionKey || 'group'}-${index}`;
-    const safeId = baseId.replace(/[^a-z0-9-_]/gi, '-');
     const headerId = `${safeId}-header`;
     const bodyId = `${safeId}-body`;
 
@@ -1405,8 +1420,21 @@
     if (!body) return;
     const shouldAnimate = animate && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     body.setAttribute('aria-hidden', String(!expanded));
+    if (expanded) {
+      body.hidden = false;
+      body.removeAttribute('hidden');
+      body.classList.add('is-open');
+    } else {
+      body.classList.remove('is-open');
+    }
     if (!shouldAnimate){
-      body.hidden = !expanded;
+      if (expanded) {
+        body.hidden = false;
+        body.removeAttribute('hidden');
+      } else {
+        body.hidden = true;
+        body.setAttribute('hidden', '');
+      }
       body.style.height = '';
       body.style.opacity = '';
       body.style.transition = '';
@@ -1427,12 +1455,16 @@
       body.style.height = '';
       body.style.overflow = '';
       body.style.opacity = '';
-      if (!expanded && !skipHide) body.hidden = true;
+      if (!expanded && !skipHide) {
+        body.hidden = true;
+        body.setAttribute('hidden', '');
+      }
       delete body.__accordionState;
     };
 
     if (expanded){
       body.hidden = false;
+      body.removeAttribute('hidden');
       const targetHeight = body.scrollHeight;
       body.style.overflow = 'hidden';
       body.style.height = '0px';
@@ -1493,6 +1525,7 @@
         if (!body) return;
         animateAccordion(body, expanded, animate);
         header.setAttribute('aria-expanded', String(expanded));
+        header.classList.toggle('is-open', expanded);
         if (chevron) {
           chevron.style.transform = expanded ? 'rotate(90deg)' : 'rotate(0deg)';
         }
