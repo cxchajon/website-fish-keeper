@@ -30,9 +30,7 @@ const RANGES_LIGHTS = [
   { id: "l-18-24", label: "18–24 inches", min: 18, max: 24, sort: 24 },
   { id: "l-24-36", label: "24–36 inches", min: 24, max: 36, sort: 36 },
   { id: "l-36-48", label: "36–48 inches", min: 36, max: 48, sort: 48 },
-  { id: "l-48-55", label: "48–55 inches", min: 48, max: 55, sort: 55 },
-  { id: "l-55-75", label: "55–75 inches", min: 55, max: 75, sort: 75 },
-  { id: "l-75-up", label: "75 inches and up", min: 75, max: 999, sort: 999 }
+  { id: "l-48-55", label: "48–55 inches", min: 48, max: 55, sort: 55 }
 ];
 
 const LIGHT_RANGE_IDS = RANGES_LIGHTS.map((range) => range.id);
@@ -78,15 +76,7 @@ const LEGACY_LIGHT_RANGE_ALIASES = [
   ['l-48-up', 'l-48-55'],
   ['48-up', 'l-48-55'],
   ['l-48-60', 'l-48-55'],
-  ['48-60', 'l-48-55'],
-  ['l-60-75', 'l-55-75'],
-  ['60-75', 'l-55-75'],
-  ['l-55-75', 'l-55-75'],
-  ['55-75', 'l-55-75'],
-  ['l-75-125', 'l-75-up'],
-  ['75-125', 'l-75-up'],
-  ['125+', 'l-75-up'],
-  ['75+', 'l-75-up']
+  ['48-60', 'l-48-55']
 ];
 
 const LIGHT_RANGE_ALIAS_MAP = new Map([...LIGHT_RANGE_ALIAS_ENTRIES, ...LEGACY_LIGHT_RANGE_ALIASES]);
@@ -116,7 +106,11 @@ const TIPS = {
   It’s often better to go <strong>slightly longer</strong> than your tank to prevent dark corners and dead spots.<br>
   For <strong>planted tanks</strong>, check PAR and spectrum ratings — high PAR supports carpet plants, while moderate PAR works for most setups.<br>
   For <strong>long tanks</strong>, consider two fixtures or one high-output unit to ensure even coverage end to end.<br>
-  For <strong>tall tanks</strong>, look for higher lumen or PAR ratings since light intensity drops quickly with depth — especially if you’re keeping rooted or carpet plants.
+  For <strong>tall tanks</strong>, look for higher lumen or PAR ratings since light intensity drops quickly with depth — especially if you’re keeping rooted or carpet plants.<br>
+  <br>
+  💡 <strong>For tanks 55 inches and longer:</strong><br>
+  We recommend using multiple smaller lights spaced evenly across the top of the aquarium.<br>
+  Combining two 24–36&quot; lights or a mix of 36–48&quot; units provides more balanced coverage and prevents dim corners in longer tanks.
 `,
   substrate:
     'Planted tanks do best with nutrient-rich soils. Unplanted/community tanks often prefer inert gravel or sand. For décor: rinse stones thoroughly; test for carbonate fizz if you keep soft-water species. Pre-soak driftwood to reduce tannins and weigh down until waterlogged.',
@@ -269,9 +263,7 @@ const LIGHT_RANGE_META = new Map([
   ["l-18-24", { label: "Recommended Lights for 18–24 inch Tanks", tip: "" }],
   ["l-24-36", { label: "Recommended Lights for 24–36 inch Tanks", tip: "" }],
   ["l-36-48", { label: "Recommended Lights for 36–48 inch Tanks", tip: "For 36–48 inch tanks, choose lights with adjustable brackets or a slight overhang. Longer tanks may benefit from dual fixtures or higher wattage to maintain even brightness and plant growth." }],
-  ["l-48-55", { label: "Recommended Lights for 48–55 inch Tanks", tip: "For 48–55 inch tanks, look for extendable arms or brackets to cover the full span. Consider pairing fixtures or upgrading output for dense planting." }],
-  ["l-55-75", { label: "Recommended Lights for 55–75 inch Tanks", tip: "For 55–75 inch tanks, plan on dual fixtures or one high-output unit with strong PAR to avoid dim corners." }],
-  ["l-75-up", { label: "Recommended Lights for 75+ inch Tanks", tip: "For tanks 75 inches and longer, combine multiple fixtures or use modular systems to maintain even intensity from end to end." }]
+  ["l-48-55", { label: "Recommended Lights for 48–55 inch Tanks", tip: "For 48–55 inch tanks, look for extendable arms or brackets to cover the full span. Consider pairing fixtures or upgrading output for dense planting." }]
 ]);
 
 const HEATERS_ADDON = {
