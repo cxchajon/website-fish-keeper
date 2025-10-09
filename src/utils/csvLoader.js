@@ -25,6 +25,8 @@ export function parseCSV(text) {
       if (inQuotes && next === '"') {
         current += '"';
         i += 1;
+      } else if (inQuotes && text[i - 1] === '\\') {
+        current = `${current.slice(0, -1)}"`;
       } else {
         inQuotes = !inQuotes;
       }
