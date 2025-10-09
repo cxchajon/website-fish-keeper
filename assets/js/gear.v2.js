@@ -985,8 +985,7 @@
 
     const titleEl = section.querySelector('.gear-subcard__title');
     if (titleEl) {
-      const countNode = el('span', { class: 'gear-subcard__count' }, ` (${count})`);
-      titleEl.appendChild(countNode);
+      titleEl.setAttribute('data-count', String(count));
     }
 
     section.dataset.section = toDataSectionKey('filters');
