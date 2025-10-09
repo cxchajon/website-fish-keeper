@@ -727,6 +727,9 @@
     }
 
     const rangeTitle = range.rangeLabel || range.label;
+    const normalizedRangeTitle = String(rangeTitle || '')
+      .trim()
+      .toLowerCase();
     if (showTitle && rangeTitle) {
       wrap.appendChild(el(headingTag,{class:'range__title'}, rangeTitle));
     }
@@ -763,12 +766,32 @@
         list.appendChild(el('p',{ class:'range__placeholder' }, placeholderText));
       }
     } else if (rawSubgroups.length) {
+      const shouldSuppressSubgroupTitle = (title) => {
+        if (!title) return false;
+        const normalizedSection = String(dataSectionKey || '')
+          .trim()
+          .toLowerCase();
+        if (normalizedSection !== 'water_treatments') {
+          return false;
+        }
+        const normalizedTitle = String(title)
+          .trim()
+          .toLowerCase();
+        if (!normalizedTitle) {
+          return false;
+        }
+        if (normalizedTitle === 'water treatments') {
+          return true;
+        }
+        return normalizedRangeTitle && normalizedTitle === normalizedRangeTitle;
+      };
+
       rawSubgroups
         .filter((subgroup) => Array.isArray(subgroup.options) && subgroup.options.length)
         .forEach((subgroup) => {
           const subgroupWrap = el('div',{ class:'range__subgroup' });
           const subgroupTitle = (subgroup.label || '').trim();
-          if (subgroupTitle) {
+          if (subgroupTitle && !shouldSuppressSubgroupTitle(subgroupTitle)) {
             subgroupWrap.appendChild(el('h3',{ class:'range__subgroup-title' }, subgroupTitle));
           }
           const subgroupList = el('div',{ class:'range__subgroup-items' });

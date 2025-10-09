@@ -303,6 +303,29 @@ const FOOD_GROUP_TIPS = new Map([
   ["food-color-and-specialty", "Supplement to enhance color or target niche feeding needs."]
 ]);
 
+function normalizeFoodGroupKey(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[()]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+    .replace(/\s+/g, ' ');
+}
+
+const FOOD_GROUP_ALIASES = new Map([
+  [normalizeFoodGroupKey('Staples (Daily)'), { id: 'food-staples-daily', label: 'Staples (Daily)' }],
+  [normalizeFoodGroupKey('Staples'), { id: 'food-staples-daily', label: 'Staples (Daily)' }],
+  [normalizeFoodGroupKey('Daily Staples'), { id: 'food-staples-daily', label: 'Staples (Daily)' }]
+]);
+
+const FOOD_GROUP_ORDER = [
+  'food-staples-daily',
+  'food-bottom-feeders-and-algae',
+  'food-high-protein-treats',
+  'food-color-and-specialty'
+];
+
 const MAINTENANCE_INTRO = "Keep your aquarium healthy and clear with the right tools for testing, water changes, and glass maintenance. Consistent care prevents algae, stress, and equipment issues.";
 
 const MAINTENANCE_GROUP_TIPS = new Map([
@@ -1032,7 +1055,18 @@ function normalizeRow(row, fallbackCategory) {
     normalized.rangeId = rangeSlug;
     normalized.groupId = rangeSlug;
     if (!normalized.groupLabel || normalized.groupLabel === normalized.groupId || normalized.groupLabel === normalized.tankRange) {
-      normalized.groupLabel = SUBSTRATE_DEFAULT_GROUP_LABEL;
+    normalized.groupLabel = SUBSTRATE_DEFAULT_GROUP_LABEL;
+    }
+  }
+
+  if (normalized.category === 'food') {
+    const groupKeySource = normalizeFoodGroupKey(normalized.subgroup || normalized.groupLabel || normalized.groupId);
+    const alias = groupKeySource ? FOOD_GROUP_ALIASES.get(groupKeySource) : undefined;
+    if (alias) {
+      normalized.groupId = alias.id;
+      normalized.rangeId = alias.id;
+      normalized.groupLabel = alias.label;
+      normalized.subgroup = alias.label;
     }
   }
 
@@ -1410,6 +1444,16 @@ function buildGroups(items, tipsMap, category, metaMap) {
   }
 
   const defaultOrder = order.map((id) => map.get(id));
+  if ((category || '').toLowerCase() === 'food') {
+    const seen = new Set();
+    const prioritized = FOOD_GROUP_ORDER.filter((id) => {
+      if (!map.has(id)) return false;
+      seen.add(id);
+      return true;
+    }).map((id) => map.get(id));
+    const remainder = defaultOrder.filter((group) => group && !seen.has(group.id));
+    return [...prioritized, ...remainder];
+  }
   if ((category || '').toLowerCase() === 'maintenance_tools') {
     const seen = new Set();
     const prioritized = MAINTENANCE_SUBGROUP_ORDER.filter((id) => {
