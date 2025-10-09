@@ -929,7 +929,8 @@
   function renderFilterBucket(bucket = {}, index = 0){
     const bucketKey = bucket.key || bucket.bucketKey || bucket.rangeKey || bucket.id || `bucket-${index}`;
     const normalizedBucket = normalizeBucketId(bucketKey);
-    const label = (bucket.label || bucket.rangeLabel || bucket.bucketLabel || bucketKey || '').trim();
+    const fullLabel = (bucket.label || bucket.rangeLabel || bucket.bucketLabel || bucketKey || '').trim();
+    const visibleLabel = fullLabel.replace(/^Recommended\s+Filters\s+for\s+/i, '').trim() || fullLabel;
     const placeholder = (bucket.placeholder || '').trim() || 'No items yet.';
     const options = Array.isArray(bucket.options) ? bucket.options : [];
     const groupId = bucket.id || bucket.rangeId || bucket.bucketId || normalizedBucket || bucketKey || `bucket-${index}`;
@@ -940,13 +941,14 @@
       ...bucket,
       id: groupId,
       key: bucketKey,
-      label,
-      rangeLabel: bucket.rangeLabel || label,
+      label: visibleLabel,
+      rangeLabel: bucket.rangeLabel || fullLabel || visibleLabel,
       tip: bucket.tip || '',
       options,
       placeholder,
       minGallons,
       maxGallons,
+      ariaLabel: fullLabel
     };
 
     const section = renderAccordionGroup(group, index, {
@@ -973,6 +975,8 @@
     const headerEl = section.querySelector('.gear-card__header');
     if (headerEl) {
       headerEl.setAttribute('data-count', String(count));
+      const ariaLabel = (group.ariaLabel || '').trim();
+      if (ariaLabel) headerEl.setAttribute('aria-label', ariaLabel);
       if (!count && typeof console !== 'undefined') {
         // eslint-disable-next-line no-console
         console.warn(`[filters] bucket "${bucketKey}" rendered with 0 items.`);
