@@ -497,12 +497,12 @@ body{
 }
 
 .range__subgroup{
-  border:1px solid rgba(148,163,184,0.28);
-  border-radius:14px;
-  background:rgba(15,23,42,0.55);
-  padding:1rem 1.1rem 1.2rem;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  padding:0;
   display:grid;
-  gap:1rem;
+  gap:1.25rem;
 }
 
 .range__subgroup-title{
@@ -514,7 +514,7 @@ body{
 
 .range__subgroup-items{
   display:grid;
-  gap:1rem;
+  gap:1.25rem;
 }
 
 .option{
@@ -611,8 +611,8 @@ body{
 /* Remove inner card styling inside range panels */
 .gear-card__body .range{
   margin:0;
-  padding:12px 0;
-  border-radius:16px;
+  padding:0;
+  border-radius:0;
 }
 
 .gear-card__body .range:not(.is-active){
@@ -622,18 +622,18 @@ body{
 }
 
 .gear-card__body .range .range__list{
-  gap:0;
+  gap:1.25rem;
 }
 
 .range-intro{
-  margin:4px 0 10px;
+  margin:0 0 1.15rem;
   padding:0;
   color:var(--muted, #b8c1cc);
 }
 
 .gear-card__body .range .option{
   margin:0;
-  padding:12px 0;
+  padding:0;
   border:0;
   border-radius:0;
   background:transparent;
@@ -682,7 +682,7 @@ body{
 }
 
 .gear-card__body .range .option + .option{
-  border-top:1px solid var(--line, #2a3240);
+  border-top:0;
 }
 
 .gear-card__body .range .option__title{
@@ -692,7 +692,7 @@ body{
 }
 
 .gear-card__body .range .option__actions{
-  padding-top:8px;
+  padding-top:0.35rem;
 }
 
 @media (max-width:640px){
