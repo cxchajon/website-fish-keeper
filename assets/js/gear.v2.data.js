@@ -704,20 +704,36 @@ function normalizeFilterBucketKey(value) {
   let key = String(value).trim().toLowerCase();
   if (!key) return "";
   key = key
+    .replace(/[\u2012-\u2015\u2212]/g, '-')
     .replace(/filters?[-_]?/g, '')
     .replace(/range[-_]?/g, '')
     .replace(/bucket[-_]?/g, '')
     .replace(/option[-_a-z0-9]*/g, '')
     .replace(/[^a-z0-9+]+/g, '_')
     .replace(/__+/g, '_')
-    .replace(/^_+|_+$/g, '')
-    .replace(/_(?:0+)?\d+$/, (match) => (match.includes('p') ? match : ''));
+    .replace(/^_+|_+$/g, '');
 
   if (!key) return "";
+
+  const segments = key.split('_').filter(Boolean);
+  if (segments.length > 3) {
+    const last = segments[segments.length - 1];
+    const previous = segments[segments.length - 2];
+    if (/^\d+$/.test(last) && /^\d+$/.test(previous)) {
+      segments.pop();
+      key = segments.join('_');
+    }
+  }
+
+  if (!key) return "";
+
+  if (key === 'g_125p') {
+    return "";
+  }
+
   if (FILTER_BUCKET_ALIASES.has(key)) {
     return FILTER_BUCKET_ALIASES.get(key) || "";
   }
-
   if (FILTER_BUCKET_META.has(key)) {
     return key;
   }
@@ -730,24 +746,53 @@ function normalizeFilterBucketKey(value) {
     return FILTER_BUCKET_ALIASES.get(direct) || "";
   }
 
-  const match = key.match(/g(?:ump)?_?(\d+)(?:_?(\d+))?(p|\+)?/);
-  if (match) {
-    const [, min, max, plus] = match;
-    if (plus || (!max && (key.includes('125') || key.includes('150') || key.endsWith('p') || key.includes('plus')))) {
-      return "";
-    }
-    if (min && max) {
-      const candidate = `g_${min}_${max}`;
-      if (FILTER_BUCKET_META.has(candidate)) return candidate;
-      if (FILTER_BUCKET_ALIASES.has(candidate)) return FILTER_BUCKET_ALIASES.get(candidate) || "";
+  const digitsOnly = key.replace(/[^0-9+]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  if (FILTER_BUCKET_ALIASES.has(digitsOnly)) {
+    return FILTER_BUCKET_ALIASES.get(digitsOnly) || "";
+  }
+
+  const plusNormalized = digitsOnly.includes('+') ? digitsOnly : digitsOnly.replace(/p$/, '+');
+  if (FILTER_BUCKET_ALIASES.has(plusNormalized)) {
+    return FILTER_BUCKET_ALIASES.get(plusNormalized) || "";
+  }
+
+  const rangeMatch = digitsOnly.match(/(\d+)(?:-(\d+))?/);
+  if (rangeMatch) {
+    const candidate = rangeMatch[2] ? `g_${rangeMatch[1]}_${rangeMatch[2]}` : `g_${rangeMatch[1]}`;
+    if (FILTER_BUCKET_META.has(candidate)) return candidate;
+    if (FILTER_BUCKET_ALIASES.has(candidate)) return FILTER_BUCKET_ALIASES.get(candidate) || "";
+    const altCandidate = rangeMatch[2] ? `${rangeMatch[1]}-${rangeMatch[2]}` : '';
+    if (altCandidate && FILTER_BUCKET_ALIASES.has(altCandidate)) {
+      return FILTER_BUCKET_ALIASES.get(altCandidate) || "";
     }
   }
 
-  if (key === 'g_125p') {
-    return "";
+  const withPrefix = key.startsWith('g_') ? key : `g_${key}`;
+  if (FILTER_BUCKET_META.has(withPrefix)) {
+    return withPrefix;
+  }
+  if (FILTER_BUCKET_ALIASES.has(withPrefix)) {
+    return FILTER_BUCKET_ALIASES.get(withPrefix) || "";
   }
 
-  return "";
+  const withGump = key.startsWith('gump_') ? key : `gump_${key}`;
+  if (FILTER_BUCKET_ALIASES.has(withGump)) {
+    return FILTER_BUCKET_ALIASES.get(withGump) || "";
+  }
+
+  const numberMatch = key.match(/(\d+)[^0-9]+(\d+)/);
+  if (numberMatch) {
+    const canonical = `g_${numberMatch[1]}_${numberMatch[2]}`;
+    if (FILTER_BUCKET_META.has(canonical)) {
+      return canonical;
+    }
+    if (FILTER_BUCKET_ALIASES.has(canonical)) {
+      return FILTER_BUCKET_ALIASES.get(canonical) || canonical;
+    }
+    return canonical;
+  }
+
+  return key;
 }
 
 function normalizeStandItem(item = {}) {
