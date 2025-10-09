@@ -916,7 +916,8 @@
       matchable: true,
       rangeOptions: {
         includeGearCard: false,
-        showTitle: false
+        showTitle: false,
+        showTip: false
       }
     });
     if (!section) return null;
