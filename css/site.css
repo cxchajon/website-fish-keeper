@@ -11,6 +11,7 @@
 .env-item { background:rgba(255,255,255,.04); border-radius:10px; padding:10px 12px; }
 .env-item__label { opacity:.9; font-size:.9rem; }
 .env-item__value { font-weight:600; margin-top:2px; }
+.env-item__caption { margin-top:4px; font-size:.78rem; opacity:.72; font-weight:400; }
 .env-item__badge { display:inline-block; font-size:.75rem; padding:2px 6px; border-radius:999px; background:rgba(255,255,255,.10); margin-left:6px; }
 @media (max-width: 680px){ .env-list { grid-template-columns: 1fr; } }
 

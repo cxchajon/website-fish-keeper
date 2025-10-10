@@ -231,6 +231,17 @@ export function deriveEnv(stock = [], options = {}) {
   const salinityCode = salinityResult.code ?? 'FW';
 
   const flowResult = buildFlow(entries);
+  const filteringInfo = computed?.filtering ?? null;
+  const turnoverValue = Number(filteringInfo?.turnover);
+  const hasFlowEstimate = filteringInfo?.hasData;
+  let turnoverCaption = 'Turnover: —';
+  if (Number.isFinite(turnoverValue) && hasFlowEstimate) {
+    const safeTurnover = Math.max(turnoverValue, 0);
+    turnoverCaption = `Turnover: ${safeTurnover.toFixed(1)}×/h`;
+  }
+  if (flowResult.condition) {
+    flowResult.condition.caption = turnoverCaption;
+  }
   conditions.push(flowResult.condition);
   detailChips.push(...flowResult.chips);
   if (Array.isArray(flowResult.noteCodes)) {
@@ -371,6 +382,8 @@ export function deriveEnv(stock = [], options = {}) {
     blackwater: blackwaterStatusToAbbrev(blackwaterStatus),
     brackishYes: Boolean(salinityResult.brackish),
     stockLength,
+    turnover: Number.isFinite(turnoverValue) ? Math.max(turnoverValue, 0) : 0,
+    turnoverCaption,
   };
 }
 
@@ -381,9 +394,12 @@ function renderConditions(root, conditions, { isEmpty = false } = {}) {
         .map((badge) => `<span class="env-item__badge">${escapeHtml(badge)}</span>`)
         .join('');
       const valueText = isEmpty ? dash : showText(condition.value);
+      const caption = !isEmpty && condition.caption
+        ? `<div class="env-item__caption">${escapeHtml(condition.caption)}</div>`
+        : '';
       return `<div class="env-item" role="listitem">
         <div class="env-item__label">${escapeHtml(condition.label)}</div>
-        <div class="env-item__value">${escapeHtml(valueText)}${badges}</div>
+        <div class="env-item__value">${escapeHtml(valueText)}${badges}${caption}</div>
       </div>`;
     })
     .join('');

@@ -28,6 +28,8 @@ const EMPTY = Object.freeze({
 let currentTank = EMPTY;
 const subscribers = new Set();
 
+const FILTER_STORAGE_KEY = 'ttg.stocking.filters.v1';
+
 function ensureNumber(value) {
   if (typeof value === 'number') {
     return Number.isFinite(value) ? value : null;
@@ -179,3 +181,41 @@ export function subscribeTank(listener) {
 }
 
 export const EMPTY_TANK = EMPTY;
+
+function parseFiltersPayload(raw) {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item) => item && typeof item === 'object');
+  } catch (_error) {
+    return [];
+  }
+}
+
+export function loadFilterSnapshot() {
+  if (typeof localStorage === 'undefined') {
+    return [];
+  }
+  try {
+    const raw = localStorage.getItem(FILTER_STORAGE_KEY);
+    return parseFiltersPayload(raw);
+  } catch (_error) {
+    return [];
+  }
+}
+
+export function saveFilterSnapshot(filters) {
+  if (typeof localStorage === 'undefined') {
+    return;
+  }
+  try {
+    if (!Array.isArray(filters) || filters.length === 0) {
+      localStorage.removeItem(FILTER_STORAGE_KEY);
+      return;
+    }
+    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
+  } catch (_error) {
+    /* no-op */
+  }
+}

@@ -1,12 +1,23 @@
-import { createDefaultState, buildComputedState, runSanitySuite, runStressSuite, SPECIES, getDefaultSpeciesId } from './logic/compute.js';
+import {
+  createDefaultState,
+  buildComputedState,
+  runSanitySuite,
+  runStressSuite,
+  SPECIES,
+  getDefaultSpeciesId,
+  calcTotalGph,
+  computeTurnover,
+  sanitizeFilterList,
+} from './logic/compute.js';
 import { renderEnvCard } from './logic/envRecommend.js';
 import { getTankVariants } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
 import { renderConditions, renderChips, bindPopoverHandlers } from './logic/ui.js';
-import { getTankSnapshot, EMPTY_TANK } from './stocking/tankStore.js';
+import { getTankSnapshot, EMPTY_TANK, loadFilterSnapshot, saveFilterSnapshot } from './stocking/tankStore.js';
 import { EVENTS, dispatchEvent as dispatchStockingEvent } from './stocking/events.js';
 import { tankLengthStatus } from './stocking/validators.js';
 import { initInfoTooltips } from './ui/tooltip.js';
+import { renderFiltrationTrigger, renderFiltrationDrawer, bindFiltrationEvents } from './ui/filter-drawer.js';
 
 function isAssumptionText(el){
   const t = (el?.textContent || '').trim();
@@ -174,6 +185,7 @@ function bootstrapStocking() {
     pageTitle: document.getElementById('page-title'),
     plantIcon: document.getElementById('plant-icon'),
     planted: document.getElementById('toggle-planted'),
+    filtrationTrigger: document.getElementById('filtration-trigger'),
     envCard: document.querySelector('#env-card, [data-role="env-card"]'),
     envInfoToggle: document.querySelector('#env-info-btn, #env-info-toggle, [data-role="env-info"]'),
     conditions: document.getElementById('conditions-list'),
@@ -194,6 +206,114 @@ function bootstrapStocking() {
   const warnedMarineIds = new Set();
 
   const canonicalSpeciesList = SPECIES.slice();
+
+  const createFilterRecord = () => ({ kind: 'HOB', gph: 0, headLossPct: 0, model: '' });
+
+  const filtrationHost = (() => {
+    const toggleRow = document.querySelector('#tank-size-card .row.toggle-row');
+    if (!toggleRow) return null;
+    const host = document.createElement('div');
+    host.className = 'filter-drawer-host';
+    host.dataset.role = 'filter-drawer-host';
+    toggleRow.insertAdjacentElement('afterend', host);
+    return host;
+  })();
+
+  const filtrationUi = {
+    trigger: refs.filtrationTrigger,
+    host: filtrationHost,
+    open: false,
+    getFilters: () => (Array.isArray(state.filters) ? state.filters.slice() : []),
+    onToggle: null,
+  };
+
+  function setFilters(nextFilters) {
+    const sanitized = sanitizeFilterList(Array.isArray(nextFilters) ? nextFilters : []);
+    const normalized = sanitized.length ? sanitized : [createFilterRecord()];
+    state.filters = normalized.map((filter) => ({ ...filter }));
+    try {
+      saveFilterSnapshot(state.filters);
+    } catch (_error) {
+      /* ignore persistence errors */
+    }
+  }
+
+  const initializeFilters = () => {
+    const stored = loadFilterSnapshot();
+    const candidate = Array.isArray(state.filters) && state.filters.length
+      ? state.filters
+      : stored;
+    setFilters(candidate);
+  };
+
+  initializeFilters();
+
+  const estimateGallonsForFilters = () => {
+    if (computed?.tank?.effectiveGallons && Number.isFinite(computed.tank.effectiveGallons)) {
+      return computed.tank.effectiveGallons;
+    }
+    const tankRecord = state.tank ?? EMPTY_TANK;
+    if (Number.isFinite(tankRecord.effectiveGallons) && tankRecord.effectiveGallons > 0) {
+      return tankRecord.effectiveGallons;
+    }
+    const gallons = Number(state.gallons ?? tankRecord.gallons);
+    return Number.isFinite(gallons) ? gallons : 0;
+  };
+
+  function getFilteringSnapshot() {
+    if (computed?.filtering) {
+      return computed.filtering;
+    }
+    const sanitized = sanitizeFilterList(state.filters);
+    const deliveredTotal = calcTotalGph(sanitized);
+    const ratedTotal = sanitized.reduce((sum, filter) => sum + (Number.isFinite(filter.gph) ? filter.gph : 0), 0);
+    const gallonsForCalc = estimateGallonsForFilters();
+    const turnover = computeTurnover(gallonsForCalc, sanitized);
+    const hasData = sanitized.some((filter) => Number.isFinite(filter.gph) && filter.gph > 0);
+    let tone = hasData ? 'neutral' : 'neutral';
+    let text = hasData ? 'Turnover meets recommended flow.' : 'Add filter flow to estimate turnover.';
+    if (hasData && gallonsForCalc <= 0) {
+      tone = 'warn';
+      text = 'Select a tank to calculate turnover.';
+    }
+    return {
+      filters: sanitized,
+      deliveredTotal,
+      ratedTotal,
+      turnover,
+      hasData,
+      status: { tone, text },
+      band: null,
+      warning: false,
+      chip: null,
+      target: null,
+    };
+  }
+
+  function syncFiltrationUI() {
+    if (!filtrationUi.trigger || !filtrationUi.host) {
+      return;
+    }
+    const metrics = getFilteringSnapshot();
+    renderFiltrationTrigger(filtrationUi.trigger, {
+      metrics,
+      open: filtrationUi.open,
+      warning: Boolean(metrics?.warning),
+    });
+    renderFiltrationDrawer(filtrationUi.host, {
+      filters: state.filters,
+      metrics,
+      open: filtrationUi.open,
+    });
+  }
+
+  syncFiltrationUI();
+
+  function handleFiltersChange(nextFilters) {
+    setFilters(nextFilters);
+    syncFiltrationUI();
+    scheduleUpdate();
+  }
 
   const SALINITY_ALIASES = new Map([
     ['fw', 'fresh'],
@@ -975,6 +1095,7 @@ function renderAll() {
     renderEnvironmentPanels();
     ensureTankAssumptionScrubbed();
     syncQtyInputFromState();
+    syncFiltrationUI();
     return;
   }
   computed = buildComputedState(state);
@@ -987,6 +1108,7 @@ function renderAll() {
   renderEnvironmentPanels();
   ensureTankAssumptionScrubbed();
   syncQtyInputFromState();
+  syncFiltrationUI();
 }
 
 function renderEnvironmentPanels() {
@@ -1125,6 +1247,14 @@ function buildGearPayload() {
     populateSpecies();
     syncQtyInputFromState({ force: true });
     syncToggles();
+    if (filtrationUi.trigger && filtrationUi.host) {
+      filtrationUi.onToggle = (open) => {
+        filtrationUi.open = open;
+        syncFiltrationUI();
+      };
+      filtrationUi.open = false;
+      bindFiltrationEvents(filtrationUi, handleFiltersChange);
+    }
     bindInputs();
     runRecompute({ skipInputSync: true });
     isBootstrapped = true;
