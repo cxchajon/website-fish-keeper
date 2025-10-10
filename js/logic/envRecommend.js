@@ -1,4 +1,5 @@
 import { clamp, getBandColor } from './utils.js';
+import { formatCareTagLabel } from './careTags.js';
 import { formatBioloadPercent } from '../bioload.js';
 
 const dash = '—';
@@ -394,9 +395,21 @@ function renderConditionsExcel(env, { isEmpty = false } = {}) {
   if (!root) return;
   root.classList.add('env-table');
 
-  const chipsHtml = !isEmpty && env.chips?.length
-    ? `<div class="env-notes">${env.chips.map((c) => `<span class="env-chip">${esc(c)}</span>`).join('')}</div>`
-    : dash;
+  const rawCareTags = Array.isArray(env.chips) ? env.chips : [];
+  const formattedCareTags = rawCareTags
+    .map((tag) => formatCareTagLabel(tag))
+    .map((label) => String(label ?? '').trim())
+    .filter((label) => label.length > 0);
+  const hasCareTags = !isEmpty && formattedCareTags.length > 0;
+  const chipsHtml = hasCareTags
+    ? `<div class="env-notes">${formattedCareTags.map((c) => `<span class="env-chip">${esc(c)}</span>`).join('')}</div>`
+    : '';
+  const careTagColClass = 'col-care-tags';
+  const darkWaterSpan = hasCareTags ? '' : ' colspan="2"';
+  const careTagHeaderCell = hasCareTags ? `<td class="env-xl-cell env-xl-label ${careTagColClass}">Care Tags</td>` : '';
+  const careTagValueCell = hasCareTags
+    ? `<td class="env-xl-cell env-xl-value ${careTagColClass}">${chipsHtml}</td>`
+    : '';
 
   const renderRange = (range) => {
     if (isEmpty) return dash;
@@ -443,13 +456,13 @@ function renderConditionsExcel(env, { isEmpty = false } = {}) {
 
         <tr class="env-xl-rowA">
           <td class="env-xl-cell env-xl-label">Brackish</td>
-          <td class="env-xl-cell env-xl-label">Dark water / tannins</td>
-          <td class="env-xl-cell env-xl-label">Notes</td>
+          <td class="env-xl-cell env-xl-label"${darkWaterSpan}>Dark water / tannins</td>
+          ${careTagHeaderCell}
         </tr>
         <tr class="env-xl-rowB">
           <td class="env-xl-cell env-xl-value env-xl-nowrap">${isEmpty ? dash : env.brackishYes == null ? dash : env.brackishYes ? 'Yes' : 'No'}</td>
-          <td class="env-xl-cell env-xl-value env-xl-nowrap">${renderText(env.blackwater)}</td>
-          <td class="env-xl-cell env-xl-value">${chipsHtml}</td>
+          <td class="env-xl-cell env-xl-value env-xl-nowrap"${darkWaterSpan}>${renderText(env.blackwater)}</td>
+          ${careTagValueCell}
         </tr>
       </tbody>
     </table>
@@ -578,10 +591,14 @@ function renderWarnings(root, warnings) {
 
 function ensureTips(el) {
   if (el.dataset.bound === 'true') return;
+  const legendCareTags = ['zones', 'sens', 'req', 'mix']
+    .map((tag) => formatCareTagLabel(tag))
+    .filter((label) => label && label.trim().length > 0)
+    .join(', ');
   el.innerHTML = `
     <div class="env-tip-legend">
       <strong>Legend</strong>
-      <p>Sal: FW (freshwater), Br-L (low brackish), Br-H (high brackish). Flow: L (low), M (moderate), H (high). Dark water: Off, Pref, Rec, Req. Notes chips: zones (mixed flow), sens (pH sensitive), req (blackwater required), mix (fresh+brackish).</p>
+      <p>Sal: FW (freshwater), Br-L (low brackish), Br-H (high brackish). Flow: L (low), M (moderate), H (high). Dark water: Off, Pref, Rec, Req. Care tags: ${escapeHtml(legendCareTags)}.</p>
     </div>
     <ul>
       <li>Match general hardness (gH) and carbonate hardness (kH) to the tightest species range— remineralize slowly when using RO.</li>
