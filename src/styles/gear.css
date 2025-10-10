@@ -537,6 +537,10 @@ main {
   border: none;
 }
 
+.aeration-subaccordion.bucket-list {
+  border-top: none;
+}
+
 .aeration-subaccordion__item {
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -561,6 +565,31 @@ main {
 
 .aeration-subaccordion .bucket-list__panel {
   padding: 0 0 16px;
+}
+
+.aeration-accessory-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.aeration-accessory-card {
+  gap: 10px;
+}
+
+.aeration-accessory-card__title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.aeration-accessory-card__description {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.aeration-accessory-card__actions {
+  margin-top: 8px;
 }
 
 .bucket-list {
