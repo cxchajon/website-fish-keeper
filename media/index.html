@@ -1,0 +1,664 @@
+<!-- Updated: Applied new translucent nav resources and grouping to the Media hub. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Media & Books — The Tank Guide by FishKeepingLifeCo</title>
+  <meta name="description" content="Explore The Tank Guide media and books by FishKeepingLifeCo—aquarium education, previews, and resources to help you build healthy freshwater aquariums." />
+  <link rel="canonical" href="https://thetankguide.com/media.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="The Tank Guide">
+  <meta property="og:title" content="Media & Books — The Tank Guide by FishKeepingLifeCo">
+  <meta property="og:description" content="Explore The Tank Guide media and books by FishKeepingLifeCo—aquarium education, previews, and resources to help you build healthy freshwater aquariums.">
+  <meta property="og:url" content="https://thetankguide.com/media.html">
+  <meta property="og:image" content="https://thetankguide.com/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@fishkeepinglife">
+  <meta name="twitter:title" content="Media & Books — The Tank Guide by FishKeepingLifeCo">
+  <meta name="twitter:description" content="Explore The Tank Guide media and books by FishKeepingLifeCo—aquarium education, previews, and resources to help you build healthy freshwater aquariums.">
+  <meta name="twitter:image" content="https://thetankguide.com/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.9" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" href="/favicon.ico" />
+  <!-- Page-scoped styles -->
+  <style>
+    :root {
+      --card-bg: rgba(255,255,255,.6);
+      --border: rgba(0,0,0,.08);
+      --muted: rgba(0,0,0,.65);
+      --ttg-nav-bg: rgba(10, 16, 30, 0.72);
+      --ttg-nav-text: #f2f6ff;
+      --ttg-nav-link: rgba(243, 247, 255, 0.85);
+    }
+
+    /* Background now matches the homepage gradient exactly */
+    html,body{
+      margin:0; padding:0;
+      color:#eef3ff;
+    }
+
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 18px; }
+
+    /* Hero */
+    .hero { padding: 64px 0 28px; text-align: left; }
+    .hero h1 { margin: 0 0 8px; }
+    .hero p.sub { margin: 0; opacity: .9; }
+    .hero-description {
+      margin: 12px 0 0;
+      max-width: 46ch;
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    /* Sections */
+    .section { margin: 32px 0 28px; }
+    .section h2 { margin: 0 0 8px; }
+    .section p.lead { margin: 0 0 16px; color: var(--muted); }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      color:#0b1020; /* card copy stays dark on light card */
+    }
+    .aquarium-library-card {
+      display: flex;
+      flex-direction: column;
+    }
+    .aquarium-library-card h2 {
+      margin: 0 0 4px;
+    }
+    .aquarium-library-card .subline {
+      margin: 0;
+      color: var(--muted);
+    }
+    .aquarium-library-card .media-divider {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 8px 0 12px;
+    }
+    .aquarium-library-card .library-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .stack { display: grid; gap: 14px; }
+    .btn {
+      display:inline-block; padding:10px 14px; border:1px solid var(--border);
+      border-radius: 10px; text-decoration:none; font-weight:600;
+      background:#fff; color:#0b1020;
+    }
+    .muted { color: var(--muted); }
+    .now-playing {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+    .now-playing-label {
+      font-weight: 700;
+      color: #000000;
+      cursor: default;
+    }
+    .now-playing-title {
+      padding-left: 6px;
+      font-weight: 400;
+      color: #333333;
+    }
+    .center { text-align:center; }
+
+    /* --- Featured Resource --- */
+    #featured-resource {
+      padding: 16px;
+    }
+
+    /* Community split layout */
+    #community .split {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 900px) {
+      #community .split {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    #community .media-thumb {
+      display: grid;
+      place-items: center;
+      min-height: 140px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.5);
+      color: #2b2b2b;
+      font-weight: 600;
+    }
+
+    #community .card .video-embed {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      margin-top: 12px;
+    }
+
+    #community .card .video-embed iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    #community .card .community-video-title {
+      margin: 16px 0 0;
+    }
+
+    #community .card .community-video-attribution {
+      margin: 4px 0 0;
+    }
+
+    #community .card .community-video-cta {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    .resource-card {
+      background: #e9f4ff;
+      border-radius: 12px;
+      padding: 16px 16px 18px;
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      color: #0b1020;
+    }
+
+    .affiliate-note {
+      font-size: .9rem;
+      opacity: .8;
+      margin: .25rem 0 .5rem;
+    }
+
+    .resource-cover-link {
+      display: inline-block;
+      line-height: 0;
+      text-decoration: none;
+    }
+
+    .resource-cover {
+      width: 40vw;
+      max-width: 280px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    .resource-cover-link:focus-visible {
+      outline: 3px solid rgba(0, 119, 199, 0.75);
+      outline-offset: 4px;
+      border-radius: 10px;
+    }
+
+    .resource-content {
+      margin-top: 12px;
+      padding: 0 8px;
+    }
+
+    #featured-resource-title {
+      margin-bottom: 4px;
+    }
+
+    .resource-title {
+      font-weight: 700;
+      font-size: 1.125rem;
+      margin: 4px 0 6px;
+      letter-spacing: 0.2px;
+    }
+
+    .resource-desc {
+      font-weight: 500;
+      line-height: 1.5;
+      margin: 0 auto 12px;
+      max-width: 60ch;
+    }
+
+    .btn.btn-amazon {
+      display: inline-block;
+      padding: 10px 16px;
+      font-weight: 700;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ffd569 0%, #ffb800 100%);
+      color: #1d1d1f;
+      text-decoration: none;
+      border: 1px solid #e3a400;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.12), 0 6px 12px rgba(0,0,0,0.08);
+      transition: transform 0.06s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    }
+
+    .btn.btn-amazon:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 0 rgba(0,0,0,0.12), 0 10px 16px rgba(0,0,0,0.12);
+      filter: saturate(1.05);
+    }
+
+    .btn.btn-amazon:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.12), 0 6px 10px rgba(0,0,0,0.10);
+    }
+
+    .btn.btn-amazon:focus-visible {
+      outline: 3px solid rgba(0, 119, 199, 0.75);
+      outline-offset: 3px;
+    }
+
+    @media (min-width: 768px) {
+      .resource-card { padding: 18px 20px 20px; }
+      .resource-cover { width: 30vw; max-width: 300px; }
+      .resource-desc { margin-bottom: 14px; }
+    }
+
+  </style>
+  <script defer src="js/nav.js?v=1.1.0"></script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://thetankguide.com/#organization",
+  "name": "FishKeepingLifeCo",
+  "alternateName": "The Tank Guide",
+  "url": "https://thetankguide.com",
+  "addressCountry": "US",
+  "addressRegion": "NY",
+  "logo": "https://thetankguide.com/logo.png",
+  "image": "https://thetankguide.com/logo.png",
+  "slogan": "Educational Aquarium Books & Tools",
+  "description": "FishKeepingLifeCo publishes educational aquarium books and interactive online tools like The Tank Guide to help aquarists of all experience levels set up, stock, and maintain thriving aquariums.",
+  "brand": {
+    "@type": "Brand",
+    "name": "The Tank Guide"
+  },
+  "foundingDate": "2025-09-12",
+  "publishingPrinciples": "https://thetankguide.com/about.html",
+  "areaServed": ["United States", "New York"],
+  "knowsAbout": [
+    "Aquariums",
+    "Fishkeeping",
+    "Nitrogen Cycle",
+    "Freshwater Aquariums",
+    "Planted Tanks",
+    "Aquarium Setup Basics",
+    "Water Parameters",
+    "Aquarium Cycling"
+  ],
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "email": "info@thetankguide.com",
+      "availableLanguage": ["en"]
+    }
+  ],
+  "sameAs": [
+    "https://www.instagram.com/FishKeepingLifeCo",
+    "https://www.tiktok.com/@FishKeepingLifeCo",
+    "https://www.facebook.com/fishkeepinglifeco",
+    "https://x.com/fishkeepinglife?s=21",
+    "https://www.youtube.com/@fishkeepinglifeco",
+    "https://www.amazon.com/author/fishkeepinglifeco"
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Book",
+  "@id": "https://thetankguide.com/#book-life-in-balance",
+  "name": "Life in Balance: The Hidden Magic of Aquariums",
+  "isbn": "979-8263446215",
+  "url": "https://amzn.to/3IRKvK0",
+  "sameAs": ["https://amzn.to/3IRKvK0"],
+  "author": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+  "publisher": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+  "audience": { "@type": "Audience", "audienceType": "Children 6–12" },
+  "about": ["Aquariums", "Fishkeeping", "Nitrogen Cycle", "Aquarium Setup Basics"],
+  "bookFormat": "https://schema.org/Hardcover",
+  "offers": {
+    "@type": "Offer",
+    "url": "https://amzn.to/3IRKvK0"
+  }
+}
+  </script>
+  <!-- Consent Mode defaults (load FIRST) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
+
+  <!-- AdSense loader (keep one global instance only) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
+    crossorigin="anonymous"></script>
+  <!-- --- Google CMP (Funding Choices) START --- -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
+  <script>
+    // Required bootstrap per Google; signals CMP presence
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
+  <!-- --- Google CMP (Funding Choices) END --- -->
+</head>
+<body class="theme-light">
+  <div id="site-nav"></div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap">
+      <h1>Media Hub</h1>
+      <p class="sub">Watch • Read • Explore</p>
+      <p class="hero-description">Step-by-step tutorials and detailed guides on setups, gear, cycling, and stocking. Start with the latest video or browse the full library.</p>
+    </div>
+  </section>
+
+  <main class="wrap" id="content">
+    <section aria-labelledby="spotlight-blurbs">
+      <h2 id="spotlight-blurbs">Spotlight Blurbs</h2>
+      <p>Quick hits on gear and techniques we love.</p>
+      <ul>
+        <li><a href="/blurbs/">Browse all blurbs →</a></li>
+        <li><a href="/blurbs/purigen/">Spotlight: Purigen</a></li>
+        <li><a href="/blurbs/cycle-check-3-readings/">Cycle Check (3-Reading Rule)</a></li>
+      </ul>
+    </section>
+
+    <!-- Featured Videos -->
+    <section class="section" aria-labelledby="videos">
+      <article class="card video-card featured-videos-card">
+        <h2 id="videos">Featured Videos</h2>
+        <p class="subline">Catch our latest upload or explore the full channel for more.</p>
+        <h3 class="visually-hidden">Latest video</h3>
+        <div class="embed-wrapper" style="position:relative;width:100%;aspect-ratio:16 / 9;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#000;">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/opok0oqzkvc?rel=0"
+            title="FishKeepingLifeCo Official Intro"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            style="position:absolute;inset:0;width:100%;height:100%;border:0;">
+          </iframe>
+        </div>
+        <p class="muted now-playing"><span class="now-playing-label">Now Playing:</span><a class="now-playing-title" href="https://youtu.be/opok0oqzkvc?si=IRXirynjvfhVz2Lt" target="_blank" rel="noopener noreferrer">Aquarium Science Made Simple: Nitrogen Cycle Explained | Life in Balance Book</a></p>
+        <hr class="media-divider" />
+        <div class="video-meta">
+          <p class="video-blurb">
+            This video introduces <em>Life in Balance: The Hidden Magic of Aquariums</em> — a science-meets-storytelling book that explains the nitrogen cycle through the world of an established aquarium. Learn how balance, biology, and imagination come together to make aquarium care simple, inspiring, and easy to understand for readers of all ages.
+          </p>
+          <div class="video-actions" style="flex-wrap:wrap;gap:12px;">
+            <a class="yt-cta" href="https://www.youtube.com/@FishKeepingLifeCo" target="_blank" rel="noopener noreferrer" title="Visit FishKeepingLifeCo on YouTube" aria-label="Visit FishKeepingLifeCo on YouTube">
+              <span class="yt-icon" aria-hidden="true">
+                <svg class="yt-cta-svg" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true">
+                  <path d="M9 7v10l8-5z" fill="#fff"></path>
+                </svg>
+              </span>
+              <span class="yt-label">Visit Our Channel</span>
+            </a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Community -->
+    <section class="section" id="community" aria-labelledby="community-title">
+      <h2 id="community-title">Community</h2>
+
+      <div class="stack">
+        <div class="split">
+          <!-- Card A: Featured Tanks -->
+          <article class="card">
+            <h3><strong>Featured Tanks</strong></h3>
+            <p class="muted">
+              Showcasing aquariums from The Tank Guide community — real setups, honest lessons learned, and ideas to try.
+              Want to be featured? Submit your tank and we’ll highlight standout builds.
+            </p>
+            <div class="media-thumb" aria-label="Featured tank placeholder">Featured tank thumbnail (placeholder)</div>
+            <div class="row" style="justify-content:space-between; align-items:center; gap:10px;">
+              <a class="btn" href="/media.html">Explore Media</a>
+              <a class="btn" href="/feature-your-tank.html">Submit Your Tank</a>
+            </div>
+          </article>
+
+          <!-- Card B: Community Video Picks -->
+          <article class="card">
+            <h3><strong>Community Video Picks</strong></h3>
+            <p class="muted">
+              Curated how-to videos and inspiration from creators we trust — and from folks who use and follow The Tank Guide.
+              We rotate a featured pick regularly and keep an archive of favorites you can explore anytime.
+            </p>
+            <hr class="card-sep" aria-hidden="true">
+            <div class="video-embed">
+              <iframe
+                src="https://www.youtube.com/embed/zX3wGQpC4eE"
+                title="Make a Freshwater Aquarium Sump — @SerpaDesign"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+                loading="lazy"
+              ></iframe>
+            </div>
+            <h3 class="card-subtitle community-video-title">Make a Freshwater Aquarium Sump</h3>
+            <p class="muted community-video-attribution">by <a href="https://youtube.com/@serpadesign" target="_blank" rel="noopener noreferrer">@SerpaDesign</a></p>
+            <hr class="media-divider" />
+            <p>
+              Recommended by a community member: I chose this video because I used it as a bible to create my sump. I watched it
+              for hours, section by section, and copied the baffle design for my 5-gallon sump. The creator explains things simply
+              and clearly, making it easy to follow. This video gave me the direction to start more DIY projects.
+            </p>
+            <p>
+              If you’re looking for DIY aquarium builds, sump setup tutorials, or beginner-friendly fishkeeping tips, this video is
+              a fantastic place to start.
+            </p>
+            <div class="community-video-cta">
+              <a class="yt-cta" href="https://www.youtube.com/watch?v=zX3wGQpC4eE" target="_blank" rel="noopener noreferrer" title="Watch Make a Freshwater Aquarium Sump on YouTube" aria-label="Watch Make a Freshwater Aquarium Sump on YouTube">
+                <span class="yt-icon" aria-hidden="true">
+                  <svg class="yt-cta-svg" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true">
+                    <path d="M9 7v10l8-5z" fill="#fff"></path>
+                  </svg>
+                </span>
+                <span class="yt-label">Watch on YouTube</span>
+              </a>
+            </div>
+          </article>
+        </div>
+
+        <!-- Aquarium Library Card -->
+        <article class="card aquarium-library-card">
+          <h2 id="articles">Aquarium Library</h2>
+          <p class="subline">Explore a collection of guides, research articles, transcripts, and more.</p>
+          <hr class="media-divider" />
+          <div class="library-item">
+            <h3>Mission &amp; Values</h3>
+            <p class="muted">Explore the values behind FishKeepingLifeCo: clear guidance, hands-on learning, responsible care, and a supportive fishkeeping community.</p>
+            <p><a class="btn" href="/about.html#sec-mission">Read Our Mission</a></p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Featured Resource -->
+    <section class="section" id="featured-resource" aria-labelledby="featured-resource-title">
+      <h2 id="featured-resource-title" class="center">Featured Resource</h2>
+      <div class="resource-card">
+        <a class="resource-cover-link" href="https://amzn.to/3IRKvK0" target="_blank" rel="sponsored noopener noreferrer">
+          <img class="resource-cover" src="assets/books/book-cover-web.jpg" alt="Life in Balance: The Hidden Magic of Aquariums — book cover" loading="lazy" />
+        </a>
+        <div class="resource-content">
+          <p class="resource-title">The Tank Guide: Cycling &amp; Stocking Companion</p>
+          <p class="resource-desc">“Life in Balance: The Hidden Magic of Aquariums” takes the confusion out of aquarium care, turning the nitrogen cycle into a simple, engaging story. Accurate yet easy to understand, it sparks curiosity in young readers while giving parents, teachers, and new aquarists the confidence to start their own aquarium journey.</p>
+          <p class="affiliate-note">As an Amazon Associate, we earn from qualifying purchases.</p>
+          <a class="btn btn-amazon" href="https://amzn.to/3IRKvK0" target="_blank" rel="sponsored noopener noreferrer">Buy Book On Amazon</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- === TTG_MediaBottom (above footer) === -->
+  <div class="ttg-adunit ttg-adunit--media-bottom" id="ad-media-bottom-1" aria-label="Advertisement">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-9905718149811880"
+         data-ad-slot="9522042154"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+
+  <div id="site-footer"></div>
+  <script>
+(async () => {
+  try {
+    const res = await fetch('/footer.v1.3.0.html?v=1.3.0', { cache: 'no-cache' });
+    const html = await res.text();
+    const host = document.getElementById('site-footer');
+    if (host) host.outerHTML = html;
+  } catch (e) { console.error('[Footer] load failed:', e); }
+})();
+</script>
+<!-- === TTG Cookie Consent START === -->
+<div id="ttg-consent" class="ttg-consent" data-consent-banner>
+  <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
+    <h3 id="ttg-consent-title">Cookies & Advertising</h3>
+    <p id="ttg-consent-desc">
+      We use cookies to run this site and (if you allow) to show relevant ads from Google AdSense. You can accept all cookies, reject personalized ads, or manage preferences anytime.
+    </p>
+    <div class="ttg-consent__actions">
+      <button type="button" class="ttg-btn ttg-btn--secondary js-consent-reject" id="ttg-consent-reject">Reject (Non-personalized)</button>
+      <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-manage">Manage</button>
+      <button type="button" class="ttg-btn ttg-btn--primary js-consent-accept" id="ttg-consent-accept">Accept All</button>
+    </div>
+  </div>
+</div>
+
+<div id="ttg-consent-modal" class="ttg-consent-modal" hidden aria-modal="true" role="dialog" aria-labelledby="ttg-consent-modal-title">
+  <div class="ttg-consent-modal__panel">
+    <h3 id="ttg-consent-modal-title">Cookie Preferences</h3>
+    <form id="ttg-consent-form">
+      <label class="ttg-row">
+        <input type="checkbox" checked disabled />
+        <span><strong>Essential</strong> — required for core site functions.</span>
+      </label>
+      <label class="ttg-row">
+        <input type="checkbox" id="ttg-c-analytics" />
+        <span><strong>Analytics</strong> — understand usage (if enabled later).</span>
+      </label>
+      <label class="ttg-row">
+        <input type="checkbox" id="ttg-c-ads" />
+        <span><strong>Advertising</strong> — allow personalized ads (Google AdSense).</span>
+      </label>
+      <div class="ttg-consent-modal__actions">
+        <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-cancel">Cancel</button>
+        <button type="submit" class="ttg-btn ttg-btn--primary">Save Preferences</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- === TTG Consent Banner Controller START === -->
+  <script defer src="/assets/js/consent-banner.js"></script>
+<!-- === TTG Consent Banner Controller END === -->
+
+
+<!-- === TTG CMP Consent Bridge START === -->
+<script>
+(function(){
+  // Helper: map TCF consent to our single "ads granted" flag.
+  // We consider "granted" only when Purpose 1 (storage) AND Purpose 4 (select personalised ads)
+  // are consented. If you want to allow NON-personalised ads when only Purpose 1 is granted,
+  // set allowNPA=true below.
+  var allowNPA = true; // if true, we’ll treat Purpose 1 only as "granted" for showing slots (Google will serve NPA ads).
+
+  function setAdConsent(granted){
+    document.documentElement.setAttribute('data-ad-consent', granted ? 'granted' : 'denied');
+    document.documentElement.classList.toggle('is-ads-disabled', !granted);
+    window.__TTG_ADS_DISABLED__ = !granted;
+    // Inform any listeners (our ad loader later)
+    window.dispatchEvent(new CustomEvent('ttg:consent-change', {detail:{granted}}));
+  }
+
+  // If Google CMP is present, it defines __tcfapi.
+  function hookTCF(){
+    if (typeof window.__tcfapi !== 'function') return false;
+
+    // Hide our local cookie banner when Google CMP is running (EEA users).
+    try{
+      var banner = document.getElementById('ttg-consent');
+      var modal  = document.getElementById('ttg-consent-modal');
+      if (banner){ banner.hidden = true; banner.classList.remove('is-open'); }
+      if (modal)  modal.hidden  = true;
+    }catch(e){}
+
+    // Listen for consent changes
+    window.__tcfapi('addEventListener', 2, function(tcData, ok){
+      if(!ok || !tcData) return;
+      // Purpose 1 = storage; Purpose 4 = personalised ads
+      var p = (tcData.purpose && tcData.purpose.consents) || {};
+      var hasP1 = !!p[1];
+      var hasP4 = !!p[4];
+
+      var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
+      setAdConsent(granted);
+    });
+
+    // Also fetch current state once
+    window.__tcfapi('getTCData', 2, function(tcData, ok){
+      if(!ok || !tcData) return;
+      var p = (tcData.purpose && tcData.purpose.consents) || {};
+      var hasP1 = !!p[1];
+      var hasP4 = !!p[4];
+      var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
+      setAdConsent(granted);
+    });
+
+    return true;
+  }
+
+  // Try to hook immediately; if CMP loads a bit later, poll briefly
+  if (!hookTCF()){
+    var tries = 0, t = setInterval(function(){
+      tries++;
+      if (hookTCF() || tries > 40) clearInterval(t); // up to ~4s
+    }, 100);
+  }
+
+  // Fallback for non-EEA visitors (no __tcfapi): keep using our local preference
+  // Our existing local banner writes ttgConsentV2 with {ads:true|false}.
+  // If CMP absent, keep existing behavior (do not force-show anything here).
+
+})();
+</script>
+<!-- === TTG CMP Consent Bridge END === -->
+
+<!-- === TTG Cookie Consent END === -->
+
+<!-- === TTG Ad Slot View Tracking START === -->
+<script src="/js/ad-slot-view-tracking.js"></script>
+<!-- === TTG Ad Slot View Tracking END === -->
+
+</body>
+</html>

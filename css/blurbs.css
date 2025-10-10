@@ -1,0 +1,37 @@
+/* -------- Spotlight Blurbs Styles (scoped) -------- */
+:root {
+  --blurb-max: 1100px;
+  --blurb-text: #222;
+  --blurb-dim: #666;
+  --blurb-line: #eee;
+  --blurb-bg: #fff;
+  --blurb-soft: #f6f8fa;
+}
+
+/* List page */
+.blurb-wrap { max-width: var(--blurb-max); margin: 0 auto; padding: 2rem 1rem; color: var(--blurb-text); }
+.blurb-wrap h1 { margin: 0 0 .5rem; }
+.blurb-wrap .subhed { color: var(--blurb-dim); margin: 0 0 1.25rem; }
+.blurb-list { border-top: 1px solid var(--blurb-line); }
+.blurb-item { display: grid; grid-template-columns: 200px 1fr; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--blurb-line); }
+@media (max-width: 760px) { .blurb-item { grid-template-columns: 1fr; } }
+.blurb-thumb { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: var(--blurb-soft); border-radius: 10px; }
+.blurb-kicker { font-size: .85rem; color: var(--blurb-dim); margin: .25rem 0 .35rem; }
+.blurb-item h2 { margin: 0; font-size: 1.25rem; }
+.blurb-item a { color: inherit; text-decoration: none; }
+.blurb-item a:hover, .blurb-item a:focus { text-decoration: underline; }
+.blurb-meta { font-size: .9rem; margin-top: .5rem; }
+.blurb-more { display:inline-block; margin-top:.5rem; text-decoration: underline; }
+
+/* Detail pages */
+.article { max-width: 780px; margin: 0 auto; padding: 2rem 1rem; color: var(--blurb-text); }
+.article h1 { margin: 0 0 .5rem; }
+.article .subhed { color: var(--blurb-dim); margin: 0 0 1.25rem; }
+.article .tip { background: var(--blurb-soft); border-left: 4px solid #cfe3ff; padding: .8rem 1rem; border-radius: 8px; margin: 1rem 0; }
+.article .back { display:inline-block; margin: 0 0 1rem; text-decoration: none; }
+.article .back:hover, .article .back:focus { text-decoration: underline; }
+.figure { margin: 1rem 0; }
+.figure img { width:100%; border-radius: 10px; background: var(--blurb-soft); aspect-ratio: 16/9; object-fit: cover; }
+
+/* Utility */
+.muted { color: var(--blurb-dim); font-size: .9rem; }
