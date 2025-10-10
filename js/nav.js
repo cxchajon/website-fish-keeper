@@ -1,326 +1,117 @@
+// The Tank Guide — Resilient Nav Loader + A11y (homepage excluded)
 (() => {
-  const NAV_VERSION = '1.1.0';
-  const NAV_PLACEHOLDER_ID = 'site-nav';
-  const HOME_PATH = '/index.html';
-  const PRIVACY_SECTION_IDS = [
-    'privacy-policy',
-    'cookies-tracking',
-    'affiliate-disclosure',
-    'adsense-disclaimer',
-    'terms-of-use',
-    'disclaimer',
-    'copyright-dmca',
-    'accessibility',
-    'contact',
-    'effective-date'
-  ];
+  const SITE_NAV_ID = 'site-nav';
+  const NAV_URL = '/nav.html';
 
-  if (window.__TTG_NAV_LOADER__) {
-    return;
-  }
-  window.__TTG_NAV_LOADER__ = true;
+  // Skip mounting on the homepage (nav-free hero)
+  const path = new URL(location.href).pathname.replace(/\/index\.html$/, '/');
+  if (path === '/') return;
 
-  function normalizePath(path) {
-    if (!path) {
-      return HOME_PATH;
-    }
-    try {
-      const url = new URL(path, window.location.origin);
-      let pathname = url.pathname.replace(/\/+$/u, '');
-      if (pathname === '' || pathname === '/') {
-        pathname = HOME_PATH;
-      }
-      return pathname;
-    } catch (error) {
-      console.warn('Failed to normalise path', path, error);
-      return path;
-    }
-  }
+  const qsa = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
-  function toCanonicalPath(path) {
-    const normalized = normalizePath(path);
-    const map = {
-      '/': HOME_PATH,
-      '/index.html': HOME_PATH,
-      '/index': HOME_PATH,
-      '/stocking.html': '/stocking.html',
-      '/stocking-advisor': '/stocking.html',
-      '/stocking-advisor.html': '/stocking.html',
-      '/gear': '/gear/index.html',
-      '/gear/': '/gear/index.html',
-      '/gear/index.html': '/gear/index.html',
-      '/media': '/media.html',
-      '/media.html': '/media.html',
-      '/feature-your-tank': '/feature-your-tank.html',
-      '/feature-your-tank.html': '/feature-your-tank.html',
-      '/contact': '/contact-feedback.html',
-      '/contact-feedback': '/contact-feedback.html',
-      '/contact-feedback.html': '/contact-feedback.html',
-      '/about': '/about.html',
-      '/about.html': '/about.html',
-      '/privacy-legal': '/privacy-legal.html',
-      '/privacy-legal.html': '/privacy-legal.html',
-      '/terms': '/terms.html',
-      '/terms.html': '/terms.html',
-      '/copyright-dmca': '/copyright-dmca.html',
-      '/copyright-dmca.html': '/copyright-dmca.html',
-      '/store': '/store.html',
-      '/store.html': '/store.html'
-    };
-    return map[normalized] ?? normalized;
-  }
-
-  function markActiveLinks(root) {
-    const here = toCanonicalPath(window.location.pathname);
-    const links = root.querySelectorAll('.links a, #ttg-drawer a');
-    links.forEach((link) => {
-      link.removeAttribute('aria-current');
+  const enhance = (root) => {
+    // Active link state
+    qsa('[data-canonical]', root).forEach(a => {
+      const canon = a.getAttribute('data-canonical');
+      if (canon === path) a.setAttribute('aria-current', 'page');
     });
-    links.forEach((link) => {
-      const href = link.getAttribute('href');
-      if (!href) {
-        return;
-      }
-      const target = toCanonicalPath(href);
-      if (target === here) {
-        link.setAttribute('aria-current', 'page');
-      }
-    });
-  }
 
-  function initNav() {
-    const root = document.getElementById('global-nav');
-    if (!root || root.dataset.navReady === 'true') {
-      return;
-    }
-
-    const openBtn = root.querySelector('#ttg-nav-open');
-    const closeBtn = root.querySelector('#drawer-close');
-    const overlay = root.querySelector('#ttg-overlay');
-    const drawer = root.querySelector('#ttg-drawer');
-
-    if (!openBtn || !overlay || !drawer) {
-      return;
-    }
-
-    let previousFocus = null;
-    let drawerFocusables = [];
-
-    const getDrawerFocusables = () => {
-      if (!drawer) {
-        return [];
-      }
-      const nodes = Array.from(
-        drawer.querySelectorAll(
-        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        )
-      ).filter((node) => node instanceof HTMLElement && !node.hasAttribute('disabled'));
-      const firstIndex = nodes.findIndex((node) => node.id === 'drawer-first');
-      if (firstIndex > 0) {
-        const [firstNode] = nodes.splice(firstIndex, 1);
-        nodes.unshift(firstNode);
-      }
-      return nodes;
-    };
-
-    const focusFirstInDrawer = () => {
-      drawerFocusables = getDrawerFocusables();
-      const target = drawer.querySelector('#drawer-first');
-      if (target instanceof HTMLElement) {
-        target.focus({ preventScroll: true });
-        return;
-      }
-      const first = drawerFocusables[0];
-      if (first instanceof HTMLElement) {
-        first.focus({ preventScroll: true });
-      }
-    };
-
-    const closeDrawer = () => {
-      if (root.getAttribute('data-open') !== 'true') {
-        return;
-      }
-      root.removeAttribute('data-open');
-      drawer.classList.remove('is-open');
-      drawer.removeAttribute('data-open');
-      overlay.classList.remove('is-open');
-      overlay.setAttribute('aria-hidden', 'true');
-      drawer.setAttribute('aria-hidden', 'true');
-      openBtn.setAttribute('aria-expanded', 'false');
-      delete document.documentElement.dataset.scrollLock;
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-      const target = openBtn instanceof HTMLElement ? openBtn : previousFocus;
-      if (target && typeof target.focus === 'function') {
-        target.focus({ preventScroll: true });
-      }
-      previousFocus = null;
-      drawerFocusables = [];
-    };
-
-    const openDrawer = () => {
-      if (root.getAttribute('data-open') === 'true') {
-        return;
-      }
-      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      root.setAttribute('data-open', 'true');
-      drawer.classList.add('is-open');
-      drawer.setAttribute('data-open', 'true');
-      overlay.classList.add('is-open');
-      overlay.setAttribute('aria-hidden', 'false');
-      drawer.setAttribute('aria-hidden', 'false');
-      openBtn.setAttribute('aria-expanded', 'true');
-      document.documentElement.dataset.scrollLock = 'on';
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-      window.requestAnimationFrame(() => {
-        focusFirstInDrawer();
-      });
-    };
-
-    const handleOutsidePointer = (event) => {
-      if (root.getAttribute('data-open') !== 'true') {
-        return;
-      }
-      const target = event.target instanceof HTMLElement ? event.target : null;
-      if (!target) {
-        return;
-      }
-      if (drawer.contains(target) || (openBtn instanceof HTMLElement && openBtn.contains(target))) {
-        return;
-      }
-      closeDrawer();
-    };
-
-    const handleKeydown = (event) => {
-      if (root.getAttribute('data-open') !== 'true') {
-        return;
-      }
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        closeDrawer();
-        return;
-      }
-      if (event.key !== 'Tab') {
-        return;
-      }
-      drawerFocusables = getDrawerFocusables();
-      if (drawerFocusables.length === 0) {
-        return;
-      }
-      const first = drawerFocusables[0];
-      const last = drawerFocusables[drawerFocusables.length - 1];
-      const active = document.activeElement;
-      if (event.shiftKey) {
-        if (active === first || !drawer.contains(active)) {
-          event.preventDefault();
-          if (last instanceof HTMLElement) {
-            last.focus({ preventScroll: true });
+    const skipLink = root.querySelector('.skip-link');
+    if (skipLink) {
+      let targetId = document.querySelector('main[id]')?.id;
+      if (!targetId) {
+        const mainEl = document.querySelector('main');
+        if (mainEl) {
+          if (!mainEl.id) {
+            mainEl.id = 'main-content';
+          }
+          targetId = mainEl.id;
+        } else {
+          const roleMain = document.querySelector('[role="main"]');
+          if (roleMain) {
+            if (!roleMain.id) {
+              roleMain.id = 'main-content';
+            }
+            targetId = roleMain.id;
           }
         }
-        return;
       }
-      if (active === last) {
-        event.preventDefault();
-        if (first instanceof HTMLElement) {
-          first.focus({ preventScroll: true });
-        }
-        return;
-      }
-      if (!drawer.contains(active)) {
-        event.preventDefault();
-        if (first instanceof HTMLElement) {
-          first.focus({ preventScroll: true });
-        }
-      }
+      if (targetId) skipLink.setAttribute('href', `#${targetId}`);
+    }
+
+    // Drawer behavior
+    const html = document.documentElement;
+    const hamburger = root.querySelector('#hamburger');
+    const drawer = root.querySelector('#ttg-drawer');
+    const closeBtn = drawer?.querySelector('.drawer-close');
+    const firstLink = drawer?.querySelector('.drawer-nav a');
+
+    const open = () => {
+      drawer?.setAttribute('data-open', 'true');
+      hamburger?.setAttribute('aria-expanded', 'true');
+      html.setAttribute('data-scroll-lock', 'on');
+      (firstLink || closeBtn)?.focus();
     };
 
-    openBtn.addEventListener('click', (event) => {
-      event.preventDefault();
-      openDrawer();
+    const close = () => {
+      drawer?.removeAttribute('data-open');
+      hamburger?.setAttribute('aria-expanded', 'false');
+      html.removeAttribute('data-scroll-lock');
+      hamburger?.focus();
+    };
+
+    hamburger?.addEventListener('click', () => {
+      const isOpen = drawer?.getAttribute('data-open') === 'true';
+      isOpen ? close() : open();
     });
-
-    closeBtn?.addEventListener('click', (event) => {
-      event.preventDefault();
-      closeDrawer();
+    closeBtn?.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && drawer?.getAttribute('data-open') === 'true') close();
     });
+    drawer?.addEventListener('click', (e) => { if (e.target === drawer) close(); });
+    drawer?.querySelectorAll('.drawer-nav a').forEach(a => a.addEventListener('click', close));
+  };
 
-    overlay.addEventListener('click', () => {
-      closeDrawer();
-    });
+  const mount = async () => {
+    const host = document.getElementById(SITE_NAV_ID);
+    if (!host) return;
 
-    drawer.addEventListener('click', (event) => {
-      const link = event.target instanceof HTMLElement ? event.target.closest('a') : null;
-      if (link) {
-        closeDrawer();
-      }
-    });
-
-    if (!root.__ttgKeyHandler) {
-      document.addEventListener('keydown', handleKeydown);
-      root.__ttgKeyHandler = handleKeydown;
-    }
-
-    if (!root.__ttgOutsideHandler) {
-      document.addEventListener('pointerdown', handleOutsidePointer, true);
-      document.addEventListener('click', handleOutsidePointer, true);
-      root.__ttgOutsideHandler = handleOutsidePointer;
-    }
-
-    markActiveLinks(root);
-    root.dataset.navReady = 'true';
-    drawer.setAttribute('aria-hidden', 'true');
-    overlay.setAttribute('aria-hidden', 'true');
-  }
-
-  function extractNav(markup) {
     try {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(markup, 'text/html');
-      const nav = doc.querySelector('#global-nav');
-      if (nav) {
-        return nav;
+      const res = await fetch(NAV_URL, { credentials: 'same-origin' });
+      if (!res.ok) throw new Error(`Fetch ${NAV_URL} failed: ${res.status}`);
+      const html = await res.text();
+      const tpl = document.createElement('template');
+      tpl.innerHTML = html.trim();
+      const header = tpl.content.querySelector('#global-nav');
+      if (!header) throw new Error('global-nav not found in nav.html');
+      host.replaceChildren(header);
+      enhance(header);
+    } catch (err) {
+      // If noscript fallback exists, leave it. If empty, inject minimal emergency nav.
+      if (!host.firstElementChild) {
+        host.innerHTML = `
+          <nav class="nav-emergency" aria-label="Primary">
+            <a class="brand" href="/">The Tank Guide</a>
+            <a href="/stocking.html">Stocking Advisor</a>
+            <a href="/gear/">Gear</a>
+            <a href="/params.html">Cycling Coach</a>
+            <a href="/feature-your-tank.html">Feature Your Tank</a>
+            <a href="/media.html">Media</a>
+            <a href="/store.html">Store</a>
+            <a href="/about.html">About</a>
+            <a href="/contact-feedback.html">Contact & Feedback</a>
+            <a href="/privacy-legal.html">Privacy & Legal</a>
+            <a href="/terms.html">Terms of Use</a>
+            <a href="/copyright-dmca.html">Copyright & DMCA</a>
+          </nav>`;
       }
-    } catch (error) {
-      console.warn('Nav parser fallback', error);
+      console.warn('[nav] fallback mode:', err);
     }
-
-    const template = document.createElement('template');
-    template.innerHTML = markup;
-    return template.content.querySelector('#global-nav');
-  }
-
-  async function mountNav() {
-    const host = document.getElementById(NAV_PLACEHOLDER_ID);
-    if (!host) {
-      return;
-    }
-    try {
-      const response = await fetch(`/nav.html?v=${NAV_VERSION}`, { cache: 'no-store' });
-      if (!response.ok) {
-        throw new Error(`Failed to fetch nav: ${response.status}`);
-      }
-      const markup = await response.text();
-      const nav = extractNav(markup);
-      if (nav) {
-        host.replaceWith(nav);
-        initNav();
-        return;
-      }
-
-      host.outerHTML = markup;
-      initNav();
-    } catch (error) {
-      console.error('Navigation failed to initialise', error);
-    }
-  }
+  };
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', mountNav);
+    document.addEventListener('DOMContentLoaded', mount, { once: true });
   } else {
-    mountNav();
+    mount();
   }
-
-  window.ttgInitNav = initNav;
-  window.__TTG_PRIVACY_SECTION_IDS__ = PRIVACY_SECTION_IDS;
 })();

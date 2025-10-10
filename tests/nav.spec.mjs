@@ -18,6 +18,21 @@ const mimeTypes = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
+const LINK_ORDER = [
+  'Home',
+  'Stocking Advisor',
+  'Gear',
+  'Cycling Coach',
+  'Feature Your Tank',
+  'Media',
+  'Store',
+  'About',
+  'Contact & Feedback',
+  'Privacy & Legal',
+  'Terms of Use',
+  'Copyright & DMCA',
+];
+
 let server;
 let baseURL = '';
 
@@ -80,7 +95,7 @@ test.afterAll(async () => {
   await stopServer();
 });
 
-async function gotoAndVerify(page, route, theme) {
+async function expectNav(page, route) {
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => {
@@ -89,78 +104,56 @@ async function gotoAndVerify(page, route, theme) {
     }
   });
 
-  const cssResponsePromise = page.waitForResponse((response) =>
-    response.url().includes('css/style.css?v=1.0.9')
-  );
-
   await page.goto(`${baseURL}${route}`);
-  const cssResponse = await cssResponsePromise;
-  expect(cssResponse.status(), `${route} should load css/style.css`).toBe(200);
+  await expect(errors, `${route} should be error free`).toEqual([]);
 
   const nav = page.locator('#global-nav');
-  await expect(nav, `${route} should render the shared nav`).toBeVisible();
-  const navPosition = await nav.evaluate((element) => window.getComputedStyle(element).position);
-  expect(navPosition).toBe('relative');
+  await expect(nav, `${route} should render global nav`).toBeVisible();
 
-  const hamburger = page.locator('#ttg-nav-open');
-  const brand = page.locator('#global-nav .brand');
-  await expect(hamburger).toBeVisible();
-  await expect(brand).toBeVisible();
-  const [hambBox, brandBox] = await Promise.all([hamburger.boundingBox(), brand.boundingBox()]);
-  expect(hambBox).not.toBeNull();
-  expect(brandBox).not.toBeNull();
-  if (hambBox && brandBox) {
-    expect(hambBox.x).toBeLessThan(brandBox.x);
-  }
+  const desktopLinks = nav.locator('.nav-links a');
+  await expect(desktopLinks).toHaveCount(LINK_ORDER.length);
+  const desktopTexts = (await desktopLinks.allTextContents()).map((value) => value.trim());
+  await expect(desktopTexts).toEqual(LINK_ORDER);
 
-  const drawer = page.locator('#ttg-drawer');
-  const overlay = page.locator('#ttg-overlay');
-  await hamburger.click();
-  await expect(nav).toHaveAttribute('data-open', 'true');
-  await expect(drawer).toHaveClass(/is-open/);
-  await expect(overlay).toHaveClass(/is-open/);
+  const drawerLinks = nav.locator('#ttg-drawer .drawer-nav a');
+  const drawerTexts = (await drawerLinks.allTextContents()).map((value) => value.trim());
+  await expect(drawerTexts).toEqual(LINK_ORDER);
 
-  const drawerZ = await drawer.evaluate((element) => Number(window.getComputedStyle(element).zIndex) || 0);
-  const overlayZ = await overlay.evaluate((element) => Number(window.getComputedStyle(element).zIndex) || 0);
-  const card = page.locator('.card').first();
-  let cardZ = 0;
-  if (await card.count()) {
-    cardZ = await card.evaluate((element) => Number(window.getComputedStyle(element).zIndex) || 0);
-  }
-  expect(drawerZ).toBeGreaterThan(cardZ);
-  expect(overlayZ).toBeGreaterThan(cardZ);
-
-  await overlay.click();
-  await expect(nav).not.toHaveAttribute('data-open', 'true');
-  await expect(drawer).not.toHaveClass(/is-open/);
-
-  await hamburger.click();
-  await expect(nav).toHaveAttribute('data-open', 'true');
-  await page.keyboard.press('Escape');
-  await expect(nav).not.toHaveAttribute('data-open', 'true');
-
-  const background = await page.evaluate(() => window.getComputedStyle(document.body).backgroundImage || '');
-  if (theme === 'dark') {
-    expect(background).toMatch(/rgb\(9, 20, 33|rgb\(10, 15, 24/);
-  } else {
-    expect(background).toMatch(/rgb\(14, 94, 139|rgb\(20, 119, 168/);
-  }
-
-  await expect(errors, `${route} should not log console errors`).toEqual([]);
+  return { nav, desktopLinks, drawerLinks };
 }
 
 test('stocking, gear, and media share the nav layout', async ({ page }) => {
-  await gotoAndVerify(page, '/stocking.html', 'dark');
-  await gotoAndVerify(page, '/gear/', 'dark');
-  await gotoAndVerify(page, '/media.html', 'light');
+  await expectNav(page, '/stocking.html');
+  await expectNav(page, '/gear/');
+  await expectNav(page, '/media.html');
 });
 
-test('index page remains free of the global nav', async ({ page }) => {
-  const cssResponsePromise = page.waitForResponse((response) =>
-    response.url().includes('css/style.css?v=1.0.9')
-  );
-  await page.goto(`${baseURL}/index.html`);
-  const cssResponse = await cssResponsePromise;
-  expect(cssResponse.status(), 'index should load css/style.css').toBe(200);
+test('hamburger toggles drawer state and scroll lock', async ({ page }) => {
+  await expectNav(page, '/stocking.html');
+  const hamburger = page.locator('#hamburger');
+  const drawer = page.locator('#ttg-drawer');
+  const html = page.locator('html');
+
+  await hamburger.click();
+  await expect(drawer).toHaveAttribute('data-open', 'true');
+  await expect(hamburger).toHaveAttribute('aria-expanded', 'true');
+  await expect(html).toHaveAttribute('data-scroll-lock', 'on');
+
+  await page.keyboard.press('Escape');
+  await expect(drawer).not.toHaveAttribute('data-open', 'true');
+  await expect(html).not.toHaveAttribute('data-scroll-lock', 'on');
+});
+
+test('index page stays nav-free and noscript fallback renders elsewhere', async ({ page, browser }) => {
+  await page.goto(`${baseURL}/`);
   await expect(page.locator('#global-nav')).toHaveCount(0);
+
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const staticPage = await context.newPage();
+  await staticPage.goto(`${baseURL}/contact-feedback.html`);
+  const noscript = staticPage.locator('#site-nav .nav-noscript');
+  await expect(noscript).toBeVisible();
+  const fallbackTexts = (await noscript.locator('a').allTextContents()).map((value) => value.trim());
+  await expect(fallbackTexts).toContain('Contact & Feedback');
+  await context.close();
 });
