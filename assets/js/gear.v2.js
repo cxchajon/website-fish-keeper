@@ -73,6 +73,12 @@
     'hygger Aquarium Air Pump, Quiet Adjustable Fish Tank Air Pump, 4W/7W/11W Powerful Oxygen Aerator Dual Stainless Steel Outlets with Air Stone Bubbler for Small Medium Large Fish Tank, Hydroponic'
   ];
 
+  const AIRLINE_ACCESSORY_WHITELIST = [
+    'AQUANEAT Aquarium Check Valve, One Way Non Return Valve for Air Pump, Fit for 3/16 Inch Airline Tubing, Fish Tank Accessories, 10pcs (Red)',
+    'Aquarium Air Valve, 10 Pcs Aquarium Air Pump Control Valves T Shaped Single Way Plastic Air Flow Control Regulator Aquarium Air Pump Accessories for Fish Tank 3/16" ID Tubing (Black)',
+    'ALEGI Aquarium Air Pump Accessories Set 25 Feet Airline Tubing with 6 Check Valves, 6 Control Valve and 40 Connectors for Fish Tank White'
+  ];
+
   function toDataSectionKey(sectionKey){
     const key = String(sectionKey || '');
     return DATA_SECTION_ALIASES[key] || key;
@@ -910,6 +916,29 @@
       (option) => !pumpKeySet.has(normaliseTitle(option?.title || option?.label || ''))
     );
 
+    const accessoryLookup = new Map();
+    airAccessories.forEach((option) => {
+      const key = normaliseTitle(option?.title || option?.label || '');
+      if (!key || accessoryLookup.has(key)) return;
+      accessoryLookup.set(key, option);
+    });
+
+    const orderedAccessories = [];
+    const missingAccessories = [];
+    AIRLINE_ACCESSORY_WHITELIST.forEach((title) => {
+      const key = normaliseTitle(title);
+      if (!key) return;
+      if (accessoryLookup.has(key)) {
+        orderedAccessories.push(accessoryLookup.get(key));
+        accessoryLookup.delete(key);
+      } else {
+        missingAccessories.push(title);
+      }
+    });
+
+    const remainingAccessories = Array.from(accessoryLookup.values());
+    const finalAccessories = [...orderedAccessories, ...remainingAccessories];
+
     const guardErrors = [];
 
     if (missingTitles.length) {
@@ -954,6 +983,16 @@
       guardErrors.push('Duplicate pump entries detected in accessories list.');
     }
 
+    if (missingAccessories.length) {
+      guardErrors.push(`Missing airline accessory records: ${missingAccessories.join(', ')}`);
+    }
+
+    if (airAccessories.length !== AIRLINE_ACCESSORY_WHITELIST.length) {
+      guardErrors.push(
+        `Expected ${AIRLINE_ACCESSORY_WHITELIST.length} airline accessories but found ${airAccessories.length}.`
+      );
+    }
+
     if (guardErrors.length) {
       if (typeof console !== 'undefined') {
         // eslint-disable-next-line no-console
@@ -988,12 +1027,40 @@
       structuredBlock.appendChild(container);
     }
 
+    const bindSubAccordionToggle = (trigger, panel, wrapper) => {
+      trigger.addEventListener('click', () => {
+        const expanded = trigger.getAttribute('aria-expanded') === 'true';
+        const nextExpanded = !expanded;
+        trigger.setAttribute('aria-expanded', String(nextExpanded));
+        const icon = trigger.querySelector('.air-subaccordion__icon');
+        if (nextExpanded) {
+          panel.removeAttribute('hidden');
+          panel.setAttribute('aria-hidden', 'false');
+          if (wrapper) wrapper.classList?.add('is-open');
+          if (icon) icon.textContent = '▾';
+        } else {
+          panel.setAttribute('hidden', '');
+          panel.setAttribute('aria-hidden', 'true');
+          if (wrapper) wrapper.classList?.remove('is-open');
+          if (icon) icon.textContent = '▸';
+        }
+      });
+    };
+
+    let subAccordion = null;
+    const ensureSubAccordion = () => {
+      if (!subAccordion) {
+        subAccordion = el('div',{ class:'air-subaccordion' });
+        container.appendChild(subAccordion);
+      }
+      return subAccordion;
+    };
+
     if (airPumps.length) {
+      const accordion = ensureSubAccordion();
       const baseId = 'air-pumps-subaccordion';
       const triggerId = `${baseId}-trigger`;
       const panelId = `${baseId}-panel`;
-
-      const subAccordion = el('div',{ class:'air-subaccordion' });
       const item = el('div',{ class:'air-subaccordion__item' });
       const trigger = el('button',{
         class:'air-subaccordion__trigger',
@@ -1027,39 +1094,72 @@
       });
       panel.appendChild(pumpList);
 
-      trigger.addEventListener('click', () => {
-        const expanded = trigger.getAttribute('aria-expanded') === 'true';
-        const nextExpanded = !expanded;
-        trigger.setAttribute('aria-expanded', String(nextExpanded));
-        const icon = trigger.querySelector('.air-subaccordion__icon');
-        if (nextExpanded) {
-          panel.removeAttribute('hidden');
-          panel.setAttribute('aria-hidden', 'false');
-          if (icon) icon.textContent = '▾';
-        } else {
-          panel.setAttribute('hidden', '');
-          panel.setAttribute('aria-hidden', 'true');
-          if (icon) icon.textContent = '▸';
-        }
-      });
+      bindSubAccordionToggle(trigger, panel, item);
 
       item.appendChild(trigger);
       item.appendChild(panel);
-      subAccordion.appendChild(item);
-      container.appendChild(subAccordion);
+      accordion.appendChild(item);
     }
 
-    if (airAccessories.length) {
-      if (airPumps.length) {
-        container.appendChild(el('div',{ class:'air-accessories-divider', 'aria-hidden':'true' }));
-      }
-      const accessoriesList = el('div',{ class:'range__list range__list--air air-accessories__list' });
-      airAccessories.forEach((accessory) => {
-        const row = createOptionRow(accessory, { context: 'air' });
-        if (row) accessoriesList.appendChild(row);
+    if (finalAccessories.length) {
+      const accordion = ensureSubAccordion();
+      const baseId = 'airline-accessories-subaccordion';
+      const triggerId = `${baseId}-trigger`;
+      const panelId = `${baseId}-panel`;
+      const item = el('div',{ class:'air-subaccordion__item' });
+      const trigger = el('button',{
+        class:'air-subaccordion__trigger',
+        type:'button',
+        id:triggerId,
+        'aria-controls':panelId,
+        'aria-expanded':'false'
       });
-      container.appendChild(accessoriesList);
-    } else if (placeholder) {
+      trigger.appendChild(el('span',{ class:'air-subaccordion__label' },'Airline Accessories'));
+      trigger.appendChild(el('span',{ class:'air-subaccordion__icon','aria-hidden':'true' },'▸'));
+
+      const panel = el('div',{
+        class:'air-subaccordion__panel',
+        id:panelId,
+        role:'region',
+        'aria-labelledby':triggerId,
+        hidden:'',
+        'aria-hidden':'true'
+      });
+      const grid = el('div',{ class:'air-accessory-grid' });
+      finalAccessories.forEach((accessory) => {
+        const title = String(accessory?.title || accessory?.label || 'Airline accessory').trim();
+        const notes = String(accessory?.notes ?? accessory?.note ?? '').trim();
+        const href = String((accessory?.href || '').trim());
+        const rel = String(accessory?.rel || 'sponsored noopener noreferrer').trim() || 'sponsored noopener noreferrer';
+        const card = el('article',{ class:'air-accessory-card' });
+        card.appendChild(el('h3',{ class:'air-accessory-card__title' }, escapeHTML(title || 'Airline accessory')));
+        if (notes) {
+          card.appendChild(el('p',{ class:'air-accessory-card__description' }, escapeHTML(notes)));
+        }
+        if (href) {
+          const actions = el('div',{ class:'air-accessory-card__actions' });
+          actions.appendChild(
+            el('a',{
+              class:'btn',
+              href,
+              target:'_blank',
+              rel
+            },'Buy on Amazon')
+          );
+          card.appendChild(actions);
+        }
+        grid.appendChild(card);
+      });
+      panel.appendChild(grid);
+
+      bindSubAccordionToggle(trigger, panel, item);
+
+      item.appendChild(trigger);
+      item.appendChild(panel);
+      accordion.appendChild(item);
+    }
+
+    if (!finalAccessories.length && placeholder) {
       container.appendChild(el('p',{ class:'range__placeholder' }, placeholder));
     }
 

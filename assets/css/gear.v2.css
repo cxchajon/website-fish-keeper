@@ -632,6 +632,52 @@ body{
   border-radius:0 0 12px 12px;
 }
 
+.air-accessory-grid{
+  display:grid;
+  gap:1.1rem;
+  margin-top:1rem;
+}
+
+@media (min-width:640px){
+  .air-accessory-grid{
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  }
+}
+
+.air-accessory-card{
+  background:rgba(15,23,42,0.88);
+  border:1px solid rgba(148,163,184,0.28);
+  border-radius:12px;
+  padding:1rem 1.15rem 1.1rem;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  gap:0.7rem;
+  min-height:0;
+}
+
+.air-accessory-card__title{
+  margin:0;
+  font-size:1.05rem;
+  line-height:1.35;
+  font-weight:600;
+}
+
+.air-accessory-card__description{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.air-accessory-card__actions{
+  margin-top:auto;
+}
+
+.air-accessory-card__actions .btn{
+  width:100%;
+  justify-content:center;
+}
+
 .air-pumps__list,
 .air-accessories__list{
   gap:1.25rem;
