@@ -16,6 +16,17 @@ const FILTRATION_TABS = [
 const AERATION_INFO =
   'Air pumps and airstones boost oxygenation, stabilize gas exchange, and provide gentle circulation. Use check valves to prevent back-siphon, splitters/manifolds for multiple lines, and consider battery backup for power outages.';
 
+const AERATION_PLACEHOLDER_TITLES = new Set([
+  'VIVOSUN 4-Inch Air Stone Disc',
+  'Pawfly 1-Inch Air Stone Cylinder 4-Pack',
+  'Penn-Plax Check Valves 6-Pack',
+  'UPETTOOLS Stainless Inline Check Valve',
+  'Pawfly Standard Airline Tubing 25 FT',
+  'hygger 4-Way Air Control Valve',
+  'HITOP Rechargeable Battery Air Pump',
+  'Cobalt Aquatics Rescue Air DC Pump',
+]);
+
 function createGrid(items, context, onSelect, onAdd, emptyMessage = 'No matches found. Try adjusting your filters.') {
   if (!items.length) {
     return EmptyState(emptyMessage);
@@ -155,6 +166,14 @@ function filterFiltration(items, tab) {
     const type = item.Filter_Type ?? item.Product_Type ?? '';
     return new RegExp(tab, 'i').test(type);
   });
+}
+
+function isPlaceholderAerationItem(item = {}) {
+  const title = (item.Product_Name ?? item.title ?? item.Title ?? '').trim();
+  if (!title) {
+    return false;
+  }
+  return AERATION_PLACEHOLDER_TITLES.has(title);
 }
 
 function normaliseAerationItem(item) {
@@ -527,7 +546,7 @@ export function CategoryAccordion(groups, context, state, handlers) {
     if (key === 'Aeration') {
       items = items
         .map((item) => normaliseAerationItem(item))
-        .filter((item) => item !== null);
+        .filter((item) => item !== null && !isPlaceholderAerationItem(item));
     }
     if (key === 'Aeration' && items.length === 0) {
       return;
