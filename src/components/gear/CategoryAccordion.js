@@ -198,6 +198,80 @@ function normaliseAerationItem(item) {
   return next;
 }
 
+function createAerationSubItem(options) {
+  const { id, label, items, context, onSelect, onAdd, showCount = true } = options;
+  const baseId = `${id}-subaccordion`;
+  const triggerId = `${baseId}-trigger`;
+  const panelId = `${baseId}-panel`;
+
+  const triggerChildren = [createElement('span', { className: 'bucket-list__label', text: label })];
+  if (showCount) {
+    triggerChildren.push(
+      createElement('span', {
+        className: 'bucket-list__count',
+        text: `${items.length} ${items.length === 1 ? 'pick' : 'picks'}`,
+      }),
+    );
+  }
+  triggerChildren.push(
+    createElement('span', { className: 'bucket-list__icon', attrs: { 'aria-hidden': 'true' }, text: '▸' }),
+  );
+
+  const trigger = createElement(
+    'button',
+    {
+      className: 'bucket-list__trigger',
+      attrs: {
+        type: 'button',
+        id: triggerId,
+        'aria-controls': panelId,
+        'aria-expanded': 'false',
+      },
+    },
+    triggerChildren,
+  );
+
+  const panel = createElement('div', {
+    className: 'bucket-list__panel',
+    attrs: {
+      id: panelId,
+      role: 'region',
+      'aria-labelledby': triggerId,
+      hidden: '',
+      'aria-hidden': 'true',
+    },
+  });
+
+  panel.appendChild(createGrid(items, context, onSelect, onAdd));
+
+  const wrapper = createElement('div', { className: 'bucket-list__item aeration-subaccordion__item' });
+
+  trigger.addEventListener('click', () => {
+    const expanded = trigger.getAttribute('aria-expanded') === 'true';
+    const nextExpanded = !expanded;
+    trigger.setAttribute('aria-expanded', String(nextExpanded));
+    const icon = trigger.querySelector('.bucket-list__icon');
+    if (nextExpanded) {
+      panel.removeAttribute('hidden');
+      panel.setAttribute('aria-hidden', 'false');
+      wrapper.classList?.add('is-open');
+      if (icon) {
+        icon.textContent = '▾';
+      }
+    } else {
+      panel.setAttribute('hidden', '');
+      panel.setAttribute('aria-hidden', 'true');
+      wrapper.classList?.remove('is-open');
+      if (icon) {
+        icon.textContent = '▸';
+      }
+    }
+  });
+
+  wrapper.append(trigger, panel);
+  return wrapper;
+}
+
 function createAerationSection(options) {
   const { items, context, onSelect, onAdd } = options;
   const container = createElement('div', { className: 'bucket-section aeration-section' });
@@ -208,81 +282,59 @@ function createAerationSection(options) {
   }
 
   const pumps = items.filter((item) => item.itemCategory === 'air-pump');
-  const accessories = items.filter((item) => item.itemCategory !== 'air-pump');
+  const airlineAccessories = items.filter((item) => {
+    const bucketLabel = String(item.bucket ?? '').trim().toLowerCase();
+    return bucketLabel === 'airline accessories';
+  });
+
+  const appendedItems = new Set();
+  const subAccordionGroups = [];
 
   if (pumps.length > 0) {
+    subAccordionGroups.push({
+      id: 'air-pumps',
+      label: 'Air Pumps',
+      items: pumps,
+      showCount: true,
+    });
+    pumps.forEach((item) => appendedItems.add(item));
+  }
+
+  if (airlineAccessories.length > 0) {
+    subAccordionGroups.push({
+      id: 'airline-accessories',
+      label: 'Airline Accessories',
+      items: airlineAccessories,
+      showCount: false,
+    });
+    airlineAccessories.forEach((item) => appendedItems.add(item));
+  }
+
+  if (subAccordionGroups.length > 0) {
     const subAccordion = createElement('div', { className: 'bucket-list aeration-subaccordion' });
-    const baseId = 'air-pumps-subaccordion';
-    const triggerId = `${baseId}-trigger`;
-    const panelId = `${baseId}-panel`;
-
-    const trigger = createElement(
-      'button',
-      {
-        className: 'bucket-list__trigger',
-        attrs: {
-          type: 'button',
-          id: triggerId,
-          'aria-controls': panelId,
-          'aria-expanded': 'false',
-        },
-      },
-      [
-        createElement('span', { className: 'bucket-list__label', text: 'Air Pumps' }),
-        createElement('span', {
-          className: 'bucket-list__count',
-          text: `${pumps.length} ${pumps.length === 1 ? 'pick' : 'picks'}`,
+    subAccordionGroups.forEach((group) => {
+      subAccordion.appendChild(
+        createAerationSubItem({
+          id: group.id,
+          label: group.label,
+          items: group.items,
+          showCount: group.showCount,
+          context,
+          onSelect,
+          onAdd,
         }),
-        createElement('span', { className: 'bucket-list__icon', attrs: { 'aria-hidden': 'true' }, text: '▸' }),
-      ],
-    );
-
-    const panel = createElement('div', {
-      className: 'bucket-list__panel',
-      attrs: {
-        id: panelId,
-        role: 'region',
-        'aria-labelledby': triggerId,
-        hidden: '',
-        'aria-hidden': 'true',
-      },
+      );
     });
-
-    panel.appendChild(createGrid(pumps, context, onSelect, onAdd));
-
-    trigger.addEventListener('click', () => {
-      const expanded = trigger.getAttribute('aria-expanded') === 'true';
-      const nextExpanded = !expanded;
-      trigger.setAttribute('aria-expanded', String(nextExpanded));
-      const icon = trigger.querySelector('.bucket-list__icon');
-      if (nextExpanded) {
-        panel.removeAttribute('hidden');
-        panel.setAttribute('aria-hidden', 'false');
-        if (icon) {
-          icon.textContent = '▾';
-        }
-      } else {
-        panel.setAttribute('hidden', '');
-        panel.setAttribute('aria-hidden', 'true');
-        if (icon) {
-          icon.textContent = '▸';
-        }
-      }
-    });
-
-    const item = createElement('div', { className: 'bucket-list__item' }, [trigger, panel]);
-    subAccordion.appendChild(item);
     container.appendChild(subAccordion);
   }
 
-  if (accessories.length > 0) {
-    if (pumps.length > 0) {
-      container.appendChild(createElement('div', { className: 'aeration-accessories-divider', attrs: { 'aria-hidden': 'true' } }));
-    }
-    container.appendChild(createGrid(accessories, context, onSelect, onAdd));
+  const remainder = items.filter((item) => !appendedItems.has(item));
+
+  if (remainder.length > 0) {
+    container.appendChild(createGrid(remainder, context, onSelect, onAdd));
   }
 
-  if (!pumps.length && !accessories.length) {
+  if (!subAccordionGroups.length && remainder.length === 0) {
     container.appendChild(createGrid(items, context, onSelect, onAdd));
   }
 

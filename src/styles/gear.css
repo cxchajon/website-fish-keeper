@@ -528,28 +528,39 @@ main {
 }
 
 .aeration-section {
-  gap: 24px;
+  gap: 20px;
 }
 
 .aeration-subaccordion {
-  border-top: 1px solid var(--border);
-}
-
-.aeration-accessories-divider {
-  height: 1px;
-  background: var(--border);
-  margin: 12px 0 6px;
-}
-
-.aeration-group {
   display: grid;
-  gap: 12px;
+  gap: 16px;
+  border: none;
 }
 
-.aeration-group__title {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 600;
+.aeration-subaccordion__item {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(9, 15, 30, 0.7);
+  padding: 0 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.aeration-subaccordion__item.is-open {
+  border-color: rgba(91, 140, 255, 0.6);
+  box-shadow: 0 0 0 1px rgba(91, 140, 255, 0.45);
+  background: rgba(91, 140, 255, 0.12);
+}
+
+.aeration-subaccordion .bucket-list__item {
+  border-bottom: none;
+}
+
+.aeration-subaccordion .bucket-list__trigger {
+  padding: 16px 0;
+}
+
+.aeration-subaccordion .bucket-list__panel {
+  padding: 0 0 16px;
 }
 
 .bucket-list {
