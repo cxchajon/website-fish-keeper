@@ -77,6 +77,53 @@
     'ALEGI Aquarium Air Pump Accessories Set 25 Feet Airline Tubing with 6 Check Valves, 6 Control Valve and 40 Connectors for Fish Tank White'
   ];
 
+  const SUBSCRIPT_DIGIT_MAP = {
+    '₀': '0',
+    '₁': '1',
+    '₂': '2',
+    '₃': '3',
+    '₄': '4',
+    '₅': '5',
+    '₆': '6',
+    '₇': '7',
+    '₈': '8',
+    '₉': '9'
+  };
+
+  const AERATION_SUBCATEGORY_FIELDS = [
+    'subcategorySlug',
+    'subcategory_slug',
+    'subcategory',
+    'Subcategory',
+    'bucket',
+    'Bucket',
+    'subgroup',
+    'groupLabel',
+    'group_label'
+  ];
+
+  const AERATION_SUBCATEGORY_ALIASES = {
+    'air-pump': 'air-pumps',
+    'air-pumps': 'air-pumps',
+    'airline-accessory': 'airline-accessories',
+    'airline-accessories': 'airline-accessories',
+    'air-pump-accessory': 'airline-accessories',
+    'air-pump-accessories': 'airline-accessories',
+    'co2-accessory': 'co2-accessories',
+    'co2-accessories': 'co2-accessories',
+    'co-2-accessory': 'co2-accessories',
+    'co-2-accessories': 'co2-accessories',
+    'co2-gear': 'co2-accessories'
+  };
+
+  const AERATION_GROUP_CONFIG = [
+    { key: 'air-pumps', id: 'air-pumps', label: 'Air Pumps' },
+    { key: 'airline-accessories', id: 'airline-accessories', label: 'Air Pump Accessories' },
+    { key: 'co2-accessories', id: 'co2-accessories', label: 'CO₂ Accessories' }
+  ];
+
+  let hasWarnedUnknownAerationGroups = false;
+
   function toDataSectionKey(sectionKey){
     const key = String(sectionKey || '');
     return DATA_SECTION_ALIASES[key] || key;
@@ -843,157 +890,7 @@
     const allOptions = groups.flatMap((group) =>
       Array.isArray(group?.options) ? group.options.filter(Boolean) : []
     );
-    const fallbackPlaceholder = groups.reduce((text, group) => text || (group?.placeholder || '').trim(), '');
-    const placeholder = allOptions.length
-      ? ''
-      : placeholderText || fallbackPlaceholder || 'Air gear picks coming soon.';
-
-    const range = {
-      id: 'air-products',
-      label: '',
-      rangeLabel: '',
-      placeholder,
-      options: allOptions
-    };
-
-    const buildFlatBlock = () => {
-      const flat = renderRangeBlock(range, 'air', {
-        includeGearCard: false,
-        showTitle: false,
-        showTip: false,
-        listClass: 'range__list--air',
-        context: 'air'
-      });
-      if (flat) {
-        flat.classList.add('range--air');
-        flat.dataset.ignoreMatch = '1';
-      }
-      return flat;
-    };
-
-    const staticGroups = groups
-      .map((group, groupIndex) => {
-        const children = Array.isArray(group?.children) ? group.children.filter(Boolean) : [];
-        if (!children.length) return null;
-        const parentId = String(group?.id || group?.originalId || `air-group-${groupIndex + 1}`);
-        return { parentId, children };
-      })
-      .filter(Boolean);
-
-    if (staticGroups.length) {
-      const slugifyValue = (value) =>
-        String(value || '')
-          .trim()
-          .toLowerCase()
-          .replace(/&/g, 'and')
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/^-+|-+$/g, '');
-
-      const ensureUniqueId = (() => {
-        const seen = new Set();
-        return (value, fallback) => {
-          const base = slugifyValue(value) || slugifyValue(fallback) || 'air-child';
-          let candidate = base;
-          let suffix = 1;
-          while (seen.has(candidate)) {
-            candidate = `${base}-${suffix++}`;
-          }
-          seen.add(candidate);
-          return candidate;
-        };
-      })();
-
-      const normalizedChildren = [];
-      staticGroups.forEach((groupEntry, groupIndex) => {
-        const parentSlug = slugifyValue(groupEntry.parentId) || `air-group-${groupIndex + 1}`;
-        groupEntry.children.forEach((child, childIndex) => {
-          if (!child) return;
-          const label = String(child.label || '').trim() || `Group ${groupIndex + 1}-${childIndex + 1}`;
-          const idSource =
-            child.id ||
-            child.slug ||
-            child.domId ||
-            child.domID ||
-            child.dom_id ||
-            '';
-          const childSlug = slugifyValue(idSource) || slugifyValue(label) || `child-${groupIndex + 1}-${childIndex + 1}`;
-          const desired = [parentSlug, childSlug].filter(Boolean).join('-');
-          const baseId = ensureUniqueId(desired, `${parentSlug}-child-${childIndex + 1}`);
-          normalizedChildren.push({ label, baseId });
-        });
-      });
-
-      const flatBlock = buildFlatBlock();
-      if (!flatBlock) {
-        return null;
-      }
-
-      const listContainer =
-        flatBlock.querySelector('.range__list') ||
-        flatBlock.querySelector('.range__list--air');
-      const container = listContainer || el('div', { class: 'range__list range__list--air' });
-      if (!listContainer) {
-        flatBlock.appendChild(container);
-      }
-
-      if (normalizedChildren.length) {
-        const accordion = el('div', { class: 'air-subaccordion' });
-        normalizedChildren.forEach((child) => {
-          const item = el('div', { class: 'air-subaccordion__item' });
-          const triggerId = `${child.baseId}-trigger`;
-          const panelId = `${child.baseId}-panel`;
-          const trigger = el('button', {
-            class: 'air-subaccordion__trigger',
-            type: 'button',
-            id: triggerId,
-            'aria-controls': panelId,
-            'aria-expanded': 'false'
-          });
-          trigger.appendChild(el('span', { class: 'air-subaccordion__label' }, child.label));
-          const icon = el('span', { class: 'air-subaccordion__icon', 'aria-hidden': 'true' }, '▸');
-          trigger.appendChild(icon);
-          const panel = el('div', {
-            class: 'air-subaccordion__panel',
-            id: panelId,
-            role: 'region',
-            'aria-labelledby': triggerId,
-            hidden: '',
-            'aria-hidden': 'true'
-          });
-
-          trigger.addEventListener('click', () => {
-            const expanded = trigger.getAttribute('aria-expanded') === 'true';
-            const nextExpanded = !expanded;
-            trigger.setAttribute('aria-expanded', String(nextExpanded));
-            if (nextExpanded) {
-              panel.removeAttribute('hidden');
-              panel.setAttribute('aria-hidden', 'false');
-              item.classList?.add('is-open');
-              icon.textContent = '▾';
-            } else {
-              panel.setAttribute('hidden', '');
-              panel.setAttribute('aria-hidden', 'true');
-              item.classList?.remove('is-open');
-              icon.textContent = '▸';
-            }
-          });
-
-          item.appendChild(trigger);
-          item.appendChild(panel);
-          accordion.appendChild(item);
-        });
-
-        if (accordion.childElementCount) {
-          container.insertBefore(accordion, container.firstChild || null);
-        }
-      }
-
-      return flatBlock;
-    }
-
-    if (!allOptions.length) {
-      return buildFlatBlock();
-    }
+    const placeholder = placeholderText || '';
 
     const normaliseTitle = (value) =>
       String(value || '')
@@ -1001,151 +898,98 @@
         .trim()
         .toLowerCase();
 
-    const optionLookup = new Map();
-    allOptions.forEach((option) => {
-      const title = option?.title || option?.label || '';
-      const key = normaliseTitle(title);
-      if (!key || optionLookup.has(key)) {
-        return;
-      }
-      optionLookup.set(key, {
-        option,
-        canonicalTitle: String(title || ''),
-        canonicalHref: String((option?.href || '').trim()),
-        canonicalNotes: String(option?.notes ?? option?.note ?? '')
+    const orderByWhitelist = (items, whitelist = []) => {
+      const lookup = new Map();
+      items.forEach((item) => {
+        const key = normaliseTitle(item?.title || item?.label || '');
+        if (key && !lookup.has(key)) {
+          lookup.set(key, item);
+        }
       });
-    });
-
-    const airPumps = [];
-    const missingTitles = [];
-    AIR_PUMP_WHITELIST.forEach((title) => {
-      const record = optionLookup.get(normaliseTitle(title));
-      if (record) {
-        airPumps.push(record.option);
-      } else {
-        missingTitles.push(title);
-      }
-    });
-
-    const pumpKeySet = new Set(
-      airPumps.map((option) => normaliseTitle(option?.title || option?.label || ''))
-    );
-    const airAccessories = allOptions.filter(
-      (option) => !pumpKeySet.has(normaliseTitle(option?.title || option?.label || ''))
-    );
-
-    const accessoryLookup = new Map();
-    airAccessories.forEach((option) => {
-      const key = normaliseTitle(option?.title || option?.label || '');
-      if (!key || accessoryLookup.has(key)) return;
-      accessoryLookup.set(key, option);
-    });
-
-    const orderedAccessories = [];
-    const missingAccessories = [];
-    AIRLINE_ACCESSORY_WHITELIST.forEach((title) => {
-      const key = normaliseTitle(title);
-      if (!key) return;
-      if (accessoryLookup.has(key)) {
-        orderedAccessories.push(accessoryLookup.get(key));
-        accessoryLookup.delete(key);
-      } else {
-        missingAccessories.push(title);
-      }
-    });
-
-    const remainingAccessories = Array.from(accessoryLookup.values());
-    const finalAccessories = [...orderedAccessories, ...remainingAccessories];
-
-    const guardErrors = [];
-
-    if (missingTitles.length) {
-      guardErrors.push(`Missing pump records: ${missingTitles.join(', ')}`);
-    }
-
-    if (airPumps.length !== AIR_PUMP_WHITELIST.length) {
-      guardErrors.push(
-        `Expected ${AIR_PUMP_WHITELIST.length} air pumps but found ${airPumps.length}.`
-      );
-    }
-
-    airPumps.forEach((pump, index) => {
-      const expectedTitle = AIR_PUMP_WHITELIST[index];
-      const pumpTitle = String(pump?.title || pump?.label || '').trim();
-      if (pumpTitle !== expectedTitle) {
-        guardErrors.push(
-          `Title mismatch for pump at position ${index + 1}: expected "${expectedTitle}" but received "${pumpTitle}".`
-        );
-      }
-      const record = optionLookup.get(normaliseTitle(expectedTitle));
-      if (record) {
-        const pumpHref = String((pump?.href || '').trim());
-        if (pumpHref !== record.canonicalHref) {
-          guardErrors.push(`URL drift detected for "${expectedTitle}".`);
+      const ordered = [];
+      whitelist.forEach((title) => {
+        const key = normaliseTitle(title);
+        if (!key) return;
+        if (lookup.has(key)) {
+          ordered.push(lookup.get(key));
+          lookup.delete(key);
         }
-        const pumpNotes = String(pump?.notes ?? pump?.note ?? '');
-        if (record.canonicalNotes && pumpNotes !== record.canonicalNotes) {
-          guardErrors.push(`Notes text mismatch for "${expectedTitle}".`);
-        }
-        const description = (record.canonicalNotes || '').trim();
-        if (!description) {
-          guardErrors.push(`Missing description for "${expectedTitle}".`);
+      });
+      lookup.forEach((item) => ordered.push(item));
+      return ordered;
+    };
+
+    const normaliseSlug = (value) => {
+      if (!value) return '';
+      return String(value)
+        .normalize('NFKD')
+        .replace(/[₀-₉]/g, (char) => SUBSCRIPT_DIGIT_MAP[char] ?? char)
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/&/g, 'and')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .trim();
+    };
+
+    const deriveGroupKey = (option) => {
+      for (const field of AERATION_SUBCATEGORY_FIELDS) {
+        if (Object.prototype.hasOwnProperty.call(option, field)) {
+          const raw = option[field];
+          const slug = normaliseSlug(raw);
+          if (slug) {
+            return AERATION_SUBCATEGORY_ALIASES[slug] || slug;
+          }
         }
       }
+      return '';
+    };
+
+    const grouped = new Map(AERATION_GROUP_CONFIG.map((group) => [group.key, []]));
+    const unknownKeys = new Set();
+
+    allOptions.forEach((option) => {
+      const key = deriveGroupKey(option);
+      if (key && grouped.has(key)) {
+        grouped.get(key).push(option);
+      } else if (option) {
+        const fallback = key || option.subgroup || option.groupLabel || option.id || '[unknown]';
+        unknownKeys.add(fallback);
+      }
     });
 
-    const duplicateAccessories = airAccessories.filter((option) =>
-      pumpKeySet.has(normaliseTitle(option?.title || option?.label || ''))
-    );
-    if (duplicateAccessories.length) {
-      guardErrors.push('Duplicate pump entries detected in accessories list.');
-    }
+    const baseRange = {
+      id: 'air-products',
+      label: '',
+      rangeLabel: '',
+      placeholder
+    };
 
-    if (missingAccessories.length) {
-      guardErrors.push(`Missing airline accessory records: ${missingAccessories.join(', ')}`);
-    }
-
-    if (airAccessories.length !== AIRLINE_ACCESSORY_WHITELIST.length) {
-      guardErrors.push(
-        `Expected ${AIRLINE_ACCESSORY_WHITELIST.length} airline accessories but found ${airAccessories.length}.`
-      );
-    }
-
-    if (guardErrors.length) {
-      if (typeof console !== 'undefined') {
-        // eslint-disable-next-line no-console
-        console.error('Air Pumps sub-accordion aborted due to data integrity issues:', guardErrors);
-      }
-      return buildFlatBlock();
-    }
-
-    const structuredBlock = renderRangeBlock(
-      { ...range, options: [] },
-      'air',
-      {
-        includeGearCard: false,
-        ignoreMatch: true,
-        showTitle: false,
-        showTip: false
-      }
-    );
+    const structuredBlock = renderRangeBlock(baseRange, 'air', {
+      includeGearCard: false,
+      ignoreMatch: true,
+      showTitle: false,
+      showTip: false
+    });
 
     if (!structuredBlock) {
-      return buildFlatBlock();
+      return null;
     }
 
     structuredBlock.classList.add('range--air');
 
-    let container = structuredBlock.querySelector('.range__list');
+    let container = structuredBlock.querySelector('.air-products__container');
     if (container) {
-      container.className = 'air-products__container';
       container.innerHTML = '';
     } else {
       container = el('div',{ class:'air-products__container' });
       structuredBlock.appendChild(container);
     }
 
-    const bindSubAccordionToggle = (trigger, panel, wrapper) => {
+    const accordion = el('div',{ class:'air-subaccordion' });
+    container.appendChild(accordion);
+
+    const bindToggle = (trigger, panel, wrapper) => {
       trigger.addEventListener('click', () => {
         const expanded = trigger.getAttribute('aria-expanded') === 'true';
         const nextExpanded = !expanded;
@@ -1165,120 +1009,96 @@
       });
     };
 
-    let subAccordion = null;
-    const ensureSubAccordion = () => {
-      if (!subAccordion) {
-        subAccordion = el('div',{ class:'air-subaccordion' });
-        container.appendChild(subAccordion);
+    AERATION_GROUP_CONFIG.forEach((group) => {
+      const items = grouped.get(group.key) || [];
+      const hasItems = items.length > 0;
+      const baseId = `${group.id || group.key}-subaccordion`;
+      const triggerId = `${baseId}-trigger`;
+      const panelId = `${baseId}-panel`;
+      const wrapper = el('div',{ class:'air-subaccordion__item' });
+      const triggerAttrs = {
+        class:'air-subaccordion__trigger',
+        type:'button',
+        id:triggerId,
+        'aria-expanded':'false'
+      };
+      if (hasItems) {
+        triggerAttrs['aria-controls'] = panelId;
+      } else {
+        triggerAttrs['aria-disabled'] = 'true';
+        triggerAttrs.disabled = '';
       }
-      return subAccordion;
-    };
-
-    if (airPumps.length) {
-      const accordion = ensureSubAccordion();
-      const baseId = 'air-pumps-subaccordion';
-      const triggerId = `${baseId}-trigger`;
-      const panelId = `${baseId}-panel`;
-      const item = el('div',{ class:'air-subaccordion__item' });
-      const trigger = el('button',{
-        class:'air-subaccordion__trigger',
-        type:'button',
-        id:triggerId,
-        'aria-controls':panelId,
-        'aria-expanded':'false'
-      });
-      trigger.appendChild(el('span',{ class:'air-subaccordion__label' },'Air Pumps'));
-      trigger.appendChild(
-        el(
-          'span',
-          { class:'air-subaccordion__count' },
-          `${airPumps.length} ${airPumps.length === 1 ? 'pick' : 'picks'}`
-        )
-      );
+      const trigger = el('button', triggerAttrs);
+      trigger.appendChild(el('span',{ class:'air-subaccordion__label' }, group.label));
+      if (hasItems && group.showCount !== false) {
+        trigger.appendChild(
+          el(
+            'span',
+            { class:'air-subaccordion__count' },
+            `${items.length} ${items.length === 1 ? 'pick' : 'picks'}`
+          )
+        );
+      }
       trigger.appendChild(el('span',{ class:'air-subaccordion__icon','aria-hidden':'true' },'▸'));
+      wrapper.appendChild(trigger);
 
-      const panel = el('div',{
-        class:'air-subaccordion__panel',
-        id:panelId,
-        role:'region',
-        'aria-labelledby':triggerId,
-        hidden:'',
-        'aria-hidden':'true'
-      });
-      const pumpList = el('div',{ class:'range__list range__list--air air-pumps__list' });
-      airPumps.forEach((pump) => {
-        const row = createOptionRow(pump, { context: 'air' });
-        if (row) pumpList.appendChild(row);
-      });
-      panel.appendChild(pumpList);
+      if (hasItems) {
+        const panel = el('div',{
+          class:'air-subaccordion__panel',
+          id:panelId,
+          role:'region',
+          'aria-labelledby':triggerId,
+          hidden:'',
+          'aria-hidden':'true'
+        });
 
-      bindSubAccordionToggle(trigger, panel, item);
-
-      item.appendChild(trigger);
-      item.appendChild(panel);
-      accordion.appendChild(item);
-    }
-
-    if (finalAccessories.length) {
-      const accordion = ensureSubAccordion();
-      const baseId = 'airline-accessories-subaccordion';
-      const triggerId = `${baseId}-trigger`;
-      const panelId = `${baseId}-panel`;
-      const item = el('div',{ class:'air-subaccordion__item' });
-      const trigger = el('button',{
-        class:'air-subaccordion__trigger',
-        type:'button',
-        id:triggerId,
-        'aria-controls':panelId,
-        'aria-expanded':'false'
-      });
-      trigger.appendChild(el('span',{ class:'air-subaccordion__label' },'Airline Accessories'));
-      trigger.appendChild(el('span',{ class:'air-subaccordion__icon','aria-hidden':'true' },'▸'));
-
-      const panel = el('div',{
-        class:'air-subaccordion__panel',
-        id:panelId,
-        role:'region',
-        'aria-labelledby':triggerId,
-        hidden:'',
-        'aria-hidden':'true'
-      });
-      const grid = el('div',{ class:'air-accessory-grid' });
-      finalAccessories.forEach((accessory) => {
-        const title = String(accessory?.title || accessory?.label || 'Airline accessory').trim();
-        const notes = String(accessory?.notes ?? accessory?.note ?? '').trim();
-        const href = String((accessory?.href || '').trim());
-        const rel = String(accessory?.rel || 'sponsored noopener noreferrer').trim() || 'sponsored noopener noreferrer';
-        const card = el('article',{ class:'air-accessory-card' });
-        card.appendChild(el('h3',{ class:'air-accessory-card__title' }, escapeHTML(title || 'Airline accessory')));
-        if (notes) {
-          card.appendChild(el('p',{ class:'air-accessory-card__description' }, escapeHTML(notes)));
+        let content = null;
+        if (group.key === 'airline-accessories') {
+          const orderedAccessories = orderByWhitelist(items, AIRLINE_ACCESSORY_WHITELIST);
+          const grid = el('div',{ class:'air-accessory-grid' });
+          orderedAccessories.forEach((accessory) => {
+            const title = String(accessory?.title || accessory?.label || '').trim();
+            const notes = String(accessory?.notes ?? accessory?.note ?? '').trim();
+            const href = String((accessory?.href || '').trim());
+            const rel = String(accessory?.rel || 'sponsored noopener noreferrer').trim() || 'sponsored noopener noreferrer';
+            const card = el('article',{ class:'air-accessory-card' });
+            card.appendChild(el('h3',{ class:'air-accessory-card__title' }, escapeHTML(title || 'Air accessory')));
+            if (notes) {
+              card.appendChild(el('p',{ class:'air-accessory-card__description' }, escapeHTML(notes)));
+            }
+            if (href) {
+              const actions = el('div',{ class:'air-accessory-card__actions' });
+              actions.appendChild(el('a',{ class:'btn', href, target:'_blank', rel },'Buy on Amazon'));
+              card.appendChild(actions);
+            }
+            grid.appendChild(card);
+          });
+          content = grid;
+        } else {
+          const whitelist = group.key === 'air-pumps' ? AIR_PUMP_WHITELIST : [];
+          const orderedItems = orderByWhitelist(items, whitelist);
+          const list = el('div',{ class:'range__list range__list--air air-pumps__list' });
+          orderedItems.forEach((option) => {
+            const row = createOptionRow(option, { context: 'air' });
+            if (row) list.appendChild(row);
+          });
+          content = list;
         }
-        if (href) {
-          const actions = el('div',{ class:'air-accessory-card__actions' });
-          actions.appendChild(
-            el('a',{
-              class:'btn',
-              href,
-              target:'_blank',
-              rel
-            },'Buy on Amazon')
-          );
-          card.appendChild(actions);
+
+        if (content) {
+          panel.appendChild(content);
         }
-        grid.appendChild(card);
-      });
-      panel.appendChild(grid);
 
-      bindSubAccordionToggle(trigger, panel, item);
+        bindToggle(trigger, panel, wrapper);
+        wrapper.appendChild(panel);
+      }
 
-      item.appendChild(trigger);
-      item.appendChild(panel);
-      accordion.appendChild(item);
-    }
+      accordion.appendChild(wrapper);
+    });
 
-    if (!finalAccessories.length && placeholder) {
-      container.appendChild(el('p',{ class:'range__placeholder' }, placeholder));
+    if (unknownKeys.size && !hasWarnedUnknownAerationGroups) {
+      console.warn('Unknown Air & Aeration subcategory items', Array.from(unknownKeys));
+      hasWarnedUnknownAerationGroups = true;
     }
 
     return structuredBlock;
