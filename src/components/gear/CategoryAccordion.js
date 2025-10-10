@@ -42,6 +42,119 @@ function createGrid(items, context, onSelect, onAdd, emptyMessage = 'No matches 
   return grid;
 }
 
+function openInfoModal(options) {
+  const { title, message, trigger } = options;
+  const modalId = `gear-info-${Math.random().toString(36).slice(2, 8)}`;
+  const titleId = `${modalId}-title`;
+  const descriptionId = `${modalId}-description`;
+  const backdrop = createElement('div', {
+    className: 'gear-info-modal',
+    attrs: {
+      role: 'dialog',
+      'aria-modal': 'true',
+      'aria-labelledby': titleId,
+      'aria-describedby': descriptionId,
+    },
+  });
+
+  const dialog = createElement('div', {
+    className: 'gear-info-modal__dialog',
+    attrs: { role: 'document', tabindex: '-1' },
+  });
+
+  const header = createElement('header', { className: 'gear-info-modal__header' });
+  const heading = createElement('h3', {
+    className: 'gear-info-modal__title',
+    attrs: { id: titleId },
+    text: title,
+  });
+  const closeButton = createElement('button', {
+    className: 'gear-info-modal__close',
+    text: 'Close',
+    attrs: { type: 'button', 'aria-label': 'Close info' },
+  });
+  header.append(heading, closeButton);
+
+  const body = createElement('div', {
+    className: 'gear-info-modal__body',
+    attrs: { id: descriptionId },
+  });
+  body.appendChild(createElement('p', { text: message }));
+
+  dialog.append(header, body);
+  backdrop.appendChild(dialog);
+
+  const previouslyFocused = document.activeElement;
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      close();
+      return;
+    }
+    if (event.key === 'Tab') {
+      const focusables = dialog.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      if (!focusables.length) {
+        event.preventDefault();
+        dialog.focus();
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  };
+
+  const close = () => {
+    backdrop.removeEventListener('keydown', handleKeyDown);
+    backdrop.remove();
+    if (previouslyFocused instanceof HTMLElement) {
+      previouslyFocused.focus();
+    } else if (trigger instanceof HTMLElement) {
+      trigger.focus();
+    }
+  };
+
+  closeButton.addEventListener('click', close);
+  backdrop.addEventListener('click', (event) => {
+    if (event.target === backdrop) {
+      close();
+    }
+  });
+  backdrop.addEventListener('keydown', handleKeyDown);
+
+  document.body.appendChild(backdrop);
+
+  requestAnimationFrame(() => {
+    const focusables = dialog.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    );
+    const focusTarget = focusables[0] ?? dialog;
+    focusTarget.focus();
+  });
+};
+
+function createInfoButton(options) {
+  const { label, message } = options;
+  const button = createElement('button', {
+    className: 'category-panel__info-btn',
+    text: 'i',
+    attrs: { type: 'button', 'aria-label': `${label} info` },
+  });
+  button.addEventListener('click', () => {
+    openInfoModal({ title: label, message, trigger: button });
+  });
+  return button;
+}
+
 function filterFiltration(items, tab) {
   if (tab === 'All') {
     return items;
@@ -73,100 +186,39 @@ function normaliseAerationItem(item) {
   return next;
 }
 
-function createAerationBucketPanel(bucket, context, onSelect, onAdd) {
-  const { id, label, items } = bucket;
-  const baseId = `aeration-${id}`;
-  const triggerId = `${baseId}-trigger`;
-  const panelId = `${baseId}-panel`;
-
-  const wrapper = createElement('div', {
-    className: 'bucket-list__item',
-    attrs: { id: baseId },
-  });
-
-  const trigger = createElement(
-    'button',
-    {
-      className: 'bucket-list__trigger accordion-header',
-      attrs: {
-        type: 'button',
-        id: triggerId,
-        'aria-controls': panelId,
-        'aria-expanded': 'false',
-      },
-    },
-    [
-      createElement('span', { className: 'bucket-list__label', text: label }),
-      createElement('span', {
-        className: 'bucket-list__count',
-        text: `${items.length} ${items.length === 1 ? 'pick' : 'picks'}`,
-      }),
-      createElement('span', {
-        className: 'bucket-list__icon',
-        attrs: { 'aria-hidden': 'true' },
-        text: '▸',
-      }),
-    ],
-  );
-
-  const panel = createElement('div', {
-    className: 'bucket-list__panel accordion-panel',
-    attrs: {
-      id: panelId,
-      role: 'region',
-      'aria-labelledby': triggerId,
-      hidden: '',
-      'aria-hidden': 'true',
-    },
-  });
-
-  panel.appendChild(createGrid(items, context, onSelect, onAdd));
-
-  trigger.addEventListener('click', () => {
-    const expanded = trigger.getAttribute('aria-expanded') === 'true';
-    trigger.setAttribute('aria-expanded', String(!expanded));
-    if (expanded) {
-      panel.setAttribute('hidden', '');
-      panel.setAttribute('aria-hidden', 'true');
-      wrapper.classList?.remove('is-open');
-      const icon = trigger.querySelector('.bucket-list__icon');
-      if (icon) {
-        icon.textContent = '▸';
-      }
-    } else {
-      panel.removeAttribute('hidden');
-      panel.setAttribute('aria-hidden', 'false');
-      wrapper.classList?.add('is-open');
-      const icon = trigger.querySelector('.bucket-list__icon');
-      if (icon) {
-        icon.textContent = '▾';
-      }
-    }
-  });
-
-  wrapper.append(trigger, panel);
-  return wrapper;
-}
-
 function createAerationSection(options) {
   const { items, context, onSelect, onAdd } = options;
   const container = createElement('div', { className: 'bucket-section aeration-section' });
-  const normalized = items
-    .map((item) => normaliseAerationItem(item))
-    .filter((item) => item !== null);
+
+  if (!items.length) {
+    container.appendChild(createGrid(items, context, onSelect, onAdd));
+    return container;
+  }
 
   const buckets = AERATION_BUCKETS.map((bucket) => ({
     ...bucket,
-    items: normalized.filter((item) => item.bucketId === bucket.id),
+    items: items.filter((item) => item.bucketId === bucket.id),
   })).filter((bucket) => bucket.items.length > 0);
 
-  const stack = createElement('div', { className: 'bucket-list' });
+  if (!buckets.length) {
+    container.appendChild(createGrid(items, context, onSelect, onAdd));
+    return container;
+  }
 
-  buckets.forEach((bucket) => {
-    stack.appendChild(createAerationBucketPanel(bucket, context, onSelect, onAdd));
+  buckets.forEach(({ id, label, items: bucketItems }) => {
+    const group = createElement('section', {
+      className: 'aeration-group',
+      attrs: { id: `aeration-${id}` },
+    });
+
+    group.append(
+      createElement('h3', { className: 'aeration-group__title', text: label }),
+      createGrid(bucketItems, context, onSelect, onAdd),
+    );
+
+    container.appendChild(group);
   });
 
-  container.appendChild(stack);
   return container;
 }
 
@@ -339,6 +391,9 @@ function createCategorySection(options) {
   });
 
   header.appendChild(trigger);
+  if (info && key === 'Aeration') {
+    header.appendChild(createInfoButton({ label, message: info }));
+  }
   section.appendChild(header);
 
   const body = createElement('div', {
@@ -357,7 +412,7 @@ function createCategorySection(options) {
   const emptyCategoryMessage = 'No items yet. We’re refreshing recommendations—check back soon.';
   const hasItems = items.length > 0;
 
-  if (info) {
+  if (info && key !== 'Aeration') {
     body.appendChild(createElement('p', { className: 'category-panel__info', text: info }));
   }
 
@@ -420,7 +475,12 @@ export function CategoryAccordion(groups, context, state, handlers) {
   ];
 
   categories.forEach(({ key, label, info: categoryInfo }) => {
-    const items = groups[key] ?? [];
+    let items = groups[key] ?? [];
+    if (key === 'Aeration') {
+      items = items
+        .map((item) => normaliseAerationItem(item))
+        .filter((item) => item !== null);
+    }
     if (key === 'Aeration' && items.length === 0) {
       return;
     }
