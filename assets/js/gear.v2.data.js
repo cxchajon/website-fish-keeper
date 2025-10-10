@@ -116,7 +116,7 @@ const TIPS = {
   Combining two 24–36&quot; lights or a mix of 36–48&quot; units provides more balanced coverage and prevents dim corners in longer tanks.
 `,
   air:
-    'Increase surface agitation to boost oxygen exchange during heavy stocking, warmer temps, or medication use. Always add check valves on airlines and pair pumps with diffusers or stones to spread flow and protect against back-siphons.',
+    'Increase surface agitation to boost oxygen exchange during heavy stocking, warmer temps, or medication use. Always add check valves on airlines and pair pumps with diffusers or stones to spread flow and protect against back-siphons.<br><br>Use a check valve on every airline to prevent back-siphon. Size your pump to the devices you’ll run (sponge filters, airstones). Consider a battery backup or UPS for outages. For CO₂, place diffusers under outflow for better circulation; use CO₂-rated check valves to protect your regulator.',
   substrate:
     'Planted tanks do best with nutrient-rich soils. Unplanted/community tanks often prefer inert gravel or sand. For décor: rinse stones thoroughly; test for carbonate fizz if you keep soft-water species. Pre-soak driftwood to reduce tannins and weigh down until waterlogged.',
   'water-treatments': `
@@ -327,9 +327,6 @@ const FOOD_GROUP_ORDER = [
 
 const MAINTENANCE_INTRO = "Keep your aquarium healthy and clear with the right tools for testing, water changes, and glass maintenance. Consistent care prevents algae, stress, and equipment issues.";
 
-const AERATION_SECTION_INTRO =
-  'Use a check valve on every airline to prevent back-siphon. Size your pump to the devices you’ll run (sponge filters, airstones). Consider a battery backup or UPS for outages. For CO₂, place diffusers under outflow for better circulation; use CO₂-rated check valves to protect your regulator.';
-
 const MAINTENANCE_GROUP_TIPS = new Map([
   ["maintenance-safety", "Use GFCI protection and surge-protected strips to keep your aquarium gear safe. Always create drip loops on cords, label plugs for quick shutoff, and keep outlets above water level."]
 ]);
@@ -404,9 +401,7 @@ const MAINTENANCE_SUBGROUP_ORDER = [
 const AIR_GROUP_META = new Map([
   [
     'maintenance_air',
-    {
-      intro: AERATION_SECTION_INTRO
-    }
+    {}
   ]
 ]);
 
