@@ -66,8 +66,6 @@
   };
 
   const AIR_PUMP_WHITELIST = [
-    'hygger Quiet Mini Aquarium Air Pump HG-811',
-    'Tetra Whisper AP150 Aquarium Air Pump',
     'HITOP 4W 110GPH Powerful Aquarium Air Pump: Quiet 2-outlets Aquarium Aerator, Adjustable Fish Tank Air Pump with Accessories, for 20-200 Gallon Tank',
     'hygger Aquarium Air Pump, Ultra Quiet Oxygen Aerator with Air Stone Airline Tubing Check Valve, Aquarium Fish Tank Air Bubbler for 3 to 79 Gallon Tank and Bucket',
     'hygger Aquarium Air Pump, Quiet Adjustable Fish Tank Air Pump, 4W/7W/11W Powerful Oxygen Aerator Dual Stainless Steel Outlets with Air Stone Bubbler for Small Medium Large Fish Tank, Hydroponic'
