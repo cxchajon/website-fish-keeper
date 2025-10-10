@@ -268,6 +268,24 @@ body{
   gap:0.65rem;
 }
 
+.gear-subcard__meta{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:0.55rem;
+  font-size:0.9rem;
+  color:var(--muted);
+}
+
+.gear-subcard__count{
+  font-weight:600;
+  color:var(--muted);
+}
+
+.gear-subcard__meta .chevron{
+  margin:0;
+}
+
 .gear-subcard__header .gear-subcard__title{
   margin:0;
   font-size:1.05rem;
@@ -537,105 +555,13 @@ body{
   gap:0;
 }
 
-.range__list--air{
-  gap:1.25rem;
-}
-
-@media (min-width:768px){
-  .range__list--air{
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  }
-}
-
-.air-products__container{
-  display:grid;
-  gap:1.25rem;
-}
-
-@media (min-width:768px){
-  .air-products__container{
-    gap:1.5rem;
-  }
-}
-
-
-.air-subaccordion{
-  background:rgba(17,24,39,0.82);
-  border:1px solid rgba(148,163,184,0.3);
-  border-radius:14px;
-  margin:0.75rem 0 1rem;
-  box-shadow:var(--shadow);
-  transition:background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-.air-subaccordion:hover,
-.air-subaccordion:focus-within{
-  background:rgba(17,24,39,0.9);
-  border-color:rgba(148,163,184,0.45);
-  box-shadow:0 20px 40px -26px rgba(15,23,42,0.85);
-}
-
-.air-subaccordion__item{
-  border-radius:inherit;
-  overflow:hidden;
-}
-
-.air-subaccordion__trigger{
-  width:100%;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:0.85rem 1.1rem;
-  border:0;
-  background:transparent;
-  color:inherit;
-  font:inherit;
-  text-align:left;
-  cursor:pointer;
-  border-radius:inherit;
-  transition:background 0.25s ease, color 0.25s ease;
-}
-
-.air-subaccordion__trigger:hover,
-.air-subaccordion__trigger:focus-visible{
-  background:rgba(255,255,255,0.04);
-}
-
-.air-subaccordion__trigger:focus-visible{
-  outline:2px solid var(--accent);
-  outline-offset:2px;
-}
-
-.air-subaccordion__label{
-  font-weight:600;
-  flex:1 1 auto;
-}
-
-.air-subaccordion__count{
-  font-size:0.9rem;
-  color:var(--muted);
-}
-
-.air-subaccordion__icon{
-  margin-left:auto;
-  font-size:1rem;
-  line-height:1;
-}
-
-.air-subaccordion__panel[hidden]{
-  display:none;
-}
-
-.air-subaccordion__panel{
-  padding:0 1.1rem 1.1rem;
-  background:rgba(255,255,255,0.02);
-  border-radius:0 0 12px 12px;
-}
-
 .air-accessory-grid{
   display:grid;
   gap:1.1rem;
-  margin-top:1rem;
+}
+
+.gear-subcard--air .air-accessory-grid{
+  margin-top:0.75rem;
 }
 
 @media (min-width:640px){
@@ -678,22 +604,6 @@ body{
   justify-content:center;
 }
 
-.air-pumps__list,
-.air-accessories__list{
-  gap:1.25rem;
-}
-
-.air-accessories__list{
-  padding-bottom:4px;
-}
-
-.air-accessories-divider{
-  height:1px;
-  background:var(--line);
-  margin:4px 0;
-  opacity:0.65;
-}
-
 .range__subgroup{
   border:0;
   border-radius:0;
@@ -713,10 +623,6 @@ body{
 .range__subgroup-items{
   display:grid;
   gap:1.25rem;
-}
-
-.gear-card__body > .range--air{
-  grid-column:1 / -1;
 }
 
 .option{
@@ -842,35 +748,42 @@ body{
   box-shadow:none;
 }
 
-.gear-subcard--substrate{
+.gear-subcard--substrate,
+.gear-subcard--air{
   border:1px solid rgba(148,163,184,0.24);
   background:rgba(15,23,42,0.7);
 }
 
-.gear-subcard--substrate .gear-subcard__body{
+.gear-subcard--substrate .gear-subcard__body,
+.gear-subcard--air .gear-subcard__body{
   padding-top:0.75rem;
   gap:0;
 }
 
-.gear-subcard--substrate .range{
+.gear-subcard--substrate .range,
+.gear-subcard--air .range{
   border:0;
   background:transparent;
   padding:0;
 }
 
-.gear-subcard--substrate .range__list{
+.gear-subcard--substrate .range__list,
+.gear-subcard--air .range__list{
   gap:0;
 }
 
-.gear-subcard--substrate .range .option{
+.gear-subcard--substrate .range .option,
+.gear-subcard--air .range .option{
   padding:0.95rem 0;
 }
 
-.gear-subcard--substrate .range .option + .option{
+.gear-subcard--substrate .range .option + .option,
+.gear-subcard--air .range .option + .option{
   border-top:1px solid rgba(148,163,184,0.28);
 }
 
-.gear-subcard--substrate .range__placeholder{
+.gear-subcard--substrate .range__placeholder,
+.gear-subcard--air .range__placeholder{
   margin:0.5rem 0 0;
   color:var(--muted);
   font-size:0.9rem;
