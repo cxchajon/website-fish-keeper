@@ -156,47 +156,17 @@ body{
   gap:1.25rem;
 }
 
-.gear-insight{
+.gear-inline-copy{
   width:min(960px,100%);
-  margin:clamp(3rem,8vw,4.5rem) auto 96px;
+  margin:clamp(1.75rem,5vw,2.5rem) auto clamp(2.5rem,6vw,3.5rem);
   padding:0 16px;
 }
 
-.gear-insight__inner{
-  background:
-    linear-gradient(135deg, rgba(59,130,246,0.18), rgba(16,185,129,0.1));
-  border:1px solid rgba(148,163,184,0.35);
-  border-radius:22px;
-  padding:clamp(1.5rem,4vw,2.25rem);
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  text-align:center;
-  color:var(--ink);
-}
-
-.gear-insight__title{
-  margin:0 0 0.75rem;
-  font-size:clamp(1.1rem,2vw,1.35rem);
-  font-weight:600;
-  letter-spacing:-0.01em;
-}
-
-.gear-insight__inner p{
-  margin:0 0 0.85rem;
+.gear-inline-copy p{
+  margin:0;
   color:var(--muted);
-  font-size:1rem;
-  line-height:1.6;
-}
-
-.gear-insight__inner p:last-child{
-  margin-bottom:0;
-}
-
-@media (min-width: 768px){
-  .gear-insight__inner{
-    text-align:left;
-  }
+  font-size:0.92rem;
+  line-height:1.5;
 }
 
 .gear-card{
