@@ -339,7 +339,50 @@ function createAerationSection(options) {
   const { items, context, onSelect, onAdd } = options;
   const container = createElement('div', { className: 'bucket-section aeration-section' });
 
+  const staticSubAccordionDefinitions = [
+    { id: 'air-pumps-static', label: 'Air Pumps' },
+    { id: 'air-pump-accessories-static', label: 'Air Pump Accessories' },
+    { id: 'co2-accessories-static', label: 'CO₂ Accessories' },
+  ];
+
+  const staticLabels = new Set(staticSubAccordionDefinitions.map((definition) => definition.label));
+
+  const subAccordionGroups = staticSubAccordionDefinitions.map((definition) => ({
+    id: definition.id,
+    label: definition.label,
+    items: [],
+    showCount: false,
+    renderContent: () =>
+      createElement('div', {
+        className: 'aeration-subaccordion__empty-panel',
+        attrs: { 'aria-hidden': 'true' },
+      }),
+  }));
+
+  const appendSubAccordion = () => {
+    if (!subAccordionGroups.length) {
+      return;
+    }
+    const subAccordion = createElement('div', { className: 'bucket-list aeration-subaccordion' });
+    subAccordionGroups.forEach((group) => {
+      subAccordion.appendChild(
+        createAerationSubItem({
+          id: group.id,
+          label: group.label,
+          items: group.items,
+          showCount: group.showCount,
+          context,
+          onSelect,
+          onAdd,
+          renderContent: group.renderContent,
+        }),
+      );
+    });
+    container.appendChild(subAccordion);
+  };
+
   if (!items.length) {
+    appendSubAccordion();
     container.appendChild(createGrid(items, context, onSelect, onAdd));
     return container;
   }
@@ -363,9 +406,9 @@ function createAerationSection(options) {
   });
 
   const orderedAirlineAccessories = AIRLINE_ACCESSORY_ORDER.map((id) => airlineAccessoriesById.get(id)).filter(Boolean);
-  const subAccordionGroups = [];
+  const existingLabels = new Set(staticLabels);
 
-  if (pumps.length > 0) {
+  if (pumps.length > 0 && !existingLabels.has('Air Pumps')) {
     subAccordionGroups.push({
       id: 'air-pumps',
       label: 'Air Pumps',
@@ -373,6 +416,7 @@ function createAerationSection(options) {
       showCount: true,
     });
     pumps.forEach((item) => appendedItems.add(item));
+    existingLabels.add('Air Pumps');
   }
 
   if (orderedAirlineAccessories.length > 0) {
@@ -386,24 +430,7 @@ function createAerationSection(options) {
     orderedAirlineAccessories.forEach((item) => appendedItems.add(item));
   }
 
-  if (subAccordionGroups.length > 0) {
-    const subAccordion = createElement('div', { className: 'bucket-list aeration-subaccordion' });
-    subAccordionGroups.forEach((group) => {
-      subAccordion.appendChild(
-        createAerationSubItem({
-          id: group.id,
-          label: group.label,
-          items: group.items,
-          showCount: group.showCount,
-          context,
-          onSelect,
-          onAdd,
-          renderContent: group.renderContent,
-        }),
-      );
-    });
-    container.appendChild(subAccordion);
-  }
+  appendSubAccordion();
 
   const remainder = items.filter((item) => !appendedItems.has(item));
 
