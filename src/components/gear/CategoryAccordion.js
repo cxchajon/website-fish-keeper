@@ -91,6 +91,7 @@ const AERATION_GROUPS = [
     key: 'co2-accessories',
     id: 'co2-accessories',
     label: 'CO₂ Accessories',
+    renderContent: ({ items }) => createCo2AccessoryList(items),
   },
 ];
 
@@ -372,11 +373,95 @@ function createAirlineAccessoryCard(item) {
 }
 
 function createAirlineAccessoryList(items = []) {
+  const ordered = orderAerationAccessoryItems(items);
   const grid = createElement('div', { className: 'product-grid aeration-accessory-grid' });
-  items.forEach((item) => {
+  ordered.forEach((item) => {
     grid.appendChild(createAirlineAccessoryCard(item));
   });
   return grid;
+}
+
+function createCo2AccessoryList(items = []) {
+  const ordered = orderAerationAccessoryItems(items);
+  const grid = createElement('div', { className: 'product-grid aeration-accessory-grid' });
+  ordered.forEach((item) => {
+    grid.appendChild(createAirlineAccessoryCard(item));
+  });
+  return grid;
+}
+
+function getAerationAccessoryRank(item = {}) {
+  const RANK_KEYS = [
+    'rank',
+    'Rank',
+    'rank_order',
+    'Rank_Order',
+    'order',
+    'Order',
+    'order_index',
+    'orderIndex',
+    'Order_Index',
+    'sort',
+    'Sort',
+    'sort_order',
+    'Sort_Order',
+    'sort_key',
+    'Sort_Key',
+    'sortKey',
+    'SortKey',
+  ];
+  for (const key of RANK_KEYS) {
+    if (Object.prototype.hasOwnProperty.call(item, key)) {
+      const raw = item[key];
+      if (raw === '' || raw === null || raw === undefined) {
+        continue;
+      }
+      const parsed = Number.parseFloat(String(raw));
+      if (Number.isFinite(parsed)) {
+        return parsed;
+      }
+    }
+  }
+  return Number.NaN;
+}
+
+function orderAerationAccessoryItems(items = []) {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+  const withIndex = items.map((item, index) => ({ item, index }));
+  const hasRank = withIndex.some(({ item }) => Number.isFinite(getAerationAccessoryRank(item)));
+
+  if (hasRank) {
+    withIndex.sort((a, b) => {
+      const rankA = getAerationAccessoryRank(a.item);
+      const rankB = getAerationAccessoryRank(b.item);
+      if (Number.isFinite(rankA) && Number.isFinite(rankB) && rankA !== rankB) {
+        return rankA - rankB;
+      }
+      if (Number.isFinite(rankA) && !Number.isFinite(rankB)) {
+        return -1;
+      }
+      if (!Number.isFinite(rankA) && Number.isFinite(rankB)) {
+        return 1;
+      }
+      return a.index - b.index;
+    });
+    return withIndex.map(({ item }) => item);
+  }
+
+  withIndex.sort((a, b) => {
+    const titleA = String(a.item.Product_Name ?? a.item.title ?? '').toLowerCase();
+    const titleB = String(b.item.Product_Name ?? b.item.title ?? '').toLowerCase();
+    if (titleA < titleB) {
+      return -1;
+    }
+    if (titleA > titleB) {
+      return 1;
+    }
+    return a.index - b.index;
+  });
+  return withIndex.map(({ item }) => item);
 }
 
 function createAerationSubItem(options) {

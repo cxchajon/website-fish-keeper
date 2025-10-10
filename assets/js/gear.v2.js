@@ -122,6 +122,12 @@
     { key: 'co2-accessories', id: 'co2-accessories', label: 'CO₂ Accessories' }
   ];
 
+  const AERATION_SOURCE_GROUP_ALIASES = {
+    'air-air-pumps': 'air-pumps',
+    'air-airline-accessories': 'airline-accessories',
+    maintenance_air: 'co2-accessories'
+  };
+
   let hasWarnedUnknownAerationGroups = false;
 
   function toDataSectionKey(sectionKey){
@@ -887,9 +893,6 @@
 
   function renderAirProducts(groups = [], options = {}){
     const placeholderText = String(options?.placeholder || '').trim();
-    const allOptions = groups.flatMap((group) =>
-      Array.isArray(group?.options) ? group.options.filter(Boolean) : []
-    );
     const placeholder = placeholderText || '';
 
     const normaliseTitle = (value) =>
@@ -945,17 +948,125 @@
       return '';
     };
 
+    const parseAccessoryRank = (item = {}) => {
+      const RANK_FIELDS = [
+        'rank',
+        'Rank',
+        'sort',
+        'Sort',
+        'order',
+        'Order',
+        'order_index',
+        'orderIndex',
+        'Sort_Order',
+        'sort_order',
+        'sort_key',
+        'Sort_Key',
+        'sortKey',
+        'SortKey'
+      ];
+      for (const field of RANK_FIELDS) {
+        if (Object.prototype.hasOwnProperty.call(item, field)) {
+          const raw = item[field];
+          if (raw === '' || raw === null || raw === undefined) continue;
+          const parsed = Number.parseFloat(String(raw));
+          if (Number.isFinite(parsed)) {
+            return parsed;
+          }
+        }
+      }
+      const label = String(item?.label || '').trim();
+      const labelMatch = label.match(/(\d+)/);
+      if (labelMatch) {
+        const value = Number.parseFloat(labelMatch[1]);
+        if (Number.isFinite(value)) {
+          return value;
+        }
+      }
+      return Number.NaN;
+    };
+
+    const orderAccessoryItems = (items = []) => {
+      if (!Array.isArray(items)) return [];
+      const withIndex = items.map((item, index) => ({ item, index }));
+      const hasRank = withIndex.some(({ item }) => Number.isFinite(parseAccessoryRank(item)));
+      if (hasRank) {
+        withIndex.sort((a, b) => {
+          const rankA = parseAccessoryRank(a.item);
+          const rankB = parseAccessoryRank(b.item);
+          if (Number.isFinite(rankA) && Number.isFinite(rankB) && rankA !== rankB) {
+            return rankA - rankB;
+          }
+          if (Number.isFinite(rankA) && !Number.isFinite(rankB)) {
+            return -1;
+          }
+          if (!Number.isFinite(rankA) && Number.isFinite(rankB)) {
+            return 1;
+          }
+          return a.index - b.index;
+        });
+      } else {
+        withIndex.sort((a, b) => {
+          const titleA = normaliseTitle(a.item?.title || a.item?.label || '');
+          const titleB = normaliseTitle(b.item?.title || b.item?.label || '');
+          if (titleA < titleB) return -1;
+          if (titleA > titleB) return 1;
+          return a.index - b.index;
+        });
+      }
+      return withIndex.map(({ item }) => item);
+    };
+
+    const createAccessoryCard = (accessory) => {
+      const title = String(accessory?.title || accessory?.label || '').trim();
+      if (!title) return null;
+      const notes = String(accessory?.notes ?? accessory?.note ?? '').trim();
+      const href = String((accessory?.href || '').trim());
+      const rel = String(accessory?.rel || 'sponsored noopener noreferrer').trim() || 'sponsored noopener noreferrer';
+      const card = el('article',{ class:'air-accessory-card' });
+      card.appendChild(el('h3',{ class:'air-accessory-card__title' }, escapeHTML(title)));
+      if (notes) {
+        card.appendChild(el('p',{ class:'air-accessory-card__description' }, escapeHTML(notes)));
+      }
+      if (href) {
+        const actions = el('div',{ class:'air-accessory-card__actions' });
+        actions.appendChild(el('a',{ class:'btn', href, target:'_blank', rel },'Buy on Amazon'));
+        card.appendChild(actions);
+      }
+      return card;
+    };
+
+    const renderAccessoryGrid = (items = []) => {
+      const grid = el('div',{ class:'air-accessory-grid' });
+      items.forEach((accessory) => {
+        const card = createAccessoryCard(accessory);
+        if (card) grid.appendChild(card);
+      });
+      return grid;
+    };
+
     const grouped = new Map(AERATION_GROUP_CONFIG.map((group) => [group.key, []]));
     const unknownKeys = new Set();
 
-    allOptions.forEach((option) => {
-      const key = deriveGroupKey(option);
-      if (key && grouped.has(key)) {
-        grouped.get(key).push(option);
-      } else if (option) {
-        const fallback = key || option.subgroup || option.groupLabel || option.id || '[unknown]';
-        unknownKeys.add(fallback);
-      }
+    groups.forEach((group) => {
+      const sourceId = group?.id || group?.originalId || '';
+      const aliasKey = AERATION_SOURCE_GROUP_ALIASES[sourceId] || '';
+      const options = Array.isArray(group?.options) ? group.options.filter(Boolean) : [];
+      options.forEach((option) => {
+        const key = deriveGroupKey(option);
+        if (key && grouped.has(key)) {
+          grouped.get(key).push(option);
+          return;
+        }
+        if (aliasKey && grouped.has(aliasKey)) {
+          grouped.get(aliasKey).push(option);
+          return;
+        }
+        if (option) {
+          const fallback = key || aliasKey || option.subgroup || option.groupLabel || option.id || '[unknown]';
+          unknownKeys.add(fallback);
+        }
+      });
     });
 
     const baseRange = {
@@ -1055,25 +1166,10 @@
         let content = null;
         if (group.key === 'airline-accessories') {
           const orderedAccessories = orderByWhitelist(items, AIRLINE_ACCESSORY_WHITELIST);
-          const grid = el('div',{ class:'air-accessory-grid' });
-          orderedAccessories.forEach((accessory) => {
-            const title = String(accessory?.title || accessory?.label || '').trim();
-            const notes = String(accessory?.notes ?? accessory?.note ?? '').trim();
-            const href = String((accessory?.href || '').trim());
-            const rel = String(accessory?.rel || 'sponsored noopener noreferrer').trim() || 'sponsored noopener noreferrer';
-            const card = el('article',{ class:'air-accessory-card' });
-            card.appendChild(el('h3',{ class:'air-accessory-card__title' }, escapeHTML(title || 'Air accessory')));
-            if (notes) {
-              card.appendChild(el('p',{ class:'air-accessory-card__description' }, escapeHTML(notes)));
-            }
-            if (href) {
-              const actions = el('div',{ class:'air-accessory-card__actions' });
-              actions.appendChild(el('a',{ class:'btn', href, target:'_blank', rel },'Buy on Amazon'));
-              card.appendChild(actions);
-            }
-            grid.appendChild(card);
-          });
-          content = grid;
+          content = renderAccessoryGrid(orderedAccessories);
+        } else if (group.key === 'co2-accessories') {
+          const orderedAccessories = orderAccessoryItems(items);
+          content = renderAccessoryGrid(orderedAccessories);
         } else {
           const whitelist = group.key === 'air-pumps' ? AIR_PUMP_WHITELIST : [];
           const orderedItems = orderByWhitelist(items, whitelist);
