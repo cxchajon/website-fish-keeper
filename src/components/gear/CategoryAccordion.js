@@ -27,6 +27,21 @@ const AERATION_PLACEHOLDER_TITLES = new Set([
   'Cobalt Aquatics Rescue Air DC Pump',
 ]);
 
+const AIRLINE_ACCESSORY_ORDER = [
+  'aeration-airline-check-valve',
+  'aeration-airline-flow-valve',
+  'aeration-airline-kit',
+];
+
+function slugifyId(value = '') {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+    .trim();
+}
+
 function createGrid(items, context, onSelect, onAdd, emptyMessage = 'No matches found. Try adjusting your filters.') {
   if (!items.length) {
     return EmptyState(emptyMessage);
@@ -198,8 +213,51 @@ function normaliseAerationItem(item) {
   return next;
 }
 
+function createAirlineAccessoryCard(item) {
+  const slugSource =
+    item.product_id ?? item.Product_ID ?? item.Item_ID ?? item.Product_Name ?? item.title ?? 'item';
+  const slug = slugifyId(slugSource) || 'item';
+  const card = createElement('article', {
+    className: 'product-card aeration-accessory-card',
+    attrs: { 'data-testid': `card-${slug}` },
+  });
+
+  card.append(
+    createElement('h3', { className: 'aeration-accessory-card__title', text: item.Product_Name ?? 'Unnamed product' }),
+    item.Notes ? createElement('p', { className: 'aeration-accessory-card__description', text: item.Notes }) : null,
+  );
+
+  const amazonLink = (item.Amazon_Link ?? item.amazon_url ?? '').trim();
+  if (amazonLink) {
+    const rel = (item.rel ?? '').trim() || 'sponsored noopener noreferrer';
+    const actions = createElement('div', { className: 'aeration-accessory-card__actions' });
+    actions.appendChild(
+      createElement('a', {
+        className: 'btn primary',
+        text: 'Buy on Amazon',
+        attrs: {
+          href: amazonLink,
+          target: '_blank',
+          rel,
+        },
+      }),
+    );
+    card.append(actions);
+  }
+
+  return card;
+}
+
+function createAirlineAccessoryList(items = []) {
+  const grid = createElement('div', { className: 'product-grid aeration-accessory-grid' });
+  items.forEach((item) => {
+    grid.appendChild(createAirlineAccessoryCard(item));
+  });
+  return grid;
+}
+
 function createAerationSubItem(options) {
-  const { id, label, items, context, onSelect, onAdd, showCount = true } = options;
+  const { id, label, items, context, onSelect, onAdd, showCount = true, renderContent } = options;
   const baseId = `${id}-subaccordion`;
   const triggerId = `${baseId}-trigger`;
   const panelId = `${baseId}-panel`;
@@ -242,7 +300,12 @@ function createAerationSubItem(options) {
     },
   });
 
-  panel.appendChild(createGrid(items, context, onSelect, onAdd));
+  const content =
+    typeof renderContent === 'function'
+      ? renderContent({ items, context, onSelect, onAdd })
+      : createGrid(items, context, onSelect, onAdd);
+
+  panel.appendChild(content);
 
   const wrapper = createElement('div', { className: 'bucket-list__item aeration-subaccordion__item' });
 
@@ -288,6 +351,18 @@ function createAerationSection(options) {
   });
 
   const appendedItems = new Set();
+  const airlineAccessoriesById = new Map();
+  airlineAccessories.forEach((item) => {
+    const key = item.product_id ?? item.Product_ID ?? item.Item_ID ?? '';
+    if (key) {
+      airlineAccessoriesById.set(key, item);
+    }
+    if (!AIRLINE_ACCESSORY_ORDER.includes(key)) {
+      appendedItems.add(item);
+    }
+  });
+
+  const orderedAirlineAccessories = AIRLINE_ACCESSORY_ORDER.map((id) => airlineAccessoriesById.get(id)).filter(Boolean);
   const subAccordionGroups = [];
 
   if (pumps.length > 0) {
@@ -300,14 +375,15 @@ function createAerationSection(options) {
     pumps.forEach((item) => appendedItems.add(item));
   }
 
-  if (airlineAccessories.length > 0) {
+  if (orderedAirlineAccessories.length > 0) {
     subAccordionGroups.push({
       id: 'airline-accessories',
       label: 'Airline Accessories',
-      items: airlineAccessories,
+      items: orderedAirlineAccessories,
       showCount: false,
+      renderContent: () => createAirlineAccessoryList(orderedAirlineAccessories),
     });
-    airlineAccessories.forEach((item) => appendedItems.add(item));
+    orderedAirlineAccessories.forEach((item) => appendedItems.add(item));
   }
 
   if (subAccordionGroups.length > 0) {
@@ -322,6 +398,7 @@ function createAerationSection(options) {
           context,
           onSelect,
           onAdd,
+          renderContent: group.renderContent,
         }),
       );
     });
