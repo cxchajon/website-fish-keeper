@@ -19,6 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" id="css-main" href="css/style.css?v=2024-06-05a" />
   <link rel="stylesheet" href="css/site.css?v=2024-07-05a" />
+  <link rel="stylesheet" href="css/ui.css?v=2024-09-15" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="icon" href="/favicon.ico" />
   <script defer src="js/nav.js?v=1.1.0"></script>
@@ -1022,6 +1023,7 @@
               <input type="checkbox" id="toggle-planted" data-testid="toggle-planted" />
               <span class="slider" aria-hidden="true"></span>
             </label>
+            <div id="filtration-trigger"></div>
           </div>
         </div>
       </div>
@@ -1383,6 +1385,46 @@
 
     </div>
   </main>
+
+  <section id="seo-summary">
+    <p class="footer-blurb">
+      <strong>The Tank Guide Stocking Advisor</strong> helps aquarists plan balanced aquarium communities by calculating 
+      <strong>bioload, aggression, and compatibility</strong> across a carefully selected range of popular 
+      <strong>freshwater fish and invertebrates</strong>. Discover ideal tank mates, safe water parameters, and 
+      <strong>custom gear suggestions</strong> based on your aquarium size and filtration. Whether you keep 
+      <strong>bettas, tetras, shrimp, corydoras, or gouramis</strong>, our free interactive tool makes 
+      aquarium stocking simple, educational, and sustainable — powered by <strong>FishKeepingLifeCo</strong>.<br><br>
+      🌿 <em>Next:</em> Explore our 
+      <a href="/gear.html">Gear Guide</a> 
+      to find recommended filters, lights, and supplies tailored to your tank.
+    </p>
+  </section>
+
+  <style>
+    #seo-summary { display:flex; justify-content:center; align-items:center; padding-top:2rem; padding-bottom:1rem; }
+    .footer-blurb { font-size:0.85rem; line-height:1.5; color:#b0b8c1; text-align:center; max-width:640px; margin:0 auto; }
+    .footer-blurb a { color:#5ac8fa; text-decoration:none; }
+    .footer-blurb a:hover { text-decoration:underline; }
+    @media (max-width:600px) { .footer-blurb { font-size:0.8rem; line-height:1.3; padding:0 1rem; margin-top:1rem; margin-bottom:1rem; } }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"The Tank Guide Stocking Advisor",
+    "url":"https://www.thetankguide.com/stocking.html",
+    "applicationCategory":"Educational, Aquarium Planner",
+    "description":"The Tank Guide Stocking Advisor helps aquarists calculate bioload, aggression, and compatibility to plan safe and balanced aquarium communities.",
+    "creator":{"@type":"Organization","name":"FishKeepingLifeCo","url":"https://www.fishkeepinglifeco.com"},
+    "operatingSystem":"All",
+    "browserRequirements":"Requires JavaScript and a modern web browser",
+    "inLanguage":"en",
+    "offers":{"@type":"Offer","price":"0","priceCurrency":"USD","category":"Free Web Tool"},
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://www.thetankguide.com/stocking.html"},
+    "keywords":["aquarium stocking calculator","fish tank compatibility tool","bioload calculator","freshwater aquarium planner","betta fish tank guide","tropical fish stocking chart","aquascaping tool","FishKeepingLifeCo"]
+  }
+  </script>
 
   <div id="site-footer"></div>
 <script>

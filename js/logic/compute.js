@@ -97,6 +97,88 @@ export function listSensitiveSpecies(speciesEntries, parameter) {
   return results;
 }
 
+const FILTER_TYPES = new Set(['HOB', 'Canister', 'Sponge']);
+
+export const TURNOVER_BANDS = Object.freeze({
+  L: [3, 5],
+  M: [5, 8],
+  H: [8, 12],
+});
+
+export const MIN_TURNOVER_FLOOR = 2;
+
+function clampHeadLoss(value) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return 0;
+  if (num < 0) return 0;
+  if (num > 40) return 40;
+  return Math.round(num);
+}
+
+function clampFlowRate(value) {
+  const num = Number(value);
+  if (!Number.isFinite(num) || num <= 0) return 0;
+  return Math.min(Math.round(num), 1500);
+}
+
+function normalizeFilterKind(kind) {
+  const value = typeof kind === 'string' ? kind.trim() : '';
+  if (FILTER_TYPES.has(value)) {
+    return value;
+  }
+  return 'HOB';
+}
+
+function sanitizeFilter(filter) {
+  if (!filter || typeof filter !== 'object') {
+    return { kind: 'HOB', gph: 0, headLossPct: 0, model: '' };
+  }
+  return {
+    kind: normalizeFilterKind(filter.kind),
+    gph: clampFlowRate(filter.gph),
+    headLossPct: clampHeadLoss(filter.headLossPct),
+    model: typeof filter.model === 'string' ? filter.model : '',
+  };
+}
+
+export function sanitizeFilterList(filters) {
+  if (!Array.isArray(filters)) return [];
+  return filters.map((filter) => sanitizeFilter(filter));
+}
+
+function summarizeFilters(filters) {
+  const sanitized = sanitizeFilterList(filters);
+  let ratedTotal = 0;
+  let deliveredTotal = 0;
+  for (const filter of sanitized) {
+    if (!Number.isFinite(filter.gph) || filter.gph <= 0) {
+      continue;
+    }
+    ratedTotal += filter.gph;
+    const multiplier = 1 - filter.headLossPct / 100;
+    const adjusted = filter.gph * (multiplier > 0 ? multiplier : 0);
+    deliveredTotal += adjusted;
+  }
+  return { sanitized, ratedTotal, deliveredTotal };
+}
+
+export function calcTotalGph(filters) {
+  const { deliveredTotal } = summarizeFilters(filters);
+  return deliveredTotal;
+}
+
+export function computeTurnover(effectiveGallons, filters) {
+  const gallons = Number(effectiveGallons);
+  if (!Number.isFinite(gallons) || gallons <= 0) {
+    return 0;
+  }
+  const delivered = calcTotalGph(filters);
+  if (!Number.isFinite(delivered) || delivered <= 0) {
+    return 0;
+  }
+  return delivered / gallons;
+}
+
 const TURNOVER_POINTS = [
   { x: 0, m: 0.85 },
   { x: 2, m: 0.85 },
@@ -185,15 +267,28 @@ function calcTank(state, entries, overrideVariant) {
   const width = Number.isFinite(widthIn) ? widthIn : 0;
   const height = Number.isFinite(heightIn) ? heightIn : 0;
   const volume = gallons + 0.7 * sump;
-  const turnover = clamp(Number(state.turnover) || 5, 0.5, 20);
-  const multiplier = interpolateMultiplier(turnover);
   const plantedMultiplier = planted ? (1 + PLANTED_CAPACITY_BONUS) : 1;
   const effectiveGallons = getEffectiveGallons(gallons, { planted });
   const baseCapacity = effectiveGallons;
   const capacity = effectiveGallons;
   const recommendedCapacity = effectiveGallons;
-  const deliveredGph = turnover * volume;
-  const ratedGph = deliveredGph / 0.78;
+
+  let turnover = clamp(Number(state.turnover) || 5, 0.5, 20);
+  let deliveredGph = turnover * volume;
+  let ratedGph = deliveredGph / 0.78;
+
+  const { ratedTotal, deliveredTotal } = summarizeFilters(state.filters);
+  if (deliveredTotal > 0) {
+    deliveredGph = deliveredTotal;
+    ratedGph = ratedTotal > 0 ? ratedTotal : deliveredGph;
+    const gallonsForTurnover = Number.isFinite(effectiveGallons) && effectiveGallons > 0 ? effectiveGallons : gallons;
+    const computedTurnover = gallonsForTurnover > 0 ? deliveredGph / gallonsForTurnover : 0;
+    if (computedTurnover > 0) {
+      turnover = computedTurnover;
+    }
+  }
+
+  const multiplier = interpolateMultiplier(turnover);
 
   return {
     gallons,
@@ -300,6 +395,104 @@ function turnoverBand(tank) {
     return { band: 'low-flow', range: [4, 6] };
   }
   return { band: 'community', range: [8, 9] };
+}
+
+const FLOW_LABEL_BY_BAND = {
+  L: 'low-flow species',
+  M: 'moderate-flow species',
+  H: 'high-flow species',
+};
+
+function resolveTurnoverBand(entries) {
+  if (!Array.isArray(entries) || entries.length === 0) {
+    return null;
+  }
+  let hasHigh = false;
+  let hasModerate = false;
+  let hasLow = false;
+  for (const entry of entries) {
+    const flow = entry?.species?.flow;
+    if (!flow) continue;
+    if (flow === 'high') {
+      hasHigh = true;
+    } else if (flow === 'moderate') {
+      hasModerate = true;
+    } else if (flow === 'low') {
+      hasLow = true;
+    }
+  }
+  if (hasHigh) {
+    return { key: 'H', range: TURNOVER_BANDS.H, label: FLOW_LABEL_BY_BAND.H };
+  }
+  if (hasModerate) {
+    return { key: 'M', range: TURNOVER_BANDS.M, label: FLOW_LABEL_BY_BAND.M };
+  }
+  if (hasLow) {
+    return { key: 'L', range: TURNOVER_BANDS.L, label: FLOW_LABEL_BY_BAND.L };
+  }
+  return null;
+}
+
+function buildFilteringState(state, tank, entries) {
+  const { sanitized, ratedTotal, deliveredTotal } = summarizeFilters(state.filters);
+  const turnover = computeTurnover(tank?.effectiveGallons ?? null, sanitized);
+  const hasFlowData = sanitized.some((filter) => Number.isFinite(filter.gph) && filter.gph > 0);
+  const stockCount = Array.isArray(entries) ? entries.length : 0;
+  const band = resolveTurnoverBand(entries);
+  const gallonsKnown = Number.isFinite(tank?.effectiveGallons) && tank.effectiveGallons > 0;
+
+  let statusTone = hasFlowData ? 'good' : 'neutral';
+  let statusText = hasFlowData
+    ? 'Turnover meets recommended flow.'
+    : 'Add filter flow to estimate turnover.';
+  let chip = null;
+  let warning = false;
+
+  if (hasFlowData && !gallonsKnown) {
+    statusTone = 'warn';
+    statusText = 'Select a tank to calculate turnover.';
+  }
+
+  if (hasFlowData && stockCount === 0 && gallonsKnown) {
+    statusTone = 'neutral';
+    statusText = 'No stock yet — turnover targets will apply once species are added.';
+  }
+
+  if (hasFlowData && stockCount > 0 && gallonsKnown) {
+    if (turnover <= 0) {
+      statusTone = 'warn';
+      statusText = 'Enter rated flow values to calculate turnover.';
+    } else if (turnover < MIN_TURNOVER_FLOOR) {
+      const text = 'Filtration too low: turnover <2×/h';
+      chip = { id: 'turnover-floor', tone: 'bad', text };
+      statusTone = 'bad';
+      statusText = text;
+      warning = true;
+    } else if (band && Array.isArray(band.range) && band.range.length >= 2) {
+      const targetLow = band.range[0];
+      if (Number.isFinite(targetLow) && turnover < targetLow) {
+        const flowLabel = band.label ?? 'current stock';
+        const text = `Turnover below ${targetLow}× target for ${flowLabel}`;
+        chip = { id: `turnover-low-${band.key}`, tone: 'warn', text };
+        statusTone = 'warn';
+        statusText = text;
+        warning = true;
+      }
+    }
+  }
+
+  return {
+    filters: sanitized,
+    ratedTotal,
+    deliveredTotal,
+    turnover,
+    hasData: hasFlowData,
+    status: { tone: statusTone, text: statusText },
+    band,
+    warning,
+    chip,
+    target: band ? { key: band.key, range: band.range } : null,
+  };
 }
 
 function createConditionItem({ key, label, range, actual, infoKey, severity, extra }) {
@@ -810,40 +1003,45 @@ function computeAggression(tank, entries, candidate) {
   };
 }
 
-function computeChips({ tank, candidate, entries, groupRule, salinityCheck, flowCheck, blackwaterCheck, bioload, conditions, aggression }) {
+function computeChips({ tank, candidate, entries, groupRule, salinityCheck, flowCheck, blackwaterCheck, bioload, conditions, aggression, filtering }) {
   const chips = [];
-  if (!candidate) return chips;
-  if (groupRule) {
-    chips.push({ tone: groupRule.severity === 'bad' ? 'bad' : 'warn', text: groupRule.message });
-  }
-  if (salinityCheck?.severity && salinityCheck.severity !== 'ok') {
-    chips.push({ tone: salinityCheck.severity === 'bad' ? 'bad' : 'warn', text: salinityCheck.reason });
-  }
-  if (flowCheck?.severity && flowCheck.severity !== 'ok') {
-    chips.push({ tone: flowCheck.severity === 'bad' ? 'bad' : 'warn', text: flowCheck.reason });
-  }
-  if (blackwaterCheck?.severity && blackwaterCheck.severity !== 'ok') {
-    chips.push({ tone: blackwaterCheck.severity === 'bad' ? 'bad' : 'warn', text: blackwaterCheck.reason });
-  }
-  if (bioload.severity !== 'ok') {
-    chips.push({ tone: bioload.severity === 'bad' ? 'bad' : 'warn', text: bioload.severity === 'bad' ? 'Capacity exceeded' : 'High capacity use' });
-  }
-  const aggressionState = aggression ?? candidate?.aggression ?? null;
-  if (aggressionState && Array.isArray(aggressionState.conflicts) && aggressionState.conflicts.length) {
-    for (const conflict of aggressionState.conflicts) {
-      if (!conflict || !conflict.message) continue;
-      const severity = typeof conflict.severity === 'string' ? conflict.severity.toLowerCase() : '';
-      const tone = (severity === 'error' || severity === 'high' || severity === 'danger' || severity === 'bad') ? 'bad' : 'warn';
-      const message = conflict.message || conflict.label || conflict.id;
-      if (!message) continue;
-      const text = `Aggression conflict: ${message}`;
-      const id = conflict.id || `aggr:${conflict.aId ?? ''}:${conflict.bId ?? ''}:${conflict.rule ?? message}`;
-      chips.push({ tone, text, kind: 'aggression', id });
+  if (candidate) {
+    if (groupRule) {
+      chips.push({ tone: groupRule.severity === 'bad' ? 'bad' : 'warn', text: groupRule.message });
+    }
+    if (salinityCheck?.severity && salinityCheck.severity !== 'ok') {
+      chips.push({ tone: salinityCheck.severity === 'bad' ? 'bad' : 'warn', text: salinityCheck.reason });
+    }
+    if (flowCheck?.severity && flowCheck.severity !== 'ok') {
+      chips.push({ tone: flowCheck.severity === 'bad' ? 'bad' : 'warn', text: flowCheck.reason });
+    }
+    if (blackwaterCheck?.severity && blackwaterCheck.severity !== 'ok') {
+      chips.push({ tone: blackwaterCheck.severity === 'bad' ? 'bad' : 'warn', text: blackwaterCheck.reason });
+    }
+    if (bioload.severity !== 'ok') {
+      chips.push({ tone: bioload.severity === 'bad' ? 'bad' : 'warn', text: bioload.severity === 'bad' ? 'Capacity exceeded' : 'High capacity use' });
+    }
+    const aggressionState = aggression ?? candidate?.aggression ?? null;
+    if (aggressionState && Array.isArray(aggressionState.conflicts) && aggressionState.conflicts.length) {
+      for (const conflict of aggressionState.conflicts) {
+        if (!conflict || !conflict.message) continue;
+        const severity = typeof conflict.severity === 'string' ? conflict.severity.toLowerCase() : '';
+        const tone = (severity === 'error' || severity === 'high' || severity === 'danger' || severity === 'bad') ? 'bad' : 'warn';
+        const message = conflict.message || conflict.label || conflict.id;
+        if (!message) continue;
+        const text = `Aggression conflict: ${message}`;
+        const id = conflict.id || `aggr:${conflict.aId ?? ''}:${conflict.bId ?? ''}:${conflict.rule ?? message}`;
+        chips.push({ tone, text, kind: 'aggression', id });
+      }
+    }
+    const conditionIssues = conditions.conditions.filter((item) => item.severity !== 'ok');
+    for (const condition of conditionIssues) {
+      chips.push({ tone: condition.severity === 'bad' ? 'bad' : 'warn', text: `${condition.label}: ${condition.hint}` });
     }
   }
-  const conditionIssues = conditions.conditions.filter((item) => item.severity !== 'ok');
-  for (const condition of conditionIssues) {
-    chips.push({ tone: condition.severity === 'bad' ? 'bad' : 'warn', text: `${condition.label}: ${condition.hint}` });
+
+  if (Array.isArray(entries) && entries.length > 0 && filtering?.chip) {
+    chips.push(filtering.chip);
   }
   return chips;
 }
@@ -948,8 +1146,21 @@ export function buildComputedState(state) {
   const aggression = computeAggression(tank, entries, candidate);
   const invertCheck = candidate ? evaluateInvertSafety(candidate.species, { water }) : { severity: 'ok' };
   const groupRule = candidate ? checkGroupRule(candidate, entries) : null;
+  const filtering = buildFilteringState(state, tank, entries);
 
-  const chips = computeChips({ tank, candidate, entries, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck, bioload, conditions, aggression });
+  const chips = computeChips({
+    tank,
+    candidate,
+    entries,
+    groupRule,
+    salinityCheck: conditions.salinityCheck,
+    flowCheck: conditions.flowCheck,
+    blackwaterCheck: conditions.blackwaterCheck,
+    bioload,
+    conditions,
+    aggression,
+    filtering,
+  });
   if (invertCheck.severity !== 'ok') {
     chips.push({ tone: invertCheck.severity === 'bad' ? 'bad' : 'warn', text: invertCheck.reason });
   }
@@ -969,6 +1180,7 @@ export function buildComputedState(state) {
     invertCheck,
     status,
     diagnostics,
+    filtering,
     turnover: turnoverBand(tank),
     stockCount: entries.length,
   };
