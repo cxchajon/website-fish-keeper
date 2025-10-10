@@ -80,6 +80,10 @@ const AERATION_SUBCATEGORY_SOURCE_FIELDS = [
   'category_key',
 ];
 
+const AERATION_GROUP_KEYS = ['air-pumps', 'airline-accessories', 'co2-accessories'];
+
+let hasWarnedUnknownAerationGroups = false;
+
 function slugifyId(value = '') {
   return String(value)
     .trim()
@@ -119,6 +123,34 @@ function deriveAerationSubcategory(item = {}) {
     }
   }
   return { key: '', rawValue: '' };
+}
+
+function groupAerationItems(items = []) {
+  const groups = AERATION_GROUP_KEYS.reduce((accumulator, key) => {
+    accumulator[key] = [];
+    return accumulator;
+  }, {});
+  const unknownItems = [];
+  const unknownKeys = new Set();
+
+  items.forEach((item) => {
+    const { key, rawValue } = deriveAerationSubcategory(item);
+    if (key && Object.prototype.hasOwnProperty.call(groups, key)) {
+      groups[key].push(item);
+      return;
+    }
+
+    unknownItems.push(item);
+    if (rawValue) {
+      unknownKeys.add(String(rawValue));
+    } else if (key) {
+      unknownKeys.add(String(key));
+    } else {
+      unknownKeys.add('[unknown]');
+    }
+  });
+
+  return { groups, unknownItems, unknownKeys };
 }
 
 function createGrid(items, context, onSelect, onAdd, emptyMessage = 'No matches found. Try adjusting your filters.') {
@@ -547,49 +579,23 @@ function createAerationSectionLegacy(options) {
 }
 
 function createGroupedAerationSection(options) {
-  const { items, context, onSelect, onAdd } = options;
+  const { items = [], context, onSelect, onAdd } = options;
   const container = createElement('div', { className: 'bucket-section aeration-section' });
-
-  if (!items.length) {
-    container.appendChild(createElement('div', { className: 'bucket-list aeration-subaccordion' }));
-    container.appendChild(createGrid(items, context, onSelect, onAdd));
-    return container;
-  }
-
-  const groups = AERATION_SUBCATEGORY_CONFIG.map((config) => ({
-    ...config,
-    items: [],
-  }));
-  const groupsByKey = new Map(groups.map((group) => [group.key, group]));
-  const unknownItems = [];
-  const unknownKeys = new Set();
-
-  items.forEach((item) => {
-    const { key, rawValue } = deriveAerationSubcategory(item);
-    const targetGroup = key ? groupsByKey.get(key) : undefined;
-    if (targetGroup) {
-      targetGroup.items.push(item);
-    } else {
-      unknownItems.push(item);
-      if (rawValue) {
-        unknownKeys.add(String(rawValue));
-      } else if (key) {
-        unknownKeys.add(key);
-      } else {
-        unknownKeys.add('[unknown]');
-      }
-    }
-  });
+  const { groups, unknownItems, unknownKeys } = groupAerationItems(items);
+  const hasAnyGrouped = AERATION_GROUP_KEYS.some((key) =>
+    Array.isArray(groups[key]) && groups[key].length > 0,
+  );
 
   const subAccordion = createElement('div', { className: 'bucket-list aeration-subaccordion' });
-  groups.forEach((group) => {
-    if (!group.items.length) {
+  AERATION_SUBCATEGORY_CONFIG.forEach((group) => {
+    const groupedItems = groups[group.key] ?? [];
+    if (!groupedItems.length) {
       return;
     }
     const subItemOptions = {
       id: group.id,
       label: group.label,
-      items: group.items,
+      items: groupedItems,
       context,
       onSelect,
       onAdd,
@@ -599,7 +605,7 @@ function createGroupedAerationSection(options) {
     }
     if (typeof group.renderContent === 'function') {
       subItemOptions.renderContent = () =>
-        group.renderContent({ items: group.items, context, onSelect, onAdd });
+        group.renderContent({ items: groupedItems, context, onSelect, onAdd });
     }
     subAccordion.appendChild(createAerationSubItem(subItemOptions));
   });
@@ -608,13 +614,13 @@ function createGroupedAerationSection(options) {
     container.appendChild(subAccordion);
   }
 
-  if (unknownItems.length > 0) {
+  if (unknownItems.length > 0 && !hasWarnedUnknownAerationGroups) {
     // eslint-disable-next-line no-console
     console.warn('Unknown Air & Aeration subcategory items', Array.from(unknownKeys));
-    container.appendChild(createGrid(unknownItems, context, onSelect, onAdd));
+    hasWarnedUnknownAerationGroups = true;
   }
 
-  if (!container.children.length) {
+  if (!hasAnyGrouped) {
     container.appendChild(createGrid(items, context, onSelect, onAdd));
   }
 
