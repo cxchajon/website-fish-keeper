@@ -537,6 +537,16 @@ body{
   gap:0;
 }
 
+.range__list--air{
+  gap:1.25rem;
+}
+
+@media (min-width:768px){
+  .range__list--air{
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  }
+}
+
 .range__subgroup{
   border:0;
   border-radius:0;
@@ -556,6 +566,10 @@ body{
 .range__subgroup-items{
   display:grid;
   gap:1.25rem;
+}
+
+.gear-card__body > .range--air{
+  grid-column:1 / -1;
 }
 
 .option{

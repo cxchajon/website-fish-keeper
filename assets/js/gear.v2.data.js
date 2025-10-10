@@ -517,6 +517,7 @@ const CSV_SOURCES = [
   { path: "/data/gear_filters_ranges.csv", category: "filters" },
   { path: "/data/gear_filters.csv", category: "filters" },
   { path: "/data/gear_lighting.csv", category: "lights" },
+  { path: "/data/gear_aeration.csv", category: "air" },
   { path: "/data/gear_substrate.csv", category: "substrate" },
   { path: "/data/gear_treatments.csv", category: "water_treatments" },
   { path: "/data/gear_food.csv", category: "food" },
@@ -926,6 +927,7 @@ function normalizeRow(row, fallbackCategory) {
   let groupLabel = (get('Group_Label') || get('group_label') || "").toString().trim();
   const groupTip = (get('Group_Tip') || get('group_tip') || "").toString().trim();
   const id = (get('Item_ID') || get('id') || "").toString().trim();
+  const bucket = (get('Bucket') || get('bucket') || "").toString().trim();
   const bucketKeyRaw = (get('bucket_key') || get('Bucket_Key') || "").toString().trim();
   const bucketLabel = (get('bucket_label') || get('Bucket_Label') || "").toString().trim();
   const bucketSortValue = toNumberOrBlank(get('bucket_sort') || get('Bucket_Sort'));
@@ -969,6 +971,19 @@ function normalizeRow(row, fallbackCategory) {
   }
   if (!groupLabel && tankRange) {
     groupLabel = tankRange;
+  }
+
+  if (category === 'air' && bucket) {
+    const bucketSlug = slugifyKey(bucket);
+    if (!groupId) {
+      groupId = bucketSlug ? `air-${bucketSlug}` : bucket;
+    }
+    if (!groupLabel) {
+      groupLabel = bucket;
+    }
+    if (!subgroup) {
+      subgroup = bucket;
+    }
   }
 
   if (!groupId && subgroup) {
@@ -1663,6 +1678,22 @@ function getItemsByCategory(normalized, category) {
   return normalized.get(category) || [];
 }
 
+function getAirItemKey(item = {}) {
+  const id = (item.id || item.product_id || item.productId || item.Item_ID || '').toString().trim().toLowerCase();
+  if (id) {
+    return id;
+  }
+  const href = (item.href || item.Amazon_Link || item.amazon_url || '').toString().trim().toLowerCase();
+  if (href) {
+    return href;
+  }
+  const title = (item.title || item.Product_Name || '').toString().trim().toLowerCase();
+  if (title) {
+    return title;
+  }
+  return '';
+}
+
 function buildGear(normalized, standsItems = []) {
   const heaters = getItemsByCategory(normalized, 'heaters');
   const filters = getItemsByCategory(normalized, 'filters');
@@ -1684,9 +1715,15 @@ function buildGear(normalized, standsItems = []) {
   const fertilizers = getItemsByCategory(normalized, 'fertilizers');
   const waterTreatments = getItemsByCategory(normalized, 'water_treatments');
   const food = getItemsByCategory(normalized, 'food');
+  const airSource = getItemsByCategory(normalized, 'air');
   const maintenanceSource = getItemsByCategory(normalized, 'maintenance_tools');
   const maintenance = [];
-  const airItems = [];
+  const airItems = Array.isArray(airSource) ? [...airSource] : [];
+  const airItemKeys = new Set(
+    airItems
+      .map((item) => getAirItemKey(item))
+      .filter((key) => key)
+  );
   const normalizeAirKey = (value = '') =>
     String(value || '')
       .toLowerCase()
@@ -1699,7 +1736,14 @@ function buildGear(normalized, standsItems = []) {
     const groupKey = normalizeAirKey(item.groupId || item.rangeId);
     const isAir = subgroupKey === 'air and aeration' || groupKey === 'maintenance_air';
     if (isAir) {
+      const key = getAirItemKey(item);
+      if (key && airItemKeys.has(key)) {
+        return;
+      }
       airItems.push({ ...item, category: 'air' });
+      if (key) {
+        airItemKeys.add(key);
+      }
     } else {
       maintenance.push(item);
     }
@@ -1707,6 +1751,14 @@ function buildGear(normalized, standsItems = []) {
   const extras = getItemsByCategory(normalized, 'extras');
   const stands = Array.isArray(standsItems) ? standsItems : [];
   const standRanges = buildStandRanges(stands);
+
+  const airGroups = buildGroups(airItems, undefined, 'air', AIR_GROUP_META);
+  const airOptions = airGroups.flatMap((group) =>
+    Array.isArray(group?.options) ? group.options.filter(Boolean) : []
+  );
+  const airPlaceholder = airOptions.length
+    ? ''
+    : airGroups.reduce((text, group) => text || (group?.placeholder || '').trim(), '') || 'Air gear picks coming soon.';
 
   const gear = {
     heaters: {
@@ -1725,7 +1777,9 @@ function buildGear(normalized, standsItems = []) {
     },
     air: {
       match: 'none',
-      accordions: buildGroups(airItems, undefined, 'air', AIR_GROUP_META)
+      groups: airGroups,
+      options: airOptions,
+      placeholder: airPlaceholder
     },
     substrate: {
       match: 'gallons',

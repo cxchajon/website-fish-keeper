@@ -826,6 +826,40 @@
     return wrap;
   }
 
+  function renderAirProducts(groups = [], options = {}){
+    const placeholderText = String(options?.placeholder || '').trim();
+    const allOptions = groups.flatMap((group) =>
+      Array.isArray(group?.options) ? group.options.filter(Boolean) : []
+    );
+    const fallbackPlaceholder = groups.reduce((text, group) => text || (group?.placeholder || '').trim(), '');
+    const placeholder = allOptions.length
+      ? ''
+      : placeholderText || fallbackPlaceholder || 'Air gear picks coming soon.';
+
+    const range = {
+      id: 'air-products',
+      label: '',
+      rangeLabel: '',
+      placeholder,
+      options: allOptions
+    };
+
+    const block = renderRangeBlock(range, 'air', {
+      includeGearCard: false,
+      showTitle: false,
+      showTip: false,
+      listClass: 'range__list--air',
+      context: 'air'
+    });
+
+    if (block) {
+      block.classList.add('range--air');
+      block.dataset.ignoreMatch = '1';
+    }
+
+    return block;
+  }
+
   function hasLiveOptions(range){
     if (!range) return false;
     const directOptions = Array.isArray(range.options) ? range.options : [];
@@ -1285,15 +1319,11 @@
       }
     }
     else if (kind === 'air') {
-      const groups = Array.isArray(GEAR.air?.accordions)
-        ? GEAR.air.accordions.filter(Boolean)
+      const groups = Array.isArray(GEAR.air?.groups)
+        ? GEAR.air.groups.filter(Boolean)
         : [];
-      blocks = groups.map((group, index) =>
-        renderAccordionGroup(group, index, {
-          sectionKey: 'air',
-          rangeClass: 'range--maintenance'
-        })
-      );
+      const airBlock = renderAirProducts(groups, { placeholder: GEAR.air?.placeholder });
+      blocks = airBlock ? [airBlock] : [];
     }
     else if (kind === 'lights') {
       const ranges = Array.isArray(GEAR.lights?.ranges) ? [...GEAR.lights.ranges] : [];
