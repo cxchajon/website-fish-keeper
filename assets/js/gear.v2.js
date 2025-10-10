@@ -1069,127 +1069,145 @@
       });
     });
 
-    const baseRange = {
-      id: 'air-products',
-      label: '',
-      rangeLabel: '',
-      placeholder
-    };
+    const fragment = document.createDocumentFragment();
 
-    const structuredBlock = renderRangeBlock(baseRange, 'air', {
-      includeGearCard: false,
-      ignoreMatch: true,
-      showTitle: false,
-      showTip: false
-    });
-
-    if (!structuredBlock) {
-      return null;
-    }
-
-    structuredBlock.classList.add('range--air');
-
-    let container = structuredBlock.querySelector('.air-products__container');
-    if (container) {
-      container.innerHTML = '';
-    } else {
-      container = el('div',{ class:'air-products__container' });
-      structuredBlock.appendChild(container);
-    }
-
-    const accordion = el('div',{ class:'air-subaccordion' });
-    container.appendChild(accordion);
-
-    const bindToggle = (trigger, panel, wrapper) => {
-      trigger.addEventListener('click', () => {
-        const expanded = trigger.getAttribute('aria-expanded') === 'true';
-        const nextExpanded = !expanded;
-        trigger.setAttribute('aria-expanded', String(nextExpanded));
-        const icon = trigger.querySelector('.air-subaccordion__icon');
-        if (nextExpanded) {
-          panel.removeAttribute('hidden');
-          panel.setAttribute('aria-hidden', 'false');
-          if (wrapper) wrapper.classList?.add('is-open');
-          if (icon) icon.textContent = '▾';
-        } else {
-          panel.setAttribute('hidden', '');
-          panel.setAttribute('aria-hidden', 'true');
-          if (wrapper) wrapper.classList?.remove('is-open');
-          if (icon) icon.textContent = '▸';
+    const createRangeBlock = (rangeId) => {
+      const block = renderRangeBlock(
+        {
+          id: rangeId,
+          label: '',
+          rangeLabel: '',
+          options: [],
+          placeholder
+        },
+        'air',
+        {
+          includeGearCard: false,
+          ignoreMatch: true,
+          showTitle: false,
+          showTip: false,
+          listClass: 'range__list--flat'
         }
-      });
+      );
+      if (block) {
+        block.classList.add('range--air-subgroup');
+      }
+      return block;
     };
 
-    AERATION_GROUP_CONFIG.forEach((group) => {
+    AERATION_GROUP_CONFIG.forEach((group, index) => {
       const items = grouped.get(group.key) || [];
-      const hasItems = items.length > 0;
-      const baseId = `${group.id || group.key}-subaccordion`;
-      const triggerId = `${baseId}-trigger`;
-      const panelId = `${baseId}-panel`;
-      const wrapper = el('div',{ class:'air-subaccordion__item' });
-      const triggerAttrs = {
-        class:'air-subaccordion__trigger',
-        type:'button',
-        id:triggerId,
-        'aria-expanded':'false'
-      };
-      if (hasItems) {
-        triggerAttrs['aria-controls'] = panelId;
+      const count = items.length;
+      const hasItems = count > 0;
+      const section = renderAccordionGroup(
+        {
+          id: group.id || group.key,
+          label: group.label,
+          options: [],
+          placeholder
+        },
+        index,
+        {
+          sectionKey: 'air',
+          sectionClass: 'gear-subcard gear-subcard--substrate gear-subcard--air',
+          headerClass: 'gear-card__header gear-subcard__header accordion-header',
+          bodyClass: 'gear-card__body gear-subcard__body accordion-panel',
+          rangeOptions: {
+            includeGearCard: false,
+            ignoreMatch: true,
+            showTitle: false,
+            showTip: false
+          }
+        }
+      );
+
+      if (!section) {
+        return;
+      }
+
+      section.dataset.airGroup = group.key;
+      section.dataset.optionCount = String(count);
+      if (!hasItems) {
+        section.dataset.empty = '1';
       } else {
-        triggerAttrs['aria-disabled'] = 'true';
-        triggerAttrs.disabled = '';
+        section.removeAttribute('data-empty');
       }
-      const trigger = el('button', triggerAttrs);
-      trigger.appendChild(el('span',{ class:'air-subaccordion__label' }, group.label));
-      if (hasItems && group.showCount !== false) {
-        trigger.appendChild(
-          el(
-            'span',
-            { class:'air-subaccordion__count' },
-            `${items.length} ${items.length === 1 ? 'pick' : 'picks'}`
-          )
-        );
-      }
-      trigger.appendChild(el('span',{ class:'air-subaccordion__icon','aria-hidden':'true' },'▸'));
-      wrapper.appendChild(trigger);
 
-      if (hasItems) {
-        const panel = el('div',{
-          class:'air-subaccordion__panel',
-          id:panelId,
-          role:'region',
-          'aria-labelledby':triggerId,
-          hidden:'',
-          'aria-hidden':'true'
-        });
-
-        let content = null;
-        if (group.key === 'airline-accessories') {
-          const orderedAccessories = orderByWhitelist(items, AIRLINE_ACCESSORY_WHITELIST);
-          content = renderAccessoryGrid(orderedAccessories);
-        } else if (group.key === 'co2-accessories') {
-          const orderedAccessories = orderAccessoryItems(items);
-          content = renderAccessoryGrid(orderedAccessories);
+      const header = section.querySelector('[data-accordion="toggle"]');
+      const body = section.querySelector('.gear-card__body');
+      if (header) {
+        if (!hasItems) {
+          header.setAttribute('aria-disabled', 'true');
+          header.setAttribute('tabindex', '-1');
         } else {
-          const whitelist = group.key === 'air-pumps' ? AIR_PUMP_WHITELIST : [];
-          const orderedItems = orderByWhitelist(items, whitelist);
-          const list = el('div',{ class:'range__list range__list--air air-pumps__list' });
-          orderedItems.forEach((option) => {
-            const row = createOptionRow(option, { context: 'air' });
-            if (row) list.appendChild(row);
-          });
-          content = list;
+          header.removeAttribute('aria-disabled');
+          header.removeAttribute('tabindex');
         }
-
-        if (content) {
-          panel.appendChild(content);
+        header.setAttribute('data-count', String(count));
+        const chevron = header.querySelector('.chevron');
+        if (chevron) {
+          const meta = el('span', { class: 'gear-subcard__meta' });
+          if (hasItems && group.showCount !== false) {
+            const countLabel = `${count} ${count === 1 ? 'pick' : 'picks'}`;
+            meta.appendChild(el('span', { class: 'gear-subcard__count' }, countLabel));
+          }
+          meta.appendChild(chevron);
+          header.appendChild(meta);
         }
-
-        bindToggle(trigger, panel, wrapper);
-        wrapper.appendChild(panel);
       }
 
-      accordion.appendChild(wrapper);
+      if (!body) {
+        fragment.appendChild(section);
+        return;
+      }
+
+      body.innerHTML = '';
+
+      if (!hasItems) {
+        const emptyMessage = placeholder || 'Air & Aeration picks coming soon.';
+        body.appendChild(el('p', { class: 'range__placeholder' }, emptyMessage));
+        fragment.appendChild(section);
+        return;
+      }
+
+      const rangeId = `${group.id || group.key}-range`;
+      const rangeBlock = createRangeBlock(rangeId);
+      if (rangeBlock) {
+        const list = rangeBlock.querySelector('.range__list');
+        if (list) {
+          list.innerHTML = '';
+          if (group.key === 'airline-accessories') {
+            const orderedAccessories = orderByWhitelist(items, AIRLINE_ACCESSORY_WHITELIST);
+            const grid = renderAccessoryGrid(orderedAccessories);
+            if (grid) {
+              grid.classList.add('air-accessory-grid');
+              list.appendChild(grid);
+            }
+          } else if (group.key === 'co2-accessories') {
+            const orderedAccessories = orderAccessoryItems(items);
+            const grid = renderAccessoryGrid(orderedAccessories);
+            if (grid) {
+              grid.classList.add('air-accessory-grid');
+              list.appendChild(grid);
+            }
+          } else {
+            const whitelist = group.key === 'air-pumps' ? AIR_PUMP_WHITELIST : [];
+            const orderedItems = orderByWhitelist(items, whitelist);
+            orderedItems.forEach((option) => {
+              const row = createOptionRow(option, { context: 'air' });
+              if (row) list.appendChild(row);
+            });
+          }
+
+          if (!list.childElementCount) {
+            const emptyMessage = placeholder || 'Air & Aeration picks coming soon.';
+            list.appendChild(el('p', { class: 'range__placeholder' }, emptyMessage));
+          }
+        }
+        body.appendChild(rangeBlock);
+      }
+
+      fragment.appendChild(section);
     });
 
     if (unknownKeys.size && !hasWarnedUnknownAerationGroups) {
@@ -1197,7 +1215,11 @@
       hasWarnedUnknownAerationGroups = true;
     }
 
-    return structuredBlock;
+    if (!fragment.childNodes.length) {
+      return el('p', { class: 'range__placeholder' }, placeholder || 'Air & Aeration picks coming soon.');
+    }
+
+    return fragment;
   }
 
   function hasLiveOptions(range){
