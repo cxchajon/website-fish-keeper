@@ -547,6 +547,84 @@ body{
   }
 }
 
+.air-products__container{
+  display:grid;
+  gap:1.25rem;
+}
+
+@media (min-width:768px){
+  .air-products__container{
+    gap:1.5rem;
+  }
+}
+
+.air-subaccordion{
+  border-top:1px solid var(--line);
+}
+
+.air-subaccordion__item{
+  border-bottom:1px solid var(--line);
+}
+
+.air-subaccordion__trigger{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 0;
+  border:0;
+  background:transparent;
+  color:inherit;
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+}
+
+.air-subaccordion__trigger:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+
+.air-subaccordion__label{
+  font-weight:600;
+  flex:1 1 auto;
+}
+
+.air-subaccordion__count{
+  font-size:0.9rem;
+  color:var(--muted);
+}
+
+.air-subaccordion__icon{
+  margin-left:auto;
+  font-size:1rem;
+  line-height:1;
+}
+
+.air-subaccordion__panel[hidden]{
+  display:none;
+}
+
+.air-subaccordion__panel{
+  padding:12px 0 16px;
+}
+
+.air-pumps__list,
+.air-accessories__list{
+  gap:1.25rem;
+}
+
+.air-accessories__list{
+  padding-bottom:4px;
+}
+
+.air-accessories-divider{
+  height:1px;
+  background:var(--line);
+  margin:4px 0;
+  opacity:0.65;
+}
+
 .range__subgroup{
   border:0;
   border-radius:0;
