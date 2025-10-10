@@ -401,7 +401,13 @@ const MAINTENANCE_SUBGROUP_ORDER = [
 const AIR_GROUP_META = new Map([
   [
     'maintenance_air',
-    {}
+    {
+      children: [
+        { id: 'air-pumps', label: 'Air Pumps' },
+        { id: 'air-pump-accessories', label: 'Air Pump Accessories' },
+        { id: 'co2-accessories', label: 'CO₂ Accessories' }
+      ]
+    }
   ]
 ]);
 
@@ -1340,7 +1346,7 @@ function buildGroups(items, tipsMap, category, metaMap) {
     if (!map.has(id)) {
       const finalId = staticMeta.id || id;
       const tip = tipsMap?.get(id) || item.groupTip || staticMeta.tip || "";
-      map.set(id, {
+      const baseGroup = {
         id: finalId,
         originalId: id,
         label: item.groupLabel || staticMeta.label || id,
@@ -1352,7 +1358,37 @@ function buildGroups(items, tipsMap, category, metaMap) {
         infoButtonText: staticMeta.infoButtonText || "",
         options: [],
         placeholder: ''
-      });
+      };
+
+      const rawChildren = Array.isArray(staticMeta.children) ? staticMeta.children : [];
+      const normalizedChildren = rawChildren
+        .map((child, index) => {
+          if (!child) return null;
+          const label = String(child.label || '').trim();
+          const fallbackId = `${finalId}-child-${index + 1}`;
+          const rawId =
+            String(
+              child.id ||
+                child.slug ||
+                child.domId ||
+                child.domID ||
+                child.dom_id ||
+                ''
+            ).trim();
+          const childId = slugifyKey(rawId || label) || slugifyKey(fallbackId) || fallbackId;
+          return {
+            ...child,
+            id: childId,
+            label
+          };
+        })
+        .filter(Boolean);
+
+      if (normalizedChildren.length) {
+        baseGroup.children = normalizedChildren;
+      }
+
+      map.set(id, baseGroup);
       order.push(id);
     }
     const group = map.get(id);

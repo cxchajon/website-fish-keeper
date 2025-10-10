@@ -873,6 +873,126 @@
       return flat;
     };
 
+    const staticGroups = groups
+      .map((group, groupIndex) => {
+        const children = Array.isArray(group?.children) ? group.children.filter(Boolean) : [];
+        if (!children.length) return null;
+        const parentId = String(group?.id || group?.originalId || `air-group-${groupIndex + 1}`);
+        return { parentId, children };
+      })
+      .filter(Boolean);
+
+    if (staticGroups.length) {
+      const slugifyValue = (value) =>
+        String(value || '')
+          .trim()
+          .toLowerCase()
+          .replace(/&/g, 'and')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '');
+
+      const ensureUniqueId = (() => {
+        const seen = new Set();
+        return (value, fallback) => {
+          const base = slugifyValue(value) || slugifyValue(fallback) || 'air-child';
+          let candidate = base;
+          let suffix = 1;
+          while (seen.has(candidate)) {
+            candidate = `${base}-${suffix++}`;
+          }
+          seen.add(candidate);
+          return candidate;
+        };
+      })();
+
+      const normalizedChildren = [];
+      staticGroups.forEach((groupEntry, groupIndex) => {
+        const parentSlug = slugifyValue(groupEntry.parentId) || `air-group-${groupIndex + 1}`;
+        groupEntry.children.forEach((child, childIndex) => {
+          if (!child) return;
+          const label = String(child.label || '').trim() || `Group ${groupIndex + 1}-${childIndex + 1}`;
+          const idSource =
+            child.id ||
+            child.slug ||
+            child.domId ||
+            child.domID ||
+            child.dom_id ||
+            '';
+          const childSlug = slugifyValue(idSource) || slugifyValue(label) || `child-${groupIndex + 1}-${childIndex + 1}`;
+          const desired = [parentSlug, childSlug].filter(Boolean).join('-');
+          const baseId = ensureUniqueId(desired, `${parentSlug}-child-${childIndex + 1}`);
+          normalizedChildren.push({ label, baseId });
+        });
+      });
+
+      const flatBlock = buildFlatBlock();
+      if (!flatBlock) {
+        return null;
+      }
+
+      const listContainer =
+        flatBlock.querySelector('.range__list') ||
+        flatBlock.querySelector('.range__list--air');
+      const container = listContainer || el('div', { class: 'range__list range__list--air' });
+      if (!listContainer) {
+        flatBlock.appendChild(container);
+      }
+
+      if (normalizedChildren.length) {
+        const accordion = el('div', { class: 'air-subaccordion' });
+        normalizedChildren.forEach((child) => {
+          const item = el('div', { class: 'air-subaccordion__item' });
+          const triggerId = `${child.baseId}-trigger`;
+          const panelId = `${child.baseId}-panel`;
+          const trigger = el('button', {
+            class: 'air-subaccordion__trigger',
+            type: 'button',
+            id: triggerId,
+            'aria-controls': panelId,
+            'aria-expanded': 'false'
+          });
+          trigger.appendChild(el('span', { class: 'air-subaccordion__label' }, child.label));
+          const icon = el('span', { class: 'air-subaccordion__icon', 'aria-hidden': 'true' }, '▸');
+          trigger.appendChild(icon);
+          const panel = el('div', {
+            class: 'air-subaccordion__panel',
+            id: panelId,
+            role: 'region',
+            'aria-labelledby': triggerId,
+            hidden: '',
+            'aria-hidden': 'true'
+          });
+
+          trigger.addEventListener('click', () => {
+            const expanded = trigger.getAttribute('aria-expanded') === 'true';
+            const nextExpanded = !expanded;
+            trigger.setAttribute('aria-expanded', String(nextExpanded));
+            if (nextExpanded) {
+              panel.removeAttribute('hidden');
+              panel.setAttribute('aria-hidden', 'false');
+              item.classList?.add('is-open');
+              icon.textContent = '▾';
+            } else {
+              panel.setAttribute('hidden', '');
+              panel.setAttribute('aria-hidden', 'true');
+              item.classList?.remove('is-open');
+              icon.textContent = '▸';
+            }
+          });
+
+          item.appendChild(trigger);
+          item.appendChild(panel);
+          accordion.appendChild(item);
+        });
+
+        if (accordion.childElementCount) {
+          container.insertBefore(accordion, container.firstChild || null);
+        }
+      }
+
+      return flatBlock;
+    }
+
     if (!allOptions.length) {
       return buildFlatBlock();
     }
