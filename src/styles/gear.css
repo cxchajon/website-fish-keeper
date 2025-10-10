@@ -531,6 +531,16 @@ main {
   gap: 24px;
 }
 
+.aeration-subaccordion {
+  border-top: 1px solid var(--border);
+}
+
+.aeration-accessories-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 0 6px;
+}
+
 .aeration-group {
   display: grid;
   gap: 12px;

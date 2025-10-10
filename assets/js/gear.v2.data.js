@@ -912,7 +912,7 @@ function normalizeRow(row, fallbackCategory) {
   let category = normalizeCategoryKey(categoryRaw);
   let rangeId = (get('Range_ID') || get('range_id') || "").toString().trim();
   let groupId = (get('Group_ID') || get('group_id') || rangeId || "").toString().trim();
-  const subgroup = (get('subgroup') || get('Subgroup') || "").toString().trim();
+  let subgroup = (get('subgroup') || get('Subgroup') || "").toString().trim();
   const tankRange = (get('tank_range') || get('Tank_Range') || "").toString().trim();
   const tanksize = (get('tanksize') || get('Tank_Size') || "").toString().trim();
   const length = (get('length') || get('Length') || "").toString().trim();

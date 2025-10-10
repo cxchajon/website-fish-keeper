@@ -16,14 +16,6 @@ const FILTRATION_TABS = [
 const AERATION_INFO =
   'Air pumps and airstones boost oxygenation, stabilize gas exchange, and provide gentle circulation. Use check valves to prevent back-siphon, splitters/manifolds for multiple lines, and consider battery backup for power outages.';
 
-const AERATION_BUCKETS = [
-  { id: 'air-pumps', label: 'Air Pumps' },
-  { id: 'airstones-diffusers', label: 'Airstones & Diffusers' },
-  { id: 'check-valves-backflow', label: 'Check Valves & Backflow' },
-  { id: 'airline-manifolds', label: 'Airline & Manifolds' },
-  { id: 'backup-power-accessories', label: 'Backup Power & Accessories' },
-];
-
 function createGrid(items, context, onSelect, onAdd, emptyMessage = 'No matches found. Try adjusting your filters.') {
   if (!items.length) {
     return EmptyState(emptyMessage);
@@ -175,14 +167,15 @@ function normaliseAerationItem(item) {
   next.rel = (next.rel ?? '').trim() || 'sponsored noopener noreferrer';
   next.product_id = next.product_id ?? next.Product_ID ?? next.Item_ID ?? '';
   const bucketRaw = next.Bucket ?? next.bucket ?? next.Subcategory ?? next.subcategory ?? '';
-  const bucketMatch = AERATION_BUCKETS.find(
-    (bucket) => bucket.label.toLowerCase() === String(bucketRaw).trim().toLowerCase(),
-  );
-  if (!bucketMatch) {
-    return null;
-  }
-  next.bucket = bucketMatch.label;
-  next.bucketId = bucketMatch.id;
+  next.bucket = String(bucketRaw).trim();
+  const categoryKey =
+    next.Item_Category ??
+    next.item_category ??
+    next.Category_Key ??
+    next.category_key ??
+    next.category ??
+    '';
+  next.itemCategory = String(categoryKey).trim().toLowerCase() || 'air-accessory';
   return next;
 }
 
@@ -195,29 +188,84 @@ function createAerationSection(options) {
     return container;
   }
 
-  const buckets = AERATION_BUCKETS.map((bucket) => ({
-    ...bucket,
-    items: items.filter((item) => item.bucketId === bucket.id),
-  })).filter((bucket) => bucket.items.length > 0);
+  const pumps = items.filter((item) => item.itemCategory === 'air-pump');
+  const accessories = items.filter((item) => item.itemCategory !== 'air-pump');
 
-  if (!buckets.length) {
-    container.appendChild(createGrid(items, context, onSelect, onAdd));
-    return container;
-  }
+  if (pumps.length > 0) {
+    const subAccordion = createElement('div', { className: 'bucket-list aeration-subaccordion' });
+    const baseId = 'air-pumps-subaccordion';
+    const triggerId = `${baseId}-trigger`;
+    const panelId = `${baseId}-panel`;
 
-  buckets.forEach(({ id, label, items: bucketItems }) => {
-    const group = createElement('section', {
-      className: 'aeration-group',
-      attrs: { id: `aeration-${id}` },
-    });
-
-    group.append(
-      createElement('h3', { className: 'aeration-group__title', text: label }),
-      createGrid(bucketItems, context, onSelect, onAdd),
+    const trigger = createElement(
+      'button',
+      {
+        className: 'bucket-list__trigger',
+        attrs: {
+          type: 'button',
+          id: triggerId,
+          'aria-controls': panelId,
+          'aria-expanded': 'false',
+        },
+      },
+      [
+        createElement('span', { className: 'bucket-list__label', text: 'Air Pumps' }),
+        createElement('span', {
+          className: 'bucket-list__count',
+          text: `${pumps.length} ${pumps.length === 1 ? 'pick' : 'picks'}`,
+        }),
+        createElement('span', { className: 'bucket-list__icon', attrs: { 'aria-hidden': 'true' }, text: '▸' }),
+      ],
     );
 
-    container.appendChild(group);
-  });
+    const panel = createElement('div', {
+      className: 'bucket-list__panel',
+      attrs: {
+        id: panelId,
+        role: 'region',
+        'aria-labelledby': triggerId,
+        hidden: '',
+        'aria-hidden': 'true',
+      },
+    });
+
+    panel.appendChild(createGrid(pumps, context, onSelect, onAdd));
+
+    trigger.addEventListener('click', () => {
+      const expanded = trigger.getAttribute('aria-expanded') === 'true';
+      const nextExpanded = !expanded;
+      trigger.setAttribute('aria-expanded', String(nextExpanded));
+      const icon = trigger.querySelector('.bucket-list__icon');
+      if (nextExpanded) {
+        panel.removeAttribute('hidden');
+        panel.setAttribute('aria-hidden', 'false');
+        if (icon) {
+          icon.textContent = '▾';
+        }
+      } else {
+        panel.setAttribute('hidden', '');
+        panel.setAttribute('aria-hidden', 'true');
+        if (icon) {
+          icon.textContent = '▸';
+        }
+      }
+    });
+
+    const item = createElement('div', { className: 'bucket-list__item' }, [trigger, panel]);
+    subAccordion.appendChild(item);
+    container.appendChild(subAccordion);
+  }
+
+  if (accessories.length > 0) {
+    if (pumps.length > 0) {
+      container.appendChild(createElement('div', { className: 'aeration-accessories-divider', attrs: { 'aria-hidden': 'true' } }));
+    }
+    container.appendChild(createGrid(accessories, context, onSelect, onAdd));
+  }
+
+  if (!pumps.length && !accessories.length) {
+    container.appendChild(createGrid(items, context, onSelect, onAdd));
+  }
 
   return container;
 }
