@@ -65,6 +65,14 @@
     extras: 'extras'
   };
 
+  const AIR_PUMP_WHITELIST = [
+    'hygger Quiet Mini Aquarium Air Pump HG-811',
+    'Tetra Whisper AP150 Aquarium Air Pump',
+    'HITOP 4W 110GPH Powerful Aquarium Air Pump: Quiet 2-outlets Aquarium Aerator, Adjustable Fish Tank Air Pump with Accessories, for 20-200 Gallon Tank',
+    'hygger Aquarium Air Pump, Ultra Quiet Oxygen Aerator with Air Stone Airline Tubing Check Valve, Aquarium Fish Tank Air Bubbler for 3 to 79 Gallon Tank and Bucket',
+    'hygger Aquarium Air Pump, Quiet Adjustable Fish Tank Air Pump, 4W/7W/11W Powerful Oxygen Aerator Dual Stainless Steel Outlets with Air Stone Bubbler for Small Medium Large Fish Tank, Hydroponic'
+  ];
+
   function toDataSectionKey(sectionKey){
     const key = String(sectionKey || '');
     return DATA_SECTION_ALIASES[key] || key;
@@ -844,20 +852,218 @@
       options: allOptions
     };
 
-    const block = renderRangeBlock(range, 'air', {
-      includeGearCard: false,
-      showTitle: false,
-      showTip: false,
-      listClass: 'range__list--air',
-      context: 'air'
-    });
+    const buildFlatBlock = () => {
+      const flat = renderRangeBlock(range, 'air', {
+        includeGearCard: false,
+        showTitle: false,
+        showTip: false,
+        listClass: 'range__list--air',
+        context: 'air'
+      });
+      if (flat) {
+        flat.classList.add('range--air');
+        flat.dataset.ignoreMatch = '1';
+      }
+      return flat;
+    };
 
-    if (block) {
-      block.classList.add('range--air');
-      block.dataset.ignoreMatch = '1';
+    if (!allOptions.length) {
+      return buildFlatBlock();
     }
 
-    return block;
+    const normaliseTitle = (value) =>
+      String(value || '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+
+    const optionLookup = new Map();
+    allOptions.forEach((option) => {
+      const title = option?.title || option?.label || '';
+      const key = normaliseTitle(title);
+      if (!key || optionLookup.has(key)) {
+        return;
+      }
+      optionLookup.set(key, {
+        option,
+        canonicalTitle: String(title || ''),
+        canonicalHref: String((option?.href || '').trim()),
+        canonicalNotes: String(option?.notes ?? option?.note ?? '')
+      });
+    });
+
+    const airPumps = [];
+    const missingTitles = [];
+    AIR_PUMP_WHITELIST.forEach((title) => {
+      const record = optionLookup.get(normaliseTitle(title));
+      if (record) {
+        airPumps.push(record.option);
+      } else {
+        missingTitles.push(title);
+      }
+    });
+
+    const pumpKeySet = new Set(
+      airPumps.map((option) => normaliseTitle(option?.title || option?.label || ''))
+    );
+    const airAccessories = allOptions.filter(
+      (option) => !pumpKeySet.has(normaliseTitle(option?.title || option?.label || ''))
+    );
+
+    const guardErrors = [];
+
+    if (missingTitles.length) {
+      guardErrors.push(`Missing pump records: ${missingTitles.join(', ')}`);
+    }
+
+    if (airPumps.length !== AIR_PUMP_WHITELIST.length) {
+      guardErrors.push(
+        `Expected ${AIR_PUMP_WHITELIST.length} air pumps but found ${airPumps.length}.`
+      );
+    }
+
+    airPumps.forEach((pump, index) => {
+      const expectedTitle = AIR_PUMP_WHITELIST[index];
+      const pumpTitle = String(pump?.title || pump?.label || '').trim();
+      if (pumpTitle !== expectedTitle) {
+        guardErrors.push(
+          `Title mismatch for pump at position ${index + 1}: expected "${expectedTitle}" but received "${pumpTitle}".`
+        );
+      }
+      const record = optionLookup.get(normaliseTitle(expectedTitle));
+      if (record) {
+        const pumpHref = String((pump?.href || '').trim());
+        if (pumpHref !== record.canonicalHref) {
+          guardErrors.push(`URL drift detected for "${expectedTitle}".`);
+        }
+        const pumpNotes = String(pump?.notes ?? pump?.note ?? '');
+        if (record.canonicalNotes && pumpNotes !== record.canonicalNotes) {
+          guardErrors.push(`Notes text mismatch for "${expectedTitle}".`);
+        }
+        const description = (record.canonicalNotes || '').trim();
+        if (!description) {
+          guardErrors.push(`Missing description for "${expectedTitle}".`);
+        }
+      }
+    });
+
+    const duplicateAccessories = airAccessories.filter((option) =>
+      pumpKeySet.has(normaliseTitle(option?.title || option?.label || ''))
+    );
+    if (duplicateAccessories.length) {
+      guardErrors.push('Duplicate pump entries detected in accessories list.');
+    }
+
+    if (guardErrors.length) {
+      if (typeof console !== 'undefined') {
+        // eslint-disable-next-line no-console
+        console.error('Air Pumps sub-accordion aborted due to data integrity issues:', guardErrors);
+      }
+      return buildFlatBlock();
+    }
+
+    const structuredBlock = renderRangeBlock(
+      { ...range, options: [] },
+      'air',
+      {
+        includeGearCard: false,
+        ignoreMatch: true,
+        showTitle: false,
+        showTip: false
+      }
+    );
+
+    if (!structuredBlock) {
+      return buildFlatBlock();
+    }
+
+    structuredBlock.classList.add('range--air');
+
+    let container = structuredBlock.querySelector('.range__list');
+    if (container) {
+      container.className = 'air-products__container';
+      container.innerHTML = '';
+    } else {
+      container = el('div',{ class:'air-products__container' });
+      structuredBlock.appendChild(container);
+    }
+
+    if (airPumps.length) {
+      const baseId = 'air-pumps-subaccordion';
+      const triggerId = `${baseId}-trigger`;
+      const panelId = `${baseId}-panel`;
+
+      const subAccordion = el('div',{ class:'air-subaccordion' });
+      const item = el('div',{ class:'air-subaccordion__item' });
+      const trigger = el('button',{
+        class:'air-subaccordion__trigger',
+        type:'button',
+        id:triggerId,
+        'aria-controls':panelId,
+        'aria-expanded':'false'
+      });
+      trigger.appendChild(el('span',{ class:'air-subaccordion__label' },'Air Pumps'));
+      trigger.appendChild(
+        el(
+          'span',
+          { class:'air-subaccordion__count' },
+          `${airPumps.length} ${airPumps.length === 1 ? 'pick' : 'picks'}`
+        )
+      );
+      trigger.appendChild(el('span',{ class:'air-subaccordion__icon','aria-hidden':'true' },'▸'));
+
+      const panel = el('div',{
+        class:'air-subaccordion__panel',
+        id:panelId,
+        role:'region',
+        'aria-labelledby':triggerId,
+        hidden:'',
+        'aria-hidden':'true'
+      });
+      const pumpList = el('div',{ class:'range__list range__list--air air-pumps__list' });
+      airPumps.forEach((pump) => {
+        const row = createOptionRow(pump, { context: 'air' });
+        if (row) pumpList.appendChild(row);
+      });
+      panel.appendChild(pumpList);
+
+      trigger.addEventListener('click', () => {
+        const expanded = trigger.getAttribute('aria-expanded') === 'true';
+        const nextExpanded = !expanded;
+        trigger.setAttribute('aria-expanded', String(nextExpanded));
+        const icon = trigger.querySelector('.air-subaccordion__icon');
+        if (nextExpanded) {
+          panel.removeAttribute('hidden');
+          panel.setAttribute('aria-hidden', 'false');
+          if (icon) icon.textContent = '▾';
+        } else {
+          panel.setAttribute('hidden', '');
+          panel.setAttribute('aria-hidden', 'true');
+          if (icon) icon.textContent = '▸';
+        }
+      });
+
+      item.appendChild(trigger);
+      item.appendChild(panel);
+      subAccordion.appendChild(item);
+      container.appendChild(subAccordion);
+    }
+
+    if (airAccessories.length) {
+      if (airPumps.length) {
+        container.appendChild(el('div',{ class:'air-accessories-divider', 'aria-hidden':'true' }));
+      }
+      const accessoriesList = el('div',{ class:'range__list range__list--air air-accessories__list' });
+      airAccessories.forEach((accessory) => {
+        const row = createOptionRow(accessory, { context: 'air' });
+        if (row) accessoriesList.appendChild(row);
+      });
+      container.appendChild(accessoriesList);
+    } else if (placeholder) {
+      container.appendChild(el('p',{ class:'range__placeholder' }, placeholder));
+    }
+
+    return structuredBlock;
   }
 
   function hasLiveOptions(range){
