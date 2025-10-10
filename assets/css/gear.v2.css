@@ -558,12 +558,26 @@ body{
   }
 }
 
+
 .air-subaccordion{
-  border-top:1px solid var(--line);
+  background:rgba(17,24,39,0.82);
+  border:1px solid rgba(148,163,184,0.3);
+  border-radius:14px;
+  margin:0.75rem 0 1rem;
+  box-shadow:var(--shadow);
+  transition:background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.air-subaccordion:hover,
+.air-subaccordion:focus-within{
+  background:rgba(17,24,39,0.9);
+  border-color:rgba(148,163,184,0.45);
+  box-shadow:0 20px 40px -26px rgba(15,23,42,0.85);
 }
 
 .air-subaccordion__item{
-  border-bottom:1px solid var(--line);
+  border-radius:inherit;
+  overflow:hidden;
 }
 
 .air-subaccordion__trigger{
@@ -571,13 +585,20 @@ body{
   display:flex;
   align-items:center;
   gap:12px;
-  padding:14px 0;
+  padding:0.85rem 1.1rem;
   border:0;
   background:transparent;
   color:inherit;
   font:inherit;
   text-align:left;
   cursor:pointer;
+  border-radius:inherit;
+  transition:background 0.25s ease, color 0.25s ease;
+}
+
+.air-subaccordion__trigger:hover,
+.air-subaccordion__trigger:focus-visible{
+  background:rgba(255,255,255,0.04);
 }
 
 .air-subaccordion__trigger:focus-visible{
@@ -606,7 +627,9 @@ body{
 }
 
 .air-subaccordion__panel{
-  padding:12px 0 16px;
+  padding:0 1.1rem 1.1rem;
+  background:rgba(255,255,255,0.02);
+  border-radius:0 0 12px 12px;
 }
 
 .air-pumps__list,
