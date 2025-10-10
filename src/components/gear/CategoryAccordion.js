@@ -13,6 +13,8 @@ const FILTRATION_TABS = [
   { label: 'Internal', value: 'Internal' },
 ];
 
+const AIR_GROUPED_SUBACCORDIONS = true;
+
 const AERATION_INFO =
   'Air pumps and airstones boost oxygenation, stabilize gas exchange, and provide gentle circulation. Use check valves to prevent back-siphon, splitters/manifolds for multiple lines, and consider battery backup for power outages.';
 
@@ -33,6 +35,51 @@ const AIRLINE_ACCESSORY_ORDER = [
   'aeration-airline-kit',
 ];
 
+const SUBSCRIPT_DIGIT_MAP = {
+  '₀': '0',
+  '₁': '1',
+  '₂': '2',
+  '₃': '3',
+  '₄': '4',
+  '₅': '5',
+  '₆': '6',
+  '₇': '7',
+  '₈': '8',
+  '₉': '9',
+};
+
+const AERATION_SUBCATEGORY_ALIASES = {
+  'air-pump': 'air-pumps',
+  'air-pumps': 'air-pumps',
+  'airline-accessory': 'airline-accessories',
+  'airline-accessories': 'airline-accessories',
+  'air-pump-accessories': 'airline-accessories',
+  'co2-accessory': 'co2-accessories',
+  'co2-accessories': 'co2-accessories',
+  'co2-gear': 'co2-accessories',
+};
+
+const AERATION_SUBCATEGORY_SOURCE_FIELDS = [
+  'subcategory_key',
+  'Subcategory_Key',
+  'subcategoryKey',
+  'SubcategoryKey',
+  'subcategory_slug',
+  'Subcategory_Slug',
+  'SubcategorySlug',
+  'sub_category',
+  'Sub_Category',
+  'subcategory',
+  'Subcategory',
+  'Bucket',
+  'bucket',
+  'Item_Category',
+  'item_category',
+  'itemCategory',
+  'Category_Key',
+  'category_key',
+];
+
 function slugifyId(value = '') {
   return String(value)
     .trim()
@@ -40,6 +87,38 @@ function slugifyId(value = '') {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
     .trim();
+}
+
+function normaliseAerationSubcategorySlug(value = '') {
+  if (!value) {
+    return '';
+  }
+  const baseSlug = String(value)
+    .normalize('NFKD')
+    .replace(/[₀-₉]/g, (char) => SUBSCRIPT_DIGIT_MAP[char] ?? char)
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+    .trim();
+  if (!baseSlug) {
+    return '';
+  }
+  return AERATION_SUBCATEGORY_ALIASES[baseSlug] ?? baseSlug;
+}
+
+function deriveAerationSubcategory(item = {}) {
+  for (const field of AERATION_SUBCATEGORY_SOURCE_FIELDS) {
+    if (Object.prototype.hasOwnProperty.call(item, field)) {
+      const rawValue = item[field];
+      const key = normaliseAerationSubcategorySlug(rawValue);
+      if (key) {
+        return { key, rawValue };
+      }
+    }
+  }
+  return { key: '', rawValue: '' };
 }
 
 function createGrid(items, context, onSelect, onAdd, emptyMessage = 'No matches found. Try adjusting your filters.') {
@@ -256,6 +335,28 @@ function createAirlineAccessoryList(items = []) {
   return grid;
 }
 
+const AERATION_SUBCATEGORY_CONFIG = [
+  {
+    key: 'air-pumps',
+    id: 'air-pumps',
+    label: 'Air Pumps',
+    showCount: true,
+  },
+  {
+    key: 'airline-accessories',
+    id: 'airline-accessories',
+    label: 'Airline Accessories',
+    showCount: false,
+    renderContent: ({ items }) => createAirlineAccessoryList(items),
+  },
+  {
+    key: 'co2-accessories',
+    id: 'co2-accessories',
+    label: 'CO₂ Accessories',
+    showCount: true,
+  },
+];
+
 function createAerationSubItem(options) {
   const { id, label, items, context, onSelect, onAdd, showCount = true, renderContent } = options;
   const baseId = `${id}-subaccordion`;
@@ -335,7 +436,7 @@ function createAerationSubItem(options) {
   return wrapper;
 }
 
-function createAerationSection(options) {
+function createAerationSectionLegacy(options) {
   const { items, context, onSelect, onAdd } = options;
   const container = createElement('div', { className: 'bucket-section aeration-section' });
 
@@ -443,6 +544,88 @@ function createAerationSection(options) {
   }
 
   return container;
+}
+
+function createGroupedAerationSection(options) {
+  const { items, context, onSelect, onAdd } = options;
+  const container = createElement('div', { className: 'bucket-section aeration-section' });
+
+  if (!items.length) {
+    container.appendChild(createElement('div', { className: 'bucket-list aeration-subaccordion' }));
+    container.appendChild(createGrid(items, context, onSelect, onAdd));
+    return container;
+  }
+
+  const groups = AERATION_SUBCATEGORY_CONFIG.map((config) => ({
+    ...config,
+    items: [],
+  }));
+  const groupsByKey = new Map(groups.map((group) => [group.key, group]));
+  const unknownItems = [];
+  const unknownKeys = new Set();
+
+  items.forEach((item) => {
+    const { key, rawValue } = deriveAerationSubcategory(item);
+    const targetGroup = key ? groupsByKey.get(key) : undefined;
+    if (targetGroup) {
+      targetGroup.items.push(item);
+    } else {
+      unknownItems.push(item);
+      if (rawValue) {
+        unknownKeys.add(String(rawValue));
+      } else if (key) {
+        unknownKeys.add(key);
+      } else {
+        unknownKeys.add('[unknown]');
+      }
+    }
+  });
+
+  const subAccordion = createElement('div', { className: 'bucket-list aeration-subaccordion' });
+  groups.forEach((group) => {
+    if (!group.items.length) {
+      return;
+    }
+    const subItemOptions = {
+      id: group.id,
+      label: group.label,
+      items: group.items,
+      context,
+      onSelect,
+      onAdd,
+    };
+    if (group.showCount === false) {
+      subItemOptions.showCount = false;
+    }
+    if (typeof group.renderContent === 'function') {
+      subItemOptions.renderContent = () =>
+        group.renderContent({ items: group.items, context, onSelect, onAdd });
+    }
+    subAccordion.appendChild(createAerationSubItem(subItemOptions));
+  });
+
+  if (subAccordion.children.length > 0) {
+    container.appendChild(subAccordion);
+  }
+
+  if (unknownItems.length > 0) {
+    // eslint-disable-next-line no-console
+    console.warn('Unknown Air & Aeration subcategory items', Array.from(unknownKeys));
+    container.appendChild(createGrid(unknownItems, context, onSelect, onAdd));
+  }
+
+  if (!container.children.length) {
+    container.appendChild(createGrid(items, context, onSelect, onAdd));
+  }
+
+  return container;
+}
+
+function createAerationSection(options) {
+  if (!AIR_GROUPED_SUBACCORDIONS) {
+    return createAerationSectionLegacy(options);
+  }
+  return createGroupedAerationSection(options);
 }
 
 function normaliseLight(item) {
