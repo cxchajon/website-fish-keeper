@@ -107,14 +107,6 @@ export const TURNOVER_BANDS = Object.freeze({
 
 export const MIN_TURNOVER_FLOOR = 2;
 
-function clampHeadLoss(value) {
-  const num = Number(value);
-  if (!Number.isFinite(num)) return 0;
-  if (num < 0) return 0;
-  if (num > 40) return 40;
-  return Math.round(num);
-}
-
 function clampFlowRate(value) {
   const num = Number(value);
   if (!Number.isFinite(num) || num <= 0) return 0;
@@ -131,13 +123,11 @@ function normalizeFilterKind(kind) {
 
 function sanitizeFilter(filter) {
   if (!filter || typeof filter !== 'object') {
-    return { kind: 'HOB', gph: 0, headLossPct: 0, model: '' };
+    return { kind: 'HOB', gph: 0 };
   }
   return {
     kind: normalizeFilterKind(filter.kind),
     gph: clampFlowRate(filter.gph),
-    headLossPct: clampHeadLoss(filter.headLossPct),
-    model: typeof filter.model === 'string' ? filter.model : '',
   };
 }
 
@@ -148,23 +138,19 @@ export function sanitizeFilterList(filters) {
 
 function summarizeFilters(filters) {
   const sanitized = sanitizeFilterList(filters);
-  let ratedTotal = 0;
-  let deliveredTotal = 0;
+  let totalGph = 0;
   for (const filter of sanitized) {
     if (!Number.isFinite(filter.gph) || filter.gph <= 0) {
       continue;
     }
-    ratedTotal += filter.gph;
-    const multiplier = 1 - filter.headLossPct / 100;
-    const adjusted = filter.gph * (multiplier > 0 ? multiplier : 0);
-    deliveredTotal += adjusted;
+    totalGph += filter.gph;
   }
-  return { sanitized, ratedTotal, deliveredTotal };
+  return { sanitized, totalGph };
 }
 
 export function calcTotalGph(filters) {
-  const { deliveredTotal } = summarizeFilters(filters);
-  return deliveredTotal;
+  const { totalGph } = summarizeFilters(filters);
+  return totalGph;
 }
 
 export function computeTurnover(effectiveGallons, filters) {
@@ -172,11 +158,11 @@ export function computeTurnover(effectiveGallons, filters) {
   if (!Number.isFinite(gallons) || gallons <= 0) {
     return 0;
   }
-  const delivered = calcTotalGph(filters);
-  if (!Number.isFinite(delivered) || delivered <= 0) {
+  const total = calcTotalGph(filters);
+  if (!Number.isFinite(total) || total <= 0) {
     return 0;
   }
-  return delivered / gallons;
+  return total / gallons;
 }
 
 const TURNOVER_POINTS = [
@@ -277,10 +263,10 @@ function calcTank(state, entries, overrideVariant) {
   let deliveredGph = turnover * volume;
   let ratedGph = deliveredGph / 0.78;
 
-  const { ratedTotal, deliveredTotal } = summarizeFilters(state.filters);
-  if (deliveredTotal > 0) {
-    deliveredGph = deliveredTotal;
-    ratedGph = ratedTotal > 0 ? ratedTotal : deliveredGph;
+  const { totalGph } = summarizeFilters(state.filters);
+  if (totalGph > 0) {
+    deliveredGph = totalGph;
+    ratedGph = totalGph;
     const gallonsForTurnover = Number.isFinite(effectiveGallons) && effectiveGallons > 0 ? effectiveGallons : gallons;
     const computedTurnover = gallonsForTurnover > 0 ? deliveredGph / gallonsForTurnover : 0;
     if (computedTurnover > 0) {
@@ -434,9 +420,9 @@ function resolveTurnoverBand(entries) {
 }
 
 function buildFilteringState(state, tank, entries) {
-  const { sanitized, ratedTotal, deliveredTotal } = summarizeFilters(state.filters);
+  const { sanitized, totalGph } = summarizeFilters(state.filters);
   const turnover = computeTurnover(tank?.effectiveGallons ?? null, sanitized);
-  const hasFlowData = sanitized.some((filter) => Number.isFinite(filter.gph) && filter.gph > 0);
+  const hasFlowData = Number.isFinite(totalGph) && totalGph > 0;
   const stockCount = Array.isArray(entries) ? entries.length : 0;
   const band = resolveTurnoverBand(entries);
   const gallonsKnown = Number.isFinite(tank?.effectiveGallons) && tank.effectiveGallons > 0;
@@ -483,8 +469,7 @@ function buildFilteringState(state, tank, entries) {
 
   return {
     filters: sanitized,
-    ratedTotal,
-    deliveredTotal,
+    gphTotal: totalGph,
     turnover,
     hasData: hasFlowData,
     status: { tone: statusTone, text: statusText },

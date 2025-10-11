@@ -29,6 +29,7 @@ let currentTank = EMPTY;
 const subscribers = new Set();
 
 const FILTER_STORAGE_KEY = 'ttg.stocking.filters.v1';
+const FILTER_KINDS = new Set(['HOB', 'Canister', 'Sponge']);
 
 function ensureNumber(value) {
   if (typeof value === 'number') {
@@ -193,13 +194,25 @@ function parseFiltersPayload(raw) {
   }
 }
 
+function normalizeStoredFilter(filter) {
+  if (!filter || typeof filter !== 'object') {
+    return null;
+  }
+  const kind = FILTER_KINDS.has(filter.kind) ? filter.kind : 'HOB';
+  const gphValue = Number(filter.gph);
+  const gph = Number.isFinite(gphValue) && gphValue > 0 ? gphValue : 0;
+  return { kind, gph };
+}
+
 export function loadFilterSnapshot() {
   if (typeof localStorage === 'undefined') {
     return [];
   }
   try {
     const raw = localStorage.getItem(FILTER_STORAGE_KEY);
-    return parseFiltersPayload(raw);
+    return parseFiltersPayload(raw)
+      .map((item) => normalizeStoredFilter(item))
+      .filter((item) => item);
   } catch (_error) {
     return [];
   }
@@ -210,11 +223,14 @@ export function saveFilterSnapshot(filters) {
     return;
   }
   try {
-    if (!Array.isArray(filters) || filters.length === 0) {
+    const normalized = Array.isArray(filters)
+      ? filters.map((item) => normalizeStoredFilter(item)).filter((item) => item)
+      : [];
+    if (normalized.length === 0) {
       localStorage.removeItem(FILTER_STORAGE_KEY);
       return;
     }
-    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
+    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(normalized));
   } catch (_error) {
     /* no-op */
   }
