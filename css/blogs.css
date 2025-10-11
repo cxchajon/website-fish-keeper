@@ -60,3 +60,19 @@ main.blogs-panel{
 }
 .blog-item > a:first-child:empty{display:none;}
 .blog-item > a:first-child:empty + div{grid-column:1/-1;}
+
+/* Text-only blog cards: collapse the thumbnail column */
+.blog-item > a:first-child:empty {
+  display: none;              /* hide empty anchor if no image inside */
+}
+.blog-item:has(> a:first-child:empty) {
+  grid-template-columns: 1fr; /* single-column layout when no image */
+}
+
+/* Safety: if an <img> still points to placeholder, hide it */
+.blog-thumb[src$="placeholder-16x9.svg"] {
+  display: none !important;
+}
+
+/* Optional polish: keep card spacing consistent */
+.blog-item { align-items: start; }
