@@ -58,3 +58,25 @@ main.blogs-panel{
   :root{--tg-text:#eaf1f6;--tg-dim:#aebbc6;--tg-soft:#0e171d;--tg-line:#20303c;}
   .blog-item,.blog-list,.figure img{border-color:var(--tg-line);}
 }
+/* Split thumbnail for Purigen card */
+.blog-thumb-split{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  border-radius:14px;
+  border:1px solid var(--tg-line);
+  background:var(--tg-soft);
+  overflow:hidden;
+  aspect-ratio:16/9;
+  width:100%;
+}
+.blog-thumb-split img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  filter:brightness(.97);
+}
+@media (max-width:600px){
+  .blog-thumb-split{ gap:4px; }
+}
