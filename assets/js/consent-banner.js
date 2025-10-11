@@ -175,11 +175,27 @@
   document.querySelectorAll('.js-consent-accept').forEach(function(btn){
     btn.addEventListener('click', function(){
       afterChoice();
+      if (typeof window.gtag === 'function'){
+        window.gtag('consent', 'update', {
+          ad_storage: 'granted',
+          analytics_storage: 'granted',
+          ad_user_data: 'granted',
+          ad_personalization: 'granted'
+        });
+      }
     });
   });
   document.querySelectorAll('.js-consent-reject').forEach(function(btn){
     btn.addEventListener('click', function(){
       afterChoice();
+      if (typeof window.gtag === 'function'){
+        window.gtag('consent', 'update', {
+          ad_storage: 'denied',
+          analytics_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied'
+        });
+      }
     });
   });
 
