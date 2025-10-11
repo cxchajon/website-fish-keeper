@@ -8,6 +8,8 @@ import {
   calcTotalGph,
   computeTurnover,
   sanitizeFilterList,
+  computeFilterFlowStats,
+  normalizeFilterTypeSelection,
 } from './logic/compute.js';
 import { renderEnvCard } from './logic/envRecommend.js';
 import { getTankVariants } from './logic/sizeMap.js';
@@ -171,6 +173,7 @@ function bootstrapStocking() {
     }
   }
   window.appState = state;
+  state.filterType = normalizeFilterTypeSelection(state.filterType);
   const initialTank = getTankSnapshot() ?? EMPTY_TANK;
   state.tank = initialTank;
   state.gallons = initialTank.gallons ?? 0;
@@ -185,6 +188,8 @@ function bootstrapStocking() {
     pageTitle: document.getElementById('page-title'),
     plantIcon: document.getElementById('plant-icon'),
     planted: document.getElementById('toggle-planted'),
+    filterTypeSelect: null,
+    filterFlowResult: null,
     filtrationTrigger: document.getElementById('filtration-trigger'),
     envCard: document.querySelector('#env-card, [data-role="env-card"]'),
     envInfoToggle: document.querySelector('#env-info-btn, #env-info-toggle, [data-role="env-info"]'),
@@ -306,6 +311,111 @@ function bootstrapStocking() {
   }
 
   syncFiltrationUI();
+
+  function updateFilterFlowNote() {
+    if (!refs.filterFlowResult) {
+      return;
+    }
+    const tankGallons = computed?.tank?.gallons ?? state?.tank?.gallons ?? state.gallons ?? 0;
+    const flow = computed?.bioload?.flowAdjustment
+      ?? computeFilterFlowStats(tankGallons, state.filterType);
+    const actual = Number(flow?.actualGph);
+    if (!Number.isFinite(actual) || actual <= 0) {
+      refs.filterFlowResult.textContent = 'Estimated flow: —';
+      return;
+    }
+    const rounded = Math.round(actual);
+    refs.filterFlowResult.textContent = `Estimated flow: ${rounded} GPH`;
+  }
+
+  function syncFilterTypeControl() {
+    if (refs.filterTypeSelect) {
+      const normalized = normalizeFilterTypeSelection(state.filterType);
+      if (refs.filterTypeSelect.value !== normalized) {
+        refs.filterTypeSelect.value = normalized;
+      }
+    }
+    updateFilterFlowNote();
+  }
+
+  function injectFilterStyles() {
+    if (document.getElementById('ttg-filter-type-style')) {
+      return;
+    }
+    const style = document.createElement('style');
+    style.id = 'ttg-filter-type-style';
+    style.textContent = `#stocking-page .row.toggle-row .row-right{flex-wrap:wrap;}`
+      + `#stocking-page .filter-type-control{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:220px;max-width:280px;flex:1 1 220px;}`
+      + `#stocking-page .filter-type-control label{font-size:0.82rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.72);}`
+      + `#stocking-page .filter-type-control select{width:100%;min-height:44px;padding:0 38px 0 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:inherit;appearance:none;}`
+      + `#stocking-page .filter-type-control .filter-type-help{font-size:0.78rem;color:rgba(255,255,255,0.68);}`
+      + `#stocking-page .filter-type-control .filter-flow{font-size:0.84rem;color:rgba(255,255,255,0.82);}`
+      + `@media(max-width:600px){#stocking-page .filter-type-control{width:100%;max-width:none;}}`;
+    document.head.appendChild(style);
+  }
+
+  function ensureFilterControl() {
+    const switchWrapper = refs.planted ? refs.planted.closest('.row-right') : null;
+    if (!switchWrapper) {
+      return;
+    }
+    let control = switchWrapper.querySelector('.filter-type-control');
+    if (!control) {
+      control = document.createElement('div');
+      control.className = 'filter-type-control';
+
+      const label = document.createElement('label');
+      label.setAttribute('for', 'filter-type');
+      label.textContent = 'Filter Type';
+
+      const select = document.createElement('select');
+      select.id = 'filter-type';
+      select.name = 'filter-type';
+      select.setAttribute('aria-describedby', 'filterHelp');
+
+      const options = [
+        { value: 'sponge', text: 'Sponge (≈4× turnover)' },
+        { value: 'hob', text: 'Hang-On-Back (HOB) (≈6× turnover)' },
+        { value: 'canister', text: 'Canister (≈8× turnover)' },
+      ];
+      options.forEach((opt) => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.text;
+        select.appendChild(option);
+      });
+
+      const help = document.createElement('p');
+      help.id = 'filterHelp';
+      help.className = 'filter-type-help';
+      help.textContent = 'Choose a filter to estimate your tank’s water flow per hour.';
+
+      const result = document.createElement('p');
+      result.id = 'filterFlowResult';
+      result.className = 'filter-flow';
+      result.setAttribute('aria-live', 'polite');
+      result.textContent = 'Estimated flow: —';
+
+      control.appendChild(label);
+      control.appendChild(select);
+      control.appendChild(help);
+      control.appendChild(result);
+
+      const insertionTarget = refs.filtrationTrigger && refs.filtrationTrigger.parentElement === switchWrapper
+        ? refs.filtrationTrigger
+        : null;
+      if (insertionTarget) {
+        switchWrapper.insertBefore(control, insertionTarget);
+      } else {
+        switchWrapper.appendChild(control);
+      }
+    }
+
+    refs.filterTypeSelect = control.querySelector('#filter-type');
+    refs.filterFlowResult = control.querySelector('#filterFlowResult');
+    syncFilterTypeControl();
+  }
+  syncFilterTypeControl();
 
   function handleFiltersChange(nextFilters) {
     setFilters(nextFilters);
@@ -1094,6 +1204,7 @@ function renderAll() {
     ensureTankAssumptionScrubbed();
     syncQtyInputFromState();
     syncFiltrationUI();
+    syncFilterTypeControl();
     return;
   }
   computed = buildComputedState(state);
@@ -1107,6 +1218,7 @@ function renderAll() {
   ensureTankAssumptionScrubbed();
   syncQtyInputFromState();
   syncFiltrationUI();
+  syncFilterTypeControl();
 }
 
 function renderEnvironmentPanels() {
@@ -1156,6 +1268,18 @@ function bindInputs() {
     refs.planted.addEventListener('change', () => {
       state.planted = Boolean(refs.planted.checked);
       syncToggles();
+      scheduleUpdate();
+    });
+  }
+
+  if (refs.filterTypeSelect) {
+    refs.filterTypeSelect.addEventListener('change', (event) => {
+      const normalized = normalizeFilterTypeSelection(event.target.value);
+      if (event.target.value !== normalized) {
+        event.target.value = normalized;
+      }
+      state.filterType = normalized;
+      syncFilterTypeControl();
       scheduleUpdate();
     });
   }
@@ -1245,6 +1369,8 @@ function buildGearPayload() {
     populateSpecies();
     syncQtyInputFromState({ force: true });
     syncToggles();
+    injectFilterStyles();
+    ensureFilterControl();
     if (filtrationUi.trigger && filtrationUi.host) {
       filtrationUi.onToggle = (open) => {
         filtrationUi.open = open;
