@@ -71,3 +71,6 @@ main.blogs-panel{
 
 /* Optional polish: keep card spacing consistent */
 .blog-item { align-items: start; }
+
+.blog-title-link{ text-decoration: underline; }
+.blog-title-link:hover, .blog-title-link:focus{ text-decoration-thickness: from-font; }
