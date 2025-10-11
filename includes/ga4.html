@@ -1,22 +1,37 @@
-<!-- Google Analytics 4 (Consent Mode-aware) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JLDG95NKGB"></script>
 <script>
-  // GA4 bootstrap
   window.dataLayer = window.dataLayer || [];
   function gtag(){ dataLayer.push(arguments); }
 
-  // Timestamp
-  gtag('js', new Date());
-
-  // IMPORTANT:
-  // Consent Mode defaults (denied) are set by /assets/js/consent-mode.js,
-  // which loads BEFORE this include. When the user accepts via the banner,
-  // consent-mode updates analytics/ad storage and GA4 will begin recording.
-
-  // GA4 config (privacy-friendly)
-  gtag('config', 'G-XXXXXXXXXX', {
-    anonymize_ip: true
+  // Respect Consent Mode v2 defaults. Do not send a page_view until ads/analytics are granted.
+  // Initialize with denied-by-default values; our consent-mode.js will update these on accept.
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'analytics_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'wait_for_update': 500
   });
 
-  // TODO: Replace G-XXXXXXXXXX with your actual GA4 Measurement ID after creating the GA4 property.
+  // Basic GA4 bootstrap; send_page_view is false so we can gate by consent.
+  gtag('js', new Date());
+  gtag('config', 'G-JLDG95NKGB', { 'send_page_view': false });
+
+  // When our banner calls acceptAll(), consent-mode.js should emit a consent update event.
+  // Listen for that and then send a page_view once per load.
+  (function(){
+    var sent = false;
+    function trySend() {
+      if (sent) return;
+      // Minimal check: analytics_storage granted
+      var s = (window.__TTG_CONSENT_STATE__ || {}).analytics_storage;
+      if (s === 'granted') {
+        sent = true;
+        gtag('event', 'page_view');
+      }
+    }
+    window.addEventListener('ttg-consent-updated', trySend);
+    // Also attempt once on load in case consent was already saved as granted.
+    document.addEventListener('DOMContentLoaded', trySend);
+  })();
 </script>
