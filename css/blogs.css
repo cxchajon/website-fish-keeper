@@ -80,25 +80,30 @@ main.blogs-panel{
   text-decoration-thickness:from-font;
 }
 .blog-article {
-  background-color: #444444;          /* darker neutral gray per reference */
-  border-radius: 6px;
+  background-color: #444444; /* dark gray interior */
+  border: 4px solid transparent;
+  border-radius: 10px;
+  background-image: linear-gradient(#444444, #444444),
+                    linear-gradient(145deg, #555555, #222222); /* metallic gradient edge */
+  background-origin: border-box;
+  background-clip: content-box, border-box;
   padding: 2rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  color: #f5f5f5;                     /* light gray text for readability */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
+  color: #f5f5f5;
 }
 
 .blog-article a {
-  color: #80bfff;                     /* soft, readable blue */
+  color: #80bfff;
 }
 
 .blog-article a:hover {
-  color: #aad4ff;                     /* slightly lighter on hover */
+  color: #aad4ff;
 }
 
 .blog-article h1,
 .blog-article h2,
 .blog-article h3 {
-  color: #ffffff;                     /* strong contrast for headings */
+  color: #ffffff;
 }
 
 main .blog-article,
