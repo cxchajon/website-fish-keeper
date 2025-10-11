@@ -5,12 +5,17 @@
   <title>Spotlight Blogs | The Tank Guide</title>
   <meta name="description" content="Short, skimmable blogs on aquarium gear, techniques, and ideas—each with a quick takeaway and a deeper read." />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/blogs.css" />
+  <script defer src="/js/nav.js?v=1.1.0"></script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"CollectionPage","name":"Spotlight Blogs","description":"Short reads with practical takeaways."}
   </script>
 </head>
 <body>
+  <div id="site-nav"></div>
+
   <main class="blogs-panel blogs-wrap">
     <header class="hero">
       <h1>Spotlight Blogs</h1>
@@ -36,5 +41,36 @@
       </article>
     </section>
   </main>
+
+  <div id="site-footer"></div>
+  <script>
+    (async () => {
+      try {
+        const res = await fetch('/footer.v1.3.0.html?v=1.3.0', { cache: 'no-cache' });
+        const html = await res.text();
+        const host = document.getElementById('site-footer');
+        if (host) host.outerHTML = html;
+      } catch (e) {
+        console.error('[Footer] load failed:', e);
+      }
+    })();
+
+    const ttgSetBlogsActive = () => {
+      const links = document.querySelectorAll('#global-nav [data-nav="media"], #ttg-drawer [data-nav="media"]');
+      if (links.length === 0) {
+        requestAnimationFrame(ttgSetBlogsActive);
+        return;
+      }
+      links.forEach((link) => {
+        link.setAttribute('aria-current', 'page');
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', ttgSetBlogsActive);
+    } else {
+      ttgSetBlogsActive();
+    }
+  </script>
 </body>
 </html>
