@@ -1,0 +1,22 @@
+<!-- Google Analytics 4 (Consent Mode-aware) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  // GA4 bootstrap
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+
+  // Timestamp
+  gtag('js', new Date());
+
+  // IMPORTANT:
+  // Consent Mode defaults (denied) are set by /assets/js/consent-mode.js,
+  // which loads BEFORE this include. When the user accepts via the banner,
+  // consent-mode updates analytics/ad storage and GA4 will begin recording.
+
+  // GA4 config (privacy-friendly)
+  gtag('config', 'G-XXXXXXXXXX', {
+    anonymize_ip: true
+  });
+
+  // TODO: Replace G-XXXXXXXXXX with your actual GA4 Measurement ID after creating the GA4 property.
+</script>
