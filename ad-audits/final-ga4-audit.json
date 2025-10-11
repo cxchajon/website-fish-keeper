@@ -1,0 +1,162 @@
+{
+  "measurement_id": "G-JLDG95NKGB",
+  "loader_once_per_page": true,
+  "config_once_per_page": true,
+  "order_consent_ga4_adsense": true,
+  "no_ua_or_alt_ids": true,
+  "uses_shared_include_where_available": true,
+  "pages": [
+    {
+      "path": "index.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": true,
+      "notes": "Replaced inline GA4 snippet with shared include between consent mode and AdSense."
+    },
+    {
+      "path": "about.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": true,
+      "notes": "Replaced inline GA4 snippet with shared include."
+    },
+    {
+      "path": "terms.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": null,
+      "notes": "Replaced inline GA4 snippet with shared include; legal template remains ad-free."
+    },
+    {
+      "path": "gear/index.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": true,
+      "notes": "Replaced inline GA4 snippet with shared include ahead of AdSense loader."
+    },
+    {
+      "path": "cookie-settings.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": null,
+      "notes": "Replaced inline GA4 snippet with shared include."
+    },
+    {
+      "path": "stocking.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": true,
+      "notes": "Replaced inline GA4 snippet with shared include and preserved Consent → GA4 → AdSense order."
+    },
+    {
+      "path": "media/index.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": true,
+      "notes": "Replaced inline GA4 snippet with shared include before AdSense."
+    },
+    {
+      "path": "feature-your-tank.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": true,
+      "notes": "Replaced inline GA4 snippet with shared include ahead of AdSense."
+    },
+    {
+      "path": "privacy-legal.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": null,
+      "notes": "Replaced inline GA4 snippet with shared include; legal page stays ad-free."
+    },
+    {
+      "path": "contact-feedback.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": null,
+      "notes": "Replaced inline GA4 snippet with shared include."
+    },
+    {
+      "path": "store.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": null,
+      "notes": "Replaced inline GA4 snippet with shared include."
+    },
+    {
+      "path": "copyright-dmca.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": null,
+      "notes": "Replaced inline GA4 snippet with shared include; template remains ad-free."
+    },
+    {
+      "path": "params.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": true,
+      "notes": "Replaced inline GA4 snippet with shared include before AdSense."
+    },
+    {
+      "path": "media.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": true,
+      "notes": "Replaced inline GA4 snippet with shared include before AdSense."
+    },
+    {
+      "path": "blogs/index.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": null,
+      "notes": "Added consent mode script and shared GA4 include to previously untracked blogs listing."
+    },
+    {
+      "path": "blogs/purigen/index.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": null,
+      "notes": "Added consent mode script and shared GA4 include to blog detail page."
+    },
+    {
+      "path": "blogs/cycle-check-3-readings/index.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": null,
+      "notes": "Added consent mode script and shared GA4 include to blog detail page."
+    },
+    {
+      "path": "404.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": null,
+      "notes": "Inserted consent mode script and shared GA4 include on fallback page."
+    },
+    {
+      "path": "gear.html",
+      "ga4_loader_count": 1,
+      "ga4_config_count": 1,
+      "consent_before_ga4": true,
+      "adsense_after_ga4": null,
+      "notes": "Added consent mode script and shared GA4 include to redirect helper."
+    }
+  ]
+}
