@@ -5,7 +5,7 @@ const FILTER_TYPES = [
 ];
 
 const DRAWER_ID = 'filter-drawer-panel';
-const DEFAULT_FILTER = Object.freeze({ kind: 'HOB', gph: 0, headLossPct: 0, model: '' });
+const DEFAULT_FILTER = Object.freeze({ kind: 'HOB', gph: 0 });
 
 function toNumber(value) {
   const num = Number(value);
@@ -99,20 +99,6 @@ function createRowElement() {
   gphField.appendChild(gphLabel);
   gphField.appendChild(gphInput);
 
-  const headField = document.createElement('div');
-  headField.className = 'filter-field filter-field--slider';
-  const headLabel = document.createElement('label');
-  headLabel.innerHTML = 'Head Loss (%) <span data-role="filter-head-display">0%</span>';
-  const headInput = document.createElement('input');
-  headInput.type = 'range';
-  headInput.min = '0';
-  headInput.max = '40';
-  headInput.step = '1';
-  headInput.value = '0';
-  headInput.dataset.role = 'filter-head';
-  headField.appendChild(headLabel);
-  headField.appendChild(headInput);
-
   const removeBtn = document.createElement('button');
   removeBtn.type = 'button';
   removeBtn.className = 'filter-row-remove';
@@ -122,7 +108,6 @@ function createRowElement() {
 
   row.appendChild(typeField);
   row.appendChild(gphField);
-  row.appendChild(headField);
   row.appendChild(removeBtn);
   return row;
 }
@@ -190,8 +175,6 @@ function updateRow(row, filter, index, isSolo) {
   row.dataset.filterIndex = String(index);
   const select = row.querySelector('[data-role="filter-kind"]');
   const gphInput = row.querySelector('[data-role="filter-gph"]');
-  const headInput = row.querySelector('[data-role="filter-head"]');
-  const headDisplay = row.querySelector('[data-role="filter-head-display"]');
   const removeBtn = row.querySelector('[data-role="filter-remove"]');
 
   if (select) {
@@ -206,14 +189,6 @@ function updateRow(row, filter, index, isSolo) {
     const gphValue = Number(filter?.gph);
     gphInput.value = Number.isFinite(gphValue) && gphValue > 0 ? String(Math.round(gphValue)) : '';
   }
-  if (headInput) {
-    const headValue = Number(filter?.headLossPct);
-    const clamped = Number.isFinite(headValue) ? Math.min(Math.max(Math.round(headValue), 0), 40) : 0;
-    headInput.value = String(clamped);
-    if (headDisplay) {
-      headDisplay.textContent = `${clamped}%`;
-    }
-  }
   if (removeBtn) {
     removeBtn.disabled = Boolean(isSolo);
     removeBtn.setAttribute('aria-disabled', isSolo ? 'true' : 'false');
@@ -225,7 +200,7 @@ function updateResults(drawer, metrics) {
   const totalEl = drawer.querySelector('[data-field="filter-total"]');
   const turnoverEl = drawer.querySelector('[data-field="filter-turnover"]');
   const statusChip = drawer.querySelector('[data-role="filter-status"]');
-  const total = formatGph(metrics?.deliveredTotal ?? metrics?.totalGph ?? 0);
+  const total = formatGph(metrics?.gphTotal ?? metrics?.totalGph ?? metrics?.deliveredTotal ?? 0);
   const turnover = formatTurnover(metrics?.turnover ?? 0);
   if (totalEl) {
     totalEl.textContent = `${total} GPH`;
@@ -249,7 +224,7 @@ export function renderFiltrationTrigger(container, { metrics = null, open = fals
   if (!button) return;
   const chevron = button.querySelector('[data-role="filtration-chevron"]');
   const summary = button.querySelector('[data-role="filtration-summary"]');
-  const total = formatGph(metrics?.deliveredTotal ?? metrics?.totalGph ?? 0);
+  const total = formatGph(metrics?.gphTotal ?? metrics?.totalGph ?? metrics?.deliveredTotal ?? 0);
   const turnover = formatTurnover(metrics?.turnover ?? 0);
   if (summary) {
     summary.textContent = `Filtration: ${total} GPH • ${turnover}×/h ⚙️`;
@@ -300,8 +275,6 @@ function cloneFilter(filter) {
   return {
     kind: typeof filter.kind === 'string' ? filter.kind : DEFAULT_FILTER.kind,
     gph: toNumber(filter.gph),
-    headLossPct: toNumber(filter.headLossPct),
-    model: typeof filter.model === 'string' ? filter.model : '',
   };
 }
 
@@ -346,13 +319,10 @@ export function bindFiltrationEvents(ctx, onFiltersChange = () => {}) {
     const next = Array.from(rows).map((row, index) => {
       const select = row.querySelector('[data-role="filter-kind"]');
       const gphInput = row.querySelector('[data-role="filter-gph"]');
-      const headInput = row.querySelector('[data-role="filter-head"]');
       const prev = current[index] || DEFAULT_FILTER;
       return {
         kind: select?.value || prev.kind || DEFAULT_FILTER.kind,
         gph: toNumber(gphInput?.value),
-        headLossPct: toNumber(headInput?.value),
-        model: typeof prev.model === 'string' ? prev.model : '',
       };
     });
     emitFilters(next);
@@ -363,17 +333,9 @@ export function bindFiltrationEvents(ctx, onFiltersChange = () => {}) {
     if (!target) return;
     const row = target.closest('[data-filter-index]');
     if (!row) return;
-    if (target.dataset.role === 'filter-head') {
-      const display = row.querySelector('[data-role="filter-head-display"]');
-      if (display) {
-        const value = Math.min(Math.max(Math.round(Number(target.value) || 0), 0), 40);
-        display.textContent = `${value}%`;
-      }
-    }
     if (
       target.dataset.role === 'filter-kind'
       || target.dataset.role === 'filter-gph'
-      || target.dataset.role === 'filter-head'
     ) {
       refreshFromDom();
     }

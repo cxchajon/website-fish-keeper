@@ -207,7 +207,7 @@ function bootstrapStocking() {
 
   const canonicalSpeciesList = SPECIES.slice();
 
-  const createFilterRecord = () => ({ kind: 'HOB', gph: 0, headLossPct: 0, model: '' });
+  const createFilterRecord = () => ({ kind: 'HOB', gph: 0 });
 
   const filtrationHost = (() => {
     const toggleRow = document.querySelector('#tank-size-card .row.toggle-row');
@@ -265,11 +265,10 @@ function bootstrapStocking() {
       return computed.filtering;
     }
     const sanitized = sanitizeFilterList(state.filters);
-    const deliveredTotal = calcTotalGph(sanitized);
-    const ratedTotal = sanitized.reduce((sum, filter) => sum + (Number.isFinite(filter.gph) ? filter.gph : 0), 0);
+    const gphTotal = calcTotalGph(sanitized);
     const gallonsForCalc = estimateGallonsForFilters();
     const turnover = computeTurnover(gallonsForCalc, sanitized);
-    const hasData = sanitized.some((filter) => Number.isFinite(filter.gph) && filter.gph > 0);
+    const hasData = Number.isFinite(gphTotal) && gphTotal > 0;
     let tone = hasData ? 'neutral' : 'neutral';
     let text = hasData ? 'Turnover meets recommended flow.' : 'Add filter flow to estimate turnover.';
     if (hasData && gallonsForCalc <= 0) {
@@ -278,8 +277,7 @@ function bootstrapStocking() {
     }
     return {
       filters: sanitized,
-      deliveredTotal,
-      ratedTotal,
+      gphTotal,
       turnover,
       hasData,
       status: { tone, text },
