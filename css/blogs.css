@@ -80,13 +80,28 @@ main.blogs-panel{
   text-decoration-thickness:from-font;
 }
 .blog-article {
-  background-color: #f7f7f7;
+  background-color: #444444;          /* darker neutral gray per reference */
   border-radius: 6px;
   padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  color: #f5f5f5;                     /* light gray text for readability */
+}
+
+.blog-article a {
+  color: #80bfff;                     /* soft, readable blue */
+}
+
+.blog-article a:hover {
+  color: #aad4ff;                     /* slightly lighter on hover */
+}
+
+.blog-article h1,
+.blog-article h2,
+.blog-article h3 {
+  color: #ffffff;                     /* strong contrast for headings */
 }
 
 main .blog-article,
 .content .blog-article {
-  background-color: #f7f7f7 !important;
+  background-color: #444444 !important;
 }
