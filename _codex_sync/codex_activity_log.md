@@ -16,3 +16,8 @@ Snapshot Cleanup — 2025-10-08 14:08:01Z
 Removed obsolete diffs:
 
 • None
+
+[2025-10-08 | Stocking Advisor | Filtration→Bioload]
+Scope: Add filter dropdown + mild flow factor (±10%).
+Result: GPH displayed and bioload adjusted; UI aligned with planted toggle.
+Next: Consider advanced modes (user-entered GPH, multi-filter setups) for future.

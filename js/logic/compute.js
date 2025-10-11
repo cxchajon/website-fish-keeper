@@ -97,6 +97,55 @@ export function listSensitiveSpecies(speciesEntries, parameter) {
   return results;
 }
 
+const FILTER_TYPE_KEYS = new Set(['sponge', 'hob', 'canister']);
+
+export const FILTER_TURNOVER_MULTIPLIERS = Object.freeze({
+  sponge: 4,
+  hob: 6,
+  canister: 8,
+});
+
+const IDEAL_TURNOVER_MULTIPLIER = FILTER_TURNOVER_MULTIPLIERS.hob;
+
+export function normalizeFilterTypeSelection(value) {
+  const key = typeof value === 'string' ? value.trim().toLowerCase() : '';
+  if (FILTER_TYPE_KEYS.has(key)) {
+    return key;
+  }
+  return 'hob';
+}
+
+export function computeFilterFlowStats(gallons, filterType) {
+  const type = normalizeFilterTypeSelection(filterType);
+  const multiplier = FILTER_TURNOVER_MULTIPLIERS[type];
+  const gallonValue = Number(gallons);
+  if (!Number.isFinite(gallonValue) || gallonValue <= 0) {
+    return {
+      type,
+      multiplier,
+      idealMultiplier: IDEAL_TURNOVER_MULTIPLIER,
+      actualGph: null,
+      idealGph: null,
+      factor: 1,
+    };
+  }
+  const actualGph = gallonValue * multiplier;
+  const idealGph = gallonValue * IDEAL_TURNOVER_MULTIPLIER;
+  let factor = 1;
+  if (idealGph > 0) {
+    const raw = 1 + ((actualGph - idealGph) / idealGph) * 0.10;
+    factor = clamp(raw, 0.90, 1.10);
+  }
+  return {
+    type,
+    multiplier,
+    idealMultiplier: IDEAL_TURNOVER_MULTIPLIER,
+    actualGph,
+    idealGph,
+    factor,
+  };
+}
+
 const FILTER_TYPES = new Set(['HOB', 'Canister', 'Sponge']);
 
 export const TURNOVER_BANDS = Object.freeze({
@@ -232,6 +281,7 @@ function calcTank(state, entries, overrideVariant) {
   const tankId = tankState?.id ?? null;
   const sump = clamp(Number(state.sumpGallons) || 0, 0, 400);
   const planted = Boolean(state.planted);
+  const filterType = normalizeFilterTypeSelection(state.filterType);
   const manualVariant = overrideVariant ?? state.variantId ?? null;
   const variant = pickTankVariant({ tankId, gallons, speciesEntries: entries, manualSelection: manualVariant })
     ?? pickTankVariant({ tankId, gallons, speciesEntries: [], manualSelection: manualVariant })
@@ -262,11 +312,20 @@ function calcTank(state, entries, overrideVariant) {
   let turnover = clamp(Number(state.turnover) || 5, 0.5, 20);
   let deliveredGph = turnover * volume;
   let ratedGph = deliveredGph / 0.78;
+  const filterFlow = computeFilterFlowStats(gallons, filterType);
 
   const { totalGph } = summarizeFilters(state.filters);
   if (totalGph > 0) {
     deliveredGph = totalGph;
     ratedGph = totalGph;
+    const gallonsForTurnover = Number.isFinite(effectiveGallons) && effectiveGallons > 0 ? effectiveGallons : gallons;
+    const computedTurnover = gallonsForTurnover > 0 ? deliveredGph / gallonsForTurnover : 0;
+    if (computedTurnover > 0) {
+      turnover = computedTurnover;
+    }
+  } else if (Number.isFinite(filterFlow.actualGph) && filterFlow.actualGph > 0) {
+    deliveredGph = filterFlow.actualGph;
+    ratedGph = filterFlow.actualGph;
     const gallonsForTurnover = Number.isFinite(effectiveGallons) && effectiveGallons > 0 ? effectiveGallons : gallons;
     const computedTurnover = gallonsForTurnover > 0 ? deliveredGph / gallonsForTurnover : 0;
     if (computedTurnover > 0) {
@@ -299,6 +358,8 @@ function calcTank(state, entries, overrideVariant) {
     effectiveGallons,
     deliveredGph,
     ratedGph,
+    filterType: filterFlow.type,
+    filterFlow,
   };
 }
 
@@ -574,7 +635,7 @@ function mapEntriesToStock(entries = []) {
   return entries.map((entry) => ({ speciesId: entry.id, count: entry.qty }));
 }
 
-function computeBioload(tank, entries, candidate) {
+function computeBioload(tank, entries, candidate, filterType) {
   const currentStock = mapEntriesToStock(entries);
   const candidateStock = candidate ? [{ speciesId: candidate.id, count: candidate.qty }] : [];
   const proposedStock = candidate ? [...currentStock, ...candidateStock] : currentStock;
@@ -597,14 +658,33 @@ function computeBioload(tank, entries, candidate) {
     currentStock: proposedStock,
     speciesMap: SPECIES_MAP,
   });
-  const currentPercent = currentPercentValue / 100;
-  const proposedPercent = proposedPercentValue / 100;
+  const flow = tank?.filterFlow ?? computeFilterFlowStats(tank?.gallons, filterType);
+  const flowFactor = Number.isFinite(flow?.factor) ? flow.factor : 1;
+  const applyFlowFactor = (value) => {
+    if (!Number.isFinite(value)) {
+      return 0;
+    }
+    return clamp(value * flowFactor, 0, 200);
+  };
+  const adjustedCurrentPercentValue = applyFlowFactor(currentPercentValue);
+  const adjustedProposedPercentValue = applyFlowFactor(proposedPercentValue);
+  const currentPercent = adjustedCurrentPercentValue / 100;
+  const proposedPercent = adjustedProposedPercentValue / 100;
   const color = getBandColor(proposedPercent);
   const turnoverIssue = tank.turnover < 2;
   const severity = proposedPercent > 1.1 ? 'bad' : proposedPercent > 0.9 ? 'warn' : turnoverIssue ? 'warn' : 'ok';
-  const text = `${formatBioloadPercent(currentPercentValue)} → ${formatBioloadPercent(proposedPercentValue)} of capacity`;
+  const text = `${formatBioloadPercent(adjustedCurrentPercentValue)} → ${formatBioloadPercent(adjustedProposedPercentValue)} of capacity`;
   const message = turnoverIssue ? 'Turnover below 2× — upgrade filtration' : undefined;
   const badge = candidate && !Number.isFinite(candidate.species.bioloadGE) ? 'estimated' : null;
+  const normalizedType = normalizeFilterTypeSelection(filterType ?? tank?.filterType);
+  const flowAdjustment = {
+    type: flow?.type ?? normalizedType,
+    multiplier: Number.isFinite(flow?.multiplier) ? flow.multiplier : FILTER_TURNOVER_MULTIPLIERS[normalizedType],
+    idealMultiplier: Number.isFinite(flow?.idealMultiplier) ? flow.idealMultiplier : IDEAL_TURNOVER_MULTIPLIER,
+    actualGph: Number.isFinite(flow?.actualGph) ? flow.actualGph : null,
+    idealGph: Number.isFinite(flow?.idealGph) ? flow.idealGph : null,
+    factor: flowFactor,
+  };
   return {
     currentLoad,
     candidateLoad,
@@ -618,6 +698,13 @@ function computeBioload(tank, entries, candidate) {
     text,
     message,
     badge,
+    adjustedCurrentLoad: currentLoad * flowFactor,
+    adjustedProposed: proposed * flowFactor,
+    flowAdjustment,
+    baseCurrentPercent: currentPercentValue / 100,
+    baseProposedPercent: proposedPercentValue / 100,
+    baseCurrentPercentValue: currentPercentValue,
+    baseProposedPercentValue: proposedPercentValue,
   };
 }
 
@@ -1127,7 +1214,7 @@ export function buildComputedState(state) {
   const tank = calcTank(state, entries, state.variantId);
   const water = sanitizeWater(state.water ?? {});
   const conditions = computeConditions(state, entries, candidate, water, state.showTips);
-  const bioload = computeBioload(tank, entries, candidate);
+  const bioload = computeBioload(tank, entries, candidate, state.filterType);
   const aggression = computeAggression(tank, entries, candidate);
   const invertCheck = candidate ? evaluateInvertSafety(candidate.species, { water }) : { severity: 'ok' };
   const groupRule = candidate ? checkGroupRule(candidate, entries) : null;
@@ -1176,6 +1263,7 @@ export function runScenario(baseState, overrides) {
     ...baseState,
     ...overrides,
   };
+  next.filterType = normalizeFilterTypeSelection(next.filterType);
   if (overrides?.stock) {
     next.stock = overrides.stock;
   }
@@ -1307,6 +1395,7 @@ export function createDefaultState() {
     planted: false,
     showTips: false,
     turnover: 5,
+    filterType: 'hob',
     sumpGallons: 0,
     tankAgeWeeks: 12,
     variantId: null,
