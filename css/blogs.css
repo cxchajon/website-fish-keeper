@@ -80,3 +80,53 @@ main.blogs-panel{
 @media (max-width:600px){
   .blog-thumb-split{ gap:4px; }
 }
+
+/* Ensure the first child (anchor) behaves like the thumbnail column */
+.blog-item > a:first-child{
+  display:block;
+  align-self:start;
+  justify-self:start;
+  width:100%;
+  max-width:100%;
+}
+
+/* Keep the card grid within a thumbnail column ~260px on desktop */
+.blog-item{
+  grid-template-columns: 260px 1fr;
+}
+@media (min-width:1024px){
+  .blog-item{ grid-template-columns: 260px 1fr; }
+}
+@media (max-width:800px){
+  .blog-item{ grid-template-columns: 1fr; }
+}
+
+/* Split thumbnail: size exactly like the old .blog-thumb */
+.blog-thumb-split{
+  width:100%;
+  max-width:100%;
+  aspect-ratio:16/9;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  border-radius:14px;
+  border:1px solid var(--tg-line);
+  background:var(--tg-soft);
+  overflow:hidden;
+}
+.blog-thumb-split img{
+  width:100%; height:100%;
+  object-fit:cover;
+  display:block;
+  filter:brightness(.97);
+  object-position:center;
+}
+
+/* Slightly tighter gap on small screens */
+@media (max-width:600px){
+  .blog-thumb-split{ gap:4px; }
+}
+
+/* Optional: don’t let any thumbnail stretch beyond column */
+.blog-item > a:first-child .blog-thumb-split{ max-width: 100%; }
+
