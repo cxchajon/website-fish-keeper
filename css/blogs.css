@@ -1,0 +1,60 @@
+/* ------------------ The Tank Guide — Blogs (renamed from Blurbs) ------------------ */
+:root{
+  --tg-text:#f4f9fc;
+  --tg-dim:#b9d4e5;
+  --tg-soft:rgba(255,255,255,0.15);
+  --tg-line:rgba(255,255,255,0.25);
+  --tg-accent:#9ce0ff;
+  --tg-max:1120px;
+}
+
+/* Page backdrop to match Media page look */
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  background:linear-gradient(180deg,#0a6fb4 0%,#1e90c2 35%,#2ca0ce 100%);
+  color:#f8fcff;
+  min-height:100vh;
+}
+
+/* Main panel */
+main.blogs-panel{
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(6px);
+  border-radius:16px;
+  max-width:var(--tg-max);
+  margin:2rem auto;
+  padding:2rem 1rem 3rem;
+  box-shadow:0 0 32px rgba(0,0,0,0.25);
+}
+
+/* List page */
+.blogs-wrap .hero h1{font-size:clamp(2rem,3.2vw,3rem);margin:0 0 .35rem;}
+.blogs-wrap .hero p{color:var(--tg-dim);margin:0 0 1.25rem;}
+.blog-list{border-top:1px solid var(--tg-line);}
+.blog-item{display:grid;grid-template-columns:260px 1fr;gap:1.25rem;padding:1.25rem 0;border-bottom:1px solid var(--tg-line);}
+@media (max-width:800px){.blog-item{grid-template-columns:1fr;}}
+.blog-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:14px;background:var(--tg-soft);border:1px solid var(--tg-line);filter:brightness(.95);}
+.blog-kicker{font-size:.9rem;color:var(--tg-dim);margin:.25rem 0 .5rem;}
+.blog-item h2{margin:0;font-size:clamp(1.1rem,2.2vw,1.5rem);color:#fff;}
+.blog-item a{color:inherit;text-decoration:none;}
+.blog-item a:hover,.blog-item a:focus{text-decoration:underline;}
+.blog-more{display:inline-flex;align-items:center;gap:.4rem;margin-top:.65rem;font-weight:600;color:var(--tg-accent);}
+.blog-more:hover,.blog-more:focus{text-decoration:underline;}
+
+/* Article / detail pages */
+.article{max-width:800px;margin:0 auto;padding:2rem 1rem 3rem;color:var(--tg-text);}
+.article h1{margin:0 0 .35rem;font-size:clamp(1.6rem,3vw,2.2rem);color:#fff;}
+.article .subhed{color:var(--tg-dim);margin:0 0 1.25rem;}
+.back{display:inline-block;margin:0 0 1rem;color:var(--tg-accent);text-decoration:none;}
+.back:hover,.back:focus{text-decoration:underline;}
+.figure{margin:1rem 0 1.25rem;}
+.figure img{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--tg-soft);border:1px solid var(--tg-line);border-radius:14px;filter:brightness(.95);}
+.tip{background:var(--tg-soft);border-left:4px solid #cfe3ff;padding:.9rem 1rem;border-radius:10px;margin:1rem 0 1.25rem;}
+.muted{color:var(--tg-dim);font-size:.95rem;}
+.btn{display:inline-block;padding:.8rem 1.2rem;background:var(--tg-accent);color:#00354a;border-radius:999px;text-decoration:none;font-weight:700;}
+
+@media (prefers-color-scheme:dark){
+  :root{--tg-text:#eaf1f6;--tg-dim:#aebbc6;--tg-soft:#0e171d;--tg-line:#20303c;}
+  .blog-item,.blog-list,.figure img{border-color:var(--tg-line);}
+}
