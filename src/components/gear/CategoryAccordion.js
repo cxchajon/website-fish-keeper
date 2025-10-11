@@ -80,17 +80,20 @@ const AERATION_GROUPS = [
     key: 'air-pumps',
     id: 'air-pumps',
     label: 'Air Pumps',
+    showCount: false,
   },
   {
     key: 'airline-accessories',
     id: 'airline-accessories',
     label: 'Air Pump Accessories',
+    showCount: false,
     renderContent: ({ items }) => createAirlineAccessoryList(items),
   },
   {
     key: 'co2-accessories',
     id: 'co2-accessories',
     label: 'CO₂ Accessories',
+    showCount: false,
     renderContent: ({ items }) => createCo2AccessoryList(items),
   },
 ];
