@@ -346,45 +346,57 @@ function isValidFilterProduct(product) {
     && Number.isFinite(Number(product.rated_gph));
 }
 
-export function sortFiltersForTank(catalog = [], tankGallons) {
-  if (!Array.isArray(catalog) || catalog.length === 0) {
+function hasValidTankRange(product) {
+  const min = Number(product?.tank_min_g);
+  const max = Number(product?.tank_max_g);
+  if (!Number.isFinite(min) || !Number.isFinite(max)) {
+    return false;
+  }
+  return min <= max;
+}
+
+export function isEligibleForTank(product, tankGallons) {
+  if (!product) {
+    return false;
+  }
+  const gallons = Number(tankGallons);
+  if (!Number.isFinite(gallons) || gallons <= 0) {
+    return false;
+  }
+  if (!hasValidTankRange(product)) {
+    return false;
+  }
+  const min = Number(product.tank_min_g);
+  const max = Number(product.tank_max_g);
+  return min <= gallons && gallons <= max;
+}
+
+export function sortEligibleProducts(list = [], tankGallons) {
+  if (!Array.isArray(list) || list.length === 0) {
     return [];
   }
   const gallons = Number(tankGallons);
   const hasGallons = Number.isFinite(gallons) && gallons > 0;
   const targetTurnover = 6;
-  return catalog
+  return list
     .filter(isValidFilterProduct)
-    .filter((product) => {
-      if (!hasGallons) {
-        return true;
-      }
-      const min = Number(product.tank_min_g);
-      const max = Number(product.tank_max_g);
-      if (Number.isFinite(min) && gallons < min) {
-        return false;
-      }
-      if (Number.isFinite(max) && gallons > max) {
-        return false;
-      }
-      return true;
-    })
+    .filter((product) => hasValidTankRange(product) && (!hasGallons || isEligibleForTank(product, gallons)))
     .map((product) => {
-      const rated = Number(product.rated_gph);
-      const turnover = hasGallons && rated > 0 ? rated / gallons : null;
-      const diff = Number.isFinite(turnover) ? Math.abs(turnover - targetTurnover) : Number.POSITIVE_INFINITY;
       const typeKey = String(product.type || '').toUpperCase();
       const typePriority = FILTER_TYPE_SORT_ORDER.has(typeKey)
         ? FILTER_TYPE_SORT_ORDER.get(typeKey)
         : FILTER_TYPE_SORT_ORDER.size + 1;
-      return { product, diff, typePriority };
+      const rated = Number(product.rated_gph);
+      const turnover = hasGallons && rated > 0 ? rated / gallons : null;
+      const diff = Number.isFinite(turnover) ? Math.abs(turnover - targetTurnover) : Number.POSITIVE_INFINITY;
+      return { product, typePriority, diff };
     })
     .sort((a, b) => {
-      if (a.diff !== b.diff) {
-        return a.diff - b.diff;
-      }
       if (a.typePriority !== b.typePriority) {
         return a.typePriority - b.typePriority;
+      }
+      if (a.diff !== b.diff) {
+        return a.diff - b.diff;
       }
       const brandCompare = String(a.product.brand || '').localeCompare(String(b.product.brand || ''));
       if (brandCompare !== 0) {
@@ -393,6 +405,10 @@ export function sortFiltersForTank(catalog = [], tankGallons) {
       return String(a.product.name || '').localeCompare(String(b.product.name || ''));
     })
     .map((entry) => entry.product);
+}
+
+export function sortFiltersForTank(catalog = [], tankGallons) {
+  return sortEligibleProducts(catalog, tankGallons);
 }
 
 export default TANK_SIZES;

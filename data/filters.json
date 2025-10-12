@@ -89,7 +89,7 @@
     "brand": "Fluval",
     "type": "CANISTER",
     "rated_gph": 145,
-    "tank_min_g": 10,
+    "tank_min_g": 20,
     "tank_max_g": 30,
     "url": "https://www.amazon.com/dp/B07KXJGDLT/?tag=fishkeepingli-20",
     "affiliate": "amazon",
