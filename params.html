@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Tank Guide — Aquarium Cycling Coach & 24-Hour Challenge</title>
+  <title>Cycling Coach &amp; 24-Hour Challenge — The Tank Guide</title>
   <meta
     name="description"
     content="Track ammonia, nitrite, and nitrate readings with The Tank Guide Cycling Coach and follow the 24-Hour Challenge for safe fishkeeping."
@@ -575,7 +575,7 @@
     <div class="page-wrap" id="cycling-coach">
       <section id="cc-title" class="cc-title" aria-label="Cycling Coach header">
         <h1 class="cc-title__h1">
-          Cycling Coach
+          Cycling Coach &amp; 24-Hour Challenge
           <span class="cc-title__leaf" aria-hidden="true"></span>
         </h1>
         <div class="cc-title__eyebrow">Nitrogen cycle tool</div>
@@ -691,7 +691,7 @@
         </div>
         <div class="challenge-card">
           <p class="challenge-instructions" id="challengeInstruction">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
-          <button type="button" class="btn" id="challenge-start">Start 24-hour challenge</button>
+          <button type="button" class="btn" id="challenge-start">Start 24-Hour Challenge</button>
           <div class="challenge-grid" id="challenge-form" hidden>
             <div class="field">
               <label for="challengeAmmonia">Ammonia after 24h</label>
@@ -755,7 +755,7 @@
 <script>
 (async () => {
   try {
-    const res = await fetch('/footer.v1.3.0.html?v=1.3.0', { cache: 'no-cache' });
+    const res = await fetch('/footer.html?v=1.2.0', { cache: 'no-cache' });
     const html = await res.text();
     const host = document.getElementById('site-footer');
     if (host) host.outerHTML = html;

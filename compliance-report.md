@@ -18,7 +18,7 @@
 ## Global Assets
 - **Consent Mode v2:** `/assets/js/consent-mode.js` sets EEA defaults to denied, persists choices for 365 days in `localStorage` + cookie, exposes `window.acceptAll()` / `window.rejectPersonalized()` and toggles `is-ads-disabled`. Funding Choices bridge syncs CMP decisions to DOM attributes.
 - **Ad placement CSS:** `/css/style.css` defines `.ttg-adunit { min-height:96px; display:flex; ... }` preventing layout collapse before fill.
-- **Footer links:** `footer.v1.3.0.html` now lists Privacy & Legal, Terms of Use, Cookie Settings, Contact, Store, Copyright.
+- **Footer links:** `footer.html` now lists Privacy & Legal, Terms of Use, Cookie Settings, Contact, Store, Copyright.
 - **ads.txt:** Added `/ads.txt` with `google.com, pub-9905718149811880, DIRECT, f08c47fec0942fa0`.
 
 ## Live Behavior Notes

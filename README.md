@@ -16,7 +16,7 @@ The Tank Guide is a static HTML/CSS/JS site delivering aquarium planning tools, 
 
 #### Shared Partials
 - [nav.html](nav.html)
-- [footer.v1.3.0.html](footer.v1.3.0.html)
+- [footer.html](footer.html)
 
 #### Other Pages
 - [404.html](404.html)
@@ -30,7 +30,7 @@ The Tank Guide is a static HTML/CSS/JS site delivering aquarium planning tools, 
 
 ## Dev Notes
 - Pure HTML/CSS/JS (no framework) with modular scripts in [js/](js) and shared styles in [css/](css).
-- Navigation and footer load as partials (see `nav.html` + `footer.v1.3.0.html`) via `js/nav.js` and page-level fetch helpers for consistency.
+- Navigation and footer load as partials (see `nav.html` + `footer.html`) via `js/nav.js` and page-level fetch helpers for consistency.
 - SEO baseline includes explicit titles, meta descriptions, and JSON-LD schema blocks across feature pages.
 
 ## Release Management
@@ -38,14 +38,16 @@ The Tank Guide is a static HTML/CSS/JS site delivering aquarium planning tools, 
 - [GitHub Releases](../../releases) must mirror each Channel Log entry (1:1 title/date alignment) when changes go live.
 
 ## Maintenance Routine
-- [ ] Daily Morning (Mon–Fri, 9:00 AM): 29G feed prompt + fertilizer check
-- [ ] Daily Evening (Daily, 9:00 PM): Journal wrap (Project, FishKeeper App/AI, quick params/maintenance)
-- [ ] Weekly (Sundays, 6:00 PM): Business & Tank Summary
-- [ ] Bi-weekly (Every other Friday, 9:00 AM): Channel Log ↔ Releases review
-- [ ] Monthly (Last day, 6:00 PM): Aquarium roll-up package
+All schedules run on Eastern Time (ET) unless otherwise noted.
+
+- [ ] Daily Morning (Mon–Fri, 9:00 AM ET): 29G feed prompt + fertilizer check
+- [ ] Daily Evening (Daily, 9:00 PM ET): Journal wrap (Project, FishKeeper App/AI, quick params/maintenance)
+- [ ] Weekly (Sundays, 6:00 PM ET): Business & Tank Summary
+- [ ] Bi-weekly (Every other Friday, 9:00 AM ET): Channel Log ↔ Releases review
+- [ ] Monthly (Last calendar day, 6:00 PM ET): Aquarium roll-up package
 
 ## Sync & Automation Notes
-Site updates flow into `/docs/CHANNEL_LOG.md`, then publish as matching GitHub Releases so external artifacts stay aligned. A bi-weekly job reviews the Channel Log against Releases to flag any gaps, and the monthly roll-up distills tank trends, incidents, costs, and time investment for leadership.
+Site updates flow into `/docs/CHANNEL_LOG.md`, then publish as matching GitHub Releases so external artifacts stay aligned. A bi-weekly job (Fridays 9:00 AM ET) reviews the Channel Log against Releases to flag gaps, while the monthly roll-up distills tank trends, incidents, costs, and time investment for leadership. reCAPTCHA v1.1 on `/contact-feedback.html` is verified each release cycle alongside Channel Log ↔ Release reconciliation.
 
 - [ ] Channel Log entry added
 - [ ] Matching GitHub Release created/updated
@@ -54,6 +56,6 @@ Site updates flow into `/docs/CHANNEL_LOG.md`, then publish as matching GitHub R
 ## Status
 - Core pages live
 
-Updated: 2025-10-12
+Updated: 2025-10-11
 
 All rights reserved — FishKeepingLifeCo (CXLXC LLC).

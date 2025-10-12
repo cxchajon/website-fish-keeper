@@ -1,5 +1,23 @@
 # Channel Log
 
+## 2025-10-11 — SEO + Docs Refresh v1.2 (README & Sync Automation)
+Owner: FishKeepingLifeCo (CXLXC LLC)
+
+SUMMARY
+- Completed full SEO metadata audit across 6 pages (index, about, media, gear, params, contact-feedback).
+- Added missing H1 elements and corrected keyword alignment ("fishkeeping guides," "24-Hour Challenge," etc.).
+- Locked keyword casing consistency across all headings.
+- Updated internal docs for README refresh (added Maintenance Routine + Sync Automation sections).
+- Verified reCAPTCHA v1.1 contact form and Channel Log ↔ Release mapping.
+- No UI layout changes; minor HTML semantic improvements only.
+- Confirmed meta description lengths and title ranges for SEO compliance.
+- Reconfirmed ownership tag as FishKeepingLifeCo (CXLXC LLC).
+
+EVIDENCE / LINKS
+- /docs/CHANNEL_LOG.md (updated)
+- /README.md (refreshed)
+- Screenshots available in project thread (SEO Audit Oct 2025)
+
 ## 2025-10-05 — Cloudflare Security Headers Post-Flight Verification
 ✅ 2025-10-05 — Cloudflare Security Headers verification passed successfully (apex & www consistent).
 
