@@ -1029,6 +1029,16 @@
               <input type="checkbox" id="toggle-planted" data-testid="toggle-planted" />
               <span class="slider" aria-hidden="true"></span>
             </label>
+            <div class="filter-type-control" data-role="filter-type">
+              <label for="filter-type">Filter Type</label>
+              <select id="filter-type" name="filter-type" aria-describedby="filter-type-help">
+                <option value="sponge">Sponge (≈4× turnover)</option>
+                <option value="hob" selected>Hang-On-Back (HOB) (≈6× turnover)</option>
+                <option value="canister">Canister (≈8× turnover)</option>
+              </select>
+              <p class="filter-type-help" id="filter-type-help">Choose a filter to estimate your tank’s water flow per hour.</p>
+              <p class="filter-flow" id="filterFlowResult" aria-live="polite">Estimated flow: —</p>
+            </div>
             <div id="filtration-trigger"></div>
           </div>
         </div>
