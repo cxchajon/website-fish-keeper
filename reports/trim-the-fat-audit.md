@@ -36,7 +36,7 @@ Quick wins: remove the unused bundles, lift the ad/consent CSS conflict, wire Ge
 - **AdSense loader on redirect stubs:** `gear.html` and `copyright.html` load AdSense + consent stacks despite immediately redirecting, adding unnecessary requests.【F:gear.html†L1-L32】【F:copyright.html†L1-L36】
 
 ## 5. Cross-Module Dependencies That Must Remain
-- **Global nav/footers:** Every public page includes `<div id="site-nav"></div>` and fetches `nav.html` via `js/nav.js`, which normalises canonical routes for active state handling.【F:js/nav.js†L23-L88】【F:contact-feedback.html†L325-L405】 Keep `nav.html`/`footer.v1.3.0.html` in sync with nav mapping.
+- **Global nav/footers:** Every public page includes `<div id="site-nav"></div>` and fetches `nav.html` via `js/nav.js`, which normalises canonical routes for active state handling.【F:js/nav.js†L23-L88】【F:contact-feedback.html†L325-L405】 Keep `nav.html`/`footer.html` in sync with nav mapping.
 - **Stocking advisor session payload:** `js/stocking.js` writes `ttg_stocking_state` before redirecting to `/gear/`. The Gear module must read and hydrate from this key to retain the “See Gear Suggestions” promise.【F:js/stocking.js†L1077-L1094】【F:src/pages/GearPage.js†L10-L45】
 - **CSV manifest:** `src/utils/csvLoader.js` relies on `/data/master_nav.json` + the split CSVs; deleting any data file will break the gear catalogue ingest.【F:src/utils/csvLoader.js†L1-L78】
 - **Consent bridge:** Funding Choices bridge toggles `documentElement.classList` and dispatches `ttg:consent-change`; any ad slot loader should listen to those events rather than duplicating state logic.【F:gear/index.html†L80-L118】【F:assets/js/consent-mode.js†L53-L68】
