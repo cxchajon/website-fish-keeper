@@ -235,6 +235,59 @@ function handleAddToBuild(item) {
   showToast('Added to Build');
 }
 
+function GearList(build = []) {
+  const container = createElement('div', {
+    className: 'build-context',
+    attrs: { 'data-testid': 'gear-list' },
+  });
+
+  container.appendChild(
+    createElement('div', {
+      className: 'gl-head',
+      text: 'Gear List',
+    }),
+  );
+
+  const count = build.length;
+  container.appendChild(
+    createElement('div', {
+      className: 'gl-count',
+      text: `${count} ${count === 1 ? 'item' : 'items'}`,
+    }),
+  );
+
+  if (count === 0) {
+    container.appendChild(
+      createElement('div', {
+        className: 'gl-empty',
+        text: 'Your selected items will appear here.',
+      }),
+    );
+    return container;
+  }
+
+  const list = createElement('ul', { className: 'gl-items' });
+  build.forEach((item, index) => {
+    const key =
+      item?.id ??
+      item?.slug ??
+      item?.title ??
+      item?.name ??
+      item?.Product_Name ??
+      item?.link ??
+      `item-${index}`;
+    const listItem = createElement('li', {
+      text: item?.title ?? item?.name ?? item?.Product_Name ?? 'Unnamed product',
+    });
+    listItem.setAttribute('data-key', key);
+    list.appendChild(listItem);
+  });
+
+  container.appendChild(list);
+
+  return container;
+}
+
 function showToast(message) {
   if (!message) {
     return;
@@ -364,6 +417,7 @@ function render() {
         onFiltrationTab: (tab) => setState({ filtrationTab: tab }),
       },
     ),
+    GearList(state.build),
     WhyPickDrawer({
       item: state.selectedItem,
       context: state.context,
