@@ -96,7 +96,6 @@ main {
 }
 
 .context-bar,
-.build-context,
 [data-testid='context-bar'] {
   position: static;
   top: auto;
@@ -111,6 +110,79 @@ main {
   border: 1px solid var(--border);
   z-index: auto;
   margin: 8px 0 16px;
+}
+
+.build-context {
+  position: relative;
+  margin: 8px 0 16px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(91, 140, 255, 0.32);
+  background: linear-gradient(
+      150deg,
+      rgba(91, 140, 255, 0.25) 0%,
+      rgba(48, 198, 237, 0.12) 42%,
+      rgba(15, 76, 117, 0.28) 100%
+    ),
+    rgba(9, 15, 30, 0.82);
+  box-shadow: 0 24px 48px -32px rgba(5, 13, 26, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.build-context > * {
+  position: relative;
+  z-index: 2;
+}
+
+.build-context::before,
+.build-context::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.build-context::before {
+  background:
+    radial-gradient(circle at 15% -20%, rgba(91, 140, 255, 0.42) 0%, rgba(91, 140, 255, 0) 55%),
+    linear-gradient(150deg, rgba(91, 140, 255, 0.24) 0%, rgba(48, 198, 237, 0.12) 45%, rgba(13, 110, 183, 0.26) 100%);
+  z-index: 0;
+}
+
+.build-context::after {
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.46) 0%, rgba(255, 255, 255, 0.14) 58%, rgba(255, 255, 255, 0) 100%);
+  clip-path: ellipse(78% 64% at 0% 0%);
+  opacity: 0.7;
+  z-index: 1;
+}
+
+.theme-light .build-context {
+  border-color: rgba(37, 99, 235, 0.22);
+  background: linear-gradient(
+      150deg,
+      rgba(91, 140, 255, 0.18) 0%,
+      rgba(67, 191, 227, 0.12) 48%,
+      rgba(24, 94, 136, 0.18) 100%
+    ),
+    rgba(250, 253, 255, 0.88);
+  box-shadow: 0 22px 42px -30px rgba(15, 23, 42, 0.25);
+}
+
+.theme-light .build-context::before {
+  background:
+    radial-gradient(circle at 15% -18%, rgba(91, 140, 255, 0.34) 0%, rgba(91, 140, 255, 0) 58%),
+    linear-gradient(150deg, rgba(91, 140, 255, 0.18) 0%, rgba(67, 191, 227, 0.12) 50%, rgba(24, 94, 136, 0.2) 100%);
+}
+
+.theme-light .build-context::after {
+  opacity: 0.85;
 }
 
 .context-bar.is-sticky,
