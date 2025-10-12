@@ -152,6 +152,13 @@ export const TANK_SIZES = [
 ];
 
 const CANONICAL_IDS = new Set(TANK_SIZES.map((tank) => tank.id));
+const TANK_GALLON_VALUES = new Set(TANK_SIZES.map((tank) => tank.gallons));
+const TANKS_BY_GALLONS = new Map();
+TANK_SIZES.forEach((tank) => {
+  if (!TANKS_BY_GALLONS.has(tank.gallons)) {
+    TANKS_BY_GALLONS.set(tank.gallons, tank);
+  }
+});
 
 const LEGACY_ALIASES = new Map([
   ['g5', '5g'],
@@ -184,6 +191,12 @@ let legacyWarningShown = false;
 export function getTankById(id) {
   if (!id) return null;
   return TANK_SIZES.find((tank) => tank.id === id) ?? null;
+}
+
+export function getTankByGallons(gallons) {
+  const numeric = parseTankGallons(gallons);
+  if (numeric === null) return null;
+  return TANKS_BY_GALLONS.get(numeric) ?? null;
 }
 
 export function getTankLengthIn(id) {
@@ -238,6 +251,40 @@ export function normalizeLegacyTankSelection(oldValue) {
 
 export function listTankIds() {
   return TANK_SIZES.map((tank) => tank.id);
+}
+
+export function parseTankGallons(value) {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) {
+      return null;
+    }
+    const rounded = Math.round(value);
+    return rounded > 0 ? rounded : null;
+  }
+  const text = String(value).trim();
+  if (!text) {
+    return null;
+  }
+  const match = text.match(/(-?\d+(?:\.\d+)?)/);
+  if (!match) {
+    return null;
+  }
+  const parsed = Number.parseInt(match[1], 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return null;
+  }
+  return parsed;
+}
+
+export function isValidTankGallons(value) {
+  const numeric = typeof value === 'number' ? Math.round(value) : parseTankGallons(value);
+  if (!Number.isFinite(numeric) || numeric <= 0) {
+    return false;
+  }
+  return TANK_GALLON_VALUES.has(numeric);
 }
 
 export default TANK_SIZES;

@@ -1,5 +1,7 @@
 (function(){
   const STORAGE_KEY = 'gearTankSelection';
+  const STOCKING_TANK_SESSION_KEY = 'ttg:tank_g';
+  const TANK_QUERY_KEYS = ['tank_g', 'tank', 'size'];
   const INCH_TO_CM = 2.54;
 
   const TANK_PRESETS = [
@@ -17,6 +19,12 @@
   ];
 
   const PRESET_MAP = new Map(TANK_PRESETS.map((preset) => [preset.id, preset]));
+  const PRESET_BY_GALLONS = new Map();
+  TANK_PRESETS.forEach((preset) => {
+    if (!PRESET_BY_GALLONS.has(preset.gallons)) {
+      PRESET_BY_GALLONS.set(preset.gallons, preset);
+    }
+  });
 
   const state = {
     selectedGallons: 0,
@@ -134,6 +142,117 @@
   };
 
   let hasWarnedUnknownAerationGroups = false;
+
+  function parseTankGallons(value){
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number') {
+      if (!Number.isFinite(value)) return null;
+      const rounded = Math.round(value);
+      return rounded > 0 ? rounded : null;
+    }
+    const text = String(value).trim();
+    if (!text) return null;
+    const match = text.match(/(-?\d+(?:\.\d+)?)/);
+    if (!match) return null;
+    const parsed = Number.parseInt(match[1], 10);
+    if (!Number.isFinite(parsed) || parsed <= 0) return null;
+    return parsed;
+  }
+
+  function isValidTankGallons(value){
+    const numeric = typeof value === 'number' ? Math.round(value) : parseTankGallons(value);
+    if (!Number.isFinite(numeric) || numeric <= 0) return false;
+    return PRESET_BY_GALLONS.has(numeric);
+  }
+
+  function findPresetByGallons(value){
+    const numeric = parseTankGallons(value);
+    if (numeric === null) return null;
+    return PRESET_BY_GALLONS.get(numeric) || null;
+  }
+
+  function readTankGallonsFromSession(){
+    try {
+      const raw = sessionStorage.getItem(STOCKING_TANK_SESSION_KEY);
+      if (!raw) return null;
+      const parsed = parseTankGallons(raw);
+      return isValidTankGallons(parsed) ? parsed : null;
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function persistSessionTankGallons(value){
+    try {
+      if (value === null || value === undefined) {
+        sessionStorage.removeItem(STOCKING_TANK_SESSION_KEY);
+      } else {
+        sessionStorage.setItem(STOCKING_TANK_SESSION_KEY, String(value));
+      }
+    } catch (_error) {
+      /* ignore persistence issues */
+    }
+  }
+
+  function readTankGallonsFromQuery(){
+    if (typeof window === 'undefined') return null;
+    const search = window.location.search || '';
+    if (!search) return null;
+    let params;
+    try {
+      params = new URLSearchParams(search);
+    } catch (_error) {
+      return null;
+    }
+    for (const key of TANK_QUERY_KEYS) {
+      if (!params.has(key)) continue;
+      const parsed = parseTankGallons(params.get(key));
+      if (parsed !== null && isValidTankGallons(parsed)) {
+        return { gallons: parsed, key };
+      }
+    }
+    return null;
+  }
+
+  function tidyTankQueryParams(){
+    if (typeof window === 'undefined' || typeof history === 'undefined' || typeof history.replaceState !== 'function') {
+      return;
+    }
+    let url;
+    try {
+      url = new URL(window.location.href);
+    } catch (_error) {
+      return;
+    }
+    let dirty = false;
+    TANK_QUERY_KEYS.forEach((key) => {
+      if (url.searchParams.has(key)) {
+        url.searchParams.delete(key);
+        dirty = true;
+      }
+    });
+    if (!dirty) return;
+    const next = `${url.pathname}${url.search}${url.hash}`;
+    history.replaceState(null, '', next);
+  }
+
+  function resolveInitialTankSelection(){
+    const fromQuery = readTankGallonsFromQuery();
+    if (fromQuery) {
+      const preset = findPresetByGallons(fromQuery.gallons);
+      if (preset) {
+        return { preset, fromQuery: true };
+      }
+    }
+    const fromSession = readTankGallonsFromSession();
+    if (fromSession !== null) {
+      const preset = findPresetByGallons(fromSession);
+      if (preset) {
+        return { preset, fromQuery: false };
+      }
+    }
+    return null;
+  }
 
   function toDataSectionKey(sectionKey){
     const key = String(sectionKey || '');
@@ -2144,12 +2263,16 @@
     });
   }
 
-  function initTankSelect(){
+  function initTankSelect(initialSelection = {}){
     const select =
       document.getElementById('tank-size') || document.getElementById('gear-tank-size');
     const wrap = document.getElementById('gear-tank-select-wrap');
     const meta = document.getElementById('gear-tank-meta');
     if (!select || !meta) return;
+
+    const initialPreset = initialSelection?.preset || null;
+    const initialFromQuery = Boolean(initialSelection?.fromQuery);
+    let initialApplied = false;
 
     select.innerHTML = '';
     const placeholderOption = document.createElement('option');
@@ -2195,12 +2318,31 @@
         setInfo(null);
         persistSelection('');
         applyHighlights();
+        persistSessionTankGallons(null);
         return;
       }
       setInfo(preset);
       persistSelection(preset.id);
       applyHighlights(preset.gallons, preset.lengthIn);
+      persistSessionTankGallons(preset.gallons);
     };
+
+    const applyInitialPreset = (preset, tidy) => {
+      if (!preset || !PRESET_MAP.has(preset.id)) {
+        return false;
+      }
+      select.value = preset.id;
+      handleSelection(preset.id);
+      if (tidy) {
+        tidyTankQueryParams();
+      }
+      initialApplied = true;
+      return true;
+    };
+
+    if (initialPreset) {
+      applyInitialPreset(initialPreset, initialFromQuery);
+    }
 
     select.addEventListener('change', (event) => {
       handleSelection(event.target.value);
@@ -2224,17 +2366,22 @@
       saved = '';
     }
 
-    if (saved && PRESET_MAP.has(saved)) {
+    if (!initialApplied && saved && PRESET_MAP.has(saved)) {
       select.value = saved;
       handleSelection(saved);
-    } else {
+      initialApplied = true;
+    }
+
+    if (!initialApplied) {
       select.value = '';
       setInfo(null);
       applyHighlights();
+      persistSessionTankGallons(null);
     }
   }
 
   function init(){
+    const initialSelection = resolveInitialTankSelection();
     ensurePanelHooks();
     buildCategory('heaters', document.getElementById('heaters-body'));
     buildCategory('filters', document.getElementById('filters-body'));
@@ -2247,7 +2394,7 @@
     buildCategory('food', document.getElementById('food-body'));
     buildCategory('maintenance-tools', document.getElementById('maintenance-tools-body'));
     wireAccordions();
-    initTankSelect();
+    initTankSelect(initialSelection);
   }
 
   if (typeof window !== 'undefined') {

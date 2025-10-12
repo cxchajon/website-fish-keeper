@@ -3,7 +3,6 @@
   <head>
     <meta charset="utf-8" />
     <title>Redirecting to The Tank Guide Gear Page</title>
-    <meta http-equiv="refresh" content="0; url=/gear/" />
     <link rel="canonical" href="https://thetankguide.com/gear/" />
     <meta name="robots" content="noindex, follow" />
     <!-- Consent Mode defaults (load FIRST) -->
@@ -12,12 +11,21 @@
     <!--#include virtual="/includes/ga4.html" -->
   </head>
   <body>
-    <p>If you are not redirected, <a href="/gear/">visit The Tank Guide gear page</a>.</p>
+    <p>If you are not redirected, <a id="gear-redirect-link" href="/gear/">visit The Tank Guide gear page</a>.</p>
     <noscript>
       <p><a href="/gear/">Continue to the gear page</a>.</p>
     </noscript>
     <script>
-      window.location.replace('/gear/');
+      (function redirectToGear(){
+        const search = window.location.search || '';
+        const hash = window.location.hash || '';
+        const target = `/gear/${search}${hash}`;
+        const link = document.getElementById('gear-redirect-link');
+        if (link) {
+          link.href = target;
+        }
+        window.location.replace(target);
+      })();
     </script>
   </body>
 </html>
