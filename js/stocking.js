@@ -338,22 +338,6 @@ function bootstrapStocking() {
     updateFilterFlowNote();
   }
 
-  function injectFilterStyles() {
-    if (document.getElementById('ttg-filter-type-style')) {
-      return;
-    }
-    const style = document.createElement('style');
-    style.id = 'ttg-filter-type-style';
-    style.textContent = `#stocking-page .row.toggle-row .row-right{flex-wrap:wrap;}`
-      + `#stocking-page .filter-type-control{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:220px;max-width:280px;flex:1 1 220px;}`
-      + `#stocking-page .filter-type-control label{font-size:0.82rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.72);}`
-      + `#stocking-page .filter-type-control select{width:100%;min-height:44px;padding:0 38px 0 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:inherit;appearance:none;}`
-      + `#stocking-page .filter-type-control .filter-type-help{font-size:0.78rem;color:rgba(255,255,255,0.68);}`
-      + `#stocking-page .filter-type-control .filter-flow{font-size:0.84rem;color:rgba(255,255,255,0.82);}`
-      + `@media(max-width:600px){#stocking-page .filter-type-control{width:100%;max-width:none;}}`;
-    document.head.appendChild(style);
-  }
-
   function ensureFilterControl() {
     const switchWrapper = refs.planted ? refs.planted.closest('.row-right') : null;
     if (!switchWrapper) {
@@ -363,6 +347,7 @@ function bootstrapStocking() {
     if (!control) {
       control = document.createElement('div');
       control.className = 'filter-type-control';
+      control.dataset.role = 'filter-type';
 
       const label = document.createElement('label');
       label.setAttribute('for', 'filter-type');
@@ -371,7 +356,7 @@ function bootstrapStocking() {
       const select = document.createElement('select');
       select.id = 'filter-type';
       select.name = 'filter-type';
-      select.setAttribute('aria-describedby', 'filterHelp');
+      select.setAttribute('aria-describedby', 'filter-type-help');
 
       const options = [
         { value: 'sponge', text: 'Sponge (≈4× turnover)' },
@@ -386,7 +371,7 @@ function bootstrapStocking() {
       });
 
       const help = document.createElement('p');
-      help.id = 'filterHelp';
+      help.id = 'filter-type-help';
       help.className = 'filter-type-help';
       help.textContent = 'Choose a filter to estimate your tank’s water flow per hour.';
 
@@ -412,6 +397,12 @@ function bootstrapStocking() {
     }
 
     refs.filterTypeSelect = control.querySelector('#filter-type');
+    if (refs.filterTypeSelect && !refs.filterTypeSelect.hasAttribute('aria-describedby')) {
+      const help = control.querySelector('#filter-type-help');
+      if (help && help.id) {
+        refs.filterTypeSelect.setAttribute('aria-describedby', help.id);
+      }
+    }
     refs.filterFlowResult = control.querySelector('#filterFlowResult');
     syncFilterTypeControl();
   }
@@ -1369,7 +1360,6 @@ function buildGearPayload() {
     populateSpecies();
     syncQtyInputFromState({ force: true });
     syncToggles();
-    injectFilterStyles();
     ensureFilterControl();
     if (filtrationUi.trigger && filtrationUi.host) {
       filtrationUi.onToggle = (open) => {

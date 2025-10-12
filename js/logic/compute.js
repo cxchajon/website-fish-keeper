@@ -105,6 +105,12 @@ export const FILTER_TURNOVER_MULTIPLIERS = Object.freeze({
   canister: 8,
 });
 
+export const FILTER_BIOLOAD_FACTORS = Object.freeze({
+  sponge: 0.9,
+  hob: 1,
+  canister: 1.1,
+});
+
 const IDEAL_TURNOVER_MULTIPLIER = FILTER_TURNOVER_MULTIPLIERS.hob;
 
 export function normalizeFilterTypeSelection(value) {
@@ -118,6 +124,7 @@ export function normalizeFilterTypeSelection(value) {
 export function computeFilterFlowStats(gallons, filterType) {
   const type = normalizeFilterTypeSelection(filterType);
   const multiplier = FILTER_TURNOVER_MULTIPLIERS[type];
+  const factor = FILTER_BIOLOAD_FACTORS[type] ?? 1;
   const gallonValue = Number(gallons);
   if (!Number.isFinite(gallonValue) || gallonValue <= 0) {
     return {
@@ -126,16 +133,11 @@ export function computeFilterFlowStats(gallons, filterType) {
       idealMultiplier: IDEAL_TURNOVER_MULTIPLIER,
       actualGph: null,
       idealGph: null,
-      factor: 1,
+      factor,
     };
   }
   const actualGph = gallonValue * multiplier;
   const idealGph = gallonValue * IDEAL_TURNOVER_MULTIPLIER;
-  let factor = 1;
-  if (idealGph > 0) {
-    const raw = 1 + ((actualGph - idealGph) / idealGph) * 0.10;
-    factor = clamp(raw, 0.90, 1.10);
-  }
   return {
     type,
     multiplier,

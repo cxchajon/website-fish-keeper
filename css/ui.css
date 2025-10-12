@@ -1,8 +1,8 @@
 #stocking-page .tank-size-card .row.toggle-row .row-right {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
@@ -12,6 +12,67 @@
 
 #stocking-page .tank-size-card .row.toggle-row .switch {
   flex: 0 0 auto;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-type-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 220px;
+  max-width: 320px;
+  flex: 1 1 240px;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-type-control label {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted, rgba(235, 239, 251, 0.78));
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-type-control select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 38px 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  appearance: none;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-type-control select:focus {
+  outline: 2px solid rgba(20, 203, 168, 0.55);
+  outline-offset: 2px;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-type-control .filter-type-help {
+  font-size: 0.78rem;
+  margin: 0;
+  color: var(--muted, rgba(235, 239, 251, 0.78));
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-type-control .filter-flow {
+  font-size: 0.84rem;
+  margin: 0;
+  color: var(--fg, #eef3ff);
+}
+
+@media (max-width: 720px) {
+  #stocking-page .tank-size-card .row.toggle-row .row-right {
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  #stocking-page .tank-size-card .row.toggle-row .filter-type-control {
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  #stocking-page .tank-size-card .row.toggle-row #filtration-trigger {
+    width: 100%;
+  }
 }
 
 #filtration-trigger {

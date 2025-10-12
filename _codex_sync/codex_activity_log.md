@@ -21,3 +21,8 @@ Removed obsolete diffs:
 Scope: Add filter dropdown + mild flow factor (±10%).
 Result: GPH displayed and bioload adjusted; UI aligned with planted toggle.
 Next: Consider advanced modes (user-entered GPH, multi-filter setups) for future.
+
+[2025-10-12 | Stocking Advisor | Filter Type render fix + normalized scaling]
+Scope: Mounted Filter Type beside Planted; restored visibility and mild ±10% effect.
+Result: Fully functional, responsive, and visually consistent.
+Next: Optional “Custom GPH” mode.
