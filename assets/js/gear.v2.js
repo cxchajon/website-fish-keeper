@@ -117,9 +117,14 @@
   };
 
   const AERATION_GROUP_CONFIG = [
-    { key: 'air-pumps', id: 'air-pumps', label: 'Air Pumps' },
-    { key: 'airline-accessories', id: 'airline-accessories', label: 'Air Pump Accessories' },
-    { key: 'co2-accessories', id: 'co2-accessories', label: 'CO₂ Accessories' }
+    { key: 'air-pumps', id: 'air-pumps', label: 'Air Pumps', showCount: false },
+    {
+      key: 'airline-accessories',
+      id: 'airline-accessories',
+      label: 'Air Pump Accessories',
+      showCount: false
+    },
+    { key: 'co2-accessories', id: 'co2-accessories', label: 'CO₂ Accessories', showCount: false }
   ];
 
   const AERATION_SOURCE_GROUP_ALIASES = {
