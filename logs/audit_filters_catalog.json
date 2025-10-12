@@ -1,0 +1,28 @@
+{
+  "generated_at": "2025-10-12T21:57:23.559Z",
+  "catalog_path": "data/filters.json",
+  "summary": {
+    "total_products": 15,
+    "invalid_product_count": 0,
+    "missing_or_invalid_count": 0,
+    "invalid_range_count": 0,
+    "duplicate_id_count": 0,
+    "duplicate_name_count": 0,
+    "valid_types": [
+      "HOB",
+      "CANISTER",
+      "SPONGE"
+    ],
+    "type_counts": {
+      "SPONGE": 2,
+      "HOB": 6,
+      "CANISTER": 7
+    }
+  },
+  "issues": {
+    "missing_or_invalid_fields": [],
+    "invalid_ranges": [],
+    "duplicate_ids": [],
+    "duplicate_brand_name": []
+  }
+}
