@@ -287,4 +287,112 @@ export function isValidTankGallons(value) {
   return TANK_GALLON_VALUES.has(numeric);
 }
 
+export function clamp(value, min, max) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) {
+    return Number.isFinite(min) ? min : 0;
+  }
+  if (Number.isFinite(min) && number < min) {
+    return min;
+  }
+  if (Number.isFinite(max) && number > max) {
+    return max;
+  }
+  return number;
+}
+
+export function parseIntSafe(value) {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  if (typeof value === 'number') {
+    const int = Number.isFinite(value) ? Math.trunc(value) : NaN;
+    return Number.isFinite(int) ? int : null;
+  }
+  const text = String(value).trim();
+  if (!text) {
+    return null;
+  }
+  const match = text.match(/-?\d+/);
+  if (!match) {
+    return null;
+  }
+  const parsed = Number.parseInt(match[0], 10);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+export function getQS() {
+  if (typeof window === 'undefined') {
+    return new URLSearchParams('');
+  }
+  try {
+    return new URLSearchParams(window.location.search || '');
+  } catch (_error) {
+    return new URLSearchParams('');
+  }
+}
+
+const FILTER_TYPE_SORT_ORDER = new Map([
+  ['CANISTER', 0],
+  ['HOB', 1],
+  ['SPONGE', 2],
+]);
+
+function isValidFilterProduct(product) {
+  return product
+    && typeof product.id === 'string'
+    && typeof product.brand === 'string'
+    && typeof product.name === 'string'
+    && Number.isFinite(Number(product.rated_gph));
+}
+
+export function sortFiltersForTank(catalog = [], tankGallons) {
+  if (!Array.isArray(catalog) || catalog.length === 0) {
+    return [];
+  }
+  const gallons = Number(tankGallons);
+  const hasGallons = Number.isFinite(gallons) && gallons > 0;
+  const targetTurnover = 6;
+  return catalog
+    .filter(isValidFilterProduct)
+    .filter((product) => {
+      if (!hasGallons) {
+        return true;
+      }
+      const min = Number(product.tank_min_g);
+      const max = Number(product.tank_max_g);
+      if (Number.isFinite(min) && gallons < min) {
+        return false;
+      }
+      if (Number.isFinite(max) && gallons > max) {
+        return false;
+      }
+      return true;
+    })
+    .map((product) => {
+      const rated = Number(product.rated_gph);
+      const turnover = hasGallons && rated > 0 ? rated / gallons : null;
+      const diff = Number.isFinite(turnover) ? Math.abs(turnover - targetTurnover) : Number.POSITIVE_INFINITY;
+      const typeKey = String(product.type || '').toUpperCase();
+      const typePriority = FILTER_TYPE_SORT_ORDER.has(typeKey)
+        ? FILTER_TYPE_SORT_ORDER.get(typeKey)
+        : FILTER_TYPE_SORT_ORDER.size + 1;
+      return { product, diff, typePriority };
+    })
+    .sort((a, b) => {
+      if (a.diff !== b.diff) {
+        return a.diff - b.diff;
+      }
+      if (a.typePriority !== b.typePriority) {
+        return a.typePriority - b.typePriority;
+      }
+      const brandCompare = String(a.product.brand || '').localeCompare(String(b.product.brand || ''));
+      if (brandCompare !== 0) {
+        return brandCompare;
+      }
+      return String(a.product.name || '').localeCompare(String(b.product.name || ''));
+    })
+    .map((entry) => entry.product);
+}
+
 export default TANK_SIZES;

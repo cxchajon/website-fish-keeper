@@ -1,7 +1,7 @@
 import { FISH_DB } from "../fish-data.js";
 import { validateSpeciesRecord } from "./speciesSchema.js";
 import { EMPTY_TANK } from '../stocking/tankStore.js';
-import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent, PLANTED_CAPACITY_BONUS } from '../bioload.js';
+import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent, PLANTED_CAPACITY_BONUS, computeFiltrationFactor } from '../bioload.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import { BEHAVIOR_TAGS } from './behaviorTags.js';
 import {
@@ -346,7 +346,10 @@ function calcTank(state, entries, overrideVariant) {
   const tankId = tankState?.id ?? null;
   const sump = clamp(Number(state.sumpGallons) || 0, 0, 400);
   const planted = Boolean(state.planted);
+  const filterId = state?.filterId ?? null;
   const filterType = normalizeFilterTypeSelection(state.filterType);
+  const manualRatedValue = Number(state?.ratedGph);
+  const manualRatedGph = Number.isFinite(manualRatedValue) && manualRatedValue > 0 ? manualRatedValue : null;
   const manualVariant = overrideVariant ?? state.variantId ?? null;
   const variant = pickTankVariant({ tankId, gallons, speciesEntries: entries, manualSelection: manualVariant })
     ?? pickTankVariant({ tankId, gallons, speciesEntries: [], manualSelection: manualVariant })
@@ -376,22 +379,28 @@ function calcTank(state, entries, overrideVariant) {
 
   let turnover = clamp(Number(state.turnover) || 5, 0.5, 20);
   let deliveredGph = turnover * volume;
-  let ratedGph = deliveredGph / 0.78;
+  let ratedGph = deliveredGph;
   let filterFlow = computeFilterFlowStats(gallons, filterType);
+  const gallonsForTurnover = Number.isFinite(effectiveGallons) && effectiveGallons > 0 ? effectiveGallons : gallons;
 
   const { totalGph } = summarizeFilters(state.filters);
   if (totalGph > 0) {
     deliveredGph = totalGph;
     ratedGph = totalGph;
-    const gallonsForTurnover = Number.isFinite(effectiveGallons) && effectiveGallons > 0 ? effectiveGallons : gallons;
     const computedTurnover = gallonsForTurnover > 0 ? deliveredGph / gallonsForTurnover : 0;
+    if (computedTurnover > 0) {
+      turnover = computedTurnover;
+    }
+  } else if (manualRatedGph) {
+    deliveredGph = manualRatedGph;
+    ratedGph = manualRatedGph;
+    const computedTurnover = gallonsForTurnover > 0 ? manualRatedGph / gallonsForTurnover : 0;
     if (computedTurnover > 0) {
       turnover = computedTurnover;
     }
   } else if (Number.isFinite(filterFlow.actualGph) && filterFlow.actualGph > 0) {
     deliveredGph = filterFlow.actualGph;
     ratedGph = filterFlow.actualGph;
-    const gallonsForTurnover = Number.isFinite(effectiveGallons) && effectiveGallons > 0 ? effectiveGallons : gallons;
     const computedTurnover = gallonsForTurnover > 0 ? deliveredGph / gallonsForTurnover : 0;
     if (computedTurnover > 0) {
       turnover = computedTurnover;
@@ -399,7 +408,12 @@ function calcTank(state, entries, overrideVariant) {
   }
 
   filterFlow = computeFilterFlowStats(gallons, filterType, deliveredGph);
+  const flowTurnover = gallonsForTurnover > 0 && deliveredGph > 0 ? deliveredGph / gallonsForTurnover : null;
+  filterFlow.turnover = Number.isFinite(flowTurnover) ? flowTurnover : null;
+  filterFlow.ratedGph = Number.isFinite(ratedGph) && ratedGph > 0 ? ratedGph : null;
+  filterFlow.filterId = filterId;
 
+  const ratedGphValue = Number.isFinite(ratedGph) && ratedGph > 0 ? ratedGph : null;
   const multiplier = interpolateMultiplier(turnover);
 
   return {
@@ -424,7 +438,8 @@ function calcTank(state, entries, overrideVariant) {
     recommendedCapacity,
     effectiveGallons,
     deliveredGph,
-    ratedGph,
+    ratedGph: ratedGphValue,
+    filterId,
     filterType: filterFlow.type,
     filterFlow,
   };
@@ -702,7 +717,7 @@ function mapEntriesToStock(entries = []) {
   return entries.map((entry) => ({ speciesId: entry.id, count: entry.qty }));
 }
 
-function computeBioload(tank, entries, candidate, filterType) {
+function computeBioload(tank, entries, candidate, filterState = {}) {
   const currentStock = mapEntriesToStock(entries);
   const candidateStock = candidate ? [{ speciesId: candidate.id, count: candidate.qty }] : [];
   const proposedStock = candidate ? [...currentStock, ...candidateStock] : currentStock;
@@ -725,7 +740,7 @@ function computeBioload(tank, entries, candidate, filterType) {
     currentStock: proposedStock,
     speciesMap: SPECIES_MAP,
   });
-  const normalizedType = normalizeFilterTypeSelection(filterType ?? tank?.filterType);
+  const normalizedType = normalizeFilterTypeSelection(filterState.filterType ?? tank?.filterType);
   const flow = tank?.filterFlow ?? computeFilterFlowStats(tank?.gallons, normalizedType);
   const tankGallons = Number.isFinite(tank?.gallons) && tank.gallons > 0
     ? tank.gallons
@@ -737,15 +752,29 @@ function computeBioload(tank, entries, candidate, filterType) {
     : Number.isFinite(flow?.actualGph) && flow.actualGph > 0
       ? flow.actualGph
       : 0;
-  const filterMultiplier = filtrationMultiplier({ type: normalizedType, gph: deliveredGph, tankGallons });
-  const applyFilterMultiplier = (value) => {
+  const hasProduct = Boolean(filterState.filterId ?? tank?.filterFlow?.filterId ?? tank?.filterId);
+  const turnoverForFactor = Number.isFinite(filterState.turnover)
+    ? filterState.turnover
+    : Number.isFinite(tank?.turnover)
+      ? tank.turnover
+      : Number.isFinite(flow?.turnover)
+        ? flow.turnover
+        : tankGallons > 0 && deliveredGph > 0
+          ? deliveredGph / tankGallons
+          : null;
+  const filtration = computeFiltrationFactor({
+    filterType: normalizedType,
+    hasProduct,
+    turnover: turnoverForFactor,
+  });
+  const applyFiltrationFactor = (value) => {
     if (!Number.isFinite(value)) {
       return 0;
     }
-    return clamp(value * filterMultiplier, 0, 200);
+    return clamp(value * filtration.totalFactor, 0, 200);
   };
-  const adjustedCurrentPercentValue = applyFilterMultiplier(currentPercentValue);
-  const adjustedProposedPercentValue = applyFilterMultiplier(proposedPercentValue);
+  const adjustedCurrentPercentValue = applyFiltrationFactor(currentPercentValue);
+  const adjustedProposedPercentValue = applyFiltrationFactor(proposedPercentValue);
   const currentPercent = adjustedCurrentPercentValue / 100;
   const proposedPercent = adjustedProposedPercentValue / 100;
   const color = getBandColor(proposedPercent);
@@ -754,14 +783,21 @@ function computeBioload(tank, entries, candidate, filterType) {
   const text = `${formatBioloadPercent(adjustedCurrentPercentValue)} → ${formatBioloadPercent(adjustedProposedPercentValue)} of capacity`;
   const message = turnoverIssue ? 'Turnover below 2× — upgrade filtration' : undefined;
   const badge = candidate && !Number.isFinite(candidate.species.bioloadGE) ? 'estimated' : null;
+  const ratedGphValue = Number.isFinite(flow?.ratedGph) && flow.ratedGph > 0
+    ? flow.ratedGph
+    : Number.isFinite(tank?.ratedGph) && tank.ratedGph > 0
+      ? tank.ratedGph
+      : null;
   const flowAdjustment = {
     type: flow?.type ?? normalizedType,
-    multiplier: Number.isFinite(flow?.multiplier) ? flow.multiplier : FILTER_TURNOVER_MULTIPLIERS[normalizedType] ?? FILTER_TURNOVER_MULTIPLIERS.hob,
-    idealMultiplier: Number.isFinite(flow?.idealMultiplier) ? flow.idealMultiplier : IDEAL_TURNOVER_MULTIPLIER,
     actualGph: deliveredGph > 0 ? deliveredGph : null,
     idealGph: Number.isFinite(flow?.idealGph) ? flow.idealGph : null,
-    factor: filterMultiplier,
-    filtrationMultiplier: filterMultiplier,
+    ratedGph: ratedGphValue,
+    turnover: Number.isFinite(turnoverForFactor) ? turnoverForFactor : null,
+    hasProduct,
+    typeFactor: filtration.typeFactor,
+    flowFactor: filtration.flowFactor,
+    totalFactor: filtration.totalFactor,
   };
   return {
     currentLoad,
@@ -776,8 +812,8 @@ function computeBioload(tank, entries, candidate, filterType) {
     text,
     message,
     badge,
-    adjustedCurrentLoad: currentLoad * filterMultiplier,
-    adjustedProposed: proposed * filterMultiplier,
+    adjustedCurrentLoad: currentLoad * filtration.totalFactor,
+    adjustedProposed: proposed * filtration.totalFactor,
     flowAdjustment,
     baseCurrentPercent: currentPercentValue / 100,
     baseProposedPercent: proposedPercentValue / 100,
@@ -1292,7 +1328,12 @@ export function buildComputedState(state) {
   const tank = calcTank(state, entries, state.variantId);
   const water = sanitizeWater(state.water ?? {});
   const conditions = computeConditions(state, entries, candidate, water, state.showTips);
-  const bioload = computeBioload(tank, entries, candidate, state.filterType);
+  const bioload = computeBioload(tank, entries, candidate, {
+    filterType: state.filterType,
+    filterId: state.filterId,
+    ratedGph: state.ratedGph,
+    turnover: tank.turnover,
+  });
   const aggression = computeAggression(tank, entries, candidate);
   const invertCheck = candidate ? evaluateInvertSafety(candidate.species, { water }) : { severity: 'ok' };
   const groupRule = candidate ? checkGroupRule(candidate, entries) : null;
@@ -1474,6 +1515,8 @@ export function createDefaultState() {
     showTips: false,
     turnover: 5,
     filterType: 'hob',
+    filterId: null,
+    ratedGph: null,
     sumpGallons: 0,
     tankAgeWeeks: 12,
     variantId: null,

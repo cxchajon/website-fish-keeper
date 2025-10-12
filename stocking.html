@@ -1030,15 +1030,33 @@
               <input type="checkbox" id="toggle-planted" data-testid="toggle-planted" />
               <span class="slider" aria-hidden="true"></span>
             </label>
-            <div class="filter-type-control" data-role="filter-type">
-              <label for="filter-type">Filter Type</label>
-              <select id="filter-type" name="filter-type" aria-describedby="filter-type-help">
-                <option value="sponge">Sponge (≈4× turnover)</option>
-                <option value="hob" selected>Hang-On-Back (HOB) (≈6× turnover)</option>
-                <option value="canister">Canister (≈8× turnover)</option>
-              </select>
-              <p class="filter-type-help" id="filter-type-help">Choose a filter to estimate your tank’s water flow per hour.</p>
-              <p class="filter-flow" id="filterFlowResult" aria-live="polite">Estimated flow: —</p>
+            <div class="filter-flow-control" data-role="filter-setup">
+              <div class="filter-flow-input">
+                <label for="filter-rated-gph">Rated Flow (GPH)</label>
+                <div class="filter-flow-input__field">
+                  <input type="number" id="filter-rated-gph" name="filter-rated-gph" inputmode="numeric" pattern="[0-9]*"
+                    min="0" step="10" placeholder="e.g., 350" aria-describedby="filter-rated-note" />
+                  <button type="button" class="filter-flow-reset" id="filter-reset" hidden>↺ Reset to product GPH</button>
+                </div>
+                <p class="filter-flow-note" id="filter-rated-note">Enter the rated flow for your filter. Selecting a product will auto-fill this.</p>
+              </div>
+              <div class="filter-product-field">
+                <label for="filter-product">Filter Product</label>
+                <div class="select-wrap">
+                  <select id="filter-product" name="filter-product" aria-describedby="filter-product-note">
+                    <option value="">— Select a product —</option>
+                  </select>
+                  <svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                    <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <p class="filter-product-note" id="filter-product-note">Choose a filter matched to your tank size to auto-fill GPH.</p>
+              </div>
+              <div class="filter-flow-meta">
+                <p class="filter-turnover" id="filter-turnover" aria-live="polite">Estimated turnover: —</p>
+                <p class="filter-product-meta" id="filter-product-label" hidden></p>
+                <p class="filter-custom-note" id="filter-custom-note" hidden>GPH customized</p>
+              </div>
             </div>
             <div id="filtration-trigger"></div>
           </div>

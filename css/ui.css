@@ -14,23 +14,73 @@
   flex: 0 0 auto;
 }
 
-#stocking-page .tank-size-card .row.toggle-row .filter-type-control {
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-control {
+  display: grid;
+  gap: 10px 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  width: 100%;
+  flex: 1 1 320px;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-control .filter-flow-input,
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-control .filter-product-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 220px;
-  max-width: 320px;
-  flex: 1 1 240px;
 }
 
-#stocking-page .tank-size-card .row.toggle-row .filter-type-control label {
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-control label {
   font-size: 0.82rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--muted, rgba(235, 239, 251, 0.78));
 }
 
-#stocking-page .tank-size-card .row.toggle-row .filter-type-control select {
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-input__field {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-input__field input {
+  flex: 1 1 auto;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-input__field input:focus {
+  outline: 2px solid rgba(20, 203, 168, 0.55);
+  outline-offset: 2px;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-reset {
+  flex: 0 0 auto;
+  border: none;
+  background: none;
+  color: rgba(235, 239, 251, 0.86);
+  font-size: 0.78rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 8px;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-reset:hover,
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-reset:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  outline: none;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-product-field .select-wrap {
+  position: relative;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-product-field select {
   width: 100%;
   min-height: 44px;
   padding: 0 38px 0 12px;
@@ -41,20 +91,33 @@
   appearance: none;
 }
 
-#stocking-page .tank-size-card .row.toggle-row .filter-type-control select:focus {
+#stocking-page .tank-size-card .row.toggle-row .filter-product-field select:focus {
   outline: 2px solid rgba(20, 203, 168, 0.55);
   outline-offset: 2px;
 }
 
-#stocking-page .tank-size-card .row.toggle-row .filter-type-control .filter-type-help {
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-control .filter-flow-note,
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-control .filter-product-note,
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-control .filter-flow-meta {
   font-size: 0.78rem;
-  margin: 0;
   color: var(--muted, rgba(235, 239, 251, 0.78));
+  margin: 0;
 }
 
-#stocking-page .tank-size-card .row.toggle-row .filter-type-control .filter-flow {
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-control .filter-flow-meta {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-control .filter-flow-meta strong,
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-control .filter-flow-meta span {
+  font-weight: 600;
+}
+
+#stocking-page .tank-size-card .row.toggle-row .filter-flow-control .filter-flow-meta .filter-turnover {
   font-size: 0.84rem;
-  margin: 0;
   color: var(--fg, #eef3ff);
 }
 
@@ -64,10 +127,9 @@
     gap: 12px;
   }
 
-  #stocking-page .tank-size-card .row.toggle-row .filter-type-control {
+  #stocking-page .tank-size-card .row.toggle-row .filter-flow-control {
+    grid-template-columns: 1fr;
     flex: 1 1 100%;
-    min-width: 0;
-    max-width: none;
   }
 
   #stocking-page .tank-size-card .row.toggle-row #filtration-trigger {
