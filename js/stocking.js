@@ -20,6 +20,7 @@ import { EVENTS, dispatchEvent as dispatchStockingEvent } from './stocking/event
 import { tankLengthStatus } from './stocking/validators.js';
 import { initInfoTooltips } from './ui/tooltip.js';
 import { renderFiltrationTrigger, renderFiltrationDrawer, bindFiltrationEvents } from './ui/filter-drawer.js';
+import { parseTankGallons, isValidTankGallons } from './utils.js';
 
 function isAssumptionText(el){
   const t = (el?.textContent || '').trim();
@@ -44,6 +45,9 @@ function scrubAssumptionOnce(scope){
 
 scrubAssumptionOnce();
 
+const GEAR_PAGE_PATH = '/gear.html';
+const GEAR_QUERY_PARAM = 'tank_g';
+const GEAR_TANK_SESSION_KEY = 'ttg:tank_g';
 (function initStockingFlags(){
   window.TTG = window.TTG || {};
   const ua = navigator.userAgent || '';
@@ -205,6 +209,47 @@ function bootstrapStocking() {
     envReco: document.getElementById('env-reco'),
     envTips: document.querySelector('#env-legend, #env-more-tips, [data-role="env-legend"]'),
   };
+
+  const normalizeGearGallons = (value) => {
+    const parsed = parseTankGallons(value);
+    if (parsed === null) {
+      return null;
+    }
+    return isValidTankGallons(parsed) ? parsed : null;
+  };
+
+  const persistGearTankGallons = (value) => {
+    try {
+      if (value === null || value === undefined) {
+        sessionStorage.removeItem(GEAR_TANK_SESSION_KEY);
+      } else {
+        sessionStorage.setItem(GEAR_TANK_SESSION_KEY, String(value));
+      }
+    } catch (_error) {
+      /* ignore storage errors */
+    }
+  };
+
+  const syncGearLinkForGallons = (candidate) => {
+    if (!refs.seeGear) {
+      return;
+    }
+    const normalized = normalizeGearGallons(candidate);
+    const href = normalized === null
+      ? GEAR_PAGE_PATH
+      : `${GEAR_PAGE_PATH}?${GEAR_QUERY_PARAM}=${normalized}`;
+    if (refs.seeGear.getAttribute('href') !== href) {
+      refs.seeGear.setAttribute('href', href);
+    }
+    persistGearTankGallons(normalized);
+  };
+
+  const syncGearLink = () => {
+    const gallonsCandidate = computed?.tank?.gallons ?? state?.tank?.gallons ?? state?.gallons ?? null;
+    syncGearLinkForGallons(gallonsCandidate);
+  };
+
+  syncGearLinkForGallons(state?.tank?.gallons ?? state?.gallons ?? null);
 
   const supportedSpeciesIds = new Set(SPECIES.map((species) => species.id));
   const speciesById = new Map(SPECIES.map((species) => [species.id, species]));
@@ -654,6 +699,7 @@ function bootstrapStocking() {
     state.selectedTankId = snapshot.id ?? null;
     state.variantId = null;
     shouldRestoreVariantFocus = false;
+    syncGearLinkForGallons(snapshot.gallons);
     resetSpeciesFilters();
     populateSpecies();
     updateLengthValidator();
@@ -1196,6 +1242,7 @@ function renderAll() {
     syncQtyInputFromState();
     syncFiltrationUI();
     syncFilterTypeControl();
+    syncGearLinkForGallons(activeTank.gallons);
     return;
   }
   computed = buildComputedState(state);
@@ -1210,6 +1257,7 @@ function renderAll() {
   syncQtyInputFromState();
   syncFiltrationUI();
   syncFilterTypeControl();
+  syncGearLink();
 }
 
 function renderEnvironmentPanels() {
@@ -1309,12 +1357,18 @@ function bindInputs() {
     }
   });
 
-  refs.seeGear.addEventListener('click', () => {
-    if (!computed) return;
-    const payload = buildGearPayload();
-    sessionStorage.setItem('ttg_stocking_state', JSON.stringify(payload));
-    window.location.href = '/gear/';
-  });
+  if (refs.seeGear) {
+    refs.seeGear.addEventListener('click', () => {
+      syncGearLink();
+      if (!computed) return;
+      const payload = buildGearPayload();
+      try {
+        sessionStorage.setItem('ttg_stocking_state', JSON.stringify(payload));
+      } catch (_error) {
+        /* ignore persistence errors */
+      }
+    });
+  }
 }
 
 function buildGearPayload() {

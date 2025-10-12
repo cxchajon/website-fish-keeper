@@ -26,3 +26,8 @@ Next: Consider advanced modes (user-entered GPH, multi-filter setups) for future
 Scope: Mounted Filter Type beside Planted; restored visibility and mild ±10% effect.
 Result: Fully functional, responsive, and visually consistent.
 Next: Optional “Custom GPH” mode.
+
+[2025-10-12 | Cross-page State | Stocking→Gear tank carryover]
+Scope: Pass tank via query (?tank_g=NN) with sessionStorage fallback; Gear page preselects and renders accordingly.
+Result: Seamless carryover and shareable URLs.
+Next: Consider carrying planted toggle and filtration selection in future (e.g., &planted=1&filter=HOB).
