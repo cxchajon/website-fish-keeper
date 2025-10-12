@@ -26,6 +26,7 @@ import {
   parseIntSafe,
   getQS,
   sortFiltersForTank,
+  sortEligibleProducts,
   isEligibleForTank,
 } from './utils.js';
 
@@ -59,6 +60,12 @@ const GEAR_FILTER_SESSION_KEY = 'ttg:filter_id';
 const GEAR_FILTER_TYPE_SESSION_KEY = 'ttg:filter_type';
 const GEAR_FILTER_GPH_SESSION_KEY = 'ttg:rated_gph';
 const FILTER_CATALOG_PATH = '/data/filters.json';
+
+const DEBUG_PRODUCTS = false;
+const DEBUG_PRODUCT_TANKS = Object.freeze([5, 10, 15, 20, 29, 40, 50, 55, 75]);
+const debugDropdownSnapshots = new Map();
+let debugDownloadLink = null;
+let debugDownloadUrl = null;
 
 let filterCatalog = [];
 const filterCatalogById = new Map();
@@ -469,6 +476,139 @@ function bootstrapStocking() {
     return filterCatalogPromise;
   }
 
+  function collectDebugOptionIds(select) {
+    if (!select) {
+      return [];
+    }
+    return Array.from(select.options || [])
+      .map((option) => String(option.value || '').trim())
+      .filter((value) => value);
+  }
+
+  function ensureDebugDownloadLink() {
+    if (debugDownloadLink || typeof document === 'undefined') {
+      return;
+    }
+    const link = document.createElement('a');
+    link.rel = 'noopener noreferrer';
+    link.target = '_blank';
+    link.download = 'audit_filters_dropdown.json';
+    link.textContent = '';
+    link.style.display = 'none';
+    link.dataset.role = 'debug-filters-download';
+    link.dataset.filename = '/logs/audit_filters_dropdown.json';
+    document.body.appendChild(link);
+    debugDownloadLink = link;
+  }
+
+  function updateDebugDownloadLink(report, hasDiff) {
+    if (!DEBUG_PRODUCTS) {
+      return;
+    }
+    ensureDebugDownloadLink();
+    if (!debugDownloadLink) {
+      return;
+    }
+    if (debugDownloadUrl) {
+      try {
+        URL.revokeObjectURL(debugDownloadUrl);
+      } catch (_error) {
+        // ignore revoke errors
+      }
+      debugDownloadUrl = null;
+    }
+    if (!hasDiff) {
+      debugDownloadLink.style.display = 'none';
+      debugDownloadLink.removeAttribute('href');
+      debugDownloadLink.textContent = '';
+      return;
+    }
+    const json = JSON.stringify(report, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    debugDownloadUrl = URL.createObjectURL(blob);
+    debugDownloadLink.href = debugDownloadUrl;
+    debugDownloadLink.style.display = 'none';
+    debugDownloadLink.textContent = '';
+    const update = () => {
+      if (!debugDownloadLink) {
+        return;
+      }
+      debugDownloadLink.style.display = 'block';
+      debugDownloadLink.textContent = 'Download filter dropdown audit report';
+      debugDownloadLink.title = 'Download filter dropdown audit report';
+    };
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(update);
+    } else {
+      update();
+    }
+  }
+
+  function runDebugFilterAudit({ select, gallons }) {
+    if (!DEBUG_PRODUCTS) {
+      return;
+    }
+    const numericGallons = Number(gallons);
+    const actualIds = collectDebugOptionIds(select);
+    if (Number.isFinite(numericGallons)) {
+      debugDropdownSnapshots.set(numericGallons, actualIds);
+    }
+    const rows = DEBUG_PRODUCT_TANKS.map((tankGallons) => {
+      const expectedProducts = sortEligibleProducts(filterCatalog, tankGallons);
+      const expectedIds = expectedProducts.map((product) => product.id);
+      const hasSample = debugDropdownSnapshots.has(tankGallons);
+      const actualSample = hasSample ? debugDropdownSnapshots.get(tankGallons) : null;
+      const missing = hasSample ? expectedIds.filter((id) => !actualSample.includes(id)) : null;
+      const extra = hasSample ? actualSample.filter((id) => !expectedIds.includes(id)) : null;
+      return {
+        tank_g: tankGallons,
+        expected_ids: expectedIds,
+        actual_ids: hasSample ? actualSample : null,
+        missing_in_dropdown: missing,
+        extra_in_dropdown: extra,
+      };
+    });
+    const sampledTanks = Array.from(debugDropdownSnapshots.keys()).sort((a, b) => a - b);
+    const report = {
+      generated_at: new Date().toISOString(),
+      sampled_tanks: sampledTanks,
+      tanks: rows,
+    };
+    window.TTG = window.TTG || {};
+    window.TTG.DEBUG_PRODUCTS = {
+      enabled: DEBUG_PRODUCTS,
+      report,
+    };
+    try {
+      const tableData = rows.map((entry) => ({
+        tank_g: entry.tank_g,
+        expected: entry.expected_ids.join(', '),
+        actual: Array.isArray(entry.actual_ids) ? entry.actual_ids.join(', ') : '(not sampled)',
+        missing: Array.isArray(entry.missing_in_dropdown) && entry.missing_in_dropdown.length
+          ? entry.missing_in_dropdown.join(', ')
+          : '',
+        extra: Array.isArray(entry.extra_in_dropdown) && entry.extra_in_dropdown.length
+          ? entry.extra_in_dropdown.join(', ')
+          : '',
+      }));
+      if (console.groupCollapsed) {
+        console.groupCollapsed('[Stocking][DEBUG] Filter dropdown audit');
+        console.table(tableData);
+        console.groupEnd();
+      } else {
+        console.log('[Stocking][DEBUG] Filter dropdown audit', tableData);
+      }
+    } catch (_error) {
+      // ignore console errors in unsupported environments
+    }
+    const hasDifferences = rows.some((entry) => {
+      const missing = Array.isArray(entry.missing_in_dropdown) ? entry.missing_in_dropdown : [];
+      const extra = Array.isArray(entry.extra_in_dropdown) ? entry.extra_in_dropdown : [];
+      return missing.length > 0 || extra.length > 0;
+    });
+    updateDebugDownloadLink(report, hasDifferences);
+  }
+
   function refreshFilterProductOptions({ preserveSelection = true } = {}) {
     ensureFilterControl();
     if (!refs.filterProductSelect) {
@@ -543,6 +683,8 @@ function bootstrapStocking() {
 
     const nextValue = currentValue && availableIds.has(currentValue) ? currentValue : '';
     select.value = nextValue;
+
+    runDebugFilterAudit({ select, gallons });
   }
 
   function computeTurnoverEstimate() {
