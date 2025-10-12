@@ -5,7 +5,6 @@ import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPe
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import { BEHAVIOR_TAGS } from './behaviorTags.js';
 import {
-  clamp,
   formatNumber,
   formatPercent,
   sum,
@@ -97,58 +96,122 @@ export function listSensitiveSpecies(speciesEntries, parameter) {
   return results;
 }
 
-const FILTER_TYPE_KEYS = new Set(['sponge', 'hob', 'canister']);
+// --- Filtration model (canonical) -------------------------------------------
+const FILTER_BASE = {
+  canister: 0.35,  // highest media capacity
+  hob:      0.25,  // hang-on-back
+  internal: 0.18,  // small internal/power filter
+  sponge:   0.12,  // air-driven sponge
+  ugf:      0.15,  // undergravel (optional)
+  none:     0.00
+};
+
+// Clamp helper
+function clamp(n, lo, hi) { return Math.min(hi, Math.max(lo, n)); }
+
+/**
+ * Returns a MULTIPLIER to apply to base bioload.
+ * Lower multiplier = more filtration headroom (better).
+ *
+ * - type: 'canister' | 'hob' | 'internal' | 'sponge' | 'ugf' | 'none'
+ * - gph: rated flow in gallons per hour
+ * - tankGallons: display volume in gallons
+ *
+ * Baseline turnover: 5x/hour for freshwater. Scale efficiency around that.
+ * Hard-cap effective efficiency to avoid impossible reductions.
+ */
+function filtrationMultiplier({ type = 'none', gph = 0, tankGallons = 0 }) {
+  const base = FILTER_BASE[type] ?? 0;
+  const turnover = tankGallons > 0 ? (gph / tankGallons) : 0;   // x per hour
+  const scale = clamp(turnover / 5, 0.4, 1.3);                  // normalize to ~5x
+  const eff = clamp(base * scale, 0, 0.6);                      // cap max 60% reduction
+  return 1 - eff;                                               // multiply base bioload by this
+}
+
+// Example: baseBioload * filtrationMultiplier({type, gph, tankGallons})
+// ---------------------------------------------------------------------------
+
+if (typeof window !== 'undefined' && window?.TTG?.DEBUG_FILTERS) {
+  const sample = { tankGallons: 29, gph: 200 };
+  const canister = filtrationMultiplier({ ...sample, type: 'canister' });
+  const hob = filtrationMultiplier({ ...sample, type: 'hob' });
+  const sponge = filtrationMultiplier({ ...sample, type: 'sponge' });
+  if (!(canister < hob && hob < sponge)) {
+    console.warn('[TTG] Filtration multiplier order unexpected', { canister, hob, sponge });
+  }
+}
+
+const FILTER_TYPE_KEYS = new Set(['canister', 'hob', 'internal', 'sponge', 'ugf', 'none']);
 
 export const FILTER_TURNOVER_MULTIPLIERS = Object.freeze({
   sponge: 4,
+  internal: 5,
+  ugf: 4.5,
   hob: 6,
   canister: 8,
-});
-
-export const FILTER_BIOLOAD_FACTORS = Object.freeze({
-  sponge: 0.9,
-  hob: 1,
-  canister: 1.1,
+  none: 0,
 });
 
 const IDEAL_TURNOVER_MULTIPLIER = FILTER_TURNOVER_MULTIPLIERS.hob;
 
+const FILTER_TYPE_ALIASES = new Map([
+  ['hob', 'hob'],
+  ['hangonback', 'hob'],
+  ['hangonbackhob', 'hob'],
+  ['hobfilter', 'hob'],
+  ['canister', 'canister'],
+  ['canisterfilter', 'canister'],
+  ['sponge', 'sponge'],
+  ['spongefilter', 'sponge'],
+  ['internal', 'internal'],
+  ['internalfilter', 'internal'],
+  ['powerfilter', 'internal'],
+  ['ugf', 'ugf'],
+  ['undergravel', 'ugf'],
+  ['undergravelfilter', 'ugf'],
+  ['none', 'none'],
+  ['nofilter', 'none'],
+]);
+
 export function normalizeFilterTypeSelection(value) {
-  const key = typeof value === 'string' ? value.trim().toLowerCase() : '';
-  if (FILTER_TYPE_KEYS.has(key)) {
-    return key;
+  if (typeof value === 'string') {
+    const trimmed = value.trim().toLowerCase();
+    if (FILTER_TYPE_KEYS.has(trimmed)) {
+      return trimmed;
+    }
+    const sanitized = trimmed.replace(/[^a-z]/g, '');
+    const mapped = FILTER_TYPE_ALIASES.get(sanitized);
+    if (mapped) {
+      return mapped;
+    }
   }
   return 'hob';
 }
 
-export function computeFilterFlowStats(gallons, filterType) {
+export function computeFilterFlowStats(gallons, filterType, overrideGph = null) {
   const type = normalizeFilterTypeSelection(filterType);
-  const multiplier = FILTER_TURNOVER_MULTIPLIERS[type];
-  const factor = FILTER_BIOLOAD_FACTORS[type] ?? 1;
+  const multiplier = FILTER_TURNOVER_MULTIPLIERS[type] ?? FILTER_TURNOVER_MULTIPLIERS.hob;
   const gallonValue = Number(gallons);
-  if (!Number.isFinite(gallonValue) || gallonValue <= 0) {
-    return {
-      type,
-      multiplier,
-      idealMultiplier: IDEAL_TURNOVER_MULTIPLIER,
-      actualGph: null,
-      idealGph: null,
-      factor,
-    };
-  }
-  const actualGph = gallonValue * multiplier;
-  const idealGph = gallonValue * IDEAL_TURNOVER_MULTIPLIER;
+  const hasGallons = Number.isFinite(gallonValue) && gallonValue > 0;
+  const overrideValue = Number(overrideGph);
+  const hasOverride = Number.isFinite(overrideValue) && overrideValue > 0;
+  const baseGph = hasGallons ? gallonValue * multiplier : 0;
+  const actualGph = hasOverride ? overrideValue : baseGph;
+  const idealGph = hasGallons ? gallonValue * IDEAL_TURNOVER_MULTIPLIER : null;
+  const tankGallons = hasGallons ? gallonValue : 0;
+  const gphForMultiplier = hasOverride ? overrideValue : baseGph;
+  const factor = filtrationMultiplier({ type, gph: gphForMultiplier, tankGallons });
   return {
     type,
     multiplier,
     idealMultiplier: IDEAL_TURNOVER_MULTIPLIER,
-    actualGph,
+    actualGph: actualGph > 0 ? actualGph : null,
     idealGph,
     factor,
   };
 }
 
-const FILTER_TYPES = new Set(['HOB', 'Canister', 'Sponge']);
+const FILTER_TYPES = new Set(['HOB', 'Canister', 'Sponge', 'Internal', 'UGF', 'None']);
 
 export const TURNOVER_BANDS = Object.freeze({
   L: [3, 5],
@@ -314,7 +377,7 @@ function calcTank(state, entries, overrideVariant) {
   let turnover = clamp(Number(state.turnover) || 5, 0.5, 20);
   let deliveredGph = turnover * volume;
   let ratedGph = deliveredGph / 0.78;
-  const filterFlow = computeFilterFlowStats(gallons, filterType);
+  let filterFlow = computeFilterFlowStats(gallons, filterType);
 
   const { totalGph } = summarizeFilters(state.filters);
   if (totalGph > 0) {
@@ -334,6 +397,8 @@ function calcTank(state, entries, overrideVariant) {
       turnover = computedTurnover;
     }
   }
+
+  filterFlow = computeFilterFlowStats(gallons, filterType, deliveredGph);
 
   const multiplier = interpolateMultiplier(turnover);
 
@@ -660,16 +725,27 @@ function computeBioload(tank, entries, candidate, filterType) {
     currentStock: proposedStock,
     speciesMap: SPECIES_MAP,
   });
-  const flow = tank?.filterFlow ?? computeFilterFlowStats(tank?.gallons, filterType);
-  const flowFactor = Number.isFinite(flow?.factor) ? flow.factor : 1;
-  const applyFlowFactor = (value) => {
+  const normalizedType = normalizeFilterTypeSelection(filterType ?? tank?.filterType);
+  const flow = tank?.filterFlow ?? computeFilterFlowStats(tank?.gallons, normalizedType);
+  const tankGallons = Number.isFinite(tank?.gallons) && tank.gallons > 0
+    ? tank.gallons
+    : Number.isFinite(tank?.effectiveGallons) && tank.effectiveGallons > 0
+      ? tank.effectiveGallons
+      : 0;
+  const deliveredGph = Number.isFinite(tank?.deliveredGph) && tank.deliveredGph > 0
+    ? tank.deliveredGph
+    : Number.isFinite(flow?.actualGph) && flow.actualGph > 0
+      ? flow.actualGph
+      : 0;
+  const filterMultiplier = filtrationMultiplier({ type: normalizedType, gph: deliveredGph, tankGallons });
+  const applyFilterMultiplier = (value) => {
     if (!Number.isFinite(value)) {
       return 0;
     }
-    return clamp(value * flowFactor, 0, 200);
+    return clamp(value * filterMultiplier, 0, 200);
   };
-  const adjustedCurrentPercentValue = applyFlowFactor(currentPercentValue);
-  const adjustedProposedPercentValue = applyFlowFactor(proposedPercentValue);
+  const adjustedCurrentPercentValue = applyFilterMultiplier(currentPercentValue);
+  const adjustedProposedPercentValue = applyFilterMultiplier(proposedPercentValue);
   const currentPercent = adjustedCurrentPercentValue / 100;
   const proposedPercent = adjustedProposedPercentValue / 100;
   const color = getBandColor(proposedPercent);
@@ -678,14 +754,14 @@ function computeBioload(tank, entries, candidate, filterType) {
   const text = `${formatBioloadPercent(adjustedCurrentPercentValue)} → ${formatBioloadPercent(adjustedProposedPercentValue)} of capacity`;
   const message = turnoverIssue ? 'Turnover below 2× — upgrade filtration' : undefined;
   const badge = candidate && !Number.isFinite(candidate.species.bioloadGE) ? 'estimated' : null;
-  const normalizedType = normalizeFilterTypeSelection(filterType ?? tank?.filterType);
   const flowAdjustment = {
     type: flow?.type ?? normalizedType,
-    multiplier: Number.isFinite(flow?.multiplier) ? flow.multiplier : FILTER_TURNOVER_MULTIPLIERS[normalizedType],
+    multiplier: Number.isFinite(flow?.multiplier) ? flow.multiplier : FILTER_TURNOVER_MULTIPLIERS[normalizedType] ?? FILTER_TURNOVER_MULTIPLIERS.hob,
     idealMultiplier: Number.isFinite(flow?.idealMultiplier) ? flow.idealMultiplier : IDEAL_TURNOVER_MULTIPLIER,
-    actualGph: Number.isFinite(flow?.actualGph) ? flow.actualGph : null,
+    actualGph: deliveredGph > 0 ? deliveredGph : null,
     idealGph: Number.isFinite(flow?.idealGph) ? flow.idealGph : null,
-    factor: flowFactor,
+    factor: filterMultiplier,
+    filtrationMultiplier: filterMultiplier,
   };
   return {
     currentLoad,
@@ -700,8 +776,8 @@ function computeBioload(tank, entries, candidate, filterType) {
     text,
     message,
     badge,
-    adjustedCurrentLoad: currentLoad * flowFactor,
-    adjustedProposed: proposed * flowFactor,
+    adjustedCurrentLoad: currentLoad * filterMultiplier,
+    adjustedProposed: proposed * filterMultiplier,
     flowAdjustment,
     baseCurrentPercent: currentPercentValue / 100,
     baseProposedPercent: proposedPercentValue / 100,
