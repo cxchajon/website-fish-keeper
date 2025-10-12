@@ -1,6 +1,11 @@
 (function(){
   const STORAGE_KEY = 'gearTankSelection';
   const STOCKING_TANK_SESSION_KEY = 'ttg:tank_g';
+  const FILTER_SESSION_KEY = 'ttg:filter_id';
+  const FILTER_TYPE_SESSION_KEY = 'ttg:filter_type';
+  const FILTER_GPH_SESSION_KEY = 'ttg:rated_gph';
+  const FILTER_QUERY_KEY = 'filter_id';
+  const FILTER_CATALOG_URL = '/data/filters.json';
   const TANK_QUERY_KEYS = ['tank_g', 'tank', 'size'];
   const INCH_TO_CM = 2.54;
 
@@ -30,6 +35,9 @@
     selectedGallons: 0,
     selectedLengthIn: 0
   };
+
+  let filterCatalog = [];
+  let filterCatalogPromise = null;
 
   const DATA_SECTION_ALIASES = {
     heaters: 'heaters',
@@ -194,6 +202,28 @@
     }
   }
 
+  function persistSessionFilterData({ filterId = '', filterType = '', ratedGph = null } = {}) {
+    try {
+      if (filterId) {
+        sessionStorage.setItem(FILTER_SESSION_KEY, filterId);
+      } else {
+        sessionStorage.removeItem(FILTER_SESSION_KEY);
+      }
+      if (filterType) {
+        sessionStorage.setItem(FILTER_TYPE_SESSION_KEY, filterType);
+      } else {
+        sessionStorage.removeItem(FILTER_TYPE_SESSION_KEY);
+      }
+      if (Number.isFinite(ratedGph) && ratedGph > 0) {
+        sessionStorage.setItem(FILTER_GPH_SESSION_KEY, String(Math.round(ratedGph)));
+      } else {
+        sessionStorage.removeItem(FILTER_GPH_SESSION_KEY);
+      }
+    } catch (_error) {
+      /* ignore persistence issues */
+    }
+  }
+
   function readTankGallonsFromQuery(){
     if (typeof window === 'undefined') return null;
     const search = window.location.search || '';
@@ -212,6 +242,88 @@
       }
     }
     return null;
+  }
+
+  function readFilterIdFromQuery(){
+    if (typeof window === 'undefined') return null;
+    const search = window.location.search || '';
+    if (!search) return null;
+    let params;
+    try {
+      params = new URLSearchParams(search);
+    } catch (_error) {
+      return null;
+    }
+    if (!params.has(FILTER_QUERY_KEY)) return null;
+    const raw = params.get(FILTER_QUERY_KEY);
+    if (!raw) return null;
+    const id = String(raw).trim();
+    return id ? id : null;
+  }
+
+  function normalizeFilterTypeKey(value){
+    const key = String(value || '').trim().toUpperCase();
+    if (!key) return '';
+    if (key === 'CANISTER' || key === 'HOB' || key === 'SPONGE') {
+      return key;
+    }
+    return '';
+  }
+
+  function markFilterSelection(filterId){
+    if (!filterId) return;
+    const page = document.getElementById('gear-page');
+    if (page) {
+      page.dataset.selectedFilterId = filterId;
+    }
+  }
+
+  function loadFilterCatalog(){
+    if (filterCatalogPromise) {
+      return filterCatalogPromise;
+    }
+    filterCatalogPromise = fetch(FILTER_CATALOG_URL, { cache: 'no-cache' })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to load filter catalog: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        filterCatalog = Array.isArray(data) ? data : [];
+        return filterCatalog;
+      })
+      .catch((error) => {
+        console.warn('[Gear] Filter catalog load failed:', error);
+        filterCatalog = [];
+        return filterCatalog;
+      });
+    return filterCatalogPromise;
+  }
+
+  async function applyFilterSelectionFromQuery(){
+    const filterId = readFilterIdFromQuery();
+    if (!filterId) return;
+    try {
+      const catalog = await loadFilterCatalog();
+      if (!Array.isArray(catalog) || !catalog.length) {
+        return;
+      }
+      const match = catalog.find((item) => item && item.id === filterId);
+      if (!match) {
+        return;
+      }
+      const rated = Number(match.rated_gph);
+      const normalizedType = normalizeFilterTypeKey(match.type);
+      persistSessionFilterData({
+        filterId: match.id,
+        filterType: normalizedType || '',
+        ratedGph: Number.isFinite(rated) && rated > 0 ? rated : null,
+      });
+      markFilterSelection(match.id);
+    } catch (error) {
+      console.error('[Gear] Failed to sync filter selection from query:', error);
+    }
   }
 
   function tidyTankQueryParams(){
@@ -2417,6 +2529,7 @@
         console.error('[Gear] Data promise rejected:', error);
       }
     }
+    await applyFilterSelectionFromQuery();
     init();
   }
 
