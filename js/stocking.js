@@ -61,7 +61,6 @@ const GEAR_FILTER_TYPE_SESSION_KEY = 'ttg:filter_type';
 const GEAR_FILTER_GPH_SESSION_KEY = 'ttg:rated_gph';
 const FILTER_CATALOG_PATH = '/data/filters.json';
 
-const DEBUG_PRODUCTS = false;
 const DEBUG_PRODUCT_TANKS = Object.freeze([5, 10, 15, 20, 29, 40, 50, 55, 75]);
 const debugDropdownSnapshots = new Map();
 let debugDownloadLink = null;
@@ -70,8 +69,16 @@ let debugDownloadUrl = null;
 let filterCatalog = [];
 const filterCatalogById = new Map();
 let filterCatalogPromise = null;
+let filterCatalogLoaded = false;
+let filterCatalogLoading = false;
+let filterCatalogLoadError = false;
+let filterCatalogErrorLogged = false;
 let pendingFilterId = null;
 let filterProductStatusMessage = '';
+
+function debugProductsEnabled() {
+  return typeof window !== 'undefined' && window.DEBUG_PRODUCTS === true;
+}
 (function initStockingFlags(){
   window.TTG = window.TTG || {};
   const ua = navigator.userAgent || '';
@@ -437,13 +444,16 @@ function bootstrapStocking() {
 
   syncFiltrationUI();
 
-  function setFilterCatalogData(list = []) {
+  function setFilterCatalogData(list = [], { hasError = false } = {}) {
     const normalized = Array.isArray(list) ? list.filter((item) => item && typeof item.id === 'string') : [];
     filterCatalog = normalized;
     filterCatalogById.clear();
     normalized.forEach((product) => {
       filterCatalogById.set(product.id, product);
     });
+    filterCatalogLoaded = true;
+    filterCatalogLoading = false;
+    filterCatalogLoadError = hasError;
   }
 
   function getFilterProductById(id) {
@@ -453,10 +463,26 @@ function bootstrapStocking() {
     return filterCatalogById.get(id) ?? null;
   }
 
+  function getSelectedTankGallons() {
+    const snapshotGallons = parseTankGallons(getTankSnapshot()?.gallons ?? null);
+    if (Number.isFinite(snapshotGallons)) {
+      return snapshotGallons;
+    }
+    const stateGallons = parseTankGallons(state?.tank?.gallons ?? state?.gallons ?? null);
+    if (Number.isFinite(stateGallons)) {
+      return stateGallons;
+    }
+    const computedGallons = parseTankGallons(computed?.tank?.gallons ?? null);
+    return Number.isFinite(computedGallons) ? computedGallons : null;
+  }
+
   function fetchFilterCatalogData() {
     if (filterCatalogPromise) {
       return filterCatalogPromise;
     }
+    filterCatalogLoading = true;
+    filterCatalogLoaded = false;
+    filterCatalogLoadError = false;
     filterCatalogPromise = fetch(FILTER_CATALOG_PATH, { cache: 'no-cache' })
       .then((response) => {
         if (!response.ok) {
@@ -469,8 +495,15 @@ function bootstrapStocking() {
         return filterCatalog;
       })
       .catch((error) => {
-        console.error('[Stocking] Filter catalog load failed:', error);
-        setFilterCatalogData([]);
+        if (!filterCatalogErrorLogged) {
+          console.error('[Stocking] Filter catalog load failed:', error);
+          filterCatalogErrorLogged = true;
+        }
+        filterCatalog = [];
+        filterCatalogById.clear();
+        filterCatalogLoaded = true;
+        filterCatalogLoading = false;
+        filterCatalogLoadError = true;
         return [];
       });
     return filterCatalogPromise;
@@ -502,7 +535,7 @@ function bootstrapStocking() {
   }
 
   function updateDebugDownloadLink(report, hasDiff) {
-    if (!DEBUG_PRODUCTS) {
+    if (!debugProductsEnabled()) {
       return;
     }
     ensureDebugDownloadLink();
@@ -544,13 +577,50 @@ function bootstrapStocking() {
     }
   }
 
-  function runDebugFilterAudit({ select, gallons }) {
-    if (!DEBUG_PRODUCTS) {
+  function runDebugFilterAudit({ select, gallons, status }) {
+    if (!debugProductsEnabled()) {
       return;
     }
     const numericGallons = Number(gallons);
+    const hasValidGallons = Number.isFinite(numericGallons) && numericGallons > 0;
     const actualIds = collectDebugOptionIds(select);
-    if (Number.isFinite(numericGallons)) {
+    const eligibleProducts = hasValidGallons
+      ? sortEligibleProducts(filterCatalog, numericGallons)
+      : [];
+    const eligibleIds = eligibleProducts.map((product) => product.id);
+    const missingForCurrent = eligibleIds.filter((id) => !actualIds.includes(id));
+    const extraForCurrent = actualIds.filter((id) => !eligibleIds.includes(id));
+    try {
+      const tankLabel = hasValidGallons ? numericGallons : null;
+      let groupOpen = false;
+      if (console.groupCollapsed) {
+        console.groupCollapsed('[Stocking][DEBUG] Filter dropdown snapshot', {
+          tank_g: tankLabel,
+          status: status ?? null,
+        });
+        groupOpen = true;
+      } else {
+        console.log('[Stocking][DEBUG] Filter dropdown snapshot', {
+          tank_g: tankLabel,
+          status: status ?? null,
+        });
+      }
+      console.log('eligible_by_catalog', eligibleIds);
+      console.log('dropdown_ids', actualIds);
+      console.log('diffs', { missing: missingForCurrent, extra: extraForCurrent });
+      if (filterCatalogLoadError) {
+        console.warn('[Stocking][DEBUG] Catalog failed to load.');
+      }
+      if (!hasValidGallons) {
+        console.warn('[Stocking][DEBUG] Tank gallons unavailable or invalid.');
+      }
+      if (groupOpen) {
+        console.groupEnd();
+      }
+    } catch (_error) {
+      // ignore console errors in unsupported environments
+    }
+    if (hasValidGallons) {
       debugDropdownSnapshots.set(numericGallons, actualIds);
     }
     const rows = DEBUG_PRODUCT_TANKS.map((tankGallons) => {
@@ -576,7 +646,7 @@ function bootstrapStocking() {
     };
     window.TTG = window.TTG || {};
     window.TTG.DEBUG_PRODUCTS = {
-      enabled: DEBUG_PRODUCTS,
+      enabled: debugProductsEnabled(),
       report,
     };
     try {
@@ -615,13 +685,44 @@ function bootstrapStocking() {
       return;
     }
     const select = refs.filterProductSelect;
-    const gallonsCandidate = computed?.tank?.gallons ?? state?.tank?.gallons ?? state?.gallons ?? null;
-    const gallons = parseTankGallons(gallonsCandidate);
-    const products = sortFiltersForTank(filterCatalog, gallons);
-    const availableIds = new Set(products.map((item) => item.id));
-    const hasGallons = Number.isFinite(gallons) && gallons > 0;
+    const gallons = getSelectedTankGallons();
+    let debugStatus = 'idle';
+
+    const applyDisabledState = (text, { status: statusKey = 'disabled' } = {}) => {
+      select.innerHTML = '';
+      const option = document.createElement('option');
+      option.value = '';
+      option.textContent = text;
+      select.appendChild(option);
+      select.value = '';
+      select.disabled = true;
+      select.setAttribute('aria-disabled', 'true');
+      filterProductStatusMessage = text;
+      debugStatus = statusKey;
+    };
 
     filterProductStatusMessage = '';
+
+    if (filterCatalogLoadError) {
+      applyDisabledState('Catalog failed to load.', { status: 'catalog-error' });
+      runDebugFilterAudit({ select, gallons, status: debugStatus });
+      return;
+    }
+
+    if (!filterCatalogLoaded) {
+      applyDisabledState('Loading filter catalog…', { status: 'loading' });
+      runDebugFilterAudit({ select, gallons, status: debugStatus });
+      return;
+    }
+
+    if (!Number.isFinite(gallons) || gallons <= 0) {
+      applyDisabledState('Select a tank size to view matching products.', { status: 'no-tank' });
+      runDebugFilterAudit({ select, gallons, status: debugStatus });
+      return;
+    }
+
+    const products = sortFiltersForTank(filterCatalog, gallons);
+    const availableIds = new Set(products.map((item) => item.id));
 
     if (pendingFilterId && availableIds.has(pendingFilterId)) {
       const candidateProduct = getFilterProductById(pendingFilterId);
@@ -637,36 +738,23 @@ function bootstrapStocking() {
     }
 
     let previousSelectionRemoved = false;
-    if (hasGallons && state.filterId) {
+    if (state.filterId && !availableIds.has(state.filterId)) {
       const currentProduct = getFilterProductById(state.filterId);
       if (!currentProduct || !isEligibleForTank(currentProduct, gallons)) {
         previousSelectionRemoved = true;
         state.filterId = null;
-        pendingFilterId = null;
       }
+      pendingFilterId = null;
     }
 
-    if (previousSelectionRemoved) {
-      filterProductStatusMessage = 'Previous product doesn\'t fit this tank size.';
+    if (!products.length) {
+      applyDisabledState('No matching products for this tank size.', { status: 'no-matches' });
+      runDebugFilterAudit({ select, gallons, status: debugStatus });
+      return;
     }
 
     const currentValue = preserveSelection ? (state.filterId ?? '') : '';
     select.innerHTML = '';
-
-    if (!products.length) {
-      const emptyOption = document.createElement('option');
-      emptyOption.value = '';
-      emptyOption.textContent = 'No matching products for this tank size.';
-      select.appendChild(emptyOption);
-      select.value = '';
-      select.disabled = true;
-      select.setAttribute('aria-disabled', 'true');
-      if (hasGallons && !filterProductStatusMessage) {
-        filterProductStatusMessage = 'No matching products for this tank size.';
-      }
-      return;
-    }
-
     select.disabled = false;
     select.removeAttribute('aria-disabled');
 
@@ -681,10 +769,18 @@ function bootstrapStocking() {
       select.appendChild(option);
     });
 
+    if (previousSelectionRemoved) {
+      filterProductStatusMessage = 'Previous product doesn\'t fit this tank size.';
+      debugStatus = 'previous-removed';
+    } else {
+      filterProductStatusMessage = '';
+      debugStatus = 'populated';
+    }
+
     const nextValue = currentValue && availableIds.has(currentValue) ? currentValue : '';
     select.value = nextValue;
 
-    runDebugFilterAudit({ select, gallons });
+    runDebugFilterAudit({ select, gallons, status: debugStatus });
   }
 
   function computeTurnoverEstimate() {
@@ -692,8 +788,7 @@ function bootstrapStocking() {
     if (Number.isFinite(computedTurnover) && computedTurnover > 0) {
       return computedTurnover;
     }
-    const gallonsCandidate = computed?.tank?.gallons ?? state?.tank?.gallons ?? state?.gallons ?? null;
-    const gallons = parseTankGallons(gallonsCandidate);
+    const gallons = getSelectedTankGallons();
     const rated = Number(state.ratedGph);
     if (Number.isFinite(gallons) && gallons > 0 && Number.isFinite(rated) && rated > 0) {
       return rated / gallons;
@@ -822,17 +917,14 @@ function bootstrapStocking() {
     if (refs.filterProductNote) {
       if (filterProductStatusMessage) {
         refs.filterProductNote.textContent = filterProductStatusMessage;
+      } else if (filterCatalogLoadError) {
+        refs.filterProductNote.textContent = 'Catalog failed to load.';
+      } else if (!filterCatalogLoaded) {
+        refs.filterProductNote.textContent = 'Loading filter catalog…';
+      } else if (!Number.isFinite(getSelectedTankGallons())) {
+        refs.filterProductNote.textContent = 'Select a tank size to view matching products.';
       } else {
-        const gallonsCandidate = computed?.tank?.gallons ?? state?.tank?.gallons ?? state?.gallons ?? null;
-        const gallons = parseTankGallons(gallonsCandidate);
-        const selectEl = refs.filterProductSelect;
-        const hasOptions = selectEl && selectEl.options.length > 1;
-        const isDisabled = !!(selectEl && selectEl.disabled);
-        if (Number.isFinite(gallons) && gallons > 0 && (!hasOptions || isDisabled)) {
-          refs.filterProductNote.textContent = 'No matching products for this tank size.';
-        } else {
-          refs.filterProductNote.textContent = 'Choose a filter matched to your tank size to auto-fill GPH.';
-        }
+        refs.filterProductNote.textContent = 'Choose a filter matched to your tank size to auto-fill GPH.';
       }
     }
 
@@ -849,13 +941,15 @@ function bootstrapStocking() {
   syncFilterControl();
 
   function initializeFilterCatalog() {
-    fetchFilterCatalogData().then(() => {
-      refreshFilterProductOptions({ preserveSelection: true });
-      syncFilterControl();
-      if (typeof scheduleUpdate === 'function') {
-        scheduleUpdate();
-      }
-    });
+    fetchFilterCatalogData()
+      .catch(() => [])
+      .finally(() => {
+        refreshFilterProductOptions({ preserveSelection: true });
+        syncFilterControl();
+        if (typeof scheduleUpdate === 'function') {
+          scheduleUpdate();
+        }
+      });
   }
 
   function handleFiltersChange(nextFilters) {

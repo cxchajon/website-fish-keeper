@@ -359,16 +359,11 @@ export function isEligibleForTank(product, tankGallons) {
   if (!product) {
     return false;
   }
-  const gallons = Number(tankGallons);
-  if (!Number.isFinite(gallons) || gallons <= 0) {
-    return false;
-  }
-  if (!hasValidTankRange(product)) {
-    return false;
-  }
-  const min = Number(product.tank_min_g);
-  const max = Number(product.tank_max_g);
-  return min <= gallons && gallons <= max;
+  const g = Number(tankGallons);
+  const min = Number(product?.tank_min_g);
+  const max = Number(product?.tank_max_g);
+  if (!Number.isFinite(g) || !Number.isFinite(min) || !Number.isFinite(max)) return false;
+  return min <= g && g <= max;
 }
 
 export function sortEligibleProducts(list = [], tankGallons) {
@@ -376,18 +371,21 @@ export function sortEligibleProducts(list = [], tankGallons) {
     return [];
   }
   const gallons = Number(tankGallons);
-  const hasGallons = Number.isFinite(gallons) && gallons > 0;
+  if (!Number.isFinite(gallons) || gallons <= 0) {
+    return [];
+  }
   const targetTurnover = 6;
   return list
     .filter(isValidFilterProduct)
-    .filter((product) => hasValidTankRange(product) && (!hasGallons || isEligibleForTank(product, gallons)))
+    .filter(hasValidTankRange)
+    .filter((product) => isEligibleForTank(product, gallons))
     .map((product) => {
       const typeKey = String(product.type || '').toUpperCase();
       const typePriority = FILTER_TYPE_SORT_ORDER.has(typeKey)
         ? FILTER_TYPE_SORT_ORDER.get(typeKey)
         : FILTER_TYPE_SORT_ORDER.size + 1;
       const rated = Number(product.rated_gph);
-      const turnover = hasGallons && rated > 0 ? rated / gallons : null;
+      const turnover = Number.isFinite(rated) && rated > 0 ? rated / gallons : null;
       const diff = Number.isFinite(turnover) ? Math.abs(turnover - targetTurnover) : Number.POSITIVE_INFINITY;
       return { product, typePriority, diff };
     })

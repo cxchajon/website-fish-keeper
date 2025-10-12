@@ -5,3 +5,6 @@ Next: Gear page to auto-highlight filter_id product and factor planted/filter in
 [2025-10-12 | Stocking Advisor | Strict filter catalog eligibility]
 Scope: Only show products whose tank_min_g ≤ tank_g ≤ tank_max_g; sort after filtering.
 Result: Dropdown now matches our Gear categorization exactly.
+[2025-10-12 | SA Products | Restore eligible dropdown (strict, inclusive, numeric)]
+Scope: Robust catalog load; strict min≤g≤max; timed repopulation; explicit empty-state; debug console diffs.
+Result: Products now appear only when truly eligible; no more blank dropdown.
