@@ -138,6 +138,24 @@
       font-weight: 600;
     }
 
+    /* Featured Tanks illustration – responsive, matches card styling */
+    .featured-tank-figure { margin: 0; }
+    .featured-tank-figure .media-aspect {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 16px;
+      background: rgba(255,255,255,.6);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.05);
+      overflow: hidden;
+    }
+    .featured-tank-figure img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: contain; /* don’t crop the illustration */
+      display: block;
+    }
+
     #community .card .video-embed {
       position: relative;
       aspect-ratio: 16 / 9;
@@ -432,22 +450,16 @@
               Showcasing aquariums from The Tank Guide community — real setups, honest lessons learned, and ideas to try.
               Want to be featured? Submit your tank and we’ll highlight standout builds.
             </p>
-            <div class="media-thumb">
-              <a
-                href="/feature-your-tank.html"
-                aria-label="Submit your tank to The Tank Guide"
-                style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; text-decoration:none; color:inherit;"
-              >
+            <figure class="featured-tank-figure">
+              <div class="media-aspect">
                 <img
                   src="/assets/media/submit-tank-illustration.png"
-                  alt="Illustration of a person taking a photo of their aquarium — submit your tank to The Tank Guide"
-                  style="width:90%; max-width:100%; height:auto; border-radius:0.75rem;"
-                />
-                <p class="caption" style="margin:0; text-align:center; font-size:0.9rem; color:#222;">
-                  Want your aquarium featured here? Submit your tank today!
-                </p>
-              </a>
-            </div>
+                  alt="Illustration of a hobbyist photographing their aquarium for a community feature"
+                  loading="lazy"
+                  onerror="this.onerror=null;this.src='/assets/media/community/submit-tank-placeholder.svg';"
+                >
+              </div>
+            </figure>
             <div class="row" style="justify-content:space-between; align-items:center; gap:10px;">
               <a class="btn" href="/media.html">Explore Media</a>
               <a class="btn" href="/feature-your-tank.html">Submit Your Tank</a>
