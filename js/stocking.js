@@ -229,7 +229,7 @@ function bootstrapStocking() {
   const refs = {
     pageTitle: document.getElementById('page-title'),
     plantIcon: document.getElementById('plant-icon'),
-    planted: document.getElementById('toggle-planted'),
+    planted: document.getElementById('stocking-planted'),
     filterSetup: document.querySelector('[data-role="filter-setup"]'),
     filterProductSelect: document.getElementById('filter-product'),
     filterRatedInput: document.getElementById('filter-rated-gph'),
@@ -1526,13 +1526,7 @@ function updateToggle(control, value) {
   const active = Boolean(value);
   if (control instanceof HTMLInputElement && control.type === 'checkbox') {
     control.checked = active;
-    control.setAttribute('data-active', active ? 'true' : 'false');
     control.setAttribute('aria-checked', active ? 'true' : 'false');
-    const wrapper = control.closest('.switch');
-    if (wrapper) {
-      wrapper.setAttribute('data-active', active ? 'true' : 'false');
-      wrapper.setAttribute('aria-checked', active ? 'true' : 'false');
-    }
     return;
   }
   control.dataset.active = active ? 'true' : 'false';

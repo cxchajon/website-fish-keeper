@@ -255,7 +255,7 @@ if (!immediateSelect) {
 
 (function wirePlantedOverlay(){
   const page = document.getElementById('stocking-page');
-  const planted = document.getElementById('toggle-planted');
+  const planted = document.getElementById('stocking-planted');
   if (!page || !planted) return;
 
   const apply = () => {
