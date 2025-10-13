@@ -6,7 +6,7 @@
   const FILTER_GPH_SESSION_KEY = 'ttg:rated_gph';
   const FILTER_QUERY_KEY = 'filter_id';
   const FILTER_CATALOG_URL = '/data/filters.json';
-  const CYCLING_COACH_URL = 'https://thetankguide.com/cycling-coach';
+  const CYCLING_COACH_URL = '/params.html';
   const TANK_QUERY_KEYS = ['tank_g', 'tank', 'size'];
   const INCH_TO_CM = 2.54;
 
