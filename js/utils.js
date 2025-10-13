@@ -332,6 +332,87 @@ export function getQS() {
   }
 }
 
+const FILTER_TYPE_CANONICAL = new Map([
+  ['HOB', 'HOB'],
+  ['HANGONBACK', 'HOB'],
+  ['HANGONBACKHOB', 'HOB'],
+  ['HOBFILTER', 'HOB'],
+  ['POWERFILTER', 'HOB'],
+  ['CANISTER', 'CANISTER'],
+  ['CANISTERFILTER', 'CANISTER'],
+  ['SPONGE', 'SPONGE'],
+  ['SPONGEFILTER', 'SPONGE'],
+  ['INTERNAL', 'HOB'],
+  ['INTERNALFILTER', 'HOB'],
+  ['UGF', 'HOB'],
+  ['UNDERGRAVEL', 'HOB'],
+  ['UNDERGRAVELFILTER', 'HOB'],
+  ['NONE', 'HOB'],
+]);
+
+const FILTER_TYPE_FACTORS = Object.freeze({
+  CANISTER: 1.1,
+  HOB: 1.0,
+  SPONGE: 0.9,
+});
+
+export function canonicalizeFilterType(value) {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (trimmed) {
+      const upper = trimmed.toUpperCase();
+      if (FILTER_TYPE_CANONICAL.has(upper)) {
+        return FILTER_TYPE_CANONICAL.get(upper);
+      }
+      const collapsed = upper.replace(/[^A-Z]/g, '');
+      if (FILTER_TYPE_CANONICAL.has(collapsed)) {
+        return FILTER_TYPE_CANONICAL.get(collapsed);
+      }
+    }
+  }
+  return 'HOB';
+}
+
+export function sumGph(filters = []) {
+  if (!Array.isArray(filters) || filters.length === 0) {
+    return 0;
+  }
+  let total = 0;
+  for (const filter of filters) {
+    const raw = filter?.rated_gph ?? filter?.gph;
+    const gph = Number(raw);
+    if (Number.isFinite(gph) && gph > 0) {
+      total += gph;
+    }
+  }
+  return total;
+}
+
+export function typeFactor(filterType) {
+  const canonical = canonicalizeFilterType(filterType);
+  return FILTER_TYPE_FACTORS[canonical] ?? 1;
+}
+
+export function weightedMixFactor(filters = [], totalOverride = null) {
+  const total = Number.isFinite(totalOverride) && totalOverride > 0
+    ? totalOverride
+    : sumGph(filters);
+  if (!Number.isFinite(total) || total <= 0) {
+    return 1;
+  }
+  let factor = 0;
+  for (const filter of filters || []) {
+    const raw = filter?.rated_gph ?? filter?.gph;
+    const gph = Number(raw);
+    if (!Number.isFinite(gph) || gph <= 0) {
+      continue;
+    }
+    const share = gph / total;
+    factor += typeFactor(filter?.type ?? filter?.kind) * share;
+  }
+  return factor > 0 ? factor : 1;
+}
+
 const FILTER_TYPE_SORT_ORDER = new Map([
   ['CANISTER', 0],
   ['HOB', 1],

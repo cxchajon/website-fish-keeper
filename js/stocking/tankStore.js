@@ -1,5 +1,5 @@
 import { EVENTS, dispatchEvent } from './events.js';
-import { getTankById } from '../utils.js';
+import { getTankById, canonicalizeFilterType } from '../utils.js';
 
 const roundTo = (value, precision) => {
   const factor = 10 ** precision;
@@ -29,7 +29,6 @@ let currentTank = EMPTY;
 const subscribers = new Set();
 
 const FILTER_STORAGE_KEY = 'ttg.stocking.filters.v1';
-const FILTER_KINDS = new Set(['HOB', 'Canister', 'Sponge']);
 
 function ensureNumber(value) {
   if (typeof value === 'number') {
@@ -198,10 +197,11 @@ function normalizeStoredFilter(filter) {
   if (!filter || typeof filter !== 'object') {
     return null;
   }
-  const kind = FILTER_KINDS.has(filter.kind) ? filter.kind : 'HOB';
-  const gphValue = Number(filter.gph);
-  const gph = Number.isFinite(gphValue) && gphValue > 0 ? gphValue : 0;
-  return { kind, gph };
+  const id = typeof filter.id === 'string' && filter.id.trim() ? filter.id.trim() : null;
+  const type = canonicalizeFilterType(filter.type ?? filter.kind);
+  const value = Number(filter.rated_gph ?? filter.gph);
+  const rated = Number.isFinite(value) && value > 0 ? Math.min(Math.round(value), 1500) : 0;
+  return { id, type, rated_gph: rated };
 }
 
 export function loadFilterSnapshot() {
