@@ -1690,3 +1690,46 @@ ins.adsbygoogle{
 #cycling-coach .planted-checkbox .checkmark {
   display: none;
 }
+
+/* Tooltips */
+.tt {
+  position: absolute;
+  z-index: 1000;
+  background: rgba(20, 24, 30, 0.96);
+  color: #e9eef5;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  padding: 10px 12px;
+  max-width: 300px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  backdrop-filter: blur(2px);
+  transform: translateY(0);
+}
+
+.tt.tt--open {
+  pointer-events: auto;
+}
+
+.tt[hidden] {
+  display: none !important;
+}
+
+/* Ensure the “i” trigger looks tappable without breaking layout */
+.tt-trigger {
+  background: transparent;
+  border: 0;
+  color: rgba(255, 255, 255, 0.85);
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.tt-trigger:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
