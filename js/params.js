@@ -1,186 +1,201 @@
 // Tooltip interactions for Cycling Coach
 (function () {
-  const ACTIVE_CLASS = 'tt--open';
-  let openTooltip = null;
-  let openTrigger = null;
+  const SELECTOR = '.tt-trigger';
+  const OPEN_CLASS = 'tt--open';
+  const OFFSET_Y = 8;
+  const OFFSET_X = 6;
 
-  function ensureFocusable(tip) {
-    if (!tip) return;
-    if (!tip.hasAttribute('tabindex')) {
-      tip.setAttribute('tabindex', '-1');
-    }
+  let currentTrigger = null;
+  let currentTooltip = null;
+
+  const origins = new WeakMap();
+
+  function ensureOrigin(tip) {
+    if (!tip || origins.has(tip)) return;
+    origins.set(tip, { parent: tip.parentElement, nextSibling: tip.nextSibling });
   }
 
-  function posTooltip(trigger, tip) {
-    if (!trigger || !tip) return;
-    const triggerRect = trigger.getBoundingClientRect();
-    const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
-    const scrollX = window.scrollX || document.documentElement.scrollLeft || 0;
-    const viewportWidth = document.documentElement.clientWidth;
-
-    const maxWidth = Math.min(320, Math.max(180, viewportWidth - 24));
-    tip.style.maxWidth = `${maxWidth}px`;
-
-    const top = triggerRect.bottom + 8 + scrollY;
-    let left = triggerRect.left + scrollX;
-
-    tip.style.top = `${top}px`;
-    tip.style.left = `${left}px`;
-
-    const tipWidth = tip.offsetWidth || maxWidth;
-    const minLeft = scrollX + 12;
-    const maxLeft = scrollX + viewportWidth - tipWidth - 12;
-    if (maxLeft < minLeft) {
-      left = minLeft;
+  function restoreOrigin(tip) {
+    const origin = origins.get(tip);
+    if (!origin) return;
+    const { parent, nextSibling } = origin;
+    if (!parent || !parent.isConnected) return;
+    if (tip.parentElement === parent) return;
+    if (nextSibling && nextSibling.parentNode === parent) {
+      parent.insertBefore(tip, nextSibling);
     } else {
-      left = Math.min(Math.max(left, minLeft), maxLeft);
+      parent.appendChild(tip);
     }
-
-    tip.style.left = `${left}px`;
   }
 
-  function makeFromData(trigger, id) {
+  function buildFromData(trigger, id) {
     const text = trigger.getAttribute('data-tt');
     if (!text) return null;
     const tip = document.createElement('div');
     tip.id = id;
     tip.className = 'tt';
     tip.setAttribute('role', 'tooltip');
-    tip.setAttribute('tabindex', '-1');
     tip.hidden = true;
     tip.textContent = text;
     document.body.appendChild(tip);
     return tip;
   }
 
-  function closeTooltip(options = {}) {
-    if (!openTooltip || !openTrigger) return;
-    const { focusTrigger = false } = options;
-    const tip = openTooltip;
-    const trigger = openTrigger;
+  function positionTooltip(trigger, tip) {
+    if (!trigger || !tip) return;
+    const rect = trigger.getBoundingClientRect();
+    const scrollX = window.pageXOffset || document.documentElement.scrollLeft || 0;
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    const viewportWidth = document.documentElement.clientWidth || window.innerWidth || 0;
 
-    tip.hidden = true;
-    tip.classList.remove(ACTIVE_CLASS);
-    trigger.setAttribute('aria-expanded', 'false');
+    const maxWidth = Math.min(300, Math.max(160, viewportWidth - 24));
+    tip.style.maxWidth = `${maxWidth}px`;
 
-    openTooltip = null;
-    openTrigger = null;
+    const top = rect.bottom + scrollY + OFFSET_Y;
+    let left = rect.left + scrollX + OFFSET_X;
 
-    if (focusTrigger && typeof trigger.focus === 'function') {
-      try {
-        trigger.focus({ preventScroll: true });
-      } catch (err) {
-        trigger.focus();
-      }
+    tip.style.top = `${top}px`;
+    tip.style.left = `${left}px`;
+
+    const tooltipWidth = tip.offsetWidth || maxWidth;
+    const minLeft = scrollX + 12;
+    const maxLeft = scrollX + viewportWidth - tooltipWidth - 12;
+
+    if (maxLeft < minLeft) {
+      left = minLeft;
+    } else if (left > maxLeft) {
+      left = maxLeft;
+    } else if (left < minLeft) {
+      left = minLeft;
     }
+
+    tip.style.left = `${left}px`;
   }
 
-  function openFor(trigger) {
+  function closeTooltip() {
+    if (!currentTooltip || !currentTrigger) return;
+
+    currentTooltip.hidden = true;
+    currentTooltip.classList.remove(OPEN_CLASS);
+    restoreOrigin(currentTooltip);
+
+    currentTrigger.setAttribute('aria-expanded', 'false');
+
+    currentTooltip = null;
+    currentTrigger = null;
+  }
+
+  function openTooltip(trigger) {
+    if (!trigger) return;
     const id = trigger.getAttribute('aria-controls');
     if (!id) return;
-    const tip = document.getElementById(id) || makeFromData(trigger, id);
+
+    const existing = document.getElementById(id);
+    const tip = existing || buildFromData(trigger, id);
     if (!tip) return;
 
-    ensureFocusable(tip);
+    if (existing) {
+      tip.setAttribute('role', 'tooltip');
+    }
 
-    if (openTooltip && openTooltip !== tip) {
+    ensureOrigin(tip);
+
+    if (currentTooltip && currentTooltip !== tip) {
       closeTooltip();
     }
 
+    if (tip.parentElement !== document.body) {
+      document.body.appendChild(tip);
+    }
+
     tip.hidden = false;
+    tip.classList.add(OPEN_CLASS);
     trigger.setAttribute('aria-expanded', 'true');
-    posTooltip(trigger, tip);
-    tip.classList.add(ACTIVE_CLASS);
 
-    openTooltip = tip;
-    openTrigger = trigger;
-
-    if (typeof tip.focus === 'function') {
-      try {
-        tip.focus({ preventScroll: true });
-      } catch (err) {
-        tip.focus();
+    positionTooltip(trigger, tip);
+    window.requestAnimationFrame(() => {
+      if (currentTrigger === trigger && currentTooltip === tip) {
+        positionTooltip(trigger, tip);
       }
-    }
+    });
+
+    currentTrigger = trigger;
+    currentTooltip = tip;
   }
 
-  function toggleFor(trigger) {
-    if (!trigger) return;
-    if (openTrigger === trigger) {
-      closeTooltip({ focusTrigger: true });
+  function toggleTooltip(trigger) {
+    if (currentTrigger === trigger) {
+      closeTooltip();
     } else {
-      openFor(trigger);
+      openTooltip(trigger);
     }
   }
 
-  function onTrigger(event) {
+  function onTriggerClick(event) {
     event.preventDefault();
-    toggleFor(event.currentTarget);
+    toggleTooltip(event.currentTarget);
   }
 
   function onTriggerKey(event) {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      toggleFor(event.currentTarget);
+      toggleTooltip(event.currentTarget);
     }
   }
 
-  function onDocClick(event) {
-    if (!openTooltip) return;
-    if (openTooltip.contains(event.target)) {
-      return;
-    }
-    const trigger = event.target.closest('.tt-trigger');
-    if (trigger) {
-      return;
-    }
+  function handleDocumentClick(event) {
+    if (!currentTooltip) return;
+    if (currentTooltip.contains(event.target)) return;
+    if (currentTrigger && event.target.closest(SELECTOR) === currentTrigger) return;
+    if (event.target.closest(SELECTOR)) return;
     closeTooltip();
   }
 
-  function onDocKeydown(event) {
-    if (event.key === 'Escape' && openTooltip) {
-      closeTooltip({ focusTrigger: true });
-    }
-  }
-
-  function onScroll() {
-    if (openTooltip) {
+  function handleKeydown(event) {
+    if (event.key === 'Escape') {
       closeTooltip();
     }
   }
 
-  function onResize() {
-    if (openTooltip && openTrigger) {
-      posTooltip(openTrigger, openTooltip);
+  function refreshPosition() {
+    if (!currentTooltip || !currentTrigger) return;
+    const rect = currentTrigger.getBoundingClientRect();
+    const viewportHeight = document.documentElement.clientHeight || window.innerHeight || 0;
+    if (rect.bottom < 0 || rect.top > viewportHeight) {
+      closeTooltip();
+    } else {
+      positionTooltip(currentTrigger, currentTooltip);
     }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    const triggers = document.querySelectorAll('.tt-trigger');
-    if (!triggers.length) {
-      return;
-    }
+    if (!document.body.classList.contains('cycling-coach')) return;
+
+    const triggers = document.querySelectorAll(SELECTOR);
+    if (!triggers.length) return;
 
     triggers.forEach((trigger) => {
       const id = trigger.getAttribute('aria-controls');
-      trigger.addEventListener('click', onTrigger);
+      trigger.addEventListener('click', onTriggerClick);
       trigger.addEventListener('keydown', onTriggerKey);
-      trigger.setAttribute('aria-expanded', trigger.getAttribute('aria-expanded') === 'true' ? 'true' : 'false');
+      trigger.setAttribute('aria-expanded', 'false');
       if (id) {
         const tip = document.getElementById(id);
         if (tip) {
-          ensureFocusable(tip);
           tip.hidden = true;
+          tip.classList.remove(OPEN_CLASS);
+          tip.setAttribute('role', 'tooltip');
+          ensureOrigin(tip);
         } else {
-          ensureFocusable(makeFromData(trigger, id));
+          buildFromData(trigger, id);
         }
       }
     });
 
-    document.addEventListener('click', onDocClick);
-    document.addEventListener('keydown', onDocKeydown);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize);
+    document.addEventListener('click', handleDocumentClick);
+    document.addEventListener('keydown', handleKeydown);
+    window.addEventListener('scroll', refreshPosition, { passive: true });
+    window.addEventListener('resize', refreshPosition);
   });
 })();
 
