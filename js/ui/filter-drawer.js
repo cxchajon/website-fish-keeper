@@ -1,11 +1,11 @@
 const FILTER_TYPES = [
   { value: 'HOB', label: 'HOB' },
-  { value: 'Canister', label: 'Canister' },
-  { value: 'Sponge', label: 'Sponge' },
+  { value: 'CANISTER', label: 'Canister' },
+  { value: 'SPONGE', label: 'Sponge' },
 ];
 
 const DRAWER_ID = 'filter-drawer-panel';
-const DEFAULT_FILTER = Object.freeze({ kind: 'HOB', gph: 0 });
+const DEFAULT_FILTER = Object.freeze({ id: null, type: 'HOB', rated_gph: 0 });
 
 function toNumber(value) {
   const num = Number(value);
@@ -170,7 +170,7 @@ function ensureDrawer(host) {
   return drawer;
 }
 
-function updateRow(row, filter, index, isSolo) {
+function updateRow(row, filter, index) {
   if (!row) return;
   row.dataset.filterIndex = String(index);
   const select = row.querySelector('[data-role="filter-kind"]');
@@ -178,20 +178,21 @@ function updateRow(row, filter, index, isSolo) {
   const removeBtn = row.querySelector('[data-role="filter-remove"]');
 
   if (select) {
-    const value = filter?.kind || DEFAULT_FILTER.kind;
+    const raw = typeof filter?.type === 'string' ? filter.type : filter?.kind;
+    const value = typeof raw === 'string' ? raw.toUpperCase() : DEFAULT_FILTER.type;
     if (FILTER_TYPES.some((type) => type.value === value)) {
       select.value = value;
     } else {
-      select.value = DEFAULT_FILTER.kind;
+      select.value = DEFAULT_FILTER.type;
     }
   }
   if (gphInput) {
-    const gphValue = Number(filter?.gph);
+    const gphValue = Number(filter?.rated_gph ?? filter?.gph);
     gphInput.value = Number.isFinite(gphValue) && gphValue > 0 ? String(Math.round(gphValue)) : '';
   }
   if (removeBtn) {
-    removeBtn.disabled = Boolean(isSolo);
-    removeBtn.setAttribute('aria-disabled', isSolo ? 'true' : 'false');
+    removeBtn.disabled = false;
+    removeBtn.setAttribute('aria-disabled', 'false');
   }
 }
 
@@ -261,20 +262,30 @@ export function renderFiltrationDrawer(host, { filters = [], metrics = null, ope
   while (rowsContainer.children.length > desired) {
     rowsContainer.removeChild(rowsContainer.lastElementChild);
   }
-  const isSolo = desired === 1;
   Array.from(rowsContainer.children).forEach((row, index) => {
-    updateRow(row, list[index] || DEFAULT_FILTER, index, isSolo);
+    updateRow(row, list[index] || DEFAULT_FILTER, index);
   });
   updateResults(drawer, metrics);
+}
+
+function toTypeValue(value) {
+  if (typeof value !== 'string') {
+    return DEFAULT_FILTER.type;
+  }
+  const upper = value.trim().toUpperCase();
+  return FILTER_TYPES.some((entry) => entry.value === upper) ? upper : DEFAULT_FILTER.type;
 }
 
 function cloneFilter(filter) {
   if (!filter || typeof filter !== 'object') {
     return { ...DEFAULT_FILTER };
   }
+  const id = typeof filter.id === 'string' && filter.id.trim() ? filter.id.trim() : null;
+  const type = toTypeValue(filter.type ?? filter.kind);
   return {
-    kind: typeof filter.kind === 'string' ? filter.kind : DEFAULT_FILTER.kind,
-    gph: toNumber(filter.gph),
+    id,
+    type,
+    rated_gph: toNumber(filter.rated_gph ?? filter.gph),
   };
 }
 
@@ -321,8 +332,9 @@ export function bindFiltrationEvents(ctx, onFiltersChange = () => {}) {
       const gphInput = row.querySelector('[data-role="filter-gph"]');
       const prev = current[index] || DEFAULT_FILTER;
       return {
-        kind: select?.value || prev.kind || DEFAULT_FILTER.kind,
-        gph: toNumber(gphInput?.value),
+        id: prev?.id ?? null,
+        type: toTypeValue(select?.value || prev?.type || DEFAULT_FILTER.type),
+        rated_gph: toNumber(gphInput?.value),
       };
     });
     emitFilters(next);
@@ -358,8 +370,7 @@ export function bindFiltrationEvents(ctx, onFiltersChange = () => {}) {
       const index = Number(row.dataset.filterIndex) || 0;
       const current = getFilters();
       if (current.length <= 1) {
-        const next = [{ ...DEFAULT_FILTER }];
-        emitFilters(next);
+        emitFilters([]);
         return;
       }
       const next = current.filter((_, idx) => idx !== index);

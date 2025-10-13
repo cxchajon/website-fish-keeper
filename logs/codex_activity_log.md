@@ -17,3 +17,5 @@ Result: Consistent UX across tools; cleaner, compact control.
 [2025-10-14 | Stocking Advisor | Planted checkbox parity with Cycling Coach]
 Scope: Replace pill switch with Coach checkbox, checkmark visible on :checked, focus/spacing identical.
 Result: Unified UX and clear selected state.
+[2025-10-14 | SA Filtration | Multi-filter totals + weighted type factor]
+Scope: Unified filters array; totals drive pill/turnover/bioload; mild weighted factor; robust events.

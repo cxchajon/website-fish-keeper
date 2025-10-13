@@ -1,6 +1,7 @@
 import { FISH_DB } from "../fish-data.js";
 import { validateSpeciesRecord } from "./speciesSchema.js";
 import { EMPTY_TANK } from '../stocking/tankStore.js';
+import { canonicalizeFilterType, sumGph, weightedMixFactor } from '../utils.js';
 import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent, PLANTED_CAPACITY_BONUS, computeFiltrationFactor } from '../bioload.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import { BEHAVIOR_TAGS } from './behaviorTags.js';
@@ -211,8 +212,6 @@ export function computeFilterFlowStats(gallons, filterType, overrideGph = null) 
   };
 }
 
-const FILTER_TYPES = new Set(['HOB', 'Canister', 'Sponge', 'Internal', 'UGF', 'None']);
-
 export const TURNOVER_BANDS = Object.freeze({
   L: [3, 5],
   M: [5, 8],
@@ -227,21 +226,17 @@ function clampFlowRate(value) {
   return Math.min(Math.round(num), 1500);
 }
 
-function normalizeFilterKind(kind) {
-  const value = typeof kind === 'string' ? kind.trim() : '';
-  if (FILTER_TYPES.has(value)) {
-    return value;
-  }
-  return 'HOB';
-}
-
 function sanitizeFilter(filter) {
   if (!filter || typeof filter !== 'object') {
-    return { kind: 'HOB', gph: 0 };
+    return { id: null, type: 'HOB', rated_gph: 0 };
   }
+  const id = typeof filter.id === 'string' && filter.id.trim() ? filter.id.trim() : null;
+  const type = canonicalizeFilterType(filter.type ?? filter.kind ?? filter.filterType);
+  const rated_gph = clampFlowRate(filter.rated_gph ?? filter.gph);
   return {
-    kind: normalizeFilterKind(filter.kind),
-    gph: clampFlowRate(filter.gph),
+    id,
+    type,
+    rated_gph,
   };
 }
 
@@ -252,14 +247,9 @@ export function sanitizeFilterList(filters) {
 
 function summarizeFilters(filters) {
   const sanitized = sanitizeFilterList(filters);
-  let totalGph = 0;
-  for (const filter of sanitized) {
-    if (!Number.isFinite(filter.gph) || filter.gph <= 0) {
-      continue;
-    }
-    totalGph += filter.gph;
-  }
-  return { sanitized, totalGph };
+  const totalGph = sumGph(sanitized);
+  const mixFactor = weightedMixFactor(sanitized, totalGph);
+  return { sanitized, totalGph, mixFactor };
 }
 
 export function calcTotalGph(filters) {
@@ -563,7 +553,7 @@ function resolveTurnoverBand(entries) {
 }
 
 function buildFilteringState(state, tank, entries) {
-  const { sanitized, totalGph } = summarizeFilters(state.filters);
+  const { sanitized, totalGph, mixFactor } = summarizeFilters(state.filters);
   const turnover = computeTurnover(tank?.effectiveGallons ?? null, sanitized);
   const hasFlowData = Number.isFinite(totalGph) && totalGph > 0;
   const stockCount = Array.isArray(entries) ? entries.length : 0;
@@ -620,6 +610,7 @@ function buildFilteringState(state, tank, entries) {
     warning,
     chip,
     target: band ? { key: band.key, range: band.range } : null,
+    mixFactor,
   };
 }
 
@@ -752,7 +743,10 @@ function computeBioload(tank, entries, candidate, filterState = {}) {
     : Number.isFinite(flow?.actualGph) && flow.actualGph > 0
       ? flow.actualGph
       : 0;
-  const hasProduct = Boolean(filterState.filterId ?? tank?.filterFlow?.filterId ?? tank?.filterId);
+  const filtersList = Array.isArray(filterState.filters) ? filterState.filters : [];
+  const totalRatedGph = Number.isFinite(filterState.totalGph) && filterState.totalGph > 0
+    ? filterState.totalGph
+    : calcTotalGph(filtersList);
   const turnoverCandidate = Number.isFinite(filterState.turnover)
     ? filterState.turnover
     : Number.isFinite(tank?.turnover)
@@ -762,11 +756,10 @@ function computeBioload(tank, entries, candidate, filterState = {}) {
         : tankGallons > 0 && deliveredGph > 0
           ? deliveredGph / tankGallons
           : null;
-  const turnoverForFactor = hasProduct ? turnoverCandidate : null;
   const filtration = computeFiltrationFactor({
-    filterType: normalizedType,
-    hasProduct,
-    turnover: turnoverForFactor,
+    filters: filtersList,
+    totalGph: totalRatedGph,
+    turnover: turnoverCandidate,
   });
   const applyFiltrationFactor = (value) => {
     if (!Number.isFinite(value)) {
@@ -789,16 +782,19 @@ function computeBioload(tank, entries, candidate, filterState = {}) {
     : Number.isFinite(tank?.ratedGph) && tank.ratedGph > 0
       ? tank.ratedGph
       : null;
+  const hasProduct = Boolean(filterState.filterId ?? tank?.filterFlow?.filterId ?? tank?.filterId)
+    || filtersList.some((filter) => filter?.id);
   const flowAdjustment = {
     type: flow?.type ?? normalizedType,
     actualGph: deliveredGph > 0 ? deliveredGph : null,
     idealGph: Number.isFinite(flow?.idealGph) ? flow.idealGph : null,
     ratedGph: ratedGphValue,
-    turnover: Number.isFinite(turnoverForFactor) ? turnoverForFactor : null,
+    turnover: Number.isFinite(turnoverCandidate) ? turnoverCandidate : null,
     hasProduct,
     typeFactor: filtration.typeFactor,
     flowFactor: filtration.flowFactor,
     totalFactor: filtration.totalFactor,
+    mixFactor: filtration.mixFactor,
   };
   return {
     currentLoad,
@@ -1327,18 +1323,20 @@ export function buildComputedState(state) {
   const entries = buildEntries(state.stock);
   const candidate = buildCandidate(state.candidate);
   const tank = calcTank(state, entries, state.variantId);
+  const filtering = buildFilteringState(state, tank, entries);
   const water = sanitizeWater(state.water ?? {});
   const conditions = computeConditions(state, entries, candidate, water, state.showTips);
   const bioload = computeBioload(tank, entries, candidate, {
     filterType: state.filterType,
     filterId: state.filterId,
     ratedGph: state.ratedGph,
-    turnover: tank.turnover,
+    turnover: Number.isFinite(filtering?.turnover) ? filtering.turnover : tank.turnover,
+    filters: filtering?.filters,
+    totalGph: filtering?.gphTotal,
   });
   const aggression = computeAggression(tank, entries, candidate);
   const invertCheck = candidate ? evaluateInvertSafety(candidate.species, { water }) : { severity: 'ok' };
   const groupRule = candidate ? checkGroupRule(candidate, entries) : null;
-  const filtering = buildFilteringState(state, tank, entries);
 
   const chips = computeChips({
     tank,
@@ -1518,6 +1516,7 @@ export function createDefaultState() {
     filterType: 'hob',
     filterId: null,
     ratedGph: null,
+    filters: [],
     sumpGallons: 0,
     tankAgeWeeks: 12,
     variantId: null,
