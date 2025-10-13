@@ -152,7 +152,7 @@
     .featured-tank-figure img {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
-      object-fit: contain; /* don’t crop the illustration */
+      object-fit: cover;
       display: block;
     }
 
@@ -450,13 +450,13 @@
               Showcasing aquariums from The Tank Guide community — real setups, honest lessons learned, and ideas to try.
               Want to be featured? Submit your tank and we’ll highlight standout builds.
             </p>
-            <figure class="featured-tank-figure">
+            <figure class="featured-tank-figure" aria-label="Featured community tank">
               <div class="media-aspect">
                 <img
-                  src="/assets/media/submit-tank-illustration.png"
-                  alt="Illustration of a hobbyist photographing their aquarium for a community feature"
+                  src="assets/media/community/IMG_9505.png"
+                  alt="Featured community aquarium from The Tank Guide — user-submitted tank"
                   loading="lazy"
-                  onerror="this.onerror=null;this.src='/assets/media/community/submit-tank-placeholder.svg';"
+                  decoding="async"
                 >
               </div>
             </figure>
