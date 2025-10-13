@@ -6,6 +6,7 @@
   const FILTER_GPH_SESSION_KEY = 'ttg:rated_gph';
   const FILTER_QUERY_KEY = 'filter_id';
   const FILTER_CATALOG_URL = '/data/filters.json';
+  const CYCLING_COACH_URL = 'https://thetankguide.com/cycling-coach';
   const TANK_QUERY_KEYS = ['tank_g', 'tank', 'size'];
   const INCH_TO_CM = 2.54;
 
@@ -718,6 +719,22 @@
     });
     if (html) node.innerHTML = html;
     return node;
+  }
+
+  function isFilterMediaGroup(group = {}){
+    const id = String(group?.id || '').toLowerCase();
+    const originalId = String(group?.originalId || '').toLowerCase();
+    if (id === 'filters_media' || id === 'filters-media') return true;
+    if (originalId === 'filters-filter-media') return true;
+    return false;
+  }
+
+  function createFilterMediaCyclingCoachBlurb(){
+    return el('p', {
+      class: 'range__tip',
+      html:
+        `Did you know? Filter media like sponges, ceramic rings, and bio balls provide surface area for beneficial bacteria — the foundation of the nitrogen cycle. Learn how it works in the <a href="${CYCLING_COACH_URL}">Cycling Coach</a>.`
+    });
   }
 
   function toNumber(value){
@@ -1552,8 +1569,20 @@
       hidden:true,
       'aria-hidden':'true'
     });
+    let hasIntro = false;
     if (group?.intro) {
       body.appendChild(el('p',{ class:'gear-subcard__intro' }, group.intro));
+      hasIntro = true;
+    }
+    if (isFilterMediaGroup(group)) {
+      const blurb = createFilterMediaCyclingCoachBlurb();
+      if (blurb) {
+        if (hasIntro) {
+          body.appendChild(blurb);
+        } else {
+          body.insertBefore(blurb, body.firstChild || null);
+        }
+      }
     }
     const renderOptions = {
       includeGearCard: false,
