@@ -14,4 +14,6 @@ Result: Cleaner UX, fewer errors, and consistent cross-page handoff.
 [2025-10-13 | Stocking Advisor | Planted control parity with Cycling Coach]
 Scope: Replaced pill switch with Coach checkbox; unified styles & behavior.
 Result: Consistent UX across tools; cleaner, compact control.
-
+[2025-10-14 | Stocking Advisor | Planted checkbox parity with Cycling Coach]
+Scope: Replace pill switch with Coach checkbox, checkmark visible on :checked, focus/spacing identical.
+Result: Unified UX and clear selected state.
