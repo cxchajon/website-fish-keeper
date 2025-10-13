@@ -60,10 +60,6 @@ const TYPE_FACTORS = Object.freeze({
   SPONGE: 0.90,
 });
 
-const FLOW_TARGET_TURNOVER = 6;
-const FLOW_FACTOR_MIN = 0.95;
-const FLOW_FACTOR_MAX = 1.05;
-
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
@@ -76,19 +72,10 @@ function computeTypeFactor(filterType, hasProduct) {
   return TYPE_FACTORS[key] ?? 1;
 }
 
-function computeFlowFactor(turnover) {
-  if (!Number.isFinite(turnover) || turnover <= 0) {
-    return 1;
-  }
-  const delta = turnover - FLOW_TARGET_TURNOVER;
-  const adjustment = clamp(delta * 0.02, -0.05, 0.05);
-  return clamp(1 + adjustment, FLOW_FACTOR_MIN, FLOW_FACTOR_MAX);
-}
-
 export function computeFiltrationFactor({ filterType, hasProduct = false, turnover = null } = {}) {
   const typeFactor = computeTypeFactor(filterType, hasProduct);
-  const flowFactor = computeFlowFactor(Number(turnover));
-  const combined = clamp(typeFactor * flowFactor, 0.9, 1.15);
+  const flowFactor = 1;
+  const combined = clamp(typeFactor * flowFactor, 0.9, 1.1);
   return {
     typeFactor,
     flowFactor,
