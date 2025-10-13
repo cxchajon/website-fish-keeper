@@ -1,3 +1,189 @@
+// Tooltip interactions for Cycling Coach
+(function () {
+  const ACTIVE_CLASS = 'tt--open';
+  let openTooltip = null;
+  let openTrigger = null;
+
+  function ensureFocusable(tip) {
+    if (!tip) return;
+    if (!tip.hasAttribute('tabindex')) {
+      tip.setAttribute('tabindex', '-1');
+    }
+  }
+
+  function posTooltip(trigger, tip) {
+    if (!trigger || !tip) return;
+    const triggerRect = trigger.getBoundingClientRect();
+    const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+    const scrollX = window.scrollX || document.documentElement.scrollLeft || 0;
+    const viewportWidth = document.documentElement.clientWidth;
+
+    const maxWidth = Math.min(320, Math.max(180, viewportWidth - 24));
+    tip.style.maxWidth = `${maxWidth}px`;
+
+    const top = triggerRect.bottom + 8 + scrollY;
+    let left = triggerRect.left + scrollX;
+
+    tip.style.top = `${top}px`;
+    tip.style.left = `${left}px`;
+
+    const tipWidth = tip.offsetWidth || maxWidth;
+    const minLeft = scrollX + 12;
+    const maxLeft = scrollX + viewportWidth - tipWidth - 12;
+    if (maxLeft < minLeft) {
+      left = minLeft;
+    } else {
+      left = Math.min(Math.max(left, minLeft), maxLeft);
+    }
+
+    tip.style.left = `${left}px`;
+  }
+
+  function makeFromData(trigger, id) {
+    const text = trigger.getAttribute('data-tt');
+    if (!text) return null;
+    const tip = document.createElement('div');
+    tip.id = id;
+    tip.className = 'tt';
+    tip.setAttribute('role', 'tooltip');
+    tip.setAttribute('tabindex', '-1');
+    tip.hidden = true;
+    tip.textContent = text;
+    document.body.appendChild(tip);
+    return tip;
+  }
+
+  function closeTooltip(options = {}) {
+    if (!openTooltip || !openTrigger) return;
+    const { focusTrigger = false } = options;
+    const tip = openTooltip;
+    const trigger = openTrigger;
+
+    tip.hidden = true;
+    tip.classList.remove(ACTIVE_CLASS);
+    trigger.setAttribute('aria-expanded', 'false');
+
+    openTooltip = null;
+    openTrigger = null;
+
+    if (focusTrigger && typeof trigger.focus === 'function') {
+      try {
+        trigger.focus({ preventScroll: true });
+      } catch (err) {
+        trigger.focus();
+      }
+    }
+  }
+
+  function openFor(trigger) {
+    const id = trigger.getAttribute('aria-controls');
+    if (!id) return;
+    const tip = document.getElementById(id) || makeFromData(trigger, id);
+    if (!tip) return;
+
+    ensureFocusable(tip);
+
+    if (openTooltip && openTooltip !== tip) {
+      closeTooltip();
+    }
+
+    tip.hidden = false;
+    trigger.setAttribute('aria-expanded', 'true');
+    posTooltip(trigger, tip);
+    tip.classList.add(ACTIVE_CLASS);
+
+    openTooltip = tip;
+    openTrigger = trigger;
+
+    if (typeof tip.focus === 'function') {
+      try {
+        tip.focus({ preventScroll: true });
+      } catch (err) {
+        tip.focus();
+      }
+    }
+  }
+
+  function toggleFor(trigger) {
+    if (!trigger) return;
+    if (openTrigger === trigger) {
+      closeTooltip({ focusTrigger: true });
+    } else {
+      openFor(trigger);
+    }
+  }
+
+  function onTrigger(event) {
+    event.preventDefault();
+    toggleFor(event.currentTarget);
+  }
+
+  function onTriggerKey(event) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleFor(event.currentTarget);
+    }
+  }
+
+  function onDocClick(event) {
+    if (!openTooltip) return;
+    if (openTooltip.contains(event.target)) {
+      return;
+    }
+    const trigger = event.target.closest('.tt-trigger');
+    if (trigger) {
+      return;
+    }
+    closeTooltip();
+  }
+
+  function onDocKeydown(event) {
+    if (event.key === 'Escape' && openTooltip) {
+      closeTooltip({ focusTrigger: true });
+    }
+  }
+
+  function onScroll() {
+    if (openTooltip) {
+      closeTooltip();
+    }
+  }
+
+  function onResize() {
+    if (openTooltip && openTrigger) {
+      posTooltip(openTrigger, openTooltip);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const triggers = document.querySelectorAll('.tt-trigger');
+    if (!triggers.length) {
+      return;
+    }
+
+    triggers.forEach((trigger) => {
+      const id = trigger.getAttribute('aria-controls');
+      trigger.addEventListener('click', onTrigger);
+      trigger.addEventListener('keydown', onTriggerKey);
+      trigger.setAttribute('aria-expanded', trigger.getAttribute('aria-expanded') === 'true' ? 'true' : 'false');
+      if (id) {
+        const tip = document.getElementById(id);
+        if (tip) {
+          ensureFocusable(tip);
+          tip.hidden = true;
+        } else {
+          ensureFocusable(makeFromData(trigger, id));
+        }
+      }
+    });
+
+    document.addEventListener('click', onDocClick);
+    document.addEventListener('keydown', onDocKeydown);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+  });
+})();
+
 const ZERO_EPS = 0.02;
 const FIELD_SETTINGS = {
   ammonia: { max: 8, decimals: 2 },

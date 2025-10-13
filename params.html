@@ -564,37 +564,37 @@
             <div class="field">
               <div class="label-row">
                 <label for="ammonia">Ammonia (NH₃/NH₄⁺)</label>
-                <button type="button" class="info-btn" data-info-id="tip-ammonia" aria-controls="tip-ammonia" aria-expanded="false" aria-label="Ammonia info" aria-describedby="tip-ammonia" data-testid="info-ammonia">ⓘ</button>
+                <button type="button" class="tt-trigger" aria-label="More info about Ammonia" aria-expanded="false" aria-controls="tt-ammonia" data-testid="info-ammonia">i</button>
               </div>
               <input type="number" id="ammonia" name="ammonia" step="0.01" min="0" inputmode="decimal" data-testid="ammonia" />
-              <div id="tip-ammonia" class="ui-tip" data-role="info-tip" role="tooltip" hidden>Waste from fish/food. Even tiny amounts are toxic.</div>
+              <div id="tt-ammonia" class="tt" role="tooltip" hidden tabindex="-1">Waste from fish/food. Even tiny amounts are toxic.</div>
             </div>
             <div class="field">
               <div class="label-row">
                 <label for="nitrite">Nitrite (NO₂⁻)</label>
-                <button type="button" class="info-btn" data-info-id="tip-nitrite" aria-controls="tip-nitrite" aria-expanded="false" aria-label="Nitrite info" aria-describedby="tip-nitrite" data-testid="info-nitrite">ⓘ</button>
+                <button type="button" class="tt-trigger" aria-label="More info about Nitrite" aria-expanded="false" aria-controls="tt-nitrite" data-testid="info-nitrite">i</button>
               </div>
               <input type="number" id="nitrite" name="nitrite" step="0.01" min="0" inputmode="decimal" data-testid="nitrite" />
-              <div id="tip-nitrite" class="ui-tip" data-role="info-tip" role="tooltip" hidden>Mid-stage of the cycle; also toxic.</div>
+              <div id="tt-nitrite" class="tt" role="tooltip" hidden tabindex="-1">Mid-stage of the cycle; also toxic.</div>
             </div>
             <div class="field">
               <div class="label-row">
                 <label for="nitrate">Nitrate (NO₃⁻)</label>
-                <button type="button" class="info-btn" data-info-id="tip-nitrate" aria-controls="tip-nitrate" aria-expanded="false" aria-label="Nitrate info" aria-describedby="tip-nitrate" data-testid="info-nitrate">ⓘ</button>
+                <button type="button" class="tt-trigger" aria-label="More info about Nitrate" aria-expanded="false" aria-controls="tt-nitrate" data-testid="info-nitrate">i</button>
               </div>
               <input type="number" id="nitrate" name="nitrate" step="0.1" min="0" inputmode="decimal" data-testid="nitrate" />
-              <div id="tip-nitrate" class="ui-tip" data-role="info-tip" role="tooltip" hidden>End product; safer but must be controlled with water changes.</div>
+              <div id="tt-nitrate" class="tt" role="tooltip" hidden tabindex="-1">End product; safer but must be controlled with water changes.</div>
             </div>
             <div class="field">
               <div class="label-row">
                 <label for="cycle-method">Cycle Method</label>
-                <button type="button" class="info-btn" data-info-id="tip-method" aria-controls="tip-method" aria-expanded="false" aria-label="Cycle method info" aria-describedby="tip-method" data-testid="info-cycle-method">ⓘ</button>
+                <button type="button" class="tt-trigger" aria-label="More info about Cycle Method" aria-expanded="false" aria-controls="tt-method" data-testid="info-cycle-method">i</button>
               </div>
               <select id="cycle-method" name="cycle-method">
                 <option value="fishless" selected>Fishless</option>
                 <option value="fish-in">Fish-in</option>
               </select>
-              <div id="tip-method" class="ui-tip" data-role="info-tip" role="tooltip" hidden>Fishless equals adding ammonia without fish. Fish-in means cycling with fish and requires extra care.</div>
+              <div id="tt-method" class="tt" role="tooltip" hidden tabindex="-1">Fishless equals adding ammonia without fish. Fish-in means cycling with fish and requires extra care.</div>
             </div>
             <div id="planted-row" class="planted-row">
               <label class="planted-checkbox">
@@ -615,9 +615,9 @@
         <div class="card__header">
           <div class="status-label">
             <h2 class="card__title" id="results-heading">Results</h2>
-            <button type="button" class="info-btn" data-info-id="tip-status" aria-controls="tip-status" aria-expanded="false" aria-label="Status info" aria-describedby="tip-status" data-testid="info-status">ⓘ</button>
+            <button type="button" class="tt-trigger" aria-label="More info about Results status" aria-expanded="false" aria-controls="tt-status" data-testid="info-status">i</button>
           </div>
-          <div id="tip-status" class="ui-tip" data-role="info-tip" role="tooltip" hidden>High-level snapshot of where your tank stands.</div>
+          <div id="tt-status" class="tt" role="tooltip" hidden tabindex="-1">High-level snapshot of where your tank stands.</div>
         </div>
         <div class="status-row" aria-live="polite" data-testid="result-status">
           <span class="status-badge" id="status-badge">⚪ Incomplete</span>
@@ -626,9 +626,9 @@
         <div class="actions-block" id="actions-block" hidden data-testid="result-actions">
           <header>
             <span>Action steps</span>
-            <button type="button" class="info-btn" data-info-id="tip-actions" aria-controls="tip-actions" aria-expanded="false" aria-label="Action steps info" aria-describedby="tip-actions" data-testid="info-actions">ⓘ</button>
+            <button type="button" class="tt-trigger" aria-label="More info about Action steps" aria-expanded="false" aria-controls="tt-actions" data-testid="info-actions">i</button>
           </header>
-          <div id="tip-actions" class="ui-tip" data-role="info-tip" role="tooltip" hidden>Quick, practical steps based on your readings.</div>
+          <div id="tt-actions" class="tt" role="tooltip" hidden tabindex="-1">Quick, practical steps based on your readings.</div>
           <ul class="actions-list" id="actions-list"></ul>
         </div>
       </section>
@@ -649,8 +649,8 @@
       <section class="card" id="challengeCard" aria-labelledby="challenge-heading" hidden>
         <div class="card__header">
           <h2 class="card__title" id="challenge-heading">24-Hour Challenge</h2>
-          <button type="button" class="info-btn" data-info-id="tip-challenge" aria-controls="tip-challenge" aria-expanded="false" aria-label="Challenge info" aria-describedby="tip-challenge" data-testid="info-challenge">ⓘ</button>
-          <div id="tip-challenge" class="ui-tip" data-role="info-tip" role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
+          <button type="button" class="tt-trigger" aria-label="More info about the Challenge" aria-expanded="false" aria-controls="tt-challenge" data-testid="info-challenge">i</button>
+          <div id="tt-challenge" class="tt" role="tooltip" hidden tabindex="-1">Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
         </div>
         <div class="challenge-card">
           <p class="challenge-instructions" id="challengeInstruction">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
@@ -672,9 +672,9 @@
           <div class="actions-block" id="challenge-results" hidden>
             <header>
               <span>Challenge test</span>
-              <button type="button" class="info-btn" data-info-id="tip-challenge-inline" aria-controls="tip-challenge-inline" aria-expanded="false" aria-label="Challenge test info" aria-describedby="tip-challenge-inline" data-testid="info-challenge-inline">ⓘ</button>
+              <button type="button" class="tt-trigger" aria-label="More info about the Challenge test" aria-expanded="false" aria-controls="tt-challenge-inline" data-testid="info-challenge-inline">i</button>
             </header>
-            <div id="tip-challenge-inline" class="ui-tip" data-role="info-tip" role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
+            <div id="tt-challenge-inline" class="tt" role="tooltip" hidden tabindex="-1">Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
             <ul class="actions-list" id="challenge-list"></ul>
           </div>
         </div>
@@ -700,8 +700,8 @@
             <span>Estimated toxic NH₃:</span>
             <span class="value" id="nh3-value">—</span>
             <span class="nh3-badge" id="nh3-badge" hidden>⚠️ Caution</span>
-            <button type="button" class="info-btn" data-info-id="tip-advanced" aria-controls="tip-advanced" aria-expanded="false" aria-label="Advanced NH3 info" aria-describedby="tip-advanced" data-testid="info-advanced">ⓘ</button>
-            <div id="tip-advanced" class="ui-tip" data-role="info-tip" role="tooltip" hidden>Test kits read TAN, which is NH3 plus NH4. Only NH3 is toxic and increases with pH and temperature.</div>
+            <button type="button" class="tt-trigger" aria-label="More info about toxic NH3 estimate" aria-expanded="false" aria-controls="tt-advanced" data-testid="info-advanced">i</button>
+            <div id="tt-advanced" class="tt" role="tooltip" hidden tabindex="-1">Test kits read TAN, which is NH3 plus NH4. Only NH3 is toxic and increases with pH and temperature.</div>
           </div>
           <p class="advanced-note"><a href="/media.html" target="_blank" rel="noopener">See Media page for Sources &amp; Further Reading.</a></p>
         </div>
@@ -726,10 +726,6 @@
 })();
 </script>
   <script type="module" src="js/params.js?v=2.0.0"></script>
-  <script type="module">
-    import { initInfoTooltips } from '/js/ui/tooltip.js';
-    initInfoTooltips();
-  </script>
 <!-- === TTG Cookie Consent START === -->
 <div id="ttg-consent" class="ttg-consent" data-consent-banner>
   <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
