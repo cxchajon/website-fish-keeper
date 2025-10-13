@@ -1008,7 +1008,7 @@
         <div class="row toggle-row">
           <div class="row-left">
             <div class="toggle-label">
-              <label class="toggle-title" for="toggle-planted">Planted</label>
+              <label class="toggle-title" for="stocking-planted">Planted</label>
               <button type="button"
                 class="icon-button info info-btn"
                 data-role="info-btn"
@@ -1026,10 +1026,10 @@
             </div>
           </div>
           <div class="row-right">
-            <label class="switch" aria-label="Planted">
-              <input type="checkbox" id="toggle-planted" data-testid="toggle-planted" />
-              <span class="slider" aria-hidden="true"></span>
-            </label>
+            <div class="form-check planted-row" id="planted-control">
+              <input type="checkbox" id="stocking-planted" class="form-check-input" data-testid="toggle-planted" />
+              <label for="stocking-planted" class="form-check-label">This is a planted tank.</label>
+            </div>
             <div class="filter-flow-control" data-role="filter-setup">
               <div class="filter-product-field">
                 <label for="filter-product">Filter Product</label>
@@ -1207,61 +1207,32 @@
           margin-bottom: 0;
         }
 
-        /* Toggle (switch) alignment and size */
-        #stocking-page .switch {
-          --track-w: 54px;
-          --track-h: 32px;
-          --thumb: 26px;
-          position: relative;
-          display: inline-block;
-          width: var(--track-w);
-          height: var(--track-h);
-          min-height: 44px;
+        /* Planted checkbox matches Cycling Coach styling */
+        #stocking-page .planted-row {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          margin: 0;
         }
-        #stocking-page .switch input {
-          opacity: 0;
-          width: 0;
-          height: 0;
+        #stocking-page .planted-row .form-check-input {
+          appearance: checkbox;
+          -webkit-appearance: checkbox;
+          width: 18px;
+          height: 18px;
+          margin: 0;
+          vertical-align: middle;
+          accent-color: currentColor;
+          border: initial;
+          background: initial;
         }
-        #stocking-page .switch .slider {
-          position: absolute;
-          left: 0;
-          right: 0;
-          top: 50%;
-          height: var(--track-h);
-          min-height: 44px;
-          transform: translateY(-50%);
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.12);
-          transition: background 0.18s ease;
+        #stocking-page .planted-row .form-check-input::before,
+        #stocking-page .planted-row .form-check-input::after {
+          content: none !important;
         }
-        #stocking-page .switch .slider::before {
-          content: '';
-          position: absolute;
-          left: 3px;
-          top: 50%;
-          width: var(--thumb);
-          height: var(--thumb);
-          border-radius: 50%;
-          background: rgba(255, 255, 255, 0.92);
-          transform: translateY(-50%);
-          transition: transform 0.18s ease;
-        }
-        #stocking-page .switch input:checked + .slider {
-          background: rgba(20, 203, 168, 0.6);
-        }
-        #stocking-page .switch input:checked + .slider::before {
-          transform: translate(calc(var(--track-w) - var(--thumb) - 6px), -50%);
-        }
-        #stocking-page .switch input:focus-visible + .slider {
-          outline: 2px solid rgba(20, 203, 168, 0.55);
-          outline-offset: 2px;
-        }
-        @media (hover: hover) {
-          #stocking-page .switch .slider:hover {
-            cursor: pointer;
-            filter: brightness(1.05);
-          }
+        #stocking-page .planted-row .form-check-label {
+          line-height: 1.2;
+          cursor: pointer;
+          user-select: none;
         }
 
         /* Shared popover for all info buttons (portal) */

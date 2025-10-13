@@ -11,3 +11,7 @@ Result: Products now appear only when truly eligible; no more blank dropdown.
 [2025-10-13 | Stocking Advisor | Rated Flow made system-controlled]
 Scope: Reordered controls; removed manual edits; auto-fill from product; neutral when none selected.
 Result: Cleaner UX, fewer errors, and consistent cross-page handoff.
+[2025-10-13 | Stocking Advisor | Planted control parity with Cycling Coach]
+Scope: Replaced pill switch with Coach checkbox; unified styles & behavior.
+Result: Consistent UX across tools; cleaner, compact control.
+
