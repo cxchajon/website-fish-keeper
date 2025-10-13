@@ -1026,9 +1026,12 @@
             </div>
           </div>
           <div class="row-right">
-            <div class="form-check planted-row" id="planted-control">
-              <input type="checkbox" id="stocking-planted" class="form-check-input" data-testid="toggle-planted" />
-              <label for="stocking-planted" class="form-check-label">This is a planted tank.</label>
+            <div class="planted-row" id="planted-control">
+              <label class="planted-checkbox">
+                <input type="checkbox" id="stocking-planted" name="stocking-planted" data-testid="toggle-planted" />
+                <span class="checkmark" aria-hidden="true"></span>
+                This is a planted tank.
+              </label>
             </div>
             <div class="filter-flow-control" data-role="filter-setup">
               <div class="filter-product-field">
@@ -1127,6 +1130,62 @@
           margin-top: 14px;
         }
 
+        /* Planted checkbox matches Cycling Coach styling */
+        #stocking-page .planted-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin: 8px 0 16px;
+        }
+        #stocking-page .planted-checkbox {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.95rem;
+          color: #d7d7d7;
+          cursor: pointer;
+          user-select: none;
+        }
+        #stocking-page .planted-checkbox input[type="checkbox"] {
+          appearance: none;
+          -webkit-appearance: none;
+          background-color: transparent;
+          margin: 0;
+          font: inherit;
+          width: 18px;
+          height: 18px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 4px;
+          display: grid;
+          place-content: center;
+          cursor: pointer;
+          transition: border 0.2s ease, background 0.2s ease;
+        }
+        #stocking-page .planted-checkbox input[type="checkbox"]::before {
+          content: "\✓";
+          font-size: 14px;
+          color: #fff;
+          transform: scale(0);
+          transition: transform 0.15s ease;
+        }
+        #stocking-page .planted-checkbox input[type="checkbox"]:checked {
+          background-color: rgba(255, 255, 255, 0.15);
+          border-color: rgba(255, 255, 255, 0.6);
+        }
+        #stocking-page .planted-checkbox input[type="checkbox"]:checked::before {
+          transform: scale(1);
+        }
+        #stocking-page .planted-checkbox:hover input[type="checkbox"] {
+          border-color: rgba(255, 255, 255, 0.6);
+        }
+        #stocking-page .planted-checkbox input[type="checkbox"]:focus-visible {
+          outline: 2px solid rgba(255, 255, 255, 0.5);
+          outline-offset: 2px;
+        }
+        #stocking-page .planted-checkbox .checkmark {
+          display: none;
+        }
+
         .tank-size-card .toggle-label {
           display: inline-flex;
           align-items: center;
@@ -1205,34 +1264,6 @@
         #stocking-page #env-card.info-open .env-bars .env-bar:last-child,
         #stocking-page #env-card.info-open .env-bars .bar-row:last-child {
           margin-bottom: 0;
-        }
-
-        /* Planted checkbox matches Cycling Coach styling */
-        #stocking-page .planted-row {
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          margin: 0;
-        }
-        #stocking-page .planted-row .form-check-input {
-          appearance: checkbox;
-          -webkit-appearance: checkbox;
-          width: 18px;
-          height: 18px;
-          margin: 0;
-          vertical-align: middle;
-          accent-color: currentColor;
-          border: initial;
-          background: initial;
-        }
-        #stocking-page .planted-row .form-check-input::before,
-        #stocking-page .planted-row .form-check-input::after {
-          content: none !important;
-        }
-        #stocking-page .planted-row .form-check-label {
-          line-height: 1.2;
-          cursor: pointer;
-          user-select: none;
         }
 
         /* Shared popover for all info buttons (portal) */
