@@ -753,7 +753,7 @@ function computeBioload(tank, entries, candidate, filterState = {}) {
       ? flow.actualGph
       : 0;
   const hasProduct = Boolean(filterState.filterId ?? tank?.filterFlow?.filterId ?? tank?.filterId);
-  const turnoverForFactor = Number.isFinite(filterState.turnover)
+  const turnoverCandidate = Number.isFinite(filterState.turnover)
     ? filterState.turnover
     : Number.isFinite(tank?.turnover)
       ? tank.turnover
@@ -762,6 +762,7 @@ function computeBioload(tank, entries, candidate, filterState = {}) {
         : tankGallons > 0 && deliveredGph > 0
           ? deliveredGph / tankGallons
           : null;
+  const turnoverForFactor = hasProduct ? turnoverCandidate : null;
   const filtration = computeFiltrationFactor({
     filterType: normalizedType,
     hasProduct,

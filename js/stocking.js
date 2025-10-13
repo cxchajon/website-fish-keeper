@@ -57,8 +57,6 @@ const GEAR_PAGE_PATH = '/gear.html';
 const GEAR_QUERY_PARAM = 'tank_g';
 const GEAR_TANK_SESSION_KEY = 'ttg:tank_g';
 const GEAR_FILTER_SESSION_KEY = 'ttg:filter_id';
-const GEAR_FILTER_TYPE_SESSION_KEY = 'ttg:filter_type';
-const GEAR_FILTER_GPH_SESSION_KEY = 'ttg:rated_gph';
 const FILTER_CATALOG_PATH = '/data/filters.json';
 
 const DEBUG_PRODUCT_TANKS = Object.freeze([5, 10, 15, 20, 29, 40, 50, 55, 75]);
@@ -208,10 +206,9 @@ function bootstrapStocking() {
     }
   }
   window.appState = state;
-  state.filterType = normalizeFilterTypeSelection(state.filterType);
+  state.filterType = state.filterType ? normalizeFilterTypeSelection(state.filterType) : null;
   state.filterId = typeof state.filterId === 'string' && state.filterId.trim() ? state.filterId.trim() : null;
-  const ratedFromState = parseIntSafe(state.ratedGph);
-  state.ratedGph = ratedFromState ?? null;
+  state.ratedGph = null;
   const qs = getQS();
   const qsFilterId = qs.get('filter_id');
   if (qsFilterId) {
@@ -236,10 +233,8 @@ function bootstrapStocking() {
     filterSetup: document.querySelector('[data-role="filter-setup"]'),
     filterProductSelect: document.getElementById('filter-product'),
     filterRatedInput: document.getElementById('filter-rated-gph'),
-    filterReset: document.getElementById('filter-reset'),
     filterTurnover: document.getElementById('filter-turnover'),
     filterProductLabel: document.getElementById('filter-product-label'),
-    filterCustomNote: document.getElementById('filter-custom-note'),
     filterFlowNote: document.getElementById('filter-rated-note'),
     filterProductNote: document.getElementById('filter-product-note'),
     filtrationTrigger: document.getElementById('filtration-trigger'),
@@ -278,22 +273,12 @@ function bootstrapStocking() {
     }
   };
 
-  const persistGearFilterData = ({ filterId, filterType, ratedGph }) => {
+  const persistGearFilterData = ({ filterId }) => {
     try {
       if (filterId) {
         sessionStorage.setItem(GEAR_FILTER_SESSION_KEY, filterId);
       } else {
         sessionStorage.removeItem(GEAR_FILTER_SESSION_KEY);
-      }
-      if (filterType) {
-        sessionStorage.setItem(GEAR_FILTER_TYPE_SESSION_KEY, filterType);
-      } else {
-        sessionStorage.removeItem(GEAR_FILTER_TYPE_SESSION_KEY);
-      }
-      if (Number.isFinite(ratedGph) && ratedGph > 0) {
-        sessionStorage.setItem(GEAR_FILTER_GPH_SESSION_KEY, String(Math.round(ratedGph)));
-      } else {
-        sessionStorage.removeItem(GEAR_FILTER_GPH_SESSION_KEY);
       }
     } catch (_error) {
       /* ignore storage errors */
@@ -325,14 +310,8 @@ function bootstrapStocking() {
       refs.seeGear.setAttribute('href', href);
     }
     persistGearTankGallons(normalizedGallons);
-    const typeForSession = state.filterId
-      ? String(state.filterType || '').toUpperCase()
-      : '';
-    const rated = Number(state.ratedGph);
     persistGearFilterData({
       filterId: filterId ?? '',
-      filterType: typeForSession || '',
-      ratedGph: Number.isFinite(rated) && rated > 0 ? rated : null,
     });
   };
 
@@ -461,6 +440,19 @@ function bootstrapStocking() {
       return null;
     }
     return filterCatalogById.get(id) ?? null;
+  }
+
+  function deriveRatedGphFromProduct(product) {
+    if (!product) {
+      return null;
+    }
+    const rated = parseIntSafe(product.rated_gph);
+    return Number.isFinite(rated) && rated > 0 ? rated : null;
+  }
+
+  function getSelectedProductRatedGph() {
+    const product = state.filterId ? getFilterProductById(state.filterId) : null;
+    return deriveRatedGphFromProduct(product);
   }
 
   function getSelectedTankGallons() {
@@ -728,11 +720,8 @@ function bootstrapStocking() {
       const candidateProduct = getFilterProductById(pendingFilterId);
       if (candidateProduct) {
         state.filterId = candidateProduct.id;
-        state.filterType = normalizeFilterTypeSelection(String(candidateProduct.type || '').toLowerCase());
-        if (!Number.isFinite(state.ratedGph) || state.ratedGph === null) {
-          const rated = parseIntSafe(candidateProduct.rated_gph);
-          state.ratedGph = rated ?? null;
-        }
+        state.filterType = normalizeFilterTypeSelection(String(candidateProduct.type || ''));
+        state.ratedGph = deriveRatedGphFromProduct(candidateProduct);
       }
       pendingFilterId = null;
     }
@@ -743,6 +732,8 @@ function bootstrapStocking() {
       if (!currentProduct || !isEligibleForTank(currentProduct, gallons)) {
         previousSelectionRemoved = true;
         state.filterId = null;
+        state.filterType = null;
+        state.ratedGph = null;
       }
       pendingFilterId = null;
     }
@@ -780,6 +771,20 @@ function bootstrapStocking() {
     const nextValue = currentValue && availableIds.has(currentValue) ? currentValue : '';
     select.value = nextValue;
 
+    if (nextValue) {
+      const selectedProduct = getFilterProductById(nextValue);
+      if (selectedProduct) {
+        state.filterType = normalizeFilterTypeSelection(String(selectedProduct.type || ''));
+        state.ratedGph = deriveRatedGphFromProduct(selectedProduct);
+      } else {
+        state.filterType = null;
+        state.ratedGph = null;
+      }
+    } else {
+      state.filterType = null;
+      state.ratedGph = null;
+    }
+
     runDebugFilterAudit({ select, gallons, status: debugStatus });
   }
 
@@ -788,8 +793,14 @@ function bootstrapStocking() {
     if (Number.isFinite(computedTurnover) && computedTurnover > 0) {
       return computedTurnover;
     }
+    if (!state.filterId) {
+      return null;
+    }
     const gallons = getSelectedTankGallons();
-    const rated = Number(state.ratedGph);
+    const ratedValue = Number(state.ratedGph);
+    const rated = Number.isFinite(ratedValue) && ratedValue > 0
+      ? ratedValue
+      : getSelectedProductRatedGph();
     if (Number.isFinite(gallons) && gallons > 0 && Number.isFinite(rated) && rated > 0) {
       return rated / gallons;
     }
@@ -803,37 +814,13 @@ function bootstrapStocking() {
     if (product) {
       state.filterId = product.id;
       pendingFilterId = product.id;
-      const typeKey = typeof product.type === 'string' ? product.type.toLowerCase() : state.filterType;
-      state.filterType = normalizeFilterTypeSelection(typeKey);
-      const rated = parseIntSafe(product.rated_gph);
-      state.ratedGph = rated ?? null;
+      state.filterType = normalizeFilterTypeSelection(String(product.type || ''));
+      state.ratedGph = deriveRatedGphFromProduct(product);
     } else {
       state.filterId = null;
       pendingFilterId = null;
-      state.filterType = 'hob';
-    }
-    syncFilterControl();
-    syncGearLink();
-    scheduleUpdate();
-  }
-
-  function handleManualRatedInput(rawValue) {
-    const parsed = parseIntSafe(rawValue);
-    state.ratedGph = parsed ?? null;
-    syncFilterControl();
-    syncGearLink();
-    scheduleUpdate();
-  }
-
-  function handleResetRatedGph() {
-    const product = state.filterId ? getFilterProductById(state.filterId) : null;
-    if (!product) {
-      return;
-    }
-    const rated = parseIntSafe(product.rated_gph);
-    state.ratedGph = rated ?? null;
-    if (refs.filterRatedInput) {
-      refs.filterRatedInput.value = state.ratedGph ? String(state.ratedGph) : '';
+      state.filterType = null;
+      state.ratedGph = null;
     }
     syncFilterControl();
     syncGearLink();
@@ -847,10 +834,8 @@ function bootstrapStocking() {
     if (refs.filterSetup) {
       refs.filterProductSelect = refs.filterSetup.querySelector('#filter-product');
       refs.filterRatedInput = refs.filterSetup.querySelector('#filter-rated-gph');
-      refs.filterReset = refs.filterSetup.querySelector('#filter-reset');
       refs.filterTurnover = refs.filterSetup.querySelector('#filter-turnover');
       refs.filterProductLabel = refs.filterSetup.querySelector('#filter-product-label');
-      refs.filterCustomNote = refs.filterSetup.querySelector('#filter-custom-note');
       refs.filterFlowNote = refs.filterSetup.querySelector('#filter-rated-note');
       refs.filterProductNote = refs.filterSetup.querySelector('#filter-product-note');
     }
@@ -858,29 +843,20 @@ function bootstrapStocking() {
       refs.filterProductSelect.addEventListener('change', handleFilterProductChange);
       refs.filterProductSelect.__ttgBound = true;
     }
-    if (refs.filterRatedInput && !refs.filterRatedInput.__ttgBound) {
-      const onInput = (event) => handleManualRatedInput(event.target.value);
-      refs.filterRatedInput.addEventListener('input', onInput);
-      refs.filterRatedInput.addEventListener('change', onInput);
-      refs.filterRatedInput.__ttgBound = true;
-    }
-    if (refs.filterReset && !refs.filterReset.__ttgBound) {
-      refs.filterReset.addEventListener('click', (event) => {
-        event.preventDefault();
-        handleResetRatedGph();
-      });
-      refs.filterReset.__ttgBound = true;
-    }
   }
 
   function syncFilterControl() {
     ensureFilterControl();
     const product = state.filterId ? getFilterProductById(state.filterId) : null;
+    const derivedRated = deriveRatedGphFromProduct(product);
+    if (product) {
+      state.filterType = normalizeFilterTypeSelection(String(product.type || ''));
+      state.ratedGph = derivedRated;
+    } else {
+      state.filterType = null;
+      state.ratedGph = null;
+    }
     const rated = Number(state.ratedGph);
-    const productRated = product ? Number(product.rated_gph) : null;
-    const isCustomized = product
-      && Number.isFinite(productRated)
-      && (!Number.isFinite(rated) || rated <= 0 || rated !== productRated);
 
     if (refs.filterProductSelect) {
       const desired = state.filterId ?? '';
@@ -892,17 +868,13 @@ function bootstrapStocking() {
     if (refs.filterRatedInput && document.activeElement !== refs.filterRatedInput) {
       if (Number.isFinite(rated) && rated > 0) {
         refs.filterRatedInput.value = String(rated);
+        refs.filterRatedInput.setAttribute('aria-readonly', 'true');
+        refs.filterRatedInput.placeholder = '';
       } else {
         refs.filterRatedInput.value = '';
+        refs.filterRatedInput.setAttribute('aria-readonly', 'true');
+        refs.filterRatedInput.placeholder = 'Select a product to auto-fill';
       }
-    }
-
-    if (refs.filterReset) {
-      refs.filterReset.hidden = !isCustomized;
-      refs.filterReset.setAttribute('aria-hidden', String(!isCustomized));
-    }
-    if (refs.filterCustomNote) {
-      refs.filterCustomNote.hidden = !isCustomized;
     }
     if (refs.filterProductLabel) {
       if (product) {
@@ -1855,12 +1827,8 @@ function bindInputs() {
       const gallonsCandidate = computed?.tank?.gallons ?? state?.tank?.gallons ?? state?.gallons ?? null;
       const normalizedGallons = normalizeGearGallons(gallonsCandidate);
       persistGearTankGallons(normalizedGallons);
-      const rated = Number(state.ratedGph);
-      const typeForSession = state.filterId ? String(state.filterType || '').toUpperCase() : '';
       persistGearFilterData({
         filterId: state.filterId ?? '',
-        filterType: typeForSession || '',
-        ratedGph: Number.isFinite(rated) && rated > 0 ? rated : null,
       });
       if (!computed) return;
       const payload = buildGearPayload();
@@ -1897,8 +1865,12 @@ function buildGearPayload() {
     },
     filter: {
       product_id: state.filterId ?? null,
-      type: state.filterId ? String(state.filterType || '').toUpperCase() : null,
-      rated_gph: roundCapacity(state.ratedGph),
+      type: state.filterId && state.filterType
+        ? String(state.filterType).toUpperCase()
+        : null,
+      rated_gph: Number.isFinite(state.ratedGph) && state.ratedGph > 0
+        ? roundCapacity(state.ratedGph)
+        : null,
     },
     heater: {
       temp_target_F: state.water.temperature,
