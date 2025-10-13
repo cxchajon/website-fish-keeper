@@ -892,6 +892,11 @@ html {
   line-height: 1.35;
   margin: 0 0 8px 0;
 }
+
+html.ttg-tooltip-lock,
+body.ttg-tooltip-lock{
+  overflow:hidden;
+}
 .hero-how{
   display: inline-block;
   margin-top: 2px;      /* tuck the link right under the tagline */
