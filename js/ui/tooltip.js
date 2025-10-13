@@ -1,7 +1,10 @@
-const INFO_BTN_BOUND_ATTR = 'tipBound';
-const OUTSIDE_EVENTS = ['pointerdown', 'mousedown', 'touchstart'];
+const INFO_TRIGGER_SELECTOR = '[data-info-id]';
+const BOUND_FLAG = 'ttgTooltipBound';
 const GAP = 10;
 const MARGIN = 8;
+const OUTSIDE_EVENTS = ['pointerdown', 'mousedown', 'touchstart'];
+
+let activeState = null;
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -27,184 +30,365 @@ function getViewportBox() {
   };
 }
 
-function ensureButtonClasses(btn) {
-  if (!btn.classList.contains('icon-button')) {
-    btn.classList.add('icon-button');
-  }
-  if (!btn.classList.contains('info')) {
-    btn.classList.add('info');
-  }
-  if (!btn.classList.contains('info-btn')) {
-    btn.classList.add('info-btn');
+function getFocusableElements(container) {
+  const selector = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled]):not([type="hidden"])',
+    'textarea:not([disabled])',
+    'select:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])',
+  ].join(',');
+  return Array.from(container.querySelectorAll(selector)).filter((el) => el.offsetParent !== null || el === document.activeElement);
+}
+
+function ensureHidden(tip, hidden = true) {
+  tip.hidden = hidden;
+  tip.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+  if (hidden) {
+    tip.setAttribute('data-open', 'false');
+    tip.setAttribute('tabindex', '-1');
+    tip.style.pointerEvents = '';
+    tip.style.visibility = '';
+    tip.style.top = '';
+    tip.style.left = '';
+    tip.removeAttribute('data-placement');
+  } else {
+    tip.setAttribute('data-open', 'true');
+    if (!tip.hasAttribute('tabindex')) {
+      tip.setAttribute('tabindex', '-1');
+    }
   }
 }
 
-export function initInfoTooltips() {
-  const buttons = Array.from(document.querySelectorAll('[data-role="info-btn"]'));
-  if (!buttons.length) {
+function determineType(tip) {
+  if ((tip.getAttribute('role') || '').toLowerCase() === 'dialog') {
+    return 'dialog';
+  }
+  if ((tip.dataset.tooltipType || '').toLowerCase() === 'dialog') {
+    tip.setAttribute('role', 'dialog');
+    return 'dialog';
+  }
+  if (!tip.hasAttribute('role')) {
+    tip.setAttribute('role', 'tooltip');
+  }
+  return 'tooltip';
+}
+
+function placeTooltip(trigger, tip) {
+  const btnRect = trigger.getBoundingClientRect();
+  const { left: viewportLeft, top: viewportTop, width: viewportWidth, height: viewportHeight } = getViewportBox();
+  const tipWidth = tip.offsetWidth;
+  const tipHeight = tip.offsetHeight;
+
+  let top = btnRect.bottom + GAP;
+  let placement = 'bottom';
+  const spaceBelow = viewportTop + viewportHeight - btnRect.bottom;
+  const spaceAbove = btnRect.top - viewportTop;
+  if (spaceBelow < tipHeight + GAP && spaceAbove >= tipHeight + GAP) {
+    top = btnRect.top - GAP - tipHeight;
+    placement = 'top';
+  }
+  const minTop = viewportTop + MARGIN;
+  const maxTop = viewportTop + viewportHeight - tipHeight - MARGIN;
+  top = clamp(top, minTop, maxTop);
+
+  let left = btnRect.left + btnRect.width / 2 - tipWidth / 2;
+  const minLeft = viewportLeft + MARGIN;
+  const maxLeft = viewportLeft + viewportWidth - tipWidth - MARGIN;
+  left = clamp(left, minLeft, maxLeft);
+
+  tip.style.top = `${Math.round(top)}px`;
+  tip.style.left = `${Math.round(left)}px`;
+  tip.dataset.placement = placement;
+}
+
+function closeActive(options = {}) {
+  if (!activeState) {
+    return;
+  }
+  const { restoreFocus = true } = options;
+  const state = activeState;
+  activeState = null;
+
+  const { trigger, tip, type, focusTrap, outsideHandler, keyHandler, viewport } = state;
+
+  OUTSIDE_EVENTS.forEach((evt) => document.removeEventListener(evt, outsideHandler, true));
+  document.removeEventListener('keydown', keyHandler, true);
+  if (focusTrap) {
+    tip.removeEventListener('keydown', focusTrap);
+  }
+  if (viewport) {
+    viewport.removeEventListener('scroll', state.viewportHandler);
+    viewport.removeEventListener('resize', state.viewportHandler);
+  }
+  window.removeEventListener('scroll', state.windowHandler, true);
+  window.removeEventListener('resize', state.windowHandler);
+
+  trigger.classList.remove('is-open');
+  trigger.setAttribute('aria-expanded', 'false');
+  ensureHidden(tip, true);
+
+  trigger.dispatchEvent(new CustomEvent('ttg:tooltip-close', {
+    bubbles: true,
+    detail: { trigger, tip, type },
+  }));
+
+  if (type === 'dialog') {
+    document.documentElement.classList.remove('ttg-tooltip-lock');
+    document.body.classList.remove('ttg-tooltip-lock');
+  }
+
+  if (restoreFocus && state.lastFocus && typeof state.lastFocus.focus === 'function') {
+    try {
+      state.lastFocus.focus({ preventScroll: true });
+    } catch (error) {
+      // ignore
+    }
+  } else if (restoreFocus) {
+    try {
+      trigger.focus({ preventScroll: true });
+    } catch (error) {
+      // ignore
+    }
+  }
+}
+
+function handleGlobalEscape(event) {
+  if (event.key === 'Escape' || event.key === 'Esc') {
+    event.stopPropagation();
+    closeActive();
+  }
+}
+
+function handleOutsideEvent(event) {
+  if (!activeState) {
+    return;
+  }
+  const { trigger, tip, type } = activeState;
+  if (trigger.contains(event.target) || tip.contains(event.target)) {
+    if (type === 'dialog') {
+      const overlay = event.target.closest('[data-tooltip-backdrop]');
+      if (overlay) {
+        event.preventDefault();
+        closeActive();
+      }
+    }
+    return;
+  }
+  closeActive();
+}
+
+function trapFocusFactory(tip) {
+  return function handleTrap(event) {
+    if (event.key !== 'Tab') {
+      return;
+    }
+    const focusable = getFocusableElements(tip);
+    if (!focusable.length) {
+      event.preventDefault();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+}
+
+function openTooltip(state) {
+  if (activeState && activeState !== state) {
+    closeActive({ restoreFocus: false });
+  } else if (activeState === state) {
     return;
   }
 
-  buttons.forEach((button) => {
-    if (button.dataset[INFO_BTN_BOUND_ATTR] === '1') {
+  const { trigger, tip, type } = state;
+
+  state.lastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : trigger;
+
+  ensureHidden(tip, false);
+  tip.style.visibility = 'hidden';
+  tip.style.pointerEvents = 'none';
+
+  if (type === 'tooltip') {
+    placeTooltip(trigger, tip);
+  }
+
+  tip.style.visibility = '';
+  tip.style.pointerEvents = '';
+
+  trigger.classList.add('is-open');
+  trigger.setAttribute('aria-expanded', 'true');
+
+  trigger.dispatchEvent(new CustomEvent('ttg:tooltip-open', {
+    bubbles: true,
+    detail: { trigger, tip, type },
+  }));
+
+  const outsideHandler = handleOutsideEvent;
+  const keyHandler = handleGlobalEscape;
+
+  OUTSIDE_EVENTS.forEach((evt) => document.addEventListener(evt, outsideHandler, true));
+  document.addEventListener('keydown', keyHandler, true);
+
+  const windowHandler = () => closeActive({ restoreFocus: false });
+  const viewportBox = getViewportBox();
+  const viewportHandler = () => closeActive({ restoreFocus: false });
+  window.addEventListener('scroll', windowHandler, true);
+  window.addEventListener('resize', windowHandler);
+  if (viewportBox.viewport) {
+    viewportBox.viewport.addEventListener('scroll', viewportHandler, { passive: true });
+    viewportBox.viewport.addEventListener('resize', viewportHandler, { passive: true });
+  }
+
+  let focusTrap = null;
+  if (type === 'dialog') {
+    document.documentElement.classList.add('ttg-tooltip-lock');
+    document.body.classList.add('ttg-tooltip-lock');
+    focusTrap = trapFocusFactory(tip);
+    tip.addEventListener('keydown', focusTrap);
+    const focusable = getFocusableElements(tip);
+    const initial = tip.querySelector('[data-tooltip-initial-focus]');
+    const target = (initial instanceof HTMLElement && !initial.hasAttribute('disabled'))
+      ? initial
+      : (focusable[0] || tip);
+    try {
+      target.focus({ preventScroll: true });
+    } catch (error) {
+      // ignore
+    }
+  } else {
+    if (!trigger.hasAttribute('aria-describedby')) {
+      trigger.setAttribute('aria-describedby', tip.id);
+    }
+    try {
+      trigger.focus({ preventScroll: true });
+    } catch (error) {
+      // ignore
+    }
+  }
+
+  state.outsideHandler = outsideHandler;
+  state.keyHandler = keyHandler;
+  state.focusTrap = focusTrap;
+  state.windowHandler = windowHandler;
+  state.viewport = viewportBox.viewport;
+  state.viewportHandler = viewportHandler;
+
+  activeState = state;
+}
+
+function bindCloseElements(state) {
+  const { tip } = state;
+  tip.querySelectorAll('[data-tooltip-close]').forEach((closeBtn) => {
+    closeBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      closeActive();
+    });
+  });
+  tip.addEventListener('keydown', (event) => {
+    if ((event.key === 'Escape' || event.key === 'Esc') && activeState === state) {
+      event.stopPropagation();
+      closeActive();
+    }
+  });
+}
+
+function prepareTrigger(trigger, tip) {
+  const type = determineType(tip);
+  ensureHidden(tip, true);
+
+  if (!trigger.getAttribute('type') && trigger.tagName === 'BUTTON') {
+    trigger.setAttribute('type', 'button');
+  }
+  trigger.setAttribute('aria-expanded', 'false');
+  trigger.setAttribute('aria-controls', tip.id);
+  trigger.setAttribute('data-tooltip-type', type);
+  if (type === 'dialog') {
+    trigger.setAttribute('aria-haspopup', 'dialog');
+  } else {
+    trigger.setAttribute('aria-haspopup', 'true');
+  }
+
+  const state = {
+    trigger,
+    tip,
+    type,
+    lastFocus: trigger,
+    outsideHandler: null,
+    keyHandler: null,
+    focusTrap: null,
+    windowHandler: null,
+    viewport: null,
+    viewportHandler: null,
+  };
+
+  trigger.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (activeState === state) {
+      closeActive();
+    } else {
+      openTooltip(state);
+    }
+  });
+
+  trigger.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      if (activeState === state) {
+        closeActive();
+      } else {
+        openTooltip(state);
+      }
+    } else if ((event.key === 'Escape' || event.key === 'Esc') && activeState === state) {
+      event.preventDefault();
+      closeActive();
+    }
+  });
+
+  bindCloseElements(state);
+  trigger.dataset[BOUND_FLAG] = '1';
+  return state;
+}
+
+export function initInfoTooltips(root = document) {
+  const scope = root instanceof Document ? root : (root?.ownerDocument || document);
+  const triggers = Array.from(scope.querySelectorAll(INFO_TRIGGER_SELECTOR));
+  triggers.forEach((trigger) => {
+    if (!(trigger instanceof HTMLElement)) {
       return;
     }
-    const tipId = button.dataset.infoId;
+    if (trigger.dataset[BOUND_FLAG] === '1') {
+      return;
+    }
+    const tipId = trigger.dataset.infoId || trigger.getAttribute('data-info-id');
     if (!tipId) {
       return;
     }
-    const tip = document.getElementById(tipId);
+    const tip = scope.getElementById ? scope.getElementById(tipId) : document.getElementById(tipId);
     if (!tip) {
       return;
     }
-
-    const freshBtn = button.cloneNode(true);
-    ensureButtonClasses(freshBtn);
-    freshBtn.dataset[INFO_BTN_BOUND_ATTR] = '1';
-    if (!freshBtn.hasAttribute('type')) {
-      freshBtn.setAttribute('type', 'button');
+    if (!tip.id) {
+      tip.id = tipId;
     }
-    const expanded = freshBtn.getAttribute('aria-expanded') === 'true';
-    freshBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-    freshBtn.setAttribute('aria-controls', tipId);
-    button.replaceWith(freshBtn);
-
-    tip.setAttribute('role', tip.getAttribute('role') || 'tooltip');
-    tip.dataset.role = tip.dataset.role || 'info-tip';
-    tip.hidden = true;
-    tip.setAttribute('aria-hidden', 'true');
-    if (tip.parentElement !== document.body) {
-      document.body.appendChild(tip);
-    }
-
-    let open = false;
-    let activeViewport = null;
-
-    const applyState = () => {
-      freshBtn.classList.toggle('is-open', open);
-      freshBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      tip.setAttribute('aria-hidden', open ? 'false' : 'true');
-      if (!open) {
-        tip.hidden = true;
-        tip.style.visibility = '';
-        tip.style.pointerEvents = '';
-        tip.style.top = '';
-        tip.style.left = '';
-        tip.removeAttribute('data-placement');
-      }
-    };
-
-    const handleOutside = (event) => {
-      if (freshBtn.contains(event.target) || tip.contains(event.target)) {
-        return;
-      }
-      closeTip();
-    };
-
-    const handleKey = (event) => {
-      if (event.key === 'Escape' || event.key === 'Esc') {
-        closeTip();
-      }
-    };
-
-    const handleWindowChange = () => closeTip();
-    const handleViewportChange = () => closeTip();
-
-    const detach = () => {
-      OUTSIDE_EVENTS.forEach((evt) => document.removeEventListener(evt, handleOutside, true));
-      document.removeEventListener('keydown', handleKey, true);
-      window.removeEventListener('scroll', handleWindowChange);
-      window.removeEventListener('resize', handleWindowChange);
-      if (activeViewport) {
-        activeViewport.removeEventListener('scroll', handleViewportChange);
-        activeViewport.removeEventListener('resize', handleViewportChange);
-        activeViewport = null;
-      }
-    };
-
-    const closeTip = () => {
-      if (!open) {
-        return;
-      }
-      open = false;
-      detach();
-      applyState();
-    };
-
-    const placeTip = () => {
-      const btnRect = freshBtn.getBoundingClientRect();
-      const { left: viewportLeft, top: viewportTop, width: viewportWidth, height: viewportHeight } = getViewportBox();
-      const tipWidth = tip.offsetWidth;
-      const tipHeight = tip.offsetHeight;
-
-      let top = btnRect.bottom + GAP;
-      let placement = 'bottom';
-      const spaceBelow = viewportTop + viewportHeight - btnRect.bottom;
-      const spaceAbove = btnRect.top - viewportTop;
-      if (spaceBelow < tipHeight + GAP && spaceAbove >= tipHeight + GAP) {
-        top = btnRect.top - GAP - tipHeight;
-        placement = 'top';
-      }
-      const minTop = viewportTop + MARGIN;
-      const maxTop = viewportTop + viewportHeight - tipHeight - MARGIN;
-      top = clamp(top, minTop, maxTop);
-
-      let left = btnRect.left + btnRect.width / 2 - tipWidth / 2;
-      const minLeft = viewportLeft + MARGIN;
-      const maxLeft = viewportLeft + viewportWidth - tipWidth - MARGIN;
-      left = clamp(left, minLeft, maxLeft);
-
-      tip.style.top = `${Math.round(top)}px`;
-      tip.style.left = `${Math.round(left)}px`;
-      tip.dataset.placement = placement;
-    };
-
-    const attach = () => {
-      OUTSIDE_EVENTS.forEach((evt) => document.addEventListener(evt, handleOutside, true));
-      document.addEventListener('keydown', handleKey, true);
-      window.addEventListener('scroll', handleWindowChange, { passive: true });
-      window.addEventListener('resize', handleWindowChange);
-      const { viewport } = getViewportBox();
-      activeViewport = viewport;
-      if (activeViewport) {
-        activeViewport.addEventListener('scroll', handleViewportChange, { passive: true });
-        activeViewport.addEventListener('resize', handleViewportChange, { passive: true });
-      }
-    };
-
-    const openTip = () => {
-      if (open) {
-        return;
-      }
-      open = true;
-      tip.hidden = false;
-      tip.style.visibility = 'hidden';
-      tip.style.pointerEvents = 'none';
-      placeTip();
-      tip.style.visibility = '';
-      tip.style.pointerEvents = '';
-      applyState();
-      attach();
-    };
-
-    applyState();
-
-    freshBtn.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (open) {
-        closeTip();
-      } else {
-        openTip();
-      }
-    });
-
-    const observer = new MutationObserver(() => {
-      if (!document.contains(freshBtn)) {
-        observer.disconnect();
-        closeTip();
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
+    prepareTrigger(trigger, tip);
   });
+}
+
+export function closeAllInfoTooltips() {
+  closeActive({ restoreFocus: false });
+}
+
+if (typeof window !== 'undefined') {
+  window.ttgTooltips = window.ttgTooltips || {};
+  window.ttgTooltips.initInfoTooltips = initInfoTooltips;
+  window.ttgTooltips.closeAllInfoTooltips = closeAllInfoTooltips;
 }

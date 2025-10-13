@@ -826,46 +826,79 @@
     return [gallons, liters, dimsIn, dimsCm].filter(Boolean).join(' • ') + weight;
   }
 
-  function showTip(kind){
-    const defaultTitle = 'Tip';
+  function resolveTipContent(kind, fallbackTitle){
     const tip = TIPS[kind];
+    const defaultTitle = fallbackTitle || 'Tip';
     let title = defaultTitle;
-    let message = 'No tip available.';
+    let body = 'No tip available.';
 
     if (typeof tip === 'string') {
-      message = tip || message;
+      body = tip || body;
     } else if (tip && typeof tip === 'object') {
       if (typeof tip.title === 'string' && tip.title.trim()) {
         title = tip.title.trim();
       }
       if (typeof tip.body === 'string' && tip.body.trim()) {
-        message = tip.body;
+        body = tip.body;
       }
     } else if (tip !== undefined && tip !== null) {
-      message = String(tip);
+      body = String(tip);
     }
 
-    const wrap = el('div',{class:'tip-wrap',style:'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:120'});
-    const cardStyles = [
-      'width:min(340px,calc(100vw - 32px))',
-      'max-width:340px',
-      'background:rgba(15,23,42,0.88)',
-      'backdrop-filter:blur(8px)',
-      '-webkit-backdrop-filter:blur(8px)',
-      'color:#e5e7eb',
-      'border:1px solid rgba(148,163,184,0.3)',
-      'border-radius:10px',
-      'padding:18px 20px',
-      'box-shadow:0 18px 36px -24px rgba(0,0,0,0.6)',
-      'font-size:0.9rem',
-      'line-height:1.5'
-    ].join(';');
-    const card = el('div',{style:cardStyles});
-    card.innerHTML = `<h3 style="margin:0 0 0.75rem;font-size:1.1rem;font-weight:600;">${escapeHTML(title)}</h3><p style="margin:0 0 1rem;color:#cbd5f5;font-size:0.9rem;line-height:1.5;">${message}</p><button style="padding:0.5rem 0.875rem;background:#111827;color:#e5e7eb;border:1px solid rgba(148,163,184,0.4);border-radius:8px;cursor:pointer;font-size:0.9rem;font-weight:600;">Close</button>`;
-    card.querySelector('button').onclick = () => wrap.remove();
-    wrap.onclick = (event) => { if (event.target === wrap) wrap.remove(); };
-    wrap.appendChild(card);
-    document.body.appendChild(wrap);
+    return { title, body };
+  }
+
+  function ensureTipDialog(button){
+    if (!(button instanceof HTMLElement)) {
+      return null;
+    }
+    if (button.dataset.tipBound === '1') {
+      return document.getElementById(button.dataset.infoId || '');
+    }
+
+    const tipKey = button.getAttribute('data-tip');
+    if (!tipKey) {
+      return null;
+    }
+
+    const header = button.closest('.gear-card__header');
+    const headingText = header?.querySelector('h2')?.textContent?.trim() || button.getAttribute('aria-label') || 'Tip';
+    const { title, body } = resolveTipContent(tipKey, headingText ? `${headingText} tip` : 'Tip');
+
+    const tipId = `gear-tip-${tipKey}`;
+    const headingId = `${tipId}-title`;
+    const panelId = `${tipId}-panel`;
+
+    let tip = document.getElementById(tipId);
+    if (!tip) {
+      tip = document.createElement('div');
+      tip.id = tipId;
+      tip.className = 'gear-tip';
+      tip.dataset.tooltipType = 'dialog';
+      tip.setAttribute('role', 'dialog');
+      tip.setAttribute('aria-modal', 'true');
+      tip.setAttribute('hidden', '');
+      tip.setAttribute('aria-labelledby', headingId);
+      tip.innerHTML = `
+        <div class="gear-tip__backdrop" data-tooltip-backdrop></div>
+        <div class="gear-tip__panel" role="document" tabindex="-1" data-tooltip-initial-focus id="${panelId}">
+          <header class="gear-tip__header">
+            <h3 id="${headingId}">${escapeHTML(title)}</h3>
+            <button type="button" class="gear-tip__close" data-tooltip-close aria-label="Close ${escapeHTML(title)}">×</button>
+          </header>
+          <div class="gear-tip__body">${body}</div>
+        </div>
+      `;
+      button.insertAdjacentElement('afterend', tip);
+    }
+
+    button.setAttribute('data-info-id', tip.id);
+    button.setAttribute('aria-controls', tip.id);
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-describedby', tip.id);
+    button.dataset.tipBound = '1';
+
+    return tip;
   }
 
   function escapeHTML(s){
@@ -2256,9 +2289,11 @@
       });
     });
 
-    document.querySelectorAll('.info-btn').forEach((btn) => {
-      btn.addEventListener('click', () => showTip(btn.getAttribute('data-tip')));
-    });
+    const infoButtons = Array.from(document.querySelectorAll('.gear-card .info-btn[data-tip]'));
+    infoButtons.forEach((btn) => ensureTipDialog(btn));
+    if (window.ttgTooltips?.initInfoTooltips) {
+      window.ttgTooltips.initInfoTooltips();
+    }
   }
 
   function matchRange(value, ranges){

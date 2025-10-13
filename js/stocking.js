@@ -1905,84 +1905,29 @@ function buildGearPayload() {
   init();
 }
 
-bootstrapStocking();
-
-(function initEnvInfoTooltip() {
-  const btn = document.querySelector('#env-info-btn,[data-role="env-info"]');
-  const tip = document.querySelector('#env-info-tip,[data-role="env-info-tip"]');
-  if (!btn || !tip) {
-    console.warn('Env info tooltip: hooks missing');
+document.addEventListener('ttg:tooltip-open', (event) => {
+  const trigger = event.target;
+  if (!(trigger instanceof HTMLElement)) {
     return;
   }
+  const card = trigger.closest('#env-card, .env-card, [data-role="env-card"]');
+  if (card) {
+    card.classList.add('is-tooltip-open');
+  }
+});
 
-  const freshBtn = btn.cloneNode(true);
-  btn.replaceWith(freshBtn);
+document.addEventListener('ttg:tooltip-close', (event) => {
+  const trigger = event.target;
+  if (!(trigger instanceof HTMLElement)) {
+    return;
+  }
+  const card = trigger.closest('#env-card, .env-card, [data-role="env-card"]');
+  if (card) {
+    card.classList.remove('is-tooltip-open');
+  }
+});
 
-  const card = freshBtn.closest('#env-card, .env-card, [data-role="env-card"]') || null;
-
-  let open = !tip.hidden;
-  let outsideHandler = null;
-  let escHandler = null;
-
-  const syncState = () => {
-    freshBtn.classList.toggle('is-open', open);
-    freshBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    tip.hidden = !open;
-    tip.setAttribute('aria-hidden', open ? 'false' : 'true');
-    if (card) {
-      card.classList.toggle('is-tooltip-open', open);
-    }
-  };
-
-  const closeTip = () => {
-    if (!open) return;
-    open = false;
-    syncState();
-
-    if (outsideHandler) {
-      document.removeEventListener('click', outsideHandler, true);
-      outsideHandler = null;
-    }
-    if (escHandler) {
-      document.removeEventListener('keydown', escHandler, true);
-      escHandler = null;
-    }
-  };
-
-  const openTip = () => {
-    if (open) return;
-    open = true;
-    syncState();
-
-    outsideHandler = (ev) => {
-      if (freshBtn.contains(ev.target) || tip.contains(ev.target)) return;
-      closeTip();
-    };
-    setTimeout(() => document.addEventListener('click', outsideHandler, true), 0);
-
-    escHandler = (ev) => {
-      if (ev.key === 'Escape') {
-        closeTip();
-      }
-    };
-    document.addEventListener('keydown', escHandler, true);
-  };
-
-  syncState();
-
-  freshBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    open ? closeTip() : openTip();
-  }, { passive: false });
-
-  const obs = new MutationObserver(() => {
-    if (!document.contains(tip) || tip.hasAttribute('data-destroyed')) {
-      closeTip();
-    }
-  });
-  obs.observe(document.body, { childList: true, subtree: true });
-})();
+bootstrapStocking();
 
 // Legacy info popover removed in favor of dedicated tooltip utility.
 (function compactBioAggSafe(){
