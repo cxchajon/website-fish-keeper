@@ -706,30 +706,6 @@ td.empty-cell {
   gap: 10px;
   margin: 8px 0 16px;
 }
-#cycling-coach input[type="checkbox"]#planted {
-  appearance: checkbox;
-  -webkit-appearance: checkbox;
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  vertical-align: middle;
-  accent-color: currentColor; /* use theme text color; preserves native tick */
-}
-#cycling-coach label[for="planted"] {
-  line-height: 1.2;
-  cursor: pointer;     /* make label a large tap target */
-  user-select: none;
-}
-#cycling-coach input[type="checkbox"]#planted::before,
-#cycling-coach input[type="checkbox"]#planted::after {
-  content: none !important;  /* defeat any global faux-checkbox art */
-}
-/* Guard against global resets forcing custom pills */
-#cycling-coach input[type="checkbox"]#planted,
-#cycling-coach .planted-row input[type="checkbox"] {
-  border: initial;
-  background: initial;
-}
 
 /* Shared control styles */
 .control {
@@ -1652,3 +1628,60 @@ ins.adsbygoogle{
   }
 }
 /* === TTG Ads (behavior fix) END === */
+
+/* ===== Custom checkbox: planted tank ===== */
+#cycling-coach .planted-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  color: #d7d7d7;
+  cursor: pointer;
+  user-select: none;
+}
+
+#cycling-coach .planted-checkbox input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  margin: 0;
+  font: inherit;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+  transition: border 0.2s ease, background 0.2s ease;
+}
+
+#cycling-coach .planted-checkbox input[type="checkbox"]::before {
+  content: "\2713";
+  font-size: 14px;
+  color: #fff;
+  transform: scale(0);
+  transition: transform 0.15s ease;
+}
+
+#cycling-coach .planted-checkbox input[type="checkbox"]:checked {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+#cycling-coach .planted-checkbox input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+#cycling-coach .planted-checkbox:hover input[type="checkbox"] {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+#cycling-coach .planted-checkbox input[type="checkbox"]:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+#cycling-coach .planted-checkbox .checkmark {
+  display: none;
+}
