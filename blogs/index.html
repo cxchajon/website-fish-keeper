@@ -26,23 +26,45 @@
       <p>Short reads with practical takeaways. Click through for the full story.</p>
     </header>
 
-    <section class="blog-list" aria-label="Blog list">
-      <!-- Purigen -->
-      <article class="blog-item" itemscope itemtype="https://schema.org/CreativeWork">
-        <a href="/blogs/purigen/" aria-label="Read Purigen blog">
-          <img class="blog-thumb" src="/blogs/purigen/img/IMG_9299.jpeg" alt="Purigen pouch ready for aquarium use" loading="lazy" />
+    <!-- Featured (newest) -->
+    <section class="blogs-featured" aria-label="Featured blog">
+      <article class="blog-item blog-item-large" itemscope itemtype="https://schema.org/CreativeWork">
+        <a href="/blogs/blackbeard/" aria-label="Read: Beating Black Beard Algae">
+          <div class="blog-thumb-hero" role="img" aria-label="Black Beard Algae before treatment">
+            <img src="/blogs/blackbeard/img/BBA_full_placeholder.jpg" alt="" loading="lazy" decoding="async"
+                 onerror="this.onerror=null;this.src='/media/placeholder-16x9.svg';" />
+          </div>
         </a>
-        <div>
-          <span class="blog-kicker">Product Highlight • ~2 min</span>
-          <h2>
-            <a class="blog-title-link" href="/blogs/purigen/" aria-label="Read the Purigen blog">
-              Want to achieve crystal clear water?
-            </a>
+        <div class="blog-meta">
+          <span class="blog-kicker">Battle Log • ~3–4 min</span>
+          <h2 itemprop="headline">
+            <a class="blog-title-link" href="/blogs/blackbeard/">Beating Black Beard Algae: What Finally Worked in My 29-Gallon</a>
           </h2>
-          <p>For water so clear, you’ll swear it isn’t there — the secret to showroom-level, photo-ready aquariums.</p>
-          <a class="blog-read" href="/blogs/purigen/">Read the blog →</a>
+          <p class="blog-abstract">My exact spot-dosing routine, lighting &amp; flow tweaks, and a sump refugium that finally turned the tide on BBA.</p>
+          <a class="blog-read" href="/blogs/blackbeard/">Read the blog →</a>
         </div>
       </article>
+    </section>
+
+    <!-- Past Blogs -->
+    <section class="blogs-past" aria-label="Past blogs">
+      <h3 class="blogs-past-title">Past Blogs</h3>
+      <div class="blogs-past-grid">
+        <!-- Purigen (small) -->
+        <article class="blog-item blog-item-small" itemscope itemtype="https://schema.org/CreativeWork">
+          <a class="blog-thumb-link" href="/blogs/purigen/" aria-label="Read: Purigen">
+            <img class="blog-thumb-mini"
+                 src="/blogs/purigen/img/thumbs/purigen-thumb.jpeg"
+                 alt="Purigen sump placement thumbnail"
+                 loading="lazy" decoding="async"
+                 onerror="this.onerror=null;this.src='/blogs/purigen/img/IMG_9299.jpeg';" />
+          </a>
+          <div class="blog-meta">
+            <h4 itemprop="headline"><a href="/blogs/purigen/">Purigen: Polish Your Water Clarity</a></h4>
+            <p class="blog-abstract-mini">Showroom-level clarity with a simple placement and one honest “downside.”</p>
+          </div>
+        </article>
+      </div>
     </section>
   </main>
 
