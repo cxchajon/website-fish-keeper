@@ -1,0 +1,74 @@
+diff --git a/scripts/build-prod.mjs b/scripts/build-prod.mjs
+new file mode 100644
+index 0000000..85e8b61
+--- /dev/null
++++ b/scripts/build-prod.mjs
+@@ -0,0 +1,68 @@
++import { promises as fs } from 'node:fs';
++import path from 'node:path';
++
++const ROOT = process.cwd();
++
++const CSS_TARGETS = [
++  { input: 'css/style.css', output: 'dist/css/style.min.css' },
++  { input: 'css/site.css', output: 'dist/css/site.min.css' }
++];
++
++const JS_TARGETS = [
++  { input: 'js/nav.js', output: 'dist/js/nav.min.js' },
++  { input: 'js/ad-slot-view-tracking.js', output: 'dist/js/ad-slot-view-tracking.min.js' }
++];
++
++function minifyCSS(source) {
++  return source
++    .replace(/\/\*[\s\S]*?\*\//g, '')
++    .replace(/\s+/g, ' ')
++    .replace(/\s*([{}:;,>])\s*/g, '$1')
++    .replace(/;}/g, '}')
++    .trim();
++}
++
++function minifyJS(source) {
++  const withoutBlockComments = source.replace(/\/\*[\s\S]*?\*\//g, '');
++  const withoutLineComments = withoutBlockComments.replace(/(^|[^:\\\"'])(\/\/).*$/gm, '$1');
++  return withoutLineComments
++    .replace(/\s+/g, ' ')
++    .replace(/\s*([=;{}(),:+\-<>])\s*/g, '$1')
++    .replace(/;}/g, '}')
++    .trim();
++}
++
++async function ensureDir(dirPath) {
++  await fs.mkdir(dirPath, { recursive: true });
++}
++
++async function buildAll() {
++  const created = [];
++  for (const { input, output } of CSS_TARGETS) {
++    const absIn = path.resolve(ROOT, input);
++    const absOut = path.resolve(ROOT, output);
++    const css = await fs.readFile(absIn, 'utf8');
++    const minified = minifyCSS(css);
++    await ensureDir(path.dirname(absOut));
++    await fs.writeFile(absOut, minified, 'utf8');
++    created.push(output);
++  }
++
++  for (const { input, output } of JS_TARGETS) {
++    const absIn = path.resolve(ROOT, input);
++    const absOut = path.resolve(ROOT, output);
++    const js = await fs.readFile(absIn, 'utf8');
++    const minified = minifyJS(js);
++    await ensureDir(path.dirname(absOut));
++    await fs.writeFile(absOut, minified, 'utf8');
++    created.push(output);
++  }
++
++  console.log('Build complete. Outputs:');
++  created.forEach((file) => console.log(` - ${file}`));
++}
++
++buildAll().catch((error) => {
++  console.error('Production build failed:', error);
++  process.exitCode = 1;
++});

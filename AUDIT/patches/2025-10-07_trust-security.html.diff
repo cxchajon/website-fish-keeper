@@ -1,0 +1,213 @@
+diff --git a/trust-security.html b/trust-security.html
+new file mode 100644
+index 0000000..b9c7ef4
+--- /dev/null
++++ b/trust-security.html
+@@ -0,0 +1,207 @@
++<!DOCTYPE html>
++<html lang="en">
++<head>
++  <meta charset="utf-8" />
++  <meta name="viewport" content="width=device-width, initial-scale=1" />
++  <title>Trust &amp; Security — The Tank Guide</title>
++  <meta name="description" content="Learn how The Tank Guide protects community data, respects content ownership, and responds to scraping or misuse." />
++  <link rel="canonical" href="https://thetankguide.com/trust-security.html" />
++  <meta property="og:type" content="website" />
++  <meta property="og:site_name" content="The Tank Guide" />
++  <meta property="og:title" content="Trust &amp; Security — The Tank Guide" />
++  <meta property="og:description" content="Learn how The Tank Guide protects community data, respects content ownership, and responds to scraping or misuse." />
++  <meta property="og:url" content="https://thetankguide.com/trust-security.html" />
++  <meta property="og:image" content="https://thetankguide.com/logo.png" />
++  <meta name="twitter:card" content="summary_large_image" />
++  <meta name="twitter:site" content="@fishkeepinglife" />
++  <meta name="twitter:title" content="Trust &amp; Security — The Tank Guide" />
++  <meta name="twitter:description" content="Learn how The Tank Guide protects community data, respects content ownership, and responds to scraping or misuse." />
++  <meta name="twitter:image" content="https://thetankguide.com/logo.png" />
++  <link rel="stylesheet" href="css/style.css?v=1.0.9" />
++  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
++
++  <style>
++    :root {
++      --ts-bg: #0a1530;
++      --ts-panel: rgba(255, 255, 255, 0.08);
++      --ts-border: rgba(255, 255, 255, 0.14);
++      --ts-fg: #f4f7ff;
++      --ts-muted: rgba(244, 247, 255, 0.8);
++      --ts-accent: #4bc2ff;
++    }
++
++    body {
++      margin: 0;
++      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
++      background: radial-gradient(circle at 18% -10%, rgba(75, 194, 255, 0.35), transparent 55%),
++        radial-gradient(circle at 85% 120%, rgba(0, 119, 199, 0.45), transparent 60%),
++        linear-gradient(160deg, #071122 0%, #0a1530 60%, #031026 100%);
++      color: var(--ts-fg);
++    }
++
++    a {
++      color: inherit;
++    }
++
++    .ts-wrapper {
++      max-width: 960px;
++      margin: 0 auto;
++      padding: 120px 20px 80px;
++    }
++
++    .ts-header {
++      text-align: left;
++      margin-bottom: 32px;
++    }
++
++    .ts-header h1 {
++      font-size: clamp(2.2rem, 5vw, 3.2rem);
++      margin: 0 0 12px;
++      letter-spacing: 0.4px;
++    }
++
++    .ts-header p {
++      max-width: 60ch;
++      margin: 0;
++      color: var(--ts-muted);
++      font-size: 1.05rem;
++      line-height: 1.6;
++    }
++
++    .ts-grid {
++      display: grid;
++      gap: 18px;
++      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
++      margin-top: 40px;
++    }
++
++    .ts-card {
++      background: var(--ts-panel);
++      border: 1px solid var(--ts-border);
++      border-radius: 18px;
++      padding: 22px;
++      backdrop-filter: blur(10px);
++      display: grid;
++      gap: 12px;
++    }
++
++    .ts-card h2 {
++      margin: 0;
++      font-size: 1.4rem;
++      letter-spacing: 0.3px;
++    }
++
++    .ts-card p {
++      margin: 0;
++      color: var(--ts-muted);
++      line-height: 1.55;
++    }
++
++    .ts-card ul {
++      margin: 0;
++      padding-left: 18px;
++      color: var(--ts-muted);
++      line-height: 1.55;
++    }
++
++    .ts-card a {
++      font-weight: 600;
++      color: var(--ts-accent);
++    }
++
++    .ts-meta {
++      margin-top: 48px;
++      padding: 22px;
++      border-radius: 16px;
++      border: 1px solid rgba(255, 255, 255, 0.12);
++      background: rgba(2, 18, 40, 0.6);
++      color: var(--ts-muted);
++      line-height: 1.55;
++    }
++
++    .ts-meta strong {
++      color: var(--ts-fg);
++    }
++
++    .ts-meta a {
++      color: var(--ts-accent);
++      font-weight: 600;
++    }
++
++    @media (max-width: 600px) {
++      .ts-wrapper {
++        padding-top: 96px;
++      }
++
++      .ts-card {
++        padding: 18px;
++      }
++    }
++  </style>
++
++  <script defer src="js/nav.js?v=1.1.0"></script>
++</head>
++<body>
++  <a class="skip-link" href="#trust-main">Skip to content</a>
++  <div id="site-nav"></div>
++
++  <main id="trust-main" class="ts-wrapper">
++    <header class="ts-header">
++      <p class="eyebrow" style="font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--ts-accent); margin-bottom:12px;">Accountability Update</p>
++      <h1>Trust &amp; Security at The Tank Guide</h1>
++      <p>We protect the aquarist community by minimizing data collection, honoring content ownership, and acting quickly when we detect scraping or misuse. This page documents what we do today and how to get help.</p>
++    </header>
++
++    <section class="ts-grid" aria-label="Trust pillars">
++      <article class="ts-card">
++        <h2>Data Practices</h2>
++        <p>We only collect the data needed to run core features and measure performance in aggregate. Identifying data is never sold. Consent controls stay visible on every page.</p>
++        <ul>
++          <li>AdSense + analytics respect your consent banner choices.</li>
++          <li>Contact form submissions route directly to encrypted inboxes.</li>
++          <li>We rotate access tokens and audit permissions quarterly.</li>
++        </ul>
++        <p>See our <a href="/privacy-legal.html">Privacy &amp; Legal policy</a> for the formal breakdown.</p>
++      </article>
++
++      <article class="ts-card">
++        <h2>Content Ownership</h2>
++        <p>Community photos, stories, and tank specs remain yours. We ask before sharing and will remove or update highlights on request.</p>
++        <p>Email <a href="mailto:info@thetankguide.com">info@thetankguide.com</a> with any edits. You can also use the <a href="/contact-feedback.html">contact form</a>.</p>
++        <p>Copyright inquiries follow our <a href="/copyright-dmca.html">DMCA notice</a>.</p>
++      </article>
++
++      <article class="ts-card">
++        <h2>Scraping &amp; Abuse Response</h2>
++        <p>We use rate limits, bot detection, and manual monitoring to catch scraping. When we find suspicious activity we:</p>
++        <ul>
++          <li>Document the source and affected content.</li>
++          <li>Block abusive IP ranges and clear compromised keys.</li>
++          <li>Notify impacted creators with recommended next steps.</li>
++        </ul>
++        <p>Please flag issues at <a href="mailto:security@thetankguide.com">security@thetankguide.com</a>.</p>
++      </article>
++    </section>
++
++    <aside class="ts-meta" aria-label="Policy quick links">
++      <p><strong>Need more detail?</strong> Review our <a href="/terms.html">Terms of Use</a> and <a href="/privacy-legal.html">Privacy &amp; Legal</a> pages, or contact us directly. We update this page whenever practices change.</p>
++    </aside>
++  </main>
++
++  <div id="site-footer"></div>
++
++  <script>
++    (async () => {
++      const host = document.getElementById('site-footer');
++      if (!host) return;
++      try {
++        const res = await fetch('/footer.html?v=1.3.2', { cache: 'no-store' });
++        if (!res.ok) throw new Error('Footer request failed');
++        host.outerHTML = await res.text();
++      } catch (error) {
++        console.error('Footer failed to load', error);
++      }
++    })();
++  </script>
++</body>
++</html>

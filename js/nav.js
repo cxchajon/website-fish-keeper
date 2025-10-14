@@ -62,6 +62,8 @@
       '/privacy-legal.html': '/privacy-legal.html',
       '/terms': '/terms.html',
       '/terms.html': '/terms.html',
+      '/trust-security': '/trust-security.html',
+      '/trust-security.html': '/trust-security.html',
       '/copyright-dmca': '/copyright-dmca.html',
       '/copyright-dmca.html': '/copyright-dmca.html',
       '/store': '/store.html',
@@ -323,4 +325,17 @@
 
   window.ttgInitNav = initNav;
   window.__TTG_PRIVACY_SECTION_IDS__ = PRIVACY_SECTION_IDS;
+
+  const featureFlags = window.__TTG_FEATURE_FLAGS__ || (window.__TTG_FEATURE_FLAGS__ = {});
+  if (typeof featureFlags.enableRightClickBlock !== 'boolean') {
+    featureFlags.enableRightClickBlock = false;
+  }
+
+  if (featureFlags.enableRightClickBlock && !document.__ttgContextMenuGuard) {
+    // Right-click deterrence only; does not prevent determined scraping.
+    document.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+    });
+    document.__ttgContextMenuGuard = true;
+  }
 })();

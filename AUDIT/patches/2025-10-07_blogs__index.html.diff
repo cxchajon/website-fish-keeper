@@ -1,0 +1,13 @@
+diff --git a/blogs/index.html b/blogs/index.html
+index 9c0436a..0813747 100644
+--- a/blogs/index.html
++++ b/blogs/index.html
+@@ -50,7 +50,7 @@
+   <script>
+     (async () => {
+       try {
+-        const res = await fetch('/footer.html?v=1.3.1', { cache: 'no-cache' });
++        const res = await fetch('/footer.html?v=1.3.2', { cache: 'no-cache' });
+         const html = await res.text();
+         const host = document.getElementById('site-footer');
+         if (host) host.outerHTML = html;

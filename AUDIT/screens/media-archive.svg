@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Media Archive Placeholder</title>
+  <desc id="desc">Placeholder slide summarising media archive additions. Generated due to browser download restrictions.</desc>
+  <rect width="1280" height="720" fill="#0c1a2f" />
+  <text x="80" y="150" fill="#eaf6ff" font-family="Arial, sans-serif" font-size="60" font-weight="700">Media Hub — TikTok, Instagram &amp; Archive</text>
+  <text x="80" y="240" fill="#c5dcff" font-family="Arial, sans-serif" font-size="34">Added platform cards with alt text + captions for TikTok &amp; Instagram</text>
+  <text x="80" y="310" fill="#c5dcff" font-family="Arial, sans-serif" font-size="34">Media Archive groups placeholders for YouTube / TikTok / Instagram</text>
+  <text x="80" y="380" fill="#94add6" font-family="Arial, sans-serif" font-size="28">Screenshot capture unavailable in sandbox (Playwright browsers blocked, see install logs).</text>
+</svg>

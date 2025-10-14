@@ -1,0 +1,28 @@
+diff --git a/playwright.e2e.config.ts b/playwright.e2e.config.ts
+new file mode 100644
+index 0000000..7773328
+--- /dev/null
++++ b/playwright.e2e.config.ts
+@@ -0,0 +1,22 @@
++import { defineConfig, devices } from '@playwright/test';
++
++export default defineConfig({
++  testDir: 'tests/e2e',
++  timeout: 60000,
++  expect: {
++    timeout: 10000
++  },
++  reporter: [
++    ['list'],
++    ['html', { outputFolder: 'playwright-report', open: 'never' }]
++  ],
++  use: {
++    baseURL: process.env.TTG_BASE_URL ?? 'http://localhost:8080',
++    trace: 'on-first-retry',
++    screenshot: 'only-on-failure',
++    video: 'off'
++  },
++  projects: [
++    { name: 'chromium', use: { ...devices['Desktop Chrome'] } }
++  ]
++});
