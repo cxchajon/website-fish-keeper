@@ -334,39 +334,6 @@
   /* TTG Popup Theme v1 — High-Contrast Minimal (scoped to #ttg-howitworks) */
   .ttg-visually-hidden{position:absolute!important;left:-9999px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important}
 
-  /* Inline (i) — crisp baseline, subtle pop, better tap target via invisible hitbox */
-  .ttg-info-btn--inline{
-    position:relative;
-    display:inline-flex;align-items:center;justify-content:center;
-    width:20px;height:20px;           /* slightly tighter */
-    margin-left:.35rem;
-    vertical-align:baseline;
-    transform:translateY(1px);        /* tiny nudge for baseline */
-    border-radius:999px;
-    border:1px solid rgba(255,255,255,.22);
-    background:linear-gradient(180deg,#1a1a1a,#0f0f0f);
-    color:#f2f2f2;
-    font:600 12px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    letter-spacing:.2px;
-    cursor:pointer;
-    box-shadow:
-      0 0 0 1px rgba(255,255,255,.14),    /* subtle outer ring */
-      inset 0 1px 0 rgba(255,255,255,.06);/* inner highlight */
-  }
-  /* Larger invisible hit area for mobile without changing visual size */
-  .ttg-info-btn--inline::after{
-    content:""; position:absolute; inset:-10px; border-radius:999px;
-  }
-  .ttg-info-btn--inline:hover{
-    color:#ffffff;
-    border-color:rgba(255,255,255,.32);
-    box-shadow:
-      0 0 0 1px rgba(155,220,255,.28),
-      inset 0 1px 0 rgba(255,255,255,.08);
-  }
-  .ttg-info-btn--inline:focus{ outline:2px solid #9bdcff; outline-offset:2px; }
-  .ttg-info-btn--inline:active{ transform:translateY(2px); }
-
   /* Under-hero "How it works" — TEXT ONLY (hard reset vs global button styles) */
   .ttg-howitworks-link{
     all: unset;                 /* wipe inherited button styles */
@@ -407,7 +374,6 @@
   @media (max-width:600px){
     #ttg-howitworks .ttg-overlay{align-items:flex-end}
     #ttg-howitworks .ttg-dialog{width:100%;max-width:none;border-radius:16px 16px 0 0;padding-bottom:env(safe-area-inset-bottom,16px)}
-    .ttg-info-btn--inline{ width:20px;height:20px;transform:translateY(1px); }
   }
 
   #ttg-howitworks .ttg-title{margin:0 2rem .75rem 0;font-size:1.35rem;line-height:1.2;font-weight:800}
@@ -454,42 +420,13 @@
 </div>
 
 <script>
-/* TTG How It Works — inline (i) button near title + subtle link; accessible modal */
+/* TTG How It Works — under-hero link; accessible modal */
 (function(){
   const overlay = document.querySelector('#ttg-howitworks .ttg-overlay');
   const dialog  = document.querySelector('#ttg-howitworks .ttg-dialog');
   const btnClose= document.querySelector('#ttg-howitworks .ttg-close');
   const btnPrimary = document.querySelector('#ttg-howitworks .ttg-primary');
-
-  // 1) Ensure an inline (i) button sits INSIDE the main H1 (after "The Tank Guide")
-  (function attachInlineInfoButton(){
-    const h1 = document.querySelector('h1');
-    if(!h1) return;
-    // Create once if not present
-    if(!h1.querySelector('.info-btn')){
-      const btn = document.createElement('button');
-      btn.type='button';
-      btn.className='info-btn';
-      btn.setAttribute('aria-label','Open How it works');
-      btn.title='How it works';
-      btn.textContent='i';
-      // Insert after the word "Guide" when possible; otherwise append at end
-      // Try to split the first text node
-      const tn = Array.from(h1.childNodes).find(n=>n.nodeType===Node.TEXT_NODE && n.textContent.includes('The Tank Guide'));
-      if(tn){
-        const parts = tn.textContent.split('The Tank Guide');
-        tn.textContent = parts[0] + 'The Tank Guide';
-        const rest = document.createTextNode(parts.slice(1).join('The Tank Guide'));
-        h1.insertBefore(btn, tn.nextSibling);
-        h1.insertBefore(rest, btn.nextSibling);
-      } else {
-        h1.appendChild(btn);
-      }
-      btn.addEventListener('click', ()=>openModal(btn));
-    }
-  })();
-
-  // 2) Insert a subtle text-only "How it works" link directly under the hero blurb
+  // Insert a subtle text-only "How it works" link directly under the hero blurb
   function insertUnderHero() {
     // Remove any previous button version so we don't inherit global styles
     document.getElementById('ttg-howitworks-opener')?.remove();
@@ -573,8 +510,6 @@
   btnPrimary&&btnPrimary.addEventListener('click', closeModal);
   overlay&&overlay.addEventListener('click',(e)=>{ if(!dialog.contains(e.target)) closeModal(); });
   // Link opener added in insertUnderHero()
-  
-  // If inline (i) exists, its click handler was bound during creation
 })();
 </script>
 <!-- === TTG Cookie Consent START === -->
