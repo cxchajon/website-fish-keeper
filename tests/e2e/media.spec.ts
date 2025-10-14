@@ -1,0 +1,54 @@
+import { test, expect } from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const auditScreenDir = path.resolve(
+  fileURLToPath(new URL('../../AUDIT/screens', import.meta.url))
+);
+
+test.beforeAll(() => {
+  fs.mkdirSync(auditScreenDir, { recursive: true });
+});
+
+test.describe('Media hub embeds', () => {
+  test('YouTube, TikTok, Instagram, and archive content render', async ({ page }) => {
+    await page.goto('/media.html');
+
+    await page.waitForSelector('iframe.shorts-embed');
+    const ytNowPlaying = page.locator('.now-playing .now-playing-title');
+    await expect(ytNowPlaying).toHaveAttribute('target', '_blank');
+
+    const tiktokCards = page.locator('#latest-tiktok .media-card');
+    const tiktokCount = await tiktokCards.count();
+    expect(tiktokCount).toBeGreaterThanOrEqual(2);
+    for (let i = 0; i < tiktokCount; i += 1) {
+      const card = tiktokCards.nth(i);
+      await expect(card.locator('a')).toHaveAttribute('target', '_blank');
+      await expect(card.locator('a')).toHaveAttribute('rel', /noopener/);
+      await expect(card.locator('img')).toHaveAttribute('alt', /.+/);
+      await expect(card.locator('figcaption')).toHaveText(/\S+/);
+    }
+
+    const instagramCards = page.locator('#latest-instagram .media-card');
+    const instagramCount = await instagramCards.count();
+    expect(instagramCount).toBeGreaterThanOrEqual(2);
+    for (let i = 0; i < instagramCount; i += 1) {
+      const card = instagramCards.nth(i);
+      await expect(card.locator('a')).toHaveAttribute('target', '_blank');
+      await expect(card.locator('a')).toHaveAttribute('rel', /noopener/);
+      await expect(card.locator('img')).toHaveAttribute('alt', /.+/);
+      await expect(card.locator('figcaption')).toHaveText(/\S+/);
+    }
+
+    const archiveGroups = page.locator('#media-archive .archive-group');
+    const archiveCount = await archiveGroups.count();
+    expect(archiveCount).toBeGreaterThanOrEqual(3);
+    for (let i = 0; i < archiveCount; i += 1) {
+      const placeholders = archiveGroups.nth(i).locator('.archive-placeholder');
+      expect(await placeholders.count()).toBeGreaterThanOrEqual(2);
+    }
+
+    await page.locator('#media-archive').screenshot({ path: path.join(auditScreenDir, 'media-archive.png') });
+  });
+});

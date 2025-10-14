@@ -1,0 +1,19 @@
+# Audit Implementation Notes — 2025-10-07
+
+## Production build step
+- Command: `npm run build`
+- Script: `scripts/build-prod.mjs`
+- Outputs: `dist/css/style.min.css`, `dist/css/site.min.css`, `dist/js/nav.min.js`, `dist/js/ad-slot-view-tracking.min.js`
+- The script performs lightweight whitespace/comment stripping without external dependencies. Source files remain unchanged for authoring.
+
+## Optional right-click protection
+- Feature flag: `window.__TTG_FEATURE_FLAGS__.enableRightClickBlock`
+- Default: `false`
+- Toggle: add `<script>window.__TTG_FEATURE_FLAGS__ = { enableRightClickBlock: true };</script>` before loading `js/nav.js` on any page that should block the context menu.
+- Effect: attaches a `contextmenu` listener that calls `preventDefault` (deterrence only; does not stop determined scraping).
+
+## Trust & Security copy updates
+- Footer source: `/footer.html`
+- Trust statement span class: `.footer-trust`
+- New policy page: `/trust-security.html`
+- Update copy once and re-run `npm run build` if nav/footer JavaScript is modified to refresh minified bundles.

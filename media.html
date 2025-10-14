@@ -92,6 +92,75 @@
       border-radius: 10px; text-decoration:none; font-weight:600;
       background:#fff; color:#0b1020;
     }
+    .media-platform-card {
+      display: grid;
+      gap: 18px;
+    }
+    .media-platform-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .media-card {
+      display: grid;
+      gap: 10px;
+    }
+    .media-thumb-link {
+      display: block;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    }
+    .media-thumb-link img {
+      width: 100%;
+      display: block;
+      height: auto;
+    }
+    .media-caption {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+    .archive-card {
+      display: grid;
+      gap: 20px;
+    }
+    .archive-grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+    .archive-group {
+      display: grid;
+      gap: 12px;
+    }
+    .archive-list {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .archive-placeholder {
+      background: rgba(255,255,255,0.7);
+      border: 1px dashed rgba(0,0,0,0.15);
+      border-radius: 10px;
+      padding: 12px;
+      color: #0b1020;
+      min-height: 112px;
+      display: grid;
+      align-content: start;
+      gap: 6px;
+    }
+    .archive-placeholder span {
+      font-weight: 600;
+    }
+    .archive-placeholder p {
+      margin: 0;
+      color: rgba(0,0,0,0.7);
+      font-size: 0.92rem;
+      line-height: 1.4;
+    }
     .muted { color: var(--muted); }
     .now-playing {
       display: flex;
@@ -445,6 +514,96 @@
       </article>
     </section>
 
+    <section class="section" id="latest-tiktok" aria-labelledby="latest-tiktok-heading">
+      <article class="card media-platform-card">
+        <h2 id="latest-tiktok-heading">Latest on TikTok</h2>
+        <p class="subline">Swipe-friendly mini guides covering cycle checkpoints, stocking math, and rapid fixes.</p>
+        <div class="media-platform-grid">
+          <figure class="media-card">
+            <a class="media-thumb-link" href="https://www.tiktok.com/@FishKeepingLifeCo/video/7328456100000000000" target="_blank" rel="noopener noreferrer">
+              <img src="assets/media/social/tiktok-placeholder.svg" alt="TikTok preview showing nitrogen cycle myth busting callouts" loading="lazy" decoding="async">
+            </a>
+            <figcaption class="media-caption">60-second nitrogen cycle myth busting with the testing steps we use in every new tank build.</figcaption>
+          </figure>
+          <figure class="media-card">
+            <a class="media-thumb-link" href="https://www.tiktok.com/@FishKeepingLifeCo" target="_blank" rel="noopener noreferrer">
+              <img src="assets/media/social/tiktok-placeholder.svg" alt="TikTok teaser highlighting aquascaping tools on a desk" loading="lazy" decoding="async">
+            </a>
+            <figcaption class="media-caption">Behind-the-scenes aquascaping kit tour covering the tools we recommend in the Tank Guide gear list.</figcaption>
+          </figure>
+        </div>
+      </article>
+    </section>
+
+    <section class="section" id="latest-instagram" aria-labelledby="latest-instagram-heading">
+      <article class="card media-platform-card">
+        <h2 id="latest-instagram-heading">Latest on Instagram</h2>
+        <p class="subline">Snapshots from current builds, reader spotlights, and upcoming book drops.</p>
+        <div class="media-platform-grid">
+          <figure class="media-card">
+            <a class="media-thumb-link" href="https://www.instagram.com/p/CycleCheckList" target="_blank" rel="noopener noreferrer">
+              <img src="assets/media/social/instagram-placeholder.svg" alt="Instagram carousel teaser for cycle checklist post" loading="lazy" decoding="async">
+            </a>
+            <figcaption class="media-caption">Printable cycle checklist preview—walk through ammonia, nitrite, and nitrate checkpoints step-by-step.</figcaption>
+          </figure>
+          <figure class="media-card">
+            <a class="media-thumb-link" href="https://www.instagram.com/FishKeepingLifeCo" target="_blank" rel="noopener noreferrer">
+              <img src="assets/media/social/instagram-placeholder.svg" alt="Instagram reel teaser showing planted aquarium close-up" loading="lazy" decoding="async">
+            </a>
+            <figcaption class="media-caption">Reader spotlight reel featuring a lush 20-gallon community tank with planting tips from our Discord crew.</figcaption>
+          </figure>
+        </div>
+      </article>
+    </section>
+
+    <section class="section" id="media-archive" aria-labelledby="media-archive-heading">
+      <article class="card archive-card">
+        <h2 id="media-archive-heading">Media Archive</h2>
+        <p class="subline">Organized collections launching soon. Bookmark this hub to track every video, short, reel, and future podcast drop.</p>
+        <div class="archive-grid">
+          <section class="archive-group" aria-labelledby="archive-youtube">
+            <h3 id="archive-youtube">YouTube Library</h3>
+            <div class="archive-list">
+              <div class="archive-placeholder">
+                <span>Coming Soon — Setup Series Index</span>
+                <p>Every cycling, stocking, and maintenance playlist in a single searchable feed.</p>
+              </div>
+              <div class="archive-placeholder">
+                <span>Coming Soon — Live Q&amp;A Replays</span>
+                <p>Timestamped recaps of long-form livestreams with download links for worksheets.</p>
+              </div>
+            </div>
+          </section>
+          <section class="archive-group" aria-labelledby="archive-tiktok">
+            <h3 id="archive-tiktok">TikTok Highlights</h3>
+            <div class="archive-list">
+              <div class="archive-placeholder">
+                <span>Coming Soon — Rapid Fix Vault</span>
+                <p>Quick remedies for cloudy water, algae blooms, and equipment hiccups.</p>
+              </div>
+              <div class="archive-placeholder">
+                <span>Coming Soon — 30-Day Challenges</span>
+                <p>Daily prompts to keep nano tanks thriving with minimal gear.</p>
+              </div>
+            </div>
+          </section>
+          <section class="archive-group" aria-labelledby="archive-instagram">
+            <h3 id="archive-instagram">Instagram Gallery</h3>
+            <div class="archive-list">
+              <div class="archive-placeholder">
+                <span>Coming Soon — Community Tank Tours</span>
+                <p>Reader-submitted scapes grouped by size, livestock, and filtration style.</p>
+              </div>
+              <div class="archive-placeholder">
+                <span>Coming Soon — Book + Merch Drops</span>
+                <p>Release-day photography and stories with direct purchase links.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </article>
+    </section>
+
     <!-- Community -->
     <section class="section" id="community" aria-labelledby="community-title">
       <h2 id="community-title">Community</h2>
@@ -568,7 +727,7 @@
   <script>
 (async () => {
   try {
-    const res = await fetch('/footer.html?v=1.3.1', { cache: 'no-cache' });
+    const res = await fetch('/footer.html?v=1.3.2', { cache: 'no-cache' });
     const html = await res.text();
     const host = document.getElementById('site-footer');
     if (host) host.outerHTML = html;
