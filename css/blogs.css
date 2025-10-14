@@ -256,3 +256,62 @@ main .blog-article,
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+/* ---- Black Beard Algae (magazine layout helpers) ---- */
+.blog-open,
+.blog-article {
+  background-color: #444444;  /* reuse dark gray standard */
+  color: #f5f5f5;
+}
+
+.blog-image {
+  margin: 2rem 0;
+  text-align: center;
+}
+.blog-image.right { float: right; width: 45%; margin-left: 2rem; }
+.blog-image.left  { float: left;  width: 45%; margin-right: 2rem; }
+
+.blog-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  display: block;
+}
+.blog-image figcaption {
+  font-size: 0.9rem;
+  color: #cccccc;
+  margin-top: 0.5rem;
+}
+
+.divider { 
+  border: 0; 
+  height: 1px; 
+  background: linear-gradient(90deg, #0000, #ffffff22, #0000); 
+  margin: 2rem 0; 
+}
+
+.gear-links h3 { color: #ffffff; margin-bottom: 1rem; }
+.gear-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.gear-grid figure { text-align: center; }
+.gear-grid img {
+  width: 100%;
+  max-width: 220px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  margin-inline: auto;
+}
+.gear-grid figcaption { margin-top: 0.5rem; color: #e3edf9; }
+
+@media (max-width: 900px) {
+  .blog-image.right, .blog-image.left { float: none; width: 100%; margin: 1rem 0; }
+  .gear-grid { grid-template-columns: 1fr; }
+}
+
+/* Keep headings readable on dark background */
+.blog-article h1, .blog-article h2, .blog-article h3 { color: #ffffff; }
+.blog-article a { color: #80bfff; }
+.blog-article a:hover { color: #aad4ff; }
