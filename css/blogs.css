@@ -383,3 +383,62 @@ main .blog-article,
   .blog-item-large{ grid-template-columns: 1fr; }
   .blog-thumb-hero{ aspect-ratio: 16/9; }
 }
+/* --- Fix: constrain blog images on Spotlight Blogs --- */
+.blogs-featured,
+.blogs-past { max-width: 1100px; margin-inline: auto; }
+
+/* Ensure all imgs inside blog cards never exceed their boxes */
+.blogs-featured img,
+.blogs-past img,
+.blog-item img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Featured hero container: fixed aspect + hard cap heights */
+.blog-thumb-hero {
+  width: 100%;
+  aspect-ratio: 16/9;
+  max-height: 420px;          /* desktop cap */
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--tg-line, #2a2a2a);
+  background: var(--tg-soft, #111);
+}
+
+/* Make the hero image fill the box without overflowing */
+.blog-thumb-hero > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Layout of the large card */
+.blog-item-large {
+  display: grid;
+  grid-template-columns: minmax(280px, 560px) 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* Small card thumb sizing stays modest */
+.blog-thumb-mini {
+  width: 96px;
+  height: 60px;  /* ~16:10 for a bit more height */
+  object-fit: cover;
+}
+
+/* Guard against any accidental absolute/fixed positioning */
+.blog-item img { position: static !important; }
+
+/* Mobile adjustments */
+@media (max-width: 900px) {
+  .blog-item-large { grid-template-columns: 1fr; }
+  .blog-thumb-hero { max-height: 260px; }  /* mobile cap */
+}
+
+/* Extra safety: no image should exceed its container vertically */
+.blog-item img { max-height: 100%; }
+
+/* --- end fix --- */
