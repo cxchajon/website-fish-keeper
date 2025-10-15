@@ -32,12 +32,12 @@ The Tank Guide is a static HTML/CSS/JS site delivering aquarium planning tools, 
 - Pure HTML/CSS/JS (no framework) with modular scripts in [js/](js) and shared styles in [css/](css).
 - Navigation and footer load as partials (see `nav.html` + `footer.html`) via `js/nav.js` and page-level fetch helpers for consistency.
 - SEO baseline includes explicit titles, meta descriptions, and JSON-LD schema blocks across feature pages.
-- Security headers are injected at Cloudflare. `/media.html` temporarily uses a page-scoped Transform Rule ([docs/security/cloudflare-transform-media-2025-10-20.json](docs/security/cloudflare-transform-media-2025-10-20.json)) that **removes** `Content-Security-Policy` and `X-Frame-Options` so the YouTube embeds can render, while still setting:
+- Security headers are injected at Cloudflare. `/media.html` uses a page-scoped Transform Rule ([docs/security/cloudflare-transform-media-2025-10-20.json](docs/security/cloudflare-transform-media-2025-10-20.json)) that sets a YouTube-friendly `Content-Security-Policy` while removing `X-Frame-Options`, and still applies:
   - `Referrer-Policy: strict-origin-when-cross-origin`
   - `X-Content-Type-Options: nosniff`
   - `Permissions-Policy: autoplay=(self "https://www.youtube.com"), fullscreen=(self "https://www.youtube.com")`
   - Rollback: delete/disable the single Cloudflare Transform Rule or revert this doc entry.
-- TODO: craft a permissive-but-safe CSP for `/media.html` (allowing YouTube) once the embed regression is resolved and validated.
+- TODO: expand the per-page CSP pattern so other embeds can be enabled without relaxing global security.
 
 ## Release Management
 - [Channel Log](docs/CHANNEL_LOG.md) is the source of truth for shipped work.
