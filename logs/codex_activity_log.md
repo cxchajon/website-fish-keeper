@@ -19,3 +19,6 @@ Scope: Replace pill switch with Coach checkbox, checkmark visible on :checked, f
 Result: Unified UX and clear selected state.
 [2025-10-14 | SA Filtration | Multi-filter totals + weighted type factor]
 Scope: Unified filters array; totals drive pill/turnover/bioload; mild weighted factor; robust events.
+[2025-10-15 | SA Products | Auto-refresh on tank change]
+Scope: Centralized refresh routine; repopulation after tank/catalog changes; strict eligibility; safe fallbacks.
+Result: Product list is always current for the selected tank size.
