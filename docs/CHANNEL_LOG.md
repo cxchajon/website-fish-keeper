@@ -111,3 +111,5 @@ Footer v1.2.2 (Sept 30, 2025)
 **Summary:** Compliance line added to footer on all pages: “As an Amazon Associate, I earn from qualifying purchases.”
 ## [2025-10-05] — Security Headers Verification (External Runner Added)
 Outbound HTTPS blocked in this environment. Added GitHub Action to verify headers at edge and commit report.
+## [2025-10-15] — Cloudflare Cache Images Rule Recorded
+- **2025-10-15** — Recorded Cloudflare *Cache Images* rule (images cached at edge for 30 days via fixed TTL). Added verification workflow to confirm `cf-cache-status` HIT on repeat fetches.
