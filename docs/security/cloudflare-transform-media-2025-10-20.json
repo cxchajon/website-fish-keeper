@@ -9,10 +9,10 @@
     "value": "/media.html"
   },
   "actions": [
-    { "action": "set", "header": "Content-Security-Policy", "value": "default-src 'self'; base-uri 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com; img-src 'self' data: https://i.ytimg.com https://yt3.ggpht.com; media-src https://*.googlevideo.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://www.youtube.com; form-action 'self'" },
+    { "action": "remove", "header": "Content-Security-Policy" },
+    { "action": "remove", "header": "X-Frame-Options" },
     { "action": "set", "header": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
     { "action": "set", "header": "X-Content-Type-Options", "value": "nosniff" },
-    { "action": "set", "header": "Permissions-Policy", "value": "autoplay=(self \"https://www.youtube.com\"), fullscreen=(self \"https://www.youtube.com\")" },
-    { "action": "remove", "header": "X-Frame-Options" }
+    { "action": "set", "header": "Permissions-Policy", "value": "autoplay=(self \"https://www.youtube.com\"), fullscreen=(self \"https://www.youtube.com\")" }
   ]
 }
