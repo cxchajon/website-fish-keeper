@@ -20,3 +20,17 @@ Browsers that still honour `child-src` (Safari 15/older Chromium builds used by 
 ## 5. Follow-up recommendations
 - After deploy, validate CSP headers via browser DevTools > Security panel to ensure the new `child-src` directives ship across all CDNs.
 - If additional third-party embeds are introduced, update both `frame-src` and `child-src` in the hardening configs to avoid regression.
+
+---
+
+## 6. Production validation attempt — October 15, 2025
+- **Deployment & cache purge:** Unable to perform merge/deploy or trigger CDN cache purge from within the constrained CI sandbox. Documented requirement for Cloudflare/Netlify "Purge Everything" post-merge.
+- **Response header capture:** `curl -I https://thetankguide.com/media.html` from the sandbox returned `HTTP/1.1 403 Forbidden` due to egress restrictions, so live CSP headers could not be confirmed. Recommend rerunning the header check from an environment with public internet access after production deploy.
+- **Visual checks:** Browser automation is blocked from reaching the production origin, preventing confirmation of iframe rendering on desktop/mobile or capturing refreshed screenshots. Request manual QA in a real browser with cleared cache/private window post-purge.
+- **Regression guard:** Without production access, DevTools console review for CSP violations could not be completed. Suggest capturing console logs during the manual QA pass.
+- **Next actions:**
+  1. Merge Part 1 PR to `main`, monitor deployment pipeline until production update completes.
+  2. Execute CDN cache purge (Cloudflare/Netlify depending on active provider) and record timestamp/operator.
+  3. Re-run header verification and visual checks, ensuring `frame-src` includes both `https://www.youtube-nocookie.com` and `https://www.youtube.com`.
+  4. Update this report with final CSP lines, screenshot evidence, and PR comment once production validation is confirmed.
+  5. Optionally align all embeds to `youtube-nocookie.com` while keeping both hosts in CSP for resilience.
