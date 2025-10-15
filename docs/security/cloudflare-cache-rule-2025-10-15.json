@@ -1,0 +1,16 @@
+{
+  "timestamp_utc": "2025-10-15T14:08:05Z",
+  "rule_name": "Cache Images",
+  "type": "cache_rule",
+  "scope": "thetankguide.com",
+  "filter_expression": "(http.request.uri.path contains \".jpg\" or http.request.uri.path contains \".jpeg\" or http.request.uri.path contains \".png\" or http.request.uri.path contains \".webp\")",
+  "cache_eligibility": "eligible",
+  "edge_ttl_seconds": 2592000,
+  "browser_ttl": null,
+  "status_code_ttl": null,
+  "change_source": "Cloudflare Dashboard",
+  "notes": [
+    "Configured to ignore origin cache-control and use a fixed 30-day Edge TTL for image extensions.",
+    "Goal: improve image performance and enable cf-cache-status HITs on repeat fetches."
+  ]
+}

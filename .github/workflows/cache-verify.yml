@@ -1,0 +1,85 @@
+name: Cache Verify
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 2 * * *"   # 02:23 UTC daily
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install curl and jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl jq
+
+      - name: Choose test URL
+        id: pick
+        run: |
+          set -e
+          try() { url="$1"; code=$(curl -sI -o /dev/null -w "%{http_code}" "$url" || true); echo "$code $url"; }
+          CANDIDATES=(
+            "https://thetankguide.com/assets/media/header1.jpg"
+            "https://thetankguide.com/favicon.ico"
+            "https://www.thetankguide.com/favicon.ico"
+          )
+          PICK=""
+          for u in "${CANDIDATES[@]}"; do
+            read -r code url <<<"$(try "$u")"
+            if [ "$code" = "200" ]; then PICK="$url"; break; fi
+          done
+          if [ -z "$PICK" ]; then
+            echo "No 200 OK candidate URL found" >&2
+            exit 1
+          fi
+          echo "url=$PICK" >> "$GITHUB_OUTPUT"
+
+      - name: Warm + fetch headers twice
+        id: fetch
+        run: |
+          set -e
+          URL="${{ steps.pick.outputs.url }}"
+          # warm
+          curl -sI "$URL" >/dev/null || true
+          # fetch #1
+          H1=$(curl -sI "$URL")
+          # fetch #2 (should be HIT if cached)
+          H2=$(curl -sI "$URL")
+
+          get_hdr() { printf "%s" "$1" | tr -d '\r' | awk -v k="^$2:" 'BEGIN{IGNORECASE=1} $0 ~ k {sub(/^.*: /,""); print; exit}'; }
+
+          CF1="$(get_hdr "$H1" "cf-cache-status")"
+          CF2="$(get_hdr "$H2" "cf-cache-status")"
+          AGE2="$(get_hdr "$H2" "age")"
+          DATE_UTC="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+
+          jq -n --arg ts "$DATE_UTC" --arg url "$URL" \
+               --arg cf1 "$CF1" --arg cf2 "$CF2" --arg age2 "$AGE2" \
+               '{timestamp_utc:$ts, url:$url, cf_cache_status_first:$cf1, cf_cache_status_second:$cf2, age_second:$age2}' \
+               > cache-verify-output.json
+
+          echo "cf1=$CF1" >> "$GITHUB_OUTPUT"
+          echo "cf2=$CF2" >> "$GITHUB_OUTPUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cache-verify-output
+          path: cache-verify-output.json
+
+      - name: Commit verification into docs/security
+        if: always()
+        run: |
+          set -e
+          mkdir -p docs/security
+          TS="$(date -u +'%Y-%m-%d')"
+          DEST="docs/security/cache-verify-$TS.json"
+          cp cache-verify-output.json "$DEST"
+          git config user.name "codex-bot"
+          git config user.email "codex-bot@users.noreply.github.com"
+          git add "$DEST"
+          git commit -m "chore(security): cache verify report ($TS) – cf1=${{ steps.fetch.outputs.cf1 }}, cf2=${{ steps.fetch.outputs.cf2 }}" || echo "No changes to commit"
+          git push
