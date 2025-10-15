@@ -34,3 +34,13 @@ Browsers that still honour `child-src` (Safari 15/older Chromium builds used by 
   3. Re-run header verification and visual checks, ensuring `frame-src` includes both `https://www.youtube-nocookie.com` and `https://www.youtube.com`.
   4. Update this report with final CSP lines, screenshot evidence, and PR comment once production validation is confirmed.
   5. Optionally align all embeds to `youtube-nocookie.com` while keeping both hosts in CSP for resilience.
+
+## 7. November 2025 follow-up — page-scoped CSP override & diagnostics
+- **Header inventory:** Active emitters remain `hardening/_headers`, `hardening/netlify.toml`, `hardening/vercel.json`, and `hardening/nginx.conf`. Each now defines a `/media.html` override that delivers a single CSP tuned for YouTube alongside the original global policy for the rest of the site.【F:hardening/_headers†L1-L24】【F:hardening/netlify.toml†L1-L31】【F:hardening/vercel.json†L1-L45】【F:hardening/nginx.conf†L1-L54】
+- **Effective CSP contents:** The page-scoped policy whitelists only the resources `/media.html` actually loads: default self, inline scripts/styles, Google consent tooling and analytics loaders, Cloudflare beacon, and YouTube frames/poster images. Frame ancestors are limited to `'self'` so the page can still appear in first-party navigation chrome.【F:hardening/_headers†L19-L24】【F:media.html†L470-L484】【F:media.html†L649-L662】
+- **Diagnostics guard:** Added `/diag/headers.html` so we can confirm CDN precedence. It performs a `HEAD` fetch for `/media.html`, counts how many CSP headers land in the response, and prints them in-order so we can spot rogue intermediaries. Remove once production verification is complete.【F:diag/headers.html†L1-L69】
+- **Next validation steps:**
+  1. Deploy preview: confirm `/diag/headers.html` reports a single CSP and copy the exact string into this report.
+  2. Capture refreshed desktop (≥1280px) and mobile (~390px) screenshots of `/media.html` showing both embeds rendering.
+  3. After production launch and CDN purge, repeat the header capture plus screenshots and document timestamps + asset paths here.
+  4. File a follow-up issue to deduplicate header sources so future CSP adjustments propagate consistently.
