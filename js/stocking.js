@@ -685,45 +685,79 @@ function bootstrapStocking() {
     updateDebugDownloadLink(report, hasDifferences);
   }
 
-  function refreshFilterProductOptions({ preserveSelection = true } = {}) {
+  function refreshFiltrationUI(options = {}) {
+    const opts = typeof options === 'object' && options !== null ? options : {};
+    const preserveSelection = Object.prototype.hasOwnProperty.call(opts, 'preserveSelection')
+      ? Boolean(opts.preserveSelection)
+      : true;
+
     ensureFilterControl();
-    if (!refs.filterProductSelect) {
-      return;
-    }
     const select = refs.filterProductSelect;
-    const gallons = getSelectedTankGallons();
+    const gallonsRaw = getSelectedTankGallons();
+    const gallons = Number.isFinite(gallonsRaw) ? gallonsRaw : null;
     let debugStatus = 'idle';
 
-    const applyDisabledState = (text, { status: statusKey = 'disabled' } = {}) => {
-      select.innerHTML = '';
-      const option = document.createElement('option');
-      option.value = '';
-      option.textContent = text;
-      select.appendChild(option);
-      select.value = '';
-      select.disabled = true;
-      select.setAttribute('aria-disabled', 'true');
-      filterProductStatusMessage = text;
-      debugStatus = statusKey;
+    const finalize = () => {
+      syncFilterControl();
+      syncFiltrationUI();
+      runDebugFilterAudit({ select, gallons, status: debugStatus });
     };
 
-    filterProductStatusMessage = '';
+    const clearSelectionState = () => {
+      const previousId = state.filterId ?? null;
+      if (previousId) {
+        const existing = Array.isArray(state.filters) ? state.filters.slice() : [];
+        const nextFilters = existing.filter((filter) => filter?.id !== previousId);
+        setFilters(nextFilters);
+      }
+      pendingFilterId = null;
+      state.filterId = null;
+      state.filterType = null;
+      state.ratedGph = null;
+    };
+
+    const applyDisabledState = (text, { status: statusKey = 'disabled', clearSelection = false } = {}) => {
+      if (select) {
+        if (document.activeElement === select && typeof select.blur === 'function') {
+          select.blur();
+        }
+        select.innerHTML = '';
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = text;
+        select.appendChild(option);
+        select.value = '';
+        select.disabled = true;
+        select.setAttribute('aria-disabled', 'true');
+      }
+      filterProductStatusMessage = text;
+      debugStatus = statusKey;
+      if (clearSelection) {
+        clearSelectionState();
+      }
+    };
+
+    if (!select) {
+      applyDisabledState('Loading filter catalog…', { status: 'no-select', clearSelection: false });
+      finalize();
+      return;
+    }
 
     if (filterCatalogLoadError) {
-      applyDisabledState('Catalog failed to load.', { status: 'catalog-error' });
-      runDebugFilterAudit({ select, gallons, status: debugStatus });
+      applyDisabledState('Catalog failed to load.', { status: 'catalog-error', clearSelection: false });
+      finalize();
       return;
     }
 
     if (!filterCatalogLoaded) {
-      applyDisabledState('Loading filter catalog…', { status: 'loading' });
-      runDebugFilterAudit({ select, gallons, status: debugStatus });
+      applyDisabledState('Loading filter catalog…', { status: 'loading', clearSelection: false });
+      finalize();
       return;
     }
 
     if (!Number.isFinite(gallons) || gallons <= 0) {
-      applyDisabledState('Select a tank size to view matching products.', { status: 'no-tank' });
-      runDebugFilterAudit({ select, gallons, status: debugStatus });
+      applyDisabledState('Select a tank size to view matching products.', { status: 'no-tank', clearSelection: true });
+      finalize();
       return;
     }
 
@@ -733,32 +767,42 @@ function bootstrapStocking() {
     if (pendingFilterId && availableIds.has(pendingFilterId)) {
       const candidateProduct = getFilterProductById(pendingFilterId);
       if (candidateProduct) {
+        const normalizedType = normalizeFilterTypeSelection(String(candidateProduct.type || ''));
+        const ratedValue = deriveRatedGphFromProduct(candidateProduct);
         state.filterId = candidateProduct.id;
-        state.filterType = normalizeFilterTypeSelection(String(candidateProduct.type || ''));
-        state.ratedGph = deriveRatedGphFromProduct(candidateProduct);
+        state.filterType = normalizedType;
+        state.ratedGph = ratedValue;
+        const rated = Number.isFinite(ratedValue) && ratedValue > 0 ? ratedValue : 0;
+        setFilters([
+          {
+            id: candidateProduct.id,
+            type: canonicalizeFilterType(candidateProduct.type),
+            rated_gph: rated,
+          },
+        ]);
       }
       pendingFilterId = null;
     }
 
     let previousSelectionRemoved = false;
     if (state.filterId && !availableIds.has(state.filterId)) {
-      const currentProduct = getFilterProductById(state.filterId);
-      if (!currentProduct || !isEligibleForTank(currentProduct, gallons)) {
-        previousSelectionRemoved = true;
-        state.filterId = null;
-        state.filterType = null;
-        state.ratedGph = null;
-      }
-      pendingFilterId = null;
+      previousSelectionRemoved = true;
+      clearSelectionState();
     }
 
     if (!products.length) {
-      applyDisabledState('No matching products for this tank size.', { status: 'no-matches' });
-      runDebugFilterAudit({ select, gallons, status: debugStatus });
+      applyDisabledState('No matching products for this tank size.', { status: 'no-matches', clearSelection: true });
+      finalize();
       return;
     }
 
-    const currentValue = preserveSelection ? (state.filterId ?? '') : '';
+    const preservedValue = preserveSelection && state.filterId && availableIds.has(state.filterId)
+      ? state.filterId
+      : '';
+
+    if (document.activeElement === select && typeof select.blur === 'function') {
+      select.blur();
+    }
     select.innerHTML = '';
     select.disabled = false;
     select.removeAttribute('aria-disabled');
@@ -767,6 +811,7 @@ function bootstrapStocking() {
     placeholder.value = '';
     placeholder.textContent = '— Select a product —';
     select.appendChild(placeholder);
+
     products.forEach((product) => {
       const option = document.createElement('option');
       option.value = product.id;
@@ -774,32 +819,35 @@ function bootstrapStocking() {
       select.appendChild(option);
     });
 
+    const nextValue = preservedValue && availableIds.has(preservedValue) ? preservedValue : '';
+    select.value = nextValue;
+
+    if (nextValue) {
+      const selectedProduct = getFilterProductById(nextValue);
+      if (selectedProduct) {
+        state.filterId = selectedProduct.id;
+        state.filterType = normalizeFilterTypeSelection(String(selectedProduct.type || ''));
+        state.ratedGph = deriveRatedGphFromProduct(selectedProduct);
+      } else {
+        previousSelectionRemoved = true;
+        clearSelectionState();
+      }
+    } else {
+      if (state.filterId) {
+        previousSelectionRemoved = true;
+      }
+      clearSelectionState();
+    }
+
     if (previousSelectionRemoved) {
-      filterProductStatusMessage = 'Previous product doesn\'t fit this tank size.';
+      filterProductStatusMessage = 'Previous product doesn't fit this tank size.';
       debugStatus = 'previous-removed';
     } else {
       filterProductStatusMessage = '';
       debugStatus = 'populated';
     }
 
-    const nextValue = currentValue && availableIds.has(currentValue) ? currentValue : '';
-    select.value = nextValue;
-
-    if (nextValue) {
-      const selectedProduct = getFilterProductById(nextValue);
-      if (selectedProduct) {
-        state.filterType = normalizeFilterTypeSelection(String(selectedProduct.type || ''));
-        state.ratedGph = deriveRatedGphFromProduct(selectedProduct);
-      } else {
-        state.filterType = null;
-        state.ratedGph = null;
-      }
-    } else {
-      state.filterType = null;
-      state.ratedGph = null;
-    }
-
-    runDebugFilterAudit({ select, gallons, status: debugStatus });
+    finalize();
   }
 
   function computeTurnoverEstimate() {
@@ -838,17 +886,22 @@ function bootstrapStocking() {
         },
       ]);
     } else {
+      const previousId = state.filterId ?? null;
       state.filterId = null;
       pendingFilterId = null;
       state.filterType = null;
       state.ratedGph = null;
+      if (previousId) {
+        const remaining = Array.isArray(state.filters)
+          ? state.filters.filter((filter) => filter?.id !== previousId)
+          : [];
+        setFilters(remaining);
+      }
     }
-    syncFiltrationUI();
-    syncFilterControl();
+    refreshFiltrationUI({ preserveSelection: true, reason: 'product-change' });
     syncGearLink();
     scheduleUpdate();
   }
-
   function ensureFilterControl() {
     if (!refs.filterSetup) {
       refs.filterSetup = document.querySelector('[data-role="filter-setup"]');
@@ -931,15 +984,14 @@ function bootstrapStocking() {
   }
 
   ensureFilterControl();
-  refreshFilterProductOptions({ preserveSelection: true });
-  syncFilterControl();
+  refreshFiltrationUI({ preserveSelection: true });
 
   function initializeFilterCatalog() {
     fetchFilterCatalogData()
       .catch(() => [])
       .finally(() => {
-        refreshFilterProductOptions({ preserveSelection: true });
-        syncFilterControl();
+        refreshFiltrationUI({ preserveSelection: true });
+        syncGearLink();
         if (typeof scheduleUpdate === 'function') {
           scheduleUpdate();
         }
@@ -948,8 +1000,8 @@ function bootstrapStocking() {
 
   function handleFiltersChange(nextFilters) {
     setFilters(nextFilters);
-    syncFilterControl();
-    syncFiltrationUI();
+    refreshFiltrationUI({ preserveSelection: true, reason: 'filters-change' });
+    syncGearLink();
     scheduleUpdate();
   }
 
@@ -1193,8 +1245,7 @@ function bootstrapStocking() {
     state.selectedTankId = snapshot.id ?? null;
     state.variantId = null;
     shouldRestoreVariantFocus = false;
-    refreshFilterProductOptions({ preserveSelection: true });
-    syncFilterControl();
+    refreshFiltrationUI({ preserveSelection: true, reason: 'tank-change' });
     syncGearLink();
     resetSpeciesFilters();
     populateSpecies();
@@ -1730,8 +1781,7 @@ function renderAll() {
     renderEnvironmentPanels();
     ensureTankAssumptionScrubbed();
     syncQtyInputFromState();
-    syncFiltrationUI();
-    syncFilterControl();
+    refreshFiltrationUI({ preserveSelection: true, reason: 'render' });
     syncGearLink();
     return;
   }
@@ -1745,8 +1795,7 @@ function renderAll() {
   renderEnvironmentPanels();
   ensureTankAssumptionScrubbed();
   syncQtyInputFromState();
-  syncFiltrationUI();
-  syncFilterControl();
+  refreshFiltrationUI({ preserveSelection: true, reason: 'render' });
   syncGearLink();
 }
 
