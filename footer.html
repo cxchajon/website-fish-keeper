@@ -58,3 +58,26 @@
     Powered by <a href="https://share.google/y5TcoQZSNh6EUvhqb" target="_blank" rel="noopener noreferrer">FishKeepingLifeCo</a> — <a href="https://www.google.com/search?q=FishKeepingLifeCo+The+Tank+Guide" target="_blank" rel="noopener noreferrer">The Tank Guide</a>
   </p>
 </footer>
+<script>
+  // Lightweight right-click and drag protection
+  if (!document.__ttgContextMenuGuard) {
+    document.addEventListener("contextmenu", function (e) {
+      var tagName = (e.target && e.target.tagName) || "";
+      if (tagName === "INPUT" || tagName === "TEXTAREA") return;
+      e.preventDefault();
+    });
+    document.__ttgContextMenuGuard = true;
+  }
+
+  if (!document.__ttgImageDragGuard) {
+    document.addEventListener("dragstart", function (e) {
+      if (e.target && e.target.tagName === "IMG") e.preventDefault();
+    });
+    document.__ttgImageDragGuard = true;
+  }
+
+  // Optional console notice
+  if (typeof console !== "undefined" && typeof console.info === "function") {
+    console.info("🛡️ Right-click protection active on TheTankGuide.com");
+  }
+</script>

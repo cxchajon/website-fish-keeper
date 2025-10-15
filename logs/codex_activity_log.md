@@ -22,3 +22,7 @@ Scope: Unified filters array; totals drive pill/turnover/bioload; mild weighted 
 [2025-10-15 | SA Products | Auto-refresh on tank change]
 Scope: Centralized refresh routine; repopulation after tank/catalog changes; strict eligibility; safe fallbacks.
 Result: Product list is always current for the selected tank size.
+[2025-10-16 | Website | Security Enhancement]
+Scope: Added right-click and drag protection site-wide.
+Result: Verified in browser — no context menu outside input fields.
+Next: Consider optional hotlink protection under Cloudflare Scrape Shield.
