@@ -1,0 +1,8 @@
+{
+  "score": "A",
+  "csp_mode": "compat",
+  "protection_layers": ["Cloudflare WAF", "Bot Fight", "Right-click lock", "CSP", "HTTPS", "Copyright metadata"],
+  "ip_protection": "legal and digital evidence in GitHub + Cloudflare logs",
+  "recommendations": ["future CSP nonce migration", "optional watermarking", "enable DMARC/DKIM"],
+  "verdict": "Secure and authenticated origin"
+}
