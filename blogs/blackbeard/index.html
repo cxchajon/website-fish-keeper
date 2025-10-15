@@ -8,6 +8,59 @@
   <link rel="canonical" href="https://thetankguide.com/blogs/blackbeard/" />
   <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
   <link rel="stylesheet" href="/css/blogs.css" />
+  <style>
+    .gear-links .gear-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 640px) {
+      .gear-links .gear-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .gear-links .product-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #222;
+      color: #fff;
+      text-decoration: none;
+      box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 2px 10px rgba(0,0,0,.25);
+      transition: transform 0.2s ease;
+    }
+    .gear-links .product-card:hover { transform: translateY(-1px); }
+    .gear-links .product-card .thumb {
+      flex: 0 0 96px;
+      width: 96px;
+      height: 64px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #111;
+    }
+    .gear-links .product-card .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .gear-links .product-card .meta { flex: 1 1 auto; }
+    .gear-links .product-card .title {
+      font-weight: 700;
+      line-height: 1.2;
+      margin: 0 0 4px 0;
+    }
+    .gear-links .product-card .desc {
+      margin: 0;
+      opacity: .9;
+    }
+    .gear-links .product-card .cta {
+      display: inline-block;
+      margin-top: 6px;
+      opacity: .9;
+      text-decoration: underline;
+    }
+  </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <script type="application/ld+json">
   {
@@ -125,23 +178,38 @@
 
       <section class="gear-links">
         <h3>Gear that made this possible</h3>
-        <div class="gear-grid">
-          <figure>
-            <img src="/blogs/shared/img/finnex_247_placeholder.jpg" alt="Finnex 24/7 LED light"
-                 onerror="this.onerror=null;this.src='/media/placeholder-16x9.svg';" />
-            <figcaption>
-              <!-- TODO: replace with your affiliate shortlink -->
-              <a href="https://amzn.to/XXXXXXXX" target="_blank" rel="noopener">Finnex 24/7 LED (custom spectrum)</a>
-            </figcaption>
-          </figure>
-          <figure>
-            <img src="/blogs/shared/img/24hour_aquarist_placeholder.jpg" alt="24-Hour Aquarist algae treatment"
-                 onerror="this.onerror=null;this.src='/media/placeholder-16x9.svg';" />
-            <figcaption>
-              <!-- Safe-route option link -->
-              <a href="https://24houraquarist.com" target="_blank" rel="noopener">24-Hour Aquarist (safe-route option)</a>
-            </figcaption>
-          </figure>
+        <div class="gear-grid" aria-label="Recommended gear">
+
+          <!-- Seachem Excel -->
+          <a class="product-card" href="https://amzn.to/4qsK89V" target="_blank" rel="noopener sponsored">
+            <div class="thumb">
+              <img
+                src="https://m.media-amazon.com/images/I/61V3cVDRUYL._UF894,1000_QL80_.jpg"
+                alt="Seachem Flourish Excel 500 ml bottle for planted aquariums"
+                loading="lazy" decoding="async">
+            </div>
+            <div class="meta">
+              <p class="title">Seachem Excel (spot-dosing)</p>
+              <p class="desc">Liquid carbon for targeted BBA treatment — precision dosing that brings visible results fast.</p>
+              <span class="cta">View on Amazon →</span>
+            </div>
+          </a>
+
+          <!-- 2HR Aquarist Fixlite -->
+          <a class="product-card" href="https://amzn.to/4n5XdD0" target="_blank" rel="noopener sponsored">
+            <div class="thumb">
+              <img
+                src="https://m.media-amazon.com/images/I/61kEW9U9mtL._UF894,1000_QL80_.jpg"
+                alt="2HR Aquarist APT Fixlite bottle for safe algae treatment in planted aquariums"
+                loading="lazy" decoding="async">
+            </div>
+            <div class="meta">
+              <p class="title">2HR Aquarist APT Fixlite (safe-route option)</p>
+              <p class="desc">A gentler alternative for controlling BBA — ideal for shrimp or delicate plant setups.</p>
+              <span class="cta">View on Amazon →</span>
+            </div>
+          </a>
+
         </div>
         <p><em>As an Amazon Associate, I earn from qualifying purchases at no extra cost to you.</em></p>
       </section>
