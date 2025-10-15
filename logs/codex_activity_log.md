@@ -19,3 +19,8 @@ Scope: Replace pill switch with Coach checkbox, checkmark visible on :checked, f
 Result: Unified UX and clear selected state.
 [2025-10-14 | SA Filtration | Multi-filter totals + weighted type factor]
 Scope: Unified filters array; totals drive pill/turnover/bioload; mild weighted factor; robust events.
+Next: Gear page to auto-highlight filter_id product and factor planted/filter into suggestions.
+[2025-10-15 | Website | Security Enhancement]
+Scope: Added right-click and drag protection site-wide.
+Result: Verified in browser — no context menu outside input fields.
+Next: Consider optional hotlink protection under Cloudflare Scrape Shield.
