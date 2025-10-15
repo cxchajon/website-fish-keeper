@@ -32,13 +32,12 @@ The Tank Guide is a static HTML/CSS/JS site delivering aquarium planning tools, 
 - Pure HTML/CSS/JS (no framework) with modular scripts in [js/](js) and shared styles in [css/](css).
 - Navigation and footer load as partials (see `nav.html` + `footer.html`) via `js/nav.js` and page-level fetch helpers for consistency.
 - SEO baseline includes explicit titles, meta descriptions, and JSON-LD schema blocks across feature pages.
-- Security headers are injected at Cloudflare. `/media.html` now has a page-scoped Transform Rule ([docs/security/cloudflare-transform-media-2025-10-20.json](docs/security/cloudflare-transform-media-2025-10-20.json)) that sets:
-  - `Content-Security-Policy: default-src 'self'; base-uri 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com; img-src 'self' data: https://i.ytimg.com https://yt3.ggpht.com; media-src https://*.googlevideo.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://www.youtube.com; form-action 'self'`
+- Security headers are injected at Cloudflare. `/media.html` temporarily uses a page-scoped Transform Rule ([docs/security/cloudflare-transform-media-2025-10-20.json](docs/security/cloudflare-transform-media-2025-10-20.json)) that **removes** `Content-Security-Policy` and `X-Frame-Options` so the YouTube embeds can render, while still setting:
   - `Referrer-Policy: strict-origin-when-cross-origin`
   - `X-Content-Type-Options: nosniff`
   - `Permissions-Policy: autoplay=(self "https://www.youtube.com"), fullscreen=(self "https://www.youtube.com")`
-  - Removes `X-Frame-Options` for the page only.
-  - Rollback: disable/delete the single Cloudflare Transform Rule or revert this doc entry.
+  - Rollback: delete/disable the single Cloudflare Transform Rule or revert this doc entry.
+- TODO: craft a permissive-but-safe CSP for `/media.html` (allowing YouTube) once the embed regression is resolved and validated.
 
 ## Release Management
 - [Channel Log](docs/CHANNEL_LOG.md) is the source of truth for shipped work.
