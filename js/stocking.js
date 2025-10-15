@@ -840,7 +840,7 @@ function bootstrapStocking() {
     }
 
     if (previousSelectionRemoved) {
-      filterProductStatusMessage = 'Previous product doesn't fit this tank size.';
+      filterProductStatusMessage = "Previous product doesn't fit this tank size.";
       debugStatus = 'previous-removed';
     } else {
       filterProductStatusMessage = '';
