@@ -1,0 +1,19 @@
+{
+  "timestamp_utc": "2025-10-15T00:00:00Z",
+  "source": "securityheaders.com",
+  "score": "A",
+  "headers": [
+    "Strict-Transport-Security",
+    "X-Frame-Options",
+    "X-Content-Type-Options",
+    "Referrer-Policy",
+    "Permissions-Policy",
+    "Content-Security-Policy"
+  ],
+  "csp_mode": "compat (unsafe-inline)",
+  "notes": [
+    "Cloudflare Security Headers rule active and validated.",
+    "Content-Security-Policy confirmed with 'unsafe-inline' allowance for legacy inline scripts/styles.",
+    "Future tightening to use CSP nonces under consideration."
+  ]
+}

@@ -113,3 +113,6 @@ Footer v1.2.2 (Sept 30, 2025)
 Outbound HTTPS blocked in this environment. Added GitHub Action to verify headers at edge and commit report.
 ## [2025-10-15] — Cloudflare Cache Images Rule Recorded
 - **2025-10-15** — Recorded Cloudflare *Cache Images* rule (images cached at edge for 30 days via fixed TTL). Added verification workflow to confirm `cf-cache-status` HIT on repeat fetches.
+- **2025-10-15** — Completed Cloudflare security headers rollout.  
+  All six headers verified with grade A on securityheaders.com.  
+  CSP enabled (compatibility mode).
