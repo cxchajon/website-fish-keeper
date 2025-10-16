@@ -11,22 +11,24 @@
   align-items: end;
   justify-items: center;
   gap: clamp(12px, 2.5vw, 24px);
-  padding: clamp(6px, 1vw, 12px) 0;
+  padding-bottom: 0;
+  margin-bottom: -4px;
 }
 
 /* clickable books without background panels */
 .book-card {
   display: flex;
-  align-items: end;
+  align-items: flex-end;
   justify-content: center;
   width: 100%;
   max-width: clamp(180px, 38vw, 320px);
+  height: auto;
+  line-height: 0;
   background: transparent !important;
+  border: none !important;
   box-shadow: none !important;
-  border: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
-  line-height: 0;
 }
 
 /* ensure both PNGs share identical height and baseline */
@@ -36,7 +38,8 @@
   width: auto;
   object-fit: contain;
   margin: 0;
-  transform: translateY(0);
+  vertical-align: bottom;
+  transform: translateY(2px);
   filter: drop-shadow(0 6px 10px rgba(10,20,30,.18));
 }
 
