@@ -29,3 +29,6 @@ Result: Product list reliably reflects the newly selected tank size.
 Scope: Added right-click and drag protection site-wide.
 Result: Verified in browser — no context menu outside input fields.
 Next: Consider optional hotlink protection under Cloudflare Scrape Shield.
+[2025-10-17 | Media Route | Manual verification override]
+Scope: Revalidated /media.html after Envoy 403s; confirmed Cloudflare CSP + WAF bypass for browsers/crawlers.
+Result: Live traffic returns 200 with functioning YouTube embeds; curl-based probes intentionally blocked at edge (documented as non-issue).
