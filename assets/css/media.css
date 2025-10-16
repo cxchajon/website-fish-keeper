@@ -1,76 +1,78 @@
 /* ─── Media Page Shared Styles ─────────────────────────────── */
 
 /* ─── Aquarium Library Shelf Layout ─────────────────────────────── */
-.library-shelf-wrap {
-  max-width: 880px;
-  margin: 1.25rem auto;
-  padding: 0.75rem 1rem 1.25rem;
-  background: #f6f1e8;
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(5,37,48,.08);
-  text-align: center;
+/* Compact, no-panels library layout */
+.aquarium-library {
+  --max: min(1000px, 94vw);
+  --gap: clamp(12px, 2.5vw, 24px);
+  --book-min: 120px;
+  --book-max: 280px;
+  margin-inline: auto;
+  max-width: var(--max);
 }
 
-.library-sub {
-  color: #2a3a43;
-  font-size: 1rem;
-  margin-bottom: 0.75rem;
-}
+/* tighten spacing */
+.aquarium-library__title { margin-top: clamp(16px, 2vw, 24px); margin-bottom: 4px; }
+.aquarium-library__lede  { margin-top: 0; margin-bottom: clamp(10px, 1.6vw, 16px); }
+.aquarium-library__note  { margin-top: clamp(12px, 2vw, 18px); }
 
-.library-books {
+/* Grid that keeps two-up even on phones */
+.books-shelf {
+  position: relative;
   display: grid;
-  grid-template-columns: repeat(2, minmax(180px, 1fr));
-  gap: 1rem;
-  align-items: end;
+  grid-template-columns: repeat(2, minmax(var(--book-min), 1fr));
   justify-items: center;
-  padding: 0.5rem 0 0.25rem;
+  align-items: end;             /* align bottoms to the shelf */
+  gap: var(--gap);
+  padding: clamp(4px, 1vw, 10px) 0;
 }
 
-.library-book {
+/* Clickable book tile with no background panel */
+.book-card {
   display: flex;
-  align-items: flex-end;
+  align-items: end;             /* bottom-align image within the link */
   justify-content: center;
-  padding: 0;
-  background: transparent;
+  width: clamp(42vw, 36vw, var(--book-max)); /* shrink on phones, grow on desktop */
+  max-width: var(--book-max);
+  aspect-ratio: 3 / 4;          /* consistent footprint as it scales */
   text-decoration: none;
-  border: 0;
+  filter: drop-shadow(0 6px 10px rgba(10, 20, 30, 0.18));
 }
 
-.library-book img {
-  width: min(220px, 40vw);
+/* The PNGs should already be transparent */
+.book-img {
+  width: 100%;
   height: auto;
   display: block;
-  transition: transform 0.15s ease;
-  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.12));
 }
 
-.library-book:hover img {
-  transform: translateY(-2px);
-  filter: drop-shadow(0 4px 4px rgba(0,0,0,0.18));
+/* One shelf spanning both columns */
+.shelf {
+  grid-column: 1 / -1;          /* span both columns */
+  height: clamp(12px, 1.8vw, 16px);
+  width: 88%;
+  border-radius: 18px;
+  background: linear-gradient(#a8743a, #7a4a1f);
+  box-shadow:
+    inset 0 6px 14px rgba(0,0,0,0.15),
+    0 10px 24px rgba(0,0,0,0.18);
+  justify-self: center;
+  margin-top: clamp(6px, 1.2vw, 12px);
 }
 
-.library-shelf-bar {
-  width: 100%;
-  height: 14px;
-  background: linear-gradient(180deg, #a97842 0%, #855b2e 100%);
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.18) inset, 0 8px 16px rgba(0,0,0,0.08);
-  margin: 0.25rem auto 0.5rem;
+/* Fine-tune sizes at larger widths */
+@media (min-width: 860px) {
+  .aquarium-library { --book-min: 180px; --book-max: 300px; }
+  .book-card { width: clamp(180px, 22vw, var(--book-max)); }
+  .shelf { width: 80%; }
 }
 
-.library-note {
-  font-size: 0.9rem;
-  color: #364a50;
-  margin: 0.25rem 0 0;
-}
-
-@media (max-width: 640px) {
-  .library-books {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-
-  .library-book img {
-    width: min(200px, 70vw);
-  }
+/* Prevent accidental white cards/panels */
+.library-card,
+.library-panel,
+.library-book-card {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  padding: 0 !important;
 }
