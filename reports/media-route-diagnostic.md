@@ -57,3 +57,9 @@
 - Restore `media/index.html` from version control and re-add its sitemap entry if stakeholders later decide to serve the folder route.
 - Remove the Cloudflare redirect rule if `/media/` needs to host unique content again.
 - Re-run sitemap submissions after any rollback so search engines re-crawl the reinstated URL.
+
+## Cloudflare follow-up
+Canonicalization is complete: `/media.html` is the sole Media route and `/media/index.html` has been removed from runtime, with `sitemap.xml` now listing only the canonical URL.【F:sitemap.xml†L1-L63】
+- Add a 301 redirect rule in Cloudflare sending `/media/*` to `/media.html`.
+- Confirm the Response Header Transform Rule continues matching `/media.html`.
+- Purge Cloudflare cache after adding the redirect.
