@@ -107,53 +107,63 @@
       flex-direction: column;
       align-items: center;
     }
-    .library-shelf {
-      position: relative;
+    /* ===== Aquarium Library — uniform books, flush layout ===== */
+    .library-books {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(2, minmax(180px, 1fr));
+      gap: 1.25rem;
+      align-items: end;
       justify-items: center;
-      margin-block: 1rem 0.5rem;
-      padding-bottom: 1.75rem;
-      width: min(460px, 100%);
     }
-    .library-shelf::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      transform: translateX(-50%);
-      width: min(440px, 100%);
+
+    .library-book {
+      background: #f2efe9;
+      border-radius: 16px;
+      padding: 12px 14px 0;
+      box-shadow: none !important;
+    }
+
+    .library-book .book-link {
+      display: inline-grid;
+      place-items: center;
+      text-decoration: none;
+      outline: none;
+      padding: 0;
+    }
+
+    .library-book .book-link img {
+      width: clamp(180px, 28vw, 220px);
+      aspect-ratio: 11 / 14;
+      height: auto;
+      display: block;
+      transform: translateY(6px);
+      box-shadow: 0 8px 18px rgba(5,37,48,.20);
+      transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+    }
+
+    .library-book .book-link:hover img,
+    .library-book .book-link:focus-visible img {
+      transform: translateY(4px);
+      box-shadow: 0 12px 28px rgba(5,37,48,.22);
+      filter: saturate(1.04);
+    }
+
+    .library-book .book-link:focus-visible {
+      outline: 3px solid rgba(5, 37, 48, 0.35);
+      outline-offset: 6px;
+      border-radius: 16px;
+    }
+
+    .library-shelf {
       height: 18px;
       border-radius: 10px;
+      margin-block-start: .75rem;
+      margin-block-end: 0;
       background: linear-gradient(180deg, #c99b66 0%, #b3814c 90%);
-      box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.4), 0 8px 22px rgba(59, 32, 8, 0.32);
     }
-    .library-shelf > * {
-      position: relative;
-      z-index: 1;
-    }
-    .book-link {
-      display: inline-block;
-      line-height: 0;
-      border-radius: 12px;
-    }
-    .book-link img {
-      display: block;
-      width: min(220px, 42vw);
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 8px 18px rgba(5, 37, 48, 0.25);
-      transition: transform .18s ease, box-shadow .18s ease;
-    }
-    .book-link:focus-visible {
-      outline: 3px solid rgba(5, 37, 48, 0.35);
-      outline-offset: 4px;
-    }
-    .book-link:focus-visible img,
-    .book-link:hover img {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 24px rgba(5, 37, 48, 0.32);
+
+    @media (max-width: 520px) {
+      .library-books { grid-template-columns: 1fr; }
     }
     .aquarium-library-card__note {
       margin: 1.1rem 0 0;
@@ -790,21 +800,21 @@
             <p class="aquarium-library-card__intro">Explore a collection of guides, research articles, transcripts, and spotlights for freshwater aquariums.</p>
             <hr class="media-divider" />
             <div class="aquarium-library-card__display">
-              <div class="library-shelf" aria-label="Aquarium Library destinations">
-                <a class="book-link" href="/library/blogs.html">
-                  <img
-                    src="/assets/media/library/books/133BACF8-CB56-48A2-AF5E-C352D674E1AB.png"
-                    alt="Blogs — articles and how-tos"
-                    loading="lazy" width="220" height="160">
-                </a>
-
-                <a class="book-link" href="/library/universities.html">
-                  <img
-                    src="/assets/media/library/books/6F5E1B9D-8AB4-4CC4-920A-F7C6093ACBFD.png"
-                    alt="University Articles — research and studies"
-                    loading="lazy" width="220" height="160">
-                </a>
+              <div class="library-books">
+                <div class="library-book">
+                  <a class="book-link" href="/library/blogs.html" aria-label="Browse Blogs">
+                    <img src="/assets/media/library/books/133BACF8-CB56-48A2-AF5E-C352D674E1AB.png"
+                         alt="Blogs — articles and how-tos" loading="lazy">
+                  </a>
+                </div>
+                <div class="library-book">
+                  <a class="book-link" href="/library/universities.html" aria-label="Read University Articles">
+                    <img src="/assets/media/library/books/6F5E1B9D-8AB4-4CC4-920A-F7C6093ACBFD.png"
+                         alt="University Articles — research and studies" loading="lazy">
+                  </a>
+                </div>
               </div>
+              <div class="library-shelf" aria-hidden="true"></div>
             </div>
             <p class="aquarium-library-card__note">More sections coming soon.</p>
             <noscript>
