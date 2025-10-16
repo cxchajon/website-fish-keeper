@@ -11,12 +11,16 @@
 
 .book{
   position: relative;
-  display: block;
-  height: clamp(120px, 22vw, 220px);  /* fixes a visible box */
+  display: inline-block;
+  cursor: pointer;                     /* visually indicates interactivity */
+  text-decoration: none;               /* remove underline just in case */
+  height: clamp(120px, 22vw, 220px);   /* fixes a visible box */
   width: clamp(110px, 20vw, 200px);
   overflow: visible;                   /* do NOT crop */
   background: transparent;
-  border: 0;
+  border: none;
+  z-index: 1;
+  pointer-events: auto;                /* ensure the anchor itself is clickable */
 }
 
 .book > img{
@@ -24,11 +28,13 @@
   bottom: 0;                           /* sit on the “shelf” */
   left: 50%;
   transform: translateX(-50%);         /* center horizontally */
-  height: 100%;                         /* fill wrapper height */
+  height: 100%;                        /* fill wrapper height */
   width: auto;
   display: block;
   opacity: 1;                           /* ensure visible */
   filter: none;
+  pointer-events: none;                /* let clicks pass through to the <a> */
+  user-select: none;                   /* prevent accidental text/image selection */
 }
 
 /* Shelf that both books rest on */
