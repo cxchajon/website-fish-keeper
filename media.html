@@ -470,26 +470,31 @@
         <h2 id="videos">Featured Videos</h2>
         <p class="subline">Catch our latest upload or explore the full channel for more.</p>
         <h3 class="visually-hidden">Latest video</h3>
-        <div class="video-embed aspect-16-9">
-          <!-- Privacy-enhanced YouTube embed depends on frame-src CSP in /hardening configs. -->
-          <iframe
-            src="https://www.youtube-nocookie.com/embed/QbPxRZqd4MI?rel=0&amp;modestbranding=1&amp;playsinline=1"
-            title="Aquarium Science Made Simple: Nitrogen Cycle Explained video"
-            aria-label="Aquarium Science Made Simple: Nitrogen Cycle Explained — Life in Balance Book"
-            loading="lazy"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-          ></iframe>
-        </div>
-        <noscript>
-          <p>
-            <a href="https://www.youtube.com/watch?v=QbPxRZqd4MI" target="_blank" rel="noopener noreferrer">
-              <img src="https://img.youtube.com/vi/QbPxRZqd4MI/hqdefault.jpg" alt="Watch Aquarium lovers unite! teaches the Nitrogen Cycle on YouTube" width="480" height="270">
+        <!-- FEATURED VIDEO SECTION -->
+        <div class="featured-video">
+          <h3 class="now-playing">
+            <strong>Now Playing:</strong>
+          </h3>
+
+          <!-- Embedded video -->
+          <div class="video-wrapper">
+            <iframe
+              src="https://www.youtube.com/embed/QbPxRZqd4MI"
+              title="Aquarium Science Made Simple: Nitrogen Cycle Explained | Life in Balance Book"
+              frameborder="0"
+              allowfullscreen>
+            </iframe>
+          </div>
+
+          <!-- Clickable title link -->
+          <p class="video-title">
+            <a href="https://youtube.com/shorts/QbPxRZqd4MI?si=NZswpQKuXwBtWGmU"
+               target="_blank"
+               rel="noopener noreferrer">
+              Aquarium Science Made Simple: Nitrogen Cycle Explained | Life in Balance Book
             </a>
           </p>
-        </noscript>
-        <p class="muted" style="margin:.25rem 0 0;"><strong>Now Playing:</strong> <a href="https://youtube.com/shorts/QbPxRZqd4MI?si=NZswpQKuXwBtWGmU" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">Aquarium Science Made Simple: Nitrogen Cycle Explained | Life in Balance Book</a></p>
+        </div>
         <p class="muted" style="margin:.35rem 0 0;">Breaking news from the underwater world — scientists at FishKeepingLifeCo have figured out how to communicate with sea life. The fish are chanting in unison: “Go read <em>Life in Balance: The Hidden Magic of Aquariums</em>!” Because even they want you to understand water chemistry.</p>
         <hr class="media-divider" />
         <div class="video-meta">
