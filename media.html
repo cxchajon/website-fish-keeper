@@ -22,6 +22,7 @@
         content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self' https://formspree.io https://www.google.com/recaptcha/; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; upgrade-insecure-requests">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="css/style.css?v=1.0.9" />
+  <link rel="stylesheet" href="/assets/css/media.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="icon" href="/favicon.ico" />
   <!-- Page-scoped styles -->
@@ -626,6 +627,28 @@
       </article>
     </section>
 
+    <section id="aquarium-library" class="library-shelf">
+      <h2 class="library-title">Aquarium Library</h2>
+
+      <div class="library-grid">
+        <div class="library-book">
+          <a href="/blog.html" aria-label="View all blog articles">
+            <img src="/assets/media/library/books/133BACF8-CB56-48A2-AF5E-C352D674E1AB.png"
+                 alt="FishKeepingLifeCo Blog – Aquarium Tips &amp; Updates"
+                 loading="lazy">
+          </a>
+        </div>
+
+        <div class="library-book">
+          <a href="/university.html" aria-label="Visit The Tank Guide University">
+            <img src="/assets/media/library/books/6F5E1B9D-8AB4-4CC4-920A-F7C6093ACBFD.png"
+                 alt="The Tank Guide University – Educational Articles"
+                 loading="lazy">
+          </a>
+        </div>
+      </div>
+    </section>
+
     <!-- TODO: Unhide the Latest on TikTok section once social automation is ready. -->
     <!-- Hidden Latest on TikTok section start -->
     <!--
@@ -815,9 +838,9 @@
           </article>
         </div>
 
-        <section id="aquarium-library" class="aquarium-library-card" aria-labelledby="aquarium-library-title" aria-label="Aquarium Library">
+        <section id="community-aquarium-library" class="aquarium-library-card" aria-labelledby="community-aquarium-library-title" aria-label="Aquarium Library">
           <div class="aquarium-library-card__inner">
-            <h2 id="aquarium-library-title">Aquarium Library</h2>
+            <h2 id="community-aquarium-library-title">Aquarium Library</h2>
             <p class="aquarium-library-card__intro">Explore a collection of guides, research articles, transcripts, and spotlights for freshwater aquariums.</p>
             <hr class="media-divider" />
             <div class="aquarium-library-card__display" role="group" aria-label="Aquarium Library Sections">
