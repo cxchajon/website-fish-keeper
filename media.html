@@ -75,47 +75,45 @@
       padding: 16px;
       color:#0b1020; /* card copy stays dark on light card */
     }
-    /* --- Aquarium Library: snap books to a single shelf --- */
-    .aquarium-library { --book-h: clamp(150px, 28vw, 240px); }
-
-    /* two-up grid, bottom-aligned */
+    /* --- Aquarium Library books --- */
     .books-shelf {
-      position: relative;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: end;
+      grid-template-columns: repeat(2, minmax(120px, 1fr));
+      gap: clamp(12px, 3vw, 28px);
+      align-items: end;           /* share a baseline */
       justify-items: center;
-      gap: clamp(12px, 2.5vw, 24px);
-      padding: clamp(6px, 1vw, 12px) 0;
     }
 
-    /* clickable books without background panels */
-    .book-card {
-      display: flex;
-      align-items: end;
-      justify-content: center;
-      width: 100%;
-      max-width: clamp(180px, 38vw, 320px);
-      background: transparent !important;
-      box-shadow: none !important;
-      border: 0 !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      line-height: 0;
-    }
-
-    /* ensure both PNGs share identical height and baseline */
-    .book-img {
+    /* Book wrapper: defines the visible box and crops any extra padding in the PNGs */
+    .book {
+      position: relative;
       display: block;
-      height: var(--book-h);
-      width: auto;
-      object-fit: contain;
-      margin: 0;
-      transform: translateY(0);
-      filter: drop-shadow(0 6px 10px rgba(10,20,30,.18));
+      height: clamp(120px, 22vw, 220px);
+      width: clamp(120px, 24vw, 220px);
+      overflow: hidden;                           /* crop by box */
+      border-radius: 12px;                        /* subtle polish */
+      background: transparent;                    /* no card */
     }
 
-    /* single shared shelf under both books */
+    /* The actual image is bottom-anchored so it sits ON the shelf */
+    .book > img {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(var(--nudgeY, 0));
+      height: calc(100% + var(--grow, 0px));      /* optional small growth */
+      width: auto;
+      display: block;
+      pointer-events: none;                        /* clicks go to the <a> */
+      /* Fake-crop remaining transparent padding safely */
+      clip-path: inset(var(--cropT, 0) var(--cropR, 0) var(--cropB, 0) var(--cropL, 0));
+    }
+
+    /* Per-image fine-tuning (adjust in 2–4px steps if needed) */
+    .book--blogs { --cropT: 18px; --cropR: 14px; --cropB: 0; --cropL: 14px; --nudgeY: 1px; }
+    .book--univ  { --cropT: 14px; --cropR: 12px; --cropB: 0; --cropL: 12px; --nudgeY: 0;  }
+
+    /* Shelf that both books rest on */
     .shelf {
       grid-column: 1 / -1;
       height: clamp(12px, 1.8vw, 16px);
@@ -127,10 +125,21 @@
       margin-top: clamp(6px, 1.2vw, 12px);
     }
 
-    /* larger displays increase book height and shelf width */
-    @media (min-width: 860px) {
-      .aquarium-library { --book-h: clamp(200px, 22vw, 280px); }
-      .shelf { width: min(80%, 820px); }
+    /* Keep side-by-side on narrow phones by scaling down */
+    @media (max-width: 480px) {
+      .books-shelf {
+        grid-template-columns: repeat(2, minmax(100px, 1fr));
+        gap: 16px;
+      }
+      .book {
+        height: clamp(110px, 34vw, 170px);
+        width: auto;
+      }
+    }
+
+    /* Optional: small hover lift for desktop only */
+    @media (hover: hover) {
+      .book:hover > img { transform: translateX(-50%) translateY(calc(var(--nudgeY, 0) - 2px)); }
     }
 
     /* nuke any legacy white “card” styles */
@@ -772,20 +781,13 @@
           </p>
 
           <div class="books-shelf" aria-label="Library destinations">
-            <a class="book-card" href="/blogs/index.html" aria-label="Blogs">
-              <img
-                class="book-img"
-                src="/assets/media/library/books/133BACF8-CB56-48A2-AF5E-C352D674E1AB.png"
-                alt="Blogs"
-                loading="lazy"
-                decoding="async"
-              />
+            <a class="book book--blogs" href="/blogs/index.html" aria-label="Blogs">
+              <img src="/assets/media/library/books/blogs.png" alt="Blogs" loading="lazy" decoding="async" />
             </a>
 
-            <a class="book-card" href="/library/universities.html" aria-label="University Articles">
+            <a class="book book--univ" href="/library/universities.html" aria-label="University Articles">
               <img
-                class="book-img"
-                src="/assets/media/library/books/6F5E1B9D-8AB4-4CC4-920A-F7C6093ACBFD.png"
+                src="/assets/media/library/books/university.png"
                 alt="University Articles"
                 loading="lazy"
                 decoding="async"
