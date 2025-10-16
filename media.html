@@ -113,17 +113,21 @@
     /* ===== Aquarium Library — uniform books, flush layout ===== */
     .library-books {
       display: grid;
-      grid-template-columns: repeat(2, minmax(220px, 1fr));
-      gap: 2rem;
+      grid-template-columns: repeat(2, minmax(180px, 1fr));
+      gap: 1.25rem;
       align-items: end;
       justify-items: center;
     }
 
     .library-book {
-      background: #f2efe9;
-      border-radius: 16px;
-      padding: 12px 14px 0;
+      background: none !important;
+      border: none !important;
+      border-radius: 0 !important;
       box-shadow: none !important;
+      padding: 0 !important;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
     }
 
     .library-book-link {
@@ -147,15 +151,18 @@
 
     .library-book-img {
       display: block;
-      width: min(280px, 100%);
+      width: clamp(180px, 28vw, 220px);
       height: auto;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.18));
-      transition: filter .18s ease;
+      box-shadow: 0 8px 16px rgba(5,37,48,0.22);
+      border: none !important;
+      background: transparent !important;
+      transition: transform .18s ease, box-shadow .18s ease;
     }
 
     .library-book-link:hover .library-book-img,
     .library-book-link:focus-visible .library-book-img {
-      filter: drop-shadow(0 12px 20px rgba(0,0,0,.24)) saturate(1.04);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(5,37,48,0.25);
     }
 
     .library-shelf {
