@@ -1,0 +1,25 @@
+name: Ads.txt Delivery Audit
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ads-txt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run ads.txt delivery probes
+        run: scripts/check-ads-txt.sh
+
+      - name: Upload ads.txt probe results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ads-txt-check
+          path: ad-audits/ads-txt-check.json

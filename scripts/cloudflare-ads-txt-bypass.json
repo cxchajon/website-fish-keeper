@@ -1,0 +1,13 @@
+{
+  "name": "Ads.txt security bypass",
+  "description": "Skip security challenges for ads.txt",
+  "expression": "(http.request.uri.path eq \"/ads.txt\")",
+  "action": "skip",
+  "action_parameters": {
+    "products": [
+      "security_level",
+      "browser_integrity_check",
+      "bot_fight_mode"
+    ]
+  }
+}
