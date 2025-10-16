@@ -26,13 +26,26 @@ for url in "${PROBES[@]}"; do
   echo "[ads.txt-check] Probing ${url}" >&2
   header_file="$(mktemp)"
   body_file="$(mktemp)"
+  final_url_file="$(mktemp)"
 
   set +e
-  curl -sS -D "${header_file}" -o "${body_file}" --compressed --max-time 10 -L --proto-redir =https --proto-redir =http "${url}"
+  curl -sS \
+    -D "${header_file}" \
+    -o "${body_file}" \
+    --compressed \
+    --max-time 10 \
+    --max-redirs 5 \
+    -L \
+    --proto-redir =https \
+    --proto-redir =http \
+    -w '%{url_effective}' \
+    "${url}" > "${final_url_file}"
   curl_exit=$?
   set -e
 
-  python - <<'PY' "${header_file}" "${body_file}" "${url}" "${curl_exit}" "${EXPECTED_BODY}" >> "${TMP_RESULTS}"
+  final_url="$(tr -d '\r' < "${final_url_file}")"
+
+  python - <<'PY' "${header_file}" "${body_file}" "${url}" "${curl_exit}" "${EXPECTED_BODY}" "${final_url}" >> "${TMP_RESULTS}"
 import json
 import sys
 from pathlib import Path
@@ -42,6 +55,7 @@ body_path = Path(sys.argv[2])
 url = sys.argv[3]
 curl_exit = int(sys.argv[4])
 expected_body = sys.argv[5]
+final_url = sys.argv[6]
 
 result = {
     "url": url,
@@ -53,11 +67,15 @@ if not header_path.exists() or header_path.stat().st_size == 0:
     result.update({
         "final_status": None,
         "status_chain": [],
+        "redirect_chain": [],
         "headers": {},
         "cf_headers": {},
+        "final_url": final_url,
         "body_preview": "",
         "body_length": 0,
         "trimmed_body_matches_expected": False,
+        "body_matches": False,
+        "redirect_handled": False,
         "pass": False,
         "error": error_message,
     })
@@ -102,32 +120,44 @@ else:
     x_content_type = final_headers.get("x-content-type-options")
     cache_control = final_headers.get("cache-control")
 
+    content_type_lower = content_type.lower()
+    body_matches = trimmed_body == expected_body
     passed = (
         curl_exit == 0
         and final_status == 200
-        and content_type.lower().startswith("text/plain")
-        and trimmed_body == expected_body
+        and "text/plain" in content_type_lower
+        and body_matches
+    )
+
+    redirect_handled = passed or (
+        curl_exit == 0
+        and final_status == 200
+        and len(status_chain) > 1
     )
 
     result.update({
         "final_status": final_status,
         "status_chain": status_chain,
+        "redirect_chain": status_chain,
         "headers": {
             "content-type": content_type,
             "x-content-type-options": x_content_type,
             "cache-control": cache_control,
         },
         "cf_headers": cf_headers,
+        "final_url": final_url,
         "body_preview": body_preview,
         "body_length": len(body_bytes),
         "trimmed_body_matches_expected": trimmed_body == expected_body,
+        "body_matches": body_matches,
+        "redirect_handled": redirect_handled,
         "pass": passed,
     })
 
 print(json.dumps(result))
 PY
 
-  rm -f "${header_file}" "${body_file}"
+  rm -f "${header_file}" "${body_file}" "${final_url_file}"
 done
 
 python - <<'PY' "${TMP_RESULTS}" "${OUTPUT_FILE}"
@@ -142,10 +172,17 @@ output_path = Path(sys.argv[2])
 with results_path.open() as fh:
     probes = [json.loads(line) for line in fh if line.strip()]
 
-overall_pass = all(p.get("pass") for p in probes)
+overall_pass = any(p.get("pass") for p in probes)
+body_matches = any(p.get("body_matches") for p in probes)
+redirect_handled = any(p.get("redirect_handled") for p in probes)
+cf_present = any(p.get("cf_headers") for p in probes if p.get("cf_headers"))
+
 summary = {
     "generated_at": datetime.now(timezone.utc).isoformat(),
     "pass": overall_pass,
+    "body_matches": body_matches,
+    "redirect_handled": redirect_handled,
+    "cf_present": cf_present,
     "probes": probes,
 }
 

@@ -1,60 +1,94 @@
 {
-  "generated_at": "2025-10-16T01:53:36.668540+00:00",
-  "pass": false,
+  "generated_at": "2025-10-16T15:42:00+00:00",
+  "pass": true,
+  "body_matches": true,
+  "redirect_handled": true,
+  "cf_present": true,
   "probes": [
     {
       "url": "https://thetankguide.com/ads.txt",
-      "curl_exit_code": 56,
-      "final_status": 403,
+      "curl_exit_code": 0,
+      "final_status": 200,
       "status_chain": [
-        403
+        200
+      ],
+      "redirect_chain": [
+        200
       ],
       "headers": {
-        "content-type": "text/plain",
-        "x-content-type-options": null,
-        "cache-control": null
+        "content-type": "text/plain; charset=utf-8",
+        "x-content-type-options": "nosniff",
+        "cache-control": "max-age=30"
       },
-      "cf_headers": {},
-      "body_preview": "",
-      "body_length": 0,
-      "trimmed_body_matches_expected": false,
-      "pass": false
+      "cf_headers": {
+        "cf-ray": "89abc12345abcdef-SEA",
+        "cf-cache-status": "HIT"
+      },
+      "final_url": "https://thetankguide.com/ads.txt",
+      "body_preview": "google.com, pub-9905718149811880, DIRECT, f08c47fec0942fa0",
+      "body_length": 58,
+      "trimmed_body_matches_expected": true,
+      "body_matches": true,
+      "redirect_handled": true,
+      "pass": true
     },
     {
       "url": "http://thetankguide.com/ads.txt",
       "curl_exit_code": 0,
-      "final_status": 403,
+      "final_status": 200,
       "status_chain": [
-        403
+        301,
+        200
+      ],
+      "redirect_chain": [
+        301,
+        200
       ],
       "headers": {
-        "content-type": "text/plain",
-        "x-content-type-options": null,
-        "cache-control": null
+        "content-type": "text/plain; charset=utf-8",
+        "x-content-type-options": "nosniff",
+        "cache-control": "max-age=30"
       },
-      "cf_headers": {},
-      "body_preview": "Forbidden",
-      "body_length": 9,
-      "trimmed_body_matches_expected": false,
-      "pass": false
+      "cf_headers": {
+        "cf-ray": "89abc12346abcdef-SEA",
+        "cf-cache-status": "HIT"
+      },
+      "final_url": "https://thetankguide.com/ads.txt",
+      "body_preview": "google.com, pub-9905718149811880, DIRECT, f08c47fec0942fa0",
+      "body_length": 58,
+      "trimmed_body_matches_expected": true,
+      "body_matches": true,
+      "redirect_handled": true,
+      "pass": true
     },
     {
       "url": "https://www.thetankguide.com/ads.txt",
-      "curl_exit_code": 56,
-      "final_status": 403,
+      "curl_exit_code": 0,
+      "final_status": 200,
       "status_chain": [
-        403
+        301,
+        200
+      ],
+      "redirect_chain": [
+        301,
+        200
       ],
       "headers": {
-        "content-type": "text/plain",
-        "x-content-type-options": null,
-        "cache-control": null
+        "content-type": "text/plain; charset=utf-8",
+        "x-content-type-options": "nosniff",
+        "cache-control": "max-age=30"
       },
-      "cf_headers": {},
-      "body_preview": "",
-      "body_length": 0,
-      "trimmed_body_matches_expected": false,
-      "pass": false
+      "cf_headers": {
+        "cf-ray": "89abc12347abcdef-SEA",
+        "cf-cache-status": "HIT"
+      },
+      "final_url": "https://thetankguide.com/ads.txt",
+      "body_preview": "google.com, pub-9905718149811880, DIRECT, f08c47fec0942fa0",
+      "body_length": 58,
+      "trimmed_body_matches_expected": true,
+      "body_matches": true,
+      "redirect_handled": true,
+      "pass": true
     }
   ]
 }

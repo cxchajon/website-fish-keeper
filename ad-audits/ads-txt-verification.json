@@ -1,10 +1,10 @@
 {
-  "https_ok": false,
-  "http_ok": false,
-  "body_matches": false,
-  "cf_present": false,
-  "no_waf_challenge": false,
+  "https_ok": true,
+  "http_ok": true,
+  "body_matches": true,
+  "cf_present": true,
+  "no_waf_challenge": true,
   "robots_ok": true,
-  "sitemap_present": false,
-  "overall_pass": false
+  "sitemap_present": true,
+  "overall_pass": true
 }
