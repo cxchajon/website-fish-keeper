@@ -12,11 +12,13 @@
       <circle cx="12" cy="12" r="11.5" fill="#fff" />
       <path d="M15.117 3c-2.997 0-4.617 1.704-4.617 4.835v2.708H7.5v3.65h3v9.807h4.407V14.193h3.51l.538-3.65h-4.048V8.334c0-.978.363-1.65 1.941-1.65h2.107V3.186C18.6 3.064 16.946 3 15.117 3z" fill="#050505"/>
     </symbol>
-    <symbol id="x" viewBox="0 0 512 512">
-      <path
-        d="M512 0 319.638 221.76 512 512H395.522L255.028 302.048 92.71 512H0l193.534-226.368L0 0h116.478l136.246 189.952L396.418 0H512Z"
-        fill="currentColor"
-      />
+    <symbol id="x" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="butt" stroke-linejoin="miter">
+        <line x1="4" y1="2" x2="22" y2="20"/>
+        <line x1="2" y1="4" x2="20" y2="22"/>
+        <line x1="2" y1="20" x2="20" y2="2"/>
+        <line x1="4" y1="22" x2="22" y2="4"/>
+      </g>
     </symbol>
     <symbol id="yt" viewBox="0 0 24 24">
       <path d="M21.7 7.3a2.5 2.5 0 00-1.7-1.8C18.3 5 12 5 12 5S5.7 5 4 5.5A2.5 2.5 0 002.3 7.3 26 26 0 002 12a26 26 0 00.3 4.7 2.5 2.5 0 001.7 1.8C5.7 19 12 19 12 19s6.3 0 7.9-.5a2.5 2.5 0 001.7-1.8A26 26 0 0022 12a26 26 0 00-.3-4.7zM10 9.8l5.6 2.2L10 14.2V9.8z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
