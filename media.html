@@ -75,69 +75,109 @@
       padding: 16px;
       color:#0b1020; /* card copy stays dark on light card */
     }
-    /* --- Aquarium Library books --- */
-    .books-shelf{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(120px, 1fr));
-      gap: clamp(12px, 3vw, 28px);
-      align-items: end;            /* align by bottoms */
-      justify-items: center;
+    /* ===== AQUARIUM LIBRARY (self-contained) ===== */
+    .alib {
+      margin: clamp(24px, 4vw, 48px) auto;
+      max-width: min(1100px, 92vw);
     }
 
-    .book{
+    .alib__header {
+      text-align: left;
+      margin-bottom: clamp(12px, 2.5vw, 20px);
+    }
+
+    .alib__dek {
+      margin: 0.25rem 0 0;
+      opacity: .9;
+    }
+
+    .alib__stage {
       position: relative;
-      display: block;
-      height: clamp(120px, 22vw, 220px);  /* fixes a visible box */
-      width: clamp(110px, 20vw, 200px);
-      overflow: visible;                   /* do NOT crop */
-      background: transparent;
-      border: 0;
+      margin-top: clamp(10px, 2.5vw, 20px);
+      padding: clamp(8px, 2vw, 16px) 0;
     }
 
-    .book > img{
+    /* Book rail — two columns always, scale instead of stacking */
+    .alib__books {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      justify-items: center;
+      align-items: end;           /* bottom-align so books sit on same baseline */
+      column-gap: clamp(16px, 6vw, 64px);
+      row-gap: 0;
+      pointer-events: none;       /* prevent the grid from capturing taps */
+      z-index: 2;                 /* above the shelf graphic */
+    }
+
+    /* Clickable book anchors */
+    .alib-book {
+      position: relative;
+      display: inline-block;
+      width: clamp(120px, 26vw, 260px);
+      aspect-ratio: 5 / 6;        /* consistent scaling */
+      text-decoration: none;
+      pointer-events: auto;       /* anchors are tap targets */
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transform: translateZ(0);
+    }
+
+    /* Images cannot block clicks; they animate smoothly */
+    .alib-book > img {
       position: absolute;
-      bottom: 0;                           /* sit on the “shelf” */
-      left: 50%;
-      transform: translateX(-50%);         /* center horizontally */
-      height: 100%;                         /* fill wrapper height */
+      inset: auto 0 0 0;          /* bottom anchored so spines sit on shelf */
+      margin-inline: auto;
+      height: 100%;
       width: auto;
       display: block;
-      opacity: 1;                           /* ensure visible */
-      filter: none;
+      pointer-events: none;
+      user-select: none;
+      will-change: transform, filter;
+      transition: transform .18s ease, filter .18s ease;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.18));
     }
 
-    /* Shelf that both books rest on */
-    .shelf {
-      grid-column: 1 / -1;
-      height: clamp(12px, 1.8vw, 16px);
-      width: min(88%, 720px);
-      border-radius: 18px;
-      background: linear-gradient(#a8743a, #7a4a1f);
-      box-shadow: inset 0 6px 14px rgba(0,0,0,.15), 0 10px 24px rgba(0,0,0,.18);
-      justify-self: center;
-      margin-top: clamp(6px, 1.2vw, 12px);
-    }
-
-    /* Keep side-by-side on narrow phones by scaling down */
-    @media (max-width: 480px){
-      .books-shelf{
-        grid-template-columns: repeat(2, minmax(100px, 1fr));
-        gap: 16px;
-      }
-      .book{
-        height: clamp(110px, 30vw, 160px);
-        width: auto;
+    /* Desktop hover lift */
+    @media (hover:hover) and (pointer:fine) {
+      .alib-book:hover > img,
+      .alib-book:focus-visible > img {
+        transform: translateY(-4px);
+        filter: drop-shadow(0 8px 14px rgba(0,0,0,.26));
       }
     }
 
-    /* nuke any legacy white “card” styles */
-    .library-card,
-    .library-panel,
-    .library-book-card {
-      background: transparent !important;
-      box-shadow: none !important;
-      border: 0 !important;
-      padding: 0 !important;
+    /* Touch press feedback */
+    .alib-book:active > img {
+      transform: translateY(-2px);
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.24));
+    }
+
+    /* The shelf: wide, centered, never blocks taps */
+    .alib__shelf {
+      position: relative;
+      height: clamp(10px, 1.6vw, 14px);
+      margin: clamp(12px, 3.5vw, 28px) auto 0;
+      width: min(820px, 92%);
+      background: linear-gradient(#8c5a2b, #6d411d);
+      border-radius: 999px;
+      box-shadow:
+        0 6px 16px rgba(0,0,0,.25),
+        inset 0 2px 0 rgba(255,255,255,.15);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Spacing below */
+    .alib__note {
+      margin-top: clamp(10px, 2.5vw, 14px);
+      opacity: .85;
+    }
+
+    /* Smallest phones: scale both books down but keep 2 columns */
+    @media (max-width: 390px) {
+      .alib-book { width: clamp(108px, 24vw, 220px); }
+      .alib__books { column-gap: clamp(12px, 5vw, 40px); }
     }
     .stack { display: grid; gap: 14px; }
     .btn {
@@ -762,26 +802,32 @@
           </article>
         </div>
 
-        <section id="aquarium-library" class="aquarium-library">
-          <h2 class="aquarium-library__title">Aquarium Library</h2>
-          <p class="aquarium-library__lede">
-            Explore a collection of guides, research articles, transcripts, and spotlights for freshwater aquariums.
-          </p>
-
-          <div class="books-shelf" aria-label="Aquarium Library categories">
-            <a class="book book--blogs" href="/blogs/" aria-label="Browse blog posts">
-              <img src="/assets/media/library/books/blogs.png" alt="Blogs book">
-            </a>
-
-            <a class="book book--university" href="/university/" aria-label="Browse university articles">
-              <img src="/assets/media/library/books/university.png" alt="University Articles book">
-            </a>
-
-            <div class="shelf" aria-hidden="true"></div>
+        <!-- Aquarium Library START -->
+        <section class="alib" aria-labelledby="alib-title">
+          <div class="alib__header">
+            <h2 id="alib-title">Aquarium Library</h2>
+            <p class="alib__dek">
+              Explore a collection of guides, research articles, transcripts, and spotlights for freshwater aquariums.
+            </p>
           </div>
 
-          <p class="aquarium-library__note">More sections coming soon.</p>
+          <div class="alib__stage">
+            <nav class="alib__books" aria-label="Library categories">
+              <a class="alib-book alib-book--blogs" href="/blogs/" aria-label="Browse blog posts">
+                <img src="/assets/media/library/books/blogs.png" alt="Blogs" width="450" height="540" loading="lazy">
+              </a>
+
+              <a class="alib-book alib-book--uni" href="/university/" aria-label="Browse university articles">
+                <img src="/assets/media/library/books/university.png" alt="University Articles" width="450" height="540" loading="lazy">
+              </a>
+            </nav>
+
+            <div class="alib__shelf" aria-hidden="true"></div>
+          </div>
+
+          <p class="alib__note">More sections coming soon.</p>
         </section>
+        <!-- Aquarium Library END -->
       </div>
     </section>
 
@@ -949,24 +995,20 @@
 <!-- === TTG Ad Slot View Tracking END === -->
 
 <script>
-  document.addEventListener(
-    'click',
-    function (e) {
-      const a = e.target.closest('a.book');
-      if (a) {
-        if (e.defaultPrevented) {
-          window.location.href = a.href;
-          return;
-        }
-        if ('ontouchstart' in window) {
-          setTimeout(() => {
-            if (!a.matches(':focus')) window.location.href = a.href;
-          }, 0);
-        }
-      }
-    },
-    { passive: true }
-  );
+  // Robust click-through for mobile Safari
+  document.addEventListener('click', function (e) {
+    const a = e.target.closest('a.alib-book');
+    if (!a) return;
+    // If something prevented default, force navigation
+    if (e.defaultPrevented) {
+      location.href = a.href;
+      return;
+    }
+    // Extra nudge for iOS
+    if ('ontouchstart' in window) {
+      setTimeout(() => { if (document.activeElement !== a) location.href = a.href; }, 0);
+    }
+  }, { passive: true });
 </script>
 
 </body>
