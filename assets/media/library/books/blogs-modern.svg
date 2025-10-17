@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="640" viewBox="0 0 520 640" role="img" aria-labelledby="title desc">
+  <title id="title">The Tank Guide Blogs Collection</title>
+  <desc id="desc">Modern illustrated book cover for the Blogs section with a deep blue gradient, highlighted spine, and warm paper pages.</desc>
+  <defs>
+    <linearGradient id="coverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1F5C86" />
+      <stop offset="65%" stop-color="#10476C" />
+      <stop offset="100%" stop-color="#0C3754" />
+    </linearGradient>
+    <linearGradient id="spineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#377AA7" />
+      <stop offset="100%" stop-color="#1C537A" />
+    </linearGradient>
+    <linearGradient id="highlightGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.7)" />
+      <stop offset="85%" stop-color="rgba(255,255,255,0)" />
+    </linearGradient>
+    <linearGradient id="pageShade" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F6E8CF" />
+      <stop offset="70%" stop-color="#EEDFBF" />
+      <stop offset="100%" stop-color="#D9C39F" />
+    </linearGradient>
+    <radialGradient id="innerGlow" cx="0" cy="0" r="1" gradientUnits="objectBoundingBox" gradientTransform="translate(0.22 0.18) scale(1 1)">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.35)" />
+      <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+    </radialGradient>
+  </defs>
+  <g id="shadow">
+    <path d="M96 568c96 28 232 28 328 0" stroke="rgba(9,24,36,0.45)" stroke-width="28" stroke-linecap="round" opacity="0.6" />
+    <path d="M88 548h344" stroke="rgba(9,24,36,0.2)" stroke-width="20" stroke-linecap="round" opacity="0.8" />
+  </g>
+  <g id="cover">
+    <rect x="88" y="56" width="336" height="528" rx="42" fill="url(#coverGradient)" />
+    <rect x="88" y="56" width="336" height="528" rx="42" fill="url(#innerGlow)" opacity="0.65" />
+    <path d="M124 96h232" stroke="url(#highlightGradient)" stroke-width="16" stroke-linecap="round" opacity="0.8" />
+    <path d="M112 516h276" stroke="rgba(0,0,0,0.35)" stroke-width="12" stroke-linecap="round" opacity="0.4" />
+  </g>
+  <g id="spine">
+    <rect x="52" y="56" width="78" height="528" rx="40" fill="url(#spineGradient)" />
+    <path d="M120 56v528" stroke="rgba(0,0,0,0.3)" stroke-width="8" stroke-linecap="round" opacity="0.6" />
+    <rect x="112" y="120" width="10" height="312" fill="#D7B46A" rx="4" />
+    <path d="M68 88h42" stroke="rgba(255,255,255,0.32)" stroke-width="10" stroke-linecap="round" />
+    <path d="M68 152h36" stroke="rgba(255,255,255,0.28)" stroke-width="8" stroke-linecap="round" />
+  </g>
+  <g id="pages">
+    <rect x="424" y="72" width="32" height="496" rx="18" fill="url(#pageShade)" />
+    <rect x="424" y="72" width="32" height="496" rx="18" fill="rgba(255,255,255,0.12)" />
+    <path d="M428 180h24" stroke="#D1BE9E" stroke-width="3" stroke-linecap="round" opacity="0.7" />
+    <path d="M428 244h24" stroke="#D1BE9E" stroke-width="3" stroke-linecap="round" opacity="0.55" />
+    <path d="M428 308h24" stroke="#D1BE9E" stroke-width="3" stroke-linecap="round" opacity="0.45" />
+    <path d="M428 372h24" stroke="#D1BE9E" stroke-width="3" stroke-linecap="round" opacity="0.35" />
+  </g>
+  <g id="title" fill="#F4F8FC" font-family="'DM Sans', 'Helvetica Neue', Arial, sans-serif" text-anchor="middle">
+    <text x="256" y="250" font-size="72" font-weight="700" letter-spacing="8">BLOGS</text>
+    <rect x="184" y="284" width="144" height="6" rx="3" fill="rgba(255,255,255,0.4)" />
+  </g>
+  <g id="baseLine">
+    <path d="M150 600h220" stroke="#F4E8D0" stroke-width="10" stroke-linecap="round" opacity="0.85" />
+    <path d="M150 600h220" stroke="rgba(192,150,82,0.25)" stroke-width="18" stroke-linecap="round" opacity="0.45" />
+  </g>
+</svg>
