@@ -1,72 +1,68 @@
 /* ─── Media Page Shared Styles ─────────────────────────────── */
 
 /* --- Aquarium Library books --- */
-.books-shelf{
-  display:grid;
-  grid-template-columns: repeat(2, minmax(120px, 1fr));
-  gap: clamp(12px, 3vw, 28px);
-  align-items: end;            /* align by bottoms */
+
+/* Layout container */
+.books-shelf {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  gap: clamp(16px, 4vw, 40px);
   justify-items: center;
+  pointer-events: auto;
 }
 
-.book{
+/* The clickable book (the <a>) */
+.book {
   position: relative;
   display: inline-block;
-  cursor: pointer;                     /* visually indicates interactivity */
-  text-decoration: none;               /* remove underline just in case */
-  height: clamp(120px, 22vw, 220px);   /* fixes a visible box */
-  width: clamp(110px, 20vw, 200px);
-  overflow: visible;                   /* do NOT crop */
-  background: transparent;
-  border: none;
-  z-index: 1;
-  pointer-events: auto;                /* ensure the anchor itself is clickable */
+  height: clamp(110px, 22vw, 200px);
+  width: clamp(95px, 20vw, 180px);
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 3;                 /* ← sit above any decorative layers */
+  pointer-events: auto;       /* ← ensure <a> can receive clicks */
 }
 
-.book > img{
+/* The image inside the link should not intercept events */
+.book > img {
   position: absolute;
-  bottom: 0;                           /* sit on the “shelf” */
-  left: 50%;
-  transform: translateX(-50%);         /* center horizontally */
-  height: 100%;                        /* fill wrapper height */
+  inset: auto 0 0 0;          /* bottom:0; left/right:0; */
+  margin: 0 auto;
+  height: 100%;
   width: auto;
   display: block;
-  opacity: 1;                           /* ensure visible */
-  filter: none;
-  pointer-events: none;                /* let clicks pass through to the <a> */
-  user-select: none;                   /* prevent accidental text/image selection */
+  pointer-events: none;       /* ← clicks pass through to the <a> */
+  user-select: none;
 }
 
-/* Shelf that both books rest on */
+/* Decorative shelf bar beneath */
 .shelf {
-  grid-column: 1 / -1;
-  height: clamp(12px, 1.8vw, 16px);
-  width: min(88%, 720px);
-  border-radius: 18px;
-  background: linear-gradient(#a8743a, #7a4a1f);
-  box-shadow: inset 0 6px 14px rgba(0,0,0,.15), 0 10px 24px rgba(0,0,0,.18);
-  justify-self: center;
-  margin-top: clamp(6px, 1.2vw, 12px);
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  bottom: -12px;
+  height: clamp(10px, 1.4vw, 16px);
+  background: linear-gradient(#7b4a20, #9a6532);
+  border-radius: 999px;
+  box-shadow: 0 6px 12px rgba(0,0,0,.25) inset, 0 10px 18px rgba(0,0,0,.25);
+  z-index: 1;                 /* ← under the books */
+  pointer-events: none;       /* ← never block taps */
 }
 
-/* Keep side-by-side on narrow phones by scaling down */
-@media (max-width: 480px){
-  .books-shelf{
-    grid-template-columns: repeat(2, minmax(100px, 1fr));
-    gap: 16px;
-  }
-  .book{
-    height: clamp(110px, 30vw, 160px);
-    width: auto;
-  }
-}
-
-/* nuke any legacy white “card” styles */
+/* If there are decorative cards behind the books, keep them under too */
 .library-card,
-.library-panel,
-.library-book-card {
-  background: transparent !important;
-  box-shadow: none !important;
-  border: 0 !important;
-  padding: 0 !important;
+.library-card::before,
+.library-card::after {
+  z-index: 0 !important;
+  pointer-events: none;       /* ← cards can’t steal the click */
+}
+
+/* Mobile single-row fallback if needed */
+@media (max-width: 480px) {
+  .books-shelf {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* still side-by-side */
+    gap: clamp(12px, 3.5vw, 24px);
+  }
 }
