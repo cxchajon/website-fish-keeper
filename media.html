@@ -76,12 +76,6 @@
       color:#0b1020; /* card copy stays dark on light card */
     }
     /* ===== AQUARIUM LIBRARY (self-contained) ===== */
-    .alib {
-      margin: clamp(24px, 4vw, 48px) auto;
-      max-width: min(1100px, 92vw);
-      padding: clamp(20px, 4vw, 40px) 0;
-    }
-
     .alib__header {
       text-align: left;
       margin-bottom: clamp(12px, 2.5vw, 20px);
@@ -92,61 +86,81 @@
       opacity: .9;
     }
 
-    .alib__panel{
-      margin: clamp(12px, 3vw, 28px) auto;
-      width: min(1040px, 92vw);
-      border-radius: 18px;
-      background: #f6efe4;
-      background-image:
-        radial-gradient(rgba(0,0,0,0.02) 20%, transparent 21%),
-        radial-gradient(rgba(0,0,0,0.02) 20%, transparent 21%);
-      background-size: 18px 18px, 24px 24px;
-      background-position: 0 0, 6px 10px;
-      box-shadow:
-        0 10px 24px rgba(0,0,0,.14),
-        inset 0 1px 0 rgba(255,255,255,.7);
-      position: relative;
-    }
-
-    .alib__panel::before,
-    .alib__panel::after{
-      content:"";
-      position:absolute; left:18px; right:18px; height:2px;
-      background: linear-gradient(90deg,#d9b981,#caa363);
-      opacity:.65; border-radius:2px;
-    }
-    .alib__panel::before{ top:10px; }
-    .alib__panel::after{ bottom:10px; }
-
-    .alib__panel-inner{
-      display:flex; justify-content:center; align-items:flex-end;
-      gap: clamp(24px, 6vw, 64px);
-      padding: clamp(22px, 4.5vw, 48px) clamp(16px, 4vw, 40px);
-    }
-
-    .alib-book{
-      display:inline-block;
-      width: clamp(140px, 28vw, 280px);
-      aspect-ratio: 5 / 6;
-      transform-origin:center bottom;
-      transition: transform .18s ease, filter .18s ease;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .alib-book img{ width:100%; height:100%; object-fit:contain; display:block; }
-
-    @media (hover:hover) and (pointer:fine){
-      .alib-book:hover{ transform: translateY(-4px); filter: drop-shadow(0 8px 12px rgba(0,0,0,.18)); }
-    }
-
-    @media (max-width: 420px){
-      .alib__panel-inner{ flex-wrap:wrap; }
-      .alib-book{ width: clamp(140px, 42vw, 220px); }
-    }
-
     .alib__foot{ text-align:center; margin: clamp(10px, 2.6vw, 18px) 0 0; color: rgba(255,255,255,.95); }
 
-    .alib__shelf, .library-shelf, .shelf { display:none !important; height:0 !important; }
+    /* --- Aquarium Library: Tabletop variant --- */
+
+    /* wrapper to control spacing relative to section text */
+    .alib{ margin-block: clamp(10px,2.5vw,18px); }
+
+    /* Wood tabletop: warm wood gradient + subtle grain + vignette edge */
+    .alib__tabletop{
+      width: min(1040px, 92vw);
+      margin-inline: auto;
+      padding: clamp(18px, 4.5vw, 36px);
+      border-radius: 16px;
+      position: relative;
+
+      /* base wood color */
+      background:
+        radial-gradient(80% 120% at 50% 0%, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 55%) , /* top vignette */
+        repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 2px, transparent 2px 14px), /* faint grain lines */
+        linear-gradient(180deg, #b57a3f 0%, #9e6732 55%, #8d5c2d 100%); /* wood */
+      box-shadow:
+        0 10px 24px rgba(0,0,0,.25), /* drop */
+        inset 0 1px 0 rgba(255,255,255,.25), /* light catch */
+        inset 0 -6px 16px rgba(0,0,0,.22);     /* edge depth */
+    }
+
+    /* Books: face-up with slight perspective and contact shadow */
+    .alib-book{
+      display:inline-block;
+      width: clamp(150px, 30vw, 280px);
+      aspect-ratio: 5 / 6;
+      margin: clamp(6px, 3vw, 28px);
+      position: relative;
+
+      /* gentle tilt so they feel placed on the table */
+      transform: perspective(800px) rotateX(8deg);
+      transform-origin: center center;
+      transition: transform .18s ease, filter .18s ease;
+    }
+
+    .alib-book img{
+      display:block; width:100%; height:100%; object-fit:contain;
+    }
+
+    /* soft contact shadow under each book */
+    .alib-book::after{
+      content:"";
+      position:absolute; left:10%; right:10%; bottom:4%;
+      height:10%;
+      background: radial-gradient(50% 60% at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,0) 70%);
+      filter: blur(6px);
+      transform: translateY(40%) scaleY(.7);
+      pointer-events:none;
+    }
+
+    /* Desktop hover: tiny lift + stronger shadow (no layout shift) */
+    @media (hover:hover) and (pointer:fine){
+      .alib-book:hover{
+        transform: perspective(800px) rotateX(6deg) translateY(-2px);
+        filter: drop-shadow(0 10px 10px rgba(0,0,0,.22));
+      }
+    }
+
+    /* Layout: keep side-by-side on most phones; wrap only when necessary */
+    .alib__tabletop{
+      display:flex; justify-content:center; align-items:flex-end; flex-wrap:wrap;
+      gap: clamp(18px, 5vw, 56px);
+    }
+
+    @media (max-width: 400px){
+      .alib-book{ width: clamp(140px, 44vw, 210px); }
+    }
+
+    /* Kill any legacy panel/shelf visuals */
+    .alib__panel, .alib__shelf, .library-shelf, .shelf { display:none !important; }
 
     @media (prefers-reduced-motion: reduce) {
       .alib-book {
@@ -778,7 +792,7 @@
         </div>
 
         <!-- Aquarium Library START -->
-        <section id="aquarium-library" class="alib" aria-labelledby="alib-title">
+        <section id="aquarium-library" aria-labelledby="alib-title">
           <div class="alib__header">
             <h2 id="alib-title">Aquarium Library</h2>
             <p class="alib__dek">
@@ -786,13 +800,14 @@
             </p>
           </div>
 
-          <div class="alib__panel">
-            <div class="alib__panel-inner">
-              <a class="alib-book" href="/blogs/" aria-label="Browse blog posts">
-                <img src="/assets/media/library/books/blogs.png" alt="Blogs" width="450" height="540" loading="lazy">
+          <div class="alib alib--table">
+            <div class="alib__tabletop">
+              <a class="alib-book" href="/blogs/">
+                <img src="/assets/media/library/books/blogs.png" alt="Blogs">
               </a>
-              <a class="alib-book" href="/university/" aria-label="Browse university articles">
-                <img src="/assets/media/library/books/university.png" alt="University Articles" width="450" height="540" loading="lazy">
+
+              <a class="alib-book" href="/university/">
+                <img src="/assets/media/library/books/university.png" alt="University Articles">
               </a>
             </div>
           </div>
