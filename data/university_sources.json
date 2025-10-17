@@ -1,0 +1,69 @@
+{
+  "updated": "2025-10-19",
+  "schools": [
+    {
+      "id": "freshwater-foundations",
+      "name": "Freshwater Foundations",
+      "badge": "School of Ecology & Water",
+      "summary": "Master the chemistry, cycle diagnostics, and ethical stocking decisions that keep freshwater systems balanced from day one.",
+      "focus": [
+        "Cycle-mapping intensives with scenario-based parameter logging",
+        "Bioload balancing calculators tailored for planted and community tanks",
+        "Ethical stocking critiques with peer feedback checkpoints"
+      ],
+      "accent": "#2d7a8c",
+      "cta": {
+        "label": "Explore Freshwater Foundations",
+        "href": "/params.html"
+      }
+    },
+    {
+      "id": "habitat-design-studios",
+      "name": "Habitat Design Studios",
+      "badge": "School of Aquascape Architecture",
+      "summary": "Transform concepts into immersive displays with planting geometry, flow planning, and iterative layout critiques.",
+      "focus": [
+        "Live layout charrettes recorded with expert commentary",
+        "Lighting & flow modeling labs for nano to display tanks",
+        "Peer studio rounds with rubric-aligned feedback"
+      ],
+      "accent": "#6f8562",
+      "cta": {
+        "label": "Preview Studio Syllabus",
+        "href": "/media.html"
+      }
+    },
+    {
+      "id": "care-welfare-clinics",
+      "name": "Care & Welfare Clinics",
+      "badge": "School of Fish Health",
+      "summary": "Build preventative care plans, nutrition schedules, and humane intervention strategies backed by current research.",
+      "focus": [
+        "Telemetry-informed observation journals for early issue detection",
+        "Nutrition rotation planners aligned to species-specific needs",
+        "Mock consults that practice calm, ethical care conversations"
+      ],
+      "accent": "#8a5b6c",
+      "cta": {
+        "label": "Review Clinic Pathway",
+        "href": "/stocking.html"
+      }
+    },
+    {
+      "id": "data-insights-lab",
+      "name": "Data Insights Lab",
+      "badge": "Applied Research Collective",
+      "summary": "Turn community-sourced datasets into actionable husbandry improvements using reproducible analysis workflows.",
+      "focus": [
+        "Hands-on dashboards for parameter trend visualisation",
+        "Open notebook walkthroughs covering reproducible methods",
+        "Quarterly synthesis sessions publishing member case studies"
+      ],
+      "accent": "#3d5c93",
+      "cta": {
+        "label": "Join Data Cohort Waitlist",
+        "href": "/contact-feedback.html"
+      }
+    }
+  ]
+}
