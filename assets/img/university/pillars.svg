@@ -1,23 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1920 540" width="1920" height="540" role="presentation" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 540" width="1920" height="540" role="presentation" aria-hidden="true">
   <defs>
-    <symbol id="pillar" viewBox="0 0 180 480">
-      <rect width="180" height="48" rx="18" fill="#0B1B2B" fill-opacity=".78" />
-      <rect x="16" y="46" width="148" height="328" rx="12" fill="#0B1B2B" fill-opacity=".88" />
-      <rect x="8" y="374" width="164" height="36" rx="14" fill="#0B1B2B" fill-opacity=".82" />
-      <rect y="404" width="180" height="48" rx="16" fill="#0B1B2B" fill-opacity=".86" />
-      <rect x="28" y="46" width="6" height="328" rx="3" fill="#fff" fill-opacity=".78" />
-      <rect x="54" y="46" width="6" height="328" rx="3" fill="#fff" fill-opacity=".5" />
-      <rect x="82" y="46" width="6" height="328" rx="3" fill="#fff" fill-opacity=".44" />
-      <rect x="110" y="46" width="6" height="328" rx="3" fill="#fff" fill-opacity=".5" />
-      <rect x="136" y="46" width="6" height="328" rx="3" fill="#fff" fill-opacity=".78" />
-    </symbol>
+    <linearGradient id="uni-pillar-cap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7f8fa2" />
+      <stop offset="1" stop-color="#6c7d92" />
+    </linearGradient>
+    <linearGradient id="uni-pillar-shaft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#97a8ba" />
+      <stop offset="1" stop-color="#7d8ea2" />
+    </linearGradient>
+    <linearGradient id="uni-pillar-foot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7b8da2" />
+      <stop offset="1" stop-color="#667a91" />
+    </linearGradient>
   </defs>
-  <g opacity=".035">
-    <use xlink:href="#pillar" x="70" y="32" />
-    <use xlink:href="#pillar" x="390" y="32" />
-    <use xlink:href="#pillar" x="710" y="32" />
-    <use xlink:href="#pillar" x="1030" y="32" />
-    <use xlink:href="#pillar" x="1350" y="32" />
-    <use xlink:href="#pillar" x="1670" y="32" />
+  <symbol id="uni-pillar" viewBox="0 0 180 480">
+    <rect width="180" height="48" rx="18" fill="url(#uni-pillar-cap)" />
+    <rect x="16" y="46" width="148" height="328" rx="12" fill="url(#uni-pillar-shaft)" />
+    <rect x="8" y="374" width="164" height="36" rx="14" fill="url(#uni-pillar-foot)" />
+    <rect y="404" width="180" height="48" rx="16" fill="url(#uni-pillar-foot)" />
+    <rect x="24" y="54" width="4" height="312" rx="2" fill="#b8c5d2" opacity=".24" />
+    <rect x="150" y="54" width="4" height="312" rx="2" fill="#b8c5d2" opacity=".24" />
+    <rect x="36" y="50" width="6" height="324" rx="3" fill="#5f7186" opacity=".32" />
+    <rect x="62" y="50" width="6" height="324" rx="3" fill="#5a6b80" opacity=".36" />
+    <rect x="90" y="50" width="6" height="324" rx="3" fill="#556579" opacity=".38" />
+    <rect x="118" y="50" width="6" height="324" rx="3" fill="#5a6b80" opacity=".36" />
+    <rect x="144" y="50" width="6" height="324" rx="3" fill="#5f7186" opacity=".32" />
+  </symbol>
+  <g>
+    <use href="#uni-pillar" x="70" y="32" />
+    <use href="#uni-pillar" x="390" y="32" />
+    <use href="#uni-pillar" x="710" y="32" />
+    <use href="#uni-pillar" x="1030" y="32" />
+    <use href="#uni-pillar" x="1350" y="32" />
+    <use href="#uni-pillar" x="1670" y="32" />
   </g>
 </svg>
