@@ -35,3 +35,7 @@ Result: Live traffic returns 200 with functioning YouTube embeds; curl-based pro
 [2025-10-18 | University | Hybrid parchment→aqua backdrop + watermark]
 Scope: New /university/ page scaffold, parchment-to-aqua gradient, procedural grain, responsive pillars SVG, hero overlay, AA checks.
 Result: Decorative background stays under perf budgets (<4KB CSS & SVG), hero overlay keeps text ≥4.5:1 contrast, responsive pillars soften on mobile.
+[2025-10-17 | The Tank Guide | Aquarium Library Fix]
+Scope: Restored book tiles + verified links.
+Result: PR created successfully.
+Next: Merge once approved.
