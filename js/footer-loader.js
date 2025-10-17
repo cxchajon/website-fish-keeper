@@ -3,7 +3,7 @@
 
   const getFooterSource = (host) => {
     const { footerSrc } = host.dataset;
-    return footerSrc && footerSrc.trim().length > 0 ? footerSrc : '/footer.html?v=1.4.3';
+    return footerSrc && footerSrc.trim().length > 0 ? footerSrc : '/footer.html?v=1.4.4';
   };
 
   const sanitizeHtml = (html) => html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
