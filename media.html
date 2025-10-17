@@ -40,6 +40,9 @@
       --card-radius: 16px;
       --card-shadow: 0 8px 16px rgba(5, 37, 48, .12);
       --gap: 0.75rem;
+      --alib-book-min: 148px;
+      --alib-book-max: 232px;
+      --alib-book-gap: clamp(18px, 4vw, 36px);
     }
 
     /* Background now matches the homepage gradient exactly */
@@ -109,24 +112,29 @@
 
     /* Books: face-up with slight perspective and contact shadow */
     .alib-book{
-      display:inline-block;
-      aspect-ratio: 5 / 6;
       position: relative;
+      display: grid;
+      place-items: end center;
+      inline-size: clamp(var(--alib-book-min), 22vw, var(--alib-book-max));
+      aspect-ratio: 5 / 6;
 
       /* gentle tilt so they feel placed on the table */
-      transform: perspective(800px) rotateX(8deg);
+      transform: perspective(800px) rotateX(7deg);
       transform-origin: center center;
       transition: transform .18s ease, filter .18s ease;
     }
 
-    .alib-book img{
-      display:block; width:100%; height:100%; object-fit:contain;
+    .alib-book__img{
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: contain;
     }
 
     /* soft contact shadow under each book */
     .alib-book::after{
       content:"";
-      position:absolute; left:10%; right:10%;
+      position:absolute; left:10%; right:10%; bottom:0;
       background: radial-gradient(50% 60% at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,0) 70%);
       transform: translateY(40%) scaleY(.7);
       pointer-events:none;
@@ -135,15 +143,29 @@
     /* Desktop hover: tiny lift + stronger shadow (no layout shift) */
     @media (hover:hover) and (pointer:fine){
       .alib-book:hover{
-        transform: perspective(800px) rotateX(6deg) translateY(-2px);
-        filter: drop-shadow(0 10px 10px rgba(0,0,0,.22));
+        transform: perspective(800px) rotateX(6deg) translateY(-3px);
+        filter: drop-shadow(0 12px 14px rgba(0,0,0,.24));
       }
+    }
+
+    .alib-book:focus-visible{
+      outline: 2px solid rgba(255,255,255,.9);
+      outline-offset: 4px;
+      transform: perspective(800px) rotateX(6deg) translateY(-3px);
+      filter: drop-shadow(0 12px 14px rgba(0,0,0,.24));
+    }
+
+    .alib-book:active{
+      transform: perspective(800px) rotateX(6deg) translateY(-3px);
+      filter: drop-shadow(0 12px 14px rgba(0,0,0,.24));
     }
 
     /* Layout: keep side-by-side on most phones; wrap only when necessary */
     .alib__tabletop{
       display:flex;
       flex-wrap:wrap;
+      align-items:flex-end;
+      justify-content:center;
     }
 
     /* -------- Compact tabletop tweaks -------- */
@@ -154,19 +176,16 @@
 
     /* smaller card, less padding, slightly smaller radius */
     .alib--compact .alib__tabletop{
-      width: min(860px, 90vw);          /* smaller card */
-      padding: clamp(12px, 3.2vw, 22px);/* tighter inside */
+      width: min(860px, 92vw);          /* smaller card */
+      padding: clamp(12px, 3vw, 22px);  /* tighter inside */
       border-radius: 12px;              /* a bit crisper */
-      gap: clamp(14px, 4vw, 32px);      /* reduce spacing between books */
-      justify-content: space-evenly;
-      align-items: flex-end;
+      gap: var(--alib-book-gap);        /* reduce spacing between books */
     }
 
     /* slightly smaller books (so more breathing room) */
     .alib--compact .alib-book{
-      width: clamp(140px, 26vw, 220px);
-      margin: clamp(2px, 2.2vw, 16px);
-      transform: perspective(800px) rotateX(7deg);
+      inline-size: clamp(var(--alib-book-min), 22vw, var(--alib-book-max));
+      margin: 0;
     }
 
     /* crisper contact shadow */
@@ -183,7 +202,7 @@
       position:absolute;
       left: 18%;
       right: 18%;
-      bottom: 6.5%;
+      bottom: 6%;
       height: 4px;
       border-radius: 999px;
       background:
@@ -197,9 +216,25 @@
 
     /* Smaller phones: keep the two-up look but tighten further */
     @media (max-width: 420px){
-      .alib--compact .alib__tabletop{ width: 92vw; padding: 12px; gap: 16px; }
-      .alib--compact .alib-book{ width: clamp(132px, 40vw, 180px); }
+      .alib--compact .alib__tabletop{ width: 92vw; padding: 12px; gap: clamp(14px, 6vw, 24px); }
+      .alib--compact .alib-book{ inline-size: clamp(132px, 42vw, var(--alib-book-max)); }
       .alib--compact .alib-book::before{ left:20%; right:20%; bottom:6%; }
+    }
+
+    @media (min-width: 1280px){
+      .alib--compact .alib__tabletop{
+        width: min(860px, 84vw);
+        gap: clamp(22px, 3vw, 40px);
+      }
+      .alib--compact .alib-book{
+        inline-size: clamp(170px, 18vw, var(--alib-book-max));
+      }
+    }
+
+    @media (max-width: 767px){
+      .alib--compact .alib__tabletop{
+        justify-content: center;
+      }
     }
 
     /* Reduce spacing before the “More sections…” line */
@@ -850,11 +885,11 @@
             <div class="alib__tabletop">
               <a class="alib-book" href="/blogs/">
                 <span class="visually-hidden">Blogs</span>
-                <img src="/assets/media/library/books/blogs-modern.svg" alt="Blogs" loading="lazy">
+                <img class="alib-book__img" src="/assets/media/library/books/blogs-modern.svg" alt="Blogs" loading="lazy">
               </a>
               <a class="alib-book" href="https://thetankguide.com/pages/university.html">
                 <span class="visually-hidden">University Articles</span>
-                <img src="/assets/media/library/books/university.svg" alt="University Articles" loading="lazy">
+                <img class="alib-book__img" src="/assets/media/library/books/university.svg" alt="University Articles" loading="lazy">
               </a>
             </div>
           </div>
