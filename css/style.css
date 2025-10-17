@@ -1337,10 +1337,12 @@ body.planted-active #cycling-coach .cc-title__leaf {
   outline-offset: 2px;
 }
 
-.site-footer .community-links i,
-.site-footer .social-strip i {
-  font-size: 30px;
-  line-height: 1;
+.site-footer .community-links svg,
+.site-footer .social-strip svg {
+  display: block;
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
 }
 
 @media (max-width: 480px) {
@@ -1349,9 +1351,10 @@ body.planted-active #cycling-coach .cc-title__leaf {
     gap: 16px;
   }
 
-  .site-footer .community-links i,
-  .site-footer .social-strip i {
-    font-size: 28px;
+  .site-footer .community-links svg,
+  .site-footer .social-strip svg {
+    width: 28px;
+    height: 28px;
   }
 }
 
