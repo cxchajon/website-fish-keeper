@@ -1307,13 +1307,13 @@ body.planted-active #cycling-coach .cc-title__leaf {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  row-gap: 8px;
+  gap: 18px;
+  row-gap: 10px;
   text-align: center;
 }
 
 .community-links {
-  margin-bottom: 16px;
+  margin: 0 0 15px;
 }
 
 .community-links a,
@@ -1321,12 +1321,12 @@ body.planted-active #cycling-coach .cc-title__leaf {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   margin: 0;
   color: #fff;
   text-decoration: none;
-  transition: color .2s ease, transform .2s ease;
+  transition: color .2s ease;
 }
 
 .community-links a:hover,
@@ -1334,8 +1334,21 @@ body.planted-active #cycling-coach .cc-title__leaf {
 .social-strip a:hover,
 .social-strip a:focus {
   color: #1e90ff;
-  transform: translateY(-1px);
   outline: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .community-links a,
+  .social-strip a {
+    transition: color .2s ease, transform .2s ease;
+  }
+
+  .community-links a:hover,
+  .community-links a:focus,
+  .social-strip a:hover,
+  .social-strip a:focus {
+    transform: translateY(-1px);
+  }
 }
 
 .community-links a:focus-visible,
@@ -1347,8 +1360,8 @@ body.planted-active #cycling-coach .cc-title__leaf {
 
 .community-links svg,
 .social-strip svg {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   fill: currentColor;
   shape-rendering: geometricPrecision;
 }
@@ -1407,20 +1420,7 @@ body.planted-active #cycling-coach .cc-title__leaf {
 }
 
 /* Small screens: allow icons to wrap neatly */
-@media (min-width: 600px) {
-  .community-links,
-  .social-strip {
-    gap: 18px;
-  }
-
-  .community-links svg,
-  .social-strip svg {
-    width: 28px;
-    height: 28px;
-  }
-}
-
-@media (min-width: 1200px) {
+@media (min-width: 768px) {
   .community-links,
   .social-strip {
     gap: 20px;
