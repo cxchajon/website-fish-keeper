@@ -273,22 +273,18 @@
       <p>The Tank Guide Gear Hub helps aquarists simplify setup decisions with hobbyist-recommended guidelines — like choosing filters rated above your tank’s volume, or using lights with slight overhang for even coverage. Explore equipment grouped by tank size to better match wattage, flow, and lighting range. Part of <em>FishKeepingLifeCo</em>, The Tank Guide focuses on education and balanced aquarium care — helping fishkeepers build reliable, long-term systems through informed gear choices and proven community practices.</p>
     </div>
   </main>
-
   <div id="site-footer"></div>
-
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      window.ttgInitNav?.();
-    });
-
     (async () => {
+      const host = document.getElementById('site-footer');
+      if (!host) return;
       try {
-        const res = await fetch('/footer.html?v=1.3.2', { cache: 'no-cache' });
-        const html = await res.text();
-        const host = document.getElementById('site-footer');
-        if (host) {
-          host.outerHTML = html;
+        const res = await fetch('/footer.html?v=1.3.3', { cache: 'no-cache' });
+        if (!res.ok) {
+          throw new Error(`Failed to load footer: ${res.status}`);
         }
+        const html = await res.text();
+        host.outerHTML = html;
       } catch (error) {
         console.error('[Footer] load failed:', error);
       }

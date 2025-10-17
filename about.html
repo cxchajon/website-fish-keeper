@@ -396,19 +396,23 @@
       <p class="about-feedback"><a href="/contact-feedback.html">Contact &amp; Feedback</a></p>
     </div>
   </main>
-
   <div id="site-footer"></div>
-
   <script>
-(async () => {
-  try {
-    const res = await fetch('/footer.html?v=1.3.2', { cache: 'no-cache' });
-    const html = await res.text();
-    const host = document.getElementById('site-footer');
-    if (host) host.outerHTML = html;
-  } catch (e) { console.error('[Footer] load failed:', e); }
-})();
-</script>
+    (async () => {
+      const host = document.getElementById('site-footer');
+      if (!host) return;
+      try {
+        const res = await fetch('/footer.html?v=1.3.3', { cache: 'no-cache' });
+        if (!res.ok) {
+          throw new Error(`Failed to load footer: ${res.status}`);
+        }
+        const html = await res.text();
+        host.outerHTML = html;
+      } catch (error) {
+        console.error('[Footer] load failed:', error);
+      }
+    })();
+  </script>
   <script>
     (() => {
       const accordion = document.getElementById('about-accordion');
