@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 540" preserveAspectRatio="none">
+  <defs>
+    <style>
+      .col { fill: #0b1b2b; fill-opacity: .032; }
+      .groove { fill: #0b1b2b; fill-opacity: .05; }
+      .cap { fill: #0b1b2b; fill-opacity: .04; }
+    </style>
+  </defs>
+  <rect width="1920" height="540" fill="none" />
+  <g>
+    <g transform="translate(50 34)">
+      <rect class="cap" x="0" y="0" width="220" height="42" rx="18" />
+      <rect class="col" x="0" y="30" width="220" height="436" rx="18" />
+      <rect class="cap" x="-10" y="432" width="240" height="44" rx="20" />
+      <rect class="groove" x="46" y="58" width="14" height="368" rx="6" />
+      <rect class="groove" x="88" y="58" width="12" height="368" rx="6" />
+      <rect class="groove" x="120" y="58" width="12" height="368" rx="6" />
+      <rect class="groove" x="162" y="58" width="14" height="368" rx="6" />
+    </g>
+    <g transform="translate(370 34)">
+      <rect class="cap" x="0" y="0" width="220" height="42" rx="18" />
+      <rect class="col" x="0" y="30" width="220" height="436" rx="18" />
+      <rect class="cap" x="-10" y="432" width="240" height="44" rx="20" />
+      <rect class="groove" x="46" y="58" width="14" height="368" rx="6" />
+      <rect class="groove" x="88" y="58" width="12" height="368" rx="6" />
+      <rect class="groove" x="120" y="58" width="12" height="368" rx="6" />
+      <rect class="groove" x="162" y="58" width="14" height="368" rx="6" />
+    </g>
+    <g transform="translate(690 34)">
+      <rect class="cap" x="0" y="0" width="220" height="42" rx="18" />
+      <rect class="col" x="0" y="30" width="220" height="436" rx="18" />
+      <rect class="cap" x="-10" y="432" width="240" height="44" rx="20" />
+      <rect class="groove" x="46" y="58" width="14" height="368" rx="6" />
+      <rect class="groove" x="88" y="58" width="12" height="368" rx="6" />
+      <rect class="groove" x="120" y="58" width="12" height="368" rx="6" />
+      <rect class="groove" x="162" y="58" width="14" height="368" rx="6" />
+    </g>
+    <g transform="translate(1010 34)">
+      <rect class="cap" x="0" y="0" width="220" height="42" rx="18" />
+      <rect class="col" x="0" y="30" width="220" height="436" rx="18" />
+      <rect class="cap" x="-10" y="432" width="240" height="44" rx="20" />
+      <rect class="groove" x="46" y="58" width="14" height="368" rx="6" />
+      <rect class="groove" x="88" y="58" width="12" height="368" rx="6" />
+      <rect class="groove" x="120" y="58" width="12" height="368" rx="6" />
+      <rect class="groove" x="162" y="58" width="14" height="368" rx="6" />
+    </g>
+    <g transform="translate(1330 34)">
+      <rect class="cap" x="0" y="0" width="220" height="42" rx="18" />
+      <rect class="col" x="0" y="30" width="220" height="436" rx="18" />
+      <rect class="cap" x="-10" y="432" width="240" height="44" rx="20" />
+      <rect class="groove" x="46" y="58" width="14" height="368" rx="6" />
+      <rect class="groove" x="88" y="58" width="12" height="368" rx="6" />
+      <rect class="groove" x="120" y="58" width="12" height="368" rx="6" />
+      <rect class="groove" x="162" y="58" width="14" height="368" rx="6" />
+    </g>
+    <g transform="translate(1650 34)">
+      <rect class="cap" x="0" y="0" width="220" height="42" rx="18" />
+      <rect class="col" x="0" y="30" width="220" height="436" rx="18" />
+      <rect class="cap" x="-10" y="432" width="240" height="44" rx="20" />
+      <rect class="groove" x="46" y="58" width="14" height="368" rx="6" />
+      <rect class="groove" x="88" y="58" width="12" height="368" rx="6" />
+      <rect class="groove" x="120" y="58" width="12" height="368" rx="6" />
+      <rect class="groove" x="162" y="58" width="14" height="368" rx="6" />
+    </g>
+  </g>
+</svg>

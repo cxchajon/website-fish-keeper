@@ -1,0 +1,165 @@
+/*
+ * University page background stack
+ * Layers: base parchment→aqua gradient, procedural grain, and a subtle pillars SVG watermark.
+ * Adjust pillar visibility via the opacity settings on .uni-bg::before and tweak height per breakpoint.
+ */
+
+.uni-bg {
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: #0b1b2b;
+  line-height: 1.6;
+  min-height: 100vh;
+  margin: 0;
+  background-color: #f8f8f6;
+  background-image:
+    radial-gradient(220px 220px at 18% 20%, rgba(11, 27, 43, 0.035) 0%, rgba(11, 27, 43, 0) 70%),
+    radial-gradient(200px 200px at 70% 75%, rgba(7, 36, 52, 0.028) 0%, rgba(7, 36, 52, 0) 68%),
+    linear-gradient(180deg, #f8f8f6 0%, #f4f5f7 42%, #e8f5f7 72%, #e8f3ff 100%);
+  background-repeat: repeat, repeat, no-repeat;
+  background-size: 280px 280px, 220px 220px, 100% 100%;
+  background-position: 0 0, 60px 80px, center top;
+  position: relative;
+}
+
+.uni-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 34vh;
+  background-image: url("/assets/img/university/pillars.svg");
+  background-repeat: repeat-x;
+  background-size: auto 32vh;
+  background-position: top center;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.uni-main {
+  position: relative;
+  z-index: 1;
+}
+
+.uni-main a {
+  color: #115372;
+  text-decoration-color: rgba(17, 83, 114, 0.35);
+  text-underline-offset: 0.25em;
+}
+
+.uni-main a:hover,
+.uni-main a:focus {
+  text-decoration-color: rgba(17, 83, 114, 0.7);
+}
+
+.uni-hero {
+  padding: clamp(72px, 12vw, 124px) 20px clamp(56px, 10vw, 96px);
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.uni-hero__overlay {
+  background-color: rgba(255, 255, 255, 0.84);
+  padding: clamp(32px, 6vw, 60px) clamp(24px, 8vw, 72px);
+  border-radius: 20px;
+  max-width: min(920px, 100%);
+  box-shadow: 0 20px 46px rgba(11, 27, 43, 0.08);
+}
+
+.uni-hero h1 {
+  font-size: clamp(2.4rem, 4vw, 3.3rem);
+  line-height: 1.1;
+  margin: 0 0 16px;
+}
+
+.uni-hero p {
+  margin: 0 auto;
+  max-width: 46ch;
+  color: rgba(11, 27, 43, 0.82);
+}
+
+.uni-content {
+  padding: 0 20px 72px;
+  display: grid;
+  gap: clamp(32px, 6vw, 56px);
+}
+
+.uni-section {
+  margin: 0 auto;
+  max-width: min(980px, 100%);
+  background-color: rgba(255, 255, 255, 0.78);
+  border-radius: 18px;
+  padding: clamp(28px, 5vw, 52px);
+  box-shadow: 0 12px 28px rgba(11, 27, 43, 0.06);
+}
+
+.uni-section h2 {
+  margin-top: 0;
+  font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+}
+
+.uni-section p {
+  margin: 0 0 1.1em;
+  color: rgba(11, 27, 43, 0.84);
+}
+
+.uni-section ul {
+  margin: 0;
+  padding-left: 1.2em;
+  color: rgba(11, 27, 43, 0.84);
+}
+
+.uni-section li + li {
+  margin-top: 0.6em;
+}
+
+@media (max-width: 1023px) {
+  .uni-hero__overlay {
+    box-shadow: 0 12px 30px rgba(11, 27, 43, 0.08);
+  }
+}
+
+@media (max-width: 599px) {
+  .uni-bg::before {
+    height: 22vh;
+    background-size: auto 22vh;
+    opacity: 0.02;
+  }
+
+  .uni-hero__overlay {
+    background-color: rgba(255, 255, 255, 0.88);
+    padding: 28px 20px;
+  }
+
+  .uni-content {
+    padding-bottom: 56px;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1023px) {
+  .uni-bg::before {
+    height: 27vh;
+    background-size: auto 27vh;
+    opacity: 0.03;
+  }
+}
+
+@media (min-width: 1024px) {
+  .uni-bg::before {
+    height: 34vh;
+    background-size: auto 34vh;
+    opacity: 0.04;
+  }
+
+  .uni-hero__overlay {
+    box-shadow: 0 28px 54px rgba(11, 27, 43, 0.12);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .uni-bg {
+    color: #0b1b2b;
+  }
+}
