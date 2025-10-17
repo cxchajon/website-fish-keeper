@@ -1466,22 +1466,7 @@
   }
   </script>
   <div id="site-footer"></div>
-  <script>
-    (async () => {
-      const host = document.getElementById('site-footer');
-      if (!host) return;
-      try {
-        const res = await fetch('/footer.html?v=1.3.3', { cache: 'no-cache' });
-        if (!res.ok) {
-          throw new Error(`Failed to load footer: ${res.status}`);
-        }
-        const html = await res.text();
-        host.outerHTML = html;
-      } catch (error) {
-        console.error('[Footer] load failed:', error);
-      }
-    })();
-  </script>
+  <script src="/js/footer-loader.js" defer></script>
   <script type="module" src="js/logic/speciesSchema.js"></script>
   <script type="module" src="js/fish-data.js"></script>
   <script type="module" src="js/logic/compute.js"></script>
