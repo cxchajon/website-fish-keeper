@@ -319,22 +319,7 @@
 
   </main>
   <div id="site-footer"></div>
-  <script>
-    (async () => {
-      const host = document.getElementById('site-footer');
-      if (!host) return;
-      try {
-        const res = await fetch('/footer.html?v=1.3.3', { cache: 'no-cache' });
-        if (!res.ok) {
-          throw new Error(`Failed to load footer: ${res.status}`);
-        }
-        const html = await res.text();
-        host.outerHTML = html;
-      } catch (error) {
-        console.error('[Footer] load failed:', error);
-      }
-    })();
-  </script>
+  <script src="/js/footer-loader.js" defer></script>
 <style>
   /* TTG Popup Theme v1 — High-Contrast Minimal (scoped to #ttg-howitworks) */
   .ttg-visually-hidden{position:absolute!important;left:-9999px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important}

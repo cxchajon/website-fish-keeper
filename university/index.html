@@ -28,22 +28,7 @@
   <div id="site-nav"></div>
   <main id="main-content" class="uni-page" aria-label="Aquarium University background demo"></main>
   <div id="site-footer"></div>
-  <script>
-    (async () => {
-      const host = document.getElementById('site-footer');
-      if (!host) return;
-      try {
-        const res = await fetch('/footer.html?v=1.3.3', { cache: 'no-cache' });
-        if (!res.ok) {
-          throw new Error(`Failed to load footer: ${res.status}`);
-        }
-        const html = await res.text();
-        host.outerHTML = html;
-      } catch (error) {
-        console.error('[Footer] load failed:', error);
-      }
-    })();
-  </script>
+  <script src="/js/footer-loader.js" defer></script>
   <!-- === TTG Cookie Consent START === -->
   <div id="ttg-consent" class="ttg-consent" data-consent-banner>
     <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
