@@ -1303,23 +1303,43 @@ body.planted-active #cycling-coach .cc-title__leaf {
 
 .social-strip,
 .community-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
   margin-bottom: 12px;
+  pointer-events: auto;
 }
 
 .social-strip a,
 .community-links a {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin: 0 8px;
+  min-width: 40px;
+  min-height: 40px;
   padding: 10px;
   color: #fff;
   font-size: 1.4rem;
+  line-height: 1;
+  text-decoration: none;
   transition: color .3s, transform .15s;
 }
 
 .social-strip a:hover,
-.community-links a:hover {
+.social-strip a:focus-visible,
+.community-links a:hover,
+.community-links a:focus-visible {
   color: #1e90ff;
   transform: translateY(-1px);
+}
+
+.social-strip a:focus-visible,
+.community-links a:focus-visible {
+  outline: 2px solid #1e90ff;
+  outline-offset: 3px;
 }
 
 .footer-links {
