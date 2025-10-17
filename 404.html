@@ -5,6 +5,7 @@
     <title>Page Not Found | The Tank Guide</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <!-- Consent Mode defaults (load FIRST) -->
     <script src="/assets/js/consent-mode.js" defer></script>
     <!-- Google tag (gtag.js) — GA4 -->
@@ -27,5 +28,22 @@
       <p>The page you requested could not be found.</p>
       <p><a href="/">Return to The Tank Guide homepage</a></p>
     </main>
+    <div id="site-footer"></div>
+    <script>
+      (async () => {
+        const host = document.getElementById('site-footer');
+        if (!host) return;
+        try {
+          const res = await fetch('/footer.html?v=1.3.3', { cache: 'no-cache' });
+          if (!res.ok) {
+            throw new Error(`Failed to load footer: ${res.status}`);
+          }
+          const html = await res.text();
+          host.outerHTML = html;
+        } catch (error) {
+          console.error('[Footer] load failed:', error);
+        }
+      })();
+    </script>
   </body>
 </html>

@@ -19,28 +19,26 @@
   <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
   <link rel="stylesheet" href="/css/site.css?v=2024-07-05a" />
   <link rel="stylesheet" href="/assets/css/university.css?v=2025-11-05" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!--#include virtual="/includes/ga4.html" -->
 </head>
-<body class="uni-bg" data-footer-variant="legal" data-no-socials="true">
+<body class="uni-bg">
   <a class="skip-link" href="#main-content">Skip to content</a>
   <div id="site-nav"></div>
   <main id="main-content" class="uni-page" aria-label="Aquarium University background demo"></main>
-  <div id="site-footer" data-footer="legal"></div>
+  <div id="site-footer"></div>
   <script>
     (async () => {
+      const host = document.getElementById('site-footer');
+      if (!host) return;
       try {
-        const preferLegal = document.body?.dataset?.noSocials === 'true' || document.body?.dataset?.footerVariant === 'legal';
-        const footerUrl = preferLegal ? '/includes/footer-legal.html?v=1.0.0' : '/footer.html?v=1.3.2';
-        const response = await fetch(footerUrl, { cache: 'no-cache' });
-        if (!response.ok) {
-          throw new Error(`Failed to load footer: ${response.status}`);
+        const res = await fetch('/footer.html?v=1.3.3', { cache: 'no-cache' });
+        if (!res.ok) {
+          throw new Error(`Failed to load footer: ${res.status}`);
         }
-        const html = await response.text();
-        const host = document.getElementById('site-footer');
-        if (host) {
-          host.outerHTML = html;
-        }
+        const html = await res.text();
+        host.outerHTML = html;
       } catch (error) {
         console.error('[Footer] load failed:', error);
       }

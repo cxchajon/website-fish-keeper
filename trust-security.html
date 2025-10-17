@@ -187,19 +187,20 @@
       <p><strong>Need more detail?</strong> Review our <a href="/terms.html">Terms of Use</a> and <a href="/privacy-legal.html">Privacy &amp; Legal</a> pages, or contact us directly. We update this page whenever practices change.</p>
     </aside>
   </main>
-
   <div id="site-footer"></div>
-
   <script>
     (async () => {
       const host = document.getElementById('site-footer');
       if (!host) return;
       try {
-        const res = await fetch('/footer.html?v=1.3.2', { cache: 'no-store' });
-        if (!res.ok) throw new Error('Footer request failed');
-        host.outerHTML = await res.text();
+        const res = await fetch('/footer.html?v=1.3.3', { cache: 'no-cache' });
+        if (!res.ok) {
+          throw new Error(`Failed to load footer: ${res.status}`);
+        }
+        const html = await res.text();
+        host.outerHTML = html;
       } catch (error) {
-        console.error('Footer failed to load', error);
+        console.error('[Footer] load failed:', error);
       }
     })();
   </script>
