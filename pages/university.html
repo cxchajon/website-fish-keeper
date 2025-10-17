@@ -20,12 +20,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
-  <link rel="stylesheet" href="/css/site.css?v=2024-07-05a" />
-  <link rel="stylesheet" href="/assets/css/theme.css?v=2025-11-07" />
+  <link rel="stylesheet" href="/assets/css/university.page.css?v=2025-11-07" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
 </head>
-<body class="theme-media">
+<body class="theme-media university">
   <a class="skip-link" href="#main-content">Skip to main content</a>
   <div id="site-nav"></div>
   <main id="main-content" class="university-bg knowledge-gradient pillar-overlay" aria-labelledby="hero-title">
@@ -168,23 +166,7 @@
     </div>
   </main>
 
-  <div id="site-footer"></div>
-  <script>
-    (async () => {
-      try {
-        const response = await fetch('/footer.html?v=1.3.2', { cache: 'no-cache' });
-        if (!response.ok) {
-          throw new Error(`Failed to load footer: ${response.status}`);
-        }
-        const html = await response.text();
-        const host = document.getElementById('site-footer');
-        if (host) {
-          host.outerHTML = html;
-        }
-      } catch (error) {
-        console.error('[Footer] load failed:', error);
-      }
-    })();
-  </script>
+  <div id="site-footer" data-footer-src="/includes/footer-legal.html"></div>
+  <script defer src="/js/footer-loader.js?v=1.0.0"></script>
 </body>
 </html>
