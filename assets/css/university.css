@@ -1,6 +1,6 @@
 /*
  * Aquarium University — background-only demonstration
- * Hybrid parchment to aqua gradient with grain and pillar watermark.
+ * Steel-blue slate gradient with grain layers and blue-gray pillar watermark.
  */
 body.uni-bg {
   margin: 0;
@@ -10,7 +10,7 @@ body.uni-bg {
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   color: #0b1b2b;
   line-height: 1.6;
-  background-color: #f8f8f6;
+  background-color: #dfe5ed;
 }
 
 body.uni-bg *,
@@ -43,38 +43,61 @@ body.uni-bg > .skip-link:focus {
 }
 
 .uni-page {
+  --uni-top-band: #141f2b;
+  --uni-mid-band: #dfe5ed;
+  --uni-bottom-band: #d7edf4;
+  --uni-overlay-ink-start: rgba(14, 26, 37, 0.055);
+  --uni-overlay-ink-mid: rgba(18, 34, 48, 0.048);
+  --uni-overlay-ink-end: rgba(21, 38, 53, 0.05);
+  --uni-grain-a-color: rgba(16, 34, 48, 0.018);
+  --uni-grain-b-color: rgba(36, 58, 74, 0.014);
   --uni-pillar-height: 32vh;
+  --uni-pillar-opacity: 0.056;
   --uni-grain-a-size: 220px;
   --uni-grain-b-size: 160px;
   flex: 1;
   position: relative;
   min-height: clamp(60vh, 72vh, 84vh);
   width: 100%;
-  background-color: #f8f8f6;
+  background-color: var(--uni-mid-band);
   background-image:
-    url('/assets/img/university/pillars.svg'),
-    linear-gradient(115deg, rgba(11, 27, 43, 0.022) 0%, rgba(11, 27, 43, 0) 62%),
-    linear-gradient(-35deg, rgba(11, 27, 43, 0.018) 12%, rgba(255, 255, 255, 0.018) 90%),
-    linear-gradient(180deg, #f8f8f6 0%, #f4f5f7 38%, #e8f5f7 68%, #e8f3ff 100%);
+    linear-gradient(180deg, var(--uni-overlay-ink-start) 0%, var(--uni-overlay-ink-mid) 52%, var(--uni-overlay-ink-end) 100%),
+    linear-gradient(125deg, rgba(10, 24, 36, 0.02) 0%, rgba(42, 64, 82, 0.012) 100%),
+    linear-gradient(-32deg, var(--uni-grain-a-color) 12%, rgba(238, 246, 252, 0.012) 90%),
+    linear-gradient(180deg, var(--uni-top-band) 0%, var(--uni-top-band) 24vh, var(--uni-mid-band) 24vh, var(--uni-mid-band) 70vh, var(--uni-bottom-band) 100%);
   background-size:
-    auto var(--uni-pillar-height),
+    100% 100%,
     var(--uni-grain-a-size) var(--uni-grain-a-size),
     var(--uni-grain-b-size) var(--uni-grain-b-size),
     100% 100%;
-  background-position: top center, center, center, center;
-  background-repeat: repeat-x, repeat, repeat, no-repeat;
+  background-position: center, center, center, center;
+  background-repeat: no-repeat, repeat, repeat, no-repeat;
   background-blend-mode: normal, soft-light, soft-light, normal;
   padding-block: clamp(144px, 20vh, 240px);
   isolation: isolate;
+}
+
+.uni-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/img/university/pillars.svg');
+  background-repeat: repeat-x;
+  background-size: auto var(--uni-pillar-height);
+  background-position: top center;
+  opacity: var(--uni-pillar-opacity);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .uni-page::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0) 36%);
+  background: linear-gradient(180deg, rgba(214, 227, 240, 0.16) 0%, rgba(199, 215, 228, 0.08) 32%, rgba(188, 210, 224, 0) 72%);
+  mix-blend-mode: soft-light;
   pointer-events: none;
-  z-index: -1;
+  z-index: 1;
 }
 
 .uni-hero-overlay {
@@ -96,6 +119,7 @@ body.uni-bg > .skip-link:focus {
 @media (max-width: 1024px) {
   .uni-page {
     --uni-pillar-height: 28vh;
+    --uni-pillar-opacity: 0.05;
     --uni-grain-a-size: 200px;
     --uni-grain-b-size: 140px;
     padding-block: clamp(128px, 24vh, 200px);
@@ -105,6 +129,7 @@ body.uni-bg > .skip-link:focus {
 @media (max-width: 720px) {
   .uni-page {
     --uni-pillar-height: 24vh;
+    --uni-pillar-opacity: 0.042;
     --uni-grain-a-size: 180px;
     --uni-grain-b-size: 120px;
     padding-block: clamp(116px, 28vh, 180px);
@@ -114,6 +139,7 @@ body.uni-bg > .skip-link:focus {
 @media (max-width: 480px) {
   .uni-page {
     --uni-pillar-height: 20vh;
+    --uni-pillar-opacity: 0.038;
     --uni-grain-a-size: 160px;
     --uni-grain-b-size: 110px;
     padding-block: clamp(104px, 30vh, 168px);
@@ -123,7 +149,13 @@ body.uni-bg > .skip-link:focus {
 @media (min-width: 1360px) {
   .uni-page {
     --uni-pillar-height: 34vh;
+    --uni-pillar-opacity: 0.058;
     --uni-grain-a-size: 240px;
     --uni-grain-b-size: 180px;
   }
+}
+
+body.uni-bg #site-nav,
+body.uni-bg #global-nav {
+  box-shadow: 0 1px 0 rgba(10, 22, 34, 0.32);
 }
