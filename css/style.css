@@ -1321,18 +1321,21 @@ body.planted-active #cycling-coach .cc-title__leaf {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
+  min-width: 44px;
+  min-height: 44px;
   margin: 0;
   color: #fff;
   text-decoration: none;
-  transition: color .2s ease, transform .2s ease;
+  border-radius: 50%;
+  transition: color .18s ease, transform .18s ease;
 }
 
 .site-footer .community-links a:hover,
-.site-footer .community-links a:focus,
+.site-footer .community-links a:focus-visible,
 .site-footer .social-strip a:hover,
-.site-footer .social-strip a:focus {
+.site-footer .social-strip a:focus-visible {
   color: #1e90ff;
   transform: translateY(-1px);
   outline: none;
@@ -1340,9 +1343,8 @@ body.planted-active #cycling-coach .cc-title__leaf {
 
 .site-footer .community-links a:focus-visible,
 .site-footer .social-strip a:focus-visible {
-  outline: 2px solid rgba(30, 144, 255, .8);
+  outline: 3px solid rgba(30, 144, 255, .85);
   outline-offset: 4px;
-  border-radius: 50%;
 }
 
 .site-footer .community-links svg,
@@ -1350,7 +1352,30 @@ body.planted-active #cycling-coach .cc-title__leaf {
   width: 28px;
   height: 28px;
   fill: currentColor;
+  stroke: currentColor;
   shape-rendering: geometricPrecision;
+}
+
+@media (min-width: 600px) {
+  .site-footer .community-links svg,
+  .site-footer .social-strip svg {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-footer .community-links a,
+  .site-footer .social-strip a {
+    transition: color .18s ease;
+  }
+
+  .site-footer .community-links a:hover,
+  .site-footer .community-links a:focus-visible,
+  .site-footer .social-strip a:hover,
+  .site-footer .social-strip a:focus-visible {
+    transform: none;
+  }
 }
 
 .footer-links {
