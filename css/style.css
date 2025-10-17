@@ -1294,86 +1294,75 @@ body.planted-active #cycling-coach .cc-title__leaf {
 }
 
 .site-footer {
-  text-align: center;
-  padding: 20px;
   background: #111;
   color: #fff;
   font-size: .9rem;
+  padding: 20px;
+  text-align: center;
 }
 
 .site-footer .community-links,
 .site-footer .social-strip {
+  align-items: center;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
   gap: 18px;
-  row-gap: 10px;
+  justify-content: center;
+  margin: 0 0 16px;
   text-align: center;
-}
-
-.site-footer .community-links {
-  margin-bottom: 16px;
 }
 
 .site-footer .community-links a,
 .site-footer .social-strip a {
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  min-width: 44px;
-  min-height: 44px;
-  margin: 0;
   color: #fff;
+  display: inline-flex;
+  height: 48px;
+  justify-content: center;
   text-decoration: none;
-  border-radius: 50%;
-  transition: color .18s ease, transform .18s ease;
+  transition: color .25s ease, transform .15s ease;
+  width: 48px;
 }
 
 .site-footer .community-links a:hover,
-.site-footer .community-links a:focus-visible,
-.site-footer .social-strip a:hover,
-.site-footer .social-strip a:focus-visible {
+.site-footer .social-strip a:hover {
   color: #1e90ff;
   transform: translateY(-1px);
-  outline: none;
 }
 
 .site-footer .community-links a:focus-visible,
 .site-footer .social-strip a:focus-visible {
-  outline: 3px solid rgba(30, 144, 255, .85);
-  outline-offset: 4px;
+  border-radius: 8px;
+  outline: 2px solid #1e90ff;
+  outline-offset: 2px;
 }
 
-.site-footer .community-links svg,
-.site-footer .social-strip svg {
-  width: 28px;
-  height: 28px;
-  fill: currentColor;
-  stroke: currentColor;
-  shape-rendering: geometricPrecision;
+.site-footer .community-links i,
+.site-footer .social-strip i {
+  font-size: 30px;
+  line-height: 1;
 }
 
-@media (min-width: 600px) {
-  .site-footer .community-links svg,
-  .site-footer .social-strip svg {
-    width: 30px;
-    height: 30px;
+@media (max-width: 480px) {
+  .site-footer .community-links,
+  .site-footer .social-strip {
+    gap: 16px;
+  }
+
+  .site-footer .community-links i,
+  .site-footer .social-strip i {
+    font-size: 28px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .site-footer .community-links a,
   .site-footer .social-strip a {
-    transition: color .18s ease;
+    transition: none;
   }
 
   .site-footer .community-links a:hover,
-  .site-footer .community-links a:focus-visible,
-  .site-footer .social-strip a:hover,
-  .site-footer .social-strip a:focus-visible {
+  .site-footer .social-strip a:hover {
     transform: none;
   }
 }
