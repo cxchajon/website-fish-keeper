@@ -1345,6 +1345,23 @@ body.planted-active #cycling-coach .cc-title__leaf {
   fill: currentColor;
 }
 
+.site-footer .social-strip .x-icon {
+  color: #fff;
+  width: 48px;
+  height: 48px;
+  transition: color .3s ease, transform .15s ease;
+}
+
+.site-footer .social-strip .x-icon:hover,
+.site-footer .social-strip .x-icon:focus-visible {
+  color: #1da1f2;
+}
+
+.site-footer .social-strip .x-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
 @media (max-width: 480px) {
   .site-footer .community-links,
   .site-footer .social-strip {
