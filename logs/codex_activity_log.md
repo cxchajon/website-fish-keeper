@@ -32,3 +32,6 @@ Next: Consider optional hotlink protection under Cloudflare Scrape Shield.
 [2025-10-17 | Media Route | Manual verification override]
 Scope: Revalidated /media.html after Envoy 403s; confirmed Cloudflare CSP + WAF bypass for browsers/crawlers.
 Result: Live traffic returns 200 with functioning YouTube embeds; curl-based probes intentionally blocked at edge (documented as non-issue).
+[2025-10-18 | University | Hybrid parchment→aqua backdrop + watermark]
+Scope: New /university/ page scaffold, parchment-to-aqua gradient, procedural grain, responsive pillars SVG, hero overlay, AA checks.
+Result: Decorative background stays under perf budgets (<4KB CSS & SVG), hero overlay keeps text ≥4.5:1 contrast, responsive pillars soften on mobile.
