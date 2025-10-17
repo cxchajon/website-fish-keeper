@@ -948,5 +948,26 @@
 <script src="/js/ad-slot-view-tracking.js"></script>
 <!-- === TTG Ad Slot View Tracking END === -->
 
+<script>
+  document.addEventListener(
+    'click',
+    function (e) {
+      const a = e.target.closest('a.book');
+      if (a) {
+        if (e.defaultPrevented) {
+          window.location.href = a.href;
+          return;
+        }
+        if ('ontouchstart' in window) {
+          setTimeout(() => {
+            if (!a.matches(':focus')) window.location.href = a.href;
+          }, 0);
+        }
+      }
+    },
+    { passive: true }
+  );
+</script>
+
 </body>
 </html>
