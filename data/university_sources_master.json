@@ -1,0 +1,129 @@
+{
+  "subjects": [
+    {
+      "id": "water-chemistry",
+      "title": "Water Chemistry",
+      "blurb": "Understanding pH, KH (buffering/alkalinity), and GH for stable freshwater systems.",
+      "universities": [
+        {
+          "name": "Duke University",
+          "articles": [
+            {
+              "title": "What do you need to know about water chemistry and why?",
+              "url": "https://users.cs.duke.edu/~narten/faq/chemistry.html",
+              "summary": "Defines pH, KH/alkalinity, GH and their relationships; emphasizes stability and safe ranges."
+            }
+          ]
+        },
+        {
+          "name": "University of Florida (UF/IFAS Extension)",
+          "articles": [
+            {
+              "title": "Ammonia in Aquatic Systems",
+              "url": "https://edis.ifas.ufl.edu/publication/FA031",
+              "summary": "Explains ammonia sources, nitrification, and practical management in closed systems."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "filtration",
+      "title": "Filtration",
+      "blurb": "Mechanical, biological, and chemical filtration — with biological as the foundation.",
+      "universities": [
+        {
+          "name": "Duke University",
+          "articles": [
+            {
+              "title": "Filters (What do you need to know about tank hardware and why?)",
+              "url": "https://users.cs.duke.edu/~narten/faq/hardware.html",
+              "summary": "Differentiates filtration types and the typical media sequence; cautions on chemical media."
+            }
+          ]
+        },
+        {
+          "name": "Iowa State University Extension",
+          "articles": [
+            {
+              "title": "Freshwater Aquarium Management (PM 1352L)",
+              "url": "https://www.extension.iastate.edu/fisheries/PM1352L.pdf",
+              "summary": "Overview of filter types, startup, and maintenance in freshwater aquariums."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "husbandry",
+      "title": "Fish Care & Maintenance",
+      "blurb": "Responsible setup, cycling, stocking, and daily/weekly routines.",
+      "universities": [
+        {
+          "name": "Penn State University",
+          "articles": [
+            {
+              "title": "Freshwater Aquarium Lesson Plan (Methods)",
+              "url": "https://ecosystems.psu.edu/outreach/youth/sftrc/lesson-plans/water/k-5/freshwater-aquarium",
+              "summary": "Stepwise setup, staged stocking for cycling, and logging for ongoing care."
+            }
+          ]
+        },
+        {
+          "name": "Ohio State University",
+          "articles": [
+            {
+              "title": "Fish Basics (4-H Pets4Life)",
+              "url": "https://ohio4h.org/sites/ohio4h/files/imce/animal_science/pets/FishBasics.pdf",
+              "summary": "Tank size/equipment basics, testing, compatibility, and routine maintenance."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "biosecurity",
+      "title": "Health & Biosecurity",
+      "blurb": "Preventing disease spread via reservoirs, vectors, and fomites; disinfection protocols.",
+      "universities": [
+        {
+          "name": "University of Florida (UF/IFAS Extension)",
+          "articles": [
+            {
+              "title": "Health Management in Aquaculture",
+              "url": "https://edis.ifas.ufl.edu/publication/FA100",
+              "summary": "Biosecurity standards, disinfection approaches, and operational hygiene."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "plants",
+      "title": "Aquascaping & Aquatic Plants",
+      "blurb": "Plant categories (submerged, emergent, floating), sourcing, and maintenance.",
+      "universities": [
+        {
+          "name": "Southern Illinois University",
+          "articles": [
+            {
+              "title": "Aquatic Plants Overview",
+              "url": "https://plantbiology.siu.edu/greenhouse/education/aquatic-plants.php",
+              "summary": "Botanical overview of common aquarium plant types and examples."
+            }
+          ]
+        },
+        {
+          "name": "University of Florida (Lakewatch/IFAS)",
+          "articles": [
+            {
+              "title": "AQUASCAPING: PLANTING AND MAINTENANCE (Circular 912 referenced)",
+              "url": "https://lakewatch.ifas.ufl.edu/media/lakewatchifasufledu/extension/newsletter/FLWNewsletterVol91997.pdf",
+              "summary": "Notes on planting/maintenance; ecological responsibility and native species use."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
