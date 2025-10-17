@@ -1308,9 +1308,10 @@ body.planted-active #cycling-coach .cc-title__leaf {
 .social-strip a {
   display: inline-block;
   margin: 0 8px;
+  padding: 10px;
   color: #fff;
   font-size: 1.4rem;
-  transition: color .3s, transform .15s ease-out;
+  transition: color .3s, transform .15s;
 }
 
 .social-strip a:hover {

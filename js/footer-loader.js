@@ -3,7 +3,7 @@
 
   const getFooterSource = (host) => {
     const { footerSrc } = host.dataset;
-    return footerSrc && footerSrc.trim().length > 0 ? footerSrc : '/footer.html?v=1.3.5';
+    return footerSrc && footerSrc.trim().length > 0 ? footerSrc : '/footer.html?v=1.3.6';
   };
 
   const sanitizeHtml = (html) => html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
@@ -17,7 +17,7 @@
     const src = getFooterSource(host);
 
     try {
-      const response = await fetch(src, { cache: 'no-cache' });
+      const response = await fetch(src, { cache: 'no-store' });
       if (!response.ok) {
         throw new Error(`Failed to load footer: ${response.status}`);
       }
