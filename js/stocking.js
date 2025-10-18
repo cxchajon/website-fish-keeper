@@ -2012,7 +2012,7 @@ bootstrapStocking();
       if (raf) return;
       raf = requestAnimationFrame(()=>{
         raf = 0;
-        const tipOpen = !!document.querySelector('.ui-tip[data-role="info-tip"]:not([hidden])');
+        const tipOpen = !!document.querySelector('.ttg-tooltip[data-tooltip-panel]:not([hidden])');
         const legacyPopOpen = !!document.querySelector('.ttg-popover.is-open');
         const expanded = bioAgg.querySelector('[aria-expanded="true"]');
         const shouldExpand = tipOpen || legacyPopOpen || !!expanded;

@@ -892,7 +892,7 @@
       button.insertAdjacentElement('afterend', tip);
     }
 
-    button.setAttribute('data-info-id', tip.id);
+    button.setAttribute('data-tooltip-id', tip.id);
     button.setAttribute('aria-controls', tip.id);
     button.setAttribute('aria-expanded', 'false');
     button.setAttribute('aria-describedby', tip.id);

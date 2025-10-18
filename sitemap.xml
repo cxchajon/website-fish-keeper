@@ -7,12 +7,12 @@
   </url>
   <url>
     <loc>https://thetankguide.com/stocking.html</loc>
-    <lastmod>2025-10-17</lastmod>
+    <lastmod>2025-10-18</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://thetankguide.com/params.html</loc>
-    <lastmod>2025-10-17</lastmod>
+    <lastmod>2025-10-18</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
@@ -22,7 +22,7 @@
   </url>
   <url>
     <loc>https://thetankguide.com/media.html</loc>
-    <lastmod>2025-10-17</lastmod>
+    <lastmod>2025-10-18</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
@@ -56,11 +56,6 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://thetankguide.com/copyright.html</loc>
-    <lastmod>2025-10-17</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://thetankguide.com/copyright-dmca.html</loc>
     <lastmod>2025-10-17</lastmod>
     <changefreq>weekly</changefreq>
@@ -88,6 +83,11 @@
   <url>
     <loc>https://thetankguide.com/blogs/blackbeard/</loc>
     <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://thetankguide.com/pages/university.html</loc>
+    <lastmod>2025-10-18</lastmod>
     <changefreq>weekly</changefreq>
   </url>
 </urlset>

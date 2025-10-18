@@ -10,6 +10,7 @@
   />
   <link rel="canonical" href="https://thetankguide.com/params.html">
   <link rel="stylesheet" href="css/style.css?v=1.0.9" />
+  <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
   <link rel="icon" href="/favicon.ico" />
   <script defer src="js/nav.js?v=1.1.0"></script>
   <style>
@@ -151,13 +152,13 @@
       transform: translateY(-1px);
     }
 
-    .info-btn + .ui-tip {
+    .info-btn + .ttg-tooltip {
       opacity: 0;
       transform: translateY(-4px);
       transition: opacity 140ms ease, transform 140ms ease;
     }
 
-    .info-btn.is-open + .ui-tip {
+    .info-btn.is-open + .ttg-tooltip {
       opacity: 1;
       transform: translateY(0);
     }
@@ -563,37 +564,37 @@
             <div class="field">
               <div class="label-row">
                 <label for="ammonia">Ammonia (NH₃/NH₄⁺)</label>
-                <button type="button" class="tt-trigger" aria-label="More info about Ammonia" aria-expanded="false" aria-controls="tt-ammonia" data-testid="info-ammonia">i</button>
+                <button type="button" class="info-btn ttg-tooltip-trigger" aria-label="More info about Ammonia" aria-expanded="false" data-tooltip-id="tt-ammonia" aria-controls="tt-ammonia" data-testid="info-ammonia">i</button>
               </div>
               <input type="number" id="ammonia" name="ammonia" step="0.01" min="0" inputmode="decimal" data-testid="ammonia" />
-              <div id="tt-ammonia" class="tt" role="tooltip" hidden>Waste from fish/food. Even tiny amounts are toxic.</div>
+              <div id="tt-ammonia" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Waste from fish/food. Even tiny amounts are toxic.</div>
             </div>
             <div class="field">
               <div class="label-row">
                 <label for="nitrite">Nitrite (NO₂⁻)</label>
-                <button type="button" class="tt-trigger" aria-label="More info about Nitrite" aria-expanded="false" aria-controls="tt-nitrite" data-testid="info-nitrite">i</button>
+                <button type="button" class="info-btn ttg-tooltip-trigger" aria-label="More info about Nitrite" aria-expanded="false" data-tooltip-id="tt-nitrite" aria-controls="tt-nitrite" data-testid="info-nitrite">i</button>
               </div>
               <input type="number" id="nitrite" name="nitrite" step="0.01" min="0" inputmode="decimal" data-testid="nitrite" />
-              <div id="tt-nitrite" class="tt" role="tooltip" hidden>Mid-stage of the cycle; also toxic.</div>
+              <div id="tt-nitrite" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Mid-stage of the cycle; also toxic.</div>
             </div>
             <div class="field">
               <div class="label-row">
                 <label for="nitrate">Nitrate (NO₃⁻)</label>
-                <button type="button" class="tt-trigger" aria-label="More info about Nitrate" aria-expanded="false" aria-controls="tt-nitrate" data-testid="info-nitrate">i</button>
+                <button type="button" class="info-btn ttg-tooltip-trigger" aria-label="More info about Nitrate" aria-expanded="false" data-tooltip-id="tt-nitrate" aria-controls="tt-nitrate" data-testid="info-nitrate">i</button>
               </div>
               <input type="number" id="nitrate" name="nitrate" step="0.1" min="0" inputmode="decimal" data-testid="nitrate" />
-              <div id="tt-nitrate" class="tt" role="tooltip" hidden>End product; safer but must be controlled with water changes.</div>
+              <div id="tt-nitrate" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>End product; safer but must be controlled with water changes.</div>
             </div>
             <div class="field">
               <div class="label-row">
                 <label for="cycle-method">Cycle Method</label>
-                <button type="button" class="tt-trigger" aria-label="More info about Cycle Method" aria-expanded="false" aria-controls="tt-method" data-testid="info-cycle-method">i</button>
+                <button type="button" class="info-btn ttg-tooltip-trigger" aria-label="More info about Cycle Method" aria-expanded="false" data-tooltip-id="tt-method" aria-controls="tt-method" data-testid="info-cycle-method">i</button>
               </div>
               <select id="cycle-method" name="cycle-method">
                 <option value="fishless" selected>Fishless</option>
                 <option value="fish-in">Fish-in</option>
               </select>
-              <div id="tt-method" class="tt" role="tooltip" hidden>Fishless equals adding ammonia without fish. Fish-in means cycling with fish and requires extra care.</div>
+              <div id="tt-method" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Fishless equals adding ammonia without fish. Fish-in means cycling with fish and requires extra care.</div>
             </div>
             <div id="planted-row" class="planted-row">
               <label class="planted-checkbox">
@@ -614,9 +615,9 @@
         <div class="card__header">
           <div class="status-label">
             <h2 class="card__title" id="results-heading">Results</h2>
-            <button type="button" class="tt-trigger" aria-label="More info about Results status" aria-expanded="false" aria-controls="tt-status" data-testid="info-status">i</button>
+            <button type="button" class="info-btn ttg-tooltip-trigger" aria-label="More info about Results status" aria-expanded="false" data-tooltip-id="tt-status" aria-controls="tt-status" data-testid="info-status">i</button>
           </div>
-          <div id="tt-status" class="tt" role="tooltip" hidden>High-level snapshot of where your tank stands.</div>
+          <div id="tt-status" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>High-level snapshot of where your tank stands.</div>
         </div>
         <div class="status-row" aria-live="polite" data-testid="result-status">
           <span class="status-badge" id="status-badge">⚪ Incomplete</span>
@@ -625,9 +626,9 @@
         <div class="actions-block" id="actions-block" hidden data-testid="result-actions">
           <header>
             <span>Action steps</span>
-            <button type="button" class="tt-trigger" aria-label="More info about Action steps" aria-expanded="false" aria-controls="tt-actions" data-testid="info-actions">i</button>
+            <button type="button" class="info-btn ttg-tooltip-trigger" aria-label="More info about Action steps" aria-expanded="false" data-tooltip-id="tt-actions" aria-controls="tt-actions" data-testid="info-actions">i</button>
           </header>
-          <div id="tt-actions" class="tt" role="tooltip" hidden>Quick, practical steps based on your readings.</div>
+          <div id="tt-actions" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Quick, practical steps based on your readings.</div>
           <ul class="actions-list" id="actions-list"></ul>
         </div>
       </section>
@@ -648,8 +649,8 @@
       <section class="card" id="challengeCard" aria-labelledby="challenge-heading" hidden>
         <div class="card__header">
           <h2 class="card__title" id="challenge-heading">24-Hour Challenge</h2>
-          <button type="button" class="tt-trigger" aria-label="More info about the Challenge" aria-expanded="false" aria-controls="tt-challenge" data-testid="info-challenge">i</button>
-          <div id="tt-challenge" class="tt" role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
+          <button type="button" class="info-btn ttg-tooltip-trigger" aria-label="More info about the Challenge" aria-expanded="false" data-tooltip-id="tt-challenge" aria-controls="tt-challenge" data-testid="info-challenge">i</button>
+          <div id="tt-challenge" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
         </div>
         <div class="challenge-card">
           <p class="challenge-instructions" id="challengeInstruction">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
@@ -671,9 +672,9 @@
           <div class="actions-block" id="challenge-results" hidden>
             <header>
               <span>Challenge test</span>
-              <button type="button" class="tt-trigger" aria-label="More info about the Challenge test" aria-expanded="false" aria-controls="tt-challenge-inline" data-testid="info-challenge-inline">i</button>
+              <button type="button" class="info-btn ttg-tooltip-trigger" aria-label="More info about the Challenge test" aria-expanded="false" data-tooltip-id="tt-challenge-inline" aria-controls="tt-challenge-inline" data-testid="info-challenge-inline">i</button>
             </header>
-            <div id="tt-challenge-inline" class="tt" role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
+            <div id="tt-challenge-inline" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
             <ul class="actions-list" id="challenge-list"></ul>
           </div>
         </div>
@@ -699,8 +700,8 @@
             <span>Estimated toxic NH₃:</span>
             <span class="value" id="nh3-value">—</span>
             <span class="nh3-badge" id="nh3-badge" hidden>⚠️ Caution</span>
-            <button type="button" class="tt-trigger" aria-label="More info about toxic NH3 estimate" aria-expanded="false" aria-controls="tt-advanced" data-testid="info-advanced">i</button>
-            <div id="tt-advanced" class="tt" role="tooltip" hidden>Test kits read TAN, which is NH3 plus NH4. Only NH3 is toxic and increases with pH and temperature.</div>
+            <button type="button" class="info-btn ttg-tooltip-trigger" aria-label="More info about toxic NH3 estimate" aria-expanded="false" data-tooltip-id="tt-advanced" aria-controls="tt-advanced" data-testid="info-advanced">i</button>
+            <div id="tt-advanced" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Test kits read TAN, which is NH3 plus NH4. Only NH3 is toxic and increases with pH and temperature.</div>
           </div>
           <p class="advanced-note"><a href="/media.html" target="_blank" rel="noopener">See Media page for Sources &amp; Further Reading.</a></p>
         </div>

@@ -13,12 +13,6 @@ body.uni-bg {
   background-color: #dfe5ed;
 }
 
-body.uni-bg *,
-body.uni-bg *::before,
-body.uni-bg *::after {
-  box-sizing: border-box;
-}
-
 body.uni-bg > .skip-link {
   position: absolute;
   top: 10px;

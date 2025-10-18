@@ -18,6 +18,7 @@
   <meta name="twitter:image" content="https://thetankguide.com/logo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" id="css-main" href="css/style.css?v=2024-06-05a" />
+  <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
   <link rel="stylesheet" href="css/site.css?v=1.4.5" />
   <link rel="stylesheet" href="css/ui.css?v=2024-09-15" />
   <link rel="icon" href="/favicon.ico" />
@@ -1009,15 +1010,15 @@
             <div class="toggle-label">
               <label class="toggle-title" for="stocking-planted">Planted</label>
               <button type="button"
-                class="icon-button info info-btn"
+                class="icon-button info info-btn ttg-tooltip-trigger"
                 data-role="info-btn"
-                data-info-id="planted-tip"
+                data-tooltip-id="planted-tip"
                 aria-expanded="false"
                 aria-controls="planted-tip"
                 aria-describedby="planted-tip"
                 title="More info">i</button>
               <div id="planted-tip"
-                class="ui-tip"
+                class="ttg-tooltip" data-tooltip-panel
                 data-role="info-tip"
                 role="tooltip"
                 hidden>
@@ -1316,10 +1317,10 @@
             <h2 class="card-title">Environmental Recommendations</h2>
             <button
               type="button"
-              class="icon-button info info-btn"
+              class="icon-button info info-btn ttg-tooltip-trigger"
               id="env-info-btn"
               data-role="info-btn"
-              data-info-id="env-info-tip"
+              data-tooltip-id="env-info-tip"
               aria-expanded="false"
               aria-controls="env-info-tip"
               aria-describedby="env-info-tip"
@@ -1328,7 +1329,7 @@
             >i</button>
             <div
               id="env-info-tip"
-              class="ui-tip"
+              class="ttg-tooltip" data-tooltip-panel
               data-role="env-info-tip"
               role="tooltip"
               hidden
@@ -1400,10 +1401,10 @@
         </div>
       </section>
 
-      <div id="bioload-tip" class="ui-tip" data-role="info-tip" role="tooltip" hidden>
+      <div id="bioload-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden>
         Approximate stocking level for your tank size. Stay in green for better stability.
       </div>
-      <div id="aggression-tip" class="ui-tip" data-role="info-tip" role="tooltip" hidden>
+      <div id="aggression-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden>
         Estimated compatibility risk. Adding aggressive or territorial species will raise this.
       </div>
 

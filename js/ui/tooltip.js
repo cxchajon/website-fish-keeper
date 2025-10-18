@@ -1,10 +1,120 @@
-const INFO_TRIGGER_SELECTOR = '[data-info-id]';
+const TOOLTIP_TRIGGER_SELECTOR = '[data-tooltip-id], [data-info-id], [data-tooltip], [data-tooltip-text], [data-tt]';
 const BOUND_FLAG = 'ttgTooltipBound';
+const DEFAULT_INLINE_CLASS = 'ttg-tooltip';
 const GAP = 10;
 const MARGIN = 8;
 const OUTSIDE_EVENTS = ['pointerdown', 'mousedown', 'touchstart'];
 
 let activeState = null;
+
+function getDocument(scope) {
+  if (scope instanceof Document) {
+    return scope;
+  }
+  if (scope && scope.ownerDocument) {
+    return scope.ownerDocument;
+  }
+  return document;
+}
+
+function createInlineTooltip(doc, id, text) {
+  const tip = doc.createElement('div');
+  tip.id = id;
+  tip.className = DEFAULT_INLINE_CLASS;
+  tip.setAttribute('role', 'tooltip');
+  tip.setAttribute('data-tooltip-panel', 'inline');
+  tip.hidden = true;
+  tip.textContent = text;
+  (doc.body || document.body).appendChild(tip);
+  return tip;
+}
+
+function normalizeTooltipElement(trigger, tip) {
+  if (!(tip instanceof HTMLElement)) {
+    return tip;
+  }
+  if (tip.classList.contains('tt')) {
+    tip.classList.remove('tt');
+  }
+  if (tip.classList.contains('ui-tip')) {
+    tip.classList.remove('ui-tip');
+  }
+  if (!tip.hasAttribute('data-tooltip-panel')) {
+    tip.setAttribute('data-tooltip-panel', 'inline');
+  }
+  const typeHint = (trigger.dataset.tooltipType || tip.dataset.tooltipType || '').toLowerCase();
+  const role = (tip.getAttribute('role') || '').toLowerCase();
+  if (typeHint !== 'dialog' && role !== 'dialog' && !tip.classList.contains(DEFAULT_INLINE_CLASS)) {
+    tip.classList.add(DEFAULT_INLINE_CLASS);
+  }
+  return tip;
+}
+
+function resolveTooltip(trigger, scope) {
+  const doc = getDocument(scope);
+  let tipId = trigger.dataset.tooltipId || trigger.dataset.infoId || trigger.getAttribute('aria-controls');
+  if (!tipId) {
+    const base = trigger.id ? `${trigger.id}-tip` : `ttg-tip-${Math.random().toString(36).slice(2, 9)}`;
+    tipId = base;
+    trigger.dataset.tooltipId = tipId;
+  }
+  let tip = doc.getElementById(tipId);
+  if (!tip) {
+    const text = trigger.dataset.tooltip || trigger.dataset.tooltipText || trigger.dataset.tt || trigger.getAttribute('data-tt');
+    if (!text) {
+      return null;
+    }
+    tip = createInlineTooltip(doc, tipId, text);
+  }
+  if (!tip.id) {
+    tip.id = tipId;
+  }
+  normalizeTooltipElement(trigger, tip);
+  trigger.dataset.tooltipId = tip.id;
+  trigger.dataset.infoId = tip.id;
+  return tip;
+}
+
+function collectInertTargets(tip) {
+  const records = [];
+  const doc = getDocument(tip);
+  const explicit = Array.from(doc.querySelectorAll('[data-tooltip-inert-target]'));
+  const targets = explicit.length ? explicit : Array.from((doc.body || document.body).children);
+  targets.forEach((el) => {
+    if (!(el instanceof HTMLElement)) {
+      return;
+    }
+    if (el === tip || el.contains(tip) || tip.contains(el)) {
+      return;
+    }
+    const record = { element: el, wasInert: !!el.inert, ariaHidden: el.getAttribute('aria-hidden') };
+    if (!record.wasInert && 'inert' in el) {
+      el.inert = true;
+    }
+    if (record.ariaHidden == null) {
+      el.setAttribute('aria-hidden', 'true');
+    }
+    records.push(record);
+  });
+  return records;
+}
+
+function releaseInertTargets(records = []) {
+  records.forEach((record) => {
+    const { element, wasInert, ariaHidden } = record;
+    if (!(element instanceof HTMLElement)) {
+      return;
+    }
+    if (!wasInert && 'inert' in element) {
+      element.inert = false;
+    }
+    if (ariaHidden == null) {
+      element.removeAttribute('aria-hidden');
+    } else {
+      element.setAttribute('aria-hidden', ariaHidden);
+    }
+  });
+}
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -111,7 +221,7 @@ function closeActive(options = {}) {
   const state = activeState;
   activeState = null;
 
-  const { trigger, tip, type, focusTrap, outsideHandler, keyHandler, viewport } = state;
+  const { trigger, tip, type, focusTrap, outsideHandler, keyHandler, viewport, inertRecords } = state;
 
   OUTSIDE_EVENTS.forEach((evt) => document.removeEventListener(evt, outsideHandler, true));
   document.removeEventListener('keydown', keyHandler, true);
@@ -137,6 +247,7 @@ function closeActive(options = {}) {
   if (type === 'dialog') {
     document.documentElement.classList.remove('ttg-tooltip-lock');
     document.body.classList.remove('ttg-tooltip-lock');
+    releaseInertTargets(inertRecords);
   }
 
   if (restoreFocus && state.lastFocus && typeof state.lastFocus.focus === 'function') {
@@ -251,6 +362,7 @@ function openTooltip(state) {
   if (type === 'dialog') {
     document.documentElement.classList.add('ttg-tooltip-lock');
     document.body.classList.add('ttg-tooltip-lock');
+    state.inertRecords = collectInertTargets(tip);
     focusTrap = trapFocusFactory(tip);
     tip.addEventListener('keydown', focusTrap);
     const focusable = getFocusableElements(tip);
@@ -327,6 +439,7 @@ function prepareTrigger(trigger, tip) {
     windowHandler: null,
     viewport: null,
     viewportHandler: null,
+    inertRecords: null,
   };
 
   trigger.addEventListener('click', (event) => {
@@ -360,7 +473,7 @@ function prepareTrigger(trigger, tip) {
 
 export function initInfoTooltips(root = document) {
   const scope = root instanceof Document ? root : (root?.ownerDocument || document);
-  const triggers = Array.from(scope.querySelectorAll(INFO_TRIGGER_SELECTOR));
+  const triggers = Array.from(scope.querySelectorAll(TOOLTIP_TRIGGER_SELECTOR));
   triggers.forEach((trigger) => {
     if (!(trigger instanceof HTMLElement)) {
       return;
@@ -368,16 +481,9 @@ export function initInfoTooltips(root = document) {
     if (trigger.dataset[BOUND_FLAG] === '1') {
       return;
     }
-    const tipId = trigger.dataset.infoId || trigger.getAttribute('data-info-id');
-    if (!tipId) {
-      return;
-    }
-    const tip = scope.getElementById ? scope.getElementById(tipId) : document.getElementById(tipId);
+    const tip = resolveTooltip(trigger, scope);
     if (!tip) {
       return;
-    }
-    if (!tip.id) {
-      tip.id = tipId;
     }
     prepareTrigger(trigger, tip);
   });
