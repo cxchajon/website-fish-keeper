@@ -50,3 +50,6 @@ Next: fine-tune spacing & line density if needed.
 [2025-10-18 | Journal | Red margin reposition]
 Scope: moved margin closer to left edge to improve vertical comfort.
 Result: widened writing area; preserved layout stability.
+[2025-10-19 | Journal | Handwritten typography]
+Scope: applied Patrick Hand (400/600), scoped styling, tuned hierarchy and spacing.
+Result: handwritten look live on /journal.html.
