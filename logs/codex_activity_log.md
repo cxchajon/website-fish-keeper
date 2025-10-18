@@ -61,3 +61,4 @@ Result: handwritten rendering live.
 
 [2025-10-18 | Journal | Header + Grouping update] Scope: new subtitle, daily grouping, removed Quick Facts label, verified legal-pad visuals.
 Result: journal live (unlinked).
+[2025-10-20 | Journal | Meta Description (A)] Scope: Added SEO-optimized Discovery meta tag to /journal.html; verified canonical and tag hierarchy.
