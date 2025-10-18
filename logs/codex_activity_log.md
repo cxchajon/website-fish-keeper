@@ -53,3 +53,6 @@ Result: widened writing area; preserved layout stability.
 [2025-10-19 | Journal | Handwritten typography]
 Scope: applied Patrick Hand (400/600), scoped styling, tuned hierarchy and spacing.
 Result: handwritten look live on /journal.html.
+[2025-10-20 | Journal | Handwritten font fix]
+Scope: load + scope Patrick Hand (400/600), CSP allowances, verified across sections.
+Result: handwritten rendering live.
