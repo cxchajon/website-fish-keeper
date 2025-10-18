@@ -24,9 +24,27 @@
       <path d="M21.7 7.3a2.5 2.5 0 00-1.7-1.8C18.3 5 12 5 12 5S5.7 5 4 5.5A2.5 2.5 0 002.3 7.3 26 26 0 002 12a26 26 0 00.3 4.7 2.5 2.5 0 001.7 1.8C5.7 19 12 19 12 19s6.3 0 7.9-.5a2.5 2.5 0 001.7-1.8A26 26 0 0022 12a26 26 0 00-.3-4.7zM10 9.8l5.6 2.2L10 14.2V9.8z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
     </symbol>
     <symbol id="am" viewBox="0 0 24 24">
-      <path d="M12 3c2.6 0 4.7 1.7 4.7 4.6V15h-3v-1.3c-.6.9-1.5 1.6-2.8 1.6a3.8 3.8 0 010-7.6c.9 0 1.7.3 2.3.7V7.4c0-1.4-.8-2.2-2-2.2-.9 0-1.8.5-2.8 1.2l-1-2A6.7 6.7 0 0112 3z" fill="currentColor"/>
-      <path d="M4.8 16.2c2.2 1.7 5 2.8 7.7 2.8s5.5-1 7.7-2.8l.8 1.8a15 15 0 01-9 .9 15 15 0 01-8.5-2.7z" fill="currentColor"/>
-      <path d="M16.8 15.5l3.2 1-1 3.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path
+        d="M15.4 9.7c0-2.3-1.5-3.6-3.6-3.6-1.6 0-2.8.6-3.6 1.7l1.4 1.4c.6-.7 1.2-1.1 1.9-1.1 1 0 1.6.6 1.6 1.7v.6h-.5c-2.9 0-4.7 1.1-4.7 3.1 0 1.6 1.2 2.7 2.8 2.7 1.1 0 2-.4 2.6-1.1v1h2.5zm-2.6 3.9c-.4.7-.9 1-1.5 1s-1-.4-1-.9c0-.9 1-1.3 2.5-1.3h.1z"
+        fill="currentColor"
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+      />
+      <path
+        d="M4.4 17.3c2.1 1.5 4.8 2.4 7.6 2.4 2.9 0 5.5-.9 7.7-2.4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+      />
+      <path
+        d="M15.9 17.4l3.2.9-.9 3.1"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
     </symbol>
   </defs>
 </svg>
