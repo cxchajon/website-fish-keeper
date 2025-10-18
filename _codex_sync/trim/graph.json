@@ -1,0 +1,188 @@
+{
+  "/": {
+    "file": "index.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/",
+    "meta_robots": [],
+    "outlinks": [
+      "/stocking.html",
+      "/gear/",
+      "/params.html",
+      "/media.html",
+      "/about.html",
+      "/contact-feedback.html"
+    ],
+    "inlinks": []
+  },
+  "/stocking.html": {
+    "file": "stocking.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/stocking.html",
+    "meta_robots": [],
+    "outlinks": [
+      "/gear.html"
+    ],
+    "inlinks": [
+      "/"
+    ]
+  },
+  "/gear/": {
+    "file": "gear/index.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/gear/",
+    "meta_robots": [],
+    "outlinks": [
+      "/params.html"
+    ],
+    "inlinks": [
+      "/",
+      "/gear.html"
+    ]
+  },
+  "/params.html": {
+    "file": "params.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/params.html",
+    "meta_robots": [],
+    "outlinks": [
+      "/media.html"
+    ],
+    "inlinks": [
+      "/",
+      "/gear/"
+    ]
+  },
+  "/media.html": {
+    "file": "media.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/media.html",
+    "meta_robots": [],
+    "outlinks": [
+      "/media.html",
+      "/feature-your-tank.html",
+      "/blogs/",
+      "/pages/university.html",
+      "/store.html"
+    ],
+    "inlinks": [
+      "/",
+      "/params.html",
+      "/media.html"
+    ]
+  },
+  "/about.html": {
+    "file": "about.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/about.html",
+    "meta_robots": [],
+    "outlinks": [
+      "/about.html",
+      "/feature-your-tank.html",
+      "/contact-feedback.html"
+    ],
+    "inlinks": [
+      "/",
+      "/about.html"
+    ]
+  },
+  "/contact-feedback.html": {
+    "file": "contact-feedback.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/contact-feedback.html",
+    "meta_robots": [
+      "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    ],
+    "outlinks": [],
+    "inlinks": [
+      "/",
+      "/about.html"
+    ]
+  },
+  "/gear.html": {
+    "file": "gear.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/gear/",
+    "meta_robots": [
+      "noindex, follow"
+    ],
+    "outlinks": [
+      "/gear/"
+    ],
+    "inlinks": [
+      "/stocking.html"
+    ]
+  },
+  "/feature-your-tank.html": {
+    "file": "feature-your-tank.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/feature-your-tank.html",
+    "meta_robots": [],
+    "outlinks": [],
+    "inlinks": [
+      "/media.html",
+      "/about.html"
+    ]
+  },
+  "/blogs/": {
+    "file": "blogs/index.html",
+    "status": 200,
+    "canonical": null,
+    "meta_robots": [],
+    "outlinks": [
+      "/blogs/blackbeard/",
+      "/blogs/purigen/"
+    ],
+    "inlinks": [
+      "/media.html",
+      "/blogs/blackbeard/",
+      "/blogs/purigen/"
+    ]
+  },
+  "/pages/university.html": {
+    "file": "pages/university.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/pages/university.html",
+    "meta_robots": [],
+    "outlinks": [
+      "/pages/university.html"
+    ],
+    "inlinks": [
+      "/media.html",
+      "/pages/university.html"
+    ]
+  },
+  "/store.html": {
+    "file": "store.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/store.html",
+    "meta_robots": [],
+    "outlinks": [],
+    "inlinks": [
+      "/media.html"
+    ]
+  },
+  "/blogs/blackbeard/": {
+    "file": "blogs/blackbeard/index.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/blogs/blackbeard/",
+    "meta_robots": [],
+    "outlinks": [
+      "/blogs/"
+    ],
+    "inlinks": [
+      "/blogs/"
+    ]
+  },
+  "/blogs/purigen/": {
+    "file": "blogs/purigen/index.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/blogs/purigen/",
+    "meta_robots": [],
+    "outlinks": [
+      "/blogs/"
+    ],
+    "inlinks": [
+      "/blogs/"
+    ]
+  }
+}

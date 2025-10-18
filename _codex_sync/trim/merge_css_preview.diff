@@ -1,0 +1,47 @@
+diff --git a/assets/css/theme.css b/assets/css/theme.css
+--- a/assets/css/theme.css
++++ b/assets/css/theme.css
+@@
+-body.theme-media *,
+-body.theme-media *::before,
+-body.theme-media *::after {
+-  box-sizing: border-box;
+-}
++/* TODO: share via utilities.css */
+diff --git a/assets/css/university.css b/assets/css/university.css
+--- a/assets/css/university.css
++++ b/assets/css/university.css
+@@
+-body.uni-bg *,
+-body.uni-bg *::before,
+-body.uni-bg *::after {
+-  box-sizing: border-box;
+-}
++/* TODO: share via utilities.css */
+diff --git a/assets/css/university.page.css b/assets/css/university.page.css
+--- a/assets/css/university.page.css
++++ b/assets/css/university.page.css
+@@
+-body.theme-media.university *,
+-body.theme-media.university *::before,
+-body.theme-media.university *::after {
+-  box-sizing: border-box;
+-}
++/* TODO: share via utilities.css */
+diff --git a/assets/css/utilities.css b/assets/css/utilities.css
+new file mode 100644
+--- /dev/null
++++ b/assets/css/utilities.css
+@@
++/* Proposed shared utilities extracted from theme/university styles */
++body.theme-media *,
++body.theme-media *::before,
++body.theme-media *::after,
++body.uni-bg *,
++body.uni-bg *::before,
++body.uni-bg *::after,
++body.theme-media.university *,
++body.theme-media.university *::before,
++body.theme-media.university *::after {
++  box-sizing: border-box;
++}

@@ -1,0 +1,15 @@
+path,file,status,canonical,meta_robots,outlinks,inlinks
+/,index.html,200,https://thetankguide.com/,,/stocking.html;/gear/;/params.html;/media.html;/about.html;/contact-feedback.html,
+/stocking.html,stocking.html,200,https://thetankguide.com/stocking.html,,/gear.html,/
+/gear/,gear/index.html,200,https://thetankguide.com/gear/,,/params.html,/;/gear.html
+/params.html,params.html,200,https://thetankguide.com/params.html,,/media.html,/;/gear/
+/media.html,media.html,200,https://thetankguide.com/media.html,,/media.html;/feature-your-tank.html;/blogs/;/pages/university.html;/store.html,/;/params.html;/media.html
+/about.html,about.html,200,https://thetankguide.com/about.html,,/about.html;/feature-your-tank.html;/contact-feedback.html,/;/about.html
+/contact-feedback.html,contact-feedback.html,200,https://thetankguide.com/contact-feedback.html,"index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",,/;/about.html
+/gear.html,gear.html,200,https://thetankguide.com/gear/,"noindex, follow",/gear/,/stocking.html
+/feature-your-tank.html,feature-your-tank.html,200,https://thetankguide.com/feature-your-tank.html,,,/media.html;/about.html
+/blogs/,blogs/index.html,200,,,/blogs/blackbeard/;/blogs/purigen/,/media.html;/blogs/blackbeard/;/blogs/purigen/
+/pages/university.html,pages/university.html,200,https://thetankguide.com/pages/university.html,,/pages/university.html,/media.html;/pages/university.html
+/store.html,store.html,200,https://thetankguide.com/store.html,,,/media.html
+/blogs/blackbeard/,blogs/blackbeard/index.html,200,https://thetankguide.com/blogs/blackbeard/,,/blogs/,/blogs/
+/blogs/purigen/,blogs/purigen/index.html,200,https://thetankguide.com/blogs/purigen/,,/blogs/,/blogs/

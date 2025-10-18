@@ -1,0 +1,4 @@
+{
+  "error": "coverage_not_available",
+  "message": "Playwright coverage could not be collected due to Chromium download being blocked (HTTP 403). See blockers.md for details."
+}

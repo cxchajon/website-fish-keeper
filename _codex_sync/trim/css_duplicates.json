@@ -1,0 +1,794 @@
+[
+  {
+    "declarations": "box-sizing: border-box",
+    "occurrences": [
+      {
+        "file": "assets/css/university.css",
+        "selectors": "body.uni-bg *,\nbody.uni-bg *::before,\nbody.uni-bg *::after"
+      },
+      {
+        "file": "assets/css/theme.css",
+        "selectors": "body.theme-media *,\nbody.theme-media *::before,\nbody.theme-media *::after"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": "body.theme-media.university *,\nbody.theme-media.university *::before,\nbody.theme-media.university *::after"
+      }
+    ]
+  },
+  {
+    "declarations": "display: none",
+    "occurrences": [
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": "select#tank-size::-ms-expand"
+      },
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".beam"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .beam"
+      }
+    ]
+  },
+  {
+    "declarations": "margin:0",
+    "occurrences": [
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".gear-subcard__meta .chevron"
+      },
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".sub-accordion .gear-subcard__body > .range .range__tip"
+      },
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".range__list--subgroups > .gear-subcard"
+      }
+    ]
+  },
+  {
+    "declarations": "-webkit-font-smoothing: antialiased;background-color: var(--ttg-navy-900);color: var(--ttg-text-strong);font-family: var(--ttg-font-sans);margin: 0;min-height: 100vh;text-rendering: optimizeLegibility",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": "body.theme-media"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": "body.theme-media.university"
+      }
+    ]
+  },
+  {
+    "declarations": "0% {\n    opacity: 0;transform: translateY(18px)",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": "@keyframes cardFadeUp"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": "@keyframes cardFadeUp"
+      }
+    ]
+  },
+  {
+    "declarations": "align-items: center;color: var(--ttg-text-strong);display: inline-flex;font-weight: 600;gap: 8px;text-decoration-color: var(--ttg-link-underline);text-decoration-thickness: 1px;text-decoration: underline",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card__link"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card__link"
+      }
+    ]
+  },
+  {
+    "declarations": "align-items: stretch;display: flex;isolation: isolate;justify-content: center;min-height: 100vh;overflow: hidden;padding: clamp(96px, 12vw, 160px) clamp(18px, 5vw, 48px) clamp(140px, 18vw, 200px);position: relative",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": "main.university-bg"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university main.university-bg"
+      }
+    ]
+  },
+  {
+    "declarations": "animation-delay: 0.15s",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card:nth-child(1)"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card:nth-child(1)"
+      }
+    ]
+  },
+  {
+    "declarations": "animation-delay: 0.25s",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card:nth-child(2)"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card:nth-child(2)"
+      }
+    ]
+  },
+  {
+    "declarations": "animation-delay: 0.35s",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card:nth-child(3)"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card:nth-child(3)"
+      }
+    ]
+  },
+  {
+    "declarations": "animation-delay: 0.45s",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card:nth-child(4)"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card:nth-child(4)"
+      }
+    ]
+  },
+  {
+    "declarations": "animation-delay: 0.55s",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card:nth-child(5)"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card:nth-child(5)"
+      }
+    ]
+  },
+  {
+    "declarations": "animation: beamFloat 9s ease-in-out infinite;background: linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(63, 211, 218, 0.22) 35%, rgba(30, 110, 160, 0.12) 70%, rgba(12, 40, 64, 0) 100%);bottom: 4%;filter: blur(1.4px);mix-blend-mode: screen;opacity: 0.4;position: absolute;top: -12%;transform-origin: top;width: clamp(220px, 22vw, 360px);z-index: 1",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".beam"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .beam"
+      }
+    ]
+  },
+  {
+    "declarations": "backdrop-filter: blur(16px);background: linear-gradient(180deg, rgba(8, 29, 49, 0.55) 0%, rgba(8, 29, 49, 0.68) 100%);border-radius: 26px;border: 1px solid rgba(148, 175, 198, 0.28);box-shadow: 0 22px 48px rgba(4, 18, 34, 0.28);padding: clamp(24px, 5vw, 36px)",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-section"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-section"
+      }
+    ]
+  },
+  {
+    "declarations": "backdrop-filter: blur(22px);background: linear-gradient(180deg, rgba(247, 250, 255, 0.18) 0%, rgba(240, 249, 255, 0.1) 100%);border-radius: 30px;border: 1px solid rgba(255, 255, 255, 0.22);box-shadow: var(--ttg-card-shadow);display: grid;gap: clamp(18px, 3vw, 28px);padding: clamp(24px, 4vw, 42px) clamp(24px, 6vw, 56px);text-align: center",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".hero"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .hero"
+      }
+    ]
+  },
+  {
+    "declarations": "background-color: var(--tank-bar-bg, rgba(15,23,42,0.92));color: var(--ink, #E5E7EB)",
+    "occurrences": [
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": "select#tank-size option"
+      },
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": "select#tank-size:hover,\nselect#tank-size:focus"
+      }
+    ]
+  },
+  {
+    "declarations": "background-image: url('/assets/img/university/pillars.svg');background-position: bottom center;background-repeat: repeat-x;background-size: min(28vw, 420px) auto;content: \"\";filter: saturate(0.85) contrast(0.95);inset: -12vh 0 -30vh;opacity: 0.2;pointer-events: none;position: absolute;z-index: 0",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".pillar-overlay::before"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .pillar-overlay::before"
+      }
+    ]
+  },
+  {
+    "declarations": "background-size: min(36vw, 360px) auto;opacity: 0.18",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".pillar-overlay::before"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .pillar-overlay::before"
+      }
+    ]
+  },
+  {
+    "declarations": "background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 90%);content: \"\";inset: 12% 8% -10% 8%;opacity: 0.6;position: absolute",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".beam::after"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .beam::after"
+      }
+    ]
+  },
+  {
+    "declarations": "background: linear-gradient(180deg, rgba(6, 19, 35, 0.35) 0%, rgba(6, 19, 35, 0.15) 38%, rgba(6, 19, 35, 0.45) 100%);content: \"\";inset: 0;pointer-events: none;position: absolute;z-index: 0",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".pillar-overlay::after"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .pillar-overlay::after"
+      }
+    ]
+  },
+  {
+    "declarations": "background: radial-gradient(120% 140% at 50% 120%, rgba(63, 211, 218, 0.38) 0%, rgba(63, 211, 218, 0) 60%);content: \"\";inset: 0;mix-blend-mode: screen;opacity: 0;position: absolute;transition: opacity 0.6s ease;z-index: -1",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card::after"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card::after"
+      }
+    ]
+  },
+  {
+    "declarations": "background: rgba(12, 34, 54, 0.72);border-color: rgba(255, 255, 255, 0.32);transform: translateY(-4px)",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".article-list li:hover,\n.article-list li:focus-within"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .article-list li:hover,\n.university .article-list li:focus-within"
+      }
+    ]
+  },
+  {
+    "declarations": "background: rgba(255, 255, 255, 0.16);border-color: rgba(255, 255, 255, 0.32)",
+    "occurrences": [
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .hamburger:hover,\n.university .hamburger:focus-visible"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university #global-nav #ttg-drawer .drawer-close:hover,\n.university #global-nav #ttg-drawer .drawer-close:focus-visible"
+      }
+    ]
+  },
+  {
+    "declarations": "background: rgba(8, 25, 42, 0.58);border-radius: 16px;border: 1px solid rgba(255, 255, 255, 0.18);padding: 16px 18px;transition: transform 0.35s ease, border-color 0.35s ease, background 0.35s ease",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".article-list li"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .article-list li"
+      }
+    ]
+  },
+  {
+    "declarations": "background: rgba(8, 29, 49, 0.82);border-radius: 12px;box-shadow: 0 16px 36px rgba(2, 12, 22, 0.38);color: var(--ttg-text-strong);font-weight: 600;left: 16px;padding: 10px 16px;position: absolute;text-decoration: none;top: 12px;transform: translateY(-140%);transition: transform 0.24s ease, box-shadow 0.24s ease;z-index: 1040",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": "body.theme-media > .skip-link"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": "body.theme-media.university > .skip-link"
+      }
+    ]
+  },
+  {
+    "declarations": "border-color: rgba(255, 255, 255, 0.38);box-shadow: var(--ttg-card-shadow-hover);transform: translateY(-8px)",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card:hover,\n.study-card:focus-visible"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card:hover,\n.university .study-card:focus-visible"
+      }
+    ]
+  },
+  {
+    "declarations": "border-radius: 10px;box-shadow: var(--ttg-focus-ring);outline: none",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".article-list a:focus-visible"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .article-list a:focus-visible"
+      }
+    ]
+  },
+  {
+    "declarations": "border-top:none;margin-top:0;padding-top:0",
+    "occurrences": [
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".range--maintenance .option + .option"
+      },
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".gear-subcard--extras .option + .option"
+      }
+    ]
+  },
+  {
+    "declarations": "box-shadow: 0 18px 46px rgba(4, 16, 28, 0.48);outline: none;transform: translateY(0)",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": "body.theme-media > .skip-link:focus"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": "body.theme-media.university > .skip-link:focus"
+      }
+    ]
+  },
+  {
+    "declarations": "box-shadow: var(--ttg-card-shadow-hover), var(--ttg-focus-ring);outline: none",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card:focus-visible"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card:focus-visible"
+      }
+    ]
+  },
+  {
+    "declarations": "color: rgba(233, 242, 255, 0.8);font-size: 0.95rem;line-height: 1.6;margin: 6px 0 0",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".article-list li p"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .article-list li p"
+      }
+    ]
+  },
+  {
+    "declarations": "color: rgba(235, 244, 255, 0.82);font-size: 1.02rem;line-height: 1.7;margin: 0 0 18px",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-section__intro"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-section__intro"
+      }
+    ]
+  },
+  {
+    "declarations": "color: rgba(241, 248, 255, 0.9);font-family: var(--ttg-font-serif);font-size: clamp(1.2rem, 3.4vw, 1.8rem);margin: 0",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".hero__subtitle"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .hero__subtitle"
+      }
+    ]
+  },
+  {
+    "declarations": "color: var(--ttg-text-muted);font-size: 0.8rem;font-weight: 600;letter-spacing: 0.36em;text-transform: uppercase",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".hero__eyebrow"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .hero__eyebrow"
+      }
+    ]
+  },
+  {
+    "declarations": "color: var(--ttg-text-muted);font-size: 0.98rem;line-height: 1.6;margin: 0",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card__copy"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card__copy"
+      }
+    ]
+  },
+  {
+    "declarations": "color: var(--ttg-text-muted);font-size: clamp(1rem, 2.3vw, 1.18rem);line-height: 1.7;margin: 0 auto;max-width: 62ch",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".hero__intro"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .hero__intro"
+      }
+    ]
+  },
+  {
+    "declarations": "color: var(--ttg-text-strong);font-family: var(--ttg-font-serif);font-size: clamp(2.7rem, 6vw, 4rem);font-weight: 600;line-height: 1.08;margin: 0;text-shadow: 0 12px 28px rgba(0, 0, 0, 0.4)",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".hero__title"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .hero__title"
+      }
+    ]
+  },
+  {
+    "declarations": "color: var(--ttg-text-strong);font-weight: 600;text-decoration: none",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".article-list a"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .article-list a"
+      }
+    ]
+  },
+  {
+    "declarations": "color:var(--muted);font-size:0.95rem;line-height:1.6;margin:0",
+    "occurrences": [
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".gear-subcard__intro"
+      },
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".gear-card__intro"
+      }
+    ]
+  },
+  {
+    "declarations": "display: grid;gap: 12px;list-style: none;margin: 0;padding: 0",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".article-list"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .article-list"
+      }
+    ]
+  },
+  {
+    "declarations": "display: grid;gap: clamp(34px, 6vw, 56px)",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-sections"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-sections"
+      }
+    ]
+  },
+  {
+    "declarations": "display: grid;gap: clamp(44px, 8vw, 72px);position: relative;width: min(1120px, 100%);z-index: 3",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".university-shell"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .university-shell"
+      }
+    ]
+  },
+  {
+    "declarations": "display: grid;gap: var(--ttg-grid-gap);grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".discipline-grid"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .discipline-grid"
+      }
+    ]
+  },
+  {
+    "declarations": "display:grid;gap:1.1rem",
+    "occurrences": [
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".range__list"
+      },
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".air-accessory-grid"
+      }
+    ]
+  },
+  {
+    "declarations": "display:grid;gap:1rem",
+    "occurrences": [
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".range--maintenance .range__list"
+      },
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".extras-group__items"
+      }
+    ]
+  },
+  {
+    "declarations": "font-family: var(--ttg-font-serif);font-size: clamp(1.25rem, 2.4vw, 1.65rem);font-weight: 600;margin: 0",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card__title"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card__title"
+      }
+    ]
+  },
+  {
+    "declarations": "font-family: var(--ttg-font-serif);font-size: clamp(1.8rem, 3vw, 2.2rem);margin: 0 0 12px",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-section__title"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-section__title"
+      }
+    ]
+  },
+  {
+    "declarations": "font-size:1.05rem;font-weight:600;line-height:1.35;margin:0",
+    "occurrences": [
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".gear-addon__title"
+      },
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".air-accessory-card__title"
+      }
+    ]
+  },
+  {
+    "declarations": "gap:0",
+    "occurrences": [
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".range__list--flat"
+      },
+      {
+        "file": "assets/css/gear.v2.css",
+        "selectors": ".gear-subcard--substrate .range__list,\n.gear-subcard--air .range__list"
+      }
+    ]
+  },
+  {
+    "declarations": "grid-template-columns: 1fr",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card"
+      }
+    ]
+  },
+  {
+    "declarations": "left: -4%",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".beam--left"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .beam--left"
+      }
+    ]
+  },
+  {
+    "declarations": "letter-spacing: 0.28em",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".hero__eyebrow"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .hero__eyebrow"
+      }
+    ]
+  },
+  {
+    "declarations": "opacity: 0.38;transform: translateY(1.5%) rotate(calc(var(--beam-tilt, 0deg) - 1deg))",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": "70%"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": "70%"
+      }
+    ]
+  },
+  {
+    "declarations": "opacity: 0.58;transform: translateY(-2.5%) rotate(calc(var(--beam-tilt, 0deg) + 1deg))",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": "45%"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": "45%"
+      }
+    ]
+  },
+  {
+    "declarations": "opacity: 1",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card:hover::after,\n.study-card:focus-visible::after"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card:hover::after,\n.university .study-card:focus-visible::after"
+      }
+    ]
+  },
+  {
+    "declarations": "opacity: 1;transform: translateY(0)",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": "100%"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": "100%"
+      }
+    ]
+  },
+  {
+    "declarations": "padding: clamp(20px, 8vw, 28px)",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-section"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-section"
+      }
+    ]
+  },
+  {
+    "declarations": "right: -6%",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".beam--right"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .beam--right"
+      }
+    ]
+  },
+  {
+    "declarations": "top: -18%;width: clamp(180px, 36vw, 260px)",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".beam"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .beam"
+      }
+    ]
+  },
+  {
+    "declarations": "transform: none",
+    "occurrences": [
+      {
+        "file": "assets/css/theme.css",
+        "selectors": ".study-card:hover,\n  .study-card:focus-visible,\n  .article-list li:hover,\n  .article-list li:focus-within"
+      },
+      {
+        "file": "assets/css/university.page.css",
+        "selectors": ".university .study-card:hover,\n  .university .study-card:focus-visible,\n  .university .article-list li:hover,\n  .university .article-list li:focus-within"
+      }
+    ]
+  }
+]

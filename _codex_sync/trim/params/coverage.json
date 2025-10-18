@@ -1,0 +1,4 @@
+{
+  "status": "not_collected",
+  "reason": "Playwright Chromium binary download blocked (HTTP 403). See blockers.md."
+}
