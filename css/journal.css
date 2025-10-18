@@ -24,7 +24,7 @@ body.journal-body a {
 
 .journal-sheet {
   position: relative;
-  padding: 64px 96px 124px 80px;
+  padding: 64px 96px 124px 52px;
   background-color: rgba(255, 249, 230, 0.94);
   background-image: repeating-linear-gradient(
       to bottom,
@@ -45,7 +45,7 @@ body.journal-body a {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 48px;
+  left: 32px;
   width: 2px;
   background-color: rgba(255, 102, 102, 0.25);
   pointer-events: none;
@@ -135,11 +135,11 @@ body.journal-body a {
   }
 
   .journal-sheet {
-    padding: 60px 84px 118px 72px;
+    padding: 60px 84px 118px 44px;
   }
 
   .journal-sheet::before {
-    left: 44px;
+    left: 28px;
   }
 }
 
@@ -153,11 +153,11 @@ body.journal-body a {
   }
 
   .journal-sheet {
-    padding: 52px 56px 104px 64px;
+    padding: 52px 56px 104px 46px;
   }
 
   .journal-sheet::before {
-    left: 40px;
+    left: 28px;
   }
 }
 
@@ -167,11 +167,11 @@ body.journal-body a {
   }
 
   .journal-sheet {
-    padding: 48px 32px 88px 54px;
+    padding: 48px 32px 88px 44px;
   }
 
   .journal-sheet::before {
-    left: 32px;
+    left: 28px;
   }
 }
 
@@ -181,7 +181,7 @@ body.journal-body a {
   }
 
   .journal-sheet {
-    padding: 44px 20px 72px 48px;
+    padding: 44px 20px 72px 40px;
   }
 
   .journal-sheet::before {
