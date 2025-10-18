@@ -1,3 +1,3 @@
 # Archived footer fragments
 
-- `footer-legal.html` — moved here on 2025-10-17 when the site standardized on `/footer.html?v=1.3.4` with the social icon row.
+Legacy footer partials previously lived here. As of footer v1.4.5 the alternate fragments were removed entirely so the git history serves as the archive. This folder remains only to document that change and to discourage adding new partials—`/footer.html` is the single source of truth.

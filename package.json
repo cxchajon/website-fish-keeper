@@ -15,7 +15,11 @@
     "audit:amazon:img": "node tests/verify-amazon-image-links.cjs",
     "build:stands": "node scripts/build-gear-stands.mjs",
     "audit:filters": "node scripts/audit-filters-catalog.mjs",
-    "build": "node scripts/build-prod.mjs"
+    "build": "node scripts/build-prod.mjs",
+    "footer:verify": "node scripts/footer-lock/verify.mjs",
+    "footer:lint": "node scripts/footer-lock/lint.mjs",
+    "footer:lock:update": "node scripts/footer-lock/update-manifest.mjs",
+    "prepare": "node scripts/footer-lock/setup-hooks.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.0"
