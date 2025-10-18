@@ -362,26 +362,26 @@
           </div>
 
           <!-- ===== SOCIALS (YouTube + one other required) ===== -->
-          <div id="socials-block" class="socials-wrap">
-            <label class="socials-title">Social Media (YouTube + one other required)</label>
+          <div id="socials-block" class="channel-wrap">
+            <label class="channel-title">Social Media (YouTube + one other required)</label>
 
             <!-- Row 1 (REQUIRED) -->
-            <div class="social-row" data-row="1">
-              <select class="social-select" aria-label="Platform (required)">
+            <div class="channel-row" data-row="1">
+              <select class="channel-select" aria-label="Platform (required)">
                 <option value="YouTube" selected>YouTube</option>
                 <option value="Instagram">Instagram</option>
                 <option value="TikTok">TikTok</option>
                 <option value="Facebook">Facebook</option>
                 <option value="Other">Other</option>
               </select>
-              <input class="social-handle" type="text" inputmode="text"
+              <input class="channel-handle" type="text" inputmode="text"
                      placeholder="e.g., @YourChannel or full URL"
                      aria-label="Handle or URL (required)" required>
             </div>
 
             <!-- Row 2 (OPTIONAL) -->
-            <div class="social-row" data-row="2">
-              <select class="social-select" aria-label="Platform (optional)">
+            <div class="channel-row" data-row="2">
+              <select class="channel-select" aria-label="Platform (optional)">
                 <option value="" selected disabled>Choose platform (optional)</option>
                 <option value="YouTube">YouTube</option>
                 <option value="Instagram">Instagram</option>
@@ -389,14 +389,14 @@
                 <option value="Facebook">Facebook</option>
                 <option value="Other">Other</option>
               </select>
-              <input class="social-handle" type="text" inputmode="text"
+              <input class="channel-handle" type="text" inputmode="text"
                      placeholder="e.g., @YourHandle or full URL"
                      aria-label="Handle or URL (optional)">
             </div>
 
             <!-- Row 3 (OPTIONAL) -->
-            <div class="social-row" data-row="3">
-              <select class="social-select" aria-label="Platform (optional)">
+            <div class="channel-row" data-row="3">
+              <select class="channel-select" aria-label="Platform (optional)">
                 <option value="" selected disabled>Choose platform (optional)</option>
                 <option value="YouTube">YouTube</option>
                 <option value="Instagram">Instagram</option>
@@ -404,7 +404,7 @@
                 <option value="Facebook">Facebook</option>
                 <option value="Other">Other</option>
               </select>
-              <input class="social-handle" type="text" inputmode="text"
+              <input class="channel-handle" type="text" inputmode="text"
                      placeholder="e.g., @YourHandle or full URL"
                      aria-label="Handle or URL (optional)">
             </div>
@@ -550,17 +550,17 @@
         .notice-card li{ margin:6px 0; line-height:1.35; }
 
         /* Socials */
-        .socials-wrap{ margin:12px 0 6px; }
-        .socials-title{ display:block; margin-bottom:8px; font-weight:600; }
-        .social-row{
+        .channel-wrap{ margin:12px 0 6px; }
+        .channel-title{ display:block; margin-bottom:8px; font-weight:600; }
+        .channel-row{
           display:grid; grid-template-columns: 160px 1fr; gap:10px; align-items:center; margin-bottom:10px;
         }
-        .social-select, .social-handle{
+        .channel-select, .channel-handle{
           padding:10px 12px; border-radius:10px; border:1px solid var(--border);
           background:rgba(255,255,255,0.05); color:var(--text); width:100%;
         }
         .field-note{ display:block; margin-top:6px; color:var(--muted); font-size:.9rem; }
-        @media (max-width: 480px){ .social-row{ grid-template-columns: 1fr; } }
+        @media (max-width: 480px){ .channel-row{ grid-template-columns: 1fr; } }
 
         /* Upload */
         .upload-card {
@@ -669,11 +669,11 @@
           return v;
         }
         function collectSocials(){
-          const rows = socialsBlock.querySelectorAll('.social-row');
+          const rows = socialsBlock.querySelectorAll('.channel-row');
           const items = [];
           rows.forEach((row) => {
-            const sel = row.querySelector('.social-select');
-            const inp = row.querySelector('.social-handle');
+            const sel = row.querySelector('.channel-select');
+            const inp = row.querySelector('.channel-handle');
             const platform = (sel && sel.value) ? sel.value : '';
             const raw = (inp && inp.value) ? inp.value : '';
             const handle = normHandle(raw);
@@ -695,16 +695,16 @@
         }
         function validateSocials(){
           const firstRow = socialsBlock.querySelector('[data-row="1"]');
-          const sel1 = firstRow.querySelector('.social-select');
-          const inp1 = firstRow.querySelector('.social-handle');
+          const sel1 = firstRow.querySelector('.channel-select');
+          const inp1 = firstRow.querySelector('.channel-handle');
           if (!sel1.value || !inp1.value.trim()){
-            alert('Please provide at least one social — the first row is required.');
+            alert('Please provide at least one profile — the first row is required.');
             inp1.focus();
             return false;
           }
           const items = collectSocials();
           if (items.length === 0){
-            alert('Please provide at least one social handle.');
+            alert('Please provide at least one profile handle.');
             inp1.focus();
             return false;
           }
@@ -840,7 +840,7 @@
 
         // ======= AJAX Submit to Formspree (no redirect) =======
         form.addEventListener('submit', async function(e) {
-          // Validate socials first
+          // Validate channel entries first
           if (!validateSocials()){
             e.preventDefault();
             e.stopImmediatePropagation();
@@ -899,9 +899,7 @@
       </p>
     </section>
   </main>
-  <div id="site-footer"></div>
-  <script src="/js/footer-loader.js" defer></script>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <!-- === TTG Cookie Consent START === -->
 <div id="ttg-consent" class="ttg-consent" data-consent-banner>
   <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
@@ -1018,5 +1016,7 @@
 
 <!-- === TTG Cookie Consent END === -->
 
+  <script src="/js/footer-loader.js?v=1.4.5" defer></script>
+  <div id="site-footer" data-footer-src="/footer.html?v=1.4.5"></div>
 </body>
 </html>

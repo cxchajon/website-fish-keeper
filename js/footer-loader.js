@@ -1,9 +1,15 @@
 (() => {
   const FOOTER_HOST_ID = 'site-footer';
+  const CANONICAL_FOOTER_SRC = '/footer.html?v=1.4.5';
 
   const getFooterSource = (host) => {
-    const { footerSrc } = host.dataset;
-    return footerSrc && footerSrc.trim().length > 0 ? footerSrc : '/footer.html?v=1.4.4';
+    const candidate = (host.dataset.footerSrc || '').trim();
+    if (candidate.length > 0) {
+      return candidate;
+    }
+
+    host.dataset.footerSrc = CANONICAL_FOOTER_SRC;
+    return CANONICAL_FOOTER_SRC;
   };
 
   const sanitizeHtml = (html) => html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');

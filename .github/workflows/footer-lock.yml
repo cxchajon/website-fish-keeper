@@ -1,0 +1,36 @@
+name: footer-lock
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Check for footer-approved label
+        id: footer_label
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = context.payload.pull_request.labels.map(label => label.name);
+            core.setOutput('approved', labels.includes('footer-approved') ? 'true' : 'false');
+
+      - name: Verify footer lock manifest
+        env:
+          APPROVED_FOOTER_CHANGE: ${{ github.event_name == 'pull_request' && steps.footer_label.outputs.approved == 'true' && '1' || '' }}
+        run: node scripts/footer-lock/verify.mjs
+
+      - name: Lint footer usage
+        run: node scripts/footer-lock/lint.mjs
