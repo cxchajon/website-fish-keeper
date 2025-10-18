@@ -35,12 +35,6 @@ body.theme-media {
   text-rendering: optimizeLegibility;
 }
 
-body.theme-media *,
-body.theme-media *::before,
-body.theme-media *::after {
-  box-sizing: border-box;
-}
-
 body.theme-media > .skip-link {
   position: absolute;
   left: 16px;

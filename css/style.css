@@ -939,54 +939,6 @@ body.ttg-tooltip-lock{
 .icon-button.info:hover{ background: rgba(0,0,0,0.5); }
 .icon-button.info:focus-visible{ outline:2px solid rgba(20,203,168,0.55); outline-offset:2px; }
 
-.ui-tip[hidden]{ display:none; }
-
-.ui-tip{
-  position: fixed;
-  z-index: 10000;
-  max-width: min(90vw, 420px);
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(0,0,0,0.78);
-  color: #fff;
-  font-size: .92rem;
-  line-height: 1.35;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-  transition: opacity 140ms ease, transform 140ms ease;
-  opacity: 0;
-  transform: translateY(-4px);
-}
-
-.icon-button.info.is-open + .ui-tip{
-  opacity: 1;
-  transform: translateY(0);
-}
-
-[data-role="env-info-tip"][hidden]{
-  display: none;
-}
-
-[data-role="env-info-tip"]{
-  position: absolute;
-  z-index: 9999;
-  top: calc(100% + 8px);
-  right: 0;
-  max-width: 280px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(6,12,24,0.96);
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 18px 36px -24px rgba(0,0,0,0.35);
-  color: rgba(235,239,251,0.95);
-  font-size: 0.85rem;
-  line-height: 1.4;
-  opacity: 0;
-  transition: opacity 120ms ease;
-}
-
-.icon-button.info.is-open + [data-role="env-info-tip"]{
-  opacity: 1;
-}
 
 /* Remove default paragraph spacing INSIDE hero to keep tight control */
 .hero-header p{ margin-top: 0; }
@@ -1785,49 +1737,3 @@ ins.adsbygoogle{
   display: none;
 }
 
-/* Tooltips */
-body.cycling-coach .tt {
-  position: absolute;
-  z-index: 1200;
-  background: rgba(12, 16, 26, 0.95);
-  color: #e9eef5;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-  border-radius: 9px;
-  padding: 10px 12px;
-  max-width: 300px;
-  font-size: 0.92rem;
-  line-height: 1.45;
-  backdrop-filter: blur(3px);
-}
-
-body.cycling-coach .tt.tt--open {
-  pointer-events: auto;
-}
-
-body.cycling-coach .tt[hidden] {
-  display: none !important;
-}
-
-/* Ensure the “i” trigger looks tappable without breaking layout */
-body.cycling-coach .tt-trigger {
-  background: transparent;
-  border: 0;
-  color: rgba(255, 255, 255, 0.85);
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  cursor: pointer;
-  padding: 0;
-  font: inherit;
-  font-weight: 600;
-  line-height: 1;
-}
-
-body.cycling-coach .tt-trigger:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.5);
-  outline-offset: 2px;
-}

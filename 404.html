@@ -9,17 +9,6 @@
     <script src="/assets/js/consent-mode.js" defer></script>
     <!-- Google tag (gtag.js) — GA4 -->
     <!--#include virtual="/includes/ga4.html" -->
-    <script>
-      (function () {
-        var path = window.location.pathname;
-        if (path && path.endsWith('.html')) {
-          var candidate = path.slice(0, -5);
-          if (candidate && !candidate.endsWith('/')) {
-            window.location.replace(candidate + '/');
-          }
-        }
-      })();
-    </script>
   </head>
   <body>
     <main class="container">

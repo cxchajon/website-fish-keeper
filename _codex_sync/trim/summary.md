@@ -25,3 +25,7 @@
 - CSS dedupe preview: `_codex_sync/trim/merge_css_preview.diff`
 - Component consolidation: `_codex_sync/trim/components_consolidation.md`
 - Blockers preventing dynamic coverage: `_codex_sync/trim/blockers.md`
+
+## Post-Trim Validation: FAIL
+- Playwright smoke could not execute; `npx playwright test` failed because browser downloads are blocked with HTTP 403 in this environment. Follow-up: rerun smoke after installing browsers in CI. (See chunks `a24562` and `2ba44a`).
+- Lighthouse quick check not run; would require local server and browser binaries.
