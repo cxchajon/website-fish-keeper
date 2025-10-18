@@ -58,3 +58,6 @@ Scope: load + scope Patrick Hand (400/600), CSP allowances, verified across sect
 Result: handwritten rendering live.
 
 [2025-10-18 | Journal | Backfill live v2] Scope: replaced placeholders with real CSV from provided RAW_DATA; newest-first; conditional sections verified.
+
+[2025-10-18 | Journal | Header + Grouping update] Scope: new subtitle, daily grouping, removed Quick Facts label, verified legal-pad visuals.
+Result: journal live (unlinked).

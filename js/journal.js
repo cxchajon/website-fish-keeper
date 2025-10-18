@@ -28,54 +28,68 @@
         return;
       }
 
-      const dateCounts = Object.create(null);
+      const groups = [];
 
-      sortedRows.forEach((row, index) => {
-        const section = document.createElement('section');
-        section.className = 'journal-entry';
-
+      sortedRows.forEach((row) => {
         const dateKey = row.date.trim();
-        const count = (dateCounts[dateKey] || 0) + 1;
-        dateCounts[dateKey] = count;
-        const entryId = `entry-${dateKey}${count > 1 ? `-${count}` : ''}`;
+        if (!dateKey) {
+          return;
+        }
+
+        const lastGroup = groups[groups.length - 1];
+        if (!lastGroup || lastGroup.date !== dateKey) {
+          groups.push({ date: dateKey, entries: [] });
+        }
+
+        groups[groups.length - 1].entries.push(row);
+      });
+
+      groups.forEach((group) => {
+        const daySection = document.createElement('section');
+        daySection.className = 'journal-day';
 
         const heading = document.createElement('h2');
-        heading.className = 'journal-date';
-        heading.id = entryId;
-        heading.textContent = formatDisplayDate(row.date);
-        section.setAttribute('aria-labelledby', entryId);
-        section.appendChild(heading);
+        heading.className = 'date-header';
+        const headingId = `date-${slugify(group.date)}`;
+        heading.id = headingId;
+        heading.textContent = formatDisplayDate(group.date);
+        daySection.setAttribute('aria-labelledby', headingId);
+        daySection.appendChild(heading);
 
-        if (row.quick_facts) {
-          const quickFacts = document.createElement('div');
-          quickFacts.className = 'journal-quick-facts';
+        group.entries.forEach((row, index) => {
+          const entry = document.createElement('article');
+          entry.className = 'journal-entry';
+          entry.id = `entry-${slugify(group.date)}-${index + 1}`;
+          daySection.appendChild(entry);
 
-          const quickParagraph = document.createElement('p');
-          const label = document.createElement('strong');
-          label.textContent = 'Quick Facts:';
-          quickParagraph.appendChild(label);
-          quickParagraph.appendChild(document.createTextNode(` ${row.quick_facts}`));
-          quickFacts.appendChild(quickParagraph);
-          section.appendChild(quickFacts);
-        }
+          if (row.quick_facts) {
+            const quickFacts = document.createElement('div');
+            quickFacts.className = 'journal-quick-facts';
 
-        if (row.ramble) {
-          const ramble = document.createElement('div');
-          ramble.className = 'journal-ramble';
+            const quickParagraph = document.createElement('p');
+            quickParagraph.textContent = row.quick_facts;
+            quickFacts.appendChild(quickParagraph);
+            entry.appendChild(quickFacts);
+          }
 
-          const rambleParagraph = document.createElement('p');
-          rambleParagraph.textContent = row.ramble;
-          ramble.appendChild(rambleParagraph);
-          section.appendChild(ramble);
-        }
+          if (row.ramble) {
+            const ramble = document.createElement('div');
+            ramble.className = 'journal-ramble';
+
+            const rambleParagraph = document.createElement('p');
+            rambleParagraph.textContent = row.ramble;
+            ramble.appendChild(rambleParagraph);
+            entry.appendChild(ramble);
+          }
+        });
 
         const divider = document.createElement('div');
         divider.className = 'journal-divider';
         divider.setAttribute('role', 'presentation');
         divider.setAttribute('aria-hidden', 'true');
-        section.appendChild(divider);
+        daySection.appendChild(divider);
 
-        entriesContainer.appendChild(section);
+        entriesContainer.appendChild(daySection);
       });
 
       entriesContainer.removeAttribute('hidden');
@@ -156,5 +170,12 @@
       day: 'numeric',
       year: 'numeric',
     }).format(date);
+  }
+
+  function slugify(value) {
+    return value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
   }
 })();
