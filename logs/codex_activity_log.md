@@ -39,3 +39,7 @@ Result: Decorative background stays under perf budgets (<4KB CSS & SVG), hero ov
 Scope: Restored book tiles + verified links.
 Result: PR created successfully.
 Next: Merge once approved.
+
+[2025-10-18 | Journal Prototype | Private test page scaffold]
+Scope: Created journal.html with notebook styling, spiral, ruled lines, and sample entries for internal validation.
+Result: Journal test page build complete (private, unlinked).

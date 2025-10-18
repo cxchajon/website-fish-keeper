@@ -1,0 +1,213 @@
+body.journal-body {
+  background-color: #fff9e6;
+  color: #222222;
+  font-family: "Patrick Hand", "Comic Neue", "Segoe UI", sans-serif;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.journal-body a {
+  color: #2956a3;
+}
+
+.journal-main {
+  min-height: calc(100vh - 160px);
+  padding: 60px 80px 120px;
+  display: flex;
+  justify-content: center;
+}
+
+.journal-layout {
+  display: flex;
+  align-items: stretch;
+  width: min(1040px, 100%);
+}
+
+.journal-spiral {
+  width: 80px;
+  position: relative;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+
+.journal-spiral::before,
+.journal-spiral::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 0 12px 12px 0;
+}
+
+.journal-spiral::before {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.05));
+  box-shadow: inset -6px 0 12px rgba(0, 0, 0, 0.08);
+}
+
+.journal-spiral::after {
+  background-image: radial-gradient(circle at 50% 6px, rgba(53, 53, 53, 0.72) 0 6px, transparent 7px);
+  background-repeat: repeat-y;
+  background-size: 34px 48px;
+  background-position: center 18px;
+  mix-blend-mode: multiply;
+  opacity: 0.85;
+}
+
+.journal-sheet {
+  position: relative;
+  flex: 1 1 auto;
+  padding: 60px 80px 120px 100px;
+  background-color: rgba(255, 249, 230, 0.94);
+  background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(166, 197, 242, 0.25) 0,
+      rgba(166, 197, 242, 0.25) 2px,
+      transparent 2px,
+      transparent 30px
+    );
+  background-size: 100% 30px;
+  background-position: 0 20px;
+  border-radius: 18px;
+  box-shadow: 0 32px 48px rgba(181, 155, 126, 0.18);
+  overflow: hidden;
+}
+
+.journal-sheet::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 60px;
+  width: 2px;
+  background-color: rgba(255, 102, 102, 0.25);
+  pointer-events: none;
+}
+
+.journal-head {
+  margin-bottom: 48px;
+  color: #222222;
+}
+
+.journal-head h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 3.5vw, 3rem);
+  font-weight: 600;
+  letter-spacing: 0.6px;
+}
+
+.journal-subhead {
+  margin: 12px 0 0;
+  font-size: clamp(1.1rem, 2.1vw, 1.4rem);
+  color: #2956a3;
+}
+
+.journal-entry {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  padding-bottom: 48px;
+}
+
+.journal-entry:last-of-type {
+  padding-bottom: 0;
+}
+
+.journal-date {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  font-weight: 600;
+  color: #000000;
+}
+
+.journal-quick-facts {
+  color: #2956a3;
+  font-size: clamp(1.08rem, 2.1vw, 1.3rem);
+  line-height: 1.65;
+  padding: 10px 16px;
+  border-left: 3px solid rgba(41, 86, 163, 0.4);
+  background-color: rgba(41, 86, 163, 0.08);
+  border-radius: 10px;
+}
+
+.journal-quick-facts strong {
+  font-weight: 600;
+}
+
+.journal-ramble {
+  color: #222222;
+  font-size: clamp(1.05rem, 2vw, 1.28rem);
+}
+
+.journal-doodle {
+  width: clamp(60px, 10vw, 110px);
+  vertical-align: middle;
+  margin: -8px 8px 0;
+}
+
+.journal-divider {
+  width: 100%;
+  height: 42px;
+  margin-top: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='84' viewBox='0 0 1600 84'%3E%3Cdefs%3E%3ClinearGradient id='shadow' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23b59b7e' stop-opacity='0.15'/%3E%3Cstop offset='1' stop-color='%23b59b7e' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 36c80 20 160-24 240-12s160 52 240 44 160-68 240-60 160 76 240 68 160-96 240-88 160 108 240 100 160-116 160-116v112H0z' fill='%23fff9e6'/%3E%3Crect width='1600' height='36' fill='url(%23shadow)'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 400px 42px;
+}
+
+.journal-entry:last-of-type .journal-divider {
+  display: none;
+}
+
+@media (max-width: 1200px) {
+  .journal-main {
+    padding: 60px 60px 110px;
+  }
+
+  .journal-layout {
+    width: min(980px, 100%);
+  }
+
+  .journal-sheet {
+    padding: 56px 70px 110px 90px;
+  }
+}
+
+@media (max-width: 900px) {
+  .journal-main {
+    padding: 52px 40px 96px;
+  }
+
+  .journal-layout {
+    width: min(920px, 100%);
+  }
+
+  .journal-sheet {
+    padding: 50px 40px 96px 84px;
+  }
+}
+
+@media (max-width: 768px) {
+  .journal-main {
+    padding: 44px 20px 84px;
+  }
+
+  .journal-layout {
+    flex-direction: column;
+  }
+
+  .journal-spiral {
+    display: none;
+  }
+
+  .journal-sheet {
+    padding: 44px 20px 80px 80px;
+  }
+}
+
+@media (max-width: 520px) {
+  .journal-sheet {
+    padding: 40px 20px 64px 74px;
+  }
+
+  .journal-quick-facts {
+    padding: 10px 14px;
+  }
+}
