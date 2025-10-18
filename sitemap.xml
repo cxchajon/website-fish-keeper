@@ -2,62 +2,92 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://thetankguide.com/</loc>
-    <lastmod>2025-10-06</lastmod>
-  </url>
-  <url>
-    <loc>https://thetankguide.com/gear/</loc>
-    <lastmod>2025-10-08</lastmod>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://thetankguide.com/stocking.html</loc>
-    <lastmod>2025-10-06</lastmod>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://thetankguide.com/params.html</loc>
-    <lastmod>2025-10-06</lastmod>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://thetankguide.com/gear/</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://thetankguide.com/media.html</loc>
-    <lastmod>2025-10-06</lastmod>
-  </url>
-  <url>
-    <loc>https://thetankguide.com/feature-your-tank.html</loc>
-    <lastmod>2025-10-06</lastmod>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://thetankguide.com/store.html</loc>
-    <lastmod>2025-10-14</lastmod>
-  </url>
-  <url>
-    <loc>https://thetankguide.com/privacy-legal.html</loc>
-    <lastmod>2025-10-06</lastmod>
-  </url>
-  <url>
-    <loc>https://thetankguide.com/terms.html</loc>
-    <lastmod>2025-10-06</lastmod>
-  </url>
-  <url>
-    <loc>https://thetankguide.com/copyright-dmca.html</loc>
-    <lastmod>2025-10-06</lastmod>
-  </url>
-  <url>
-    <loc>https://thetankguide.com/contact-feedback.html</loc>
-    <lastmod>2025-10-06</lastmod>
-  </url>
-  <url>
-    <loc>https://thetankguide.com/cookie-settings.html</loc>
-    <lastmod>2025-10-06</lastmod>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://thetankguide.com/about.html</loc>
-    <lastmod>2025-10-06</lastmod>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://thetankguide.com/blogs/index.html</loc>
-    <lastmod>2025-10-14</lastmod>
+    <loc>https://thetankguide.com/feature-your-tank.html</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://thetankguide.com/blogs/purigen/index.html</loc>
-    <lastmod>2025-10-14</lastmod>
+    <loc>https://thetankguide.com/contact-feedback.html</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://thetankguide.com/privacy-legal.html</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://thetankguide.com/terms.html</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://thetankguide.com/copyright.html</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://thetankguide.com/copyright-dmca.html</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://thetankguide.com/cookie-settings.html</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://thetankguide.com/blogs/</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://thetankguide.com/blogs/purigen/</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://thetankguide.com/blogs/cycle-check-3-readings/</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://thetankguide.com/blogs/blackbeard/</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
   </url>
 </urlset>
