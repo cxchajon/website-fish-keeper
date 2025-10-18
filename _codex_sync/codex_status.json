@@ -1,7 +1,7 @@
 {
-  "last_sync": "2025-10-13T14:11:00Z",
-  "status": "ready",
-  "notes": "Tooltip behavior refreshed across scoped pages; Playwright browser downloads blocked (HTTP 403) but existing binaries used for captures.",
+  "last_sync": "2025-10-18T02:52:23Z",
+  "status": "action_required",
+  "notes": "- Playwright Chromium download blocked; coverage pending.\n- Orphan media/icons identified for removal.\n- Tooltip utilities need consolidation (see components report).",
   "active_tasks": [],
   "last_result": "PASS",
   "ready": true

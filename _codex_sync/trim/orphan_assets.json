@@ -1,0 +1,10 @@
+{
+  "orphan_images": [
+    "assets/media/library/books/blogs.png",
+    "assets/media/community/submit-tank-placeholder.svg",
+    "assets/icons/favicon.png",
+    "assets/icons/footer-x.svg"
+  ],
+  "duplicate_groups": [],
+  "notes": "String matching used for references; may miss dynamically generated URLs."
+}
