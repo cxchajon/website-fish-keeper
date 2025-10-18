@@ -36,7 +36,7 @@ All loaders used an async IIFE, called `host.outerHTML = html`, and fetched with
     <a href="https://www.youtube.com/@fishkeepinglifeco" target="_blank" rel="noopener noreferrer" aria-label="The Tank Guide on YouTube">
       <i class="fab fa-youtube" aria-hidden="true"></i>
     </a>
-    <a href="https://www.amazon.com/author/fishkeepinglifeco" target="_blank" rel="noopener noreferrer" aria-label="The Tank Guide on Amazon">
+    <a href="https://amzn.to/3IRKvK0" target="_blank" rel="sponsored noopener noreferrer" aria-label="The Tank Guide on Amazon">
       <i class="fab fa-amazon" aria-hidden="true"></i>
     </a>
   </div>
@@ -60,7 +60,7 @@ All loaders used an async IIFE, called `host.outerHTML = html`, and fetched with
     <br>
     As an Amazon Associate, we earn from qualifying purchases.
     <br>
-    <a class="amazon-cta" href="https://www.amazon.com/author/fishkeepinglifeco" target="_blank" rel="noopener noreferrer">
+    <a class="amazon-cta" href="https://amzn.to/3IRKvK0" target="_blank" rel="sponsored noopener noreferrer">
       Shop our books on Amazon »
     </a>
   </p>
