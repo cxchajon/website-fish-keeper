@@ -47,3 +47,6 @@ Result: Journal test page build complete (private, unlinked).
 Scope: remove spiral, expand width, legal-pad styling.
 Result: page live at /journal.html (unlinked).
 Next: fine-tune spacing & line density if needed.
+[2025-10-18 | Journal | Red margin reposition]
+Scope: moved margin closer to left edge to improve vertical comfort.
+Result: widened writing area; preserved layout stability.
