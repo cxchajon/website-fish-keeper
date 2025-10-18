@@ -1,0 +1,80 @@
+{
+  "checksums_diff": {
+    "added": 8,
+    "changed": 20,
+    "removed": 528
+  },
+  "generated_at": "2025-10-18T03:38:39.295324+00:00",
+  "redirect_rule_present": true,
+  "removed_assets": {
+    "assets/icons/favicon.png": {
+      "exists": false,
+      "references": []
+    },
+    "assets/icons/footer-x.svg": {
+      "exists": false,
+      "references": []
+    },
+    "assets/media/community/submit-tank-placeholder.svg": {
+      "exists": false,
+      "references": []
+    },
+    "assets/media/library/books/blogs.png": {
+      "exists": false,
+      "references": []
+    }
+  },
+  "removed_assets_absent": true,
+  "sitemap": {
+    "has_university": true,
+    "legacy_conflicts": [],
+    "present": true
+  },
+  "tooltip_modules": {
+    "params_imports_only": true,
+    "params_module_present": true,
+    "tooltip_exports": true,
+    "tooltip_module_present": true
+  },
+  "utilities_check": {
+    "pages": {
+      "/": {
+        "box_sizing_count": 1,
+        "import_count": 0,
+        "page_exists": true,
+        "status": false
+      },
+      "/about.html": {
+        "box_sizing_count": 1,
+        "import_count": 0,
+        "page_exists": true,
+        "status": false
+      },
+      "/gear/": {
+        "box_sizing_count": 0,
+        "import_count": 0,
+        "page_exists": true,
+        "status": false
+      },
+      "/media.html": {
+        "box_sizing_count": 0,
+        "import_count": 1,
+        "page_exists": true,
+        "status": true
+      },
+      "/params.html": {
+        "box_sizing_count": 0,
+        "import_count": 1,
+        "page_exists": true,
+        "status": true
+      },
+      "/stocking.html": {
+        "box_sizing_count": 0,
+        "import_count": 1,
+        "page_exists": true,
+        "status": true
+      }
+    },
+    "utilities_exists": true
+  }
+}

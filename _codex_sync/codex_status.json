@@ -1,8 +1,8 @@
 {
-  "last_sync": "2025-10-18T02:52:23Z",
-  "status": "action_required",
-  "notes": "- Playwright Chromium download blocked; coverage pending.\n- Orphan media/icons identified for removal.\n- Tooltip utilities need consolidation (see components report).",
+  "last_sync": "2025-10-18T03:42:16Z",
+  "status": "fail",
+  "notes": "- utilities.css not imported on /, /gear/, /about (box-sizing still inline).\n- Playwright Chromium download blocked by proxy; runtime smoke unavailable.",
   "active_tasks": [],
-  "last_result": "PASS",
+  "last_result": "Static verification failed; runtime blocked (HTTP 403).",
   "ready": true
 }
