@@ -49,3 +49,15 @@ Post-flight:
 • Bundle checksums (post-change): js/ui/tooltip.js d127d693…, js/stocking.js 7080ade5…, css/style.css b18285f2…, assets/js/gear.v2.js 46287065…, assets/css/gear.v2.css c74a6bc2… .
 • Keyboard automation (desktop+mobile) confirming Enter/Escape behavior with screenshots: post_home_desktop.png / post_home_mobile.png, post_gear_desktop.png / post_gear_mobile.png, post_stocking_desktop.png / post_stocking_mobile.png, post_params_desktop.png / post_params_mobile.png, post_media_desktop.png / post_media_mobile.png, post_about_desktop.png / post_about_mobile.png.
 • Remaining issues tracked in docs/tooltip_a11y_fixlist.md.
+
+[2025-10-18 | Trim Recheck Verification]
+Scope: Verified “trim the fat” consolidation against preflight snapshot and post-change requirements.
+Findings:
+• Checksums differ (+8 / -528 / Δ20) relative to `_codex_sync/preflight_checksums.json`.
+• Removed assets (`blogs.png`, submit tank placeholder, favicon.png, footer-x.svg) absent on disk and unreferenced.
+• `utilities.css` still missing on `/`, `/gear/`, `/about` (0 imports) with inline `box-sizing` blocks persisting on `/` and `/about`.
+• Tooltip module remains unified (`js/ui/tooltip.js` exports + `js/params.js` import-only) and sitemap includes `/pages/university.html` without legacy duplicates; `_redirects` carries `/404.html / 301` rule.
+Runtime:
+• Playwright Chromium download blocked by proxy (HTTP 403), preventing smoke run — captured in `_codex_sync/trim/runtime_report.json` & `runtime_console.txt`.
+Follow-ups:
+• Restore a single `utilities.css` import on affected pages and remove redundant inline `box-sizing` declarations to complete trim spec.
