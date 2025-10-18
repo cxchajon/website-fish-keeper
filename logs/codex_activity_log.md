@@ -43,3 +43,7 @@ Next: Merge once approved.
 [2025-10-18 | Journal Prototype | Private test page scaffold]
 Scope: Created journal.html with notebook styling, spiral, ruled lines, and sample entries for internal validation.
 Result: Journal test page build complete (private, unlinked).
+[2025-10-18 | Journal | Legal notepad refactor]
+Scope: remove spiral, expand width, legal-pad styling.
+Result: page live at /journal.html (unlinked).
+Next: fine-tune spacing & line density if needed.
