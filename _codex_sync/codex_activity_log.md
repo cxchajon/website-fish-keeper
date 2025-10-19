@@ -62,3 +62,4 @@ Runtime:
 Follow-ups:
 • Restore a single `utilities.css` import on affected pages and remove redundant inline `box-sizing` declarations to complete trim spec.
 SITEMAP 2025-10-19T00-42-34Z updated 18→20 URLs
+INFOICON_AUDIT 2025-10-19T02:48:08Z • pages_scanned=20 • matches=21 • ready_for_injection
