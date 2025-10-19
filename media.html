@@ -900,31 +900,36 @@
                       <stop offset="100%" stop-color="#FFF5DA" />
                     </linearGradient>
                     <linearGradient id="journalBinding" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#CBAE82" />
-                      <stop offset="100%" stop-color="#B18953" />
+                      <stop offset="0%" stop-color="#B9B3A8" />
+                      <stop offset="100%" stop-color="#A9A399" />
                     </linearGradient>
                     <linearGradient id="journalEdgeHighlight" x1="62%" y1="42%" x2="100%" y2="100%">
                       <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0" />
                       <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.4" />
                     </linearGradient>
                     <linearGradient id="journalStaple" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#F3EEE7" />
-                      <stop offset="100%" stop-color="#D9D0C2" />
+                      <stop offset="0%" stop-color="#E3E0DA" />
+                      <stop offset="100%" stop-color="#D6D2CB" />
                     </linearGradient>
                     <filter id="journalPadShadow" x="-18%" y="-14%" width="136%" height="160%">
-                      <feOffset dx="0" dy="18" in="SourceAlpha" result="offset" />
+                      <feOffset dx="0" dy="16" in="SourceAlpha" result="offset" />
                       <feGaussianBlur in="offset" stdDeviation="14" result="blur" />
                       <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.12 0" result="shadow" />
                       <feBlend in="shadow" in2="SourceGraphic" mode="normal" />
                     </filter>
                     <clipPath id="journalPaperClip">
-                      <rect x="56" y="64" width="400" height="384" rx="32" ry="32" />
+                      <rect x="56" y="64" width="400" height="424" rx="32" ry="32" />
                     </clipPath>
+                    <filter id="journalLabelShadow" x="-10%" y="-10%" width="120%" height="140%">
+                      <feOffset dx="0" dy="1" in="SourceAlpha" result="offset" />
+                      <feGaussianBlur in="offset" stdDeviation="2.6" result="labelBlur" />
+                      <feColorMatrix in="labelBlur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.08 0" />
+                    </filter>
                   </defs>
                   <g id="pad" filter="url(#journalPadShadow)" preserveAspectRatio="xMidYMid meet">
-                    <rect x="56" y="64" width="400" height="384" rx="32" ry="32" fill="url(#journalPaper)" />
+                    <rect x="56" y="64" width="400" height="424" rx="32" ry="32" fill="url(#journalPaper)" />
                     <g clip-path="url(#journalPaperClip)">
-                      <line x1="104" y1="140" x2="104" y2="448" stroke="#FF6666" stroke-width="3" stroke-opacity="0.25" />
+                      <line x1="104" y1="140" x2="104" y2="480" stroke="#FF6666" stroke-width="3" stroke-opacity="0.25" />
                       <g stroke="#A6C5F2" stroke-width="2.6" stroke-opacity="0.25">
                         <line x1="96" y1="188" x2="456" y2="188" />
                         <line x1="96" y1="204" x2="456" y2="204" />
@@ -941,15 +946,68 @@
                         <line x1="96" y1="380" x2="456" y2="380" />
                         <line x1="96" y1="396" x2="456" y2="396" />
                         <line x1="96" y1="412" x2="456" y2="412" />
+                        <line x1="96" y1="428" x2="456" y2="428" />
+                        <line x1="96" y1="444" x2="456" y2="444" />
+                        <line x1="96" y1="460" x2="456" y2="460" />
+                        <line x1="96" y1="476" x2="456" y2="476" />
                       </g>
                     </g>
-                    <rect x="56" y="64" width="400" height="384" rx="32" ry="32" fill="none" stroke="url(#journalEdgeHighlight)" stroke-width="3" />
+                    <rect x="56" y="64" width="400" height="424" rx="32" ry="32" fill="none" stroke="url(#journalEdgeHighlight)" stroke-width="3" />
                     <rect x="56" y="64" width="400" height="92" rx="32" ry="32" fill="url(#journalBinding)" />
+                    <rect x="56" y="64" width="400" height="16" rx="32" ry="16" fill="#FFFFFF" fill-opacity="0.18" />
                     <g fill="url(#journalStaple)">
                       <rect x="120" y="92" width="32" height="10" rx="4" ry="4" />
                       <rect x="196" y="92" width="32" height="10" rx="4" ry="4" />
                       <rect x="272" y="92" width="32" height="10" rx="4" ry="4" />
                       <rect x="348" y="92" width="32" height="10" rx="4" ry="4" />
+                    </g>
+                    <g id="pad-label" transform="translate(130 214)" fill="#1E1E1E" fill-opacity="0.92">
+                      <g filter="url(#journalLabelShadow)">
+                        <g transform="translate(0 0)">
+                          <path d="M4 0H26V8H16V30C16 38 12 44 4 44H0V36H4C7 36 8 34 8 30V8H4Z" />
+                        </g>
+                        <g transform="translate(32 0)" fill-rule="evenodd">
+                          <path d="M17 0C26 0 34 6 34 22C34 38 26 44 17 44C8 44 0 38 0 22C0 6 8 0 17 0ZM17 10C12 10 8 14 8 22C8 30 12 34 17 34C22 34 26 30 26 22C26 14 22 10 17 10Z" />
+                        </g>
+                        <g transform="translate(72 0)">
+                          <path d="M0 0H8V28C8 34 12 36 16 36C20 36 24 34 24 28V0H32V28C32 40 24 44 16 44C8 44 0 40 0 28Z" />
+                        </g>
+                        <g transform="translate(110 0)">
+                          <path d="M0 0H20C30 0 34 6 34 16C34 26 28 32 20 32H16L28 44H16L4 32H0V0ZM8 8V24H20C24 24 26 22 26 16C26 10 24 8 20 8Z" />
+                        </g>
+                        <g transform="translate(150 0)">
+                          <path d="M0 0H10L22 28V0H32V44H22L10 16V44H0Z" />
+                        </g>
+                        <g transform="translate(188 0)">
+                          <path d="M16 0L32 44H24L21.6 34H10.4L8 44H0L16 0ZM11.6 26H20.4L16 12Z" />
+                        </g>
+                        <g transform="translate(226 0)">
+                          <path d="M0 0H8V36H26V44H0Z" />
+                        </g>
+                      </g>
+                      <g>
+                        <g transform="translate(0 0)">
+                          <path d="M4 0H26V8H16V30C16 38 12 44 4 44H0V36H4C7 36 8 34 8 30V8H4Z" />
+                        </g>
+                        <g transform="translate(32 0)" fill-rule="evenodd">
+                          <path d="M17 0C26 0 34 6 34 22C34 38 26 44 17 44C8 44 0 38 0 22C0 6 8 0 17 0ZM17 10C12 10 8 14 8 22C8 30 12 34 17 34C22 34 26 30 26 22C26 14 22 10 17 10Z" />
+                        </g>
+                        <g transform="translate(72 0)">
+                          <path d="M0 0H8V28C8 34 12 36 16 36C20 36 24 34 24 28V0H32V28C32 40 24 44 16 44C8 44 0 40 0 28Z" />
+                        </g>
+                        <g transform="translate(110 0)">
+                          <path d="M0 0H20C30 0 34 6 34 16C34 26 28 32 20 32H16L28 44H16L4 32H0V0ZM8 8V24H20C24 24 26 22 26 16C26 10 24 8 20 8Z" />
+                        </g>
+                        <g transform="translate(150 0)">
+                          <path d="M0 0H10L22 28V0H32V44H22L10 16V44H0Z" />
+                        </g>
+                        <g transform="translate(188 0)">
+                          <path d="M16 0L32 44H24L21.6 34H10.4L8 44H0L16 0ZM11.6 26H20.4L16 12Z" />
+                        </g>
+                        <g transform="translate(226 0)">
+                          <path d="M0 0H8V36H26V44H0Z" />
+                        </g>
+                      </g>
                     </g>
                   </g>
                 </svg>
