@@ -1,0 +1,222 @@
+[
+  {
+    "url_path": "/",
+    "file": "index.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/about.html",
+    "file": "about.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/about.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-19T00:42:14Z"
+  },
+  {
+    "url_path": "/blogs/",
+    "file": "blogs/index.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/blogs/",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/blogs/blackbeard/",
+    "file": "blogs/blackbeard/index.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/blogs/blackbeard/",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/blogs/cycle-check-3-readings/",
+    "file": "blogs/cycle-check-3-readings/index.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/blogs/cycle-check-3-readings/",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/blogs/purigen/",
+    "file": "blogs/purigen/index.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/blogs/purigen/",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/contact-feedback.html",
+    "file": "contact-feedback.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/contact-feedback.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/cookie-settings.html",
+    "file": "cookie-settings.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/cookie-settings.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/copyright-dmca.html",
+    "file": "copyright-dmca.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/copyright-dmca.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/feature-your-tank.html",
+    "file": "feature-your-tank.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/feature-your-tank.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/gear/",
+    "file": "gear/index.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/gear/",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-19T00:42:14Z"
+  },
+  {
+    "url_path": "/journal.html",
+    "file": "journal.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/journal.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-19T00:42:14Z"
+  },
+  {
+    "url_path": "/media.html",
+    "file": "media.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/media.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/pages/university.html",
+    "file": "pages/university.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/pages/university.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-19T00:42:14Z"
+  },
+  {
+    "url_path": "/params.html",
+    "file": "params.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/params.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/privacy-legal.html",
+    "file": "privacy-legal.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/privacy-legal.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/stocking.html",
+    "file": "stocking.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/stocking.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/store.html",
+    "file": "store.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/store.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/terms.html",
+    "file": "terms.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/terms.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  },
+  {
+    "url_path": "/trust-security.html",
+    "file": "trust-security.html",
+    "status": 200,
+    "canonical": "https://thetankguide.com/trust-security.html",
+    "robots": {
+      "noindex": false,
+      "nofollow": false
+    },
+    "lastmod": "2025-10-18T22:50:06Z"
+  }
+]

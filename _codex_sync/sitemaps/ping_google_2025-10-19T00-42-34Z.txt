@@ -1,0 +1,7 @@
+HTTP/1.1 403 Forbidden
+content-length: 9
+content-type: text/plain
+date: Sun, 19 Oct 2025 00:45:27 GMT
+server: envoy
+connection: close
+
