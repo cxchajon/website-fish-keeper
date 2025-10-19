@@ -60,6 +60,47 @@
       opacity: .9;
       text-decoration: underline;
     }
+
+    /* === Topic Accent System (Magazine) === */
+    :root{
+      --accent:#8fe3ff; /* fallback */
+    }
+    .topic-core{ --accent:#3CAEA3; }
+    .topic-algae{ --accent:#C94C4C; }
+    .topic-product{ --accent:#FF8C42; }
+    .topic-chem{ --accent:#5D8AA8; }
+    .topic-gear{ --accent:#1F7A8C; }
+
+    /* apply accent to card frame and headline bar */
+    .topic-section .blog-card{ border-top:4px solid var(--accent); }
+    .topic-section .blog-card .card-title::before{
+      background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
+    }
+
+    /* hero/button/link accents can read var(--accent) if desired */
+    .topic-section .card-cta,
+    .topic-section .blogs-grid a:hover{ color: var(--accent); }
+
+    /* Individual article header/banner accents */
+    .article-accent{
+      --accent: var(--accent);
+      border-top: 6px solid var(--accent);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+      padding: 12px 0 6px;
+    }
+    .article-accent .eyebrow,
+    .article-accent .meta a,
+    .article-accent a:hover{ color: var(--accent); }
+
+    /* Optional subtle gradient underline for article H1 */
+    .article-accent h1{
+      position:relative; padding-top:14px; margin-bottom:.6rem;
+    }
+    .article-accent h1::before{
+      content:""; position:absolute; top:0; left:0; width:70px; height:3px;
+      background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
+      border-radius:2px; opacity:.95;
+    }
   </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <script type="application/ld+json">
@@ -77,7 +118,7 @@
   <!-- Google tag (gtag.js) — GA4 -->
   <!--#include virtual="/includes/ga4.html" -->
 </head>
-<body class="blog-open-page">
+<body class="blog-open-page topic-algae">
   <div id="site-nav"></div>
 
   <main class="blog-open">
@@ -85,8 +126,10 @@
 
       <p><a href="/blogs/">← Back to Spotlight Blogs</a></p>
 
-      <h1 itemprop="headline">BBA Gone: How I Finally Beat Black Beard Algae (Spot Dose Guide)</h1>
-      <p class="kicker" itemprop="description">My exact spot-dosing routine, lighting &amp; flow fixes, and sump refugium tweaks that finally beat BBA—safely.</p>
+      <div class="article-accent">
+        <h1 itemprop="headline">BBA Gone: How I Finally Beat Black Beard Algae (Spot Dose Guide)</h1>
+        <p class="kicker" itemprop="description">My exact spot-dosing routine, lighting &amp; flow fixes, and sump refugium tweaks that finally beat BBA—safely.</p>
+      </div>
 
       <p>I’ve had Black Beard Algae for years. Back when this tank was a 20-long, it was my sandbox. I ran air stones, sponge filters, hacked HOBs with cut-to-fit sponges, went blackwater, chased reds—you name it. I wasn’t reckless; I knew how to keep fish happy at a minimum. The fun was bending the rules and seeing what else was possible.</p>
 
