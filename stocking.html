@@ -189,10 +189,12 @@
       gap: 6px;
     }
 
-    .field-label-row .micro-info {
-      width: 20px;
-      height: 20px;
-      font-size: 0.72rem;
+    .field-label-row .info-btn,
+    .filter-turnover-label .info-btn {
+      --info-btn-visible: 30px;
+      --info-btn-hit: 44px;
+      font-size: 0.95rem;
+      transform: none;
     }
 
     .filter-turnover {
@@ -209,33 +211,12 @@
       font-weight: 600;
     }
 
-    .filter-turnover-label .micro-info {
-      width: 20px;
-      height: 20px;
-      font-size: 0.72rem;
-    }
-
     .filter-turnover-value {
       font-variant-numeric: tabular-nums;
     }
 
-    .micro-info {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      color: var(--fg);
-      background: rgba(255, 255, 255, 0.12);
-      font-size: 0.78rem;
-      cursor: pointer;
-    }
-
-    .micro-info:focus-visible,
     .link-like:focus-visible,
-    button:focus-visible,
+    button:focus-visible:not(.info-btn),
     .toggle:focus-visible {
       outline: 2px solid rgba(163, 200, 255, 0.7);
       outline-offset: 3px;
@@ -1047,7 +1028,7 @@
               <label class="toggle-title" for="stocking-planted">Planted</label>
               <button
                 type="button"
-                class="icon-button info info-btn ttg-tooltip-trigger"
+                class="info-btn ttg-tooltip-trigger"
                 data-role="info-btn"
                 data-info="planted"
                 data-tooltip-id="planted-tip"
@@ -1073,7 +1054,7 @@
                   <label for="filter-product">Filter Product</label>
                   <button
                     type="button"
-                    class="micro-info ttg-tooltip-trigger"
+                    class="info-btn ttg-tooltip-trigger"
                     data-info="filter-product"
                     data-tooltip-id="filter-product-tip"
                     aria-expanded="false"
@@ -1097,7 +1078,7 @@
                   <label for="filter-rated-gph">Rated Flow (GPH)</label>
                   <button
                     type="button"
-                    class="micro-info ttg-tooltip-trigger"
+                    class="info-btn ttg-tooltip-trigger"
                     data-info="rated-flow"
                     data-tooltip-id="rated-flow-tip"
                     aria-expanded="false"
@@ -1119,7 +1100,7 @@
                     Estimated turnover
                     <button
                       type="button"
-                      class="micro-info ttg-tooltip-trigger"
+                      class="info-btn ttg-tooltip-trigger"
                       data-info="turnover"
                       data-tooltip-id="turnover-tip"
                       aria-expanded="false"
@@ -1273,40 +1254,35 @@
           font-weight: 600;
         }
 
-        /* Keep info icon visual language consistent (already present) */
-        #stocking-page .info-btn,
-        #stocking-page .icon-button.info {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 22px;
-          height: 22px;
-          min-width: 22px;
-          min-height: 22px;
-          border-radius: 50%;
-          padding: 0;
-          font-size: 13px;
-          line-height: 1;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          color: inherit;
-          cursor: pointer;
-        }
-        #stocking-page .info-btn:hover,
-        #stocking-page .icon-button.info:hover {
-          background: rgba(255, 255, 255, 0.12);
-        }
-        #stocking-page .info-btn:focus,
-        #stocking-page .icon-button.info:focus {
-          outline: 2px solid rgba(20, 203, 168, 0.55);
-          outline-offset: 2px;
+        /* Info buttons adopt Cycling Coach parity */
+        #stocking-page .info-btn {
+          --info-btn-hit: 44px;
+          --info-btn-visible: 30px;
+          --info-btn-bg: rgba(255, 255, 255, 0.12);
+          --info-btn-bg-hover: rgba(255, 255, 255, 0.18);
+          --info-btn-bg-active: rgba(255, 255, 255, 0.14);
+          --info-btn-border: rgba(255, 255, 255, 0.24);
+          --info-btn-border-hover: rgba(255, 255, 255, 0.32);
+          --info-btn-border-active: rgba(255, 255, 255, 0.28);
+          --info-btn-focus: rgba(20, 203, 168, 0.7);
+          --info-btn-icon: var(--fg);
+          font-size: 0.95rem;
+          transform: none;
         }
 
         /* Env. Recommendations single icon “expanded” state (if present) */
         #stocking-page [data-role="env-info"][aria-expanded="true"] {
-          background: rgba(20, 203, 168, 0.9);
+          --info-btn-bg: rgba(20, 203, 168, 0.9);
+          --info-btn-bg-hover: rgba(20, 203, 168, 0.95);
+          --info-btn-bg-active: rgba(20, 203, 168, 0.82);
+          --info-btn-border: rgba(20, 203, 168, 0.95);
+          --info-btn-border-hover: rgba(20, 203, 168, 1);
+          --info-btn-border-active: rgba(20, 203, 168, 0.92);
+          --info-btn-focus: rgba(20, 203, 168, 0.55);
           color: #0b1b18;
-          border-color: rgba(20, 203, 168, 0.95);
+        }
+
+        #stocking-page [data-role="env-info"][aria-expanded="true"]::before {
           box-shadow: 0 0 0 2px rgba(20, 203, 168, 0.25);
         }
 
@@ -1389,7 +1365,7 @@
             <h2 class="card-title">Environmental Recommendations</h2>
             <button
               type="button"
-              class="icon-button info info-btn ttg-tooltip-trigger"
+              class="info-btn ttg-tooltip-trigger"
               id="env-info-btn"
               data-role="info-btn"
               data-info="env-info"

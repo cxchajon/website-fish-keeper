@@ -73,7 +73,7 @@ function ensureTrigger(container) {
   if (!infoBtn) {
     infoBtn = document.createElement('button');
     infoBtn.type = 'button';
-    infoBtn.className = 'micro-info ttg-tooltip-trigger';
+    infoBtn.className = 'info-btn ttg-tooltip-trigger';
     infoBtn.dataset.role = 'filtration-info';
     infoBtn.dataset.info = 'filtration-pill';
     infoBtn.dataset.tooltipId = 'filtration-pill-tip';
