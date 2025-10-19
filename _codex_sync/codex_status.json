@@ -1,8 +1,8 @@
 {
-  "last_sync": "2025-10-18T03:42:16Z",
-  "status": "fail",
-  "notes": "- utilities.css not imported on /, /gear/, /about (box-sizing still inline).\n- Playwright Chromium download blocked by proxy; runtime smoke unavailable.",
   "active_tasks": [],
-  "last_result": "sitemap_updated",
-  "ready": true
+  "last_result": "infoicon_audit",
+  "last_sync": "2025-10-18T03:42:16Z",
+  "notes": "- utilities.css not imported on /, /gear/, /about (box-sizing still inline).\n- Playwright Chromium download blocked by proxy; runtime smoke unavailable.",
+  "ready": true,
+  "status": "ready_for_tooltip_injection"
 }

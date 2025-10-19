@@ -1,0 +1,80 @@
+[
+  {
+    "page_path": "/",
+    "file": "index.html",
+    "missing_terms": [
+      {
+        "term": "Water Change",
+        "intent": "Highlight maintenance",
+        "tooltip": "Routine partial water changes remove waste and refresh minerals to keep fish healthy.",
+        "recommended_icon_location": "Add tooltip near first mention or summary of 'Water Change' on index.html."
+      }
+    ]
+  },
+  {
+    "page_path": "/gear/",
+    "file": "gear/index.html",
+    "missing_terms": [
+      {
+        "term": "Filter Media",
+        "intent": "Guide gear choices",
+        "tooltip": "Filter media houses bacteria and removes debris; rinse gently in tank water to preserve colonies.",
+        "recommended_icon_location": "Add tooltip near first mention or summary of 'Filter Media' on gear/index.html."
+      }
+    ]
+  },
+  {
+    "page_path": "/params.html",
+    "file": "params.html",
+    "missing_terms": [
+      {
+        "term": "Beneficial Bacteria",
+        "intent": "Encourage bacterial support",
+        "tooltip": "Beneficial bacteria colonies live in filters and substrate, breaking down ammonia and nitrite.",
+        "recommended_icon_location": "Add tooltip near first mention or summary of 'Beneficial Bacteria' on params.html."
+      },
+      {
+        "term": "General Hardness",
+        "intent": "Explain GH",
+        "tooltip": "General hardness (GH) measures dissolved minerals like calcium and magnesium that fish need.",
+        "recommended_icon_location": "Add tooltip near first mention or summary of 'General Hardness' on params.html."
+      },
+      {
+        "term": "Carbonate Hardness",
+        "intent": "Explain KH",
+        "tooltip": "Carbonate hardness (KH) stabilizes pH by buffering acids; aim for a stable range for your species.",
+        "recommended_icon_location": "Add tooltip near first mention or summary of 'Carbonate Hardness' on params.html."
+      },
+      {
+        "term": "pH Swing",
+        "intent": "Warn about rapid pH changes",
+        "tooltip": "Rapid pH swings stress fish; adjust slowly and test water before major changes.",
+        "recommended_icon_location": "Add tooltip near first mention or summary of 'pH Swing' on params.html."
+      }
+    ]
+  },
+  {
+    "page_path": "/stocking.html",
+    "file": "stocking.html",
+    "missing_terms": [
+      {
+        "term": "Stocking Density",
+        "intent": "Prevent overstocking",
+        "tooltip": "Stocking density balances fish size, behavior, and filtration so the tank is not overcrowded.",
+        "recommended_icon_location": "Add tooltip near first mention or summary of 'Stocking Density' on stocking.html."
+      },
+      {
+        "term": "Quarantine Tank",
+        "intent": "Promote isolation before stocking",
+        "tooltip": "A quarantine tank lets you observe new fish for illness before adding them to your display tank.",
+        "recommended_icon_location": "Add tooltip near first mention or summary of 'Quarantine Tank' on stocking.html."
+      },
+      {
+        "term": "Drip Acclimation",
+        "intent": "Advocate gentle acclimation",
+        "tooltip": "Drip acclimation slowly matches bag water to tank water to reduce shock when adding fish.",
+        "recommended_icon_location": "Add tooltip near first mention or summary of 'Drip Acclimation' on stocking.html."
+      }
+    ]
+  }
+]

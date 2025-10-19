@@ -944,5 +944,27 @@
     "assets/js/generated/gear-stands.json": "0ef868a0bdee6b08ca0e9aeaca05b3ce51f95e0552f94f2c9f48c7d8e9ade0bf",
     "assets/js/include-partials.js": "3757b703cdebdc9a33c7712f2c6c9b559e04ba74fabd587206f0f41f368d1deb",
     "assets/js/includes.js": "5793cb391e7d214fc842c525aa1ce1b55f0a8258bf4b80255ee59fdaf152a6c2"
+  },
+  "infoicon_audit_preflight_2025-10-19T02:48:08Z": {
+    "/workspace/website-fish-keeper/about.html": "a297525c5a4692c5bbfd10c502dcca92c21b0cb6738215ea6027b4a9451fa31e",
+    "/workspace/website-fish-keeper/blogs/blackbeard/index.html": "9407585554348bbd2a15b01a6fc686d0e1349d13184e4df87e88270e90f442e1",
+    "/workspace/website-fish-keeper/blogs/cycle-check-3-readings/index.html": "38368ba0ec67ce82950230a0b4af8ade0e492eb7cbdf68eecb2c24eaf2ea24bf",
+    "/workspace/website-fish-keeper/blogs/index.html": "7a1f7dd1341536a0a73e1a2816311d1f1ed7a7e806a8003540d09216e229e2c6",
+    "/workspace/website-fish-keeper/blogs/purigen/index.html": "2a92e013d41f3dc6dadf852713e4bae84c8c4388486c9f99f5701dc5df9c408a",
+    "/workspace/website-fish-keeper/contact-feedback.html": "7cd00d496d51dccd13addd24802a06a9e786506096af61779a458d490822a1a4",
+    "/workspace/website-fish-keeper/cookie-settings.html": "02843edffa59bf4e737ec1965e1b5827ec3be12939bdef7c16331fff411d9c68",
+    "/workspace/website-fish-keeper/copyright-dmca.html": "09a59214a9db2c34f4aef82837189b014f1d564a2da5bee461cc3b0024eff480",
+    "/workspace/website-fish-keeper/feature-your-tank.html": "8ad2916e4023e4445603a65a233675bce82b8763dcfc484c7c09b07bbc950a71",
+    "/workspace/website-fish-keeper/gear/index.html": "2c617a25d8c001f472a97a07782b487cf0e78b3fa6aa72f655bc8482e404bd5b",
+    "/workspace/website-fish-keeper/index.html": "c2e454dcacb3246278581ec1f93aa27587256423f52f6fa576ff91a2197e5f9f",
+    "/workspace/website-fish-keeper/journal.html": "2eeec124272034b11be769ed486f6ecd2bf7d3977c71ab6346c17fc892bf9fc1",
+    "/workspace/website-fish-keeper/media.html": "81b6c1dfd7c79c427925af3432a627f5b8727b88d791aee12b3c61be6af3362f",
+    "/workspace/website-fish-keeper/pages/university.html": "1a32491c2f0f1616dc18ddd77dbc4d4f7a2484db93cf12e9d8d20658f7610abc",
+    "/workspace/website-fish-keeper/params.html": "845af3149dc8404bbe12bbb30fcef7417f33eeb2f6382347f8c3ba60408cdfb9",
+    "/workspace/website-fish-keeper/privacy-legal.html": "70da958d88519a45f94af3a4842e5e0c9d4b1250dfa81120fd49c26192bb15e6",
+    "/workspace/website-fish-keeper/stocking.html": "46d503bade25b5c1302813a3e6e8e3d026a4ac391c2f1b2978c4097a3956f242",
+    "/workspace/website-fish-keeper/store.html": "4c1c9d97c894dcbc6abbc554384e7246a9c5de92880c5f60f7fe16f4276c28ca",
+    "/workspace/website-fish-keeper/terms.html": "d57b65530fd565b4e629ae699e16f66ec11191e2faff011d6bf88350b272aeae",
+    "/workspace/website-fish-keeper/trust-security.html": "7bb1559e563fa039a0096c4ba2d193ffef4fe2552eae3cf774bb42be18d9c3bf"
   }
 }
