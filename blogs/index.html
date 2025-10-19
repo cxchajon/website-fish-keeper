@@ -16,6 +16,134 @@
       border-radius: 12px;
       background: #0b1720;
     }
+
+    .topics-nav{
+      display:flex; flex-wrap:wrap; gap:.5rem .75rem;
+      padding: 10px 0 6px;
+      margin: 8px 0 18px;
+    }
+    .topics-nav a{
+      display:inline-flex; align-items:center;
+      padding:.28rem .7rem; border-radius:999px;
+      background: rgba(255,255,255,.10);
+      color: var(--text, #f4f9fc); text-decoration:none; font-weight:600; font-size:.9rem;
+      border:1px solid rgba(255,255,255,.16);
+    }
+    .topics-nav a:hover{
+      background: rgba(255,255,255,.16);
+      border-color: rgba(255,255,255,.28);
+    }
+
+    .topic-section{
+      background: linear-gradient(180deg, rgba(0,0,0,.06), rgba(0,0,0,.02));
+      border-radius: var(--radius, 18px);
+      padding: clamp(14px,2.8vw,22px);
+      margin: 18px 0 24px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.18);
+    }
+    .topic-head{
+      display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+      margin: 4px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .topic-head h2{
+      margin:0; color: var(--text, #f4f9fc); letter-spacing:.3px;
+    }
+    .topic-sub{
+      margin:0; color: var(--muted, rgba(255,255,255,0.72)); font-size:.95rem; opacity:.9;
+    }
+
+    .blogs-grid{
+      display:grid;
+      gap: clamp(16px, 3vw, 26px);
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    /* Maintain the magazine borders from earlier */
+    .blog-card{
+      position: relative;
+      background: var(--card, rgba(255,255,255,0.06));
+      border-radius: calc(var(--radius, 18px) - 4px);
+      border: 2px solid rgba(255,255,255,0.08);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.06),
+        0 6px 20px rgba(0,0,0,0.18);
+      overflow: hidden;
+      transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease;
+      display:flex;
+      flex-direction:column;
+      height:100%;
+    }
+    .blog-card:hover{
+      transform: translateY(-4px);
+      background: var(--card-hover, rgba(255,255,255,0.12));
+      border-color: rgba(255,255,255,0.22);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.08),
+        0 10px 26px rgba(0,0,0,0.28);
+    }
+    /* Headline bar on each card title */
+    .blog-card .card-title{ position:relative; padding-top:10px; margin-top:8px; }
+    .blog-card .card-title::before{
+      content:""; position:absolute; top:0; left:0; width:48px; height:2px;
+      background: linear-gradient(to right, var(--brand, #9ce0ff), rgba(255,255,255,0));
+      border-radius:2px; opacity:.9; transition: width .3s ease, opacity .3s ease;
+    }
+    .blog-card:hover .card-title::before{ width:72px; opacity:1; }
+
+    .blog-card .card-content{
+      display:flex;
+      flex-direction:column;
+      gap:.65rem;
+      padding: clamp(14px, 2.6vw, 20px);
+    }
+    .blog-card .card-kicker{
+      margin:0;
+      font-size:.9rem;
+      color: var(--muted, rgba(255,255,255,0.72));
+      letter-spacing:.2px;
+    }
+    .blog-card .card-title{
+      font-size:clamp(1.15rem, 2.6vw, 1.55rem);
+      margin:0;
+    }
+    .blog-card .card-title a{
+      color:inherit;
+      text-decoration:none;
+    }
+    .blog-card .card-title a:hover,
+    .blog-card .card-title a:focus{
+      text-decoration:underline;
+    }
+    .blog-card .card-excerpt{
+      margin:0;
+      color: var(--text-secondary, rgba(255,255,255,0.82));
+      font-size:clamp(.95rem, 2vw, 1.05rem);
+      line-height:1.45;
+      flex-grow:1;
+    }
+    .blog-card .card-read{
+      margin-top:auto;
+      font-weight:600;
+      color: var(--brand, #9ce0ff);
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+    }
+    .blog-card .card-read:hover,
+    .blog-card .card-read:focus{
+      text-decoration:underline;
+    }
+
+    .blog-card .card-thumb-link{
+      display:block;
+    }
   </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (load FIRST) -->
@@ -35,32 +163,42 @@
       <p>Short reads with practical takeaways. Click through for the full story.</p>
     </header>
 
-    <!-- Featured (newest) -->
-    <section class="blogs-featured" aria-label="Featured blog">
-      <article class="blog-item blog-item-large" itemscope itemtype="https://schema.org/CreativeWork">
-        <a href="/blogs/nitrogen-cycle/" aria-label="Read: The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping">
-          <div class="blog-thumb-hero" role="img" aria-label="Placeholder illustration for the aquarium nitrogen cycle">
-            <img src="/media/placeholder-16x9.svg" alt="Placeholder illustration for the aquarium nitrogen cycle" loading="lazy" decoding="async" />
+    <nav class="topics-nav" aria-label="Blog topics">
+      <a href="#topic-beginner">Beginner Basics</a>
+      <a href="#topic-algae">Algae &amp; Problem Solving</a>
+      <a href="#topic-product">Product Highlights</a>
+    </nav>
+
+    <section id="topic-beginner" class="topic-section">
+      <header class="topic-head">
+        <h2>Beginner Basics</h2>
+        <p class="topic-sub">First steps, setup mistakes, and confidence builders.</p>
+      </header>
+      <div class="blogs-grid">
+        <article class="blog-card" itemscope itemtype="https://schema.org/CreativeWork">
+          <a class="card-thumb-link" href="/blogs/nitrogen-cycle/" aria-label="Read: The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping">
+            <img class="card-thumb" src="/media/placeholder-16x9.svg" alt="Placeholder illustration for the aquarium nitrogen cycle" loading="lazy" decoding="async" />
+          </a>
+          <div class="card-content">
+            <p class="card-kicker">Beginner Basics • ~5 min</p>
+            <h3 class="card-title" itemprop="headline">
+              <a href="/blogs/nitrogen-cycle/">The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping</a>
+            </h3>
+            <p class="card-excerpt">A plain-English path from confusion to stable tanks — fishless vs fish-in, plants, seeding, and simple habits that work.</p>
+            <a class="card-read" href="/blogs/nitrogen-cycle/">Read the blog →</a>
           </div>
-        </a>
-        <div class="blog-meta">
-          <span class="blog-kicker">Beginner Basics • ~5 min</span>
-          <h2 itemprop="headline">
-            <a class="blog-title-link" href="/blogs/nitrogen-cycle/">The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping</a>
-          </h2>
-          <p class="blog-abstract">A plain-English path from confusion to stable tanks — fishless vs fish-in, plants, seeding, and simple habits that work.</p>
-          <a class="blog-read" href="/blogs/nitrogen-cycle/">Read the blog →</a>
-        </div>
-      </article>
+        </article>
+      </div>
     </section>
 
-    <!-- Past Blogs -->
-    <section class="blogs-past" aria-label="Past blogs">
-      <h3 class="blogs-past-title">Past Blogs</h3>
-      <div class="blogs-past-grid">
-        <!-- Black Beard Algae (small) -->
-        <article class="blog-item blog-item-small" itemscope itemtype="https://schema.org/CreativeWork">
-          <a class="blog-thumb-link" href="/blogs/blackbeard/" aria-label="Read: Beating Black Beard Algae">
+    <section id="topic-algae" class="topic-section">
+      <header class="topic-head">
+        <h2>Algae &amp; Problem Solving</h2>
+        <p class="topic-sub">Real-world fixes and maintenance wins.</p>
+      </header>
+      <div class="blogs-grid">
+        <article class="blog-card" itemscope itemtype="https://schema.org/CreativeWork">
+          <a class="card-thumb-link" href="/blogs/blackbeard/" aria-label="Read: Beating Black Beard Algae">
             <img
               src="/blogs/blackbeard/img/IMG_9610.png"
               alt="Black Beard Algae before treatment (full bloom)"
@@ -72,24 +210,31 @@
               onerror="this.onerror=null;this.src='/blogs/shared/img/ph-card.png';"
             />
           </a>
-          <div class="blog-meta">
-            <h4 itemprop="headline"><a href="/blogs/blackbeard/">Beating Black Beard Algae: What Finally Worked</a></h4>
-            <p class="blog-abstract-mini">Spot-dosing, lighting, and flow tweaks that finally shut down stubborn BBA.</p>
+          <div class="card-content">
+            <h3 class="card-title" itemprop="headline"><a href="/blogs/blackbeard/">Beating Black Beard Algae: What Finally Worked</a></h3>
+            <p class="card-excerpt">Spot-dosing, lighting, and flow tweaks that finally shut down stubborn BBA.</p>
           </div>
         </article>
+      </div>
+    </section>
 
-        <!-- Purigen (small) -->
-        <article class="blog-item blog-item-small" itemscope itemtype="https://schema.org/CreativeWork">
-          <a class="blog-thumb-link" href="/blogs/purigen/" aria-label="Read: Purigen">
-            <img class="blog-thumb-mini"
+    <section id="topic-product" class="topic-section">
+      <header class="topic-head">
+        <h2>Product Highlights</h2>
+        <p class="topic-sub">Hand-picked gear that earned a spot in the sump.</p>
+      </header>
+      <div class="blogs-grid">
+        <article class="blog-card" itemscope itemtype="https://schema.org/CreativeWork">
+          <a class="card-thumb-link" href="/blogs/purigen/" aria-label="Read: Purigen">
+            <img class="card-thumb"
                  src="/blogs/purigen/img/thumbs/purigen-thumb.jpeg"
                  alt="Purigen sump placement thumbnail"
                  loading="lazy" decoding="async"
                  onerror="this.onerror=null;this.src='/blogs/purigen/img/IMG_9299.jpeg';" />
           </a>
-          <div class="blog-meta">
-            <h4 itemprop="headline"><a href="/blogs/purigen/">Purigen: Polish Your Water Clarity</a></h4>
-            <p class="blog-abstract-mini">Showroom-level clarity with a simple placement and one honest “downside.”</p>
+          <div class="card-content">
+            <h3 class="card-title" itemprop="headline"><a href="/blogs/purigen/">Purigen: Polish Your Water Clarity</a></h3>
+            <p class="card-excerpt">Showroom-level clarity with a simple placement and one honest “downside.”</p>
           </div>
         </article>
       </div>
