@@ -62,3 +62,4 @@ Result: handwritten rendering live.
 [2025-10-18 | Journal | Header + Grouping update] Scope: new subtitle, daily grouping, removed Quick Facts label, verified legal-pad visuals.
 Result: journal live (unlinked).
 [2025-10-20 | Journal | Meta Description (A)] Scope: Added SEO-optimized Discovery meta tag to /journal.html; verified canonical and tag hierarchy.
+[2025-10-21 | Memory | Created 29G sync memory docs] Added /docs/memory/{29g_sync_matrix,29g_sync_checklist,29g_runbook}.md to track journal updates.
