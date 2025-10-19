@@ -53,13 +53,42 @@ function ensureTrigger(container) {
   topLine.appendChild(label);
   topLine.appendChild(chevron);
 
-  const summary = document.createElement('span');
-  summary.className = 'filter-trigger-summary';
-  summary.dataset.role = 'filtration-summary';
-  summary.textContent = 'Filtration: 0 GPH • 0.0×/h ⚙️';
+  let summary = button.querySelector('[data-role="filtration-summary"]');
+  if (!summary) {
+    summary = document.createElement('span');
+    summary.className = 'filter-trigger-summary';
+    summary.dataset.role = 'filtration-summary';
+  }
+  let summaryText = summary.querySelector('[data-role="filtration-summary-text"]');
+  if (!summaryText) {
+    summaryText = document.createElement('span');
+    summaryText.className = 'filter-trigger-summary-text';
+    summaryText.dataset.role = 'filtration-summary-text';
+    summary.appendChild(summaryText);
+  }
+  if (!summaryText.textContent) {
+    summaryText.textContent = 'Filtration: 0 GPH • 0.0×/h ⚙️';
+  }
+  let infoBtn = summary.querySelector('[data-role="filtration-info"]');
+  if (!infoBtn) {
+    infoBtn = document.createElement('button');
+    infoBtn.type = 'button';
+    infoBtn.className = 'micro-info ttg-tooltip-trigger';
+    infoBtn.dataset.role = 'filtration-info';
+    infoBtn.dataset.info = 'filtration-pill';
+    infoBtn.dataset.tooltipId = 'filtration-pill-tip';
+    infoBtn.setAttribute('aria-controls', 'filtration-pill-tip');
+    infoBtn.setAttribute('aria-expanded', 'false');
+    infoBtn.setAttribute('aria-label', 'More info about filtration summary');
+    infoBtn.title = 'More info';
+    infoBtn.textContent = 'i';
+    summary.appendChild(infoBtn);
+  }
 
   button.appendChild(topLine);
-  button.appendChild(summary);
+  if (!summary.isConnected) {
+    button.appendChild(summary);
+  }
   container.innerHTML = '';
   container.appendChild(button);
   return button;
@@ -225,9 +254,12 @@ export function renderFiltrationTrigger(container, { metrics = null, open = fals
   if (!button) return;
   const chevron = button.querySelector('[data-role="filtration-chevron"]');
   const summary = button.querySelector('[data-role="filtration-summary"]');
+  const summaryText = button.querySelector('[data-role="filtration-summary-text"]');
   const total = formatGph(metrics?.gphTotal ?? metrics?.totalGph ?? metrics?.deliveredTotal ?? 0);
   const turnover = formatTurnover(metrics?.turnover ?? 0);
-  if (summary) {
+  if (summaryText) {
+    summaryText.textContent = `Filtration: ${total} GPH • ${turnover}×/h ⚙️`;
+  } else if (summary) {
     summary.textContent = `Filtration: ${total} GPH • ${turnover}×/h ⚙️`;
   }
   button.setAttribute('aria-expanded', open ? 'true' : 'false');

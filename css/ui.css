@@ -174,9 +174,22 @@
 }
 
 .filter-trigger-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.78rem;
   opacity: 0.78;
+  flex-wrap: wrap;
+}
+
+.filter-trigger-summary-text {
   white-space: nowrap;
+}
+
+.filter-trigger-summary .micro-info {
+  width: 20px;
+  height: 20px;
+  font-size: 0.72rem;
 }
 
 .filter-trigger-chevron {
@@ -189,7 +202,7 @@
 }
 
 @media (max-width: 600px) {
-  .filter-trigger-summary {
+  .filter-trigger-summary-text {
     white-space: normal;
   }
 }

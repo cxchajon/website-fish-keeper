@@ -14,7 +14,7 @@ const HAR_PATH = path.join(OUTPUT_DIR, 'runtime_network.har');
 const CONSOLE_PATH = path.join(OUTPUT_DIR, 'runtime_console.txt');
 const REPORT_PATH = path.join(OUTPUT_DIR, 'runtime_report.json');
 
-const TOOLTIP_SELECTOR = "[data-tooltip-id], [data-info-id], [data-tooltip], [data-tooltip-text], [data-tt]";
+const TOOLTIP_SELECTOR = "[data-tooltip-id], [data-info-id], [data-info], [data-tooltip], [data-tooltip-text], [data-tt]";
 
 const CONTENT_TYPES = {
   '.html': 'text/html; charset=utf-8',

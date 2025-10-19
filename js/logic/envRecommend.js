@@ -503,8 +503,8 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   const generalChips = isEmpty ? '' : renderChips(env.detailChips ?? []);
   const bioloadLabel = isEmpty ? '0% → 0% of capacity' : env.bioloadLabel;
   const aggressionLabel = isEmpty ? '0%' : env.aggressionLabel;
-  const bioloadInfoBtn = '<button type="button" class="icon-button info info-btn ttg-tooltip-trigger" data-role="info-btn" data-tooltip-id="bioload-tip" aria-expanded="false" aria-controls="bioload-tip" title="More info">i</button>';
-  const aggressionInfoBtn = '<button type="button" class="icon-button info info-btn ttg-tooltip-trigger" data-role="info-btn" data-tooltip-id="aggression-tip" aria-expanded="false" aria-controls="aggression-tip" title="More info">i</button>';
+  const bioloadInfoBtn = '<button type="button" class="icon-button info info-btn ttg-tooltip-trigger" data-role="info-btn" data-info="bioload" data-tooltip-id="bioload-tip" aria-expanded="false" aria-controls="bioload-tip" aria-label="More info about the bioload gauge" title="More info">i</button>';
+  const aggressionInfoBtn = '<button type="button" class="icon-button info info-btn ttg-tooltip-trigger" data-role="info-btn" data-info="aggression" data-tooltip-id="aggression-tip" aria-expanded="false" aria-controls="aggression-tip" aria-label="More info about the aggression gauge" title="More info">i</button>';
 
   if (isMobile) {
     root.classList.add('env-bars--xl');
