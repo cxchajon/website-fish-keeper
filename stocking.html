@@ -183,6 +183,42 @@
       color: var(--muted);
     }
 
+    .field-label-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .field-label-row .micro-info {
+      width: 20px;
+      height: 20px;
+      font-size: 0.72rem;
+    }
+
+    .filter-turnover {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: baseline;
+    }
+
+    .filter-turnover-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    .filter-turnover-label .micro-info {
+      width: 20px;
+      height: 20px;
+      font-size: 0.72rem;
+    }
+
+    .filter-turnover-value {
+      font-variant-numeric: tabular-nums;
+    }
+
     .micro-info {
       display: inline-flex;
       align-items: center;
@@ -1009,21 +1045,18 @@
           <div class="row-left">
             <div class="toggle-label">
               <label class="toggle-title" for="stocking-planted">Planted</label>
-              <button type="button"
+              <button
+                type="button"
                 class="icon-button info info-btn ttg-tooltip-trigger"
                 data-role="info-btn"
+                data-info="planted"
                 data-tooltip-id="planted-tip"
                 aria-expanded="false"
                 aria-controls="planted-tip"
                 aria-describedby="planted-tip"
-                title="More info">i</button>
-              <div id="planted-tip"
-                class="ttg-tooltip" data-tooltip-panel
-                data-role="info-tip"
-                role="tooltip"
-                hidden>
-                Planted tanks allow higher bioload and provide stability. Toggle ON if you keep live plants.
-              </div>
+                aria-label="More info about planted tanks"
+                title="More info"
+              >i</button>
             </div>
           </div>
           <div class="row-right">
@@ -1036,7 +1069,19 @@
             </div>
             <div class="filter-flow-control" data-role="filter-setup">
               <div class="filter-product-field">
-                <label for="filter-product">Filter Product</label>
+                <div class="field-label-row">
+                  <label for="filter-product">Filter Product</label>
+                  <button
+                    type="button"
+                    class="micro-info ttg-tooltip-trigger"
+                    data-info="filter-product"
+                    data-tooltip-id="filter-product-tip"
+                    aria-expanded="false"
+                    aria-controls="filter-product-tip"
+                    aria-label="More info about selecting a filter product"
+                    title="More info"
+                  >i</button>
+                </div>
                 <div class="select-wrap">
                   <select id="filter-product" name="filter-product" aria-describedby="filter-product-note">
                     <option value="">— Select a product —</option>
@@ -1048,7 +1093,19 @@
                 <p class="filter-product-note" id="filter-product-note">Choose a filter matched to your tank size to auto-fill GPH.</p>
               </div>
               <div class="filter-flow-input">
-                <label for="filter-rated-gph">Rated Flow (GPH)</label>
+                <div class="field-label-row">
+                  <label for="filter-rated-gph">Rated Flow (GPH)</label>
+                  <button
+                    type="button"
+                    class="micro-info ttg-tooltip-trigger"
+                    data-info="rated-flow"
+                    data-tooltip-id="rated-flow-tip"
+                    aria-expanded="false"
+                    aria-controls="rated-flow-tip"
+                    aria-label="More info about rated flow"
+                    title="More info"
+                  >i</button>
+                </div>
                 <div class="filter-flow-input__field">
                   <input type="text" id="filter-rated-gph" name="filter-rated-gph" inputmode="numeric"
                     pattern="[0-9]*" readonly placeholder="Select a product to auto-fill"
@@ -1057,7 +1114,22 @@
                 <p class="filter-flow-note" id="filter-rated-note">Auto-filled from selected product.</p>
               </div>
               <div class="filter-flow-meta">
-                <p class="filter-turnover" id="filter-turnover" aria-live="polite">Estimated turnover: —</p>
+                <p class="filter-turnover" id="filter-turnover" aria-live="polite">
+                  <span class="filter-turnover-label">
+                    Estimated turnover
+                    <button
+                      type="button"
+                      class="micro-info ttg-tooltip-trigger"
+                      data-info="turnover"
+                      data-tooltip-id="turnover-tip"
+                      aria-expanded="false"
+                      aria-controls="turnover-tip"
+                      aria-label="More info about turnover"
+                      title="More info"
+                    >i</button>
+                  </span>
+                  <span class="filter-turnover-value" data-role="filter-turnover-value">—</span>
+                </p>
                 <p class="filter-product-meta" id="filter-product-label" hidden></p>
               </div>
             </div>
@@ -1320,6 +1392,7 @@
               class="icon-button info info-btn ttg-tooltip-trigger"
               id="env-info-btn"
               data-role="info-btn"
+              data-info="env-info"
               data-tooltip-id="env-info-tip"
               aria-expanded="false"
               aria-controls="env-info-tip"
@@ -1327,15 +1400,6 @@
               title="More info"
               aria-label="More info and tips about Environmental Recommendations"
             >i</button>
-            <div
-              id="env-info-tip"
-              class="ttg-tooltip" data-tooltip-panel
-              data-role="env-info-tip"
-              role="tooltip"
-              hidden
-            >
-              Derived from your selected stock. Ranges reflect compatible overlaps across all species.
-            </div>
           </div>
           <p class="card-subtitle">Derived from your selected stock.</p>
           <div class="env-compact-summary" data-role="env-compact-summary" aria-hidden="true" hidden>
@@ -1401,12 +1465,14 @@
         </div>
       </section>
 
-      <div id="bioload-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden>
-        Approximate stocking level for your tank size. Stay in green for better stability.
-      </div>
-      <div id="aggression-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden>
-        Estimated compatibility risk. Adding aggressive or territorial species will raise this.
-      </div>
+      <div id="planted-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="planted"></div>
+      <div id="filter-product-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="filter-product"></div>
+      <div id="rated-flow-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="rated-flow"></div>
+      <div id="turnover-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="turnover"></div>
+      <div id="filtration-pill-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="filtration-pill"></div>
+      <div id="env-info-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="env-info"></div>
+      <div id="bioload-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="bioload"></div>
+      <div id="aggression-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="aggression"></div>
 
       <a class="see-gear" id="btn-gear" href="/gear.html" data-testid="btn-gear">See Gear Suggestions</a>
 

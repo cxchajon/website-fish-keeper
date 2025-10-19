@@ -1,4 +1,5 @@
-const TOOLTIP_TRIGGER_SELECTOR = '[data-tooltip-id], [data-info-id], [data-tooltip], [data-tooltip-text], [data-tt]';
+import { getTooltipContent } from './tooltip-content.js';
+const TOOLTIP_TRIGGER_SELECTOR = '[data-tooltip-id], [data-info-id], [data-info], [data-tooltip], [data-tooltip-text], [data-tt]';
 const BOUND_FLAG = 'ttgTooltipBound';
 const DEFAULT_INLINE_CLASS = 'ttg-tooltip';
 const GAP = 10;
@@ -6,6 +7,99 @@ const MARGIN = 8;
 const OUTSIDE_EVENTS = ['pointerdown', 'mousedown', 'touchstart'];
 
 let activeState = null;
+
+function tipHasContent(tip) {
+  if (!(tip instanceof HTMLElement)) {
+    return false;
+  }
+  if (tip.childElementCount > 0) {
+    return true;
+  }
+  const text = (tip.textContent || '').trim();
+  return text.length > 0;
+}
+
+function applyRegistryContent(trigger, tip, scope) {
+  if (!(trigger instanceof HTMLElement) || !(tip instanceof HTMLElement)) {
+    return false;
+  }
+  const doc = getDocument(scope);
+  const keyCandidates = [
+    trigger.dataset.info,
+    trigger.getAttribute('data-info-key'),
+    tip.dataset.info,
+    tip.getAttribute('data-info-key'),
+  ];
+  const rawKey = keyCandidates.find((value) => typeof value === 'string' && value.trim());
+  if (!rawKey) {
+    return tipHasContent(tip);
+  }
+  const key = rawKey.trim().toLowerCase();
+  trigger.dataset.info = key;
+  tip.dataset.info = key;
+  const entry = getTooltipContent(key);
+  if (!entry) {
+    return tipHasContent(tip);
+  }
+  const { title, body = [], bullets = [], ariaLabel, label } = entry;
+  const lines = Array.isArray(body) ? body.filter((line) => typeof line === 'string' && line.trim()) : [];
+  const points = Array.isArray(bullets) ? bullets.filter((line) => typeof line === 'string' && line.trim()) : [];
+  const hasContent = Boolean(title) || lines.length > 0 || points.length > 0;
+  if (!hasContent) {
+    return false;
+  }
+  if (tip.dataset.tooltipRendered === key && tipHasContent(tip)) {
+    return true;
+  }
+  tip.innerHTML = '';
+  tip.dataset.tooltipRendered = key;
+  if (title) {
+    const heading = doc.createElement('strong');
+    heading.className = 'ttg-tooltip__title';
+    heading.textContent = title;
+    tip.appendChild(heading);
+  }
+  lines.forEach((line) => {
+    const paragraph = doc.createElement('p');
+    paragraph.className = 'ttg-tooltip__body';
+    paragraph.textContent = line;
+    tip.appendChild(paragraph);
+  });
+  if (points.length) {
+    const list = doc.createElement('ul');
+    list.className = 'ttg-tooltip__list';
+    points.forEach((line) => {
+      const item = doc.createElement('li');
+      item.textContent = line;
+      list.appendChild(item);
+    });
+    tip.appendChild(list);
+  }
+  const announcedLabel = ariaLabel || label;
+  if (announcedLabel && !trigger.getAttribute('aria-label')) {
+    trigger.setAttribute('aria-label', announcedLabel);
+  }
+  if (announcedLabel && !trigger.getAttribute('title')) {
+    trigger.setAttribute('title', announcedLabel);
+  }
+  return tipHasContent(tip);
+}
+
+function hideTrigger(trigger, tip) {
+  if (!(trigger instanceof HTMLElement)) {
+    return;
+  }
+  if (activeState && activeState.trigger === trigger) {
+    closeActive({ restoreFocus: false });
+  }
+  trigger.setAttribute('hidden', '');
+  trigger.setAttribute('aria-hidden', 'true');
+  trigger.setAttribute('aria-disabled', 'true');
+  trigger.classList.add('ttg-tooltip-hidden');
+  if (tip instanceof HTMLElement) {
+    ensureHidden(tip, true);
+  }
+}
 
 function getDocument(scope) {
   if (scope instanceof Document) {
@@ -61,10 +155,13 @@ function resolveTooltip(trigger, scope) {
   let tip = doc.getElementById(tipId);
   if (!tip) {
     const text = trigger.dataset.tooltip || trigger.dataset.tooltipText || trigger.dataset.tt || trigger.getAttribute('data-tt');
-    if (!text) {
+    if (typeof text === 'string' && text.length) {
+      tip = createInlineTooltip(doc, tipId, text);
+    } else if (trigger.dataset.info || trigger.getAttribute('data-info-key')) {
+      tip = createInlineTooltip(doc, tipId, '');
+    } else {
       return null;
     }
-    tip = createInlineTooltip(doc, tipId, text);
   }
   if (!tip.id) {
     tip.id = tipId;
@@ -473,16 +570,32 @@ function prepareTrigger(trigger, tip) {
 
 export function initInfoTooltips(root = document) {
   const scope = root instanceof Document ? root : (root?.ownerDocument || document);
-  const triggers = Array.from(scope.querySelectorAll(TOOLTIP_TRIGGER_SELECTOR));
+  const searchRoot = root instanceof Document || typeof root?.querySelectorAll !== 'function' ? scope : root;
+  if (!scope || !searchRoot) {
+    return;
+  }
+  const triggers = Array.from(searchRoot.querySelectorAll(TOOLTIP_TRIGGER_SELECTOR));
   triggers.forEach((trigger) => {
     if (!(trigger instanceof HTMLElement)) {
       return;
     }
-    if (trigger.dataset[BOUND_FLAG] === '1') {
-      return;
-    }
     const tip = resolveTooltip(trigger, scope);
     if (!tip) {
+      hideTrigger(trigger);
+      return;
+    }
+    const hasContent = applyRegistryContent(trigger, tip, scope);
+    if (!hasContent) {
+      hideTrigger(trigger, tip);
+      return;
+    }
+    if (trigger.classList.contains('ttg-tooltip-hidden')) {
+      trigger.classList.remove('ttg-tooltip-hidden');
+    }
+    trigger.removeAttribute('hidden');
+    trigger.removeAttribute('aria-hidden');
+    trigger.removeAttribute('aria-disabled');
+    if (trigger.dataset[BOUND_FLAG] === '1') {
       return;
     }
     prepareTrigger(trigger, tip);

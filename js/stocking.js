@@ -235,6 +235,7 @@ function bootstrapStocking() {
     filterProductSelect: document.getElementById('filter-product'),
     filterRatedInput: document.getElementById('filter-rated-gph'),
     filterTurnover: document.getElementById('filter-turnover'),
+    filterTurnoverValue: document.querySelector('[data-role="filter-turnover-value"]'),
     filterProductLabel: document.getElementById('filter-product-label'),
     filterFlowNote: document.getElementById('filter-rated-note'),
     filterProductNote: document.getElementById('filter-product-note'),
@@ -433,6 +434,7 @@ function bootstrapStocking() {
       metrics,
       open: filtrationUi.open,
     });
+    initInfoTooltips();
   }
 
   syncFiltrationUI();
@@ -910,6 +912,7 @@ function bootstrapStocking() {
       refs.filterProductSelect = refs.filterSetup.querySelector('#filter-product');
       refs.filterRatedInput = refs.filterSetup.querySelector('#filter-rated-gph');
       refs.filterTurnover = refs.filterSetup.querySelector('#filter-turnover');
+      refs.filterTurnoverValue = refs.filterSetup.querySelector('[data-role="filter-turnover-value"]');
       refs.filterProductLabel = refs.filterSetup.querySelector('#filter-product-label');
       refs.filterFlowNote = refs.filterSetup.querySelector('#filter-rated-note');
       refs.filterProductNote = refs.filterSetup.querySelector('#filter-product-note');
@@ -976,7 +979,11 @@ function bootstrapStocking() {
     }
 
     const turnover = computeTurnoverEstimate();
-    if (refs.filterTurnover) {
+    if (refs.filterTurnoverValue) {
+      refs.filterTurnoverValue.textContent = Number.isFinite(turnover)
+        ? `${turnover.toFixed(1)}×/h`
+        : '—';
+    } else if (refs.filterTurnover) {
       refs.filterTurnover.textContent = Number.isFinite(turnover)
         ? `Estimated turnover: ${turnover.toFixed(1)}×/h`
         : 'Estimated turnover: —';

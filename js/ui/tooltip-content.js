@@ -1,0 +1,154 @@
+const TOOLTIP_COPY = new Map([
+  [
+    'planted',
+    {
+      title: 'Planted tank toggle',
+      body: [
+        'Live plants consume ammonia and nitrite, buffering waste spikes and adding oxygen.',
+        'Turn this on when you keep live plants so we allow a little more bioload and widen matching parameters.',
+      ],
+      ariaLabel: 'More info about planted tanks',
+    },
+  ],
+  [
+    'filter-product',
+    {
+      title: 'Filter product list',
+      body: [
+        'We filter the catalog to products that suit your tank size.',
+        'Picking one saves its type and rated flow so you can compare turnover instantly.',
+      ],
+      ariaLabel: 'More info about choosing a filter product',
+    },
+  ],
+  [
+    'rated-flow',
+    {
+      title: 'Rated flow (GPH)',
+      body: [
+        'This is the manufacturer’s gallons-per-hour specification for the filter.',
+        'We auto-fill it from the product you choose; only adjust if you have a measured value.',
+      ],
+      ariaLabel: 'More info about rated flow',
+    },
+  ],
+  [
+    'turnover',
+    {
+      title: 'Turnover explained',
+      body: [
+        'Turnover equals total filter flow divided by tank volume.',
+        'Most community freshwater tanks thrive around 4–7× per hour. River species may need more, while bettas or gentle planted tanks can stay toward the low end.',
+      ],
+      ariaLabel: 'More info about turnover',
+    },
+  ],
+  [
+    'filtration-pill',
+    {
+      title: 'Filtration summary chip',
+      body: [
+        'We total every filter you add and convert it into gallons per hour and estimated turnover.',
+        'Sponge filters get a softer weighting because their flow is diffuse, so the turnover chip reflects that gentler output.',
+      ],
+      ariaLabel: 'More info about the filtration summary',
+    },
+  ],
+  [
+    'env-info',
+    {
+      title: 'Environmental recommendations',
+      body: [
+        'Parameter ranges reflect the overlap across every species in your stock list.',
+        'Stay inside the highlighted bands to keep the whole community comfortable.',
+      ],
+      ariaLabel: 'More info about environmental recommendations',
+    },
+  ],
+  [
+    'bioload',
+    {
+      title: 'Bioload gauge',
+      body: [
+        'Shows how much of your tank’s capacity is used based on species size and waste output.',
+        'Staying in the green keeps extra buffer for filtration, oxygen, and future growth.',
+      ],
+      ariaLabel: 'More info about the bioload gauge',
+    },
+  ],
+  [
+    'aggression',
+    {
+      title: 'Aggression & compatibility',
+      body: [
+        'Estimates stress or conflict risk between the species you’ve added.',
+        'Higher percentages flag territorial, nippy, or mismatched temperaments so you can plan around them.',
+      ],
+      ariaLabel: 'More info about the aggression gauge',
+    },
+  ],
+]);
+
+function normalizeKey(key) {
+  return typeof key === 'string' ? key.trim().toLowerCase() : '';
+}
+
+function normalizeEntry(value) {
+  if (!value || typeof value !== 'object') {
+    return null;
+  }
+  const entry = { ...value };
+  if (typeof entry.body === 'string') {
+    entry.body = [entry.body];
+  } else if (Array.isArray(entry.body)) {
+    entry.body = entry.body.filter((line) => typeof line === 'string' && line.trim());
+  } else {
+    entry.body = [];
+  }
+  if (Array.isArray(entry.bullets)) {
+    entry.bullets = entry.bullets.filter((line) => typeof line === 'string' && line.trim());
+  } else {
+    entry.bullets = [];
+  }
+  return entry;
+}
+
+export function getTooltipContent(key) {
+  const normalized = normalizeKey(key);
+  if (!normalized) {
+    return null;
+  }
+  return TOOLTIP_COPY.get(normalized) || null;
+}
+
+export function defineTooltipContent(key, value) {
+  const normalized = normalizeKey(key);
+  const entry = normalizeEntry(value);
+  if (!normalized || !entry) {
+    return;
+  }
+  TOOLTIP_COPY.set(normalized, entry);
+}
+
+export function hasTooltipContent(key) {
+  const normalized = normalizeKey(key);
+  if (!normalized) {
+    return false;
+  }
+  return TOOLTIP_COPY.has(normalized);
+}
+
+export function listTooltipKeys() {
+  return Array.from(TOOLTIP_COPY.keys());
+}
+
+export function getOrDefineTooltipContent(key, fallback) {
+  const existing = getTooltipContent(key);
+  if (existing) {
+    return existing;
+  }
+  defineTooltipContent(key, fallback);
+  return getTooltipContent(key);
+}
+
+export default TOOLTIP_COPY;
