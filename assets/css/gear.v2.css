@@ -293,21 +293,34 @@ body.ttg-tooltip-lock{
 }
 
 .info-btn{
-  border:1px solid rgba(148,163,184,0.35);
-  background:rgba(15,23,42,0.6);
-  color:var(--ink);
-  border-radius:50%;
-  width:24px;
-  height:24px;
-  font-size:0.75rem;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
+  --info-btn-color: var(--muted, rgba(226,232,240,0.72));
+  --info-btn-color-hover: var(--ink, #e5e7eb);
+  --info-btn-color-disabled: rgba(148,163,184,0.55);
+  --info-btn-focus-inner: var(--bg, #0f172a);
+  --info-btn-focus-outer: var(--accent, rgba(96,165,250,0.9));
+  font-size:0.95rem;
+}
+
+.info-btn:hover:not([disabled]){
+  color:var(--info-btn-color-hover);
 }
 
 .info-btn:focus-visible{
-  outline:2px solid var(--accent);
-  outline-offset:2px;
+  outline:none;
+}
+
+.info-btn[disabled]{
+  color:var(--info-btn-color-disabled);
+}
+
+@media (prefers-color-scheme: light){
+  .info-btn{
+    --info-btn-color: var(--ink-600, #475569);
+    --info-btn-color-hover: var(--ink-900, #0f172a);
+    --info-btn-color-disabled: rgba(148,163,184,0.55);
+    --info-btn-focus-inner: var(--surface, #ffffff);
+    --info-btn-focus-outer: var(--accent, rgba(59,130,246,0.82));
+  }
 }
 
 .gear-card__header .chevron{

@@ -469,25 +469,65 @@ main {
 }
 
 .category-panel__info-btn {
+  --info-btn-hit: 44px;
+  --info-btn-color: var(--muted);
+  --info-btn-color-hover: var(--fg);
+  --info-btn-color-disabled: rgba(246, 248, 255, 0.45);
+  --info-btn-focus-inner: var(--bg);
+  --info-btn-focus-outer: var(--accent);
   flex: 0 0 auto;
-  margin-right: 16px;
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--fg);
-  font-size: 0.95rem;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--info-btn-hit);
+  height: var(--info-btn-hit);
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  background: none;
+  color: var(--info-btn-color);
+  font: inherit;
   font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.category-panel__info-btn:hover,
+.category-panel__info-btn:hover:not([disabled]) {
+  color: var(--info-btn-color-hover);
+}
+
+.category-panel__info-btn:active:not([disabled]) {
+  transform: scale(0.96);
+}
+
 .category-panel__info-btn:focus-visible {
-  background: var(--accent);
-  border-color: transparent;
-  color: #fff;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--info-btn-focus-inner), 0 0 0 4px var(--info-btn-focus-outer);
+}
+
+.category-panel__info-btn[disabled] {
+  color: var(--info-btn-color-disabled);
+  cursor: default;
+  pointer-events: none;
+}
+
+@media (prefers-color-scheme: light) {
+  .category-panel__info-btn {
+    --info-btn-color: var(--ink-600, #475569);
+    --info-btn-color-hover: var(--ink-900, #0f172a);
+    --info-btn-color-disabled: rgba(148, 163, 184, 0.55);
+    --info-btn-focus-inner: var(--surface, #ffffff);
+    --info-btn-focus-outer: var(--accent, rgba(91, 140, 255, 0.7));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-panel__info-btn {
+    transition: none;
+  }
 }
 
 .category-panel__title {
