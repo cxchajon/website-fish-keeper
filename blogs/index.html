@@ -7,6 +7,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
   <link rel="stylesheet" href="/css/blogs.css" />
+  <style>
+    .card-thumb {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #0b1720;
+    }
+  </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (load FIRST) -->
   <script src="/assets/js/consent-mode.js" defer></script>
@@ -51,11 +61,16 @@
         <!-- Black Beard Algae (small) -->
         <article class="blog-item blog-item-small" itemscope itemtype="https://schema.org/CreativeWork">
           <a class="blog-thumb-link" href="/blogs/blackbeard/" aria-label="Read: Beating Black Beard Algae">
-            <img class="blog-thumb-mini"
-                 src="/blogs/blackbeard/img/IMG_9610.png?v=1"
-                 alt="Black Beard Algae covering plants in a 29-gallon aquarium before treatment"
-                 loading="lazy" decoding="async"
-                 onerror="this.onerror=null;this.src='/media/placeholder-16x9.svg';" />
+            <img
+              src="/blogs/blackbeard/img/IMG_9610.png"
+              alt="Black Beard Algae before treatment (full bloom)"
+              class="card-thumb"
+              loading="lazy"
+              decoding="async"
+              width="320"
+              height="180"
+              onerror="this.onerror=null;this.src='/blogs/shared/img/ph-card.png';"
+            />
           </a>
           <div class="blog-meta">
             <h4 itemprop="headline"><a href="/blogs/blackbeard/">Beating Black Beard Algae: What Finally Worked</a></h4>
