@@ -186,10 +186,10 @@
   white-space: nowrap;
 }
 
-.filter-trigger-summary .micro-info {
-  width: 20px;
-  height: 20px;
-  font-size: 0.72rem;
+.filter-trigger-summary .info-btn {
+  --info-btn-visible: 30px;
+  transform: none;
+  font-size: 0.95rem;
 }
 
 .filter-trigger-chevron {

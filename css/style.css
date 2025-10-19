@@ -902,42 +902,96 @@ body.ttg-tooltip-lock{
   margin-top: 2px;      /* tuck the link right under the tagline */
 }
 
-/* Info button aligned to title baseline */
+/* Unified info button chip */
 .info-btn{
+  --info-btn-hit: 44px;
+  --info-btn-visible: 30px;
+  --info-btn-bg: rgba(255,255,255,0.12);
+  --info-btn-bg-hover: rgba(255,255,255,0.18);
+  --info-btn-bg-active: rgba(255,255,255,0.14);
+  --info-btn-border: rgba(255,255,255,0.24);
+  --info-btn-border-hover: rgba(255,255,255,0.32);
+  --info-btn-border-active: rgba(255,255,255,0.28);
+  --info-btn-focus: rgba(20,203,168,0.68);
+  --info-btn-icon: rgba(238,243,255,0.96);
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  line-height: 1;
-  /* Use existing icon or letter “i”; this styles the container */
-  background: rgba(0,0,0,0.35);
-  color: #fff;
-  border: 0;
+  width: var(--info-btn-hit);
+  height: var(--info-btn-hit);
+  border-radius: 9999px;
   padding: 0;
-  transform: translateY(1px);  /* subtle vertical nudge to align with text baseline */
+  border: 0;
+  background: none;
+  color: var(--info-btn-icon);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 160ms ease;
 }
-.info-btn:hover{ background: rgba(0,0,0,0.5); }
 
-.icon-button.info{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  line-height: 1;
-  background: rgba(0,0,0,0.35);
-  color: #fff;
-  border: 0;
-  padding: 0;
-  transform: translateY(1px);
-  cursor: pointer;
+.info-btn::before{
+  content: '';
+  position: absolute;
+  inset: calc((var(--info-btn-hit) - var(--info-btn-visible)) / 2);
+  border-radius: inherit;
+  background: var(--info-btn-bg);
+  border: 1.5px solid var(--info-btn-border);
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+  z-index: 0;
 }
-.icon-button.info:hover{ background: rgba(0,0,0,0.5); }
-.icon-button.info:focus-visible{ outline:2px solid rgba(20,203,168,0.55); outline-offset:2px; }
+
+.info-btn::after{
+  content: '';
+  position: absolute;
+  inset: calc((var(--info-btn-hit) - var(--info-btn-visible)) / 2 - 3px);
+  border-radius: inherit;
+  border: 2px solid var(--info-btn-focus);
+  opacity: 0;
+  transition: opacity 140ms ease;
+  z-index: -1;
+}
+
+.info-btn:hover::before{
+  background: var(--info-btn-bg-hover);
+  border-color: var(--info-btn-border-hover);
+}
+
+.info-btn:active::before{
+  background: var(--info-btn-bg-active);
+  border-color: var(--info-btn-border-active);
+}
+
+.info-btn:focus-visible{
+  outline: none;
+}
+
+.info-btn:focus-visible::after{
+  opacity: 1;
+}
+
+.info-btn[disabled]{
+  color: rgba(238,243,255,0.45);
+  cursor: default;
+  pointer-events: none;
+}
+
+.info-btn[disabled]::before{
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.16);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .info-btn,
+  .info-btn::before,
+  .info-btn::after{
+    transition-duration: 0ms;
+  }
+}
 
 
 /* Remove default paragraph spacing INSIDE hero to keep tight control */

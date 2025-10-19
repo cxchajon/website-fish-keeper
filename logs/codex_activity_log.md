@@ -65,3 +65,4 @@ Result: journal live (unlinked).
 [2025-10-21 | Memory | Created 29G sync memory docs] Added /docs/memory/{29g_sync_matrix,29g_sync_checklist,29g_runbook}.md to track journal updates.
 
 [2025-10-19 | SA | Info buttons fixed with shared accessible tooltip (Coach parity)]
+[2025-10-19 | SA | Info buttons rounded (Coach parity)]

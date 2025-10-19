@@ -214,7 +214,7 @@ export function renderConditions(list, items) {
     label.textContent = item.label;
     if (item.infoKey) {
       const infoBtn = document.createElement('button');
-      infoBtn.className = 'micro-info';
+      infoBtn.className = 'info-btn ttg-tooltip-trigger';
       infoBtn.type = 'button';
       infoBtn.setAttribute('data-info-key', item.infoKey);
       infoBtn.setAttribute('aria-label', `${item.label} info`);

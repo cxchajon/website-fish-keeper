@@ -131,25 +131,17 @@
     }
 
     .info-btn {
-      appearance: none;
-      background: var(--chip-plain);
-      border: 1px solid var(--card-border);
-      border-radius: 999px;
-      color: inherit;
-      font-size: 0.85rem;
-      line-height: 1;
-      padding: 6px 8px;
-      cursor: pointer;
-      transition: transform 160ms ease;
-    }
-
-    .info-btn:focus-visible {
-      outline: 2px solid #8cc4ff;
-      outline-offset: 2px;
-    }
-
-    .info-btn:hover {
-      transform: translateY(-1px);
+      --info-btn-hit: 44px;
+      --info-btn-visible: 30px;
+      --info-btn-bg: var(--chip-plain);
+      --info-btn-bg-hover: rgba(255, 255, 255, 0.16);
+      --info-btn-bg-active: rgba(255, 255, 255, 0.12);
+      --info-btn-border: var(--card-border);
+      --info-btn-border-hover: rgba(255, 255, 255, 0.26);
+      --info-btn-border-active: rgba(255, 255, 255, 0.22);
+      --info-btn-focus: #8cc4ff;
+      --info-btn-icon: inherit;
+      font-size: 0.92rem;
     }
 
     .info-btn + .ttg-tooltip {
