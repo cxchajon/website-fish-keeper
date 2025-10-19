@@ -34,6 +34,24 @@
       border-color: rgba(255,255,255,.28);
     }
 
+    .topics-nav a.topic-core,
+    .topics-nav a.topic-algae,
+    .topics-nav a.topic-product,
+    .topics-nav a.topic-chem,
+    .topics-nav a.topic-gear{
+      color: color-mix(in srgb, var(--accent) 88%, white 18%);
+      border-color: color-mix(in srgb, var(--accent) 46%, transparent);
+    }
+    .topics-nav a.topic-core:hover,
+    .topics-nav a.topic-algae:hover,
+    .topics-nav a.topic-product:hover,
+    .topics-nav a.topic-chem:hover,
+    .topics-nav a.topic-gear:hover{
+      background: color-mix(in srgb, var(--accent) 22%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 36%, transparent);
+    }
+
     .topic-section{
       background: linear-gradient(180deg, rgba(0,0,0,.06), rgba(0,0,0,.02));
       border-radius: var(--radius, 18px);
@@ -144,6 +162,46 @@
     .blog-card .card-thumb-link{
       display:block;
     }
+
+    /* === Topic Accent System (Magazine) === */
+    :root{
+      --accent:#8fe3ff; /* fallback */
+    }
+    .topic-core{ --accent:#3CAEA3; }
+    .topic-algae{ --accent:#C94C4C; }
+    .topic-product{ --accent:#FF8C42; }
+    .topic-chem{ --accent:#5D8AA8; }
+    .topic-gear{ --accent:#1F7A8C; }
+
+    /* apply accent to card frame and headline bar */
+    .topic-section .blog-card{ border-top:4px solid var(--accent); }
+    .topic-section .blog-card .card-title::before{
+      background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
+    }
+
+    /* hero/button/link accents can read var(--accent) if desired */
+    .topic-section .card-cta,
+    .topic-section .blogs-grid a:hover{ color: var(--accent); }
+
+    /* Individual article header/banner accents */
+    .article-accent{
+      --accent: var(--accent);
+      border-top: 6px solid var(--accent);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+    .article-accent .eyebrow,
+    .article-accent .meta a,
+    .article-accent a:hover{ color: var(--accent); }
+
+    /* Optional subtle gradient underline for article H1 */
+    .article-accent h1{
+      position:relative; padding-top:14px;
+    }
+    .article-accent h1::before{
+      content:""; position:absolute; top:0; left:0; width:70px; height:3px;
+      background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
+      border-radius:2px; opacity:.95;
+    }
   </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (load FIRST) -->
@@ -164,12 +222,12 @@
     </header>
 
     <nav class="topics-nav" aria-label="Blog topics">
-      <a href="#topic-beginner">Beginner Basics</a>
-      <a href="#topic-algae">Algae &amp; Problem Solving</a>
-      <a href="#topic-product">Product Highlights</a>
+      <a href="#topic-beginner" class="topic-core">Beginner Basics</a>
+      <a href="#topic-algae" class="topic-algae">Algae &amp; Problem Solving</a>
+      <a href="#topic-product" class="topic-product">Product Highlights</a>
     </nav>
 
-    <section id="topic-beginner" class="topic-section">
+    <section id="topic-beginner" class="topic-section topic-core">
       <header class="topic-head">
         <h2>Beginner Basics</h2>
         <p class="topic-sub">First steps, setup mistakes, and confidence builders.</p>
@@ -191,7 +249,7 @@
       </div>
     </section>
 
-    <section id="topic-algae" class="topic-section">
+    <section id="topic-algae" class="topic-section topic-algae">
       <header class="topic-head">
         <h2>Algae &amp; Problem Solving</h2>
         <p class="topic-sub">Real-world fixes and maintenance wins.</p>
@@ -218,7 +276,7 @@
       </div>
     </section>
 
-    <section id="topic-product" class="topic-section">
+    <section id="topic-product" class="topic-section topic-product">
       <header class="topic-head">
         <h2>Product Highlights</h2>
         <p class="topic-sub">Hand-picked gear that earned a spot in the sump.</p>

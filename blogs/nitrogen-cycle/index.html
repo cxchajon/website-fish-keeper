@@ -20,6 +20,46 @@
     .callout strong{color:#fff}
     .numlist{padding-left:1.1em}
     .pullquote{font-style:italic; border-left:3px solid rgba(255,255,255,.25); padding-left:12px; margin:18px 0}
+
+    /* === Topic Accent System (Magazine) === */
+    :root{
+      --accent:#8fe3ff; /* fallback */
+    }
+    .topic-core{ --accent:#3CAEA3; }
+    .topic-algae{ --accent:#C94C4C; }
+    .topic-product{ --accent:#FF8C42; }
+    .topic-chem{ --accent:#5D8AA8; }
+    .topic-gear{ --accent:#1F7A8C; }
+
+    /* apply accent to card frame and headline bar */
+    .topic-section .blog-card{ border-top:4px solid var(--accent); }
+    .topic-section .blog-card .card-title::before{
+      background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
+    }
+
+    /* hero/button/link accents can read var(--accent) if desired */
+    .topic-section .card-cta,
+    .topic-section .blogs-grid a:hover{ color: var(--accent); }
+
+    /* Individual article header/banner accents */
+    .article-accent{
+      --accent: var(--accent);
+      border-top: 6px solid var(--accent);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+    .article-accent .eyebrow,
+    .article-accent .meta a,
+    .article-accent a:hover{ color: var(--accent); }
+
+    /* Optional subtle gradient underline for article H1 */
+    .article-accent h1{
+      position:relative; padding-top:14px;
+    }
+    .article-accent h1::before{
+      content:""; position:absolute; top:0; left:0; width:70px; height:3px;
+      background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
+      border-radius:2px; opacity:.95;
+    }
   </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (load FIRST) -->
@@ -27,7 +67,7 @@
   <!-- Google tag (gtag.js) — GA4 -->
   <!--#include virtual="/includes/ga4.html" -->
 </head>
-<body class="blog-open-page">
+<body class="blog-open-page topic-core">
 
   <!-- BEGIN Global Header (reuse the same header markup used elsewhere on the site) -->
   <!-- @@include or paste header/nav exactly as used in other blog pages -->
@@ -36,7 +76,7 @@
 
   <main class="blog-open">
     <article class="blog-article">
-      <div class="tg-article-panel">
+      <div class="tg-article-panel article-accent">
         <p><a href="/blogs/">← Back to all posts</a></p>
 
         <h1>The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping</h1>

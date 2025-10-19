@@ -34,6 +34,48 @@
     .ad-card a{color:var(--link);text-decoration:none}
     .ad-card a:hover,.ad-card a:focus{text-decoration:underline}
     @media (min-width:680px){ .ad-cards{grid-template-columns:1fr 1fr} }
+
+    /* === Topic Accent System (Magazine) === */
+    :root{
+      --accent:#8fe3ff; /* fallback */
+    }
+    .topic-core{ --accent:#3CAEA3; }
+    .topic-algae{ --accent:#C94C4C; }
+    .topic-product{ --accent:#FF8C42; }
+    .topic-chem{ --accent:#5D8AA8; }
+    .topic-gear{ --accent:#1F7A8C; }
+
+    /* apply accent to card frame and headline bar */
+    .topic-section .blog-card{ border-top:4px solid var(--accent); }
+    .topic-section .blog-card .card-title::before{
+      background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
+    }
+
+    /* hero/button/link accents can read var(--accent) if desired */
+    .topic-section .card-cta,
+    .topic-section .blogs-grid a:hover{ color: var(--accent); }
+
+    /* Individual article header/banner accents */
+    .article-accent{
+      --accent: var(--accent);
+      border-top: 6px solid var(--accent);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+      padding: 12px 0 8px;
+      margin-bottom: 12px;
+    }
+    .article-accent .eyebrow,
+    .article-accent .meta a,
+    .article-accent a:hover{ color: var(--accent); }
+
+    /* Optional subtle gradient underline for article H1 */
+    .article-accent h1{
+      position:relative; padding-top:14px;
+    }
+    .article-accent h1::before{
+      content:""; position:absolute; top:0; left:0; width:70px; height:3px;
+      background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
+      border-radius:2px; opacity:.95;
+    }
   </style>
   <script type="application/ld+json">
   {
@@ -50,12 +92,14 @@
   <!-- Google tag (gtag.js) — GA4 -->
   <!--#include virtual="/includes/ga4.html" -->
 </head>
-<body class="blog-open-page">
+<body class="blog-open-page topic-product">
   <main class="article blog-open" itemscope itemtype="https://schema.org/BlogPosting">
     <article>
       <a class="back" href="/blogs/">← Back to all posts</a>
-      <h1 itemprop="headline">Chasing Crystal Clear Aquarium Water (And What Finally Worked)</h1>
-      <p class="subhed">You can — and it’s easier than you think. Just a simple addition in the right place of your filtration setup can take your tank from clear… to showroom-level clarity.</p>
+      <div class="article-accent">
+        <h1 itemprop="headline">Chasing Crystal Clear Aquarium Water (And What Finally Worked)</h1>
+        <p class="subhed">You can — and it’s easier than you think. Just a simple addition in the right place of your filtration setup can take your tank from clear… to showroom-level clarity.</p>
+      </div>
 
       <div class="intro-divider" aria-hidden="true"></div>
 
