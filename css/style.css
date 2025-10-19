@@ -470,6 +470,24 @@ html[data-scroll-lock="on"] body {
   padding: 18px;
 }
 
+.seo-intro {
+  max-width: 700px;
+  margin: 1rem auto 0;
+  padding: 0;
+  font-size: 0.75em;
+  line-height: 1.4;
+  color: var(--muted, rgba(255, 255, 255, 0.85));
+  text-align: center;
+}
+
+.seo-intro p {
+  margin: 0;
+}
+
+.seo-intro strong {
+  color: var(--fg, #ffffff);
+}
+
 .card {
   background: var(--card);
   border: 1px solid var(--line);
