@@ -61,3 +61,4 @@ Runtime:
 • Playwright Chromium download blocked by proxy (HTTP 403), preventing smoke run — captured in `_codex_sync/trim/runtime_report.json` & `runtime_console.txt`.
 Follow-ups:
 • Restore a single `utilities.css` import on affected pages and remove redundant inline `box-sizing` declarations to complete trim spec.
+SITEMAP 2025-10-19T00-42-34Z updated 18→20 URLs
