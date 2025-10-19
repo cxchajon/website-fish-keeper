@@ -891,6 +891,58 @@
                 <span class="visually-hidden">University Articles</span>
                 <img class="alib-book__img" src="/assets/media/library/books/university.svg" alt="University Articles" loading="lazy">
               </a>
+              <div class="alib-book">
+                <span class="visually-hidden">Journal</span>
+                <svg class="alib-book__img" viewBox="0 0 512 512" width="100%" height="auto" role="img" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+                  <defs>
+                    <linearGradient id="journalPaper" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#fdf6c9" />
+                      <stop offset="55%" stop-color="#f8e9a4" />
+                      <stop offset="100%" stop-color="#f3dc86" />
+                    </linearGradient>
+                    <linearGradient id="journalBinding" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#d7b58a" />
+                      <stop offset="100%" stop-color="#c19763" />
+                    </linearGradient>
+                    <filter id="journalShadow" x="-15%" y="-15%" width="130%" height="140%">
+                      <feOffset dx="0" dy="18" in="SourceAlpha" result="off" />
+                      <feGaussianBlur in="off" stdDeviation="16" result="blur" />
+                      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.28 0" result="shadow" />
+                      <feBlend in="shadow" in2="SourceGraphic" mode="normal" />
+                    </filter>
+                  </defs>
+                  <g filter="url(#journalShadow)">
+                    <rect x="96" y="80" width="320" height="360" rx="28" ry="28" fill="url(#journalPaper)" />
+                    <rect x="96" y="80" width="320" height="68" rx="24" ry="24" fill="url(#journalBinding)" />
+                    <g fill="#a88458">
+                      <rect x="164" y="102" width="24" height="6" rx="2.5" />
+                      <rect x="236" y="102" width="24" height="6" rx="2.5" />
+                      <rect x="308" y="102" width="24" height="6" rx="2.5" />
+                    </g>
+                    <line x1="148" y1="152" x2="148" y2="412" stroke="#d66464" stroke-width="5" stroke-opacity="0.55" />
+                    <g stroke="#6f9cc6" stroke-width="4" stroke-opacity="0.4">
+                      <line x1="120" y1="176" x2="392" y2="176" />
+                      <line x1="120" y1="208" x2="392" y2="208" />
+                      <line x1="120" y1="240" x2="392" y2="240" />
+                      <line x1="120" y1="272" x2="392" y2="272" />
+                      <line x1="120" y1="304" x2="392" y2="304" />
+                      <line x1="120" y1="336" x2="392" y2="336" />
+                      <line x1="120" y1="368" x2="392" y2="368" />
+                      <line x1="120" y1="400" x2="392" y2="400" />
+                    </g>
+                    <g fill="#3c3a37" transform="translate(150 152) scale(1.52)">
+                      <path d="M0 0h32v8H20v38c0 10-7 16-16 16H0v-8h4c6 0 12-4 12-10V8H0z" />
+                      <path d="M44 8c0-6 4-8 8-8h28c4 0 8 2 8 8v32c0 6-4 8-8 8H52c-4 0-8-2-8-8V8zm12-2c-2 0-4 1-4 4v28c0 3 2 4 4 4h20c2 0 4-1 4-4V10c0-3-2-4-4-4H56z" />
+                      <path d="M98 0h12v36c0 8 3 12 10 12h12c7 0 10-4 10-12V0h12v36c0 16-8 24-22 24h-12c-14 0-22-8-22-24z" />
+                      <path d="M164 0h26c14 0 24 10 24 24 0 10-6 18-16 22l18 24h-14l-16-22h-10v22h-12zm26 36c6 0 12-4 12-12 0-8-6-12-12-12h-14v24z" />
+                      <path d="M226 0h12l26 48h-12l-6-10h-28l-6 10h-12zm14 28-10-18-10 18z" />
+                      <path d="M274 0h12l28 48h-12l-6-12h-30l-6 12h-12zm16 28-12-24-12 24z" />
+                      <path d="M322 0h38v8H334v40h26v8h-38z" />
+                    </g>
+                  </g>
+                </svg>
+                <p class="alib__caption">Journal</p>
+              </div>
             </div>
           </div>
 
