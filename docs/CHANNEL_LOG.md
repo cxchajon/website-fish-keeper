@@ -1,5 +1,11 @@
 # Channel Log
 
+## 2025-10-19 — Release v1.3 (Journal Integration & Maintenance Automation)
+[2025-10-19 | TheTankGuide.com | Release v1.3]
+Scope: Journal Integration & Maintenance Automation
+Result: Daily/weekly/monthly automation fully linked; all logs (Project, FishKeeper App/AI, Maintenance/Params) sync to shared routines.
+Next: Begin prep for v1.4 (Automated Summary ZIP + Public Tank Journal Integration).
+
 ## 2025-10-11 — SEO + Docs Refresh v1.2 (README & Sync Automation)
 Owner: FishKeepingLifeCo (CXLXC LLC)
 
