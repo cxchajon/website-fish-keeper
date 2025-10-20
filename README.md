@@ -6,6 +6,25 @@ Owner: FishKeepingLifeCo (CXLXC LLC)
 ## Overview
 The Tank Guide is a static HTML/CSS/JS site delivering aquarium planning tools, reference guides, and tank management workflows. Updates are tracked internally through the [Channel Log](docs/CHANNEL_LOG.md) and mirrored to GitHub Releases for deployment notes.
 
+## 🚀 Latest Release — v1.3 (October 19, 2025)
+Focus: Journal Integration & Maintenance Automation
+
+### What's New
+- Unified journal update system across Project Journal, FishKeeper App/AI notes, and 29G Aquarium quick logs.
+- Added daily, weekly, and monthly automations:
+  - 🕗 Daily 8 PM → Project Journal update
+  - 🕘 Daily 9 PM → AI notes update
+  - 📅 Weekly Sunday → roll-up summary (water changes, dosing, expenses, time)
+- Added feeding + dosing reminders per 29G schedule.
+- Verified SEO and footer/schema consistency with v1.2.
+- README refreshed for maintenance documentation clarity.
+
+### Repository Notes
+- Main site: https://thetankguide.com
+- Owner: FishKeepingLifeCo (CXLXC LLC)
+- Current version: v1.3
+- Status: ✅ Stable / Production-ready
+
 ## Core Pages
 - [index.html](index.html) — Homepage / feature grid.
 - [about.html](about.html) — Story, mission, vision.
@@ -62,6 +81,6 @@ Site updates flow into `/docs/CHANNEL_LOG.md`, then publish as matching GitHub R
 ## Status
 - Core pages live
 
-Updated: 2025-10-11
+Updated: 2025-10-19
 
 All rights reserved — FishKeepingLifeCo (CXLXC LLC).
