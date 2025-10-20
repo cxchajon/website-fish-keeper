@@ -66,3 +66,4 @@ Result: journal live (unlinked).
 
 [2025-10-19 | SA | Info buttons fixed with shared accessible tooltip (Coach parity)]
 [2025-10-19 | SA | Info buttons rounded (Coach parity)]
+[2025-10-20 | Journal] Added major maintenance entry; regenerated journal.csv/json; verified /journal.html renders newest-first.
