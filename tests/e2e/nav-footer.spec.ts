@@ -41,4 +41,68 @@ test.describe('Navigation and footer smoke checks', () => {
 
     await footer.screenshot({ path: path.join(auditScreenDir, 'footer-trust-link.png') });
   });
+
+  test('right click remains available by default when deterrent flag is off', async ({ page }) => {
+    await page.goto('/');
+
+    const defaultPrevented = await page.evaluate(() =>
+      new Promise((resolve) => {
+        const listener = (event) => {
+          document.removeEventListener('contextmenu', listener, true);
+          resolve(event.defaultPrevented);
+        };
+        document.addEventListener('contextmenu', listener, true);
+        const event = new MouseEvent('contextmenu', {
+          bubbles: true,
+          cancelable: true,
+          button: 2
+        });
+        if (!document.body) {
+          resolve(false);
+          return;
+        }
+        document.body.dispatchEvent(event);
+        setTimeout(() => {
+          document.removeEventListener('contextmenu', listener, true);
+          resolve(false);
+        }, 100);
+      })
+    );
+
+    expect(defaultPrevented).toBe(false);
+  });
+
+  test('right click is blocked when deterrent flag is enabled', async ({ page }) => {
+    await page.addInitScript(() => {
+      window.__RIGHT_CLICK_DETERRENT__ = true;
+    });
+
+    await page.goto('/');
+
+    const defaultPrevented = await page.evaluate(() =>
+      new Promise((resolve) => {
+        const listener = (event) => {
+          document.removeEventListener('contextmenu', listener, true);
+          resolve(event.defaultPrevented);
+        };
+        document.addEventListener('contextmenu', listener, true);
+        const event = new MouseEvent('contextmenu', {
+          bubbles: true,
+          cancelable: true,
+          button: 2
+        });
+        if (!document.body) {
+          resolve(false);
+          return;
+        }
+        document.body.dispatchEvent(event);
+        setTimeout(() => {
+          document.removeEventListener('contextmenu', listener, true);
+          resolve(false);
+        }, 100);
+      })
+    );
+
+    expect(defaultPrevented).toBe(true);
+  });
 });

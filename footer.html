@@ -83,25 +83,5 @@
   </p>
 </footer>
 <script>
-  // Lightweight right-click and drag protection
-  if (!document.__ttgContextMenuGuard) {
-    document.addEventListener("contextmenu", function (e) {
-      var tagName = (e.target && e.target.tagName) || "";
-      if (tagName === "INPUT" || tagName === "TEXTAREA") return;
-      e.preventDefault();
-    });
-    document.__ttgContextMenuGuard = true;
-  }
-
-  if (!document.__ttgImageDragGuard) {
-    document.addEventListener("dragstart", function (e) {
-      if (e.target && e.target.tagName === "IMG") e.preventDefault();
-    });
-    document.__ttgImageDragGuard = true;
-  }
-
-  // Optional console notice
-  if (typeof console !== "undefined" && typeof console.info === "function") {
-    console.info("🛡️ Right-click protection active on TheTankGuide.com");
-  }
+  // Right-click deterrent handled centrally in js/nav.js via window.__RIGHT_CLICK_DETERRENT__.
 </script>
