@@ -100,6 +100,22 @@
     .product-card-text a:hover {
       text-decoration: underline;
     }
+
+    .shop-cta{
+      display:flex; align-items:center; gap:16px;
+      padding:20px; border-radius:16px;
+      background:#111820;
+      text-decoration:none; color:#e8eef5;
+      box-shadow:0 1px 0 rgba(255,255,255,0.06) inset, 0 8px 24px rgba(0,0,0,0.35);
+      transition:transform .06s ease, background .2s ease;
+    }
+    .shop-cta:hover{ transform:translateY(-1px); background:#0f161d; }
+    .shop-cta__thumb{ flex:0 0 auto; width:72px; height:72px; border-radius:12px; overflow:hidden; background:#0b1117; box-shadow:0 0 0 1px rgba(255,255,255,0.06) inset; }
+    .shop-cta__thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .shop-cta__body{ display:flex; flex-direction:column; gap:6px; }
+    .shop-cta__title{ font-weight:700; letter-spacing:.1px; }
+    .shop-cta__desc{ color:#b8c7d6; line-height:1.45; }
+    .shop-cta__link{ color:#8fc6ff; font-weight:600; white-space:nowrap; }
   </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (load FIRST) -->
@@ -216,33 +232,19 @@
         <p><em>Tags:</em> Cycling Coach • Core Principles • Nitrogen Cycle • Fishless Cycle • Fish-In Cycle • Aquarium Water Chemistry</p>
 
         <!-- Book promo card -->
-        <aside class="ad-card book-promo">
-          <img
-            class="ad-card__img"
-            src="/assets/books/book-cover-web.jpg"
-            alt="Life in Balance: The Hidden Magic of Aquariums book cover"
-            width="112"
-            height="160"
-            loading="lazy"
-            decoding="async"
-          />
-          <div class="ad-card__body">
-            <h3 class="ad-card__title">
-              Life in Balance: The Hidden Magic of Aquariums —
-            </h3>
-            <p class="ad-card__text">
-              The definitive freshwater aquarium book for beginners and families.
-              <em>Life in Balance</em> brings the science of freshwater aquariums to life
-              through engaging stories and vivid art.
-              <a class="ad-card__cta"
-                 href="https://amzn.to/49ipZNg"
-                 rel="sponsored noopener"
-                 target="_blank">
-                Shop on Amazon →
-              </a>
-            </p>
+        <a class="shop-cta" href="https://amzn.to/49ipZNg" target="_blank" rel="nofollow sponsored noopener" aria-label="Life in Balance book — Shop on Amazon">
+          <div class="shop-cta__thumb">
+            <img src="/assets/books/book-cover-web.jpg" alt="Life in Balance: The Hidden Magic of Aquariums book cover" loading="lazy" width="72" height="72">
           </div>
-        </aside>
+          <div class="shop-cta__body">
+            <div class="shop-cta__title">Life in Balance: The Hidden Magic of Aquariums</div>
+            <div class="shop-cta__desc">
+              The definitive freshwater aquarium book for beginners and families.
+              <em>Life in Balance</em> brings the science of freshwater aquariums to life through engaging stories and vivid art.
+              <span class="shop-cta__link">Shop on Amazon →</span>
+            </div>
+          </div>
+        </a>
       </div>
     </article>
   </main>
