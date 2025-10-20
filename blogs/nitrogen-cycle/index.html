@@ -116,7 +116,22 @@
     .shop-cta__title{ font-weight:700; letter-spacing:.1px; }
     .shop-cta__desc{ color:#b8c7d6; line-height:1.45; }
     .shop-cta__link{ color:#8fc6ff; font-weight:600; white-space:nowrap; }
-    .shop-cta.book-feature .shop-cta__thumb{ width:90px; height:90px; }
+    .shop-cta.book-feature .shop-cta__thumb {
+      width: 120px;
+      height: 120px;
+      border-radius: 14px;
+    }
+    .shop-cta.book-feature .shop-cta__body {
+      gap: 8px;
+    }
+    .shop-cta.book-feature .shop-cta__title {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .shop-cta.book-feature .shop-cta__link {
+      color: #8fc6ff;
+      font-weight: 600;
+    }
   </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (load FIRST) -->
@@ -235,15 +250,11 @@
         <!-- Book promo card -->
         <a class="shop-cta book-feature" href="https://amzn.to/49ipZNg" target="_blank" rel="nofollow sponsored noopener" aria-label="Life in Balance book — Shop on Amazon">
           <div class="shop-cta__thumb">
-            <img src="/assets/books/book-cover-web.jpg" alt="Life in Balance: The Hidden Magic of Aquariums book cover" loading="lazy" width="90" height="90">
+            <img src="/assets/books/book-cover-web.jpg" alt="Life in Balance: The Hidden Magic of Aquariums book cover" loading="lazy" width="120" height="120">
           </div>
           <div class="shop-cta__body">
             <div class="shop-cta__title">Life in Balance: The Hidden Magic of Aquariums</div>
-            <div class="shop-cta__desc">
-              <strong>Life in Balance:</strong> The definitive guide to freshwater aquariums for beginners and families.
-              Discover how science and story meet beneath the surface.
-              <span class="shop-cta__link">Shop on Amazon →</span>
-            </div>
+            <div class="shop-cta__link">Shop on Amazon →</div>
           </div>
         </a>
       </div>
