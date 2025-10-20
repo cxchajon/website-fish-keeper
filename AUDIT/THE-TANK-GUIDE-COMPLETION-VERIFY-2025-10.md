@@ -46,3 +46,10 @@ All FAIL and PARTIAL findings are now confirmed as resolved.
 - Gate the footer `contextmenu`/`dragstart` handlers behind `window.__TTG_FEATURE_FLAGS__.enableRightClickBlock` so deterrence defaults off.
 - Drop the console notice (or guard it) until the footer script honors the flag.
 - Re-run targeted audit once the feature flag wiring is corrected.
+
+## Targeted Fix — S3 (Right-Click Deterrent) — 2025-10-20
+- Status: PASS
+- Evidence:
+  - Feature flag and guarded listeners implemented in `js/nav.js` lines 332-419. 【F:js/nav.js†L326-L419】
+  - Footer inline guards removed; now references central implementation in `footer.html` lines 85-87. 【F:footer.html†L85-L87】
+  - Playwright coverage verifying OFF/ON behavior in `tests/e2e/nav-footer.spec.ts` (“right click remains available by default when deterrent flag is off”, “right click is blocked when deterrent flag is enabled”). 【F:tests/e2e/nav-footer.spec.ts†L41-L105】

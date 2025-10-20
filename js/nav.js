@@ -326,16 +326,98 @@
   window.ttgInitNav = initNav;
   window.__TTG_PRIVACY_SECTION_IDS__ = PRIVACY_SECTION_IDS;
 
-  const featureFlags = window.__TTG_FEATURE_FLAGS__ || (window.__TTG_FEATURE_FLAGS__ = {});
-  if (typeof featureFlags.enableRightClickBlock !== 'boolean') {
-    featureFlags.enableRightClickBlock = false;
+  // Found bindings at js/nav.js:342-371 (contextmenu/drag)
+  // Found bindings at footer.html:85-107 (contextmenu/drag)
+
+  const deterrentState = {
+    enabled:
+      typeof window.__RIGHT_CLICK_DETERRENT__ === 'boolean'
+        ? window.__RIGHT_CLICK_DETERRENT__
+        : false,
+    handlersAttached: false,
+    handleContextMenu: null,
+    handleDragStart: null
+  };
+
+  const attachDeterrentListeners = () => {
+    if (deterrentState.handlersAttached) {
+      return;
+    }
+    deterrentState.handleContextMenu = (event) => {
+      const targetTag = event.target && event.target.tagName;
+      if (targetTag === 'INPUT' || targetTag === 'TEXTAREA') {
+        return;
+      }
+      event.preventDefault();
+    };
+    deterrentState.handleDragStart = (event) => {
+      if (event.target && event.target.tagName === 'IMG') {
+        event.preventDefault();
+      }
+    };
+    document.addEventListener('contextmenu', deterrentState.handleContextMenu);
+    document.addEventListener('dragstart', deterrentState.handleDragStart);
+    deterrentState.handlersAttached = true;
+  };
+
+  const detachDeterrentListeners = () => {
+    if (!deterrentState.handlersAttached) {
+      return;
+    }
+    if (deterrentState.handleContextMenu) {
+      document.removeEventListener('contextmenu', deterrentState.handleContextMenu);
+    }
+    if (deterrentState.handleDragStart) {
+      document.removeEventListener('dragstart', deterrentState.handleDragStart);
+    }
+    deterrentState.handlersAttached = false;
+  };
+
+  const updateDeterrent = (isEnabled) => {
+    if (isEnabled) {
+      attachDeterrentListeners();
+    } else {
+      detachDeterrentListeners();
+    }
+  };
+
+  if (typeof window.__RIGHT_CLICK_DETERRENT__ !== 'boolean') {
+    window.__RIGHT_CLICK_DETERRENT__ = deterrentState.enabled;
+  } else {
+    deterrentState.enabled = Boolean(window.__RIGHT_CLICK_DETERRENT__);
   }
 
-  if (featureFlags.enableRightClickBlock && !document.__ttgContextMenuGuard) {
-    // Right-click deterrence only; does not prevent determined scraping.
-    document.addEventListener('contextmenu', (event) => {
-      event.preventDefault();
-    });
-    document.__ttgContextMenuGuard = true;
+  Object.defineProperty(window, '__RIGHT_CLICK_DETERRENT__', {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return deterrentState.enabled;
+    },
+    set(value) {
+      const nextValue = Boolean(value);
+      if (nextValue === deterrentState.enabled) {
+        return;
+      }
+      deterrentState.enabled = nextValue;
+      updateDeterrent(nextValue);
+    }
+  });
+
+  const featureFlags = window.__TTG_FEATURE_FLAGS__ || (window.__TTG_FEATURE_FLAGS__ = {});
+  if (!Object.prototype.hasOwnProperty.call(featureFlags, 'enableRightClickBlock')) {
+    featureFlags.enableRightClickBlock = deterrentState.enabled;
   }
+  Object.defineProperty(featureFlags, 'enableRightClickBlock', {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return window.__RIGHT_CLICK_DETERRENT__;
+    },
+    set(value) {
+      window.__RIGHT_CLICK_DETERRENT__ = value;
+    }
+  });
+
+  // Feature-flagged deterrent (OFF by default). Attach/remove listeners based on flag.
+  updateDeterrent(deterrentState.enabled);
 })();
