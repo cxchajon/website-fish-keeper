@@ -977,6 +977,18 @@ body.ttg-tooltip-lock{
   display: block;
 }
 
+.ttg-tooltip[data-ttg-portal='body']{
+  position: absolute;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.ttg-tooltip[data-ttg-portal='body'][data-open='true']{
+  opacity: 1;
+  transform: translateY(0);
+}
+
 @media (prefers-color-scheme: light){
   .info-btn{
     --info-btn-color: var(--ink-700, #334155);

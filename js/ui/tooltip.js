@@ -2,8 +2,9 @@ import { getTooltipContent } from './tooltip-content.js';
 const TOOLTIP_TRIGGER_SELECTOR = '[data-tooltip-id], [data-info-id], [data-info], [data-tooltip], [data-tooltip-text], [data-tt]';
 const BOUND_FLAG = 'ttgTooltipBound';
 const DEFAULT_INLINE_CLASS = 'ttg-tooltip';
-const GAP = 10;
-const MARGIN = 8;
+const DEFAULT_OFFSET_X = 6;
+const DEFAULT_OFFSET_Y = 6;
+const EDGE_GUTTER = 8;
 const OUTSIDE_EVENTS = ['pointerdown', 'mousedown', 'touchstart'];
 
 let activeState = null;
@@ -217,6 +218,45 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
+function parseOffset(trigger) {
+  const raw = typeof trigger?.dataset?.ttOffset === 'string' ? trigger.dataset.ttOffset.trim() : '';
+  if (!raw) {
+    return { x: DEFAULT_OFFSET_X, y: DEFAULT_OFFSET_Y };
+  }
+  const parts = raw.split(',').map((part) => part.trim()).filter((part) => part.length);
+  if (!parts.length) {
+    return { x: DEFAULT_OFFSET_X, y: DEFAULT_OFFSET_Y };
+  }
+  const first = parseFloat(parts[0]);
+  const second = parts.length > 1 ? parseFloat(parts[1]) : Number.NaN;
+  const offsetX = Number.isFinite(first) ? first : DEFAULT_OFFSET_X;
+  let offsetY = Number.isFinite(second) ? second : Number.NaN;
+  if (!Number.isFinite(offsetY)) {
+    offsetY = Number.isFinite(first) ? first : DEFAULT_OFFSET_Y;
+  }
+  if (!Number.isFinite(offsetY)) {
+    offsetY = DEFAULT_OFFSET_Y;
+  }
+  return { x: offsetX, y: offsetY };
+}
+
+function resolveOffsets(state) {
+  if (!state) {
+    return { x: DEFAULT_OFFSET_X, y: DEFAULT_OFFSET_Y };
+  }
+  if (state.trigger instanceof HTMLElement) {
+    const parsed = parseOffset(state.trigger);
+    if (!state.offset || state.offset.x !== parsed.x || state.offset.y !== parsed.y) {
+      state.offset = parsed;
+    }
+    return state.offset;
+  }
+  if (state.offset && typeof state.offset.x === 'number' && typeof state.offset.y === 'number') {
+    return state.offset;
+  }
+  return { x: DEFAULT_OFFSET_X, y: DEFAULT_OFFSET_Y };
+}
+
 function getViewportBox() {
   const vv = window.visualViewport;
   if (vv) {
@@ -235,6 +275,32 @@ function getViewportBox() {
     height: window.innerHeight,
     viewport: null,
   };
+}
+
+function hasNonVisibleOverflow(style) {
+  if (!style) {
+    return false;
+  }
+  const values = [style.overflow, style.overflowX, style.overflowY];
+  return values.some((value) => {
+    if (!value) {
+      return false;
+    }
+    const normalized = value.toLowerCase();
+    return normalized && normalized !== 'visible' && normalized !== 'unset';
+  });
+}
+
+function findOverflowAncestor(element) {
+  let current = element?.parentElement || null;
+  while (current && current !== document.body) {
+    const style = window.getComputedStyle(current);
+    if (hasNonVisibleOverflow(style)) {
+      return current;
+    }
+    current = current.parentElement;
+  }
+  return null;
 }
 
 function getFocusableElements(container) {
@@ -282,32 +348,150 @@ function determineType(tip) {
   return 'tooltip';
 }
 
-function placeTooltip(trigger, tip) {
-  const btnRect = trigger.getBoundingClientRect();
-  const { left: viewportLeft, top: viewportTop, width: viewportWidth, height: viewportHeight } = getViewportBox();
-  const tipWidth = tip.offsetWidth;
-  const tipHeight = tip.offsetHeight;
-
-  let top = btnRect.bottom + GAP;
-  let placement = 'bottom';
-  const spaceBelow = viewportTop + viewportHeight - btnRect.bottom;
-  const spaceAbove = btnRect.top - viewportTop;
-  if (spaceBelow < tipHeight + GAP && spaceAbove >= tipHeight + GAP) {
-    top = btnRect.top - GAP - tipHeight;
-    placement = 'top';
+function ensureTooltipPortal(state) {
+  if (!state || !(state.trigger instanceof HTMLElement) || !(state.tip instanceof HTMLElement)) {
+    return;
   }
-  const minTop = viewportTop + MARGIN;
-  const maxTop = viewportTop + viewportHeight - tipHeight - MARGIN;
-  top = clamp(top, minTop, maxTop);
+  const { trigger, tip } = state;
+  if ((!state.homeParent || !state.homeParent.isConnected) && tip.parentElement && tip.parentElement !== document.body) {
+    state.homeParent = tip.parentElement;
+  }
+  if (tip.parentElement && tip.parentElement !== document.body) {
+    state.homeNextSibling = tip.nextSibling || null;
+  }
+  const needsPortal = !!findOverflowAncestor(trigger);
+  if (needsPortal) {
+    if (tip.parentElement !== document.body) {
+      document.body.appendChild(tip);
+    }
+    tip.dataset.ttgPortal = 'body';
+    state.usesPortal = true;
+  } else {
+    state.usesPortal = false;
+  }
+}
 
-  let left = btnRect.left + btnRect.width / 2 - tipWidth / 2;
-  const minLeft = viewportLeft + MARGIN;
-  const maxLeft = viewportLeft + viewportWidth - tipWidth - MARGIN;
+function restoreTooltipHome(state) {
+  if (!state || !(state.tip instanceof HTMLElement)) {
+    return;
+  }
+  const { tip, homeParent } = state;
+  const shouldRestore = tip.parentElement === document.body && homeParent instanceof Node;
+  if (shouldRestore) {
+    const reference = state.homeNextSibling && state.homeNextSibling.parentNode === homeParent
+      ? state.homeNextSibling
+      : null;
+    if (reference) {
+      homeParent.insertBefore(tip, reference);
+    } else {
+      homeParent.appendChild(tip);
+    }
+    state.homeNextSibling = tip.nextSibling || null;
+  }
+  if (tip.dataset.ttgPortal) {
+    delete tip.dataset.ttgPortal;
+  }
+  state.usesPortal = false;
+}
+
+function isTriggerOffscreen(trigger) {
+  if (!(trigger instanceof HTMLElement)) {
+    return true;
+  }
+  const rect = trigger.getBoundingClientRect();
+  if (rect.width === 0 && rect.height === 0) {
+    return true;
+  }
+  const { left, top, width, height } = getViewportBox();
+  const viewportLeft = left;
+  const viewportTop = top;
+  const viewportRight = viewportLeft + width;
+  const viewportBottom = viewportTop + height;
+  return rect.right < viewportLeft || rect.left > viewportRight || rect.bottom < viewportTop || rect.top > viewportBottom;
+}
+
+function placeTooltip(state) {
+  if (!state || !(state.trigger instanceof HTMLElement) || !(state.tip instanceof HTMLElement)) {
+    return;
+  }
+  const { trigger, tip } = state;
+  const offsets = resolveOffsets(state);
+  const triggerRect = trigger.getBoundingClientRect();
+  const pageX = window.scrollX || window.pageXOffset || 0;
+  const pageY = window.scrollY || window.pageYOffset || 0;
+  const viewportBox = getViewportBox();
+  const viewportLeft = pageX + (viewportBox.left || 0);
+  const viewportTop = pageY + (viewportBox.top || 0);
+  const viewportRight = viewportLeft + viewportBox.width;
+  const viewportBottom = viewportTop + viewportBox.height;
+
+  const tipRect = tip.getBoundingClientRect();
+  const tipWidth = tipRect.width;
+  const tipHeight = tipRect.height;
+
+  const gutterLeft = viewportLeft + EDGE_GUTTER;
+  const gutterRight = viewportRight - EDGE_GUTTER;
+  const gutterTop = viewportTop + EDGE_GUTTER;
+  const gutterBottom = viewportBottom - EDGE_GUTTER;
+
+  const minLeft = gutterLeft;
+  let maxLeft = gutterRight - tipWidth;
+  if (maxLeft < minLeft) {
+    maxLeft = minLeft;
+  }
+  let left = triggerRect.left + offsets.x + pageX;
   left = clamp(left, minLeft, maxLeft);
+
+  const minTop = gutterTop;
+  let maxTop = gutterBottom - tipHeight;
+  if (maxTop < minTop) {
+    maxTop = minTop;
+  }
+
+  const defaultTop = triggerRect.bottom + offsets.y + pageY;
+  let top = defaultTop;
+  let placement = 'bottom-right';
+
+  if (defaultTop + tipHeight > gutterBottom) {
+    const aboveTop = triggerRect.top - tipHeight - offsets.y + pageY;
+    const clampedAbove = clamp(aboveTop, minTop, maxTop);
+    const fitsAbove = clampedAbove >= gutterTop && clampedAbove + tipHeight <= gutterBottom;
+    if (fitsAbove) {
+      top = clampedAbove;
+      placement = 'top-right';
+    } else {
+      const centerTop = triggerRect.top + triggerRect.height / 2 - tipHeight / 2 + pageY;
+      top = clamp(centerTop, minTop, maxTop);
+      placement = 'middle-right';
+    }
+  } else {
+    top = clamp(defaultTop, minTop, maxTop);
+  }
 
   tip.style.top = `${Math.round(top)}px`;
   tip.style.left = `${Math.round(left)}px`;
   tip.dataset.placement = placement;
+  state.placement = placement;
+}
+
+function repositionTooltip(state) {
+  if (!state || state.type !== 'tooltip' || activeState !== state) {
+    return;
+  }
+  const { tip } = state;
+  if (!(tip instanceof HTMLElement) || !tip.isConnected) {
+    return;
+  }
+  if (isTriggerOffscreen(state.trigger)) {
+    closeActive({ restoreFocus: false });
+    return;
+  }
+  ensureTooltipPortal(state);
+  tip.style.visibility = 'hidden';
+  tip.style.pointerEvents = 'none';
+  placeTooltip(state);
+  tip.style.visibility = '';
+  tip.style.pointerEvents = '';
 }
 
 function closeActive(options = {}) {
@@ -335,6 +519,7 @@ function closeActive(options = {}) {
   trigger.classList.remove('is-open');
   trigger.setAttribute('aria-expanded', 'false');
   ensureHidden(tip, true);
+  restoreTooltipHome(state);
 
   trigger.dispatchEvent(new CustomEvent('ttg:tooltip-close', {
     bubbles: true,
@@ -420,12 +605,16 @@ function openTooltip(state) {
 
   state.lastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : trigger;
 
+  if (type === 'tooltip') {
+    ensureTooltipPortal(state);
+  }
+
   ensureHidden(tip, false);
   tip.style.visibility = 'hidden';
   tip.style.pointerEvents = 'none';
 
   if (type === 'tooltip') {
-    placeTooltip(trigger, tip);
+    placeTooltip(state);
   }
 
   tip.style.visibility = '';
@@ -445,14 +634,13 @@ function openTooltip(state) {
   OUTSIDE_EVENTS.forEach((evt) => document.addEventListener(evt, outsideHandler, true));
   document.addEventListener('keydown', keyHandler, true);
 
-  const windowHandler = () => closeActive({ restoreFocus: false });
   const viewportBox = getViewportBox();
-  const viewportHandler = () => closeActive({ restoreFocus: false });
-  window.addEventListener('scroll', windowHandler, true);
-  window.addEventListener('resize', windowHandler);
+  const reposition = () => repositionTooltip(state);
+  window.addEventListener('scroll', reposition, true);
+  window.addEventListener('resize', reposition);
   if (viewportBox.viewport) {
-    viewportBox.viewport.addEventListener('scroll', viewportHandler, { passive: true });
-    viewportBox.viewport.addEventListener('resize', viewportHandler, { passive: true });
+    viewportBox.viewport.addEventListener('scroll', reposition, { passive: true });
+    viewportBox.viewport.addEventListener('resize', reposition, { passive: true });
   }
 
   let focusTrap = null;
@@ -486,9 +674,9 @@ function openTooltip(state) {
   state.outsideHandler = outsideHandler;
   state.keyHandler = keyHandler;
   state.focusTrap = focusTrap;
-  state.windowHandler = windowHandler;
+  state.windowHandler = reposition;
   state.viewport = viewportBox.viewport;
-  state.viewportHandler = viewportHandler;
+  state.viewportHandler = reposition;
 
   activeState = state;
 }
@@ -537,6 +725,11 @@ function prepareTrigger(trigger, tip) {
     viewport: null,
     viewportHandler: null,
     inertRecords: null,
+    offset: parseOffset(trigger),
+    homeParent: tip.parentElement || null,
+    homeNextSibling: tip.nextSibling || null,
+    usesPortal: false,
+    placement: null,
   };
 
   trigger.addEventListener('click', (event) => {
