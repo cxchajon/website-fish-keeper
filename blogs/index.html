@@ -17,6 +17,10 @@
       background: #0b1720;
     }
 
+    .card-img {
+      object-fit: cover;
+    }
+
     .topics-nav{
       display:flex; flex-wrap:wrap; gap:.5rem .75rem;
       padding: 10px 0 6px;
@@ -235,7 +239,13 @@
       <div class="blogs-grid">
         <article class="blog-card" itemscope itemtype="https://schema.org/CreativeWork">
           <a class="card-thumb-link" href="/blogs/nitrogen-cycle/" aria-label="Read: The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping">
-            <img class="card-thumb" src="/media/placeholder-16x9.svg" alt="Placeholder illustration for the aquarium nitrogen cycle" loading="lazy" decoding="async" />
+            <img
+              class="card-thumb card-img"
+              src="/blogs/shared/img/nitrogen-cycle-diagram.PNG"
+              alt="Educational nitrogen cycle diagram showing fish waste turning into ammonia, nitrite, and nitrate, keeping aquariums safe."
+              loading="lazy"
+              decoding="async"
+            />
           </a>
           <div class="card-content">
             <p class="card-kicker">Core Principles • ~5 min</p>
