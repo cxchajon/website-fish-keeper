@@ -1822,7 +1822,117 @@ h2, .h2 {
   p { font-size: 1.05rem; line-height: 1.65; }
 }
 
-/* White text contrast for blue/gradient sections */
+body.page-background #content .section {
+  padding: clamp(48px, 10vw, 80px) 20px;
+}
+
+body.page-background #content .section--gradient {
+  color: #fff;
+  --muted: rgba(255,255,255,.86);
+  background:
+    radial-gradient(1200px 800px at 75% -10%, rgba(54,194,204,0.85) 0%, rgba(54,194,204,0) 60%),
+    radial-gradient(1200px 900px at -10% 120%, rgba(0,119,199,0.95) 0%, rgba(0,119,199,0) 60%),
+    linear-gradient(140deg, #0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
+}
+
+body.page-background #content .section--gradient h1,
+body.page-background #content .section--gradient h2,
+body.page-background #content .section--gradient h3 {
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0,0,0,.15);
+}
+
+body.page-background #content .section--gradient a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+body.page-background #content .section .container {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+}
+
+body.page-background #content .grid {
+  display: grid;
+  gap: 24px;
+}
+
+body.page-background #content .grid--2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+body.page-background #content .eyebrow {
+  margin: 0.5rem 0 1rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+body.page-background #content .kicker {
+  margin: 1.5rem 0 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.page-background #content .faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 32px 0 24px;
+}
+
+body.page-background #content .faq-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.28);
+  background: rgba(255,255,255,0.08);
+  color: inherit;
+  font-weight: 700;
+  text-align: center;
+  transition: background 180ms ease, border-color 180ms ease;
+}
+
+body.page-background #content .faq-btn:hover,
+body.page-background #content .faq-btn:focus-visible {
+  background: rgba(255,255,255,0.14);
+  border-color: rgba(255,255,255,0.38);
+  color: #fff;
+}
+
+body.page-background #content .faq-answers {
+  display: grid;
+  gap: 32px;
+  margin-top: 32px;
+}
+
+body.page-background #content .faq-answer {
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.18);
+  scroll-margin-top: 96px;
+}
+
+body.page-background #content .faq-answer h3 {
+  margin-top: 0;
+}
+
+@media (min-width: 640px) {
+  body.page-background #content .faq-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  body.page-background #content .faq-btn {
+    flex: 1 1 240px;
+  }
+}
+
+/* Shared white/gradient typography helpers */
 .section--brand,
 .section--gradient,
 .section--blue {
@@ -1830,19 +1940,24 @@ h2, .h2 {
   --muted: rgba(255,255,255,.86);
 }
 
-.section--brand h1, .section--brand h2, .section--brand h3,
-.section--gradient h1, .section--gradient h2, .section--gradient h3 {
+.section--brand h1,
+.section--brand h2,
+.section--brand h3,
+.section--gradient h1,
+.section--gradient h2,
+.section--gradient h3,
+.section--blue h1,
+.section--blue h2,
+.section--blue h3 {
   color: #fff;
 }
 
-.section--gradient h1, .section--gradient h2 {
-  text-shadow: 0 1px 0 rgba(0,0,0,.15);
-}
-
-/* Maintain readable width for large text blocks */
-.container--copy {
-  max-width: 68ch;
-  margin-inline: auto;
+.section--brand a,
+.section--gradient a,
+.section--blue a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* Tagline under product line */
@@ -1853,27 +1968,9 @@ h2, .h2 {
   text-transform: none;
 }
 
-/* Links readable in dark sections */
-.section--brand a,
-.section--gradient a,
-.section--blue a {
-  color: #fff;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.section--gradient .prototype-faq {
-  padding: 32px 0 0;
-  background: transparent;
-}
-
-.section--gradient .prototype-faq .wrap {
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-.section--gradient .prototype-faq h2 {
-  color: #fff;
+/* Maintain readable width for large text blocks */
+.container--copy {
+  max-width: 68ch;
+  margin-inline: auto;
 }
 
