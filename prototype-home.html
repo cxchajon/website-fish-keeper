@@ -19,7 +19,7 @@
   <meta name="twitter:description" content="Learn aquarium science the easy way. The Tank Guide offers free tools, guides, and articles to help you master the nitrogen cycle and stock a healthy freshwater tank." />
   <meta name="twitter:image" content="https://thetankguide.com/logo.png" />
 
-  <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
+  <link rel="stylesheet" href="/css/style.css?v=1.1.1" />
   <style>
     :root{
       --bg:#0c2740;
@@ -39,7 +39,7 @@
     /* Hero gradient */
     .hero{
       min-height:100dvh;
-      padding:28px 20px 38px;
+      padding:var(--space-5) 16px var(--space-6);
       background:
         radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54,194,204,0.0) 60%),
         radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0,119,199,0.0) 60%),
@@ -61,7 +61,7 @@
     .features-grid{
       display:grid;
       grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 24px;
+      gap: var(--space-4);
     }
     @media (max-width: 1024px){
       .features-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
@@ -70,11 +70,20 @@
       .features-grid{ grid-template-columns: 1fr; }
     }
 
-    .card{background:var(--card-bg);border:1px solid var(--card-line);border-radius:14px;padding:16px;backdrop-filter: blur(6px);display:grid;gap:10px}
-    .card h3{margin:2px 0 4px;font-size:1.1rem}
-    .card p{margin:0;color:var(--muted);min-height:3.2em}
-    .actions{margin-top:8px}
-    .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--link-line);background:var(--btn-bg);color:var(--btn-fg);font-weight:700;text-decoration:none}
+    .card{
+      background:var(--card-bg);
+      border:1px solid var(--card-line);
+      border-radius:var(--radius-card);
+      padding:var(--space-5);
+      margin-bottom:var(--space-5);
+      backdrop-filter: blur(6px);
+      display:grid;
+      gap:var(--space-3);
+    }
+    .card h3{margin:var(--space-2) 0 var(--space-2);font-size:1.08rem}
+    .card p{margin:0;color:var(--muted);min-height:2.8em}
+    .actions{margin-top:var(--space-3)}
+    .btn{display:inline-block;padding:10px 16px;border-radius:12px;border:1px solid var(--link-line);background:var(--btn-bg);color:var(--btn-fg);font-weight:700;text-decoration:none}
     .btn:hover{background:var(--btn-bg-hover)}
 
     /* SEO intro (subtle, ~25% smaller) */
@@ -98,26 +107,26 @@
       text-transform:uppercase;
       text-align:center;
       padding:6px 10px;
-      margin:16px auto 0;
+      margin:var(--space-3) auto 0;
       border-radius:999px;
       width:fit-content;
     }
     .prototype-badge a{color:var(--fg);text-decoration:underline;text-decoration-color:rgba(255,255,255,.4);text-decoration-thickness:1px;}
 
-    .prototype-intro{padding:60px 20px 32px;color:#0c2740;background:#f5f8fb;}
+    .prototype-intro{padding:var(--space-6) 20px var(--space-5);color:#0c2740;background:#f5f8fb;}
     .prototype-intro .wrap{max-width:920px;}
-    .prototype-intro h1{color:#08324a;font-size:clamp(2rem,4vw,3.4rem);line-height:1.1;margin-bottom:24px;}
-    .prototype-intro p{color:#1f3a4d;line-height:1.7;font-size:1.05rem;margin-bottom:20px;}
-    .prototype-intro h2{color:#0a4d87;margin-top:32px;margin-bottom:16px;font-size:1.6rem;}
-    .prototype-intro .proto-cta{font-size:0.9rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#0a4d87;margin-top:36px;margin-bottom:0;}
+    .prototype-intro h1{color:#08324a;font-size:clamp(2rem,4.6vw,3.1rem);line-height:1.12;margin-bottom:var(--space-3);}
+    .prototype-intro p{color:#1f3a4d;line-height:1.55;font-size:1.02rem;margin-bottom:var(--space-3);}
+    .prototype-intro h2{color:#0a4d87;margin-top:var(--space-5);margin-bottom:var(--space-3);font-size:1.5rem;}
+    .prototype-intro .proto-cta{font-size:0.9rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#0a4d87;margin-top:var(--space-5);margin-bottom:0;}
 
-    .prototype-faq{padding:32px 20px 28px;background:#e8eff7;color:#0c2740;}
+    .prototype-faq{padding:var(--space-6) 20px var(--space-5);background:#e8eff7;color:#0c2740;}
     .prototype-faq .wrap{max-width:880px;}
-    .prototype-faq h2{margin:0 0 20px;font-size:1.5rem;color:#08324a;}
-    .prototype-faq details{border:1px solid rgba(12,39,64,0.12);border-radius:12px;padding:16px 18px;margin-bottom:12px;background:#fff;}
+    .prototype-faq h2{margin:0 0 var(--space-3);font-size:1.5rem;color:#08324a;}
+    .prototype-faq details{border:1px solid rgba(12,39,64,0.12);border-radius:var(--radius-card);padding:var(--space-4) var(--space-5);margin-bottom:var(--space-3);background:#fff;}
     .prototype-faq summary{font-weight:700;cursor:pointer;list-style:none;}
     .prototype-faq summary::-webkit-details-marker{display:none;}
-    .prototype-faq p{margin:12px 0 0;font-size:0.98rem;line-height:1.6;color:#1f3a4d;}
+    .prototype-faq p{margin:var(--space-2) 0 0;font-size:0.96rem;line-height:1.5;color:#1f3a4d;}
 
     .prototype-faq details[open]{box-shadow:0 10px 24px rgba(12,39,64,0.12);}
   </style>
