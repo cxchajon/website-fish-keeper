@@ -72,7 +72,7 @@
     .community-archive-cta {
       display: flex;
       justify-content: center;
-      margin: clamp(16px, 4vw, 22px) 0 clamp(20px, 5vw, 28px);
+      margin: clamp(16px, 4vw, 22px) 0 clamp(18px, 4vw, 26px);
     }
 
     .community-archive-button {
@@ -84,7 +84,7 @@
       align-items: center;
       gap: clamp(10px, 2.4vw, 12px);
       padding: clamp(12px, 3vw, 16px) clamp(22px, 6vw, 30px);
-      min-height: clamp(48px, 12vw, 58px);
+      min-height: clamp(48px, 12vw, 60px);
       border-radius: 999px;
       background: linear-gradient(135deg, var(--cta-bg-start), var(--cta-bg-end));
       border: 1px solid var(--cta-border);
@@ -96,6 +96,7 @@
       position: relative;
       white-space: nowrap;
       transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+      filter: none;
     }
 
     .community-archive-button__label {
@@ -121,54 +122,51 @@
       box-shadow: 0 18px 38px rgba(8, 21, 50, 0.38);
     }
 
-    .youtube-replay-icon {
+    .youtube-rewind-icon {
       width: clamp(24px, 6vw, 32px);
       height: clamp(24px, 6vw, 32px);
       flex-shrink: 0;
-      color: rgba(17, 24, 39, 0.8);
-      transition: color 0.3s ease;
+      display: block;
+      color: #ffffff;
     }
 
-    .youtube-replay-icon .replay-ring {
-      transform-origin: 32px 32px;
+    .youtube-rewind-icon .rewind-chevrons {
+      transform-origin: center;
     }
 
-    @keyframes replay-spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    @keyframes rewind-jiggle {
+      0%, 100% { transform: translateX(0); }
+      40% { transform: translateX(-3px); }
+      70% { transform: translateX(-1px); }
     }
 
     @media (prefers-reduced-motion: no-preference) {
-      .community-archive-button {
-        transition: transform 0.35s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.35s ease, color 0.3s ease;
+      .community-archive-button:hover .youtube-rewind-icon .rewind-chevrons,
+      .community-archive-button:focus-visible .youtube-rewind-icon .rewind-chevrons {
+        animation: rewind-jiggle 300ms ease-in-out forwards;
       }
 
       .community-archive-button:hover,
       .community-archive-button:focus-visible {
-        transform: scale(1.03);
-      }
-
-      .community-archive-button:hover .youtube-replay-icon .replay-ring,
-      .community-archive-button:focus-visible .youtube-replay-icon .replay-ring {
-        animation: replay-spin 2.5s linear infinite;
+        filter: drop-shadow(0 10px 18px rgba(8, 21, 50, 0.3));
       }
     }
 
     @media (max-width: 600px) {
       .community-archive-cta {
-        margin: clamp(14px, 5vw, 20px) 0 clamp(18px, 7vw, 24px);
+        margin: clamp(14px, 5vw, 18px) 0 clamp(16px, 6vw, 20px);
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .community-archive-button,
-      .community-archive-button:hover,
-      .community-archive-button:focus-visible {
-        transform: none !important;
+      .community-archive-button:hover .youtube-rewind-icon .rewind-chevrons,
+      .community-archive-button:focus-visible .youtube-rewind-icon .rewind-chevrons {
+        animation: none !important;
       }
 
-      .youtube-replay-icon .replay-ring {
-        animation: none !important;
+      .community-archive-button:hover,
+      .community-archive-button:focus-visible {
+        filter: drop-shadow(0 8px 16px rgba(8, 21, 50, 0.28));
       }
     }
 
@@ -185,6 +183,10 @@
     .alib__header {
       text-align: left;
       margin-bottom: clamp(12px, 2.5vw, 20px);
+    }
+
+    .alib__header h2 {
+      margin: clamp(8px, 2vw, 16px) 0 clamp(6px, 1.8vw, 12px);
     }
 
     .alib__dek {
@@ -976,35 +978,34 @@
           </article>
         </div>
 
-        <div class="community-archive-cta">
-          <a
-            class="community-archive-button"
-            href="/pages/community-videos.html"
-            aria-label="View all Community Video Picks (archive)"
-          >
-            <svg
-              class="youtube-replay-icon"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 64 64"
-              role="img"
-              focusable="false"
-              aria-hidden="true"
-            >
-              <title>YouTube – View All Community Video Picks</title>
-              <rect x="8" y="16" width="48" height="32" rx="8" fill="#FF0000" />
-              <path d="M28 24v16l12-8z" fill="#FFFFFF" />
-              <g class="replay-ring" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M32 18a14 14 0 1 1-9.899 4.101l-2.6-7.4 7.4 2.6" />
-              </g>
-            </svg>
-            <span class="community-archive-button__label">View all Community Video Picks</span>
-            <span class="community-archive-button__arrow" aria-hidden="true">→</span>
-          </a>
-        </div>
-
         <!-- Aquarium Library START -->
         <section id="aquarium-library" aria-labelledby="alib-title">
           <div class="alib__header">
+            <div class="community-archive-cta">
+              <a
+                class="community-archive-button"
+                href="/pages/community-videos.html"
+                aria-label="View all Community Video Picks (archive)"
+              >
+                <svg
+                  class="youtube-rewind-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 64 36"
+                  role="img"
+                  focusable="false"
+                  aria-hidden="true"
+                >
+                  <title>YouTube Rewind — View all Community Video Picks</title>
+                  <rect width="64" height="36" rx="9" fill="#FF0000" />
+                  <g class="rewind-chevrons" fill="currentColor">
+                    <path d="M48 9v18L20 18z" />
+                    <path d="M36 9v18L18 18z" />
+                  </g>
+                </svg>
+                <span class="community-archive-button__label">View all Community Video Picks</span>
+                <span class="community-archive-button__arrow" aria-hidden="true">→</span>
+              </a>
+            </div>
             <h2 id="alib-title">Aquarium Library</h2>
             <p class="alib__dek">
               Explore a collection of guides, research articles, transcripts, and spotlights for freshwater aquariums.
