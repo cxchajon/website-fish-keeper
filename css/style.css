@@ -1862,3 +1862,18 @@ h2, .h2 {
   text-underline-offset: 2px;
 }
 
+.section--gradient .prototype-faq {
+  padding: 32px 0 0;
+  background: transparent;
+}
+
+.section--gradient .prototype-faq .wrap {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.section--gradient .prototype-faq h2 {
+  color: #fff;
+}
+
