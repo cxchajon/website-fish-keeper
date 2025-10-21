@@ -1803,3 +1803,58 @@ ins.adsbygoogle{
   display: none;
 }
 
+
+/* === Typography lift === */
+.h1, h1 {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.h2, h2 {
+  font-weight: 750;
+  letter-spacing: -0.005em;
+  line-height: 1.18;
+}
+
+@media (max-width: 480px) {
+  .h1, h1 { font-size: clamp(2rem, 6.5vw, 2.4rem); }
+  .h2, h2 { font-size: clamp(1.35rem, 4.8vw, 1.6rem); }
+  p { font-size: 1.05rem; line-height: 1.65; }
+}
+
+/* Match white text to brand/gradient blue sections */
+.section--brand,
+.section--gradient,
+.section--blue {
+  color: #fff;
+  --muted: rgba(255,255,255,.86);
+}
+
+.section--brand h1, .section--brand h2, .section--brand h3,
+.section--gradient h1, .section--gradient h2, .section--gradient h3 {
+  color: #fff;
+}
+
+.section--gradient h1, .section--gradient h2 { text-shadow: 0 1px 0 rgba(0,0,0,.15); }
+
+/* comfortable line length */
+.container--copy { max-width: 68ch; margin-inline: auto; }
+
+/* Hero tagline under FishKeepingLifeCo line */
+.tagline {
+  margin-top: .65rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: none;
+}
+
+/* Links on blue sections visibly underlined & accessible */
+.section--brand a,
+.section--gradient a,
+.section--blue a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
