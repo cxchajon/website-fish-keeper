@@ -1849,13 +1849,13 @@ body.page-background #content .section--gradient a {
 }
 
 body.page-background #content .section .container {
-  width: min(1100px, 100%);
+  width: min(980px, 100%);
   margin: 0 auto;
 }
 
 body.page-background #content .grid {
   display: grid;
-  gap: 24px;
+  gap: var(--space-4);
 }
 
 body.page-background #content .grid--2 {
@@ -1863,7 +1863,7 @@ body.page-background #content .grid--2 {
 }
 
 body.page-background #content .eyebrow {
-  margin: 0.5rem 0 1rem;
+  margin: var(--space-2) 0 var(--space-3);
   font-size: 0.95rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1871,7 +1871,7 @@ body.page-background #content .eyebrow {
 }
 
 body.page-background #content .kicker {
-  margin: 0.5rem 0 0;
+  margin: var(--space-1) 0 0;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1879,14 +1879,14 @@ body.page-background #content .kicker {
 
 body.page-background #content .faq-list {
   display: grid;
-  gap: 12px;
-  margin: 12px 0 0;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
 }
 
 body.page-background #content .faq-btn {
   display: block;
-  padding: 14px 16px;
-  border-radius: 12px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-card);
   background: rgba(255,255,255,0.12);
   color: #fff;
   font-weight: 700;
@@ -1905,12 +1905,12 @@ body.page-background #content .faq-btn:active {
 
 body.page-background #content .faq-answers {
   display: grid;
-  gap: 32px;
-  margin-top: 32px;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
 }
 
 body.page-background #content .faq-answer {
-  padding-top: 24px;
+  padding-top: var(--space-5);
   border-top: 1px solid rgba(255,255,255,0.18);
   scroll-margin-top: 96px;
 }
@@ -1972,3 +1972,135 @@ body.page-background #content .faq-answer h3 {
   margin-inline: auto;
 }
 
+
+/* --- Compact spacing & visual refresh (v1.1.1) --- */
+:root{
+  /* spacing scale tuned tighter */
+  --space-0: 0;
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 14px;
+  --space-4: 18px;
+  --space-5: 24px;
+  --space-6: 28px;
+  --space-7: 32px;
+  --radius-card: 14px;
+}
+
+/* Base type rhythm */
+body{
+  line-height: 1.45; /* down from ~1.55–1.6 */
+  letter-spacing: 0;
+}
+
+p{ 
+  margin: var(--space-3) 0;           /* tighter paragraph gaps */
+}
+
+/* Headings: reduce sizes a notch on mobile, keep weight strong */
+h1{
+  font-weight: 800;
+  line-height: 1.15;
+  margin: var(--space-5) 0 var(--space-3);
+  font-size: clamp(28px, 5.8vw, 40px); /* previously ~32–48px -> a bit smaller */
+}
+h2{
+  font-weight: 800;
+  line-height: 1.18;
+  margin: var(--space-5) 0 var(--space-2);
+  font-size: clamp(22px, 4.6vw, 30px);
+}
+h3{
+  font-weight: 700;
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+/* Sections – reduce vertical padding */
+.section,
+.section--light,
+.section--brand,
+.hero{
+  padding-top: var(--space-6);   /* was larger; reduce */
+  padding-bottom: var(--space-6);
+}
+
+/* Hero keeps blue gradient; just tighten spacing */
+.hero .container{
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-4);
+}
+
+/* Content container max width feels roomy but compact */
+.container{
+  max-width: 980px;           /* desktop */
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* Cards (tool, contact) – reduce padding & gap */
+.card,
+.tool-card,
+.contact-card{
+  border-radius: var(--radius-card);
+  padding: var(--space-5);            /* was bigger */
+  margin-bottom: var(--space-5);
+}
+.card p:last-child{ margin-bottom: 0; }
+
+.card .actions,
+.tool-card .actions{
+  margin-top: var(--space-3);
+}
+
+/* “Launch” buttons – keep size readable but tighter */
+.button,
+.btn,
+.card .btn{
+  padding: 10px 16px;
+  font-weight: 700;
+  border-radius: 12px;
+}
+
+/* FAQ – compact items */
+.faq,
+.faq-list{
+  margin-top: var(--space-5);
+}
+.faq-item,
+.faq .item{
+  border-radius: 14px;
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-3);
+}
+.faq-item h3,
+.faq .q{
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.2;
+}
+.faq .a{
+  margin-top: var(--space-2);
+}
+
+/* Lists inside content blocks */
+ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
+
+/* Section separators (if used) – smaller gap */
+.section + .section{ margin-top: var(--space-6); }
+
+/* Footer/utility links – condense line-height slightly */
+.footer,
+.site-footer{
+  line-height: 1.35;
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-5);
+}
+
+/* Media queries – a bit tighter on very small screens */
+@media (max-width: 360px){
+  h1{ font-size: 26px; }
+  h2{ font-size: 20px; }
+  .card,
+  .tool-card,
+  .contact-card{ padding: var(--space-4); }
+}
