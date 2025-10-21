@@ -237,7 +237,7 @@
   </script>
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
-<body class="page-background homepage-prototype">
+<body class="homepage-prototype">
   <div id="site-nav"></div>
 
   <main id="content">
@@ -414,6 +414,108 @@
 
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
+
+  <!-- BEGIN: prototype-only CTA overrides (test page only) -->
+  <style id="prototype-cta-bubble-overrides">
+    /* Kill any card overlays that might sit above the buttons */
+    body.homepage-prototype .tool-card::before,
+    body.homepage-prototype .tool-card::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    /* Force the button to be fully visible and legible */
+    body.homepage-prototype .tool-card a.btn,
+    body.homepage-prototype .tool-card a.btn.btn--primary,
+    body.homepage-prototype .tool-card .btn,
+    body.homepage-prototype .tool-card .btn.btn--primary {
+      position: relative !important;
+      z-index: 2 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      max-width: 520px !important;
+      margin-top: 10px !important;
+      padding: 12px 20px !important;
+      border-radius: 999px !important;
+      border: 2px solid rgba(255,255,255,.9) !important;
+
+      /* Raised bubble look (visible UNPRESSED state) */
+      background: linear-gradient(180deg, #FFFFFF 0%, #F3F7FC 100%) !important;
+      box-shadow:
+        0 12px 22px rgba(6,42,77,.22),
+        0 3px 6px rgba(6,42,77,.12),
+        inset 0 1px 0 rgba(255,255,255,.9) !important;
+
+      /* Override any global “ghost/white/transparent” text */
+      color: #0d365f !important;
+      font-weight: 800 !important;
+      text-shadow: 0 1px 0 rgba(255,255,255,.65) !important;
+
+      /* Neutralize common visibility killers */
+      opacity: 1 !important;
+      filter: none !important;
+      mix-blend-mode: normal !important;
+      pointer-events: auto !important;
+      text-decoration: none !important;
+    }
+
+    /* Ensure nested spans/icons aren’t faded */
+    body.homepage-prototype .tool-card .btn *,
+    body.homepage-prototype .tool-card a.btn * {
+      color: inherit !important;
+      opacity: 1 !important;
+      filter: none !important;
+      mix-blend-mode: normal !important;
+      text-shadow: inherit !important;
+    }
+
+    /* Hover/focus lift */
+    @media (hover:hover) {
+      body.homepage-prototype .tool-card .btn:hover,
+      body.homepage-prototype .tool-card .btn:focus-visible {
+        transform: translateY(-1px) !important;
+        box-shadow:
+          0 14px 26px rgba(6,42,77,.26),
+          0 4px 8px rgba(6,42,77,.14),
+          inset 0 1px 0 rgba(255,255,255,.95) !important;
+        outline: none !important;
+      }
+    }
+
+    /* Pressed (depressed bubble) */
+    body.homepage-prototype .tool-card .btn:active {
+        transform: translateY(1px) !important;
+        background: linear-gradient(180deg, #E8EEF7 0%, #DFE8F3 100%) !important;
+        color: #0b2f52 !important;
+        box-shadow:
+          0 6px 12px rgba(6,42,77,.22),
+          inset 0 3px 7px rgba(6,42,77,.18),
+          inset 0 -1px 0 rgba(255,255,255,.6) !important;
+    }
+
+    /* Tighter spacing between cards on prototype only */
+    body.homepage-prototype .tool-card { margin-bottom: 14px !important; }
+  </style>
+
+  <script>
+    // Prototype-only: remove any disabled flags that JS/CSS might use
+    (function(){
+      var btns = document.querySelectorAll('body.homepage-prototype .tool-card a.btn, body.homepage-prototype .tool-card .btn');
+      btns.forEach(function(b){
+        b.classList.remove('disabled','is-disabled','ghost','btn--ghost','btn--disabled');
+        b.removeAttribute('disabled');
+        b.setAttribute('aria-disabled','false');
+        // make sure text is not wrapped in a faded span
+        var label = b.textContent && b.textContent.trim();
+        if (!label && b.getAttribute('aria-label')) {
+          b.textContent = b.getAttribute('aria-label');
+        }
+      });
+    })();
+  </script>
+  <!-- END: prototype-only CTA overrides -->
 
 </body>
 </html>
