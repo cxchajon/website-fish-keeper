@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-const VERSION = '1.4.6';
+const VERSION = '1.4.7';
 const TRACKED_FILES = [
   'footer.html',
   'assets/sprite.socials.svg',
