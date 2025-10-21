@@ -90,3 +90,57 @@ body.homepage-prototype {
 @media (prefers-reduced-motion: reduce) {
   .homepage-prototype .btn { transition: none; }
 }
+
+/* ——— Prototype CTA visibility & bubble styling ——— */
+.homepage-prototype .tool-card .btn.btn--primary {
+  /* kill any inherited opacity/filters */
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+
+  /* visible label on light bubble */
+  color: #0d365f !important;              /* dark navy label */
+  text-shadow: 0 1px 0 rgba(255,255,255,.65);
+
+  /* bubble fill */
+  background: linear-gradient(180deg,#ffffff 0%,#f2f6fb 100%) !important;
+  border: 2px solid rgba(255,255,255,0.75);
+  border-radius: 999px;
+  box-shadow:
+    0 10px 18px rgba(6,42,77,.18),
+    0 2px 4px rgba(6,42,77,.10),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+/* hover/focus lift */
+.homepage-prototype .tool-card .btn.btn--primary:hover,
+.homepage-prototype .tool-card .btn.btn--primary:focus-visible {
+  transform: translateY(-1px);
+  box-shadow:
+    0 12px 22px rgba(6,42,77,.22),
+    0 3px 6px rgba(6,42,77,.12),
+    inset 0 1px 0 rgba(255,255,255,.95);
+  outline: none;
+}
+
+/* pressed/depressed */
+.homepage-prototype .tool-card .btn.btn--primary:active {
+  transform: translateY(1px);
+  background: linear-gradient(180deg,#e8eef7 0%,#dfe8f3 100%) !important;
+  color: #093258 !important;
+  box-shadow:
+    0 4px 8px rgba(6,42,77,.2),
+    inset 0 3px 6px rgba(6,42,77,.14),
+    inset 0 -1px 0 rgba(255,255,255,.6);
+}
+
+/* full width on mobile */
+.homepage-prototype .tool-card .btn { width: 100%; }
+@media (min-width:768px){ .homepage-prototype .tool-card .btn { width:auto; min-width:9rem; } }
+
+.homepage-prototype .tool-card a,
+.homepage-prototype .btn,
+.homepage-prototype .btn-primary {
+  /* stop global white labels or dimming */
+  color: inherit !important;
+}
