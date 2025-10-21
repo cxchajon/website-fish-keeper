@@ -232,9 +232,8 @@
   <div id="site-nav"></div>
 
   <main id="content">
-    <div class="prototype-badge"><a href="/">Prototype</a></div>
 
-    <!-- HERO / TOOLS (existing gradient panel) -->
+    <!-- HERO / TOOLS -->
     <section class="section section--gradient" id="tools">
       <div class="container">
         <h2>Fishkeeping Guides &amp; Tools — The Tank Guide</h2>
@@ -242,60 +241,55 @@
         <p>Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</p>
         <p class="kicker">EXPLORE OUR TOOLS BELOW TO START YOUR TANK THE RIGHT WAY.</p>
 
-        <section id="features" aria-labelledby="features-title">
-          <h3 id="features-title" class="visually-hidden">Tools &amp; Sections</h3>
-          <div class="features-grid">
-            <article class="card" aria-labelledby="card-stocking-title">
+        <!-- Keep existing card components and links -->
+        <div class="tool-cards">
+          <div class="features-grid" role="list">
+            <article class="card" aria-labelledby="card-stocking-title" role="listitem">
               <h3 id="card-stocking-title">Stocking Advisor</h3>
               <p>Smart stocking made simple — plan a thriving community with confidence.</p>
               <div class="actions"><a class="btn" href="/stocking.html" aria-label="Open Stocking Advisor tool">Launch</a></div>
             </article>
 
-            <article class="card" aria-labelledby="card-gear-title">
+            <article class="card" aria-labelledby="card-gear-title" role="listitem">
               <h3 id="card-gear-title">Gear</h3>
               <p>The gear you need, matched to your tank and goals.</p>
               <div class="actions"><a class="btn" href="/gear/" aria-label="Open Gear recommendations">Launch</a></div>
             </article>
 
-            <article class="card" aria-labelledby="card-cycling-title">
+            <article class="card" aria-labelledby="card-cycling-title" role="listitem">
               <h3 id="card-cycling-title">Cycling Coach</h3>
               <p>Master the nitrogen cycle with step-by-step guidance.</p>
               <div class="actions"><a class="btn" href="/params.html" aria-label="Open Cycling Coach tool">Launch</a></div>
             </article>
           </div>
-        </section>
+        </div>
       </div>
     </section>
 
-    <!-- ABOUT + CONTACT (existing gradient row) -->
+    <!-- ABOUT + CONTACT -->
     <section class="section section--gradient" id="about-contact">
       <div class="container grid grid--2">
-        <article class="card" aria-labelledby="card-about-title">
-          <h3 id="card-about-title">About</h3>
-          <p>Learn who we are, our approach to guides and tools, and what’s next for The Tank Guide.</p>
-          <div class="actions">
-            <a class="btn" href="/about.html" aria-label="Open About page">Learn more</a>
-          </div>
-        </article>
-
-        <article class="card" aria-labelledby="card-contact-title">
-          <h3 id="card-contact-title">Contact</h3>
+        <div class="card">
+          <h3>About</h3>
+          <p>Learn more about The Tank Guide and FishKeepingLifeCo.</p>
+          <p><a class="btn" href="/about.html">Learn more</a></p>
+        </div>
+        <div class="card">
+          <h3>Contact</h3>
           <p>Questions, ideas, or spot a logic issue? Reach out with feedback, recommend fish or gear to review, or share your insights.</p>
-          <div class="actions">
-            <a class="btn" href="/contact-feedback.html" aria-label="Open Contact form">Contact &amp; Feedback</a>
-          </div>
-        </article>
+          <p><a class="btn" href="/contact-feedback.html">Contact &amp; Feedback</a></p>
+        </div>
       </div>
     </section>
 
-    <!-- GEMINI COPY BLOCK (moved here, gradient background) -->
+    <!-- GEMINI COPY (on the SAME blue gradient) -->
     <section class="section section--gradient" id="learn">
       <div class="container container--copy">
         <h1>Aquarium Science, Simplified for Everyone</h1>
         <p>Welcome to The Tank Guide, where we make the science of aquariums simple, beautiful, and accessible for everyone. We know that starting your first fish tank can feel like a deep dive into a world of complex chemistry and conflicting advice. Our mission, powered by FishKeepingLifeCo, is to be the clear, calm voice that guides you from confusion to confidence.</p>
 
         <h2>Master the Foundation: Understanding the Nitrogen Cycle</h2>
-        <p>At the heart of every stable aquarium is one crucial process: the nitrogen cycle. It’s the invisible engine that turns fish waste into harmless nitrates, creating a safe environment for your aquatic life. Instead of just telling you about it, we’ve built the <a href="/params.html">Cycling Coach</a>&mdash;an interactive tool that lets you track your tank’s progress and understand each stage. This isn’t just data; it’s the foundation of responsible fishkeeping, and we’re here to walk you through every step.</p>
+        <p>At the heart of every stable aquarium is one crucial process: the nitrogen cycle. It’s the invisible engine that turns fish waste into harmless nitrates, creating a safe environment for your aquatic life. Instead of just telling you about it, we’ve built the <a href="/params.html">Cycling Coach</a>—an interactive tool that lets you track your tank’s progress and understand each stage. This isn’t just data; it’s the foundation of responsible fishkeeping, and we’re here to walk you through every step.</p>
 
         <h2>Build a Balanced Community with Our Stocking Advisor</h2>
         <p>Once your tank is cycled and ready, the real fun begins: choosing your fish. But how many can you add? Will they get along? A healthy tank is a balanced ecosystem, not just a collection of pretty fish. That’s why we developed our <a href="/stocking.html">Stocking Advisor</a>. It goes beyond simple ‘one inch of fish per gallon’ rules, using logic based on bioload, behavior, and filtration capacity. This tool, born from our own research and testing, helps you build a peaceful and thriving underwater community without the stress of guesswork. Use it to test your ideas in real time and plan a tank that’s both beautiful and sustainable.</p>
@@ -311,56 +305,9 @@
           <a class="faq-btn" href="#faq-2">How many fish can I put in my aquarium?</a>
           <a class="faq-btn" href="#faq-3">What basic equipment do I need for a freshwater aquarium?</a>
         </div>
-
-        <div class="faq-answers">
-          <article id="faq-1" class="faq-answer">
-            <h3>What is the most important thing to know before starting a fish tank?</h3>
-            <p>The most important concept is the nitrogen cycle&mdash;it keeps harmful waste in check so your fish stay healthy. Our <a href="/params.html">Cycling Coach</a> tool is designed to help you track each stage and learn what to do next.</p>
-          </article>
-          <article id="faq-2" class="faq-answer">
-            <h3>How many fish can I put in my aquarium?</h3>
-            <p>Stocking safely depends on the adult size of your fish, their waste output (bioload), and the filtration you’re running. Use our free <a href="/stocking.html">Stocking Advisor</a> to model different communities and keep things balanced.</p>
-          </article>
-          <article id="faq-3" class="faq-answer">
-            <h3>What basic equipment do I need for a freshwater aquarium?</h3>
-            <p>You’ll want a properly sized tank and filter, a reliable heater, a thermometer, substrate, water conditioner, and lighting that matches your goals. Explore our <a href="/gear/">Gear Guide</a> for specific picks and pro tips.</p>
-          </article>
-        </div>
       </div>
     </section>
 
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What is the most important thing to know before starting a fish tank?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The most important concept is the nitrogen cycle—it keeps harmful waste in check so your fish stay healthy. Our Cycling Coach tool is designed to help you track each stage and learn what to do next."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How many fish can I put in my aquarium?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Stocking safely depends on the adult size of your fish, their waste output (bioload), and the filtration you’re running. Use our free Stocking Advisor to model different communities and keep things balanced."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What basic equipment do I need for a freshwater aquarium?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "You’ll want a properly sized tank and filter, a reliable heater, a thermometer, substrate, water conditioner, and lighting that matches your goals. Explore our Gear Guide for specific picks and pro tips."
-            }
-          }
-        ]
-      }
-    </script>
   </main>
 
   <!-- === TTG Cookie Consent START === -->
