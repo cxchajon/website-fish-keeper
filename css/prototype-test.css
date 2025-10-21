@@ -1,146 +1,108 @@
-/* Scope to prototype page only */
-body.prototype-home,
-body.homepage-prototype {
-  /* tighten spacing under the intro, just in case */
-}
-/* If the prototype body has no unique class, add one to <body> in the prototype file:
-   <body class="homepage-prototype"> */
+/* ===== Prototype-only rules (scoped) ===== */
+.homepage-prototype .tg-tight { margin-top: 0.5rem; }
+.homepage-prototype .tg-tools { color: #fff; }
+.homepage-prototype .tg-tools__intro { margin-bottom: 0.75rem; }
 
-/* Tighter gap between intro block and first card */
-.homepage-prototype .tools-intro { margin-bottom: 0.75rem; }
-@media (min-width: 768px) {
-  .homepage-prototype .tools-intro { margin-bottom: 1rem; }
+.homepage-prototype .tg-grid {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 14px;           /* tighter vertical spacing */
 }
 
-/* Bubble button styles — scoped to prototype */
-.homepage-prototype .btn {
-  -webkit-tap-highlight-color: transparent;
+.homepage-prototype .tool-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.06) 100%);
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 18px;
+  padding: 18px 16px 20px;
+  box-shadow: 0 8px 26px rgba(9, 35, 66, .20);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  overflow: hidden;           /* contains any internal effects */
+  isolation: isolate;         /* create new stacking context */
+}
+
+/* Remove any accidental overlays from pseudo-elements */
+.homepage-prototype .tool-card::before,
+.homepage-prototype .tool-card::after {
+  content: none !important;
+}
+
+.homepage-prototype .tool-card h3 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  line-height: 1.15;
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0,0,0,.15);
+}
+
+.homepage-prototype .tool-card p {
+  margin: 0 0 14px;
+  color: rgba(255,255,255,.92);
+}
+
+/* ===== Bubble Button (raised, readable when NOT pressed) ===== */
+.homepage-prototype .btn.btn--primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 0;
+  min-width: 9rem;
+  padding: 12px 20px;
   border-radius: 999px;
-  padding: 0.9rem 1.4rem;
-  font-weight: 800;
-  font-size: 1.05rem;
-  letter-spacing: 0.02em;
-  line-height: 1;
-  cursor: pointer;
-  text-decoration: none;
-  user-select: none;
-  transition: transform 120ms ease, box-shadow 120ms ease, background 160ms ease, color 160ms ease;
-  position: relative;
-}
+  border: 2px solid rgba(255,255,255,.85);
 
-/* Raised, light “bubble” with dark label for contrast on blue cards */
-.homepage-prototype .btn--primary {
-  color: #0d365f; /* dark label for 4.5:1+ contrast on light button */
-  background: linear-gradient(180deg, #ffffff 0%, #f4f7fb 100%);
+  /* Raised bubble fill (light) */
+  background: linear-gradient(180deg, #FFFFFF 0%, #F3F7FC 100%);
   box-shadow:
-    0 10px 18px rgba(6, 42, 77, 0.18),
-    0 2px 4px rgba(6, 42, 77, 0.10),
-    inset 0 1px 0 rgba(255,255,255,0.85);
-}
+    0 12px 22px rgba(6,42,77,.22),
+    0 3px 6px rgba(6,42,77,.12),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  transform: translateZ(0);
 
-/* Top gloss highlight */
-.homepage-prototype .btn--primary::before {
-  content: "";
-  position: absolute;
-  inset: 6% 8% auto 8%;
-  height: 38%;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0));
-  pointer-events: none;
-}
+  /* Make label visible (override any global white/opacity rules) */
+  color: #0d365f !important;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255,255,255,.65);
 
-/* Hover/focus lift */
-.homepage-prototype .btn--primary:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    0 12px 22px rgba(6, 42, 77, 0.20),
-    0 3px 6px rgba(6, 42, 77, 0.12),
-    inset 0 1px 0 rgba(255,255,255,0.9);
-}
-
-/* Pressed “depressed” feel */
-.homepage-prototype .btn--primary:active {
-  transform: translateY(1px);
-  box-shadow:
-    0 4px 8px rgba(6, 42, 77, 0.18),
-    inset 0 3px 6px rgba(6, 42, 77, 0.12),
-    inset 0 -1px 0 rgba(255,255,255,0.6);
-}
-
-/* Keyboard accessibility */
-.homepage-prototype .btn:focus-visible {
-  outline: 0;
-  box-shadow:
-    0 0 0 3px #fff,
-    0 0 0 6px #1b6fbd,
-    0 12px 22px rgba(6, 42, 77, 0.20);
-}
-
-/* Full-width on mobile inside cards; intrinsic on ≥768px */
-.homepage-prototype .tool-card .btn { width: 100%; }
-@media (min-width: 768px) {
-  .homepage-prototype .tool-card .btn { width: auto; min-width: 9rem; }
-}
-
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .homepage-prototype .btn { transition: none; }
-}
-
-/* ——— Prototype CTA visibility & bubble styling ——— */
-.homepage-prototype .tool-card .btn.btn--primary {
-  /* kill any inherited opacity/filters */
   opacity: 1 !important;
   filter: none !important;
   mix-blend-mode: normal !important;
 
-  /* visible label on light bubble */
-  color: #0d365f !important;              /* dark navy label */
-  text-shadow: 0 1px 0 rgba(255,255,255,.65);
-
-  /* bubble fill */
-  background: linear-gradient(180deg,#ffffff 0%,#f2f6fb 100%) !important;
-  border: 2px solid rgba(255,255,255,0.75);
-  border-radius: 999px;
-  box-shadow:
-    0 10px 18px rgba(6,42,77,.18),
-    0 2px 4px rgba(6,42,77,.10),
-    inset 0 1px 0 rgba(255,255,255,.9);
+  position: relative;
+  z-index: 1;                 /* keep above any internal gradients */
+  text-decoration: none;
 }
 
-/* hover/focus lift */
-.homepage-prototype .tool-card .btn.btn--primary:hover,
-.homepage-prototype .tool-card .btn.btn--primary:focus-visible {
+/* Hover/focus lift */
+.homepage-prototype .btn.btn--primary:hover,
+.homepage-prototype .btn.btn--primary:focus-visible {
   transform: translateY(-1px);
   box-shadow:
-    0 12px 22px rgba(6,42,77,.22),
-    0 3px 6px rgba(6,42,77,.12),
+    0 14px 26px rgba(6,42,77,.26),
+    0 4px 8px rgba(6,42,77,.14),
     inset 0 1px 0 rgba(255,255,255,.95);
   outline: none;
 }
 
-/* pressed/depressed */
-.homepage-prototype .tool-card .btn.btn--primary:active {
+/* Pressed state (depressed bubble) */
+.homepage-prototype .btn.btn--primary:active {
   transform: translateY(1px);
-  background: linear-gradient(180deg,#e8eef7 0%,#dfe8f3 100%) !important;
-  color: #093258 !important;
+  background: linear-gradient(180deg, #E8EEF7 0%, #DFE8F3 100%);
+  color: #0b2f52 !important;
   box-shadow:
-    0 4px 8px rgba(6,42,77,.2),
-    inset 0 3px 6px rgba(6,42,77,.14),
+    0 6px 12px rgba(6,42,77,.22),
+    inset 0 3px 7px rgba(6,42,77,.18),
     inset 0 -1px 0 rgba(255,255,255,.6);
 }
 
-/* full width on mobile */
+/* Full-width on small screens for easy tapping */
 .homepage-prototype .tool-card .btn { width: 100%; }
-@media (min-width:768px){ .homepage-prototype .tool-card .btn { width:auto; min-width:9rem; } }
+@media (min-width: 768px) {
+  .homepage-prototype .tool-card .btn { width: auto; }
+}
 
+/* Kill inherited button resets that may force white/transparent text */
 .homepage-prototype .tool-card a,
 .homepage-prototype .btn,
 .homepage-prototype .btn-primary {
-  /* stop global white labels or dimming */
   color: inherit !important;
 }
