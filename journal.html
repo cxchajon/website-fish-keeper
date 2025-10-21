@@ -25,7 +25,7 @@
     href="https://fonts.googleapis.com/css2?family=Patrick+Hand:wght@400;600&display=swap"
     rel="stylesheet"
   />
-  <link rel="stylesheet" href="css/journal.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/journal.css?v=1.0.2" />
   <script defer src="js/nav.js?v=1.1.0"></script>
 </head>
 <body class="journal-body">
@@ -78,14 +78,40 @@
             </div>
           </section>
         </header>
-
-        <div class="journal-entries" data-journal-entries></div>
+        <nav class="journal-month-nav" aria-label="Journal months" data-journal-nav-top hidden>
+          <button type="button" class="journal-month-nav__chip" data-journal-nav-prev aria-disabled="true" disabled>
+            ◀ Previous
+          </button>
+          <p class="journal-month-nav__label" data-journal-nav-label></p>
+          <button type="button" class="journal-month-nav__chip" data-journal-nav-next aria-disabled="true" disabled>
+            Next ▶
+          </button>
+        </nav>
+        <p class="journal-notice" data-journal-notice hidden></p>
+        <section class="journal-month" data-journal-month hidden>
+          <h2 class="journal-month__title" data-journal-month-title></h2>
+          <div class="journal-entries" data-journal-entries></div>
+        </section>
         <p class="journal-empty" data-journal-empty hidden>Journal entries will appear here once available.</p>
+        <nav
+          class="journal-month-nav journal-month-nav--bottom"
+          aria-label="Journal months"
+          data-journal-nav-bottom
+          hidden
+        >
+          <button type="button" class="journal-month-nav__chip" data-journal-nav-prev aria-disabled="true" disabled>
+            ◀ Previous
+          </button>
+          <p class="journal-month-nav__label" data-journal-nav-label></p>
+          <button type="button" class="journal-month-nav__chip" data-journal-nav-next aria-disabled="true" disabled>
+            Next ▶
+          </button>
+        </nav>
       </article>
     </div>
   </main>
   <script src="/js/footer-loader.js?v=1.4.5" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.5"></div>
-  <script defer src="js/journal.js?v=1.0.0"></script>
+  <script defer src="js/journal.js?v=1.1.0"></script>
 </body>
 </html>
