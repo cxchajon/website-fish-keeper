@@ -38,8 +38,7 @@
 
     /* Hero gradient */
     .hero{
-      min-height:100dvh;
-      padding:var(--space-5) 16px var(--space-6);
+      padding:clamp(16px,2.5vw,28px) 16px clamp(8px,1.5vw,16px);
       background:
         radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54,194,204,0.0) 60%),
         radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0,119,199,0.0) 60%),
@@ -62,6 +61,7 @@
       display:grid;
       grid-template-columns: repeat(3, minmax(0,1fr));
       gap: var(--space-4);
+      margin-top:12px;
     }
     @media (max-width: 1024px){
       .features-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
@@ -74,7 +74,7 @@
       background:var(--card-bg);
       border:1px solid var(--card-line);
       border-radius:var(--radius-card);
-      padding:var(--space-5);
+      padding:clamp(16px,2.2vw,22px);
       margin-bottom:var(--space-5);
       backdrop-filter: blur(6px);
       display:grid;
@@ -83,8 +83,7 @@
     .card h3{margin:var(--space-2) 0 var(--space-2);font-size:1.08rem}
     .card p{margin:0;color:var(--muted);min-height:2.8em}
     .actions{margin-top:var(--space-3)}
-    .btn{display:inline-block;padding:10px 16px;border-radius:12px;border:1px solid var(--link-line);background:var(--btn-bg);color:var(--btn-fg);font-weight:700;text-decoration:none}
-    .btn:hover{background:var(--btn-bg-hover)}
+    .btn{display:inline-block;padding:14px 22px;border-radius:28px;font-weight:800;font-size:1.05rem;line-height:1;text-align:center;text-decoration:none;transition:transform .05s ease,box-shadow .15s ease,background-color .15s ease,color .15s ease,border-color .15s ease;cursor:pointer;border:2px solid transparent}
 
     /* SEO intro (subtle, ~25% smaller) */
     .seo-intro{
@@ -243,39 +242,39 @@
   <main id="content">
 
     <!-- HERO / TOOLS -->
-    <section class="section section--gradient" id="tools">
+    <section class="hero hero--tools section section--gradient" id="tools">
       <div class="container">
         <div class="hero-intro">
-          <h2>Fishkeeping Guides &amp; Tools — The Tank Guide</h2>
           <p class="eyebrow">a product of <strong>FishKeepingLifeCo</strong></p>
-          <p>Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</p>
-          <p class="kicker">EXPLORE OUR TOOLS BELOW TO START YOUR TANK THE RIGHT WAY.</p>
+          <h1>Fishkeeping Guides &amp; Tools — The Tank Guide</h1>
+          <p class="lede">Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</p>
+          <p class="cta-line">EXPLORE OUR TOOLS BELOW TO START YOUR TANK THE RIGHT WAY.</p>
         </div>
 
         <!-- Keep existing card components and links -->
-        <div class="tools-grid" role="list">
+        <div class="tools-grid section--tools" role="list">
           <article class="tool-card" aria-labelledby="card-stocking-title" role="listitem">
             <h3 id="card-stocking-title">Stocking Advisor</h3>
             <p>Smart stocking made simple — plan a thriving community with confidence.</p>
-            <a class="btn btn-launch" href="/stocking.html" role="button" aria-label="Launch Stocking Advisor">Launch</a>
+            <a class="btn btn--launch" href="/stocking.html" role="button" aria-label="Launch Stocking Advisor">Launch</a>
           </article>
 
           <article class="tool-card" aria-labelledby="card-gear-title" role="listitem">
             <h3 id="card-gear-title">Gear</h3>
             <p>The gear you need, matched to your tank and goals.</p>
-            <a class="btn btn-launch" href="/gear/" role="button" aria-label="Launch Gear recommendations">Launch</a>
+            <a class="btn btn--launch" href="/gear/" role="button" aria-label="Launch Gear recommendations">Launch</a>
           </article>
 
           <article class="tool-card" aria-labelledby="card-cycling-title" role="listitem">
             <h3 id="card-cycling-title">Cycling Coach</h3>
             <p>Master the nitrogen cycle with step-by-step guidance.</p>
-            <a class="btn btn-launch" href="/params.html" role="button" aria-label="Launch Cycling Coach">Launch</a>
+            <a class="btn btn--launch" href="/params.html" role="button" aria-label="Launch Cycling Coach">Launch</a>
           </article>
 
           <article class="tool-card" aria-labelledby="card-media-title" role="listitem">
             <h3 id="card-media-title">Media Hub</h3>
             <p>Videos, logs, and project updates from our own research.</p>
-            <a class="btn btn-launch" href="/media.html" role="button" aria-label="Launch Media Hub">Launch</a>
+            <a class="btn btn--launch" href="/media.html" role="button" aria-label="Launch Media Hub">Launch</a>
           </article>
         </div>
       </div>
