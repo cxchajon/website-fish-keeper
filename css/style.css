@@ -1826,6 +1826,11 @@ body.page-background #content .section {
   padding: clamp(48px, 10vw, 80px) 20px;
 }
 
+body.page-background #content .hero,
+body.page-background #content .hero.hero--tools {
+  padding: clamp(16px, 2.5vw, 28px) 20px clamp(8px, 1.5vw, 16px);
+}
+
 body.page-background #content .section--gradient {
   color: #fff;
   --muted: rgba(255,255,255,.86);
@@ -1870,6 +1875,29 @@ body.page-background #content .eyebrow {
   opacity: 0.85;
 }
 
+body.page-background #content .hero .eyebrow {
+  margin-bottom: 8px;
+  letter-spacing: 0.06em;
+}
+
+body.page-background #content .hero h1 {
+  margin: 8px 0 10px;
+  line-height: 1.15;
+}
+
+body.page-background #content .hero p.lede,
+body.page-background #content .hero .lede {
+  margin: 10px 0 14px;
+  max-width: 68ch;
+}
+
+body.page-background #content .hero .cta-line {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 body.page-background #content .kicker {
   margin: var(--space-1) 0 0;
   font-weight: 700;
@@ -1878,8 +1906,8 @@ body.page-background #content .kicker {
 }
 
 .hero-intro {
-  --hero-internal-gap: 8px;
-  --hero-bottom-gap: 48px;
+  --hero-internal-gap: 6px;
+  --hero-bottom-gap: 0px;
   display: grid;
   gap: var(--hero-internal-gap);
   margin-bottom: var(--hero-bottom-gap);
@@ -1899,8 +1927,8 @@ body.page-background #content .kicker {
 
 @media (min-width: 768px) {
   .hero-intro {
-    --hero-internal-gap: 10px;
-    --hero-bottom-gap: 56px;
+    --hero-internal-gap: 8px;
+    --hero-bottom-gap: 0px;
   }
 
   .hero-intro h1 {
@@ -1912,6 +1940,7 @@ body.page-background #content .kicker {
   --tools-gap: 20px;
   display: grid;
   gap: var(--tools-gap);
+  margin-top: 12px;
 }
 
 @media (min-width: 768px) {
@@ -1922,7 +1951,7 @@ body.page-background #content .kicker {
 
 .tool-card {
   border-radius: 16px;
-  padding: 18px 16px;
+  padding: clamp(16px, 2.2vw, 22px);
   backdrop-filter: saturate(120%) blur(0px);
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.22);
@@ -1938,34 +1967,109 @@ body.page-background #content .kicker {
   margin: 0 0 14px 0;
 }
 
-.btn.btn-launch {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  min-width: 120px;
-  padding: 10px 16px;
-  border-radius: 999px;
+/* HERO — tighter vertical rhythm */
+.hero,
+.hero.hero--tools {
+  padding-top: clamp(16px, 2.5vw, 28px);
+  padding-bottom: clamp(8px, 1.5vw, 16px);
+}
+
+.hero .eyebrow {
+  margin-bottom: 8px;
+  letter-spacing: 0.06em;
+}
+
+.hero h1 {
+  margin: 8px 0 10px;
+  line-height: 1.15;
+}
+
+.hero p.lede,
+.hero .lede {
+  margin: 10px 0 14px;
+  max-width: 68ch;
+}
+
+.hero .cta-line {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+/* Reduce gap between hero and first card */
+.section--tools,
+.card-grid {
+  margin-top: 12px;
+}
+
+/* Card spacing tighten just a bit */
+.card {
+  padding: clamp(16px, 2.2vw, 22px);
+}
+
+/* Base button */
+.btn,
+.button,
+a.btn,
+a.button {
+  display: inline-block;
+  padding: 14px 22px;
+  border-radius: 28px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1;
+  text-align: center;
   text-decoration: none;
-  font-weight: 600;
+  transition: transform 0.05s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+/* Primary style used for "Launch" */
+.btn--launch,
+.button--launch,
+.card .btn,
+.card a.btn {
+  background: #ffffff;
+  color: #0b5fa5;
   border: 2px solid rgba(255, 255, 255, 0.85);
-  background: rgba(255, 255, 255, 0.95);
-  color: #073b4c;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18), inset 0 -2px 0 rgba(0, 0, 0, 0.05);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
-.btn.btn-launch:focus-visible {
-  outline: 3px solid #ffd166;
+/* Hover/focus/active states for clear affordance */
+.btn--launch:hover,
+.btn--launch:focus,
+.card .btn:hover,
+.card .btn:focus {
+  background: #f7fbff;
+  color: #084e8a;
+  border-color: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22), inset 0 -2px 0 rgba(255, 255, 255, 0.6);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.btn--launch:active,
+.card .btn:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18) inset;
+}
+
+/* Ensure buttons are not styled as disabled */
+.btn[disabled],
+.button[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Accessibility: visible focus ring on keyboard nav */
+.btn:focus-visible,
+.button:focus-visible,
+a.btn:focus-visible,
+a.button:focus-visible {
+  outline: 3px solid #c2e0ff;
   outline-offset: 2px;
-}
-
-.btn.btn-launch:hover {
-  filter: brightness(0.98);
-}
-
-.gradient .btn.btn-launch,
-.section--gradient .btn.btn-launch {
-  border-color: rgba(255, 255, 255, 0.9);
 }
 
 body.page-background #content .faq-list {
@@ -2107,18 +2211,19 @@ h3{
 }
 
 /* Sections – reduce vertical padding */
-.section,
+.section:not(.hero),
 .section--light,
-.section--brand,
-.hero{
+.section--brand{
   padding-top: var(--space-6);   /* was larger; reduce */
   padding-bottom: var(--space-6);
 }
 
 /* Hero keeps blue gradient; just tighten spacing */
 .hero .container{
-  padding-top: var(--space-5);
-  padding-bottom: var(--space-4);
+  width: min(980px, 100%);
+  margin: 0 auto;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* Content container max width feels roomy but compact */
@@ -2133,7 +2238,7 @@ h3{
 .tool-card,
 .contact-card{
   border-radius: var(--radius-card);
-  padding: var(--space-5);            /* was bigger */
+  padding: clamp(16px, 2.2vw, 22px);            /* was bigger */
   margin-bottom: var(--space-5);
 }
 .card p:last-child{ margin-bottom: 0; }
@@ -2141,15 +2246,6 @@ h3{
 .card .actions,
 .tool-card .actions{
   margin-top: var(--space-3);
-}
-
-/* “Launch” buttons – keep size readable but tighter */
-.button,
-.btn,
-.card .btn{
-  padding: 10px 16px;
-  font-weight: 700;
-  border-radius: 12px;
 }
 
 /* FAQ – compact items */
