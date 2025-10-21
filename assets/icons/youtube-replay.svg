@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-hidden="true">
+  <title>YouTube – View All Community Video Picks</title>
+  <rect x="8" y="16" width="48" height="32" rx="8" fill="#FF0000" />
+  <path d="M28 24v16l12-8z" fill="#FFFFFF" />
+  <g class="replay-ring" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 18a14 14 0 1 1-9.899 4.101l-2.6-7.4 7.4 2.6" />
+  </g>
+</svg>

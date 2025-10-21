@@ -69,38 +69,107 @@
     .section h2 { margin: 0 0 8px; }
     .section p.lead { margin: 0 0 16px; color: var(--muted); }
 
-    .cta-row {
+    .community-archive-cta {
       display: flex;
       justify-content: center;
-      margin-block: clamp(12px, 3vw, 20px);
+      margin: clamp(16px, 4vw, 22px) 0 clamp(20px, 5vw, 28px);
     }
 
-    .btn--ghost {
+    .community-archive-button {
+      --cta-bg-start: rgba(37, 99, 235, 0.92);
+      --cta-bg-end: rgba(59, 130, 246, 0.86);
+      --cta-border: rgba(255, 255, 255, 0.28);
+      --cta-shadow: 0 16px 32px rgba(8, 21, 50, 0.35);
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 10px 18px;
+      gap: clamp(10px, 2.4vw, 12px);
+      padding: clamp(12px, 3vw, 16px) clamp(22px, 6vw, 30px);
+      min-height: clamp(48px, 12vw, 58px);
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      color: rgba(238, 243, 255, 0.9);
-      background: transparent;
-      text-decoration: none;
+      background: linear-gradient(135deg, var(--cta-bg-start), var(--cta-bg-end));
+      border: 1px solid var(--cta-border);
+      color: #ffffff;
       font-weight: 600;
       letter-spacing: 0.01em;
-      transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+      box-shadow: var(--cta-shadow);
+      position: relative;
+      white-space: nowrap;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
     }
 
-    .btn--ghost:hover,
-    .btn--ghost:focus-visible {
-      color: #ffffff;
-      border-color: rgba(255, 255, 255, 0.85);
-      background: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 10px 18px rgba(5, 37, 48, 0.18);
+    .community-archive-button__label {
+      font-size: clamp(0.95rem, 2.6vw, 1.05rem);
     }
 
-    .btn--ghost:focus-visible {
-      outline: 3px solid rgba(255, 255, 255, 0.4);
+    .community-archive-button__arrow {
+      display: inline-flex;
+      align-items: center;
+      font-size: 1.1em;
+      line-height: 1;
+      margin-left: clamp(6px, 1.8vw, 10px);
+    }
+
+    .community-archive-button:focus-visible {
+      outline: 2px solid rgba(96, 165, 250, 0.95);
       outline-offset: 3px;
+    }
+
+    .community-archive-button:hover,
+    .community-archive-button:focus-visible {
+      border-color: rgba(255, 255, 255, 0.45);
+      box-shadow: 0 18px 38px rgba(8, 21, 50, 0.38);
+    }
+
+    .youtube-replay-icon {
+      width: clamp(24px, 6vw, 32px);
+      height: clamp(24px, 6vw, 32px);
+      flex-shrink: 0;
+      color: rgba(17, 24, 39, 0.8);
+      transition: color 0.3s ease;
+    }
+
+    .youtube-replay-icon .replay-ring {
+      transform-origin: 32px 32px;
+    }
+
+    @keyframes replay-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .community-archive-button {
+        transition: transform 0.35s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.35s ease, color 0.3s ease;
+      }
+
+      .community-archive-button:hover,
+      .community-archive-button:focus-visible {
+        transform: scale(1.03);
+      }
+
+      .community-archive-button:hover .youtube-replay-icon .replay-ring,
+      .community-archive-button:focus-visible .youtube-replay-icon .replay-ring {
+        animation: replay-spin 2.5s linear infinite;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .community-archive-cta {
+        margin: clamp(14px, 5vw, 20px) 0 clamp(18px, 7vw, 24px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .community-archive-button,
+      .community-archive-button:hover,
+      .community-archive-button:focus-visible {
+        transform: none !important;
+      }
+
+      .youtube-replay-icon .replay-ring {
+        animation: none !important;
+      }
     }
 
     /* Cards */
@@ -907,6 +976,32 @@
           </article>
         </div>
 
+        <div class="community-archive-cta">
+          <a
+            class="community-archive-button"
+            href="/pages/community-videos.html"
+            aria-label="View all Community Video Picks (archive)"
+          >
+            <svg
+              class="youtube-replay-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 64 64"
+              role="img"
+              focusable="false"
+              aria-hidden="true"
+            >
+              <title>YouTube – View All Community Video Picks</title>
+              <rect x="8" y="16" width="48" height="32" rx="8" fill="#FF0000" />
+              <path d="M28 24v16l12-8z" fill="#FFFFFF" />
+              <g class="replay-ring" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M32 18a14 14 0 1 1-9.899 4.101l-2.6-7.4 7.4 2.6" />
+              </g>
+            </svg>
+            <span class="community-archive-button__label">View all Community Video Picks</span>
+            <span class="community-archive-button__arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+
         <!-- Aquarium Library START -->
         <section id="aquarium-library" aria-labelledby="alib-title">
           <div class="alib__header">
@@ -1055,10 +1150,6 @@
         <!-- Aquarium Library END -->
       </div>
     </section>
-
-    <p class="cta-row">
-      <a class="btn--ghost" href="/pages/community-video-picks.html" aria-label="View all Community Video Picks">View all Community Video Picks →</a>
-    </p>
 
     <!-- Featured Resource -->
     <section class="section" id="featured-resource" aria-labelledby="featured-resource-title">
