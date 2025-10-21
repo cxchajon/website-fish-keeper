@@ -86,7 +86,10 @@
       }
       const data = await response.json();
       const months = Array.isArray(data)
-        ? data.map((value) => normalizeMonthString(value)).filter(Boolean)
+        ? data
+            .map((value) => normalizeMonthString(value))
+            .filter(Boolean)
+            .sort(compareMonthDesc)
         : [];
       if (!months.length) {
         throw new Error('index.json empty');
@@ -113,7 +116,7 @@
         }
       }
     });
-    return Array.from(monthSet).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0));
+    return Array.from(monthSet).sort(compareMonthDesc);
   }
 
   async function ensureMasterEntries() {
@@ -314,28 +317,28 @@
   }
 
   function updateNav(month) {
-    const monthLabel = formatMonthLabel(month);
+    const { label, prevMonth, nextMonth } = getMonthNavigation(month);
     navs.forEach((nav) => {
-      const label = nav.querySelector('[data-journal-nav-label]');
-      if (label) {
-        label.textContent = monthLabel;
+      const labelElement = nav.querySelector('[data-journal-nav-label]');
+      if (labelElement) {
+        labelElement.textContent = label || '';
       }
       const prevButton = nav.querySelector('[data-journal-nav-prev]');
       const nextButton = nav.querySelector('[data-journal-nav-next]');
-      const neighbors = getMonthNeighbors(month);
-      setNavButton(prevButton, neighbors.older, 'prev');
-      setNavButton(nextButton, neighbors.newer, 'next');
+      setNavButton(prevButton, prevMonth, 'prev');
+      setNavButton(nextButton, nextMonth, 'next');
     });
   }
 
-  function getMonthNeighbors(month) {
+  function getMonthNavigation(month) {
+    const label = formatMonthLabel(month);
     const index = availableMonths.indexOf(month);
     if (index === -1) {
-      return { newer: null, older: null };
+      return { label, prevMonth: null, nextMonth: null };
     }
-    const newer = index > 0 ? availableMonths[index - 1] : null;
-    const older = index < availableMonths.length - 1 ? availableMonths[index + 1] : null;
-    return { newer, older };
+    const prevMonth = index < availableMonths.length - 1 ? availableMonths[index + 1] : null;
+    const nextMonth = index > 0 ? availableMonths[index - 1] : null;
+    return { label, prevMonth, nextMonth };
   }
 
   function setNavButton(button, targetMonth, type) {
@@ -427,8 +430,8 @@
   }
 
   function findNearestMonth(month) {
-    const neighbors = getMonthNeighbors(month);
-    return neighbors.newer || neighbors.older || null;
+    const { nextMonth, prevMonth } = getMonthNavigation(month);
+    return nextMonth || prevMonth || null;
   }
 
   function buildMonthUrl(month) {
@@ -459,10 +462,20 @@
     if (!month) {
       return '';
     }
-    const date = new Date(`${month}-01T00:00:00Z`);
+    const match = month.match(/^(\d{4})-(\d{2})$/);
+    if (!match) {
+      return month;
+    }
+    const year = Number.parseInt(match[1], 10);
+    const monthIndex = Number.parseInt(match[2], 10) - 1;
+    if (Number.isNaN(year) || Number.isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) {
+      return month;
+    }
+    const date = new Date(Date.UTC(year, monthIndex, 1, 12, 0, 0));
     return new Intl.DateTimeFormat('en-US', {
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
+      timeZone: 'America/New_York'
     }).format(date);
   }
 
@@ -485,14 +498,31 @@
   }
 
   function formatDisplayDate(dateString) {
-    const date = new Date(`${dateString}T00:00:00`);
+    const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!match) {
+      return dateString;
+    }
+    const year = Number.parseInt(match[1], 10);
+    const monthIndex = Number.parseInt(match[2], 10) - 1;
+    const day = Number.parseInt(match[3], 10);
+    if (
+      [year, monthIndex, day].some((value) => Number.isNaN(value)) ||
+      monthIndex < 0 ||
+      monthIndex > 11 ||
+      day < 1 ||
+      day > 31
+    ) {
+      return dateString;
+    }
+    const date = new Date(Date.UTC(year, monthIndex, day, 12, 0, 0));
     if (Number.isNaN(date.getTime())) {
       return dateString;
     }
     return new Intl.DateTimeFormat('en-US', {
       month: 'long',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
+      timeZone: 'America/New_York'
     }).format(date);
   }
 
@@ -501,5 +531,15 @@
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
+  }
+
+  function compareMonthDesc(a, b) {
+    if (typeof a !== 'string' || typeof b !== 'string') {
+      return 0;
+    }
+    if (a === b) {
+      return 0;
+    }
+    return a < b ? 1 : -1;
   }
 })();
