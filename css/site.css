@@ -133,8 +133,8 @@
   text-align: center;
 }
 
-.site-footer .community-links,
-.site-footer .social-strip {
+
+.site-footer .community-links.social-strip {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
@@ -144,8 +144,7 @@
   text-align: center;
 }
 
-.site-footer .community-links a,
-.site-footer .social-strip a {
+.site-footer .community-links a {
   align-items: center;
   color: #fff;
   display: inline-flex;
@@ -157,64 +156,32 @@
 }
 
 .site-footer .community-links a:hover,
-.site-footer .social-strip a:hover {
+.site-footer .community-links a:focus-visible {
   color: #1e90ff;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
   transform: translateY(-1px);
 }
 
-.site-footer .community-links a:focus-visible,
-.site-footer .social-strip a:focus-visible {
-  border-radius: 8px;
-  outline: 2px solid #1e90ff;
-  outline-offset: 2px;
-}
-
-.site-footer .community-links svg,
-.site-footer .social-strip svg {
+.site-footer .community-links svg {
   display: block;
-  width: 28px;
-  height: 28px;
   fill: currentColor;
-}
-
-.site-footer .social-strip .x-icon {
-  color: #fff;
-  width: 28px;
-  height: 28px;
-  transition: color .3s ease, transform .15s ease;
-}
-
-.site-footer .social-strip .x-icon:hover,
-.site-footer .social-strip .x-icon:focus-visible {
-  color: #1da1f2;
-}
-
-.site-footer .social-strip .x-icon svg {
-  width: 100%;
-  height: 100%;
+  height: 30px;
+  width: 30px;
 }
 
 @media (max-width: 480px) {
-  .site-footer .community-links,
-  .site-footer .social-strip {
+  .site-footer .community-links.social-strip {
     gap: 16px;
-  }
-
-  .site-footer .community-links svg,
-  .site-footer .social-strip svg {
-    width: 28px;
-    height: 28px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .site-footer .community-links a,
-  .site-footer .social-strip a {
+  .site-footer .community-links a {
     transition: none;
   }
 
-  .site-footer .community-links a:hover,
-  .site-footer .social-strip a:hover {
+  .site-footer .community-links a:hover {
     transform: none;
   }
 }
@@ -273,14 +240,7 @@
 }
 
 @media (min-width: 768px) {
-  .community-links,
-  .social-strip {
+  .site-footer .community-links.social-strip {
     gap: 20px;
-  }
-
-  .community-links svg,
-  .social-strip svg {
-    width: 30px;
-    height: 30px;
   }
 }
