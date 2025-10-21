@@ -1803,27 +1803,26 @@ ins.adsbygoogle{
   display: none;
 }
 
-
-/* === Typography lift === */
-.h1, h1 {
+/* === Typography Enhancement & Contrast Adjustments === */
+h1, .h1 {
   font-weight: 800;
   letter-spacing: -0.01em;
   line-height: 1.1;
 }
 
-.h2, h2 {
+h2, .h2 {
   font-weight: 750;
   letter-spacing: -0.005em;
   line-height: 1.18;
 }
 
 @media (max-width: 480px) {
-  .h1, h1 { font-size: clamp(2rem, 6.5vw, 2.4rem); }
-  .h2, h2 { font-size: clamp(1.35rem, 4.8vw, 1.6rem); }
+  h1, .h1 { font-size: clamp(2rem, 6.5vw, 2.4rem); }
+  h2, .h2 { font-size: clamp(1.35rem, 4.8vw, 1.6rem); }
   p { font-size: 1.05rem; line-height: 1.65; }
 }
 
-/* Match white text to brand/gradient blue sections */
+/* White text contrast for blue/gradient sections */
 .section--brand,
 .section--gradient,
 .section--blue {
@@ -1836,12 +1835,17 @@ ins.adsbygoogle{
   color: #fff;
 }
 
-.section--gradient h1, .section--gradient h2 { text-shadow: 0 1px 0 rgba(0,0,0,.15); }
+.section--gradient h1, .section--gradient h2 {
+  text-shadow: 0 1px 0 rgba(0,0,0,.15);
+}
 
-/* comfortable line length */
-.container--copy { max-width: 68ch; margin-inline: auto; }
+/* Maintain readable width for large text blocks */
+.container--copy {
+  max-width: 68ch;
+  margin-inline: auto;
+}
 
-/* Hero tagline under FishKeepingLifeCo line */
+/* Tagline under product line */
 .tagline {
   margin-top: .65rem;
   font-weight: 700;
@@ -1849,7 +1853,7 @@ ins.adsbygoogle{
   text-transform: none;
 }
 
-/* Links on blue sections visibly underlined & accessible */
+/* Links readable in dark sections */
 .section--brand a,
 .section--gradient a,
 .section--blue a {
