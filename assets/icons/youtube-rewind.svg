@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 36" role="img" aria-labelledby="title">
+  <title id="title">YouTube Rewind — View all Community Video Picks</title>
+  <rect width="64" height="36" rx="9" fill="#FF0000" />
+  <g fill="currentColor">
+    <path d="M48 9v18L20 18z" />
+    <path d="M36 9v18L18 18z" />
+  </g>
+</svg>
