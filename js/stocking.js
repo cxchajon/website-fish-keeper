@@ -14,7 +14,7 @@ import {
 import { renderEnvCard } from './logic/envRecommend.js';
 import { getTankVariants } from './logic/sizeMap.js';
 import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } from './logic/utils.js';
-import { renderConditions, renderChips, bindPopoverHandlers } from './logic/ui.js';
+import { renderConditions, renderChips } from './logic/ui.js';
 import { getTankSnapshot, EMPTY_TANK, loadFilterSnapshot, saveFilterSnapshot } from './stocking/tankStore.js';
 import { EVENTS, dispatchEvent as dispatchStockingEvent } from './stocking/events.js';
 import { tankLengthStatus } from './stocking/validators.js';
@@ -1960,7 +1960,6 @@ function buildGearPayload() {
 }
 
   function init() {
-    bindPopoverHandlers(document.body);
     pruneMarineEntries();
     resetSpeciesFilters();
     populateSpecies();

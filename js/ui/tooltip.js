@@ -1,5 +1,5 @@
 import { getTooltipContent } from './tooltip-content.js';
-const TOOLTIP_TRIGGER_SELECTOR = '[data-tooltip-id], [data-info-id], [data-info], [data-tooltip], [data-tooltip-text], [data-tt]';
+const TOOLTIP_TRIGGER_SELECTOR = '[data-tooltip-id], [data-info-id], [data-info], [data-info-key], [data-tooltip], [data-tooltip-text], [data-tt], .ttg-tooltip-trigger';
 const BOUND_FLAG = 'ttgTooltipBound';
 const DEFAULT_INLINE_CLASS = 'ttg-tooltip';
 const DEFAULT_OFFSET_X = 6;

@@ -55,6 +55,56 @@ const TOOLTIP_COPY = new Map([
     },
   ],
   [
+    'gh',
+    {
+      title: 'What is gH?',
+      body: [
+        'General hardness measures dissolved calcium and magnesium. Many fish rely on minerals for osmoregulation and bone health.',
+      ],
+      ariaLabel: 'More info about general hardness (gH)',
+    },
+  ],
+  [
+    'kh',
+    {
+      title: 'Why kH matters',
+      body: [
+        'Carbonate hardness buffers pH swings. Low kH makes pH unstable; high kH keeps alkaline water steady.',
+      ],
+      ariaLabel: 'More info about carbonate hardness (kH)',
+    },
+  ],
+  [
+    'salinity',
+    {
+      title: 'Salinity categories',
+      body: [
+        'Freshwater has negligible salt, while low and high brackish carry increasing minerals. Dual-tolerant species bridge fresh and light brackish mixes—avoid spanning extremes without them.',
+      ],
+      ariaLabel: 'More info about salinity categories',
+    },
+  ],
+  [
+    'blackwater',
+    {
+      title: 'Blackwater & tannins',
+      body: [
+        'Blackwater systems are stained by tannins from leaves and wood. Species that require it need the lower pH and humic compounds.',
+      ],
+      ariaLabel: 'More info about blackwater environments',
+    },
+  ],
+  [
+    'ph-sensitive',
+    {
+      title: 'pH-sensitive species',
+      body: [
+        'These fish are less tolerant of swings. Match pH closely and prioritize stability when parameters are tight.',
+      ],
+      ariaLabel: 'More info about pH-sensitive species',
+    },
+  ],
+  [
     'env-info',
     {
       title: 'Environmental recommendations',
