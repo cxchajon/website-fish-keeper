@@ -38,35 +38,35 @@
 
 | Path | has_placeholder | has_loader | embeds_inline_footer | fetches_url | notes |
 | --- | --- | --- | --- | --- | --- |
-| 404.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| about.html | Y | Y | N | /footer.html?v=1.4.5 |  |
+| 404.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| about.html | Y | Y | N | /footer.html?v=1.4.6 |  |
 | archive/footers/footer-legal.html | — | — | — | — | Removed |
 | blogs/bba/backups/gear-section-preupdate.html | N | N | N | — | Backup fragment; Missing placeholder; Missing loader script |
-| blogs/blackbeard/index.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| blogs/cycle-check-3-readings/index.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| blogs/index.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| blogs/purigen/index.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| contact-feedback.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| cookie-settings.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| copyright-dmca.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| feature-your-tank.html | Y | Y | N | /footer.html?v=1.4.5 |  |
+| blogs/blackbeard/index.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| blogs/cycle-check-3-readings/index.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| blogs/index.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| blogs/purigen/index.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| contact-feedback.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| cookie-settings.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| copyright-dmca.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| feature-your-tank.html | Y | Y | N | /footer.html?v=1.4.6 |  |
 | footer.html | N | N | Y | — | Canonical footer partial; Missing placeholder; Missing loader script |
-| gear.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| gear/index.html | Y | Y | N | /footer.html?v=1.4.5 |  |
+| gear.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| gear/index.html | Y | Y | N | /footer.html?v=1.4.6 |  |
 | includes/ga4.html | N | N | N | — | Server include; Missing placeholder; Missing loader script |
 | includes/head.html | N | N | N | — | Server include; Missing placeholder; Missing loader script |
-| index.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| media.html | Y | Y | N | /footer.html?v=1.4.5 |  |
+| index.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| media.html | Y | Y | N | /footer.html?v=1.4.6 |  |
 | nav.html | N | N | N | — | Navigation partial; Missing placeholder; Missing loader script |
-| pages/university.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| params.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| privacy-legal.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| stocking.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| store.html | Y | Y | N | /footer.html?v=1.4.5 |  |
+| pages/university.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| params.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| privacy-legal.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| stocking.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| store.html | Y | Y | N | /footer.html?v=1.4.6 |  |
 | templates/blog-footer-gear.html | — | — | — | — | Removed |
-| terms.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| trust-security.html | Y | Y | N | /footer.html?v=1.4.5 |  |
-| university/index.html | Y | Y | N | /footer.html?v=1.4.5 |  |
+| terms.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| trust-security.html | Y | Y | N | /footer.html?v=1.4.6 |  |
+| university/index.html | Y | Y | N | /footer.html?v=1.4.6 |  |
 
 ## Files updated to normalize placeholder/loader
 

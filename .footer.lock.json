@@ -1,10 +1,10 @@
 {
-  "version": "1.4.5",
-  "generatedAt": "2025-10-21T01:35:11.970Z",
+  "version": "1.4.6",
+  "generatedAt": "2025-10-21T05:05:49.160Z",
   "files": {
-    "footer.html": "a2d45e7a936b5bb1d5207356d16ddc0e0ac499ce39dd6f029be677b483378759",
-    "assets/sprite.socials.svg": "67f89506814b232881a5cde7c93c545ef5b3e1c8276842a6b1c9c1bacbea80cf",
-    "js/footer-loader.js": "e6455aa2a9e82eeefc385ed8494ffac622147c73c640ea313333f4a19b7eacf3",
-    "css/site.css": "99af51da42d655a37530e142e009deef9fb3bfd83e1d65e20e39e19bba51ae8e"
+    "footer.html": "91bbfe4eb0541e8f01d6051c82b48a1b9f42ad18b8cfa589e77d45b661529917",
+    "assets/sprite.socials.svg": "2ae2ce5c30e5d29a803f12fea56339d58781d9886fe0323d13931e8d7cae217e",
+    "js/footer-loader.js": "cd2b55d9860abcbc9579fb414379133025e0deecb8eeca81f9f538513f27da8d",
+    "css/site.css": "118986f0160fd9c5efbfea1827d059cb217e0e87130ad91419e0ddb4c1cc34d4"
   }
 }

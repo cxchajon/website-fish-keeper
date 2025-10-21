@@ -11,7 +11,7 @@ The following files make up the footer surface and are protected by the hash loc
 - `/js/footer-loader.js`
 - `/css/site.css`
 
-Only `/footer.html` may contain markup for the global footer. All pages load it dynamically via `<div id="site-footer" data-footer-src="/footer.html?v=1.4.5"></div>` and the canonical loader script at `/js/footer-loader.js?v=1.4.5`.
+Only `/footer.html` may contain markup for the global footer. All pages load it dynamically via `<div id="site-footer" data-footer-src="/footer.html?v=1.4.6"></div>` and the canonical loader script at `/js/footer-loader.js?v=1.4.6`.
 
 ## Guard rails
 
@@ -20,7 +20,7 @@ Only `/footer.html` may contain markup for the global footer. All pages load it 
   > Footer is LOCKED. Do not modify without explicit approval. To proceed, set APPROVED_FOOTER_CHANGE=1.
 - `APPROVED_FOOTER_CHANGE=1` bypasses the hook and CI checks. Only set it after explicit approval.
 - GitHub Actions workflow **footer-lock** enforces the same verification plus `node scripts/footer-lock/lint.mjs`. On pull requests, add the `footer-approved` label to allow intentional footer updates; without the label, the job fails.
-- Repository lint: `npm run footer:lint` (also executed in the pre-commit hook) ensures every HTML page contains exactly one footer placeholder, uses `/js/footer-loader.js?v=1.4.5`, sets `data-footer-src` correctly, and blocks new class names containing `social`.
+- Repository lint: `npm run footer:lint` (also executed in the pre-commit hook) ensures every HTML page contains exactly one footer placeholder, uses `/js/footer-loader.js?v=1.4.6`, sets `data-footer-src` correctly, and blocks new class names containing `social`.
 
 ## Requesting changes
 
@@ -39,9 +39,9 @@ Only `/footer.html` may contain markup for the global footer. All pages load it 
   - Powered by line links: FishKeepingLifeCo → Google business share URL, The Tank Guide → Google search result.
   - No `<meta name="robots">` or inline `<style>` blocks.
 - [ ] Confirm `/assets/sprite.socials.svg` icons use `fill`/`stroke="currentColor"` and expose ids: `ig`, `tk`, `fb`, `x`, `yt`, `am`.
-- [ ] Ensure `/js/footer-loader.js` continues to replace the placeholder via `outerHTML` and fetches `/footer.html?v=1.4.5` (or the approved version).
+- [ ] Ensure `/js/footer-loader.js` continues to replace the placeholder via `outerHTML` and fetches `/footer.html?v=1.4.6` (or the approved version).
 - [ ] Verify `/css/site.css` contains the canonical footer styles (48×48 tap targets, base color `#fff`, hover/focus color ~`#1e90ff`).
 - [ ] Run `npm run footer:lint`.
-- [ ] Spot check key pages locally (homepage, legal pages, store, blog entries) to ensure the loader requests `/footer.html?v=1.4.5` with a 200 response and the rendered footer matches the canonical markup.
+- [ ] Spot check key pages locally (homepage, legal pages, store, blog entries) to ensure the loader requests `/footer.html?v=1.4.6` with a 200 response and the rendered footer matches the canonical markup.
 
 Keep this document updated whenever the process or asset list changes.

@@ -1,6 +1,6 @@
 import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-const CANONICAL_VERSION = '1.4.5';
+const CANONICAL_VERSION = '1.4.6';
 const CANONICAL_SCRIPT_SRC = `/js/footer-loader.js?v=${CANONICAL_VERSION}`;
 const CANONICAL_FOOTER_SRC = `/footer.html?v=${CANONICAL_VERSION}`;
 const ALLOWED_SOCIAL_CLASS_TOKENS = new Set(['social-strip']);
@@ -10,7 +10,7 @@ const EXPECTED_SOCIAL_HREFS = [
   'https://www.facebook.com/fishkeepinglifeco',
   'https://x.com/fishkeepinglife',
   'https://www.youtube.com/@fishkeepinglifeco',
-  'https://amzn.to/3IRKvK0',
+  'https://www.amazon.com/author/fishkeepinglifeco',
 ];
 const EXPECTED_NAV_HREFS = [
   '/privacy-legal.html',
@@ -139,9 +139,6 @@ const lint = () => {
           }
           if (!attrs.rel || !attrs.rel.includes('noopener') || !attrs.rel.includes('noreferrer')) {
             issues.push({ file, message: `Social link ${expectedHref} must include rel="noopener noreferrer".` });
-          }
-          if (expectedHref === 'https://amzn.to/3IRKvK0' && (!attrs.rel || !attrs.rel.includes('sponsored'))) {
-            issues.push({ file, message: 'Amazon social link must include rel="sponsored".' });
           }
           if (!attrs['aria-label']) {
             issues.push({ file, message: `Social link ${expectedHref} missing aria-label.` });
