@@ -72,6 +72,80 @@ body.journal-body {
   color: #2956a3;
 }
 
+.journal-month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 28px 0 20px;
+  font-size: clamp(1.05rem, 2.6vw, 1.15rem);
+}
+
+.journal-month-nav--bottom {
+  margin-top: 36px;
+}
+
+.journal-month-nav__chip {
+  background: none;
+  border: none;
+  color: #2956a3;
+  font: inherit;
+  font-weight: 600;
+  padding: 2px 4px;
+  cursor: pointer;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.journal-month-nav__chip:hover,
+.journal-month-nav__chip:focus-visible {
+  border-bottom-color: currentColor;
+}
+
+.journal-month-nav__chip:focus-visible {
+  outline: 2px solid rgba(41, 86, 163, 0.45);
+  outline-offset: 2px;
+}
+
+.journal-month-nav__chip[disabled] {
+  color: rgba(41, 86, 163, 0.35);
+  cursor: default;
+  border-bottom-color: transparent;
+}
+
+.journal-month-nav__label {
+  margin: 0;
+  flex: 1 1 auto;
+  text-align: center;
+  font-weight: 600;
+  color: #000000;
+}
+
+.journal-month {
+  margin-top: 16px;
+}
+
+.journal-month__title {
+  margin: 0 0 28px;
+  font-size: clamp(1.4rem, 3.4vw, 1.65rem);
+  font-weight: 600;
+  color: #000000;
+}
+
+.journal-notice {
+  margin: 16px 0 0;
+  font-size: clamp(0.95rem, 2.4vw, 1.05rem);
+  color: #2956a3;
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .journal-month-nav__label {
+    flex-basis: 100%;
+  }
+}
+
 .journal-day {
   position: relative;
   display: grid;
