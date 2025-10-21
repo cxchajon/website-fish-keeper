@@ -209,6 +209,14 @@ main .blog-article,
 }
 
 @media (min-width: 1024px) {
+  .blog-post,
+  .blog-container,
+  .content-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
   main.article.blog-open,
   .blog-open .content {
     max-width: 1100px;
@@ -217,12 +225,84 @@ main .blog-article,
   }
 
   .blog-open article {
-    max-width: 100%;
+    max-width: none;
     padding-inline: 0;
   }
 
-  .blog-open article p {
+  .blog-open article p,
+  .blog-content p {
     max-width: 70ch;
+  }
+
+  .blog-open article :is(h1, h2, h3, blockquote),
+  .blog-content :is(h1, h2, h3, blockquote) {
+    max-width: 90ch;
+  }
+
+  .blog-open article figure,
+  .blog-open article .post-image,
+  .blog-open article img,
+  .blog-content figure,
+  .blog-content .post-image,
+  .blog-content img,
+  .blog-hero,
+  .post-header .hero-media {
+    display: block;
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .blog-hero,
+  .post-header .hero-media {
+    max-width: 1200px;
+  }
+
+  .blog-open article iframe,
+  .blog-open article video,
+  .blog-content iframe,
+  .blog-content video {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .blog-open article h1,
+  .blog-content h1 {
+    line-height: 1.1;
+  }
+
+  .blog-open article h2,
+  .blog-content h2 {
+    line-height: 1.15;
+  }
+
+  .blog-open article h3,
+  .blog-content h3 {
+    line-height: 1.2;
+  }
+
+  .blog-open article p,
+  .blog-content p {
+    line-height: 1.6;
+  }
+
+  .blog-layout--with-sidebar .blog-main {
+    max-width: 1100px;
+  }
+}
+
+.blog-content img {
+  height: auto !important;
+}
+
+@media (min-width: 1280px) {
+  .blog-content,
+  .blog-open article {
+    font-size: 1.0625rem;
   }
 }
 
