@@ -68,3 +68,5 @@ Result: journal live (unlinked).
 [2025-10-19 | SA | Info buttons rounded (Coach parity)]
 [2025-10-20 | Journal] Added major maintenance entry; regenerated journal.csv/json; verified /journal.html renders newest-first.
 [2025-10-21 | SA | Info icons fixed — shared accessible tooltip, Coach parity]
+
+[2025-10-21 | Journal] Added Feeding & Dosing entry; rebuilt CSV/JSON and 2025-10.json; verified monthly render and nav.
