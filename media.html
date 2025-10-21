@@ -360,6 +360,111 @@
       }
     }
 
+    /* Community Video Picks (Legacy) */
+    #community-video-legacy .legacy-grid {
+      display: grid;
+      gap: clamp(16px, 3vw, 24px);
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 600px) {
+      #community-video-legacy .legacy-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 1024px) {
+      #community-video-legacy .legacy-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    #community-video-legacy .legacy-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      height: 100%;
+    }
+
+    #community-video-legacy .legacy-thumb {
+      display: block;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    #community-video-legacy .legacy-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #community-video-legacy .legacy-title {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    #community-video-legacy .legacy-title a {
+      color: #0b1020;
+      text-decoration: none;
+    }
+
+    #community-video-legacy .legacy-title a:hover,
+    #community-video-legacy .legacy-title a:focus {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+
+    #community-video-legacy .legacy-creator {
+      margin: -4px 0 0;
+      font-size: 0.95rem;
+    }
+
+    #community-video-legacy .legacy-creator a {
+      color: inherit;
+      font-weight: 600;
+    }
+
+    #community-video-legacy .legacy-description {
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    #community-video-legacy .legacy-card-footer {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #community-video-legacy .legacy-card-cta {
+      display: flex;
+    }
+
+    #community-video-legacy .legacy-card-cta .yt-cta {
+      width: 100%;
+      justify-content: center;
+    }
+
+    @media (min-width: 600px) {
+      #community-video-legacy .legacy-card-cta {
+        justify-content: flex-end;
+      }
+
+      #community-video-legacy .legacy-card-cta .yt-cta {
+        width: auto;
+      }
+    }
+
+    #community-video-legacy .legacy-meta {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
     #community .media-thumb {
       display: grid;
       place-items: center;
@@ -1018,6 +1123,62 @@
           <p class="alib__foot">More sections coming soon.</p>
         </section>
         <!-- Aquarium Library END -->
+      </div>
+    </section>
+
+    <!-- Community Video Picks (Legacy) -->
+    <section class="section" id="community-video-legacy" aria-labelledby="community-video-legacy-title">
+      <h2 id="community-video-legacy-title">Community Video Picks (Legacy)</h2>
+      <p class="lead">A small archive of tutorials and explainers we’ve previously highlighted. These remain solid references even as we feature newer content.</p>
+
+      <div class="legacy-grid">
+        <article class="card legacy-card">
+          <a class="legacy-thumb" href="https://youtu.be/zX3wGQpC4eE" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.youtube.com/vi/zX3wGQpC4eE/hqdefault.jpg" alt="Make a Freshwater Aquarium Sump by SerpaDesign" loading="lazy" decoding="async">
+          </a>
+          <h3 class="legacy-title">
+            <a href="https://youtu.be/zX3wGQpC4eE" target="_blank" rel="noopener noreferrer">Make a Freshwater Aquarium Sump</a>
+          </h3>
+          <p class="muted legacy-creator">by <a href="https://youtube.com/@serpadesign" target="_blank" rel="noopener noreferrer">SerpaDesign</a></p>
+          <p class="legacy-description">A clear, step-by-step sump build that’s approachable for first-time DIY aquarists. We like this one for its baffle design walkthrough and easy-to-follow pacing.</p>
+          <div class="legacy-card-footer">
+            <div class="legacy-card-cta">
+              <a class="yt-cta" href="https://youtu.be/zX3wGQpC4eE" target="_blank" rel="noopener noreferrer" aria-label="Watch on YouTube: Make a Freshwater Aquarium Sump">
+                <span class="yt-icon" aria-hidden="true">
+                  <svg class="yt-cta-svg" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true">
+                    <path d="M9 7v10l8-5z" fill="#fff"></path>
+                  </svg>
+                </span>
+                <span class="yt-label">Watch on YouTube</span>
+              </a>
+            </div>
+            <p class="legacy-meta">Added: 2025-10-14</p>
+          </div>
+        </article>
+
+        <article class="card legacy-card">
+          <a class="legacy-thumb" href="https://youtube.com/shorts/QbPxRZqd4MI" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.youtube.com/vi/QbPxRZqd4MI/hqdefault.jpg" alt="Nitrogen Cycle Explained — short by FishKeepingLifeCo" loading="lazy" decoding="async">
+          </a>
+          <h3 class="legacy-title">
+            <a href="https://youtube.com/shorts/QbPxRZqd4MI" target="_blank" rel="noopener noreferrer">Aquarium Science Made Simple: Nitrogen Cycle Explained</a>
+          </h3>
+          <p class="muted legacy-creator">by <a href="https://youtube.com/@fishkeepinglifeco" target="_blank" rel="noopener noreferrer">FishKeepingLifeCo</a></p>
+          <p class="legacy-description">A fast, family-friendly explainer that covers the nitrogen cycle essentials in under a minute—great to share with anyone new to freshwater aquariums.</p>
+          <div class="legacy-card-footer">
+            <div class="legacy-card-cta">
+              <a class="yt-cta" href="https://youtube.com/shorts/QbPxRZqd4MI" target="_blank" rel="noopener noreferrer" aria-label="Watch on YouTube: Aquarium Science Made Simple: Nitrogen Cycle Explained">
+                <span class="yt-icon" aria-hidden="true">
+                  <svg class="yt-cta-svg" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true">
+                    <path d="M9 7v10l8-5z" fill="#fff"></path>
+                  </svg>
+                </span>
+                <span class="yt-label">Watch on YouTube</span>
+              </a>
+            </div>
+            <p class="legacy-meta">Added: 2025-10-14</p>
+          </div>
+        </article>
       </div>
     </section>
 
