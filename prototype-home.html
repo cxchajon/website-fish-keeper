@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Tank Guide: Simple Aquarium Science &amp; Tools for Beginners</title>
+  <meta name="description" content="Learn aquarium science the easy way. The Tank Guide offers free tools, guides, and articles to help you master the nitrogen cycle and stock a healthy freshwater tank." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://thetankguide.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="The Tank Guide" />
+  <meta property="og:title" content="The Tank Guide: Simple Aquarium Science &amp; Tools for Beginners" />
+  <meta property="og:description" content="Learn aquarium science the easy way. The Tank Guide offers free tools, guides, and articles to help you master the nitrogen cycle and stock a healthy freshwater tank." />
+  <meta property="og:url" content="https://thetankguide.com/" />
+  <meta property="og:image" content="https://thetankguide.com/logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@fishkeepinglife" />
+  <meta name="twitter:title" content="The Tank Guide: Simple Aquarium Science &amp; Tools for Beginners" />
+  <meta name="twitter:description" content="Learn aquarium science the easy way. The Tank Guide offers free tools, guides, and articles to help you master the nitrogen cycle and stock a healthy freshwater tank." />
+  <meta name="twitter:image" content="https://thetankguide.com/logo.png" />
+
+  <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
+  <style>
+    :root{
+      --bg:#0c2740;
+      --fg:#ffffff;
+      --muted:rgba(255,255,255,.85);
+      --card-bg: rgba(255,255,255,.10);
+      --card-line: rgba(255,255,255,.18);
+      --btn-fg:#08324a;
+      --btn-bg:#ffffff;
+      --btn-bg-hover:#f3f6ff;
+      --link-line: rgba(255,255,255,.22);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+
+    /* Hero gradient */
+    .hero{
+      min-height:100dvh;
+      padding:28px 20px 38px;
+      background:
+        radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54,194,204,0.0) 60%),
+        radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0,119,199,0.0) 60%),
+        linear-gradient(140deg,#0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
+    }
+
+    .wrap{max-width:1080px;margin:0 auto}
+
+    .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+
+    /* Brand */
+    .brand-name{font-weight:800;font-size:1.4rem}
+    .brand-sub{font-size:1rem;opacity:.9}
+
+    /* Headline (unused placeholder for now) */
+    .headline{max-width:900px;font-weight:800;font-size:clamp(2rem,4vw,3.2rem);line-height:1.1;margin:40px 0 26px}
+
+    /* Launch grid */
+    .features-grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 24px;
+    }
+    @media (max-width: 1024px){
+      .features-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 640px){
+      .features-grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{background:var(--card-bg);border:1px solid var(--card-line);border-radius:14px;padding:16px;backdrop-filter: blur(6px);display:grid;gap:10px}
+    .card h3{margin:2px 0 4px;font-size:1.1rem}
+    .card p{margin:0;color:var(--muted);min-height:3.2em}
+    .actions{margin-top:8px}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--link-line);background:var(--btn-bg);color:var(--btn-fg);font-weight:700;text-decoration:none}
+    .btn:hover{background:var(--btn-bg-hover)}
+
+    /* SEO intro (subtle, ~25% smaller) */
+    .seo-intro{
+      max-width:700px;
+      margin:1rem auto 0;
+      padding:0;
+      font-size:0.75em;
+      line-height:1.4;
+      color:var(--muted);
+      text-align:center;
+    }
+    .seo-intro strong{color:var(--fg)}
+
+    /* Prototype elements */
+    .prototype-badge{
+      background:rgba(10,77,135,.8);
+      color:var(--fg);
+      font-size:0.75rem;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      text-align:center;
+      padding:6px 10px;
+      margin:16px auto 0;
+      border-radius:999px;
+      width:fit-content;
+    }
+    .prototype-badge a{color:var(--fg);text-decoration:underline;text-decoration-color:rgba(255,255,255,.4);text-decoration-thickness:1px;}
+
+    .prototype-intro{padding:60px 20px 32px;color:#0c2740;background:#f5f8fb;}
+    .prototype-intro .wrap{max-width:920px;}
+    .prototype-intro h1{color:#08324a;font-size:clamp(2rem,4vw,3.4rem);line-height:1.1;margin-bottom:24px;}
+    .prototype-intro p{color:#1f3a4d;line-height:1.7;font-size:1.05rem;margin-bottom:20px;}
+    .prototype-intro h2{color:#0a4d87;margin-top:32px;margin-bottom:16px;font-size:1.6rem;}
+    .prototype-intro .proto-cta{font-size:0.9rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#0a4d87;margin-top:36px;margin-bottom:0;}
+
+    .prototype-faq{padding:32px 20px 28px;background:#e8eff7;color:#0c2740;}
+    .prototype-faq .wrap{max-width:880px;}
+    .prototype-faq h2{margin:0 0 20px;font-size:1.5rem;color:#08324a;}
+    .prototype-faq details{border:1px solid rgba(12,39,64,0.12);border-radius:12px;padding:16px 18px;margin-bottom:12px;background:#fff;}
+    .prototype-faq summary{font-weight:700;cursor:pointer;list-style:none;}
+    .prototype-faq summary::-webkit-details-marker{display:none;}
+    .prototype-faq p{margin:12px 0 0;font-size:0.98rem;line-height:1.6;color:#1f3a4d;}
+
+    .prototype-faq details[open]{box-shadow:0 10px 24px rgba(12,39,64,0.12);}
+  </style>
+  <script defer src="/js/nav.js?v=1.1.0"></script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://thetankguide.com/#organization",
+  "name": "FishKeepingLifeCo",
+  "alternateName": "The Tank Guide",
+  "url": "https://thetankguide.com",
+  "addressCountry": "US",
+  "addressRegion": "NY",
+  "logo": "https://thetankguide.com/logo.png",
+  "image": "https://thetankguide.com/logo.png",
+  "slogan": "Educational Aquarium Books & Tools",
+  "description": "FishKeepingLifeCo publishes educational aquarium books and interactive online tools like The Tank Guide to help new aquarists and hobbyists set up, stock, and maintain thriving aquariums.",
+  "brand": {
+    "@type": "Brand",
+    "name": "The Tank Guide"
+  },
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "CXLXC LLC"
+  },
+  "foundingDate": "2025-09-12",
+  "publishingPrinciples": "https://thetankguide.com/about.html",
+  "areaServed": ["United States", "New York"],
+  "knowsAbout": [
+    "Aquariums",
+    "Fishkeeping",
+    "Nitrogen Cycle",
+    "Freshwater Aquariums",
+    "Planted Tanks",
+    "Aquarium Setup Basics",
+    "Water Parameters",
+    "Aquarium Cycling"
+  ],
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "email": "info@thetankguide.com",
+      "availableLanguage": ["en"]
+    }
+  ],
+  "sameAs": [
+    "https://www.instagram.com/FishKeepingLifeCo",
+    "https://www.tiktok.com/@FishKeepingLifeCo",
+    "https://www.facebook.com/fishkeepinglifeco",
+    "https://x.com/fishkeepinglife?s=21",
+    "https://www.youtube.com/@fishkeepinglifeco",
+    "https://amzn.to/3IRKvK0"
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://thetankguide.com/#website",
+  "url": "https://thetankguide.com/",
+  "name": "The Tank Guide",
+  "alternateName": "FishKeepingLifeCo",
+  "inLanguage": "en",
+  "publisher": {
+    "@id": "https://thetankguide.com/#organization"
+  },
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://thetankguide.com/favicon.ico"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://thetankguide.com/?s={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+  </script>
+  <!-- Consent Mode defaults (load FIRST) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
+  <!-- Google tag (gtag.js) — GA4 -->
+  <!--#include virtual="/includes/ga4.html" -->
+
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
+  <!-- End Cloudflare Web Analytics -->
+  <!-- --- Google CMP (Funding Choices) START --- -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
+  <script>
+    // Required bootstrap per Google; signals CMP presence
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
+  <!-- --- Google CMP (Funding Choices) END --- -->
+</head>
+<body class="page-background">
+  <div id="site-nav"></div>
+
+  <main>
+    <div class="prototype-badge"><a href="/">Prototype</a></div>
+
+    <header class="hero">
+      <div class="wrap">
+        <div class="hero-header">
+          <h1 class="brand-name hero-title">Fishkeeping Guides &amp; Tools — The Tank Guide</h1>
+          <p class="brand-sub hero-subline">a product of <strong>FishKeepingLifeCo</strong></p>
+          <p class="hero-tagline" id="hero-blurb">Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</p>
+          <p class="tagline">EXPLORE OUR TOOLS BELOW TO START YOUR TANK THE RIGHT WAY.</p>
+        </div>
+
+        <section id="features" aria-labelledby="features-title">
+          <h2 id="features-title" class="visually-hidden">Tools &amp; Sections</h2>
+          <div class="features-grid">
+            <article class="card" aria-labelledby="card-stocking-title">
+              <h3 id="card-stocking-title">Stocking Advisor</h3>
+              <p>Smart stocking made simple — plan a thriving community with confidence.</p>
+              <div class="actions"><a class="btn" href="/stocking.html" aria-label="Open Stocking Advisor tool">Launch</a></div>
+            </article>
+
+            <article class="card" aria-labelledby="card-gear-title">
+              <h3 id="card-gear-title">Gear</h3>
+              <p>The gear you need, matched to your tank and goals.</p>
+              <div class="actions"><a class="btn" href="/gear/" aria-label="Open Gear recommendations">Launch</a></div>
+            </article>
+
+            <article class="card" aria-labelledby="card-cycling-title">
+              <h3 id="card-cycling-title">Cycling Coach</h3>
+              <p>Master the nitrogen cycle with step-by-step guidance.</p>
+              <div class="actions"><a class="btn" href="/params.html" aria-label="Open Cycling Coach tool">Launch</a></div>
+            </article>
+
+            <article class="card" aria-labelledby="card-media-title">
+              <h3 id="card-media-title">Media</h3>
+              <p>Watch • Read • Explore — videos and blogs for every aquarist.</p>
+              <div class="actions"><a class="btn" href="/media.html" aria-label="Discover Media resources">Discover</a></div>
+            </article>
+
+            <article class="card" aria-labelledby="card-about-title">
+              <h3 id="card-about-title">About</h3>
+              <p>
+                Learn who we are, our approach to guides and tools, and what’s next for The Tank Guide.
+              </p>
+              <div class="actions">
+                <a class="btn" href="/about.html" aria-label="Open About page">Learn more</a>
+              </div>
+            </article>
+
+            <article class="card" aria-labelledby="card-contact-title">
+              <h3 id="card-contact-title">Contact</h3>
+              <p>
+                Questions, ideas, or spot a logic issue? Reach out with feedback, recommend fish or gear to review, or share your insights.
+              </p>
+              <div class="actions">
+                <a class="btn" href="/contact-feedback.html" aria-label="Open Contact form">Contact &amp; Feedback</a>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </header>
+
+    <!-- Index-only: tighten the gap above the hero on mobile -->
+    <style>
+      /* HERO GAP FIX (prototype keeps same tweak) */
+      @media (max-width: 768px){
+        .hero{ margin-top:0 !important; padding-top:8px !important; }
+        .hero > *:first-child{ margin-top:0 !important; }
+        .hero h1{ margin-top:6px !important; }
+        .hero .brandline,
+        .hero .subtitle,
+        .hero p{ margin-top:4px !important; }
+        .hero .wave,
+        .hero .swoosh,
+        .hero .divider,
+        .hero img[alt*="wave" i]{ display:none !important; }
+        .hero .wave, .hero .swoosh, .hero .divider{
+          margin:0 !important; padding:0 !important; height:0 !important;
+        }
+      }
+    </style>
+
+    <section class="seo-intro">
+      <div class="wrap">
+        <p>The Tank Guide simplifies aquarium setup and fishkeeping confidence. Plan, cycle, stock, and maintain your thriving planted aquarium or community tank. (FKLCo)</p>
+      </div>
+    </section>
+
+    <section id="learn" class="section section--gradient">
+      <div class="container container--copy">
+        <h1>Aquarium Science, Simplified for Everyone</h1>
+        <p>Welcome to The Tank Guide, where we make the science of aquariums simple, beautiful, and accessible for everyone. We know that starting your first fish tank can feel like a deep dive into a world of complex chemistry and conflicting advice. Our mission, powered by FishKeepingLifeCo, is to be the clear, calm voice that guides you from confusion to confidence.</p>
+
+        <h2>Master the Foundation: Understanding the Nitrogen Cycle</h2>
+        <p>At the heart of every stable aquarium is one crucial process: the nitrogen cycle. It’s the invisible engine that turns fish waste into harmless nitrates, creating a safe environment for your aquatic life. Instead of just telling you about it, we’ve built the <a href="/params.html">Cycling Coach—an interactive tool</a> that lets you track your tank’s progress and understand each stage.</p>
+
+        <h2>Build a Balanced Community with Our Stocking Advisor</h2>
+        <p>Once your tank is cycled and ready, the real fun begins: choosing your fish. … Our <a href="/stocking.html">Stocking Advisor</a> helps you design a peaceful, sustainable community.</p>
+
+        <h2>Learn with Us: From Our Tank to Yours</h2>
+        <p>Everything we teach is backed by real-world experience. Our guides and articles are directly informed by our own ongoing research and testing, where we document everything from fertilizer dosing to fish behavior. Follow along in the <a href="/media.html">Media Hub</a>. This is science in action, not just in theory.</p>
+      </div>
+    </section>
+
+    <section class="prototype-faq" aria-labelledby="prototype-faq-title">
+      <div class="wrap">
+        <h2 id="prototype-faq-title">Beginner FAQs</h2>
+        <details>
+          <summary>What is the most important thing to know before starting a fish tank?</summary>
+          <p>The most important concept is the nitrogen cycle… Our <a href="/params.html">Cycling Coach</a> tool is designed to help you track this process.</p>
+        </details>
+        <details>
+          <summary>How many fish can I put in my aquarium?</summary>
+          <p>It depends on species’ adult size, waste production (bioload), and your filtration capacity… Use our free <a href="/stocking.html">Stocking Advisor</a>.</p>
+        </details>
+        <details>
+          <summary>What basic equipment do I need for a freshwater aquarium?</summary>
+          <p>Tank, filter sized for volume, heater, thermometer, substrate, water conditioner, and lighting… See our <a href="/gear/">Gear Guide</a>.</p>
+        </details>
+      </div>
+    </section>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the most important thing to know before starting a fish tank?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The most important concept is the nitrogen cycle… Our Cycling Coach tool is designed to help you track this process."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How many fish can I put in my aquarium?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It depends on species’ adult size, waste production (bioload), and your filtration capacity… Use our free Stocking Advisor."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What basic equipment do I need for a freshwater aquarium?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Tank, filter sized for volume, heater, thermometer, substrate, water conditioner, and lighting… See our Gear Guide."
+            }
+          }
+        ]
+      }
+    </script>
+  </main>
+
+  <!-- === TTG Cookie Consent START === -->
+  <div id="ttg-consent" class="ttg-consent" data-consent-banner>
+    <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
+      <h3 id="ttg-consent-title">Cookies &amp; Advertising</h3>
+      <p id="ttg-consent-desc">
+        We use cookies to run this site and (if you allow) to show relevant ads from Google AdSense. You can accept all cookies, reject personalized ads, or manage preferences anytime.
+      </p>
+      <div class="ttg-consent__actions">
+        <button type="button" class="ttg-btn ttg-btn--secondary js-consent-reject" id="ttg-consent-reject">Reject (Non-personalized)</button>
+        <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-manage">Manage</button>
+        <button type="button" class="ttg-btn ttg-btn--primary js-consent-accept" id="ttg-consent-accept">Accept All</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="ttg-consent-modal" class="ttg-consent-modal" hidden aria-modal="true" role="dialog" aria-labelledby="ttg-consent-modal-title">
+    <div class="ttg-consent-modal__panel">
+      <h3 id="ttg-consent-modal-title">Cookie Preferences</h3>
+      <form id="ttg-consent-form">
+        <label class="ttg-row">
+          <input type="checkbox" checked disabled />
+          <span><strong>Essential</strong> — required for core site functions.</span>
+        </label>
+        <label class="ttg-row">
+          <input type="checkbox" id="ttg-c-analytics" />
+          <span><strong>Analytics</strong> — understand usage (if enabled later).</span>
+        </label>
+        <label class="ttg-row">
+          <input type="checkbox" id="ttg-c-ads" />
+          <span><strong>Advertising</strong> — allow personalized ads (Google AdSense).</span>
+        </label>
+        <div class="ttg-consent-modal__actions">
+          <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-cancel">Cancel</button>
+          <button type="submit" class="ttg-btn ttg-btn--primary">Save Preferences</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- === TTG Consent Banner Controller START === -->
+    <script defer src="/assets/js/consent-banner.js"></script>
+  <!-- === TTG Consent Banner Controller END === -->
+
+
+  <!-- === TTG CMP Consent Bridge START === -->
+  <script>
+  (function(){
+    var allowNPA = true;
+
+    function setAdConsent(granted){
+      document.documentElement.setAttribute('data-ad-consent', granted ? 'granted' : 'denied');
+      document.documentElement.classList.toggle('is-ads-disabled', !granted);
+      window.__TTG_ADS_DISABLED__ = !granted;
+      window.dispatchEvent(new CustomEvent('ttg:consent-change', {detail:{granted}}));
+    }
+
+    function hookTCF(){
+      if (typeof window.__tcfapi !== 'function') return false;
+
+      try{
+        var banner = document.getElementById('ttg-consent');
+        var modal  = document.getElementById('ttg-consent-modal');
+        if (banner){ banner.hidden = true; banner.classList.remove('is-open'); }
+        if (modal)  modal.hidden  = true;
+      }catch(e){}
+
+      window.__tcfapi('addEventListener', 2, function(tcData, ok){
+        if(!ok || !tcData) return;
+        var p = (tcData.purpose && tcData.purpose.consents) || {};
+        var hasP1 = !!p[1];
+        var hasP4 = !!p[4];
+
+        var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
+        setAdConsent(granted);
+      });
+
+      window.__tcfapi('getTCData', 2, function(tcData, ok){
+        if(!ok || !tcData) return;
+        var p = (tcData.purpose && tcData.purpose.consents) || {};
+        var hasP1 = !!p[1];
+        var hasP4 = !!p[4];
+        var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
+        setAdConsent(granted);
+      });
+
+      return true;
+    }
+
+    if (!hookTCF()){
+      var tries = 0, t = setInterval(function(){
+        tries++;
+        if (hookTCF() || tries > 40) clearInterval(t);
+      }, 100);
+    }
+
+  })();
+  </script>
+  <!-- === TTG CMP Consent Bridge END === -->
+
+  <script src="/js/footer-loader.js?v=1.4.7" defer></script>
+  <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
+
+</body>
+</html>
