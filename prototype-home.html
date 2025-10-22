@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Prototype-only: ocean gradient overrides loaded last. When promoting to index.html, keep overrides last or merge into main.css. -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -20,7 +21,6 @@
   <meta name="twitter:image" content="https://thetankguide.com/logo.png" />
 
   <link rel="stylesheet" href="css/style.css?v=1.1.9" />
-  <link rel="stylesheet" href="css/overrides-prototype.css?v=1.0.0" />
   <style>
     :root{
       --bg:#0c2740;
@@ -123,6 +123,7 @@
 
     .prototype-faq details[open]{box-shadow:0 10px 24px rgba(12,39,64,0.12);}
   </style>
+  <link rel="stylesheet" href="css/overrides-prototype.css?v=1.0.1" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <script type="application/ld+json">
 {
@@ -230,7 +231,7 @@
   </script>
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
-<body class="page-background prototype-home page-gradient">
+<body id="prototype-home" class="page-background prototype-home page-gradient">
   <div id="site-nav"></div>
 
   <main id="content">

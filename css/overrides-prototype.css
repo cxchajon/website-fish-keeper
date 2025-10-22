@@ -1,69 +1,71 @@
-/* ====== Prototype-only hard overrides ====== */
+/* Prototype-only hard overrides: ordered and specific */
 
-/* One smooth ocean gradient from top (light) to bottom (dark) */
+/* Full-page ocean gradient: top (light) → bottom (dark) */
 html, body { height: 100%; }
-body {
-  margin: 0;
+body#prototype-home,
+html body {
+  margin: 0 !important;
   background: linear-gradient(
     to bottom,
     #66d1f6 0%,
-    #3bb2ec 22%,
+    #3bb2ec 20%,
     #1e8edd 50%,
-    #0f66b8 76%,
+    #0f66b8 75%,
     #0b4f91 100%
   ) !important;
-  background-attachment: fixed !important; /* seamless while scrolling */
+  /* Avoid iOS fixed jitter; we can drop 'fixed' to keep a continuous look while scrolling */
+  background-attachment: scroll !important;
 }
 
-/* Remove any white backgrounds / bands (including pseudo elements) */
-#app, main, .wrapper, .container, .section, .band, .stripe, .page-band,
-.hero, .tools-section, .cards-section, .content-section, .faq-section,
-.footer, .header, .grid, .tool-grid, .row, .col,
-.card, .tool-card, .feature-card, .panel, .tile, .box,
-.card::before, .card::after, .tool-card::before, .tool-card::after,
-.panel::before, .panel::after {
+/*  A. Remove any white background paints on common panel classes and their pseudos */
+.card, .panel, .tool-card, .feature-card, .tile, .box,
+.card::before, .panel::before, .tool-card::before, .feature-card::before,
+.card::after,  .panel::after,  .tool-card::after,  .feature-card::after {
   background: transparent !important;
   background-image: none !important;
 }
 
-/* Nuke inline “white” paints too */
-*[style*="background:#fff"], *[style*="background: #fff"],
-*[style*="background-color:#fff"], *[style*="background-color: #fff"] {
+/*  B. Kill inline white backgrounds (style attribute) without touching layout */
+*[style*="background:#fff"],
+*[style*="background: #fff"],
+*[style*="background-color:#fff"],
+*[style*="background-color: #fff"],
+*[style*="background:#ffffff"],
+*[style*="background-color:#ffffff"] {
   background: transparent !important;
 }
 
-/* Glassy cards so text stays readable on the gradient */
-.card, .tool-card, .feature-card, .panel, .tile, .box {
+/*  C. Neutralize "white card" illusion from heavy light box-shadows */
+.card, .panel, .tool-card, .feature-card, .tile, .box {
+  box-shadow:
+    0 10px 24px rgba(0,0,0,0.20) !important;           /* keep depth */
+  border: 1px solid rgba(255,255,255,0.14) !important;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255,255,255,0.14) !important;
-  box-shadow:
-    0 10px 24px rgba(0,0,0,0.20),
-    inset 0 1px 0 rgba(255,255,255,0.10) !important;
-  background: rgba(255,255,255,0.06) !important;
 }
 
-/* Card text on dark bg */
-.card h2, .tool-card h2, .feature-card h2 { color: #fff !important; }
-.card p,  .tool-card p,  .feature-card p  { color: rgba(255,255,255,0.95) !important; }
-
-/* Tighten vertical rhythm */
-.section, .tools-section, .cards-section, .content-section {
-  padding-top: 1rem !important; padding-bottom: 1rem !important;
-}
-.section + .section, .cards-section + .cards-section { margin-top: 0.25rem !important; }
-
-/* Kill any page-edge bands that look like dividers */
-.page-shadow, .edge-fade, .band-shadow, .container::before, .container::after {
-  display: none !important;
+/* If any component ships a light outer shadow, override it explicitly */
+.card, .panel, .tool-card, .feature-card, .tile, .box {
+  --local-card-shadow: none !important;
 }
 
-/* Button wrapper bg must stay transparent */
+/* Button wrappers must not repaint white */
 .button-wrapper, .cta-wrap, .btn-wrap { background: transparent !important; }
+
+/* Tighten spacing as requested */
+.section, .tools-section, .cards-section, .content-section, .faq-section {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+}
+.card + .card, .panel + .panel { margin-top: 0.5rem !important; }
+
+/* Ensure readable text over darker lower gradient */
+.card h2, .panel h2, .tool-card h2 { color: #fff !important; }
+.card p,  .panel p,  .tool-card p  { color: rgba(255,255,255,0.95) !important; }
 
 /* iOS seam mitigation */
 @supports (-webkit-overflow-scrolling: touch) {
   body { -webkit-backface-visibility: hidden; transform: translateZ(0); }
 }
 
-/* ====== END overrides ====== */
+/* END overrides */
