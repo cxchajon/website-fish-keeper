@@ -25,137 +25,9 @@ html,
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-}
-
-body {
   background: var(--bg);
   color: var(--fg);
-}
-
-/* ===== ONE PAGE-WIDE GRADIENT (safe for iOS Safari) ===== */
-html,
-body {
-  height: 100%;
-}
-
-body.prototype-home {
-  margin: 0;
-  background: transparent !important;
-}
-
-body.prototype-home::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(
-    to bottom,
-    #66d1f6 0%,
-    #38a7e6 35%,
-    #1577c7 65%,
-    #0b4f91 100%
-  );
-}
-
-/* ===== NUKE ANY SECTION/BAND BACKGROUNDS THAT CAUSE SPLITS ===== */
-body.prototype-home #app,
-body.prototype-home .page,
-body.prototype-home.page-background,
-body.prototype-home.page-gradient,
-body.prototype-home .main,
-body.prototype-home .wrapper,
-body.prototype-home .container,
-body.prototype-home .section,
-body.prototype-home .hero,
-body.prototype-home .tools-section,
-body.prototype-home .cards-section,
-body.prototype-home .content-section,
-body.prototype-home .faq-section,
-body.prototype-home .footer,
-body.prototype-home .header,
-body.prototype-home .band,
-body.prototype-home .split,
-body.prototype-home .stripe,
-body.prototype-home .gradient-break,
-body.prototype-home .page-band {
-  background: transparent !important;
-  background-image: none !important;
-  box-shadow: none;
-}
-
-body.prototype-home hr,
-body.prototype-home .divider,
-body.prototype-home .wave-separator,
-body.prototype-home .section-separator,
-body.prototype-home .bg-strip {
-  display: none !important;
-}
-
-/* ===== CARDS REMAIN TRANSLUCENT OVER THE GRADIENT ===== */
-body.prototype-home .card,
-body.prototype-home .tool-card,
-body.prototype-home .section-card {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 18px;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-}
-
-/* Keep hero text readable over the gradient */
-body.prototype-home .hero,
-body.prototype-home .hero-content {
-  color: #fff;
-}
-
-body.prototype-home .hero h1 {
-  color: #fff;
-}
-
-body.prototype-home .hero p {
-  color: rgba(255, 255, 255, 0.95);
-}
-
-/* Spacing (optional tidy): reduce gaps a bit so the page is tighter */
-body.prototype-home .section + .section,
-body.prototype-home .tools-section,
-body.prototype-home .cards-section,
-body.prototype-home .content-section,
-body.prototype-home .faq-section {
-  margin-top: 0.85rem !important;
-}
-
-/* ===== Button style already handled elsewhere; keep text visible ===== */
-body.prototype-home .button,
-body.prototype-home .btn,
-body.prototype-home .cta {
-  color: #fff !important;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
-}
-
-/* iOS overscroll backdrop fix to avoid faint bands when rubber-banding */
-@supports (-webkit-overflow-scrolling: touch) {
-  body.prototype-home {
-    -webkit-backface-visibility: hidden;
-    transform: translateZ(0);
-  }
-}
-
-section {
-  margin-block: 28px;
-}
-
-section:first-of-type {
-  margin-top: 16px;
-}
-
-.btn,
-.btn-primary {
-  color: #fff;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
 body.theme-dark {
@@ -617,14 +489,12 @@ html[data-scroll-lock="on"] body {
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--card);
+  border: 1px solid var(--line);
   border-radius: 12px;
   padding: 14px;
   margin-bottom: 14px;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 8px 22px rgba(0, 20, 60, 0.25);
+  backdrop-filter: blur(8px);
 }
 
 .row {
@@ -2082,11 +1952,9 @@ body.page-background #content .kicker {
 .tool-card {
   border-radius: 16px;
   padding: clamp(16px, 2.2vw, 22px);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 8px 22px rgba(0, 20, 60, 0.25);
+  backdrop-filter: saturate(120%) blur(0px);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   display: grid;
   gap: 12px;
 }
@@ -2525,187 +2393,3 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 }
 
 .tools-cta-line { margin-bottom: 0.75rem; }
-
-/* ===== PAGE-WIDE OCEAN GRADIENT (top light → bottom dark) ===== */
-html, body { height: 100%; }
-body {
-  margin: 0;
-  background: transparent !important; /* we’ll draw via a fixed overlay */
-}
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1; /* sit behind all content */
-  background: linear-gradient(
-    to bottom,
-    #66d1f6 0%,
-    #3bb2ec 22%,
-    #1e8edd 50%,
-    #0f66b8 76%,
-    #0b4f91 100%
-  );
-}
-
-/* ===== NUKE ANY WHITE/BAND BACKGROUNDS THAT CAUSE SEAMS ===== */
-#app,
-.page,
-main,
-.wrapper,
-.container,
-.section,
-.hero,
-.tools-section,
-.cards-section,
-.content-section,
-.faq-section,
-.footer,
-.header,
-.band,
-.split,
-.stripe,
-.page-band,
-.gradient-break {
-  background: transparent !important;
-  background-image: none !important;
-}
-
-/* Common components that often force white */
-.card,
-.tool-card,
-.feature-card,
-.panel,
-.tile,
-.box {
-  background: rgba(255,255,255,0.06) !important; /* translucent, glassy */
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255,255,255,0.14);
-  box-shadow:
-    0 8px 22px rgba(0,0,0,0.18),
-    inset 0 1px 0 rgba(255,255,255,0.10);
-}
-
-/* Headings/text over gradient stay readable */
-.hero, .hero * { color: #fff !important; }
-.card h2, .tool-card h2 { color: #fff; }
-.card p, .tool-card p { color: rgba(255,255,255,0.95); }
-
-/* Tighten vertical rhythm a bit */
-.section, .tools-section, .cards-section, .content-section { padding-top: 1.25rem; padding-bottom: 1.25rem; }
-.section + .section { margin-top: 0.5rem !important; }
-
-/* Buttons keep their blue style (already implemented) but ensure no white wrappers override them */
-.button, .btn, .cta {
-  position: relative;
-  color: #fff !important;
-}
-.button-wrapper, .cta-wrap { background: transparent !important; }
-
-/* iOS overscroll fix to avoid faint bands during rubber-band scrolling */
-@supports (-webkit-overflow-scrolling: touch) {
-  body { -webkit-backface-visibility: hidden; transform: translateZ(0); }
-}
-
-/* ===== LAST-RESORT OVERRIDES FOR ANY LINGERING WHITE ===== */
-/* If any component still renders white, force transparency */
-*[style*="background:#fff"],
-*[style*="background: #fff"],
-*[style*="background-color:#fff"],
-*[style*="background-color: #fff"] {
-  background: transparent !important;
-}
-/* ----- One-page ocean gradient background (prototype only) ----- */
-html, body {
-  background: none !important; /* kill any legacy backgrounds */
-}
-body.tg-prototype-onegradient {
-  position: relative;
-  /* fallback color while gradient paints */
-  background: #0A6EC0;
-}
-body.tg-prototype-onegradient::before {
-  content: "";
-  position: fixed; /* follows viewport; no section seams */
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  /* Sunlit surface → twilight blue ocean */
-  background: linear-gradient(
-    to bottom,
-    #66C7FF 0%,
-    #38A8EE 20%,
-    #1683D3 45%,
-    #0E69BE 70%,
-    #0A4F9F 100%
-  );
-  /* make sure it covers very tall pages too */
-  background-attachment: fixed;
-  will-change: transform; /* smoother on mobile Safari */
-}
-
-/* Make all page sections transparent so they don’t repaint stripes */
-.ocean-section,
-.hero,
-.tools-grid,
-.gemini-wrap,
-.faq-section,
-.about-section,
-.contact-section {
-  background: transparent !important;
-}
-
-/* If any section uses its own gradient utility, neutralize it here */
-.has-ocean-gradient,
-.bg-ocean-gradient,
-.section-gradient {
-  background: transparent !important;
-}
-
-/* Cards keep their glass look but without filling the whole row with color */
-.card,
-.tool-card,
-.media-card,
-.about-card,
-.contact-card {
-  background: rgba(255, 255, 255, 0.06) !important; /* subtle glass */
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(8px);
-}
-
-/* Remove any gradient “caps” or top/bottom overlays that create bands */
-.card::before,
-.card::after,
-.tool-card::before,
-.tool-card::after,
-.section-cap-top,
-.section-cap-bottom {
-  content: none !important;
-  background: none !important;
-  box-shadow: none !important;
-}
-
-/* Kill section separators if present */
-.section-divider,
-.hr-gradient,
-.divider-band {
-  display: none !important;
-}
-
-/* Container shouldn’t clip the fixed pseudo-element */
-main, .page-wrap {
-  background: transparent !important;
-  overflow: visible;
-}
-
-/* iOS safe area (so the fixed gradient reaches the edges under notches) */
-@supports (padding: max(0px)) {
-  body.tg-prototype-onegradient {
-    padding-left: max(0px, env(safe-area-inset-left));
-    padding-right: max(0px, env(safe-area-inset-right));
-  }
-}
-
-/* (Optional) Smooth scroll so transitions feel continuous */
-html { scroll-behavior: smooth; }

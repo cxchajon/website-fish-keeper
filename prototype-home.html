@@ -13,181 +13,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg-top:#79d2ff;         /* shallow water */
-      --bg-mid:#1a8bd6;         /* mid depth */
-      --bg-bottom:#0a4e91;      /* deep */
-      --card-bg: rgba(255,255,255,0.06);
-      --card-border: rgba(255,255,255,0.18);
-      --text:#eaf6ff;
-      --muted:#cfe9ff;
-      --shadow: 0 10px 30px rgba(0,0,0,.25);
-      --radius:20px;
-      --pad:24px;
-      --gap:18px;          /* slightly tighter vertical rhythm */
-      --h1: clamp(28px, 5.5vw, 48px);
-      --h2: clamp(20px, 4.2vw, 28px);
-      --lead: clamp(16px, 2.9vw, 19px);
-    }
-
-    /* Full-page single gradient (fixed so it doesn't "band" while scrolling) */
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--text);
-      background: linear-gradient(
-        to bottom,
-        var(--bg-top) 0%,
-        var(--bg-mid) 45%,
-        var(--bg-bottom) 100%
-      ) fixed;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-    }
-
-    .wrap {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 28px 18px 80px; /* a touch tighter at top */
-    }
-
-    /* Hero (tighter stack, NO “A PRODUCT OF …” line here) */
-    .hero {
-      margin-top: 8px;
-      margin-bottom: 18px;
-    }
-    .eyebrow {
-      letter-spacing: .12em;
-      font-weight: 700;
-      opacity: .9;
-      text-transform: uppercase;
-      font-size: 12px;
-      margin: 0 0 8px 0;
-    }
-    .h1 {
-      font-size: var(--h1);
-      line-height: 1.05;
-      font-weight: 800;
-      margin: 0 0 10px 0; /* tighter */
-      text-wrap: balance;
-    }
-    .lead {
-      font-size: var(--lead);
-      line-height: 1.6;
-      color: var(--muted);
-      margin: 0 0 18px 0; /* tighter */
-    }
-    .cta-line {
-      font-weight: 800;
-      margin: 0 0 12px 0;
-      letter-spacing: .02em;
-    }
-
-    /* Cards grid */
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: var(--gap);
-    }
-    @media (min-width: 860px){
-      .grid { grid-template-columns: 1fr 1fr; }
-    }
-
-    .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius);
-      box-shadow: 0 10px 24px rgba(0,0,0,.15);
-      padding: var(--pad);
-    }
-    .card h3{
-      margin: 0 0 8px 0;
-      font-size: var(--h2);
-      line-height: 1.25;
-    }
-    .card p{
-      margin: 0 0 14px 0;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.65;
-    }
-
-    /* Bubble (3-D) button */
-    .btn {
-      --btnTop: #9ed1ff;
-      --btnBot: #2872f0;
-      --ring: rgba(255,255,255,.85);
-
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 14px 22px;
-      min-height: 54px;
-      width: 100%;
-      border-radius: 999px;
-      border: 2px solid var(--ring);
-      background: linear-gradient(to bottom, var(--btnTop), var(--btnBot));
-      color: #fff;
-      font-weight: 800;
-      letter-spacing: .01em;
-      box-shadow:
-        inset 0 -3px 0 rgba(0,0,0,.15),
-        0 10px 24px rgba(0,0,0,.22);
-      text-decoration: none;
-      transition: transform .1s ease, box-shadow .1s ease, filter .1s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    /* glossy highlight */
-    .btn::before{
-      content:"";
-      position:absolute;
-      left: 10%;
-      right: 10%;
-      top: 8px;
-      height: 22px;
-      border-radius: 999px;
-      background: linear-gradient(to bottom, rgba(255,255,255,.85), rgba(255,255,255,.35));
-      pointer-events: none;
-      filter: blur(.2px);
-    }
-    .btn:hover { filter: brightness(1.05); }
-    .btn:active{
-      transform: translateY(1px);
-      box-shadow:
-        inset 0 -1px 0 rgba(0,0,0,.12),
-        0 6px 16px rgba(0,0,0,.22);
-    }
-
-    /* Content sections (the long-form copy below cards) share the SAME page bg,
-       we remove any section-specific backgrounds to keep one smooth gradient. */
-    .section {
-      margin-top: 34px;   /* slightly tighter than before */
-    }
-    .section h2{
-      font-size: var(--h2);
-      line-height: 1.25;
-      margin: 0 0 10px 0;
-    }
-    .section p{
-      color: var(--muted);
-      margin: 0 0 14px 0;
-      font-size: 16px;
-      line-height: 1.75;
-      text-wrap: pretty;
-    }
-
-    /* Small footer spacer */
-    .spacer { height: 48px; }
-  </style>
+  <!-- Prototype-only stylesheet (scoped) -->
+  <link rel="stylesheet" href="/experiments/proto-home.css?v=1">
 </head>
-<body>
+<body class="proto-home">
   <div class="wrap">
     <!-- HERO: remove duplicate "product of ..." line; keep tight stack -->
     <header class="hero" aria-label="Intro">
@@ -201,37 +30,37 @@
       <article class="card">
         <h3>Stocking Advisor</h3>
         <p>Smart stocking made simple — plan a thriving community with confidence.</p>
-        <a class="btn" href="/stocking-advisor.html">Launch</a>
+        <a class="btn-cta" href="/stocking-advisor.html">Launch</a>
       </article>
 
       <article class="card">
         <h3>Gear</h3>
         <p>The gear you need, matched to your tank and goals.</p>
-        <a class="btn" href="/gear.html">Launch</a>
+        <a class="btn-cta" href="/gear.html">Launch</a>
       </article>
 
       <article class="card">
         <h3>Cycling Coach</h3>
         <p>Master the nitrogen cycle with step-by-step guidance.</p>
-        <a class="btn" href="/cycling-coach.html">Launch</a>
+        <a class="btn-cta" href="/cycling-coach.html">Launch</a>
       </article>
 
       <article class="card">
         <h3>Media Hub</h3>
         <p>Videos, logs, and project updates from our own research.</p>
-        <a class="btn" href="/media.html">Discover</a>
+        <a class="btn-cta" href="/media.html">Discover</a>
       </article>
 
       <article class="card">
         <h3>About</h3>
         <p>Learn more about The Tank Guide and FishKeepingLifeCo.</p>
-        <a class="btn" href="/about.html">Learn more</a>
+        <a class="btn-cta" href="/about.html">Learn more</a>
       </article>
 
       <article class="card">
         <h3>Contact</h3>
         <p>Questions, ideas, or spot a logic issue? Reach out with feedback, recommend fish or gear to review, or share your insights.</p>
-        <a class="btn" href="/contact.html">Contact &amp; Feedback</a>
+        <a class="btn-cta" href="/contact.html">Contact &amp; Feedback</a>
       </article>
     </section>
 
