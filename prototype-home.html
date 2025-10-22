@@ -39,10 +39,6 @@
     /* Hero gradient */
     .hero{
       padding:clamp(16px,2.5vw,28px) 16px clamp(8px,1.5vw,16px);
-      background:
-        radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54,194,204,0.0) 60%),
-        radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0,119,199,0.0) 60%),
-        linear-gradient(140deg,#0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
     }
 
     .wrap{max-width:1080px;margin:0 auto}
@@ -112,14 +108,14 @@
     }
     .prototype-badge a{color:var(--fg);text-decoration:underline;text-decoration-color:rgba(255,255,255,.4);text-decoration-thickness:1px;}
 
-    .prototype-intro{padding:var(--space-6) 20px var(--space-5);color:#0c2740;background:#f5f8fb;}
+    .prototype-intro{padding:var(--space-6) 20px var(--space-5);color:#0c2740;}
     .prototype-intro .wrap{max-width:920px;}
     .prototype-intro h1{color:#08324a;font-size:clamp(2rem,4.6vw,3.1rem);line-height:1.12;margin-bottom:var(--space-3);}
     .prototype-intro p{color:#1f3a4d;line-height:1.55;font-size:1.02rem;margin-bottom:var(--space-3);}
     .prototype-intro h2{color:#0a4d87;margin-top:var(--space-5);margin-bottom:var(--space-3);font-size:1.5rem;}
     .prototype-intro .proto-cta{font-size:0.9rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#0a4d87;margin-top:var(--space-5);margin-bottom:0;}
 
-    .prototype-faq{padding:var(--space-6) 20px var(--space-5);background:#e8eff7;color:#0c2740;}
+    .prototype-faq{padding:var(--space-6) 20px var(--space-5);color:#0c2740;}
     .prototype-faq .wrap{max-width:880px;}
     .prototype-faq h2{margin:0 0 var(--space-3);font-size:1.5rem;color:#08324a;}
     .prototype-faq details{border:1px solid rgba(12,39,64,0.12);border-radius:var(--radius-card);padding:var(--space-4) var(--space-5);margin-bottom:var(--space-3);background:#fff;}
@@ -525,6 +521,40 @@
       });
     })();
   </script>
+
+  <style id="prototype-gradient-fix">
+    body.prototype-home {
+      background: linear-gradient(180deg,
+        #023459 0%,
+        #065D91 35%,
+        #0B87C8 65%,
+        #24B3E4 100%
+      ) !important;
+      background-attachment: fixed !important;
+      background-repeat: no-repeat !important;
+      background-size: cover !important;
+      color: #FFFFFF;
+      transition: background 0.6s ease-in-out;
+    }
+
+    /* Remove section-level background blocks that break the flow */
+    .theme-tools,
+    .theme-body,
+    .tools-section,
+    .page-section,
+    .section--gradient,
+    .hero,
+    main {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    /* Ensure cards remain visible and readable */
+    .tool-card {
+      background: rgba(255,255,255,0.08) !important;
+      backdrop-filter: blur(8px) !important;
+    }
+  </style>
 
 </body>
 </html>
