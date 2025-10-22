@@ -86,99 +86,128 @@
 .page--prototype-home .tools-intro { margin: 0.25rem 0 1.0rem; }
 
 /* ===========================================================
-   PROTOTYPE HOME CTA — FINAL GLOSSY CENTERED VERSION
+   PROTOTYPE HOME — GLOSSY 3D CTA (scoped)
    =========================================================== */
 
 .page--prototype-home .cta-bubble {
   -webkit-appearance: none;
   appearance: none;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  /* size + layout */
+  /* Size & shape */
   width: 100%;
-  max-width: 520px;
-  height: 64px;                      /* consistent pill height */
-  padding: 0 1.5rem;
-  margin: 0.8rem auto 0.3rem;
+  max-width: 560px;
+  height: 72px;                    /* matches the screenshot heft */
+  padding: 0 1.25rem;
   border-radius: 9999px;
-  border: 3px solid #ffffff;
+  border: 4px solid #fff;          /* thick white rim */
+  margin: 0.9rem auto 0;
 
-  /* background: layered gloss */
+  /* Depth + fill */
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.1) 30%, transparent 60%), /* top gloss layer */
-    radial-gradient(100% 220% at 50% 0%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.15) 40%, transparent 65%), /* curved highlight */
-    linear-gradient(180deg, #6fc6ff 0%, #2a86ff 45%, #1f67ee 100%); /* main fill */
-
-  background-repeat: no-repeat;
-  background-blend-mode: screen, normal;
+    linear-gradient(180deg, #79c9ff 0%, #2f8dff 46%, #1a63e6 100%); /* base fill */
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.55),
-    0 14px 28px rgba(9, 33, 73, 0.35),
-    0 6px 12px rgba(9, 33, 73, 0.25);
+    inset 0 1px 0 rgba(255,255,255,0.75),                           /* inner lip */
+    0 18px 34px rgba(10, 35, 85, 0.35),                              /* main drop */
+    0 8px 16px rgba(10, 35, 85, 0.28);
 
-  /* text styling */
-  color: #ffffff;
+  /* Label */
+  color: #fff;
   font-weight: 800;
-  font-size: 1.12rem;
-  letter-spacing: 0.15px;
-  text-decoration: none;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+  font-size: 1.35rem;
+  letter-spacing: 0.2px;
   line-height: 1;
   text-align: center;
+  text-decoration: none;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.18);
 
-  /* animation + smoothing */
+  /* Smoothness */
   transform: translateZ(0);
   transition:
     transform 140ms ease,
-    box-shadow 140ms ease,
+    box-shadow 160ms ease,
     background 180ms ease;
 }
 
-/* hover/press states */
+/* Curved "bead" highlight — the glossy pill cap */
+.page--prototype-home .cta-bubble::before {
+  content: "";
+  position: absolute;
+  inset: 8px 16px auto 16px;     /* top, right, bottom(auto), left — offsets */
+  height: 54%;                   /* curved cap height */
+  border-radius: 9999px;
+  background:
+    radial-gradient(120% 180% at 20% 35%,
+      rgba(255,255,255,0.92) 0%,
+      rgba(255,255,255,0.55) 38%,
+      rgba(255,255,255,0.22) 62%,
+      rgba(255,255,255,0.0) 72%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* Hover lift */
 @media (hover:hover) {
   .page--prototype-home .cta-bubble:hover {
     transform: translateY(-2px);
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.6),
-      0 18px 32px rgba(9, 33, 73, 0.38),
-      0 8px 18px rgba(9, 33, 73, 0.28);
+      inset 0 1px 0 rgba(255,255,255,0.8),
+      0 22px 40px rgba(10, 35, 85, 0.38),
+      0 9px 20px rgba(10, 35, 85, 0.30);
     background:
-      linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.2) 30%, transparent 60%),
-      radial-gradient(100% 220% at 50% 0%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.25) 40%, transparent 70%),
-      linear-gradient(180deg, #79c8ff 0%, #358cff 40%, #1f6df0 100%);
+      linear-gradient(180deg, #85ceff 0%, #3993ff 42%, #1d6aec 100%);
   }
 }
 
+/* Pressed */
 .page--prototype-home .cta-bubble:active {
   transform: translateY(1px);
   box-shadow:
     inset 0 2px 8px rgba(0,0,0,0.18),
-    0 8px 16px rgba(9, 33, 73, 0.35);
+    0 12px 24px rgba(10, 35, 85, 0.35);
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 25%, transparent 55%),
-    radial-gradient(100% 220% at 50% 0%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.1) 35%, transparent 60%),
-    linear-gradient(180deg, #58b0ff 0%, #2474ff 45%, #195edf 100%);
+    linear-gradient(180deg, #66bcff 0%, #2a84ff 48%, #1659d8 100%);
 }
 
-/* focus ring for accessibility */
+/* Keyboard focus (accessible but on-brand) */
 .page--prototype-home .cta-bubble:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 3px rgba(255,255,255,0.95),
-    0 0 0 6px rgba(36,115,255,0.55),
-    inset 0 1px 0 rgba(255,255,255,0.55),
-    0 14px 28px rgba(9,33,73,0.35);
+    0 0 0 3px #fff,
+    0 0 0 7px rgba(45, 122, 255, 0.55),
+    inset 0 1px 0 rgba(255,255,255,0.75),
+    0 18px 34px rgba(10, 35, 85, 0.35);
 }
 
-/* responsive fine-tune */
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .page--prototype-home .cta-bubble {
+    transition: none;
+  }
+}
+
+/* Responsive size tune */
 @media (max-width: 480px) {
   .page--prototype-home .cta-bubble {
-    max-width: 90%;
-    height: 56px;
-    font-size: 1.05rem;
+    height: 64px;
+    max-width: 92%;
+    font-size: 1.2rem;
+    border-width: 3px;
   }
+  .page--prototype-home .cta-bubble::before {
+    inset: 8px 14px auto 14px;
+    height: 56%;
+  }
+}
+
+/* Ensure buttons are centered in their cards */
+.page--prototype-home .card,
+.page--prototype-home .tools-card,
+.page--prototype-home .cta-wrap {
+  text-align: center;
 }
 
 /* Ensure no global forms/components are altered */
