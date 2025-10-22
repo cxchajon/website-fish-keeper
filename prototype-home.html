@@ -90,13 +90,12 @@
   </main>
 
   <style>
-  /* Prototype-only hero spacing tighten */
+  /* ===== Prototype-only: tighten hero and first-card spacing ===== */
   .page--prototype-home .hero--prototype{
-    /* pull hero up under the nav a bit */
-    padding-top: clamp(10px, 3.2vw, 28px);          /* was larger */
-    /* reduce extra space before the first card */
-    padding-bottom: clamp(8px, 2.8vw, 16px);        /* was larger */
-    margin-bottom: clamp(8px, 2.4vw, 14px);         /* creates crisp transition to cards */
+    /* pull hero closer to nav and reduce extra air below */
+    padding-top: clamp(6px, 1.8vw, 18px);
+    padding-bottom: clamp(4px, 1.4vw, 10px);
+    margin-bottom: clamp(6px, 1.4vw, 10px); /* controls space before first card */
   }
 
   .page--prototype-home .hero--prototype .wrap {
@@ -138,23 +137,33 @@
     text-underline-offset: 3px;
   }
 
-  /* Keep text rhythm tight (already matching live) */
-  .page--prototype-home .hero--prototype .eyebrow{ margin-bottom: clamp(6px,.8vw,10px); }
-  .page--prototype-home .hero--prototype .h1{      margin-bottom: clamp(10px,1.2vw,14px); }
-  .page--prototype-home .hero--prototype .lede{    margin-bottom: clamp(6px,.9vw,10px); }
-  .page--prototype-home .hero--prototype .how{     margin-top: clamp(0px,.4vw,6px); }
+  /* tighten internal hero text rhythm */
+  .page--prototype-home .hero--prototype .eyebrow{ margin-bottom: clamp(4px, .6vw, 8px); }
+  .page--prototype-home .hero--prototype .h1{      margin-bottom: clamp(8px, 1vw, 12px); }
+  .page--prototype-home .hero--prototype .lede{    margin-bottom: clamp(6px, .8vw, 10px); }
+  .page--prototype-home .hero--prototype .how{     margin-top: clamp(0px, .3vw, 4px); }
+
+  /* nudge the first card up under the “How it works” link */
+  .page--prototype-home .tool-card:first-of-type{
+    margin-top: clamp(8px, 1.6vw, 12px);
+  }
+
+  /* small-screen pass (iPhone widths) — tighten a bit more */
+  @media (max-width: 420px){
+    .page--prototype-home .hero--prototype{
+      padding-top: 8px;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+    }
+    .page--prototype-home .tool-card:first-of-type{
+      margin-top: 10px; /* sits directly under the link without crowding */
+    }
+  }
 
   /* Small-screen tighten a touch more */
   @media (max-width: 380px) {
     .page--prototype-home .hero--prototype .h1   { line-height: 1.12; }
     .page--prototype-home .hero--prototype .lede { line-height: 1.36; }
-  }
-
-  /* Nudge the first tool card up slightly on small screens (without affecting other cards) */
-  @media (max-width: 768px){
-    .page--prototype-home .tool-card:first-of-type{
-      margin-top: clamp(10px, 2.2vw, 14px);         /* was effectively larger via hero spacing */
-    }
   }
   </style>
 
