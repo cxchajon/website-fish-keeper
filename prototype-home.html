@@ -522,39 +522,99 @@
     })();
   </script>
 
-  <style id="prototype-gradient-fix">
-    body.prototype-home {
-      background: linear-gradient(180deg,
-        #023459 0%,
-        #065D91 35%,
-        #0B87C8 65%,
-        #24B3E4 100%
-      ) !important;
-      background-attachment: fixed !important;
-      background-repeat: no-repeat !important;
-      background-size: cover !important;
-      color: #FFFFFF;
-      transition: background 0.6s ease-in-out;
+  <style id="prototype-gradient-parallax">
+    :root {
+      /* gradient positions (will be adjusted by JS) */
+      --grad-shift: 0px;         /* pixels to nudge the gradient */
+      --grad-top:   #012C4A;
+      --grad-mid1:  #024B73;
+      --grad-mid2:  #0379A6;
+      --grad-bot:   #1FB2E1;
     }
 
-    /* Remove section-level background blocks that break the flow */
-    .theme-tools,
-    .theme-body,
-    .tools-section,
-    .page-section,
-    .section--gradient,
-    .hero,
-    main {
+    /* Unified vertical gradient with slight position nudge */
+    body.prototype-home {
+      background:
+        linear-gradient(
+          180deg,
+          var(--grad-top) 0%,
+          var(--grad-mid1) 25%,
+          var(--grad-mid2) 60%,
+          var(--grad-bot) 100%
+        ) fixed no-repeat;
+      background-size: cover;
+      /* Nudge the gradient using background-position-y to create depth */
+      background-position: center calc(var(--grad-shift));
+      color: #fff;
+    }
+
+    /* Keep sections transparent so the single gradient shows through */
+    .theme-tools, .tools-section, .theme-body, .theme-body-alt, main {
       background: transparent !important;
       box-shadow: none !important;
     }
 
-    /* Ensure cards remain visible and readable */
+    /* Glassy cards remain readable */
     .tool-card {
       background: rgba(255,255,255,0.08) !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
       backdrop-filter: blur(8px) !important;
     }
+
+    /* Respect users who prefer less motion */
+    @media (prefers-reduced-motion: reduce) {
+      body.prototype-home {
+        background-position: center 0px !important; /* freeze */
+      }
+    }
   </style>
+
+  <script id="prototype-gradient-parallax-js">
+    (function () {
+      const root = document.documentElement;
+      const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (prefersReduce) return; // honor user setting
+
+      let ticking = false;
+      let lastY = 0;
+
+      function onScroll() {
+        lastY = window.scrollY || window.pageYOffset || 0;
+        if (!ticking) {
+          window.requestAnimationFrame(update);
+          ticking = true;
+        }
+      }
+
+      function update() {
+        // Map scroll to a small shift (0 -> ~60px). Feel free to tune factor.
+        const maxShift = 60;                 // pixels
+        const factor   = 0.06;               // shift per px scrolled
+        const shift    = Math.max(0, Math.min(maxShift, lastY * factor));
+
+        root.style.setProperty('--grad-shift', shift + 'px');
+        ticking = false;
+      }
+
+      // Initial paint
+      update();
+
+      // Attach listeners
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Pause work when hidden to save battery
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          window.removeEventListener('scroll', onScroll, { passive: true });
+          // Freeze at current shift
+        } else {
+          window.addEventListener('scroll', onScroll, { passive: true });
+          onScroll();
+        }
+      });
+    })();
+  </script>
 
 </body>
 </html>
