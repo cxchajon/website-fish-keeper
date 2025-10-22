@@ -24,6 +24,7 @@ Focus: Journal Integration & Maintenance Automation
 - Owner: FishKeepingLifeCo (CXLXC LLC)
 - Current version: v1.3
 - Status: ✅ Stable / Production-ready
+- Prototype lives at /prototype-home.html
 
 ## Core Pages
 - [index.html](index.html) — Homepage / feature grid.
