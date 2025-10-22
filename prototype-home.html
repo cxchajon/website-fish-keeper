@@ -14,55 +14,54 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css?v=1.0.9">
-  <link rel="stylesheet" href="/css/prototype-home.css?v=proto-1.0.1">
+  <link rel="stylesheet" href="/css/prototype-home.css?v=proto-1.0.3">
 </head>
 <body class="page--prototype-home">
+  <!-- NAV (global include) -->
+  <div id="site-nav" data-src="/nav.html"></div>
+
   <main class="proto-home">
     <div class="wrap">
-      <!-- HERO: remove duplicate "product of ..." line; keep tight stack -->
+      <!-- HERO -->
       <header class="hero proto-hero" aria-label="Intro">
         <p class="eyebrow">Fishkeeping Guides &amp; Tools — The Tank Guide</p>
         <h1 class="h1">Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</h1>
-        <p class="cta-line">EXPLORE OUR TOOLS BELOW TO START YOUR TANK THE RIGHT WAY.</p>
       </header>
 
+      <section class="tools-intro hero-copy">
+        <p>Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</p>
+        <h3>EXPLORE OUR TOOLS BELOW TO START YOUR TANK THE RIGHT WAY.</h3>
+      </section>
+
       <!-- CARDS -->
-      <section class="grid" aria-label="Tools and resources">
-        <article class="card proto-card">
-          <h3>Stocking Advisor</h3>
-          <p>Smart stocking made simple — plan a thriving community with confidence.</p>
-          <a class="cta-bubble cta-md" href="/stocking/">Launch</a>
-        </article>
+      <section class="card">
+        <h2>Stocking Advisor</h2>
+        <p>Smart stocking made simple — plan a thriving community with confidence.</p>
+        <a class="cta-bubble cta-lg" href="/stocking/">Launch</a>
+      </section>
 
-        <article class="card proto-card">
-          <h3>Gear</h3>
-          <p>The gear you need, matched to your tank and goals.</p>
-          <a class="cta-bubble cta-md" href="/gear/">Launch</a>
-        </article>
+      <section class="card">
+        <h2>Gear</h2>
+        <p>The gear you need, matched to your tank and goals.</p>
+        <a class="cta-bubble cta-lg" href="/gear/">Launch</a>
+      </section>
 
-        <article class="card proto-card">
-          <h3>Cycling Coach</h3>
-          <p>Master the nitrogen cycle with step-by-step guidance.</p>
-          <a class="cta-bubble cta-md" href="/params.html">Launch</a>
-        </article>
+      <section class="card">
+        <h2>Media Hub</h2>
+        <p>Videos, logs, and project updates from our own research.</p>
+        <a class="cta-bubble cta-lg" href="/media/">Discover</a>
+      </section>
 
-        <article class="card proto-card">
-          <h3>Media Hub</h3>
-          <p>Videos, logs, and project updates from our own research.</p>
-          <a class="cta-bubble cta-md" href="/media/">Discover</a>
-        </article>
+      <section class="card">
+        <h2>About</h2>
+        <p>Learn more about The Tank Guide and FishKeepingLifeCo.</p>
+        <a class="cta-bubble cta-lg" href="/about/">Learn more</a>
+      </section>
 
-        <article class="card proto-card">
-          <h3>About</h3>
-          <p>Learn more about The Tank Guide and FishKeepingLifeCo.</p>
-          <a class="cta-bubble cta-md" href="/about/">Learn more</a>
-        </article>
-
-        <article class="card proto-card">
-          <h3>Contact</h3>
-          <p>Questions, ideas, or spot a logic issue? Reach out with feedback, recommend fish or gear to review, or share your insights.</p>
-          <a class="cta-bubble cta-md" href="/contact/">Contact</a>
-        </article>
+      <section class="card">
+        <h2>Contact</h2>
+        <p>Questions, ideas, or spot a logic issue? Reach out with feedback or share your insights.</p>
+        <a class="cta-bubble cta-lg" href="/contact/">Contact &amp; Feedback</a>
       </section>
 
       <!-- LONG-FORM COPY (same background; no dividers) -->
@@ -89,8 +88,13 @@
 
       <div class="spacer" aria-hidden="true"></div>
     </div>
-    <script src="/js/footer-loader.js?v=1.4.7" defer></script>
-    <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
   </main>
+
+  <!-- include loaders already used on the main site -->
+  <script src="/js/nav.js?v=1.4.7" defer></script>
+  <script src="/js/footer-loader.js?v=1.4.7" defer></script>
+
+  <!-- FOOTER (global include) -->
+  <div id="site-footer" data-src="/footer.html?v=1.4.7" data-footer-src="/footer.html?v=1.4.7"></div>
 </body>
 </html>

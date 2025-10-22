@@ -1,124 +1,102 @@
 /* ===========================================================
-   Prototype Home Stylesheet
-   SCOPE: prototype-home.html only
+   PROTOTYPE HOME (scoped) — affects only prototype-home.html
    =========================================================== */
 
+/* Background: single smooth ocean gradient, top light → bottom dark */
 .page--prototype-home {
   min-height: 100svh;
-  background: linear-gradient(180deg, #0a6fb3 0%, #0d7fc1 22%, #128bd0 48%, #1379b6 72%, #0f6299 100%);
+  background: linear-gradient(180deg,
+    #6fd0ff 0%,
+    #45b7f4 22%,
+    #1999e6 46%,
+    #167fc9 70%,
+    #0f5ea2 100%);
   background-attachment: local;
   background-size: cover;
   overflow-x: hidden;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
-/* --- Bubble Buttons --- */
+/* Card tightening to match reference */
+.page--prototype-home .card {
+  border-radius: 22px;
+  padding: 1.2rem 1.35rem;
+  margin: 1.1rem 0;
+  backdrop-filter: saturate(120%) blur(6px);
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.06));
+  box-shadow:
+    0 20px 30px rgba(9,33,73,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+/* Headline block spacing (tighter group) */
+.page--prototype-home .hero-copy { margin-bottom: 0.75rem; }
+.page--prototype-home .tools-intro { margin: 0.25rem 0 1.0rem; }
+
+/* Bubble CTA — glossy pill with highlight & white rim */
 .page--prototype-home .cta-bubble {
   -webkit-appearance: none;
   appearance: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  min-width: 11rem;
-  padding: 0.9rem 1.4rem;
+  width: 100%;
+  max-width: 520px;
+  padding: 1.0rem 1.2rem;
   border-radius: 9999px;
+  border: 3px solid #fff;
 
+  /* glossy fill + highlight capsule */
   background:
-    radial-gradient(120% 180% at 20% 10%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 45%, rgba(255,255,255,0) 60%),
-    linear-gradient(180deg, #5eb5ff 0%, #2a86ff 40%, #1f67ee 100%);
-  border: 3px solid #ffffff;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.55),
-    0 12px 24px rgba(12, 50, 140, 0.35),
-    0 3px 8px rgba(12, 50, 140, 0.35);
-
-  color: #ffffff;
-  font-weight: 800;
-  letter-spacing: 0.2px;
+    radial-gradient(120% 180% at 22% 14%, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.25) 44%, rgba(255,255,255,0) 60%),
+    linear-gradient(180deg, #73c2ff 0%, #368bff 44%, #1f6ef0 100%);
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.15rem;
+  letter-spacing: .2px;
   text-decoration: none;
-  text-shadow: 0 1px 0 rgba(0,0,0,0.15);
+  text-shadow: 0 1px 0 rgba(0,0,0,.15);
   line-height: 1;
-  transform: translateZ(0);
-  transition: transform 120ms ease, box-shadow 120ms ease, background-position 120ms ease;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.55),
+    0 14px 26px rgba(13,50,140,.35),
+    0 4px 10px rgba(13,50,140,.28);
+  transition: transform .12s ease, box-shadow .12s ease;
 }
+
+.page--prototype-home .cta-bubble.cta-lg { padding: 1.1rem 1.35rem; }
+.page--prototype-home .card .cta-bubble { margin: .8rem auto .2rem; display: block; }
 
 @media (hover:hover) {
   .page--prototype-home .cta-bubble:hover {
     transform: translateY(-2px);
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.55),
-      0 16px 28px rgba(12, 50, 140, 0.38),
-      0 6px 12px rgba(12, 50, 140, 0.3);
+      inset 0 1px 0 rgba(255,255,255,.6),
+      0 18px 30px rgba(13,50,140,.40),
+      0 8px 16px rgba(13,50,140,.28);
   }
 }
 
 .page--prototype-home .cta-bubble:active {
   transform: translateY(1px);
-  box-shadow:
-    inset 0 2px 8px rgba(0,0,0,0.18),
-    0 6px 12px rgba(12, 50, 140, 0.32),
-    0 2px 6px rgba(12, 50, 140, 0.25);
   background:
-    radial-gradient(120% 180% at 25% 15%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.10) 38%, rgba(255,255,255,0) 58%),
-    linear-gradient(180deg, #409dff 0%, #1d75ff 45%, #155de2 100%);
+    radial-gradient(120% 180% at 26% 18%, rgba(255,255,255,.45) 0%, rgba(255,255,255,.15) 40%, rgba(255,255,255,0) 60%),
+    linear-gradient(180deg, #4aa9ff 0%, #246efe 46%, #1759de 100%);
+  box-shadow:
+    inset 0 2px 8px rgba(0,0,0,.18),
+    0 10px 18px rgba(13,50,140,.35);
 }
 
 .page--prototype-home .cta-bubble:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 3px rgba(255,255,255,0.9),
-    0 0 0 6px rgba(45,117,255,0.65),
-    inset 0 1px 0 rgba(255,255,255,0.55),
-    0 12px 24px rgba(12, 50, 140, 0.35);
+    0 0 0 3px rgba(255,255,255,.95),
+    0 0 0 6px rgba(36,115,255,.6),
+    inset 0 1px 0 rgba(255,255,255,.6),
+    0 14px 26px rgba(13,50,140,.35);
 }
 
-.page--prototype-home .cta-bubble.cta-lg {
-  min-width: 14rem;
-  padding: 1rem 1.6rem;
-  font-size: 1.125rem;
-}
-
-.page--prototype-home .cta-bubble.cta-md {
-  min-width: 11rem;
-  padding: 0.9rem 1.4rem;
-  font-size: 1rem;
-}
-
-.page--prototype-home .cta-bubble.cta-sm {
-  min-width: 9.5rem;
-  padding: 0.75rem 1.2rem;
-  font-size: .95rem;
-}
-
-@media (max-width: 420px) {
-  .page--prototype-home .cta-bubble {
-    width: 100%;
-  }
-}
-
-/* --- Card tightening (page-only) --- */
-.page--prototype-home .card {
-  padding: 1.2rem 1.4rem;
-  margin-bottom: 1.2rem;
-  border-radius: 18px;
-}
-
-.page--prototype-home .card p {
-  font-size: 0.96rem;
-  line-height: 1.4;
-}
-
-/* Reduce excess space below each section */
-.page--prototype-home section {
-  margin-bottom: 1.5rem;
-}
-
-/* Optional: subtle card hover lift */
-@media (hover:hover) {
-  .page--prototype-home .card:hover {
-    transform: translateY(-2px);
-    transition: transform 0.15s ease, box-shadow 0.2s ease;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-  }
-}
+/* Ensure no global forms/components are altered */
+.page--prototype-home input,
+.page--prototype-home select,
+.page--prototype-home button { font-family: inherit; }
