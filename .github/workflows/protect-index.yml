@@ -1,0 +1,31 @@
+name: Protect index.html
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+jobs:
+  protect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Detect index.html changes
+        run: |
+          set -e
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE="$(git rev-parse HEAD~1)"
+            HEAD="$(git rev-parse HEAD)"
+          fi
+          CHANGED="$(git diff --name-only "$BASE" "$HEAD" | grep -E '^index\.html$' || true)"
+          if [ -n "$CHANGED" ]; then
+            MSG="$(git log -1 --pretty=%B "$HEAD")"
+            if ! echo "$MSG" | grep -qi '\[index-override\]'; then
+              echo "❌ index.html is protected. Add [index-override] in the commit message to proceed (and ensure owner approval)."
+              exit 1
+            fi
+          fi

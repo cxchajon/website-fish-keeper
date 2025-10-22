@@ -85,3 +85,20 @@ Site updates flow into `/docs/CHANNEL_LOG.md`, then publish as matching GitHub R
 Updated: 2025-10-19
 
 All rights reserved — FishKeepingLifeCo (CXLXC LLC).
+
+## Protected Files
+- `index.html` is the **live homepage**. Do not edit it directly.
+- Use `prototype-home.html` for experiments and previews.
+- To intentionally modify `index.html`:
+  1. Include `[index-override]` in your commit message.
+  2. Get approval from a CODEOWNER.
+  3. CI will enforce the protection and only allow merges with the override token.
+
+### Optional local “hands-off” toggle
+Hide local changes to `index.html` until you intentionally unprotect it:
+
+```bash
+git update-index --skip-worktree index.html
+# When you truly need to edit it:
+git update-index --no-skip-worktree index.html
+```
