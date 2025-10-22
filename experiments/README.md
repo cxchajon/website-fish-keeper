@@ -1,1 +1,1 @@
-- [Homepage Prototype](./homepage-prototype.html) — Prototype only; excluded from sitemap; noindex.
+- [Homepage Prototype](/prototype-home.html) — Prototype only; excluded from sitemap; noindex.

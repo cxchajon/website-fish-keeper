@@ -236,7 +236,7 @@
   </script>
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
-<body class="page-background">
+<body class="page-background prototype-home">
   <div id="site-nav"></div>
 
   <main id="content">
@@ -425,6 +425,100 @@
 
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
+
+  <!-- prototype-only CTA & spacing fixes -->
+  <style id="prototype-cta-fix">
+    /* Scope all overrides to this page only */
+    body.prototype-home {
+      --btn-bg: linear-gradient(180deg,#4EA1FF 0%,#1A73E8 100%);
+      --btn-fg: #FFFFFF;
+      --btn-bg-pressed: linear-gradient(180deg,#3A8CF7 0%,#1669D8 100%);
+    }
+
+    /* Remove any overlay/glass that may wash out buttons */
+    body.prototype-home .tool-card::before,
+    body.prototype-home .tool-card::after { content:none !important; display:none !important; }
+    body.prototype-home .tool-card *::before,
+    body.prototype-home .tool-card *::after {
+      mix-blend-mode: normal !important;
+      filter: none !important;
+      backdrop-filter: none !important;
+    }
+
+    /* Bubble CTA appearance */
+    body.prototype-home .tool-card .btn,
+    body.prototype-home .tool-card a.btn,
+    body.prototype-home .tool-card .cta,
+    body.prototype-home .tool-card a.cta,
+    body.prototype-home .tool-card button {
+      position: relative !important;
+      z-index: 3 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      max-width: 520px !important;
+      min-height: 56px !important;
+      padding: 12px 22px !important;
+      margin-top: 10px !important;
+      border-radius: 999px !important;
+
+      background: var(--btn-bg) !important;
+      color: var(--btn-fg) !important;
+      border: 2px solid rgba(255,255,255,.92) !important;
+
+      font-weight: 800 !important;
+      font-size: 18px !important;
+      letter-spacing: .2px !important;
+      text-shadow: 0 1px 0 rgba(0,0,0,.15) !important;
+
+      opacity: 1 !important;
+      mix-blend-mode: normal !important;
+      filter: none !important;
+      text-decoration: none !important;
+
+      /* Raised bubble look */
+      box-shadow:
+        0 12px 22px rgba(6,42,77,.20),
+        0 3px 6px rgba(6,42,77,.12),
+        inset 0 1px 0 rgba(255,255,255,.88) !important;
+      transition: transform .06s ease-out, box-shadow .06s ease-out, background .06s ease-out;
+    }
+
+    /* Pressed state */
+    body.prototype-home .tool-card .btn:active,
+    body.prototype-home .tool-card a.btn:active,
+    body.prototype-home .tool-card .cta:active,
+    body.prototype-home .tool-card a.cta:active,
+    body.prototype-home .tool-card button:active {
+      background: var(--btn-bg-pressed) !important;
+      transform: translateY(1px) !important;
+      box-shadow:
+        0 6px 12px rgba(6,42,77,.22),
+        inset 0 3px 7px rgba(6,42,77,.18),
+        inset 0 -1px 0 rgba(255,255,255,.6) !important;
+    }
+
+    /* Tighter spacing between cards */
+    body.prototype-home .tool-card { margin-bottom: 14px !important; }
+    body.prototype-home .tool-card p + .btn,
+    body.prototype-home .tool-card p + .cta,
+    body.prototype-home .tool-card p + button { margin-top: 12px !important; }
+  </style>
+
+  <script id="prototype-cta-unghost">
+    // Ensure buttons aren’t disabled/ghosted by leftover classes/attrs
+    (function(){
+      var sel='body.prototype-home .tool-card a.btn, body.prototype-home .tool-card .btn, body.prototype-home .tool-card .cta, body.prototype-home .tool-card button';
+      document.querySelectorAll(sel).forEach(function(b){
+        b.classList.remove('disabled','is-disabled','ghost','btn--ghost','btn--disabled');
+        b.removeAttribute('disabled');
+        b.setAttribute('aria-disabled','false');
+        // Force visible label color in case CSS variables elsewhere override
+        b.style.color = 'var(--btn-fg)';
+      });
+    })();
+  </script>
 
 </body>
 </html>
