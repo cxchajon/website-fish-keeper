@@ -18,15 +18,67 @@
 
 /* Card tightening to match reference */
 .page--prototype-home .card {
-  border-radius: 22px;
-  padding: 1.2rem 1.35rem;
-  margin: 1.1rem 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
   text-align: center;
-  backdrop-filter: saturate(120%) blur(6px);
-  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.06));
+  max-width: 520px;
+  margin: 1.2rem auto;
+  padding: 1.85rem 1.9rem 1.75rem;
+  border-radius: 26px;
+  backdrop-filter: saturate(140%) blur(12px);
+  -webkit-backdrop-filter: saturate(140%) blur(12px);
+  border: 1.5px solid rgba(255,255,255,0.45);
+  background:
+    radial-gradient(140% 220% at 50% -20%, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.12) 45%, rgba(255,255,255,0) 65%),
+    linear-gradient(160deg, rgba(126,208,255,0.85) 0%, rgba(74,154,255,0.75) 42%, rgba(38,102,224,0.92) 100%);
   box-shadow:
-    0 20px 30px rgba(9,33,73,0.18),
-    inset 0 1px 0 rgba(255,255,255,0.12);
+    0 22px 42px rgba(8,35,88,0.38),
+    inset 0 1px 0 rgba(255,255,255,0.35),
+    inset 0 -16px 32px rgba(16,53,138,0.35);
+}
+
+.page--prototype-home .card::before {
+  content: "";
+  position: absolute;
+  inset: 1.5px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 35%, rgba(6,41,120,0.18) 100%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.page--prototype-home .card > * { position: relative; z-index: 1; }
+
+.page--prototype-home .card h2 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.6vw, 1.75rem);
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 8px 24px rgba(11,31,72,0.45), 0 2px 4px rgba(0,0,0,0.35);
+}
+
+.page--prototype-home .card p {
+  margin: 0;
+  max-width: 32ch;
+  color: rgba(255,255,255,0.95);
+  font-size: 1rem;
+  line-height: 1.5;
+  text-shadow: 0 4px 12px rgba(9,28,70,0.35);
+}
+
+@media (max-width: 600px) {
+  .page--prototype-home .card {
+    margin: 1rem auto;
+    padding: 1.6rem 1.45rem 1.55rem;
+    border-radius: 22px;
+  }
+
+  .page--prototype-home .card::before {
+    border-radius: 20px;
+  }
 }
 
 /* Headline block spacing (tighter group) */
