@@ -30,6 +30,84 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
+/* ---- Global page gradient (single source of truth) ---- */
+html,
+body {
+  height: 100%;
+}
+
+body.page-gradient,
+.page-background.page-gradient {
+  background: linear-gradient(
+    180deg,
+    #0a6fb3 0%,
+    #0d7fc1 22%,
+    #128bd0 48%,
+    #1379b6 72%,
+    #0f6299 100%
+  );
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+/* Remove section-level paints that caused bands */
+.section-gradient,
+.section--gradient,
+.split-bg,
+.banded-bg,
+.bg-panel,
+.bg-divider,
+.hero-divider {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* If specific IDs add backgrounds, neutralize them */
+#tools,
+#learn,
+#about,
+#about-contact,
+#contact,
+#media,
+#gemini,
+#hero {
+  background: transparent !important;
+}
+
+/* Card look: translucent panel on top of the single gradient */
+.card,
+.tool-card,
+.section-card {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 22px rgba(0, 20, 60, 0.25);
+}
+
+/* Remove any extra top/bottom “shadows” painted as gradients on sections */
+[class*="shadow-"],
+[class*="overlay-"] {
+  background: none !important;
+}
+
+/* Optional: tighten vertical rhythm a touch so blocks feel closer */
+section {
+  margin-block: 28px;
+}
+
+section:first-of-type {
+  margin-top: 16px;
+}
+
+/* ---- Buttons (keep your new 3D style; ensure contrast) ---- */
+.btn,
+.btn-primary {
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+
 body.theme-dark {
   --page-bg: radial-gradient(140% 100% at 0% 0%, #091421 0%, #0b1b2b 45%, #0a0f18 100%);
   background: var(--page-bg);
@@ -489,12 +567,14 @@ html[data-scroll-lock="on"] body {
 }
 
 .card {
-  background: var(--card);
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   padding: 14px;
   margin-bottom: 14px;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 8px 22px rgba(0, 20, 60, 0.25);
 }
 
 .row {
@@ -1952,9 +2032,11 @@ body.page-background #content .kicker {
 .tool-card {
   border-radius: 16px;
   padding: clamp(16px, 2.2vw, 22px);
-  backdrop-filter: saturate(120%) blur(0px);
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 8px 22px rgba(0, 20, 60, 0.25);
   display: grid;
   gap: 12px;
 }
