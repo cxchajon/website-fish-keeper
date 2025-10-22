@@ -22,15 +22,14 @@
 
   <main class="proto-home">
     <div class="wrap">
-      <!-- HERO -->
-      <header class="hero proto-hero" aria-label="Intro">
-        <p class="eyebrow">Fishkeeping Guides &amp; Tools — The Tank Guide</p>
-        <h1 class="h1">Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</h1>
-      </header>
-
-      <section class="tools-intro hero-copy">
-        <p>Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</p>
-        <h3>EXPLORE OUR TOOLS BELOW TO START YOUR TANK THE RIGHT WAY.</h3>
+      <!-- HERO (prototype-only, cloned from live) -->
+      <section class="hero hero--prototype">
+        <div class="wrap">
+          <p class="eyebrow">Fishkeeping Guides &amp; Tools — The Tank Guide</p>
+          <h1 class="h1">Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</h1>
+          <p class="lede">Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</p>
+          <p class="how"><a href="/how-it-works.html">How it works</a></p>
+        </div>
       </section>
 
       <!-- CARDS -->
@@ -91,58 +90,60 @@
   </main>
 
   <style>
-  /* --- Prototype-only hero typographic system (scoped) --- */
-  .page--prototype-home .hero {
-    /* keep current background; only spacing tweaks */
-    padding-top: clamp(20px, 5.6vw, 56px);
-    padding-bottom: clamp(18px, 5.2vw, 48px);
+  /* ===== HERO: match live homepage (scoped to prototype) ===== */
+  .page--prototype-home .hero--prototype {
+    /* keep current background; we’re matching type & spacing only */
+    padding-top: clamp(22px, 6vw, 60px);
+    padding-bottom: clamp(20px, 5.4vw, 52px);
   }
 
-  /* keep the text column narrow to match live hero */
-  .page--prototype-home .hero .wrap {
-    max-width: 58rem;
+  .page--prototype-home .hero--prototype .wrap {
+    max-width: 58rem;               /* live hero text width */
     margin-inline: auto;
   }
 
-  /* eyebrow: “Fishkeeping Guides & Tools — The Tank Guide” */
-  .page--prototype-home .hero .eyebrow {
-    letter-spacing: 0.06em;        /* small caps-like tracking */
+  /* Eyebrow line (small caps feel on live) */
+  .page--prototype-home .hero--prototype .eyebrow {
     font-weight: 600;
+    font-size: clamp(14px, 2.9vw, 16px);
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+    margin: 0 0 clamp(8px, 0.9vw, 12px);
     opacity: .92;
-    margin: 0 0 clamp(8px, .8vw, 12px);
   }
 
-  /* headline */
-  .page--prototype-home .hero .h1 {
+  /* H1: mirror live scale (≈28–40px) with tight leading */
+  .page--prototype-home .hero--prototype .h1 {
     font-weight: 800;
-    /* mirror live clamp band (≈28–40px) */
     font-size: clamp(28px, 5.8vw, 40px);
-    line-height: clamp(1.08, 1.02 + .4vw, 1.14); /* tighter than default */
-    letter-spacing: -0.012em;      /* tiny optical tightening */
-    margin: 0 0 clamp(10px, 1.2vw, 14px);
-    max-width: 46rem;              /* keeps rag length similar to live */
+    line-height: 1.14;              /* tighter like live */
+    letter-spacing: -0.012em;
+    margin: 0 0 clamp(12px, 1.4vw, 16px);
+    max-width: 46rem;               /* control rag length to match live */
   }
 
-  /* subcopy paragraph under the H1 */
-  .page--prototype-home .hero p {
+  /* Subcopy/lede under the H1 */
+  .page--prototype-home .hero--prototype .lede {
     font-size: clamp(16px, 3.7vw, 19px);
-    line-height: clamp(1.30, 1.22 + .4vw, 1.36);
-    margin: 0 0 clamp(12px, 1.6vw, 18px);
+    line-height: 1.34;
+    margin: 0 0 clamp(12px, 1.4vw, 18px);
     max-width: 44rem;
     opacity: .98;
   }
 
-  /* “How it works” link spacing */
-  .page--prototype-home .hero .how-it-works,
-  .page--prototype-home .hero a[href*="how"] {
-    display: inline-block;
+  /* “How it works” link spacing matches live’s tight lockup */
+  .page--prototype-home .hero--prototype .how {
     margin-top: clamp(2px, .6vw, 8px);
   }
+  .page--prototype-home .hero--prototype .how a {
+    display: inline-block;
+    text-underline-offset: 3px;
+  }
 
-  /* small-screen refinements */
+  /* Small-screen tighten a touch more */
   @media (max-width: 380px) {
-    .page--prototype-home .hero .h1 { line-height: 1.14; }
-    .page--prototype-home .hero p   { line-height: 1.36; }
+    .page--prototype-home .hero--prototype .h1   { line-height: 1.12; }
+    .page--prototype-home .hero--prototype .lede { line-height: 1.36; }
   }
   </style>
 
