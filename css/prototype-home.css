@@ -10,26 +10,34 @@
 html, body { height: 100%; }
 
 .page--prototype-home {
+  /* Exact same palette as we’ve been using; extends to the very bottom */
+  --ocean-surface: #1ea6ff;   /* bright surface blue (reduced brightness vs earlier) */
+  --ocean-mid:     #0f6bc9;   /* mid water */
+  --ocean-deeper:  #0c3f89;   /* deeper */
+  --ocean-deep:    #0b2347;   /* darkest near-bottom/navy */
+
+  background: linear-gradient(
+    180deg,
+    var(--ocean-surface) 0%,
+    var(--ocean-mid) 28%,
+    var(--ocean-deeper) 58%,
+    var(--ocean-deep) 100%
+  );
+  background-attachment: fixed;      /* smooth continuous feel on scroll */
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: #fff;
   min-height: 100vh;
-  overflow-x: hidden;
-  background:
-    radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54, 194, 204, 0) 60%),
-    radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0, 119, 199, 0) 60%),
-    linear-gradient(140deg, #0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
 }
 
+/* Kill any prototype-only overlays/separators that create a band/divider */
 .page--prototype-home.page-gradient,
 .page--prototype-home .page-gradient,
-.page--prototype-home .page-background {
-  background: none !important;
-  background-image: none !important;
-}
-
+.page--prototype-home .page-background,
 .page--prototype-home [class*="separator"],
 .page--prototype-home::before,
 .page--prototype-home::after {
   background: none !important;
-  background-image: none !important;
   box-shadow: none !important;
 }
 
@@ -40,7 +48,7 @@ html, body { height: 100%; }
 .page--prototype-home .section--about,
 .page--prototype-home .section--media,
 .page--prototype-home .section--contact,
-.page--prototype-home .bottom-blurb,
+.page--prototype-home .deep-blurb,
 .page--prototype-home .faq,
 .page--prototype-home .cards-wrap,
 .page--prototype-home .hero,
@@ -79,29 +87,17 @@ html, body { height: 100%; }
   margin: 1.2rem auto;
   padding: 1.85rem 1.9rem 1.75rem;
   border-radius: 26px;
-  border: 1.5px solid rgba(255,255,255,0.45);
-  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
-  background-clip: padding-box;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow:
-    0 14px 28px rgba(5, 20, 50, 0.22),
-    inset 0 1px 0 rgba(255,255,255,0.35);
+  border: 1.5px solid rgba(255,255,255,0.18);
 }
 
-/* ✅ Card keeps its own glass look, but no outer hard edge */
-.page--prototype-home .tool-card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03)) !important;
+.page--prototype-home .tool-card,
+.page--prototype-home .info-card,
+.page--prototype-home .card {
+  background: rgba(255,255,255,0.04);  /* faint glass effect only */
+  backdrop-filter: blur(0.5px);
+  -webkit-backdrop-filter: blur(0.5px);
   background-clip: padding-box;
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 20px;
-  box-shadow:
-    0 14px 30px rgba(0,0,0,0.28),
-    inset 0 1px 0 rgba(255,255,255,0.25);
-}
-
-.page--prototype-home .info-card {
-  background-clip: padding-box;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 
 /* If any “divider” utility got used, neutralize it on prototype */
@@ -120,17 +116,7 @@ html, body { height: 100%; }
     inset 0 1px 0 rgba(255,255,255,0.35);
 }
 
-.page--prototype-home .card::before {
-  content: "";
-  position: absolute;
-  inset: 1.5px;
-  border-radius: 24px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 35%, rgba(6,41,120,0.18) 100%);
-  pointer-events: none;
-  mix-blend-mode: screen;
-}
 
-.page--prototype-home .card > * { position: relative; z-index: 1; }
 
 .page--prototype-home .card h2 {
   margin: 0;
@@ -156,9 +142,6 @@ html, body { height: 100%; }
     border-radius: 22px;
   }
 
-  .page--prototype-home .card::before {
-    border-radius: 20px;
-  }
 }
 
 /* Headline block spacing (tighter group) */
@@ -276,23 +259,27 @@ html, body { height: 100%; }
 .page--prototype-home select,
 .page--prototype-home button { font-family: inherit; }
 
-/* Footer preface blurb */
-.page--prototype-home .bottom-blurb {
-  text-align: center;
-  padding: 3.25rem 1.5rem 4rem;
+/* Bottom blurb sits directly on the deepest gradient */
+.page--prototype-home .deep-blurb {
+  /* No panel background here—let the darkest gradient show through */
+  background: transparent;
+  padding: 56px 0 96px;
+  /* Make sure this section lands in the darkest range of the gradient;
+     if the page is short on content, push it down a bit */
 }
 
-.page--prototype-home .bottom-blurb .blurb-inner {
-  max-width: 800px;
+.page--prototype-home .deep-blurb .container {
+  max-width: 1080px;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
-.page--prototype-home .bottom-blurb .blurb-copy {
-  color: rgba(255,255,255,0.94);
-  font-size: 1.05rem;
-  line-height: 1.7;
-  margin: 0;
+.page--prototype-home .deep-blurb__copy {
+  color: #e9f3ff;
+  font-size: 18px;
+  line-height: 1.65;
+  text-align: center;
   text-wrap: balance;
-  /* gentle top highlight so copy floats over the deepest blue */
-  text-shadow: 0 1px 0 rgba(0,0,0,0.35);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+  margin: 0;
 }

@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="/css/style.css?v=1.0.9">
   <link rel="stylesheet" href="/css/prototype-home.css">
 </head>
-<body class="page--prototype-home">
+<body class="page page--prototype-home">
   <!-- NAV (global include) -->
   <div id="site-nav" data-src="/nav.html"></div>
 
@@ -90,9 +90,11 @@
     </div>
   </main>
 
-  <section class="bottom-blurb section">
-    <div class="blurb-inner">
-      <p class="blurb-copy">
+  <!-- Bottom blurb (sits on dark background) -->
+  <section class="deep-blurb" aria-labelledby="deep-blurb-title">
+    <div class="container">
+      <h2 id="deep-blurb-title" class="visually-hidden">About The Tank Guide</h2>
+      <p class="deep-blurb__copy">
         The Tank Guide simplifies aquarium setup and fishkeeping confidence.
         Plan, cycle, stock, and maintain your thriving planted aquarium or
         community tank. (FKLCo)
