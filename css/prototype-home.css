@@ -3,36 +3,34 @@
    =========================================================== */
 
 /* ===========================
-   PROTOTYPE HOME — OCEAN DEPTH BACKGROUND
-   A gentle “sunlit surface” blue at the top, dark navy at the bottom.
-   Only affects the prototype page.
+   PROTOTYPE HOME — MATCH LIVE HOMEPAGE BACKGROUND
+   Scoped copy of the production homepage gradient; affects prototype only.
    =========================== */
 
 html, body { height: 100%; }
 
 .page--prototype-home {
-  min-height: 100svh;
+  min-height: 100vh;
   overflow-x: hidden;
+  background:
+    radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54, 194, 204, 0) 60%),
+    radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0, 119, 199, 0) 60%),
+    linear-gradient(140deg, #0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
+}
 
-  /* Page background (already present — keep) */
-  --ocean-0: #2f93da;  /* surface */
-  --ocean-1: #1f7dc7;
-  --ocean-2: #1068b2;
-  --ocean-3: #0a559b;
-  --ocean-4: #083f7c;
-  --ocean-5: #05295d;  /* deep */
-  background: linear-gradient(
-    180deg,
-    var(--ocean-0) 0%,
-    var(--ocean-1) 20%,
-    var(--ocean-2) 42%,
-    var(--ocean-3) 65%,
-    var(--ocean-4) 85%,
-    var(--ocean-5) 100%
-  );
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
+.page--prototype-home.page-gradient,
+.page--prototype-home .page-gradient,
+.page--prototype-home .page-background {
+  background: none !important;
+  background-image: none !important;
+}
+
+.page--prototype-home [class*="separator"],
+.page--prototype-home::before,
+.page--prototype-home::after {
+  background: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
 }
 
 /* ✅ Ensure all prototype sections are transparent so no seam appears */
@@ -62,7 +60,7 @@ html, body { height: 100%; }
   content: none !important;
 }
 
-/* Keep footer/nav transparent so the ocean gradient stays continuous */
+/* Keep footer/nav transparent so the homepage gradient stays continuous */
 .page--prototype-home header,
 .page--prototype-home footer {
   background: transparent !important;
@@ -83,6 +81,7 @@ html, body { height: 100%; }
   border-radius: 26px;
   border: 1.5px solid rgba(255,255,255,0.45);
   background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+  background-clip: padding-box;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   box-shadow:
@@ -93,11 +92,16 @@ html, body { height: 100%; }
 /* ✅ Card keeps its own glass look, but no outer hard edge */
 .page--prototype-home .tool-card {
   background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03)) !important;
+  background-clip: padding-box;
   border: 1px solid rgba(255,255,255,0.18);
   border-radius: 20px;
   box-shadow:
     0 14px 30px rgba(0,0,0,0.28),
     inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+.page--prototype-home .info-card {
+  background-clip: padding-box;
 }
 
 /* If any “divider” utility got used, neutralize it on prototype */
