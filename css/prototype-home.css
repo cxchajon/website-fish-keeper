@@ -10,20 +10,9 @@
 html, body { height: 100%; }
 
 .page--prototype-home {
-  /* Exact same palette as we’ve been using; extends to the very bottom */
-  --ocean-surface: #1ea6ff;   /* bright surface blue (reduced brightness vs earlier) */
-  --ocean-mid:     #0f6bc9;   /* mid water */
-  --ocean-deeper:  #0c3f89;   /* deeper */
-  --ocean-deep:    #0b2347;   /* darkest near-bottom/navy */
-
-  background: linear-gradient(
-    180deg,
-    var(--ocean-surface) 0%,
-    var(--ocean-mid) 28%,
-    var(--ocean-deeper) 58%,
-    var(--ocean-deep) 100%
-  );
-  background-attachment: fixed;      /* smooth continuous feel on scroll */
+  /* Match live homepage light-blue gradient */
+  background: linear-gradient(180deg, #39b6ff 0%, #1593ff 100%);
+  background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
   color: #fff;
@@ -33,10 +22,7 @@ html, body { height: 100%; }
 /* Kill any prototype-only overlays/separators that create a band/divider */
 .page--prototype-home.page-gradient,
 .page--prototype-home .page-gradient,
-.page--prototype-home .page-background,
-.page--prototype-home [class*="separator"],
-.page--prototype-home::before,
-.page--prototype-home::after {
+.page--prototype-home .page-background {
   background: none !important;
   box-shadow: none !important;
 }
@@ -66,6 +52,23 @@ html, body { height: 100%; }
 .page--prototype-home .cards-wrap::before,
 .page--prototype-home .cards-wrap::after {
   content: none !important;
+}
+
+/* Remove any lingering dark utilities */
+.page--prototype-home [class*="dark"],
+.page--prototype-home [class*="black"] {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Neutralize any divider/separator overlays */
+.page--prototype-home::before,
+.page--prototype-home::after,
+.page--prototype-home [class*="divider"],
+.page--prototype-home [class*="separator"] {
+  display: none !important;
+  background: none !important;
+  box-shadow: none !important;
 }
 
 /* Keep footer/nav transparent so the homepage gradient stays continuous */
