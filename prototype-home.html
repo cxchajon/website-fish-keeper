@@ -90,6 +90,62 @@
     </div>
   </main>
 
+  <style>
+  /* --- Prototype-only hero typographic system (scoped) --- */
+  .page--prototype-home .hero {
+    /* keep current background; only spacing tweaks */
+    padding-top: clamp(20px, 5.6vw, 56px);
+    padding-bottom: clamp(18px, 5.2vw, 48px);
+  }
+
+  /* keep the text column narrow to match live hero */
+  .page--prototype-home .hero .wrap {
+    max-width: 58rem;
+    margin-inline: auto;
+  }
+
+  /* eyebrow: “Fishkeeping Guides & Tools — The Tank Guide” */
+  .page--prototype-home .hero .eyebrow {
+    letter-spacing: 0.06em;        /* small caps-like tracking */
+    font-weight: 600;
+    opacity: .92;
+    margin: 0 0 clamp(8px, .8vw, 12px);
+  }
+
+  /* headline */
+  .page--prototype-home .hero .h1 {
+    font-weight: 800;
+    /* mirror live clamp band (≈28–40px) */
+    font-size: clamp(28px, 5.8vw, 40px);
+    line-height: clamp(1.08, 1.02 + .4vw, 1.14); /* tighter than default */
+    letter-spacing: -0.012em;      /* tiny optical tightening */
+    margin: 0 0 clamp(10px, 1.2vw, 14px);
+    max-width: 46rem;              /* keeps rag length similar to live */
+  }
+
+  /* subcopy paragraph under the H1 */
+  .page--prototype-home .hero p {
+    font-size: clamp(16px, 3.7vw, 19px);
+    line-height: clamp(1.30, 1.22 + .4vw, 1.36);
+    margin: 0 0 clamp(12px, 1.6vw, 18px);
+    max-width: 44rem;
+    opacity: .98;
+  }
+
+  /* “How it works” link spacing */
+  .page--prototype-home .hero .how-it-works,
+  .page--prototype-home .hero a[href*="how"] {
+    display: inline-block;
+    margin-top: clamp(2px, .6vw, 8px);
+  }
+
+  /* small-screen refinements */
+  @media (max-width: 380px) {
+    .page--prototype-home .hero .h1 { line-height: 1.14; }
+    .page--prototype-home .hero p   { line-height: 1.36; }
+  }
+  </style>
+
   <!-- Bottom blurb (sits on dark background) -->
   <section class="deep-blurb" aria-labelledby="deep-blurb-title">
     <div class="container">
