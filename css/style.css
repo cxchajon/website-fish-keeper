@@ -2615,3 +2615,97 @@ main,
 *[style*="background-color: #fff"] {
   background: transparent !important;
 }
+/* ----- One-page ocean gradient background (prototype only) ----- */
+html, body {
+  background: none !important; /* kill any legacy backgrounds */
+}
+body.tg-prototype-onegradient {
+  position: relative;
+  /* fallback color while gradient paints */
+  background: #0A6EC0;
+}
+body.tg-prototype-onegradient::before {
+  content: "";
+  position: fixed; /* follows viewport; no section seams */
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* Sunlit surface → twilight blue ocean */
+  background: linear-gradient(
+    to bottom,
+    #66C7FF 0%,
+    #38A8EE 20%,
+    #1683D3 45%,
+    #0E69BE 70%,
+    #0A4F9F 100%
+  );
+  /* make sure it covers very tall pages too */
+  background-attachment: fixed;
+  will-change: transform; /* smoother on mobile Safari */
+}
+
+/* Make all page sections transparent so they don’t repaint stripes */
+.ocean-section,
+.hero,
+.tools-grid,
+.gemini-wrap,
+.faq-section,
+.about-section,
+.contact-section {
+  background: transparent !important;
+}
+
+/* If any section uses its own gradient utility, neutralize it here */
+.has-ocean-gradient,
+.bg-ocean-gradient,
+.section-gradient {
+  background: transparent !important;
+}
+
+/* Cards keep their glass look but without filling the whole row with color */
+.card,
+.tool-card,
+.media-card,
+.about-card,
+.contact-card {
+  background: rgba(255, 255, 255, 0.06) !important; /* subtle glass */
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+/* Remove any gradient “caps” or top/bottom overlays that create bands */
+.card::before,
+.card::after,
+.tool-card::before,
+.tool-card::after,
+.section-cap-top,
+.section-cap-bottom {
+  content: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* Kill section separators if present */
+.section-divider,
+.hr-gradient,
+.divider-band {
+  display: none !important;
+}
+
+/* Container shouldn’t clip the fixed pseudo-element */
+main, .page-wrap {
+  background: transparent !important;
+  overflow: visible;
+}
+
+/* iOS safe area (so the fixed gradient reaches the edges under notches) */
+@supports (padding: max(0px)) {
+  body.tg-prototype-onegradient {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}
+
+/* (Optional) Smooth scroll so transitions feel continuous */
+html { scroll-behavior: smooth; }
