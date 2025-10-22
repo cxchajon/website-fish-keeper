@@ -13,117 +13,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
-  <style>
-    :root{
-      --card-bg: rgba(255,255,255,0.06);
-      --card-border: rgba(255,255,255,0.18);
-      --text:#eaf6ff;
-      --muted:#cfe9ff;
-      --shadow: 0 10px 30px rgba(0,0,0,.25);
-      --radius:20px;
-      --pad:24px;
-      --gap:18px;          /* slightly tighter vertical rhythm */
-      --h1: clamp(28px, 5.5vw, 48px);
-      --h2: clamp(20px, 4.2vw, 28px);
-      --lead: clamp(16px, 2.9vw, 19px);
-    }
-
-    body {
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--text);
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-    }
-
-    .wrap {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 28px 18px 80px; /* a touch tighter at top */
-    }
-
-    /* Hero (tighter stack, NO “A PRODUCT OF …” line here) */
-    .hero {
-      margin-top: 8px;
-      margin-bottom: 18px;
-    }
-    .eyebrow {
-      letter-spacing: .12em;
-      font-weight: 700;
-      opacity: .9;
-      text-transform: uppercase;
-      font-size: 12px;
-      margin: 0 0 8px 0;
-    }
-    .h1 {
-      font-size: var(--h1);
-      line-height: 1.05;
-      font-weight: 800;
-      margin: 0 0 10px 0; /* tighter */
-      text-wrap: balance;
-    }
-    .lead {
-      font-size: var(--lead);
-      line-height: 1.6;
-      color: var(--muted);
-      margin: 0 0 18px 0; /* tighter */
-    }
-    .cta-line {
-      font-weight: 800;
-      margin: 0 0 12px 0;
-      letter-spacing: .02em;
-    }
-
-    /* Cards grid */
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: var(--gap);
-    }
-    @media (min-width: 860px){
-      .grid { grid-template-columns: 1fr 1fr; }
-    }
-
-    .card {
-      padding: var(--pad);
-    }
-    .card h3{
-      margin: 0 0 8px 0;
-      font-size: var(--h2);
-      line-height: 1.25;
-    }
-    .card p{
-      margin: 0 0 14px 0;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.65;
-    }
-
-    /* Content sections (the long-form copy below cards) share the SAME page bg,
-       we remove any section-specific backgrounds to keep one smooth gradient. */
-    .section {
-      margin-top: 34px;   /* slightly tighter than before */
-    }
-    .section h2{
-      font-size: var(--h2);
-      line-height: 1.25;
-      margin: 0 0 10px 0;
-    }
-    .section p{
-      color: var(--muted);
-      margin: 0 0 14px 0;
-      font-size: 16px;
-      line-height: 1.75;
-      text-wrap: pretty;
-    }
-
-    /* Small footer spacer */
-    .spacer { height: 48px; }
-  </style>
+  <!-- Prototype-only stylesheet (scoped) -->
+  <link rel="stylesheet" href="/experiments/proto-home.css?v=1">
 </head>
-<body class="prototype-home">
-  <div id="site-nav"></div>
-  <script src="/js/nav.js?v=1.0.9" defer></script>
+<body class="proto-home">
   <div class="wrap">
     <!-- HERO: remove duplicate "product of ..." line; keep tight stack -->
     <header class="hero proto-hero" aria-label="Intro">
@@ -137,12 +30,14 @@
       <article class="card proto-card">
         <h3>Stocking Advisor</h3>
         <p>Smart stocking made simple — plan a thriving community with confidence.</p>
+        <a class="btn-cta" href="/stocking-advisor.html">Launch</a>
         <a class="cta-btn cta-btn--lg" href="/stocking.html">Launch</a>
       </article>
 
       <article class="card proto-card">
         <h3>Gear</h3>
         <p>The gear you need, matched to your tank and goals.</p>
+        <a class="btn-cta" href="/gear.html">Launch</a>
         <a class="cta-btn cta-btn--lg" href="/gear/">Launch</a>
       </article>
 
