@@ -1,42 +1,43 @@
-/* ------------------------------------------------------------
-   Prototype Page — Unified Light Blue Background
-   ------------------------------------------------------------ */
+/* Unified gradient background (match live homepage) */
 .page--prototype-home {
-  /* Match live homepage background exactly */
-  background:
-    radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54, 194, 204, 0) 60%),
-    radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0, 119, 199, 0) 60%),
-    linear-gradient(140deg, #0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
-  min-height: 100vh;
+  position: relative;
+  background: linear-gradient(180deg, #42b7ff 0%, #1a8eff 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
   color: #fff;
+  overflow: hidden;
 }
 
-/* Remove any old gradient layers, separators, or dark overlays */
-.page--prototype-home::before,
-.page--prototype-home::after,
-.page--prototype-home [class*="gradient"],
+/* Add top brightness layer */
+.page--prototype-home::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30vh;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.1) 35%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure content appears above the glow */
+.page--prototype-home > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Remove all dark/secondary overlays */
 .page--prototype-home [class*="overlay"],
-.page--prototype-home [class*="separator"],
+.page--prototype-home [class*="gradient"],
 .page--prototype-home [class*="divider"] {
   display: none !important;
   background: none !important;
-  box-shadow: none !important;
 }
-
-/* Transparent sections and cards (so gradient shows through) */
-.page--prototype-home section,
-.page--prototype-home .tool-card,
-.page--prototype-home .info-card,
-.page--prototype-home .media-card,
-.page--prototype-home .card {
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-/* Keep button gloss intact */
-.page--prototype-home .launch-button,
-.page--prototype-home .btn,
-.page--prototype-home button {
-  filter: none;
-}
-
