@@ -3,10 +3,11 @@
    ------------------------------------------------------------ */
 .page--prototype-home {
   /* Match live homepage background exactly */
-  background: linear-gradient(180deg, #45b9ff 0%, #1593ff 100%);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
+  background:
+    radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54, 194, 204, 0) 60%),
+    radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0, 119, 199, 0) 60%),
+    linear-gradient(140deg, #0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
+  min-height: 100vh;
   color: #fff;
 }
 
@@ -39,7 +40,3 @@
   filter: none;
 }
 
-/* Ensure full-page coverage */
-.page--prototype-home {
-  min-height: 100vh;
-}
