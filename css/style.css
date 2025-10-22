@@ -25,74 +25,144 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
-  color: var(--fg);
+  height: 100%;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-/* ---- Global page gradient (single source of truth) ---- */
-html,
 body {
-  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
 }
 
-body.page-gradient,
-.page-background.page-gradient {
+/* ---------- Prototype home: base page gradient (top → bottom) ---------- */
+body.prototype-home {
   background: linear-gradient(
-    180deg,
-    #0a6fb3 0%,
-    #0d7fc1 22%,
-    #128bd0 48%,
-    #1379b6 72%,
-    #0f6299 100%
+    to bottom,
+    #5ec9f3 0%,
+    #2393d6 38%,
+    #0c4a83 100%
   );
   background-attachment: fixed;
   background-repeat: no-repeat;
-  background-size: 100% 100%;
+  color: #0b1a2b;
 }
 
-/* Remove section-level paints that caused bands */
-.section-gradient,
-.section--gradient,
-.split-bg,
-.banded-bg,
-.bg-panel,
-.bg-divider,
-.hero-divider {
+/* Remove any legacy hard splits so the gradient shows through */
+body.prototype-home .section,
+body.prototype-home .hero,
+body.prototype-home .tools-section,
+body.prototype-home .cards-section,
+body.prototype-home .content-section,
+body.prototype-home .faq-section,
+body.prototype-home .footer,
+body.prototype-home .header,
+body.prototype-home .main {
   background: transparent !important;
-  box-shadow: none !important;
+  box-shadow: none;
 }
 
-/* If specific IDs add backgrounds, neutralize them */
-#tools,
-#learn,
-#about,
-#about-contact,
-#contact,
-#media,
-#gemini,
-#hero {
-  background: transparent !important;
-}
-
-/* Card look: translucent panel on top of the single gradient */
-.card,
-.tool-card,
-.section-card {
+/* Keep cards looking like panels over the gradient */
+body.prototype-home .card,
+body.prototype-home .tool-card,
+body.prototype-home .section-card {
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 22px rgba(0, 20, 60, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-/* Remove any extra top/bottom “shadows” painted as gradients on sections */
-[class*="shadow-"],
-[class*="overlay-"] {
-  background: none !important;
+/* Hero readability: use a subtle overlay only inside hero area */
+body.prototype-home .hero,
+body.prototype-home .hero-content {
+  position: relative;
+  padding-top: 0.35rem !important;
+  padding-bottom: 1.1rem !important;
+  text-align: center;
+  color: #fff;
 }
 
-/* Optional: tighten vertical rhythm a touch so blocks feel closer */
+body.prototype-home .hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.06) 0%,
+    rgba(0, 0, 0, 0.14) 55%,
+    rgba(0, 0, 0, 0.22) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.prototype-home .hero h1,
+body.prototype-home .hero p {
+  position: relative;
+  z-index: 1;
+}
+
+body.prototype-home .hero h1 {
+  font-size: clamp(1.4rem, 4.4vw, 2rem);
+  font-weight: 800;
+  line-height: 1.22;
+  letter-spacing: -0.012em;
+  margin: 0.25rem 0 0.45rem;
+}
+
+body.prototype-home .hero p {
+  font-size: clamp(1rem, 2.6vw, 1.12rem);
+  line-height: 1.48;
+  color: rgba(255, 255, 255, 0.96);
+  margin: 0.2rem auto 0.85rem;
+  max-width: 64ch;
+}
+
+/* Ensure consistent spacing between sections */
+body.prototype-home .section + .section,
+body.prototype-home .tools-section,
+body.prototype-home .cards-section,
+body.prototype-home .content-section,
+body.prototype-home .faq-section {
+  margin-top: 1rem !important;
+}
+
+/* Buttons — ensure text stays visible on glassmorphism buttons */
+body.prototype-home .btn,
+body.prototype-home .button,
+body.prototype-home .cta {
+  color: #ffffff !important;
+  font-weight: 800;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* Hide old split bars/stripes */
+body.prototype-home .divider,
+body.prototype-home .band,
+body.prototype-home .split,
+body.prototype-home .gradient-break {
+  display: none !important;
+}
+
+/* Mobile tune-ups */
+@media (max-width: 600px) {
+  body.prototype-home .hero {
+    padding-top: 0.2rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  body.prototype-home .hero h1 {
+    font-size: 1.55rem;
+  }
+
+  body.prototype-home .hero p {
+    font-size: 1.02rem;
+  }
+}
+
 section {
   margin-block: 28px;
 }
@@ -101,7 +171,6 @@ section:first-of-type {
   margin-top: 16px;
 }
 
-/* ---- Buttons (keep your new 3D style; ensure contrast) ---- */
 .btn,
 .btn-primary {
   color: #fff;
