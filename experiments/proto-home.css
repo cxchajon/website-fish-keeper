@@ -1,179 +1,29 @@
-/* Prototype-only styles: EVERYTHING lives under .proto-home */
+/* Prototype-only styles — must NOT leak globally */
 .proto-home {
-  --bg-start: #a6e6ff;
-  --bg-mid:   #1a8bd6;
-  --bg-end:   #0352a3;
-  --card-bg: rgba(255,255,255,0.06);
-  --card-border: rgba(255,255,255,0.18);
-  --text: #eaf6ff;
-  --muted: #cfe9ff;
-  --radius: 20px;
-  --pad: 24px;
-  --gap: 18px;
-  --h1: clamp(28px, 5.5vw, 48px);
-  --h2: clamp(20px, 4.2vw, 28px);
-  --lead: clamp(16px, 2.9vw, 19px);
-}
-
-body.proto-home {
-  margin: 0;
   min-height: 100dvh;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color: var(--text);
-  background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-mid) 45%, var(--bg-end) 100%) fixed;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  background: linear-gradient(
+    180deg,
+    #0a6fb3 0%,
+    #0d7fc1 22%,
+    #128bd0 48%,
+    #1379b6 72%,
+    #0f6299 100%
+  );
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-.proto-home .wrap {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 28px 18px 80px;
-}
-
-/* Hero (tighter stack, NO “A PRODUCT OF …” line here) */
-.proto-home .hero {
-  margin-top: 8px;
-  margin-bottom: 18px;
-}
-
-.proto-home .eyebrow {
-  letter-spacing: .12em;
-  font-weight: 700;
-  opacity: .9;
-  text-transform: uppercase;
-  font-size: 12px;
-  margin: 0 0 8px 0;
-}
-
-.proto-home .h1 {
-  font-size: var(--h1);
-  line-height: 1.05;
-  font-weight: 800;
-  margin: 0 0 10px 0;
-  text-wrap: balance;
-}
-
-.proto-home .lead {
-  font-size: var(--lead);
-  line-height: 1.6;
-  color: var(--muted);
-  margin: 0 0 18px 0;
-}
-
-.proto-home .cta-line {
-  font-weight: 800;
-  margin: 0 0 12px 0;
-  letter-spacing: .02em;
-}
-
-/* Cards grid */
-.proto-home .grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--gap);
-}
-
-@media (min-width: 860px) {
-  .proto-home .grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* Cards (scoped) */
-.proto-home .card {
-  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
-  border-radius: var(--radius);
-  padding: var(--pad);
-  margin: 0;
-  box-shadow: 0 8px 24px rgba(0,0,0,.15);
-  border: 1px solid rgba(255,255,255,.25);
-  backdrop-filter: blur(10px);
-}
-
-.proto-home .card h3 {
-  margin: 0 0 8px 0;
-  font-size: var(--h2);
-  line-height: 1.25;
-}
-
-.proto-home .card p {
-  margin: 0 0 14px 0;
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.65;
-}
-
-/* Example 3D “bubble” CTA button (scoped) */
+/* (Optional) prototype-specific spacing/buttons… keep everything under .proto-home */
 .proto-home .btn-cta {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 54px;
-  padding: 16px 28px;
-  border-radius: 999px;
-  font-weight: 800;
-  letter-spacing: .01em;
-  color: #fff;
+  display:inline-block; padding:16px 28px; border-radius:999px; font-weight:800;
+  color:#fff;
   background: linear-gradient(180deg,#69b7ff 0%,#1a63d1 80%);
-  box-shadow: 0 6px 18px rgba(13,69,153,.35), inset 0 10px 22px rgba(255,255,255,.35);
-  border: 2px solid rgba(255,255,255,.75);
-  text-shadow: 0 1px 0 rgba(0,0,0,.15);
-  text-decoration: none;
-  transition: transform .1s ease, box-shadow .1s ease, filter .1s ease;
-  -webkit-tap-highlight-color: transparent;
-  overflow: hidden;
+  border:2px solid rgba(255,255,255,.75);
+  box-shadow:0 6px 18px rgba(13,69,153,.35), inset 0 10px 22px rgba(255,255,255,.35);
+  transition: transform .06s ease, box-shadow .06s ease;
 }
-
-.proto-home .btn-cta:before {
-  content: "";
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  top: 8px;
-  height: 22px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.35));
-  pointer-events: none;
-  filter: blur(.2px);
-}
-
-.proto-home .btn-cta:hover {
-  filter: brightness(1.05);
-}
-
 .proto-home .btn-cta:active {
   transform: translateY(2px);
-  box-shadow: 0 3px 10px rgba(13,69,153,.25), inset 0 6px 14px rgba(255,255,255,.25);
-}
-
-.proto-home .btn-cta:focus-visible {
-  outline: 3px solid #fff;
-  outline-offset: 2px;
-}
-
-/* Content sections */
-.proto-home .section {
-  margin-top: 34px;
-}
-
-.proto-home .section h2 {
-  font-size: var(--h2);
-  line-height: 1.25;
-  margin: 0 0 10px 0;
-}
-
-.proto-home .section p {
-  color: var(--muted);
-  margin: 0 0 14px 0;
-  font-size: 16px;
-  line-height: 1.75;
-  text-wrap: pretty;
-}
-
-/* Small footer spacer */
-.proto-home .spacer {
-  height: 48px;
+  box-shadow:0 3px 10px rgba(13,69,153,.25), inset 0 6px 14px rgba(255,255,255,.25);
 }
