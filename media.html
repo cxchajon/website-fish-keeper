@@ -355,6 +355,11 @@
       }
     }
     .stack { display: grid; gap: 14px; }
+    .featured-tank-cta {
+      display: flex;
+      justify-content: center;
+      margin-top: var(--space-4);
+    }
     .btn {
       display:inline-block; padding:10px 14px; border:1px solid var(--border);
       border-radius: 10px; text-decoration:none; font-weight:600;
@@ -917,9 +922,8 @@
                 >
               </div>
             </figure>
-            <div class="row" style="justify-content:space-between; align-items:center; gap:10px;">
-              <a class="btn" href="/media.html">Explore Media</a>
-              <a class="btn" href="/feature-your-tank.html">Submit Your Tank</a>
+            <div class="featured-tank-cta">
+              <a class="btn" href="/feature-your-tank.html" aria-label="Submit your tank">Submit Your Tank</a>
             </div>
           </article>
 
