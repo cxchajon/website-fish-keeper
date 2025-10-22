@@ -19,7 +19,76 @@
   <meta name="twitter:description" content="Learn aquarium science the easy way. The Tank Guide offers free tools, guides, and articles to help you master the nitrogen cycle and stock a healthy freshwater tank." />
   <meta name="twitter:image" content="https://thetankguide.com/logo.png" />
 
-  <link rel="stylesheet" href="css/style.css?v=1.1.7" />
+  <link rel="stylesheet" href="css/style.css?v=1.1.8" />
+  <style id="prototype-gradient-hard-overrides">
+  /* ===== Full-page ocean gradient (top light -> bottom dark) ===== */
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: linear-gradient(
+      to bottom,
+      #66d1f6 0%,
+      #3bb2ec 22%,
+      #1e8edd 50%,
+      #0f66b8 76%,
+      #0b4f91 100%
+    ) !important;
+    background-attachment: fixed !important; /* no seams while scrolling */
+  }
+
+  /* ===== Nuke any white backgrounds and bands ===== */
+  /* Brutal, but isolated to this test page. */
+  #app, main, .wrapper, .container, .section, .band, .stripe, .page-band,
+  .hero, .tools-section, .cards-section, .content-section, .faq-section,
+  .footer, .header, .grid, .tool-grid, .row, .col,
+  .card, .tool-card, .feature-card, .panel, .tile, .box,
+  .card::before, .card::after, .tool-card::before, .tool-card::after,
+  .panel::before, .panel::after {
+    background: transparent !important;
+    background-image: none !important;
+  }
+
+  /* Some builds paint white on inline style attributes—override those too */
+  *[style*="background:#fff"], *[style*="background: #fff"],
+  *[style*="background-color:#fff"], *[style*="background-color: #fff"] {
+    background: transparent !important;
+  }
+
+  /* Give cards the glassy look so text stays readable on the gradient */
+  .card, .tool-card, .feature-card, .panel, .tile, .box {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.14) !important;
+    box-shadow:
+      0 10px 24px rgba(0,0,0,0.20),
+      inset 0 1px 0 rgba(255,255,255,0.10) !important;
+    /* Slight translucent fill to lift from background */
+    background: rgba(255,255,255,0.06) !important;
+  }
+
+  /* Headings and body copy on cards */
+  .card h2, .tool-card h2, .feature-card h2 { color: #fff !important; }
+  .card p, .tool-card p, .feature-card p { color: rgba(255,255,255,0.95) !important; }
+
+  /* Tighten vertical rhythm so sections don’t feel spaced apart */
+  .section, .tools-section, .cards-section, .content-section {
+    padding-top: 1rem !important; padding-bottom: 1rem !important;
+  }
+  .section + .section, .cards-section + .cards-section { margin-top: 0.25rem !important; }
+
+  /* Kill any outer “page shadow” bands that might look like dividers */
+  .page-shadow, .edge-fade, .band-shadow, .container::before, .container::after {
+    display: none !important;
+  }
+
+  /* Ensure button wrappers don't reintroduce white */
+  .button-wrapper, .cta-wrap, .btn-wrap { background: transparent !important; }
+
+  /* iOS rubber-band scroll seam mitigation */
+  @supports (-webkit-overflow-scrolling: touch) {
+    body { -webkit-backface-visibility: hidden; transform: translateZ(0); }
+  }
+</style>
   <style>
     :root{
       --bg:#0c2740;
