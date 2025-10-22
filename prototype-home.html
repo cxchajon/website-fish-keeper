@@ -274,7 +274,7 @@
           <article class="tool-card" aria-labelledby="card-media-title" role="listitem">
             <h3 id="card-media-title">Media Hub</h3>
             <p>Videos, logs, and project updates from our own research.</p>
-            <a class="btn btn--launch" href="/media.html" role="button" aria-label="Launch Media Hub">Launch</a>
+            <a class="btn btn--launch" href="/media.html" role="button" aria-label="Discover Media Hub">Discover</a>
           </article>
         </div>
       </div>
@@ -286,12 +286,12 @@
         <div class="card">
           <h3>About</h3>
           <p>Learn more about The Tank Guide and FishKeepingLifeCo.</p>
-          <p><a class="btn" href="/about.html">Learn more</a></p>
+          <p><a class="btn btn--launch" href="/about.html">Learn more</a></p>
         </div>
         <div class="card">
           <h3>Contact</h3>
           <p>Questions, ideas, or spot a logic issue? Reach out with feedback, recommend fish or gear to review, or share your insights.</p>
-          <p><a class="btn" href="/contact-feedback.html">Contact &amp; Feedback</a></p>
+          <p><a class="btn btn--launch" href="/contact-feedback.html">Contact &amp; Feedback</a></p>
         </div>
       </div>
     </section>
@@ -450,7 +450,10 @@
     body.prototype-home .tool-card a.btn,
     body.prototype-home .tool-card .cta,
     body.prototype-home .tool-card a.cta,
-    body.prototype-home .tool-card button {
+    body.prototype-home .tool-card button,
+    body.prototype-home #about-contact .card .btn,
+    body.prototype-home #about-contact .card a.btn,
+    body.prototype-home #about-contact .card button {
       position: relative !important;
       z-index: 3 !important;
       display: inline-flex !important;
@@ -490,7 +493,10 @@
     body.prototype-home .tool-card a.btn:active,
     body.prototype-home .tool-card .cta:active,
     body.prototype-home .tool-card a.cta:active,
-    body.prototype-home .tool-card button:active {
+    body.prototype-home .tool-card button:active,
+    body.prototype-home #about-contact .card .btn:active,
+    body.prototype-home #about-contact .card a.btn:active,
+    body.prototype-home #about-contact .card button:active {
       background: var(--btn-bg-pressed) !important;
       transform: translateY(1px) !important;
       box-shadow:
@@ -509,7 +515,7 @@
   <script id="prototype-cta-unghost">
     // Ensure buttons aren’t disabled/ghosted by leftover classes/attrs
     (function(){
-      var sel='body.prototype-home .tool-card a.btn, body.prototype-home .tool-card .btn, body.prototype-home .tool-card .cta, body.prototype-home .tool-card button';
+      var sel='body.prototype-home .tool-card a.btn, body.prototype-home .tool-card .btn, body.prototype-home .tool-card .cta, body.prototype-home .tool-card button, body.prototype-home #about-contact .card a.btn, body.prototype-home #about-contact .card .btn, body.prototype-home #about-contact .card button';
       document.querySelectorAll(sel).forEach(function(b){
         b.classList.remove('disabled','is-disabled','ghost','btn--ghost','btn--disabled');
         b.removeAttribute('disabled');
