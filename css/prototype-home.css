@@ -14,13 +14,13 @@ html, body { height: 100%; }
   min-height: 100svh;
   overflow-x: hidden;
 
-  --ocean-0: #2f93da; /* darker, cooler surface */
+  /* Page background (already present — keep) */
+  --ocean-0: #2f93da;  /* surface */
   --ocean-1: #1f7dc7;
   --ocean-2: #1068b2;
   --ocean-3: #0a559b;
   --ocean-4: #083f7c;
-  --ocean-5: #05295d; /* deeper, darker base */
-
+  --ocean-5: #05295d;  /* deep */
   background: linear-gradient(
     180deg,
     var(--ocean-0) 0%,
@@ -35,13 +35,31 @@ html, body { height: 100%; }
   background-size: 100% 100%;
 }
 
-/* Make sure inner sections don’t overwrite the page gradient */
+/* ✅ Ensure all prototype sections are transparent so no seam appears */
+.page--prototype-home .section,
+.page--prototype-home .section--intro,
+.page--prototype-home .section--tools,
+.page--prototype-home .section--about,
+.page--prototype-home .section--media,
+.page--prototype-home .section--contact,
+.page--prototype-home .bottom-blurb,
+.page--prototype-home .faq,
+.page--prototype-home .cards-wrap,
 .page--prototype-home .hero,
 .page--prototype-home main,
 .page--prototype-home section,
 .page--prototype-home .page-surface,
 .page--prototype-home .content-wrap {
-  background: transparent !important; /* prototype-page only */
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* ✅ Kill any pseudo overlays that may draw a band */
+.page--prototype-home .section::before,
+.page--prototype-home .section::after,
+.page--prototype-home .cards-wrap::before,
+.page--prototype-home .cards-wrap::after {
+  content: none !important;
 }
 
 /* Keep footer/nav transparent so the ocean gradient stays continuous */
@@ -70,6 +88,23 @@ html, body { height: 100%; }
   box-shadow:
     0 14px 28px rgba(5, 20, 50, 0.22),
     inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+/* ✅ Card keeps its own glass look, but no outer hard edge */
+.page--prototype-home .tool-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03)) !important;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 20px;
+  box-shadow:
+    0 14px 30px rgba(0,0,0,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+/* If any “divider” utility got used, neutralize it on prototype */
+.page--prototype-home .divider,
+.page--prototype-home .hr,
+.page--prototype-home .section-divider {
+  display: none !important;
 }
 
 .page--prototype-home .feature-card {
@@ -237,32 +272,23 @@ html, body { height: 100%; }
 .page--prototype-home select,
 .page--prototype-home button { font-family: inherit; }
 
-/* ===============================
-   BOTTOM BLURB — Ocean Transition Footer Preface
-   =============================== */
+/* Footer preface blurb */
 .page--prototype-home .bottom-blurb {
   text-align: center;
-  padding: 4rem 1.5rem 5rem;
-  color: #ffffff;
-  background: linear-gradient(
-    180deg,
-    rgba(5, 41, 93, 0.0) 0%,
-    rgba(5, 41, 93, 0.25) 50%,
-    rgba(5, 41, 93, 0.45) 100%
-  );
+  padding: 3.25rem 1.5rem 4rem;
 }
 
-.page--prototype-home .bottom-blurb h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #fff;
-}
-
-.page--prototype-home .bottom-blurb p {
-  max-width: 680px;
+.page--prototype-home .bottom-blurb .blurb-inner {
+  max-width: 800px;
   margin: 0 auto;
+}
+
+.page--prototype-home .bottom-blurb .blurb-copy {
+  color: rgba(255,255,255,0.94);
   font-size: 1.05rem;
-  line-height: 1.6;
-  color: rgba(255,255,255,0.92);
+  line-height: 1.7;
+  margin: 0;
+  text-wrap: balance;
+  /* gentle top highlight so copy floats over the deepest blue */
+  text-shadow: 0 1px 0 rgba(0,0,0,0.35);
 }
