@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "lint:css": "stylelint '**/*.css'",
+    "guard:proto": "bash scripts/guard-prototype.sh",
+    "precommit": "npm run guard:proto && npm run lint:css",
     "pw:install": "playwright install --with-deps",
     "test": "playwright test",
     "test:e2e": "playwright test --config=playwright.e2e.config.ts",
@@ -22,6 +25,8 @@
     "prepare": "node scripts/footer-lock/setup-hooks.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "^1.42.0"
+    "@playwright/test": "^1.42.0",
+    "stylelint": "^16.0.0",
+    "stylelint-config-standard": "^36.0.0"
   }
 }

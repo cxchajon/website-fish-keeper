@@ -1,29 +1,26 @@
 /* Prototype-only styles — must NOT leak globally */
 .proto-home {
-  min-height: 100dvh;
-  background: linear-gradient(
-    180deg,
-    #0a6fb3 0%,
-    #0d7fc1 22%,
-    #128bd0 48%,
-    #1379b6 72%,
-    #0f6299 100%
-  );
-  background-attachment: fixed;
+  min-height: 100svh;
+  background: linear-gradient(180deg, #0a6fb3 0%, #0d7fc1 22%, #128bd0 48%, #1379b6 72%, #0f6299 100%);
+  background-attachment: local;
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-/* (Optional) prototype-specific spacing/buttons… keep everything under .proto-home */
+/* Never target bare tags or global classes here */
 .proto-home .btn-cta {
-  display:inline-block; padding:16px 28px; border-radius:999px; font-weight:800;
-  color:#fff;
-  background: linear-gradient(180deg,#69b7ff 0%,#1a63d1 80%);
-  border:2px solid rgba(255,255,255,.75);
-  box-shadow:0 6px 18px rgba(13,69,153,.35), inset 0 10px 22px rgba(255,255,255,.35);
-  transition: transform .06s ease, box-shadow .06s ease;
+  display: inline-block;
+  padding: 16px 28px;
+  border-radius: 999px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(180deg, #69b7ff 0%, #1a63d1 80%);
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 6px 18px rgba(13, 69, 153, 0.35), inset 0 10px 22px rgba(255, 255, 255, 0.35);
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
 }
+
 .proto-home .btn-cta:active {
   transform: translateY(2px);
-  box-shadow:0 3px 10px rgba(13,69,153,.25), inset 0 6px 14px rgba(255,255,255,.25);
+  box-shadow: 0 3px 10px rgba(13, 69, 153, 0.25), inset 0 6px 14px rgba(255, 255, 255, 0.25);
 }
