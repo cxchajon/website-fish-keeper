@@ -2525,3 +2525,93 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 }
 
 .tools-cta-line { margin-bottom: 0.75rem; }
+
+/* ===== PAGE-WIDE OCEAN GRADIENT (top light → bottom dark) ===== */
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: transparent !important; /* we’ll draw via a fixed overlay */
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1; /* sit behind all content */
+  background: linear-gradient(
+    to bottom,
+    #66d1f6 0%,
+    #3bb2ec 22%,
+    #1e8edd 50%,
+    #0f66b8 76%,
+    #0b4f91 100%
+  );
+}
+
+/* ===== NUKE ANY WHITE/BAND BACKGROUNDS THAT CAUSE SEAMS ===== */
+#app,
+.page,
+main,
+.wrapper,
+.container,
+.section,
+.hero,
+.tools-section,
+.cards-section,
+.content-section,
+.faq-section,
+.footer,
+.header,
+.band,
+.split,
+.stripe,
+.page-band,
+.gradient-break {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* Common components that often force white */
+.card,
+.tool-card,
+.feature-card,
+.panel,
+.tile,
+.box {
+  background: rgba(255,255,255,0.06) !important; /* translucent, glassy */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow:
+    0 8px 22px rgba(0,0,0,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.10);
+}
+
+/* Headings/text over gradient stay readable */
+.hero, .hero * { color: #fff !important; }
+.card h2, .tool-card h2 { color: #fff; }
+.card p, .tool-card p { color: rgba(255,255,255,0.95); }
+
+/* Tighten vertical rhythm a bit */
+.section, .tools-section, .cards-section, .content-section { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+.section + .section { margin-top: 0.5rem !important; }
+
+/* Buttons keep their blue style (already implemented) but ensure no white wrappers override them */
+.button, .btn, .cta {
+  position: relative;
+  color: #fff !important;
+}
+.button-wrapper, .cta-wrap { background: transparent !important; }
+
+/* iOS overscroll fix to avoid faint bands during rubber-band scrolling */
+@supports (-webkit-overflow-scrolling: touch) {
+  body { -webkit-backface-visibility: hidden; transform: translateZ(0); }
+}
+
+/* ===== LAST-RESORT OVERRIDES FOR ANY LINGERING WHITE ===== */
+/* If any component still renders white, force transparency */
+*[style*="background:#fff"],
+*[style*="background: #fff"],
+*[style*="background-color:#fff"],
+*[style*="background-color: #fff"] {
+  background: transparent !important;
+}
