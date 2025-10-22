@@ -90,11 +90,13 @@
   </main>
 
   <style>
-  /* ===== HERO: match live homepage (scoped to prototype) ===== */
-  .page--prototype-home .hero--prototype {
-    /* keep current background; we’re matching type & spacing only */
-    padding-top: clamp(22px, 6vw, 60px);
-    padding-bottom: clamp(20px, 5.4vw, 52px);
+  /* Prototype-only hero spacing tighten */
+  .page--prototype-home .hero--prototype{
+    /* pull hero up under the nav a bit */
+    padding-top: clamp(10px, 3.2vw, 28px);          /* was larger */
+    /* reduce extra space before the first card */
+    padding-bottom: clamp(8px, 2.8vw, 16px);        /* was larger */
+    margin-bottom: clamp(8px, 2.4vw, 14px);         /* creates crisp transition to cards */
   }
 
   .page--prototype-home .hero--prototype .wrap {
@@ -102,13 +104,12 @@
     margin-inline: auto;
   }
 
-  /* Eyebrow line (small caps feel on live) */
   .page--prototype-home .hero--prototype .eyebrow {
     font-weight: 600;
     font-size: clamp(14px, 2.9vw, 16px);
     letter-spacing: 0.06em;
     line-height: 1.2;
-    margin: 0 0 clamp(8px, 0.9vw, 12px);
+    margin: 0;
     opacity: .92;
   }
 
@@ -118,7 +119,7 @@
     font-size: clamp(28px, 5.8vw, 40px);
     line-height: 1.14;              /* tighter like live */
     letter-spacing: -0.012em;
-    margin: 0 0 clamp(12px, 1.4vw, 16px);
+    margin: 0;
     max-width: 46rem;               /* control rag length to match live */
   }
 
@@ -126,24 +127,34 @@
   .page--prototype-home .hero--prototype .lede {
     font-size: clamp(16px, 3.7vw, 19px);
     line-height: 1.34;
-    margin: 0 0 clamp(12px, 1.4vw, 18px);
+    margin: 0;
     max-width: 44rem;
     opacity: .98;
   }
 
   /* “How it works” link spacing matches live’s tight lockup */
-  .page--prototype-home .hero--prototype .how {
-    margin-top: clamp(2px, .6vw, 8px);
-  }
   .page--prototype-home .hero--prototype .how a {
     display: inline-block;
     text-underline-offset: 3px;
   }
 
+  /* Keep text rhythm tight (already matching live) */
+  .page--prototype-home .hero--prototype .eyebrow{ margin-bottom: clamp(6px,.8vw,10px); }
+  .page--prototype-home .hero--prototype .h1{      margin-bottom: clamp(10px,1.2vw,14px); }
+  .page--prototype-home .hero--prototype .lede{    margin-bottom: clamp(6px,.9vw,10px); }
+  .page--prototype-home .hero--prototype .how{     margin-top: clamp(0px,.4vw,6px); }
+
   /* Small-screen tighten a touch more */
   @media (max-width: 380px) {
     .page--prototype-home .hero--prototype .h1   { line-height: 1.12; }
     .page--prototype-home .hero--prototype .lede { line-height: 1.36; }
+  }
+
+  /* Nudge the first tool card up slightly on small screens (without affecting other cards) */
+  @media (max-width: 768px){
+    .page--prototype-home .tool-card:first-of-type{
+      margin-top: clamp(10px, 2.2vw, 14px);         /* was effectively larger via hero spacing */
+    }
   }
   </style>
 
