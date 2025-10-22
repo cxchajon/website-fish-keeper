@@ -102,3 +102,9 @@ git update-index --skip-worktree index.html
 # When you truly need to edit it:
 git update-index --no-skip-worktree index.html
 ```
+
+## Prototype Workflow
+- Edit only `prototype-home.html` and `/experiments/proto-home.css` when building prototype homepage updates.
+- Namespace every prototype style under `.proto-home` to prevent bleed into the live site.
+- Include "prototype-only" (or "proto") in your PR title or body so the CI guard validates the diff scope.
+- Any global/site-wide change requires review from the CODEOWNERS listed in `.github/CODEOWNERS`.

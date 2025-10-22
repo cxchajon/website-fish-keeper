@@ -1,2 +1,9 @@
-# Only owners can approve edits to the live homepage
-/index.html  @FishKeepingLifeCo
+# Global files require codeowner review
+/css/style.css           @cxchajon
+/index.html              @cxchajon
+/includes/**             @cxchajon
+/js/**                   @cxchajon
+
+# Prototype directory can be edited by anyone on the web team
+/experiments/**          @cxchajon @webteam
+/prototype-home.html     @cxchajon @webteam
