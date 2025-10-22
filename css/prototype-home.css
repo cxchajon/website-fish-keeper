@@ -14,25 +14,23 @@ html, body { height: 100%; }
   min-height: 100svh;
   overflow-x: hidden;
 
-  /* Tunable palette for the ocean depth */
-  --ocean-0: #3aa7e9; /* softer, not too bright surface */
-  --ocean-1: #218dd8;
-  --ocean-2: #0e71c5;
-  --ocean-3: #0a56a3;
-  --ocean-4: #093e82;
-  --ocean-5: #072b60; /* near-navy at bottom */
+  --ocean-0: #2f93da; /* darker, cooler surface */
+  --ocean-1: #1f7dc7;
+  --ocean-2: #1068b2;
+  --ocean-3: #0a559b;
+  --ocean-4: #083f7c;
+  --ocean-5: #05295d; /* deeper, darker base */
 
-  /* Full-page gradient */
   background: linear-gradient(
     180deg,
     var(--ocean-0) 0%,
-    var(--ocean-1) 18%,
-    var(--ocean-2) 38%,
-    var(--ocean-3) 60%,
-    var(--ocean-4) 82%,
+    var(--ocean-1) 20%,
+    var(--ocean-2) 42%,
+    var(--ocean-3) 65%,
+    var(--ocean-4) 85%,
     var(--ocean-5) 100%
   );
-  background-attachment: fixed;  /* keeps the depth feel while scrolling */
+  background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
@@ -238,3 +236,33 @@ html, body { height: 100%; }
 .page--prototype-home input,
 .page--prototype-home select,
 .page--prototype-home button { font-family: inherit; }
+
+/* ===============================
+   BOTTOM BLURB — Ocean Transition Footer Preface
+   =============================== */
+.page--prototype-home .bottom-blurb {
+  text-align: center;
+  padding: 4rem 1.5rem 5rem;
+  color: #ffffff;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 41, 93, 0.0) 0%,
+    rgba(5, 41, 93, 0.25) 50%,
+    rgba(5, 41, 93, 0.45) 100%
+  );
+}
+
+.page--prototype-home .bottom-blurb h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.page--prototype-home .bottom-blurb p {
+  max-width: 680px;
+  margin: 0 auto;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.92);
+}
