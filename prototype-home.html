@@ -15,6 +15,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css?v=1.0.9">
   <link rel="stylesheet" href="/css/prototype-home.css">
+  <style id="prototype-hero-fix">
+    /* Scoped override for prototype only */
+    .page--prototype-home .hero-copy {
+      text-align: left;
+    }
+    .page--prototype-home .hero-copy .eyebrow {
+      font-weight: 700;
+      margin-bottom: 0.4em;
+    }
+    .page--prototype-home .hero-copy .hero-subtext {
+      font-size: inherit;
+      line-height: 1.4;
+      margin: 0;
+      text-align: left;
+    }
+  </style>
 </head>
 <body class="page--prototype-home">
   <!-- NAV (global include) -->
@@ -27,7 +43,10 @@
         <div class="wrap">
           <div class="hero-copy">
             <p class="eyebrow"><strong>Fishkeeping Guides &amp; Tools — The Tank Guide</strong></p>
-            <h1>Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</h1>
+            <p class="hero-subtext">
+              Smart fishkeeping guides, planning tools, and step-by-step checklists to set up,
+              stock, and care for your aquarium.
+            </p>
           </div>
           <p class="lede">Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</p>
           <p class="how"><a href="/how-it-works.html">How it works</a></p>
