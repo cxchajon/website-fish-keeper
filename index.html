@@ -13,19 +13,21 @@
   <meta property="og:description" content="The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.">
   <meta property="og:url" content="https://thetankguide.com/">
   <meta property="og:image" content="https://thetankguide.com/assets/og/default.png">
-  <meta property="og:image:alt" content="The Tank Guide logo over an illustrated aquarium background">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="A beginner's guide to aquarium setup showing free stocking and cycling tools.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@fishkeepinglife">
   <meta name="twitter:title" content="Fishkeeping Guides &amp; Tools — The Tank Guide">
   <meta name="twitter:description" content="The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.">
   <meta name="twitter:image" content="https://thetankguide.com/assets/og/default.png">
-  <meta name="twitter:image:alt" content="The Tank Guide logo over an illustrated aquarium background">
+  <meta name="twitter:image:alt" content="A beginner's guide to aquarium setup showing free stocking and cycling tools.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css?v=live-hero-1">
   <link rel="stylesheet" href="/css/prototype-home.css?v=live-hero-1">
-  <meta name="x-build" content="live-hero-sync-001">
+  <meta name="x-build" content="live-hero-sync-002">
   <style id="prototype-home-inline">
     /* Scoped only to prototype page */
     .page--prototype-home {
@@ -508,6 +510,45 @@
     .page--prototype-home.has-global-footer .policy-fallback {
       display: none;
     }
+
+    .home-quicklinks ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem 1rem;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .home-quicklinks a {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* LCP-friendly hero fallback + simpler paint */
+    .hero--prototype {
+      background-color: #0b6ea6;
+    }
+
+    /* Soften heavy shadows used on cards/buttons (keep look but cheaper to render) */
+    .tool-card {
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .18),
+        0 10px 16px rgba(0, 0, 0, .16),
+        0 20px 32px rgba(0, 0, 0, .18) !important;
+    }
+
+    .btn-glossy {
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .44),
+        0 10px 18px rgba(6, 42, 77, .18),
+        0 4px 10px rgba(6, 42, 77, .12) !important;
+    }
+
+    /* Ensure hero doesn’t over-expand on small screens */
+    .hero--prototype {
+      min-height: clamp(300px, 70vh, 520px);
+    }
   </style>
   <script defer src="js/nav.js?v=1.1.0"></script>
   <script type="application/ld+json">
@@ -572,14 +613,11 @@
       "@id": "https://thetankguide.com/#website",
       "url": "https://thetankguide.com/",
       "name": "The Tank Guide",
-      "alternateName": "FishKeepingLifeCo",
-      "inLanguage": "en",
-      "publisher": {
-        "@id": "https://thetankguide.com/#organization"
-      },
+      "description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
+      "publisher": { "@id": "https://thetankguide.com/#organization" },
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://thetankguide.com/?s={search_term_string}",
+        "target": { "@type": "EntryPoint", "urlTemplate": "https://thetankguide.com/search?q={search_term_string}" },
         "query-input": "required name=search_term_string"
       }
     },
@@ -588,18 +626,52 @@
       "@id": "https://thetankguide.com/#webpage",
       "url": "https://thetankguide.com/",
       "name": "Fishkeeping Guides &amp; Tools — The Tank Guide",
+      "isPartOf": { "@id": "https://thetankguide.com/#website" },
+      "publisher": { "@id": "https://thetankguide.com/#organization" },
       "description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
-      "inLanguage": "en",
-      "isPartOf": {
-        "@id": "https://thetankguide.com/#website"
-      },
-      "about": {
-        "@id": "https://thetankguide.com/#organization"
-      },
       "primaryImageOfPage": {
         "@type": "ImageObject",
-        "url": "https://thetankguide.com/assets/og/default.png",
-        "caption": "The Tank Guide logo over an illustrated aquarium background"
+        "url": "https://thetankguide.com/assets/og/default.png"
+      }
+    }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is The Tank Guide?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Tank Guide is a free educational resource from FishKeepingLifeCo. We provide easy-to-understand guides, a fish tank stocking calculator, a nitrogen cycle tracker, and gear recommendations to help beginners successfully set up a freshwater aquarium."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many fish can I put in my aquarium?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This depends on the fish species' adult size, waste production (bioload), behavior, and your filtration capacity. Our free Stocking Advisor tool helps you calculate a safe and balanced stocking list to prevent overstocking."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the aquarium nitrogen cycle?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The nitrogen cycle is a natural 4–8 week process where beneficial bacteria grow in your filter. These bacteria convert toxic fish waste (ammonia) into safer compounds (nitrate). Complete this cycling process before adding fish; our Cycling Coach tool can guide you."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What equipment do I need for a beginner fish tank?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At a minimum, you need a tank, a filter, a heater, a thermometer, a water conditioner (dechlorinator), and substrate. See our Gear Guide for reliable, cost-effective recommendations."
       }
     }
   ]
@@ -658,6 +730,17 @@
           </div>
         </div>
       </section>
+
+      <nav class="home-quicklinks" aria-label="Homepage quick links">
+        <ul>
+          <li><a href="/stocking.html">Plan My Stocking List</a></li>
+          <li><a href="/gear/">Browse the Gear Guide</a></li>
+          <li><a href="/params.html">Start the Cycling Coach</a></li>
+          <li><a href="/media.html">Explore the Media Hub</a></li>
+          <li><a href="/about.html">Learn About The Tank Guide</a></li>
+          <li><a href="/contact-feedback.html">Contact &amp; Feedback</a></li>
+        </ul>
+      </nav>
 
       <!-- CARDS -->
       <div class="tools" id="how-it-works">
@@ -756,6 +839,26 @@
         community tank. (FKLCo)
       </p>
     </div>
+  </section>
+
+  <section id="faq" class="section proto-section" aria-labelledby="faq-title">
+    <h2 id="faq-title">Frequently Asked Questions</h2>
+    <details>
+      <summary>Q: What is The Tank Guide?</summary>
+      <p>A: The Tank Guide is a free educational resource from FishKeepingLifeCo. We provide easy-to-understand guides, a fish tank stocking calculator, a nitrogen cycle tracker, and gear recommendations to help beginners successfully set up a freshwater aquarium.</p>
+    </details>
+    <details>
+      <summary>Q: How many fish can I put in my aquarium?</summary>
+      <p>A: This depends on the fish species' adult size, waste production (bioload), behavior, and your filtration capacity. Our free Stocking Advisor tool helps you calculate a safe and balanced stocking list to prevent overstocking.</p>
+    </details>
+    <details>
+      <summary>Q: What is the aquarium nitrogen cycle?</summary>
+      <p>A: The nitrogen cycle is a natural 4–8 week process where beneficial bacteria grow in your filter. These bacteria convert toxic fish waste (ammonia) into safer compounds (nitrate). Complete this cycling process before adding fish; our Cycling Coach tool can guide you.</p>
+    </details>
+    <details>
+      <summary>Q: What equipment do I need for a beginner fish tank?</summary>
+      <p>A: At a minimum, you need a tank, a filter, a heater, a thermometer, a water conditioner (dechlorinator), and substrate. See our Gear Guide for reliable, cost-effective recommendations.</p>
+    </details>
   </section>
 
   <nav class="policy-fallback" data-policy-fallback aria-label="Legal links">
