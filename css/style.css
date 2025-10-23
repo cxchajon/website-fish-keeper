@@ -2513,3 +2513,12 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 .page--prototype-home .hero p {
   text-align: left !important;
 }
+
+/* Prototype: hero text alignment and bold eyebrow */
+.page--prototype-home .hero-copy {
+  text-align: left;
+}
+.page--prototype-home .hero-copy .eyebrow {
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}

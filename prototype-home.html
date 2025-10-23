@@ -25,8 +25,10 @@
       <!-- HERO (prototype-only, cloned from live) -->
       <section class="hero hero--prototype">
         <div class="wrap">
-          <p class="eyebrow">Fishkeeping Guides &amp; Tools — The Tank Guide</p>
-          <h1 class="h1">Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</h1>
+          <div class="hero-copy">
+            <p class="eyebrow"><strong>Fishkeeping Guides &amp; Tools — The Tank Guide</strong></p>
+            <h1>Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</h1>
+          </div>
           <p class="lede">Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</p>
           <p class="how"><a href="/how-it-works.html">How it works</a></p>
         </div>
@@ -107,7 +109,8 @@
   }
 
   /* H1: mirror live scale (≈28–40px) with tight leading */
-  .page--prototype-home .hero--prototype .h1 {
+  .page--prototype-home .hero--prototype .h1,
+  .page--prototype-home .hero--prototype .hero-copy h1 {
     font-weight: 800;
     font-size: clamp(28px, 5.8vw, 40px);
     line-height: 1.14;              /* tighter like live */
@@ -133,13 +136,15 @@
 
   /* tighten internal hero text rhythm (spacing handled globally) */
   .page--prototype-home .hero--prototype .eyebrow{ margin-bottom: clamp(4px, .6vw, 8px); }
-  .page--prototype-home .hero--prototype .h1{      margin-bottom: clamp(8px, 1vw, 12px); }
+  .page--prototype-home .hero--prototype .h1,
+  .page--prototype-home .hero--prototype .hero-copy h1 {      margin-bottom: clamp(8px, 1vw, 12px); }
   .page--prototype-home .hero--prototype .lede{    margin-bottom: clamp(6px, .8vw, 10px); }
   .page--prototype-home .hero--prototype .how{     margin-top: clamp(0px, .3vw, 4px); }
 
   /* Small-screen tighten a touch more */
   @media (max-width: 380px) {
-    .page--prototype-home .hero--prototype .h1   { line-height: 1.12; }
+    .page--prototype-home .hero--prototype .h1,
+    .page--prototype-home .hero--prototype .hero-copy h1   { line-height: 1.12; }
     .page--prototype-home .hero--prototype .lede { line-height: 1.36; }
   }
   </style>
