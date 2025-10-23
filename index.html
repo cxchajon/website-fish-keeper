@@ -23,17 +23,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=1.0.9">
-  <link rel="stylesheet" href="/css/prototype-home.css">
+  <link rel="stylesheet" href="/css/style.css?v=live-hero-1">
+  <link rel="stylesheet" href="/css/prototype-home.css?v=live-hero-1">
+  <meta name="x-build" content="live-hero-sync-001">
   <style id="prototype-home-inline">
-    /* Scoped to prototype and live home pages */
-    .page--prototype-home,
-    .page--home {
+    /* Scoped only to prototype page */
+    .page--prototype-home {
       position: relative;
     }
 
-    .page--prototype-home::before,
-    .page--home::before {
+    .page--prototype-home::before {
       content: "";
       position: absolute;
       top: 66px;
@@ -53,8 +52,7 @@
     }
 
     @media (max-width: 600px) {
-      .page--prototype-home::before,
-      .page--home::before {
+      .page--prototype-home::before {
         height: clamp(280px, 44vh, 520px);
         background: linear-gradient(180deg,
             rgba(255, 255, 255, 0) 0px,
@@ -67,8 +65,7 @@
     }
 
     @media (min-width: 1024px) {
-      .page--prototype-home::before,
-      .page--home::before {
+      .page--prototype-home::before {
         top: 66px;
         height: clamp(210px, 30vh, 360px);
         background: linear-gradient(180deg,
@@ -81,31 +78,26 @@
       }
     }
 
-    .page--prototype-home .proto-home,
-    .page--home .proto-home {
+    .page--prototype-home .proto-home {
       position: relative;
       isolation: isolate;
       z-index: 1;
     }
 
     .page--prototype-home #site-nav,
-    .page--prototype-home #global-nav,
-    .page--home #site-nav,
-    .page--home #global-nav {
+    .page--prototype-home #global-nav {
       position: relative;
       z-index: 2;
     }
 
-    .page--prototype-home .proto-home > .wrap,
-    .page--home .proto-home > .wrap {
+    .page--prototype-home .proto-home > .wrap {
       display: grid;
       gap: clamp(48px, 7vw, 88px);
       position: relative;
       z-index: 1;
     }
 
-    .page--prototype-home .hero--prototype,
-    .page--home .hero--prototype {
+    .page--prototype-home .hero--prototype {
       position: relative;
       z-index: 1;
       padding: 28px 20px 38px;
@@ -116,23 +108,20 @@
         linear-gradient(140deg, #0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
     }
 
-    .page--prototype-home .hero--prototype .wrap,
-    .page--home .hero--prototype .wrap {
+    .page--prototype-home .hero--prototype .wrap {
       max-width: 1080px;
       margin: 0 auto;
       position: relative;
       z-index: 1;
     }
 
-    .page--prototype-home .hero-copy,
-    .page--home .hero-copy {
+    .page--prototype-home .hero-copy {
       max-width: 30rem;
       padding: 16px 0 14px;
       margin: 0;
     }
 
-    .page--prototype-home .hero-copy .hero-title,
-    .page--home .hero-copy .hero-title {
+    .page--prototype-home .hero-copy .hero-title {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -143,8 +132,7 @@
       line-height: 1.1;
     }
 
-    .page--prototype-home .hero-copy .hero-subline,
-    .page--home .hero-copy .hero-subline {
+    .page--prototype-home .hero-copy .hero-subline {
       margin: 0 0 4px 0;
       font-size: 1rem;
       font-weight: 400;
@@ -152,14 +140,12 @@
       color: rgba(255, 255, 255, 0.9);
     }
 
-    .page--prototype-home .hero-copy .hero-subline strong,
-    .page--home .hero-copy .hero-subline strong {
+    .page--prototype-home .hero-copy .hero-subline strong {
       font-weight: 800;
       color: rgba(255, 255, 255, 0.98);
     }
 
-    .page--prototype-home .hero-copy .hero-lede,
-    .page--home .hero-copy .hero-lede {
+    .page--prototype-home .hero-copy .hero-lede {
       margin: 6px 0 8px 0;
       font-size: 1.05rem;
       line-height: 1.35;
@@ -167,13 +153,11 @@
       max-width: 42ch;
     }
 
-    .page--prototype-home .hero-copy .how,
-    .page--home .hero-copy .how {
+    .page--prototype-home .hero-copy .how {
       margin: 0.35rem 0 0;
     }
 
-    .page--prototype-home .hero-copy .how .how-trigger,
-    .page--home .hero-copy .how .how-trigger {
+    .page--prototype-home .hero-copy .how .how-trigger {
       all: unset;
       display: inline;
       cursor: pointer;
@@ -186,32 +170,27 @@
       transition: opacity 0.2s ease;
     }
 
-    .page--prototype-home .hero-copy .how .how-trigger:hover,
-    .page--home .hero-copy .how .how-trigger:hover {
+    .page--prototype-home .hero-copy .how .how-trigger:hover {
       opacity: 0.9;
     }
 
-    .page--prototype-home .hero-copy .how .how-trigger:focus-visible,
-    .page--home .hero-copy .how .how-trigger:focus-visible {
+    .page--prototype-home .hero-copy .how .how-trigger:focus-visible {
       outline: 2px solid currentColor;
       outline-offset: 2px;
     }
 
     @media (min-width: 768px) {
-      .page--prototype-home .hero-copy,
-      .page--home .hero-copy {
+      .page--prototype-home .hero-copy {
         max-width: 40rem;
         padding: 24px 0 18px;
       }
 
-      .page--prototype-home .hero-copy .hero-title,
-      .page--home .hero-copy .hero-title {
+      .page--prototype-home .hero-copy .hero-title {
         margin-bottom: 8px;
       }
     }
 
-    .page--prototype-home .tools,
-    .page--home .tools {
+    .page--prototype-home .tools {
       display: grid;
       gap: clamp(24px, 4vw, 32px);
       max-width: 1100px;
@@ -220,21 +199,18 @@
     }
 
     @media (min-width: 640px) {
-      .page--prototype-home .tools,
-      .page--home .tools {
+      .page--prototype-home .tools {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
     @media (min-width: 1100px) {
-      .page--prototype-home .tools,
-      .page--home .tools {
+      .page--prototype-home .tools {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
 
-    .page--prototype-home .tool-card,
-    .page--home .tool-card {
+    .page--prototype-home .tool-card {
       position: relative;
       display: grid;
       gap: clamp(16px, 2.2vw, 24px);
@@ -251,8 +227,7 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .page--prototype-home .tool-card::before,
-    .page--home .tool-card::before {
+    .page--prototype-home .tool-card::before {
       content: "";
       position: absolute;
       inset: 0;
@@ -262,8 +237,7 @@
         radial-gradient(260px 180px at 86% 14%, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 72%);
     }
 
-    .page--prototype-home .tool-card h2,
-    .page--home .tool-card h2 {
+    .page--prototype-home .tool-card h2 {
       margin: 0;
       font-size: clamp(1.5rem, 2.2vw, 1.875rem);
       font-weight: 700;
@@ -271,16 +245,13 @@
       line-height: 1.2;
     }
 
-    .page--prototype-home .tool-card p,
-    .page--home .tool-card p {
+    .page--prototype-home .tool-card p {
       margin: 0;
       line-height: 1.6;
     }
 
     .page--prototype-home .tool-card:hover,
-    .page--prototype-home .tool-card:focus-within,
-    .page--home .tool-card:hover,
-    .page--home .tool-card:focus-within {
+    .page--prototype-home .tool-card:focus-within {
       transform: translateY(-4px);
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.24),
@@ -288,8 +259,7 @@
         0 36px 54px rgba(0, 0, 0, 0.28);
     }
 
-    .page--prototype-home .btn-glossy,
-    .page--home .btn-glossy {
+    .page--prototype-home .btn-glossy {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -312,8 +282,7 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .page--prototype-home .btn-glossy::before,
-    .page--home .btn-glossy::before {
+    .page--prototype-home .btn-glossy::before {
       content: "";
       position: absolute;
       left: 6%;
@@ -325,21 +294,18 @@
       pointer-events: none;
     }
 
-    .page--prototype-home .btn-glossy > span,
-    .page--home .btn-glossy > span {
+    .page--prototype-home .btn-glossy > span {
       position: relative;
       z-index: 1;
       font-size: clamp(18px, 2.6vw, 28px);
       line-height: 1;
     }
 
-    .page--prototype-home .btn-glossy:hover,
-    .page--home .btn-glossy:hover {
+    .page--prototype-home .btn-glossy:hover {
       transform: translateY(-1px);
     }
 
-    .page--prototype-home .btn-glossy:active,
-    .page--home .btn-glossy:active {
+    .page--prototype-home .btn-glossy:active {
       transform: translateY(1px);
       box-shadow:
         inset 0 2px 6px rgba(0,0,0,0.18),
@@ -347,53 +313,45 @@
         0 3px 8px rgba(6,42,77,0.12);
     }
 
-    .page--prototype-home .btn-glossy:focus-visible,
-    .page--home .btn-glossy:focus-visible {
+    .page--prototype-home .btn-glossy:focus-visible {
       outline: 3px solid rgba(255, 255, 255, 0.85);
       outline-offset: 4px;
     }
 
-    .page--prototype-home .proto-section,
-    .page--home .proto-section {
+    .page--prototype-home .proto-section {
       max-width: min(62rem, 92vw);
       margin-inline: auto;
       display: grid;
       gap: clamp(16px, 3vw, 24px);
     }
 
-    .page--prototype-home .proto-section h2,
-    .page--home .proto-section h2 {
+    .page--prototype-home .proto-section h2 {
       margin: 0;
       font-size: clamp(1.75rem, 3vw, 2.25rem);
       line-height: 1.25;
     }
 
-    .page--prototype-home .proto-section p,
-    .page--home .proto-section p {
+    .page--prototype-home .proto-section p {
       margin: 0;
       line-height: 1.7;
     }
 
-    .page--prototype-home .deep-blurb,
-    .page--home .deep-blurb {
+    .page--prototype-home .deep-blurb {
       padding: clamp(32px, 6vw, 64px) clamp(20px, 4vw, 64px);
     }
 
-    .page--prototype-home .deep-blurb__copy,
-    .page--home .deep-blurb__copy {
+    .page--prototype-home .deep-blurb__copy {
       max-width: 46rem;
       margin: 0 auto;
       line-height: 1.6;
       text-align: center;
     }
 
-    .page--prototype-home .how-it-works-overlay[hidden],
-    .page--home .how-it-works-overlay[hidden] {
+    .page--prototype-home .how-it-works-overlay[hidden] {
       display: none;
     }
 
-    .page--prototype-home .how-it-works-overlay,
-    .page--home .how-it-works-overlay {
+    .page--prototype-home .how-it-works-overlay {
       position: fixed;
       inset: 0;
       display: flex;
@@ -408,20 +366,17 @@
       z-index: 1200;
     }
 
-    .page--prototype-home .how-it-works-overlay.is-visible,
-    .page--home .how-it-works-overlay.is-visible {
+    .page--prototype-home .how-it-works-overlay.is-visible {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .page--prototype-home.modal-open .proto-home,
-    .page--home.modal-open .proto-home {
+    .page--prototype-home.modal-open .proto-home {
       filter: blur(6px);
       transition: filter 0.3s ease;
     }
 
-    .page--prototype-home .how-it-works-modal,
-    .page--home .how-it-works-modal {
+    .page--prototype-home .how-it-works-modal {
       display: grid;
       gap: clamp(16px, 3vw, 24px);
       padding: clamp(24px, 4vw, 36px);
@@ -437,23 +392,20 @@
       background-image: linear-gradient(145deg, rgba(45, 60, 92, 0.92), rgba(16, 22, 34, 0.75));
     }
 
-    .page--prototype-home .how-it-works-modal__header,
-    .page--home .how-it-works-modal__header {
+    .page--prototype-home .how-it-works-modal__header {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
       gap: 12px;
     }
 
-    .page--prototype-home .how-it-works-modal__header h2,
-    .page--home .how-it-works-modal__header h2 {
+    .page--prototype-home .how-it-works-modal__header h2 {
       margin: 0;
       font-size: clamp(1.5rem, 2.6vw, 2rem);
       letter-spacing: -0.01em;
     }
 
-    .page--prototype-home .how-it-works-modal__close,
-    .page--home .how-it-works-modal__close {
+    .page--prototype-home .how-it-works-modal__close {
       background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.25);
       color: rgba(255, 255, 255, 0.9);
@@ -470,46 +422,38 @@
     }
 
     .page--prototype-home .how-it-works-modal__close:hover,
-    .page--prototype-home .how-it-works-modal__close:focus-visible,
-    .page--home .how-it-works-modal__close:hover,
-    .page--home .how-it-works-modal__close:focus-visible {
+    .page--prototype-home .how-it-works-modal__close:focus-visible {
       background: rgba(255, 255, 255, 0.24);
       transform: translateY(-1px);
     }
 
-    .page--prototype-home .how-it-works-modal__body,
-    .page--home .how-it-works-modal__body {
+    .page--prototype-home .how-it-works-modal__body {
       display: grid;
       gap: clamp(12px, 2.6vw, 18px);
     }
 
-    .page--prototype-home .how-it-works-modal__body p,
-    .page--home .how-it-works-modal__body p {
+    .page--prototype-home .how-it-works-modal__body p {
       margin: 0;
       line-height: 1.6;
     }
 
-    .page--prototype-home .how-it-works-modal__body ol,
-    .page--home .how-it-works-modal__body ol {
+    .page--prototype-home .how-it-works-modal__body ol {
       margin: 0;
       padding-left: 1.25rem;
       display: grid;
       gap: 0.75rem;
     }
 
-    .page--prototype-home .how-it-works-modal__body li,
-    .page--home .how-it-works-modal__body li {
+    .page--prototype-home .how-it-works-modal__body li {
       line-height: 1.6;
     }
 
-    .page--prototype-home .how-it-works-modal__cta,
-    .page--home .how-it-works-modal__cta {
+    .page--prototype-home .how-it-works-modal__cta {
       font-weight: 600;
       color: rgba(255, 255, 255, 0.95);
     }
 
-    .page--prototype-home .how-it-works-modal__footer,
-    .page--home .how-it-works-modal__footer {
+    .page--prototype-home .how-it-works-modal__footer {
       display: flex;
       justify-content: flex-end;
     }
@@ -518,26 +462,33 @@
       .page--prototype-home .tool-card,
       .page--prototype-home .btn-glossy,
       .page--prototype-home .how-it-works-overlay,
-      .page--prototype-home .how-it-works-modal,
-      .page--home .tool-card,
-      .page--home .btn-glossy,
-      .page--home .how-it-works-overlay,
-      .page--home .how-it-works-modal {
+      .page--prototype-home .how-it-works-modal {
         transition: none;
         transform: none !important;
       }
     }
+  </style>
+  <style id="home-inline-overrides">
+    .page--prototype-home .hero-container,
+    .page--prototype-home .hero-legacy,
+    .page--prototype-home .hero:not(.hero--prototype) {
+      display: none !important;
+    }
 
-    .page--home #site-nav,
-    .page--home #global-nav {
+    .page--prototype-home .hero.hero--prototype {
+      display: block !important;
+    }
+
+    .page--prototype-home #site-nav,
+    .page--prototype-home #global-nav {
       min-height: 72px;
     }
 
-    .page--home #site-footer {
+    .page--prototype-home #site-footer {
       min-height: 320px;
     }
 
-    .page--home .policy-fallback {
+    .page--prototype-home .policy-fallback {
       display: flex;
       justify-content: center;
       gap: 0.5rem;
@@ -547,14 +498,14 @@
       text-align: center;
     }
 
-    .page--home .policy-fallback a {
+    .page--prototype-home .policy-fallback a {
       color: inherit;
       text-decoration: underline;
       text-decoration-thickness: 1px;
       text-underline-offset: 2px;
     }
 
-    .page--home.has-global-footer .policy-fallback {
+    .page--prototype-home.has-global-footer .policy-fallback {
       display: none;
     }
   </style>
@@ -688,12 +639,12 @@
   </script>
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
-<body class="page-background page--home">
+<body class="page-background page--prototype-home">
   <div id="site-nav"></div>
 
   <main class="proto-home">
     <div class="wrap">
-      <!-- HERO -->
+      <!-- HERO (prototype-only, cloned from live) -->
       <section class="hero hero--prototype">
         <div class="wrap">
           <div class="hero-copy">
@@ -789,7 +740,7 @@
           <li><strong>Follow guided checklists</strong> that adapt to your experience level and simplify water science.</li>
           <li><strong>Stay supported</strong> with media hubs, research logs, and contact options when you need a deeper dive.</li>
         </ol>
-        <p class="how-it-works-modal__cta">Ready to explore? Open any tool to see the full experience.</p>
+        <p class="how-it-works-modal__cta">Ready to explore? Launch any tool to see the full experience.</p>
       </div>
       <div class="how-it-works-modal__footer">
         <button type="button" class="btn-glossy" data-close-modal>Close</button>
@@ -816,27 +767,8 @@
 
   <script>
   (function () {
-    const page = document.querySelector('.page--prototype-home, .page--home');
+    const page = document.querySelector('.page--prototype-home');
     if (!page) return;
-
-    const liveHomeContainer = document.querySelector('.page--home');
-    if (liveHomeContainer) {
-      const legacyWrappers = Array.from(
-        document.querySelectorAll('#old-hero-guard, .hero-container')
-      ).filter((element) => !liveHomeContainer.contains(element));
-
-      legacyWrappers.forEach((element) => {
-        element.remove();
-      });
-
-      const strayHeroes = Array.from(document.querySelectorAll('.hero')).filter(
-        (hero) => !liveHomeContainer.contains(hero)
-      );
-
-      strayHeroes.forEach((hero) => {
-        hero.remove();
-      });
-    }
 
     const openButton = page.querySelector('#how-it-works-button');
     const overlay = page.querySelector('[data-how-it-works-overlay]');
@@ -962,7 +894,7 @@
   <script>
     (function () {
       const setupFallback = () => {
-        const page = document.querySelector('.page--home');
+        const page = document.querySelector('.page--prototype-home');
         if (!page) return;
 
         const fallback = page.querySelector('[data-policy-fallback]');
