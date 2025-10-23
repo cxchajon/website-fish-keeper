@@ -17,39 +17,45 @@
   <link rel="stylesheet" href="/css/prototype-home.css">
   <style id="prototype-hero-enhanced">
     /* Scoped only to prototype page */
-    .page--prototype-home .hero--prototype {
+    .page--prototype-home .proto-home {
       position: relative;
-      overflow: hidden;
-      padding-block: clamp(80px, 12vw, 140px);
+      isolation: isolate;
     }
 
-    .page--prototype-home .hero--prototype .hero-top-haze {
+    .page--prototype-home .proto-home .page-top-haze {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 40%;
+      top: clamp(56px, 8vw, 72px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      max-width: none;
+      height: 42vh;
       background: linear-gradient(to bottom,
-          rgba(255, 255, 255, 0.8) 0%,
-          rgba(255, 255, 255, 0.25) 20%,
-          rgba(255, 255, 255, 0.05) 60%,
-          transparent 100%);
-      opacity: 0.75;
-      filter: blur(6px);
+          rgba(255, 255, 255, 0.92) 0%,
+          rgba(255, 255, 255, 0.58) 28%,
+          rgba(255, 255, 255, 0.2) 58%,
+          rgba(255, 255, 255, 0) 100%);
       pointer-events: none;
-      z-index: 1;
+      z-index: -1;
     }
 
     @media (max-width: 600px) {
-      .page--prototype-home .hero--prototype .hero-top-haze {
-        height: 45%;
+      .page--prototype-home .proto-home .page-top-haze {
+        height: 45vh;
       }
     }
 
     @media (min-width: 1024px) {
-      .page--prototype-home .hero--prototype .hero-top-haze {
-        height: 32%;
+      .page--prototype-home .proto-home .page-top-haze {
+        height: 30vh;
       }
+    }
+
+    .page--prototype-home .hero--prototype {
+      position: relative;
+      overflow: hidden;
+      padding-block: clamp(80px, 12vw, 140px);
+      z-index: 1;
     }
 
     .page--prototype-home .hero--prototype .wrap {
@@ -129,10 +135,10 @@
   <div id="site-nav" data-src="/nav.html"></div>
 
   <main class="proto-home">
+    <div class="page-top-haze" aria-hidden="true"></div>
     <div class="wrap">
       <!-- HERO (prototype-only, cloned from live) -->
       <section class="hero hero--prototype">
-        <div class="hero-top-haze" aria-hidden="true"></div>
         <div class="wrap">
           <div class="hero-copy">
             <h1 class="hero-title">Fishkeeping Guides &amp; Tools — The Tank Guide</h1>
@@ -241,6 +247,8 @@
   .page--prototype-home .proto-home > .wrap {
     display: grid;
     gap: clamp(48px, 7vw, 88px);
+    position: relative;
+    z-index: 1;
   }
 
   .page--prototype-home .hero--prototype {
