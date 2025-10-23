@@ -1,314 +1,3 @@
-<!--
-Backup of previous head and main from 2025-10-23:
-&lt;head&gt;
-  &lt;meta charset=&quot;utf-8&quot; /&gt;
-  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot; /&gt;
-  &lt;title&gt;Fishkeeping Guides &amp;amp; Tools — The Tank Guide&lt;/title&gt;
-  &lt;meta name=&quot;description&quot; content=&quot;The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.&quot;&gt;
-  &lt;link rel=&quot;canonical&quot; href=&quot;https://thetankguide.com/&quot;&gt;
-  &lt;meta property=&quot;og:type&quot; content=&quot;website&quot;&gt;
-  &lt;meta property=&quot;og:site_name&quot; content=&quot;The Tank Guide&quot;&gt;
-  &lt;meta property=&quot;og:title&quot; content=&quot;Fishkeeping Guides &amp;amp; Tools — The Tank Guide&quot;&gt;
-  &lt;meta property=&quot;og:description&quot; content=&quot;The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.&quot;&gt;
-  &lt;meta property=&quot;og:url&quot; content=&quot;https://thetankguide.com/&quot;&gt;
-  &lt;meta property=&quot;og:image&quot; content=&quot;https://thetankguide.com/logo.png&quot;&gt;
-  &lt;meta name=&quot;twitter:card&quot; content=&quot;summary_large_image&quot;&gt;
-  &lt;meta name=&quot;twitter:site&quot; content=&quot;@fishkeepinglife&quot;&gt;
-  &lt;meta name=&quot;twitter:title&quot; content=&quot;Fishkeeping Guides &amp;amp; Tools — The Tank Guide&quot;&gt;
-  &lt;meta name=&quot;twitter:description&quot; content=&quot;The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.&quot;&gt;
-  &lt;meta name=&quot;twitter:image&quot; content=&quot;https://thetankguide.com/logo.png&quot;&gt;
-
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;css/style.css?v=1.0.9&quot; /&gt;
-  &lt;style&gt;
-    :root{
-      --bg:#0c2740;
-      --fg:#ffffff;
-      --muted:rgba(255,255,255,.85);
-      --card-bg: rgba(255,255,255,.10);
-      --card-line: rgba(255,255,255,.18);
-      --btn-fg:#08324a;
-      --btn-bg:#ffffff;
-      --btn-bg-hover:#f3f6ff;
-      --link-line: rgba(255,255,255,.22);
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    a{color:inherit;text-decoration:none}
-
-    /* Hero gradient */
-    .hero{
-      min-height:100dvh;
-      padding:28px 20px 38px;
-      background:
-        radial-gradient(1200px 800px at 75% -10%, #36c2cc 0%, rgba(54,194,204,0.0) 60%),
-        radial-gradient(1200px 900px at -10% 120%, #0077c7 0%, rgba(0,119,199,0.0) 60%),
-        linear-gradient(140deg,#0077c7 0%, #0b6ea6 40%, #0a4d87 100%);
-    }
-
-    .wrap{max-width:1080px;margin:0 auto}
-
-    .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
-
-    /* Brand */
-    .brand-name{font-weight:800;font-size:1.4rem}
-    .brand-sub{font-size:1rem;opacity:.9}
-    .tagline{margin-top:6px;font-size:1.05rem;opacity:.85}
-
-    /* Headline (unused placeholder for now) */
-    .headline{max-width:900px;font-weight:800;font-size:clamp(2rem,4vw,3.2rem);line-height:1.1;margin:40px 0 26px}
-
-    /* L&#97;unch grid */
-    .features-grid{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 24px;
-    }
-    @media (max-width: 1024px){
-      .features-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-    }
-    @media (max-width: 640px){
-      .features-grid{ grid-template-columns: 1fr; }
-    }
-
-    .card{background:var(--card-bg);border:1px solid var(--card-line);border-radius:14px;padding:16px;backdrop-filter: blur(6px);display:grid;gap:10px}
-    .card h3{margin:2px 0 4px;font-size:1.1rem}
-    .card p{margin:0;color:var(--muted);min-height:3.2em}
-    .actions{margin-top:8px}
-
-    /* SEO intro (subtle, ~25% smaller) */
-    .seo-intro{
-      max-width:700px;
-      margin:1rem auto 0;   /* sits close to socials */
-      padding:0;
-      font-size:0.75em;     /* ~25% smaller than body text */
-      line-height:1.4;
-      color:var(--muted);
-      text-align:center;
-    }
-    .seo-intro strong{color:var(--fg)}
-  &lt;/style&gt;
-  &lt;script defer src=&quot;js/nav.js?v=1.1.0&quot;&gt;&lt;/script&gt;
-  &lt;script type=&quot;application/ld+json&quot;&gt;
-{
-  &quot;@context&quot;: &quot;https://schema.org&quot;,
-  &quot;@type&quot;: &quot;Organization&quot;,
-  &quot;@id&quot;: &quot;https://thetankguide.com/#organization&quot;,
-  &quot;name&quot;: &quot;FishKeepingLifeCo&quot;,
-  &quot;alternateName&quot;: &quot;The Tank Guide&quot;,
-  &quot;url&quot;: &quot;https://thetankguide.com&quot;,
-  &quot;addressCountry&quot;: &quot;US&quot;,
-  &quot;addressRegion&quot;: &quot;NY&quot;,
-  &quot;logo&quot;: &quot;https://thetankguide.com/logo.png&quot;,
-  &quot;image&quot;: &quot;https://thetankguide.com/logo.png&quot;,
-  &quot;slogan&quot;: &quot;Educational Aquarium Books &amp; Tools&quot;,
-  &quot;description&quot;: &quot;FishKeepingLifeCo publishes educational aquarium books and interactive online tools like The Tank Guide to help new aquarists and hobbyists set up, stock, and maintain thriving aquariums.&quot;,
-  &quot;brand&quot;: {
-    &quot;@type&quot;: &quot;Brand&quot;,
-    &quot;name&quot;: &quot;The Tank Guide&quot;
-  },
-  &quot;parentOrganization&quot;: {
-    &quot;@type&quot;: &quot;Organization&quot;,
-    &quot;name&quot;: &quot;CXLXC LLC&quot;
-  },
-  &quot;foundingDate&quot;: &quot;2025-09-12&quot;,
-  &quot;publishingPrinciples&quot;: &quot;https://thetankguide.com/about.html&quot;,
-  &quot;areaServed&quot;: [&quot;United States&quot;, &quot;New York&quot;],
-  &quot;knowsAbout&quot;: [
-    &quot;Aquariums&quot;,
-    &quot;Fishkeeping&quot;,
-    &quot;Nitrogen Cycle&quot;,
-    &quot;Freshwater Aquariums&quot;,
-    &quot;Planted Tanks&quot;,
-    &quot;Aquarium Setup Basics&quot;,
-    &quot;Water Parameters&quot;,
-    &quot;Aquarium Cycling&quot;
-  ],
-  &quot;contactPoint&quot;: [
-    {
-      &quot;@type&quot;: &quot;ContactPoint&quot;,
-      &quot;contactType&quot;: &quot;customer support&quot;,
-      &quot;email&quot;: &quot;info@thetankguide.com&quot;,
-      &quot;availableLanguage&quot;: [&quot;en&quot;]
-    }
-  ],
-  &quot;sameAs&quot;: [
-    &quot;https://www.instagram.com/FishKeepingLifeCo&quot;,
-    &quot;https://www.tiktok.com/@FishKeepingLifeCo&quot;,
-    &quot;https://www.facebook.com/fishkeepinglifeco&quot;,
-    &quot;https://x.com/fishkeepinglife?s=21&quot;,
-    &quot;https://www.youtube.com/@fishkeepinglifeco&quot;,
-    &quot;https://amzn.to/3IRKvK0&quot;
-  ]
-}
-  &lt;/script&gt;
-  &lt;script type=&quot;application/ld+json&quot;&gt;
-{
-  &quot;@context&quot;: &quot;https://schema.org&quot;,
-  &quot;@type&quot;: &quot;WebSite&quot;,
-  &quot;@id&quot;: &quot;https://thetankguide.com/#website&quot;,
-  &quot;url&quot;: &quot;https://thetankguide.com/&quot;,
-  &quot;name&quot;: &quot;The Tank Guide&quot;,
-  &quot;alternateName&quot;: &quot;FishKeepingLifeCo&quot;,
-  &quot;inLanguage&quot;: &quot;en&quot;,
-  &quot;publisher&quot;: {
-    &quot;@id&quot;: &quot;https://thetankguide.com/#organization&quot;
-  },
-  &quot;logo&quot;: {
-    &quot;@type&quot;: &quot;ImageObject&quot;,
-    &quot;url&quot;: &quot;https://thetankguide.com/favicon.ico&quot;
-  },
-  &quot;potentialAction&quot;: {
-    &quot;@type&quot;: &quot;SearchAction&quot;,
-    &quot;target&quot;: &quot;https://thetankguide.com/?s={search_term_string}&quot;,
-    &quot;query-input&quot;: &quot;required name=search_term_string&quot;
-  }
-}
-  &lt;/script&gt;
-  &lt;!-- Consent Mode defaults (load FIRST) --&gt;
-  &lt;script src=&quot;/assets/js/consent-mode.js&quot; defer&gt;&lt;/script&gt;
-  &lt;!-- Google tag (gtag.js) — GA4 --&gt;
-  &lt;!--#include virtual=&quot;/includes/ga4.html&quot; --&gt;
-
-  &lt;!-- AdSense loader (keep one global instance only) --&gt;
-  &lt;script async src=&quot;https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880&quot;
-    crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
-  &lt;!-- Cloudflare Web Analytics --&gt;
-  &lt;script defer src=&quot;https://static.cloudflareinsights.com/beacon.min.js&quot;
-    data-cf-beacon=&#x27;{&quot;token&quot;: &quot;YOUR_CLOUDFLARE_TOKEN&quot;}&#x27;&gt;&lt;/script&gt;
-  &lt;!-- End Cloudflare Web Analytics --&gt;
-  &lt;!-- --- Google CMP (Funding Choices) START --- --&gt;
-  &lt;script async src=&quot;https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1&quot;&gt;&lt;/script&gt;
-  &lt;script&gt;
-    // Required bootstrap per Google; signals CMP presence
-    (function() {
-      function signalGooglefcPresent() {
-        if (!window.frames[&#x27;googlefcPresent&#x27;]) {
-          if (document.body) {
-            const iframe = document.createElement(&#x27;iframe&#x27;);
-            iframe.style.cssText = &#x27;display:none&#x27;;
-            iframe.name = &#x27;googlefcPresent&#x27;;
-            document.body.appendChild(iframe);
-          } else {
-            setTimeout(signalGooglefcPresent, 0);
-          }
-        }
-      }
-      signalGooglefcPresent();
-    })();
-  &lt;/script&gt;
-  &lt;!-- --- Google CMP (Funding Choices) END --- --&gt;
-&lt;/head&gt;
-
-&lt;main&gt;
-  &lt;!-- HERO --&gt;
-  &lt;header class=&quot;hero&quot;&gt;
-    &lt;div class=&quot;wrap&quot;&gt;
-      &lt;!-- Brand --&gt;
-      &lt;div class=&quot;hero-header&quot;&gt;
-        &lt;h1 class=&quot;brand-name hero-title&quot;&gt;Fishkeeping Guides &amp;amp; Tools — The Tank Guide&lt;/h1&gt;
-        &lt;p class=&quot;brand-sub hero-subline&quot;&gt;a product of &lt;strong&gt;FishKeepingLifeCo&lt;/strong&gt;&lt;/p&gt;
-        &lt;p class=&quot;tagline hero-tagline&quot; id=&quot;hero-blurb&quot;&gt;Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.&lt;/p&gt;
-      &lt;/div&gt;
-
-      &lt;!-- L&#97;unchpad --&gt;
-      &lt;section id=&quot;features&quot; aria-labelledby=&quot;features-title&quot;&gt;
-        &lt;h2 id=&quot;features-title&quot; class=&quot;visually-hidden&quot;&gt;Tools &amp;amp; Sections&lt;/h2&gt;
-        &lt;div class=&quot;features-grid&quot;&gt;
-          &lt;article class=&quot;card&quot; aria-labelledby=&quot;card-stocking-title&quot;&gt;
-            &lt;h3 id=&quot;card-stocking-title&quot;&gt;Stocking Advisor&lt;/h3&gt;
-            &lt;p&gt;Smart stocking made simple — plan a thriving community with confidence.&lt;/p&gt;
-            &lt;div class=&quot;actions&quot;&gt;&lt;a class=&quot;btn btn--primary&quot; href=&quot;/stocking.html&quot; aria-label=&quot;Open Stocking Advisor tool&quot;&gt;L&#97;unch&lt;/a&gt;&lt;/div&gt;
-          &lt;/article&gt;
-
-          &lt;article class=&quot;card&quot; aria-labelledby=&quot;card-gear-title&quot;&gt;
-            &lt;h3 id=&quot;card-gear-title&quot;&gt;Gear&lt;/h3&gt;
-            &lt;p&gt;The gear you need, matched to your tank and goals.&lt;/p&gt;
-            &lt;div class=&quot;actions&quot;&gt;&lt;a class=&quot;btn btn--primary&quot; href=&quot;/gear/&quot; aria-label=&quot;Open Gear recommendations&quot;&gt;L&#97;unch&lt;/a&gt;&lt;/div&gt;
-          &lt;/article&gt;
-
-          &lt;article class=&quot;card&quot; aria-labelledby=&quot;card-cycling-title&quot;&gt;
-            &lt;h3 id=&quot;card-cycling-title&quot;&gt;Cycling Coach&lt;/h3&gt;
-            &lt;p&gt;Master the nitrogen cycle with step-by-step guidance.&lt;/p&gt;
-            &lt;div class=&quot;actions&quot;&gt;&lt;a class=&quot;btn btn--primary&quot; href=&quot;/params.html&quot; aria-label=&quot;Open Cycling Coach tool&quot;&gt;L&#97;unch&lt;/a&gt;&lt;/div&gt;
-          &lt;/article&gt;
-
-          &lt;article class=&quot;card&quot; aria-labelledby=&quot;card-media-title&quot;&gt;
-            &lt;h3 id=&quot;card-media-title&quot;&gt;Media&lt;/h3&gt;
-            &lt;p&gt;Watch • Read • Explore — videos and blogs for every aquarist.&lt;/p&gt;
-            &lt;div class=&quot;actions&quot;&gt;&lt;a class=&quot;btn btn--primary&quot; href=&quot;/media.html&quot; aria-label=&quot;Discover Media resources&quot;&gt;Discover&lt;/a&gt;&lt;/div&gt;
-          &lt;/article&gt;
-
-          &lt;article class=&quot;card&quot; aria-labelledby=&quot;card-about-title&quot;&gt;
-            &lt;h3 id=&quot;card-about-title&quot;&gt;About&lt;/h3&gt;
-            &lt;p&gt;
-              Learn who we are, our approach to guides and tools, and what’s next for The Tank Guide.
-            &lt;/p&gt;
-            &lt;div class=&quot;actions&quot;&gt;
-              &lt;a class=&quot;btn btn--primary&quot; href=&quot;/about.html&quot; aria-label=&quot;Open About page&quot;&gt;Learn more&lt;/a&gt;
-            &lt;/div&gt;
-          &lt;/article&gt;
-
-          &lt;article class=&quot;card&quot; aria-labelledby=&quot;card-contact-title&quot;&gt;
-            &lt;h3 id=&quot;card-contact-title&quot;&gt;Contact&lt;/h3&gt;
-            &lt;p&gt;
-              Questions, ideas, or spot a logic issue? Reach out with feedback, recommend fish or gear to review, or share your insights.
-            &lt;/p&gt;
-            &lt;div class=&quot;actions&quot;&gt;
-              &lt;a class=&quot;btn btn--primary&quot; href=&quot;/contact-feedback.html&quot; aria-label=&quot;Open Contact form&quot;&gt;Contact &amp;amp; Feedback&lt;/a&gt;
-            &lt;/div&gt;
-          &lt;/article&gt;
-        &lt;/div&gt;
-      &lt;/section&gt;
-    &lt;/div&gt;
-  &lt;/header&gt;
-
-  &lt;div class=&quot;wrap&quot;&gt;
-    &lt;div class=&quot;ttg-adunit&quot; id=&quot;ad-home-mid&quot; aria-label=&quot;Advertisement&quot;&gt;
-      &lt;ins class=&quot;adsbygoogle&quot;
-           style=&quot;display:block&quot;
-           data-ad-client=&quot;ca-pub-9905718149811880&quot;
-           data-ad-slot=&quot;9522042154&quot;
-           data-ad-format=&quot;auto&quot;
-           data-full-width-responsive=&quot;true&quot;&gt;&lt;/ins&gt;
-      &lt;script&gt;
-           (adsbygoogle = window.adsbygoogle || []).push({});
-      &lt;/script&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-
-  &lt;!-- Index-only: tighten the gap above the hero on mobile --&gt;
-  &lt;style&gt;
-    /* HERO GAP FIX (index only) */
-    @media (max-width: 768px){
-      /* Remove any extra offset above hero */
-      .hero{ margin-top:0 !important; padding-top:8px !important; }
-      /* Ensure the first hero child doesn&#x27;t push down content */
-      .hero &gt; *:first-child{ margin-top:0 !important; }
-      /* Bring headline and sublines closer */
-      .hero h1{ margin-top:6px !important; }
-      .hero .brandline,
-      .hero .subtitle,
-      .hero p{ margin-top:4px !important; }
-      /* Hide or neutralize decorative swoosh/wave on small screens */
-      .hero .wave,
-      .hero .swoosh,
-      .hero .divider,
-      .hero img[alt*=&quot;wave&quot; i]{ display:none !important; }
-      /* If the decoration must remain in DOM, collapse its footprint */
-      .hero .wave, .hero .swoosh, .hero .divider{
-        margin:0 !important; padding:0 !important; height:0 !important;
-      }
-    }
-  &lt;/style&gt;
-
-  &lt;!-- SEO Intro (blurb, sits above footer) --&gt;
-  &lt;section class=&quot;seo-intro&quot;&gt;
-    &lt;div class=&quot;wrap&quot;&gt;
-      &lt;p&gt;The Tank Guide simplifies aquarium setup and fishkeeping confidence. Plan, cycle, stock, and maintain your thriving planted aquarium or community tank. (FKLCo)&lt;/p&gt;
-    &lt;/div&gt;
-  &lt;/section&gt;
-  &lt;/main&gt;
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -839,7 +528,16 @@ Backup of previous head and main from 2025-10-23:
       }
     }
 
-    .page--home .legal-fallback {
+    .page--home #site-nav,
+    .page--home #global-nav {
+      min-height: 72px;
+    }
+
+    .page--home #site-footer {
+      min-height: 320px;
+    }
+
+    .page--home .policy-fallback {
       display: flex;
       justify-content: center;
       gap: 0.5rem;
@@ -849,11 +547,15 @@ Backup of previous head and main from 2025-10-23:
       text-align: center;
     }
 
-    .page--home .legal-fallback a {
+    .page--home .policy-fallback a {
       color: inherit;
       text-decoration: underline;
       text-decoration-thickness: 1px;
       text-underline-offset: 2px;
+    }
+
+    .page--home.has-global-footer .policy-fallback {
+      display: none;
     }
   </style>
   <script defer src="js/nav.js?v=1.1.0"></script>
@@ -987,7 +689,7 @@ Backup of previous head and main from 2025-10-23:
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
 <body class="page-background">
-  <div class="page--home">
+  <div class="page--home proto-home">
     <div id="site-nav"></div>
 
     <main class="proto-home">
@@ -1088,7 +790,7 @@ Backup of previous head and main from 2025-10-23:
             <li><strong>Follow guided checklists</strong> that adapt to your experience level and simplify water science.</li>
             <li><strong>Stay supported</strong> with media hubs, research logs, and contact options when you need a deeper dive.</li>
           </ol>
-          <p class="how-it-works-modal__cta">Ready to explore? L&#97;unch any tool to see the full experience.</p>
+          <p class="how-it-works-modal__cta">Ready to explore? Open any tool to see the full experience.</p>
         </div>
         <div class="how-it-works-modal__footer">
           <button type="button" class="btn-glossy" data-close-modal>Close</button>
@@ -1107,7 +809,7 @@ Backup of previous head and main from 2025-10-23:
       </div>
     </section>
 
-    <nav class="legal-fallback" data-legal-fallback aria-label="Legal links">
+    <nav class="policy-fallback" data-policy-fallback aria-label="Legal links">
       <a href="/privacy-legal.html">Privacy Policy</a>
       <span aria-hidden="true">&bull;</span>
       <a href="/terms.html">Terms</a>
@@ -1243,24 +945,27 @@ Backup of previous head and main from 2025-10-23:
   <script>
     (function () {
       const setupFallback = () => {
-        const fallback = document.querySelector('[data-legal-fallback]');
+        const page = document.querySelector('.page--home');
+        if (!page) return;
+
+        const fallback = page.querySelector('[data-policy-fallback]');
         const footer = document.getElementById('site-footer');
         if (!fallback || !footer) {
           return;
         }
 
-        const hideFallback = () => {
-          fallback.setAttribute('hidden', '');
+        const flagFooterReady = () => {
+          page.classList.add('has-global-footer');
         };
 
         if (footer.children.length > 0) {
-          hideFallback();
+          flagFooterReady();
           return;
         }
 
         const observer = new MutationObserver(() => {
           if (footer.children.length > 0) {
-            hideFallback();
+            flagFooterReady();
             observer.disconnect();
           }
         });
@@ -1268,10 +973,10 @@ Backup of previous head and main from 2025-10-23:
         observer.observe(footer, { childList: true });
       };
 
-      if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        setupFallback();
-      } else {
+      if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', setupFallback, { once: true });
+      } else {
+        setupFallback();
       }
     })();
   </script>
