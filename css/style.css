@@ -2443,3 +2443,68 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 /* Safety: no first-child top margin inside hero */
 .page--prototype-home .hero > :first-child { margin-top: 0 !important; }
 
+/* -----------------------------------------------------------
+   PROTOTYPE DESKTOP LAYOUT — do not affect live homepage
+   ----------------------------------------------------------- */
+
+/* Base container width on prototype */
+.page--prototype-home .wrap,
+.page--prototype-home .proto-section-wrap,
+.page--prototype-home .container {
+  max-width: 1080px;                /* matches live width */
+  margin-inline: auto;
+  padding-inline: clamp(16px, 2.2vw, 24px);
+}
+
+/* Ensure main doesn’t force a single-column flex on desktop */
+@media (min-width: 768px) {
+  .page--prototype-home main,
+  .page--prototype-home .proto-section-wrap {
+    display: block;                  /* stop global flex column from locking mobile layout */
+    gap: 0;                          /* gap no longer needed when block */
+  }
+}
+
+/* Cards grid: switch stacked cards to 2-col on tablet/desktop */
+.page--prototype-home .tools,
+.page--prototype-home .tools-grid,
+.page--prototype-home .cards {
+  display: grid;
+  grid-template-columns: 1fr;        /* mobile default: one column */
+  gap: clamp(14px, 2vw, 24px);
+}
+
+/* Two columns from 900px up; breathing room */
+@media (min-width: 900px) {
+  .page--prototype-home .tools,
+  .page--prototype-home .tools-grid,
+  .page--prototype-home .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+/* Guard: card blocks should stretch and not set fixed widths */
+.page--prototype-home .tool-card {
+  width: auto;
+  max-width: none;
+  margin: 0;                         /* grid controls spacing */
+}
+
+/* Keep the nice hero spacing we added but avoid huge desktop gaps */
+@media (min-width: 900px) {
+  .page--prototype-home .hero {
+    padding-block: clamp(28px, 3.5vw, 56px) clamp(18px, 3vw, 36px);
+    min-height: unset !important;    /* ensure no 100vh creeps in at desktop */
+  }
+  .page--prototype-home .tools-intro {
+    margin-bottom: clamp(10px, 1.6vw, 18px);
+  }
+}
+
+/* Safety: if any legacy rule sets fixed widths on cards, neutralize */
+.page--prototype-home .tool-card[style*="width"],
+.page--prototype-home .tool-card[style*="max-width"] {
+  width: auto !important;
+  max-width: none !important;
+}
