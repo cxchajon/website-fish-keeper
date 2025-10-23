@@ -2394,32 +2394,52 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 
 .tools-cta-line { margin-bottom: 0.75rem; }
 
-/* === Prototype home spacing corrections (scoped) === */
-body.page--prototype-home .proto-home > .wrap {
-  padding-top: clamp(0px, 0.4vw, 8px);
+/* ----------------------------------------------------------
+   PROTOTYPE: spacing fixes apply on all sizes, incl. desktop
+   ---------------------------------------------------------- */
+.page--prototype-home { margin: 0; padding: 0; }
+
+/* NAV should not contribute bottom spacing */
+.page--prototype-home #global-nav,
+.page--prototype-home .site-nav,
+.page--prototype-home header { margin-bottom: 0 !important; }
+
+/* HERO owns its spacing; stop margin-collapsing and kill tall min-height */
+.page--prototype-home .hero {
+  display: flow-root;                /* new block formatting context */
+  padding-block: clamp(20px, 4vw, 48px) clamp(16px, 3vw, 32px);
+  min-height: initial !important;    /* neutralize any 100vh/100dvh from globals */
 }
 
-body.page--prototype-home .proto-home .hero--prototype {
-  min-height: 0;
-  align-content: flex-start;
-  padding-top: clamp(0px, 0.6vw, 8px);
-  padding-bottom: clamp(6px, 1vw, 14px);
-  margin-bottom: clamp(2px, 0.6vw, 8px);
-}
-
-body.page--prototype-home .proto-home .tool-card:first-of-type {
-  margin-top: clamp(2px, 0.4vw, 6px);
-}
-
-@media (max-width: 480px) {
-  body.page--prototype-home .proto-home .hero--prototype {
-    padding-top: clamp(0px, 1.4vw, 8px);
-    padding-bottom: clamp(4px, 2vw, 12px);
-    margin-bottom: clamp(2px, 1.2vw, 6px);
-  }
-
-  body.page--prototype-home .proto-home .tool-card:first-of-type {
-    margin-top: clamp(2px, 1.2vw, 8px);
+/* Desktop: ensure no breakpoint reintroduces tall hero */
+@media (min-width: 768px) {
+  .page--prototype-home .hero {
+    padding-block: clamp(28px, 3.5vw, 56px) clamp(18px, 3vw, 36px);
+    min-height: unset !important;
   }
 }
+
+/* Tighten hero children margins so the stack doesn’t add surprise gaps */
+.page--prototype-home .hero > * { margin-top: 0; }
+.page--prototype-home .hero .eyebrow,
+.page--prototype-home .hero .h1,
+.page--prototype-home .hero h1,
+.page--prototype-home .hero p { margin-block: 0.25em 0.6em; }
+
+/* Bring “How it works” and first card up */
+.page--prototype-home .tools-intro { margin: 0; padding-top: 0; margin-bottom: clamp(8px, 1.6vw, 16px); }
+.page--prototype-home .tool-card,
+.page--prototype-home .cards,
+.page--prototype-home .tools { margin-top: 0; }
+
+/* Use GAP for vertical rhythm so breakpoints don’t collapse margins */
+.page--prototype-home main,
+.page--prototype-home .proto-section-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 2.2vw, 24px);
+}
+
+/* Safety: no first-child top margin inside hero */
+.page--prototype-home .hero > :first-child { margin-top: 0 !important; }
 
