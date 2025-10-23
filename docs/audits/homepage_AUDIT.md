@@ -1,28 +1,25 @@
-Generated 2025-10-23T20:14:36Z UTC | commit ce9e70c7fe7de3f2f475c8a4cf7179be1c74ca37 | source prototype-home (prototype-home.html)
+Generated 2025-10-23T20:14:32Z UTC | commit ce9e70c7fe7de3f2f475c8a4cf7179be1c74ca37 | source homepage (index.html)
 
-# Prototype Home Audit Summary
+# Homepage Audit Summary
 
-**AdSense readiness verdict:** **Blocked**
+**AdSense readiness verdict:** **Ready**
 
-- **Blockers:**
-  - ROBOTS_NOINDEX: noindex,nofollow
-  - PRIVACY_POLICY_MISSING: No privacy policy link detected
+- **Blockers:** None detected
 - **Risks:**
-  - MISSING_OG_IMAGE: No og:image present
   - HERO_GRADIENT_HEAVY: Hero background uses large gradients that may impact LCP
-- **Passes:** None noted
+- **Passes:** Robots allow indexing; OG tags present; Twitter card tags present
 
 ## Meta Inventory
 
 | Field | Value |
 | --- | --- |
-| Title | The Tank Guide — Prototype Home (31) |
-| Description | Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium. (115) |
-| Robots | noindex,nofollow |
-| Canonical | None |
-| Viewport | width=device-width,initial-scale=1 |
-| OG tags | None |
-| Twitter tags | None |
+| Title | Fishkeeping Guides & Tools — The Tank Guide (43) |
+| Description | The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums. (152) |
+| Robots | index,follow |
+| Canonical | https://thetankguide.com/ |
+| Viewport | width=device-width, initial-scale=1 |
+| OG tags | og:description, og:image, og:image:alt, og:site_name, og:title, og:type, og:url |
+| Twitter tags | twitter:card, twitter:description, twitter:image, twitter:image:alt, twitter:site, twitter:title |
 
 ## Headings Map
 
@@ -39,6 +36,8 @@ Generated 2025-10-23T20:14:36Z UTC | commit ce9e70c7fe7de3f2f475c8a4cf7179be1c74
 - H2: Learn with Us: From Our Tank to Yours
 - H2: How The Tank Guide Works
 - H2: About The Tank Guide
+- H3: Cookies & Advertising
+- H3: Cookie Preferences
 
 ## Links & Anchors
 
@@ -52,6 +51,8 @@ Generated 2025-10-23T20:14:36Z UTC | commit ce9e70c7fe7de3f2f475c8a4cf7179be1c74
 | Explore the Media Hub | https://thetankguide.com/media.html |  |  |
 | Learn more | https://thetankguide.com/about.html |  |  |
 | Contact & Feedback | https://thetankguide.com/contact-feedback.html |  |  |
+| Privacy Policy | https://thetankguide.com/privacy-legal.html |  |  |
+| Terms | https://thetankguide.com/terms.html |  |  |
 
 ### External Links
 
@@ -63,8 +64,7 @@ No images detected.
 
 ## Structured Data
 
-- None
-
+- Type: Organization | Valid: True | Errors: []
 ## Accessibility Spot-Check
 
 - Focus styles present on hero CTA links (based on CSS).
@@ -83,22 +83,21 @@ No images detected.
 
 ## AdSense Policy Checklist
 
-- Privacy policy link present: False (static HTML: False)
+- Privacy policy link present: True (static HTML: True)
 
-- Terms link present: False
+- Terms link present: True
 
 - Contact link present: True
 
-- Robots allow indexing: No
+- Robots allow indexing: Yes
 
-- Content depth: 636 words of editorial copy before any ad placeholders.
+- Content depth: 693 words of editorial copy before any ad placeholders.
 
 - Prohibited content: None detected in static scan.
 
 ## Prioritized Fix List
 
-- **P0** ROBOTS_NOINDEX — noindex,nofollow
-- **P0** PRIVACY_POLICY_MISSING — No privacy policy link detected
-- **P1** MISSING_OG_IMAGE — No og:image present
+- **P0** None
+
 - **P1** HERO_GRADIENT_HEAVY — Hero background uses large gradients that may impact LCP
 - **P2** Confirm performance optimizations for gradients and ensure CLS placeholders for hero media.

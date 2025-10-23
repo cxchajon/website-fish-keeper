@@ -1,0 +1,186 @@
+{
+  "_meta": "Generated 2025-10-23T20:14:36Z UTC | commit ce9e70c7fe7de3f2f475c8a4cf7179be1c74ca37 | source prototype-home (prototype-home.html)",
+  "data": {
+    "meta": {
+      "robots": "noindex,nofollow",
+      "title": "The Tank Guide \u2014 Prototype Home (31)",
+      "description": "Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium. (115)",
+      "canonical": null,
+      "viewport": "width=device-width,initial-scale=1",
+      "og": {},
+      "twitter": {}
+    },
+    "structured_data": [],
+    "links": {
+      "internal": [
+        {
+          "href": "https://thetankguide.com/stocking.html",
+          "anchor": "Plan My Stocking List",
+          "rel": "",
+          "target": ""
+        },
+        {
+          "href": "https://thetankguide.com/gear/",
+          "anchor": "Browse the Gear Guide",
+          "rel": "",
+          "target": ""
+        },
+        {
+          "href": "https://thetankguide.com/params.html",
+          "anchor": "Start the Cycling Coach",
+          "rel": "",
+          "target": ""
+        },
+        {
+          "href": "https://thetankguide.com/media.html",
+          "anchor": "Explore the Media Hub",
+          "rel": "",
+          "target": ""
+        },
+        {
+          "href": "https://thetankguide.com/about.html",
+          "anchor": "Learn more",
+          "rel": "",
+          "target": ""
+        },
+        {
+          "href": "https://thetankguide.com/contact-feedback.html",
+          "anchor": "Contact & Feedback",
+          "rel": "",
+          "target": ""
+        }
+      ],
+      "external": [],
+      "policy_presence": {
+        "privacy": {
+          "found": false,
+          "href": null,
+          "in_static_html": false
+        },
+        "terms": {
+          "found": false,
+          "href": null,
+          "in_static_html": false
+        },
+        "contact": {
+          "found": true,
+          "href": "https://thetankguide.com/contact-feedback.html",
+          "in_static_html": true
+        }
+      }
+    },
+    "headings": [
+      {
+        "level": "H1",
+        "text": "Fishkeeping Guides & Tools \u2014 The Tank Guide"
+      },
+      {
+        "level": "H2",
+        "text": "Stocking Advisor"
+      },
+      {
+        "level": "H2",
+        "text": "Gear"
+      },
+      {
+        "level": "H2",
+        "text": "Cycling Coach"
+      },
+      {
+        "level": "H2",
+        "text": "Media"
+      },
+      {
+        "level": "H2",
+        "text": "About"
+      },
+      {
+        "level": "H2",
+        "text": "Contact"
+      },
+      {
+        "level": "H2",
+        "text": "Aquarium Science, Simplified for Everyone"
+      },
+      {
+        "level": "H2",
+        "text": "Master the Foundation: Understanding the Nitrogen Cycle"
+      },
+      {
+        "level": "H2",
+        "text": "Build a Balanced Community with Our Stocking Advisor"
+      },
+      {
+        "level": "H2",
+        "text": "Learn with Us: From Our Tank to Yours"
+      },
+      {
+        "level": "H2",
+        "text": "How The Tank Guide Works"
+      },
+      {
+        "level": "H2",
+        "text": "About The Tank Guide"
+      }
+    ],
+    "images": [],
+    "scripts": [
+      {
+        "src": null,
+        "async": false,
+        "defer": false,
+        "module": false
+      },
+      {
+        "src": "https://thetankguide.com/js/nav.js?v=1.4.7",
+        "async": false,
+        "defer": true,
+        "module": false
+      },
+      {
+        "src": "https://thetankguide.com/js/footer-loader.js?v=1.4.7",
+        "async": false,
+        "defer": true,
+        "module": false
+      }
+    ],
+    "stylesheets": [
+      {
+        "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap",
+        "inline_bytes": 0,
+        "media": null
+      },
+      {
+        "href": "https://thetankguide.com/css/style.css?v=1.0.9",
+        "inline_bytes": 0,
+        "media": null
+      },
+      {
+        "href": "https://thetankguide.com/css/prototype-home.css",
+        "inline_bytes": 0,
+        "media": null
+      },
+      {
+        "href": null,
+        "inline_bytes": 11988,
+        "media": null
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Inter",
+        "source": "google",
+        "font-display": "swap"
+      }
+    ],
+    "performance_hints": {
+      "hero_has_large_gradients": true,
+      "uses_blur_or_heavy_shadows": true,
+      "cls_placeholders_for_async_nav_footer": true,
+      "cache_headers": {
+        "cache-control": null,
+        "expires": null
+      }
+    }
+  }
+}

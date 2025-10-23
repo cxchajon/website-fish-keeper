@@ -1,50 +1,29 @@
-[
-  {
-    "id": "ISSUE-001",
-    "type": "SEO",
-    "severity": "P0",
-    "location": "prototype-home.html — <meta name=\"robots\">",
-    "evidence": "Page sets noindex,nofollow in the head, preventing crawling and AdSense review.",
-    "recommendation": "Remove the prototype noindex,nofollow directive (and align robots.txt/sitemap) before launch." 
-  },
-  {
-    "id": "ISSUE-002",
-    "type": "SEO",
-    "severity": "P0",
-    "location": "prototype-home.html — <head>",
-    "evidence": "No <link rel=\"canonical\"> present; duplicates may occur when copied to production.",
-    "recommendation": "Add a canonical link pointing to the final production URL for the home experience." 
-  },
-  {
-    "id": "ISSUE-003",
-    "type": "SEO",
-    "severity": "P1",
-    "location": "prototype-home.html — <head>",
-    "evidence": "Open Graph and Twitter metadata are absent, so shared links render without branded previews.",
-    "recommendation": "Add og:title, og:description, og:url, og:image, twitter:card, and twitter:site fields that mirror the optimized SEO copy." 
-  },
-  {
-    "id": "ISSUE-004",
-    "type": "GEO",
-    "severity": "P1",
-    "location": "prototype-home.html — <head>",
-    "evidence": "No JSON-LD Organization/WebSite/WebPage data is provided, limiting eligibility for rich results.",
-    "recommendation": "Publish JSON-LD covering Organization, WebSite (with SearchAction), and WebPage entities referencing this URL." 
-  },
-  {
-    "id": "ISSUE-005",
-    "type": "AEO",
-    "severity": "P1",
-    "location": "prototype-home.html — tools grid links",
-    "evidence": "Six internal CTAs all use the single word 'Launch', which is ambiguous for screen readers and weak for anchor relevance.",
-    "recommendation": "Update CTA copy to action + intent phrases (e.g., 'Plan my stocking list') and add a hero CTA that matches top workflow." 
-  },
-  {
-    "id": "ISSUE-006",
-    "type": "AdSense",
-    "severity": "P0",
-    "location": "prototype-home.html — navigation/footer includes",
-    "evidence": "Privacy/Terms links only load via deferred JS includes; if the fetch fails, compliance links disappear.",
-    "recommendation": "Provide server-rendered nav/footer (or inline fallback links) so required policies are always present for reviewers." 
-  }
-]
+{
+  "_meta": "Generated 2025-10-23T20:14:36Z UTC | commit ce9e70c7fe7de3f2f475c8a4cf7179be1c74ca37 | source prototype-home (prototype-home.html)",
+  "issues": [
+    {
+      "id": "ROBOTS_NOINDEX",
+      "severity": "blocker",
+      "where": "head>meta[name=robots]",
+      "details": "noindex,nofollow"
+    },
+    {
+      "id": "MISSING_OG_IMAGE",
+      "severity": "warn",
+      "where": "head",
+      "details": "No og:image present"
+    },
+    {
+      "id": "PRIVACY_POLICY_MISSING",
+      "severity": "blocker",
+      "where": "links",
+      "details": "No privacy policy link detected"
+    },
+    {
+      "id": "HERO_GRADIENT_HEAVY",
+      "severity": "warn",
+      "where": "style",
+      "details": "Hero background uses large gradients that may impact LCP"
+    }
+  ]
+}
