@@ -71,7 +71,10 @@
               Plan faster with research-backed calculators, curated gear picks, and on-call coaching for every stage of your tank.
             </p>
           </div>
-          <p class="how"><a href="#how-it-works">How it works</a></p>
+          <p class="how">
+            <button type="button" id="how-it-works-button" class="how-trigger" aria-expanded="false"
+              aria-controls="how-it-works-modal">How it works</button>
+          </p>
         </div>
       </section>
 
@@ -140,6 +143,30 @@
     </div>
   </main>
 
+  <div class="how-it-works-overlay" data-how-it-works-overlay hidden aria-hidden="true">
+    <div class="how-it-works-modal" id="how-it-works-modal" role="dialog" aria-modal="true"
+      aria-labelledby="how-it-works-title" aria-describedby="how-it-works-description" tabindex="-1">
+      <header class="how-it-works-modal__header">
+        <h2 id="how-it-works-title">How The Tank Guide Works</h2>
+        <button type="button" class="how-it-works-modal__close" data-close-modal aria-label="Close How it Works dialog">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </header>
+      <div class="how-it-works-modal__body" id="how-it-works-description">
+        <p>The prototype home highlights the core experiences that guide you from tank setup to long-term care.</p>
+        <ol>
+          <li><strong>Start with the Hero tools</strong> — jump into stocking, gear, or cycling workflows matched to your tank.</li>
+          <li><strong>Follow guided checklists</strong> that adapt to your experience level and simplify water science.</li>
+          <li><strong>Stay supported</strong> with media hubs, research logs, and contact options when you need a deeper dive.</li>
+        </ol>
+        <p class="how-it-works-modal__cta">Ready to explore? Launch any tool to see the full experience.</p>
+      </div>
+      <div class="how-it-works-modal__footer">
+        <button type="button" class="btn-glossy" data-close-modal>Close</button>
+      </div>
+    </div>
+  </div>
+
   <style>
   .page--prototype-home .proto-home > .wrap {
     display: grid;
@@ -161,7 +188,7 @@
     margin: 0;
   }
 
-  .page--prototype-home .hero--prototype .how a {
+  .page--prototype-home .hero--prototype .how .how-trigger {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -169,6 +196,11 @@
     letter-spacing: 0.02em;
     text-decoration-thickness: 2px;
     text-underline-offset: 6px;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
   }
 
   .page--prototype-home .tools {
@@ -229,7 +261,7 @@
   }
 
   .page--prototype-home .btn-glossy:focus-visible,
-  .page--prototype-home .how a:focus-visible {
+  .page--prototype-home .how .how-trigger:focus-visible {
     outline: 3px solid rgba(255, 255, 255, 0.85);
     outline-offset: 4px;
   }
@@ -263,6 +295,117 @@
     text-align: center;
   }
 
+  .page--prototype-home .how-it-works-overlay[hidden] {
+    display: none;
+  }
+
+  .page--prototype-home .how-it-works-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(20px, 4vw, 40px);
+    background: rgba(8, 12, 20, 0.68);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1200;
+  }
+
+  .page--prototype-home .how-it-works-overlay.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .page--prototype-home.modal-open .proto-home {
+    filter: blur(6px);
+    transition: filter 0.3s ease;
+  }
+
+  .page--prototype-home .how-it-works-modal {
+    display: grid;
+    gap: clamp(16px, 3vw, 24px);
+    padding: clamp(24px, 4vw, 36px);
+    border-radius: 24px;
+    background: rgba(25, 35, 52, 0.82);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 20px 60px rgba(0, 0, 0, 0.35);
+    color: rgba(255, 255, 255, 0.96);
+    max-width: min(520px, 100%);
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background-image: linear-gradient(145deg, rgba(45, 60, 92, 0.92), rgba(16, 22, 34, 0.75));
+  }
+
+  .page--prototype-home .how-it-works-modal__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .page--prototype-home .how-it-works-modal__header h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    letter-spacing: -0.01em;
+  }
+
+  .page--prototype-home .how-it-works-modal__close {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 999px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .page--prototype-home .how-it-works-modal__close:hover,
+  .page--prototype-home .how-it-works-modal__close:focus-visible {
+    background: rgba(255, 255, 255, 0.24);
+    transform: translateY(-1px);
+  }
+
+  .page--prototype-home .how-it-works-modal__body {
+    display: grid;
+    gap: clamp(12px, 2.6vw, 18px);
+  }
+
+  .page--prototype-home .how-it-works-modal__body p {
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .page--prototype-home .how-it-works-modal__body ol {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .page--prototype-home .how-it-works-modal__body li {
+    line-height: 1.6;
+  }
+
+  .page--prototype-home .how-it-works-modal__cta {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  .page--prototype-home .how-it-works-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
   @media (max-width: 480px) {
     .page--prototype-home .hero-copy .hero-title {
       font-size: clamp(2rem, 9vw, 2.8rem);
@@ -276,7 +419,9 @@
 
   @media (prefers-reduced-motion: reduce) {
     .page--prototype-home .tool-card,
-    .page--prototype-home .btn-glossy {
+    .page--prototype-home .btn-glossy,
+    .page--prototype-home .how-it-works-overlay,
+    .page--prototype-home .how-it-works-modal {
       transition: none;
       transform: none !important;
     }
@@ -294,6 +439,132 @@
       </p>
     </div>
   </section>
+
+  <script>
+  (function () {
+    const page = document.querySelector('.page--prototype-home');
+    if (!page) return;
+
+    const openButton = page.querySelector('#how-it-works-button');
+    const overlay = page.querySelector('[data-how-it-works-overlay]');
+    const modal = overlay ? overlay.querySelector('.how-it-works-modal') : null;
+    const closeButtons = overlay ? Array.from(overlay.querySelectorAll('[data-close-modal]')) : [];
+
+    const focusableSelectors = [
+      'a[href]:not([tabindex="-1"])',
+      'button:not([disabled]):not([tabindex="-1"])',
+      'textarea:not([disabled])',
+      'input[type="text"]:not([disabled])',
+      'input[type="radio"]:not([disabled])',
+      'input[type="checkbox"]:not([disabled])',
+      'select:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])'
+    ].join(',');
+
+    if (!openButton || !overlay || !modal) {
+      return;
+    }
+
+    let lastFocusedElement = null;
+
+    const setAriaState = (expanded) => {
+      openButton.setAttribute('aria-expanded', String(expanded));
+      overlay.setAttribute('aria-hidden', String(!expanded));
+    };
+
+    const getFocusableItems = () => Array.from(modal.querySelectorAll(focusableSelectors));
+
+    const focusFirstElement = () => {
+      const focusableItems = getFocusableItems();
+      const target = focusableItems.length ? focusableItems[0] : modal;
+      target.focus({ preventScroll: true });
+    };
+
+    const handleKeydown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeModal();
+        return;
+      }
+
+      if (event.key !== 'Tab') {
+        return;
+      }
+
+      const focusableItems = getFocusableItems();
+      if (!focusableItems.length) {
+        event.preventDefault();
+        modal.focus({ preventScroll: true });
+        return;
+      }
+
+      const first = focusableItems[0];
+      const last = focusableItems[focusableItems.length - 1];
+
+      if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      }
+    };
+
+    const closeModal = () => {
+      if (overlay.hidden) return;
+
+      overlay.classList.remove('is-visible');
+
+      const finalizeClose = () => {
+        overlay.hidden = true;
+        overlay.removeEventListener('transitionend', finalizeClose);
+      };
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        finalizeClose();
+      } else {
+        overlay.addEventListener('transitionend', finalizeClose, { once: true });
+        window.setTimeout(finalizeClose, 350);
+      }
+
+      page.classList.remove('modal-open');
+      document.removeEventListener('keydown', handleKeydown, true);
+      setAriaState(false);
+
+      if (lastFocusedElement) {
+        lastFocusedElement.focus({ preventScroll: true });
+      }
+    };
+
+    const openModal = () => {
+      if (!overlay.hidden) return;
+
+      lastFocusedElement = document.activeElement;
+      overlay.hidden = false;
+      window.requestAnimationFrame(() => {
+        overlay.classList.add('is-visible');
+      });
+
+      page.classList.add('modal-open');
+      document.addEventListener('keydown', handleKeydown, true);
+      setAriaState(true);
+
+      window.setTimeout(focusFirstElement, 50);
+    };
+
+    openButton.addEventListener('click', openModal);
+
+    overlay.addEventListener('click', (event) => {
+      if (event.target === overlay) {
+        closeModal();
+      }
+    });
+
+    closeButtons.forEach((button) => {
+      button.addEventListener('click', closeModal);
+    });
+  })();
+  </script>
 
   <!-- include loaders already used on the main site -->
   <script src="/js/nav.js?v=1.4.7" defer></script>
