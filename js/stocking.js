@@ -54,6 +54,116 @@ function scrubAssumptionOnce(scope){
 
 scrubAssumptionOnce();
 
+const LIVE_REGION_ID = 'stocking-status';
+const STOCK_FEEDBACK_DURATION = 1600;
+const FEEDBACK_CLEAR_PADDING = 120;
+let liveRegionEl = null;
+let pendingStockFeedback = null;
+let pendingFeedbackClearTimer = null;
+
+const A11Y_LOG_ENABLED = (() => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  const ttg = window.TTG || {};
+  if (ttg.features && typeof ttg.features.stockingA11yLog === 'boolean') {
+    return ttg.features.stockingA11yLog;
+  }
+  if (ttg.featureFlags && typeof ttg.featureFlags.stockingA11yLog === 'boolean') {
+    return ttg.featureFlags.stockingA11yLog;
+  }
+  if (typeof ttg.stockingA11yLog === 'boolean') {
+    return ttg.stockingA11yLog;
+  }
+  return false;
+})();
+
+function logA11y(...args) {
+  if (!A11Y_LOG_ENABLED) return;
+  try {
+    console.info('[Stocking][a11y]', ...args);
+  } catch (_error) {
+    /* noop */
+  }
+}
+
+function ensureLiveRegion() {
+  if (liveRegionEl && liveRegionEl.isConnected) {
+    return liveRegionEl;
+  }
+  liveRegionEl = document.getElementById(LIVE_REGION_ID);
+  return liveRegionEl;
+}
+
+function announceStatus(message) {
+  if (typeof message !== 'string' || !message.trim()) {
+    return;
+  }
+  const region = ensureLiveRegion();
+  if (!region) {
+    return;
+  }
+  region.textContent = '';
+  const stamp = Date.now().toString(36);
+  region.setAttribute('data-last-announcement', stamp);
+  region.textContent = message;
+  logA11y('announce', message);
+}
+
+function escapeSelector(value) {
+  if (typeof value !== 'string') {
+    return '';
+  }
+  if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') {
+    return CSS.escape(value);
+  }
+  return value.replace(/["'\\]/g, '\\$&');
+}
+
+function captureStockScrollAnchor() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  const root = document.getElementById('stock-list');
+  if (!root) {
+    return null;
+  }
+  const rect = root.getBoundingClientRect();
+  return {
+    top: rect.top,
+    scrollY: window.scrollY,
+  };
+}
+
+function queueStockFeedback(feedback = {}) {
+  const now = Date.now();
+  const base = {
+    timestamp: now,
+    duration: STOCK_FEEDBACK_DURATION,
+    preserveScroll: true,
+    focusApplied: false,
+    scrollRestored: false,
+  };
+  if (pendingFeedbackClearTimer) {
+    clearTimeout(pendingFeedbackClearTimer);
+    pendingFeedbackClearTimer = null;
+  }
+  pendingStockFeedback = { ...base, ...feedback };
+  if (!pendingStockFeedback.scrollAnchor) {
+    pendingStockFeedback.scrollAnchor = captureStockScrollAnchor();
+  }
+  if (pendingStockFeedback.message) {
+    announceStatus(pendingStockFeedback.message);
+  }
+  logA11y('feedback:queue', pendingStockFeedback);
+  pendingFeedbackClearTimer = setTimeout(() => {
+    if (pendingStockFeedback && pendingStockFeedback.timestamp === now) {
+      pendingStockFeedback = null;
+    }
+    pendingFeedbackClearTimer = null;
+  }, pendingStockFeedback.duration + FEEDBACK_CLEAR_PADDING);
+}
+
 const GEAR_PAGE_PATH = '/gear.html';
 const GEAR_QUERY_PARAM = 'tank_g';
 const GEAR_TANK_SESSION_KEY = 'ttg:tank_g';
@@ -254,6 +364,55 @@ function bootstrapStocking() {
     envReco: document.getElementById('env-reco'),
     envTips: document.querySelector('#env-legend, #env-more-tips, [data-role="env-legend"]'),
   };
+
+  const busyIndicator = (() => {
+    let timer = null;
+    let active = false;
+    const BUSY_CLASS = 'is-loading';
+    const DELAY_MS = 140;
+    const resolveButton = () => refs.addBtn || document.getElementById('plan-add');
+    const apply = (flag) => {
+      const button = resolveButton();
+      if (!button) {
+        return;
+      }
+      if (flag) {
+        button.classList.add(BUSY_CLASS);
+        button.setAttribute('aria-busy', 'true');
+      } else {
+        button.classList.remove(BUSY_CLASS);
+        button.removeAttribute('aria-busy');
+      }
+    };
+    return {
+      request() {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
+          timer = null;
+          active = true;
+          apply(true);
+        }, DELAY_MS);
+      },
+      clear() {
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+        if (!active) {
+          return;
+        }
+        active = false;
+        apply(false);
+      },
+    };
+  })();
+
+  let lastBioloadPercent = null;
+  let lastBioloadAnnouncedAt = 0;
+  let queuedBioloadMessage = null;
+  let queuedBioloadTimer = null;
 
   const normalizeGearGallons = (value) => {
     const parsed = parseTankGallons(value);
@@ -842,8 +1001,12 @@ function bootstrapStocking() {
     }
 
     if (previousSelectionRemoved) {
-      filterProductStatusMessage = "Previous product doesn't fit this tank size.";
+      const resetMessage = 'Filter reset for new tank size. Select a new product.';
+      filterProductStatusMessage = resetMessage;
       debugStatus = 'previous-removed';
+      if (opts.reason === 'tank-change') {
+        announceStatus(resetMessage);
+      }
     } else {
       filterProductStatusMessage = '';
       debugStatus = 'populated';
@@ -1372,30 +1535,67 @@ function currentStockArray() {
   return Array.from(STOCK.values()).map(({ species, qty }) => ({ species, qty }));
 }
 
-document.addEventListener('advisor:addCandidate', (e) => {
-  const s = e.detail?.species; const addQty = Math.max(1, e.detail?.qty || 1);
-  if (!s || !s.id) return;
-  const cur = STOCK.get(s.id)?.qty || 0;
-  const next = Math.min(999, cur + addQty);
-  STOCK.set(s.id, { species: s, qty: next });
-  renderStockList();
+document.addEventListener('advisor:addCandidate', (event) => {
+  const detail = event.detail ?? {};
+  const species = detail.species;
+  const addQty = Math.max(1, detail.qty || 1);
+  if (!species || !species.id) {
+    return;
+  }
+  const scrollAnchor = captureStockScrollAnchor();
+  const current = STOCK.get(species.id)?.qty || 0;
+  const next = Math.min(999, current + addQty);
+  STOCK.set(species.id, { species, qty: next });
+  queueStockFeedback({
+    message: `Added ${species.common_name || species.id} (${next})`,
+    highlightId: species.id,
+    scrollAnchor,
+  });
+  renderStockList({ preserveScroll: true });
 });
 
-document.addEventListener('advisor:removeCandidate', (e) => {
-  const id = e.detail?.id;
-  if (!id) return;
+document.addEventListener('advisor:removeCandidate', (event) => {
+  const id = event.detail?.id;
+  if (!id) {
+    return;
+  }
+  const entry = STOCK.get(id);
+  const label = entry?.species?.common_name || entry?.species?.id || id;
+  const scrollAnchor = captureStockScrollAnchor();
+  const order = Array.from(STOCK.keys());
+  const index = order.indexOf(id);
   STOCK.delete(id);
+  const focusId = index !== -1 ? order[index + 1] ?? order[index - 1] ?? null : null;
+  queueStockFeedback({
+    message: `Removed ${label}`,
+    focusId,
+    focusFallback: 'add',
+    scrollAnchor,
+    cardFlash: true,
+  });
+  renderStockList({ preserveScroll: true });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
   renderStockList();
 });
 
-document.addEventListener('DOMContentLoaded', renderStockList);
-
-function renderStockList() {
-  const root = document.querySelector('#stock-list');
+function renderStockList(options = {}) {
+  const root = document.getElementById('stock-list');
   if (!root) return;
+
+  const opts = typeof options === 'object' && options !== null ? options : {};
+  const feedback = pendingStockFeedback;
+  const preserveScroll = opts.preserveScroll ?? Boolean(feedback?.preserveScroll);
+  const anchor = preserveScroll ? feedback?.scrollAnchor ?? captureStockScrollAnchor() : null;
 
   if (STOCK.size === 0) {
     root.innerHTML = `<div class="stock-empty subtle">No stock yet. Add species to begin.</div>`;
+    bindStockListEvents(root);
+    if (preserveScroll && anchor) {
+      restoreScrollFromAnchor(root, anchor, feedback);
+    }
+    applyPendingStockFeedback(root);
     return;
   }
 
@@ -1405,44 +1605,192 @@ function renderStockList() {
   }
   root.innerHTML = rows.join('');
 
-  // Event delegation for +/- and remove
-  root.addEventListener('click', onRowClick, { once: true });
+  bindStockListEvents(root);
+  if (preserveScroll && anchor) {
+    restoreScrollFromAnchor(root, anchor, feedback);
+  }
+  applyPendingStockFeedback(root);
 }
 
-function onRowClick(e) {
-  const plus  = e.target.closest('[data-qty-plus]');
-  const minus = e.target.closest('[data-qty-minus]');
-  const rem   = e.target.closest('[data-remove-id]');
-  if (!plus && !minus && !rem) return;
+function bindStockListEvents(root) {
+  if (!root || root.__ttgStockBound) {
+    return;
+  }
+  root.addEventListener('click', onRowClick);
+  root.__ttgStockBound = true;
+}
 
-  if (plus) {
-    const id = plus.getAttribute('data-qty-plus');
-    const entry = STOCK.get(id);
-    if (!entry) return;
-    entry.qty = Math.min(999, entry.qty + 1);
-    STOCK.set(id, entry);
-    renderStockList();
-    syncStateFromStock();
+function restoreScrollFromAnchor(root, anchor, feedback) {
+  if (typeof window === 'undefined' || !anchor) {
+    return;
+  }
+  if (feedback && feedback.scrollRestored) {
+    return;
+  }
+  requestAnimationFrame(() => {
+    const rect = root.getBoundingClientRect();
+    const delta = rect.top - (anchor.top ?? rect.top);
+    if (Math.abs(delta) > 1) {
+      window.scrollTo({ top: anchor.scrollY + delta, behavior: 'auto' });
+      logA11y('scroll:restore', { delta });
+    }
+    if (feedback) {
+      feedback.scrollRestored = true;
+    }
+  });
+}
+
+function flashStockCard(feedback, now) {
+  const card = document.getElementById('stock-list-card');
+  if (!card) {
+    return;
+  }
+  card.classList.add('is-updated');
+  const remaining = Math.max(600, (feedback.duration || STOCK_FEEDBACK_DURATION) - (now - feedback.timestamp));
+  setTimeout(() => {
+    card.classList.remove('is-updated');
+  }, remaining);
+}
+
+function focusRemoveButton(id) {
+  if (!id) {
+    return false;
+  }
+  const selector = `#stock-list [data-remove-id="${escapeSelector(id)}"]`;
+  const button = document.querySelector(selector);
+  if (button && typeof button.focus === 'function') {
+    button.focus();
+    return true;
+  }
+  return false;
+}
+
+function applyPendingStockFeedback(root) {
+  if (!pendingStockFeedback) {
+    return;
+  }
+  const now = Date.now();
+  const feedback = pendingStockFeedback;
+  if (now - feedback.timestamp > (feedback.duration || STOCK_FEEDBACK_DURATION)) {
+    pendingStockFeedback = null;
     return;
   }
 
-  if (minus) {
-    const id = minus.getAttribute('data-qty-minus');
-    const entry = STOCK.get(id);
-    if (!entry) return;
-    entry.qty = Math.max(0, entry.qty - 1);
-    if (entry.qty === 0) STOCK.delete(id); else STOCK.set(id, entry);
-    renderStockList();
-    syncStateFromStock();
-    return;
+  if (feedback.highlightId) {
+    const selector = `[data-row-id="${escapeSelector(feedback.highlightId)}"]`;
+    const row = root.querySelector(selector);
+    if (row) {
+      row.classList.add('is-updated');
+      const remaining = Math.max(0, (feedback.duration || STOCK_FEEDBACK_DURATION) - (now - feedback.timestamp));
+      setTimeout(() => {
+        if (row.isConnected) {
+          row.classList.remove('is-updated');
+        }
+      }, remaining);
+    }
   }
 
-  if (rem) {
-    const id = rem.getAttribute('data-remove-id');
-    STOCK.delete(id);
-    renderStockList();
-    syncStateFromStock();
+  if (feedback.cardFlash) {
+    flashStockCard(feedback, now);
   }
+
+  if (!feedback.focusApplied) {
+    let focused = false;
+    if (feedback.focusSelector) {
+      const selector = `#stock-list ${feedback.focusSelector}`;
+      const node = document.querySelector(selector);
+      if (node && typeof node.focus === 'function') {
+        node.focus();
+        focused = true;
+      }
+    }
+    if (!focused && feedback.focusId) {
+      focused = focusRemoveButton(feedback.focusId);
+    }
+    if (!focused && feedback.focusFallback === 'add' && elAdd && typeof elAdd.focus === 'function') {
+      elAdd.focus();
+      focused = true;
+    }
+    if (focused || (!feedback.focusId && !feedback.focusFallback)) {
+      feedback.focusApplied = true;
+    }
+    if (feedback.focusSelector || feedback.focusId || feedback.focusFallback) {
+      logA11y('focus:restore', {
+        success: focused,
+        target: feedback.focusSelector || feedback.focusId || feedback.focusFallback || null,
+      });
+    }
+  }
+}
+
+function onRowClick(event) {
+  const target = event.target.closest('[data-qty-plus],[data-qty-minus],[data-remove-id]');
+  if (!target) {
+    return;
+  }
+  event.preventDefault();
+  event.stopPropagation();
+
+  const plusId = target.getAttribute('data-qty-plus');
+  const minusId = target.getAttribute('data-qty-minus');
+  const removeId = target.getAttribute('data-remove-id');
+  const scrollAnchor = captureStockScrollAnchor();
+
+  if (plusId) {
+    handleQtyMutation(plusId, 1, scrollAnchor, { focusSelector: `[data-qty-plus="${escapeSelector(plusId)}"]` });
+    return;
+  }
+  if (minusId) {
+    handleQtyMutation(minusId, -1, scrollAnchor, { focusSelector: `[data-qty-minus="${escapeSelector(minusId)}"]` });
+    return;
+  }
+  if (removeId) {
+    handleRemoveMutation(removeId, scrollAnchor);
+  }
+}
+
+function handleQtyMutation(id, delta, scrollAnchor, options = {}) {
+  const entry = STOCK.get(id);
+  if (!entry) {
+    return;
+  }
+  const label = entry.species?.common_name || entry.species?.id || id;
+  const nextQty = Math.max(0, Math.min(999, (entry.qty || 0) + delta));
+  if (nextQty === entry.qty) {
+    return;
+  }
+  if (nextQty <= 0) {
+    handleRemoveMutation(id, scrollAnchor, { label });
+    return;
+  }
+  entry.qty = nextQty;
+  STOCK.set(id, entry);
+  queueStockFeedback({
+    message: `${delta > 0 ? 'Increased' : 'Decreased'} ${label} to ${nextQty}`,
+    highlightId: id,
+    focusSelector: options.focusSelector || null,
+    scrollAnchor,
+  });
+  renderStockList({ preserveScroll: true });
+  syncStateFromStock();
+}
+
+function handleRemoveMutation(id, scrollAnchor, options = {}) {
+  const entry = STOCK.get(id);
+  const label = options.label || entry?.species?.common_name || entry?.species?.id || id;
+  const order = Array.from(STOCK.keys());
+  const index = order.indexOf(id);
+  STOCK.delete(id);
+  const focusId = index !== -1 ? order[index + 1] ?? order[index - 1] ?? null : null;
+  queueStockFeedback({
+    message: `Removed ${label}`,
+    focusId,
+    focusFallback: 'add',
+    scrollAnchor,
+    cardFlash: true,
+  });
+  renderStockList({ preserveScroll: true });
+  syncStateFromStock();
 }
 
 function stockRow(s, qty) {
@@ -1450,14 +1798,14 @@ function stockRow(s, qty) {
   const id   = esc(s.id);
   const qStr = `${qty}`;
   return `
-    <div class="stock-row" data-testid="species-row">
+    <div class="stock-row" data-testid="species-row" data-row-id="${id}">
       <div class="stock-row__name">${name}</div>
       <div class="stock-row__qtyctrl" role="group" aria-label="Quantity for ${name}">
-        <button class="qtybtn" data-qty-minus="${id}" aria-label="Decrease ${name}">–</button>
+        <button type="button" class="qtybtn" data-qty-minus="${id}" aria-label="Decrease ${name}">–</button>
         <div class="qtyval" aria-live="polite" aria-atomic="true">${qStr}</div>
-        <button class="qtybtn" data-qty-plus="${id}" aria-label="Increase ${name}">+</button>
+        <button type="button" class="qtybtn" data-qty-plus="${id}" aria-label="Increase ${name}">+</button>
       </div>
-      <button class="stock-row__remove" data-remove-id="${id}" aria-label="Remove ${name}" data-testid="btn-remove-species">Remove</button>
+      <button type="button" class="stock-row__remove" data-remove-id="${id}" aria-label="Remove ${name}" data-testid="btn-remove-species">Remove</button>
     </div>
   `;
 }
@@ -1790,6 +2138,8 @@ function renderAll() {
     syncQtyInputFromState();
     refreshFiltrationUI({ preserveSelection: true, reason: 'render' });
     syncGearLink();
+    lastBioloadPercent = null;
+    lastBioloadAnnouncedAt = Date.now();
     return;
   }
   computed = buildComputedState(state);
@@ -1804,6 +2154,47 @@ function renderAll() {
   syncQtyInputFromState();
   refreshFiltrationUI({ preserveSelection: true, reason: 'render' });
   syncGearLink();
+
+  const percentValue = computed?.bioload?.proposedPercent;
+  if (Number.isFinite(percentValue)) {
+    const normalized = Math.max(0, percentValue * 100);
+    const rounded = Math.round(normalized * 10) / 10;
+    const now = Date.now();
+    const hasActiveFeedback = pendingStockFeedback
+      && now - pendingStockFeedback.timestamp < (pendingStockFeedback.duration || STOCK_FEEDBACK_DURATION);
+    const message = `Recalculated bioload: ${rounded.toFixed(1)}% capacity.`;
+    if (!hasActiveFeedback && (lastBioloadPercent === null
+      || Math.abs(lastBioloadPercent - rounded) >= 0.1
+      || now - lastBioloadAnnouncedAt > 5000)) {
+      announceStatus(message);
+      lastBioloadPercent = rounded;
+      lastBioloadAnnouncedAt = now;
+      queuedBioloadMessage = null;
+      if (queuedBioloadTimer) {
+        clearTimeout(queuedBioloadTimer);
+        queuedBioloadTimer = null;
+      }
+    } else if (hasActiveFeedback) {
+      queuedBioloadMessage = { text: message, percent: rounded };
+      if (queuedBioloadTimer) {
+        clearTimeout(queuedBioloadTimer);
+      }
+      const duration = (pendingStockFeedback?.duration || STOCK_FEEDBACK_DURATION);
+      const elapsed = pendingStockFeedback ? now - pendingStockFeedback.timestamp : 0;
+      const delay = Math.max(200, duration - elapsed + 80);
+      queuedBioloadTimer = setTimeout(() => {
+        queuedBioloadTimer = null;
+        const stillActive = pendingStockFeedback
+          && Date.now() - pendingStockFeedback.timestamp < (pendingStockFeedback.duration || STOCK_FEEDBACK_DURATION);
+        if (!stillActive && queuedBioloadMessage) {
+          announceStatus(queuedBioloadMessage.text);
+          lastBioloadPercent = queuedBioloadMessage.percent;
+          lastBioloadAnnouncedAt = Date.now();
+          queuedBioloadMessage = null;
+        }
+      }, delay);
+    }
+  }
 }
 
 function renderEnvironmentPanels() {
@@ -1821,16 +2212,26 @@ function renderEnvironmentPanels() {
 }
 
 function runRecompute({ skipInputSync = false } = {}) {
-  if (!skipInputSync) {
-    syncStateFromInputs();
+  try {
+    if (!skipInputSync) {
+      syncStateFromInputs();
+    }
+    pruneMarineEntries();
+    renderAll();
+  } finally {
+    busyIndicator.clear();
   }
-  pruneMarineEntries();
-  renderAll();
 }
 
-const scheduleUpdate = debounce(() => {
-  runRecompute();
-});
+const scheduleUpdate = (() => {
+  const debounced = debounce(() => {
+    runRecompute();
+  }, 160);
+  return () => {
+    busyIndicator.request();
+    debounced();
+  };
+})();
 
 initializeFilterCatalog();
 
