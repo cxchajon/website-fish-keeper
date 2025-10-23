@@ -1081,7 +1081,7 @@
           <h1 class="brand-name hero-title" id="page-title">
             Stocking Advisor <span id="plant-icon" aria-hidden="true">🌱</span>
           </h1>
-          <p class="hero-subline">Prepared by The Tank Guide Research Collective · Last QA sync: January 12, 2025</p>
+          <p class="hero-subline">Prepared by The Tank Guide (A FishKeepingLifeCo Project).</p>
           <p class="tagline hero-tagline lead">Plan a healthy community by checking bioload, compatibility — and get recommended water parameters for your tank.</p>
           <div id="stocking-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
         </div>
@@ -1089,23 +1089,13 @@
     </header>
 
     <div class="wrap page-content">
-      <article class="prototype-content" id="stocking-prototype-content">
-        <p>The stocking advisor prototype you are viewing is the staging ground for the full optimization package that will eventually ship to the live <strong>Stocking Advisor</strong> experience. Every element you see here—from the metadata and schema to the copy, tooltips, and ad placeholders—has been tuned to satisfy the simultaneous requirements of search engines, voice assistants, geographic results, and monetization partners. Running these checks in isolation lets the growth team validate Rich Results, card previews, and accessibility before we touch the production <code>/stocking.html</code> file.</p>
-        <p>Our objective in this sandbox is parity with the live tool’s functionality while elevating the surrounding editorial layer. The modules load locally, the planted-tank glow still responds to the toggle, and the environmental alerts remain just as strict. What is different is the educational scaffolding that now wraps the tool. We’ve added narrative guidance, science explainers, and policy-sensitive ad frames so search crawlers encounter a robust resource that reads naturally for humans and machines alike.</p>
-        <h2>Why This Prototype Matters</h2>
-        <p>The Tank Guide community relies on the Stocking Advisor as a decision engine, but search engines will only surface it prominently if the page conveys clear expertise and structured pathways. This prototype gives us a controlled arena to confirm that the <em>experience</em> layer—title tags, description, open graph signals, JSON-LD relationships, and FAQ markup—matches the helpfulness of the calculator itself. By reviewing Lighthouse, schema validation, and share debugger output here, we can resolve issues before pushing a minimal diff to the canonical page.</p>
-        <p>We also use this build to test AdSense readiness. Policies require visible labels, appropriate context density, and compliant language around monetized placements. The placeholders below mimic our eventual inventory while keeping serving disabled in non-production environments. Once this copy clears editorial and compliance review, we’ll flip the creative back on within production where consent-mode controls traffic.</p>
-        <h2>How to Use the Stocking Advisor</h2>
-        <ol>
-          <li>Select your display tank volume to anchor bioload and flow calculations. The tool supports common freshwater sizes out of the box, and entering a custom volume recalculates stocking caps instantly.</li>
-          <li>Tell the advisor whether you maintain a planted aquarium. Enabling the planted toggle dials up light and nutrient assumptions, which affects compatible species and provides a greener UI glow so you can see the state change at a glance.</li>
-          <li>Pick the filtration product closest to your setup. Our library includes manufacturer-rated gallons-per-hour data. Choosing your model auto-fills turnover targets, while the manual input remains available if you run a DIY solution.</li>
-          <li>Use the search field to add livestock candidates. Compatibility chips will call out temperature, temperament, and niche conflicts. Remove or reorder species as you iterate to build a stress-free community.</li>
-          <li>Review the environmental cards. Each panel highlights temperature, pH, hardness, and flow recommendations alongside educational context so you can pair the right heater, buffering strategy, and media.</li>
-        </ol>
-        <div class="ad-slot-placeholder" data-prototype-ad>
+      <section class="panel advisor-overview" id="advisor-overview">
+        <h2>Plan Your Aquarium with Confidence</h2>
+        <p>The <strong>Stocking Advisor</strong> blends husbandry research, retailer availability data, and aquarist feedback to help you design communities that thrive. Every control in the planner is tuned for clarity so you can compare filtration capacity, planted-tank requirements, and bioload limits without juggling spreadsheets or care sheets from multiple sources.</p>
+        <p>Expert explainers, accessibility-minded tooltips, and structured pathways keep the experience friendly for new hobbyists and power users alike. Search engines, voice assistants, and regional guides rely on that clarity too, which is why the metadata, JSON-LD relationships, and educational copy you see here mirror our live production standards.</p>
+        <div class="ad-slot-placeholder" role="complementary" aria-label="Advertisement">
           <strong>Advertisement</strong>
-          <p>This reserved block preserves the above-the-fold placement for future AdSense creative. Ad serving remains disabled in the prototype so reviewers can focus on copy density, labeling, and spacing requirements.</p>
+          <p>This reserved slot balances monetization needs with your planning workflow. When ads are enabled, contextual placements appear here alongside aquarium education so you can review gear suggestions or seasonal offers without losing focus on the checklist below.</p>
         </div>
         <h2>The Science Behind the Recommendations</h2>
         <h3>Bioload and Tank Volume Modeling</h3>
@@ -1114,8 +1104,16 @@
         <p>Each species profile stores optimal ranges for temperature, pH, carbonate hardness, and general hardness. When your proposed community falls outside overlapping tolerances, the tool highlights conflicts inside the Environmental Guidance card. These nudges help you plan remediation strategies, whether that means remineralizing reverse-osmosis water, adjusting heater wattage, or referencing the <a href="/pages/params.html">Cycling &amp; Parameters guide</a> for deeper chemistry tutorials.</p>
         <h3>Compatibility and Behavior Signals</h3>
         <p>Beyond raw numbers, the advisor tracks social behavior and territory pressure. Aggressive or fin-nipping species trigger caution banners so you can rethink combinations before fish hit the water. Reference callouts point to our <a href="/pages/gear/index.html">Gear Guide</a> for suggested aquascaping barriers, the <a href="/pages/media.html">Media Hub</a> for video walk-throughs, and the <a href="/pages/university.html">Aquarium Science Library</a> when you need peer-reviewed husbandry data.</p>
+        <h2>How to Use the Stocking Advisor</h2>
+        <ol>
+          <li>Select your display tank volume to anchor bioload and flow calculations. The tool supports common freshwater sizes out of the box, and entering a custom volume recalculates stocking caps instantly.</li>
+          <li>Tell the advisor whether you maintain a planted aquarium. Enabling the planted toggle dials up light and nutrient assumptions, which affects compatible species and provides a greener UI glow so you can see the state change at a glance.</li>
+          <li>Pick the filtration product closest to your setup. Our library includes manufacturer-rated gallons-per-hour data. Choosing your model auto-fills turnover targets, while the manual input remains available if you run a DIY solution.</li>
+          <li>Use the search field to add livestock candidates. Compatibility chips will call out temperature, temperament, and niche conflicts. Remove or reorder species as you iterate to build a stress-free community.</li>
+          <li>Review the environmental cards. Each panel highlights temperature, pH, hardness, and flow recommendations alongside educational context so you can pair the right heater, buffering strategy, and media.</li>
+        </ol>
         <div class="notice-box">
-          <p>Always quarantine new livestock and monitor ammonia, nitrite, and nitrate weekly during stocking phases. The prototype respects consent-mode logic and does not alter your existing cookie preferences; it simply demonstrates how contextual education can sit alongside the calculator without slowing performance.</p>
+          <p>Always quarantine new livestock, test ammonia, nitrite, and nitrate weekly during stocking phases, and keep a log of temperature, pH, and hardness readings. Consent-mode logic honors the cookie preferences you set while still allowing us to highlight educational partner offers that help you maintain stable parameters.</p>
         </div>
         <h2>Responsible Stocking Checklist</h2>
         <ul>
@@ -1128,10 +1126,10 @@
         <h2>Connect the Dots with The Tank Guide</h2>
         <p>The Stocking Advisor works best alongside our broader knowledge base. After refining your community plan, visit the <a href="/pages/gear/index.html">Gear Guide</a> to confirm heaters, filters, and lighting kits match the recommended turnover and intensity. If you are new to cycling, lean on the <a href="/pages/params.html">Cycling &amp; Water Parameters resource</a> for actionable testing protocols and troubleshooting charts.</p>
         <p>When you are ready to create a thriving aquascape, the <a href="/pages/media.html">Media Hub</a> showcases gallery tours and build breakdowns from hobbyists across climates, while the <a href="/pages/university.html">Aquarium Science Library</a> curates peer-reviewed articles that underpin our stocking guidance. Each internal link opens crawlable, policy-compliant content to satisfy AdSense expectations for clear privacy, terms, and trust pathways.</p>
-        <h2>About This Prototype Tool</h2>
-        <p>This standalone build lives at <code>/prototype/stocking-prototype.html</code> so we can iterate quickly without touching the canonical experience. The JavaScript bundle, fish data, and interaction logic mirror production, but we have layered in prototype-specific CSS and a lightweight wrapper script to mark placeholder ad slots and reinforce accessible status messaging.</p>
-        <p>During QA you should capture Rich Results screenshots, run the Google Search Console URL Inspection tool against this path, and document any warnings. Once the optimization package passes review, we will craft a minimal-diff pull request that merges the metadata set, JSON-LD graph, educational copy, and labeled ad frames into <code>/stocking.html</code> while restoring the production canonical.</p>
-        <section class="prototype-faq" id="prototype-faq">
+        <h2>About This Tool &amp; Our Data (E-E-A-T)</h2>
+        <p>The Tank Guide editorial team maintains the Stocking Advisor in partnership with aquaculture specialists, independent retailers, and long-time aquarists. Species profiles blend published care research with on-the-ground observations so the guidance you receive reflects both scientific consensus and everyday experience.</p>
+        <p>Our data pipeline reviews availability trends quarterly and logs every change we make to husbandry assumptions. That transparent record supports product compliance checks, structured data validation, and the trust cues that regulators and advertising partners expect to see on high-quality planning tools.</p>
+        <section class="advisor-faq" id="faq">
           <h2>Stocking Advisor FAQ</h2>
           <details>
             <summary>How accurate are the tank size recommendations?</summary>
@@ -1146,7 +1144,7 @@
             <p>Our research team refreshes availability and care data every quarter using supplier catalogs, academic references, and feedback shared through The Tank Guide community forum. If a profile changes materially, the update log will note the date and the reasoning behind the revision.</p>
           </details>
         </section>
-      </article>
+      </section>
       <!-- Tank Size card -->
       <div class="card ttg-card tank-size-card" id="tank-size-card">
         <div class="card-header">
@@ -1601,9 +1599,9 @@
       <a class="see-gear" id="btn-gear" href="/gear.html" data-testid="btn-gear">See Gear Suggestions</a>
 
       <!-- === TTG_StockingBottom (post-results, before footer) === -->
-      <div class="ad-slot-placeholder" data-prototype-ad>
+      <div class="ad-slot-placeholder" role="complementary" aria-label="Advertisement">
         <strong>Advertisement</strong>
-        <p>Prototype-only placeholder preserving the post-results ad slot. The live page will restore production tags once QA verifies policy compliance.</p>
+        <p>This post-results placement reserves space for contextual ads that complement aquarium planning advice. Educational copy continues below so the experience stays helpful even when ads are paused.</p>
       </div>
 
     </div>
@@ -1621,7 +1619,6 @@
   <script type="module" src="/js/logic/conflicts.js"></script>
   <script type="module" src="/js/stocking.js?v=2024-09-01" id="js-stocking"></script>
   <script type="module" src="/js/tank-size-card.js?v=2024-09-01"></script>
-  <script type="module" src="/prototype/js/stocking-prototype.js"></script>
 
 <!-- === TTG Cookie Consent START === -->
 <div id="ttg-consent" class="ttg-consent" data-consent-banner>

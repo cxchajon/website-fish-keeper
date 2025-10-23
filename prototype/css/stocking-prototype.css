@@ -24,27 +24,25 @@ main.stocking-page {
   padding-bottom: 96px;
 }
 
-.prototype-content {
-  background: rgba(8, 12, 28, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
-  box-shadow: 0 24px 72px -32px rgba(8, 16, 32, 0.45);
-  padding: 32px;
+.advisor-overview {
   margin: 24px 0 48px;
+  display: grid;
+  gap: 16px;
 }
 
-.prototype-content h2,
-.prototype-content h3 {
+.advisor-overview h2,
+.advisor-overview h3 {
   color: #f6f9ff;
+  margin-top: 0;
 }
 
-.prototype-content p,
-.prototype-content li {
+.advisor-overview p,
+.advisor-overview li {
   color: rgba(238, 243, 255, 0.85);
   line-height: 1.7;
 }
 
-.prototype-content a {
+.advisor-overview a {
   color: #88c7ff;
   font-weight: 600;
   text-decoration-thickness: 2px;
@@ -68,7 +66,7 @@ main.stocking-page {
   color: rgba(255, 255, 255, 0.76);
 }
 
-.prototype-faq details {
+.advisor-faq details {
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 12px;
   background: rgba(10, 18, 36, 0.6);
@@ -76,18 +74,18 @@ main.stocking-page {
   margin-bottom: 14px;
 }
 
-.prototype-faq summary {
+.advisor-faq summary {
   font-weight: 600;
   font-size: 1.02rem;
   cursor: pointer;
 }
 
-.prototype-faq summary:focus-visible {
+.advisor-faq summary:focus-visible {
   outline: 2px solid #5bbcff;
   outline-offset: 4px;
 }
 
-.prototype-faq p {
+.advisor-faq p {
   margin: 12px 0 0;
 }
 
@@ -100,7 +98,7 @@ main.stocking-page {
 }
 
 @media (max-width: 720px) {
-  .prototype-content {
+  .advisor-overview {
     padding: 24px;
   }
 
