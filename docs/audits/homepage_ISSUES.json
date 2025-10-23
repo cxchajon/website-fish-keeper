@@ -1,0 +1,11 @@
+{
+  "_meta": "Generated 2025-10-23T20:14:32Z UTC | commit ce9e70c7fe7de3f2f475c8a4cf7179be1c74ca37 | source homepage (index.html)",
+  "issues": [
+    {
+      "id": "HERO_GRADIENT_HEAVY",
+      "severity": "warn",
+      "where": "style",
+      "details": "Hero background uses large gradients that may impact LCP"
+    }
+  ]
+}

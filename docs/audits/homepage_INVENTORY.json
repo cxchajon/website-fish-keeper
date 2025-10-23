@@ -1,0 +1,286 @@
+{
+  "_meta": "Generated 2025-10-23T20:14:32Z UTC | commit ce9e70c7fe7de3f2f475c8a4cf7179be1c74ca37 | source homepage (index.html)",
+  "data": {
+    "meta": {
+      "robots": "index,follow",
+      "title": "Fishkeeping Guides & Tools \u2014 The Tank Guide (43)",
+      "description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums. (152)",
+      "canonical": "https://thetankguide.com/",
+      "viewport": "width=device-width, initial-scale=1",
+      "og": {
+        "og:type": "website",
+        "og:site_name": "The Tank Guide",
+        "og:title": "Fishkeeping Guides & Tools \u2014 The Tank Guide",
+        "og:description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
+        "og:url": "https://thetankguide.com/",
+        "og:image": "https://thetankguide.com/assets/og/default.png",
+        "og:image:alt": "The Tank Guide logo over an illustrated aquarium background"
+      },
+      "twitter": {
+        "twitter:card": "summary_large_image",
+        "twitter:site": "@fishkeepinglife",
+        "twitter:title": "Fishkeeping Guides & Tools \u2014 The Tank Guide",
+        "twitter:description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
+        "twitter:image": "https://thetankguide.com/assets/og/default.png",
+        "twitter:image:alt": "The Tank Guide logo over an illustrated aquarium background"
+      }
+    },
+    "structured_data": [
+      {
+        "type": "Organization",
+        "valid_json": true,
+        "errors": []
+      }
+    ],
+    "links": {
+      "internal": [
+        {
+          "href": "https://thetankguide.com/stocking.html",
+          "anchor": "Plan My Stocking List",
+          "rel": "",
+          "target": ""
+        },
+        {
+          "href": "https://thetankguide.com/gear/",
+          "anchor": "Browse the Gear Guide",
+          "rel": "",
+          "target": ""
+        },
+        {
+          "href": "https://thetankguide.com/params.html",
+          "anchor": "Start the Cycling Coach",
+          "rel": "",
+          "target": ""
+        },
+        {
+          "href": "https://thetankguide.com/media.html",
+          "anchor": "Explore the Media Hub",
+          "rel": "",
+          "target": ""
+        },
+        {
+          "href": "https://thetankguide.com/about.html",
+          "anchor": "Learn more",
+          "rel": "",
+          "target": ""
+        },
+        {
+          "href": "https://thetankguide.com/contact-feedback.html",
+          "anchor": "Contact & Feedback",
+          "rel": "",
+          "target": ""
+        },
+        {
+          "href": "https://thetankguide.com/privacy-legal.html",
+          "anchor": "Privacy Policy",
+          "rel": "",
+          "target": ""
+        },
+        {
+          "href": "https://thetankguide.com/terms.html",
+          "anchor": "Terms",
+          "rel": "",
+          "target": ""
+        }
+      ],
+      "external": [],
+      "policy_presence": {
+        "privacy": {
+          "found": true,
+          "href": "https://thetankguide.com/privacy-legal.html",
+          "in_static_html": true
+        },
+        "terms": {
+          "found": true,
+          "href": "https://thetankguide.com/terms.html",
+          "in_static_html": true
+        },
+        "contact": {
+          "found": true,
+          "href": "https://thetankguide.com/contact-feedback.html",
+          "in_static_html": true
+        }
+      }
+    },
+    "headings": [
+      {
+        "level": "H1",
+        "text": "Fishkeeping Guides & Tools \u2014 The Tank Guide"
+      },
+      {
+        "level": "H2",
+        "text": "Stocking Advisor"
+      },
+      {
+        "level": "H2",
+        "text": "Gear"
+      },
+      {
+        "level": "H2",
+        "text": "Cycling Coach"
+      },
+      {
+        "level": "H2",
+        "text": "Media"
+      },
+      {
+        "level": "H2",
+        "text": "About"
+      },
+      {
+        "level": "H2",
+        "text": "Contact"
+      },
+      {
+        "level": "H2",
+        "text": "Aquarium Science, Simplified for Everyone"
+      },
+      {
+        "level": "H2",
+        "text": "Master the Foundation: Understanding the Nitrogen Cycle"
+      },
+      {
+        "level": "H2",
+        "text": "Build a Balanced Community with Our Stocking Advisor"
+      },
+      {
+        "level": "H2",
+        "text": "Learn with Us: From Our Tank to Yours"
+      },
+      {
+        "level": "H2",
+        "text": "How The Tank Guide Works"
+      },
+      {
+        "level": "H2",
+        "text": "About The Tank Guide"
+      },
+      {
+        "level": "H3",
+        "text": "Cookies & Advertising"
+      },
+      {
+        "level": "H3",
+        "text": "Cookie Preferences"
+      }
+    ],
+    "images": [],
+    "scripts": [
+      {
+        "src": "https://thetankguide.com/js/nav.js?v=1.1.0",
+        "async": false,
+        "defer": true,
+        "module": false
+      },
+      {
+        "src": null,
+        "async": false,
+        "defer": false,
+        "module": false
+      },
+      {
+        "src": "https://thetankguide.com/assets/js/consent-mode.js",
+        "async": false,
+        "defer": true,
+        "module": false
+      },
+      {
+        "src": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880",
+        "async": true,
+        "defer": false,
+        "module": false
+      },
+      {
+        "src": "https://static.cloudflareinsights.com/beacon.min.js",
+        "async": false,
+        "defer": true,
+        "module": false
+      },
+      {
+        "src": "https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1",
+        "async": true,
+        "defer": false,
+        "module": false
+      },
+      {
+        "src": null,
+        "async": false,
+        "defer": false,
+        "module": false
+      },
+      {
+        "src": null,
+        "async": false,
+        "defer": false,
+        "module": false
+      },
+      {
+        "src": null,
+        "async": false,
+        "defer": false,
+        "module": false
+      },
+      {
+        "src": "https://thetankguide.com/assets/js/consent-banner.js",
+        "async": false,
+        "defer": true,
+        "module": false
+      },
+      {
+        "src": null,
+        "async": false,
+        "defer": false,
+        "module": false
+      },
+      {
+        "src": "https://thetankguide.com/js/footer-loader.js?v=1.4.7",
+        "async": false,
+        "defer": true,
+        "module": false
+      }
+    ],
+    "stylesheets": [
+      {
+        "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap",
+        "inline_bytes": 0,
+        "media": null
+      },
+      {
+        "href": "https://thetankguide.com/css/style.css?v=live-hero-1",
+        "inline_bytes": 0,
+        "media": null
+      },
+      {
+        "href": "https://thetankguide.com/css/prototype-home.css?v=live-hero-1",
+        "inline_bytes": 0,
+        "media": null
+      },
+      {
+        "href": null,
+        "inline_bytes": 11987,
+        "media": null
+      },
+      {
+        "href": null,
+        "inline_bytes": 981,
+        "media": null
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Inter",
+        "source": "google",
+        "font-display": "swap"
+      }
+    ],
+    "performance_hints": {
+      "hero_has_large_gradients": true,
+      "uses_blur_or_heavy_shadows": true,
+      "cls_placeholders_for_async_nav_footer": true,
+      "cache_headers": {
+        "cache-control": null,
+        "expires": null
+      }
+    }
+  }
+}
