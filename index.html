@@ -821,6 +821,25 @@
     const page = document.querySelector('.page--prototype-home, .page--home');
     if (!page) return;
 
+    const liveHomeContainer = document.querySelector('.page--home');
+    if (liveHomeContainer) {
+      const legacyWrappers = Array.from(
+        document.querySelectorAll('#old-hero-guard, .hero-container')
+      ).filter((element) => !liveHomeContainer.contains(element));
+
+      legacyWrappers.forEach((element) => {
+        element.remove();
+      });
+
+      const strayHeroes = Array.from(document.querySelectorAll('.hero')).filter(
+        (hero) => !liveHomeContainer.contains(hero)
+      );
+
+      strayHeroes.forEach((hero) => {
+        hero.remove();
+      });
+    }
+
     const openButton = page.querySelector('#how-it-works-button');
     const overlay = page.querySelector('[data-how-it-works-overlay]');
     const modal = overlay ? overlay.querySelector('.how-it-works-modal') : null;
