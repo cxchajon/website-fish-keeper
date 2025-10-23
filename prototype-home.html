@@ -18,22 +18,37 @@
   <style id="prototype-hero-enhanced">
     /* Scoped only to prototype page */
     .page--prototype-home .hero-copy {
+      display: grid;
+      gap: clamp(12px, 2vw, 18px);
       text-align: left;
-      margin-bottom: 1.2rem;
+      margin: 0;
+      max-width: min(52rem, 92vw);
     }
 
     .page--prototype-home .hero-copy .hero-title {
-      font-size: clamp(1.8rem, 4vw, 2.4rem);
-      line-height: 1.2;
-      font-weight: 700;
-      margin-bottom: 0.6rem;
+      font-size: clamp(2.25rem, 6vw, 3.4rem);
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      margin: 0;
+      text-wrap: balance;
     }
 
     .page--prototype-home .hero-copy .hero-subtext {
-      font-size: clamp(1rem, 2.6vw, 1.25rem);
-      line-height: 1.4;
+      font-size: clamp(1.125rem, 2.8vw, 1.5rem);
+      line-height: 1.5;
       margin: 0;
-      text-align: left;
+      color: rgba(255, 255, 255, 0.96);
+      max-width: 42rem;
+      text-wrap: balance;
+    }
+
+    .page--prototype-home .hero-copy .hero-lede {
+      font-size: clamp(1rem, 2.4vw, 1.25rem);
+      line-height: 1.6;
+      margin: 0;
+      max-width: 38rem;
+      color: rgba(255, 255, 255, 0.88);
     }
   </style>
 </head>
@@ -47,53 +62,55 @@
       <section class="hero hero--prototype">
         <div class="wrap">
           <div class="hero-copy">
-            <h1 class="hero-title"><strong>Fishkeeping Guides &amp; Tools — The Tank Guide</strong></h1>
+            <h1 class="hero-title">Fishkeeping Guides &amp; Tools — The Tank Guide</h1>
             <p class="hero-subtext">
               Smart fishkeeping guides, planning tools, and step-by-step checklists to set up,
               stock, and care for your aquarium.
             </p>
+            <p class="hero-lede">
+              Plan faster with research-backed calculators, curated gear picks, and on-call coaching for every stage of your tank.
+            </p>
           </div>
-          <p class="lede">Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.</p>
-          <p class="how"><a href="/how-it-works.html">How it works</a></p>
+          <p class="how"><a href="#how-it-works">How it works</a></p>
         </div>
       </section>
 
       <!-- CARDS -->
-      <div class="tools">
+      <div class="tools" id="how-it-works">
         <section class="card tool-card">
           <h2>Stocking Advisor</h2>
           <p>Smart stocking made simple — plan a thriving community with confidence.</p>
-          <a class="btn-glossy" href="/stocking.html"><span>Launch</span></a>
+          <a class="btn-glossy" href="/stocking.html" aria-label="Launch the Stocking Advisor tool"><span>Launch</span></a>
         </section>
 
         <section class="card tool-card">
           <h2>Gear</h2>
           <p>The gear you need, matched to your tank and goals.</p>
-          <a class="btn-glossy" href="/gear/"><span>Launch</span></a>
+          <a class="btn-glossy" href="/gear/" aria-label="Open curated aquarium gear recommendations"><span>Launch</span></a>
         </section>
 
         <section class="card tool-card">
           <h2>Cycling Coach</h2>
           <p>Master the nitrogen cycle with step-by-step guidance.</p>
-          <a class="btn-glossy" href="/params.html"><span>Launch</span></a>
+          <a class="btn-glossy" href="/params.html" aria-label="Launch the Cycling Coach tool"><span>Launch</span></a>
         </section>
 
         <section class="card tool-card">
           <h2>Media</h2>
           <p>Watch • Read • Explore — videos and blogs for every aquarist.</p>
-          <a class="btn-glossy" href="/media.html"><span>Discover</span></a>
+          <a class="btn-glossy" href="/media.html" aria-label="Discover videos, blogs, and research logs"><span>Discover</span></a>
         </section>
 
         <section class="card tool-card">
           <h2>About</h2>
           <p>Learn who we are, our approach to guides and tools, and what’s next for The Tank Guide.</p>
-          <a class="btn-glossy" href="/about.html"><span>Learn more</span></a>
+          <a class="btn-glossy" href="/about.html" aria-label="Learn more about The Tank Guide"><span>Learn more</span></a>
         </section>
 
         <section class="card tool-card">
           <h2>Contact</h2>
           <p>Questions, ideas, or spot a logic issue? Reach out with feedback, recommend fish or gear to review, or share your insights.</p>
-          <a class="btn-glossy" href="/contact-feedback.html"><span>Contact &amp; Feedback</span></a>
+          <a class="btn-glossy" href="/contact-feedback.html" aria-label="Contact The Tank Guide team and share feedback"><span>Contact &amp; Feedback</span></a>
         </section>
       </div>
 
@@ -124,58 +141,145 @@
   </main>
 
   <style>
+  .page--prototype-home .proto-home > .wrap {
+    display: grid;
+    gap: clamp(48px, 7vw, 88px);
+  }
+
+  .page--prototype-home .hero--prototype {
+    padding-block: clamp(64px, 10vw, 120px);
+  }
+
   .page--prototype-home .hero--prototype .wrap {
-    max-width: 58rem;               /* live hero text width */
+    max-width: 62rem;
     margin-inline: auto;
+    display: grid;
+    gap: clamp(24px, 4vw, 36px);
   }
 
-  .page--prototype-home .hero--prototype .eyebrow {
-    font-weight: 600;
-    font-size: clamp(14px, 2.9vw, 16px);
-    letter-spacing: 0.06em;
-    line-height: 1.2;
+  .page--prototype-home .hero--prototype .how {
     margin: 0;
-    opacity: .92;
   }
 
-  /* H1: mirror live scale (≈28–40px) with tight leading */
-  .page--prototype-home .hero--prototype .h1,
-  .page--prototype-home .hero--prototype .hero-copy h1 {
-    font-weight: 800;
-    font-size: clamp(28px, 5.8vw, 40px);
-    line-height: 1.14;              /* tighter like live */
-    letter-spacing: -0.012em;
-    margin: 0;
-    max-width: 46rem;               /* control rag length to match live */
-  }
-
-  /* Subcopy/lede under the H1 */
-  .page--prototype-home .hero--prototype .lede {
-    font-size: clamp(16px, 3.7vw, 19px);
-    line-height: 1.34;
-    margin: 0;
-    max-width: 44rem;
-    opacity: .98;
-  }
-
-  /* “How it works” link spacing matches live’s tight lockup */
   .page--prototype-home .hero--prototype .how a {
-    display: inline-block;
-    text-underline-offset: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
   }
 
-  /* tighten internal hero text rhythm (spacing handled globally) */
-  .page--prototype-home .hero--prototype .eyebrow{ margin-bottom: clamp(4px, .6vw, 8px); }
-  .page--prototype-home .hero--prototype .h1,
-  .page--prototype-home .hero--prototype .hero-copy h1 {      margin-bottom: clamp(8px, 1vw, 12px); }
-  .page--prototype-home .hero--prototype .lede{    margin-bottom: clamp(6px, .8vw, 10px); }
-  .page--prototype-home .hero--prototype .how{     margin-top: clamp(0px, .3vw, 4px); }
+  .page--prototype-home .tools {
+    display: grid;
+    gap: clamp(24px, 4vw, 32px);
+    max-width: 1100px;
+    margin-inline: auto;
+    scroll-margin-top: clamp(80px, 12vw, 140px);
+  }
 
-  /* Small-screen tighten a touch more */
-  @media (max-width: 380px) {
-    .page--prototype-home .hero--prototype .h1,
-    .page--prototype-home .hero--prototype .hero-copy h1   { line-height: 1.12; }
-    .page--prototype-home .hero--prototype .lede { line-height: 1.36; }
+  @media (min-width: 640px) {
+    .page--prototype-home .tools {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .page--prototype-home .tools {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .page--prototype-home .tool-card {
+    display: grid;
+    gap: clamp(16px, 2.2vw, 24px);
+    padding: clamp(24px, 4vw, 36px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .page--prototype-home .tool-card h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 2.2vw, 1.875rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .page--prototype-home .tool-card p {
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .page--prototype-home .tool-card:hover,
+  .page--prototype-home .tool-card:focus-within {
+    transform: translateY(-4px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.24),
+      0 18px 28px rgba(0, 0, 0, 0.24),
+      0 36px 54px rgba(0, 0, 0, 0.28);
+  }
+
+  .page--prototype-home .btn-glossy {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .page--prototype-home .btn-glossy:hover {
+    transform: translateY(-1px);
+  }
+
+  .page--prototype-home .btn-glossy:focus-visible,
+  .page--prototype-home .how a:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.85);
+    outline-offset: 4px;
+  }
+
+  .page--prototype-home .proto-section {
+    max-width: min(62rem, 92vw);
+    margin-inline: auto;
+    display: grid;
+    gap: clamp(16px, 3vw, 24px);
+  }
+
+  .page--prototype-home .proto-section h2 {
+    margin: 0;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    line-height: 1.25;
+  }
+
+  .page--prototype-home .proto-section p {
+    margin: 0;
+    line-height: 1.7;
+  }
+
+  .page--prototype-home .deep-blurb {
+    padding: clamp(32px, 6vw, 64px) clamp(20px, 4vw, 64px);
+  }
+
+  .page--prototype-home .deep-blurb__copy {
+    max-width: 46rem;
+    margin: 0 auto;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  @media (max-width: 480px) {
+    .page--prototype-home .hero-copy .hero-title {
+      font-size: clamp(2rem, 9vw, 2.8rem);
+    }
+
+    .page--prototype-home .hero-copy .hero-subtext,
+    .page--prototype-home .hero-copy .hero-lede {
+      font-size: clamp(1.05rem, 4vw, 1.25rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page--prototype-home .tool-card,
+    .page--prototype-home .btn-glossy {
+      transition: none;
+      transform: none !important;
+    }
   }
   </style>
 
