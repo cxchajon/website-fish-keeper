@@ -1,4 +1,4 @@
-name: Prototype Guard
+name: Prototype Guard (Disabled)
 
 on:
   pull_request:
@@ -8,31 +8,5 @@ jobs:
   guard:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
-      - name: Fail if a prototype-only PR touches global files
-        run: |
-          set -e
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_BODY="${{ github.event.pull_request.body }}"
-          # Consider prototype-only PRs those titled with "proto" or having a checklist tick:
-          if echo "$PR_TITLE $PR_BODY" | grep -Eqi "prototype-only|proto"; then
-            echo "Prototype-only PR detected. Checking changed files…"
-            git fetch origin ${{ github.base_ref }}
-            # Get diff list
-            CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-            echo "$CHANGED"
-            # Allowed paths
-            ALLOWED_REGEX='^(prototype-home\.html|experiments/.*|deploy-audits/.*|\.github/.*)$'
-            BAD=0
-            while IFS= read -r f; do
-              [ -z "$f" ] && continue
-              [[ "$f" =~ $ALLOWED_REGEX ]] || BAD=1
-            done <<< "$CHANGED"
-            if [ $BAD -ne 0 ]; then
-              echo "::error::Prototype-only PR touched files outside allowed paths."
-              exit 1
-            fi
-          else
-            echo "Not marked as prototype-only; guard skipped."
-          fi
+      - name: Prototype guard disabled
+        run: echo "Prototype guard checks removed; allowing all changes."

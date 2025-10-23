@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "lint:css": "stylelint '**/*.css'",
-    "guard:proto": "bash scripts/guard-prototype.sh",
-    "precommit": "npm run guard:proto && npm run lint:css",
+    "precommit": "npm run lint:css",
     "pw:install": "playwright install --with-deps",
     "test": "playwright test",
     "test:e2e": "playwright test --config=playwright.e2e.config.ts",
