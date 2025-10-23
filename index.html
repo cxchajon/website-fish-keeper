@@ -546,102 +546,136 @@
   </style>
   <script defer src="js/nav.js?v=1.1.0"></script>
   <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": "https://thetankguide.com/#organization",
-  "name": "FishKeepingLifeCo",
-  "alternateName": "The Tank Guide",
-  "url": "https://thetankguide.com",
-  "logo": "https://thetankguide.com/logo.png",
-  "image": "https://thetankguide.com/logo.png",
-  "slogan": "Educational Aquarium Books &amp; Tools",
-  "description": "FishKeepingLifeCo publishes educational aquarium books and interactive online tools like The Tank Guide to help new aquarists and hobbyists set up, stock, and maintain thriving aquariums.",
-  "address": {
-    "@type": "PostalAddress",
-    "addressCountry": "US",
-    "addressRegion": "NY"
-  },
-  "brand": {
-    "@type": "Brand",
-    "name": "The Tank Guide"
-  },
-  "parentOrganization": {
-    "@type": "Organization",
-    "name": "CXLXC LLC"
-  },
-  "foundingDate": "2025-09-12",
-  "publishingPrinciples": "https://thetankguide.com/about.html",
-  "areaServed": ["United States", "New York"],
-  "knowsAbout": [
-    "Aquariums",
-    "Fishkeeping",
-    "Nitrogen Cycle",
-    "Freshwater Aquariums",
-    "Planted Tanks",
-    "Aquarium Setup Basics",
-    "Water Parameters",
-    "Aquarium Cycling"
-  ],
-  "contactPoint": [
     {
-      "@type": "ContactPoint",
-      "contactType": "customer support",
-      "email": "info@thetankguide.com",
-      "availableLanguage": ["en"]
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://thetankguide.com/#organization",
+          "name": "FishKeepingLifeCo",
+          "alternateName": "The Tank Guide",
+          "url": "https://thetankguide.com/",
+          "logo": "https://thetankguide.com/logo.png",
+          "image": "https://thetankguide.com/logo.png",
+          "slogan": "Educational Aquarium Books &amp; Tools",
+          "description": "FishKeepingLifeCo publishes educational aquarium books and interactive online tools like The Tank Guide to help new aquarists and hobbyists set up, stock, and maintain thriving aquariums.",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "US",
+            "addressRegion": "NY"
+          },
+          "brand": {
+            "@type": "Brand",
+            "name": "The Tank Guide"
+          },
+          "parentOrganization": {
+            "@type": "Organization",
+            "name": "CXLXC LLC"
+          },
+          "foundingDate": "2025-09-12",
+          "publishingPrinciples": "https://thetankguide.com/about.html",
+          "areaServed": [
+            "United States",
+            "New York"
+          ],
+          "knowsAbout": [
+            "Aquariums",
+            "Fishkeeping",
+            "Nitrogen Cycle",
+            "Freshwater Aquariums",
+            "Planted Tanks",
+            "Aquarium Setup Basics",
+            "Water Parameters",
+            "Aquarium Cycling"
+          ],
+          "contactPoint": [
+            {
+              "@type": "ContactPoint",
+              "contactType": "customer support",
+              "email": "info@thetankguide.com",
+              "availableLanguage": [
+                "en"
+              ]
+            }
+          ],
+          "sameAs": [
+            "https://www.instagram.com/FishKeepingLifeCo",
+            "https://www.tiktok.com/@FishKeepingLifeCo",
+            "https://www.facebook.com/fishkeepinglifeco",
+            "https://x.com/fishkeepinglife?s=21",
+            "https://www.youtube.com/@fishkeepinglifeco",
+            "https://amzn.to/3IRKvK0"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://thetankguide.com/#website",
+          "url": "https://thetankguide.com/",
+          "name": "The Tank Guide",
+          "description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
+          "publisher": {
+            "@id": "https://thetankguide.com/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://thetankguide.com/search?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://thetankguide.com/#webpage",
+          "url": "https://thetankguide.com/",
+          "name": "Fishkeeping Guides &amp; Tools — The Tank Guide",
+          "description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
+          "isPartOf": {
+            "@id": "https://thetankguide.com/#website"
+          },
+          "publisher": {
+            "@id": "https://thetankguide.com/#organization"
+          },
+          "primaryImageOfPage": {
+            "@type": "ImageObject",
+            "url": "https://thetankguide.com/assets/og/default.png",
+            "width": 1200,
+            "height": 630
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://thetankguide.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is The Tank Guide?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The Tank Guide is a free educational resource from FishKeepingLifeCo. We provide easy-to-understand guides, a fish tank stocking calculator, a nitrogen cycle tracker, and gear recommendations to help beginners successfully set up a freshwater aquarium."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How many fish can I put in my aquarium?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "It depends on species’ adult size, behavior, waste production (bioload), and your filtration capacity. Use our free Stocking Advisor to plan a safe, balanced community for your tank."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is the aquarium nitrogen cycle?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The nitrogen cycle is a natural 4–8 week process where beneficial bacteria convert toxic ammonia into safer nitrate. Complete cycling before adding fish—our Cycling Coach guides you step-by-step."
+              }
+            }
+          ]
+        }
+      ]
     }
-  ],
-  "sameAs": [
-    "https://www.instagram.com/FishKeepingLifeCo",
-    "https://www.tiktok.com/@FishKeepingLifeCo",
-    "https://www.facebook.com/fishkeepinglifeco",
-    "https://x.com/fishkeepinglife?s=21",
-    "https://www.youtube.com/@fishkeepinglifeco",
-    "https://amzn.to/3IRKvK0"
-  ]
-}
-  </script>
-
-  <script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@graph":[
-    {
-      "@type":"WebSite",
-      "@id":"https://thetankguide.com/#website",
-      "url":"https://thetankguide.com/",
-      "name":"The Tank Guide",
-      "description":"The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
-      "publisher":{"@id":"https://thetankguide.com/#organization"},
-      "potentialAction":{
-        "@type":"SearchAction",
-        "target":{"@type":"EntryPoint","urlTemplate":"https://thetankguide.com/search?q={search_term_string}"},
-        "query-input":"required name=search_term_string"
-      }
-    },
-    {
-      "@type":"WebPage",
-      "@id":"https://thetankguide.com/#webpage",
-      "url":"https://thetankguide.com/",
-      "name":"Fishkeeping Guides &amp; Tools — The Tank Guide",
-      "isPartOf":{"@id":"https://thetankguide.com/#website"},
-      "primaryImageOfPage":{"@type":"ImageObject","url":"https://thetankguide.com/assets/og/default.png"},
-      "description":"The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
-      "publisher":{"@id":"https://thetankguide.com/#organization"}
-    }
-  ]
-}
-  </script>
-  <script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@type":"FAQPage",
-  "mainEntity":[
-    {"@type":"Question","name":"What is The Tank Guide?","acceptedAnswer":{"@type":"Answer","text":"The Tank Guide is a free educational resource from FishKeepingLifeCo. We provide easy-to-understand guides, a fish tank stocking calculator, a nitrogen cycle tracker, and gear recommendations to help beginners successfully set up a freshwater aquarium."}},
-    {"@type":"Question","name":"How many fish can I put in my aquarium?","acceptedAnswer":{"@type":"Answer","text":"This depends on the fish species' adult size, waste production (bioload), behavior, and your filtration capacity. Our free Stocking Advisor tool helps you calculate a safe and balanced stocking list to prevent overstocking."}},
-    {"@type":"Question","name":"What is the aquarium nitrogen cycle?","acceptedAnswer":{"@type":"Answer","text":"The nitrogen cycle is a natural 4–8 week process where beneficial bacteria grow in your filter and convert ammonia into nitrate. You must complete this cycling process before adding fish; our Cycling Coach can guide you."}}
-  ]
-}
   </script>
   <!-- Consent Mode defaults (load FIRST) -->
   <script src="/assets/js/consent-mode.js" defer></script>
@@ -758,6 +792,25 @@
         <p>We believe that a successful aquarium is one of the most rewarding experiences a family can share. It’s a living piece of art and a constant lesson in biology. With the right knowledge and the right tools, you can create a stunning underwater world that lasts for years to come. Your journey starts here.</p>
       </section>
 
+      <section class="section proto-section" id="home-faq" aria-labelledby="home-faq-title">
+        <h2 id="home-faq-title">Beginner Aquarium FAQ</h2>
+
+        <details>
+          <summary><strong>What is The Tank Guide?</strong></summary>
+          <p>The Tank Guide is a free educational resource from FishKeepingLifeCo. We provide easy-to-understand guides, a fish tank stocking calculator, a nitrogen cycle tracker, and gear recommendations to help beginners successfully set up a freshwater aquarium.</p>
+        </details>
+
+        <details>
+          <summary><strong>How many fish can I put in my aquarium?</strong></summary>
+          <p>It depends on species’ adult size, behavior, waste production (bioload), and your filtration capacity. Use our free <a href="/stocking.html">Stocking Advisor</a> to plan a safe, balanced community for your tank.</p>
+        </details>
+
+        <details>
+          <summary><strong>What is the aquarium nitrogen cycle?</strong></summary>
+          <p>The nitrogen cycle is a natural 4–8 week process where beneficial bacteria convert toxic ammonia into safer nitrate. Complete cycling before adding fish—our <a href="/params.html">Cycling Coach</a> guides you step-by-step.</p>
+        </details>
+      </section>
+
       <div class="spacer" aria-hidden="true"></div>
     </div>
   </main>
@@ -794,22 +847,6 @@
         community tank. (FKLCo)
       </p>
     </div>
-  </section>
-
-  <section class="home-faq" aria-labelledby="faq-heading">
-    <h2 id="faq-heading">Beginner FAQ</h2>
-    <details>
-      <summary>What is The Tank Guide?</summary>
-      <p>The Tank Guide is a free educational resource from FishKeepingLifeCo. We provide easy-to-understand guides, a fish tank stocking calculator, a nitrogen cycle tracker, and gear recommendations to help beginners successfully set up a freshwater aquarium.</p>
-    </details>
-    <details>
-      <summary>How many fish can I put in my aquarium?</summary>
-      <p>This depends on adult size, bioload, behavior, and your filtration capacity. Use our free Stocking Advisor to calculate a safe and balanced stocking list.</p>
-    </details>
-    <details>
-      <summary>What is the aquarium nitrogen cycle?</summary>
-      <p>The nitrogen cycle is a natural 4–8 week process where beneficial bacteria convert toxic ammonia into safer nitrate. Complete cycling before adding fish; our Cycling Coach can guide you.</p>
-    </details>
   </section>
 
   <nav class="policy-fallback" data-policy-fallback aria-label="Legal links">
