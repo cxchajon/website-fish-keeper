@@ -15,17 +15,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css?v=1.0.9">
   <link rel="stylesheet" href="/css/prototype-home.css">
-  <style id="prototype-hero-fix">
-    /* Scoped override for prototype only */
+  <style id="prototype-hero-enhanced">
+    /* Scoped only to prototype page */
     .page--prototype-home .hero-copy {
       text-align: left;
+      margin-bottom: 1.2rem;
     }
-    .page--prototype-home .hero-copy .eyebrow {
+
+    .page--prototype-home .hero-copy .hero-title {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      line-height: 1.2;
       font-weight: 700;
-      margin-bottom: 0.4em;
+      margin-bottom: 0.6rem;
     }
+
     .page--prototype-home .hero-copy .hero-subtext {
-      font-size: inherit;
+      font-size: clamp(1rem, 2.6vw, 1.25rem);
       line-height: 1.4;
       margin: 0;
       text-align: left;
@@ -42,7 +47,7 @@
       <section class="hero hero--prototype">
         <div class="wrap">
           <div class="hero-copy">
-            <p class="eyebrow"><strong>Fishkeeping Guides &amp; Tools — The Tank Guide</strong></p>
+            <h1 class="hero-title"><strong>Fishkeeping Guides &amp; Tools — The Tank Guide</strong></h1>
             <p class="hero-subtext">
               Smart fishkeeping guides, planning tools, and step-by-step checklists to set up,
               stock, and care for your aquarium.
