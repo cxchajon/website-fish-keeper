@@ -48,22 +48,20 @@ main.stocking-page {
   text-decoration-thickness: 2px;
 }
 
-.ad-slot-placeholder {
-  border: 1px dashed rgba(255, 255, 255, 0.3);
-  border-radius: 14px;
-  padding: 18px;
-  margin: 40px auto;
+.ad-hero {
   text-align: center;
-  background: rgba(14, 20, 40, 0.65);
+  margin: 1.5rem 0;
 }
 
-.ad-slot-placeholder strong {
-  display: block;
-  margin-bottom: 8px;
+.ad-label {
+  display: inline-block;
+  background: var(--accent-dark, #1a237e);
+  color: #fff;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.76);
 }
 
 .advisor-faq details {
@@ -102,7 +100,4 @@ main.stocking-page {
     padding: 24px;
   }
 
-  .ad-slot-placeholder {
-    margin: 32px auto;
-  }
 }
