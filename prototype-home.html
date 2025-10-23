@@ -17,37 +17,50 @@
   <link rel="stylesheet" href="/css/prototype-home.css">
   <style id="prototype-home-inline">
     /* Scoped only to prototype page */
-    .page--prototype-home .proto-home {
+    .page--prototype-home {
       position: relative;
-      isolation: isolate;
     }
 
-    .page--prototype-home .page-top-haze {
+    .page--prototype-home::before {
+      content: "";
       position: absolute;
-      top: clamp(56px, 7vw, 84px);
+      top: 0;
       left: 50%;
       transform: translateX(-50%);
       width: 100vw;
-      height: clamp(220px, 42vh, 460px);
+      height: clamp(240px, 38vh, 460px);
       background: linear-gradient(180deg,
-          rgba(255, 255, 255, 0.94) 0%,
-          rgba(255, 255, 255, 0.72) 26%,
-          rgba(255, 255, 255, 0.32) 55%,
+          rgba(255, 255, 255, 0.96) 0%,
+          rgba(255, 255, 255, 0.82) 22%,
+          rgba(255, 255, 255, 0.48) 48%,
+          rgba(255, 255, 255, 0.18) 68%,
           rgba(255, 255, 255, 0) 100%);
       pointer-events: none;
       z-index: 0;
     }
 
     @media (max-width: 600px) {
-      .page--prototype-home .page-top-haze {
-        height: clamp(260px, 45vh, 520px);
+      .page--prototype-home::before {
+        height: clamp(280px, 44vh, 520px);
       }
     }
 
     @media (min-width: 1024px) {
-      .page--prototype-home .page-top-haze {
-        height: clamp(180px, 28vh, 360px);
+      .page--prototype-home::before {
+        height: clamp(210px, 30vh, 360px);
       }
+    }
+
+    .page--prototype-home .proto-home {
+      position: relative;
+      isolation: isolate;
+      z-index: 1;
+    }
+
+    .page--prototype-home #site-nav,
+    .page--prototype-home #global-nav {
+      position: relative;
+      z-index: 2;
     }
 
     .page--prototype-home .proto-home > .wrap {
@@ -434,7 +447,6 @@
   <div id="site-nav" data-src="/nav.html"></div>
 
   <main class="proto-home">
-    <div class="page-top-haze" aria-hidden="true"></div>
     <div class="wrap">
       <!-- HERO (prototype-only, cloned from live) -->
       <section class="hero hero--prototype">
