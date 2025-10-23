@@ -33,6 +33,10 @@ body.page--prototype-home .hero {
   gap: clamp(16px, 3vw, 28px);
 }
 
+.page--prototype-home .hero--prototype {
+  background-color: #0b6ea6; /* avg gradient color */
+}
+
 body.page--prototype-home .hero .eyebrow,
 body.page--prototype-home .hero h1,
 body.page--prototype-home .hero p,
@@ -71,6 +75,14 @@ body.page--prototype-home .tool-card p {
   overflow: hidden;
 }
 
+.page--prototype-home .tool-card:hover,
+.page--prototype-home .tool-card:focus-within{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.24),
+    0 18px 28px rgba(0,0,0,0.24),
+    0 36px 54px rgba(0,0,0,0.28);
+}
+
 /* Card corner lighting */
 .page--prototype-home .tool-card::before{
   content:"";
@@ -100,8 +112,8 @@ body.page--prototype-home .tool-card p {
   background: linear-gradient(180deg, #49a5ff 0%, #1a66e9 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.48),
-    0 14px 26px rgba(6,42,77,0.22),
-    0 6px 12px rgba(6,42,77,0.16);
+    0 14px 26px rgba(6,42,77,0.18),
+    0 6px 12px rgba(6,42,77,0.14);
   position: relative;
   overflow: hidden;
   contain: paint;
