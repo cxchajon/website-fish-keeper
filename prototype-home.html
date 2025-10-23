@@ -90,14 +90,6 @@
   </main>
 
   <style>
-  /* ===== Prototype-only: tighten hero and first-card spacing ===== */
-  .page--prototype-home .hero--prototype{
-    /* pull hero closer to nav and reduce extra air below */
-    padding-top: clamp(6px, 1.8vw, 18px);
-    padding-bottom: clamp(4px, 1.4vw, 10px);
-    margin-bottom: clamp(6px, 1.4vw, 10px); /* controls space before first card */
-  }
-
   .page--prototype-home .hero--prototype .wrap {
     max-width: 58rem;               /* live hero text width */
     margin-inline: auto;
@@ -137,28 +129,11 @@
     text-underline-offset: 3px;
   }
 
-  /* tighten internal hero text rhythm */
+  /* tighten internal hero text rhythm (spacing handled globally) */
   .page--prototype-home .hero--prototype .eyebrow{ margin-bottom: clamp(4px, .6vw, 8px); }
   .page--prototype-home .hero--prototype .h1{      margin-bottom: clamp(8px, 1vw, 12px); }
   .page--prototype-home .hero--prototype .lede{    margin-bottom: clamp(6px, .8vw, 10px); }
   .page--prototype-home .hero--prototype .how{     margin-top: clamp(0px, .3vw, 4px); }
-
-  /* nudge the first card up under the “How it works” link */
-  .page--prototype-home .tool-card:first-of-type{
-    margin-top: clamp(8px, 1.6vw, 12px);
-  }
-
-  /* small-screen pass (iPhone widths) — tighten a bit more */
-  @media (max-width: 420px){
-    .page--prototype-home .hero--prototype{
-      padding-top: 8px;
-      padding-bottom: 6px;
-      margin-bottom: 8px;
-    }
-    .page--prototype-home .tool-card:first-of-type{
-      margin-top: 10px; /* sits directly under the link without crowding */
-    }
-  }
 
   /* Small-screen tighten a touch more */
   @media (max-width: 380px) {
@@ -185,5 +160,6 @@
 
   <!-- FOOTER (global include) -->
   <div id="site-footer" data-src="/footer.html?v=1.4.7" data-footer-src="/footer.html?v=1.4.7"></div>
+
 </body>
 </html>
