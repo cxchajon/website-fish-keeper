@@ -1040,10 +1040,6 @@
       }
     }
 
-    #stocking-page .ttg-popover {
-      z-index: 2147483647;
-    }
-
     #stocking-page button:not(.info-btn),
     #stocking-page select {
       min-height: 44px;
@@ -1103,96 +1099,6 @@
     .hero-how-works {
       margin-right: 0.5rem;
     }
-
-    .info-btn {
-      inline-size: 1.5rem;
-      block-size: 1.5rem;
-      border-radius: 50%;
-      border: 1px solid var(--ink-20, #7aa0c8);
-      background: transparent;
-      color: inherit;
-      font: 600 0.9rem/1 system-ui;
-      display: inline-grid;
-      place-items: center;
-    }
-
-    .info-btn:hover,
-    .info-btn:focus-visible {
-      outline: 2px solid var(--ink-30, #98b7d6);
-    }
-
-    .info-popover {
-      position: relative;
-      margin: 0.5rem 0 1rem;
-      padding: 1rem;
-      border-radius: 0.75rem;
-      border: 1px solid var(--ink-20, #274a63);
-      background: rgba(14, 39, 56, 0.85);
-      color: var(--ink-90, #e8f2fb);
-      max-inline-size: 48rem;
-    }
-
-    .info-popover[hidden] {
-      display: none;
-    }
-
-    .info-popover__header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-block-end: 0.25rem;
-    }
-
-    .info-popover__close {
-      background: none;
-      border: none;
-      color: inherit;
-      font-size: 1.25rem;
-      line-height: 1;
-    }
-
-    #stock-list-card .card-header {
-      position: relative;
-    }
-
-    #stocking-checklist-pop {
-      position: absolute;
-      z-index: 999;
-      margin: 0;
-      margin-top: 0.5rem;
-      padding: 1rem 1.2rem;
-      border-radius: 0.75rem;
-      border: 1px solid var(--ink-20, #274a63);
-      background: rgba(14, 39, 56, 0.92);
-      color: var(--ink-90, #e8f2fb);
-      max-inline-size: 20rem;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    #stocking-checklist-pop ul {
-      margin: 0;
-      padding-left: 1.2rem;
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-
-    @media (prefers-reduced-motion: no-preference) {
-      .info-popover {
-        animation: fadeIn 0.14s ease-out;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-2px);
-        }
-
-        to {
-          opacity: 1;
-          transform: none;
-        }
-      }
-    }
   </style>
   <!-- Consent Mode defaults (load FIRST) -->
   <script src="/assets/js/consent-mode.js" defer></script>
@@ -1221,7 +1127,7 @@
   </script>
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
-<body class="theme-dark">
+<body class="theme-dark prototype-stock-page">
   <div id="site-nav"></div>
   <main id="stocking-page" class="stocking-page">
     <header class="hero">
@@ -1235,33 +1141,44 @@
           <!-- Inline "How it works" link (prototype only) -->
           <p class="muted small" id="how-it-works-inline-wrap">
             <a href="#" id="hero-how-works" class="hero-how-works link-underline">How it works</a>
-            <button id="stocking-tip-btn"
-                    class="info-btn"
-                    aria-label="Open stocking tip"
-                    aria-haspopup="dialog"
-                    aria-controls="stocking-tip-pop">i</button>
+            <span class="info-trigger-scope" data-info-scope="stocking-tip">
+              <button
+                id="stocking-tip-btn"
+                type="button"
+                class="info-btn"
+                data-info-btn="stocking-tip"
+                aria-label="Open stocking tip"
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-controls="stocking-tip-pop"
+              >i</button>
+              <div
+                id="stocking-tip-pop"
+                class="info-popover"
+                data-info-pop="stocking-tip"
+                role="dialog"
+                aria-labelledby="stocking-tip-title"
+                aria-modal="false"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <strong id="stocking-tip-title">Stocking Tip</strong>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
+                </div>
+                <p>
+                  Always quarantine new livestock. During stocking phases, test ammonia,
+                  nitrite, and nitrate weekly, and log temperature, pH, and hardness.
+                  Consistent tracking helps your parameters stay stable as the biofilter adapts.
+                </p>
+              </div>
+            </span>
           </p>
           <div id="stocking-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
         </div>
       </div>
     </header>
 
-    <div id="stocking-tip-pop"
-         class="info-popover"
-         role="dialog"
-         aria-labelledby="stocking-tip-title"
-         aria-modal="false"
-         hidden>
-      <div class="info-popover__header">
-        <strong id="stocking-tip-title">Stocking Tip</strong>
-        <button class="info-popover__close" aria-label="Close">×</button>
-      </div>
-      <p>
-        Always quarantine new livestock. During stocking phases, test ammonia,
-        nitrite, and nitrate weekly, and log temperature, pH, and hardness.
-        Consistent tracking helps your parameters stay stable as the biofilter adapts.
-      </p>
-    </div>
+    
 
     <div class="wrap page-content">
       <div class="ad-container ad-hero" role="complementary" aria-label="Advertisement">
@@ -1353,28 +1270,37 @@
           <div class="row title-row between">
             <div class="sa-proto-tank-size-label">
               <h2 class="card-title" id="tank-size-heading">Tank Size</h2>
-              <button
-                type="button"
-                class="sa-proto-tooltip-trigger"
-                data-sa-proto-tooltip-trigger
-                data-sa-proto-tooltip-id="sa-proto-tank-size-tip"
-                aria-label="How tank size selections work"
-                aria-describedby="sa-proto-tank-size-tip"
-                aria-controls="sa-proto-tank-size-tip"
-                aria-expanded="false"
-              >
-                i
-              </button>
+              <span class="info-trigger-scope" data-info-scope="tank-size">
+                <button
+                  type="button"
+                  class="info-btn"
+                  data-info-btn="tank-size"
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
+                  aria-controls="tank-size-pop"
+                  aria-label="How tank size selections work"
+                >i</button>
+                <div
+                  id="tank-size-pop"
+                  class="info-popover"
+                  data-info-pop="tank-size"
+                  role="dialog"
+                  aria-modal="false"
+                  aria-labelledby="tank-size-pop-title"
+                  hidden
+                >
+                  <div class="info-popover__header">
+                    <strong id="tank-size-pop-title">Tank size picker</strong>
+                    <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
+                  </div>
+                  <ul>
+                    <li>Select your aquarium volume to anchor stocking, parameter, and filter calculations.</li>
+                    <li>Preset options reflect popular tank footprints, but you can type a custom gallon value anytime.</li>
+                    <li>Adjustments update every card instantly so you can compare scenarios before buying equipment.</li>
+                  </ul>
+                </div>
+              </span>
             </div>
-          </div>
-          <div
-            class="sa-proto-tooltip"
-            id="sa-proto-tank-size-tip"
-            role="tooltip"
-            data-sa-proto-tooltip
-            hidden
-          >
-            <p>Choose your tank size and the advisor instantly calculates safe stocking levels.</p>
           </div>
           <p class="card-subtitle">Select a tank size to begin.</p>
         </div>
@@ -1397,18 +1323,36 @@
           <div class="row-left">
             <div class="toggle-label">
               <label class="toggle-title" for="stocking-planted">Planted</label>
-              <button
-                type="button"
-                class="info-btn ttg-tooltip-trigger"
-                data-role="info-btn"
-                data-info="planted"
-                data-tooltip-id="planted-tip"
-                aria-expanded="false"
-                aria-controls="planted-tip"
-                aria-describedby="planted-tip"
-                aria-label="More info about planted tanks"
-                title="More info"
-              >i</button>
+              <span class="info-trigger-scope" data-info-scope="planted">
+                <button
+                  type="button"
+                  class="info-btn"
+                  data-info-btn="planted"
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
+                  aria-controls="planted-pop"
+                  aria-label="More info about planted tanks"
+                >i</button>
+                <div
+                  id="planted-pop"
+                  class="info-popover"
+                  data-info-pop="planted"
+                  role="dialog"
+                  aria-modal="false"
+                  aria-labelledby="planted-pop-title"
+                  hidden
+                >
+                  <div class="info-popover__header">
+                    <strong id="planted-pop-title">When to mark the tank planted</strong>
+                    <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
+                  </div>
+                  <ul>
+                    <li>Toggle this on when you have actively growing live plants you prune and fertilize regularly.</li>
+                    <li>Planted mode gives a modest stocking buffer because thriving plants absorb ammonia and nitrate.</li>
+                    <li>Leave it off for artificial plants or sparse growth so recommendations stay conservative.</li>
+                  </ul>
+                </div>
+              </span>
             </div>
           </div>
           <div class="row-right">
@@ -1423,16 +1367,36 @@
               <div class="filter-product-field">
                 <div class="field-label-row">
                   <label for="filter-product">Filter Product</label>
-                  <button
-                    type="button"
-                    class="info-btn ttg-tooltip-trigger"
-                    data-info="filter-product"
-                    data-tooltip-id="filter-product-tip"
-                    aria-expanded="false"
-                    aria-controls="filter-product-tip"
-                    aria-label="More info about selecting a filter product"
-                    title="More info"
-                  >i</button>
+                  <span class="info-trigger-scope" data-info-scope="filter-product">
+                    <button
+                      type="button"
+                      class="info-btn"
+                      data-info-btn="filter-product"
+                      aria-expanded="false"
+                      aria-haspopup="dialog"
+                      aria-controls="filter-product-pop"
+                      aria-label="More info about selecting a filter product"
+                    >i</button>
+                    <div
+                      id="filter-product-pop"
+                      class="info-popover"
+                      data-info-pop="filter-product"
+                      role="dialog"
+                      aria-modal="false"
+                      aria-labelledby="filter-product-pop-title"
+                      hidden
+                    >
+                      <div class="info-popover__header">
+                        <strong id="filter-product-pop-title">Picking a filter</strong>
+                        <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
+                      </div>
+                      <ul>
+                        <li>Select a model rated for your tank volume or one size larger for heavy stocking plans.</li>
+                        <li>Choosing a product fills in its rated gallons-per-hour so turnover math stays accurate.</li>
+                        <li>Switch to a custom entry if you run multiple filters or throttle the manufacturer flow.</li>
+                      </ul>
+                    </div>
+                  </span>
                 </div>
                 <div class="select-wrap">
                   <select id="filter-product" name="filter-product" aria-describedby="filter-product-note">
@@ -1447,16 +1411,36 @@
               <div class="filter-flow-input">
                 <div class="field-label-row">
                   <label for="filter-rated-gph">Rated Flow (GPH)</label>
-                  <button
-                    type="button"
-                    class="info-btn ttg-tooltip-trigger"
-                    data-info="rated-flow"
-                    data-tooltip-id="rated-flow-tip"
-                    aria-expanded="false"
-                    aria-controls="rated-flow-tip"
-                    aria-label="More info about rated flow"
-                    title="More info"
-                  >i</button>
+                  <span class="info-trigger-scope" data-info-scope="rated-flow">
+                    <button
+                      type="button"
+                      class="info-btn"
+                      data-info-btn="rated-flow"
+                      aria-expanded="false"
+                      aria-haspopup="dialog"
+                      aria-controls="rated-flow-pop"
+                      aria-label="More info about rated flow"
+                    >i</button>
+                    <div
+                      id="rated-flow-pop"
+                      class="info-popover"
+                      data-info-pop="rated-flow"
+                      role="dialog"
+                      aria-modal="false"
+                      aria-labelledby="rated-flow-pop-title"
+                      hidden
+                    >
+                      <div class="info-popover__header">
+                        <strong id="rated-flow-pop-title">About rated flow</strong>
+                        <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
+                      </div>
+                      <ul>
+                        <li>Manufacturers list gallons-per-hour without media or head height losses.</li>
+                        <li>Expect real-world flow to run 20–30% lower once sponges and biomedia are installed.</li>
+                        <li>Edit this value if you throttle the filter or use spray-bar mods that slow output.</li>
+                      </ul>
+                    </div>
+                  </span>
                 </div>
                 <div class="filter-flow-input__field">
                   <input type="text" id="filter-rated-gph" name="filter-rated-gph" inputmode="numeric"
@@ -1469,16 +1453,36 @@
                 <p class="filter-turnover" id="filter-turnover" aria-live="polite">
                   <span class="filter-turnover-label">
                     Estimated turnover
-                    <button
-                      type="button"
-                      class="info-btn ttg-tooltip-trigger"
-                      data-info="turnover"
-                      data-tooltip-id="turnover-tip"
-                      aria-expanded="false"
-                      aria-controls="turnover-tip"
-                      aria-label="More info about turnover"
-                      title="More info"
-                    >i</button>
+                    <span class="info-trigger-scope" data-info-scope="turnover">
+                      <button
+                        type="button"
+                        class="info-btn"
+                        data-info-btn="turnover"
+                        aria-expanded="false"
+                        aria-haspopup="dialog"
+                        aria-controls="turnover-pop"
+                        aria-label="More info about turnover"
+                      >i</button>
+                      <div
+                        id="turnover-pop"
+                        class="info-popover"
+                        data-info-pop="turnover"
+                        role="dialog"
+                        aria-modal="false"
+                        aria-labelledby="turnover-pop-title"
+                        hidden
+                      >
+                        <div class="info-popover__header">
+                          <strong id="turnover-pop-title">Turnover targets</strong>
+                          <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
+                        </div>
+                        <ul>
+                          <li>Turnover compares your filter flow to the aquarium volume (GPH ÷ gallons).</li>
+                          <li>General community tanks thrive around 5–7× per hour; active species often prefer 8× or more.</li>
+                          <li>If the number dips low, consider upsizing filtration or adding supplemental circulation.</li>
+                        </ul>
+                      </div>
+                    </span>
                   </span>
                   <span class="filter-turnover-value" data-role="filter-turnover-value">—</span>
                 </p>
@@ -1686,38 +1690,6 @@
           margin-bottom: 0;
         }
 
-        /* Shared popover for all info buttons (portal) */
-        #stocking-page .ttg-popover {
-          position: fixed;
-          z-index: 2147483647;
-          pointer-events: auto;
-          min-width: 240px; max-width: 320px;
-          padding: 12px 12px 10px;
-          border-radius: 10px;
-          background: rgba(20,22,25,.96);
-          border: 1px solid rgba(255,255,255,.12);
-          box-shadow: 0 10px 30px rgba(0,0,0,.35);
-          color:inherit;
-          transform-origin: top left;
-          opacity: 0; transform: scale(.98);
-          transition: opacity .14s ease, transform .14s ease;
-        }
-        #stocking-page .ttg-popover.is-open { opacity:1; transform:scale(1); }
-        #stocking-page .ttg-popover[hidden] { display:none !important; }
-
-        #stocking-page .ttg-popover h3 { font-size:14px; margin:0 0 6px; font-weight:600; }
-        #stocking-page .ttg-popover p { font-size:13px; margin:0 0 10px; line-height:1.4; }
-        #stocking-page .ttg-popover .close {
-          display:inline-flex; align-items:center; justify-content:center;
-          height:30px; padding:0 10px; border-radius:8px;
-          background: rgba(255,255,255,.08);
-          border:1px solid rgba(255,255,255,.12);
-          color:inherit; cursor:pointer;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          #stocking-page .ttg-popover { transition:none; }
-        }
       </style>
 
       <section class="card ttg-card" id="stock-list-card" aria-live="polite">
@@ -1725,37 +1697,42 @@
           <div class="row title-row between">
             <h2 class="card-title">
               Current Stock
-              <button
-                type="button"
-                id="stocking-checklist-btn"
-                class="info-btn"
-                aria-label="View Responsible Stocking Checklist"
-                aria-haspopup="dialog"
-                aria-controls="stocking-checklist-pop"
-              >i</button>
+              <span class="info-trigger-scope" data-info-scope="stocking-checklist">
+                <button
+                  type="button"
+                  id="stocking-checklist-btn"
+                  class="info-btn"
+                  data-info-btn="stocking-checklist"
+                  aria-label="View Responsible Stocking Checklist"
+                  aria-haspopup="dialog"
+                  aria-expanded="false"
+                  aria-controls="stocking-checklist-pop"
+                >i</button>
+                <div
+                  id="stocking-checklist-pop"
+                  class="info-popover"
+                  data-info-pop="stocking-checklist"
+                  role="dialog"
+                  aria-labelledby="stocking-checklist-title"
+                  aria-modal="false"
+                  hidden
+                >
+                  <div class="info-popover__header">
+                    <strong id="stocking-checklist-title">Responsible Stocking Checklist</strong>
+                    <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
+                  </div>
+                  <ul>
+                    <li>Verify your nitrogen cycle is stable with zero ammonia and nitrite before introducing new species.</li>
+                    <li>Match species by temperature, pH, and hardness tolerances, leaning toward the overlap rather than the extremes.</li>
+                    <li>Stage livestock additions over several weeks so your biofilter adapts gradually.</li>
+                    <li>Supplement mechanical filtration with live plants or seeded media to buffer bioload spikes.</li>
+                    <li>Keep a log of maintenance tasks, feeding routines, and observed behavior shifts to inform future adjustments.</li>
+                  </ul>
+                </div>
+              </span>
             </h2>
           </div>
           <p class="card-subtitle">Your selected fish and inverts appear here. No stock yet. Add species to begin.</p>
-        </div>
-        <div
-          id="stocking-checklist-pop"
-          class="info-popover"
-          role="dialog"
-          aria-labelledby="stocking-checklist-title"
-          aria-modal="false"
-          hidden
-        >
-          <div class="info-popover__header">
-            <strong id="stocking-checklist-title">Responsible Stocking Checklist</strong>
-            <button class="info-popover__close" aria-label="Close">×</button>
-          </div>
-          <ul>
-            <li>Verify your nitrogen cycle is stable with zero ammonia and nitrite before introducing new species.</li>
-            <li>Match species by temperature, pH, and hardness tolerances, leaning toward the overlap rather than the extremes.</li>
-            <li>Stage livestock additions over several weeks so your biofilter adapts gradually.</li>
-            <li>Supplement mechanical filtration with live plants or seeded media to buffer bioload spikes.</li>
-            <li>Keep a log of maintenance tasks, feeding routines, and observed behavior shifts to inform future adjustments.</li>
-          </ul>
         </div>
         <div id="stock-list" class="stock-list" data-testid="species-list"></div>
       </section>
@@ -1764,19 +1741,37 @@
         <div class="card-header env-header">
           <div class="row title-row">
             <h2 class="card-title">Environmental Recommendations</h2>
-            <button
-              type="button"
-              class="info-btn ttg-tooltip-trigger"
-              id="env-info-btn"
-              data-role="info-btn"
-              data-info="env-info"
-              data-tooltip-id="env-info-tip"
-              aria-expanded="false"
-              aria-controls="env-info-tip"
-              aria-describedby="env-info-tip"
-              title="More info"
-              aria-label="More info and tips about Environmental Recommendations"
-            >i</button>
+            <span class="info-trigger-scope" data-info-scope="env-info">
+              <button
+                type="button"
+                class="info-btn"
+                id="env-info-btn"
+                data-info-btn="env-info"
+                aria-expanded="false"
+                aria-haspopup="dialog"
+                aria-controls="env-info-pop"
+                aria-label="More info and tips about Environmental Recommendations"
+              >i</button>
+              <div
+                id="env-info-pop"
+                class="info-popover"
+                data-info-pop="env-info"
+                role="dialog"
+                aria-modal="false"
+                aria-labelledby="env-info-title"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <strong id="env-info-title">Environmental Card Guide</strong>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
+                </div>
+                <ul>
+                  <li>Ranges blend the overlapping temperature, pH, hardness, and flow preferences of the fish you add.</li>
+                  <li>Alerts surface when your planned community drifts outside that shared band so you can adjust stock or gear.</li>
+                  <li>Use these guardrails as a starting point and verify with your own water tests before introducing livestock.</li>
+                </ul>
+              </div>
+            </span>
           </div>
           <p class="card-subtitle">Derived from your selected stock.</p>
           <div class="env-compact-summary" data-role="env-compact-summary" aria-hidden="true" hidden>
@@ -1842,14 +1837,6 @@
         </div>
       </section>
 
-      <div id="planted-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="planted"></div>
-      <div id="filter-product-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="filter-product"></div>
-      <div id="rated-flow-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="rated-flow"></div>
-      <div id="turnover-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="turnover"></div>
-      <div id="filtration-pill-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="filtration-pill"></div>
-      <div id="env-info-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="env-info"></div>
-      <div id="bioload-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="bioload"></div>
-      <div id="aggression-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="aggression"></div>
 
       <a class="see-gear" id="btn-gear" href="/gear.html" data-testid="btn-gear">See Gear Suggestions</a>
 
@@ -1874,87 +1861,6 @@
   <script type="module" src="/js/logic/conflicts.js"></script>
   <script type="module" src="/js/stocking.js?v=2024-09-01" id="js-stocking"></script>
   <script type="module" src="/js/tank-size-card.js?v=2024-09-01"></script>
-
-  <script>
-    (() => {
-      const btn = document.getElementById('stocking-checklist-btn');
-      const pop = document.getElementById('stocking-checklist-pop');
-      const closeBtn = pop?.querySelector('.info-popover__close');
-      if (!btn || !pop || !closeBtn) return;
-
-      const place = () => {
-        const rect = btn.getBoundingClientRect();
-        const x = rect.left + window.scrollX;
-        const y = rect.bottom + window.scrollY + 8;
-        pop.style.left = `${x}px`;
-        pop.style.top = `${y}px`;
-      };
-
-      const open = () => {
-        place();
-        pop.hidden = false;
-        closeBtn.focus();
-      };
-      const close = () => {
-        pop.hidden = true;
-        btn.focus();
-      };
-
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        pop.hidden ? open() : close();
-      });
-      closeBtn.addEventListener('click', close);
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !pop.hidden) close();
-      });
-      document.addEventListener('click', (e) => {
-        if (!pop.hidden && !pop.contains(e.target) && e.target !== btn) {
-          close();
-        }
-      });
-      window.addEventListener('resize', () => {
-        if (!pop.hidden) place();
-      });
-      window.addEventListener('scroll', () => {
-        if (!pop.hidden) place();
-      }, true);
-
-      btn.title = 'View responsible stocking practices.';
-    })();
-  </script>
-
-  <script>
-    (() => {
-      const btn = document.getElementById('stocking-tip-btn');
-      const pop = document.getElementById('stocking-tip-pop');
-      const closeBtn = pop?.querySelector('.info-popover__close');
-      if (!btn || !pop || !closeBtn) return;
-
-      const open = () => {
-        pop.hidden = false;
-        closeBtn.focus();
-      };
-      const close = () => {
-        pop.hidden = true;
-        btn.focus();
-      };
-
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        pop.hidden ? open() : close();
-      });
-      closeBtn.addEventListener('click', close);
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !pop.hidden) close();
-      });
-      document.addEventListener('click', (e) => {
-        if (!pop.hidden && !pop.contains(e.target) && e.target !== btn) close();
-      });
-
-      btn.title = 'Quarantine new fish and track basics while stocking.';
-    })();
-  </script>
 
   <!-- How it works modal (prototype only) -->
   <div id="how-modal" class="modal-backdrop hidden" aria-hidden="true">
