@@ -174,66 +174,101 @@
     });
   };
 
-  const setupTooltip = () => {
-    const trigger = document.querySelector('[data-sa-proto-tooltip-trigger]');
-    if (!trigger) return;
+  const initInfoPopovers = () => {
+    const scopeRoot = document.querySelector('.prototype-stock-page');
+    if (!scopeRoot) return;
 
-    const tooltipId = trigger.getAttribute('data-sa-proto-tooltip-id');
-    if (!tooltipId) return;
+    const getButton = (scope) => scope?.querySelector('[data-info-btn]');
+    const getPopover = (scope) => scope?.querySelector('[data-info-pop]');
 
-    const tooltip = document.getElementById(tooltipId);
-    if (!tooltip) return;
+    let openScope = null;
 
-    let hideTimer;
+    const closeScope = (scope, { returnFocus = true } = {}) => {
+      if (!scope) return;
+      const btn = getButton(scope);
+      const pop = getPopover(scope);
 
-    const openTooltip = () => {
-      clearTimeout(hideTimer);
-      tooltip.hidden = false;
-      trigger.setAttribute('aria-expanded', 'true');
-    };
-
-    const closeTooltip = () => {
-      clearTimeout(hideTimer);
-      tooltip.hidden = true;
-      trigger.setAttribute('aria-expanded', 'false');
-    };
-
-    trigger.addEventListener('click', (event) => {
-      event.preventDefault();
-      const isOpen = trigger.getAttribute('aria-expanded') === 'true';
-      if (isOpen) {
-        closeTooltip();
-      } else {
-        openTooltip();
+      if (btn) {
+        btn.setAttribute('aria-expanded', 'false');
       }
-    });
+      if (pop && !pop.hidden) {
+        pop.hidden = true;
+      }
+      scope.classList.remove('is-open');
 
-    trigger.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        const isOpen = trigger.getAttribute('aria-expanded') === 'true';
-        if (isOpen) {
-          closeTooltip();
-        } else {
-          openTooltip();
+      if (returnFocus && btn && typeof btn.focus === 'function') {
+        btn.focus();
+      }
+
+      if (openScope === scope) {
+        openScope = null;
+      }
+    };
+
+    const openScopeFor = (scope) => {
+      if (!scope) return;
+      const btn = getButton(scope);
+      const pop = getPopover(scope);
+      if (!btn || !pop) return;
+
+      pop.hidden = false;
+      scope.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+      openScope = scope;
+    };
+
+    scopeRoot.addEventListener('click', (event) => {
+      const closeTrigger = event.target.closest('[data-info-close]');
+      if (closeTrigger && scopeRoot.contains(closeTrigger)) {
+        const scope = closeTrigger.closest('[data-info-scope]');
+        if (scope) {
+          event.preventDefault();
+          event.stopPropagation();
+          closeScope(scope);
         }
+        return;
       }
 
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        closeTooltip();
+      const btn = event.target.closest('[data-info-btn]');
+      if (!btn || !scopeRoot.contains(btn)) return;
+
+      const scope = btn.closest('[data-info-scope]');
+      if (!scope) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+      if (isExpanded) {
+        closeScope(scope);
+        return;
       }
+
+      if (openScope && openScope !== scope) {
+        closeScope(openScope, { returnFocus: false });
+      }
+
+      openScopeFor(scope);
     });
 
-    trigger.addEventListener('blur', () => {
-      hideTimer = window.setTimeout(closeTooltip, 50);
+    document.addEventListener('click', (event) => {
+      if (!openScope) return;
+      if (!scopeRoot.contains(event.target)) {
+        closeScope(openScope);
+        return;
+      }
+
+      if (openScope.contains(event.target)) {
+        return;
+      }
+
+      closeScope(openScope);
     });
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && trigger.getAttribute('aria-expanded') === 'true') {
-        closeTooltip();
-        trigger.focus();
-      }
+      if (event.key !== 'Escape' || !openScope) return;
+      event.preventDefault();
+      closeScope(openScope);
     });
   };
 
@@ -248,7 +283,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     setupHowItWorksModal();
-    setupTooltip();
+    initInfoPopovers();
     setupFeatureCta();
   });
 
