@@ -447,6 +447,69 @@
       justify-content: flex-end;
     }
 
+    body.prototype-page .current-stock-card,
+    body.prototype-page #current-stock {
+      position: relative;
+      overflow: visible;
+    }
+
+    /* Info button */
+    body.prototype-page .info-btn {
+      inline-size: 1.5rem;
+      block-size: 1.5rem;
+      border-radius: 50%;
+      border: 1px solid var(--ink-20, #7aa0c8);
+      background: transparent;
+      color: inherit;
+      font: 600 0.9rem/1 system-ui;
+      display: inline-grid;
+      place-items: center;
+      margin-inline-start: 0.4rem;
+      cursor: pointer;
+    }
+
+    /* Popover anchored tightly to the button */
+    body.prototype-page .info-popover {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0.5rem;
+      z-index: 999;
+      max-inline-size: 22rem;
+      padding: 1rem 1.2rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--ink-20, #274a63);
+      background: rgba(14, 39, 56, 0.97);
+      color: var(--ink-95, #eef6ff);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    body.prototype-page .info-popover[hidden] {
+      display: none;
+    }
+
+    body.prototype-page .info-popover__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+
+    body.prototype-page .info-popover__close {
+      background: none;
+      border: none;
+      color: inherit;
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    body.prototype-page .info-popover ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .page--prototype-home .tool-card,
       .page--prototype-home .btn-glossy,
@@ -459,7 +522,7 @@
 
   </style>
 </head>
-<body class="page--prototype-home">
+<body class="page--prototype-home prototype-page">
   <!-- NAV (global include) -->
   <div id="site-nav" data-src="/nav.html"></div>
 
@@ -535,6 +598,43 @@
       <section class="section proto-section" id="stocking-advisor">
         <h2>Build a Balanced Community with Our Stocking Advisor</h2>
         <p>Once your tank is cycled and ready, the real fun begins: choosing your fish. But how many can you add? Will they get along? A healthy tank is a balanced ecosystem, not just a collection of pretty fish. That’s why we developed our Stocking Advisor. It goes beyond simple ‘one inch of fish per gallon’ rules, using logic based on bioload, behavior, and filtration capacity. This tool, born from our own research and testing, helps you build a peaceful and thriving underwater community without the stress of guesswork. Use it to test your ideas in real time and plan a tank that’s both beautiful and sustainable.</p>
+        <div class="current-stock-card" id="current-stock" aria-live="polite">
+          <h3 class="card-title">
+            Current Stock
+            <button
+              id="stocking-checklist-btn"
+              class="info-btn"
+              type="button"
+              aria-expanded="false"
+              aria-label="View Responsible Stocking Checklist"
+              aria-controls="stocking-checklist-pop"
+            >i</button>
+          </h3>
+
+          <!-- Popover content -->
+          <div
+            id="stocking-checklist-pop"
+            class="info-popover"
+            role="dialog"
+            aria-labelledby="stocking-checklist-title"
+            aria-modal="false"
+            hidden
+          >
+            <div class="info-popover__header">
+              <strong id="stocking-checklist-title">Responsible Stocking Checklist</strong>
+              <button class="info-popover__close" type="button" aria-label="Close">×</button>
+            </div>
+            <ul>
+              <li>Verify your nitrogen cycle is stable with zero ammonia and nitrite before introducing new species.</li>
+              <li>Match species by temperature, pH, and hardness tolerances, leaning toward the overlap rather than the extremes.</li>
+              <li>Stage livestock additions over several weeks so your biofilter adapts gradually.</li>
+              <li>Supplement mechanical filtration with live plants or seeded media to buffer bioload spikes.</li>
+              <li>Keep a log of maintenance tasks, feeding routines, and observed behavior shifts to inform future adjustments.</li>
+            </ul>
+          </div>
+
+          <p class="card-subtitle">Your selected fish and inverts appear here. No stock yet. Add species to begin.</p>
+        </div>
       </section>
 
       <section class="section proto-section" id="learn-with-us">
@@ -583,6 +683,47 @@
       </p>
     </div>
   </section>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('stocking-checklist-btn');
+    const pop = document.getElementById('stocking-checklist-pop');
+    const closeBtn = pop?.querySelector('.info-popover__close');
+    if (!btn || !pop || !closeBtn) return;
+
+    const card = btn.closest('.current-stock-card') || btn.closest('#current-stock');
+    card.style.position = 'relative';
+    card.style.overflow = 'visible';
+
+    const open = () => {
+      const rect = btn.getBoundingClientRect();
+      const offset = rect.bottom + window.scrollY + 8;
+      pop.style.top = `${btn.offsetTop + btn.offsetHeight + 8}px`;
+      pop.style.right = `8px`;
+      pop.hidden = false;
+      btn.setAttribute('aria-expanded', 'true');
+      closeBtn.focus();
+    };
+
+    const close = () => {
+      pop.hidden = true;
+      btn.setAttribute('aria-expanded', 'false');
+      btn.focus();
+    };
+
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      pop.hidden ? open() : close();
+    });
+    closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !pop.hidden) close();
+    });
+    document.addEventListener('click', e => {
+      if (!pop.hidden && !pop.contains(e.target) && e.target !== btn) close();
+    });
+  });
+  </script>
 
   <script>
   (function () {
