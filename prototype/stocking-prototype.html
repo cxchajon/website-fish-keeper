@@ -332,15 +332,84 @@
 
     .link-like {
       background: none;
-      border: none;
-      color: #a3c8ff;
-      font: inherit;
-      cursor: pointer;
+      border: 0;
       padding: 0;
+      margin-left: 0.5rem;
+      text-decoration: underline;
+      cursor: pointer;
+      font: inherit;
+      color: #a3c8ff;
     }
 
     .link-like:hover {
       text-decoration: underline;
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+    }
+
+    .modal__scrim {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal__card {
+      position: relative;
+      margin: 6vh auto;
+      max-width: 640px;
+      background: #0e2637;
+      color: #e8f1f6;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      padding: 20px 20px 16px;
+    }
+
+    .modal__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .modal__close {
+      background: transparent;
+      border: 0;
+      color: inherit;
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+
+    .modal__body {
+      margin-top: 8px;
+    }
+
+    .modal__body .steps {
+      display: grid;
+      gap: 0.75rem;
+      padding-left: 1.25rem;
+    }
+
+    .modal__footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    .btn {
+      background: #2e77ff;
+      color: #fff;
+      border: 0;
+      padding: 0.6rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
     }
 
     [data-role="tank-spec"] {
@@ -1133,16 +1202,19 @@
           </p>
         </section>
 
-        <section class="sa-proto-block" id="sa-proto-howto">
-          <h2>How to Use the Stocking Advisor</h2>
-          <button class="sa-proto-howitworks-trigger" type="button" aria-controls="sa-proto-howitworks" aria-expanded="false">How it works</button>
-          <ol>
-            <li><strong>Pick your tank size.</strong> Enter a volume or choose a preset; stocking levels update right away.</li>
-            <li><strong>Toggle planted mode.</strong> Plants give a small buffer and you’ll see the UI reflect the change.</li>
-            <li><strong>Select your filter.</strong> Choose a model to auto-fill flow; adjust GPH if you’ve modded your setup.</li>
-            <li><strong>Add your fish.</strong> Search and add species. Reorder or remove as you plan. Chips flag conflicts.</li>
-            <li><strong>Review the health cards.</strong> See target temperature, pH, hardness, and flow and how to stay there.</li>
-          </ol>
+        <section id="how-it-works-block" class="section">
+          <h2 class="section-title">
+            How to Use the Stocking Advisor
+            <button
+              id="sa-howitworks-trigger"
+              class="link-like"
+              aria-haspopup="dialog"
+              aria-controls="sa-howitworks-modal"
+            >
+              How it works
+            </button>
+          </h2>
+          <p class="muted">Choose your tank size and the advisor instantly calculates safe stocking levels.</p>
         </section>
 
         <section class="sa-proto-block" id="sa-proto-connect">
@@ -1684,47 +1756,85 @@
   <script type="module" src="/js/tank-size-card.js?v=2024-09-01"></script>
 
   <div
-    id="sa-proto-howitworks"
-    class="sa-proto-modal-backdrop"
+    id="sa-howitworks-modal"
+    class="modal hidden"
     role="dialog"
     aria-modal="true"
-    aria-labelledby="sa-proto-how-modal-title"
-    data-sa-proto-modal
-    hidden
+    aria-labelledby="sa-howitworks-title"
+    aria-hidden="true"
   >
-    <div class="sa-proto-modal-panel" role="document">
-      <div class="sa-proto-modal-header">
-        <h2 id="sa-proto-how-modal-title">How it works</h2>
-        <button
-          type="button"
-          class="sa-proto-modal-close"
-          data-sa-proto-modal-close
-          aria-label="Close"
-        >
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="sa-proto-modal-body">
-        <p>Choose your tank size and the advisor instantly calculates safe stocking levels.</p>
-        <ol>
-          <li>Pick your tank size — or enter a custom volume.</li>
-          <li>Toggle “Planted” if you keep live plants.</li>
-          <li>Select a filter (or enter your GPH) to see turnover.</li>
-          <li>Add fish or shrimp; watch compatibility chips for warnings.</li>
-          <li>Review temperature, pH, hardness, and flow cards.</li>
+    <div class="modal__scrim" data-close="1"></div>
+    <div class="modal__card" role="document" tabindex="-1">
+      <header class="modal__header">
+        <h3 id="sa-howitworks-title">How the Stocking Advisor works</h3>
+        <button class="modal__close" aria-label="Close" data-close="1">✕</button>
+      </header>
+      <div class="modal__body">
+        <ol class="steps">
+          <li><strong>Pick your tank size.</strong> Enter a volume or choose a preset; stocking levels update right away.</li>
+          <li><strong>Toggle planted mode.</strong> Plants give a small buffer and you’ll see the UI reflect the change.</li>
+          <li><strong>Select your filter.</strong> Choose a model to auto-fill flow; adjust GPH if you’ve modded your setup.</li>
+          <li><strong>Add your fish.</strong> Search and add species. Reorder or remove as you plan. Chips flag conflicts.</li>
+          <li><strong>Review the health cards.</strong> See target temperature, pH, hardness, and flow — and how to stay there.</li>
         </ol>
-        <p class="sa-proto-modal-helper">
-          Need chemistry help? The Cycling Coach explains testing, mineral balance, and safe adjustments.
-        </p>
+      </div>
+      <div class="modal__footer" role="group">
+        <button class="btn" data-close="1">Close</button>
       </div>
     </div>
   </div>
-  <div
-    class="sa-proto-visually-hidden"
-    data-sa-proto-modal-announcer
-    aria-live="polite"
-    aria-atomic="true"
-  ></div>
+
+  <script>
+    (() => {
+      // Guard: prototype only
+      if (!document.body || !document.querySelector('#sa-howitworks-trigger')) return;
+
+      const trigger = document.getElementById('sa-howitworks-trigger');
+      const modal = document.getElementById('sa-howitworks-modal');
+      const card = modal?.querySelector('.modal__card');
+      let lastFocus = null;
+
+      const focusable = () =>
+        card.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+
+      function openModal() {
+        lastFocus = document.activeElement;
+        modal.classList.remove('hidden');
+        modal.removeAttribute('aria-hidden');
+        const first = focusable()[0];
+        (first || card).focus();
+        document.addEventListener('keydown', onKey);
+      }
+
+      function closeModal() {
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+        document.removeEventListener('keydown', onKey);
+        if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      }
+
+      function onKey(e) {
+        if (e.key === 'Escape') return closeModal();
+        if (e.key === 'Tab') {
+          const nodes = Array.from(focusable());
+          const first = nodes[0], last = nodes[nodes.length - 1];
+          if (!nodes.length) return e.preventDefault();
+          if (e.shiftKey && document.activeElement === first) {
+            last.focus();
+            e.preventDefault();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            first.focus();
+            e.preventDefault();
+          }
+        }
+      }
+
+      trigger.addEventListener('click', openModal);
+      modal.addEventListener('click', (e) => {
+        if (e.target.dataset.close) closeModal();
+      });
+    })();
+  </script>
 
 <!-- === TTG Cookie Consent START === -->
 <div id="ttg-consent" class="ttg-consent" data-consent-banner>
