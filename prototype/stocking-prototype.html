@@ -1151,6 +1151,31 @@
       line-height: 1;
     }
 
+    #stock-list-card .card-header {
+      position: relative;
+    }
+
+    #stocking-checklist-pop {
+      position: absolute;
+      z-index: 999;
+      margin: 0;
+      margin-top: 0.5rem;
+      padding: 1rem 1.2rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--ink-20, #274a63);
+      background: rgba(14, 39, 56, 0.92);
+      color: var(--ink-90, #e8f2fb);
+      max-inline-size: 20rem;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    #stocking-checklist-pop ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
     @media (prefers-reduced-motion: no-preference) {
       .info-popover {
         animation: fadeIn 0.14s ease-out;
@@ -1698,9 +1723,39 @@
       <section class="card ttg-card" id="stock-list-card" aria-live="polite">
         <div class="card-header">
           <div class="row title-row between">
-            <h2 class="card-title">Current Stock</h2>
+            <h2 class="card-title">
+              Current Stock
+              <button
+                type="button"
+                id="stocking-checklist-btn"
+                class="info-btn"
+                aria-label="View Responsible Stocking Checklist"
+                aria-haspopup="dialog"
+                aria-controls="stocking-checklist-pop"
+              >i</button>
+            </h2>
           </div>
           <p class="card-subtitle">Your selected fish and inverts appear here. No stock yet. Add species to begin.</p>
+        </div>
+        <div
+          id="stocking-checklist-pop"
+          class="info-popover"
+          role="dialog"
+          aria-labelledby="stocking-checklist-title"
+          aria-modal="false"
+          hidden
+        >
+          <div class="info-popover__header">
+            <strong id="stocking-checklist-title">Responsible Stocking Checklist</strong>
+            <button class="info-popover__close" aria-label="Close">×</button>
+          </div>
+          <ul>
+            <li>Verify your nitrogen cycle is stable with zero ammonia and nitrite before introducing new species.</li>
+            <li>Match species by temperature, pH, and hardness tolerances, leaning toward the overlap rather than the extremes.</li>
+            <li>Stage livestock additions over several weeks so your biofilter adapts gradually.</li>
+            <li>Supplement mechanical filtration with live plants or seeded media to buffer bioload spikes.</li>
+            <li>Keep a log of maintenance tasks, feeding routines, and observed behavior shifts to inform future adjustments.</li>
+          </ul>
         </div>
         <div id="stock-list" class="stock-list" data-testid="species-list"></div>
       </section>
@@ -1819,6 +1874,55 @@
   <script type="module" src="/js/logic/conflicts.js"></script>
   <script type="module" src="/js/stocking.js?v=2024-09-01" id="js-stocking"></script>
   <script type="module" src="/js/tank-size-card.js?v=2024-09-01"></script>
+
+  <script>
+    (() => {
+      const btn = document.getElementById('stocking-checklist-btn');
+      const pop = document.getElementById('stocking-checklist-pop');
+      const closeBtn = pop?.querySelector('.info-popover__close');
+      if (!btn || !pop || !closeBtn) return;
+
+      const place = () => {
+        const rect = btn.getBoundingClientRect();
+        const x = rect.left + window.scrollX;
+        const y = rect.bottom + window.scrollY + 8;
+        pop.style.left = `${x}px`;
+        pop.style.top = `${y}px`;
+      };
+
+      const open = () => {
+        place();
+        pop.hidden = false;
+        closeBtn.focus();
+      };
+      const close = () => {
+        pop.hidden = true;
+        btn.focus();
+      };
+
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        pop.hidden ? open() : close();
+      });
+      closeBtn.addEventListener('click', close);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !pop.hidden) close();
+      });
+      document.addEventListener('click', (e) => {
+        if (!pop.hidden && !pop.contains(e.target) && e.target !== btn) {
+          close();
+        }
+      });
+      window.addEventListener('resize', () => {
+        if (!pop.hidden) place();
+      });
+      window.addEventListener('scroll', () => {
+        if (!pop.hidden) place();
+      }, true);
+
+      btn.title = 'View responsible stocking practices.';
+    })();
+  </script>
 
   <script>
     (() => {
