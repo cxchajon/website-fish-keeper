@@ -1102,7 +1102,20 @@
         <p>Each species profile stores optimal ranges for temperature, pH, carbonate hardness, and general hardness. When your proposed community falls outside overlapping tolerances, the tool highlights conflicts inside the Environmental Guidance card. These nudges help you plan remediation strategies, whether that means remineralizing reverse-osmosis water, adjusting heater wattage, or referencing the <a href="/pages/params.html">Cycling &amp; Parameters guide</a> for deeper chemistry tutorials.</p>
         <h3>Compatibility and Behavior Signals</h3>
         <p>Beyond raw numbers, the advisor tracks social behavior and territory pressure. Aggressive or fin-nipping species trigger caution banners so you can rethink combinations before fish hit the water. Reference callouts point to our <a href="/pages/gear/index.html">Gear Guide</a> for suggested aquascaping barriers, the <a href="/pages/media.html">Media Hub</a> for video walk-throughs, and the <a href="/pages/university.html">Aquarium Science Library</a> when you need peer-reviewed husbandry data.</p>
-        <h2>How to Use the Stocking Advisor</h2>
+        <div class="sa-proto-how-header">
+          <h2>How to Use the Stocking Advisor</h2>
+          <button
+            type="button"
+            class="sa-proto-how-trigger"
+            data-sa-proto-modal-trigger="how-it-works"
+            aria-controls="howItWorksModal"
+            aria-expanded="false"
+            aria-haspopup="dialog"
+            role="button"
+          >
+            How it works
+          </button>
+        </div>
         <ol>
           <li>Select your display tank volume to anchor bioload and flow calculations. The tool supports common freshwater sizes out of the box, and entering a custom volume recalculates stocking caps instantly.</li>
           <li>Tell the advisor whether you maintain a planted aquarium. Enabling the planted toggle dials up light and nutrient assumptions, which affects compatible species and provides a greener UI glow so you can see the state change at a glance.</li>
@@ -1124,6 +1137,23 @@
         <h2>Connect the Dots with The Tank Guide</h2>
         <p>The Stocking Advisor works best alongside our broader knowledge base. After refining your community plan, visit the <a href="/pages/gear/index.html">Gear Guide</a> to confirm heaters, filters, and lighting kits match the recommended turnover and intensity. If you are new to cycling, lean on the <a href="/pages/params.html">Cycling &amp; Water Parameters resource</a> for actionable testing protocols and troubleshooting charts.</p>
         <p>When you are ready to create a thriving aquascape, the <a href="/pages/media.html">Media Hub</a> showcases gallery tours and build breakdowns from hobbyists across climates, while the <a href="/pages/university.html">Aquarium Science Library</a> curates peer-reviewed articles that underpin our stocking guidance. Each internal link opens crawlable, policy-compliant content to satisfy AdSense expectations for clear privacy, terms, and trust pathways.</p>
+        <div class="sa-proto-feature-cta">
+          <h3>Feature your tank</h3>
+          <p>
+            Finished your plan? We’d love to showcase real community builds. Send a photo, your stock list, and a few notes and we may feature it on The Tank Guide.
+          </p>
+          <div class="sa-proto-feature-actions">
+            <a
+              class="sa-proto-feature-primary"
+              href="/prototype/feature-your-tank.html"
+              aria-label="Submit your tank for a community feature"
+              data-sa-proto-feature-cta
+            >
+              Submit your tank
+            </a>
+            <a class="sa-proto-feature-secondary" href="/pages/media.html#community">See featured tanks</a>
+          </div>
+        </div>
         <section class="advisor-faq" id="faq">
           <h2>Stocking Advisor FAQ</h2>
           <details>
@@ -1144,7 +1174,30 @@
       <div class="card ttg-card tank-size-card" id="tank-size-card">
         <div class="card-header">
           <div class="row title-row between">
-            <h2 class="card-title">Tank Size</h2>
+            <div class="sa-proto-tank-size-label">
+              <h2 class="card-title" id="tank-size-heading">Tank Size</h2>
+              <button
+                type="button"
+                class="sa-proto-tooltip-trigger"
+                data-sa-proto-tooltip-trigger
+                data-sa-proto-tooltip-id="sa-proto-tank-size-tip"
+                aria-label="How tank size selections work"
+                aria-describedby="sa-proto-tank-size-tip"
+                aria-controls="sa-proto-tank-size-tip"
+                aria-expanded="false"
+              >
+                i
+              </button>
+            </div>
+          </div>
+          <div
+            class="sa-proto-tooltip"
+            id="sa-proto-tank-size-tip"
+            role="tooltip"
+            data-sa-proto-tooltip
+            hidden
+          >
+            <p>Choose your tank size and the advisor instantly calculates safe stocking levels.</p>
           </div>
           <p class="card-subtitle">Select a tank size to begin.</p>
         </div>
@@ -1614,6 +1667,49 @@
   <script type="module" src="/js/logic/conflicts.js"></script>
   <script type="module" src="/js/stocking.js?v=2024-09-01" id="js-stocking"></script>
   <script type="module" src="/js/tank-size-card.js?v=2024-09-01"></script>
+
+  <div
+    id="howItWorksModal"
+    class="sa-proto-modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="sa-proto-how-modal-title"
+    data-sa-proto-modal
+    hidden
+  >
+    <div class="sa-proto-modal-panel" role="document">
+      <div class="sa-proto-modal-header">
+        <h2 id="sa-proto-how-modal-title">How it works</h2>
+        <button
+          type="button"
+          class="sa-proto-modal-close"
+          data-sa-proto-modal-close
+          aria-label="Close"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="sa-proto-modal-body">
+        <p>Choose your tank size and the advisor instantly calculates safe stocking levels.</p>
+        <ol>
+          <li>Pick your tank size — or enter a custom volume.</li>
+          <li>Toggle “Planted” if you keep live plants.</li>
+          <li>Select a filter (or enter your GPH) to see turnover.</li>
+          <li>Add fish or shrimp; watch compatibility chips for warnings.</li>
+          <li>Review temperature, pH, hardness, and flow cards.</li>
+        </ol>
+        <p class="sa-proto-modal-helper">
+          Need chemistry help? The Cycling Coach explains testing, mineral balance, and safe adjustments.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div
+    class="sa-proto-visually-hidden"
+    data-sa-proto-modal-announcer
+    aria-live="polite"
+    aria-atomic="true"
+  ></div>
 
 <!-- === TTG Cookie Consent START === -->
 <div id="ttg-consent" class="ttg-consent" data-consent-banner>
