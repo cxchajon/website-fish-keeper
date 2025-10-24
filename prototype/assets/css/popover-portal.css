@@ -18,3 +18,23 @@
   background: rgba(0, 0, 0, 0.25);
   z-index: 9998;
 }
+
+/* Tighten spacing */
+.ttg-popover-panel {
+  margin: 0;
+  transform-origin: top left;
+}
+
+/* Optional small arrow so “connection” reads visually */
+.ttg-popover-panel[data-arrow="true"]::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  background: var(--card-bg, #142536);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  left: var(--arrow-left, 14px);
+  top: var(--arrow-top, -5px);
+}
+
