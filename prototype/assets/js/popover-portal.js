@@ -1,135 +1,205 @@
-(() => {
-  const root = document.getElementById('ttg-popover-root');
-  if (!root) return;
+(function () {
+  if (!location.pathname.includes('/prototype/stocking-prototype.html')) return;
 
-  const VP_PAD = 8; // keep this many px inside viewport
-  const GAP_MOBILE = 6;
-  const GAP_DESK = 8;
-
-  const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
-  const gap = () => (isMobile() ? GAP_MOBILE : GAP_DESK);
-
-  function clamp(val, min, max) {
-    return Math.min(Math.max(val, min), max);
+  // 1) Ensure portal root
+  let root = document.getElementById('ttg-popover-root');
+  if (!root) {
+    root = document.createElement('div');
+    root.id = 'ttg-popover-root';
+    root.setAttribute('aria-hidden', 'true');
+    document.body.prepend(root);
   }
 
-  /** Compute best position near trigger with tight gap and on-screen clamping */
+  // Utilities
+  const VP_PAD = 8;
+  const GAP_MOBILE = 6, GAP_DESK = 8;
+  const isMobile = () => matchMedia('(max-width: 768px)').matches;
+  const gap = () => (isMobile() ? GAP_MOBILE : GAP_DESK);
+  const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+
+  // Resolve the panel for a trigger:
+  function resolvePanel(trigger) {
+    // 1) Prefer aria-controls
+    const id = trigger.getAttribute('aria-controls');
+    if (id) {
+      const byId = document.getElementById(id);
+      if (byId) return byId;
+    }
+    // 2) data-popover-target="#id"
+    const tSel = trigger.getAttribute('data-popover-target');
+    if (tSel) {
+      const any = document.querySelector(tSel);
+      if (any) return any;
+    }
+    // 3) Next sibling that looks like a popover/tooltip
+    let sib = trigger.nextElementSibling;
+    while (sib) {
+      const role = (sib.getAttribute('role') || '').toLowerCase();
+      if (
+        role === 'tooltip' ||
+        sib.hasAttribute('data-popover') ||
+        sib.classList.contains('popover') ||
+        sib.classList.contains('tooltip')
+      ) {
+        return sib;
+      }
+      sib = sib.nextElementSibling;
+    }
+    // 4) Last resort: closest descendant marked data-popover within same parent
+    const cand = trigger.parentElement?.querySelector('[role="tooltip"],[data-popover],.tooltip,.popover');
+    return cand || null;
+  }
+
   function computePosition(triggerRect, panelRect) {
     const g = gap();
     const vw = document.documentElement.clientWidth;
     const vh = document.documentElement.clientHeight;
 
-    // Prefer bottom-start; fall back to top-start if not enough space
-    const preferBottom =
-      (triggerRect.bottom + g + panelRect.height + VP_PAD) <= vh;
+    // Prefer bottom if enough room
+    const preferBottom = (triggerRect.bottom + g + panelRect.height + VP_PAD) <= vh;
 
     let top = preferBottom
       ? triggerRect.bottom + g
       : triggerRect.top - panelRect.height - g;
 
-    // Start at left aligned to trigger, clamp into viewport with padding
     let left = triggerRect.left;
-
-    // If panel would overflow right, shift left; if overflow left, clamp rightwards
     left = clamp(left, VP_PAD, vw - panelRect.width - VP_PAD);
 
-    // If the chosen side still overflows (extreme cases), force to other side
-    if (!preferBottom && top < VP_PAD) {
-      top = clamp(triggerRect.bottom + g, VP_PAD, vh - panelRect.height - VP_PAD);
-    } else {
-      top = clamp(top, VP_PAD, vh - panelRect.height - VP_PAD);
-    }
+    // Clamp vertically
+    top = clamp(top, VP_PAD, vh - panelRect.height - VP_PAD);
 
-    // arrow offsets (optional)
-    const arrowLeft = clamp((triggerRect.left + triggerRect.width/2) - left - 5, 10, panelRect.width - 10);
-    const arrowTop = preferBottom ? -5 : panelRect.height - 5; // top or bottom
-
-    return { top, left, preferBottom, arrowLeft, arrowTop };
+    const arrowLeft = clamp((triggerRect.left + triggerRect.width / 2) - left - 5, 10, panelRect.width - 10);
+    return { top, left, preferBottom, arrowLeft };
   }
 
-  function placePanel(trigger, panel) {
-    // Ensure we can measure
+  function place(trigger, panel) {
+    // Reveal for measurement
     panel.style.visibility = 'hidden';
     panel.style.display = 'block';
-    panel.dataset.arrow = 'true';
 
-    // Measure after in DOM
     const t = trigger.getBoundingClientRect();
     const p = panel.getBoundingClientRect();
 
     const pos = computePosition(t, p);
     panel.style.top = `${Math.round(window.scrollY + pos.top)}px`;
     panel.style.left = `${Math.round(window.scrollX + pos.left)}px`;
-    panel.style.setProperty('--arrow-left', `${Math.round(pos.arrowLeft)}px`);
-    panel.style.setProperty('--arrow-top', `${Math.round(pos.arrowTop)}px`);
-
     panel.style.visibility = 'visible';
   }
 
-  function openPopover(trigger, panel) {
-    // semantics
-    const isTooltip = (panel.getAttribute('role') || '').toLowerCase() === 'tooltip';
-    if (!isTooltip) panel.setAttribute('role', 'dialog');
-    panel.setAttribute('aria-modal', 'false');
-    panel.classList.add('ttg-popover-panel');
+  function close(trigger, panel) {
+    trigger.setAttribute('aria-expanded', 'false');
+    if (trigger._ttgOriginalHost) trigger._ttgOriginalHost.appendChild(panel);
+    panel.style.display = 'none';
+    root.setAttribute('aria-hidden', 'true');
 
-    // portal
+    document.removeEventListener('mousedown', panel._onDocClick);
+    document.removeEventListener('keydown', panel._onKey);
+    window.removeEventListener('scroll', panel._onReposition, true);
+    window.removeEventListener('resize', panel._onReposition);
+  }
+
+  function open(trigger, panel) {
+    if (!panel.classList.contains('ttg-popover-panel')) panel.classList.add('ttg-popover-panel');
+
+    if (!trigger._ttgOriginalHost) trigger._ttgOriginalHost = panel.parentElement;
     root.appendChild(panel);
     root.removeAttribute('aria-hidden');
 
-    placePanel(trigger, panel);
+    // Accessibility: use dialog semantics for multi-line content
+    const role = (panel.getAttribute('role') || '').toLowerCase();
+    if (!role || role === 'tooltip') panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-modal', 'false');
+
+    place(trigger, panel);
     trigger.setAttribute('aria-expanded', 'true');
+    trigger.focus({ preventScroll: true });
 
-    // Close handlers
-    const onDocClick = (e) => { if (!panel.contains(e.target) && e.target !== trigger) close(); };
-    const onKey = (e) => { if (e.key === 'Escape') close(); };
-    const onScroll = () => placePanel(trigger, panel);
-    const onResize = () => placePanel(trigger, panel);
+    panel._onDocClick = (e) => {
+      if (!panel.contains(e.target) && e.target !== trigger) close(trigger, panel);
+    };
+    panel._onKey = (e) => { if (e.key === 'Escape') close(trigger, panel); };
+    panel._onReposition = () => place(trigger, panel);
 
-    function close() {
-      trigger.setAttribute('aria-expanded', 'false');
-      (trigger._ttgOriginalHost || document.body).appendChild(panel);
-      panel.style.display = 'none';
-      root.setAttribute('aria-hidden', 'true');
-      document.removeEventListener('mousedown', onDocClick);
-      document.removeEventListener('keydown', onKey);
-      window.removeEventListener('scroll', onScroll, true);
-      window.removeEventListener('resize', onResize);
-    }
-
-    document.addEventListener('mousedown', onDocClick);
-    document.addEventListener('keydown', onKey);
-    window.addEventListener('scroll', onScroll, true);  // capture scroll from containers too
-    window.addEventListener('resize', onResize);
-
-    trigger._ttgClose = close;
+    document.addEventListener('mousedown', panel._onDocClick);
+    document.addEventListener('keydown', panel._onKey);
+    window.addEventListener('scroll', panel._onReposition, true);
+    window.addEventListener('resize', panel._onReposition);
   }
 
-  function bind(trigger) {
-    const id = trigger.getAttribute('aria-controls');
-    if (!id) return;
-    const panel = document.getElementById(id);
-    if (!panel) return;
+  function bindTrigger(trigger) {
+    const panel = resolvePanel(trigger);
+    if (!panel) {
+      const path = trigger.id ? `#${trigger.id}` : trigger.className ? `.${String(trigger.className).trim().replace(/\s+/g, '.')}` : trigger.tagName.toLowerCase();
+      const label = trigger.getAttribute('aria-label') || trigger.textContent?.trim() || 'unknown trigger';
+      console.warn('[TTG proto] popover trigger missing panel:', { path, label });
+      return;
+    }
 
     if (!trigger.hasAttribute('aria-expanded')) trigger.setAttribute('aria-expanded', 'false');
-    if (!trigger._ttgOriginalHost) trigger._ttgOriginalHost = panel.parentElement;
+    // Ensure each trigger bound once
+    if (trigger._ttgBound) return;
+    trigger._ttgBound = true;
 
     const toggle = (e) => {
       e.preventDefault();
       const expanded = trigger.getAttribute('aria-expanded') === 'true';
-      if (expanded && trigger._ttgClose) trigger._ttgClose();
-      else openPopover(trigger, panel);
-      trigger.focus({ preventScroll: true });
+      expanded ? close(trigger, panel) : open(trigger, panel);
     };
+
     trigger.addEventListener('click', toggle);
     trigger.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') toggle(e);
+      if (e.key === 'Escape' && trigger.getAttribute('aria-expanded') === 'true') {
+        e.preventDefault(); close(trigger, panel);
+      }
     });
   }
 
-  // (Re)bind known info triggers
-  const triggers = document.querySelectorAll(
-    '#stocking-tip-btn, .ttg-info-btn, .tooltip-trigger, [aria-haspopup="dialog"], [aria-controls]'
-  );
-  triggers.forEach(bind);
+  function bindAll() {
+    const sel = [
+      '#stocking-tip-btn',
+      '.ttg-info-btn',
+      '.tooltip-trigger',
+      '[data-info]',
+      '[aria-haspopup][aria-controls]',
+      '[data-popover-target]'
+    ].join(',');
+    const triggers = document.querySelectorAll(sel);
+
+    if (!triggers.length) {
+      console.warn('[TTG proto] no info-popover triggers found; aborting binder');
+      return;
+    }
+
+    triggers.forEach(bindTrigger);
+  }
+
+  // Initial bind after network idle-ish
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindAll, { once: true });
+  } else {
+    bindAll();
+  }
+
+  // Rebind on DOM mutations (prototype’s UI flips between compact/expanded)
+  const mo = new MutationObserver((muts) => {
+    // If nodes added or attributes affecting visibility changed, try rebinding
+    for (const m of muts) {
+      if (m.type === 'childList' && (m.addedNodes?.length || m.removedNodes?.length)) {
+        bindAll();
+        break;
+      }
+      if (m.type === 'attributes' && (m.attributeName === 'class' || m.attributeName === 'hidden' || m.attributeName === 'style')) {
+        bindAll();
+        break;
+      }
+    }
+  });
+  mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'hidden', 'style'] });
+
+  // Debug: surface number of bound triggers (visible in console)
+  setTimeout(() => {
+    const count = document.querySelectorAll('[aria-expanded]').length;
+    console.info('[TTG proto] info-popovers bound:', count);
+  }, 500);
 })();
