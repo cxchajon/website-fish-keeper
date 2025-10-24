@@ -13,7 +13,8 @@ body.theme-dark {
 }
 
 
-.prototype-stock-page .info-trigger-scope {
+
+.prototype-stock-page .info-trigger {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -21,6 +22,26 @@ body.theme-dark {
   margin-inline-start: 0.5rem;
   overflow: visible;
   isolation: isolate;
+}
+
+.prototype-stock-page .info-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.prototype-stock-page .info-inline .info-trigger {
+  margin-inline-start: 0;
+}
+
+.prototype-stock-page .card-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.prototype-stock-page .card-title-row .card-title {
+  margin: 0;
 }
 
 .prototype-stock-page .info-btn {
@@ -98,25 +119,26 @@ body.theme-dark {
 
 .prototype-stock-page [data-info-pop] {
   position: absolute;
-  top: 100%;
-  left: 0;
-  padding: 12px 12px 10px;
-  border-radius: 10px;
-  background: rgba(20, 22, 25, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  inset-inline-start: 0;
+  inset-block-start: calc(100% + 8px);
+  padding: 14px 16px 12px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(18, 26, 44, 0.98), rgba(10, 16, 30, 0.96));
+  border: 1px solid rgba(163, 200, 255, 0.2);
+  box-shadow: 0 14px 40px rgba(4, 10, 30, 0.45);
   color: rgba(235, 243, 255, 0.92);
+  max-inline-size: min(22rem, 90vw);
   transform-origin: top center;
-  transform: scale(0.98);
+  transform: translateY(-4px) scale(0.98);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.14s ease, transform 0.14s ease;
-  z-index: 140;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 220;
 }
 
 .prototype-stock-page [data-info-pop].is-open {
   opacity: 1;
-  transform: scale(1);
+  transform: translateY(0) scale(1);
   pointer-events: auto;
 }
 
@@ -189,8 +211,15 @@ body.theme-dark {
 
 .prototype-stock-page #stock-list-card,
 .prototype-stock-page #stock-list-card .card-header,
+.prototype-stock-page #env-card,
 .prototype-stock-page #env-card .card-header,
+.prototype-stock-page #tank-size-card,
 .prototype-stock-page #tank-size-card .card-header {
+  position: relative;
+  overflow: visible;
+}
+
+.prototype-stock-page .card {
   position: relative;
   overflow: visible;
 }

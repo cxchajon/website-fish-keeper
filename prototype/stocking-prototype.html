@@ -1139,29 +1139,30 @@
           <p class="hero-subline">Prepared by The Tank Guide (A FishKeepingLifeCo Project).</p>
           <p class="tagline hero-tagline lead">Plan a healthy community by checking bioload, compatibility — and get recommended water parameters for your tank.</p>
           <!-- Inline "How it works" link (prototype only) -->
-          <p class="muted small" id="how-it-works-inline-wrap">
+          <div class="muted small info-inline" id="how-it-works-inline-wrap">
             <a href="#" id="hero-how-works" class="hero-how-works link-underline">How it works</a>
-            <span class="info-trigger-scope" data-info-scope="stocking-tip">
-                <button
-                  id="stocking-tip-btn"
-                  type="button"
-                  class="info-btn"
-                  data-info-btn="stocking-tip"
-                  aria-label="Open stocking tip"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                  aria-controls="stocking-tip-pop"
-                  aria-describedby="stocking-tip-pop"
-                >i</button>
-                <div
-                  id="stocking-tip-pop"
-                  class="info-popover"
-                  data-info-pop="stocking-tip"
-                  role="tooltip"
-                  aria-labelledby="stocking-tip-title"
-                  tabindex="-1"
-                  hidden
-                >
+            <div class="info-trigger" data-info-scope="stocking-tip">
+              <button
+                id="stocking-tip-btn"
+                type="button"
+                class="info-btn"
+                data-info-btn="stocking-tip"
+                aria-label="Open stocking tip"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls="stocking-tip-pop"
+                aria-describedby="stocking-tip-pop"
+              >i</button>
+              <div
+                id="stocking-tip-pop"
+                class="info-popover"
+                data-info-pop="stocking-tip"
+                role="dialog"
+                aria-labelledby="stocking-tip-title"
+                aria-modal="false"
+                tabindex="-1"
+                hidden
+              >
                 <div class="info-popover__header">
                   <strong id="stocking-tip-title">Stocking Tip</strong>
                   <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
@@ -1172,8 +1173,8 @@
                   Consistent tracking helps your parameters stay stable as the biofilter adapts.
                 </p>
               </div>
-            </span>
-          </p>
+            </div>
+          </div>
           <div id="stocking-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
         </div>
       </div>
@@ -1271,7 +1272,7 @@
           <div class="row title-row between">
             <div class="sa-proto-tank-size-label">
               <h2 class="card-title" id="tank-size-heading">Tank Size</h2>
-              <span class="info-trigger-scope" data-info-scope="tank-size">
+              <div class="info-trigger" data-info-scope="tank-size">
                 <button
                   type="button"
                   class="info-btn"
@@ -1286,8 +1287,9 @@
                   id="tank-size-pop"
                   class="info-popover"
                   data-info-pop="tank-size"
-                  role="tooltip"
+                  role="dialog"
                   aria-labelledby="tank-size-pop-title"
+                  aria-modal="false"
                   tabindex="-1"
                   hidden
                 >
@@ -1301,7 +1303,7 @@
                     <li>Adjustments update every card instantly so you can compare scenarios before buying equipment.</li>
                   </ul>
                 </div>
-              </span>
+              </div>
             </div>
           </div>
           <p class="card-subtitle">Select a tank size to begin.</p>
@@ -1325,7 +1327,7 @@
           <div class="row-left">
             <div class="toggle-label">
               <label class="toggle-title" for="stocking-planted">Planted</label>
-              <span class="info-trigger-scope" data-info-scope="planted">
+              <div class="info-trigger" data-info-scope="planted">
                 <button
                   type="button"
                   class="info-btn"
@@ -1340,8 +1342,9 @@
                   id="planted-pop"
                   class="info-popover"
                   data-info-pop="planted"
-                  role="tooltip"
+                  role="dialog"
                   aria-labelledby="planted-pop-title"
+                  aria-modal="false"
                   tabindex="-1"
                   hidden
                 >
@@ -1355,7 +1358,7 @@
                     <li>Leave it off for artificial plants or sparse growth so recommendations stay conservative.</li>
                   </ul>
                 </div>
-              </span>
+              </div>
             </div>
           </div>
           <div class="row-right">
@@ -1370,7 +1373,7 @@
               <div class="filter-product-field">
                 <div class="field-label-row">
                   <label for="filter-product">Filter Product</label>
-                  <span class="info-trigger-scope" data-info-scope="filter-product">
+                  <div class="info-trigger" data-info-scope="filter-product">
                     <button
                       type="button"
                       class="info-btn"
@@ -1385,8 +1388,9 @@
                       id="filter-product-pop"
                       class="info-popover"
                       data-info-pop="filter-product"
-                      role="tooltip"
+                      role="dialog"
                       aria-labelledby="filter-product-pop-title"
+                      aria-modal="false"
                       tabindex="-1"
                       hidden
                     >
@@ -1400,7 +1404,7 @@
                         <li>Switch to a custom entry if you run multiple filters or throttle the manufacturer flow.</li>
                       </ul>
                     </div>
-                  </span>
+                  </div>
                 </div>
                 <div class="select-wrap">
                   <select id="filter-product" name="filter-product" aria-describedby="filter-product-note">
@@ -1415,7 +1419,7 @@
               <div class="filter-flow-input">
                 <div class="field-label-row">
                   <label for="filter-rated-gph">Rated Flow (GPH)</label>
-                  <span class="info-trigger-scope" data-info-scope="rated-flow">
+                  <div class="info-trigger" data-info-scope="rated-flow">
                     <button
                       type="button"
                       class="info-btn"
@@ -1430,8 +1434,9 @@
                       id="rated-flow-pop"
                       class="info-popover"
                       data-info-pop="rated-flow"
-                      role="tooltip"
+                      role="dialog"
                       aria-labelledby="rated-flow-pop-title"
+                      aria-modal="false"
                       tabindex="-1"
                       hidden
                     >
@@ -1445,7 +1450,7 @@
                         <li>Edit this value if you throttle the filter or use spray-bar mods that slow output.</li>
                       </ul>
                     </div>
-                  </span>
+                  </div>
                 </div>
                 <div class="filter-flow-input__field">
                   <input type="text" id="filter-rated-gph" name="filter-rated-gph" inputmode="numeric"
@@ -1458,7 +1463,7 @@
                 <p class="filter-turnover" id="filter-turnover" aria-live="polite">
                   <span class="filter-turnover-label">
                     Estimated turnover
-                    <span class="info-trigger-scope" data-info-scope="turnover">
+                    <div class="info-trigger" data-info-scope="turnover">
                         <button
                           type="button"
                           class="info-btn"
@@ -1473,8 +1478,9 @@
                           id="turnover-pop"
                           class="info-popover"
                           data-info-pop="turnover"
-                          role="tooltip"
+                          role="dialog"
                           aria-labelledby="turnover-pop-title"
+                          aria-modal="false"
                           tabindex="-1"
                           hidden
                         >
@@ -1488,7 +1494,7 @@
                           <li>If the number dips low, consider upsizing filtration or adding supplemental circulation.</li>
                         </ul>
                       </div>
-                    </span>
+                    </div>
                   </span>
                   <span class="filter-turnover-value" data-role="filter-turnover-value">—</span>
                 </p>
@@ -1701,9 +1707,9 @@
       <section class="card ttg-card" id="stock-list-card" aria-live="polite">
         <div class="card-header">
           <div class="row title-row between">
-            <h2 class="card-title">
-              Current Stock
-              <span class="info-trigger-scope" data-info-scope="stocking-checklist">
+            <div class="card-title-row">
+              <h2 class="card-title">Current Stock</h2>
+              <div class="info-trigger" data-info-scope="stocking-checklist">
                 <button
                   type="button"
                   id="stocking-checklist-btn"
@@ -1719,8 +1725,9 @@
                   id="stocking-checklist-pop"
                   class="info-popover"
                   data-info-pop="stocking-checklist"
-                  role="tooltip"
+                  role="dialog"
                   aria-labelledby="stocking-checklist-title"
+                  aria-modal="false"
                   tabindex="-1"
                   hidden
                 >
@@ -1729,15 +1736,15 @@
                     <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
                   </div>
                   <ul>
-                    <li>Nitrogen cycle zero ammonia/nitrite.</li>
-                    <li>Match parameters by overlap.</li>
-                    <li>Stage additions over weeks.</li>
-                    <li>Plants/seeded media buffer.</li>
-                    <li>Keep a simple log.</li>
+                    <li>Verify your nitrogen cycle is stable with zero ammonia and nitrite before introducing new species.</li>
+                    <li>Match species by temperature, pH, and hardness tolerances, leaning into the overlapping sweet spot.</li>
+                    <li>Stage livestock additions over several weeks so the biofilter can adjust without stress spikes.</li>
+                    <li>Use live plants or seeded media to buffer bioload swings as you expand the community.</li>
+                    <li>Keep a quick log of maintenance, feedings, and behavior shifts so you can course-correct early.</li>
                   </ul>
                 </div>
-              </span>
-            </h2>
+              </div>
+            </div>
           </div>
           <p class="card-subtitle">Your selected fish and inverts appear here. No stock yet. Add species to begin.</p>
         </div>
@@ -1748,7 +1755,7 @@
         <div class="card-header env-header">
           <div class="row title-row">
             <h2 class="card-title">Environmental Recommendations</h2>
-            <span class="info-trigger-scope" data-info-scope="env-info">
+            <div class="info-trigger" data-info-scope="env-info">
               <button
                 type="button"
                 class="info-btn"
@@ -1765,8 +1772,9 @@
                 id="env-info-pop"
                 class="info-popover"
                 data-info-pop="env-info"
-                role="tooltip"
+                role="dialog"
                 aria-labelledby="env-info-title"
+                aria-modal="false"
                 tabindex="-1"
                 hidden
               >
@@ -1780,7 +1788,7 @@
                   <li>Use these guardrails as a starting point and verify with your own water tests before introducing livestock.</li>
                 </ul>
               </div>
-            </span>
+            </div>
           </div>
           <p class="card-subtitle">Derived from your selected stock.</p>
           <div class="env-compact-summary" data-role="env-compact-summary" aria-hidden="true" hidden>
