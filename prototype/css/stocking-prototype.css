@@ -30,6 +30,17 @@ main.stocking-page {
   gap: 16px;
 }
 
+.sa-proto-block {
+  display: grid;
+  gap: 14px;
+  padding: 12px 0;
+}
+
+.sa-proto-block + .sa-proto-block {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 24px;
+}
+
 .advisor-overview h2,
 .advisor-overview h3 {
   color: #f6f9ff;
@@ -110,7 +121,8 @@ main.stocking-page {
   flex-wrap: wrap;
 }
 
-.sa-proto-how-trigger {
+.sa-proto-how-trigger,
+.sa-proto-howitworks-trigger {
   border: 1px solid rgba(255, 255, 255, 0.45);
   background: rgba(12, 20, 36, 0.65);
   color: #f5f9ff;
@@ -123,14 +135,17 @@ main.stocking-page {
 }
 
 .sa-proto-how-trigger:hover,
-.sa-proto-how-trigger:focus-visible {
+.sa-proto-how-trigger:focus-visible,
+.sa-proto-howitworks-trigger:hover,
+.sa-proto-howitworks-trigger:focus-visible {
   background: rgba(59, 117, 217, 0.55);
   border-color: rgba(163, 200, 255, 0.85);
   color: #ffffff;
   outline: none;
 }
 
-.sa-proto-how-trigger:focus-visible {
+.sa-proto-how-trigger:focus-visible,
+.sa-proto-howitworks-trigger:focus-visible {
   box-shadow: 0 0 0 3px rgba(163, 200, 255, 0.35);
 }
 
@@ -141,7 +156,8 @@ main.stocking-page {
     gap: 12px;
   }
 
-  .sa-proto-how-trigger {
+  .sa-proto-how-trigger,
+  .sa-proto-howitworks-trigger {
     width: 100%;
     text-align: center;
   }
@@ -335,7 +351,8 @@ body.sa-proto-modal-open {
 }
 
 /* === Prototype-only Feature CTA === */
-.sa-proto-feature-cta {
+.sa-proto-feature-cta,
+.sa-proto-feature {
   margin-top: 28px;
   padding: 24px 28px;
   border-radius: 16px;
@@ -345,13 +362,15 @@ body.sa-proto-modal-open {
   gap: 14px;
 }
 
-.sa-proto-feature-cta h3 {
+.sa-proto-feature-cta h3,
+.sa-proto-feature h3 {
   margin: 0;
   font-size: 1.35rem;
   color: #ffffff;
 }
 
-.sa-proto-feature-cta p {
+.sa-proto-feature-cta p,
+.sa-proto-feature p {
   margin: 0;
   color: rgba(238, 243, 255, 0.85);
   line-height: 1.6;
@@ -363,7 +382,8 @@ body.sa-proto-modal-open {
   gap: 12px;
 }
 
-.sa-proto-feature-primary {
+.sa-proto-feature-primary,
+.sa-proto-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -378,17 +398,21 @@ body.sa-proto-modal-open {
 }
 
 .sa-proto-feature-primary:hover,
-.sa-proto-feature-primary:focus-visible {
+.sa-proto-feature-primary:focus-visible,
+.sa-proto-button:hover,
+.sa-proto-button:focus-visible {
   transform: translateY(-1px);
   box-shadow: 0 10px 26px rgba(14, 110, 196, 0.35);
   outline: none;
 }
 
-.sa-proto-feature-primary:focus-visible {
+.sa-proto-feature-primary:focus-visible,
+.sa-proto-button:focus-visible {
   box-shadow: 0 0 0 3px rgba(163, 200, 255, 0.45);
 }
 
-.sa-proto-feature-secondary {
+.sa-proto-feature-secondary,
+.sa-proto-link {
   display: inline-flex;
   align-items: center;
   padding: 8px 14px;
@@ -401,13 +425,16 @@ body.sa-proto-modal-open {
 }
 
 .sa-proto-feature-secondary:hover,
-.sa-proto-feature-secondary:focus-visible {
+.sa-proto-feature-secondary:focus-visible,
+.sa-proto-link:hover,
+.sa-proto-link:focus-visible {
   background: rgba(59, 117, 217, 0.35);
   border-color: rgba(163, 200, 255, 0.85);
   outline: none;
 }
 
-.sa-proto-feature-secondary:focus-visible {
+.sa-proto-feature-secondary:focus-visible,
+.sa-proto-link:focus-visible {
   box-shadow: 0 0 0 3px rgba(163, 200, 255, 0.35);
 }
 

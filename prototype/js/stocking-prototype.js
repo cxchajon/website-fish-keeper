@@ -20,8 +20,12 @@
   };
 
   const setupHowItWorksModal = () => {
-    const trigger = document.querySelector('[data-sa-proto-modal-trigger="how-it-works"]');
-    const modal = document.querySelector('[data-sa-proto-modal]');
+    const trigger =
+      document.querySelector('.sa-proto-howitworks-trigger') ||
+      document.querySelector('[data-sa-proto-modal-trigger="how-it-works"]');
+    const modal =
+      document.getElementById('sa-proto-howitworks') ||
+      document.querySelector('[data-sa-proto-modal]');
     if (!trigger || !modal) return;
 
     const closeButton = modal.querySelector('[data-sa-proto-modal-close]');

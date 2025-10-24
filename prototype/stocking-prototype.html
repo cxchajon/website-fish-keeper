@@ -1093,36 +1093,74 @@
         <span class="ad-label">Advertisement</span>
       </div>
       <section class="panel advisor-overview" id="advisor-overview">
-        <h2>Plan Your Aquarium with Confidence</h2>
-        <p>The <strong>Stocking Advisor</strong> blends husbandry research, retailer availability data, and aquarist feedback to help you design communities that thrive. Every control in the planner is tuned for clarity so you can compare filtration capacity, planted-tank requirements, and bioload limits without juggling spreadsheets or care sheets from multiple sources.</p>
-        <h2>The Science Behind the Recommendations</h2>
-        <h3>Bioload and Tank Volume Modeling</h3>
-        <p>The advisor blends conservative inch-per-gallon heuristics with metabolic multipliers derived from species activity levels. Shoaling danios, for example, carry a higher motion factor than slow-moving gouramis, and that difference influences the “remaining capacity” indicator. The planted toggle further adjusts oxygen availability and beneficial bacteria assumptions, reflecting the natural filtration boost that thriving plants provide.</p>
-        <h3>Water Chemistry Guardrails</h3>
-        <p>Each species profile stores optimal ranges for temperature, pH, carbonate hardness, and general hardness. When your proposed community falls outside overlapping tolerances, the tool highlights conflicts inside the Environmental Guidance card. These nudges help you plan remediation strategies, whether that means remineralizing reverse-osmosis water, adjusting heater wattage, or referencing the <a href="/pages/params.html">Cycling &amp; Parameters guide</a> for deeper chemistry tutorials.</p>
-        <h3>Compatibility and Behavior Signals</h3>
-        <p>Beyond raw numbers, the advisor tracks social behavior and territory pressure. Aggressive or fin-nipping species trigger caution banners so you can rethink combinations before fish hit the water. Reference callouts point to our <a href="/pages/gear/index.html">Gear Guide</a> for suggested aquascaping barriers, the <a href="/pages/media.html">Media Hub</a> for video walk-throughs, and the <a href="/pages/university.html">Aquarium Science Library</a> when you need peer-reviewed husbandry data.</p>
-        <div class="sa-proto-how-header">
+        <section class="sa-proto-block" id="sa-proto-confidence">
+          <h2>Plan Your Aquarium with Confidence</h2>
+          <p>
+            The <strong>Stocking Advisor</strong> helps you build a calm, healthy tank. It uses real-world
+            stocking data and hobby feedback to show you—at a glance—how your choices affect
+            bioload, filtration needs, and species mix. No spreadsheets. No guesswork.
+          </p>
+          <p>
+            Choose a tank size, tell us if it’s planted, pick a filter, then add fish or inverts.
+            The tool updates your stocking level, flags behavior conflicts, and suggests target
+            water ranges while you plan.
+          </p>
+        </section>
+
+        <section class="sa-proto-block" id="sa-proto-science">
+          <h2>The Science Behind the Recommendations</h2>
+
+          <h3>Bioload, not “inches per gallon”</h3>
+          <p>
+            The Advisor estimates <strong>bioload</strong>—how much waste your stock produces—using
+            conservative rules plus activity multipliers. Fast swimmers (like danios) add more
+            load than slow cruisers (like gouramis). A planted tank gives a small buffer because
+            thriving plants take up nitrogen.
+          </p>
+
+          <h3>Water chemistry guardrails</h3>
+          <p>
+            Each species carries preferred ranges for temperature, pH, and hardness.
+            If your plan mixes fish outside a shared range, the Environmental card highlights it
+            so you can adjust stock, remineralize, or tweak heat and flow.
+          </p>
+
+          <h3>Compatibility and behavior</h3>
+          <p>
+            The Advisor warns about known problem pairs—fin nippers with long fins, shrimp-unsafe
+            hunters with inverts, or aggressive fish with peaceful schooling species—so you can
+            fix issues before they’re in the water.
+          </p>
+        </section>
+
+        <section class="sa-proto-block" id="sa-proto-howto">
           <h2>How to Use the Stocking Advisor</h2>
-          <button
-            type="button"
-            class="sa-proto-how-trigger"
-            data-sa-proto-modal-trigger="how-it-works"
-            aria-controls="howItWorksModal"
-            aria-expanded="false"
-            aria-haspopup="dialog"
-            role="button"
-          >
-            How it works
-          </button>
-        </div>
-        <ol>
-          <li>Select your display tank volume to anchor bioload and flow calculations. The tool supports common freshwater sizes out of the box, and entering a custom volume recalculates stocking caps instantly.</li>
-          <li>Tell the advisor whether you maintain a planted aquarium. Enabling the planted toggle dials up light and nutrient assumptions, which affects compatible species and provides a greener UI glow so you can see the state change at a glance.</li>
-          <li>Pick the filtration product closest to your setup. Our library includes manufacturer-rated gallons-per-hour data. Choosing your model auto-fills turnover targets, while the manual input remains available if you run a DIY solution.</li>
-          <li>Use the search field to add livestock candidates. Compatibility chips will call out temperature, temperament, and niche conflicts. Remove or reorder species as you iterate to build a stress-free community.</li>
-          <li>Review the environmental cards. Each panel highlights temperature, pH, hardness, and flow recommendations alongside educational context so you can pair the right heater, buffering strategy, and media.</li>
-        </ol>
+          <button class="sa-proto-howitworks-trigger" type="button" aria-controls="sa-proto-howitworks" aria-expanded="false">How it works</button>
+          <ol>
+            <li><strong>Pick your tank size.</strong> Enter a volume or choose a preset; stocking levels update right away.</li>
+            <li><strong>Toggle planted mode.</strong> Plants give a small buffer and you’ll see the UI reflect the change.</li>
+            <li><strong>Select your filter.</strong> Choose a model to auto-fill flow; adjust GPH if you’ve modded your setup.</li>
+            <li><strong>Add your fish.</strong> Search and add species. Reorder or remove as you plan. Chips flag conflicts.</li>
+            <li><strong>Review the health cards.</strong> See target temperature, pH, hardness, and flow and how to stay there.</li>
+          </ol>
+        </section>
+
+        <section class="sa-proto-block" id="sa-proto-connect">
+          <h2>Connect the Dots with The Tank Guide</h2>
+          <p>
+            When your plan looks good, head to the <a href="/pages/gear/index.html">Gear Guide</a> to match filters,
+            heaters, and lights, or brush up on testing in the
+            <a href="/pages/params.html">Cycling Coach</a>.
+          </p>
+
+          <div class="sa-proto-feature">
+            <h3>Feature your tank</h3>
+            <p>Finished your build? We’d love to showcase it. Send a photo, stock list, and a few notes.</p>
+            <a class="sa-proto-button" href="/prototype/feature-your-tank.html" aria-label="Submit your tank for a community feature">Submit your tank</a>
+            <a class="sa-proto-link" href="/pages/media.html#community">See featured tanks</a>
+          </div>
+        </section>
+
         <div class="notice-box">
           <p>Always quarantine new livestock, test ammonia, nitrite, and nitrate weekly during stocking phases, and keep a log of temperature, pH, and hardness readings. Consent-mode logic honors the cookie preferences you set while still allowing us to highlight educational partner offers that help you maintain stable parameters.</p>
         </div>
@@ -1134,26 +1172,6 @@
           <li>Supplement mechanical filtration with live plants or seeded media to buffer bioload spikes.</li>
           <li>Keep a log of maintenance tasks, feeding routines, and observed behavior shifts to inform future adjustments.</li>
         </ul>
-        <h2>Connect the Dots with The Tank Guide</h2>
-        <p>The Stocking Advisor works best alongside our broader knowledge base. After refining your community plan, visit the <a href="/pages/gear/index.html">Gear Guide</a> to confirm heaters, filters, and lighting kits match the recommended turnover and intensity. If you are new to cycling, lean on the <a href="/pages/params.html">Cycling &amp; Water Parameters resource</a> for actionable testing protocols and troubleshooting charts.</p>
-        <p>When you are ready to create a thriving aquascape, the <a href="/pages/media.html">Media Hub</a> showcases gallery tours and build breakdowns from hobbyists across climates, while the <a href="/pages/university.html">Aquarium Science Library</a> curates peer-reviewed articles that underpin our stocking guidance. Each internal link opens crawlable, policy-compliant content to satisfy AdSense expectations for clear privacy, terms, and trust pathways.</p>
-        <div class="sa-proto-feature-cta">
-          <h3>Feature your tank</h3>
-          <p>
-            Finished your plan? We’d love to showcase real community builds. Send a photo, your stock list, and a few notes and we may feature it on The Tank Guide.
-          </p>
-          <div class="sa-proto-feature-actions">
-            <a
-              class="sa-proto-feature-primary"
-              href="/prototype/feature-your-tank.html"
-              aria-label="Submit your tank for a community feature"
-              data-sa-proto-feature-cta
-            >
-              Submit your tank
-            </a>
-            <a class="sa-proto-feature-secondary" href="/pages/media.html#community">See featured tanks</a>
-          </div>
-        </div>
         <section class="advisor-faq" id="faq">
           <h2>Stocking Advisor FAQ</h2>
           <details>
@@ -1669,7 +1687,7 @@
   <script type="module" src="/js/tank-size-card.js?v=2024-09-01"></script>
 
   <div
-    id="howItWorksModal"
+    id="sa-proto-howitworks"
     class="sa-proto-modal-backdrop"
     role="dialog"
     aria-modal="true"
