@@ -182,15 +182,28 @@
     const BUTTON_SELECTOR = '[data-info-btn]';
     const POPOVER_SELECTOR = '[data-info-pop]';
     const OUTSIDE_EVENTS = ['pointerdown', 'mousedown', 'touchstart'];
+    const FOCUSABLE_SELECTORS = [
+      'a[href]',
+      'button:not([disabled])',
+      'textarea:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',');
 
     let idCounter = 0;
     let openState = null;
 
-    const getElements = (scope) => {
-      if (!scope) return null;
-      const trigger = scope.querySelector(BUTTON_SELECTOR);
+    const getPairFromTrigger = (trigger) => {
+      if (!(trigger instanceof HTMLElement)) {
+        return null;
+      }
+      const scope = trigger.closest(SCOPE_SELECTOR);
+      if (!scope) {
+        return null;
+      }
       const popover = scope.querySelector(POPOVER_SELECTOR);
-      if (!(trigger instanceof HTMLElement) || !(popover instanceof HTMLElement)) {
+      if (!(popover instanceof HTMLElement)) {
         return null;
       }
       return { scope, trigger, popover };
@@ -218,13 +231,19 @@
       trigger.setAttribute('aria-describedby', popover.id);
       trigger.classList.remove('is-open');
 
-      popover.setAttribute('role', popover.getAttribute('role') || 'tooltip');
+      popover.setAttribute('role', 'dialog');
       popover.setAttribute('tabindex', popover.getAttribute('tabindex') || '-1');
       popover.setAttribute('aria-hidden', 'true');
-      popover.removeAttribute('aria-modal');
+      popover.setAttribute('aria-modal', 'false');
       popover.hidden = true;
       popover.classList.remove('is-open');
       delete popover.dataset.infoPlacement;
+      popover.style.left = '';
+      popover.style.top = '';
+      popover.style.minWidth = '';
+      popover.style.maxWidth = '';
+      popover.style.visibility = '';
+      popover.style.pointerEvents = '';
     };
 
     const hidePopover = (pair) => {
@@ -254,7 +273,7 @@
         return;
       }
 
-      const gap = Number.parseFloat(popover.dataset.infoGap || '10');
+      const gap = Number.parseFloat(popover.dataset.infoGap || '12');
       const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
       const viewportHeight = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0);
       const gutter = 12;
@@ -264,7 +283,7 @@
       popover.style.left = '0px';
       popover.style.top = '0px';
 
-      const computedMax = Math.min(320, Math.max(180, viewportWidth - (gutter * 2)));
+      const computedMax = Math.min(352, Math.max(200, viewportWidth - (gutter * 2)));
       const computedMin = Math.min(240, computedMax);
       popover.style.maxWidth = `${computedMax}px`;
       popover.style.minWidth = `${computedMin}px`;
@@ -335,6 +354,30 @@
       }
     };
 
+    const focusFirstElement = (popover) => {
+      if (!popover) {
+        return;
+      }
+      const focusable = popover.querySelectorAll(FOCUSABLE_SELECTORS);
+      for (const element of focusable) {
+        if (element instanceof HTMLElement && !element.hasAttribute('disabled')) {
+          try {
+            element.focus({ preventScroll: true });
+            return;
+          } catch (error) {
+            // ignore focus errors
+          }
+        }
+      }
+      if (typeof popover.focus === 'function') {
+        try {
+          popover.focus({ preventScroll: true });
+        } catch (error) {
+          // ignore focus errors
+        }
+      }
+    };
+
     const openScope = (pair) => {
       if (!pair) return;
       if (openState && openState.scope === pair.scope) {
@@ -363,11 +406,7 @@
 
       repositionActive();
 
-      try {
-        trigger.focus({ preventScroll: true });
-      } catch (error) {
-        // ignore focus errors
-      }
+      focusFirstElement(popover);
 
       OUTSIDE_EVENTS.forEach((evt) => document.addEventListener(evt, handleOutside, true));
       document.addEventListener('keydown', handleEscape, true);
@@ -377,8 +416,7 @@
 
     const handleTriggerClick = (event) => {
       const trigger = event.currentTarget;
-      const scope = trigger.closest(SCOPE_SELECTOR);
-      const pair = getElements(scope);
+      const pair = getPairFromTrigger(trigger);
       if (!pair) {
         return;
       }
@@ -389,8 +427,7 @@
 
     const handleTriggerKeydown = (event) => {
       const trigger = event.currentTarget;
-      const scope = trigger.closest(SCOPE_SELECTOR);
-      const pair = getElements(scope);
+      const pair = getPairFromTrigger(trigger);
       if (!pair) {
         return;
       }
@@ -398,7 +435,7 @@
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         openScope(pair);
-      } else if ((event.key === 'Escape' || event.key === 'Esc') && openState && openState.scope === scope) {
+      } else if ((event.key === 'Escape' || event.key === 'Esc') && openState && openState.scope === pair.scope) {
         event.preventDefault();
         closeActive();
       }
@@ -429,26 +466,32 @@
       event.stopPropagation();
     };
 
-    scopeRoot.querySelectorAll(SCOPE_SELECTOR).forEach((scope) => {
-      const pair = getElements(scope);
+    const processedScopes = new WeakSet();
+
+    scopeRoot.querySelectorAll(BUTTON_SELECTOR).forEach((trigger) => {
+      if (!(trigger instanceof HTMLElement)) {
+        return;
+      }
+      const pair = getPairFromTrigger(trigger);
       if (!pair) {
         return;
       }
 
-      ensureIds(pair);
-      applyAria(pair);
-      bindCloseButtons(pair);
+      if (!processedScopes.has(pair.scope)) {
+        ensureIds(pair);
+        applyAria(pair);
+        bindCloseButtons(pair);
+        processedScopes.add(pair.scope);
 
-      const { trigger, popover } = pair;
+        pair.popover.addEventListener('click', (event) => {
+          event.stopPropagation();
+        });
+      }
 
       trigger.addEventListener('click', handleTriggerClick);
       trigger.addEventListener('keydown', handleTriggerKeydown);
       trigger.addEventListener('pointerdown', stopEvent);
       trigger.addEventListener('mousedown', stopEvent);
-
-      popover.addEventListener('click', (event) => {
-        event.stopPropagation();
-      });
     });
   };
 
