@@ -1142,25 +1142,26 @@
           <p class="muted small" id="how-it-works-inline-wrap">
             <a href="#" id="hero-how-works" class="hero-how-works link-underline">How it works</a>
             <span class="info-trigger-scope" data-info-scope="stocking-tip">
-              <button
-                id="stocking-tip-btn"
-                type="button"
-                class="info-btn"
-                data-info-btn="stocking-tip"
-                aria-label="Open stocking tip"
-                aria-haspopup="dialog"
-                aria-expanded="false"
-                aria-controls="stocking-tip-pop"
-              >i</button>
-              <div
-                id="stocking-tip-pop"
-                class="info-popover"
-                data-info-pop="stocking-tip"
-                role="dialog"
-                aria-labelledby="stocking-tip-title"
-                aria-modal="false"
-                hidden
-              >
+                <button
+                  id="stocking-tip-btn"
+                  type="button"
+                  class="info-btn"
+                  data-info-btn="stocking-tip"
+                  aria-label="Open stocking tip"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  aria-controls="stocking-tip-pop"
+                  aria-describedby="stocking-tip-pop"
+                >i</button>
+                <div
+                  id="stocking-tip-pop"
+                  class="info-popover"
+                  data-info-pop="stocking-tip"
+                  role="tooltip"
+                  aria-labelledby="stocking-tip-title"
+                  tabindex="-1"
+                  hidden
+                >
                 <div class="info-popover__header">
                   <strong id="stocking-tip-title">Stocking Tip</strong>
                   <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
@@ -1276,17 +1277,18 @@
                   class="info-btn"
                   data-info-btn="tank-size"
                   aria-expanded="false"
-                  aria-haspopup="dialog"
+                  aria-haspopup="true"
                   aria-controls="tank-size-pop"
+                  aria-describedby="tank-size-pop"
                   aria-label="How tank size selections work"
                 >i</button>
                 <div
                   id="tank-size-pop"
                   class="info-popover"
                   data-info-pop="tank-size"
-                  role="dialog"
-                  aria-modal="false"
+                  role="tooltip"
                   aria-labelledby="tank-size-pop-title"
+                  tabindex="-1"
                   hidden
                 >
                   <div class="info-popover__header">
@@ -1329,17 +1331,18 @@
                   class="info-btn"
                   data-info-btn="planted"
                   aria-expanded="false"
-                  aria-haspopup="dialog"
+                  aria-haspopup="true"
                   aria-controls="planted-pop"
+                  aria-describedby="planted-pop"
                   aria-label="More info about planted tanks"
                 >i</button>
                 <div
                   id="planted-pop"
                   class="info-popover"
                   data-info-pop="planted"
-                  role="dialog"
-                  aria-modal="false"
+                  role="tooltip"
                   aria-labelledby="planted-pop-title"
+                  tabindex="-1"
                   hidden
                 >
                   <div class="info-popover__header">
@@ -1373,17 +1376,18 @@
                       class="info-btn"
                       data-info-btn="filter-product"
                       aria-expanded="false"
-                      aria-haspopup="dialog"
+                      aria-haspopup="true"
                       aria-controls="filter-product-pop"
+                      aria-describedby="filter-product-pop"
                       aria-label="More info about selecting a filter product"
                     >i</button>
                     <div
                       id="filter-product-pop"
                       class="info-popover"
                       data-info-pop="filter-product"
-                      role="dialog"
-                      aria-modal="false"
+                      role="tooltip"
                       aria-labelledby="filter-product-pop-title"
+                      tabindex="-1"
                       hidden
                     >
                       <div class="info-popover__header">
@@ -1417,17 +1421,18 @@
                       class="info-btn"
                       data-info-btn="rated-flow"
                       aria-expanded="false"
-                      aria-haspopup="dialog"
+                      aria-haspopup="true"
                       aria-controls="rated-flow-pop"
+                      aria-describedby="rated-flow-pop"
                       aria-label="More info about rated flow"
                     >i</button>
                     <div
                       id="rated-flow-pop"
                       class="info-popover"
                       data-info-pop="rated-flow"
-                      role="dialog"
-                      aria-modal="false"
+                      role="tooltip"
                       aria-labelledby="rated-flow-pop-title"
+                      tabindex="-1"
                       hidden
                     >
                       <div class="info-popover__header">
@@ -1454,24 +1459,25 @@
                   <span class="filter-turnover-label">
                     Estimated turnover
                     <span class="info-trigger-scope" data-info-scope="turnover">
-                      <button
-                        type="button"
-                        class="info-btn"
-                        data-info-btn="turnover"
-                        aria-expanded="false"
-                        aria-haspopup="dialog"
-                        aria-controls="turnover-pop"
-                        aria-label="More info about turnover"
-                      >i</button>
-                      <div
-                        id="turnover-pop"
-                        class="info-popover"
-                        data-info-pop="turnover"
-                        role="dialog"
-                        aria-modal="false"
-                        aria-labelledby="turnover-pop-title"
-                        hidden
-                      >
+                        <button
+                          type="button"
+                          class="info-btn"
+                          data-info-btn="turnover"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-controls="turnover-pop"
+                          aria-describedby="turnover-pop"
+                          aria-label="More info about turnover"
+                        >i</button>
+                        <div
+                          id="turnover-pop"
+                          class="info-popover"
+                          data-info-pop="turnover"
+                          role="tooltip"
+                          aria-labelledby="turnover-pop-title"
+                          tabindex="-1"
+                          hidden
+                        >
                         <div class="info-popover__header">
                           <strong id="turnover-pop-title">Turnover targets</strong>
                           <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
@@ -1704,17 +1710,18 @@
                   class="info-btn"
                   data-info-btn="stocking-checklist"
                   aria-label="View Responsible Stocking Checklist"
-                  aria-haspopup="dialog"
+                  aria-haspopup="true"
                   aria-expanded="false"
                   aria-controls="stocking-checklist-pop"
+                  aria-describedby="stocking-checklist-pop"
                 >i</button>
                 <div
                   id="stocking-checklist-pop"
                   class="info-popover"
                   data-info-pop="stocking-checklist"
-                  role="dialog"
+                  role="tooltip"
                   aria-labelledby="stocking-checklist-title"
-                  aria-modal="false"
+                  tabindex="-1"
                   hidden
                 >
                   <div class="info-popover__header">
@@ -1722,11 +1729,11 @@
                     <button type="button" class="info-popover__close" data-info-close aria-label="Close">×</button>
                   </div>
                   <ul>
-                    <li>Verify your nitrogen cycle is stable with zero ammonia and nitrite before introducing new species.</li>
-                    <li>Match species by temperature, pH, and hardness tolerances, leaning toward the overlap rather than the extremes.</li>
-                    <li>Stage livestock additions over several weeks so your biofilter adapts gradually.</li>
-                    <li>Supplement mechanical filtration with live plants or seeded media to buffer bioload spikes.</li>
-                    <li>Keep a log of maintenance tasks, feeding routines, and observed behavior shifts to inform future adjustments.</li>
+                    <li>Nitrogen cycle zero ammonia/nitrite.</li>
+                    <li>Match parameters by overlap.</li>
+                    <li>Stage additions over weeks.</li>
+                    <li>Plants/seeded media buffer.</li>
+                    <li>Keep a simple log.</li>
                   </ul>
                 </div>
               </span>
@@ -1747,18 +1754,20 @@
                 class="info-btn"
                 id="env-info-btn"
                 data-info-btn="env-info"
+                data-role="env-info"
                 aria-expanded="false"
-                aria-haspopup="dialog"
+                aria-haspopup="true"
                 aria-controls="env-info-pop"
+                aria-describedby="env-info-pop"
                 aria-label="More info and tips about Environmental Recommendations"
               >i</button>
               <div
                 id="env-info-pop"
                 class="info-popover"
                 data-info-pop="env-info"
-                role="dialog"
-                aria-modal="false"
+                role="tooltip"
                 aria-labelledby="env-info-title"
+                tabindex="-1"
                 hidden
               >
                 <div class="info-popover__header">
@@ -2045,6 +2054,7 @@
 <script src="/js/ad-slot-view-tracking.js"></script>
 <!-- === TTG Ad Slot View Tracking END === -->
 
+<script defer src="/prototype/js/stocking-prototype.js"></script>
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
 </body>
