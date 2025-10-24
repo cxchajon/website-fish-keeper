@@ -129,7 +129,11 @@
   function bindTrigger(trigger) {
     const panel = resolvePanel(trigger);
     if (!panel) {
-      const path = trigger.id ? `#${trigger.id}` : trigger.className ? `.${String(trigger.className).trim().replace(/\s+/g, '.')}` : trigger.tagName.toLowerCase();
+      const path = trigger.id
+        ? `#${trigger.id}`
+        : trigger.className
+          ? `.${String(trigger.className).trim().replace(/\s+/g, '.')}`
+          : trigger.tagName.toLowerCase();
       const label = trigger.getAttribute('aria-label') || trigger.textContent?.trim() || 'unknown trigger';
       console.warn('[TTG proto] popover trigger missing panel:', { path, label });
       return;
@@ -176,7 +180,7 @@
 
   // Initial bind after network idle-ish
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bindAll, { once: true });
+    document.addEventListener('DOMContentLoaded', bindAll);
   } else {
     bindAll();
   }
