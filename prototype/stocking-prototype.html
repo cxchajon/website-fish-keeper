@@ -1099,6 +1099,75 @@
     #stocking-page .tank-size-card + .card-spacer:empty {
       display: none !important;
     }
+
+    .hero-how-works {
+      margin-right: 0.5rem;
+    }
+
+    .info-btn {
+      inline-size: 1.5rem;
+      block-size: 1.5rem;
+      border-radius: 50%;
+      border: 1px solid var(--ink-20, #7aa0c8);
+      background: transparent;
+      color: inherit;
+      font: 600 0.9rem/1 system-ui;
+      display: inline-grid;
+      place-items: center;
+    }
+
+    .info-btn:hover,
+    .info-btn:focus-visible {
+      outline: 2px solid var(--ink-30, #98b7d6);
+    }
+
+    .info-popover {
+      position: relative;
+      margin: 0.5rem 0 1rem;
+      padding: 1rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--ink-20, #274a63);
+      background: rgba(14, 39, 56, 0.85);
+      color: var(--ink-90, #e8f2fb);
+      max-inline-size: 48rem;
+    }
+
+    .info-popover[hidden] {
+      display: none;
+    }
+
+    .info-popover__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-block-end: 0.25rem;
+    }
+
+    .info-popover__close {
+      background: none;
+      border: none;
+      color: inherit;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .info-popover {
+        animation: fadeIn 0.14s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-2px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+    }
   </style>
   <!-- Consent Mode defaults (load FIRST) -->
   <script src="/assets/js/consent-mode.js" defer></script>
@@ -1140,14 +1209,34 @@
           <p class="tagline hero-tagline lead">Plan a healthy community by checking bioload, compatibility — and get recommended water parameters for your tank.</p>
           <!-- Inline "How it works" link (prototype only) -->
           <p class="muted small" id="how-it-works-inline-wrap">
-            <a href="#" id="how-it-works-link" class="link-underline">
-              How to use the Stocking Advisor
-            </a>
+            <a href="#" id="hero-how-works" class="hero-how-works link-underline">How it works</a>
+            <button id="stocking-tip-btn"
+                    class="info-btn"
+                    aria-label="Open stocking tip"
+                    aria-haspopup="dialog"
+                    aria-controls="stocking-tip-pop">i</button>
           </p>
           <div id="stocking-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
         </div>
       </div>
     </header>
+
+    <div id="stocking-tip-pop"
+         class="info-popover"
+         role="dialog"
+         aria-labelledby="stocking-tip-title"
+         aria-modal="false"
+         hidden>
+      <div class="info-popover__header">
+        <strong id="stocking-tip-title">Stocking Tip</strong>
+        <button class="info-popover__close" aria-label="Close">×</button>
+      </div>
+      <p>
+        Always quarantine new livestock. During stocking phases, test ammonia,
+        nitrite, and nitrate weekly, and log temperature, pH, and hardness.
+        Consistent tracking helps your parameters stay stable as the biofilter adapts.
+      </p>
+    </div>
 
     <div class="wrap page-content">
       <div class="ad-container ad-hero" role="complementary" aria-label="Advertisement">
@@ -1734,6 +1823,38 @@
   <script type="module" src="/js/stocking.js?v=2024-09-01" id="js-stocking"></script>
   <script type="module" src="/js/tank-size-card.js?v=2024-09-01"></script>
 
+  <script>
+    (() => {
+      const btn = document.getElementById('stocking-tip-btn');
+      const pop = document.getElementById('stocking-tip-pop');
+      const closeBtn = pop?.querySelector('.info-popover__close');
+      if (!btn || !pop || !closeBtn) return;
+
+      const open = () => {
+        pop.hidden = false;
+        closeBtn.focus();
+      };
+      const close = () => {
+        pop.hidden = true;
+        btn.focus();
+      };
+
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        pop.hidden ? open() : close();
+      });
+      closeBtn.addEventListener('click', close);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !pop.hidden) close();
+      });
+      document.addEventListener('click', (e) => {
+        if (!pop.hidden && !pop.contains(e.target) && e.target !== btn) close();
+      });
+
+      btn.title = 'Quarantine new fish and track basics while stocking.';
+    })();
+  </script>
+
   <!-- How it works modal (prototype only) -->
   <div id="how-modal" class="modal-backdrop hidden" aria-hidden="true">
     <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="how-modal-title">
@@ -1754,7 +1875,7 @@
 
   <script>
     (() => {
-      const link = document.getElementById('how-it-works-link');
+      const link = document.getElementById('hero-how-works') || document.getElementById('how-it-works-link');
       const modal = document.getElementById('how-modal');
       const closeX = document.getElementById('how-close');
       const okBtn = document.getElementById('how-ok');
