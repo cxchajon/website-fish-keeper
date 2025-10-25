@@ -179,6 +179,13 @@ body.theme-dark {
   transition: background 0.18s ease, border-color 0.18s ease;
 }
 
+.prototype-stock-page .info-popover__header .info-popover__close ~ .info-popover__close,
+.prototype-stock-page .info-popover__header .info-popover__close ~ [data-close="popover"],
+.prototype-stock-page .info-popover__header [data-close="popover"] ~ [data-close="popover"],
+.prototype-stock-page .info-popover__header button[aria-label="Close"] ~ button[aria-label="Close"] {
+  display: none !important;
+}
+
 .prototype-stock-page .info-popover__close:hover,
 .prototype-stock-page .info-popover__close:focus-visible {
   background: rgba(255, 255, 255, 0.14);

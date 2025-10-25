@@ -1,5 +1,46 @@
 (function () {
-  if (!location.pathname.includes('/prototype/stocking-prototype.html')) return;
+  if (!/\/prototype\/stocking-prototype\.html$/.test(location.pathname)) return;
+
+  const CLOSE_SEL = '.info-popover__close, .popover-close, [data-close="popover"], button[aria-label="Close"]';
+
+  function ensureSingleClose(panel) {
+    const header = panel.querySelector('.info-popover__header, .popover-header, header') || panel;
+    const closes = header.querySelectorAll(CLOSE_SEL);
+    let primary = closes[0] || null;
+
+    if (closes.length > 1) {
+      closes.forEach((btn, idx) => { if (idx > 0) btn.remove(); });
+    }
+
+    if (!primary) {
+      primary = document.createElement('button');
+      primary.type = 'button';
+      primary.className = 'info-popover__close';
+      primary.textContent = '×';
+      primary.setAttribute('aria-label', 'Close');
+      primary.setAttribute('title', 'Close');
+      primary.dataset.close = 'popover';
+      primary.dataset.infoClose = '';
+      header.appendChild(primary);
+    } else {
+      primary.type = 'button';
+      if (!primary.classList.contains('info-popover__close')) {
+        primary.classList.add('info-popover__close');
+      }
+      if (!primary.hasAttribute('aria-label')) primary.setAttribute('aria-label', 'Close');
+      if (!primary.hasAttribute('title')) primary.setAttribute('title', 'Close');
+      if (!primary.dataset.close) primary.dataset.close = 'popover';
+      if (!primary.dataset.infoClose) primary.dataset.infoClose = '';
+      if ((primary.textContent || '').trim().length !== 1) primary.textContent = '×';
+    }
+
+    // Normalize any other close glyphs lingering in the panel (defensive)
+    panel.querySelectorAll(CLOSE_SEL).forEach((btn) => {
+      if ((btn.textContent || '').trim().length !== 1) btn.textContent = '×';
+    });
+
+    return primary;
+  }
 
   // 1) Ensure portal root
   let root = document.getElementById('ttg-popover-root');
@@ -92,6 +133,12 @@
     panel.style.display = 'none';
     root.setAttribute('aria-hidden', 'true');
 
+    if (panel._ttgCloseBtn && panel._ttgCloseHandler) {
+      panel._ttgCloseBtn.removeEventListener('click', panel._ttgCloseHandler);
+      panel._ttgCloseBtn = null;
+      panel._ttgCloseHandler = null;
+    }
+
     document.removeEventListener('mousedown', panel._onDocClick);
     document.removeEventListener('keydown', panel._onKey);
     window.removeEventListener('scroll', panel._onReposition, true);
@@ -113,6 +160,22 @@
     place(trigger, panel);
     trigger.setAttribute('aria-expanded', 'true');
     trigger.focus({ preventScroll: true });
+
+    const closeBtn = ensureSingleClose(panel);
+    if (closeBtn) {
+      if (panel._ttgCloseBtn && panel._ttgCloseBtn !== closeBtn && panel._ttgCloseHandler) {
+        panel._ttgCloseBtn.removeEventListener('click', panel._ttgCloseHandler);
+      }
+
+      const handler = (e) => {
+        e.preventDefault();
+        close(trigger, panel);
+      };
+
+      closeBtn.addEventListener('click', handler);
+      panel._ttgCloseBtn = closeBtn;
+      panel._ttgCloseHandler = handler;
+    }
 
     panel._onDocClick = (e) => {
       if (!panel.contains(e.target) && e.target !== trigger) close(trigger, panel);
