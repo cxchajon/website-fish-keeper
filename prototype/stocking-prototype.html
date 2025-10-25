@@ -1150,6 +1150,7 @@
                 type="button"
                 class="info-btn"
                 data-info-btn="stocking-tip"
+                data-popover="info"
                 aria-label="Open stocking tip"
                 aria-haspopup="true"
                 aria-expanded="false"
@@ -1158,8 +1159,9 @@
               >i</button>
               <div
                 id="stocking-tip-pop"
-                class="info-popover"
+                class="info-popover popover-panel"
                 data-info-pop="stocking-tip"
+                data-popover-panel
                 role="dialog"
                 aria-labelledby="stocking-tip-title"
                 aria-modal="false"
@@ -1168,7 +1170,7 @@
               >
                 <div class="info-popover__header">
                   <strong id="stocking-tip-title">Stocking Tip</strong>
-                  <button type="button" class="info-popover__close" data-info-close aria-label="Close" title="Close">×</button>
+                  <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
                 </div>
                 <p>
                   Always quarantine new livestock. During stocking phases, test ammonia,
@@ -1201,6 +1203,7 @@
                   type="button"
                   class="info-btn"
                   data-info-btn="tank-size"
+                  data-popover="info"
                   aria-expanded="false"
                   aria-haspopup="true"
                   aria-controls="tank-size-pop"
@@ -1209,8 +1212,9 @@
                 >i</button>
                 <div
                   id="tank-size-pop"
-                  class="info-popover"
+                  class="info-popover popover-panel"
                   data-info-pop="tank-size"
+                  data-popover-panel
                   role="dialog"
                   aria-labelledby="tank-size-pop-title"
                   aria-modal="false"
@@ -1219,7 +1223,7 @@
                 >
                   <div class="info-popover__header">
                     <strong id="tank-size-pop-title">Tank size picker</strong>
-                    <button type="button" class="info-popover__close" data-info-close aria-label="Close" title="Close">×</button>
+                    <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
                   </div>
                   <ul>
                     <li>Select your aquarium volume to anchor stocking, parameter, and filter calculations.</li>
@@ -1256,6 +1260,7 @@
                   type="button"
                   class="info-btn"
                   data-info-btn="planted"
+                  data-popover="info"
                   aria-expanded="false"
                   aria-haspopup="true"
                   aria-controls="planted-pop"
@@ -1264,8 +1269,9 @@
                 >i</button>
                 <div
                   id="planted-pop"
-                  class="info-popover"
+                  class="info-popover popover-panel"
                   data-info-pop="planted"
+                  data-popover-panel
                   role="dialog"
                   aria-labelledby="planted-pop-title"
                   aria-modal="false"
@@ -1274,7 +1280,7 @@
                 >
                   <div class="info-popover__header">
                     <strong id="planted-pop-title">When to mark the tank planted</strong>
-                    <button type="button" class="info-popover__close" data-info-close aria-label="Close" title="Close">×</button>
+                    <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
                   </div>
                   <ul>
                     <li>Toggle this on when you have actively growing live plants you prune and fertilize regularly.</li>
@@ -1302,6 +1308,7 @@
                       type="button"
                       class="info-btn"
                       data-info-btn="filter-product"
+                      data-popover="info"
                       aria-expanded="false"
                       aria-haspopup="true"
                       aria-controls="filter-product-pop"
@@ -1310,8 +1317,9 @@
                     >i</button>
                     <div
                       id="filter-product-pop"
-                      class="info-popover"
+                      class="info-popover popover-panel"
                       data-info-pop="filter-product"
+                      data-popover-panel
                       role="dialog"
                       aria-labelledby="filter-product-pop-title"
                       aria-modal="false"
@@ -1320,7 +1328,7 @@
                     >
                       <div class="info-popover__header">
                         <strong id="filter-product-pop-title">Picking a filter</strong>
-                        <button type="button" class="info-popover__close" data-info-close aria-label="Close" title="Close">×</button>
+                        <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
                       </div>
                       <ul>
                         <li>Select a model rated for your tank volume or one size larger for heavy stocking plans.</li>
@@ -1348,6 +1356,7 @@
                       type="button"
                       class="info-btn"
                       data-info-btn="rated-flow"
+                      data-popover="info"
                       aria-expanded="false"
                       aria-haspopup="true"
                       aria-controls="rated-flow-pop"
@@ -1356,8 +1365,9 @@
                     >i</button>
                     <div
                       id="rated-flow-pop"
-                      class="info-popover"
+                      class="info-popover popover-panel"
                       data-info-pop="rated-flow"
+                      data-popover-panel
                       role="dialog"
                       aria-labelledby="rated-flow-pop-title"
                       aria-modal="false"
@@ -1366,7 +1376,7 @@
                     >
                       <div class="info-popover__header">
                         <strong id="rated-flow-pop-title">About rated flow</strong>
-                        <button type="button" class="info-popover__close" data-info-close aria-label="Close" title="Close">×</button>
+                        <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
                       </div>
                       <ul>
                         <li>Manufacturers list gallons-per-hour without media or head height losses.</li>
@@ -1392,6 +1402,7 @@
                           type="button"
                           class="info-btn"
                           data-info-btn="turnover"
+                          data-popover="info"
                           aria-expanded="false"
                           aria-haspopup="true"
                           aria-controls="turnover-pop"
@@ -1400,8 +1411,9 @@
                         >i</button>
                         <div
                           id="turnover-pop"
-                          class="info-popover"
+                          class="info-popover popover-panel"
                           data-info-pop="turnover"
+                          data-popover-panel
                           role="dialog"
                           aria-labelledby="turnover-pop-title"
                           aria-modal="false"
@@ -1410,7 +1422,7 @@
                         >
                         <div class="info-popover__header">
                           <strong id="turnover-pop-title">Turnover targets</strong>
-                          <button type="button" class="info-popover__close" data-info-close aria-label="Close" title="Close">×</button>
+                          <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
                         </div>
                         <ul>
                           <li>Turnover compares your filter flow to the aquarium volume (GPH ÷ gallons).</li>
@@ -1639,6 +1651,7 @@
                   id="stocking-checklist-btn"
                   class="info-btn"
                   data-info-btn="stocking-checklist"
+                  data-popover="info"
                   aria-label="View Responsible Stocking Checklist"
                   aria-haspopup="true"
                   aria-expanded="false"
@@ -1647,8 +1660,9 @@
                 >i</button>
                 <div
                   id="stocking-checklist-pop"
-                  class="info-popover"
+                  class="info-popover popover-panel"
                   data-info-pop="stocking-checklist"
+                  data-popover-panel
                   role="dialog"
                   aria-labelledby="stocking-checklist-title"
                   aria-modal="false"
@@ -1657,7 +1671,7 @@
                 >
                   <div class="info-popover__header">
                     <strong id="stocking-checklist-title">Responsible Stocking Checklist</strong>
-                    <button type="button" class="info-popover__close" data-info-close aria-label="Close" title="Close">×</button>
+                    <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
                   </div>
                   <ul>
                     <li>Verify your nitrogen cycle is stable with zero ammonia and nitrite before introducing new species.</li>
@@ -1685,6 +1699,7 @@
                 class="info-btn"
                 id="env-info-btn"
                 data-info-btn="env-info"
+                data-popover="info"
                 data-role="env-info"
                 aria-expanded="false"
                 aria-haspopup="true"
@@ -1694,8 +1709,9 @@
               >i</button>
               <div
                 id="env-info-pop"
-                class="info-popover"
+                class="info-popover popover-panel"
                 data-info-pop="env-info"
+                data-popover-panel
                 role="dialog"
                 aria-labelledby="env-info-title"
                 aria-modal="false"
@@ -1704,7 +1720,7 @@
               >
                 <div class="info-popover__header">
                   <strong id="env-info-title">Environmental Card Guide</strong>
-                  <button type="button" class="info-popover__close" data-info-close aria-label="Close" title="Close">×</button>
+                  <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
                 </div>
                 <ul>
                   <li>Ranges blend the overlapping temperature, pH, hardness, and flow preferences of the fish you add.</li>
@@ -2022,8 +2038,6 @@
 <!-- === TTG Ad Slot View Tracking END === -->
 
 <script defer src="/prototype/js/stocking-prototype.js"></script>
-<script defer src="/prototype/assets/js/popover-portal.js"></script>
-<script src="/prototype/assets/js/proto-popovers.js" defer></script>
 <script src="/assets/js/prototype-popovers.js" defer></script>
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
