@@ -723,24 +723,6 @@ body.sa-proto-modal-open {
 .ad-slot-placeholder + #post-results-explainer {
   margin-top: var(--space-8);
 }
-:root {
-  --popover-z: 10020;
-}
-.popover-panel,
-[role="dialog"].popover {
-  position: fixed; /* ensure above cards & not clipped */
-  z-index: var(--popover-z);
-}
-.popover-close {
-  inline-size: 2.25rem;
-  block-size: 2.25rem;
-  border: 0;
-  border-radius: .5rem;
-  font: inherit;
-  line-height: 2.25rem;
-  text-align: center;
-  background: rgba(255,255,255,.08);
-  color: var(--ttg-onSurface, #fff);
-  cursor: pointer;
-}
-.popover-close + .popover-close { display: none; } /* guard against duplicates */
+.popover-panel,[role="dialog"].popover{position:fixed;z-index:10020}
+.popover-close{inline-size:2.25rem;block-size:2.25rem;border:0;border-radius:.5rem;background:rgba(255,255,255,.08);color:inherit;cursor:pointer}
+.popover-close + .popover-close{display:none}
