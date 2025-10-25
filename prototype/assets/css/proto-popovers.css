@@ -83,3 +83,9 @@
 .proto-popover .dup-x {
   display: none !important;
 }
+
+/* Hide Filtration summary info trigger (prototype only) */
+#filtration-trigger [data-role="filtration-info"],
+#filtration-trigger .info-btn.ttg-tooltip-trigger[aria-controls="filtration-pill-tip"] {
+  display: none !important;
+}
