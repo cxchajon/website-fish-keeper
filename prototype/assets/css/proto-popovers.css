@@ -1,7 +1,85 @@
-#ttg-proto-popover-root{position:absolute;inset:0;pointer-events:none}
-.ttg-proto-pop{position:absolute;z-index:9999;pointer-events:auto;max-width:min(320px,90vw);background:#0b1324;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.35);padding:12px 14px;line-height:1.4}
-.ttg-proto-pop[hidden]{display:none}
-.ttg-proto-pop h4{margin:0 0 6px;font-size:15px}
-.ttg-proto-pop .close{position:absolute;top:8px;right:10px;border:0;background:transparent;color:#cfe0ff;font-size:18px;cursor:pointer}
-.ttg-proto-pop[data-edge="top"]{transform-origin:bottom left}
-.ttg-proto-pop[data-edge="bottom"]{transform-origin:top left}
+.proto-popover {
+  position: absolute;
+  inset: auto;
+  z-index: 1200;
+  min-width: 240px;
+  max-width: min(320px, 90vw);
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(6, 12, 24, 0.96);
+  color: #eef3ff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 22px 46px -24px rgba(4, 8, 18, 0.72);
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  will-change: opacity, transform;
+}
+
+.proto-popover[hidden] {
+  display: none !important;
+}
+
+.proto-popover.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.proto-popover header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 12px;
+}
+
+.proto-popover header h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.proto-popover [data-close] {
+  margin-left: auto;
+  border: 0;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.proto-popover [data-close]:hover,
+.proto-popover [data-close]:focus-visible {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+.proto-popover [data-close]:focus-visible {
+  outline: 2px solid rgba(20, 203, 168, 0.65);
+  outline-offset: 2px;
+}
+
+.proto-popover p {
+  margin: 0 0 0.85rem;
+  font-size: 0.96rem;
+  line-height: 1.5;
+}
+
+.proto-popover ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.proto-popover ul li + li {
+  margin-top: 0.45rem;
+}
+
+.proto-popover .dup-x {
+  display: none !important;
+}

@@ -37,8 +37,7 @@
   <link rel="stylesheet" href="/css/site.css?v=1.4.7" />
   <link rel="stylesheet" href="/css/ui.css?v=2024-09-15" />
   <link rel="stylesheet" href="/prototype/css/stocking-prototype.css" />
-  <link rel="stylesheet" href="/prototype/assets/css/popover-portal.css" />
-  <link rel="stylesheet" href="/prototype/assets/css/prototype-popovers.css" />
+  <link rel="stylesheet" href="/prototype/assets/css/proto-popovers.css" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -707,25 +706,6 @@
       font-size: 0.95rem;
     }
 
-    .popover {
-      position: absolute;
-      inset: auto auto auto auto;
-      z-index: 40;
-      max-width: 320px;
-      background: var(--popover-bg);
-      color: var(--fg);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 0.95rem;
-      line-height: 1.5;
-      box-shadow: 0 20px 48px -28px rgba(4, 8, 18, 0.7);
-    }
-
-    .popover[data-hidden="true"] {
-      display: none;
-    }
-
     .see-gear {
       margin-top: 24px;
       display: inline-flex;
@@ -1130,7 +1110,6 @@
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
 <body class="theme-dark prototype-stock-page">
-  <div id="ttg-popover-root" aria-hidden="true"></div>
   <div id="site-nav"></div>
   <main id="stocking-page" class="stocking-page">
     <header class="hero">
@@ -1149,12 +1128,13 @@
                 id="stocking-tip-btn"
                 type="button"
                 class="proto-info-trigger info-btn"
+                aria-haspopup="dialog"
                 aria-controls="pop-stocking-tip"
                 aria-expanded="false"
                 aria-label="Stocking tip details"
                 data-proto-popover="pop-stocking-tip"
               >i</button>
-              <div id="pop-stocking-tip" class="proto-popover" hidden>
+              <div id="pop-stocking-tip" class="proto-popover" role="dialog" aria-labelledby="pop-stocking-tip-title" tabindex="-1" hidden>
                 <header>
                   <h3 id="pop-stocking-tip-title">Stocking Tip</h3>
                   <button type="button" data-close aria-label="Close">×</button>
@@ -1191,12 +1171,13 @@
                 <button
                   type="button"
                   class="proto-info-trigger info-btn"
+                  aria-haspopup="dialog"
                   aria-controls="pop-tank-size"
                   aria-expanded="false"
                   aria-label="How tank size selections work"
                   data-proto-popover="pop-tank-size"
                 >i</button>
-                <div id="pop-tank-size" class="proto-popover" hidden>
+                <div id="pop-tank-size" class="proto-popover" role="dialog" aria-labelledby="pop-tank-size-title" tabindex="-1" hidden>
                   <header>
                     <h3 id="pop-tank-size-title">Tank size picker</h3>
                     <button type="button" data-close aria-label="Close">×</button>
@@ -1237,12 +1218,13 @@
                 <button
                   type="button"
                   class="proto-info-trigger info-btn"
+                  aria-haspopup="dialog"
                   aria-controls="pop-planted"
                   aria-expanded="false"
                   aria-label="More info about planted tanks"
                   data-proto-popover="pop-planted"
                 >i</button>
-                <div id="pop-planted" class="proto-popover" hidden>
+                <div id="pop-planted" class="proto-popover" role="dialog" aria-labelledby="pop-planted-title" tabindex="-1" hidden>
                   <header>
                     <h3 id="pop-planted-title">When to mark the tank planted</h3>
                     <button type="button" data-close aria-label="Close">×</button>
@@ -1274,12 +1256,13 @@
                     <button
                       type="button"
                       class="proto-info-trigger info-btn"
+                      aria-haspopup="dialog"
                       aria-controls="pop-filter-product"
                       aria-expanded="false"
                       aria-label="More info about selecting a filter product"
                       data-proto-popover="pop-filter-product"
                     >i</button>
-                    <div id="pop-filter-product" class="proto-popover" hidden>
+                    <div id="pop-filter-product" class="proto-popover" role="dialog" aria-labelledby="pop-filter-product-title" tabindex="-1" hidden>
                       <header>
                         <h3 id="pop-filter-product-title">Picking a filter</h3>
                         <button type="button" data-close aria-label="Close">×</button>
@@ -1311,12 +1294,13 @@
                     <button
                       type="button"
                       class="proto-info-trigger info-btn"
+                      aria-haspopup="dialog"
                       aria-controls="pop-rated-flow"
                       aria-expanded="false"
                       aria-label="More info about rated flow"
                       data-proto-popover="pop-rated-flow"
                     >i</button>
-                    <div id="pop-rated-flow" class="proto-popover" hidden>
+                    <div id="pop-rated-flow" class="proto-popover" role="dialog" aria-labelledby="pop-rated-flow-title" tabindex="-1" hidden>
                       <header>
                         <h3 id="pop-rated-flow-title">About rated flow</h3>
                         <button type="button" data-close aria-label="Close">×</button>
@@ -1346,12 +1330,13 @@
                         <button
                           type="button"
                           class="proto-info-trigger info-btn"
+                          aria-haspopup="dialog"
                           aria-controls="pop-turnover"
                           aria-expanded="false"
                           aria-label="More info about turnover"
                           data-proto-popover="pop-turnover"
                         >i</button>
-                        <div id="pop-turnover" class="proto-popover" hidden>
+                        <div id="pop-turnover" class="proto-popover" role="dialog" aria-labelledby="pop-turnover-title" tabindex="-1" hidden>
                           <header>
                             <h3 id="pop-turnover-title">Turnover targets</h3>
                             <button type="button" data-close aria-label="Close">×</button>
@@ -1584,12 +1569,13 @@
                   type="button"
                   id="stocking-checklist-btn"
                   class="proto-info-trigger info-btn"
+                  aria-haspopup="dialog"
                   aria-controls="pop-stocking-checklist"
                   aria-expanded="false"
                   aria-label="View Responsible Stocking Checklist"
                   data-proto-popover="pop-stocking-checklist"
                 >i</button>
-                <div id="pop-stocking-checklist" class="proto-popover" hidden>
+                <div id="pop-stocking-checklist" class="proto-popover" role="dialog" aria-labelledby="pop-stocking-checklist-title" tabindex="-1" hidden>
                   <header>
                     <h3 id="pop-stocking-checklist-title">Responsible Stocking Checklist</h3>
                     <button type="button" data-close aria-label="Close">×</button>
@@ -1620,6 +1606,7 @@
               <button
                 type="button"
                 class="proto-info-trigger info-btn"
+                aria-haspopup="dialog"
                 id="env-info-btn"
                 data-role="env-info"
                 aria-controls="pop-env-info"
@@ -1627,7 +1614,7 @@
                 aria-label="More info and tips about Environmental Recommendations"
                 data-proto-popover="pop-env-info"
               >i</button>
-              <div id="pop-env-info" class="proto-popover" hidden>
+              <div id="pop-env-info" class="proto-popover" role="dialog" aria-labelledby="pop-env-info-title" tabindex="-1" hidden>
                 <header>
                   <h3 id="pop-env-info-title">Environmental Card Guide</h3>
                   <button type="button" data-close aria-label="Close">×</button>
@@ -1950,7 +1937,7 @@
 <!-- === TTG Ad Slot View Tracking END === -->
 
   <script defer src="/prototype/js/stocking-prototype.js"></script>
-  <script src="/prototype/assets/js/prototype-popovers.js" defer></script>
+  <script src="/prototype/assets/js/proto-popovers.js" defer></script>
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
 </body>
