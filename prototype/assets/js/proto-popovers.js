@@ -1,5 +1,43 @@
 (function(){
-  if(!location.pathname.includes('/prototype/stocking-prototype.html')) return;
+  if(!/\/prototype\/stocking-prototype\.html$/.test(location.pathname)) return;
+
+  const CLOSE_SEL='.info-popover__close, .popover-close, [data-close="popover"], button[aria-label="Close"]';
+
+  function ensureSingleClose(container){
+    const header=container.querySelector('.info-popover__header, .popover-header, header')||container;
+    const buttons=header.querySelectorAll(CLOSE_SEL);
+    let primary=buttons[0]||null;
+
+    if(buttons.length>1){
+      buttons.forEach((btn,idx)=>{ if(idx>0) btn.remove(); });
+    }
+
+    if(!primary){
+      primary=document.createElement('button');
+      primary.type='button';
+      primary.className='info-popover__close';
+      primary.textContent='×';
+      primary.setAttribute('aria-label','Close');
+      primary.setAttribute('title','Close');
+      primary.dataset.close='popover';
+      primary.dataset.infoClose='';
+      header.appendChild(primary);
+    }else{
+      primary.type='button';
+      if(!primary.classList.contains('info-popover__close')) primary.classList.add('info-popover__close');
+      if(!primary.hasAttribute('aria-label')) primary.setAttribute('aria-label','Close');
+      if(!primary.hasAttribute('title')) primary.setAttribute('title','Close');
+      if(!primary.dataset.close) primary.dataset.close='popover';
+      if(!primary.dataset.infoClose) primary.dataset.infoClose='';
+      if((primary.textContent||'').trim().length!==1) primary.textContent='×';
+    }
+
+    container.querySelectorAll(CLOSE_SEL).forEach(btn=>{
+      if((btn.textContent||'').trim().length!==1) btn.textContent='×';
+    });
+
+    return primary;
+  }
 
   // --- portal root + single panel
   let root=document.getElementById('ttg-proto-popover-root');
@@ -12,11 +50,10 @@
     panel.setAttribute('role','dialog');
     panel.setAttribute('aria-modal','false');
     panel.setAttribute('hidden','');
-    panel.innerHTML='<button class="close" aria-label="Close">×</button><div class="content"></div>';
+    panel.innerHTML='<div class="content"></div>';
     root.appendChild(panel);
   }
   const content=panel.querySelector('.content');
-  const closeBtn=panel.querySelector('.close');
 
   const GAP_MOBILE=6, GAP_DESK=8, PAD=8;
   const isMobile=()=>matchMedia('(max-width:768px)').matches;
@@ -73,6 +110,16 @@
 
     trigger.setAttribute('aria-expanded','true');
     activeTrigger=trigger;
+    const closeBtn=ensureSingleClose(content);
+    if(closeBtn){
+      if(panel._ttgCloseBtn && panel._ttgCloseBtn!==closeBtn && panel._ttgCloseHandler){
+        panel._ttgCloseBtn.removeEventListener('click', panel._ttgCloseHandler);
+      }
+      const handler=(e)=>{ e.preventDefault(); close(); };
+      closeBtn.addEventListener('click', handler);
+      panel._ttgCloseBtn=closeBtn;
+      panel._ttgCloseHandler=handler;
+    }
     document.addEventListener('mousedown',onDocDown,true);
     document.addEventListener('keydown',onKey,true);
     window.addEventListener('resize',reposition,true);
@@ -84,6 +131,11 @@
     activeTrigger.setAttribute('aria-expanded','false');
     activeTrigger=null;
     panel.setAttribute('hidden','');
+    if(panel._ttgCloseBtn && panel._ttgCloseHandler){
+      panel._ttgCloseBtn.removeEventListener('click', panel._ttgCloseHandler);
+      panel._ttgCloseBtn=null;
+      panel._ttgCloseHandler=null;
+    }
     document.removeEventListener('mousedown',onDocDown,true);
     document.removeEventListener('keydown',onKey,true);
     window.removeEventListener('resize',reposition,true);
@@ -110,8 +162,6 @@
     if(e.key==='Escape') { e.preventDefault(); close(); }
     if((e.key==='Enter'||e.key===' ') && document.activeElement===activeTrigger){ e.preventDefault(); close(); }
   }
-  closeBtn.addEventListener('click', close);
-
   // --- Event delegation for ALL info triggers
   const TRIGGER_SEL = ['#stocking-tip-btn','.ttg-info-btn','.tooltip-trigger','[data-info]','[aria-haspopup][aria-controls]','[data-popover-target]'].join(',');
   document.addEventListener('click', (e)=>{
