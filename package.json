@@ -8,6 +8,7 @@
     "precommit": "npm run lint:css",
     "pw:install": "playwright install --with-deps",
     "test": "playwright test",
+    "test:stocking:extended": "node stocking-tests-extended/runner/index.js",
     "test:e2e": "playwright test --config=playwright.e2e.config.ts",
     "test:consent": "playwright test tests/consent-ads.spec.ts --project=chromium",
     "serve:static": "npx http-server -p 8080 -c-1 .",

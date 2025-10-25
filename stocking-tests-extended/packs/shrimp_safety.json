@@ -1,0 +1,21 @@
+{
+  "name": "shrimp_safety",
+  "description": "Shrimp should be protected from predators while peaceful mixes stay green.",
+  "tests": [
+    {
+      "type": "pairwise_incompatible",
+      "label": "Shrimp vs predators",
+      "sample": 220,
+      "source": { "categories": ["shrimp"] },
+      "target": { "shrimpUnsafe": true },
+      "reasonIncludes": ["shrimp"]
+    },
+    {
+      "type": "pairwise_compatible",
+      "label": "Shrimp friendly community",
+      "sample": 180,
+      "source": { "categories": ["shrimp"] },
+      "target": { "invertSafe": true, "aggressionLte": 25 }
+    }
+  ]
+}

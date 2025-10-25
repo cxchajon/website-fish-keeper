@@ -1,0 +1,248 @@
+[
+  {
+    "runId": "2025-10-25",
+    "date": "2025-10-25T22:24:42.482Z",
+    "libHash": "aad6aa98cc3aa4f0b4f09705489066903bdf11b8c72eb57024ab9aa13047e7bf",
+    "totalSpecies": 20,
+    "totalPairsTested": 275,
+    "failCount": 32,
+    "failRate": 0.11636363636363636,
+    "dimensions": {
+      "brackish": {
+        "tested": 0,
+        "skipped": 1,
+        "failCount": 0
+      },
+      "cichlid_aggression": {
+        "tested": 16,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "coldwater": {
+        "tested": 0,
+        "skipped": 1,
+        "failCount": 0
+      },
+      "community_sanity": {
+        "tested": 218,
+        "skipped": 0,
+        "failCount": 30
+      },
+      "shrimp_safety": {
+        "tested": 38,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "snail_safety": {
+        "tested": 11,
+        "skipped": 0,
+        "failCount": 2
+      }
+    }
+  },
+  {
+    "runId": "2025-10-25",
+    "date": "2025-10-25T22:25:07.803Z",
+    "libHash": "aad6aa98cc3aa4f0b4f09705489066903bdf11b8c72eb57024ab9aa13047e7bf",
+    "totalSpecies": 20,
+    "totalPairsTested": 275,
+    "failCount": 32,
+    "failRate": 0.11636363636363636,
+    "dimensions": {
+      "brackish": {
+        "tested": 0,
+        "skipped": 1,
+        "failCount": 0
+      },
+      "cichlid_aggression": {
+        "tested": 16,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "coldwater": {
+        "tested": 0,
+        "skipped": 1,
+        "failCount": 0
+      },
+      "community_sanity": {
+        "tested": 218,
+        "skipped": 0,
+        "failCount": 30
+      },
+      "shrimp_safety": {
+        "tested": 38,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "snail_safety": {
+        "tested": 11,
+        "skipped": 0,
+        "failCount": 2
+      }
+    }
+  },
+  {
+    "runId": "2025-10-25",
+    "date": "2025-10-25T22:25:59.700Z",
+    "libHash": "aad6aa98cc3aa4f0b4f09705489066903bdf11b8c72eb57024ab9aa13047e7bf",
+    "totalSpecies": 20,
+    "totalPairsTested": 175,
+    "failCount": 20,
+    "failRate": 0.11428571428571428,
+    "dimensions": {
+      "brackish": {
+        "tested": 0,
+        "skipped": 1,
+        "failCount": 0
+      },
+      "cichlid_aggression": {
+        "tested": 16,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "coldwater": {
+        "tested": 0,
+        "skipped": 1,
+        "failCount": 0
+      },
+      "community_sanity": {
+        "tested": 118,
+        "skipped": 0,
+        "failCount": 18
+      },
+      "shrimp_safety": {
+        "tested": 38,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "snail_safety": {
+        "tested": 11,
+        "skipped": 0,
+        "failCount": 2
+      }
+    }
+  },
+  {
+    "runId": "2025-10-25",
+    "date": "2025-10-25T22:26:46.146Z",
+    "libHash": "aad6aa98cc3aa4f0b4f09705489066903bdf11b8c72eb57024ab9aa13047e7bf",
+    "totalSpecies": 20,
+    "totalPairsTested": 173,
+    "failCount": 18,
+    "failRate": 0.10404624277456648,
+    "dimensions": {
+      "brackish": {
+        "tested": 0,
+        "skipped": 1,
+        "failCount": 0
+      },
+      "cichlid_aggression": {
+        "tested": 16,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "coldwater": {
+        "tested": 0,
+        "skipped": 1,
+        "failCount": 0
+      },
+      "community_sanity": {
+        "tested": 118,
+        "skipped": 0,
+        "failCount": 18
+      },
+      "shrimp_safety": {
+        "tested": 38,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "snail_safety": {
+        "tested": 9,
+        "skipped": 0,
+        "failCount": 0
+      }
+    }
+  },
+  {
+    "runId": "2025-10-25",
+    "date": "2025-10-25T22:27:02.315Z",
+    "libHash": "aad6aa98cc3aa4f0b4f09705489066903bdf11b8c72eb57024ab9aa13047e7bf",
+    "totalSpecies": 20,
+    "totalPairsTested": 173,
+    "failCount": 16,
+    "failRate": 0.09248554913294797,
+    "dimensions": {
+      "brackish": {
+        "tested": 0,
+        "skipped": 1,
+        "failCount": 0
+      },
+      "cichlid_aggression": {
+        "tested": 16,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "coldwater": {
+        "tested": 0,
+        "skipped": 1,
+        "failCount": 0
+      },
+      "community_sanity": {
+        "tested": 118,
+        "skipped": 0,
+        "failCount": 16
+      },
+      "shrimp_safety": {
+        "tested": 38,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "snail_safety": {
+        "tested": 9,
+        "skipped": 0,
+        "failCount": 0
+      }
+    }
+  },
+  {
+    "runId": "2025-10-25",
+    "date": "2025-10-25T22:27:17.496Z",
+    "libHash": "aad6aa98cc3aa4f0b4f09705489066903bdf11b8c72eb57024ab9aa13047e7bf",
+    "totalSpecies": 20,
+    "totalPairsTested": 105,
+    "failCount": 0,
+    "failRate": 0,
+    "dimensions": {
+      "brackish": {
+        "tested": 0,
+        "skipped": 1,
+        "failCount": 0
+      },
+      "cichlid_aggression": {
+        "tested": 16,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "coldwater": {
+        "tested": 0,
+        "skipped": 1,
+        "failCount": 0
+      },
+      "community_sanity": {
+        "tested": 50,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "shrimp_safety": {
+        "tested": 38,
+        "skipped": 0,
+        "failCount": 0
+      },
+      "snail_safety": {
+        "tested": 9,
+        "skipped": 0,
+        "failCount": 0
+      }
+    }
+  }
+]

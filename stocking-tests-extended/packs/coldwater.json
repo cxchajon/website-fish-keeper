@@ -1,0 +1,14 @@
+{
+  "name": "coldwater",
+  "description": "Coldwater vs tropical temperature range mismatches should block pairings.",
+  "tests": [
+    {
+      "type": "pairwise_incompatible",
+      "label": "Coldwater vs tropical",
+      "sample": 250,
+      "source": { "temperatureMaxLte": 74 },
+      "target": { "temperatureMinGte": 76 },
+      "reasonIncludes": ["temperature"]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "cichlid_aggression",
+  "description": "Aggressive cichlid archetypes should flag large temperament gaps.",
+  "tests": [
+    {
+      "type": "pairwise_incompatible",
+      "label": "Cichlid vs peaceful gap",
+      "sample": 240,
+      "source": {
+        "anyOf": [
+          { "includeTagsAny": ["cichlid", "mbuna", "convict"], "aggressionGte": 45 },
+          { "aggressionGte": 60 }
+        ]
+      },
+      "target": {
+        "aggressionLte": 20,
+        "excludeTagsAny": ["aggressive", "semi_aggressive", "cichlid"]
+      },
+      "reasonIncludes": ["aggression", "temperament"]
+    }
+  ]
+}

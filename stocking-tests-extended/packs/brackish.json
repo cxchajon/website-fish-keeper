@@ -1,0 +1,15 @@
+{
+  "name": "brackish",
+  "description": "Brackish species should not mix with freshwater-only stock.",
+  "tests": [
+    {
+      "type": "pairwise_incompatible",
+      "label": "Brackish vs fresh",
+      "sample": 200,
+      "source": { "salinity": ["brackish-low", "brackish-high"] },
+      "target": { "salinity": ["fresh"], "excludeSalinity": ["dual"] },
+      "reasonIncludes": ["salinity"]
+    }
+  ],
+  "skipMessage": "brackish: skipped (0 species)"
+}
