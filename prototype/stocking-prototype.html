@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="/css/ui.css?v=2024-09-15" />
   <link rel="stylesheet" href="/prototype/css/stocking-prototype.css" />
   <link rel="stylesheet" href="/prototype/assets/css/popover-portal.css" />
-  <link rel="stylesheet" href="/prototype/assets/css/proto-popovers.css" />
+  <link rel="stylesheet" href="/prototype/assets/css/prototype-popovers.css" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -1148,35 +1148,24 @@
               <button
                 id="stocking-tip-btn"
                 type="button"
-                class="info-btn"
-                data-info-btn="stocking-tip"
-                data-popover="info"
-                aria-label="Open stocking tip"
-                aria-haspopup="true"
+                class="proto-info-trigger info-btn"
+                aria-controls="pop-stocking-tip"
                 aria-expanded="false"
-                aria-controls="stocking-tip-pop"
-                aria-describedby="stocking-tip-pop"
+                aria-label="Stocking tip details"
+                data-proto-popover="pop-stocking-tip"
               >i</button>
-              <div
-                id="stocking-tip-pop"
-                class="info-popover popover-panel"
-                data-info-pop="stocking-tip"
-                data-popover-panel
-                role="dialog"
-                aria-labelledby="stocking-tip-title"
-                aria-modal="false"
-                tabindex="-1"
-                hidden
-              >
-                <div class="info-popover__header">
-                  <strong id="stocking-tip-title">Stocking Tip</strong>
-                  <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
+              <div id="pop-stocking-tip" class="proto-popover" hidden>
+                <header>
+                  <h3 id="pop-stocking-tip-title">Stocking Tip</h3>
+                  <button type="button" data-close aria-label="Close">×</button>
+                </header>
+                <div role="document" aria-labelledby="pop-stocking-tip-title">
+                  <p>
+                    Always quarantine new livestock. During stocking phases, test ammonia,
+                    nitrite, and nitrate weekly, and log temperature, pH, and hardness.
+                    Consistent tracking helps your parameters stay stable as the biofilter adapts.
+                  </p>
                 </div>
-                <p>
-                  Always quarantine new livestock. During stocking phases, test ammonia,
-                  nitrite, and nitrate weekly, and log temperature, pH, and hardness.
-                  Consistent tracking helps your parameters stay stable as the biofilter adapts.
-                </p>
               </div>
             </div>
           </div>
@@ -1201,35 +1190,24 @@
               <div class="info-trigger" data-info-scope="tank-size">
                 <button
                   type="button"
-                  class="info-btn"
-                  data-info-btn="tank-size"
-                  data-popover="info"
+                  class="proto-info-trigger info-btn"
+                  aria-controls="pop-tank-size"
                   aria-expanded="false"
-                  aria-haspopup="true"
-                  aria-controls="tank-size-pop"
-                  aria-describedby="tank-size-pop"
                   aria-label="How tank size selections work"
+                  data-proto-popover="pop-tank-size"
                 >i</button>
-                <div
-                  id="tank-size-pop"
-                  class="info-popover popover-panel"
-                  data-info-pop="tank-size"
-                  data-popover-panel
-                  role="dialog"
-                  aria-labelledby="tank-size-pop-title"
-                  aria-modal="false"
-                  tabindex="-1"
-                  hidden
-                >
-                  <div class="info-popover__header">
-                    <strong id="tank-size-pop-title">Tank size picker</strong>
-                    <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
+                <div id="pop-tank-size" class="proto-popover" hidden>
+                  <header>
+                    <h3 id="pop-tank-size-title">Tank size picker</h3>
+                    <button type="button" data-close aria-label="Close">×</button>
+                  </header>
+                  <div role="document" aria-labelledby="pop-tank-size-title">
+                    <ul>
+                      <li>Select your aquarium volume to anchor stocking, parameter, and filter calculations.</li>
+                      <li>Preset options reflect popular tank footprints, but you can type a custom gallon value anytime.</li>
+                      <li>Adjustments update every card instantly so you can compare scenarios before buying equipment.</li>
+                    </ul>
                   </div>
-                  <ul>
-                    <li>Select your aquarium volume to anchor stocking, parameter, and filter calculations.</li>
-                    <li>Preset options reflect popular tank footprints, but you can type a custom gallon value anytime.</li>
-                    <li>Adjustments update every card instantly so you can compare scenarios before buying equipment.</li>
-                  </ul>
                 </div>
               </div>
             </div>
@@ -1258,35 +1236,24 @@
               <div class="info-trigger" data-info-scope="planted">
                 <button
                   type="button"
-                  class="info-btn"
-                  data-info-btn="planted"
-                  data-popover="info"
+                  class="proto-info-trigger info-btn"
+                  aria-controls="pop-planted"
                   aria-expanded="false"
-                  aria-haspopup="true"
-                  aria-controls="planted-pop"
-                  aria-describedby="planted-pop"
                   aria-label="More info about planted tanks"
+                  data-proto-popover="pop-planted"
                 >i</button>
-                <div
-                  id="planted-pop"
-                  class="info-popover popover-panel"
-                  data-info-pop="planted"
-                  data-popover-panel
-                  role="dialog"
-                  aria-labelledby="planted-pop-title"
-                  aria-modal="false"
-                  tabindex="-1"
-                  hidden
-                >
-                  <div class="info-popover__header">
-                    <strong id="planted-pop-title">When to mark the tank planted</strong>
-                    <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
+                <div id="pop-planted" class="proto-popover" hidden>
+                  <header>
+                    <h3 id="pop-planted-title">When to mark the tank planted</h3>
+                    <button type="button" data-close aria-label="Close">×</button>
+                  </header>
+                  <div role="document" aria-labelledby="pop-planted-title">
+                    <ul>
+                      <li>Toggle this on when you have actively growing live plants you prune and fertilize regularly.</li>
+                      <li>Planted mode gives a modest stocking buffer because thriving plants absorb ammonia and nitrate.</li>
+                      <li>Leave it off for artificial plants or sparse growth so recommendations stay conservative.</li>
+                    </ul>
                   </div>
-                  <ul>
-                    <li>Toggle this on when you have actively growing live plants you prune and fertilize regularly.</li>
-                    <li>Planted mode gives a modest stocking buffer because thriving plants absorb ammonia and nitrate.</li>
-                    <li>Leave it off for artificial plants or sparse growth so recommendations stay conservative.</li>
-                  </ul>
                 </div>
               </div>
             </div>
@@ -1306,35 +1273,24 @@
                   <div class="info-trigger" data-info-scope="filter-product">
                     <button
                       type="button"
-                      class="info-btn"
-                      data-info-btn="filter-product"
-                      data-popover="info"
+                      class="proto-info-trigger info-btn"
+                      aria-controls="pop-filter-product"
                       aria-expanded="false"
-                      aria-haspopup="true"
-                      aria-controls="filter-product-pop"
-                      aria-describedby="filter-product-pop"
                       aria-label="More info about selecting a filter product"
+                      data-proto-popover="pop-filter-product"
                     >i</button>
-                    <div
-                      id="filter-product-pop"
-                      class="info-popover popover-panel"
-                      data-info-pop="filter-product"
-                      data-popover-panel
-                      role="dialog"
-                      aria-labelledby="filter-product-pop-title"
-                      aria-modal="false"
-                      tabindex="-1"
-                      hidden
-                    >
-                      <div class="info-popover__header">
-                        <strong id="filter-product-pop-title">Picking a filter</strong>
-                        <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
+                    <div id="pop-filter-product" class="proto-popover" hidden>
+                      <header>
+                        <h3 id="pop-filter-product-title">Picking a filter</h3>
+                        <button type="button" data-close aria-label="Close">×</button>
+                      </header>
+                      <div role="document" aria-labelledby="pop-filter-product-title">
+                        <ul>
+                          <li>Select a model rated for your tank volume or one size larger for heavy stocking plans.</li>
+                          <li>Choosing a product fills in its rated gallons-per-hour so turnover math stays accurate.</li>
+                          <li>Switch to a custom entry if you run multiple filters or throttle the manufacturer flow.</li>
+                        </ul>
                       </div>
-                      <ul>
-                        <li>Select a model rated for your tank volume or one size larger for heavy stocking plans.</li>
-                        <li>Choosing a product fills in its rated gallons-per-hour so turnover math stays accurate.</li>
-                        <li>Switch to a custom entry if you run multiple filters or throttle the manufacturer flow.</li>
-                      </ul>
                     </div>
                   </div>
                 </div>
@@ -1354,35 +1310,24 @@
                   <div class="info-trigger" data-info-scope="rated-flow">
                     <button
                       type="button"
-                      class="info-btn"
-                      data-info-btn="rated-flow"
-                      data-popover="info"
+                      class="proto-info-trigger info-btn"
+                      aria-controls="pop-rated-flow"
                       aria-expanded="false"
-                      aria-haspopup="true"
-                      aria-controls="rated-flow-pop"
-                      aria-describedby="rated-flow-pop"
                       aria-label="More info about rated flow"
+                      data-proto-popover="pop-rated-flow"
                     >i</button>
-                    <div
-                      id="rated-flow-pop"
-                      class="info-popover popover-panel"
-                      data-info-pop="rated-flow"
-                      data-popover-panel
-                      role="dialog"
-                      aria-labelledby="rated-flow-pop-title"
-                      aria-modal="false"
-                      tabindex="-1"
-                      hidden
-                    >
-                      <div class="info-popover__header">
-                        <strong id="rated-flow-pop-title">About rated flow</strong>
-                        <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
+                    <div id="pop-rated-flow" class="proto-popover" hidden>
+                      <header>
+                        <h3 id="pop-rated-flow-title">About rated flow</h3>
+                        <button type="button" data-close aria-label="Close">×</button>
+                      </header>
+                      <div role="document" aria-labelledby="pop-rated-flow-title">
+                        <ul>
+                          <li>Manufacturers list gallons-per-hour without media or head height losses.</li>
+                          <li>Expect real-world flow to run 20–30% lower once sponges and biomedia are installed.</li>
+                          <li>Edit this value if you throttle the filter or use spray-bar mods that slow output.</li>
+                        </ul>
                       </div>
-                      <ul>
-                        <li>Manufacturers list gallons-per-hour without media or head height losses.</li>
-                        <li>Expect real-world flow to run 20–30% lower once sponges and biomedia are installed.</li>
-                        <li>Edit this value if you throttle the filter or use spray-bar mods that slow output.</li>
-                      </ul>
                     </div>
                   </div>
                 </div>
@@ -1400,36 +1345,25 @@
                     <div class="info-trigger" data-info-scope="turnover">
                         <button
                           type="button"
-                          class="info-btn"
-                          data-info-btn="turnover"
-                          data-popover="info"
+                          class="proto-info-trigger info-btn"
+                          aria-controls="pop-turnover"
                           aria-expanded="false"
-                          aria-haspopup="true"
-                          aria-controls="turnover-pop"
-                          aria-describedby="turnover-pop"
                           aria-label="More info about turnover"
+                          data-proto-popover="pop-turnover"
                         >i</button>
-                        <div
-                          id="turnover-pop"
-                          class="info-popover popover-panel"
-                          data-info-pop="turnover"
-                          data-popover-panel
-                          role="dialog"
-                          aria-labelledby="turnover-pop-title"
-                          aria-modal="false"
-                          tabindex="-1"
-                          hidden
-                        >
-                        <div class="info-popover__header">
-                          <strong id="turnover-pop-title">Turnover targets</strong>
-                          <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
+                        <div id="pop-turnover" class="proto-popover" hidden>
+                          <header>
+                            <h3 id="pop-turnover-title">Turnover targets</h3>
+                            <button type="button" data-close aria-label="Close">×</button>
+                          </header>
+                          <div role="document" aria-labelledby="pop-turnover-title">
+                            <ul>
+                              <li>Turnover compares your filter flow to the aquarium volume (GPH ÷ gallons).</li>
+                              <li>General community tanks thrive around 5–7× per hour; active species often prefer 8× or more.</li>
+                              <li>If the number dips low, consider upsizing filtration or adding supplemental circulation.</li>
+                            </ul>
+                          </div>
                         </div>
-                        <ul>
-                          <li>Turnover compares your filter flow to the aquarium volume (GPH ÷ gallons).</li>
-                          <li>General community tanks thrive around 5–7× per hour; active species often prefer 8× or more.</li>
-                          <li>If the number dips low, consider upsizing filtration or adding supplemental circulation.</li>
-                        </ul>
-                      </div>
                     </div>
                   </span>
                   <span class="filter-turnover-value" data-role="filter-turnover-value">—</span>
@@ -1649,37 +1583,26 @@
                 <button
                   type="button"
                   id="stocking-checklist-btn"
-                  class="info-btn"
-                  data-info-btn="stocking-checklist"
-                  data-popover="info"
-                  aria-label="View Responsible Stocking Checklist"
-                  aria-haspopup="true"
+                  class="proto-info-trigger info-btn"
+                  aria-controls="pop-stocking-checklist"
                   aria-expanded="false"
-                  aria-controls="stocking-checklist-pop"
-                  aria-describedby="stocking-checklist-pop"
+                  aria-label="View Responsible Stocking Checklist"
+                  data-proto-popover="pop-stocking-checklist"
                 >i</button>
-                <div
-                  id="stocking-checklist-pop"
-                  class="info-popover popover-panel"
-                  data-info-pop="stocking-checklist"
-                  data-popover-panel
-                  role="dialog"
-                  aria-labelledby="stocking-checklist-title"
-                  aria-modal="false"
-                  tabindex="-1"
-                  hidden
-                >
-                  <div class="info-popover__header">
-                    <strong id="stocking-checklist-title">Responsible Stocking Checklist</strong>
-                    <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
+                <div id="pop-stocking-checklist" class="proto-popover" hidden>
+                  <header>
+                    <h3 id="pop-stocking-checklist-title">Responsible Stocking Checklist</h3>
+                    <button type="button" data-close aria-label="Close">×</button>
+                  </header>
+                  <div role="document" aria-labelledby="pop-stocking-checklist-title">
+                    <ul>
+                      <li>Verify your nitrogen cycle is stable with zero ammonia and nitrite before introducing new species.</li>
+                      <li>Match species by temperature, pH, and hardness tolerances, leaning into the overlapping sweet spot.</li>
+                      <li>Stage livestock additions over several weeks so the biofilter can adjust without stress spikes.</li>
+                      <li>Use live plants or seeded media to buffer bioload swings as you expand the community.</li>
+                      <li>Keep a quick log of maintenance, feedings, and behavior shifts so you can course-correct early.</li>
+                    </ul>
                   </div>
-                  <ul>
-                    <li>Verify your nitrogen cycle is stable with zero ammonia and nitrite before introducing new species.</li>
-                    <li>Match species by temperature, pH, and hardness tolerances, leaning into the overlapping sweet spot.</li>
-                    <li>Stage livestock additions over several weeks so the biofilter can adjust without stress spikes.</li>
-                    <li>Use live plants or seeded media to buffer bioload swings as you expand the community.</li>
-                    <li>Keep a quick log of maintenance, feedings, and behavior shifts so you can course-correct early.</li>
-                  </ul>
                 </div>
               </div>
             </div>
@@ -1696,37 +1619,26 @@
             <div class="info-trigger" data-info-scope="env-info">
               <button
                 type="button"
-                class="info-btn"
+                class="proto-info-trigger info-btn"
                 id="env-info-btn"
-                data-info-btn="env-info"
-                data-popover="info"
                 data-role="env-info"
+                aria-controls="pop-env-info"
                 aria-expanded="false"
-                aria-haspopup="true"
-                aria-controls="env-info-pop"
-                aria-describedby="env-info-pop"
                 aria-label="More info and tips about Environmental Recommendations"
+                data-proto-popover="pop-env-info"
               >i</button>
-              <div
-                id="env-info-pop"
-                class="info-popover popover-panel"
-                data-info-pop="env-info"
-                data-popover-panel
-                role="dialog"
-                aria-labelledby="env-info-title"
-                aria-modal="false"
-                tabindex="-1"
-                hidden
-              >
-                <div class="info-popover__header">
-                  <strong id="env-info-title">Environmental Card Guide</strong>
-                  <button type="button" class="info-popover__close popover-close" data-info-close aria-label="Close" title="Close">×</button>
+              <div id="pop-env-info" class="proto-popover" hidden>
+                <header>
+                  <h3 id="pop-env-info-title">Environmental Card Guide</h3>
+                  <button type="button" data-close aria-label="Close">×</button>
+                </header>
+                <div role="document" aria-labelledby="pop-env-info-title">
+                  <ul>
+                    <li>Ranges blend the overlapping temperature, pH, hardness, and flow preferences of the fish you add.</li>
+                    <li>Alerts surface when your planned community drifts outside that shared band so you can adjust stock or gear.</li>
+                    <li>Use these guardrails as a starting point and verify with your own water tests before introducing livestock.</li>
+                  </ul>
                 </div>
-                <ul>
-                  <li>Ranges blend the overlapping temperature, pH, hardness, and flow preferences of the fish you add.</li>
-                  <li>Alerts surface when your planned community drifts outside that shared band so you can adjust stock or gear.</li>
-                  <li>Use these guardrails as a starting point and verify with your own water tests before introducing livestock.</li>
-                </ul>
               </div>
             </div>
           </div>
@@ -2037,8 +1949,8 @@
 <script src="/js/ad-slot-view-tracking.js"></script>
 <!-- === TTG Ad Slot View Tracking END === -->
 
-<script defer src="/prototype/js/stocking-prototype.js"></script>
-<script src="/assets/js/prototype-popovers.js" defer></script>
+  <script defer src="/prototype/js/stocking-prototype.js"></script>
+  <script src="/prototype/assets/js/prototype-popovers.js" defer></script>
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
 </body>
