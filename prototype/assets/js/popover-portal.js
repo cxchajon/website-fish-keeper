@@ -209,17 +209,24 @@
 
     const toggle = (e) => {
       e.preventDefault();
+      e.stopPropagation();
+      if (trigger.dataset.lock) return;
+      trigger.dataset.lock = '1';
+      setTimeout(() => { delete trigger.dataset.lock; }, 200);
       const expanded = trigger.getAttribute('aria-expanded') === 'true';
       expanded ? close(trigger, panel) : open(trigger, panel);
     };
 
-    trigger.addEventListener('click', toggle);
+    trigger.addEventListener('click', toggle, false);
     trigger.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') toggle(e);
       if (e.key === 'Escape' && trigger.getAttribute('aria-expanded') === 'true') {
         e.preventDefault(); close(trigger, panel);
       }
-    });
+    }, false);
+    trigger.addEventListener('touchend', (e) => {
+      toggle(e);
+    }, { passive: false });
   }
 
   function bindAll() {
