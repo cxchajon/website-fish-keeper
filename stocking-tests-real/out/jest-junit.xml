@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="stocking-tests-real" tests="13" failures="0">
+  <testcase name="bioload calculations with real data > planted tanks increase capacity headroom" time="0.000">
+  </testcase>
+  <testcase name="bioload calculations with real data > adding more fish raises total bioload" time="0.000">
+  </testcase>
+  <testcase name="compatibility rules against real species > fin-nipper vs long-fin yields warning" time="0.001">
+  </testcase>
+  <testcase name="compatibility rules against real species > shrimp unsafe species block shrimp plans" time="0.000">
+  </testcase>
+  <testcase name="compatibility rules against real species > temperature and pH mismatches are blockers" time="0.000">
+  </testcase>
+  <testcase name="fuzzed compatibility checks > random pairs and triples evaluate without throwing" time="0.001">
+  </testcase>
+  <testcase name="fuzzed compatibility checks > shoaling requirements trigger warnings when understocked" time="0.000">
+  </testcase>
+  <testcase name="fuzzed compatibility checks > salinity mismatches flagged when brackish species exist" time="0.000">
+  </testcase>
+  <testcase name="integration scenarios > Tropical peaceful community produces sensible bioload and compatibility" time="0.000">
+  </testcase>
+  <testcase name="integration scenarios > Semi-aggressive schooling tank produces sensible bioload and compatibility" time="0.000">
+  </testcase>
+  <testcase name="integration scenarios > Shrimp nano produces sensible bioload and compatibility" time="0.000">
+  </testcase>
+  <testcase name="turnover guidance > computes turnover rate and recommendation band" time="0.001">
+  </testcase>
+  <testcase name="turnover guidance > zero gallons produces zero turnover" time="0.000">
+  </testcase>
+</testsuite>

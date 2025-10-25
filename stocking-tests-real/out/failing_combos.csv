@@ -1,0 +1,53 @@
+species_a,species_b,issue
+cory_bronze,tiger_barb,Bronze Corydoras ↔ Tiger Barb: aggression gap
+pgourami,betta_male,Pearl Gourami ↔ Betta (Male): aggression gap
+kuhli,tiger_barb,Kuhli Loach ↔ Tiger Barb: aggression gap
+betta_female,neocaridina,Betta (Female) ↔ Cherry Shrimp: shrimp predation risk
+cory_panda,betta_male,Panda Corydoras ↔ Betta (Male): aggression gap
+tiger_barb,cory_panda,Tiger Barb ↔ Panda Corydoras: aggression gap
+betta_male,harlequin,Betta (Male) ↔ Harlequin Rasbora: aggression gap
+cardinal,neocaridina,Cardinal Tetra ↔ Cherry Shrimp: shrimp predation risk
+chili,betta_male,Chili Rasbora ↔ Betta (Male): aggression gap
+tiger_barb,otocinclus,Tiger Barb ↔ Otocinclus (Oto Cat): aggression gap
+betta_male,cory_bronze,Betta (Male) ↔ Bronze Corydoras: aggression gap
+zebra,pgourami,Zebra Danio ↔ Pearl Gourami: temperature mismatch
+nerite,betta_male,Nerite Snail ↔ Betta (Male): aggression gap
+cory_panda,betta_male,Panda Corydoras ↔ Betta (Male): aggression gap
+zebra,betta_male,Zebra Danio ↔ Betta (Male): aggression gap
+betta_female,neocaridina,Betta (Female) ↔ Cherry Shrimp: shrimp predation risk
+amano,pgourami,Amano Shrimp ↔ Pearl Gourami: shrimp predation risk
+neocaridina,rummynose,Cherry Shrimp ↔ Rummynose Tetra: shrimp predation risk
+tiger_barb,neon,Tiger Barb ↔ Neon Tetra: aggression gap
+rummynose,betta_male,Rummynose Tetra ↔ Betta (Male): aggression gap
+amano,dgourami,Amano Shrimp ↔ Dwarf Gourami: shrimp predation risk
+kuhli,betta_male,Kuhli Loach ↔ Betta (Male): aggression gap
+betta_male,cory_panda,Betta (Male) ↔ Panda Corydoras: aggression gap
+amano,guppy_male,Amano Shrimp ↔ Guppy (Male): shrimp predation risk
+zebra,neocaridina,Zebra Danio ↔ Cherry Shrimp: shrimp predation risk
+neocaridina,harlequin,Cherry Shrimp ↔ Harlequin Rasbora: shrimp predation risk
+betta_male,kuhli,Betta (Male) ↔ Kuhli Loach: aggression gap
+cardinal,betta_male,Cardinal Tetra ↔ Betta (Male): aggression gap
+zebra,pgourami,Zebra Danio ↔ Pearl Gourami: temperature mismatch
+cardinal,betta_male,Cardinal Tetra ↔ Betta (Male): aggression gap
+cherrybarb,neocaridina,Cherry Barb ↔ Cherry Shrimp: shrimp predation risk
+pgourami,amano,Pearl Gourami ↔ Amano Shrimp: shrimp predation risk
+guppy_male,neocaridina,Guppy (Male) ↔ Cherry Shrimp: shrimp predation risk
+amano,zebra,Amano Shrimp ↔ Zebra Danio: shrimp predation risk
+neocaridina,cardinal,Cherry Shrimp ↔ Cardinal Tetra: shrimp predation risk
+harlequin,neocaridina,Harlequin Rasbora ↔ Cherry Shrimp: shrimp predation risk
+rummynose,neocaridina,Rummynose Tetra ↔ Cherry Shrimp: shrimp predation risk
+harlequin,tiger_barb,Harlequin Rasbora ↔ Tiger Barb: aggression gap
+amano,betta_male,Amano Shrimp ↔ Betta (Male): shrimp predation risk
+amano,rummynose,Amano Shrimp ↔ Rummynose Tetra: shrimp predation risk
+pgourami,zebra,Pearl Gourami ↔ Zebra Danio: temperature mismatch
+harlequin,amano,Harlequin Rasbora ↔ Amano Shrimp: shrimp predation risk
+guppy_male,betta_male,Guppy (Male) ↔ Betta (Male): aggression gap
+rummynose,tiger_barb,Rummynose Tetra ↔ Tiger Barb: aggression gap
+neocaridina,harlequin,Cherry Shrimp ↔ Harlequin Rasbora: shrimp predation risk
+neocaridina,zebra,Cherry Shrimp ↔ Zebra Danio: shrimp predation risk
+amano,zebra,Amano Shrimp ↔ Zebra Danio: shrimp predation risk
+neocaridina,betta_female,Cherry Shrimp ↔ Betta (Female): shrimp predation risk
+betta_female,neocaridina,Betta (Female) ↔ Cherry Shrimp: shrimp predation risk
+betta_male,nerite,Betta (Male) ↔ Nerite Snail: aggression gap
+amano,dgourami,Amano Shrimp ↔ Dwarf Gourami: shrimp predation risk
+none,none,no brackish species available
