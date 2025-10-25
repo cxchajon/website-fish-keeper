@@ -89,3 +89,65 @@
 #filtration-trigger .info-btn.ttg-tooltip-trigger[aria-controls="filtration-pill-tip"] {
   display: none !important;
 }
+
+/* === PROTOTYPE-ONLY compact input for turnover === */
+.proto-input-group {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.proto-input {
+  display: inline-block;
+  height: 48px;
+  line-height: 48px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  width: 160px;
+  max-width: 50vw;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.proto-input--compact {
+  width: 140px;
+}
+
+@media (min-width: 768px) {
+  .proto-input--compact {
+    width: 160px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .proto-input--compact {
+    width: 180px;
+  }
+}
+
+.proto-input[readonly] {
+  cursor: default;
+}
+
+.proto-input-suffix {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: #cfe4ff;
+  user-select: none;
+  pointer-events: none;
+}
+
+.proto-turnover {
+  margin-top: 8px;
+}
