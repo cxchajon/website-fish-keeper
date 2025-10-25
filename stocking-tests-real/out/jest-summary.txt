@@ -1,0 +1,4 @@
+Test files: 5
+Total tests: 13
+Passed: 13
+Failed: 0

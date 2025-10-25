@@ -1,0 +1,10 @@
+{
+  "name": "stocking-tests-real",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node runner.mjs",
+    "test:coverage": "node runner.mjs"
+  }
+}
