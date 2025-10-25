@@ -1,0 +1,21 @@
+{
+  "name": "snail_safety",
+  "description": "Snails should avoid fin-nippers and invertebrate predators.",
+  "tests": [
+    {
+      "type": "pairwise_incompatible",
+      "label": "Snail vs aggressor",
+      "sample": 200,
+      "source": { "categories": ["snail"] },
+      "target": { "shrimpUnsafe": true, "aggressionGte": 55 },
+      "reasonIncludes": ["predation", "aggression"]
+    },
+    {
+      "type": "pairwise_compatible",
+      "label": "Snail friendly",
+      "sample": 160,
+      "source": { "categories": ["snail"] },
+      "target": { "invertSafe": true, "aggressionLte": 25 }
+    }
+  ]
+}

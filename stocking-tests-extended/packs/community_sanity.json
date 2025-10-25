@@ -1,0 +1,94 @@
+{
+  "name": "community_sanity",
+  "description": "Peaceful community mixes should stay green with and without planted buffers.",
+  "tests": [
+    {
+      "type": "pairwise_compatible",
+      "label": "Peaceful pair sampling",
+      "sample": 260,
+      "source": {
+        "categories": ["fish", "shrimp", "snail"],
+        "aggressionLte": 20,
+        "excludeTagsAny": ["fin_nipper", "territorial", "aggressive", "semi_aggressive"],
+        "includeIds": [
+          "neon",
+          "cardinal",
+          "harlequin",
+          "cherrybarb",
+          "cory_panda",
+          "cory_bronze",
+          "amano",
+          "neocaridina",
+          "nerite",
+          "otocinclus",
+          "kuhli"
+        ],
+        "invertSafe": true
+      },
+      "target": {
+        "categories": ["fish", "shrimp", "snail"],
+        "aggressionLte": 20,
+        "excludeTagsAny": ["fin_nipper", "territorial", "aggressive", "semi_aggressive"],
+        "includeIds": [
+          "neon",
+          "cardinal",
+          "harlequin",
+          "cherrybarb",
+          "cory_panda",
+          "cory_bronze",
+          "amano",
+          "neocaridina",
+          "nerite",
+          "otocinclus",
+          "kuhli"
+        ],
+        "invertSafe": true
+      }
+    },
+    {
+      "type": "plan_compatible",
+      "plans": [
+        {
+          "name": "20g tetra & cory community",
+          "gallons": 20,
+          "entries": [
+            { "id": "neon", "count": 10 },
+            { "id": "cory_panda", "count": 6 },
+            { "id": "nerite", "count": 2 }
+          ],
+          "plantedStates": [false, true]
+        },
+        {
+          "name": "29g gourami planted",
+          "gallons": 29,
+          "entries": [
+            { "id": "pgourami", "count": 1 },
+            { "id": "harlequin", "count": 10 },
+            { "id": "cory_bronze", "count": 6 }
+          ],
+          "plantedStates": [false, true]
+        },
+        {
+          "name": "12g invert haven",
+          "gallons": 12,
+          "entries": [
+            { "id": "neocaridina", "count": 12 },
+            { "id": "amano", "count": 6 },
+            { "id": "nerite", "count": 2 }
+          ],
+          "plantedStates": [false, true]
+        },
+        {
+          "name": "36g active schoolers",
+          "gallons": 36,
+          "entries": [
+            { "id": "zebra", "count": 8 },
+            { "id": "kuhli", "count": 6 },
+            { "id": "cherrybarb", "count": 8 }
+          ],
+          "plantedStates": [false, true]
+        }
+      ]
+    }
+  ]
+}
