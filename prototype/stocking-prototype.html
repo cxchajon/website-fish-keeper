@@ -1323,34 +1323,34 @@
                 <p class="filter-flow-note" id="filter-rated-note">Auto-filled from selected product.</p>
               </div>
               <div class="filter-flow-meta">
-                <p class="filter-turnover" id="filter-turnover" aria-live="polite">
-                  <span class="filter-turnover-label">
-                    Estimated turnover
+                <div class="filter-turnover turnover-block" id="filter-turnover" aria-live="polite">
+                  <div class="field-label-row">
+                    <label class="field-label" for="turnoverValue">Estimated turnover</label>
                     <div class="info-trigger" data-info-scope="turnover">
-                        <button
-                          type="button"
-                          class="proto-info-trigger info-btn"
-                          aria-haspopup="dialog"
-                          aria-controls="pop-turnover"
-                          aria-expanded="false"
-                          aria-label="More info about turnover"
-                          data-proto-popover="pop-turnover"
-                        >i</button>
-                        <div id="pop-turnover" class="proto-popover" role="dialog" aria-labelledby="pop-turnover-title" tabindex="-1" hidden>
-                          <header>
-                            <h3 id="pop-turnover-title">Turnover targets</h3>
-                            <button type="button" data-close aria-label="Close">×</button>
-                          </header>
-                          <div role="document" aria-labelledby="pop-turnover-title">
-                            <ul>
-                              <li>Turnover compares your filter flow to the aquarium volume (GPH ÷ gallons).</li>
-                              <li>General community tanks thrive around 5–7× per hour; active species often prefer 8× or more.</li>
-                              <li>If the number dips low, consider upsizing filtration or adding supplemental circulation.</li>
-                            </ul>
-                          </div>
+                      <button
+                        type="button"
+                        class="proto-info-trigger info-btn field-label-info"
+                        aria-haspopup="dialog"
+                        aria-controls="pop-turnover"
+                        aria-expanded="false"
+                        aria-label="More info about turnover"
+                        data-proto-popover="pop-turnover"
+                      >i</button>
+                      <div id="pop-turnover" class="proto-popover" role="dialog" aria-labelledby="pop-turnover-title" tabindex="-1" hidden>
+                        <header>
+                          <h3 id="pop-turnover-title">Turnover targets</h3>
+                          <button type="button" data-close aria-label="Close">×</button>
+                        </header>
+                        <div role="document" aria-labelledby="pop-turnover-title">
+                          <ul>
+                            <li>Turnover compares your filter flow to the aquarium volume (GPH ÷ gallons).</li>
+                            <li>General community tanks thrive around 5–7× per hour; active species often prefer 8× or more.</li>
+                            <li>If the number dips low, consider upsizing filtration or adding supplemental circulation.</li>
+                          </ul>
                         </div>
+                      </div>
                     </div>
-                  </span>
+                  </div>
                   <span class="filter-turnover-value" data-role="filter-turnover-value" aria-hidden="true" hidden>—</span>
                   <!-- Mirrors .filter-flow-input__field > input styling from Rated flow (GPH) field -->
                   <!-- PROTOTYPE-ONLY: Compact turnover field -->
@@ -1367,7 +1367,7 @@
                     />
                     <span class="proto-input-suffix" aria-hidden="true">×/h</span>
                   </div>
-                </p>
+                </div>
                 <p class="filter-product-meta" id="filter-product-label" hidden></p>
               </div>
             </div>
