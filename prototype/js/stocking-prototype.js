@@ -183,9 +183,52 @@
     });
   };
 
+  const removeFiltrationSummaryInfo = () => {
+    const host = document.getElementById('filtration-trigger');
+    if (!host) return;
+
+    const INFO_SELECTOR = '[data-role="filtration-info"]';
+    const PANEL_ID = 'filtration-pill-tip';
+
+    const prune = () => {
+      const infoTrigger = host.querySelector(INFO_SELECTOR);
+      if (infoTrigger) {
+        // Filtration summary info trigger selectors:
+        // - #filtration-trigger [data-role="filtration-info"]
+        // - .info-btn.ttg-tooltip-trigger[aria-controls="filtration-pill-tip"]
+        // Associated panel id: "filtration-pill-tip"
+        const panelId = infoTrigger.getAttribute('aria-controls') || PANEL_ID;
+        infoTrigger.remove();
+        if (panelId) {
+          const panel = document.getElementById(panelId);
+          panel?.remove();
+        }
+      } else {
+        const strayPanel = document.getElementById(PANEL_ID);
+        strayPanel?.remove();
+      }
+    };
+
+    prune();
+
+    const observer = new MutationObserver(() => {
+      const hasTrigger = host.querySelector(INFO_SELECTOR);
+      const hasPanel = document.getElementById(PANEL_ID);
+      if (!hasTrigger && !hasPanel) {
+        return;
+      }
+      prune();
+    });
+
+    observer.observe(host, { childList: true, subtree: true });
+
+    window.addEventListener('beforeunload', () => observer.disconnect(), { once: true });
+  };
+
   document.addEventListener('DOMContentLoaded', () => {
     setupHowItWorksModal();
     setupFeatureCta();
+    removeFiltrationSummaryInfo();
   });
 
   const adSlots = document.querySelectorAll('[data-prototype-ad]');
