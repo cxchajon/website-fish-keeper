@@ -1,0 +1,7 @@
+#ttg-proto-popover-root{position:absolute;inset:0;pointer-events:none}
+.ttg-proto-pop{position:absolute;z-index:9999;pointer-events:auto;max-width:min(320px,90vw);background:#0b1324;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.35);padding:12px 14px;line-height:1.4}
+.ttg-proto-pop[hidden]{display:none}
+.ttg-proto-pop h4{margin:0 0 6px;font-size:15px}
+.ttg-proto-pop .close{position:absolute;top:8px;right:10px;border:0;background:transparent;color:#cfe0ff;font-size:18px;cursor:pointer}
+.ttg-proto-pop[data-edge="top"]{transform-origin:bottom left}
+.ttg-proto-pop[data-edge="bottom"]{transform-origin:top left}
