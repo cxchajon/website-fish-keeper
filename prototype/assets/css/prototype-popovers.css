@@ -1,0 +1,31 @@
+/* PROTOTYPE-ONLY popover styles */
+.proto-popover {
+  position: absolute;
+  inset: auto;
+  max-width: min(92vw, 520px);
+  background: #0a1320;
+  color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.35);
+  padding: 16px 18px 18px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity .16s ease, transform .16s ease;
+  z-index: 1100; /* above cards */
+}
+.proto-popover.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.proto-popover header {
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  margin:-4px 0 10px;
+}
+.proto-popover [data-close]{
+  appearance:none; border:0; background:rgba(255,255,255,.08);
+  border-radius:10px; width:38px; height:34px; color:#fff; cursor:pointer;
+}
+/* Hide any accidental second close icon */
+.proto-popover header .dup-x { display:none !important; }
