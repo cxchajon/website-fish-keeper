@@ -1,206 +1,322 @@
-(function(){
-  if(!/\/prototype\/stocking-prototype\.html$/.test(location.pathname)) return;
+(function () {
+  if (!/\/prototype\/stocking-prototype\.html$/.test(window.location.pathname)) {
+    return;
+  }
 
-  const CLOSE_SEL='.info-popover__close, .popover-close, [data-close="popover"], button[aria-label="Close"]';
+  const FOCUSABLE_SELECTOR = [
+    'a[href]:not([tabindex="-1"])',
+    'button:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+  ].join(',');
 
-  function ensureSingleClose(container){
-    const header=container.querySelector('.info-popover__header, .popover-header, header')||container;
-    const buttons=header.querySelectorAll(CLOSE_SEL);
-    let primary=buttons[0]||null;
+  const state = {
+    trigger: null,
+    panel: null
+  };
 
-    if(buttons.length>1){
-      buttons.forEach((btn,idx)=>{ if(idx>0) btn.remove(); });
+  const boundTriggers = new WeakSet();
+
+  function findPanel(trigger) {
+    let targetId = trigger.getAttribute('aria-controls');
+    if (!targetId) {
+      const dataTarget = trigger.getAttribute('data-proto-popover');
+      if (dataTarget) {
+        targetId = dataTarget;
+        trigger.setAttribute('aria-controls', dataTarget);
+      }
     }
 
-    if(!primary){
-      primary=document.createElement('button');
-      primary.type='button';
-      primary.className='info-popover__close';
-      primary.textContent='×';
-      primary.setAttribute('aria-label','Close');
-      primary.setAttribute('title','Close');
-      primary.dataset.close='popover';
-      primary.dataset.infoClose='';
-      header.appendChild(primary);
-    }else{
-      primary.type='button';
-      if(!primary.classList.contains('info-popover__close')) primary.classList.add('info-popover__close');
-      if(!primary.hasAttribute('aria-label')) primary.setAttribute('aria-label','Close');
-      if(!primary.hasAttribute('title')) primary.setAttribute('title','Close');
-      if(!primary.dataset.close) primary.dataset.close='popover';
-      if(!primary.dataset.infoClose) primary.dataset.infoClose='';
-      if((primary.textContent||'').trim().length!==1) primary.textContent='×';
+    if (!targetId) {
+      return null;
     }
 
-    container.querySelectorAll(CLOSE_SEL).forEach(btn=>{
-      if((btn.textContent||'').trim().length!==1) btn.textContent='×';
+    if (targetId.startsWith('#')) {
+      targetId = targetId.slice(1);
+    }
+
+    return document.getElementById(targetId);
+  }
+
+  function ensurePanelInBody(panel) {
+    if (panel && panel.parentElement !== document.body) {
+      document.body.appendChild(panel);
+    }
+  }
+
+  function normalizeTrigger(trigger, panel) {
+    trigger.setAttribute('aria-haspopup', 'dialog');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.classList.add('proto-info-trigger');
+
+    if (!panel) {
+      return;
+    }
+
+    ensurePanelInBody(panel);
+
+    if (!panel.hasAttribute('role')) {
+      panel.setAttribute('role', 'dialog');
+    }
+    if (!panel.hasAttribute('tabindex')) {
+      panel.setAttribute('tabindex', '-1');
+    }
+    panel.classList.remove('is-open');
+    panel.setAttribute('hidden', '');
+
+    const closeButtons = panel.querySelectorAll('[data-close]');
+    closeButtons.forEach((btn, idx) => {
+      if (idx === 0) {
+        btn.classList.remove('dup-x');
+        if (!btn.dataset.protoCloseBound) {
+          btn.addEventListener('click', event => {
+            event.preventDefault();
+            closePopover(true);
+          });
+          btn.dataset.protoCloseBound = 'true';
+        }
+      } else {
+        btn.classList.add('dup-x');
+      }
+    });
+  }
+
+  function focusFirst(panel) {
+    const focusable = Array.from(panel.querySelectorAll(FOCUSABLE_SELECTOR)).filter(el => {
+      if (el.classList.contains('dup-x')) return false;
+      if (el.hasAttribute('disabled')) return false;
+      if (el.getAttribute('aria-hidden') === 'true') return false;
+      if (el.offsetParent === null && el !== panel) return false;
+      return true;
     });
 
-    return primary;
-  }
-
-  // --- portal root + single panel
-  let root=document.getElementById('ttg-proto-popover-root');
-  if(!root){ root=document.createElement('div'); root.id='ttg-proto-popover-root'; document.body.prepend(root); }
-  let panel=document.getElementById('ttg-proto-pop');
-  if(!panel){
-    panel=document.createElement('div');
-    panel.id='ttg-proto-pop';
-    panel.className='ttg-proto-pop';
-    panel.setAttribute('role','dialog');
-    panel.setAttribute('aria-modal','false');
-    panel.setAttribute('hidden','');
-    panel.innerHTML='<div class="content"></div>';
-    root.appendChild(panel);
-  }
-  const content=panel.querySelector('.content');
-
-  const GAP_MOBILE=6, GAP_DESK=8, PAD=8;
-  const isMobile=()=>matchMedia('(max-width:768px)').matches;
-  const gap=()=>isMobile()?GAP_MOBILE:GAP_DESK;
-  const clamp=(v,a,b)=>Math.min(Math.max(v,a),b);
-  let activeTrigger=null;
-
-  function resolvePanelMarkup(trigger){
-    // 1) aria-controls points to hidden markup
-    const id=trigger.getAttribute('aria-controls');
-    if(id){
-      const src=document.getElementById(id);
-      if(src) return src.innerHTML.trim();
+    const target = focusable[0] || panel;
+    if (typeof target.focus === 'function') {
+      target.focus({ preventScroll: true });
     }
-    // 2) data-popover, title, or data-info
-    if(trigger.dataset.popover) return trigger.dataset.popover;
-    if(trigger.dataset.info) return trigger.dataset.info;
-    const t=trigger.getAttribute('title');
-    if(t) return `<p>${t}</p>`;
-    // 3) next sibling with role tooltip/dialog
-    let sib=trigger.nextElementSibling;
-    while(sib){
-      const role=(sib.getAttribute('role')||'').toLowerCase();
-      if(role==='tooltip'||role==='dialog'||sib.hasAttribute('data-popover')){
-        return sib.innerHTML.trim();
+  }
+
+  function getScrollOffsets() {
+    const doc = document.documentElement || document.body.parentNode;
+    const body = document.body || doc;
+    const fallbackScrollLeft = body && typeof body.scrollLeft === 'number' ? body.scrollLeft : 0;
+    const fallbackScrollTop = body && typeof body.scrollTop === 'number' ? body.scrollTop : 0;
+    const scrollX = typeof window.pageXOffset === 'number'
+      ? window.pageXOffset
+      : (doc && typeof doc.scrollLeft === 'number' ? doc.scrollLeft : fallbackScrollLeft);
+    const scrollY = typeof window.pageYOffset === 'number'
+      ? window.pageYOffset
+      : (doc && typeof doc.scrollTop === 'number' ? doc.scrollTop : fallbackScrollTop);
+    return { scrollX, scrollY };
+  }
+
+  function computePosition(triggerRect, panelRect) {
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const spacing = 12;
+
+    const spaceBelow = viewportHeight - triggerRect.bottom;
+    const spaceAbove = triggerRect.top;
+
+    const placeBelow = panelRect.height + spacing <= spaceBelow || spaceBelow >= spaceAbove;
+
+    let top = placeBelow
+      ? triggerRect.bottom + spacing
+      : triggerRect.top - panelRect.height - spacing;
+
+    if (top < spacing) {
+      top = spacing;
+    }
+
+    let left = triggerRect.left;
+    if (left + panelRect.width > viewportWidth - spacing) {
+      left = viewportWidth - panelRect.width - spacing;
+    }
+    if (left < spacing) {
+      left = spacing;
+    }
+
+    return {
+      top,
+      left,
+      edge: placeBelow ? 'bottom' : 'top'
+    };
+  }
+
+  function applyPosition(trigger, panel) {
+    const triggerRect = trigger.getBoundingClientRect();
+    const panelRect = panel.getBoundingClientRect();
+    const position = computePosition(triggerRect, panelRect);
+
+    const { scrollX, scrollY } = getScrollOffsets();
+
+    panel.style.top = `${Math.round(scrollY + position.top)}px`;
+    panel.style.left = `${Math.round(scrollX + position.left)}px`;
+    panel.dataset.edge = position.edge;
+  }
+
+  function reposition() {
+    if (!state.trigger || !state.panel || state.panel.hasAttribute('hidden')) {
+      return;
+    }
+
+    state.panel.style.visibility = 'hidden';
+    requestAnimationFrame(() => {
+      if (!state.trigger || !state.panel || state.panel.hasAttribute('hidden')) {
+        return;
       }
-      sib=sib.nextElementSibling;
+      applyPosition(state.trigger, state.panel);
+      state.panel.style.visibility = '';
+    });
+  }
+
+  function openPopover(trigger, panel) {
+    if (state.trigger && state.trigger !== trigger) {
+      closePopover(false);
     }
-    return '';
-  }
 
-  function computePos(triggerRect, panelRect){
-    const vw=document.documentElement.clientWidth;
-    const vh=document.documentElement.clientHeight;
-    const prefersBottom=triggerRect.bottom+gap()+panelRect.height+PAD<=vh;
-    let top=prefersBottom?triggerRect.bottom+gap():triggerRect.top-panelRect.height-gap();
-    let left=triggerRect.left;
-    left=clamp(left, PAD, vw-panelRect.width-PAD);
-    top=clamp(top, PAD, vh-panelRect.height-PAD);
-    return {top,left,edge:prefersBottom?'bottom':'top'};
-  }
+    if (state.trigger === trigger) {
+      closePopover(true);
+      return;
+    }
 
-  function open(trigger, html){
-    content.innerHTML=html||'<p>More info</p>';
+    state.trigger = trigger;
+    state.panel = panel;
+
+    trigger.setAttribute('aria-expanded', 'true');
+
     panel.removeAttribute('hidden');
-    panel.style.visibility='hidden'; // measure first
-    const t=trigger.getBoundingClientRect();
-    const p=panel.getBoundingClientRect();
-    const pos=computePos(t,p);
-    panel.style.top = `${Math.round(window.scrollY+pos.top)}px`;
-    panel.style.left= `${Math.round(window.scrollX+pos.left)}px`;
-    panel.dataset.edge=pos.edge;
-    panel.style.visibility='visible';
+    panel.classList.add('is-open');
+    panel.style.visibility = 'hidden';
 
-    trigger.setAttribute('aria-expanded','true');
-    activeTrigger=trigger;
-    const closeBtn=ensureSingleClose(content);
-    if(closeBtn){
-      if(panel._ttgCloseBtn && panel._ttgCloseBtn!==closeBtn && panel._ttgCloseHandler){
-        panel._ttgCloseBtn.removeEventListener('click', panel._ttgCloseHandler);
+    requestAnimationFrame(() => {
+      if (!state.trigger || !state.panel) {
+        return;
       }
-      const handler=(e)=>{ e.preventDefault(); close(); };
-      closeBtn.addEventListener('click', handler);
-      panel._ttgCloseBtn=closeBtn;
-      panel._ttgCloseHandler=handler;
-    }
-    document.addEventListener('mousedown',onDocDown,true);
-    document.addEventListener('keydown',onKey,true);
-    window.addEventListener('resize',reposition,true);
-    window.addEventListener('scroll',reposition,true);
-  }
-
-  function close(){
-    if(!activeTrigger) return;
-    activeTrigger.setAttribute('aria-expanded','false');
-    activeTrigger=null;
-    panel.setAttribute('hidden','');
-    if(panel._ttgCloseBtn && panel._ttgCloseHandler){
-      panel._ttgCloseBtn.removeEventListener('click', panel._ttgCloseHandler);
-      panel._ttgCloseBtn=null;
-      panel._ttgCloseHandler=null;
-    }
-    document.removeEventListener('mousedown',onDocDown,true);
-    document.removeEventListener('keydown',onKey,true);
-    window.removeEventListener('resize',reposition,true);
-    window.removeEventListener('scroll',reposition,true);
-  }
-
-  function reposition(){
-    if(!activeTrigger || panel.hasAttribute('hidden')) return;
-    panel.style.visibility='hidden';
-    const t=activeTrigger.getBoundingClientRect();
-    const p=panel.getBoundingClientRect();
-    const pos=computePos(t,p);
-    panel.style.top = `${Math.round(window.scrollY+pos.top)}px`;
-    panel.style.left= `${Math.round(window.scrollX+pos.left)}px`;
-    panel.dataset.edge=pos.edge;
-    panel.style.visibility='visible';
-  }
-
-  function onDocDown(e){
-    if(panel.contains(e.target) || e.target===activeTrigger) return;
-    close();
-  }
-  function onKey(e){
-    if(e.key==='Escape') { e.preventDefault(); close(); }
-    if((e.key==='Enter'||e.key===' ') && document.activeElement===activeTrigger){ e.preventDefault(); close(); }
-  }
-  // --- Event delegation for ALL info triggers
-  const TRIGGER_SEL = ['#stocking-tip-btn','.ttg-info-btn','.tooltip-trigger','[data-info]','[aria-haspopup][aria-controls]','[data-popover-target]'].join(',');
-  document.addEventListener('click', (e)=>{
-    const t = e.target.closest(TRIGGER_SEL);
-    if(!t) return;
-    e.preventDefault();
-    const html = resolvePanelMarkup(t);
-    if(!html) return; // nothing to show
-    const expanded = t.getAttribute('aria-expanded')==='true';
-    expanded ? close() : open(t, html);
-  });
-
-  document.addEventListener('keydown', (e)=>{
-    const t = e.target.closest?.(TRIGGER_SEL);
-    if(!t) return;
-    if(e.key==='Enter'||e.key===' '){
-      e.preventDefault();
-      const html = resolvePanelMarkup(t);
-      if(!html) return;
-      const expanded = t.getAttribute('aria-expanded')==='true';
-      expanded ? close() : open(t, html);
-    }
-  });
-
-  // Bootstrap aria-expanded for discoverability
-  function seed(){
-    document.querySelectorAll(TRIGGER_SEL).forEach(el=>{
-      if(!el.hasAttribute('aria-expanded')) el.setAttribute('aria-expanded','false');
-      if(!el.hasAttribute('role')) el.setAttribute('role','button');
-      el.setAttribute('tabindex','0');
+      applyPosition(trigger, panel);
+      panel.style.visibility = '';
+      focusFirst(panel);
     });
+
+    document.addEventListener('pointerdown', onDocumentPointerDown, true);
+    document.addEventListener('keydown', onDocumentKeyDown, true);
+    window.addEventListener('resize', reposition, true);
+    window.addEventListener('scroll', reposition, true);
   }
-  seed();
 
-  // Re-seed as cards mount/compact
-  new MutationObserver(seed).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','style']});
+  function closePopover(returnFocus) {
+    if (!state.trigger || !state.panel) {
+      return;
+    }
 
-  // Log binding count
-  setTimeout(()=> {
-    console.info('[PROTO] info triggers bound:', document.querySelectorAll(TRIGGER_SEL).length);
-  }, 600);
+    const { trigger, panel } = state;
+
+    trigger.setAttribute('aria-expanded', 'false');
+
+    panel.classList.remove('is-open');
+    panel.setAttribute('hidden', '');
+    panel.style.visibility = '';
+    panel.style.top = '';
+    panel.style.left = '';
+
+    document.removeEventListener('pointerdown', onDocumentPointerDown, true);
+    document.removeEventListener('keydown', onDocumentKeyDown, true);
+    window.removeEventListener('resize', reposition, true);
+    window.removeEventListener('scroll', reposition, true);
+
+    state.trigger = null;
+    state.panel = null;
+
+    if (returnFocus && document.contains(trigger)) {
+      trigger.focus({ preventScroll: true });
+    }
+  }
+
+  function onTriggerClick(event) {
+    event.preventDefault();
+    const trigger = event.currentTarget;
+    const panel = findPanel(trigger);
+    if (!panel) {
+      return;
+    }
+
+    const expanded = trigger.getAttribute('aria-expanded') === 'true';
+    if (expanded) {
+      closePopover(true);
+    } else {
+      openPopover(trigger, panel);
+    }
+  }
+
+  function onTriggerKeyDown(event) {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    event.currentTarget.click();
+  }
+
+  function onDocumentPointerDown(event) {
+    if (!state.panel || !state.trigger) {
+      return;
+    }
+
+    if (state.panel.contains(event.target) || state.trigger.contains(event.target)) {
+      return;
+    }
+
+    const otherTrigger = event.target.closest('.proto-info-trigger');
+    if (otherTrigger) {
+      return;
+    }
+
+    closePopover(true);
+  }
+
+  function onDocumentKeyDown(event) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closePopover(true);
+    }
+  }
+
+  function initTrigger(trigger) {
+    if (boundTriggers.has(trigger)) {
+      return;
+    }
+
+    const panel = findPanel(trigger);
+    normalizeTrigger(trigger, panel);
+
+    trigger.addEventListener('click', onTriggerClick);
+    trigger.addEventListener('keydown', onTriggerKeyDown);
+
+    boundTriggers.add(trigger);
+  }
+
+  function initAllTriggers(root) {
+    const buttons = (root || document).querySelectorAll('button.proto-info-trigger, button[aria-controls], button[data-proto-popover]');
+    buttons.forEach(initTrigger);
+  }
+
+  initAllTriggers(document);
+
+  const observer = new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+      mutation.addedNodes.forEach(node => {
+        if (!(node instanceof Element)) {
+          return;
+        }
+        if (node.matches && node.matches('button.proto-info-trigger, button[aria-controls], button[data-proto-popover]')) {
+          initTrigger(node);
+        }
+        initAllTriggers(node);
+      });
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
 })();

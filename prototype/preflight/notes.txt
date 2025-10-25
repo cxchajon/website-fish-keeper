@@ -1,3 +1,11 @@
-PRE-FLIGHT SUMMARY
-===================
-Environment limitation prevented capturing live browser diagnostics within this run. All info buttons were reviewed via markup/JS inspection: aria-expanded attributes toggle via prototype script, panels remove the hidden attribute, but visibility was previously blocked by missing .is-open class application. Duplicate close buttons were present in markup but are now suppressed via JS adjustments.
+Pre-flight diagnostics summary (Phase 0)
+---------------------------------------
+- All automated attempts to load https://thetankguide.com/prototype/stocking-prototype.html in Playwright received a Cloudflare "Please unblock challenges.cloudflare.com" interstitial and HTTP 403 responses. No application markup rendered for inspection.
+- Console output recorded numerous CSP violations (blocked inline/eval scripts), failed resource loads for Cloudflare scripts, and uncaught errors triggered by the challenge payload.
+- Network failures included blocked requests to https://challenges.cloudflare.com/turnstile/... and https://static.cloudflareinsights.com/beacon.min.js/..., plus 403/404 status codes for the main document and auxiliary assets.
+- Because the page never passed the challenge, info popover triggers could not be interacted with; aria-expanded states, panel visibility, and duplicate close buttons remain unverified at this stage.
+- Placeholder screenshots were generated for the five requested viewports documenting the Cloudflare block (real UI unavailable until access is restored).
+
+Outstanding items before Phase 1
+- Replace placeholder screenshots with actual captures once the prototype can load without Cloudflare blocking automation.
+- Re-run console/network capture to validate that the popover baseline is clear prior to implementing the new system.
