@@ -320,3 +320,71 @@
 
   observer.observe(document.body, { childList: true, subtree: true });
 })();
+
+// === PROTOTYPE-ONLY: turnover field binding ===
+(() => {
+  if (!location.pathname.includes('/prototype/stocking-prototype.html')) {
+    return;
+  }
+
+  const input = document.getElementById('turnoverValue');
+  if (!input) {
+    return;
+  }
+
+  input.setAttribute('aria-live', 'polite');
+
+  const source = document.querySelector('[data-role="filter-turnover-value"]');
+  if (source) {
+    source.hidden = true;
+    source.setAttribute('aria-hidden', 'true');
+  }
+
+  let lastValue = null;
+
+  const clamp = (value) => Math.max(0, Math.min(99.9, value));
+
+  const setTurnover = (value) => {
+    const numeric = Number(value);
+    if (Number.isFinite(numeric)) {
+      const clamped = clamp(numeric);
+      const formatted = clamped.toFixed(1);
+      if (formatted !== lastValue) {
+        input.value = formatted;
+        lastValue = formatted;
+      }
+    } else {
+      if (lastValue !== null || input.value !== '') {
+        input.value = '';
+      }
+      lastValue = null;
+    }
+  };
+
+  const parseTurnoverText = (text) => {
+    if (!text) return null;
+    if (/—|--/.test(text)) return null;
+    const match = text.match(/([0-9]+(?:\.[0-9]+)?)/);
+    return match ? Number(match[1]) : null;
+  };
+
+  window.__setPrototypeTurnover = setTurnover;
+
+  const syncFromSource = () => {
+    if (!source) return;
+    const text = source.textContent.trim();
+    const parsed = parseTurnoverText(text);
+    setTurnover(parsed);
+    if (Number.isFinite(parsed)) {
+      window.__initialTurnover = parsed;
+    }
+  };
+
+  if (source) {
+    syncFromSource();
+    const observer = new MutationObserver(syncFromSource);
+    observer.observe(source, { characterData: true, childList: true, subtree: true });
+  } else if (typeof window.__initialTurnover !== 'undefined') {
+    setTurnover(window.__initialTurnover);
+  }
+})();

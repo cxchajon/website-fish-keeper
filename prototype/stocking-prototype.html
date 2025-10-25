@@ -1351,7 +1351,22 @@
                         </div>
                     </div>
                   </span>
-                  <span class="filter-turnover-value" data-role="filter-turnover-value">—</span>
+                  <span class="filter-turnover-value" data-role="filter-turnover-value" aria-hidden="true" hidden>—</span>
+                  <!-- Mirrors .filter-flow-input__field > input styling from Rated flow (GPH) field -->
+                  <!-- PROTOTYPE-ONLY: Compact turnover field -->
+                  <div class="proto-input-group proto-turnover">
+                    <input
+                      id="turnoverValue"
+                      class="proto-input proto-input--compact"
+                      type="text"
+                      inputmode="decimal"
+                      aria-label="Estimated turnover in tank volumes per hour"
+                      value="5.0"
+                      placeholder="—"
+                      readonly
+                    />
+                    <span class="proto-input-suffix" aria-hidden="true">×/h</span>
+                  </div>
                 </p>
                 <p class="filter-product-meta" id="filter-product-label" hidden></p>
               </div>
