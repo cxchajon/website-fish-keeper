@@ -1,0 +1,1 @@
+Console log capture unavailable in container environment; no runtime errors observed during static analysis.

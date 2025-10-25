@@ -8,6 +8,9 @@
   const OPEN = 'is-open';
   const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
   const byId = id => document.getElementById(id);
+  const isTriggerEl = el => Boolean(el?.closest('[data-proto-popover], .proto-info-trigger'));
+
+  let active = null;
 
   function place(trigger, panel) {
     const t = trigger.getBoundingClientRect();
@@ -28,6 +31,10 @@
   }
 
   function open(trigger, panel) {
+    if (active && active.panel !== panel) {
+      close(active.trigger, active.panel, { focus: false });
+    }
+
     trigger.setAttribute('aria-expanded', 'true');
     panel.removeAttribute('hidden');
     panel.classList.add(OPEN);
@@ -39,22 +46,32 @@
       focusFirst(panel);
     });
 
-    const outside = e => { if (!panel.contains(e.target) && e.target !== trigger) close(trigger, panel); };
+    const outside = e => {
+      if (panel.contains(e.target)) return;
+      if (e.target === trigger) return;
+      const focusRestore = !isTriggerEl(e.target);
+      close(trigger, panel, { focus: focusRestore });
+    };
     const esc = e => { if (e.key === 'Escape') close(trigger, panel); };
     document.addEventListener('pointerdown', outside, true);
     document.addEventListener('keydown', esc, true);
     panel._clean = () => {
       document.removeEventListener('pointerdown', outside, true);
       document.removeEventListener('keydown', esc, true);
+      delete panel._clean;
     };
+
+    active = { trigger, panel };
   }
 
-  function close(trigger, panel) {
+  function close(trigger, panel, opts = {}) {
+    const { focus = true } = opts;
     trigger.setAttribute('aria-expanded','false');
     panel.classList.remove(OPEN);
     panel.setAttribute('hidden','');
     panel._clean && panel._clean();
-    trigger.focus({ preventScroll:true });
+    if (active && active.panel === panel) active = null;
+    if (focus) trigger.focus({ preventScroll:true });
   }
 
   function bindTrigger(trigger) {
@@ -64,7 +81,13 @@
 
     // de-dup close icons
     const closeButtons = panel.querySelectorAll('[data-close], .ttg-popover-close, .popover-close, button[aria-label="Close"]');
-    closeButtons.forEach((b, i) => { if (i > 0) b.classList.add('dup-x'); });
+    closeButtons.forEach((btn, index) => {
+      if (index === 0) return;
+      btn.classList.add('dup-x');
+      btn.setAttribute('hidden', '');
+      btn.setAttribute('aria-hidden', 'true');
+      btn.setAttribute('tabindex', '-1');
+    });
     const closeBtn = closeButtons[0] || panel.querySelector('button') || null;
     if (closeBtn) {
       closeBtn.type = 'button';

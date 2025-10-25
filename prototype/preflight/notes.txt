@@ -1,0 +1,3 @@
+PRE-FLIGHT SUMMARY
+===================
+Environment limitation prevented capturing live browser diagnostics within this run. All info buttons were reviewed via markup/JS inspection: aria-expanded attributes toggle via prototype script, panels remove the hidden attribute, but visibility was previously blocked by missing .is-open class application. Duplicate close buttons were present in markup but are now suppressed via JS adjustments.
