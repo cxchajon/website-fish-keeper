@@ -285,14 +285,20 @@
         article.className = 'journal-entry';
         article.id = `entry-${slugify(group.date)}-${index + 1}`;
 
-        const chips = createEntryChips(entry);
-        if (chips) {
-          article.appendChild(chips);
+        const hasQuickFacts = entry && typeof entry.quick_facts === 'string' && entry.quick_facts.trim();
+        let chipTexts = [];
+
+        if (hasQuickFacts) {
+          const chipResult = buildEntryChips(entry);
+          if (chipResult && chipResult.container) {
+            article.appendChild(chipResult.container);
+            chipTexts = chipResult.chips;
+          }
         }
 
-        const note = createEntryNote(entry);
-        if (note) {
-          article.appendChild(note);
+        const noteText = dedupeNotes(chipTexts, entry && entry.ramble);
+        if (noteText) {
+          article.appendChild(createEntryNoteElement(noteText));
         }
 
         daySection.appendChild(article);
@@ -308,7 +314,7 @@
     });
   }
 
-  function createEntryChips(entry) {
+  function buildEntryChips(entry) {
     if (!entry || typeof entry.quick_facts !== 'string') {
       return null;
     }
@@ -338,20 +344,12 @@
     };
 
     quickFacts
-      .split('·')
+      .split(/·|•/)
       .map((part) => part.trim())
       .filter(Boolean)
       .forEach((fact) => {
-        const key = fact.toLowerCase();
-        if (!seen.has(key)) {
-          seen.add(key);
-          chips.push(fact);
-        }
+        addChip(fact);
       });
-
-    if (!chips.length) {
-      return null;
-    }
 
     addChip(entry.category);
 
@@ -359,6 +357,10 @@
       entry.tags.forEach((tag) => {
         addChip(tag);
       });
+    }
+
+    if (!chips.length) {
+      return null;
     }
 
     const chipsContainer = document.createElement('div');
@@ -373,16 +375,11 @@
       chipsContainer.appendChild(chip);
     });
 
-    return chipsContainer;
+    return { container: chipsContainer, chips };
   }
 
-  function createEntryNote(entry) {
-    if (!entry || typeof entry.ramble !== 'string') {
-      return null;
-    }
-
-    const ramble = entry.ramble.trim();
-    if (!ramble) {
+  function createEntryNoteElement(noteText) {
+    if (typeof noteText !== 'string' || !noteText.trim()) {
       return null;
     }
 
@@ -394,9 +391,265 @@
     label.textContent = 'Notes:';
     paragraph.appendChild(label);
 
-    paragraph.append(document.createTextNode(ramble));
+    paragraph.append(document.createTextNode(' '));
+    paragraph.append(document.createTextNode(noteText));
 
     return paragraph;
+  }
+
+  const SYNONYM_REPLACEMENTS = [
+    { pattern: /\bwc\b/g, replacement: 'water change' },
+    { pattern: /\bwater changes?\b/g, replacement: 'water change' },
+    { pattern: /\bcap\b/g, replacement: 'capful' },
+    { pattern: /\bcapfuls?\b/g, replacement: 'capful' },
+    { pattern: /\btrim & replant\b/g, replacement: 'trim' },
+    { pattern: /\btrim and replant\b/g, replacement: 'trim' },
+    { pattern: /\btrimmed leaves?\b/g, replacement: 'trim' },
+    { pattern: /\btrim(?:med|ming)\b/g, replacement: 'trim' },
+    { pattern: /\breplanted\b/g, replacement: 'trim' }
+  ];
+
+  const KEEP_PHRASES = [
+    'baseline reset',
+    'fish ignored wafers',
+    'post-trim recovery',
+    'pre-stocking observation continues',
+    'pre-stocking observation week baseline',
+    'baseline observations',
+    'bba receding on intake',
+    'rasboras calmer',
+    'nitrate trending down',
+    'monitor co2 drop checker',
+    'test nitrates tomorrow',
+    'waited 15 minutes between doses'
+  ];
+
+  const KEEP_PHRASES_NORMALIZED = KEEP_PHRASES.map((phrase) => normalizeForComparison(phrase)).filter(Boolean);
+
+  const FILLER_WORDS = new Set(['performed', 'we', 'today', 'continued', 'continuing', 'maintenance']);
+
+  function dedupeNotes(chips, ramble) {
+    if (typeof ramble !== 'string') {
+      return '';
+    }
+
+    const trimmedRamble = ramble.trim();
+    if (!trimmedRamble) {
+      return '';
+    }
+
+    const normalizedChips = Array.isArray(chips)
+      ? Array.from(
+          chips.reduce((map, chip) => {
+            const normalized = normalizeForComparison(chip);
+            if (!normalized || map.has(normalized)) {
+              return map;
+            }
+            map.set(normalized, {
+              normalized,
+              tokens: tokensFromNormalized(normalized)
+            });
+            return map;
+          }, new Map()).values()
+        )
+      : [];
+
+    if (!normalizedChips.length) {
+      return trimmedRamble;
+    }
+
+    const clauses = splitClauses(trimmedRamble);
+    if (!clauses.length) {
+      return trimmedRamble;
+    }
+
+    const keptClauses = [];
+
+    clauses.forEach((clause) => {
+      if (!clause.normalized) {
+        return;
+      }
+
+      if (shouldKeepClause(clause.normalized)) {
+        keptClauses.push(clause);
+        return;
+      }
+
+      let dropClause = false;
+
+      for (let index = 0; index < normalizedChips.length; index += 1) {
+        const chip = normalizedChips[index];
+        if (isChipMatch(clause, chip)) {
+          dropClause = true;
+          break;
+        }
+
+        if (isFillerClause(clause.tokens) && hasTokenOverlap(clause.tokens, chip.tokens)) {
+          dropClause = true;
+          break;
+        }
+      }
+
+      if (!dropClause) {
+        keptClauses.push(clause);
+      }
+    });
+
+    const result = joinClauses(keptClauses);
+    return result;
+  }
+
+  function shouldKeepClause(normalizedClause) {
+    if (!normalizedClause) {
+      return false;
+    }
+    return KEEP_PHRASES_NORMALIZED.some((phrase) => normalizedClause.includes(phrase));
+  }
+
+  function isChipMatch(clause, chip) {
+    if (!chip || !clause) {
+      return false;
+    }
+    const { normalized: clauseNormalized, tokens: clauseTokens } = clause;
+    const { normalized: chipNormalized, tokens: chipTokens } = chip;
+
+    if (!chipNormalized || !clauseNormalized) {
+      return false;
+    }
+
+    if (chipTokens.length && chipTokens.every((token) => clauseTokens.includes(token))) {
+      return true;
+    }
+
+    const similarity = computeSimilarity(clauseNormalized, chipNormalized);
+    return similarity >= 0.8;
+  }
+
+  function isFillerClause(tokens) {
+    if (!Array.isArray(tokens) || !tokens.length) {
+      return false;
+    }
+    return tokens.every((token) => FILLER_WORDS.has(token));
+  }
+
+  function hasTokenOverlap(clauseTokens, chipTokens) {
+    if (!clauseTokens.length || !chipTokens.length) {
+      return false;
+    }
+    return chipTokens.some((token) => clauseTokens.includes(token));
+  }
+
+  function splitClauses(text) {
+    const segments = text.match(/[^.;!?•·—–]+(?:[.;!?•·—–]+|$)/g);
+    if (!segments) {
+      return [];
+    }
+    return segments
+      .map((segment) => {
+        const trimmed = segment.trim();
+        if (!trimmed) {
+          return null;
+        }
+        const normalized = normalizeForComparison(trimmed);
+        return {
+          original: trimmed,
+          normalized,
+          tokens: tokensFromNormalized(normalized)
+        };
+      })
+      .filter(Boolean);
+  }
+
+  function normalizeForComparison(value) {
+    if (typeof value !== 'string') {
+      return '';
+    }
+
+    let normalized = value.toLowerCase();
+    normalized = normalized.replace(/&/g, ' and ');
+
+    SYNONYM_REPLACEMENTS.forEach(({ pattern, replacement }) => {
+      normalized = normalized.replace(pattern, replacement);
+    });
+
+    normalized = normalized.replace(/[^a-z0-9%\s]/g, ' ');
+    normalized = normalized.replace(/\s+/g, ' ').trim();
+    return normalized;
+  }
+
+  function tokensFromNormalized(normalized) {
+    if (!normalized) {
+      return [];
+    }
+    return normalized.split(' ').filter(Boolean);
+  }
+
+  function computeSimilarity(a, b) {
+    if (!a || !b) {
+      return 0;
+    }
+    if (a === b) {
+      return 1;
+    }
+    const distance = levenshteinDistance(a, b);
+    const maxLength = Math.max(a.length, b.length);
+    if (!maxLength) {
+      return 0;
+    }
+    return 1 - distance / maxLength;
+  }
+
+  function levenshteinDistance(a, b) {
+    const lenA = a.length;
+    const lenB = b.length;
+
+    if (lenA === 0) {
+      return lenB;
+    }
+    if (lenB === 0) {
+      return lenA;
+    }
+
+    const matrix = Array.from({ length: lenB + 1 }, (_, row) => {
+      const arr = new Array(lenA + 1);
+      arr[0] = row;
+      return arr;
+    });
+
+    for (let col = 0; col <= lenA; col += 1) {
+      matrix[0][col] = col;
+    }
+
+    for (let row = 1; row <= lenB; row += 1) {
+      for (let col = 1; col <= lenA; col += 1) {
+        if (b.charAt(row - 1) === a.charAt(col - 1)) {
+          matrix[row][col] = matrix[row - 1][col - 1];
+        } else {
+          const substitution = matrix[row - 1][col - 1] + 1;
+          const insertion = matrix[row][col - 1] + 1;
+          const deletion = matrix[row - 1][col] + 1;
+          matrix[row][col] = Math.min(substitution, insertion, deletion);
+        }
+      }
+    }
+
+    return matrix[lenB][lenA];
+  }
+
+  function joinClauses(clauses) {
+    if (!Array.isArray(clauses) || !clauses.length) {
+      return '';
+    }
+
+    const parts = clauses.map((clause, index) => {
+      let text = clause.original;
+      if (!/[.!?;:]$/.test(text)) {
+        text += index === clauses.length - 1 ? '.' : '.';
+      }
+      return text;
+    });
+
+    return parts.join(' ').replace(/\s+/g, ' ').trim();
   }
 
   function updateNav(month) {
