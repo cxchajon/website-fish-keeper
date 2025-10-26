@@ -285,22 +285,14 @@
         article.className = 'journal-entry';
         article.id = `entry-${slugify(group.date)}-${index + 1}`;
 
-        if (entry.quick_facts) {
-          const quickFacts = document.createElement('div');
-          quickFacts.className = 'journal-quick-facts';
-          const quickParagraph = document.createElement('p');
-          quickParagraph.textContent = entry.quick_facts;
-          quickFacts.appendChild(quickParagraph);
-          article.appendChild(quickFacts);
+        const chips = createEntryChips(entry);
+        if (chips) {
+          article.appendChild(chips);
         }
 
-        if (entry.ramble) {
-          const ramble = document.createElement('div');
-          ramble.className = 'journal-ramble';
-          const rambleParagraph = document.createElement('p');
-          rambleParagraph.textContent = entry.ramble;
-          ramble.appendChild(rambleParagraph);
-          article.appendChild(ramble);
+        const note = createEntryNote(entry);
+        if (note) {
+          article.appendChild(note);
         }
 
         daySection.appendChild(article);
@@ -314,6 +306,97 @@
 
       entriesContainer.appendChild(daySection);
     });
+  }
+
+  function createEntryChips(entry) {
+    if (!entry || typeof entry.quick_facts !== 'string') {
+      return null;
+    }
+
+    const quickFacts = entry.quick_facts.trim();
+    if (!quickFacts) {
+      return null;
+    }
+
+    const chips = [];
+    const seen = new Set();
+
+    const addChip = (value) => {
+      if (typeof value !== 'string') {
+        return;
+      }
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return;
+      }
+      const key = trimmed.toLowerCase();
+      if (seen.has(key)) {
+        return;
+      }
+      seen.add(key);
+      chips.push(trimmed);
+    };
+
+    quickFacts
+      .split('·')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .forEach((fact) => {
+        const key = fact.toLowerCase();
+        if (!seen.has(key)) {
+          seen.add(key);
+          chips.push(fact);
+        }
+      });
+
+    if (!chips.length) {
+      return null;
+    }
+
+    addChip(entry.category);
+
+    if (Array.isArray(entry.tags)) {
+      entry.tags.forEach((tag) => {
+        addChip(tag);
+      });
+    }
+
+    const chipsContainer = document.createElement('div');
+    chipsContainer.className = 'chips';
+    chipsContainer.setAttribute('role', 'list');
+
+    chips.forEach((text) => {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.setAttribute('role', 'listitem');
+      chip.textContent = text;
+      chipsContainer.appendChild(chip);
+    });
+
+    return chipsContainer;
+  }
+
+  function createEntryNote(entry) {
+    if (!entry || typeof entry.ramble !== 'string') {
+      return null;
+    }
+
+    const ramble = entry.ramble.trim();
+    if (!ramble) {
+      return null;
+    }
+
+    const paragraph = document.createElement('p');
+    paragraph.className = 'note';
+
+    const label = document.createElement('span');
+    label.className = 'note-label';
+    label.textContent = 'Notes:';
+    paragraph.appendChild(label);
+
+    paragraph.append(document.createTextNode(ramble));
+
+    return paragraph;
   }
 
   function updateNav(month) {
