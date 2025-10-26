@@ -1316,13 +1316,26 @@
                   </div>
                 </div>
                 <div class="filter-flow-input__field">
-                  <input type="text" id="filter-rated-gph" name="filter-rated-gph" inputmode="numeric"
-                    pattern="[0-9]*" readonly placeholder="Select a product to auto-fill"
-                    aria-describedby="filter-rated-note" />
+                  <input
+                    type="text"
+                    id="filter-rated-gph"
+                    name="filter-rated-gph"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="Add custom GPH and press Enter"
+                    aria-describedby="filter-rated-note"
+                  />
                 </div>
-                <p class="filter-flow-note" id="filter-rated-note">Auto-filled from selected product.</p>
+                <p class="filter-flow-note" id="filter-rated-note">Press Enter to add each custom GPH value.</p>
               </div>
               <div class="filter-flow-meta">
+                <div
+                  class="proto-filter-chips"
+                  data-role="proto-filter-chips"
+                  role="list"
+                  aria-live="polite"
+                ></div>
+                <p class="proto-filter-empty" data-role="proto-filter-empty">No filters added yet.</p>
                 <div class="filter-turnover turnover-block" id="filter-turnover" aria-live="polite">
                   <div class="field-label-row">
                     <label class="field-label" for="turnoverValue">Estimated turnover</label>
@@ -1351,6 +1364,7 @@
                       </div>
                     </div>
                   </div>
+                  <p class="proto-filter-summary" data-role="proto-filter-summary">Filtration: 0 GPH • 0.0×/h</p>
                   <span class="filter-turnover-value" data-role="filter-turnover-value" aria-hidden="true" hidden>—</span>
                   <!-- Mirrors .filter-flow-input__field > input styling from Rated flow (GPH) field -->
                   <!-- PROTOTYPE-ONLY: Compact turnover field -->
@@ -1775,6 +1789,7 @@
   <script type="module" src="/js/logic/conflicts.js"></script>
   <script type="module" src="/js/stocking.js?v=2024-09-01" id="js-stocking"></script>
   <script type="module" src="/js/tank-size-card.js?v=2024-09-01"></script>
+  <script type="module" src="/prototype/js/proto-filtration.js"></script>
 
   <!-- How it works modal (prototype only) -->
   <div id="how-modal" class="modal-backdrop hidden" aria-hidden="true">

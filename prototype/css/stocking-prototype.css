@@ -723,6 +723,90 @@ body.sa-proto-modal-open {
 .ad-slot-placeholder + #post-results-explainer {
   margin-top: var(--space-8);
 }
+.prototype-mode .proto-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.prototype-mode .proto-filter-empty {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.prototype-mode .proto-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--chip);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px var(--shadow);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.prototype-mode .proto-filter-chip[data-source="manual"] {
+  background: rgba(20, 203, 168, 0.12);
+  border-color: rgba(20, 203, 168, 0.22);
+}
+
+.prototype-mode .proto-filter-chip__icon {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.prototype-mode .proto-filter-chip__label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.prototype-mode .proto-filter-chip__gph {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.prototype-mode .proto-filter-chip__remove {
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 999px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.prototype-mode .proto-filter-chip__remove:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+}
+
+.prototype-mode .proto-filter-chip__remove:hover,
+.prototype-mode .proto-filter-chip__remove:focus-visible {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.prototype-mode .proto-filter-chip__remove:active {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.prototype-mode .proto-filter-summary {
+  margin: 10px 0 0;
+  font-weight: 600;
+}
+
+.prototype-mode #filter-turnover [data-role="filter-turnover-value"],
+.prototype-mode #filter-turnover .proto-turnover {
+  display: none !important;
+}
+
+.prototype-mode .proto-filter-chips[data-has-filters="true"] + .proto-filter-empty {
+  display: none;
+}
 .popover-panel,[role="dialog"].popover{position:fixed;z-index:10020}
 .popover-close{inline-size:2.25rem;block-size:2.25rem;border:0;border-radius:.5rem;background:rgba(255,255,255,.08);color:inherit;cursor:pointer}
 .popover-close + .popover-close{display:none}
