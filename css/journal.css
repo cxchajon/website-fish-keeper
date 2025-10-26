@@ -168,16 +168,21 @@ body.journal-body {
 
 .chips {
   margin: 2px 0 6px;
-  line-height: 1.8;
+  line-height: 1.6;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
 }
 
 .chip {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   padding: 2px 8px;
-  margin: 2px 4px 2px 0;
   border-radius: 6px;
   background: #f2f6ff;
   color: #003366;
+  max-width: 100%;
+  word-break: break-word;
 }
 
 .chip:hover {
