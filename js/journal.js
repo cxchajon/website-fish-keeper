@@ -343,13 +343,15 @@
       chips.push(trimmed);
     };
 
-    quickFacts
-      .split(/·|•/)
-      .map((part) => part.trim())
-      .filter(Boolean)
-      .forEach((fact) => {
-        addChip(fact);
-      });
+    if (quickFacts) {
+      quickFacts
+        .split(/·|•/)
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .forEach((fact) => {
+          addChip(fact);
+        });
+    }
 
     addChip(entry.category);
 
@@ -357,6 +359,14 @@
       entry.tags.forEach((tag) => {
         addChip(tag);
       });
+    } else if (typeof entry.tags === 'string') {
+      entry.tags
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean)
+        .forEach((tag) => {
+          addChip(tag);
+        });
     }
 
     if (!chips.length) {
@@ -406,7 +416,8 @@
     { pattern: /\btrim and replant\b/g, replacement: 'trim' },
     { pattern: /\btrimmed leaves?\b/g, replacement: 'trim' },
     { pattern: /\btrim(?:med|ming)\b/g, replacement: 'trim' },
-    { pattern: /\breplanted\b/g, replacement: 'trim' }
+    { pattern: /\breplanted\b/g, replacement: 'trim' },
+    { pattern: /\bexcel\b/g, replacement: 'seachem excel' }
   ];
 
   const KEEP_PHRASES = [
