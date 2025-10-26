@@ -72,3 +72,4 @@ Result: journal live (unlinked).
 [2025-10-21 | Journal] Added Feeding & Dosing entry; rebuilt CSV/JSON and 2025-10.json; verified monthly render and nav.
 [2025-10-22 | Journal] Added Feeding, Test & Dosing entry; rebuilt CSV/JSON and 2025-10.json; verified monthly render and nav.
 [2025-10-23 | Journal] Added Feeding, Test & Dosing entry; rebuilt CSV/JSON and 2025-10.json; verified monthly render and nav.
+[2025-10-26 | Journal] Added Maintenance & Dosing entry; rebuilt CSV/JSON and 2025-10.json; verified monthly render and nav.
