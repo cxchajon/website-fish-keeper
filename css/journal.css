@@ -166,6 +166,36 @@ body.journal-body {
   gap: 16px;
 }
 
+.chips {
+  margin: 2px 0 6px;
+  line-height: 1.8;
+}
+
+.chip {
+  display: inline-block;
+  padding: 2px 8px;
+  margin: 2px 4px 2px 0;
+  border-radius: 6px;
+  background: #f2f6ff;
+  color: #003366;
+}
+
+.chip:hover {
+  background: #dce8ff;
+  transition: background 0.2s ease;
+}
+
+.note {
+  margin: 2px 0 12px;
+  color: #2a2a2a;
+}
+
+.note-label {
+  font-weight: 600;
+  color: #2956a3;
+  margin-right: 4px;
+}
+
 .journal-quick-facts {
   margin: 20px 0 28px;
   color: #2956a3;
