@@ -30,18 +30,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
+  <link rel="stylesheet" href="/assets/css/dashboard.css" />
   <link rel="stylesheet" href="/assets/css/journal-dashboard.css" />
   <link rel="stylesheet" href="/css/journal-dashboard.overrides.css?v=2025-10-27-1" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
 </head>
-<body class="dashboard-page dashboard-blueprint">
+<body class="dashboard-page dashboard-blueprint dashboard-bg">
   <div id="site-nav"></div>
-  <main class="dashboard-main dashboard-wrap" id="main-content">
-    <div class="board-wrapper section">
-      <div class="dashboard-layout section">
-        <div id="aquarium-dashboard"></div>
-      </div>
-    </div>
+  <main id="dash-root" class="dash-full bleed">
+    <section class="dash-block" id="main-content">
+      <div id="aquarium-dashboard"></div>
+    </section>
   </main>
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
