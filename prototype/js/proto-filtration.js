@@ -1,9 +1,9 @@
 import { canonicalizeFilterType, weightedMixFactor } from '/js/utils.js';
 import {
   computeTurnover,
-  computeEfficiency as computeFilterEfficiency,
   getTotalGPH,
-  resolveFilterBaseKey,
+  computeAggregateEfficiency,
+  mapFiltersForEfficiency,
 } from '../assets/js/proto-filtration-math.js';
 
 const DEBUG_FILTERS = Boolean(window?.TTG?.DEBUG_FILTERS);
@@ -242,14 +242,11 @@ function computeFilterStats(appFilters) {
   const mixFactor = Number.isFinite(mixFactorRaw) && mixFactorRaw > 0 ? mixFactorRaw : fallbackFactor;
   const gallons = state.tankGallons;
   const turnoverValue = totalGph > 0 ? computeTurnover(totalGph, gallons) : 0;
-  const efficiencyValues = turnoverValue > 0
-    ? filtersForCalc
-        .map((filter) => computeFilterEfficiency(resolveFilterBaseKey(filter.resolvedType), turnoverValue))
-        .filter((value) => Number.isFinite(value) && value > 0)
-    : [];
-  const efficiency = efficiencyValues.length ? Math.max(...efficiencyValues) : 0;
+  const normalizedForEfficiency = turnoverValue > 0 ? mapFiltersForEfficiency(filtersForCalc) : [];
+  const { total: efficiency, perFilter: efficiencyDetails } =
+    turnoverValue > 0 ? computeAggregateEfficiency(normalizedForEfficiency, turnoverValue) : { total: 0, perFilter: [] };
   const turnover = totalGph > 0 ? turnoverValue : null;
-  return { totalGph, mixFactor, turnover, efficiency };
+  return { totalGph, mixFactor, turnover, efficiency, efficiencyDetails };
 }
 
 function logFilterDebug(payload) {
@@ -309,8 +306,8 @@ function applyFiltersToApp() {
   if (!appState) return;
   const appFilters = state.filters.map((item) => toAppFilter(item));
   const normalizedFilters = appFilters.map((entry) => ({ ...entry }));
-  const { totalGph, mixFactor, turnover, efficiency } = computeFilterStats(normalizedFilters);
-  state.totals = { totalGph, mixFactor, turnover, efficiency };
+  const { totalGph, mixFactor, turnover, efficiency, efficiencyDetails } = computeFilterStats(normalizedFilters);
+  state.totals = { totalGph, mixFactor, turnover, efficiency, efficiencyDetails };
   appState.filters = normalizedFilters;
   const productFilters = state.filters.filter((item) => item.source === FILTER_SOURCES.PRODUCT);
   const primaryProduct = productFilters.length ? productFilters[productFilters.length - 1] : null;
@@ -334,6 +331,9 @@ function applyFiltersToApp() {
     turnover,
     mixFactor,
     efficiency,
+    efficiencyDetails: Array.isArray(state.totals?.efficiencyDetails)
+      ? state.totals.efficiencyDetails.map((entry) => ({ ...entry }))
+      : [],
   };
   logFilterDebug({ filters: snapshotFilters, totalGph, turnover, mixFactor, efficiency });
   persistAppFilters(appFilters);
