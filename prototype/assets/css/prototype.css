@@ -1,6 +1,6 @@
-/* defensive: if a legacy summary card sneaks in, keep it invisible */
+/* Defensive: hide any legacy filtration summary card if it leaks in */
 #filtration-summary,
-.card[data-card="filtration-summary"],
-section.card.filtration-summary {
+.filtration-summary,
+[data-card="filtration-summary"] {
   display: none !important;
 }
