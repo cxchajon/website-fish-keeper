@@ -904,7 +904,7 @@ body.sa-proto-modal-open {
   transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
-.prototype-mode .proto-filter-chip[data-source="manual"] {
+.prototype-mode .proto-filter-chip[data-source="custom"] {
   background: rgba(20, 203, 168, 0.12);
   border-color: rgba(20, 203, 168, 0.22);
 }
