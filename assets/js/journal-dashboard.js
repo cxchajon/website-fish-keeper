@@ -635,13 +635,14 @@ function buildPanels() {
 }
 
 function buildNitratePanel() {
-  const panel = createElement('section', 'dashboard-panel');
+  const panel = createElement('section', 'dashboard-panel section chart-section chart--nitrate');
   panel.id = 'dashboard-panel-nitrate';
   panel.setAttribute('role', 'tabpanel');
   panel.setAttribute('aria-labelledby', 'dashboard-tab-nitrate');
   if (state.activeTab !== 'nitrate') panel.hidden = true;
   const heading = document.createElement('h2');
   heading.textContent = 'Nitrate Levels';
+  heading.className = 'section-title';
   panel.appendChild(heading);
 
   const monthLabel = deriveMonthLabel(state.dataState?.meta?.dateStart, state.dataState?.meta?.dateEnd);
@@ -652,7 +653,7 @@ function buildNitratePanel() {
     ])
   );
 
-  const chartWrap = createElement('div', 'dashboard-chart');
+  const chartWrap = createElement('div', 'dashboard-chart chart-container');
   const hoverSummary = createHoverSummary();
   chartWrap.appendChild(hoverSummary);
   const chart = renderNitrateChart(state.dataState.nitrateData, {
@@ -689,13 +690,14 @@ function buildNitrateTable() {
 }
 
 function buildDosingPanel() {
-  const panel = createElement('section', 'dashboard-panel');
+  const panel = createElement('section', 'dashboard-panel section chart-section chart--dosing');
   panel.id = 'dashboard-panel-dosing';
   panel.setAttribute('role', 'tabpanel');
   panel.setAttribute('aria-labelledby', 'dashboard-tab-dosing');
   if (state.activeTab !== 'dosing') panel.hidden = true;
   const heading = document.createElement('h2');
   heading.textContent = 'Dosing Totals';
+  heading.className = 'section-title';
   panel.appendChild(heading);
 
   panel.appendChild(
@@ -705,7 +707,7 @@ function buildDosingPanel() {
     ])
   );
 
-  const chartWrap = createElement('div', 'dashboard-chart');
+  const chartWrap = createElement('div', 'dashboard-chart chart-container');
   const hoverSummary = createHoverSummary();
   chartWrap.appendChild(hoverSummary);
   const chart = renderDosingChart(state.dataState.dosingData, {
@@ -738,13 +740,14 @@ function buildDosingPanel() {
 }
 
 function buildMaintenancePanel() {
-  const panel = createElement('section', 'dashboard-panel');
+  const panel = createElement('section', 'dashboard-panel section chart-section chart--maintenance');
   panel.id = 'dashboard-panel-maintenance';
   panel.setAttribute('role', 'tabpanel');
   panel.setAttribute('aria-labelledby', 'dashboard-tab-maintenance');
   if (state.activeTab !== 'maintenance') panel.hidden = true;
   const heading = document.createElement('h2');
   heading.textContent = 'Maintenance Log';
+  heading.className = 'section-title';
   panel.appendChild(heading);
   panel.appendChild(
     createLegend([
