@@ -380,6 +380,9 @@ function render() {
   state.tankGallons = getTankGallons();
   renderChips();
   renderSummary();
+  if (typeof window.renderFiltration === 'function') {
+    window.renderFiltration();
+  }
   const productFilters = state.filters.filter((item) => item.source === FILTER_SOURCES.PRODUCT);
   const latestProduct = productFilters.length ? productFilters[productFilters.length - 1] : null;
   if (!pendingProductId && latestProduct?.id) {
@@ -487,6 +490,20 @@ function addManualFilter(typeValue, value) {
   refs.manualInput?.focus({ preventScroll: true });
   return true;
 }
+
+window.renderFiltration = function renderFiltration() {
+  const tankGallons = getTankGallons();
+  if (Number.isFinite(tankGallons) && tankGallons >= 0) {
+    state.tankGallons = tankGallons;
+  }
+  const appFilters = state.filters.map((item) => toAppFilter(item));
+  const totalGph = calcTotalGph(appFilters);
+  const turnover = computeTurnover(state.tankGallons, appFilters);
+  const chipbar = document.querySelector('.filtration-chipbar');
+  if (chipbar) {
+    chipbar.dataset.total = `${formatGph(totalGph)} GPH • ${formatTurnover(turnover)}×/h`;
+  }
+};
 
 function tryAddCustom() {
   const typeValue = refs.manualType?.value || '';
