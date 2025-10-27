@@ -1277,15 +1277,24 @@
                     </div>
                   </div>
                 </div>
-                <div class="select-wrap">
-                  <select id="filter-product" name="filter-product" aria-describedby="filter-product-note">
-                    <option value="">— Select a product —</option>
-                  </select>
-                  <svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-                    <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
+                <div class="proto-inline-controls" data-role="filter-product-controls">
+                  <div class="select-wrap proto-inline-controls__field">
+                    <select id="filter-product" name="filter-product" aria-describedby="filter-product-note">
+                      <option value="">— Select a product —</option>
+                    </select>
+                    <svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                      <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                  <button
+                    type="button"
+                    id="filter-product-add"
+                    class="proto-add-button proto-add-button--primary"
+                    disabled
+                    aria-disabled="true"
+                  >Add Selected</button>
                 </div>
-                <p class="filter-product-note" id="filter-product-note">Choose a filter matched to your tank size to auto-fill GPH.</p>
+                <p class="filter-product-note" id="filter-product-note">Choose a filter matched to your tank size and use Add Selected when ready.</p>
               </div>
               <div class="filter-flow-input">
                 <div class="field-label-row">
@@ -1315,18 +1324,39 @@
                     </div>
                   </div>
                 </div>
-                <div class="filter-flow-input__field">
-                  <input
-                    type="text"
-                    id="filter-rated-gph"
-                    name="filter-rated-gph"
-                    inputmode="numeric"
-                    pattern="[0-9]*"
-                    placeholder="Add custom GPH and press Enter"
-                    aria-describedby="filter-rated-note"
-                  />
+                <div class="proto-inline-controls proto-inline-controls--flow">
+                  <div class="select-wrap proto-inline-controls__field proto-inline-controls__field--type">
+                    <label class="sr-only" for="filter-custom-type">Filter Type</label>
+                    <select id="filter-custom-type" name="filter-custom-type" aria-describedby="filter-rated-note">
+                      <option value="">Filter type</option>
+                      <option value="HOB">Hang-on-back (HOB)</option>
+                      <option value="CANISTER">Canister</option>
+                      <option value="SPONGE">Sponge</option>
+                    </select>
+                    <svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                      <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                  <div class="filter-flow-input__field proto-inline-controls__field">
+                    <input
+                      type="text"
+                      id="filter-rated-gph"
+                      name="filter-rated-gph"
+                      inputmode="numeric"
+                      pattern="[0-9]*"
+                      placeholder="Enter GPH"
+                      aria-describedby="filter-rated-note"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    id="filter-manual-add"
+                    class="proto-add-button"
+                    disabled
+                    aria-disabled="true"
+                  >Add Custom</button>
                 </div>
-                <p class="filter-flow-note" id="filter-rated-note">Press Enter to add each custom GPH value.</p>
+                <p class="filter-flow-note" id="filter-rated-note">Pick a filter type and flow, then press Enter or Add Custom.</p>
               </div>
               <div class="filter-flow-meta">
                 <div
