@@ -1,3 +1,7 @@
+html.dashboard-page {
+  overflow-x: clip;
+}
+
 body.dashboard-body {
   margin: 0;
   min-height: 100vh;
@@ -9,6 +13,7 @@ body.dashboard-body {
   background-repeat: no-repeat;
   background-size: cover;
   color: rgba(255, 255, 255, 0.92);
+  overflow-x: clip;
 }
 
 #aquarium-dashboard {
@@ -19,15 +24,20 @@ body.dashboard-body {
   min-height: calc(100vh - 160px);
   display: flex;
   justify-content: center;
-  padding: clamp(40px, 8vw, 72px) clamp(16px, 6vw, 48px);
+  padding: clamp(40px, 8vw, 72px) clamp(16px, 5vw, 48px);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: clip;
 }
 
 .dashboard-layout {
-  width: min(1200px, 100%);
+  width: min(100%, 1200px);
+  margin-inline: auto;
 }
 
 .dashboard-shell {
-  width: min(1080px, 100%);
+  width: min(100%, 1080px);
   margin: 0 auto;
   padding: clamp(48px, 10vw, 96px) clamp(20px, 4vw, 56px) clamp(80px, 12vw, 120px);
   display: grid;
@@ -50,7 +60,7 @@ body.dashboard-body {
 }
 
 .legend-label {
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .legend-swatch {
@@ -367,6 +377,7 @@ body.dashboard-body {
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
 }
@@ -375,6 +386,13 @@ body.dashboard-body {
   margin-top: 16px;
   border-collapse: collapse;
   width: 100%;
+}
+
+.dashboard-table.sr-only {
+  width: 1px;
+  height: 1px;
+  max-width: 1px;
+  max-height: 1px;
 }
 
 @media (max-width: 720px) {
