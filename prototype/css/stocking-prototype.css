@@ -692,6 +692,105 @@ body.sa-proto-modal-open {
 }
 
 /* PROTOTYPE-ONLY */
+.prototype-mode .proto-inline-controls {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.prototype-mode .proto-inline-controls[data-role="filter-product-controls"] {
+  margin-top: 10px;
+}
+
+.prototype-mode .proto-inline-controls__field {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.prototype-mode .proto-inline-controls__field--type {
+  flex: 0 0 180px;
+}
+
+.prototype-mode .proto-inline-controls--flow {
+  margin-top: 6px;
+}
+
+.prototype-mode .proto-inline-controls--flow .filter-flow-input__field {
+  flex: 1 1 160px;
+}
+
+.prototype-mode .proto-inline-controls select,
+.prototype-mode .proto-inline-controls input {
+  height: 44px;
+}
+
+.prototype-mode .proto-add-button {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--fg);
+  font-weight: 600;
+  font-size: 0.95rem;
+  height: 44px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.prototype-mode .proto-add-button--primary {
+  background: rgba(59, 117, 217, 0.55);
+  border-color: rgba(163, 200, 255, 0.65);
+  box-shadow: 0 2px 6px rgba(59, 117, 217, 0.25);
+}
+
+.prototype-mode .proto-add-button--primary:hover,
+.prototype-mode .proto-add-button--primary:focus-visible {
+  background: rgba(74, 140, 242, 0.65);
+  border-color: rgba(180, 215, 255, 0.9);
+}
+
+.prototype-mode .proto-add-button:hover,
+.prototype-mode .proto-add-button:focus-visible {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.prototype-mode .proto-add-button:focus-visible {
+  outline: 2px solid rgba(163, 200, 255, 0.6);
+  outline-offset: 2px;
+}
+
+.prototype-mode .proto-add-button[disabled],
+.prototype-mode .proto-add-button[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+  box-shadow: none;
+}
+
+@media (max-width: 600px) {
+  .prototype-mode .proto-inline-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .prototype-mode .proto-inline-controls__field,
+  .prototype-mode .proto-inline-controls__field--type {
+    flex: 1 1 auto;
+  }
+
+  .prototype-mode .proto-add-button {
+    width: 100%;
+  }
+}
+
 #post-results-explainer.ttg-explainer--bg {
   background: transparent;
   padding: var(--space-8) 0;

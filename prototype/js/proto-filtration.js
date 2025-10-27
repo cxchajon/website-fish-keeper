@@ -6,6 +6,7 @@ const FILTER_SOURCES = Object.freeze({
   PRODUCT: 'product',
   MANUAL: 'manual',
 });
+const ACTIVE_PRODUCT_NOTE = 'Select another product and click Add Selected to add it. Use × to remove filters you no longer need.';
 const ICONS = Object.freeze({
   [FILTER_SOURCES.PRODUCT]: '🛠️',
   [FILTER_SOURCES.MANUAL]: '✳️',
@@ -18,7 +19,10 @@ const state = {
 
 const refs = {
   productSelect: null,
+  productAddBtn: null,
+  manualType: null,
   manualInput: null,
+  manualAddBtn: null,
   manualNote: null,
   productNote: null,
   productLabel: null,
@@ -32,6 +36,9 @@ let catalogPromise = null;
 let baseManualNote = '';
 let baseProductNote = '';
 let recomputeFrame = 0;
+let pendingProductId = '';
+let productStatusMessage = '';
+let productStatusTimer = 0;
 
 function clampGph(value) {
   const num = Number(value);
@@ -55,6 +62,46 @@ function formatTurnover(value) {
     return '0.0';
   }
   return Math.max(num, 0).toFixed(1);
+}
+
+const FILTER_TYPE_LABELS = Object.freeze({
+  CANISTER: 'Canister',
+  HOB: 'Hang-on-back (HOB)',
+  SPONGE: 'Sponge',
+});
+
+function formatFilterTypeLabel(value) {
+  const canonical = canonicalizeFilterType(value);
+  return FILTER_TYPE_LABELS[canonical] || canonical || 'HOB';
+}
+
+function computeManualLabel(type, gph) {
+  const labelType = formatFilterTypeLabel(type);
+  return `${labelType} ${formatGph(gph)} GPH`;
+}
+
+function canAddProduct(product) {
+  if (!product || !product.id) {
+    return false;
+  }
+  return !state.filters.some((entry) => entry.source === FILTER_SOURCES.PRODUCT && entry.id === product.id);
+}
+
+function canAddManual(type, gph) {
+  const canonicalType = canonicalizeFilterType(type);
+  const rated = clampGph(gph);
+  return Boolean(canonicalType) && Number.isFinite(rated) && rated > 0;
+}
+
+function setButtonState(button, enabled) {
+  if (!button) return;
+  if (enabled) {
+    button.disabled = false;
+    button.removeAttribute('aria-disabled');
+  } else {
+    button.disabled = true;
+    button.setAttribute('aria-disabled', 'true');
+  }
 }
 
 function toAppFilter(item) {
@@ -105,11 +152,12 @@ function applyFiltersToApp() {
   if (!appState) return;
   const appFilters = state.filters.map((item) => toAppFilter(item));
   appState.filters = appFilters.map((entry) => ({ ...entry }));
-  const product = state.filters.find((item) => item.source === FILTER_SOURCES.PRODUCT) ?? null;
-  if (product) {
-    appState.filterId = product.id ?? null;
-    appState.filterType = canonicalizeFilterType(product.type ?? 'HOB');
-    appState.ratedGph = clampGph(product.gph);
+  const productFilters = state.filters.filter((item) => item.source === FILTER_SOURCES.PRODUCT);
+  const primaryProduct = productFilters.length ? productFilters[productFilters.length - 1] : null;
+  if (primaryProduct) {
+    appState.filterId = primaryProduct.id ?? null;
+    appState.filterType = canonicalizeFilterType(primaryProduct.type ?? 'HOB');
+    appState.ratedGph = clampGph(primaryProduct.gph);
   } else {
     appState.filterId = null;
     appState.filterType = null;
@@ -136,8 +184,17 @@ function ensureRefs() {
   if (!refs.productSelect) {
     refs.productSelect = document.getElementById('filter-product');
   }
+  if (!refs.productAddBtn) {
+    refs.productAddBtn = document.getElementById('filter-product-add');
+  }
+  if (!refs.manualType) {
+    refs.manualType = document.getElementById('filter-custom-type');
+  }
   if (!refs.manualInput) {
     refs.manualInput = document.getElementById('filter-rated-gph');
+  }
+  if (!refs.manualAddBtn) {
+    refs.manualAddBtn = document.getElementById('filter-manual-add');
   }
   if (!refs.manualNote) {
     refs.manualNote = document.getElementById('filter-rated-note');
@@ -185,6 +242,42 @@ function setManualNote(message, { isError = false } = {}) {
 function setProductNote(message) {
   if (!refs.productNote) return;
   refs.productNote.textContent = message;
+}
+
+function computeProductNote() {
+  const hasProduct = state.filters.some((item) => item.source === FILTER_SOURCES.PRODUCT);
+  return hasProduct ? ACTIVE_PRODUCT_NOTE : baseProductNote;
+}
+
+function updateProductNote() {
+  const message = productStatusMessage || computeProductNote();
+  setProductNote(message);
+}
+
+function clearProductStatusMessage() {
+  if (productStatusTimer) {
+    window.clearTimeout(productStatusTimer);
+    productStatusTimer = 0;
+  }
+  productStatusMessage = '';
+}
+
+function showProductStatus(message, { duration = 2400 } = {}) {
+  if (!message) {
+    clearProductStatusMessage();
+    updateProductNote();
+    return;
+  }
+  clearProductStatusMessage();
+  productStatusMessage = message;
+  setProductNote(message);
+  if (duration > 0) {
+    productStatusTimer = window.setTimeout(() => {
+      productStatusTimer = 0;
+      productStatusMessage = '';
+      updateProductNote();
+    }, duration);
+  }
 }
 
 function renderChips() {
@@ -246,59 +339,99 @@ function renderSummary() {
 
 function syncSelectValue() {
   if (!refs.productSelect) return;
-  const product = state.filters.find((item) => item.source === FILTER_SOURCES.PRODUCT) ?? null;
-  const desired = product?.id ?? '';
+  const desired = pendingProductId || '';
   if (refs.productSelect.value !== desired) {
     refs.productSelect.value = desired;
   }
+}
+
+function getSelectedProduct() {
+  const id = pendingProductId || refs.productSelect?.value || '';
+  if (!id) return null;
+  return findProductById(id);
+}
+
+function updateProductAddButton() {
+  const button = refs.productAddBtn;
+  if (!button) return;
+  const product = getSelectedProduct();
+  if (!product) {
+    setButtonState(button, false);
+    return;
+  }
+  const item = createProductFilter(product);
+  const enabled = Boolean(item) && canAddProduct(item);
+  setButtonState(button, enabled);
+}
+
+function updateManualAddButton() {
+  const button = refs.manualAddBtn;
+  if (!button) return;
+  const typeValue = refs.manualType?.value || '';
+  const gphValue = refs.manualInput?.value || '';
+  const enabled = canAddManual(typeValue, gphValue);
+  setButtonState(button, enabled);
 }
 
 function render() {
   state.tankGallons = getTankGallons();
   renderChips();
   renderSummary();
-  const product = state.filters.find((item) => item.source === FILTER_SOURCES.PRODUCT) ?? null;
-  updateProductLabel(product);
-  syncSelectValue();
-  if (product) {
-    setProductNote('Selecting a different product swaps the filter chip.');
-  } else {
-    setProductNote(baseProductNote);
+  const productFilters = state.filters.filter((item) => item.source === FILTER_SOURCES.PRODUCT);
+  const latestProduct = productFilters.length ? productFilters[productFilters.length - 1] : null;
+  if (!pendingProductId && latestProduct?.id) {
+    pendingProductId = latestProduct.id;
   }
+  updateProductLabel(latestProduct);
+  syncSelectValue();
+  updateProductNote();
+  updateProductAddButton();
+  updateManualAddButton();
   if (!refs.manualInput) return;
   if (!refs.manualInput.placeholder) {
-    refs.manualInput.placeholder = 'Add custom GPH and press Enter';
+    refs.manualInput.placeholder = 'Enter GPH';
   }
 }
 
 function setFilters(nextFilters) {
-  const product = nextFilters.find((item) => item.source === FILTER_SOURCES.PRODUCT) ?? null;
-  const manuals = nextFilters.filter((item) => item.source === FILTER_SOURCES.MANUAL);
-  const sanitizedManuals = manuals
-    .map((manual) => ({
-      ...manual,
-      gph: clampGph(manual.gph) ?? 0,
-      label: manual.label,
-      type: 'HOB',
-    }))
-    .filter((manual) => manual.gph > 0);
-  const uniqueManuals = [];
-  const seen = new Set();
-  sanitizedManuals.forEach((manual) => {
-    const id = manual.id ?? '';
-    if (!id || !seen.has(id)) {
-      uniqueManuals.push(manual);
-      if (id) {
-        seen.add(id);
-      }
-    }
-  });
-  const next = [];
-  if (product) {
-    next.push({ ...product, gph: clampGph(product.gph) ?? 0 });
+  if (!Array.isArray(nextFilters)) {
+    return;
   }
-  next.push(...uniqueManuals);
-  state.filters = next;
+  const sanitized = [];
+  const seen = new Set();
+
+  nextFilters.forEach((raw) => {
+    if (!raw) return;
+    const source = raw.source === FILTER_SOURCES.PRODUCT ? FILTER_SOURCES.PRODUCT : FILTER_SOURCES.MANUAL;
+    const gph = clampGph(raw.gph ?? raw.rated_gph);
+    if (!Number.isFinite(gph) || gph <= 0) {
+      return;
+    }
+    let id = typeof raw.id === 'string' && raw.id ? raw.id : null;
+    if (!id) {
+      id = `manual-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+    }
+    const type = canonicalizeFilterType(raw.type ?? (source === FILTER_SOURCES.PRODUCT ? raw.type : 'HOB'));
+    const label = typeof raw.label === 'string' && raw.label
+      ? raw.label
+      : source === FILTER_SOURCES.PRODUCT
+        ? raw.name ?? id
+        : computeManualLabel(type, gph);
+    const key = `${source}:${id}`;
+    if (seen.has(key)) {
+      return;
+    }
+    seen.add(key);
+    sanitized.push({
+      id,
+      source,
+      label,
+      gph,
+      type,
+    });
+  });
+
+  state.filters = sanitized;
   render();
   applyFiltersToApp();
 }
@@ -319,57 +452,45 @@ function createProductFilter(product) {
   };
 }
 
-function addOrReplaceProduct(product) {
-  const item = createProductFilter(product);
-  if (!item) {
-    return;
-  }
-  const manuals = state.filters.filter((entry) => entry.source === FILTER_SOURCES.MANUAL);
-  if (state.filters.length && state.filters[0]?.source === FILTER_SOURCES.PRODUCT && state.filters[0]?.id === item.id) {
-    setFilters([item, ...manuals]);
-    return;
-  }
-  setFilters([item, ...manuals]);
-}
-
 function removeFilterById(id) {
   const targetId = typeof id === 'string' ? id : '';
   const next = state.filters.filter((item) => item.id !== targetId);
   setFilters(next);
-  if (refs.productSelect && (!targetId || refs.productSelect.value === targetId)) {
-    if (!next.some((item) => item.source === FILTER_SOURCES.PRODUCT)) {
-      refs.productSelect.value = '';
-    }
-  }
+  updateProductAddButton();
 }
 
-function addManualFilter(value) {
+function addManualFilter(typeValue, value) {
+  const canonicalType = canonicalizeFilterType(typeValue);
   const rated = clampGph(value);
-  if (!rated) {
-    setManualNote('Enter a positive flow value (GPH).', { isError: true });
+  if (!canAddManual(canonicalType, rated)) {
+    setManualNote('Select a filter type and enter a positive flow value (GPH).', { isError: true });
     return false;
   }
   const id = `manual-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
   const manual = {
     id,
     source: FILTER_SOURCES.MANUAL,
-    label: `Custom ${rated} GPH`,
+    label: computeManualLabel(canonicalType, rated),
     gph: rated,
-    type: 'HOB',
+    type: canonicalType,
   };
-  const next = state.filters.concat([manual]);
-  setFilters(next);
-  setManualNote(baseManualNote);
   if (refs.manualInput) {
     refs.manualInput.value = '';
+    refs.manualInput.removeAttribute('aria-invalid');
   }
+  setManualNote(baseManualNote);
+  setFilters(state.filters.concat([manual]));
+  updateManualAddButton();
   return true;
 }
 
-function handleManualSubmit() {
-  if (!refs.manualInput) return;
-  const value = refs.manualInput.value.trim();
-  addManualFilter(value);
+function tryAddCustom() {
+  const typeValue = refs.manualType?.value || '';
+  const value = refs.manualInput?.value?.trim() || '';
+  const added = addManualFilter(typeValue, value);
+  if (!added) {
+    updateManualAddButton();
+  }
 }
 
 function findProductById(id) {
@@ -379,17 +500,56 @@ function findProductById(id) {
 
 async function handleProductChange(value) {
   const id = typeof value === 'string' ? value : '';
+  pendingProductId = id;
+  showProductStatus('');
   if (!id) {
-    removeFilterById(state.filters.find((item) => item.source === FILTER_SOURCES.PRODUCT)?.id ?? '');
+    updateProductAddButton();
     return;
   }
   await loadCatalog();
   const product = findProductById(id);
   if (!product) {
-    setProductNote('Filter catalog unavailable. Try again.');
+    showProductStatus('Filter catalog unavailable. Try again.', { duration: 2800 });
+    updateProductAddButton();
     return;
   }
-  addOrReplaceProduct(product);
+  const item = createProductFilter(product);
+  if (!item) {
+    showProductStatus('Filter data unavailable. Try a different model.', { duration: 2800 });
+    updateProductAddButton();
+    return;
+  }
+  updateProductAddButton();
+  if (canAddProduct(item)) {
+    showProductStatus('Click Add Selected to add this filter.', { duration: 0 });
+  } else {
+    showProductStatus('Already added. Remove its chip to add again.', { duration: 0 });
+  }
+}
+
+async function tryAddProduct() {
+  await loadCatalog();
+  const product = getSelectedProduct();
+  if (!product) {
+    showProductStatus('Select a filter to add.', { duration: 2200 });
+    updateProductAddButton();
+    return;
+  }
+  const item = createProductFilter(product);
+  if (!item) {
+    showProductStatus('Filter data unavailable. Try a different model.', { duration: 2800 });
+    updateProductAddButton();
+    return;
+  }
+  if (!canAddProduct(item)) {
+    showProductStatus('Already added', { duration: 2200 });
+    updateProductAddButton();
+    return;
+  }
+  pendingProductId = item.id || pendingProductId;
+  setFilters(state.filters.concat([item]));
+  showProductStatus('Filter added.', { duration: 1800 });
+  updateProductAddButton();
 }
 
 async function loadCatalog() {
@@ -439,12 +599,13 @@ function hydrateFromAppState() {
       }
       return;
     }
+    const type = canonicalizeFilterType(entry?.type ?? 'HOB');
     const manual = {
       id: id ?? `manual-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
       source: FILTER_SOURCES.MANUAL,
-      label: `Custom ${gph} GPH`,
+      label: computeManualLabel(type, gph),
       gph,
-      type: 'HOB',
+      type,
     };
     next.push(manual);
   });
@@ -463,16 +624,31 @@ function attachEventListeners() {
     refs.manualInput.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
         event.preventDefault();
-        handleManualSubmit();
+        tryAddCustom();
       }
     });
     refs.manualInput.addEventListener('input', () => {
       if (refs.manualInput?.value) {
         refs.manualInput.removeAttribute('aria-invalid');
-        if (baseManualNote) {
+        if (refs.manualNote && baseManualNote) {
           refs.manualNote.textContent = baseManualNote;
         }
       }
+      updateManualAddButton();
+    });
+  }
+  if (refs.manualType) {
+    refs.manualType.addEventListener('change', () => {
+      if (canAddManual(refs.manualType.value, refs.manualInput?.value)) {
+        setManualNote(baseManualNote);
+        refs.manualInput?.removeAttribute('aria-invalid');
+      }
+      updateManualAddButton();
+    });
+  }
+  if (refs.manualAddBtn) {
+    refs.manualAddBtn.addEventListener('click', () => {
+      tryAddCustom();
     });
   }
   if (refs.chips) {
@@ -489,6 +665,13 @@ function attachEventListeners() {
       true,
     );
   }
+  if (refs.productAddBtn) {
+    refs.productAddBtn.addEventListener('click', () => {
+      tryAddProduct().catch(() => {
+        showProductStatus('Unable to add filter. Try again.', { duration: 2400 });
+      });
+    });
+  }
   window.addEventListener('ttg:tank:changed', () => {
     state.tankGallons = getTankGallons();
     render();
@@ -504,8 +687,8 @@ async function init() {
     }
   });
   ensureRefs();
-  baseManualNote = refs.manualNote?.textContent || 'Press Enter to add each custom GPH value.';
-  baseProductNote = refs.productNote?.textContent || 'Choose a filter matched to your tank size to auto-fill GPH.';
+  baseManualNote = refs.manualNote?.textContent || 'Pick a filter type and flow, then press Enter or Add Custom.';
+  baseProductNote = refs.productNote?.textContent || 'Choose a filter matched to your tank size and use Add Selected when ready.';
   if (refs.manualInput) {
     refs.manualInput.removeAttribute('readonly');
   }
