@@ -644,8 +644,22 @@ function buildNitratePanel() {
   heading.textContent = 'Nitrate Levels';
   panel.appendChild(heading);
 
+  const monthLabel = deriveMonthLabel(state.dataState?.meta?.dateStart, state.dataState?.meta?.dateEnd);
+  panel.appendChild(
+    createLegend([
+      { color: '#60a5fa', label: 'Nitrate (ppm)' },
+      { color: '#f59e0b', label: 'Water-change day' }
+    ])
+  );
+
   const chartWrap = createElement('div', 'dashboard-chart');
-  const chart = renderNitrateChart(state.dataState.nitrateData);
+  const hoverSummary = createHoverSummary();
+  chartWrap.appendChild(hoverSummary);
+  const chart = renderNitrateChart(state.dataState.nitrateData, {
+    xLabel: monthLabel ? `Date (${monthLabel})` : 'Date',
+    yLabel: 'ppm',
+    onSummaryChange: (text) => updateHoverSummary(hoverSummary, text)
+  });
   chartWrap.appendChild(chart.svg);
   chartWrap.appendChild(chart.tooltip);
   panel.appendChild(chartWrap);
@@ -684,8 +698,21 @@ function buildDosingPanel() {
   heading.textContent = 'Dosing Totals';
   panel.appendChild(heading);
 
+  panel.appendChild(
+    createLegend([
+      { color: '#10b981', label: 'Thrive Plus (pumps)' },
+      { color: '#8b5cf6', label: 'Seachem Excel (capfuls)' }
+    ])
+  );
+
   const chartWrap = createElement('div', 'dashboard-chart');
-  const chart = renderDosingChart(state.dataState.dosingData);
+  const hoverSummary = createHoverSummary();
+  chartWrap.appendChild(hoverSummary);
+  const chart = renderDosingChart(state.dataState.dosingData, {
+    xLabel: 'Week',
+    yLabel: 'Amount (pumps or caps)',
+    onSummaryChange: (text) => updateHoverSummary(hoverSummary, text)
+  });
   chartWrap.appendChild(chart.svg);
   chartWrap.appendChild(chart.tooltip);
   panel.appendChild(chartWrap);
@@ -719,6 +746,15 @@ function buildMaintenancePanel() {
   const heading = document.createElement('h2');
   heading.textContent = 'Maintenance Log';
   panel.appendChild(heading);
+  panel.appendChild(
+    createLegend([
+      { color: '#f59e0b', label: 'Water change' },
+      { color: '#eab308', label: 'Filter maintenance' },
+      { color: '#fb923c', label: 'Trim / replant' },
+      { color: '#38bdf8', label: 'Glass cleaning' },
+      { color: '#7c3aed', label: 'BBA treatment' }
+    ])
+  );
   panel.appendChild(renderMaintenanceCards(state.dataState.maintenanceEvents));
   return panel;
 }
@@ -749,24 +785,29 @@ function renderMaintenanceCards(events) {
     day.items.forEach((item, index) => {
       const li = document.createElement('li');
       li.innerHTML = `<span class="dashboard-card__type">${item.type}</span><span class="dashboard-card__details">${item.details}</span>`;
-      if (item.type === 'Water Change' && (item.sumpPct != null || item.displayPct != null)) {
-        const extra = document.createElement('span');
-        extra.className = 'dashboard-card__details';
-        extra.textContent = `${item.sumpPct != null ? `${item.sumpPct}% sump` : ''}${item.displayPct != null ? ` / ${item.displayPct}% display` : ''}`.trim();
-        li.appendChild(extra);
-      }
       list.appendChild(li);
     });
     card.appendChild(list);
+    const waterChangeMeta = day.items.find((item) => item.type === 'Water Change' && (item.sumpPct != null || item.displayPct != null));
+    if (waterChangeMeta) {
+      const parts = [];
+      if (waterChangeMeta.sumpPct != null) parts.push(`${waterChangeMeta.sumpPct}% sump`);
+      if (waterChangeMeta.displayPct != null) parts.push(`${waterChangeMeta.displayPct}% display`);
+      if (parts.length) {
+        const metaLine = createElement('p', 'dashboard-card__meta');
+        metaLine.textContent = `Exchange: ${parts.join(' / ')}`;
+        card.appendChild(metaLine);
+      }
+    }
     grid.appendChild(card);
   });
   return grid;
 }
 
-function renderNitrateChart(data) {
+function renderNitrateChart(data, options = {}) {
   const width = 720;
   const height = 280;
-  const margin = { top: 24, right: 32, bottom: 36, left: 48 };
+  const margin = { top: 36, right: 32, bottom: 60, left: 60 };
   const svg = createSvg(width, height);
   const tooltip = createTooltip();
   const innerWidth = width - margin.left - margin.right;
@@ -781,19 +822,24 @@ function renderNitrateChart(data) {
   const yScale = createLinearScale([0, yMax], innerHeight);
 
   drawGrid(g, innerWidth, innerHeight, xScale, yScale);
-  drawAxes(g, innerWidth, innerHeight, xScale, yScale);
+  drawAxes(g, innerWidth, innerHeight, xScale, yScale, {
+    xLabel: options.xLabel,
+    yLabel: options.yLabel
+  });
   drawReferenceLine(g, yScale, innerWidth, TARGET_NO3);
   drawNitratePath(g, data, xScale, yScale);
-  drawNitrateDots(g, data, xScale, yScale, tooltip);
+  drawNitrateDots(g, data, xScale, yScale, tooltip, {
+    onSummaryChange: options.onSummaryChange
+  });
 
-  attachTooltipHandlers(svg, tooltip);
+  attachTooltipHandlers(svg, tooltip, () => options.onSummaryChange?.(null));
   return { svg, tooltip };
 }
 
-function renderDosingChart(data) {
+function renderDosingChart(data, options = {}) {
   const width = 720;
   const height = 280;
-  const margin = { top: 24, right: 32, bottom: 56, left: 48 };
+  const margin = { top: 36, right: 32, bottom: 68, left: 64 };
   const svg = createSvg(width, height);
   const tooltip = createTooltip();
   const innerWidth = width - margin.left - margin.right;
@@ -810,9 +856,15 @@ function renderDosingChart(data) {
   const yScale = createLinearScale([0, Math.ceil(maxValue / 2) * 2 + 2 || 10], innerHeight);
 
   drawGrid(g, innerWidth, innerHeight, xScale, yScale);
-  drawAxes(g, innerWidth, innerHeight, xScale, yScale, true);
-  drawBars(g, data, xScale, yScale, tooltip);
-  attachTooltipHandlers(svg, tooltip);
+  drawAxes(g, innerWidth, innerHeight, xScale, yScale, {
+    rotateX: true,
+    xLabel: options.xLabel,
+    yLabel: options.yLabel
+  });
+  drawBars(g, data, xScale, yScale, tooltip, {
+    onSummaryChange: options.onSummaryChange
+  });
+  attachTooltipHandlers(svg, tooltip, () => options.onSummaryChange?.(null));
   return { svg, tooltip };
 }
 
@@ -833,7 +885,8 @@ function drawGrid(group, width, height, xScale, yScale) {
   group.appendChild(gridGroup);
 }
 
-function drawAxes(group, width, height, xScale, yScale, rotateX = false) {
+function drawAxes(group, width, height, xScale, yScale, options = {}) {
+  const { rotateX = false, xLabel, yLabel } = options;
   const axisGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   axisGroup.setAttribute('class', 'dashboard-axis');
   const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -879,6 +932,30 @@ function drawAxes(group, width, height, xScale, yScale, rotateX = false) {
     yAxis.appendChild(text);
   });
   axisGroup.appendChild(yAxis);
+
+  if (xLabel) {
+    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.setAttribute('x', width / 2);
+    label.setAttribute('y', height + (rotateX ? 46 : 40));
+    label.setAttribute('fill', '#dbeafe');
+    label.setAttribute('font-size', '13');
+    label.setAttribute('text-anchor', 'middle');
+    label.textContent = xLabel;
+    axisGroup.appendChild(label);
+  }
+
+  if (yLabel) {
+    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.setAttribute('x', -48);
+    label.setAttribute('y', height / 2);
+    label.setAttribute('fill', '#dbeafe');
+    label.setAttribute('font-size', '13');
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('transform', `rotate(-90 ${-48} ${height / 2})`);
+    label.textContent = yLabel;
+    axisGroup.appendChild(label);
+  }
+
   group.appendChild(axisGroup);
 }
 
@@ -905,12 +982,12 @@ function drawNitratePath(group, data, xScale, yScale) {
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   path.setAttribute('d', pathData.join(' '));
   path.setAttribute('fill', 'none');
-  path.setAttribute('stroke', '#8ee0ff');
+  path.setAttribute('stroke', '#60a5fa');
   path.setAttribute('stroke-width', '3');
   group.appendChild(path);
 }
 
-function drawNitrateDots(group, data, xScale, yScale, tooltip) {
+function drawNitrateDots(group, data, xScale, yScale, tooltip, options = {}) {
   let lastValid = null;
   data.forEach((point, index) => {
     if (point.nitrate != null) {
@@ -925,18 +1002,30 @@ function drawNitrateDots(group, data, xScale, yScale, tooltip) {
     circle.setAttribute('cx', x);
     circle.setAttribute('cy', y);
     circle.setAttribute('r', point.wc ? 6 : 4);
-    circle.setAttribute('fill', point.wc ? '#9de2b6' : '#66d1f6');
-    circle.setAttribute('stroke', '#041730');
+    circle.setAttribute('fill', point.wc ? '#f59e0b' : '#60a5fa');
+    circle.setAttribute('stroke', point.wc ? '#92400e' : '#0b4aa7');
     circle.setAttribute('stroke-width', '2');
-    circle.addEventListener('mouseenter', (event) => showTooltip(event, tooltip, buildNitrateTooltip(point)));
-    circle.addEventListener('mouseleave', () => hideTooltip(tooltip));
-    circle.addEventListener('focus', (event) => showTooltip(event, tooltip, buildNitrateTooltip(point)));
-    circle.addEventListener('blur', () => hideTooltip(tooltip));
+    const showHandler = (event) => {
+      showTooltip(event, tooltip, buildNitrateTooltip(point));
+      options.onSummaryChange?.(formatNitrateSummary(point));
+    };
+    const hideHandler = () => {
+      hideTooltip(tooltip);
+      options.onSummaryChange?.(null);
+    };
+    circle.addEventListener('pointerenter', showHandler);
+    circle.addEventListener('pointerleave', hideHandler);
+    circle.addEventListener('pointerdown', showHandler);
+    circle.addEventListener('pointercancel', hideHandler);
+    circle.addEventListener('focus', showHandler);
+    circle.addEventListener('blur', hideHandler);
     group.appendChild(circle);
   });
 }
 
-function drawBars(group, data, xScale, yScale, tooltip) {
+function drawBars(group, data, xScale, yScale, tooltip, options = {}) {
+  const thriveColor = '#10b981';
+  const excelColor = '#8b5cf6';
   data.forEach((item, index) => {
     const x = xScale.position(index);
     const width = xScale.bandwidth;
@@ -948,9 +1037,19 @@ function drawBars(group, data, xScale, yScale, tooltip) {
     thriveRect.setAttribute('y', yScale.map(item.thrivePumps));
     thriveRect.setAttribute('width', width / 2 - 4);
     thriveRect.setAttribute('height', thriveHeight);
-    thriveRect.setAttribute('fill', '#66d1f6');
-    thriveRect.addEventListener('mouseenter', (event) => showTooltip(event, tooltip, buildDosingTooltip(item)));
-    thriveRect.addEventListener('mouseleave', () => hideTooltip(tooltip));
+    thriveRect.setAttribute('fill', thriveColor);
+    const showHandler = (event) => {
+      showTooltip(event, tooltip, buildDosingTooltip(item));
+      options.onSummaryChange?.(formatDosingSummary(item));
+    };
+    const hideHandler = () => {
+      hideTooltip(tooltip);
+      options.onSummaryChange?.(null);
+    };
+    thriveRect.addEventListener('pointerenter', showHandler);
+    thriveRect.addEventListener('pointerleave', hideHandler);
+    thriveRect.addEventListener('pointerdown', showHandler);
+    thriveRect.addEventListener('pointercancel', hideHandler);
     group.appendChild(thriveRect);
 
     const excelRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -958,9 +1057,11 @@ function drawBars(group, data, xScale, yScale, tooltip) {
     excelRect.setAttribute('y', yScale.map(item.excelCapEquivalent));
     excelRect.setAttribute('width', width / 2 - 4);
     excelRect.setAttribute('height', excelHeight);
-    excelRect.setAttribute('fill', '#9de2b6');
-    excelRect.addEventListener('mouseenter', (event) => showTooltip(event, tooltip, buildDosingTooltip(item)));
-    excelRect.addEventListener('mouseleave', () => hideTooltip(tooltip));
+    excelRect.setAttribute('fill', excelColor);
+    excelRect.addEventListener('pointerenter', showHandler);
+    excelRect.addEventListener('pointerleave', hideHandler);
+    excelRect.addEventListener('pointerdown', showHandler);
+    excelRect.addEventListener('pointercancel', hideHandler);
     group.appendChild(excelRect);
   });
 }
@@ -987,17 +1088,35 @@ function buildDosingTooltip(item) {
 function showTooltip(event, tooltip, content) {
   tooltip.innerHTML = content;
   tooltip.style.opacity = '1';
-  const { clientX, clientY } = event;
-  tooltip.style.left = `${clientX + 16}px`;
-  tooltip.style.top = `${clientY - 16}px`;
+  let clientX = event?.clientX;
+  let clientY = event?.clientY;
+  if ((clientX == null || clientY == null) && event?.target) {
+    const rect = event.target.getBoundingClientRect?.();
+    if (rect) {
+      clientX = rect.left + rect.width / 2;
+      clientY = rect.top + rect.height / 2;
+    }
+  }
+  if (event?.pointerType === 'touch') {
+    event.preventDefault?.();
+  }
+  tooltip.style.left = `${(clientX ?? 0) + 16}px`;
+  tooltip.style.top = `${(clientY ?? 0) - 16}px`;
 }
 
 function hideTooltip(tooltip) {
   tooltip.style.opacity = '0';
 }
 
-function attachTooltipHandlers(svg, tooltip) {
-  svg.addEventListener('mouseleave', () => hideTooltip(tooltip));
+function attachTooltipHandlers(svg, tooltip, onLeave) {
+  const handleLeave = () => {
+    hideTooltip(tooltip);
+    onLeave?.();
+  };
+  svg.addEventListener('mouseleave', handleLeave);
+  svg.addEventListener('pointerleave', handleLeave);
+  svg.addEventListener('pointercancel', handleLeave);
+  svg.addEventListener('touchend', handleLeave);
 }
 
 function createSvg(width, height) {
@@ -1015,6 +1134,47 @@ function createTooltip() {
   tooltip.style.opacity = '0';
   tooltip.style.transition = 'opacity 0.15s ease';
   return tooltip;
+}
+
+function createLegend(items = []) {
+  const legend = createElement('div', 'legend');
+  legend.setAttribute('role', 'list');
+  items.forEach((item) => {
+    const legendItem = createElement('span', 'legend-item');
+    legendItem.setAttribute('role', 'listitem');
+    const swatch = createElement('span', 'legend-swatch');
+    swatch.style.setProperty('--swatch', item.color);
+    swatch.setAttribute('role', 'img');
+    swatch.setAttribute('aria-label', `${item.label} color`);
+    const label = createElement('span', 'legend-label');
+    label.textContent = item.label;
+    legendItem.appendChild(swatch);
+    legendItem.appendChild(label);
+    legend.appendChild(legendItem);
+  });
+  return legend;
+}
+
+function createHoverSummary() {
+  const summary = createElement('div', 'hover-summary');
+  summary.setAttribute('aria-live', 'polite');
+  summary.setAttribute('role', 'status');
+  summary.setAttribute('aria-hidden', 'true');
+  summary.hidden = true;
+  return summary;
+}
+
+function updateHoverSummary(element, text) {
+  if (!element) return;
+  if (text) {
+    element.textContent = text;
+    element.hidden = false;
+    element.setAttribute('aria-hidden', 'false');
+  } else {
+    element.textContent = '';
+    element.hidden = true;
+    element.setAttribute('aria-hidden', 'true');
+  }
 }
 
 function createBandScale(values, width, padding = 0.1) {
@@ -1099,6 +1259,26 @@ function createIcon(name, className) {
   return svg;
 }
 
+function deriveMonthLabel(start, end) {
+  const startDate = start instanceof Date ? start : start ? new Date(start) : null;
+  const endDate = end instanceof Date ? end : end ? new Date(end) : null;
+  const reference = endDate || startDate;
+  if (!reference) return '';
+  const sameMonth =
+    startDate && endDate
+      ? startDate.getFullYear() === endDate.getFullYear() && startDate.getMonth() === endDate.getMonth()
+      : true;
+  const formatter = new Intl.DateTimeFormat(undefined, { month: 'short', year: 'numeric' });
+  if (sameMonth) {
+    return formatter.format(reference);
+  }
+  if (startDate && endDate) {
+    const startFormatter = new Intl.DateTimeFormat(undefined, { month: 'short' });
+    return `${startFormatter.format(startDate)} – ${formatter.format(endDate)}`;
+  }
+  return formatter.format(reference);
+}
+
 function formatRange(start, end) {
   if (!start || !end) return '';
   const startDate = new Date(start);
@@ -1131,6 +1311,66 @@ function formatWaterChange(day) {
   if (day.sumpPct != null) parts.push(`${day.sumpPct}% sump`);
   if (day.displayPct != null) parts.push(`${day.displayPct}% display`);
   return parts.length ? parts.join(' / ') : 'Yes';
+}
+
+function formatNumber(value, decimals = 2) {
+  if (value == null || Number.isNaN(value)) return '';
+  const fixed = Number(value).toFixed(decimals);
+  return fixed.replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
+}
+
+function formatExcelSummary(point) {
+  if (!point) return '';
+  if (!Array.isArray(point.excelNotes) || !point.excelNotes.length) {
+    if (point.excelCap > 0) {
+      const value = formatNumber(point.excelCap, 2);
+      const plural = Math.abs(point.excelCap - 1) < 0.01 ? 'capful' : 'capfuls';
+      return `${value} ${plural}`.trim();
+    }
+    return '';
+  }
+  const normalized = point.excelNotes
+    .map((note) => {
+      if (!note) return '';
+      if (/spot/i.test(note)) return 'spot';
+      const cleaned = note.replace(/\(spot\)/i, '').replace(/cap eq\./i, 'cap eq.');
+      return cleaned.trim().replace(/\bCaps\b/, 'caps').replace(/\bCap\b/, 'cap');
+    })
+    .filter(Boolean);
+  if (!normalized.length) {
+    return formatExcelSummary({ excelCap: point.excelCap });
+  }
+  return normalized.join(' + ');
+}
+
+function formatNitrateSummary(point) {
+  if (!point) return '';
+  const date = point.dateISO ? new Date(point.dateISO) : null;
+  const dateLabel = date
+    ? date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+    : point.dateLabel;
+  const nitrateValue = point.nitrate != null ? `${formatNumber(point.nitrate, 1)} ppm` : '—';
+  const parts = [`${dateLabel} — Nitrate: ${nitrateValue}`];
+  if (point.thrive > 0) {
+    parts.push(`Thrive: ${formatNumber(point.thrive, 2)} pumps`);
+  }
+  if (point.excelCap > 0) {
+    const excelText = formatExcelSummary(point);
+    if (excelText) {
+      parts.push(`Excel: ${excelText}`);
+    }
+  }
+  if (point.wc) {
+    parts.push('Water change');
+  }
+  return parts.join(' | ');
+}
+
+function formatDosingSummary(item) {
+  if (!item) return '';
+  const thrive = formatNumber(item.thrivePumps, 2) || '0';
+  const excel = formatNumber(item.excelCapEquivalent, 2) || '0';
+  return `${item.label} — Thrive: ${thrive} pumps • Excel: ${excel} capfuls`;
 }
 
 document.addEventListener('DOMContentLoaded', init);
