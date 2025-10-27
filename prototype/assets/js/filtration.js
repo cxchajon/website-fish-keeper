@@ -3,9 +3,7 @@
 
   window.disableLegacyFiltrationSummary = true;
 
-  const legacySummaryEl = document.getElementById('filtration-summary');
-  if (legacySummaryEl) {
-    legacySummaryEl.setAttribute('hidden', '');
-    legacySummaryEl.setAttribute('data-proto-hide', '');
+  if (typeof window.renderFiltration === 'function') {
+    window.renderFiltration();
   }
 })();
