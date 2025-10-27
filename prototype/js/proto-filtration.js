@@ -32,6 +32,7 @@ const state = {
   tankGallons: 0,
   totals: {
     totalGph: 0,
+    ratedGph: 0,
     turnover: 0,
     efficiency: 0,
     mixFactor: null,
@@ -227,26 +228,26 @@ function computeFilterStats(appFilters) {
     ...filter,
     resolvedType: resolveEfficiencyType(filter.kind ?? filter.type),
   }));
-  const totalGph = getTotalGPH(filtersForCalc);
-  const mixFactorRaw = totalGph > 0
+  const { rated: totalRatedGph, derated: totalDeratedGph } = getTotalGPH(filtersForCalc);
+  const mixFactorRaw = totalRatedGph > 0
     ? filtersForCalc.reduce((sum, filter) => {
         const gph = Number(filter?.rated_gph ?? filter?.gph);
         if (!Number.isFinite(gph) || gph <= 0) {
           return sum;
         }
         const weight = TYPE_WEIGHT[filter.resolvedType] ?? TYPE_WEIGHT.HOB;
-        return sum + weight * (gph / totalGph);
+        return sum + weight * (gph / totalRatedGph);
       }, 0)
     : null;
-  const fallbackFactor = weightedMixFactor(appFilters, totalGph);
+  const fallbackFactor = weightedMixFactor(appFilters, totalRatedGph);
   const mixFactor = Number.isFinite(mixFactorRaw) && mixFactorRaw > 0 ? mixFactorRaw : fallbackFactor;
   const gallons = state.tankGallons;
-  const turnoverValue = totalGph > 0 ? computeTurnover(totalGph, gallons) : 0;
+  const turnoverValue = totalRatedGph > 0 ? computeTurnover(totalRatedGph, gallons) : 0;
   const normalizedForEfficiency = turnoverValue > 0 ? mapFiltersForEfficiency(filtersForCalc) : [];
   const { total: efficiency, perFilter: efficiencyDetails } =
     turnoverValue > 0 ? computeAggregateEfficiency(normalizedForEfficiency, turnoverValue) : { total: 0, perFilter: [] };
-  const turnover = totalGph > 0 ? turnoverValue : null;
-  return { totalGph, mixFactor, turnover, efficiency, efficiencyDetails };
+  const turnover = totalRatedGph > 0 ? turnoverValue : null;
+  return { totalGph: totalDeratedGph, ratedGph: totalRatedGph, mixFactor, turnover, efficiency, efficiencyDetails };
 }
 
 function logFilterDebug(payload) {
@@ -263,11 +264,12 @@ function logFilterDebug(payload) {
   try {
     console.groupCollapsed('[Proto] Filtration debug');
     if (rows.length) {
-      console.table(rows);
-    } else {
-      console.log('No filters configured');
-    }
-    console.log('totalGPH:', payload.totalGph);
+    console.table(rows);
+  } else {
+    console.log('No filters configured');
+  }
+    console.log('totalGPH (derated):', payload.totalGph);
+    console.log('ratedGPH:', payload.ratedGph);
     console.log('turnover:', payload.turnover);
     console.log('mixFactor:', payload.mixFactor);
     if (payload.baseBioload != null) {
@@ -306,8 +308,8 @@ function applyFiltersToApp() {
   if (!appState) return;
   const appFilters = state.filters.map((item) => toAppFilter(item));
   const normalizedFilters = appFilters.map((entry) => ({ ...entry }));
-  const { totalGph, mixFactor, turnover, efficiency, efficiencyDetails } = computeFilterStats(normalizedFilters);
-  state.totals = { totalGph, mixFactor, turnover, efficiency, efficiencyDetails };
+  const { totalGph, ratedGph, mixFactor, turnover, efficiency, efficiencyDetails } = computeFilterStats(normalizedFilters);
+  state.totals = { totalGph, ratedGph, mixFactor, turnover, efficiency, efficiencyDetails };
   appState.filters = normalizedFilters;
   const productFilters = state.filters.filter((item) => item.source === FILTER_SOURCES.PRODUCT);
   const primaryProduct = productFilters.length ? productFilters[productFilters.length - 1] : null;
@@ -320,7 +322,8 @@ function applyFiltersToApp() {
     appState.filterType = null;
     appState.ratedGph = null;
   }
-  appState.totalGph = Number.isFinite(totalGph) && totalGph > 0 ? totalGph : null;
+  appState.totalGph = Number.isFinite(ratedGph) && ratedGph > 0 ? ratedGph : null;
+  appState.actualGph = Number.isFinite(totalGph) && totalGph > 0 ? totalGph : null;
   appState.mixFactor = Number.isFinite(mixFactor) && mixFactor > 0 ? mixFactor : null;
   appState.turnover = Number.isFinite(turnover) && turnover > 0 ? turnover : null;
   appState.efficiency = Number.isFinite(efficiency) && efficiency > 0 ? efficiency : null;
@@ -328,6 +331,7 @@ function applyFiltersToApp() {
   appState.filtering = {
     filters: snapshotFilters,
     gphTotal: totalGph,
+    ratedGph,
     turnover,
     mixFactor,
     efficiency,
@@ -335,7 +339,7 @@ function applyFiltersToApp() {
       ? state.totals.efficiencyDetails.map((entry) => ({ ...entry }))
       : [],
   };
-  logFilterDebug({ filters: snapshotFilters, totalGph, turnover, mixFactor, efficiency });
+  logFilterDebug({ filters: snapshotFilters, totalGph, ratedGph, turnover, mixFactor, efficiency });
   persistAppFilters(appFilters);
   scheduleRecompute();
 }
@@ -508,7 +512,8 @@ function renderSummary() {
   const appFilters = state.filters.map((item) => toAppFilter(item));
   const stats = computeFilterStats(appFilters);
   state.totals = stats;
-  refs.summary.textContent = `Filtration: ${formatGph(stats.totalGph)} GPH • ${formatTurnover(stats.turnover)}×/h`;
+  const displayGph = Number.isFinite(stats.ratedGph) && stats.ratedGph > 0 ? stats.ratedGph : stats.totalGph;
+  refs.summary.textContent = `Filtration: ${formatGph(displayGph)} GPH • ${formatTurnover(stats.turnover)}×/h`;
 }
 
 function syncSelectValue() {
@@ -678,7 +683,8 @@ window.renderFiltration = function renderFiltration() {
   state.totals = stats;
   const chipbar = document.querySelector('.filtration-chipbar');
   if (chipbar) {
-    chipbar.dataset.total = `${formatGph(stats.totalGph)} GPH • ${formatTurnover(stats.turnover)}×/h`;
+    const chipGph = Number.isFinite(stats.ratedGph) && stats.ratedGph > 0 ? stats.ratedGph : stats.totalGph;
+    chipbar.dataset.total = `${formatGph(chipGph)} GPH • ${formatTurnover(stats.turnover)}×/h`;
   }
 };
 

@@ -6,6 +6,11 @@ export const FILTER_BASE = Object.freeze({
   Sponge: 0.25,
 });
 
+export const FLOW_DERATE = 0.65; // Crosscheck Fix — Oct 2025
+export const MAX_RELIEF = 0.6; // Crosscheck Fix — Oct 2025
+export const TURNOVER_MIN = 0.4; // Crosscheck Fix — Oct 2025
+export const TURNOVER_MAX = 1.3; // Crosscheck Fix — Oct 2025
+
 const FILTER_TYPE_LOOKUP = Object.freeze({
   CANISTER: 'Canister',
   HOB: 'HOB',
@@ -31,14 +36,14 @@ export function clamp(n, lo, hi) {
 export function computeTurnover(totalGPH, gallons) {
   const g = Math.max(1, Number(gallons) || 0);
   const flow = Math.max(0, Number(totalGPH) || 0);
-  return flow / g;
+  return (flow * FLOW_DERATE) / g; // Crosscheck Fix — Oct 2025
 }
 
 export function computeEfficiency(type, turnover) {
   const key = resolveFilterBaseKey(type);
   const base = FILTER_BASE[key] ?? FILTER_BASE.HOB;
-  const turnoverFactor = clamp(turnover / 5, 0.4, 1.3);
-  return clamp(base * turnoverFactor, 0, 0.6);
+  const turnoverFactor = clamp(turnover / 5, TURNOVER_MIN, TURNOVER_MAX);
+  return clamp(base * turnoverFactor, 0, MAX_RELIEF);
 }
 
 export function mapFiltersForEfficiency(filters) {
@@ -55,10 +60,11 @@ export function mapFiltersForEfficiency(filters) {
         filter?.flow ??
         filter?.flowGPH ??
         0;
-      const gph = Number(rawGph);
-      if (!Number.isFinite(gph) || gph <= 0) {
+      const ratedGph = Number(rawGph);
+      if (!Number.isFinite(ratedGph) || ratedGph <= 0) {
         return null;
       }
+      const deratedGph = ratedGph * FLOW_DERATE; // Crosscheck Fix — Oct 2025
 
       const rawType =
         filter?.resolvedType ??
@@ -70,7 +76,7 @@ export function mapFiltersForEfficiency(filters) {
       const id = typeof filter?.id === 'string' && filter.id ? filter.id : null;
       const source = typeof filter?.source === 'string' && filter.source ? filter.source : null;
 
-      return { id, type, gph, source };
+      return { id, type, gph: deratedGph, ratedGph, source };
     })
     .filter(Boolean);
 }
@@ -89,8 +95,8 @@ export function computeAggregateEfficiency(filters, turnover) {
     };
   });
 
-  const totalRaw = perFilter.reduce((sum, entry) => sum + entry.efficiency, 0);
-  const total = clamp(totalRaw, 0, 0.6);
+  const combined = 1 - perFilter.reduce((prod, entry) => prod * (1 - entry.efficiency), 1); // Crosscheck Fix — Oct 2025
+  const total = clamp(combined, 0, MAX_RELIEF);
 
   return { total, perFilter };
 }
@@ -109,17 +115,25 @@ export function computePercent(adjustedBioload, capacity) {
 
 export function getTotalGPH(filters) {
   if (!Array.isArray(filters) || filters.length === 0) {
-    return 0;
+    return { rated: 0, derated: 0 };
   }
-  return filters.reduce((sum, filter) => {
-    const raw =
-      filter?.rated_gph ??
-      filter?.ratedGph ??
-      filter?.gph ??
-      filter?.flow ??
-      filter?.flowGPH ??
-      0;
-    const value = Number(raw);
-    return Number.isFinite(value) && value > 0 ? sum + value : sum;
-  }, 0);
+  return filters.reduce(
+    (acc, filter) => {
+      const raw =
+        filter?.rated_gph ??
+        filter?.ratedGph ??
+        filter?.gph ??
+        filter?.flow ??
+        filter?.flowGPH ??
+        0;
+      const value = Number(raw);
+      if (!Number.isFinite(value) || value <= 0) {
+        return acc;
+      }
+      acc.rated += value;
+      acc.derated += value * FLOW_DERATE; // Crosscheck Fix — Oct 2025
+      return acc;
+    },
+    { rated: 0, derated: 0 },
+  );
 }

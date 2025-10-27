@@ -23,14 +23,14 @@ if (DEBUG_TESTS) {
   })();
 
   const filters = [{ source: 'custom', type: 'HOB', gph: 200 }];
-  const total = getTotalGPH(filters);
-  const turnover = computeTurnover(total, gallons);
+  const totals = getTotalGPH(filters);
+  const turnover = computeTurnover(totals.rated, gallons);
   const eff = computeEfficiency(resolveFilterBaseKey('HOB'), turnover);
   const adjusted = computeAdjustedBioload(base, eff);
   const pct1 = computePercent(adjusted, cap);
 
   // eslint-disable-next-line no-console
-  console.table({ pct0, pct1, total, turnover, eff });
+  console.table({ pct0, pct1, ratedTotal: totals.rated, deratedTotal: totals.derated, turnover, eff });
 
   if (!(pct1 < pct0)) {
     // eslint-disable-next-line no-console
