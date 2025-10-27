@@ -647,7 +647,7 @@ function buildNitratePanel() {
   const monthLabel = deriveMonthLabel(state.dataState?.meta?.dateStart, state.dataState?.meta?.dateEnd);
   panel.appendChild(
     createLegend([
-      { color: '#60a5fa', label: 'Nitrate (ppm)' },
+      { color: '#1f6feb', label: 'Nitrate (ppm)' },
       { color: '#f59e0b', label: 'Water-change day' }
     ])
   );
@@ -749,10 +749,10 @@ function buildMaintenancePanel() {
   panel.appendChild(
     createLegend([
       { color: '#f59e0b', label: 'Water change' },
-      { color: '#eab308', label: 'Filter maintenance' },
-      { color: '#fb923c', label: 'Trim / replant' },
-      { color: '#38bdf8', label: 'Glass cleaning' },
-      { color: '#7c3aed', label: 'BBA treatment' }
+      { color: '#10b981', label: 'Filter maintenance' },
+      { color: '#8b5cf6', label: 'Trim / replant' },
+      { color: '#1f6feb', label: 'Glass cleaning' },
+      { color: '#ef4444', label: 'BBA treatment' }
     ])
   );
   panel.appendChild(renderMaintenanceCards(state.dataState.maintenanceEvents));
@@ -870,8 +870,8 @@ function renderDosingChart(data, options = {}) {
 
 function drawGrid(group, width, height, xScale, yScale) {
   const gridGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  gridGroup.setAttribute('stroke', 'rgba(255,255,255,0.15)');
-  gridGroup.setAttribute('stroke-dasharray', '3 3');
+  gridGroup.setAttribute('stroke', '#e5e7eb');
+  gridGroup.setAttribute('stroke-dasharray', '4 4');
   const yTicks = yScale.ticks(5);
   yTicks.forEach((tick) => {
     const y = yScale.map(tick);
@@ -902,7 +902,7 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     text.setAttribute('x', x);
     text.setAttribute('y', rotateX ? 20 : 24);
-    text.setAttribute('fill', 'rgba(255,255,255,0.75)');
+    text.setAttribute('fill', '#4b5563');
     text.setAttribute('font-size', '12');
     text.setAttribute('text-anchor', rotateX ? 'end' : 'middle');
     if (rotateX) {
@@ -925,7 +925,7 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     text.setAttribute('x', -10);
     text.setAttribute('y', y + 4);
-    text.setAttribute('fill', 'rgba(255,255,255,0.75)');
+    text.setAttribute('fill', '#4b5563');
     text.setAttribute('font-size', '12');
     text.setAttribute('text-anchor', 'end');
     text.textContent = tick;
@@ -937,7 +937,7 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
     const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     label.setAttribute('x', width / 2);
     label.setAttribute('y', height + (rotateX ? 46 : 40));
-    label.setAttribute('fill', '#dbeafe');
+    label.setAttribute('fill', '#1f2937');
     label.setAttribute('font-size', '13');
     label.setAttribute('text-anchor', 'middle');
     label.textContent = xLabel;
@@ -948,7 +948,7 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
     const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     label.setAttribute('x', -48);
     label.setAttribute('y', height / 2);
-    label.setAttribute('fill', '#dbeafe');
+    label.setAttribute('fill', '#1f2937');
     label.setAttribute('font-size', '13');
     label.setAttribute('text-anchor', 'middle');
     label.setAttribute('transform', `rotate(-90 ${-48} ${height / 2})`);
@@ -966,8 +966,8 @@ function drawReferenceLine(group, yScale, width, value) {
   line.setAttribute('x2', width);
   line.setAttribute('y1', y);
   line.setAttribute('y2', y);
-  line.setAttribute('stroke', 'rgba(255,255,255,0.4)');
-  line.setAttribute('stroke-dasharray', '4 4');
+  line.setAttribute('stroke', '#1f6feb33');
+  line.setAttribute('stroke-dasharray', '6 6');
   group.appendChild(line);
 }
 
@@ -982,7 +982,7 @@ function drawNitratePath(group, data, xScale, yScale) {
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   path.setAttribute('d', pathData.join(' '));
   path.setAttribute('fill', 'none');
-  path.setAttribute('stroke', '#60a5fa');
+  path.setAttribute('stroke', '#1f6feb');
   path.setAttribute('stroke-width', '3');
   group.appendChild(path);
 }
@@ -1002,11 +1002,19 @@ function drawNitrateDots(group, data, xScale, yScale, tooltip, options = {}) {
     circle.setAttribute('cx', x);
     circle.setAttribute('cy', y);
     circle.setAttribute('r', point.wc ? 6 : 4);
-    circle.setAttribute('fill', point.wc ? '#f59e0b' : '#60a5fa');
-    circle.setAttribute('stroke', point.wc ? '#92400e' : '#0b4aa7');
+    circle.setAttribute('fill', point.wc ? '#f59e0b' : '#1f6feb');
+    circle.setAttribute('stroke', point.wc ? '#b45309' : '#1e3a8a');
     circle.setAttribute('stroke-width', '2');
+    circle.setAttribute('tabindex', '0');
+    circle.setAttribute('role', 'img');
+    circle.setAttribute(
+      'aria-label',
+      point.wc
+        ? `${point.dateLabel}: Water change marker`
+        : `${point.dateLabel}: Nitrate ${point.nitrate != null ? point.nitrate.toFixed(1) : 'unknown'} ppm`
+    );
     const showHandler = (event) => {
-      showTooltip(event, tooltip, buildNitrateTooltip(point));
+      showTooltip(event, tooltip, buildNitrateTooltip(point), point.wc ? '#f59e0b' : '#1f6feb');
       options.onSummaryChange?.(formatNitrateSummary(point));
     };
     const hideHandler = () => {
@@ -1038,18 +1046,26 @@ function drawBars(group, data, xScale, yScale, tooltip, options = {}) {
     thriveRect.setAttribute('width', width / 2 - 4);
     thriveRect.setAttribute('height', thriveHeight);
     thriveRect.setAttribute('fill', thriveColor);
-    const showHandler = (event) => {
-      showTooltip(event, tooltip, buildDosingTooltip(item));
+    thriveRect.setAttribute('tabindex', '0');
+    thriveRect.setAttribute('role', 'img');
+    thriveRect.setAttribute(
+      'aria-label',
+      `${item.label}: Thrive ${item.thrivePumps.toFixed(2)} pumps`
+    );
+    const showThrive = (event) => {
+      showTooltip(event, tooltip, buildDosingTooltip(item), thriveColor);
       options.onSummaryChange?.(formatDosingSummary(item));
     };
     const hideHandler = () => {
       hideTooltip(tooltip);
       options.onSummaryChange?.(null);
     };
-    thriveRect.addEventListener('pointerenter', showHandler);
+    thriveRect.addEventListener('pointerenter', showThrive);
     thriveRect.addEventListener('pointerleave', hideHandler);
-    thriveRect.addEventListener('pointerdown', showHandler);
+    thriveRect.addEventListener('pointerdown', showThrive);
     thriveRect.addEventListener('pointercancel', hideHandler);
+    thriveRect.addEventListener('focus', showThrive);
+    thriveRect.addEventListener('blur', hideHandler);
     group.appendChild(thriveRect);
 
     const excelRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -1058,10 +1074,22 @@ function drawBars(group, data, xScale, yScale, tooltip, options = {}) {
     excelRect.setAttribute('width', width / 2 - 4);
     excelRect.setAttribute('height', excelHeight);
     excelRect.setAttribute('fill', excelColor);
-    excelRect.addEventListener('pointerenter', showHandler);
+    excelRect.setAttribute('tabindex', '0');
+    excelRect.setAttribute('role', 'img');
+    excelRect.setAttribute(
+      'aria-label',
+      `${item.label}: Excel ${item.excelCapEquivalent.toFixed(2)} cap equivalents`
+    );
+    const showExcel = (event) => {
+      showTooltip(event, tooltip, buildDosingTooltip(item), excelColor);
+      options.onSummaryChange?.(formatDosingSummary(item));
+    };
+    excelRect.addEventListener('pointerenter', showExcel);
     excelRect.addEventListener('pointerleave', hideHandler);
-    excelRect.addEventListener('pointerdown', showHandler);
+    excelRect.addEventListener('pointerdown', showExcel);
     excelRect.addEventListener('pointercancel', hideHandler);
+    excelRect.addEventListener('focus', showExcel);
+    excelRect.addEventListener('blur', hideHandler);
     group.appendChild(excelRect);
   });
 }
@@ -1085,8 +1113,9 @@ function buildDosingTooltip(item) {
   `;
 }
 
-function showTooltip(event, tooltip, content) {
+function showTooltip(event, tooltip, content, accentColor) {
   tooltip.innerHTML = content;
+  tooltip.style.setProperty('--tooltip-accent', accentColor || '#1f6feb');
   tooltip.style.opacity = '1';
   let clientX = event?.clientX;
   let clientY = event?.clientY;
@@ -1133,6 +1162,7 @@ function createTooltip() {
   tooltip.style.pointerEvents = 'none';
   tooltip.style.opacity = '0';
   tooltip.style.transition = 'opacity 0.15s ease';
+  tooltip.style.setProperty('--tooltip-accent', '#1f6feb');
   return tooltip;
 }
 
