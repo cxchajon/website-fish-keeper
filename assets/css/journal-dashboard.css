@@ -198,6 +198,74 @@ body.dashboard-page {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+/* --- Expanded vertical rhythm for frameless blueprint --- */
+
+/* Global padding so everything breathes more */
+body.dashboard-blueprint main,
+.dashboard-wrap {
+  padding-top: clamp(24px, 4vh, 60px);
+  padding-bottom: clamp(40px, 6vh, 80px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(48px, 6vh, 80px);
+}
+
+/* Section spacing: headings, graphs, controls */
+.section,
+.chart-section {
+  margin-top: clamp(32px, 5vh, 64px);
+  margin-bottom: clamp(32px, 5vh, 64px);
+}
+
+/* Headings slightly larger and spaced */
+.section-title,
+h1.section-title,
+h2.section-title {
+  font-size: clamp(24px, 2.6vw, 30px);
+  margin-bottom: 18px;
+}
+
+/* Chart containers grow and fill width elegantly */
+.chart-container {
+  margin-top: 20px;
+  padding: 16px 0;
+  min-height: 320px;
+}
+
+/* Nitrate / Dosing / Maintenance controls spread out */
+.tabbar,
+.tab-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(18px, 2vw, 32px);
+  margin-top: 24px;
+}
+
+/* Buttons breathe more */
+.tab-btn,
+.range-picker,
+.switch {
+  padding: 14px 24px;
+  font-size: 1.05rem;
+}
+
+/* Adjust legend and chart labels so they aren’t crammed */
+.recharts-legend-wrapper {
+  margin-top: 16px;
+}
+.recharts-responsive-container {
+  margin-top: 12px;
+}
+
+/* Prevent everything from hugging the edges on wide screens */
+@media (min-width: 1024px) {
+  .dashboard-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
 .dashboard-page .dashboard-month__btn svg {
   stroke: #f7fafc;
 }
