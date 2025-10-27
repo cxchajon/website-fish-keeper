@@ -1,5 +1,13 @@
-import { canonicalizeFilterType } from '/js/utils.js';
-import { calcTotalGph, computeTurnover } from '/js/logic/compute.js';
+import { canonicalizeFilterType, weightedMixFactor } from '/js/utils.js';
+
+const DEBUG_FILTERS = Boolean(window?.TTG?.DEBUG_FILTERS);
+const TYPE_WEIGHT = Object.freeze({
+  CANISTER: 1.12,
+  HOB: 1.0,
+  INTERNAL: 0.94,
+  UGF: 0.9,
+  SPONGE: 0.86,
+});
 
 const FILTER_STORAGE_KEY = 'ttg.stocking.filters.v1';
 const FILTER_SOURCES = Object.freeze({
@@ -42,8 +50,26 @@ let pendingProductId = '';
 let productStatusMessage = '';
 let productStatusTimer = 0;
 
+function parseGph(value) {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : NaN;
+  }
+  if (typeof value === 'string') {
+    const normalized = value.trim();
+    if (!normalized) {
+      return NaN;
+    }
+    const digits = normalized.replace(/[^0-9.]/g, '');
+    if (!digits) {
+      return NaN;
+    }
+    return Number(digits);
+  }
+  return NaN;
+}
+
 function clampGph(value) {
-  const num = Number(value);
+  const num = parseGph(value);
   if (!Number.isFinite(num) || num <= 0) {
     return null;
   }
@@ -69,17 +95,33 @@ function formatTurnover(value) {
 const FILTER_TYPE_LABELS = Object.freeze({
   CANISTER: 'Canister',
   HOB: 'Hang-on-back (HOB)',
+  INTERNAL: 'Internal',
+  UGF: 'Undergravel',
   SPONGE: 'Sponge',
 });
 
 function formatFilterTypeLabel(value) {
-  const canonical = canonicalizeFilterType(value);
+  const canonical = resolveEfficiencyType(value);
   return FILTER_TYPE_LABELS[canonical] || canonical || 'HOB';
 }
 
 function computeManualLabel(type, gph) {
   const labelType = formatFilterTypeLabel(type);
   return `${labelType} ${formatGph(gph)} GPH`;
+}
+
+function resolveEfficiencyType(rawType) {
+  const canonical = canonicalizeFilterType(rawType);
+  if (canonical === 'HOB' && typeof rawType === 'string') {
+    const upper = rawType.trim().toUpperCase();
+    if (upper === 'INTERNAL' || upper === 'POWERHEAD') {
+      return 'INTERNAL';
+    }
+    if (upper === 'UGF' || upper === 'UNDERGRAVEL') {
+      return 'UGF';
+    }
+  }
+  return canonical;
 }
 
 function canAddProduct(product) {
@@ -108,11 +150,15 @@ function setButtonState(button, enabled) {
 
 function toAppFilter(item) {
   const gph = clampGph(item?.gph);
-  const type = canonicalizeFilterType(item?.type ?? (item?.source === FILTER_SOURCES.PRODUCT ? item?.type : 'HOB'));
+  const baseType = item?.type ?? (item?.source === FILTER_SOURCES.PRODUCT ? item?.type : 'HOB');
+  const type = canonicalizeFilterType(baseType);
+  const efficiencyType = resolveEfficiencyType(item?.efficiencyType ?? baseType);
   return {
     id: typeof item?.id === 'string' && item.id ? item.id : null,
     type,
     rated_gph: gph ?? 0,
+    kind: efficiencyType,
+    source: item?.source === FILTER_SOURCES.PRODUCT ? FILTER_SOURCES.PRODUCT : FILTER_SOURCES.MANUAL,
   };
 }
 
@@ -149,11 +195,93 @@ function scheduleRecompute() {
   });
 }
 
+function computeFilterStats(appFilters) {
+  const filtersForCalc = appFilters.map((filter) => ({
+    ...filter,
+    resolvedType: resolveEfficiencyType(filter.kind ?? filter.type),
+  }));
+  const totalGph = filtersForCalc.reduce((sum, filter) => {
+    const gph = Number(filter?.rated_gph ?? filter?.gph);
+    return Number.isFinite(gph) && gph > 0 ? sum + gph : sum;
+  }, 0);
+  const mixFactorRaw = totalGph > 0
+    ? filtersForCalc.reduce((sum, filter) => {
+        const gph = Number(filter?.rated_gph ?? filter?.gph);
+        if (!Number.isFinite(gph) || gph <= 0) {
+          return sum;
+        }
+        const weight = TYPE_WEIGHT[filter.resolvedType] ?? TYPE_WEIGHT.HOB;
+        return sum + weight * (gph / totalGph);
+      }, 0)
+    : null;
+  const fallbackFactor = weightedMixFactor(appFilters, totalGph);
+  const mixFactor = Number.isFinite(mixFactorRaw) && mixFactorRaw > 0 ? mixFactorRaw : fallbackFactor;
+  const gallons = state.tankGallons;
+  const turnover = gallons > 0 && Number.isFinite(totalGph) && totalGph > 0
+    ? totalGph / gallons
+    : null;
+  return { totalGph, mixFactor, turnover };
+}
+
+function logFilterDebug(payload) {
+  if (!DEBUG_FILTERS || typeof console === 'undefined') {
+    return;
+  }
+  const rows = Array.isArray(payload.filters)
+    ? payload.filters.map((filter) => ({
+        source: filter.source,
+        type: filter.kind ?? filter.type,
+        gph: filter.rated_gph,
+      }))
+    : [];
+  try {
+    console.groupCollapsed('[Proto] Filtration debug');
+    if (rows.length) {
+      console.table(rows);
+    } else {
+      console.log('No filters configured');
+    }
+    console.log('totalGPH:', payload.totalGph);
+    console.log('turnover:', payload.turnover);
+    console.log('mixFactor:', payload.mixFactor);
+    if (payload.baseBioload != null) {
+      console.log('baseBioload:', payload.baseBioload);
+    }
+    if (payload.adjustedBioload != null) {
+      console.log('adjustedBioload:', payload.adjustedBioload);
+    }
+    if (payload.bioloadPercent != null) {
+      console.log('bioloadPercent:', payload.bioloadPercent);
+    }
+    console.groupEnd();
+  } catch (error) {
+    console.log('[Proto] Filtration debug', payload, error);
+  }
+}
+
+if (DEBUG_FILTERS && typeof window !== 'undefined') {
+  window.addEventListener('ttg:proto:filtration-debug', (event) => {
+    const detail = event?.detail ?? {};
+    logFilterDebug({
+      filters: Array.isArray(detail.filters) ? detail.filters : [],
+      totalGph: detail.totalGph ?? null,
+      turnover: detail.turnover ?? null,
+      mixFactor: detail.mixFactor ?? null,
+      efficiency: detail.efficiency ?? null,
+      baseBioload: detail.baseBioload ?? null,
+      adjustedBioload: detail.adjustedBioload ?? null,
+      bioloadPercent: detail.bioloadPercent ?? null,
+    });
+  });
+}
+
 function applyFiltersToApp() {
   const appState = window.appState;
   if (!appState) return;
   const appFilters = state.filters.map((item) => toAppFilter(item));
-  appState.filters = appFilters.map((entry) => ({ ...entry }));
+  const normalizedFilters = appFilters.map((entry) => ({ ...entry }));
+  const { totalGph, mixFactor, turnover } = computeFilterStats(normalizedFilters);
+  appState.filters = normalizedFilters;
   const productFilters = state.filters.filter((item) => item.source === FILTER_SOURCES.PRODUCT);
   const primaryProduct = productFilters.length ? productFilters[productFilters.length - 1] : null;
   if (primaryProduct) {
@@ -165,6 +293,17 @@ function applyFiltersToApp() {
     appState.filterType = null;
     appState.ratedGph = null;
   }
+  appState.totalGph = Number.isFinite(totalGph) && totalGph > 0 ? totalGph : null;
+  appState.mixFactor = Number.isFinite(mixFactor) && mixFactor > 0 ? mixFactor : null;
+  appState.turnover = Number.isFinite(turnover) && turnover > 0 ? turnover : null;
+  const snapshotFilters = normalizedFilters.map((entry) => ({ ...entry }));
+  appState.filtering = {
+    filters: snapshotFilters,
+    gphTotal: totalGph,
+    turnover,
+    mixFactor,
+  };
+  logFilterDebug({ filters: snapshotFilters, totalGph, turnover, mixFactor });
   persistAppFilters(appFilters);
   scheduleRecompute();
 }
@@ -335,8 +474,7 @@ function renderChips() {
 function renderSummary() {
   if (!refs.summary) return;
   const appFilters = state.filters.map((item) => toAppFilter(item));
-  const totalGph = calcTotalGph(appFilters);
-  const turnover = computeTurnover(state.tankGallons, appFilters);
+  const { totalGph, turnover } = computeFilterStats(appFilters);
   refs.summary.textContent = `Filtration: ${formatGph(totalGph)} GPH • ${formatTurnover(turnover)}×/h`;
 }
 
@@ -417,12 +555,14 @@ function setFilters(nextFilters) {
     if (!id) {
       id = `manual-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
     }
-    const type = canonicalizeFilterType(raw.type ?? (source === FILTER_SOURCES.PRODUCT ? raw.type : 'HOB'));
+    const inputType = raw.type ?? (source === FILTER_SOURCES.PRODUCT ? raw.type : 'HOB');
+    const type = canonicalizeFilterType(inputType);
+    const efficiencyType = resolveEfficiencyType(raw.efficiencyType ?? inputType);
     const label = typeof raw.label === 'string' && raw.label
       ? raw.label
       : source === FILTER_SOURCES.PRODUCT
         ? raw.name ?? id
-        : computeManualLabel(type, gph);
+        : computeManualLabel(efficiencyType, gph);
     const key = `${source}:${id}`;
     if (seen.has(key)) {
       return;
@@ -434,6 +574,7 @@ function setFilters(nextFilters) {
       label,
       gph,
       type,
+      efficiencyType,
     });
   });
 
@@ -455,6 +596,7 @@ function createProductFilter(product) {
     label,
     gph: rated,
     type: canonicalizeFilterType(product.type ?? 'HOB'),
+    efficiencyType: resolveEfficiencyType(product.type ?? 'HOB'),
   };
 }
 
@@ -466,6 +608,7 @@ function removeFilterById(id) {
 }
 
 function addManualFilter(typeValue, value) {
+  const efficiencyType = resolveEfficiencyType(typeValue);
   const canonicalType = canonicalizeFilterType(typeValue);
   const rated = clampGph(value);
   if (!canAddManual(canonicalType, rated)) {
@@ -476,9 +619,10 @@ function addManualFilter(typeValue, value) {
   const manual = {
     id,
     source: FILTER_SOURCES.MANUAL,
-    label: computeManualLabel(canonicalType, rated),
+    label: computeManualLabel(efficiencyType, rated),
     gph: rated,
     type: canonicalType,
+    efficiencyType,
   };
   if (refs.manualInput) {
     refs.manualInput.value = '';
@@ -497,8 +641,7 @@ window.renderFiltration = function renderFiltration() {
     state.tankGallons = tankGallons;
   }
   const appFilters = state.filters.map((item) => toAppFilter(item));
-  const totalGph = calcTotalGph(appFilters);
-  const turnover = computeTurnover(state.tankGallons, appFilters);
+  const { totalGph, turnover } = computeFilterStats(appFilters);
   const chipbar = document.querySelector('.filtration-chipbar');
   if (chipbar) {
     chipbar.dataset.total = `${formatGph(totalGph)} GPH • ${formatTurnover(turnover)}×/h`;
@@ -621,12 +764,14 @@ function hydrateFromAppState() {
       return;
     }
     const type = canonicalizeFilterType(entry?.type ?? 'HOB');
+    const efficiencyType = resolveEfficiencyType(entry?.kind ?? entry?.efficiencyType ?? entry?.type ?? 'HOB');
     const manual = {
       id: id ?? `manual-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
       source: FILTER_SOURCES.MANUAL,
-      label: computeManualLabel(type, gph),
+      label: computeManualLabel(efficiencyType, gph),
       gph,
       type,
+      efficiencyType,
     };
     next.push(manual);
   });

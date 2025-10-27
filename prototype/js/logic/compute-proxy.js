@@ -6,15 +6,26 @@ import { weightedMixFactor } from '../../../js/utils.js?orig';
 const { computeBioload: baseComputeBioload, buildComputedState: baseBuildComputedState, calcTotalGph } = baseCompute;
 
 const __DEV_BIOLOAD = false;
+const DEBUG_FILTERS = Boolean(typeof window !== 'undefined' && window?.TTG?.DEBUG_FILTERS);
 
 const clamp = (value, lo, hi) => Math.min(hi, Math.max(lo, value));
 
 const FILTER_BASE = Object.freeze({
-  CANISTER: 0.52,
+  CANISTER: 0.55,
   HOB: 0.45,
-  SPONGE: 0.36,
-  MIXED: 0.48,
+  INTERNAL: 0.4,
+  UGF: 0.38,
+  SPONGE: 0.34,
+  MIXED: 0.46,
   DEFAULT: 0.45,
+});
+
+const TYPE_WEIGHT = Object.freeze({
+  CANISTER: 1.12,
+  HOB: 1.0,
+  INTERNAL: 0.94,
+  UGF: 0.9,
+  SPONGE: 0.86,
 });
 
 const TYPE_THRESHOLDS = Object.freeze({
@@ -213,9 +224,32 @@ const resolveMixFactor = (filterState, raw) => {
   if (filtersList.length === 0) {
     return null;
   }
-  const total = Number.isFinite(filterState?.totalGph) && filterState.totalGph > 0 ? filterState.totalGph : null;
-  const factor = weightedMixFactor(filtersList, total);
-  return Number.isFinite(factor) && factor > 0 ? factor : null;
+  const total = Number.isFinite(filterState?.totalGph) && filterState.totalGph > 0
+    ? filterState.totalGph
+    : filtersList.reduce((sum, filter) => {
+        const gph = Number(filter?.rated_gph ?? filter?.gph);
+        return Number.isFinite(gph) && gph > 0 ? sum + gph : sum;
+      }, 0);
+  if (!Number.isFinite(total) || total <= 0) {
+    return null;
+  }
+  let factor = 0;
+  for (const filter of filtersList) {
+    const gph = Number(filter?.rated_gph ?? filter?.gph);
+    if (!Number.isFinite(gph) || gph <= 0) {
+      continue;
+    }
+    const share = gph / total;
+    const rawType = filter?.kind ?? filter?.type ?? filter?.filterType;
+    const typeKey = normalizeTypeBlend(rawType) ?? 'HOB';
+    const weight = TYPE_WEIGHT[typeKey] ?? TYPE_WEIGHT.HOB;
+    factor += weight * share;
+  }
+  if (factor > 0) {
+    return factor;
+  }
+  const fallback = weightedMixFactor(filtersList, total);
+  return Number.isFinite(fallback) && fallback > 0 ? fallback : null;
 };
 
 const resolveTypeBlendInput = (filterState, raw) => {
@@ -226,7 +260,8 @@ const resolveTypeBlendInput = (filterState, raw) => {
   if (!filtersList.length) {
     return null;
   }
-  const firstType = filtersList[0]?.type ?? filtersList[0]?.kind;
+  const first = filtersList[0];
+  const firstType = first?.kind ?? first?.type ?? first?.filterType;
   if (typeof firstType === 'string') {
     return firstType;
   }
@@ -328,6 +363,27 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
 
   if (raw.flowAdjustment?.mixFactor != null && flowAdjustment.mixFactor == null) {
     flowAdjustment.mixFactor = raw.flowAdjustment.mixFactor;
+  }
+
+  if (DEBUG_FILTERS && typeof window !== 'undefined') {
+    try {
+      window.dispatchEvent(
+        new CustomEvent('ttg:proto:filtration-debug', {
+          detail: {
+            filters: filterState?.filters ?? [],
+            totalGph,
+            turnover: proposedDetails.turnoverX,
+            mixFactor,
+            efficiency: proposedDetails.efficiency,
+            baseBioload: baseProposedDetails.load,
+            adjustedBioload: proposedDetails.effectiveLoad,
+            bioloadPercent: proposedPercentValue,
+          },
+        }),
+      );
+    } catch (_error) {
+      /* ignore debug dispatch failures */
+    }
   }
 
   if (__DEV_BIOLOAD && typeof console !== 'undefined') {
