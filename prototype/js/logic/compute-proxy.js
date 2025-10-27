@@ -4,6 +4,8 @@ import { getBandColor } from '../../../js/logic/utils.js?orig';
 
 const { computeBioload: baseComputeBioload, buildComputedState: baseBuildComputedState, calcTotalGph } = baseCompute;
 
+const __DEV_BIOLOAD = false;
+
 const clamp = (value, lo, hi) => Math.min(hi, Math.max(lo, value));
 
 const mapLinear = (value, a, b, min, max) => {
@@ -12,19 +14,37 @@ const mapLinear = (value, a, b, min, max) => {
   return min + (max - min) * t;
 };
 
-export const percentBioload = ({ gallons, planted, speciesLoad, flowGPH }) => {
+const computeBioloadDetails = ({ gallons, planted, speciesLoad, flowGPH }) => {
   const tankGallons = Math.max(0, Number(gallons || 0));
-  const plantedAdj = planted ? 0.9 : 1.0;
-  const load = Math.max(0, Number(speciesLoad || 0)) * plantedAdj;
+  const plantedAdj = planted ? 0.90 : 1.00;
   const flow = Math.max(0, Number(flowGPH || 0));
+  const speciesTotal = Math.max(0, Number(speciesLoad || 0));
 
+  const load = speciesTotal * plantedAdj;
   const baseCapacity = tankGallons * 1.0;
   const turnoverX = tankGallons > 0 ? flow / tankGallons : 0;
-  const flowBonus = mapLinear(turnoverX, 5, 10, 0, 0.10);
-  const capacity = baseCapacity * (1 + clamp(flowBonus, 0, 0.10));
+  const rawBonus = mapLinear(turnoverX, 5, 10, 0.00, 0.10);
+  const capBonus = clamp(rawBonus, 0.00, 0.10);
+  const capacity = baseCapacity * (1 + capBonus);
+  const percent = capacity > 0 ? (load / capacity) * 100 : 0;
 
-  return capacity > 0 ? (load / capacity) * 100 : 0;
+  return {
+    gallons: tankGallons,
+    planted: Boolean(planted),
+    speciesLoad: speciesTotal,
+    flowGPH: flow,
+    plantedAdj,
+    load,
+    baseCapacity,
+    turnoverX,
+    rawBonus,
+    capBonus,
+    capacity,
+    percent,
+  };
 };
+
+export const percentBioload = (state) => computeBioloadDetails(state).percent;
 
 const computeFlowBonus = (gallons, flowGPH) => {
   const tankGallons = Math.max(0, Number(gallons || 0));
@@ -107,10 +127,16 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
   const gallons = Number.isFinite(tank?.gallons) ? tank.gallons : 0;
   const planted = Boolean(tank?.planted);
   const flowGPH = resolveFlowGph(tank, filterState, raw);
-  const baseCurrentPercentValue = percentBioload({ gallons, planted, speciesLoad: raw.currentLoad ?? 0, flowGPH: 0 });
-  const baseProposedPercentValue = percentBioload({ gallons, planted, speciesLoad: raw.proposed ?? 0, flowGPH: 0 });
-  const currentPercentValue = percentBioload({ gallons, planted, speciesLoad: raw.currentLoad ?? 0, flowGPH });
-  const proposedPercentValue = percentBioload({ gallons, planted, speciesLoad: raw.proposed ?? 0, flowGPH });
+
+  const baseCurrentDetails = computeBioloadDetails({ gallons, planted, speciesLoad: raw.currentLoad ?? 0, flowGPH: 0 });
+  const baseProposedDetails = computeBioloadDetails({ gallons, planted, speciesLoad: raw.proposed ?? 0, flowGPH: 0 });
+  const currentDetails = computeBioloadDetails({ gallons, planted, speciesLoad: raw.currentLoad ?? 0, flowGPH });
+  const proposedDetails = computeBioloadDetails({ gallons, planted, speciesLoad: raw.proposed ?? 0, flowGPH });
+
+  const baseCurrentPercentValue = baseCurrentDetails.percent;
+  const baseProposedPercentValue = baseProposedDetails.percent;
+  const currentPercentValue = currentDetails.percent;
+  const proposedPercentValue = proposedDetails.percent;
 
   const currentPercent = currentPercentValue / 100;
   const proposedPercent = proposedPercentValue / 100;
@@ -126,15 +152,15 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
         : 'ok';
   const text = `${formatBioloadPercent(currentPercentValue)} → ${formatBioloadPercent(proposedPercentValue)} of capacity`;
   const message = turnoverIssue ? 'Turnover below 2× — upgrade filtration' : raw.message;
-  const flowBonus = computeFlowBonus(gallons, flowGPH);
-  const capacityMultiplier = 1 + flowBonus;
+  const capBonus = computeFlowBonus(gallons, flowGPH);
+  const capacityMultiplier = 1 + capBonus;
   const totalFactor = capacityMultiplier > 0 ? 1 / capacityMultiplier : 1;
 
   const flowAdjustment = {
     ...raw.flowAdjustment,
     actualGph: resolveActualGph(raw, flowGPH, filterState, tank),
     turnover: Number.isFinite(turnover) ? turnover : null,
-    flowBonus,
+    flowBonus: capBonus,
     capacityMultiplier,
     totalFactor,
     flowFactor: totalFactor,
@@ -142,6 +168,26 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
 
   if (raw.flowAdjustment?.mixFactor != null && flowAdjustment.mixFactor == null) {
     flowAdjustment.mixFactor = raw.flowAdjustment.mixFactor;
+  }
+
+  if (__DEV_BIOLOAD && typeof console !== 'undefined') {
+    const debugRow = {
+      gallons,
+      speciesLoad: proposedDetails.speciesLoad,
+      planted,
+      flowGPH,
+      turnoverX: proposedDetails.turnoverX,
+      efficiencyUsed: '(none)',
+      capacityBonus: Number.isFinite(proposedDetails.capBonus) ? proposedDetails.capBonus : '(none)',
+      numerator_load: proposedDetails.load,
+      denominator_capacity: proposedDetails.capacity,
+      percent_out: proposedPercentValue,
+    };
+    try {
+      console.table(debugRow);
+    } catch (error) {
+      console.log('Bioload debug', debugRow, error);
+    }
   }
 
   return {
@@ -192,4 +238,56 @@ export function computeBioload(tank, entries, candidate, filterState = {}) {
 export function buildComputedState(state) {
   const raw = baseBuildComputedState(state);
   return patchComputed(raw, state);
+}
+
+if (__DEV_BIOLOAD && typeof window !== 'undefined') {
+  const runDevCases = () => {
+    const base = { gallons: 29, speciesLoad: 15, planted: false };
+    const variants = [
+      { ...base, flowGPH: 80, label: 'Case A (80 GPH)' },
+      { ...base, flowGPH: 200, label: 'Case B (200 GPH)' },
+      { ...base, flowGPH: 260, label: 'Case C (260 GPH)' },
+    ];
+    const rows = variants.map((variant) => {
+      const details = computeBioloadDetails(variant);
+      return {
+        label: variant.label,
+        percent: Number(details.percent.toFixed(4)),
+        turnoverX: details.turnoverX,
+        capacityBonus: details.capBonus,
+      };
+    });
+    try {
+      console.table(rows);
+    } catch (error) {
+      console.log('Bioload dev cases', rows, error);
+    }
+    return rows;
+  };
+
+  window.__runBioloadDevCases = runDevCases;
+
+  const attachDevButton = () => {
+    if (!document?.body || document.getElementById('dev-bioload-trigger')) {
+      return;
+    }
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.id = 'dev-bioload-trigger';
+    button.textContent = 'Run Bioload DEV Cases';
+    button.style.position = 'fixed';
+    button.style.bottom = '1rem';
+    button.style.right = '1rem';
+    button.style.zIndex = '9999';
+    button.addEventListener('click', () => {
+      runDevCases();
+    });
+    document.body.appendChild(button);
+  };
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    attachDevButton();
+  } else {
+    window.addEventListener('DOMContentLoaded', attachDevButton, { once: true });
+  }
 }

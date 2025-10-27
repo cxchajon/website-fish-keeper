@@ -1,17 +1,31 @@
-# Bioload Post-flight Notes
+# Bioload Post-flight Report
 
-**Files touched**
-- `prototype/stocking-prototype.html` — import map reroutes the prototype to the patched compute logic.
-- `prototype/js/logic/compute-proxy.js` — wraps the canonical compute module with the new bioload math.
-- `prototype/tests/bioload.turnover.spec.js` — node-based regression covering flow, planted relief, and zero-gallon guard.
-- `prototype/audit_out/bioload-preflight.md`, `prototype/audit_out/bioload-tests.txt` — audit artifacts per brief.
+## Files touched
+- `prototype/js/logic/compute-proxy.js` — adds dev flag, detailed percent math helper, UI-bound console diagnostics, and dev harness.
+- `prototype/tests/bioload.turnover.spec.js` — restructures into `describe` suite with Jest-style expectations.
+- `prototype/audit_out/bioload-callchain.md`, `prototype/audit_out/bioload-preflight-console.txt`, `prototype/audit_out/bioload-tests.txt` — updated audit artifacts per brief.
 
-**Formula comparison**
-- _Before_: `percent = computeBioloadPercent(...) * filtration.totalFactor` → flow multipliers inflated the load.
-- _After_: `percent = (speciesLoad * plantedAdj) / (gallons * (1 + flowBonus)) * 100` with `flowBonus` = mapLinear(turnover, 5–10× → 0–10%).
+## Formula snapshot
+- **Final math** (`computeBioloadDetails` → `percentBioload`):
+  ```js
+  const load = speciesLoad * (planted ? 0.90 : 1.00);
+  const turnoverX = gallons > 0 ? flowGPH / gallons : 0;
+  const capBonus = clamp(mapLinear(turnoverX, 5, 10, 0.00, 0.10), 0.00, 0.10);
+  const capacity = gallons * (1 + capBonus);
+  const percent = capacity > 0 ? (load / capacity) * 100 : 0;
+  ```
+  Flow only expands the denominator; no multipliers touch the numerator.
 
-**29g reference (species load = 15)**
-- 80 GPH → **51.72 %**
-- 260 GPH → **47.92 %** (higher flow yields equal or lower usage, never higher).
+## Monotonic check (species load ≈ 15 GE)
+| Case | Flow (GPH) | Turnover× | Percent |
+|------|------------|-----------|---------|
+| A    | 80         | 2.76×     | 51.72% |
+| B    | 200        | 6.90×     | 49.83% |
+| C    | 260        | 8.97×     | 47.92% |
 
-Manual sanity reminder: stock plan stays steady or drops when filters are added, turnover badge still reflects raw ×/h, planted toggle lowers percent modestly.
+Higher flow keeps the same stock at or below the previous capacity usage.
+
+## Validation
+- `node --test prototype/tests/bioload.turnover.spec.js`
+- Manual harness (`window.__runBioloadDevCases`) echoes the monotonic table above.
+- Planted toggle observed to lower percent while flag disabled.
