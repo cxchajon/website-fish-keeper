@@ -2,23 +2,19 @@ import * as baseCompute from '../../../js/logic/compute.js?orig';
 import { formatBioloadPercent } from '../../../js/bioload.js?orig';
 import { getBandColor } from '../../../js/logic/utils.js?orig';
 import { weightedMixFactor } from '../../../js/utils.js?orig';
+import {
+  clamp,
+  computeTurnover as computeFilterTurnover,
+  computeEfficiency as computeFilterEfficiency,
+  computeAdjustedBioload,
+  computePercent,
+  resolveFilterBaseKey,
+} from '../../assets/js/proto-filtration-math.js';
 
 const { computeBioload: baseComputeBioload, buildComputedState: baseBuildComputedState, calcTotalGph } = baseCompute;
 
 const __DEV_BIOLOAD = false;
 const DEBUG_FILTERS = Boolean(typeof window !== 'undefined' && window?.TTG?.DEBUG_FILTERS);
-
-const clamp = (value, lo, hi) => Math.min(hi, Math.max(lo, value));
-
-const FILTER_BASE = Object.freeze({
-  CANISTER: 0.55,
-  HOB: 0.45,
-  INTERNAL: 0.4,
-  UGF: 0.38,
-  SPONGE: 0.34,
-  MIXED: 0.46,
-  DEFAULT: 0.45,
-});
 
 const TYPE_WEIGHT = Object.freeze({
   CANISTER: 1.12,
@@ -33,11 +29,21 @@ const TYPE_THRESHOLDS = Object.freeze({
   SPONGE_MAX: 0.95,
 });
 
+const FILTER_TYPE_CANON = new Map([
+  ['CANISTER', 'CANISTER'],
+  ['HOB', 'HOB'],
+  ['INTERNAL', 'INTERNAL'],
+  ['UGF', 'UGF'],
+  ['SPONGE', 'SPONGE'],
+  ['MIXED', 'HOB'],
+  ['DEFAULT', 'HOB'],
+]);
+
 const normalizeTypeBlend = (value) => {
   if (typeof value === 'string') {
     const upper = value.trim().toUpperCase();
-    if (upper && FILTER_BASE[upper] != null) {
-      return upper;
+    if (upper && FILTER_TYPE_CANON.has(upper)) {
+      return FILTER_TYPE_CANON.get(upper);
     }
   }
   return null;
@@ -75,14 +81,13 @@ const resolvePlantBonus = ({ planted, plantBonus }) => {
   return planted ? 0.1 : 0;
 };
 
-const computeEfficiency = ({ turnover, flowGPH, typeBlend, mixFactor }) => {
-  if (!Number.isFinite(turnover) || turnover <= 0 || !Number.isFinite(flowGPH) || flowGPH <= 0) {
+const computeBlendEfficiency = ({ turnover, typeBlend, mixFactor }) => {
+  if (!Number.isFinite(turnover) || turnover <= 0) {
     return 0;
   }
   const blendKey = resolveTypeBlend({ typeBlend, mixFactor });
-  const base = FILTER_BASE[blendKey] ?? FILTER_BASE.DEFAULT;
-  const turnoverFactor = clamp(turnover / 5, 0.4, 1.3);
-  return clamp(base * turnoverFactor, 0, 0.6);
+  const baseKey = resolveFilterBaseKey(blendKey);
+  return computeFilterEfficiency(baseKey, turnover);
 };
 
 const mapLinear = (value, a, b, min, max) => {
@@ -113,12 +118,12 @@ const computeBioloadDetails = ({
   const bonus = resolvePlantBonus({ planted, plantBonus });
   const loadBase = speciesTotal;
   const loadPlanted = loadBase * (1 - bonus);
-  const turnover = tankGallons > 0 && flow > 0 ? flow / tankGallons : 0;
-  const eff = computeEfficiency({ turnover, flowGPH: flow, typeBlend, mixFactor });
-  const effectiveLoad = loadPlanted * (1 - eff);
+  const turnover = flow > 0 ? computeFilterTurnover(flow, tankGallons) : 0;
+  const eff = computeBlendEfficiency({ turnover, typeBlend, mixFactor });
+  const effectiveLoad = computeAdjustedBioload(loadPlanted, eff);
   const baseCapacity = Number.isFinite(capacity) && capacity > 0 ? capacity : tankGallons;
   const safeCapacity = Math.max(1, Number(baseCapacity || 0));
-  const percent = clamp((effectiveLoad / safeCapacity) * 100, 0, 200);
+  const percent = computePercent(effectiveLoad, safeCapacity);
 
   return {
     gallons: tankGallons,
@@ -186,7 +191,8 @@ const resolveTurnover = (tank, flowGPH, filterState = {}, raw) => {
   }
   const gallons = Number.isFinite(tank?.gallons) && tank.gallons > 0 ? tank.gallons : 0;
   if (gallons > 0 && flowGPH > 0) {
-    return flowGPH / gallons;
+    const computed = computeFilterTurnover(flowGPH, gallons);
+    return computed > 0 ? computed : null;
   }
   if (Number.isFinite(tank?.turnover) && tank.turnover > 0) {
     return tank.turnover;
@@ -433,7 +439,11 @@ const deriveFilterState = (state, computed) => {
     ?? computed?.bioload?.flowAdjustment?.mixFactor
     ?? state?.mixFactor
     ?? null;
-  return { filters, totalGph, turnover, ratedGph, mixFactor };
+  const efficiency = computed?.filtering?.efficiency
+    ?? state?.filtering?.efficiency
+    ?? state?.efficiency
+    ?? null;
+  return { filters, totalGph, turnover, ratedGph, mixFactor, efficiency };
 };
 
 const patchComputed = (computed, state) => {
