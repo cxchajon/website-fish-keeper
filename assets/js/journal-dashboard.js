@@ -609,7 +609,7 @@ function buildTabs() {
     button.id = `dashboard-tab-${id}`;
     button.setAttribute('aria-controls', `dashboard-panel-${id}`);
     button.setAttribute('aria-label', tabAria[id]);
-    button.className = `dashboard-tab${state.activeTab === id ? ' is-active' : ''}`;
+    button.className = `dashboard-tab tab-btn${state.activeTab === id ? ' is-active' : ''}`;
     button.tabIndex = state.activeTab === id ? 0 : -1;
     button.setAttribute('aria-selected', state.activeTab === id ? 'true' : 'false');
     button.appendChild(createIcon(id === 'nitrate' ? 'droplet' : id === 'dosing' ? 'beaker' : 'scissors', 'dashboard-tab__icon'));

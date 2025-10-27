@@ -506,3 +506,154 @@ body.dashboard-page {
     justify-content: center;
   }
 }
+/* --- Frameless Dashboard Theme (Blueprint) --- */
+body.dashboard-blueprint {
+  /* already set by you */
+  overflow-x: hidden;
+}
+
+/* Neutralize “card” look everywhere on this page */
+.dashboard-card,
+.dashboard-hero,
+.dashboard-panel,
+.dashboard-tabs,
+.dashboard-chart,
+.card,
+.panel,
+.chart-container,
+.controls,
+.section {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Open up layout a bit */
+.dashboard-wrap,
+.container,
+.max-w-7xl,
+.page-inner {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: clamp(12px, 3vw, 24px);
+}
+
+/* Typography tuned for dark blueprint */
+body.dashboard-blueprint,
+body.dashboard-blueprint p {
+  color: #E6EDF6;
+}
+body.dashboard-blueprint h1,
+body.dashboard-blueprint h2,
+body.dashboard-blueprint h3 {
+  color: #FFFFFF;
+  letter-spacing: 0.2px;
+}
+.subtle,
+.muted,
+.help-text {
+  color: #A9B8C9;
+}
+
+/* Tabs/controls become flat-outline pills */
+.tabbar,
+.tab-row {
+  gap: 12px;
+}
+.tab-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #E6EDF6;
+  border-radius: 999px;
+  padding: 10px 16px;
+}
+.tab-btn:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.tab-btn.is-active {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+/* Date range & switches: flat */
+.range-picker,
+.switch,
+.chip {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #E6EDF6;
+  box-shadow: none;
+}
+.dashboard-month,
+.dashboard-month__btn {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #E6EDF6 !important;
+  box-shadow: none !important;
+}
+.dashboard-month__btn {
+  border-radius: 999px;
+}
+
+/* Recharts on dark background */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.recharts-xAxis .recharts-cartesian-axis-tick tspan,
+.recharts-yAxis .recharts-cartesian-axis-tick tspan {
+  fill: #C8D6E8;
+}
+
+.recharts-tooltip-wrapper .custom-tooltip,
+.chart-tooltip {
+  background: rgba(8, 12, 20, 0.92) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #E6EDF6 !important;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+.legend,
+.legend * {
+  color: #E6EDF6 !important;
+}
+
+/* Lines/bars pop a bit more on blueprint */
+.line-nitrate {
+  stroke: #64B5FF !important;
+}
+.dot-waterchange {
+  fill: #FFB54C !important;
+}
+.bar-thrive {
+  fill: #33D3A6 !important;
+}
+.bar-excel {
+  fill: #A78BFA !important;
+}
+
+/* Section headings with simple underline (no card header) */
+.section-title {
+  margin: 28px 0 12px;
+  font-size: clamp(22px, 2.2vw, 28px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 8px;
+}
+
+/* Ensure all images/charts scale and no overflow */
+img,
+svg,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 480px) {
+  .chart-container {
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 14px;
+    padding: 8px;
+  }
+}
