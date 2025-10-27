@@ -1,0 +1,90 @@
+/* Page scope */
+html[data-page="journal-dashboard"] body {
+  background: #0e1a27; /* existing blueprint base, keep */
+}
+
+/* 1) Kill ANY card/panel/glass look on this page */
+html[data-page="journal-dashboard"] .card,
+html[data-page="journal-dashboard"] .dash-card,
+html[data-page="journal-dashboard"] .panel,
+html[data-page="journal-dashboard"] .module,
+html[data-page="journal-dashboard"] .glass,
+html[data-page="journal-dashboard"] .elevated,
+html[data-page="journal-dashboard"] .shell,
+html[data-page="journal-dashboard"] .chart-card,
+html[data-page="journal-dashboard"] .section-card,
+html[data-page="journal-dashboard"] .dashboard-tabs,
+html[data-page="journal-dashboard"] .dashboard-tab,
+html[data-page="journal-dashboard"] .dashboard-toggle,
+html[data-page="journal-dashboard"] .dashboard-month,
+html[data-page="journal-dashboard"] .dashboard-month__btn,
+html[data-page="journal-dashboard"] .tab-btn,
+html[data-page="journal-dashboard"] .range-picker,
+html[data-page="journal-dashboard"] .switch,
+html[data-page="journal-dashboard"] .chip,
+html[data-page="journal-dashboard"] [class*="card"],
+html[data-page="journal-dashboard"] [class*="panel"] {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* 2) Remove inner rounded frames often used around charts */
+html[data-page="journal-dashboard"] .chart-frame,
+html[data-page="journal-dashboard"] .chart-shell,
+html[data-page="journal-dashboard"] .chart-wrap,
+html[data-page="journal-dashboard"] [class*="chart-"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 3) Expand layout breathing room so content uses open space */
+html[data-page="journal-dashboard"] .container,
+html[data-page="journal-dashboard"] .dashboard-container,
+html[data-page="journal-dashboard"] main {
+  max-width: 1200px !important;
+  width: min(1200px, 94vw) !important;
+  margin-inline: auto !important;
+  padding-inline: clamp(16px, 4vw, 32px) !important;
+}
+
+/* 4) Headings/legends spacing (open it up) */
+html[data-page="journal-dashboard"] h1,
+html[data-page="journal-dashboard"] h2 {
+  margin-top: clamp(16px, 4vh, 36px) !important;
+  margin-bottom: clamp(10px, 2vh, 20px) !important;
+}
+html[data-page="journal-dashboard"] .legend,
+html[data-page="journal-dashboard"] .section-intro {
+  margin-bottom: clamp(12px, 2.2vh, 24px) !important;
+}
+
+/* 5) Recharts canvas should never paint a box */
+html[data-page="journal-dashboard"] .recharts-wrapper,
+html[data-page="journal-dashboard"] .recharts-surface {
+  background: transparent !important;
+}
+
+/* 6) Mobile-specific: ensure no card style leaks at small widths */
+@media (max-width: 768px) {
+  html[data-page="journal-dashboard"] .pill,
+  html[data-page="journal-dashboard"] .segmented,
+  html[data-page="journal-dashboard"] .toggle,
+  html[data-page="journal-dashboard"] [class*="pill"],
+  html[data-page="journal-dashboard"] [class*="segment"] {
+    background: rgba(255,255,255,0.06) !important; /* subtle tap target */
+    box-shadow: none !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+  }
+}
+
+html[data-page="journal-dashboard"] .section {
+  padding-block: clamp(16px, 4vh, 48px) !important;
+}
+html[data-page="journal-dashboard"] .section + .section {
+  margin-top: clamp(8px, 2vh, 24px) !important;
+}

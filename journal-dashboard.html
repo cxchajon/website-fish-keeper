@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-page="journal-dashboard">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -31,6 +31,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
   <link rel="stylesheet" href="/assets/css/journal-dashboard.css" />
+  <link rel="stylesheet" href="/css/journal-dashboard.overrides.css?v=2025-10-27-1" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
 </head>
 <body class="dashboard-page dashboard-blueprint">
@@ -45,5 +46,41 @@
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
   <script type="module" src="/assets/js/journal-dashboard.js"></script>
+  <script>
+(function(){
+  if (document.documentElement.getAttribute('data-page') !== 'journal-dashboard') return;
+  const kill = ['glass','elevated','card','panel','module','chart-card','section-card'];
+  const selectors = kill.map(k=>'.'+k).join(',');
+  const scrub = (root = document) => {
+    root.querySelectorAll(selectors).forEach(el => {
+      kill.forEach(k => el.classList.remove(k));
+      // Also remove inline styles that set background/shadow
+      el.style.background = 'transparent';
+      el.style.boxShadow = 'none';
+      el.style.backdropFilter = 'none';
+    });
+  };
+
+  const run = () => scrub();
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run, { once: true });
+  } else {
+    run();
+  }
+
+  const observer = new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+      mutation.addedNodes.forEach(node => {
+        if (node.nodeType === 1) {
+          scrub(node);
+        }
+      });
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
+</script>
 </body>
 </html>
