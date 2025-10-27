@@ -17,6 +17,8 @@ const state = {
   tankGallons: 0,
 };
 
+window.disableLegacyFilterRows = true;
+
 const refs = {
   productSelect: null,
   productAddBtn: null,
@@ -188,16 +190,16 @@ function ensureRefs() {
     refs.productAddBtn = document.getElementById('filter-product-add');
   }
   if (!refs.manualType) {
-    refs.manualType = document.getElementById('filter-custom-type');
+    refs.manualType = document.getElementById('fs-type');
   }
   if (!refs.manualInput) {
-    refs.manualInput = document.getElementById('filter-rated-gph');
+    refs.manualInput = document.getElementById('fs-gph');
   }
   if (!refs.manualAddBtn) {
-    refs.manualAddBtn = document.getElementById('filter-manual-add');
+    refs.manualAddBtn = document.getElementById('fs-add-custom');
   }
   if (!refs.manualNote) {
-    refs.manualNote = document.getElementById('filter-rated-note');
+    refs.manualNote = document.querySelector('.filter-setup .hint');
   }
   if (!refs.productNote) {
     refs.productNote = document.getElementById('filter-product-note');
@@ -228,8 +230,9 @@ function updateProductLabel(productItem) {
 }
 
 function setManualNote(message, { isError = false } = {}) {
-  if (!refs.manualNote) return;
-  refs.manualNote.textContent = message;
+  if (refs.manualNote && typeof message === 'string') {
+    refs.manualNote.textContent = message;
+  }
   if (refs.manualInput) {
     if (isError) {
       refs.manualInput.setAttribute('aria-invalid', 'true');
@@ -389,7 +392,7 @@ function render() {
   updateManualAddButton();
   if (!refs.manualInput) return;
   if (!refs.manualInput.placeholder) {
-    refs.manualInput.placeholder = 'Enter GPH';
+    refs.manualInput.placeholder = 'GPH';
   }
 }
 
@@ -481,6 +484,7 @@ function addManualFilter(typeValue, value) {
   setManualNote(baseManualNote);
   setFilters(state.filters.concat([manual]));
   updateManualAddButton();
+  refs.manualInput?.focus({ preventScroll: true });
   return true;
 }
 
@@ -687,7 +691,7 @@ async function init() {
     }
   });
   ensureRefs();
-  baseManualNote = refs.manualNote?.textContent || 'Pick a filter type and flow, then press Enter or Add Custom.';
+  baseManualNote = refs.manualNote?.textContent || 'Tip: press Enter in the GPH field to add quickly.';
   baseProductNote = refs.productNote?.textContent || 'Choose a filter matched to your tank size and use Add Selected when ready.';
   if (refs.manualInput) {
     refs.manualInput.removeAttribute('readonly');

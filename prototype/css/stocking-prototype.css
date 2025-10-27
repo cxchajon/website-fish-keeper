@@ -726,6 +726,63 @@ body.sa-proto-modal-open {
   height: 44px;
 }
 
+.prototype-mode .filter-setup {
+  margin-top: 0.5rem;
+}
+
+.prototype-mode .filter-setup .muted {
+  opacity: 0.8;
+  margin: 0 0 0.5rem;
+}
+
+.prototype-mode .filter-setup__row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.prototype-mode .fs-input {
+  height: 44px;
+  border-radius: 12px;
+  padding: 0.5rem 0.75rem;
+  min-width: 0;
+}
+
+.prototype-mode .fs-select {
+  width: 160px;
+}
+
+.prototype-mode .fs-gph {
+  width: 120px;
+}
+
+.prototype-mode .btn-compact {
+  height: 44px;
+  padding: 0 0.9rem;
+  border-radius: 12px;
+}
+
+@media (max-width: 420px) {
+  .prototype-mode .fs-select {
+    flex: 1 1 140px;
+  }
+
+  .prototype-mode .fs-gph {
+    flex: 0 0 110px;
+  }
+
+  .prototype-mode #fs-add-custom {
+    flex: 0 0 auto;
+  }
+}
+
+.prototype-mode .hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
 .prototype-mode .proto-add-button {
   flex: 0 0 auto;
   display: inline-flex;
