@@ -792,3 +792,76 @@ canvas {
     padding: 8px;
   }
 }
+/* === Mobile "frameless" dashboard === */
+@media (max-width: 768px) {
+  /* Kill any card/glass look on mobile */
+  .dashboard-card,
+  .panel,
+  .glass,
+  .surface,
+  .module,
+  .card,
+  .chart-frame {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Some builds draw a rounded frame via ::before/::after */
+  .dashboard-card::before,
+  .panel::before,
+  .glass::before,
+  .surface::before,
+  .module::before,
+  .card::before,
+  .chart-frame::before,
+  .dashboard-card::after,
+  .panel::after,
+  .glass::after,
+  .surface::after,
+  .module::after,
+  .card::after,
+  .chart-frame::after {
+    content: none !important;
+  }
+
+  /* Headings and blocks breathe on the blueprint */
+  .section,
+  .chart-section {
+    margin-top: clamp(28px, 5vh, 56px);
+    margin-bottom: clamp(28px, 5vh, 56px);
+    padding: 0; /* no inner card padding */
+  }
+
+  /* Chart containers expand; no inner rounded panel */
+  .chart-container,
+  .recharts-responsive-container {
+    background: transparent !important;
+    border-radius: 0 !important;
+    min-height: clamp(360px, 48vh, 520px);
+  }
+
+  /* Hero chart a touch taller */
+  .chart--nitrate .recharts-responsive-container {
+    min-height: clamp(400px, 52vh, 560px);
+  }
+
+  /* Keep page side padding but avoid any overflow */
+  .dashboard-wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Make sure nothing forces a narrow inner card width */
+  .dashboard-inner,
+  .content-wrap,
+  .chart-inner {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+  }
+}
+
