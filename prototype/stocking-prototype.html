@@ -1296,67 +1296,29 @@
                 </div>
                 <p class="filter-product-note" id="filter-product-note">Choose a filter matched to your tank size and use Add Selected when ready.</p>
               </div>
-              <div class="filter-flow-input">
-                <div class="field-label-row">
-                  <label for="filter-rated-gph">Rated Flow (GPH)</label>
-                  <div class="info-trigger" data-info-scope="rated-flow">
-                    <button
-                      type="button"
-                      class="proto-info-trigger info-btn"
-                      aria-haspopup="dialog"
-                      aria-controls="pop-rated-flow"
-                      aria-expanded="false"
-                      aria-label="More info about rated flow"
-                      data-proto-popover="pop-rated-flow"
-                    >i</button>
-                    <div id="pop-rated-flow" class="proto-popover" role="dialog" aria-labelledby="pop-rated-flow-title" tabindex="-1" hidden>
-                      <header>
-                        <h3 id="pop-rated-flow-title">About rated flow</h3>
-                        <button type="button" data-close aria-label="Close">×</button>
-                      </header>
-                      <div role="document" aria-labelledby="pop-rated-flow-title">
-                        <ul>
-                          <li>Manufacturers list gallons-per-hour without media or head height losses.</li>
-                          <li>Expect real-world flow to run 20–30% lower once sponges and biomedia are installed.</li>
-                          <li>Edit this value if you throttle the filter or use spray-bar mods that slow output.</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+              <div class="filter-setup">
+                <p class="muted">Choose a filter to estimate how much water flow your tank has per hour.</p>
+
+                <div class="filter-setup__row" role="group" aria-label="Add custom filter">
+                  <label class="visually-hidden" for="fs-type">Filter type</label>
+                  <select id="fs-type" class="fs-input fs-select">
+                    <option value="" selected disabled>Filter type…</option>
+                    <option>HOB</option>
+                    <option>Canister</option>
+                    <option>Internal</option>
+                    <option>Sponge</option>
+                    <option>Powerhead</option>
+                  </select>
+
+                  <label class="visually-hidden" for="fs-gph">Rated flow (GPH)</label>
+                  <input id="fs-gph" class="fs-input fs-gph" inputmode="numeric" pattern="[0-9]*" placeholder="GPH">
+
+                  <button id="fs-add-custom" type="button" class="btn btn-primary btn-compact" aria-disabled="true">
+                    Add custom
+                  </button>
                 </div>
-                <div class="proto-inline-controls proto-inline-controls--flow">
-                  <div class="select-wrap proto-inline-controls__field proto-inline-controls__field--type">
-                    <label class="sr-only" for="filter-custom-type">Filter Type</label>
-                    <select id="filter-custom-type" name="filter-custom-type" aria-describedby="filter-rated-note">
-                      <option value="">Filter type</option>
-                      <option value="HOB">Hang-on-back (HOB)</option>
-                      <option value="CANISTER">Canister</option>
-                      <option value="SPONGE">Sponge</option>
-                    </select>
-                    <svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-                      <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                  </div>
-                  <div class="filter-flow-input__field proto-inline-controls__field">
-                    <input
-                      type="text"
-                      id="filter-rated-gph"
-                      name="filter-rated-gph"
-                      inputmode="numeric"
-                      pattern="[0-9]*"
-                      placeholder="Enter GPH"
-                      aria-describedby="filter-rated-note"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    id="filter-manual-add"
-                    class="proto-add-button"
-                    disabled
-                    aria-disabled="true"
-                  >Add Custom</button>
-                </div>
-                <p class="filter-flow-note" id="filter-rated-note">Pick a filter type and flow, then press Enter or Add Custom.</p>
+
+                <p class="hint">Tip: press Enter in the GPH field to add quickly.</p>
               </div>
               <div class="filter-flow-meta">
                 <div
