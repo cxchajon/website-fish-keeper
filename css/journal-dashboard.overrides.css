@@ -1,6 +1,63 @@
 /* Page scope */
+html[data-page="journal-dashboard"],
 html[data-page="journal-dashboard"] body {
-  background: #0e1a27; /* existing blueprint base, keep */
+  height: 100%;
+}
+
+html[data-page="journal-dashboard"] {
+  /* deep navy base */
+  background: #0b1620;
+  /* grid: 32px major, 8px minor */
+  background-image:
+    /* major grid (fainter rounded-rect frame feel) */
+    radial-gradient(100% 100% at 50% 0%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 60%),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 8px);
+  background-size:
+    auto,
+    100% 100%,
+    100% 32px,
+    32px 100%,
+    100% 8px,
+    8px 100%;
+  background-attachment: fixed;
+}
+
+html[data-page="journal-dashboard"] body {
+  /* ensure wrappers don’t paint over the grid */
+  background: transparent !important;
+}
+
+html[data-page="journal-dashboard"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.35) 70%),
+    radial-gradient(80% 50% at 50% 120%, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.35) 70%);
+  z-index: 0;
+}
+
+html[data-page="journal-dashboard"] main,
+html[data-page="journal-dashboard"] .dashboard-wrap,
+html[data-page="journal-dashboard"] .page,
+html[data-page="journal-dashboard"] .dashboard-main,
+html[data-page="journal-dashboard"] .container,
+html[data-page="journal-dashboard"] .dashboard-wrap .container,
+html[data-page="journal-dashboard"] .dashboard-page .dashboard-wrap {
+  background: transparent !important;
+  position: relative;
+  z-index: 1;
+}
+
+html[data-page="journal-dashboard"] .page,
+html[data-page="journal-dashboard"] .dashboard-wrap,
+html[data-page="journal-dashboard"] .container {
+  background-color: transparent !important;
 }
 
 /* 1) Kill ANY card/panel/glass look on this page */
@@ -13,12 +70,8 @@ html[data-page="journal-dashboard"] .elevated,
 html[data-page="journal-dashboard"] .shell,
 html[data-page="journal-dashboard"] .chart-card,
 html[data-page="journal-dashboard"] .section-card,
-html[data-page="journal-dashboard"] .dashboard-tabs,
-html[data-page="journal-dashboard"] .dashboard-tab,
-html[data-page="journal-dashboard"] .dashboard-toggle,
 html[data-page="journal-dashboard"] .dashboard-month,
 html[data-page="journal-dashboard"] .dashboard-month__btn,
-html[data-page="journal-dashboard"] .tab-btn,
 html[data-page="journal-dashboard"] .range-picker,
 html[data-page="journal-dashboard"] .switch,
 html[data-page="journal-dashboard"] .chip,
@@ -87,4 +140,82 @@ html[data-page="journal-dashboard"] .section {
 }
 html[data-page="journal-dashboard"] .section + .section {
   margin-top: clamp(8px, 2vh, 24px) !important;
+}
+
+/* Pill tabs (Nitrate / Dosing / Maintenance) */
+html[data-page="journal-dashboard"] .dashboard-tabs {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0 6px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+html[data-page="journal-dashboard"] .dashboard-tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(112, 189, 255, 0.25);
+  background: linear-gradient(180deg, rgba(27, 43, 60, 0.55), rgba(18, 32, 46, 0.65));
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  color: #dbeafe;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+html[data-page="journal-dashboard"] .dashboard-tab::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #60a5fa;
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.8);
+}
+
+html[data-page="journal-dashboard"] .dashboard-tab .dashboard-tab__icon {
+  display: none;
+}
+
+html[data-page="journal-dashboard"] .dashboard-tab.is-active {
+  border-color: rgba(56, 189, 248, 0.5);
+  background: linear-gradient(180deg, rgba(35, 61, 90, 0.75), rgba(26, 51, 77, 0.9));
+  box-shadow:
+    0 14px 30px rgba(24, 144, 255, 0.25),
+    inset 0 0 0 1px rgba(173, 216, 255, 0.25);
+}
+
+html[data-page="journal-dashboard"] .dashboard-tab span {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+/* Chart panel sits directly on background (no opaque card) */
+html[data-page="journal-dashboard"] .chart-container {
+  background: transparent !important;
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 0 0 0 transparent;
+}
+
+html[data-page="journal-dashboard"] .recharts-responsive-container {
+  width: 100% !important;
+  height: 420px !important;
+}
+
+@media (min-width: 768px) {
+  html[data-page="journal-dashboard"] .recharts-responsive-container {
+    height: 520px !important;
+  }
+}
+
+html[data-page="journal-dashboard"] .card,
+html[data-page="journal-dashboard"] .dashboard-card {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
 }
