@@ -1,22 +1,39 @@
-import test from 'node:test';
+import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { percentBioload } from '../js/logic/compute-proxy.js';
 
-test('adding flow does NOT increase bioload % (same stock)', () => {
-  const baseState = { gallons: 29, planted: false, speciesLoad: 15, flowGPH: 120 };
-  const p1 = percentBioload(baseState);
-  const p2 = percentBioload({ ...baseState, flowGPH: 260 });
-  assert.ok(p2 <= p1 + 1e-9, `Expected ${p2} <= ${p1}`);
+const expect = (actual) => ({
+  toBeLessThanOrEqual(expected) {
+    assert.ok(actual <= expected + 1e-9, `Expected ${actual} ≤ ${expected}`);
+  },
+  toBeLessThan(expected) {
+    assert.ok(actual < expected, `Expected ${actual} < ${expected}`);
+  },
+  toBe(expected) {
+    assert.equal(actual, expected);
+  },
 });
 
-test('planted relief lowers % vs non-planted (same stock & flow)', () => {
-  const unplanted = percentBioload({ gallons: 29, planted: false, speciesLoad: 15, flowGPH: 200 });
-  const planted = percentBioload({ gallons: 29, planted: true, speciesLoad: 15, flowGPH: 200 });
-  assert.ok(planted < unplanted, `Expected planted ${planted} < ${unplanted}`);
-});
+describe('bioload percent & turnover relationship', () => {
+  const base = { gallons: 29, speciesLoad: 15, planted: false };
 
-test('0 capacity guard returns 0 and does not crash', () => {
-  const percent = percentBioload({ gallons: 0, planted: false, speciesLoad: 10, flowGPH: 200 });
-  assert.equal(percent, 0);
+  test('more flow does NOT increase percent', () => {
+    const low = percentBioload({ ...base, flowGPH: 80 });
+    const mid = percentBioload({ ...base, flowGPH: 200 });
+    const high = percentBioload({ ...base, flowGPH: 260 });
+    expect(mid).toBeLessThanOrEqual(low);
+    expect(high).toBeLessThanOrEqual(mid);
+  });
+
+  test('planted reduces percent with same stock/flow', () => {
+    const off = percentBioload({ ...base, planted: false, flowGPH: 200 });
+    const on = percentBioload({ ...base, planted: true, flowGPH: 200 });
+    expect(on).toBeLessThan(off);
+  });
+
+  test('zero-capacity guard', () => {
+    const percent = percentBioload({ gallons: 0, speciesLoad: 10, planted: false, flowGPH: 200 });
+    expect(percent).toBe(0);
+  });
 });
