@@ -1,0 +1,185 @@
+[
+  {
+    "path": "js/fish-data.js",
+    "responsibilities": [
+      "Defines per-species bioload gallon-equivalent (bioloadGE) values consumed by calculators."
+    ],
+    "keyExports": [
+      {
+        "name": "FISH_DB",
+        "details": "Array of species records with bioloadGE, activity tags, etc.",
+        "consumedBy": ["js/logic/compute.js", "prototype/js/logic/compute-proxy.js", "crosscheck/tests"]
+      }
+    ]
+  },
+  {
+    "path": "js/bioload.js",
+    "responsibilities": [
+      "Normalize tank capacity (displacement, planted bonus).",
+      "Aggregate species bioload and convert to percent of capacity.",
+      "Provide legacy filtration multiplier (type+mix only)."
+    ],
+    "keyExports": [
+      {
+        "name": "getEffectiveGallons",
+        "details": "Applies displacement and planted bonus to raw gallons.",
+        "callSites": ["js/logic/compute.js::computeBioload"]
+      },
+      {
+        "name": "getTotalGE",
+        "details": "Sums species bioloadGE × counts to obtain base load.",
+        "callSites": ["js/logic/compute.js::computeBioload", "prototype/js/logic/compute-proxy.js (via base engine)"]
+      },
+      {
+        "name": "computeBioloadPercent",
+        "details": "Returns percent usage = totalGE / effectiveGallons × 100.",
+        "callSites": ["js/logic/compute.js::computeBioload"]
+      },
+      {
+        "name": "computeFiltrationFactor",
+        "details": "Legacy multiplier that clamps type-weighted mix to 0.9–1.1 and feeds upstream percent math.",
+        "callSites": ["js/logic/compute.js::computeBioload"]
+      }
+    ]
+  },
+  {
+    "path": "js/logic/compute.js",
+    "responsibilities": [
+      "Compute tank bioload percent (current/proposed) from species, planted flag, and legacy filtration factor.",
+      "Derive turnover heuristics and compose flowAdjustment metadata consumed by UI."
+    ],
+    "keyExports": [
+      {
+        "name": "computeBioload",
+        "details": "Sums base bioload (getTotalGE), applies planted capacity bonus, multiplies by computeFiltrationFactor.totalFactor.",
+        "callSites": ["prototype/js/logic/compute-proxy.js::computeBioload", "js/stocking.js"]
+      },
+      {
+        "name": "buildComputedState",
+        "details": "Builds computed summary (bioload, aggression, env) consumed by UI rendering.",
+        "callSites": ["js/stocking.js", "prototype/js/logic/compute-proxy.js::buildComputedState"]
+      },
+      {
+        "name": "calcTotalGph",
+        "details": "Sums rated_gph across filters for flow heuristics.",
+        "callSites": ["js/logic/compute.js::computeBioload", "prototype/js/logic/compute-proxy.js::resolveFlowGph"]
+      }
+    ]
+  },
+  {
+    "path": "prototype/assets/js/proto-filtration-math.js",
+    "responsibilities": [
+      "Prototype filtration math: turnover, per-filter efficiency, aggregate relief, adjusted bioload percent."
+    ],
+    "keyExports": [
+      {
+        "name": "FILTER_BASE",
+        "details": "Base relief factors per filter type (Canister 0.60 → Sponge 0.25).",
+        "callSites": ["computeEfficiency"]
+      },
+      {
+        "name": "computeTurnover",
+        "details": "totalGPH / gallons with floor guards.",
+        "callSites": ["prototype/js/logic/compute-proxy.js::computeBioloadDetails", "prototype/js/proto-filtration.js::computeFilterStats"]
+      },
+      {
+        "name": "computeEfficiency",
+        "details": "Clamps FILTER_BASE[type] × clamp(turnover/5,0.4,1.3) to [0,0.6].",
+        "callSites": ["computeAggregateEfficiency", "prototype/js/logic/compute-proxy.js::computeBlendEfficiency"]
+      },
+      {
+        "name": "mapFiltersForEfficiency",
+        "details": "Normalizes catalog/custom filters to {type,gph,id,source}.",
+        "callSites": ["computeAggregateEfficiency", "prototype/js/logic/compute-proxy.js::computeBioloadDetails", "prototype/js/proto-filtration.js::computeFilterStats"]
+      },
+      {
+        "name": "computeAggregateEfficiency",
+        "details": "Sums per-filter efficiencies and clamps total to ≤0.6.",
+        "callSites": ["prototype/js/logic/compute-proxy.js::computeBioloadDetails", "prototype/js/proto-filtration.js::computeFilterStats"]
+      },
+      {
+        "name": "computeAdjustedBioload",
+        "details": "Applies (1 - efficiency) multiplier to base load.",
+        "callSites": ["prototype/js/logic/compute-proxy.js::computeBioloadDetails"]
+      },
+      {
+        "name": "computePercent",
+        "details": "Converts adjusted load / capacity into clamped percent (0–200).",
+        "callSites": ["prototype/js/logic/compute-proxy.js::computeBioloadDetails"]
+      },
+      {
+        "name": "getTotalGPH",
+        "details": "Adds up rated flow across filters.",
+        "callSites": ["prototype/js/proto-filtration.js::computeFilterStats"]
+      }
+    ]
+  },
+  {
+    "path": "prototype/js/logic/compute-proxy.js",
+    "responsibilities": [
+      "Wrap legacy computeBioload to inject prototype filtration math and plant bonus handling.",
+      "Expose percentBioload helper for prototype tests.",
+      "Dispatch debug telemetry for filter efficiency snapshots."
+    ],
+    "keyComponents": [
+      {
+        "name": "resolvePlantBonus",
+        "details": "Returns clamp(plantBonus,0,0.2) or 0.1 when planted is true.",
+        "callSites": ["computeBioloadDetails"]
+      },
+      {
+        "name": "computeBioloadDetails",
+        "details": "Builds turnover, equipment efficiency (via computeAggregateEfficiency), applies plant bonus and adjusted percent.",
+        "callSites": ["percentBioload", "patchBioload"]
+      },
+      {
+        "name": "patchBioload",
+        "details": "Recomputes bioload percent using prototype math and overlays onto base engine output.",
+        "callSites": ["computeBioload", "buildComputedState"]
+      },
+      {
+        "name": "computeFlowBonus",
+        "details": "Adds up to 10% capacity bonus when turnover is 5–10×, feeding flowAdjustment metadata.",
+        "callSites": ["patchBioload"]
+      },
+      {
+        "name": "deriveFilterState",
+        "details": "Extracts filter list/turnover from computed state or proto UI for recompute loop.",
+        "callSites": ["patchComputed"]
+      }
+    ]
+  },
+  {
+    "path": "prototype/js/proto-filtration.js",
+    "responsibilities": [
+      "Prototype filtration UI adapter: manages filter chips, syncs with appState, triggers recompute.",
+      "Normalizes product/custom filters and persists selections."],
+    "keyComponents": [
+      {
+        "name": "computeFilterStats",
+        "details": "Derives total GPH, weighted mix, turnover, and efficiency via proto-filtration-math.",
+        "callSites": ["applyFiltersToApp", "window.renderFiltration"]
+      },
+      {
+        "name": "setFilters",
+        "details": "Sanitizes added filters (product/custom), updates state, re-renders chips, and dispatches recompute.",
+        "callSites": ["addManualFilter", "tryAddProduct", "hydrateFromAppState"]
+      },
+      {
+        "name": "applyFiltersToApp",
+        "details": "Writes normalized filters + computed totals onto window.appState and dispatches 'ttg:recompute'.",
+        "callSites": ["setFilters"]
+      },
+      {
+        "name": "addManualFilter",
+        "details": "Validates custom type/GPH, formats label, appends to chip list (source='custom').",
+        "callSites": ["tryAddCustom"]
+      },
+      {
+        "name": "tryAddProduct",
+        "details": "Loads catalog entry, transforms into product filter, appends via setFilters.",
+        "callSites": ["product add button click handler"]
+      }
+    ]
+  }
+]

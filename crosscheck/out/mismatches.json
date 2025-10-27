@@ -1,0 +1,464 @@
+[
+  {
+    "scenario": "20g-bare-sponge_hob",
+    "check": "diminishing-returns",
+    "expected": "Second improvement <= first (37.440%)",
+    "got": "74.880%",
+    "message": "Stacking filters should yield diminishing returns."
+  },
+  {
+    "scenario": "20g-planted-sponge_hob",
+    "check": "diminishing-returns",
+    "expected": "Second improvement <= first (33.696%)",
+    "got": "67.392%",
+    "message": "Stacking filters should yield diminishing returns."
+  },
+  {
+    "scenario": "29g-bare-sponge_hob",
+    "check": "diminishing-returns",
+    "expected": "Second improvement <= first (17.807%)",
+    "got": "59.655%",
+    "message": "Stacking filters should yield diminishing returns."
+  },
+  {
+    "scenario": "29g-planted-sponge_hob",
+    "check": "diminishing-returns",
+    "expected": "Second improvement <= first (16.027%)",
+    "got": "53.689%",
+    "message": "Stacking filters should yield diminishing returns."
+  },
+  {
+    "scenario": "40g-bare-sponge_hob",
+    "check": "diminishing-returns",
+    "expected": "Second improvement <= first (9.360%)",
+    "got": "46.800%",
+    "message": "Stacking filters should yield diminishing returns."
+  },
+  {
+    "scenario": "40g-planted-sponge_hob",
+    "check": "diminishing-returns",
+    "expected": "Second improvement <= first (8.424%)",
+    "got": "42.120%",
+    "message": "Stacking filters should yield diminishing returns."
+  },
+  {
+    "scenario": "20g-bare-sponge80",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-bare-hob200",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-bare-canister300",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-bare-sponge_hob",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-bare-hob_hob",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-bare-hob_canister",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-bare-custom60",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-bare-custom120",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-bare-custom200",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-bare-product200_custom120",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-planted-sponge80",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-planted-hob200",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-planted-canister300",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-planted-sponge_hob",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-planted-hob_hob",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-planted-hob_canister",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-planted-custom60",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-planted-custom120",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-planted-custom200",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "20g-planted-product200_custom120",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-bare-sponge80",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-bare-hob200",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-bare-canister300",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-bare-sponge_hob",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-bare-hob_hob",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-bare-hob_canister",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-bare-custom60",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-bare-custom120",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-bare-custom200",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-bare-product200_custom120",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-planted-sponge80",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-planted-hob200",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-planted-canister300",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-planted-sponge_hob",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-planted-hob_hob",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-planted-hob_canister",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-planted-custom60",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-planted-custom120",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-planted-custom200",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "29g-planted-product200_custom120",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-bare-sponge80",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-bare-hob200",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-bare-canister300",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-bare-sponge_hob",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-bare-hob_hob",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-bare-hob_canister",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-bare-custom60",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-bare-custom120",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-bare-custom200",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-bare-product200_custom120",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-planted-sponge80",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-planted-hob200",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-planted-canister300",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-planted-sponge_hob",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-planted-hob_hob",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-planted-hob_canister",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-planted-custom60",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-planted-custom120",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-planted-custom200",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  },
+  {
+    "scenario": "40g-planted-product200_custom120",
+    "check": "turnover-derate",
+    "expected": "Total flow ≈ 65% of rated GPH",
+    "got": "ratio=1.000",
+    "message": "Rated GPH is not derated before efficiency."
+  }
+]
