@@ -3,11 +3,24 @@
   const inProto = () => location.pathname.includes('/prototype/stocking-prototype.html');
   if (!inProto()) return;
 
+  const LEGACY_SELECTORS = [
+    '#filtration-summary',
+    '.filtration-summary',
+    '[data-card="filtration-summary"]',
+    '.filtration-card',
+    '#filtration-trigger',
+    '.filter-setup-legacy',
+    '.filter-rows',
+    '.filter-row',
+    '.add-another-filter',
+    '.total-flow',
+    '.turnover'
+  ].join(',');
+
   const removeLegacySummary = () => {
-    // Direct/known selectors
-    document
-      .querySelectorAll('#filtration-summary, .filtration-summary, [data-card="filtration-summary"]')
-      .forEach((node) => node.remove());
+    if (LEGACY_SELECTORS) {
+      document.querySelectorAll(LEGACY_SELECTORS).forEach((node) => node.remove());
+    }
 
     // Heuristic: any card whose header text is exactly "Filtration",
     // but which is NOT the chip bar container nor the Filter Setup card.
