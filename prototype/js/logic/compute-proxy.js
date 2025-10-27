@@ -1,6 +1,7 @@
 import * as baseCompute from '../../../js/logic/compute.js?orig';
 import { formatBioloadPercent } from '../../../js/bioload.js?orig';
 import { getBandColor } from '../../../js/logic/utils.js?orig';
+import { weightedMixFactor } from '../../../js/utils.js?orig';
 
 const { computeBioload: baseComputeBioload, buildComputedState: baseBuildComputedState, calcTotalGph } = baseCompute;
 
@@ -8,43 +9,124 @@ const __DEV_BIOLOAD = false;
 
 const clamp = (value, lo, hi) => Math.min(hi, Math.max(lo, value));
 
+const FILTER_BASE = Object.freeze({
+  CANISTER: 0.52,
+  HOB: 0.45,
+  SPONGE: 0.36,
+  MIXED: 0.48,
+  DEFAULT: 0.45,
+});
+
+const TYPE_THRESHOLDS = Object.freeze({
+  CANISTER_MIN: 1.05,
+  SPONGE_MAX: 0.95,
+});
+
+const normalizeTypeBlend = (value) => {
+  if (typeof value === 'string') {
+    const upper = value.trim().toUpperCase();
+    if (upper && FILTER_BASE[upper] != null) {
+      return upper;
+    }
+  }
+  return null;
+};
+
+const typeBlendFromMixFactor = (mixFactor) => {
+  if (!Number.isFinite(mixFactor) || mixFactor <= 0) {
+    return null;
+  }
+  if (mixFactor >= TYPE_THRESHOLDS.CANISTER_MIN) {
+    return 'CANISTER';
+  }
+  if (mixFactor <= TYPE_THRESHOLDS.SPONGE_MAX) {
+    return 'SPONGE';
+  }
+  return 'HOB';
+};
+
+const resolveTypeBlend = ({ typeBlend, mixFactor }) => {
+  const normalized = normalizeTypeBlend(typeBlend);
+  if (normalized) {
+    return normalized;
+  }
+  const fromMix = typeBlendFromMixFactor(mixFactor);
+  if (fromMix) {
+    return fromMix;
+  }
+  return 'HOB';
+};
+
+const resolvePlantBonus = ({ planted, plantBonus }) => {
+  if (Number.isFinite(plantBonus)) {
+    return clamp(plantBonus, 0, 0.2);
+  }
+  return planted ? 0.1 : 0;
+};
+
+const computeEfficiency = ({ turnover, flowGPH, typeBlend, mixFactor }) => {
+  if (!Number.isFinite(turnover) || turnover <= 0 || !Number.isFinite(flowGPH) || flowGPH <= 0) {
+    return 0;
+  }
+  const blendKey = resolveTypeBlend({ typeBlend, mixFactor });
+  const base = FILTER_BASE[blendKey] ?? FILTER_BASE.DEFAULT;
+  const turnoverFactor = clamp(turnover / 5, 0.4, 1.3);
+  return clamp(base * turnoverFactor, 0, 0.6);
+};
+
 const mapLinear = (value, a, b, min, max) => {
   if (b === a) return min;
   const t = clamp((value - a) / (b - a), 0, 1);
   return min + (max - min) * t;
 };
 
-const computeBioloadDetails = ({ gallons, planted, speciesLoad, flowGPH }) => {
+const computeBioloadDetails = ({
+  gallons,
+  planted,
+  speciesLoad,
+  flowGPH,
+  totalGPH,
+  capacity,
+  typeBlend,
+  mixFactor,
+  plantBonus,
+}) => {
   const tankGallons = Math.max(0, Number(gallons || 0));
-  const plantedAdj = planted ? 0.90 : 1.00;
-  const flow = Math.max(0, Number(flowGPH || 0));
+  const flowInput = Number.isFinite(flowGPH)
+    ? flowGPH
+    : Number.isFinite(totalGPH)
+      ? totalGPH
+      : 0;
+  const flow = Math.max(0, Number(flowInput || 0));
   const speciesTotal = Math.max(0, Number(speciesLoad || 0));
-
-  const load = speciesTotal * plantedAdj;
-  const baseCapacity = tankGallons * 1.0;
-  const turnoverX = tankGallons > 0 ? flow / tankGallons : 0;
-  const rawBonus = mapLinear(turnoverX, 5, 10, 0.00, 0.10);
-  const capBonus = clamp(rawBonus, 0.00, 0.10);
-  const capacity = baseCapacity * (1 + capBonus);
-  const percent = capacity > 0 ? (load / capacity) * 100 : 0;
+  const bonus = resolvePlantBonus({ planted, plantBonus });
+  const loadBase = speciesTotal;
+  const loadPlanted = loadBase * (1 - bonus);
+  const turnover = tankGallons > 0 && flow > 0 ? flow / tankGallons : 0;
+  const eff = computeEfficiency({ turnover, flowGPH: flow, typeBlend, mixFactor });
+  const effectiveLoad = loadPlanted * (1 - eff);
+  const baseCapacity = Number.isFinite(capacity) && capacity > 0 ? capacity : tankGallons;
+  const safeCapacity = Math.max(1, Number(baseCapacity || 0));
+  const percent = clamp((effectiveLoad / safeCapacity) * 100, 0, 200);
 
   return {
     gallons: tankGallons,
     planted: Boolean(planted),
-    speciesLoad: speciesTotal,
+    speciesLoad: loadBase,
     flowGPH: flow,
-    plantedAdj,
-    load,
-    baseCapacity,
-    turnoverX,
-    rawBonus,
-    capBonus,
-    capacity,
+    plantBonus: bonus,
+    load: loadPlanted,
+    turnoverX: turnover,
+    efficiency: eff,
+    effectiveLoad,
+    capacity: safeCapacity,
     percent,
   };
 };
 
 export const percentBioload = (state) => computeBioloadDetails(state).percent;
+
+export const computeBioloadPercentForTest = (state) => percentBioload(state);
 
 const computeFlowBonus = (gallons, flowGPH) => {
   const tankGallons = Math.max(0, Number(gallons || 0));
@@ -120,6 +202,37 @@ const resolveActualGph = (raw, flowGPH, filterState = {}, tank) => {
   return null;
 };
 
+const resolveMixFactor = (filterState, raw) => {
+  if (Number.isFinite(filterState?.mixFactor) && filterState.mixFactor > 0) {
+    return filterState.mixFactor;
+  }
+  if (Number.isFinite(raw?.flowAdjustment?.mixFactor) && raw.flowAdjustment.mixFactor > 0) {
+    return raw.flowAdjustment.mixFactor;
+  }
+  const filtersList = Array.isArray(filterState?.filters) ? filterState.filters : [];
+  if (filtersList.length === 0) {
+    return null;
+  }
+  const total = Number.isFinite(filterState?.totalGph) && filterState.totalGph > 0 ? filterState.totalGph : null;
+  const factor = weightedMixFactor(filtersList, total);
+  return Number.isFinite(factor) && factor > 0 ? factor : null;
+};
+
+const resolveTypeBlendInput = (filterState, raw) => {
+  if (raw?.flowAdjustment?.type) {
+    return raw.flowAdjustment.type;
+  }
+  const filtersList = Array.isArray(filterState?.filters) ? filterState.filters : [];
+  if (!filtersList.length) {
+    return null;
+  }
+  const firstType = filtersList[0]?.type ?? filtersList[0]?.kind;
+  if (typeof firstType === 'string') {
+    return firstType;
+  }
+  return null;
+};
+
 const patchBioload = (raw, { tank, filterState } = {}) => {
   if (!raw || !tank) {
     return raw;
@@ -127,11 +240,58 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
   const gallons = Number.isFinite(tank?.gallons) ? tank.gallons : 0;
   const planted = Boolean(tank?.planted);
   const flowGPH = resolveFlowGph(tank, filterState, raw);
+  const mixFactor = resolveMixFactor(filterState, raw);
+  const typeBlend = resolveTypeBlendInput(filterState, raw);
+  const plantBonus = Number.isFinite(raw?.plantBonus) ? raw.plantBonus : null;
+  const capacity = Number.isFinite(raw?.capacity) ? raw.capacity : null;
+  const totalGph = Number.isFinite(filterState?.totalGph) && filterState.totalGph > 0
+    ? filterState.totalGph
+    : flowGPH;
 
-  const baseCurrentDetails = computeBioloadDetails({ gallons, planted, speciesLoad: raw.currentLoad ?? 0, flowGPH: 0 });
-  const baseProposedDetails = computeBioloadDetails({ gallons, planted, speciesLoad: raw.proposed ?? 0, flowGPH: 0 });
-  const currentDetails = computeBioloadDetails({ gallons, planted, speciesLoad: raw.currentLoad ?? 0, flowGPH });
-  const proposedDetails = computeBioloadDetails({ gallons, planted, speciesLoad: raw.proposed ?? 0, flowGPH });
+  const baseCurrentDetails = computeBioloadDetails({
+    gallons,
+    planted,
+    speciesLoad: raw.currentLoad ?? 0,
+    flowGPH: 0,
+    totalGPH: totalGph,
+    capacity,
+    typeBlend,
+    mixFactor,
+    plantBonus,
+  });
+  const baseProposedDetails = computeBioloadDetails({
+    gallons,
+    planted,
+    speciesLoad: raw.proposed ?? 0,
+    flowGPH: 0,
+    totalGPH: totalGph,
+    capacity,
+    typeBlend,
+    mixFactor,
+    plantBonus,
+  });
+  const currentDetails = computeBioloadDetails({
+    gallons,
+    planted,
+    speciesLoad: raw.currentLoad ?? 0,
+    flowGPH,
+    totalGPH: totalGph,
+    capacity,
+    typeBlend,
+    mixFactor,
+    plantBonus,
+  });
+  const proposedDetails = computeBioloadDetails({
+    gallons,
+    planted,
+    speciesLoad: raw.proposed ?? 0,
+    flowGPH,
+    totalGPH: totalGph,
+    capacity,
+    typeBlend,
+    mixFactor,
+    plantBonus,
+  });
 
   const baseCurrentPercentValue = baseCurrentDetails.percent;
   const baseProposedPercentValue = baseProposedDetails.percent;
@@ -177,8 +337,8 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
       planted,
       flowGPH,
       turnoverX: proposedDetails.turnoverX,
-      efficiencyUsed: '(none)',
-      capacityBonus: Number.isFinite(proposedDetails.capBonus) ? proposedDetails.capBonus : '(none)',
+      efficiencyUsed: Number.isFinite(proposedDetails.efficiency) ? proposedDetails.efficiency : '(none)',
+      capacityBonus: '(n/a)',
       numerator_load: proposedDetails.load,
       denominator_capacity: proposedDetails.capacity,
       percent_out: proposedPercentValue,
@@ -213,7 +373,11 @@ const deriveFilterState = (state, computed) => {
   const totalGph = computed?.filtering?.gphTotal ?? state?.totalGph ?? null;
   const turnover = computed?.filtering?.turnover ?? computed?.bioload?.flowAdjustment?.turnover ?? state?.turnover ?? null;
   const ratedGph = computed?.filtering?.ratedGph ?? state?.ratedGph ?? null;
-  return { filters, totalGph, turnover, ratedGph };
+  const mixFactor = computed?.filtering?.mixFactor
+    ?? computed?.bioload?.flowAdjustment?.mixFactor
+    ?? state?.mixFactor
+    ?? null;
+  return { filters, totalGph, turnover, ratedGph, mixFactor };
 };
 
 const patchComputed = (computed, state) => {
@@ -254,7 +418,7 @@ if (__DEV_BIOLOAD && typeof window !== 'undefined') {
         label: variant.label,
         percent: Number(details.percent.toFixed(4)),
         turnoverX: details.turnoverX,
-        capacityBonus: details.capBonus,
+        efficiency: Number(details.efficiency?.toFixed?.(4) ?? details.efficiency ?? 0),
       };
     });
     try {

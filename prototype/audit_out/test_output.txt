@@ -1,0 +1,51 @@
+TAP version 13
+# [StockingAdvisor] Species loaded: 20/20; marine excluded
+# Subtest: bioload percent vs filtration
+    # Subtest: more GPH should not raise percent
+    ok 1 - more GPH should not raise percent
+      ---
+      duration_ms: 2.023495
+      ...
+    # Subtest: planted reduces percent at same GPH
+    ok 2 - planted reduces percent at same GPH
+      ---
+      duration_ms: 0.385941
+      ...
+    1..2
+ok 1 - bioload percent vs filtration
+  ---
+  duration_ms: 4.711101
+  type: 'suite'
+  ...
+# [StockingAdvisor] Species loaded: 20/20; marine excluded
+# Subtest: bioload percent & turnover relationship
+    # Subtest: more flow does NOT increase percent
+    ok 1 - more flow does NOT increase percent
+      ---
+      duration_ms: 2.293273
+      ...
+    # Subtest: planted reduces percent with same stock/flow
+    ok 2 - planted reduces percent with same stock/flow
+      ---
+      duration_ms: 0.477067
+      ...
+    # Subtest: zero-capacity guard saturates at clamp
+    ok 3 - zero-capacity guard saturates at clamp
+      ---
+      duration_ms: 0.478328
+      ...
+    1..3
+ok 2 - bioload percent & turnover relationship
+  ---
+  duration_ms: 5.779647
+  type: 'suite'
+  ...
+1..2
+# tests 5
+# suites 2
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 316.051088

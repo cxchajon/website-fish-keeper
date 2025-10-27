@@ -32,8 +32,8 @@ describe('bioload percent & turnover relationship', () => {
     expect(on).toBeLessThan(off);
   });
 
-  test('zero-capacity guard', () => {
+  test('zero-capacity guard saturates at clamp', () => {
     const percent = percentBioload({ gallons: 0, speciesLoad: 10, planted: false, flowGPH: 200 });
-    expect(percent).toBe(0);
+    expect(percent).toBe(200);
   });
 });
