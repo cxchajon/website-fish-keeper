@@ -1,0 +1,6 @@
+/* defensive: if a legacy summary card sneaks in, keep it invisible */
+#filtration-summary,
+.card[data-card="filtration-summary"],
+section.card.filtration-summary {
+  display: none !important;
+}
