@@ -37,9 +37,25 @@
   <link rel="stylesheet" href="/css/site.css?v=1.4.7" />
   <link rel="stylesheet" href="/css/ui.css?v=2024-09-15" />
   <link rel="stylesheet" href="/prototype/css/stocking-prototype.css" />
-  <link rel="stylesheet" href="/prototype/assets/css/proto-popovers.css" />
-  <link rel="stylesheet" href="/prototype/assets/css/filtration.css" />
-  <link rel="stylesheet" href="/prototype/assets/css/prototype.css" />
+  <link rel="stylesheet" href="/prototype/assets/css/proto-popovers.css?v=proto_rm_2025_10_25" />
+  <link rel="stylesheet" href="/prototype/assets/css/filtration.css?v=proto_rm_2025_10_25" />
+  <link rel="stylesheet" href="/prototype/assets/css/prototype.css?v=proto_rm_2025_10_25" />
+  <style>
+    /* PROTOTYPE ONLY — block any lingering legacy UI from appearing */
+    .filtration-card,
+    .filtration-summary,
+    .filter-setup-legacy,
+    .filter-rows,
+    .filter-row,
+    .add-another-filter,
+    .total-flow,
+    .turnover,
+    #filtration-summary,
+    [data-card="filtration-summary"],
+    #filtration-trigger {
+      display: none !important;
+    }
+  </style>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -134,9 +150,9 @@
   }
   </script>
   <script defer src="/js/nav.js?v=1.1.0"></script>
-  <script defer src="/prototype/assets/js/filtration.js"></script>
+  <script defer src="/prototype/assets/js/filtration.js?v=proto_rm_2025_10_25"></script>
   <!-- proto guard: ensure legacy filtration card stays removed -->
-  <script src="/prototype/assets/js/proto-guards.js" defer></script>
+  <script src="/prototype/assets/js/proto-guards.js?v=proto_rm_2025_10_25" defer></script>
   <style>
     :root {
       --fg: #eef3ff;
@@ -1382,7 +1398,6 @@
                 <p class="filter-product-meta" id="filter-product-label" hidden></p>
               </div>
             </div>
-            <div id="filtration-trigger"></div>
           </div>
         </div>
       </div>
@@ -1972,7 +1987,31 @@
 <!-- === TTG Ad Slot View Tracking END === -->
 
   <script defer src="/prototype/js/stocking-prototype.js"></script>
-  <script src="/prototype/assets/js/proto-popovers.js" defer></script>
+  <script src="/prototype/assets/js/proto-popovers.js?v=proto_rm_2025_10_25" defer></script>
+  <script>
+    (function () {
+      const TARGET_SELECTOR = '.filtration-card,.filtration-summary,.filter-setup-legacy,.filter-rows,.filter-row,.add-another-filter,.total-flow,.turnover,#filtration-summary,[data-card="filtration-summary"],#filtration-trigger';
+      const purge = (root = document) => {
+        root.querySelectorAll(TARGET_SELECTOR).forEach((node) => {
+          node.remove();
+        });
+      };
+
+      purge();
+
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes?.forEach((node) => {
+            if (node.nodeType === 1) {
+              purge(node);
+            }
+          });
+        });
+      });
+
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+    })();
+  </script>
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
 </body>

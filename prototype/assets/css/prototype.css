@@ -1,6 +1,14 @@
 /* Defensive: hide any legacy filtration summary card if it leaks in */
 #filtration-summary,
 .filtration-summary,
-[data-card="filtration-summary"] {
+[data-card="filtration-summary"],
+.filtration-card,
+.filter-setup-legacy,
+.filter-rows,
+.filter-row,
+.add-another-filter,
+.total-flow,
+.turnover,
+#filtration-trigger {
   display: none !important;
 }

@@ -84,12 +84,6 @@
   display: none !important;
 }
 
-/* Hide Filtration summary info trigger (prototype only) */
-#filtration-trigger [data-role="filtration-info"],
-#filtration-trigger .info-btn.ttg-tooltip-trigger[aria-controls="filtration-pill-tip"] {
-  display: none !important;
-}
-
 /* === PROTOTYPE-ONLY compact input for turnover === */
 .proto-input-group {
   position: relative;
