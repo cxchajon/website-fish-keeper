@@ -353,22 +353,6 @@
         });
     }
 
-    addChip(entry.category);
-
-    if (Array.isArray(entry.tags)) {
-      entry.tags.forEach((tag) => {
-        addChip(tag);
-      });
-    } else if (typeof entry.tags === 'string') {
-      entry.tags
-        .split(',')
-        .map((tag) => tag.trim())
-        .filter(Boolean)
-        .forEach((tag) => {
-          addChip(tag);
-        });
-    }
-
     if (!chips.length) {
       return null;
     }
