@@ -217,7 +217,9 @@ if (!immediateSelect) {
 
     const restoreFocusSafely = () => {
       try {
-        shouldRestoreVariantFocus?.();
+        if (typeof shouldRestoreVariantFocus === 'function') {
+          shouldRestoreVariantFocus();
+        }
       } catch (error) {
         const message = typeof error?.message === 'string' ? error.message : String(error);
         console.warn('[tank-size]', 'Focus restore skipped:', message);

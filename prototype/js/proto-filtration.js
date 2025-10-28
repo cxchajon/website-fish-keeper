@@ -5,6 +5,12 @@ import {
   computeAggregateEfficiency,
   mapFiltersForEfficiency,
 } from '../assets/js/proto-filtration-math.js';
+import {
+  loadFilterCatalog as fetchFilterCatalog,
+  filterByTank as filterCatalogByTank,
+  sortByTypeBrandGph,
+  BIG_FALLBACK_LIST,
+} from './catalog-loader.js';
 
 const DEBUG_FILTERS = Boolean(window?.TTG?.DEBUG_FILTERS);
 const TYPE_WEIGHT = Object.freeze({
@@ -56,6 +62,7 @@ const refs = {
 };
 
 let catalog = new Map();
+let catalogItems = [];
 let catalogPromise = null;
 let baseManualNote = '';
 let baseProductNote = '';
@@ -63,6 +70,7 @@ let recomputeFrame = 0;
 let pendingProductId = '';
 let productStatusMessage = '';
 let productStatusTimer = 0;
+let lastOptionsSignature = '';
 
 function normalizeSource(value) {
   if (value === FILTER_SOURCES.PRODUCT) {
@@ -109,6 +117,30 @@ function formatGph(value) {
     return '0';
   }
   return String(Math.round(num));
+}
+
+function formatGallonsRange(min, max) {
+  const minValue = Number.isFinite(min) && min > 0 ? Math.round(min) : 0;
+  const maxValue = Number.isFinite(max) && max > 0 ? Math.round(max) : Infinity;
+  const lower = `${minValue}g`;
+  const upper = maxValue === Infinity ? '∞' : `${maxValue}g`;
+  return lower === upper ? lower : `${lower}–${upper}`;
+}
+
+function formatProductOption(item) {
+  const label = item?.name ? item.name : item?.id ?? '';
+  const details = [];
+  if (Number.isFinite(item?.gphRated) && item.gphRated > 0) {
+    details.push(`${formatGph(item.gphRated)} GPH`);
+  }
+  if (typeof item?.type === 'string' && item.type) {
+    details.push(item.type);
+  }
+  details.push(formatGallonsRange(item?.minGallons, item?.maxGallons));
+  if (!label) {
+    return details.join(' • ');
+  }
+  return details.length ? `${label} • ${details.join(' • ')}` : label;
 }
 
 function formatTurnover(value) {
@@ -554,6 +586,7 @@ function updateManualAddButton() {
 
 function render() {
   state.tankGallons = getTankGallons();
+  renderProductOptions();
   renderChips();
   renderSummary();
   if (typeof window.renderFiltration === 'function') {
@@ -585,7 +618,7 @@ function setFilters(nextFilters) {
   nextFilters.forEach((raw) => {
     if (!raw) return;
     const source = normalizeSource(raw.source);
-    const gph = clampGph(raw.gph ?? raw.rated_gph);
+    const gph = clampGph(raw.gph ?? raw.rated_gph ?? raw.gphRated);
     if (!Number.isFinite(gph) || gph <= 0) {
       return;
     }
@@ -623,7 +656,7 @@ function setFilters(nextFilters) {
 
 function createProductFilter(product) {
   if (!product || !product.id) return null;
-  const rated = clampGph(product.rated_gph ?? product.ratedGph);
+  const rated = clampGph(product.rated_gph ?? product.ratedGph ?? product.gphRated);
   if (!rated) {
     return null;
   }
@@ -702,6 +735,72 @@ function findProductById(id) {
   return catalog.get(id) ?? null;
 }
 
+function getCatalogItemsForTank(gallons) {
+  if (!catalogItems.length) {
+    return [];
+  }
+  const filtered = filterCatalogByTank(catalogItems, gallons);
+  return filtered.length ? filtered : catalogItems.slice();
+}
+
+function buildOptionsSignature(items) {
+  if (!items.length) return '';
+  return items.map((item) => item.id).join('|');
+}
+
+function renderProductOptions() {
+  if (!refs.productSelect || !catalogItems.length) {
+    return;
+  }
+  const tankGallons = Number.isFinite(state.tankGallons) && state.tankGallons > 0
+    ? state.tankGallons
+    : getTankGallons();
+  const items = getCatalogItemsForTank(tankGallons);
+  if (!items.length) {
+    return;
+  }
+  const signature = buildOptionsSignature(items);
+  const shouldRender = signature !== lastOptionsSignature || refs.productSelect.dataset.catalogReady !== '1';
+  if (!shouldRender) {
+    return;
+  }
+  lastOptionsSignature = signature;
+  const selectEl = refs.productSelect;
+  const previousValue = pendingProductId || selectEl.value || '';
+  selectEl.innerHTML = '';
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '— Select a product —';
+  selectEl.appendChild(placeholder);
+  items.forEach((item) => {
+    const option = document.createElement('option');
+    option.value = item.id;
+    option.textContent = formatProductOption(item);
+    if (Number.isFinite(item.minGallons)) {
+      option.dataset.minGallons = String(Math.max(0, Math.round(item.minGallons)));
+    }
+    if (Number.isFinite(item.maxGallons)) {
+      option.dataset.maxGallons = item.maxGallons === Infinity
+        ? 'Infinity'
+        : String(Math.max(0, Math.round(item.maxGallons)));
+    }
+    if (Number.isFinite(item.gphRated) && item.gphRated > 0) {
+      option.dataset.gph = String(Math.round(item.gphRated));
+    }
+    if (typeof item.type === 'string' && item.type) {
+      option.dataset.filterType = item.type;
+    }
+    selectEl.appendChild(option);
+  });
+  if (previousValue) {
+    selectEl.value = previousValue;
+    if (selectEl.value !== previousValue) {
+      pendingProductId = '';
+    }
+  }
+  selectEl.dataset.catalogReady = '1';
+}
+
 async function handleProductChange(value) {
   const id = typeof value === 'string' ? value : '';
   pendingProductId = id;
@@ -760,26 +859,26 @@ async function loadCatalog() {
   if (catalogPromise) {
     return catalogPromise;
   }
-  catalogPromise = fetch('/data/filters.json', { cache: 'no-cache' })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to load catalog: ${response.status}`);
-      }
-      return response.json();
+  catalogPromise = fetchFilterCatalog()
+    .then((items) => sortByTypeBrandGph(items))
+    .catch((error) => {
+      console.warn('[proto-filtration] falling back to embedded catalog:', error);
+      return sortByTypeBrandGph(BIG_FALLBACK_LIST);
     })
-    .then((data) => {
+    .then((items) => {
+      catalogItems = items.slice();
       catalog = new Map();
-      const list = Array.isArray(data) ? data : [];
-      list.forEach((item) => {
+      catalogItems.forEach((item) => {
         if (item && typeof item.id === 'string' && item.id) {
           catalog.set(item.id, item);
         }
       });
+      lastOptionsSignature = '';
+      renderProductOptions();
       return catalog;
     })
-    .catch((_error) => {
-      catalog = new Map();
-      return catalog;
+    .finally(() => {
+      catalogPromise = null;
     });
   return catalogPromise;
 }
@@ -790,7 +889,7 @@ function hydrateFromAppState() {
   const existing = Array.isArray(appState.filters) ? appState.filters : [];
   const next = [];
   existing.forEach((entry) => {
-    const gph = clampGph(entry?.rated_gph ?? entry?.gph);
+    const gph = clampGph(entry?.rated_gph ?? entry?.gphRated ?? entry?.gph);
     if (!gph) {
       return;
     }
