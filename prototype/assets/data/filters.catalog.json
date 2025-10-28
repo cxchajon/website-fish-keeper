@@ -1,0 +1,290 @@
+[
+  {
+    "id": "aquaneat-sponge-20",
+    "brand": "Aquaneat",
+    "model": "Dual Sponge (up to 20G)",
+    "type": "SPONGE",
+    "gphRated": 120,
+    "minGallons": 0,
+    "maxGallons": 20
+  },
+  {
+    "id": "aquaneat-sponge-60",
+    "brand": "Aquaneat",
+    "model": "Dual Sponge (up to 60G)",
+    "type": "SPONGE",
+    "gphRated": 200,
+    "minGallons": 20,
+    "maxGallons": 40
+  },
+  {
+    "id": "aquaneat-sponge-10",
+    "brand": "Aquaneat",
+    "model": "Single Sponge (up to 10G)",
+    "type": "SPONGE",
+    "gphRated": 60,
+    "minGallons": 0,
+    "maxGallons": 20
+  },
+  {
+    "id": "hygger-double-sponge-m",
+    "brand": "Hygger",
+    "model": "Double Sponge (M)",
+    "type": "SPONGE",
+    "gphRated": 120,
+    "minGallons": 0,
+    "maxGallons": 20
+  },
+  {
+    "id": "hygger-double-sponge-s",
+    "brand": "Hygger",
+    "model": "Double Sponge (S)",
+    "type": "SPONGE",
+    "gphRated": 80,
+    "minGallons": 0,
+    "maxGallons": 20
+  },
+  {
+    "id": "pawfly-sponge-10",
+    "brand": "Pawfly",
+    "model": "Nano Sponge (up to 10G)",
+    "type": "SPONGE",
+    "gphRated": 60,
+    "minGallons": 0,
+    "maxGallons": 20
+  },
+  {
+    "id": "powkoo-dual-sponge-40",
+    "brand": "Powkoo",
+    "model": "Dual Sponge (20-55G)",
+    "type": "SPONGE",
+    "gphRated": 150,
+    "minGallons": 20,
+    "maxGallons": 55
+  },
+  {
+    "id": "aquaclear-30",
+    "brand": "AquaClear",
+    "model": "30",
+    "type": "HOB",
+    "gphRated": 150,
+    "minGallons": 20,
+    "maxGallons": 40
+  },
+  {
+    "id": "aquaclear-50",
+    "brand": "AquaClear",
+    "model": "50",
+    "type": "HOB",
+    "gphRated": 200,
+    "minGallons": 20,
+    "maxGallons": 40
+  },
+  {
+    "id": "aquaclear-70",
+    "brand": "AquaClear",
+    "model": "70",
+    "type": "HOB",
+    "gphRated": 300,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "aqueon-quietflow-75",
+    "brand": "Aqueon",
+    "model": "QuietFlow 75 LED PRO",
+    "type": "HOB",
+    "gphRated": 400,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "fluval-c2",
+    "brand": "Fluval",
+    "model": "C2",
+    "type": "HOB",
+    "gphRated": 119,
+    "minGallons": 0,
+    "maxGallons": 20
+  },
+  {
+    "id": "hygger-quiet-power-filter",
+    "brand": "Hygger",
+    "model": "Quiet Power",
+    "type": "HOB",
+    "gphRated": 260,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "marineland-penguin-350",
+    "brand": "Marineland",
+    "model": "Penguin 350 BIO Wheel",
+    "type": "HOB",
+    "gphRated": 350,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "seachem-tidal-110",
+    "brand": "Seachem",
+    "model": "Tidal 110",
+    "type": "HOB",
+    "gphRated": 450,
+    "minGallons": 75,
+    "maxGallons": null
+  },
+  {
+    "id": "seachem-tidal-35",
+    "brand": "Seachem",
+    "model": "Tidal 35",
+    "type": "HOB",
+    "gphRated": 130,
+    "minGallons": 20,
+    "maxGallons": 40
+  },
+  {
+    "id": "seachem-tidal-55",
+    "brand": "Seachem",
+    "model": "Tidal 55",
+    "type": "HOB",
+    "gphRated": 250,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "seachem-tidal-75",
+    "brand": "Seachem",
+    "model": "Tidal 75",
+    "type": "HOB",
+    "gphRated": 350,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "tetra-whisper-iq-45",
+    "brand": "Tetra",
+    "model": "Whisper IQ 45",
+    "type": "HOB",
+    "gphRated": 260,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "aqueon-quietflow-200",
+    "brand": "Aqueon",
+    "model": "QuietFlow Canister 200",
+    "type": "CANISTER",
+    "gphRated": 200,
+    "minGallons": 20,
+    "maxGallons": 40
+  },
+  {
+    "id": "cascade-1500",
+    "brand": "Cascade",
+    "model": "1500 Canister",
+    "type": "CANISTER",
+    "gphRated": 350,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "eheim-2213",
+    "brand": "Eheim",
+    "model": "Classic 2213",
+    "type": "CANISTER",
+    "gphRated": 116,
+    "minGallons": 0,
+    "maxGallons": 20
+  },
+  {
+    "id": "fluval-107",
+    "brand": "Fluval",
+    "model": "107 Performance",
+    "type": "CANISTER",
+    "gphRated": 145,
+    "minGallons": 20,
+    "maxGallons": 40
+  },
+  {
+    "id": "fluval-207",
+    "brand": "Fluval",
+    "model": "207 Performance",
+    "type": "CANISTER",
+    "gphRated": 206,
+    "minGallons": 20,
+    "maxGallons": 40
+  },
+  {
+    "id": "fluval-307",
+    "brand": "Fluval",
+    "model": "307 Performance",
+    "type": "CANISTER",
+    "gphRated": 303,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "fluval-407",
+    "brand": "Fluval",
+    "model": "407 Performance",
+    "type": "CANISTER",
+    "gphRated": 383,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "fluval-fx2",
+    "brand": "Fluval",
+    "model": "FX2",
+    "type": "CANISTER",
+    "gphRated": 475,
+    "minGallons": 75,
+    "maxGallons": null
+  },
+  {
+    "id": "fluval-fx4",
+    "brand": "Fluval",
+    "model": "FX4",
+    "type": "CANISTER",
+    "gphRated": 700,
+    "minGallons": 75,
+    "maxGallons": null
+  },
+  {
+    "id": "oase-biomaster-250",
+    "brand": "Oase",
+    "model": "BioMaster Thermo 250",
+    "type": "CANISTER",
+    "gphRated": 250,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "oase-biomaster-600",
+    "brand": "Oase",
+    "model": "BioMaster Thermo 600",
+    "type": "CANISTER",
+    "gphRated": 320,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "sunsun-hw-3000",
+    "brand": "Sunsun",
+    "model": "HW 3000 Canister",
+    "type": "CANISTER",
+    "gphRated": 793,
+    "minGallons": 75,
+    "maxGallons": null
+  },
+  {
+    "id": "penn-plax-ugf-20-29",
+    "brand": "Penn-Plax",
+    "model": "Undergravel 20-29G",
+    "type": "UGF",
+    "gphRated": 150,
+    "minGallons": 20,
+    "maxGallons": 29
+  }
+]

@@ -1,10 +1,11 @@
 import { canonicalizeFilterType, weightedMixFactor } from '/js/utils.js';
-// Product catalog wired via filters.json (site-wide audit, Oct 2025)
+// Product catalog wired via normalized filters.catalog.json (site-wide audit, Oct 2025)
 import {
   filterProductsByTankSize,
-  formatProductDropdownLabel,
-  loadProductCatalog,
-} from '../assets/js/products/filters.js';
+  getLastCatalogError,
+  loadFilterCatalog,
+  sortByTypeBrandGph,
+} from '../assets/js/products/catalog-loader.js';
 import {
   computeTurnover,
   getTotalGPH,
@@ -147,6 +148,23 @@ function getRatedGphValue(product) {
   return clampGph(product?.gphRated ?? product?.rated_gph ?? product?.ratedGph ?? product?.gph);
 }
 
+function formatProductDropdownLabel(product) {
+  if (!product) return '';
+  const brand = product.brand ? String(product.brand).trim() : '';
+  const model = product.model ? String(product.model).trim() : '';
+  const gph = getRatedGphValue(product) || 0;
+  const type = product.type ? String(product.type).trim() : 'HOB';
+  const parts = [];
+  if (brand) {
+    parts.push(brand);
+  }
+  if (model) {
+    parts.push(model);
+  }
+  const prefix = parts.length ? parts.join(' ') : product.id;
+  return `${prefix} — ${gph} GPH (${type})`;
+}
+
 function formatProductLabel(product) {
   return formatProductDropdownLabel(product);
 }
@@ -210,16 +228,21 @@ function renderFilterDropdown(list, { fallback = false, datasetFallback = fallba
 }
 
 function updateVisibleProducts() {
-  const gallons = Number.isFinite(state.tankGallons) ? state.tankGallons : null;
+  const rawGallons = Number.isFinite(state.tankGallons) ? state.tankGallons : null;
   if (!catalogAll.length) {
     const dropdownFallback = catalogFallbackActive || Boolean(catalogLoadError);
     renderFilterDropdown([], { fallback: catalogFallbackActive, datasetFallback: dropdownFallback });
+    updateCatalogDiagnostics({ itemsLoaded: 0, matches: 0, gallons: rawGallons, fallback: catalogFallbackActive });
     return;
   }
-  const { items, fallback } = filterProductsByTankSize(catalogAll, gallons);
-  catalogVisible = items;
-  catalogFallbackActive = fallback;
-  if (fallback && catalogAll.length) {
+  const gallons = Number.isFinite(rawGallons) ? Math.max(rawGallons, 0) : null;
+  const nextVisible = filterProductsByTankSize(catalogAll, gallons);
+  const hasExactMatch = Number.isFinite(gallons)
+    ? catalogAll.some((product) => fitsTankRange(product, gallons))
+    : true;
+  catalogVisible = Array.isArray(nextVisible) ? nextVisible.slice() : [];
+  catalogFallbackActive = Number.isFinite(gallons) && !hasExactMatch && catalogVisible.length > 0;
+  if (catalogFallbackActive && catalogAll.length) {
     const roundedGallons = Number.isFinite(gallons) ? Math.round(gallons) : gallons;
     if (roundedGallons !== lastFallbackLogGallons) {
       console.warn('[Proto] No size-matched filters. Falling back to full catalog.', {
@@ -232,8 +255,57 @@ function updateVisibleProducts() {
   } else {
     lastFallbackLogGallons = null;
   }
-  const dropdownFallback = fallback || Boolean(catalogLoadError);
-  renderFilterDropdown(catalogVisible, { fallback, datasetFallback: dropdownFallback });
+  const dropdownFallback = catalogFallbackActive || Boolean(catalogLoadError);
+  renderFilterDropdown(catalogVisible, { fallback: catalogFallbackActive, datasetFallback: dropdownFallback });
+  updateCatalogDiagnostics({
+    itemsLoaded: catalogAll.length,
+    matches: catalogVisible.length,
+    gallons,
+    fallback: catalogFallbackActive,
+    sample: catalogVisible[0] ?? null,
+  });
+}
+
+function fitsTankRange(product, gallons) {
+  if (!product || !Number.isFinite(gallons)) {
+    return false;
+  }
+  const min = Number.isFinite(product.minGallons) ? product.minGallons : -Infinity;
+  const max = Number.isFinite(product.maxGallons) ? product.maxGallons : Infinity;
+  return gallons >= min && gallons <= max;
+}
+
+function updateCatalogDiagnostics({ itemsLoaded, matches, gallons, fallback, sample = null }) {
+  const payload = {
+    itemsLoaded,
+    matches,
+    tankGallons: Number.isFinite(gallons) ? Math.round(gallons) : null,
+    fallback,
+    sample: sample
+      ? {
+          brand: sample.brand ?? null,
+          model: sample.model ?? null,
+          type: sample.type ?? null,
+          gphRated: Number.isFinite(sample.gphRated) ? sample.gphRated : null,
+        }
+      : null,
+  };
+  try {
+    console.debug('[Proto][Filters] catalog update', payload);
+  } catch (_error) {
+    /* noop */
+  }
+  const banner = document.querySelector('[data-role="filter-diagnostics"]');
+  if (banner) {
+    const parts = [
+      `Loaded: ${itemsLoaded}`,
+      `Matches: ${matches}`,
+      `Tank: ${Number.isFinite(gallons) ? Math.round(gallons) : '—'}`,
+      fallback ? 'Fallback list' : 'Exact match',
+    ];
+    banner.textContent = parts.join(' • ');
+    banner.dataset.fallback = fallback ? 'true' : 'false';
+  }
 }
 
 function computeManualLabel(type, gph) {
@@ -894,18 +966,20 @@ async function loadCatalog() {
   if (catalogPromise) {
     return catalogPromise;
   }
-  catalogPromise = loadProductCatalog()
-    .then(({ items, fallback, error }) => {
+  catalogPromise = loadFilterCatalog()
+    .then((items) => {
+      const list = Array.isArray(items) ? items.slice() : [];
+      const sortedList = list.slice().sort(sortByTypeBrandGph);
       catalogIndex = new Map();
-      catalogAll = Array.isArray(items) ? items.slice() : [];
-      catalogVisible = catalogAll.slice();
-      catalogLoadError = error ?? null;
-      catalogFallbackActive = Boolean(fallback);
-      catalogAll.forEach((product) => {
-        if (product && product.id) {
+      catalogAll = sortedList;
+      catalogVisible = sortedList.slice();
+      catalogLoadError = getLastCatalogError?.() ?? null;
+      catalogFallbackActive = false;
+      catalogAll
+        .filter((product) => product && product.id)
+        .forEach((product) => {
           catalogIndex.set(product.id, product);
-        }
-      });
+        });
       updateVisibleProducts();
       syncSelectValue();
       updateProductAddButton();
