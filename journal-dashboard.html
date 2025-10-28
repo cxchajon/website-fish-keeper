@@ -34,158 +34,160 @@
   <script defer src="/js/nav.js?v=1.1.0"></script>
 </head>
 <body class="page--journal-dashboard">
-  <div id="site-nav"></div>
-  <main id="journal-dashboard" class="journal-dashboard" aria-labelledby="journal-dashboard-title">
-    <div class="journal-dashboard__inner">
-      <header class="journal-dashboard__header">
-        <div class="journal-dashboard__title-group">
-          <p class="journal-dashboard__eyebrow">FishKeepingLifeCo · 29G Planted</p>
-          <h1 id="journal-dashboard-title" class="journal-dashboard__title">Journal Dashboard</h1>
-          <p class="journal-dashboard__subtitle">Live nitrate, dosing, and maintenance insights pulled directly from the aquarium journal.</p>
-        </div>
-        <div class="journal-dashboard__controls" role="group" aria-label="Dashboard range controls">
-          <div class="journal-dashboard__range" aria-live="polite">
-            <button type="button" class="journal-dashboard__range-btn" data-range-nav="prev" aria-label="Previous month">
-              <span aria-hidden="true">&#8249;</span>
-            </button>
-            <div class="journal-dashboard__range-labels">
-              <span class="journal-dashboard__range-window" data-range-window>—</span>
-              <span class="journal-dashboard__range-month" data-range-month>—</span>
+    <div id="site-nav"></div>
+    <main id="journal-dashboard" class="journal-dashboard" aria-labelledby="journal-dashboard-title">
+      <div class="content">
+        <div class="journal-dashboard__inner">
+          <header class="journal-dashboard__header">
+            <div class="journal-dashboard__title-group">
+              <p class="journal-dashboard__eyebrow">FishKeepingLifeCo · 29G Planted</p>
+              <h1 id="journal-dashboard-title" class="journal-dashboard__title">Journal Dashboard</h1>
+              <p class="journal-dashboard__subtitle">Live nitrate, dosing, and maintenance insights pulled directly from the aquarium journal.</p>
             </div>
-            <button type="button" class="journal-dashboard__range-btn" data-range-nav="next" aria-label="Next month">
-              <span aria-hidden="true">&#8250;</span>
+            <div class="journal-dashboard__controls" role="group" aria-label="Dashboard range controls">
+              <div class="journal-dashboard__range" aria-live="polite">
+                <button type="button" class="journal-dashboard__range-btn" data-range-nav="prev" aria-label="Previous month">
+                  <span aria-hidden="true">&#8249;</span>
+                </button>
+                <div class="journal-dashboard__range-labels">
+                  <span class="journal-dashboard__range-window" data-range-window>—</span>
+                  <span class="journal-dashboard__range-month" data-range-month>—</span>
+                </div>
+                <button type="button" class="journal-dashboard__range-btn" data-range-nav="next" aria-label="Next month">
+                  <span aria-hidden="true">&#8250;</span>
+                </button>
+              </div>
+              <button
+                type="button"
+                class="journal-dashboard__toggle"
+                data-range-toggle
+                aria-pressed="false"
+                aria-label="Toggle last 30 days view"
+              >
+                <span class="journal-dashboard__toggle-track" aria-hidden="true">
+                  <span class="journal-dashboard__toggle-thumb"></span>
+                </span>
+                Include last 30 days across months
+              </button>
+            </div>
+          </header>
+
+          <div class="journal-dashboard__tabs" role="tablist" aria-label="Journal dashboard views">
+            <button
+              type="button"
+              class="journal-dashboard__tab is-active"
+              role="tab"
+              aria-selected="true"
+              data-tab="nitrate"
+              id="tab-nitrate"
+              aria-controls="panel-nitrate"
+            >
+              Nitrate
+            </button>
+            <button
+              type="button"
+              class="journal-dashboard__tab"
+              role="tab"
+              aria-selected="false"
+              data-tab="dosing"
+              id="tab-dosing"
+              aria-controls="panel-dosing"
+              tabindex="-1"
+            >
+              Dosing
+            </button>
+            <button
+              type="button"
+              class="journal-dashboard__tab"
+              role="tab"
+              aria-selected="false"
+              data-tab="maintenance"
+              id="tab-maintenance"
+              aria-controls="panel-maintenance"
+              tabindex="-1"
+            >
+              Maintenance
             </button>
           </div>
-          <button
-            type="button"
-            class="journal-dashboard__toggle"
-            data-range-toggle
-            aria-pressed="false"
-            aria-label="Toggle last 30 days view"
+
+          <p class="journal-dashboard__error" data-dashboard-error hidden></p>
+
+          <section
+            id="panel-nitrate"
+            class="journal-dashboard__panel is-active"
+            role="tabpanel"
+            aria-labelledby="tab-nitrate"
           >
-            <span class="journal-dashboard__toggle-track" aria-hidden="true">
-              <span class="journal-dashboard__toggle-thumb"></span>
-            </span>
-            Include last 30 days across months
-          </button>
+            <article class="dashboard-card">
+              <header class="dashboard-card__header">
+                <div>
+                  <h2 class="dashboard-card__title">Nitrate Trend</h2>
+                  <p class="dashboard-card__hint">Automated pulls from the latest liquid test kit logs.</p>
+                </div>
+                <div class="dashboard-card__legend" aria-hidden="true">
+                  <span class="dashboard-card__legend-item">
+                    <span class="dashboard-card__legend-dot dashboard-card__legend-dot--nitrate"></span>
+                    Nitrate (ppm)
+                  </span>
+                  <span class="dashboard-card__legend-item">
+                    <span class="dashboard-card__legend-dot dashboard-card__legend-dot--water"></span>
+                    Water change
+                  </span>
+                </div>
+              </header>
+              <div class="dashboard-card__body">
+                <div class="dashboard-card__chart">
+                  <canvas id="nitrateChart" role="img" aria-label="Line chart of nitrate readings"></canvas>
+                  <p class="dashboard-card__status" data-chart-status aria-live="polite"></p>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section
+            id="panel-dosing"
+            class="journal-dashboard__panel"
+            role="tabpanel"
+            aria-labelledby="tab-dosing"
+            hidden
+          >
+            <article class="dashboard-card">
+              <header class="dashboard-card__header">
+                <div>
+                  <h2 class="dashboard-card__title">Weekly Dosing Totals</h2>
+                  <p class="dashboard-card__hint">Grouped comparison of Thrive Plus pumps vs. Excel capfuls.</p>
+                </div>
+              </header>
+              <div class="dashboard-card__body">
+                <div class="dashboard-card__chart">
+                  <canvas id="dosingChart" role="img" aria-label="Weekly dosing totals"></canvas>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section
+            id="panel-maintenance"
+            class="journal-dashboard__panel"
+            role="tabpanel"
+            aria-labelledby="tab-maintenance"
+            hidden
+          >
+            <article class="dashboard-card">
+              <header class="dashboard-card__header">
+                <div>
+                  <h2 class="dashboard-card__title">Maintenance Timeline</h2>
+                  <p class="dashboard-card__hint">Major cleaning cycles, trims, and system tweaks at-a-glance.</p>
+                </div>
+              </header>
+              <div class="dashboard-card__body">
+                <ul class="maintenance-list" data-maintenance-list aria-live="polite"></ul>
+              </div>
+            </article>
+          </section>
         </div>
-      </header>
-
-      <div class="journal-dashboard__tabs" role="tablist" aria-label="Journal dashboard views">
-        <button
-          type="button"
-          class="journal-dashboard__tab is-active"
-          role="tab"
-          aria-selected="true"
-          data-tab="nitrate"
-          id="tab-nitrate"
-          aria-controls="panel-nitrate"
-        >
-          Nitrate
-        </button>
-        <button
-          type="button"
-          class="journal-dashboard__tab"
-          role="tab"
-          aria-selected="false"
-          data-tab="dosing"
-          id="tab-dosing"
-          aria-controls="panel-dosing"
-          tabindex="-1"
-        >
-          Dosing
-        </button>
-        <button
-          type="button"
-          class="journal-dashboard__tab"
-          role="tab"
-          aria-selected="false"
-          data-tab="maintenance"
-          id="tab-maintenance"
-          aria-controls="panel-maintenance"
-          tabindex="-1"
-        >
-          Maintenance
-        </button>
       </div>
-
-      <p class="journal-dashboard__error" data-dashboard-error hidden></p>
-
-      <section
-        id="panel-nitrate"
-        class="journal-dashboard__panel is-active"
-        role="tabpanel"
-        aria-labelledby="tab-nitrate"
-      >
-        <article class="dashboard-card">
-          <header class="dashboard-card__header">
-            <div>
-              <h2 class="dashboard-card__title">Nitrate Trend</h2>
-              <p class="dashboard-card__hint">Automated pulls from the latest liquid test kit logs.</p>
-            </div>
-            <div class="dashboard-card__legend" aria-hidden="true">
-              <span class="dashboard-card__legend-item">
-                <span class="dashboard-card__legend-dot dashboard-card__legend-dot--nitrate"></span>
-                Nitrate (ppm)
-              </span>
-              <span class="dashboard-card__legend-item">
-                <span class="dashboard-card__legend-dot dashboard-card__legend-dot--water"></span>
-                Water change
-              </span>
-            </div>
-          </header>
-          <div class="dashboard-card__body">
-            <div class="dashboard-card__chart">
-              <canvas id="nitrateChart" role="img" aria-label="Line chart of nitrate readings"></canvas>
-              <p class="dashboard-card__status" data-chart-status aria-live="polite"></p>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      <section
-        id="panel-dosing"
-        class="journal-dashboard__panel"
-        role="tabpanel"
-        aria-labelledby="tab-dosing"
-        hidden
-      >
-        <article class="dashboard-card">
-          <header class="dashboard-card__header">
-            <div>
-              <h2 class="dashboard-card__title">Weekly Dosing Totals</h2>
-              <p class="dashboard-card__hint">Grouped comparison of Thrive Plus pumps vs. Excel capfuls.</p>
-            </div>
-          </header>
-          <div class="dashboard-card__body">
-            <div class="dashboard-card__chart">
-              <canvas id="dosingChart" role="img" aria-label="Weekly dosing totals"></canvas>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      <section
-        id="panel-maintenance"
-        class="journal-dashboard__panel"
-        role="tabpanel"
-        aria-labelledby="tab-maintenance"
-        hidden
-      >
-        <article class="dashboard-card">
-          <header class="dashboard-card__header">
-            <div>
-              <h2 class="dashboard-card__title">Maintenance Timeline</h2>
-              <p class="dashboard-card__hint">Major cleaning cycles, trims, and system tweaks at-a-glance.</p>
-            </div>
-          </header>
-          <div class="dashboard-card__body">
-            <ul class="maintenance-list" data-maintenance-list aria-live="polite"></ul>
-          </div>
-        </article>
-      </section>
-    </div>
-  </main>
+    </main>
 
   <script>
     window.__JOURNAL_FALLBACK__ = {
