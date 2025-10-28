@@ -244,22 +244,3 @@
     gap: 20px;
   }
 }
-
-/* Journal dashboard charts */
-.chart-wrap {
-  position: relative;
-  width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
-  height: 52vh;
-}
-
-@media (max-width: 768px) {
-  .chart-wrap {
-    height: 64vh;
-  }
-
-  canvas {
-    font-size: 14px !important;
-  }
-}
