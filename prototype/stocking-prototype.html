@@ -953,19 +953,46 @@
 
     #stocking-page .env-bars {
       margin-top: 10px;
-      row-gap: 10px;
+      row-gap: 12px;
     }
 
-    #stocking-page .env-bars .env-bar,
-    #stocking-page .env-bars .bar-row {
+    #stocking-page .env-bars .env-bar {
       margin-bottom: var(--space-xs);
       padding-top: var(--space-xs);
       padding-bottom: var(--space-xs);
     }
 
-    #stocking-page .env-bars .env-bar:last-child,
-    #stocking-page .env-bars .bar-row:last-child {
+    #stocking-page .env-bars .env-bar:last-child {
       margin-bottom: 0;
+    }
+
+    #stocking-page .env-compatibility {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: flex-start;
+      margin-top: 6px;
+    }
+
+    #stocking-page .env-compatibility .chip {
+      margin-top: 0;
+    }
+
+    #stocking-page .env-compat-note {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+      line-height: 1.35;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    #stocking-page .env-detail-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
     }
 
     /* ----- Compact Bioload/Aggression card adjustments ----- */
@@ -1424,18 +1451,23 @@
           opacity: 1;
         }
 
-        #stocking-page #env-card .env-bars .env-bar,
-        #stocking-page #env-card .env-bars .bar-row {
+        #stocking-page #env-card .env-bars .env-bar {
           margin-bottom: 0;
         }
 
-        #stocking-page #env-card.info-open .env-bars .env-bar,
-        #stocking-page #env-card.info-open .env-bars .bar-row {
+        #stocking-page #env-card .env-compatibility {
+          margin-top: 4px;
+        }
+
+        #stocking-page #env-card .env-detail-chips {
+          margin-top: 6px;
+        }
+
+        #stocking-page #env-card.info-open .env-bars .env-bar {
           margin-bottom: var(--space-xs);
         }
 
-        #stocking-page #env-card.info-open .env-bars .env-bar:last-child,
-        #stocking-page #env-card.info-open .env-bars .bar-row:last-child {
+        #stocking-page #env-card.info-open .env-bars .env-bar:last-child {
           margin-bottom: 0;
         }
 
@@ -1644,7 +1676,9 @@
     {
       "imports": {
         "/js/logic/compute.js": "/prototype/js/logic/compute-proxy.js",
-        "./logic/compute.js": "/prototype/js/logic/compute-proxy.js"
+        "./logic/compute.js": "/prototype/js/logic/compute-proxy.js",
+        "/js/logic/envRecommend.js": "/prototype/js/logic/envRecommend.js",
+        "./logic/envRecommend.js": "/prototype/js/logic/envRecommend.js"
       }
     }
   </script>
