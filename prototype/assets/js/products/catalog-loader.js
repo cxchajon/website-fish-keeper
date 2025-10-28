@@ -1,10 +1,87 @@
 import { FLOW_DERATE, TURNOVER_MIN, TURNOVER_MAX, MIN_GALLONS, MAX_GALLONS } from '../proto-filtration-consts.js';
 
-const CATALOG_URL = '/prototype/assets/data/filters.catalog.json';
+export const CATALOG_URL = '/prototype/assets/data/filters.catalog.json';
+export const FALLBACK_LIST = [
+  { id: 'fluval-107', brand: 'Fluval', model: '107', type: 'CANISTER', gphRated: 145 },
+  { id: 'fluval-207', brand: 'Fluval', model: '207', type: 'CANISTER', gphRated: 206 },
+  { id: 'fluval-307', brand: 'Fluval', model: '307', type: 'CANISTER', gphRated: 303 },
+  { id: 'fluval-407', brand: 'Fluval', model: '407', type: 'CANISTER', gphRated: 383 },
+  { id: 'powkoo-dual-sponge', brand: 'Powkoo', model: 'Dual Sponge (20–55g)', type: 'SPONGE', gphRated: 150 },
+  { id: 'pawfly-single-sponge', brand: 'Pawfly', model: 'Single Sponge (≤10g)', type: 'SPONGE', gphRated: 60 },
+  { id: 'seachem-tidal35', brand: 'Seachem', model: 'Tidal 35', type: 'HOB', gphRated: 130 },
+  { id: 'seachem-tidal55', brand: 'Seachem', model: 'Tidal 55', type: 'HOB', gphRated: 250 },
+  { id: 'seachem-tidal75', brand: 'Seachem', model: 'Tidal 75', type: 'HOB', gphRated: 350 },
+  { id: 'aqueon-quietflow-20', brand: 'Aqueon', model: 'QuietFlow 20', type: 'HOB', gphRated: 125 },
+  { id: 'aqueon-quietflow-30', brand: 'Aqueon', model: 'QuietFlow 30', type: 'HOB', gphRated: 200 },
+  { id: 'aquaclear-50', brand: 'AquaClear', model: '50', type: 'HOB', gphRated: 200 },
+  { id: 'hydor-pro-250', brand: 'Hydor', model: 'Professional 250', type: 'CANISTER', gphRated: 240 },
+];
+
 const KNOWN_TYPES = new Set(['CANISTER', 'HOB', 'INTERNAL', 'UGF', 'SPONGE', 'OTHER']);
 
 let catalogCache = null;
 let pendingLoad = null;
+let rawCatalogCache = null;
+let pendingRawLoad = null;
+
+export async function loadFilterCatalogRaw() {
+  if (Array.isArray(rawCatalogCache) && rawCatalogCache.length) {
+    return rawCatalogCache.slice();
+  }
+  if (pendingRawLoad) {
+    const list = await pendingRawLoad;
+    return Array.isArray(list) ? list.slice() : [];
+  }
+
+  const tag = '[catalog-loader]';
+  const url = `${CATALOG_URL}?v=${window.__BUILD_HASH__ || Date.now()}`;
+
+  pendingRawLoad = (async () => {
+    let payload = null;
+    const hasConsoleGroup = typeof console.group === 'function';
+    if (hasConsoleGroup) {
+      console.group(tag, 'fetch', url);
+    }
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      console.log('HTTP', res.status);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const json = await res.json();
+      console.log('loaded count', Array.isArray(json) ? json.length : 'n/a');
+      if (Array.isArray(json) && json.length) {
+        payload = json;
+      }
+    } catch (error) {
+      console.warn(`${tag} fetch failed:`, error);
+    } finally {
+      if (typeof console.groupEnd === 'function') {
+        console.groupEnd();
+      }
+    }
+
+    if (!payload && Array.isArray(window.__FILTER_CATALOG__) && window.__FILTER_CATALOG__.length) {
+      console.info(`${tag} using window.__FILTER_CATALOG__ fallback`);
+      payload = window.__FILTER_CATALOG__;
+    }
+
+    if (!payload || !payload.length) {
+      console.info(`${tag} using hardcoded FALLBACK_LIST`);
+      payload = FALLBACK_LIST;
+    }
+
+    return Array.isArray(payload) ? payload.slice() : [];
+  })();
+
+  try {
+    const resolved = await pendingRawLoad;
+    rawCatalogCache = Array.isArray(resolved) ? resolved.slice() : [];
+    return rawCatalogCache.slice();
+  } finally {
+    pendingRawLoad = null;
+  }
+}
 
 export async function loadFilterCatalog() {
   if (Array.isArray(catalogCache)) {
@@ -13,27 +90,24 @@ export async function loadFilterCatalog() {
   if (pendingLoad) {
     return pendingLoad.then((items) => items.slice());
   }
-  const url = `${CATALOG_URL}?v=${window.__BUILD_HASH__ || Date.now()}`;
-  pendingLoad = fetch(url, { cache: 'no-store' })
-    .then(async (res) => {
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-      const raw = await res.json();
-      const payload = Array.isArray(raw) ? raw : [];
-      catalogCache = payload;
-      return payload;
+
+  pendingLoad = loadFilterCatalogRaw()
+    .then((items) => {
+      const payload = Array.isArray(items) ? items : [];
+      catalogCache = payload.slice();
+      return catalogCache.slice();
     })
     .catch((error) => {
       console.warn('[products] catalog load failed:', error);
-      catalogCache = [];
-      return [];
+      catalogCache = FALLBACK_LIST.slice();
+      return catalogCache.slice();
     })
     .finally(() => {
       pendingLoad = null;
     });
+
   const result = await pendingLoad;
-  return result.slice();
+  return Array.isArray(result) ? result.slice() : [];
 }
 
 export function normalizeItem(item) {
