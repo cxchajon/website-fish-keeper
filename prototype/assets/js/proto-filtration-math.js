@@ -11,6 +11,7 @@ export const MAX_RELIEF = 0.6; // Crosscheck Fix — Oct 2025
 export const TURNOVER_MIN = 0.4; // Crosscheck Fix — Oct 2025
 export const TURNOVER_MAX = 1.3; // Crosscheck Fix — Oct 2025
 
+// [Crosscheck Fix — Oct 2025] Ensure product filters carry type; unify product/custom mapping; safe fallback.
 const FILTER_TYPE_LOOKUP = Object.freeze({
   CANISTER: 'Canister',
   HOB: 'HOB',
@@ -18,6 +19,84 @@ const FILTER_TYPE_LOOKUP = Object.freeze({
   UGF: 'UGF',
   SPONGE: 'Sponge',
 });
+
+const FILTER_TYPE_KEYWORDS = [
+  { token: 'SPONGE', pattern: /sponge/i },
+  { token: 'CANISTER', pattern: /canister/i },
+  { token: 'INTERNAL', pattern: /\b(internal|powerhead|submersible)\b/i },
+  { token: 'UGF', pattern: /\b(ugf|under\s*-?gravel)\b/i },
+  { token: 'HOB', pattern: /\b(hob|hang[-\s]?on[-\s]?back)\b/i },
+];
+
+const FALLBACK_FILTER_TYPE = 'HOB';
+const missingTypeWarnings = new Set();
+
+function normalizeTypeToken(value) {
+  if (typeof value !== 'string') {
+    return '';
+  }
+  const trimmed = value.trim();
+  return trimmed ? trimmed.toUpperCase() : '';
+}
+
+function lookupBaseKey(token) {
+  const normalized = normalizeTypeToken(token);
+  if (normalized && FILTER_TYPE_LOOKUP[normalized]) {
+    return FILTER_TYPE_LOOKUP[normalized];
+  }
+  return null;
+}
+
+export function resolveFilterType(filter) {
+  if (!filter) {
+    return FILTER_TYPE_LOOKUP[FALLBACK_FILTER_TYPE];
+  }
+
+  const primaryCandidates = [
+    filter?.resolvedType,
+    filter?.kind,
+    filter?.type,
+    filter?.filterType,
+    filter?.efficiencyType,
+  ];
+
+  for (const candidate of primaryCandidates) {
+    const baseKey = lookupBaseKey(candidate);
+    if (baseKey) {
+      return baseKey;
+    }
+  }
+
+  const sourceKey = lookupBaseKey(filter?.source);
+  if (sourceKey) {
+    return sourceKey;
+  }
+
+  const name = typeof filter?.name === 'string' ? filter.name : filter?.label;
+  if (name) {
+    for (const { token, pattern } of FILTER_TYPE_KEYWORDS) {
+      if (pattern.test(name)) {
+        const baseKey = FILTER_TYPE_LOOKUP[token];
+        if (baseKey) {
+          return baseKey;
+        }
+      }
+    }
+  }
+
+  const fallback = FILTER_TYPE_LOOKUP[FALLBACK_FILTER_TYPE];
+  const source = typeof filter?.source === 'string' ? filter.source.toLowerCase() : '';
+  if (source === 'product') {
+    const warningKey = filter?.id ?? name ?? 'unknown-product';
+    if (!missingTypeWarnings.has(warningKey)) {
+      missingTypeWarnings.add(warningKey);
+      if (typeof console !== 'undefined' && typeof console.warn === 'function') {
+        console.warn('[Filtration] Missing type for product:', name || warningKey);
+      }
+    }
+  }
+  return fallback;
+}
 
 export function resolveFilterBaseKey(type) {
   if (typeof type === 'string') {
@@ -66,17 +145,11 @@ export function mapFiltersForEfficiency(filters) {
       }
       const deratedGph = ratedGph * FLOW_DERATE; // Crosscheck Fix — Oct 2025
 
-      const rawType =
-        filter?.resolvedType ??
-        filter?.kind ??
-        filter?.type ??
-        filter?.filterType ??
-        filter?.source;
-      const type = resolveFilterBaseKey(rawType);
+      const type = resolveFilterType(filter);
       const id = typeof filter?.id === 'string' && filter.id ? filter.id : null;
       const source = typeof filter?.source === 'string' && filter.source ? filter.source : null;
 
-      return { id, type, gph: deratedGph, ratedGph, source };
+      return { id, type, gph: deratedGph, deratedGph, ratedGph, source };
     })
     .filter(Boolean);
 }
