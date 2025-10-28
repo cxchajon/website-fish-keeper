@@ -1,6 +1,10 @@
 (() => {
   document.documentElement.classList.add('prototype-mode');
 
+  if (typeof window !== 'undefined' && typeof window.shouldRestoreVariantFocus !== 'function') {
+    window.shouldRestoreVariantFocus = () => false;
+  }
+
   const fireProtoEvent = (eventName) => {
     if (!eventName) return;
     try {

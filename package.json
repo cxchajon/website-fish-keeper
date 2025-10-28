@@ -21,6 +21,8 @@
     "sync:filters": "node ./scripts/extract-gear-filters.mjs",
     "sync:filters:check": "node ./scripts/extract-gear-filters.mjs --dry-run",
     "build": "node scripts/build-prod.mjs",
+    "build:prototype": "node scripts/build-prototype.mjs",
+    "postbuild:prototype": "node scripts/copy-proto-assets.mjs",
     "footer:verify": "node scripts/footer-lock/verify.mjs",
     "footer:lint": "node scripts/footer-lock/lint.mjs",
     "footer:lock:update": "node scripts/footer-lock/update-manifest.mjs",
