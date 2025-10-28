@@ -174,6 +174,21 @@ const computeBioloadDetails = ({
   const safeCapacity = Math.max(1, Number(baseCapacity || 0));
   const percent = computePercent(adjustedLoadGE, safeCapacity);
 
+  if (
+    normalizedFilters.length > 0 &&
+    Number.isFinite(adjustedLoadGE) &&
+    Number.isFinite(loadBase) &&
+    adjustedLoadGE > loadBase + 0.01
+  ) {
+    if (typeof console !== 'undefined' && typeof console.warn === 'function') {
+      console.warn('[Filtration] Adjusted bioload increased with filters. Check sign/relief.', {
+        baselineBioload: loadBase,
+        adjustedBioload: adjustedLoadGE,
+        filters: efficiencyDetails.length ? efficiencyDetails : normalizedFilters,
+      });
+    }
+  }
+
   if (DEBUG_FILTERS && typeof console !== 'undefined') {
     const debugFilters = normalizedFilters.map((filter) => ({
       id: filter.id ?? null,

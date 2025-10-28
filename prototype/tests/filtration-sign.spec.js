@@ -1,107 +1,61 @@
-import { computeTurnover, computeAggregateEfficiency, computeAdjustedBioload, computePercent } from '../assets/js/proto-filtration-math.js';
-import { getTotalGE } from '../../js/bioload.js';
-import { FISH_DB } from '../../js/fish-data.js';
+import test from 'node:test';
+import assert from 'node:assert/strict';
 
-const speciesMap = new Map(FISH_DB.map((species) => [species.id, species]));
+import {
+  computeAdjustedBioload,
+  computeAggregateEfficiency,
+  computeTurnover,
+  mapFiltersForEfficiency,
+} from '../assets/js/proto-filtration-math.js';
 
-function toStockEntries(stock) {
-  return stock.map((entry) => ({ speciesId: entry.id, count: entry.count }));
-}
+const BASE = 0.50; // 50%
+const DEFAULT_GALLONS = 29;
 
-function toFilterEntries(filters) {
-  return filters.map((filter) => ({
-    type: filter.type,
-    rated_gph: filter.gph,
-  }));
-}
-
-function totalRatedGph(filters) {
-  return filters.reduce((sum, filter) => {
-    const value = Number(filter.rated_gph);
-    return Number.isFinite(value) && value > 0 ? sum + value : sum;
-  }, 0);
-}
-
-function computePercentUsed({ gallons, stock, filters }) {
-  const load = getTotalGE(toStockEntries(stock), speciesMap);
-  const normalizedFilters = toFilterEntries(filters);
-  const ratedSum = totalRatedGph(normalizedFilters);
-  const turnover = ratedSum > 0 ? computeTurnover(ratedSum, gallons) : 0;
-  const aggregate = normalizedFilters.length
-    ? computeAggregateEfficiency(normalizedFilters, turnover)
-    : { total: 0 };
-  const adjustedLoad = computeAdjustedBioload(load, aggregate.total ?? 0);
-  return computePercent(adjustedLoad, gallons);
-}
-
-const failures = [];
-
-function recordResult(name, passed, detail) {
-  const label = passed ? 'PASS' : 'FAIL';
-  const parts = [`[${label}] ${name}`];
-  if (detail) {
-    parts.push(detail);
-  }
-  console.log(parts.join(' — '));
-  if (!passed) {
-    failures.push(name);
-  }
-}
-
-function assertPercentDoesNotIncrease({ gallons, stock, filtersBefore, filterAdded }) {
-  const before = computePercentUsed({ gallons, stock, filters: filtersBefore });
-  const after = computePercentUsed({ gallons, stock, filters: [...filtersBefore, filterAdded] });
-  const epsilon = 0.01;
-  const passed = after <= before + epsilon;
-  const detail = `before=${before.toFixed(4)} after=${after.toFixed(4)}`;
-  recordResult('Adding a filter never raises percent used', passed, detail);
-}
-
-function assertMonotonicity({ gallons, stock, filters }) {
-  let previous = null;
-  let passed = true;
-  const readings = [];
-  const epsilon = 0.01;
-  filters.forEach((filterSet, index) => {
-    const percent = computePercentUsed({ gallons, stock, filters: filterSet });
-    readings.push(percent);
-    if (previous != null && percent > previous + epsilon) {
-      passed = false;
-    }
-    previous = percent;
-  });
-  const detail = readings.map((value, index) => `step${index + 1}=${value.toFixed(4)}`).join(' ');
-  recordResult('Bioload percent is monotonic with added flow', passed, detail);
-}
-
-assertPercentDoesNotIncrease({
-  gallons: 29,
-  stock: [
-    { id: 'betta_male', count: 1 },
-    { id: 'cory_panda', count: 12 },
-  ],
-  filtersBefore: [
-    { type: 'HOB', gph: 200 },
-  ],
-  filterAdded: { type: 'SPONGE', gph: 80 },
+const mk = (type, ratedGph, gallons = DEFAULT_GALLONS) => ({
+  type,
+  rated_gph: ratedGph,
+  gallons,
 });
 
-assertMonotonicity({
-  gallons: 29,
-  stock: [
-    { id: 'betta_male', count: 1 },
-  ],
-  filters: [
-    [
-      { type: 'HOB', gph: 200 },
-    ],
-    [
-      { type: 'HOB', gph: 200 },
-      { type: 'SPONGE', gph: 80 },
-    ],
-  ],
+function computeAdjusted(base, filters, gallons = DEFAULT_GALLONS) {
+  const normalized = mapFiltersForEfficiency(filters);
+  const totalRated = normalized.reduce((sum, filter) => sum + (filter.ratedGph ?? 0), 0);
+  const turnover = totalRated > 0 ? computeTurnover(totalRated, gallons) : 0;
+  const { total: equipmentRelief } = computeAggregateEfficiency(filters, turnover);
+  return computeAdjustedBioload(base, equipmentRelief);
+}
+
+test('sponge reduces vs baseline', () => {
+  const sponge = mk('SPONGE', 100);
+  const out = computeAdjusted(BASE, [sponge]);
+  assert.ok(out < BASE, `expected ${out} to be less than ${BASE}`);
 });
 
-if (failures.length > 0) {
-  process.exitCode = 1;
-}
+test('hob reduces vs baseline with at least sponge relief', () => {
+  const sponge = mk('SPONGE', 100);
+  const hob = mk('HOB', 200);
+  const spongeOut = computeAdjusted(BASE, [sponge]);
+  const hobOut = computeAdjusted(BASE, [hob]);
+  assert.ok(hobOut < BASE, 'HOB should reduce load versus baseline');
+  assert.ok(hobOut <= spongeOut + 1e-6, 'HOB relief should meet or exceed sponge relief');
+});
+
+test('canister reduces vs baseline with the strongest relief', () => {
+  const hob = mk('HOB', 200);
+  const can = mk('CANISTER', 200);
+  const hobOut = computeAdjusted(BASE, [hob]);
+  const canOut = computeAdjusted(BASE, [can]);
+  assert.ok(canOut < BASE, 'Canister should reduce load versus baseline');
+  assert.ok(canOut <= hobOut + 1e-6, 'Canister relief should meet or exceed HOB relief');
+});
+
+test('adding second filter reduces again with diminishing returns', () => {
+  const hob = mk('HOB', 200);
+  const sponge = mk('SPONGE', 80);
+  const one = computeAdjusted(BASE, [hob]);
+  const two = computeAdjusted(BASE, [hob, sponge]);
+  assert.ok(two < one, 'Second filter should further reduce load');
+  const firstDelta = BASE - one;
+  const secondDelta = one - two;
+  assert.ok(secondDelta <= firstDelta + 1e-6, 'Second filter relief should be subject to diminishing returns');
+});
