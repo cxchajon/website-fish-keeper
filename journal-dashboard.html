@@ -29,89 +29,86 @@
   <link rel="icon" href="/favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="/css/site.css?v=2025-10-27c" />
   <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
+  <link rel="stylesheet" href="/assets/css/journal-dashboard.css?v=2025-10-27" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
-  <link rel="stylesheet" href="/assets/css/journal-dashboard.css" />
 </head>
 <body class="page-journal-dashboard">
   <div id="site-nav"></div>
-  <main class="journal-dashboard" aria-labelledby="journal-dashboard-title">
-    <section class="journal-dashboard__intro">
-      <div class="journal-dashboard__title-wrap">
-        <h1 id="journal-dashboard-title" class="journal-dashboard__title">Nitrate Levels</h1>
-        <span class="journal-dashboard__title-accent" aria-hidden="true"></span>
+  <main class="journal-dashboard" id="main-content">
+    <header class="journal-dashboard__header">
+      <div class="journal-dashboard__heading">
+        <h1 class="journal-dashboard__title">Nitrate Levels</h1>
+        <span class="journal-dashboard__underline" aria-hidden="true"></span>
       </div>
-      <p class="journal-dashboard__subtitle">Data-driven view of the 29-gallon planted tank journal.</p>
-      <div class="journal-dashboard__controls">
-        <span class="journal-dashboard__chip" role="note">
-          <span class="journal-dashboard__chip-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 17H5V9h14Zm0-13H5V5h14Z" fill="currentColor"/></svg>
-          </span>
-          October 1 – 27, 2025
-        </span>
-        <div class="journal-dashboard__pager" role="group" aria-label="Change month">
-          <button type="button" class="journal-dashboard__pager-btn" aria-label="Previous month">
-            <span aria-hidden="true">◀︎</span>
+      <p class="journal-dashboard__lead">Live dashboard for the FishKeepingLifeCo 29-gallon planted tank journal.</p>
+      <div class="journal-dashboard__filters" role="group" aria-label="Dashboard filters">
+        <div class="journal-dashboard__month" aria-live="polite">
+          <button type="button" class="journal-dashboard__month-btn" data-nav="prev" aria-label="Previous month">
+            <span aria-hidden="true">‹</span>
           </button>
-          <span class="journal-dashboard__pager-label">September 2025</span>
-          <button type="button" class="journal-dashboard__pager-btn" aria-label="Next month">
-            <span aria-hidden="true">▶︎</span>
+          <div class="journal-dashboard__month-meta">
+            <span class="journal-dashboard__range" data-range-label>—</span>
+            <span class="journal-dashboard__month-label" data-month-label>—</span>
+          </div>
+          <button type="button" class="journal-dashboard__month-btn" data-nav="next" aria-label="Next month">
+            <span aria-hidden="true">›</span>
           </button>
         </div>
-        <button type="button" class="journal-dashboard__toggle" aria-pressed="false">
-          <span class="journal-dashboard__toggle-thumb" aria-hidden="true"></span>
+        <button
+          type="button"
+          class="journal-dashboard__toggle"
+          data-range-toggle
+          aria-pressed="false"
+          aria-label="Toggle 30-day range"
+        >
+          <span class="journal-dashboard__toggle-track" aria-hidden="true">
+            <span class="journal-dashboard__toggle-thumb"></span>
+          </span>
           Include last 30 days across months
         </button>
       </div>
-    </section>
+    </header>
 
-    <nav class="journal-dashboard__tabs" role="tablist" aria-label="Journal dashboard views">
+    <div class="journal-dashboard__tabs" role="tablist" aria-label="Journal dashboard views">
       <button
         type="button"
         class="journal-dashboard__tab is-active"
-        id="tab-nitrate"
         role="tab"
         aria-selected="true"
+        id="tab-nitrate"
         aria-controls="panel-nitrate"
-        data-panel="nitrate"
+        data-tab="nitrate"
       >
-        <span class="journal-dashboard__tab-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M4 18h16v2H4zm0-7h16v2H4zm0-7h16v2H4z" fill="currentColor"/></svg>
-        </span>
         Nitrate
       </button>
       <button
         type="button"
         class="journal-dashboard__tab"
-        id="tab-dosing"
         role="tab"
         aria-selected="false"
+        id="tab-dosing"
         aria-controls="panel-dosing"
-        data-panel="dosing"
+        data-tab="dosing"
         tabindex="-1"
       >
-        <span class="journal-dashboard__tab-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M7 4h10l1 6a6 6 0 0 1-12 0Zm5 14a4 4 0 0 0 4-4h2a6 6 0 0 1-12 0h2a4 4 0 0 0 4 4Z" fill="currentColor"/></svg>
-        </span>
         Dosing
       </button>
       <button
         type="button"
         class="journal-dashboard__tab"
-        id="tab-maintenance"
         role="tab"
         aria-selected="false"
+        id="tab-maintenance"
         aria-controls="panel-maintenance"
-        data-panel="maintenance"
+        data-tab="maintenance"
         tabindex="-1"
       >
-        <span class="journal-dashboard__tab-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M21 5.41 18.59 3 9 12.59V15h2.41ZM7 13H3v8h8v-4H9v2H5v-4h2Z" fill="currentColor"/></svg>
-        </span>
         Maintenance
       </button>
-    </nav>
+    </div>
+
+    <p class="journal-dashboard__error" data-dashboard-error hidden></p>
 
     <section
       id="panel-nitrate"
@@ -119,22 +116,24 @@
       role="tabpanel"
       aria-labelledby="tab-nitrate"
     >
-      <header class="journal-dashboard__panel-header">
-        <h2 class="journal-dashboard__panel-title">Nitrate Levels</h2>
-        <div class="journal-dashboard__legend" aria-hidden="true">
-          <span class="journal-dashboard__legend-item">
-            <span class="journal-dashboard__legend-dot journal-dashboard__legend-dot--nitrate"></span>
-            Nitrate (ppm)
-          </span>
-          <span class="journal-dashboard__legend-item">
-            <span class="journal-dashboard__legend-dot journal-dashboard__legend-dot--water"></span>
-            Water-change day
-          </span>
+      <header class="journal-dashboard__panel-heading">
+        <div>
+          <h2 class="journal-dashboard__panel-title">Nitrate Levels</h2>
+          <div class="journal-dashboard__legend" aria-hidden="true">
+            <span class="journal-dashboard__legend-item">
+              <span class="journal-dashboard__legend-dot journal-dashboard__legend-dot--nitrate"></span>
+              Nitrate (ppm)
+            </span>
+            <span class="journal-dashboard__legend-item">
+              <span class="journal-dashboard__legend-dot journal-dashboard__legend-dot--water"></span>
+              Water change
+            </span>
+          </div>
         </div>
       </header>
-      <div class="journal-dashboard__placeholder" data-state="loading">Loading chart…</div>
-      <div class="journal-dashboard__chart-wrap">
-        <canvas id="nitrateChart" class="journal-dashboard__chart" role="img" aria-label="Line chart of nitrate readings"></canvas>
+      <p class="journal-dashboard__status" data-status="nitrate" hidden>Loading chart…</p>
+      <div class="journal-dashboard__chart" data-chart="nitrate">
+        <canvas id="nitrate-chart" role="img" aria-label="Line chart of nitrate readings"></canvas>
       </div>
     </section>
 
@@ -145,12 +144,12 @@
       aria-labelledby="tab-dosing"
       hidden
     >
-      <header class="journal-dashboard__panel-header">
+      <header class="journal-dashboard__panel-heading">
         <h2 class="journal-dashboard__panel-title">Weekly Dosing</h2>
       </header>
-      <div class="journal-dashboard__placeholder" data-state="loading">Loading chart…</div>
-      <div class="journal-dashboard__chart-wrap">
-        <canvas id="dosingChart" class="journal-dashboard__chart" role="img" aria-label="Grouped bar chart of Thrive+ and Excel dosing totals"></canvas>
+      <p class="journal-dashboard__status" data-status="dosing" hidden>Loading chart…</p>
+      <div class="journal-dashboard__chart" data-chart="dosing">
+        <canvas id="dosing-chart" role="img" aria-label="Weekly dosing totals for Thrive Plus and Seachem Excel"></canvas>
       </div>
     </section>
 
@@ -161,33 +160,16 @@
       aria-labelledby="tab-maintenance"
       hidden
     >
-      <header class="journal-dashboard__panel-header">
+      <header class="journal-dashboard__panel-heading">
         <h2 class="journal-dashboard__panel-title">Maintenance Timeline</h2>
       </header>
-      <div class="journal-dashboard__placeholder" data-state="loading">Loading entries…</div>
-      <ol class="journal-dashboard__timeline" id="maintenanceList" hidden></ol>
+      <p class="journal-dashboard__status" data-status="maintenance" hidden>Loading entries…</p>
+      <ol class="journal-dashboard__maintenance" data-maintenance-list hidden></ol>
     </section>
   </main>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
-  <script>
-    (async () => {
-      try {
-        const res = await fetch('/footer.html?v=1.4.7');
-        const html = await res.text();
-        const host = document.getElementById('site-footer');
-        if (host) {
-          if (host.children.length === 0) {
-            host.outerHTML = html;
-          }
-        } else {
-          document.body.insertAdjacentHTML('beforeend', html);
-        }
-      } catch (e) {
-        console.error('Footer failed to load:', e);
-      }
-    })();
-  </script>
-  <script type="module" defer src="/assets/js/journal-dashboard.js"></script>
+  <script type="module" src="/assets/js/journal-dashboard.js"></script>
 </body>
 </html>
