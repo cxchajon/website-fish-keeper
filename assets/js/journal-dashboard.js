@@ -7,7 +7,7 @@ const CHART_DIMENSION_LIMITS = {
   maxWidth: 1120,
   viewportPadding: 48,
   fallbackWidth: 720,
-  minHeight: 340,
+  minHeight: 360,
   maxHeight: 720,
   heightRatio: 0.6
 };
@@ -61,7 +61,7 @@ function toDate(value) {
 }
 
 function formatDateLabel(date) {
-  return date.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' });
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
 function extractNitrate(segment) {
@@ -717,15 +717,17 @@ function buildNitratePanel() {
     ])
   );
 
-  const chartWrap = createElement('div', 'dashboard-chart chart-container chart-viewport');
+  const chartWrap = createElement('div', 'dashboard-chart chart-container chart-viewport chart-block');
   const chartDimensions = computeChartDimensions(chartWrap);
+  const nitrateDimensions = { ...chartDimensions, height: Math.max(chartDimensions.height, 360) };
+  chartWrap.style.setProperty('--chart-height', `${nitrateDimensions.height}px`);
   const hoverSummary = createHoverSummary();
   chartWrap.appendChild(hoverSummary);
   const chart = renderNitrateChart(state.dataState.nitrateData, {
     xLabel: monthLabel ? `Date (${monthLabel})` : 'Date',
     yLabel: 'ppm',
     onSummaryChange: (text) => updateHoverSummary(hoverSummary, text),
-    dimensions: chartDimensions
+    dimensions: nitrateDimensions
   });
   chartWrap.appendChild(chart.svg);
   chartWrap.appendChild(chart.tooltip);
@@ -773,15 +775,17 @@ function buildDosingPanel() {
     ])
   );
 
-  const chartWrap = createElement('div', 'dashboard-chart chart-container chart-viewport');
+  const chartWrap = createElement('div', 'dashboard-chart chart-container chart-viewport chart-block');
   const chartDimensions = computeChartDimensions(chartWrap);
+  const dosingDimensions = { ...chartDimensions, height: Math.max(chartDimensions.height, 380) };
+  chartWrap.style.setProperty('--chart-height', `${dosingDimensions.height}px`);
   const hoverSummary = createHoverSummary();
   chartWrap.appendChild(hoverSummary);
   const chart = renderDosingChart(state.dataState.dosingData, {
     xLabel: 'Week',
     yLabel: 'Amount (pumps or caps)',
     onSummaryChange: (text) => updateHoverSummary(hoverSummary, text),
-    dimensions: chartDimensions
+    dimensions: dosingDimensions
   });
   chartWrap.appendChild(chart.svg);
   chartWrap.appendChild(chart.tooltip);
@@ -882,12 +886,12 @@ function renderNitrateChart(data, options = {}) {
   const xTickConfig = mobile
     ? {
         fontSize: 11,
-        angle: -35,
+        angle: -25,
         textAnchor: 'end',
         tickInterval: 2,
-        tickMargin: 14,
-        baseOffset: 20,
-        labelOffset: 60
+        tickMargin: 12,
+        baseOffset: 18,
+        labelOffset: 56
       }
     : {
         fontSize: 13,
@@ -943,7 +947,7 @@ function renderDosingChart(data, options = {}) {
         angle: -25,
         textAnchor: 'end',
         tickInterval: 1,
-        tickMargin: 10,
+        tickMargin: 14,
         baseOffset: 20,
         labelOffset: 56
       }
@@ -992,8 +996,8 @@ function renderDosingChart(data, options = {}) {
 
 function drawGrid(group, width, height, xScale, yScale) {
   const gridGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  gridGroup.setAttribute('stroke', 'rgba(236, 244, 255, 0.1)');
-  gridGroup.setAttribute('stroke-dasharray', '4 4');
+  gridGroup.setAttribute('stroke', 'rgba(226, 232, 240, 0.2)');
+  gridGroup.setAttribute('stroke-dasharray', '4 6');
   const yTicks = yScale.ticks(5);
   yTicks.forEach((tick) => {
     const y = yScale.map(tick);
@@ -1106,8 +1110,8 @@ function drawReferenceLine(group, yScale, width, value) {
   line.setAttribute('x2', width);
   line.setAttribute('y1', y);
   line.setAttribute('y2', y);
-  line.setAttribute('stroke', '#1f6feb33');
-  line.setAttribute('stroke-dasharray', '6 6');
+  line.setAttribute('stroke', '#4ea8ff66');
+  line.setAttribute('stroke-dasharray', '4 6');
   group.appendChild(line);
 }
 
@@ -1122,7 +1126,7 @@ function drawNitratePath(group, data, xScale, yScale) {
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   path.setAttribute('d', pathData.join(' '));
   path.setAttribute('fill', 'none');
-  path.setAttribute('stroke', '#1f6feb');
+  path.setAttribute('stroke', '#4ea8ff');
   path.setAttribute('stroke-width', '3');
   group.appendChild(path);
 }
@@ -1141,10 +1145,10 @@ function drawNitrateDots(group, data, xScale, yScale, tooltip, options = {}) {
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     circle.setAttribute('cx', x);
     circle.setAttribute('cy', y);
-    circle.setAttribute('r', point.wc ? 7 : 5);
-    circle.setAttribute('fill', point.wc ? '#f59e0b' : '#1f6feb');
-    circle.setAttribute('stroke', point.wc ? '#b45309' : '#1e3a8a');
-    circle.setAttribute('stroke-width', '2');
+    circle.setAttribute('r', point.wc ? 5 : 3);
+    circle.setAttribute('fill', point.wc ? '#f9a825' : '#4ea8ff');
+    circle.setAttribute('stroke', point.wc ? '#d97706' : '#1d4ed8');
+    circle.setAttribute('stroke-width', point.wc ? '1.8' : '1.4');
     circle.setAttribute('tabindex', '0');
     circle.setAttribute('role', 'img');
     circle.setAttribute(
@@ -1154,7 +1158,7 @@ function drawNitrateDots(group, data, xScale, yScale, tooltip, options = {}) {
         : `${point.dateLabel}: Nitrate ${point.nitrate != null ? point.nitrate.toFixed(1) : 'unknown'} ppm`
     );
     const showHandler = (event) => {
-      showTooltip(event, tooltip, buildNitrateTooltip(point), point.wc ? '#f59e0b' : '#1f6feb');
+      showTooltip(event, tooltip, buildNitrateTooltip(point), point.wc ? '#f9a825' : '#4ea8ff');
       options.onSummaryChange?.(formatNitrateSummary(point));
     };
     const hideHandler = () => {
@@ -1259,7 +1263,7 @@ function buildDosingTooltip(item) {
 
 function showTooltip(event, tooltip, content, accentColor) {
   tooltip.innerHTML = content;
-  tooltip.style.setProperty('--tooltip-accent', accentColor || '#1f6feb');
+  tooltip.style.setProperty('--tooltip-accent', accentColor || '#4ea8ff');
   tooltip.style.opacity = '1';
   let clientX = event?.clientX;
   let clientY = event?.clientY;
@@ -1310,7 +1314,7 @@ function createTooltip() {
   tooltip.style.pointerEvents = 'none';
   tooltip.style.opacity = '0';
   tooltip.style.transition = 'opacity 0.15s ease';
-  tooltip.style.setProperty('--tooltip-accent', '#1f6feb');
+  tooltip.style.setProperty('--tooltip-accent', '#4ea8ff');
   return tooltip;
 }
 
