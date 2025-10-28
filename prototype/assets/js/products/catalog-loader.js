@@ -1,13 +1,18 @@
+import { FLOW_DERATE } from '../proto-filtration-math.js';
+
 const CATALOG_URL = '/prototype/assets/data/filters.catalog.json';
 
-const TYPE_ORDER = new Map([
-  ['SPONGE', 0],
-  ['INTERNAL', 1],
-  ['HOB', 2],
-  ['CANISTER', 3],
-  ['UGF', 4],
-  ['OTHER', 5],
-]);
+const TURNOVER_MIN = 4; // 4× turnover guardrail (prototype heuristics)
+const TURNOVER_MAX = 10; // 10× turnover guardrail (prototype heuristics)
+const MIN_GALLON_BOUND = 5;
+const MAX_GALLON_BOUND = 300;
+
+const SPONGE_BRANDS = new Set(['powkoo', 'xy', 'aquaneat', 'uxcell']);
+const SPONGE_PATTERNS = [
+  /sponge/i,
+  /bacto[-\s]?surge/i,
+  /hydro\s*sponge/i,
+];
 
 let catalogCache = null;
 let pendingLoad = null;
@@ -24,6 +29,73 @@ function coerceNumber(value) {
   return NaN;
 }
 
+function clampGallons(value) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) {
+    return null;
+  }
+  const bounded = Math.min(Math.max(num, MIN_GALLON_BOUND), MAX_GALLON_BOUND);
+  return Math.round(bounded);
+}
+
+function inferType(rawType, brand, model, id) {
+  const normalized = typeof rawType === 'string' ? rawType.trim().toUpperCase() : '';
+  if (normalized === 'SPONGE') {
+    return 'SPONGE';
+  }
+  if (normalized === 'HOB' || normalized === 'CANISTER' || normalized === 'INTERNAL' || normalized === 'UGF') {
+    return normalized;
+  }
+  const haystack = [brand, model, id]
+    .map((value) => (typeof value === 'string' ? value.toLowerCase() : ''))
+    .filter(Boolean)
+    .join(' ');
+  if (haystack) {
+    if (SPONGE_PATTERNS.some((pattern) => pattern.test(haystack))) {
+      return 'SPONGE';
+    }
+    const brandKey = typeof brand === 'string' ? brand.trim().toLowerCase() : '';
+    if (brandKey && SPONGE_BRANDS.has(brandKey)) {
+      return 'SPONGE';
+    }
+  }
+  if (normalized) {
+    return normalized;
+  }
+  return 'HOB';
+}
+
+// When the catalog omits tank bounds, infer them from derated flow using
+// our 4×–10× turnover guardrails so size gating can still function.
+function inferGallonsRange({ minGallons, maxGallons, gphRated }) {
+  const min = Number.isFinite(minGallons) ? Math.max(0, Math.round(minGallons)) : null;
+  const max = Number.isFinite(maxGallons) ? Math.max(0, Math.round(maxGallons)) : null;
+  if (min !== null && max !== null) {
+    return { min, max };
+  }
+  if (!Number.isFinite(gphRated) || gphRated <= 0) {
+    return { min, max };
+  }
+  const gphEffective = gphRated * FLOW_DERATE;
+  if (!Number.isFinite(gphEffective) || gphEffective <= 0) {
+    return { min, max };
+  }
+  const fallbackMin = clampGallons(Math.floor(gphEffective / TURNOVER_MAX));
+  const fallbackMax = clampGallons(Math.ceil(gphEffective / TURNOVER_MIN));
+  let nextMin = min ?? fallbackMin;
+  let nextMax = max ?? fallbackMax;
+  if (Number.isFinite(nextMin) && Number.isFinite(nextMax) && nextMin > nextMax) {
+    const low = Math.min(nextMin, nextMax);
+    const high = Math.max(nextMin, nextMax);
+    nextMin = low;
+    nextMax = high;
+  }
+  return {
+    min: nextMin,
+    max: nextMax,
+  };
+}
+
 function sanitizeProduct(raw) {
   if (!raw || typeof raw.id !== 'string') {
     return null;
@@ -34,21 +106,26 @@ function sanitizeProduct(raw) {
   }
   const brand = typeof raw.brand === 'string' ? raw.brand.trim() : '';
   const model = typeof raw.model === 'string' && raw.model.trim() ? raw.model.trim() : id;
-  const type = typeof raw.type === 'string' && raw.type.trim() ? raw.type.trim().toUpperCase() : 'HOB';
+  const type = inferType(raw.type, brand, model, id);
   const gph = coerceNumber(raw.gphRated);
   if (!Number.isFinite(gph) || gph <= 0) {
     return null;
   }
   const minGallons = coerceNumber(raw.minGallons);
   const maxGallons = coerceNumber(raw.maxGallons);
+  const range = inferGallonsRange({
+    minGallons,
+    maxGallons,
+    gphRated: gph,
+  });
   return {
     id,
     brand,
     model,
     type,
     gphRated: Math.round(gph),
-    minGallons: Number.isFinite(minGallons) ? Math.max(0, Math.round(minGallons)) : null,
-    maxGallons: Number.isFinite(maxGallons) ? Math.max(0, Math.round(maxGallons)) : null,
+    minGallons: Number.isFinite(range.min) ? range.min : null,
+    maxGallons: Number.isFinite(range.max) ? range.max : null,
   };
 }
 
@@ -105,10 +182,12 @@ export function sortByTypeBrandGph(a, b) {
   if (!a && !b) return 0;
   if (!a) return 1;
   if (!b) return -1;
-  const orderA = TYPE_ORDER.get(a.type) ?? TYPE_ORDER.size;
-  const orderB = TYPE_ORDER.get(b.type) ?? TYPE_ORDER.size;
-  if (orderA !== orderB) {
-    return orderA - orderB;
+  const typeCompare = String(a.type || '').localeCompare(String(b.type || ''), undefined, {
+    sensitivity: 'base',
+    usage: 'sort',
+  });
+  if (typeCompare !== 0) {
+    return typeCompare;
   }
   const brandCompare = String(a.brand || '').localeCompare(String(b.brand || ''), undefined, {
     sensitivity: 'base',
@@ -116,13 +195,6 @@ export function sortByTypeBrandGph(a, b) {
   });
   if (brandCompare !== 0) {
     return brandCompare;
-  }
-  const modelCompare = String(a.model || '').localeCompare(String(b.model || ''), undefined, {
-    sensitivity: 'base',
-    usage: 'sort',
-  });
-  if (modelCompare !== 0) {
-    return modelCompare;
   }
   return (a.gphRated ?? 0) - (b.gphRated ?? 0);
 }
