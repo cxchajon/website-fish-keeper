@@ -155,6 +155,35 @@ html[data-page="journal-dashboard"] .section + .section {
   margin-top: clamp(8px, 2vh, 24px) !important;
 }
 
+/* Blueprint charts stay frameless and wide */
+html[data-page="journal-dashboard"] .chart-card {
+  padding-inline: clamp(12px, 3.5vw, 22px) !important;
+  padding-block: clamp(16px, 4vh, 28px) !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+@media (max-width: 640px) {
+  html[data-page="journal-dashboard"] .chart-card {
+    padding-inline: clamp(10px, 4vw, 18px) !important;
+    padding-block: clamp(14px, 6vw, 26px) !important;
+  }
+}
+
+html[data-page="journal-dashboard"] .chart-shell,
+html[data-page="journal-dashboard"] .chart-h440,
+html[data-page="journal-dashboard"] .chart-h400 {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+html[data-page="journal-dashboard"] .chart-shell .recharts-responsive-container {
+  overflow: visible !important;
+}
+
 /* Pill tabs (Nitrate / Dosing / Maintenance) */
 html[data-page="journal-dashboard"] .dashboard-tabs {
   display: grid;

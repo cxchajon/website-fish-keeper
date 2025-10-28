@@ -7,7 +7,10 @@ Chart.register(...registerables);
 const CATEGORY_CHART_OPTIONS = {
   responsive: true,
   maintainAspectRatio: false,
-  layout: { padding: { top: 8, right: 12, bottom: 44, left: 12 } },
+  layout: { padding: { top: 12, right: 18, bottom: 48, left: 18 } },
+  animation: false,
+  transitions: { active: { animation: { duration: 0 } } },
+  interaction: { mode: 'index', intersect: false, axis: 'x' },
   plugins: {
     legend: {
       labels: { color: '#cbd5e1', boxWidth: 10, usePointStyle: true, font: { size: 13 } }
@@ -20,23 +23,25 @@ const CATEGORY_CHART_OPTIONS = {
       offset: false,
       ticks: {
         color: '#cbd5e1',
-        autoSkip: false,
-        maxRotation: 26,
-        minRotation: 26,
+        autoSkip: true,
+        autoSkipPadding: 10,
+        maxRotation: 32,
+        minRotation: 0,
         padding: 8
       },
       grid: {
         display: true,
-        color: 'rgba(255,255,255,0.15)',
-        lineWidth: 1.2,
+        color: 'rgba(255,255,255,0.18)',
+        lineWidth: 1.1,
         drawTicks: true,
-        drawBorder: false
+        drawBorder: false,
+        drawOnChartArea: true
       }
     },
     y: {
       beginAtZero: true,
       grid: { display: true, color: 'rgba(255,255,255,0.12)' },
-      ticks: { color: '#cbd5e1', stepSize: 5, font: { size: 12 } },
+      ticks: { color: '#cbd5e1', stepSize: 5, padding: 6, font: { size: 12 } },
       title: { display: true, text: '', color: '#cbd5e1', font: { size: 13 } }
     }
   }
