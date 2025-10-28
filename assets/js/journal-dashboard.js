@@ -36,6 +36,26 @@ function computeChartDimensions(container) {
   return { width, height };
 }
 
+function isMobileViewport() {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return false;
+  }
+  try {
+    return window.matchMedia('(max-width: 600px)').matches;
+  } catch (error) {
+    console.warn('matchMedia not available, assuming desktop viewport');
+    return false;
+  }
+}
+
+function computeMarginBottom(base, xTickConfig = {}) {
+  const tickMargin = xTickConfig.tickMargin ?? 8;
+  const baseOffset = xTickConfig.baseOffset ?? 18;
+  const labelOffset = xTickConfig.labelOffset ?? (xTickConfig.angle ? 52 : 40);
+  const tickDepth = baseOffset + tickMargin;
+  return Math.max(base, tickDepth + 8, labelOffset + 4);
+}
+
 function toDate(value) {
   return new Date(`${value}T00:00:00`);
 }
@@ -697,7 +717,7 @@ function buildNitratePanel() {
     ])
   );
 
-  const chartWrap = createElement('div', 'dashboard-chart chart-container');
+  const chartWrap = createElement('div', 'dashboard-chart chart-container chart-viewport');
   const chartDimensions = computeChartDimensions(chartWrap);
   const hoverSummary = createHoverSummary();
   chartWrap.appendChild(hoverSummary);
@@ -753,7 +773,7 @@ function buildDosingPanel() {
     ])
   );
 
-  const chartWrap = createElement('div', 'dashboard-chart chart-container');
+  const chartWrap = createElement('div', 'dashboard-chart chart-container chart-viewport');
   const chartDimensions = computeChartDimensions(chartWrap);
   const hoverSummary = createHoverSummary();
   chartWrap.appendChild(hoverSummary);
@@ -858,7 +878,32 @@ function renderMaintenanceCards(events) {
 function renderNitrateChart(data, options = {}) {
   const { xLabel, yLabel, onSummaryChange, dimensions } = options;
   const { width, height } = dimensions ?? computeChartDimensions();
-  const margin = { top: 36, right: 32, bottom: 60, left: 60 };
+  const mobile = isMobileViewport();
+  const xTickConfig = mobile
+    ? {
+        fontSize: 11,
+        angle: -35,
+        textAnchor: 'end',
+        tickInterval: 2,
+        tickMargin: 14,
+        baseOffset: 20,
+        labelOffset: 60
+      }
+    : {
+        fontSize: 13,
+        angle: 0,
+        textAnchor: 'middle',
+        tickInterval: 0,
+        tickMargin: 8,
+        baseOffset: 18,
+        labelOffset: 40
+      };
+  const margin = {
+    top: 36,
+    right: 32,
+    bottom: computeMarginBottom(mobile ? 60 : 30, xTickConfig),
+    left: 60
+  };
   const svg = createSvg(width, height);
   const tooltip = createTooltip();
   const innerWidth = width - margin.left - margin.right;
@@ -875,7 +920,8 @@ function renderNitrateChart(data, options = {}) {
   drawGrid(g, innerWidth, innerHeight, xScale, yScale);
   drawAxes(g, innerWidth, innerHeight, xScale, yScale, {
     xLabel,
-    yLabel
+    yLabel,
+    xTickConfig
   });
   drawReferenceLine(g, yScale, innerWidth, TARGET_NO3);
   drawNitratePath(g, data, xScale, yScale);
@@ -890,7 +936,32 @@ function renderNitrateChart(data, options = {}) {
 function renderDosingChart(data, options = {}) {
   const { xLabel, yLabel, onSummaryChange, dimensions } = options;
   const { width, height } = dimensions ?? computeChartDimensions();
-  const margin = { top: 36, right: 32, bottom: 68, left: 64 };
+  const mobile = isMobileViewport();
+  const xTickConfig = mobile
+    ? {
+        fontSize: 11,
+        angle: -25,
+        textAnchor: 'end',
+        tickInterval: 1,
+        tickMargin: 10,
+        baseOffset: 20,
+        labelOffset: 56
+      }
+    : {
+        fontSize: 13,
+        angle: 0,
+        textAnchor: 'middle',
+        tickInterval: 0,
+        tickMargin: 6,
+        baseOffset: 18,
+        labelOffset: 36
+      };
+  const margin = {
+    top: 36,
+    right: 32,
+    bottom: computeMarginBottom(mobile ? 56 : 28, xTickConfig),
+    left: 64
+  };
   const svg = createSvg(width, height);
   const tooltip = createTooltip();
   const innerWidth = width - margin.left - margin.right;
@@ -908,9 +979,9 @@ function renderDosingChart(data, options = {}) {
 
   drawGrid(g, innerWidth, innerHeight, xScale, yScale);
   drawAxes(g, innerWidth, innerHeight, xScale, yScale, {
-    rotateX: true,
     xLabel,
-    yLabel
+    yLabel,
+    xTickConfig
   });
   drawBars(g, data, xScale, yScale, tooltip, {
     onSummaryChange
@@ -937,12 +1008,26 @@ function drawGrid(group, width, height, xScale, yScale) {
 }
 
 function drawAxes(group, width, height, xScale, yScale, options = {}) {
-  const { rotateX = false, xLabel, yLabel } = options;
+  const { rotateX = false, xLabel, yLabel, xTickConfig = {} } = options;
   const axisGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   axisGroup.setAttribute('class', 'dashboard-axis');
   const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   xAxis.setAttribute('transform', `translate(0, ${height})`);
+  const angle = xTickConfig.angle ?? (rotateX ? -25 : 0);
+  const textAnchor = xTickConfig.textAnchor ?? (rotateX ? 'end' : 'middle');
+  const fontSize = xTickConfig.fontSize ?? (rotateX ? 13 : 14);
+  const tickInterval = xTickConfig.tickInterval ?? 0;
+  const tickMargin = xTickConfig.tickMargin ?? (rotateX ? 6 : 8);
+  const baseOffset = xTickConfig.baseOffset ?? 18;
+  const labelOffset = xTickConfig.labelOffset ?? (angle ? 52 : 40);
+  const tickCount = xScale.values.length;
+  const tickOffsetY = baseOffset + tickMargin;
   xScale.values.forEach((value, index) => {
+    const shouldRenderTick =
+      tickInterval <= 0 || index === tickCount - 1 || index % (tickInterval + 1) === 0;
+    if (!shouldRenderTick) {
+      return;
+    }
     const x = xScale.position(index) + xScale.bandwidth / 2;
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.setAttribute('x1', x);
@@ -952,13 +1037,13 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
     xAxis.appendChild(line);
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     text.setAttribute('x', x);
-    text.setAttribute('y', rotateX ? 22 : 26);
-    text.setAttribute('fill', 'rgba(236, 244, 255, 0.9)');
-    text.setAttribute('font-size', rotateX ? '13' : '14');
+    text.setAttribute('y', tickOffsetY);
+    text.setAttribute('fill', 'rgba(226, 232, 240, 0.95)');
+    text.setAttribute('font-size', `${fontSize}`);
     text.setAttribute('font-weight', '500');
-    text.setAttribute('text-anchor', rotateX ? 'end' : 'middle');
-    if (rotateX) {
-      text.setAttribute('transform', `rotate(-25 ${x} ${height + 20})`);
+    text.setAttribute('text-anchor', textAnchor);
+    if (angle) {
+      text.setAttribute('transform', `rotate(${angle} ${x} ${height + tickOffsetY})`);
     }
     text.textContent = value;
     xAxis.appendChild(text);
@@ -989,8 +1074,8 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
   if (xLabel) {
     const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     label.setAttribute('x', width / 2);
-    label.setAttribute('y', height + (rotateX ? 46 : 40));
-    label.setAttribute('fill', 'rgba(236, 244, 255, 0.92)');
+    label.setAttribute('y', height + labelOffset);
+    label.setAttribute('fill', 'rgba(226, 232, 240, 0.95)');
     label.setAttribute('font-size', '16');
     label.setAttribute('font-weight', '600');
     label.setAttribute('text-anchor', 'middle');

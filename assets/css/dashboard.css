@@ -91,13 +91,14 @@ body.dashboard-bg{
 /* Give charts generous height, responsive to viewport */
 .chart-viewport{
   width: 100%;
-  height: clamp(340px, 60vh, 720px);
+  height: clamp(400px, 65vh, 720px);
   margin-top: 20px;
+  padding-bottom: 24px;
 }
 
 .recharts-cartesian-axis-tick-value tspan{
   font-size: 0.9rem !important;
-  fill: rgba(255,255,255,0.9);
+  fill: rgba(226,232,240,0.95);
 }
 
 .recharts-tooltip-label,
