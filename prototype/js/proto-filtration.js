@@ -1,21 +1,10 @@
 import { canonicalizeFilterType, weightedMixFactor } from '/js/utils.js';
-// Product catalog wired via normalized filters.catalog.json (site-wide audit, Oct 2025)
-import {
-  filterByGallons,
-  loadFiltersCatalog,
-  normalizeItem,
-  sortByTypeBrandGph,
-} from '../assets/js/products/catalog-loader.js';
 import {
   computeTurnover,
   getTotalGPH,
   computeAggregateEfficiency,
   mapFiltersForEfficiency,
 } from '../assets/js/proto-filtration-math.js';
-
-if (typeof window !== 'undefined') {
-  window.shouldRestoreVariantFocus = () => false;
-}
 
 const DEBUG_FILTERS = Boolean(window?.TTG?.DEBUG_FILTERS);
 const TYPE_WEIGHT = Object.freeze({
@@ -66,13 +55,8 @@ const refs = {
   summary: null,
 };
 
-let catalogIndex = new Map();
-let catalogAll = [];
-let catalogVisible = [];
-let catalogFallbackActive = false;
+let catalog = new Map();
 let catalogPromise = null;
-let catalogLoadError = null;
-let lastFallbackLogGallons = null;
 let baseManualNote = '';
 let baseProductNote = '';
 let recomputeFrame = 0;
@@ -148,183 +132,6 @@ function formatFilterTypeLabel(value) {
   return FILTER_TYPE_LABELS[canonical] || canonical || 'HOB';
 }
 
-function getRatedGphValue(product) {
-  return clampGph(product?.gphRated ?? product?.rated_gph ?? product?.ratedGph ?? product?.gph);
-}
-
-function formatProductDropdownLabel(product) {
-  if (!product) return '';
-  const brand = product.brand ? String(product.brand).trim() : '';
-  const model = product.model ? String(product.model).trim() : '';
-  const gph = getRatedGphValue(product) || 0;
-  const type = product.type ? String(product.type).trim() : 'HOB';
-  const parts = [];
-  if (brand) {
-    parts.push(brand);
-  }
-  if (model) {
-    parts.push(model);
-  }
-  const prefix = parts.length ? parts.join(' ') : product.id;
-  return `${prefix} — ${gph} GPH (${type})`;
-}
-
-function formatProductLabel(product) {
-  return formatProductDropdownLabel(product);
-}
-
-function renderFilterDropdown(list, { fallback = false, datasetFallback = fallback } = {}) {
-  const select = refs.productSelect;
-  if (!select) {
-    return;
-  }
-  const currentValue = pendingProductId || select.value || '';
-  const collection = Array.isArray(list) ? list : [];
-  select.innerHTML = '';
-
-  if (!collection.length) {
-    const empty = document.createElement('option');
-    empty.value = '';
-    empty.disabled = true;
-    empty.selected = true;
-    empty.textContent = fallback ? 'Catalog unavailable' : 'No matching products';
-    select.appendChild(empty);
-    select.dataset.fallback = datasetFallback ? 'true' : 'false';
-    return;
-  }
-
-  const placeholder = document.createElement('option');
-  placeholder.value = '';
-  placeholder.textContent = '— Select a product —';
-  placeholder.disabled = true;
-  placeholder.selected = !currentValue;
-  select.appendChild(placeholder);
-
-  const applyOption = (product) => {
-    const option = document.createElement('option');
-    option.value = product.id;
-    option.textContent = formatProductDropdownLabel(product);
-    option.dataset.type = product.type || '';
-    option.dataset.brand = product.brand || '';
-    option.dataset.gphRated = String(getRatedGphValue(product) || 0);
-    if (Number.isFinite(product.minGallons)) {
-      option.dataset.minG = String(product.minGallons);
-    }
-    if (Number.isFinite(product.maxGallons)) {
-      option.dataset.maxG = String(product.maxGallons);
-    }
-    return option;
-  };
-
-  let host = select;
-  let group = null;
-  if (fallback && collection.length) {
-    group = document.createElement('optgroup');
-    group.label = 'All filters (no size match)';
-    select.appendChild(group);
-    host = group;
-  }
-
-  collection.forEach((product) => {
-    host.appendChild(applyOption(product));
-  });
-
-  const selectedExists = collection.some((product) => product.id === currentValue);
-  if (!selectedExists && currentValue && catalogIndex.has(currentValue)) {
-    const preserved = catalogIndex.get(currentValue);
-    if (preserved) {
-      const option = applyOption(preserved);
-      option.dataset.persisted = 'true';
-      host.appendChild(option);
-    }
-  }
-
-  select.dataset.fallback = datasetFallback ? 'true' : 'false';
-  const desired = currentValue && catalogIndex.has(currentValue) ? currentValue : '';
-  select.value = desired;
-}
-
-function updateVisibleProducts() {
-  const rawGallons = Number.isFinite(state.tankGallons) ? state.tankGallons : null;
-  if (!catalogAll.length) {
-    const dropdownFallback = catalogFallbackActive || Boolean(catalogLoadError);
-    renderFilterDropdown([], { fallback: catalogFallbackActive, datasetFallback: dropdownFallback });
-    updateCatalogDiagnostics({ itemsLoaded: 0, matches: 0, gallons: rawGallons, fallback: catalogFallbackActive });
-    return;
-  }
-  const gallons = Number.isFinite(rawGallons) ? Math.max(rawGallons, 0) : null;
-  const nextVisible = filterByGallons(catalogAll, gallons);
-  const hasExactMatch = Number.isFinite(gallons)
-    ? catalogAll.some((product) => fitsTankRange(product, gallons))
-    : true;
-  catalogVisible = Array.isArray(nextVisible) ? nextVisible.slice() : [];
-  catalogFallbackActive = Number.isFinite(gallons) && !hasExactMatch && catalogVisible.length > 0;
-  if (catalogFallbackActive && catalogAll.length) {
-    const roundedGallons = Number.isFinite(gallons) ? Math.round(gallons) : gallons;
-    if (roundedGallons !== lastFallbackLogGallons) {
-      console.warn('[Proto] No size-matched filters. Falling back to full catalog.', {
-        gallons: roundedGallons,
-        itemsLoaded: catalogAll.length,
-        firstItemSample: catalogAll[0] ?? null,
-      });
-      lastFallbackLogGallons = roundedGallons;
-    }
-  } else {
-    lastFallbackLogGallons = null;
-  }
-  const dropdownFallback = catalogFallbackActive || Boolean(catalogLoadError);
-  renderFilterDropdown(catalogVisible, { fallback: catalogFallbackActive, datasetFallback: dropdownFallback });
-  updateCatalogDiagnostics({
-    itemsLoaded: catalogAll.length,
-    matches: catalogVisible.length,
-    gallons,
-    fallback: catalogFallbackActive,
-    sample: catalogVisible[0] ?? null,
-  });
-}
-
-function fitsTankRange(product, gallons) {
-  if (!product || !Number.isFinite(gallons)) {
-    return false;
-  }
-  const min = Number.isFinite(product.minGallons) ? product.minGallons : -Infinity;
-  const max = Number.isFinite(product.maxGallons) ? product.maxGallons : Infinity;
-  return gallons >= min && gallons <= max;
-}
-
-function updateCatalogDiagnostics({ itemsLoaded, matches, gallons, fallback, sample = null }) {
-  const payload = {
-    itemsLoaded,
-    matches,
-    tankGallons: Number.isFinite(gallons) ? Math.round(gallons) : null,
-    fallback,
-    sample: sample
-      ? {
-          brand: sample.brand ?? null,
-          model: sample.model ?? null,
-          type: sample.type ?? null,
-          gphRated: Number.isFinite(sample.gphRated) ? sample.gphRated : null,
-        }
-      : null,
-  };
-  try {
-    console.debug('[Proto][Filters] catalog update', payload);
-  } catch (_error) {
-    /* noop */
-  }
-  const banner = document.querySelector('[data-role="filter-diagnostics"]');
-  if (banner) {
-    const parts = [
-      `Loaded: ${itemsLoaded}`,
-      `Matches: ${matches}`,
-      `Tank: ${Number.isFinite(gallons) ? Math.round(gallons) : '—'}`,
-      fallback ? 'Fallback list' : 'Exact match',
-    ];
-    banner.textContent = parts.join(' • ');
-    banner.dataset.fallback = fallback ? 'true' : 'false';
-  }
-}
-
 function computeManualLabel(type, gph) {
   const labelType = formatFilterTypeLabel(type);
   return `${labelType} ${formatGph(gph)} GPH`;
@@ -348,11 +155,7 @@ function canAddProduct(product) {
   if (!product || !product.id) {
     return false;
   }
-  return !state.filters.some(
-    (entry) =>
-      entry.source === FILTER_SOURCES.PRODUCT &&
-      (entry.id === product.id || entry.productId === product.id),
-  );
+  return !state.filters.some((entry) => entry.source === FILTER_SOURCES.PRODUCT && entry.id === product.id);
 }
 
 function canAddManual(type, gph) {
@@ -384,9 +187,6 @@ function toAppFilter(item) {
     rated_gph: gph ?? 0,
     kind: efficiencyType,
     source,
-    productId: source === FILTER_SOURCES.PRODUCT
-      ? (typeof item?.productId === 'string' && item.productId ? item.productId : (typeof item?.id === 'string' ? item.id : null))
-      : null,
   };
 }
 
@@ -400,10 +200,6 @@ function persistAppFilters(filters) {
           id: entry.id ?? null,
           type: canonicalizeFilterType(entry.type),
           rated_gph: clampGph(entry.rated_gph) ?? 0,
-          productId:
-            entry.source === FILTER_SOURCES.PRODUCT
-              ? entry.productId ?? entry.id ?? null
-              : null,
         }))
       : [];
     const meaningful = payload.filter((item) => item.id || item.rated_gph > 0);
@@ -563,7 +359,7 @@ function getTankGallons() {
 
 function ensureRefs() {
   if (!refs.productSelect) {
-    refs.productSelect = document.getElementById('filterProduct') || document.getElementById('filter-product');
+    refs.productSelect = document.getElementById('filter-product');
   }
   if (!refs.productAddBtn) {
     refs.productAddBtn = document.getElementById('filter-product-add');
@@ -601,9 +397,7 @@ function updateProductLabel(productItem) {
   if (!refs.productLabel) return;
   if (productItem) {
     refs.productLabel.hidden = false;
-    const fallbackLabel = `${formatFilterTypeLabel(productItem.type)} ${formatGph(productItem.gph)} GPH`;
-    const label = typeof productItem.label === 'string' && productItem.label ? productItem.label : fallbackLabel;
-    refs.productLabel.textContent = label;
+    refs.productLabel.textContent = `${productItem.label} • ${formatGph(productItem.gph)} GPH`;
   } else {
     refs.productLabel.hidden = true;
     refs.productLabel.textContent = '';
@@ -744,10 +538,6 @@ function updateProductAddButton() {
     setButtonState(button, false);
     return;
   }
-  if (!getRatedGphValue(product)) {
-    setButtonState(button, false);
-    return;
-  }
   const item = createProductFilter(product);
   const enabled = Boolean(item) && canAddProduct(item);
   setButtonState(button, enabled);
@@ -764,9 +554,6 @@ function updateManualAddButton() {
 
 function render() {
   state.tankGallons = getTankGallons();
-  if (catalogAll.length) {
-    updateVisibleProducts();
-  }
   renderChips();
   renderSummary();
   if (typeof window.renderFiltration === 'function') {
@@ -819,9 +606,6 @@ function setFilters(nextFilters) {
       return;
     }
     seen.add(key);
-    const productId = source === FILTER_SOURCES.PRODUCT
-      ? (typeof raw.productId === 'string' && raw.productId ? raw.productId : id)
-      : null;
     sanitized.push({
       id,
       source,
@@ -829,7 +613,6 @@ function setFilters(nextFilters) {
       gph,
       type,
       efficiencyType,
-      productId,
     });
   });
 
@@ -840,19 +623,18 @@ function setFilters(nextFilters) {
 
 function createProductFilter(product) {
   if (!product || !product.id) return null;
-  const rated = getRatedGphValue(product);
+  const rated = clampGph(product.rated_gph ?? product.ratedGph);
   if (!rated) {
     return null;
   }
-  const label = formatProductLabel(product);
+  const label = product.name ? `${product.name}` : product.id;
   return {
     id: product.id,
-    productId: product.id,
     source: FILTER_SOURCES.PRODUCT,
     label,
     gph: rated,
     type: canonicalizeFilterType(product.type ?? 'HOB'),
-    efficiencyType: resolveEfficiencyType(product.type ?? product.efficiencyType ?? 'HOB'),
+    efficiencyType: resolveEfficiencyType(product.type ?? 'HOB'),
   };
 }
 
@@ -917,7 +699,7 @@ function tryAddCustom() {
 
 function findProductById(id) {
   if (!id) return null;
-  return catalogIndex.get(id) ?? null;
+  return catalog.get(id) ?? null;
 }
 
 async function handleProductChange(value) {
@@ -932,11 +714,6 @@ async function handleProductChange(value) {
   const product = findProductById(id);
   if (!product) {
     showProductStatus('Filter catalog unavailable. Try again.', { duration: 2800 });
-    updateProductAddButton();
-    return;
-  }
-  if (!getRatedGphValue(product)) {
-    showProductStatus('This listing does not report a rated flow. Choose another filter.', { duration: 3200 });
     updateProductAddButton();
     return;
   }
@@ -983,42 +760,26 @@ async function loadCatalog() {
   if (catalogPromise) {
     return catalogPromise;
   }
-  catalogPromise = loadFiltersCatalog()
-    .then((items) => {
-      const list = Array.isArray(items) ? items : [];
-      const normalized = list
-        .map((entry) => normalizeItem(entry))
-        .filter((product) => product && product.id);
-      const deduped = [];
-      const seen = new Set();
-      normalized.forEach((product) => {
-        if (!product?.id || seen.has(product.id)) {
-          return;
-        }
-        seen.add(product.id);
-        deduped.push(product);
-      });
-      const sortedList = deduped.slice().sort(sortByTypeBrandGph);
-      catalogIndex = new Map(sortedList.map((product) => [product.id, product]));
-      catalogAll = sortedList;
-      catalogVisible = sortedList.slice();
-      catalogLoadError = null;
-      catalogFallbackActive = false;
-      updateVisibleProducts();
-      syncSelectValue();
-      updateProductAddButton();
-      return catalogIndex;
+  catalogPromise = fetch('/data/filters.json', { cache: 'no-cache' })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Failed to load catalog: ${response.status}`);
+      }
+      return response.json();
     })
-    .catch((error) => {
-      catalogIndex = new Map();
-      catalogAll = [];
-      catalogVisible = [];
-      catalogLoadError = error;
-      catalogFallbackActive = true;
-      renderFilterDropdown([], { fallback: true, datasetFallback: true });
-      updateProductAddButton();
-      showProductStatus('Filter catalog unavailable. Try again later.', { duration: 3600 });
-      return catalogIndex;
+    .then((data) => {
+      catalog = new Map();
+      const list = Array.isArray(data) ? data : [];
+      list.forEach((item) => {
+        if (item && typeof item.id === 'string' && item.id) {
+          catalog.set(item.id, item);
+        }
+      });
+      return catalog;
+    })
+    .catch((_error) => {
+      catalog = new Map();
+      return catalog;
     });
   return catalogPromise;
 }
@@ -1033,11 +794,7 @@ function hydrateFromAppState() {
     if (!gph) {
       return;
     }
-    const id = typeof entry?.productId === 'string' && entry.productId
-      ? entry.productId
-      : typeof entry?.id === 'string' && entry.id
-        ? entry.id
-        : null;
+    const id = typeof entry?.id === 'string' && entry.id ? entry.id : null;
     const product = id ? findProductById(id) : null;
     if (product) {
       const productItem = createProductFilter(product);
