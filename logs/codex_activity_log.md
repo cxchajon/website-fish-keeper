@@ -77,3 +77,7 @@ Result: journal live (unlinked).
 [2025-10-27 | Journal] Added entry; rebuilt CSV/JSON and 2025-10.json; verified Journal render (chips+notes de-dup) and month nav; dashboard refreshed.
 [2025-10-28 | TheTankGuide | Journal dashboard charts] Scope: Align x-ticks/grid to data; improve mobile readability. Result: Vertical gridlines at each date; taller mobile charts; clean labels. Next: Consider pinch-zoom toggle if future months add too many dates.
 [2025-10-28 | TheTankGuide | Journal Dashboard Rebuild] Scope: Rebuilt journal-dashboard with Chart.js tabs; restored original style; removed duplicate footer. Result: One global footer; charts auto-update from /data/journal.csv; guard passes. Next: Wire weekly auto-regeneration of /data/journal.csv in the journal workflow (if not already).
+[2025-10-28 | TheTankGuide | Rebuilt journal dashboard]
+Scope: Restore original dashboard, local Chart.js, auto data, footer-safe.
+Result: Charts render; footer-lock pass.
+Next: Hook date controls to fetch previous month slice when backend is ready.
