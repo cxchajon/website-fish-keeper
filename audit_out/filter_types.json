@@ -1,0 +1,137 @@
+[
+  {
+    "id": "fluval-107",
+    "name": "107 Performance Canister",
+    "gph": 145.0,
+    "declared_type": "CANISTER",
+    "inferred_type": "CANISTER",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "fluval-207",
+    "name": "207 Performance Canister",
+    "gph": 206.0,
+    "declared_type": "CANISTER",
+    "inferred_type": "CANISTER",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "fluval-307",
+    "name": "307 Performance Canister",
+    "gph": 303.0,
+    "declared_type": "CANISTER",
+    "inferred_type": "CANISTER",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "fluval-407",
+    "name": "407 Performance Canister",
+    "gph": 383.0,
+    "declared_type": "CANISTER",
+    "inferred_type": "CANISTER",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "oase-biomaster-250",
+    "name": "BioMaster Thermo 250",
+    "gph": 250.0,
+    "declared_type": "CANISTER",
+    "inferred_type": "UNKNOWN",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "oase-biomaster-600",
+    "name": "BioMaster Thermo 600",
+    "gph": 320.0,
+    "declared_type": "CANISTER",
+    "inferred_type": "UNKNOWN",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "powkoo-dual-sponge-40",
+    "name": "Dual Sponge Filter (20\u201355G)",
+    "gph": 150.0,
+    "declared_type": "SPONGE",
+    "inferred_type": "SPONGE",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "fluval-fx4",
+    "name": "FX4 High Performance Canister",
+    "gph": 700.0,
+    "declared_type": "CANISTER",
+    "inferred_type": "CANISTER",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "aquaclear-30",
+    "name": "Power Filter 30",
+    "gph": 150.0,
+    "declared_type": "HOB",
+    "inferred_type": "UNKNOWN",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "aquaclear-50",
+    "name": "Power Filter 50",
+    "gph": 200.0,
+    "declared_type": "HOB",
+    "inferred_type": "UNKNOWN",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "aquaclear-70",
+    "name": "Power Filter 70",
+    "gph": 300.0,
+    "declared_type": "HOB",
+    "inferred_type": "UNKNOWN",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "aquaneat-sponge-10",
+    "name": "Single Sponge Filter (Up to 10G)",
+    "gph": 60.0,
+    "declared_type": "SPONGE",
+    "inferred_type": "SPONGE",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "seachem-tidal-35",
+    "name": "Tidal 35",
+    "gph": 130.0,
+    "declared_type": "HOB",
+    "inferred_type": "UNKNOWN",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "seachem-tidal-55",
+    "name": "Tidal 55",
+    "gph": 250.0,
+    "declared_type": "HOB",
+    "inferred_type": "UNKNOWN",
+    "source_file": "data/filters.json",
+    "notes": ""
+  },
+  {
+    "id": "seachem-tidal-75",
+    "name": "Tidal 75",
+    "gph": 350.0,
+    "declared_type": "HOB",
+    "inferred_type": "UNKNOWN",
+    "source_file": "data/filters.json",
+    "notes": ""
+  }
+]
