@@ -4,6 +4,19 @@ html[data-page="journal-dashboard"] body {
   height: 100%;
 }
 
+@font-face {
+  font-family: "Inter";
+  src: local("Inter"), local("Inter-Regular");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html[data-page="journal-dashboard"],
+html[data-page="journal-dashboard"] body {
+  overflow-x: hidden;
+}
+
 html[data-page="journal-dashboard"] {
   /* deep navy base */
   background: #0b1620;
@@ -200,6 +213,16 @@ html[data-page="journal-dashboard"] .chart-container {
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.05),
     0 0 0 0 transparent;
+}
+
+html[data-page="journal-dashboard"] .chart-block {
+  margin-block: 32px;
+}
+
+@media (max-width: 480px) {
+  html[data-page="journal-dashboard"] .chart-block {
+    min-height: 420px;
+  }
 }
 
 html[data-page="journal-dashboard"] .recharts-responsive-container {

@@ -6,7 +6,7 @@ function toDate(value) {
 }
 
 function formatDateLabel(date) {
-  return date.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' });
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
 function extractNitrate(segment) {

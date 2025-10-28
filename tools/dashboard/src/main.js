@@ -281,7 +281,7 @@ function buildNitratePanel() {
   heading.textContent = 'Nitrate Levels';
   panel.appendChild(heading);
 
-  const chartWrap = createElement('div', 'dashboard-chart');
+  const chartWrap = createElement('div', 'dashboard-chart chart-block');
   const chart = renderNitrateChart(state.dataState.nitrateData);
   chartWrap.appendChild(chart.svg);
   chartWrap.appendChild(chart.tooltip);
@@ -321,7 +321,7 @@ function buildDosingPanel() {
   heading.textContent = 'Dosing Totals';
   panel.appendChild(heading);
 
-  const chartWrap = createElement('div', 'dashboard-chart');
+  const chartWrap = createElement('div', 'dashboard-chart chart-block');
   const chart = renderDosingChart(state.dataState.dosingData);
   chartWrap.appendChild(chart.svg);
   chartWrap.appendChild(chart.tooltip);
