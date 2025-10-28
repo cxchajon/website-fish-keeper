@@ -37,96 +37,135 @@
 <body class="page-journal-dashboard">
   <div id="site-nav"></div>
   <main class="journal-dashboard" aria-labelledby="journal-dashboard-title">
-    <header class="journal-dashboard__header">
-      <h1 id="journal-dashboard-title" class="journal-dashboard__title">Journal Dashboard</h1>
-      <p class="journal-dashboard__subtitle">
-        Live nitrate readings, weekly dosing totals, and a running maintenance log sourced from the FishKeepingLifeCo journal.
-      </p>
-    </header>
+    <section class="journal-dashboard__intro">
+      <div class="journal-dashboard__title-wrap">
+        <h1 id="journal-dashboard-title" class="journal-dashboard__title">Nitrate Levels</h1>
+        <span class="journal-dashboard__title-accent" aria-hidden="true"></span>
+      </div>
+      <p class="journal-dashboard__subtitle">Data-driven view of the 29-gallon planted tank journal.</p>
+      <div class="journal-dashboard__controls">
+        <span class="journal-dashboard__chip" role="note">
+          <span class="journal-dashboard__chip-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 17H5V9h14Zm0-13H5V5h14Z" fill="currentColor"/></svg>
+          </span>
+          October 1 – 27, 2025
+        </span>
+        <div class="journal-dashboard__pager" role="group" aria-label="Change month">
+          <button type="button" class="journal-dashboard__pager-btn" aria-label="Previous month">
+            <span aria-hidden="true">◀︎</span>
+          </button>
+          <span class="journal-dashboard__pager-label">September 2025</span>
+          <button type="button" class="journal-dashboard__pager-btn" aria-label="Next month">
+            <span aria-hidden="true">▶︎</span>
+          </button>
+        </div>
+        <button type="button" class="journal-dashboard__toggle" aria-pressed="false">
+          <span class="journal-dashboard__toggle-thumb" aria-hidden="true"></span>
+          Include last 30 days across months
+        </button>
+      </div>
+    </section>
 
-    <div class="journal-dashboard__tabs" role="tablist" aria-label="Journal dashboard views">
+    <nav class="journal-dashboard__tabs" role="tablist" aria-label="Journal dashboard views">
       <button
         type="button"
         class="journal-dashboard__tab is-active"
-        id="journal-tab-nitrate"
+        id="tab-nitrate"
         role="tab"
         aria-selected="true"
-        aria-controls="nitrate-panel"
+        aria-controls="panel-nitrate"
         data-panel="nitrate"
       >
+        <span class="journal-dashboard__tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M4 18h16v2H4zm0-7h16v2H4zm0-7h16v2H4z" fill="currentColor"/></svg>
+        </span>
         Nitrate
       </button>
       <button
         type="button"
         class="journal-dashboard__tab"
-        id="journal-tab-dosing"
+        id="tab-dosing"
         role="tab"
         aria-selected="false"
-        aria-controls="dosing-panel"
+        aria-controls="panel-dosing"
         data-panel="dosing"
         tabindex="-1"
       >
+        <span class="journal-dashboard__tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M7 4h10l1 6a6 6 0 0 1-12 0Zm5 14a4 4 0 0 0 4-4h2a6 6 0 0 1-12 0h2a4 4 0 0 0 4 4Z" fill="currentColor"/></svg>
+        </span>
         Dosing
       </button>
       <button
         type="button"
         class="journal-dashboard__tab"
-        id="journal-tab-maint"
+        id="tab-maintenance"
         role="tab"
         aria-selected="false"
-        aria-controls="maint-panel"
-        data-panel="maint"
+        aria-controls="panel-maintenance"
+        data-panel="maintenance"
         tabindex="-1"
       >
+        <span class="journal-dashboard__tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M21 5.41 18.59 3 9 12.59V15h2.41ZM7 13H3v8h8v-4H9v2H5v-4h2Z" fill="currentColor"/></svg>
+        </span>
         Maintenance
       </button>
-    </div>
+    </nav>
 
     <section
-      id="nitrate-panel"
+      id="panel-nitrate"
       class="journal-dashboard__panel is-active"
       role="tabpanel"
-      aria-labelledby="journal-tab-nitrate"
+      aria-labelledby="tab-nitrate"
     >
-      <div class="journal-dashboard__loading" data-state="loading">Loading nitrate trend…</div>
+      <header class="journal-dashboard__panel-header">
+        <h2 class="journal-dashboard__panel-title">Nitrate Levels</h2>
+        <div class="journal-dashboard__legend" aria-hidden="true">
+          <span class="journal-dashboard__legend-item">
+            <span class="journal-dashboard__legend-dot journal-dashboard__legend-dot--nitrate"></span>
+            Nitrate (ppm)
+          </span>
+          <span class="journal-dashboard__legend-item">
+            <span class="journal-dashboard__legend-dot journal-dashboard__legend-dot--water"></span>
+            Water-change day
+          </span>
+        </div>
+      </header>
+      <div class="journal-dashboard__placeholder" data-state="loading">Loading chart…</div>
       <div class="journal-dashboard__chart-wrap">
         <canvas id="nitrateChart" class="journal-dashboard__chart" role="img" aria-label="Line chart of nitrate readings"></canvas>
       </div>
-      <div class="journal-dashboard__legend" aria-hidden="true">
-        <span class="journal-dashboard__legend-item">
-          <span class="journal-dashboard__legend-dot journal-dashboard__legend-dot--regular"></span>
-          Reading
-        </span>
-        <span class="journal-dashboard__legend-item">
-          <span class="journal-dashboard__legend-dot journal-dashboard__legend-dot--water"></span>
-          Water change
-        </span>
-      </div>
-      <p class="journal-dashboard__note">Target nitrate level is 20 ppm.</p>
     </section>
 
     <section
-      id="dosing-panel"
+      id="panel-dosing"
       class="journal-dashboard__panel"
       role="tabpanel"
-      aria-labelledby="journal-tab-dosing"
+      aria-labelledby="tab-dosing"
       hidden
     >
-      <div class="journal-dashboard__loading" data-state="loading">Loading dosing totals…</div>
+      <header class="journal-dashboard__panel-header">
+        <h2 class="journal-dashboard__panel-title">Weekly Dosing</h2>
+      </header>
+      <div class="journal-dashboard__placeholder" data-state="loading">Loading chart…</div>
       <div class="journal-dashboard__chart-wrap">
-        <canvas id="dosingChart" class="journal-dashboard__chart" role="img" aria-label="Bar chart of weekly dosing totals"></canvas>
+        <canvas id="dosingChart" class="journal-dashboard__chart" role="img" aria-label="Grouped bar chart of Thrive+ and Excel dosing totals"></canvas>
       </div>
     </section>
 
     <section
-      id="maint-panel"
+      id="panel-maintenance"
       class="journal-dashboard__panel"
       role="tabpanel"
-      aria-labelledby="journal-tab-maint"
+      aria-labelledby="tab-maintenance"
       hidden
     >
-      <div class="journal-dashboard__loading" data-state="loading">Loading maintenance log…</div>
-      <ol class="journal-dashboard__timeline" id="maintenanceList"></ol>
+      <header class="journal-dashboard__panel-header">
+        <h2 class="journal-dashboard__panel-title">Maintenance Timeline</h2>
+      </header>
+      <div class="journal-dashboard__placeholder" data-state="loading">Loading entries…</div>
+      <ol class="journal-dashboard__timeline" id="maintenanceList" hidden></ol>
     </section>
   </main>
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>

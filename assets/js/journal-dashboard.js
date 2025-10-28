@@ -1,54 +1,454 @@
 const root = document.querySelector('.journal-dashboard');
 
-if (root) {
-  (async () => {
-    const panels = {
-      nitrate: root.querySelector('#nitrate-panel'),
-      dosing: root.querySelector('#dosing-panel'),
-      maint: root.querySelector('#maint-panel')
-    };
+if (!root) {
+  // Page not present.
+} else {
+  const panels = {
+    nitrate: root.querySelector('#panel-nitrate'),
+    dosing: root.querySelector('#panel-dosing'),
+    maintenance: root.querySelector('#panel-maintenance')
+  };
 
-    const tabs = Array.from(root.querySelectorAll('.journal-dashboard__tab'));
-    const loadingClass = 'journal-dashboard__hidden';
+  const placeholders = {
+    nitrate: panels.nitrate?.querySelector('.journal-dashboard__placeholder'),
+    dosing: panels.dosing?.querySelector('.journal-dashboard__placeholder'),
+    maintenance: panels.maintenance?.querySelector('.journal-dashboard__placeholder')
+  };
 
-    const hideLoading = panel => {
-      const loader = panel?.querySelector('.journal-dashboard__loading');
-      if (loader) {
-        loader.classList.add(loadingClass);
-        loader.setAttribute('aria-hidden', 'true');
-      }
-    };
+  const timelineList = root.querySelector('#maintenanceList');
+  const tabs = Array.from(root.querySelectorAll('.journal-dashboard__tab'));
 
-    const ensureMessage = (panel, text, type = 'empty') => {
+  const detectedColumns = new Set();
+  let ChartLib = null;
+  const charts = { nitrate: null, dosing: null };
+  const rendered = { nitrate: false, dosing: false, maintenance: false };
+  let normalisedEntries = [];
+  let weeklySummary = [];
+  let maintenanceEntries = [];
+
+  const addMessage = (panel, type, text) => {
+    if (!panel) return null;
+    let message = panel.querySelector(`.journal-dashboard__${type}`);
+    if (!message) {
+      message = document.createElement('p');
+      message.className = `journal-dashboard__${type}`;
+      panel.append(message);
+    }
+    message.textContent = text;
+    return message;
+  };
+
+  const clearMessages = panel => {
+    panel?.querySelectorAll('.journal-dashboard__empty, .journal-dashboard__error').forEach(node => node.remove());
+  };
+
+  const setPlaceholderState = (panelKey, state, text) => {
+    const placeholder = placeholders[panelKey];
+    if (!placeholder) return;
+    if (text) {
+      placeholder.textContent = text;
+    }
+    placeholder.dataset.state = state;
+  };
+
+  const showCdnError = () => {
+    ['nitrate', 'dosing', 'maintenance'].forEach(key => {
+      const panel = panels[key];
       if (!panel) return;
-      let message = panel.querySelector(`.journal-dashboard__${type}`);
-      if (!message) {
-        message = document.createElement('p');
-        message.className = `journal-dashboard__${type}`;
-        const note = panel.querySelector('.journal-dashboard__note');
-        if (note) {
-          note.before(message);
+      setPlaceholderState(key, 'loaded');
+      clearMessages(panel);
+      addMessage(panel, 'error', 'Charts unavailable (Chart.js not loaded).');
+    });
+  };
+
+  const normaliseKey = key => String(key ?? '').trim().replace(/[\s_\-]+/g, '').toLowerCase();
+
+  const parseCsv = text => {
+    const rows = [];
+    let field = '';
+    let insideQuotes = false;
+    let currentRow = [];
+
+    for (let i = 0; i < text.length; i += 1) {
+      const char = text[i];
+      if (char === '"') {
+        const next = text[i + 1];
+        if (insideQuotes && next === '"') {
+          field += '"';
+          i += 1;
         } else {
-          panel.append(message);
+          insideQuotes = !insideQuotes;
+        }
+        continue;
+      }
+
+      if (char === ',' && !insideQuotes) {
+        currentRow.push(field);
+        field = '';
+        continue;
+      }
+
+      if ((char === '\n' || char === '\r') && !insideQuotes) {
+        if (char === '\r' && text[i + 1] === '\n') {
+          i += 1;
+        }
+        currentRow.push(field);
+        rows.push(currentRow);
+        currentRow = [];
+        field = '';
+        continue;
+      }
+
+      field += char;
+    }
+
+    if (field !== '' || currentRow.length) {
+      currentRow.push(field);
+      rows.push(currentRow);
+    }
+
+    return rows;
+  };
+
+  const parseNumber = value => {
+    if (value == null) return null;
+    const text = String(value).trim();
+    if (!text) return null;
+    const rangeMatch = text.replace(/ppm/gi, '').match(/(\d+(?:\.\d+)?)(?:\s*[–-]\s*(\d+(?:\.\d+)?))?/);
+    if (rangeMatch) {
+      const first = Number(rangeMatch[1]);
+      const second = rangeMatch[2] ? Number(rangeMatch[2]) : first;
+      if (Number.isFinite(first) && Number.isFinite(second)) {
+        return Number(((first + second) / 2).toFixed(2));
+      }
+    }
+    const cleaned = Number(text.replace(/[^0-9.+-]/g, ''));
+    return Number.isFinite(cleaned) ? cleaned : null;
+  };
+
+  const splitSegments = value =>
+    String(value ?? '')
+      .split(/[\u2022\u2027\u00B7•·]+/)
+      .map(segment => segment.replace(/[.;]+$/, '').trim())
+      .filter(Boolean);
+
+  const extractThriveFromSegments = segments => {
+    let total = 0;
+    segments.forEach(segment => {
+      if (!/(thrive|fertiliz|nilocg)/i.test(segment)) return;
+      const matches = segment.matchAll(/(\d+(?:\.\d+)?)(?=\s*(?:pump|pumps))/gi);
+      for (const match of matches) {
+        const value = Number(match[1]);
+        if (Number.isFinite(value)) {
+          total += value;
         }
       }
-      message.textContent = text;
-    };
+    });
+    return total;
+  };
 
-    const clearMessages = panel => {
-      panel?.querySelectorAll('.journal-dashboard__empty, .journal-dashboard__error').forEach(el => el.remove());
-    };
+  const extractExcelFromSegments = segments => {
+    let total = 0;
+    segments.forEach(segment => {
+      if (!/excel/i.test(segment)) return;
+      const matches = segment.matchAll(/(\d+(?:\.\d+)?)(?=\s*(?:cap|caps|capful|capfuls|ml))/gi);
+      for (const match of matches) {
+        const value = Number(match[1]);
+        if (Number.isFinite(value)) {
+          total += value;
+        }
+      }
+    });
+    return total;
+  };
 
-    const showChartUnavailable = () => {
-      Object.values(panels).forEach(panel => {
-        if (!panel) return;
-        panel.innerHTML = '<p class="journal-dashboard__error">Charts unavailable (Chart.js not loaded).</p>';
+  const extractNitrate = (rawValue, quickFacts, ramble) => {
+    const direct = parseNumber(rawValue);
+    if (direct != null) return direct;
+    const combined = `${quickFacts || ''} ${ramble || ''}`;
+    const match = combined.match(/nitrate[^\d]*(\d+(?:\.\d+)?)(?:\s*[–-]\s*(\d+(?:\.\d+)?))?\s*ppm/i);
+    if (!match) return null;
+    const first = Number(match[1]);
+    const second = match[2] ? Number(match[2]) : first;
+    if (Number.isFinite(first) && Number.isFinite(second)) {
+      return Number(((first + second) / 2).toFixed(2));
+    }
+    return null;
+  };
+
+  const hasWaterChangeLanguage = value => /water\s*change|\bwc\b/i.test(String(value ?? ''));
+  const maintenanceKeywordPattern = /(trim|clean|scrape|wipe|vacuum|filter|maint|brush|polish|replant|spot\s*dose)/i;
+
+  const parseBoolean = value => {
+    if (typeof value === 'boolean') return value;
+    const text = String(value ?? '').trim().toLowerCase();
+    if (!text) return false;
+    return ['true', '1', 'yes', 'y', 't', '✓'].includes(text);
+  };
+
+  const parseDate = raw => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    if (!raw) return null;
+    const text = String(raw).trim();
+    if (!text) return null;
+
+    let date;
+    const iso = text.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
+    if (iso) {
+      const [, y, m, d] = iso.map(Number);
+      date = new Date(y, m - 1, d);
+    } else {
+      const short = text.match(/^(\d{1,2})[\/-](\d{1,2})(?:[\/-](\d{2,4}))?$/);
+      if (short) {
+        let [, m, d, y] = short;
+        const month = Number(m);
+        const day = Number(d);
+        let year = y ? Number(y.length === 2 ? `20${y}` : y) : currentYear;
+        date = new Date(year, month - 1, day);
+      } else {
+        const guess = new Date(text);
+        if (!Number.isNaN(guess)) {
+          date = guess;
+        }
+      }
+    }
+
+    if (!date || Number.isNaN(date.getTime())) return null;
+
+    if (date.getFullYear() < currentYear - 2) {
+      date.setFullYear(currentYear);
+    }
+
+    if (date.getTime() - now.getTime() > 45 * 86400000) {
+      date.setFullYear(date.getFullYear() - 1);
+    }
+
+    return date;
+  };
+
+  const loadCsv = async () => {
+    const response = await fetch('/data/journal.csv', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`CSV request failed: ${response.status}`);
+    const text = await response.text();
+    const rows = parseCsv(text).filter(row => row.some(cell => cell && cell.trim())) ;
+    if (!rows.length) return [];
+    const headers = rows.shift();
+    const columnIndex = {};
+
+    headers.forEach((header, index) => {
+      const normalised = normaliseKey(header);
+      if (!normalised) return;
+      if (['date'].includes(normalised) && columnIndex.date == null) {
+        columnIndex.date = index;
+        detectedColumns.add(header.trim() || 'date');
+      }
+      if (['nitrate', 'nitrateppm', 'nitratelevel', 'nitrateppmbefore', 'nitrates'].includes(normalised) && columnIndex.nitrate == null) {
+        columnIndex.nitrate = index;
+        detectedColumns.add(header.trim() || 'nitrate');
+      }
+      if (['thrive', 'thrivepumps', 'thriveplus', 'nilocgthriveplus', 'fertpumps', 'thrivepump'].includes(normalised) && columnIndex.thrive == null) {
+        columnIndex.thrive = index;
+        detectedColumns.add(header.trim() || 'thrive');
+      }
+      if (['excel', 'excelcaps', 'excelcap', 'seachemexcel', 'excelcapfuls', 'excelml'].includes(normalised) && columnIndex.excel == null) {
+        columnIndex.excel = index;
+        detectedColumns.add(header.trim() || 'excel');
+      }
+      if (['waterchange', 'wc', 'waterchangewc', 'waterchangeflag'].includes(normalised) && columnIndex.waterChange == null) {
+        columnIndex.waterChange = index;
+        detectedColumns.add(header.trim() || 'water_change');
+      }
+    });
+
+    return rows
+      .map(row => {
+        const record = headers.reduce((acc, header, index) => {
+          acc[header] = row[index];
+          return acc;
+        }, {});
+        return {
+          date: columnIndex.date != null ? row[columnIndex.date] : record.date ?? record.Date,
+          nitrate: columnIndex.nitrate != null ? row[columnIndex.nitrate] : record.nitrate ?? record.nitrate_ppm,
+          thrive: columnIndex.thrive != null ? row[columnIndex.thrive] : record.thrive ?? record.thrive_pumps,
+          excel: columnIndex.excel != null ? row[columnIndex.excel] : record.excel ?? record.excel_caps,
+          wc: columnIndex.waterChange != null ? row[columnIndex.waterChange] : record.water_change ?? record.wc,
+          quickFacts: record.quick_facts ?? record.quickFacts,
+          ramble: record.ramble,
+          category: record.category,
+          tags: record.tags
+        };
+      })
+      .filter(item => item.date);
+  };
+
+  const loadJson = async () => {
+    const response = await fetch('/data/journal.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`JSON request failed: ${response.status}`);
+    const data = await response.json();
+    return Array.isArray(data) ? data : [];
+  };
+
+  const normaliseEntries = rawEntries => {
+    const entries = [];
+
+    rawEntries.forEach(item => {
+      const date = parseDate(item.date);
+      if (!date) return;
+      const label = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+      const quickFacts = item.quickFacts ?? item.quick_facts ?? '';
+      const ramble = item.ramble ?? '';
+      const segments = splitSegments(quickFacts);
+
+      const nitrate = extractNitrate(item.nitrate ?? item.nitrate_ppm ?? item['nitrate (ppm)'], quickFacts, ramble);
+      const thriveColValue = parseNumber(item.thrive ?? item.thrive_pumps);
+      const excelColValue = parseNumber(item.excel ?? item.excel_caps ?? item.excel_capfuls);
+      const thriveFromSegments = extractThriveFromSegments(segments);
+      const excelFromSegments = extractExcelFromSegments(segments);
+      const thrive = Number.isFinite(thriveColValue) ? thriveColValue : thriveFromSegments;
+      const excel = Number.isFinite(excelColValue) ? excelColValue : excelFromSegments;
+      const wcFlag =
+        parseBoolean(item.wc ?? item.water_change ?? item.waterchange) ||
+        hasWaterChangeLanguage(quickFacts) ||
+        hasWaterChangeLanguage(item.category) ||
+        hasWaterChangeLanguage(item.tags) ||
+        parseBoolean(item.wc_flag);
+
+      const maintenanceNotes = segments.filter(segment => maintenanceKeywordPattern.test(segment));
+      const isMaintenance = wcFlag || /maint/i.test(item.category ?? '') || maintenanceNotes.length > 0;
+
+      entries.push({
+        date,
+        label,
+        nitrate: nitrate ?? null,
+        thrive: Number.isFinite(thrive) ? Number(thrive.toFixed(2)) : 0,
+        excel: Number.isFinite(excel) ? Number(excel.toFixed(2)) : 0,
+        wc: Boolean(wcFlag),
+        maintenanceNotes,
+        quickFacts,
+        ramble,
+        category: item.category ?? '',
+        isMaintenance
       });
-    };
+    });
 
-    let Chart;
+    entries.sort((a, b) => a.date - b.date);
+    return entries;
+  };
+
+  const formatDateLong = date =>
+    new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
+
+  const weekKey = date => {
+    const cloned = new Date(date.getTime());
+    const day = cloned.getDay();
+    const diff = (day + 6) % 7;
+    cloned.setDate(cloned.getDate() - diff);
+    cloned.setHours(0, 0, 0, 0);
+    return cloned;
+  };
+
+  const formatRangeLabel = (start, end) => {
+    if (start.getMonth() === end.getMonth()) {
+      const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(start);
+      return `${month} ${start.getDate()}–${end.getDate()}`;
+    }
+    const startLabel = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(start);
+    const endLabel = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(end);
+    return `${startLabel} – ${endLabel}`;
+  };
+
+  const buildWeeklySummary = entries => {
+    const groups = new Map();
+
+    entries.forEach(entry => {
+      const start = weekKey(entry.date);
+      const key = start.getTime();
+      if (!groups.has(key)) {
+        const end = new Date(start.getTime());
+        end.setDate(end.getDate() + 6);
+        groups.set(key, {
+          start,
+          end,
+          thrive: 0,
+          excel: 0
+        });
+      }
+      const group = groups.get(key);
+      group.thrive += entry.thrive || 0;
+      group.excel += entry.excel || 0;
+    });
+
+    return Array.from(groups.values())
+      .sort((a, b) => a.start - b.start)
+      .map(group => ({
+        label: formatRangeLabel(group.start, group.end),
+        thrive: Number(group.thrive.toFixed(2)),
+        excel: Number(group.excel.toFixed(2))
+      }));
+  };
+
+  const buildMaintenanceEntries = entries =>
+    entries
+      .filter(entry => entry.isMaintenance)
+      .map(entry => ({
+        date: entry.date,
+        label: entry.wc ? 'Water change' : entry.category || 'Maintenance',
+        notes: entry.maintenanceNotes.length
+          ? entry.maintenanceNotes
+          : entry.quickFacts
+              .split(/[.;]+/)
+              .map(segment => segment.trim())
+              .filter(Boolean)
+              .slice(0, 3)
+      }));
+
+  const renderMaintenance = () => {
+    if (rendered.maintenance) return;
+    setPlaceholderState('maintenance', 'loaded');
+    clearMessages(panels.maintenance);
+
+    if (!maintenanceEntries.length) {
+      addMessage(panels.maintenance, 'empty', 'No journal entries found yet.');
+      rendered.maintenance = true;
+      return;
+    }
+
+    if (timelineList) {
+      timelineList.removeAttribute('hidden');
+      timelineList.innerHTML = '';
+      maintenanceEntries.forEach(entry => {
+        const item = document.createElement('li');
+        item.className = 'journal-dashboard__timeline-item';
+
+        const date = document.createElement('p');
+        date.className = 'journal-dashboard__timeline-date';
+        date.textContent = formatDateLong(entry.date);
+
+        const label = document.createElement('p');
+        label.className = 'journal-dashboard__timeline-label';
+        label.textContent = entry.label;
+
+        const notes = document.createElement('ul');
+        notes.className = 'journal-dashboard__timeline-notes';
+        entry.notes.forEach(noteText => {
+          const noteItem = document.createElement('li');
+          noteItem.textContent = noteText;
+          notes.append(noteItem);
+        });
+
+        item.append(date, label, notes);
+        timelineList.append(item);
+      });
+    }
+
+    rendered.maintenance = true;
+  };
+
+  const loadChartLibrary = async () => {
+    if (ChartLib) return ChartLib;
     try {
-      ({ Chart } = await import('https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.esm.js'));
+      ({ Chart: ChartLib } = await import('https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.esm.js'));
     } catch (esmError) {
       try {
         await new Promise((resolve, reject) => {
@@ -58,840 +458,378 @@ if (root) {
           script.onerror = reject;
           document.head.appendChild(script);
         });
-        Chart = window.Chart;
+        ChartLib = window.Chart;
       } catch (umdError) {
-        showChartUnavailable();
         console.error('Chart.js failed to load', esmError, umdError);
-        return;
-      }
-    }
-
-    if (!Chart) {
-      showChartUnavailable();
-      console.error('Chart.js is unavailable');
-      return;
-    }
-
-    const DAY_MS = 86_400_000;
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const detectedColumns = new Set();
-
-    const normaliseKey = key => key.replace(/[\s_-]+/g, '').toLowerCase();
-
-    const splitSegments = value =>
-      String(value ?? '')
-        .split(/[\u2022\u2027\u00B7•·]+/)
-        .map(segment => segment.trim())
-        .filter(Boolean);
-
-    const maintenanceKeywords = /(water change|trim|clean|scrape|filter|vacuum|maint|glass|wipe)/i;
-    const waterChangeKeywords = /(water change|\bwc\b)/i;
-
-    const dedupe = items => {
-      const unique = [];
-      items.forEach(item => {
-        if (!item) return;
-        const lower = item.toLowerCase();
-        if (!unique.some(existing => existing.toLowerCase() === lower)) {
-          unique.push(item);
-        }
-      });
-      return unique;
-    };
-
-    const buildMaintenanceNotes = (categoryText, initialWc, quickFactsText, extras, flaggedMaintenance) => {
-      const quickSegments = splitSegments(quickFactsText);
-      const categoryIsMaintenance = /maint/i.test(categoryText || '');
-      let wcFlag = initialWc;
-      if (!wcFlag && quickSegments.some(segment => waterChangeKeywords.test(segment))) {
-        wcFlag = true;
-      }
-      if (!wcFlag && waterChangeKeywords.test(categoryText || '')) {
-        wcFlag = true;
-      }
-      const hasMaintenanceKeyword = quickSegments.some(segment => maintenanceKeywords.test(segment));
-      const isMaintenance =
-        wcFlag || categoryIsMaintenance || hasMaintenanceKeyword || flaggedMaintenance || extras.length > 0;
-      if (!isMaintenance) {
-        return { wc: wcFlag, notes: [] };
-      }
-
-      const includeFullQuickFacts = wcFlag || categoryIsMaintenance;
-      const quickFactNotes = includeFullQuickFacts
-        ? quickSegments
-        : quickSegments.filter(segment => maintenanceKeywords.test(segment));
-      const combined = dedupe([...quickFactNotes, ...extras]);
-      return { wc: wcFlag, notes: combined };
-    };
-
-    const parseBoolean = value => {
-      if (value == null) return false;
-      const text = String(value).trim().toLowerCase();
-      if (!text) return false;
-      return ['true', 'yes', 'y', '1', '✓', 'done'].includes(text);
-    };
-
-    const parseNumber = value => {
-      if (value == null) return null;
-      const text = String(value).trim();
-      if (!text) return null;
-      const numeric = Number(text.replace(/[^0-9.+-]/g, ''));
-      return Number.isFinite(numeric) ? numeric : null;
-    };
-
-    const titleCase = value =>
-      value
-        .split(/[\s_\-]+/)
-        .filter(Boolean)
-        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(' ');
-
-    const coerceDate = raw => {
-      if (!raw) return null;
-      const text = String(raw).trim();
-      if (!text) return null;
-
-      let date;
-      const isoMatch = text.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
-      if (isoMatch) {
-        const [, y, m, d] = isoMatch.map(Number);
-        date = new Date(y, m - 1, d);
-      } else {
-        const shortMatch = text.match(/^(\d{1,2})[\/-](\d{1,2})(?:[\/-](\d{2,4}))?$/);
-        if (shortMatch) {
-          let [, m, d, y] = shortMatch;
-          const month = Number(m);
-          const day = Number(d);
-          let year;
-          if (y) {
-            year = Number(y.length === 2 ? `20${y}` : y);
-          } else {
-            year = currentYear;
-          }
-          date = new Date(year, month - 1, day);
-        } else {
-          const hasYear = /\b\d{4}\b/.test(text);
-          const seedYear = currentYear;
-          date = new Date(hasYear ? text : `${text} ${seedYear}`);
-          if (Number.isNaN(date.getTime()) && !hasYear) {
-            date = new Date(`${text} ${seedYear - 1}`);
-          }
-        }
-      }
-
-      if (!date || Number.isNaN(date.getTime())) {
         return null;
       }
-
-      if (date.getFullYear() < currentYear - 2) {
-        date.setFullYear(currentYear);
-      }
-
-      if (date - now > 45 * DAY_MS) {
-        date.setFullYear(date.getFullYear() - 1);
-      }
-
-      return date;
-    };
-
-    const parseCsv = text => {
-      const rows = [];
-      let current = '';
-      let inQuotes = false;
-      const pushValue = (row, value) => {
-        row.push(value.trim());
-      };
-      const pushRow = row => {
-        if (row.length > 0) {
-          rows.push(row);
-        }
-      };
-
-      let row = [];
-      for (let i = 0; i < text.length; i += 1) {
-        const char = text[i];
-        if (char === '"') {
-          const next = text[i + 1];
-          if (inQuotes && next === '"') {
-            current += '"';
-            i += 1;
-          } else {
-            inQuotes = !inQuotes;
-          }
-        } else if (char === ',' && !inQuotes) {
-          pushValue(row, current);
-          current = '';
-        } else if ((char === '\n' || char === '\r') && !inQuotes) {
-          if (char === '\r' && text[i + 1] === '\n') {
-            i += 1;
-          }
-          pushValue(row, current);
-          pushRow(row);
-          row = [];
-          current = '';
-        } else {
-          current += char;
-        }
-      }
-
-      if (current.length || row.length) {
-        pushValue(row, current);
-        pushRow(row);
-      }
-
-      return rows;
-    };
-
-    const normaliseRows = rawRows => {
-      if (!rawRows.length) return [];
-      const headers = rawRows[0].map(value => ({
-        raw: value,
-        key: normaliseKey(value)
-      }));
-      const dataRows = rawRows.slice(1);
-
-      const findColumn = aliases =>
-        headers.findIndex(header => aliases.some(alias => header.key === normaliseKey(alias)));
-
-      const colIndex = {
-        date: findColumn(['date', 'entrydate', 'logged', 'logdate']),
-        nitrate: findColumn(['nitrate', 'nitrateppm', 'no3', 'nitrate(ppm)']),
-        thrive: findColumn(['thrive', 'thriveplus', 'thrive_pumps', 'thrivepumps']),
-        excel: findColumn(['excel', 'excelcaps', 'excel_dose', 'seachemexcel']),
-        wc: findColumn(['waterchange', 'water_change', 'wc', 'waterchanges']),
-        category: findColumn(['category']),
-        quickfacts: findColumn(['quickfacts', 'quick_facts'])
-      };
-
-      Object.entries(colIndex).forEach(([key, index]) => {
-        if (index >= 0) {
-          detectedColumns.add(key);
-        }
-      });
-
-      const knownKeys = new Set(Object.values(colIndex).filter(i => i >= 0).map(i => headers[i].key));
-
-      return dataRows
-        .map(columns => {
-          const getValue = index => (index >= 0 ? columns[index] ?? '' : '');
-          const date = coerceDate(getValue(colIndex.date));
-          if (!date) {
-            return null;
-          }
-
-          const nitrate = parseNumber(getValue(colIndex.nitrate));
-          const thrive = parseNumber(getValue(colIndex.thrive));
-          const excel = parseNumber(getValue(colIndex.excel));
-          let wc = parseBoolean(getValue(colIndex.wc));
-          const categoryText = getValue(colIndex.category);
-          const quickFactsText = getValue(colIndex.quickfacts);
-
-          const extras = [];
-          let flaggedMaintenance = false;
-          headers.forEach((header, headerIndex) => {
-            if (knownKeys.has(header.key)) return;
-            const rawValue = columns[headerIndex];
-            if (rawValue == null) return;
-            const trimmed = String(rawValue).trim();
-            if (!trimmed) return;
-            if (parseBoolean(trimmed) && trimmed.length <= 5) {
-              extras.push(titleCase(header.raw));
-              flaggedMaintenance = true;
-            } else if (maintenanceKeywords.test(trimmed)) {
-              extras.push(`${titleCase(header.raw)}: ${trimmed}`);
-              flaggedMaintenance = true;
-            }
-          });
-
-          const maintenance = buildMaintenanceNotes(categoryText, wc, quickFactsText, extras, flaggedMaintenance);
-          wc = maintenance.wc;
-
-          return {
-            date,
-            nitrate: nitrate ?? null,
-            thrive: thrive ?? null,
-            excel: excel ?? null,
-            wc,
-            notes: maintenance.notes,
-            category: categoryText?.trim() || ''
-          };
-        })
-        .filter(Boolean);
-    };
-
-    const fetchJournalData = async () => {
-      try {
-        const response = await fetch('/data/journal.csv', {
-          cache: 'no-store',
-          headers: { Pragma: 'no-cache', 'Cache-Control': 'no-cache' }
-        });
-        if (!response.ok) {
-          throw new Error(`CSV request failed with status ${response.status}`);
-        }
-        const text = await response.text();
-        const rows = parseCsv(text);
-        const entries = normaliseRows(rows);
-        if (entries.length) {
-          return entries;
-        }
-        throw new Error('CSV contained no usable rows');
-      } catch (csvError) {
-        try {
-          const jsonResponse = await fetch('/data/journal.json', { cache: 'no-store' });
-          if (!jsonResponse.ok) {
-            throw new Error(`JSON request failed with status ${jsonResponse.status}`);
-          }
-          const jsonData = await jsonResponse.json();
-          if (!Array.isArray(jsonData)) {
-            throw new Error('JSON data malformed');
-          }
-          detectedColumns.add('json');
-          return jsonData
-            .map(entry => {
-              const date = coerceDate(entry.date || entry.logged || entry.logDate);
-              if (!date) return null;
-              const nitrate = parseNumber(entry.nitrate ?? entry.nitrate_ppm ?? entry.no3);
-              const thrive = parseNumber(entry.thrive ?? entry.thrive_plus ?? entry.thrive_pumps);
-              const excel = parseNumber(entry.excel ?? entry.excel_caps ?? entry.excel_dose);
-              let wc = parseBoolean(entry.water_change ?? entry.wc);
-              const categoryText = entry.category || entry.type || '';
-              const quickFactsText = entry.quick_facts || entry.quickfacts || '';
-
-              const extras = [];
-              let flaggedMaintenance = false;
-              Object.entries(entry).forEach(([key, value]) => {
-                if (
-                  [
-                    'date',
-                    'logged',
-                    'logDate',
-                    'nitrate',
-                    'nitrate_ppm',
-                    'no3',
-                    'thrive',
-                    'thrive_plus',
-                    'thrive_pumps',
-                    'excel',
-                    'excel_caps',
-                    'excel_dose',
-                    'water_change',
-                    'wc',
-                    'category',
-                    'quick_facts',
-                    'quickfacts',
-                    'time',
-                    'ramble',
-                    'notes',
-                    'tags',
-                    'media'
-                  ].includes(key)
-                ) {
-                  return;
-                }
-                if (value == null || value === '') return;
-                const text = String(value).trim();
-                if (!text) return;
-                if (parseBoolean(text) && text.length <= 5) {
-                  extras.push(titleCase(key));
-                  flaggedMaintenance = true;
-                } else if (maintenanceKeywords.test(text)) {
-                  extras.push(`${titleCase(key)}: ${text}`);
-                  flaggedMaintenance = true;
-                }
-              });
-
-              const maintenance = buildMaintenanceNotes(categoryText, wc, quickFactsText, extras, flaggedMaintenance);
-              wc = maintenance.wc;
-
-              return {
-                date,
-                nitrate: nitrate ?? null,
-                thrive: thrive ?? null,
-                excel: excel ?? null,
-                wc,
-                notes: maintenance.notes,
-                category: categoryText?.trim() || ''
-              };
-            })
-            .filter(Boolean);
-        } catch (jsonError) {
-          console.error('Failed to load journal data', csvError, jsonError);
-          return [];
-        }
-      }
-    };
-
-    const entries = await fetchJournalData();
-    if (!entries.length) {
-      Object.values(panels).forEach(panel => {
-        if (!panel) return;
-        hideLoading(panel);
-        clearMessages(panel);
-        ensureMessage(panel, 'No journal entries found yet.', 'empty');
-      });
-      return;
     }
+    return ChartLib;
+  };
 
-    entries.sort((a, b) => a.date.getTime() - b.date.getTime());
+  const registerPlugins = Chart => {
+    if (registerPlugins.done) return;
+    const targetLinePlugin = {
+      id: 'targetLine',
+      defaults: {
+        value: 20,
+        label: 'Target: <20 ppm',
+        color: 'rgba(96, 165, 250, 0.6)',
+        lineWidth: 1,
+        dash: [6, 6]
+      },
+      afterDraw(chart, args, opts) {
+        const yScale = chart.scales.y;
+        if (!yScale) return;
+        const y = yScale.getPixelForValue(opts.value);
+        if (!Number.isFinite(y)) return;
+        const { left, right } = chart.chartArea;
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.setLineDash(opts.dash);
+        ctx.strokeStyle = opts.color;
+        ctx.lineWidth = opts.lineWidth;
+        ctx.beginPath();
+        ctx.moveTo(left, y);
+        ctx.lineTo(right, y);
+        ctx.stroke();
+        ctx.restore();
 
-    const nitrateEntries = entries.filter(entry => entry.nitrate !== null);
-    const dosingEntries = entries.filter(entry => entry.thrive !== null || entry.excel !== null);
-
-    if (!nitrateEntries.length) {
-      const panel = panels.nitrate;
-      hideLoading(panel);
-      clearMessages(panel);
-      ensureMessage(panel, 'Nitrate readings are not available yet.', 'empty');
-    }
-
-    if (!dosingEntries.some(entry => (entry.thrive ?? 0) || (entry.excel ?? 0))) {
-      const tab = tabs.find(button => button.dataset.panel === 'dosing');
-      if (tab) {
-        tab.classList.add('journal-dashboard__hidden');
-        tab.setAttribute('aria-hidden', 'true');
-        tab.setAttribute('tabindex', '-1');
-      }
-      const panel = panels.dosing;
-      panel?.classList.add('journal-dashboard__hidden');
-      panel?.setAttribute('hidden', '');
-      hideLoading(panel);
-      clearMessages(panel);
-      ensureMessage(panel, 'Dosing data is not available in the current journal export.', 'empty');
-    }
-
-    const maintenanceEntries = entries.filter(entry => entry.wc || (entry.notes && entry.notes.length));
-
-    const shortDateFormatter = new Intl.DateTimeFormat(undefined, { month: 'short', day: '2-digit' });
-    const longDateFormatter = new Intl.DateTimeFormat(undefined, {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-
-    const formatWeekRange = (start, end) => {
-      const startLabel = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(start);
-      const endLabel = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(end);
-      return `${startLabel}–${endLabel}`;
-    };
-
-    const startOfWeek = date => {
-      const clone = new Date(date);
-      const day = clone.getDay();
-      const diff = (day + 6) % 7; // Monday start
-      clone.setDate(clone.getDate() - diff);
-      clone.setHours(0, 0, 0, 0);
-      return clone;
-    };
-
-    const groupWeeklyTotals = data => {
-      const totals = new Map();
-      data.forEach(entry => {
-        if (entry.thrive == null && entry.excel == null) return;
-        const thriveAmount = entry.thrive ?? 0;
-        const excelAmount = entry.excel ?? 0;
-        if (!thriveAmount && !excelAmount) return;
-        const start = startOfWeek(entry.date);
-        const key = start.getTime();
-        const bucket = totals.get(key) || {
-          start,
-          end: new Date(start.getTime() + 6 * DAY_MS),
-          thrive: 0,
-          excel: 0
-        };
-        bucket.thrive += thriveAmount;
-        bucket.excel += excelAmount;
-        totals.set(key, bucket);
-      });
-      return Array.from(totals.values()).sort((a, b) => a.start.getTime() - b.start.getTime());
-    };
-
-    const responsiveTicksPlugin = {
-      id: 'responsiveTicks',
-      beforeLayout: chart => {
-        const isMobile = window.matchMedia('(max-width: 767px)').matches;
-        const xScale = chart.options.scales?.x;
-        if (xScale) {
-          xScale.ticks = xScale.ticks || {};
-          xScale.ticks.autoSkip = !isMobile;
-          xScale.ticks.maxRotation = isMobile ? 32 : 0;
-          xScale.ticks.minRotation = isMobile ? 32 : 0;
-        }
+        ctx.save();
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.95)';
+        ctx.font = '11px "Inter", "Segoe UI", sans-serif';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(opts.label, right - 8, y - 6);
+        ctx.restore();
       }
     };
 
     const hoverLinePlugin = {
       id: 'hoverLine',
-      afterDatasetsDraw: chart => {
-        const active = chart.tooltip?.getActiveElements();
-        if (!active || !active.length) return;
-        const { ctx, chartArea } = chart;
-        const x = active[0]?.element?.x;
-        if (!x) return;
+      afterDatasetsDraw(chart) {
+        const tooltip = chart.tooltip;
+        const active = tooltip?.getActiveElements?.() ?? [];
+        if (!active.length) return;
+        const { element } = active[0];
+        if (!element) return;
+        const { x } = element;
+        const { top, bottom } = chart.chartArea;
+        const ctx = chart.ctx;
         ctx.save();
-        ctx.strokeStyle = 'rgba(148, 163, 184, 0.45)';
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.6)';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(x, chartArea.top);
-        ctx.lineTo(x, chartArea.bottom);
+        ctx.moveTo(x, bottom);
+        ctx.lineTo(x, top);
         ctx.stroke();
         ctx.restore();
       }
     };
 
-    const referenceLinePlugin = {
-      id: 'referenceLine',
-      afterDatasetsDraw: chart => {
-        const targetValue = 20;
-        const yScale = chart.scales?.y;
-        if (!yScale) return;
-        const y = yScale.getPixelForValue(targetValue);
-        if (!Number.isFinite(y)) return;
-        const { ctx, chartArea } = chart;
-        ctx.save();
-        ctx.strokeStyle = 'rgba(250, 204, 21, 0.65)';
-        ctx.setLineDash([6, 6]);
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(chartArea.left, y);
-        ctx.lineTo(chartArea.right, y);
-        ctx.stroke();
-        ctx.restore();
-      }
-    };
+    Chart.register(targetLinePlugin, hoverLinePlugin);
+    registerPlugins.done = true;
+  };
 
-    const state = {
-      charts: {
-        nitrate: null,
-        dosing: null
-      },
-      initialised: {
-        nitrate: false,
-        dosing: false,
-        maint: false
-      }
-    };
-
-    const initNitrateChart = () => {
-      if (state.initialised.nitrate || !panels.nitrate || !nitrateEntries.length) {
-        state.initialised.nitrate = true;
-        hideLoading(panels.nitrate);
-        return;
-      }
-      const labels = nitrateEntries.map(entry => shortDateFormatter.format(entry.date));
-      const data = nitrateEntries.map(entry => entry.nitrate);
-      const pointColors = nitrateEntries.map(entry => (entry.wc ? '#f97316' : '#3b82f6'));
-
-      hideLoading(panels.nitrate);
+  const createNitrateChart = Chart => {
+    if (rendered.nitrate) return;
+    const canvas = root.querySelector('#nitrateChart');
+    if (!canvas || !normalisedEntries.length) {
+      setPlaceholderState('nitrate', 'loaded');
       clearMessages(panels.nitrate);
+      addMessage(panels.nitrate, 'empty', 'No journal entries found yet.');
+      rendered.nitrate = true;
+      return;
+    }
 
-      const context = root.querySelector('#nitrateChart');
-      state.charts.nitrate = new Chart(context, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [
-            {
-              label: 'Nitrate (ppm)',
-              data,
-              borderColor: '#38bdf8',
-              backgroundColor: 'rgba(56, 189, 248, 0.18)',
-              fill: false,
-              tension: 0.25,
-              borderWidth: 2,
-              pointBackgroundColor: pointColors,
-              pointBorderColor: pointColors,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointHitRadius: 14
-            }
-          ]
-        },
-        options: {
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          scales: {
-            x: {
-              grid: {
-                display: true,
-                color: 'rgba(71, 85, 105, 0.35)'
-              },
-              ticks: {
-                color: 'rgba(226, 232, 240, 0.9)',
-                font: { size: 11 }
-              }
-            },
-            y: {
-              beginAtZero: true,
-              grid: {
-                display: true,
-                color: 'rgba(71, 85, 105, 0.35)'
-              },
-              ticks: {
-                color: 'rgba(226, 232, 240, 0.9)',
-                font: { size: 12 }
-              }
-            }
-          },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: context => {
-                  const index = context.dataIndex;
-                  const entry = nitrateEntries[index];
-                  let label = `Nitrate: ${context.formattedValue} ppm`;
-                  if (entry?.wc) {
-                    label += ' • Water change';
-                  }
-                  return label;
-                },
-                footer: context => {
-                  const index = context[0]?.dataIndex;
-                  if (index == null) return '';
-                  return longDateFormatter.format(nitrateEntries[index].date);
+    setPlaceholderState('nitrate', 'loaded');
+    clearMessages(panels.nitrate);
+
+    const labels = normalisedEntries.map(entry => entry.label);
+    const data = normalisedEntries.map(entry => entry.nitrate);
+    const pointColors = normalisedEntries.map(entry => (entry.wc ? '#fb923c' : '#38bdf8'));
+    const mediaQuery = window.matchMedia('(min-width: 768px)');
+    const ticksRotation = mediaQuery.matches ? 0 : 32;
+
+    charts.nitrate = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Nitrate (ppm)',
+            data,
+            borderColor: '#38bdf8',
+            borderWidth: 2,
+            pointBackgroundColor: pointColors,
+            pointBorderColor: pointColors,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            tension: 0.35,
+            fill: false,
+            spanGaps: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            displayColors: false,
+            callbacks: {
+              label(context) {
+                const entry = normalisedEntries[context.dataIndex];
+                const nitrateValue = context.parsed.y;
+                const labelParts = [`${context.dataset.label}: ${nitrateValue ?? 'n/a'} ppm`];
+                if (entry?.wc) {
+                  labelParts.push('Water-change day');
                 }
-              }
-            }
-          }
-        },
-        plugins: [responsiveTicksPlugin, hoverLinePlugin, referenceLinePlugin]
-      });
-
-      state.initialised.nitrate = true;
-    };
-
-    const initDosingChart = () => {
-      if (state.initialised.dosing || !panels.dosing) {
-        state.initialised.dosing = true;
-        return;
-      }
-
-      const weekly = groupWeeklyTotals(entries);
-      if (!weekly.length) {
-        hideLoading(panels.dosing);
-        clearMessages(panels.dosing);
-        ensureMessage(panels.dosing, 'Dosing totals are not available for the selected period.', 'empty');
-        state.initialised.dosing = true;
-        return;
-      }
-
-      const labels = weekly.map(range => formatWeekRange(range.start, range.end));
-      const thriveData = weekly.map(range => Number(range.thrive.toFixed(2)));
-      const excelData = weekly.map(range => Number(range.excel.toFixed(2)));
-
-      hideLoading(panels.dosing);
-      clearMessages(panels.dosing);
-
-      const context = root.querySelector('#dosingChart');
-      state.charts.dosing = new Chart(context, {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [
-            {
-              label: 'Thrive Plus (pumps)',
-              data: thriveData,
-              backgroundColor: 'rgba(34, 197, 94, 0.7)',
-              borderColor: 'rgba(34, 197, 94, 1)',
-              borderWidth: 1,
-              borderRadius: { topLeft: 6, topRight: 6 },
-              borderSkipped: false
-            },
-            {
-              label: 'Seachem Excel (caps)',
-              data: excelData,
-              backgroundColor: 'rgba(168, 85, 247, 0.7)',
-              borderColor: 'rgba(168, 85, 247, 1)',
-              borderWidth: 1,
-              borderRadius: { topLeft: 6, topRight: 6 },
-              borderSkipped: false
-            }
-          ]
-        },
-        options: {
-          maintainAspectRatio: false,
-          responsive: true,
-          interaction: { mode: 'index', intersect: false },
-          scales: {
-            x: {
-              stacked: false,
-              grid: {
-                display: true,
-                color: 'rgba(71, 85, 105, 0.3)'
-              },
-              ticks: {
-                color: 'rgba(226, 232, 240, 0.9)',
-                font: { size: 11 }
-              }
-            },
-            y: {
-              beginAtZero: true,
-              grid: {
-                color: 'rgba(71, 85, 105, 0.3)'
-              },
-              ticks: {
-                color: 'rgba(226, 232, 240, 0.9)',
-                font: { size: 12 }
+                return labelParts;
               }
             }
           },
-          plugins: {
-            legend: {
-              position: 'top',
-              labels: {
-                color: 'rgba(226, 232, 240, 0.95)',
-                usePointStyle: true
-              }
+          targetLine: { value: 20 }
+        },
+        scales: {
+          x: {
+            type: 'category',
+            grid: { display: false },
+            ticks: {
+              color: 'rgba(148, 163, 184, 0.9)',
+              maxRotation: ticksRotation,
+              minRotation: ticksRotation,
+              font: { size: 11 },
+              autoSkip: mediaQuery.matches
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(30, 41, 59, 0.8)' },
+            ticks: {
+              color: 'rgba(148, 163, 184, 0.9)',
+              font: { size: 11 }
             },
-            tooltip: {
-              callbacks: {
-                label: context => `${context.dataset.label}: ${context.formattedValue}`
+            title: {
+              display: true,
+              text: 'ppm',
+              color: 'rgba(148, 163, 184, 0.9)',
+              font: { size: 11, weight: '600' }
+            }
+          }
+        }
+      }
+    });
+
+    mediaQuery.addEventListener('change', event => {
+      const rotation = event.matches ? 0 : 32;
+      charts.nitrate.options.scales.x.ticks.maxRotation = rotation;
+      charts.nitrate.options.scales.x.ticks.minRotation = rotation;
+      charts.nitrate.options.scales.x.ticks.autoSkip = event.matches;
+      charts.nitrate.update();
+    });
+
+    rendered.nitrate = true;
+  };
+
+  const createDosingChart = Chart => {
+    if (rendered.dosing) return;
+    const canvas = root.querySelector('#dosingChart');
+    if (!canvas || !weeklySummary.length) {
+      setPlaceholderState('dosing', 'loaded');
+      clearMessages(panels.dosing);
+      addMessage(panels.dosing, 'empty', 'No journal entries found yet.');
+      rendered.dosing = true;
+      return;
+    }
+
+    setPlaceholderState('dosing', 'loaded');
+    clearMessages(panels.dosing);
+
+    const labels = weeklySummary.map(group => group.label);
+    const thriveData = weeklySummary.map(group => group.thrive);
+    const excelData = weeklySummary.map(group => group.excel);
+    const mediaQuery = window.matchMedia('(min-width: 768px)');
+
+    charts.dosing = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Thrive+',
+            data: thriveData,
+            backgroundColor: 'rgba(34, 197, 94, 0.8)',
+            borderRadius: { topLeft: 6, topRight: 6 }
+          },
+          {
+            label: 'Excel',
+            data: excelData,
+            backgroundColor: 'rgba(168, 85, 247, 0.8)',
+            borderRadius: { topLeft: 6, topRight: 6 }
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              color: 'rgba(226, 232, 240, 0.9)',
+              font: { size: 11 }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label(context) {
+                const value = context.parsed.y ?? 0;
+                return `${context.dataset.label}: ${value} total`;
               }
             }
           }
         },
-        plugins: [responsiveTicksPlugin, hoverLinePlugin]
-      });
-
-      state.initialised.dosing = true;
-    };
-
-    const initMaintenance = () => {
-      if (state.initialised.maint || !panels.maint) {
-        state.initialised.maint = true;
-        return;
-      }
-      hideLoading(panels.maint);
-      const list = panels.maint.querySelector('#maintenanceList');
-      if (!maintenanceEntries.length) {
-        ensureMessage(panels.maint, 'No maintenance entries logged yet.', 'empty');
-        state.initialised.maint = true;
-        return;
-      }
-
-      list.innerHTML = '';
-      maintenanceEntries
-        .slice()
-        .sort((a, b) => b.date.getTime() - a.date.getTime())
-        .forEach(entry => {
-          const item = document.createElement('li');
-          item.className = 'journal-dashboard__timeline-item';
-          const date = document.createElement('span');
-          date.className = 'journal-dashboard__timeline-date';
-          date.textContent = longDateFormatter.format(entry.date);
-
-          const title = document.createElement('p');
-          title.className = 'journal-dashboard__timeline-label';
-          title.textContent = entry.wc ? 'Water change' : entry.category || 'Maintenance';
-
-          item.append(date, title);
-
-          const notes = [];
-          if (entry.notes?.length) {
-            notes.push(...entry.notes);
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: {
+              color: 'rgba(148, 163, 184, 0.9)',
+              font: { size: 11 },
+              maxRotation: mediaQuery.matches ? 0 : 20,
+              minRotation: mediaQuery.matches ? 0 : 20,
+              autoSkip: mediaQuery.matches
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(30, 41, 59, 0.85)' },
+            ticks: {
+              color: 'rgba(148, 163, 184, 0.9)',
+              font: { size: 11 }
+            },
+            title: {
+              display: true,
+              text: 'Total doses',
+              color: 'rgba(148, 163, 184, 0.9)',
+              font: { size: 11, weight: '600' }
+            }
           }
-          if (entry.wc && !entry.notes?.length) {
-            notes.push('Performed full or partial water change');
-          }
-
-          if (notes.length) {
-            const noteList = document.createElement('ul');
-            noteList.className = 'journal-dashboard__timeline-notes';
-            notes.forEach(note => {
-              const noteItem = document.createElement('li');
-              noteItem.textContent = note;
-              noteList.append(noteItem);
-            });
-            item.append(noteList);
-          }
-
-          list.append(item);
-        });
-
-      state.initialised.maint = true;
-    };
-
-    const getVisibleTabs = () => tabs.filter(tab => !tab.classList.contains('journal-dashboard__hidden'));
-
-    const activateTab = (slug, focus = false) => {
-      const visibleTabs = getVisibleTabs();
-      visibleTabs.forEach((tab, index) => {
-        const isActive = tab.dataset.panel === slug;
-        tab.classList.toggle('is-active', isActive);
-        tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        if (isActive) {
-          tab.removeAttribute('tabindex');
-          if (focus) {
-            tab.focus();
-          }
-        } else {
-          tab.setAttribute('tabindex', '-1');
         }
-      });
-
-      Object.entries(panels).forEach(([key, panel]) => {
-        if (!panel) return;
-        const match = key === slug;
-        panel.classList.toggle('is-active', match);
-        if (match) {
-          panel.removeAttribute('hidden');
-        } else {
-          panel.setAttribute('hidden', '');
-        }
-      });
-
-      if (slug === 'nitrate') {
-        initNitrateChart();
-        state.charts.nitrate?.resize();
-      } else if (slug === 'dosing') {
-        initDosingChart();
-        state.charts.dosing?.resize();
-      } else if (slug === 'maint') {
-        initMaintenance();
       }
-    };
+    });
 
+    mediaQuery.addEventListener('change', event => {
+      const rotation = event.matches ? 0 : 20;
+      charts.dosing.options.scales.x.ticks.maxRotation = rotation;
+      charts.dosing.options.scales.x.ticks.minRotation = rotation;
+      charts.dosing.options.scales.x.ticks.autoSkip = event.matches;
+      charts.dosing.update();
+    });
+
+    rendered.dosing = true;
+  };
+
+  const showPanel = panelKey => {
+    tabs.forEach(tab => {
+      const isActive = tab.dataset.panel === panelKey;
+      tab.classList.toggle('is-active', isActive);
+      tab.setAttribute('aria-selected', String(isActive));
+      tab.tabIndex = isActive ? 0 : -1;
+    });
+
+    Object.entries(panels).forEach(([key, panel]) => {
+      if (!panel) return;
+      const isActive = key === panelKey;
+      panel.classList.toggle('is-active', isActive);
+      if (isActive) {
+        panel.removeAttribute('hidden');
+      } else {
+        panel.setAttribute('hidden', '');
+      }
+    });
+
+    if (panelKey === 'nitrate') {
+      createNitrateChart(ChartLib);
+    } else if (panelKey === 'dosing') {
+      createDosingChart(ChartLib);
+    } else if (panelKey === 'maintenance') {
+      renderMaintenance();
+    }
+  };
+
+  const initialiseTabs = () => {
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
-        if (tab.classList.contains('journal-dashboard__hidden')) return;
-        activateTab(tab.dataset.panel);
-      });
-      tab.addEventListener('keydown', event => {
-        const allowed = ['ArrowRight', 'ArrowLeft', 'Home', 'End'];
-        if (!allowed.includes(event.key)) return;
-        const visibleTabs = getVisibleTabs();
-        const currentIndex = visibleTabs.indexOf(tab);
-        if (currentIndex === -1) return;
-        event.preventDefault();
-        let nextIndex = currentIndex;
-        if (event.key === 'ArrowRight') {
-          nextIndex = (currentIndex + 1) % visibleTabs.length;
-        } else if (event.key === 'ArrowLeft') {
-          nextIndex = (currentIndex - 1 + visibleTabs.length) % visibleTabs.length;
-        } else if (event.key === 'Home') {
-          nextIndex = 0;
-        } else if (event.key === 'End') {
-          nextIndex = visibleTabs.length - 1;
-        }
-        const nextTab = visibleTabs[nextIndex];
-        if (nextTab) {
-          activateTab(nextTab.dataset.panel, true);
-        }
+        if (tab.classList.contains('is-active')) return;
+        showPanel(tab.dataset.panel);
       });
     });
+  };
 
-    initNitrateChart();
-    activateTab(getVisibleTabs()[0]?.dataset.panel || 'maint');
+  const loadData = async () => {
+    try {
+      const csvEntries = await loadCsv();
+      if (csvEntries.length) {
+        return csvEntries;
+      }
+    } catch (error) {
+      console.warn('CSV load failed, falling back to JSON', error);
+    }
+
+    try {
+      const jsonEntries = await loadJson();
+      if (jsonEntries.length) {
+        return jsonEntries;
+      }
+    } catch (error) {
+      console.error('JSON load failed', error);
+    }
+
+    return [];
+  };
+
+  const initialise = async () => {
+    const Chart = await loadChartLibrary();
+    if (!Chart) {
+      showCdnError();
+      return;
+    }
+    ChartLib = Chart;
+    registerPlugins(Chart);
+
+    const rawEntries = await loadData();
+    if (detectedColumns.size) {
+      window.__journalDetectedColumns = Array.from(detectedColumns);
+    }
+
+    if (!rawEntries.length) {
+      ['nitrate', 'dosing', 'maintenance'].forEach(key => {
+        const panel = panels[key];
+        if (!panel) return;
+        setPlaceholderState(key, 'loaded');
+        clearMessages(panel);
+        addMessage(panel, 'empty', 'No journal entries found yet.');
+      });
+      return;
+    }
+
+    normalisedEntries = normaliseEntries(rawEntries);
+    weeklySummary = buildWeeklySummary(normalisedEntries);
+    maintenanceEntries = buildMaintenanceEntries(normalisedEntries);
+
+    initialiseTabs();
+    createNitrateChart(Chart);
 
     window.addEventListener('orientationchange', () => {
-      if (state.charts.nitrate) {
-        state.charts.nitrate.resize();
-      }
-      if (state.charts.dosing) {
-        state.charts.dosing.resize();
-      }
+      Object.values(charts).forEach(instance => instance?.resize());
     });
-  })();
+  };
+
+  initialise();
 }
