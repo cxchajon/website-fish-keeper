@@ -19,7 +19,7 @@ const expect = (actual) => ({
 });
 
 describe('prototype bioload filtration aggregation', () => {
-  const basePlan = { gallons: 29, speciesLoad: 100, capacity: 100, planted: false };
+  const basePlan = { gallons: 29, speciesLoad: 100, capacity: 100 };
 
   test('custom-only filters aggregate with monotonic percent', () => {
     const baseline = computeBioloadPercentForTest({ ...basePlan, flowGPH: 0, totalGPH: 0, filters: [] });
@@ -70,7 +70,6 @@ describe('prototype bioload filtration aggregation', () => {
       gallons: 29,
       speciesLoad,
       capacity,
-      planted: false,
       flowGPH: 0,
       totalGPH: 0,
       filters: [],

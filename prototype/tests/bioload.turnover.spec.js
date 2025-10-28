@@ -16,7 +16,7 @@ const expect = (actual) => ({
 });
 
 describe('bioload percent & turnover relationship', () => {
-  const base = { gallons: 29, speciesLoad: 15, planted: false };
+  const base = { gallons: 29, speciesLoad: 15 };
 
   test('more flow does NOT increase percent', () => {
     const low = percentBioload({ ...base, flowGPH: 80 });
@@ -26,14 +26,8 @@ describe('bioload percent & turnover relationship', () => {
     expect(high).toBeLessThanOrEqual(mid);
   });
 
-  test('planted reduces percent with same stock/flow', () => {
-    const off = percentBioload({ ...base, planted: false, flowGPH: 200 });
-    const on = percentBioload({ ...base, planted: true, flowGPH: 200 });
-    expect(on).toBeLessThan(off);
-  });
-
   test('zero-capacity guard saturates at clamp', () => {
-    const percent = percentBioload({ gallons: 0, speciesLoad: 10, planted: false, flowGPH: 200 });
+    const percent = percentBioload({ gallons: 0, speciesLoad: 10, flowGPH: 200 });
     expect(percent).toBe(200);
   });
 });

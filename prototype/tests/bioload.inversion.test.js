@@ -10,7 +10,7 @@ const expect = (actual) => ({
 });
 
 describe('bioload percent vs filtration', () => {
-  const plan = { gallons: 29, planted: false, speciesLoad: 15, capacity: 30, typeBlend: 'HOB' };
+  const plan = { gallons: 29, speciesLoad: 15, capacity: 30, typeBlend: 'HOB' };
 
   test('more GPH should not raise percent', () => {
     const p0 = computeBioloadPercentForTest({ ...plan, totalGPH: 0, flowGPH: 0 });
@@ -20,9 +20,4 @@ describe('bioload percent vs filtration', () => {
     expect(p2).toBeLessThanOrEqual(p1);
   });
 
-  test('planted reduces percent at same GPH', () => {
-    const a = computeBioloadPercentForTest({ ...plan, planted: false, totalGPH: 200, flowGPH: 200 });
-    const b = computeBioloadPercentForTest({ ...plan, planted: true, totalGPH: 200, flowGPH: 200 });
-    expect(b).toBeLessThanOrEqual(a);
-  });
 });

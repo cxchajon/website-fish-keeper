@@ -1,35 +1,29 @@
-// File: prototype/js/logic/compute-proxy.js:17-43
-const computeBioloadDetails = ({ gallons, planted, speciesLoad, flowGPH }) => {
+// File: prototype/js/logic/compute-proxy.js — filtration-only prototype math
+const computeBioloadDetails = ({ gallons, speciesLoad, flowGPH }) => {
   const tankGallons = Math.max(0, Number(gallons || 0));
-  const plantedAdj = planted ? 0.90 : 1.00;
   const flow = Math.max(0, Number(flowGPH || 0));
   const speciesTotal = Math.max(0, Number(speciesLoad || 0));
 
-  const load = speciesTotal * plantedAdj;
-  const baseCapacity = tankGallons * 1.0;
   const turnoverX = tankGallons > 0 ? flow / tankGallons : 0;
-  const rawBonus = mapLinear(turnoverX, 5, 10, 0.00, 0.10);
-  const capBonus = clamp(rawBonus, 0.00, 0.10);
-  const capacity = baseCapacity * (1 + capBonus);
-  const percent = capacity > 0 ? (load / capacity) * 100 : 0;
+  const filterRelief = clamp(aggregateFilterRelief, 0, MAX_RELIEF);
+  const effectiveLoad = speciesTotal * (1 - filterRelief);
+  const capBonus = clamp(mapLinear(turnoverX, 5, 10, 0.00, 0.10), 0.00, 0.10);
+  const capacity = Math.max(1, tankGallons) * (1 + capBonus);
+  const percent = capacity > 0 ? (effectiveLoad / capacity) * 100 : 0;
 
   return {
     gallons: tankGallons,
-    planted: Boolean(planted),
     speciesLoad: speciesTotal,
     flowGPH: flow,
-    plantedAdj,
-    load,
-    baseCapacity,
+    filterRelief,
+    effectiveLoad,
     turnoverX,
-    rawBonus,
     capBonus,
     capacity,
     percent,
   };
 };
 
-// File: prototype/js/logic/compute-proxy.js:155-166
 const capBonus = computeFlowBonus(gallons, flowGPH);
 const capacityMultiplier = 1 + capBonus;
 const totalFactor = capacityMultiplier > 0 ? 1 / capacityMultiplier : 1;
