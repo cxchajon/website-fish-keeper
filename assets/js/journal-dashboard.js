@@ -8,6 +8,16 @@
     return;
   }
 
+  if (typeof Chart === 'undefined') {
+    const container = document.querySelector('#journal-dashboard') || root;
+    if (container) {
+      container.innerHTML =
+        '<div class="error-banner">Charts unavailable (Chart.js not loaded).</div>';
+    }
+    console.error('Chart.js failed to load');
+    return;
+  }
+
   const DAY_MS = 86_400_000;
   const fmtShort = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' });
   const fmtFull = new Intl.DateTimeFormat(undefined, {
