@@ -123,7 +123,16 @@
             "name": "How accurate are the tank size recommendations?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "The advisor uses a balanced approach that considers species behavior, activity level, and planted-tank benefits. It avoids rigid “rules” and instead provides conservative starting points so aquarists can fine-tune their stocking levels through regular testing and observation."
+              "text": "The advisor uses a balanced approach that considers species behavior, activity level, and conservative new-tank assumptions. It avoids rigid “rules” and instead provides conservative starting points so aquarists can fine-tune their stocking levels through regular testing and observation."
+            }
+          },
+          {
+            "@type": "Question",
+            "@id": "https://thetankguide.com/prototype/stocking-prototype.html#faq-plants",
+            "name": "Why don’t plants change capacity here?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "This tool is a new-tank walkthrough. Fresh setups don’t have established plant mass or stable growth, so we don’t count a plant bonus. After your tank cycles and plants are thriving, your effective capacity may improve. That’s why we recommend regular water testing (ammonia, nitrite, nitrate, pH, KH/GH) and rechecking your plan as the tank matures."
             }
           },
           {
@@ -154,27 +163,20 @@
   <!-- proto guard: ensure legacy filtration card stays removed -->
   <script src="/prototype/assets/js/proto-guards.js?v=proto_rm_2025_10_25" defer></script>
   <style>
-    :root {
-      --fg: #eef3ff;
-      --muted: rgba(235, 239, 251, 0.86);
-      --panel: rgba(255, 255, 255, 0.08);
-      --border: rgba(255, 255, 255, 0.14);
-      --chip: rgba(255, 255, 255, 0.12);
-      --ok: #12c278;
-      --warn: #f4b400;
-      --bad: #ff645c;
-      --bar-bg: rgba(255, 255, 255, 0.12);
-      --ghost: rgba(255, 255, 255, 0.25);
-      --shadow: rgba(18, 30, 56, 0.18);
-      --popover-bg: rgba(6, 12, 24, 0.96);
-      --sa-plant-r: 20;
-      --sa-plant-g: 203;
-      --sa-plant-b: 168;
-      --sa-plant-wash-soft: 0.12;
-      --sa-plant-wash-strong: 0.18;
-      --sa-plant-border: rgba(20, 203, 168, 0.35);
-      --sa-plant-glow: 0 0 0 1px rgba(20, 203, 168, 0.25), 0 6px 24px rgba(20, 203, 168, 0.18);
-    }
+      :root {
+        --fg: #eef3ff;
+        --muted: rgba(235, 239, 251, 0.86);
+        --panel: rgba(255, 255, 255, 0.08);
+        --border: rgba(255, 255, 255, 0.14);
+        --chip: rgba(255, 255, 255, 0.12);
+        --ok: #12c278;
+        --warn: #f4b400;
+        --bad: #ff645c;
+        --bar-bg: rgba(255, 255, 255, 0.12);
+        --ghost: rgba(255, 255, 255, 0.25);
+        --shadow: rgba(18, 30, 56, 0.18);
+        --popover-bg: rgba(6, 12, 24, 0.96);
+      }
 
     html,
     body {
@@ -198,43 +200,10 @@
       padding: 0 18px;
     }
 
-    .stocking-page {
-      position: relative;
-      isolation: isolate;
-    }
-
-    .stocking-page::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      background:
-        radial-gradient(1200px 800px at 20% -10%,
-          rgba(var(--sa-plant-r), var(--sa-plant-g), var(--sa-plant-b), var(--sa-plant-wash-strong)) 0%,
-          rgba(var(--sa-plant-r), var(--sa-plant-g), var(--sa-plant-b), 0) 60%),
-        linear-gradient(180deg,
-          rgba(var(--sa-plant-r), var(--sa-plant-g), var(--sa-plant-b), var(--sa-plant-wash-soft)) 0%,
-          rgba(var(--sa-plant-r), var(--sa-plant-g), var(--sa-plant-b), 0) 60%);
-      opacity: 0;
-      transition: opacity 0.28s ease;
-      will-change: opacity;
-    }
-
-    .stocking-page.is-planted::before {
-      opacity: 1;
-    }
-
-    .stocking-page.is-planted .tank-size-card {
-      border-color: var(--sa-plant-border);
-      box-shadow: var(--sa-plant-glow);
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .stocking-page::before {
-        transition: none;
+      .stocking-page {
+        position: relative;
+        isolation: isolate;
       }
-    }
 
     .page-content {
       padding-bottom: 96px;
@@ -264,18 +233,10 @@
       opacity: 0.85;
     }
 
-    .tagline {
-      font-size: 1.05rem;
-      opacity: 0.85;
-    }
-
-    #plant-icon {
-      margin-left: 8px;
-      font-size: 1.7rem;
-      vertical-align: middle;
-      color: #3ddc84;
-      display: none;
-    }
+      .tagline {
+        font-size: 1.05rem;
+        opacity: 0.85;
+      }
 
     .hero .lead {
       max-width: 36rem;
@@ -923,23 +884,6 @@
       color: rgba(255, 255, 255, 0.72);
     }
 
-    #stocking-page .row.toggle-row {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-      margin: 8px 0;
-    }
-
-    #stocking-page .row.toggle-row .row-left {
-      display: block;
-    }
-
-    #stocking-page .row.toggle-row .row-right {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-
     #stocking-page .card p,
     #stocking-page .panel p {
       margin-top: var(--space-xs);
@@ -1075,10 +1019,6 @@
         font-size: 12.5px;
       }
 
-      #stocking-page .row.toggle-row .row-right {
-        gap: 8px;
-      }
-
       #stocking-page .env-card table th,
       #stocking-page .env-card table td {
         padding: 8px 10px;
@@ -1136,9 +1076,7 @@
     <header class="hero">
       <div class="wrap">
         <div class="hero-header">
-          <h1 class="brand-name hero-title" id="page-title">
-            Stocking Advisor <span id="plant-icon" aria-hidden="true">🌱</span>
-          </h1>
+          <h1 class="brand-name hero-title" id="page-title">Stocking Advisor</h1>
           <p class="hero-subline">Prepared by The Tank Guide (A FishKeepingLifeCo Project).</p>
           <p class="tagline hero-tagline lead">Plan a healthy community by checking bioload, compatibility — and get recommended water parameters for your tank.</p>
           <!-- Inline "How it works" link (prototype only) -->
@@ -1230,176 +1168,138 @@
           <!-- Facts line stays; starts EMPTY to avoid duplicate helper text -->
           <div class="facts-line muted-text" data-role="tank-spec" aria-live="polite"></div>
 
-        <!-- Planted (stacked) -->
-        <div class="row toggle-row">
-          <div class="row-left">
-            <div class="toggle-label">
-              <label class="toggle-title" for="stocking-planted">Planted</label>
-              <div class="info-trigger" data-info-scope="planted">
-                <button
-                  type="button"
-                  class="proto-info-trigger info-btn"
-                  aria-haspopup="dialog"
-                  aria-controls="pop-planted"
-                  aria-expanded="false"
-                  aria-label="More info about planted tanks"
-                  data-proto-popover="pop-planted"
-                >i</button>
-                <div id="pop-planted" class="proto-popover" role="dialog" aria-labelledby="pop-planted-title" tabindex="-1" hidden>
-                  <header>
-                    <h3 id="pop-planted-title">When to mark the tank planted</h3>
-                    <button type="button" data-close aria-label="Close">×</button>
-                  </header>
-                  <div role="document" aria-labelledby="pop-planted-title">
-                    <ul>
-                      <li>Toggle this on when you have actively growing live plants you prune and fertilize regularly.</li>
-                      <li>Planted mode gives a modest stocking buffer because thriving plants absorb ammonia and nitrate.</li>
-                      <li>Leave it off for artificial plants or sparse growth so recommendations stay conservative.</li>
-                    </ul>
+          <div class="filter-flow-control" data-role="filter-setup">
+            <div class="filter-product-field">
+              <div class="field-label-row">
+                <label for="filter-product">Filter Product</label>
+                <div class="info-trigger" data-info-scope="filter-product">
+                  <button
+                    type="button"
+                    class="proto-info-trigger info-btn"
+                    aria-haspopup="dialog"
+                    aria-controls="pop-filter-product"
+                    aria-expanded="false"
+                    aria-label="More info about selecting a filter product"
+                    data-proto-popover="pop-filter-product"
+                  >i</button>
+                  <div id="pop-filter-product" class="proto-popover" role="dialog" aria-labelledby="pop-filter-product-title" tabindex="-1" hidden>
+                    <header>
+                      <h3 id="pop-filter-product-title">Picking a filter</h3>
+                      <button type="button" data-close aria-label="Close">×</button>
+                    </header>
+                    <div role="document" aria-labelledby="pop-filter-product-title">
+                      <ul>
+                        <li>Select a model rated for your tank volume or one size larger for heavy stocking plans.</li>
+                        <li>Choosing a product fills in its rated gallons-per-hour so turnover math stays accurate.</li>
+                        <li>Switch to a custom entry if you run multiple filters or throttle the manufacturer flow.</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
+              <div class="proto-inline-controls" data-role="filter-product-controls">
+                <div class="select-wrap proto-inline-controls__field">
+                  <select id="filter-product" name="filter-product" aria-describedby="filter-product-note">
+                    <option value="">— Select a product —</option>
+                  </select>
+                  <svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                    <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <button
+                  type="button"
+                  id="filter-product-add"
+                  class="proto-add-button proto-add-button--primary"
+                  disabled
+                  aria-disabled="true"
+                >Add Selected</button>
+              </div>
+              <p class="filter-product-note" id="filter-product-note">Choose a filter matched to your tank size and use Add Selected when ready.</p>
             </div>
-          </div>
-          <div class="row-right">
-            <div class="planted-row" id="planted-control">
-              <label class="planted-checkbox">
-                <input type="checkbox" id="stocking-planted" name="stocking-planted" data-testid="toggle-planted" />
-                <span class="checkmark" aria-hidden="true"></span>
-                This is a planted tank.
-              </label>
+            <div class="filter-setup">
+              <p class="muted">Choose a filter to estimate how much water flow your tank has per hour.</p>
+
+              <div class="filter-setup__row" role="group" aria-label="Add custom filter">
+                <label class="visually-hidden" for="fs-type">Filter type</label>
+                <select id="fs-type" class="fs-input fs-select">
+                  <option value="" selected disabled>Filter type…</option>
+                  <option>HOB</option>
+                  <option>Canister</option>
+                  <option>Internal</option>
+                  <option>Sponge</option>
+                  <option>Powerhead</option>
+                </select>
+
+                <label class="visually-hidden" for="fs-gph">Rated flow (GPH)</label>
+                <input id="fs-gph" class="fs-input fs-gph" inputmode="numeric" pattern="[0-9]*" placeholder="GPH">
+
+                <button id="fs-add-custom" type="button" class="btn btn-primary btn-compact" aria-disabled="true">
+                  Add custom
+                </button>
+              </div>
+
+              <p class="hint">Tip: press Enter in the GPH field to add quickly.</p>
             </div>
-            <div class="filter-flow-control" data-role="filter-setup">
-              <div class="filter-product-field">
+            <div class="filter-flow-meta">
+              <div
+                class="proto-filter-chips"
+                data-role="proto-filter-chips"
+                role="list"
+                aria-live="polite"
+              ></div>
+              <p class="proto-filter-empty" data-role="proto-filter-empty">No filters added yet.</p>
+              <div class="filter-turnover turnover-block" id="filter-turnover" aria-live="polite">
                 <div class="field-label-row">
-                  <label for="filter-product">Filter Product</label>
-                  <div class="info-trigger" data-info-scope="filter-product">
+                  <label class="field-label" for="turnoverValue">Estimated turnover</label>
+                  <div class="info-trigger" data-info-scope="turnover">
                     <button
                       type="button"
-                      class="proto-info-trigger info-btn"
+                      class="proto-info-trigger info-btn field-label-info"
                       aria-haspopup="dialog"
-                      aria-controls="pop-filter-product"
+                      aria-controls="pop-turnover"
                       aria-expanded="false"
-                      aria-label="More info about selecting a filter product"
-                      data-proto-popover="pop-filter-product"
+                      aria-label="More info about turnover"
+                      data-proto-popover="pop-turnover"
                     >i</button>
-                    <div id="pop-filter-product" class="proto-popover" role="dialog" aria-labelledby="pop-filter-product-title" tabindex="-1" hidden>
+                    <div id="pop-turnover" class="proto-popover" role="dialog" aria-labelledby="pop-turnover-title" tabindex="-1" hidden>
                       <header>
-                        <h3 id="pop-filter-product-title">Picking a filter</h3>
+                        <h3 id="pop-turnover-title">Turnover targets</h3>
                         <button type="button" data-close aria-label="Close">×</button>
                       </header>
-                      <div role="document" aria-labelledby="pop-filter-product-title">
+                      <div role="document" aria-labelledby="pop-turnover-title">
                         <ul>
-                          <li>Select a model rated for your tank volume or one size larger for heavy stocking plans.</li>
-                          <li>Choosing a product fills in its rated gallons-per-hour so turnover math stays accurate.</li>
-                          <li>Switch to a custom entry if you run multiple filters or throttle the manufacturer flow.</li>
+                          <li>Turnover compares your filter flow to the aquarium volume (GPH ÷ gallons).</li>
+                          <li>General community tanks thrive around 5–7× per hour; active species often prefer 8× or more.</li>
+                          <li>If the number dips low, consider upsizing filtration or adding supplemental circulation.</li>
                         </ul>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="proto-inline-controls" data-role="filter-product-controls">
-                  <div class="select-wrap proto-inline-controls__field">
-                    <select id="filter-product" name="filter-product" aria-describedby="filter-product-note">
-                      <option value="">— Select a product —</option>
-                    </select>
-                    <svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-                      <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                  </div>
-                  <button
-                    type="button"
-                    id="filter-product-add"
-                    class="proto-add-button proto-add-button--primary"
-                    disabled
-                    aria-disabled="true"
-                  >Add Selected</button>
+                <p class="proto-filter-summary" data-role="proto-filter-summary">Filtration: 0 GPH • 0.0×/h</p>
+                <div class="heads-up-note" role="note">
+                  <p><strong>Heads-up for later:</strong> As your tank matures—especially if you add lots of healthy, fast-growing plants—your effective capacity can change. Keep testing your water and revisit your plan after cycling.</p>
                 </div>
-                <p class="filter-product-note" id="filter-product-note">Choose a filter matched to your tank size and use Add Selected when ready.</p>
-              </div>
-              <div class="filter-setup">
-                <p class="muted">Choose a filter to estimate how much water flow your tank has per hour.</p>
-
-                <div class="filter-setup__row" role="group" aria-label="Add custom filter">
-                  <label class="visually-hidden" for="fs-type">Filter type</label>
-                  <select id="fs-type" class="fs-input fs-select">
-                    <option value="" selected disabled>Filter type…</option>
-                    <option>HOB</option>
-                    <option>Canister</option>
-                    <option>Internal</option>
-                    <option>Sponge</option>
-                    <option>Powerhead</option>
-                  </select>
-
-                  <label class="visually-hidden" for="fs-gph">Rated flow (GPH)</label>
-                  <input id="fs-gph" class="fs-input fs-gph" inputmode="numeric" pattern="[0-9]*" placeholder="GPH">
-
-                  <button id="fs-add-custom" type="button" class="btn btn-primary btn-compact" aria-disabled="true">
-                    Add custom
-                  </button>
+                <span class="filter-turnover-value" data-role="filter-turnover-value" aria-hidden="true" hidden>—</span>
+                <!-- Mirrors .filter-flow-input__field > input styling from Rated flow (GPH) field -->
+                <!-- PROTOTYPE-ONLY: Compact turnover field -->
+                <div class="proto-input-group proto-turnover">
+                  <input
+                    id="turnoverValue"
+                    class="proto-input proto-input--compact"
+                    type="text"
+                    inputmode="decimal"
+                    aria-label="Estimated turnover in tank volumes per hour"
+                    value="5.0"
+                    placeholder="—"
+                    readonly
+                  />
+                  <span class="proto-input-suffix" aria-hidden="true">×/h</span>
                 </div>
-
-                <p class="hint">Tip: press Enter in the GPH field to add quickly.</p>
               </div>
-              <div class="filter-flow-meta">
-                <div
-                  class="proto-filter-chips"
-                  data-role="proto-filter-chips"
-                  role="list"
-                  aria-live="polite"
-                ></div>
-                <p class="proto-filter-empty" data-role="proto-filter-empty">No filters added yet.</p>
-                <div class="filter-turnover turnover-block" id="filter-turnover" aria-live="polite">
-                  <div class="field-label-row">
-                    <label class="field-label" for="turnoverValue">Estimated turnover</label>
-                    <div class="info-trigger" data-info-scope="turnover">
-                      <button
-                        type="button"
-                        class="proto-info-trigger info-btn field-label-info"
-                        aria-haspopup="dialog"
-                        aria-controls="pop-turnover"
-                        aria-expanded="false"
-                        aria-label="More info about turnover"
-                        data-proto-popover="pop-turnover"
-                      >i</button>
-                      <div id="pop-turnover" class="proto-popover" role="dialog" aria-labelledby="pop-turnover-title" tabindex="-1" hidden>
-                        <header>
-                          <h3 id="pop-turnover-title">Turnover targets</h3>
-                          <button type="button" data-close aria-label="Close">×</button>
-                        </header>
-                        <div role="document" aria-labelledby="pop-turnover-title">
-                          <ul>
-                            <li>Turnover compares your filter flow to the aquarium volume (GPH ÷ gallons).</li>
-                            <li>General community tanks thrive around 5–7× per hour; active species often prefer 8× or more.</li>
-                            <li>If the number dips low, consider upsizing filtration or adding supplemental circulation.</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="proto-filter-summary" data-role="proto-filter-summary">Filtration: 0 GPH • 0.0×/h</p>
-                  <span class="filter-turnover-value" data-role="filter-turnover-value" aria-hidden="true" hidden>—</span>
-                  <!-- Mirrors .filter-flow-input__field > input styling from Rated flow (GPH) field -->
-                  <!-- PROTOTYPE-ONLY: Compact turnover field -->
-                  <div class="proto-input-group proto-turnover">
-                    <input
-                      id="turnoverValue"
-                      class="proto-input proto-input--compact"
-                      type="text"
-                      inputmode="decimal"
-                      aria-label="Estimated turnover in tank volumes per hour"
-                      value="5.0"
-                      placeholder="—"
-                      readonly
-                    />
-                    <span class="proto-input-suffix" aria-hidden="true">×/h</span>
-                  </div>
-                </div>
-                <p class="filter-product-meta" id="filter-product-label" hidden></p>
-              </div>
+              <p class="filter-product-meta" id="filter-product-label" hidden></p>
             </div>
           </div>
-        </div>
       </div>
 
       <style>
@@ -1455,87 +1355,28 @@
           }
         }
 
-        /* Facts line (empty when none selected) */
-        .tank-size-card .facts-line {
-          margin-top: 8px;
-        }
+          /* Facts line (empty when none selected) */
+          .tank-size-card .facts-line {
+            margin-top: 8px;
+          }
+
+          .heads-up-note {
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--muted);
+          }
+
+          .heads-up-note strong {
+            color: var(--fg);
+          }
 
         /* Ensure the card can host positioned children safely */
         .tank-size-card { position: relative; }
-
-        .tank-size-card .row.toggle-row {
-          margin-top: 14px;
-        }
-
-        /* Planted checkbox matches Cycling Coach styling */
-        #stocking-page .planted-row {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          margin: 8px 0 16px;
-        }
-        #stocking-page .planted-checkbox {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 0.95rem;
-          color: #d7d7d7;
-          cursor: pointer;
-          user-select: none;
-        }
-        #stocking-page .planted-checkbox input[type="checkbox"] {
-          appearance: none;
-          -webkit-appearance: none;
-          background-color: transparent;
-          margin: 0;
-          font: inherit;
-          width: 18px;
-          height: 18px;
-          border: 2px solid rgba(255, 255, 255, 0.3);
-          border-radius: 4px;
-          display: grid;
-          place-content: center;
-          cursor: pointer;
-          transition: border 0.2s ease, background 0.2s ease;
-        }
-        #stocking-page .planted-checkbox input[type="checkbox"]::before {
-          content: "\✓";
-          font-size: 14px;
-          color: #fff;
-          transform: scale(0);
-          transition: transform 0.15s ease;
-        }
-        #stocking-page .planted-checkbox input[type="checkbox"]:checked {
-          background-color: rgba(255, 255, 255, 0.15);
-          border-color: rgba(255, 255, 255, 0.6);
-        }
-        #stocking-page .planted-checkbox input[type="checkbox"]:checked::before {
-          transform: scale(1);
-        }
-        #stocking-page .planted-checkbox:hover input[type="checkbox"] {
-          border-color: rgba(255, 255, 255, 0.6);
-        }
-        #stocking-page .planted-checkbox input[type="checkbox"]:focus-visible {
-          outline: 2px solid rgba(255, 255, 255, 0.5);
-          outline-offset: 2px;
-        }
-        #stocking-page .planted-checkbox .checkmark {
-          display: none;
-        }
-
-        .tank-size-card .toggle-label {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .tank-size-card .row.toggle-row .row-right {
-          padding-left: 6px;
-        }
-
-        .tank-size-card .toggle-title {
-          font-weight: 600;
-        }
 
         /* Info buttons adopt Cycling Coach parity */
         #stocking-page .info-btn {
@@ -1626,7 +1467,7 @@
                       <li>Verify your nitrogen cycle is stable with zero ammonia and nitrite before introducing new species.</li>
                       <li>Match species by temperature, pH, and hardness tolerances, leaning into the overlapping sweet spot.</li>
                       <li>Stage livestock additions over several weeks so the biofilter can adjust without stress spikes.</li>
-                      <li>Use live plants or seeded media to buffer bioload swings as you expand the community.</li>
+                      <li>Seed extra bio media to buffer bioload swings as you expand the community.</li>
                       <li>Keep a quick log of maintenance, feedings, and behavior shifts so you can course-correct early.</li>
                     </ul>
                   </div>
@@ -1750,7 +1591,7 @@
         <h2>The Science Behind the Recommendations</h2>
 
         <h3>Bioload, not “inches per gallon”</h3>
-        <p>The Advisor estimates bioload—how much waste your stock produces—using conservative rules plus activity multipliers. Fast swimmers (like danios) add more load than slow cruisers (like gouramis). A planted tank gives a small buffer because thriving plants take up nitrogen.</p>
+        <p>The Advisor estimates bioload—how much waste your stock produces—using conservative rules plus activity multipliers. Fast swimmers (like danios) add more load than slow cruisers (like gouramis). Because this walkthrough assumes a fresh setup, only your filtration setup reduces the effective load; revisit your plan after cycling if you grow a dense plant canopy.</p>
 
         <h3>Water chemistry guardrails</h3>
         <p>Each species carries preferred ranges for temperature, pH, and hardness. If your plan mixes fish outside a shared range, the Environmental card highlights it so you can adjust stock, remineralize, or tweak heat and flow.</p>
@@ -1772,10 +1613,14 @@
 
       <section class="advisor-faq" id="stocking-faq">
         <h2>Stocking Advisor FAQ</h2>
-        <details>
-          <summary>How accurate are the tank size recommendations?</summary>
-          <p>The advisor uses a balanced approach that considers species behavior, activity level, and planted-tank benefits. It avoids rigid “rules” and instead provides conservative starting points so aquarists can fine-tune their stocking levels through regular testing and observation.</p>
-        </details>
+          <details>
+            <summary>How accurate are the tank size recommendations?</summary>
+            <p>The advisor uses a balanced approach that considers species behavior, activity level, and conservative new-tank assumptions. It avoids rigid “rules” and instead provides conservative starting points so aquarists can fine-tune their stocking levels through regular testing and observation.</p>
+          </details>
+          <details>
+            <summary>Why don’t plants change capacity here?</summary>
+            <p><strong>Q:</strong> Why don’t plants change capacity here?<br /><strong>A:</strong> This tool is a new-tank walkthrough. Fresh setups don’t have established plant mass or stable growth, so we don’t count a plant bonus. After your tank cycles and plants are thriving, your effective capacity may improve. That’s why we recommend <strong>regular water testing</strong> (ammonia, nitrite, nitrate, pH, KH/GH) and <strong>rechecking your plan</strong> as the tank matures.</p>
+          </details>
         <details>
           <summary>What water parameters does the Stocking Advisor monitor?</summary>
           <p>Temperature, pH, carbonate hardness, general hardness, and flow are tracked for every species profile. When a planned community falls outside those overlapping bands, the tool surfaces alerts so you can adjust gear or livestock before completing the build.</p>
@@ -1817,13 +1662,12 @@
     <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="how-modal-title">
       <button type="button" class="icon-btn modal-close" id="how-close" aria-label="Close dialog">×</button>
       <h3 id="how-modal-title">How the Stocking Advisor works</h3>
-      <ol class="spaced">
-        <li><strong>Pick your tank size.</strong> Enter a volume or choose a preset — stocking levels update right away.</li>
-        <li><strong>Toggle planted mode.</strong> Plants give a small buffer and you’ll see the UI reflect the change.</li>
-        <li><strong>Select your filter.</strong> Choose a model to auto-fill flow; adjust GPH if you’ve modded your setup.</li>
-        <li><strong>Add your fish.</strong> Search and add species. Reorder or remove as you plan. Chips flag conflicts.</li>
-        <li><strong>Review the health cards.</strong> See target temperature, pH, hardness, and flow — and how to stay there.</li>
-      </ol>
+        <ol class="spaced">
+          <li><strong>Pick your tank size.</strong> Enter a volume or choose a preset — stocking levels update right away.</li>
+          <li><strong>Select your filter.</strong> Choose a model to auto-fill flow; adjust GPH if you’ve modded your setup.</li>
+          <li><strong>Add your fish.</strong> Search and add species. Reorder or remove as you plan. Chips flag conflicts.</li>
+          <li><strong>Review the health cards.</strong> See target temperature, pH, hardness, and flow — and how to stay there.</li>
+        </ol>
       <div class="actions">
         <button type="button" class="btn primary" id="how-ok">Close</button>
       </div>

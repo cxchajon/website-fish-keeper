@@ -78,13 +78,6 @@ const resolveTypeBlend = ({ typeBlend, mixFactor }) => {
   return 'HOB';
 };
 
-const resolvePlantBonus = ({ planted, plantBonus }) => {
-  if (Number.isFinite(plantBonus)) {
-    return clamp(plantBonus, 0, 0.15); // Crosscheck Fix — Oct 2025
-  }
-  return planted ? 0.08 : 0; // Crosscheck Fix — Oct 2025
-};
-
 const computeBlendEfficiency = ({ turnover, typeBlend, mixFactor }) => {
   if (!Number.isFinite(turnover) || turnover <= 0) {
     return 0;
@@ -102,7 +95,6 @@ const mapLinear = (value, a, b, min, max) => {
 
 const computeBioloadDetails = ({
   gallons,
-  planted,
   speciesLoad,
   flowGPH,
   totalGPH,
@@ -110,15 +102,11 @@ const computeBioloadDetails = ({
   capacity,
   typeBlend,
   mixFactor,
-  plantBonus,
   filters,
 }) => {
   const tankGallons = Math.max(0, Number(gallons || 0));
   const speciesTotal = Math.max(0, Number(speciesLoad || 0));
-  const plantRelief = resolvePlantBonus({ planted, plantBonus });
   const loadBase = speciesTotal;
-  const plantFactor = 1 - plantRelief;
-  const loadAfterPlants = loadBase * plantFactor;
 
   const normalizedFilters = mapFiltersForEfficiency(filters);
   const deratedFromFilters = normalizedFilters.reduce((sum, filter) => sum + filter.gph, 0);
@@ -180,8 +168,7 @@ const computeBioloadDetails = ({
   eff = clamp(eff, 0, MAX_RELIEF);
 
   const equipmentFactor = 1 - eff; // Crosscheck Fix — Oct 2025
-  const effectiveFactor = Math.max(0, equipmentFactor * plantFactor); // Crosscheck Fix — Oct 2025
-  const effectiveLoad = computeAdjustedBioload(loadBase, 1 - effectiveFactor);
+  const effectiveLoad = computeAdjustedBioload(loadBase, eff);
   const baseCapacity = Number.isFinite(capacity) && capacity > 0 ? capacity : tankGallons;
   const safeCapacity = Math.max(1, Number(baseCapacity || 0));
   const percent = computePercent(effectiveLoad, safeCapacity);
@@ -197,7 +184,6 @@ const computeBioloadDetails = ({
     try {
       console.debug('[Proto] Bioload math snapshot', {
         gallons: tankGallons,
-        planted: Boolean(planted),
         baseBioload: loadBase,
         filters: debugFilters,
         totalFlowGPH: totalDeratedFlow,
@@ -208,8 +194,6 @@ const computeBioloadDetails = ({
         efficiencyTotal: eff,
         efficiencyPerFilter: efficiencyDetails,
         equipmentFactor,
-        plantFactor,
-        effectiveFactor,
         effectiveBioload: effectiveLoad,
         percent,
       });
@@ -220,19 +204,15 @@ const computeBioloadDetails = ({
 
   return {
     gallons: tankGallons,
-    planted: Boolean(planted),
     speciesLoad: loadBase,
     flowGPH: appliedDeratedFlow,
     flowRatedGPH: appliedRatedFlow,
     flowTotalGPH: totalDeratedFlow,
     flowTotalRatedGPH: totalRatedFlow,
-    plantBonus: plantRelief,
-    plantFactor,
-    load: loadAfterPlants,
+    load: loadBase,
     turnoverX: turnover,
     efficiency: eff,
     efficiencyDetails,
-    effectiveFactor,
     effectiveLoad,
     capacity: safeCapacity,
     percent,
@@ -382,11 +362,9 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     return raw;
   }
   const gallons = Number.isFinite(tank?.gallons) ? tank.gallons : 0;
-  const planted = Boolean(tank?.planted);
   const flowGPH = resolveFlowGph(tank, filterState, raw);
   const mixFactor = resolveMixFactor(filterState, raw);
   const typeBlend = resolveTypeBlendInput(filterState, raw);
-  const plantBonus = Number.isFinite(raw?.plantBonus) ? raw.plantBonus : null;
   const capacity = Number.isFinite(raw?.capacity) ? raw.capacity : null;
   const totalDeratedFromState = Number.isFinite(filterState?.totalGph) && filterState.totalGph > 0
     ? filterState.totalGph
@@ -403,7 +381,6 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
 
   const baseCurrentDetails = computeBioloadDetails({
     gallons,
-    planted,
     speciesLoad: raw.currentLoad ?? 0,
     flowGPH: 0,
     totalGPH: totalRatedForDetails,
@@ -411,12 +388,10 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     capacity,
     typeBlend,
     mixFactor,
-    plantBonus,
     filters: filtersList,
   });
   const baseProposedDetails = computeBioloadDetails({
     gallons,
-    planted,
     speciesLoad: raw.proposed ?? 0,
     flowGPH: 0,
     totalGPH: totalRatedForDetails,
@@ -424,12 +399,10 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     capacity,
     typeBlend,
     mixFactor,
-    plantBonus,
     filters: filtersList,
   });
   const currentDetails = computeBioloadDetails({
     gallons,
-    planted,
     speciesLoad: raw.currentLoad ?? 0,
     flowGPH,
     totalGPH: totalRatedForDetails,
@@ -437,12 +410,10 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     capacity,
     typeBlend,
     mixFactor,
-    plantBonus,
     filters: filtersList,
   });
   const proposedDetails = computeBioloadDetails({
     gallons,
-    planted,
     speciesLoad: raw.proposed ?? 0,
     flowGPH,
     totalGPH: totalRatedForDetails,
@@ -450,7 +421,6 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     capacity,
     typeBlend,
     mixFactor,
-    plantBonus,
     filters: filtersList,
   });
 
@@ -519,7 +489,6 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
   if (DEBUG_FILTERS && typeof console !== 'undefined') {
     const debugPayload = {
       gallons,
-      planted,
       baseBioload: raw.proposed ?? 0,
       filters: filtersList.map((filter) => ({
         id: filter?.id ?? null,
@@ -548,7 +517,6 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     const debugRow = {
       gallons,
       speciesLoad: proposedDetails.speciesLoad,
-      planted,
       flowGPH,
       turnoverX: proposedDetails.turnoverX,
       efficiencyUsed: Number.isFinite(proposedDetails.efficiency) ? proposedDetails.efficiency : '(none)',
@@ -634,7 +602,7 @@ export function buildComputedState(state) {
 
 if (__DEV_BIOLOAD && typeof window !== 'undefined') {
   const runDevCases = () => {
-    const base = { gallons: 29, speciesLoad: 15, planted: false };
+    const base = { gallons: 29, speciesLoad: 15 };
     const variants = [
       { ...base, flowGPH: 80, label: 'Case A (80 GPH)' },
       { ...base, flowGPH: 200, label: 'Case B (200 GPH)' },

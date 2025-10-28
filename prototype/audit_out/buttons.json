@@ -4,7 +4,6 @@
   "controls": [
     {"label": "Hero stocking tip", "selector": "#stocking-tip-btn", "section": "Hero info inline"},
     {"label": "Tank size", "selector": "[data-proto-popover=pop-tank-size]", "section": "Tank size card"},
-    {"label": "Planted", "selector": "[data-proto-popover=pop-planted]", "section": "Planted toggle"},
     {"label": "Filter product", "selector": "[data-proto-popover=pop-filter-product]", "section": "Filter setup"},
     {"label": "Rated flow", "selector": "[data-proto-popover=pop-rated-flow]", "section": "Filter setup"},
     {"label": "Turnover", "selector": "[data-proto-popover=pop-turnover]", "section": "Flow guidance"},
