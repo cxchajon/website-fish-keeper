@@ -33,8 +33,8 @@
   <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <link rel="stylesheet" href="/assets/css/journal-dashboard.css?v=1.0.0" />
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-8vFXC4e2fBqE7is1J4vFn4Z4DQH1c1hE9Xx3E5I7lFk8ApAxWRj7sB6RaNn3yXBB" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
   <script defer src="/assets/js/journal-dashboard.js?v=1.0.0"></script>
 </head>
 <body class="page-journal-dashboard">
@@ -134,5 +134,23 @@
   </main>
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
+  <script>
+    (async () => {
+      try {
+        const res = await fetch('/footer.html?v=1.4.7');
+        const html = await res.text();
+        const host = document.getElementById('site-footer');
+        if (host) {
+          if (host.children.length === 0) {
+            host.outerHTML = html;
+          }
+        } else {
+          document.body.insertAdjacentHTML('beforeend', html);
+        }
+      } catch (e) {
+        console.error('Footer failed to load:', e);
+      }
+    })();
+  </script>
 </body>
 </html>
