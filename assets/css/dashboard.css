@@ -79,6 +79,7 @@ body.dashboard-bg{
 .chart-wrap{
   width: 100%;
   margin-top: 16px;
+  margin-bottom: clamp(36px, 10vh, 72px);
 }
 .chart-legend{
   display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
@@ -90,7 +91,29 @@ body.dashboard-bg{
 /* Give charts generous height, responsive to viewport */
 .chart-viewport{
   width: 100%;
-  height: clamp(260px, 48vh, 520px);
+  height: clamp(340px, 60vh, 720px);
+  margin-top: 20px;
+}
+
+.recharts-cartesian-axis-tick-value tspan{
+  font-size: 0.9rem !important;
+  fill: rgba(255,255,255,0.9);
+}
+
+.recharts-tooltip-label,
+.recharts-legend-item-text{
+  font-size: 0.95rem !important;
+  fill: rgba(255,255,255,0.9);
+}
+
+.recharts-line-curve path{
+  stroke-width: 3px !important;
+}
+
+.recharts-bar-rectangle rect{
+  stroke-width: 0 !important;
+  rx: 4px;
+  ry: 4px;
 }
 
 /* Tighten mobile typography so it doesn’t feel crowded */
