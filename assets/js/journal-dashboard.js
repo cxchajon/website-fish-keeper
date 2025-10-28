@@ -9,7 +9,8 @@ const CHART_DIMENSION_LIMITS = {
   fallbackWidth: 720,
   minHeight: 360,
   maxHeight: 720,
-  heightRatio: 0.6
+  heightRatio: 0.6,
+  mobileHeightRatio: 0.66
 };
 
 function computeChartDimensions(container) {
@@ -19,11 +20,14 @@ function computeChartDimensions(container) {
   const viewportWidth = Math.max(document.documentElement?.clientWidth || 0, window.innerWidth || 0);
   const viewportHeight = Math.max(document.documentElement?.clientHeight || 0, window.innerHeight || 0);
   const availableWidth = viewportWidth - CHART_DIMENSION_LIMITS.viewportPadding;
+  const heightRatio = isMobileViewport()
+    ? CHART_DIMENSION_LIMITS.mobileHeightRatio
+    : CHART_DIMENSION_LIMITS.heightRatio;
   const width = Math.min(
     CHART_DIMENSION_LIMITS.maxWidth,
     Math.max(CHART_DIMENSION_LIMITS.minWidth, availableWidth || CHART_DIMENSION_LIMITS.fallbackWidth)
   );
-  const desiredHeight = viewportHeight ? viewportHeight * CHART_DIMENSION_LIMITS.heightRatio : CHART_DIMENSION_LIMITS.minHeight;
+  const desiredHeight = viewportHeight ? viewportHeight * heightRatio : CHART_DIMENSION_LIMITS.minHeight;
   const height = Math.round(
     Math.max(
       CHART_DIMENSION_LIMITS.minHeight,
@@ -717,7 +721,9 @@ function buildNitratePanel() {
     ])
   );
 
+  const chartOuter = createElement('div', 'chart-wrap');
   const chartWrap = createElement('div', 'dashboard-chart chart-container chart-viewport chart-block');
+  chartOuter.appendChild(chartWrap);
   const chartDimensions = computeChartDimensions(chartWrap);
   const nitrateDimensions = { ...chartDimensions, height: Math.max(chartDimensions.height, 360) };
   chartWrap.style.setProperty('--chart-height', `${nitrateDimensions.height}px`);
@@ -731,7 +737,7 @@ function buildNitratePanel() {
   });
   chartWrap.appendChild(chart.svg);
   chartWrap.appendChild(chart.tooltip);
-  panel.appendChild(chartWrap);
+  panel.appendChild(chartOuter);
 
   panel.appendChild(buildNitrateTable());
   return panel;
@@ -775,7 +781,9 @@ function buildDosingPanel() {
     ])
   );
 
+  const chartOuter = createElement('div', 'chart-wrap');
   const chartWrap = createElement('div', 'dashboard-chart chart-container chart-viewport chart-block');
+  chartOuter.appendChild(chartWrap);
   const chartDimensions = computeChartDimensions(chartWrap);
   const dosingDimensions = { ...chartDimensions, height: Math.max(chartDimensions.height, 380) };
   chartWrap.style.setProperty('--chart-height', `${dosingDimensions.height}px`);
@@ -789,7 +797,7 @@ function buildDosingPanel() {
   });
   chartWrap.appendChild(chart.svg);
   chartWrap.appendChild(chart.tooltip);
-  panel.appendChild(chartWrap);
+  panel.appendChild(chartOuter);
 
   const table = document.createElement('table');
   table.className = 'dashboard-table sr-only';
@@ -885,10 +893,10 @@ function renderNitrateChart(data, options = {}) {
   const mobile = isMobileViewport();
   const xTickConfig = mobile
     ? {
-        fontSize: 11,
-        angle: -25,
+        fontSize: 12,
+        angle: -26,
         textAnchor: 'end',
-        tickInterval: 2,
+        tickInterval: 0,
         tickMargin: 12,
         baseOffset: 18,
         labelOffset: 56
@@ -905,7 +913,7 @@ function renderNitrateChart(data, options = {}) {
   const margin = {
     top: 36,
     right: 32,
-    bottom: computeMarginBottom(mobile ? 60 : 30, xTickConfig),
+    bottom: computeMarginBottom(mobile ? 68 : 36, xTickConfig),
     left: 60
   };
   const svg = createSvg(width, height);
@@ -916,7 +924,7 @@ function renderNitrateChart(data, options = {}) {
   g.setAttribute('transform', `translate(${margin.left},${margin.top})`);
   svg.appendChild(g);
 
-  const xScale = createBandScale(data.map((d) => d.dateLabel), innerWidth);
+  const xScale = createBandScale(data.map((d) => d.dateLabel), innerWidth, 0);
   const nitrateValues = data.map((d) => (d.nitrate != null ? d.nitrate : null)).filter((v) => v != null);
   const yMax = Math.max(TARGET_NO3, Math.ceil(Math.max(...nitrateValues, 0) / 5) * 5 + 5 || 20);
   const yScale = createLinearScale([0, yMax], innerHeight);
@@ -943,10 +951,10 @@ function renderDosingChart(data, options = {}) {
   const mobile = isMobileViewport();
   const xTickConfig = mobile
     ? {
-        fontSize: 11,
-        angle: -25,
+        fontSize: 12,
+        angle: -26,
         textAnchor: 'end',
-        tickInterval: 1,
+        tickInterval: 0,
         tickMargin: 14,
         baseOffset: 20,
         labelOffset: 56
@@ -963,7 +971,7 @@ function renderDosingChart(data, options = {}) {
   const margin = {
     top: 36,
     right: 32,
-    bottom: computeMarginBottom(mobile ? 56 : 28, xTickConfig),
+    bottom: computeMarginBottom(mobile ? 64 : 32, xTickConfig),
     left: 64
   };
   const svg = createSvg(width, height);
@@ -974,7 +982,7 @@ function renderDosingChart(data, options = {}) {
   g.setAttribute('transform', `translate(${margin.left},${margin.top})`);
   svg.appendChild(g);
 
-  const xScale = createBandScale(data.map((d) => d.label), innerWidth, 0.2);
+  const xScale = createBandScale(data.map((d) => d.label), innerWidth, 0);
   const maxValue = Math.max(
     ...data.map((d) => Math.max(d.thrivePumps, d.excelCapEquivalent)),
     0
@@ -995,9 +1003,9 @@ function renderDosingChart(data, options = {}) {
 }
 
 function drawGrid(group, width, height, xScale, yScale) {
-  const gridGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  gridGroup.setAttribute('stroke', 'rgba(226, 232, 240, 0.2)');
-  gridGroup.setAttribute('stroke-dasharray', '4 6');
+  const horizontalGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  horizontalGroup.setAttribute('stroke', 'rgba(226, 232, 240, 0.12)');
+  horizontalGroup.setAttribute('stroke-width', '1');
   const yTicks = yScale.ticks(5);
   yTicks.forEach((tick) => {
     const y = yScale.map(tick);
@@ -1006,9 +1014,24 @@ function drawGrid(group, width, height, xScale, yScale) {
     line.setAttribute('x2', width);
     line.setAttribute('y1', y);
     line.setAttribute('y2', y);
-    gridGroup.appendChild(line);
+    horizontalGroup.appendChild(line);
   });
-  group.appendChild(gridGroup);
+
+  const verticalGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  verticalGroup.setAttribute('stroke', 'rgba(255, 255, 255, 0.15)');
+  verticalGroup.setAttribute('stroke-width', '1.2');
+  xScale.values.forEach((_, index) => {
+    const x = xScale.position(index) + xScale.bandwidth / 2;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x);
+    line.setAttribute('x2', x);
+    line.setAttribute('y1', 0);
+    line.setAttribute('y2', height);
+    verticalGroup.appendChild(line);
+  });
+
+  group.appendChild(verticalGroup);
+  group.appendChild(horizontalGroup);
 }
 
 function drawAxes(group, width, height, xScale, yScale, options = {}) {
@@ -1067,7 +1090,7 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
     text.setAttribute('x', -10);
     text.setAttribute('y', y + 4);
     text.setAttribute('fill', 'rgba(236, 244, 255, 0.85)');
-    text.setAttribute('font-size', '14');
+    text.setAttribute('font-size', '12');
     text.setAttribute('font-weight', '500');
     text.setAttribute('text-anchor', 'end');
     text.textContent = tick;
@@ -1080,7 +1103,7 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
     label.setAttribute('x', width / 2);
     label.setAttribute('y', height + labelOffset);
     label.setAttribute('fill', 'rgba(226, 232, 240, 0.95)');
-    label.setAttribute('font-size', '16');
+    label.setAttribute('font-size', '14');
     label.setAttribute('font-weight', '600');
     label.setAttribute('text-anchor', 'middle');
     label.textContent = xLabel;
@@ -1092,7 +1115,7 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
     label.setAttribute('x', -48);
     label.setAttribute('y', height / 2);
     label.setAttribute('fill', 'rgba(236, 244, 255, 0.92)');
-    label.setAttribute('font-size', '16');
+    label.setAttribute('font-size', '13');
     label.setAttribute('font-weight', '600');
     label.setAttribute('text-anchor', 'middle');
     label.setAttribute('transform', `rotate(-90 ${-48} ${height / 2})`);
@@ -1145,10 +1168,10 @@ function drawNitrateDots(group, data, xScale, yScale, tooltip, options = {}) {
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     circle.setAttribute('cx', x);
     circle.setAttribute('cy', y);
-    circle.setAttribute('r', point.wc ? 5 : 3);
+    circle.setAttribute('r', point.wc ? 6 : 4);
     circle.setAttribute('fill', point.wc ? '#f9a825' : '#4ea8ff');
     circle.setAttribute('stroke', point.wc ? '#d97706' : '#1d4ed8');
-    circle.setAttribute('stroke-width', point.wc ? '1.8' : '1.4');
+    circle.setAttribute('stroke-width', point.wc ? '2' : '1.6');
     circle.setAttribute('tabindex', '0');
     circle.setAttribute('role', 'img');
     circle.setAttribute(
@@ -1180,14 +1203,18 @@ function drawBars(group, data, xScale, yScale, tooltip, options = {}) {
   const excelColor = '#8b5cf6';
   data.forEach((item, index) => {
     const x = xScale.position(index);
-    const width = xScale.bandwidth;
+    const categoryWidth = xScale.bandwidth * 0.7;
+    const datasetWidth = categoryWidth / 2;
+    const barWidth = datasetWidth * 0.9;
+    const inset = (datasetWidth - barWidth) / 2;
+    const base = x + (xScale.bandwidth - categoryWidth) / 2;
     const thriveHeight = yScale.map(0) - yScale.map(item.thrivePumps);
     const excelHeight = yScale.map(0) - yScale.map(item.excelCapEquivalent);
 
     const thriveRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    thriveRect.setAttribute('x', x);
+    thriveRect.setAttribute('x', base + inset);
     thriveRect.setAttribute('y', yScale.map(item.thrivePumps));
-    thriveRect.setAttribute('width', width / 2 - 4);
+    thriveRect.setAttribute('width', barWidth);
     thriveRect.setAttribute('height', thriveHeight);
     thriveRect.setAttribute('rx', '4');
     thriveRect.setAttribute('ry', '4');
@@ -1215,9 +1242,9 @@ function drawBars(group, data, xScale, yScale, tooltip, options = {}) {
     group.appendChild(thriveRect);
 
     const excelRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    excelRect.setAttribute('x', x + width / 2 + 4);
+    excelRect.setAttribute('x', base + datasetWidth + inset);
     excelRect.setAttribute('y', yScale.map(item.excelCapEquivalent));
-    excelRect.setAttribute('width', width / 2 - 4);
+    excelRect.setAttribute('width', barWidth);
     excelRect.setAttribute('height', excelHeight);
     excelRect.setAttribute('rx', '4');
     excelRect.setAttribute('ry', '4');

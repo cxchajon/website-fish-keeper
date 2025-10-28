@@ -75,3 +75,4 @@ Result: journal live (unlinked).
 [2025-10-26 | Journal] Added Maintenance & Dosing entry; rebuilt CSV/JSON and 2025-10.json; verified monthly render and nav.
 
 [2025-10-27 | Journal] Added entry; rebuilt CSV/JSON and 2025-10.json; verified Journal render (chips+notes de-dup) and month nav; dashboard refreshed.
+[2025-10-28 | TheTankGuide | Journal dashboard charts] Scope: Align x-ticks/grid to data; improve mobile readability. Result: Vertical gridlines at each date; taller mobile charts; clean labels. Next: Consider pinch-zoom toggle if future months add too many dates.
