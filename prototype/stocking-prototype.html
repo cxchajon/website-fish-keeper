@@ -55,6 +55,15 @@
     #filtration-trigger {
       display: none !important;
     }
+
+    .no-products.hidden {
+      display: none !important;
+    }
+
+    #filterProduct {
+      border: 2px solid #00bfff !important;
+      background: rgba(0, 64, 128, 0.15);
+    }
   </style>
   <script type="application/ld+json">
   {
@@ -1198,7 +1207,7 @@
           <div class="filter-flow-control" data-role="filter-setup">
             <div class="filter-product-field">
               <div class="field-label-row">
-                <label for="filter-product">Filter Product</label>
+                <label for="filterProduct">Filter Product</label>
                 <div class="info-trigger" data-info-scope="filter-product">
                   <button
                     type="button"
@@ -1226,13 +1235,14 @@
               </div>
               <div class="proto-inline-controls" data-role="filter-product-controls">
                 <div class="select-wrap proto-inline-controls__field">
-                  <select id="filter-product" name="filter-product" aria-describedby="filter-product-note" data-ui="filter-product">
+                  <select id="filterProduct" name="filter-product" aria-describedby="filter-product-note" data-ui="filter-product">
                     <option value="">— Select a product —</option>
                   </select>
                   <svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </div>
+                <p class="no-products hidden">No matching products for this tank size.</p>
                 <button
                   type="button"
                   id="filter-product-add"

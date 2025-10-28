@@ -342,7 +342,8 @@ function bootstrapStocking() {
     plantIcon: document.getElementById('plant-icon'),
     planted: document.getElementById('stocking-planted'),
     filterSetup: document.querySelector('[data-role="filter-setup"]'),
-    filterProductSelect: document.getElementById('filter-product'),
+    filterProductSelect:
+      document.getElementById('filterProduct') || document.getElementById('filter-product'),
     filterRatedInput: document.getElementById('filter-rated-gph'),
     filterTurnover: document.getElementById('filter-turnover'),
     filterTurnoverValue: document.querySelector('[data-role="filter-turnover-value"]'),
@@ -1072,7 +1073,7 @@ function bootstrapStocking() {
       refs.filterSetup = document.querySelector('[data-role="filter-setup"]');
     }
     if (refs.filterSetup) {
-      refs.filterProductSelect = refs.filterSetup.querySelector('#filter-product');
+      refs.filterProductSelect = refs.filterSetup.querySelector('#filterProduct, #filter-product');
       refs.filterRatedInput = refs.filterSetup.querySelector('#filter-rated-gph');
       refs.filterTurnover = refs.filterSetup.querySelector('#filter-turnover');
       refs.filterTurnoverValue = refs.filterSetup.querySelector('[data-role="filter-turnover-value"]');
