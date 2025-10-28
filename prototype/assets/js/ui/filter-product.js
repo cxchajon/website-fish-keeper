@@ -1,13 +1,14 @@
 import { FALLBACK_LIST, loadFilterCatalogRaw } from '../products/catalog-loader.js';
 
-function findSelectEl() {
-  return (
+function getFilterProductRefs() {
+  const selectEl =
+    document.querySelector('#filterProduct') ||
     document.querySelector('[data-ui="filter-product"]') ||
     document.querySelector('select[name="filter-product"]') ||
-    document.querySelector('#filter-product') ||
-    document.querySelector('select[name="filterProduct"]') ||
-    document.querySelector('#filterProduct')
-  );
+    document.querySelector('#filter-product');
+  const noMatchEl = document.querySelector('.no-products');
+
+  return { selectEl, noMatchEl };
 }
 
 function resolveGallonsSource() {
@@ -20,11 +21,11 @@ function resolveGallonsSource() {
 }
 
 export async function refreshFilterProductDropdown(gallons) {
-  const selectEl = findSelectEl();
+  const { selectEl, noMatchEl } = getFilterProductRefs();
   const tag = '[filter-product]';
   if (!selectEl) {
     console.error(`${tag} select element not found (check selector)`, {
-      selectors: '[data-ui="filter-product"], select[name="filter-product"], #filter-product',
+      selectors: '#filterProduct, [data-ui="filter-product"], select[name="filter-product"], #filter-product',
       path: location.pathname,
     });
     return;
@@ -101,7 +102,21 @@ export async function refreshFilterProductDropdown(gallons) {
       selectEl.appendChild(option);
     });
 
-  console.log('rendered options', selectEl.options.length, '(filtered:', filtered.length, ')');
+  const optionCount = selectEl.options.length;
+  const hasOptions = optionCount > 1;
+
+  if (hasOptions) {
+    noMatchEl?.classList.add('hidden');
+    selectEl.style.display = 'block';
+    selectEl.style.opacity = '1';
+  } else {
+    noMatchEl?.classList.remove('hidden');
+    selectEl.style.display = 'none';
+    selectEl.style.opacity = '0';
+  }
+
+  console.log(`${tag}`, 'Updated element:', selectEl, 'Options:', optionCount);
+  console.log('rendered options', optionCount, '(filtered:', filtered.length, ')');
   if (typeof console.groupEnd === 'function') {
     console.groupEnd();
   }

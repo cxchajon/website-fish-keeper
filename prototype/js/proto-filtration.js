@@ -559,7 +559,7 @@ function getTankGallons() {
 
 function ensureRefs() {
   if (!refs.productSelect) {
-    refs.productSelect = document.getElementById('filter-product');
+    refs.productSelect = document.getElementById('filterProduct') || document.getElementById('filter-product');
   }
   if (!refs.productAddBtn) {
     refs.productAddBtn = document.getElementById('filter-product-add');
