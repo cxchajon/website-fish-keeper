@@ -44,18 +44,108 @@
   <!-- Lucide icons (UMD) -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    .dash-wrap { max-width: 1100px; margin: 0 auto; padding: 24px 16px 80px; }
-    .section { margin: 24px 0 40px; }
-    .chart-card { margin-top: 12px; border-radius: 16px; padding: 12px; backdrop-filter: blur(2px); }
-    /* Ensure ResponsiveContainer has a height */
-    .chart-h400 { height: 420px; }
-    .chart-h440 { height: 440px; }
-    .title { font-size: clamp(22px, 4.5vw, 40px); font-weight: 800; color: #E6EEF8; letter-spacing: .2px; text-shadow: 0 1px 0 #000; }
-    .sub { color:#AFC2D6; margin-top:6px; }
-    .legend-row { display:flex; gap:20px; align-items:center; color:#CFE2FF; font-size:14px; margin:10px 0 6px; }
-    .dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
-    /* Optional soft outline to “de-card” look */
-    .chart-card { background: rgba(0,0,0,0.06); border: 1px solid rgba(255,255,255,0.05); }
+    :root { color-scheme: dark; }
+    .dash-wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: clamp(28px, 4vw, 72px) clamp(12px, 3.8vw, 48px) clamp(88px, 8vw, 120px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(32px, 6vh, 68px);
+    }
+    @media (max-width: 640px) {
+      .dash-wrap {
+        padding-inline: clamp(10px, 3.6vw, 24px);
+        gap: clamp(28px, 8vh, 56px);
+      }
+    }
+    .section {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(14px, 3vh, 26px);
+    }
+    .chart-card {
+      margin: 0;
+      padding: clamp(12px, 3vw, 22px) 0 clamp(22px, 5vw, 32px);
+      border-radius: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+    .chart-shell {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 320px;
+    }
+    /* Ensure ResponsiveContainer has a reserved height */
+    .chart-h400,
+    .chart-h440 {
+      position: relative;
+      width: 100%;
+      min-height: 360px;
+    }
+    .chart-h400 { height: 400px; }
+    .chart-h440 { height: 420px; }
+    @media (max-width: 640px) {
+      .chart-h400,
+      .chart-h440 {
+        min-height: 320px;
+      }
+      .chart-h440 { height: 360px; }
+    }
+    .title {
+      font-size: clamp(24px, 4.5vw, 42px);
+      font-weight: 800;
+      color: #e6eef8;
+      letter-spacing: 0.2px;
+      text-shadow: 0 1px 0 #000;
+    }
+    .sub {
+      color: #afc2d6;
+      margin-top: 6px;
+      font-size: clamp(15px, 3.6vw, 18px);
+    }
+    .legend-row {
+      display: flex;
+      gap: clamp(12px, 4vw, 24px);
+      align-items: center;
+      color: #cfe2ff;
+      font-size: 14px;
+      margin: 4px clamp(4px, 2vw, 10px) 2px;
+      padding-inline: clamp(8px, 4vw, 20px);
+      flex-wrap: wrap;
+    }
+    @media (max-width: 480px) {
+      .legend-row {
+        align-items: flex-start;
+      }
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .chart-h440 .recharts-responsive-container,
+    .chart-h400 .recharts-responsive-container {
+      width: 100% !important;
+      height: 100% !important;
+    }
+    main#dash-root {
+      width: 100%;
+      padding: 0;
+      position: relative;
+    }
+    main#dash-root .dash-block {
+      padding: 0;
+    }
+    .tab-trigger {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
   </style>
 </head>
 <body class="dashboard-page dashboard-blueprint dashboard-bg">
@@ -149,7 +239,66 @@
       );
     };
 
+    const useMatchMedia = (query) => {
+      const getMatch = () => {
+        if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+          return false;
+        }
+        return window.matchMedia(query).matches;
+      };
+
+      const [matches, setMatches] = React.useState(getMatch);
+
+      React.useEffect(() => {
+        if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+          return;
+        }
+        const mql = window.matchMedia(query);
+        const handler = (event) => setMatches(event.matches);
+        handler(mql);
+
+        if (typeof mql.addEventListener === "function") {
+          mql.addEventListener("change", handler);
+          return () => mql.removeEventListener("change", handler);
+        }
+
+        if (typeof mql.addListener === "function") {
+          mql.addListener(handler);
+          return () => mql.removeListener(handler);
+        }
+      }, [query]);
+
+      return matches;
+    };
+
+    const isNarrow = useMatchMedia("(max-width: 540px)");
+    const isVeryNarrow = useMatchMedia("(max-width: 420px)");
+
     const axisTickStyle = { fontSize: 12, fill: "#BFD0E5" };
+    const xTickAngle = isNarrow ? -32 : 0;
+    const xTickAnchor = isNarrow ? "end" : "middle";
+    const xTickDy = isNarrow ? 22 : 12;
+    const xTickMargin = isNarrow ? 18 : 8;
+    const xTickInterval = isVeryNarrow ? "preserveStartEnd" : 0;
+    const xTickHeight = isNarrow ? 62 : 40;
+
+    const barTickAngle = isNarrow ? -28 : 0;
+    const barTickHeight = isNarrow ? 60 : 36;
+    const barTickDy = isNarrow ? 18 : 12;
+    const barTickMargin = isNarrow ? 16 : 8;
+    const barTickInterval = isVeryNarrow ? "preserveStartEnd" : 0;
+
+    const chartMargins = React.useMemo(() => (
+      isNarrow
+        ? { top: 16, right: 20, left: 20, bottom: 56 }
+        : { top: 16, right: 28, left: 28, bottom: 40 }
+    ), [isNarrow]);
+
+    const barChartMargins = React.useMemo(() => (
+      isNarrow
+        ? { top: 16, right: 16, left: 16, bottom: 52 }
+        : { top: 18, right: 28, left: 28, bottom: 36 }
+    ), [isNarrow]);
 
     return (
       <div className="dash-wrap">
@@ -162,9 +311,12 @@
               key={key}
               onClick={() => setTab(key)}
               style={{
-                borderRadius: 9999, padding: "10px 16px", border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: 9999,
+                padding: "10px 16px",
+                border: "1px solid rgba(255,255,255,0.12)",
                 background: tab===key ? "rgba(59,130,246,.18)" : "rgba(255,255,255,0.04)",
-                color: "#E6EEF8", fontWeight: 600, backdropFilter: "blur(2px)"
+                color: "#E6EEF8",
+                fontWeight: 600
               }}
             >
               {key==="nitrate" ? "Nitrate" : key==="dosing" ? "Dosing" : "Maintenance"}
@@ -178,17 +330,20 @@
               <span><span className="dot" style={{background:"#3b82f6"}}></span> Nitrate (ppm)</span>
               <span><span className="dot" style={{background:"#f59e0b"}}></span> Water-change day</span>
             </div>
-            <div className="chart-h440">
+            <div className="chart-h440 chart-shell">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={nitrateData} margin={{ top: 8, right: 16, left: 8, bottom: 30 }}>
-                  {/* vertical & horizontal gridlines for alignment */}
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(191,208,229,.3)" vertical={true} />
+                <LineChart data={nitrateData} margin={chartMargins}>
+                  <CartesianGrid strokeDasharray="2 6" stroke="rgba(191,208,229,.28)" vertical />
                   <XAxis
                     dataKey="date"
-                    tick={axisTickStyle}
-                    angle={-25}
-                    dy={18}
-                    interval={0}
+                    tick={{ ...axisTickStyle, textAnchor: xTickAnchor }}
+                    angle={xTickAngle}
+                    height={xTickHeight}
+                    dy={xTickDy}
+                    tickMargin={xTickMargin}
+                    interval={xTickInterval}
+                    allowDuplicatedCategory={false}
+                    scale="point"
                   />
                   <YAxis
                     tick={axisTickStyle}
@@ -198,7 +353,7 @@
                   />
                   <Tooltip
                     contentStyle={{ background:"rgba(7,24,39,.92)", border:"1px solid rgba(191,208,229,.2)", color:"#E6EEF8" }}
-                    cursor={{ stroke: "rgba(2,132,199,.6)", strokeWidth: 1 }}
+                    cursor={{ stroke: "rgba(56,189,248,0.7)", strokeWidth: 1.2, strokeDasharray: "3 3" }}
                   />
                   <ReferenceLine y={20} stroke="#fbbf24" strokeDasharray="5 5" />
                   <Line type="monotone" dataKey="nitrate" stroke="#60a5fa" strokeWidth={3} dot={<CustomDot />} connectNulls />
@@ -214,15 +369,24 @@
               <span><span className="dot" style={{background:"#10b981"}}></span> Thrive Plus (pumps)</span>
               <span><span className="dot" style={{background:"#8b5cf6"}}></span> Excel (capfuls)</span>
             </div>
-            <div className="chart-h440">
+            <div className="chart-h440 chart-shell">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={dosingData} margin={{ top: 8, right: 16, left: 8, bottom: 36 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(191,208,229,.3)" vertical={true} />
-                  <XAxis dataKey="week" tick={axisTickStyle} interval={0} angle={-15} dy={14}/>
+                <BarChart data={dosingData} margin={barChartMargins}>
+                  <CartesianGrid strokeDasharray="2 6" stroke="rgba(191,208,229,.28)" vertical />
+                  <XAxis
+                    dataKey="week"
+                    tick={{ ...axisTickStyle, textAnchor: xTickAnchor }}
+                    angle={barTickAngle}
+                    height={barTickHeight}
+                    dy={barTickDy}
+                    tickMargin={barTickMargin}
+                    interval={barTickInterval}
+                    scale="band"
+                  />
                   <YAxis tick={axisTickStyle} width={44} />
                   <Tooltip contentStyle={{ background:"rgba(7,24,39,.92)", border:"1px solid rgba(191,208,229,.2)", color:"#E6EEF8" }}/>
-                  <Bar dataKey="thrive" fill="#10b981" radius={[8,8,0,0]} />
-                  <Bar dataKey="excel"  fill="#8b5cf6" radius={[8,8,0,0]} />
+                  <Bar dataKey="thrive" fill="#10b981" radius={[8,8,0,0]} maxBarSize={48} />
+                  <Bar dataKey="excel"  fill="#8b5cf6" radius={[8,8,0,0]} maxBarSize={48} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
