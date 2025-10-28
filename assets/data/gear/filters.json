@@ -1,0 +1,361 @@
+[
+  {
+    "id": "aqueon_aqueon_quietflow_canister_filter_200_200",
+    "brand": "Aqueon",
+    "name": "Aqueon QuietFlow Canister Filter 200",
+    "typeDeclared": "CANISTER",
+    "gphRated": 200,
+    "minGallons": 13,
+    "maxGallons": 33
+  },
+  {
+    "id": "cascade_cascade_1500_canister_filter_350",
+    "brand": "Cascade",
+    "name": "Cascade 1500 Canister Filter",
+    "typeDeclared": "CANISTER",
+    "gphRated": 350,
+    "minGallons": 22,
+    "maxGallons": 57
+  },
+  {
+    "id": "eheim_eheim_classic_external_canister_filter_2213_116",
+    "brand": "Eheim",
+    "name": "Eheim Classic External Canister Filter 2213",
+    "typeDeclared": "CANISTER",
+    "gphRated": 116,
+    "minGallons": 7,
+    "maxGallons": 19
+  },
+  {
+    "id": "fluval_fluval_107_performance_canister_145",
+    "brand": "Fluval",
+    "name": "Fluval 107 Performance Canister",
+    "typeDeclared": "CANISTER",
+    "gphRated": 145,
+    "minGallons": 9,
+    "maxGallons": 24
+  },
+  {
+    "id": "fluval_fluval_207_performance_canister_206",
+    "brand": "Fluval",
+    "name": "Fluval 207 Performance Canister",
+    "typeDeclared": "CANISTER",
+    "gphRated": 206,
+    "minGallons": 13,
+    "maxGallons": 34
+  },
+  {
+    "id": "fluval_fluval_307_performance_canister_303",
+    "brand": "Fluval",
+    "name": "Fluval 307 Performance Canister",
+    "typeDeclared": "CANISTER",
+    "gphRated": 303,
+    "minGallons": 19,
+    "maxGallons": 50
+  },
+  {
+    "id": "fluval_fluval_407_perfomance_canister_filter_for_aquariums_up_to_100_gallons_aquarium_canister_filter_383",
+    "brand": "Fluval",
+    "name": "Fluval 407 Perfomance Canister Filter - for Aquariums Up to 100 Gallons - Aquarium Canister Filter",
+    "typeDeclared": "CANISTER",
+    "gphRated": 383,
+    "minGallons": 24,
+    "maxGallons": 63,
+    "url": "https://amzn.to/3KBqqs4"
+  },
+  {
+    "id": "fluval_fluval_407_performance_canister_383",
+    "brand": "Fluval",
+    "name": "Fluval 407 Performance Canister",
+    "typeDeclared": "CANISTER",
+    "gphRated": 383,
+    "minGallons": 24,
+    "maxGallons": 63
+  },
+  {
+    "id": "fluval_fluval_fx2_high_performance_canister_aquarium_filter_multi_stage_filtration_built_in_powered_water_change_system_and_basket_in_basket_tray_design_475",
+    "brand": "Fluval",
+    "name": "Fluval FX2 High Performance Canister Aquarium Filter - Multi-Stage Filtration, Built-in Powered Water Change System, and Basket-in-Basket Tray Design",
+    "typeDeclared": "CANISTER",
+    "gphRated": 475,
+    "minGallons": 30,
+    "maxGallons": 78,
+    "url": "https://amzn.to/48QPCEJ"
+  },
+  {
+    "id": "fluval_fluval_fx4_high_performance_canister_700",
+    "brand": "Fluval",
+    "name": "Fluval FX4 High Performance Canister",
+    "typeDeclared": "CANISTER",
+    "gphRated": 700,
+    "minGallons": 45,
+    "maxGallons": 114
+  },
+  {
+    "id": "hygger_hygger_quiet_aquarium_power_filter_260",
+    "brand": "Hygger",
+    "name": "Hygger Quiet Aquarium Power Filter",
+    "typeDeclared": "CANISTER",
+    "gphRated": 260,
+    "minGallons": 16,
+    "maxGallons": 43
+  },
+  {
+    "id": "oase_oase_biomaster_thermo_250_250",
+    "brand": "Oase",
+    "name": "Oase BioMaster Thermo 250",
+    "typeDeclared": "CANISTER",
+    "gphRated": 250,
+    "minGallons": 16,
+    "maxGallons": 41
+  },
+  {
+    "id": "oase_oase_biomaster_thermo_600_320",
+    "brand": "Oase",
+    "name": "Oase BioMaster Thermo 600",
+    "typeDeclared": "CANISTER",
+    "gphRated": 320,
+    "minGallons": 20,
+    "maxGallons": 52
+  },
+  {
+    "id": "sunsun_sunsun_hw_3000_canister_filter_793",
+    "brand": "SunSun",
+    "name": "SunSun HW-3000 Canister Filter",
+    "typeDeclared": "CANISTER",
+    "gphRated": 793,
+    "minGallons": 51,
+    "maxGallons": 129
+  },
+  {
+    "id": "aquaclear_aquaclear_30_power_filter_150",
+    "brand": "AquaClear",
+    "name": "AquaClear 30 Power Filter",
+    "typeDeclared": "HOB",
+    "gphRated": 150,
+    "minGallons": 9,
+    "maxGallons": 25
+  },
+  {
+    "id": "aquaclear_aquaclear_50_power_filter_200",
+    "brand": "AquaClear",
+    "name": "AquaClear 50 Power Filter",
+    "typeDeclared": "HOB",
+    "gphRated": 200,
+    "minGallons": 13,
+    "maxGallons": 33
+  },
+  {
+    "id": "aquaclear_aquaclear_70_power_filter_300",
+    "brand": "AquaClear",
+    "name": "AquaClear 70 Power Filter",
+    "typeDeclared": "HOB",
+    "gphRated": 300,
+    "minGallons": 19,
+    "maxGallons": 49
+  },
+  {
+    "id": "aquaclear_aquaclear_70_power_filter_fish_tank_filter_for_40_to_70_gallon_aquariums_black_300",
+    "brand": "AquaClear",
+    "name": "AquaClear 70 Power Filter, Fish Tank Filter for 40- to 70-Gallon Aquariums, Black",
+    "typeDeclared": "HOB",
+    "gphRated": 300,
+    "minGallons": 19,
+    "maxGallons": 49,
+    "url": "https://amzn.to/3IVD0BO"
+  },
+  {
+    "id": "aqueon_aqueon_quietflow_75_led_pro_aquarium_fish_tank_power_filter_for_up_to_90_gallon_aquariums_400",
+    "brand": "Aqueon",
+    "name": "Aqueon QuietFlow 75 LED PRO Aquarium Fish Tank Power Filter For Up To 90 Gallon Aquariums",
+    "typeDeclared": "HOB",
+    "gphRated": 400,
+    "minGallons": 26,
+    "maxGallons": 65,
+    "url": "https://amzn.to/48hBMeC"
+  },
+  {
+    "id": "fluval_fluval_c2_power_filter_fish_tank_filter_for_aquariums_up_to_30_gal_119",
+    "brand": "Fluval",
+    "name": "Fluval C2 Power Filter, Fish Tank Filter for Aquariums up to 30 Gal.",
+    "typeDeclared": "HOB",
+    "gphRated": 119,
+    "minGallons": 7,
+    "maxGallons": 20,
+    "url": "https://amzn.to/4mSXsRP"
+  },
+  {
+    "id": "fluval_ac30_power_filter_10_30_us_gal_38_114_l_fluval_usa_fluvalaquatics_com_150",
+    "brand": "Fluval",
+    "name": "AC30 Power Filter, 10–30 US Gal / 38–114 L – Fluval USA (fluvalaquatics.com)",
+    "typeDeclared": "HOB",
+    "gphRated": 150,
+    "minGallons": 9,
+    "maxGallons": 25,
+    "url": "https://amzn.to/4n9MXK9"
+  },
+  {
+    "id": "marineland_marineland_penguin_350_bio_wheel_filter_350",
+    "brand": "MarineLand",
+    "name": "MarineLand Penguin 350 BIO-Wheel Filter",
+    "typeDeclared": "HOB",
+    "gphRated": 350,
+    "minGallons": 22,
+    "maxGallons": 57
+  },
+  {
+    "id": "marineland_marineland_penguin_bio_wheel_power_filter_multi_stage_aquarium_filtration_350",
+    "brand": "MarineLand",
+    "name": "Marineland Penguin Bio-Wheel Power Filter, Multi-Stage Aquarium Filtration",
+    "typeDeclared": "HOB",
+    "gphRated": 350,
+    "minGallons": 22,
+    "maxGallons": 57,
+    "url": "https://amzn.to/4h0gsMT"
+  },
+  {
+    "id": "seachem_seachem_tidal_35_hob_filter_130",
+    "brand": "Seachem",
+    "name": "Seachem Tidal 35 HOB Filter",
+    "typeDeclared": "HOB",
+    "gphRated": 130,
+    "minGallons": 8,
+    "maxGallons": 22
+  },
+  {
+    "id": "seachem_seachem_tidal_power_aquarium_filter_35_gallon_large_fish_tank_filter_black_130",
+    "brand": "Seachem",
+    "name": "Seachem Tidal Power Aquarium Filter - 35 Gallon Large Fish Tank Filter, black",
+    "typeDeclared": "HOB",
+    "gphRated": 130,
+    "minGallons": 8,
+    "maxGallons": 22,
+    "url": "https://amzn.to/3IUy1RL"
+  },
+  {
+    "id": "seachem_seachem_large_aquarium_fish_tank_filter_tidal_55_gallon_200_liters_by_sicce_250",
+    "brand": "Seachem",
+    "name": "SeaChem Large Aquarium Fish Tank Filter, Tidal 55 Gallon (200 Liters) by Sicce",
+    "typeDeclared": "HOB",
+    "gphRated": 250,
+    "minGallons": 16,
+    "maxGallons": 41,
+    "url": "https://amzn.to/3VRpXV0"
+  },
+  {
+    "id": "seachem_seachem_tidal_55_hang_on_back_filter_250",
+    "brand": "Seachem",
+    "name": "Seachem Tidal 55 Hang On Back Filter",
+    "typeDeclared": "HOB",
+    "gphRated": 250,
+    "minGallons": 16,
+    "maxGallons": 41
+  },
+  {
+    "id": "seachem_seachem_tidal_75_hob_filter_350",
+    "brand": "Seachem",
+    "name": "Seachem Tidal 75 HOB Filter",
+    "typeDeclared": "HOB",
+    "gphRated": 350,
+    "minGallons": 22,
+    "maxGallons": 57
+  },
+  {
+    "id": "seachem_seachem_large_aquarium_fish_tank_filter_tidal_110_gallon_400_liters_by_sicce_450",
+    "brand": "Seachem",
+    "name": "SeaChem – Large Aquarium Fish Tank Filter, Tidal 110 Gallon (400 Liters) by Sicce",
+    "typeDeclared": "HOB",
+    "gphRated": 450,
+    "minGallons": 29,
+    "maxGallons": 74,
+    "url": "https://amzn.to/48gPNZP"
+  },
+  {
+    "id": "tetra_tetra_whisper_iq_power_filter_45_260",
+    "brand": "Tetra",
+    "name": "Tetra Whisper IQ Power Filter 45",
+    "typeDeclared": "HOB",
+    "gphRated": 260,
+    "minGallons": 16,
+    "maxGallons": 43
+  },
+  {
+    "id": "aquaneat_aquaneat_single_sponge_filter_up_to_10g_60",
+    "brand": "AQUANEAT",
+    "name": "AQUANEAT Single Sponge Filter (Up to 10G)",
+    "typeDeclared": "SPONGE",
+    "gphRated": 60,
+    "minGallons": 3,
+    "maxGallons": 10
+  },
+  {
+    "id": "aquaneat_aquaneat_aquarium_bio_sponge_filter_breeding_fry_betta_shrimp_nano_fish_tank_middle_up_to_20gal_120",
+    "brand": "AQUANEAT",
+    "name": "AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Middle up to 20Gal)",
+    "typeDeclared": "SPONGE",
+    "gphRated": 120,
+    "minGallons": 7,
+    "maxGallons": 20,
+    "url": "https://amzn.to/4mTK28f"
+  },
+  {
+    "id": "aquaneat_aquaneat_aquarium_bio_sponge_filter_breeding_fry_betta_shrimp_nano_fish_tank_large_up_to_60gal_200",
+    "brand": "AQUANEAT",
+    "name": "AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Large up to 60Gal)",
+    "typeDeclared": "SPONGE",
+    "gphRated": 200,
+    "minGallons": 13,
+    "maxGallons": 33,
+    "url": "https://amzn.to/3KTUjUi"
+  },
+  {
+    "id": "hygger_hygger_aquarium_double_sponge_filter_comes_with_2_spare_sponges_s_80",
+    "brand": "Hygger",
+    "name": "hygger Aquarium Double Sponge Filter, Comes with 2 Spare Sponges (S)",
+    "typeDeclared": "SPONGE",
+    "gphRated": 80,
+    "minGallons": 5,
+    "maxGallons": 13,
+    "url": "https://amzn.to/46Qxf0a"
+  },
+  {
+    "id": "hygger_hygger_aquarium_double_sponge_filter_for_fresh_water_and_salt_water_fish_tank_m_120",
+    "brand": "Hygger",
+    "name": "hygger Aquarium Double Sponge Filter for Fresh Water and Salt-Water Fish Tank (M)",
+    "typeDeclared": "SPONGE",
+    "gphRated": 120,
+    "minGallons": 7,
+    "maxGallons": 20,
+    "url": "https://amzn.to/46XUzsV"
+  },
+  {
+    "id": "pawfly_pawfly_aquarium_nano_bio_sponge_filter_quiet_betta_fry_shrimp_and_small_fish_foam_filter_for_tiny_fish_tank_up_to_10_gallon_60",
+    "brand": "Pawfly",
+    "name": "Pawfly Aquarium Nano Bio Sponge Filter Quiet Betta Fry Shrimp and Small Fish Foam Filter for Tiny Fish Tank up to 10 Gallon",
+    "typeDeclared": "SPONGE",
+    "gphRated": 60,
+    "minGallons": 3,
+    "maxGallons": 10,
+    "url": "https://amzn.to/3IXHtns"
+  },
+  {
+    "id": "powkoo_powkoo_dual_sponge_filter_20_55g_150",
+    "brand": "Powkoo",
+    "name": "Powkoo Dual Sponge Filter (20–55G)",
+    "typeDeclared": "SPONGE",
+    "gphRated": 150,
+    "minGallons": 9,
+    "maxGallons": 25
+  },
+  {
+    "id": "penn_plax_penn_plax_undergravel_aquarium_filter_for_20_long_29_gallon_tanks_two_14_x_11_1_plates_150",
+    "brand": "Penn-Plax",
+    "name": "Penn-Plax Undergravel Aquarium Filter for 20 (Long) - 29 Gallon Tanks (Two 14\" x 11.1\" Plates)",
+    "typeDeclared": "UGF",
+    "gphRated": 150,
+    "minGallons": 9,
+    "maxGallons": 25,
+    "url": "https://amzn.to/435uUgL",
+    "notes": "Undergravel plate system (mechanical/biological base) — pair with powerhead or airlift."
+  }
+]

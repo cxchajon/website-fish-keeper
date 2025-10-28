@@ -2,7 +2,7 @@ import { canonicalizeFilterType, weightedMixFactor } from '/js/utils.js';
 // Product catalog wired via normalized filters.catalog.json (site-wide audit, Oct 2025)
 import {
   filterByGallons,
-  loadFilterCatalog,
+  loadFiltersCatalog,
   normalizeItem,
   sortByTypeBrandGph,
 } from '../assets/js/products/catalog-loader.js';
@@ -12,6 +12,10 @@ import {
   computeAggregateEfficiency,
   mapFiltersForEfficiency,
 } from '../assets/js/proto-filtration-math.js';
+
+if (typeof window !== 'undefined') {
+  window.shouldRestoreVariantFocus = () => false;
+}
 
 const DEBUG_FILTERS = Boolean(window?.TTG?.DEBUG_FILTERS);
 const TYPE_WEIGHT = Object.freeze({
@@ -979,7 +983,7 @@ async function loadCatalog() {
   if (catalogPromise) {
     return catalogPromise;
   }
-  catalogPromise = loadFilterCatalog()
+  catalogPromise = loadFiltersCatalog()
     .then((items) => {
       const list = Array.isArray(items) ? items : [];
       const normalized = list

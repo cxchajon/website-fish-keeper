@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Gear Filter Catalog",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "brand", "name", "typeDeclared", "gphRated"],
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$",
+        "minLength": 3
+      },
+      "brand": {
+        "type": "string",
+        "minLength": 1
+      },
+      "name": {
+        "type": "string",
+        "minLength": 1
+      },
+      "typeDeclared": {
+        "type": "string",
+        "enum": ["CANISTER", "HOB", "SPONGE", "INTERNAL", "UGF"]
+      },
+      "gphRated": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "minGallons": {
+        "anyOf": [
+          { "type": "integer", "minimum": 0 },
+          { "type": "null" }
+        ]
+      },
+      "maxGallons": {
+        "anyOf": [
+          { "type": "integer", "minimum": 0 },
+          { "type": "null" }
+        ]
+      },
+      "url": {
+        "type": "string"
+      },
+      "image": {
+        "type": "string"
+      },
+      "notes": {
+        "type": "string"
+      }
+    }
+  }
+}

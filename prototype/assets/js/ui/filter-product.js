@@ -1,4 +1,4 @@
-import { FALLBACK_LIST, loadFilterCatalogRaw } from '../products/catalog-loader.js';
+import { filterByGallons, loadFiltersCatalog } from '../products/catalog-loader.js';
 
 function getFilterProductRefs() {
   const selectEl =
@@ -33,37 +33,25 @@ export async function refreshFilterProductDropdown(gallons) {
 
   let list;
   try {
-    list = await loadFilterCatalogRaw();
+    list = await loadFiltersCatalog();
   } catch (error) {
-    console.warn(`${tag} load failed, forcing fallback list`, error);
-    list = null;
+    console.warn(`${tag} load failed; using empty list`, error);
+    list = [];
   }
 
-  const safeList = Array.isArray(list) && list.length ? list : FALLBACK_LIST;
-  if (!Array.isArray(list) || !list.length) {
-    console.info(`${tag} loader returned empty payload; using FALLBACK_LIST`, {
-      source: 'refresh-filter-product',
-      path: location.pathname,
-    });
-  }
-
-  const toSlice = Array.isArray(safeList) ? safeList.slice() : [];
+  const safeList = Array.isArray(list) ? list.slice() : [];
   const gallonsNumber = Number(gallons);
   const hasGallons = Number.isFinite(gallonsNumber);
-  const filtered = toSlice.filter((item) => {
-    const min = Number.isFinite(item?.minGallons) ? item.minGallons : -Infinity;
-    const max = Number.isFinite(item?.maxGallons) ? item.maxGallons : Infinity;
-    if (!hasGallons) return true;
-    return gallonsNumber >= min && gallonsNumber <= max;
+  const { items: filtered, fallback: usedFallback } = filterByGallons(safeList, hasGallons ? gallonsNumber : null, {
+    withMeta: true,
   });
-
-  const toShow = filtered.length ? filtered : toSlice;
+  const toShow = Array.isArray(filtered) && filtered.length ? filtered.slice() : [];
 
   const hasConsoleGroup = typeof console.group === 'function';
   if (hasConsoleGroup) {
     console.group(tag, 'render');
   }
-  console.log('gallons', hasGallons ? gallonsNumber : gallons, 'listCount', toSlice.length);
+  console.log('gallons', hasGallons ? gallonsNumber : gallons, 'listCount', safeList.length);
 
   selectEl.innerHTML = '';
 
@@ -74,33 +62,38 @@ export async function refreshFilterProductDropdown(gallons) {
   placeholder.selected = true;
   selectEl.appendChild(placeholder);
 
-  toShow
-    .slice()
-    .sort((a, b) =>
-      (a?.type || '').localeCompare(b?.type || '') ||
-      (a?.brand || '').localeCompare(b?.brand || '') ||
-      (Number(a?.gphRated) || 0) - (Number(b?.gphRated) || 0)
-    )
-    .forEach((item) => {
-      if (!item) return;
-      const option = document.createElement('option');
-      const brand = item.brand || 'Unknown';
-      const model = item.model || '';
-      const type = item.type ? ` (${item.type})` : '';
-      const gph = Number.isFinite(item.gphRated) ? item.gphRated : Number(item.gph) || 0;
-      option.value = item.id || `${brand.toLowerCase()}-${model.toLowerCase()}`;
-      option.textContent = `${brand} ${model}`.trim() + ` — ${gph} GPH${type}`;
-      option.dataset.type = (item.type || 'UNKNOWN').toUpperCase();
-      option.dataset.brand = brand;
-      option.dataset.gphRated = gph || 0;
-      if (Number.isFinite(item?.minGallons)) {
-        option.dataset.minG = String(item.minGallons);
-      }
-      if (Number.isFinite(item?.maxGallons)) {
-        option.dataset.maxG = String(item.maxGallons);
-      }
-      selectEl.appendChild(option);
-    });
+  toShow.forEach((item) => {
+    if (!item) return;
+    const option = document.createElement('option');
+    const brand = item.brand || 'Unknown';
+    const model = item.model || item.name || '';
+    const gph = Number.isFinite(item.gphRated) ? Number(item.gphRated) : Number(item.gph) || 0;
+    const typeToken = (item.typeDeclared || item.type || 'HOB').toUpperCase();
+    const labelParts = [];
+    if (brand) {
+      labelParts.push(brand);
+    }
+    if (model) {
+      labelParts.push(model);
+    }
+    const baseLabel = labelParts.join(' ').trim() || item.id || brand;
+    option.value = item.id || baseLabel.toLowerCase().replace(/\s+/g, '-');
+    option.textContent = `${baseLabel} — ${gph} GPH${typeToken ? ` (${typeToken})` : ''}`;
+    option.dataset.type = typeToken;
+    option.dataset.typeDeclared = typeToken;
+    option.dataset.brand = brand;
+    option.dataset.gphRated = String(gph || 0);
+    if (Number.isFinite(item?.minGallons)) {
+      option.dataset.minG = String(Math.round(item.minGallons));
+    }
+    if (Number.isFinite(item?.maxGallons)) {
+      option.dataset.maxG = String(Math.round(item.maxGallons));
+    }
+    if (item.url) {
+      option.dataset.url = item.url;
+    }
+    selectEl.appendChild(option);
+  });
 
   const optionCount = selectEl.options.length;
   const hasOptions = optionCount > 1;
@@ -116,10 +109,12 @@ export async function refreshFilterProductDropdown(gallons) {
   }
 
   console.log(`${tag}`, 'Updated element:', selectEl, 'Options:', optionCount);
-  console.log('rendered options', optionCount, '(filtered:', filtered.length, ')');
+  console.log('rendered options', optionCount, '(filtered:', toShow.length, ')');
   if (typeof console.groupEnd === 'function') {
     console.groupEnd();
   }
+
+  selectEl.dataset.fallback = usedFallback ? 'true' : 'false';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
