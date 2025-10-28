@@ -32,104 +32,101 @@
   <link rel="stylesheet" href="/css/site.css?v=2025-10-27c" />
   <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
-  <link rel="stylesheet" href="/assets/css/journal-dashboard.css?v=1.0.0" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-8vFXC4e2fBqE7is1J4vFn4Z4DQH1c1hE9Xx3E5I7lFk8ApAxWRj7sB6RaNn3yXBB" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
-  <script defer src="/assets/js/journal-dashboard.js?v=1.0.0"></script>
+  <link rel="stylesheet" href="/assets/css/journal-dashboard.css" />
 </head>
 <body class="page-journal-dashboard">
   <div id="site-nav"></div>
-  <main id="jdash" class="jdash">
-    <header class="jdash__header">
-      <h1 class="jdash__title">Journal Dashboard</h1>
-      <p class="jdash__lead">
-        Explore nitrate trends, weekly dosing totals, and a rolling log of maintenance pulled directly from the
-        FishKeepingLifeCo 29-gallon journal dataset.
+  <main class="journal-dashboard" aria-labelledby="journal-dashboard-title">
+    <header class="journal-dashboard__header">
+      <h1 id="journal-dashboard-title" class="journal-dashboard__title">Journal Dashboard</h1>
+      <p class="journal-dashboard__subtitle">
+        Live nitrate readings, weekly dosing totals, and a running maintenance log sourced from the FishKeepingLifeCo journal.
       </p>
     </header>
 
-    <section class="jdash__grid" aria-label="Latest journal highlights">
-      <article class="jdash__grid-card">
-        <h2 class="jdash__grid-label">Latest nitrate reading</h2>
-        <p class="jdash__grid-value" id="jdash-stat-nitrate">Checking…</p>
-        <p class="jdash__disclaimer">Updated automatically when new entries post to the journal.</p>
-      </article>
-      <article class="jdash__grid-card">
-        <h2 class="jdash__grid-label">Water changes (30 days)</h2>
-        <p class="jdash__grid-value" id="jdash-stat-water">Checking…</p>
-        <p class="jdash__disclaimer">Counts water-change events detected in the imported log.</p>
-      </article>
-      <article class="jdash__grid-card">
-        <h2 class="jdash__grid-label">Last maintenance entry</h2>
-        <p class="jdash__grid-value" id="jdash-stat-maint">Checking…</p>
-        <p class="jdash__disclaimer">Summaries stay visible even if charts are unavailable.</p>
-      </article>
-    </section>
-
-    <nav class="jdash__tabs" role="tablist" aria-label="Journal Dashboard Tabs">
+    <div class="journal-dashboard__tabs" role="tablist" aria-label="Journal dashboard views">
       <button
-        class="jdash__tab is-active"
-        data-tab="nitrate"
-        id="jdash-tab-nitrate"
+        type="button"
+        class="journal-dashboard__tab is-active"
+        id="journal-tab-nitrate"
         role="tab"
-        aria-controls="panel-nitrate"
         aria-selected="true"
+        aria-controls="nitrate-panel"
+        data-panel="nitrate"
       >
         Nitrate
       </button>
       <button
-        class="jdash__tab"
-        data-tab="dosing"
-        id="jdash-tab-dosing"
+        type="button"
+        class="journal-dashboard__tab"
+        id="journal-tab-dosing"
         role="tab"
-        aria-controls="panel-dosing"
         aria-selected="false"
+        aria-controls="dosing-panel"
+        data-panel="dosing"
         tabindex="-1"
       >
         Dosing
       </button>
       <button
-        class="jdash__tab"
-        data-tab="maint"
-        id="jdash-tab-maint"
+        type="button"
+        class="journal-dashboard__tab"
+        id="journal-tab-maint"
         role="tab"
-        aria-controls="panel-maint"
         aria-selected="false"
+        aria-controls="maint-panel"
+        data-panel="maint"
         tabindex="-1"
       >
         Maintenance
       </button>
-    </nav>
+    </div>
 
     <section
-      id="panel-nitrate"
-      class="jdash__panel is-active"
+      id="nitrate-panel"
+      class="journal-dashboard__panel is-active"
       role="tabpanel"
-      aria-labelledby="jdash-tab-nitrate"
+      aria-labelledby="journal-tab-nitrate"
     >
-      <canvas id="nitrateChart" class="jdash__chart" role="img" aria-label="Line chart of nitrate values"></canvas>
-      <p class="jdash__note">Target is below 20 ppm. Tap or hover to see exact values and water-change days.</p>
+      <div class="journal-dashboard__loading" data-state="loading">Loading nitrate trend…</div>
+      <div class="journal-dashboard__chart-wrap">
+        <canvas id="nitrateChart" class="journal-dashboard__chart" role="img" aria-label="Line chart of nitrate readings"></canvas>
+      </div>
+      <div class="journal-dashboard__legend" aria-hidden="true">
+        <span class="journal-dashboard__legend-item">
+          <span class="journal-dashboard__legend-dot journal-dashboard__legend-dot--regular"></span>
+          Reading
+        </span>
+        <span class="journal-dashboard__legend-item">
+          <span class="journal-dashboard__legend-dot journal-dashboard__legend-dot--water"></span>
+          Water change
+        </span>
+      </div>
+      <p class="journal-dashboard__note">Target nitrate level is 20 ppm.</p>
     </section>
 
     <section
-      id="panel-dosing"
-      class="jdash__panel"
+      id="dosing-panel"
+      class="journal-dashboard__panel"
       role="tabpanel"
-      aria-labelledby="jdash-tab-dosing"
+      aria-labelledby="journal-tab-dosing"
       hidden
     >
-      <canvas id="dosingChart" class="jdash__chart" role="img" aria-label="Stacked bar chart of weekly dosing totals"></canvas>
-      <p class="jdash__note">Weekly totals (Sun–Sat): Thrive Plus pumps and Seachem Excel capful/spot dose equivalents.</p>
+      <div class="journal-dashboard__loading" data-state="loading">Loading dosing totals…</div>
+      <div class="journal-dashboard__chart-wrap">
+        <canvas id="dosingChart" class="journal-dashboard__chart" role="img" aria-label="Bar chart of weekly dosing totals"></canvas>
+      </div>
     </section>
 
     <section
-      id="panel-maint"
-      class="jdash__panel"
+      id="maint-panel"
+      class="journal-dashboard__panel"
       role="tabpanel"
-      aria-labelledby="jdash-tab-maint"
+      aria-labelledby="journal-tab-maint"
       hidden
     >
-      <div id="maintList" class="jdash__maint" aria-live="polite"></div>
+      <div class="journal-dashboard__loading" data-state="loading">Loading maintenance log…</div>
+      <ol class="journal-dashboard__timeline" id="maintenanceList"></ol>
     </section>
   </main>
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
@@ -152,5 +149,6 @@
       }
     })();
   </script>
+  <script type="module" defer src="/assets/js/journal-dashboard.js"></script>
 </body>
 </html>
