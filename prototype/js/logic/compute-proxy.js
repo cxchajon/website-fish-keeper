@@ -168,10 +168,11 @@ const computeBioloadDetails = ({
   eff = clamp(eff, 0, MAX_RELIEF);
 
   const equipmentFactor = 1 - eff; // Crosscheck Fix — Oct 2025
-  const effectiveLoad = computeAdjustedBioload(loadBase, eff);
+  // Bugfix: sponge add raised bioload — Oct 2025
+  const adjustedLoadGE = computeAdjustedBioload(loadBase, eff);
   const baseCapacity = Number.isFinite(capacity) && capacity > 0 ? capacity : tankGallons;
   const safeCapacity = Math.max(1, Number(baseCapacity || 0));
-  const percent = computePercent(effectiveLoad, safeCapacity);
+  const percent = computePercent(adjustedLoadGE, safeCapacity);
 
   if (DEBUG_FILTERS && typeof console !== 'undefined') {
     const debugFilters = normalizedFilters.map((filter) => ({
@@ -194,7 +195,7 @@ const computeBioloadDetails = ({
         efficiencyTotal: eff,
         efficiencyPerFilter: efficiencyDetails,
         equipmentFactor,
-        effectiveBioload: effectiveLoad,
+        effectiveBioload: adjustedLoadGE,
         percent,
       });
     } catch (_error) {
@@ -213,7 +214,7 @@ const computeBioloadDetails = ({
     turnoverX: turnover,
     efficiency: eff,
     efficiencyDetails,
-    effectiveLoad,
+    effectiveLoad: adjustedLoadGE,
     capacity: safeCapacity,
     percent,
   };
@@ -541,8 +542,9 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     text,
     message,
     flowAdjustment,
-    adjustedCurrentLoad: raw.currentLoad,
-    adjustedProposed: raw.proposed,
+    // Bugfix: sponge add raised bioload — Oct 2025
+    adjustedCurrentLoad: currentDetails.effectiveLoad,
+    adjustedProposed: proposedDetails.effectiveLoad,
     baseCurrentPercent: baseCurrentPercentValue / 100,
     baseProposedPercent: baseProposedPercentValue / 100,
     baseCurrentPercentValue,

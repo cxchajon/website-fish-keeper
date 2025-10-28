@@ -104,7 +104,9 @@ export function computeAggregateEfficiency(filters, turnover) {
 export function computeAdjustedBioload(baseBioload, eff) {
   const b = Math.max(0, Number(baseBioload) || 0);
   const efficiency = Math.max(0, Number(eff) || 0);
-  return b * (1 - efficiency);
+  // Bugfix: sponge add raised bioload — Oct 2025
+  const reliefFactor = Math.max(0, 1 - efficiency);
+  return b * reliefFactor;
 }
 
 export function computePercent(adjustedBioload, capacity) {
