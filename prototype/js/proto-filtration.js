@@ -56,6 +56,7 @@ const refs = {
 };
 
 let catalog = new Map();
+let catalogList = [];
 let catalogPromise = null;
 let baseManualNote = '';
 let baseProductNote = '';
@@ -130,6 +131,94 @@ const FILTER_TYPE_LABELS = Object.freeze({
 function formatFilterTypeLabel(value) {
   const canonical = resolveEfficiencyType(value);
   return FILTER_TYPE_LABELS[canonical] || canonical || 'HOB';
+}
+
+function normalizeCatalogItem(raw) {
+  if (!raw || typeof raw.id !== 'string') {
+    return null;
+  }
+  const id = raw.id.trim();
+  if (!id) {
+    return null;
+  }
+  const brand = typeof raw.brand === 'string' ? raw.brand.trim() : '';
+  const name = typeof raw.name === 'string' ? raw.name.trim() : '';
+  const rated = clampGph(raw.rated_gph ?? raw.ratedGph ?? raw.gphRated ?? raw.gph);
+  const type = canonicalizeFilterType(raw.type ?? raw.typeDeclared ?? raw.typeInferred ?? 'HOB');
+  const efficiencyType = resolveEfficiencyType(raw.efficiencyType ?? raw.type ?? raw.typeDeclared ?? raw.typeInferred ?? type);
+  return {
+    id,
+    brand,
+    name,
+    rated_gph: rated,
+    type,
+    efficiencyType,
+  };
+}
+
+function getRatedGphValue(product) {
+  return clampGph(product?.rated_gph ?? product?.ratedGph ?? product?.gphRated ?? product?.gph);
+}
+
+function buildProductDescriptor(product) {
+  const brand = (product?.brand ?? '').trim();
+  const rawName = (product?.name ?? '').trim();
+  if (brand && rawName && rawName.toLowerCase().startsWith(brand.toLowerCase())) {
+    return rawName;
+  }
+  const parts = [];
+  if (brand) {
+    parts.push(brand);
+  }
+  if (rawName) {
+    parts.push(rawName);
+  }
+  if (parts.length) {
+    return parts.join(' ').trim();
+  }
+  return product?.id ?? '';
+}
+
+function formatProductLabel(product) {
+  const descriptor = buildProductDescriptor(product);
+  const typeLabel = formatFilterTypeLabel(product?.type ?? product?.efficiencyType);
+  const rated = getRatedGphValue(product);
+  const labelParts = [];
+  if (descriptor) {
+    labelParts.push(descriptor);
+  }
+  if (typeLabel) {
+    labelParts.push(typeLabel);
+  }
+  const prefix = labelParts.join(' ').trim() || 'Filter';
+  const flow = Number.isFinite(rated) && rated > 0 ? formatGph(rated) : '0';
+  return `${prefix} – ${flow} GPH`;
+}
+
+function populateProductSelect() {
+  const select = refs.productSelect;
+  if (!select) {
+    return;
+  }
+  const currentValue = pendingProductId || select.value || '';
+  select.innerHTML = '';
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '— Select a product —';
+  select.appendChild(placeholder);
+
+  catalogList.forEach((product) => {
+    const option = document.createElement('option');
+    option.value = product.id;
+    option.textContent = formatProductLabel(product);
+    option.dataset.type = product.type;
+    option.dataset.brand = product.brand || '';
+    option.dataset.gph = String(getRatedGphValue(product) || 0);
+    select.appendChild(option);
+  });
+
+  const desired = currentValue && catalog.has(currentValue) ? currentValue : '';
+  select.value = desired;
 }
 
 function computeManualLabel(type, gph) {
@@ -538,6 +627,10 @@ function updateProductAddButton() {
     setButtonState(button, false);
     return;
   }
+  if (!getRatedGphValue(product)) {
+    setButtonState(button, false);
+    return;
+  }
   const item = createProductFilter(product);
   const enabled = Boolean(item) && canAddProduct(item);
   setButtonState(button, enabled);
@@ -623,18 +716,18 @@ function setFilters(nextFilters) {
 
 function createProductFilter(product) {
   if (!product || !product.id) return null;
-  const rated = clampGph(product.rated_gph ?? product.ratedGph);
+  const rated = getRatedGphValue(product);
   if (!rated) {
     return null;
   }
-  const label = product.name ? `${product.name}` : product.id;
+  const label = formatProductLabel(product);
   return {
     id: product.id,
     source: FILTER_SOURCES.PRODUCT,
     label,
     gph: rated,
     type: canonicalizeFilterType(product.type ?? 'HOB'),
-    efficiencyType: resolveEfficiencyType(product.type ?? 'HOB'),
+    efficiencyType: resolveEfficiencyType(product.type ?? product.efficiencyType ?? 'HOB'),
   };
 }
 
@@ -717,6 +810,11 @@ async function handleProductChange(value) {
     updateProductAddButton();
     return;
   }
+  if (!getRatedGphValue(product)) {
+    showProductStatus('This listing does not report a rated flow. Choose another filter.', { duration: 3200 });
+    updateProductAddButton();
+    return;
+  }
   const item = createProductFilter(product);
   if (!item) {
     showProductStatus('Filter data unavailable. Try a different model.', { duration: 2800 });
@@ -769,16 +867,37 @@ async function loadCatalog() {
     })
     .then((data) => {
       catalog = new Map();
+      catalogList = [];
       const list = Array.isArray(data) ? data : [];
       list.forEach((item) => {
-        if (item && typeof item.id === 'string' && item.id) {
-          catalog.set(item.id, item);
+        const normalized = normalizeCatalogItem(item);
+        if (!normalized) {
+          return;
         }
+        catalog.set(normalized.id, normalized);
+        catalogList.push(normalized);
       });
+      catalogList.sort((a, b) => {
+        const brandCompare = String(a.brand || '').localeCompare(String(b.brand || ''));
+        if (brandCompare !== 0) {
+          return brandCompare;
+        }
+        const nameCompare = String(a.name || '').localeCompare(String(b.name || ''));
+        if (nameCompare !== 0) {
+          return nameCompare;
+        }
+        return a.id.localeCompare(b.id);
+      });
+      populateProductSelect();
+      syncSelectValue();
+      updateProductAddButton();
       return catalog;
     })
     .catch((_error) => {
       catalog = new Map();
+      catalogList = [];
+      populateProductSelect();
+      updateProductAddButton();
       return catalog;
     });
   return catalogPromise;
