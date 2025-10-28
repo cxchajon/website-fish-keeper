@@ -1,32 +1,153 @@
-import { FLOW_DERATE } from '../proto-filtration-math.js';
+import { FLOW_DERATE, TURNOVER_MIN, TURNOVER_MAX, MIN_GALLONS, MAX_GALLONS } from '../proto-filtration-consts.js';
 
 const CATALOG_URL = '/prototype/assets/data/filters.catalog.json';
-
-const TURNOVER_MIN = 4; // 4× turnover guardrail (prototype heuristics)
-const TURNOVER_MAX = 10; // 10× turnover guardrail (prototype heuristics)
-const MIN_GALLON_BOUND = 5;
-const MAX_GALLON_BOUND = 300;
-
-const SPONGE_BRANDS = new Set(['powkoo', 'xy', 'aquaneat', 'uxcell']);
-const SPONGE_PATTERNS = [
-  /sponge/i,
-  /bacto[-\s]?surge/i,
-  /hydro\s*sponge/i,
-];
+const KNOWN_TYPES = new Set(['CANISTER', 'HOB', 'INTERNAL', 'UGF', 'SPONGE', 'OTHER']);
 
 let catalogCache = null;
 let pendingLoad = null;
-let lastLoadError = null;
 
-function coerceNumber(value) {
-  if (typeof value === 'number') {
-    return Number.isFinite(value) ? value : NaN;
+export async function loadFilterCatalog() {
+  if (Array.isArray(catalogCache)) {
+    return catalogCache.slice();
   }
-  if (typeof value === 'string' && value.trim()) {
-    const normalized = value.replace(/[^0-9.-]/g, '');
-    return normalized ? Number(normalized) : NaN;
+  if (pendingLoad) {
+    return pendingLoad.then((items) => items.slice());
   }
-  return NaN;
+  const url = `${CATALOG_URL}?v=${window.__BUILD_HASH__ || Date.now()}`;
+  pendingLoad = fetch(url, { cache: 'no-store' })
+    .then(async (res) => {
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const raw = await res.json();
+      const payload = Array.isArray(raw) ? raw : [];
+      catalogCache = payload;
+      return payload;
+    })
+    .catch((error) => {
+      console.warn('[products] catalog load failed:', error);
+      catalogCache = [];
+      return [];
+    })
+    .finally(() => {
+      pendingLoad = null;
+    });
+  const result = await pendingLoad;
+  return result.slice();
+}
+
+export function normalizeItem(item) {
+  if (!item) {
+    return null;
+  }
+
+  const brand = typeof item.brand === 'string' && item.brand.trim() ? item.brand.trim() : 'Unknown';
+  const model = typeof item.model === 'string' ? item.model.trim() : '';
+  const name = typeof item.name === 'string' ? item.name.trim() : '';
+  const typeToken = typeof item.type === 'string' ? item.type.trim().toUpperCase() : '';
+  const gphRated = coerceNumber(item.gphRated ?? item.gph ?? item.flow ?? item.ratedGph);
+
+  if (!Number.isFinite(gphRated) || gphRated <= 0) {
+    return null;
+  }
+
+  const slugParts = [];
+  if (brand && brand !== 'Unknown') {
+    slugParts.push(slugify(brand));
+  }
+  if (model) {
+    slugParts.push(slugify(model));
+  } else if (name) {
+    slugParts.push(slugify(name));
+  }
+  if (!slugParts.length) {
+    slugParts.push(`filter-${Math.round(Math.max(gphRated, 0))}`);
+  }
+  const fallbackId = slugParts.filter(Boolean).join('-');
+  const rawId = typeof item.id === 'string' && item.id.trim() ? item.id.trim() : fallbackId;
+  const id = slugify(rawId);
+
+  if (!id) {
+    return null;
+  }
+
+  let type = typeToken || 'UNKNOWN';
+  const haystack = [model, name, brand].filter(Boolean).join(' ');
+  if (type === 'UNKNOWN' && /sponge/i.test(haystack)) {
+    type = 'SPONGE';
+  }
+  if (!KNOWN_TYPES.has(type)) {
+    type = type === 'UNKNOWN' ? 'OTHER' : type;
+    if (!KNOWN_TYPES.has(type)) {
+      type = 'OTHER';
+    }
+  }
+
+  let minGallons = coerceNumber(item.minGallons);
+  let maxGallons = coerceNumber(item.maxGallons);
+
+  if (Number.isFinite(minGallons)) {
+    minGallons = clampGallons(minGallons);
+  } else {
+    minGallons = null;
+  }
+  if (Number.isFinite(maxGallons)) {
+    maxGallons = clampGallons(maxGallons);
+  } else {
+    maxGallons = null;
+  }
+
+  if (gphRated > 0 && (minGallons == null || maxGallons == null)) {
+    const eff = gphRated * FLOW_DERATE;
+    const derivedMin = clampGallons(Math.floor(eff / TURNOVER_MAX));
+    const derivedMax = clampGallons(Math.ceil(eff / TURNOVER_MIN));
+    const lo = Math.min(derivedMin ?? MIN_GALLONS, derivedMax ?? MAX_GALLONS);
+    const hi = Math.max(derivedMin ?? MIN_GALLONS, derivedMax ?? MAX_GALLONS);
+    if (minGallons == null) {
+      minGallons = lo;
+    }
+    if (maxGallons == null) {
+      maxGallons = hi;
+    }
+  }
+
+  if (Number.isFinite(minGallons) && Number.isFinite(maxGallons) && minGallons > maxGallons) {
+    const low = Math.min(minGallons, maxGallons);
+    const high = Math.max(minGallons, maxGallons);
+    minGallons = low;
+    maxGallons = high;
+  }
+
+  return {
+    id,
+    brand,
+    model,
+    type,
+    gphRated: Math.round(gphRated),
+    minGallons: Number.isFinite(minGallons) ? minGallons : null,
+    maxGallons: Number.isFinite(maxGallons) ? maxGallons : null,
+  };
+}
+
+export function filterByGallons(list, gallons) {
+  const collection = Array.isArray(list) ? list.filter(Boolean) : [];
+  const sorted = collection.slice().sort(sortByTypeBrandGph);
+  if (!Number.isFinite(gallons)) {
+    return sorted;
+  }
+  const target = Number(gallons);
+  const filtered = sorted.filter((item) => {
+    const min = Number.isFinite(item.minGallons) ? item.minGallons : -Infinity;
+    const max = Number.isFinite(item.maxGallons) ? item.maxGallons : Infinity;
+    return target >= min && target <= max;
+  });
+  return filtered.length ? filtered : sorted;
+}
+
+export function sortByTypeBrandGph(a, b) {
+  return (a?.type || '').localeCompare(b?.type || '')
+    || (a?.brand || '').localeCompare(b?.brand || '')
+    || (a?.gphRated || 0) - (b?.gphRated || 0);
 }
 
 function clampGallons(value) {
@@ -34,180 +155,31 @@ function clampGallons(value) {
   if (!Number.isFinite(num)) {
     return null;
   }
-  const bounded = Math.min(Math.max(num, MIN_GALLON_BOUND), MAX_GALLON_BOUND);
-  return Math.round(bounded);
+  return Math.max(MIN_GALLONS, Math.min(MAX_GALLONS, Math.round(num)));
 }
 
-function inferType(rawType, brand, model, id) {
-  const normalized = typeof rawType === 'string' ? rawType.trim().toUpperCase() : '';
-  if (normalized === 'SPONGE') {
-    return 'SPONGE';
+function slugify(value) {
+  if (typeof value !== 'string') {
+    return '';
   }
-  if (normalized === 'HOB' || normalized === 'CANISTER' || normalized === 'INTERNAL' || normalized === 'UGF') {
-    return normalized;
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function coerceNumber(value) {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : NaN;
   }
-  const haystack = [brand, model, id]
-    .map((value) => (typeof value === 'string' ? value.toLowerCase() : ''))
-    .filter(Boolean)
-    .join(' ');
-  if (haystack) {
-    if (SPONGE_PATTERNS.some((pattern) => pattern.test(haystack))) {
-      return 'SPONGE';
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return NaN;
     }
-    const brandKey = typeof brand === 'string' ? brand.trim().toLowerCase() : '';
-    if (brandKey && SPONGE_BRANDS.has(brandKey)) {
-      return 'SPONGE';
-    }
+    const digits = trimmed.replace(/[^0-9.-]/g, '');
+    return digits ? Number(digits) : NaN;
   }
-  if (normalized) {
-    return normalized;
-  }
-  return 'HOB';
+  return NaN;
 }
-
-// When the catalog omits tank bounds, infer them from derated flow using
-// our 4×–10× turnover guardrails so size gating can still function.
-function inferGallonsRange({ minGallons, maxGallons, gphRated }) {
-  const min = Number.isFinite(minGallons) ? Math.max(0, Math.round(minGallons)) : null;
-  const max = Number.isFinite(maxGallons) ? Math.max(0, Math.round(maxGallons)) : null;
-  if (min !== null && max !== null) {
-    return { min, max };
-  }
-  if (!Number.isFinite(gphRated) || gphRated <= 0) {
-    return { min, max };
-  }
-  const gphEffective = gphRated * FLOW_DERATE;
-  if (!Number.isFinite(gphEffective) || gphEffective <= 0) {
-    return { min, max };
-  }
-  const fallbackMin = clampGallons(Math.floor(gphEffective / TURNOVER_MAX));
-  const fallbackMax = clampGallons(Math.ceil(gphEffective / TURNOVER_MIN));
-  let nextMin = min ?? fallbackMin;
-  let nextMax = max ?? fallbackMax;
-  if (Number.isFinite(nextMin) && Number.isFinite(nextMax) && nextMin > nextMax) {
-    const low = Math.min(nextMin, nextMax);
-    const high = Math.max(nextMin, nextMax);
-    nextMin = low;
-    nextMax = high;
-  }
-  return {
-    min: nextMin,
-    max: nextMax,
-  };
-}
-
-function sanitizeProduct(raw) {
-  if (!raw || typeof raw.id !== 'string') {
-    return null;
-  }
-  const id = raw.id.trim();
-  if (!id) {
-    return null;
-  }
-  const brand = typeof raw.brand === 'string' ? raw.brand.trim() : '';
-  const model = typeof raw.model === 'string' && raw.model.trim() ? raw.model.trim() : id;
-  const type = inferType(raw.type, brand, model, id);
-  const gph = coerceNumber(raw.gphRated);
-  if (!Number.isFinite(gph) || gph <= 0) {
-    return null;
-  }
-  const minGallons = coerceNumber(raw.minGallons);
-  const maxGallons = coerceNumber(raw.maxGallons);
-  const range = inferGallonsRange({
-    minGallons,
-    maxGallons,
-    gphRated: gph,
-  });
-  return {
-    id,
-    brand,
-    model,
-    type,
-    gphRated: Math.round(gph),
-    minGallons: Number.isFinite(range.min) ? range.min : null,
-    maxGallons: Number.isFinite(range.max) ? range.max : null,
-  };
-}
-
-export async function loadFilterCatalog() {
-  if (Array.isArray(catalogCache)) {
-    return catalogCache.map((item) => ({ ...item }));
-  }
-  if (pendingLoad) {
-    return pendingLoad.then((items) => items.map((item) => ({ ...item })));
-  }
-  pendingLoad = fetch(CATALOG_URL, { cache: 'no-cache' })
-    .then(async (response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to load filter catalog (${response.status})`);
-      }
-      const data = await response.json();
-      if (!Array.isArray(data)) {
-        throw new Error('Catalog payload must be an array');
-      }
-      const normalized = data.map((entry) => sanitizeProduct(entry)).filter(Boolean);
-      catalogCache = normalized;
-      lastLoadError = null;
-      return normalized;
-    })
-    .catch((error) => {
-      console.error('[Proto] Unable to load filter catalog. Falling back to empty list.', error);
-      lastLoadError = error;
-      catalogCache = [];
-      return [];
-    })
-    .finally(() => {
-      pendingLoad = null;
-    });
-  const items = await pendingLoad;
-  return items.map((item) => ({ ...item }));
-}
-
-export function getLastCatalogError() {
-  return lastLoadError;
-}
-
-export function filterProductsByTankSize(list, gallons) {
-  const items = Array.isArray(list) ? list.filter(Boolean) : [];
-  const sortedAll = items.slice().sort(sortByTypeBrandGph);
-  if (!Number.isFinite(gallons)) {
-    return sortedAll;
-  }
-  const target = Math.max(0, Number(gallons));
-  const matches = sortedAll.filter((product) => fitsTank(product, target));
-  return matches.length ? matches : sortedAll;
-}
-
-export function sortByTypeBrandGph(a, b) {
-  if (!a && !b) return 0;
-  if (!a) return 1;
-  if (!b) return -1;
-  const typeCompare = String(a.type || '').localeCompare(String(b.type || ''), undefined, {
-    sensitivity: 'base',
-    usage: 'sort',
-  });
-  if (typeCompare !== 0) {
-    return typeCompare;
-  }
-  const brandCompare = String(a.brand || '').localeCompare(String(b.brand || ''), undefined, {
-    sensitivity: 'base',
-    usage: 'sort',
-  });
-  if (brandCompare !== 0) {
-    return brandCompare;
-  }
-  return (a.gphRated ?? 0) - (b.gphRated ?? 0);
-}
-
-function fitsTank(product, gallons) {
-  if (!product || !Number.isFinite(gallons)) {
-    return false;
-  }
-  const min = Number.isFinite(product.minGallons) ? product.minGallons : -Infinity;
-  const max = Number.isFinite(product.maxGallons) ? product.maxGallons : Infinity;
-  return gallons >= min && gallons <= max;
-}
-
-// Catalog generation infers tank size ranges from rated GPH using heuristic tiers:
-// ≤120 GPH → 0–20 gal, 120–220 GPH → 20–40 gal, 220–400 GPH → 40–75 gal, >400 GPH → 75+ gal.
-// These bounds are embedded in the dataset so loader consumers do not need to recompute them.
