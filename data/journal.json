@@ -1,7 +1,7 @@
 {
   "period": {
     "start": "2025-10-01",
-    "end": "2025-10-27"
+    "end": "2025-10-28"
   },
   "nitrate": [
     { "date": "2025-10-01", "ppm": 7.5, "wc": false },
@@ -14,7 +14,8 @@
     { "date": "2025-10-22", "ppm": 5, "wc": false },
     { "date": "2025-10-23", "ppm": 9, "wc": false },
     { "date": "2025-10-26", "ppm": 6, "wc": true },
-    { "date": "2025-10-27", "ppm": 5, "wc": false }
+    { "date": "2025-10-27", "ppm": 5, "wc": false },
+    { "date": "2025-10-28", "ppm": 5, "wc": false }
   ],
   "dosing": [
     {
@@ -40,6 +41,12 @@
       "label": "Week 4 (10/21–10/27)",
       "thrive": 11,
       "excel": 6
+    },
+    {
+      "week": "2025-W44",
+      "label": "Week 5 (10/28–11/3)",
+      "thrive": 4,
+      "excel": 0
     }
   ],
   "maintenance": [

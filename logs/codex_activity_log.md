@@ -81,3 +81,7 @@ Result: journal live (unlinked).
 Scope: Restore original dashboard, local Chart.js, auto data, footer-safe.
 Result: Charts render; footer-lock pass.
 Next: Hook date controls to fetch previous month slice when backend is ready.
+[2025-10-28 | Journal | Add daily log]
+Scope: Add 10/28 entry to JSON/CSV and render on /journal.html.
+Result: Data updated; dashboard will pick up on next fetch.
+Next: None.
