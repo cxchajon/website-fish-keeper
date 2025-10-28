@@ -1,4 +1,10 @@
 import { canonicalizeFilterType, weightedMixFactor } from '/js/utils.js';
+// Product catalog wired via filters.json (site-wide audit, Oct 2025)
+import {
+  filterProductsByTankSize,
+  formatProductDropdownLabel,
+  loadProductCatalog,
+} from '../assets/js/products/filters.js';
 import {
   computeTurnover,
   getTotalGPH,
@@ -55,9 +61,13 @@ const refs = {
   summary: null,
 };
 
-let catalog = new Map();
-let catalogList = [];
+let catalogIndex = new Map();
+let catalogAll = [];
+let catalogVisible = [];
+let catalogFallbackActive = false;
 let catalogPromise = null;
+let catalogLoadError = null;
+let lastFallbackLogGallons = null;
 let baseManualNote = '';
 let baseProductNote = '';
 let recomputeFrame = 0;
@@ -133,92 +143,97 @@ function formatFilterTypeLabel(value) {
   return FILTER_TYPE_LABELS[canonical] || canonical || 'HOB';
 }
 
-function normalizeCatalogItem(raw) {
-  if (!raw || typeof raw.id !== 'string') {
-    return null;
-  }
-  const id = raw.id.trim();
-  if (!id) {
-    return null;
-  }
-  const brand = typeof raw.brand === 'string' ? raw.brand.trim() : '';
-  const name = typeof raw.name === 'string' ? raw.name.trim() : '';
-  const rated = clampGph(raw.rated_gph ?? raw.ratedGph ?? raw.gphRated ?? raw.gph);
-  const type = canonicalizeFilterType(raw.type ?? raw.typeDeclared ?? raw.typeInferred ?? 'HOB');
-  const efficiencyType = resolveEfficiencyType(raw.efficiencyType ?? raw.type ?? raw.typeDeclared ?? raw.typeInferred ?? type);
-  return {
-    id,
-    brand,
-    name,
-    rated_gph: rated,
-    type,
-    efficiencyType,
-  };
-}
-
 function getRatedGphValue(product) {
-  return clampGph(product?.rated_gph ?? product?.ratedGph ?? product?.gphRated ?? product?.gph);
-}
-
-function buildProductDescriptor(product) {
-  const brand = (product?.brand ?? '').trim();
-  const rawName = (product?.name ?? '').trim();
-  if (brand && rawName && rawName.toLowerCase().startsWith(brand.toLowerCase())) {
-    return rawName;
-  }
-  const parts = [];
-  if (brand) {
-    parts.push(brand);
-  }
-  if (rawName) {
-    parts.push(rawName);
-  }
-  if (parts.length) {
-    return parts.join(' ').trim();
-  }
-  return product?.id ?? '';
+  return clampGph(product?.gphRated ?? product?.rated_gph ?? product?.ratedGph ?? product?.gph);
 }
 
 function formatProductLabel(product) {
-  const descriptor = buildProductDescriptor(product);
-  const typeLabel = formatFilterTypeLabel(product?.type ?? product?.efficiencyType);
-  const rated = getRatedGphValue(product);
-  const labelParts = [];
-  if (descriptor) {
-    labelParts.push(descriptor);
-  }
-  if (typeLabel) {
-    labelParts.push(typeLabel);
-  }
-  const prefix = labelParts.join(' ').trim() || 'Filter';
-  const flow = Number.isFinite(rated) && rated > 0 ? formatGph(rated) : '0';
-  return `${prefix} – ${flow} GPH`;
+  return formatProductDropdownLabel(product);
 }
 
-function populateProductSelect() {
+function renderFilterDropdown(list, { fallback = false, datasetFallback = fallback } = {}) {
   const select = refs.productSelect;
   if (!select) {
     return;
   }
   const currentValue = pendingProductId || select.value || '';
   select.innerHTML = '';
+
   const placeholder = document.createElement('option');
   placeholder.value = '';
   placeholder.textContent = '— Select a product —';
   select.appendChild(placeholder);
 
-  catalogList.forEach((product) => {
+  const collection = Array.isArray(list) ? list : [];
+  const applyOption = (product) => {
     const option = document.createElement('option');
     option.value = product.id;
-    option.textContent = formatProductLabel(product);
-    option.dataset.type = product.type;
+    option.textContent = formatProductDropdownLabel(product);
+    option.dataset.type = product.type || '';
     option.dataset.brand = product.brand || '';
     option.dataset.gph = String(getRatedGphValue(product) || 0);
-    select.appendChild(option);
+    if (Number.isFinite(product.minGallons)) {
+      option.dataset.minG = String(product.minGallons);
+    }
+    if (Number.isFinite(product.maxGallons)) {
+      option.dataset.maxG = String(product.maxGallons);
+    }
+    return option;
+  };
+
+  let host = select;
+  let group = null;
+  if (fallback && collection.length) {
+    group = document.createElement('optgroup');
+    group.label = 'All filters (no size match)';
+    select.appendChild(group);
+    host = group;
+  }
+
+  collection.forEach((product) => {
+    host.appendChild(applyOption(product));
   });
 
-  const desired = currentValue && catalog.has(currentValue) ? currentValue : '';
+  const selectedExists = collection.some((product) => product.id === currentValue);
+  if (!selectedExists && currentValue && catalogIndex.has(currentValue)) {
+    const preserved = catalogIndex.get(currentValue);
+    if (preserved) {
+      const option = applyOption(preserved);
+      option.dataset.persisted = 'true';
+      host.appendChild(option);
+    }
+  }
+
+  select.dataset.fallback = datasetFallback ? 'true' : 'false';
+  const desired = currentValue && catalogIndex.has(currentValue) ? currentValue : '';
   select.value = desired;
+}
+
+function updateVisibleProducts() {
+  const gallons = Number.isFinite(state.tankGallons) ? state.tankGallons : null;
+  if (!catalogAll.length) {
+    const dropdownFallback = catalogFallbackActive || Boolean(catalogLoadError);
+    renderFilterDropdown([], { fallback: catalogFallbackActive, datasetFallback: dropdownFallback });
+    return;
+  }
+  const { items, fallback } = filterProductsByTankSize(catalogAll, gallons);
+  catalogVisible = items;
+  catalogFallbackActive = fallback;
+  if (fallback && catalogAll.length) {
+    const roundedGallons = Number.isFinite(gallons) ? Math.round(gallons) : gallons;
+    if (roundedGallons !== lastFallbackLogGallons) {
+      console.warn('[Proto] No size-matched filters. Falling back to full catalog.', {
+        gallons: roundedGallons,
+        itemsLoaded: catalogAll.length,
+        firstItemSample: catalogAll[0] ?? null,
+      });
+      lastFallbackLogGallons = roundedGallons;
+    }
+  } else {
+    lastFallbackLogGallons = null;
+  }
+  const dropdownFallback = fallback || Boolean(catalogLoadError);
+  renderFilterDropdown(catalogVisible, { fallback, datasetFallback: dropdownFallback });
 }
 
 function computeManualLabel(type, gph) {
@@ -244,7 +259,11 @@ function canAddProduct(product) {
   if (!product || !product.id) {
     return false;
   }
-  return !state.filters.some((entry) => entry.source === FILTER_SOURCES.PRODUCT && entry.id === product.id);
+  return !state.filters.some(
+    (entry) =>
+      entry.source === FILTER_SOURCES.PRODUCT &&
+      (entry.id === product.id || entry.productId === product.id),
+  );
 }
 
 function canAddManual(type, gph) {
@@ -276,6 +295,9 @@ function toAppFilter(item) {
     rated_gph: gph ?? 0,
     kind: efficiencyType,
     source,
+    productId: source === FILTER_SOURCES.PRODUCT
+      ? (typeof item?.productId === 'string' && item.productId ? item.productId : (typeof item?.id === 'string' ? item.id : null))
+      : null,
   };
 }
 
@@ -289,6 +311,10 @@ function persistAppFilters(filters) {
           id: entry.id ?? null,
           type: canonicalizeFilterType(entry.type),
           rated_gph: clampGph(entry.rated_gph) ?? 0,
+          productId:
+            entry.source === FILTER_SOURCES.PRODUCT
+              ? entry.productId ?? entry.id ?? null
+              : null,
         }))
       : [];
     const meaningful = payload.filter((item) => item.id || item.rated_gph > 0);
@@ -486,7 +512,9 @@ function updateProductLabel(productItem) {
   if (!refs.productLabel) return;
   if (productItem) {
     refs.productLabel.hidden = false;
-    refs.productLabel.textContent = `${productItem.label} • ${formatGph(productItem.gph)} GPH`;
+    const fallbackLabel = `${formatFilterTypeLabel(productItem.type)} ${formatGph(productItem.gph)} GPH`;
+    const label = typeof productItem.label === 'string' && productItem.label ? productItem.label : fallbackLabel;
+    refs.productLabel.textContent = label;
   } else {
     refs.productLabel.hidden = true;
     refs.productLabel.textContent = '';
@@ -647,6 +675,9 @@ function updateManualAddButton() {
 
 function render() {
   state.tankGallons = getTankGallons();
+  if (catalogAll.length) {
+    updateVisibleProducts();
+  }
   renderChips();
   renderSummary();
   if (typeof window.renderFiltration === 'function') {
@@ -699,6 +730,9 @@ function setFilters(nextFilters) {
       return;
     }
     seen.add(key);
+    const productId = source === FILTER_SOURCES.PRODUCT
+      ? (typeof raw.productId === 'string' && raw.productId ? raw.productId : id)
+      : null;
     sanitized.push({
       id,
       source,
@@ -706,6 +740,7 @@ function setFilters(nextFilters) {
       gph,
       type,
       efficiencyType,
+      productId,
     });
   });
 
@@ -723,6 +758,7 @@ function createProductFilter(product) {
   const label = formatProductLabel(product);
   return {
     id: product.id,
+    productId: product.id,
     source: FILTER_SOURCES.PRODUCT,
     label,
     gph: rated,
@@ -792,7 +828,7 @@ function tryAddCustom() {
 
 function findProductById(id) {
   if (!id) return null;
-  return catalog.get(id) ?? null;
+  return catalogIndex.get(id) ?? null;
 }
 
 async function handleProductChange(value) {
@@ -858,47 +894,36 @@ async function loadCatalog() {
   if (catalogPromise) {
     return catalogPromise;
   }
-  catalogPromise = fetch('/data/filters.json', { cache: 'no-cache' })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to load catalog: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      catalog = new Map();
-      catalogList = [];
-      const list = Array.isArray(data) ? data : [];
-      list.forEach((item) => {
-        const normalized = normalizeCatalogItem(item);
-        if (!normalized) {
-          return;
+  catalogPromise = loadProductCatalog()
+    .then(({ items, fallback, error }) => {
+      catalogIndex = new Map();
+      catalogAll = Array.isArray(items) ? items.slice() : [];
+      catalogVisible = catalogAll.slice();
+      catalogLoadError = error ?? null;
+      catalogFallbackActive = Boolean(fallback);
+      catalogAll.forEach((product) => {
+        if (product && product.id) {
+          catalogIndex.set(product.id, product);
         }
-        catalog.set(normalized.id, normalized);
-        catalogList.push(normalized);
       });
-      catalogList.sort((a, b) => {
-        const brandCompare = String(a.brand || '').localeCompare(String(b.brand || ''));
-        if (brandCompare !== 0) {
-          return brandCompare;
-        }
-        const nameCompare = String(a.name || '').localeCompare(String(b.name || ''));
-        if (nameCompare !== 0) {
-          return nameCompare;
-        }
-        return a.id.localeCompare(b.id);
-      });
-      populateProductSelect();
+      updateVisibleProducts();
       syncSelectValue();
       updateProductAddButton();
-      return catalog;
+      if (catalogLoadError) {
+        showProductStatus('Filter catalog limited. Showing fallback list.', { duration: 3600 });
+      }
+      return catalogIndex;
     })
-    .catch((_error) => {
-      catalog = new Map();
-      catalogList = [];
-      populateProductSelect();
+    .catch((error) => {
+      catalogIndex = new Map();
+      catalogAll = [];
+      catalogVisible = [];
+      catalogLoadError = error;
+      catalogFallbackActive = true;
+      renderFilterDropdown([], { fallback: true });
       updateProductAddButton();
-      return catalog;
+      showProductStatus('Filter catalog unavailable. Try again later.', { duration: 3600 });
+      return catalogIndex;
     });
   return catalogPromise;
 }
@@ -913,7 +938,11 @@ function hydrateFromAppState() {
     if (!gph) {
       return;
     }
-    const id = typeof entry?.id === 'string' && entry.id ? entry.id : null;
+    const id = typeof entry?.productId === 'string' && entry.productId
+      ? entry.productId
+      : typeof entry?.id === 'string' && entry.id
+        ? entry.id
+        : null;
     const product = id ? findProductById(id) : null;
     if (product) {
       const productItem = createProductFilter(product);
