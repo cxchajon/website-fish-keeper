@@ -31,6 +31,33 @@ import {
   canonicalizeFilterType,
 } from './utils.js';
 
+export let shouldRestoreVariantFocus = () => {
+  if (typeof document === 'undefined') {
+    return false;
+  }
+  const active = document.activeElement;
+  if (active && typeof active.blur === 'function') {
+    try {
+      active.blur();
+    } catch (_error) {
+      /* noop */
+    }
+  }
+  return false;
+};
+
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'shouldRestoreVariantFocus', {
+    configurable: true,
+    get() {
+      return shouldRestoreVariantFocus;
+    },
+    set(value) {
+      shouldRestoreVariantFocus = value;
+    },
+  });
+}
+
 function isAssumptionText(el){
   const t = (el?.textContent || '').trim();
   return /^Tank:\s*\d+(\.\d+)?\s*gal\s*—\s*assumed:/i.test(t);
@@ -1415,7 +1442,6 @@ function bootstrapStocking() {
     state.liters = snapshot.liters ?? 0;
     state.selectedTankId = snapshot.id ?? null;
     state.variantId = null;
-    shouldRestoreVariantFocus = false;
     refreshFiltrationUI({ preserveSelection: true, reason: 'tank-change' });
     syncGearLink();
     resetSpeciesFilters();
