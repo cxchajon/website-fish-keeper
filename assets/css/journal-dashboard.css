@@ -4,40 +4,38 @@
   min-height: 100vh;
 }
 
-.journal-dashboard {
+.journal-dashboard,
+#journal-dashboard {
   position: relative;
-  padding: clamp(48px, 6vw, 72px) 20px 80px;
   isolation: isolate;
+  min-height: 100%;
+  padding: clamp(48px, 6vw, 72px) 20px 80px;
+  padding-bottom: var(--footer-safe, 160px);
 }
 
-.journal-dashboard::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(circle at 12% 18%, rgba(66, 159, 255, 0.28), transparent 45%),
-    radial-gradient(circle at 88% 12%, rgba(123, 91, 255, 0.2), transparent 50%),
-    radial-gradient(circle at 50% 82%, rgba(0, 180, 170, 0.18), transparent 55%),
-    linear-gradient(
-      135deg,
-      rgba(9, 19, 37, 0.92) 0%,
-      rgba(7, 14, 28, 0.92) 40%,
-      rgba(4, 9, 20, 0.96) 100%
-    );
-  z-index: -2;
+@media (min-width: 768px) {
+  .journal-dashboard,
+  #journal-dashboard {
+    padding-bottom: var(--footer-safe, 200px);
+  }
 }
 
-.journal-dashboard::after {
+#journal-dashboard::before {
   content: "";
-  position: fixed;
+  position: absolute;
   inset: 0;
-  background-size: 48px 48px;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  mask: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.85));
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
+  background:
+    radial-gradient(1200px 800px at 70% 0%, rgba(0, 92, 255, 0.08), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 40px),
+    linear-gradient(180deg, #071220 0%, #0a1626 100%);
+}
+
+#journal-dashboard .content {
+  position: relative;
+  z-index: 1;
 }
 
 .journal-dashboard__inner {
@@ -45,6 +43,14 @@
   margin: 0 auto;
   display: grid;
   gap: clamp(32px, 4vw, 44px);
+}
+
+.dashboard-card,
+.dashboard-card__chart,
+.dashboard-card canvas,
+.dashboard-card__status {
+  filter: none !important;
+  backdrop-filter: none !important;
 }
 
 .journal-dashboard__header {
@@ -312,6 +318,8 @@
 .dashboard-card__chart {
   min-height: clamp(260px, 40vw, 340px);
   position: relative;
+  transform: none !important;
+  will-change: auto;
 }
 
 .dashboard-card__status {
@@ -325,7 +333,7 @@
   font-size: 1rem;
   color: rgba(224, 237, 255, 0.7);
   padding: 20px;
-  backdrop-filter: blur(2px);
+  background: rgba(7, 16, 30, 0.82);
 }
 
 .maintenance-list {
