@@ -1,5 +1,6 @@
 import { TANK_SIZES, getTankById, normalizeLegacyTankSelection } from './utils.js';
 import { setTank, normalizeTankPreset, getTankSnapshot } from './stocking/tankStore.js';
+import { shouldRestoreVariantFocus } from './stocking.js';
 
 const TANK_SELECT_QUERY = "#tank-size, [data-role='tank-size'], select[name='tank-size'], select[name='tankSize'], #tank-size-select";
 const ALLOWED_TANK_IDS = new Set(TANK_SIZES.map((tank) => tank.id));
@@ -214,9 +215,19 @@ if (!immediateSelect) {
     const normalizedId = normalizeLegacyTankSelection(rawId);
     const tank = normalizedId ? getNormalizedById(normalizedId) : null;
 
+    const restoreFocusSafely = () => {
+      try {
+        shouldRestoreVariantFocus?.();
+      } catch (error) {
+        const message = typeof error?.message === 'string' ? error.message : String(error);
+        console.warn('[tank-size]', 'Focus restore skipped:', message);
+      }
+    };
+
     if (!tank){
       selectEl.value = '';
       const snapshot = setTank(null);
+      restoreFocusSafely();
       syncStateFromSnapshot(snapshot);
       updateTankSpecLine(null);
       try { localStorage.removeItem(STORAGE_KEY); } catch (_){ }
@@ -225,6 +236,7 @@ if (!immediateSelect) {
     }
 
     const snapshot = setTank(tank);
+    restoreFocusSafely();
     selectEl.value = tank.id;
     syncStateFromSnapshot(snapshot);
     state.variantId = null;
