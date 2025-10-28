@@ -55,15 +55,6 @@
     #filtration-trigger {
       display: none !important;
     }
-
-    .no-products.hidden {
-      display: none !important;
-    }
-
-    #filterProduct {
-      border: 2px solid #00bfff !important;
-      background: rgba(0, 64, 128, 0.15);
-    }
   </style>
   <script type="application/ld+json">
   {
@@ -962,46 +953,19 @@
 
     #stocking-page .env-bars {
       margin-top: 10px;
-      row-gap: 12px;
+      row-gap: 10px;
     }
 
-    #stocking-page .env-bars .env-bar {
+    #stocking-page .env-bars .env-bar,
+    #stocking-page .env-bars .bar-row {
       margin-bottom: var(--space-xs);
       padding-top: var(--space-xs);
       padding-bottom: var(--space-xs);
     }
 
-    #stocking-page .env-bars .env-bar:last-child {
+    #stocking-page .env-bars .env-bar:last-child,
+    #stocking-page .env-bars .bar-row:last-child {
       margin-bottom: 0;
-    }
-
-    #stocking-page .env-compatibility {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: flex-start;
-      margin-top: 6px;
-    }
-
-    #stocking-page .env-compatibility .chip {
-      margin-top: 0;
-    }
-
-    #stocking-page .env-compat-note {
-      display: inline-flex;
-      align-items: center;
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 13px;
-      line-height: 1.35;
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    #stocking-page .env-detail-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
     }
 
     /* ----- Compact Bioload/Aggression card adjustments ----- */
@@ -1207,7 +1171,7 @@
           <div class="filter-flow-control" data-role="filter-setup">
             <div class="filter-product-field">
               <div class="field-label-row">
-                <label for="filterProduct">Filter Product</label>
+                <label for="filter-product">Filter Product</label>
                 <div class="info-trigger" data-info-scope="filter-product">
                   <button
                     type="button"
@@ -1235,14 +1199,13 @@
               </div>
               <div class="proto-inline-controls" data-role="filter-product-controls">
                 <div class="select-wrap proto-inline-controls__field">
-                  <select id="filterProduct" name="filter-product" aria-describedby="filter-product-note" data-ui="filter-product">
+                  <select id="filter-product" name="filter-product" aria-describedby="filter-product-note">
                     <option value="">— Select a product —</option>
                   </select>
                   <svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </div>
-                <p class="no-products hidden">No matching products for this tank size.</p>
                 <button
                   type="button"
                   id="filter-product-add"
@@ -1461,23 +1424,18 @@
           opacity: 1;
         }
 
-        #stocking-page #env-card .env-bars .env-bar {
+        #stocking-page #env-card .env-bars .env-bar,
+        #stocking-page #env-card .env-bars .bar-row {
           margin-bottom: 0;
         }
 
-        #stocking-page #env-card .env-compatibility {
-          margin-top: 4px;
-        }
-
-        #stocking-page #env-card .env-detail-chips {
-          margin-top: 6px;
-        }
-
-        #stocking-page #env-card.info-open .env-bars .env-bar {
+        #stocking-page #env-card.info-open .env-bars .env-bar,
+        #stocking-page #env-card.info-open .env-bars .bar-row {
           margin-bottom: var(--space-xs);
         }
 
-        #stocking-page #env-card.info-open .env-bars .env-bar:last-child {
+        #stocking-page #env-card.info-open .env-bars .env-bar:last-child,
+        #stocking-page #env-card.info-open .env-bars .bar-row:last-child {
           margin-bottom: 0;
         }
 
@@ -1686,9 +1644,7 @@
     {
       "imports": {
         "/js/logic/compute.js": "/prototype/js/logic/compute-proxy.js",
-        "./logic/compute.js": "/prototype/js/logic/compute-proxy.js",
-        "/js/logic/envRecommend.js": "/prototype/js/logic/envRecommend.js",
-        "./logic/envRecommend.js": "/prototype/js/logic/envRecommend.js"
+        "./logic/compute.js": "/prototype/js/logic/compute-proxy.js"
       }
     }
   </script>
@@ -1700,7 +1656,6 @@
   <script type="module" src="/js/stocking.js?v=2024-09-01" id="js-stocking"></script>
   <script type="module" src="/js/tank-size-card.js?v=2024-09-01"></script>
   <script type="module" src="/prototype/js/proto-filtration.js"></script>
-  <script type="module" src="/prototype/assets/js/ui/filter-product.js"></script>
   <script type="module" defer src="/prototype/assets/js/proto-filter-tests.js"></script>
 
   <!-- How it works modal (prototype only) -->
