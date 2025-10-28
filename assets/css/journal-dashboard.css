@@ -1,14 +1,173 @@
-.jdash{ max-width:1100px; margin:0 auto; padding:1rem 1rem 2rem; }
-.jdash__title{ font-size:1.5rem; font-weight:700; margin:.25rem 0 .5rem; }
-.jdash__tabs{ display:flex; gap:.5rem; margin: .25rem 0 1rem; }
-.jdash__tab{ padding:.6rem 1rem; border-radius:999px; border:1px solid #264163; background:#0b1322; color:#d7e9ff; }
-.jdash__tab.is-active{ border-color:#3b82f6; box-shadow:0 0 0 2px #1e3a8a inset; }
-.jdash__panel{ display:none; }
-.jdash__panel.is-active{ display:block; }
-.jdash__note{ opacity:.8; font-size:.875rem; margin-top:.5rem; }
-.jdash__maint{ display:grid; gap:.75rem; }
-.jdash__card{ padding:.9rem 1rem; border-left:4px solid #f59e0b; background:linear-gradient(90deg,#1f2937,#111827); color:#e5e7eb; border-radius:.75rem; }
+.page-journal-dashboard .jdash {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
-@media (max-width:480px){
-  #nitrateChart,#dosingChart{ height:360px; }
+.page-journal-dashboard .jdash__title {
+  font-size: clamp(1.75rem, 2vw + 1.1rem, 2.5rem);
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.page-journal-dashboard .jdash__lead {
+  color: #cbd5f5;
+  font-size: 1rem;
+  line-height: 1.5;
+  max-width: 70ch;
+  margin: 0;
+}
+
+.page-journal-dashboard .jdash__header {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.page-journal-dashboard .jdash__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.page-journal-dashboard .jdash__tab {
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(99, 179, 237, 0.4);
+  background: rgba(15, 23, 42, 0.7);
+  color: #e2e8f0;
+  font-weight: 600;
+  transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease;
+}
+
+.page-journal-dashboard .jdash__tab:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.6);
+  outline-offset: 2px;
+}
+
+.page-journal-dashboard .jdash__tab.is-active {
+  border-color: #3b82f6;
+  background: linear-gradient(140deg, rgba(37, 99, 235, 0.65), rgba(14, 165, 233, 0.55));
+  color: #f8fafc;
+  box-shadow: 0 0 0 1px rgba(191, 219, 254, 0.35) inset;
+}
+
+.page-journal-dashboard .jdash__panel {
+  display: none;
+  background: radial-gradient(circle at top, rgba(30, 64, 175, 0.25), rgba(15, 23, 42, 0.95));
+  border-radius: 1rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  box-shadow: 0 18px 60px rgba(8, 11, 21, 0.65);
+}
+
+.page-journal-dashboard .jdash__panel.is-active {
+  display: block;
+}
+
+.page-journal-dashboard .jdash__chart {
+  width: 100%;
+  height: clamp(320px, 55vh, 480px);
+}
+
+.page-journal-dashboard .jdash__note {
+  opacity: 0.85;
+  font-size: 0.95rem;
+  color: #cbd5f5;
+  margin-top: 0.75rem;
+}
+
+.page-journal-dashboard .jdash__maint {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.page-journal-dashboard .jdash__card {
+  padding: 1rem 1.1rem;
+  border-left: 4px solid #f59e0b;
+  background: linear-gradient(120deg, rgba(30, 41, 59, 0.95), rgba(30, 64, 175, 0.35));
+  color: #f1f5f9;
+  border-radius: 0.85rem;
+  line-height: 1.4;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.page-journal-dashboard .jdash__card strong {
+  font-size: 1.05rem;
+  color: #fde68a;
+  letter-spacing: 0.01em;
+}
+
+.page-journal-dashboard .jdash__meta {
+  font-size: 0.85rem;
+  color: rgba(226, 232, 240, 0.8);
+}
+
+.page-journal-dashboard .jdash__summary {
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(226, 232, 240, 0.95);
+}
+
+.page-journal-dashboard .jdash__empty {
+  border-left-color: rgba(148, 163, 184, 0.65);
+  background: rgba(15, 23, 42, 0.7);
+  color: rgba(226, 232, 240, 0.82);
+}
+
+.page-journal-dashboard .jdash__error {
+  border-left-color: rgba(248, 113, 113, 0.85);
+  background: rgba(127, 29, 29, 0.3);
+  color: #fee2e2;
+}
+
+.page-journal-dashboard .jdash__grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.page-journal-dashboard .jdash__grid-card {
+  padding: 1rem 1.1rem;
+  border-radius: 0.85rem;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #e0e7ff;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.page-journal-dashboard .jdash__grid-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.page-journal-dashboard .jdash__grid-value {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.page-journal-dashboard .jdash__disclaimer {
+  font-size: 0.85rem;
+  color: rgba(226, 232, 240, 0.75);
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .page-journal-dashboard .jdash {
+    padding: 1rem 0.75rem 2.5rem;
+  }
+
+  .page-journal-dashboard .jdash__panel {
+    padding: 1rem;
+  }
 }
