@@ -2,6 +2,39 @@
 // Contains data adapter and interactive logic
 const EXCEL_SPOT_EQUIVALENT = 0.5;
 const TARGET_NO3 = 20;
+const CHART_DIMENSION_LIMITS = {
+  minWidth: 360,
+  maxWidth: 1120,
+  viewportPadding: 48,
+  fallbackWidth: 720,
+  minHeight: 340,
+  maxHeight: 720,
+  heightRatio: 0.6
+};
+
+function computeChartDimensions(container) {
+  if (typeof window === 'undefined') {
+    return { width: CHART_DIMENSION_LIMITS.fallbackWidth, height: CHART_DIMENSION_LIMITS.minHeight };
+  }
+  const viewportWidth = Math.max(document.documentElement?.clientWidth || 0, window.innerWidth || 0);
+  const viewportHeight = Math.max(document.documentElement?.clientHeight || 0, window.innerHeight || 0);
+  const availableWidth = viewportWidth - CHART_DIMENSION_LIMITS.viewportPadding;
+  const width = Math.min(
+    CHART_DIMENSION_LIMITS.maxWidth,
+    Math.max(CHART_DIMENSION_LIMITS.minWidth, availableWidth || CHART_DIMENSION_LIMITS.fallbackWidth)
+  );
+  const desiredHeight = viewportHeight ? viewportHeight * CHART_DIMENSION_LIMITS.heightRatio : CHART_DIMENSION_LIMITS.minHeight;
+  const height = Math.round(
+    Math.max(
+      CHART_DIMENSION_LIMITS.minHeight,
+      Math.min(desiredHeight || CHART_DIMENSION_LIMITS.minHeight, CHART_DIMENSION_LIMITS.maxHeight)
+    )
+  );
+  if (container) {
+    container.style.setProperty('--chart-height', `${height}px`);
+  }
+  return { width, height };
+}
 
 function toDate(value) {
   return new Date(`${value}T00:00:00`);
@@ -400,6 +433,17 @@ function init() {
   if (!container) return;
   state.container = container;
   state.container.classList.add('dashboard-app-mounted');
+  let resizeTimerId = null;
+  window.addEventListener(
+    'resize',
+    () => {
+      clearTimeout(resizeTimerId);
+      resizeTimerId = window.setTimeout(() => {
+        render();
+      }, 150);
+    },
+    { passive: true }
+  );
   loadMonthIndex();
 }
 
@@ -654,12 +698,14 @@ function buildNitratePanel() {
   );
 
   const chartWrap = createElement('div', 'dashboard-chart chart-container');
+  const chartDimensions = computeChartDimensions(chartWrap);
   const hoverSummary = createHoverSummary();
   chartWrap.appendChild(hoverSummary);
   const chart = renderNitrateChart(state.dataState.nitrateData, {
     xLabel: monthLabel ? `Date (${monthLabel})` : 'Date',
     yLabel: 'ppm',
-    onSummaryChange: (text) => updateHoverSummary(hoverSummary, text)
+    onSummaryChange: (text) => updateHoverSummary(hoverSummary, text),
+    dimensions: chartDimensions
   });
   chartWrap.appendChild(chart.svg);
   chartWrap.appendChild(chart.tooltip);
@@ -708,12 +754,14 @@ function buildDosingPanel() {
   );
 
   const chartWrap = createElement('div', 'dashboard-chart chart-container');
+  const chartDimensions = computeChartDimensions(chartWrap);
   const hoverSummary = createHoverSummary();
   chartWrap.appendChild(hoverSummary);
   const chart = renderDosingChart(state.dataState.dosingData, {
     xLabel: 'Week',
     yLabel: 'Amount (pumps or caps)',
-    onSummaryChange: (text) => updateHoverSummary(hoverSummary, text)
+    onSummaryChange: (text) => updateHoverSummary(hoverSummary, text),
+    dimensions: chartDimensions
   });
   chartWrap.appendChild(chart.svg);
   chartWrap.appendChild(chart.tooltip);
@@ -808,8 +856,8 @@ function renderMaintenanceCards(events) {
 }
 
 function renderNitrateChart(data, options = {}) {
-  const width = 720;
-  const height = 280;
+  const { xLabel, yLabel, onSummaryChange, dimensions } = options;
+  const { width, height } = dimensions ?? computeChartDimensions();
   const margin = { top: 36, right: 32, bottom: 60, left: 60 };
   const svg = createSvg(width, height);
   const tooltip = createTooltip();
@@ -826,22 +874,22 @@ function renderNitrateChart(data, options = {}) {
 
   drawGrid(g, innerWidth, innerHeight, xScale, yScale);
   drawAxes(g, innerWidth, innerHeight, xScale, yScale, {
-    xLabel: options.xLabel,
-    yLabel: options.yLabel
+    xLabel,
+    yLabel
   });
   drawReferenceLine(g, yScale, innerWidth, TARGET_NO3);
   drawNitratePath(g, data, xScale, yScale);
   drawNitrateDots(g, data, xScale, yScale, tooltip, {
-    onSummaryChange: options.onSummaryChange
+    onSummaryChange
   });
 
-  attachTooltipHandlers(svg, tooltip, () => options.onSummaryChange?.(null));
+  attachTooltipHandlers(svg, tooltip, () => onSummaryChange?.(null));
   return { svg, tooltip };
 }
 
 function renderDosingChart(data, options = {}) {
-  const width = 720;
-  const height = 280;
+  const { xLabel, yLabel, onSummaryChange, dimensions } = options;
+  const { width, height } = dimensions ?? computeChartDimensions();
   const margin = { top: 36, right: 32, bottom: 68, left: 64 };
   const svg = createSvg(width, height);
   const tooltip = createTooltip();
@@ -861,19 +909,19 @@ function renderDosingChart(data, options = {}) {
   drawGrid(g, innerWidth, innerHeight, xScale, yScale);
   drawAxes(g, innerWidth, innerHeight, xScale, yScale, {
     rotateX: true,
-    xLabel: options.xLabel,
-    yLabel: options.yLabel
+    xLabel,
+    yLabel
   });
   drawBars(g, data, xScale, yScale, tooltip, {
-    onSummaryChange: options.onSummaryChange
+    onSummaryChange
   });
-  attachTooltipHandlers(svg, tooltip, () => options.onSummaryChange?.(null));
+  attachTooltipHandlers(svg, tooltip, () => onSummaryChange?.(null));
   return { svg, tooltip };
 }
 
 function drawGrid(group, width, height, xScale, yScale) {
   const gridGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  gridGroup.setAttribute('stroke', '#e5e7eb');
+  gridGroup.setAttribute('stroke', 'rgba(236, 244, 255, 0.1)');
   gridGroup.setAttribute('stroke-dasharray', '4 4');
   const yTicks = yScale.ticks(5);
   yTicks.forEach((tick) => {
@@ -904,9 +952,10 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
     xAxis.appendChild(line);
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     text.setAttribute('x', x);
-    text.setAttribute('y', rotateX ? 20 : 24);
-    text.setAttribute('fill', '#4b5563');
-    text.setAttribute('font-size', '12');
+    text.setAttribute('y', rotateX ? 22 : 26);
+    text.setAttribute('fill', 'rgba(236, 244, 255, 0.9)');
+    text.setAttribute('font-size', rotateX ? '13' : '14');
+    text.setAttribute('font-weight', '500');
     text.setAttribute('text-anchor', rotateX ? 'end' : 'middle');
     if (rotateX) {
       text.setAttribute('transform', `rotate(-25 ${x} ${height + 20})`);
@@ -928,8 +977,9 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     text.setAttribute('x', -10);
     text.setAttribute('y', y + 4);
-    text.setAttribute('fill', '#4b5563');
-    text.setAttribute('font-size', '12');
+    text.setAttribute('fill', 'rgba(236, 244, 255, 0.85)');
+    text.setAttribute('font-size', '14');
+    text.setAttribute('font-weight', '500');
     text.setAttribute('text-anchor', 'end');
     text.textContent = tick;
     yAxis.appendChild(text);
@@ -940,8 +990,9 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
     const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     label.setAttribute('x', width / 2);
     label.setAttribute('y', height + (rotateX ? 46 : 40));
-    label.setAttribute('fill', '#1f2937');
-    label.setAttribute('font-size', '13');
+    label.setAttribute('fill', 'rgba(236, 244, 255, 0.92)');
+    label.setAttribute('font-size', '16');
+    label.setAttribute('font-weight', '600');
     label.setAttribute('text-anchor', 'middle');
     label.textContent = xLabel;
     axisGroup.appendChild(label);
@@ -951,8 +1002,9 @@ function drawAxes(group, width, height, xScale, yScale, options = {}) {
     const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     label.setAttribute('x', -48);
     label.setAttribute('y', height / 2);
-    label.setAttribute('fill', '#1f2937');
-    label.setAttribute('font-size', '13');
+    label.setAttribute('fill', 'rgba(236, 244, 255, 0.92)');
+    label.setAttribute('font-size', '16');
+    label.setAttribute('font-weight', '600');
     label.setAttribute('text-anchor', 'middle');
     label.setAttribute('transform', `rotate(-90 ${-48} ${height / 2})`);
     label.textContent = yLabel;
@@ -1004,7 +1056,7 @@ function drawNitrateDots(group, data, xScale, yScale, tooltip, options = {}) {
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     circle.setAttribute('cx', x);
     circle.setAttribute('cy', y);
-    circle.setAttribute('r', point.wc ? 6 : 4);
+    circle.setAttribute('r', point.wc ? 7 : 5);
     circle.setAttribute('fill', point.wc ? '#f59e0b' : '#1f6feb');
     circle.setAttribute('stroke', point.wc ? '#b45309' : '#1e3a8a');
     circle.setAttribute('stroke-width', '2');
@@ -1048,6 +1100,8 @@ function drawBars(group, data, xScale, yScale, tooltip, options = {}) {
     thriveRect.setAttribute('y', yScale.map(item.thrivePumps));
     thriveRect.setAttribute('width', width / 2 - 4);
     thriveRect.setAttribute('height', thriveHeight);
+    thriveRect.setAttribute('rx', '4');
+    thriveRect.setAttribute('ry', '4');
     thriveRect.setAttribute('fill', thriveColor);
     thriveRect.setAttribute('tabindex', '0');
     thriveRect.setAttribute('role', 'img');
@@ -1076,6 +1130,8 @@ function drawBars(group, data, xScale, yScale, tooltip, options = {}) {
     excelRect.setAttribute('y', yScale.map(item.excelCapEquivalent));
     excelRect.setAttribute('width', width / 2 - 4);
     excelRect.setAttribute('height', excelHeight);
+    excelRect.setAttribute('rx', '4');
+    excelRect.setAttribute('ry', '4');
     excelRect.setAttribute('fill', excelColor);
     excelRect.setAttribute('tabindex', '0');
     excelRect.setAttribute('role', 'img');
@@ -1154,6 +1210,10 @@ function attachTooltipHandlers(svg, tooltip, onLeave) {
 function createSvg(width, height) {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.setAttribute('width', width);
+  svg.setAttribute('height', height);
+  svg.style.width = '100%';
+  svg.style.height = '100%';
   svg.setAttribute('role', 'img');
   svg.setAttribute('aria-label', 'Chart visualization');
   return svg;
