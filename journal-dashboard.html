@@ -31,38 +31,38 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="/css/site.css?v=2025-10-27c" />
   <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
-  <link rel="stylesheet" href="/assets/css/dashboard.css" />
-  <link rel="stylesheet" href="/css/journal-dashboard.overrides.css?v=2025-10-27-1" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
 </head>
 <body class="dashboard-page dashboard-blueprint dashboard-bg">
   <div id="site-nav"></div>
-  <main id="dash-root" class="dash-full bleed">
-    <section class="dash-block" id="main-content">
-      <section class="jdash">
-        <div class="jdash__tabs" role="tablist" aria-label="Journal Dashboard">
-          <button class="jdash__tab is-active" data-tab="nitrate">Nitrate</button>
-          <button class="jdash__tab" data-tab="dosing">Dosing</button>
-          <button class="jdash__tab" data-tab="maint">Maintenance</button>
-        </div>
+  <main id="jdash" class="jdash">
+    <h1 class="jdash__title">Journal Dashboard</h1>
 
-        <div class="jdash__panel is-active" id="tab-nitrate">
-          <canvas id="nitrateChart" height="420"></canvas>
-        </div>
-        <div class="jdash__panel" id="tab-dosing">
-          <canvas id="dosingChart" height="420"></canvas>
-        </div>
-        <div class="jdash__panel" id="tab-maint">
-          <div id="maintList" class="jdash__maint"></div>
-        </div>
-      </section>
+    <nav class="jdash__tabs" role="tablist" aria-label="Journal Dashboard Tabs">
+      <button class="jdash__tab is-active" data-tab="nitrate">Nitrate</button>
+      <button class="jdash__tab" data-tab="dosing">Dosing</button>
+      <button class="jdash__tab" data-tab="maint">Maintenance</button>
+    </nav>
+
+    <section id="panel-nitrate" class="jdash__panel is-active">
+      <canvas id="nitrateChart" height="420"></canvas>
+      <p class="jdash__note">Target is below 20 ppm. Tap/hover to see exact values.</p>
+    </section>
+
+    <section id="panel-dosing" class="jdash__panel">
+      <canvas id="dosingChart" height="420"></canvas>
+      <p class="jdash__note">Weekly totals (Sun–Sat): Thrive+ pumps and Excel capfuls/spot equivalents.</p>
+    </section>
+
+    <section id="panel-maint" class="jdash__panel">
+      <div id="maintList" class="jdash__maint"></div>
     </section>
   </main>
   <script src="/js/footer-loader.js?v=1.4.7" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.7"></div>
-  <link rel="stylesheet" href="/assets/css/journal-dashboard.css?v=1">
+  <link rel="stylesheet" href="/assets/css/journal-dashboard.css?v=2">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js" crossorigin="anonymous"></script>
-  <script defer src="/assets/js/journal-dashboard.js?v=1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/journal-dashboard.js?v=2"></script>
 </body>
 </html>

@@ -1,19 +1,14 @@
-.jdash { max-width: 1100px; margin: 0 auto; padding: 1.25rem; position: relative; }
-.jdash:before { /* subtle blueprint grid under this section only */
-  content:""; position:absolute; inset:0; pointer-events:none;
-  background:
-    linear-gradient(#0f172a22 1px, transparent 1px) 0 0/24px 24px,
-    linear-gradient(90deg,#0f172a22 1px, transparent 1px) 0 0/24px 24px;
-}
-.jdash__tabs { display:flex; gap:.5rem; margin: .75rem 0 1rem; }
-.jdash__tab { padding:.6rem 1rem; border-radius:999px; background:#0b1322; color:#cfe7ff; border:1px solid #1c2740; }
-.jdash__tab.is-active { box-shadow:0 0 24px #3b82f633 inset, 0 0 16px #3b82f633; border-color:#2a3b65; }
-.jdash__panel { display:none; }
-.jdash__panel.is-active { display:block; }
-canvas { width:100%; height:auto; }
-@media (max-width:480px){
-  #nitrateChart,#dosingChart{ height:380px; }
-}
-
+.jdash{ max-width:1100px; margin:0 auto; padding:1rem 1rem 2rem; }
+.jdash__title{ font-size:1.5rem; font-weight:700; margin:.25rem 0 .5rem; }
+.jdash__tabs{ display:flex; gap:.5rem; margin: .25rem 0 1rem; }
+.jdash__tab{ padding:.6rem 1rem; border-radius:999px; border:1px solid #264163; background:#0b1322; color:#d7e9ff; }
+.jdash__tab.is-active{ border-color:#3b82f6; box-shadow:0 0 0 2px #1e3a8a inset; }
+.jdash__panel{ display:none; }
+.jdash__panel.is-active{ display:block; }
+.jdash__note{ opacity:.8; font-size:.875rem; margin-top:.5rem; }
 .jdash__maint{ display:grid; gap:.75rem; }
-.jdash__card{ padding: .9rem 1rem; border-left:4px solid #f59e0b; background:linear-gradient(90deg,#1f2937, #111827); color:#e5e7eb; border-radius:.75rem; }
+.jdash__card{ padding:.9rem 1rem; border-left:4px solid #f59e0b; background:linear-gradient(90deg,#1f2937,#111827); color:#e5e7eb; border-radius:.75rem; }
+
+@media (max-width:480px){
+  #nitrateChart,#dosingChart{ height:360px; }
+}
