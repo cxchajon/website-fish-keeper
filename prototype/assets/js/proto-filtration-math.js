@@ -1,9 +1,9 @@
 export const FILTER_BASE = Object.freeze({
-  Canister: 0.60,
-  HOB: 0.50,
-  Internal: 0.45,
-  UGF: 0.35,
-  Sponge: 0.25,
+  Canister: 0.55,
+  HOB: 0.40,
+  Internal: 0.26,
+  UGF: 0.18,
+  Sponge: 0.15,
 });
 
 export const FLOW_DERATE = 0.65; // Crosscheck Fix — Oct 2025
@@ -161,14 +161,16 @@ export function computeAggregateEfficiency(filters, turnover) {
   }
 
   const perFilter = normalized.map((filter) => {
-    const efficiency = computeEfficiency(filter.type, turnover);
+    const rawRelief = computeEfficiency(filter.type, turnover);
+    const relief = Number.isFinite(rawRelief) && rawRelief > 0 ? clamp(rawRelief, 0, MAX_RELIEF) : 0;
     return {
       ...filter,
-      efficiency: Number.isFinite(efficiency) && efficiency > 0 ? efficiency : 0,
+      relief,
+      efficiency: relief,
     };
   });
 
-  const combined = 1 - perFilter.reduce((prod, entry) => prod * (1 - entry.efficiency), 1); // Crosscheck Fix — Oct 2025
+  const combined = 1 - perFilter.reduce((prod, entry) => prod * (1 - entry.relief), 1); // Crosscheck Fix — Oct 2025
   const total = clamp(combined, 0, MAX_RELIEF);
 
   return { total, perFilter };
