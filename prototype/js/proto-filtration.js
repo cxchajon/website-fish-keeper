@@ -1,9 +1,9 @@
 import { canonicalizeFilterType, weightedMixFactor } from '/js/utils.js';
 // Product catalog wired via normalized filters.catalog.json (site-wide audit, Oct 2025)
 import {
-  filterProductsByTankSize,
-  getLastCatalogError,
+  filterByGallons,
   loadFilterCatalog,
+  normalizeItem,
   sortByTypeBrandGph,
 } from '../assets/js/products/catalog-loader.js';
 import {
@@ -175,21 +175,34 @@ function renderFilterDropdown(list, { fallback = false, datasetFallback = fallba
     return;
   }
   const currentValue = pendingProductId || select.value || '';
+  const collection = Array.isArray(list) ? list : [];
   select.innerHTML = '';
+
+  if (!collection.length) {
+    const empty = document.createElement('option');
+    empty.value = '';
+    empty.disabled = true;
+    empty.selected = true;
+    empty.textContent = fallback ? 'Catalog unavailable' : 'No matching products';
+    select.appendChild(empty);
+    select.dataset.fallback = datasetFallback ? 'true' : 'false';
+    return;
+  }
 
   const placeholder = document.createElement('option');
   placeholder.value = '';
   placeholder.textContent = '— Select a product —';
+  placeholder.disabled = true;
+  placeholder.selected = !currentValue;
   select.appendChild(placeholder);
 
-  const collection = Array.isArray(list) ? list : [];
   const applyOption = (product) => {
     const option = document.createElement('option');
     option.value = product.id;
     option.textContent = formatProductDropdownLabel(product);
     option.dataset.type = product.type || '';
     option.dataset.brand = product.brand || '';
-    option.dataset.gph = String(getRatedGphValue(product) || 0);
+    option.dataset.gphRated = String(getRatedGphValue(product) || 0);
     if (Number.isFinite(product.minGallons)) {
       option.dataset.minG = String(product.minGallons);
     }
@@ -236,7 +249,7 @@ function updateVisibleProducts() {
     return;
   }
   const gallons = Number.isFinite(rawGallons) ? Math.max(rawGallons, 0) : null;
-  const nextVisible = filterProductsByTankSize(catalogAll, gallons);
+  const nextVisible = filterByGallons(catalogAll, gallons);
   const hasExactMatch = Number.isFinite(gallons)
     ? catalogAll.some((product) => fitsTankRange(product, gallons))
     : true;
@@ -968,24 +981,28 @@ async function loadCatalog() {
   }
   catalogPromise = loadFilterCatalog()
     .then((items) => {
-      const list = Array.isArray(items) ? items.slice() : [];
-      const sortedList = list.slice().sort(sortByTypeBrandGph);
-      catalogIndex = new Map();
+      const list = Array.isArray(items) ? items : [];
+      const normalized = list
+        .map((entry) => normalizeItem(entry))
+        .filter((product) => product && product.id);
+      const deduped = [];
+      const seen = new Set();
+      normalized.forEach((product) => {
+        if (!product?.id || seen.has(product.id)) {
+          return;
+        }
+        seen.add(product.id);
+        deduped.push(product);
+      });
+      const sortedList = deduped.slice().sort(sortByTypeBrandGph);
+      catalogIndex = new Map(sortedList.map((product) => [product.id, product]));
       catalogAll = sortedList;
       catalogVisible = sortedList.slice();
-      catalogLoadError = getLastCatalogError?.() ?? null;
+      catalogLoadError = null;
       catalogFallbackActive = false;
-      catalogAll
-        .filter((product) => product && product.id)
-        .forEach((product) => {
-          catalogIndex.set(product.id, product);
-        });
       updateVisibleProducts();
       syncSelectValue();
       updateProductAddButton();
-      if (catalogLoadError) {
-        showProductStatus('Filter catalog limited. Showing fallback list.', { duration: 3600 });
-      }
       return catalogIndex;
     })
     .catch((error) => {
@@ -994,7 +1011,7 @@ async function loadCatalog() {
       catalogVisible = [];
       catalogLoadError = error;
       catalogFallbackActive = true;
-      renderFilterDropdown([], { fallback: true });
+      renderFilterDropdown([], { fallback: true, datasetFallback: true });
       updateProductAddButton();
       showProductStatus('Filter catalog unavailable. Try again later.', { duration: 3600 });
       return catalogIndex;

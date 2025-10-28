@@ -1,176 +1,5 @@
 [
   {
-    "id": "aquaneat-sponge-20",
-    "brand": "Aquaneat",
-    "model": "Dual Sponge (up to 20G)",
-    "type": "SPONGE",
-    "gphRated": 120,
-    "minGallons": 0,
-    "maxGallons": 20
-  },
-  {
-    "id": "aquaneat-sponge-60",
-    "brand": "Aquaneat",
-    "model": "Dual Sponge (up to 60G)",
-    "type": "SPONGE",
-    "gphRated": 200,
-    "minGallons": 20,
-    "maxGallons": 40
-  },
-  {
-    "id": "aquaneat-sponge-10",
-    "brand": "Aquaneat",
-    "model": "Single Sponge (up to 10G)",
-    "type": "SPONGE",
-    "gphRated": 60,
-    "minGallons": 0,
-    "maxGallons": 20
-  },
-  {
-    "id": "hygger-double-sponge-m",
-    "brand": "Hygger",
-    "model": "Double Sponge (M)",
-    "type": "SPONGE",
-    "gphRated": 120,
-    "minGallons": 0,
-    "maxGallons": 20
-  },
-  {
-    "id": "hygger-double-sponge-s",
-    "brand": "Hygger",
-    "model": "Double Sponge (S)",
-    "type": "SPONGE",
-    "gphRated": 80,
-    "minGallons": 0,
-    "maxGallons": 20
-  },
-  {
-    "id": "pawfly-sponge-10",
-    "brand": "Pawfly",
-    "model": "Nano Sponge (up to 10G)",
-    "type": "SPONGE",
-    "gphRated": 60,
-    "minGallons": 0,
-    "maxGallons": 20
-  },
-  {
-    "id": "powkoo-dual-sponge-40",
-    "brand": "Powkoo",
-    "model": "Dual Sponge (20-55G)",
-    "type": "SPONGE",
-    "gphRated": 150,
-    "minGallons": 20,
-    "maxGallons": 55
-  },
-  {
-    "id": "aquaclear-30",
-    "brand": "AquaClear",
-    "model": "30",
-    "type": "HOB",
-    "gphRated": 150,
-    "minGallons": 20,
-    "maxGallons": 40
-  },
-  {
-    "id": "aquaclear-50",
-    "brand": "AquaClear",
-    "model": "50",
-    "type": "HOB",
-    "gphRated": 200,
-    "minGallons": 20,
-    "maxGallons": 40
-  },
-  {
-    "id": "aquaclear-70",
-    "brand": "AquaClear",
-    "model": "70",
-    "type": "HOB",
-    "gphRated": 300,
-    "minGallons": 40,
-    "maxGallons": 75
-  },
-  {
-    "id": "aqueon-quietflow-75",
-    "brand": "Aqueon",
-    "model": "QuietFlow 75 LED PRO",
-    "type": "HOB",
-    "gphRated": 400,
-    "minGallons": 40,
-    "maxGallons": 75
-  },
-  {
-    "id": "fluval-c2",
-    "brand": "Fluval",
-    "model": "C2",
-    "type": "HOB",
-    "gphRated": 119,
-    "minGallons": 0,
-    "maxGallons": 20
-  },
-  {
-    "id": "hygger-quiet-power-filter",
-    "brand": "Hygger",
-    "model": "Quiet Power",
-    "type": "HOB",
-    "gphRated": 260,
-    "minGallons": 40,
-    "maxGallons": 75
-  },
-  {
-    "id": "marineland-penguin-350",
-    "brand": "Marineland",
-    "model": "Penguin 350 BIO Wheel",
-    "type": "HOB",
-    "gphRated": 350,
-    "minGallons": 40,
-    "maxGallons": 75
-  },
-  {
-    "id": "seachem-tidal-110",
-    "brand": "Seachem",
-    "model": "Tidal 110",
-    "type": "HOB",
-    "gphRated": 450,
-    "minGallons": 75,
-    "maxGallons": null
-  },
-  {
-    "id": "seachem-tidal-35",
-    "brand": "Seachem",
-    "model": "Tidal 35",
-    "type": "HOB",
-    "gphRated": 130,
-    "minGallons": 20,
-    "maxGallons": 40
-  },
-  {
-    "id": "seachem-tidal-55",
-    "brand": "Seachem",
-    "model": "Tidal 55",
-    "type": "HOB",
-    "gphRated": 250,
-    "minGallons": 40,
-    "maxGallons": 75
-  },
-  {
-    "id": "seachem-tidal-75",
-    "brand": "Seachem",
-    "model": "Tidal 75",
-    "type": "HOB",
-    "gphRated": 350,
-    "minGallons": 40,
-    "maxGallons": 75
-  },
-  {
-    "id": "tetra-whisper-iq-45",
-    "brand": "Tetra",
-    "model": "Whisper IQ 45",
-    "type": "HOB",
-    "gphRated": 260,
-    "minGallons": 40,
-    "maxGallons": 75
-  },
-  {
     "id": "aqueon-quietflow-200",
     "brand": "Aqueon",
     "model": "QuietFlow Canister 200",
@@ -194,7 +23,7 @@
     "model": "Classic 2213",
     "type": "CANISTER",
     "gphRated": 116,
-    "minGallons": 0,
+    "minGallons": 7,
     "maxGallons": 20
   },
   {
@@ -240,7 +69,7 @@
     "type": "CANISTER",
     "gphRated": 475,
     "minGallons": 75,
-    "maxGallons": null
+    "maxGallons": 78
   },
   {
     "id": "fluval-fx4",
@@ -249,7 +78,7 @@
     "type": "CANISTER",
     "gphRated": 700,
     "minGallons": 75,
-    "maxGallons": null
+    "maxGallons": 114
   },
   {
     "id": "oase-biomaster-250",
@@ -276,7 +105,178 @@
     "type": "CANISTER",
     "gphRated": 793,
     "minGallons": 75,
-    "maxGallons": null
+    "maxGallons": 129
+  },
+  {
+    "id": "aquaclear-30",
+    "brand": "AquaClear",
+    "model": "30",
+    "type": "HOB",
+    "gphRated": 150,
+    "minGallons": 20,
+    "maxGallons": 40
+  },
+  {
+    "id": "aquaclear-50",
+    "brand": "AquaClear",
+    "model": "50",
+    "type": "HOB",
+    "gphRated": 200,
+    "minGallons": 20,
+    "maxGallons": 40
+  },
+  {
+    "id": "aquaclear-70",
+    "brand": "AquaClear",
+    "model": "70",
+    "type": "HOB",
+    "gphRated": 300,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "aqueon-quietflow-75",
+    "brand": "Aqueon",
+    "model": "QuietFlow 75 LED PRO",
+    "type": "HOB",
+    "gphRated": 400,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "fluval-c2",
+    "brand": "Fluval",
+    "model": "C2",
+    "type": "HOB",
+    "gphRated": 119,
+    "minGallons": 7,
+    "maxGallons": 20
+  },
+  {
+    "id": "hygger-quiet-power-filter",
+    "brand": "Hygger",
+    "model": "Quiet Power",
+    "type": "HOB",
+    "gphRated": 260,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "marineland-penguin-350",
+    "brand": "Marineland",
+    "model": "Penguin 350 BIO Wheel",
+    "type": "HOB",
+    "gphRated": 350,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "seachem-tidal-35",
+    "brand": "Seachem",
+    "model": "Tidal 35",
+    "type": "HOB",
+    "gphRated": 130,
+    "minGallons": 20,
+    "maxGallons": 40
+  },
+  {
+    "id": "seachem-tidal-55",
+    "brand": "Seachem",
+    "model": "Tidal 55",
+    "type": "HOB",
+    "gphRated": 250,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "seachem-tidal-75",
+    "brand": "Seachem",
+    "model": "Tidal 75",
+    "type": "HOB",
+    "gphRated": 350,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "seachem-tidal-110",
+    "brand": "Seachem",
+    "model": "Tidal 110",
+    "type": "HOB",
+    "gphRated": 450,
+    "minGallons": 74,
+    "maxGallons": 75
+  },
+  {
+    "id": "tetra-whisper-iq-45",
+    "brand": "Tetra",
+    "model": "Whisper IQ 45",
+    "type": "HOB",
+    "gphRated": 260,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "aquaneat-sponge-10",
+    "brand": "Aquaneat",
+    "model": "Single Sponge (up to 10G)",
+    "type": "SPONGE",
+    "gphRated": 60,
+    "minGallons": 5,
+    "maxGallons": 20
+  },
+  {
+    "id": "aquaneat-sponge-20",
+    "brand": "Aquaneat",
+    "model": "Dual Sponge (up to 20G)",
+    "type": "SPONGE",
+    "gphRated": 120,
+    "minGallons": 7,
+    "maxGallons": 20
+  },
+  {
+    "id": "aquaneat-sponge-60",
+    "brand": "Aquaneat",
+    "model": "Dual Sponge (up to 60G)",
+    "type": "SPONGE",
+    "gphRated": 200,
+    "minGallons": 20,
+    "maxGallons": 40
+  },
+  {
+    "id": "hygger-double-sponge-s",
+    "brand": "Hygger",
+    "model": "Double Sponge (S)",
+    "type": "SPONGE",
+    "gphRated": 80,
+    "minGallons": 5,
+    "maxGallons": 20
+  },
+  {
+    "id": "hygger-double-sponge-m",
+    "brand": "Hygger",
+    "model": "Double Sponge (M)",
+    "type": "SPONGE",
+    "gphRated": 120,
+    "minGallons": 7,
+    "maxGallons": 20
+  },
+  {
+    "id": "pawfly-sponge-10",
+    "brand": "Pawfly",
+    "model": "Nano Sponge (up to 10G)",
+    "type": "SPONGE",
+    "gphRated": 60,
+    "minGallons": 5,
+    "maxGallons": 20
+  },
+  {
+    "id": "powkoo-dual-sponge-40",
+    "brand": "Powkoo",
+    "model": "Dual Sponge (20-55G)",
+    "type": "SPONGE",
+    "gphRated": 150,
+    "minGallons": 20,
+    "maxGallons": 55
   },
   {
     "id": "penn-plax-ugf-20-29",
