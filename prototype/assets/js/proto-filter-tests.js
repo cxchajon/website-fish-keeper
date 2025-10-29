@@ -1,39 +1,30 @@
 import {
-  computeTurnover,
-  computeEfficiency,
-  computeAdjustedBioload,
+  combinedRbc,
   computePercent,
-  getTotalGPH,
-  resolveFilterBaseKey,
+  effectiveCapacity,
+  normalizeFilters,
 } from './proto-filtration-math.js';
 
 const DEBUG_TESTS = false;
 
 if (DEBUG_TESTS) {
-  const gallons = 29;
-  const base = 50;
-  const cap = 100;
-
-  const pct0 = (() => {
-    const total = 0;
-    const turn = computeTurnover(total, gallons);
-    const eff = 0;
-    const adjusted = computeAdjustedBioload(base, eff);
-    return computePercent(adjusted, cap);
-  })();
-
-  const filters = [{ source: 'custom', type: 'HOB', gph: 200 }];
-  const totals = getTotalGPH(filters);
-  const turnover = computeTurnover(totals.rated, gallons);
-  const eff = computeEfficiency(resolveFilterBaseKey('HOB'), turnover);
-  const adjusted = computeAdjustedBioload(base, eff);
-  const pct1 = computePercent(adjusted, cap);
+  const baseCapacity = 100;
+  const baseLoad = 50;
+  const filters = [
+    { source: 'custom', type: 'HOB', rated_gph: 200 },
+    { source: 'custom', type: 'SPONGE', rated_gph: 80 },
+  ];
+  const normalized = normalizeFilters(filters);
+  const capacityBoost = combinedRbc(normalized, { normalized: true });
+  const effectiveCap = effectiveCapacity(baseCapacity, normalized, { normalized: true });
+  const percent = computePercent(baseLoad, effectiveCap);
 
   // eslint-disable-next-line no-console
-  console.table({ pct0, pct1, ratedTotal: totals.rated, deratedTotal: totals.derated, turnover, eff });
-
-  if (!(pct1 < pct0)) {
-    // eslint-disable-next-line no-console
-    console.warn('[Proto Tests] Expected pct1 < pct0 for custom filter guard.');
-  }
+  console.table({
+    baseCapacity,
+    baseLoad,
+    capacityBoost,
+    effectiveCapacity: effectiveCap,
+    percent,
+  });
 }

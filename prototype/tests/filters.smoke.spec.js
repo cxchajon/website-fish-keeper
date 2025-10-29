@@ -6,11 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 import { loadFilterCatalog, filterByTank } from '../js/catalog-loader.js';
 import {
-  computeTurnover,
-  computeAggregateEfficiency,
-  computeAdjustedBioload,
-  computePercent,
-  getTotalGPH,
+  effectiveCapacity,
+  computePercent
 } from '../assets/js/proto-filtration-math.js';
 import { getShouldRestoreVariantFocus } from '../../js/focus-restore.js';
 
@@ -34,11 +31,9 @@ async function loadCatalogFromDisk() {
 }
 
 function computeBioloadPercent(filters, gallons, baseBioload, capacity) {
-  const { rated } = getTotalGPH(filters);
-  const turnover = computeTurnover(rated, gallons);
-  const { total: efficiency } = computeAggregateEfficiency(filters, turnover);
-  const adjusted = computeAdjustedBioload(baseBioload, efficiency);
-  return computePercent(adjusted, capacity);
+  const baseCapacity = Number.isFinite(capacity) && capacity > 0 ? capacity : gallons;
+  const effectiveCap = effectiveCapacity(baseCapacity, filters);
+  return computePercent(baseBioload, effectiveCap);
 }
 
 test('catalog smoke: >30 items and source tagged', async () => {

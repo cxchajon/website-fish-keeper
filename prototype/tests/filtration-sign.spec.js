@@ -1,4 +1,4 @@
-import { computeTurnover, computeAggregateEfficiency, computeAdjustedBioload, computePercent } from '../assets/js/proto-filtration-math.js';
+import { effectiveCapacity, computePercent } from '../assets/js/proto-filtration-math.js';
 import { getTotalGE } from '../../js/bioload.js';
 import { FISH_DB } from '../../js/fish-data.js';
 
@@ -15,23 +15,12 @@ function toFilterEntries(filters) {
   }));
 }
 
-function totalRatedGph(filters) {
-  return filters.reduce((sum, filter) => {
-    const value = Number(filter.rated_gph);
-    return Number.isFinite(value) && value > 0 ? sum + value : sum;
-  }, 0);
-}
 
 function computePercentUsed({ gallons, stock, filters }) {
   const load = getTotalGE(toStockEntries(stock), speciesMap);
   const normalizedFilters = toFilterEntries(filters);
-  const ratedSum = totalRatedGph(normalizedFilters);
-  const turnover = ratedSum > 0 ? computeTurnover(ratedSum, gallons) : 0;
-  const aggregate = normalizedFilters.length
-    ? computeAggregateEfficiency(normalizedFilters, turnover)
-    : { total: 0 };
-  const adjustedLoad = computeAdjustedBioload(load, aggregate.total ?? 0);
-  return computePercent(adjustedLoad, gallons);
+  const effectiveCap = effectiveCapacity(gallons, normalizedFilters);
+  return computePercent(load, effectiveCap);
 }
 
 const failures = [];
