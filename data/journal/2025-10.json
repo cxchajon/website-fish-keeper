@@ -1,4 +1,17 @@
-[ 
+[
+  {
+    "date": "2025-10-29",
+    "time": "",
+    "category": "Feeding, Test & Dosing",
+    "quick_facts": "Fed flakes + bloodworms · Nitrate 10 ppm · 0 Thrive pumps · 1.5 caps Excel (spot + cap) · No water change",
+    "ramble": "Spot-dosed and cap-dosed Seachem Excel, targeting remaining BBA near the random flow generator. Amano shrimp observed grazing — signs of recovery and ecosystem balance.",
+    "nitrate_ppm": "10",
+    "nitrite_ppm": "",
+    "ammonia_ppm": "",
+    "ph": "",
+    "media": "",
+    "tags": "feeding,dosing,testing,algae-control,29g"
+  },
   {
     "date": "2025-10-28",
     "time": "",
