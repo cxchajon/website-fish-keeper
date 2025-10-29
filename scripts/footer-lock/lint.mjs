@@ -1,6 +1,6 @@
 import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-const CANONICAL_VERSION = '1.4.8';
+const CANONICAL_VERSION = '1.4.9';
 const CANONICAL_SCRIPT_SRC = `/js/footer-loader.js?v=${CANONICAL_VERSION}`;
 const CANONICAL_FOOTER_SRC = `/footer.html?v=${CANONICAL_VERSION}`;
 const ALLOWED_SOCIAL_CLASS_TOKENS = new Set(['social-strip']);
@@ -8,6 +8,7 @@ const EXPECTED_SOCIAL_HREFS = [
   'https://www.instagram.com/FishKeepingLifeCo',
   'https://www.tiktok.com/@FishKeepingLifeCo',
   'https://www.facebook.com/fishkeepinglifeco',
+  'https://chatgpt.com/g/g-69012624c9688191b98c2623badff18d-the-tank-guide-assistant-by-fishkeepinglifeco',
   'https://x.com/fishkeepinglife',
   'https://www.youtube.com/@fishkeepinglifeco',
   'https://www.amazon.com/author/fishkeepinglifeco',
