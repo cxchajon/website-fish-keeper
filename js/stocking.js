@@ -30,6 +30,7 @@ import {
   isEligibleForTank,
   canonicalizeFilterType,
 } from './utils.js';
+import { getGearData } from './gear-data.js';
 
 export let shouldRestoreVariantFocus = () => {
   if (typeof document === 'undefined') {
@@ -195,7 +196,6 @@ const GEAR_PAGE_PATH = '/gear.html';
 const GEAR_QUERY_PARAM = 'tank_g';
 const GEAR_TANK_SESSION_KEY = 'ttg:tank_g';
 const GEAR_FILTER_SESSION_KEY = 'ttg:filter_id';
-const FILTER_CATALOG_PATH = '/data/filters.json';
 
 const DEBUG_PRODUCT_TANKS = Object.freeze([5, 10, 15, 20, 29, 40, 50, 55, 75]);
 const debugDropdownSnapshots = new Map();
@@ -627,7 +627,32 @@ function bootstrapStocking() {
   syncFiltrationUI();
 
   function setFilterCatalogData(list = [], { hasError = false } = {}) {
-    const normalized = Array.isArray(list) ? list.filter((item) => item && typeof item.id === 'string') : [];
+    const normalized = Array.isArray(list)
+      ? list
+        .filter((item) => item && typeof item.id === 'string')
+        .map((item) => {
+          const ratedRaw = Number(item?.rated_gph ?? item?.gphRated ?? item?.ratedGph);
+          const rated = Number.isFinite(ratedRaw) && ratedRaw > 0 ? Math.round(ratedRaw) : 0;
+          const minCandidates = [
+            Number(item?.tank_min_g),
+            Number(item?.minGallons),
+          ].filter((value) => Number.isFinite(value) && value >= 0);
+          const maxCandidates = [
+            Number(item?.tank_max_g),
+            Number(item?.maxGallons),
+          ].filter((value) => Number.isFinite(value) && value > 0);
+          const min = minCandidates.length ? Math.max(0, Math.min(...minCandidates)) : 0;
+          const resolvedMax = maxCandidates.length ? Math.max(min, Math.max(...maxCandidates)) : 9999;
+          return {
+            ...item,
+            rated_gph: rated,
+            gphRated: rated,
+            tank_min_g: min,
+            tank_max_g: resolvedMax,
+          };
+        })
+        .filter((item) => Number.isFinite(item.rated_gph) && item.rated_gph > 0)
+      : [];
     filterCatalog = normalized;
     filterCatalogById.clear();
     normalized.forEach((product) => {
@@ -678,15 +703,10 @@ function bootstrapStocking() {
     filterCatalogLoading = true;
     filterCatalogLoaded = false;
     filterCatalogLoadError = false;
-    filterCatalogPromise = fetch(FILTER_CATALOG_PATH, { cache: 'no-cache' })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to load filter catalog: ${response.status}`);
-        }
-        return response.json();
-      })
+    filterCatalogPromise = getGearData()
       .then((data) => {
-        setFilterCatalogData(Array.isArray(data) ? data : []);
+        const list = Array.isArray(data) ? data : [];
+        setFilterCatalogData(list, { hasError: false });
         return filterCatalog;
       })
       .catch((error) => {
@@ -694,12 +714,11 @@ function bootstrapStocking() {
           console.error('[Stocking] Filter catalog load failed:', error);
           filterCatalogErrorLogged = true;
         }
-        filterCatalog = [];
-        filterCatalogById.clear();
-        filterCatalogLoaded = true;
-        filterCatalogLoading = false;
-        filterCatalogLoadError = true;
+        setFilterCatalogData([], { hasError: true });
         return [];
+      })
+      .finally(() => {
+        filterCatalogPromise = null;
       });
     return filterCatalogPromise;
   }
@@ -804,7 +823,7 @@ function bootstrapStocking() {
       console.log('dropdown_ids', actualIds);
       console.log('diffs', { missing: missingForCurrent, extra: extraForCurrent });
       if (filterCatalogLoadError) {
-        console.warn('[Stocking][DEBUG] Catalog failed to load.');
+        console.warn('[Stocking][DEBUG] Filters unavailable.');
       }
       if (!hasValidGallons) {
         console.warn('[Stocking][DEBUG] Tank gallons unavailable or invalid.');
@@ -933,7 +952,7 @@ function bootstrapStocking() {
     }
 
     if (filterCatalogLoadError) {
-      applyDisabledState('Catalog failed to load.', { status: 'catalog-error', clearSelection: false });
+      applyDisabledState('Filters unavailable. Try again later.', { status: 'catalog-error', clearSelection: false });
       finalize();
       return;
     }
@@ -1159,7 +1178,7 @@ function bootstrapStocking() {
       if (filterProductStatusMessage) {
         refs.filterProductNote.textContent = filterProductStatusMessage;
       } else if (filterCatalogLoadError) {
-        refs.filterProductNote.textContent = 'Catalog failed to load.';
+        refs.filterProductNote.textContent = 'Filters unavailable. Try again later.';
       } else if (!filterCatalogLoaded) {
         refs.filterProductNote.textContent = 'Loading filter catalog…';
       } else if (!Number.isFinite(getSelectedTankGallons())) {

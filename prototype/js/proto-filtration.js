@@ -9,9 +9,9 @@ import {
   loadFilterCatalog as fetchFilterCatalog,
   filterByTank as filterCatalogByTank,
   sortByTypeBrandGph,
-  BIG_FALLBACK_LIST,
   CATALOG_SOURCES,
 } from './catalog-loader.js';
+import { populateFilterDropdown } from '../../js/gear-data.js';
 
 const DEBUG_FILTERS = Boolean(window?.TTG?.DEBUG_FILTERS);
 const TYPE_WEIGHT = Object.freeze({
@@ -76,9 +76,10 @@ let lastOptionsSignature = '';
 
 const catalogMeta = {
   source: CATALOG_SOURCES.FALLBACK,
-  total: BIG_FALLBACK_LIST.length,
+  total: 0,
   matched: 0,
 };
+const VALID_CATALOG_SOURCES = new Set(Object.values(CATALOG_SOURCES));
 
 function normalizeSource(value) {
   if (value === FILTER_SOURCES.PRODUCT) {
@@ -757,7 +758,7 @@ function updateCatalogDebug({ matchedCount = null, totalCount = null, source = n
   if (Number.isFinite(matchedCount) && matchedCount >= 0) {
     catalogMeta.matched = Math.max(0, Math.round(matchedCount));
   }
-  if (source === CATALOG_SOURCES.CATALOG || source === CATALOG_SOURCES.FALLBACK) {
+  if (source && VALID_CATALOG_SOURCES.has(source)) {
     catalogMeta.source = source;
   }
   badge.dataset.source = catalogMeta.source;
@@ -769,8 +770,22 @@ function buildOptionsSignature(items) {
   return items.map((item) => item.id).join('|');
 }
 
+function showProductDropdownUnavailable(message = 'Filters unavailable') {
+  if (!refs.productSelect) {
+    return;
+  }
+  populateFilterDropdown(refs.productSelect, [], { emptyMessage: message, preserveValue: false });
+  refs.productSelect.dataset.catalogReady = '0';
+  pendingProductId = '';
+}
+
 function renderProductOptions() {
-  if (!refs.productSelect || !catalogItems.length) {
+  if (!refs.productSelect) {
+    return;
+  }
+  if (!catalogItems.length) {
+    showProductDropdownUnavailable();
+    updateCatalogDebug({ matchedCount: 0, totalCount: 0 });
     return;
   }
   const tankGallons = Number.isFinite(state.tankGallons) && state.tankGallons > 0
@@ -781,6 +796,7 @@ function renderProductOptions() {
   const items = matchCount ? filteredForTank : catalogItems.slice();
   updateCatalogDebug({ matchedCount: matchCount, totalCount: catalogItems.length });
   if (!items.length) {
+    showProductDropdownUnavailable('Filters unavailable');
     return;
   }
   const signature = buildOptionsSignature(items);
@@ -791,36 +807,39 @@ function renderProductOptions() {
   lastOptionsSignature = signature;
   const selectEl = refs.productSelect;
   const previousValue = pendingProductId || selectEl.value || '';
-  selectEl.innerHTML = '';
-  const placeholder = document.createElement('option');
-  placeholder.value = '';
-  placeholder.textContent = '— Select a product —';
-  selectEl.appendChild(placeholder);
-  items.forEach((item) => {
-    const option = document.createElement('option');
-    option.value = item.id;
-    option.textContent = formatProductOption(item);
-    if (Number.isFinite(item.minGallons)) {
-      option.dataset.minGallons = String(Math.max(0, Math.round(item.minGallons)));
-    }
-    if (Number.isFinite(item.maxGallons)) {
-      option.dataset.maxGallons = item.maxGallons === Infinity
-        ? 'Infinity'
-        : String(Math.max(0, Math.round(item.maxGallons)));
-    }
-    if (Number.isFinite(item.gphRated) && item.gphRated > 0) {
-      option.dataset.gph = String(Math.round(item.gphRated));
-    }
-    if (typeof item.type === 'string' && item.type) {
-      option.dataset.filterType = item.type;
-    }
-    selectEl.appendChild(option);
+  const result = populateFilterDropdown(selectEl, items, {
+    placeholder: '— Select a product —',
+    placeholderValue: '',
+    selectedValue: previousValue,
+    mapOption: (item) => {
+      const dataset = {};
+      if (Number.isFinite(item.minGallons)) {
+        dataset.minGallons = String(Math.max(0, Math.round(item.minGallons)));
+      }
+      if (Number.isFinite(item.maxGallons)) {
+        dataset.maxGallons = item.maxGallons === Infinity
+          ? 'Infinity'
+          : String(Math.max(0, Math.round(item.maxGallons)));
+      }
+      if (Number.isFinite(item.gphRated) && item.gphRated > 0) {
+        dataset.gph = String(Math.round(item.gphRated));
+      }
+      if (typeof item.type === 'string' && item.type) {
+        dataset.filterType = item.type;
+      }
+      return {
+        value: item.id,
+        label: formatProductOption(item),
+        dataset,
+      };
+    },
   });
-  if (previousValue) {
-    selectEl.value = previousValue;
-    if (selectEl.value !== previousValue) {
-      pendingProductId = '';
-    }
+  if (!result.hasOptions) {
+    showProductDropdownUnavailable('Filters unavailable');
+    return;
+  }
+  if (previousValue && selectEl.value !== previousValue) {
+    pendingProductId = '';
   }
   selectEl.dataset.catalogReady = '1';
 }
@@ -883,13 +902,8 @@ async function loadCatalog() {
   if (catalogPromise) {
     return catalogPromise;
   }
-  const applyCatalogPayload = (payload) => {
-    const source = payload?.source === CATALOG_SOURCES.CATALOG
-      ? CATALOG_SOURCES.CATALOG
-      : CATALOG_SOURCES.FALLBACK;
-    const rawItems = Array.isArray(payload?.items) ? payload.items : [];
-    const normalized = rawItems.length ? sortByTypeBrandGph(rawItems) : sortByTypeBrandGph(BIG_FALLBACK_LIST);
-    const resolvedSource = rawItems.length ? source : CATALOG_SOURCES.FALLBACK;
+  const applyCatalogItems = (items, source) => {
+    const normalized = sortByTypeBrandGph(Array.isArray(items) ? items : []);
     catalogItems = normalized.slice();
     catalog = new Map();
     catalogItems.forEach((item) => {
@@ -898,19 +912,26 @@ async function loadCatalog() {
       }
     });
     lastOptionsSignature = '';
-    updateCatalogDebug({ source: resolvedSource, totalCount: catalogItems.length, matchedCount: 0 });
+    updateCatalogDebug({ source, totalCount: catalogItems.length, matchedCount: 0 });
     renderProductOptions();
     return catalog;
   };
 
-  catalogPromise = fetchFilterCatalog()
-    .then((result) => applyCatalogPayload(result))
+    catalogPromise = fetchFilterCatalog()
+      .then((result) => {
+        const source = result?.source && VALID_CATALOG_SOURCES.has(result.source)
+          ? result.source
+          : CATALOG_SOURCES.FALLBACK;
+      const items = Array.isArray(result?.items) ? result.items : [];
+      if (!items.length) {
+        showProductDropdownUnavailable();
+      }
+      return applyCatalogItems(items, items.length ? source : CATALOG_SOURCES.FALLBACK);
+    })
     .catch((error) => {
-      console.warn('[proto-filtration] falling back to embedded catalog:', error);
-      return applyCatalogPayload({
-        source: CATALOG_SOURCES.FALLBACK,
-        items: BIG_FALLBACK_LIST,
-      });
+      console.error('[proto-filtration] failed to load filter catalog:', error);
+      showProductDropdownUnavailable('Filters unavailable');
+      return applyCatalogItems([], CATALOG_SOURCES.FALLBACK);
     })
     .finally(() => {
       catalogPromise = null;
