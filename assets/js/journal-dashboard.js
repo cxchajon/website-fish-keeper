@@ -70,7 +70,7 @@
   async function loadData() {
     const fallback = window.__JOURNAL_FALLBACK__ ? JSON.parse(JSON.stringify(window.__JOURNAL_FALLBACK__)) : null;
     try {
-      const response = await fetch('/data/journal.json', { cache: 'no-cache' });
+      const response = await fetch(`/data/journal.json?t=${Date.now()}`, { cache: 'no-cache' });
       if (!response.ok) {
         throw new Error('Request failed');
       }

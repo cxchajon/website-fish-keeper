@@ -85,3 +85,7 @@ Next: Hook date controls to fetch previous month slice when backend is ready.
 Scope: Add 10/28 entry to JSON/CSV and render on /journal.html.
 Result: Data updated; dashboard will pick up on next fetch.
 Next: None.
+[2025-10-29 | Journal | Add daily log]
+Scope: Add 10/29 feeding/test/dosing entry.
+Result: Data updated, dashboard auto-synced via cache-buster.
+Next: None.

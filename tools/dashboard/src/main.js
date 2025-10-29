@@ -63,7 +63,7 @@ async function ensureMonthLoaded(month) {
   if (!state.monthCache.has(month)) {
     try {
       updateState({ loading: true, error: null });
-      const response = await fetch(`/data/journal/${month}.json`, { cache: 'no-store' });
+      const response = await fetch(`/data/journal/${month}.json?t=${Date.now()}`, { cache: 'no-store' });
       if (!response.ok) throw new Error(`Failed to load journal month ${month}`);
       const entries = await response.json();
       state.monthCache.set(month, entries);
@@ -81,7 +81,7 @@ async function ensureMasterData() {
   if (state.masterData || state.masterLoading) return;
   state.masterLoading = true;
   try {
-    const response = await fetch('/data/journal.json', { cache: 'no-store' });
+    const response = await fetch(`/data/journal.json?t=${Date.now()}`, { cache: 'no-store' });
     if (!response.ok) throw new Error('Failed to load trailing journal entries');
     state.masterData = await response.json();
   } catch (error) {
