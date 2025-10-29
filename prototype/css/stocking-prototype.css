@@ -966,3 +966,78 @@ body.sa-proto-modal-open {
 .popover-panel,[role="dialog"].popover{position:fixed;z-index:10020}
 .popover-close{inline-size:2.25rem;block-size:2.25rem;border:0;border-radius:.5rem;background:rgba(255,255,255,.08);color:inherit;cursor:pointer}
 .popover-close + .popover-close{display:none}
+
+/* Crosscheck UI fix — Oct 2025: filter chips overflow */
+.proto-stock .fp-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  align-items: flex-start;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.proto-stock .fp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.proto-stock .fp-chip .proto-filter-chip__icon {
+  flex: 0 0 auto;
+}
+
+.proto-stock .fp-chip__label {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.proto-stock .fp-chip__badge {
+  flex: 0 0 auto;
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 2px 6px;
+  border-radius: 6px;
+  opacity: 0.9;
+}
+
+.proto-stock .fp-chip__close {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: inherit;
+}
+
+.proto-stock .fp-chip__close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 0;
+}
+
+@media (max-width: 480px) {
+  .proto-stock .fp-chip {
+    padding: 6px 8px;
+  }
+
+  .proto-stock .fp-chip__badge {
+    font-size: 11px;
+  }
+}
+
+.proto-stock .filter-status {
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  margin-bottom: 8px;
+}

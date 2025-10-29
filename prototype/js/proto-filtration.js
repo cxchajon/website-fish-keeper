@@ -518,10 +518,11 @@ function renderChips() {
     return;
   }
   state.filters.forEach((item) => {
-    const chip = document.createElement('div');
-    chip.className = 'proto-filter-chip';
+    const chip = document.createElement('span');
+    chip.className = 'proto-filter-chip fp-chip';
     chip.dataset.filterId = item.id ?? '';
     chip.dataset.source = item.source;
+    chip.setAttribute('role', 'listitem');
 
     const icon = document.createElement('span');
     icon.className = 'proto-filter-chip__icon';
@@ -529,16 +530,18 @@ function renderChips() {
     icon.textContent = ICONS[item.source] || '⚙️';
 
     const label = document.createElement('span');
-    label.className = 'proto-filter-chip__label';
+    label.className = 'proto-filter-chip__label fp-chip__label';
     label.textContent = item.label;
+    label.setAttribute('title', item.label);
 
     const gph = document.createElement('span');
-    gph.className = 'proto-filter-chip__gph';
-    gph.textContent = `${formatGph(item.gph)} GPH`;
+    gph.className = 'proto-filter-chip__gph fp-chip__badge';
+    gph.setAttribute('aria-hidden', 'true');
+    gph.innerHTML = `${formatGph(item.gph)}&nbsp;GPH`;
 
     const remove = document.createElement('button');
     remove.type = 'button';
-    remove.className = 'proto-filter-chip__remove';
+    remove.className = 'proto-filter-chip__remove fp-chip__close';
     remove.dataset.removeFilter = item.id ?? '';
     remove.setAttribute('aria-label', `Remove ${item.label}`);
     remove.textContent = '×';
