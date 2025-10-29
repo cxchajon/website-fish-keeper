@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadFilterCatalog, filterByTank, BIG_FALLBACK_LIST } from '../js/catalog-loader.js';
+import { loadFilterCatalog, filterByTank } from '../js/catalog-loader.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,22 +20,32 @@ async function createFsFetch() {
   };
 }
 
-test('catalog loads with nonzero items (either JSON or fallback)', async () => {
+async function loadCatalogItems() {
   const result = await loadFilterCatalog({
     fetchImpl: createFsFetch,
   });
+  return result;
+}
+
+test('catalog loads with nonzero items (either JSON or fallback)', async () => {
+  const result = await loadCatalogItems();
   assert.ok(result && typeof result === 'object', 'loadFilterCatalog should resolve to an object payload');
   assert.ok(Array.isArray(result.items), 'payload should include an items array');
   assert.ok(result.items.length > 20, 'catalog should include more than 20 entries');
+  assert.ok(
+    ['NETWORK', 'CACHE', 'FALLBACK'].includes(result.source),
+    'payload should include a recognized source tag',
+  );
   assert.ok(
     result.items.every((item) => typeof item.id === 'string' && item.id && Number.isFinite(item.gphRated)),
     'all catalog items should include id and numeric gphRated',
   );
 });
 
-test('size filtering differs across tanks', () => {
-  const smallTank = filterByTank(BIG_FALLBACK_LIST, 10);
-  const mediumTank = filterByTank(BIG_FALLBACK_LIST, 40);
+test('size filtering differs across tanks', async () => {
+  const { items } = await loadCatalogItems();
+  const smallTank = filterByTank(items, 10);
+  const mediumTank = filterByTank(items, 40);
   assert.notStrictEqual(
     smallTank.length,
     mediumTank.length,
@@ -43,9 +53,10 @@ test('size filtering differs across tanks', () => {
   );
 });
 
-test('sponge typed items exist', () => {
+test('sponge typed items exist', async () => {
+  const { items } = await loadCatalogItems();
   assert.ok(
-    BIG_FALLBACK_LIST.some((item) => item.type === 'SPONGE'),
-    'fallback catalog should include sponge filters',
+    items.some((item) => item.type === 'SPONGE'),
+    'catalog should include sponge filters',
   );
 });

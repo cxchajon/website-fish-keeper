@@ -5,7 +5,7 @@
   const FILTER_TYPE_SESSION_KEY = 'ttg:filter_type';
   const FILTER_GPH_SESSION_KEY = 'ttg:rated_gph';
   const FILTER_QUERY_KEY = 'filter_id';
-  const FILTER_CATALOG_URL = '/data/filters.json';
+  const GEAR_DATA_MODULE_PATH = '/js/gear-data.js';
   const CYCLING_COACH_URL = '/params.html';
   const TANK_QUERY_KEYS = ['tank_g', 'tank', 'size'];
   const INCH_TO_CM = 2.54;
@@ -39,6 +39,7 @@
 
   let filterCatalog = [];
   let filterCatalogPromise = null;
+  let gearDataModulePromise = null;
 
   const DATA_SECTION_ALIASES = {
     heaters: 'heaters',
@@ -279,16 +280,28 @@
     }
   }
 
+  function loadGearDataModule(){
+    if (gearDataModulePromise) {
+      return gearDataModulePromise;
+    }
+    gearDataModulePromise = import(GEAR_DATA_MODULE_PATH)
+      .catch((error) => {
+        gearDataModulePromise = null;
+        throw error;
+      });
+    return gearDataModulePromise;
+  }
+
   function loadFilterCatalog(){
     if (filterCatalogPromise) {
       return filterCatalogPromise;
     }
-    filterCatalogPromise = fetch(FILTER_CATALOG_URL, { cache: 'no-cache' })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to load filter catalog: ${response.status}`);
+    filterCatalogPromise = loadGearDataModule()
+      .then((module) => {
+        if (!module || typeof module.getGearData !== 'function') {
+          throw new Error('Gear data module unavailable');
         }
-        return response.json();
+        return module.getGearData();
       })
       .then((data) => {
         filterCatalog = Array.isArray(data) ? data : [];

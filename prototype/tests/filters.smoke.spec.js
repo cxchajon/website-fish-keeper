@@ -47,7 +47,7 @@ test('catalog smoke: >30 items and source tagged', async () => {
   assert.ok(Array.isArray(payload.items), 'payload.items should be an array');
   assert.ok(payload.items.length > 30, 'catalog should expose more than 30 items');
   assert.ok(
-    payload.source === 'CATALOG' || payload.source === 'FALLBACK',
+    ['NETWORK', 'CACHE', 'FALLBACK'].includes(payload.source),
     'payload should include a source indicator',
   );
 });
