@@ -212,15 +212,25 @@ export async function loadFilterCatalog(options = {}) {
 
 export function filterByTank(items, gallons) {
   const list = Array.isArray(items) ? items : [];
-  const volume = toNumber(gallons, NaN);
-  if (!Number.isFinite(volume) || volume <= 0) {
-    return list.slice();
+  const g = Number(gallons);
+  const canFilter = Number.isFinite(g) && g > 0;
+  const matched = canFilter
+    ? list.filter((item) => {
+      const minRaw = Number(item?.minGallons ?? 0);
+      const maxRaw = Number(item?.maxGallons ?? 9999);
+      if (!Number.isFinite(minRaw) && !Number.isFinite(maxRaw)) {
+        return true;
+      }
+      const min = Number.isFinite(minRaw) ? minRaw : 0;
+      const max = Number.isFinite(maxRaw) ? maxRaw : 9999;
+      return g >= min && g <= max;
+    })
+    : list.slice();
+  if (typeof console !== 'undefined' && typeof console.info === 'function') {
+    const label = canFilter ? g : 'n/a';
+    console.info(`[FilterCatalog] ${list.length} total, ${matched.length} size-matched for ${label}g`);
   }
-  return list.filter((item) => {
-    const min = Number.isFinite(item.minGallons) ? item.minGallons : 0;
-    const max = Number.isFinite(item.maxGallons) ? item.maxGallons : Infinity;
-    return volume >= min && volume <= max;
-  });
+  return matched;
 }
 
 export function sortByTypeBrandGph(items) {
