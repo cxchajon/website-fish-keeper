@@ -1,6 +1,6 @@
 import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-const CANONICAL_VERSION = '1.4.7';
+const CANONICAL_VERSION = '1.4.8';
 const CANONICAL_SCRIPT_SRC = `/js/footer-loader.js?v=${CANONICAL_VERSION}`;
 const CANONICAL_FOOTER_SRC = `/footer.html?v=${CANONICAL_VERSION}`;
 const ALLOWED_SOCIAL_CLASS_TOKENS = new Set(['social-strip']);

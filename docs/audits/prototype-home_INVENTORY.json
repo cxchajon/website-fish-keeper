@@ -132,13 +132,13 @@
         "module": false
       },
       {
-        "src": "https://thetankguide.com/js/nav.js?v=1.4.7",
+        "src": "https://thetankguide.com/js/nav.js?v=1.4.8",
         "async": false,
         "defer": true,
         "module": false
       },
       {
-        "src": "https://thetankguide.com/js/footer-loader.js?v=1.4.7",
+        "src": "https://thetankguide.com/js/footer-loader.js?v=1.4.8",
         "async": false,
         "defer": true,
         "module": false
