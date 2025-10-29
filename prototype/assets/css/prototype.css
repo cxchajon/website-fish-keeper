@@ -12,3 +12,21 @@
 #filtration-trigger {
   display: none !important;
 }
+
+/* Oct 2025 – Hide Aggression Meter (Prototype only) */
+.proto-stock .meter--aggression,
+.proto-stock .aggression-meter,
+.proto-stock [data-metric="aggression"],
+.proto-stock [data-role="aggression-percent"],
+.proto-stock [data-info="aggression"],
+.proto-stock .env-bar[data-kind="aggression"] {
+  display: none !important;
+}
+
+.proto-stock #env-bars .env-bar + .env-bar {
+  margin-top: 0;
+}
+
+.proto-stock #env-bars .bioagg-card {
+  row-gap: 12px;
+}
