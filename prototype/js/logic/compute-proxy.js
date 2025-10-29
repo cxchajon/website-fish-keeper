@@ -4,15 +4,13 @@ import { getBandColor } from '../../../js/logic/utils.js?orig';
 import { weightedMixFactor } from '../../../js/utils.js?orig';
 import {
   clamp,
+  toNum,
   computeTurnover as computeFilterTurnover,
-  computeEfficiency as computeFilterEfficiency,
-  computeAdjustedBioload,
+  effectiveCapacity,
   computePercent,
-  resolveFilterBaseKey,
-  computeAggregateEfficiency,
-  mapFiltersForEfficiency,
-  MAX_RELIEF,
-  FLOW_DERATE,
+  normalizeFilters,
+  getTotalGPH,
+  MAX_CAPACITY_BONUS,
 } from '../../assets/js/proto-filtration-math.js';
 
 const { computeBioload: baseComputeBioload, buildComputedState: baseBuildComputedState, calcTotalGph } = baseCompute;
@@ -98,125 +96,69 @@ const computeBioloadDetails = ({
   speciesLoad,
   flowGPH,
   totalGPH,
-  totalDeratedGPH,
   capacity,
   typeBlend,
   mixFactor,
   filters,
 }) => {
-  const tankGallons = Math.max(0, Number(gallons || 0));
-  const speciesTotal = Math.max(0, Number(speciesLoad || 0));
-  const loadBase = speciesTotal;
+  const tankGallons = Math.max(0, toNum(gallons));
+  const baseBioload = Math.max(0, toNum(speciesLoad));
+  const baseCapacityInput = toNum(capacity);
+  const baseCapacity = baseCapacityInput > 0 ? baseCapacityInput : tankGallons;
 
-  const normalizedFilters = mapFiltersForEfficiency(filters);
-  const deratedFromFilters = normalizedFilters.reduce((sum, filter) => sum + filter.gph, 0);
-  const ratedFromFilters = normalizedFilters.reduce(
-    (sum, filter) => sum + (Number.isFinite(filter.ratedGph) && filter.ratedGph > 0 ? filter.ratedGph : 0),
-    0,
-  );
-  const totalFromInputRated = Number.isFinite(totalGPH) && totalGPH > 0 ? totalGPH : 0;
-  const totalFromInputDerated = Number.isFinite(totalDeratedGPH) && totalDeratedGPH > 0 ? totalDeratedGPH : 0;
-  const flowInputRated = Number.isFinite(flowGPH) && flowGPH > 0 ? flowGPH : 0;
-  const flowInputDerated = flowInputRated > 0 ? flowInputRated * FLOW_DERATE : 0;
+  const normalizedFilters = normalizeFilters(filters);
+  const { rated: totalRatedFromFilters } = getTotalGPH(normalizedFilters, { normalized: true });
+  const totalRatedFromInput = Math.max(0, toNum(totalGPH));
+  const flowFromInput = Math.max(0, toNum(flowGPH));
+  const totalRatedFlow = totalRatedFromFilters > 0
+    ? totalRatedFromFilters
+    : totalRatedFromInput > 0
+      ? totalRatedFromInput
+      : flowFromInput;
+  const appliedRatedFlow = totalRatedFlow > 0 ? totalRatedFlow : 0;
+  const turnover = appliedRatedFlow > 0 && tankGallons > 0
+    ? computeFilterTurnover(appliedRatedFlow, tankGallons)
+    : 0;
 
-  const totalRatedFlow = ratedFromFilters > 0 ? ratedFromFilters : Math.max(totalFromInputRated, flowInputRated);
-  const totalDeratedFlowBase = deratedFromFilters > 0 ? deratedFromFilters : Math.max(totalFromInputDerated, flowInputDerated);
-  const totalDeratedFlow = totalDeratedFlowBase > 0
-    ? totalDeratedFlowBase
-    : totalRatedFlow > 0
-      ? totalRatedFlow * FLOW_DERATE
-      : 0;
+  const capacityDetails = effectiveCapacity(baseCapacity, normalizedFilters, {
+    includeBreakdown: true,
+    normalized: true,
+    cap: MAX_CAPACITY_BONUS,
+  });
+  const effectiveCap = capacityDetails.effective;
+  const capacityModifier = capacityDetails.modifier;
+  const percent = computePercent(baseBioload, effectiveCap);
 
-  const appliedRatedFlow = Math.max(flowInputRated, totalRatedFlow);
-  const appliedDeratedFlow = appliedRatedFlow > 0 ? appliedRatedFlow * FLOW_DERATE : totalDeratedFlow;
-
-  const ratedForTurnover = totalRatedFlow > 0
-    ? totalRatedFlow
-    : totalDeratedFlow > 0
-      ? totalDeratedFlow / FLOW_DERATE
-      : 0;
-  const turnover = ratedForTurnover > 0 ? computeFilterTurnover(ratedForTurnover, tankGallons) : 0;
-  const fallbackType = resolveTypeBlend({ typeBlend, mixFactor });
-
-  let efficiencyDetails = [];
-  let eff = 0;
-  if (normalizedFilters.length) {
-    const aggregate = computeAggregateEfficiency(normalizedFilters, turnover);
-    efficiencyDetails = aggregate.perFilter;
-    eff = aggregate.total;
-  }
-
-  if ((!normalizedFilters.length || eff <= 0) && turnover > 0) {
-    const blendEff = computeBlendEfficiency({ turnover, typeBlend, mixFactor });
-    if (blendEff > eff) {
-      eff = blendEff;
-      efficiencyDetails = blendEff > 0
-        ? [
-            {
-              id: null,
-              type: resolveFilterBaseKey(fallbackType),
-              source: 'fallback',
-              gph: totalDeratedFlow || appliedDeratedFlow || null,
-              ratedGph: totalRatedFlow || appliedRatedFlow || null,
-              efficiency: blendEff,
-            },
-          ]
-        : [];
-    }
-  }
-
-  eff = clamp(eff, 0, MAX_RELIEF);
-
-  const equipmentFactor = 1 - eff; // Crosscheck Fix — Oct 2025
-  // Bugfix: sponge add raised bioload — Oct 2025
-  const adjustedLoadGE = computeAdjustedBioload(loadBase, eff);
-  const baseCapacity = Number.isFinite(capacity) && capacity > 0 ? capacity : tankGallons;
-  const safeCapacity = Math.max(1, Number(baseCapacity || 0));
-  const percent = computePercent(adjustedLoadGE, safeCapacity);
-
-  if (DEBUG_FILTERS && typeof console !== 'undefined') {
-    const debugFilters = normalizedFilters.map((filter) => ({
-      id: filter.id ?? null,
-      source: filter.source ?? null,
-      type: filter.type,
-      gph: filter.gph,
-      ratedGph: filter.ratedGph ?? null,
-    }));
+  if ((!Number.isFinite(percent) || Number.isNaN(percent)) && typeof console !== 'undefined') {
     try {
-      console.debug('[Proto] Bioload math snapshot', {
+      console.warn('[Filtration] Invalid result — check parsing.', {
         gallons: tankGallons,
-        baseBioload: loadBase,
-        filters: debugFilters,
-        totalFlowGPH: totalDeratedFlow,
-        totalRatedFlowGPH: totalRatedFlow,
-        appliedFlowGPH: appliedDeratedFlow,
-        appliedRatedFlowGPH: appliedRatedFlow,
-        turnover,
-        efficiencyTotal: eff,
-        efficiencyPerFilter: efficiencyDetails,
-        equipmentFactor,
-        effectiveBioload: adjustedLoadGE,
-        percent,
+        baseBioload,
+        baseCapacity,
+        effectiveCapacity: effectiveCap,
       });
     } catch (_error) {
-      // ignore console issues in prototype logging
+      /* noop for console failures */
     }
   }
 
   return {
     gallons: tankGallons,
-    speciesLoad: loadBase,
-    flowGPH: appliedDeratedFlow,
+    speciesLoad: baseBioload,
+    flowGPH: appliedRatedFlow,
     flowRatedGPH: appliedRatedFlow,
-    flowTotalGPH: totalDeratedFlow,
+    flowTotalGPH: totalRatedFlow,
     flowTotalRatedGPH: totalRatedFlow,
-    load: loadBase,
+    load: baseBioload,
     turnoverX: turnover,
-    efficiency: eff,
-    efficiencyDetails,
-    effectiveLoad: adjustedLoadGE,
-    capacity: safeCapacity,
+    efficiency: capacityModifier,
+    efficiencyDetails: capacityDetails.filters,
+    effectiveCapacity: effectiveCap,
+    baseCapacity,
     percent,
+    filters: normalizedFilters,
+    typeBlend,
+    mixFactor,
   };
 };
 
@@ -224,13 +166,7 @@ export const percentBioload = (state) => computeBioloadDetails(state).percent;
 
 export const computeBioloadPercentForTest = (state) => percentBioload(state);
 
-const computeFlowBonus = (gallons, flowGPH) => {
-  const tankGallons = Math.max(0, Number(gallons || 0));
-  const flow = Math.max(0, Number(flowGPH || 0));
-  if (tankGallons <= 0 || flow <= 0) return 0;
-  const turnoverX = flow / tankGallons;
-  return clamp(mapLinear(turnoverX, 5, 10, 0, 0.10), 0, 0.10);
-};
+const computeFlowBonus = () => 0;
 
 const resolveFlowGph = (tank, filterState = {}, raw) => {
   const filtersList = Array.isArray(filterState.filters) ? filterState.filters : [];
@@ -367,17 +303,14 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
   const mixFactor = resolveMixFactor(filterState, raw);
   const typeBlend = resolveTypeBlendInput(filterState, raw);
   const capacity = Number.isFinite(raw?.capacity) ? raw.capacity : null;
-  const totalDeratedFromState = Number.isFinite(filterState?.totalGph) && filterState.totalGph > 0
+  const totalFromState = Number.isFinite(filterState?.totalGph) && filterState.totalGph > 0
     ? filterState.totalGph
     : null;
   const totalRatedFromState = Number.isFinite(filterState?.ratedGph) && filterState.ratedGph > 0
     ? filterState.ratedGph
     : null;
-  const totalRatedForDetails = totalRatedFromState
-    ?? (totalDeratedFromState && totalDeratedFromState > 0 ? totalDeratedFromState / FLOW_DERATE : flowGPH);
-  const totalDeratedForDetails = totalDeratedFromState
-    ?? (totalRatedForDetails && totalRatedForDetails > 0 ? totalRatedForDetails * FLOW_DERATE : 0);
-  const totalGph = totalDeratedForDetails || totalRatedForDetails || 0;
+  const totalRatedForDetails = totalRatedFromState ?? totalFromState ?? flowGPH;
+  const totalGph = totalRatedForDetails && totalRatedForDetails > 0 ? totalRatedForDetails : 0;
   const filtersList = Array.isArray(filterState?.filters) ? filterState.filters : [];
 
   const baseCurrentDetails = computeBioloadDetails({
@@ -385,7 +318,6 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     speciesLoad: raw.currentLoad ?? 0,
     flowGPH: 0,
     totalGPH: totalRatedForDetails,
-    totalDeratedGPH: totalDeratedForDetails,
     capacity,
     typeBlend,
     mixFactor,
@@ -396,7 +328,6 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     speciesLoad: raw.proposed ?? 0,
     flowGPH: 0,
     totalGPH: totalRatedForDetails,
-    totalDeratedGPH: totalDeratedForDetails,
     capacity,
     typeBlend,
     mixFactor,
@@ -407,7 +338,6 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     speciesLoad: raw.currentLoad ?? 0,
     flowGPH,
     totalGPH: totalRatedForDetails,
-    totalDeratedGPH: totalDeratedForDetails,
     capacity,
     typeBlend,
     mixFactor,
@@ -418,7 +348,6 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     speciesLoad: raw.proposed ?? 0,
     flowGPH,
     totalGPH: totalRatedForDetails,
-    totalDeratedGPH: totalDeratedForDetails,
     capacity,
     typeBlend,
     mixFactor,
@@ -444,9 +373,9 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
         : 'ok';
   const text = `${formatBioloadPercent(currentPercentValue)} → ${formatBioloadPercent(proposedPercentValue)} of capacity`;
   const message = turnoverIssue ? 'Turnover below 2× — upgrade filtration' : raw.message;
-  const capBonus = computeFlowBonus(gallons, proposedDetails.flowGPH);
-  const capacityMultiplier = 1 + capBonus;
-  const totalFactor = capacityMultiplier > 0 ? 1 / capacityMultiplier : 1;
+  const capBonus = 0;
+  const capacityMultiplier = 1;
+  const totalFactor = 1;
 
   const resolvedActualGph = proposedDetails.flowGPH ?? resolveActualGph(raw, flowGPH, filterState, tank);
 
@@ -458,6 +387,8 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     capacityMultiplier,
     totalFactor,
     flowFactor: totalFactor,
+    capacityBoost: proposedDetails.efficiency,
+    effectiveCapacity: proposedDetails.effectiveCapacity,
   };
 
   if (raw.flowAdjustment?.mixFactor != null && flowAdjustment.mixFactor == null) {
@@ -474,10 +405,13 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
             ratedGph: totalRatedForDetails,
             turnover: proposedDetails.turnoverX,
             mixFactor,
+            capacityBoost: proposedDetails.efficiency,
             efficiency: proposedDetails.efficiency,
             efficiencyDetails: proposedDetails.efficiencyDetails,
+            capacityDetails: proposedDetails.efficiencyDetails,
+            effectiveCapacity: proposedDetails.effectiveCapacity,
             baseBioload: baseProposedDetails.load,
-            adjustedBioload: proposedDetails.effectiveLoad,
+            adjustedBioload: proposedDetails.load,
             bioloadPercent: proposedPercentValue,
           },
         }),
@@ -504,7 +438,7 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
       turnover: proposedDetails.turnoverX,
       efficiencyTotal: proposedDetails.efficiency,
       efficiencyPerFilter: proposedDetails.efficiencyDetails,
-      effectiveBioload: proposedDetails.effectiveLoad,
+      effectiveCapacity: proposedDetails.effectiveCapacity,
       percent: proposedPercentValue,
     };
     try {
@@ -542,9 +476,10 @@ const patchBioload = (raw, { tank, filterState } = {}) => {
     text,
     message,
     flowAdjustment,
-    // Bugfix: sponge add raised bioload — Oct 2025
-    adjustedCurrentLoad: currentDetails.effectiveLoad,
-    adjustedProposed: proposedDetails.effectiveLoad,
+    adjustedCurrentLoad: currentDetails.load,
+    adjustedProposed: proposedDetails.load,
+    effectiveCapacity: proposedDetails.effectiveCapacity,
+    capacityModifier: proposedDetails.efficiency,
     baseCurrentPercent: baseCurrentPercentValue / 100,
     baseProposedPercent: baseProposedPercentValue / 100,
     baseCurrentPercentValue,

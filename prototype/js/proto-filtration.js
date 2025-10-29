@@ -2,8 +2,10 @@ import { canonicalizeFilterType, weightedMixFactor } from '/js/utils.js';
 import {
   computeTurnover,
   getTotalGPH,
-  computeAggregateEfficiency,
-  mapFiltersForEfficiency,
+  describeFilterCapacity,
+  normalizeFilters,
+  effectiveCapacity,
+  MAX_CAPACITY_BONUS,
 } from '../assets/js/proto-filtration-math.js';
 import {
   loadFilterCatalog as fetchFilterCatalog,
@@ -41,8 +43,10 @@ const state = {
     totalGph: 0,
     ratedGph: 0,
     turnover: 0,
+    capacityBoost: 0,
     efficiency: 0,
     mixFactor: null,
+    capacityDetails: [],
   },
 };
 
@@ -269,7 +273,7 @@ function computeFilterStats(appFilters) {
     ...filter,
     resolvedType: resolveEfficiencyType(filter.kind ?? filter.type),
   }));
-  const { rated: totalRatedGph, derated: totalDeratedGph } = getTotalGPH(filtersForCalc);
+  const { rated: totalRatedGph } = getTotalGPH(filtersForCalc);
   const mixFactorRaw = totalRatedGph > 0
     ? filtersForCalc.reduce((sum, filter) => {
         const gph = Number(filter?.rated_gph ?? filter?.gph);
@@ -284,11 +288,19 @@ function computeFilterStats(appFilters) {
   const mixFactor = Number.isFinite(mixFactorRaw) && mixFactorRaw > 0 ? mixFactorRaw : fallbackFactor;
   const gallons = state.tankGallons;
   const turnoverValue = totalRatedGph > 0 ? computeTurnover(totalRatedGph, gallons) : 0;
-  const normalizedForEfficiency = turnoverValue > 0 ? mapFiltersForEfficiency(filtersForCalc) : [];
-  const { total: efficiency, perFilter: efficiencyDetails } =
-    turnoverValue > 0 ? computeAggregateEfficiency(normalizedForEfficiency, turnoverValue) : { total: 0, perFilter: [] };
+  const normalized = normalizeFilters(filtersForCalc);
+  const { total: capacityBoost, breakdown } = describeFilterCapacity(normalized, { normalized: true, cap: MAX_CAPACITY_BONUS });
   const turnover = totalRatedGph > 0 ? turnoverValue : null;
-  return { totalGph: totalDeratedGph, ratedGph: totalRatedGph, mixFactor, turnover, efficiency, efficiencyDetails };
+  return {
+    totalGph: totalRatedGph,
+    ratedGph: totalRatedGph,
+    mixFactor,
+    turnover,
+    capacityBoost,
+    efficiency: capacityBoost,
+    efficiencyDetails: breakdown,
+    capacityDetails: breakdown,
+  };
 }
 
 function logFilterDebug(payload) {
@@ -313,6 +325,10 @@ function logFilterDebug(payload) {
     console.log('ratedGPH:', payload.ratedGph);
     console.log('turnover:', payload.turnover);
     console.log('mixFactor:', payload.mixFactor);
+    console.log('capacityBoost:', payload.capacityBoost ?? payload.efficiency ?? null);
+    if (payload.effectiveCapacity != null) {
+      console.log('effectiveCapacity:', payload.effectiveCapacity);
+    }
     if (payload.baseBioload != null) {
       console.log('baseBioload:', payload.baseBioload);
     }
@@ -336,7 +352,10 @@ if (DEBUG_FILTERS && typeof window !== 'undefined') {
       totalGph: detail.totalGph ?? null,
       turnover: detail.turnover ?? null,
       mixFactor: detail.mixFactor ?? null,
+      capacityBoost: detail.capacityBoost ?? detail.efficiency ?? null,
       efficiency: detail.efficiency ?? null,
+      capacityDetails: detail.capacityDetails ?? detail.efficiencyDetails ?? null,
+      effectiveCapacity: detail.effectiveCapacity ?? null,
       baseBioload: detail.baseBioload ?? null,
       adjustedBioload: detail.adjustedBioload ?? null,
       bioloadPercent: detail.bioloadPercent ?? null,
@@ -349,8 +368,10 @@ function applyFiltersToApp() {
   if (!appState) return;
   const appFilters = state.filters.map((item) => toAppFilter(item));
   const normalizedFilters = appFilters.map((entry) => ({ ...entry }));
-  const { totalGph, ratedGph, mixFactor, turnover, efficiency, efficiencyDetails } = computeFilterStats(normalizedFilters);
-  state.totals = { totalGph, ratedGph, mixFactor, turnover, efficiency, efficiencyDetails };
+  const { totalGph, ratedGph, mixFactor, turnover, capacityBoost, efficiency, efficiencyDetails, capacityDetails } = computeFilterStats(normalizedFilters);
+  state.totals = { totalGph, ratedGph, mixFactor, turnover, capacityBoost, efficiency, efficiencyDetails, capacityDetails };
+  const baseCapacityGallons = Number.isFinite(state.tankGallons) && state.tankGallons > 0 ? state.tankGallons : 0;
+  const effectiveCapacityValue = effectiveCapacity(baseCapacityGallons, normalizedFilters, { normalized: true, cap: MAX_CAPACITY_BONUS });
   appState.filters = normalizedFilters;
   const productFilters = state.filters.filter((item) => item.source === FILTER_SOURCES.PRODUCT);
   const primaryProduct = productFilters.length ? productFilters[productFilters.length - 1] : null;
@@ -367,7 +388,9 @@ function applyFiltersToApp() {
   appState.actualGph = Number.isFinite(totalGph) && totalGph > 0 ? totalGph : null;
   appState.mixFactor = Number.isFinite(mixFactor) && mixFactor > 0 ? mixFactor : null;
   appState.turnover = Number.isFinite(turnover) && turnover > 0 ? turnover : null;
+  appState.capacityBoost = Number.isFinite(capacityBoost) && capacityBoost > 0 ? capacityBoost : null;
   appState.efficiency = Number.isFinite(efficiency) && efficiency > 0 ? efficiency : null;
+  appState.effectiveCapacity = Number.isFinite(effectiveCapacityValue) && effectiveCapacityValue > 0 ? effectiveCapacityValue : null;
   const snapshotFilters = normalizedFilters.map((entry) => ({ ...entry }));
   appState.filtering = {
     filters: snapshotFilters,
@@ -375,12 +398,17 @@ function applyFiltersToApp() {
     ratedGph,
     turnover,
     mixFactor,
+    capacityBoost,
     efficiency,
+    effectiveCapacity: effectiveCapacityValue,
     efficiencyDetails: Array.isArray(state.totals?.efficiencyDetails)
       ? state.totals.efficiencyDetails.map((entry) => ({ ...entry }))
       : [],
+    capacityDetails: Array.isArray(state.totals?.capacityDetails)
+      ? state.totals.capacityDetails.map((entry) => ({ ...entry }))
+      : [],
   };
-  logFilterDebug({ filters: snapshotFilters, totalGph, ratedGph, turnover, mixFactor, efficiency });
+  logFilterDebug({ filters: snapshotFilters, totalGph, ratedGph, turnover, mixFactor, capacityBoost, effectiveCapacity: effectiveCapacityValue });
   persistAppFilters(appFilters);
   scheduleRecompute();
 }
@@ -560,7 +588,11 @@ function renderSummary() {
   const stats = computeFilterStats(appFilters);
   state.totals = stats;
   const displayGph = Number.isFinite(stats.ratedGph) && stats.ratedGph > 0 ? stats.ratedGph : stats.totalGph;
+  const boostPercent = Number.isFinite(stats.capacityBoost) && stats.capacityBoost > 0 ? stats.capacityBoost * 100 : 0;
+  const boostLabel = boostPercent > 0 ? `Capacity boost: +${Math.round(boostPercent)}% (RBC)` : 'Capacity boost: +0% (RBC)';
   refs.summary.textContent = `Filtration: ${formatGph(displayGph)} GPH • ${formatTurnover(stats.turnover)}×/h`;
+  refs.summary.setAttribute('title', boostLabel);
+  refs.summary.dataset.capacityBoost = String(Math.max(0, Math.round(boostPercent)));
 }
 
 function syncSelectValue() {
@@ -732,7 +764,10 @@ window.renderFiltration = function renderFiltration() {
   const chipbar = document.querySelector('.filtration-chipbar');
   if (chipbar) {
     const chipGph = Number.isFinite(stats.ratedGph) && stats.ratedGph > 0 ? stats.ratedGph : stats.totalGph;
+    const boostPercent = Number.isFinite(stats.capacityBoost) && stats.capacityBoost > 0 ? Math.round(stats.capacityBoost * 100) : 0;
     chipbar.dataset.total = `${formatGph(chipGph)} GPH • ${formatTurnover(stats.turnover)}×/h`;
+    chipbar.dataset.capacityBoost = `${Math.max(0, boostPercent)}%`;
+    chipbar.setAttribute('title', boostPercent > 0 ? `Capacity boost: +${boostPercent}% (RBC)` : 'Capacity boost: +0% (RBC)');
   }
 };
 
