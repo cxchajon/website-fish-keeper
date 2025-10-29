@@ -4,9 +4,9 @@ import {
   getTotalGPH,
   describeFilterCapacity,
   normalizeFilters,
-  effectiveCapacity,
   MAX_CAPACITY_BONUS,
 } from '../assets/js/proto-filtration-math.js';
+import { computeCapacitySnapshot } from '../assets/js/proto-filtration.js';
 import {
   loadFilterCatalog as fetchFilterCatalog,
   filterByTank as filterCatalogByTank,
@@ -268,28 +268,45 @@ function scheduleRecompute() {
   });
 }
 
-function computeFilterStats(appFilters) {
-  const filtersForCalc = appFilters.map((filter) => ({
-    ...filter,
-    resolvedType: resolveEfficiencyType(filter.kind ?? filter.type),
-  }));
-  const { rated: totalRatedGph } = getTotalGPH(filtersForCalc);
+function computeFilterStats(appFilters, { gallons = state.tankGallons, capacityDetails = null } = {}) {
+  const baseList = Array.isArray(appFilters) ? appFilters.map((filter) => ({ ...filter })) : [];
+  const normalizedFilters = normalizeFilters(baseList);
+  const resolvedCapacity = capacityDetails
+    ? {
+        total: Number.isFinite(capacityDetails.capacityModifier) ? capacityDetails.capacityModifier : 0,
+        breakdown: Array.isArray(capacityDetails.filters)
+          ? capacityDetails.filters.map((entry) => ({ ...entry }))
+          : [],
+      }
+    : describeFilterCapacity(normalizedFilters, {
+        normalized: true,
+        cap: MAX_CAPACITY_BONUS,
+      });
+  const capacityBoost = resolvedCapacity.total;
+  const breakdown = resolvedCapacity.breakdown;
+  const { rated: totalRatedGph } = getTotalGPH(normalizedFilters, { normalized: true });
   const mixFactorRaw = totalRatedGph > 0
-    ? filtersForCalc.reduce((sum, filter) => {
-        const gph = Number(filter?.rated_gph ?? filter?.gph);
-        if (!Number.isFinite(gph) || gph <= 0) {
+    ? normalizedFilters.reduce((sum, filter) => {
+        const rated = Number(filter?.ratedGph ?? filter?.rated_gph ?? filter?.gph ?? 0);
+        if (!Number.isFinite(rated) || rated <= 0) {
           return sum;
         }
-        const weight = TYPE_WEIGHT[filter.resolvedType] ?? TYPE_WEIGHT.HOB;
-        return sum + weight * (gph / totalRatedGph);
+        const resolved = resolveEfficiencyType(filter?.kind ?? filter?.type);
+        const weight = TYPE_WEIGHT[resolved] ?? TYPE_WEIGHT.HOB;
+        return sum + weight * (rated / totalRatedGph);
       }, 0)
     : null;
-  const fallbackFactor = weightedMixFactor(appFilters, totalRatedGph);
+  const fallbackPayload = normalizedFilters.map((filter) => ({
+    ...filter,
+    rated_gph: Number(filter?.ratedGph ?? filter?.rated_gph ?? filter?.gph ?? 0) || 0,
+    type: canonicalizeFilterType(filter?.type ?? filter?.kind ?? filter?.filterType),
+  }));
+  const fallbackFactor = weightedMixFactor(fallbackPayload, totalRatedGph);
   const mixFactor = Number.isFinite(mixFactorRaw) && mixFactorRaw > 0 ? mixFactorRaw : fallbackFactor;
-  const gallons = state.tankGallons;
-  const turnoverValue = totalRatedGph > 0 ? computeTurnover(totalRatedGph, gallons) : 0;
-  const normalized = normalizeFilters(filtersForCalc);
-  const { total: capacityBoost, breakdown } = describeFilterCapacity(normalized, { normalized: true, cap: MAX_CAPACITY_BONUS });
+  const volume = Number.isFinite(gallons) && gallons > 0 ? gallons : state.tankGallons;
+  const turnoverValue = totalRatedGph > 0 && Number.isFinite(volume) && volume > 0
+    ? computeTurnover(totalRatedGph, volume)
+    : 0;
   const turnover = totalRatedGph > 0 ? turnoverValue : null;
   return {
     totalGph: totalRatedGph,
@@ -298,8 +315,9 @@ function computeFilterStats(appFilters) {
     turnover,
     capacityBoost,
     efficiency: capacityBoost,
-    efficiencyDetails: breakdown,
-    capacityDetails: breakdown,
+    efficiencyDetails: breakdown.map((entry) => ({ ...entry })),
+    capacityDetails: breakdown.map((entry) => ({ ...entry })),
+    normalizedFilters: normalizedFilters.map((entry) => ({ ...entry })),
   };
 }
 
@@ -367,12 +385,33 @@ function applyFiltersToApp() {
   const appState = window.appState;
   if (!appState) return;
   const appFilters = state.filters.map((item) => toAppFilter(item));
-  const normalizedFilters = appFilters.map((entry) => ({ ...entry }));
-  const { totalGph, ratedGph, mixFactor, turnover, capacityBoost, efficiency, efficiencyDetails, capacityDetails } = computeFilterStats(normalizedFilters);
-  state.totals = { totalGph, ratedGph, mixFactor, turnover, capacityBoost, efficiency, efficiencyDetails, capacityDetails };
   const baseCapacityGallons = Number.isFinite(state.tankGallons) && state.tankGallons > 0 ? state.tankGallons : 0;
-  const effectiveCapacityValue = effectiveCapacity(baseCapacityGallons, normalizedFilters, { normalized: true, cap: MAX_CAPACITY_BONUS });
-  appState.filters = normalizedFilters;
+  const capacitySnapshot = computeCapacitySnapshot(baseCapacityGallons, appFilters);
+  const {
+    totalGph,
+    ratedGph,
+    mixFactor,
+    turnover,
+    capacityBoost,
+    efficiencyDetails,
+    capacityDetails,
+    normalizedFilters,
+  } = computeFilterStats(capacitySnapshot.normalizedFilters, {
+    gallons: baseCapacityGallons,
+    capacityDetails: capacitySnapshot,
+  });
+  state.totals = {
+    totalGph,
+    ratedGph,
+    mixFactor,
+    turnover,
+    capacityBoost,
+    efficiency: capacityBoost,
+    efficiencyDetails,
+    capacityDetails,
+  };
+  const effectiveCapacityValue = capacitySnapshot.effectiveCapacity;
+  appState.filters = normalizedFilters.map((entry) => ({ ...entry }));
   const productFilters = state.filters.filter((item) => item.source === FILTER_SOURCES.PRODUCT);
   const primaryProduct = productFilters.length ? productFilters[productFilters.length - 1] : null;
   if (primaryProduct) {
@@ -389,7 +428,7 @@ function applyFiltersToApp() {
   appState.mixFactor = Number.isFinite(mixFactor) && mixFactor > 0 ? mixFactor : null;
   appState.turnover = Number.isFinite(turnover) && turnover > 0 ? turnover : null;
   appState.capacityBoost = Number.isFinite(capacityBoost) && capacityBoost > 0 ? capacityBoost : null;
-  appState.efficiency = Number.isFinite(efficiency) && efficiency > 0 ? efficiency : null;
+  appState.efficiency = Number.isFinite(capacityBoost) && capacityBoost > 0 ? capacityBoost : null;
   appState.effectiveCapacity = Number.isFinite(effectiveCapacityValue) && effectiveCapacityValue > 0 ? effectiveCapacityValue : null;
   const snapshotFilters = normalizedFilters.map((entry) => ({ ...entry }));
   appState.filtering = {
@@ -399,7 +438,7 @@ function applyFiltersToApp() {
     turnover,
     mixFactor,
     capacityBoost,
-    efficiency,
+    efficiency: capacityBoost,
     effectiveCapacity: effectiveCapacityValue,
     efficiencyDetails: Array.isArray(state.totals?.efficiencyDetails)
       ? state.totals.efficiencyDetails.map((entry) => ({ ...entry }))
@@ -585,8 +624,22 @@ function renderChips() {
 function renderSummary() {
   if (!refs.summary) return;
   const appFilters = state.filters.map((item) => toAppFilter(item));
-  const stats = computeFilterStats(appFilters);
-  state.totals = stats;
+  const baseCapacityGallons = Number.isFinite(state.tankGallons) && state.tankGallons > 0 ? state.tankGallons : 0;
+  const capacitySnapshot = computeCapacitySnapshot(baseCapacityGallons, appFilters);
+  const stats = computeFilterStats(capacitySnapshot.normalizedFilters, {
+    gallons: baseCapacityGallons,
+    capacityDetails: capacitySnapshot,
+  });
+  state.totals = {
+    totalGph: stats.totalGph,
+    ratedGph: stats.ratedGph,
+    mixFactor: stats.mixFactor,
+    turnover: stats.turnover,
+    capacityBoost: stats.capacityBoost,
+    efficiency: stats.capacityBoost,
+    efficiencyDetails: stats.efficiencyDetails,
+    capacityDetails: stats.capacityDetails,
+  };
   const displayGph = Number.isFinite(stats.ratedGph) && stats.ratedGph > 0 ? stats.ratedGph : stats.totalGph;
   const boostPercent = Number.isFinite(stats.capacityBoost) && stats.capacityBoost > 0 ? stats.capacityBoost * 100 : 0;
   const boostLabel = boostPercent > 0 ? `Capacity boost: +${Math.round(boostPercent)}% (RBC)` : 'Capacity boost: +0% (RBC)';
@@ -759,8 +812,21 @@ window.renderFiltration = function renderFiltration() {
     state.tankGallons = tankGallons;
   }
   const appFilters = state.filters.map((item) => toAppFilter(item));
-  const stats = computeFilterStats(appFilters);
-  state.totals = stats;
+  const capacitySnapshot = computeCapacitySnapshot(state.tankGallons, appFilters);
+  const stats = computeFilterStats(capacitySnapshot.normalizedFilters, {
+    gallons: state.tankGallons,
+    capacityDetails: capacitySnapshot,
+  });
+  state.totals = {
+    totalGph: stats.totalGph,
+    ratedGph: stats.ratedGph,
+    mixFactor: stats.mixFactor,
+    turnover: stats.turnover,
+    capacityBoost: stats.capacityBoost,
+    efficiency: stats.capacityBoost,
+    efficiencyDetails: stats.efficiencyDetails,
+    capacityDetails: stats.capacityDetails,
+  };
   const chipbar = document.querySelector('.filtration-chipbar');
   if (chipbar) {
     const chipGph = Number.isFinite(stats.ratedGph) && stats.ratedGph > 0 ? stats.ratedGph : stats.totalGph;
