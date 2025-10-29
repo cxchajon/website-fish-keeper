@@ -280,6 +280,28 @@
       gap: 6px;
     }
 
+    .filter-catalog-debug {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      letter-spacing: 0.01em;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 6px 12px;
+      box-shadow: 0 8px 18px -14px var(--shadow);
+    }
+
+    .filter-catalog-debug[data-source='CATALOG'] {
+      color: #b7f5d0;
+    }
+
+    .filter-catalog-debug[data-source='FALLBACK'] {
+      color: #ffd9b5;
+    }
+
     .field-label-row .info-btn,
     .filter-turnover-label .info-btn {
       --info-btn-visible: 30px;
@@ -1197,6 +1219,13 @@
                   </div>
                 </div>
               </div>
+              <div
+                class="filter-catalog-debug"
+                id="filter-catalog-debug"
+                role="status"
+                aria-live="polite"
+                data-source="FALLBACK"
+              >Catalog source: FALLBACK • Loaded: 0 | Size-matched: 0</div>
               <div class="proto-inline-controls" data-role="filter-product-controls">
                 <div class="select-wrap proto-inline-controls__field">
                   <select id="filter-product" name="filter-product" aria-describedby="filter-product-note">
