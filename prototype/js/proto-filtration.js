@@ -10,6 +10,7 @@ import {
   filterByTank as filterCatalogByTank,
   sortByTypeBrandGph,
   BIG_FALLBACK_LIST,
+  CATALOG_SOURCES,
 } from './catalog-loader.js';
 
 const DEBUG_FILTERS = Boolean(window?.TTG?.DEBUG_FILTERS);
@@ -59,6 +60,7 @@ const refs = {
   chips: null,
   emptyState: null,
   summary: null,
+  catalogDebug: null,
 };
 
 let catalog = new Map();
@@ -71,6 +73,12 @@ let pendingProductId = '';
 let productStatusMessage = '';
 let productStatusTimer = 0;
 let lastOptionsSignature = '';
+
+const catalogMeta = {
+  source: CATALOG_SOURCES.FALLBACK,
+  total: BIG_FALLBACK_LIST.length,
+  matched: 0,
+};
 
 function normalizeSource(value) {
   if (value === FILTER_SOURCES.PRODUCT) {
@@ -414,6 +422,9 @@ function ensureRefs() {
   if (!refs.productLabel) {
     refs.productLabel = document.getElementById('filter-product-label');
   }
+  if (!refs.catalogDebug) {
+    refs.catalogDebug = document.getElementById('filter-catalog-debug');
+  }
   if (!refs.chips) {
     refs.chips = document.querySelector('[data-role="proto-filter-chips"]');
   }
@@ -735,12 +746,22 @@ function findProductById(id) {
   return catalog.get(id) ?? null;
 }
 
-function getCatalogItemsForTank(gallons) {
-  if (!catalogItems.length) {
-    return [];
+function updateCatalogDebug({ matchedCount = null, totalCount = null, source = null } = {}) {
+  const badge = refs.catalogDebug;
+  if (!badge) {
+    return;
   }
-  const filtered = filterCatalogByTank(catalogItems, gallons);
-  return filtered.length ? filtered : catalogItems.slice();
+  if (Number.isFinite(totalCount)) {
+    catalogMeta.total = Math.max(0, Math.round(totalCount));
+  }
+  if (Number.isFinite(matchedCount) && matchedCount >= 0) {
+    catalogMeta.matched = Math.max(0, Math.round(matchedCount));
+  }
+  if (source === CATALOG_SOURCES.CATALOG || source === CATALOG_SOURCES.FALLBACK) {
+    catalogMeta.source = source;
+  }
+  badge.dataset.source = catalogMeta.source;
+  badge.textContent = `Catalog source: ${catalogMeta.source} • Loaded: ${catalogMeta.total} | Size-matched: ${catalogMeta.matched}`;
 }
 
 function buildOptionsSignature(items) {
@@ -755,7 +776,10 @@ function renderProductOptions() {
   const tankGallons = Number.isFinite(state.tankGallons) && state.tankGallons > 0
     ? state.tankGallons
     : getTankGallons();
-  const items = getCatalogItemsForTank(tankGallons);
+  const filteredForTank = filterCatalogByTank(catalogItems, tankGallons);
+  const matchCount = filteredForTank.length;
+  const items = matchCount ? filteredForTank : catalogItems.slice();
+  updateCatalogDebug({ matchedCount: matchCount, totalCount: catalogItems.length });
   if (!items.length) {
     return;
   }
@@ -859,23 +883,34 @@ async function loadCatalog() {
   if (catalogPromise) {
     return catalogPromise;
   }
+  const applyCatalogPayload = (payload) => {
+    const source = payload?.source === CATALOG_SOURCES.CATALOG
+      ? CATALOG_SOURCES.CATALOG
+      : CATALOG_SOURCES.FALLBACK;
+    const rawItems = Array.isArray(payload?.items) ? payload.items : [];
+    const normalized = rawItems.length ? sortByTypeBrandGph(rawItems) : sortByTypeBrandGph(BIG_FALLBACK_LIST);
+    const resolvedSource = rawItems.length ? source : CATALOG_SOURCES.FALLBACK;
+    catalogItems = normalized.slice();
+    catalog = new Map();
+    catalogItems.forEach((item) => {
+      if (item && typeof item.id === 'string' && item.id) {
+        catalog.set(item.id, item);
+      }
+    });
+    lastOptionsSignature = '';
+    updateCatalogDebug({ source: resolvedSource, totalCount: catalogItems.length, matchedCount: 0 });
+    renderProductOptions();
+    return catalog;
+  };
+
   catalogPromise = fetchFilterCatalog()
-    .then((items) => sortByTypeBrandGph(items))
+    .then((result) => applyCatalogPayload(result))
     .catch((error) => {
       console.warn('[proto-filtration] falling back to embedded catalog:', error);
-      return sortByTypeBrandGph(BIG_FALLBACK_LIST);
-    })
-    .then((items) => {
-      catalogItems = items.slice();
-      catalog = new Map();
-      catalogItems.forEach((item) => {
-        if (item && typeof item.id === 'string' && item.id) {
-          catalog.set(item.id, item);
-        }
+      return applyCatalogPayload({
+        source: CATALOG_SOURCES.FALLBACK,
+        items: BIG_FALLBACK_LIST,
       });
-      lastOptionsSignature = '';
-      renderProductOptions();
-      return catalog;
     })
     .finally(() => {
       catalogPromise = null;
@@ -997,6 +1032,7 @@ async function init() {
   if (refs.manualInput) {
     refs.manualInput.removeAttribute('readonly');
   }
+  updateCatalogDebug();
   await loadCatalog();
   hydrateFromAppState();
   attachEventListeners();

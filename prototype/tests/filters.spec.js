@@ -21,13 +21,14 @@ async function createFsFetch() {
 }
 
 test('catalog loads with nonzero items (either JSON or fallback)', async () => {
-  const items = await loadFilterCatalog({
+  const result = await loadFilterCatalog({
     fetchImpl: createFsFetch,
   });
-  assert.ok(Array.isArray(items), 'loadFilterCatalog should resolve to an array');
-  assert.ok(items.length > 20, 'catalog should include more than 20 entries');
+  assert.ok(result && typeof result === 'object', 'loadFilterCatalog should resolve to an object payload');
+  assert.ok(Array.isArray(result.items), 'payload should include an items array');
+  assert.ok(result.items.length > 20, 'catalog should include more than 20 entries');
   assert.ok(
-    items.every((item) => typeof item.id === 'string' && item.id && Number.isFinite(item.gphRated)),
+    result.items.every((item) => typeof item.id === 'string' && item.id && Number.isFinite(item.gphRated)),
     'all catalog items should include id and numeric gphRated',
   );
 });

@@ -7,6 +7,11 @@ import {
 const CATALOG_PATH = '/prototype/assets/data/filters_catalog.json';
 const CACHE_BUSTER = `${FALLBACK_FILTER_CATALOG_VERSION}-${FALLBACK_FILTER_CATALOG_GENERATED_AT || 'fallback'}`;
 
+export const CATALOG_SOURCES = Object.freeze({
+  CATALOG: 'CATALOG',
+  FALLBACK: 'FALLBACK',
+});
+
 const TYPE_ORDER = Object.freeze({
   CANISTER: 0,
   HOB: 1,
@@ -17,7 +22,7 @@ const TYPE_ORDER = Object.freeze({
   OTHER: 6,
 });
 
-let cachedItems = null;
+let cachedResult = null;
 let inflightPromise = null;
 
 function normalizeType(value) {
@@ -112,8 +117,26 @@ const FALLBACK_SANITIZED = Object.freeze(
   sanitizeCatalog(FALLBACK_FILTER_CATALOG).map((item) => Object.freeze({ ...item })),
 );
 
+const FALLBACK_RESULT = Object.freeze({
+  source: CATALOG_SOURCES.FALLBACK,
+  items: FALLBACK_SANITIZED,
+});
+
 function cloneItems(items) {
   return items.map((item) => ({ ...item }));
+}
+
+function cloneResult(result) {
+  if (!result || typeof result !== 'object') {
+    return { source: CATALOG_SOURCES.FALLBACK, items: cloneItems(FALLBACK_SANITIZED) };
+  }
+  const source = result.source === CATALOG_SOURCES.CATALOG
+    ? CATALOG_SOURCES.CATALOG
+    : CATALOG_SOURCES.FALLBACK;
+  const items = Array.isArray(result.items) && result.items.length
+    ? cloneItems(result.items)
+    : cloneItems(FALLBACK_SANITIZED);
+  return { source, items };
 }
 
 function getFetchImplementation(options = {}) {
@@ -145,36 +168,46 @@ async function requestCatalog(fetchImpl) {
   if (!items.length) {
     throw new Error('Empty catalog');
   }
-  return items;
+  return {
+    source: CATALOG_SOURCES.CATALOG,
+    items,
+  };
 }
 
 export async function loadFilterCatalog(options = {}) {
-  if (cachedItems) {
-    return cloneItems(cachedItems);
+  if (cachedResult) {
+    return cloneResult(cachedResult);
   }
   if (inflightPromise) {
     const pending = await inflightPromise;
-    return cloneItems(pending);
+    return cloneResult(pending);
   }
   const fetchImpl = getFetchImplementation(options);
   if (!fetchImpl) {
-    cachedItems = FALLBACK_SANITIZED;
-    return cloneItems(cachedItems);
+    cachedResult = FALLBACK_RESULT;
+    return cloneResult(cachedResult);
   }
   inflightPromise = requestCatalog(fetchImpl)
     .catch((error) => {
       console.warn('[catalog-loader] fetch failed:', error);
-      return FALLBACK_SANITIZED;
+      return FALLBACK_RESULT;
     })
-    .then((items) => {
-      cachedItems = items;
-      return items;
+    .then((result) => {
+      cachedResult = {
+        source: result?.source === CATALOG_SOURCES.CATALOG
+          ? CATALOG_SOURCES.CATALOG
+          : CATALOG_SOURCES.FALLBACK,
+        items: Array.isArray(result?.items) && result.items.length
+          ? sanitizeCatalog(result.items)
+          : FALLBACK_SANITIZED,
+      };
+      return cachedResult;
     })
     .finally(() => {
       inflightPromise = null;
     });
   const resolved = await inflightPromise;
-  return cloneItems(resolved);
+  return cloneResult(resolved);
 }
 
 export function filterByTank(items, gallons) {

@@ -1,7 +1,7 @@
 // Auto-generated fallback catalog for the prototype loader.
 // Derived from prototype/assets/data/filters_catalog.json
 export const FALLBACK_FILTER_CATALOG_VERSION = 1;
-export const FALLBACK_FILTER_CATALOG_GENERATED_AT = "2025-10-28T23:26:15.646Z";
+export const FALLBACK_FILTER_CATALOG_GENERATED_AT = "2025-10-28T23:51:39.138Z";
 export const FALLBACK_FILTER_CATALOG = [
   {
     "id": "aqueon-quietflow-200",
@@ -265,42 +265,6 @@ export const FALLBACK_FILTER_CATALOG = [
     "maxGallons": 75
   },
   {
-    "id": "marineland-penguin-350",
-    "brand": "MarineLand",
-    "name": "MarineLand Penguin 350 BIO-Wheel Filter",
-    "type": "OTHER",
-    "gphRated": 350,
-    "minGallons": 40,
-    "maxGallons": 75
-  },
-  {
-    "id": "seachem-tidal-35-1",
-    "brand": "Seachem",
-    "name": "Seachem Tidal Power Aquarium Filter - 35 Gallon Large Fish Tank Filter, black",
-    "type": "OTHER",
-    "gphRated": 130,
-    "minGallons": 20,
-    "maxGallons": 40
-  },
-  {
-    "id": "seachem-tidal-55-2",
-    "brand": "Seachem",
-    "name": "SeaChem Large Aquarium Fish Tank Filter, Tidal 55 Gallon (200 Liters) by Sicce",
-    "type": "OTHER",
-    "gphRated": 250,
-    "minGallons": 40,
-    "maxGallons": 75
-  },
-  {
-    "id": "seachem-tidal-110",
-    "brand": "Seachem",
-    "name": "SeaChem – Large Aquarium Fish Tank Filter, Tidal 110 Gallon (400 Liters) by Sicce",
-    "type": "OTHER",
-    "gphRated": 450,
-    "minGallons": 55,
-    "maxGallons": 125
-  },
-  {
     "id": "aquaneat-sponge-10",
     "brand": "AQUANEAT",
     "name": "AQUANEAT Single Sponge Filter (Up to 10G)",
@@ -371,5 +335,41 @@ export const FALLBACK_FILTER_CATALOG = [
     "gphRated": 150,
     "minGallons": 20,
     "maxGallons": 40
+  },
+  {
+    "id": "marineland-penguin-350",
+    "brand": "MarineLand",
+    "name": "MarineLand Penguin 350 BIO-Wheel Filter",
+    "type": "OTHER",
+    "gphRated": 350,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "seachem-tidal-35-1",
+    "brand": "Seachem",
+    "name": "Seachem Tidal Power Aquarium Filter - 35 Gallon Large Fish Tank Filter, black",
+    "type": "OTHER",
+    "gphRated": 130,
+    "minGallons": 20,
+    "maxGallons": 40
+  },
+  {
+    "id": "seachem-tidal-55-2",
+    "brand": "Seachem",
+    "name": "SeaChem Large Aquarium Fish Tank Filter, Tidal 55 Gallon (200 Liters) by Sicce",
+    "type": "OTHER",
+    "gphRated": 250,
+    "minGallons": 40,
+    "maxGallons": 75
+  },
+  {
+    "id": "seachem-tidal-110",
+    "brand": "Seachem",
+    "name": "SeaChem – Large Aquarium Fish Tank Filter, Tidal 110 Gallon (400 Liters) by Sicce",
+    "type": "OTHER",
+    "gphRated": 450,
+    "minGallons": 55,
+    "maxGallons": 125
   }
 ];
