@@ -1,6 +1,7 @@
 import { clamp, getBandColor } from './utils.js';
 import { formatCareTagLabel } from './careTags.js';
 import { formatBioloadPercent } from '../bioload.js';
+import { SHOW_AGGRESSION_METER } from './uiFlags.js';
 
 const dash = '—';
 const showRange = (range) => {
@@ -92,7 +93,8 @@ function toggleEnvCompact({ env, bioloadPercent, aggressionPercent }) {
   const hasEnv = isEnvDataMeaningful(env);
   const bio = Number(bioloadPercent);
   const agg = Number(aggressionPercent);
-  const hasMeters = (Number.isFinite(bio) && bio > 0) || (Number.isFinite(agg) && agg > 0);
+  const hasAggressionMeter = SHOW_AGGRESSION_METER && Number.isFinite(agg) && agg > 0;
+  const hasMeters = (Number.isFinite(bio) && bio > 0) || hasAggressionMeter;
   const shouldCompact = !(hasEnv || hasMeters);
 
   if (shouldCompact) {
@@ -490,21 +492,51 @@ function renderConditionsExcel(env, { isEmpty = false } = {}) {
 
 function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   if (!root) return;
+  const showAggressionMeter = Boolean(SHOW_AGGRESSION_METER);
   const rawBioloadPct = isEmpty ? 0 : Number(env.bioloadPct) || 0;
   const bioloadPct = isEmpty ? 0 : sanitizePercent(rawBioloadPct);
   const aggressionPct = isEmpty ? 0 : sanitizePercent(env.aggressionPct);
   const bioloadColor = getBandColor(bioloadPct / 100);
   const bioloadDisplay = formatBioloadPercent(Math.max(0, Math.min(200, rawBioloadPct)));
   const bioloadAria = Number.isFinite(bioloadPct) ? Number(bioloadPct.toFixed(2)) : 0;
-  const aggressionColor = colorForSeverity(isEmpty ? 'ok' : env.aggressionSeverity);
-  const aggressionPercentDisplay = `${Math.round(aggressionPct)}%`;
   const bioloadNotes = isEmpty ? '' : renderChips(env.barNotes?.bioload ?? []);
-  const aggressionNotes = isEmpty ? '' : renderChips(env.barNotes?.aggression ?? []);
   const generalChips = isEmpty ? '' : renderChips(env.detailChips ?? []);
   const bioloadLabel = isEmpty ? '0% → 0% of capacity' : env.bioloadLabel;
-  const aggressionLabel = isEmpty ? '0%' : env.aggressionLabel;
   const bioloadInfoBtn = '<button type="button" class="info-btn ttg-tooltip-trigger" data-role="info-btn" data-info="bioload" data-tooltip-id="bioload-tip" aria-expanded="false" aria-controls="bioload-tip" aria-label="More info about the bioload gauge" title="More info">i</button>';
-  const aggressionInfoBtn = '<button type="button" class="info-btn ttg-tooltip-trigger" data-role="info-btn" data-info="aggression" data-tooltip-id="aggression-tip" aria-expanded="false" aria-controls="aggression-tip" aria-label="More info about the aggression gauge" title="More info">i</button>';
+  const aggressionColor = showAggressionMeter ? colorForSeverity(isEmpty ? 'ok' : env.aggressionSeverity) : '';
+  const aggressionPercentDisplay = showAggressionMeter ? `${Math.round(aggressionPct)}%` : '';
+  const aggressionNotes = showAggressionMeter && !isEmpty ? renderChips(env.barNotes?.aggression ?? []) : '';
+  const aggressionLabel = showAggressionMeter ? (isEmpty ? '0%' : env.aggressionLabel) : '';
+  const aggressionInfoBtn = showAggressionMeter
+    ? '<button type="button" class="info-btn ttg-tooltip-trigger" data-role="info-btn" data-info="aggression" data-tooltip-id="aggression-tip" aria-expanded="false" aria-controls="aggression-tip" aria-label="More info about the aggression gauge" title="More info">i</button>'
+    : '';
+
+  const aggressionSectionMobile = showAggressionMeter
+    ? `
+        <div class="env-bar env-bar--xl bar-row">
+          <div class="env-bar__hd">
+            <div class="env-bar__label metric-label">Aggression ${aggressionInfoBtn}</div>
+            <div class="env-bar__value" data-role="aggression-percent">${aggressionPercentDisplay}</div>
+          </div>
+          <div class="env-bar__track meter-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
+            <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
+          </div>
+        </div>`
+    : '';
+
+  const aggressionSectionDesktop = showAggressionMeter
+    ? `
+      <div class="env-bar metric-row">
+        <div class="env-bar__hd">
+          <span class="env-bar__label metric-label">Aggression ${aggressionInfoBtn}</span>
+          <span data-role="aggression-percent">${escapeHtml(aggressionPercentDisplay)}</span>
+        </div>
+        <div class="env-bar__track progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
+          <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
+        </div>
+        ${aggressionNotes || escapeHtml(aggressionLabel)}
+      </div>`
+    : '';
 
   if (isMobile) {
     root.classList.add('env-bars--xl');
@@ -519,15 +551,7 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
             <div class="env-bar__fill" style="width:${bioloadPct}%; background:${bioloadColor};"></div>
           </div>
         </div>
-        <div class="env-bar env-bar--xl bar-row">
-          <div class="env-bar__hd">
-            <div class="env-bar__label metric-label">Aggression ${aggressionInfoBtn}</div>
-            <div class="env-bar__value" data-role="aggression-percent">${aggressionPercentDisplay}</div>
-          </div>
-          <div class="env-bar__track meter-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
-            <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
-          </div>
-        </div>
+        ${aggressionSectionMobile}
       </div>
     `;
     return;
@@ -546,16 +570,7 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
         </div>
         ${bioloadNotes}
       </div>
-      <div class="env-bar metric-row">
-        <div class="env-bar__hd">
-          <span class="env-bar__label metric-label">Aggression ${aggressionInfoBtn}</span>
-          <span data-role="aggression-percent">${escapeHtml(aggressionPercentDisplay)}</span>
-        </div>
-        <div class="env-bar__track progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(aggressionPct)}">
-          <div class="env-bar__fill" style="width:${aggressionPct}%; background:${aggressionColor};"></div>
-        </div>
-        ${aggressionNotes || escapeHtml(aggressionLabel)}
-      </div>
+      ${aggressionSectionDesktop}
       ${generalChips}
     </div>`;
 }
