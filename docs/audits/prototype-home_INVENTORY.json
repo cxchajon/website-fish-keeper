@@ -138,7 +138,7 @@
         "module": false
       },
       {
-        "src": "https://thetankguide.com/js/footer-loader.js?v=1.4.8",
+        "src": "https://thetankguide.com/js/footer-loader.js?v=1.4.9",
         "async": false,
         "defer": true,
         "module": false
