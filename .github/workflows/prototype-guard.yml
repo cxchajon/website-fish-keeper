@@ -1,4 +1,4 @@
-name: Prototype Guard (Disabled)
+name: Prototype Guard
 
 on:
   pull_request:
@@ -7,6 +7,28 @@ on:
 jobs:
   guard:
     runs-on: ubuntu-latest
+    env:
+      PR_TITLE: ${{ github.event.pull_request.title }}
     steps:
-      - name: Prototype guard disabled
-        run: echo "Prototype guard checks removed; allowing all changes."
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run live guard
+        run: npm run guard:live
+
+      - name: Run test suite
+        run: npm test

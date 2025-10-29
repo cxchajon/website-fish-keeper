@@ -5,3 +5,4 @@ cd "$REPO_ROOT"
 
 node scripts/footer-lock/verify.mjs
 node scripts/footer-lock/lint.mjs
+npm run guard:live

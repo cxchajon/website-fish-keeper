@@ -13,10 +13,13 @@
   display: none !important;
 }
 
-/* Oct 2025 – Hide Aggression Meter (Prototype only) */
+/* Oct 2025 — Prototype-only: hide aggression meter UI */
 .proto-stock .meter--aggression,
 .proto-stock .aggression-meter,
-.proto-stock [data-metric="aggression"],
+.proto-stock [data-metric="aggression"] {
+  display: none !important;
+}
+
 .proto-stock [data-role="aggression-percent"],
 .proto-stock [data-info="aggression"],
 .proto-stock .env-bar[data-kind="aggression"] {

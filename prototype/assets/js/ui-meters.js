@@ -1,12 +1,38 @@
-(function () {
-  if (typeof window === 'undefined' || typeof document === 'undefined') {
-    return;
-  }
+import { ASSET_ROOT, IS_PROTOTYPE_BUILD } from '../../../assets/js/env/asset-roots.js';
 
-  if (!window.location || !window.location.pathname || !window.location.pathname.includes('/prototype/')) {
-    return;
-  }
+const PROTOTYPE_SEGMENT = '/prototype/';
+const PROTO_BODY_CLASS = 'proto-stock';
 
+const matchesPrototypeLocation = () => {
+  if (typeof location === 'undefined' || typeof location.pathname !== 'string') {
+    return false;
+  }
+  return location.pathname.includes(PROTOTYPE_SEGMENT);
+};
+
+const bodyHasPrototypeClass = () => {
+  if (typeof document === 'undefined') return false;
+  try {
+    const body = document.body;
+    const docEl = document.documentElement;
+    return Boolean(
+      (body && body.classList && body.classList.contains(PROTO_BODY_CLASS)) ||
+        (docEl && docEl.classList && (docEl.classList.contains(PROTO_BODY_CLASS) || docEl.classList.contains('prototype-mode'))),
+    );
+  } catch (_error) {
+    return false;
+  }
+};
+
+const assetRootMatchesPrototype = typeof ASSET_ROOT === 'string' && ASSET_ROOT.includes(PROTOTYPE_SEGMENT);
+
+const inPrototype =
+  assetRootMatchesPrototype ||
+  IS_PROTOTYPE_BUILD ||
+  matchesPrototypeLocation() ||
+  bodyHasPrototypeClass();
+
+if (typeof window !== 'undefined' && typeof document !== 'undefined' && inPrototype && window.__TTG_BLOCK_INIT__ !== true) {
   const AGGRESSION_SELECTORS = [
     '[data-role="aggression-percent"]',
     '.meter--aggression',
@@ -14,7 +40,7 @@
     '[data-metric="aggression"]',
   ];
 
-  function pruneAggressionMeter(root) {
+  const pruneAggressionMeter = (root) => {
     if (!root) return;
 
     const toRemove = new Set();
@@ -42,9 +68,9 @@
         node.parentNode.removeChild(node);
       }
     });
-  }
+  };
 
-  function init() {
+  const init = () => {
     const barsRoot = document.getElementById('env-bars');
     if (!barsRoot) {
       return;
@@ -61,11 +87,11 @@
     window.addEventListener('beforeunload', () => {
       observer.disconnect();
     });
-  }
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init, { once: true });
   } else {
     init();
   }
-})();
+}
