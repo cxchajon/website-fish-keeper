@@ -1,7 +1,7 @@
 {
   "period": {
     "start": "2025-10-01",
-    "end": "2025-10-29"
+    "end": "2025-10-30"
   },
   "nitrate": [
     { "date": "2025-10-01", "ppm": 7.5, "wc": false },
@@ -16,7 +16,8 @@
     { "date": "2025-10-26", "ppm": 6, "wc": true },
     { "date": "2025-10-27", "ppm": 5, "wc": false },
     { "date": "2025-10-28", "ppm": 5, "wc": false },
-    { "date": "2025-10-29", "ppm": 10, "wc": false }
+    { "date": "2025-10-29", "ppm": 10, "wc": false },
+    { "date": "2025-10-30", "ppm": 18, "wc": false }
   ],
   "dosing": [
     {

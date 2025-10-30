@@ -89,6 +89,10 @@ Next: None.
 Scope: Add 10/29 feeding/test/dosing entry.
 Result: Data updated, dashboard auto-synced via cache-buster.
 Next: None.
+[2025-10-30 | Journal | Add daily log]
+Scope: Add 10/30 feeding/test/dosing entry (Post-Treatment Recovery Week start).
+Result: Data updated + dashboard synced.
+Next: None.
 [2025-10-30 | Label Position Update]
 Summary: Moved date labels from the x-axis to sit beside each data point on the journal dashboard charts.
 Changes: Disabled x-axis ticks, added custom point labels with accent colors tied to each dataset.
