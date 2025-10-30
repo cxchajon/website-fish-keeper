@@ -41,6 +41,7 @@
   <link rel="stylesheet" href="/prototype/assets/css/proto-popovers.css?v=proto_rm_2025_10_25" />
   <link rel="stylesheet" href="/prototype/assets/css/filtration.css?v=proto_rm_2025_10_25" />
   <link rel="stylesheet" href="/prototype/assets/css/prototype.css?v=proto_rm_2025_10_25" />
+  <link rel="stylesheet" href="/prototype/css/proto-fixes.css" />
   <style>
     /* PROTOTYPE ONLY — block any lingering legacy UI from appearing */
     .filtration-card,
@@ -1308,14 +1309,17 @@
                 <div class="field-label-row">
                   <label class="field-label" for="turnoverValue">Estimated turnover</label>
                   <div class="info-trigger" data-info-scope="turnover">
-                    <span
+                    <button
+                      type="button"
                       class="info-badge info-btn field-label-info"
-                      role="button"
-                      tabindex="0"
+                      id="turnover-info-btn"
+                      aria-haspopup="dialog"
+                      aria-controls="turnover-info-panel"
                       aria-expanded="false"
                       aria-label="Estimated turnover info"
+                      data-info-target="#turnover-info-panel"
                       data-tip="Filtration increases your tank’s capacity to process waste. Stocking % is now calculated using your tank’s effective biological capacity (RBC)."
-                    >i</span>
+                    >i</button>
                     <div id="pop-turnover" class="proto-popover" role="dialog" aria-labelledby="pop-turnover-title" tabindex="-1" hidden>
                       <header>
                         <h3 id="pop-turnover-title">Turnover targets</h3>
@@ -1687,12 +1691,55 @@
 
     </div>
 
-    <section class="seo-intro">
-      <div class="wrap">
-        <p>The Tank Guide Stocking Advisor calculates aquarium bioload and compatibility. Plan balanced communities of bettas, tetras, shrimp, and more, powered by FishKeepingLifeCo.</p>
+  <section class="seo-intro">
+    <div class="wrap">
+      <p>The Tank Guide Stocking Advisor calculates aquarium bioload and compatibility. Plan balanced communities of bettas, tetras, shrimp, and more, powered by FishKeepingLifeCo.</p>
+    </div>
+  </section>
+</main>
+
+  <div
+    id="bioload-info-panel"
+    class="proto-info-panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="bioload-info-title"
+    hidden
+  >
+    <div class="proto-info-panel__surface" data-info-surface>
+      <header class="proto-info-panel__header">
+        <h3 id="bioload-info-title" class="proto-info-panel__title">Bioload capacity guide</h3>
+        <button type="button" class="proto-info-panel__close" aria-label="Close" data-info-close>×</button>
+      </header>
+      <div class="proto-info-panel__body">
+        <p>Filtration increases your tank’s capacity to process waste. Stocking % is now calculated using your tank’s effective biological capacity (RBC).</p>
+        <p><strong>Heads-up for later:</strong> As your tank matures—especially if you add lots of healthy, fast-growing plants—your effective capacity can change. Keep testing your water and revisit your plan after cycling.</p>
       </div>
-    </section>
-  </main>
+    </div>
+  </div>
+
+  <div
+    id="turnover-info-panel"
+    class="proto-info-panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="turnover-info-title"
+    hidden
+  >
+    <div class="proto-info-panel__surface" data-info-surface>
+      <header class="proto-info-panel__header">
+        <h3 id="turnover-info-title" class="proto-info-panel__title">Turnover targets</h3>
+        <button type="button" class="proto-info-panel__close" aria-label="Close" data-info-close>×</button>
+      </header>
+      <div class="proto-info-panel__body">
+        <ul>
+          <li>Turnover compares your filter flow to the aquarium volume (GPH ÷ gallons).</li>
+          <li>General community tanks thrive around 5–7× per hour; active species often prefer 8× or more.</li>
+          <li>If the number dips low, consider upsizing filtration or adding supplemental circulation.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
   <script type="importmap">
     {
@@ -1711,6 +1758,7 @@
   <script type="module" src="/js/tank-size-card.js?v=2024-09-01"></script>
   <script type="module" src="/prototype/assets/js/ui-meters.js" defer></script>
   <script type="module" src="/prototype/js/proto-filtration.js"></script>
+  <script type="module" src="/prototype/js/info-popovers.js" defer></script>
   <script type="module" defer src="/prototype/assets/js/proto-filter-tests.js"></script>
 
   <!-- How it works modal (prototype only) -->

@@ -82,15 +82,44 @@
 
     selectors.forEach((selector) => {
       root.querySelectorAll(selector).forEach((node) => {
-        upgradeInfoBadge(node, BIOLOAD_TIP_TEXT);
+        const upgraded = upgradeInfoBadge(node, BIOLOAD_TIP_TEXT);
+        if (upgraded instanceof HTMLElement) {
+          upgraded.classList.remove('ttg-tooltip-trigger');
+          upgraded.removeAttribute('data-tooltip-id');
+          upgraded.dataset.info = 'bioload';
+          upgraded.setAttribute('data-info-target', '#bioload-info-panel');
+          upgraded.setAttribute('aria-controls', 'bioload-info-panel');
+          upgraded.setAttribute('aria-haspopup', 'dialog');
+          upgraded.setAttribute('aria-expanded', upgraded.getAttribute('aria-expanded') === 'true' ? 'true' : 'false');
+          upgraded.setAttribute('type', 'button');
+          upgraded.id = 'bioload-info-btn';
+        }
       });
     });
 
     root.querySelectorAll('.info-badge[data-info="bioload"]').forEach((node) => {
       if (node instanceof HTMLElement) {
         node.dataset.tip = node.dataset.tip || BIOLOAD_TIP_TEXT;
+        node.setAttribute('data-info-target', '#bioload-info-panel');
+        node.setAttribute('aria-controls', 'bioload-info-panel');
+        node.setAttribute('aria-haspopup', 'dialog');
       }
     });
+  };
+
+  const ensureTurnoverInfoButton = () => {
+    const button =
+      document.getElementById('turnover-info-btn') ||
+      document.querySelector('[data-info-target="#turnover-info-panel"]');
+    if (!(button instanceof HTMLElement)) {
+      return;
+    }
+    button.setAttribute('type', 'button');
+    button.classList.add('info-btn');
+    button.setAttribute('data-info-target', '#turnover-info-panel');
+    button.setAttribute('aria-controls', 'turnover-info-panel');
+    button.setAttribute('aria-haspopup', 'dialog');
+    button.setAttribute('aria-expanded', button.getAttribute('aria-expanded') === 'true' ? 'true' : 'false');
   };
 
   const observeBioloadBadgeRenders = () => {
@@ -338,6 +367,7 @@
     removeFiltrationSummaryInfo();
     syncBioloadBadges(document);
     observeBioloadBadgeRenders();
+    ensureTurnoverInfoButton();
   });
 
   const adSlots = document.querySelectorAll('[data-prototype-ad]');
