@@ -45,12 +45,14 @@
   gap: clamp(32px, 4vw, 44px);
 }
 
-.dashboard-card,
-.dashboard-card__chart,
-.dashboard-card canvas,
-.dashboard-card__status {
+.jd-card,
+.jd-chart,
+.jd-chart__canvas,
+.jd-chart__status {
   filter: none !important;
   backdrop-filter: none !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
 }
 
 .journal-dashboard__header {
@@ -238,12 +240,12 @@
   display: none;
 }
 
-.dashboard-card {
-  background: rgba(14, 24, 45, 0.82);
+.jd-card {
+  background: #0d172b;
   border-radius: 20px;
-  border: 1px solid rgba(129, 202, 255, 0.24);
-  box-shadow: 0 18px 44px rgba(6, 10, 22, 0.6);
-  overflow: hidden;
+  border: 1px solid rgba(112, 168, 255, 0.34);
+  box-shadow: 0 18px 52px rgba(5, 12, 26, 0.65);
+  overflow: visible;
   display: grid;
 }
 
@@ -313,16 +315,22 @@
 
 .dashboard-card__body {
   padding: 0 clamp(20px, 3vw, 32px) clamp(24px, 4vw, 36px);
+  overflow: visible;
 }
 
-.dashboard-card__chart {
-  min-height: clamp(260px, 40vw, 340px);
+.jd-chart {
   position: relative;
   transform: none !important;
   will-change: auto;
+  background: linear-gradient(160deg, rgba(17, 29, 52, 0.95) 0%, rgba(9, 17, 34, 0.95) 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(65, 105, 170, 0.36);
+  box-shadow: inset 0 0 0 1px rgba(25, 45, 82, 0.28), 0 28px 48px rgba(4, 12, 26, 0.55);
+  padding: clamp(18px, 5vw, 26px);
+  min-height: clamp(280px, 52vw, 360px);
 }
 
-.dashboard-card__status {
+.jd-chart__status {
   position: absolute;
   inset: 0;
   display: flex;
@@ -331,9 +339,149 @@
   text-align: center;
   font-weight: 600;
   font-size: 1rem;
-  color: rgba(224, 237, 255, 0.7);
+  color: rgba(224, 237, 255, 0.82);
   padding: 20px;
-  background: rgba(7, 16, 30, 0.82);
+  background: rgba(5, 12, 26, 0.92);
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+.jd-chart__status:empty {
+  display: none;
+}
+
+.jd-chart__canvas {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 260px;
+  display: block;
+  position: relative;
+  z-index: 0;
+}
+
+.jd-card .dashboard-card__legend {
+  gap: 12px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.jd-card .dashboard-card__legend-item {
+  gap: 6px;
+}
+
+.jd-card .dashboard-card__legend-dot {
+  width: 13px;
+  height: 13px;
+}
+
+.jd-card .dashboard-card__hint {
+  color: rgba(224, 237, 255, 0.72);
+}
+
+.jd-card .dashboard-card__title {
+  color: #f8fbff;
+}
+
+.jd-card .dashboard-card__title::after {
+  background: linear-gradient(90deg, #35d1ff 0%, rgba(53, 209, 255, 0) 100%);
+}
+
+.jd-card .dashboard-card__body {
+  padding-bottom: clamp(28px, 6vw, 40px);
+}
+
+.jd-chart::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  pointer-events: none;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px rgba(90, 140, 210, 0.18);
+  opacity: 0.6;
+  z-index: 0;
+}
+
+.jd-chart--line {
+  overflow: visible;
+}
+
+.jd-chart--bar {
+  min-height: clamp(240px, 48vw, 320px);
+}
+
+.jd-card + .jd-card {
+  margin-top: 0;
+}
+
+.journal-dashboard__inner {
+  padding-bottom: clamp(40px, 6vw, 72px);
+}
+
+.jd-card:last-of-type {
+  margin-bottom: 0;
+}
+
+.jd-chart {
+  overflow: visible;
+}
+
+.jd-chart canvas {
+  border-radius: 12px;
+}
+
+.journal-dashboard__inner::after {
+  content: "";
+  display: block;
+  height: clamp(80px, 14vw, 140px);
+}
+
+.jd-chart::after {
+  border-radius: 12px;
+}
+
+.page--journal-dashboard .content {
+  padding-bottom: clamp(80px, 10vw, 140px);
+}
+
+.journal-dashboard__inner {
+  gap: clamp(32px, 4vw, 44px);
+}
+
+.jd-card .dashboard-card__header {
+  padding-bottom: 8px;
+}
+
+
+.jd-card .dashboard-card__legend-item {
+  flex-wrap: wrap;
+}
+
+.jd-chart::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: radial-gradient(120% 120% at 50% 0%, rgba(36, 69, 126, 0.25), transparent 65%);
+  pointer-events: none;
+  mix-blend-mode: normal;
+  z-index: 0;
+}
+
+.jd-chart::after {
+  pointer-events: none;
+}
+
+.jd-chart canvas {
+  position: relative;
+  z-index: 1;
+}
+
+.jd-chart__status {
+  z-index: 2;
+}
+
+.jd-card .dashboard-card__legend {
+  gap: clamp(8px, 2vw, 16px);
 }
 
 .maintenance-list {
@@ -410,8 +558,9 @@
     padding-left: 60px;
   }
 
-  .dashboard-card__chart {
-    min-height: clamp(220px, 50vw, 300px);
+  .jd-chart {
+    min-height: clamp(240px, 60vw, 320px);
+    padding: clamp(16px, 7vw, 24px);
   }
 }
 
@@ -424,5 +573,19 @@
     flex: 1 1 auto;
     text-align: center;
     padding-inline: 12px;
+  }
+
+  .jd-card .dashboard-card__legend {
+    font-size: 0.82rem;
+  }
+
+  .jd-chart {
+    min-height: 260px;
+  }
+}
+
+@media (max-width: 414px) {
+  .jd-chart {
+    padding: 16px;
   }
 }
