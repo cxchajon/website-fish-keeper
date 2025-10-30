@@ -2,6 +2,13 @@
   {
     "name": "Amano Shrimp",
     "slug": "amano-shrimp",
+    "id": "amano_shrimp",
+    "tags": [
+      "algae_eater",
+      "shrimp_safe",
+      "snail_safe",
+      "requires_cover"
+    ],
     "aggression": {
       "baseline": 0.05,
       "vectors": {
@@ -57,6 +64,14 @@
   {
     "name": "Betta (Female)",
     "slug": "betta-female",
+    "id": "betta_female",
+    "tags": [
+      "labyrinth",
+      "low_flow",
+      "longfin_target",
+      "shrimp_risk"
+    ],
+    "sorority_min": 5,
     "aggression": {
       "baseline": 0.35,
       "vectors": {
@@ -112,6 +127,13 @@
   {
     "name": "Betta (Male)",
     "slug": "betta-male",
+    "id": "betta_male",
+    "tags": [
+      "labyrinth",
+      "low_flow",
+      "longfin_target",
+      "shrimp_risk"
+    ],
     "aggression": {
       "baseline": 0.65,
       "vectors": {
@@ -167,6 +189,13 @@
   {
     "name": "Bronze Corydoras",
     "slug": "bronze-corydoras",
+    "id": "cory_bronze",
+    "tags": [
+      "bottom_dweller",
+      "schooling",
+      "requires_cover"
+    ],
+    "schooling_min": 6,
     "aggression": {
       "baseline": 0.10,
       "vectors": {
@@ -222,6 +251,12 @@
   {
     "name": "Cardinal Tetra",
     "slug": "cardinal-tetra",
+    "id": "tetra_cardinal",
+    "tags": [
+      "schooling",
+      "sensitive"
+    ],
+    "schooling_min": 6,
     "aggression": {
       "baseline": 0.30,
       "vectors": {
@@ -277,6 +312,12 @@
   {
     "name": "Cherry Barb",
     "slug": "cherry-barb",
+    "id": "cherry_barb",
+    "tags": [
+      "schooling",
+      "semi_nipper"
+    ],
+    "schooling_min": 6,
     "aggression": {
       "baseline": 0.20,
       "vectors": {
@@ -332,6 +373,13 @@
   {
     "name": "Cherry Shrimp",
     "slug": "cherry-shrimp",
+    "id": "cherry_shrimp",
+    "tags": [
+      "nano",
+      "shrimp_safe",
+      "snail_safe",
+      "requires_cover"
+    ],
     "aggression": {
       "baseline": 0.05,
       "vectors": {
@@ -387,6 +435,14 @@
   {
     "name": "Chili Rasbora",
     "slug": "chili-rasbora",
+    "id": "chili_rasbora",
+    "tags": [
+      "nano",
+      "schooling",
+      "shrimp_safe",
+      "sensitive"
+    ],
+    "schooling_min": 8,
     "aggression": {
       "baseline": 0.08,
       "vectors": {
@@ -442,6 +498,14 @@
   {
     "name": "Dwarf Gourami",
     "slug": "dwarf-gourami",
+    "id": "dwarf_gourami",
+    "tags": [
+      "labyrinth",
+      "low_flow",
+      "longfin_target",
+      "shrimp_risk",
+      "sensitive"
+    ],
     "aggression": {
       "baseline": 0.35,
       "vectors": {
@@ -497,6 +561,12 @@
   {
     "name": "Guppy (Male)",
     "slug": "guppy-male",
+    "id": "guppy_male",
+    "tags": [
+      "active_swimmer",
+      "longfin_target",
+      "shrimp_risk"
+    ],
     "aggression": {
       "baseline": 0.20,
       "vectors": {
@@ -552,6 +622,12 @@
   {
     "name": "Harlequin Rasbora",
     "slug": "harlequin-rasbora",
+    "id": "harlequin_rasbora",
+    "tags": [
+      "schooling",
+      "shrimp_safe"
+    ],
+    "schooling_min": 8,
     "aggression": {
       "baseline": 0.18,
       "vectors": {
@@ -607,6 +683,13 @@
   {
     "name": "Kuhli Loach",
     "slug": "kuhli-loach",
+    "id": "kuhli_loach",
+    "tags": [
+      "bottom_dweller",
+      "requires_cover",
+      "schooling"
+    ],
+    "schooling_min": 6,
     "aggression": {
       "baseline": 0.12,
       "vectors": {
@@ -662,6 +745,13 @@
   {
     "name": "Neon Tetra",
     "slug": "neon-tetra",
+    "id": "tetra_neon",
+    "tags": [
+      "schooling",
+      "shrimp_safe",
+      "sensitive"
+    ],
+    "schooling_min": 8,
     "aggression": {
       "baseline": 0.25,
       "vectors": {
@@ -717,6 +807,12 @@
   {
     "name": "Nerite Snail",
     "slug": "nerite-snail",
+    "id": "nerite_snail",
+    "tags": [
+      "algae_eater",
+      "snail_safe",
+      "shrimp_safe"
+    ],
     "aggression": {
       "baseline": 0.02,
       "vectors": {
@@ -772,6 +868,14 @@
   {
     "name": "Otocinclus",
     "slug": "otocinclus",
+    "id": "otocinclus",
+    "tags": [
+      "algae_eater",
+      "schooling",
+      "sensitive",
+      "requires_cover"
+    ],
+    "schooling_min": 6,
     "aggression": {
       "baseline": 0.08,
       "vectors": {
@@ -827,6 +931,14 @@
   {
     "name": "Panda Corydoras",
     "slug": "panda-corydoras",
+    "id": "cory_panda",
+    "tags": [
+      "bottom_dweller",
+      "schooling",
+      "requires_cover",
+      "sensitive"
+    ],
+    "schooling_min": 6,
     "aggression": {
       "baseline": 0.10,
       "vectors": {
@@ -882,6 +994,13 @@
   {
     "name": "Pearl Gourami",
     "slug": "pearl-gourami",
+    "id": "pearl_gourami",
+    "tags": [
+      "labyrinth",
+      "low_flow",
+      "longfin_target",
+      "shrimp_risk"
+    ],
     "aggression": {
       "baseline": 0.28,
       "vectors": {
@@ -937,6 +1056,13 @@
   {
     "name": "Rummynose Tetra",
     "slug": "rummynose-tetra",
+    "id": "rummynose_tetra",
+    "tags": [
+      "schooling",
+      "sensitive",
+      "shrimp_safe"
+    ],
+    "schooling_min": 10,
     "aggression": {
       "baseline": 0.22,
       "vectors": {
@@ -992,6 +1118,13 @@
   {
     "name": "Tiger Barb",
     "slug": "tiger-barb",
+    "id": "tiger_barb",
+    "tags": [
+      "fin_nipper",
+      "active_swimmer",
+      "schooling"
+    ],
+    "schooling_min": 8,
     "aggression": {
       "baseline": 0.55,
       "vectors": {
@@ -1047,6 +1180,13 @@
   {
     "name": "Zebra Danio",
     "slug": "zebra-danio",
+    "id": "zebra_danio",
+    "tags": [
+      "active_swimmer",
+      "schooling",
+      "shrimp_safe"
+    ],
+    "schooling_min": 6,
     "aggression": {
       "baseline": 0.25,
       "vectors": {
