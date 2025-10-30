@@ -388,6 +388,7 @@ function bootstrapStocking() {
     qty: document.getElementById('plan-qty'),
     addBtn: document.getElementById('plan-add'),
     stockList: document.getElementById('stock-list'),
+    stockWarnings: document.getElementById('stock-warnings'),
     seeGear: document.getElementById('btn-gear'),
     envReco: document.getElementById('env-reco'),
     envTips: document.querySelector('#env-legend, #env-more-tips, [data-role="env-legend"]'),
@@ -2149,6 +2150,56 @@ function renderCandidateState() {
   }
 }
 
+function renderStockWarningsPanel(warnings = []) {
+  const container = refs.stockWarnings;
+  if (!container) {
+    return;
+  }
+  container.innerHTML = '';
+  const list = Array.isArray(warnings) ? warnings : [];
+  if (!list.length) {
+    container.hidden = true;
+    return;
+  }
+  const fragment = document.createDocumentFragment();
+  for (const warning of list) {
+    if (!warning) continue;
+    const node = document.createElement('div');
+    node.className = 'status-strip';
+    node.dataset.state = (() => {
+      const severity = typeof warning.severity === 'string' ? warning.severity.toLowerCase() : '';
+      if (severity === 'danger' || severity === 'bad' || severity === 'error') return 'bad';
+      if (severity === 'warn' || severity === 'warning') return 'warn';
+      return 'ok';
+    })();
+    node.setAttribute('role', 'alert');
+    if (warning.id) {
+      node.dataset.warningId = warning.id;
+    }
+    const title = typeof warning.title === 'string' && warning.title.trim() ? warning.title.trim() : '';
+    const message = typeof warning.message === 'string' && warning.message.trim() ? warning.message.trim() : '';
+    const fallback = typeof warning.text === 'string' && warning.text.trim() ? warning.text.trim() : '';
+    const header = document.createElement('span');
+    header.className = 'warning-title';
+    if (title) {
+      header.textContent = title;
+    } else {
+      header.textContent = fallback || 'Warning';
+    }
+    node.appendChild(header);
+    const bodyText = title ? message : message && message !== fallback ? message : (fallback && fallback !== header.textContent ? fallback : '');
+    if (bodyText) {
+      const body = document.createElement('span');
+      body.className = 'warning-message';
+      body.textContent = bodyText;
+      node.appendChild(body);
+    }
+    fragment.appendChild(node);
+  }
+  container.appendChild(fragment);
+  container.hidden = false;
+}
+
 function renderDiagnostics() {
   if (!debugMode) return;
   const groupLabel = computed ? '[Stocking] Diagnostics' : '[Stocking] Diagnostics (inactive)';
@@ -2178,6 +2229,7 @@ function renderAll() {
     }
     renderCandidateState();
     syncStockFromState();
+    renderStockWarningsPanel([]);
     renderDiagnostics();
     renderEnvironmentPanels();
     ensureTankAssumptionScrubbed();
@@ -2194,6 +2246,7 @@ function renderAll() {
   }
   renderCandidateState();
   syncStockFromState();
+  renderStockWarningsPanel(computed?.status?.warnings ?? []);
   renderDiagnostics();
   renderEnvironmentPanels();
   ensureTankAssumptionScrubbed();

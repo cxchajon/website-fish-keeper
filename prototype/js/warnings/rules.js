@@ -1,4 +1,6 @@
 const FEMALE_BETTA_IDS = new Set(['betta_female', 'betta-female']);
+const MALE_BETTA_IDS = new Set(['betta_male', 'betta-male']);
+const BETTA_IDS = new Set([...FEMALE_BETTA_IDS, ...MALE_BETTA_IDS]);
 const FIN_NIPPER_TAG = 'fin_nipper';
 
 const normalizeId = (value) => {
@@ -7,10 +9,11 @@ const normalizeId = (value) => {
   return String(value).toLowerCase();
 };
 
-const isFemaleBetta = (entry) => {
-  const id = normalizeId(entry?.id ?? entry?.species?.id ?? entry?.species?.slug);
-  return FEMALE_BETTA_IDS.has(id);
-};
+const resolveEntryId = (entry) => normalizeId(entry?.id ?? entry?.species?.id ?? entry?.species?.slug);
+
+const isFemaleBetta = (entry) => FEMALE_BETTA_IDS.has(resolveEntryId(entry));
+
+const isBetta = (entry) => BETTA_IDS.has(resolveEntryId(entry));
 
 const numericQty = (entry) => {
   const qty = Number(entry?.qty ?? entry?.quantity ?? 0);
@@ -38,7 +41,7 @@ const gatherContext = (entries = [], candidate = null) => {
   return list;
 };
 
-export const rule_betta_female_sorority = ({ entries, candidate, tank }) => {
+export const rule_betta_female_sorority = ({ entries, candidate }) => {
   const context = gatherContext(entries, candidate);
   if (!context.some(isFemaleBetta)) {
     return [];
@@ -47,43 +50,34 @@ export const rule_betta_female_sorority = ({ entries, candidate, tank }) => {
     if (!isFemaleBetta(item)) return sum;
     return sum + item.qty;
   }, 0);
-  if (totalQty < 2) {
+  if (totalQty < 2 || totalQty > 4) {
     return [];
   }
-  const gallons = Number(tank?.gallons ?? tank?.displayGallons ?? 0) || 0;
-  const warnings = [];
-  if (totalQty >= 2 && totalQty < 5) {
-    warnings.push({
-      id: 'betta_female_sorority_lowcount',
+
+  const message = 'Female bettas should only be kept together in groups of 5 or more to diffuse aggression. 2–4 is high risk of fighting and stress.';
+  const text = `Female bettas: group too small — ${message}`;
+  return [
+    {
+      id: 'betta.femaleGroupTooSmall',
       severity: 'danger',
       icon: 'alert',
       kind: 'behavior',
-      chips: ['Aggression', 'Territoriality'],
-      text: 'Female Betta groups under 5 are unstable and often fight. Keep a single female, or a sorority of 5+ in 20g+ with dense cover.',
-      help: 'Sororities require careful setup: 5–7+ females, 20g+ footprint, heavy planting/hardscape, multiple line-of-sight breaks, and close observation.',
-    });
-  }
-  if (totalQty >= 2 && gallons > 0 && gallons < 20) {
-    warnings.push({
-      id: 'betta_female_sorority_tank_too_small',
-      severity: 'warn',
-      icon: 'alert',
-      kind: 'behavior',
-      chips: ['Space', 'Aggression'],
-      text: 'A sorority of 5+ female Bettas is risky in tanks under 20 gallons. Increase space and provide heavy planting/hiding.',
-    });
-  }
-  return warnings;
+      chips: ['Aggression'],
+      title: 'Female bettas: group too small',
+      message,
+      text,
+    },
+  ];
 };
 
-export const rule_betta_female_finnipper = ({ entries, candidate }) => {
+export const rule_betta_fin_nippers = ({ entries, candidate }) => {
   const context = gatherContext(entries, candidate);
-  const hasBetta = context.some((item) => isFemaleBetta(item));
+  const hasBetta = context.some((item) => isBetta(item));
   if (!hasBetta) {
     return [];
   }
   const hasFinNipper = context.some((item) => {
-    if (isFemaleBetta(item)) return false;
+    if (isBetta(item)) return false;
     if (item.qty <= 0) return false;
     const tags = Array.isArray(item.species?.tags) ? item.species.tags : [];
     return tags.some((tag) => typeof tag === 'string' && tag.toLowerCase() === FIN_NIPPER_TAG);
@@ -91,19 +85,23 @@ export const rule_betta_female_finnipper = ({ entries, candidate }) => {
   if (!hasFinNipper) {
     return [];
   }
+  const message = 'Fin-nipping species can shred betta fins and cause severe stress or injury.';
+  const text = `Fin-nippers present with betta — ${message}`;
   return [
     {
-      id: 'betta_female_finnipper_conflict',
-      severity: 'warn',
+      id: 'betta.finNippers',
+      severity: 'danger',
       icon: 'alert',
       kind: 'compatibility',
       chips: ['Compatibility'],
-      text: 'Fin-nippers (e.g., Tiger Barbs, Serpae Tetras) may harass Bettas and damage fins. Avoid this combination.',
+      title: 'Fin-nippers present with betta',
+      message,
+      text,
     },
   ];
 };
 
-const WARNING_RULES = [rule_betta_female_sorority, rule_betta_female_finnipper];
+const WARNING_RULES = [rule_betta_female_sorority, rule_betta_fin_nippers];
 
 export const evaluateWarningRules = (context) => {
   if (!context || typeof context !== 'object') {
