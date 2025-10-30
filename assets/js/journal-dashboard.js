@@ -19,6 +19,238 @@
     Chart.defaults.font.weight = '500';
   }
 
+  const journalPointLabelPlugin = {
+    id: 'journalPointLabels',
+    defaults: {
+      offset: 12,
+      minSpacing: 6,
+      boundaryPadding: 8,
+      font: { size: 11, weight: '600' }
+    },
+    afterDatasetsDraw(chart) {
+      const datasets = chart.data?.datasets || [];
+      if (!datasets.length) {
+        return;
+      }
+
+      const pluginOptions = chart.options?.plugins?.journalPointLabels || {};
+      const options = mergeLabelOptions(journalPointLabelPlugin.defaults, pluginOptions);
+      const fontFamily = Chart.defaults?.font?.family || 'Inter, "Segoe UI", system-ui, sans-serif';
+      const ctx = chart.ctx;
+      const chartArea = chart.chartArea;
+      if (!chartArea) {
+        ctx.restore();
+        return;
+      }
+      const placements = [];
+
+      ctx.save();
+      datasets.forEach((dataset, datasetIndex) => {
+        if (!dataset || !Array.isArray(dataset.pointLabels)) {
+          return;
+        }
+
+        const meta = chart.getDatasetMeta(datasetIndex);
+        if (!meta || meta.hidden || meta.type !== 'line') {
+          return;
+        }
+
+        const elements = meta.data || [];
+        const color = dataset.labelColor || options.color || dataset.borderColor || '#ffffff';
+        const fontSize = dataset.labelFontSize || options.font.size;
+        const fontWeight = dataset.labelFontWeight || options.font.weight;
+        const lineHeight = fontSize * 1.35;
+        const baseOffset = Number.isFinite(dataset.labelOffset) ? dataset.labelOffset : options.offset;
+        const alternate = dataset.labelDirection === 'alternate';
+
+        ctx.fillStyle = color;
+        ctx.textBaseline = 'bottom';
+        ctx.textAlign = 'center';
+
+        elements.forEach((element, index) => {
+          const label = dataset.pointLabels[index];
+          if (!element || typeof element.x !== 'number' || typeof element.y !== 'number' || !label) {
+            return;
+          }
+
+          const text = String(label);
+          ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+          const textWidth = ctx.measureText(text).width;
+          let x = element.x + (dataset.labelXOffset || 0);
+          let y = element.y - baseOffset;
+
+          if (alternate && index % 2 === 1) {
+            y = element.y + baseOffset * 0.85;
+          }
+
+          ({ x, y } = fitLabelWithinChart({
+            x,
+            y,
+            width: textWidth,
+            height: lineHeight,
+            chartArea,
+            placements,
+            alternate,
+            elementY: element.y,
+            offset: baseOffset,
+            options
+          }));
+
+          ctx.fillText(text, x, y);
+
+          placements.push({
+            left: x - textWidth / 2,
+            right: x + textWidth / 2,
+            top: y - lineHeight,
+            bottom: y
+          });
+        });
+      });
+      ctx.restore();
+    }
+  };
+
+  if (typeof Chart?.register === 'function') {
+    Chart.register(journalPointLabelPlugin);
+  }
+
+  function mergeLabelOptions(defaults, overrides) {
+    const result = { ...defaults, font: { ...defaults.font } };
+    if (!overrides || typeof overrides !== 'object') {
+      return result;
+    }
+    if (typeof overrides.offset === 'number') {
+      result.offset = overrides.offset;
+    }
+    if (typeof overrides.minSpacing === 'number') {
+      result.minSpacing = overrides.minSpacing;
+    }
+    if (typeof overrides.boundaryPadding === 'number') {
+      result.boundaryPadding = overrides.boundaryPadding;
+    }
+    if (overrides.font && typeof overrides.font === 'object') {
+      result.font = { ...result.font, ...overrides.font };
+    }
+    if (typeof overrides.color === 'string') {
+      result.color = overrides.color;
+    }
+    return result;
+  }
+
+  function boxesOverlap(a, b) {
+    return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function fitLabelWithinChart({ x, y, width, height, chartArea, placements, elementY, options }) {
+    const maxAttempts = 12;
+    const step = height + (options.minSpacing || 4);
+    let attempt = 0;
+    let direction = y < elementY ? -1 : 1;
+    if (!direction) {
+      direction = -1;
+    }
+
+    const xMin = chartArea.left + (options.boundaryPadding || 0) + width / 2;
+    const xMax = chartArea.right - (options.boundaryPadding || 0) - width / 2;
+    let candidateX = clamp(x, xMin, xMax);
+    let candidateY = y;
+
+    while (attempt < maxAttempts) {
+      let top = candidateY - height;
+      let bottom = candidateY;
+
+      if (top < chartArea.top + (options.boundaryPadding || 0)) {
+        candidateY = chartArea.top + (options.boundaryPadding || 0) + height;
+        top = candidateY - height;
+        bottom = candidateY;
+      }
+
+      if (bottom > chartArea.bottom - (options.boundaryPadding || 0)) {
+        candidateY = chartArea.bottom - (options.boundaryPadding || 0);
+        top = candidateY - height;
+        bottom = candidateY;
+      }
+
+      const candidateBox = {
+        left: candidateX - width / 2,
+        right: candidateX + width / 2,
+        top,
+        bottom
+      };
+
+      const overlaps = placements.some((placed) => boxesOverlap(candidateBox, placed));
+      if (!overlaps) {
+        return { x: candidateX, y: candidateY };
+      }
+
+      candidateY += direction * step;
+      direction *= -1;
+      attempt += 1;
+    }
+
+    return { x: candidateX, y: candidateY };
+  }
+
+  function parseColor(color) {
+    if (!color || typeof color !== 'string') {
+      return null;
+    }
+    if (color.startsWith('#')) {
+      let hex = color.slice(1).trim();
+      if (hex.length === 3) {
+        hex = hex
+          .split('')
+          .map((char) => `${char}${char}`)
+          .join('');
+      }
+      const numeric = Number.parseInt(hex, 16);
+      if (!Number.isFinite(numeric)) {
+        return null;
+      }
+      return {
+        r: (numeric >> 16) & 255,
+        g: (numeric >> 8) & 255,
+        b: numeric & 255,
+        a: 1
+      };
+    }
+    const match = color.match(/rgba?\(([^)]+)\)/i);
+    if (!match) {
+      return null;
+    }
+    const parts = match[1]
+      .split(',')
+      .map((part) => part.trim())
+      .map((part) => Number.parseFloat(part));
+    if (parts.length < 3 || parts.some((value) => !Number.isFinite(value))) {
+      return null;
+    }
+    return {
+      r: parts[0],
+      g: parts[1],
+      b: parts[2],
+      a: parts[3] ?? 1
+    };
+  }
+
+  function lightenColor(color, amount = 0.2, alpha = 0.95) {
+    const parsed = parseColor(color);
+    if (!parsed) {
+      return color;
+    }
+    const clampChannel = (value) => clamp(Math.round(value), 0, 255);
+    const mix = (channel) => clampChannel(channel + (255 - channel) * amount);
+    const r = mix(parsed.r);
+    const g = mix(parsed.g);
+    const b = mix(parsed.b);
+    const nextAlpha = typeof alpha === 'number' ? Math.min(Math.max(alpha, 0), 1) : parsed.a;
+    return `rgba(${r}, ${g}, ${b}, ${nextAlpha})`;
+  }
+
   const dom = {
     rangeWindow: document.querySelector('[data-range-window]'),
     rangeMonth: document.querySelector('[data-range-month]'),
@@ -265,6 +497,7 @@
 
     destroyChart('nitrate');
 
+    const labelColor = lightenColor('#7dd3fc', 0.32, 0.96);
     const datasets = [
       {
         label: 'Nitrate',
@@ -274,7 +507,14 @@
         pointBorderColor: 'rgba(15, 23, 42, 0.85)',
         borderWidth: 2,
         pointRadius: 4,
-        tension: 0.35
+        tension: 0.35,
+        clip: false,
+        pointLabels: labels,
+        labelColor,
+        labelFontSize: 11,
+        labelFontWeight: '600',
+        labelDirection: 'alternate',
+        labelOffset: 14
       },
       {
         label: 'Water Change',
@@ -315,7 +555,23 @@
         datasets
       },
       options: {
+        layout: {
+          padding: {
+            top: 24,
+            bottom: 16,
+            left: 4,
+            right: 4
+          }
+        },
         scales: {
+          x: {
+            ticks: {
+              display: false
+            },
+            grid: {
+              display: true
+            }
+          },
           y: {
             beginAtZero: true,
             suggestedMax: 25,
@@ -329,6 +585,13 @@
           annotation: annotationConfig,
           legend: {
             display: false
+          },
+          journalPointLabels: {
+            offset: 14,
+            font: {
+              size: 11,
+              weight: '600'
+            }
           }
         }
       }
