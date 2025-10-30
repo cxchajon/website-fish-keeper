@@ -50,8 +50,14 @@
     rangeButtons: Array.from(document.querySelectorAll('[data-range-nav]')),
     tabs: Array.from(document.querySelectorAll('[data-tab]')),
     panels: Array.from(document.querySelectorAll('.journal-dashboard__panel')),
-    maintenanceList: document.querySelector('[data-maintenance-list]'),
-    error: document.querySelector('[data-dashboard-error]')
+    error: document.querySelector('[data-dashboard-error]'),
+    densityChips: Array.from(document.querySelectorAll('[data-density]')),
+    groupChips: Array.from(document.querySelectorAll('[data-group]')),
+    focusModal: document.querySelector('[data-focus-modal]'),
+    focusOpen: document.querySelector('[data-focus-open]'),
+    focusClose: Array.from(document.querySelectorAll('[data-focus-close]')),
+    focusChartWrap: document.querySelector('[data-focus-chart]'),
+    maintenanceStatus: document.querySelector('[data-maintenance-status]')
   };
 
   const state = {
@@ -59,10 +65,22 @@
     showLast30: false,
     activeTab: 'nitrate',
     monthOffset: 0,
+    density: 'compact',
+    groupMode: 'daily',
     charts: {
       nitrate: null,
-      dosing: null
+      nitrateFocus: null,
+      dosingThrive: null,
+      dosingExcel: null,
+      maintenance: null
     }
+  };
+
+  let focusReturnElement = null;
+
+  const STORAGE_KEYS = {
+    density: 'jd-density-mode',
+    groupMode: 'jd-group-mode'
   };
 
   const dateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
@@ -166,9 +184,35 @@
       return;
     }
     state.data = data;
+    loadSettings();
+    syncDensityUI();
+    syncGroupUI();
     updateRangeLabels();
     bindControls();
     renderAll();
+  }
+
+  function loadSettings() {
+    try {
+      const density = localStorage.getItem(STORAGE_KEYS.density);
+      if (density === 'comfortable' || density === 'expanded' || density === 'compact') {
+        state.density = density;
+      }
+      const groupMode = localStorage.getItem(STORAGE_KEYS.groupMode);
+      if (groupMode === 'weekly' || groupMode === 'daily') {
+        state.groupMode = groupMode;
+      }
+    } catch (error) {
+      console.warn('Unable to load dashboard preferences.', error);
+    }
+  }
+
+  function saveSetting(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (error) {
+      console.warn('Unable to persist dashboard preference.', error);
+    }
   }
 
   function setError(message) {
@@ -177,6 +221,22 @@
     }
     dom.error.textContent = message || '';
     dom.error.hidden = !message;
+  }
+
+  function syncDensityUI() {
+    dom.densityChips.forEach((chip) => {
+      const isActive = chip.dataset.density === state.density;
+      chip.classList.toggle('is-active', isActive);
+      chip.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+  }
+
+  function syncGroupUI() {
+    dom.groupChips.forEach((chip) => {
+      const isActive = chip.dataset.group === state.groupMode;
+      chip.classList.toggle('is-active', isActive);
+      chip.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
   }
 
   async function loadData() {
@@ -269,6 +329,9 @@
         dom.toggle.classList.toggle('is-active', state.showLast30);
         dom.toggle.setAttribute('aria-pressed', state.showLast30 ? 'true' : 'false');
         renderNitrateChart();
+        if (state.charts.nitrateFocus) {
+          renderFocusChart();
+        }
       });
     }
 
@@ -276,6 +339,47 @@
       tab.addEventListener('click', () => {
         setActiveTab(tab.dataset.tab);
       });
+    });
+
+    dom.densityChips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const value = chip.dataset.density;
+        if (!value || value === state.density) {
+          return;
+        }
+        state.density = value;
+        saveSetting(STORAGE_KEYS.density, value);
+        syncDensityUI();
+        renderAll();
+      });
+    });
+
+    dom.groupChips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const value = chip.dataset.group;
+        if (!value || value === state.groupMode) {
+          return;
+        }
+        state.groupMode = value;
+        saveSetting(STORAGE_KEYS.groupMode, value);
+        syncGroupUI();
+        renderAll();
+      });
+    });
+
+    if (dom.focusOpen) {
+      dom.focusOpen.addEventListener('click', openFocusModal);
+    }
+
+    dom.focusClose.forEach((trigger) => {
+      trigger.addEventListener('click', closeFocusModal);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && dom.focusModal && !dom.focusModal.hasAttribute('hidden')) {
+        event.preventDefault();
+        closeFocusModal();
+      }
     });
   }
 
@@ -323,8 +427,11 @@
 
   function renderAll() {
     renderNitrateChart();
-    renderDosingChart();
-    renderMaintenance();
+    renderDosingCharts();
+    renderMaintenanceTimeline();
+    if (state.charts.nitrateFocus) {
+      renderFocusChart();
+    }
     setActiveTab(state.activeTab);
   }
 
@@ -335,26 +442,163 @@
     }
   }
 
-  function getNitrateSeries() {
+  function getNitrateSeries({ focus = false } = {}) {
     if (!state.data) {
-      return { labels: [], values: [], markers: [] };
+      return { points: [] };
     }
+
+    const densityLimit = focus ? Infinity : getDensityLimit('nitrate');
     const endDate = parseISO(state.data.period.end);
     const cutoff = endDate ? new Date(endDate) : null;
     if (cutoff) {
       cutoff.setDate(cutoff.getDate() - 29);
     }
-    const items = state.data.nitrate.filter((entry) => {
-      if (!state.showLast30 || !cutoff) {
+
+    let items = state.data.nitrate.filter((entry) => {
+      if (focus || !state.showLast30 || !cutoff) {
         return true;
       }
       const current = parseISO(entry.date);
       return current && current >= cutoff && current <= endDate;
     });
-    const labels = items.map((entry) => dateFormatter.format(parseISO(entry.date)));
-    const values = items.map((entry) => entry.ppm);
-    const markers = items.map((entry) => (entry.wc ? entry.ppm : null));
-    return { labels, values, markers };
+
+    if (!focus && Number.isFinite(densityLimit) && items.length > densityLimit) {
+      items = items.slice(items.length - densityLimit);
+    }
+
+    if (state.groupMode === 'weekly') {
+      items = groupNitrateByWeek(items);
+    } else {
+      items = items
+        .map((entry) => {
+          const parsed = parseISO(entry.date);
+          const label = parsed ? dateFormatter.format(parsed) : entry.date;
+          return {
+            label,
+            tooltip: `${label} · ${entry.ppm} ppm`,
+            value: entry.ppm,
+            marker: entry.wc ? entry.ppm : null,
+            date: entry.date,
+            wc: entry.wc
+          };
+        })
+        .filter((item) => Number.isFinite(item.value));
+    }
+
+    if (focus && Number.isFinite(densityLimit) && items.length > densityLimit && state.groupMode === 'daily') {
+      // Focus mode still respects density limit when daily data is extremely long to prevent crashes.
+      items = items.slice(items.length - densityLimit * 2);
+    }
+
+    return { points: items };
+  }
+
+  function getDensityLimit(type) {
+    const base = state.density;
+    if (base === 'expanded') {
+      return 48;
+    }
+    if (base === 'comfortable') {
+      return type === 'nitrate' ? 18 : 16;
+    }
+    return type === 'nitrate' ? 10 : 12;
+  }
+
+  function groupNitrateByWeek(items) {
+    const buckets = new Map();
+    items.forEach((entry) => {
+      const parsed = parseISO(entry.date);
+      if (!parsed) {
+        return;
+      }
+      const { year, week } = getIsoWeek(parsed);
+      const key = `${year}-W${week}`;
+      if (!buckets.has(key)) {
+        buckets.set(key, {
+          week,
+          year,
+          total: 0,
+          count: 0,
+          start: parsed,
+          end: parsed,
+          wc: Boolean(entry.wc)
+        });
+      }
+      const bucket = buckets.get(key);
+      bucket.total += entry.ppm || 0;
+      bucket.count += Number.isFinite(entry.ppm) ? 1 : 0;
+      bucket.start = bucket.start && bucket.start < parsed ? bucket.start : parsed;
+      bucket.end = bucket.end && bucket.end > parsed ? bucket.end : parsed;
+      bucket.wc = bucket.wc || Boolean(entry.wc);
+    });
+
+    const sorted = Array.from(buckets.values()).sort((a, b) => a.start - b.start);
+    return sorted.map((bucket) => {
+      const average = bucket.count ? Number.parseFloat((bucket.total / bucket.count).toFixed(1)) : 0;
+      const rangeStart = maintenanceFormatter.format(bucket.start);
+      const rangeEnd = maintenanceFormatter.format(bucket.end);
+      const label = `Week ${bucket.week}`;
+      return {
+        label,
+        tooltip: `${label} · ${rangeStart} – ${rangeEnd}`,
+        value: average,
+        marker: bucket.wc ? average : null,
+        date: `${bucket.year}-W${bucket.week}`,
+        wc: bucket.wc
+      };
+    });
+  }
+
+  function getIsoWeek(date) {
+    const copy = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const day = copy.getUTCDay() || 7;
+    copy.setUTCDate(copy.getUTCDate() + 4 - day);
+    const yearStart = new Date(Date.UTC(copy.getUTCFullYear(), 0, 1));
+    const weekNumber = Math.ceil(((copy - yearStart) / 86400000 + 1) / 7);
+    return { year: copy.getUTCFullYear(), week: weekNumber };
+  }
+
+  function getLabelStep(count) {
+    const width = typeof window !== 'undefined' ? window.innerWidth || 0 : 0;
+    if (state.density === 'expanded') {
+      return width < 480 ? 1 : 1;
+    }
+    if (state.density === 'comfortable') {
+      return width <= 420 ? 2 : 1;
+    }
+    if (width <= 360) {
+      return 3;
+    }
+    if (width <= 768) {
+      return 2;
+    }
+    return count > 14 ? 2 : 1;
+  }
+
+  function getRollingAverage(values, windowSize) {
+    if (!Array.isArray(values) || values.length === 0) {
+      return [];
+    }
+    const size = Math.max(1, windowSize);
+    return values.map((value, index) => {
+      let sum = 0;
+      let count = 0;
+      for (let offset = 0; offset < size; offset += 1) {
+        const target = index - offset;
+        if (target < 0) {
+          break;
+        }
+        const current = values[target];
+        if (Number.isFinite(current)) {
+          sum += current;
+          count += 1;
+        }
+      }
+      if (!count) {
+        return null;
+      }
+      return Number.parseFloat((sum / count).toFixed(1));
+    });
   }
 
   function renderNitrateChart() {
@@ -362,8 +606,8 @@
     if (!canvas) {
       return;
     }
-    const { labels, values, markers } = getNitrateSeries();
-    if (!labels.length) {
+    const { points } = getNitrateSeries();
+    if (!points.length) {
       destroyChart('nitrate');
       if (statusEl) {
         statusEl.textContent = 'No nitrate readings available for this range yet.';
@@ -376,16 +620,17 @@
     }
 
     const ctx = canvas.getContext('2d');
-    const datasets = createNitrateDatasets({ labels, values, markers });
+    const datasets = createNitrateDatasets(points);
     const annotation = getNitrateAnnotation();
+    const values = points.map((point) => point.value);
     const suggestedMax = getSuggestedMax(values);
-    const options = getNitrateChartOptions({ annotation, suggestedMax });
+    const options = getNitrateChartOptions({ annotation, suggestedMax, focus: false });
 
     if (!state.charts.nitrate) {
       state.charts.nitrate = new Chart(ctx, {
         type: 'line',
         data: {
-          labels,
+          labels: points.map((point) => point.label),
           datasets
         },
         options
@@ -394,97 +639,132 @@
     }
 
     const chart = state.charts.nitrate;
-    chart.data.labels = labels;
+    chart.data.labels = points.map((point) => point.label);
     chart.data.datasets = datasets;
     chart.options = options;
     chart.config.options = options;
     chart.update();
   }
 
-  function createNitrateDatasets({ labels, values, markers }) {
+  function createNitrateDatasets(points, { focus = false } = {}) {
     const compact = isCompactViewport();
-    const skipDense = labels.length > (compact ? 11 : 16);
-    const lineColor = '#38bdf8';
-    const pointColor = '#0ea5e9';
-    const labelColor = lightenColor('#e0f2ff', 0.12, 1);
-    const strokeColor = 'rgba(7, 12, 24, 0.92)';
+    const step = focus ? 1 : getLabelStep(points.length);
+    const lineColor = focus ? '#38bdf8' : '#4cc9f0';
+    const pointColor = focus ? '#0ea5e9' : '#22d3ee';
+    const labelColor = lightenColor('#e0f2ff', 0.05, 1);
+    const strokeColor = 'rgba(6, 12, 24, 0.92)';
 
-    return [
-      {
-        label: 'Nitrate',
-        data: values,
-        pointLabels: labels,
-        borderColor: lineColor,
-        backgroundColor: lineColor,
-        borderWidth: 3,
-        tension: 0.35,
-        fill: false,
-        spanGaps: true,
-        clip: false,
-        pointBackgroundColor: pointColor,
-        pointHoverBackgroundColor: pointColor,
-        pointBorderColor: '#0f172a',
-        pointBorderWidth: 2,
-        pointRadius: (context) => (context?.chart?.width || 0) < 540 ? 5 : 4,
-        pointHoverRadius: (context) => (context?.chart?.width || 0) < 540 ? 7 : 6,
-        pointHitRadius: 10,
-        datalabels: {
-          display: true,
-          color: labelColor,
-          textAlign: 'left',
-          position: 'auto',
-          alternate: true,
-          offset: compact ? 16 : 20,
-          xOffset: compact ? 6 : 10,
-          minSpacing: compact ? 6 : 8,
-          boundaryPadding: 12,
-          shadowColor: 'rgba(6, 12, 24, 0.6)',
-          shadowBlur: 6,
-          textStrokeColor: strokeColor,
-          textStrokeWidth: 3,
-          font: {
-            size: compact ? 10 : 11,
-            weight: '600'
-          },
-          formatter(value, context) {
-            const dataset = context.dataset || {};
-            const label = Array.isArray(dataset.pointLabels) ? dataset.pointLabels[context.dataIndex] : null;
-            if (!label) {
-              return '';
-            }
-            if (skipDense && context.dataIndex % 2 === 1) {
-              return '';
-            }
-            const elements = context.meta?.data || [];
-            const current = elements[context.dataIndex];
-            const previous = elements[context.dataIndex - 1];
-            if (previous && current) {
-              const spacing = Math.abs(current.x - previous.x);
-              const threshold = compact ? 32 : 28;
-              if (spacing < threshold && context.dataIndex % 2 === 1) {
-                return '';
-              }
-            }
-            return label;
-          }
-        }
+    const dataset = {
+      label: 'Nitrate',
+      data: points.map((point) => point.value),
+      pointLabels: points.map((point) => point.label),
+      tooltips: points.map((point) => point.tooltip),
+      borderColor: lineColor,
+      backgroundColor: lineColor,
+      borderWidth: focus ? 4 : 3.5,
+      tension: 0.32,
+      fill: false,
+      spanGaps: true,
+      clip: false,
+      pointBackgroundColor: pointColor,
+      pointHoverBackgroundColor: pointColor,
+      pointBorderColor: '#061225',
+      pointBorderWidth: 2,
+      pointRadius: (context) => {
+        const width = context?.chart?.width || 0;
+        const base = width < 540 ? 6 : 5;
+        return focus ? base + 1 : base;
       },
-      {
-        label: 'Water Change',
-        data: markers,
-        type: 'scatter',
-        pointBackgroundColor: '#fb923c',
-        pointBorderColor: lightenColor('#fb923c', 0.18, 1),
-        pointRadius: (context) => (context?.chart?.width || 0) < 540 ? 5 : 4,
-        pointHoverRadius: (context) => (context?.chart?.width || 0) < 540 ? 7 : 6,
-        pointBorderWidth: 2,
-        pointHitRadius: 10,
-        showLine: false,
+      pointHoverRadius: (context) => {
+        const width = context?.chart?.width || 0;
+        const base = width < 540 ? 8 : 7;
+        return focus ? base + 1 : base;
+      },
+      pointHitRadius: 12,
+      datalabels: {
+        display: true,
+        color: labelColor,
+        align: (ctx) => (ctx.dataIndex % 2 === 0 ? 'end' : 'start'),
+        anchor: (ctx) => (ctx.dataIndex % 2 === 0 ? 'end' : 'start'),
+        offset: focus ? 16 : compact ? 18 : 20,
+        clamp: false,
+        clip: false,
+        padding: { top: 4, bottom: 4, left: 6, right: 6 },
+        textStrokeColor: strokeColor,
+        textStrokeWidth: 3,
+        font: {
+          size: focus ? 12 : compact ? 10 : 11,
+          weight: '600'
+        },
+        formatter(value, context) {
+          const labels = context.dataset?.pointLabels || [];
+          const label = labels[context.dataIndex];
+          if (!label) {
+            return '';
+          }
+          if (!focus && step > 1 && context.dataIndex % step !== 0) {
+            return '';
+          }
+          const elements = context.meta?.data || [];
+          const current = elements[context.dataIndex];
+          const previous = elements[context.dataIndex - 1];
+          if (!focus && previous && current) {
+            const spacing = Math.abs(current.x - previous.x);
+            const minSpacing = compact ? 28 : 34;
+            if (spacing < minSpacing && context.dataIndex % 2 === 1) {
+              return '';
+            }
+          }
+          return label;
+        }
+      }
+    };
+
+    const markerDataset = {
+      label: 'Water Change',
+      data: points.map((point) => point.marker),
+      type: 'scatter',
+      pointBackgroundColor: '#fb923c',
+      pointBorderColor: lightenColor('#fb923c', 0.2, 1),
+      pointRadius: (context) => {
+        const width = context?.chart?.width || 0;
+        const base = width < 540 ? 6 : 5;
+        return focus ? base + 1 : base;
+      },
+      pointHoverRadius: (context) => {
+        const width = context?.chart?.width || 0;
+        const base = width < 540 ? 8 : 7;
+        return focus ? base + 1 : base;
+      },
+      pointBorderWidth: 2,
+      pointHitRadius: 12,
+      showLine: false,
+      datalabels: {
+        display: false
+      }
+    };
+
+    const datasets = [dataset, markerDataset];
+
+    if (focus) {
+      const rolling = getRollingAverage(points.map((point) => point.value), 3);
+      datasets.push({
+        label: '3-pt avg',
+        data: rolling,
+        borderColor: 'rgba(129, 140, 248, 0.9)',
+        borderWidth: 2,
+        borderDash: [6, 6],
+        pointRadius: 0,
+        spanGaps: true,
+        tension: 0.3,
+        fill: false,
         datalabels: {
           display: false
         }
-      }
-    ];
+      });
+    }
+
+    return datasets;
   }
 
   function getNitrateAnnotation() {
@@ -536,17 +816,17 @@
     return Math.max(25, padded);
   }
 
-  function getNitrateChartOptions({ annotation, suggestedMax }) {
+  function getNitrateChartOptions({ annotation, suggestedMax, focus }) {
     return {
       responsive: true,
       maintainAspectRatio: false,
       animation: getAnimationOptions(),
       layout: {
         padding: {
-          top: 32,
-          bottom: 24,
-          left: 18,
-          right: 18
+          top: focus ? 40 : 32,
+          bottom: focus ? 36 : 24,
+          left: focus ? 24 : 18,
+          right: focus ? 24 : 18
         }
       },
       interaction: {
@@ -562,8 +842,8 @@
             display: false
           },
           grid: {
-            color: 'rgba(80, 118, 184, 0.32)',
-            lineWidth: 1,
+            color: 'rgba(120, 162, 226, 0.22)',
+            lineWidth: 1.2,
             drawBorder: false,
             tickLength: 0
           }
@@ -574,14 +854,15 @@
           ticks: {
             count: 5,
             padding: 10,
-            color: 'rgba(226, 232, 240, 0.88)',
+            color: 'rgba(234, 240, 255, 0.9)',
             callback: (value) => `${Math.round(value)} ppm`
           },
           border: {
             display: false
           },
           grid: {
-            color: 'rgba(76, 112, 176, 0.25)',
+            color: 'rgba(113, 155, 214, 0.28)',
+            lineWidth: 1.1,
             drawTicks: false
           }
         }
@@ -609,7 +890,7 @@
           titleColor: '#e2e8f0',
           bodyColor: '#f8fafc',
           displayColors: false,
-          padding: 12,
+          padding: focus ? 16 : 12,
           cornerRadius: 10,
           callbacks: {
             label(context) {
@@ -617,8 +898,13 @@
               if (!Number.isFinite(value)) {
                 return '';
               }
-              const label = context.dataset?.label ? `${context.dataset.label}: ` : '';
-              return `${label}${value} ppm`;
+              const dataset = context.dataset || {};
+              const label = dataset?.tooltips ? dataset.tooltips[context.dataIndex] : null;
+              if (typeof label === 'string') {
+                return label;
+              }
+              const prefix = dataset?.label ? `${dataset.label}: ` : '';
+              return `${prefix}${value} ppm`;
             }
           }
         },
@@ -640,62 +926,112 @@
     return width <= 420;
   }
 
-  function renderDosingChart() {
-    const canvas = document.getElementById('dosingChart');
-    if (!canvas) {
+  function renderDosingCharts() {
+    const thriveCanvas = document.getElementById('dosingThriveChart');
+    const excelCanvas = document.getElementById('dosingExcelChart');
+    const entries = getDosingSeries();
+    if (!thriveCanvas || !excelCanvas) {
       return;
     }
-    const entries = state.data?.dosing || [];
-    if (!entries.length) {
-      destroyChart('dosing');
-      return;
-    }
-    const labels = entries.map((entry) => entry.label);
-    const thriveValues = entries.map((entry) => entry.thrive);
-    const excelValues = entries.map((entry) => entry.excel);
-    const datasets = [
-      {
-        label: 'Thrive Plus (pumps)',
-        data: thriveValues,
-        backgroundColor: 'rgba(52, 211, 153, 0.88)',
-        hoverBackgroundColor: 'rgba(16, 185, 129, 0.95)',
-        borderRadius: 8,
-        borderSkipped: false,
-        maxBarThickness: 36
-      },
-      {
-        label: 'Seachem Excel (caps)',
-        data: excelValues,
-        backgroundColor: 'rgba(168, 85, 247, 0.86)',
-        hoverBackgroundColor: 'rgba(147, 51, 234, 0.94)',
-        borderRadius: 8,
-        borderSkipped: false,
-        maxBarThickness: 36
-      }
-    ];
-    const options = getDosingChartOptions(labels);
 
-    if (!state.charts.dosing) {
-      state.charts.dosing = new Chart(canvas.getContext('2d'), {
+    if (!entries.labels.length) {
+      destroyChart('dosingThrive');
+      destroyChart('dosingExcel');
+      return;
+    }
+
+    const thriveConfig = createMiniBarConfig({
+      canvas: thriveCanvas,
+      chartKey: 'dosingThrive',
+      label: 'Thrive pumps',
+      values: entries.thrive,
+      labels: entries.labels,
+      color: 'rgba(34, 197, 94, 0.88)',
+      hover: 'rgba(16, 185, 129, 0.95)'
+    });
+
+    const excelConfig = createMiniBarConfig({
+      canvas: excelCanvas,
+      chartKey: 'dosingExcel',
+      label: 'Excel capfuls',
+      values: entries.excel,
+      labels: entries.labels,
+      color: 'rgba(129, 140, 248, 0.9)',
+      hover: 'rgba(99, 102, 241, 0.95)'
+    });
+
+    updateMiniChart(thriveConfig);
+    updateMiniChart(excelConfig);
+  }
+
+  function getDosingSeries() {
+    const items = state.data?.dosing || [];
+    if (!items.length) {
+      return { labels: [], thrive: [], excel: [] };
+    }
+    const limit = getDensityLimit('dosing');
+    const normalized = state.groupMode === 'weekly' ? groupDosingByWeek(items) : items.slice();
+    const trimmed = normalized.length > limit ? normalized.slice(normalized.length - limit) : normalized;
+    const labels = trimmed.map((entry) => entry.label || entry.week || 'Week');
+    const thrive = trimmed.map((entry) => {
+      const value = Number.isFinite(entry.thrive) ? entry.thrive : Number.parseFloat(entry.thrive);
+      return Number.isFinite(value) ? value : 0;
+    });
+    const excel = trimmed.map((entry) => {
+      const value = Number.isFinite(entry.excel) ? entry.excel : Number.parseFloat(entry.excel);
+      return Number.isFinite(value) ? value : 0;
+    });
+    return { labels, thrive, excel };
+  }
+
+  function groupDosingByWeek(items) {
+    const map = new Map();
+    items.forEach((entry, index) => {
+      const key = entry.week || entry.label || `Week-${index}`;
+      if (!map.has(key)) {
+        map.set(key, {
+          label: entry.label || entry.week || `Week ${index + 1}`,
+          week: entry.week || key,
+          thrive: 0,
+          excel: 0,
+          order: index
+        });
+      }
+      const bucket = map.get(key);
+      const thriveValue = Number.isFinite(entry.thrive) ? entry.thrive : parseFloat(entry.thrive) || 0;
+      const excelValue = Number.isFinite(entry.excel) ? entry.excel : parseFloat(entry.excel) || 0;
+      bucket.thrive += thriveValue;
+      bucket.excel += excelValue;
+    });
+    return Array.from(map.values()).sort((a, b) => a.order - b.order);
+  }
+
+  function createMiniBarConfig({ canvas, chartKey, label, values, labels, color, hover }) {
+    return {
+      canvas,
+      chartKey,
+      config: {
         type: 'bar',
         data: {
           labels,
-          datasets
+          datasets: [
+            {
+              label,
+              data: values,
+              backgroundColor: color,
+              hoverBackgroundColor: hover,
+              borderRadius: 8,
+              borderSkipped: false,
+              maxBarThickness: 34
+            }
+          ]
         },
-        options
-      });
-      return;
-    }
-
-    const chart = state.charts.dosing;
-    chart.data.labels = labels;
-    chart.data.datasets = datasets;
-    chart.options = options;
-    chart.config.options = options;
-    chart.update();
+        options: getMiniBarOptions(labels)
+      }
+    };
   }
 
-  function getDosingChartOptions(labels) {
+  function getMiniBarOptions(labels) {
     const dense = Array.isArray(labels) && labels.length > 6;
     return {
       responsive: true,
@@ -703,15 +1039,11 @@
       animation: getAnimationOptions(),
       layout: {
         padding: {
-          top: 24,
-          right: 16,
-          bottom: 24,
-          left: 16
+          top: 16,
+          right: 12,
+          bottom: 20,
+          left: 12
         }
-      },
-      interaction: {
-        intersect: false,
-        mode: 'index'
       },
       scales: {
         x: {
@@ -719,12 +1051,10 @@
             display: false
           },
           ticks: {
-            autoSkip: dense,
-            maxRotation: 0,
-            color: 'rgba(226, 232, 240, 0.78)',
-            padding: 8,
+            display: !dense,
+            color: 'rgba(214, 228, 255, 0.76)',
             font: {
-              size: 12
+              size: 11
             }
           },
           border: {
@@ -734,48 +1064,221 @@
         y: {
           beginAtZero: true,
           grid: {
-            color: 'rgba(76, 112, 176, 0.22)',
+            color: 'rgba(118, 156, 222, 0.22)',
             drawTicks: false
           },
           border: {
             display: false
           },
           ticks: {
-            padding: 10,
-            color: 'rgba(226, 232, 240, 0.82)',
-            callback: (value) => `${value}`
+            padding: 8,
+            color: 'rgba(230, 240, 255, 0.85)',
+            font: {
+              size: 11
+            }
           }
         }
       },
       plugins: {
         legend: {
-          position: 'top',
-          align: 'start',
-          labels: {
-            usePointStyle: true,
-            pointStyle: 'rectRounded',
-            boxWidth: 12,
-            padding: 14,
-            color: 'rgba(226, 232, 240, 0.88)',
-            font: {
-              size: 12,
-              weight: '600'
+          display: false
+        },
+        datalabels: {
+          display: true,
+          color: 'rgba(234, 242, 255, 0.88)',
+          align: 'end',
+          anchor: 'end',
+          offset: 6,
+          font: {
+            size: 11,
+            weight: '600'
+          },
+          formatter(value, context) {
+            if (!Number.isFinite(value)) {
+              return '';
             }
+            if (dense && context.dataIndex % 2 === 1) {
+              return '';
+            }
+            return value;
           }
         },
         tooltip: {
-          intersect: false,
-          mode: 'index',
-          backgroundColor: 'rgba(9, 17, 32, 0.94)',
-          borderColor: 'rgba(120, 196, 255, 0.35)',
+          backgroundColor: 'rgba(8, 16, 32, 0.94)',
+          borderColor: 'rgba(120, 196, 255, 0.3)',
           borderWidth: 1,
           titleColor: '#e2e8f0',
           bodyColor: '#f8fafc',
           displayColors: false,
-          padding: 12
+          padding: 10
         },
-        datalabels: {
-          display: false
+        jdChartBackground: {
+          color: '#0f1a33'
+        }
+      }
+    };
+  }
+
+  function updateMiniChart({ canvas, chartKey, config }) {
+    const ctx = canvas.getContext('2d');
+    const existing = state.charts[chartKey];
+    if (!existing) {
+      state.charts[chartKey] = new Chart(ctx, config);
+      return;
+    }
+    existing.data = config.data;
+    existing.options = config.options;
+    existing.config.data = config.data;
+    existing.config.options = config.options;
+    existing.update();
+  }
+
+  function renderMaintenanceTimeline() {
+    const canvas = document.getElementById('maintenanceChart');
+    if (!canvas) {
+      return;
+    }
+    const status = dom.maintenanceStatus;
+    const events = state.data?.maintenance || [];
+    if (!events.length) {
+      destroyChart('maintenance');
+      if (status) {
+        status.textContent = 'No maintenance events logged yet.';
+      }
+      return;
+    }
+
+    if (status) {
+      status.textContent = '';
+    }
+
+    const series = events
+      .map((entry) => {
+        const date = parseISO(entry.date);
+        if (!date) {
+          return null;
+        }
+        return {
+          x: date.getTime(),
+          y: 0,
+          type: entry.type,
+          details: entry.details || '—',
+          dateLabel: maintenanceFormatter.format(date)
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.x - b.x);
+
+    const options = getMaintenanceOptions(series);
+    const data = {
+      datasets: [
+        {
+          type: 'scatter',
+          data: series,
+          pointBackgroundColor: series.map((point) => getMaintenanceColor(point.type)),
+          pointBorderColor: 'rgba(15, 23, 42, 0.9)',
+          pointBorderWidth: 2,
+          pointRadius: (context) => ((context?.chart?.width || 0) < 520 ? 6 : 5),
+          pointHoverRadius: (context) => ((context?.chart?.width || 0) < 520 ? 9 : 8),
+          datalabels: {
+            display: true,
+            align: 'top',
+            anchor: 'end',
+            offset: 12,
+            color: 'rgba(228, 238, 255, 0.88)',
+            backgroundColor: 'rgba(11, 22, 40, 0.88)',
+            borderRadius: 999,
+            padding: { top: 4, bottom: 4, left: 10, right: 10 },
+            font: {
+              size: 10,
+              weight: '600'
+            },
+            formatter(value) {
+              return value?.type || '';
+            }
+          }
+        }
+      ]
+    };
+
+    if (!state.charts.maintenance) {
+      state.charts.maintenance = new Chart(canvas.getContext('2d'), {
+        type: 'scatter',
+        data,
+        options
+      });
+      return;
+    }
+
+    const chart = state.charts.maintenance;
+    chart.data = data;
+    chart.options = options;
+    chart.config.data = data;
+    chart.config.options = options;
+    chart.update();
+  }
+
+  function getMaintenanceOptions(series) {
+    const minTime = series[0]?.x;
+    const maxTime = series[series.length - 1]?.x;
+    const padding = 1000 * 60 * 60 * 24 * 2;
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: getAnimationOptions(),
+      parsing: false,
+      scales: {
+        x: {
+          type: 'linear',
+          min: minTime - padding,
+          max: maxTime + padding,
+          grid: {
+            color: 'rgba(108, 148, 214, 0.24)',
+            drawTicks: false
+          },
+          ticks: {
+            color: 'rgba(214, 228, 255, 0.7)',
+            maxRotation: 0,
+            autoSkip: true,
+            callback(value) {
+              if (!Number.isFinite(value)) {
+                return '';
+              }
+              return dateFormatter.format(new Date(value));
+            }
+          },
+          border: {
+            display: false
+          }
+        },
+        y: {
+          display: false,
+          min: -1,
+          max: 1
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(8, 16, 32, 0.94)',
+          borderColor: 'rgba(120, 196, 255, 0.3)',
+          borderWidth: 1,
+          titleColor: '#e2e8f0',
+          bodyColor: '#f8fafc',
+          padding: 12,
+          callbacks: {
+            title(context) {
+              const point = context[0]?.raw;
+              return point?.dateLabel || '';
+            },
+            label(context) {
+              const point = context.raw;
+              if (!point) {
+                return '';
+              }
+              return `${point.type}: ${point.details}`;
+            }
+          }
         },
         jdChartBackground: {
           color: '#101b33'
@@ -784,43 +1287,83 @@
     };
   }
 
-  function renderMaintenance() {
-    if (!dom.maintenanceList) {
+  function getMaintenanceColor(type) {
+    const normalized = String(type || '').toLowerCase();
+    if (normalized.includes('trim')) {
+      return 'rgba(248, 113, 113, 0.92)';
+    }
+    if (normalized.includes('filter')) {
+      return 'rgba(129, 140, 248, 0.9)';
+    }
+    if (normalized.includes('dose') || normalized.includes('fert')) {
+      return 'rgba(16, 185, 129, 0.92)';
+    }
+    return 'rgba(250, 204, 21, 0.9)';
+  }
+
+  function openFocusModal() {
+    if (!dom.focusModal) {
       return;
     }
-    dom.maintenanceList.innerHTML = '';
-    const entries = state.data?.maintenance || [];
-    if (!entries.length) {
-      const item = document.createElement('li');
-      item.textContent = 'No maintenance events logged yet.';
-      dom.maintenanceList.appendChild(item);
+    focusReturnElement = document.activeElement;
+    dom.focusModal.removeAttribute('hidden');
+    document.body.classList.add('is-focus-open');
+    renderFocusChart();
+    const closeTrigger = dom.focusClose[0];
+    if (closeTrigger) {
+      closeTrigger.focus();
+    }
+  }
+
+  function closeFocusModal() {
+    if (!dom.focusModal) {
       return;
     }
-    entries.forEach((entry) => {
-      const item = document.createElement('li');
-      const header = document.createElement('div');
-      header.className = 'maintenance-list__header';
+    dom.focusModal.setAttribute('hidden', '');
+    document.body.classList.remove('is-focus-open');
+    destroyChart('nitrateFocus');
+    if (focusReturnElement && typeof focusReturnElement.focus === 'function') {
+      focusReturnElement.focus();
+    }
+    focusReturnElement = null;
+  }
 
-      const dateEl = document.createElement('span');
-      dateEl.className = 'maintenance-list__date';
-      const parsedDate = parseISO(entry.date);
-      dateEl.textContent = parsedDate ? maintenanceFormatter.format(parsedDate) : entry.date;
-
-      const typeEl = document.createElement('span');
-      typeEl.className = 'maintenance-list__type';
-      typeEl.textContent = entry.type;
-
-      header.appendChild(dateEl);
-      header.appendChild(typeEl);
-
-      const details = document.createElement('p');
-      details.className = 'maintenance-list__details';
-      details.textContent = entry.details || 'Details unavailable';
-
-      item.appendChild(header);
-      item.appendChild(details);
-      dom.maintenanceList.appendChild(item);
+  function renderFocusChart() {
+    const canvas = document.getElementById('nitrateFocusChart');
+    if (!canvas) {
+      return;
+    }
+    const { points } = getNitrateSeries({ focus: true });
+    if (!points.length) {
+      destroyChart('nitrateFocus');
+      return;
+    }
+    const datasets = createNitrateDatasets(points, { focus: true });
+    const values = points.map((point) => point.value);
+    const options = getNitrateChartOptions({
+      annotation: getNitrateAnnotation(),
+      suggestedMax: getSuggestedMax(values),
+      focus: true
     });
+
+    if (!state.charts.nitrateFocus) {
+      state.charts.nitrateFocus = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: points.map((point) => point.label),
+          datasets
+        },
+        options
+      });
+      return;
+    }
+
+    const chart = state.charts.nitrateFocus;
+    chart.data.labels = points.map((point) => point.label);
+    chart.data.datasets = datasets;
+    chart.options = options;
+    chart.config.options = options;
+    chart.update();
   }
 
   function setActiveTab(target) {
@@ -847,7 +1390,10 @@
       renderNitrateChart();
     }
     if (target === 'dosing') {
-      renderDosingChart();
+      renderDosingCharts();
+    }
+    if (target === 'maintenance') {
+      renderMaintenanceTimeline();
     }
   }
 })();
