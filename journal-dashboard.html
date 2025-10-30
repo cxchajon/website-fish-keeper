@@ -119,7 +119,7 @@
             role="tabpanel"
             aria-labelledby="tab-nitrate"
           >
-            <article class="dashboard-card">
+            <article class="dashboard-card jd-card">
               <header class="dashboard-card__header">
                 <div>
                   <h2 class="dashboard-card__title">Nitrate Trend</h2>
@@ -137,9 +137,14 @@
                 </div>
               </header>
               <div class="dashboard-card__body">
-                <div class="dashboard-card__chart">
-                  <canvas id="nitrateChart" role="img" aria-label="Line chart of nitrate readings"></canvas>
-                  <p class="dashboard-card__status" data-chart-status aria-live="polite"></p>
+                <div class="dashboard-card__chart jd-chart jd-chart--line">
+                  <canvas
+                    id="nitrateChart"
+                    class="jd-chart__canvas"
+                    role="img"
+                    aria-label="Line chart of nitrate readings"
+                  ></canvas>
+                  <p class="dashboard-card__status jd-chart__status" data-chart-status aria-live="polite"></p>
                 </div>
               </div>
             </article>
@@ -152,7 +157,7 @@
             aria-labelledby="tab-dosing"
             hidden
           >
-            <article class="dashboard-card">
+            <article class="dashboard-card jd-card">
               <header class="dashboard-card__header">
                 <div>
                   <h2 class="dashboard-card__title">Weekly Dosing Totals</h2>
@@ -160,8 +165,13 @@
                 </div>
               </header>
               <div class="dashboard-card__body">
-                <div class="dashboard-card__chart">
-                  <canvas id="dosingChart" role="img" aria-label="Weekly dosing totals"></canvas>
+                <div class="dashboard-card__chart jd-chart jd-chart--bar">
+                  <canvas
+                    id="dosingChart"
+                    class="jd-chart__canvas"
+                    role="img"
+                    aria-label="Weekly dosing totals"
+                  ></canvas>
                 </div>
               </div>
             </article>
@@ -174,7 +184,7 @@
             aria-labelledby="tab-maintenance"
             hidden
           >
-            <article class="dashboard-card">
+            <article class="dashboard-card jd-card">
               <header class="dashboard-card__header">
                 <div>
                   <h2 class="dashboard-card__title">Maintenance Timeline</h2>
@@ -237,6 +247,7 @@
   </script>
   <script defer src="/assets/vendor/chartjs/chart.4.4.4.min.js"></script>
   <script defer src="/assets/vendor/chartjs/chartjs-plugin-annotation.3.1.0.min.js"></script>
+  <script defer src="/assets/js/vendor/chartjs-plugin-datalabels.js"></script>
   <script defer src="/assets/js/journal-dashboard.js"></script>
   <script src="/js/footer-loader.js?v=1.4.9" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.9"></div>

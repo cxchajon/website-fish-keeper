@@ -19,180 +19,88 @@
     Chart.defaults.font.weight = '500';
   }
 
-  const journalPointLabelPlugin = {
-    id: 'journalPointLabels',
-    defaults: {
-      offset: 12,
-      minSpacing: 6,
-      boundaryPadding: 8,
-      font: { size: 11, weight: '600' }
-    },
-    afterDatasetsDraw(chart) {
-      const datasets = chart.data?.datasets || [];
-      if (!datasets.length) {
-        return;
-      }
+  const reduceMotionQuery = safeMatchMedia('(prefers-reduced-motion: reduce)');
 
-      const pluginOptions = chart.options?.plugins?.journalPointLabels || {};
-      const options = mergeLabelOptions(journalPointLabelPlugin.defaults, pluginOptions);
-      const fontFamily = Chart.defaults?.font?.family || 'Inter, "Segoe UI", system-ui, sans-serif';
+  const chartBackgroundPlugin = {
+    id: 'jdChartBackground',
+    defaults: { color: '#101b33' },
+    beforeDraw(chart, args, pluginOptions) {
       const ctx = chart.ctx;
-      const chartArea = chart.chartArea;
-      if (!chartArea) {
-        ctx.restore();
+      const area = chart.chartArea;
+      if (!ctx || !area) {
         return;
       }
-      const placements = [];
 
+      const color = pluginOptions?.color || chartBackgroundPlugin.defaults.color;
       ctx.save();
-      datasets.forEach((dataset, datasetIndex) => {
-        if (!dataset || !Array.isArray(dataset.pointLabels)) {
-          return;
-        }
-
-        const meta = chart.getDatasetMeta(datasetIndex);
-        if (!meta || meta.hidden || meta.type !== 'line') {
-          return;
-        }
-
-        const elements = meta.data || [];
-        const color = dataset.labelColor || options.color || dataset.borderColor || '#ffffff';
-        const fontSize = dataset.labelFontSize || options.font.size;
-        const fontWeight = dataset.labelFontWeight || options.font.weight;
-        const lineHeight = fontSize * 1.35;
-        const baseOffset = Number.isFinite(dataset.labelOffset) ? dataset.labelOffset : options.offset;
-        const alternate = dataset.labelDirection === 'alternate';
-
-        ctx.fillStyle = color;
-        ctx.textBaseline = 'bottom';
-        ctx.textAlign = 'center';
-
-        elements.forEach((element, index) => {
-          const label = dataset.pointLabels[index];
-          if (!element || typeof element.x !== 'number' || typeof element.y !== 'number' || !label) {
-            return;
-          }
-
-          const text = String(label);
-          ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
-          const textWidth = ctx.measureText(text).width;
-          let x = element.x + (dataset.labelXOffset || 0);
-          let y = element.y - baseOffset;
-
-          if (alternate && index % 2 === 1) {
-            y = element.y + baseOffset * 0.85;
-          }
-
-          ({ x, y } = fitLabelWithinChart({
-            x,
-            y,
-            width: textWidth,
-            height: lineHeight,
-            chartArea,
-            placements,
-            alternate,
-            elementY: element.y,
-            offset: baseOffset,
-            options
-          }));
-
-          ctx.fillText(text, x, y);
-
-          placements.push({
-            left: x - textWidth / 2,
-            right: x + textWidth / 2,
-            top: y - lineHeight,
-            bottom: y
-          });
-        });
-      });
+      ctx.fillStyle = color;
+      ctx.fillRect(area.left, area.top, area.width, area.height);
       ctx.restore();
     }
   };
 
   if (typeof Chart?.register === 'function') {
-    Chart.register(journalPointLabelPlugin);
+    Chart.register(chartBackgroundPlugin);
   }
 
-  function mergeLabelOptions(defaults, overrides) {
-    const result = { ...defaults, font: { ...defaults.font } };
-    if (!overrides || typeof overrides !== 'object') {
-      return result;
+  const dom = {
+    rangeWindow: document.querySelector('[data-range-window]'),
+    rangeMonth: document.querySelector('[data-range-month]'),
+    toggle: document.querySelector('[data-range-toggle]'),
+    rangeButtons: Array.from(document.querySelectorAll('[data-range-nav]')),
+    tabs: Array.from(document.querySelectorAll('[data-tab]')),
+    panels: Array.from(document.querySelectorAll('.journal-dashboard__panel')),
+    maintenanceList: document.querySelector('[data-maintenance-list]'),
+    error: document.querySelector('[data-dashboard-error]')
+  };
+
+  const state = {
+    data: null,
+    showLast30: false,
+    activeTab: 'nitrate',
+    monthOffset: 0,
+    charts: {
+      nitrate: null,
+      dosing: null
     }
-    if (typeof overrides.offset === 'number') {
-      result.offset = overrides.offset;
-    }
-    if (typeof overrides.minSpacing === 'number') {
-      result.minSpacing = overrides.minSpacing;
-    }
-    if (typeof overrides.boundaryPadding === 'number') {
-      result.boundaryPadding = overrides.boundaryPadding;
-    }
-    if (overrides.font && typeof overrides.font === 'object') {
-      result.font = { ...result.font, ...overrides.font };
-    }
-    if (typeof overrides.color === 'string') {
-      result.color = overrides.color;
-    }
-    return result;
+  };
+
+  const dateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
+  const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' });
+  const maintenanceFormatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  if (reduceMotionQuery && typeof reduceMotionQuery.addEventListener === 'function') {
+    reduceMotionQuery.addEventListener('change', () => {
+      const animation = getAnimationOptions();
+      Object.values(state.charts).forEach((chart) => {
+        if (chart) {
+          chart.options.animation = animation;
+          chart.update();
+        }
+      });
+    });
   }
 
-  function boxesOverlap(a, b) {
-    return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+  init();
+
+  function safeMatchMedia(query) {
+    if (typeof window.matchMedia === 'function') {
+      return window.matchMedia(query);
+    }
+    return null;
+  }
+
+  function getAnimationOptions() {
+    return reduceMotionQuery?.matches
+      ? false
+      : {
+          duration: 600,
+          easing: 'easeOutQuart'
+        };
   }
 
   function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
-  }
-
-  function fitLabelWithinChart({ x, y, width, height, chartArea, placements, elementY, options }) {
-    const maxAttempts = 12;
-    const step = height + (options.minSpacing || 4);
-    let attempt = 0;
-    let direction = y < elementY ? -1 : 1;
-    if (!direction) {
-      direction = -1;
-    }
-
-    const xMin = chartArea.left + (options.boundaryPadding || 0) + width / 2;
-    const xMax = chartArea.right - (options.boundaryPadding || 0) - width / 2;
-    let candidateX = clamp(x, xMin, xMax);
-    let candidateY = y;
-
-    while (attempt < maxAttempts) {
-      let top = candidateY - height;
-      let bottom = candidateY;
-
-      if (top < chartArea.top + (options.boundaryPadding || 0)) {
-        candidateY = chartArea.top + (options.boundaryPadding || 0) + height;
-        top = candidateY - height;
-        bottom = candidateY;
-      }
-
-      if (bottom > chartArea.bottom - (options.boundaryPadding || 0)) {
-        candidateY = chartArea.bottom - (options.boundaryPadding || 0);
-        top = candidateY - height;
-        bottom = candidateY;
-      }
-
-      const candidateBox = {
-        left: candidateX - width / 2,
-        right: candidateX + width / 2,
-        top,
-        bottom
-      };
-
-      const overlaps = placements.some((placed) => boxesOverlap(candidateBox, placed));
-      if (!overlaps) {
-        return { x: candidateX, y: candidateY };
-      }
-
-      candidateY += direction * step;
-      direction *= -1;
-      attempt += 1;
-    }
-
-    return { x: candidateX, y: candidateY };
   }
 
   function parseColor(color) {
@@ -250,34 +158,6 @@
     const nextAlpha = typeof alpha === 'number' ? Math.min(Math.max(alpha, 0), 1) : parsed.a;
     return `rgba(${r}, ${g}, ${b}, ${nextAlpha})`;
   }
-
-  const dom = {
-    rangeWindow: document.querySelector('[data-range-window]'),
-    rangeMonth: document.querySelector('[data-range-month]'),
-    toggle: document.querySelector('[data-range-toggle]'),
-    rangeButtons: Array.from(document.querySelectorAll('[data-range-nav]')),
-    tabs: Array.from(document.querySelectorAll('[data-tab]')),
-    panels: Array.from(document.querySelectorAll('.journal-dashboard__panel')),
-    maintenanceList: document.querySelector('[data-maintenance-list]'),
-    error: document.querySelector('[data-dashboard-error]')
-  };
-
-  const state = {
-    data: null,
-    showLast30: false,
-    activeTab: 'nitrate',
-    monthOffset: 0,
-    charts: {
-      nitrate: null,
-      dosing: null
-    }
-  };
-
-  const dateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
-  const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' });
-  const maintenanceFormatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
-  init();
 
   async function init() {
     const data = await loadData();
@@ -495,107 +375,269 @@
       statusEl.textContent = '';
     }
 
-    destroyChart('nitrate');
+    const ctx = canvas.getContext('2d');
+    const datasets = createNitrateDatasets({ labels, values, markers });
+    const annotation = getNitrateAnnotation();
+    const suggestedMax = getSuggestedMax(values);
+    const options = getNitrateChartOptions({ annotation, suggestedMax });
 
-    const labelColor = lightenColor('#7dd3fc', 0.32, 0.96);
-    const datasets = [
+    if (!state.charts.nitrate) {
+      state.charts.nitrate = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets
+        },
+        options
+      });
+      return;
+    }
+
+    const chart = state.charts.nitrate;
+    chart.data.labels = labels;
+    chart.data.datasets = datasets;
+    chart.options = options;
+    chart.config.options = options;
+    chart.update();
+  }
+
+  function createNitrateDatasets({ labels, values, markers }) {
+    const compact = isCompactViewport();
+    const skipDense = labels.length > (compact ? 11 : 16);
+    const lineColor = '#38bdf8';
+    const pointColor = '#0ea5e9';
+    const labelColor = lightenColor('#e0f2ff', 0.12, 1);
+    const strokeColor = 'rgba(7, 12, 24, 0.92)';
+
+    return [
       {
         label: 'Nitrate',
         data: values,
-        borderColor: '#7dd3fc',
-        pointBackgroundColor: '#38bdf8',
-        pointBorderColor: 'rgba(15, 23, 42, 0.85)',
-        borderWidth: 2,
-        pointRadius: 4,
-        tension: 0.35,
-        clip: false,
         pointLabels: labels,
-        labelColor,
-        labelFontSize: 11,
-        labelFontWeight: '600',
-        labelDirection: 'alternate',
-        labelOffset: 14
+        borderColor: lineColor,
+        backgroundColor: lineColor,
+        borderWidth: 3,
+        tension: 0.35,
+        fill: false,
+        spanGaps: true,
+        clip: false,
+        pointBackgroundColor: pointColor,
+        pointHoverBackgroundColor: pointColor,
+        pointBorderColor: '#0f172a',
+        pointBorderWidth: 2,
+        pointRadius: (context) => (context?.chart?.width || 0) < 540 ? 5 : 4,
+        pointHoverRadius: (context) => (context?.chart?.width || 0) < 540 ? 7 : 6,
+        pointHitRadius: 10,
+        datalabels: {
+          display: true,
+          color: labelColor,
+          textAlign: 'left',
+          position: 'auto',
+          alternate: true,
+          offset: compact ? 16 : 20,
+          xOffset: compact ? 6 : 10,
+          minSpacing: compact ? 6 : 8,
+          boundaryPadding: 12,
+          shadowColor: 'rgba(6, 12, 24, 0.6)',
+          shadowBlur: 6,
+          textStrokeColor: strokeColor,
+          textStrokeWidth: 3,
+          font: {
+            size: compact ? 10 : 11,
+            weight: '600'
+          },
+          formatter(value, context) {
+            const dataset = context.dataset || {};
+            const label = Array.isArray(dataset.pointLabels) ? dataset.pointLabels[context.dataIndex] : null;
+            if (!label) {
+              return '';
+            }
+            if (skipDense && context.dataIndex % 2 === 1) {
+              return '';
+            }
+            const elements = context.meta?.data || [];
+            const current = elements[context.dataIndex];
+            const previous = elements[context.dataIndex - 1];
+            if (previous && current) {
+              const spacing = Math.abs(current.x - previous.x);
+              const threshold = compact ? 32 : 28;
+              if (spacing < threshold && context.dataIndex % 2 === 1) {
+                return '';
+              }
+            }
+            return label;
+          }
+        }
       },
       {
         label: 'Water Change',
         data: markers,
+        type: 'scatter',
         pointBackgroundColor: '#fb923c',
-        pointBorderColor: '#fb923c',
-        pointRadius: 6,
-        showLine: false
+        pointBorderColor: lightenColor('#fb923c', 0.18, 1),
+        pointRadius: (context) => (context?.chart?.width || 0) < 540 ? 5 : 4,
+        pointHoverRadius: (context) => (context?.chart?.width || 0) < 540 ? 7 : 6,
+        pointBorderWidth: 2,
+        pointHitRadius: 10,
+        showLine: false,
+        datalabels: {
+          display: false
+        }
       }
     ];
+  }
 
-    const annotationConfig = window.ChartAnnotation
-      ? {
-          annotations: {
-            target: {
-              type: 'line',
-              yMin: 20,
-              borderColor: 'rgba(255, 255, 255, 0.5)',
-              borderWidth: 1.5,
-              borderDash: [6, 6],
-              label: {
-                content: '20 ppm guide',
-                position: 'start',
-                padding: 6,
-                backgroundColor: 'rgba(8, 12, 24, 0.82)',
-                borderColor: 'rgba(148, 163, 184, 0.45)',
-                color: '#f8fafc'
-              }
-            }
-          }
-        }
-      : undefined;
-
-    state.charts.nitrate = new Chart(canvas.getContext('2d'), {
-      type: 'line',
-      data: {
-        labels,
-        datasets
-      },
-      options: {
-        layout: {
-          padding: {
-            top: 24,
-            bottom: 16,
-            left: 4,
-            right: 4
-          }
-        },
-        scales: {
-          x: {
-            ticks: {
-              display: false
-            },
-            grid: {
-              display: true
-            }
-          },
-          y: {
-            beginAtZero: true,
-            suggestedMax: 25,
-            ticks: {
-              count: 4,
-              callback: (value) => `${Math.round(value)} ppm`
-            }
-          }
-        },
-        plugins: {
-          annotation: annotationConfig,
-          legend: {
-            display: false
-          },
-          journalPointLabels: {
-            offset: 14,
+  function getNitrateAnnotation() {
+    if (!window.ChartAnnotation) {
+      return undefined;
+    }
+    return {
+      annotations: {
+        target: {
+          type: 'line',
+          yMin: 20,
+          yMax: 20,
+          borderColor: 'rgba(226, 232, 240, 0.35)',
+          borderWidth: 1.5,
+          borderDash: [6, 6],
+          label: {
+            content: '20 ppm guide',
+            position: 'start',
+            padding: 6,
+            color: '#e2e8f0',
+            backgroundColor: 'rgba(15, 23, 42, 0.92)',
+            borderColor: 'rgba(148, 163, 184, 0.42)',
+            borderWidth: 1,
             font: {
+              family: Chart.defaults?.font?.family || 'Inter, "Segoe UI", system-ui, sans-serif',
               size: 11,
               weight: '600'
             }
           }
         }
       }
-    });
+    };
+  }
+
+  function getSuggestedMax(values) {
+    if (!Array.isArray(values) || !values.length) {
+      return 25;
+    }
+    const maxValue = values.reduce((acc, value) => {
+      if (Number.isFinite(value) && value > acc) {
+        return value;
+      }
+      return acc;
+    }, 0);
+    if (!Number.isFinite(maxValue)) {
+      return 25;
+    }
+    const padded = Math.ceil((maxValue + 4) / 5) * 5;
+    return Math.max(25, padded);
+  }
+
+  function getNitrateChartOptions({ annotation, suggestedMax }) {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: getAnimationOptions(),
+      layout: {
+        padding: {
+          top: 32,
+          bottom: 24,
+          left: 18,
+          right: 18
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'nearest'
+      },
+      scales: {
+        x: {
+          ticks: {
+            display: false
+          },
+          border: {
+            display: false
+          },
+          grid: {
+            color: 'rgba(80, 118, 184, 0.32)',
+            lineWidth: 1,
+            drawBorder: false,
+            tickLength: 0
+          }
+        },
+        y: {
+          beginAtZero: true,
+          suggestedMax,
+          ticks: {
+            count: 5,
+            padding: 10,
+            color: 'rgba(226, 232, 240, 0.88)',
+            callback: (value) => `${Math.round(value)} ppm`
+          },
+          border: {
+            display: false
+          },
+          grid: {
+            color: 'rgba(76, 112, 176, 0.25)',
+            drawTicks: false
+          }
+        }
+      },
+      elements: {
+        line: {
+          borderCapStyle: 'round',
+          borderJoinStyle: 'round'
+        },
+        point: {
+          hoverBorderWidth: 2
+        }
+      },
+      plugins: {
+        annotation,
+        legend: {
+          display: false
+        },
+        tooltip: {
+          intersect: false,
+          mode: 'nearest',
+          backgroundColor: 'rgba(9, 17, 32, 0.94)',
+          borderColor: 'rgba(120, 196, 255, 0.35)',
+          borderWidth: 1,
+          titleColor: '#e2e8f0',
+          bodyColor: '#f8fafc',
+          displayColors: false,
+          padding: 12,
+          cornerRadius: 10,
+          callbacks: {
+            label(context) {
+              const value = context.parsed?.y ?? context.parsed;
+              if (!Number.isFinite(value)) {
+                return '';
+              }
+              const label = context.dataset?.label ? `${context.dataset.label}: ` : '';
+              return `${label}${value} ppm`;
+            }
+          }
+        },
+        datalabels: {
+          display: false
+        },
+        jdChartBackground: {
+          color: '#101b33'
+        }
+      }
+    };
+  }
+
+  function isCompactViewport() {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+    const width = window.innerWidth || document.documentElement?.clientWidth || 0;
+    return width <= 420;
   }
 
   function renderDosingChart() {
@@ -608,49 +650,138 @@
       destroyChart('dosing');
       return;
     }
-    destroyChart('dosing');
     const labels = entries.map((entry) => entry.label);
     const thriveValues = entries.map((entry) => entry.thrive);
     const excelValues = entries.map((entry) => entry.excel);
-    state.charts.dosing = new Chart(canvas.getContext('2d'), {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Thrive Plus (pumps)',
-            data: thriveValues,
-            backgroundColor: '#34d399'
-          },
-          {
-            label: 'Seachem Excel (caps)',
-            data: excelValues,
-            backgroundColor: '#a855f7'
-          }
-        ]
+    const datasets = [
+      {
+        label: 'Thrive Plus (pumps)',
+        data: thriveValues,
+        backgroundColor: 'rgba(52, 211, 153, 0.88)',
+        hoverBackgroundColor: 'rgba(16, 185, 129, 0.95)',
+        borderRadius: 8,
+        borderSkipped: false,
+        maxBarThickness: 36
       },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              count: 4,
-              callback: (value) => `${value}`
+      {
+        label: 'Seachem Excel (caps)',
+        data: excelValues,
+        backgroundColor: 'rgba(168, 85, 247, 0.86)',
+        hoverBackgroundColor: 'rgba(147, 51, 234, 0.94)',
+        borderRadius: 8,
+        borderSkipped: false,
+        maxBarThickness: 36
+      }
+    ];
+    const options = getDosingChartOptions(labels);
+
+    if (!state.charts.dosing) {
+      state.charts.dosing = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets
+        },
+        options
+      });
+      return;
+    }
+
+    const chart = state.charts.dosing;
+    chart.data.labels = labels;
+    chart.data.datasets = datasets;
+    chart.options = options;
+    chart.config.options = options;
+    chart.update();
+  }
+
+  function getDosingChartOptions(labels) {
+    const dense = Array.isArray(labels) && labels.length > 6;
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: getAnimationOptions(),
+      layout: {
+        padding: {
+          top: 24,
+          right: 16,
+          bottom: 24,
+          left: 16
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            autoSkip: dense,
+            maxRotation: 0,
+            color: 'rgba(226, 232, 240, 0.78)',
+            padding: 8,
+            font: {
+              size: 12
             }
           },
-          x: {
-            ticks: {
-              autoSkip: false
+          border: {
+            display: false
+          }
+        },
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: 'rgba(76, 112, 176, 0.22)',
+            drawTicks: false
+          },
+          border: {
+            display: false
+          },
+          ticks: {
+            padding: 10,
+            color: 'rgba(226, 232, 240, 0.82)',
+            callback: (value) => `${value}`
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+          align: 'start',
+          labels: {
+            usePointStyle: true,
+            pointStyle: 'rectRounded',
+            boxWidth: 12,
+            padding: 14,
+            color: 'rgba(226, 232, 240, 0.88)',
+            font: {
+              size: 12,
+              weight: '600'
             }
           }
         },
-        plugins: {
-          legend: {
-            display: false
-          }
+        tooltip: {
+          intersect: false,
+          mode: 'index',
+          backgroundColor: 'rgba(9, 17, 32, 0.94)',
+          borderColor: 'rgba(120, 196, 255, 0.35)',
+          borderWidth: 1,
+          titleColor: '#e2e8f0',
+          bodyColor: '#f8fafc',
+          displayColors: false,
+          padding: 12
+        },
+        datalabels: {
+          display: false
+        },
+        jdChartBackground: {
+          color: '#101b33'
         }
       }
-    });
+    };
   }
 
   function renderMaintenance() {
