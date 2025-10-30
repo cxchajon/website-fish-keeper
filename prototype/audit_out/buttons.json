@@ -6,7 +6,6 @@
     {"label": "Tank size", "selector": "[data-proto-popover=pop-tank-size]", "section": "Tank size card"},
     {"label": "Filter product", "selector": "[data-proto-popover=pop-filter-product]", "section": "Filter setup"},
     {"label": "Rated flow", "selector": "[data-proto-popover=pop-rated-flow]", "section": "Filter setup"},
-    {"label": "Turnover", "selector": "[data-proto-popover=pop-turnover]", "section": "Flow guidance"},
     {"label": "Stocking checklist", "selector": "[data-proto-popover=pop-stocking-checklist]", "section": "Checklist"},
     {"label": "Environmental recommendations", "selector": "[data-proto-popover=pop-env-info]", "section": "Environment"}
   ],
