@@ -1,4 +1,7 @@
 import * as baseCompute from '../../../js/logic/compute.js?orig';
+import { getSpeciesListV2, getSpeciesBySlugV2 } from '../../../proto/logic/species.adapter.v2.js';
+import { compatScore } from '../../../proto/logic/compat.v2.js';
+import { calcAggression, AGGRESSION_TOKENS } from '../../../proto/logic/aggression.v2.js';
 import { formatBioloadPercent } from '../../../js/bioload.js?orig';
 import { getBandColor } from '../../../js/logic/utils.js?orig';
 import { weightedMixFactor } from '../../../js/utils.js?orig';
@@ -13,10 +16,164 @@ import {
   MAX_CAPACITY_BONUS,
 } from '../../assets/js/proto-filtration-math.js';
 
-const { computeBioload: baseComputeBioload, buildComputedState: baseBuildComputedState, calcTotalGph } = baseCompute;
+const {
+  computeBioload: baseComputeBioload,
+  buildComputedState: baseBuildComputedState,
+  calcTotalGph,
+  getDefaultSpeciesId: legacyGetDefaultSpeciesId,
+  autoBioloadUnit,
+  listSensitiveSpecies,
+  normalizeFilterTypeSelection,
+  computeFilterFlowStats,
+  sanitizeFilterList,
+  computeTurnover: baseComputeTurnover,
+  runScenario: baseRunScenario,
+  runSanitySuite: baseRunSanitySuite,
+  runStressSuite: baseRunStressSuite,
+  createDefaultState: baseCreateDefaultState,
+  FILTER_TURNOVER_MULTIPLIERS,
+  TURNOVER_BANDS,
+  MIN_TURNOVER_FLOOR,
+} = baseCompute;
 
 const __DEV_BIOLOAD = false;
 const DEBUG_FILTERS = Boolean(typeof window !== 'undefined' && window?.TTG?.DEBUG_FILTERS);
+
+const SPECIES_V2 = Object.freeze(getSpeciesListV2().map(({ slug }) => getSpeciesBySlugV2(slug)));
+const SPECIES_BY_KEY = (() => {
+  const map = new Map();
+  for (const species of SPECIES_V2) {
+    if (!species) continue;
+    if (species.id) {
+      map.set(String(species.id).toLowerCase(), species);
+    }
+    if (species.slug) {
+      map.set(String(species.slug).toLowerCase(), species);
+    }
+  }
+  return map;
+})();
+const SPECIES_LIST_V2 = Object.freeze(SPECIES_V2.map((species) => ({
+  id: species.id,
+  name: species.common_name,
+  slug: species.slug,
+})));
+const ALL_SPECIES_V2 = SPECIES_LIST_V2;
+
+const resolveSpeciesById = (id) => {
+  if (!id) return null;
+  return SPECIES_BY_KEY.get(String(id).toLowerCase()) ?? null;
+};
+
+const PARAMETER_LABELS = Object.freeze({
+  temperature: 'Temperature',
+  pH: 'pH',
+  gh: 'General hardness',
+  kH: 'Carbonate hardness',
+});
+
+const TOKEN_CHIP_TEXT = Object.freeze({
+  [AGGRESSION_TOKENS.UNSTABLE_SORORITY]: 'Female betta groups of 2-4 are unstable — keep a single female or 5+ in at least 20 gallons.',
+});
+
+const ERROR_CHIP_TEXT = Object.freeze({
+  [AGGRESSION_TOKENS.FATAL_INCOMPATIBLE_BETTA_MALE]: 'Male bettas must be housed individually — multiple males are incompatible.',
+});
+
+const cloneEntryWithSpecies = (entry) => {
+  if (!entry || typeof entry !== 'object') {
+    return entry;
+  }
+  const species = resolveSpeciesById(entry?.species?.id ?? entry?.species?.slug);
+  if (!species) {
+    return entry;
+  }
+  return { ...entry, species };
+};
+
+const buildCompatibilityMap = (species, water) => {
+  if (!species?.protoV2?.parameters) {
+    return null;
+  }
+  const { parameters } = species.protoV2;
+  return {
+    temperature: parameters.temperature ? compatScore(parameters.temperature, water?.temperature) : null,
+    pH: parameters.pH ? compatScore(parameters.pH, water?.pH) : null,
+    gh: parameters.gh ? compatScore(parameters.gh, water?.gH) : null,
+    kH: parameters.kh ? compatScore(parameters.kh, water?.kH) : null,
+  };
+};
+
+const buildCompatibilityChips = (compatibility) => {
+  if (!compatibility) return [];
+  const chips = [];
+  for (const [key, result] of Object.entries(compatibility)) {
+    if (!result || !result.status || result.status === 'Optimal') continue;
+    const tone = result.status === 'Incompatible' ? 'bad' : 'warn';
+    const label = PARAMETER_LABELS[key] || key;
+    chips.push({ tone, text: `${label}: ${result.status}` });
+  }
+  return chips;
+};
+
+const buildBehaviorChips = (species) => {
+  const behavior = species?.protoV2?.behavior;
+  if (!behavior) return [];
+  const chips = [];
+  if (Array.isArray(behavior.predationRisks)) {
+    for (const risk of behavior.predationRisks) {
+      if (!risk) continue;
+      chips.push({ tone: 'warn', text: `Predation risk: ${risk}` });
+    }
+  }
+  if (Array.isArray(behavior.incompatibilities)) {
+    for (const item of behavior.incompatibilities) {
+      if (!item) continue;
+      chips.push({ tone: 'warn', text: `Incompatibility: ${item}` });
+    }
+  }
+  return chips;
+};
+
+const totalQuantityForSpecies = (entries, candidate) => {
+  const speciesId = candidate?.species?.id;
+  let total = Number(candidate?.qty) || 0;
+  if (!speciesId) return total;
+  for (const entry of entries) {
+    if (entry?.species?.id === speciesId) {
+      total += Number(entry.qty) || 0;
+    }
+  }
+  return total;
+};
+
+const toAggressionContext = (tank) => ({
+  gallons: Number(tank?.gallons) || Number(tank?.displayGallons) || 0,
+  tankGallons: Number(tank?.gallons) || Number(tank?.displayGallons) || 0,
+  tank,
+});
+
+const buildAggressionChips = (result, species) => {
+  if (!result) return [];
+  if (result.error === AGGRESSION_TOKENS.FATAL_INCOMPATIBLE_BETTA_MALE) {
+    return [{ tone: 'bad', text: ERROR_CHIP_TEXT[AGGRESSION_TOKENS.FATAL_INCOMPATIBLE_BETTA_MALE] }];
+  }
+  const chips = [];
+  if (Array.isArray(result.tokens)) {
+    for (const token of result.tokens) {
+      if (token === AGGRESSION_TOKENS.UNSTABLE_SORORITY) {
+        chips.push({ tone: 'warn', text: TOKEN_CHIP_TEXT[token] });
+      }
+    }
+  }
+  if (Number.isFinite(result.value) && Number.isFinite(result.base) && Math.abs(result.value - result.base) > 0.01) {
+    const display = Math.round(result.value * 100);
+    const tone = result.value >= 0.8 ? 'bad' : 'warn';
+    const speciesName = species?.common_name || 'species';
+    chips.push({ tone, text: `Aggression adjusted to ${display}% risk for ${speciesName}.` });
+  }
+  return chips;
+};
 
 const TYPE_WEIGHT = Object.freeze({
   CANISTER: 1.12,
@@ -525,7 +682,41 @@ const patchComputed = (computed, state) => {
   return { ...computed, bioload: patchedBioload };
 };
 
-export * from '../../../js/logic/compute.js?orig';
+const patchProtoComputed = (computed) => {
+  if (!computed || typeof computed !== 'object') {
+    return computed;
+  }
+  const entries = Array.isArray(computed.entries) ? computed.entries.map(cloneEntryWithSpecies) : [];
+  const candidate = computed.candidate ? cloneEntryWithSpecies(computed.candidate) : null;
+  const chips = Array.isArray(computed.chips) ? [...computed.chips] : [];
+
+  let candidateExtras = null;
+  if (candidate?.species) {
+    const compatibility = buildCompatibilityMap(candidate.species, computed.water);
+    const compatibilityChips = buildCompatibilityChips(compatibility);
+    const behaviorChips = buildBehaviorChips(candidate.species);
+    const totalQty = totalQuantityForSpecies(entries, candidate);
+    const aggression = calcAggression(candidate.species, totalQty, toAggressionContext(computed.tank));
+    const aggressionChips = buildAggressionChips(aggression, candidate.species);
+    chips.push(...compatibilityChips, ...behaviorChips, ...aggressionChips);
+    candidateExtras = { compatibility, aggression };
+  }
+
+  const patchedCandidate = candidateExtras
+    ? { ...candidate, protoV2State: candidateExtras }
+    : candidate;
+
+  return {
+    ...computed,
+    entries,
+    candidate: patchedCandidate,
+    chips,
+    protoV2: {
+      candidate: candidateExtras,
+      tokens: AGGRESSION_TOKENS,
+    },
+  };
+};
 
 export function computeBioload(tank, entries, candidate, filterState = {}) {
   const raw = baseComputeBioload(tank, entries, candidate, filterState);
@@ -534,8 +725,44 @@ export function computeBioload(tank, entries, candidate, filterState = {}) {
 
 export function buildComputedState(state) {
   const raw = baseBuildComputedState(state);
-  return patchComputed(raw, state);
+  return patchProtoComputed(patchComputed(raw, state));
 }
+
+const fallbackDefaultSpeciesId = (() => {
+  const legacyId = typeof legacyGetDefaultSpeciesId === 'function' ? legacyGetDefaultSpeciesId() : null;
+  return SPECIES_LIST_V2.find((item) => item.id === legacyId)?.id ?? SPECIES_LIST_V2[0]?.id ?? legacyId;
+})();
+
+export const SPECIES = SPECIES_V2;
+export const SPECIES_LIST = SPECIES_LIST_V2;
+export const ALL_SPECIES = ALL_SPECIES_V2;
+
+export function getSpeciesById(id) {
+  return resolveSpeciesById(id);
+}
+
+export function getDefaultSpeciesId() {
+  return fallbackDefaultSpeciesId;
+}
+
+export {
+  autoBioloadUnit,
+  listSensitiveSpecies,
+  normalizeFilterTypeSelection,
+  computeFilterFlowStats,
+  sanitizeFilterList,
+  calcTotalGph,
+  baseComputeTurnover as computeTurnover,
+  baseRunScenario as runScenario,
+  baseRunSanitySuite as runSanitySuite,
+  baseRunStressSuite as runStressSuite,
+  baseCreateDefaultState as createDefaultState,
+  FILTER_TURNOVER_MULTIPLIERS,
+  TURNOVER_BANDS,
+  MIN_TURNOVER_FLOOR,
+};
+
+export { AGGRESSION_TOKENS };
 
 if (__DEV_BIOLOAD && typeof window !== 'undefined') {
   const runDevCases = () => {

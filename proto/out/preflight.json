@@ -1,0 +1,90 @@
+{
+  "prototypePages": [
+    "prototype/stocking-prototype.html",
+    "prototype-home.html"
+  ],
+  "prototypeScripts": [
+    "prototype/js/stocking-prototype.js",
+    "prototype/js/logic/compute-proxy.js",
+    "prototype/js/proto-filtration.js",
+    "prototype/js/info-popovers.js",
+    "prototype/assets/js/proto-filtration.js",
+    "prototype/assets/js/proto-filtration-math.js",
+    "prototype/assets/js/ui-meters.js",
+    "proto/logic/fish-data.proto.js",
+    "proto/logic/speciesSchema.proto.js"
+  ],
+  "speciesSources": [
+    {
+      "file": "prototype/stocking-prototype.html",
+      "import": "/proto/logic/fish-data.proto.js"
+    },
+    {
+      "file": "proto/logic/fish-data.proto.js",
+      "import": "./speciesSchema.proto.js"
+    },
+    {
+      "file": "proto/logic/fish-data.proto.js",
+      "import": "/js/logic/behaviorTags.js"
+    },
+    {
+      "file": "prototype/js/logic/compute-proxy.js",
+      "import": "../../../js/logic/compute.js?orig"
+    }
+  ],
+  "computeModules": [
+    {
+      "path": "prototype/js/logic/compute-proxy.js",
+      "exports": [
+        "percentBioload",
+        "computeBioloadPercentForTest",
+        "computeBioload",
+        "buildComputedState"
+      ]
+    },
+    {
+      "path": "prototype/assets/js/proto-filtration.js",
+      "exports": [
+        "makeState",
+        "computeBaseBioload",
+        "computeCapacitySnapshot",
+        "recompute",
+        "percent",
+        "recomputeAndRender"
+      ]
+    },
+    {
+      "path": "prototype/assets/js/proto-filtration-math.js",
+      "exports": [
+        "RBC_TABLE",
+        "MAX_CAPACITY_BONUS",
+        "clamp",
+        "toNum",
+        "rbcForFilter",
+        "normalizeFilter",
+        "normalizeFilters",
+        "describeFilterCapacity",
+        "combinedRbc",
+        "effectiveCapacity",
+        "turnoverX",
+        "computeTurnover",
+        "getTotalGPH",
+        "computePercent",
+        "stockingPercent",
+        "toTurnoverLabel"
+      ]
+    },
+    {
+      "path": "js/logic/conflicts.js",
+      "exports": [
+        "keyPair",
+        "evaluatePair",
+        "evaluateInvertSafety",
+        "evaluateSalinity",
+        "evaluateFlow",
+        "evaluateBlackwater",
+        "checkGroupRule"
+      ]
+    }
+  ]
+}
