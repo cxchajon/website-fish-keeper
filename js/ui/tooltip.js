@@ -20,6 +20,32 @@ function tipHasContent(tip) {
   return text.length > 0;
 }
 
+function shouldKeepNativeTitle(trigger) {
+  if (!(trigger instanceof HTMLElement)) {
+    return false;
+  }
+  if (trigger.dataset.tooltipKeepTitle === '1') {
+    return true;
+  }
+  if (trigger.hasAttribute('data-tooltip-keep-title')) {
+    return true;
+  }
+  return false;
+}
+
+function stripNativeTitle(trigger) {
+  if (!(trigger instanceof HTMLElement)) {
+    return;
+  }
+  if (shouldKeepNativeTitle(trigger)) {
+    return;
+  }
+  if (trigger.hasAttribute('title')) {
+    trigger.dataset.tooltipOriginalTitle = trigger.getAttribute('title') || '';
+    trigger.removeAttribute('title');
+  }
+}
+
 function applyRegistryContent(trigger, tip, scope) {
   if (!(trigger instanceof HTMLElement) || !(tip instanceof HTMLElement)) {
     return false;
@@ -40,7 +66,11 @@ function applyRegistryContent(trigger, tip, scope) {
   tip.dataset.info = key;
   const entry = getTooltipContent(key);
   if (!entry) {
-    return tipHasContent(tip);
+    const hasInlineContent = tipHasContent(tip);
+    if (hasInlineContent) {
+      stripNativeTitle(trigger);
+    }
+    return hasInlineContent;
   }
   const { title, body = [], bullets = [], ariaLabel, label } = entry;
   const lines = Array.isArray(body) ? body.filter((line) => typeof line === 'string' && line.trim()) : [];
@@ -80,9 +110,7 @@ function applyRegistryContent(trigger, tip, scope) {
   if (announcedLabel && !trigger.getAttribute('aria-label')) {
     trigger.setAttribute('aria-label', announcedLabel);
   }
-  if (announcedLabel && !trigger.getAttribute('title')) {
-    trigger.setAttribute('title', announcedLabel);
-  }
+  stripNativeTitle(trigger);
   return tipHasContent(tip);
 }
 
