@@ -111,6 +111,60 @@
             </button>
           </div>
 
+          <div class="journal-dashboard__display" role="group" aria-label="Chart display controls">
+            <div class="journal-dashboard__display-group" data-density-group>
+              <span class="journal-dashboard__display-label" id="density-toggle-label">Density</span>
+              <button
+                type="button"
+                class="journal-dashboard__chip is-active"
+                data-density="compact"
+                aria-pressed="true"
+                aria-describedby="density-toggle-label"
+              >
+                Compact
+              </button>
+              <button
+                type="button"
+                class="journal-dashboard__chip"
+                data-density="comfortable"
+                aria-pressed="false"
+                aria-describedby="density-toggle-label"
+              >
+                Comfortable
+              </button>
+              <button
+                type="button"
+                class="journal-dashboard__chip"
+                data-density="expanded"
+                aria-pressed="false"
+                aria-describedby="density-toggle-label"
+              >
+                Expanded
+              </button>
+            </div>
+            <div class="journal-dashboard__display-group" data-group-toggle>
+              <span class="journal-dashboard__display-label" id="group-toggle-label">Aggregation</span>
+              <button
+                type="button"
+                class="journal-dashboard__chip is-active"
+                data-group="daily"
+                aria-pressed="true"
+                aria-describedby="group-toggle-label"
+              >
+                Daily
+              </button>
+              <button
+                type="button"
+                class="journal-dashboard__chip"
+                data-group="weekly"
+                aria-pressed="false"
+                aria-describedby="group-toggle-label"
+              >
+                Weekly
+              </button>
+            </div>
+          </div>
+
           <p class="journal-dashboard__error" data-dashboard-error hidden></p>
 
           <section
@@ -123,8 +177,12 @@
               <header class="dashboard-card__header">
                 <div>
                   <h2 class="dashboard-card__title">Nitrate Trend</h2>
-                  <p class="dashboard-card__hint">Automated pulls from the latest liquid test kit logs.</p>
+                  <p class="dashboard-card__hint">Quick view of core readings with water-change markers.</p>
                 </div>
+                <button type="button" class="jd-focus" data-focus-open aria-haspopup="dialog">
+                  <span class="jd-focus__icon" aria-hidden="true">&#128269;</span>
+                  Focus
+                </button>
                 <div class="dashboard-card__legend" aria-hidden="true">
                   <span class="dashboard-card__legend-item">
                     <span class="dashboard-card__legend-dot dashboard-card__legend-dot--nitrate"></span>
@@ -137,7 +195,7 @@
                 </div>
               </header>
               <div class="dashboard-card__body">
-                <div class="dashboard-card__chart jd-chart jd-chart--line">
+                <div class="dashboard-card__chart jd-chart jd-chart--line" data-chart-card>
                   <canvas
                     id="nitrateChart"
                     class="jd-chart__canvas"
@@ -161,17 +219,33 @@
               <header class="dashboard-card__header">
                 <div>
                   <h2 class="dashboard-card__title">Weekly Dosing Totals</h2>
-                  <p class="dashboard-card__hint">Grouped comparison of Thrive Plus pumps vs. Excel capfuls.</p>
+                  <p class="dashboard-card__hint">Side-by-side pumps and capfuls to highlight weekly swings.</p>
                 </div>
               </header>
               <div class="dashboard-card__body">
-                <div class="dashboard-card__chart jd-chart jd-chart--bar">
-                  <canvas
-                    id="dosingChart"
-                    class="jd-chart__canvas"
-                    role="img"
-                    aria-label="Weekly dosing totals"
-                  ></canvas>
+                <div class="jd-mini-grid">
+                  <div class="dashboard-card__chart jd-chart jd-chart--mini" data-chart-card>
+                    <header class="jd-mini__header">
+                      <h3 class="jd-mini__title">Thrive Pumps / week</h3>
+                    </header>
+                    <canvas
+                      id="dosingThriveChart"
+                      class="jd-chart__canvas jd-chart__canvas--mini"
+                      role="img"
+                      aria-label="Weekly Thrive Plus dosing"
+                    ></canvas>
+                  </div>
+                  <div class="dashboard-card__chart jd-chart jd-chart--mini" data-chart-card>
+                    <header class="jd-mini__header">
+                      <h3 class="jd-mini__title">Excel Capfuls / week</h3>
+                    </header>
+                    <canvas
+                      id="dosingExcelChart"
+                      class="jd-chart__canvas jd-chart__canvas--mini"
+                      role="img"
+                      aria-label="Weekly Excel dosing"
+                    ></canvas>
+                  </div>
                 </div>
               </div>
             </article>
@@ -188,14 +262,46 @@
               <header class="dashboard-card__header">
                 <div>
                   <h2 class="dashboard-card__title">Maintenance Timeline</h2>
-                  <p class="dashboard-card__hint">Major cleaning cycles, trims, and system tweaks at-a-glance.</p>
+                  <p class="dashboard-card__hint">Swipe through the strip to catch spacing between key upkeep events.</p>
                 </div>
               </header>
               <div class="dashboard-card__body">
-                <ul class="maintenance-list" data-maintenance-list aria-live="polite"></ul>
+                <div class="dashboard-card__chart jd-chart jd-chart--timeline" data-chart-card>
+                  <canvas
+                    id="maintenanceChart"
+                    class="jd-chart__canvas"
+                    role="img"
+                    aria-label="Timeline of maintenance events"
+                  ></canvas>
+                  <p class="dashboard-card__status jd-chart__status" data-maintenance-status aria-live="polite"></p>
+                </div>
               </div>
             </article>
           </section>
+        </div>
+      </div>
+
+      <div class="jd-focus-modal" data-focus-modal hidden role="dialog" aria-modal="true" aria-labelledby="jd-focus-title">
+        <div class="jd-focus-modal__backdrop" data-focus-close></div>
+        <div class="jd-focus-modal__dialog" role="document">
+          <header class="jd-focus-modal__header">
+            <div>
+              <p class="jd-focus-modal__eyebrow">Nitrate detail view</p>
+              <h2 class="jd-focus-modal__title" id="jd-focus-title">Nitrate Trend — Focus Mode</h2>
+              <p class="jd-focus-modal__hint">All logged samples with rolling average overlay for deeper context.</p>
+            </div>
+            <button type="button" class="jd-focus-modal__close" data-focus-close aria-label="Close focus view">&times;</button>
+          </header>
+          <div class="jd-focus-modal__body">
+            <div class="jd-focus-modal__chart jd-chart jd-chart--focus" data-focus-chart>
+              <canvas
+                id="nitrateFocusChart"
+                class="jd-chart__canvas"
+                role="img"
+                aria-label="Detailed nitrate chart"
+              ></canvas>
+            </div>
+          </div>
         </div>
       </div>
     </main>
