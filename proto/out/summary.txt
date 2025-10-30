@@ -1,0 +1,61 @@
+TAP version 13
+# Subtest: Cardinal baseline equals 1.0
+ok 1 - Cardinal baseline equals 1.0
+  ---
+  duration_ms: 2.419728
+  ...
+# Subtest: Neon tetra normalization around 0.95
+ok 2 - Neon tetra normalization around 0.95
+  ---
+  duration_ms: 0.301734
+  ...
+# Subtest: Bronze corydoras normalization around 1.9
+ok 3 - Bronze corydoras normalization around 1.9
+  ---
+  duration_ms: 0.308847
+  ...
+# Subtest: Pearl gourami normalization around 2.5
+ok 4 - Pearl gourami normalization around 2.5
+  ---
+  duration_ms: 0.267725
+  ...
+# Subtest: Tiger barb group aggression scaling
+ok 5 - Tiger barb group aggression scaling
+  ---
+  duration_ms: 2.582183
+  ...
+# Subtest: Female betta sorority handling
+ok 6 - Female betta sorority handling
+  ---
+  duration_ms: 0.449425
+  ...
+# Subtest: Male betta incompatibility when qty > 1
+ok 7 - Male betta incompatibility when qty > 1
+  ---
+  duration_ms: 1.531647
+  ...
+# Subtest: Cardinal tetra pH compatibility tiers
+ok 8 - Cardinal tetra pH compatibility tiers
+  ---
+  duration_ms: 3.630304
+  ...
+# [StockingAdvisor] Species loaded: 20/20; marine excluded
+# Subtest: Predation risk chip appears for betta and cherry shrimp mix
+ok 9 - Predation risk chip appears for betta and cherry shrimp mix
+  ---
+  duration_ms: 61.087351
+  ...
+# Subtest: Fin-nip warning surfaces for tiger barbs with long-finned tankmates
+ok 10 - Fin-nip warning surfaces for tiger barbs with long-finned tankmates
+  ---
+  duration_ms: 2.159208
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 571.391461

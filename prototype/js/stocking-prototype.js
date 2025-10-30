@@ -361,10 +361,20 @@
     window.addEventListener('beforeunload', () => observer.disconnect(), { once: true });
   };
 
+  const stripPrototypeDiagnostics = () => {
+    const selectors = ['.dev-debug', '[data-proto-debug]'];
+    selectors.forEach((selector) => {
+      document.querySelectorAll(selector).forEach((node) => {
+        node.remove();
+      });
+    });
+  };
+
   document.addEventListener('DOMContentLoaded', () => {
     setupHowItWorksModal();
     setupFeatureCta();
     removeFiltrationSummaryInfo();
+    stripPrototypeDiagnostics();
     syncBioloadBadges(document);
     observeBioloadBadgeRenders();
     ensureTurnoverInfoButton();
