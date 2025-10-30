@@ -30,17 +30,6 @@ const MARKUP = `
           >i</button>
         </div>
       </div>
-      <div class="turnover">
-        <button
-          id="turnover-info-btn"
-          class="info-btn"
-          type="button"
-          data-info-target="#turnover-info-panel"
-          aria-controls="turnover-info-panel"
-          aria-haspopup="dialog"
-          aria-expanded="false"
-        >i</button>
-      </div>
       <div
         id="bioload-info-panel"
         class="proto-info-panel"
@@ -57,27 +46,6 @@ const MARKUP = `
           <div class="proto-info-panel__body">
             <p>Filtration increases your tank’s capacity to process waste.</p>
             <button type="button" id="panel-focus">Focus check</button>
-          </div>
-        </div>
-      </div>
-      <div
-        id="turnover-info-panel"
-        class="proto-info-panel"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="turnover-info-title"
-        hidden
-      >
-        <div class="proto-info-panel__surface" data-info-surface>
-          <header class="proto-info-panel__header">
-            <h3 id="turnover-info-title" class="proto-info-panel__title">Turnover targets</h3>
-            <button type="button" data-info-close aria-label="Close">×</button>
-          </header>
-          <div class="proto-info-panel__body">
-            <ul>
-              <li>Turnover compares filter flow to aquarium volume.</li>
-              <li>General community tanks thrive around 5–7× per hour.</li>
-            </ul>
           </div>
         </div>
       </div>
@@ -100,7 +68,7 @@ async function mountPrototype(page) {
 }
 
 test.describe('prototype info buttons', () => {
-  test('bioload and turnover panels open and close', async ({ page }) => {
+  test('bioload panel opens and closes', async ({ page }) => {
     await mountPrototype(page);
 
     const bioloadPanel = page.locator('#bioload-info-panel');
@@ -115,13 +83,6 @@ test.describe('prototype info buttons', () => {
     await expect(bioloadPanel).toBeHidden();
     await expect(bioloadBtn).toHaveAttribute('aria-expanded', 'false');
     await expect(bioloadBtn).toBeFocused();
-
-    const turnoverBtn = page.locator('#turnover-info-btn');
-    const turnoverPanel = page.locator('#turnover-info-panel');
-
-    await turnoverBtn.click();
-    await expect(turnoverPanel).toBeVisible();
-    await expect(turnoverBtn).toHaveAttribute('aria-expanded', 'true');
   });
 
   test('event delegation opens targets for new triggers', async ({ page }) => {

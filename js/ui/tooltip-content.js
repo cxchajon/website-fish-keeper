@@ -35,12 +35,15 @@ const TOOLTIP_COPY = new Map([
   [
     'turnover',
     {
-      title: 'Turnover explained',
-      body: [
-        'Turnover equals total filter flow divided by tank volume.',
-        'Most community freshwater tanks thrive around 4–7× per hour. River species may need more, while bettas or gentle planted tanks can stay toward the low end.',
+      title: 'Estimated turnover',
+      bullets: [
+        'Filtration increases your tank’s capacity to process waste. The Stocking % shown here uses your effective biological capacity (RBC).',
+        'Turnover = total GPH ÷ tank gallons.',
+        'Targets: general 5–7×/h • active species 8×+.',
+        'If turnover is low, consider upsizing filtration or adding circulation.',
+        'Recheck after cycling and after major stock/plant changes.',
       ],
-      ariaLabel: 'More info about turnover',
+      ariaLabel: 'More info about estimated turnover',
     },
   ],
   [

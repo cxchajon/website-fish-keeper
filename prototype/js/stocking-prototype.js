@@ -107,21 +107,6 @@
     });
   };
 
-  const ensureTurnoverInfoButton = () => {
-    const button =
-      document.getElementById('turnover-info-btn') ||
-      document.querySelector('[data-info-target="#turnover-info-panel"]');
-    if (!(button instanceof HTMLElement)) {
-      return;
-    }
-    button.setAttribute('type', 'button');
-    button.classList.add('info-btn');
-    button.setAttribute('data-info-target', '#turnover-info-panel');
-    button.setAttribute('aria-controls', 'turnover-info-panel');
-    button.setAttribute('aria-haspopup', 'dialog');
-    button.setAttribute('aria-expanded', button.getAttribute('aria-expanded') === 'true' ? 'true' : 'false');
-  };
-
   const observeBioloadBadgeRenders = () => {
     const envBars = document.getElementById('env-bars');
     if (!envBars) return;
@@ -377,7 +362,6 @@
     stripPrototypeDiagnostics();
     syncBioloadBadges(document);
     observeBioloadBadgeRenders();
-    ensureTurnoverInfoButton();
   });
 
   const adSlots = document.querySelectorAll('[data-prototype-ad]');
