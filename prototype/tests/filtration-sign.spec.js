@@ -1,6 +1,6 @@
 import { effectiveCapacity, computePercent } from '../assets/js/proto-filtration-math.js';
 import { getTotalGE } from '../../js/bioload.js';
-import { FISH_DB } from '../../js/fish-data.js';
+import { FISH_DB } from '../../proto/logic/fish-data.proto.js';
 
 const speciesMap = new Map(FISH_DB.map((species) => [species.id, species]));
 
