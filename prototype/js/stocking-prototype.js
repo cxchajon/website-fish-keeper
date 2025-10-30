@@ -23,6 +23,109 @@
     }
   };
 
+  const BIOLOAD_TIP_TEXT =
+    "Shows how much of your tank’s capacity is used based on species size and waste output. Staying in the green keeps extra buffer for filtration, oxygen, and future growth.";
+
+  const upgradeInfoBadge = (node, tipText) => {
+    if (!(node instanceof HTMLElement)) {
+      return null;
+    }
+    if (node.classList.contains('info-badge')) {
+      node.classList.add('info-btn');
+      if (!node.dataset.tip && tipText) {
+        node.dataset.tip = tipText;
+      }
+      if (!node.hasAttribute('role')) {
+        node.setAttribute('role', 'button');
+      }
+      if (!node.hasAttribute('tabindex')) {
+        node.setAttribute('tabindex', '0');
+      }
+      node.setAttribute('aria-expanded', node.getAttribute('aria-expanded') || 'false');
+      if (!node.textContent || !node.textContent.trim()) {
+        node.textContent = 'i';
+      }
+      return node;
+    }
+
+    const replacement = document.createElement('span');
+    replacement.className = 'info-badge info-btn';
+    replacement.setAttribute('role', 'button');
+    replacement.setAttribute('tabindex', '0');
+    replacement.setAttribute('aria-expanded', 'false');
+
+    const ariaLabel = node.getAttribute('aria-label');
+    if (ariaLabel) {
+      replacement.setAttribute('aria-label', ariaLabel);
+    }
+
+    if (tipText) {
+      replacement.dataset.tip = tipText;
+    } else if (node.dataset.tip || node.dataset.tooltip) {
+      replacement.dataset.tip = (node.dataset.tip || node.dataset.tooltip || '').trim();
+    }
+
+    replacement.textContent = (node.textContent || 'i').trim() || 'i';
+
+    node.replaceWith(replacement);
+    return replacement;
+  };
+
+  const syncBioloadBadges = (root = document) => {
+    if (!root) return;
+
+    const selectors = [
+      '.ttg-tooltip-trigger[data-info="bioload"]',
+      'button.info-btn[data-info="bioload"]',
+      '[data-role="info-btn"][data-info="bioload"]',
+    ];
+
+    selectors.forEach((selector) => {
+      root.querySelectorAll(selector).forEach((node) => {
+        upgradeInfoBadge(node, BIOLOAD_TIP_TEXT);
+      });
+    });
+
+    root.querySelectorAll('.info-badge[data-info="bioload"]').forEach((node) => {
+      if (node instanceof HTMLElement) {
+        node.dataset.tip = node.dataset.tip || BIOLOAD_TIP_TEXT;
+      }
+    });
+  };
+
+  const observeBioloadBadgeRenders = () => {
+    const envBars = document.getElementById('env-bars');
+    if (!envBars) return;
+
+    const applySync = () => {
+      syncBioloadBadges(envBars);
+      const tooltips = window.TTGProtoTooltips;
+      if (tooltips && typeof tooltips.close === 'function') {
+        tooltips.close();
+      }
+    };
+
+    applySync();
+
+    if (typeof MutationObserver !== 'function') {
+      return;
+    }
+
+    const observer = new MutationObserver(() => {
+      applySync();
+    });
+
+    observer.observe(envBars, { childList: true, subtree: true });
+
+    window.addEventListener(
+      'beforeunload',
+      () => {
+        observer.disconnect();
+      },
+      { once: true },
+    );
+  };
+
   const setupHowItWorksModal = () => {
     const trigger =
       document.querySelector('.sa-proto-howitworks-trigger') ||
@@ -233,6 +336,8 @@
     setupHowItWorksModal();
     setupFeatureCta();
     removeFiltrationSummaryInfo();
+    syncBioloadBadges(document);
+    observeBioloadBadgeRenders();
   });
 
   const adSlots = document.querySelectorAll('[data-prototype-ad]');

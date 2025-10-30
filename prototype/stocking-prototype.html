@@ -57,6 +57,38 @@
       display: none !important;
     }
   </style>
+  <style>
+    .prototype-stock-page .info-badge {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+    }
+
+    .proto-info-tooltip {
+      position: absolute;
+      max-width: 320px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(6, 12, 24, 0.96);
+      border: 1px solid rgba(163, 200, 255, 0.32);
+      color: rgba(238, 243, 255, 0.92);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      box-shadow: 0 18px 36px rgba(4, 10, 30, 0.4);
+      z-index: 1100;
+      pointer-events: auto;
+    }
+
+    .proto-info-tooltip[hidden] {
+      display: none !important;
+    }
+
+    .proto-info-tooltip__body {
+      margin: 0;
+    }
+  </style>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -1276,18 +1308,14 @@
                 <div class="field-label-row">
                   <label class="field-label" for="turnoverValue">Estimated turnover</label>
                   <div class="info-trigger" data-info-scope="turnover">
-                    <button
-                      type="button"
-                      class="proto-info-trigger info-btn field-label-info"
-                      aria-haspopup="dialog"
-                      aria-controls="pop-turnover"
-                      aria-expanded="false"
-                      aria-label="Estimated turnover info"
-                      data-proto-popover="pop-turnover"
-                      data-tooltip="Filtration increases your tank’s capacity to process waste. Stocking % is now calculated using your tank’s effective biological capacity (RBC)."
+                    <span
+                      class="info-badge info-btn field-label-info"
                       role="button"
                       tabindex="0"
-                    >i</button>
+                      aria-expanded="false"
+                      aria-label="Estimated turnover info"
+                      data-tip="Filtration increases your tank’s capacity to process waste. Stocking % is now calculated using your tank’s effective biological capacity (RBC)."
+                    >i</span>
                     <div id="pop-turnover" class="proto-popover" role="dialog" aria-labelledby="pop-turnover-title" tabindex="-1" hidden>
                       <header>
                         <h3 id="pop-turnover-title">Turnover targets</h3>
@@ -1867,6 +1895,7 @@
 <script src="/js/ad-slot-view-tracking.js"></script>
 <!-- === TTG Ad Slot View Tracking END === -->
 
+  <script defer src="/prototype/js/ui/tooltip.js"></script>
   <script defer src="/prototype/js/stocking-prototype.js"></script>
   <script src="/prototype/assets/js/proto-popovers.js?v=proto_rm_2025_10_25" defer></script>
   <script>
