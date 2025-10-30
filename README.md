@@ -14,7 +14,7 @@ Official website for aquarium tools and resources.
 ## Releases
 Public change history is available on the GitHub Releases page.
 
-**Latest public release:** v1.4 (2025-10-29)
+**Latest public release:** v1.5 (2025-10-29)
 
 —
 
