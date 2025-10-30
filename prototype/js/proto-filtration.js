@@ -14,6 +14,7 @@ import {
   CATALOG_SOURCES,
 } from './catalog-loader.js';
 import { populateFilterDropdown } from '../../js/gear-data.js';
+import { isDebugEnabled, onDebugToggle } from './devtools.js';
 
 const DEBUG_FILTERS = Boolean(window?.TTG?.DEBUG_FILTERS);
 const TYPE_WEIGHT = Object.freeze({
@@ -61,10 +62,12 @@ const refs = {
   manualNote: null,
   productNote: null,
   productLabel: null,
+  productField: null,
   chips: null,
   emptyState: null,
   summary: null,
   catalogDebug: null,
+  flowMeta: null,
 };
 
 let catalog = new Map();
@@ -77,6 +80,8 @@ let pendingProductId = '';
 let productStatusMessage = '';
 let productStatusTimer = 0;
 let lastOptionsSignature = '';
+let productDebugText = '';
+let productDebugVisible = false;
 
 const catalogMeta = {
   source: CATALOG_SOURCES.FALLBACK,
@@ -84,6 +89,104 @@ const catalogMeta = {
   matched: 0,
 };
 const VALID_CATALOG_SOURCES = new Set(Object.values(CATALOG_SOURCES));
+
+function ensureCatalogDebugElement() {
+  if (refs.catalogDebug && refs.catalogDebug.isConnected) {
+    return refs.catalogDebug;
+  }
+  if (!isDebugEnabled()) {
+    return null;
+  }
+  const productField = refs.productField || document.querySelector('.filter-product-field');
+  const controls = productField?.querySelector('.proto-inline-controls');
+  if (!productField) {
+    return null;
+  }
+  refs.productField = productField;
+  const badge = document.createElement('div');
+  badge.className = 'filter-catalog-debug dev-debug';
+  badge.id = 'filter-catalog-debug';
+  badge.setAttribute('role', 'status');
+  badge.setAttribute('aria-live', 'polite');
+  if (controls && controls.parentNode) {
+    controls.parentNode.insertBefore(badge, controls);
+  } else {
+    productField.appendChild(badge);
+  }
+  refs.catalogDebug = badge;
+  return badge;
+}
+
+function removeCatalogDebugElement() {
+  if (refs.catalogDebug && refs.catalogDebug.parentNode) {
+    refs.catalogDebug.parentNode.removeChild(refs.catalogDebug);
+  }
+  refs.catalogDebug = null;
+}
+
+function syncCatalogDebug() {
+  if (!isDebugEnabled()) {
+    removeCatalogDebugElement();
+    return;
+  }
+  const badge = ensureCatalogDebugElement();
+  if (!badge) {
+    return;
+  }
+  badge.dataset.source = catalogMeta.source;
+  badge.textContent = `Catalog source: ${catalogMeta.source} • Loaded: ${catalogMeta.total} | Size-matched: ${catalogMeta.matched}`;
+}
+
+function ensureProductLabelElement() {
+  if (refs.productLabel && refs.productLabel.isConnected) {
+    return refs.productLabel;
+  }
+  if (!isDebugEnabled()) {
+    return null;
+  }
+  const flowMeta = refs.flowMeta || document.querySelector('.filter-flow-meta');
+  if (!flowMeta) {
+    return null;
+  }
+  refs.flowMeta = flowMeta;
+  const label = document.createElement('p');
+  label.className = 'filter-product-meta dev-debug';
+  label.id = 'filter-product-label';
+  label.hidden = true;
+  flowMeta.appendChild(label);
+  refs.productLabel = label;
+  return label;
+}
+
+function removeProductLabelElement() {
+  if (refs.productLabel && refs.productLabel.parentNode) {
+    refs.productLabel.parentNode.removeChild(refs.productLabel);
+  }
+  refs.productLabel = null;
+}
+
+function syncProductDebug() {
+  if (!isDebugEnabled()) {
+    removeProductLabelElement();
+    return;
+  }
+  const label = ensureProductLabelElement();
+  if (!label) {
+    return;
+  }
+  if (productDebugVisible && productDebugText) {
+    label.hidden = false;
+    label.textContent = productDebugText;
+  } else {
+    label.hidden = true;
+    label.textContent = '';
+  }
+}
+
+onDebugToggle(() => {
+  syncCatalogDebug();
+  syncProductDebug();
+});
 
 function normalizeSource(value) {
   if (value === FILTER_SOURCES.PRODUCT) {
@@ -490,6 +593,9 @@ function ensureRefs() {
   if (!refs.productLabel) {
     refs.productLabel = document.getElementById('filter-product-label');
   }
+  if (!refs.productField) {
+    refs.productField = document.querySelector('.filter-product-field');
+  }
   if (!refs.catalogDebug) {
     refs.catalogDebug = document.getElementById('filter-catalog-debug');
   }
@@ -502,17 +608,17 @@ function ensureRefs() {
   if (!refs.summary) {
     refs.summary = document.querySelector('[data-role="proto-filter-summary"]');
   }
+  if (!refs.flowMeta) {
+    refs.flowMeta = document.querySelector('.filter-flow-meta');
+  }
 }
 
 function updateProductLabel(productItem) {
-  if (!refs.productLabel) return;
-  if (productItem) {
-    refs.productLabel.hidden = false;
-    refs.productLabel.textContent = `${productItem.label} • ${formatGph(productItem.gph)} GPH`;
-  } else {
-    refs.productLabel.hidden = true;
-    refs.productLabel.textContent = '';
-  }
+  productDebugVisible = Boolean(productItem);
+  productDebugText = productItem
+    ? `${productItem.label} • ${formatGph(productItem.gph)} GPH`
+    : '';
+  syncProductDebug();
 }
 
 function setManualNote(message, { isError = false } = {}) {
@@ -852,10 +958,6 @@ function findProductById(id) {
 }
 
 function updateCatalogDebug({ matchedCount = null, totalCount = null, source = null } = {}) {
-  const badge = refs.catalogDebug;
-  if (!badge) {
-    return;
-  }
   if (Number.isFinite(totalCount)) {
     catalogMeta.total = Math.max(0, Math.round(totalCount));
   }
@@ -865,8 +967,7 @@ function updateCatalogDebug({ matchedCount = null, totalCount = null, source = n
   if (source && VALID_CATALOG_SOURCES.has(source)) {
     catalogMeta.source = source;
   }
-  badge.dataset.source = catalogMeta.source;
-  badge.textContent = `Catalog source: ${catalogMeta.source} • Loaded: ${catalogMeta.total} | Size-matched: ${catalogMeta.matched}`;
+  syncCatalogDebug();
 }
 
 function buildOptionsSignature(items) {

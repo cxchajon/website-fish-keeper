@@ -33,3 +33,34 @@
 .proto-stock #env-bars .bioagg-card {
   row-gap: 12px;
 }
+
+.dev-debug {
+  font-style: normal;
+}
+
+body:not(.debug-on) .dev-debug {
+  display: none !important;
+}
+
+.proto-debug-badge {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(10, 16, 32, 0.82);
+  color: #f5f7fb;
+  box-shadow: 0 12px 24px -16px rgba(0, 0, 0, 0.65);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+body:not(.debug-on) .proto-debug-badge {
+  display: none;
+}
