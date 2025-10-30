@@ -12,7 +12,7 @@ test('flags female betta sorority when 2–4 present (<5)', () => {
     tank: { gallons: 20 },
   });
   const warnings = runAllWarnings(state, catalog);
-  assert.ok(hasWarning(warnings, 'betta_female_sorority_min'));
+  assert.ok(hasWarning(warnings, 'betta.femaleGroupTooSmall'));
 });
 
 test('does NOT flag sorority when >=5 females', () => {
@@ -21,7 +21,7 @@ test('does NOT flag sorority when >=5 females', () => {
     tank: { gallons: 29 },
   });
   const warnings = runAllWarnings(state, catalog);
-  assert.ok(!hasWarning(warnings, 'betta_female_sorority_min'));
+  assert.ok(!hasWarning(warnings, 'betta.femaleGroupTooSmall'));
 });
 
 test('flags fin-nipper conflict for betta female + tiger barbs', () => {
@@ -32,7 +32,7 @@ test('flags fin-nipper conflict for betta female + tiger barbs', () => {
     ],
   });
   const warnings = runAllWarnings(state, catalog);
-  assert.ok(hasWarning(warnings, 'betta_female_finnipper_conflict'));
+  assert.ok(hasWarning(warnings, 'betta.finNippers'));
 });
 
 test('flags fin-nipper conflict for betta male + tiger barbs', () => {
@@ -43,7 +43,7 @@ test('flags fin-nipper conflict for betta male + tiger barbs', () => {
     ],
   });
   const warnings = runAllWarnings(state, catalog);
-  assert.ok(hasWarning(warnings, 'betta_male_finnipper_conflict'));
+  assert.ok(hasWarning(warnings, 'betta.finNippers'));
 });
 
 test('zebra danio is NOT treated as fin-nipper, only active swimmer', () => {

@@ -3,6 +3,7 @@ import speciesData from '../../data/species.v2.json' with { type: 'json' };
 const FIN_NIPPER_TAG = 'fin_nipper';
 const FEMALE_BETTA_ID = 'betta_female';
 const MALE_BETTA_ID = 'betta_male';
+const BETTA_IDS = new Set([FEMALE_BETTA_ID, MALE_BETTA_ID]);
 
 function normalizeId(value) {
   if (value == null) return '';
@@ -141,19 +142,23 @@ function hasFinNipper(entries, excludeIds = []) {
 
 function createSororityWarning() {
   return {
-    id: 'betta_female_sorority_min',
-    severity: 'warn',
+    id: 'betta.femaleGroupTooSmall',
+    severity: 'danger',
     kind: 'behavior',
-    text: 'Sororities are high-risk. If attempting, keep **≥5 females** in **20+ gallons** with heavy cover; otherwise keep a single female.',
+    title: 'Female bettas: group too small',
+    message: 'Female bettas should only be kept together in groups of 5 or more to diffuse aggression. 2–4 is high risk of fighting and stress.',
+    text: 'Female bettas: group too small — Female bettas should only be kept together in groups of 5 or more to diffuse aggression. 2–4 is high risk of fighting and stress.',
   };
 }
 
-function createFinNipperWarning(id) {
+function createFinNipperWarning() {
   return {
-    id,
-    severity: 'warn',
+    id: 'betta.finNippers',
+    severity: 'danger',
     kind: 'compatibility',
-    text: 'Fin-nippers may harass Bettas and damage fins. Avoid this combination.',
+    title: 'Fin-nippers present with betta',
+    message: 'Fin-nipping species can shred betta fins and cause severe stress or injury.',
+    text: 'Fin-nippers present with betta — Fin-nipping species can shred betta fins and cause severe stress or injury.',
   };
 }
 
@@ -163,22 +168,13 @@ export function runAllWarnings(state, catalogInput) {
   const warnings = [];
 
   const femaleQty = qtyOf(entries, FEMALE_BETTA_ID);
-  if (femaleQty > 1) {
-    const sororityMin = Number(catalog.byId[FEMALE_BETTA_ID]?.sorority_min ?? 5);
-    if (femaleQty < sororityMin) {
-      warnings.push(createSororityWarning());
-    }
+  if (femaleQty >= 2 && femaleQty <= 4) {
+    warnings.push(createSororityWarning());
   }
 
-  const finNipperPresent = hasFinNipper(entries, [FEMALE_BETTA_ID, MALE_BETTA_ID]);
-  if (finNipperPresent) {
-    if (femaleQty > 0) {
-      warnings.push(createFinNipperWarning('betta_female_finnipper_conflict'));
-    }
-    const maleQty = qtyOf(entries, MALE_BETTA_ID);
-    if (maleQty > 0) {
-      warnings.push(createFinNipperWarning('betta_male_finnipper_conflict'));
-    }
+  const bettaPresent = entries.some((entry) => BETTA_IDS.has(entry.id) && entry.quantity > 0);
+  if (bettaPresent && hasFinNipper(entries, Array.from(BETTA_IDS))) {
+    warnings.push(createFinNipperWarning());
   }
 
   return warnings;

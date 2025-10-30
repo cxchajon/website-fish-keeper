@@ -5,6 +5,7 @@ import { canonicalizeFilterType, sumGph, weightedMixFactor } from '../utils.js';
 import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent, PLANTED_CAPACITY_BONUS, computeFiltrationFactor } from '../bioload.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import { BEHAVIOR_TAGS } from './behaviorTags.js';
+import { evaluateStockWarnings } from './warnings.js';
 import {
   formatNumber,
   formatPercent,
@@ -1229,6 +1230,45 @@ function computeChips({ tank, candidate, entries, groupRule, salinityCheck, flow
   return chips;
 }
 
+const WARNING_SEVERITY_RANK = { danger: 2, bad: 2, warn: 1, warning: 1 };
+
+function sortWarnings(list) {
+  list.sort((left, right) => {
+    const diff = (WARNING_SEVERITY_RANK[right?.severity] ?? 0) - (WARNING_SEVERITY_RANK[left?.severity] ?? 0);
+    if (diff !== 0) return diff;
+    const leftText = (left?.text || '').toLowerCase();
+    const rightText = (right?.text || '').toLowerCase();
+    if (leftText < rightText) return -1;
+    if (leftText > rightText) return 1;
+    return 0;
+  });
+  return list;
+}
+
+function mergeWarnings(base, additions) {
+  if (!Array.isArray(additions) || additions.length === 0) {
+    return base;
+  }
+  const target = Array.isArray(base) ? [...base] : [];
+  const seen = new Set(target.map((item) => (item?.id ? String(item.id) : null)).filter(Boolean));
+  let mutated = false;
+  for (const addition of additions) {
+    if (!addition || typeof addition !== 'object') continue;
+    const id = addition.id ? String(addition.id) : null;
+    if (id && seen.has(id)) continue;
+    target.push(addition);
+    if (id) {
+      seen.add(id);
+    }
+    mutated = true;
+  }
+  if (!mutated) {
+    return base;
+  }
+  sortWarnings(target);
+  return target;
+}
+
 function computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck, flowCheck, blackwaterCheck }) {
   const issues = [];
   issues.push({ severity: bioload.severity, message: bioload.severity === 'bad' ? 'Bioload exceeds recommended capacity' : 'Bioload nearing limit' });
@@ -1272,16 +1312,7 @@ function computeStatus({ bioload, aggression, conditions, groupRule, salinityChe
     }
   }
 
-  const severityRank = { danger: 2, bad: 2, warn: 1, warning: 1 };
-  warnings.sort((left, right) => {
-    const diff = (severityRank[right.severity] ?? 0) - (severityRank[left.severity] ?? 0);
-    if (diff !== 0) return diff;
-    const leftText = (left.text || '').toLowerCase();
-    const rightText = (right.text || '').toLowerCase();
-    if (leftText < rightText) return -1;
-    if (leftText > rightText) return 1;
-    return 0;
-  });
+  sortWarnings(warnings);
 
   return { ...status, warnings };
 }
@@ -1355,8 +1386,11 @@ export function buildComputedState(state) {
     chips.push({ tone: invertCheck.severity === 'bad' ? 'bad' : 'warn', text: invertCheck.reason });
   }
   const status = computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck });
+  const stockWarnings = evaluateStockWarnings({ entries, candidate });
+  const mergedWarnings = mergeWarnings(status.warnings, stockWarnings);
+  const statusWithWarnings = mergedWarnings === status.warnings ? status : { ...status, warnings: mergedWarnings };
 
-  const diagnostics = computeDiagnostics({ tank, bioload, aggression, status, candidate, entries });
+  const diagnostics = computeDiagnostics({ tank, bioload, aggression, status: statusWithWarnings, candidate, entries });
 
   return {
     tank,
@@ -1368,7 +1402,7 @@ export function buildComputedState(state) {
     aggression,
     chips,
     invertCheck,
-    status,
+    status: statusWithWarnings,
     diagnostics,
     filtering,
     turnover: turnoverBand(tank),
