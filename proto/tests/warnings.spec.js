@@ -46,6 +46,18 @@ test('flags fin-nipper conflict for betta male + tiger barbs', () => {
   assert.ok(hasWarning(warnings, 'betta.finNippers'));
 });
 
+test('flags both warnings when female sorority and fin-nippers overlap', () => {
+  const state = mockState({
+    stock: [
+      { speciesId: 'betta_female', quantity: 3 },
+      { speciesId: 'tiger_barb', quantity: 8 },
+    ],
+  });
+  const warnings = runAllWarnings(state, catalog);
+  assert.ok(hasWarning(warnings, 'betta.femaleGroupTooSmall'));
+  assert.ok(hasWarning(warnings, 'betta.finNippers'));
+});
+
 test('zebra danio is NOT treated as fin-nipper, only active swimmer', () => {
   const zebra = catalog.byId['zebra_danio'];
   assert.ok(zebra, 'catalog entry should exist for zebra danio');

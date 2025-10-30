@@ -9,104 +9,121 @@ const normalizeId = (value) => {
   return String(value).toLowerCase();
 };
 
-const resolveEntryId = (entry) => normalizeId(entry?.id ?? entry?.species?.id ?? entry?.species?.slug);
+const resolveEntryId = (entry) =>
+  normalizeId(entry?.id ?? entry?.species?.id ?? entry?.species?.slug ?? entry?.slug);
 
-const isFemaleBetta = (entry) => FEMALE_BETTA_IDS.has(resolveEntryId(entry));
-
-const isBetta = (entry) => BETTA_IDS.has(resolveEntryId(entry));
-
-const numericQty = (entry) => {
-  const qty = Number(entry?.qty ?? entry?.quantity ?? 0);
+const toQuantity = (entry) => {
+  const qty = Number(entry?.qty ?? entry?.quantity ?? entry?.count ?? 0);
   return Number.isFinite(qty) && qty > 0 ? qty : 0;
+};
+
+const normalizeContextEntry = (entry, source) => {
+  if (!entry) return null;
+  const qty = toQuantity(entry);
+  if (qty <= 0) return null;
+  const id = resolveEntryId(entry);
+  if (!id) return null;
+  const species = entry.species ?? null;
+  return { id, qty, species, source };
 };
 
 const gatherContext = (entries = [], candidate = null) => {
   const list = [];
-  for (const item of entries) {
-    if (!item) continue;
-    const qty = numericQty(item);
-    if (qty <= 0) continue;
-    const species = item.species ?? null;
-    const id = normalizeId(item.id ?? species?.id ?? species?.slug);
-    list.push({ id, qty, species, source: 'stock' });
+  for (const item of Array.isArray(entries) ? entries : []) {
+    const normalized = normalizeContextEntry(item, 'stock');
+    if (normalized) {
+      list.push(normalized);
+    }
   }
-  if (candidate?.species) {
-    const qty = numericQty(candidate);
-    if (qty > 0) {
-      const species = candidate.species;
-      const id = normalizeId(candidate.id ?? species?.id ?? species?.slug);
-      list.push({ id, qty, species, source: 'candidate' });
+  if (candidate) {
+    const normalizedCandidate = normalizeContextEntry(candidate, 'candidate');
+    if (normalizedCandidate) {
+      list.push(normalizedCandidate);
     }
   }
   return list;
 };
 
-export const rule_betta_female_sorority = ({ entries, candidate }) => {
+const hasFinNipper = (context) => {
+  for (const item of context) {
+    if (!item || BETTA_IDS.has(item.id)) {
+      continue;
+    }
+    const tags = Array.isArray(item.species?.tags) ? item.species.tags : [];
+    if (tags.some((tag) => typeof tag === 'string' && tag.toLowerCase() === FIN_NIPPER_TAG)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const createFemaleSororityWarning = () => {
+  const message =
+    'Female bettas should only be kept together in groups of 5 or more to diffuse aggression. 2–4 is high risk of fighting and stress.';
+  return {
+    id: 'betta.femaleGroupTooSmall',
+    severity: 'danger',
+    icon: 'alert',
+    kind: 'behavior',
+    chips: ['Aggression'],
+    title: 'Female bettas: group too small',
+    message,
+    text: `Female bettas: group too small — ${message}`,
+  };
+};
+
+const createFinNipperWarning = () => {
+  const message = 'Fin-nipping species can shred betta fins and cause severe stress or injury.';
+  return {
+    id: 'betta.finNippers',
+    severity: 'danger',
+    icon: 'alert',
+    kind: 'compatibility',
+    chips: ['Compatibility'],
+    title: 'Fin-nippers present with betta',
+    message,
+    text: `Fin-nippers present with betta — ${message}`,
+  };
+};
+
+export const rule_betta_female_sorority = ({ entries, candidate } = {}) => {
   const context = gatherContext(entries, candidate);
-  if (!context.some(isFemaleBetta)) {
+  if (!context.some((item) => FEMALE_BETTA_IDS.has(item.id))) {
     return [];
   }
-  const totalQty = context.reduce((sum, item) => {
-    if (!isFemaleBetta(item)) return sum;
-    return sum + item.qty;
-  }, 0);
+
+  const totalQty = context.reduce(
+    (sum, item) => (FEMALE_BETTA_IDS.has(item.id) ? sum + item.qty : sum),
+    0,
+  );
+
   if (totalQty < 2 || totalQty > 4) {
     return [];
   }
 
-  const message = 'Female bettas should only be kept together in groups of 5 or more to diffuse aggression. 2–4 is high risk of fighting and stress.';
-  const text = `Female bettas: group too small — ${message}`;
-  return [
-    {
-      id: 'betta.femaleGroupTooSmall',
-      severity: 'danger',
-      icon: 'alert',
-      kind: 'behavior',
-      chips: ['Aggression'],
-      title: 'Female bettas: group too small',
-      message,
-      text,
-    },
-  ];
+  return [createFemaleSororityWarning()];
 };
 
-export const rule_betta_fin_nippers = ({ entries, candidate }) => {
+export const rule_betta_fin_nippers = ({ entries, candidate } = {}) => {
   const context = gatherContext(entries, candidate);
-  const hasBetta = context.some((item) => isBetta(item));
-  if (!hasBetta) {
+  if (!context.some((item) => BETTA_IDS.has(item.id))) {
     return [];
   }
-  const hasFinNipper = context.some((item) => {
-    if (isBetta(item)) return false;
-    if (item.qty <= 0) return false;
-    const tags = Array.isArray(item.species?.tags) ? item.species.tags : [];
-    return tags.some((tag) => typeof tag === 'string' && tag.toLowerCase() === FIN_NIPPER_TAG);
-  });
-  if (!hasFinNipper) {
+
+  if (!hasFinNipper(context)) {
     return [];
   }
-  const message = 'Fin-nipping species can shred betta fins and cause severe stress or injury.';
-  const text = `Fin-nippers present with betta — ${message}`;
-  return [
-    {
-      id: 'betta.finNippers',
-      severity: 'danger',
-      icon: 'alert',
-      kind: 'compatibility',
-      chips: ['Compatibility'],
-      title: 'Fin-nippers present with betta',
-      message,
-      text,
-    },
-  ];
+
+  return [createFinNipperWarning()];
 };
 
-const WARNING_RULES = [rule_betta_female_sorority, rule_betta_fin_nippers];
+const WARNING_RULES = Object.freeze([rule_betta_female_sorority, rule_betta_fin_nippers]);
 
 export const evaluateWarningRules = (context) => {
   if (!context || typeof context !== 'object') {
     return [];
   }
+
   const results = [];
   for (const rule of WARNING_RULES) {
     try {
