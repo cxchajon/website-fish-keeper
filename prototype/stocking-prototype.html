@@ -592,6 +592,31 @@
       background: rgba(255, 100, 92, 0.92);
     }
 
+    #stocking-page #stock-warnings {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      margin: var(--space-sm) 0 0;
+    }
+
+    #stocking-page #stock-warnings .status-strip {
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 1rem;
+      color: #0b1228;
+    }
+
+    #stocking-page #stock-warnings .warning-title {
+      font-weight: 700;
+    }
+
+    #stocking-page #stock-warnings .warning-message {
+      font-size: 0.96rem;
+      opacity: 0.92;
+    }
+
     .chips {
       margin-top: 14px;
       display: flex;
@@ -1536,6 +1561,7 @@
           <p class="card-subtitle">Your selected fish and inverts appear here. No stock yet. Add species to begin.</p>
         </div>
         <div id="stock-list" class="stock-list" data-testid="species-list"></div>
+        <div id="stock-warnings" class="stock-warnings" hidden aria-live="polite"></div>
       </section>
 
       <section class="card ttg-card tank-env-card env-card" id="env-card" data-role="env-card" aria-live="polite">

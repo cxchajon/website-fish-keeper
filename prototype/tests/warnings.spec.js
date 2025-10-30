@@ -97,3 +97,24 @@ test('Male bettas also warn when housed with fin nippers', () => {
   assert.ok(conflict, 'Shared fin-nipper conflict warning should appear for male bettas');
   assert.equal(conflict.severity, 'danger');
 });
+
+test('Female sorority and fin-nipper conflict surface together when both apply', () => {
+  const state = createDefaultState();
+  state.gallons = 29;
+  state.stock = [
+    { id: 'betta_female', qty: 3 },
+    { id: 'tiger_barb', qty: 6 },
+  ];
+  state.candidate = null;
+
+  const computed = buildComputedState(state);
+  const warnings = collectWarningById(computed.status?.warnings);
+
+  const sorority = warnings.get('betta.femaleGroupTooSmall');
+  const finNipper = warnings.get('betta.finNippers');
+
+  assert.ok(sorority, 'Female betta sorority warning should appear for 3 females');
+  assert.ok(finNipper, 'Fin-nipper warning should appear alongside sorority warning');
+  assert.equal(sorority.severity, 'danger');
+  assert.equal(finNipper.severity, 'danger');
+});

@@ -144,6 +144,7 @@ function createSororityWarning() {
   return {
     id: 'betta.femaleGroupTooSmall',
     severity: 'danger',
+    icon: 'alert',
     kind: 'behavior',
     title: 'Female bettas: group too small',
     message: 'Female bettas should only be kept together in groups of 5 or more to diffuse aggression. 2–4 is high risk of fighting and stress.',
@@ -155,6 +156,7 @@ function createFinNipperWarning() {
   return {
     id: 'betta.finNippers',
     severity: 'danger',
+    icon: 'alert',
     kind: 'compatibility',
     title: 'Fin-nippers present with betta',
     message: 'Fin-nipping species can shred betta fins and cause severe stress or injury.',
