@@ -2,6 +2,7 @@ import * as baseCompute from '../../../js/logic/compute.js?orig';
 import { getSpeciesListV2, getSpeciesBySlugV2 } from '../../../proto/logic/species.adapter.v2.js';
 import { compatScore } from '../../../proto/logic/compat.v2.js';
 import { calcAggression, AGGRESSION_TOKENS } from '../../../proto/logic/aggression.v2.js';
+import { evaluateWarningRules } from '../warnings/rules.js';
 import { formatBioloadPercent } from '../../../js/bioload.js?orig';
 import { getBandColor } from '../../../js/logic/utils.js?orig';
 import { weightedMixFactor } from '../../../js/utils.js?orig';
@@ -706,11 +707,30 @@ const patchProtoComputed = (computed) => {
     ? { ...candidate, protoV2State: candidateExtras }
     : candidate;
 
+  const baseWarnings = Array.isArray(computed.status?.warnings) ? computed.status.warnings : [];
+  const ruleWarnings = evaluateWarningRules({ entries, candidate: patchedCandidate, tank: computed.tank });
+  let status = computed.status;
+  if (Array.isArray(ruleWarnings) && ruleWarnings.length > 0) {
+    const seen = new Set(baseWarnings.map((warning) => warning?.id));
+    const additions = [];
+    for (const warning of ruleWarnings) {
+      if (!warning || typeof warning !== 'object') continue;
+      const id = warning.id;
+      if (!id || seen.has(id)) continue;
+      additions.push(warning);
+      seen.add(id);
+    }
+    if (additions.length > 0) {
+      status = { ...(computed.status || {}), warnings: [...baseWarnings, ...additions] };
+    }
+  }
+
   return {
     ...computed,
     entries,
     candidate: patchedCandidate,
     chips,
+    status,
     protoV2: {
       candidate: candidateExtras,
       tokens: AGGRESSION_TOKENS,
