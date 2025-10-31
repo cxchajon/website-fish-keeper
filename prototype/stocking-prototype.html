@@ -1335,12 +1335,12 @@
                   <label class="field-label" for="turnoverValue">Estimated turnover</label>
                   <button
                     type="button"
-                    class="info-btn"
+                    class="info-btn ttg-tooltip-trigger"
                     data-info="turnover"
-                    data-info-target="#turnover-popover"
+                    data-tooltip-id="turnover-tip"
                     aria-expanded="false"
-                    aria-controls="turnover-popover"
-                    aria-label="More info about estimated turnover"
+                    aria-controls="turnover-tip"
+                    aria-label="More info about turnover"
                     title="More info"
                   >i</button>
                 </div>
@@ -1736,30 +1736,9 @@
     aria-hidden="true"
   >
     <div class="proto-info-overlay__backdrop" data-overlay-backdrop></div>
-    <article
-      id="turnover-popover"
-      class="proto-info-popover"
-      data-info="turnover"
-      role="dialog"
-      aria-modal="false"
-      aria-labelledby="turnover-popover-title"
-      hidden
-    >
-      <header class="proto-info-popover__header">
-        <h3 id="turnover-popover-title" class="proto-info-popover__title">Estimated turnover</h3>
-        <button type="button" class="proto-info-popover__close" data-info-close aria-label="Close">×</button>
-      </header>
-      <div class="proto-info-popover__body">
-        <ul class="proto-info-popover__list">
-          <li>Filtration increases your tank’s capacity to process waste. The Stocking % shown here uses your effective biological capacity (RBC).</li>
-          <li>Turnover = total GPH ÷ tank gallons.</li>
-          <li>Targets: general 5–7×/h • active species 8×+.</li>
-          <li>If turnover is low, consider upsizing filtration or adding circulation.</li>
-          <li>Recheck after cycling and after major stock/plant changes.</li>
-        </ul>
-      </div>
-    </article>
   </div>
+
+  <div id="turnover-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="turnover"></div>
 
   <script type="importmap">
     {
