@@ -1,0 +1,4 @@
+- Promote the skip link and ensure focus indicators meet 3:1 contrast over gradients.
+- Label all dynamic totals with `aria-live="polite"` so screen readers announce changes without interrupting input.
+- Maintain consistent heading levels when injecting prototype notes to avoid skipping from H2 to H4.
+- Provide keyboard shortcuts for toggling advanced filters while keeping the controls reachable with standard Tab order.

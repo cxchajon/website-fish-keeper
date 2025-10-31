@@ -1,0 +1,30 @@
+{
+  "title": "Stocking Advisor Prototype | Plan Freshwater Communities | The Tank Guide",
+  "description": "Preview the Stocking Advisor prototype to model freshwater fish communities, rehearse compatibility, and tune bioload decisions before publishing to the live experience.",
+  "canonical": "https://thetankguide.com/stocking-advisor.html",
+  "robots": "index,follow",
+  "og": {
+    "title": "Stocking Advisor Prototype | Plan Freshwater Communities",
+    "description": "Explore the Gemini-tuned prototype of The Tank Guide Stocking Advisor for balanced freshwater aquarium plans and compatibility tips.",
+    "url": "https://thetankguide.com/stocking-advisor.html",
+    "type": "website",
+    "site_name": "The Tank Guide",
+    "image": {
+      "url": "https://thetankguide.com/assets/og/stocking-advisor-prototype.png",
+      "width": 1200,
+      "height": 630,
+      "alt": "Prototype view of The Tank Guide Stocking Advisor showing recommended fish combinations."
+    }
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "site": "@fishkeepinglife",
+    "creator": "@fishkeepinglife",
+    "title": "Stocking Advisor Prototype | Plan Freshwater Communities",
+    "description": "Walk through the prototype Stocking Advisor workflow to practice balanced stocking plans backed by Gemini guidance.",
+    "image": {
+      "url": "https://thetankguide.com/assets/og/stocking-advisor-prototype.png",
+      "alt": "Prototype Stocking Advisor dashboard highlighting compatibility guidance."
+    }
+  }
+}

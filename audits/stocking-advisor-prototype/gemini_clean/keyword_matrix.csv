@@ -1,0 +1,5 @@
+keyword,search_intent,notes
+"aquarium stocking calculator","Transactional","Prototype keyword for users testing bioload plans before launch"
+"freshwater fish compatibility","Informational","Supports FAQ answers about cycle readiness and alerts"
+"nitrogen cycle aquarium","Informational","Links to educational paragraph on bioload impact"
+"fish tank stocking planner","Transactional","Aligns with WebApplication schema naming"
