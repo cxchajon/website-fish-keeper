@@ -1,0 +1,113 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://thetankguide.com/#organization",
+      "name": "The Tank Guide",
+      "url": "https://thetankguide.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://thetankguide.com/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://www.youtube.com/@TheTankGuide",
+        "https://www.instagram.com/fishkeepinglife/",
+        "https://www.facebook.com/fishkeepinglife",
+        "https://www.tiktok.com/@fishkeepinglife"
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://thetankguide.com/stocking-advisor.html#webpage",
+      "url": "https://thetankguide.com/stocking-advisor.html",
+      "name": "Stocking Advisor Prototype",
+      "description": "Preview the Stocking Advisor prototype to model freshwater fish communities, rehearse compatibility, and tune bioload decisions before publishing to the live experience.",
+      "inLanguage": "en",
+      "datePublished": "2023-06-15T09:00:00-04:00",
+      "dateModified": "2025-10-31T16:08:20Z",
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://thetankguide.com/assets/og/stocking-advisor-prototype.png"
+      },
+      "publisher": {
+        "@id": "https://thetankguide.com/#organization"
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://thetankguide.com/stocking-advisor.html#app",
+      "name": "Stocking Advisor",
+      "url": "https://thetankguide.com/stocking-advisor.html",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Web",
+      "description": "A freshwater aquarium stocking planner that balances bioload, compatibility, and parameter targets before livestock purchases.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "publisher": {
+        "@id": "https://thetankguide.com/#organization"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://thetankguide.com/stocking-advisor.html#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thetankguide.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Stocking Advisor",
+          "item": "https://thetankguide.com/stocking-advisor.html"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://thetankguide.com/stocking-advisor.html#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does the prototype handle cycle readiness guidance?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It assumes a conservative cycle and highlights stocking ranges that protect against ammonia spikes, encouraging keepers to stagger additions and test water chemistry weekly."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I compare different community presets in one session?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The prototype caches your current mix, letting you duplicate, rename, and iterate on scenarios so you can evaluate stocking density before pushing updates live."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What data powers the compatibility alerts?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Gemini synthesizes our catalog of species records, tagging each fish with temperament, adult size, and parameter tolerances to surface conflicts the moment they appear in a plan."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How should I report feedback on the prototype results?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Use the built-in send-feedback link in the results panel or drop a note in the #stocking-advisor Slack channel so the product team can review logs and reproduce the scenario."
+          }
+        }
+      ]
+    }
+  ]
+}
