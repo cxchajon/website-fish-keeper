@@ -1,0 +1,170 @@
+{
+  "title": "Stocking Advisor Prototype \u2014 Optimize Aquarium Plans | The Tank Guide",
+  "meta_tags": [
+    {
+      "charset": "UTF-8"
+    },
+    {
+      "name": "description",
+      "content": "Explore the prototype experience for The Tank Guide Stocking Advisor, including metadata, structured data, and educational copy tuned for SEO, AEO, GEO, and AdSense validation."
+    },
+    {
+      "name": "viewport",
+      "content": "width=device-width, initial-scale=1"
+    },
+    {
+      "name": "theme-color",
+      "content": "#0a1020"
+    },
+    {
+      "property": "og:type",
+      "content": "article"
+    },
+    {
+      "property": "og:site_name",
+      "content": "The Tank Guide"
+    },
+    {
+      "property": "og:title",
+      "content": "Stocking Advisor Prototype \u2014 Optimize Aquarium Plans | The Tank Guide"
+    },
+    {
+      "property": "og:description",
+      "content": "Preview the optimized Stocking Advisor experience with refreshed metadata, structured data, and guidance for balanced freshwater aquariums."
+    },
+    {
+      "property": "og:url",
+      "content": "https://thetankguide.com/prototype/stocking-prototype.html"
+    },
+    {
+      "property": "og:image",
+      "content": "https://thetankguide.com/assets/og/stocking-advisor-og.png"
+    },
+    {
+      "property": "og:image:width",
+      "content": "1200"
+    },
+    {
+      "property": "og:image:height",
+      "content": "630"
+    },
+    {
+      "property": "og:image:alt",
+      "content": "Screenshot of The Tank Guide Stocking Advisor interface highlighting tank planning insights."
+    },
+    {
+      "property": "article:published_time",
+      "content": "2024-11-18T09:00:00-05:00"
+    },
+    {
+      "property": "article:modified_time",
+      "content": "2025-01-12T10:15:00-05:00"
+    },
+    {
+      "property": "article:section",
+      "content": "Aquarium Planning"
+    },
+    {
+      "property": "article:tag",
+      "content": "aquarium stocking"
+    },
+    {
+      "property": "article:tag",
+      "content": "fish tank planner"
+    },
+    {
+      "property": "article:tag",
+      "content": "freshwater compatibility"
+    },
+    {
+      "name": "twitter:card",
+      "content": "summary_large_image"
+    },
+    {
+      "name": "twitter:site",
+      "content": "@fishkeepinglife"
+    },
+    {
+      "name": "twitter:title",
+      "content": "Stocking Advisor Prototype \u2014 Optimize Aquarium Plans | The Tank Guide"
+    },
+    {
+      "name": "twitter:description",
+      "content": "See the SEO and structured data prototype for the Stocking Advisor before it ships to the live stocking page."
+    },
+    {
+      "name": "twitter:image",
+      "content": "https://thetankguide.com/assets/og/stocking-advisor-og.png"
+    },
+    {
+      "name": "twitter:image:alt",
+      "content": "Stocking Advisor dashboard preview with fish compatibility insights."
+    },
+    {
+      "name": "twitter:creator",
+      "content": "@fishkeepinglife"
+    }
+  ],
+  "link_tags": [
+    {
+      "rel": "preload",
+      "href": "/footer.html?v=1.4.9",
+      "as": "fetch",
+      "crossorigin": "anonymous"
+    },
+    {
+      "rel": "manifest",
+      "href": "/manifest.webmanifest"
+    },
+    {
+      "rel": "icon",
+      "href": "/favicon.ico"
+    },
+    {
+      "rel": "apple-touch-icon",
+      "sizes": "180x180",
+      "href": "/assets/icons/apple-touch-icon.png"
+    },
+    {
+      "rel": "canonical",
+      "href": "https://thetankguide.com/prototype/stocking-prototype.html"
+    },
+    {
+      "rel": "stylesheet",
+      "id": "css-main",
+      "href": "/css/style.css?v=2024-06-05a"
+    },
+    {
+      "rel": "stylesheet",
+      "href": "/assets/css/utilities.css?v=2025-11-07"
+    },
+    {
+      "rel": "stylesheet",
+      "href": "/css/site.css?v=1.4.9"
+    },
+    {
+      "rel": "stylesheet",
+      "href": "/css/ui.css?v=2024-09-15"
+    },
+    {
+      "rel": "stylesheet",
+      "href": "/prototype/css/stocking-prototype.css"
+    },
+    {
+      "rel": "stylesheet",
+      "href": "/prototype/assets/css/proto-popovers.css?v=proto_rm_2025_10_25"
+    },
+    {
+      "rel": "stylesheet",
+      "href": "/prototype/assets/css/filtration.css?v=proto_rm_2025_10_25"
+    },
+    {
+      "rel": "stylesheet",
+      "href": "/prototype/assets/css/prototype.css?v=proto_rm_2025_10_25"
+    },
+    {
+      "rel": "stylesheet",
+      "href": "/prototype/css/proto-fixes.css"
+    }
+  ]
+}
