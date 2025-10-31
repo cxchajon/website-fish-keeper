@@ -380,23 +380,27 @@ function ensureTooltipPortal(state) {
   if (!state || !(state.trigger instanceof HTMLElement) || !(state.tip instanceof HTMLElement)) {
     return;
   }
+
   const { trigger, tip } = state;
-  if ((!state.homeParent || !state.homeParent.isConnected) && tip.parentElement && tip.parentElement !== document.body) {
+  const doc = getDocument(trigger);
+  const body = doc.body || doc.documentElement;
+  if (!body) {
+    return;
+  }
+
+  if ((!state.homeParent || !state.homeParent.isConnected) && tip.parentElement && tip.parentElement !== body) {
     state.homeParent = tip.parentElement;
   }
-  if (tip.parentElement && tip.parentElement !== document.body) {
+  if (tip.parentElement && tip.parentElement !== body) {
     state.homeNextSibling = tip.nextSibling || null;
   }
-  const needsPortal = !!findOverflowAncestor(trigger);
-  if (needsPortal) {
-    if (tip.parentElement !== document.body) {
-      document.body.appendChild(tip);
-    }
-    tip.dataset.ttgPortal = 'body';
-    state.usesPortal = true;
-  } else {
-    state.usesPortal = false;
+
+  if (tip.parentElement !== body) {
+    body.appendChild(tip);
   }
+
+  tip.dataset.ttgPortal = 'body';
+  state.usesPortal = true;
 }
 
 function restoreTooltipHome(state) {
@@ -404,7 +408,9 @@ function restoreTooltipHome(state) {
     return;
   }
   const { tip, homeParent } = state;
-  const shouldRestore = tip.parentElement === document.body && homeParent instanceof Node;
+  const doc = getDocument(tip);
+  const body = doc.body || document.body;
+  const shouldRestore = tip.parentElement === body && homeParent instanceof Node;
   if (shouldRestore) {
     const reference = state.homeNextSibling && state.homeNextSibling.parentNode === homeParent
       ? state.homeNextSibling
