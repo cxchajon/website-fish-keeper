@@ -1,5 +1,7 @@
 # The Tank Guide — Changelog
 
+- [2025-10-31 | Journal] Added Feeding entry (flakes only); updated data; verified dashboard renders latest.
+
 # v1.9.4 — 2025-10-20 | S3 Deterrent Flag Honored
 - Default OFF; listeners attach only when `window.__RIGHT_CLICK_DETERRENT__` is true.
 - Playwright coverage added to confirm OFF/ON behaviors for right-click deterrent.
