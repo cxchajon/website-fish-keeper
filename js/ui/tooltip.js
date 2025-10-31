@@ -800,6 +800,13 @@ export function initInfoTooltips(root = document) {
     if (!(trigger instanceof HTMLElement)) {
       return;
     }
+    if (
+      trigger.hasAttribute('data-tooltip-panel')
+      || trigger.classList.contains('ttg-tooltip')
+      || (trigger.getAttribute('role') || '').toLowerCase() === 'tooltip'
+    ) {
+      return;
+    }
     const tip = resolveTooltip(trigger, scope);
     if (!tip) {
       hideTrigger(trigger);
