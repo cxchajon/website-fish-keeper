@@ -7,6 +7,14 @@ const FOCUSABLE_SELECTOR = [
   '[tabindex]:not([tabindex="-1"])'
 ].join(',');
 
+const BODY_LOCK_CLASS = 'proto-popover-overlay-open';
+const OVERLAY_ID = 'proto-info-overlay';
+const OVERLAY_ACTIVE_CLASS = 'is-active';
+const PANEL_OPEN_CLASS = 'is-open';
+const POINTER_GUARD_ATTR = 'data-info-pointer-ts';
+const POINTER_GUARD_WINDOW = 400;
+const VIEWPORT_GUTTER = 12;
+
 function getFocusable(panel) {
   return Array.from(panel.querySelectorAll(FOCUSABLE_SELECTOR));
 }
@@ -19,18 +27,69 @@ function focusFirst(panel) {
   }
 }
 
+function clamp(value, min, max) {
+  if (Number.isNaN(value)) return min;
+  if (value < min) return min;
+  if (value > max) return max;
+  return value;
+}
+
 export function initInfoPopovers(doc = typeof document !== 'undefined' ? document : null) {
   if (!doc || !doc.addEventListener) {
     return () => {};
   }
 
-  const HostHTMLElement = doc.defaultView?.HTMLElement || globalThis.HTMLElement || null;
+  const win = doc.defaultView || globalThis;
+  const HostHTMLElement = win?.HTMLElement || globalThis.HTMLElement || null;
+
   const state = {
     trigger: null,
     panel: null,
   };
 
   const body = doc.body;
+  let overlayRoot = null;
+  let overlayBackdrop = null;
+
+  const ensureOverlay = () => {
+    if (overlayRoot && overlayRoot.isConnected) {
+      return overlayRoot;
+    }
+
+    let root = doc.getElementById(OVERLAY_ID);
+    if (!root) {
+      root = doc.createElement('div');
+      root.id = OVERLAY_ID;
+      root.className = 'proto-info-overlay';
+      root.setAttribute('hidden', '');
+      root.setAttribute('aria-hidden', 'true');
+
+      const backdrop = doc.createElement('div');
+      backdrop.className = 'proto-info-overlay__backdrop';
+      backdrop.setAttribute('data-overlay-backdrop', '');
+      root.appendChild(backdrop);
+
+      (doc.body || doc.documentElement).appendChild(root);
+    }
+
+    overlayRoot = root;
+    overlayBackdrop = overlayRoot.querySelector('[data-overlay-backdrop]');
+    if (!overlayBackdrop) {
+      overlayBackdrop = doc.createElement('div');
+      overlayBackdrop.className = 'proto-info-overlay__backdrop';
+      overlayBackdrop.setAttribute('data-overlay-backdrop', '');
+      overlayRoot.insertBefore(overlayBackdrop, overlayRoot.firstChild);
+    }
+
+    if (!overlayRoot.dataset.overlayBound) {
+      overlayBackdrop.addEventListener('pointerdown', () => {
+        closePanel(true);
+      });
+      overlayRoot.dataset.overlayBound = '1';
+    }
+
+    return overlayRoot;
+  };
 
   const resetAria = (trigger, expanded) => {
     if (trigger) {
@@ -38,29 +97,91 @@ export function initInfoPopovers(doc = typeof document !== 'undefined' ? documen
     }
   };
 
-  const closePanel = (restoreFocus = true) => {
-    if (!state.panel || !state.trigger) {
+  const lockScroll = () => {
+    if (body && body.classList) {
+      body.classList.add(BODY_LOCK_CLASS);
+    }
+  };
+
+  const unlockScroll = () => {
+    if (body && body.classList) {
+      body.classList.remove(BODY_LOCK_CLASS);
+    }
+  };
+
+  const clearPanelStyles = (panel) => {
+    if (!panel || !panel.style) return;
+    panel.style.top = '';
+    panel.style.left = '';
+    panel.style.right = '';
+    panel.style.bottom = '';
+    panel.style.visibility = '';
+    panel.removeAttribute('data-overlay-placement');
+  };
+
+  const positionPanel = (trigger, panel) => {
+    if (!trigger || !panel) {
       return;
     }
 
-    const { panel, trigger } = state;
-
-    resetAria(trigger, false);
-    panel.setAttribute('hidden', '');
-    panel.classList.remove('is-open');
-
-    doc.removeEventListener('pointerdown', onDocumentPointerDown, true);
-    doc.removeEventListener('keydown', onDocumentKeydown, true);
-
-    if (body && body.classList) {
-      body.classList.remove('proto-info-panel-open');
+    const overlay = ensureOverlay();
+    if (!overlay || !overlay.isConnected) {
+      return;
     }
 
-    state.panel = null;
-    state.trigger = null;
+    const viewport = win?.visualViewport || null;
+    const viewportWidth = viewport?.width ?? win.innerWidth ?? doc.documentElement.clientWidth ?? panel.offsetWidth;
+    const viewportHeight = viewport?.height ?? win.innerHeight ?? doc.documentElement.clientHeight ?? panel.offsetHeight;
+    const offsetLeft = viewport?.offsetLeft ?? 0;
+    const offsetTop = viewport?.offsetTop ?? 0;
 
-    if (restoreFocus && trigger && typeof trigger.focus === 'function') {
-      trigger.focus({ preventScroll: true });
+    const triggerRect = trigger.getBoundingClientRect();
+
+    // Temporarily ensure visibility for measurement
+    const prevVisibility = panel.style.visibility;
+    panel.style.visibility = 'hidden';
+    const panelRect = panel.getBoundingClientRect();
+    panel.style.visibility = prevVisibility;
+
+    let placement = 'bottom';
+    let top = triggerRect.bottom + VIEWPORT_GUTTER;
+    const fitsBelow = top + panelRect.height <= offsetTop + viewportHeight - VIEWPORT_GUTTER;
+
+    if (!fitsBelow) {
+      const candidateTop = triggerRect.top - VIEWPORT_GUTTER - panelRect.height;
+      if (candidateTop >= offsetTop + VIEWPORT_GUTTER) {
+        placement = 'top';
+        top = candidateTop;
+      } else {
+        placement = 'center';
+      }
+    }
+
+    let left = triggerRect.left + triggerRect.width / 2 - panelRect.width / 2;
+
+    const minLeft = offsetLeft + VIEWPORT_GUTTER;
+    const maxLeft = offsetLeft + viewportWidth - VIEWPORT_GUTTER - panelRect.width;
+    const minTop = offsetTop + VIEWPORT_GUTTER;
+    const maxTop = offsetTop + viewportHeight - VIEWPORT_GUTTER - panelRect.height;
+
+    if (placement === 'center') {
+      const centerTop = offsetTop + (viewportHeight - panelRect.height) / 2;
+      const centerLeft = offsetLeft + (viewportWidth - panelRect.width) / 2;
+      top = clamp(centerTop, minTop, maxTop);
+      left = clamp(centerLeft, minLeft, maxLeft);
+    } else {
+      top = clamp(top, minTop, maxTop);
+      left = clamp(left, minLeft, maxLeft);
+    }
+
+    panel.style.top = `${Math.round(top)}px`;
+    panel.style.left = `${Math.round(left)}px`;
+    panel.dataset.overlayPlacement = placement;
+  };
+
+  const repositionActive = () => {
+    if (state.trigger && state.panel) {
+      positionPanel(state.trigger, state.panel);
     }
   };
 
@@ -125,13 +246,46 @@ export function initInfoPopovers(doc = typeof document !== 'undefined' ? documen
     closePanel(true);
   };
 
+  const closePanel = (restoreFocus = true) => {
+    if (!state.panel || !state.trigger) {
+      return;
+    }
+
+    const { panel, trigger } = state;
+
+    resetAria(trigger, false);
+    panel.classList.remove(PANEL_OPEN_CLASS);
+    panel.setAttribute('hidden', '');
+    clearPanelStyles(panel);
+
+    doc.removeEventListener('pointerdown', onDocumentPointerDown, true);
+    doc.removeEventListener('keydown', onDocumentKeydown, true);
+    win.removeEventListener('resize', repositionActive, true);
+    win.removeEventListener('scroll', repositionActive, true);
+
+    if (overlayRoot && overlayRoot.isConnected) {
+      overlayRoot.classList.remove(OVERLAY_ACTIVE_CLASS);
+      overlayRoot.setAttribute('aria-hidden', 'true');
+      overlayRoot.setAttribute('hidden', '');
+    }
+
+    unlockScroll();
+
+    state.panel = null;
+    state.trigger = null;
+
+    if (restoreFocus && trigger && typeof trigger.focus === 'function') {
+      trigger.focus({ preventScroll: true });
+    }
+  };
+
   const ensurePanelBasics = (panel) => {
     if (!panel) return;
     if (!panel.hasAttribute('role')) {
       panel.setAttribute('role', 'dialog');
     }
     if (!panel.hasAttribute('aria-modal')) {
-      panel.setAttribute('aria-modal', 'true');
+      panel.setAttribute('aria-modal', 'false');
     }
     if (!panel.hasAttribute('tabindex')) {
       panel.setAttribute('tabindex', '-1');
@@ -154,28 +308,54 @@ export function initInfoPopovers(doc = typeof document !== 'undefined' ? documen
     ensurePanelBasics(panel);
     resetAria(trigger, true);
 
-    panel.classList.add('is-open');
-    panel.removeAttribute('hidden');
-
-    if (body && body.classList) {
-      body.classList.add('proto-info-panel-open');
+    const overlay = ensureOverlay();
+    if (overlay && !overlay.contains(panel)) {
+      overlay.appendChild(panel);
     }
+
+    overlay?.classList.add(OVERLAY_ACTIVE_CLASS);
+    overlay?.setAttribute('aria-hidden', 'false');
+    overlay?.removeAttribute('hidden');
+
+    panel.style.visibility = 'hidden';
+    panel.removeAttribute('hidden');
+    panel.classList.add(PANEL_OPEN_CLASS);
+
+    lockScroll();
+
+    requestAnimationFrame(() => {
+      if (!state.panel || state.panel !== panel) {
+        return;
+      }
+      positionPanel(trigger, panel);
+      panel.style.visibility = '';
+      focusFirst(panel);
+    });
 
     doc.addEventListener('pointerdown', onDocumentPointerDown, true);
     doc.addEventListener('keydown', onDocumentKeydown, true);
-
-    focusFirst(panel);
+    win.addEventListener('resize', repositionActive, true);
+    win.addEventListener('scroll', repositionActive, true);
   };
 
   const findPanel = (trigger) => {
     if (!trigger) return null;
+
     const selector = trigger.getAttribute('data-info-target');
-    if (!selector) return null;
-    try {
-      return doc.querySelector(selector);
-    } catch (_error) {
-      return null;
+    if (selector) {
+      try {
+        return doc.querySelector(selector);
+      } catch (_error) {
+        return null;
+      }
     }
+
+    const controlsId = trigger.getAttribute('aria-controls');
+    if (controlsId) {
+      return doc.getElementById(controlsId);
+    }
+
+    return null;
   };
 
   const normalizeTrigger = (trigger) => {
@@ -190,26 +370,36 @@ export function initInfoPopovers(doc = typeof document !== 'undefined' ? documen
     trigger.setAttribute('aria-haspopup', 'dialog');
     trigger.setAttribute('aria-expanded', trigger.getAttribute('aria-expanded') === 'true' ? 'true' : 'false');
 
-    const panel = findPanel(trigger);
-    if (panel && !trigger.getAttribute('aria-controls')) {
-      if (panel.id) {
-        trigger.setAttribute('aria-controls', panel.id);
+    if (!trigger.getAttribute('data-info-target')) {
+      const controlsId = trigger.getAttribute('aria-controls');
+      if (controlsId) {
+        trigger.setAttribute('data-info-target', `#${controlsId}`);
       }
+    }
+
+    const panel = findPanel(trigger);
+    if (panel && panel.id && !trigger.getAttribute('aria-controls')) {
+      trigger.setAttribute('aria-controls', panel.id);
     }
   };
 
-  const handleTriggerClick = (event) => {
-    const trigger = event.target?.closest?.('[data-info-target]');
-    if (!trigger) {
-      return;
-    }
+  const wasPointerHandledRecently = (trigger) => {
+    const stamp = Number(trigger?.getAttribute(POINTER_GUARD_ATTR) || 0);
+    return Number.isFinite(stamp) && stamp > 0 && Date.now() - stamp < POINTER_GUARD_WINDOW;
+  };
 
-    if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') {
-      return;
-    }
+  const markPointerHandled = (trigger) => {
+    if (!trigger) return;
+    const timestamp = Date.now();
+    trigger.setAttribute(POINTER_GUARD_ATTR, String(timestamp));
+    win.setTimeout?.(() => {
+      if (trigger.getAttribute(POINTER_GUARD_ATTR) === String(timestamp)) {
+        trigger.removeAttribute(POINTER_GUARD_ATTR);
+      }
+    }, POINTER_GUARD_WINDOW);
+  };
 
-    event.preventDefault();
-
+  const toggleForTrigger = (trigger, viaKeyboard = false) => {
     const panel = findPanel(trigger);
     if (!panel) {
       return;
@@ -218,28 +408,78 @@ export function initInfoPopovers(doc = typeof document !== 'undefined' ? documen
     normalizeTrigger(trigger);
     ensurePanelBasics(panel);
 
-    if (event.type === 'keydown') {
-      trigger.click();
-      return;
-    }
-
-    if (panel.hasAttribute('hidden')) {
+    const isHidden = panel.hasAttribute('hidden');
+    if (isHidden || state.panel !== panel) {
       openPanel(trigger, panel);
-    } else if (state.panel === panel) {
-      closePanel(true);
     } else {
-      openPanel(trigger, panel);
+      closePanel(viaKeyboard);
     }
   };
 
-  const handleCloseClick = (event) => {
-    const closer = event.target?.closest?.('[data-info-close]');
-    if (!closer) {
+  const onTriggerPointerUp = (event) => {
+    const trigger = event.currentTarget;
+    if (!trigger) {
+      return;
+    }
+
+    if (event.pointerType === 'mouse' && event.button !== 0) {
       return;
     }
 
     event.preventDefault();
-    closePanel(true);
+    event.stopPropagation();
+    markPointerHandled(trigger);
+    toggleForTrigger(trigger, false);
+  };
+
+  const onTriggerClick = (event) => {
+    const trigger = event.currentTarget;
+    if (!trigger) {
+      return;
+    }
+
+    if (wasPointerHandledRecently(trigger)) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    event.preventDefault();
+    toggleForTrigger(trigger, event.detail === 0);
+  };
+
+  const onTriggerKeydown = (event) => {
+    const trigger = event.currentTarget;
+    if (!trigger) {
+      return;
+    }
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleForTrigger(trigger, true);
+      return;
+    }
+
+    if (event.key === 'Escape' && trigger.getAttribute('aria-expanded') === 'true') {
+      event.preventDefault();
+      closePanel(true);
+    }
+  };
+
+  const boundTriggers = new WeakSet();
+
+  const bindTrigger = (trigger) => {
+    if (!trigger || boundTriggers.has(trigger)) {
+      return;
+    }
+
+    normalizeTrigger(trigger);
+
+    trigger.addEventListener('pointerup', onTriggerPointerUp, { passive: false });
+    trigger.addEventListener('click', onTriggerClick, { passive: false });
+    trigger.addEventListener('keydown', onTriggerKeydown);
+
+    boundTriggers.add(trigger);
   };
 
   const applyToNode = (node) => {
@@ -247,16 +487,16 @@ export function initInfoPopovers(doc = typeof document !== 'undefined' ? documen
     if (!ElementCtor || !(node instanceof ElementCtor)) {
       return;
     }
-    if (typeof node.matches === 'function' && node.matches('[data-info-target]')) {
-      normalizeTrigger(node);
+
+    if (node.matches?.('[data-info-target]')) {
+      bindTrigger(node);
     }
-    if (typeof node.querySelectorAll === 'function') {
-      node.querySelectorAll('[data-info-target]').forEach((child) => normalizeTrigger(child));
-    }
+
+    node.querySelectorAll?.('[data-info-target]').forEach((child) => bindTrigger(child));
   };
 
   const triggers = Array.from(doc.querySelectorAll('[data-info-target]'));
-  triggers.forEach(normalizeTrigger);
+  triggers.forEach(bindTrigger);
 
   let observer = null;
   const ObserverCtor = doc.defaultView?.MutationObserver || globalThis.MutationObserver;
@@ -269,16 +509,27 @@ export function initInfoPopovers(doc = typeof document !== 'undefined' ? documen
     observer.observe(doc.body || doc.documentElement, { childList: true, subtree: true });
   }
 
-  doc.addEventListener('click', handleTriggerClick);
-  doc.addEventListener('keydown', handleTriggerClick);
+  const handleCloseClick = (event) => {
+    const closer = event.target?.closest?.('[data-info-close]');
+    if (!closer) {
+      return;
+    }
+
+    event.preventDefault();
+    closePanel(true);
+  };
+
   doc.addEventListener('click', handleCloseClick);
 
   return () => {
     closePanel(false);
-    doc.removeEventListener('click', handleTriggerClick);
-    doc.removeEventListener('keydown', handleTriggerClick);
-    doc.removeEventListener('click', handleCloseClick);
     observer?.disconnect?.();
+    doc.removeEventListener('click', handleCloseClick);
+    triggers.forEach((trigger) => {
+      trigger.removeEventListener('pointerup', onTriggerPointerUp);
+      trigger.removeEventListener('click', onTriggerClick);
+      trigger.removeEventListener('keydown', onTriggerKeydown);
+    });
   };
 }
 

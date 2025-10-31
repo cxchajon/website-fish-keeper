@@ -288,6 +288,11 @@
       return;
     }
 
+    if (trigger.hasAttribute('data-info-target') || trigger.dataset.protoPopoverIgnore === '1') {
+      boundTriggers.add(trigger);
+      return;
+    }
+
     const panel = findPanel(trigger);
     normalizeTrigger(trigger, panel);
 
