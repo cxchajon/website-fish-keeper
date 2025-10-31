@@ -3,10 +3,10 @@
 <head>
   <link rel="preload" href="/footer.html?v=1.4.9" as="fetch" crossorigin="anonymous">
   <meta charset="UTF-8" />
-  <title>Stocking Advisor Prototype | Plan Freshwater Communities | The Tank Guide</title>
+  <title>Aquarium Stocking Calculator &amp; Fish Compatibility | The Tank Guide</title>
   <meta
     name="description"
-    content="Preview the Stocking Advisor prototype to model freshwater fish communities, rehearse compatibility, and tune bioload decisions before publishing to the live experience."
+    content="Plan your tank with our aquarium stocking calculator. Check fish tank compatibility, manage bioload, and get stocking ideas. Read our FAQ for answers about this tool."
   />
   <meta name="robots" content="index,follow" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -103,114 +103,23 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@graph": [
+    "@type": "FAQPage",
+    "mainEntity": [
       {
-        "@type": "Organization",
-        "@id": "https://thetankguide.com/#organization",
-        "name": "The Tank Guide",
-        "url": "https://thetankguide.com/",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://thetankguide.com/logo.png",
-          "width": 512,
-          "height": 512
-        },
-        "sameAs": [
-          "https://www.youtube.com/@TheTankGuide",
-          "https://www.instagram.com/fishkeepinglife/",
-          "https://www.facebook.com/fishkeepinglife",
-          "https://www.tiktok.com/@fishkeepinglife"
-        ]
-      },
-      {
-        "@type": "WebPage",
-        "@id": "https://thetankguide.com/stocking-advisor.html#webpage",
-        "url": "https://thetankguide.com/stocking-advisor.html",
-        "name": "Stocking Advisor Prototype",
-        "description": "Preview the Stocking Advisor prototype to model freshwater fish communities, rehearse compatibility, and tune bioload decisions before publishing to the live experience.",
-        "inLanguage": "en",
-        "datePublished": "2023-06-15T09:00:00-04:00",
-        "dateModified": "2025-10-31T16:08:20Z",
-        "primaryImageOfPage": {
-          "@type": "ImageObject",
-          "url": "https://thetankguide.com/assets/og/stocking-advisor-prototype.png"
-        },
-        "publisher": {
-          "@id": "https://thetankguide.com/#organization"
+        "@type": "Question",
+        "name": "What data powers the compatibility alerts?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Our fish tank compatibility checks are powered by The Tank Guide's in-house research, real-world testing, and trusted aquarium science sources. This Stocking Advisor is a helpful freshwater aquarium guide, but remember that exact fish behavior and your tank's conditions can vary."
         }
       },
       {
-        "@type": "WebApplication",
-        "@id": "https://thetankguide.com/stocking-advisor.html#app",
-        "name": "Stocking Advisor",
-        "url": "https://thetankguide.com/stocking-advisor.html",
-        "applicationCategory": "LifestyleApplication",
-        "operatingSystem": "Web",
-        "description": "A freshwater aquarium stocking planner that balances bioload, compatibility, and parameter targets before livestock purchases.",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        },
-        "publisher": {
-          "@id": "https://thetankguide.com/#organization"
+        "@type": "Question",
+        "name": "How should I report feedback on the prototype results?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You can share suggestions or report bugs for this Stocking Advisor prototype via our Contact & Feedback page. Your input directly helps FishKeepingLifeCo improve future versions of this aquarium stocking calculator and our other fishkeeping tools."
         }
-      },
-      {
-        "@type": "BreadcrumbList",
-        "@id": "https://thetankguide.com/stocking-advisor.html#breadcrumb",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://thetankguide.com/"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Stocking Advisor",
-            "item": "https://thetankguide.com/stocking-advisor.html"
-          }
-        ]
-      },
-      {
-        "@type": "FAQPage",
-        "@id": "https://thetankguide.com/stocking-advisor.html#faq",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "How does the prototype handle cycle readiness guidance?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "It assumes a conservative cycle and highlights stocking ranges that protect against ammonia spikes, encouraging keepers to stagger additions and test water chemistry weekly."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I compare different community presets in one session?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. The prototype caches your current mix, letting you duplicate, rename, and iterate on scenarios so you can evaluate stocking density before pushing updates live."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What data powers the compatibility alerts?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Gemini synthesizes our catalog of species records, tagging each fish with temperament, adult size, and parameter tolerances to surface conflicts the moment they appear in a plan."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How should I report feedback on the prototype results?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Use the built-in send-feedback link in the results panel or drop a note in the #stocking-advisor Slack channel so the product team can review logs and reproduce the scenario."
-            }
-          }
-        ]
       }
     ]
   }
@@ -1809,75 +1718,14 @@
 
       <section class="panel faq-section" id="faq" aria-labelledby="faq-title">
         <h2 id="faq-title" class="section-title">Stocking Advisor Prototype FAQ</h2>
-        <div class="faq-accordion" data-faq-accordion>
-          <div class="faq-item">
-            <h3>
-              <button
-                class="faq-trigger"
-                type="button"
-                aria-expanded="false"
-                aria-controls="faq-panel-1"
-                id="faq-trigger-1"
-                data-proto-popover-ignore="1"
-              >
-                How does the prototype handle cycle readiness guidance?
-              </button>
-            </h3>
-            <div class="faq-panel" id="faq-panel-1" role="region" aria-labelledby="faq-trigger-1" hidden>
-              <p>It assumes a conservative cycle and highlights stocking ranges that protect against ammonia spikes, encouraging keepers to stagger additions and test water chemistry weekly.</p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <h3>
-              <button
-                class="faq-trigger"
-                type="button"
-                aria-expanded="false"
-                aria-controls="faq-panel-2"
-                id="faq-trigger-2"
-                data-proto-popover-ignore="1"
-              >
-                Can I compare different community presets in one session?
-              </button>
-            </h3>
-            <div class="faq-panel" id="faq-panel-2" role="region" aria-labelledby="faq-trigger-2" hidden>
-              <p>Yes. The prototype caches your current mix, letting you duplicate, rename, and iterate on scenarios so you can evaluate stocking density before pushing updates live.</p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <h3>
-              <button
-                class="faq-trigger"
-                type="button"
-                aria-expanded="false"
-                aria-controls="faq-panel-3"
-                id="faq-trigger-3"
-                data-proto-popover-ignore="1"
-              >
-                What data powers the compatibility alerts?
-              </button>
-            </h3>
-            <div class="faq-panel" id="faq-panel-3" role="region" aria-labelledby="faq-trigger-3" hidden>
-              <p>Gemini synthesizes our catalog of species records, tagging each fish with temperament, adult size, and parameter tolerances to surface conflicts the moment they appear in a plan.</p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <h3>
-              <button
-                class="faq-trigger"
-                type="button"
-                aria-expanded="false"
-                aria-controls="faq-panel-4"
-                id="faq-trigger-4"
-                data-proto-popover-ignore="1"
-              >
-                How should I report feedback on the prototype results?
-              </button>
-            </h3>
-            <div class="faq-panel" id="faq-panel-4" role="region" aria-labelledby="faq-trigger-4" hidden>
-              <p>Use the built-in send-feedback link in the results panel or drop a note in the #stocking-advisor Slack channel so the product team can review logs and reproduce the scenario.</p>
-            </div>
-          </div>
+        <div class="faq-section-wrapper">
+
+          <h3>What data powers the compatibility alerts?</h3>
+          <p>Our <strong>fish tank compatibility</strong> checks are powered by <strong>The Tank Guide's</strong> in-house research, real-world testing, and trusted aquarium science sources. This <strong>Stocking Advisor</strong> is a helpful <strong>freshwater aquarium guide</strong>, but remember that exact <strong>fish behavior</strong> and your tank's conditions can vary.</p>
+
+          <h3>How should I report feedback on the prototype results?</h3>
+          <p>You can share suggestions or report bugs for this <strong>Stocking Advisor</strong> prototype via our <a href="https://thetankguide.com/pages/contact-feedback.html">Contact &amp; Feedback</a> page. Your input directly helps <strong>FishKeepingLifeCo</strong> improve future versions of this <strong>aquarium stocking calculator</strong> and our other <strong>fishkeeping</strong> tools.</p>
+
         </div>
       </section>
 
