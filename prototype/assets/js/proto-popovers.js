@@ -284,7 +284,20 @@
   }
 
   function initTrigger(trigger) {
+    if (!(trigger instanceof Element)) {
+      return;
+    }
+
     if (boundTriggers.has(trigger)) {
+      return;
+    }
+
+    if (
+      trigger.classList.contains('ttg-tooltip-trigger')
+      || trigger.hasAttribute('data-tooltip-id')
+      || typeof trigger.dataset.tooltipId === 'string'
+    ) {
+      boundTriggers.add(trigger);
       return;
     }
 
