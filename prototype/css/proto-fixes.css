@@ -6,6 +6,21 @@
   pointer-events: none;
 }
 
+body.prototype-stock-page .ttg-tooltip {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+body.prototype-stock-page .ttg-tooltip.is-open,
+body.prototype-stock-page .ttg-tooltip[data-open="true"],
+body.prototype-stock-page .ttg-tooltip[aria-expanded="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
 .proto-stock .info-dot,
 .proto-stock .info-btn {
   position: relative;
