@@ -1,5 +1,6 @@
 # The Tank Guide — Changelog
 
+- [2025-10-31 | Stocking Advisor] Captured prototype→live migration plan (inventory, diff, rollback) and staged backups for Stocking Advisor parity work.
 - [2025-10-31 | Journal] Added Feeding entry (flakes only); updated data; verified dashboard renders latest.
 
 # v1.9.4 — 2025-10-20 | S3 Deterrent Flag Honored
