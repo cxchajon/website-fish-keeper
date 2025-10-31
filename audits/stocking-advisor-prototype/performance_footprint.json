@@ -1,0 +1,195 @@
+{
+  "html_bytes": 68639,
+  "css": {
+    "file_count": 9,
+    "total_bytes": 111369,
+    "files": [
+      [
+        "/css/style.css?v=2024-06-05a",
+        59213
+      ],
+      [
+        "/assets/css/utilities.css?v=2025-11-07",
+        1927
+      ],
+      [
+        "/css/site.css?v=1.4.9",
+        8500
+      ],
+      [
+        "/css/ui.css?v=2024-09-15",
+        10193
+      ],
+      [
+        "/prototype/css/stocking-prototype.css",
+        22911
+      ],
+      [
+        "/prototype/assets/css/proto-popovers.css?v=proto_rm_2025_10_25",
+        5013
+      ],
+      [
+        "/prototype/assets/css/filtration.css?v=proto_rm_2025_10_25",
+        50
+      ],
+      [
+        "/prototype/assets/css/prototype.css?v=proto_rm_2025_10_25",
+        1377
+      ],
+      [
+        "/prototype/css/proto-fixes.css",
+        2185
+      ]
+    ]
+  },
+  "javascript": {
+    "file_count": 22,
+    "total_bytes": 297690,
+    "files": [
+      [
+        "/js/nav.js?v=1.1.0",
+        12798,
+        "defer"
+      ],
+      [
+        "/prototype/assets/js/filtration.js?v=proto_rm_2025_10_25",
+        467,
+        "defer"
+      ],
+      [
+        "/prototype/assets/js/proto-guards.js?v=proto_rm_2025_10_25",
+        1763,
+        "defer"
+      ],
+      [
+        "/assets/js/consent-mode.js",
+        5066,
+        "defer"
+      ],
+      [
+        "https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1",
+        null,
+        "async"
+      ],
+      [
+        "/prototype/assets/js/proto-guard.js",
+        1424,
+        "module"
+      ],
+      [
+        "/proto/logic/speciesSchema.proto.js",
+        2741,
+        "module"
+      ],
+      [
+        "/proto/logic/species.adapter.v2.js",
+        21324,
+        "module"
+      ],
+      [
+        "/js/logic/compute.js",
+        54876,
+        "module"
+      ],
+      [
+        "/js/logic/conflicts.js",
+        7896,
+        "module"
+      ],
+      [
+        "/js/stocking.js?v=2024-09-01",
+        80868,
+        "module"
+      ],
+      [
+        "/js/tank-size-card.js?v=2024-09-01",
+        9219,
+        "module"
+      ],
+      [
+        "/prototype/assets/js/ui-meters.js",
+        2658,
+        "module"
+      ],
+      [
+        "/prototype/js/proto-filtration.js",
+        40031,
+        "module"
+      ],
+      [
+        "/prototype/js/info-popovers.js",
+        15088,
+        "module"
+      ],
+      [
+        "/prototype/assets/js/proto-filter-tests.js",
+        792,
+        "module defer"
+      ],
+      [
+        "/assets/js/consent-banner.js",
+        7282,
+        "defer"
+      ],
+      [
+        "/js/ad-slot-view-tracking.js",
+        1443,
+        "classic"
+      ],
+      [
+        "/prototype/js/ui/tooltip.js",
+        8384,
+        "defer"
+      ],
+      [
+        "/prototype/js/stocking-prototype.js",
+        11223,
+        "defer"
+      ],
+      [
+        "/prototype/assets/js/proto-popovers.js?v=proto_rm_2025_10_25",
+        11175,
+        "defer"
+      ],
+      [
+        "/js/footer-loader.js?v=1.4.9",
+        1172,
+        "defer"
+      ]
+    ],
+    "inline_blocks": [
+      {
+        "description": "Google CMP bootstrap",
+        "approx_bytes": 545
+      },
+      {
+        "description": "How it works modal controller",
+        "approx_bytes": 1388
+      },
+      {
+        "description": "CMP consent bridge",
+        "approx_bytes": 2531
+      },
+      {
+        "description": "Prototype purge guard",
+        "approx_bytes": 793
+      }
+    ],
+    "importmap_present": true
+  },
+  "preload_hints": [
+    "/footer.html?v=1.4.9"
+  ],
+  "async_scripts": 1,
+  "defer_scripts": 10,
+  "module_scripts": 11,
+  "lazy_loading": {
+    "images_with_loading_attr": 0,
+    "iframes": 0
+  },
+  "notes": [
+    "No native lazy-loading attributes detected on images or embeds.",
+    "Footer fetched at runtime by footer-loader.js.",
+    "Navigation and consent banners inject additional markup after load."
+  ]
+}

@@ -1,0 +1,218 @@
+[
+  {
+    "script": "/js/nav.js?v=1.1.0",
+    "type": "classic",
+    "loading": "defer",
+    "approx_size_bytes": 12798,
+    "role": "Injects global navigation, drawer controls, and aria-current marking based on location.",
+    "notes": "Guards against double-init via window.__TTG_NAV_LOADER__ and manages focus trap for mobile drawer."
+  },
+  {
+    "script": "/prototype/assets/js/filtration.js?v=proto_rm_2025_10_25",
+    "type": "classic",
+    "loading": "defer",
+    "approx_size_bytes": 467,
+    "role": "Prototype hook that disables legacy filtration widgets and invokes renderFiltration if present.",
+    "notes": "Sets window.disableLegacyFiltrationCard and no-ops legacy renderers on prototype route."
+  },
+  {
+    "script": "/prototype/assets/js/proto-guards.js?v=proto_rm_2025_10_25",
+    "type": "classic",
+    "loading": "defer",
+    "approx_size_bytes": 1763,
+    "role": "Removes any legacy filtration summary DOM that might slip into the prototype.",
+    "notes": "MutationObserver prunes known selectors and heuristic \"Filtration\" cards."
+  },
+  {
+    "script": "/assets/js/consent-mode.js",
+    "type": "classic",
+    "loading": "defer",
+    "approx_size_bytes": 5066,
+    "role": "Defines default Google Consent Mode states before analytics tags load.",
+    "notes": "Executed early in head to set up consent signals."
+  },
+  {
+    "script": "https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1",
+    "type": "external",
+    "loading": "async",
+    "approx_size_bytes": null,
+    "role": "Loads Google Funding Choices CMP messaging for consent collection.",
+    "notes": "Third-party script served by Google."
+  },
+  {
+    "script": "(inline) Google CMP bootstrap",
+    "type": "inline",
+    "loading": "immediate",
+    "approx_size_bytes": 545,
+    "role": "Creates hidden iframe to signal Funding Choices availability per Google requirement.",
+    "notes": "Immediately executed self-invoking function."
+  },
+  {
+    "script": "/prototype/assets/js/proto-guard.js",
+    "type": "module",
+    "loading": "immediate",
+    "approx_size_bytes": 1424,
+    "role": "Verifies prototype pages only load prototype asset roots; blocks init on live pages using prototype bundles.",
+    "notes": "Warns via console and toggles window.__TTG_BLOCK_INIT__ when misconfigured."
+  },
+  {
+    "script": "(importmap)",
+    "type": "importmap",
+    "loading": "immediate",
+    "approx_size_bytes": 183,
+    "role": "Maps /js/logic/compute.js imports to the prototype compute proxy.",
+    "notes": "Defines module resolution for compute.js and its relative alias."
+  },
+  {
+    "script": "/proto/logic/speciesSchema.proto.js",
+    "type": "module",
+    "loading": "immediate",
+    "approx_size_bytes": 2741,
+    "role": "Validates species dataset structure and enumerates allowed tags for prototype data.",
+    "notes": "Imports behavior tag constants from live logic."
+  },
+  {
+    "script": "/proto/logic/species.adapter.v2.js",
+    "type": "module",
+    "loading": "immediate",
+    "approx_size_bytes": 21324,
+    "role": "Provides v2 species dataset adapter combining legacy fixtures with prototype metadata.",
+    "notes": "Exports getters for species list and slug lookups used by the compute proxy."
+  },
+  {
+    "script": "/js/logic/compute.js",
+    "type": "module",
+    "loading": "immediate",
+    "approx_size_bytes": 54876,
+    "role": "Core stocking compute engine (bioload, environment ranges, conflict detection).",
+    "notes": "Imported through the proto import map to reuse live logic with overrides."
+  },
+  {
+    "script": "/js/logic/conflicts.js",
+    "type": "module",
+    "loading": "immediate",
+    "approx_size_bytes": 7896,
+    "role": "Applies compatibility rules and conflict resolution for species mixes.",
+    "notes": "Used by compute pipeline to generate warnings."
+  },
+  {
+    "script": "/js/stocking.js?v=2024-09-01",
+    "type": "module",
+    "loading": "immediate",
+    "approx_size_bytes": 80868,
+    "role": "Main Stocking Advisor controller handling species selection, rendering, recompute loop, and session persistence.",
+    "notes": "Dispatches ttg:* events and orchestrates UI updates for stock, warnings, and environment cards."
+  },
+  {
+    "script": "/js/tank-size-card.js?v=2024-09-01",
+    "type": "module",
+    "loading": "immediate",
+    "approx_size_bytes": 9219,
+    "role": "Bootstraps the Tank Size card, populates presets, syncs facts line, and dispatches tank change events.",
+    "notes": "Also enforces whitelist guards and removes legacy variant UI."
+  },
+  {
+    "script": "/prototype/assets/js/ui-meters.js",
+    "type": "module",
+    "loading": "immediate",
+    "approx_size_bytes": 2658,
+    "role": "Styles and animates prototype meter widgets within the environment card (bioload bars, chips).",
+    "notes": "Hooks into DOM to update ARIA values alongside visuals."
+  },
+  {
+    "script": "/prototype/js/proto-filtration.js",
+    "type": "module",
+    "loading": "immediate",
+    "approx_size_bytes": 40031,
+    "role": "Prototype filtration UI layer managing catalog fetches, manual entries, turnover math, and recompute dispatch.",
+    "notes": "Bridges filter selections into window.appState and schedules ttg:recompute events."
+  },
+  {
+    "script": "/prototype/js/info-popovers.js",
+    "type": "module",
+    "loading": "immediate",
+    "approx_size_bytes": 15088,
+    "role": "Reusable popover/overlay controller providing focus trapping, positioning, and scroll lock for info dialogs.",
+    "notes": "Ensures panels are moved to body, handles pointer guards, and closes on ESC/backdrop click."
+  },
+  {
+    "script": "/prototype/assets/js/proto-filter-tests.js",
+    "type": "module",
+    "loading": "defer",
+    "approx_size_bytes": 792,
+    "role": "Optional debug harness for filtration math (logs computed capacity when DEBUG_TESTS is true).",
+    "notes": "Disabled by default; aids manual verification."
+  },
+  {
+    "script": "(inline) How it works modal controller",
+    "type": "inline",
+    "loading": "after DOM",
+    "approx_size_bytes": 1388,
+    "role": "Wires the hero \"How it works\" link to modal open/close behavior with focus restoration and Escape handling.",
+    "notes": "Manages modal backdrop click-to-close and prevents body scroll while open."
+  },
+  {
+    "script": "/assets/js/consent-banner.js",
+    "type": "classic",
+    "loading": "defer",
+    "approx_size_bytes": 7282,
+    "role": "Local consent banner logic controlling banner visibility, modal toggles, and storage of user choices.",
+    "notes": "Listens for banner and modal actions then emits ttg:consent-change events."
+  },
+  {
+    "script": "(inline) CMP consent bridge",
+    "type": "inline",
+    "loading": "after DOM",
+    "approx_size_bytes": 2531,
+    "role": "Bridges Google CMP (__tcfapi) decisions into TTG consent flags and hides the local banner when CMP is present.",
+    "notes": "Maps Purpose 1/4 consent to document attributes and dispatches ttg:consent-change."
+  },
+  {
+    "script": "/js/ad-slot-view-tracking.js",
+    "type": "classic",
+    "loading": "immediate",
+    "approx_size_bytes": 1443,
+    "role": "Tracks ad slot impressions and viewability for analytics.",
+    "notes": "Sets observers on designated ad placeholders."
+  },
+  {
+    "script": "/prototype/js/ui/tooltip.js",
+    "type": "classic",
+    "loading": "defer",
+    "approx_size_bytes": 8384,
+    "role": "Provides tooltip positioning/keyboard support for info buttons such as Estimated turnover.",
+    "notes": "Attaches hover/focus listeners and maintains a tooltip registry on window."
+  },
+  {
+    "script": "/prototype/js/stocking-prototype.js",
+    "type": "classic",
+    "loading": "defer",
+    "approx_size_bytes": 11223,
+    "role": "Prototype enhancer toggling prototype-mode class, upgrading info badges to dialog triggers, and routing analytics events.",
+    "notes": "Observes env bars to resync bioload buttons and emits analytics via saProtoAnalytics/dataLayer when available."
+  },
+  {
+    "script": "/prototype/assets/js/proto-popovers.js?v=proto_rm_2025_10_25",
+    "type": "classic",
+    "loading": "defer",
+    "approx_size_bytes": 11175,
+    "role": "Legacy-compatible popover fallback ensuring info popovers behave consistently on the prototype route.",
+    "notes": "Normalizes triggers, moves panels to body, manages focus, and positions overlays near triggers."
+  },
+  {
+    "script": "(inline) Prototype purge guard",
+    "type": "inline",
+    "loading": "after DOM",
+    "approx_size_bytes": 793,
+    "role": "Continuously removes legacy filtration markup inserted after load using MutationObserver.",
+    "notes": "Targets .filtration-card and related selectors; runs immediately and on added nodes."
+  },
+  {
+    "script": "/js/footer-loader.js?v=1.4.9",
+    "type": "classic",
+    "loading": "defer",
+    "approx_size_bytes": 1172,
+    "role": "Fetches and injects shared site footer into #site-footer from /footer.html?v=1.4.9.",
+    "notes": "Loads footer HTML once navigation placeholder is ready."
+  }
+]
