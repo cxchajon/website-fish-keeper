@@ -1,0 +1,1242 @@
+[
+  {
+    "name": "Amano Shrimp",
+    "slug": "amano-shrimp",
+    "id": "amano_shrimp",
+    "tags": [
+      "algae_eater",
+      "shrimp_safe",
+      "snail_safe",
+      "requires_cover"
+    ],
+    "aggression": {
+      "baseline": 0.05,
+      "vectors": {
+        "intraspecificMale": 0.05,
+        "interspecificGeneral": 0.05,
+        "finNipperRisk": 0.00,
+        "invertebratePredator": 0.10
+      }
+    },
+    "bioload": {
+      "multiplier": 0.20,
+      "components": {
+        "sizeFactor": 0.25,
+        "metabolismFactor": 0.65,
+        "dietFactor": 0.30
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.6, 7.2],
+        "tolerable": [6.2, 7.6],
+        "preferred": 6.8
+      },
+      "temperature": {
+        "optimal": [70, 76],
+        "tolerable": [68, 78],
+        "preferred": 73
+      },
+      "kh": { "optimal": [2, 6], "tolerable": [1, 8], "unit": "dKH" },
+      "gh": { "optimal": [5, 10], "tolerable": [4, 12], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "behavior": {
+      "schoolingMinimum": 6,
+      "territorySize": null,
+      "predationRisks": ["Predators: large fish"],
+      "incompatibilities": [],
+      "notes": "Active algae grazers; need mature tanks with biofilm."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["SeriouslyFish", "FishBase"],
+      "secondary": ["Aquarium Co-Op", "Shrimp Keepers Forum"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Betta (Female)",
+    "slug": "betta-female",
+    "id": "betta_female",
+    "tags": [
+      "labyrinth",
+      "low_flow",
+      "longfin_target",
+      "shrimp_risk"
+    ],
+    "sorority_min": 5,
+    "aggression": {
+      "baseline": 0.35,
+      "vectors": {
+        "intraspecificMale": 0.45,
+        "interspecificGeneral": 0.25,
+        "finNipperRisk": 0.20,
+        "invertebratePredator": 0.40
+      }
+    },
+    "bioload": {
+      "multiplier": 1.40,
+      "components": {
+        "sizeFactor": 1.35,
+        "metabolismFactor": 1.30,
+        "dietFactor": 1.10
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.2, 7.2],
+        "tolerable": [6.0, 7.6],
+        "preferred": 6.8
+      },
+      "temperature": {
+        "optimal": [77, 82],
+        "tolerable": [75, 84],
+        "preferred": 79
+      },
+      "kh": { "optimal": [2, 6], "tolerable": [1, 8], "unit": "dKH" },
+      "gh": { "optimal": [4, 10], "tolerable": [3, 14], "unit": "dGH" },
+      "flow": "low"
+    },
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": 12,
+      "predationRisks": ["Shrimp (cherry)", "Juvenile fry"],
+      "incompatibilities": ["Fin-nippers", "Large cichlids"],
+      "notes": "Semi-aggressive labyrinth fish; sororities require heavy planting."
+    },
+    "confidence": {
+      "overall": 7,
+      "aggression": 7,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 7
+    },
+    "sources": {
+      "primary": ["BettaFish.com", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Reddit r/BettaFish"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Betta (Male)",
+    "slug": "betta-male",
+    "id": "betta_male",
+    "tags": [
+      "labyrinth",
+      "low_flow",
+      "longfin_target",
+      "shrimp_risk"
+    ],
+    "aggression": {
+      "baseline": 0.65,
+      "vectors": {
+        "intraspecificMale": 0.95,
+        "interspecificGeneral": 0.50,
+        "finNipperRisk": 0.40,
+        "invertebratePredator": 0.55
+      }
+    },
+    "bioload": {
+      "multiplier": 1.50,
+      "components": {
+        "sizeFactor": 1.40,
+        "metabolismFactor": 1.35,
+        "dietFactor": 1.20
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.2, 7.2],
+        "tolerable": [6.0, 7.8],
+        "preferred": 6.9
+      },
+      "temperature": {
+        "optimal": [78, 82],
+        "tolerable": [76, 84],
+        "preferred": 80
+      },
+      "kh": { "optimal": [2, 6], "tolerable": [1, 8], "unit": "dKH" },
+      "gh": { "optimal": [4, 12], "tolerable": [3, 16], "unit": "dGH" },
+      "flow": "low"
+    },
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": 18,
+      "predationRisks": ["Shrimp (cherry)", "Juvenile fry"],
+      "incompatibilities": ["Male bettas", "Fin-nippers"],
+      "notes": "Highly territorial; should be housed singly."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["BettaFish.com", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Reddit r/Aquariums"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Bronze Corydoras",
+    "slug": "bronze-corydoras",
+    "id": "cory_bronze",
+    "tags": [
+      "bottom_dweller",
+      "schooling",
+      "requires_cover"
+    ],
+    "schooling_min": 6,
+    "aggression": {
+      "baseline": 0.10,
+      "vectors": {
+        "intraspecificMale": 0.10,
+        "interspecificGeneral": 0.10,
+        "finNipperRisk": 0.05,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 1.90,
+      "components": {
+        "sizeFactor": 1.80,
+        "metabolismFactor": 1.60,
+        "dietFactor": 1.30
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.2, 7.4],
+        "tolerable": [6.0, 7.8],
+        "preferred": 6.8
+      },
+      "temperature": {
+        "optimal": [72, 79],
+        "tolerable": [70, 80],
+        "preferred": 75
+      },
+      "kh": { "optimal": [2, 6], "tolerable": [1, 10], "unit": "dKH" },
+      "gh": { "optimal": [4, 12], "tolerable": [3, 14], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "behavior": {
+      "schoolingMinimum": 6,
+      "territorySize": null,
+      "predationRisks": [],
+      "incompatibilities": ["Aggressive large cichlids"],
+      "notes": "Bottom-dwelling shoalers that appreciate soft substrate."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["PlanetCatfish", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Reddit r/Aquariums"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Cardinal Tetra",
+    "slug": "cardinal-tetra",
+    "id": "tetra_cardinal",
+    "tags": [
+      "schooling",
+      "sensitive"
+    ],
+    "schooling_min": 6,
+    "aggression": {
+      "baseline": 0.30,
+      "vectors": {
+        "intraspecificMale": 0.20,
+        "interspecificGeneral": 0.20,
+        "finNipperRisk": 0.10,
+        "invertebratePredator": 0.00
+      }
+    },
+    "bioload": {
+      "multiplier": 1.00,
+      "components": {
+        "sizeFactor": 1.00,
+        "metabolismFactor": 1.00,
+        "dietFactor": 1.00
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [5.0, 6.5],
+        "tolerable": [4.5, 7.0],
+        "preferred": 5.5
+      },
+      "temperature": {
+        "optimal": [75, 80],
+        "tolerable": [73, 82],
+        "preferred": 77
+      },
+      "kh": { "optimal": [1, 4], "tolerable": [1, 7], "unit": "dKH" },
+      "gh": { "optimal": [1, 6], "tolerable": [1, 10], "unit": "dGH" },
+      "flow": "low"
+    },
+    "behavior": {
+      "schoolingMinimum": 6,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (cherry)"],
+      "incompatibilities": [],
+      "notes": "Peaceful schooling fish."
+    },
+    "confidence": {
+      "overall": 9,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 9,
+      "behavior": 9
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Reddit r/Aquariums"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Cherry Barb",
+    "slug": "cherry-barb",
+    "id": "cherry_barb",
+    "tags": [
+      "schooling",
+      "semi_nipper"
+    ],
+    "schooling_min": 6,
+    "aggression": {
+      "baseline": 0.20,
+      "vectors": {
+        "intraspecificMale": 0.25,
+        "interspecificGeneral": 0.15,
+        "finNipperRisk": 0.20,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 0.85,
+      "components": {
+        "sizeFactor": 0.80,
+        "metabolismFactor": 0.95,
+        "dietFactor": 0.80
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.2, 7.2],
+        "tolerable": [6.0, 7.6],
+        "preferred": 6.8
+      },
+      "temperature": {
+        "optimal": [74, 80],
+        "tolerable": [72, 82],
+        "preferred": 77
+      },
+      "kh": { "optimal": [3, 6], "tolerable": [2, 10], "unit": "dKH" },
+      "gh": { "optimal": [5, 12], "tolerable": [4, 14], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "behavior": {
+      "schoolingMinimum": 6,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (cherry)", "Shrimp (amano)"],
+      "incompatibilities": ["Long-finned bettas"],
+      "notes": "Active midwater barb; males can spar in tight spaces."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 7,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["SeriouslyFish", "FishBase"],
+      "secondary": ["Aquarium Co-Op", "Practical Fishkeeping"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Cherry Shrimp",
+    "slug": "cherry-shrimp",
+    "id": "cherry_shrimp",
+    "tags": [
+      "nano",
+      "shrimp_safe",
+      "snail_safe",
+      "requires_cover"
+    ],
+    "aggression": {
+      "baseline": 0.05,
+      "vectors": {
+        "intraspecificMale": 0.05,
+        "interspecificGeneral": 0.05,
+        "finNipperRisk": 0.00,
+        "invertebratePredator": 0.10
+      }
+    },
+    "bioload": {
+      "multiplier": 0.15,
+      "components": {
+        "sizeFactor": 0.20,
+        "metabolismFactor": 0.60,
+        "dietFactor": 0.25
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.4, 7.4],
+        "tolerable": [6.2, 7.6],
+        "preferred": 6.8
+      },
+      "temperature": {
+        "optimal": [70, 78],
+        "tolerable": [68, 80],
+        "preferred": 74
+      },
+      "kh": { "optimal": [3, 7], "tolerable": [2, 8], "unit": "dKH" },
+      "gh": { "optimal": [6, 10], "tolerable": [5, 12], "unit": "dGH" },
+      "flow": "low"
+    },
+    "behavior": {
+      "schoolingMinimum": 10,
+      "territorySize": null,
+      "predationRisks": ["Predators: bettas", "Predators: gouramis"],
+      "incompatibilities": [],
+      "notes": "Prolific dwarf shrimp; thrive in planted, stable tanks."
+    },
+    "confidence": {
+      "overall": 7,
+      "aggression": 8,
+      "bioload": 7,
+      "parameters": 7,
+      "behavior": 7
+    },
+    "sources": {
+      "primary": ["Shrimp Keepers Forum", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Reddit r/Shrimp"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Chili Rasbora",
+    "slug": "chili-rasbora",
+    "id": "chili_rasbora",
+    "tags": [
+      "nano",
+      "schooling",
+      "shrimp_safe",
+      "sensitive"
+    ],
+    "schooling_min": 8,
+    "aggression": {
+      "baseline": 0.08,
+      "vectors": {
+        "intraspecificMale": 0.08,
+        "interspecificGeneral": 0.10,
+        "finNipperRisk": 0.05,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 0.45,
+      "components": {
+        "sizeFactor": 0.40,
+        "metabolismFactor": 0.70,
+        "dietFactor": 0.40
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [5.0, 6.8],
+        "tolerable": [4.8, 7.2],
+        "preferred": 5.8
+      },
+      "temperature": {
+        "optimal": [74, 80],
+        "tolerable": [72, 82],
+        "preferred": 78
+      },
+      "kh": { "optimal": [0, 3], "tolerable": [0, 5], "unit": "dKH" },
+      "gh": { "optimal": [1, 6], "tolerable": [1, 8], "unit": "dGH" },
+      "flow": "low"
+    },
+    "behavior": {
+      "schoolingMinimum": 8,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": ["Large boisterous fish"],
+      "notes": "Tiny nano schooling fish; require fine foods and cover."
+    },
+    "confidence": {
+      "overall": 7,
+      "aggression": 7,
+      "bioload": 7,
+      "parameters": 7,
+      "behavior": 7
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "The Planted Tank"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Dwarf Gourami",
+    "slug": "dwarf-gourami",
+    "id": "dwarf_gourami",
+    "tags": [
+      "labyrinth",
+      "low_flow",
+      "longfin_target",
+      "shrimp_risk",
+      "sensitive"
+    ],
+    "aggression": {
+      "baseline": 0.35,
+      "vectors": {
+        "intraspecificMale": 0.55,
+        "interspecificGeneral": 0.30,
+        "finNipperRisk": 0.15,
+        "invertebratePredator": 0.35
+      }
+    },
+    "bioload": {
+      "multiplier": 1.60,
+      "components": {
+        "sizeFactor": 1.50,
+        "metabolismFactor": 1.40,
+        "dietFactor": 1.20
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.2, 7.2],
+        "tolerable": [6.0, 7.6],
+        "preferred": 6.8
+      },
+      "temperature": {
+        "optimal": [76, 82],
+        "tolerable": [74, 84],
+        "preferred": 80
+      },
+      "kh": { "optimal": [2, 6], "tolerable": [1, 8], "unit": "dKH" },
+      "gh": { "optimal": [4, 10], "tolerable": [3, 14], "unit": "dGH" },
+      "flow": "low"
+    },
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": 15,
+      "predationRisks": ["Shrimp (cherry)"],
+      "incompatibilities": ["Aggressive gouramis"],
+      "notes": "Peaceful centerpiece; males can spar if cramped."
+    },
+    "confidence": {
+      "overall": 7,
+      "aggression": 7,
+      "bioload": 7,
+      "parameters": 7,
+      "behavior": 7
+    },
+    "sources": {
+      "primary": ["SeriouslyFish", "FishBase"],
+      "secondary": ["Aquarium Co-Op", "The Aquatic Gazette"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Guppy (Male)",
+    "slug": "guppy-male",
+    "id": "guppy_male",
+    "tags": [
+      "active_swimmer",
+      "longfin_target",
+      "shrimp_risk"
+    ],
+    "aggression": {
+      "baseline": 0.20,
+      "vectors": {
+        "intraspecificMale": 0.30,
+        "interspecificGeneral": 0.20,
+        "finNipperRisk": 0.15,
+        "invertebratePredator": 0.20
+      }
+    },
+    "bioload": {
+      "multiplier": 0.80,
+      "components": {
+        "sizeFactor": 0.75,
+        "metabolismFactor": 0.90,
+        "dietFactor": 0.75
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [7.0, 7.8],
+        "tolerable": [6.8, 8.2],
+        "preferred": 7.4
+      },
+      "temperature": {
+        "optimal": [74, 80],
+        "tolerable": [72, 82],
+        "preferred": 77
+      },
+      "kh": { "optimal": [4, 9], "tolerable": [3, 12], "unit": "dKH" },
+      "gh": { "optimal": [8, 14], "tolerable": [6, 18], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "behavior": {
+      "schoolingMinimum": 3,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": ["Fin-nippers", "Large predators"],
+      "notes": "Active livebearers; best with ratio-heavy groups."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 7,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Guppy Forum"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Harlequin Rasbora",
+    "slug": "harlequin-rasbora",
+    "id": "harlequin_rasbora",
+    "tags": [
+      "schooling",
+      "shrimp_safe"
+    ],
+    "schooling_min": 8,
+    "aggression": {
+      "baseline": 0.18,
+      "vectors": {
+        "intraspecificMale": 0.20,
+        "interspecificGeneral": 0.18,
+        "finNipperRisk": 0.12,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 0.90,
+      "components": {
+        "sizeFactor": 0.85,
+        "metabolismFactor": 0.95,
+        "dietFactor": 0.90
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.2, 7.2],
+        "tolerable": [6.0, 7.6],
+        "preferred": 6.8
+      },
+      "temperature": {
+        "optimal": [74, 80],
+        "tolerable": [72, 82],
+        "preferred": 78
+      },
+      "kh": { "optimal": [2, 6], "tolerable": [1, 8], "unit": "dKH" },
+      "gh": { "optimal": [4, 10], "tolerable": [3, 14], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "behavior": {
+      "schoolingMinimum": 6,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": [],
+      "notes": "Hardy schooling rasbora; excellent community fish."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Practical Fishkeeping"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Kuhli Loach",
+    "slug": "kuhli-loach",
+    "id": "kuhli_loach",
+    "tags": [
+      "bottom_dweller",
+      "requires_cover",
+      "schooling"
+    ],
+    "schooling_min": 6,
+    "aggression": {
+      "baseline": 0.12,
+      "vectors": {
+        "intraspecificMale": 0.10,
+        "interspecificGeneral": 0.12,
+        "finNipperRisk": 0.05,
+        "invertebratePredator": 0.15
+      }
+    },
+    "bioload": {
+      "multiplier": 1.10,
+      "components": {
+        "sizeFactor": 1.00,
+        "metabolismFactor": 1.10,
+        "dietFactor": 1.00
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [5.8, 6.8],
+        "tolerable": [5.5, 7.2],
+        "preferred": 6.3
+      },
+      "temperature": {
+        "optimal": [75, 82],
+        "tolerable": [73, 84],
+        "preferred": 79
+      },
+      "kh": { "optimal": [1, 4], "tolerable": [1, 6], "unit": "dKH" },
+      "gh": { "optimal": [3, 8], "tolerable": [2, 10], "unit": "dGH" },
+      "flow": "low"
+    },
+    "behavior": {
+      "schoolingMinimum": 5,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": ["Large predatory fish"],
+      "notes": "Shy nocturnal loaches; need sand and hides."
+    },
+    "confidence": {
+      "overall": 7,
+      "aggression": 7,
+      "bioload": 7,
+      "parameters": 7,
+      "behavior": 7
+    },
+    "sources": {
+      "primary": ["Loaches Online", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Reddit r/Loaches"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Neon Tetra",
+    "slug": "neon-tetra",
+    "id": "tetra_neon",
+    "tags": [
+      "schooling",
+      "shrimp_safe",
+      "sensitive"
+    ],
+    "schooling_min": 8,
+    "aggression": {
+      "baseline": 0.25,
+      "vectors": {
+        "intraspecificMale": 0.18,
+        "interspecificGeneral": 0.18,
+        "finNipperRisk": 0.08,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 0.95,
+      "components": {
+        "sizeFactor": 0.90,
+        "metabolismFactor": 1.00,
+        "dietFactor": 0.95
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [5.2, 6.8],
+        "tolerable": [4.8, 7.2],
+        "preferred": 6.0
+      },
+      "temperature": {
+        "optimal": [72, 78],
+        "tolerable": [70, 80],
+        "preferred": 75
+      },
+      "kh": { "optimal": [1, 4], "tolerable": [1, 6], "unit": "dKH" },
+      "gh": { "optimal": [2, 8], "tolerable": [1, 10], "unit": "dGH" },
+      "flow": "low"
+    },
+    "behavior": {
+      "schoolingMinimum": 6,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (cherry)"],
+      "incompatibilities": [],
+      "notes": "Classic nano tetra; sensitive to swings during acclimation."
+    },
+    "confidence": {
+      "overall": 9,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 9,
+      "behavior": 9
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Nerite Snail",
+    "slug": "nerite-snail",
+    "id": "nerite_snail",
+    "tags": [
+      "algae_eater",
+      "snail_safe",
+      "shrimp_safe"
+    ],
+    "aggression": {
+      "baseline": 0.02,
+      "vectors": {
+        "intraspecificMale": 0.02,
+        "interspecificGeneral": 0.02,
+        "finNipperRisk": 0.00,
+        "invertebratePredator": 0.10
+      }
+    },
+    "bioload": {
+      "multiplier": 0.35,
+      "components": {
+        "sizeFactor": 0.40,
+        "metabolismFactor": 0.60,
+        "dietFactor": 0.45
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [7.2, 8.2],
+        "tolerable": [7.0, 8.5],
+        "preferred": 7.6
+      },
+      "temperature": {
+        "optimal": [72, 78],
+        "tolerable": [70, 80],
+        "preferred": 75
+      },
+      "kh": { "optimal": [4, 10], "tolerable": [3, 12], "unit": "dKH" },
+      "gh": { "optimal": [8, 18], "tolerable": [6, 20], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": ["Predators: pufferfish"],
+      "incompatibilities": ["Copper-based meds"],
+      "notes": "Excellent algae grazers; require hard water for shell health."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 9,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["Invertebrates Magazine", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Snail Keepers Group"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Otocinclus",
+    "slug": "otocinclus",
+    "id": "otocinclus",
+    "tags": [
+      "algae_eater",
+      "schooling",
+      "sensitive",
+      "requires_cover"
+    ],
+    "schooling_min": 6,
+    "aggression": {
+      "baseline": 0.08,
+      "vectors": {
+        "intraspecificMale": 0.08,
+        "interspecificGeneral": 0.10,
+        "finNipperRisk": 0.02,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 0.55,
+      "components": {
+        "sizeFactor": 0.50,
+        "metabolismFactor": 0.70,
+        "dietFactor": 0.50
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 7.2],
+        "tolerable": [5.8, 7.5],
+        "preferred": 6.6
+      },
+      "temperature": {
+        "optimal": [72, 79],
+        "tolerable": [70, 81],
+        "preferred": 76
+      },
+      "kh": { "optimal": [1, 4], "tolerable": [1, 6], "unit": "dKH" },
+      "gh": { "optimal": [3, 10], "tolerable": [2, 12], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "behavior": {
+      "schoolingMinimum": 5,
+      "territorySize": null,
+      "predationRisks": ["Predators: large cichlids"],
+      "incompatibilities": ["Uncycled tanks"],
+      "notes": "Algae grazers needing mature biofilm and stable water."
+    },
+    "confidence": {
+      "overall": 7,
+      "aggression": 8,
+      "bioload": 7,
+      "parameters": 7,
+      "behavior": 7
+    },
+    "sources": {
+      "primary": ["PlanetCatfish", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Otocinclus.com"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Panda Corydoras",
+    "slug": "panda-corydoras",
+    "id": "cory_panda",
+    "tags": [
+      "bottom_dweller",
+      "schooling",
+      "requires_cover",
+      "sensitive"
+    ],
+    "schooling_min": 6,
+    "aggression": {
+      "baseline": 0.10,
+      "vectors": {
+        "intraspecificMale": 0.10,
+        "interspecificGeneral": 0.10,
+        "finNipperRisk": 0.05,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 1.40,
+      "components": {
+        "sizeFactor": 1.30,
+        "metabolismFactor": 1.40,
+        "dietFactor": 1.10
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 7.2],
+        "tolerable": [5.8, 7.6],
+        "preferred": 6.6
+      },
+      "temperature": {
+        "optimal": [70, 76],
+        "tolerable": [68, 78],
+        "preferred": 73
+      },
+      "kh": { "optimal": [1, 4], "tolerable": [1, 6], "unit": "dKH" },
+      "gh": { "optimal": [3, 8], "tolerable": [2, 10], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "behavior": {
+      "schoolingMinimum": 6,
+      "territorySize": null,
+      "predationRisks": [],
+      "incompatibilities": ["Rough substrate"],
+      "notes": "Peaceful bottom shoalers; cooler temperatures preferred."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["PlanetCatfish", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Reddit r/Corydoras"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Pearl Gourami",
+    "slug": "pearl-gourami",
+    "id": "pearl_gourami",
+    "tags": [
+      "labyrinth",
+      "low_flow",
+      "longfin_target",
+      "shrimp_risk"
+    ],
+    "aggression": {
+      "baseline": 0.28,
+      "vectors": {
+        "intraspecificMale": 0.45,
+        "interspecificGeneral": 0.25,
+        "finNipperRisk": 0.15,
+        "invertebratePredator": 0.35
+      }
+    },
+    "bioload": {
+      "multiplier": 2.50,
+      "components": {
+        "sizeFactor": 2.30,
+        "metabolismFactor": 1.90,
+        "dietFactor": 1.70
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 7.2],
+        "tolerable": [5.8, 7.6],
+        "preferred": 6.6
+      },
+      "temperature": {
+        "optimal": [76, 82],
+        "tolerable": [74, 84],
+        "preferred": 80
+      },
+      "kh": { "optimal": [2, 6], "tolerable": [1, 8], "unit": "dKH" },
+      "gh": { "optimal": [4, 12], "tolerable": [3, 14], "unit": "dGH" },
+      "flow": "low"
+    },
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": 24,
+      "predationRisks": ["Shrimp (cherry)", "Small fry"],
+      "incompatibilities": ["Fin-nippers", "Highly aggressive fish"],
+      "notes": "Large peaceful gourami; males guard bubble nests."
+    },
+    "confidence": {
+      "overall": 7,
+      "aggression": 7,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 7
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Practical Fishkeeping"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Rummynose Tetra",
+    "slug": "rummynose-tetra",
+    "id": "rummynose_tetra",
+    "tags": [
+      "schooling",
+      "sensitive",
+      "shrimp_safe"
+    ],
+    "schooling_min": 10,
+    "aggression": {
+      "baseline": 0.22,
+      "vectors": {
+        "intraspecificMale": 0.20,
+        "interspecificGeneral": 0.22,
+        "finNipperRisk": 0.12,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 1.05,
+      "components": {
+        "sizeFactor": 1.00,
+        "metabolismFactor": 1.10,
+        "dietFactor": 1.00
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [5.6, 6.8],
+        "tolerable": [5.4, 7.2],
+        "preferred": 6.2
+      },
+      "temperature": {
+        "optimal": [76, 82],
+        "tolerable": [74, 84],
+        "preferred": 80
+      },
+      "kh": { "optimal": [1, 4], "tolerable": [1, 6], "unit": "dKH" },
+      "gh": { "optimal": [2, 8], "tolerable": [2, 10], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "behavior": {
+      "schoolingMinimum": 10,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": ["Slow long-finned fish"],
+      "notes": "Fast shoaling tetra; color fades when stressed."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Tiger Barb",
+    "slug": "tiger-barb",
+    "id": "tiger_barb",
+    "tags": [
+      "fin_nipper",
+      "active_swimmer",
+      "schooling"
+    ],
+    "schooling_min": 8,
+    "aggression": {
+      "baseline": 0.55,
+      "vectors": {
+        "intraspecificMale": 0.65,
+        "interspecificGeneral": 0.55,
+        "finNipperRisk": 0.80,
+        "invertebratePredator": 0.30
+      }
+    },
+    "bioload": {
+      "multiplier": 1.60,
+      "components": {
+        "sizeFactor": 1.50,
+        "metabolismFactor": 1.60,
+        "dietFactor": 1.20
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.4, 7.4],
+        "tolerable": [6.0, 7.8],
+        "preferred": 6.9
+      },
+      "temperature": {
+        "optimal": [75, 80],
+        "tolerable": [73, 82],
+        "preferred": 77
+      },
+      "kh": { "optimal": [3, 8], "tolerable": [2, 10], "unit": "dKH" },
+      "gh": { "optimal": [5, 12], "tolerable": [4, 14], "unit": "dGH" },
+      "flow": "high"
+    },
+    "behavior": {
+      "schoolingMinimum": 8,
+      "territorySize": 18,
+      "predationRisks": ["Shrimp (all sizes)"],
+      "incompatibilities": ["Long-finned species", "Slow bettas"],
+      "notes": "Boisterous shoaling barb; must be kept in large groups."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Reddit r/Barbs"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Zebra Danio",
+    "slug": "zebra-danio",
+    "id": "zebra_danio",
+    "tags": [
+      "active_swimmer",
+      "schooling",
+      "shrimp_safe"
+    ],
+    "schooling_min": 6,
+    "aggression": {
+      "baseline": 0.25,
+      "vectors": {
+        "intraspecificMale": 0.28,
+        "interspecificGeneral": 0.22,
+        "finNipperRisk": 0.25,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 0.90,
+      "components": {
+        "sizeFactor": 0.85,
+        "metabolismFactor": 1.05,
+        "dietFactor": 0.80
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.6, 7.6],
+        "tolerable": [6.2, 8.0],
+        "preferred": 7.2
+      },
+      "temperature": {
+        "optimal": [68, 76],
+        "tolerable": [66, 78],
+        "preferred": 72
+      },
+      "kh": { "optimal": [3, 7], "tolerable": [2, 10], "unit": "dKH" },
+      "gh": { "optimal": [5, 14], "tolerable": [4, 18], "unit": "dGH" },
+      "flow": "high"
+    },
+    "behavior": {
+      "schoolingMinimum": 6,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": ["Slow long-finned fish"],
+      "notes": "Fast, hardy danios; require current and open swim space."
+    },
+    "confidence": {
+      "overall": 9,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 9,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  }
+]
