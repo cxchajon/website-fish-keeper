@@ -13,6 +13,23 @@ body.prototype-stock-page .ttg-tooltip {
   transition: opacity 0.25s ease;
 }
 
+/* Hero spacing tweaks for prototype hero after walkthrough removal */
+.proto-stock .hero-header {
+  padding: 16px 0 10px;
+}
+
+.proto-stock .hero-title {
+  margin-bottom: 4px;
+}
+
+.proto-stock .hero-subline {
+  margin-bottom: 2px;
+}
+
+.proto-stock .hero-tagline {
+  margin: 0 0 6px 0;
+}
+
 body.prototype-stock-page .ttg-tooltip.is-open,
 body.prototype-stock-page .ttg-tooltip[data-open="true"],
 body.prototype-stock-page .ttg-tooltip[aria-expanded="true"] {
