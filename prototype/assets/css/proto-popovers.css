@@ -1,3 +1,119 @@
+.proto-info-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  pointer-events: none;
+}
+
+.proto-info-overlay[hidden] {
+  display: none !important;
+}
+
+.proto-info-overlay.is-active {
+  pointer-events: auto;
+}
+
+.proto-info-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 12, 24, 0.55);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.proto-info-overlay.is-active .proto-info-overlay__backdrop {
+  opacity: 1;
+}
+
+.proto-info-popover {
+  position: fixed;
+  z-index: 12001;
+  max-width: min(360px, calc(100vw - 32px));
+  width: min(360px, calc(100vw - 32px));
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: rgba(6, 12, 24, 0.96);
+  color: #eef3ff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 22px 46px -24px rgba(4, 8, 18, 0.72);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+  pointer-events: auto;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  will-change: top, left, opacity;
+}
+
+.proto-info-popover[hidden] {
+  display: none !important;
+}
+
+.proto-info-popover.is-open {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.proto-info-popover[data-overlay-placement='center'] {
+  transform: translate3d(0, 0, 0);
+}
+
+.proto-info-popover__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+}
+
+.proto-info-popover__title {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+.proto-info-popover__close {
+  border: 0;
+  padding: 4px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.proto-info-popover__close:hover,
+.proto-info-popover__close:focus-visible {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.proto-info-popover__close:focus-visible {
+  outline: 2px solid rgba(20, 203, 168, 0.65);
+  outline-offset: 2px;
+}
+
+.proto-info-popover__body {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: rgba(238, 243, 255, 0.92);
+}
+
+.proto-info-popover__list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+body.proto-popover-overlay-open {
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+
 .proto-popover {
   position: absolute;
   inset: auto;
