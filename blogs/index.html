@@ -24,14 +24,32 @@
       box-shadow: 0 18px 46px rgba(0, 0, 0, 0.32);
     }
 
-    .card-media {
-      display: block;
+    .blog-card .card-thumb-link { display:block; }
+    .blog-card .card-media {
       position: relative;
+      display: block;
       width: 100%;
-      height: 220px;
-      border-radius: 12px;
       overflow: hidden;
-      background: #0b1720;
+      border-radius: var(--radius-lg, 16px);
+      aspect-ratio: 16 / 9;
+      background: #1b1c21;
+    }
+
+    .blog-card .card-media::before {
+      content: none;
+    }
+
+    .blog-card .card-media img.blog-card-image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      transition: transform 0.25s ease;
+    }
+
+    .blog-card:hover .card-media img.blog-card-image {
+      transform: scale(1.02);
     }
 
     .card-thumb {
@@ -41,30 +59,17 @@
       object-fit: cover;
     }
 
-    .blog-card-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center center;
-      display: block;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-      transition: transform 0.3s ease;
-    }
-
-    @media (max-width: 600px) {
-      .card-media {
-        height: 180px;
-      }
-    }
-
-    .algae-hero {
-      object-position: 50% 42%;
-    }
-
     .card-img {
       object-fit: cover;
     }
+
+    /* Focal helpers (opt-in) */
+    .blog-card .card-media img.blog-card-image.pos-center { object-position: 50% 50% !important; }
+    .blog-card .card-media img.blog-card-image.pos-top { object-position: 50% 10% !important; }
+    .blog-card .card-media img.blog-card-image.pos-bottom { object-position: 50% 90% !important; }
+    .blog-card .card-media img.blog-card-image.pos-left { object-position: 10% 50% !important; }
+    .blog-card .card-media img.blog-card-image.pos-right { object-position: 90% 50% !important; }
+    .blog-card .card-media img.blog-card-image.pos-betta-head { object-position: 38% 62% !important; }
 
     .topics-nav{
       display:flex; flex-wrap:wrap; gap:.5rem .75rem;
@@ -293,7 +298,7 @@
           <a class="card-thumb-link" href="/blogs/betta-fish-in-a-community-tank.html" aria-label="Read: Betta Fish in a Community Tank" itemprop="url">
             <span class="card-media">
               <img
-                class="blog-card-image"
+                class="blog-card-image pos-betta-head"
                 src="/assets/blogs/betta-community-tank/originals/betta-community-tank-hero.jpg"
                 alt="Betta resting near a random flow nozzle in a planted tank"
                 loading="lazy"
@@ -355,7 +360,7 @@
               <img
                 src="/blogs/blackbeard/img/IMG_9610.png"
                 alt="Black Beard Algae before treatment (full bloom)"
-                class="card-thumb blog-card-image algae-hero"
+                class="card-thumb blog-card-image pos-top"
                 loading="lazy"
                 decoding="async"
                 width="320"
