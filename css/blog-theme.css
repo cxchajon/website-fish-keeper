@@ -4,6 +4,9 @@
   --blog-text: #f5f5f5;
   --blog-accent: #00c3b6;   /* Tank Guide teal accent */
   --blog-muted: #9ea3aa;
+  --blog-footer-fade-start: #2d2d2d;
+  --blog-footer-fade-mid: #343541;
+  --blog-footer-fade-end: #111111; /* Matches global footer base */
 }
 
 body.blog-article {
@@ -54,4 +57,22 @@ figcaption {
   font-size: 0.9rem;
   margin-top: 6px;
   text-align: center;
+}
+
+.blog-footer-fade {
+  background: linear-gradient(
+    180deg,
+    var(--blog-footer-fade-start) 0%,
+    var(--blog-footer-fade-mid) 60%,
+    var(--blog-footer-fade-end) 100%
+  );
+  min-height: clamp(160px, 18vh, 220px);
+  width: 100%;
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  .blog-footer-fade {
+    min-height: 160px;
+  }
 }
