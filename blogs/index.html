@@ -41,15 +41,11 @@
       object-fit: cover;
     }
 
-    .card-thumb--betta {
+    .blog-card-image{
+      display:block;width:100%;height:auto;
+      aspect-ratio: 16/9;
       object-fit: cover;
-      object-position: 35% 72%;
-    }
-
-    @media (max-width: 600px) {
-      .card-thumb--betta {
-        object-position: 35% 72%;
-      }
+      object-position: 35% 68%; /* same focal bias as hero */
     }
 
     .card-img {
@@ -283,15 +279,13 @@
           <a class="card-thumb-link" href="/blogs/betta-fish-in-a-community-tank.html" aria-label="Read: Betta Fish in a Community Tank" itemprop="url">
             <span class="card-media">
               <img
-                class="card-thumb card-thumb--betta"
-                src="/assets/blogs/betta-community-tank/originals/betta-resting-random-flow-generator-planted-tank.jpg"
-                alt="Betta resting near a Random Flow Generator in a planted tank."
+                class="blog-card-image"
+                src="/assets/blogs/betta-community-tank/originals/betta-community-tank-hero.jpg"
+                alt="Betta resting near a random flow nozzle in a planted tank"
                 loading="lazy"
                 decoding="async"
-                width="1200"
-                height="675"
                 itemprop="image"
-              />
+              >
             </span>
           </a>
           <div class="card-content">
@@ -305,7 +299,7 @@
             <h3 class="card-title" itemprop="headline">
               <a href="/blogs/betta-fish-in-a-community-tank.html">Betta Fish in a Community Tank</a>
             </h3>
-            <p class="card-excerpt" itemprop="description">Real-world lessons on keeping bettas peacefully in planted community tanks — and how balance makes them the calm kings of the aquarium.</p>
+            <p class="card-excerpt" itemprop="description">Real-world lessons on keeping bettas peacefully in planted community tanks — and how balance makes them calm kings of the aquarium.</p>
             <a class="card-read" href="/blogs/betta-fish-in-a-community-tank.html">Read the blog →</a>
           </div>
         </article>
