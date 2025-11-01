@@ -1,0 +1,57 @@
+:root {
+  --blog-bg-dark: #2d2d2d;
+  --blog-bg-alt: #343541;
+  --blog-text: #f5f5f5;
+  --blog-accent: #00c3b6;   /* Tank Guide teal accent */
+  --blog-muted: #9ea3aa;
+}
+
+body.blog-article {
+  background-color: var(--blog-bg-dark);
+  color: var(--blog-text);
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.65;
+  margin: 0;
+  padding: 0;
+}
+
+.blog-hero {
+  background: linear-gradient(180deg, var(--blog-bg-alt) 0%, var(--blog-bg-dark) 100%);
+  color: var(--blog-text);
+}
+
+.blog-article h1, 
+.blog-article h2, 
+.blog-article h3 {
+  color: var(--blog-accent);
+  font-weight: 600;
+  margin-top: 1.6em;
+}
+
+.blog-article p, 
+.blog-article li {
+  color: var(--blog-text);
+}
+
+.blog-article a {
+  color: var(--blog-accent);
+  text-decoration: none;
+}
+
+.blog-article a:hover {
+  text-decoration: underline;
+}
+
+figure {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 6px;
+  margin: 1.5em auto;
+}
+
+figcaption {
+  color: var(--blog-muted);
+  font-size: 0.9rem;
+  margin-top: 6px;
+  text-align: center;
+}
