@@ -36,6 +36,13 @@ async function ensureDir(dirPath) {
   await fs.mkdir(dirPath, { recursive: true });
 }
 
+async function ensurePrototypeExcluded() {
+  const prototypeDist = path.resolve(ROOT, 'dist/prototype');
+  await fs.rm(prototypeDist, { recursive: true, force: true });
+  const prototypeRoot = path.resolve(ROOT, 'prototype');
+  console.log('Prototype guard: excluded files under', path.relative(ROOT, prototypeRoot), 'from production outputs.');
+}
+
 async function buildAll() {
   const created = [];
   for (const { input, output } of CSS_TARGETS) {
@@ -60,6 +67,8 @@ async function buildAll() {
 
   console.log('Build complete. Outputs:');
   created.forEach((file) => console.log(` - ${file}`));
+
+  await ensurePrototypeExcluded();
 }
 
 buildAll().catch((error) => {

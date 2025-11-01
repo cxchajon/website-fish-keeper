@@ -15,6 +15,7 @@
 
   // Basic GA4 bootstrap; send_page_view is false so we can gate by consent.
   gtag('js', new Date());
+  gtag('set', 'user_properties', { environment: 'prototype', surface: 'gear-prototype' });
   gtag('config', 'G-JLDG95NKGB', { 'send_page_view': false });
 
   // When our banner calls acceptAll(), consent-mode.js should emit a consent update event.

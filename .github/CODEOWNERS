@@ -1,9 +1,8 @@
-# Global files require codeowner review
-/css/style.css           @cxchajon
-/index.html              @cxchajon
-/includes/**             @cxchajon
-/js/**                   @cxchajon
+# Prototype gear work is intentionally open to the full web team.
+/prototype/gear/**    @cxchajon @webteam
 
-# Prototype directory can be edited by anyone on the web team
-/experiments/**          @cxchajon @webteam
-/prototype-home.html     @cxchajon @webteam
+# Guardrail configuration stays with the OWNER so overrides are reviewed.
+/.guard/**            @cxchajon
+
+# Everything else requires OWNER approval while the prototype lock is active.
+*                     @cxchajon
