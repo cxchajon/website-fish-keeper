@@ -28,7 +28,7 @@
       display: block;
       position: relative;
       width: 100%;
-      aspect-ratio: 16 / 9;
+      height: 220px;
       border-radius: 12px;
       overflow: hidden;
       background: #0b1720;
@@ -41,11 +41,25 @@
       object-fit: cover;
     }
 
-    .blog-card-image{
-      display:block;width:100%;height:auto;
-      aspect-ratio: 16/9;
+    .blog-card-image {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      object-position: 35% 68%; /* same focal bias as hero */
+      object-position: center center;
+      display: block;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    @media (max-width: 600px) {
+      .card-media {
+        height: 180px;
+      }
+    }
+
+    .algae-hero {
+      object-position: 50% 42%;
     }
 
     .card-img {
@@ -307,7 +321,7 @@
           <a class="card-thumb-link" href="/blogs/nitrogen-cycle/" aria-label="Read: The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping">
             <span class="card-media">
               <img
-                class="card-thumb card-img"
+                class="card-thumb card-img blog-card-image"
                 src="/blogs/shared/img/nitrogen-cycle-diagram.PNG"
                 alt="Educational nitrogen cycle diagram showing fish waste turning into ammonia, nitrite, and nitrate, keeping aquariums safe."
                 loading="lazy"
@@ -341,7 +355,7 @@
               <img
                 src="/blogs/blackbeard/img/IMG_9610.png"
                 alt="Black Beard Algae before treatment (full bloom)"
-                class="card-thumb"
+                class="card-thumb blog-card-image algae-hero"
                 loading="lazy"
                 decoding="async"
                 width="320"
@@ -367,7 +381,7 @@
         <article class="blog-card" itemscope itemtype="https://schema.org/CreativeWork">
           <a class="card-thumb-link" href="/blogs/purigen/" aria-label="Read: Purigen">
             <span class="card-media">
-              <img class="card-thumb"
+              <img class="card-thumb blog-card-image"
                    src="/blogs/purigen/img/thumbs/purigen-thumb.jpeg"
                    alt="Purigen sump placement thumbnail"
                    loading="lazy" decoding="async"
