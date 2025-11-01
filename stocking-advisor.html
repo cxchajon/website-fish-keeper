@@ -3,10 +3,10 @@
 <head>
   <link rel="preload" href="/footer.html?v=1.4.9" as="fetch" crossorigin="anonymous">
   <meta charset="UTF-8" />
-  <title>Aquarium Stocking Calculator &amp; Fish Compatibility | The Tank Guide</title>
+  <title>Aquarium Stocking Calculator: Fish Compatibility &amp; Bioload Tool</title>
   <meta
     name="description"
-    content="Plan your freshwater tank with our aquarium stocking calculator. Check fish compatibility, estimate bioload, and get community ideas. From The Tank Guide."
+    content="Use our free aquarium stocking calculator to plan your freshwater tank. Check fish compatibility, estimate bioload, and get stocking ideas. From The Tank Guide."
   />
   <meta name="robots" content="index,follow" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -17,14 +17,17 @@
   <link rel="canonical" href="https://thetankguide.com/stocking-advisor.html" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://thetankguide.com/stocking-advisor.html" />
-  <meta property="og:title" content="Aquarium Stocking Calculator &amp; Fish Compatibility | The Tank Guide" />
+  <meta property="og:title" content="Aquarium Stocking Calculator: Fish Compatibility &amp; Bioload Tool" />
   <meta
     property="og:description"
-    content="Plan your freshwater tank with our aquarium stocking calculator. Check fish compatibility, estimate bioload, and get community ideas. From The Tank Guide."
+    content="Use our free aquarium stocking calculator to plan your freshwater tank. Check fish compatibility, estimate bioload, and get stocking ideas. From The Tank Guide."
   />
   <meta property="og:site_name" content="The Tank Guide" />
   <meta property="og:image" content="https://thetankguide.com/assets/og/stocking-advisor.png" />
-  <meta property="og:image:alt" content="An illustration of a freshwater aquarium with a user interface for an aquarium stocking calculator overlaid." />
+  <meta
+    property="og:image:alt"
+    content="An illustration of The Tank Guide's aquarium stocking calculator interface overlaid on a photo of a lush planted freshwater tank."
+  />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:locale" content="en_US" />
@@ -32,13 +35,16 @@
   <meta name="twitter:site" content="@fishkeepinglife" />
   <meta name="twitter:creator" content="@fishkeepinglife" />
   <meta name="twitter:url" content="https://thetankguide.com/stocking-advisor.html" />
-  <meta name="twitter:title" content="Aquarium Stocking Calculator &amp; Fish Compatibility | The Tank Guide" />
+  <meta name="twitter:title" content="Aquarium Stocking Calculator: Fish Compatibility &amp; Bioload Tool" />
   <meta
     name="twitter:description"
-    content="Plan your freshwater tank with our aquarium stocking calculator. Check fish compatibility, estimate bioload, and get community ideas. From The Tank Guide."
+    content="Use our free aquarium stocking calculator to plan your freshwater tank. Check fish compatibility, estimate bioload, and get stocking ideas. From The Tank Guide."
   />
   <meta name="twitter:image" content="https://thetankguide.com/assets/og/stocking-advisor.png" />
-  <meta name="twitter:image:alt" content="An illustration of a freshwater aquarium with a user interface for an aquarium stocking calculator overlaid." />
+  <meta
+    name="twitter:image:alt"
+    content="An illustration of The Tank Guide's aquarium stocking calculator interface overlaid on a photo of a lush planted freshwater tank."
+  />
   <link rel="stylesheet" id="css-main" href="/css/style.css?v=2024-06-05a" />
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
   <link rel="stylesheet" href="/css/site.css?v=1.4.9" />
@@ -103,7 +109,9 @@
         "url": "https://thetankguide.com/",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://thetankguide.com/logo.png"
+          "url": "https://thetankguide.com/logo.png",
+          "width": 512,
+          "height": 512
         },
         "sameAs": [
           "https://www.youtube.com/@TheTankGuide",
@@ -113,19 +121,29 @@
         ]
       },
       {
+        "@type": "ImageObject",
+        "@id": "https://thetankguide.com/stocking-advisor.html#primaryimage",
+        "url": "/assets/og/stocking-advisor.png",
+        "width": 1200,
+        "height": 630
+      },
+      {
         "@type": "WebPage",
         "@id": "https://thetankguide.com/stocking-advisor.html#webpage",
         "url": "https://thetankguide.com/stocking-advisor.html",
-        "name": "Aquarium Stocking Calculator &amp; Fish Compatibility | The Tank Guide",
-        "description": "Plan your freshwater tank with our aquarium stocking calculator. Check fish compatibility, estimate bioload, and get community ideas. From The Tank Guide.",
+        "name": "Aquarium Stocking Calculator: Fish Compatibility &amp; Bioload Tool",
+        "description": "Use our free aquarium stocking calculator to plan your freshwater tank. Check fish compatibility, estimate bioload, and get stocking ideas. From The Tank Guide.",
+        "inLanguage": "en-US",
         "isPartOf": {
           "@id": "https://thetankguide.com/#organization"
         },
         "primaryImageOfPage": {
-          "@type": "ImageObject",
-          "url": "https://thetankguide.com/assets/og/stocking-advisor.png"
+          "@id": "https://thetankguide.com/stocking-advisor.html#primaryimage"
         },
-        "dateModified": "2025-10-31T23:01:57Z"
+        "mainEntityOfPage": {
+          "@id": "https://thetankguide.com/stocking-advisor.html#webapp"
+        },
+        "dateModified": "2025-11-01T18:02:39Z"
       },
       {
         "@type": "WebApplication",
@@ -135,7 +153,9 @@
         "description": "An interactive aquarium stocking calculator to help freshwater hobbyists check fish compatibility and estimate bioload.",
         "applicationCategory": "LifestyleApplication",
         "operatingSystem": "Web",
-        "image": "https://thetankguide.com/assets/og/stocking-advisor.png",
+        "image": {
+          "@id": "https://thetankguide.com/stocking-advisor.html#primaryimage"
+        },
         "author": {
           "@id": "https://thetankguide.com/#organization"
         },
@@ -170,7 +190,7 @@
             "name": "What data powers the compatibility alerts?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Our fish compatibility checks are based on The Tank Guide's in-house research, real-world testing, and data from trusted aquarium science sources. These results are recommendations, as real fish behavior and aquarium conditions can vary."
+              "text": "Compatibility alerts combine The Tank Guide’s lab observations, aggregated aquarist feedback, and peer-reviewed husbandry references. Species profiles track temperament, adult size, and habitat overlap. We score each plan with conservative assumptions, then update guidance as our community shares outcomes. Use alerts as guardrails alongside ongoing testing, observation, and documentation routines."
             }
           },
           {
@@ -178,7 +198,7 @@
             "name": "How should I report feedback on the Stocking Advisor results?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Share suggestions or report issues on our Contact & Feedback page at https://thetankguide.com/contact-feedback.html. Please include your tank size, species, and any error messages so our team can review quickly. Every submission helps refine the Stocking Advisor experience for the community."
+              "text": "Send feedback through the Contact and Feedback page, including tank volume, stock list, filtration, and warnings so we can replicate scenarios. Screenshots of parameter cards help us trace edge cases faster. We triage compatibility bugs first, then prioritize enhancements that improve clarity, accessibility, and freshwater community outcomes for every plan."
             }
           }
         ]
@@ -308,6 +328,22 @@
       line-height: 1.5;
     }
 
+    .quick-answer {
+      margin: 0 auto 28px;
+      padding: 16px 20px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 18px 36px -24px var(--shadow);
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.6;
+    }
+
+    .quick-answer p {
+      margin: 0;
+    }
+
     .page-content > .panel:first-of-type {
       margin-top: 10px;
     }
@@ -356,6 +392,11 @@
       font-weight: 600;
       text-align: left;
       cursor: pointer;
+      list-style: none;
+    }
+
+    .faq-trigger::-webkit-details-marker {
+      display: none;
     }
 
     .faq-trigger::after {
@@ -1252,6 +1293,13 @@
 
 
     <div class="wrap">
+      <div class="quick-answer" role="note" aria-label="Stocking Advisor quick answer">
+        <p>The Tank Guide Stocking Advisor is a free tool to help you plan a healthy freshwater aquarium. Use it to check fish compatibility, estimate bioload, and get instant recommendations on temperature and pH for your community.</p>
+      </div>
+    </div>
+
+
+    <div class="wrap">
       <div class="ad-placeholder" id="ad-pre-tool" role="complementary" aria-label="Advertisement">
         <span>Advertisement</span>
       </div>
@@ -1745,13 +1793,46 @@
       <section class="panel faq-section" id="faq" aria-labelledby="faq-title">
         <h2 id="faq-title" class="section-title">Stocking Advisor FAQ</h2>
         <div class="faq-section-wrapper">
-
-          <h3>What data powers the compatibility alerts?</h3>
-          <p>Our <strong>fish tank compatibility</strong> checks are powered by <strong>The Tank Guide's</strong> in-house research, real-world testing, and trusted aquarium science sources. The <strong>Stocking Advisor</strong> is a helpful <strong>freshwater aquarium guide</strong>, but remember that exact <strong>fish behavior</strong> and your tank's conditions can vary.</p>
-
-          <h3>How should I report feedback on the Stocking Advisor results?</h3>
-          <p>Share suggestions or report issues on our <a href="/contact-feedback.html">Contact &amp; Feedback</a> page. Please include your tank size, planned species, filter details, and any error messages so our team can review quickly. Every submission helps refine the Stocking Advisor experience for the community.</p>
-
+          <div class="faq-accordion" data-faq-accordion>
+            <details class="faq-item" id="faq-item-compatibility">
+              <summary
+                class="faq-trigger"
+                id="faq-question-compatibility"
+                aria-expanded="false"
+                aria-controls="faq-panel-compatibility"
+              >
+                What data powers the compatibility alerts?
+              </summary>
+              <div
+                class="faq-panel"
+                id="faq-panel-compatibility"
+                role="region"
+                aria-labelledby="faq-question-compatibility"
+                hidden
+              >
+                <p>Compatibility alerts combine The Tank Guide’s lab observations, aggregated aquarist feedback, and peer-reviewed husbandry references. Species profiles track temperament, adult size, and habitat overlap. We score each plan with conservative assumptions, then update guidance as our community shares outcomes. Use alerts as guardrails alongside ongoing testing, observation, and documentation routines.</p>
+              </div>
+            </details>
+            <details class="faq-item" id="faq-item-feedback">
+              <summary
+                class="faq-trigger"
+                id="faq-question-feedback"
+                aria-expanded="false"
+                aria-controls="faq-panel-feedback"
+              >
+                How should I report feedback on the Stocking Advisor results?
+              </summary>
+              <div
+                class="faq-panel"
+                id="faq-panel-feedback"
+                role="region"
+                aria-labelledby="faq-question-feedback"
+                hidden
+              >
+                <p>Send feedback through the <a href="/contact-feedback.html">Contact and Feedback page</a>, including tank volume, stock list, filtration, and warnings so we can replicate scenarios. Screenshots of parameter cards help us trace edge cases faster. We triage compatibility bugs first, then prioritize enhancements that improve clarity, accessibility, and freshwater community outcomes for every plan.</p>
+              </div>
+            </details>
+          </div>
         </div>
       </section>
 
@@ -1960,20 +2041,32 @@
     (function () {
       const accordions = document.querySelectorAll('[data-faq-accordion]');
       accordions.forEach((accordion) => {
-        accordion.querySelectorAll('.faq-trigger').forEach((trigger) => {
-          const panelId = trigger.getAttribute('aria-controls');
-          if (!panelId) {
+        accordion.querySelectorAll('details').forEach((item, index) => {
+          const summary = item.querySelector('.faq-trigger');
+          const panel = item.querySelector('.faq-panel');
+          if (!summary || !panel) {
             return;
           }
-          const panel = document.getElementById(panelId);
-          if (!panel) {
-            return;
+
+          if (!summary.id) {
+            summary.id = `faq-summary-${index}`;
           }
-          trigger.addEventListener('click', () => {
-            const expanded = trigger.getAttribute('aria-expanded') === 'true';
-            trigger.setAttribute('aria-expanded', String(!expanded));
-            panel.hidden = expanded;
-          });
+
+          if (!panel.id) {
+            panel.id = `${summary.id}-panel`;
+          }
+
+          summary.setAttribute('aria-controls', panel.id);
+
+          const syncState = () => {
+            const expanded = item.open;
+            summary.setAttribute('aria-expanded', String(expanded));
+            panel.hidden = !expanded;
+          };
+
+          syncState();
+
+          item.addEventListener('toggle', syncState);
         });
       });
     })();
