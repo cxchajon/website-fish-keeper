@@ -1,5 +1,10 @@
 # The Tank Guide — Changelog
 
+## v1.9.5 — 2025-11-01 | Checklist Reconciliation Audit
+- Totals: COMPLETE=4, INCOMPLETE=3, DEFERRED=3
+- Highlights: Right-click deterrent flag remains opt-in; build + Playwright smoke coverage stay healthy.
+- Outstanding: Recreate the October QA clickthrough log and document the tool-page + homepage Quick Q&A plans.
+
 - [2025-10-31 | Stocking Advisor] Captured prototype→live migration plan (inventory, diff, rollback) and staged backups for Stocking Advisor parity work.
 - [2025-10-31 | Journal] Added Feeding entry (flakes only); updated data; verified dashboard renders latest.
 

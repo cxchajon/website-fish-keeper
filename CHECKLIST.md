@@ -17,3 +17,25 @@
 ### Deferred by Plan
 - 💤 **S7** — TikTok media cards remain deferred until social automation is ready. 【F:media.html†L686-L710】
 - 💤 **S8** — Instagram + archive blocks remain deferred until the archive workflow lands. 【F:media.html†L712-L759】
+
+## Verification — 2025-11-01 (Reconciliation)
+- ✅ **A1** — `js/nav.js` keeps `window.__RIGHT_CLICK_DETERRENT__` false unless explicitly enabled. (L333-L409)
+- 💤 **B1** — TikTok showcase remains commented out pending automation. (`media.html` L814-L838)
+- 💤 **B2** — Instagram showcase remains commented out pending automation. (`media.html` L840-L865)
+- 💤 **B3** — Media archive block remains commented out pending automation. (`media.html` L866-L918)
+- ✅ **C1** — Playwright smoke specs live in `tests/e2e/` with `npm run test:e2e`. (`package.json` L6-L24)
+- ✅ **C2** — `scripts/build-prod.mjs` writes minified assets to `/dist`. (L1-L55)
+- ❌ **D1** — Missing `/AUDIT/qa-clickthrough-2025-10.md`; recreate October desktop/mobile log.
+- ❌ **E1** — No repository log captures the v2.1 tool-page optimization backlog; document plan.
+- ❌ **E2** — No documentation outlines the homepage Quick Q&A block plan; capture planning notes.
+- ✅ **E3** — `docs/CHANGELOG.md` (2025-10-23) tracks the FAQPage JSON-LD follow-up.
+
+### Must Fix Next
+- ❌ **D1** — Restore `/AUDIT/qa-clickthrough-2025-10.md` with October desktop/mobile QA passes.
+- ❌ **E1** — Log the v2.1 tool-page optimization plan (e.g., `logs/codex_activity_log.md` or `/AUDIT/SEO-GEO-REPORT.md`).
+- ❌ **E2** — Record the homepage Quick Q&A block roadmap (e.g., `logs/codex_activity_log.md` or `CHECKLIST.md`).
+
+### Deferred by Plan
+- 💤 **B1** — TikTok media cards remain paused until social automation lands.
+- 💤 **B2** — Instagram media cards remain paused until social automation lands.
+- 💤 **B3** — Media archive scaffolding remains paused until archive workflow lands.
