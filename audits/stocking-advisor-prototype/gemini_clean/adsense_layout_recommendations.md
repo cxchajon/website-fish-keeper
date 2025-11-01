@@ -1,4 +1,0 @@
-- Reserve 320x100 or 300x250 slots above the tool intro for mobile, scaling to 728x90 on desktop to avoid overlapping controls.
-- After the results summary, provide a responsive in-content placeholder with at least 120px top spacing so charts remain legible.
-- Place a concluding 300x250 container after the FAQ to capture engaged readers while leaving 64px padding before the footer links.
-- Use CSS min-height guards on each placeholder to prevent layout shifts when ads load asynchronously.

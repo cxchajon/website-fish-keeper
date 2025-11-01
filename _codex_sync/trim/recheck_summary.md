@@ -5,7 +5,7 @@
 | --- | --- | --- |
 | Checksum diff vs preflight | INFO | `_codex_sync/recheck_checksums.json` reports +8 added / 528 removed / 20 changed entries relative to `_codex_sync/preflight_checksums.json`. |
 | Removed assets absent | PASS | `assets/media/library/books/blogs.png`, `assets/media/community/submit-tank-placeholder.svg`, `assets/icons/favicon.png`, and `assets/icons/footer-x.svg` are missing from disk and have no references. |
-| Utilities.css imported exactly once | FAIL | `/`, `/gear/`, and `/about.html` still omit `assets/css/utilities.css` (0 imports) and retain inline `box-sizing` rules; `stocking.html`, `params.html`, and `media.html` are correct. |
+| Utilities.css imported exactly once | FAIL | `/`, `/gear/`, and `/about.html` still omit `assets/css/utilities.css` (0 imports) and retain inline `box-sizing` rules; `stocking-advisor.html`, `params.html`, and `media.html` are correct. |
 | Tooltip module unified | PASS | `js/ui/tooltip.js` exports the controller and `js/params.js` only imports/initialises it. |
 | Redirect rule present | PASS | `_redirects` contains the `/404.html / 301` rule. |
 | Sitemap updated | PASS | `sitemap.xml` lists `/pages/university.html` with no legacy duplicates. |

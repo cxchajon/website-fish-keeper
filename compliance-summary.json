@@ -1,6 +1,6 @@
 {
   "pages": {
-    "/stocking.html": {
+    "/stocking-advisor.html": {
       "loader_once_head": true,
       "slots_match": true,
       "consent_hooks": true,

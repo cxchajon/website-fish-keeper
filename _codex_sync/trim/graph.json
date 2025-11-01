@@ -5,7 +5,7 @@
     "canonical": "https://thetankguide.com/",
     "meta_robots": [],
     "outlinks": [
-      "/stocking.html",
+      "/stocking-advisor.html",
       "/gear/",
       "/params.html",
       "/media.html",
@@ -14,10 +14,10 @@
     ],
     "inlinks": []
   },
-  "/stocking.html": {
-    "file": "stocking.html",
+  "/stocking-advisor.html": {
+    "file": "stocking-advisor.html",
     "status": 200,
-    "canonical": "https://thetankguide.com/stocking.html",
+    "canonical": "https://thetankguide.com/stocking-advisor.html",
     "meta_robots": [],
     "outlinks": [
       "/gear.html"
@@ -109,7 +109,7 @@
       "/gear/"
     ],
     "inlinks": [
-      "/stocking.html"
+      "/stocking-advisor.html"
     ]
   },
   "/feature-your-tank.html": {

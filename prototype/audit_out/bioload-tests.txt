@@ -1,5 +1,0 @@
-[StockingAdvisor] Species loaded: 20/20; marine excluded
-▶ bioload percent & turnover relationship
-  ✔ more flow does NOT increase percent
-  ✔ zero-capacity guard saturates at clamp
-✔ bioload percent & turnover relationship

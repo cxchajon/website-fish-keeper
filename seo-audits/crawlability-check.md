@@ -3,7 +3,7 @@
 | URL | HTTP Status | Meta Robots | X-Robots-Tag | Canonical | Notes |
 | --- | ----------- | ----------- | ------------- | --------- | ----- |
 | https://thetankguide.com/ | 200 | — | — | https://thetankguide.com/ | — |
-| https://thetankguide.com/stocking.html | 200 | — | — | https://thetankguide.com/stocking.html | — |
+| https://thetankguide.com/stocking-advisor.html | 200 | — | — | https://thetankguide.com/stocking-advisor.html | — |
 | https://thetankguide.com/params.html | 200 | — | — | https://thetankguide.com/params.html | — |
 | https://thetankguide.com/gear/ | 200 | — | — | https://thetankguide.com/gear/ | — |
 | https://thetankguide.com/media.html | 200 | — | — | https://thetankguide.com/media.html | — |

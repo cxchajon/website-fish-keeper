@@ -1,5 +1,5 @@
-// Fails if a commit modifies live files while PR title or branch mentions "proto"
-// and always fails if a commit from /prototype/ also touches live UI files.
+// Fails if a commit modifies live files while PR title or branch mentions experimental work
+// and always fails if changes under /experiments/ also touch live UI files.
 // Safe to run locally and in CI.
 import { execSync } from 'node:child_process';
 
@@ -30,7 +30,7 @@ function getChangedFiles(range) {
 const changed = getChangedFiles(DIFF_RANGE);
 
 const LIVE_GUARDED = [
-  'stocking.html',
+  'stocking-advisor.html',
   'assets/js/',
   'assets/css/',
   'js/',
@@ -46,19 +46,23 @@ const isGuardedLivePath = (path) => {
   return LIVE_GUARDED.some((root) => path.startsWith(root));
 };
 
-const PROTOTYPE_FILES = changed.filter((p) => p.startsWith('prototype/'));
+const EXPERIMENT_FILES = changed.filter((p) => p.startsWith('experiments/'));
 const LIVE_TOUCHED = changed.filter((p) => isGuardedLivePath(p));
 
-if (PROTOTYPE_FILES.length && LIVE_TOUCHED.length) {
-  console.error('[Guard] Prototype commit also touches live files:\n' + LIVE_TOUCHED.join('\n'));
+if (EXPERIMENT_FILES.length && LIVE_TOUCHED.length) {
+  console.error('[Guard] Experiment commit also touches live files:\n' + LIVE_TOUCHED.join('\n'));
   process.exit(1);
 }
 
 const CI_TITLE = (process.env.PR_TITLE || '').toLowerCase();
 const CI_BRANCH = (process.env.GITHUB_HEAD_REF || process.env.BRANCH_NAME || '').toLowerCase();
-const mentionsProto = CI_TITLE.includes('proto') || CI_BRANCH.includes('proto');
+const mentionsExperiments =
+  CI_TITLE.includes('experiment') ||
+  CI_BRANCH.includes('experiment') ||
+  CI_TITLE.includes('proto-home') ||
+  CI_BRANCH.includes('proto-home');
 
-if (mentionsProto && LIVE_TOUCHED.length) {
-  console.error('[Guard] Proto PR/branch cannot modify live files:\n' + LIVE_TOUCHED.join('\n'));
+if (mentionsExperiments && LIVE_TOUCHED.length) {
+  console.error('[Guard] Experiment PR/branch cannot modify live files:\n' + LIVE_TOUCHED.join('\n'));
   process.exit(1);
 }

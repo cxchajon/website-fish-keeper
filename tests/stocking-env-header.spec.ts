@@ -3,7 +3,7 @@ import { mkdirSync } from 'fs';
 
 mkdirSync('test-artifacts', { recursive: true });
 
-const url = '/stocking.html';
+const url = '/stocking-advisor.html';
 
 test.describe('Stocking Advisor — Env. Recommendations unified info icon', () => {
   test('desktop: single icon toggles environmental legend', async ({ page }) => {

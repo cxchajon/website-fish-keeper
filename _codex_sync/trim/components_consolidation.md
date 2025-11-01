@@ -2,7 +2,7 @@
 
 - `js/ui/tooltip.js` already exposes a generalized tooltip/dialog controller used by Gear UI and Stocking advisor overlays. 【js/ui/tooltip.js†L1-L320】
 - `js/params.js` ships a parallel tooltip system (`tt-trigger`, `tt--open`) with overlapping responsibilities (ARIA role management, ESC handling, dynamic positioning). Maintaining both increases payload and risk of divergent behavior. 【js/params.js†L1-L160】
-- `assets/css/theme.css` and `assets/css/media.css` each define tooltip visuals separately, while Stocking page adds `.ui-tip` rules inline. 【assets/css/theme.css†L30-L120】【assets/css/media.css†L1-L120】【stocking.html†L1330-L1410】
+- `assets/css/theme.css` and `assets/css/media.css` each define tooltip visuals separately, while Stocking page adds `.ui-tip` rules inline. 【assets/css/theme.css†L30-L120】【assets/css/media.css†L1-L120】【stocking-advisor.html†L1330-L1410】
 
 ## Proposed consolidation steps
 1. Extend `js/ui/tooltip.js` to support the Cycling Coach requirements (dynamic creation from `data-tt`, persistent positioning).

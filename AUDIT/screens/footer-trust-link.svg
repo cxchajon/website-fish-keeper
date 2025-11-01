@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
-  <title id="title">Footer Trust &amp; Security Placeholder</title>
-  <desc id="desc">Placeholder slide summarising footer trust link update. Generated due to browser download restrictions.</desc>
-  <rect width="1280" height="720" fill="#101c36" />
-  <text x="80" y="160" fill="#e2f1ff" font-family="Arial, sans-serif" font-size="64" font-weight="700">Footer Update — Trust &amp; Security</text>
-  <text x="80" y="250" fill="#bcd4ff" font-family="Arial, sans-serif" font-size="36">Manual verification: link + trust statement added to footer.html</text>
-  <text x="80" y="330" fill="#94add6" font-family="Arial, sans-serif" font-size="28">Screenshot capture unavailable in sandbox (Playwright browsers blocked, see install logs).</text>
-</svg>

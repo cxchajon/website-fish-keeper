@@ -1,1 +1,0 @@
-[2025-10-xx] Prototype debug log cleared. Plant toggle snapshots were removed; enable TTG.DEBUG_FILTERS to capture filtration-only math dumps in the browser console.
