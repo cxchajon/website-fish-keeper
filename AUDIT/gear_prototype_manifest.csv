@@ -1,4 +1,5 @@
 # Summary: total_files_copied=27
+# 2025-11-01: Prototype Gear metadata/content refreshed with Gemini quick answers, FAQ JSON-LD relocation, extras education copy, and prototype ad-slot placeholders.
 # Total_shared_references=9
 # Path_rewrites=Converted gear-specific assets to prototype-relative ./paths; nav/footer loaders now reference ./includes/
 original_path,prototype_path,file_type,notes
