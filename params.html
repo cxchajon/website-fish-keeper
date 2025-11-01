@@ -44,6 +44,34 @@
       z-index: 0;
     }
 
+    .page-update-banner {
+      background: #fff7d6;
+      border: 1px solid #facc15;
+      border-radius: 14px;
+      box-shadow: 0 10px 24px rgba(8, 15, 30, 0.18);
+      color: #422006;
+      margin: 1.25rem auto 1.5rem;
+      max-width: 800px;
+      padding: 1rem 1.5rem;
+      text-align: center;
+      width: min(100%, 800px);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: pageUpdateBannerFadeIn 0.6s ease forwards;
+    }
+
+    @keyframes pageUpdateBannerFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     body.planted-active .planted-overlay {
       opacity: 1;
     }
@@ -52,6 +80,12 @@
       .planted-overlay,
       .page-title__leaf {
         transition-duration: 0ms;
+      }
+
+      .page-update-banner {
+        animation: none;
+        opacity: 1;
+        transform: none;
       }
     }
 
@@ -533,6 +567,9 @@
         </h1>
         <div class="cc-title__eyebrow">Nitrogen cycle tool</div>
         <p class="cc-title__subline">Enter today’s readings for a clear snapshot.</p>
+        <div class="page-update-banner" role="status" aria-live="polite">
+          ⚠️ Redesign Coming Soon — This page is being updated to match our new design style.
+        </div>
       </section>
 
       <!-- === TTG_ParamsTop (under hero/blurb) === -->
