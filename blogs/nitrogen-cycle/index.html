@@ -12,10 +12,21 @@
   <link rel="stylesheet" href="/css/blogs.css" />
   <!-- Fallback styles in case the site-wide gray panel class name isn’t present -->
   <style>
-    .tg-article-panel{background:#3b3b3b;color:#e9eef1;border-radius:16px;padding:28px;max-width:820px;margin:24px auto;line-height:1.7}
-    .tg-article-panel a{color:#9cd3ff}
-    .tg-article-panel h1,.tg-article-panel h2,.tg-article-panel h3{color:#ffffff;margin:1.2em 0 .4em}
-    .tg-article-panel .lede{opacity:.9}
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: var(--accent, #8fe3ff);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover,
+    .back-link:focus {
+      text-decoration: underline;
+    }
+
+    .article-accent .lede{opacity:.9}
     .callout{background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:14px 16px; margin:16px 0}
     .callout strong{color:#fff}
     .numlist{padding-left:1.1em}
@@ -156,26 +167,29 @@
 
   <main class="blog-open">
     <article class="blog-article">
-      <div class="tg-article-panel article-accent">
-        <p><a href="/blogs/">← Back to all posts</a></p>
+      <p><a class="back-link" href="/blogs/">← Back to all posts</a></p>
 
+      <header class="article-accent">
         <h1>The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping</h1>
         <p class="lede">If you’re new and this part feels confusing, you’re not alone. This is the story of how I went from totally stuck to “I’ve got this,” and the simple habits that keep my tanks stable today.</p>
+      </header>
 
-        <figure class="blog-img" style="text-align:center;margin:1.5rem auto;">
-          <img
-            src="/blogs/shared/img/nitrogen-cycle-diagram.PNG"
-            alt="Simplified nitrogen cycle diagram from fish waste to clean water: ammonia → nitrite → nitrate → water change"
-            loading="lazy"
-            width="1200"
-            height="900"
-            style="max-width:100%;height:auto;border-radius:12px"
-          />
-          <figcaption style="font-style:italic;color:#aeb0b4;margin-top:0.5rem;">
-            A simplified view of the nitrogen cycle — from fish waste to clean water.
-          </figcaption>
-        </figure>
+      <figure class="blog-hero">
+        <img
+          src="/blogs/shared/img/nitrogen-cycle-diagram.PNG"
+          alt="Simplified nitrogen cycle diagram from fish waste to clean water: ammonia → nitrite → nitrate → water change"
+          loading="lazy"
+          width="1200"
+          height="900"
+        />
+        <figcaption>
+          <em>A simplified view of the nitrogen cycle — from fish waste to clean water.</em>
+        </figcaption>
+      </figure>
 
+      <div class="section-split" aria-hidden="true"></div>
+
+      <div class="blog-body">
         <h2>What is the nitrogen cycle in an aquarium?</h2>
         <div class="callout"><strong>Quick answer:</strong> Waste becomes <strong>ammonia</strong> (toxic). Bacteria convert it to <strong>nitrite</strong> (still harmful). A second group converts that to <strong>nitrate</strong> (much less toxic). Plants and water changes remove nitrate. That repeating loop is the nitrogen cycle.</div>
 

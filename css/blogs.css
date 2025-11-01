@@ -208,6 +208,120 @@ main .blog-article,
   background: rgba(255, 255, 255, 0.04) !important;
 }
 
+.blog-hero {
+  margin: clamp(12px, 3vw, 28px) auto 0;
+  max-width: min(960px, 100%);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+}
+
+.blog-hero img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.blog-hero figcaption {
+  margin: 0;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  color: rgba(229, 235, 240, 0.85);
+  background: linear-gradient(180deg, rgba(8, 12, 18, 0.65), rgba(8, 12, 18, 0.85));
+}
+
+/* Shared inner article wrapper */
+.blog-body {
+  position: relative;
+  background: rgba(25, 25, 25, 0.35);
+  border-radius: 14px;
+  padding: clamp(22px, 4vw, 28px) clamp(18px, 4vw, 26px);
+  margin: clamp(20px, 4vw, 32px) auto;
+  max-width: min(900px, 100%);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  overflow: hidden;
+}
+
+.blog-body::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 120px;
+  background: linear-gradient(
+    to bottom,
+    rgba(25, 25, 25, 0.3) 0%,
+    rgba(25, 25, 25, 0.15) 40%,
+    rgba(25, 25, 25, 0.0) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blog-body > * {
+  position: relative;
+  z-index: 1;
+}
+
+.blog-body p,
+.blog-body li {
+  line-height: 1.7;
+  color: #d8d8d8;
+}
+
+.blog-body h2,
+.blog-body h3 {
+  margin-top: clamp(2rem, 5vw, 3rem);
+  color: #ffffff;
+}
+
+.blog-body figure {
+  margin: 28px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.blog-body figure img,
+.blog-body figure video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.blog-body a {
+  color: var(--blog-accent, #80bfff);
+}
+
+.blog-body ul,
+.blog-body ol {
+  margin: clamp(1.1rem, 2.8vw, 1.6rem) 0;
+  padding-left: 1.25rem;
+}
+
+.blog-body ul li,
+.blog-body ol li {
+  margin: 0.6rem 0;
+}
+
+.section-split {
+  height: 8px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  margin: 24px auto 16px;
+  max-width: min(900px, 100%);
+}
+
+@media (max-width: 640px) {
+  .blog-body {
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
+}
+
 @media (min-width: 1024px) {
   .blog-post,
   .blog-container,
