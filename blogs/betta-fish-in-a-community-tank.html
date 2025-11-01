@@ -13,18 +13,18 @@
   <meta property="og:title" content="Betta Fish in a Community Tank" />
   <meta property="og:description" content="Lessons from real tanks on keeping a betta peacefully in a planted community aquarium." />
   <meta property="og:url" content="https://thetankguide.com/blogs/betta-fish-in-a-community-tank.html" />
-  <meta property="og:image" content="https://thetankguide.com/assets/blogs/betta-community-tank/originals/betta-fish-resting-by-random-flow-generator.jpg" />
+  <meta property="og:image" content="https://thetankguide.com/assets/blogs/betta-community-tank/originals/betta-resting-random-flow-generator-planted-tank.jpg" />
   <meta property="og:image:width" content="1600" />
   <meta property="og:image:height" content="1067" />
-  <meta property="og:image:alt" content="Betta resting near random flow generator" />
+  <meta property="og:image:alt" content="Betta resting near a Random Flow Generator in a planted tank." />
   <meta property="article:published_time" content="2025-10-10T10:00:00-05:00" />
   <meta property="article:modified_time" content="2025-10-10T10:00:00-05:00" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@fishkeepinglife" />
   <meta name="twitter:title" content="Betta Fish in a Community Tank" />
   <meta name="twitter:description" content="Lessons from real tanks on keeping a betta peacefully in a planted community aquarium." />
-  <meta name="twitter:image" content="https://thetankguide.com/assets/blogs/betta-community-tank/originals/betta-fish-resting-by-random-flow-generator.jpg" />
-  <meta name="twitter:image:alt" content="Betta resting near random flow generator" />
+  <meta name="twitter:image" content="https://thetankguide.com/assets/blogs/betta-community-tank/originals/betta-resting-random-flow-generator-planted-tank.jpg" />
+  <meta name="twitter:image:alt" content="Betta resting near a Random Flow Generator in a planted tank." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -33,9 +33,6 @@
   <link rel="stylesheet" href="/css/blogs.css">
   <style>
     .article-layout {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: clamp(2rem, 5vw, 3.5rem) clamp(1.5rem, 5vw, 3rem) clamp(3rem, 6vw, 4rem);
       display: flex;
       flex-direction: column;
     }
@@ -116,45 +113,6 @@
       color: var(--blog-accent);
     }
 
-    figure {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 10px;
-      margin: clamp(1.8rem, 4vw, 2.7rem) auto;
-    }
-
-    figure img {
-      display: block;
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-    }
-
-    figure figcaption {
-      margin-top: 0.8rem;
-      font-size: 0.95rem;
-      color: var(--blog-muted);
-      text-align: center;
-      line-height: 1.4;
-    }
-
-    .hero-figure {
-      margin-top: 0;
-      padding: 0;
-      background: none;
-    }
-
-    .hero-figure img {
-      border-radius: 18px;
-      height: clamp(280px, 52vw, 520px);
-      object-fit: cover;
-      object-position: 50% 40%;
-    }
-
-    .hero-figure figcaption {
-      padding: 0 10px;
-    }
-
     .pro-tip {
       margin: clamp(1.5rem, 3.5vw, 2rem) 0;
       padding: 1rem 1.25rem;
@@ -168,7 +126,7 @@
     }
 
     @media (max-width: 640px) {
-      .article-layout {
+      main {
         padding-inline: clamp(1.2rem, 6vw, 2rem);
       }
 
@@ -176,9 +134,56 @@
         text-align: left;
       }
 
-      .hero-figure figcaption {
+      .hero figcaption {
         padding: 0;
       }
+    }
+
+    /* Scoped to this article page */
+    main {
+      max-width: 880px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    figure {
+      margin: 28px 0 40px;
+      background: #333;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    figcaption {
+      background: #2a2a2a;
+      padding: 12px 14px;
+      color: #aeb3b9;
+      line-height: 1.5;
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid rgba(255, 255, 255, .10);
+      margin: 36px 0;
+    }
+
+    figure + h2,
+    figure + h3 {
+      margin-top: 32px;
+    }
+
+    figcaption + * {
+      margin-top: 20px;
+    }
+
+    figure.hero {
+      margin-top: 0;
     }
   </style>
   <script type="application/ld+json">
@@ -188,7 +193,7 @@
     "headline": "Betta Fish in a Community Tank",
     "description": "Lessons from real tanks on keeping a betta peacefully in a planted community aquarium.",
     "image": [
-      "https://thetankguide.com/assets/blogs/betta-community-tank/originals/betta-fish-resting-by-random-flow-generator.jpg"
+      "https://thetankguide.com/assets/blogs/betta-community-tank/originals/betta-resting-random-flow-generator-planted-tank.jpg"
     ],
     "author": {
       "@type": "Organization",
@@ -226,9 +231,12 @@
         <p class="deck"><strong>How to Keep the King of the Aquarium Peacefully Among Others</strong><br>By FishKeepingLifeCo | <a href="http://TheTankGuide.com">TheTankGuide.com</a> — Oct 2025</p>
       </header>
 
-      <figure class="hero-figure">
-        <img src="/assets/blogs/betta-community-tank/originals/betta-fish-resting-by-random-flow-generator.jpg" alt="Betta resting near random flow generator" width="1600" height="1067">
-        <figcaption>“A moment of stillness. He pauses mid-tank, watching, before his next patrol begins.”</figcaption>
+      <figure class="hero">
+        <img src="/assets/blogs/betta-community-tank/originals/betta-resting-random-flow-generator-planted-tank.jpg"
+             alt="Betta resting near a Random Flow Generator in a planted tank."
+             loading="eager"
+             style="object-fit:cover; object-position:60% 62%;">
+        <figcaption>A moment of stillness. He pauses mid-tank, watching, before his next patrol begins.</figcaption>
       </figure>
 
       <div class="section-divider" aria-hidden="true"></div>
@@ -246,8 +254,10 @@
       <p>I stocked peaceful species first — cherry barbs and cardinal tetras — fish that kept to themselves and rarely caused trouble. After that, I brought in my betta, Walter Mitty, named after the movie character with his wild imagination.</p>
 
       <figure>
-        <img src="/assets/blogs/betta-community-tank/originals/_assets_blogs_betta-community-tank_originals_betta-fish-interacting-at-glass-in-community-tank.jpg" alt="Betta interacting at aquarium glass" loading="lazy" width="1600" height="1067">
-        <figcaption>“Bold and aware. He tracks movement outside the glass—always curious, never hiding.”</figcaption>
+        <img src="/assets/blogs/betta-community-tank/originals/betta-greeting-at-glass-planted-community.jpg"
+             alt="Betta meeting a visitor’s finger at the glass."
+             loading="lazy">
+        <figcaption>Bold and aware. He tracks movement outside the glass—always curious, never hiding.</figcaption>
       </figure>
 
       <div class="section-divider" aria-hidden="true"></div>
@@ -257,8 +267,10 @@
       <p>He’d go after the cherry barbs because they were the most active swimmers, but their small size and peaceful nature made them safe companions—he never attacked them. Whenever I approached, he’d investigate first, always aware, always watching. That’s when I realized — in a well-balanced community, a betta can become the calm authority rather than the chaos everyone warns about.</p>
 
       <figure>
-        <img src="/assets/blogs/betta-community-tank/originals/_assets_blogs_betta-community-tank_originals_top-down-view-betta-in-planted-community-tank.jpg" alt="Top-down view of betta in planted community tank" loading="lazy" width="1600" height="1067">
-        <figcaption>“Using the floating plants as cover, he drifts through his domain with quiet confidence.”</figcaption>
+        <img src="/assets/blogs/betta-community-tank/originals/top-down-betta-floating-plants-community.jpg"
+             alt="Top-down view of a betta under floating plants."
+             loading="lazy">
+        <figcaption>Using the floating plants as cover, he drifts through his domain with quiet confidence.</figcaption>
       </figure>
 
       <div class="section-divider" aria-hidden="true"></div>
@@ -276,8 +288,10 @@
       <p>But his legacy taught me a lot. When I set up my new 29-gallon planted tank with a 5-gallon sump, I applied everything I’d learned — and the new betta thrived.</p>
 
       <figure>
-        <img src="/assets/blogs/betta-community-tank/originals/_assets_blogs_betta-community-tank_originals_betta-fish-with-neon-tetra-tank-mates-in-community-tank.jpg" alt="Betta with neon tetra tank mates" loading="lazy" width="1600" height="1067">
-        <figcaption>“The centerpiece of the community. His presence anchors the tank—calm authority without aggression.”</figcaption>
+        <img src="/assets/blogs/betta-community-tank/originals/betta-with-neon-tetras-community-tank.jpg"
+             alt="Betta swimming among neon tetras in a planted community."
+             loading="lazy">
+        <figcaption>The centerpiece of the community. His presence anchors the tank—calm authority without aggression.</figcaption>
       </figure>
 
       <div class="section-divider" aria-hidden="true"></div>
@@ -314,7 +328,6 @@
       <p>Give them what they need, respect their instincts, and you’ll see what I see:</p>
       <p><strong>A true king of the tank — calm, curious, and utterly captivating.</strong></p>
       <p>For more setup ideas and real community examples, explore our <strong><a href="/stocking-advisor.html">Stocking Advisor</a></strong> and upcoming community-tank features on The Tank Guide.</p>
-      <p><a href="https://thetankguide.com/blogs/betta-fish-in-a-community-tank.html">https://thetankguide.com/blogs/betta-fish-in-a-community-tank.html</a></p>
     </article>
   </main>
 
