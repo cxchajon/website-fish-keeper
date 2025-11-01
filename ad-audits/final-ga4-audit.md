@@ -7,7 +7,7 @@
 | terms.html | 1 | 1 | N/A | Replaced inline GA4 block with shared include; legal page remains ad-free. |
 | gear/index.html | 1 | 1 | ✅ | Replaced inline GA4 block with shared include before AdSense loader. |
 | cookie-settings.html | 1 | 1 | N/A | Replaced inline GA4 block with shared include. |
-| stocking.html | 1 | 1 | ✅ | Replaced inline GA4 block with shared include and preserved loader order. |
+| stocking-advisor.html | 1 | 1 | ✅ | Replaced inline GA4 block with shared include and preserved loader order. |
 | media/index.html | 1 | 1 | ✅ | Replaced inline GA4 block with shared include before AdSense. |
 | feature-your-tank.html | 1 | 1 | ✅ | Replaced inline GA4 block with shared include before AdSense. |
 | privacy-legal.html | 1 | 1 | N/A | Replaced inline GA4 block with shared include; legal copy stays ad-free. |

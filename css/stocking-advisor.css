@@ -1,5 +1,5 @@
 /* Stocking Advisor aggregated styles (migrated from prototype) */
-/* Source: prototype/css/stocking-prototype.css */
+/* Stocking Advisor base styles */
 :root {
   color-scheme: dark;
 }
@@ -1044,7 +1044,7 @@ body.sa-proto-modal-open {
   margin-bottom: 8px;
 }
 
-/* Source: prototype/assets/css/proto-popovers.css */
+/* Stocking Advisor popover styles */
 .proto-info-overlay {
   position: fixed;
   inset: 0;
@@ -1309,12 +1309,12 @@ body.proto-popover-overlay-open {
   margin-top: 8px;
 }
 
-/* Source: prototype/assets/css/filtration.css */
+/* Stocking Advisor filtration controls */
 [data-proto-hide] {
   display: none !important;
 }
 
-/* Source: prototype/assets/css/prototype.css */
+/* Stocking Advisor shared UI tokens */
 /* Defensive: hide any legacy filtration summary card if it leaks in */
 #filtration-summary,
 .filtration-summary,
@@ -1382,7 +1382,7 @@ body:not(.debug-on) .proto-debug-badge {
   display: none;
 }
 
-/* Source: prototype/css/proto-fixes.css */
+/* Stocking Advisor layout adjustments */
 /* Prototype-only adjustments for info popovers and meter hit targets */
 .proto-stock .env-bar__fill,
 .proto-stock .env-bar__track,

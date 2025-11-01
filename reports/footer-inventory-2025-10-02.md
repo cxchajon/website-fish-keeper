@@ -7,7 +7,7 @@
 - `/store.html` (embedded copy at the bottom of the page)
 
 ## Loader patterns (pre-unification)
-- `index.html`, `about.html`, `feature-your-tank.html`, `contact-feedback.html`, `privacy-legal.html`, `terms.html`, `media.html`, `params.html`, `stocking.html`, `copyright-dmca.html`: each included `<div id="site-footer"></div>` followed by an inline script fetching `footer.v1.2.3.html?v=1.2.3` with a **relative** URL (no leading slash).
+- `index.html`, `about.html`, `feature-your-tank.html`, `contact-feedback.html`, `privacy-legal.html`, `terms.html`, `media.html`, `params.html`, `stocking-advisor.html`, `copyright-dmca.html`: each included `<div id="site-footer"></div>` followed by an inline script fetching `footer.v1.2.3.html?v=1.2.3` with a **relative** URL (no leading slash).
 - `gear/index.html`: same structure but already fetched `'/footer.v1.2.3.html?v=1.2.3'` with a leading slash.
 - `store.html`: contained an inline footer block (no loader) duplicating the v1.2.3 markup.
 

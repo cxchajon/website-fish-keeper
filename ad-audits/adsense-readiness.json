@@ -3,7 +3,7 @@
   "ads_txt_ok": true,
   "ads_txt_line": "google.com, pub-9905718149811880, DIRECT, f08c47fec0942fa0",
   "pages": {
-    "/stocking.html": {
+    "/stocking-advisor.html": {
       "loader_once_head": true,
       "slots_match": true,
       "placement_looks_ok": true,

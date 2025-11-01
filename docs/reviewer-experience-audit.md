@@ -2,7 +2,7 @@
 
 ## 1. Beginner Pathway Flow — Present
 - Homepage launch grid guides visitors from Stocking Advisor to Gear, Cycling Coach, Media, and About with succinct blurbs and launch buttons that set expectations for each tool.【F:index.html†L194-L229】
-- Stocking Advisor hands off to gear suggestions with inline CTA buttons and summary copy, keeping the journey moving.【F:stocking.html†L1405-L1433】
+- Stocking Advisor hands off to gear suggestions with inline CTA buttons and summary copy, keeping the journey moving.【F:stocking-advisor.html†L1405-L1433】
 - Gear page reinforces next steps with a prominent "Next Step: Cycle Your Tank" block that links directly to Cycling Coach; however, the flow ends at Cycling Coach without an equivalent nudge toward Media or About, so the last hand-off relies on global navigation.【F:gear/index.html†L262-L269】【F:params.html†L743-L749】
 - Beginner/advanced segmentation is uneven: Cycling Coach clearly walls off its advanced metrics in an optional disclosure, but the Stocking Advisor lacks an explicit Beginner mode toggle or copy that reassures novices about complexity.【F:params.html†L721-L743】
 
@@ -12,7 +12,7 @@
 - Mission section encourages community participation via Feature Your Tank references, reinforcing transparency and inclusion.【F:about.html†L320-L333】
 
 ## 3. Transparency & Trust — Visible
-- Core tools expose their logic through inline tooltips that define metrics like ammonia, nitrite, and bioload, while Stocking Advisor surfaces safety warnings when limits are exceeded.【F:params.html†L604-L669】【F:stocking.html†L1398-L1403】
+- Core tools expose their logic through inline tooltips that define metrics like ammonia, nitrite, and bioload, while Stocking Advisor surfaces safety warnings when limits are exceeded.【F:params.html†L604-L669】【F:stocking-advisor.html†L1398-L1403】
 - Cycling Coach keeps advanced toxic NH₃ math optional but explained, and points readers to a "Sources & Further Reading" link — though the destination lacks a dedicated reference list, creating a slight follow-through gap.【F:params.html†L721-L743】
 - Affiliate and advertising disclosures sit near relevant CTAs (gear affiliate note, media feature card, site footer), signaling monetization clearly.【F:gear/index.html†L101-L108】【F:media.html†L503-L510】【F:footer.html†L44-L52】
 

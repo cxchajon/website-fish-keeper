@@ -54,26 +54,26 @@
     ]
   },
   {
-    "page_path": "/stocking.html",
-    "file": "stocking.html",
+    "page_path": "/stocking-advisor.html",
+    "file": "stocking-advisor.html",
     "missing_terms": [
       {
         "term": "Stocking Density",
         "intent": "Prevent overstocking",
         "tooltip": "Stocking density balances fish size, behavior, and filtration so the tank is not overcrowded.",
-        "recommended_icon_location": "Add tooltip near first mention or summary of 'Stocking Density' on stocking.html."
+        "recommended_icon_location": "Add tooltip near first mention or summary of 'Stocking Density' on stocking-advisor.html."
       },
       {
         "term": "Quarantine Tank",
         "intent": "Promote isolation before stocking",
         "tooltip": "A quarantine tank lets you observe new fish for illness before adding them to your display tank.",
-        "recommended_icon_location": "Add tooltip near first mention or summary of 'Quarantine Tank' on stocking.html."
+        "recommended_icon_location": "Add tooltip near first mention or summary of 'Quarantine Tank' on stocking-advisor.html."
       },
       {
         "term": "Drip Acclimation",
         "intent": "Advocate gentle acclimation",
         "tooltip": "Drip acclimation slowly matches bag water to tank water to reduce shock when adding fish.",
-        "recommended_icon_location": "Add tooltip near first mention or summary of 'Drip Acclimation' on stocking.html."
+        "recommended_icon_location": "Add tooltip near first mention or summary of 'Drip Acclimation' on stocking-advisor.html."
       }
     ]
   }

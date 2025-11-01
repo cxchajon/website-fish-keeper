@@ -27,7 +27,7 @@
 | pages/university.html | Y | Y | N | — | Loader src: /js/footer-loader.js; Uses loader default |
 | params.html | Y | Y | N | — | Loader src: /js/footer-loader.js; Uses loader default |
 | privacy-legal.html | Y | Y | N | — | Loader src: /js/footer-loader.js; Uses loader default |
-| stocking.html | Y | Y | N | — | Loader src: /js/footer-loader.js; Uses loader default |
+| stocking-advisor.html | Y | Y | N | — | Loader src: /js/footer-loader.js; Uses loader default |
 | store.html | Y | Y | N | — | Loader src: /js/footer-loader.js; Uses loader default |
 | templates/blog-footer-gear.html | N | N | N | — | Template fragment; Missing placeholder; Missing loader script |
 | terms.html | Y | Y | N | — | Loader src: /js/footer-loader.js; Uses loader default |
@@ -61,7 +61,7 @@
 | pages/university.html | Y | Y | N | /footer.html?v=1.4.9 |  |
 | params.html | Y | Y | N | /footer.html?v=1.4.9 |  |
 | privacy-legal.html | Y | Y | N | /footer.html?v=1.4.9 |  |
-| stocking.html | Y | Y | N | /footer.html?v=1.4.9 |  |
+| stocking-advisor.html | Y | Y | N | /footer.html?v=1.4.9 |  |
 | store.html | Y | Y | N | /footer.html?v=1.4.9 |  |
 | templates/blog-footer-gear.html | — | — | — | — | Removed |
 | terms.html | Y | Y | N | /footer.html?v=1.4.9 |  |
@@ -70,7 +70,7 @@
 
 ## Files updated to normalize placeholder/loader
 
-`404.html`, `about.html`, `blogs/blackbeard/index.html`, `blogs/cycle-check-3-readings/index.html`, `blogs/index.html`, `blogs/purigen/index.html`, `contact-feedback.html`, `cookie-settings.html`, `copyright-dmca.html`, `feature-your-tank.html`, `gear.html`, `gear/index.html`, `index.html`, `media.html`, `pages/university.html`, `params.html`, `privacy-legal.html`, `stocking.html`, `store.html`, `terms.html`, `trust-security.html`, `university/index.html`
+`404.html`, `about.html`, `blogs/blackbeard/index.html`, `blogs/cycle-check-3-readings/index.html`, `blogs/index.html`, `blogs/purigen/index.html`, `contact-feedback.html`, `cookie-settings.html`, `copyright-dmca.html`, `feature-your-tank.html`, `gear.html`, `gear/index.html`, `index.html`, `media.html`, `pages/university.html`, `params.html`, `privacy-legal.html`, `stocking-advisor.html`, `store.html`, `terms.html`, `trust-security.html`, `university/index.html`
 
 Legacy fragments removed: `archive/footers/footer-legal.html`, `templates/blog-footer-gear.html`.
 

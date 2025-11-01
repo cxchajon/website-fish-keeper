@@ -1,1 +1,0 @@
-Network request capture unavailable in container environment; prototype assets expected to load from static paths.

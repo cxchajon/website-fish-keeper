@@ -1,4 +1,0 @@
-- Surface Midwest, Northeast, and Pacific Northwest presets first because those regions contribute the bulk of beta users.
-- Refresh copy to note soft water alternatives for regions with naturally low mineral content, especially the Pacific Northwest.
-- Queue quarterly reviews of seasonal shipping restrictions so regional guidance reflects current supplier timelines.
-- Capture location opt-in analytics to see where nitrogen-cycle education content reduces bounce rates before expanding internationally.

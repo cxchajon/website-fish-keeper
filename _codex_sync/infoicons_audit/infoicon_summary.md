@@ -25,7 +25,7 @@
 - **Nitrite** on `params.html` → tooltip near `div.field > div.label-row > label`.
 - **Nitrate** on `params.html` → tooltip near `div.field > div.label-row > label`.
 - **Water Change** on `params.html` → tooltip near `div.form-grid > div.field > div#tt-nitrate`.
-- **Bioload** on `stocking.html` → tooltip near `div.wrap > div.hero-header > p.tagline.hero-tagline`.
+- **Bioload** on `stocking-advisor.html` → tooltip near `div.wrap > div.hero-header > p.tagline.hero-tagline`.
 - **Nitrogen Cycle** on `store.html` → tooltip near `article.product > div.details > p.desc`.
 - **Beneficial Bacteria** on `store.html` → tooltip near `article.product > div.details > p.desc`.
 
@@ -33,4 +33,4 @@
 - `index.html` missing: Water Change
 - `gear/index.html` missing: Filter Media
 - `params.html` missing: Beneficial Bacteria, General Hardness, Carbonate Hardness, pH Swing
-- `stocking.html` missing: Stocking Density, Quarantine Tank, Drip Acclimation
+- `stocking-advisor.html` missing: Stocking Density, Quarantine Tank, Drip Acclimation

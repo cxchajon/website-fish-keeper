@@ -68,7 +68,7 @@
   "canonical_seo": {
     "homepage_canonical": "https://thetankguide.com/",
     "subpage_canonical": [
-      {"url": "https://thetankguide.com/stocking.html", "canonical": "https://thetankguide.com/stocking.html"}
+      {"url": "https://thetankguide.com/stocking-advisor.html", "canonical": "https://thetankguide.com/stocking-advisor.html"}
     ],
     "www_vs_apex": "unclear — unable to reach hosts over HTTP/HTTPS from restricted environment"
   },

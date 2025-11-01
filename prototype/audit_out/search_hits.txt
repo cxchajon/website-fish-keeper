@@ -1,1 +1,0 @@
-[2025-10-xx] Prototype grep sweep — no planted toggle references remain. Inline maturity note added near filtration summary; FAQ updated with plant guidance.

@@ -45,7 +45,7 @@ Generated 2025-10-23T20:14:32Z UTC | commit ce9e70c7fe7de3f2f475c8a4cf7179be1c74
 
 | Anchor | Href | Rel | Target |
 | --- | --- | --- | --- |
-| Plan My Stocking List | https://thetankguide.com/stocking.html |  |  |
+| Plan My Stocking List | https://thetankguide.com/stocking-advisor.html |  |  |
 | Browse the Gear Guide | https://thetankguide.com/gear/ |  |  |
 | Start the Cycling Coach | https://thetankguide.com/params.html |  |  |
 | Explore the Media Hub | https://thetankguide.com/media.html |  |  |

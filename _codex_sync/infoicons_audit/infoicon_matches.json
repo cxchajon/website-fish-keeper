@@ -216,8 +216,8 @@
     "preflight_timestamp": "2025-10-19T02:48:08Z"
   },
   {
-    "page_path": "/stocking.html",
-    "file": "stocking.html",
+    "page_path": "/stocking-advisor.html",
+    "file": "stocking-advisor.html",
     "term": "Bioload",
     "intent": "Clarify stocking impact",
     "context_excerpt": "Plan a healthy community by checking bioload, compatibility \u2014 and get recommended water parameters for your tank.",

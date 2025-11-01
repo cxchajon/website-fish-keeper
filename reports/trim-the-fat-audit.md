@@ -45,7 +45,7 @@ Quick wins: remove the unused bundles, lift the ad/consent CSS conflict, wire Ge
 | Page | Loader present once | `<ins>` slots | Consent placeholders when denied | Notes |
 |------|---------------------|---------------|----------------------------------|-------|
 | `/index.html` | ✅ script in `<head>` | ❌ none defined | ❌ `.is-ads-disabled` hides any potential slots | Add at least one responsive `<ins>` and keep placeholder visible.【F:index.html†L145-L173】【F:assets/css/ads.css†L1-L13】 |
-| `/stocking.html` | ✅ | ✅ Top `8419879326`, bottom `8979116676` | ❌ Hidden when consent denied because of shared CSS | Keep slots but adjust CSS to preserve placeholders for NPA traffic.【F:stocking.html†L965-L976】【F:stocking.html†L1370-L1382】【F:assets/css/ads.css†L1-L13】 |
+| `/stocking-advisor.html` | ✅ | ✅ Top `8419879326`, bottom `8979116676` | ❌ Hidden when consent denied because of shared CSS | Keep slots but adjust CSS to preserve placeholders for NPA traffic.【F:stocking-advisor.html†L965-L976】【F:stocking-advisor.html†L1370-L1382】【F:assets/css/ads.css†L1-L13】 |
 | `/gear/index.html` | ✅ | ✅ Bottom slot `1762971638` only | ❌ Hidden on denial via CSS | Add top slot (comment already present) and ensure consent denial keeps wrappers visible.【F:gear/index.html†L45-L61】【F:assets/css/ads.css†L1-L13】 |
 | `/params.html` | ✅ | ✅ Top `8136808291`, bottom `5754828160` | ❌ Hidden on denial | Same CSS issue; placeholders disappear for NPA state.【F:params.html†L575-L585】【F:params.html†L663-L672】 |
 | `/media.html` | ✅ | ✅ Bottom `9522042154` | ❌ Hidden on denial | Acceptable placement; fix CSS to prevent collapse.【F:media.html†L502-L513】 |
@@ -97,7 +97,7 @@ Quick wins: remove the unused bundles, lift the ad/consent CSS conflict, wire Ge
 - `backups/cleanup-20251002-165631/*.csv` duplicate live CSVs; confirm no automation depends on them.【448e33†L1-L2】
 
 ### C. Command Outputs & Link Map Highlights
-- Ad slot references: Stocking (`8419879326`, `8979116676`).【F:stocking.html†L965-L976】【F:stocking.html†L1370-L1382】
+- Ad slot references: Stocking (`8419879326`, `8979116676`).【F:stocking-advisor.html†L965-L976】【F:stocking-advisor.html†L1370-L1382】
 - Params slots (`8136808291`, `5754828160`).【F:params.html†L575-L585】【F:params.html†L663-L672】
 - Media slot (`9522042154`).【F:media.html†L502-L511】
 - Gear slot (`1762971638`).【F:gear/index.html†L45-L61】
@@ -111,7 +111,7 @@ Quick wins: remove the unused bundles, lift the ad/consent CSS conflict, wire Ge
 - Font Awesome CDN & Google Fonts as needed.【F:gear/index.html†L7-L13】【F:index.html†L23-L30】
 
 ### E. Test Hooks & Data Attributes
-- `data-testid` coverage on Gear (`gear-root`, accordions, modals) and Stocking (`species-list`, `btn-gear`) remains intact.【F:gear/index.html†L45-L53】【F:stocking.html†L1328-L1374】
+- `data-testid` coverage on Gear (`gear-root`, accordions, modals) and Stocking (`species-list`, `btn-gear`) remains intact.【F:gear/index.html†L45-L53】【F:stocking-advisor.html†L1328-L1374】
 
 ## Top 10 Safest Removals
 - [ ] Remove `js/gear.js` legacy bundle.【F:js/gear.js†L1-L30】

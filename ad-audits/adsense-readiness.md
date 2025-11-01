@@ -19,7 +19,7 @@ All static QA checkpoints passed for the monetized templates, consent wiring, an
 ## Page Results
 | Page | loader_once_head | slots_match | placement_looks_ok | cls_guard | banner_initial | accept_ads | accept_persist | reject_ads_non_personalized | reject_persist | legal_pages_adfree |
 |------|------------------|-------------|---------------------|-----------|----------------|------------|----------------|-----------------------------|----------------|--------------------|
-| /stocking.html | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| /stocking-advisor.html | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | /params.html | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | /gear.html | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | /media.html | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |

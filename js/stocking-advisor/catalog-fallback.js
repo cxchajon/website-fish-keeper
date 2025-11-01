@@ -1,5 +1,5 @@
-// Auto-generated fallback catalog for the prototype loader.
-// Derived from prototype/assets/data/filters_catalog.json
+// Auto-generated fallback catalog for the Stocking Advisor loader.
+// Derived from the Stocking Advisor filter catalog export
 export const FALLBACK_FILTER_CATALOG_VERSION = 1;
 export const FALLBACK_FILTER_CATALOG_GENERATED_AT = "2025-10-28T23:51:39.138Z";
 export const FALLBACK_FILTER_CATALOG = [

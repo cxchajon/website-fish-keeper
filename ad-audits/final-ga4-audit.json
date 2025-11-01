@@ -47,7 +47,7 @@
       "notes": "Replaced inline GA4 snippet with shared include."
     },
     {
-      "path": "stocking.html",
+      "path": "stocking-advisor.html",
       "ga4_loader_count": 1,
       "ga4_config_count": 1,
       "consent_before_ga4": true,

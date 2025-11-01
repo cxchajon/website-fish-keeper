@@ -27,7 +27,7 @@ REMOVED_ASSETS = [
 PAGES_TO_CHECK = {
     "index.html": "/",
     "gear/index.html": "/gear/",
-    "stocking.html": "/stocking.html",
+    "stocking-advisor.html": "/stocking-advisor.html",
     "params.html": "/params.html",
     "media.html": "/media.html",
     "about.html": "/about.html",
