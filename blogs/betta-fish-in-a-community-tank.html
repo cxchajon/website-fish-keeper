@@ -163,6 +163,72 @@
 
     /* extra breathing room between images & headings */
     h2, h3{margin-top:40px}
+
+    .blog-body {
+      position: relative;
+      background: rgba(25,25,25,0.35);
+      border-radius: 14px;
+      padding: 28px 22px;
+      margin: 24px auto;
+      max-width: 900px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      overflow: hidden;
+    }
+
+    .blog-body::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 120px;
+      background: linear-gradient(to bottom,
+        rgba(25,25,25,0.3) 0%,
+        rgba(25,25,25,0.15) 40%,
+        rgba(25,25,25,0.0) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .blog-body p {
+      line-height: 1.7;
+      color: #d8d8d8;
+      position: relative;
+      z-index: 1;
+    }
+
+    .blog-body h2,
+    .blog-body h3 {
+      margin-top: 36px;
+      color: #ffffff;
+      position: relative;
+      z-index: 1;
+    }
+
+    .blog-body figure {
+      margin: 28px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Optional subtle divider before body */
+    .section-split {
+      height: 8px;
+      background: linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .blog-body {
+        padding: 20px 16px;
+        border-radius: 12px;
+      }
+    }
   </style>
   <script type="application/ld+json">
   {
@@ -220,110 +286,114 @@
         <figcaption>A moment of stillness. He pauses mid-tank, watching, before his next patrol begins.</figcaption>
       </figure>
 
-      <h2>🧠 Introduction</h2>
-      <p class="tg-block">Many aquarists assume bettas must live alone — but that’s not always true.</p>
-      <p class="tg-block">Most people searching for betta info hit the same wall:</p>
-      <p class="tg-block"><em>“Keep them alone in a 5-gallon tank, and you’ll be fine.”</em></p>
-      <p class="tg-block">That’s what I read too when I got back into the hobby. The reason always given is simple — you never know what kind of temperament your betta will have. But over time, through research and observation, I learned there’s more to the story. With the right setup, bettas can absolutely thrive in a community tank — not as bullies, but as balanced, curious leaders of their own little ecosystem.</p>
-
       <div class="section-split" aria-hidden="true"></div>
 
-      <h3>🌿 My Journey Back Into the Hobby</h3>
-      <p class="tg-block">When I got back into the hobby, I planned a divided 20-gallon—safe, predictable, two separate scapes. But I wanted more. I wanted to see if a betta could actually thrive in a community. So I scrapped the divider and went all-in on a planted community tank instead.</p>
-      <p class="tg-block">I stocked peaceful species first — cherry barbs and cardinal tetras — fish that kept to themselves and rarely caused trouble. After that, I brought in my betta, Walter Mitty, named after the movie character with his wild imagination.</p>
+      <div class="blog-body">
+        <h2>🧠 Introduction</h2>
+        <p class="tg-block">Many aquarists assume bettas must live alone — but that’s not always true.</p>
+        <p class="tg-block">Most people searching for betta info hit the same wall:</p>
+        <p class="tg-block"><em>“Keep them alone in a 5-gallon tank, and you’ll be fine.”</em></p>
+        <p class="tg-block">That’s what I read too when I got back into the hobby. The reason always given is simple — you never know what kind of temperament your betta will have. But over time, through research and observation, I learned there’s more to the story. With the right setup, bettas can absolutely thrive in a community tank — not as bullies, but as balanced, curious leaders of their own little ecosystem.</p>
 
-      <figure class="tg-figure">
-        <img
-          src="/assets/blogs/betta-community-tank/originals/betta-greeting-at-glass-planted-community.jpg"
-          alt="Betta meeting a visitor’s finger at the glass."
-          class="tg-img"
-          loading="lazy"
-          decoding="async"
-          referrerpolicy="no-referrer"
-        >
-        <figcaption>Bold and aware. He tracks movement outside the glass—always curious, never hiding.</figcaption>
-      </figure>
+        <div class="section-split" aria-hidden="true"></div>
 
-      <div class="section-split" aria-hidden="true"></div>
+        <h3>🌿 My Journey Back Into the Hobby</h3>
+        <p class="tg-block">When I got back into the hobby, I planned a divided 20-gallon—safe, predictable, two separate scapes. But I wanted more. I wanted to see if a betta could actually thrive in a community. So I scrapped the divider and went all-in on a planted community tank instead.</p>
+        <p class="tg-block">I stocked peaceful species first — cherry barbs and cardinal tetras — fish that kept to themselves and rarely caused trouble. After that, I brought in my betta, Walter Mitty, named after the movie character with his wild imagination.</p>
 
-      <h3>🧩 Establishing Order</h3>
-      <p class="tg-block">At first, Walter darted at the other fish, and I worried it was aggression. But when I watched closely, I saw a pattern: he never actually made contact. It wasn’t about harm — it was about establishing his place in the tank’s pecking order. Over time, he became the tank’s peacekeeper — breaking up fights between barbs and patrolling the area like a guardian.</p>
-      <p class="tg-block">He’d go after the cherry barbs because they were the most active swimmers, but their small size and peaceful nature made them safe companions—he never attacked them. Whenever I approached, he’d investigate first, always aware, always watching. That’s when I realized — in a well-balanced community, a betta can become the calm authority rather than the chaos everyone warns about.</p>
+        <figure class="tg-figure">
+          <img
+            src="/assets/blogs/betta-community-tank/originals/betta-greeting-at-glass-planted-community.jpg"
+            alt="Betta meeting a visitor’s finger at the glass."
+            class="tg-img"
+            loading="lazy"
+            decoding="async"
+            referrerpolicy="no-referrer"
+          >
+          <figcaption>Bold and aware. He tracks movement outside the glass—always curious, never hiding.</figcaption>
+        </figure>
 
-      <figure class="tg-figure">
-        <img
-          src="/assets/blogs/betta-community-tank/originals/top-down-betta-floating-plants-community.jpg"
-          alt="Top-down view of a betta under floating plants."
-          class="tg-img"
-          loading="lazy"
-          decoding="async"
-          referrerpolicy="no-referrer"
-        >
-        <figcaption>Using the floating plants as cover, he drifts through his domain with quiet confidence.</figcaption>
-      </figure>
+        <div class="section-split" aria-hidden="true"></div>
 
-      <div class="section-split" aria-hidden="true"></div>
+        <h3>🧩 Establishing Order</h3>
+        <p class="tg-block">At first, Walter darted at the other fish, and I worried it was aggression. But when I watched closely, I saw a pattern: he never actually made contact. It wasn’t about harm — it was about establishing his place in the tank’s pecking order. Over time, he became the tank’s peacekeeper — breaking up fights between barbs and patrolling the area like a guardian.</p>
+        <p class="tg-block">He’d go after the cherry barbs because they were the most active swimmers, but their small size and peaceful nature made them safe companions—he never attacked them. Whenever I approached, he’d investigate first, always aware, always watching. That’s when I realized — in a well-balanced community, a betta can become the calm authority rather than the chaos everyone warns about.</p>
 
-      <h3>⚠️ The Apisto Experiment</h3>
-      <p class="tg-block">One day, I tried introducing an Apistogramma. While acclimating the bag, Walter flared instantly. That’s when I learned a key rule:</p>
-      <p class="tg-block"><strong>Bettas see fish of similar size and shape as rivals.</strong></p>
-      <p class="tg-block">The Apisto went to another tank, and peace remained. It was a good reminder that betta compatibility isn’t just about temperament — it’s about silhouette, space, and dominance cues. Walter taught me that lesson clearly, and it shaped how I chose tankmates from that point forward.</p>
+        <figure class="tg-figure">
+          <img
+            src="/assets/blogs/betta-community-tank/originals/top-down-betta-floating-plants-community.jpg"
+            alt="Top-down view of a betta under floating plants."
+            class="tg-img"
+            loading="lazy"
+            decoding="async"
+            referrerpolicy="no-referrer"
+          >
+          <figcaption>Using the floating plants as cover, he drifts through his domain with quiet confidence.</figcaption>
+        </figure>
 
-      <div class="section-split" aria-hidden="true"></div>
+        <div class="section-split" aria-hidden="true"></div>
 
-      <h3>🌈 Saying Goodbye &amp; Starting Again</h3>
-      <p class="tg-block">Walter lived a few good years. When he got sick, I tried everything I could — different remedies, water changes, mild treatments — hoping he’d recover. Unfortunately, he developed that spinal issue where the back arches, and eventually, he couldn’t swim right.</p>
-      <p class="tg-block">It was rough. I eventually had to euthanize him using the clove oil method recommended by veterinary guidance — one of the hardest moments I’ve had in fishkeeping.</p>
-      <p class="tg-block">But his legacy taught me a lot. When I set up my new 29-gallon planted tank with a 5-gallon sump, I applied everything I’d learned — and the new betta thrived.</p>
+        <h3>⚠️ The Apisto Experiment</h3>
+        <p class="tg-block">One day, I tried introducing an Apistogramma. While acclimating the bag, Walter flared instantly. That’s when I learned a key rule:</p>
+        <p class="tg-block"><strong>Bettas see fish of similar size and shape as rivals.</strong></p>
+        <p class="tg-block">The Apisto went to another tank, and peace remained. It was a good reminder that betta compatibility isn’t just about temperament — it’s about silhouette, space, and dominance cues. Walter taught me that lesson clearly, and it shaped how I chose tankmates from that point forward.</p>
 
-      <figure class="tg-figure">
-        <img
-          src="/assets/blogs/betta-community-tank/originals/betta-with-neon-tetras-community-tank.jpg"
-          alt="Betta swimming among neon tetras in a planted community."
-          class="tg-img"
-          loading="lazy"
-          decoding="async"
-          referrerpolicy="no-referrer"
-        >
-        <figcaption>The centerpiece of the community. His presence anchors the tank—calm authority without aggression.</figcaption>
-      </figure>
+        <div class="section-split" aria-hidden="true"></div>
 
-      <div class="section-split" aria-hidden="true"></div>
+        <h3>🌈 Saying Goodbye &amp; Starting Again</h3>
+        <p class="tg-block">Walter lived a few good years. When he got sick, I tried everything I could — different remedies, water changes, mild treatments — hoping he’d recover. Unfortunately, he developed that spinal issue where the back arches, and eventually, he couldn’t swim right.</p>
+        <p class="tg-block">It was rough. I eventually had to euthanize him using the clove oil method recommended by veterinary guidance — one of the hardest moments I’ve had in fishkeeping.</p>
+        <p class="tg-block">But his legacy taught me a lot. When I set up my new 29-gallon planted tank with a 5-gallon sump, I applied everything I’d learned — and the new betta thrived.</p>
 
-      <h2>🌊 Behavior in a Balanced Tank</h2>
-      <p class="tg-block">In my 29-gallon sump-filtered setup, my betta is the quiet king. He checks on every corner, investigates my hand when I reach in, and doesn’t bother shrimp or snails.</p>
-      <p class="tg-block">He even “patrols” when the cherry barbs squabble — the same way Walter used to. The current is gentle thanks to a Random Flow Generator nozzle and a gate valve, keeping the flow calm but steady.</p>
-      <p class="tg-block">He’s not just decoration — he’s part of the ecosystem. And watching him settle into that role confirmed everything Walter had taught me: given the right conditions, bettas don’t dominate through aggression—they lead through presence.</p>
+        <figure class="tg-figure">
+          <img
+            src="/assets/blogs/betta-community-tank/originals/betta-with-neon-tetras-community-tank.jpg"
+            alt="Betta swimming among neon tetras in a planted community."
+            class="tg-img"
+            loading="lazy"
+            decoding="async"
+            referrerpolicy="no-referrer"
+          >
+          <figcaption>The centerpiece of the community. His presence anchors the tank—calm authority without aggression.</figcaption>
+        </figure>
 
-      <div class="section-split" aria-hidden="true"></div>
+        <div class="section-split" aria-hidden="true"></div>
 
-      <h2>🌿 Why Bettas Belong in Planted Communities</h2>
-      <p class="tg-block">Here’s what made it work:</p>
-      <ul class="tg-block">
-        <li>✅ <strong>Give space</strong> — especially horizontal swimming room. Bettas breathe from the surface using their labyrinth organ, but they patrol horizontally across their territory.</li>
-        <li>✅ <strong>Keep water pristine.</strong> Don’t rely on their “hardy” label; they tolerate poor conditions briefly, but thrive only with consistency. Ammonia spikes and temperature swings stress them quickly.</li>
-        <li>✅ <strong>Provide plants with broad leaves</strong> — like java fern or anubias — they love to rest or perch on them.</li>
-        <li>✅ <strong>Avoid fin-nippers or flashy fish</strong> — tiger barbs, male guppies, angelfish, or other long-finned species often trigger aggression.</li>
-        <li>✅ <strong>Add the betta last.</strong> Let the community aquarium setup establish first so the betta blends in rather than claiming the whole tank.</li>
-      </ul>
-      <p class="pro-tip tg-block">💧 <strong>Pro Tip:</strong> Keep conditions stable around 78 °F (25 °C) with gentle flow and a pH between 6.8 – 7.4 for best results.</p>
+        <h2>🌊 Behavior in a Balanced Tank</h2>
+        <p class="tg-block">In my 29-gallon sump-filtered setup, my betta is the quiet king. He checks on every corner, investigates my hand when I reach in, and doesn’t bother shrimp or snails.</p>
+        <p class="tg-block">He even “patrols” when the cherry barbs squabble — the same way Walter used to. The current is gentle thanks to a Random Flow Generator nozzle and a gate valve, keeping the flow calm but steady.</p>
+        <p class="tg-block">He’s not just decoration — he’s part of the ecosystem. And watching him settle into that role confirmed everything Walter had taught me: given the right conditions, bettas don’t dominate through aggression—they lead through presence.</p>
 
-      <div class="section-split" aria-hidden="true"></div>
+        <div class="section-split" aria-hidden="true"></div>
 
-      <h2>🧮 Planning Your Own Betta Community</h2>
-      <p class="tg-block">If you’re thinking about building your own betta-friendly setup, planning goes a long way. Peaceful betta tankmates, flow strength, and filtration all affect how balanced the tank will be.</p>
-      <p class="tg-block">Before you start stocking, try our <strong><a href="/stocking-advisor.html">Stocking Advisor</a></strong> — it helps you estimate bioload, compatibility, and filtration strength for your exact setup. It’s the same logic I use when designing my own tanks, and it’ll save you the kind of guesswork that cost Walter Mitty his Apisto tankmate.</p>
+        <h2>🌿 Why Bettas Belong in Planted Communities</h2>
+        <p class="tg-block">Here’s what made it work:</p>
+        <ul class="tg-block">
+          <li>✅ <strong>Give space</strong> — especially horizontal swimming room. Bettas breathe from the surface using their labyrinth organ, but they patrol horizontally across their territory.</li>
+          <li>✅ <strong>Keep water pristine.</strong> Don’t rely on their “hardy” label; they tolerate poor conditions briefly, but thrive only with consistency. Ammonia spikes and temperature swings stress them quickly.</li>
+          <li>✅ <strong>Provide plants with broad leaves</strong> — like java fern or anubias — they love to rest or perch on them.</li>
+          <li>✅ <strong>Avoid fin-nippers or flashy fish</strong> — tiger barbs, male guppies, angelfish, or other long-finned species often trigger aggression.</li>
+          <li>✅ <strong>Add the betta last.</strong> Let the community aquarium setup establish first so the betta blends in rather than claiming the whole tank.</li>
+        </ul>
+        <p class="pro-tip tg-block">💧 <strong>Pro Tip:</strong> Keep conditions stable around 78 °F (25 °C) with gentle flow and a pH between 6.8 – 7.4 for best results.</p>
 
-      <div class="section-split" aria-hidden="true"></div>
+        <div class="section-split" aria-hidden="true"></div>
 
-      <h2>🐟 Final Thoughts</h2>
-      <p class="tg-block">Bettas get a bad reputation because of misunderstanding. In reality, with space, plants, clean water, and compatible tankmates, they bring life, movement, and personality to a planted community.</p>
-      <p class="tg-block">They’ll establish their order, but it’s rarely violent. It’s confidence — like a rooster establishing the pecking order: posturing, not violence.</p>
-      <p class="tg-block">Give them what they need, respect their instincts, and you’ll see what I see:</p>
-      <p class="tg-block"><strong>A true king of the tank — calm, curious, and utterly captivating.</strong></p>
-      <p class="tg-block">For more setup ideas and real community examples, explore our <strong><a href="/stocking-advisor.html">Stocking Advisor</a></strong> and upcoming community-tank features on The Tank Guide.</p>
+        <h2>🧮 Planning Your Own Betta Community</h2>
+        <p class="tg-block">If you’re thinking about building your own betta-friendly setup, planning goes a long way. Peaceful betta tankmates, flow strength, and filtration all affect how balanced the tank will be.</p>
+        <p class="tg-block">Before you start stocking, try our <strong><a href="/stocking-advisor.html">Stocking Advisor</a></strong> — it helps you estimate bioload, compatibility, and filtration strength for your exact setup. It’s the same logic I use when designing my own tanks, and it’ll save you the kind of guesswork that cost Walter Mitty his Apisto tankmate.</p>
 
-      <div class="section-split" aria-hidden="true"></div>
+        <div class="section-split" aria-hidden="true"></div>
+
+        <h2>🐟 Final Thoughts</h2>
+        <p class="tg-block">Bettas get a bad reputation because of misunderstanding. In reality, with space, plants, clean water, and compatible tankmates, they bring life, movement, and personality to a planted community.</p>
+        <p class="tg-block">They’ll establish their order, but it’s rarely violent. It’s confidence — like a rooster establishing the pecking order: posturing, not violence.</p>
+        <p class="tg-block">Give them what they need, respect their instincts, and you’ll see what I see:</p>
+        <p class="tg-block"><strong>A true king of the tank — calm, curious, and utterly captivating.</strong></p>
+        <p class="tg-block">For more setup ideas and real community examples, explore our <strong><a href="/stocking-advisor.html">Stocking Advisor</a></strong> and upcoming community-tank features on The Tank Guide.</p>
+
+        <div class="section-split" aria-hidden="true"></div>
+      </div>
     </article>
   </main>
 
