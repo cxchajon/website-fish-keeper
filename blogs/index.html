@@ -9,13 +9,40 @@
   <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
   <link rel="stylesheet" href="/css/blogs.css" />
   <style>
+    body {
+      background-color: #2d2d2d;
+      background-image: none;
+      color: #f4f9fc;
+      --brand: #00c3b6;
+      --accent: #00c3b6;
+      --radius: 16px;
+    }
+
+    main.blogs-panel {
+      background: rgba(52, 53, 65, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.32);
+    }
+
+    .card-media {
+      display: block;
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0b1720;
+    }
+
     .card-thumb {
       display: block;
       width: 100%;
-      aspect-ratio: 16 / 9;
+      height: 100%;
       object-fit: cover;
-      border-radius: 12px;
-      background: #0b1720;
+    }
+
+    .card-thumb--betta {
+      object-position: 50% 45%;
     }
 
     .card-img {
@@ -86,12 +113,12 @@
     /* Maintain the magazine borders from earlier */
     .blog-card{
       position: relative;
-      background: var(--card, rgba(255,255,255,0.06));
-      border-radius: calc(var(--radius, 18px) - 4px);
-      border: 2px solid rgba(255,255,255,0.08);
+      background: #343541;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
       box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.06),
-        0 6px 20px rgba(0,0,0,0.18);
+        inset 0 0 0 1px rgba(255,255,255,0.05),
+        0 14px 30px rgba(0,0,0,0.32);
       overflow: hidden;
       transition:
         transform 0.25s ease,
@@ -104,17 +131,17 @@
     }
     .blog-card:hover{
       transform: translateY(-4px);
-      background: var(--card-hover, rgba(255,255,255,0.12));
-      border-color: rgba(255,255,255,0.22);
+      background: rgba(52,53,65,0.95);
+      border-color: rgba(255,255,255,0.18);
       box-shadow:
         inset 0 0 0 1px rgba(255,255,255,0.08),
-        0 10px 26px rgba(0,0,0,0.28);
+        0 18px 36px rgba(0,0,0,0.38);
     }
     /* Headline bar on each card title */
     .blog-card .card-title{ position:relative; padding-top:10px; margin-top:8px; }
     .blog-card .card-title::before{
       content:""; position:absolute; top:0; left:0; width:48px; height:2px;
-      background: linear-gradient(to right, var(--brand, #9ce0ff), rgba(255,255,255,0));
+      background: linear-gradient(to right, var(--brand, #00c3b6), rgba(255,255,255,0));
       border-radius:2px; opacity:.9; transition: width .3s ease, opacity .3s ease;
     }
     .blog-card:hover .card-title::before{ width:72px; opacity:1; }
@@ -123,13 +150,20 @@
       display:flex;
       flex-direction:column;
       gap:.65rem;
-      padding: clamp(14px, 2.6vw, 20px);
+      padding: clamp(20px, 3vw, 24px);
     }
     .blog-card .card-kicker{
       margin:0;
       font-size:.9rem;
       color: var(--muted, rgba(255,255,255,0.72));
       letter-spacing:.2px;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:.35rem;
+    }
+    .blog-card .card-kicker .meta-sep{
+      color: rgba(255,255,255,0.38);
     }
     .blog-card .card-title{
       font-size:clamp(1.15rem, 2.6vw, 1.55rem);
@@ -153,7 +187,7 @@
     .blog-card .card-read{
       margin-top:auto;
       font-weight:600;
-      color: var(--brand, #9ce0ff);
+      color: var(--brand, #00c3b6);
       text-decoration:none;
       display:inline-flex;
       align-items:center;
@@ -238,34 +272,49 @@
         <p class="topic-sub">First steps, setup mistakes, and confidence builders.</p>
       </header>
       <div class="blogs-grid">
-        <article class="blog-card" itemscope itemtype="https://schema.org/CreativeWork">
-          <a class="card-thumb-link" href="/blogs/betta-fish-in-a-community-tank.html" aria-label="Read: Betta Fish in a Community Tank">
-            <img
-              class="card-thumb card-img"
-              src="/assets/blogs/betta-community-tank/originals/betta-resting-random-flow-generator-planted-tank.jpg"
-              alt="Betta resting near a Random Flow Generator in a planted tank."
-              loading="lazy"
-              decoding="async"
-            />
+        <article class="blog-card" itemscope itemtype="https://schema.org/BlogPosting">
+          <a class="card-thumb-link" href="/blogs/betta-fish-in-a-community-tank.html" aria-label="Read: Betta Fish in a Community Tank" itemprop="url">
+            <span class="card-media">
+              <img
+                class="card-thumb card-thumb--betta"
+                src="/assets/blogs/betta-community-tank/originals/betta-resting-random-flow-generator-planted-tank.jpg"
+                alt="Betta resting near a Random Flow Generator in a planted tank."
+                loading="lazy"
+                decoding="async"
+                width="1200"
+                height="675"
+                itemprop="image"
+              />
+            </span>
           </a>
           <div class="card-content">
-            <p class="card-kicker">Oct 2025 • 12 min read</p>
+            <p class="card-kicker">
+              <span class="card-author" itemprop="author">FishKeepingLifeCo</span>
+              <span class="meta-sep" aria-hidden="true">•</span>
+              <time datetime="2025-10-31T09:00:00-04:00" itemprop="datePublished">Oct 31, 2025</time>
+              <span class="meta-sep" aria-hidden="true">•</span>
+              <span class="card-readtime">12 min read</span>
+            </p>
             <h3 class="card-title" itemprop="headline">
               <a href="/blogs/betta-fish-in-a-community-tank.html">Betta Fish in a Community Tank</a>
             </h3>
-            <p class="card-excerpt">A real-world look at keeping a betta peacefully in a planted community—setup, behavior, and the rules that actually matter.</p>
+            <p class="card-excerpt" itemprop="description">Real-world lessons on keeping bettas peacefully in planted community tanks — and how balance makes them the calm kings of the aquarium.</p>
             <a class="card-read" href="/blogs/betta-fish-in-a-community-tank.html">Read the blog →</a>
           </div>
         </article>
         <article class="blog-card" itemscope itemtype="https://schema.org/CreativeWork">
           <a class="card-thumb-link" href="/blogs/nitrogen-cycle/" aria-label="Read: The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping">
-            <img
-              class="card-thumb card-img"
-              src="/blogs/shared/img/nitrogen-cycle-diagram.PNG"
-              alt="Educational nitrogen cycle diagram showing fish waste turning into ammonia, nitrite, and nitrate, keeping aquariums safe."
-              loading="lazy"
-              decoding="async"
-            />
+            <span class="card-media">
+              <img
+                class="card-thumb card-img"
+                src="/blogs/shared/img/nitrogen-cycle-diagram.PNG"
+                alt="Educational nitrogen cycle diagram showing fish waste turning into ammonia, nitrite, and nitrate, keeping aquariums safe."
+                loading="lazy"
+                decoding="async"
+                width="1200"
+                height="675"
+              />
+            </span>
           </a>
           <div class="card-content">
             <p class="card-kicker">Core Principles • ~5 min</p>
@@ -287,16 +336,18 @@
       <div class="blogs-grid">
         <article class="blog-card" itemscope itemtype="https://schema.org/CreativeWork">
           <a class="card-thumb-link" href="/blogs/blackbeard/" aria-label="Read: Beating Black Beard Algae">
-            <img
-              src="/blogs/blackbeard/img/IMG_9610.png"
-              alt="Black Beard Algae before treatment (full bloom)"
-              class="card-thumb"
-              loading="lazy"
-              decoding="async"
-              width="320"
-              height="180"
-              onerror="this.onerror=null;this.src='/blogs/shared/img/ph-card.png';"
-            />
+            <span class="card-media">
+              <img
+                src="/blogs/blackbeard/img/IMG_9610.png"
+                alt="Black Beard Algae before treatment (full bloom)"
+                class="card-thumb"
+                loading="lazy"
+                decoding="async"
+                width="320"
+                height="180"
+                onerror="this.onerror=null;this.src='/blogs/shared/img/ph-card.png';"
+              />
+            </span>
           </a>
           <div class="card-content">
             <h3 class="card-title" itemprop="headline"><a href="/blogs/blackbeard/">Beating Black Beard Algae: What Finally Worked</a></h3>
@@ -314,11 +365,15 @@
       <div class="blogs-grid">
         <article class="blog-card" itemscope itemtype="https://schema.org/CreativeWork">
           <a class="card-thumb-link" href="/blogs/purigen/" aria-label="Read: Purigen">
-            <img class="card-thumb"
-                 src="/blogs/purigen/img/thumbs/purigen-thumb.jpeg"
-                 alt="Purigen sump placement thumbnail"
-                 loading="lazy" decoding="async"
-                 onerror="this.onerror=null;this.src='/blogs/purigen/img/IMG_9299.jpeg';" />
+            <span class="card-media">
+              <img class="card-thumb"
+                   src="/blogs/purigen/img/thumbs/purigen-thumb.jpeg"
+                   alt="Purigen sump placement thumbnail"
+                   loading="lazy" decoding="async"
+                   width="1200"
+                   height="675"
+                   onerror="this.onerror=null;this.src='/blogs/purigen/img/IMG_9299.jpeg';" />
+            </span>
           </a>
           <div class="card-content">
             <h3 class="card-title" itemprop="headline"><a href="/blogs/purigen/">Purigen: Polish Your Water Clarity</a></h3>
