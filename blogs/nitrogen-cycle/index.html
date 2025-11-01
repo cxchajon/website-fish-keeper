@@ -152,6 +152,22 @@
       font-weight: 600;
     }
   </style>
+  <style>
+    /* Nitrogen Cycle page: show full illustration without cropping */
+    .tg-figure--nocrop { overflow: hidden; border-radius: 14px; }
+    .tg-figure--nocrop .tg-img--nocrop {
+      width: 100%;
+      height: auto;
+      object-fit: contain !important;
+      aspect-ratio: auto !important;
+      display: block;
+      background: #1f1f1f;
+    }
+    .tg-figure--nocrop .card-media,
+    .tg-figure--nocrop .tg-media {
+      height: auto !important;
+    }
+  </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (load FIRST) -->
   <script src="/assets/js/consent-mode.js" defer></script>
@@ -174,13 +190,14 @@
         <p class="lede">If you’re new and this part feels confusing, you’re not alone. This is the story of how I went from totally stuck to “I’ve got this,” and the simple habits that keep my tanks stable today.</p>
       </header>
 
-      <figure class="blog-hero">
+      <figure class="blog-hero tg-figure tg-figure--nocrop">
         <img
+          class="tg-img tg-img--nocrop"
           src="/blogs/shared/img/nitrogen-cycle-diagram.PNG"
           alt="Simplified nitrogen cycle diagram from fish waste to clean water: ammonia → nitrite → nitrate → water change"
           loading="lazy"
-          width="1200"
-          height="900"
+          width="2625"
+          height="3375"
         />
         <figcaption>
           <em>A simplified view of the nitrogen cycle — from fish waste to clean water.</em>
