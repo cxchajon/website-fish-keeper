@@ -590,25 +590,77 @@
       </article>
     </section>
 
-    <section id="quick-answers" class="gear-quick-answers" aria-labelledby="quick-answers-title">
+    <section id="quick-answers" class="gear-quick-answers qa-cards" aria-labelledby="quick-answers-title">
       <h2 id="quick-answers-title">Quick Answers: Essential Gear Checklist by Tank Size</h2>
       <p class="quick-answers__intro">Use these at-a-glance checklists for the most common community aquariums so you can match heaters, flow, lighting, and substrate before you shop.</p>
-      <div class="quick-answers__grid">
-        <article class="quick-answers__item">
-          <h3>10-Gallon Community Tank Essentials</h3>
-          <p>50W adjustable heater, hang-on-back filter rated 80 GPH, 15–20W LED, air stone with check valve, 10 lbs fine gravel, and a snug lid to curb evaporation.</p>
+      <div class="qa-card-list" role="list">
+        <article id="qa-10g-card" class="qa-card" role="listitem">
+          <button
+            type="button"
+            class="qa-card__trigger"
+            aria-expanded="false"
+            aria-controls="qa-10g-panel"
+            data-qa-size="10g"
+            data-analytics="quick-answers"
+          >
+            <span class="qa-card__title">10-Gallon Community Tank Essentials</span>
+            <span class="qa-card__icon" aria-hidden="true">▸</span>
+          </button>
+          <div id="qa-10g-panel" class="qa-panel" aria-hidden="true" hidden>
+            <span class="qa-panel__copy" aria-hidden="true">Copy checklist</span>
+            <p>50W adjustable heater, hang-on-back filter rated 80 GPH, 15–20W LED, air stone with check valve, 10 lbs fine gravel, and a snug lid to curb evaporation.</p>
+          </div>
         </article>
-        <article class="quick-answers__item">
-          <h3>20-Gallon Beginner Tank Essentials</h3>
-          <p>100W adjustable heater, canister or HOB filter rated 160–200 GPH, 20–30W LED, dual outlet air pump, 20 lbs planted substrate, and glass canopy for humidity control.</p>
+        <article id="qa-20g-card" class="qa-card" role="listitem">
+          <button
+            type="button"
+            class="qa-card__trigger"
+            aria-expanded="false"
+            aria-controls="qa-20g-panel"
+            data-qa-size="20g"
+            data-analytics="quick-answers"
+          >
+            <span class="qa-card__title">20-Gallon Beginner Tank Essentials</span>
+            <span class="qa-card__icon" aria-hidden="true">▸</span>
+          </button>
+          <div id="qa-20g-panel" class="qa-panel" aria-hidden="true" hidden>
+            <span class="qa-panel__copy" aria-hidden="true">Copy checklist</span>
+            <p>100W adjustable heater, canister or HOB filter rated 160–200 GPH, 20–30W LED, dual outlet air pump, 20 lbs planted substrate, and glass canopy for humidity control.</p>
+          </div>
         </article>
-        <article class="quick-answers__item">
-          <h3>29-Gallon Showcase Tank Essentials</h3>
-          <p>150W adjustable heater, canister filter rated 220–250 GPH, 30–40W LED with timer, air manifold for multiple stones, 30 lbs mix of sand and gravel, and magnetic algae cleaner.</p>
+        <article id="qa-29g-card" class="qa-card" role="listitem">
+          <button
+            type="button"
+            class="qa-card__trigger"
+            aria-expanded="false"
+            aria-controls="qa-29g-panel"
+            data-qa-size="29g"
+            data-analytics="quick-answers"
+          >
+            <span class="qa-card__title">29-Gallon Showcase Tank Essentials</span>
+            <span class="qa-card__icon" aria-hidden="true">▸</span>
+          </button>
+          <div id="qa-29g-panel" class="qa-panel" aria-hidden="true" hidden>
+            <span class="qa-panel__copy" aria-hidden="true">Copy checklist</span>
+            <p>150W adjustable heater, canister filter rated 220–250 GPH, 30–40W LED with timer, air manifold for multiple stones, 30 lbs mix of sand and gravel, and magnetic algae cleaner.</p>
+          </div>
         </article>
-        <article class="quick-answers__item">
-          <h3>40 Breeder Community Tank Essentials</h3>
-          <p>200W adjustable heater, canister filter rated 300 GPH with spray bar, 40–50W LED, battery-backed air pump, 40 lbs buffered substrate, and reinforced stand rated for 600 lbs.</p>
+        <article id="qa-40b-card" class="qa-card" role="listitem">
+          <button
+            type="button"
+            class="qa-card__trigger"
+            aria-expanded="false"
+            aria-controls="qa-40b-panel"
+            data-qa-size="40b"
+            data-analytics="quick-answers"
+          >
+            <span class="qa-card__title">40 Breeder Community Tank Essentials</span>
+            <span class="qa-card__icon" aria-hidden="true">▸</span>
+          </button>
+          <div id="qa-40b-panel" class="qa-panel" aria-hidden="true" hidden>
+            <span class="qa-panel__copy" aria-hidden="true">Copy checklist</span>
+            <p>200W adjustable heater, canister filter rated 300 GPH with spray bar, 40–50W LED, battery-backed air pump, 40 lbs buffered substrate, and reinforced stand rated for 600 lbs.</p>
+          </div>
         </article>
       </div>
     </section>
@@ -667,6 +719,7 @@
       <li class="proto-footer-links__item"><a href="/cookies.html">Cookie Policy</a></li>
     </ul>
   </div>
+  <script defer src="./js/quick-answers.js"></script>
   <script defer src="./js/gear.v2.data.js"></script>
   <script type="module" src="./js/ui/tooltip.js"></script>
   <script defer src="./js/gear.v2.js"></script>
