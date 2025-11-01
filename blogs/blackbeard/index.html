@@ -63,6 +63,20 @@
       text-decoration: underline;
     }
 
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: var(--accent, #8fe3ff);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover,
+    .back-link:focus {
+      text-decoration: underline;
+    }
+
     /* === Topic Accent System (Magazine) === */
     :root{
       --accent:#8fe3ff; /* fallback */
@@ -126,166 +140,170 @@
   <main class="blog-open">
     <article class="blog-article" itemscope itemtype="https://schema.org/BlogPosting">
 
-      <p><a href="/blogs/">← Back to Spotlight Blogs</a></p>
+      <p><a class="back-link" href="/blogs/">← Back to Spotlight Blogs</a></p>
 
       <div class="article-accent">
         <h1 itemprop="headline">BBA Gone: How I Finally Beat Black Beard Algae (Spot Dose Guide)</h1>
         <p class="kicker" itemprop="description">My exact spot-dosing routine, lighting &amp; flow fixes, and sump refugium tweaks that finally beat BBA—safely.</p>
       </div>
 
-      <p>I’ve had Black Beard Algae for years. Back when this tank was a 20-long, it was my sandbox. I ran air stones, sponge filters, hacked HOBs with cut-to-fit sponges, went blackwater, chased reds—you name it. I wasn’t reckless; I knew how to keep fish happy at a minimum. The fun was bending the rules and seeing what else was possible.</p>
+      <div class="section-split" aria-hidden="true"></div>
 
-      <p>I used to follow the “let the tank do its thing” philosophy—no chemicals. Later I warmed up to startup helpers like Seachem <a href="https://amzn.to/4npfuvn" target="_blank" rel="noopener noreferrer">Stability</a>, and that shifted my thinking. One habit that didn’t help: the tank sat by the living room TV, so the lights were often on with no timer. Today the light runs a proper plant-first spectrum (no extra white spikes) on a schedule. I’m on a Finnex 24/7 with a custom program.</p>
-      <!-- TODO: add internal link to Finnex 24/7 guide when available -->
+      <div class="blog-body">
+        <p>I’ve had Black Beard Algae for years. Back when this tank was a 20-long, it was my sandbox. I ran air stones, sponge filters, hacked HOBs with cut-to-fit sponges, went blackwater, chased reds—you name it. I wasn’t reckless; I knew how to keep fish happy at a minimum. The fun was bending the rules and seeing what else was possible.</p>
 
-      <figure class="blog-image right">
-        <img src="/blogs/blackbeard/img/IMG_9610.png" alt="Before photo of planted aquarium with heavy Black Beard Algae growth"
-             onerror="this.onerror=null;this.src='/media/placeholder-16x9.svg';" />
-        <figcaption>Before: heavy BBA on hardscape and leaves.</figcaption>
-      </figure>
+        <p>I used to follow the “let the tank do its thing” philosophy—no chemicals. Later I warmed up to startup helpers like Seachem <a href="https://amzn.to/4npfuvn" target="_blank" rel="noopener noreferrer">Stability</a>, and that shifted my thinking. One habit that didn’t help: the tank sat by the living room TV, so the lights were often on with no timer. Today the light runs a proper plant-first spectrum (no extra white spikes) on a schedule. I’m on a Finnex 24/7 with a custom program.</p>
+        <!-- TODO: add internal link to Finnex 24/7 guide when available -->
 
-      <h2>Why I Stopped Tolerating Black Beard Algae</h2>
-      <p>When I upgraded to a 29-gallon with a sump, I wanted a clean top—no gear hanging off the rim. It looked great… except the Black Beard Algae kept coming back. People call BBA a lifetime algae. I used to justify it as “still a plant, still photosynthesizing.” What I missed: it was robbing nutrients and light from the plants I actually wanted.</p>
-      <ul>
-        <li>Inconsistent lighting (no timer back then) and the wrong spectrum</li>
-        <li>Plant melt left in the tank—dying tissue leaks compounds BBA loves</li>
-        <li>Uneven flow—dead spots let BBA settle and hold ground</li>
-        <li>Fertilizer timing vs. uptake—when growth stalls, nutrients linger</li>
-      </ul>
+        <figure class="blog-image right">
+          <img src="/blogs/blackbeard/img/IMG_9610.png" alt="Before photo of planted aquarium with heavy Black Beard Algae growth"
+               onerror="this.onerror=null;this.src='/media/placeholder-16x9.svg';" />
+          <figcaption>Before: heavy BBA on hardscape and leaves.</figcaption>
+        </figure>
 
-      <h2>My Experiments: Why Liquid Carbon Dosing Didn’t Work</h2>
-      <!-- TODO: add internal link to Seachem Excel guide when available -->
-      <p>I’d tried <a href="https://amzn.to/4qsK89V" target="_blank" rel="noopener sponsored">Seachem Excel</a> before and didn’t love it because I used it like “liquid CO₂.” It isn’t. Used correctly as a targeted algaecide, it’s a different story.</p>
+        <h2>Why I Stopped Tolerating Black Beard Algae</h2>
+        <p>When I upgraded to a 29-gallon with a sump, I wanted a clean top—no gear hanging off the rim. It looked great… except the Black Beard Algae kept coming back. People call BBA a lifetime algae. I used to justify it as “still a plant, still photosynthesizing.” What I missed: it was robbing nutrients and light from the plants I actually wanted.</p>
+        <ul>
+          <li>Inconsistent lighting (no timer back then) and the wrong spectrum</li>
+          <li>Plant melt left in the tank—dying tissue leaks compounds BBA loves</li>
+          <li>Uneven flow—dead spots let BBA settle and hold ground</li>
+          <li>Fertilizer timing vs. uptake—when growth stalls, nutrients linger</li>
+        </ul>
 
-      <h2>The Game Changer: How to Spot Dose Seachem Excel for BBA</h2>
-      <h3>Step-by-Step: The Still Water Technique</h3>
-      <ol>
-        <li><strong>Turn off the flow</strong> — pumps and air off for about 10–15 minutes.</li>
-        <li><strong>Load the <a href="https://amzn.to/46Sc3rZ" target="_blank" rel="noopener sponsored">pipette</a></strong> — around 2ml of Seachem Excel.</li>
-        <li><strong>Spot dose</strong> — aim right at the BBA patch until it lightly clouds over.</li>
-        <li><strong>(Optional)</strong> — one capful over the surface (especially during water changes).</li>
-        <li><strong>Wait 10–15 minutes</strong> — then restore flow.</li>
-      </ol>
+        <h2>My Experiments: Why Liquid Carbon Dosing Didn’t Work</h2>
+        <!-- TODO: add internal link to Seachem Excel guide when available -->
+        <p>I’d tried <a href="https://amzn.to/4qsK89V" target="_blank" rel="noopener sponsored">Seachem Excel</a> before and didn’t love it because I used it like “liquid CO₂.” It isn’t. Used correctly as a targeted algaecide, it’s a different story.</p>
 
-      <figure class="blog-image left">
-        <img src="/blogs/blackbeard/img/IMG_9605.jpeg" alt="Aquarist spot applying Seachem Excel with a pipette to Black Beard Algae"
-             onerror="this.onerror=null;this.src='/media/placeholder-16x9.svg';" />
-        <figcaption>During: spot-dosing Seachem Excel with a pipette as BBA enters the red transition phase.</figcaption>
-      </figure>
+        <h2>The Game Changer: How to Spot Dose Seachem Excel for BBA</h2>
+        <h3>Step-by-Step: The Still Water Technique</h3>
+        <ol>
+          <li><strong>Turn off the flow</strong> — pumps and air off for about 10–15 minutes.</li>
+          <li><strong>Load the <a href="https://amzn.to/46Sc3rZ" target="_blank" rel="noopener sponsored">pipette</a></strong> — around 2ml of Seachem Excel.</li>
+          <li><strong>Spot dose</strong> — aim right at the BBA patch until it lightly clouds over.</li>
+          <li><strong>(Optional)</strong> — one capful over the surface (especially during water changes).</li>
+          <li><strong>Wait 10–15 minutes</strong> — then restore flow.</li>
+        </ol>
 
-      <p><strong>What you’ll see:</strong> by day 2–3 that patch turns deep red, then shrivels and lets go. You’ll need to clean intakes/screens for a bit because dead BBA breaks loose—small price for visible progress.</p>
-      <figure class="figure">
-        <img src="/blogs/blackbeard/img/IMG_9612.png"
-             alt="Amano shrimp eating softened red BBA after Excel treatment"
-             loading="lazy" decoding="async">
-        <figcaption>Amano shrimp move in once BBA softens and turns red — they won’t touch it in its tough, black form.</figcaption>
-      </figure>
-      <p><strong>That’s when the Amano shrimp move in. They won’t touch it in its black, coarse form — but once it softens and turns red, they eat it like crazy.</strong></p>
+        <figure class="blog-image left">
+          <img src="/blogs/blackbeard/img/IMG_9605.jpeg" alt="Aquarist spot applying Seachem Excel with a pipette to Black Beard Algae"
+               onerror="this.onerror=null;this.src='/media/placeholder-16x9.svg';" />
+          <figcaption>During: spot-dosing Seachem Excel with a pipette as BBA enters the red transition phase.</figcaption>
+        </figure>
 
-      <blockquote>
-        <p><strong>Safety notes</strong><br>
-        Excel can melt sensitive plants if overdone. Go easy with shrimp tanks. Don’t combine heavy Excel and peroxide spot-treatments on the same day. Stay within the manufacturer’s max daily dose when combining spot + water-column dosing.</p>
-      </blockquote>
+        <p><strong>What you’ll see:</strong> by day 2–3 that patch turns deep red, then shrivels and lets go. You’ll need to clean intakes/screens for a bit because dead BBA breaks loose—small price for visible progress.</p>
+        <figure class="figure">
+          <img src="/blogs/blackbeard/img/IMG_9612.png"
+               alt="Amano shrimp eating softened red BBA after Excel treatment"
+               loading="lazy" decoding="async">
+          <figcaption>Amano shrimp move in once BBA softens and turns red — they won’t touch it in its tough, black form.</figcaption>
+        </figure>
+        <p><strong>That’s when the Amano shrimp move in. They won’t touch it in its black, coarse form — but once it softens and turns red, they eat it like crazy.</strong></p>
 
-      <h2>The Long-Term BBA Fix: Light, Flow, and Nutrients</h2>
-      <p>Fixing those set the stage: I stabilized the light, added a refugium in the sump to eat excess nutrients, and switched to a random flow generator—more coverage, gentler push, fewer stagnant pockets. Then I tackled the algae itself.</p>
-      <h3>Step 1: Fixing the Light Spectrum (No More Extra Whites!)</h3>
-      <p>Keep a real photoperiod (timer) and plant-first spectrum; no “extra white for brightness.”</p>
-      <h3>Step 2: Boosting Flow with a Random Flow Generator</h3>
-      <p>Healthy flow with a random flow generator = fewer footholds.</p>
-      <h3>Step 3: Refugium Power (Starving the Algae)</h3>
-      <!-- TODO: add internal link to refugium guide when available -->
-      <p>Refugium = nutrient sink (huge help in the sump).</p>
-      <p>Prune melt right away—don’t let dying leaves feed BBA.</p>
+        <blockquote>
+          <p><strong>Safety notes</strong><br>
+          Excel can melt sensitive plants if overdone. Go easy with shrimp tanks. Don’t combine heavy Excel and peroxide spot-treatments on the same day. Stay within the manufacturer’s max daily dose when combining spot + water-column dosing.</p>
+        </blockquote>
 
-      <figure>
-        <img src="/blogs/blackbeard/img/IMG_9608.jpeg?v=2025-10-14-1"
-             alt="Seachem Excel bottle in front of an activated sump refugium section"
-             loading="lazy" decoding="async"
-             style="max-width: 80%; height: auto; margin: 0 auto; display: block; border-radius: 8px;"
-             onerror="this.onerror=null;this.src='/media/placeholder-16x9.svg';" />
-        <figcaption>Seachem Excel in front of the sump refugium — the bottle I use for targeted spot-dosing.</figcaption>
-      </figure>
+        <h2>The Long-Term BBA Fix: Light, Flow, and Nutrients</h2>
+        <p>Fixing those set the stage: I stabilized the light, added a refugium in the sump to eat excess nutrients, and switched to a random flow generator—more coverage, gentler push, fewer stagnant pockets. Then I tackled the algae itself.</p>
+        <h3>Step 1: Fixing the Light Spectrum (No More Extra Whites!)</h3>
+        <p>Keep a real photoperiod (timer) and plant-first spectrum; no “extra white for brightness.”</p>
+        <h3>Step 2: Boosting Flow with a Random Flow Generator</h3>
+        <p>Healthy flow with a random flow generator = fewer footholds.</p>
+        <h3>Step 3: Refugium Power (Starving the Algae)</h3>
+        <!-- TODO: add internal link to refugium guide when available -->
+        <p>Refugium = nutrient sink (huge help in the sump).</p>
+        <p>Prune melt right away—don’t let dying leaves feed BBA.</p>
 
-      <h2>Managing My New Problem: Zero Nitrates (The Dosing Life)</h2>
-      <p>Keep nitrates readable (I like 5–15&nbsp;ppm). My plants now crash nitrates fast, so I test daily and dose accordingly.</p>
+        <figure>
+          <img src="/blogs/blackbeard/img/IMG_9608.jpeg?v=2025-10-14-1"
+               alt="Seachem Excel bottle in front of an activated sump refugium section"
+               loading="lazy" decoding="async"
+               style="max-width: 80%; height: auto; margin: 0 auto; display: block; border-radius: 8px;"
+               onerror="this.onerror=null;this.src='/media/placeholder-16x9.svg';" />
+          <figcaption>Seachem Excel in front of the sump refugium — the bottle I use for targeted spot-dosing.</figcaption>
+        </figure>
 
-      <h2>TL;DR: My BBA playbook</h2>
-      <ol>
-        <li>Fix the environment first: timer + plant spectrum, better flow, remove melt, add refugium.</li>
-        <li>Spot-dose Excel with pump + air off for 10–15 min; ~2&nbsp;ml per patch.</li>
-        <li>Expect red → shrivel → release by day 2–3; clean intakes.</li>
-        <li>Keep nitrates in range and prune early so BBA has nothing to eat.</li>
-        <li>Repeat on stragglers; it’s work, but it’s consistently effective.</li>
-      </ol>
+        <h2>Managing My New Problem: Zero Nitrates (The Dosing Life)</h2>
+        <p>Keep nitrates readable (I like 5–15&nbsp;ppm). My plants now crash nitrates fast, so I test daily and dose accordingly.</p>
 
-      <hr class="divider">
+        <h2>TL;DR: My BBA playbook</h2>
+        <ol>
+          <li>Fix the environment first: timer + plant spectrum, better flow, remove melt, add refugium.</li>
+          <li>Spot-dose Excel with pump + air off for 10–15 min; ~2&nbsp;ml per patch.</li>
+          <li>Expect red → shrivel → release by day 2–3; clean intakes.</li>
+          <li>Keep nitrates in range and prune early so BBA has nothing to eat.</li>
+          <li>Repeat on stragglers; it’s work, but it’s consistently effective.</li>
+        </ol>
 
-      <section class="gear-links">
-        <h3>Gear that made this possible</h3>
-        <div class="gear-grid" aria-label="Recommended gear">
+        <hr class="divider">
 
-          <!-- Seachem Excel -->
-          <a class="product-card" href="https://amzn.to/4qsK89V" target="_blank" rel="noopener sponsored">
-            <div class="thumb">
-              <img
-                src="https://m.media-amazon.com/images/I/61V3cVDRUYL._UF894,1000_QL80_.jpg"
-                alt="Seachem Flourish Excel 500 ml bottle for planted aquariums"
-                loading="lazy" decoding="async">
-            </div>
-            <div class="meta">
-              <p class="title">Seachem Excel (spot-dosing)</p>
-              <p class="desc">Liquid carbon for targeted BBA treatment — precise dosing that shows results within days.</p>
-              <span class="cta">View on Amazon →</span>
-            </div>
-          </a>
+        <section class="gear-links">
+          <h3>Gear that made this possible</h3>
+          <div class="gear-grid" aria-label="Recommended gear">
 
-          <!-- 2HR Aquarist Fixlite -->
-          <a class="product-card" href="https://amzn.to/4n5XdD0" target="_blank" rel="noopener sponsored">
-            <div class="thumb">
-              <img
-                src="https://m.media-amazon.com/images/I/61kEW9U9mtL._UF894,1000_QL80_.jpg"
-                alt="2HR Aquarist APT Fixlite bottle for safe algae treatment in planted aquariums"
-                loading="lazy" decoding="async">
-            </div>
-            <div class="meta">
-              <p class="title">2HR Aquarist APT Fixlite (safe-route option)</p>
-              <p class="desc">A gentler alternative for algae control — perfect for shrimp and sensitive plants.</p>
-              <span class="cta">View on Amazon →</span>
-            </div>
-          </a>
+            <!-- Seachem Excel -->
+            <a class="product-card" href="https://amzn.to/4qsK89V" target="_blank" rel="noopener sponsored">
+              <div class="thumb">
+                <img
+                  src="https://m.media-amazon.com/images/I/61V3cVDRUYL._UF894,1000_QL80_.jpg"
+                  alt="Seachem Flourish Excel 500 ml bottle for planted aquariums"
+                  loading="lazy" decoding="async">
+              </div>
+              <div class="meta">
+                <p class="title">Seachem Excel (spot-dosing)</p>
+                <p class="desc">Liquid carbon for targeted BBA treatment — precise dosing that shows results within days.</p>
+                <span class="cta">View on Amazon →</span>
+              </div>
+            </a>
 
-          <!-- Pipettes -->
-          <a class="product-card" href="https://amzn.to/46Sc3rZ" target="_blank" rel="noopener sponsored">
-            <div class="thumb">
-              <img
-                src="https://m.media-amazon.com/images/I/71HM5ajqQZL._SL1500_.jpg"
-                alt="3ml disposable pipettes used for precise Seachem Excel spot dosing"
-                loading="lazy" decoding="async">
-            </div>
-            <div class="meta">
-              <p class="title">3ml Pipettes (20 pack)</p>
-              <p class="desc">Accurate, disposable droppers — perfect for controlled spot-dosing of Excel on BBA.</p>
-              <span class="cta">View on Amazon →</span>
-            </div>
-          </a>
+            <!-- 2HR Aquarist Fixlite -->
+            <a class="product-card" href="https://amzn.to/4n5XdD0" target="_blank" rel="noopener sponsored">
+              <div class="thumb">
+                <img
+                  src="https://m.media-amazon.com/images/I/61kEW9U9mtL._UF894,1000_QL80_.jpg"
+                  alt="2HR Aquarist APT Fixlite bottle for safe algae treatment in planted aquariums"
+                  loading="lazy" decoding="async">
+              </div>
+              <div class="meta">
+                <p class="title">2HR Aquarist APT Fixlite (safe-route option)</p>
+                <p class="desc">A gentler alternative for algae control — perfect for shrimp and sensitive plants.</p>
+                <span class="cta">View on Amazon →</span>
+              </div>
+            </a>
 
-        </div>
-        <p><em>As an Amazon Associate, I earn from qualifying purchases at no extra cost to you.</em></p>
-      </section>
+            <!-- Pipettes -->
+            <a class="product-card" href="https://amzn.to/46Sc3rZ" target="_blank" rel="noopener sponsored">
+              <div class="thumb">
+                <img
+                  src="https://m.media-amazon.com/images/I/71HM5ajqQZL._SL1500_.jpg"
+                  alt="3ml disposable pipettes used for precise Seachem Excel spot dosing"
+                  loading="lazy" decoding="async">
+              </div>
+              <div class="meta">
+                <p class="title">3ml Pipettes (20 pack)</p>
+                <p class="desc">Accurate, disposable droppers — perfect for controlled spot-dosing of Excel on BBA.</p>
+                <span class="cta">View on Amazon →</span>
+              </div>
+            </a>
 
-      <ul class="tags">
-        <li>Aquarium Problem Solving</li>
-        <li>Black Beard Algae Fix</li>
-        <li>Planted Tank Tips</li>
-        <li>Seachem Excel</li>
-        <li>Algae Control</li>
-        <li>Sump Refugium</li>
-        <li>DIY Aquarium Care</li>
-        <li>Aquarium Lights</li>
-      </ul>
+          </div>
+          <p><em>As an Amazon Associate, I earn from qualifying purchases at no extra cost to you.</em></p>
+        </section>
 
-      <p><a href="/blogs/">← Back to Spotlight Blogs</a></p>
+        <ul class="tags">
+          <li>Aquarium Problem Solving</li>
+          <li>Black Beard Algae Fix</li>
+          <li>Planted Tank Tips</li>
+          <li>Seachem Excel</li>
+          <li>Algae Control</li>
+          <li>Sump Refugium</li>
+          <li>DIY Aquarium Care</li>
+          <li>Aquarium Lights</li>
+        </ul>
+
+        <p><a class="back-link" href="/blogs/">← Back to Spotlight Blogs</a></p>
+      </div>
 
     </article>
   </main>
