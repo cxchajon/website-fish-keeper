@@ -42,7 +42,14 @@
     }
 
     .card-thumb--betta {
-      object-position: 50% 45%;
+      object-fit: cover;
+      object-position: 50% 60%;
+    }
+
+    @media (max-width: 600px) {
+      .card-thumb--betta {
+        object-position: 50% 62%;
+      }
     }
 
     .card-img {
