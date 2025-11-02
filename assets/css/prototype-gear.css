@@ -176,3 +176,35 @@
   }
 }
 
+
+/* Make card text & bullets truly flush-left inside prototype cards */
+#prototype-gear .section-card { padding-left: 18px; padding-right: 18px; }
+
+#prototype-gear .section-card p {
+  margin-left: 0 !important;
+  text-align: left;
+}
+
+#prototype-gear .section-card ul,
+#prototype-gear .section-card li {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  text-indent: 0 !important;
+}
+
+#prototype-gear .section-card ul.list-flush {
+  list-style-position: inside;     /* bullet aligns with text start */
+  margin-block: 10px 12px;
+}
+
+#prototype-gear .section-card ul.list-flush > li {
+  margin-block: 6px;
+  padding-inline-start: 0.25rem;   /* tiny breathing room so bullet doesn't touch edge */
+}
+
+/* Mobile nudge */
+@media (max-width:480px){
+  #prototype-gear .section-card { padding-left: 16px; padding-right: 16px; }
+  #prototype-gear .section-card ul.list-flush > li { padding-inline-start: 0.2rem; }
+}
+
