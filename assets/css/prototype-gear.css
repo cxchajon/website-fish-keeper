@@ -50,6 +50,9 @@
   border: 1px solid rgba(120, 160, 255, 0.18);
   background: rgba(255, 255, 255, 0.02);
   padding: 20px 18px;
+  padding-left: 18px;
+  padding-right: 18px;
+  line-height: 1.55;
 }
 
 #prototype-gear .section-card > :first-child {
@@ -79,6 +82,13 @@
   }
 }
 
+@media (max-width: 480px) {
+  #prototype-gear .section-card ul {
+    margin-left: 0;
+    padding-left: 0;
+  }
+}
+
 /* Prevent headings from adding unexpected gap inside cards */
 #prototype-gear .section-card h2,
 #prototype-gear .section-card h3 {
@@ -86,12 +96,36 @@
 }
 
 /* Normalize list spacing inside cards so bullets don’t add extra trailing space */
+#prototype-gear .section-card p,
+#prototype-gear .section-card ul,
+#prototype-gear .section-card li {
+  margin-left: 0;
+  padding-left: 0;
+  text-align: left;
+}
+
 #prototype-gear .section-card ul {
-  margin-block: 10px 10px;
+  list-style-position: inside;
+  margin-block: 10px 12px;
+}
+
+#prototype-gear .section-card li {
+  margin-block: 6px;
+  padding-inline-start: 0.5rem;
 }
 
 #prototype-gear .section-card p {
   margin-block: 10px;
+}
+
+#prototype-gear .section-card a {
+  color: #a8c5ff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+#prototype-gear .section-card strong {
+  color: #d6e1ff;
 }
 
 #prototype-gear .section-card p:last-child,
