@@ -4,10 +4,31 @@
 #prototype-gear .ad--prototype,
 #prototype-gear .ad-slot.prototype,
 #prototype-gear .adsense-proto-slot {
-  display: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
+  display: block;
+  min-height: 96px;
+  padding: 8px 12px;
+  margin: 12px 0 18px;
+  border: 1px dashed rgba(160, 190, 255, 0.28);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.015);
+  backdrop-filter: saturate(120%) blur(0.5px);
+}
+
+@media (min-width: 768px) {
+  #prototype-gear .ad-slot,
+  #prototype-gear .ad--prototype,
+  #prototype-gear .ad-slot.prototype,
+  #prototype-gear .adsense-proto-slot {
+    min-height: 120px;
+    margin: 14px 0 20px;
+  }
+}
+
+#prototype-gear .ad-slot + .section-card,
+#prototype-gear .section-card + .ad-slot,
+#prototype-gear .ad-slot + .gear-accordion,
+#prototype-gear .gear-accordion + .ad-slot {
+  margin-top: 10px;
 }
 
 /* Accordion stack tightening (mobile-first) */
@@ -19,7 +40,6 @@
 
 /* When accordions are directly adjacent, collapse the joint gap further */
 #prototype-gear .gear-accordion + .gear-accordion,
-#prototype-gear .gear-accordion-item + .gear-accordion-item,
 #prototype-gear .gear-block + .gear-block {
   margin-block-start: 8px;
 }
