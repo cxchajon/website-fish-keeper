@@ -19,10 +19,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          # Avoid lockfile requirement on prototype jobs
+          cache: 'none'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies (skip if no lockfile)
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            echo "No package-lock.json; skipping npm install for prototype guard."
+          fi
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
