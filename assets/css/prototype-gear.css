@@ -49,9 +49,7 @@
   border-radius: 18px;
   border: 1px solid rgba(120, 160, 255, 0.18);
   background: rgba(255, 255, 255, 0.02);
-  padding: 20px 18px;
-  padding-left: 18px;
-  padding-right: 18px;
+  padding: 1.25rem 1.25rem 1.25rem 1.5rem;
   line-height: 1.55;
 }
 
@@ -83,9 +81,13 @@
 }
 
 @media (max-width: 480px) {
+  #prototype-gear .section-card {
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+  }
+
   #prototype-gear .section-card ul {
-    margin-left: 0;
-    padding-left: 0;
+    list-style-position: inside;
   }
 }
 
@@ -96,26 +98,24 @@
 }
 
 /* Normalize list spacing inside cards so bullets don’t add extra trailing space */
-#prototype-gear .section-card p,
-#prototype-gear .section-card ul,
-#prototype-gear .section-card li {
-  margin-left: 0;
-  padding-left: 0;
-  text-align: left;
-}
-
 #prototype-gear .section-card ul {
-  list-style-position: inside;
+  list-style-position: inside !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  text-indent: 0 !important;
   margin-block: 10px 12px;
 }
 
 #prototype-gear .section-card li {
-  margin-block: 6px;
-  padding-inline-start: 0.5rem;
+  margin: 6px 0;
+  padding-left: 0 !important;
+  line-height: 1.55;
 }
 
 #prototype-gear .section-card p {
   margin-block: 10px;
+  margin-left: 0 !important;
+  text-align: left;
 }
 
 #prototype-gear .section-card a {
@@ -178,33 +178,7 @@
 
 
 /* Make card text & bullets truly flush-left inside prototype cards */
-#prototype-gear .section-card { padding-left: 18px; padding-right: 18px; }
-
-#prototype-gear .section-card p {
-  margin-left: 0 !important;
-  text-align: left;
-}
-
-#prototype-gear .section-card ul,
-#prototype-gear .section-card li {
-  margin-left: 0 !important;
-  padding-left: 0 !important;
-  text-indent: 0 !important;
-}
-
 #prototype-gear .section-card ul.list-flush {
-  list-style-position: inside;     /* bullet aligns with text start */
-  margin-block: 10px 12px;
-}
-
-#prototype-gear .section-card ul.list-flush > li {
-  margin-block: 6px;
-  padding-inline-start: 0.25rem;   /* tiny breathing room so bullet doesn't touch edge */
-}
-
-/* Mobile nudge */
-@media (max-width:480px){
-  #prototype-gear .section-card { padding-left: 16px; padding-right: 16px; }
-  #prototype-gear .section-card ul.list-flush > li { padding-inline-start: 0.2rem; }
+  list-style-position: inside;
 }
 
