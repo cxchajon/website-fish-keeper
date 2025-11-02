@@ -274,7 +274,7 @@
 
   function markFilterSelection(filterId){
     if (!filterId) return;
-    const page = document.getElementById('gear-page');
+    const page = document.getElementById('prototype-gear') || document.getElementById('gear-page');
     if (page) {
       page.dataset.selectedFilterId = filterId;
     }

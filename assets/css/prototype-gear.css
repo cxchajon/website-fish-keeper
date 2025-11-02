@@ -1,0 +1,124 @@
+/* Prototype Gear Page — scoped overrides */
+
+#prototype-gear .ad-slot,
+#prototype-gear .ad--prototype,
+#prototype-gear .ad-slot.prototype,
+#prototype-gear .adsense-proto-slot {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+/* Accordion stack tightening (mobile-first) */
+#prototype-gear .gear-accordion,
+#prototype-gear .gear-accordion-item,
+#prototype-gear .gear-block {
+  margin-block-end: 12px;
+}
+
+/* When accordions are directly adjacent, collapse the joint gap further */
+#prototype-gear .gear-accordion + .gear-accordion,
+#prototype-gear .gear-accordion-item + .gear-accordion-item,
+#prototype-gear .gear-block + .gear-block {
+  margin-block-start: 8px;
+}
+
+/* Tighten inner card spacing so content blocks match Testing Kits card look */
+#prototype-gear .section-card {
+  border-radius: 18px;
+  border: 1px solid rgba(120, 160, 255, 0.18);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 20px 18px;
+}
+
+#prototype-gear .section-card > :first-child {
+  margin-block-start: 0;
+}
+
+#prototype-gear .section-card > :last-child {
+  margin-block-end: 0;
+}
+
+/* Reduce extra gap before section headers that follow the last accordion row */
+#prototype-gear .gear-accordion:last-of-type {
+  margin-block-end: 10px;
+}
+
+/* Make the “Routine Cleaning Checklist ↔ Plant Nutrient Support” and
+   “Stands & Cabinets ↔ next header” join tighter on small screens */
+@media (max-width: 480px) {
+  #prototype-gear .gear-accordion,
+  #prototype-gear .gear-accordion-item,
+  #prototype-gear .gear-block {
+    margin-block-end: 10px;
+  }
+
+  #prototype-gear .gear-accordion + .gear-accordion {
+    margin-block-start: 6px;
+  }
+}
+
+/* Prevent headings from adding unexpected gap inside cards */
+#prototype-gear .section-card h2,
+#prototype-gear .section-card h3 {
+  margin-block: 0 10px;
+}
+
+/* Normalize list spacing inside cards so bullets don’t add extra trailing space */
+#prototype-gear .section-card ul {
+  margin-block: 10px 10px;
+}
+
+#prototype-gear .section-card p {
+  margin-block: 10px;
+}
+
+#prototype-gear .section-card p:last-child,
+#prototype-gear .section-card ul:last-child {
+  margin-block-end: 0;
+}
+
+/* Existing prototype card styling */
+#prototype-gear .proto-card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+  padding: 1.25rem 1.25rem 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+#prototype-gear .proto-card h3,
+#prototype-gear .proto-card h4 {
+  margin-top: 0.25rem;
+}
+
+#prototype-gear .proto-faq-accordion .faq-item {
+  margin-bottom: 12px;
+}
+
+/* Gear card spacing adjustments for current layout */
+#prototype-gear .gear-shell {
+  gap: 0.75rem;
+}
+
+#prototype-gear #core-equipment .gear-shell,
+#prototype-gear #water-quality .gear-shell {
+  margin-block-end: 64px;
+}
+
+#prototype-gear .gear-shell > .gear-card:last-child {
+  margin-block-end: 0;
+}
+
+@media (max-width: 480px) {
+  #prototype-gear .gear-shell {
+    gap: 0.625rem;
+  }
+
+  #prototype-gear #core-equipment .gear-shell,
+  #prototype-gear #water-quality .gear-shell {
+    margin-block-end: 52px;
+  }
+}
+
