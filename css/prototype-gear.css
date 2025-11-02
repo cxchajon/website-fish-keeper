@@ -1,0 +1,20 @@
+/* Prototype Gear Page — scoped styles only */
+/* Match the "Testing Kits & Monitoring" card visual */
+.proto-card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+  padding: 1.25rem 1.25rem 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* If that card uses a class already (e.g., .gear-info-card),
+   you can attach the same variables here for consistency. */
+.proto-card h3,
+.proto-card h4 {
+  margin-top: 0.25rem;
+}
+
+.proto-faq-accordion .faq-item {
+  margin-bottom: 12px;
+}
