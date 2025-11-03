@@ -5,6 +5,7 @@
 - Highlights: Right-click deterrent flag remains opt-in; build + Playwright smoke coverage stay healthy.
 - Outstanding: Recreate the October QA clickthrough log and document the tool-page + homepage Quick Q&A plans.
 
+- [2025-11-02 | Journal] Added Maintenance & Dosing entry; regenerated data; verified journal + dashboard render latest.
 - [2025-10-31 | Stocking Advisor] Captured prototype→live migration plan (inventory, diff, rollback) and staged backups for Stocking Advisor parity work.
 - [2025-10-31 | Journal] Added Feeding entry (flakes only); updated data; verified dashboard renders latest.
 

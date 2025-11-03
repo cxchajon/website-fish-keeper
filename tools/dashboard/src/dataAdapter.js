@@ -5,6 +5,38 @@ function toDate(value) {
   return new Date(`${value}T00:00:00`);
 }
 
+function getQuickFacts(entry) {
+  if (!entry) {
+    return '';
+  }
+  const candidates = [
+    entry.quick_facts,
+    entry.quickFacts,
+    entry['Action/Observation'],
+    entry.action_observation,
+    entry.actionObservation
+  ];
+  for (const value of candidates) {
+    if (typeof value === 'string' && value.trim()) {
+      return value;
+    }
+  }
+  return '';
+}
+
+function getNotes(entry) {
+  if (!entry) {
+    return '';
+  }
+  const candidates = [entry.ramble, entry.notes_results, entry['Notes/Results'], entry.notesResults];
+  for (const value of candidates) {
+    if (typeof value === 'string' && value.trim()) {
+      return value;
+    }
+  }
+  return '';
+}
+
 function formatDateLabel(date) {
   return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
@@ -161,7 +193,7 @@ function extractMaintenanceSegments(text) {
 }
 
 function parseEntry(entry) {
-  const combined = [entry.quick_facts, entry.ramble].filter(Boolean).join(' · ');
+  const combined = [getQuickFacts(entry), getNotes(entry)].filter(Boolean).join(' · ');
   const segments = combined.split(/[·•]/).map((segment) => segment.trim()).filter(Boolean);
   let nitrateInfo = null;
   for (const segment of segments) {

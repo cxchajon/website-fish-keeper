@@ -308,7 +308,7 @@
 
   <script>
     window.__JOURNAL_FALLBACK__ = {
-      period: { start: "2025-10-01", end: "2025-10-27" },
+      period: { start: "2025-10-01", end: "2025-11-02" },
       nitrate: [
         { date: "2025-10-01", ppm: 7.5, wc: false },
         { date: "2025-10-06", ppm: 20, wc: true },
@@ -319,15 +319,25 @@
         { date: "2025-10-22", ppm: 5, wc: false },
         { date: "2025-10-23", ppm: 9, wc: false },
         { date: "2025-10-26", ppm: 6, wc: true },
-        { date: "2025-10-27", ppm: 5, wc: false }
+        { date: "2025-10-27", ppm: 5, wc: false },
+        { date: "2025-10-28", ppm: 5, wc: false },
+        { date: "2025-10-29", ppm: 10, wc: false },
+        { date: "2025-10-30", ppm: 18, wc: false },
+        { date: "2025-11-02", ppm: 20, wc: true }
       ],
       dosing: [
         { week: "2025-W40", label: "Week 1 (10/1–10/6)", thrive: 10, excel: 2 },
         { week: "2025-W41", label: "Week 2 (10/7–10/13)", thrive: 12, excel: 3 },
         { week: "2025-W42", label: "Week 3 (10/14–10/20)", thrive: 14, excel: 5 },
-        { week: "2025-W43", label: "Week 4 (10/21–10/27)", thrive: 11, excel: 6 }
+        { week: "2025-W43", label: "Week 4 (10/21–10/27)", thrive: 11, excel: 6 },
+        { week: "2025-W44", label: "Week 5 (10/28–11/3)", thrive: 4, excel: 1.5 }
       ],
       maintenance: [
+        {
+          date: "2025-11-02",
+          type: "Water Change + Trim",
+          details: "~95% sump / ~70% display water change; light trim; Excel spot + cap"
+        },
         {
           date: "2025-10-26",
           type: "Major WC",

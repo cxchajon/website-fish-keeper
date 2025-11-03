@@ -1,1399 +1,1168 @@
-(function () {
-  const statusEl = document.querySelector('[data-chart-status]');
-  if (statusEl) {
-    statusEl.textContent = 'Loading dashboard…';
-  }
+// Auto-generated dashboard bundle
+// Contains data adapter and interactive logic
+const EXCEL_SPOT_EQUIVALENT = 0.5;
+const TARGET_NO3 = 20;
 
-  if (typeof window.Chart === 'undefined') {
-    if (statusEl) {
-      statusEl.textContent = 'Charts unavailable (Chart.js not loaded).';
+function toDate(value) {
+  return new Date(`${value}T00:00:00`);
+}
+
+function getQuickFacts(entry) {
+  if (!entry) {
+    return '';
+  }
+  const candidates = [
+    entry.quick_facts,
+    entry.quickFacts,
+    entry['Action/Observation'],
+    entry.action_observation,
+    entry.actionObservation
+  ];
+  for (const value of candidates) {
+    if (typeof value === 'string' && value.trim()) {
+      return value;
     }
+  }
+  return '';
+}
+
+function getNotes(entry) {
+  if (!entry) {
+    return '';
+  }
+  const candidates = [entry.ramble, entry.notes_results, entry['Notes/Results'], entry.notesResults];
+  for (const value of candidates) {
+    if (typeof value === 'string' && value.trim()) {
+      return value;
+    }
+  }
+  return '';
+}
+
+function formatDateLabel(date) {
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+function extractNitrate(segment) {
+  if (!segment || !/nitrate/i.test(segment)) {
+    return null;
+  }
+  const cleaned = segment.replace(/nitrate[:\s-]*/i, '').replace(/ppm/gi, 'ppm');
+  const approxRegexes = [
+    /≈\s*(\d+(?:\.\d+)?)/i,
+    /closer to\s*(\d+(?:\.\d+)?)/i,
+    /about\s*(\d+(?:\.\d+)?)/i,
+    /around\s*(\d+(?:\.\d+)?)/i,
+    /~\s*(\d+(?:\.\d+)?)/i,
+    /approx(?:\.|imately)?\s*(\d+(?:\.\d+)?)/i
+  ];
+  let approxValue = null;
+  for (const regex of approxRegexes) {
+    const match = cleaned.match(regex);
+    if (match) {
+      approxValue = Number(match[1]);
+      break;
+    }
+  }
+  let range = null;
+  const rangeMatch = cleaned.match(/(\d+(?:\.\d+)?)\s*(?:–|-|to)\s*(\d+(?:\.\d+)?)/);
+  if (rangeMatch) {
+    range = [Number(rangeMatch[1]), Number(rangeMatch[2])];
+  }
+  let singleValue = null;
+  const ppmMatch = cleaned.match(/(~?\d+(?:\.\d+)?)\s*ppm/i);
+  if (ppmMatch) {
+    singleValue = Number(ppmMatch[1].replace('~', ''));
+  }
+  if (!singleValue && !range) {
+    const strayMatch = cleaned.match(/(\d+(?:\.\d+)?)/);
+    if (strayMatch) {
+      singleValue = Number(strayMatch[1]);
+    }
+  }
+  let chosen = null;
+  if (approxValue != null) {
+    chosen = approxValue;
+  } else if (range) {
+    chosen = (range[0] + range[1]) / 2;
+  } else if (singleValue != null) {
+    chosen = singleValue;
+  }
+  if (chosen == null) {
+    return null;
+  }
+  const tooltipParts = [];
+  if (range) {
+    tooltipParts.push(`Range: ${range[0]}–${range[1]} ppm`);
+    tooltipParts.push(`Avg ${(Math.round(((range[0] + range[1]) / 2) * 10) / 10).toFixed(1)}`);
+  }
+  if (approxValue != null) {
+    tooltipParts.push(`Approx: ${approxValue} ppm`);
+  }
+  const tooltip = tooltipParts.length ? tooltipParts.join(' • ') : null;
+  return {
+    value: chosen,
+    tooltip,
+    range,
+    raw: segment.trim()
+  };
+}
+
+function detectWaterChange(text) {
+  if (!text) return null;
+  if (!/(water change|\bwc\b)/i.test(text)) {
+    return null;
+  }
+  const sumpMatch = text.match(/(~?\d+(?:\.\d+)?)%\s*sump/i);
+  const displayMatch = text.match(/(~?\d+(?:\.\d+)?)%\s*display/i);
+  const sumpPct = sumpMatch ? Number(sumpMatch[1].replace('~', '')) : null;
+  const displayPct = displayMatch ? Number(displayMatch[1].replace('~', '')) : null;
+  return {
+    hasChange: true,
+    sumpPct,
+    displayPct
+  };
+}
+
+function extractThrive(text) {
+  if (!text) return 0;
+  let total = 0;
+  const pumpMatches = text.matchAll(/(\d+(?:\.\d+)?)\s*pump/gi);
+  for (const match of pumpMatches) {
+    const count = Number(match[1]);
+    if (!Number.isNaN(count)) {
+      total += count;
+    }
+  }
+  return total;
+}
+
+function extractExcel(text) {
+  if (!text || !/excel/i.test(text)) {
+    return { total: 0, details: [] };
+  }
+  let total = 0;
+  const details = [];
+  const numericCaps = [...text.matchAll(/(\d+(?:\.\d+)?)\s*cap(?:ful|s)?/gi)];
+  for (const match of numericCaps) {
+    const amount = Number(match[1]);
+    if (!Number.isNaN(amount)) {
+      total += amount;
+      details.push(`${amount} cap${amount === 1 ? '' : 's'}`);
+    }
+  }
+  const cleaned = text.replace(/\d+(?:\.\d+)?\s*cap(?:ful|s)?/gi, '');
+  const soloCaps = cleaned.match(/\bcap(?:ful)?\b/gi);
+  if (soloCaps) {
+    total += soloCaps.length;
+    soloCaps.forEach(() => details.push('1 cap'));
+  }
+  const spotMatches = text.match(/spot(?:\s*dose)?/gi);
+  if (spotMatches) {
+    total += spotMatches.length * EXCEL_SPOT_EQUIVALENT;
+    spotMatches.forEach(() => details.push(`${EXCEL_SPOT_EQUIVALENT} cap (spot)`));
+  }
+  return { total, details };
+}
+
+const maintenancePatterns = [
+  { regex: /trim|prune/i, type: 'Trim' },
+  { regex: /glass|scraper/i, type: 'Glass Cleaning' },
+  { regex: /filter/i, type: 'Filter Maintenance' },
+  { regex: /replant/i, type: 'Replant' },
+  { regex: /bba/i, type: 'BBA Treatment' }
+];
+
+function extractMaintenanceSegments(text) {
+  if (!text) return [];
+  const segments = text.split(/[·•]/).map((segment) => segment.trim()).filter(Boolean);
+  const events = [];
+  const seen = new Map();
+  for (const segment of segments) {
+    for (const { regex, type } of maintenancePatterns) {
+      if (regex.test(segment)) {
+        const existing = seen.get(type);
+        if (!existing || segment.length < existing.length) {
+          seen.set(type, segment);
+        }
+      }
+    }
+  }
+  for (const [type, details] of seen.entries()) {
+    events.push({ type, details });
+  }
+  return events;
+}
+
+function parseEntry(entry) {
+  const combined = [getQuickFacts(entry), getNotes(entry)].filter(Boolean).join(' · ');
+  const segments = combined.split(/[·•]/).map((segment) => segment.trim()).filter(Boolean);
+  let nitrateInfo = null;
+  for (const segment of segments) {
+    if (/nitrate/i.test(segment)) {
+      nitrateInfo = extractNitrate(segment);
+      if (nitrateInfo) break;
+    }
+  }
+  const waterChange = detectWaterChange(combined);
+  const thrive = extractThrive(combined);
+  const excel = extractExcel(combined);
+  const maintenance = extractMaintenanceSegments(combined);
+  return {
+    nitrate: nitrateInfo,
+    waterChange,
+    thrive,
+    excel,
+    maintenance
+  };
+}
+
+function isoWeekStart(date) {
+  const result = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+  const day = result.getUTCDay() || 7;
+  if (day !== 1) {
+    result.setUTCDate(result.getUTCDate() - day + 1);
+  }
+  return result;
+}
+
+function isoWeekLabel(startDate) {
+  const endDate = new Date(startDate);
+  endDate.setUTCDate(endDate.getUTCDate() + 6);
+  const format = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' });
+  return `${format.format(startDate)} – ${format.format(endDate)}`;
+}
+
+function buildWaterChangeDetails(info) {
+  if (!info) return '';
+  const parts = [];
+  if (info.sumpPct != null) {
+    parts.push(`${info.sumpPct}% sump`);
+  }
+  if (info.displayPct != null) {
+    parts.push(`${info.displayPct}% display`);
+  }
+  return parts.length ? parts.join(' / ') : 'Water change';
+}
+
+function prepareDashboardData({ entries, includeLast30 = false, masterEntries = [] }) {
+  if (!entries || !entries.length) {
+    return {
+      nitrateData: [],
+      dosingData: [],
+      maintenanceEvents: [],
+      meta: { dateStart: null, dateEnd: null, sampleByDate: new Map() }
+    };
+  }
+  const entryDates = entries.map((entry) => toDate(entry.date));
+  const maxDate = new Date(Math.max(...entryDates.map((d) => d.getTime())));
+  let relevantEntries = entries;
+  if (includeLast30 && masterEntries.length) {
+    const windowEnd = maxDate;
+    const windowStart = new Date(windowEnd);
+    windowStart.setUTCDate(windowStart.getUTCDate() - 29);
+    relevantEntries = masterEntries.filter((entry) => {
+      const entryDate = toDate(entry.date);
+      return entryDate >= windowStart && entryDate <= windowEnd;
+    });
+  }
+  const sorted = [...relevantEntries].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+  const byDate = new Map();
+  for (const entry of sorted) {
+    const key = entry.date;
+    let record = byDate.get(key);
+    if (!record) {
+      const dateObj = toDate(key);
+      record = {
+        dateISO: key,
+        date: dateObj,
+        nitrateReadings: [],
+        thrive: 0,
+        excel: 0,
+        excelNotes: [],
+        waterChange: null,
+        maintenance: []
+      };
+      byDate.set(key, record);
+    }
+    const parsed = parseEntry(entry);
+    if (parsed.nitrate) {
+      record.nitrateReadings.push(parsed.nitrate);
+    }
+    if (parsed.waterChange) {
+      record.waterChange = parsed.waterChange;
+    }
+    if (parsed.thrive) {
+      record.thrive += parsed.thrive;
+    }
+    if (parsed.excel.total) {
+      record.excel += parsed.excel.total;
+      record.excelNotes.push(...parsed.excel.details);
+    }
+    if (parsed.maintenance.length) {
+      record.maintenance.push(...parsed.maintenance);
+    }
+  }
+  const nitrateData = [];
+  const maintenanceEvents = [];
+  let minDate = null;
+  let maxRangeDate = null;
+  const sampleByDate = new Map();
+  for (const record of [...byDate.values()].sort((a, b) => a.date - b.date)) {
+    const chosenReading = record.nitrateReadings.length ? record.nitrateReadings[record.nitrateReadings.length - 1] : null;
+    const nitrateValue = chosenReading ? chosenReading.value : null;
+    const tooltip = chosenReading ? chosenReading.tooltip || chosenReading.raw : null;
+    nitrateData.push({
+      dateLabel: formatDateLabel(record.date),
+      dateISO: record.dateISO,
+      nitrate: nitrateValue,
+      nitrateDetails: tooltip,
+      wc: Boolean(record.waterChange),
+      sumpPct: record.waterChange ? record.waterChange.sumpPct : null,
+      displayPct: record.waterChange ? record.waterChange.displayPct : null,
+      thrive: Number(record.thrive.toFixed(2)),
+      excelCap: Number(record.excel.toFixed(2)),
+      excelNotes: record.excelNotes
+    });
+    if (!minDate || record.date < minDate) minDate = record.date;
+    if (!maxRangeDate || record.date > maxRangeDate) maxRangeDate = record.date;
+    if (record.waterChange) {
+      maintenanceEvents.push({
+        dateLabel: formatDateLabel(record.date),
+        dateISO: record.dateISO,
+        type: 'Water Change',
+        details: buildWaterChangeDetails(record.waterChange),
+        sumpPct: record.waterChange.sumpPct,
+        displayPct: record.waterChange.displayPct
+      });
+    }
+    if (record.maintenance.length) {
+      for (const item of record.maintenance) {
+        maintenanceEvents.push({
+          dateLabel: formatDateLabel(record.date),
+          dateISO: record.dateISO,
+          type: item.type,
+          details: item.details,
+          sumpPct: record.waterChange ? record.waterChange.sumpPct : null,
+          displayPct: record.waterChange ? record.waterChange.displayPct : null
+        });
+      }
+    }
+    sampleByDate.set(record.dateISO, {
+      nitrate: nitrateValue,
+      nitrateDetails: tooltip,
+      thrive: Number(record.thrive.toFixed(2)),
+      excelCap: Number(record.excel.toFixed(2)),
+      excelNotes: record.excelNotes,
+      waterChange: record.waterChange,
+      maintenance: record.maintenance
+    });
+  }
+  const dosingDataMap = new Map();
+  for (const day of nitrateData) {
+    const dateObj = toDate(day.dateISO);
+    const weekStart = isoWeekStart(dateObj);
+    const weekKey = weekStart.toISOString().slice(0, 10);
+    let aggregate = dosingDataMap.get(weekKey);
+    if (!aggregate) {
+      aggregate = {
+        weekStart,
+        thrivePumps: 0,
+        excelCapEquivalent: 0
+      };
+      dosingDataMap.set(weekKey, aggregate);
+    }
+    aggregate.thrivePumps += day.thrive;
+    aggregate.excelCapEquivalent += day.excelCap;
+  }
+  const dosingData = [...dosingDataMap.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([key, value]) => ({
+      weekKey: key,
+      label: isoWeekLabel(value.weekStart),
+      thrivePumps: Number(value.thrivePumps.toFixed(2)),
+      excelCapEquivalent: Number(value.excelCapEquivalent.toFixed(2))
+    }));
+  return {
+    nitrateData,
+    dosingData,
+    maintenanceEvents,
+    meta: {
+      dateStart: minDate,
+      dateEnd: maxRangeDate,
+      sampleByDate
+    }
+  };
+}
+
+const state = {
+  months: [],
+  currentIndex: 0,
+  monthCache: new Map(),
+  masterData: null,
+  includeLast30: false,
+  activeTab: 'nitrate',
+  dataState: null,
+  error: null,
+  loading: false
+};
+
+const TAB_IDS = ['nitrate', 'dosing', 'maintenance'];
+const TAB_LABELS = {
+  nitrate: 'Nitrate Levels',
+  dosing: 'Dosing Totals',
+  maintenance: 'Maintenance Log'
+};
+
+const tabAria = {
+  nitrate: 'Show Nitrate Levels',
+  dosing: 'Show Dosing Totals',
+  maintenance: 'Show Maintenance Log'
+};
+
+const iconPaths = {
+  calendar: 'M7 3a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1zm0 2H4v12h16V6h-3v2a1 1 0 0 1-2 0V6H9v2a1 1 0 0 1-2 0zm2-4a1 1 0 0 0-1 1v1h8V2a1 1 0 0 0-1-1z',
+  droplet: 'M12 2.69 7.05 9.24a7 7 0 1 0 9.9 0z',
+  beaker: 'M6 2h12v2h-1v9.44a5 5 0 1 1-10 0V4H6z',
+  scissors: 'M6.5 6.5 4 3h2l2 3 2-3h2L9.5 6.5l1.76 2.64a1.5 1.5 0 1 1-1.26.78L9 7.42l-1.99 3.04a1.5 1.5 0 1 1-1.26-.78zm7.5 9.5a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm-8 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0z'
+};
+
+function init() {
+  const container = document.getElementById('aquarium-dashboard');
+  if (!container) return;
+  state.container = container;
+  state.container.classList.add('dashboard-app-mounted');
+  loadMonthIndex();
+}
+
+async function loadMonthIndex() {
+  updateState({ loading: true, error: null });
+  try {
+    const response = await fetch('/data/journal/index.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Failed to load journal index');
+    const months = await response.json();
+    updateState({ months, currentIndex: 0 });
+    if (months.length) {
+      await ensureMonthLoaded(months[0]);
+    }
+  } catch (error) {
+    console.error(error);
+    updateState({ error: 'Unable to load journal index.' });
+  } finally {
+    updateState({ loading: false });
+  }
+}
+
+async function ensureMonthLoaded(month) {
+  if (!month) return;
+  if (!state.monthCache.has(month)) {
+    try {
+      updateState({ loading: true, error: null });
+      const response = await fetch(`/data/journal/${month}.json?t=${Date.now()}`, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`Failed to load journal month ${month}`);
+      const entries = await response.json();
+      state.monthCache.set(month, entries);
+    } catch (error) {
+      console.error(error);
+      updateState({ error: 'Unable to load journal entries.' });
+    } finally {
+      updateState({ loading: false });
+    }
+  }
+  refreshDatasets();
+}
+
+async function ensureMasterData() {
+  if (state.masterData || state.masterLoading) return;
+  state.masterLoading = true;
+  try {
+    const response = await fetch(`/data/journal.json?t=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) throw new Error('Failed to load trailing journal entries');
+    state.masterData = await response.json();
+  } catch (error) {
+    console.error(error);
+    updateState({ error: 'Unable to load trailing journal entries.' });
+  } finally {
+    state.masterLoading = false;
+  }
+}
+
+function refreshDatasets() {
+  const month = state.months[state.currentIndex];
+  const entries = state.monthCache.get(month);
+  if (!entries) {
+    render();
     return;
   }
-
-  if (typeof Chart.defaults === 'object') {
-    Chart.defaults.color = 'rgba(226, 232, 240, 0.85)';
-    Chart.defaults.font = Chart.defaults.font || {};
-    Chart.defaults.font.family = 'Inter, "Segoe UI", system-ui, sans-serif';
-    Chart.defaults.font.size = 14;
-    Chart.defaults.font.weight = '500';
+  const datasets = prepareDashboardData({
+    entries,
+    includeLast30: state.includeLast30,
+    masterEntries: state.includeLast30 && state.masterData ? state.masterData : []
+  });
+  state.dataState = datasets;
+  const sample = datasets.meta?.sampleByDate?.get('2025-10-26');
+  if (sample) {
+    console.log('29G Dashboard sample (2025-10-26)', sample);
   }
+  render();
+}
 
-  const reduceMotionQuery = safeMatchMedia('(prefers-reduced-motion: reduce)');
+function updateState(partial) {
+  Object.assign(state, partial);
+  render();
+}
 
-  const chartBackgroundPlugin = {
-    id: 'jdChartBackground',
-    defaults: { color: '#101b33' },
-    beforeDraw(chart, args, pluginOptions) {
-      const ctx = chart.ctx;
-      const area = chart.chartArea;
-      if (!ctx || !area) {
-        return;
+function render() {
+  if (!state.container) return;
+  state.container.innerHTML = '';
+  state.container.appendChild(buildShell());
+}
+
+function buildShell() {
+  const shell = createElement('div', 'dashboard-shell');
+  shell.appendChild(buildHeader());
+  if (state.error) {
+    shell.appendChild(createParagraph(state.error, 'dashboard-error'));
+  }
+  if (state.loading && !state.dataState) {
+    shell.appendChild(createParagraph('Loading dashboard…', 'dashboard-loading'));
+    return shell;
+  }
+  if (!state.dataState || !state.dataState.nitrateData.length) {
+    shell.appendChild(createParagraph('No journal data available.', 'dashboard-empty'));
+    return shell;
+  }
+  shell.appendChild(buildTabs());
+  shell.appendChild(buildPanels());
+  return shell;
+}
+
+function buildHeader() {
+  const header = createElement('header', 'dashboard-hero');
+  const titleWrap = createElement('div', 'dashboard-hero__title');
+  const title = document.createElement('h1');
+  title.textContent = '29G Aquarium Dashboard';
+  const subtitle = document.createElement('p');
+  subtitle.textContent = 'Data-driven view of the 29-gallon planted tank journal.';
+  titleWrap.appendChild(title);
+  titleWrap.appendChild(subtitle);
+
+  const meta = createElement('div', 'dashboard-hero__meta');
+  meta.appendChild(createIcon('calendar', 'dashboard-hero__icon'));
+  const rangeSpan = document.createElement('span');
+  rangeSpan.textContent = formatRange(state.dataState?.meta?.dateStart, state.dataState?.meta?.dateEnd) || 'Loading range…';
+  meta.appendChild(rangeSpan);
+
+  const controls = createElement('div', 'dashboard-controls');
+  controls.appendChild(buildMonthSwitcher());
+  controls.appendChild(buildToggle());
+
+  header.appendChild(titleWrap);
+  header.appendChild(meta);
+  header.appendChild(controls);
+  return header;
+}
+
+function buildMonthSwitcher() {
+  const wrapper = createElement('div', 'dashboard-month');
+  const prevBtn = document.createElement('button');
+  prevBtn.type = 'button';
+  prevBtn.className = 'dashboard-month__btn';
+  prevBtn.setAttribute('aria-label', 'View previous month');
+  prevBtn.disabled = state.currentIndex >= state.months.length - 1;
+  prevBtn.appendChild(createChevron('left'));
+  prevBtn.addEventListener('click', () => {
+    if (state.currentIndex >= state.months.length - 1) return;
+    state.currentIndex += 1;
+    ensureMonthLoaded(state.months[state.currentIndex]);
+  });
+
+  const label = createElement('p', 'dashboard-month__label');
+  label.textContent = formatMonth(state.months[state.currentIndex]);
+
+  const nextBtn = document.createElement('button');
+  nextBtn.type = 'button';
+  nextBtn.className = 'dashboard-month__btn';
+  nextBtn.setAttribute('aria-label', 'View next month');
+  nextBtn.disabled = state.currentIndex === 0;
+  nextBtn.appendChild(createChevron('right'));
+  nextBtn.addEventListener('click', () => {
+    if (state.currentIndex === 0) return;
+    state.currentIndex -= 1;
+    ensureMonthLoaded(state.months[state.currentIndex]);
+  });
+
+  wrapper.appendChild(prevBtn);
+  wrapper.appendChild(label);
+  wrapper.appendChild(nextBtn);
+  return wrapper;
+}
+
+function buildToggle() {
+  const label = createElement('label', 'dashboard-toggle');
+  const input = document.createElement('input');
+  input.type = 'checkbox';
+  input.checked = state.includeLast30;
+  input.addEventListener('change', async (event) => {
+    state.includeLast30 = event.target.checked;
+    if (state.includeLast30) {
+      await ensureMasterData();
+    }
+    refreshDatasets();
+  });
+  const text = document.createElement('span');
+  text.textContent = 'Include last 30 days across months';
+  label.appendChild(input);
+  label.appendChild(text);
+  return label;
+}
+
+function buildTabs() {
+  const tabList = createElement('div', 'dashboard-tabs');
+  tabList.setAttribute('role', 'tablist');
+  tabList.setAttribute('aria-label', 'Dashboard views');
+  tabList.addEventListener('keydown', (event) => {
+    if (!['ArrowRight', 'ArrowLeft'].includes(event.key)) return;
+    event.preventDefault();
+    const direction = event.key === 'ArrowRight' ? 1 : -1;
+    const idx = TAB_IDS.indexOf(state.activeTab);
+    const nextIdx = (idx + direction + TAB_IDS.length) % TAB_IDS.length;
+    state.activeTab = TAB_IDS[nextIdx];
+    render();
+    const nextButton = tabList.querySelector(`[data-tab='${state.activeTab}']`);
+    if (nextButton) nextButton.focus();
+  });
+
+  TAB_IDS.forEach((id) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.tab = id;
+    button.setAttribute('role', 'tab');
+    button.id = `dashboard-tab-${id}`;
+    button.setAttribute('aria-controls', `dashboard-panel-${id}`);
+    button.setAttribute('aria-label', tabAria[id]);
+    button.className = `dashboard-tab${state.activeTab === id ? ' is-active' : ''}`;
+    button.tabIndex = state.activeTab === id ? 0 : -1;
+    button.setAttribute('aria-selected', state.activeTab === id ? 'true' : 'false');
+    button.appendChild(createIcon(id === 'nitrate' ? 'droplet' : id === 'dosing' ? 'beaker' : 'scissors', 'dashboard-tab__icon'));
+    const span = document.createElement('span');
+    span.textContent = TAB_LABELS[id].split(' ')[0];
+    button.appendChild(span);
+    button.addEventListener('click', () => {
+      state.activeTab = id;
+      render();
+    });
+    tabList.appendChild(button);
+  });
+
+  return tabList;
+}
+
+function buildPanels() {
+  const fragment = document.createDocumentFragment();
+  fragment.appendChild(buildNitratePanel());
+  fragment.appendChild(buildDosingPanel());
+  fragment.appendChild(buildMaintenancePanel());
+  return fragment;
+}
+
+function buildNitratePanel() {
+  const panel = createElement('section', 'dashboard-panel');
+  panel.id = 'dashboard-panel-nitrate';
+  panel.setAttribute('role', 'tabpanel');
+  panel.setAttribute('aria-labelledby', 'dashboard-tab-nitrate');
+  if (state.activeTab !== 'nitrate') panel.hidden = true;
+  const heading = document.createElement('h2');
+  heading.textContent = 'Nitrate Levels';
+  panel.appendChild(heading);
+
+  const chartWrap = createElement('div', 'dashboard-chart chart-block');
+  const chart = renderNitrateChart(state.dataState.nitrateData);
+  chartWrap.appendChild(chart.svg);
+  chartWrap.appendChild(chart.tooltip);
+  panel.appendChild(chartWrap);
+
+  panel.appendChild(buildNitrateTable());
+  return panel;
+}
+
+function buildNitrateTable() {
+  const table = document.createElement('table');
+  table.className = 'dashboard-table sr-only';
+  const caption = document.createElement('caption');
+  caption.className = 'sr-only';
+  caption.textContent = 'Daily nitrate, dosing, and water change values';
+  table.appendChild(caption);
+  const thead = document.createElement('thead');
+  thead.innerHTML = '<tr><th scope="col">Date</th><th scope="col">Nitrate (ppm)</th><th scope="col">Thrive (pumps)</th><th scope="col">Excel (cap eq.)</th><th scope="col">Water Change</th></tr>';
+  table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  state.dataState.nitrateData.forEach((day) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `<td>${day.dateLabel}</td><td>${day.nitrate != null ? day.nitrate.toFixed(1) : '—'}</td><td>${day.thrive.toFixed(2)}</td><td>${day.excelCap.toFixed(2)}</td><td>${formatWaterChange(day)}</td>`;
+    tbody.appendChild(row);
+  });
+  table.appendChild(tbody);
+  return table;
+}
+
+function buildDosingPanel() {
+  const panel = createElement('section', 'dashboard-panel');
+  panel.id = 'dashboard-panel-dosing';
+  panel.setAttribute('role', 'tabpanel');
+  panel.setAttribute('aria-labelledby', 'dashboard-tab-dosing');
+  if (state.activeTab !== 'dosing') panel.hidden = true;
+  const heading = document.createElement('h2');
+  heading.textContent = 'Dosing Totals';
+  panel.appendChild(heading);
+
+  const chartWrap = createElement('div', 'dashboard-chart chart-block');
+  const chart = renderDosingChart(state.dataState.dosingData);
+  chartWrap.appendChild(chart.svg);
+  chartWrap.appendChild(chart.tooltip);
+  panel.appendChild(chartWrap);
+
+  const table = document.createElement('table');
+  table.className = 'dashboard-table sr-only';
+  const caption = document.createElement('caption');
+  caption.className = 'sr-only';
+  caption.textContent = 'Weekly Thrive and Excel dosing totals';
+  table.appendChild(caption);
+  const thead = document.createElement('thead');
+  thead.innerHTML = '<tr><th scope="col">Week</th><th scope="col">Thrive (pumps)</th><th scope="col">Excel (cap eq.)</th></tr>';
+  table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  state.dataState.dosingData.forEach((week) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `<td>${week.label}</td><td>${week.thrivePumps.toFixed(2)}</td><td>${week.excelCapEquivalent.toFixed(2)}</td>`;
+    tbody.appendChild(row);
+  });
+  table.appendChild(tbody);
+  panel.appendChild(table);
+  return panel;
+}
+
+function buildMaintenancePanel() {
+  const panel = createElement('section', 'dashboard-panel');
+  panel.id = 'dashboard-panel-maintenance';
+  panel.setAttribute('role', 'tabpanel');
+  panel.setAttribute('aria-labelledby', 'dashboard-tab-maintenance');
+  if (state.activeTab !== 'maintenance') panel.hidden = true;
+  const heading = document.createElement('h2');
+  heading.textContent = 'Maintenance Log';
+  panel.appendChild(heading);
+  panel.appendChild(renderMaintenanceCards(state.dataState.maintenanceEvents));
+  return panel;
+}
+
+function renderMaintenanceCards(events) {
+  const grid = createElement('div', 'dashboard-maintenance-grid');
+  if (!events.length) {
+    grid.appendChild(createParagraph('No maintenance logged in this range.', 'dashboard-empty'));
+    return grid;
+  }
+  const grouped = new Map();
+  events.forEach((event) => {
+    if (!grouped.has(event.dateISO)) {
+      grouped.set(event.dateISO, { dateISO: event.dateISO, dateLabel: event.dateLabel, items: [] });
+    }
+    grouped.get(event.dateISO).items.push(event);
+  });
+  [...grouped.values()].sort((a, b) => (a.dateISO > b.dateISO ? 1 : -1)).forEach((day) => {
+    const card = createElement('article', 'dashboard-card');
+    const header = createElement('header', 'dashboard-card__header');
+    const hasWaterChange = day.items.some((item) => item.type === 'Water Change');
+    header.appendChild(createIcon(hasWaterChange ? 'droplet' : 'scissors', 'dashboard-card__icon'));
+    const title = document.createElement('h3');
+    title.textContent = day.dateLabel;
+    header.appendChild(title);
+    card.appendChild(header);
+    const list = createElement('ul', 'dashboard-card__list');
+    day.items.forEach((item, index) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="dashboard-card__type">${item.type}</span><span class="dashboard-card__details">${item.details}</span>`;
+      if (item.type === 'Water Change' && (item.sumpPct != null || item.displayPct != null)) {
+        const extra = document.createElement('span');
+        extra.className = 'dashboard-card__details';
+        extra.textContent = `${item.sumpPct != null ? `${item.sumpPct}% sump` : ''}${item.displayPct != null ? ` / ${item.displayPct}% display` : ''}`.trim();
+        li.appendChild(extra);
       }
+      list.appendChild(li);
+    });
+    card.appendChild(list);
+    grid.appendChild(card);
+  });
+  return grid;
+}
 
-      const color = pluginOptions?.color || chartBackgroundPlugin.defaults.color;
-      ctx.save();
-      ctx.fillStyle = color;
-      ctx.fillRect(area.left, area.top, area.width, area.height);
-      ctx.restore();
+function renderNitrateChart(data) {
+  const width = 720;
+  const height = 280;
+  const margin = { top: 24, right: 32, bottom: 36, left: 48 };
+  const svg = createSvg(width, height);
+  const tooltip = createTooltip();
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('transform', `translate(${margin.left},${margin.top})`);
+  svg.appendChild(g);
+
+  const xScale = createBandScale(data.map((d) => d.dateLabel), innerWidth);
+  const nitrateValues = data.map((d) => (d.nitrate != null ? d.nitrate : null)).filter((v) => v != null);
+  const yMax = Math.max(TARGET_NO3, Math.ceil(Math.max(...nitrateValues, 0) / 5) * 5 + 5 || 20);
+  const yScale = createLinearScale([0, yMax], innerHeight);
+
+  drawGrid(g, innerWidth, innerHeight, xScale, yScale);
+  drawAxes(g, innerWidth, innerHeight, xScale, yScale);
+  drawReferenceLine(g, yScale, innerWidth, TARGET_NO3);
+  drawNitratePath(g, data, xScale, yScale);
+  drawNitrateDots(g, data, xScale, yScale, tooltip);
+
+  attachTooltipHandlers(svg, tooltip);
+  return { svg, tooltip };
+}
+
+function renderDosingChart(data) {
+  const width = 720;
+  const height = 280;
+  const margin = { top: 24, right: 32, bottom: 56, left: 48 };
+  const svg = createSvg(width, height);
+  const tooltip = createTooltip();
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('transform', `translate(${margin.left},${margin.top})`);
+  svg.appendChild(g);
+
+  const xScale = createBandScale(data.map((d) => d.label), innerWidth, 0.2);
+  const maxValue = Math.max(
+    ...data.map((d) => Math.max(d.thrivePumps, d.excelCapEquivalent)),
+    0
+  );
+  const yScale = createLinearScale([0, Math.ceil(maxValue / 2) * 2 + 2 || 10], innerHeight);
+
+  drawGrid(g, innerWidth, innerHeight, xScale, yScale);
+  drawAxes(g, innerWidth, innerHeight, xScale, yScale, true);
+  drawBars(g, data, xScale, yScale, tooltip);
+  attachTooltipHandlers(svg, tooltip);
+  return { svg, tooltip };
+}
+
+function drawGrid(group, width, height, xScale, yScale) {
+  const gridGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  gridGroup.setAttribute('stroke', 'rgba(255,255,255,0.15)');
+  gridGroup.setAttribute('stroke-dasharray', '3 3');
+  const yTicks = yScale.ticks(5);
+  yTicks.forEach((tick) => {
+    const y = yScale.map(tick);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', '0');
+    line.setAttribute('x2', width);
+    line.setAttribute('y1', y);
+    line.setAttribute('y2', y);
+    gridGroup.appendChild(line);
+  });
+  group.appendChild(gridGroup);
+}
+
+function drawAxes(group, width, height, xScale, yScale, rotateX = false) {
+  const axisGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  axisGroup.setAttribute('class', 'dashboard-axis');
+  const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  xAxis.setAttribute('transform', `translate(0, ${height})`);
+  xScale.values.forEach((value, index) => {
+    const x = xScale.position(index) + xScale.bandwidth / 2;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x);
+    line.setAttribute('x2', x);
+    line.setAttribute('y1', 0);
+    line.setAttribute('y2', 6);
+    xAxis.appendChild(line);
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', x);
+    text.setAttribute('y', rotateX ? 20 : 24);
+    text.setAttribute('fill', 'rgba(255,255,255,0.75)');
+    text.setAttribute('font-size', '12');
+    text.setAttribute('text-anchor', rotateX ? 'end' : 'middle');
+    if (rotateX) {
+      text.setAttribute('transform', `rotate(-25 ${x} ${height + 20})`);
+    }
+    text.textContent = value;
+    xAxis.appendChild(text);
+  });
+  axisGroup.appendChild(xAxis);
+
+  const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  yScale.ticks(5).forEach((tick) => {
+    const y = yScale.map(tick);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', -6);
+    line.setAttribute('x2', 0);
+    line.setAttribute('y1', y);
+    line.setAttribute('y2', y);
+    yAxis.appendChild(line);
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', -10);
+    text.setAttribute('y', y + 4);
+    text.setAttribute('fill', 'rgba(255,255,255,0.75)');
+    text.setAttribute('font-size', '12');
+    text.setAttribute('text-anchor', 'end');
+    text.textContent = tick;
+    yAxis.appendChild(text);
+  });
+  axisGroup.appendChild(yAxis);
+  group.appendChild(axisGroup);
+}
+
+function drawReferenceLine(group, yScale, width, value) {
+  const y = yScale.map(value);
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line.setAttribute('x1', '0');
+  line.setAttribute('x2', width);
+  line.setAttribute('y1', y);
+  line.setAttribute('y2', y);
+  line.setAttribute('stroke', 'rgba(255,255,255,0.4)');
+  line.setAttribute('stroke-dasharray', '4 4');
+  group.appendChild(line);
+}
+
+function drawNitratePath(group, data, xScale, yScale) {
+  const pathData = [];
+  data.forEach((point, index) => {
+    if (point.nitrate == null) return;
+    const x = xScale.position(index) + xScale.bandwidth / 2;
+    const y = yScale.map(point.nitrate);
+    pathData.push(`${pathData.length ? 'L' : 'M'}${x},${y}`);
+  });
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', pathData.join(' '));
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', '#8ee0ff');
+  path.setAttribute('stroke-width', '3');
+  group.appendChild(path);
+}
+
+function drawNitrateDots(group, data, xScale, yScale, tooltip) {
+  let lastValid = null;
+  data.forEach((point, index) => {
+    if (point.nitrate != null) {
+      lastValid = point.nitrate;
+    } else if (!point.wc) {
+      return;
+    }
+    const displayValue = point.nitrate != null ? point.nitrate : lastValid ?? TARGET_NO3;
+    const x = xScale.position(index) + xScale.bandwidth / 2;
+    const y = yScale.map(displayValue);
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', x);
+    circle.setAttribute('cy', y);
+    circle.setAttribute('r', point.wc ? 6 : 4);
+    circle.setAttribute('fill', point.wc ? '#9de2b6' : '#66d1f6');
+    circle.setAttribute('stroke', '#041730');
+    circle.setAttribute('stroke-width', '2');
+    circle.addEventListener('mouseenter', (event) => showTooltip(event, tooltip, buildNitrateTooltip(point)));
+    circle.addEventListener('mouseleave', () => hideTooltip(tooltip));
+    circle.addEventListener('focus', (event) => showTooltip(event, tooltip, buildNitrateTooltip(point)));
+    circle.addEventListener('blur', () => hideTooltip(tooltip));
+    group.appendChild(circle);
+  });
+}
+
+function drawBars(group, data, xScale, yScale, tooltip) {
+  data.forEach((item, index) => {
+    const x = xScale.position(index);
+    const width = xScale.bandwidth;
+    const thriveHeight = yScale.map(0) - yScale.map(item.thrivePumps);
+    const excelHeight = yScale.map(0) - yScale.map(item.excelCapEquivalent);
+
+    const thriveRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    thriveRect.setAttribute('x', x);
+    thriveRect.setAttribute('y', yScale.map(item.thrivePumps));
+    thriveRect.setAttribute('width', width / 2 - 4);
+    thriveRect.setAttribute('height', thriveHeight);
+    thriveRect.setAttribute('fill', '#66d1f6');
+    thriveRect.addEventListener('mouseenter', (event) => showTooltip(event, tooltip, buildDosingTooltip(item)));
+    thriveRect.addEventListener('mouseleave', () => hideTooltip(tooltip));
+    group.appendChild(thriveRect);
+
+    const excelRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    excelRect.setAttribute('x', x + width / 2 + 4);
+    excelRect.setAttribute('y', yScale.map(item.excelCapEquivalent));
+    excelRect.setAttribute('width', width / 2 - 4);
+    excelRect.setAttribute('height', excelHeight);
+    excelRect.setAttribute('fill', '#9de2b6');
+    excelRect.addEventListener('mouseenter', (event) => showTooltip(event, tooltip, buildDosingTooltip(item)));
+    excelRect.addEventListener('mouseleave', () => hideTooltip(tooltip));
+    group.appendChild(excelRect);
+  });
+}
+
+function buildNitrateTooltip(point) {
+  return `
+    <p class="dashboard-tooltip__title">${point.dateLabel}</p>
+    <p class="dashboard-tooltip__value"><span>Nitrate:</span> ${point.nitrate.toFixed(1)} ppm</p>
+    <p class="dashboard-tooltip__value"><span>Thrive:</span> ${point.thrive.toFixed(2)} pumps</p>
+    <p class="dashboard-tooltip__value"><span>Excel:</span> ${point.excelCap.toFixed(2)} cap eq.</p>
+    ${point.nitrateDetails ? `<p class="dashboard-tooltip__note">${point.nitrateDetails}</p>` : ''}
+    ${point.wc ? `<p class="dashboard-tooltip__note">Water change ${formatWaterChange(point)}</p>` : ''}
+  `;
+}
+
+function buildDosingTooltip(item) {
+  return `
+    <p class="dashboard-tooltip__title">${item.label}</p>
+    <p class="dashboard-tooltip__value"><span>Thrive:</span> ${item.thrivePumps.toFixed(2)} pumps</p>
+    <p class="dashboard-tooltip__value"><span>Excel:</span> ${item.excelCapEquivalent.toFixed(2)} cap eq.</p>
+  `;
+}
+
+function showTooltip(event, tooltip, content) {
+  tooltip.innerHTML = content;
+  tooltip.style.opacity = '1';
+  const { clientX, clientY } = event;
+  tooltip.style.left = `${clientX + 16}px`;
+  tooltip.style.top = `${clientY - 16}px`;
+}
+
+function hideTooltip(tooltip) {
+  tooltip.style.opacity = '0';
+}
+
+function attachTooltipHandlers(svg, tooltip) {
+  svg.addEventListener('mouseleave', () => hideTooltip(tooltip));
+}
+
+function createSvg(width, height) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'Chart visualization');
+  return svg;
+}
+
+function createTooltip() {
+  const tooltip = createElement('div', 'dashboard-tooltip');
+  tooltip.style.position = 'fixed';
+  tooltip.style.pointerEvents = 'none';
+  tooltip.style.opacity = '0';
+  tooltip.style.transition = 'opacity 0.15s ease';
+  return tooltip;
+}
+
+function createBandScale(values, width, padding = 0.1) {
+  const step = width / (values.length || 1);
+  const band = step * (1 - padding * 2);
+  return {
+    values,
+    bandwidth: band,
+    position(index) {
+      return index * step + step * padding;
     }
   };
+}
 
-  if (typeof Chart?.register === 'function') {
-    Chart.register(chartBackgroundPlugin);
-  }
-
-  const dom = {
-    rangeWindow: document.querySelector('[data-range-window]'),
-    rangeMonth: document.querySelector('[data-range-month]'),
-    toggle: document.querySelector('[data-range-toggle]'),
-    rangeButtons: Array.from(document.querySelectorAll('[data-range-nav]')),
-    tabs: Array.from(document.querySelectorAll('[data-tab]')),
-    panels: Array.from(document.querySelectorAll('.journal-dashboard__panel')),
-    error: document.querySelector('[data-dashboard-error]'),
-    densityChips: Array.from(document.querySelectorAll('[data-density]')),
-    groupChips: Array.from(document.querySelectorAll('[data-group]')),
-    focusModal: document.querySelector('[data-focus-modal]'),
-    focusOpen: document.querySelector('[data-focus-open]'),
-    focusClose: Array.from(document.querySelectorAll('[data-focus-close]')),
-    focusChartWrap: document.querySelector('[data-focus-chart]'),
-    maintenanceStatus: document.querySelector('[data-maintenance-status]')
-  };
-
-  const state = {
-    data: null,
-    showLast30: false,
-    activeTab: 'nitrate',
-    monthOffset: 0,
-    density: 'compact',
-    groupMode: 'daily',
-    charts: {
-      nitrate: null,
-      nitrateFocus: null,
-      dosingThrive: null,
-      dosingExcel: null,
-      maintenance: null
+function createLinearScale(domain, range) {
+  const [d0, d1] = domain;
+  const [r0, r1] = [range, 0];
+  return {
+    map(value) {
+      if (d1 === d0) return r0;
+      return r0 + ((value - d0) / (d1 - d0)) * (r1 - r0);
+    },
+    ticks(count) {
+      const step = (d1 - d0) / count;
+      const ticks = [];
+      for (let i = 0; i <= count; i += 1) {
+        ticks.push(Math.round((d0 + step * i) * 10) / 10);
+      }
+      return ticks;
     }
   };
+}
 
-  let focusReturnElement = null;
+function createElement(tag, className) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  return element;
+}
 
-  const STORAGE_KEYS = {
-    density: 'jd-density-mode',
-    groupMode: 'jd-group-mode'
-  };
+function createParagraph(text, className) {
+  const p = document.createElement('p');
+  if (className) p.className = className;
+  p.textContent = text;
+  return p;
+}
 
-  const dateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
-  const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' });
-  const maintenanceFormatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
-  if (reduceMotionQuery && typeof reduceMotionQuery.addEventListener === 'function') {
-    reduceMotionQuery.addEventListener('change', () => {
-      const animation = getAnimationOptions();
-      Object.values(state.charts).forEach((chart) => {
-        if (chart) {
-          chart.options.animation = animation;
-          chart.update();
-        }
-      });
-    });
+function createChevron(direction) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('width', '20');
+  svg.setAttribute('height', '20');
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', 'currentColor');
+  path.setAttribute('stroke-width', '2');
+  path.setAttribute('stroke-linecap', 'round');
+  path.setAttribute('stroke-linejoin', 'round');
+  if (direction === 'left') {
+    path.setAttribute('d', 'M15 18l-6-6 6-6');
+  } else {
+    path.setAttribute('d', 'M9 6l6 6-6 6');
   }
+  svg.appendChild(path);
+  return svg;
+}
 
-  init();
+function createIcon(name, className) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('width', '20');
+  svg.setAttribute('height', '20');
+  svg.setAttribute('aria-hidden', 'true');
+  if (className) svg.classList.add(className);
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('fill', name === 'droplet' ? 'currentColor' : 'none');
+  path.setAttribute('stroke', 'currentColor');
+  path.setAttribute('stroke-width', '1.8');
+  path.setAttribute('stroke-linecap', 'round');
+  path.setAttribute('stroke-linejoin', 'round');
+  path.setAttribute('d', iconPaths[name] || iconPaths.calendar);
+  svg.appendChild(path);
+  return svg;
+}
 
-  function safeMatchMedia(query) {
-    if (typeof window.matchMedia === 'function') {
-      return window.matchMedia(query);
-    }
-    return null;
+function formatRange(start, end) {
+  if (!start || !end) return '';
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  const sameYear = startDate.getUTCFullYear() === endDate.getUTCFullYear();
+  const sameMonth = sameYear && startDate.getUTCMonth() === endDate.getUTCMonth();
+  const formatterMonth = new Intl.DateTimeFormat(undefined, { month: 'long' });
+  const formatterDay = new Intl.DateTimeFormat(undefined, { day: 'numeric' });
+  if (sameMonth) {
+    return `${formatterMonth.format(startDate)} ${formatterDay.format(startDate)} – ${formatterDay.format(endDate)}, ${endDate.getUTCFullYear()}`;
   }
-
-  function getAnimationOptions() {
-    return reduceMotionQuery?.matches
-      ? false
-      : {
-          duration: 600,
-          easing: 'easeOutQuart'
-        };
+  if (sameYear) {
+    const monthDay = new Intl.DateTimeFormat(undefined, { month: 'long', day: 'numeric' });
+    return `${monthDay.format(startDate)} – ${monthDay.format(endDate)}, ${endDate.getUTCFullYear()}`;
   }
-
-  function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-  }
-
-  function parseColor(color) {
-    if (!color || typeof color !== 'string') {
-      return null;
-    }
-    if (color.startsWith('#')) {
-      let hex = color.slice(1).trim();
-      if (hex.length === 3) {
-        hex = hex
-          .split('')
-          .map((char) => `${char}${char}`)
-          .join('');
-      }
-      const numeric = Number.parseInt(hex, 16);
-      if (!Number.isFinite(numeric)) {
-        return null;
-      }
-      return {
-        r: (numeric >> 16) & 255,
-        g: (numeric >> 8) & 255,
-        b: numeric & 255,
-        a: 1
-      };
-    }
-    const match = color.match(/rgba?\(([^)]+)\)/i);
-    if (!match) {
-      return null;
-    }
-    const parts = match[1]
-      .split(',')
-      .map((part) => part.trim())
-      .map((part) => Number.parseFloat(part));
-    if (parts.length < 3 || parts.some((value) => !Number.isFinite(value))) {
-      return null;
-    }
-    return {
-      r: parts[0],
-      g: parts[1],
-      b: parts[2],
-      a: parts[3] ?? 1
-    };
-  }
-
-  function lightenColor(color, amount = 0.2, alpha = 0.95) {
-    const parsed = parseColor(color);
-    if (!parsed) {
-      return color;
-    }
-    const clampChannel = (value) => clamp(Math.round(value), 0, 255);
-    const mix = (channel) => clampChannel(channel + (255 - channel) * amount);
-    const r = mix(parsed.r);
-    const g = mix(parsed.g);
-    const b = mix(parsed.b);
-    const nextAlpha = typeof alpha === 'number' ? Math.min(Math.max(alpha, 0), 1) : parsed.a;
-    return `rgba(${r}, ${g}, ${b}, ${nextAlpha})`;
-  }
-
-  async function init() {
-    const data = await loadData();
-    if (!data) {
-      setError('Unable to load journal data right now.');
-      return;
-    }
-    state.data = data;
-    loadSettings();
-    syncDensityUI();
-    syncGroupUI();
-    updateRangeLabels();
-    bindControls();
-    renderAll();
-  }
-
-  function loadSettings() {
-    try {
-      const density = localStorage.getItem(STORAGE_KEYS.density);
-      if (density === 'comfortable' || density === 'expanded' || density === 'compact') {
-        state.density = density;
-      }
-      const groupMode = localStorage.getItem(STORAGE_KEYS.groupMode);
-      if (groupMode === 'weekly' || groupMode === 'daily') {
-        state.groupMode = groupMode;
-      }
-    } catch (error) {
-      console.warn('Unable to load dashboard preferences.', error);
-    }
-  }
-
-  function saveSetting(key, value) {
-    try {
-      localStorage.setItem(key, value);
-    } catch (error) {
-      console.warn('Unable to persist dashboard preference.', error);
-    }
-  }
-
-  function setError(message) {
-    if (!dom.error) {
-      return;
-    }
-    dom.error.textContent = message || '';
-    dom.error.hidden = !message;
-  }
-
-  function syncDensityUI() {
-    dom.densityChips.forEach((chip) => {
-      const isActive = chip.dataset.density === state.density;
-      chip.classList.toggle('is-active', isActive);
-      chip.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-    });
-  }
-
-  function syncGroupUI() {
-    dom.groupChips.forEach((chip) => {
-      const isActive = chip.dataset.group === state.groupMode;
-      chip.classList.toggle('is-active', isActive);
-      chip.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-    });
-  }
-
-  async function loadData() {
-    const fallback = window.__JOURNAL_FALLBACK__ ? JSON.parse(JSON.stringify(window.__JOURNAL_FALLBACK__)) : null;
-    try {
-      const response = await fetch(`/data/journal.json?t=${Date.now()}`, { cache: 'no-cache' });
-      if (!response.ok) {
-        throw new Error('Request failed');
-      }
-      const payload = await response.json();
-      const normalized = normalizeModel(payload);
-      if (normalized) {
-        return normalized;
-      }
-    } catch (error) {
-      const normalizedFallback = normalizeModel(fallback);
-      if (normalizedFallback) {
-        return normalizedFallback;
-      }
-      console.error('Failed to load journal dashboard data.', error);
-    }
-    return null;
-  }
-
-  function normalizeModel(raw) {
-    if (!raw || typeof raw !== 'object') {
-      return null;
-    }
-    if (Array.isArray(raw)) {
-      return null;
-    }
-    const period = {
-      start: raw.period?.start || null,
-      end: raw.period?.end || null
-    };
-
-    const nitrate = Array.isArray(raw.nitrate)
-      ? raw.nitrate
-          .map((entry) => ({
-            date: entry.date || null,
-            ppm: typeof entry.ppm === 'number' ? entry.ppm : parseFloat(entry.ppm),
-            wc: Boolean(entry.wc)
-          }))
-          .filter((entry) => entry.date && Number.isFinite(entry.ppm))
-          .sort((a, b) => new Date(`${a.date}T00:00:00Z`).getTime() - new Date(`${b.date}T00:00:00Z`).getTime())
-      : [];
-
-    const dosing = Array.isArray(raw.dosing)
-      ? raw.dosing.map((entry) => ({
-          week: entry.week || '',
-          label: entry.label || entry.week || '',
-          thrive: typeof entry.thrive === 'number' ? entry.thrive : parseFloat(entry.thrive) || 0,
-          excel: typeof entry.excel === 'number' ? entry.excel : parseFloat(entry.excel) || 0
-        }))
-      : [];
-
-    const maintenance = Array.isArray(raw.maintenance)
-      ? raw.maintenance
-          .map((entry) => ({
-            date: entry.date || null,
-            type: entry.type || 'Maintenance',
-            details: entry.details || ''
-          }))
-          .filter((entry) => entry.date)
-          .sort((a, b) => new Date(`${b.date}T00:00:00Z`).getTime() - new Date(`${a.date}T00:00:00Z`).getTime())
-      : [];
-
-    if (!period.start || !period.end) {
-      const first = nitrate[0]?.date;
-      const last = nitrate[nitrate.length - 1]?.date;
-      period.start = first || period.start;
-      period.end = last || period.end;
-    }
-
-    return { period, nitrate, dosing, maintenance };
-  }
-
-  function bindControls() {
-    dom.rangeButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        const direction = button.dataset.rangeNav === 'next' ? 1 : -1;
-        state.monthOffset += direction;
-        updateMonthLabel();
-      });
-    });
-
-    if (dom.toggle) {
-      dom.toggle.addEventListener('click', () => {
-        state.showLast30 = !state.showLast30;
-        dom.toggle.classList.toggle('is-active', state.showLast30);
-        dom.toggle.setAttribute('aria-pressed', state.showLast30 ? 'true' : 'false');
-        renderNitrateChart();
-        if (state.charts.nitrateFocus) {
-          renderFocusChart();
-        }
-      });
-    }
-
-    dom.tabs.forEach((tab) => {
-      tab.addEventListener('click', () => {
-        setActiveTab(tab.dataset.tab);
-      });
-    });
-
-    dom.densityChips.forEach((chip) => {
-      chip.addEventListener('click', () => {
-        const value = chip.dataset.density;
-        if (!value || value === state.density) {
-          return;
-        }
-        state.density = value;
-        saveSetting(STORAGE_KEYS.density, value);
-        syncDensityUI();
-        renderAll();
-      });
-    });
-
-    dom.groupChips.forEach((chip) => {
-      chip.addEventListener('click', () => {
-        const value = chip.dataset.group;
-        if (!value || value === state.groupMode) {
-          return;
-        }
-        state.groupMode = value;
-        saveSetting(STORAGE_KEYS.groupMode, value);
-        syncGroupUI();
-        renderAll();
-      });
-    });
-
-    if (dom.focusOpen) {
-      dom.focusOpen.addEventListener('click', openFocusModal);
-    }
-
-    dom.focusClose.forEach((trigger) => {
-      trigger.addEventListener('click', closeFocusModal);
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && dom.focusModal && !dom.focusModal.hasAttribute('hidden')) {
-        event.preventDefault();
-        closeFocusModal();
-      }
-    });
-  }
-
-  function parseISO(value) {
-    if (!value) {
-      return null;
-    }
-    const date = new Date(`${value}T00:00:00`);
-    return Number.isNaN(date.getTime()) ? null : date;
-  }
-
-  function updateRangeLabels() {
-    if (!state.data) {
-      return;
-    }
-    const start = parseISO(state.data.period.start);
-    const end = parseISO(state.data.period.end);
-    if (dom.rangeWindow) {
-      if (!start || !end) {
-        dom.rangeWindow.textContent = '—';
-      } else {
-        const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
-        const rangeText = sameMonth
-          ? `${dateFormatter.format(start)} – ${dateFormatter.format(end)}, ${end.getFullYear()}`
-          : `${dateFormatter.format(start)} ${start.getFullYear()} – ${dateFormatter.format(end)} ${end.getFullYear()}`;
-        dom.rangeWindow.textContent = rangeText;
-      }
-    }
-    updateMonthLabel();
-  }
-
-  function updateMonthLabel() {
-    if (!dom.rangeMonth || !state.data) {
-      return;
-    }
-    const end = parseISO(state.data.period.end);
-    if (!end) {
-      dom.rangeMonth.textContent = '—';
-      return;
-    }
-    const labelDate = new Date(end);
-    labelDate.setMonth(labelDate.getMonth() + state.monthOffset);
-    dom.rangeMonth.textContent = monthFormatter.format(labelDate);
-  }
-
-  function renderAll() {
-    renderNitrateChart();
-    renderDosingCharts();
-    renderMaintenanceTimeline();
-    if (state.charts.nitrateFocus) {
-      renderFocusChart();
-    }
-    setActiveTab(state.activeTab);
-  }
-
-  function destroyChart(key) {
-    if (state.charts[key]) {
-      state.charts[key].destroy();
-      state.charts[key] = null;
-    }
-  }
-
-  function getNitrateSeries({ focus = false } = {}) {
-    if (!state.data) {
-      return { points: [] };
-    }
-
-    const densityLimit = focus ? Infinity : getDensityLimit('nitrate');
-    const endDate = parseISO(state.data.period.end);
-    const cutoff = endDate ? new Date(endDate) : null;
-    if (cutoff) {
-      cutoff.setDate(cutoff.getDate() - 29);
-    }
-
-    let items = state.data.nitrate.filter((entry) => {
-      if (focus || !state.showLast30 || !cutoff) {
-        return true;
-      }
-      const current = parseISO(entry.date);
-      return current && current >= cutoff && current <= endDate;
-    });
-
-    if (!focus && Number.isFinite(densityLimit) && items.length > densityLimit) {
-      items = items.slice(items.length - densityLimit);
-    }
-
-    if (state.groupMode === 'weekly') {
-      items = groupNitrateByWeek(items);
-    } else {
-      items = items
-        .map((entry) => {
-          const parsed = parseISO(entry.date);
-          const label = parsed ? dateFormatter.format(parsed) : entry.date;
-          return {
-            label,
-            tooltip: `${label} · ${entry.ppm} ppm`,
-            value: entry.ppm,
-            marker: entry.wc ? entry.ppm : null,
-            date: entry.date,
-            wc: entry.wc
-          };
-        })
-        .filter((item) => Number.isFinite(item.value));
-    }
-
-    if (focus && Number.isFinite(densityLimit) && items.length > densityLimit && state.groupMode === 'daily') {
-      // Focus mode still respects density limit when daily data is extremely long to prevent crashes.
-      items = items.slice(items.length - densityLimit * 2);
-    }
-
-    return { points: items };
-  }
-
-  function getDensityLimit(type) {
-    const base = state.density;
-    if (base === 'expanded') {
-      return 48;
-    }
-    if (base === 'comfortable') {
-      return type === 'nitrate' ? 18 : 16;
-    }
-    return type === 'nitrate' ? 10 : 12;
-  }
-
-  function groupNitrateByWeek(items) {
-    const buckets = new Map();
-    items.forEach((entry) => {
-      const parsed = parseISO(entry.date);
-      if (!parsed) {
-        return;
-      }
-      const { year, week } = getIsoWeek(parsed);
-      const key = `${year}-W${week}`;
-      if (!buckets.has(key)) {
-        buckets.set(key, {
-          week,
-          year,
-          total: 0,
-          count: 0,
-          start: parsed,
-          end: parsed,
-          wc: Boolean(entry.wc)
-        });
-      }
-      const bucket = buckets.get(key);
-      bucket.total += entry.ppm || 0;
-      bucket.count += Number.isFinite(entry.ppm) ? 1 : 0;
-      bucket.start = bucket.start && bucket.start < parsed ? bucket.start : parsed;
-      bucket.end = bucket.end && bucket.end > parsed ? bucket.end : parsed;
-      bucket.wc = bucket.wc || Boolean(entry.wc);
-    });
-
-    const sorted = Array.from(buckets.values()).sort((a, b) => a.start - b.start);
-    return sorted.map((bucket) => {
-      const average = bucket.count ? Number.parseFloat((bucket.total / bucket.count).toFixed(1)) : 0;
-      const rangeStart = maintenanceFormatter.format(bucket.start);
-      const rangeEnd = maintenanceFormatter.format(bucket.end);
-      const label = `Week ${bucket.week}`;
-      return {
-        label,
-        tooltip: `${label} · ${rangeStart} – ${rangeEnd}`,
-        value: average,
-        marker: bucket.wc ? average : null,
-        date: `${bucket.year}-W${bucket.week}`,
-        wc: bucket.wc
-      };
-    });
-  }
-
-  function getIsoWeek(date) {
-    const copy = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    const day = copy.getUTCDay() || 7;
-    copy.setUTCDate(copy.getUTCDate() + 4 - day);
-    const yearStart = new Date(Date.UTC(copy.getUTCFullYear(), 0, 1));
-    const weekNumber = Math.ceil(((copy - yearStart) / 86400000 + 1) / 7);
-    return { year: copy.getUTCFullYear(), week: weekNumber };
-  }
-
-  function getLabelStep(count) {
-    const width = typeof window !== 'undefined' ? window.innerWidth || 0 : 0;
-    if (state.density === 'expanded') {
-      return width < 480 ? 1 : 1;
-    }
-    if (state.density === 'comfortable') {
-      return width <= 420 ? 2 : 1;
-    }
-    if (width <= 360) {
-      return 3;
-    }
-    if (width <= 768) {
-      return 2;
-    }
-    return count > 14 ? 2 : 1;
-  }
-
-  function getRollingAverage(values, windowSize) {
-    if (!Array.isArray(values) || values.length === 0) {
-      return [];
-    }
-    const size = Math.max(1, windowSize);
-    return values.map((value, index) => {
-      let sum = 0;
-      let count = 0;
-      for (let offset = 0; offset < size; offset += 1) {
-        const target = index - offset;
-        if (target < 0) {
-          break;
-        }
-        const current = values[target];
-        if (Number.isFinite(current)) {
-          sum += current;
-          count += 1;
-        }
-      }
-      if (!count) {
-        return null;
-      }
-      return Number.parseFloat((sum / count).toFixed(1));
-    });
-  }
-
-  function renderNitrateChart() {
-    const canvas = document.getElementById('nitrateChart');
-    if (!canvas) {
-      return;
-    }
-    const { points } = getNitrateSeries();
-    if (!points.length) {
-      destroyChart('nitrate');
-      if (statusEl) {
-        statusEl.textContent = 'No nitrate readings available for this range yet.';
-      }
-      return;
-    }
-
-    if (statusEl) {
-      statusEl.textContent = '';
-    }
-
-    const ctx = canvas.getContext('2d');
-    const datasets = createNitrateDatasets(points);
-    const annotation = getNitrateAnnotation();
-    const values = points.map((point) => point.value);
-    const suggestedMax = getSuggestedMax(values);
-    const options = getNitrateChartOptions({ annotation, suggestedMax, focus: false });
-
-    if (!state.charts.nitrate) {
-      state.charts.nitrate = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: points.map((point) => point.label),
-          datasets
-        },
-        options
-      });
-      return;
-    }
-
-    const chart = state.charts.nitrate;
-    chart.data.labels = points.map((point) => point.label);
-    chart.data.datasets = datasets;
-    chart.options = options;
-    chart.config.options = options;
-    chart.update();
-  }
-
-  function createNitrateDatasets(points, { focus = false } = {}) {
-    const compact = isCompactViewport();
-    const step = focus ? 1 : getLabelStep(points.length);
-    const lineColor = focus ? '#38bdf8' : '#4cc9f0';
-    const pointColor = focus ? '#0ea5e9' : '#22d3ee';
-    const labelColor = lightenColor('#e0f2ff', 0.05, 1);
-    const strokeColor = 'rgba(6, 12, 24, 0.92)';
-
-    const dataset = {
-      label: 'Nitrate',
-      data: points.map((point) => point.value),
-      pointLabels: points.map((point) => point.label),
-      tooltips: points.map((point) => point.tooltip),
-      borderColor: lineColor,
-      backgroundColor: lineColor,
-      borderWidth: focus ? 4 : 3.5,
-      tension: 0.32,
-      fill: false,
-      spanGaps: true,
-      clip: false,
-      pointBackgroundColor: pointColor,
-      pointHoverBackgroundColor: pointColor,
-      pointBorderColor: '#061225',
-      pointBorderWidth: 2,
-      pointRadius: (context) => {
-        const width = context?.chart?.width || 0;
-        const base = width < 540 ? 6 : 5;
-        return focus ? base + 1 : base;
-      },
-      pointHoverRadius: (context) => {
-        const width = context?.chart?.width || 0;
-        const base = width < 540 ? 8 : 7;
-        return focus ? base + 1 : base;
-      },
-      pointHitRadius: 12,
-      datalabels: {
-        display: true,
-        color: labelColor,
-        align: (ctx) => (ctx.dataIndex % 2 === 0 ? 'end' : 'start'),
-        anchor: (ctx) => (ctx.dataIndex % 2 === 0 ? 'end' : 'start'),
-        offset: focus ? 16 : compact ? 18 : 20,
-        clamp: false,
-        clip: false,
-        padding: { top: 4, bottom: 4, left: 6, right: 6 },
-        textStrokeColor: strokeColor,
-        textStrokeWidth: 3,
-        font: {
-          size: focus ? 12 : compact ? 10 : 11,
-          weight: '600'
-        },
-        formatter(value, context) {
-          const labels = context.dataset?.pointLabels || [];
-          const label = labels[context.dataIndex];
-          if (!label) {
-            return '';
-          }
-          if (!focus && step > 1 && context.dataIndex % step !== 0) {
-            return '';
-          }
-          const elements = context.meta?.data || [];
-          const current = elements[context.dataIndex];
-          const previous = elements[context.dataIndex - 1];
-          if (!focus && previous && current) {
-            const spacing = Math.abs(current.x - previous.x);
-            const minSpacing = compact ? 28 : 34;
-            if (spacing < minSpacing && context.dataIndex % 2 === 1) {
-              return '';
-            }
-          }
-          return label;
-        }
-      }
-    };
-
-    const markerDataset = {
-      label: 'Water Change',
-      data: points.map((point) => point.marker),
-      type: 'scatter',
-      pointBackgroundColor: '#fb923c',
-      pointBorderColor: lightenColor('#fb923c', 0.2, 1),
-      pointRadius: (context) => {
-        const width = context?.chart?.width || 0;
-        const base = width < 540 ? 6 : 5;
-        return focus ? base + 1 : base;
-      },
-      pointHoverRadius: (context) => {
-        const width = context?.chart?.width || 0;
-        const base = width < 540 ? 8 : 7;
-        return focus ? base + 1 : base;
-      },
-      pointBorderWidth: 2,
-      pointHitRadius: 12,
-      showLine: false,
-      datalabels: {
-        display: false
-      }
-    };
-
-    const datasets = [dataset, markerDataset];
-
-    if (focus) {
-      const rolling = getRollingAverage(points.map((point) => point.value), 3);
-      datasets.push({
-        label: '3-pt avg',
-        data: rolling,
-        borderColor: 'rgba(129, 140, 248, 0.9)',
-        borderWidth: 2,
-        borderDash: [6, 6],
-        pointRadius: 0,
-        spanGaps: true,
-        tension: 0.3,
-        fill: false,
-        datalabels: {
-          display: false
-        }
-      });
-    }
-
-    return datasets;
-  }
-
-  function getNitrateAnnotation() {
-    if (!window.ChartAnnotation) {
-      return undefined;
-    }
-    return {
-      annotations: {
-        target: {
-          type: 'line',
-          yMin: 20,
-          yMax: 20,
-          borderColor: 'rgba(226, 232, 240, 0.35)',
-          borderWidth: 1.5,
-          borderDash: [6, 6],
-          label: {
-            content: '20 ppm guide',
-            position: 'start',
-            padding: 6,
-            color: '#e2e8f0',
-            backgroundColor: 'rgba(15, 23, 42, 0.92)',
-            borderColor: 'rgba(148, 163, 184, 0.42)',
-            borderWidth: 1,
-            font: {
-              family: Chart.defaults?.font?.family || 'Inter, "Segoe UI", system-ui, sans-serif',
-              size: 11,
-              weight: '600'
-            }
-          }
-        }
-      }
-    };
-  }
-
-  function getSuggestedMax(values) {
-    if (!Array.isArray(values) || !values.length) {
-      return 25;
-    }
-    const maxValue = values.reduce((acc, value) => {
-      if (Number.isFinite(value) && value > acc) {
-        return value;
-      }
-      return acc;
-    }, 0);
-    if (!Number.isFinite(maxValue)) {
-      return 25;
-    }
-    const padded = Math.ceil((maxValue + 4) / 5) * 5;
-    return Math.max(25, padded);
-  }
-
-  function getNitrateChartOptions({ annotation, suggestedMax, focus }) {
-    return {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: getAnimationOptions(),
-      layout: {
-        padding: {
-          top: focus ? 40 : 32,
-          bottom: focus ? 36 : 24,
-          left: focus ? 24 : 18,
-          right: focus ? 24 : 18
-        }
-      },
-      interaction: {
-        intersect: false,
-        mode: 'nearest'
-      },
-      scales: {
-        x: {
-          ticks: {
-            display: false
-          },
-          border: {
-            display: false
-          },
-          grid: {
-            color: 'rgba(120, 162, 226, 0.22)',
-            lineWidth: 1.2,
-            drawBorder: false,
-            tickLength: 0
-          }
-        },
-        y: {
-          beginAtZero: true,
-          suggestedMax,
-          ticks: {
-            count: 5,
-            padding: 10,
-            color: 'rgba(234, 240, 255, 0.9)',
-            callback: (value) => `${Math.round(value)} ppm`
-          },
-          border: {
-            display: false
-          },
-          grid: {
-            color: 'rgba(113, 155, 214, 0.28)',
-            lineWidth: 1.1,
-            drawTicks: false
-          }
-        }
-      },
-      elements: {
-        line: {
-          borderCapStyle: 'round',
-          borderJoinStyle: 'round'
-        },
-        point: {
-          hoverBorderWidth: 2
-        }
-      },
-      plugins: {
-        annotation,
-        legend: {
-          display: false
-        },
-        tooltip: {
-          intersect: false,
-          mode: 'nearest',
-          backgroundColor: 'rgba(9, 17, 32, 0.94)',
-          borderColor: 'rgba(120, 196, 255, 0.35)',
-          borderWidth: 1,
-          titleColor: '#e2e8f0',
-          bodyColor: '#f8fafc',
-          displayColors: false,
-          padding: focus ? 16 : 12,
-          cornerRadius: 10,
-          callbacks: {
-            label(context) {
-              const value = context.parsed?.y ?? context.parsed;
-              if (!Number.isFinite(value)) {
-                return '';
-              }
-              const dataset = context.dataset || {};
-              const label = dataset?.tooltips ? dataset.tooltips[context.dataIndex] : null;
-              if (typeof label === 'string') {
-                return label;
-              }
-              const prefix = dataset?.label ? `${dataset.label}: ` : '';
-              return `${prefix}${value} ppm`;
-            }
-          }
-        },
-        datalabels: {
-          display: false
-        },
-        jdChartBackground: {
-          color: '#101b33'
-        }
-      }
-    };
-  }
-
-  function isCompactViewport() {
-    if (typeof window === 'undefined') {
-      return false;
-    }
-    const width = window.innerWidth || document.documentElement?.clientWidth || 0;
-    return width <= 420;
-  }
-
-  function renderDosingCharts() {
-    const thriveCanvas = document.getElementById('dosingThriveChart');
-    const excelCanvas = document.getElementById('dosingExcelChart');
-    const entries = getDosingSeries();
-    if (!thriveCanvas || !excelCanvas) {
-      return;
-    }
-
-    if (!entries.labels.length) {
-      destroyChart('dosingThrive');
-      destroyChart('dosingExcel');
-      return;
-    }
-
-    const thriveConfig = createMiniBarConfig({
-      canvas: thriveCanvas,
-      chartKey: 'dosingThrive',
-      label: 'Thrive pumps',
-      values: entries.thrive,
-      labels: entries.labels,
-      color: 'rgba(34, 197, 94, 0.88)',
-      hover: 'rgba(16, 185, 129, 0.95)'
-    });
-
-    const excelConfig = createMiniBarConfig({
-      canvas: excelCanvas,
-      chartKey: 'dosingExcel',
-      label: 'Excel capfuls',
-      values: entries.excel,
-      labels: entries.labels,
-      color: 'rgba(129, 140, 248, 0.9)',
-      hover: 'rgba(99, 102, 241, 0.95)'
-    });
-
-    updateMiniChart(thriveConfig);
-    updateMiniChart(excelConfig);
-  }
-
-  function getDosingSeries() {
-    const items = state.data?.dosing || [];
-    if (!items.length) {
-      return { labels: [], thrive: [], excel: [] };
-    }
-    const limit = getDensityLimit('dosing');
-    const normalized = state.groupMode === 'weekly' ? groupDosingByWeek(items) : items.slice();
-    const trimmed = normalized.length > limit ? normalized.slice(normalized.length - limit) : normalized;
-    const labels = trimmed.map((entry) => entry.label || entry.week || 'Week');
-    const thrive = trimmed.map((entry) => {
-      const value = Number.isFinite(entry.thrive) ? entry.thrive : Number.parseFloat(entry.thrive);
-      return Number.isFinite(value) ? value : 0;
-    });
-    const excel = trimmed.map((entry) => {
-      const value = Number.isFinite(entry.excel) ? entry.excel : Number.parseFloat(entry.excel);
-      return Number.isFinite(value) ? value : 0;
-    });
-    return { labels, thrive, excel };
-  }
-
-  function groupDosingByWeek(items) {
-    const map = new Map();
-    items.forEach((entry, index) => {
-      const key = entry.week || entry.label || `Week-${index}`;
-      if (!map.has(key)) {
-        map.set(key, {
-          label: entry.label || entry.week || `Week ${index + 1}`,
-          week: entry.week || key,
-          thrive: 0,
-          excel: 0,
-          order: index
-        });
-      }
-      const bucket = map.get(key);
-      const thriveValue = Number.isFinite(entry.thrive) ? entry.thrive : parseFloat(entry.thrive) || 0;
-      const excelValue = Number.isFinite(entry.excel) ? entry.excel : parseFloat(entry.excel) || 0;
-      bucket.thrive += thriveValue;
-      bucket.excel += excelValue;
-    });
-    return Array.from(map.values()).sort((a, b) => a.order - b.order);
-  }
-
-  function createMiniBarConfig({ canvas, chartKey, label, values, labels, color, hover }) {
-    return {
-      canvas,
-      chartKey,
-      config: {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [
-            {
-              label,
-              data: values,
-              backgroundColor: color,
-              hoverBackgroundColor: hover,
-              borderRadius: 8,
-              borderSkipped: false,
-              maxBarThickness: 34
-            }
-          ]
-        },
-        options: getMiniBarOptions(labels)
-      }
-    };
-  }
-
-  function getMiniBarOptions(labels) {
-    const dense = Array.isArray(labels) && labels.length > 6;
-    return {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: getAnimationOptions(),
-      layout: {
-        padding: {
-          top: 16,
-          right: 12,
-          bottom: 20,
-          left: 12
-        }
-      },
-      scales: {
-        x: {
-          grid: {
-            display: false
-          },
-          ticks: {
-            display: !dense,
-            color: 'rgba(214, 228, 255, 0.76)',
-            font: {
-              size: 11
-            }
-          },
-          border: {
-            display: false
-          }
-        },
-        y: {
-          beginAtZero: true,
-          grid: {
-            color: 'rgba(118, 156, 222, 0.22)',
-            drawTicks: false
-          },
-          border: {
-            display: false
-          },
-          ticks: {
-            padding: 8,
-            color: 'rgba(230, 240, 255, 0.85)',
-            font: {
-              size: 11
-            }
-          }
-        }
-      },
-      plugins: {
-        legend: {
-          display: false
-        },
-        datalabels: {
-          display: true,
-          color: 'rgba(234, 242, 255, 0.88)',
-          align: 'end',
-          anchor: 'end',
-          offset: 6,
-          font: {
-            size: 11,
-            weight: '600'
-          },
-          formatter(value, context) {
-            if (!Number.isFinite(value)) {
-              return '';
-            }
-            if (dense && context.dataIndex % 2 === 1) {
-              return '';
-            }
-            return value;
-          }
-        },
-        tooltip: {
-          backgroundColor: 'rgba(8, 16, 32, 0.94)',
-          borderColor: 'rgba(120, 196, 255, 0.3)',
-          borderWidth: 1,
-          titleColor: '#e2e8f0',
-          bodyColor: '#f8fafc',
-          displayColors: false,
-          padding: 10
-        },
-        jdChartBackground: {
-          color: '#0f1a33'
-        }
-      }
-    };
-  }
-
-  function updateMiniChart({ canvas, chartKey, config }) {
-    const ctx = canvas.getContext('2d');
-    const existing = state.charts[chartKey];
-    if (!existing) {
-      state.charts[chartKey] = new Chart(ctx, config);
-      return;
-    }
-    existing.data = config.data;
-    existing.options = config.options;
-    existing.config.data = config.data;
-    existing.config.options = config.options;
-    existing.update();
-  }
-
-  function renderMaintenanceTimeline() {
-    const canvas = document.getElementById('maintenanceChart');
-    if (!canvas) {
-      return;
-    }
-    const status = dom.maintenanceStatus;
-    const events = state.data?.maintenance || [];
-    if (!events.length) {
-      destroyChart('maintenance');
-      if (status) {
-        status.textContent = 'No maintenance events logged yet.';
-      }
-      return;
-    }
-
-    if (status) {
-      status.textContent = '';
-    }
-
-    const series = events
-      .map((entry) => {
-        const date = parseISO(entry.date);
-        if (!date) {
-          return null;
-        }
-        return {
-          x: date.getTime(),
-          y: 0,
-          type: entry.type,
-          details: entry.details || '—',
-          dateLabel: maintenanceFormatter.format(date)
-        };
-      })
-      .filter(Boolean)
-      .sort((a, b) => a.x - b.x);
-
-    const options = getMaintenanceOptions(series);
-    const data = {
-      datasets: [
-        {
-          type: 'scatter',
-          data: series,
-          pointBackgroundColor: series.map((point) => getMaintenanceColor(point.type)),
-          pointBorderColor: 'rgba(15, 23, 42, 0.9)',
-          pointBorderWidth: 2,
-          pointRadius: (context) => ((context?.chart?.width || 0) < 520 ? 6 : 5),
-          pointHoverRadius: (context) => ((context?.chart?.width || 0) < 520 ? 9 : 8),
-          datalabels: {
-            display: true,
-            align: 'top',
-            anchor: 'end',
-            offset: 12,
-            color: 'rgba(228, 238, 255, 0.88)',
-            backgroundColor: 'rgba(11, 22, 40, 0.88)',
-            borderRadius: 999,
-            padding: { top: 4, bottom: 4, left: 10, right: 10 },
-            font: {
-              size: 10,
-              weight: '600'
-            },
-            formatter(value) {
-              return value?.type || '';
-            }
-          }
-        }
-      ]
-    };
-
-    if (!state.charts.maintenance) {
-      state.charts.maintenance = new Chart(canvas.getContext('2d'), {
-        type: 'scatter',
-        data,
-        options
-      });
-      return;
-    }
-
-    const chart = state.charts.maintenance;
-    chart.data = data;
-    chart.options = options;
-    chart.config.data = data;
-    chart.config.options = options;
-    chart.update();
-  }
-
-  function getMaintenanceOptions(series) {
-    const minTime = series[0]?.x;
-    const maxTime = series[series.length - 1]?.x;
-    const padding = 1000 * 60 * 60 * 24 * 2;
-    return {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: getAnimationOptions(),
-      parsing: false,
-      scales: {
-        x: {
-          type: 'linear',
-          min: minTime - padding,
-          max: maxTime + padding,
-          grid: {
-            color: 'rgba(108, 148, 214, 0.24)',
-            drawTicks: false
-          },
-          ticks: {
-            color: 'rgba(214, 228, 255, 0.7)',
-            maxRotation: 0,
-            autoSkip: true,
-            callback(value) {
-              if (!Number.isFinite(value)) {
-                return '';
-              }
-              return dateFormatter.format(new Date(value));
-            }
-          },
-          border: {
-            display: false
-          }
-        },
-        y: {
-          display: false,
-          min: -1,
-          max: 1
-        }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: 'rgba(8, 16, 32, 0.94)',
-          borderColor: 'rgba(120, 196, 255, 0.3)',
-          borderWidth: 1,
-          titleColor: '#e2e8f0',
-          bodyColor: '#f8fafc',
-          padding: 12,
-          callbacks: {
-            title(context) {
-              const point = context[0]?.raw;
-              return point?.dateLabel || '';
-            },
-            label(context) {
-              const point = context.raw;
-              if (!point) {
-                return '';
-              }
-              return `${point.type}: ${point.details}`;
-            }
-          }
-        },
-        jdChartBackground: {
-          color: '#101b33'
-        }
-      }
-    };
-  }
-
-  function getMaintenanceColor(type) {
-    const normalized = String(type || '').toLowerCase();
-    if (normalized.includes('trim')) {
-      return 'rgba(248, 113, 113, 0.92)';
-    }
-    if (normalized.includes('filter')) {
-      return 'rgba(129, 140, 248, 0.9)';
-    }
-    if (normalized.includes('dose') || normalized.includes('fert')) {
-      return 'rgba(16, 185, 129, 0.92)';
-    }
-    return 'rgba(250, 204, 21, 0.9)';
-  }
-
-  function openFocusModal() {
-    if (!dom.focusModal) {
-      return;
-    }
-    focusReturnElement = document.activeElement;
-    dom.focusModal.removeAttribute('hidden');
-    document.body.classList.add('is-focus-open');
-    renderFocusChart();
-    const closeTrigger = dom.focusClose[0];
-    if (closeTrigger) {
-      closeTrigger.focus();
-    }
-  }
-
-  function closeFocusModal() {
-    if (!dom.focusModal) {
-      return;
-    }
-    dom.focusModal.setAttribute('hidden', '');
-    document.body.classList.remove('is-focus-open');
-    destroyChart('nitrateFocus');
-    if (focusReturnElement && typeof focusReturnElement.focus === 'function') {
-      focusReturnElement.focus();
-    }
-    focusReturnElement = null;
-  }
-
-  function renderFocusChart() {
-    const canvas = document.getElementById('nitrateFocusChart');
-    if (!canvas) {
-      return;
-    }
-    const { points } = getNitrateSeries({ focus: true });
-    if (!points.length) {
-      destroyChart('nitrateFocus');
-      return;
-    }
-    const datasets = createNitrateDatasets(points, { focus: true });
-    const values = points.map((point) => point.value);
-    const options = getNitrateChartOptions({
-      annotation: getNitrateAnnotation(),
-      suggestedMax: getSuggestedMax(values),
-      focus: true
-    });
-
-    if (!state.charts.nitrateFocus) {
-      state.charts.nitrateFocus = new Chart(canvas.getContext('2d'), {
-        type: 'line',
-        data: {
-          labels: points.map((point) => point.label),
-          datasets
-        },
-        options
-      });
-      return;
-    }
-
-    const chart = state.charts.nitrateFocus;
-    chart.data.labels = points.map((point) => point.label);
-    chart.data.datasets = datasets;
-    chart.options = options;
-    chart.config.options = options;
-    chart.update();
-  }
-
-  function setActiveTab(target) {
-    if (!target) {
-      return;
-    }
-    state.activeTab = target;
-    dom.tabs.forEach((tab) => {
-      const isActive = tab.dataset.tab === target;
-      tab.classList.toggle('is-active', isActive);
-      tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
-      tab.setAttribute('tabindex', isActive ? '0' : '-1');
-    });
-    dom.panels.forEach((panel) => {
-      const isActive = panel.id === `panel-${target}`;
-      panel.classList.toggle('is-active', isActive);
-      if (isActive) {
-        panel.removeAttribute('hidden');
-      } else {
-        panel.setAttribute('hidden', '');
-      }
-    });
-    if (target === 'nitrate') {
-      renderNitrateChart();
-    }
-    if (target === 'dosing') {
-      renderDosingCharts();
-    }
-    if (target === 'maintenance') {
-      renderMaintenanceTimeline();
-    }
-  }
-})();
+  const full = new Intl.DateTimeFormat(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+  return `${full.format(startDate)} – ${full.format(endDate)}`;
+}
+
+function formatMonth(month) {
+  if (!month) return '';
+  const [year, m] = month.split('-').map(Number);
+  const date = new Date(Date.UTC(year, m - 1, 1));
+  const formatter = new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' });
+  return formatter.format(date);
+}
+
+function formatWaterChange(day) {
+  const parts = [];
+  if (day.sumpPct != null) parts.push(`${day.sumpPct}% sump`);
+  if (day.displayPct != null) parts.push(`${day.displayPct}% display`);
+  return parts.length ? parts.join(' / ') : 'Yes';
+}
+
+document.addEventListener('DOMContentLoaded', init);
