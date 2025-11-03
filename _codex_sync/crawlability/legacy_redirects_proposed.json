@@ -1,0 +1,12 @@
+[
+  {
+    "from": "/gear.html",
+    "to": "/gear/",
+    "reason": "Legacy static file duplicates directory index"
+  },
+  {
+    "from": "/university/",
+    "to": "/pages/university.html",
+    "reason": "Legacy university hub path should consolidate on canonical /pages version"
+  }
+]

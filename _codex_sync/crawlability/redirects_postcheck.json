@@ -1,0 +1,23 @@
+[
+  {
+    "from": "/gear.html",
+    "expected_final": "/gear/",
+    "resolved_final": "/gear/",
+    "hops": 1,
+    "status": "pass"
+  },
+  {
+    "from": "/university/",
+    "expected_final": "/pages/university.html",
+    "resolved_final": "/pages/university.html",
+    "hops": 1,
+    "status": "pass"
+  },
+  {
+    "from": "/university",
+    "expected_final": "/pages/university.html",
+    "resolved_final": "/pages/university.html",
+    "hops": 1,
+    "status": "pass"
+  }
+]

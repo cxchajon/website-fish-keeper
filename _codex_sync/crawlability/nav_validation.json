@@ -1,0 +1,260 @@
+{
+  "/": [
+    {
+      "href": "/",
+      "status": "200",
+      "final_url": "/",
+      "canonical_match": true
+    },
+    {
+      "href": "/stocking-advisor.html",
+      "status": "200",
+      "final_url": "/stocking-advisor.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/gear/",
+      "status": "200",
+      "final_url": "/gear/",
+      "canonical_match": true
+    },
+    {
+      "href": "/params.html",
+      "status": "200",
+      "final_url": "/params.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/feature-your-tank.html",
+      "status": "200",
+      "final_url": "/feature-your-tank.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/media.html",
+      "status": "200",
+      "final_url": "/media.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/store.html",
+      "status": "200",
+      "final_url": "/store.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/about.html",
+      "status": "200",
+      "final_url": "/about.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/contact-feedback.html",
+      "status": "200",
+      "final_url": "/contact-feedback.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/privacy-legal.html",
+      "status": "200",
+      "final_url": "/privacy-legal.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/terms.html",
+      "status": "200",
+      "final_url": "/terms.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/copyright-dmca.html",
+      "status": "200",
+      "final_url": "/copyright-dmca.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/trust-security.html",
+      "status": "200",
+      "final_url": "/trust-security.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/cookie-settings.html",
+      "status": "200",
+      "final_url": "/cookie-settings.html",
+      "canonical_match": true
+    }
+  ],
+  "/gear/": [
+    {
+      "href": "/",
+      "status": "200",
+      "final_url": "/",
+      "canonical_match": true
+    },
+    {
+      "href": "/stocking-advisor.html",
+      "status": "200",
+      "final_url": "/stocking-advisor.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/gear/",
+      "status": "200",
+      "final_url": "/gear/",
+      "canonical_match": true
+    },
+    {
+      "href": "/params.html",
+      "status": "200",
+      "final_url": "/params.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/feature-your-tank.html",
+      "status": "200",
+      "final_url": "/feature-your-tank.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/media.html",
+      "status": "200",
+      "final_url": "/media.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/store.html",
+      "status": "200",
+      "final_url": "/store.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/about.html",
+      "status": "200",
+      "final_url": "/about.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/contact-feedback.html",
+      "status": "200",
+      "final_url": "/contact-feedback.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/privacy-legal.html",
+      "status": "200",
+      "final_url": "/privacy-legal.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/terms.html",
+      "status": "200",
+      "final_url": "/terms.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/copyright-dmca.html",
+      "status": "200",
+      "final_url": "/copyright-dmca.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/trust-security.html",
+      "status": "200",
+      "final_url": "/trust-security.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/cookie-settings.html",
+      "status": "200",
+      "final_url": "/cookie-settings.html",
+      "canonical_match": true
+    }
+  ],
+  "/stocking-advisor.html": [
+    {
+      "href": "/",
+      "status": "200",
+      "final_url": "/",
+      "canonical_match": true
+    },
+    {
+      "href": "/stocking-advisor.html",
+      "status": "200",
+      "final_url": "/stocking-advisor.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/gear/",
+      "status": "200",
+      "final_url": "/gear/",
+      "canonical_match": true
+    },
+    {
+      "href": "/params.html",
+      "status": "200",
+      "final_url": "/params.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/feature-your-tank.html",
+      "status": "200",
+      "final_url": "/feature-your-tank.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/media.html",
+      "status": "200",
+      "final_url": "/media.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/store.html",
+      "status": "200",
+      "final_url": "/store.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/about.html",
+      "status": "200",
+      "final_url": "/about.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/contact-feedback.html",
+      "status": "200",
+      "final_url": "/contact-feedback.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/privacy-legal.html",
+      "status": "200",
+      "final_url": "/privacy-legal.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/terms.html",
+      "status": "200",
+      "final_url": "/terms.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/copyright-dmca.html",
+      "status": "200",
+      "final_url": "/copyright-dmca.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/trust-security.html",
+      "status": "200",
+      "final_url": "/trust-security.html",
+      "canonical_match": true
+    },
+    {
+      "href": "/cookie-settings.html",
+      "status": "200",
+      "final_url": "/cookie-settings.html",
+      "canonical_match": true
+    }
+  ]
+}

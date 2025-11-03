@@ -1,0 +1,20 @@
+[
+  {
+    "from": "/gear.html",
+    "to": "/gear/",
+    "type": "netlify_redirect",
+    "status": 301
+  },
+  {
+    "from": "/university/",
+    "to": "/pages/university.html",
+    "type": "netlify_redirect",
+    "status": 301
+  },
+  {
+    "from": "/university",
+    "to": "/pages/university.html",
+    "type": "netlify_redirect",
+    "status": 301
+  }
+]

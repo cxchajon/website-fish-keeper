@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /prototype/
-Disallow: /prototype-home.html
 
 Sitemap: https://thetankguide.com/sitemap.xml

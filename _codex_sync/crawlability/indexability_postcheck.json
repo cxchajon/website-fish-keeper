@@ -1,0 +1,187 @@
+{
+  "/": {
+    "source_path": "index.html",
+    "title": "Fishkeeping Guides & Tools \u2014 The Tank Guide",
+    "canonical": "https://thetankguide.com/",
+    "robots_meta": "index,follow",
+    "indexable": true
+  },
+  "/about.html": {
+    "source_path": "about.html",
+    "title": "About FishKeepingLifeCo \u2014 Fishkeeping Guides & Mission",
+    "canonical": "https://thetankguide.com/about.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/contact-feedback.html": {
+    "source_path": "contact-feedback.html",
+    "title": "Contact & Feedback \u2014 Fishkeeping Questions | The Tank Guide",
+    "canonical": "https://thetankguide.com/contact-feedback.html",
+    "robots_meta": "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
+    "indexable": true
+  },
+  "/feature-your-tank.html": {
+    "source_path": "feature-your-tank.html",
+    "title": "Feature Your Tank \u2014 The Tank Guide",
+    "canonical": "https://thetankguide.com/feature-your-tank.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/media.html": {
+    "source_path": "media.html",
+    "title": "Fishkeeping Media & Books \u2014 The Tank Guide YouTube Rewind \u2014 View past Community Video Picks",
+    "canonical": "https://thetankguide.com/media.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/params.html": {
+    "source_path": "params.html",
+    "title": "Cycling Coach & 24-Hour Challenge \u2014 The Tank Guide",
+    "canonical": "https://thetankguide.com/params.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/store.html": {
+    "source_path": "store.html",
+    "title": "Store \u2014 The Tank Guide",
+    "canonical": "https://thetankguide.com/store.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/journal.html": {
+    "source_path": "journal.html",
+    "title": "FishKeepingLifeCo Journal \u2014 The Tank Guide",
+    "canonical": "https://thetankguide.com/journal.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/journal-dashboard.html": {
+    "source_path": "journal-dashboard.html",
+    "title": "29G Aquarium Dashboard \u2014 The Tank Guide",
+    "canonical": "https://thetankguide.com/journal-dashboard.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/pages/university.html": {
+    "source_path": "pages/university.html",
+    "title": "The Tank Guide University \u2014 Foundation Studies",
+    "canonical": "https://thetankguide.com/pages/university.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/pages/community-video-picks.html": {
+    "source_path": "pages/community-video-picks.html",
+    "title": "Community Video Picks",
+    "canonical": "https://thetankguide.com/pages/community-video-picks.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/privacy-legal.html": {
+    "source_path": "privacy-legal.html",
+    "title": "Privacy & Legal | The Tank Guide \u2022 FishKeepingLifeCo",
+    "canonical": "https://thetankguide.com/privacy-legal.html",
+    "robots_meta": "index,follow",
+    "indexable": true
+  },
+  "/copyright-dmca.html": {
+    "source_path": "copyright-dmca.html",
+    "title": "Copyright & Content Usage | The Tank Guide",
+    "canonical": "https://thetankguide.com/copyright-dmca.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/cookie-settings.html": {
+    "source_path": "cookie-settings.html",
+    "title": "Cookie Settings \u2014 The Tank Guide",
+    "canonical": "https://thetankguide.com/cookie-settings.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/terms.html": {
+    "source_path": "terms.html",
+    "title": "Terms of Use | The Tank Guide",
+    "canonical": "https://thetankguide.com/terms.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/trust-security.html": {
+    "source_path": "trust-security.html",
+    "title": "Trust & Security \u2014 The Tank Guide",
+    "canonical": "https://thetankguide.com/trust-security.html",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/stocking-advisor.html": {
+    "source_path": "stocking-advisor.html",
+    "title": "Aquarium Stocking Calculator: Fish Compatibility & Bioload Tool",
+    "canonical": "https://thetankguide.com/stocking-advisor.html",
+    "robots_meta": "index,follow",
+    "indexable": true
+  },
+  "/gear/": {
+    "source_path": "gear/index.html",
+    "title": "Fishkeeping Gear Guides \u2014 Match Equipment to Tank Size",
+    "canonical": "https://thetankguide.com/gear/",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/blogs/": {
+    "source_path": "blogs/index.html",
+    "title": "Spotlight Blogs | The Tank Guide",
+    "canonical": "https://thetankguide.com/blogs/",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/blogs/betta-fish-in-a-community-tank.html": {
+    "source_path": "blogs/betta-fish-in-a-community-tank.html",
+    "title": "Betta Fish in a Community Tank: A Peaceful Setup Guide | The Tank Guide",
+    "canonical": "https://thetankguide.com/blogs/betta-fish-in-a-community-tank.html",
+    "robots_meta": "max-snippet:-1, max-image-preview:large, max-video-preview:-1",
+    "indexable": true
+  },
+  "/blogs/blackbeard/": {
+    "source_path": "blogs/blackbeard/index.html",
+    "title": "BBA Gone: How I Finally Beat Black Beard Algae (Spot Dose Guide)",
+    "canonical": "https://thetankguide.com/blogs/blackbeard/",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/blogs/nitrogen-cycle/": {
+    "source_path": "blogs/nitrogen-cycle/index.html",
+    "title": "The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping",
+    "canonical": "https://thetankguide.com/blogs/nitrogen-cycle/",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/blogs/purigen/": {
+    "source_path": "blogs/purigen/index.html",
+    "title": "Purigen: Polish Your Water Clarity | The Tank Guide",
+    "canonical": "https://thetankguide.com/blogs/purigen/",
+    "robots_meta": null,
+    "indexable": true
+  },
+  "/gear.html": {
+    "source_path": "gear.html",
+    "title": "Redirecting to The Tank Guide Gear Page",
+    "canonical": "https://thetankguide.com/gear/",
+    "robots_meta": "noindex, follow",
+    "indexable": false,
+    "redirect_target": "/gear/"
+  },
+  "/university/": {
+    "source_path": "university/index.html",
+    "title": "Aquarium University \u2014 Hybrid Academic & Aquatic Learning",
+    "canonical": "https://thetankguide.com/university/",
+    "robots_meta": null,
+    "indexable": false,
+    "redirect_target": "/pages/university.html"
+  },
+  "/404.html": {
+    "source_path": "404.html",
+    "title": "Page Not Found | The Tank Guide",
+    "canonical": null,
+    "robots_meta": null,
+    "indexable": false,
+    "redirect_target": "/"
+  }
+}
