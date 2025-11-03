@@ -420,7 +420,29 @@
     })();
   </script>
   <!-- --- Google CMP (Funding Choices) END --- -->
-</head>
+<style id="gear-amazon-btn-fix">
+    /* Scope strictly to the gear prototype page */
+    .gear-page a.btn{ text-decoration:none; color:var(--ink,#e5e7eb); }
+    .gear-page a.btn:visited{ color:var(--ink,#e5e7eb); }
+
+    .gear-page .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.35rem;
+      padding:.55rem 1.1rem; border-radius:999px;
+      border:1px solid rgba(148,163,184,.45);
+      background: rgba(59,130,246,.18);
+      font-weight:600; line-height:1.2; transition: background .2s, border-color .2s, box-shadow .2s, transform .2s;
+      box-shadow: 0 8px 18px -14px rgba(15,23,42,.6);
+    }
+    .gear-page .btn:hover{ background: rgba(59,130,246,.28); border-color: rgba(148,163,184,.6); transform: translateY(-1px); }
+    .gear-page .btn:focus-visible{ outline:2px solid rgba(96,165,250,.8); outline-offset:3px; }
+
+    /* Amazon variant */
+    .gear-page .btn--amazon{ background: rgba(59,130,246,.22); border-color: rgba(148,163,184,.55); }
+    .gear-page .btn--amazon:hover{ background: rgba(59,130,246,.32); border-color: rgba(148,163,184,.7); }
+
+    /* Product card spacing */
+    .gear-page .option .btn{ margin-top:.35rem; }
+  </style></head>
 <body class="theme-dark proto-gear">
   <div id="site-nav"></div>
   <main id="prototype-gear" class="gear-page" aria-labelledby="gear-title">
