@@ -1,7 +1,7 @@
 {
   "period": {
     "start": "2025-10-01",
-    "end": "2025-11-02"
+    "end": "2025-11-03"
   },
   "nitrate": [
     {
@@ -109,7 +109,7 @@
       "week": "2025-W44",
       "label": "Week 5 (10/28\u201311/3)",
       "thrive": 4,
-      "excel": 1.5
+      "excel": 2.5
     }
   ],
   "maintenance": [
