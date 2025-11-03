@@ -28,7 +28,7 @@ const PAGES = [
   '/stocking-advisor.html',
   '/params.html',
   '/media.html',
-  '/gear.html',
+  '/gear/',
   '/contact-feedback.html',
 ];
 

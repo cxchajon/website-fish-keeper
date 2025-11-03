@@ -7,7 +7,7 @@ Official website for aquarium tools and resources.
 - index.html
 - about.html
 - media.html
-- gear.html
+- gear/index.html
 - params.html
 - contact-feedback.html
 

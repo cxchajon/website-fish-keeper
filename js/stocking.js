@@ -192,7 +192,7 @@ function queueStockFeedback(feedback = {}) {
   }, pendingStockFeedback.duration + FEEDBACK_CLEAR_PADDING);
 }
 
-const GEAR_PAGE_PATH = '/gear.html';
+const GEAR_PAGE_PATH = '/gear/';
 const GEAR_QUERY_PARAM = 'tank_g';
 const GEAR_TANK_SESSION_KEY = 'ttg:tank_g';
 const GEAR_FILTER_SESSION_KEY = 'ttg:filter_id';
