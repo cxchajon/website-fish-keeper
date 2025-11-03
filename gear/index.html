@@ -137,87 +137,102 @@
   <link rel="stylesheet" href="/assets/css/prototype-gear.css?v=0.1.0">
   <link rel="stylesheet" href="./css/gear.v2.css">
   <style id="gear-btn-patch">
-  :root{
-    --btn-radius: 999px;
-    --btn-gap: 0.5rem;
-    --btn-pad-y: .6rem;
-    --btn-pad-x: 1.15rem;
-    --ink: #e5e7eb;
-    --muted: rgba(226,232,240,.72);
-    --bg: #0f172a;
-    /* Amazon */
-    --amzn-bg: #FF9900;
-    --amzn-bg-hover: #E68A00;
-    --amzn-ink: #131921;
-    /* Hygger (flat, subtle gradient, less fluorescent) */
-    --hg-start: #2aa86a;     /* greener */
-    --hg-end:   #f36b23;     /* brand orange */
-    --hg-hover: brightness(1.05);
-  }
-
-  /* Base pill button refresh (page-scoped) */
-  .gear-page .btn,
-  .gear-page a.btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:.5rem;
-    padding:var(--btn-pad-y) var(--btn-pad-x);
-    border-radius:var(--btn-radius);
-    border:1px solid rgba(148,163,184,.45);
-    text-decoration:none;
-    font-weight:700;
-    line-height:1.2;
-    transition:filter .2s ease, background .2s ease, box-shadow .2s ease, border-color .2s ease;
-    box-shadow: 0 12px 28px -20px rgba(15,23,42,.8);
+  .gear-page .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .7rem 1.1rem;
+    border-radius: 999px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    line-height: 1;
+    transition: transform .06s ease, filter .2s ease, box-shadow .2s ease;
     white-space: nowrap;
   }
-  .gear-page .btn svg{ width:1.05em; height:1.05em; }
 
-  /* Amazon variant */
-  .gear-page .btn--amazon{
-    background: var(--amzn-bg);
-    color: var(--amzn-ink);
-    border-color: rgba(0,0,0,.08);
+  .gear-page .btn:active {
+    transform: translateY(1px);
   }
-  .gear-page .btn--amazon:hover{ background: var(--amzn-bg-hover); }
 
-  /* Hygger variant (flat with gentle blend) */
-  .gear-page .btn--hygger{
-    color:#fff;
-    border-color: rgba(0,0,0,.08);
-    background: linear-gradient(90deg, var(--hg-start) 40%, var(--hg-end) 100%);
-    /* very low contrast blend to feel flat */
-    background-size: 100% 100%;
-    filter: none;
+  .gear-page .btn svg {
+    width: 1em;
+    height: 1em;
   }
-  .gear-page .btn--hygger:hover{ filter: var(--hg-hover); }
 
-  /* Button grouping */
-  .gear-page .btn + .btn{ margin-left: var(--btn-gap); }
+  .gear-page .btn-amazon {
+    background: #ff9900;
+    color: #131921;
+    box-shadow: 0 10px 22px -12px rgba(255, 153, 0, .5), 0 0 0 1px rgba(0, 0, 0, .1) inset;
+  }
 
-  /* Small layout helpers if container is narrow */
-  @media (max-width:520px){
-    .gear-page .btn-group{
-      display:flex; flex-wrap:wrap; gap: var(--btn-gap);
+  .gear-page .btn-amazon:hover {
+    filter: brightness(0.95);
+  }
+
+  .gear-page .btn-hygger {
+    background: linear-gradient(90deg, #1fb760 0%, #11a24f 45%, #f36b23 100%);
+    color: #ffffff;
+    box-shadow: 0 10px 22px -12px rgba(31, 183, 96, .35), 0 0 0 1px rgba(255, 255, 255, .08) inset;
+  }
+
+  .gear-page .btn-hygger:hover {
+    filter: brightness(0.97);
+  }
+
+  .gear-page .btn:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, .6);
+    outline-offset: 2px;
+  }
+
+  .gear-page .cta-row {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+
+  .gear-page .cta-row .btn + .btn {
+    margin-left: 0;
+  }
+
+  .gear-page .btn + .btn {
+    margin-left: .5rem;
+  }
+
+  @media (prefers-color-scheme: light) {
+    .gear-page .btn-amazon {
+      color: #111;
     }
-    .gear-page .btn + .btn{ margin-left: 0; }
   }
 
-  /* Hygger disclosure style */
-  .gear-page .affiliate-disclaimer--hygger{
-    margin-top:.35rem;
-    font-size:.85rem;
-    color: var(--muted);
+  @media (max-width: 520px) {
+    .gear-page .cta-row {
+      width: 100%;
+      justify-content: flex-start;
+    }
   }
   </style>
   <style>
-    .affiliate-disclaimer {
+    .affiliate-disclosure {
       margin: 1.25rem auto 0;
       font-size: 0.9em;
       color: #c8d0da;
       max-width: min(960px, 100%);
       padding: 0 16px;
+    }
+
+    .affiliate-disclosure p {
+      margin: 0.35rem 0 0;
+    }
+
+    .affiliate-disclosure p:first-child {
+      margin-top: 0;
+    }
+
+    .affiliate-disclosure strong {
+      color: #f8fafc;
     }
 
     .pub-credit {
@@ -480,6 +495,11 @@
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
 <body class="theme-dark">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="icon-cart" viewBox="0 0 16 16">
+      <path fill="currentColor" d="M0 1.5a.5.5 0 0 1 .5-.5H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </symbol>
+  </svg>
   <div id="site-nav"></div>
   <main id="gear-guide" class="gear-page" aria-labelledby="gear-title">
     <div class="gear-intro">
@@ -500,9 +520,10 @@
       </div>
     </div>
 
-    <p class="affiliate-disclaimer">
-      <em>As an Amazon Associate, we earn from qualifying purchases.</em>
-    </p>
+    <div class="affiliate-disclosure">
+      <p><strong>Amazon Associates Disclosure:</strong> As an Amazon Associate, we earn from qualifying purchases.</p>
+      <p><strong>Hygger Affiliate Disclosure:</strong> We may earn a commission from purchases made through Hygger links (at no extra cost to you).</p>
+    </div>
 
     <section id="tank-ref" class="tank-ref" aria-label="Interactive tank gear finder">
       <div class="card card--tank">
@@ -1030,99 +1051,165 @@
 })();
   </script>
   <script id="gear-btn-script">
-(function(){
+(function () {
   const scope = document.querySelector('.gear-page');
-  if(!scope){
+  if (!scope) {
     return;
   }
 
-  const HYGGER_URL = "https://www.hygger-online.com/?ref=FKLC";
+  const HYGGER_URL = 'https://www.hygger-online.com/?ref=FKLC';
+  const ROW_SELECTOR = '.option, .gear-addon, .gear-card';
+  const XLINK_NS = 'http://www.w3.org/1999/xlink';
 
-  // Utility: normalize text
-  const txt = (el)=> (el?.textContent || "").trim().toLowerCase();
-
-  // Generic cart icon (MIT-friendly)
-  const CART_SVG = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>';
-
-  const ensureRelTarget = (anchor) => {
-    const relValue = anchor.getAttribute('rel') || '';
-    const relTokens = new Set(relValue.split(/\s+/).filter(Boolean));
-    ['sponsored', 'noopener', 'noreferrer'].forEach(token => relTokens.add(token));
+  function ensureRelTarget(anchor) {
+    const relTokens = new Set((anchor.getAttribute('rel') || '').split(/\s+/).filter(Boolean));
+    ['sponsored', 'noopener', 'noreferrer'].forEach((token) => relTokens.add(token));
     anchor.setAttribute('rel', Array.from(relTokens).join(' '));
     anchor.setAttribute('target', '_blank');
-  };
+  }
 
-  const applyEnhancements = () => {
-    // 1) Refresh ALL Amazon buttons (anchors already marked as buttons)
-    const amazonBtns = scope.querySelectorAll('a.btn[href*="amazon."], a.btn[href*="amzn.to"]');
-    amazonBtns.forEach((a) => {
-      a.classList.add('btn--amazon');
-      ensureRelTarget(a);
-      if(!a.querySelector('svg')){
-        const label = a.textContent.trim() || 'Buy on Amazon';
-        a.innerHTML = CART_SVG + '<span>'+label+'</span>';
-      }
-      const parent = a.parentElement;
-      if(parent && scope.contains(parent) && !parent.classList.contains('btn-group')){
-        parent.classList.add('btn-group');
-      }
-    });
-
-    // 2) Add Hygger button next to Amazon button for rows mentioning "hygger"
-    const itemBlocks = scope.querySelectorAll('.option, [data-item], .range .option, .gear-subcard__body .option, .gear-card__body .option, .item, .product, .gear-row, .gear-card');
-    itemBlocks.forEach((block) => {
-      if(!txt(block).includes('hygger')) return;
-      const amzn = block.querySelector('a.btn--amazon');
-      if(!amzn) return;
-      const ctaWrap = amzn.parentElement && scope.contains(amzn.parentElement) ? amzn.parentElement : block;
-      if(ctaWrap.querySelector('.btn--hygger')) return;
-
-      const hg = document.createElement('a');
-      hg.className = 'btn btn--hygger';
-      hg.href = HYGGER_URL;
-      ensureRelTarget(hg);
-      hg.setAttribute('aria-label','Shop Hygger (opens in a new tab)');
-      hg.innerHTML = CART_SVG + '<span>Shop Hygger</span>';
-
-      ctaWrap.classList.add('btn-group');
-      amzn.insertAdjacentElement('afterend', hg);
-    });
-
-    // 3) Add Hygger affiliate disclosure under the existing Amazon disclosure.
-    const amazonDisclosureCandidates = Array.from(scope.querySelectorAll('p, .disclosure, .disclaimer'))
-      .filter((p) => /amazon associate|amazon associates|qualifying purchases/i.test(p.textContent || ''));
-
-    if(amazonDisclosureCandidates.length){
-      const anchor = amazonDisclosureCandidates[0];
-      const parent = anchor.parentElement || scope;
-      if(!parent.querySelector('.affiliate-disclaimer--hygger')){
-        const line = document.createElement('p');
-        line.className = 'affiliate-disclaimer--hygger';
-        line.textContent = 'We may earn a commission from purchases made through our Hygger partner link. This helps support our educational content.';
-        anchor.insertAdjacentElement('afterend', line);
-      }
+  function createIcon() {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+    svg.setAttribute('width', '1em');
+    svg.setAttribute('height', '1em');
+    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    use.setAttribute('href', '#icon-cart');
+    if (use.setAttributeNS) {
+      use.setAttributeNS(XLINK_NS, 'xlink:href', '#icon-cart');
     }
-  };
+    svg.appendChild(use);
+    return svg;
+  }
+
+  function setButtonContent(anchor, labelText, fallback) {
+    const text = (labelText || fallback || '').replace(/\s+/g, ' ').trim() || fallback || 'Buy on Amazon';
+    anchor.innerHTML = '';
+    anchor.appendChild(createIcon());
+    const span = document.createElement('span');
+    span.textContent = text;
+    anchor.appendChild(span);
+  }
+
+  function normalizeAmazonButton(anchor) {
+    const rawLabel = anchor.querySelector('span')?.textContent || anchor.textContent;
+    const label = (rawLabel || 'Buy on Amazon').replace(/\s+/g, ' ').trim();
+    anchor.classList.add('btn', 'btn-amazon');
+    anchor.classList.remove('btn--amazon');
+    ensureRelTarget(anchor);
+    setButtonContent(anchor, label, 'Buy on Amazon');
+    const wrap = anchor.parentElement;
+    if (wrap) {
+      wrap.classList.add('cta-row');
+    }
+    return wrap || null;
+  }
+
+  function makeHyggerButton() {
+    const a = document.createElement('a');
+    a.className = 'btn btn-hygger';
+    a.href = HYGGER_URL;
+    ensureRelTarget(a);
+    a.setAttribute('aria-label', 'Shop Hygger (opens in a new tab)');
+    setButtonContent(a, 'Shop Hygger', 'Shop Hygger');
+    return a;
+  }
+
+  function getRowTitle(row) {
+    if (!row) return '';
+    const titleEl = row.querySelector(
+      'h1, h2, h3, h4, h5, h6, .option__title strong, .option__title, .gear-addon__title, .gear-card__title, p.title, .title, strong'
+    );
+    return (titleEl?.textContent || '').trim();
+  }
+
+  function syncHyggerForRow(row) {
+    if (!row) {
+      return;
+    }
+
+    const title = getRowTitle(row);
+    const hasHygger = /\bhygger\b/i.test(title);
+    const primaryAmazon = row.querySelector('a.btn-amazon, a.btn.btn-amazon');
+    const ctaWrap = primaryAmazon?.parentElement || primaryAmazon || row;
+    if (ctaWrap) {
+      ctaWrap.classList.add('cta-row');
+    }
+
+    const existing = ctaWrap ? ctaWrap.querySelector('.btn-hygger, .btn--hygger') : null;
+
+    if (hasHygger && primaryAmazon && ctaWrap) {
+      if (existing) {
+        existing.classList.add('btn', 'btn-hygger');
+        existing.classList.remove('btn--hygger');
+        ensureRelTarget(existing);
+        setButtonContent(existing, existing.querySelector('span')?.textContent || 'Shop Hygger', 'Shop Hygger');
+      } else {
+        ctaWrap.appendChild(makeHyggerButton());
+      }
+    } else if (existing) {
+      existing.remove();
+    }
+  }
+
+  function removeStrayHygger() {
+    scope.querySelectorAll('.btn-hygger, .btn--hygger').forEach((btn) => {
+      const row = btn.closest(ROW_SELECTOR);
+      if (!row || !/\bhygger\b/i.test(getRowTitle(row))) {
+        btn.remove();
+      }
+    });
+  }
+
+  function runEnhancements() {
+    const amazonButtons = Array.from(scope.querySelectorAll('a[href*="amazon."][href], a[href*="amzn.to"][href]'));
+
+    amazonButtons.forEach((anchor) => {
+      const labelCandidate = anchor.querySelector('span')?.textContent || anchor.textContent || '';
+      const normalizedLabel = labelCandidate.replace(/\s+/g, ' ').trim();
+      if (!/\bamazon\b/i.test(normalizedLabel) || !/\bbuy\b/i.test(normalizedLabel)) {
+        return;
+      }
+
+      normalizeAmazonButton(anchor);
+      const row = anchor.closest(ROW_SELECTOR);
+      syncHyggerForRow(row);
+    });
+
+    scope.querySelectorAll(ROW_SELECTOR).forEach((row) => {
+      if (!row.querySelector('a[href*="amazon."][href], a[href*="amzn.to"][href]')) {
+        const stray = row.querySelector('.btn-hygger, .btn--hygger');
+        if (stray) {
+          stray.remove();
+        }
+      }
+    });
+
+    removeStrayHygger();
+  }
 
   let scheduled = false;
-  const scheduleEnhancements = () => {
-    if(scheduled) return;
+  function schedule() {
+    if (scheduled) {
+      return;
+    }
     scheduled = true;
     requestAnimationFrame(() => {
       scheduled = false;
-      applyEnhancements();
+      runEnhancements();
     });
-  };
-
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', scheduleEnhancements);
-  } else {
-    scheduleEnhancements();
   }
 
-  window.addEventListener('load', scheduleEnhancements, { once: true });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', schedule);
+  } else {
+    schedule();
+  }
 
-  const observer = new MutationObserver(scheduleEnhancements);
+  window.addEventListener('load', schedule);
+
+  const observer = new MutationObserver(schedule);
   observer.observe(scope, { childList: true, subtree: true });
 })();
   </script>
