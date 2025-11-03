@@ -1,8 +1,8 @@
 {
   "active_tasks": [],
-  "last_result": "infoicon_audit",
+  "last_result": "crawlability_update",
   "last_sync": "2025-10-18T03:42:16Z",
   "notes": "- utilities.css not imported on /, /gear/, /about (box-sizing still inline).\n- Playwright Chromium download blocked by proxy; runtime smoke unavailable.",
   "ready": true,
-  "status": "ready_for_tooltip_injection"
+  "status": "verified"
 }

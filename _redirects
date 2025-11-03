@@ -3,3 +3,5 @@
 /404.html / 301
 /prototype/stocking-prototype.html  /stocking-advisor.html  302
 /stocking.html /stocking-advisor.html 301
+/university/ /pages/university.html 301
+/university /pages/university.html 301
