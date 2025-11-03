@@ -30,7 +30,7 @@ function getChangedFiles(range) {
 const changed = getChangedFiles(DIFF_RANGE);
 
 const LIVE_GUARDED = [
-  'stocking-advisor.html',
+  'stocking/',
   'assets/js/',
   'assets/css/',
   'js/',

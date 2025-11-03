@@ -37,7 +37,7 @@ export default defineConfig({
   webServer: shouldStartServer
     ? {
         command: `node scripts/dev-server.mjs`,
-        url: `${DEFAULT_BASE}/stocking-advisor.html`,
+        url: `${DEFAULT_BASE}/stocking/`,
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000,
       }

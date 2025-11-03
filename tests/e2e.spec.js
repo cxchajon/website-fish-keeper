@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const STOCKING_PATH = '/stocking-advisor.html';
+const STOCKING_PATH = '/stocking/';
 const SPECIES_QUERY = /neon/i;
 
 async function capture(page, testInfo, filename) {

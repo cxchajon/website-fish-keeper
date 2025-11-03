@@ -150,7 +150,7 @@ async function gotoAndVerify(page, route, theme) {
 }
 
 test('stocking, gear, and media share the nav layout', async ({ page }) => {
-  await gotoAndVerify(page, '/stocking-advisor.html', 'dark');
+  await gotoAndVerify(page, '/stocking/', 'dark');
   await gotoAndVerify(page, '/gear/', 'dark');
   await gotoAndVerify(page, '/media.html', 'light');
 });

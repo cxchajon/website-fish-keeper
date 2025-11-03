@@ -238,7 +238,7 @@ async function run() {
   const pagesToVisit = [
     { path: '/', expectStatus: 200 },
     { path: '/gear/', expectStatus: 200 },
-    { path: '/stocking-advisor.html', expectStatus: 200 },
+    { path: '/stocking/', expectStatus: 200 },
     { path: '/params.html', expectStatus: 200 },
     { path: '/media.html', expectStatus: 200 },
     { path: '/about.html', expectStatus: 200 },
