@@ -12,6 +12,12 @@
   margin: 0.35rem 0;
 }
 
+.proto-card-intro {
+  margin: 0.25rem 0 0.75rem 0;
+  color: var(--text-300);
+  line-height: 1.5;
+}
+
 @media (max-width: 480px) {
   .proto-gear .gear-card ul {
     padding-left: 1rem;
