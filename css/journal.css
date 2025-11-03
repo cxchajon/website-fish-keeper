@@ -166,6 +166,23 @@ body.journal-body {
   gap: 16px;
 }
 
+.journal-entry img {
+  display: block;
+  max-width: 90%;
+  height: auto;
+  margin: 1.25rem auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .journal-entry img {
+    max-width: 95%;
+    margin: 1rem auto;
+  }
+}
+
 .chips {
   margin: 2px 0 6px;
   line-height: 1.6;
