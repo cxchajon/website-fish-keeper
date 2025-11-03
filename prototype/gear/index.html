@@ -408,7 +408,7 @@
   <main id="prototype-gear" class="gear-page" aria-labelledby="gear-title">
     <div class="gear-intro">
       <h1 id="gear-title" class="gear-intro__title">Fish Keeping Gear Guide</h1>
-      <p class="gear-intro__blurb">Build a resilient freshwater setup with vetted heaters, filters, lighting, and monitoring tools sized for 10, 20, 29, and 40 breeder aquariums.</p>
+      <p class="gear-intro__blurb">Build a resilient freshwater setup with vetted heaters, filters, lighting, and monitoring tools.</p>
     </div>
 
     <div class="trust-note" aria-labelledby="trust-note-heading">
@@ -450,7 +450,6 @@
       <h2 id="core-equipment-title">Core Equipment Recommendations</h2>
       <div class="gear-shell">
         <section class="gear-card" data-gear="heaters">
-          <p class="gear-card__intro">Stable temperatures within a 1–2°F window reduce stress responses, so these picks focus on heaters that recover quickly from room swings and keep tropical fish steady.</p>
           <header class="gear-card__header">
             <button
               class="gear-card__trigger"
@@ -464,11 +463,12 @@
             </button>
             <button class="info-btn" type="button" aria-label="Heater tip" aria-haspopup="dialog" data-tip="heaters">i</button>
           </header>
-          <div id="heaters-body" class="gear-card__body" hidden></div>
+          <div id="heaters-body" class="gear-card__body" hidden>
+            <p class="gear-card__intro proto-card-intro">Stable temperatures within a 1–2°F window reduce stress responses, so these picks focus on heaters that recover quickly from room swings and keep tropical fish steady.</p>
+          </div>
         </section>
 
         <section class="gear-card" data-gear="filters">
-          <p class="gear-card__intro">Filtration is the tank’s life support—each recommendation balances mechanical polishing, biological capacity, and adjustable flow so waste never outruns your biofilter.</p>
           <header class="gear-card__header">
             <button
               class="gear-card__trigger"
@@ -482,7 +482,9 @@
             </button>
             <button class="info-btn" type="button" aria-label="Filter tip" aria-haspopup="dialog" data-tip="filters">i</button>
           </header>
-          <div id="filters-body" class="gear-card__body" hidden></div>
+          <div id="filters-body" class="gear-card__body" hidden>
+            <p class="gear-card__intro proto-card-intro">Filtration is the tank’s life support—each recommendation balances mechanical polishing, biological capacity, and adjustable flow so waste never outruns your biofilter.</p>
+          </div>
         </section>
 
         <section class="gear-card" data-gear="air">
@@ -503,7 +505,6 @@
         </section>
 
         <section class="gear-card" data-gear="lights">
-          <p class="gear-card__intro">Lighting needs shift between fish-only and planted tanks, so we flag fixtures with timers and spectrum control that showcase fish while fueling plant growth when you need it.</p>
           <header class="gear-card__header">
             <button
               class="gear-card__trigger"
@@ -517,7 +518,9 @@
             </button>
             <button class="info-btn" type="button" aria-label="Light tip" aria-haspopup="dialog" data-tip="lights">i</button>
           </header>
-          <div id="lights-body" class="gear-card__body" hidden></div>
+          <div id="lights-body" class="gear-card__body" hidden>
+            <p class="gear-card__intro proto-card-intro">Lighting needs shift between fish-only and planted tanks, so we flag fixtures with timers and spectrum control that showcase fish while fueling plant growth when you need it.</p>
+          </div>
         </section>
 
         <section class="gear-card" data-gear="substrate">
