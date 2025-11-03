@@ -197,6 +197,38 @@
     }
   }
 
+  function getEntryQuickFacts(entry) {
+    if (!entry) {
+      return '';
+    }
+    const candidates = [
+      entry.quick_facts,
+      entry.quickFacts,
+      entry['Action/Observation'],
+      entry.action_observation,
+      entry.actionObservation
+    ];
+    for (const value of candidates) {
+      if (typeof value === 'string' && value.trim()) {
+        return value;
+      }
+    }
+    return '';
+  }
+
+  function getEntryNotes(entry) {
+    if (!entry) {
+      return '';
+    }
+    const candidates = [entry.ramble, entry.notes_results, entry['Notes/Results'], entry.notesResults];
+    for (const value of candidates) {
+      if (typeof value === 'string' && value.trim()) {
+        return value;
+      }
+    }
+    return '';
+  }
+
   async function loadMonthEntries(month) {
     if (monthCache.has(month)) {
       return monthCache.get(month);
@@ -285,18 +317,18 @@
         article.className = 'journal-entry';
         article.id = `entry-${slugify(group.date)}-${index + 1}`;
 
-        const hasQuickFacts = entry && typeof entry.quick_facts === 'string' && entry.quick_facts.trim();
+        const quickFacts = getEntryQuickFacts(entry);
         let chipTexts = [];
 
-        if (hasQuickFacts) {
-          const chipResult = buildEntryChips(entry);
+        if (quickFacts) {
+          const chipResult = buildEntryChips(entry, quickFacts);
           if (chipResult && chipResult.container) {
             article.appendChild(chipResult.container);
             chipTexts = chipResult.chips;
           }
         }
 
-        const noteText = dedupeNotes(chipTexts, entry && entry.ramble);
+        const noteText = dedupeNotes(chipTexts, getEntryNotes(entry));
         if (noteText) {
           article.appendChild(createEntryNoteElement(noteText));
         }
@@ -314,15 +346,13 @@
     });
   }
 
-  function buildEntryChips(entry) {
-    if (!entry || typeof entry.quick_facts !== 'string') {
+  function buildEntryChips(entry, quickFactsOverride) {
+    const rawQuickFacts = quickFactsOverride ?? getEntryQuickFacts(entry);
+    if (!rawQuickFacts) {
       return null;
     }
 
-    const quickFacts = entry.quick_facts.trim();
-    if (!quickFacts) {
-      return null;
-    }
+    const quickFacts = rawQuickFacts.trim();
 
     const chips = [];
     const seen = new Set();

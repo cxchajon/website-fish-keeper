@@ -1,6 +1,18 @@
 const CSV_URL = '/data/journal.csv';
 const JSON_URL = '/data/journal.json';
 
+function resolveField(source, keys) {
+  if (!source) {
+    return '';
+  }
+  for (const key of keys) {
+    if (Object.prototype.hasOwnProperty.call(source, key) && source[key] != null) {
+      return String(source[key]);
+    }
+  }
+  return '';
+}
+
 function parseCSV(text) {
   const rows = [];
   let field = '';
@@ -230,8 +242,8 @@ function normaliseEntries(rawEntries) {
         return null;
       }
 
-      const quickFacts = (row.quick_facts ?? '').trim();
-      const ramble = (row.ramble ?? '').trim();
+      const quickFacts = resolveField(row, ['quick_facts', 'quickFacts', 'Action/Observation', 'action_observation']).trim();
+      const ramble = resolveField(row, ['ramble', 'notes_results', 'Notes/Results', 'notesResults']).trim();
       const combined = [quickFacts, ramble].filter(Boolean).join(' ');
       const nitrateColumn = safeNumber(row.nitrate_ppm);
       const nitrate = nitrateColumn ?? parseNitrateFromText(combined) ?? parseNitrateFromText(quickFacts);
@@ -245,6 +257,8 @@ function normaliseEntries(rawEntries) {
         category: (row.category ?? '').trim(),
         quickFacts,
         ramble,
+        quick_facts: quickFacts,
+        notes_results: ramble,
         nitrate,
         waterChange,
         tags,

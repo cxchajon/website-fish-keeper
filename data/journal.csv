@@ -1,57 +1,58 @@
-date,time,category,quick_facts,ramble,nitrate_ppm,nitrite_ppm,ammonia_ppm,ph,media,tags
-2025-10-31,,Feeding,Fed: flakes only (light portion) · End-of-week low-waste day,Continuing Post-Treatment Recovery Week.,,,,,,"feeding,low-waste,recovery-week,29g"
-2025-10-30,,"Feeding, Test & Dosing",Fed flakes + brine shrimp · Nitrate 18 ppm · 0 Thrive pumps · 1.5 caps Excel (spot + cap) · No water change,Spot- and cap-dosed Seachem Excel. Black beard algae around hardware has turned fully red — marking the start of Post-Treatment Recovery Week as the die-off phase begins and the tank stabilizes.,18,,,,,"feeding,dosing,testing,algae-control,recovery-week,29g"
-2025-10-29,,"Feeding, Test & Dosing",Fed flakes + bloodworms · Nitrate 10 ppm · 0 Thrive pumps · 1.5 caps Excel (spot + cap) · No water change,"Spot-dosed and cap-dosed Seachem Excel, targeting remaining BBA near the random flow generator. Amano shrimp observed grazing — signs of recovery and ecosystem balance.",10,,,,,"feeding,dosing,testing,algae-control,29g"
-2025-10-28,,"Feeding, Test & Dosing",Fed 3 algae wafers + small pinch flakes · Nitrate 5 ppm · 4 pumps Thrive fertilizer · No Excel dose · No water change,Ensured every fish ate the wafers and flakes mix. System remains stable and balanced following the recent maintenance cycle.,5,,,,,"feeding,dosing,testing,post-maintenance,29g"
-2025-10-27,,"Feeding, Test & Dosing",Nitrate ≤ 5 ppm · Fed flakes + brine shrimp · Seachem Excel: spot dose + 1 cap (targeted random flow generator),Focused Excel on the random flow generator to clear remaining BBA before upcoming blog content. Continuing post-maintenance phase after the major water change.,,,,,,"feeding,dosing,testing,post-maintenance,29g"
-2025-10-26,,Maintenance & Dosing,Water change (~90% sump / ~75% display) · Trimmed dead leaves · Wiped glass with algae scraper · Dosed Seachem Excel (capful + spot) · Pre-Stocking Observation Week (Oct 20–27 2025),Performed ~90% sump and ~75% display water change. Trimmed dead and dying leaves and wiped the glass with the in-tank algae scraper. Dosed Seachem Excel (general capful and spot dose targeting remaining BBA on equipment). Continuing the Pre-Stocking Observation Week baseline observations.,,,,,,"maintenance,dosing,cleaning,pre-stocking,29g"
-2025-10-23,,"Feeding, Test & Dosing",Fed flakes + brine shrimp · Nitrate 5–10 ppm (closer to 5) · 4 pumps fertilizer · Spot-dosed Seachem Excel + 1 capful · Pre-Stocking Observation Week (Oct 20–27 2025),Fed flakes and brine shrimp. Nitrate tested between 5–10 ppm (closer to 5). Dosed 4 pumps of fertilizer and spot-dosed Seachem Excel with an additional capful. Continuing the Pre-Stocking Observation Week baseline.,,,,,,"feeding,dosing,testing,pre-stocking,29g"
-2025-10-22,,"Feeding, Test & Dosing",Fed flakes + bloodworms · Nitrate 5 ppm · Spot-dosed Seachem Excel · 4 pumps fertilizer (2 with sump off → wait 15 min → 2 with sump on) · Pre-Stocking Observation Week (Oct 20–27 2025),"Fed flakes and bloodworms; nitrate tested at 5 ppm. Spot-dosed Seachem Excel, then dosed 4 pumps of fertilizer—2 with sump off, waited 15 minutes, then 2 with sump on. Continuing the Pre-Stocking Observation Week baseline period.",5,,,,,"feeding,dosing,testing,pre-stocking,29g"
-2025-10-21,,Feeding & Dosing,Fed algae wafers + small pinch flakes · Spot-dosed Seachem Excel · Skipped water test (<24h post-maintenance) · Pre-Stocking Observation Week (Oct 20–27 2025),"Most fish ignored wafers, so added a small pinch of flakes. Spot dose of Seachem Excel. Skipped testing since it’s within 24 hours of the major maintenance cycle; continuing baseline observations for Pre-Stocking Week.",,,,,,"feeding,dosing,pre-stocking,29g"
-2025-10-20,,Maintenance,Major maintenance cycle · WC ~90% sump / 70% display · Replaced filters · Added Poly-fil (support browned Purigen) · Trim & replant · Dosed Stability · Light feed: flakes + brine shrimp · Pre-Stocking Observation Week (Oct 20–27 2025),Performed extra maintenance to set a fresh baseline before adding new fish; monitoring through the Pre-Stocking Observation Week.,,,,,,"maintenance,feeding,pre-stocking,29g"
-2025-10-16,,Test,Water test · Nitrate: 10-20 ppm (closer to 10),Nitrate: 10-20 ppm (closer to 10),,,,,,
-2025-10-16,,Feeding,Fed: algae wafers + brine shrimp + bloodworms,Heavy mixed feeding (pre-light-day preparation),,,,,,
-2025-10-15,,Test,Water test · Nitrate: ~10 ppm,Nitrate: ~10 ppm,,,,,,
-2025-10-15,,Feeding,Fed: flakes + brine shrimp,Schedule adjustment: chose brine instead of bloodworms (bloodworms given yesterday),,,,,,
-2025-10-14,,Test,Water test · Nitrate: 5-10 ppm,Nitrate: 5-10 ppm,,,,,,
-2025-10-14,,Feeding,Fed: flakes + bloodworms,Post-vacation recovery feeding,,,,,,
-2025-10-14,,Dosing,Dosed: NilocG Thrive Plus — 4 pumps,Routine dose after fast,,,,,,
-2025-10-10,,Test,Water test · Nitrate: ~10 ppm — pre-water change,Nitrate: ~10 ppm — pre-water change,,,,,,
-2025-10-10,,Maintenance,Maintenance: Water change + refugium trim + light replanting,90% sump / 80% display; trimmed pothos in refugium; light replanting; no filter changes,,,,,,
-2025-10-10,,Feeding,Fed: flakes + brine shrimp + bloodworms,High-protein pre-trip feeding; lights extended ~2 hrs,,,,,,
-2025-10-09,,Test,Water test · Nitrate: 5-10 ppm,Nitrate: 5-10 ppm,,,,,,
-2025-10-09,,Feeding,Fed: flakes + brine shrimp,Normal Thursday mix,,,,,,
-2025-10-09,,Dosing,Dosed: NilocG Thrive Plus — 4 pumps,Routine dose,,,,,,
-2025-10-08,,Feeding,Fed: flakes + bloodworms,Small pinch flakes + ~2 spoonfuls bloodworms; Tag: heavy protein feeding,,,,,,
-2025-10-08,,Dosing,Dosed: NilocG Thrive Plus — 4 pumps,Routine dose,,,,,,
-2025-10-07,,Feeding,Fed: flakes + algae wafers,Veggie day deviation: included flakes,,,,,,
-2025-10-07,,Dosing,Dosed: Seachem Excel — 1 capful + spot dose,Method: spot + cap,,,,,,
-2025-10-06,,Test,Water test · Nitrate: 10-20 ppm (~20) — pre-water change,Nitrate: 10-20 ppm (~20) — pre-water change,,,,,,
-2025-10-06,,Maintenance,Maintenance: Water change + plant trimming,Performed ~95% sump / ~80% display; removed dead/melted leaves,,,,,,
-2025-10-06,,Feeding,Fed: none,Skipped feeding due to late water change,,,,,,
-2025-10-06,,Dosing,Dosed: Seachem Excel — 2 capfuls,Dose at low water level during WC,,,,,,
-2025-10-03,,Test,Water test · Nitrate: 10-20 ppm (≈20),Nitrate: 10-20 ppm (≈20),,,,,,
-2025-10-03,,Feeding,Fed: flakes only,Light day,,,,,,
-2025-10-02,,Test,Water test · Nitrate: 5-10 ppm,Nitrate: 5-10 ppm,,,,,,
-2025-10-02,,Feeding,Fed: flakes + brine shrimp,Fed flakes and ~half cube brine shrimp,,,,,,
-2025-10-02,,Dosing,Dosed: NilocG Thrive Plus — 4 pumps,Routine fertilizer dose,,,,,,
-2025-10-01,,Test,Water test · Nitrate: 5-10 ppm,Nitrate: 5-10 ppm,,,,,,
-2025-10-01,,Feeding,Fed: flakes + bloodworms,Standard Wednesday mix,,,,,,
-2025-10-01,,Dosing,Dosed: Seachem Excel — 1 capful + spot dose,Method: capful + spot dose,,,,,,
-2025-10-01,,Dosing,Dosed: NilocG Thrive Plus — 4 pumps,Routine fertilizer dose,,,,,,
-2025-09-30,,Feeding,Fed: algae wafers + flakes,Three algae wafers and some flakes,,,,,,
-2025-09-29,,Feeding,Fed: flakes + brine shrimp,Pinch of flakes + ~half cube brine shrimp; forgot to turn off air/sump (Excel may disperse),,,,,,
-2025-09-29,,Dosing,Dosed: Seachem Excel — spot dose,Method: spot dose with circulation on; note: sump/air left on,,,,,,
-2025-09-25,,Feeding,Fed: flakes + brine shrimp,Completed feeding: flakes and ~half cube brine shrimp,,,,,,
-2025-09-24,,Feeding,Fed: flakes + bloodworms,Scheduled feeding (backfilled per user approval),,,,,,
-2025-09-23,,Feeding,Fed: veggie-only (zucchini/spinach or wafers),Scheduled feeding (backfilled per user approval),,,,,,
-2025-09-22,,Feeding,Fed: flakes + brine shrimp,Scheduled feeding (backfilled per user approval),,,,,,
-2025-09-19,,Feeding,Fed: flakes only,Scheduled feeding (backfilled per user approval),,,,,,
-2025-09-18,,Feeding,Fed: flakes + brine shrimp,Scheduled feeding (backfilled per user approval),,,,,,
-2025-09-17,,Feeding,Fed: flakes + bloodworms,Scheduled feeding (backfilled per user approval),,,,,,
-2025-09-16,,Feeding,Fed: veggie-only (zucchini/spinach or wafers),Scheduled feeding (backfilled per user approval),,,,,,
-2025-09-15,,Feeding,Fed: flakes + brine shrimp,Scheduled feeding (backfilled per user approval),,,,,,
-2025-09-12,,Feeding,Fed: flakes only,Scheduled feeding (backfilled per user approval),,,,,,
-2025-09-11,,Feeding,Fed: flakes + brine shrimp,Scheduled feeding (backfilled per user approval),,,,,,
-2025-09-10,,Feeding,Fed: flakes + bloodworms,Scheduled feeding (backfilled per user approval),,,,,,
-2025-09-09,,Feeding,Fed: veggie-only (zucchini/spinach or wafers),Scheduled feeding (backfilled per user approval),,,,,,
+Date,Time,Category,Action/Observation,Notes/Results
+2025-09-09,,Feeding,Fed: veggie-only (zucchini/spinach or wafers),Scheduled feeding (backfilled per user approval)
+2025-09-10,,Feeding,Fed: flakes + bloodworms,Scheduled feeding (backfilled per user approval)
+2025-09-11,,Feeding,Fed: flakes + brine shrimp,Scheduled feeding (backfilled per user approval)
+2025-09-12,,Feeding,Fed: flakes only,Scheduled feeding (backfilled per user approval)
+2025-09-15,,Feeding,Fed: flakes + brine shrimp,Scheduled feeding (backfilled per user approval)
+2025-09-16,,Feeding,Fed: veggie-only (zucchini/spinach or wafers),Scheduled feeding (backfilled per user approval)
+2025-09-17,,Feeding,Fed: flakes + bloodworms,Scheduled feeding (backfilled per user approval)
+2025-09-18,,Feeding,Fed: flakes + brine shrimp,Scheduled feeding (backfilled per user approval)
+2025-09-19,,Feeding,Fed: flakes only,Scheduled feeding (backfilled per user approval)
+2025-09-22,,Feeding,Fed: flakes + brine shrimp,Scheduled feeding (backfilled per user approval)
+2025-09-23,,Feeding,Fed: veggie-only (zucchini/spinach or wafers),Scheduled feeding (backfilled per user approval)
+2025-09-24,,Feeding,Fed: flakes + bloodworms,Scheduled feeding (backfilled per user approval)
+2025-09-25,,Feeding,Fed: flakes + brine shrimp,Completed feeding: flakes and ~half cube brine shrimp
+2025-09-29,,Dosing,Dosed: Seachem Excel — spot dose,Method: spot dose with circulation on; note: sump/air left on
+2025-09-29,,Feeding,Fed: flakes + brine shrimp,Pinch of flakes + ~half cube brine shrimp; forgot to turn off air/sump (Excel may disperse)
+2025-09-30,,Feeding,Fed: algae wafers + flakes,Three algae wafers and some flakes
+2025-10-01,,Dosing,Dosed: NilocG Thrive Plus — 4 pumps,Routine fertilizer dose
+2025-10-01,,Dosing,Dosed: Seachem Excel — 1 capful + spot dose,Method: capful + spot dose
+2025-10-01,,Feeding,Fed: flakes + bloodworms,Standard Wednesday mix
+2025-10-01,,Test,Water test · Nitrate: 5-10 ppm,Nitrate: 5-10 ppm
+2025-10-02,,Dosing,Dosed: NilocG Thrive Plus — 4 pumps,Routine fertilizer dose
+2025-10-02,,Feeding,Fed: flakes + brine shrimp,Fed flakes and ~half cube brine shrimp
+2025-10-02,,Test,Water test · Nitrate: 5-10 ppm,Nitrate: 5-10 ppm
+2025-10-03,,Feeding,Fed: flakes only,Light day
+2025-10-03,,Test,Water test · Nitrate: 10-20 ppm (≈20),Nitrate: 10-20 ppm (≈20)
+2025-10-06,,Dosing,Dosed: Seachem Excel — 2 capfuls,Dose at low water level during WC
+2025-10-06,,Feeding,Fed: none,Skipped feeding due to late water change
+2025-10-06,,Maintenance,Maintenance: Water change + plant trimming,Performed ~95% sump / ~80% display; removed dead/melted leaves
+2025-10-06,,Test,Water test · Nitrate: 10-20 ppm (~20) — pre-water change,Nitrate: 10-20 ppm (~20) — pre-water change
+2025-10-07,,Dosing,Dosed: Seachem Excel — 1 capful + spot dose,Method: spot + cap
+2025-10-07,,Feeding,Fed: flakes + algae wafers,Veggie day deviation: included flakes
+2025-10-08,,Dosing,Dosed: NilocG Thrive Plus — 4 pumps,Routine dose
+2025-10-08,,Feeding,Fed: flakes + bloodworms,Small pinch flakes + ~2 spoonfuls bloodworms; Tag: heavy protein feeding
+2025-10-09,,Dosing,Dosed: NilocG Thrive Plus — 4 pumps,Routine dose
+2025-10-09,,Feeding,Fed: flakes + brine shrimp,Normal Thursday mix
+2025-10-09,,Test,Water test · Nitrate: 5-10 ppm,Nitrate: 5-10 ppm
+2025-10-10,,Feeding,Fed: flakes + brine shrimp + bloodworms,High-protein pre-trip feeding; lights extended ~2 hrs
+2025-10-10,,Maintenance,Maintenance: Water change + refugium trim + light replanting,90% sump / 80% display; trimmed pothos in refugium; light replanting; no filter changes
+2025-10-10,,Test,Water test · Nitrate: ~10 ppm — pre-water change,Nitrate: ~10 ppm — pre-water change
+2025-10-14,,Dosing,Dosed: NilocG Thrive Plus — 4 pumps,Routine dose after fast
+2025-10-14,,Feeding,Fed: flakes + bloodworms,Post-vacation recovery feeding
+2025-10-14,,Test,Water test · Nitrate: 5-10 ppm,Nitrate: 5-10 ppm
+2025-10-15,,Feeding,Fed: flakes + brine shrimp,Schedule adjustment: chose brine instead of bloodworms (bloodworms given yesterday)
+2025-10-15,,Test,Water test · Nitrate: ~10 ppm,Nitrate: ~10 ppm
+2025-10-16,,Feeding,Fed: algae wafers + brine shrimp + bloodworms,Heavy mixed feeding (pre-light-day preparation)
+2025-10-16,,Test,Water test · Nitrate: 10-20 ppm (closer to 10),Nitrate: 10-20 ppm (closer to 10)
+2025-10-20,,Maintenance,Major maintenance cycle · WC ~90% sump / 70% display · Replaced filters · Added Poly-fil (support browned Purigen) · Trim & replant · Dosed Stability · Light feed: flakes + brine shrimp · Pre-Stocking Observation Week (Oct 20–27 2025),Performed extra maintenance to set a fresh baseline before adding new fish; monitoring through the Pre-Stocking Observation Week.
+2025-10-21,,Feeding & Dosing,Fed algae wafers + small pinch flakes · Spot-dosed Seachem Excel · Skipped water test (<24h post-maintenance) · Pre-Stocking Observation Week (Oct 20–27 2025),"Most fish ignored wafers, so added a small pinch of flakes. Spot dose of Seachem Excel. Skipped testing since it’s within 24 hours of the major maintenance cycle; continuing baseline observations for Pre-Stocking Week."
+2025-10-22,,"Feeding, Test & Dosing",Fed flakes + bloodworms · Nitrate 5 ppm · Spot-dosed Seachem Excel · 4 pumps fertilizer (2 with sump off → wait 15 min → 2 with sump on) · Pre-Stocking Observation Week (Oct 20–27 2025),"Fed flakes and bloodworms; nitrate tested at 5 ppm. Spot-dosed Seachem Excel, then dosed 4 pumps of fertilizer—2 with sump off, waited 15 minutes, then 2 with sump on. Continuing the Pre-Stocking Observation Week baseline period."
+2025-10-23,,"Feeding, Test & Dosing",Fed flakes + brine shrimp · Nitrate 5–10 ppm (closer to 5) · 4 pumps fertilizer · Spot-dosed Seachem Excel + 1 capful · Pre-Stocking Observation Week (Oct 20–27 2025),Fed flakes and brine shrimp. Nitrate tested between 5–10 ppm (closer to 5). Dosed 4 pumps of fertilizer and spot-dosed Seachem Excel with an additional capful. Continuing the Pre-Stocking Observation Week baseline.
+2025-10-26,,Maintenance & Dosing,Water change (~90% sump / ~75% display) · Trimmed dead leaves · Wiped glass with algae scraper · Dosed Seachem Excel (capful + spot) · Pre-Stocking Observation Week (Oct 20–27 2025),Performed ~90% sump and ~75% display water change. Trimmed dead and dying leaves and wiped the glass with the in-tank algae scraper. Dosed Seachem Excel (general capful and spot dose targeting remaining BBA on equipment). Continuing the Pre-Stocking Observation Week baseline observations.
+2025-10-27,,"Feeding, Test & Dosing",Nitrate ≤ 5 ppm · Fed flakes + brine shrimp · Seachem Excel: spot dose + 1 cap (targeted random flow generator),Focused Excel on the random flow generator to clear remaining BBA before upcoming blog content. Continuing post-maintenance phase after the major water change.
+2025-10-28,,"Feeding, Test & Dosing",Fed 3 algae wafers + small pinch flakes · Nitrate 5 ppm · 4 pumps Thrive fertilizer · No Excel dose · No water change,Ensured every fish ate the wafers and flakes mix. System remains stable and balanced following the recent maintenance cycle.
+2025-10-29,,"Feeding, Test & Dosing",Fed flakes + bloodworms · Nitrate 10 ppm · 0 Thrive pumps · 1.5 caps Excel (spot + cap) · No water change,"Spot-dosed and cap-dosed Seachem Excel, targeting remaining BBA near the random flow generator. Amano shrimp observed grazing — signs of recovery and ecosystem balance."
+2025-10-30,,"Feeding, Test & Dosing",Fed flakes + brine shrimp · Nitrate 18 ppm · 0 Thrive pumps · 1.5 caps Excel (spot + cap) · No water change,Spot- and cap-dosed Seachem Excel. Black beard algae around hardware has turned fully red — marking the start of Post-Treatment Recovery Week as the die-off phase begins and the tank stabilizes.
+2025-10-31,,Feeding,Fed: flakes only (light portion) · End-of-week low-waste day,Continuing Post-Treatment Recovery Week.
+2025-11-02,,Maintenance & Dosing,Pre-water-change nitrate test: 20–40 ppm (≈20). Performed ~95% sump / ~70% display water change + light trim. Spot- and cap-dosed Seachem Excel (post-change).,Continuing Post-Treatment Recovery Week. Noticed new plant growth emerging.
