@@ -279,11 +279,7 @@
       { date: '2025-11-02', type: 'Dosing', detail: 'Seachem Excel — spot + 1 capful', notes: 'Targeted residual BBA areas' },
       { date: '2025-11-03', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Standard Monday feeding; healthy appetite observed' },
       { date: '2025-11-03', type: 'Dosing', detail: 'Seachem Excel — 2 spot doses', notes: 'Routine spot treatment; maintaining low BBA presence' },
-      { date: '2025-11-03', type: 'Observation', detail: 'Malaysian trumpet snails observed cleaning sump overflow screen', notes: 'Natural Balance Discovery milestone', milestone: true },
-      { date: '2025-11-04', type: 'Parameters', detail: 'Nitrate: under 5 ppm', notes: 'Post-Treatment Recovery Week continues', nitrate: 5 },
-      { date: '2025-11-04', type: 'Dosing', detail: 'NilocG Thrive Plus — 4 pumps', notes: 'Routine fertilizer dose' },
-      { date: '2025-11-04', type: 'Dosing', detail: 'Seachem Excel — spot dose', notes: 'Targeted spot treatment' },
-      { date: '2025-11-04', type: 'Feeding', detail: 'algae wafers + flakes', notes: 'Fed algae wafers and a small amount of flakes to ensure all fish fed' }
+      { date: '2025-11-03', type: 'Observation', detail: 'Malaysian trumpet snails observed cleaning sump overflow screen', notes: 'Natural Balance Discovery milestone', milestone: true }
     ];
 
     // ====== Quick helpers ======
@@ -294,7 +290,7 @@
       } catch { return iso; }
     };
     const lastWC = new Date('2025-11-02');
-    const today = new Date('2025-11-04');
+    const today = new Date('2025-11-03');
 
     // ====== Stats ======
     const feedings = aquariumData.filter(d => d.type === 'Feeding' && d.detail !== 'none');

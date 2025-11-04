@@ -99,4 +99,3 @@ Changes: Disabled x-axis ticks, added custom point labels with accent colors tie
 Result: Dates render clearly near each reading without overlapping or crowding the chart base.
 Next: Fine-tune spacing for denser data sets and validate on smaller mobile breakpoints.
 [2025-11-03 | Journal | Add 2025-11-03 entry + photo] Scope: CSV+JSON regenerated; journal page updated with image; dashboard reflects new data. Result: Success; no footer/nav touched. Next: Continue Post-Treatment Recovery Week monitoring.
-[2025-11-04 | Journal] Added entry + refreshed CSV/JSON; dashboard and Media card updated.
