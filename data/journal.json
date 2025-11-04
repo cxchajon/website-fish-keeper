@@ -78,6 +78,11 @@
       "date": "2025-11-02",
       "ppm": 20,
       "wc": true
+    },
+    {
+      "date": "2025-11-04",
+      "ppm": 5,
+      "wc": false
     }
   ],
   "dosing": [
@@ -110,6 +115,12 @@
       "label": "Week 5 (10/28\u201311/3)",
       "thrive": 4,
       "excel": 2.5
+    },
+    {
+      "week": "2025-W45",
+      "label": "Week 6 (11/4–11/10)",
+      "thrive": 4,
+      "excel": 0.5
     }
   ],
   "maintenance": [
