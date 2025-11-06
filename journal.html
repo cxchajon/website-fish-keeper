@@ -6,7 +6,7 @@
   <title>Tank Journal — Legal Pad</title>
   <script src="/js/nav.js?v=1.1.0" defer></script>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Kalam:wght@300;400&display=swap" rel="stylesheet">
   <style>
     :root {
       color-scheme: light;
@@ -58,88 +58,73 @@
       line-height: 1.6;
     }
 
-    .legalpad-page .journal-entries {
-      margin: 0;
-      padding: 0 0 0 32px;
+    /* scope to journal page only */
+    main.legalpad-page { /* background provided by site; keep transparent */ }
+
+    /* Remove all “card/panel” chrome inside journal area */
+    .legalpad-page .entry,
+    .legalpad-page .entry-card,
+    .legalpad-page .panel,
+    .legalpad-page .card {
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      margin: 0 0 28px 0 !important;
     }
 
-    .legalpad-page .entries {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .legalpad-page .entry {
-      margin: 0 0 40px;
-      padding: 0;
-      border: 0;
+    /* Handwriting for body text ONLY (keep site headings/nav with brand font) */
+    .legalpad-page .entry-body,
+    .legalpad-page .entry-body p,
+    .legalpad-page .entry-body li {
+      font-family: "Patrick Hand", "Kalam", system-ui, sans-serif;
+      font-size: 20px;
+      line-height: 1.9;
+      letter-spacing: 0.15px;
+      color: #252525;
       background: transparent;
-      box-shadow: none;
-      font-family: 'Caveat', cursive;
-      font-size: clamp(1.125rem, 1.4vw + 1rem, 1.5rem);
-      line-height: 1.6;
     }
 
-    .legalpad-page .entry:last-of-type {
-      margin-bottom: 0;
+    /* Titles/meta keep brand font (NOT handwriting) */
+    .legalpad-page h1,
+    .legalpad-page h2,
+    .legalpad-page .entry-title,
+    .legalpad-page .entry-meta {
+      font-family: inherit;
+      background: transparent;
     }
 
-    .legalpad-page .meta {
-      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    .legalpad-page .entry-title {
+      font-size: clamp(1.25rem, 1vw + 1.2rem, 1.6rem);
+      margin: 0 0 6px;
+    }
+
+    .legalpad-page .entry-meta {
       font-size: 0.95rem;
-      font-weight: 600;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      margin-bottom: 6px;
+      margin: 0 0 12px;
+      color: rgba(37, 37, 37, 0.65);
     }
 
-    .legalpad-page .meta .date {
-      color: #0b66ff;
+    .legalpad-page .entry-body p {
+      margin: 0 0 18px;
     }
 
-    .legalpad-page .meta .cat {
-      color: #0a7a55;
-    }
-
-    .legalpad-page .text {
-      margin: 0 0 16px;
-      white-space: pre-line;
-    }
-
+    /* Journal images fit writing column and never overflow */
+    .legalpad-page .entry-body img,
     .legalpad-page .journal-photo {
       display: block;
-      max-width: 560px;
+      max-width: 680px;
       width: 100%;
       height: auto;
-      border: 0;
-      border-radius: 4px;
-      box-shadow: none;
-      margin: 12px 0 16px;
+      border-radius: 6px;
+      margin: 12px 0 8px 0;
     }
 
-    .legalpad-page .entry::after {
-      content: "";
-      display: block;
-      height: 1px;
-      margin-top: 18px;
-      background: linear-gradient(to right, transparent, rgba(168, 196, 255, 0.65) 25%, transparent 80%);
-      opacity: 0.6;
-    }
-
-    .legalpad-page a {
-      color: #0b66ff;
-      text-decoration: underline;
-      text-decoration-thickness: 1px;
-      text-decoration-color: rgba(11, 102, 255, 0.8);
-    }
-
-    .legalpad-page a:hover,
-    .legalpad-page a:focus-visible {
-      text-decoration-thickness: 2px;
-    }
-
+    /* Hide any stray debug nav list that was in the content area */
     .legalpad-page [aria-label="Site navigation"] {
-      display: none;
+      display: none !important;
     }
 
     @media (max-width: 640px) {
@@ -152,89 +137,112 @@
         padding: 0 16px 56px;
       }
 
-      .legalpad-page .journal-entries {
-        padding-left: 24px;
+      .legalpad-page .entry-title {
+        font-size: clamp(1.2rem, 2.4vw + 1rem, 1.4rem);
       }
 
-      .legalpad-page .entry {
-        font-size: clamp(1.125rem, 2.2vw + 1.05rem, 1.35rem);
-      }
-
-      .legalpad-page .meta {
-        font-size: 0.9rem;
+      .legalpad-page .entry-meta {
+        font-size: 0.85rem;
       }
     }
   </style>
 </head>
 <body>
   <div id="site-nav"></div>
-  <main class="legalpad-page" id="journal">
+  <main id="journal" class="legalpad-page" aria-label="Tank Journal">
     <header>
       <h1>Tank Journal</h1>
-      <p class="intro-text">Legal-pad view of recent entries. Newest on top. (Uses only global nav &amp; footer—unchanged.)</p>
+      <p class="intro-text">Legal-pad view of recent entries. Newest on top.</p>
     </header>
 
-    <section class="journal-entries" aria-label="Tank Journal entries">
-      <ul class="entries" id="entries"></ul>
-    </section>
+    <article class="entry">
+      <h2 class="entry-title">2025-11-03 | Feeding, Dosing &amp; Observation</h2>
+      <p class="entry-meta">Logged November 3, 2025</p>
+      <div class="entry-body">
+        <p>Fed flakes and brine shrimp with two spot doses of Seachem Excel to keep BBA in check.</p>
+        <p>Malaysian trumpet snails naturally polished the sump overflow screen, keeping debris away and signaling a “Natural Balance Discovery” milestone as the system self-regulates during Post-Treatment Recovery Week.</p>
+        <img
+          class="journal-photo"
+          src="/assets/images/mts-on-strainer-2025-11-03.jpg"
+          alt="Malaysian trumpet snails cleaning the overflow screen"
+          loading="lazy"
+        >
+      </div>
+    </article>
+
+    <article class="entry">
+      <h2 class="entry-title">2025-11-02 | Maintenance &amp; Dosing</h2>
+      <p class="entry-meta">Logged November 2, 2025</p>
+      <div class="entry-body">
+        <p>Pre-water-change nitrate tested between 20–40 ppm (closer to 20). Completed roughly 95% sump and 70% display water changes with a light trim.</p>
+        <p>Performed spot and cap doses of Seachem Excel as a routine post-change treatment and noted fresh plant growth emerging.</p>
+      </div>
+    </article>
+
+    <article class="entry">
+      <h2 class="entry-title">2025-10-31 | Feeding</h2>
+      <p class="entry-meta">Logged October 31, 2025</p>
+      <div class="entry-body">
+        <p>Served a light portion of flakes only for the planned low-waste day while continuing Post-Treatment Recovery Week.</p>
+      </div>
+    </article>
+
+    <article class="entry">
+      <h2 class="entry-title">2025-10-30 | Feeding, Test &amp; Dosing</h2>
+      <p class="entry-meta">Logged October 30, 2025</p>
+      <div class="entry-body">
+        <p>Nitrate measured between 10–20 ppm (leaning closer to 20). Fed flakes and brine shrimp alongside spot and cap doses of Seachem Excel.</p>
+        <p>Black beard algae around equipment has fully turned red, marking the start of Post-Treatment Recovery Week as the die-off phase takes hold.</p>
+      </div>
+    </article>
+
+    <article class="entry">
+      <h2 class="entry-title">2025-10-29 | Feeding, Test &amp; Dosing</h2>
+      <p class="entry-meta">Logged October 29, 2025</p>
+      <div class="entry-body">
+        <p>Nitrate came in at 10 ppm. Fed flakes and bloodworms, then spot and cap dosed Seachem Excel targeting remaining BBA near the random flow generator.</p>
+        <p>Amano shrimp grazed in the treated area, showing renewed activity and signaling a recovering ecosystem.</p>
+      </div>
+    </article>
+
+    <article class="entry">
+      <h2 class="entry-title">2025-10-28 | Feeding, Test &amp; Dosing</h2>
+      <p class="entry-meta">Logged October 28, 2025</p>
+      <div class="entry-body">
+        <p>Fed three algae wafers and a small pinch of flakes to ensure the entire community ate. Nitrate registered at 5 ppm.</p>
+        <p>Dosed four pumps of NilocG Thrive Plus. System remains stable and balanced following the recent maintenance cycle.</p>
+      </div>
+    </article>
+
+    <article class="entry">
+      <h2 class="entry-title">2025-10-27 | Feeding, Test &amp; Dosing</h2>
+      <p class="entry-meta">Logged October 27, 2025</p>
+      <div class="entry-body">
+        <p>Nitrate tested at or below 5 ppm. Dosed one cap plus spot applications of Seachem Excel.</p>
+        <p>Fed flakes and brine shrimp while the tank remained stable post-maintenance.</p>
+      </div>
+    </article>
   </main>
 
-  <script>
-    const data = [
-      { date:'2025-11-03', cat:'Feeding, Dosing & Observation',
-        text:'Fed flakes and brine shrimp. Performed two spot doses of Seachem Excel for continued BBA control. Malaysian trumpet snails were observed naturally cleaning the sump overflow screen, preventing buildup — marking the “Natural Balance Discovery” milestone as the system begins showing signs of self-regulation during the Post-Treatment Recovery Week.',
-        image:'/assets/images/mts-on-strainer-2025-11-03.jpg'
-      },
-      { date:'2025-11-02', cat:'Maintenance & Dosing',
-        text:'Pre-water-change nitrate test read between 20–40 ppm (closer to 20). Performed ~95% sump and ~70% display water change with a light trim. Spot- and cap-dosed Seachem Excel for routine post-change treatment. Noticed new plant growth emerging.'
-      },
-      { date:'2025-10-31', cat:'Feeding',
-        text:'Fed flakes only (light portion) as the end-of-week low-waste day. Continuing Post-Treatment Recovery Week.' },
-      { date:'2025-10-30', cat:'Feeding, Test & Dosing',
-        text:'Nitrate measured between 10–20 ppm, closer to 20. Fed flakes and brine shrimp. Spot- and cap-dosed Seachem Excel. Black beard algae around hardware has turned fully red — marking the start of the Post-Treatment Recovery Week as the die-off phase begins and the tank stabilizes.' },
-      { date:'2025-10-29', cat:'Feeding, Test & Dosing',
-        text:'Nitrate measured at 10 ppm. Fed flakes and bloodworms. Spot-dosed and cap-dosed Seachem Excel, targeting remaining BBA near the random flow generator. Amano shrimp observed grazing and showing interest in the treated area — signs of recovery and ecosystem balance.' },
-      { date:'2025-10-28', cat:'Feeding, Test & Dosing',
-        text:'Fed 3 algae wafers and a small pinch of flakes to ensure all fish ate. Nitrate measured at 5 ppm. Dosed 4 pumps of NilocG Thrive Plus. System remains stable and balanced following the recent maintenance cycle.' },
-      { date:'2025-10-27', cat:'Feeding, Test & Dosing',
-        text:'Nitrate tested ≤5 ppm. Dosed 1 cap + spot Seachem Excel. Fed flakes + brine shrimp. Stable post-maintenance.' }
-    ];
-
-    const list = document.getElementById('entries');
-    data.sort((a, b) => (a.date < b.date ? 1 : -1));
-
-    const toHTML = (entry) => {
-      const photo = entry.image
-        ? `<img class="journal-photo" src="${entry.image}" alt="Journal photo for ${entry.date}" loading="lazy">`
-        : '';
-
-      return `
-        <li class="entry">
-          <div class="meta">
-            <span class="date">${entry.date}</span>
-            <span aria-hidden="true"> | </span>
-            <span class="cat">${entry.cat}</span>
-          </div>
-          <div class="text">${entry.text}</div>
-          ${photo}
-        </li>`;
-    };
-
-    list.innerHTML = data.map(toHTML).join('');
-  </script>
   <script src="/js/footer-loader.js?v=1.4.9" defer></script>
-  <div id="site-footer" data-footer-src="/footer.html?v=1.4.9"></div>
+  <div id="site-footer" data-footer="legal" data-footer-src="/footer.html?v=1.4.9"></div>
   <script>
-    (function () {
-      const footerHost = document.getElementById('site-footer');
-      if (!footerHost) {
-        return;
-      }
-      const footerBase = '/includes/';
-      const legalFooterPath = footerBase + 'footer-' + 'legal.html?v=1.3.2';
-      footerHost.dataset.footer = 'legal';
-      footerHost.dataset.footerSrc = legalFooterPath;
-    })();
+    document.addEventListener('DOMContentLoaded', () => {
+      const removeSocialStrip = () => {
+        const footer = document.querySelector('footer.site-footer');
+        if (!footer) {
+          requestAnimationFrame(removeSocialStrip);
+          return;
+        }
+
+        const socialStrip = footer.querySelector('.community-links');
+        if (socialStrip) {
+          socialStrip.remove();
+        }
+      };
+
+      removeSocialStrip();
+    });
   </script>
 </body>
 </html>
