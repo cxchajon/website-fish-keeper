@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="preload" href="/footer.html?v=1.4.9" as="fetch" crossorigin="anonymous">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Aquarium Tracker Dashboard</title>
@@ -132,6 +133,8 @@
 </head>
 
 <body>
+  <script defer src="/js/nav.js?v=1.1.0"></script>
+  <div id="site-nav"></div>
   <div class="dashboard-header">
     <h1>🐠 Aquarium Monitoring Dashboard</h1>
     <p>Real-time tracking of water parameters, feeding schedules, and maintenance</p>
@@ -473,5 +476,7 @@
     `).join('');
     document.getElementById('recentActivity').innerHTML = activityHTML;
   </script>
+  <script src="/js/footer-loader.js?v=1.4.9" defer></script>
+  <div id="site-footer" data-footer-src="/footer.html?v=1.4.9"></div>
 </body>
 </html>

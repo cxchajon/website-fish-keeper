@@ -14,10 +14,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use Node.js 20
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        if: ${{ hashFiles('package-lock.json') != '' }}
+        run: npm ci
+
+      - name: Install dependencies (no lockfile)
+        if: ${{ hashFiles('package-lock.json') == '' }}
+        run: npm i --no-audit --no-fund
 
       - name: Evaluate prototype allowlist
         id: guard
