@@ -1,150 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="preload" href="/footer.html?v=1.4.9" as="fetch" crossorigin="anonymous">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tank Journal — Legal Pad</title>
-
-  <!-- LEGAL-PAD THEME -->
+  <script src="/js/nav.js?v=1.1.0" defer></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --pad-cream:#faf3dc;
-      --rule-blue:#a8c4ff;
-      --rule-blue-faint:#cfe0ff;
-      --margin-red:#ff6b6b;
-      --ink:#2b2b2b;
-      --ink-muted:#585858;
-      --entry-sep:#e9dfc6;
-      --card-bg:rgba(255,255,255,.85);
-      --link:#0b66ff;
+    :root {
+      color-scheme: light;
     }
 
-    /* Reset */
-    *,*::before,*::after{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      color:var(--ink);
-      font: 16px/1.6 "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    body {
+      margin: 0;
+      color: #2b2b2b;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background:
-        /* horizontal blue rules */
         repeating-linear-gradient(
           to bottom,
-          var(--rule-blue-faint) 0px,
-          var(--rule-blue-faint) 1px,
-          var(--pad-cream) 1px,
-          var(--pad-cream) 40px
+          rgba(168, 196, 255, 0.45) 0px,
+          rgba(168, 196, 255, 0.45) 1px,
+          #fcf4d9 1px,
+          #fcf4d9 40px
         ),
-        /* pale sheet */
-        var(--pad-cream);
+        #fcf4d9;
     }
 
-    /* red left margin line */
-    body::before{
-      content:"";
-      position:fixed;
-      left:14px;
-      top:0;
-      bottom:0;
-      width:2px;
-      background:var(--margin-red);
-      opacity:.75;
-      pointer-events:none;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0 auto 0 18px;
+      width: 2px;
+      background: rgba(235, 87, 87, 0.7);
+      pointer-events: none;
     }
 
-    .page{
-      max-width:900px;
-      margin:40px auto 24px;
-      padding:0 16px;
+    main.legalpad-page {
+      max-width: 880px;
+      margin: 48px auto 32px;
+      padding: 0 24px 64px;
+      display: block;
     }
 
-    .heading{
-      margin: 12px 0 18px;
-      padding: 6px 0 6px 24px;
-      border-left:4px solid var(--margin-red);
-      background:transparent;
-    }
-    .heading h1{
-      margin:0 0 4px;
-      font-size:28px;
-      letter-spacing:.2px;
-    }
-    .heading p{
-      margin:0;
-      color:var(--ink-muted);
-      font-size:14px;
+    .legalpad-page h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.9rem, 2.5vw + 1.3rem, 2.6rem);
+      font-weight: 700;
+      letter-spacing: 0.015em;
     }
 
-    /* Entries */
-    .entries{list-style:none; margin:0; padding:0 18px 40px 32px}
-    .entry{
-      position:relative;
-      margin:0 0 28px;
-      padding:0 0 18px;
-      border:none;
-      background:transparent;
-      border-radius:0;
-      box-shadow:none;
-    }
-    .entry + .entry{margin-top:0}
-
-    .meta{
-      font-weight:600;
-      margin-bottom:6px;
-    }
-    .meta .date{color:#0b66ff}
-    .meta .cat{color:#0a7a55}
-    .text{margin:6px 0 12px}
-
-    .journal-photo{
-      display:block;
-      max-width:560px;
-      width:100%;
-      height:auto;
-      border-radius:6px;
-      margin:8px 0 16px;
-      box-shadow:none;
-      border:1px solid rgba(0,0,0,.06);
+    .legalpad-page .intro-text {
+      margin: 0 0 32px;
+      max-width: 640px;
+      color: rgba(43, 43, 43, 0.75);
+      font-size: 1rem;
+      line-height: 1.6;
     }
 
-    .note{
-      margin-top:6px;
-      font-size:14px;
-      color:var(--ink-muted);
+    .legalpad-page .journal-entries {
+      margin: 0;
+      padding: 0 0 0 32px;
     }
 
-    /* tiny “ruled” separator under each entry */
-    .entry::after{
-      content:"";
-      display:block;
-      height:1px;
-      background:linear-gradient(to right, transparent, var(--rule-blue) 30%, transparent 70%);
-      margin-top:12px;
-      opacity:.55;
+    .legalpad-page .entries {
+      list-style: none;
+      margin: 0;
+      padding: 0;
     }
 
-    /* Mobile tweaks */
-    @media (max-width:520px){
-      .heading h1{font-size:22px}
-      .page{margin-top:26px}
+    .legalpad-page .entry {
+      margin: 0 0 40px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      font-family: 'Caveat', cursive;
+      font-size: clamp(1.125rem, 1.4vw + 1rem, 1.5rem);
+      line-height: 1.6;
+    }
+
+    .legalpad-page .entry:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .legalpad-page .meta {
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .legalpad-page .meta .date {
+      color: #0b66ff;
+    }
+
+    .legalpad-page .meta .cat {
+      color: #0a7a55;
+    }
+
+    .legalpad-page .text {
+      margin: 0 0 16px;
+      white-space: pre-line;
+    }
+
+    .legalpad-page .journal-photo {
+      display: block;
+      max-width: 560px;
+      width: 100%;
+      height: auto;
+      border: 0;
+      border-radius: 4px;
+      box-shadow: none;
+      margin: 12px 0 16px;
+    }
+
+    .legalpad-page .entry::after {
+      content: "";
+      display: block;
+      height: 1px;
+      margin-top: 18px;
+      background: linear-gradient(to right, transparent, rgba(168, 196, 255, 0.65) 25%, transparent 80%);
+      opacity: 0.6;
+    }
+
+    .legalpad-page a {
+      color: #0b66ff;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-decoration-color: rgba(11, 102, 255, 0.8);
+    }
+
+    .legalpad-page a:hover,
+    .legalpad-page a:focus-visible {
+      text-decoration-thickness: 2px;
+    }
+
+    .legalpad-page [aria-label="Site navigation"] {
+      display: none;
+    }
+
+    @media (max-width: 640px) {
+      body::before {
+        left: 12px;
+      }
+
+      main.legalpad-page {
+        margin: 32px auto 24px;
+        padding: 0 16px 56px;
+      }
+
+      .legalpad-page .journal-entries {
+        padding-left: 24px;
+      }
+
+      .legalpad-page .entry {
+        font-size: clamp(1.125rem, 2.2vw + 1.05rem, 1.35rem);
+      }
+
+      .legalpad-page .meta {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
-  <script defer src="/js/nav.js?v=1.1.0"></script>
   <div id="site-nav"></div>
-  <main class="page" id="page">
-    <header class="heading">
+  <main class="legalpad-page" id="journal">
+    <header>
       <h1>Tank Journal</h1>
-      <p>Legal-pad view of recent entries. Newest on top. (Uses only global nav & footer—unchanged.)</p>
+      <p class="intro-text">Legal-pad view of recent entries. Newest on top. (Uses only global nav &amp; footer—unchanged.)</p>
     </header>
 
-    <ul class="entries" id="entries"></ul>
+    <section class="journal-entries" aria-label="Tank Journal entries">
+      <ul class="entries" id="entries"></ul>
+    </section>
   </main>
 
   <script>
-    // --- SOURCE DATA (you can swap this to CSV fetch later; for now it's inline to restore the page fast) ---
     const data = [
       { date:'2025-11-03', cat:'Feeding, Dosing & Observation',
         text:'Fed flakes and brine shrimp. Performed two spot doses of Seachem Excel for continued BBA control. Malaysian trumpet snails were observed naturally cleaning the sump overflow screen, preventing buildup — marking the “Natural Balance Discovery” milestone as the system begins showing signs of self-regulation during the Post-Treatment Recovery Week.',
@@ -165,33 +200,41 @@
         text:'Nitrate tested ≤5 ppm. Dosed 1 cap + spot Seachem Excel. Fed flakes + brine shrimp. Stable post-maintenance.' }
     ];
 
-    // --- RENDER ---
-    const ul = document.getElementById('entries');
+    const list = document.getElementById('entries');
+    data.sort((a, b) => (a.date < b.date ? 1 : -1));
 
-    // newest first
-    data.sort((a,b)=> (a.date < b.date ? 1 : -1));
+    const toHTML = (entry) => {
+      const photo = entry.image
+        ? `<img class="journal-photo" src="${entry.image}" alt="Journal photo for ${entry.date}" loading="lazy">`
+        : '';
 
-    const toHTML = (e) => {
-      // build optional image src if provided
-      let imgHTML = '';
-      if (e.image){
-        imgHTML = `<img class="journal-photo" src="${e.image}" alt="Journal photo for ${e.date}" loading="lazy">`;
-      }
       return `
         <li class="entry">
           <div class="meta">
-            <span class="date">${e.date}</span>
+            <span class="date">${entry.date}</span>
             <span aria-hidden="true"> | </span>
-            <span class="cat">${e.cat}</span>
+            <span class="cat">${entry.cat}</span>
           </div>
-          <div class="text">${e.text}</div>
-          ${imgHTML}
+          <div class="text">${entry.text}</div>
+          ${photo}
         </li>`;
     };
 
-    ul.innerHTML = data.map(toHTML).join('');
+    list.innerHTML = data.map(toHTML).join('');
   </script>
   <script src="/js/footer-loader.js?v=1.4.9" defer></script>
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.9"></div>
+  <script>
+    (function () {
+      const footerHost = document.getElementById('site-footer');
+      if (!footerHost) {
+        return;
+      }
+      const footerBase = '/includes/';
+      const legalFooterPath = footerBase + 'footer-' + 'legal.html?v=1.3.2';
+      footerHost.dataset.footer = 'legal';
+      footerHost.dataset.footerSrc = legalFooterPath;
+    })();
+  </script>
 </body>
 </html>
