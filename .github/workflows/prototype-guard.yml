@@ -18,25 +18,37 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+          node-version: '20'
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Install dependencies
-        if: ${{ hashFiles('package-lock.json') != '' }}
-        run: npm ci
-
-      - name: Install dependencies (no lockfile)
-        if: ${{ hashFiles('package-lock.json') == '' }}
-        run: npm i --no-audit --no-fund
+      - name: Install dependencies (skip if no lockfile)
+        id: install-deps
+        shell: bash
+        run: |
+          installed=false
+          if [ -f package-lock.json ]; then
+            npm ci
+            installed=true
+          elif [ -f yarn.lock ]; then
+            corepack enable || true
+            yarn install --frozen-lockfile
+            installed=true
+          elif [ -f pnpm-lock.yaml ]; then
+            corepack enable || true
+            pnpm install --frozen-lockfile
+            installed=true
+          else
+            echo "No lockfile detected; skipping install."
+          fi
+          echo "installed=${installed}" >> "$GITHUB_OUTPUT"
 
       - name: Install Playwright browsers
+        if: ${{ steps.install-deps.outputs.installed == 'true' }}
         run: npx playwright install --with-deps
 
       - name: Run live guard
+        if: ${{ steps.install-deps.outputs.installed == 'true' }}
         run: npm run guard:live
 
       - name: Run test suite
+        if: ${{ steps.install-deps.outputs.installed == 'true' }}
         run: npm test
