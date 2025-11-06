@@ -60,12 +60,10 @@
     }
 
     .heading{
-      margin: 8px 0 18px;
-      padding: 10px 12px 6px 12px;
+      margin: 12px 0 18px;
+      padding: 6px 0 6px 24px;
       border-left:4px solid var(--margin-red);
-      background: var(--card-bg);
-      backdrop-filter: blur(2px);
-      border-radius:8px;
+      background:transparent;
     }
     .heading h1{
       margin:0 0 4px;
@@ -79,17 +77,17 @@
     }
 
     /* Entries */
-    .entries{list-style:none; margin:0; padding:0}
+    .entries{list-style:none; margin:0; padding:0 18px 40px 32px}
     .entry{
       position:relative;
-      margin: 0 0 18px;
-      padding: 14px 14px 12px;
-      border:1px solid var(--entry-sep);
-      background: var(--card-bg);
-      border-radius:10px;
-      box-shadow: 0 2px 0 rgba(0,0,0,.03);
+      margin:0 0 28px;
+      padding:0 0 18px;
+      border:none;
+      background:transparent;
+      border-radius:0;
+      box-shadow:none;
     }
-    .entry + .entry{margin-top:12px}
+    .entry + .entry{margin-top:0}
 
     .meta{
       font-weight:600;
@@ -97,18 +95,17 @@
     }
     .meta .date{color:#0b66ff}
     .meta .cat{color:#0a7a55}
-    .text{margin:6px 0 10px}
-    .img{
-      display:flex; justify-content:center;
-      margin: 8px 0 2px;
-    }
-    .img img{
+    .text{margin:6px 0 12px}
+
+    .journal-photo{
+      display:block;
+      max-width:560px;
       width:100%;
-      max-width:360px;           /* keep it small */
       height:auto;
-      border-radius:8px;
-      border:1px solid var(--entry-sep);
-      box-shadow:0 2px 8px rgba(0,0,0,.08);
+      border-radius:6px;
+      margin:8px 0 16px;
+      box-shadow:none;
+      border:1px solid rgba(0,0,0,.06);
     }
 
     .note{
@@ -123,8 +120,8 @@
       display:block;
       height:1px;
       background:linear-gradient(to right, transparent, var(--rule-blue) 30%, transparent 70%);
-      margin-top:10px;
-      opacity:.6;
+      margin-top:12px;
+      opacity:.55;
     }
 
     /* Mobile tweaks */
@@ -151,8 +148,7 @@
     const data = [
       { date:'2025-11-03', cat:'Feeding, Dosing & Observation',
         text:'Fed flakes and brine shrimp. Performed two spot doses of Seachem Excel for continued BBA control. Malaysian trumpet snails were observed naturally cleaning the sump overflow screen, preventing buildup — marking the “Natural Balance Discovery” milestone as the system begins showing signs of self-regulation during the Post-Treatment Recovery Week.',
-        image:'/assets/images/MTS on strainer',    // folder name shows as “MTS on strainer” in your screenshot
-        imageExt:'.jpg'
+        image:'/assets/images/mts-on-strainer-2025-11-03.jpg'
       },
       { date:'2025-11-02', cat:'Maintenance & Dosing',
         text:'Pre-water-change nitrate test read between 20–40 ppm (closer to 20). Performed ~95% sump and ~70% display water change with a light trim. Spot- and cap-dosed Seachem Excel for routine post-change treatment. Noticed new plant growth emerging.'
@@ -179,11 +175,7 @@
       // build optional image src if provided
       let imgHTML = '';
       if (e.image){
-        const safePath = `${e.image}${e.imageExt || ''}`; // e.g., "/assets/images/MTS on strainer.jpg"
-        imgHTML = `
-          <div class="img">
-            <img src="${safePath}" alt="Journal photo for ${e.date}" loading="lazy" />
-          </div>`;
+        imgHTML = `<img class="journal-photo" src="${e.image}" alt="Journal photo for ${e.date}" loading="lazy">`;
       }
       return `
         <li class="entry">
