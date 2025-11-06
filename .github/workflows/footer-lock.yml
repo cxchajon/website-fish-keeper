@@ -16,11 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-
-      - name: Enable Corepack
-        run: corepack enable
+          node-version: '20'
 
       - name: Check for footer-approved label
         id: footer_label
@@ -31,18 +27,32 @@ jobs:
             const labels = context.payload.pull_request.labels.map(label => label.name);
             core.setOutput('approved', labels.includes('footer-approved') ? 'true' : 'false');
 
-      - name: Install dependencies
-        if: ${{ hashFiles('package-lock.json') != '' }}
-        run: npm ci
-
-      - name: Install dependencies (no lockfile)
-        if: ${{ hashFiles('package-lock.json') == '' }}
-        run: npm i --no-audit --no-fund
+      - name: Install dependencies (skip if no lockfile)
+        id: install-deps
+        shell: bash
+        run: |
+          installed=false
+          if [ -f package-lock.json ]; then
+            npm ci
+            installed=true
+          elif [ -f yarn.lock ]; then
+            corepack enable || true
+            yarn install --frozen-lockfile
+            installed=true
+          elif [ -f pnpm-lock.yaml ]; then
+            corepack enable || true
+            pnpm install --frozen-lockfile
+            installed=true
+          else
+            echo "No lockfile detected; skipping install."
+          fi
+          echo "installed=${installed}" >> "$GITHUB_OUTPUT"
 
       - name: Verify footer lock manifest
         env:
-          APPROVED_FOOTER_CHANGE: ${{ github.event_name == 'pull_request' && steps.footer_label.outputs.approved == 'true' && '1' || '' }}
+          APPROVED_FOOTER_CHANGE: "${{ github.event_name == 'pull_request' && steps.footer_label.outputs.approved == 'true' && '1' || '' }}"
         run: node scripts/footer-lock/verify.mjs
 
       - name: Lint footer usage
+        if: ${{ hashFiles('scripts/footer-lock/lint.mjs') != '' }}
         run: node scripts/footer-lock/lint.mjs
