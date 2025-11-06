@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="preload" href="/footer.html?v=1.4.9" as="fetch" crossorigin="anonymous">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tank Journal — Legal Pad</title>
@@ -134,6 +135,8 @@
   </style>
 </head>
 <body>
+  <script defer src="/js/nav.js?v=1.1.0"></script>
+  <div id="site-nav"></div>
   <main class="page" id="page">
     <header class="heading">
       <h1>Tank Journal</h1>
@@ -196,5 +199,7 @@
 
     ul.innerHTML = data.map(toHTML).join('');
   </script>
+  <script src="/js/footer-loader.js?v=1.4.9" defer></script>
+  <div id="site-footer" data-footer-src="/footer.html?v=1.4.9"></div>
 </body>
 </html>
