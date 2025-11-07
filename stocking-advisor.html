@@ -208,21 +208,6 @@
   </script>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <style>
-      :root {
-        --fg: #eef3ff;
-        --muted: rgba(235, 239, 251, 0.86);
-        --panel: rgba(255, 255, 255, 0.08);
-        --border: rgba(255, 255, 255, 0.14);
-        --chip: rgba(255, 255, 255, 0.12);
-        --ok: #12c278;
-        --warn: #f4b400;
-        --bad: #ff645c;
-        --bar-bg: rgba(255, 255, 255, 0.12);
-        --ghost: rgba(255, 255, 255, 0.25);
-        --shadow: rgba(18, 30, 56, 0.18);
-        --popover-bg: rgba(6, 12, 24, 0.96);
-      }
-
     body > .skip-link {
       position: absolute;
       top: -48px;
@@ -246,18 +231,17 @@
       margin: 0;
       padding: 0;
       color: var(--fg);
-      background: radial-gradient(circle at 12% 18%, rgba(66, 110, 255, 0.35), transparent 40%),
-        radial-gradient(circle at 78% 12%, rgba(20, 215, 170, 0.28), transparent 45%),
-        linear-gradient(180deg, rgba(10, 16, 32, 0.94), rgba(4, 8, 18, 0.98));
+      background: var(--page-bg);
       font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
       min-height: 100vh;
     }
 
     .ad-placeholder {
       margin: 20px auto;
-      border: 1px dashed rgba(163, 200, 255, 0.35);
+      border: 1px dashed var(--line);
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--card);
+      box-shadow: 0 24px 48px -30px var(--shadow);
       min-height: 120px;
       display: flex;
       align-items: center;
@@ -265,7 +249,7 @@
       text-transform: uppercase;
       letter-spacing: 0.12em;
       font-weight: 700;
-      color: rgba(235, 239, 251, 0.82);
+      color: var(--muted);
     }
 
     .ad-placeholder span {
@@ -273,7 +257,7 @@
     }
 
     a {
-      color: #a3c8ff;
+      color: var(--link);
     }
 
     .wrap {
@@ -296,12 +280,22 @@
       text-align: left;
     }
 
+    .hero-surface {
+      background: var(--card-raised);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: clamp(1.5rem, 5vw, 2.75rem) clamp(1.25rem, 4vw, 2.8rem);
+      box-shadow: 0 32px 60px -36px var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
     .hero-title {
       margin: 0 0 4px;
     }
 
     .hero-subline {
       margin: 0 0 6px;
+      color: var(--muted);
     }
 
     .brand-name {
@@ -313,11 +307,13 @@
     .brand-sub {
       font-size: 0.95rem;
       opacity: 0.85;
+      color: var(--muted);
     }
 
       .tagline {
         font-size: 1.05rem;
         opacity: 0.85;
+        color: var(--muted);
       }
 
     .hero .lead {
@@ -330,14 +326,15 @@
 
     .quick-answer {
       margin: 0 auto 28px;
-      padding: 16px 20px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 18px 36px -24px var(--shadow);
+      padding: 18px clamp(1.25rem, 4vw, 2rem);
+      border-radius: 18px;
+      background: var(--card-raised);
+      border: 1px solid var(--line);
+      box-shadow: 0 32px 60px -36px var(--shadow);
       color: var(--muted);
       font-size: 1.02rem;
       line-height: 1.6;
+      backdrop-filter: blur(12px);
     }
 
     .quick-answer p {
@@ -349,13 +346,13 @@
     }
 
     .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
+      background: var(--card);
+      border: 1px solid var(--line);
       border-radius: 18px;
       padding: 20px 20px 22px;
-      box-shadow: 0 18px 36px -24px var(--shadow);
+      box-shadow: 0 28px 56px -34px var(--shadow);
       margin-bottom: 20px;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
     }
 
     .faq-section {
@@ -372,9 +369,10 @@
     }
 
     .faq-item {
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      border: 1px solid var(--line);
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.06);
+      background: var(--card);
+      box-shadow: 0 24px 50px -36px var(--shadow);
       overflow: hidden;
     }
 
@@ -448,18 +446,19 @@
       font-size: 0.85rem;
       letter-spacing: 0.01em;
       color: var(--muted);
-      background: rgba(255, 255, 255, 0.08);
+      background: var(--card);
       border-radius: 12px;
       padding: 6px 12px;
-      box-shadow: 0 8px 18px -14px var(--shadow);
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 32px -28px var(--shadow);
     }
 
     .filter-catalog-debug[data-source='CATALOG'] {
-      color: #b7f5d0;
+      color: var(--ok);
     }
 
     .filter-catalog-debug[data-source='FALLBACK'] {
-      color: #ffd9b5;
+      color: var(--warn);
     }
 
     .field-label-row .info-btn,
@@ -491,7 +490,7 @@
     .link-like:focus-visible,
     button:focus-visible:not(.info-btn),
     .toggle:focus-visible {
-      outline: 2px solid rgba(163, 200, 255, 0.7);
+      outline: 2px solid var(--link);
       outline-offset: 3px;
     }
 
@@ -503,7 +502,7 @@
       text-decoration: underline;
       cursor: pointer;
       font: inherit;
-      color: #a3c8ff;
+      color: var(--link);
     }
 
     .link-like:hover {
@@ -529,11 +528,12 @@
       width: min(92vw, 640px);
       max-height: 85vh;
       overflow: auto;
-      background: var(--card, #0f2742);
-      color: var(--text, #e7f0ff);
+      background: var(--card-raised);
+      color: var(--fg);
       border-radius: 16px;
       padding: 20px 22px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--line);
+      box-shadow: 0 36px 64px -32px var(--shadow);
       position: relative;
     }
 
@@ -583,8 +583,8 @@
       align-items: center;
       padding: 10px 12px;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--line);
+      background: var(--card);
     }
 
     .condition-item .label {
@@ -603,15 +603,15 @@
     }
 
     .condition-item[data-state="ok"] {
-      border-color: rgba(54, 211, 153, 0.55);
+      border-color: var(--ok);
     }
 
     .condition-item[data-state="warn"] {
-      border-color: rgba(244, 180, 0, 0.6);
+      border-color: var(--warn);
     }
 
     .condition-item[data-state="bad"] {
-      border-color: rgba(255, 100, 92, 0.7);
+      border-color: var(--bad);
     }
 
     .condition-icon {
@@ -626,18 +626,18 @@
     }
 
     .condition-item[data-state="ok"] .condition-icon {
-      background: rgba(54, 211, 153, 0.25);
-      color: #3ddc84;
+      background: var(--ok-soft);
+      color: var(--ok);
     }
 
     .condition-item[data-state="warn"] .condition-icon {
-      background: rgba(244, 180, 0, 0.22);
-      color: #f4b400;
+      background: var(--warn-soft);
+      color: var(--warn);
     }
 
     .condition-item[data-state="bad"] .condition-icon {
-      background: rgba(255, 100, 92, 0.26);
-      color: #ff645c;
+      background: var(--bad-soft);
+      color: var(--bad);
     }
 
     .bars {
@@ -702,20 +702,25 @@
       align-items: center;
       gap: 12px;
       font-size: 1.02rem;
-      color: #0b1228;
-      background: rgba(255, 255, 255, 0.88);
+      color: var(--fg);
+      background: var(--card-raised);
+      border: 1px solid var(--line);
+      box-shadow: 0 20px 40px -28px var(--shadow);
     }
 
     .status-strip[data-state="ok"] {
-      background: rgba(61, 220, 132, 0.92);
+      background: var(--ok-soft);
+      border-color: var(--ok);
     }
 
     .status-strip[data-state="warn"] {
-      background: rgba(244, 180, 0, 0.92);
+      background: var(--warn-soft);
+      border-color: var(--warn);
     }
 
     .status-strip[data-state="bad"] {
-      background: rgba(255, 100, 92, 0.92);
+      background: var(--bad-soft);
+      border-color: var(--bad);
     }
 
     #stocking-page #stock-warnings {
@@ -752,7 +757,7 @@
 
     .chip {
       background: var(--chip);
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      border: 1px solid var(--chip-border);
       border-radius: 999px;
       padding: 6px 12px;
       font-size: 0.92rem;
@@ -764,14 +769,14 @@
 
     .chip.warning,
     .chip[data-tone="warn"] {
-      border-color: rgba(244, 180, 0, 0.6);
-      color: #f4d48a;
+      border-color: var(--chip-warn-border);
+      color: var(--chip-warn-text);
     }
 
     .chip.danger,
     .chip[data-tone="bad"] {
-      border-color: rgba(255, 100, 92, 0.7);
-      color: #ffb3b0;
+      border-color: var(--chip-bad-border);
+      color: var(--chip-bad-text);
     }
 
     .chip__icon {
@@ -834,8 +839,9 @@
       gap: 8px;
       padding: 12px 14px;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--line);
+      background: var(--card);
+      box-shadow: 0 20px 44px -32px var(--shadow);
     }
 
     .stock-entry__name {
@@ -853,7 +859,7 @@
       border: 0;
       border-radius: 10px;
       padding: 8px 12px;
-      background: rgba(255, 255, 255, 0.12);
+      background: var(--chip);
       color: inherit;
       font-weight: 600;
       cursor: pointer;
@@ -861,7 +867,7 @@
     }
 
     .stock-entry__remove:hover {
-      background: rgba(255, 255, 255, 0.18);
+      background: var(--chip-border);
     }
 
     @media (min-width: 640px) {
@@ -1088,7 +1094,7 @@
       margin: 2px 0 0;
       font-size: 13px;
       line-height: 1.35;
-      color: rgba(255, 255, 255, 0.72);
+      color: var(--muted);
     }
 
     #stocking-page .card p,
@@ -1282,11 +1288,13 @@
     <div id="stocking-page" class="stocking-page proto-stock">
     <header class="hero">
       <div class="wrap">
-        <div class="hero-header">
+        <div class="hero-surface">
+          <div class="hero-header">
           <h1 class="brand-name hero-title" id="page-title">Stocking Advisor</h1>
           <p class="hero-subline">Prepared by The Tank Guide (A FishKeepingLifeCo Project).</p>
           <p class="tagline hero-tagline lead">Plan a healthy community by checking bioload, compatibility — and get recommended water parameters for your tank.</p>
           <div id="stocking-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+          </div>
         </div>
       </div>
     </header>
@@ -1494,8 +1502,8 @@
           line-height: 44px;
           padding: 0 44px 0 14px;
           border-radius: 12px;
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid var(--line);
+          background: var(--card);
           color: inherit;
           -webkit-appearance: none;
           -moz-appearance: none;
@@ -1521,7 +1529,7 @@
           transform: translateY(-50%) rotate(180deg);
         }
         .tank-size-card .select-wrap select:focus {
-          outline: 2px solid rgba(20, 203, 168, 0.55);
+          outline: 2px solid var(--info-btn-focus);
           outline-offset: 2px;
         }
         @media (prefers-reduced-motion: reduce) {
@@ -1539,8 +1547,8 @@
             margin-top: 12px;
             padding: 12px 14px;
             border-radius: 12px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: var(--card);
+            border: 1px solid var(--line);
             font-size: 0.95rem;
             line-height: 1.5;
             color: var(--muted);
@@ -1557,13 +1565,6 @@
         #stocking-page .info-btn {
           --info-btn-hit: 44px;
           --info-btn-visible: 30px;
-          --info-btn-bg: rgba(255, 255, 255, 0.12);
-          --info-btn-bg-hover: rgba(255, 255, 255, 0.18);
-          --info-btn-bg-active: rgba(255, 255, 255, 0.14);
-          --info-btn-border: rgba(255, 255, 255, 0.24);
-          --info-btn-border-hover: rgba(255, 255, 255, 0.32);
-          --info-btn-border-active: rgba(255, 255, 255, 0.28);
-          --info-btn-focus: rgba(20, 203, 168, 0.7);
           --info-btn-icon: var(--fg);
           font-size: 0.95rem;
           transform: none;
