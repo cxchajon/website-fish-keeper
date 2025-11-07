@@ -1,29 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="preload" href="/footer.html?v=1.4.9" as="fetch" crossorigin="anonymous">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex, nofollow">
-  <title>Cycling Coach Prototype — Aquarium Nitrogen Cycle Planner</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Aquarium Cycling Coach &amp; Nitrogen Cycle Tracker | The Tank Guide</title>
   <meta
     name="description"
-    content="Preview the Cycling Coach staging experience. Learn how The Tank Guide walks aquarists through safe nitrogen cycling, live water tracking, and readiness checks."
+    content="Use the Cycling Coach to log ammonia, nitrite, nitrate, and temperature results, unlock the 24-hour challenge checklist, and confirm your aquarium is safe for new fish."
   />
+  <link rel="canonical" href="https://thetankguide.com/staging/cycling-coach/" />
   <link rel="icon" href="/favicon.ico" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="The Tank Guide" />
-  <meta property="og:title" content="Cycling Coach Prototype — Aquarium Nitrogen Cycle Planner" />
-  <meta property="og:description" content="Explore the Cycling Coach staging build with Gemini SEO updates. Track the nitrogen cycle, follow readiness milestones, and prepare your tank for fish." />
+  <meta property="og:title" content="Aquarium Cycling Coach &amp; Nitrogen Cycle Tracker | The Tank Guide" />
+  <meta
+    property="og:description"
+    content="Stage your aquarium with the Cycling Coach: track test inputs, read AI-ready results, and pass the 24-hour challenge before adding fish."
+  />
   <meta property="og:url" content="https://thetankguide.com/staging/cycling-coach/" />
-  <meta property="og:image" content="https://thetankguide.com/assets/og/cycling-coach.png" />
-  <meta property="og:image:alt" content="Cycling Coach prototype interface with nitrogen cycle tracking visuals." />
+  <meta
+    property="og:image"
+    content="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'><rect width='100%' height='100%' fill='%230a0e1a'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='%23ffffff'>Cycling Coach</text></svg>"
+  />
+  <meta property="og:image:alt" content="Cycling Coach staging preview title graphic." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@fishkeepinglife" />
-  <meta name="twitter:title" content="Cycling Coach Prototype — Aquarium Nitrogen Cycle Planner" />
-  <meta name="twitter:description" content="See how the Cycling Coach prototype organizes cycling steps, readiness gates, and learning resources in one dashboard." />
-  <meta name="twitter:image" content="https://thetankguide.com/assets/og/cycling-coach-twitter.png" />
-  <meta name="twitter:image:alt" content="Cycling Coach prototype preview for Gemini SEO testing." />
+  <meta name="twitter:title" content="Aquarium Cycling Coach &amp; Nitrogen Cycle Tracker | The Tank Guide" />
+  <meta
+    name="twitter:description"
+    content="Follow the Cycling Coach staging flow, record readings, and check the 24-hour challenge for a fish-ready aquarium."
+  />
+  <meta
+    name="twitter:image"
+    content="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'><rect width='100%' height='100%' fill='%230a0e1a'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='%23ffffff'>Cycling Coach</text></svg>"
+  />
+  <meta name="twitter:image:alt" content="Cycling Coach staging preview title graphic." />
   <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
@@ -70,7 +82,7 @@
     }
 
     .stage-wrap {
-      width: min(960px, 100%);
+      width: min(1080px, 100%);
       margin: 0 auto;
       display: grid;
       gap: clamp(32px, 6vw, 64px);
@@ -94,7 +106,7 @@
       margin: 0;
       font-size: clamp(1.05rem, 1.6vw, 1.25rem);
       color: var(--cycling-muted);
-      max-width: 55ch;
+      max-width: 65ch;
     }
 
     .stage-pill-group {
@@ -133,20 +145,113 @@
     }
 
     .panel p,
-    .panel li {
+    .panel li,
+    .panel dt,
+    .panel dd {
       color: var(--cycling-muted);
       line-height: 1.7;
     }
 
-    .checklist {
+    .inputs-grid {
       display: grid;
-      gap: 16px;
+      gap: 18px;
+    }
+
+    .input-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .input-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+
+    label span {
+      display: block;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    input[type="number"],
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(6, 20, 34, 0.7);
+      color: #e9f9ff;
+      font-size: 1rem;
+    }
+
+    .results-grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .result-card {
+      background: rgba(6, 20, 34, 0.72);
+      border-radius: 16px;
+      border: 1px solid rgba(98, 225, 255, 0.24);
+      padding: 18px;
+    }
+
+    .result-card h3 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+      color: #8befff;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(38, 210, 174, 0.18);
+      color: #26d2ae;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .challenge-steps {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+      padding-left: 20px;
+    }
+
+    details.advanced {
+      background: rgba(5, 20, 36, 0.8);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 16px;
+    }
+
+    details.advanced summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #e1f7ff;
+      outline: none;
+    }
+
+    details.advanced p {
+      margin-top: 12px;
+    }
+
+    .how-to-list {
+      display: grid;
+      gap: 12px;
       padding-left: 20px;
     }
 
     .how-links {
       display: grid;
-      gap: 12px;
+      gap: 10px;
+      margin-top: 16px;
     }
 
     .how-links a {
@@ -160,55 +265,15 @@
       text-decoration: underline;
     }
 
-    .faq {
+    #cycling-faq .qa {
       display: grid;
-      gap: 14px;
+      gap: 6px;
     }
 
-    .faq details {
-      background: rgba(9, 28, 44, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 16px;
-      padding: 12px 16px;
-    }
-
-    .faq summary {
-      cursor: pointer;
-      font-weight: 700;
-      color: #e1f7ff;
-      outline: none;
-    }
-
-    .faq p {
-      margin: 10px 0 0;
-    }
-
-    .cta-banner {
-      text-align: center;
-      background: rgba(0, 113, 164, 0.28);
-      border: 1px solid rgba(90, 220, 255, 0.45);
-      border-radius: 18px;
-      padding: clamp(20px, 5vw, 32px);
-      display: grid;
-      gap: 12px;
-    }
-
-    .cta-banner a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
-      padding: 12px 24px;
-      border-radius: 999px;
-      background: #1fb6ff;
-      color: #052135;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .cta-banner a:hover,
-    .cta-banner a:focus-visible {
-      filter: brightness(1.08);
+    #cycling-faq h3 {
+      margin: 16px 0 4px;
+      font-size: 1.1rem;
+      color: #8befff;
     }
 
     .proto-legal {
@@ -241,15 +306,14 @@
       }
     }
   </style>
-
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
       "@id": "https://thetankguide.com/staging/cycling-coach/#webpage",
       "url": "https://thetankguide.com/staging/cycling-coach/",
-      "name": "Cycling Coach Prototype — Aquarium Nitrogen Cycle Planner",
-      "description": "Preview the Cycling Coach staging experience for managing the nitrogen cycle, daily testing, and readiness milestones before launch.",
+      "name": "Aquarium Cycling Coach & Nitrogen Cycle Tracker | The Tank Guide",
+      "description": "Use the Cycling Coach to log ammonia, nitrite, nitrate, and temperature readings, unlock the 24-hour challenge, and confirm your aquarium is ready for fish.",
       "isPartOf": {
         "@type": "WebSite",
         "@id": "https://thetankguide.com/#website",
@@ -274,7 +338,7 @@
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "Cycling Coach Prototype",
+          "name": "Cycling Coach",
           "item": "https://thetankguide.com/staging/cycling-coach/"
         }
       ]
@@ -288,26 +352,50 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "What does the Cycling Coach prototype cover?",
+          "name": "What does the Cycling Coach track?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The staging build focuses on step-by-step nitrogen cycling guidance, progress tracking, and alerts to confirm when it is safe to add fish."
+            "text": "Cycling Coach logs ammonia, nitrite, nitrate, pH, and temperature so you can see how close your tank is to completing the nitrogen cycle."
           }
         },
         {
           "@type": "Question",
-          "name": "Can I log real tank data in this version?",
+          "name": "How often should I test my aquarium during cycling?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. Testers can record ammonia, nitrite, nitrate, and temperature readings so the coach can highlight action items before launch."
+            "text": "Test daily until both ammonia and nitrite read 0 ppm after a 24-hour challenge dose; logging results in Cycling Coach helps highlight trends."
           }
         },
         {
           "@type": "Question",
-          "name": "How will Gemini updates affect the Cycling Coach?",
+          "name": "Can the Cycling Coach help with fish-in cycling?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Gemini SEO, AEO, and GEO updates ensure headings, structured data, and location cues align with Google Search and AI Overviews while preserving coach functionality."
+            "text": "Yes. The tool flags when to add water conditioner, partial water changes, or bacteria boosters to protect fish while bacteria establish."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the 24-hour challenge?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It is a safety check where you add a measured dose of ammonia, then confirm ammonia and nitrite return to 0 ppm within 24 hours before adding fish."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Cycling Coach cover advanced metrics like toxic NH3?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "An optional advanced panel estimates un-ionized ammonia (NH3) based on temperature and pH so experienced keepers can gauge stress risks."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where can I learn more about the nitrogen cycle?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Explore our media library for deep dives on cycling science, bacteria starters, and troubleshooting stubborn tanks."
           }
         }
       ]
@@ -318,52 +406,61 @@
       "@context": "https://schema.org",
       "@type": "HowTo",
       "@id": "https://thetankguide.com/staging/cycling-coach/#howto",
-      "name": "How to Use the Cycling Coach Prototype",
-      "description": "Follow these steps to test the Cycling Coach staging experience and confirm nitrogen cycle readiness.",
+      "name": "24-Hour Challenge Readiness Test",
+      "description": "Confirm your aquarium is ready for fish by completing the Cycling Coach 24-hour challenge steps.",
       "step": [
         {
           "@type": "HowToStep",
           "position": 1,
-          "name": "Start a new cycle log",
+          "name": "Dose ammonia to 2 ppm",
           "itemListElement": {
             "@type": "HowToDirection",
-            "text": "Open the Cycling Coach prototype and create a new aquarium profile with tank size, start date, and cycling method."
+            "text": "Add a precise ammonia source or fish food equivalent to reach 2 ppm, then record the value in Cycling Coach."
           }
         },
         {
           "@type": "HowToStep",
           "position": 2,
-          "name": "Record water test readings",
+          "name": "Log the zero-hour readings",
           "itemListElement": {
             "@type": "HowToDirection",
-            "text": "Enter daily ammonia, nitrite, nitrate, and temperature data to see trend lines and readiness status."
+            "text": "Enter ammonia, nitrite, nitrate, pH, and temperature immediately after dosing so the challenge timer begins."
           }
         },
         {
           "@type": "HowToStep",
           "position": 3,
-          "name": "Review readiness checklist",
+          "name": "Retest at the 24-hour mark",
           "itemListElement": {
             "@type": "HowToDirection",
-            "text": "Check that ammonia and nitrite stay at 0 ppm for 24 hours after dosing and confirm nitrate production before adding fish."
+            "text": "After 24 hours, retest the same parameters and update Cycling Coach to compare against target thresholds."
+          }
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Review the readiness verdict",
+          "itemListElement": {
+            "@type": "HowToDirection",
+            "text": "Confirm both ammonia and nitrite are 0 ppm and nitrate is rising. Cycling Coach will mark the tank fish-ready when all goals are met."
           }
         }
       ],
       "tool": [
         "Liquid test kit",
         "Thermometer",
-        "Cycling log dashboard"
+        "Cycling Coach dashboard"
       ],
-      "totalTime": "P28D"
+      "totalTime": "P1D"
     }
   </script>
-
   <script src="/assets/js/consent-mode.js" defer></script>
   <!--#include virtual="/includes/ga4.html" -->
-  <script
+  <!-- AdSense disabled on staging -->
+  <!-- <script
     async
     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
-    crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script> -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
   <script>
@@ -393,77 +490,186 @@
       <section class="stage-hero">
         <p class="stage-pill-group" aria-label="Prototype status badges">
           <span class="stage-pill">Staging Preview</span>
-          <span class="stage-pill">Gemini SEO/AEO/GEO Ready</span>
+          <span class="stage-pill">Gemini SEO · AEO · GEO Ready</span>
         </p>
-        <h1 id="cycling-coach-title">Cycling Coach Prototype for Confident Nitrogen Cycling</h1>
+        <h1 id="cycling-coach-title">Cycling Coach &amp; 24-Hour Challenge</h1>
         <p>
-          This staging build keeps every Cycling Coach feature intact while layering Gemini search updates. Follow a clean testing
-          flow, confirm water chemistry milestones, and prepare for launch without risking live rankings.
+          The Cycling Coach guides you through the nitrogen cycle with structured inputs, clear AI-ready summaries, and a
+          science-backed readiness check. Log daily readings, understand what your data means, and finish the 24-hour challenge
+          before introducing fish.
         </p>
       </section>
 
-      <section class="panel" aria-labelledby="section-updates-title">
-        <h2 id="section-updates-title">What’s New in the Gemini Update</h2>
-        <p>
-          Structured headings, intent-driven copy, and location cues now align with Gemini SEO, AI Overviews (AEO), and Google
-          Experiences (GEO). The underlying Cycling Coach dashboards, calculators, and reminders remain unchanged so testers can
-          compare production to staging.
-        </p>
-        <ul class="checklist">
-          <li>Targeted headings and subcopy clarify each cycling milestone for AI snippets.</li>
-          <li>Localized helper text highlights when to escalate to in-person fish stores or water testing labs.</li>
-          <li>JSON-LD coverage (WebPage, BreadcrumbList, FAQPage, HowTo) supports eligibility across surfaces.</li>
-        </ul>
+      <section class="panel" id="inputs" aria-labelledby="inputs-heading">
+        <h2 id="inputs-heading">Inputs</h2>
+        <p>Capture tank details and your most recent water test readings so Cycling Coach can model your cycle.</p>
+        <div class="inputs-grid" role="form" aria-labelledby="inputs-heading">
+          <div class="input-group" aria-label="Tank profile">
+            <div class="input-row">
+              <label for="tank-volume">
+                <span>Tank volume (gallons)</span>
+                <input type="number" id="tank-volume" name="tank-volume" min="1" step="0.5" placeholder="20" />
+              </label>
+              <label for="cycle-method">
+                <span>Cycling method</span>
+                <select id="cycle-method" name="cycle-method">
+                  <option value="fishless">Fishless (liquid ammonia)</option>
+                  <option value="fish-in">Fish-in with detoxifier</option>
+                  <option value="seeded">Seeded media / jump-start</option>
+                </select>
+              </label>
+              <label for="start-date">
+                <span>Cycle start date</span>
+                <input type="date" id="start-date" name="start-date" />
+              </label>
+            </div>
+          </div>
+          <div class="input-group" aria-label="Water parameters">
+            <div class="input-row">
+              <label for="ammonia">
+                <span>Ammonia (NH₃/NH₄⁺)</span>
+                <input type="number" id="ammonia" name="ammonia" min="0" step="0.1" placeholder="0.25" aria-describedby="ammonia-help" />
+              </label>
+              <label for="nitrite">
+                <span>Nitrite (NO₂⁻)</span>
+                <input type="number" id="nitrite" name="nitrite" min="0" step="0.1" placeholder="0.5" />
+              </label>
+              <label for="nitrate">
+                <span>Nitrate (NO₃⁻)</span>
+                <input type="number" id="nitrate" name="nitrate" min="0" step="1" placeholder="20" />
+              </label>
+            </div>
+            <div class="input-row">
+              <label for="ph">
+                <span>pH</span>
+                <input type="number" id="ph" name="ph" min="5" max="9.5" step="0.1" placeholder="7.4" />
+              </label>
+              <label for="temperature">
+                <span>Temperature (°F)</span>
+                <input type="number" id="temperature" name="temperature" min="60" max="92" step="0.5" placeholder="78" />
+              </label>
+              <label for="last-test">
+                <span>Last test time</span>
+                <input type="datetime-local" id="last-test" name="last-test" />
+              </label>
+            </div>
+            <p id="ammonia-help">Need gear? Track readings with a liquid kit from our <a href="/gear/">test results guide</a>.</p>
+          </div>
+        </div>
       </section>
 
-      <section class="panel" aria-labelledby="how-to-title">
-        <h2 id="how-to-title">How to Use the Cycling Coach Prototype</h2>
+      <section class="panel" id="results" aria-labelledby="results-heading">
+        <h2 id="results-heading">Results</h2>
         <p>
-          Walk through the nitrogen cycle workflow exactly as an aquarist would in production. These steps validate the new
-          headings and ensure links resolve correctly.
+          Cycling Coach translates your readings into a clear readiness verdict, highlights what to watch next, and prepares
+          copy suitable for search and AI summaries.
         </p>
-        <ol class="checklist">
-          <li>Start a fresh log and pick your cycling method (fishless, fish-in, or seeded media).</li>
-          <li>Enter baseline water readings, then enable reminders for daily ammonia and nitrite tests.</li>
-          <li>Log nitrate growth and temperature trends to unlock the readiness checklist.</li>
+        <div class="results-grid">
+          <article class="result-card" aria-labelledby="status-heading">
+            <h3 id="status-heading">Readiness status</h3>
+            <p><span class="status-badge" role="status" aria-live="polite">Monitoring</span></p>
+            <p>
+              Keep dosing bacteria starter and track daily trends. Ammonia must drop to 0 ppm and nitrite must match before the
+              24-hour challenge can clear.
+            </p>
+          </article>
+          <article class="result-card" aria-labelledby="trend-heading">
+            <h3 id="trend-heading">Trend insights</h3>
+            <dl>
+              <dt>Ammonia</dt>
+              <dd>Falling — expect 0 ppm within 3–4 days with steady bacteria support.</dd>
+              <dt>Nitrite</dt>
+              <dd>Rising — perform a partial water change if levels exceed 2 ppm during fish-in cycles.</dd>
+              <dt>Nitrate</dt>
+              <dd>Increasing — plan a water change to bring levels below 40 ppm before stocking.</dd>
+            </dl>
+          </article>
+          <article class="result-card" aria-labelledby="actions-heading">
+            <h3 id="actions-heading">Next actions</h3>
+            <ul>
+              <li>Schedule the 24-hour challenge once ammonia and nitrite both hit 0 ppm.</li>
+              <li>Stabilize temperature between 75–80 °F to keep bacteria active.</li>
+              <li>Document observations and photos for your <a href="/media.html">cycling reference library</a>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="challenge" aria-labelledby="challenge-heading">
+        <h2 id="challenge-heading">24-Hour Challenge (Is Your Tank Ready for Fish?)</h2>
+        <p>
+          This final readiness test mimics the waste load new fish create. Complete each step without ammonia or nitrite spikes
+          to earn a green light from Cycling Coach.
+        </p>
+        <ol class="challenge-steps">
+          <li>Dose pure ammonia (or equivalent food) to 2 ppm and log the start time.</li>
+          <li>Check ammonia and nitrite at the 12-hour midpoint to confirm downward movement.</li>
+          <li>Retest at 24 hours. Both ammonia and nitrite must read 0 ppm; nitrate should climb.</li>
+          <li>Perform a final polishing water change and stabilize temperature before adding fish.</li>
+        </ol>
+      </section>
+
+      <section class="panel" id="advanced" aria-labelledby="advanced-heading">
+        <h2 id="advanced-heading">Advanced (Toxic NH₃ Estimate)</h2>
+        <details class="advanced">
+          <summary>Advanced (Toxic NH₃ Estimate)</summary>
+          <p>
+            Cycling Coach calculates un-ionized ammonia (NH₃) using the Emerson formula, combining pH, temperature, and total
+            ammonia. Values above 0.02 ppm may stress fish; pause stocking plans and increase aeration if you approach that
+            threshold.
+          </p>
+          <p>
+            Experienced keepers can compare readings against expert interviews and lab data in our <a href="/media.html">Media
+            library</a>. Use this insight alongside your own judgement before making significant livestock decisions.
+          </p>
+        </details>
+      </section>
+
+      <section class="panel" id="how-to" aria-labelledby="how-to-heading">
+        <h2 id="how-to-heading">How to Use the Cycling Coach &amp; Understand the Nitrogen Cycle</h2>
+        <p>
+          Cycling Coach turns raw measurements into guidance so you stay ahead of spikes and keep beneficial bacteria thriving.
+          Follow this loop each time you test.
+        </p>
+        <ol class="how-to-list">
+          <li>Run liquid tests for ammonia, nitrite, nitrate, pH, and temperature, then add data to the dashboard.</li>
+          <li>Read the generated insights to see whether you should dose bacteria, perform water changes, or wait.</li>
+          <li>After the 24-hour challenge, confirm nitrates rise while ammonia and nitrite stay at 0 ppm for a full day.</li>
         </ol>
         <div class="how-links" aria-label="Related internal resources">
-          <a href="/gear/">Check the Gear Guide for test kits and cycling tools</a>
-          <a href="/stocking-advisor/">Plan your first stocking list once cycling is complete</a>
+          <a href="/gear/">test results</a>
+          <a href="/stocking-advisor/">safe environment for your fish</a>
         </div>
       </section>
 
-      <section class="panel" id="faq" aria-labelledby="faq-title">
-        <h2 id="faq-title">Cycling Coach Prototype FAQ</h2>
-        <div class="faq">
-          <details>
-            <summary>Do existing automation scripts still run?</summary>
-            <p>
-              Yes. Consent mode, ad loading, nav injection, and footer fetching scripts mirror production. Only headings and
-              structured data were tuned for Gemini requirements.
-            </p>
-          </details>
-          <details>
-            <summary>Will the prototype affect live indexing?</summary>
-            <p>
-              No. The page is blocked with <code>noindex, nofollow</code> directives, so search engines ignore the staging URL
-              while QA takes place.
-            </p>
-          </details>
-          <details>
-            <summary>Where can I report feedback?</summary>
-            <p>
-              Share notes with the Cycling Coach working group or use the <a href="/contact-feedback.html">contact form</a> so we
-              can track layout, copy, or data issues before launch.
-            </p>
-          </details>
+      <section class="panel card" id="cycling-faq" aria-labelledby="faq-heading">
+        <div class="card__header"><h2 id="faq-heading">Cycling Coach FAQs</h2></div>
+        <div class="card__body">
+          <div class="qa">
+            <h3>How does Cycling Coach keep my nitrogen cycle on track?</h3>
+            <p>It highlights ammonia and nitrite spikes, suggests corrective actions, and confirms when conditions meet stocking goals.</p>
+          </div>
+          <div class="qa">
+            <h3>What if my readings plateau?</h3>
+            <p>Review your log for missing bacteria boosters or insufficient aeration, then retest after adjusting temperature and flow.</p>
+          </div>
+          <div class="qa">
+            <h3>Can I use Cycling Coach for planted tanks?</h3>
+            <p>Yes—just record CO₂ dosing and plant mass notes so you understand how fast nutrients convert during cycling.</p>
+          </div>
+          <div class="qa">
+            <h3>Do I still need water changes during cycling?</h3>
+            <p>Yes. Partial water changes keep nitrite and nitrate below stress levels and refresh trace minerals for bacteria.</p>
+          </div>
+          <div class="qa">
+            <h3>What happens after the 24-hour challenge?</h3>
+            <p>Perform a polishing water change, match temperature, and acclimate fish slowly while continuing to log readings.</p>
+          </div>
+          <div class="qa">
+            <h3>Where can I get more aquarium education?</h3>
+            <p>Explore our guides, podcasts, and interviews in the Media library for deep dives on cycling science.</p>
+          </div>
         </div>
-      </section>
-
-      <section class="cta-banner" aria-labelledby="cta-title">
-        <h2 id="cta-title">Ready to Test the Cycling Coach?</h2>
-        <p>Jump into the staging workflow, validate your nitrogen cycle data, and confirm every Gemini update works as expected.</p>
-        <a href="/params.html">Launch Cycling Coach Prototype</a>
       </section>
     </div>
   </main>
@@ -480,7 +686,7 @@
 
   <div id="ttg-consent" class="ttg-consent" data-consent-banner>
     <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
-      <h3 id="ttg-consent-title">Cookies & Advertising</h3>
+      <h3 id="ttg-consent-title">Cookies &amp; Advertising</h3>
       <p id="ttg-consent-desc">
         We use cookies to run this site and (if you allow) to show relevant ads from Google AdSense. You can accept all cookies,
         reject personalized ads, or manage preferences anytime.
