@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preload" href="/footer.html?v=1.4.9" as="fetch" crossorigin="anonymous">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Cycling Coach Prototype — Aquarium Nitrogen Cycle Planner</title>
+  <meta
+    name="description"
+    content="Preview the Cycling Coach staging experience. Learn how The Tank Guide walks aquarists through safe nitrogen cycling, live water tracking, and readiness checks."
+  />
+  <link rel="icon" href="/favicon.ico" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="The Tank Guide" />
+  <meta property="og:title" content="Cycling Coach Prototype — Aquarium Nitrogen Cycle Planner" />
+  <meta property="og:description" content="Explore the Cycling Coach staging build with Gemini SEO updates. Track the nitrogen cycle, follow readiness milestones, and prepare your tank for fish." />
+  <meta property="og:url" content="https://thetankguide.com/staging/cycling-coach/" />
+  <meta property="og:image" content="https://thetankguide.com/assets/og/cycling-coach.png" />
+  <meta property="og:image:alt" content="Cycling Coach prototype interface with nitrogen cycle tracking visuals." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@fishkeepinglife" />
+  <meta name="twitter:title" content="Cycling Coach Prototype — Aquarium Nitrogen Cycle Planner" />
+  <meta name="twitter:description" content="See how the Cycling Coach prototype organizes cycling steps, readiness gates, and learning resources in one dashboard." />
+  <meta name="twitter:image" content="https://thetankguide.com/assets/og/cycling-coach-twitter.png" />
+  <meta name="twitter:image:alt" content="Cycling Coach prototype preview for Gemini SEO testing." />
+  <link rel="stylesheet" href="/css/style.css?v=1.0.9" />
+  <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
+  <script defer src="/js/nav.js?v=1.1.0"></script>
+  <style>
+    :root {
+      --cycling-bg: linear-gradient(165deg, #061525 0%, #0a314a 55%, #0f4b4c 100%);
+      --cycling-panel: rgba(11, 28, 44, 0.78);
+      --cycling-panel-border: rgba(255, 255, 255, 0.12);
+      --cycling-text: rgba(232, 244, 255, 0.94);
+      --cycling-muted: rgba(216, 235, 255, 0.72);
+      --cycling-pill: rgba(32, 192, 192, 0.12);
+      --cycling-pill-border: rgba(32, 192, 192, 0.42);
+    }
+
+    body.page--cycling-coach {
+      min-height: 100vh;
+      background: var(--cycling-bg);
+      color: var(--cycling-text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 16px;
+      padding: 10px 16px;
+      background: rgba(9, 19, 36, 0.86);
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: top 0.25s ease;
+      z-index: 9999;
+    }
+
+    .skip-link:focus {
+      top: 12px;
+    }
+
+    main {
+      flex: 1;
+      padding: clamp(48px, 8vw, 92px) 20px clamp(84px, 12vw, 140px);
+    }
+
+    .stage-wrap {
+      width: min(960px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: clamp(32px, 6vw, 64px);
+    }
+
+    .stage-hero {
+      display: grid;
+      gap: 16px;
+      text-align: left;
+    }
+
+    .stage-hero h1 {
+      margin: 0;
+      font-size: clamp(2.15rem, 4vw, 3rem);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+    }
+
+    .stage-hero p {
+      margin: 0;
+      font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+      color: var(--cycling-muted);
+      max-width: 55ch;
+    }
+
+    .stage-pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .stage-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: var(--cycling-pill);
+      border: 1px solid var(--cycling-pill-border);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #8befff;
+      letter-spacing: 0.01em;
+    }
+
+    .panel {
+      background: var(--cycling-panel);
+      border: 1px solid var(--cycling-panel-border);
+      border-radius: 22px;
+      padding: clamp(20px, 5vw, 36px);
+      box-shadow: 0 24px 60px rgba(4, 14, 24, 0.35);
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+      color: #ffffff;
+    }
+
+    .panel p,
+    .panel li {
+      color: var(--cycling-muted);
+      line-height: 1.7;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 16px;
+      padding-left: 20px;
+    }
+
+    .how-links {
+      display: grid;
+      gap: 12px;
+    }
+
+    .how-links a {
+      color: #76efff;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .how-links a:hover,
+    .how-links a:focus-visible {
+      text-decoration: underline;
+    }
+
+    .faq {
+      display: grid;
+      gap: 14px;
+    }
+
+    .faq details {
+      background: rgba(9, 28, 44, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 12px 16px;
+    }
+
+    .faq summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #e1f7ff;
+      outline: none;
+    }
+
+    .faq p {
+      margin: 10px 0 0;
+    }
+
+    .cta-banner {
+      text-align: center;
+      background: rgba(0, 113, 164, 0.28);
+      border: 1px solid rgba(90, 220, 255, 0.45);
+      border-radius: 18px;
+      padding: clamp(20px, 5vw, 32px);
+      display: grid;
+      gap: 12px;
+    }
+
+    .cta-banner a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: #1fb6ff;
+      color: #052135;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .cta-banner a:hover,
+    .cta-banner a:focus-visible {
+      filter: brightness(1.08);
+    }
+
+    .proto-legal {
+      margin-top: clamp(36px, 8vw, 68px);
+      text-align: center;
+      font-size: 0.9rem;
+      color: rgba(200, 224, 240, 0.72);
+    }
+
+    .proto-legal a {
+      color: inherit;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .proto-legal a:hover,
+    .proto-legal a:focus-visible {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 720px) {
+      .stage-pill-group {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .stage-pill {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "@id": "https://thetankguide.com/staging/cycling-coach/#webpage",
+      "url": "https://thetankguide.com/staging/cycling-coach/",
+      "name": "Cycling Coach Prototype — Aquarium Nitrogen Cycle Planner",
+      "description": "Preview the Cycling Coach staging experience for managing the nitrogen cycle, daily testing, and readiness milestones before launch.",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://thetankguide.com/#website",
+        "name": "The Tank Guide",
+        "url": "https://thetankguide.com/"
+      },
+      "inLanguage": "en-US"
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "@id": "https://thetankguide.com/staging/cycling-coach/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thetankguide.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cycling Coach Prototype",
+          "item": "https://thetankguide.com/staging/cycling-coach/"
+        }
+      ]
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "@id": "https://thetankguide.com/staging/cycling-coach/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What does the Cycling Coach prototype cover?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The staging build focuses on step-by-step nitrogen cycling guidance, progress tracking, and alerts to confirm when it is safe to add fish."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I log real tank data in this version?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Testers can record ammonia, nitrite, nitrate, and temperature readings so the coach can highlight action items before launch."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How will Gemini updates affect the Cycling Coach?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Gemini SEO, AEO, and GEO updates ensure headings, structured data, and location cues align with Google Search and AI Overviews while preserving coach functionality."
+          }
+        }
+      ]
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "@id": "https://thetankguide.com/staging/cycling-coach/#howto",
+      "name": "How to Use the Cycling Coach Prototype",
+      "description": "Follow these steps to test the Cycling Coach staging experience and confirm nitrogen cycle readiness.",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Start a new cycle log",
+          "itemListElement": {
+            "@type": "HowToDirection",
+            "text": "Open the Cycling Coach prototype and create a new aquarium profile with tank size, start date, and cycling method."
+          }
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Record water test readings",
+          "itemListElement": {
+            "@type": "HowToDirection",
+            "text": "Enter daily ammonia, nitrite, nitrate, and temperature data to see trend lines and readiness status."
+          }
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Review readiness checklist",
+          "itemListElement": {
+            "@type": "HowToDirection",
+            "text": "Check that ammonia and nitrite stay at 0 ppm for 24 hours after dosing and confirm nitrate production before adding fish."
+          }
+        }
+      ],
+      "tool": [
+        "Liquid test kit",
+        "Thermometer",
+        "Cycling log dashboard"
+      ],
+      "totalTime": "P28D"
+    }
+  </script>
+
+  <script src="/assets/js/consent-mode.js" defer></script>
+  <!--#include virtual="/includes/ga4.html" -->
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
+    crossorigin="anonymous"></script>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
+  <script>
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
+</head>
+<body class="page--cycling-coach">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div id="site-nav"></div>
+
+  <main id="main-content" aria-labelledby="cycling-coach-title">
+    <div class="stage-wrap">
+      <section class="stage-hero">
+        <p class="stage-pill-group" aria-label="Prototype status badges">
+          <span class="stage-pill">Staging Preview</span>
+          <span class="stage-pill">Gemini SEO/AEO/GEO Ready</span>
+        </p>
+        <h1 id="cycling-coach-title">Cycling Coach Prototype for Confident Nitrogen Cycling</h1>
+        <p>
+          This staging build keeps every Cycling Coach feature intact while layering Gemini search updates. Follow a clean testing
+          flow, confirm water chemistry milestones, and prepare for launch without risking live rankings.
+        </p>
+      </section>
+
+      <section class="panel" aria-labelledby="section-updates-title">
+        <h2 id="section-updates-title">What’s New in the Gemini Update</h2>
+        <p>
+          Structured headings, intent-driven copy, and location cues now align with Gemini SEO, AI Overviews (AEO), and Google
+          Experiences (GEO). The underlying Cycling Coach dashboards, calculators, and reminders remain unchanged so testers can
+          compare production to staging.
+        </p>
+        <ul class="checklist">
+          <li>Targeted headings and subcopy clarify each cycling milestone for AI snippets.</li>
+          <li>Localized helper text highlights when to escalate to in-person fish stores or water testing labs.</li>
+          <li>JSON-LD coverage (WebPage, BreadcrumbList, FAQPage, HowTo) supports eligibility across surfaces.</li>
+        </ul>
+      </section>
+
+      <section class="panel" aria-labelledby="how-to-title">
+        <h2 id="how-to-title">How to Use the Cycling Coach Prototype</h2>
+        <p>
+          Walk through the nitrogen cycle workflow exactly as an aquarist would in production. These steps validate the new
+          headings and ensure links resolve correctly.
+        </p>
+        <ol class="checklist">
+          <li>Start a fresh log and pick your cycling method (fishless, fish-in, or seeded media).</li>
+          <li>Enter baseline water readings, then enable reminders for daily ammonia and nitrite tests.</li>
+          <li>Log nitrate growth and temperature trends to unlock the readiness checklist.</li>
+        </ol>
+        <div class="how-links" aria-label="Related internal resources">
+          <a href="/gear/">Check the Gear Guide for test kits and cycling tools</a>
+          <a href="/stocking-advisor/">Plan your first stocking list once cycling is complete</a>
+        </div>
+      </section>
+
+      <section class="panel" id="faq" aria-labelledby="faq-title">
+        <h2 id="faq-title">Cycling Coach Prototype FAQ</h2>
+        <div class="faq">
+          <details>
+            <summary>Do existing automation scripts still run?</summary>
+            <p>
+              Yes. Consent mode, ad loading, nav injection, and footer fetching scripts mirror production. Only headings and
+              structured data were tuned for Gemini requirements.
+            </p>
+          </details>
+          <details>
+            <summary>Will the prototype affect live indexing?</summary>
+            <p>
+              No. The page is blocked with <code>noindex, nofollow</code> directives, so search engines ignore the staging URL
+              while QA takes place.
+            </p>
+          </details>
+          <details>
+            <summary>Where can I report feedback?</summary>
+            <p>
+              Share notes with the Cycling Coach working group or use the <a href="/contact-feedback.html">contact form</a> so we
+              can track layout, copy, or data issues before launch.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section class="cta-banner" aria-labelledby="cta-title">
+        <h2 id="cta-title">Ready to Test the Cycling Coach?</h2>
+        <p>Jump into the staging workflow, validate your nitrogen cycle data, and confirm every Gemini update works as expected.</p>
+        <a href="/params.html">Launch Cycling Coach Prototype</a>
+      </section>
+    </div>
+  </main>
+
+  <nav class="proto-legal" aria-label="Legal">
+    <a href="/privacy-legal.html">Privacy Policy</a>
+    <span aria-hidden="true">&bull;</span>
+    <a href="/terms.html">Terms of Use</a>
+  </nav>
+
+  <div id="site-footer" data-footer-src="/footer.html?v=1.4.9"></div>
+
+  <div id="ttg-consent" class="ttg-consent" data-consent-banner>
+    <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
+      <h3 id="ttg-consent-title">Cookies & Advertising</h3>
+      <p id="ttg-consent-desc">
+        We use cookies to run this site and (if you allow) to show relevant ads from Google AdSense. You can accept all cookies,
+        reject personalized ads, or manage preferences anytime.
+      </p>
+      <div class="ttg-consent__actions">
+        <button type="button" class="ttg-btn ttg-btn--secondary js-consent-reject" id="ttg-consent-reject">Reject (Non-personalized)</button>
+        <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-manage">Manage</button>
+        <button type="button" class="ttg-btn ttg-btn--primary js-consent-accept" id="ttg-consent-accept">Accept All</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="ttg-consent-modal" class="ttg-consent-modal" hidden aria-modal="true" role="dialog" aria-labelledby="ttg-consent-modal-title">
+    <div class="ttg-consent-modal__panel">
+      <h3 id="ttg-consent-modal-title">Cookie Preferences</h3>
+      <form id="ttg-consent-form">
+        <label class="ttg-row">
+          <input type="checkbox" checked disabled />
+          <span><strong>Essential</strong> — required for core site functions.</span>
+        </label>
+        <label class="ttg-row">
+          <input type="checkbox" id="ttg-c-analytics" />
+          <span><strong>Analytics</strong> — understand usage (if enabled later).</span>
+        </label>
+        <label class="ttg-row">
+          <input type="checkbox" id="ttg-c-ads" />
+          <span><strong>Advertising</strong> — allow personalized ads (Google AdSense).</span>
+        </label>
+        <div class="ttg-consent-modal__actions">
+          <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-cancel">Cancel</button>
+          <button type="submit" class="ttg-btn ttg-btn--primary">Save Preferences</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script defer src="/assets/js/consent-banner.js"></script>
+  <script>
+    (function(){
+      var allowNPA = true;
+
+      function setAdConsent(granted){
+        document.documentElement.setAttribute('data-ad-consent', granted ? 'granted' : 'denied');
+        document.documentElement.classList.toggle('is-ads-disabled', !granted);
+        window.__TTG_ADS_DISABLED__ = !granted;
+        window.dispatchEvent(new CustomEvent('ttg:consent-change', {detail:{granted}}));
+      }
+
+      function hookTCF(){
+        if (typeof window.__tcfapi !== 'function') return false;
+
+        try{
+          var banner = document.getElementById('ttg-consent');
+          var modal  = document.getElementById('ttg-consent-modal');
+          if (banner){ banner.hidden = true; banner.classList.remove('is-open'); }
+          if (modal)  modal.hidden  = true;
+        }catch(e){}
+
+        window.__tcfapi('addEventListener', 2, function(tcData, ok){
+          if(!ok || !tcData) return;
+          var p = (tcData.purpose && tcData.purpose.consents) || {};
+          var hasP1 = !!p[1];
+          var hasP4 = !!p[4];
+          var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
+          setAdConsent(granted);
+        });
+
+        window.__tcfapi('getTCData', 2, function(tcData, ok){
+          if(!ok || !tcData) return;
+          var p = (tcData.purpose && tcData.purpose.consents) || {};
+          var hasP1 = !!p[1];
+          var hasP4 = !!p[4];
+          var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
+          setAdConsent(granted);
+        });
+
+        return true;
+      }
+
+      function init(){
+        if (hookTCF()) {
+          return;
+        }
+
+        var stored = localStorage.getItem('ttg-ad-consent');
+        if (stored) {
+          setAdConsent(stored === 'granted');
+          return;
+        }
+
+        setAdConsent(false);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init, { once: true });
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+  <script src="/js/footer-loader.js?v=1.4.9" defer></script>
+</body>
+</html>
