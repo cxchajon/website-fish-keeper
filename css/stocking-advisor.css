@@ -4,14 +4,47 @@
   color-scheme: dark;
 }
 
-body.theme-dark {
-  background: radial-gradient(circle at 12% 18%, rgba(66, 110, 255, 0.35), transparent 40%),
-    radial-gradient(circle at 78% 12%, rgba(20, 215, 170, 0.28), transparent 45%),
-    linear-gradient(180deg, rgba(10, 16, 32, 0.94), rgba(4, 8, 18, 0.98));
-  color: #eef3ff;
+body.prototype-stock-page {
+  --fg: #eef3ff;
+  --muted: rgba(223, 233, 255, 0.82);
+  --card: rgba(12, 20, 36, 0.82);
+  --card-raised: rgba(16, 26, 46, 0.9);
+  --panel: var(--card);
+  --line: rgba(135, 170, 228, 0.28);
+  --chip: rgba(223, 237, 255, 0.18);
+  --chip-border: rgba(223, 237, 255, 0.38);
+  --chip-warn-border: rgba(244, 180, 0, 0.55);
+  --chip-bad-border: rgba(255, 100, 92, 0.6);
+  --chip-warn-text: #f4d48a;
+  --chip-bad-text: #ffb3b0;
+  --info-btn-bg: rgba(223, 237, 255, 0.12);
+  --info-btn-bg-hover: rgba(223, 237, 255, 0.18);
+  --info-btn-bg-active: rgba(223, 237, 255, 0.14);
+  --info-btn-border: rgba(223, 237, 255, 0.24);
+  --info-btn-border-hover: rgba(223, 237, 255, 0.32);
+  --info-btn-border-active: rgba(223, 237, 255, 0.28);
+  --info-btn-focus: rgba(20, 203, 168, 0.7);
+  --ghost: rgba(225, 236, 255, 0.32);
+  --bar-bg: rgba(223, 237, 255, 0.2);
+  --ok: #12c278;
+  --warn: #f4b400;
+  --bad: #ff645c;
+  --ok-soft: rgba(18, 194, 120, 0.25);
+  --warn-soft: rgba(244, 180, 0, 0.22);
+  --bad-soft: rgba(255, 100, 92, 0.26);
+  --shadow: rgba(5, 12, 28, 0.68);
+  --shadow-base: rgba(5, 12, 28, 0.68);
+  --popover-bg: rgba(6, 12, 24, 0.96);
+  --link: #8ec5ff;
+}
+
+body.theme-dark.prototype-stock-page {
+  background: var(--page-bg);
+  color: var(--fg);
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   margin: 0;
   min-height: 100vh;
+  background-attachment: fixed;
 }
 
 

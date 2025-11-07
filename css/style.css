@@ -15,6 +15,9 @@
   --bubble-bad-bg: rgba(226, 85, 85, 0.2);
   --bubble-bad-line: rgba(226, 85, 85, 0.55);
   --bubble-bad-text: #ffe3e3;
+  --nav-layer: 20000;
+  --nav-overlay-layer: 20001;
+  --nav-drawer-layer: 20002;
 }
 
 * {
@@ -87,7 +90,7 @@ body.theme-light {
 
 #global-nav {
   position: relative;
-  z-index: 10000;
+  z-index: var(--nav-layer, 20000);
   background: rgba(10, 14, 22, 0.35);
   backdrop-filter: saturate(1.4) blur(6px);
   -webkit-backdrop-filter: saturate(1.4) blur(6px);
@@ -321,7 +324,7 @@ body.theme-light {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.35);
-  z-index: 10001;
+  z-index: var(--nav-overlay-layer, 20001);
   display: none;
   pointer-events: none;
 }
@@ -342,7 +345,7 @@ body.theme-light {
   background: rgba(10, 14, 22, 0.82);
   backdrop-filter: saturate(1.2) blur(6px);
   -webkit-backdrop-filter: saturate(1.2) blur(6px);
-  z-index: 10002;
+  z-index: var(--nav-drawer-layer, 20002);
   display: flex;
   flex-direction: column;
   color: var(--nav-text);
