@@ -46,8 +46,6 @@
       --cycling-panel-border: rgba(255, 255, 255, 0.12);
       --cycling-text: rgba(232, 244, 255, 0.94);
       --cycling-muted: rgba(216, 235, 255, 0.72);
-      --cycling-pill: rgba(32, 192, 192, 0.12);
-      --cycling-pill-border: rgba(32, 192, 192, 0.42);
     }
 
     body.page--cycling-coach {
@@ -107,27 +105,6 @@
       font-size: clamp(1.05rem, 1.6vw, 1.25rem);
       color: var(--cycling-muted);
       max-width: 65ch;
-    }
-
-    .stage-pill-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 4px;
-    }
-
-    .stage-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: var(--cycling-pill);
-      border: 1px solid var(--cycling-pill-border);
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #8befff;
-      letter-spacing: 0.01em;
     }
 
     .panel {
@@ -204,6 +181,24 @@
       flex-wrap: wrap;
       gap: 12px;
       align-items: center;
+    }
+
+    .form-grid + .form-actions {
+      margin-top: 12px;
+    }
+
+    .challenge-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .challenge-grid .field {
+      margin-bottom: 12px;
+    }
+
+    #challenge-check {
+      margin-top: 12px;
     }
 
     .form-actions .btn,
@@ -418,10 +413,10 @@
         },
         {
           "@type": "Question",
-          "name": "Where can I learn more about the nitrogen cycle?",
+          "name": "Where can I get more aquarium education?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Explore our media library for deep dives on cycling science, bacteria starters, and troubleshooting stubborn tanks."
+            "text": "Explore our guides in the media library for deep dives on cycling science and beginner-friendly how-tos."
           }
         }
       ]
@@ -514,10 +509,6 @@
   <main id="main-content" aria-labelledby="cycling-coach-title">
     <div class="stage-wrap">
       <section class="stage-hero">
-        <p class="stage-pill-group" aria-label="Prototype status badges">
-          <span class="stage-pill">Staging Preview</span>
-          <span class="stage-pill">Gemini SEO · AEO · GEO Ready</span>
-        </p>
         <h1 id="cycling-coach-title">Cycling Coach &amp; 24-Hour Challenge</h1>
         <p>
           The Cycling Coach guides you through the nitrogen cycle with structured inputs, clear AI-ready summaries, and a
@@ -646,7 +637,7 @@
       </section>
 
       <section class="card" id="challengeCard" aria-labelledby="challenge-heading" hidden>
-        <div class="card__header">
+        <div class="card__header challenge-header">
           <h2 class="card__title" id="challenge-heading">24-Hour Challenge</h2>
           <button
             type="button"
@@ -657,8 +648,8 @@
             aria-controls="tt-challenge"
             data-testid="info-challenge"
           >i</button>
-          <div id="tt-challenge" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
         </div>
+        <div id="tt-challenge" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
         <div class="challenge-card">
           <p class="challenge-instructions" id="challengeInstruction">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
           <button type="button" class="btn" id="challenge-start">Start 24-Hour Challenge</button>
@@ -780,7 +771,7 @@
           </div>
           <div class="qa">
             <h3>Where can I get more aquarium education?</h3>
-            <p>Explore our guides, podcasts, and interviews in the Media library for deep dives on cycling science.</p>
+            <p>Explore our guides in the <a href="/media.html">Media library</a> for deep dives on cycling science and beginner-friendly how-tos.</p>
           </div>
         </div>
       </section>
