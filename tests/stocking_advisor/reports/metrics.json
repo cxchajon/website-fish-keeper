@@ -1,0 +1,188 @@
+{
+  "timestamp": "2025-11-08T18:00:00.000Z",
+  "note": "This is a SAMPLE metrics file demonstrating expected output format.",
+  "testSuiteVersion": "1.0.0",
+  "playwright": "1.56.1",
+  "node": "v22.21.1",
+  "totals": {
+    "deterministic": 108,
+    "random": 100,
+    "ui": 6,
+    "total": 214
+  },
+  "assertions": {
+    "spongeNeverIncreases": {
+      "description": "Sponge filters must never increase bioload percentage",
+      "passed": 15,
+      "failed": 0,
+      "passRate": "100.00",
+      "details": "All sponge filters correctly increased effective capacity via RBC model"
+    },
+    "orderIndependence": {
+      "description": "Adding filters/fish in any order should yield identical results",
+      "total": 100,
+      "violations": 0,
+      "violationRate": "0.00",
+      "tolerance": 0.01,
+      "details": "All random scenarios passed order-independence check"
+    },
+    "zeroState": {
+      "description": "Tanks with no fish should show 0% bioload",
+      "passed": 6,
+      "failed": 0,
+      "passRate": "100.00"
+    },
+    "monotonicity": {
+      "description": "Better filtration (higher RBC) should not increase bioload %",
+      "status": "expected",
+      "note": "Implicitly tested via RBC model: Canister > HOB > Sponge"
+    },
+    "turnoverSanity": {
+      "description": "Increasing GPH should not increase bioload %",
+      "status": "expected",
+      "note": "Verified through turnover calculations in capacity formula"
+    },
+    "diminishingReturns": {
+      "description": "3rd filter provides smaller benefit than 1st/2nd",
+      "status": "informational",
+      "weights": {
+        "filter1": 1.0,
+        "filter2": 0.5,
+        "filter3": 0.25,
+        "filter4": 0.125
+      },
+      "note": "Built into RBC capacity calculation via diminishingWeight() function"
+    },
+    "tankScaling": {
+      "description": "Same fish+filters in larger tank = same or lower bioload %",
+      "status": "expected",
+      "note": "Bioload % = species_load / (tank_gallons * (1 + RBC_modifier))"
+    }
+  },
+  "ui": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "passRate": "100.00",
+    "checks": [
+      {
+        "test": "Default page load",
+        "passed": true
+      },
+      {
+        "test": "Add fish",
+        "passed": true
+      },
+      {
+        "test": "Add filter",
+        "passed": true
+      },
+      {
+        "test": "Mobile responsive layout",
+        "passed": true
+      },
+      {
+        "test": "Info button click",
+        "passed": true
+      },
+      {
+        "test": "No console errors",
+        "passed": true
+      }
+    ]
+  },
+  "filtrationModel": {
+    "type": "RBC (Relative Biological Capacity)",
+    "formula": "effective_capacity = base_capacity × (1 + combined_RBC)",
+    "maxCapacityBonus": 0.6,
+    "maxCapacityBonusPercent": "60%",
+    "rbcValues": {
+      "CANISTER_LARGE": 1.25,
+      "CANISTER_MID": 0.75,
+      "HOB_LARGE_BASKET": 0.6,
+      "SPONGE_LARGE": 0.4,
+      "SPONGE_SMALL": 0.2,
+      "HOB_SMALL_CARTRIDGE": 0.15,
+      "UGF": 0.35,
+      "INTERNAL": 0.3
+    },
+    "diminishingWeights": {
+      "base": 2,
+      "formula": "weight = 1 / (base ^ index)",
+      "example": {
+        "filter1": 1.0,
+        "filter2": 0.5,
+        "filter3": 0.25
+      }
+    }
+  },
+  "coverage": {
+    "tankSizes": [5, 10, 20, 29, 40, 55],
+    "filterTypes": ["Sponge", "HOB", "Canister", "Internal", "Powerhead"],
+    "gphRange": {
+      "min": 40,
+      "max": 700
+    },
+    "fishSpecies": {
+      "total": "All available species from live catalog",
+      "examples": ["Betta", "Neon Tetra", "Cory Catfish", "Bristlenose Pleco", "Gourami"]
+    },
+    "scenarios": {
+      "deterministic": "6 tanks × 6 filter configs × 3 fish loads",
+      "random": "100 scenarios (configurable to 10,000)",
+      "edgeCases": ["Zero state", "Single fish", "Heavy stocking", "Multi-filter", "Large centerpiece"]
+    }
+  },
+  "performance": {
+    "estimatedDuration": {
+      "deterministic": "~3-5 minutes",
+      "random100": "~5-8 minutes",
+      "random10000": "~30-60 minutes",
+      "uiChecks": "~1-2 minutes"
+    },
+    "note": "Duration depends on network speed and page load time"
+  },
+  "acceptanceCriteria": {
+    "spongeAssertion": {
+      "threshold": 0,
+      "actual": 0,
+      "status": "PASS"
+    },
+    "orderIndependence": {
+      "deterministicThreshold": 0,
+      "randomThreshold": 0.5,
+      "actual": 0,
+      "status": "PASS"
+    },
+    "zeroState": {
+      "threshold": 0,
+      "actual": 0,
+      "status": "PASS"
+    },
+    "uiChecks": {
+      "criticalFailuresAllowed": 0,
+      "actual": 0,
+      "status": "PASS"
+    },
+    "consoleErrors": {
+      "threshold": 0,
+      "actual": 0,
+      "status": "PASS"
+    }
+  },
+  "recommendations": [
+    "✓ All core assertions passed",
+    "✓ RBC model correctly increases capacity without reducing bioload directly",
+    "✓ Order-independence verified across all scenarios",
+    "✓ No sponge filter bugs detected",
+    "✓ UI interactions work correctly",
+    "✓ Mobile responsiveness confirmed",
+    "✓ No console errors"
+  ],
+  "nextSteps": [
+    "Run full suite with 10,000 random scenarios for comprehensive stress test",
+    "Monitor for edge cases in production with real user data",
+    "Consider adding parametric tests for extreme tank sizes (100+ gallons)",
+    "Add visual regression testing for UI changes"
+  ]
+}

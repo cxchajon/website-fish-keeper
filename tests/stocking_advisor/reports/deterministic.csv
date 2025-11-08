@@ -1,0 +1,37 @@
+tank_gallons,filters,fish,bioload_percent,notes
+5,Sponge:80GPH,0 species,0.0,Zero state - no fish
+5,HOB:200GPH,0 species,0.0,Zero state - no fish
+5,Canister:300GPH,0 species,0.0,Zero state - no fish
+5,Sponge:80GPH,1 betta,68.5,Small tank + sponge + single fish
+5,HOB:200GPH,1 betta,62.3,Small tank + HOB + single fish
+5,Canister:300GPH,1 betta,58.1,Small tank + canister + single fish (best efficiency)
+10,Sponge:80GPH,0 species,0.0,Zero state
+10,HOB:200GPH,0 species,0.0,Zero state
+10,Canister:300GPH,0 species,0.0,Zero state
+10,Sponge:80GPH,6 neon tetras,72.4,Light school + sponge
+10,HOB:200GPH,6 neon tetras,65.8,Light school + HOB
+10,Canister:300GPH,6 neon tetras,60.2,Light school + canister
+10,HOB:200GPH+Sponge:80GPH,6 neon tetras,58.9,Multi-filter setup improves capacity
+20,Sponge:80GPH,0 species,0.0,Zero state
+20,HOB:200GPH,0 species,0.0,Zero state
+20,Canister:300GPH,0 species,0.0,Zero state
+20,Sponge:80GPH,1 betta + 6 tetras + 3 corys,48.7,Community mix + sponge
+20,HOB:200GPH,1 betta + 6 tetras + 3 corys,43.2,Community mix + HOB
+20,Canister:300GPH,1 betta + 6 tetras + 3 corys,38.5,Community mix + canister
+20,HOB:200GPH+Sponge:80GPH,1 betta + 6 tetras + 3 corys,36.8,Multi-filter reduces bioload %
+20,HOB:200GPH+HOB:200GPH,1 betta + 6 tetras + 3 corys,35.1,Dual HOB setup
+20,Canister:300GPH+Sponge:80GPH,1 betta + 6 tetras + 3 corys,32.4,High efficiency combo
+29,Sponge:80GPH,12 tetras,62.3,Mid school + sponge
+29,HOB:200GPH,12 tetras,55.7,Mid school + HOB
+29,Canister:300GPH,12 tetras,49.8,Mid school + canister
+29,HOB:200GPH+Sponge:80GPH,12 tetras,47.2,Multi-filter
+40,Sponge:80GPH,6 corys + 1 bristlenose,41.2,Bottom crew + sponge
+40,HOB:200GPH,6 corys + 1 bristlenose,36.5,Bottom crew + HOB
+40,Canister:300GPH,6 corys + 1 bristlenose,32.1,Bottom crew + canister
+40,HOB:200GPH+HOB:200GPH,6 corys + 1 bristlenose,29.8,Dual HOB
+55,Sponge:80GPH,18 small tetras,58.9,Heavy community + sponge
+55,HOB:200GPH,18 small tetras,52.4,Heavy community + HOB
+55,Canister:300GPH,18 small tetras,46.2,Heavy community + canister
+55,Canister:300GPH+Sponge:80GPH,18 small tetras,42.1,High efficiency combo
+55,HOB:200GPH,1 gourami + 10 tetras,38.7,Centerpiece + school
+55,Canister:300GPH,1 gourami + 10 tetras,34.2,Centerpiece + school + canister

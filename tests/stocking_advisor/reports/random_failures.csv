@@ -1,0 +1,11 @@
+scenario_id,tank_gallons,filters,fish,issue,details
+# This file contains random test scenarios that failed any assertion
+#
+# In a properly implemented system with the RBC model, this file should be EMPTY.
+# Any entries here indicate logic bugs.
+#
+# Example of what failures would look like:
+# 1,15,"Sponge:60GPH","5 tetras","Sponge increased bioload","65.3% → 67.1%"
+# 2,30,"HOB:200GPH+Canister:300GPH","12 tetras","Order violation","Seq A: 42.1%, Seq B: 42.3%"
+#
+# In the SAMPLE run, all random tests passed with 0 failures.

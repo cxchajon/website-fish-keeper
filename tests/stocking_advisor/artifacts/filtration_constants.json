@@ -1,0 +1,117 @@
+{
+  "note": "Filtration constants extracted from js/stocking-advisor/filtration/math.js",
+  "source": "/home/user/website-fish-keeper/js/stocking-advisor/filtration/math.js",
+  "extractedAt": "2025-11-08T18:00:00.000Z",
+  "model": "RBC (Relative Biological Capacity)",
+  "constants": {
+    "RBC_TABLE": {
+      "SPONGE_SMALL": 0.2,
+      "SPONGE_LARGE": 0.4,
+      "HOB_SMALL_CARTRIDGE": 0.15,
+      "HOB_LARGE_BASKET": 0.6,
+      "CANISTER_MID": 0.75,
+      "CANISTER_LARGE": 1.25
+    },
+    "MAX_CAPACITY_BONUS": 0.6,
+    "DIMINISHING_WEIGHT_BASE": 2,
+    "DEFAULT_RBC": 0.15,
+    "MAX_SINGLE_RBC": 1.25
+  },
+  "formulas": {
+    "effectiveCapacity": "base_capacity × (1 + combined_RBC)",
+    "combinedRBC": "sum of (filter_RBC × diminishing_weight), capped at MAX_CAPACITY_BONUS",
+    "diminishingWeight": "1 / (DIMINISHING_WEIGHT_BASE ^ filter_index)",
+    "bioloadPercent": "(species_bioload / effective_capacity) × 100",
+    "turnover": "total_GPH / tank_gallons"
+  },
+  "inference": {
+    "mediaVolumeThresholds": {
+      "CANISTER_LARGE": "≥ 3.9 L",
+      "CANISTER_MID": "≥ 1.8 L",
+      "HOB_LARGE_BASKET": "≥ 1.0 L",
+      "SPONGE_LARGE": "≥ 0.8 L",
+      "SPONGE_SMALL": "≥ 0.3 L",
+      "HOB_SMALL_CARTRIDGE": "< 0.3 L"
+    },
+    "typeInference": {
+      "description": "Filter type is inferred from archetype, resolvedType, kind, type, filterType, or sourceType fields",
+      "keywords": {
+        "canister": "Canister filter",
+        "sponge": "Sponge filter",
+        "hob": "Hang-on-back filter",
+        "hang": "Hang-on-back filter",
+        "ugf": "Under-gravel filter",
+        "undergravel": "Under-gravel filter",
+        "internal": "Internal filter",
+        "powerhead": "Powerhead filter"
+      }
+    }
+  },
+  "examples": {
+    "singleFilter": {
+      "scenario": "40gal tank, Canister 300GPH",
+      "calculation": {
+        "baseCapacity": 40,
+        "filterRBC": 0.75,
+        "diminishingWeight": 1.0,
+        "combinedRBC": 0.75,
+        "effectiveCapacity": "40 × (1 + 0.75) = 70",
+        "capacityBoost": "+75%"
+      }
+    },
+    "multipleFilters": {
+      "scenario": "40gal tank, Canister 300GPH + HOB 200GPH + Sponge 80GPH",
+      "calculation": {
+        "baseCapacity": 40,
+        "filter1": {
+          "type": "Canister",
+          "rbc": 0.75,
+          "weight": 1.0,
+          "weighted": 0.75
+        },
+        "filter2": {
+          "type": "HOB",
+          "rbc": 0.15,
+          "weight": 0.5,
+          "weighted": 0.075
+        },
+        "filter3": {
+          "type": "Sponge",
+          "rbc": 0.2,
+          "weight": 0.25,
+          "weighted": 0.05
+        },
+        "rawTotal": 0.875,
+        "cappedAt": 0.6,
+        "effectiveCapacity": "40 × (1 + 0.6) = 64",
+        "note": "Capped at MAX_CAPACITY_BONUS (0.6) even though raw total is 0.875"
+      }
+    },
+    "zeroState": {
+      "scenario": "20gal tank, no fish, HOB 200GPH",
+      "calculation": {
+        "speciesBioload": 0,
+        "effectiveCapacity": "20 × (1 + 0.15) = 23",
+        "bioloadPercent": "(0 / 23) × 100 = 0%"
+      }
+    }
+  },
+  "changelog": {
+    "v2025-10": "Gemini RBC Rollout",
+    "changes": [
+      "Switched from bioload reduction to capacity boost model",
+      "Introduced RBC (Relative Biological Capacity) constants",
+      "Added diminishing returns for multiple filters",
+      "Capped total filtration benefit at +60%",
+      "Fixed sponge filter bug where bioload appeared to increase"
+    ],
+    "legacyModel": {
+      "description": "Previous model subtracted filter relief from bioload numerator",
+      "issues": [
+        "String concatenation bugs",
+        "Sponge filters appeared to raise stocking %",
+        "Impossible to reason about when multiple filters stacked"
+      ]
+    }
+  }
+}

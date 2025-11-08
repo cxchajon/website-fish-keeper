@@ -1,0 +1,10 @@
+tank_gallons,num_filters,num_species,bioload_A,bioload_B,delta
+# This file contains scenarios where sequence A ≠ sequence B (order-independence violations)
+#
+# In a properly implemented system, this file should be EMPTY.
+# Any entries here indicate a bug in the computation logic.
+#
+# Example of what a violation would look like:
+# 25,2,3,45.23,45.31,0.08
+#
+# In the SAMPLE run, all tests passed with 0 violations.
