@@ -310,6 +310,12 @@
     }
 
     const panel = findPanel(trigger);
+
+    if (trigger.closest('#global-nav') || trigger.hasAttribute('data-nav')) {
+      boundTriggers.add(trigger);
+      return;
+    }
+
     normalizeTrigger(trigger, panel);
 
     trigger.addEventListener('click', onTriggerClick);
@@ -331,7 +337,10 @@
         if (!(node instanceof Element)) {
           return;
         }
-        if (node.matches && node.matches('button.proto-info-trigger, button[aria-controls], button[data-proto-popover]')) {
+        if (
+          node.matches
+          && node.matches('button.proto-info-trigger, button[aria-controls], button[data-proto-popover]')
+        ) {
           initTrigger(node);
         }
         initAllTriggers(node);
