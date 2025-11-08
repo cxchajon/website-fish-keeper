@@ -162,6 +162,18 @@
       gap: 8px;
     }
 
+    .label-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .label-row label {
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.005em;
+    }
+
     .input-row {
       display: grid;
       gap: 12px;
@@ -185,6 +197,20 @@
       background: rgba(6, 20, 34, 0.7);
       color: #e9f9ff;
       font-size: 1rem;
+    }
+
+    .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .form-actions .btn,
+    .form-actions .btn.btn--secondary {
+      padding: 10px 18px;
+      border-radius: 18px;
+      font-size: 0.95rem;
     }
 
     .results-grid {
@@ -727,10 +753,6 @@
           <li>Read the generated insights to see whether you should dose bacteria, perform water changes, or wait.</li>
           <li>After the 24-hour challenge, confirm nitrates rise while ammonia and nitrite stay at 0 ppm for a full day.</li>
         </ol>
-        <div class="how-links" aria-label="Related internal resources">
-          <a href="/gear/">test results</a>
-          <a href="/stocking-advisor/">safe environment for your fish</a>
-        </div>
       </section>
 
       <section class="panel card" id="cycling-faq" aria-labelledby="faq-heading">
