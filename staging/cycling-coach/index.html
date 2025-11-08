@@ -500,130 +500,221 @@
         </p>
       </section>
 
-      <section class="panel" id="inputs" aria-labelledby="inputs-heading">
-        <h2 id="inputs-heading">Inputs</h2>
-        <p>Capture tank details and your most recent water test readings so Cycling Coach can model your cycle.</p>
-        <div class="inputs-grid" role="form" aria-labelledby="inputs-heading">
-          <div class="input-group" aria-label="Tank profile">
-            <div class="input-row">
-              <label for="tank-volume">
-                <span>Tank volume (gallons)</span>
-                <input type="number" id="tank-volume" name="tank-volume" min="1" step="0.5" placeholder="20" />
-              </label>
-              <label for="cycle-method">
-                <span>Cycling method</span>
-                <select id="cycle-method" name="cycle-method">
-                  <option value="fishless">Fishless (liquid ammonia)</option>
-                  <option value="fish-in">Fish-in with detoxifier</option>
-                  <option value="seeded">Seeded media / jump-start</option>
-                </select>
-              </label>
-              <label for="start-date">
-                <span>Cycle start date</span>
-                <input type="date" id="start-date" name="start-date" />
-              </label>
+      <section class="card" aria-labelledby="inputs-heading">
+        <div class="card__header">
+          <h2 class="card__title" id="inputs-heading">Inputs</h2>
+        </div>
+        <form id="coach-form" novalidate data-testid="coach-form">
+          <div class="form-grid">
+            <div class="field">
+              <div class="label-row">
+                <label for="ammonia">Ammonia (NH₃/NH₄⁺)</label>
+                <button
+                  type="button"
+                  class="info-btn ttg-tooltip-trigger"
+                  aria-label="More info about Ammonia"
+                  aria-expanded="false"
+                  data-tooltip-id="tt-ammonia"
+                  aria-controls="tt-ammonia"
+                  data-testid="info-ammonia"
+                >i</button>
+              </div>
+              <input type="number" id="ammonia" name="ammonia" step="0.01" min="0" inputmode="decimal" data-testid="ammonia" />
+              <div id="tt-ammonia" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Waste from fish/food. Even tiny amounts are toxic.</div>
+            </div>
+            <div class="field">
+              <div class="label-row">
+                <label for="nitrite">Nitrite (NO₂⁻)</label>
+                <button
+                  type="button"
+                  class="info-btn ttg-tooltip-trigger"
+                  aria-label="More info about Nitrite"
+                  aria-expanded="false"
+                  data-tooltip-id="tt-nitrite"
+                  aria-controls="tt-nitrite"
+                  data-testid="info-nitrite"
+                >i</button>
+              </div>
+              <input type="number" id="nitrite" name="nitrite" step="0.01" min="0" inputmode="decimal" data-testid="nitrite" />
+              <div id="tt-nitrite" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Mid-stage of the cycle; also toxic.</div>
+            </div>
+            <div class="field">
+              <div class="label-row">
+                <label for="nitrate">Nitrate (NO₃⁻)</label>
+                <button
+                  type="button"
+                  class="info-btn ttg-tooltip-trigger"
+                  aria-label="More info about Nitrate"
+                  aria-expanded="false"
+                  data-tooltip-id="tt-nitrate"
+                  aria-controls="tt-nitrate"
+                  data-testid="info-nitrate"
+                >i</button>
+              </div>
+              <input type="number" id="nitrate" name="nitrate" step="0.1" min="0" inputmode="decimal" data-testid="nitrate" />
+              <div id="tt-nitrate" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>End product; safer but must be controlled with water changes. In planted tanks, a steady nitrate target around 10–20 ppm is common; Cycling Coach evaluates cycle completion independently of plants.</div>
+            </div>
+            <div class="field">
+              <div class="label-row">
+                <label for="cycle-method">Cycle Method</label>
+                <button
+                  type="button"
+                  class="info-btn ttg-tooltip-trigger"
+                  aria-label="More info about Cycle Method"
+                  aria-expanded="false"
+                  data-tooltip-id="tt-method"
+                  aria-controls="tt-method"
+                  data-testid="info-cycle-method"
+                >i</button>
+              </div>
+              <select id="cycle-method" name="cycle-method">
+                <option value="fishless" selected>Fishless</option>
+                <option value="fish-in">Fish-in</option>
+              </select>
+              <div id="tt-method" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Fishless equals adding ammonia without fish. Fish-in means cycling with fish and requires extra care.</div>
             </div>
           </div>
-          <div class="input-group" aria-label="Water parameters">
-            <div class="input-row">
-              <label for="ammonia">
-                <span>Ammonia (NH₃/NH₄⁺)</span>
-                <input type="number" id="ammonia" name="ammonia" min="0" step="0.1" placeholder="0.25" aria-describedby="ammonia-help" />
-              </label>
-              <label for="nitrite">
-                <span>Nitrite (NO₂⁻)</span>
-                <input type="number" id="nitrite" name="nitrite" min="0" step="0.1" placeholder="0.5" />
-              </label>
-              <label for="nitrate">
-                <span>Nitrate (NO₃⁻)</span>
-                <input type="number" id="nitrate" name="nitrate" min="0" step="1" placeholder="20" />
-              </label>
-            </div>
-            <div class="input-row">
-              <label for="ph">
-                <span>pH</span>
-                <input type="number" id="ph" name="ph" min="5" max="9.5" step="0.1" placeholder="7.4" />
-              </label>
-              <label for="temperature">
-                <span>Temperature (°F)</span>
-                <input type="number" id="temperature" name="temperature" min="60" max="92" step="0.5" placeholder="78" />
-              </label>
-              <label for="last-test">
-                <span>Last test time</span>
-                <input type="datetime-local" id="last-test" name="last-test" />
-              </label>
-            </div>
-            <p id="ammonia-help">Need gear? Track readings with a liquid kit from our <a href="/gear/">test results guide</a>.</p>
+          <div class="form-actions">
+            <button type="button" class="btn" id="check-button">Check</button>
+            <button type="button" class="btn btn--secondary" id="clear-button">Clear</button>
           </div>
+        </form>
+      </section>
+
+      <section class="card" aria-labelledby="results-heading">
+        <div class="card__header">
+          <div class="status-label">
+            <h2 class="card__title" id="results-heading">Results</h2>
+            <button
+              type="button"
+              class="info-btn ttg-tooltip-trigger"
+              aria-label="More info about Results status"
+              aria-expanded="false"
+              data-tooltip-id="tt-status"
+              aria-controls="tt-status"
+              data-testid="info-status"
+            >i</button>
+          </div>
+          <div id="tt-status" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>High-level snapshot of where your tank stands.</div>
+        </div>
+        <div class="status-row" aria-live="polite" data-testid="result-status">
+          <span class="status-badge" id="status-badge">⚪ Incomplete</span>
+          <p class="results-summary" id="results-summary">Ammonia: — ppm • Nitrite: — ppm • Nitrate: — ppm • Method: Fishless</p>
+        </div>
+        <div class="actions-block" id="actions-block" hidden data-testid="result-actions">
+          <header>
+            <span>Action steps</span>
+            <button
+              type="button"
+              class="info-btn ttg-tooltip-trigger"
+              aria-label="More info about Action steps"
+              aria-expanded="false"
+              data-tooltip-id="tt-actions"
+              aria-controls="tt-actions"
+              data-testid="info-actions"
+            >i</button>
+          </header>
+          <div id="tt-actions" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Quick, practical steps based on your readings.</div>
+          <ul class="actions-list" id="actions-list"></ul>
         </div>
       </section>
 
-      <section class="panel" id="results" aria-labelledby="results-heading">
-        <h2 id="results-heading">Results</h2>
-        <p>
-          Cycling Coach translates your readings into a clear readiness verdict, highlights what to watch next, and prepares
-          copy suitable for search and AI summaries.
-        </p>
-        <div class="results-grid">
-          <article class="result-card" aria-labelledby="status-heading">
-            <h3 id="status-heading">Readiness status</h3>
-            <p><span class="status-badge" role="status" aria-live="polite">Monitoring</span></p>
-            <p>
-              Keep dosing bacteria starter and track daily trends. Ammonia must drop to 0 ppm and nitrite must match before the
-              24-hour challenge can clear.
-            </p>
-          </article>
-          <article class="result-card" aria-labelledby="trend-heading">
-            <h3 id="trend-heading">Trend insights</h3>
-            <dl>
-              <dt>Ammonia</dt>
-              <dd>Falling — expect 0 ppm within 3–4 days with steady bacteria support.</dd>
-              <dt>Nitrite</dt>
-              <dd>Rising — perform a partial water change if levels exceed 2 ppm during fish-in cycles.</dd>
-              <dt>Nitrate</dt>
-              <dd>Increasing — plan a water change to bring levels below 40 ppm before stocking.</dd>
-            </dl>
-          </article>
-          <article class="result-card" aria-labelledby="actions-heading">
-            <h3 id="actions-heading">Next actions</h3>
-            <ul>
-              <li>Schedule the 24-hour challenge once ammonia and nitrite both hit 0 ppm.</li>
-              <li>Stabilize temperature between 75–80 °F to keep bacteria active.</li>
-              <li>Document observations and photos for your <a href="/media.html">cycling reference library</a>.</li>
-            </ul>
-          </article>
+      <section class="card" id="challengeCard" aria-labelledby="challenge-heading" hidden>
+        <div class="card__header">
+          <h2 class="card__title" id="challenge-heading">24-Hour Challenge</h2>
+          <button
+            type="button"
+            class="info-btn ttg-tooltip-trigger"
+            aria-label="More info about the Challenge"
+            aria-expanded="false"
+            data-tooltip-id="tt-challenge"
+            aria-controls="tt-challenge"
+            data-testid="info-challenge"
+          >i</button>
+          <div id="tt-challenge" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
+        </div>
+        <div class="challenge-card">
+          <p class="challenge-instructions" id="challengeInstruction">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
+          <button type="button" class="btn" id="challenge-start">Start 24-Hour Challenge</button>
+          <div class="challenge-grid" id="challenge-form" hidden>
+            <div class="field">
+              <label for="challengeAmmonia">Ammonia after 24h</label>
+              <input type="number" id="challengeAmmonia" step="0.01" min="0" inputmode="decimal" />
+              <p class="field-error" id="challenge-ammonia-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="challengeNitrite">Nitrite after 24h</label>
+              <input type="number" id="challengeNitrite" step="0.01" min="0" inputmode="decimal" />
+              <p class="field-error" id="challenge-nitrite-error" hidden></p>
+            </div>
+          </div>
+          <button type="button" class="btn" id="challenge-check" hidden>Check results</button>
+          <div id="challengeMessage"></div>
+          <div class="actions-block" id="challenge-results" hidden>
+            <header>
+              <span>Challenge test</span>
+              <button
+                type="button"
+                class="info-btn ttg-tooltip-trigger"
+                aria-label="More info about the Challenge test"
+                aria-expanded="false"
+                data-tooltip-id="tt-challenge-inline"
+                aria-controls="tt-challenge-inline"
+                data-testid="info-challenge-inline"
+              >i</button>
+            </header>
+            <div id="tt-challenge-inline" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
+            <ul class="actions-list" id="challenge-list"></ul>
+          </div>
+          <ol class="challenge-steps">
+            <li>Dose pure ammonia (or equivalent food) to 2 ppm and log the start time.</li>
+            <li>Check ammonia and nitrite at the 12-hour midpoint to confirm downward movement.</li>
+            <li>Retest at 24 hours. Both ammonia and nitrite must read 0 ppm; nitrate should climb.</li>
+            <li>Perform a final polishing water change and stabilize temperature before adding fish.</li>
+          </ol>
         </div>
       </section>
 
-      <section class="panel" id="challenge" aria-labelledby="challenge-heading">
-        <h2 id="challenge-heading">24-Hour Challenge (Is Your Tank Ready for Fish?)</h2>
-        <p>
-          This final readiness test mimics the waste load new fish create. Complete each step without ammonia or nitrite spikes
-          to earn a green light from Cycling Coach.
-        </p>
-        <ol class="challenge-steps">
-          <li>Dose pure ammonia (or equivalent food) to 2 ppm and log the start time.</li>
-          <li>Check ammonia and nitrite at the 12-hour midpoint to confirm downward movement.</li>
-          <li>Retest at 24 hours. Both ammonia and nitrite must read 0 ppm; nitrate should climb.</li>
-          <li>Perform a final polishing water change and stabilize temperature before adding fish.</li>
-        </ol>
-      </section>
-
-      <section class="panel" id="advanced" aria-labelledby="advanced-heading">
-        <h2 id="advanced-heading">Advanced (Toxic NH₃ Estimate)</h2>
-        <details class="advanced">
-          <summary>Advanced (Toxic NH₃ Estimate)</summary>
+      <details class="advanced" id="advanced-panel">
+        <summary aria-controls="advanced-content" aria-expanded="false">Advanced (optional)</summary>
+        <div class="advanced-body" id="advanced-content">
+          <div class="advanced-grid">
+            <div class="field">
+              <label for="ph">pH</label>
+              <input type="number" id="ph" name="ph" step="0.1" inputmode="decimal" data-testid="ph" />
+            </div>
+            <div class="field">
+              <label for="temperature">Temperature</label>
+              <div class="temp-toggle">
+                <input type="number" id="temperature" name="temperature" step="0.1" inputmode="decimal" data-testid="temp" />
+                <button type="button" id="temp-toggle" aria-label="Switch temperature unit">°F</button>
+              </div>
+            </div>
+          </div>
+          <div class="advanced-output" aria-live="polite">
+            <span>Estimated toxic NH₃:</span>
+            <span class="value" id="nh3-value">—</span>
+            <span class="nh3-badge" id="nh3-badge" hidden>⚠️ Caution</span>
+            <button
+              type="button"
+              class="info-btn ttg-tooltip-trigger"
+              aria-label="More info about toxic NH3 estimate"
+              aria-expanded="false"
+              data-tooltip-id="tt-advanced"
+              aria-controls="tt-advanced"
+              data-testid="info-advanced"
+            >i</button>
+            <div id="tt-advanced" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Test kits read TAN, which is NH3 plus NH4. Only NH3 is toxic and increases with pH and temperature.</div>
+          </div>
+          <p class="advanced-note"><a href="/media.html" target="_blank" rel="noopener">See Media page for Sources &amp; Further Reading.</a></p>
           <p>
-            Cycling Coach calculates un-ionized ammonia (NH₃) using the Emerson formula, combining pH, temperature, and total
-            ammonia. Values above 0.02 ppm may stress fish; pause stocking plans and increase aeration if you approach that
-            threshold.
+            Cycling Coach calculates un-ionized ammonia (NH₃) using the Emerson formula, combining pH, temperature, and total ammonia. Values above 0.02 ppm may stress fish; pause stocking plans and increase aeration if you approach that threshold.
           </p>
           <p>
-            Experienced keepers can compare readings against expert interviews and lab data in our <a href="/media.html">Media
-            library</a>. Use this insight alongside your own judgement before making significant livestock decisions.
+            Experienced keepers can compare readings against expert interviews and lab data in our <a href="/media.html">Media library</a>. Use this insight alongside your own judgement before making significant livestock decisions.
           </p>
-        </details>
-      </section>
+        </div>
+      </details>
 
       <section class="panel" id="how-to" aria-labelledby="how-to-heading">
         <h2 id="how-to-heading">How to Use the Cycling Coach &amp; Understand the Nitrogen Cycle</h2>
@@ -723,6 +814,7 @@
     </div>
   </div>
 
+  <script type="module" src="/staging/cycling-coach/params.staging.js?v=0.1.0"></script>
   <script defer src="/assets/js/consent-banner.js"></script>
   <script>
     (function(){
