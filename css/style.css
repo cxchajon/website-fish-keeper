@@ -1433,13 +1433,19 @@ body.planted-active #cycling-coach .cc-title__leaf {
   line-height: 1.6;
 }
 
-.footer-note .amazon-cta {
+.site-footer .under-social {
+  margin: 12px 0 8px;
+  text-align: center;
+  font-size: .95rem;
+}
+
+.site-footer .under-social a {
   color: #1e90ff;
   text-decoration: none;
   font-weight: 500;
 }
 
-.footer-note .amazon-cta:hover {
+.site-footer .under-social a:hover {
   text-decoration: underline;
 }
 
