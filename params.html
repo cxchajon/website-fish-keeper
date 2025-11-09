@@ -294,6 +294,16 @@
       gap: 10px;
     }
 
+    .cc-results-head {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cc-results-head .card__title {
+      margin: 0;
+    }
+
     .status-badge {
       display: inline-flex;
       align-items: center;
@@ -399,6 +409,21 @@
       gap: 18px;
     }
 
+    .cc-advanced {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .cc-advanced .field {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .cc-advanced input[type="text"],
+    .cc-advanced input[type="number"] {
+      width: 100%;
+    }
+
     .advanced-grid {
       display: grid;
       gap: 16px;
@@ -437,6 +462,47 @@
 
     .advanced-output .value {
       font-variant-numeric: tabular-nums;
+    }
+
+    .cc-faqs {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .cc-faqs .card__title {
+      margin: 0;
+    }
+
+    .cc-accordion {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.55);
+      padding: 0.5rem 0.75rem;
+    }
+
+    .cc-accordion summary {
+      cursor: pointer;
+      font-weight: 600;
+      list-style: none;
+    }
+
+    .cc-accordion summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .cc-accordion summary:focus-visible {
+      outline: 2px solid #8cc4ff;
+      outline-offset: 2px;
+    }
+
+    .cc-accordion[open] {
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    .cc-accordion-body {
+      padding: 0.5rem 0.25rem 0.25rem;
+      display: grid;
+      gap: 0.5rem;
     }
 
     .nh3-badge {
@@ -643,7 +709,7 @@
 
       <section class="card" aria-labelledby="results-heading">
         <div class="card__header">
-          <div class="status-label">
+          <div class="status-label cc-results-head">
             <h2 class="card__title" id="results-heading">Results</h2>
             <button type="button" class="info-btn ttg-tooltip-trigger" aria-label="More info about Results status" aria-expanded="false" data-tooltip-id="tt-status" aria-controls="tt-status" data-testid="info-status">i</button>
           </div>
@@ -712,7 +778,7 @@
 
       <details class="advanced" id="advanced-panel">
         <summary aria-controls="advanced-content" aria-expanded="false">Advanced (optional)</summary>
-        <div class="advanced-body" id="advanced-content">
+        <div class="advanced-body cc-advanced" id="advanced-content">
           <div class="advanced-grid">
             <div class="field">
               <label for="ph">pH</label>
@@ -736,6 +802,52 @@
           <p class="advanced-note"><a href="/media.html" target="_blank" rel="noopener">See Media page for Sources &amp; Further Reading.</a></p>
         </div>
       </details>
+
+      <section class="card cc-faqs" id="cycling-faq" aria-labelledby="faq-heading">
+        <h2 class="card__title" id="faq-heading">Cycling Coach FAQs</h2>
+
+        <details class="cc-accordion">
+          <summary>How does Cycling Coach keep my nitrogen cycle on track?</summary>
+          <div class="cc-accordion-body">
+            <p>It highlights ammonia and nitrite spikes, suggests corrective actions, and confirms when conditions meet stocking goals.</p>
+          </div>
+        </details>
+
+        <details class="cc-accordion">
+          <summary>What if my readings plateau?</summary>
+          <div class="cc-accordion-body">
+            <p>Review your log for missing bacteria boosters or insufficient aeration, then retest after adjusting temperature and flow.</p>
+          </div>
+        </details>
+
+        <details class="cc-accordion">
+          <summary>Can I use Cycling Coach for planted tanks?</summary>
+          <div class="cc-accordion-body">
+            <p>Yes—just record CO₂ dosing and plant mass notes so you understand how fast nutrients convert during cycling.</p>
+          </div>
+        </details>
+
+        <details class="cc-accordion">
+          <summary>Do I still need water changes during cycling?</summary>
+          <div class="cc-accordion-body">
+            <p>Yes. Partial water changes keep nitrite and nitrate below stress levels and refresh trace minerals for bacteria.</p>
+          </div>
+        </details>
+
+        <details class="cc-accordion">
+          <summary>What happens after the 24-hour challenge?</summary>
+          <div class="cc-accordion-body">
+            <p>Perform a polishing water change, match temperature, and acclimate fish slowly while continuing to log readings.</p>
+          </div>
+        </details>
+
+        <details class="cc-accordion">
+          <summary>Where can I get more aquarium education?</summary>
+          <div class="cc-accordion-body">
+            <p>Explore our guides in the <a href="/media.html">Media library</a> for deep dives on cycling science and beginner-friendly how-tos.</p>
+          </div>
+        </details>
+      </section>
 
       <section id="cc-bottom" class="cc-bottom" aria-label="About Cycling Coach">
         <p class="home-subtext cc-disclaimer">Cycling Coach is an educational tool. Always confirm with your own testing and judgment before making aquarium decisions.</p>

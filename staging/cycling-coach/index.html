@@ -139,6 +139,17 @@
       gap: 8px;
     }
 
+    .cc-results-head {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .cc-results-head .card__title {
+      margin: 0;
+    }
+
     .label-row {
       display: flex;
       align-items: center;
@@ -155,6 +166,28 @@
       display: grid;
       gap: 12px;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+
+    .cc-advanced {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .cc-advanced .field {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .cc-advanced input[type="text"],
+    .cc-advanced input[type="number"] {
+      width: 100%;
+    }
+
+    .cc-advanced .temp-toggle {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.35rem;
+      align-items: center;
     }
 
     label span {
@@ -195,6 +228,62 @@
 
     .challenge-grid .field {
       margin-bottom: 12px;
+    }
+
+    .cc-faqs {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .cc-faqs .card__header {
+      margin-bottom: 0;
+    }
+
+    .cc-faqs .card__body {
+      display: grid;
+      gap: 0.5rem;
+      margin: 0;
+    }
+
+    .cc-accordion {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.55);
+      padding: 0.5rem 0.75rem;
+    }
+
+    .cc-accordion summary {
+      cursor: pointer;
+      font-weight: 600;
+      list-style: none;
+      outline: none;
+      color: #ffffff;
+      margin: 0;
+    }
+
+    .cc-accordion summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .cc-accordion summary:focus-visible {
+      outline: 2px solid rgba(140, 196, 255, 0.85);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    .cc-accordion[open] {
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    .cc-accordion-body {
+      padding: 0.5rem 0.25rem 0.25rem;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .cc-accordion-body p {
+      margin: 0;
+      color: var(--cycling-muted);
     }
 
     #challenge-check {
@@ -600,7 +689,7 @@
 
       <section class="card" aria-labelledby="results-heading">
         <div class="card__header">
-          <div class="status-label">
+          <div class="status-label cc-results-head">
             <h2 class="card__title" id="results-heading">Results</h2>
             <button
               type="button"
@@ -695,7 +784,7 @@
       <details class="advanced" id="advanced-panel">
         <summary aria-controls="advanced-content" aria-expanded="false">Advanced (optional)</summary>
         <div class="advanced-body" id="advanced-content">
-          <div class="advanced-grid">
+          <div class="advanced-grid cc-advanced">
             <div class="field">
               <label for="ph">pH</label>
               <input type="number" id="ph" name="ph" step="0.1" inputmode="decimal" data-testid="ph" />
@@ -746,45 +835,49 @@
         </ol>
       </section>
 
-      <section class="panel card" id="cycling-faq" aria-labelledby="faq-heading">
+      <section class="panel card cc-faqs" id="cycling-faq" aria-labelledby="faq-heading">
         <div class="card__header"><h2 id="faq-heading">Cycling Coach FAQs</h2></div>
         <div class="card__body">
-          <div class="qa">
-            <h3>How does Cycling Coach keep my nitrogen cycle on track?</h3>
-            <p>It highlights ammonia and nitrite spikes, suggests corrective actions, and confirms when conditions meet stocking goals.</p>
-          </div>
-          <div class="qa">
-            <h3>What if my readings plateau?</h3>
-            <p>Review your log for missing bacteria boosters or insufficient aeration, then retest after adjusting temperature and flow.</p>
-          </div>
-          <div class="qa">
-            <h3>Can I use Cycling Coach for planted tanks?</h3>
-            <p>Yes—just record CO₂ dosing and plant mass notes so you understand how fast nutrients convert during cycling.</p>
-          </div>
-          <div class="qa">
-            <h3>Do I still need water changes during cycling?</h3>
-            <p>Yes. Partial water changes keep nitrite and nitrate below stress levels and refresh trace minerals for bacteria.</p>
-          </div>
-          <div class="qa">
-            <h3>What happens after the 24-hour challenge?</h3>
-            <p>Perform a polishing water change, match temperature, and acclimate fish slowly while continuing to log readings.</p>
-          </div>
-          <div class="qa">
-            <h3>Where can I get more aquarium education?</h3>
-            <p>Explore our guides in the <a href="/media.html">Media library</a> for deep dives on cycling science and beginner-friendly how-tos.</p>
-          </div>
+          <details class="cc-accordion">
+            <summary>How does Cycling Coach keep my nitrogen cycle on track?</summary>
+            <div class="cc-accordion-body">
+              <p>It highlights ammonia and nitrite spikes, suggests corrective actions, and confirms when conditions meet stocking goals.</p>
+            </div>
+          </details>
+          <details class="cc-accordion">
+            <summary>What if my readings plateau?</summary>
+            <div class="cc-accordion-body">
+              <p>Review your log for missing bacteria boosters or insufficient aeration, then retest after adjusting temperature and flow.</p>
+            </div>
+          </details>
+          <details class="cc-accordion">
+            <summary>Can I use Cycling Coach for planted tanks?</summary>
+            <div class="cc-accordion-body">
+              <p>Yes—just record CO₂ dosing and plant mass notes so you understand how fast nutrients convert during cycling.</p>
+            </div>
+          </details>
+          <details class="cc-accordion">
+            <summary>Do I still need water changes during cycling?</summary>
+            <div class="cc-accordion-body">
+              <p>Yes. Partial water changes keep nitrite and nitrate below stress levels and refresh trace minerals for bacteria.</p>
+            </div>
+          </details>
+          <details class="cc-accordion">
+            <summary>What happens after the 24-hour challenge?</summary>
+            <div class="cc-accordion-body">
+              <p>Perform a polishing water change, match temperature, and acclimate fish slowly while continuing to log readings.</p>
+            </div>
+          </details>
+          <details class="cc-accordion">
+            <summary>Where can I get more aquarium education?</summary>
+            <div class="cc-accordion-body">
+              <p>Explore our guides in the <a href="/media.html">Media library</a> for deep dives on cycling science and beginner-friendly how-tos.</p>
+            </div>
+          </details>
         </div>
       </section>
     </div>
   </main>
-
-  <nav class="proto-legal" aria-label="Legal">
-    <a href="/privacy-legal.html">Privacy Policy</a>
-    <span aria-hidden="true">&bull;</span>
-    <a href="/terms.html">Terms of Use</a>
-    <span aria-hidden="true">&bull;</span>
-    <a href="/about.html">About</a>
-  </nav>
 
   <div id="site-footer" data-footer-src="/footer.html?v=1.4.9"></div>
 
