@@ -1,10 +1,79 @@
 [
   {
+    "date": "2025-11-09",
+    "time": "",
+    "category": "Maintenance",
+    "quick_facts": "Nitrate 40 ppm (pre-water-change) · ~90% sump / ~75% display water change · New poly-fil barrier installed",
+    "ramble": "Pre-water-change nitrate test measured at 40 ppm. Performed ~90% sump and ~75% display water change. Added a new poly-fil barrier to prevent debris from entering the pump chamber and support continued water clarity and flow stabilization.",
+    "nitrate_ppm": "40",
+    "nitrite_ppm": "",
+    "ammonia_ppm": "",
+    "ph": "",
+    "media": "",
+    "tags": "29g,maintenance,post-treatment-recovery-week",
+    "photos": [
+      {
+        "src": "/assets/images/2025-11-09-sump-top-poly.jpg",
+        "alt": "Top-down view of the sump after installing the new poly-fil barrier. Plants visible in the refugium section.",
+        "caption": "Top view — new poly-fil layer added above the refugium for debris control."
+      },
+      {
+        "src": "/assets/images/2025-11-09-sump-front-poly.jpg",
+        "alt": "Front view showing the sump chambers with fresh poly-fil installed for mechanical filtration and flow clarity.",
+        "caption": "Front view — poly-fil barrier placed to prevent debris from reaching the pump chamber."
+      },
+      {
+        "src": "/assets/images/2025-11-09-sump-filled-poly.jpg",
+        "alt": "Full sump setup showing all chambers after refill. Clear flow path and new filter media in place.",
+        "caption": "System refilled — flow restored and water clarity improving post-maintenance."
+      }
+    ]
+  },
+  {
+    "date": "2025-11-06",
+    "time": "",
+    "category": "Feeding, Test & Dosing",
+    "quick_facts": "Nitrate 20 ppm · Fed flakes + brine shrimp · Spot-dosed Seachem Excel",
+    "ramble": "Nitrate measured at 20 ppm. Fed flakes and brine shrimp. Spot-dosed Seachem Excel. The BBA that was near the random flow generator is now completely gone — marking the completion of the Post-Treatment Recovery Week and the successful end of the recovery cycle.",
+    "nitrate_ppm": "20",
+    "nitrite_ppm": "",
+    "ammonia_ppm": "",
+    "ph": "",
+    "media": "",
+    "tags": "29g,feeding,dosing,testing,post-treatment-recovery-week"
+  },
+  {
+    "date": "2025-11-05",
+    "time": "",
+    "category": "Feeding & Dosing",
+    "quick_facts": "Fed flakes + bloodworms · Spot-dosed Seachem Excel · No water change",
+    "ramble": "Fed flakes and bloodworms. Spot-dosed Seachem Excel for light algae control. Fish feeding response strong; system remains stable through Post-Treatment Recovery Week.",
+    "nitrate_ppm": "",
+    "nitrite_ppm": "",
+    "ammonia_ppm": "",
+    "ph": "",
+    "media": "",
+    "tags": "29g,feeding,dosing,post-treatment-recovery-week"
+  },
+  {
+    "date": "2025-11-04",
+    "time": "",
+    "category": "Feeding, Test & Dosing",
+    "quick_facts": "Nitrate <5 ppm · Fed algae wafers + flakes · 4 pumps NilocG Thrive Plus · Spot-dosed Seachem Excel",
+    "ramble": "Nitrate tested under 5 ppm. Dosed 4 pumps of NilocG Thrive Plus and spot-dosed Seachem Excel. Fed algae wafers and a small amount of flakes to ensure all fish fed. Nutrient levels remain very low but stable as Post-Treatment Recovery Week continues.",
+    "nitrate_ppm": "<5",
+    "nitrite_ppm": "",
+    "ammonia_ppm": "",
+    "ph": "",
+    "media": "",
+    "tags": "29g,feeding,dosing,testing,post-treatment-recovery-week"
+  },
+  {
     "date": "2025-11-03",
     "time": "",
     "category": "Feeding, Dosing & Observation",
-    "quick_facts": "Fed flakes and brine shrimp \u00b7 Excel spot-dose x2 \u00b7 ThrivePlus 0 \u00b7 No water change",
-    "ramble": "Malaysian trumpet snails were observed naturally cleaning the sump overflow screen, preventing buildup \u2014 marking the \u201cNatural Balance Discovery\u201d milestone as the system begins showing signs of self-regulation during the Post-Treatment Recovery Week.",
+    "quick_facts": "Fed flakes and brine shrimp · Excel spot-dose x2 · ThrivePlus 0 · No water change",
+    "ramble": "Malaysian trumpet snails were observed naturally cleaning the sump overflow screen, preventing buildup — marking the “Natural Balance Discovery” milestone as the system begins showing signs of self-regulation during the Post-Treatment Recovery Week.",
     "nitrate_ppm": "",
     "nitrite_ppm": "",
     "ammonia_ppm": "",
@@ -16,7 +85,7 @@
     "date": "2025-11-02",
     "time": "",
     "category": "Maintenance & Dosing",
-    "quick_facts": "Pre-water-change nitrate test: 20\u201340 ppm (\u224820) \u00b7 ~95% sump / ~70% display water change + light trim \u00b7 Spot- and cap-dosed Seachem Excel (post-change)",
+    "quick_facts": "Pre-water-change nitrate test: 20–40 ppm (≈20) · ~95% sump / ~70% display water change + light trim · Spot- and cap-dosed Seachem Excel (post-change)",
     "ramble": "Continuing Post-Treatment Recovery Week. Noticed new plant growth emerging.",
     "nitrate_ppm": "",
     "nitrite_ppm": "",
