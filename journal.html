@@ -125,6 +125,27 @@
       margin: 12px 0 8px 0;
     }
 
+    .journal-photos {
+      margin: 0.5rem 0;
+    }
+
+    .journal-figure {
+      margin: 0.75rem 0 1.25rem;
+    }
+
+    .journal-photo {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+      display: block;
+    }
+
+    .journal-figcaption {
+      font-size: 0.9rem;
+      opacity: 0.85;
+      margin-top: 0.25rem;
+    }
+
     @media (max-width: 640px) {
       body::before {
         left: 12px;
@@ -152,6 +173,74 @@
       <h1>Tank Journal</h1>
       <p class="intro-text">Legal-pad view of recent entries. Newest on top.</p>
     </header>
+
+    <article class="entry">
+      <h2 class="entry-title">2025-11-09 | Maintenance</h2>
+      <p class="entry-meta">Logged November 9, 2025</p>
+      <div class="entry-body">
+        <p>Pre-water-change nitrate tested at 40 ppm, prompting a deep clean with roughly 90% of the sump and 75% of the display refreshed.</p>
+        <p>Installed a new poly-fil barrier to keep debris out of the pump chamber and maintain water clarity as the system settles post-maintenance.</p>
+        <div class="journal-photos" aria-label="journal photos">
+          <figure class="journal-figure">
+            <img
+              class="journal-photo"
+              src="/assets/images/2025-11-09-sump-top-poly.jpg"
+              alt="Top-down view of the sump after installing the new poly-fil barrier. Plants visible in the refugium section."
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption class="journal-figcaption">Top view — new poly-fil layer added above the refugium for debris control.</figcaption>
+          </figure>
+          <figure class="journal-figure">
+            <img
+              class="journal-photo"
+              src="/assets/images/2025-11-09-sump-front-poly.jpg"
+              alt="Front view showing the sump chambers with fresh poly-fil installed for mechanical filtration and flow clarity."
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption class="journal-figcaption">Front view — poly-fil barrier placed to prevent debris from reaching the pump chamber.</figcaption>
+          </figure>
+          <figure class="journal-figure">
+            <img
+              class="journal-photo"
+              src="/assets/images/2025-11-09-sump-filled-poly.jpg"
+              alt="Full sump setup showing all chambers after refill. Clear flow path and new filter media in place."
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption class="journal-figcaption">System refilled — flow restored and water clarity improving post-maintenance.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <h2 class="entry-title">2025-11-06 | Feeding, Test &amp; Dosing</h2>
+      <p class="entry-meta">Logged November 6, 2025</p>
+      <div class="entry-body">
+        <p>Nitrate measured at 20 ppm with the community fed flakes and brine shrimp alongside a spot dose of Seachem Excel.</p>
+        <p>The last traces of BBA near the random flow generator have cleared, closing out the Post-Treatment Recovery Week on a high note.</p>
+      </div>
+    </article>
+
+    <article class="entry">
+      <h2 class="entry-title">2025-11-05 | Feeding &amp; Dosing</h2>
+      <p class="entry-meta">Logged November 5, 2025</p>
+      <div class="entry-body">
+        <p>Fed flakes and bloodworms with a targeted spot dose of Seachem Excel to keep algae pressure light.</p>
+        <p>Fish activity and appetite remain strong as the system holds steady through Post-Treatment Recovery Week.</p>
+      </div>
+    </article>
+
+    <article class="entry">
+      <h2 class="entry-title">2025-11-04 | Feeding, Test &amp; Dosing</h2>
+      <p class="entry-meta">Logged November 4, 2025</p>
+      <div class="entry-body">
+        <p>Nitrate tested under 5 ppm. Dosed four pumps of NilocG Thrive Plus and added a spot dose of Seachem Excel.</p>
+        <p>Fed algae wafers with a pinch of flakes so every fish got a share, keeping nutrients low yet stable during Post-Treatment Recovery Week.</p>
+      </div>
+    </article>
 
     <article class="entry">
       <h2 class="entry-title">2025-11-03 | Feeding, Dosing &amp; Observation</h2>
