@@ -1,10 +1,10 @@
 {
   "version": "1.4.9",
-  "generatedAt": "2025-10-29T14:23:06.965Z",
+  "generatedAt": "2025-11-09T02:05:20.726Z",
   "files": {
-    "footer.html": "600acaeeb67772c5c86e30423a3270521c4b02874833a60331f496cee6f558f4",
+    "footer.html": "8756c8be418fd512b8db21d0f0f4205b366f2c93dce809405ef040f3755e9aed",
     "assets/sprite.socials.svg": "5a728cfd1f827946e741cf685459b3ca0e71c1810790f36fc5f4e00c195c63ad",
     "js/footer-loader.js": "d8c9f12de64d5f73a5265bce7ab9445a378d8f43018b8fdf28a749c3cbe4aaef",
-    "css/site.css": "118986f0160fd9c5efbfea1827d059cb217e0e87130ad91419e0ddb4c1cc34d4"
+    "css/site.css": "b629a03b7427ce0fa2491ef6294f03ddc66e7cb8dd0865312b556799201d18c4"
   }
 }
