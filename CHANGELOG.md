@@ -1,5 +1,7 @@
 # The Tank Guide — Changelog
 
+- Cycling Coach UI polish: moved Results info icon inline, fixed Advanced spacing, converted FAQs to accordions, removed duplicate legal links.
+
 ## v1.9.5 — 2025-11-01 | Checklist Reconciliation Audit
 - Totals: COMPLETE=4, INCOMPLETE=3, DEFERRED=3
 - Highlights: Right-click deterrent flag remains opt-in; build + Playwright smoke coverage stay healthy.
