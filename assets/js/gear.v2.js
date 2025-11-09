@@ -993,10 +993,16 @@
     const rawContext = options.context ?? '';
     const context = String(rawContext).toLowerCase();
     const hasValidHref = /^https?:\/\//i.test(href);
-    const buyLabel = `Buy ${escapeHTML(displayTitle)} on Amazon`;
+    const isAmazonAffiliate = hasValidHref && /(amazon\.|amzn\.to)/i.test(href);
+    const buttonClasses = ['btn'];
+    if (isAmazonAffiliate) {
+      buttonClasses.push('btn-amazon', 'btn-amazon-affiliate');
+    }
+    const actionLabel = `${isAmazonAffiliate ? 'Shop' : 'Buy'} ${escapeHTML(displayTitle)} on Amazon`;
+    const linkText = isAmazonAffiliate ? 'Shop on Amazon' : 'Buy on Amazon';
     const actionsHtml = hasValidHref
-      ? `<a class=\"btn\" href=\"${escapeHTML(href)}\" target=\"_blank\" rel=\"sponsored noopener noreferrer\" aria-label=\"${buyLabel}\">Buy on Amazon</a>`
-      : '<button class=\"btn\" type=\"button\" aria-disabled=\"true\" title=\"Link coming soon\">Buy on Amazon</button>';
+      ? `<a class=\"${buttonClasses.join(' ')}\" href=\"${escapeHTML(href)}\" target=\"_blank\" rel=\"sponsored noopener noreferrer\" aria-label=\"${actionLabel}\">${linkText}</a>`
+      : `<button class=\"${buttonClasses.join(' ')}\" type=\"button\" aria-disabled=\"true\" title=\"Link coming soon\">${linkText}</button>`;
     row.innerHTML = `
       <div class="option__title">${headingHtml}</div>
       ${noteText ? `<p class="option__note">${escapeHTML(noteText)}</p>` : ''}

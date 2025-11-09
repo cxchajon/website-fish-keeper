@@ -161,6 +161,24 @@
     height: 1em;
   }
 
+  .gear-page .btn-amazon-affiliate {
+    border: 1px solid rgba(148, 163, 184, .45);
+    background: #FF9900;
+    color: #131921;
+    line-height: 1.2;
+    transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+
+  .gear-page .btn-amazon-affiliate:hover {
+    background: #E68A00;
+    border-color: rgba(148, 163, 184, .6);
+  }
+
+  .gear-page .btn-amazon-affiliate svg {
+    width: 1.1em;
+    height: 1.1em;
+  }
+
   .gear-page .btn-amazon {
     background: #ff9900;
     color: #131921;
@@ -1084,7 +1102,8 @@
   }
 
   function setButtonContent(anchor, labelText, fallback) {
-    const text = (labelText || fallback || '').replace(/\s+/g, ' ').trim() || fallback || 'Buy on Amazon';
+    const defaultText = (fallback || 'Shop on Amazon');
+    const text = (labelText || defaultText).replace(/\s+/g, ' ').trim() || defaultText;
     anchor.innerHTML = '';
     anchor.appendChild(createIcon());
     const span = document.createElement('span');
@@ -1094,11 +1113,11 @@
 
   function normalizeAmazonButton(anchor) {
     const rawLabel = anchor.querySelector('span')?.textContent || anchor.textContent;
-    const label = (rawLabel || 'Buy on Amazon').replace(/\s+/g, ' ').trim();
-    anchor.classList.add('btn', 'btn-amazon');
+    const label = (rawLabel || 'Shop on Amazon').replace(/\s+/g, ' ').trim();
+    anchor.classList.add('btn', 'btn-amazon', 'btn-amazon-affiliate');
     anchor.classList.remove('btn--amazon');
     ensureRelTarget(anchor);
-    setButtonContent(anchor, label, 'Buy on Amazon');
+    setButtonContent(anchor, label, 'Shop on Amazon');
     const wrap = anchor.parentElement;
     if (wrap) {
       wrap.classList.add('cta-row');
@@ -1167,8 +1186,11 @@
 
     amazonButtons.forEach((anchor) => {
       const labelCandidate = anchor.querySelector('span')?.textContent || anchor.textContent || '';
-      const normalizedLabel = labelCandidate.replace(/\s+/g, ' ').trim();
-      if (!/\bamazon\b/i.test(normalizedLabel) || !/\bbuy\b/i.test(normalizedLabel)) {
+      const normalizedLabel = labelCandidate.replace(/\s+/g, ' ').trim().toLowerCase();
+      if (!normalizedLabel.includes('amazon')) {
+        return;
+      }
+      if (!/\b(buy|shop)\b/.test(normalizedLabel)) {
         return;
       }
 
