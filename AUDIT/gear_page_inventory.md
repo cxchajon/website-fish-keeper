@@ -8,13 +8,13 @@
 - An affiliate disclosure (“As an Amazon Associate, we earn from qualifying purchases.”) appears immediately before the gear accordion grid. (Source: gear/index.html L211-L213)
 - All product links generated for gear items use `rel="sponsored noopener noreferrer"`, ensuring affiliate metadata accompanies every Amazon URL. (Source: assets/js/gear.v2.js L930-L1001, L1834-L1904)
 - JSON-LD for WebPage, BreadcrumbList, and ItemList identifies gear sections and publisher data for SEO. (Source: gear/index.html L13-L79)
-- Navigation and footer markup are fetched and injected on load via `/js/nav.js?v=1.1.0` and `/js/footer-loader.js?v=1.4.9`, rather than being inlined. (Source: gear/index.html L146, L319; js/nav.js L223-L266; js/footer-loader.js L16-L28)
+- Navigation and footer markup are fetched and injected on load via `/js/nav.js?v=1.1.0` and `/js/footer-loader.js?v=1.5.2`, rather than being inlined. (Source: gear/index.html L146, L319; js/nav.js L223-L266; js/footer-loader.js L16-L28)
 - Filter product ranges pull an additional catalog (`/assets/data/gearCatalog.json`) through `/js/gear-data.js`, storing results with caching logic. (Source: js/gear-data.js L1-L96)
 - A CTA block directs readers to “Next Step: Cycle Your Tank” linking to `/params.html` for the Cycling Coach workflow. (Source: gear/index.html L302-L308)
 
 ## 1. Overview
 - **Primary file:** `gear/index.html`
-- **Related includes & partials:** navigation fetched from `/nav.html?v=1.1.0`; footer fetched from `/footer.html?v=1.4.9`; GA include `<!--#include virtual="/includes/ga4.html" -->`. (Sources: gear/index.html L146-L150; js/nav.js L223-L266; js/footer-loader.js L16-L28)
+- **Related includes & partials:** navigation fetched from `/nav.html?v=1.1.0`; footer fetched from `/footer.html?v=1.5.2`; GA include `<!--#include virtual="/includes/ga4.html" -->`. (Sources: gear/index.html L146-L150; js/nav.js L223-L266; js/footer-loader.js L16-L28)
 - **Data sources:** CSV files in `/data/` and JSON in `/assets/js/generated/gear-stands.json`. (Source: assets/js/gear.v2.data.js L521-L608)
 - **External services:** Google AdSense, Cloudflare Web Analytics, Google Funding Choices CMP, Google Fonts preconnect, Amazon affiliate links. (Source: gear/index.html L96-L160)
 
@@ -330,10 +330,10 @@ Each accordion header contains an info button referencing `TIPS` entries. Dialog
 - On-page CTA: `/params.html` (Cycling Coach) within the Next Step section. (Source: gear/index.html L302-L308)
 
 ## 7. Scripts & Styles
-- Stylesheets: `/css/style.css?v=2024-06-05a`, `/css/site.css?v=1.4.9`, `/assets/css/gear.v2.css`. (Source: gear/index.html L96-L100)
+- Stylesheets: `/css/style.css?v=2024-06-05a`, `/css/site.css?v=1.5.2`, `/assets/css/gear.v2.css`. (Source: gear/index.html L96-L100)
 - Inline style block styles the affiliate disclaimer and banner animation. (Source: gear/index.html L100-L145)
-- Scripts loaded: `/js/nav.js?v=1.1.0`, `/assets/js/consent-mode.js`, GA4 include, Google AdSense, Cloudflare beacon, Google Funding Choices loader, `/assets/js/gear.v2.data.js`, `/js/ui/tooltip.js` (module), `/assets/js/gear.v2.js`, `/js/footer-loader.js?v=1.4.9`. (Source: gear/index.html L146-L319)
-- Additional fetches: `/nav.html?v=1.1.0` (nav.js L223-L266), `/footer.html?v=1.4.9` (footer-loader.js L16-L28), `/js/gear-data.js` imports `/assets/data/gearCatalog.json`. (Source: assets/js/gear.v2.js L287-L302; js/gear-data.js L1-L96)
+- Scripts loaded: `/js/nav.js?v=1.1.0`, `/assets/js/consent-mode.js`, GA4 include, Google AdSense, Cloudflare beacon, Google Funding Choices loader, `/assets/js/gear.v2.data.js`, `/js/ui/tooltip.js` (module), `/assets/js/gear.v2.js`, `/js/footer-loader.js?v=1.5.2`. (Source: gear/index.html L146-L319)
+- Additional fetches: `/nav.html?v=1.1.0` (nav.js L223-L266), `/footer.html?v=1.5.2` (footer-loader.js L16-L28), `/js/gear-data.js` imports `/assets/data/gearCatalog.json`. (Source: assets/js/gear.v2.js L287-L302; js/gear-data.js L1-L96)
 - Data fetch matrix summarized in `AUDIT/gear_page_assets.csv`.
 
 ## 8. Accessibility Notes

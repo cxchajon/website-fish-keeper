@@ -1,6 +1,6 @@
 (() => {
   const FOOTER_HOST_ID = 'site-footer';
-  const CANONICAL_FOOTER_SRC = '/footer.html?v=1.4.9';
+  const CANONICAL_FOOTER_SRC = '/footer.html?v=1.5.2';
 
   const getFooterSource = (host) => {
     const candidate = (host.dataset.footerSrc || '').trim();

@@ -90,7 +90,7 @@ async function gotoAndVerify(page, route, theme) {
   });
 
   const cssResponsePromise = page.waitForResponse((response) =>
-    response.url().includes('css/style.css?v=1.0.9')
+    response.url().includes('css/style.css?v=1.0.10')
   );
 
   await page.goto(`${baseURL}${route}`);
@@ -157,7 +157,7 @@ test('stocking, gear, and media share the nav layout', async ({ page }) => {
 
 test('index page remains free of the global nav', async ({ page }) => {
   const cssResponsePromise = page.waitForResponse((response) =>
-    response.url().includes('css/style.css?v=1.0.9')
+    response.url().includes('css/style.css?v=1.0.10')
   );
   await page.goto(`${baseURL}/index.html`);
   const cssResponse = await cssResponsePromise;

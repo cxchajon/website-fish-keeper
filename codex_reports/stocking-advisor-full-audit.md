@@ -4,7 +4,7 @@
 
 | Tag | Key Attributes | Purpose & Notes |
 | --- | --------------- | --------------- |
-| `link` | rel=`preload`, href=`https://thetankguide.com/footer.html?v=1.4.9` | Preloads shared footer fragment fetched later by `footer-loader.js`; uses anonymous CORS fetch hint. 【F:stocking-advisor.html†L4-L4】【F:stocking-advisor.html†L1981-L1982】 |
+| `link` | rel=`preload`, href=`https://thetankguide.com/footer.html?v=1.5.2` | Preloads shared footer fragment fetched later by `footer-loader.js`; uses anonymous CORS fetch hint. 【F:stocking-advisor.html†L4-L4】【F:stocking-advisor.html†L1981-L1982】 |
 | `meta` | charset=`UTF-8` | Sets UTF-8 encoding. 【F:stocking-advisor.html†L5-L5】 |
 | `title` | "Aquarium Stocking Calculator & Fish Compatibility | The Tank Guide" | Page title targets core keyword + brand. 【F:stocking-advisor.html†L6-L6】 |
 | `meta` | name=`description`, content=`Plan your freshwater tank…` | Primary SEO description present; matches OG/Twitter copy. 【F:stocking-advisor.html†L7-L24】 |
@@ -19,7 +19,7 @@
 | `meta` | name=`twitter:*` set (`card`, `site`, `creator`, `url`, `title`, `description`, `image`, `image:alt`) | Twitter summary large card mirrors OG data. 【F:stocking-advisor.html†L31-L41】 |
 | `link` | rel=`stylesheet`, href=`https://thetankguide.com/css/style.css?v=2024-06-05a` (id `css-main`) | Primary global stylesheet. 【F:stocking-advisor.html†L42-L42】 |
 | `link` | rel=`stylesheet`, href=`https://thetankguide.com/assets/css/utilities.css?v=2025-11-07` | Utility tokens. 【F:stocking-advisor.html†L43-L43】 |
-| `link` | rel=`stylesheet`, href=`https://thetankguide.com/css/site.css?v=1.4.9` | Layout theme. 【F:stocking-advisor.html†L44-L44】 |
+| `link` | rel=`stylesheet`, href=`https://thetankguide.com/css/site.css?v=1.5.2` | Layout theme. 【F:stocking-advisor.html†L44-L44】 |
 | `link` | rel=`stylesheet`, href=`https://thetankguide.com/css/ui.css?v=2024-09-15` | UI components baseline. 【F:stocking-advisor.html†L45-L45】 |
 | `link` | rel=`stylesheet`, href=`https://thetankguide.com/css/stocking-advisor.css?v=2025-10-31` | Tool-specific styling. 【F:stocking-advisor.html†L46-L46】 |
 | `style` (inline) | Prototype purge + tooltip styling | Removes deprecated filtration UI fragments that legacy scripts might inject. 【F:stocking-advisor.html†L47-L94】 |
