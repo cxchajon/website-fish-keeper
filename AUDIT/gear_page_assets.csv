@@ -1,7 +1,7 @@
 asset_type,file_path_or_url,used_for,referenced_from,notes
-html,/footer.html?v=1.4.9,Footer preload,gear/index.html L4-L5,Preloaded and later fetched by footer loader
+html,/footer.html?v=1.5.2,Footer preload,gear/index.html L4-L5,Preloaded and later fetched by footer loader
 css,/css/style.css?v=2024-06-05a,Global styles,gear/index.html L97,
-css,/css/site.css?v=1.4.9,Site-level styles,gear/index.html L98,
+css,/css/site.css?v=1.5.2,Site-level styles,gear/index.html L98,
 css,/assets/css/gear.v2.css,Gear page layout,gear/index.html L99,
 js,/js/nav.js?v=1.1.0,Loads navigation drawer,gear/index.html L146,Fetches /nav.html?v=1.1.0
 js,/assets/js/consent-mode.js,Consent defaults,gear/index.html L148,
@@ -12,9 +12,9 @@ js,https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1,Google
 js,/assets/js/gear.v2.data.js,Loads gear datasets,gear/index.html L316,Fetches CSV sources and stands JSON
 js,/js/ui/tooltip.js,Tooltip dialog handling,gear/index.html L317,Imports tooltip-content registry
 js,/assets/js/gear.v2.js,Gear page interactivity,gear/index.html L318,Imports /js/gear-data.js
-js,/js/footer-loader.js?v=1.4.9,Loads footer include,gear/index.html L319,Fetches /footer.html?v=1.4.9
+js,/js/footer-loader.js?v=1.5.2,Loads footer include,gear/index.html L319,Fetches /footer.html?v=1.5.2
 html,/nav.html?v=1.1.0,Navigation markup,js/nav.js L223-L266,Fetched via fetch()
-html,/footer.html?v=1.4.9,Footer markup,js/footer-loader.js L16-L28,Fetched and injected
+html,/footer.html?v=1.5.2,Footer markup,js/footer-loader.js L16-L28,Fetched and injected
 js,/js/gear-data.js,Filter catalog module,assets/js/gear.v2.js L287-L302,Fetches /assets/data/gearCatalog.json
 json,/assets/data/gearCatalog.json,Filter catalog data,js/gear-data.js L1-L90,Fetched with cache & localStorage
 json,/assets/js/generated/gear-stands.json,Stand recommendations,assets/js/gear.v2.data.js L535-L579 & L1874-L1910,Fetched via fetch

@@ -2,7 +2,7 @@
 
 ## Summary
 - Added `?v=1.3.5` cache-busting token and explicit `xlink:href` fallbacks to every `<use>` reference for `/assets/sprite.socials.svg` in `footer.html`.
-- Injected a single `<link rel="preload" href="/footer.html?v=1.4.9" as="fetch" crossorigin="anonymous">` tag into each HTML document that boots the canonical footer loader.
+- Injected a single `<link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">` tag into each HTML document that boots the canonical footer loader.
 - Regenerated `.footer.lock.json` so the hash guard tracks the new footer HTML signature.
 
 ## Cloudflare Cache Purge

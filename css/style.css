@@ -1433,6 +1433,20 @@ body.planted-active #cycling-coach .cc-title__leaf {
   line-height: 1.6;
 }
 
+.site-footer .affiliate-note {
+  margin: .4rem 0 0;
+  font-size: .95rem;
+  text-align: center;
+  opacity: .9;
+  color: inherit;
+}
+
+.site-footer .affiliate-note a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+
 .site-footer .under-social {
   margin: 12px 0 8px;
   text-align: center;

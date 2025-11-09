@@ -32,7 +32,7 @@ original_path,prototype_path,file_type,notes
 /data/gear_maintenance.csv,/prototype/gear/data/gear_maintenance.csv,csv,Maintenance tools dataset
 /data/gear_extras.csv,/prototype/gear/data/gear_extras.csv,csv,Extras dataset for dynamic sections
 /css/style.css?v=2024-06-05a,shared ref,css,Global stylesheet reused without duplication
-/css/site.css?v=1.4.9,shared ref,css,Global layout stylesheet reused without duplication
+/css/site.css?v=1.5.2,shared ref,css,Global layout stylesheet reused without duplication
 https://thetankguide.com/assets/logo.png,shared ref,img,Existing logo reference retained in JSON-LD
 https://thetankguide.com/assets/og/gear-guide.png,shared ref,img,OG/Twitter preview image hosted externally
 https://fonts.gstatic.com,shared ref,external,Font preconnect remains shared

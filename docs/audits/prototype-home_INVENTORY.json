@@ -138,7 +138,7 @@
         "module": false
       },
       {
-        "src": "https://thetankguide.com/js/footer-loader.js?v=1.4.9",
+        "src": "https://thetankguide.com/js/footer-loader.js?v=1.5.2",
         "async": false,
         "defer": true,
         "module": false
@@ -151,7 +151,7 @@
         "media": null
       },
       {
-        "href": "https://thetankguide.com/css/style.css?v=1.0.9",
+        "href": "https://thetankguide.com/css/style.css?v=1.0.10",
         "inline_bytes": 0,
         "media": null
       },
