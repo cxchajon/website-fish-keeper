@@ -39,6 +39,15 @@
   <link rel="stylesheet" href="/css/style.css?v=1.0.10" />
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
+  <!-- AdSense (staging placeholder; keep commented on staging)
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=YOUR-ADSENSE-CLIENT-ID" crossorigin="anonymous"></script>
+  -->
+  <!-- To enable on PRODUCTION ONLY:
+    1) Replace YOUR-ADSENSE-CLIENT-ID.
+    2) Uncomment this loader.
+    3) Remove meta robots noindex/nofollow.
+    4) Update canonical to the production URL.
+  -->
   <style>
     :root {
       --cycling-bg: linear-gradient(165deg, #061525 0%, #0a314a 55%, #0f4b4c 100%);
@@ -404,6 +413,23 @@
       text-decoration: underline;
     }
 
+    .ad-slot {
+      display: block;
+      width: 100%;
+      min-height: 90px;
+      margin-top: 3rem;
+      margin-bottom: 9.5rem;
+      text-align: center;
+    }
+
+    .ad-slot .ad-placeholder {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
     @media (max-width: 720px) {
       .stage-pill-group {
         flex-direction: column;
@@ -413,6 +439,13 @@
       .stage-pill {
         width: 100%;
         justify-content: center;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .ad-slot {
+        margin-top: 2.5rem;
+        margin-bottom: 10rem;
       }
     }
   </style>
@@ -566,11 +599,6 @@
   </script>
   <script src="/assets/js/consent-mode.js" defer></script>
   <!--#include virtual="/includes/ga4.html" -->
-  <!-- AdSense disabled on staging -->
-  <!-- <script
-    async
-    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
-    crossorigin="anonymous"></script> -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
   <script>
@@ -824,6 +852,18 @@
 
       <section class="panel" id="how-to" aria-labelledby="how-to-heading">
         <h2 id="how-to-heading">How to Use the Cycling Coach &amp; Understand the Nitrogen Cycle</h2>
+        <div class="ad-slot" role="region" aria-label="Advertisement">
+          <!-- AdSense unit placeholder (keep disabled on staging)
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="YOUR-ADSENSE-CLIENT-ID"
+               data-ad-slot="TBD_SLOT_ID"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+          -->
+          <div class="ad-placeholder">Advertisement</div>
+        </div>
         <p>
           Cycling Coach turns raw measurements into guidance so you stay ahead of spikes and keep beneficial bacteria thriving.
           Follow this loop each time you test.
@@ -842,6 +882,19 @@
           </ul>
         </div>
       </section>
+
+      <div class="ad-slot" role="region" aria-label="Advertisement">
+        <!-- AdSense unit placeholder (keep disabled on staging)
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="YOUR-ADSENSE-CLIENT-ID"
+             data-ad-slot="TBD_SLOT_ID"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        -->
+        <div class="ad-placeholder">Advertisement</div>
+      </div>
 
       <section class="panel card cc-faqs" id="cycling-faq" aria-labelledby="faq-heading">
         <div class="card__header"><h2 id="faq-heading">Cycling Coach FAQs</h2></div>
