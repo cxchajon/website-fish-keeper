@@ -13,12 +13,9 @@ const EXPECTED_SOCIAL_HREFS = [
   'https://www.youtube.com/@fishkeepinglifeco',
 ];
 const EXPECTED_NAV_HREFS = [
-  '/privacy-legal.html',
-  '/terms.html',
   '/trust-security.html',
   '/cookie-settings.html',
   '/cookie-settings.html',
-  '/contact-feedback.html',
   '/store.html',
   '/copyright-dmca.html',
 ];

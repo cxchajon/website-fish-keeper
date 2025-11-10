@@ -2545,3 +2545,20 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
   font-weight: 700;
   margin-bottom: 0.5em;
 }
+.legal-links {
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  color: var(--muted-text, #aaa);
+}
+
+.legal-links a {
+  margin: 0 10px;
+  color: var(--link-color, #80bfff);
+  text-decoration: none;
+}
+
+.legal-links a:hover {
+  text-decoration: underline;
+}
