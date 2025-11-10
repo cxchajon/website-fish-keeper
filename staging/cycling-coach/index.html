@@ -23,7 +23,7 @@
     content="Stage your aquarium with the Cycling Coach: track test inputs, read AI-ready results, and pass the 24-hour challenge before adding fish."
   />
   <meta property="og:url" content="https://thetankguide.com/staging/cycling-coach/" />
-  <meta property="og:image" content="https://thetankguide.com/assets/images/cycling-coach-og.png" />
+  <meta property="og:image" content="https://thetankguide.com/assets/og/cycling-coach.png" />
   <meta property="og:image:alt" content="Cycling Coach staging preview title graphic." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@fishkeepinglife" />
@@ -32,8 +32,9 @@
     name="twitter:description"
     content="Follow the Cycling Coach staging flow, record readings, and check the 24-hour challenge for a fish-ready aquarium."
   />
-  <meta name="twitter:image" content="https://thetankguide.com/assets/images/cycling-coach-og.png" />
+  <meta name="twitter:image" content="https://thetankguide.com/assets/og/cycling-coach.png" />
   <meta name="twitter:image:alt" content="Cycling Coach staging preview title graphic." />
+  <!-- TODO: ensure /assets/og/cycling-coach.png (1200x630) exists in production -->
   <link rel="stylesheet" href="/css/style.css?v=1.0.10" />
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
@@ -441,11 +442,36 @@
       text-decoration: underline;
     }
 
+    .site-footer-legal {
+      padding: clamp(48px, 6vw, 72px) 20px 32px;
+      text-align: center;
+      color: var(--cycling-muted);
+      font-size: 0.95rem;
+    }
+
+    .site-footer-legal__links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+
+    .site-footer-legal__links a {
+      color: #8befff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .site-footer-legal__links a:hover,
+    .site-footer-legal__links a:focus-visible {
+      text-decoration: underline;
+    }
+
     .ad-slot {
       display: block;
       width: 100%;
       min-height: 90px;
-      margin-top: 9.5rem;
+      margin-top: 10rem;
       margin-bottom: 10rem;
       text-align: center;
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -1044,6 +1070,14 @@
     </div>
     <p class="last-updated">Last updated: November 10, 2025</p>
   </main>
+
+  <div class="site-footer-legal" role="contentinfo" aria-label="Legal links">
+    <div class="site-footer-legal__links">
+      <a href="/privacy-legal.html">Privacy Policy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/contact-feedback.html">Contact</a>
+    </div>
+  </div>
 
   <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
 
