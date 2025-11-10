@@ -9,7 +9,7 @@
     name="description"
     content="Is your aquarium cycled? Track your nitrogen cycle with the Cycling Coach. Log ammonia, nitrite, and nitrate to see when your fishless or fish-in cycle is safe."
   />
-  <link rel="canonical" href="https://thetankguide.com/staging/cycling-coach/" />
+  <link rel="canonical" href="https://thetankguide.com/cycling-coach/" />
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/logos/logo-512.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/logo-512.png">
   <link rel="apple-touch-icon" href="/assets/img/logos/apple-touch-icon.png">
@@ -484,6 +484,33 @@
       }
     }
   </style>
+  <style id="coach-inline-link-style">
+    .page--cycling-coach .stage-wrap a,
+    .page--cycling-coach .card a,
+    .page--cycling-coach .panel a,
+    .how-links a,
+    .cc-accordion-body a,
+    .coach-page a,
+    .content-card a,
+    .faq a {
+      color: #ffffff !important;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: opacity 0.2s ease;
+    }
+
+    .page--cycling-coach .stage-wrap a:hover,
+    .page--cycling-coach .card a:hover,
+    .page--cycling-coach .panel a:hover,
+    .how-links a:hover,
+    .cc-accordion-body a:hover,
+    .coach-page a:hover,
+    .content-card a:hover,
+    .faq a:hover {
+      opacity: 0.85;
+    }
+  </style>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -636,6 +663,21 @@
         "Cycling Coach dashboard"
       ],
       "totalTime": "P1D"
+    }
+  </script>
+  <script type="application/ld+json" id="org-schema">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://thetankguide.com/#organization",
+      "name": "FishKeepingLifeCo",
+      "url": "https://thetankguide.com/",
+      "logo": "https://thetankguide.com/assets/img/logo/logo-512.png",
+      "sameAs": [
+        "https://thetankguide.com",
+        "https://www.amazon.com/author/fklc",
+        "https://chatgpt.com/g/g-69012624c9688191b98c2623badff18d-the-tank-guide-assistant-by-fishkeepinglifeco"
+      ]
     }
   </script>
   <script src="/assets/js/consent-mode.js" defer></script>
