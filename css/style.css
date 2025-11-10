@@ -2547,18 +2547,20 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 }
 .legal-links {
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   margin-top: 40px;
   margin-bottom: 20px;
-  color: var(--muted-text, #aaa);
+  color: var(--muted-text, #a0a0a0);
 }
 
 .legal-links a {
-  margin: 0 10px;
-  color: var(--link-color, #80bfff);
-  text-decoration: none;
+  margin: 0 12px;
+  color: #ffffff;
+  text-decoration: underline;
+  font-weight: 600;
 }
 
-.legal-links a:hover {
-  text-decoration: underline;
+.legal-links a:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
 }

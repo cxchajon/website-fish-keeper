@@ -444,20 +444,19 @@
 
   <div class="blog-footer-fade" aria-hidden="true"></div>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
-  <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
-
-<section class="legal-links">
-  <a href="/privacy-legal.html">Privacy Policy</a>
-  <a href="/terms.html">Terms</a>
-  <a href="/contact-feedback.html">Contact</a>
-</section>
-
-<noscript>
-  <section class="legal-links">
+  <section class="legal-links" aria-label="Site legal links">
     <a href="/privacy-legal.html">Privacy Policy</a>
     <a href="/terms.html">Terms</a>
     <a href="/contact-feedback.html">Contact</a>
   </section>
-</noscript>
+  <noscript>
+    <section class="legal-links" aria-label="Site legal links (noscript)">
+      <a href="/privacy-legal.html">Privacy Policy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/contact-feedback.html">Contact</a>
+    </section>
+  </noscript>
+
+  <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
 </body>
 </html>
