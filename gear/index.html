@@ -937,6 +937,19 @@
   <script type="module" src="/js/ui/tooltip.js"></script>
   <script defer src="/assets/js/gear.v2.js"></script>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
+  <section class="legal-links" aria-label="Site legal links">
+    <a href="/privacy-legal.html">Privacy Policy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/contact-feedback.html">Contact</a>
+  </section>
+  <noscript>
+    <section class="legal-links" aria-label="Site legal links (noscript)">
+      <a href="/privacy-legal.html">Privacy Policy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/contact-feedback.html">Contact</a>
+    </section>
+  </noscript>
+
   <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
   <script>
 (function () {
@@ -1220,19 +1233,5 @@
   observer.observe(scope, { childList: true, subtree: true });
 })();
   </script>
-
-<section class="legal-links">
-  <a href="/privacy-legal.html">Privacy Policy</a>
-  <a href="/terms.html">Terms</a>
-  <a href="/contact-feedback.html">Contact</a>
-</section>
-
-<noscript>
-  <section class="legal-links">
-    <a href="/privacy-legal.html">Privacy Policy</a>
-    <a href="/terms.html">Terms</a>
-    <a href="/contact-feedback.html">Contact</a>
-  </section>
-</noscript>
 </body>
 </html>
