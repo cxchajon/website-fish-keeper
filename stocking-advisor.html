@@ -12,8 +12,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0a1020" />
   <link rel="manifest" href="/manifest.webmanifest" />
-  <link rel="icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/logos/logo-512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/logo-512.png">
+  <link rel="apple-touch-icon" href="/assets/img/logos/apple-touch-icon.png">
+  <meta property="og:site_name" content="The Tank Guide" />
+  <!-- TODO: Replace temporary favicon (logo-512.png) with 16x16 + 32x32 versions later -->
+  <!--#include virtual="/includes/schema-organization.html" -->
   <link rel="canonical" href="https://thetankguide.com/stocking-advisor.html" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://thetankguide.com/stocking-advisor.html" />
@@ -22,7 +26,6 @@
     property="og:description"
     content="Use our free aquarium stocking calculator to plan your freshwater tank. Check fish compatibility, estimate bioload, and get stocking ideas. From The Tank Guide."
   />
-  <meta property="og:site_name" content="The Tank Guide" />
   <meta property="og:image" content="https://thetankguide.com/assets/og/stocking-advisor.png" />
   <meta
     property="og:image:alt"
@@ -103,24 +106,6 @@
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "Organization",
-        "@id": "https://thetankguide.com/#organization",
-        "name": "The Tank Guide",
-        "url": "https://thetankguide.com/",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://thetankguide.com/logo.png",
-          "width": 512,
-          "height": 512
-        },
-        "sameAs": [
-          "https://www.youtube.com/@TheTankGuide",
-          "https://www.instagram.com/thetankguide/",
-          "https://www.facebook.com/thetankguide/",
-          "https://www.tiktok.com/@thetankguide"
-        ]
-      },
-      {
         "@type": "ImageObject",
         "@id": "https://thetankguide.com/stocking-advisor.html#primaryimage",
         "url": "/assets/og/stocking-advisor.png",
@@ -143,7 +128,13 @@
         "mainEntityOfPage": {
           "@id": "https://thetankguide.com/stocking-advisor.html#webapp"
         },
-        "dateModified": "2025-11-01T18:02:39Z"
+        "dateModified": "2025-11-01T18:02:39Z",
+        "publisher": {
+          "@id": "https://thetankguide.com/#organization"
+        },
+        "author": {
+          "@id": "https://thetankguide.com/#organization"
+        }
       },
       {
         "@type": "WebApplication",
