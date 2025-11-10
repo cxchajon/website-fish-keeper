@@ -25,7 +25,7 @@ PAGES: List[Path] = [
     Path("university/index.html"),
     Path("journal.html"),
     Path("journal-dashboard.html"),
-    Path("staging/cycling-coach/index.html"),
+    Path("cycling-coach/index.html"),
     Path("blogs/index.html"),
     Path("blogs/betta-fish-in-a-community-tank.html"),
     Path("blogs/nitrogen-cycle/index.html"),

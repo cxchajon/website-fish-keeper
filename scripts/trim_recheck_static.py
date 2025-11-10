@@ -28,7 +28,7 @@ PAGES_TO_CHECK = {
     "index.html": "/",
     "gear/index.html": "/gear/",
     "stocking-advisor.html": "/stocking-advisor.html",
-    "params.html": "/params.html",
+    "cycling-coach/index.html": "/cycling-coach/",
     "media.html": "/media.html",
     "about.html": "/about.html",
 }

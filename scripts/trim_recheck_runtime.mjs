@@ -239,7 +239,7 @@ async function run() {
     { path: '/', expectStatus: 200 },
     { path: '/gear/', expectStatus: 200 },
     { path: '/stocking-advisor.html', expectStatus: 200 },
-    { path: '/params.html', expectStatus: 200 },
+    { path: '/cycling-coach/', expectStatus: 200 },
     { path: '/media.html', expectStatus: 200 },
     { path: '/about.html', expectStatus: 200 },
     { path: '/contact-feedback.html', expectStatus: 200 },

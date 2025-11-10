@@ -7,7 +7,7 @@
     "outlinks": [
       "/stocking-advisor.html",
       "/gear/",
-      "/params.html",
+      "/cycling-coach/",
       "/media.html",
       "/about.html",
       "/contact-feedback.html"
@@ -32,17 +32,17 @@
     "canonical": "https://thetankguide.com/gear/",
     "meta_robots": [],
     "outlinks": [
-      "/params.html"
+      "/cycling-coach/"
     ],
     "inlinks": [
       "/",
       "/gear.html"
     ]
   },
-  "/params.html": {
+  "/cycling-coach/": {
     "file": "params.html",
     "status": 200,
-    "canonical": "https://thetankguide.com/params.html",
+    "canonical": "https://thetankguide.com/cycling-coach/",
     "meta_robots": [],
     "outlinks": [
       "/media.html"
@@ -66,7 +66,7 @@
     ],
     "inlinks": [
       "/",
-      "/params.html",
+      "/cycling-coach/",
       "/media.html"
     ]
   },

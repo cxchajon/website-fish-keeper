@@ -4,7 +4,7 @@
 | --- | ----------- | ----------- | ------------- | --------- | ----- |
 | https://thetankguide.com/ | 200 | — | — | https://thetankguide.com/ | — |
 | https://thetankguide.com/stocking-advisor.html | 200 | — | — | https://thetankguide.com/stocking-advisor.html | — |
-| https://thetankguide.com/params.html | 200 | — | — | https://thetankguide.com/params.html | — |
+| https://thetankguide.com/cycling-coach/ | 200 | — | — | https://thetankguide.com/cycling-coach/ | — |
 | https://thetankguide.com/gear/ | 200 | — | — | https://thetankguide.com/gear/ | — |
 | https://thetankguide.com/media.html | 200 | — | — | https://thetankguide.com/media.html | — |
 | https://thetankguide.com/store.html | 200 | — | — | https://thetankguide.com/store.html | — |
