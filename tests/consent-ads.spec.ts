@@ -26,7 +26,7 @@ interface FlowConfig {
 const PAGES = [
   '/index.html',
   '/stocking-advisor.html',
-  '/params.html',
+  '/cycling-coach/',
   '/media.html',
   '/gear/',
   '/contact-feedback.html',

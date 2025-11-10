@@ -10,7 +10,7 @@
 - JSON-LD for WebPage, BreadcrumbList, and ItemList identifies gear sections and publisher data for SEO. (Source: gear/index.html L13-L79)
 - Navigation and footer markup are fetched and injected on load via `/js/nav.js?v=1.1.0` and `/js/footer-loader.js?v=1.5.2`, rather than being inlined. (Source: gear/index.html L146, L319; js/nav.js L223-L266; js/footer-loader.js L16-L28)
 - Filter product ranges pull an additional catalog (`/assets/data/gearCatalog.json`) through `/js/gear-data.js`, storing results with caching logic. (Source: js/gear-data.js L1-L96)
-- A CTA block directs readers to “Next Step: Cycle Your Tank” linking to `/params.html` for the Cycling Coach workflow. (Source: gear/index.html L302-L308)
+- A CTA block directs readers to “Next Step: Cycle Your Tank” linking to `/cycling-coach/` for the Cycling Coach workflow. (Source: gear/index.html L302-L308)
 
 ## 1. Overview
 - **Primary file:** `gear/index.html`
@@ -315,7 +315,7 @@ Each accordion header contains an info button referencing `TIPS` entries. Dialog
   - DWVO 75-120 Gallon Aquarium Stand with Power Outlet & LED Light, Cabinet for Accessories Storage – Heavy Duty Metal Fish Tank Stand Suitable for Turtle Tank, Reptile Terrarium, 2000 LBS Capacity, White (Source: assets/js/generated/gear-stands.json L428) — Link: https://amzn.to/3VVta5Y
 
 ### 4.5 CTA & Supporting Copy
-- CTA block: “Next Step: Cycle Your Tank” with copy “You’ve picked the right gear — now bring it to life. The Cycling Coach walks you through building your tank’s biological balance, from first fill to fish-ready.” Link to `/params.html`. (Source: gear/index.html L302-L308)
+- CTA block: “Next Step: Cycle Your Tank” with copy “You’ve picked the right gear — now bring it to life. The Cycling Coach walks you through building your tank’s biological balance, from first fill to fish-ready.” Link to `/cycling-coach/`. (Source: gear/index.html L302-L308)
 - Supporting paragraph describing The Tank Guide Gear Hub mission. (Source: gear/index.html L312-L314)
 
 ## 5. Size Selector / Interactions
@@ -327,7 +327,7 @@ Each accordion header contains an info button referencing `TIPS` entries. Dialog
 
 ## 6. Links & CTAs
 - Full inventory of 170 links (internal, external, affiliate) captured in `AUDIT/gear_page_links.csv`. (Generated from datasets listed above.)
-- On-page CTA: `/params.html` (Cycling Coach) within the Next Step section. (Source: gear/index.html L302-L308)
+- On-page CTA: `/cycling-coach/` (Cycling Coach) within the Next Step section. (Source: gear/index.html L302-L308)
 
 ## 7. Scripts & Styles
 - Stylesheets: `/css/style.css?v=2024-06-05a`, `/css/site.css?v=1.5.2`, `/assets/css/gear.v2.css`. (Source: gear/index.html L96-L100)

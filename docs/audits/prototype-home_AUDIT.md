@@ -48,7 +48,7 @@ Generated 2025-10-23T20:14:36Z UTC | commit ce9e70c7fe7de3f2f475c8a4cf7179be1c74
 | --- | --- | --- | --- |
 | Plan My Stocking List | https://thetankguide.com/stocking-advisor.html |  |  |
 | Browse the Gear Guide | https://thetankguide.com/gear/ |  |  |
-| Start the Cycling Coach | https://thetankguide.com/params.html |  |  |
+| Start the Cycling Coach | https://thetankguide.com/cycling-coach/ |  |  |
 | Explore the Media Hub | https://thetankguide.com/media.html |  |  |
 | Learn more | https://thetankguide.com/about.html |  |  |
 | Contact & Feedback | https://thetankguide.com/contact-feedback.html |  |  |

@@ -1,9 +1,9 @@
 path,file,status,canonical,meta_robots,outlinks,inlinks
-/,index.html,200,https://thetankguide.com/,,/stocking-advisor.html;/gear/;/params.html;/media.html;/about.html;/contact-feedback.html,
+/,index.html,200,https://thetankguide.com/,,/stocking-advisor.html;/gear/;/cycling-coach/;/media.html;/about.html;/contact-feedback.html,
 /stocking-advisor.html,stocking-advisor.html,200,https://thetankguide.com/stocking-advisor.html,,/gear.html,/
-/gear/,gear/index.html,200,https://thetankguide.com/gear/,,/params.html,/;/gear.html
-/params.html,params.html,200,https://thetankguide.com/params.html,,/media.html,/;/gear/
-/media.html,media.html,200,https://thetankguide.com/media.html,,/media.html;/feature-your-tank.html;/blogs/;/pages/university.html;/store.html,/;/params.html;/media.html
+/gear/,gear/index.html,200,https://thetankguide.com/gear/,,/cycling-coach/,/;/gear.html
+/cycling-coach/,params.html,200,https://thetankguide.com/cycling-coach/,,/media.html,/;/gear/
+/media.html,media.html,200,https://thetankguide.com/media.html,,/media.html;/feature-your-tank.html;/blogs/;/pages/university.html;/store.html,/;/cycling-coach/;/media.html
 /about.html,about.html,200,https://thetankguide.com/about.html,,/about.html;/feature-your-tank.html;/contact-feedback.html,/;/about.html
 /contact-feedback.html,contact-feedback.html,200,https://thetankguide.com/contact-feedback.html,"index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",,/;/about.html
 /gear.html,gear.html,200,https://thetankguide.com/gear/,"noindex, follow",/gear/,/stocking-advisor.html

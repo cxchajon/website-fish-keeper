@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 const CANONICAL_VERSION = '1.5.2';
 const CANONICAL_SCRIPT_SRC = `/js/footer-loader.js?v=${CANONICAL_VERSION}`;
 const CANONICAL_FOOTER_SRC = `/footer.html?v=${CANONICAL_VERSION}`;
@@ -101,6 +101,9 @@ const lint = () => {
   const issues = [];
 
   for (const file of files) {
+    if (!existsSync(file)) {
+      continue;
+    }
     const text = readFileSync(file, 'utf8');
     const lines = text.split('\n');
 

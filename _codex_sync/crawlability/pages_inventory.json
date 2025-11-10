@@ -45,11 +45,11 @@
     "http_status_hint": "200"
   },
   {
-    "path": "/params.html",
+    "path": "/cycling-coach/",
     "source_path": "params.html",
     "title": "Cycling Coach & 24-Hour Challenge \u2014 The Tank Guide",
     "has_canonical": true,
-    "canonical": "https://thetankguide.com/params.html",
+    "canonical": "https://thetankguide.com/cycling-coach/",
     "robots_meta": null,
     "http_status_hint": "200"
   },

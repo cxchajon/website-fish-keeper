@@ -8,7 +8,7 @@
       "cls_guard": true,
       "ready": true
     },
-    "/params.html": {
+    "/cycling-coach/": {
       "loader_once_head": true,
       "slots_match": true,
       "consent_hooks": true,

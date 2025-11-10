@@ -35,7 +35,7 @@ Next: Consider carrying planted toggle and filtration selection in future (e.g.,
 [2025-10-13 | Tooltip Accessibility Alignment]
 Scope: Unified tooltip/popover accessibility on home, gear, stocking, params, media, about.
 Pre-flight:
-• Verified manifest entries (/, /gear/, /stocking-advisor.html, /params.html, /media.html, /about.html).
+• Verified manifest entries (/, /gear/, /stocking-advisor.html, /cycling-coach/, /media.html, /about.html).
 • Info icon counts — home:1 (script-injected), gear:10, stocking:2, params:9, media:0, about:0.
 • Bundle checksums (pre-change): js/ui/tooltip.js bc768e29…, js/stocking.js 2cdec31b…, css/style.css 0b061eab… .
 • Playwright browser install attempt failed (HTTP 403); documented and proceeded with existing binaries.

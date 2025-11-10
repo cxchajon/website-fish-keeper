@@ -156,7 +156,7 @@
     "preflight_timestamp": "2025-10-19T02:48:08Z"
   },
   {
-    "page_path": "/params.html",
+    "page_path": "/cycling-coach/",
     "file": "params.html",
     "term": "Nitrogen Cycle",
     "intent": "Explain cycling process",
@@ -168,7 +168,7 @@
     "preflight_timestamp": "2025-10-19T02:48:08Z"
   },
   {
-    "page_path": "/params.html",
+    "page_path": "/cycling-coach/",
     "file": "params.html",
     "term": "Ammonia",
     "intent": "Warn about toxic ammonia",
@@ -180,7 +180,7 @@
     "preflight_timestamp": "2025-10-19T02:48:08Z"
   },
   {
-    "page_path": "/params.html",
+    "page_path": "/cycling-coach/",
     "file": "params.html",
     "term": "Nitrite",
     "intent": "Warn about nitrite spikes",
@@ -192,7 +192,7 @@
     "preflight_timestamp": "2025-10-19T02:48:08Z"
   },
   {
-    "page_path": "/params.html",
+    "page_path": "/cycling-coach/",
     "file": "params.html",
     "term": "Nitrate",
     "intent": "Highlight nitrate management",
@@ -204,7 +204,7 @@
     "preflight_timestamp": "2025-10-19T02:48:08Z"
   },
   {
-    "page_path": "/params.html",
+    "page_path": "/cycling-coach/",
     "file": "params.html",
     "term": "Water Change",
     "intent": "Highlight maintenance",

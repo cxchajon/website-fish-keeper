@@ -15,7 +15,7 @@
       "reject_persist": true,
       "legal_pages_adfree": false
     },
-    "/params.html": {
+    "/cycling-coach/": {
       "loader_once_head": true,
       "slots_match": true,
       "placement_looks_ok": true,
@@ -83,7 +83,7 @@
   "ready_for_submission": true,
   "notes": [
     "Static QA confirms loader present once per monetized template head.",
-    "Slot IDs on stocking/params/gear/media match provided inventory map.",
+    "Slot IDs on stocking/cycling-coach/gear/media match provided inventory map.",
     "Consent banner hooks accept and reject paths with persistence verified in QA.",
     "Legal disclosures remain free of ad markup as required."
   ]

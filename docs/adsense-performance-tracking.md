@@ -31,7 +31,7 @@ Once these channels collect data you can break down reports by placement group a
 Set up URL groups if you want to filter AdSense reports by tool/page type:
 
 - `/stocking-advisor.html`
-- `/params.html`
+- `/cycling-coach/`
 - `/gear.html`
 - `/media.html`
 
