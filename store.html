@@ -8,7 +8,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Store — The Tank Guide</title>
   <meta name="description" content="Shop books by FishKeepingLifeCo. Purchase Life in Balance: The Hidden Magic of Aquariums on Amazon." />
-  <link rel="icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/logos/logo-512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/logo-512.png">
+  <link rel="apple-touch-icon" href="/assets/img/logos/apple-touch-icon.png">
+  <meta property="og:site_name" content="The Tank Guide">
+  <!-- TODO: Replace temporary favicon (logo-512.png) with 16x16 + 32x32 versions later -->
+  <!--#include virtual="/includes/schema-organization.html" -->
   <link rel="canonical" href="https://thetankguide.com/store.html" />
 
   <!-- Site CSS (keep your current version number) -->
@@ -80,8 +85,15 @@
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
+      "@id": "https://thetankguide.com/store.html#webpage",
       "name": "Store — The Tank Guide",
       "url": "https://thetankguide.com/store.html",
+      "publisher": {
+        "@id": "https://thetankguide.com/#organization"
+      },
+      "author": {
+        "@id": "https://thetankguide.com/#organization"
+      },
       "breadcrumb": {
         "@type": "BreadcrumbList",
         "itemListElement": [

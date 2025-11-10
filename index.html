@@ -8,8 +8,13 @@
   <title>Fishkeeping Guides &amp; Tools — The Tank Guide</title>
   <meta name="description" content="The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums." />
   <link rel="canonical" href="https://thetankguide.com/" />
-  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/logos/logo-512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/logo-512.png">
+  <link rel="apple-touch-icon" href="/assets/img/logos/apple-touch-icon.png">
   <meta property="og:site_name" content="The Tank Guide">
+  <!-- TODO: Replace temporary favicon (logo-512.png) with 16x16 + 32x32 versions later -->
+  <!--#include virtual="/includes/schema-organization.html" -->
+  <meta property="og:type" content="website">
   <meta property="og:title" content="Fishkeeping Guides &amp; Tools — The Tank Guide">
   <meta property="og:description" content="The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.">
   <meta property="og:url" content="https://thetankguide.com/">
@@ -551,64 +556,6 @@
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "Organization",
-          "@id": "https://thetankguide.com/#organization",
-          "name": "FishKeepingLifeCo",
-          "alternateName": "The Tank Guide",
-          "url": "https://thetankguide.com/",
-          "logo": "https://thetankguide.com/logo.png",
-          "image": "https://thetankguide.com/logo.png",
-          "slogan": "Educational Aquarium Books &amp; Tools",
-          "description": "FishKeepingLifeCo publishes educational aquarium books and interactive online tools like The Tank Guide to help new aquarists and hobbyists set up, stock, and maintain thriving aquariums.",
-          "address": {
-            "@type": "PostalAddress",
-            "addressCountry": "US",
-            "addressRegion": "NY"
-          },
-          "brand": {
-            "@type": "Brand",
-            "name": "The Tank Guide"
-          },
-          "parentOrganization": {
-            "@type": "Organization",
-            "name": "CXLXC LLC"
-          },
-          "foundingDate": "2025-09-12",
-          "publishingPrinciples": "https://thetankguide.com/about.html",
-          "areaServed": [
-            "United States",
-            "New York"
-          ],
-          "knowsAbout": [
-            "Aquariums",
-            "Fishkeeping",
-            "Nitrogen Cycle",
-            "Freshwater Aquariums",
-            "Planted Tanks",
-            "Aquarium Setup Basics",
-            "Water Parameters",
-            "Aquarium Cycling"
-          ],
-          "contactPoint": [
-            {
-              "@type": "ContactPoint",
-              "contactType": "customer support",
-              "email": "info@thetankguide.com",
-              "availableLanguage": [
-                "en"
-              ]
-            }
-          ],
-          "sameAs": [
-            "https://www.instagram.com/FishKeepingLifeCo",
-            "https://www.tiktok.com/@FishKeepingLifeCo",
-            "https://www.facebook.com/fishkeepinglifeco",
-            "https://x.com/fishkeepinglife?s=21",
-            "https://www.youtube.com/@fishkeepinglifeco",
-            "https://amzn.to/3IRKvK0"
-          ]
-        },
-        {
           "@type": "WebSite",
           "@id": "https://thetankguide.com/#website",
           "url": "https://thetankguide.com/",
@@ -636,6 +583,9 @@
             "@id": "https://thetankguide.com/#website"
           },
           "publisher": {
+            "@id": "https://thetankguide.com/#organization"
+          },
+          "author": {
             "@id": "https://thetankguide.com/#organization"
           },
           "primaryImageOfPage": {
