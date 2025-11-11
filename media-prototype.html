@@ -1,6 +1,6 @@
 <!-- PROTOTYPE: EXCLUDE FROM SITEMAP/CRAWL -->
 <!-- Updated: Applied new translucent nav resources and grouping to the Media hub. -->
-<!-- Prototype note: TikTok and Instagram sections are active here; Media Archive remains hidden pending automation work. -->
+<!-- Prototype note: Social channel experiments are shelved here; Media Archive remains hidden pending automation work. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -196,8 +196,6 @@
       opacity: .9;
     }
 
-    .alib__foot{ text-align:center; margin: clamp(10px, 2.6vw, 18px) 0 0; color: rgba(255,255,255,.95); }
-
     /* --- Aquarium Library: Tabletop variant --- */
 
     /* wrapper to control spacing relative to section text */
@@ -221,9 +219,10 @@
     .alib-book{
       position: relative;
       display: grid;
-      place-items: end center;
+      place-items: center;
       inline-size: clamp(var(--alib-book-min), 22vw, var(--alib-book-max));
       aspect-ratio: 5 / 6;
+      padding: clamp(16px, 3vw, 22px);
 
       /* gentle tilt so they feel placed on the table */
       transform: perspective(800px) rotateX(7deg);
@@ -236,6 +235,8 @@
       inline-size: 100%;
       block-size: 100%;
       object-fit: contain;
+      border-radius: clamp(12px, 3vw, 18px);
+      box-shadow: 0 12px 26px rgba(5, 37, 48, 0.16);
     }
 
     /* soft contact shadow under each book */
@@ -424,7 +425,7 @@
     .center { text-align:center; }
 
     .media-storefront-hero {
-      margin: 2rem auto;
+      margin: clamp(32px, 6vw, 48px) auto;
       max-width: 1100px;
     }
 
@@ -895,137 +896,36 @@
             <div class="alib__tabletop">
               <a class="alib-book" href="/blogs/">
                 <span class="visually-hidden">Blogs</span>
-                <img class="alib-book__img" src="/assets/media/library/books/blogs-modern.svg" alt="Blogs" loading="lazy">
+                <img
+                  class="alib-book__img"
+                  src="/assets/img/library-blogs.webp"
+                  alt="FishKeepingLifeCo library blogs cover artwork"
+                  loading="lazy"
+                  decoding="async"
+                >
               </a>
               <a class="alib-book" href="https://thetankguide.com/pages/university.html">
                 <span class="visually-hidden">University Articles</span>
-                <img class="alib-book__img" src="/assets/media/library/books/university.svg" alt="University Articles" loading="lazy">
+                <img
+                  class="alib-book__img"
+                  src="/assets/img/university-articles.webp"
+                  alt="Aquarium University research articles artwork"
+                  loading="lazy"
+                  decoding="async"
+                >
               </a>
               <a class="alib-book" href="/journal.html" aria-label="Open the FishKeepingLifeCo Journal">
                 <span class="visually-hidden">Journal</span>
-                <svg class="alib-book__img" viewBox="0 0 512 512" width="100%" height="auto" role="img" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
-                  <defs>
-                    <linearGradient id="journalPaper" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#FFF9E6" />
-                      <stop offset="100%" stop-color="#FFF5DA" />
-                    </linearGradient>
-                    <linearGradient id="journalBinding" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#B9B3A8" />
-                      <stop offset="100%" stop-color="#A9A399" />
-                    </linearGradient>
-                    <linearGradient id="journalEdgeHighlight" x1="62%" y1="42%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0" />
-                      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.4" />
-                    </linearGradient>
-                    <linearGradient id="journalStaple" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#E3E0DA" />
-                      <stop offset="100%" stop-color="#D6D2CB" />
-                    </linearGradient>
-                    <filter id="journalPadShadow" x="-18%" y="-14%" width="136%" height="160%">
-                      <feOffset dx="0" dy="16" in="SourceAlpha" result="offset" />
-                      <feGaussianBlur in="offset" stdDeviation="14" result="blur" />
-                      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.12 0" result="shadow" />
-                      <feBlend in="shadow" in2="SourceGraphic" mode="normal" />
-                    </filter>
-                    <clipPath id="journalPaperClip">
-                      <rect x="56" y="64" width="400" height="424" rx="32" ry="32" />
-                    </clipPath>
-                    <filter id="journalLabelShadow" x="-10%" y="-10%" width="120%" height="140%">
-                      <feOffset dx="0" dy="1" in="SourceAlpha" result="offset" />
-                      <feGaussianBlur in="offset" stdDeviation="2.6" result="labelBlur" />
-                      <feColorMatrix in="labelBlur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.08 0" />
-                    </filter>
-                  </defs>
-                  <g id="pad" filter="url(#journalPadShadow)" preserveAspectRatio="xMidYMid meet">
-                    <rect x="56" y="64" width="400" height="424" rx="32" ry="32" fill="url(#journalPaper)" />
-                    <g clip-path="url(#journalPaperClip)">
-                      <line x1="104" y1="140" x2="104" y2="480" stroke="#FF6666" stroke-width="3" stroke-opacity="0.25" />
-                      <g stroke="#A6C5F2" stroke-width="2.6" stroke-opacity="0.25">
-                        <line x1="96" y1="188" x2="456" y2="188" />
-                        <line x1="96" y1="204" x2="456" y2="204" />
-                        <line x1="96" y1="220" x2="456" y2="220" />
-                        <line x1="96" y1="236" x2="456" y2="236" />
-                        <line x1="96" y1="252" x2="456" y2="252" />
-                        <line x1="96" y1="268" x2="456" y2="268" />
-                        <line x1="96" y1="284" x2="456" y2="284" />
-                        <line x1="96" y1="300" x2="456" y2="300" />
-                        <line x1="96" y1="316" x2="456" y2="316" />
-                        <line x1="96" y1="332" x2="456" y2="332" />
-                        <line x1="96" y1="348" x2="456" y2="348" />
-                        <line x1="96" y1="364" x2="456" y2="364" />
-                        <line x1="96" y1="380" x2="456" y2="380" />
-                        <line x1="96" y1="396" x2="456" y2="396" />
-                        <line x1="96" y1="412" x2="456" y2="412" />
-                        <line x1="96" y1="428" x2="456" y2="428" />
-                        <line x1="96" y1="444" x2="456" y2="444" />
-                        <line x1="96" y1="460" x2="456" y2="460" />
-                        <line x1="96" y1="476" x2="456" y2="476" />
-                      </g>
-                    </g>
-                    <rect x="56" y="64" width="400" height="424" rx="32" ry="32" fill="none" stroke="url(#journalEdgeHighlight)" stroke-width="3" />
-                    <rect x="56" y="64" width="400" height="92" rx="32" ry="32" fill="url(#journalBinding)" />
-                    <rect x="56" y="64" width="400" height="16" rx="32" ry="16" fill="#FFFFFF" fill-opacity="0.18" />
-                    <g fill="url(#journalStaple)">
-                      <rect x="120" y="92" width="32" height="10" rx="4" ry="4" />
-                      <rect x="196" y="92" width="32" height="10" rx="4" ry="4" />
-                      <rect x="272" y="92" width="32" height="10" rx="4" ry="4" />
-                      <rect x="348" y="92" width="32" height="10" rx="4" ry="4" />
-                    </g>
-                    <g id="pad-label" transform="translate(130 214)" fill="#1E1E1E" fill-opacity="0.92">
-                      <g filter="url(#journalLabelShadow)">
-                        <g transform="translate(0 0)">
-                          <path d="M0 0H28V8H20V32Q20 44 8 44H0V36H8Q14 36 14 30V8H0Z" />
-                        </g>
-                        <g transform="translate(32 0)" fill-rule="evenodd">
-                          <path d="M17 0C28 0 34 8 34 22C34 36 28 44 17 44C6 44 0 36 0 22C0 8 6 0 17 0ZM17 12C12 12 10 16 10 22C10 28 12 32 17 32C22 32 24 28 24 22C24 16 22 12 17 12Z" />
-                        </g>
-                        <g transform="translate(72 0)">
-                          <path d="M0 0H10V28C10 32 12 34 16 34C20 34 22 32 22 28V0H32V28C32 40 24 44 16 44C8 44 0 40 0 28V0Z" />
-                        </g>
-                        <g transform="translate(110 0)">
-                          <path d="M0 0H20C29 0 34 6 34 16C34 24 29 30 22 30L34 44H22L12 32H8V44H0V0ZM8 8V24H20C24 24 26 22 26 16C26 10 24 8 20 8H8Z" />
-                        </g>
-                        <g transform="translate(150 0)">
-                          <path d="M0 0H10L24 30V0H32V44H22L8 14V44H0V0Z" />
-                        </g>
-                        <g transform="translate(188 0)">
-                          <path d="M16 0L32 44H24L21 36H11L8 44H0L16 0ZM13 28H19L16 18Z" />
-                        </g>
-                        <g transform="translate(226 0)">
-                          <path d="M0 0H10V36H30V44H0V0Z" />
-                        </g>
-                      </g>
-                      <g>
-                        <g transform="translate(0 0)">
-                          <path d="M0 0H28V8H20V32Q20 44 8 44H0V36H8Q14 36 14 30V8H0Z" />
-                        </g>
-                        <g transform="translate(32 0)" fill-rule="evenodd">
-                          <path d="M17 0C28 0 34 8 34 22C34 36 28 44 17 44C6 44 0 36 0 22C0 8 6 0 17 0ZM17 12C12 12 10 16 10 22C10 28 12 32 17 32C22 32 24 28 24 22C24 16 22 12 17 12Z" />
-                        </g>
-                        <g transform="translate(72 0)">
-                          <path d="M0 0H10V28C10 32 12 34 16 34C20 34 22 32 22 28V0H32V28C32 40 24 44 16 44C8 44 0 40 0 28V0Z" />
-                        </g>
-                        <g transform="translate(110 0)">
-                          <path d="M0 0H20C29 0 34 6 34 16C34 24 29 30 22 30L34 44H22L12 32H8V44H0V0ZM8 8V24H20C24 24 26 22 26 16C26 10 24 8 20 8H8Z" />
-                        </g>
-                        <g transform="translate(150 0)">
-                          <path d="M0 0H10L24 30V0H32V44H22L8 14V44H0V0Z" />
-                        </g>
-                        <g transform="translate(188 0)">
-                          <path d="M16 0L32 44H24L21 36H11L8 44H0L16 0ZM13 28H19L16 18Z" />
-                        </g>
-                        <g transform="translate(226 0)">
-                          <path d="M0 0H10V36H30V44H0V0Z" />
-                        </g>
-                      </g>
-                    </g>
-                  </g>
-                </svg>
+                <img
+                  class="alib-book__img"
+                  src="/assets/img/library-journal.webp"
+                  alt="FishKeepingLifeCo Journal notebook artwork"
+                  loading="lazy"
+                  decoding="async"
+                >
               </a>
             </div>
           </div>
-
-          <p class="alib__foot">More sections coming soon.</p>
         </section>
         <!-- Aquarium Library END -->
       </div>
