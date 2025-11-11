@@ -6,7 +6,7 @@
   <title>Aquarium Cycling Coach &amp; Nitrogen Cycle Tracker | The Tank Guide</title>
   <meta
     name="description"
-    content="Track your aquarium's nitrogen cycle. Enter ammonia, nitrite, and nitrate levels into the Cycling Coach to see if your fishless or fish-in cycle is complete."
+    content="Track your aquarium's nitrogen cycle. Enter ammonia, nitrite, and nitrate levels to see if your fishless or fish-in cycle is complete."
   />
   <link rel="canonical" href="https://thetankguide.com/cycling-coach/" />
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/logos/logo-512.png">
@@ -19,22 +19,21 @@
   <meta property="og:title" content="Aquarium Cycling Coach &amp; Nitrogen Cycle Tracker | The Tank Guide" />
   <meta
     property="og:description"
-    content="Track your aquarium's nitrogen cycle. Enter ammonia, nitrite, and nitrate levels into the Cycling Coach to see if your fishless or fish-in cycle is complete."
+    content="Track your aquarium's nitrogen cycle. Enter ammonia, nitrite, and nitrate levels to see if your fishless or fish-in cycle is complete."
   />
   <meta property="og:url" content="https://thetankguide.com/cycling-coach/" />
-  <meta property="og:image" content="https://thetankguide.com/assets/og/cycling-coach.png" />
-  <meta property="og:image:alt" content="Cycling Coach preview title graphic." />
+  <meta property="og:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
+  <meta property="og:image:alt" content="The Tank Guide — Cycling Coach" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@fishkeepinglife" />
   <meta name="twitter:title" content="Aquarium Cycling Coach &amp; Nitrogen Cycle Tracker | The Tank Guide" />
   <meta name="twitter:url" content="https://thetankguide.com/cycling-coach/" />
   <meta
     name="twitter:description"
-    content="Track your aquarium's nitrogen cycle. Enter ammonia, nitrite, and nitrate levels into the Cycling Coach to see if your fishless or fish-in cycle is complete."
+    content="Track your aquarium's nitrogen cycle. Enter ammonia, nitrite, and nitrate levels to see if your fishless or fish-in cycle is complete."
   />
-  <meta name="twitter:image" content="https://thetankguide.com/assets/og/cycling-coach.png" />
-  <meta name="twitter:image:alt" content="Cycling Coach preview title graphic." />
-  <!-- TODO: ensure /assets/og/cycling-coach.png (1200x630) exists in production -->
+  <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
+  <meta name="twitter:image:alt" content="The Tank Guide — Cycling Coach" />
   <link rel="stylesheet" href="/css/style.css?v=1.0.10" />
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
@@ -514,7 +513,7 @@
     }
 
     .page--cycling-coach .cc-actions {
-      margin-top: 0.5rem;
+      margin-top: 1rem;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 0.75rem;
@@ -536,9 +535,15 @@
       border: 1px solid rgba(255, 255, 255, 0.18);
     }
 
-    .page--cycling-coach .challenge-header {
+    .page--cycling-coach .challenge-title {
+      display: inline-flex;
       align-items: baseline;
       gap: 0.45rem;
+      margin: 0;
+    }
+
+    .page--cycling-coach .challenge-title .info-btn {
+      flex-shrink: 0;
     }
 
     .page--cycling-coach .challenge-grid {
@@ -553,7 +558,7 @@
     }
 
     .page--cycling-coach #challenge-check {
-      margin-top: 0.75rem;
+      margin-top: 1rem;
     }
 
     .page--cycling-coach .cc-accordion summary {
@@ -843,7 +848,7 @@
   <main id="main-content" aria-labelledby="cycling-coach-title">
     <div class="stage-wrap">
       <section class="stage-hero">
-        <h1 id="cycling-coach-title">Cycling Coach &amp; 24-Hour Challenge</h1>
+        <h1 id="cycling-coach-title">Cycling Coach</h1>
         
         <p>
           The Cycling Coach guides you through the nitrogen cycle with structured inputs, clear AI-ready summaries, and a
@@ -976,16 +981,18 @@
 
       <section class="card" id="challengeCard" aria-labelledby="challenge-heading" hidden>
         <div class="card__header challenge-header">
-          <h2 class="card__title" id="challenge-heading">24-Hour Challenge</h2>
-          <button
-            type="button"
-            class="info-btn ttg-tooltip-trigger"
-            aria-label="More info about the Challenge"
-            aria-expanded="false"
-            data-tooltip-id="tt-challenge"
-            aria-controls="tt-challenge"
-            data-testid="info-challenge"
-          >i</button>
+          <h2 class="card__title challenge-title" id="challenge-heading">
+            24-Hour Challenge
+            <button
+              type="button"
+              class="info-btn ttg-tooltip-trigger"
+              aria-label="More info about the Challenge"
+              aria-expanded="false"
+              data-tooltip-id="tt-challenge"
+              aria-controls="tt-challenge"
+              data-testid="info-challenge"
+            >i</button>
+          </h2>
         </div>
         <div id="tt-challenge" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
         <div class="challenge-card">
