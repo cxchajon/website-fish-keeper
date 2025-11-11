@@ -79,6 +79,38 @@
     .section h2 { margin: 0 0 8px; }
     .section p.lead { margin: 0 0 16px; color: var(--muted); }
 
+    .faq-accordion { display: grid; gap: 1rem; margin-top: 1rem; }
+
+    .faq-item {
+      border-radius: 16px;
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+
+    .faq-summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 1rem 1.25rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      position: relative;
+    }
+    .faq-summary::-webkit-details-marker { display: none; }
+    .faq-summary::after {
+      content: "▸";
+      position: absolute;
+      right: 1.25rem;
+      transition: transform .2s ease;
+    }
+    .faq-item[open] .faq-summary::after { transform: rotate(90deg); }
+
+    .faq-content { padding: 0 1.25rem 1.25rem; line-height: 1.55; }
+
+    /* AdSense safety spacing near FAQ */
+    .faq-section { margin-top: 2rem; }
+    .faq-section + .ad-slot, .ad-slot + .faq-section { margin-top: 10rem; } /* ~160px */
+
     .community-archive-cta {
       display: flex;
       justify-content: flex-start;
@@ -1139,28 +1171,48 @@
       </script>
     </div>
 
-    <section class="section" id="media-faq" aria-labelledby="media-faq-title">
-      <article class="card">
-        <h2 id="media-faq-title">Frequently Asked Questions</h2>
-        <div class="stack">
-          <div>
-            <h3>What is The Tank Guide?</h3>
-            <p>The Tank Guide is the FishKeepingLifeCo learning platform dedicated to freshwater beginners. We publish clear videos, hands-on guides, and illustrated books that make aquarium science approachable for families, classrooms, and first-time hobbyists.</p>
-          </div>
-          <div>
-            <h3>What is “Life in Balance” about?</h3>
-            <p>“Life in Balance” is our family-friendly storybook that turns the nitrogen cycle, filtration, and fish care basics into an illustrated adventure. It helps new aquarists understand the science behind stable tanks while keeping the narrative uplifting and easy to follow.</p>
-          </div>
-          <div>
-            <h3>Where can I find nitrogen cycle guides?</h3>
-            <p>Start with the <a href="/university/" aria-label="Visit The Tank Guide Aquarium University">Aquarium University lessons</a>, then bookmark the quick-reference sheets in the <a href="#aquarium-library">Aquarium Library</a>. You can also watch our <a href="https://www.youtube.com/@FishKeepingLifeCo" target="_blank" rel="noopener noreferrer">YouTube tutorials</a> for step-by-step nitrogen cycle walkthroughs.</p>
-          </div>
-          <div>
-            <h3>Do you feature community tanks?</h3>
-            <p>Absolutely. We showcase reader aquariums in the Featured Tanks gallery, spotlight a Community Video Pick, and invite hobbyists to share builds through the <a href="/feature-your-tank.html">Feature Your Tank</a> form.</p>
-          </div>
+    <section class="section faq-section" id="media-faq" aria-labelledby="media-faq-title">
+      <div class="wrap">
+        <h2 class="section-title" id="media-faq-title">Frequently Asked Questions</h2>
+
+        <div class="faq-accordion" role="tablist" aria-label="The Tank Guide FAQs">
+          <details class="faq-item" role="group">
+            <summary class="faq-summary" role="button" aria-controls="faq1" aria-expanded="false">
+              What is The Tank Guide?
+            </summary>
+            <div id="faq1" class="faq-content">
+              <p>The Tank Guide is the FishKeepingLifeCo learning platform dedicated to freshwater beginners. We publish clear videos, hands-on guides, and illustrated books that make aquarium science approachable for families, classrooms, and first-time hobbyists.</p>
+            </div>
+          </details>
+
+          <details class="faq-item" role="group">
+            <summary class="faq-summary" role="button" aria-controls="faq2" aria-expanded="false">
+              What is “Life in Balance” about?
+            </summary>
+            <div id="faq2" class="faq-content">
+              <p>“Life in Balance” is our family-friendly storybook that turns the nitrogen cycle, filtration, and fish care basics into an illustrated adventure. It helps new aquarists understand the science behind stable tanks while keeping the narrative uplifting and easy to follow.</p>
+            </div>
+          </details>
+
+          <details class="faq-item" role="group">
+            <summary class="faq-summary" role="button" aria-controls="faq3" aria-expanded="false">
+              Where can I find nitrogen cycle guides?
+            </summary>
+            <div id="faq3" class="faq-content">
+              <p>Start with the <a href="/university/" aria-label="Visit The Tank Guide Aquarium University">Aquarium University lessons</a>, then bookmark the quick-reference sheets in the <a href="#aquarium-library">Aquarium Library</a>. You can also watch our <a href="https://www.youtube.com/@FishKeepingLifeCo" target="_blank" rel="noopener noreferrer">YouTube tutorials</a> for step-by-step nitrogen cycle walkthroughs.</p>
+            </div>
+          </details>
+
+          <details class="faq-item" role="group">
+            <summary class="faq-summary" role="button" aria-controls="faq4" aria-expanded="false">
+              Do you feature community tanks?
+            </summary>
+            <div id="faq4" class="faq-content">
+              <p>Absolutely. We showcase reader aquariums in the Featured Tanks gallery, spotlight a Community Video Pick, and invite hobbyists to share builds through the <a href="/feature-your-tank.html">Feature Your Tank</a> form.</p>
+            </div>
+          </details>
         </div>
-      </article>
+      </div>
     </section>
 
     <section class="seo-intro">
@@ -1169,6 +1221,35 @@
       </div>
     </section>
   </main>
+
+  <script>
+    (function() {
+      var items = document.querySelectorAll('.faq-accordion .faq-item');
+      if (!items.length) return;
+
+      var updateSummary = function(item) {
+        var summary = item.querySelector('.faq-summary');
+        if (summary) {
+          summary.setAttribute('aria-expanded', item.open ? 'true' : 'false');
+        }
+      };
+
+      items.forEach(function(item) {
+        updateSummary(item);
+        item.addEventListener('toggle', function() {
+          updateSummary(item);
+          if (item.open) {
+            items.forEach(function(other) {
+              if (other !== item) {
+                other.open = false;
+                updateSummary(other);
+              }
+            });
+          }
+        });
+      });
+    })();
+  </script>
 
   <!-- Prototype-only crawlable legal links -->
   <div class="visually-hidden" aria-hidden="false">
