@@ -440,6 +440,11 @@
       border-radius: 12px;
     }
 
+    .storefront {
+      margin-top: 4rem;
+      margin-bottom: 4rem;
+    }
+
     /* Community split layout */
     #community .split {
       display: grid;
@@ -529,6 +534,29 @@
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://thetankguide.com/#organization",
+  "name": "FishKeepingLifeCo",
+  "alternateName": "The Tank Guide",
+  "url": "https://thetankguide.com/",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://thetankguide.com/assets/img/logos/logo-512.png",
+    "width": 512,
+    "height": 512
+  },
+  "sameAs": [
+    "https://www.youtube.com/@FishKeepingLifeCo",
+    "https://www.amazon.com/stores/author/B0FZMFJ6QL",
+    "https://x.com/FishKeepingLifeCo",
+    "https://www.facebook.com/FishKeepingLifeCo",
+    "https://chatgpt.com/g/g-69012624c9688191b98c2623badff18d"
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
   "@type": "WebPage",
   "@id": "https://thetankguide.com/media.html#webpage",
   "name": "Fishkeeping Media & Books — The Tank Guide",
@@ -540,6 +568,48 @@
   "author": {
     "@id": "https://thetankguide.com/#organization"
   }
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
+    {
+      "@type": "Book",
+      "position": 1,
+      "name": "Life in Balance: The Hidden Magic of Aquariums",
+      "isbn": "979-8263446215",
+      "author": {"@id": "https://thetankguide.com/#organization"},
+      "publisher": {"@id": "https://thetankguide.com/#organization"},
+      "audience": {"@type": "Audience", "audienceType": "Families and Beginners"},
+      "url": "https://thetankguide.com/store.html#life-in-balance"
+    },
+    {
+      "@type": "Book",
+      "position": 2,
+      "name": "The Daily Tank Journal",
+      "author": {"@id": "https://thetankguide.com/#organization"},
+      "publisher": {"@id": "https://thetankguide.com/#organization"},
+      "url": "https://thetankguide.com/store.html#tank-journal"
+    },
+    {
+      "@type": "Book",
+      "position": 3,
+      "name": "Life in Balance: The Hidden Magic in Aquariums Coloring Book Vol. 1",
+      "author": {"@id": "https://thetankguide.com/#organization"},
+      "publisher": {"@id": "https://thetankguide.com/#organization"},
+      "url": "https://thetankguide.com/store.html#coloring1"
+    },
+    {
+      "@type": "Book",
+      "position": 4,
+      "name": "Life in Balance: The Hidden Magic in Aquariums Coloring Book Vol. 2",
+      "author": {"@id": "https://thetankguide.com/#organization"},
+      "publisher": {"@id": "https://thetankguide.com/#organization"},
+      "url": "https://thetankguide.com/store.html#coloring2"
+    }
+  ]
 }
   </script>
   <script type="application/ld+json">
@@ -950,8 +1020,15 @@
 
     <section class="media-storefront-hero">
       <a href="/store.html">
-        <img src="/assets/img/fishkeepinglifeco-storefront.webp" alt="FishKeepingLifeCo storefront illustration with red and white awning and blue logo panels">
+        <img src="/assets/img/fishkeepinglifeco-storefront.webp" alt="FishKeepingLifeCo storefront illustration showing educational aquarium books and journals">
       </a>
+    </section>
+
+    <section class="storefront">
+      <h2>📚 Educational Aquarium Books from Our Store</h2>
+      <p>FishKeepingLifeCo publishes educational aquarium guides that make fishkeeping simple, scientific, and beginner-friendly. Each resource is designed to fill real gaps in aquarium education—from understanding core concepts to building consistent care routines.</p>
+      <p>Start with our flagship guide, <em>Life in Balance: The Hidden Magic of Aquariums</em>, which transforms complex topics like the nitrogen cycle into an engaging storybook for families. Track your tank’s health with <em>The Daily Tank Journal</em> (Standard and Planted Edition), structured logbooks for monitoring water parameters and maintenance schedules. For visual learners, the <em>Life in Balance Coloring Books</em> (Vol. 1 &amp; 2) reinforce scientific concepts through hands-on activities.</p>
+      <p><a href="/store.html">Explore the full collection of guides and journals on our Store page.</a></p>
     </section>
 
     <section class="section" id="media-faq" aria-labelledby="media-faq-title">
