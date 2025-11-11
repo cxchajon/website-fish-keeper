@@ -74,6 +74,14 @@
       line-height: 1.45;
     }
 
+    .hero-update {
+      margin: 18px 0 0;
+      max-width: 48ch;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      opacity: .85;
+    }
+
     /* Sections */
     .section { margin: 32px 0 28px; }
     .section h2 { margin: 0 0 8px; }
@@ -215,7 +223,7 @@
       --ttg-ad-bg-end: rgba(38, 92, 156, 0.78);
       --ttg-ad-chip-bg: rgba(10, 23, 42, 0.88);
       --ttg-ad-chip-color: rgba(235, 243, 255, 0.96);
-      margin: 10rem auto;
+      margin: clamp(9.5rem, 16vw, 12rem) auto;
       width: min(860px, 92vw);
       min-height: clamp(220px, 42vw, 300px);
       display: flex;
@@ -300,6 +308,10 @@
       visibility: visible;
     }
 
+    .stack > .ttg-ad-slot {
+      margin-block: clamp(9.5rem, 16vw, 12rem);
+    }
+
     @media (max-width: 600px) {
       .community-archive-cta {
         margin: clamp(14px, 5vw, 18px) 0 0;
@@ -350,6 +362,17 @@
     .alib__dek {
       margin: 0.25rem 0 2rem;
       opacity: .9;
+    }
+
+    .alib__list {
+      margin: 0 0 clamp(20px, 4vw, 28px);
+      padding-left: 1.25rem;
+      color: rgba(238, 243, 255, 0.88);
+    }
+
+    .alib__list li {
+      margin: 0.4rem 0;
+      line-height: 1.45;
     }
 
     /* --- Aquarium Library: Tabletop variant --- */
@@ -683,127 +706,6 @@
 
   </style>
   <script defer src="js/nav.js?v=1.1.0"></script>
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": "https://thetankguide.com/#organization",
-  "name": "FishKeepingLifeCo",
-  "alternateName": "The Tank Guide",
-  "url": "https://thetankguide.com/",
-  "logo": {
-    "@type": "ImageObject",
-    "url": "https://thetankguide.com/assets/img/logos/logo-512.png",
-    "width": 512,
-    "height": 512
-  },
-  "sameAs": [
-    "https://www.youtube.com/@FishKeepingLifeCo",
-    "https://www.amazon.com/stores/author/B0FZMFJ6QL",
-    "https://x.com/FishKeepingLifeCo",
-    "https://www.facebook.com/FishKeepingLifeCo",
-    "https://chatgpt.com/g/g-69012624c9688191b98c2623badff18d"
-  ]
-}
-  </script>
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "@id": "https://thetankguide.com/media.html#webpage",
-  "name": "Fishkeeping Media & Books — The Tank Guide",
-  "url": "https://thetankguide.com/media.html",
-  "description": "Explore FishKeepingLifeCo media picks, books, and aquarium learning resources from The Tank Guide.",
-  "publisher": {
-    "@id": "https://thetankguide.com/#organization"
-  },
-  "author": {
-    "@id": "https://thetankguide.com/#organization"
-  }
-}
-  </script>
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  "itemListElement": [
-    {
-      "@type": "Book",
-      "position": 1,
-      "name": "Life in Balance: The Hidden Magic of Aquariums",
-      "isbn": "979-8263446215",
-      "author": {"@id": "https://thetankguide.com/#organization"},
-      "publisher": {"@id": "https://thetankguide.com/#organization"},
-      "audience": {"@type": "Audience", "audienceType": "Families and Beginners"},
-      "url": "https://thetankguide.com/store.html#life-in-balance"
-    },
-    {
-      "@type": "Book",
-      "position": 2,
-      "name": "The Daily Tank Journal",
-      "author": {"@id": "https://thetankguide.com/#organization"},
-      "publisher": {"@id": "https://thetankguide.com/#organization"},
-      "url": "https://thetankguide.com/store.html#tank-journal"
-    },
-    {
-      "@type": "Book",
-      "position": 3,
-      "name": "Life in Balance: The Hidden Magic in Aquariums Coloring Book Vol. 1",
-      "author": {"@id": "https://thetankguide.com/#organization"},
-      "publisher": {"@id": "https://thetankguide.com/#organization"},
-      "url": "https://thetankguide.com/store.html#coloring1"
-    },
-    {
-      "@type": "Book",
-      "position": 4,
-      "name": "Life in Balance: The Hidden Magic in Aquariums Coloring Book Vol. 2",
-      "author": {"@id": "https://thetankguide.com/#organization"},
-      "publisher": {"@id": "https://thetankguide.com/#organization"},
-      "url": "https://thetankguide.com/store.html#coloring2"
-    }
-  ]
-}
-  </script>
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What is The Tank Guide?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "The Tank Guide is the FishKeepingLifeCo platform that turns beginner freshwater aquarium questions into clear answers with videos, step-by-step guides, and books for families."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is \"Life in Balance\" about?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Life in Balance is a family-friendly illustrated storybook that explains aquarium science topics like the nitrogen cycle, filtration, and fish care in an encouraging narrative."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Where can I find nitrogen cycle guides?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "You can explore our Aquarium University lessons, dive into the Library quick-reference sheets, and watch the FishKeepingLifeCo YouTube tutorials that walk through every nitrogen cycle checkpoint."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Do you feature community tanks?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes. We highlight reader aquariums in the Featured Tanks gallery, elevate a Community Video Pick, and invite aquarists to submit builds through the Feature Your Tank form."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Consent Mode defaults (load FIRST) -->
   <script src="/assets/js/consent-mode.js" defer></script>
   <!-- Google tag (gtag.js) — GA4 -->
@@ -847,6 +749,7 @@
       <h1>Media Hub &amp; Fishkeeping Guides</h1>
       <p class="sub">Watch • Read • Explore</p>
       <p class="hero-description">Step-by-step tutorials and detailed guides on setups, gear, cycling, and stocking. Start with the latest video or browse the full library.</p>
+      <p class="hero-update">Media hub balances branded content with curated community picks and an open call to submit tanks, spotlighting both original and community voices. Curated how-to videos and inspiration from creators we trust — and from folks who use and follow The Tank Guide. We rotate a featured pick regularly and keep an archive of favorites you can explore anytime.</p>
     </div>
   </section>
 
@@ -859,10 +762,16 @@
         <h3 class="visually-hidden">Latest video</h3>
         <!-- FEATURED VIDEO SECTION -->
         <div class="featured-video">
-          <h3 class="now-playing">
-            <span class="now-playing-label">Now Playing:</span><br>
-            <span class="now-playing-title">How to beat Black Beard Algae. My full guide</span>
-          </h3>
+          <h3 class="now-playing">Now Playing: Latest Video</h3>
+
+          <!-- Clickable title link -->
+          <p class="video-title">
+            <a href="https://youtube.com/shorts/kdkC66luNa0"
+               target="_blank"
+               rel="noopener noreferrer nofollow">
+              How to beat Black Beard Algae. My full guide
+            </a>
+          </p>
 
           <!-- Embedded video -->
           <div class="video-embed">
@@ -882,15 +791,6 @@
               </a>
             </p>
           </noscript>
-
-          <!-- Clickable title link -->
-          <p class="video-title">
-            <a href="https://youtube.com/shorts/kdkC66luNa0"
-               target="_blank"
-               rel="noopener noreferrer nofollow">
-              How to beat Black Beard Algae. My full guide
-            </a>
-          </p>
         </div>
         <p class="muted" style="margin:.35rem 0 0;">
           Got Black Beard Algae (BBA)? This short guide shows what really works — and what doesn’t.
@@ -1104,6 +1004,11 @@
             <p class="alib__dek">
               The Aquarium Library is our free collection of fishkeeping guides, research articles, and data logs. You'll find practical blogs for hands-on tips, university articles for scientific background, and a journal for tracking your tank's data over time. Use them together to understand your tank, solve problems, and maintain stable water conditions.
             </p>
+            <ul class="alib__list">
+              <li><strong>Blogs</strong> — practical blogs for hands-on tips.</li>
+              <li><strong>University Articles</strong> — university articles for scientific background.</li>
+              <li><strong>Journal</strong> — a journal for tracking your tank's data over time.</li>
+            </ul>
           </div>
 
           <div class="alib alib--table alib--compact">
@@ -1146,7 +1051,7 @@
     </section>
 
     <section class="media-storefront-hero">
-      <a href="/store.html">
+      <a href="/store.html" aria-label="Visit the FishKeepingLifeCo Store for educational aquarium books and journals">
         <img src="/assets/img/fishkeepinglifeco-storefront.webp" alt="FishKeepingLifeCo storefront illustration showing educational aquarium books and journals">
       </a>
     </section>
@@ -1155,6 +1060,7 @@
       <h2>📚 Educational Aquarium Books from Our Store</h2>
       <p>FishKeepingLifeCo publishes educational aquarium guides that make fishkeeping simple, scientific, and beginner-friendly. Each resource is designed to fill real gaps in aquarium education—from understanding core concepts to building consistent care routines.</p>
       <p>Start with our flagship guide, <em>Life in Balance: The Hidden Magic of Aquariums</em>, which transforms complex topics like the nitrogen cycle into an engaging storybook for families. Track your tank’s health with <em>The Daily Tank Journal</em> (Standard and Planted Edition), structured logbooks for monitoring water parameters and maintenance schedules. For visual learners, the <em>Life in Balance Coloring Books</em> (Vol. 1 &amp; 2) reinforce scientific concepts through hands-on activities.</p>
+      <p>Together with the Aquarium Library, use them to understand your tank, solve problems, and maintain stable water conditions.</p>
       <p><a href="/store.html">Explore the full collection of guides and journals on our Store page.</a></p>
     </section>
 
@@ -1453,5 +1359,146 @@
   </noscript>
 
   <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://thetankguide.com/#organization",
+    "name": "FishKeepingLifeCo",
+    "alternateName": "The Tank Guide",
+    "url": "https://thetankguide.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://thetankguide.com/assets/img/logos/logo-512.png",
+      "width": 512,
+      "height": 512
+    },
+    "sameAs": [
+      "https://www.youtube.com/@FishKeepingLifeCo",
+      "https://www.amazon.com/stores/author/B0FZMFJ6QL",
+      "https://chatgpt.com/g/g-69012624c9688191b98c2623badff18d"
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is The Tank Guide?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Tank Guide is the FishKeepingLifeCo learning platform dedicated to freshwater beginners. We publish clear videos, hands-on guides, and illustrated books that make aquarium science approachable for families, classrooms, and first-time hobbyists."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is \"Life in Balance\" about?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "\"Life in Balance\" is our family-friendly storybook that turns the nitrogen cycle, filtration, and fish care basics into an illustrated adventure. It helps new aquarists understand the science behind stable tanks while keeping the narrative uplifting and easy to follow."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Where can I find nitrogen cycle guides?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Start with the Aquarium University lessons, then bookmark the quick-reference sheets in the Aquarium Library. You can also watch our YouTube tutorials for step-by-step nitrogen cycle walkthroughs."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you feature community tanks?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. We showcase reader aquariums in the Featured Tanks gallery, spotlight a Community Video Pick, and invite hobbyists to share builds through the Feature Your Tank form."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": "How to beat Black Beard Algae. My full guide",
+    "description": "Got Black Beard Algae (BBA)? This short guide shows what really works — and what doesn’t. For a deeper breakdown, visit our Blogs page.",
+    "uploadDate": "2025-10-24",
+    "thumbnailUrl": "https://img.youtube.com/vi/kdkC66luNa0/hqdefault.jpg",
+    "url": "https://youtube.com/shorts/kdkC66luNa0",
+    "embedUrl": "https://www.youtube.com/embed/kdkC66luNa0",
+    "publisher": {"@id": "https://thetankguide.com/#organization"}
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": "This is ACTUALLY The Method for Crystal Clear Aquarium Water",
+    "description": "AQUAPROS tests Seachem Purigen to see if it really delivers crystal-clear water. The results show it’s a great polishing tool—but true clarity still depends on solid basics like regular water changes, proper filtration, and balanced bioload.",
+    "uploadDate": "2025-10-21",
+    "thumbnailUrl": "https://img.youtube.com/vi/TlF4_lzUR1M/hqdefault.jpg",
+    "url": "https://www.youtube.com/watch?v=TlF4_lzUR1M",
+    "embedUrl": "https://www.youtube.com/embed/TlF4_lzUR1M",
+    "publisher": {"@id": "https://thetankguide.com/#organization"}
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": [
+      {
+        "@type": "Book",
+        "position": 1,
+        "name": "Life in Balance: The Hidden Magic of Aquariums",
+        "isbn": "979-8263446215",
+        "author": {"@id": "https://thetankguide.com/#organization"},
+        "publisher": {"@id": "https://thetankguide.com/#organization"},
+        "url": "https://thetankguide.com/store.html#life-in-balance"
+      },
+      {
+        "@type": "Book",
+        "position": 2,
+        "name": "The Daily Tank Journal (Standard Edition)",
+        "author": {"@id": "https://thetankguide.com/#organization"},
+        "publisher": {"@id": "https://thetankguide.com/#organization"},
+        "url": "https://thetankguide.com/store.html#tank-journal"
+      },
+      {
+        "@type": "Book",
+        "position": 3,
+        "name": "The Daily Tank Journal (Planted Edition)",
+        "author": {"@id": "https://thetankguide.com/#organization"},
+        "publisher": {"@id": "https://thetankguide.com/#organization"},
+        "url": "https://thetankguide.com/store.html#tank-journal-planted"
+      },
+      {
+        "@type": "Book",
+        "position": 4,
+        "name": "Life in Balance Coloring Book Vol. 1",
+        "author": {"@id": "https://thetankguide.com/#organization"},
+        "publisher": {"@id": "https://thetankguide.com/#organization"},
+        "url": "https://thetankguide.com/store.html#coloring1"
+      },
+      {
+        "@type": "Book",
+        "position": 5,
+        "name": "Life in Balance Coloring Book Vol. 2",
+        "author": {"@id": "https://thetankguide.com/#organization"},
+        "publisher": {"@id": "https://thetankguide.com/#organization"},
+        "url": "https://thetankguide.com/store.html#coloring2"
+      }
+    ]
+  }
+  </script>
 </body>
 </html>
