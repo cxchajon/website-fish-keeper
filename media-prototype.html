@@ -81,8 +81,8 @@
 
     .community-archive-cta {
       display: flex;
-      justify-content: center;
-      margin: clamp(16px, 4vw, 22px) 0 clamp(18px, 4vw, 26px);
+      justify-content: flex-start;
+      margin: clamp(18px, 4vw, 26px) 0 0;
     }
 
     .community-archive-button {
@@ -111,14 +111,6 @@
 
     .community-archive-button__label {
       font-size: clamp(0.95rem, 2.6vw, 1.05rem);
-    }
-
-    .community-archive-button__arrow {
-      display: inline-flex;
-      align-items: center;
-      font-size: 1.1em;
-      line-height: 1;
-      margin-left: clamp(6px, 1.8vw, 10px);
     }
 
     .community-archive-button:focus-visible {
@@ -164,7 +156,7 @@
 
     @media (max-width: 600px) {
       .community-archive-cta {
-        margin: clamp(14px, 5vw, 18px) 0 clamp(16px, 6vw, 20px);
+        margin: clamp(14px, 5vw, 18px) 0 0;
       }
     }
 
@@ -374,37 +366,6 @@
       display:inline-block; padding:10px 14px; border:1px solid var(--border);
       border-radius: 10px; text-decoration:none; font-weight:600;
       background:#fff; color:#0b1020;
-    }
-    .media-platform-card {
-      display: grid;
-      gap: 18px;
-    }
-    .media-platform-grid {
-      display: grid;
-      gap: 16px;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    }
-    .media-card {
-      display: grid;
-      gap: 10px;
-    }
-    .media-thumb-link {
-      display: block;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid rgba(0,0,0,0.05);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-    }
-    .media-thumb-link img {
-      width: 100%;
-      display: block;
-      height: auto;
-    }
-    .media-caption {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.45;
     }
     .archive-card {
       display: grid;
@@ -702,7 +663,7 @@
 
           <noscript>
             <p>
-              <a href="https://youtube.com/shorts/kdkC66luNa0" target="_blank" rel="noopener nofollow">
+              <a href="https://youtube.com/shorts/kdkC66luNa0" target="_blank" rel="noopener noreferrer nofollow">
                 <img src="https://img.youtube.com/vi/kdkC66luNa0/hqdefault.jpg" alt="Watch How to beat Black Beard Algae. My full guide on YouTube" width="480" height="270">
               </a>
             </p>
@@ -712,7 +673,7 @@
           <p class="video-title">
             <a href="https://youtube.com/shorts/kdkC66luNa0"
                target="_blank"
-               rel="noopener nofollow">
+               rel="noopener noreferrer nofollow">
               How to beat Black Beard Algae. My full guide
             </a>
           </p>
@@ -735,54 +696,96 @@
             </a>
           </div>
         </div>
+
+        <div class="community-video-picks">
+          <hr class="media-divider" />
+          <h3 class="card-subtitle community-video-heading"><strong>Community Video Picks</strong></h3>
+          <p class="muted">
+            Curated how-to videos and inspiration from creators we trust — and from folks who use and follow The Tank Guide.
+            We rotate a featured pick regularly and keep an archive of favorites you can explore anytime.
+          </p>
+          <div class="video-embed">
+            <iframe
+              src="https://www.youtube.com/embed/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO"
+              title="AQUAPROS — This is ACTUALLY The Method for Crystal Clear Aquarium Water"
+              aria-label="AQUAPROS — This is ACTUALLY The Method for Crystal Clear Aquarium Water community pick"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <noscript>
+            <p>
+              <a href="https://youtu.be/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO" target="_blank" rel="noopener noreferrer">
+                <img src="https://img.youtube.com/vi/TlF4_lzUR1M/hqdefault.jpg" alt="Watch This is ACTUALLY The Method for Crystal Clear Aquarium Water by AQUAPROS on YouTube" width="480" height="270">
+              </a>
+            </p>
+          </noscript>
+          <h3 class="card-subtitle community-video-title">This is ACTUALLY The Method for Crystal Clear Aquarium Water</h3>
+          <p class="muted community-video-attribution">by <a href="https://youtube.com/@aquapros" target="_blank" rel="noopener noreferrer">@AQUAPROS</a></p>
+          <hr class="media-divider" />
+          <p>
+            AQUAPROS tests Seachem Purigen to see if it really delivers crystal-clear water. The results show it’s a great polishing tool—but true clarity still depends on solid basics like regular water changes, proper filtration, and balanced bioload. A must-watch for anyone chasing that perfect glass-clear tank.
+          </p>
+          <div class="community-video-cta">
+            <a class="yt-cta" href="https://youtu.be/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO" target="_blank" rel="noopener noreferrer" title="Watch This is ACTUALLY The Method for Crystal Clear Aquarium Water on YouTube" aria-label="Watch This is ACTUALLY The Method for Crystal Clear Aquarium Water on YouTube">
+              <span class="yt-icon" aria-hidden="true">
+                <svg class="yt-cta-svg" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true">
+                  <path d="M9 7v10l8-5z" fill="#fff"></path>
+                </svg>
+              </span>
+              <span class="yt-label">Watch on YouTube</span>
+            </a>
+          </div>
+          <p class="muted community-video-added-date">
+            <time datetime="2025-10-21">Added: 2025-10-21</time>
+          </p>
+          <div class="community-archive-cta">
+            <a
+              class="community-archive-button"
+              href="/pages/community-video-picks.html"
+              aria-label="View past Community Video Picks"
+            >
+              <svg
+                class="youtube-rewind-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 60 36"
+                preserveAspectRatio="xMidYMid meet"
+                role="img"
+                focusable="false"
+                aria-hidden="true"
+              >
+                <title>YouTube Rewind — View past Community Video Picks</title>
+                <rect width="60" height="36" rx="9" fill="#FF0000" />
+                <g class="rewind-chevrons" fill="currentColor">
+                  <path d="M40 10v16L24 18z" />
+                  <path d="M30 10v16L14 18z" />
+                </g>
+              </svg>
+              <span class="community-archive-button__label">View past Community Video Picks</span>
+              <svg
+                class="youtube-rewind-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 60 36"
+                preserveAspectRatio="xMidYMid meet"
+                role="img"
+                focusable="false"
+                aria-hidden="true"
+              >
+                <title>YouTube Rewind — View past Community Video Picks</title>
+                <rect width="60" height="36" rx="9" fill="#FF0000" />
+                <g class="rewind-chevrons" fill="currentColor">
+                  <path d="M40 10v16L24 18z" />
+                  <path d="M30 10v16L14 18z" />
+                </g>
+              </svg>
+            </a>
+          </div>
+        </div>
       </article>
     </section>
 
-  <!-- Latest on TikTok (prototype visible) -->
-  <section class="section" id="latest-tiktok" aria-labelledby="latest-tiktok-heading">
-    <article class="card media-platform-card">
-      <h2 id="latest-tiktok-heading">Latest on TikTok</h2>
-      <p class="subline">Swipe-friendly mini guides covering cycle checkpoints, stocking math, and rapid fixes.</p>
-      <p class="muted">Our TikTok feed delivers fast aquarium checkpoints you can apply in real time — from testing nitrogen levels to dialing in gear. Each clip reinforces the longer tutorials on this page so beginners can check their progress between water changes.</p>
-      <div class="media-platform-grid">
-        <figure class="media-card">
-          <a class="media-thumb-link" href="https://www.tiktok.com/@FishKeepingLifeCo/video/7328456100000000000" target="_blank" rel="noopener noreferrer">
-            <img src="assets/media/social/tiktok-placeholder.svg" alt="TikTok preview showing nitrogen cycle myth busting callouts" loading="lazy" decoding="async">
-          </a>
-          <figcaption class="media-caption">60-second nitrogen cycle myth busting with the testing steps we use in every new tank build.</figcaption>
-        </figure>
-        <figure class="media-card">
-          <a class="media-thumb-link" href="https://www.tiktok.com/@FishKeepingLifeCo" target="_blank" rel="noopener noreferrer">
-            <img src="assets/media/social/tiktok-placeholder.svg" alt="TikTok teaser highlighting aquascaping tools on a desk" loading="lazy" decoding="async">
-          </a>
-          <figcaption class="media-caption">Behind-the-scenes aquascaping kit tour covering the tools we recommend in the Tank Guide gear list.</figcaption>
-        </figure>
-      </div>
-    </article>
-  </section>
-
-  <!-- Latest on Instagram (prototype visible) -->
-  <section class="section" id="latest-instagram" aria-labelledby="latest-instagram-heading">
-    <article class="card media-platform-card">
-      <h2 id="latest-instagram-heading">Latest on Instagram</h2>
-      <p class="subline">Snapshots from current builds, reader spotlights, and upcoming book drops.</p>
-      <p class="muted">Instagram is where we slow down to show the craft: build diaries, community tank tours, and previews of new FishKeepingLifeCo releases. Follow along for photo walk-throughs that complement our guides and point you to deeper reads in the Library.</p>
-      <div class="media-platform-grid">
-        <figure class="media-card">
-          <a class="media-thumb-link" href="https://www.instagram.com/p/CycleCheckList" target="_blank" rel="noopener noreferrer">
-            <img src="assets/media/social/instagram-placeholder.svg" alt="Instagram carousel teaser for cycle checklist post" loading="lazy" decoding="async">
-          </a>
-          <figcaption class="media-caption">Printable cycle checklist preview—walk through ammonia, nitrite, and nitrate checkpoints step-by-step.</figcaption>
-        </figure>
-        <figure class="media-card">
-          <a class="media-thumb-link" href="https://www.instagram.com/FishKeepingLifeCo" target="_blank" rel="noopener noreferrer">
-            <img src="assets/media/social/instagram-placeholder.svg" alt="Instagram reel teaser showing planted aquarium close-up" loading="lazy" decoding="async">
-          </a>
-          <figcaption class="media-caption">Reader spotlight reel featuring a lush 20-gallon community tank with planting tips from our Discord crew.</figcaption>
-        </figure>
-      </div>
-    </article>
-  </section>
     <!-- TODO: Unhide the Media Archive section once the archive features are ready. -->
     <!-- Hidden Media Archive section start -->
     <!--
@@ -864,52 +867,6 @@
             </div>
           </article>
 
-          <!-- Card B: Community Video Picks -->
-          <article class="card">
-            <h3><strong>Community Video Picks</strong></h3>
-            <p class="muted">
-              Curated how-to videos and inspiration from creators we trust — and from folks who use and follow The Tank Guide.
-              We rotate a featured pick regularly and keep an archive of favorites you can explore anytime.
-            </p>
-            <hr class="card-sep" aria-hidden="true">
-            <div class="video-embed">
-              <iframe
-                src="https://www.youtube.com/embed/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO"
-                title="AQUAPROS — This is ACTUALLY The Method for Crystal Clear Aquarium Water"
-                aria-label="AQUAPROS — This is ACTUALLY The Method for Crystal Clear Aquarium Water community pick"
-                loading="lazy"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen
-              ></iframe>
-            </div>
-            <noscript>
-              <p>
-                <a href="https://youtu.be/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO" target="_blank" rel="noopener noreferrer">
-                  <img src="https://img.youtube.com/vi/TlF4_lzUR1M/hqdefault.jpg" alt="Watch This is ACTUALLY The Method for Crystal Clear Aquarium Water by AQUAPROS on YouTube" width="480" height="270">
-                </a>
-              </p>
-            </noscript>
-            <h3 class="card-subtitle community-video-title">This is ACTUALLY The Method for Crystal Clear Aquarium Water</h3>
-            <p class="muted community-video-attribution">by <a href="https://youtube.com/@aquapros" target="_blank" rel="noopener noreferrer">@AQUAPROS</a></p>
-            <hr class="media-divider" />
-            <p>
-              AQUAPROS tests Seachem Purigen to see if it really delivers crystal-clear water. The results show it’s a great polishing tool—but true clarity still depends on solid basics like regular water changes, proper filtration, and balanced bioload. A must-watch for anyone chasing that perfect glass-clear tank.
-            </p>
-            <div class="community-video-cta">
-              <a class="yt-cta" href="https://youtu.be/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO" target="_blank" rel="noopener noreferrer" title="Watch This is ACTUALLY The Method for Crystal Clear Aquarium Water on YouTube" aria-label="Watch This is ACTUALLY The Method for Crystal Clear Aquarium Water on YouTube">
-                <span class="yt-icon" aria-hidden="true">
-                  <svg class="yt-cta-svg" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true">
-                    <path d="M9 7v10l8-5z" fill="#fff"></path>
-                  </svg>
-                </span>
-                <span class="yt-label">Watch on YouTube</span>
-              </a>
-            </div>
-            <p class="muted community-video-added-date">
-              <time datetime="2025-10-21">Added: 2025-10-21</time>
-            </p>
-          </article>
         </div>
 
         <!-- === TTG_MediaMid (between Community and Aquarium Library) === -->
@@ -928,32 +885,6 @@
         <!-- Aquarium Library START -->
         <section id="aquarium-library" aria-labelledby="alib-title">
           <div class="alib__header">
-            <div class="community-archive-cta">
-              <a
-                class="community-archive-button"
-                href="/pages/community-video-picks.html"
-                aria-label="View past Community Video Picks"
-              >
-                <svg
-                  class="youtube-rewind-icon"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 60 36"
-                  preserveAspectRatio="xMidYMid meet"
-                  role="img"
-                  focusable="false"
-                  aria-hidden="true"
-                >
-                  <title>YouTube Rewind — View past Community Video Picks</title>
-                  <rect width="60" height="36" rx="9" fill="#FF0000" />
-                  <g class="rewind-chevrons" fill="currentColor">
-                    <path d="M40 10v16L24 18z" />
-                    <path d="M30 10v16L14 18z" />
-                  </g>
-                </svg>
-                <span class="community-archive-button__label">View past Community Video Picks</span>
-                <span class="community-archive-button__arrow" aria-hidden="true">→</span>
-              </a>
-            </div>
             <h2 id="alib-title">Aquarium Library</h2>
             <p class="alib__dek">
               Explore a collection of guides, research articles, transcripts, and spotlights for freshwater aquariums.
@@ -1100,6 +1031,12 @@
       </div>
     </section>
 
+    <section class="media-storefront-hero">
+      <a href="/store.html">
+        <img src="/assets/img/fishkeepinglifeco-storefront.webp" alt="FishKeepingLifeCo storefront illustration with red and white awning and blue logo panels">
+      </a>
+    </section>
+
     <section class="section" id="media-faq" aria-labelledby="media-faq-title">
       <article class="card">
         <h2 id="media-faq-title">Frequently Asked Questions</h2>
@@ -1123,12 +1060,6 @@
         </div>
       </article>
     </section>
-
-      <section class="media-storefront-hero">
-        <a href="/store.html">
-          <img src="/assets/img/fishkeepinglifeco-storefront.webp" alt="FishKeepingLifeCo storefront illustration with red and white awning and blue logo panels">
-        </a>
-      </section>
 
     <section class="seo-intro">
       <div class="wrap">
