@@ -2564,3 +2564,88 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
   outline: 2px solid rgba(255, 255, 255, 0.6);
   outline-offset: 2px;
 }
+
+/* Media prototype — Now Playing banner layout */
+.np-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  margin: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background-image:
+    linear-gradient(135deg, rgba(6, 18, 36, 0.12), rgba(6, 18, 36, 0.45)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.6)),
+    url("/assets/img/now-playing-banner-1920x1080.webp");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+@media (min-width: 768px) {
+  .np-banner {
+    height: 160px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .np-banner {
+    height: 180px;
+  }
+}
+
+.np-banner__label {
+  margin: 0;
+  padding: 0 1.25rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: clamp(1.125rem, 2.6vw, 1.25rem);
+  color: #f7fbff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
+  cursor: default;
+}
+
+@media (min-width: 768px) {
+  .np-banner__label {
+    font-size: clamp(1.375rem, 2.6vw, 1.5rem);
+  }
+}
+
+.np-title {
+  margin: 0.65rem auto 0.95rem;
+  text-align: center;
+  font-size: clamp(1.125rem, 2.6vw, 1.375rem);
+  font-weight: 600;
+  color: #eef3ff;
+}
+
+.np-title .marquee-title {
+  max-width: 32ch;
+  margin: 0 auto;
+  padding: 0;
+  position: static;
+  color: inherit;
+  text-decoration: none;
+  line-height: 1.3;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.np-title .marquee-title::after {
+  content: none;
+}
+
+.np-title .marquee-title:focus-visible {
+  outline: 3px solid rgba(155, 212, 255, 0.9);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
