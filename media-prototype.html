@@ -115,6 +115,66 @@
       border-radius: 6px;
     }
 
+    /* --- Video banner background (cinema strip style) --- */
+    .video-banner {
+      position: relative;
+      border-radius: 14px;
+      padding: 1.25rem 1.25rem 1.5rem;
+      margin: 1rem 0 2rem;
+      background:
+        radial-gradient(120% 120% at 50% 120%, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 55%),
+        linear-gradient(135deg, #0a3e5c 0%, #0d5a8e 55%, #1e2c78 100%);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+
+    .video-banner.has-poster {
+      background-image:
+        url("/assets/img/now-playing-banner-1920x1080.webp"),
+        radial-gradient(120% 120% at 50% 120%, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 55%),
+        linear-gradient(135deg, #0a3e5c 0%, #0d5a8e 55%, #1e2c78 100%);
+      background-size: cover, auto, auto;
+      background-position: center, center, center;
+      background-repeat: no-repeat;
+    }
+
+    .video-banner .marquee-title {
+      display: inline-block;
+      font-weight: 800;
+      font-size: clamp(1.05rem, 2.6vw, 1.4rem);
+      letter-spacing: 0.02em;
+      line-height: 1.25;
+      padding: 0.5rem 0.85rem;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.28);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25) inset, 0 2px 8px rgba(0,0,0,0.2);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .video-banner iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      margin-top: 0.75rem;
+      border-radius: 12px;
+      background: #000;
+    }
+
+    .video-banner p {
+      color: #e7f4ff;
+    }
+
+    .video-banner a:focus-visible {
+      outline: 3px solid #9bd4ff;
+      outline-offset: 3px;
+      border-radius: 10px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .video-banner { transition: none; }
+    }
+
     /* Sections */
     .section { margin: 32px 0 28px; }
     .section h2 { margin: 0 0 8px; }
@@ -795,19 +855,9 @@
         <h3 class="visually-hidden">Latest video</h3>
         <!-- FEATURED VIDEO SECTION -->
         <div class="featured-video">
-          <h3 class="now-playing">Now Playing: Latest Video</h3>
-
-          <!-- Clickable title link -->
-          <div class="marquee-title video-title" role="heading" aria-level="4">
-            <a href="https://youtube.com/shorts/kdkC66luNa0"
-               target="_blank"
-               rel="noopener noreferrer nofollow">
-              How to beat Black Beard Algae. My full guide
-            </a>
-          </div>
-
-          <!-- Embedded video -->
-          <div class="video-embed">
+          <section class="video-banner has-poster" aria-label="Now Playing video">
+            <h3>Now Playing: Latest Video</h3>
+            <a href="https://www.youtube.com/watch?v=kdkC66luNa0" class="marquee-title" target="_blank" rel="noopener noreferrer nofollow">How to beat Black Beard Algae. My full guide</a>
             <iframe
               src="https://www.youtube.com/embed/kdkC66luNa0?rel=0&amp;modestbranding=1"
               title="How to beat Black Beard Algae. My full guide"
@@ -815,8 +865,8 @@
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowfullscreen
               loading="lazy"></iframe>
-          </div>
-
+            <p>Got Black Beard Algae (BBA)? This short guide shows what really works — and what doesn’t. For a deeper breakdown, <a href="/blogs/" aria-label="Read more aquarium care blogs on The Tank Guide">visit our Blogs page</a>.</p>
+          </section>
           <noscript>
             <p>
               <a href="https://youtube.com/shorts/kdkC66luNa0" target="_blank" rel="noopener noreferrer nofollow">
@@ -825,10 +875,6 @@
             </p>
           </noscript>
         </div>
-        <p class="muted" style="margin:.35rem 0 0;">
-          Got Black Beard Algae (BBA)? This short guide shows what really works — and what doesn’t.
-          For a deeper breakdown, <a href="/blogs/" aria-label="Read more aquarium care blogs on The Tank Guide">visit our Blogs page</a>.
-        </p>
         <p class="muted" style="margin:.35rem 0 0;">Added: 2025-10-24</p>
         <hr class="media-divider" />
         <div class="video-meta">
@@ -851,7 +897,8 @@
             Curated how-to videos and inspiration from creators we trust — and from folks who use and follow The Tank Guide.
             We rotate a featured pick regularly and keep an archive of favorites you can explore anytime.
           </p>
-          <div class="video-embed">
+          <section class="video-banner has-poster" aria-label="Community Video Pick">
+            <a href="https://www.youtube.com/watch?v=TlF4_lzUR1M" class="marquee-title" target="_blank" rel="noopener noreferrer">This is ACTUALLY The Method for Crystal Clear Aquarium Water</a>
             <iframe
               src="https://www.youtube.com/embed/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO"
               title="AQUAPROS — This is ACTUALLY The Method for Crystal Clear Aquarium Water"
@@ -861,7 +908,8 @@
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowfullscreen
             ></iframe>
-          </div>
+            <p>AQUAPROS tests Seachem Purigen to see if it really delivers crystal-clear water...</p>
+          </section>
           <noscript>
             <p>
               <a href="https://youtu.be/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO" target="_blank" rel="noopener noreferrer">
@@ -869,18 +917,8 @@
               </a>
             </p>
           </noscript>
-          <div class="marquee-title card-subtitle community-video-title" role="heading" aria-level="4">
-            <a href="https://youtu.be/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO"
-               target="_blank"
-               rel="noopener noreferrer">
-              This is ACTUALLY The Method for Crystal Clear Aquarium Water
-            </a>
-          </div>
           <p class="muted community-video-attribution">by <a href="https://youtube.com/@aquapros" target="_blank" rel="noopener noreferrer">@AQUAPROS</a></p>
           <hr class="media-divider" />
-          <p>
-            AQUAPROS tests Seachem Purigen to see if it really delivers crystal-clear water. The results show it’s a great polishing tool—but true clarity still depends on solid basics like regular water changes, proper filtration, and balanced bioload. A must-watch for anyone chasing that perfect glass-clear tank.
-          </p>
           <div class="community-video-cta">
             <a class="yt-cta" href="https://youtu.be/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO" target="_blank" rel="noopener noreferrer" title="Watch This is ACTUALLY The Method for Crystal Clear Aquarium Water on YouTube" aria-label="Watch This is ACTUALLY The Method for Crystal Clear Aquarium Water on YouTube">
               <span class="yt-icon" aria-hidden="true">
@@ -1481,7 +1519,7 @@
     "@context": "https://schema.org",
     "@type": "VideoObject",
     "name": "This is ACTUALLY The Method for Crystal Clear Aquarium Water",
-    "description": "AQUAPROS tests Seachem Purigen to see if it really delivers crystal-clear water. The results show it’s a great polishing tool—but true clarity still depends on solid basics like regular water changes, proper filtration, and balanced bioload.",
+    "description": "AQUAPROS tests Seachem Purigen to see if it really delivers crystal-clear water.",
     "uploadDate": "2025-10-21",
     "thumbnailUrl": "https://img.youtube.com/vi/TlF4_lzUR1M/hqdefault.jpg",
     "url": "https://www.youtube.com/watch?v=TlF4_lzUR1M",
