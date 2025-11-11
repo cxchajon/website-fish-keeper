@@ -49,6 +49,8 @@
     { id: 'ad-bottom-params', label: 'ParamsBottom' },
     { id: 'ad-top-gear', label: 'GearTop' },
     { id: 'ad-bottom-gear', label: 'GearBottom' },
+    { id: 'ad-media-top-1', label: 'MediaTop' },
+    { id: 'ad-media-mid-1', label: 'MediaMid' },
     { id: 'ad-media-bottom-1', label: 'MediaBottom' }
   ];
 
