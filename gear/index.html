@@ -278,38 +278,87 @@
       box-shadow: 0 18px 36px -24px rgba(15, 23, 42, 0.5);
     }
 
-    .adsense-proto-slot {
-      border: 1px dashed rgba(148, 163, 184, 0.4);
-      border-radius: 12px;
-      color: rgba(148, 163, 184, 0.8);
+    .ttg-ad-slot {
+      --ttg-ad-border: rgba(129, 155, 211, 0.72);
+      --ttg-ad-bg: rgba(12, 20, 36, 0.22);
+      --ttg-ad-label-bg: rgba(12, 20, 36, 0.85);
+      --ttg-ad-label-color: rgba(226, 235, 255, 0.96);
+      margin: 10rem auto;
+      padding: clamp(1.5rem, 4vw, 2.75rem);
+      max-width: min(100%, 970px);
+      min-height: 280px;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      font-size: 0.85rem;
-      gap: 0.5rem;
-      margin: 0 auto;
-      max-width: min(960px, 100%);
-      min-height: 120px;
-      padding: 1.5rem;
+      border-radius: 20px;
+      border: 2px dashed transparent;
+      background: transparent;
       text-align: center;
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
-    .adsense-proto-slot__label {
-      color: rgba(191, 219, 254, 0.92);
-      font-size: 0.75rem;
+    body[data-ad-qa="true"] .ttg-ad-slot,
+    .ttg-ad-slot.ttg-ad-slot--empty {
+      border-color: var(--ttg-ad-border);
+      background: var(--ttg-ad-bg);
+    }
+
+    .ttg-ad-slot::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--ttg-ad-label-bg);
+      color: var(--ttg-ad-label-color);
+      font-size: 0.78rem;
       font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      white-space: nowrap;
+      z-index: 2;
     }
 
-    .adsense-proto-slot__content {
-      display: inline-block;
+    body[data-ad-qa="true"] .ttg-ad-slot::before,
+    .ttg-ad-slot.ttg-ad-slot--empty::before {
+      content: attr(data-ad-label);
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    .adsense-proto-slot:focus-visible {
-      outline: 2px solid rgba(96, 165, 250, 0.8);
-      outline-offset: 4px;
+    .ttg-ad-slot::after {
+      content: attr(data-ad-label);
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: clamp(1rem, 4vw, 1.75rem);
+      background: var(--ttg-ad-label-bg);
+      color: var(--ttg-ad-label-color);
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 1;
+    }
+
+    .ttg-ad-slot.ttg-ad-slot--empty::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .ttg-ad-slot ins.adsbygoogle {
+      display: block;
+      width: 100%;
+      position: relative;
+      z-index: 3;
     }
 
     .gear-card__header {
@@ -530,6 +579,19 @@
       <p><strong>Hygger Affiliate Disclosure:</strong> We may earn a commission from purchases made through Hygger links (at no extra cost to you).</p>
     </div>
 
+    <!-- Display Ad: TTG_Gear_Top — Slot 7692943403 -->
+    <div class="ttg-ad-slot" id="ad-gear-top" data-ad-label="TTG_Gear_Top • Slot 7692943403" aria-label="Advertisement">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9905718149811880"
+           data-ad-slot="7692943403"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
     <section id="tank-ref" class="tank-ref" aria-label="Interactive tank gear finder">
       <div class="card card--tank">
         <h4 class="card-title">Interactive Gear Finder</h4>
@@ -658,16 +720,6 @@
         </section>
       </div>
     </section>
-
-    <div
-      class="ad-slot adsense-proto-slot"
-      data-slot="adsense-proto-water"
-      role="note"
-      aria-label="Advertisement"
-    >
-      <span class="adsense-proto-slot__label">Advertisement</span>
-      <span class="adsense-proto-slot__content">Advertisement space</span>
-    </div>
 
     <section id="water-quality" class="gear-cluster" aria-labelledby="water-quality-title">
       <h2 id="water-quality-title">Testing Kits &amp; Monitoring</h2>
@@ -828,14 +880,17 @@
       </div>
     </section>
 
-    <div
-      class="ad-slot adsense-proto-slot"
-      data-slot="adsense-proto-qa-below"
-      role="note"
-      aria-label="Advertisement"
-    >
-      <span class="adsense-proto-slot__label">Advertisement</span>
-      <span class="adsense-proto-slot__content">Advertisement space</span>
+    <!-- Display Ad: TTG_Gear_Bottom — Slot 1762971638 -->
+    <div class="ttg-ad-slot" id="ad-gear-bottom" data-ad-label="TTG_Gear_Bottom • Slot 1762971638" aria-label="Advertisement">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9905718149811880"
+           data-ad-slot="1762971638"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
     </div>
 
     <section id="faqs" class="gear-inline-copy" aria-labelledby="faq-title">
@@ -1234,6 +1289,51 @@
   const observer = new MutationObserver(schedule);
   observer.observe(scope, { childList: true, subtree: true });
 })();
+  </script>
+
+  <script>
+    (function() {
+      var QA_MODE = false;
+      var body = document.body;
+      if (QA_MODE && body) {
+        body.setAttribute('data-ad-qa', 'true');
+      }
+
+      var slots = document.querySelectorAll('.ttg-ad-slot');
+      if (!slots.length) {
+        return;
+      }
+
+      var evaluateSlot = function(slot, ins) {
+        if (!slot || !ins) return;
+        var hasIframe = ins.querySelector('iframe');
+        var height = ins.offsetHeight;
+        if (hasIframe && height > 40) {
+          slot.classList.remove('ttg-ad-slot--empty');
+        } else {
+          slot.classList.add('ttg-ad-slot--empty');
+        }
+      };
+
+      slots.forEach(function(slot) {
+        var ins = slot.querySelector('ins.adsbygoogle');
+        if (!ins) {
+          return;
+        }
+
+        var refresh = function() { evaluateSlot(slot, ins); };
+        refresh();
+
+        var observer = new MutationObserver(refresh);
+        observer.observe(ins, { childList: true, subtree: true });
+
+        window.addEventListener('load', function() {
+          setTimeout(refresh, 1800);
+        });
+
+        window.addEventListener('ttg:consent-change', refresh);
+      });
+    })();
   </script>
 </body>
 </html>

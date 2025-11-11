@@ -154,13 +154,104 @@
       }
     }
 
+    .ttg-ad-slot {
+      --ttg-ad-border: rgba(129, 155, 211, 0.72);
+      --ttg-ad-bg: rgba(12, 20, 36, 0.22);
+      --ttg-ad-label-bg: rgba(12, 20, 36, 0.85);
+      --ttg-ad-label-color: rgba(226, 235, 255, 0.96);
+      margin: 10rem auto;
+      padding: clamp(1.5rem, 4vw, 2.75rem);
+      max-width: min(100%, 970px);
+      min-height: 280px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      border: 2px dashed transparent;
+      background: transparent;
+      text-align: center;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    body.theme-light .ttg-ad-slot {
+      --ttg-ad-border: rgba(41, 99, 170, 0.62);
+      --ttg-ad-bg: rgba(24, 63, 137, 0.12);
+      --ttg-ad-label-bg: rgba(24, 63, 137, 0.88);
+      --ttg-ad-label-color: rgba(238, 244, 255, 0.98);
+    }
+
+    body[data-ad-qa="true"] .ttg-ad-slot,
+    .ttg-ad-slot.ttg-ad-slot--empty {
+      border-color: var(--ttg-ad-border);
+      background: var(--ttg-ad-bg);
+    }
+
+    .ttg-ad-slot::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--ttg-ad-label-bg);
+      color: var(--ttg-ad-label-color);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      white-space: nowrap;
+      z-index: 2;
+    }
+
+    body[data-ad-qa="true"] .ttg-ad-slot::before,
+    .ttg-ad-slot.ttg-ad-slot--empty::before {
+      content: attr(data-ad-label);
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .ttg-ad-slot::after {
+      content: attr(data-ad-label);
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: clamp(1rem, 4vw, 1.75rem);
+      background: var(--ttg-ad-label-bg);
+      color: var(--ttg-ad-label-color);
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 1;
+    }
+
+    .ttg-ad-slot.ttg-ad-slot--empty::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .ttg-ad-slot ins.adsbygoogle {
+      display: block;
+      width: 100%;
+      position: relative;
+      z-index: 3;
+    }
+
     @media (max-width: 600px) {
       .community-archive-cta {
         margin: clamp(14px, 5vw, 18px) 0 0;
       }
 
-      .ad-slot {
-        margin: 3rem auto !important;
+      .ttg-ad-slot {
+        margin: 9.75rem auto;
+        min-height: 240px;
       }
     }
 
@@ -698,8 +789,8 @@
     </div>
   </section>
 
-  <!-- === TTG_MediaTop (under hero) === -->
-  <div class="ttg-adunit ttg-adunit--top" id="ad-media-top-1" aria-label="Advertisement">
+  <!-- Display Ad: TTG_MediaTop — Slot 9522042154 -->
+  <div class="ttg-ad-slot" id="ad-media-top-1" data-ad-label="TTG_MediaTop • Slot 9522042154" aria-label="Advertisement">
     <ins class="adsbygoogle"
          style="display:block"
          data-ad-client="ca-pub-9905718149811880"
@@ -915,18 +1006,6 @@
     -->
     <!-- Hidden Media Archive section end -->
 
-    <div class="ad-slot" id="ad-placeholder-media-mid" style="margin: 4rem auto; max-width: 728px; text-align: center;">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-PLACEHOLDER"
-           data-ad-slot="PLACEHOLDER"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
-    </div>
-
     <!-- Community -->
     <section class="section" id="community" aria-labelledby="community-title">
       <h2 id="community-title">Community</h2>
@@ -957,8 +1036,21 @@
 
         </div>
 
+        <!-- Display Ad: TTG_MediaProto_FeatureYourTank1 — Slot 6411910426 -->
+        <div class="ttg-ad-slot" id="ad-media-feature-your-tank" data-ad-label="TTG_MediaProto_FeatureYourTank1 • Slot 6411910426" aria-label="Advertisement">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-9905718149811880"
+               data-ad-slot="6411910426"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+
         <!-- === TTG_MediaMid (between Community and Aquarium Library) === -->
-        <div class="ttg-adunit" id="ad-media-mid-1" aria-label="Advertisement">
+        <div class="ttg-ad-slot" id="ad-media-mid-1" data-ad-label="TTG_MediaMid • Slot 9522042154" aria-label="Advertisement">
           <ins class="adsbygoogle"
                style="display:block"
                data-ad-client="ca-pub-9905718149811880"
@@ -1031,6 +1123,19 @@
       <p><a href="/store.html">Explore the full collection of guides and journals on our Store page.</a></p>
     </section>
 
+    <!-- Display Ad: TTG_MediaProto_FAQ_Top — Slot 6497764235 -->
+    <div class="ttg-ad-slot" id="ad-media-faq-top" data-ad-label="TTG_MediaProto_FAQ_Top • Slot 6497764235" aria-label="Advertisement">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9905718149811880"
+           data-ad-slot="6497764235"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
     <section class="section" id="media-faq" aria-labelledby="media-faq-title">
       <article class="card">
         <h2 id="media-faq-title">Frequently Asked Questions</h2>
@@ -1067,8 +1172,8 @@
     <p>Privacy Policy: <a href="/privacy-legal.html">Privacy Policy</a> · Terms: <a href="/terms.html">Terms</a> · Contact: <a href="/contact-feedback.html">Contact</a></p>
   </div>
 
-  <!-- === TTG_MediaBottom (above footer) === -->
-  <div class="ttg-adunit ttg-adunit--media-bottom" id="ad-media-bottom-1" aria-label="Advertisement">
+  <!-- Display Ad: TTG_MediaBottom — Slot 9522042154 -->
+  <div class="ttg-ad-slot" id="ad-media-bottom-1" data-ad-label="TTG_MediaBottom • Slot 9522042154" aria-label="Advertisement">
     <ins class="adsbygoogle"
          style="display:block"
          data-ad-client="ca-pub-9905718149811880"
@@ -1198,6 +1303,51 @@
 <!-- === TTG Ad Slot View Tracking START === -->
 <script src="/js/ad-slot-view-tracking.js"></script>
 <!-- === TTG Ad Slot View Tracking END === -->
+
+<script>
+  (function() {
+    var QA_MODE = true;
+    var body = document.body;
+    if (QA_MODE && body) {
+      body.setAttribute('data-ad-qa', 'true');
+    }
+
+    var slots = document.querySelectorAll('.ttg-ad-slot');
+    if (!slots.length) {
+      return;
+    }
+
+    var evaluateSlot = function(slot, ins) {
+      if (!slot || !ins) return;
+      var hasIframe = ins.querySelector('iframe');
+      var height = ins.offsetHeight;
+      if (hasIframe && height > 40) {
+        slot.classList.remove('ttg-ad-slot--empty');
+      } else {
+        slot.classList.add('ttg-ad-slot--empty');
+      }
+    };
+
+    slots.forEach(function(slot) {
+      var ins = slot.querySelector('ins.adsbygoogle');
+      if (!ins) {
+        return;
+      }
+
+      var refresh = function() { evaluateSlot(slot, ins); };
+      refresh();
+
+      var observer = new MutationObserver(refresh);
+      observer.observe(ins, { childList: true, subtree: true });
+
+      window.addEventListener('load', function() {
+        setTimeout(refresh, 1800);
+      });
+
+      window.addEventListener('ttg:consent-change', refresh);
+    });
+  })();
+</script>
 
 <script>
   // Robust click-through for mobile Safari

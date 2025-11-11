@@ -212,24 +212,87 @@
       min-height: 100vh;
     }
 
-    .ad-placeholder {
-      margin: 20px auto;
-      border: 1px dashed var(--line);
-      border-radius: 12px;
-      background: var(--card);
-      box-shadow: 0 24px 48px -30px var(--shadow);
-      min-height: 120px;
+    .ttg-ad-slot {
+      --ttg-ad-border: rgba(129, 155, 211, 0.72);
+      --ttg-ad-bg: rgba(12, 20, 36, 0.22);
+      --ttg-ad-label-bg: rgba(12, 20, 36, 0.85);
+      --ttg-ad-label-color: rgba(226, 235, 255, 0.96);
+      margin: 10rem auto;
+      padding: clamp(1.5rem, 4vw, 2.75rem);
+      max-width: min(100%, 970px);
+      min-height: 280px;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-weight: 700;
-      color: var(--muted);
+      border-radius: 20px;
+      border: 2px dashed transparent;
+      background: transparent;
+      text-align: center;
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
-    .ad-placeholder span {
+    body[data-ad-qa="true"] .ttg-ad-slot,
+    .ttg-ad-slot.ttg-ad-slot--empty {
+      border-color: var(--ttg-ad-border);
+      background: var(--ttg-ad-bg);
+    }
+
+    .ttg-ad-slot::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--ttg-ad-label-bg);
+      color: var(--ttg-ad-label-color);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      white-space: nowrap;
+      z-index: 2;
+    }
+
+    body[data-ad-qa="true"] .ttg-ad-slot::before,
+    .ttg-ad-slot.ttg-ad-slot--empty::before {
+      content: attr(data-ad-label);
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .ttg-ad-slot::after {
+      content: attr(data-ad-label);
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: clamp(1rem, 4vw, 1.75rem);
+      background: var(--ttg-ad-label-bg);
+      color: var(--ttg-ad-label-color);
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 1;
+    }
+
+    .ttg-ad-slot.ttg-ad-slot--empty::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .ttg-ad-slot ins.adsbygoogle {
       display: block;
+      width: 100%;
+      position: relative;
+      z-index: 3;
     }
 
     a {
@@ -1234,6 +1297,10 @@
   <!-- Google tag (gtag.js) — GA4 -->
   <!--#include virtual="/includes/ga4.html" -->
 
+  <!-- AdSense loader (keep one global instance only) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
+    crossorigin="anonymous"></script>
+
   <!-- --- Google CMP (Funding Choices) START --- -->
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
   <script>
@@ -1284,8 +1351,17 @@
 
 
     <div class="wrap">
-      <div class="ad-placeholder" id="ad-pre-tool" role="complementary" aria-label="Advertisement">
-        <span>Advertisement</span>
+      <!-- Display Ad: TTG_StockingAdvisor_Top — Slot 8419879326 -->
+      <div class="ttg-ad-slot" id="ad-stocking-top" data-ad-label="TTG_StockingAdvisor_Top • Slot 8419879326" aria-label="Advertisement">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-9905718149811880"
+             data-ad-slot="8419879326"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
       </div>
     </div>
 
@@ -1758,8 +1834,17 @@
         </p>
       </section>
 
-      <div class="ad-placeholder" id="ad-mid-content" role="complementary" aria-label="Advertisement">
-        <span>Advertisement</span>
+      <!-- Display Ad: TTG_StockingAdvisor_Mid — Slot 5996977454 -->
+      <div class="ttg-ad-slot" id="ad-stocking-mid" data-ad-label="TTG_StockingAdvisor_Mid • Slot 5996977454" aria-label="Advertisement">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-9905718149811880"
+             data-ad-slot="5996977454"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
       </div>
 
       <section class="panel" aria-labelledby="educational-title">
@@ -1823,8 +1908,17 @@
         </nav>
       </noscript>
 
-      <div class="ad-placeholder" id="ad-post-faq" role="complementary" aria-label="Advertisement">
-        <span>Advertisement</span>
+      <!-- Display Ad: TTG_StockingAdvisor_Bottom — Slot 9758352395 -->
+      <div class="ttg-ad-slot" id="ad-stocking-bottom" data-ad-label="TTG_StockingAdvisor_Bottom • Slot 9758352395" aria-label="Advertisement">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-9905718149811880"
+             data-ad-slot="9758352395"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
       </div>
 
     </div>
@@ -2058,6 +2152,52 @@
       });
     })();
   </script>
+
+  <script>
+    (function() {
+      var QA_MODE = false;
+      var body = document.body;
+      if (QA_MODE && body) {
+        body.setAttribute('data-ad-qa', 'true');
+      }
+
+      var slots = document.querySelectorAll('.ttg-ad-slot');
+      if (!slots.length) {
+        return;
+      }
+
+      var evaluateSlot = function(slot, ins) {
+        if (!slot || !ins) return;
+        var hasIframe = ins.querySelector('iframe');
+        var height = ins.offsetHeight;
+        if (hasIframe && height > 40) {
+          slot.classList.remove('ttg-ad-slot--empty');
+        } else {
+          slot.classList.add('ttg-ad-slot--empty');
+        }
+      };
+
+      slots.forEach(function(slot) {
+        var ins = slot.querySelector('ins.adsbygoogle');
+        if (!ins) {
+          return;
+        }
+
+        var refresh = function() { evaluateSlot(slot, ins); };
+        refresh();
+
+        var observer = new MutationObserver(refresh);
+        observer.observe(ins, { childList: true, subtree: true });
+
+        window.addEventListener('load', function() {
+          setTimeout(refresh, 1800);
+        });
+
+        window.addEventListener('ttg:consent-change', refresh);
+      });
+    })();
+  </script>
+
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
     <a href="/privacy-legal.html">Privacy Policy</a>

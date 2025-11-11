@@ -514,18 +514,6 @@
           ✅ Thanks! Your submission has been sent. We’ll review and contact you if selected.
         </div>
       </section>
-      <div class="ttg-adunit" id="ad-feature-mid" aria-label="Advertisement">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-9905718149811880"
-             data-ad-slot="9522042154"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-      </div>
-
       <!-- ======= Scoped Styles (minimal) ======= -->
       <style>
         #feature-tank-form.ft-wrap {
@@ -598,29 +586,112 @@
           background: rgba(255,255,255,0.04);
         }
         .thumb img { width: 100%; height: 100%; object-fit: cover; display:block; }
-        .thumb .badge {
-          position:absolute; bottom:6px; right:6px; background: rgba(0,0,0,0.55);
-          padding: 2px 6px; border-radius: 6px; font-size:.7rem;
-        }
+    .thumb .badge {
+      position:absolute; bottom:6px; right:6px; background: rgba(0,0,0,0.55);
+      padding: 2px 6px; border-radius: 6px; font-size:.7rem;
+    }
 
-        /* Consent — native iOS-safe */
-        .consent-row { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start; margin: 12px 0 6px; }
-        .consent-checkbox {
-          width: 20px; height: 20px; margin-top:2px;
-          -webkit-appearance: checkbox; appearance: checkbox; accent-color: var(--accent);
-          transform: scale(1.15); transform-origin: top left; cursor:pointer;
-        }
-        .consent-label { user-select:none; cursor:pointer; line-height:1.4; }
-        .consent-help { color: var(--muted); margin: 0 0 10px; }
+    /* Consent — native iOS-safe */
+    .consent-row { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start; margin: 12px 0 6px; }
+    .consent-checkbox {
+      width: 20px; height: 20px; margin-top:2px;
+      -webkit-appearance: checkbox; appearance: checkbox; accent-color: var(--accent);
+      transform: scale(1.15); transform-origin: top left; cursor:pointer;
+    }
+    .consent-label { user-select:none; cursor:pointer; line-height:1.4; }
+    .consent-help { color: var(--muted); margin: 0 0 10px; }
 
-        /* Disabled submit look */
-        #submitBtn[disabled] { opacity: .5; cursor: not-allowed; }
+    /* Disabled submit look */
+    #submitBtn[disabled] { opacity: .5; cursor: not-allowed; }
 
-        /* A11y helpers */
-        .sr-only {
-          position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;
-        }
-      </style>
+    /* A11y helpers */
+    .sr-only {
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;
+    }
+
+    .ttg-ad-slot {
+      --ttg-ad-border: rgba(129, 155, 211, 0.72);
+      --ttg-ad-bg: rgba(12, 20, 36, 0.22);
+      --ttg-ad-label-bg: rgba(12, 20, 36, 0.85);
+      --ttg-ad-label-color: rgba(226, 235, 255, 0.96);
+      margin: 10rem auto;
+      padding: clamp(1.5rem, 4vw, 2.75rem);
+      max-width: min(100%, 970px);
+      min-height: 280px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      border: 2px dashed transparent;
+      background: transparent;
+      text-align: center;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    body[data-ad-qa="true"] .ttg-ad-slot,
+    .ttg-ad-slot.ttg-ad-slot--empty {
+      border-color: var(--ttg-ad-border);
+      background: var(--ttg-ad-bg);
+    }
+
+    .ttg-ad-slot::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--ttg-ad-label-bg);
+      color: var(--ttg-ad-label-color);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      white-space: nowrap;
+      z-index: 2;
+    }
+
+    body[data-ad-qa="true"] .ttg-ad-slot::before,
+    .ttg-ad-slot.ttg-ad-slot--empty::before {
+      content: attr(data-ad-label);
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .ttg-ad-slot::after {
+      content: attr(data-ad-label);
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: clamp(1rem, 4vw, 1.75rem);
+      background: var(--ttg-ad-label-bg);
+      color: var(--ttg-ad-label-color);
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 1;
+    }
+
+    .ttg-ad-slot.ttg-ad-slot--empty::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .ttg-ad-slot ins.adsbygoogle {
+      display: block;
+      width: 100%;
+      position: relative;
+      z-index: 3;
+    }
+  </style>
 
       <!-- Cloudinary Upload Widget -->
       <script src="https://widget.cloudinary.com/v2.0/global/all.js" defer></script>
@@ -907,6 +978,18 @@
         📌 Features are <strong>only</strong> accepted through this website. We don’t take submissions via YouTube comments or social DMs.
       </p>
     </section>
+    <!-- Display Ad: TTG_FeatureYourTank_FooterTop — Slot NEW_SLOT_ID -->
+    <div class="ttg-ad-slot" id="ad-feature-footer-top" data-ad-label="TTG_FeatureYourTank_FooterTop • Slot NEW_SLOT_ID" aria-label="Advertisement">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9905718149811880"
+           data-ad-slot="NEW_SLOT_ID"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
   </main>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <!-- === TTG Cookie Consent START === -->
@@ -1024,6 +1107,51 @@
 <!-- === TTG CMP Consent Bridge END === -->
 
 <!-- === TTG Cookie Consent END === -->
+
+<script>
+  (function() {
+    var QA_MODE = false;
+    var body = document.body;
+    if (QA_MODE && body) {
+      body.setAttribute('data-ad-qa', 'true');
+    }
+
+    var slots = document.querySelectorAll('.ttg-ad-slot');
+    if (!slots.length) {
+      return;
+    }
+
+    var evaluateSlot = function(slot, ins) {
+      if (!slot || !ins) return;
+      var hasIframe = ins.querySelector('iframe');
+      var height = ins.offsetHeight;
+      if (hasIframe && height > 40) {
+        slot.classList.remove('ttg-ad-slot--empty');
+      } else {
+        slot.classList.add('ttg-ad-slot--empty');
+      }
+    };
+
+    slots.forEach(function(slot) {
+      var ins = slot.querySelector('ins.adsbygoogle');
+      if (!ins) {
+        return;
+      }
+
+      var refresh = function() { evaluateSlot(slot, ins); };
+      refresh();
+
+      var observer = new MutationObserver(refresh);
+      observer.observe(ins, { childList: true, subtree: true });
+
+      window.addEventListener('load', function() {
+        setTimeout(refresh, 1800);
+      });
+
+      window.addEventListener('ttg:consent-change', refresh);
+    });
+  })();
+</script>
 
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
