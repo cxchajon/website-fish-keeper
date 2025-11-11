@@ -1,0 +1,144 @@
+{
+  "inventory": [
+    {
+      "file_path": "/home/user/website-fish-keeper/feature-your-tank.html",
+      "line_start": 518,
+      "line_end": 523,
+      "is_commented_out": false,
+      "context_heading": "No context found",
+      "wrapper_selector": ".ttg-adunit",
+      "data_ad_client": "ca-pub-9905718149811880",
+      "data_ad_slot": "9522042154",
+      "data_ad_format": "auto",
+      "data_full_width_responsive": "true"
+    },
+    {
+      "file_path": "/home/user/website-fish-keeper/about.html",
+      "line_start": 361,
+      "line_end": 366,
+      "is_commented_out": false,
+      "context_heading": "No context found",
+      "wrapper_selector": ".ttg-adunit",
+      "data_ad_client": "ca-pub-9905718149811880",
+      "data_ad_slot": "9522042154",
+      "data_ad_format": "auto",
+      "data_full_width_responsive": "true"
+    },
+    {
+      "file_path": "/home/user/website-fish-keeper/media.html",
+      "line_start": 1169,
+      "line_end": 1174,
+      "is_commented_out": false,
+      "context_heading": "seo-intro",
+      "wrapper_selector": ".ttg-adunit",
+      "data_ad_client": "ca-pub-9905718149811880",
+      "data_ad_slot": "9522042154",
+      "data_ad_format": "auto",
+      "data_full_width_responsive": "true"
+    },
+    {
+      "file_path": "/home/user/website-fish-keeper/media-prototype.html",
+      "line_start": 633,
+      "line_end": 638,
+      "is_commented_out": false,
+      "context_heading": "hero",
+      "wrapper_selector": ".ttg-adunit",
+      "data_ad_client": "ca-pub-9905718149811880",
+      "data_ad_slot": "9522042154",
+      "data_ad_format": "auto",
+      "data_full_width_responsive": "true"
+    },
+    {
+      "file_path": "/home/user/website-fish-keeper/media-prototype.html",
+      "line_start": 849,
+      "line_end": 854,
+      "is_commented_out": false,
+      "context_heading": "No context found",
+      "wrapper_selector": ".ad-slot",
+      "data_ad_client": "ca-pub-PLACEHOLDER",
+      "data_ad_slot": "PLACEHOLDER",
+      "data_ad_format": "auto",
+      "data_full_width_responsive": "true"
+    },
+    {
+      "file_path": "/home/user/website-fish-keeper/media-prototype.html",
+      "line_start": 892,
+      "line_end": 897,
+      "is_commented_out": false,
+      "context_heading": "No context found",
+      "wrapper_selector": ".ttg-adunit",
+      "data_ad_client": "ca-pub-9905718149811880",
+      "data_ad_slot": "9522042154",
+      "data_ad_format": "auto",
+      "data_full_width_responsive": "true"
+    },
+    {
+      "file_path": "/home/user/website-fish-keeper/media-prototype.html",
+      "line_start": 995,
+      "line_end": 1000,
+      "is_commented_out": false,
+      "context_heading": "seo-intro",
+      "wrapper_selector": ".ttg-adunit",
+      "data_ad_client": "ca-pub-9905718149811880",
+      "data_ad_slot": "9522042154",
+      "data_ad_format": "auto",
+      "data_full_width_responsive": "true"
+    },
+    {
+      "file_path": "/home/user/website-fish-keeper/cycling-coach/index.html",
+      "line_start": 1077,
+      "line_end": 1082,
+      "is_commented_out": true,
+      "context_heading": "No context found",
+      "wrapper_selector": ".ad-slot",
+      "data_ad_client": "YOUR-ADSENSE-CLIENT-ID",
+      "data_ad_slot": "TBD_SLOT_ID",
+      "data_ad_format": "auto",
+      "data_full_width_responsive": "true"
+    },
+    {
+      "file_path": "/home/user/website-fish-keeper/cycling-coach/index.html",
+      "line_start": 1130,
+      "line_end": 1135,
+      "is_commented_out": true,
+      "context_heading": "new-tank-syndrome",
+      "wrapper_selector": ".ad-slot",
+      "data_ad_client": "YOUR-ADSENSE-CLIENT-ID",
+      "data_ad_slot": "TBD_SLOT_ID",
+      "data_ad_format": "auto",
+      "data_full_width_responsive": "true"
+    }
+  ],
+  "summary": {
+    "totals": {
+      "units_found": 9,
+      "active_units": 7,
+      "commented_units": 2,
+      "unique_slot_ids": 1,
+      "placeholder_clients": 1,
+      "placeholder_slots": 1,
+      "duplicate_slot_ids": [
+        {
+          "slot": "9522042154",
+          "count": 6,
+          "files": [
+            "/home/user/website-fish-keeper/feature-your-tank.html",
+            "/home/user/website-fish-keeper/about.html",
+            "/home/user/website-fish-keeper/media.html",
+            "/home/user/website-fish-keeper/media-prototype.html",
+            "/home/user/website-fish-keeper/media-prototype.html",
+            "/home/user/website-fish-keeper/media-prototype.html"
+          ]
+        }
+      ]
+    },
+    "recommended_new_slots": 6,
+    "noindex_pages": [
+      "/home/user/website-fish-keeper/prototype-home.html",
+      "/home/user/website-fish-keeper/nav.html",
+      "/home/user/website-fish-keeper/media-prototype.html",
+      "/home/user/website-fish-keeper/docs/audits/prototype-home_HEAD.html",
+      "/home/user/website-fish-keeper/docs/audits/prototype-home_GEMINI_head.html"
+    ]
+  }
+}
