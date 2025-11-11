@@ -1,0 +1,1422 @@
+<!-- PROTOTYPE: EXCLUDE FROM SITEMAP/CRAWL -->
+<!-- Updated: Applied new translucent nav resources and grouping to the Media hub. -->
+<!-- Prototype note: TikTok and Instagram sections are active here; Media Archive remains hidden pending automation work. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
+  <meta charset="UTF-8" />
+  <title>Fishkeeping Media &amp; Books — The Tank Guide</title>
+  <meta name="description" content="Explore The Tank Guide’s fishkeeping guides, videos, and books. Find resources from FishKeepingLifeCo to help you build a healthy freshwater aquarium." />
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://thetankguide.com/media.html">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/logos/logo-512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/logo-512.png">
+  <link rel="apple-touch-icon" href="/assets/img/logos/apple-touch-icon.png">
+  <meta property="og:site_name" content="The Tank Guide">
+  <!-- TODO: Replace temporary favicon (logo-512.png) with 16x16 + 32x32 versions later -->
+  <!--#include virtual="/includes/schema-organization.html" -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Fishkeeping Media &amp; Books — The Tank Guide">
+  <meta property="og:description" content="Explore The Tank Guide fishkeeping guides, media, and books by FishKeepingLifeCo—videos, previews, and resources to help you build healthy freshwater aquariums.">
+  <meta property="og:url" content="https://thetankguide.com/media.html">
+  <meta property="og:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="FishKeepingLifeCo logo (1200×630).">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@fishkeepinglife">
+  <meta name="twitter:title" content="Fishkeeping Media &amp; Books — The Tank Guide">
+  <meta name="twitter:description" content="Explore The Tank Guide fishkeeping guides, media, and books by FishKeepingLifeCo—videos, previews, and resources to help you build healthy freshwater aquariums.">
+  <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png">
+  <meta name="twitter:image:alt" content="FishKeepingLifeCo logo (1200×630).">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://i.ytimg.com https://img.youtube.com; font-src 'self' data: https://cdnjs.cloudflare.com; connect-src 'self' https://formspree.io https://www.google.com/recaptcha/; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; upgrade-insecure-requests">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css?v=1.0.10" />
+  <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
+  <link rel="stylesheet" href="/assets/css/media.css" />
+  <!-- Page-scoped styles -->
+  <style>
+    :root {
+      --card-bg: rgba(255,255,255,.6);
+      --border: rgba(0,0,0,.08);
+      --muted: rgba(0,0,0,.65);
+      --ttg-nav-bg: rgba(10, 16, 30, 0.72);
+      --ttg-nav-text: #f2f6ff;
+      --ttg-nav-link: rgba(243, 247, 255, 0.85);
+      --lib-max: 860px;
+      --card-w: min(360px, 88vw);
+      --card-pad: 16px;
+      --card-radius: 16px;
+      --card-shadow: 0 8px 16px rgba(5, 37, 48, .12);
+      --gap: 0.75rem;
+      --alib-book-min: 148px;
+      --alib-book-max: 232px;
+      --alib-book-gap: clamp(18px, 4vw, 36px);
+    }
+
+    /* Background now matches the homepage gradient exactly */
+    html,body{
+      margin:0; padding:0;
+      color:#eef3ff;
+    }
+
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 18px; }
+
+    /* Hero */
+    .hero { padding: 64px 0 28px; text-align: left; }
+    .hero h1 { margin: 0 0 8px; }
+    .hero p.sub { margin: 0; opacity: .9; }
+    .hero-description {
+      margin: 12px 0 0;
+      max-width: 46ch;
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    /* Sections */
+    .section { margin: 32px 0 28px; }
+    .section h2 { margin: 0 0 8px; }
+    .section p.lead { margin: 0 0 16px; color: var(--muted); }
+
+    .community-archive-cta {
+      display: flex;
+      justify-content: center;
+      margin: clamp(16px, 4vw, 22px) 0 clamp(18px, 4vw, 26px);
+    }
+
+    .community-archive-button {
+      --cta-bg-start: rgba(37, 99, 235, 0.92);
+      --cta-bg-end: rgba(59, 130, 246, 0.86);
+      --cta-border: rgba(255, 255, 255, 0.28);
+      --cta-shadow: 0 16px 32px rgba(8, 21, 50, 0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: clamp(10px, 2.4vw, 12px);
+      padding: clamp(12px, 3vw, 16px) clamp(22px, 6vw, 30px);
+      min-height: clamp(48px, 12vw, 60px);
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--cta-bg-start), var(--cta-bg-end));
+      border: 1px solid var(--cta-border);
+      color: #ffffff;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      box-shadow: var(--cta-shadow);
+      position: relative;
+      white-space: nowrap;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+      filter: none;
+    }
+
+    .community-archive-button__label {
+      font-size: clamp(0.95rem, 2.6vw, 1.05rem);
+    }
+
+    .community-archive-button__arrow {
+      display: inline-flex;
+      align-items: center;
+      font-size: 1.1em;
+      line-height: 1;
+      margin-left: clamp(6px, 1.8vw, 10px);
+    }
+
+    .community-archive-button:focus-visible {
+      outline: 2px solid rgba(96, 165, 250, 0.95);
+      outline-offset: 3px;
+    }
+
+    .community-archive-button:hover,
+    .community-archive-button:focus-visible {
+      border-color: rgba(255, 255, 255, 0.45);
+      box-shadow: 0 18px 38px rgba(8, 21, 50, 0.38);
+    }
+
+    .youtube-rewind-icon {
+      width: clamp(24px, 5.6vw, 26px);
+      height: auto;
+      flex-shrink: 0;
+      display: block;
+      color: #ffffff;
+    }
+
+    .youtube-rewind-icon .rewind-chevrons {
+      transform-origin: center;
+    }
+
+    @keyframes rewind-jiggle {
+      0%, 100% { transform: translateX(0); }
+      40% { transform: translateX(-3px); }
+      70% { transform: translateX(-1px); }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .community-archive-button:hover .youtube-rewind-icon .rewind-chevrons,
+      .community-archive-button:focus-visible .youtube-rewind-icon .rewind-chevrons {
+        animation: rewind-jiggle 300ms ease-in-out forwards;
+      }
+
+      .community-archive-button:hover,
+      .community-archive-button:focus-visible {
+        filter: drop-shadow(0 10px 18px rgba(8, 21, 50, 0.3));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .community-archive-cta {
+        margin: clamp(14px, 5vw, 18px) 0 clamp(16px, 6vw, 20px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .community-archive-button:hover .youtube-rewind-icon .rewind-chevrons,
+      .community-archive-button:focus-visible .youtube-rewind-icon .rewind-chevrons {
+        animation: none !important;
+      }
+
+      .community-archive-button:hover,
+      .community-archive-button:focus-visible {
+        filter: drop-shadow(0 8px 16px rgba(8, 21, 50, 0.28));
+      }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      color:#0b1020; /* card copy stays dark on light card */
+    }
+    /* ===== AQUARIUM LIBRARY (self-contained) ===== */
+    .alib__header {
+      text-align: left;
+      margin-bottom: clamp(12px, 2.5vw, 20px);
+    }
+
+    .alib__header h2 {
+      margin: clamp(8px, 2vw, 16px) 0 clamp(6px, 1.8vw, 12px);
+    }
+
+    .alib__dek {
+      margin: 0.25rem 0 0;
+      opacity: .9;
+    }
+
+    .alib__foot{ text-align:center; margin: clamp(10px, 2.6vw, 18px) 0 0; color: rgba(255,255,255,.95); }
+
+    /* --- Aquarium Library: Tabletop variant --- */
+
+    /* wrapper to control spacing relative to section text */
+    /* Wood tabletop: warm wood gradient + subtle grain + vignette edge */
+    .alib__tabletop{
+      margin-inline: auto;
+      position: relative;
+
+      /* base wood color */
+      background:
+        radial-gradient(80% 120% at 50% 0%, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 55%) , /* top vignette */
+        repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 2px, transparent 2px 14px), /* faint grain lines */
+        linear-gradient(180deg, #b57a3f 0%, #9e6732 55%, #8d5c2d 100%); /* wood */
+      box-shadow:
+        0 10px 24px rgba(0,0,0,.25), /* drop */
+        inset 0 1px 0 rgba(255,255,255,.25), /* light catch */
+        inset 0 -6px 16px rgba(0,0,0,.22);     /* edge depth */
+    }
+
+    /* Books: face-up with slight perspective and contact shadow */
+    .alib-book{
+      position: relative;
+      display: grid;
+      place-items: end center;
+      inline-size: clamp(var(--alib-book-min), 22vw, var(--alib-book-max));
+      aspect-ratio: 5 / 6;
+
+      /* gentle tilt so they feel placed on the table */
+      transform: perspective(800px) rotateX(7deg);
+      transform-origin: center center;
+      transition: transform .18s ease, filter .18s ease;
+    }
+
+    .alib-book__img{
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: contain;
+    }
+
+    /* soft contact shadow under each book */
+    .alib-book::after{
+      content:"";
+      position:absolute; left:10%; right:10%; bottom:0;
+      background: radial-gradient(50% 60% at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,0) 70%);
+      transform: translateY(40%) scaleY(.7);
+      pointer-events:none;
+    }
+
+    /* Desktop hover: tiny lift + stronger shadow (no layout shift) */
+    @media (hover:hover) and (pointer:fine){
+      .alib-book:hover{
+        transform: perspective(800px) rotateX(6deg) translateY(-3px);
+        filter: drop-shadow(0 12px 14px rgba(0,0,0,.24));
+      }
+    }
+
+    .alib-book:focus-visible{
+      outline: 2px solid rgba(255,255,255,.9);
+      outline-offset: 4px;
+      transform: perspective(800px) rotateX(6deg) translateY(-3px);
+      filter: drop-shadow(0 12px 14px rgba(0,0,0,.24));
+    }
+
+    .alib-book:active{
+      transform: perspective(800px) rotateX(6deg) translateY(-3px);
+      filter: drop-shadow(0 12px 14px rgba(0,0,0,.24));
+    }
+
+    /* Layout: keep side-by-side on most phones; wrap only when necessary */
+    .alib__tabletop{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:flex-end;
+      justify-content:center;
+    }
+
+    /* -------- Compact tabletop tweaks -------- */
+    .alib--compact {
+      /* tighten vertical spacing around the whole block */
+      margin-block: clamp(6px, 1.6vw, 14px);
+    }
+
+    /* smaller card, less padding, slightly smaller radius */
+    .alib--compact .alib__tabletop{
+      width: min(860px, 92vw);          /* smaller card */
+      padding: clamp(12px, 3vw, 22px);  /* tighter inside */
+      border-radius: 12px;              /* a bit crisper */
+      gap: var(--alib-book-gap);        /* reduce spacing between books */
+    }
+
+    /* slightly smaller books (so more breathing room) */
+    .alib--compact .alib-book{
+      inline-size: clamp(var(--alib-book-min), 22vw, var(--alib-book-max));
+      margin: 0;
+    }
+
+    /* crisper contact shadow */
+    .alib--compact .alib-book::after{
+      bottom: 2%;
+      height: 8%;
+      filter: blur(5px);
+      opacity: .85;
+    }
+
+    /* NEW: subtle white “edge line” under each book */
+    .alib--compact .alib-book::before{
+      content:"";
+      position:absolute;
+      left: 18%;
+      right: 18%;
+      bottom: 6%;
+      height: 4px;
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.55));
+      box-shadow:
+        0 2px 6px rgba(0,0,0,.18),      /* soft shadow below the line */
+        inset 0 1px 0 rgba(255,255,255,.6);
+      pointer-events:none;
+      transform: translateY(40%) scaleY(.9);  /* sits just below the book */
+    }
+
+    /* Smaller phones: keep the two-up look but tighten further */
+    @media (max-width: 420px){
+      .alib--compact .alib__tabletop{ width: 92vw; padding: 12px; gap: clamp(14px, 6vw, 24px); }
+      .alib--compact .alib-book{ inline-size: clamp(132px, 42vw, var(--alib-book-max)); }
+      .alib--compact .alib-book::before{ left:20%; right:20%; bottom:6%; }
+    }
+
+    @media (min-width: 1280px){
+      .alib--compact .alib__tabletop{
+        width: min(860px, 84vw);
+        gap: clamp(22px, 3vw, 40px);
+      }
+      .alib--compact .alib-book{
+        inline-size: clamp(170px, 18vw, var(--alib-book-max));
+      }
+    }
+
+    @media (max-width: 767px){
+      .alib--compact .alib__tabletop{
+        justify-content: center;
+      }
+    }
+
+    /* Reduce spacing before the “More sections…” line */
+    .alib--compact ~ p { margin-top: clamp(8px, 1.6vw, 14px); }
+
+    /* Kill any legacy panel/shelf visuals */
+    .alib__panel, .alib__shelf, .library-shelf, .shelf { display:none !important; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .alib-book {
+        transition: none !important;
+        transform: none !important;
+      }
+    }
+    .stack { display: grid; gap: 14px; }
+    .featured-tank-cta {
+      display: flex;
+      justify-content: center;
+      margin-top: var(--space-4);
+    }
+    .btn {
+      display:inline-block; padding:10px 14px; border:1px solid var(--border);
+      border-radius: 10px; text-decoration:none; font-weight:600;
+      background:#fff; color:#0b1020;
+    }
+    .media-platform-card {
+      display: grid;
+      gap: 18px;
+    }
+    .media-platform-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .media-card {
+      display: grid;
+      gap: 10px;
+    }
+    .media-thumb-link {
+      display: block;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    }
+    .media-thumb-link img {
+      width: 100%;
+      display: block;
+      height: auto;
+    }
+    .media-caption {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+    .archive-card {
+      display: grid;
+      gap: 20px;
+    }
+    .archive-grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+    .archive-group {
+      display: grid;
+      gap: 12px;
+    }
+    .archive-list {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .archive-placeholder {
+      background: rgba(255,255,255,0.7);
+      border: 1px dashed rgba(0,0,0,0.15);
+      border-radius: 10px;
+      padding: 12px;
+      color: #0b1020;
+      min-height: 112px;
+      display: grid;
+      align-content: start;
+      gap: 6px;
+    }
+    .archive-placeholder span {
+      font-weight: 600;
+    }
+    .archive-placeholder p {
+      margin: 0;
+      color: rgba(0,0,0,0.7);
+      font-size: 0.92rem;
+      line-height: 1.4;
+    }
+    .muted { color: var(--muted); }
+    .now-playing {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+    .now-playing-label {
+      font-weight: 700;
+      color: #000000;
+      cursor: default;
+    }
+    .now-playing-title {
+      padding-left: 6px;
+      font-weight: 400;
+      color: #333333;
+    }
+    .center { text-align:center; }
+
+    /* --- Featured Resource --- */
+    #featured-resource {
+      padding: 16px;
+    }
+
+    /* Community split layout */
+    #community .split {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 900px) {
+      #community .split {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+
+    #community .media-thumb {
+      display: grid;
+      place-items: center;
+      min-height: 140px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.5);
+      color: #2b2b2b;
+      font-weight: 600;
+    }
+
+    /* media page embed fixes */
+    .video-embed {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+      background: #000;
+    }
+    .video-embed iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* Featured Tanks illustration – responsive, matches card styling */
+    .featured-tank-figure { margin: 0; }
+    .featured-tank-figure .media-aspect {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 16px;
+      background: rgba(255,255,255,.6);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.05);
+      overflow: hidden;
+    }
+    .featured-tank-figure img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #community .card .video-embed {
+      margin-top: 12px;
+    }
+
+    #community .card .community-video-title {
+      margin: 16px 0 0;
+    }
+
+    #community .card .community-video-attribution {
+      margin: 4px 0 0;
+    }
+
+    #community .card .community-video-cta {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    .resource-card {
+      background: #e9f4ff;
+      border-radius: 12px;
+      padding: 16px 16px 18px;
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      color: #0b1020;
+    }
+
+    .affiliate-note {
+      font-size: .9rem;
+      opacity: .8;
+      margin: .25rem 0 .5rem;
+    }
+
+    .resource-cover-link {
+      display: inline-block;
+      line-height: 0;
+      text-decoration: none;
+    }
+
+    .resource-cover {
+      width: 40vw;
+      max-width: 280px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    .resource-cover-link:focus-visible {
+      outline: 3px solid rgba(0, 119, 199, 0.75);
+      outline-offset: 4px;
+      border-radius: 10px;
+    }
+
+    .resource-content {
+      margin-top: 12px;
+      padding: 0 8px;
+    }
+
+    #featured-resource-title {
+      margin-bottom: 4px;
+    }
+
+    .resource-title {
+      font-weight: 700;
+      font-size: 1.125rem;
+      margin: 4px 0 6px;
+      letter-spacing: 0.2px;
+    }
+
+    .resource-desc {
+      font-weight: 500;
+      line-height: 1.5;
+      margin: 0 auto 12px;
+      max-width: 60ch;
+    }
+
+    .btn.btn-amazon {
+      display: inline-block;
+      padding: 10px 16px;
+      font-weight: 700;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ffd569 0%, #ffb800 100%);
+      color: #1d1d1f;
+      text-decoration: none;
+      border: 1px solid #e3a400;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.12), 0 6px 12px rgba(0,0,0,0.08);
+      transition: transform 0.06s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    }
+
+    .btn.btn-amazon:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 0 rgba(0,0,0,0.12), 0 10px 16px rgba(0,0,0,0.12);
+      filter: saturate(1.05);
+    }
+
+    .btn.btn-amazon:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.12), 0 6px 10px rgba(0,0,0,0.10);
+    }
+
+    .btn.btn-amazon:focus-visible {
+      outline: 3px solid rgba(0, 119, 199, 0.75);
+      outline-offset: 3px;
+    }
+
+    @media (min-width: 768px) {
+      .resource-card { padding: 18px 20px 20px; }
+      .resource-cover { width: 30vw; max-width: 300px; }
+      .resource-desc { margin-bottom: 14px; }
+    }
+
+  </style>
+  <script defer src="js/nav.js?v=1.1.0"></script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://thetankguide.com/media.html#webpage",
+  "name": "Fishkeeping Media & Books — The Tank Guide",
+  "url": "https://thetankguide.com/media.html",
+  "description": "Explore FishKeepingLifeCo media picks, books, and aquarium learning resources from The Tank Guide.",
+  "publisher": {
+    "@id": "https://thetankguide.com/#organization"
+  },
+  "author": {
+    "@id": "https://thetankguide.com/#organization"
+  }
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is The Tank Guide?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Tank Guide is the FishKeepingLifeCo platform that turns beginner freshwater aquarium questions into clear answers with videos, step-by-step guides, and books for families."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is \"Life in Balance\" about?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Life in Balance is a family-friendly illustrated storybook that explains aquarium science topics like the nitrogen cycle, filtration, and fish care in an encouraging narrative."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where can I find nitrogen cycle guides?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can explore our Aquarium University lessons, dive into the Library quick-reference sheets, and watch the FishKeepingLifeCo YouTube tutorials that walk through every nitrogen cycle checkpoint."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you feature community tanks?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. We highlight reader aquariums in the Featured Tanks gallery, elevate a Community Video Pick, and invite aquarists to submit builds through the Feature Your Tank form."
+      }
+    }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Book",
+  "@id": "https://thetankguide.com/#book-life-in-balance",
+  "name": "Life in Balance: The Hidden Magic of Aquariums",
+  "isbn": "979-8263446215",
+  "url": "https://amzn.to/3IRKvK0",
+  "sameAs": ["https://amzn.to/3IRKvK0"],
+  "author": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+  "publisher": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+  "audience": { "@type": "Audience", "audienceType": "Children 6–12" },
+  "about": ["Aquariums", "Fishkeeping", "Nitrogen Cycle", "Aquarium Setup Basics"],
+  "bookFormat": "https://schema.org/Hardcover",
+  "offers": {
+    "@type": "Offer",
+    "url": "https://amzn.to/3IRKvK0"
+  }
+}
+  </script>
+  <!-- Consent Mode defaults (load FIRST) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
+  <!-- Google tag (gtag.js) — GA4 -->
+  <!--#include virtual="/includes/ga4.html" -->
+
+  <!-- AdSense loader (keep one global instance only) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
+    crossorigin="anonymous"></script>
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
+  <!-- End Cloudflare Web Analytics -->
+  <!-- --- Google CMP (Funding Choices) START --- -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
+  <script>
+    // Required bootstrap per Google; signals CMP presence
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
+  <!-- --- Google CMP (Funding Choices) END --- -->
+</head>
+<body class="theme-light">
+  <div id="site-nav"></div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap">
+      <h1>Media Hub &amp; Fishkeeping Guides</h1>
+      <p class="sub">Watch • Read • Explore</p>
+      <p class="hero-description">Step-by-step tutorials and detailed guides on setups, gear, cycling, and stocking. Start with the latest video or browse the full library.</p>
+    </div>
+  </section>
+
+  <!-- === TTG_MediaTop (under hero) === -->
+  <div class="ttg-adunit ttg-adunit--top" id="ad-media-top-1" aria-label="Advertisement">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-9905718149811880"
+         data-ad-slot="9522042154"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+
+  <main class="wrap" id="content">
+    <!-- Featured Videos -->
+    <section class="section" aria-labelledby="videos">
+      <article class="card video-card featured-videos-card">
+        <h2 id="videos">Featured Videos</h2>
+        <p class="subline">Catch our latest upload or explore the full channel for more.</p>
+        <h3 class="visually-hidden">Latest video</h3>
+        <!-- FEATURED VIDEO SECTION -->
+        <div class="featured-video">
+          <h3 class="now-playing">
+            <span class="now-playing-label">Now Playing:</span><br>
+            <span class="now-playing-title">How to beat Black Beard Algae. My full guide</span>
+          </h3>
+
+          <!-- Embedded video -->
+          <div class="video-embed">
+            <iframe
+              src="https://www.youtube.com/embed/kdkC66luNa0?rel=0&amp;modestbranding=1"
+              title="How to beat Black Beard Algae. My full guide"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              loading="lazy"></iframe>
+          </div>
+
+          <noscript>
+            <p>
+              <a href="https://youtube.com/shorts/kdkC66luNa0" target="_blank" rel="noopener nofollow">
+                <img src="https://img.youtube.com/vi/kdkC66luNa0/hqdefault.jpg" alt="Watch How to beat Black Beard Algae. My full guide on YouTube" width="480" height="270">
+              </a>
+            </p>
+          </noscript>
+
+          <!-- Clickable title link -->
+          <p class="video-title">
+            <a href="https://youtube.com/shorts/kdkC66luNa0"
+               target="_blank"
+               rel="noopener nofollow">
+              How to beat Black Beard Algae. My full guide
+            </a>
+          </p>
+        </div>
+        <p class="muted" style="margin:.35rem 0 0;">
+          Got Black Beard Algae (BBA)? This short guide shows what really works — and what doesn’t.
+          For a deeper breakdown, <a href="/blogs/" aria-label="Read more aquarium care blogs on The Tank Guide">visit our Blogs page</a>.
+        </p>
+        <p class="muted" style="margin:.35rem 0 0;">Added: 2025-10-24</p>
+        <hr class="media-divider" />
+        <div class="video-meta">
+          <div class="video-actions" style="flex-wrap:wrap;gap:12px;">
+            <a class="yt-cta" href="https://www.youtube.com/@FishKeepingLifeCo" target="_blank" rel="noopener noreferrer" title="Visit FishKeepingLifeCo on YouTube" aria-label="Visit FishKeepingLifeCo on YouTube">
+              <span class="yt-icon" aria-hidden="true">
+                <svg class="yt-cta-svg" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true">
+                  <path d="M9 7v10l8-5z" fill="#fff"></path>
+                </svg>
+              </span>
+              <span class="yt-label">Visit Our Channel</span>
+            </a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+  <!-- Latest on TikTok (prototype visible) -->
+  <section class="section" id="latest-tiktok" aria-labelledby="latest-tiktok-heading">
+    <article class="card media-platform-card">
+      <h2 id="latest-tiktok-heading">Latest on TikTok</h2>
+      <p class="subline">Swipe-friendly mini guides covering cycle checkpoints, stocking math, and rapid fixes.</p>
+      <p class="muted">Our TikTok feed delivers fast aquarium checkpoints you can apply in real time — from testing nitrogen levels to dialing in gear. Each clip reinforces the longer tutorials on this page so beginners can check their progress between water changes.</p>
+      <div class="media-platform-grid">
+        <figure class="media-card">
+          <a class="media-thumb-link" href="https://www.tiktok.com/@FishKeepingLifeCo/video/7328456100000000000" target="_blank" rel="noopener noreferrer">
+            <img src="assets/media/social/tiktok-placeholder.svg" alt="TikTok preview showing nitrogen cycle myth busting callouts" loading="lazy" decoding="async">
+          </a>
+          <figcaption class="media-caption">60-second nitrogen cycle myth busting with the testing steps we use in every new tank build.</figcaption>
+        </figure>
+        <figure class="media-card">
+          <a class="media-thumb-link" href="https://www.tiktok.com/@FishKeepingLifeCo" target="_blank" rel="noopener noreferrer">
+            <img src="assets/media/social/tiktok-placeholder.svg" alt="TikTok teaser highlighting aquascaping tools on a desk" loading="lazy" decoding="async">
+          </a>
+          <figcaption class="media-caption">Behind-the-scenes aquascaping kit tour covering the tools we recommend in the Tank Guide gear list.</figcaption>
+        </figure>
+      </div>
+    </article>
+  </section>
+
+  <!-- Latest on Instagram (prototype visible) -->
+  <section class="section" id="latest-instagram" aria-labelledby="latest-instagram-heading">
+    <article class="card media-platform-card">
+      <h2 id="latest-instagram-heading">Latest on Instagram</h2>
+      <p class="subline">Snapshots from current builds, reader spotlights, and upcoming book drops.</p>
+      <p class="muted">Instagram is where we slow down to show the craft: build diaries, community tank tours, and previews of new FishKeepingLifeCo releases. Follow along for photo walk-throughs that complement our guides and point you to deeper reads in the Library.</p>
+      <div class="media-platform-grid">
+        <figure class="media-card">
+          <a class="media-thumb-link" href="https://www.instagram.com/p/CycleCheckList" target="_blank" rel="noopener noreferrer">
+            <img src="assets/media/social/instagram-placeholder.svg" alt="Instagram carousel teaser for cycle checklist post" loading="lazy" decoding="async">
+          </a>
+          <figcaption class="media-caption">Printable cycle checklist preview—walk through ammonia, nitrite, and nitrate checkpoints step-by-step.</figcaption>
+        </figure>
+        <figure class="media-card">
+          <a class="media-thumb-link" href="https://www.instagram.com/FishKeepingLifeCo" target="_blank" rel="noopener noreferrer">
+            <img src="assets/media/social/instagram-placeholder.svg" alt="Instagram reel teaser showing planted aquarium close-up" loading="lazy" decoding="async">
+          </a>
+          <figcaption class="media-caption">Reader spotlight reel featuring a lush 20-gallon community tank with planting tips from our Discord crew.</figcaption>
+        </figure>
+      </div>
+    </article>
+  </section>
+    <!-- TODO: Unhide the Media Archive section once the archive features are ready. -->
+    <!-- Hidden Media Archive section start -->
+    <!--
+    <section class="section" id="media-archive" aria-labelledby="media-archive-heading">
+      <article class="card archive-card">
+        <h2 id="media-archive-heading">Media Archive</h2>
+        <p class="subline">Organized collections launching soon. Bookmark this hub to track every video, short, reel, and future podcast drop.</p>
+        <div class="archive-grid">
+          <section class="archive-group" aria-labelledby="archive-youtube">
+            <h3 id="archive-youtube">YouTube Library</h3>
+            <div class="archive-list">
+              <div class="archive-placeholder">
+                <span>Coming Soon — Setup Series Index</span>
+                <p>Every cycling, stocking, and maintenance playlist in a single searchable feed.</p>
+              </div>
+              <div class="archive-placeholder">
+                <span>Coming Soon — Live Q&amp;A Replays</span>
+                <p>Timestamped recaps of long-form livestreams with download links for worksheets.</p>
+              </div>
+            </div>
+          </section>
+          <section class="archive-group" aria-labelledby="archive-tiktok">
+            <h3 id="archive-tiktok">TikTok Highlights</h3>
+            <div class="archive-list">
+              <div class="archive-placeholder">
+                <span>Coming Soon — Rapid Fix Vault</span>
+                <p>Quick remedies for cloudy water, algae blooms, and equipment hiccups.</p>
+              </div>
+              <div class="archive-placeholder">
+                <span>Coming Soon — 30-Day Challenges</span>
+                <p>Daily prompts to keep nano tanks thriving with minimal gear.</p>
+              </div>
+            </div>
+          </section>
+          <section class="archive-group" aria-labelledby="archive-instagram">
+            <h3 id="archive-instagram">Instagram Gallery</h3>
+            <div class="archive-list">
+              <div class="archive-placeholder">
+                <span>Coming Soon — Community Tank Tours</span>
+                <p>Reader-submitted scapes grouped by size, livestock, and filtration style.</p>
+              </div>
+              <div class="archive-placeholder">
+                <span>Coming Soon — Book + Merch Drops</span>
+                <p>Release-day photography and stories with direct purchase links.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </article>
+    </section>
+
+    -->
+    <!-- Hidden Media Archive section end -->
+    <!-- Community -->
+    <section class="section" id="community" aria-labelledby="community-title">
+      <h2 id="community-title">Community</h2>
+
+      <div class="stack">
+        <div class="split">
+          <!-- Card A: Featured Tanks -->
+          <article class="card">
+            <h3><strong>Featured Tanks</strong></h3>
+            <p class="muted">
+              Showcasing aquariums from The Tank Guide community — real setups, honest lessons learned, and ideas to try.
+              Want to be featured? Submit your tank and we’ll highlight standout builds.
+            </p>
+            <figure class="featured-tank-figure" aria-label="Featured community tank">
+              <div class="media-aspect">
+                <img
+                  src="assets/media/community/IMG_9505.png"
+                  alt="Featured community aquarium from The Tank Guide — user-submitted tank"
+                  loading="lazy"
+                  decoding="async"
+                >
+              </div>
+            </figure>
+            <div class="featured-tank-cta">
+              <a class="btn" href="/feature-your-tank.html" aria-label="Submit your tank">Submit Your Tank</a>
+            </div>
+          </article>
+
+          <!-- Card B: Community Video Picks -->
+          <article class="card">
+            <h3><strong>Community Video Picks</strong></h3>
+            <p class="muted">
+              Curated how-to videos and inspiration from creators we trust — and from folks who use and follow The Tank Guide.
+              We rotate a featured pick regularly and keep an archive of favorites you can explore anytime.
+            </p>
+            <hr class="card-sep" aria-hidden="true">
+            <div class="video-embed">
+              <iframe
+                src="https://www.youtube.com/embed/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO"
+                title="AQUAPROS — This is ACTUALLY The Method for Crystal Clear Aquarium Water"
+                aria-label="AQUAPROS — This is ACTUALLY The Method for Crystal Clear Aquarium Water community pick"
+                loading="lazy"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <noscript>
+              <p>
+                <a href="https://youtu.be/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO" target="_blank" rel="noopener noreferrer">
+                  <img src="https://img.youtube.com/vi/TlF4_lzUR1M/hqdefault.jpg" alt="Watch This is ACTUALLY The Method for Crystal Clear Aquarium Water by AQUAPROS on YouTube" width="480" height="270">
+                </a>
+              </p>
+            </noscript>
+            <h3 class="card-subtitle community-video-title">This is ACTUALLY The Method for Crystal Clear Aquarium Water</h3>
+            <p class="muted community-video-attribution">by <a href="https://youtube.com/@aquapros" target="_blank" rel="noopener noreferrer">@AQUAPROS</a></p>
+            <hr class="media-divider" />
+            <p>
+              AQUAPROS tests Seachem Purigen to see if it really delivers crystal-clear water. The results show it’s a great polishing tool—but true clarity still depends on solid basics like regular water changes, proper filtration, and balanced bioload. A must-watch for anyone chasing that perfect glass-clear tank.
+            </p>
+            <div class="community-video-cta">
+              <a class="yt-cta" href="https://youtu.be/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO" target="_blank" rel="noopener noreferrer" title="Watch This is ACTUALLY The Method for Crystal Clear Aquarium Water on YouTube" aria-label="Watch This is ACTUALLY The Method for Crystal Clear Aquarium Water on YouTube">
+                <span class="yt-icon" aria-hidden="true">
+                  <svg class="yt-cta-svg" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true">
+                    <path d="M9 7v10l8-5z" fill="#fff"></path>
+                  </svg>
+                </span>
+                <span class="yt-label">Watch on YouTube</span>
+              </a>
+            </div>
+            <p class="muted community-video-added-date">
+              <time datetime="2025-10-21">Added: 2025-10-21</time>
+            </p>
+          </article>
+        </div>
+
+        <!-- === TTG_MediaMid (between Community and Aquarium Library) === -->
+        <div class="ttg-adunit" id="ad-media-mid-1" aria-label="Advertisement">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-9905718149811880"
+               data-ad-slot="9522042154"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+
+        <!-- Aquarium Library START -->
+        <section id="aquarium-library" aria-labelledby="alib-title">
+          <div class="alib__header">
+            <div class="community-archive-cta">
+              <a
+                class="community-archive-button"
+                href="/pages/community-video-picks.html"
+                aria-label="View past Community Video Picks"
+              >
+                <svg
+                  class="youtube-rewind-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 60 36"
+                  preserveAspectRatio="xMidYMid meet"
+                  role="img"
+                  focusable="false"
+                  aria-hidden="true"
+                >
+                  <title>YouTube Rewind — View past Community Video Picks</title>
+                  <rect width="60" height="36" rx="9" fill="#FF0000" />
+                  <g class="rewind-chevrons" fill="currentColor">
+                    <path d="M40 10v16L24 18z" />
+                    <path d="M30 10v16L14 18z" />
+                  </g>
+                </svg>
+                <span class="community-archive-button__label">View past Community Video Picks</span>
+                <span class="community-archive-button__arrow" aria-hidden="true">→</span>
+              </a>
+            </div>
+            <h2 id="alib-title">Aquarium Library</h2>
+            <p class="alib__dek">
+              Explore a collection of guides, research articles, transcripts, and spotlights for freshwater aquariums.
+            </p>
+          </div>
+
+          <div class="alib alib--table alib--compact">
+            <div class="alib__tabletop">
+              <a class="alib-book" href="/blogs/">
+                <span class="visually-hidden">Blogs</span>
+                <img class="alib-book__img" src="/assets/media/library/books/blogs-modern.svg" alt="Blogs" loading="lazy">
+              </a>
+              <a class="alib-book" href="https://thetankguide.com/pages/university.html">
+                <span class="visually-hidden">University Articles</span>
+                <img class="alib-book__img" src="/assets/media/library/books/university.svg" alt="University Articles" loading="lazy">
+              </a>
+              <a class="alib-book" href="/journal.html" aria-label="Open the FishKeepingLifeCo Journal">
+                <span class="visually-hidden">Journal</span>
+                <svg class="alib-book__img" viewBox="0 0 512 512" width="100%" height="auto" role="img" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+                  <defs>
+                    <linearGradient id="journalPaper" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#FFF9E6" />
+                      <stop offset="100%" stop-color="#FFF5DA" />
+                    </linearGradient>
+                    <linearGradient id="journalBinding" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#B9B3A8" />
+                      <stop offset="100%" stop-color="#A9A399" />
+                    </linearGradient>
+                    <linearGradient id="journalEdgeHighlight" x1="62%" y1="42%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0" />
+                      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.4" />
+                    </linearGradient>
+                    <linearGradient id="journalStaple" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#E3E0DA" />
+                      <stop offset="100%" stop-color="#D6D2CB" />
+                    </linearGradient>
+                    <filter id="journalPadShadow" x="-18%" y="-14%" width="136%" height="160%">
+                      <feOffset dx="0" dy="16" in="SourceAlpha" result="offset" />
+                      <feGaussianBlur in="offset" stdDeviation="14" result="blur" />
+                      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.12 0" result="shadow" />
+                      <feBlend in="shadow" in2="SourceGraphic" mode="normal" />
+                    </filter>
+                    <clipPath id="journalPaperClip">
+                      <rect x="56" y="64" width="400" height="424" rx="32" ry="32" />
+                    </clipPath>
+                    <filter id="journalLabelShadow" x="-10%" y="-10%" width="120%" height="140%">
+                      <feOffset dx="0" dy="1" in="SourceAlpha" result="offset" />
+                      <feGaussianBlur in="offset" stdDeviation="2.6" result="labelBlur" />
+                      <feColorMatrix in="labelBlur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.08 0" />
+                    </filter>
+                  </defs>
+                  <g id="pad" filter="url(#journalPadShadow)" preserveAspectRatio="xMidYMid meet">
+                    <rect x="56" y="64" width="400" height="424" rx="32" ry="32" fill="url(#journalPaper)" />
+                    <g clip-path="url(#journalPaperClip)">
+                      <line x1="104" y1="140" x2="104" y2="480" stroke="#FF6666" stroke-width="3" stroke-opacity="0.25" />
+                      <g stroke="#A6C5F2" stroke-width="2.6" stroke-opacity="0.25">
+                        <line x1="96" y1="188" x2="456" y2="188" />
+                        <line x1="96" y1="204" x2="456" y2="204" />
+                        <line x1="96" y1="220" x2="456" y2="220" />
+                        <line x1="96" y1="236" x2="456" y2="236" />
+                        <line x1="96" y1="252" x2="456" y2="252" />
+                        <line x1="96" y1="268" x2="456" y2="268" />
+                        <line x1="96" y1="284" x2="456" y2="284" />
+                        <line x1="96" y1="300" x2="456" y2="300" />
+                        <line x1="96" y1="316" x2="456" y2="316" />
+                        <line x1="96" y1="332" x2="456" y2="332" />
+                        <line x1="96" y1="348" x2="456" y2="348" />
+                        <line x1="96" y1="364" x2="456" y2="364" />
+                        <line x1="96" y1="380" x2="456" y2="380" />
+                        <line x1="96" y1="396" x2="456" y2="396" />
+                        <line x1="96" y1="412" x2="456" y2="412" />
+                        <line x1="96" y1="428" x2="456" y2="428" />
+                        <line x1="96" y1="444" x2="456" y2="444" />
+                        <line x1="96" y1="460" x2="456" y2="460" />
+                        <line x1="96" y1="476" x2="456" y2="476" />
+                      </g>
+                    </g>
+                    <rect x="56" y="64" width="400" height="424" rx="32" ry="32" fill="none" stroke="url(#journalEdgeHighlight)" stroke-width="3" />
+                    <rect x="56" y="64" width="400" height="92" rx="32" ry="32" fill="url(#journalBinding)" />
+                    <rect x="56" y="64" width="400" height="16" rx="32" ry="16" fill="#FFFFFF" fill-opacity="0.18" />
+                    <g fill="url(#journalStaple)">
+                      <rect x="120" y="92" width="32" height="10" rx="4" ry="4" />
+                      <rect x="196" y="92" width="32" height="10" rx="4" ry="4" />
+                      <rect x="272" y="92" width="32" height="10" rx="4" ry="4" />
+                      <rect x="348" y="92" width="32" height="10" rx="4" ry="4" />
+                    </g>
+                    <g id="pad-label" transform="translate(130 214)" fill="#1E1E1E" fill-opacity="0.92">
+                      <g filter="url(#journalLabelShadow)">
+                        <g transform="translate(0 0)">
+                          <path d="M0 0H28V8H20V32Q20 44 8 44H0V36H8Q14 36 14 30V8H0Z" />
+                        </g>
+                        <g transform="translate(32 0)" fill-rule="evenodd">
+                          <path d="M17 0C28 0 34 8 34 22C34 36 28 44 17 44C6 44 0 36 0 22C0 8 6 0 17 0ZM17 12C12 12 10 16 10 22C10 28 12 32 17 32C22 32 24 28 24 22C24 16 22 12 17 12Z" />
+                        </g>
+                        <g transform="translate(72 0)">
+                          <path d="M0 0H10V28C10 32 12 34 16 34C20 34 22 32 22 28V0H32V28C32 40 24 44 16 44C8 44 0 40 0 28V0Z" />
+                        </g>
+                        <g transform="translate(110 0)">
+                          <path d="M0 0H20C29 0 34 6 34 16C34 24 29 30 22 30L34 44H22L12 32H8V44H0V0ZM8 8V24H20C24 24 26 22 26 16C26 10 24 8 20 8H8Z" />
+                        </g>
+                        <g transform="translate(150 0)">
+                          <path d="M0 0H10L24 30V0H32V44H22L8 14V44H0V0Z" />
+                        </g>
+                        <g transform="translate(188 0)">
+                          <path d="M16 0L32 44H24L21 36H11L8 44H0L16 0ZM13 28H19L16 18Z" />
+                        </g>
+                        <g transform="translate(226 0)">
+                          <path d="M0 0H10V36H30V44H0V0Z" />
+                        </g>
+                      </g>
+                      <g>
+                        <g transform="translate(0 0)">
+                          <path d="M0 0H28V8H20V32Q20 44 8 44H0V36H8Q14 36 14 30V8H0Z" />
+                        </g>
+                        <g transform="translate(32 0)" fill-rule="evenodd">
+                          <path d="M17 0C28 0 34 8 34 22C34 36 28 44 17 44C6 44 0 36 0 22C0 8 6 0 17 0ZM17 12C12 12 10 16 10 22C10 28 12 32 17 32C22 32 24 28 24 22C24 16 22 12 17 12Z" />
+                        </g>
+                        <g transform="translate(72 0)">
+                          <path d="M0 0H10V28C10 32 12 34 16 34C20 34 22 32 22 28V0H32V28C32 40 24 44 16 44C8 44 0 40 0 28V0Z" />
+                        </g>
+                        <g transform="translate(110 0)">
+                          <path d="M0 0H20C29 0 34 6 34 16C34 24 29 30 22 30L34 44H22L12 32H8V44H0V0ZM8 8V24H20C24 24 26 22 26 16C26 10 24 8 20 8H8Z" />
+                        </g>
+                        <g transform="translate(150 0)">
+                          <path d="M0 0H10L24 30V0H32V44H22L8 14V44H0V0Z" />
+                        </g>
+                        <g transform="translate(188 0)">
+                          <path d="M16 0L32 44H24L21 36H11L8 44H0L16 0ZM13 28H19L16 18Z" />
+                        </g>
+                        <g transform="translate(226 0)">
+                          <path d="M0 0H10V36H30V44H0V0Z" />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <p class="alib__foot">More sections coming soon.</p>
+        </section>
+        <!-- Aquarium Library END -->
+      </div>
+    </section>
+
+    <section class="section" id="media-faq" aria-labelledby="media-faq-title">
+      <article class="card">
+        <h2 id="media-faq-title">Frequently Asked Questions</h2>
+        <div class="stack">
+          <div>
+            <h3>What is The Tank Guide?</h3>
+            <p>The Tank Guide is the FishKeepingLifeCo learning platform dedicated to freshwater beginners. We publish clear videos, hands-on guides, and illustrated books that make aquarium science approachable for families, classrooms, and first-time hobbyists.</p>
+          </div>
+          <div>
+            <h3>What is “Life in Balance” about?</h3>
+            <p>“Life in Balance” is our family-friendly storybook that turns the nitrogen cycle, filtration, and fish care basics into an illustrated adventure. It helps new aquarists understand the science behind stable tanks while keeping the narrative uplifting and easy to follow.</p>
+          </div>
+          <div>
+            <h3>Where can I find nitrogen cycle guides?</h3>
+            <p>Start with the <a href="/university/" aria-label="Visit The Tank Guide Aquarium University">Aquarium University lessons</a>, then bookmark the quick-reference sheets in the <a href="#aquarium-library">Aquarium Library</a>. You can also watch our <a href="https://www.youtube.com/@FishKeepingLifeCo" target="_blank" rel="noopener noreferrer">YouTube tutorials</a> for step-by-step nitrogen cycle walkthroughs.</p>
+          </div>
+          <div>
+            <h3>Do you feature community tanks?</h3>
+            <p>Absolutely. We showcase reader aquariums in the Featured Tanks gallery, spotlight a Community Video Pick, and invite hobbyists to share builds through the <a href="/feature-your-tank.html">Feature Your Tank</a> form.</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Featured Book -->
+    <section class="section" id="featured-resource" aria-labelledby="featured-resource-title">
+      <h2 id="featured-resource-title" class="center">Featured Book: Life in Balance</h2>
+      <div class="resource-card">
+        <a class="resource-cover-link" href="https://amzn.to/3IRKvK0" target="_blank" rel="sponsored noopener noreferrer">
+          <img class="resource-cover" src="assets/books/book-cover-web.jpg" alt="Life in Balance: The Hidden Magic of Aquariums — book cover" loading="lazy" />
+        </a>
+        <div class="resource-content">
+          <p class="resource-title">Life in Balance: The Hidden Magic of Aquariums</p>
+          <p class="resource-desc">Life in Balance is the definitive beginner aquarium book that turns complex care into a joyful adventure. It simplifies the nitrogen cycle and aquarium setup science into an engaging, accurate story for families and teachers. This easy-to-understand fishkeeping guide builds the confidence needed to start and maintain a thriving freshwater ecosystem — perfect for anyone beginning their aquarium journey.</p>
+          <p class="affiliate-note">As an Amazon Associate, we earn from qualifying purchases.</p>
+          <a class="btn btn-amazon" href="/store.html">Visit Our Store Page</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="seo-intro">
+      <div class="wrap">
+        <p>The Tank Guide media makes aquarium science simple. Explore videos and guides on the nitrogen cycle, water chemistry, and balanced aquascapes. (FKLCo)</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Prototype-only crawlable legal links -->
+  <div class="visually-hidden" aria-hidden="false">
+    <p>Privacy Policy: <a href="/privacy-legal.html">Privacy Policy</a> · Terms: <a href="/terms.html">Terms</a> · Contact: <a href="/contact-feedback.html">Contact</a></p>
+  </div>
+
+  <!-- === TTG_MediaBottom (above footer) === -->
+  <div class="ttg-adunit ttg-adunit--media-bottom" id="ad-media-bottom-1" aria-label="Advertisement">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-9905718149811880"
+         data-ad-slot="9522042154"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+<!-- === TTG Cookie Consent START === -->
+<div id="ttg-consent" class="ttg-consent" data-consent-banner>
+  <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
+    <h3 id="ttg-consent-title">Cookies & Advertising</h3>
+    <p id="ttg-consent-desc">
+      We use cookies to run this site and (if you allow) to show relevant ads from Google AdSense. You can accept all cookies, reject personalized ads, or manage preferences anytime.
+    </p>
+    <div class="ttg-consent__actions">
+      <button type="button" class="ttg-btn ttg-btn--secondary js-consent-reject" id="ttg-consent-reject">Reject (Non-personalized)</button>
+      <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-manage">Manage</button>
+      <button type="button" class="ttg-btn ttg-btn--primary js-consent-accept" id="ttg-consent-accept">Accept All</button>
+    </div>
+  </div>
+</div>
+
+<div id="ttg-consent-modal" class="ttg-consent-modal" hidden aria-modal="true" role="dialog" aria-labelledby="ttg-consent-modal-title">
+  <div class="ttg-consent-modal__panel">
+    <h3 id="ttg-consent-modal-title">Cookie Preferences</h3>
+    <form id="ttg-consent-form">
+      <label class="ttg-row">
+        <input type="checkbox" checked disabled />
+        <span><strong>Essential</strong> — required for core site functions.</span>
+      </label>
+      <label class="ttg-row">
+        <input type="checkbox" id="ttg-c-analytics" />
+        <span><strong>Analytics</strong> — understand usage (if enabled later).</span>
+      </label>
+      <label class="ttg-row">
+        <input type="checkbox" id="ttg-c-ads" />
+        <span><strong>Advertising</strong> — allow personalized ads (Google AdSense).</span>
+      </label>
+      <div class="ttg-consent-modal__actions">
+        <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-cancel">Cancel</button>
+        <button type="submit" class="ttg-btn ttg-btn--primary">Save Preferences</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- === TTG Consent Banner Controller START === -->
+  <script defer src="/assets/js/consent-banner.js"></script>
+<!-- === TTG Consent Banner Controller END === -->
+
+
+<!-- === TTG CMP Consent Bridge START === -->
+<script>
+(function(){
+  // Helper: map TCF consent to our single "ads granted" flag.
+  // We consider "granted" only when Purpose 1 (storage) AND Purpose 4 (select personalised ads)
+  // are consented. If you want to allow NON-personalised ads when only Purpose 1 is granted,
+  // set allowNPA=true below.
+  var allowNPA = true; // if true, we’ll treat Purpose 1 only as "granted" for showing slots (Google will serve NPA ads).
+
+  function setAdConsent(granted){
+    document.documentElement.setAttribute('data-ad-consent', granted ? 'granted' : 'denied');
+    document.documentElement.classList.toggle('is-ads-disabled', !granted);
+    window.__TTG_ADS_DISABLED__ = !granted;
+    // Inform any listeners (our ad loader later)
+    window.dispatchEvent(new CustomEvent('ttg:consent-change', {detail:{granted}}));
+  }
+
+  // If Google CMP is present, it defines __tcfapi.
+  function hookTCF(){
+    if (typeof window.__tcfapi !== 'function') return false;
+
+    // Hide our local cookie banner when Google CMP is running (EEA users).
+    try{
+      var banner = document.getElementById('ttg-consent');
+      var modal  = document.getElementById('ttg-consent-modal');
+      if (banner){ banner.hidden = true; banner.classList.remove('is-open'); }
+      if (modal)  modal.hidden  = true;
+    }catch(e){}
+
+    // Listen for consent changes
+    window.__tcfapi('addEventListener', 2, function(tcData, ok){
+      if(!ok || !tcData) return;
+      // Purpose 1 = storage; Purpose 4 = personalised ads
+      var p = (tcData.purpose && tcData.purpose.consents) || {};
+      var hasP1 = !!p[1];
+      var hasP4 = !!p[4];
+
+      var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
+      setAdConsent(granted);
+    });
+
+    // Also fetch current state once
+    window.__tcfapi('getTCData', 2, function(tcData, ok){
+      if(!ok || !tcData) return;
+      var p = (tcData.purpose && tcData.purpose.consents) || {};
+      var hasP1 = !!p[1];
+      var hasP4 = !!p[4];
+      var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
+      setAdConsent(granted);
+    });
+
+    return true;
+  }
+
+  // Try to hook immediately; if CMP loads a bit later, poll briefly
+  if (!hookTCF()){
+    var tries = 0, t = setInterval(function(){
+      tries++;
+      if (hookTCF() || tries > 40) clearInterval(t); // up to ~4s
+    }, 100);
+  }
+
+  // Fallback for non-EEA visitors (no __tcfapi): keep using our local preference
+  // Our existing local banner writes ttgConsentV2 with {ads:true|false}.
+  // If CMP absent, keep existing behavior (do not force-show anything here).
+
+})();
+</script>
+<!-- === TTG CMP Consent Bridge END === -->
+
+<!-- === TTG Cookie Consent END === -->
+
+<!-- === TTG Ad Slot View Tracking START === -->
+<script src="/js/ad-slot-view-tracking.js"></script>
+<!-- === TTG Ad Slot View Tracking END === -->
+
+<script>
+  // Robust click-through for mobile Safari
+  document.addEventListener('click', function (e) {
+    const a = e.target.closest('a.alib-book');
+    if (!a) return;
+    // If something prevented default, force navigation
+    if (e.defaultPrevented) {
+      location.href = a.href;
+      return;
+    }
+    // Extra nudge for iOS
+    if ('ontouchstart' in window) {
+      setTimeout(() => { if (document.activeElement !== a) location.href = a.href; }, 0);
+    }
+  }, { passive: true });
+</script>
+
+  <script src="/js/footer-loader.js?v=1.5.2" defer></script>
+  <section class="legal-links" aria-label="Site legal links">
+    <a href="/privacy-legal.html">Privacy Policy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/contact-feedback.html">Contact</a>
+  </section>
+  <noscript>
+    <section class="legal-links" aria-label="Site legal links (noscript)">
+      <a href="/privacy-legal.html">Privacy Policy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/contact-feedback.html">Contact</a>
+    </section>
+  </noscript>
+
+  <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
+</body>
+</html>
