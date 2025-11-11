@@ -74,12 +74,45 @@
       line-height: 1.45;
     }
 
-    .hero-update {
-      margin: 18px 0 0;
-      max-width: 48ch;
-      font-size: 0.95rem;
-      line-height: 1.5;
-      opacity: .85;
+    .marquee-title {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: clamp(0.75rem, 2vw, 1.35rem) auto clamp(1.1rem, 2.8vw, 1.6rem);
+      padding: clamp(0.65rem, 2vw, 0.95rem) clamp(1.15rem, 3.2vw, 1.85rem);
+      max-width: 100%;
+      text-align: center;
+      font-weight: 700;
+      font-size: clamp(1.15rem, 2.4vw, 1.3rem);
+      letter-spacing: 0.045em;
+      color: #0b1020;
+      background: linear-gradient(135deg, rgba(250, 252, 255, 0.95), rgba(226, 238, 255, 0.9));
+      border-radius: 999px;
+      box-shadow: 0 10px 24px rgba(11, 16, 32, 0.16);
+    }
+
+    .marquee-title::after {
+      content: "";
+      position: absolute;
+      bottom: clamp(-0.6rem, -1.5vw, -0.75rem);
+      left: 12%;
+      right: 12%;
+      height: 2px;
+      background: rgba(11, 16, 32, 0.18);
+      border-radius: 999px;
+    }
+
+    .marquee-title a {
+      display: inline-block;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .marquee-title a:focus-visible {
+      outline: 3px solid rgba(51, 102, 204, 0.85);
+      outline-offset: 4px;
+      border-radius: 6px;
     }
 
     /* Sections */
@@ -748,8 +781,8 @@
     <div class="wrap">
       <h1>Media Hub &amp; Fishkeeping Guides</h1>
       <p class="sub">Watch • Read • Explore</p>
-      <p class="hero-description">Step-by-step tutorials and detailed guides on setups, gear, cycling, and stocking. Start with the latest video or browse the full library.</p>
-      <p class="hero-update">Media hub balances branded content with curated community picks and an open call to submit tanks, spotlighting both original and community voices. Curated how-to videos and inspiration from creators we trust — and from folks who use and follow The Tank Guide. We rotate a featured pick regularly and keep an archive of favorites you can explore anytime.</p>
+      <p class="hero-description"><strong>Watch • Read • Explore</strong><br>
+        Step-by-step tutorials and guides on aquarium setups, gear, cycling, and stocking. Start with the latest video or browse curated community picks from trusted creators and Tank Guide followers. Submit your tank to be featured, or explore our growing archive of how-to videos and real aquarium builds.</p>
     </div>
   </section>
 
@@ -765,13 +798,13 @@
           <h3 class="now-playing">Now Playing: Latest Video</h3>
 
           <!-- Clickable title link -->
-          <p class="video-title">
+          <div class="marquee-title video-title" role="heading" aria-level="4">
             <a href="https://youtube.com/shorts/kdkC66luNa0"
                target="_blank"
                rel="noopener noreferrer nofollow">
               How to beat Black Beard Algae. My full guide
             </a>
-          </p>
+          </div>
 
           <!-- Embedded video -->
           <div class="video-embed">
@@ -836,7 +869,13 @@
               </a>
             </p>
           </noscript>
-          <h3 class="card-subtitle community-video-title">This is ACTUALLY The Method for Crystal Clear Aquarium Water</h3>
+          <div class="marquee-title card-subtitle community-video-title" role="heading" aria-level="4">
+            <a href="https://youtu.be/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO"
+               target="_blank"
+               rel="noopener noreferrer">
+              This is ACTUALLY The Method for Crystal Clear Aquarium Water
+            </a>
+          </div>
           <p class="muted community-video-attribution">by <a href="https://youtube.com/@aquapros" target="_blank" rel="noopener noreferrer">@AQUAPROS</a></p>
           <hr class="media-divider" />
           <p>
@@ -1007,7 +1046,7 @@
             <ul class="alib__list">
               <li><strong>Blogs</strong> — practical blogs for hands-on tips.</li>
               <li><strong>University Articles</strong> — university articles for scientific background.</li>
-              <li><strong>Journal</strong> — a journal for tracking your tank's data over time.</li>
+              <li><strong>Journal:</strong> Follow our aquarium builds and fishkeeping experiments.</li>
             </ul>
           </div>
 
