@@ -103,3 +103,7 @@ Next: Fine-tune spacing for denser data sets and validate on smaller mobile brea
 Scope: Pin Node 20 LTS, repair prototype-guard workflow, enforce single global footer include.
 Result: Both CI guards pass; journal layout intact; footer hash verified.
 Next: Continue connecting CSV auto-updates when stable.
+[2025-02-14 | Media-Prototype | Aquarium Library Update]
+Scope: Replace generic Library paragraph with brand-aligned 3-sentence version.
+Result: Updated text live, verified tone/spacing match site standards.
+Next: Continue expanding Library descriptions under each card.
