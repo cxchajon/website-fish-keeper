@@ -335,3 +335,6 @@
     background: linear-gradient(135deg, #0a3e5c 0%, #1e2c78 100%);
   }
 }
+#aquarium-library {
+  scroll-margin-top: 96px;
+}
