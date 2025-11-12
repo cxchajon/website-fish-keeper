@@ -2565,23 +2565,23 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
   outline-offset: 2px;
 }
 
-/* Media prototype — Now Playing banner layout */
+/* 🎬 Now Playing Banner Layout */
 .np-banner {
   position: relative;
+  background: linear-gradient(135deg, #0a3e5c 0%, #0d5a8e 55%, #1e2c78 100%);
+  background-image: url("/assets/img/now-playing-banner-1600x400.webp"),
+    linear-gradient(135deg, #0a3e5c 0%, #0d5a8e 55%, #1e2c78 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 140px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 120px;
-  margin: 0;
-  border-radius: 16px;
+  text-align: center;
   overflow: hidden;
-  background-image:
-    linear-gradient(135deg, rgba(6, 18, 36, 0.12), rgba(6, 18, 36, 0.45)),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.6)),
-    url("/assets/img/now-playing-banner-1920x1080.webp");
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+  margin-bottom: 0.75rem;
 }
 
 @media (min-width: 768px) {
@@ -2596,56 +2596,42 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
   }
 }
 
-.np-banner__label {
+.np-banner h3 {
+  color: #ffffff;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 800;
   margin: 0;
-  padding: 0 1.25rem;
-  text-align: center;
-  font-weight: 700;
-  font-size: clamp(1.125rem, 2.6vw, 1.25rem);
-  color: #f7fbff;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
-  cursor: default;
-}
-
-@media (min-width: 768px) {
-  .np-banner__label {
-    font-size: clamp(1.375rem, 2.6vw, 1.5rem);
-  }
+  z-index: 2;
 }
 
 .np-title {
-  margin: 0.65rem auto 0.95rem;
   text-align: center;
-  font-size: clamp(1.125rem, 2.6vw, 1.375rem);
   font-weight: 600;
-  color: #eef3ff;
+  font-size: clamp(1rem, 2.4vw, 1.25rem);
+  margin: 0.5rem 0 0.75rem;
+  color: #fff;
 }
 
-.np-title .marquee-title {
-  max-width: 32ch;
-  margin: 0 auto;
-  padding: 0;
-  position: static;
-  color: inherit;
+.np-title a {
+  color: #fff;
   text-decoration: none;
-  line-height: 1.3;
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  background: none;
-  border-radius: 0;
-  box-shadow: none;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 0.25rem 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: background 0.3s ease;
 }
 
-.np-title .marquee-title::after {
-  content: none;
+.np-title a:hover,
+.np-title a:focus-visible {
+  background: rgba(0, 0, 0, 0.55);
+  outline: none;
 }
 
-.np-title .marquee-title:focus-visible {
-  outline: 3px solid rgba(155, 212, 255, 0.9);
-  outline-offset: 4px;
-  border-radius: 6px;
+/* Accessibility fallback (no image or slow load) */
+@supports not (background-image: url("/assets/img/now-playing-banner-1600x400.webp")) {
+  .np-banner {
+    background: linear-gradient(135deg, #0a3e5c 0%, #1e2c78 100%);
+  }
 }
