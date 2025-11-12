@@ -14,6 +14,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/logo-512.png">
   <link rel="apple-touch-icon" href="/assets/img/logos/apple-touch-icon.png">
   <meta property="og:site_name" content="The Tank Guide">
+  <meta property="og:locale" content="en_US">
   <!-- TODO: Replace temporary favicon (logo-512.png) with 16x16 + 32x32 versions later -->
   <!--#include virtual="/includes/schema-organization.html" -->
   <meta property="og:type" content="website">
@@ -23,13 +24,14 @@
   <meta property="og:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="FishKeepingLifeCo logo (1200×630).">
+  <meta property="og:image:alt" content="FishKeepingLifeCo / The Tank Guide social preview (1200×630)">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@fishkeepinglife">
   <meta name="twitter:title" content="Fishkeeping Media &amp; Books — The Tank Guide">
   <meta name="twitter:description" content="Explore FishKeepingLifeCo videos, books, and aquarium guides in one hub designed to make aquarium science simple for every hobbyist.">
   <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png">
-  <meta name="twitter:image:alt" content="FishKeepingLifeCo logo (1200×630).">
+  <meta name="twitter:image:alt" content="FishKeepingLifeCo / The Tank Guide social preview (1200×630)">
+  <meta name="twitter:url" content="https://thetankguide.com/media.html">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://i.ytimg.com https://img.youtube.com; font-src 'self' data: https://cdnjs.cloudflare.com; connect-src 'self' https://formspree.io https://www.google.com/recaptcha/; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; upgrade-insecure-requests">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="css/style.css?v=1.0.10" />
@@ -1031,7 +1033,8 @@
                data-ad-client="ca-pub-9905718149811880"
                data-ad-slot="6411910426"
                data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
+               data-full-width-responsive="true"
+               aria-label="Advertisement"></ins>
           <script>
             (adsbygoogle = window.adsbygoogle || []).push({});
           </script>
@@ -1113,7 +1116,8 @@
            data-ad-client="ca-pub-9905718149811880"
            data-ad-slot="6497764235"
            data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
+           data-full-width-responsive="true"
+           aria-label="Advertisement"></ins>
       <script>
         (adsbygoogle = window.adsbygoogle || []).push({});
       </script>
@@ -1405,28 +1409,6 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": "https://thetankguide.com/#organization",
-    "name": "FishKeepingLifeCo",
-    "alternateName": "The Tank Guide",
-    "url": "https://thetankguide.com/",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://thetankguide.com/assets/img/logos/logo-512.png",
-      "width": 512,
-      "height": 512
-    },
-    "sameAs": [
-      "https://www.youtube.com/@FishKeepingLifeCo",
-      "https://www.amazon.com/stores/author/B0FZMFJ6QL",
-      "https://chatgpt.com/g/g-69012624c9688191b98c2623badff18d"
-    ]
-  }
-  </script>
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
       {
@@ -1492,6 +1474,22 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": "https://thetankguide.com/media.html#collection",
+    "name": "Media Hub: Aquarium Videos, Books & Guides",
+    "description": "Explore The Tank Guide's media hub. Find expert aquarium setup videos, fishkeeping books, and simple science guides for every hobbyist.",
+    "url": "https://thetankguide.com/media.html",
+    "mainEntity": [
+      { "@type": "WebPage", "@id": "https://thetankguide.com/media.html#featured-videos", "name": "Featured Videos" },
+      { "@type": "WebPage", "@id": "https://thetankguide.com/media.html#community", "name": "Community" },
+      { "@type": "WebPage", "@id": "https://thetankguide.com/media.html#aquarium-library", "name": "Aquarium Library" }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
     "@type": "VideoObject",
     "name": "How to beat Black Beard Algae. My full guide",
     "description": "Got Black Beard Algae (BBA)? This short guide shows what really works — and what doesn’t. For a deeper breakdown, visit our Blogs page.",
@@ -1528,6 +1526,7 @@
     "@context": "https://schema.org",
     "@type": "ItemList",
     "name": "Educational Aquarium Books by FishKeepingLifeCo",
+    "description": "Educational guides and journals that make fishkeeping simple, scientific, and beginner-friendly.",
     "itemListElement": [
       {
         "@type": "ListItem",
@@ -1535,10 +1534,10 @@
         "item": {
           "@type": "Book",
           "name": "Life in Balance: The Hidden Magic of Aquariums",
-          "isbn": "979-8263446215",
-          "author": {"@id": "https://thetankguide.com/#organization"},
-          "publisher": {"@id": "https://thetankguide.com/#organization"},
-          "url": "https://thetankguide.com/store.html#life-in-balance"
+          "url": "https://thetankguide.com/store.html#life-in-balance",
+          "author": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+          "publisher": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+          "bookFormat": "https://schema.org/Paperback"
         }
       },
       {
@@ -1546,10 +1545,11 @@
         "position": 2,
         "item": {
           "@type": "Book",
-          "name": "The Daily Tank Journal (Standard and Planted Edition)",
-          "author": {"@id": "https://thetankguide.com/#organization"},
-          "publisher": {"@id": "https://thetankguide.com/#organization"},
-          "url": "https://thetankguide.com/store.html#tank-journal"
+          "name": "The Daily Tank Journal (Planted Edition)",
+          "url": "https://thetankguide.com/store.html#tank-journal-planted",
+          "author": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+          "publisher": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+          "bookFormat": "https://schema.org/SpiralBound"
         }
       },
       {
@@ -1557,12 +1557,61 @@
         "position": 3,
         "item": {
           "@type": "Book",
-          "name": "Life in Balance Coloring Books (Vol. 1 & 2)",
-          "author": {"@id": "https://thetankguide.com/#organization"},
-          "publisher": {"@id": "https://thetankguide.com/#organization"},
-          "url": "https://thetankguide.com/store.html#coloring1"
+          "name": "The Daily Tank Journal (Standard Edition)",
+          "url": "https://thetankguide.com/store.html#tank-journal-standard",
+          "author": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+          "publisher": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+          "bookFormat": "https://schema.org/SpiralBound"
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "item": {
+          "@type": "Book",
+          "name": "Life in Balance Coloring Book — Vol. 1",
+          "url": "https://thetankguide.com/store.html#coloring-vol1",
+          "author": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+          "publisher": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+          "bookFormat": "https://schema.org/Paperback"
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "item": {
+          "@type": "Book",
+          "name": "Life in Balance Coloring Book — Vol. 2",
+          "url": "https://thetankguide.com/store.html#coloring-vol2",
+          "author": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+          "publisher": { "@type": "Organization", "name": "FishKeepingLifeCo" },
+          "bookFormat": "https://schema.org/Paperback"
         }
       }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://thetankguide.com/#organization",
+    "name": "FishKeepingLifeCo",
+    "url": "https://thetankguide.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://thetankguide.com/assets/logo/fklco-logo-schema.png"
+    },
+    "description": "FishKeepingLifeCo (The Tank Guide) is a learning platform dedicated to making freshwater aquarium science simple, scientific, and beginner-friendly.",
+    "sameAs": [
+      "https://www.youtube.com/@FishKeepingLifeCo",
+      "https://www.amazon.com/author/fklc",
+      "https://chatgpt.com/g/g-69012624c9688191b98c2623badff18d",
+      "https://www.instagram.com/fishkeepinglifeco/",
+      "https://www.tiktok.com/@fishkeepinglifeco",
+      "https://www.facebook.com/share/1GFKqjkSRp/?mibextid=wwXIfr",
+      "https://x.com/fishkeepinglife"
     ]
   }
   </script>
