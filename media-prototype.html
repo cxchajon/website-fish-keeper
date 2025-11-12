@@ -634,6 +634,11 @@
       font-weight: 400;
       color: #333333;
     }
+    .now-playing-title a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
     .center { text-align:center; }
 
     .media-storefront-hero {
@@ -795,16 +800,16 @@
         <h3 class="visually-hidden">Latest video</h3>
         <!-- FEATURED VIDEO SECTION -->
         <div class="featured-video">
-          <h3 class="now-playing">Now Playing: Latest Video</h3>
-
-          <!-- Clickable title link -->
-          <div class="marquee-title video-title" role="heading" aria-level="4">
-            <a href="https://youtube.com/shorts/kdkC66luNa0"
-               target="_blank"
-               rel="noopener noreferrer nofollow">
-              How to beat Black Beard Algae. My full guide
-            </a>
-          </div>
+          <h3 class="now-playing">
+            <span class="now-playing-label">Now Playing:</span><br>
+            <span class="now-playing-title">
+              <a href="https://youtube.com/shorts/kdkC66luNa0"
+                 target="_blank"
+                 rel="noopener noreferrer nofollow">
+                How to beat Black Beard Algae. My full guide
+              </a>
+            </span>
+          </h3>
 
           <!-- Embedded video -->
           <div class="video-embed">
@@ -830,11 +835,11 @@
           For a deeper breakdown, <a href="/blogs/" aria-label="Read more aquarium care blogs on The Tank Guide">visit our Blogs page</a>.
         </p>
         <p class="muted" style="margin:.35rem 0 0;">Added: 2025-10-24</p>
-        <hr class="media-divider" />
-        <div class="video-meta">
-          <div class="video-actions" style="flex-wrap:wrap;gap:12px;">
-            <a class="yt-cta" href="https://www.youtube.com/@FishKeepingLifeCo" target="_blank" rel="noopener noreferrer" title="Visit FishKeepingLifeCo on YouTube" aria-label="Visit FishKeepingLifeCo on YouTube">
-              <span class="yt-icon" aria-hidden="true">
+          <hr class="media-divider" />
+          <div class="video-meta">
+            <div class="video-actions" style="flex-wrap:wrap;gap:12px;">
+              <a class="yt-cta" href="https://www.youtube.com/@FishKeepingLifeCo" target="_blank" rel="noopener noreferrer" title="Visit FishKeepingLifeCo on YouTube" aria-label="Visit FishKeepingLifeCo on YouTube">
+                <span class="yt-icon" aria-hidden="true">
                 <svg class="yt-cta-svg" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true">
                   <path d="M9 7v10l8-5z" fill="#fff"></path>
                 </svg>
@@ -845,8 +850,8 @@
         </div>
 
         <div class="community-video-picks">
-          <hr class="media-divider" />
-          <h3 class="card-subtitle community-video-heading"><strong>Community Video Picks</strong></h3>
+          <hr class="card-sep" aria-hidden="true">
+          <h3><strong>Community Video Picks</strong></h3>
           <p class="muted">
             Curated how-to videos and inspiration from creators we trust — and from folks who use and follow The Tank Guide.
             We rotate a featured pick regularly and keep an archive of favorites you can explore anytime.
@@ -869,13 +874,7 @@
               </a>
             </p>
           </noscript>
-          <div class="marquee-title card-subtitle community-video-title" role="heading" aria-level="4">
-            <a href="https://youtu.be/TlF4_lzUR1M?si=PiioiCkW5qf8U6AO"
-               target="_blank"
-               rel="noopener noreferrer">
-              This is ACTUALLY The Method for Crystal Clear Aquarium Water
-            </a>
-          </div>
+          <h3 class="card-subtitle community-video-title">This is ACTUALLY The Method for Crystal Clear Aquarium Water</h3>
           <p class="muted community-video-attribution">by <a href="https://youtube.com/@aquapros" target="_blank" rel="noopener noreferrer">@AQUAPROS</a></p>
           <hr class="media-divider" />
           <p>
