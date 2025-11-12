@@ -2,6 +2,8 @@
   const NAV_VERSION = '1.1.0';
   const NAV_PLACEHOLDER_ID = 'site-nav';
   const HOME_PATH = '/index.html';
+  // Detect the prototype variant so we can bypass production URL enforcement logic.
+  const onPrototype = window.location.pathname.endsWith('/media-prototype.html');
   const PRIVACY_SECTION_IDS = [
     'privacy-policy',
     'cookies-tracking',
@@ -39,6 +41,19 @@
 
   function toCanonicalPath(path) {
     const normalized = normalizePath(path);
+    if (onPrototype) {
+      // Prevent any automatic canonicalisation from sending the prototype to production URLs.
+      if (
+        normalized === '/media' ||
+        normalized === '/media.html' ||
+        normalized === '/media-prototype' ||
+        normalized === '/media-prototype.html'
+      ) {
+        return '/media-prototype.html';
+      }
+      return normalized;
+    }
+
     const map = {
       '/': HOME_PATH,
       '/index.html': HOME_PATH,
