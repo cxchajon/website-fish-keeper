@@ -182,6 +182,8 @@
       <p class="intro-text">Legal-pad view of recent entries. Newest on top.</p>
     </header>
 
+    <div id="journal-entries" class="jp-list"></div>
+
     <article class="entry">
       <h2 class="entry-title">2025-11-09 | Maintenance</h2>
       <p class="entry-meta">Logged November 9, 2025</p>
@@ -334,5 +336,323 @@
   </noscript>
 
   <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
+
+  <script>
+    (function () {
+      const container = document.getElementById('journal-entries');
+      const log = (...args) => console.log('[Journal]', ...args);
+      const error = (...args) => console.error('[Journal]', ...args);
+
+      if (!container) {
+        error('Missing #journal-entries container.');
+        return;
+      }
+
+      const fallbackEntries = Array.from(document.querySelectorAll('#journal > .entry'));
+
+      const clearFallbackEntries = () => {
+        fallbackEntries.forEach((entry) => {
+          if (entry.parentNode) {
+            entry.parentNode.removeChild(entry);
+          }
+        });
+      };
+
+      const toLongDate = (value) => {
+        if (!value) return '';
+        const [year, month, day] = value.split('-').map(Number);
+        if (!year || !month || !day) return value;
+        const date = new Date(Date.UTC(year, month - 1, day));
+        return date.toLocaleDateString(undefined, {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric'
+        });
+      };
+
+      const paragraphize = (parent, text) => {
+        if (!text) return;
+        String(text)
+          .split(/\r?\n+/)
+          .map((segment) => segment.trim())
+          .filter(Boolean)
+          .forEach((segment) => {
+            const p = document.createElement('p');
+            p.textContent = segment;
+            parent.appendChild(p);
+          });
+      };
+
+      const addPhotoFigure = (parent, photo) => {
+        if (!photo || !photo.src) return;
+        const figure = document.createElement('figure');
+        figure.className = 'journal-figure';
+
+        const img = document.createElement('img');
+        img.className = 'journal-photo';
+        img.src = photo.src;
+        if (photo.alt) img.alt = photo.alt;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        figure.appendChild(img);
+
+        if (photo.caption) {
+          const figcaption = document.createElement('figcaption');
+          figcaption.className = 'journal-figcaption';
+          figcaption.textContent = photo.caption;
+          figure.appendChild(figcaption);
+        }
+
+        parent.appendChild(figure);
+      };
+
+      const createEntryElement = (entry) => {
+        const article = document.createElement('article');
+        article.className = 'entry';
+
+        const titleParts = [];
+        if (entry.date) titleParts.push(entry.date);
+        if (entry.title) titleParts.push(entry.title);
+        else if (entry.category) titleParts.push(entry.category);
+        else if (entry.quickFacts) titleParts.push(entry.quickFacts);
+        const title = document.createElement('h2');
+        title.className = 'entry-title';
+        title.textContent = titleParts.filter(Boolean).join(' | ') || 'Journal Entry';
+        article.appendChild(title);
+
+        const meta = document.createElement('p');
+        meta.className = 'entry-meta';
+        const pieces = [];
+        if (entry.date) pieces.push(`Logged ${toLongDate(entry.date)}`);
+        if (entry.time) pieces.push(entry.time);
+        meta.textContent = pieces.filter(Boolean).join(' • ');
+        if (!meta.textContent) meta.textContent = 'Journal details';
+        article.appendChild(meta);
+
+        const body = document.createElement('div');
+        body.className = 'entry-body';
+
+        if (entry.quickFacts) {
+          const quickFacts = document.createElement('p');
+          quickFacts.textContent = entry.quickFacts;
+          body.appendChild(quickFacts);
+        }
+
+        paragraphize(body, entry.body);
+        paragraphize(body, entry.ramble);
+        paragraphize(body, entry.notes);
+        paragraphize(body, entry.actionObservation);
+
+        if (entry.nitrate || entry.dosing || entry.waterChange || entry.thrivePlus) {
+          const details = document.createElement('p');
+          const detailParts = [];
+          if (entry.nitrate) detailParts.push(`Nitrate: ${entry.nitrate}`);
+          if (entry.dosing) detailParts.push(`Dosing: ${entry.dosing}`);
+          if (entry.thrivePlus) detailParts.push(`Thrive Plus: ${entry.thrivePlus}`);
+          if (entry.waterChange) detailParts.push(`Water change: ${entry.waterChange}`);
+          details.textContent = detailParts.join(' · ');
+          body.appendChild(details);
+        }
+
+        const photos = Array.isArray(entry.photos) ? entry.photos : [];
+        photos.forEach((photo) => addPhotoFigure(body, photo));
+
+        if (entry.media && typeof entry.media === 'string') {
+          addPhotoFigure(body, { src: entry.media, alt: entry.mediaAlt, caption: entry.mediaCaption });
+        }
+
+        if (entry.tags && entry.tags.length) {
+          const tags = Array.isArray(entry.tags) ? entry.tags : String(entry.tags).split(',');
+          const tagLine = document.createElement('p');
+          tagLine.textContent = `Tags: ${tags.map((tag) => tag.trim()).filter(Boolean).join(', ')}`;
+          body.appendChild(tagLine);
+        }
+
+        if (!body.children.length) {
+          const fallback = document.createElement('p');
+          fallback.textContent = 'No additional details provided.';
+          body.appendChild(fallback);
+        }
+
+        article.appendChild(body);
+        return article;
+      };
+
+      const renderEntries = (entries, source) => {
+        if (!Array.isArray(entries) || !entries.length) {
+          throw new Error('No entries available to render.');
+        }
+        clearFallbackEntries();
+        container.innerHTML = '';
+        entries.forEach((entry) => {
+          container.appendChild(createEntryElement(entry));
+        });
+        log(`Rendered from ${source}:`, entries.length, 'entries');
+        window.__journalLogs = window.__journalLogs || [];
+        window.__journalLogs.push({ level: 'log', message: `Rendered from ${source}`, count: entries.length });
+        window.__journalRenderedSource = source;
+        window.__journalRenderedCount = entries.length;
+      };
+
+      const parseCsv = (text) => {
+        const rows = [];
+        let current = '';
+        let row = [];
+        let inQuotes = false;
+        for (let i = 0; i < text.length; i += 1) {
+          const char = text[i];
+          if (char === '"') {
+            if (inQuotes && text[i + 1] === '"') {
+              current += '"';
+              i += 1;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (char === ',' && !inQuotes) {
+            row.push(current);
+            current = '';
+          } else if ((char === '\n' || char === '\r') && !inQuotes) {
+            if (char === '\r' && text[i + 1] === '\n') {
+              i += 1;
+            }
+            row.push(current);
+            rows.push(row);
+            row = [];
+            current = '';
+          } else {
+            current += char;
+          }
+        }
+        if (current.length || row.length) {
+          row.push(current);
+          rows.push(row);
+        }
+        return rows
+          .map((cols) => cols.map((col) => col.trim()))
+          .filter((cols) => cols.some((col) => col));
+      };
+
+      const normalizeJsonEntries = (data) => {
+        if (!Array.isArray(data)) return [];
+        return data.map((item) => ({
+          date: item.date || '',
+          time: item.time || '',
+          title: item.title || '',
+          category: item.category || '',
+          body: item.body || '',
+          ramble: item.ramble || '',
+          quickFacts: item.quick_facts || '',
+          notes: item.notes || '',
+          nitrate: item.nitrate_ppm || '',
+          dosing: item.dosing || '',
+          thrivePlus: item.thrive_plus || '',
+          waterChange: item.water_change || '',
+          tags: item.tags || '',
+          photos: item.photos || [],
+          media: item.media || '',
+          mediaAlt: item.media_alt || '',
+          mediaCaption: item.media_caption || ''
+        }));
+      };
+
+      const normalizeCsvEntries = (text) => {
+        const rows = parseCsv(text);
+        if (!rows.length) return [];
+        const headers = rows[0];
+        const entries = rows.slice(1).map((cols) => {
+          const record = {};
+          headers.forEach((header, index) => {
+            record[header] = cols[index] || '';
+          });
+          return {
+            date: record['Date'] || '',
+            time: record['Time'] || '',
+            category: record['Category'] || '',
+            actionObservation: record['Action/Observation'] || '',
+            notes: record['Notes/Results'] || '',
+            nitrate: record['Nitrate(ppm)'] || '',
+            dosing: record['Dosing'] || '',
+            thrivePlus: record['ThrivePlus(pumps)'] || '',
+            waterChange: record['WaterChange'] || '',
+            tags: record['tags'] || '',
+            media: record['Image'] || ''
+          };
+        });
+        return entries.filter((entry) => entry.date);
+      };
+
+      const sortEntries = (entries) => {
+        return entries.slice().sort((a, b) => {
+          if (a.date === b.date) return 0;
+          return a.date > b.date ? -1 : 1;
+        });
+      };
+
+      const fetchJsonEntries = async () => {
+        const baseUrl = '/data/journal/2025-11.json';
+        const jsonUrl = `${baseUrl}?cb=${Date.now()}`;
+        const response = await fetch(jsonUrl, { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`JSON request failed with status ${response.status}`);
+        }
+        const data = await response.json();
+        return sortEntries(normalizeJsonEntries(data));
+      };
+
+      const fetchCsvEntries = async () => {
+        const baseUrl = '/data/journal.csv';
+        const csvUrl = `${baseUrl}?cb=${Date.now()}`;
+        const response = await fetch(csvUrl, { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`CSV request failed with status ${response.status}`);
+        }
+        const text = await response.text();
+        return sortEntries(normalizeCsvEntries(text));
+      };
+
+      const showError = (message) => {
+        container.innerHTML = '';
+        const article = document.createElement('article');
+        article.className = 'entry';
+
+        const title = document.createElement('h2');
+        title.className = 'entry-title';
+        title.textContent = 'Journal temporarily unavailable';
+        article.appendChild(title);
+
+        const meta = document.createElement('p');
+        meta.className = 'entry-meta';
+        meta.textContent = 'Please try refreshing the page in a moment.';
+        article.appendChild(meta);
+
+        const body = document.createElement('div');
+        body.className = 'entry-body';
+        const p = document.createElement('p');
+        p.textContent = message;
+        body.appendChild(p);
+        article.appendChild(body);
+
+        container.appendChild(article);
+      };
+
+      const start = async () => {
+        try {
+          const jsonEntries = await fetchJsonEntries();
+          renderEntries(jsonEntries, 'JSON');
+        } catch (jsonError) {
+          error('JSON fetch failed:', jsonError);
+          try {
+            const csvEntries = await fetchCsvEntries();
+            renderEntries(csvEntries, 'CSV');
+          } catch (csvError) {
+            error('CSV fetch failed:', csvError);
+            showError('We couldn\'t load the journal entries just now. They\'ll be back after a quick refresh.');
+          }
+        }
+      };
+
+      start();
+    })();
+  </script>
 </body>
 </html>
