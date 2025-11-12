@@ -743,10 +743,52 @@
         // ======= Helpers: Socials =======
         function normHandle(val){
           if (!val) return '';
-          let v = (''+val).trim();
-          if (/^https?:\/\//i.test(v)) return v; // full URL
-          v = v.replace(/^@+/, '').trim();       // strip leading @
+          let v = ('' + val).trim();
+          v = v.replace(/\s+/g, '');
+          if (/^https?:\/\//i.test(v)) return v;
+          v = v.replace(/^@+/, '').replace(/\/+$/, '');
           return v;
+        }
+        function canonicalSocial(platform, value){
+          if (!platform || !value) return { handle: '', url: '' };
+          let handle = value;
+          let urlValue = value;
+          if (/^https?:\/\//i.test(value)){
+            try {
+              const parsed = new URL(value);
+              const segments = parsed.pathname.split('/').filter(Boolean);
+              if (platform === 'Instagram'){
+                handle = segments[0] ? segments[0].replace(/^@+/, '') : '';
+              } else if (platform === 'TikTok'){
+                const last = segments.pop() || '';
+                handle = last.replace(/^@+/, '');
+              } else if (platform === 'YouTube'){
+                const last = segments.pop() || '';
+                handle = last.replace(/^@+/, '');
+              } else if (platform === 'Facebook'){
+                handle = segments[0] || '';
+              }
+            } catch (err) {
+              handle = value.replace(/^@+/, '').replace(/\/+$/, '');
+            }
+          }
+          handle = (handle || '').replace(/^@+/, '').replace(/\/+$/, '');
+          let url = '';
+          if (handle){
+            if (platform === 'Instagram'){
+              url = `https://www.instagram.com/${handle}/`;
+            } else if (platform === 'TikTok'){
+              url = `https://www.tiktok.com/@${handle}`;
+            } else if (platform === 'YouTube'){
+              url = `https://www.youtube.com/@${handle}`;
+            } else if (platform === 'Facebook'){
+              url = `https://www.facebook.com/${handle}`;
+            }
+          }
+          if (!url){
+            url = urlValue;
+          }
+          return { handle, url };
         }
         function collectSocials(){
           const rows = socialsBlock.querySelectorAll('.channel-row');
@@ -756,16 +798,12 @@
             const inp = row.querySelector('.channel-handle');
             const platform = (sel && sel.value) ? sel.value : '';
             const raw = (inp && inp.value) ? inp.value : '';
-            const handle = normHandle(raw);
-            if (platform && handle){
-              let url = handle;
-              if (!/^https?:\/\//i.test(handle)){
-                if (platform === 'Instagram') url = 'https://instagram.com/' + handle;
-                else if (platform === 'TikTok') url = 'https://tiktok.com/@' + handle;
-                else if (platform === 'YouTube') url = 'https://youtube.com/@' + handle;
-                else if (platform === 'Facebook') url = 'https://facebook.com/' + handle;
+            const rawHandle = normHandle(raw);
+            if (platform && rawHandle){
+              const { handle, url } = canonicalSocial(platform, rawHandle);
+              if (handle && url){
+                items.push({ platform, handle, url });
               }
-              items.push({ platform, handle, url });
             }
           });
           return items;
