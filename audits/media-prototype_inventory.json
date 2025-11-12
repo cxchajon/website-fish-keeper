@@ -1,0 +1,146 @@
+{
+  "meta": {
+    "title": "Fishkeeping Media &amp; Books \u2014 The Tank Guide",
+    "description": "Explore FishKeepingLifeCo videos, books, and aquarium guides in one hub designed to make aquarium science simple for every hobbyist.",
+    "robots": "noindex, nofollow",
+    "canonical": "https://thetankguide.com/media.html"
+  },
+  "og_twitter": {
+    "og": {
+      "og:site_name": true,
+      "og:type": true,
+      "og:title": true,
+      "og:description": true,
+      "og:url": true,
+      "og:image": true,
+      "og:image:width": true,
+      "og:image:height": true,
+      "og:image:alt": true,
+      "og:locale": false
+    },
+    "twitter": {
+      "twitter:card": true,
+      "twitter:site": true,
+      "twitter:title": true,
+      "twitter:description": true,
+      "twitter:image": true,
+      "twitter:image:alt": true,
+      "twitter:url": false
+    }
+  },
+  "headings": {
+    "H1": 1,
+    "H2": 6,
+    "H3": 10
+  },
+  "word_counts": {
+    "page": 844,
+    "aquarium_library": 84
+  },
+  "adsense_units": [
+    {
+      "file": "media-prototype.html",
+      "line": 1029,
+      "data-ad-client": "ca-pub-9905718149811880",
+      "data-ad-slot": "6411910426",
+      "data-ad-format": "auto",
+      "data-ad-layout": null,
+      "data-full-width-responsive": "true",
+      "aria-label": null,
+      "style": "display:block"
+    },
+    {
+      "file": "media-prototype.html",
+      "line": 1111,
+      "data-ad-client": "ca-pub-9905718149811880",
+      "data-ad-slot": "6497764235",
+      "data-ad-format": "auto",
+      "data-ad-layout": null,
+      "data-full-width-responsive": "true",
+      "aria-label": null,
+      "style": "display:block"
+    }
+  ],
+  "adsense_duplicates": [],
+  "placeholders": [],
+  "schema_blocks": [
+    {
+      "@type": "Organization",
+      "has_id": true,
+      "has_url": true,
+      "logo": true,
+      "sameAs_count": 3
+    },
+    {
+      "@type": "FAQPage",
+      "question_count": 7
+    },
+    {
+      "@type": "VideoObject",
+      "fields_present": [
+        "name",
+        "description",
+        "uploadDate",
+        "thumbnailUrl",
+        "embedUrl",
+        "url",
+        "publisher",
+        "author"
+      ],
+      "fields_missing": []
+    },
+    {
+      "@type": "VideoObject",
+      "fields_present": [
+        "name",
+        "description",
+        "uploadDate",
+        "thumbnailUrl",
+        "embedUrl",
+        "url",
+        "publisher",
+        "author"
+      ],
+      "fields_missing": []
+    },
+    {
+      "@type": "ItemList",
+      "item_count": 3,
+      "bookFormat_present": false
+    },
+    {
+      "@type": "BreadcrumbList",
+      "crumbs": [
+        "Home",
+        "Media Hub"
+      ]
+    }
+  ],
+  "accessibility_flags": {
+    "ads_have_aria": false,
+    "storefront_link_aria": true,
+    "images_have_alt": true,
+    "iframes_have_title": true
+  },
+  "keywords": {
+    "primary": [
+      "aquarium library",
+      "fishkeeping",
+      "media hub",
+      "aquarium guides"
+    ],
+    "secondary": [
+      "black beard algae",
+      "community video",
+      "aquarium books"
+    ]
+  },
+  "risks_blockers": [
+    "Robots meta is set to 'noindex, nofollow'",
+    "Missing og:locale meta tag",
+    "Missing twitter:url meta tag",
+    "Organization schema missing some sameAs profiles compared to include file"
+  ],
+  "links": 27,
+  "images": 7
+}
