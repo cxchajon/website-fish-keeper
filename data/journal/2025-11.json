@@ -1,42 +1,18 @@
 [
   {
     "date": "2025-11-12",
-    "time": "",
-    "category": "Feeding, Test & Dosing",
-    "quick_facts": "Nitrate 10–20 ppm (~10) · Fed flakes + bloodworms · Excel 1 cap",
-    "ramble": "Nitrate measured between 10–20 ppm (closer to 10). Fed flakes and bloodworms. Dosed one capful of Seachem Excel as part of the ongoing daily maintenance routine. Nutrient levels stable and fish behavior normal.",
-    "nitrate_ppm": "10-20 (~10)",
-    "nitrite_ppm": "",
-    "ammonia_ppm": "",
-    "ph": "",
-    "media": "",
-    "tags": "29g,feeding,testing,dosing"
+    "title": "Feeding, Test & Dosing",
+    "body": "Nitrate measured between 10–20 ppm (closer to 10). Fed flakes and bloodworms. Dosed one capful of Seachem Excel as part of the ongoing daily maintenance routine. Nutrient levels stable and fish behavior normal."
   },
   {
     "date": "2025-11-11",
-    "time": "",
-    "category": "Feeding, Test & Dosing",
-    "quick_facts": "Nitrate 5 ppm · Fed algae wafers + flakes · Excel 1 cap · Thrive Plus 4 pumps",
-    "ramble": "Nitrate measured at 5 ppm. Fed algae wafers and flakes. Dosed Seachem Excel (1 capful) and NilocG Thrive Plus (4 pumps). Stable parameters maintained through consistent nutrient and plant care routine.",
-    "nitrate_ppm": "5",
-    "nitrite_ppm": "",
-    "ammonia_ppm": "",
-    "ph": "",
-    "media": "",
-    "tags": "29g,feeding,testing,dosing"
+    "title": "Feeding, Test & Dosing",
+    "body": "Nitrate measured at 5 ppm. Fed algae wafers and flakes. Dosed Seachem Excel (1 capful) and NilocG Thrive Plus (4 pumps). Stable parameters maintained through consistent nutrient and plant care routine."
   },
   {
     "date": "2025-11-10",
-    "time": "",
-    "category": "Feeding",
-    "quick_facts": "Fed flakes + brine shrimp · Healthy appetite · System stable post-maintenance",
-    "ramble": "Fed flakes and brine shrimp. Standard Monday feeding with healthy appetite observed. System remains stable following recent maintenance and filtration updates.",
-    "nitrate_ppm": "",
-    "nitrite_ppm": "",
-    "ammonia_ppm": "",
-    "ph": "",
-    "media": "",
-    "tags": "29g,feeding"
+    "title": "Feeding",
+    "body": "Fed flakes and brine shrimp. Standard Monday feeding with healthy appetite observed. System remains stable following recent maintenance and filtration updates."
   },
   {
     "date": "2025-11-09",
