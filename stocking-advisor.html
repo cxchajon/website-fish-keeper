@@ -176,6 +176,38 @@
               "@type": "Answer",
               "text": "Send feedback through the Contact and Feedback page, including tank volume, stock list, filtration, and warnings so we can replicate scenarios. Screenshots of parameter cards help us trace edge cases faster. We triage compatibility bugs first, then prioritize enhancements that improve clarity, accessibility, and freshwater community outcomes for every plan."
             }
+          },
+          {
+            "@type": "Question",
+            "name": "How is aquarium bioload calculated in this tool?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The Stocking Advisor estimates bioload by modeling how much waste each fish produces instead of relying on length. It applies conservative rules and activity multipliers so fast swimmers count heavier and also factors in your filtration data to gauge biological capacity. That helps the tool flag busy communities before they overload the system."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the 'inches per gallon' rule, and why doesn’t this calculator use it?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The inches per gallon rule assumes every inch of fish adds the same load, but active species and calm fish strain a tank differently. This calculator skips that shortcut and models bioload directly, so higher activity species move the gauge more. Using bioload keeps guidance conservative even when tank shapes or filtration upgrades break the old rule of thumb."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does the Stocking Advisor handle water chemistry and compatibility?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The Stocking Advisor stores each species’ preferred temperature, pH, and hardness ranges and compares them across your plan. When fish fall outside a shared window the Environmental card highlights it so you can adjust stock, remineralize, or tweak heat and flow. It also cross-checks temperament, fin nipping risks, and predator prey matches to surface compatibility warnings early."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the aquarium nitrogen cycle?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The aquarium nitrogen cycle turns ammonia from fish waste into nitrite and then nitrate through beneficial bacteria growing on filter media and hard surfaces. Keeping it stable means adding livestock slowly, rinsing media in dechlorinated water, and tracking tests so the bacteria keep up. Staying on top of the cycle keeps nutrients from creeping beyond safe ranges while the tank matures."
+            }
           }
         ]
       }
@@ -1898,6 +1930,82 @@
                 hidden
               >
                 <p>Send feedback through the <a href="/contact-feedback.html">Contact and Feedback page</a>, including tank volume, stock list, filtration, and warnings so we can replicate scenarios. Screenshots of parameter cards help us trace edge cases faster. We triage compatibility bugs first, then prioritize enhancements that improve clarity, accessibility, and freshwater community outcomes for every plan.</p>
+              </div>
+            </details>
+            <details class="faq-item" id="faq-item-bioload">
+              <summary
+                class="faq-trigger"
+                id="faq-question-bioload"
+                aria-expanded="false"
+                aria-controls="faq-panel-bioload"
+              >
+                How is aquarium bioload calculated in this tool?
+              </summary>
+              <div
+                class="faq-panel"
+                id="faq-panel-bioload"
+                role="region"
+                aria-labelledby="faq-question-bioload"
+                hidden
+              >
+                <p>The Stocking Advisor estimates bioload by looking at how much waste each fish type produces, not just its size. It applies conservative rules and activity multipliers so fast swimmers count heavier than calm species, then factors in the filtration data you enter to gauge effective biological capacity. That’s why the tool can flag a busy community sooner than a slow school even if the headcounts match.</p>
+              </div>
+            </details>
+            <details class="faq-item" id="faq-item-inches">
+              <summary
+                class="faq-trigger"
+                id="faq-question-inches"
+                aria-expanded="false"
+                aria-controls="faq-panel-inches"
+              >
+                What is the 'inches per gallon' rule, and why doesn’t this calculator use it?
+              </summary>
+              <div
+                class="faq-panel"
+                id="faq-panel-inches"
+                role="region"
+                aria-labelledby="faq-question-inches"
+                hidden
+              >
+                <p>The old rule assumes every inch of fish creates the same load, but a hyper danio and a slow gourami do not stress a tank equally. This calculator skips that shortcut and models bioload directly, so species with higher activity or waste output move the gauge more. Using bioload instead of inches keeps the guidance conservative even when tank shapes or filtration upgrades break the outdated rule of thumb.</p>
+              </div>
+            </details>
+            <details class="faq-item" id="faq-item-chemistry">
+              <summary
+                class="faq-trigger"
+                id="faq-question-chemistry"
+                aria-expanded="false"
+                aria-controls="faq-panel-chemistry"
+              >
+                How does the Stocking Advisor handle water chemistry and compatibility?
+              </summary>
+              <div
+                class="faq-panel"
+                id="faq-panel-chemistry"
+                role="region"
+                aria-labelledby="faq-question-chemistry"
+                hidden
+              >
+                <p>The Stocking Advisor stores each species’ preferred temperature, pH, and hardness ranges and compares them against your plan. When fish fall outside a shared range, the Environmental card highlights it so you can adjust stock, remineralize, or tweak heat and flow. It also checks temperament, fin-nipping risks, and predator-prey matches so you see compatibility warnings before the fish meet.</p>
+              </div>
+            </details>
+            <details class="faq-item" id="faq-item-nitrogen">
+              <summary
+                class="faq-trigger"
+                id="faq-question-nitrogen"
+                aria-expanded="false"
+                aria-controls="faq-panel-nitrogen"
+              >
+                What is the aquarium nitrogen cycle?
+              </summary>
+              <div
+                class="faq-panel"
+                id="faq-panel-nitrogen"
+                role="region"
+                aria-labelledby="faq-question-nitrogen"
+                hidden
+              >
+                <p>The nitrogen cycle is the process that turns ammonia from fish waste into nitrite and then nitrate using beneficial bacteria on your filter media and hard surfaces. The Stocking Advisor reminds you to add livestock slowly, rinse media in dechlorinated water, and keep testing so those bacteria can keep up. Staying on top of the cycle keeps nutrients from creeping beyond safe ranges while your tank matures.</p>
               </div>
             </details>
           </div>
