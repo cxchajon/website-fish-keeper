@@ -2598,6 +2598,120 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
   outline-offset: 2px;
 }
 
+/* -----------------------------------------------------------
+   HERO "HOW IT WORKS" MODAL (live homepage)
+   ----------------------------------------------------------- */
+.how-it-works-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 5vw, 60px);
+  background: rgba(3, 12, 26, 0.68);
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.28s ease;
+}
+
+.how-it-works-overlay[hidden] {
+  display: none !important;
+}
+
+.how-it-works-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.how-it-works-modal {
+  background: #fff;
+  color: #0a1a2f;
+  width: min(640px, 100%);
+  max-height: min(90vh, 720px);
+  overflow-y: auto;
+  border-radius: 18px;
+  padding: clamp(20px, 4vw, 36px);
+  box-shadow:
+    0 24px 50px rgba(4, 12, 24, 0.35),
+    0 2px 12px rgba(4, 12, 24, 0.18);
+}
+
+.how-it-works-modal:focus {
+  outline: 3px solid #1b6fbd;
+  outline-offset: 3px;
+}
+
+.how-it-works-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.how-it-works-modal__close {
+  border: none;
+  background: rgba(7, 23, 43, 0.08);
+  color: #06162a;
+  border-radius: 999px;
+  width: 38px;
+  height: 38px;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.how-it-works-modal__close:hover,
+.how-it-works-modal__close:focus-visible {
+  background: rgba(7, 23, 43, 0.18);
+}
+
+.how-it-works-modal__body {
+  display: grid;
+  gap: 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.how-it-works-modal__body ol {
+  padding-left: 1.2rem;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.how-it-works-modal__body li strong {
+  color: #0a1a2f;
+}
+
+.how-it-works-modal__cta {
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.how-it-works-modal__footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.page--prototype-home.body--modal-open {
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .how-it-works-overlay {
+    align-items: flex-start;
+    padding-top: clamp(40px, 10vh, 80px);
+  }
+
+  .how-it-works-modal {
+    max-height: calc(100vh - clamp(40px, 10vh, 80px));
+  }
+}
+
 /* ===== Homepage FAQ Cards ===== */
 #beginner-faq {
   margin-top: 3rem;
