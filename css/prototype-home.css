@@ -48,7 +48,7 @@ body.page--prototype-home .proto-section h2,
 body.page--prototype-home .proto-section p,
 body.page--prototype-home .deep-blurb,
 body.page--prototype-home .deep-blurb__copy {
-  color: rgba(255, 255, 255, 0.94);
+  color: #ffffff;
 }
 
 body.page--prototype-home .tool-card h2,
@@ -213,7 +213,7 @@ body > .skip-link:focus {
   font: inherit;
   font-size: 0.95rem;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.95);
+  color: #ffffff;
   text-decoration: underline;
   text-underline-offset: 2px;
   transition: opacity 0.2s ease;
@@ -505,27 +505,6 @@ body > .skip-link:focus {
 .page--prototype-home .how-it-works-modal__footer {
   display: flex;
   justify-content: flex-end;
-}
-
-.page--prototype-home .policy-fallback {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin: clamp(32px, 6vw, 48px) auto;
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
-  text-align: center;
-}
-
-.page--prototype-home .policy-fallback a {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
-}
-
-.page--prototype-home.has-global-footer .policy-fallback {
-  display: none;
 }
 
 .page--prototype-home .tools-title {

@@ -299,12 +299,6 @@
     </div>
   </section>
 
-  <nav class="policy-fallback" data-policy-fallback aria-label="Legal links">
-    <a href="/privacy-legal.html">Privacy Policy</a>
-    <span aria-hidden="true">&bull;</span>
-    <a href="/terms.html">Terms</a>
-  </nav>
-
   <script>
   (function () {
     const page = document.querySelector('.page--prototype-home');
@@ -429,45 +423,6 @@
       button.addEventListener('click', closeModal);
     });
   })();
-  </script>
-
-  <script>
-    (function () {
-      const setupFallback = () => {
-        const page = document.querySelector('.page--prototype-home');
-        if (!page) return;
-
-        const fallback = page.querySelector('[data-policy-fallback]');
-        const footer = document.getElementById('site-footer');
-        if (!fallback || !footer) {
-          return;
-        }
-
-        const flagFooterReady = () => {
-          page.classList.add('has-global-footer');
-        };
-
-        if (footer.children.length > 0) {
-          flagFooterReady();
-          return;
-        }
-
-        const observer = new MutationObserver(() => {
-          if (footer.children.length > 0) {
-            flagFooterReady();
-            observer.disconnect();
-          }
-        });
-
-        observer.observe(footer, { childList: true });
-      };
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setupFallback, { once: true });
-      } else {
-        setupFallback();
-      }
-    })();
   </script>
 
 <!-- === TTG Cookie Consent START === -->
