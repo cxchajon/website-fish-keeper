@@ -13,7 +13,7 @@
         "og:title": "Fishkeeping Guides & Tools \u2014 The Tank Guide",
         "og:description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
         "og:url": "https://thetankguide.com/",
-        "og:image": "/assets/img/Logo-Master-1200×630.PNG",
+        "og:image": "/assets/img/Logo-Master-1200\u00d7630.PNG",
         "og:image:alt": "The Tank Guide logo"
       },
       "twitter": {
@@ -21,7 +21,7 @@
         "twitter:site": "@fishkeepinglife",
         "twitter:title": "Fishkeeping Guides & Tools \u2014 The Tank Guide",
         "twitter:description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
-        "twitter:image": "/assets/img/Logo-Master-1200×630.PNG",
+        "twitter:image": "/assets/img/Logo-Master-1200\u00d7630.PNG",
         "twitter:image:alt": "The Tank Guide logo"
       }
     },
@@ -246,23 +246,18 @@
         "media": null
       },
       {
-        "href": "https://thetankguide.com/css/style.css?v=live-hero-1",
+        "href": "https://thetankguide.com/css/style.css",
         "inline_bytes": 0,
         "media": null
       },
       {
-        "href": "https://thetankguide.com/css/prototype-home.css?v=live-hero-1",
+        "href": "https://thetankguide.com/css/site.css",
         "inline_bytes": 0,
         "media": null
       },
       {
-        "href": null,
-        "inline_bytes": 11987,
-        "media": null
-      },
-      {
-        "href": null,
-        "inline_bytes": 981,
+        "href": "https://thetankguide.com/css/utilities.css",
+        "inline_bytes": 0,
         "media": null
       }
     ],
