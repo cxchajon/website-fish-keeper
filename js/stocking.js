@@ -1852,7 +1852,13 @@ function stockRow(s, qty) {
         <div class="qtyval" aria-live="polite" aria-atomic="true">${qStr}</div>
         <button type="button" class="qtybtn" data-qty-plus="${id}" aria-label="Increase ${name}">+</button>
       </div>
-      <button type="button" class="stock-row__remove" data-remove-id="${id}" aria-label="Remove ${name}" data-testid="btn-remove-species">Remove</button>
+      <button
+        type="button"
+        class="stock-row__remove"
+        data-remove-id="${id}"
+        aria-label="Remove ${name} from stock"
+        data-testid="btn-remove-species"
+      >Remove</button>
     </div>
   `;
 }
