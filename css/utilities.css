@@ -1,0 +1,97 @@
+/*
+ * Shared utility styles extracted for theme and interactive pages.
+ * Includes consolidated layout helpers and tooltip visuals.
+ */
+
+body.theme-media *,
+body.theme-media *::before,
+body.theme-media *::after,
+body.uni-bg *,
+body.uni-bg *::before,
+body.uni-bg *::after,
+body.theme-media.university *,
+body.theme-media.university *::before,
+body.theme-media.university *::after {
+  box-sizing: border-box;
+}
+
+/* Inline tooltip presentation used by Cycling Coach, Stocking, etc. */
+.ttg-tooltip {
+  position: fixed;
+  z-index: 1600;
+  background: rgba(12, 16, 26, 0.95);
+  color: #e9eef5;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  border-radius: 9px;
+  padding: 10px 12px;
+  max-width: min(320px, calc(100vw - 32px));
+  font-size: 0.92rem;
+  line-height: 1.45;
+  backdrop-filter: blur(3px);
+  pointer-events: auto;
+}
+
+.ttg-tooltip[data-open='true'] {
+  pointer-events: auto;
+}
+
+.ttg-tooltip[hidden] {
+  display: none !important;
+}
+
+.ttg-tooltip__title {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0 0 6px;
+}
+
+.ttg-tooltip__body {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.ttg-tooltip__body + .ttg-tooltip__body {
+  margin-top: 6px;
+}
+
+.ttg-tooltip__list {
+  margin: 8px 0 0 18px;
+  padding: 0;
+  list-style: disc;
+}
+
+.ttg-tooltip__list > li + li {
+  margin-top: 4px;
+}
+
+/* Trigger styling adopted by Cycling Coach buttons */
+.ttg-tooltip-trigger {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ttg-tooltip-trigger:focus-visible {
+  outline: none;
+}
+
+html.ttg-tooltip-lock,
+body.ttg-tooltip-lock {
+  overflow: hidden;
+}
