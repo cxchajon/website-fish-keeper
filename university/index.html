@@ -33,6 +33,10 @@
   <link rel="stylesheet" href="/assets/css/university.css?v=2025-11-05" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!--#include virtual="/includes/ga4.html" -->
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
+  <!-- End Cloudflare Web Analytics -->
 </head>
 <body class="uni-bg">
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -155,24 +159,35 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "@id": "https://thetankguide.com/university/#webpage",
-    "url": "https://thetankguide.com/university/",
-    "name": "Aquarium University — Hybrid Academic & Aquatic Learning",
-    "description": "Dive into Aquarium University by The Tank Guide for guided study tracks that mix aquatic science with practical fishkeeping.",
-    "publisher": {
-      "@id": "https://thetankguide.com/#organization"
-    },
-    "mainEntity": {
-      "@type": "Organization",
-      "@id": "https://thetankguide.com/university/#program",
-      "name": "Aquarium University",
-      "url": "https://thetankguide.com/university/",
-      "description": "Hybrid academic-meets-hobby curriculum highlighting labs, study tracks, and certification paths for aquarists.",
-      "parentOrganization": {
-        "@id": "https://thetankguide.com/#organization"
+    "@graph": [
+      {
+        "@type": ["WebPage", "CollectionPage"],
+        "@id": "https://thetankguide.com/university/#webpage",
+        "url": "https://thetankguide.com/university/",
+        "name": "Aquarium University — Hybrid Academic & Aquatic Learning",
+        "description": "Dive into Aquarium University by The Tank Guide. Our courses bridge aquatic science with hands-on fishkeeping practice for confident beginner aquarists.",
+        "isPartOf": { "@id": "https://thetankguide.com/#website" },
+        "publisher": { "@id": "https://thetankguide.com/#organization" },
+        "mainEntity": {
+          "@type": "Organization",
+          "@id": "https://thetankguide.com/university/#program",
+          "name": "Aquarium University",
+          "url": "https://thetankguide.com/university/",
+          "description": "Hybrid academic-meets-hobby curriculum highlighting labs, study tracks, and certification paths for aquarists.",
+          "parentOrganization": {
+            "@id": "https://thetankguide.com/#organization"
+          }
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://thetankguide.com/university/#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://thetankguide.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Aquarium University", "item": "https://thetankguide.com/university/" }
+        ]
       }
-    }
+    ]
   }
   </script>
 </body>

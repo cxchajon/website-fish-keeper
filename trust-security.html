@@ -150,6 +150,12 @@
   </style>
 
   <script defer src="js/nav.js?v=1.1.0"></script>
+  <!-- Google tag (gtag.js) — GA4 -->
+  <!--#include virtual="/includes/ga4.html" -->
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
+  <!-- End Cloudflare Web Analytics -->
 </head>
 <body>
   <a class="skip-link" href="#trust-main">Skip to content</a>
@@ -217,50 +223,58 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": "https://thetankguide.com/trust-security.html#webpage",
-    "url": "https://thetankguide.com/trust-security.html",
-    "name": "Trust & Security — The Tank Guide",
-    "description": "Learn how The Tank Guide protects community data, honors content ownership, and responds to scraping or abuse reports.",
-    "publisher": {
-      "@id": "https://thetankguide.com/#organization"
-    },
-    "author": {
-      "@id": "https://thetankguide.com/#organization"
-    },
-    "mainEntity": {
-      "@type": "ItemList",
-      "name": "Trust pillars",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "item": {
-            "@type": "Thing",
-            "name": "Data Practices",
-            "description": "Minimal data collection with quarterly permission reviews and consent-aware analytics."
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "item": {
-            "@type": "Thing",
-            "name": "Content Ownership",
-            "description": "Community submissions remain creator-owned with DMCA and removal pathways."
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "item": {
-            "@type": "Thing",
-            "name": "Scraping & Abuse Response",
-            "description": "Rate limits, monitoring, and dedicated security contacts mitigate scraping or misuse."
-          }
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://thetankguide.com/trust-security.html#webpage",
+        "url": "https://thetankguide.com/trust-security.html",
+        "name": "Trust & Security — The Tank Guide",
+        "description": "Learn how The Tank Guide protects community data, respects content ownership, and responds to scraping or misuse.",
+        "isPartOf": { "@id": "https://thetankguide.com/#website" },
+        "publisher": { "@id": "https://thetankguide.com/#organization" },
+        "mainEntity": {
+          "@type": "ItemList",
+          "name": "Trust pillars",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "item": {
+                "@type": "Thing",
+                "name": "Data Practices",
+                "description": "Minimal data collection with quarterly permission reviews and consent-aware analytics."
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "item": {
+                "@type": "Thing",
+                "name": "Content Ownership",
+                "description": "Community submissions remain creator-owned with DMCA and removal pathways."
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "item": {
+                "@type": "Thing",
+                "name": "Scraping & Abuse Response",
+                "description": "Rate limits, monitoring, and dedicated security contacts mitigate scraping or misuse."
+              }
+            }
+          ]
         }
-      ]
-    }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://thetankguide.com/trust-security.html#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://thetankguide.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Trust & Security", "item": "https://thetankguide.com/trust-security.html" }
+        ]
+      }
+    ]
   }
   </script>
 </body>

@@ -37,6 +37,12 @@
   <link rel="stylesheet" href="/assets/css/university.page.css?v=2025-11-07" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!-- nav.js dynamically loads /nav.html -->
+  <!-- Google tag (gtag.js) — GA4 -->
+  <!--#include virtual="/includes/ga4.html" -->
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
+  <!-- End Cloudflare Web Analytics -->
 </head>
 <body class="theme-media university">
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -200,25 +206,36 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "@id": "https://thetankguide.com/pages/university.html#webpage",
-    "url": "https://thetankguide.com/pages/university.html",
-    "name": "The Tank Guide University — Foundation Studies",
-    "description": "Explore curated aquarium study paths covering chemistry, filtration, livestock care, biosecurity, and aquascaping.",
-    "publisher": {
-      "@id": "https://thetankguide.com/#organization"
-    },
-    "mainEntity": {
-      "@type": "ItemList",
-      "name": "Core study sections",
-      "itemListElement": [
-        {"@type": "ListItem", "position": 1, "item": {"@type": "WebPage", "@id": "https://thetankguide.com/pages/university.html#air-aeration", "name": "Water Chemistry"}},
-        {"@type": "ListItem", "position": 2, "item": {"@type": "WebPage", "@id": "https://thetankguide.com/pages/university.html#filtration-science", "name": "Filtration"}},
-        {"@type": "ListItem", "position": 3, "item": {"@type": "WebPage", "@id": "https://thetankguide.com/pages/university.html#water-chemistry", "name": "Fish Care & Maintenance"}},
-        {"@type": "ListItem", "position": 4, "item": {"@type": "WebPage", "@id": "https://thetankguide.com/pages/university.html#plant-nutrients", "name": "Health & Biosecurity"}},
-        {"@type": "ListItem", "position": 5, "item": {"@type": "WebPage", "@id": "https://thetankguide.com/pages/university.html#ecology-behavior", "name": "Aquascaping & Aquatic Plants"}}
-      ]
-    }
+    "@graph": [
+      {
+        "@type": ["WebPage", "CollectionPage"],
+        "@id": "https://thetankguide.com/pages/university.html#webpage",
+        "url": "https://thetankguide.com/pages/university.html",
+        "name": "The Tank Guide University — Foundation Studies",
+        "description": "Explore The Tank Guide University's aquarium study paths! Learn water chemistry, filtration, aquatic ecology, and planted ecosystem fundamentals.",
+        "isPartOf": { "@id": "https://thetankguide.com/#website" },
+        "publisher": { "@id": "https://thetankguide.com/#organization" },
+        "mainEntity": {
+          "@type": "ItemList",
+          "name": "Core study sections",
+          "itemListElement": [
+            {"@type": "ListItem", "position": 1, "item": {"@type": "WebPage", "@id": "https://thetankguide.com/pages/university.html#air-aeration", "name": "Water Chemistry"}},
+            {"@type": "ListItem", "position": 2, "item": {"@type": "WebPage", "@id": "https://thetankguide.com/pages/university.html#filtration-science", "name": "Filtration"}},
+            {"@type": "ListItem", "position": 3, "item": {"@type": "WebPage", "@id": "https://thetankguide.com/pages/university.html#water-chemistry", "name": "Fish Care & Maintenance"}},
+            {"@type": "ListItem", "position": 4, "item": {"@type": "WebPage", "@id": "https://thetankguide.com/pages/university.html#plant-nutrients", "name": "Health & Biosecurity"}},
+            {"@type": "ListItem", "position": 5, "item": {"@type": "WebPage", "@id": "https://thetankguide.com/pages/university.html#ecology-behavior", "name": "Aquascaping & Aquatic Plants"}}
+          ]
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://thetankguide.com/pages/university.html#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://thetankguide.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Aquarium University", "item": "https://thetankguide.com/pages/university.html" }
+        ]
+      }
+    ]
   }
   </script>
 </body>

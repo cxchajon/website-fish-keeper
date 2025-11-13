@@ -78,6 +78,12 @@
       color: #0b1020;
     }
   </style>
+  <!-- Google tag (gtag.js) — GA4 -->
+  <!--#include virtual="/includes/ga4.html" -->
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
+  <!-- End Cloudflare Web Analytics -->
 </head>
 <body class="theme-light">
   <div id="site-nav"></div>
@@ -157,54 +163,65 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "@id": "https://thetankguide.com/pages/community-video-picks.html#webpage",
-    "url": "https://thetankguide.com/pages/community-video-picks.html",
-    "name": "Community Video Picks",
-    "description": "An archive of aquarium tutorials and explainers The Tank Guide has highlighted for ongoing reference.",
-    "publisher": {
-      "@id": "https://thetankguide.com/#organization"
-    },
-    "mainEntity": {
-      "@type": "ItemList",
-      "name": "Featured community videos",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "item": {
-            "@type": "VideoObject",
-            "name": "Make a Freshwater Aquarium Sump",
-            "description": "A clear, step-by-step sump build tutorial with approachable DIY guidance.",
-            "url": "https://www.youtube.com/watch?v=zX3wGQpC4eE",
-            "thumbnailUrl": "https://img.youtube.com/vi/zX3wGQpC4eE/hqdefault.jpg",
-            "uploadDate": "2025-10-14",
-            "inLanguage": "en",
-            "creator": {
-              "@type": "Organization",
-              "name": "SerpaDesign"
+    "@graph": [
+      {
+        "@type": ["WebPage", "CollectionPage"],
+        "@id": "https://thetankguide.com/pages/community-video-picks.html#webpage",
+        "url": "https://thetankguide.com/pages/community-video-picks.html",
+        "name": "Community Video Picks",
+        "description": "An archive of tutorials and explainers we’ve highlighted. These remain solid references even as we feature newer content.",
+        "isPartOf": { "@id": "https://thetankguide.com/#website" },
+        "publisher": { "@id": "https://thetankguide.com/#organization" },
+        "mainEntity": {
+          "@type": "ItemList",
+          "name": "Featured community videos",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "item": {
+                "@type": "VideoObject",
+                "name": "Make a Freshwater Aquarium Sump",
+                "description": "A clear, step-by-step sump build tutorial with approachable DIY guidance.",
+                "url": "https://www.youtube.com/watch?v=zX3wGQpC4eE",
+                "thumbnailUrl": "https://img.youtube.com/vi/zX3wGQpC4eE/hqdefault.jpg",
+                "uploadDate": "2025-10-14",
+                "inLanguage": "en",
+                "creator": {
+                  "@type": "Organization",
+                  "name": "SerpaDesign"
+                }
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "item": {
+                "@type": "VideoObject",
+                "name": "Aquarium Science Made Simple: Nitrogen Cycle Explained | Life in Balance Book",
+                "description": "A playful explainer from FishKeepingLifeCo that champions understanding the nitrogen cycle.",
+                "url": "https://www.youtube.com/shorts/QbPxRZqd4MI",
+                "thumbnailUrl": "https://img.youtube.com/vi/QbPxRZqd4MI/hqdefault.jpg",
+                "uploadDate": "2025-10-14",
+                "inLanguage": "en",
+                "creator": {
+                  "@type": "Organization",
+                  "name": "FishKeepingLifeCo"
+                }
+              }
             }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "item": {
-            "@type": "VideoObject",
-            "name": "Aquarium Science Made Simple: Nitrogen Cycle Explained | Life in Balance Book",
-            "description": "A playful explainer from FishKeepingLifeCo that champions understanding the nitrogen cycle.",
-            "url": "https://www.youtube.com/shorts/QbPxRZqd4MI",
-            "thumbnailUrl": "https://img.youtube.com/vi/QbPxRZqd4MI/hqdefault.jpg",
-            "uploadDate": "2025-10-14",
-            "inLanguage": "en",
-            "creator": {
-              "@type": "Organization",
-              "name": "FishKeepingLifeCo"
-            }
-          }
+          ]
         }
-      ]
-    }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://thetankguide.com/pages/community-video-picks.html#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://thetankguide.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Community Video Picks", "item": "https://thetankguide.com/pages/community-video-picks.html" }
+        ]
+      }
+    ]
   }
   </script>
 </body>
