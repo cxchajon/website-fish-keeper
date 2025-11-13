@@ -13,16 +13,16 @@
         "og:title": "Fishkeeping Guides & Tools \u2014 The Tank Guide",
         "og:description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
         "og:url": "https://thetankguide.com/",
-        "og:image": "https://thetankguide.com/assets/og/default.png",
-        "og:image:alt": "The Tank Guide logo over an illustrated aquarium background"
+        "og:image": "/assets/img/Logo-Master-1200×630.PNG",
+        "og:image:alt": "The Tank Guide logo"
       },
       "twitter": {
         "twitter:card": "summary_large_image",
         "twitter:site": "@fishkeepinglife",
         "twitter:title": "Fishkeeping Guides & Tools \u2014 The Tank Guide",
         "twitter:description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
-        "twitter:image": "https://thetankguide.com/assets/og/default.png",
-        "twitter:image:alt": "The Tank Guide logo over an illustrated aquarium background"
+        "twitter:image": "/assets/img/Logo-Master-1200×630.PNG",
+        "twitter:image:alt": "The Tank Guide logo"
       }
     },
     "structured_data": [
