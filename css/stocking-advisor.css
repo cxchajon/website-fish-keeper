@@ -335,7 +335,7 @@ main.stocking-page {
   margin: 1.5rem 0;
 }
 
-.ad-label {
+.ad-label:not(.sr-only) {
   display: inline-block;
   background: var(--accent-dark, #1a237e);
   color: #fff;
