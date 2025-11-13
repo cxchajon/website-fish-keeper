@@ -101,7 +101,7 @@
         "@type": "WebPage",
         "@id": "https://thetankguide.com/stocking-advisor.html#webpage",
         "url": "https://thetankguide.com/stocking-advisor.html",
-        "name": "Aquarium Stocking Calculator: Fish Compatibility &amp; Bioload Tool",
+        "name": "Aquarium Stocking Calculator: Fish Compatibility & Bioload Tool",
         "description": "Use our free aquarium stocking calculator to plan your freshwater tank. Check fish compatibility, estimate bioload, and get stocking ideas. From The Tank Guide.",
         "inLanguage": "en-US",
         "isPartOf": {
@@ -1406,7 +1406,6 @@
         </div>
 
         <div class="form-row">
-          <label for="tank-size" class="sr-only">Tank size</label>
           <div class="select-wrap" id="tank-size-select-wrap">
             <select id="tank-size" name="tank-size" data-role="tank-size" aria-label="Tank size" data-testid="tank-gallons"></select>
             <svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
@@ -1481,14 +1480,21 @@
                 </select>
 
                 <label class="visually-hidden" for="fs-gph">Rated flow (GPH)</label>
-                <input id="fs-gph" class="fs-input fs-gph" inputmode="numeric" pattern="[0-9]*" placeholder="GPH">
+                <input
+                  id="fs-gph"
+                  class="fs-input fs-gph"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="GPH"
+                  aria-describedby="fs-gph-hint"
+                >
 
                 <button id="fs-add-custom" type="button" class="btn btn-primary btn-compact" aria-disabled="true">
                   Add custom
                 </button>
               </div>
 
-              <p class="hint">Tip: press Enter in the GPH field to add quickly.</p>
+              <p class="hint" id="fs-gph-hint">Tip: press Enter in the GPH field to add quickly.</p>
             </div>
             <div class="filter-flow-meta">
               <div
