@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Aquarium Cycling Coach &amp; Nitrogen Cycle Tracker | The Tank Guide</title>
   <meta name="description" content="Track your aquarium's nitrogen cycle. Enter ammonia, nitrite, and nitrate levels to see if your fishless or fish-in cycle is complete." />
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large" />
   <link rel="canonical" href="https://thetankguide.com/cycling-coach/" />
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/logos/logo-512.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/logo-512.png">
@@ -29,772 +30,174 @@
   <meta name="twitter:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
   <link rel="stylesheet" href="/css/style.css?v=1.0.10" />
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
+  <link rel="stylesheet" href="/assets/css/cycling-coach.css?v=1.0.0" media="print" onload="this.media='all'" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
-  <!-- AdSense loader (configure client ID before enabling in production)
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=YOUR-ADSENSE-CLIENT-ID" crossorigin="anonymous"></script>
-  -->
-  <style>
-    :root {
-      --cycling-bg: linear-gradient(165deg, #061525 0%, #0a314a 55%, #0f4b4c 100%);
-      --cycling-panel: rgba(11, 28, 44, 0.78);
-      --cycling-panel-border: rgba(255, 255, 255, 0.12);
-      --cycling-text: rgba(232, 244, 255, 0.94);
-      --cycling-muted: rgba(216, 235, 255, 0.72);
-    }
-
-    body.page--cycling-coach {
-      min-height: 100vh;
-      background: var(--cycling-bg);
-      color: var(--cycling-text);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .skip-link {
-      position: absolute;
-      top: -40px;
-      left: 16px;
-      padding: 10px 16px;
-      background: rgba(9, 19, 36, 0.86);
-      color: #ffffff;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: top 0.25s ease;
-      z-index: 9999;
-    }
-
-    .skip-link:focus {
-      top: 12px;
-    }
-
-    main {
-      flex: 1;
-      padding: clamp(48px, 8vw, 92px) 20px clamp(84px, 12vw, 140px);
-    }
-
-    .stage-wrap {
-      width: min(1080px, 100%);
-      margin: 0 auto;
-      display: grid;
-      gap: clamp(32px, 6vw, 64px);
-    }
-
-    .stage-hero {
-      display: grid;
-      gap: 16px;
-      text-align: left;
-    }
-
-    .stage-hero h1 {
-      margin: 0;
-      font-size: clamp(2.15rem, 4vw, 3rem);
-      line-height: 1.1;
-      letter-spacing: -0.01em;
-      color: #ffffff;
-    }
-
-    .stage-hero p {
-      margin: 0;
-      font-size: clamp(1.05rem, 1.6vw, 1.25rem);
-      color: var(--cycling-muted);
-      max-width: 65ch;
-    }
-
-    .page-meta {
-      margin: 0;
-      font-size: 0.95rem;
-      color: var(--cycling-muted);
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .page-meta .byline {
-      font-weight: 600;
-      color: #ffffff;
-    }
-
-    .page-meta time {
-      color: var(--cycling-muted);
-    }
-
-    .page-meta .meta-sep {
-      color: var(--cycling-muted);
-    }
-
-    .panel {
-      background: var(--cycling-panel);
-      border: 1px solid var(--cycling-panel-border);
-      border-radius: 22px;
-      padding: clamp(20px, 5vw, 36px);
-      box-shadow: 0 24px 60px rgba(4, 14, 24, 0.35);
-    }
-
-    .panel h2 {
-      margin-top: 0;
-      font-size: clamp(1.6rem, 2.8vw, 2.1rem);
-      color: #ffffff;
-    }
-
-    .panel p,
-    .panel li,
-    .panel dt,
-    .panel dd {
-      color: var(--cycling-muted);
-      line-height: 1.7;
-    }
-
-    .metric-why {
-      margin: 0 0 0.35rem;
-      font-size: 0.9rem;
-      color: var(--cycling-muted);
-      line-height: 1.5;
-    }
-
-    .inputs-grid {
-      display: grid;
-      gap: clamp(14px, 2.8vw, 18px);
-    }
-
-    .input-group {
-      display: grid;
-      gap: 8px;
-    }
-
-    .cc-results-head {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .cc-results-head .card__title {
-      margin: 0;
-    }
-
-    .label-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .label-row label {
-      font-weight: 700;
-      font-size: 1.05rem;
-      letter-spacing: -0.005em;
-    }
-
-    .input-row {
-      display: grid;
-      gap: 12px;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    }
-
-    .cc-advanced {
-      display: grid;
-      gap: 0.75rem;
-    }
-
-    .cc-advanced .field {
-      display: grid;
-      gap: 0.35rem;
-    }
-
-    .cc-advanced input[type="text"],
-    .cc-advanced input[type="number"] {
-      width: 100%;
-    }
-
-    .cc-advanced .temp-toggle {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 0.35rem;
-      align-items: center;
-    }
-
-    label span {
-      display: block;
-      font-weight: 600;
-      color: #ffffff;
-      margin-bottom: 4px;
-    }
-
-    input[type="number"],
-    input[type="date"],
-    select {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(6, 20, 34, 0.7);
-      color: #e9f9ff;
-      font-size: 1rem;
-    }
-
-    .form-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .form-grid + .form-actions {
-      margin-top: 12px;
-    }
-
-    .challenge-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .challenge-grid .field {
-      margin-bottom: 12px;
-    }
-
-    .cc-faqs {
-      display: grid;
-      gap: 0.75rem;
-    }
-
-    .cc-faqs .card__header {
-      margin-bottom: 0;
-    }
-
-    .cc-faqs .card__body {
-      display: grid;
-      gap: 0.5rem;
-      margin: 0;
-    }
-
-    .cc-accordion {
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      background: rgba(15, 23, 42, 0.55);
-      padding: 0.5rem 0.75rem;
-    }
-
-    .cc-accordion summary {
-      cursor: pointer;
-      font-weight: 600;
-      list-style: none;
-      outline: none;
-      color: #ffffff;
-      margin: 0;
-    }
-
-    .cc-accordion summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .cc-accordion summary:focus-visible {
-      outline: 2px solid rgba(140, 196, 255, 0.85);
-      outline-offset: 2px;
-      border-radius: 6px;
-    }
-
-    .cc-accordion[open] {
-      background: rgba(15, 23, 42, 0.7);
-    }
-
-    .cc-accordion-body {
-      padding: 0.5rem 0.25rem 0.25rem;
-      display: grid;
-      gap: 0.5rem;
-    }
-
-    .cc-accordion-body p {
-      margin: 0;
-      color: var(--cycling-muted);
-    }
-
-    #challenge-check {
-      margin-top: 12px;
-    }
-
-    .form-actions .btn,
-    .form-actions .btn.btn--secondary {
-      padding: 10px 18px;
-      border-radius: 18px;
-      font-size: 0.95rem;
-    }
-
-    .results-grid {
-      display: grid;
-      gap: 20px;
-    }
-
-    .result-card {
-      background: rgba(6, 20, 34, 0.72);
-      border-radius: 16px;
-      border: 1px solid rgba(98, 225, 255, 0.24);
-      padding: 18px;
-    }
-
-    .result-card h3 {
-      margin: 0 0 8px;
-      font-size: 1.1rem;
-      color: #8befff;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: rgba(38, 210, 174, 0.18);
-      color: #26d2ae;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    .challenge-steps {
-      display: grid;
-      gap: 14px;
-      margin-top: 16px;
-      padding-left: 20px;
-    }
-
-    details.advanced {
-      background: rgba(5, 20, 36, 0.8);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      padding: 16px;
-    }
-
-    details.advanced summary {
-      cursor: pointer;
-      font-weight: 700;
-      color: #e1f7ff;
-      outline: none;
-    }
-
-    details.advanced p {
-      margin-top: 12px;
-    }
-
-    .how-to-list {
-      display: grid;
-      gap: 12px;
-      padding-left: 20px;
-    }
-
-    .how-links {
-      display: grid;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .how-links a {
-      color: #76efff;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .how-links a:hover,
-    .how-links a:focus-visible {
-      text-decoration: underline;
-    }
-
-    #cycling-faq .qa {
-      display: grid;
-      gap: 6px;
-    }
-
-    #cycling-faq h3 {
-      margin: 16px 0 4px;
-      font-size: 1.1rem;
-      color: #8befff;
-    }
-
-    .proto-legal {
-      margin-top: clamp(36px, 8vw, 68px);
-      text-align: center;
-      font-size: 0.9rem;
-      color: rgba(200, 224, 240, 0.72);
-    }
-
-    .proto-legal a {
-      color: inherit;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .proto-legal a:hover,
-    .proto-legal a:focus-visible {
-      text-decoration: underline;
-    }
-
-    .ad-slot {
-      display: block;
-      width: 100%;
-      min-height: 90px;
-      margin-top: 10rem;
-      margin-bottom: 10rem;
-      text-align: center;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      background: transparent;
-      padding: 18px;
-    }
-
-    :root[data-theme="light"] .ad-slot {
-      border-color: rgba(0, 0, 0, 0.12);
-    }
-
-    .ad-slot .ad-placeholder {
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      opacity: 0.7;
-    }
-
-    .page--cycling-coach .info-btn {
-      --info-btn-size: 28px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: var(--info-btn-size);
-      height: var(--info-btn-size);
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(9, 28, 46, 0.68);
-      color: rgba(225, 245, 255, 0.88);
-      font-size: 0.85rem;
-      font-weight: 700;
-      line-height: 1;
-      box-shadow: 0 10px 22px rgba(3, 10, 18, 0.45);
-      transition: background 0.2s ease, transform 0.18s ease, color 0.2s ease;
-    }
-
-    .page--cycling-coach .info-btn:hover,
-    .page--cycling-coach .info-btn:focus-visible {
-      background: rgba(18, 58, 86, 0.85);
-      color: #ffffff;
-      transform: translateY(-1px);
-    }
-
-    .page--cycling-coach .info-btn:focus-visible {
-      outline: 2px solid rgba(132, 213, 255, 0.75);
-      outline-offset: 2px;
-    }
-
-    .page--cycling-coach #coach-form .field {
-      gap: 0.45rem;
-    }
-
-    .page--cycling-coach #coach-form .label-row {
-      gap: 0.4rem;
-      align-items: baseline;
-    }
-
-    .page--cycling-coach #coach-form label {
-      font-size: 1.08rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      color: #f4fbff;
-    }
-
-    .page--cycling-coach #coach-form .metric-why {
-      margin: 0;
-      font-size: 0.92rem;
-      line-height: 1.55;
-    }
-
-    .page--cycling-coach .cc-actions {
-      margin-top: 1rem;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.75rem;
-      align-items: stretch;
-    }
-
-    .page--cycling-coach .cc-actions .btn {
-      min-height: 40px;
-      padding: 0.55rem 0.75rem;
-      border-radius: 14px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      box-shadow: 0 10px 24px rgba(4, 14, 24, 0.4);
-    }
-
-    .page--cycling-coach .cc-actions .btn.btn--secondary {
-      background: rgba(10, 31, 48, 0.72);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-    }
-
-    .page--cycling-coach .challenge-title {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 0.45rem;
-      margin: 0;
-    }
-
-    .page--cycling-coach .challenge-title .info-btn {
-      flex-shrink: 0;
-    }
-
-    .page--cycling-coach .challenge-grid {
-      display: grid;
-      gap: 0.75rem;
-      margin-top: 1rem;
-    }
-
-    .page--cycling-coach .challenge-grid .field {
-      margin: 0;
-      gap: 0.45rem;
-    }
-
-    .page--cycling-coach #challenge-check {
-      margin-top: 1rem;
-    }
-
-    .page--cycling-coach .cc-accordion summary {
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: -0.005em;
-      color: #f1fbff;
-      padding: 0.35rem 0.2rem;
-    }
-
-    .page--cycling-coach .cc-accordion-body {
-      padding: 0.4rem 0.5rem 0.3rem;
-      gap: 0.4rem;
-    }
-
-    #cycling-faq h3 {
-      margin: 16px 0 6px;
-      font-size: 1.15rem;
-      color: #d4f6ff;
-    }
-
-    .page--cycling-coach .cc-education-cta {
-      margin-top: clamp(16px, 3vw, 24px);
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(9, 24, 38, 0.62);
-      display: grid;
-      gap: 6px;
-      color: var(--cycling-muted);
-    }
-
-    .page--cycling-coach .cc-education-cta h3 {
-      margin: 0;
-      font-size: 0.95rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: rgba(235, 246, 255, 0.88);
-    }
-
-    .page--cycling-coach .cc-education-cta p {
-      margin: 0;
-      font-size: 0.96rem;
-      line-height: 1.55;
-    }
-
-    @media (max-width: 720px) {
-      .stage-pill-group {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .stage-pill {
-        width: 100%;
-        justify-content: center;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .page-meta {
-        font-size: 0.9rem;
-      }
-    }
-  </style>
-  <style id="coach-inline-link-style">
-    .page--cycling-coach .stage-wrap a,
-    .page--cycling-coach .card a,
-    .page--cycling-coach .panel a,
-    .how-links a,
-    .cc-accordion-body a,
-    .coach-page a,
-    .content-card a,
-    .faq a {
-      color: #ffffff !important;
-      font-weight: 600;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      transition: opacity 0.2s ease;
-    }
-
-    .page--cycling-coach .stage-wrap a:hover,
-    .page--cycling-coach .card a:hover,
-    .page--cycling-coach .panel a:hover,
-    .how-links a:hover,
-    .cc-accordion-body a:hover,
-    .coach-page a:hover,
-    .content-card a:hover,
-    .faq a:hover {
-      opacity: 0.85;
-    }
-  </style>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880" crossorigin="anonymous"></script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebPage",
-      "@id": "https://thetankguide.com/cycling-coach/#webpage",
-      "url": "https://thetankguide.com/cycling-coach/",
-      "name": "Aquarium Cycling Coach & Nitrogen Cycle Tracker | The Tank Guide",
-      "description": "Is your aquarium cycled? Track your nitrogen cycle with the Cycling Coach. Log ammonia, nitrite, and nitrate to see when your tank is safe for fish.",
-      "isPartOf": {
-        "@type": "WebSite",
-        "@id": "https://thetankguide.com/#website",
-        "name": "The Tank Guide",
-        "url": "https://thetankguide.com/"
-      },
-      "inLanguage": "en-US",
-      "publisher": {
-        "@id": "https://thetankguide.com/#organization"
-      },
-      "author": {
-        "@id": "https://thetankguide.com/#organization"
-      }
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "@id": "https://thetankguide.com/cycling-coach/#breadcrumb",
-      "itemListElement": [
+      "@graph": [
         {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://thetankguide.com/"
+          "@type": "WebPage",
+          "@id": "https://thetankguide.com/cycling-coach/#webpage",
+          "url": "https://thetankguide.com/cycling-coach/",
+          "name": "Aquarium Cycling Coach & Nitrogen Cycle Tracker | The Tank Guide",
+          "description": "Is your aquarium cycled? Track your nitrogen cycle with the Cycling Coach. Log ammonia, nitrite, and nitrate to see when your tank is safe for fish.",
+          "inLanguage": "en-US",
+          "isPartOf": {
+            "@id": "https://thetankguide.com/#website"
+          },
+          "mainEntity": {
+            "@id": "https://thetankguide.com/cycling-coach/#webapp"
+          },
+          "publisher": {
+            "@id": "https://thetankguide.com/#organization"
+          },
+          "author": {
+            "@id": "https://thetankguide.com/#organization"
+          }
         },
         {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Cycling Coach",
-          "item": "https://thetankguide.com/cycling-coach/"
+          "@type": "WebApplication",
+          "@id": "https://thetankguide.com/cycling-coach/#webapp",
+          "name": "Cycling Coach – Aquarium Nitrogen Cycle Tracker",
+          "url": "https://thetankguide.com/cycling-coach/",
+          "applicationCategory": "Utilities",
+          "operatingSystem": "All",
+          "description": "Track your aquarium nitrogen cycle and confirm when your tank is cycled using the Cycling Coach tool.",
+          "publisher": {
+            "@id": "https://thetankguide.com/#organization"
+          },
+          "author": {
+            "@id": "https://thetankguide.com/#organization"
+          },
+          "isPartOf": {
+            "@id": "https://thetankguide.com/#website"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://thetankguide.com/cycling-coach/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://thetankguide.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Cycling Coach",
+              "item": "https://thetankguide.com/cycling-coach/"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://thetankguide.com/cycling-coach/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How does Cycling Coach keep my nitrogen cycle on track?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "It highlights ammonia and nitrite spikes, suggests corrective actions, and confirms when conditions meet stocking goals."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What if my readings plateau?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Review your log for missing bacteria boosters or insufficient aeration, then retest after adjusting temperature and flow."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I use Cycling Coach for planted tanks?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes—just record CO₂ dosing and plant mass notes so you understand how fast nutrients convert during cycling."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do I still need water changes during cycling?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Partial water changes keep nitrite and nitrate below stress levels and refresh trace minerals for bacteria."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What happens after the 24-hour challenge?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Perform a polishing water change, match temperature, and acclimate fish slowly while continuing to log readings."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Where can I get more aquarium education?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Explore our University resources for water chemistry foundations or visit the media library for cycling guides and how-tos."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://thetankguide.com/cycling-coach/#howto",
+          "name": "How to Do the 24-Hour Aquarium Cycle Test",
+          "description": "Confirm your aquarium is ready for fish by completing the Cycling Coach 24-hour challenge steps.",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "position": 1,
+              "name": "Dose ammonia to 2 ppm",
+              "itemListElement": {
+                "@type": "HowToDirection",
+                "text": "Add a precise ammonia source or fish food equivalent to reach 2 ppm, then record the value in Cycling Coach."
+              }
+            },
+            {
+              "@type": "HowToStep",
+              "position": 2,
+              "name": "Log the zero-hour readings",
+              "itemListElement": {
+                "@type": "HowToDirection",
+                "text": "Enter ammonia, nitrite, nitrate, pH, and temperature immediately after dosing so the challenge timer begins."
+              }
+            },
+            {
+              "@type": "HowToStep",
+              "position": 3,
+              "name": "Retest at the 24-hour mark",
+              "itemListElement": {
+                "@type": "HowToDirection",
+                "text": "After 24 hours, retest the same parameters and update Cycling Coach to compare against target thresholds."
+              }
+            },
+            {
+              "@type": "HowToStep",
+              "position": 4,
+              "name": "Review the readiness verdict",
+              "itemListElement": {
+                "@type": "HowToDirection",
+                "text": "Confirm both ammonia and nitrite are 0 ppm and nitrate is rising. Cycling Coach will mark the tank fish-ready when all goals are met."
+              }
+            }
+          ],
+          "tool": [
+            "Liquid test kit",
+            "Thermometer",
+            "Cycling Coach dashboard"
+          ],
+          "totalTime": "P1D"
         }
       ]
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "@id": "https://thetankguide.com/cycling-coach/#faq",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "How does Cycling Coach keep my nitrogen cycle on track?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "It highlights ammonia and nitrite spikes, suggests corrective actions, and confirms when conditions meet stocking goals."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What if my readings plateau?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Review your log for missing bacteria boosters or insufficient aeration, then retest after adjusting temperature and flow."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can I use Cycling Coach for planted tanks?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes—just record CO₂ dosing and plant mass notes so you understand how fast nutrients convert during cycling."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Do I still need water changes during cycling?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Partial water changes keep nitrite and nitrate below stress levels and refresh trace minerals for bacteria."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What happens after the 24-hour challenge?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Perform a polishing water change, match temperature, and acclimate fish slowly while continuing to log readings."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Where can I get more aquarium education?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Explore our University resources for water chemistry foundations or visit the media library for cycling guides and how-tos."
-          }
-        }
-      ]
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "HowTo",
-      "@id": "https://thetankguide.com/cycling-coach/#howto",
-      "name": "How to Do the 24-Hour Aquarium Cycle Test",
-      "description": "Confirm your aquarium is ready for fish by completing the Cycling Coach 24-hour challenge steps.",
-      "step": [
-        {
-          "@type": "HowToStep",
-          "position": 1,
-          "name": "Dose ammonia to 2 ppm",
-          "itemListElement": {
-            "@type": "HowToDirection",
-            "text": "Add a precise ammonia source or fish food equivalent to reach 2 ppm, then record the value in Cycling Coach."
-          }
-        },
-        {
-          "@type": "HowToStep",
-          "position": 2,
-          "name": "Log the zero-hour readings",
-          "itemListElement": {
-            "@type": "HowToDirection",
-            "text": "Enter ammonia, nitrite, nitrate, pH, and temperature immediately after dosing so the challenge timer begins."
-          }
-        },
-        {
-          "@type": "HowToStep",
-          "position": 3,
-          "name": "Retest at the 24-hour mark",
-          "itemListElement": {
-            "@type": "HowToDirection",
-            "text": "After 24 hours, retest the same parameters and update Cycling Coach to compare against target thresholds."
-          }
-        },
-        {
-          "@type": "HowToStep",
-          "position": 4,
-          "name": "Review the readiness verdict",
-          "itemListElement": {
-            "@type": "HowToDirection",
-            "text": "Confirm both ammonia and nitrite are 0 ppm and nitrate is rising. Cycling Coach will mark the tank fish-ready when all goals are met."
-          }
-        }
-      ],
-      "tool": [
-        "Liquid test kit",
-        "Thermometer",
-        "Cycling Coach dashboard"
-      ],
-      "totalTime": "P1D"
     }
   </script>
   <script type="application/ld+json" id="org-schema">
@@ -802,17 +205,18 @@
       "@context": "https://schema.org",
       "@type": "Organization",
       "@id": "https://thetankguide.com/#organization",
-      "name": "The Tank Guide",
+      "name": "FishKeepingLifeCo",
+      "alternateName": "The Tank Guide",
       "url": "https://thetankguide.com/",
       "logo": "https://thetankguide.com/assets/img/logos/logo-512.png",
       "sameAs": [
-        "https://thetankguide.com/",
-        "https://www.amazon.com/author/fklc",
-        "https://www.instagram.com/fishkeepinglifeco/",
+        "https://www.instagram.com/fishkeepinglifeco",
         "https://www.tiktok.com/@fishkeepinglifeco",
-        "https://www.facebook.com/fishkeepinglifeco",
         "https://x.com/fishkeepinglife",
-        "https://www.youtube.com/@FishKeepingLifeCo"
+        "https://www.youtube.com/@FishKeepingLifeCo",
+        "https://www.threads.com/@fishkeepinglifeco",
+        "https://www.facebook.com/share/1G81Domx5i/",
+        "https://www.amazon.com/author/fklc"
       ]
     }
   </script>
@@ -820,23 +224,6 @@
   <!--#include virtual="/includes/ga4.html" -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
-  <script>
-    (function() {
-      function signalGooglefcPresent() {
-        if (!window.frames['googlefcPresent']) {
-          if (document.body) {
-            const iframe = document.createElement('iframe');
-            iframe.style.cssText = 'display:none';
-            iframe.name = 'googlefcPresent';
-            document.body.appendChild(iframe);
-          } else {
-            setTimeout(signalGooglefcPresent, 0);
-          }
-        }
-      }
-      signalGooglefcPresent();
-    })();
-  </script>
 </head>
 <body class="page--cycling-coach">
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -1077,16 +464,16 @@
       </details>
 
         <div class="ad-slot" role="region" aria-label="Advertisement">
-          <!-- AdSense unit placeholder (enable after configuring production ad client)
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="YOUR-ADSENSE-CLIENT-ID"
-               data-ad-slot="TBD_SLOT_ID"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
+          <ins
+            class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-9905718149811880"
+            data-ad-slot="8136808291"
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          ></ins>
           <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-          -->
-          <div class="ad-placeholder">Advertisement</div>
+          <div class="ad-placeholder" aria-hidden="true">Advertisement</div>
         </div>
       <section class="panel" id="how-to" aria-labelledby="how-to-heading">
         <h2 id="how-to-heading">How to Use the Cycling Coach &amp; Understand the Nitrogen Cycle</h2>
@@ -1130,16 +517,16 @@
       </section>
 
       <div class="ad-slot" role="region" aria-label="Advertisement">
-        <!-- AdSense unit placeholder (enable after configuring production ad client)
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="YOUR-ADSENSE-CLIENT-ID"
-             data-ad-slot="TBD_SLOT_ID"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
+        <ins
+          class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-9905718149811880"
+          data-ad-slot="5754828160"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        -->
-        <div class="ad-placeholder">Advertisement</div>
+        <div class="ad-placeholder" aria-hidden="true">Advertisement</div>
       </div>
 
       <section class="panel card cc-faqs" id="cycling-faq" aria-labelledby="faq-heading">
@@ -1243,69 +630,6 @@
 
   <script type="module" src="/js/cycling-coach.js?v=1.0.0"></script>
   <script defer src="/assets/js/consent-banner.js"></script>
-  <script>
-    (function(){
-      var allowNPA = true;
-
-      function setAdConsent(granted){
-        document.documentElement.setAttribute('data-ad-consent', granted ? 'granted' : 'denied');
-        document.documentElement.classList.toggle('is-ads-disabled', !granted);
-        window.__TTG_ADS_DISABLED__ = !granted;
-        window.dispatchEvent(new CustomEvent('ttg:consent-change', {detail:{granted}}));
-      }
-
-      function hookTCF(){
-        if (typeof window.__tcfapi !== 'function') return false;
-
-        try{
-          var banner = document.getElementById('ttg-consent');
-          var modal  = document.getElementById('ttg-consent-modal');
-          if (banner){ banner.hidden = true; banner.classList.remove('is-open'); }
-          if (modal)  modal.hidden  = true;
-        }catch(e){}
-
-        window.__tcfapi('addEventListener', 2, function(tcData, ok){
-          if(!ok || !tcData) return;
-          var p = (tcData.purpose && tcData.purpose.consents) || {};
-          var hasP1 = !!p[1];
-          var hasP4 = !!p[4];
-          var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
-          setAdConsent(granted);
-        });
-
-        window.__tcfapi('getTCData', 2, function(tcData, ok){
-          if(!ok || !tcData) return;
-          var p = (tcData.purpose && tcData.purpose.consents) || {};
-          var hasP1 = !!p[1];
-          var hasP4 = !!p[4];
-          var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
-          setAdConsent(granted);
-        });
-
-        return true;
-      }
-
-      function init(){
-        if (hookTCF()) {
-          return;
-        }
-
-        var stored = localStorage.getItem('ttg-ad-consent');
-        if (stored) {
-          setAdConsent(stored === 'granted');
-          return;
-        }
-
-        setAdConsent(false);
-      }
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init, { once: true });
-      } else {
-        init();
-      }
-    })();
-  </script>
 
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
 </body>
