@@ -166,39 +166,23 @@
             "name": "What data powers the compatibility alerts?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Compatibility alerts combine The Tank Guide’s lab observations, aggregated aquarist feedback, and peer-reviewed husbandry references. Species profiles track temperament, adult size, and habitat overlap. We score each plan with conservative assumptions, then update guidance as our community shares outcomes. Use alerts as guardrails alongside ongoing testing, observation, and documentation routines."
+              "text": "Compatibility alerts use species behavior profiles, water chemistry needs, adult size, aggression, territorial requirements, environmental preferences, and a conservative model built from verified husbandry references and hobbyist outcomes to avoid risky combinations such as mixing aggressive cichlids with peaceful tetras or pairing long-fin fish with fast nippers."
             }
           },
           {
             "@type": "Question",
-            "name": "How should I report feedback on the Stocking Advisor results?",
+            "name": "How is aquarium bioload calculated?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Send feedback through the Contact and Feedback page, including tank volume, stock list, filtration, and warnings so we can replicate scenarios. Screenshots of parameter cards help us trace edge cases faster. We triage compatibility bugs first, then prioritize enhancements that improve clarity, accessibility, and freshwater community outcomes for every plan."
+              "text": "Bioload is estimated from each species' adult size, activity level, feeding response, and habitat preference, using conservative waste assumptions so active schooling fish count heavier than slow bottom-dwellers."
             }
           },
           {
             "@type": "Question",
-            "name": "How is aquarium bioload calculated in this tool?",
+            "name": "What if my fish or invertebrate isn’t listed?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "The Stocking Advisor estimates bioload by modeling how much waste each fish produces instead of relying on length. It applies conservative rules and activity multipliers so fast swimmers count heavier and also factors in your filtration data to gauge biological capacity. That helps the tool flag busy communities before they overload the system."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is the 'inches per gallon' rule, and why doesn’t this calculator use it?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The inches per gallon rule assumes every inch of fish adds the same load, but active species and calm fish strain a tank differently. This calculator skips that shortcut and models bioload directly, so higher activity species move the gauge more. Using bioload keeps guidance conservative even when tank shapes or filtration upgrades break the old rule of thumb."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How does the Stocking Advisor handle water chemistry and compatibility?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The Stocking Advisor stores each species’ preferred temperature, pH, and hardness ranges and compares them across your plan. When fish fall outside a shared window the Environmental card highlights it so you can adjust stock, remineralize, or tweak heat and flow. It also cross-checks temperament, fin nipping risks, and predator prey matches to surface compatibility warnings early."
+              "text": "If a species is missing you can use the closest match for planning, note any special needs, and request an addition through the Contact & Feedback page when the species is common or frequently requested."
             }
           },
           {
@@ -206,7 +190,47 @@
             "name": "What is the aquarium nitrogen cycle?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "The aquarium nitrogen cycle turns ammonia from fish waste into nitrite and then nitrate through beneficial bacteria growing on filter media and hard surfaces. Keeping it stable means adding livestock slowly, rinsing media in dechlorinated water, and tracking tests so the bacteria keep up. Staying on top of the cycle keeps nutrients from creeping beyond safe ranges while the tank matures."
+              "text": "The nitrogen cycle is the multi-week process where beneficial bacteria convert ammonia into nitrite and then nitrate, helping you know when a tank is ready for stocking and safer additions."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How often should I update my stocking plan?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Update your plan whenever tank size, filtration, or livestock changes, when behavior or water tests look off, or when plant growth, maturity, or filter performance shifts bioload."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use this tool for saltwater tanks?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Not yet; the Advisor currently supports freshwater setups such as community, semi-aggressive, planted, and low-tech tanks, with saltwater support planned for a future expansion."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How accurate is the bioload calculation?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Bioload estimates are intentionally conservative for new aquarists and are most accurate with common community fish, but results vary with species rarity, tank maturity, plant density, and filtration."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What’s the difference between bioload and the inch-per-gallon rule?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The inch-per-gallon rule counts only fish length, while bioload modeling accounts for activity, body mass, oxygen demand, waste production, and behavior, making it safer and more realistic for modern tanks."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I override compatibility warnings?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes; compatibility alerts flag potential risks but experienced aquarists can override them when they understand the species and environment, while beginners should follow the warnings to reduce stress and losses."
             }
           }
         ]
@@ -1366,7 +1390,7 @@
         <div class="hero-surface">
           <div class="hero-header">
           <h1 class="brand-name hero-title" id="page-title">Stocking Advisor</h1>
-          <p class="hero-subline">Prepared by The Tank Guide (A FishKeepingLifeCo Project).</p>
+          <p class="hero-subline">By The Tank Guide, from FishKeepingLifeCo</p>
           <p class="tagline hero-tagline lead">Plan a healthy community by checking bioload, compatibility — and get recommended water parameters for your tank.</p>
           <div id="stocking-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
           </div>
@@ -1778,7 +1802,7 @@
               </div>
             </div>
           </div>
-          <p class="card-subtitle">Derived from your selected stock.</p>
+          <p class="card-subtitle">Based on your selected stock.</p>
           <div class="env-compact-summary" data-role="env-compact-summary" aria-hidden="true" hidden>
             <span data-field="summary-text">Add species to see recommendations.</span>
           </div>
@@ -1910,26 +1934,8 @@
                 aria-labelledby="faq-question-compatibility"
                 hidden
               >
-                <p>Compatibility alerts combine The Tank Guide’s lab observations, aggregated aquarist feedback, and peer-reviewed husbandry references. Species profiles track temperament, adult size, and habitat overlap. We score each plan with conservative assumptions, then update guidance as our community shares outcomes. Use alerts as guardrails alongside ongoing testing, observation, and documentation routines.</p>
-              </div>
-            </details>
-            <details class="faq-item" id="faq-item-feedback">
-              <summary
-                class="faq-trigger"
-                id="faq-question-feedback"
-                aria-expanded="false"
-                aria-controls="faq-panel-feedback"
-              >
-                How should I report feedback on the Stocking Advisor results?
-              </summary>
-              <div
-                class="faq-panel"
-                id="faq-panel-feedback"
-                role="region"
-                aria-labelledby="faq-question-feedback"
-                hidden
-              >
-                <p>Send feedback through the <a href="/contact-feedback.html">Contact and Feedback page</a>, including tank volume, stock list, filtration, and warnings so we can replicate scenarios. Screenshots of parameter cards help us trace edge cases faster. We triage compatibility bugs first, then prioritize enhancements that improve clarity, accessibility, and freshwater community outcomes for every plan.</p>
+                <p>Compatibility alerts are generated using species-specific behavior profiles, water chemistry requirements, adult size, aggression tendencies, territorial needs, and environmental preferences. The system also uses a conservative model built from verified husbandry references and hobbyist-reported outcomes to avoid risky combinations.</p>
+                <p>Examples include: aggressive cichlids flagged when paired with peaceful tetras, long-fin slow swimmers flagged with fast nippy species, and soft-water species flagged when mixed with hard-water species.</p>
               </div>
             </details>
             <details class="faq-item" id="faq-item-bioload">
@@ -1939,7 +1945,7 @@
                 aria-expanded="false"
                 aria-controls="faq-panel-bioload"
               >
-                How is aquarium bioload calculated in this tool?
+                How is aquarium bioload calculated?
               </summary>
               <div
                 class="faq-panel"
@@ -1948,45 +1954,26 @@
                 aria-labelledby="faq-question-bioload"
                 hidden
               >
-                <p>The Stocking Advisor estimates bioload by looking at how much waste each fish type produces, not just its size. It applies conservative rules and activity multipliers so fast swimmers count heavier than calm species, then factors in the filtration data you enter to gauge effective biological capacity. That’s why the tool can flag a busy community sooner than a slow school even if the headcounts match.</p>
+                <p>Bioload is estimated from each species’ adult size, activity level, feeding response, and habitat preference. A conservative model is used—meaning the system intentionally assumes higher waste output to provide a safety margin, especially for beginners. Active schooling fish generate higher bioload than slow bottom-dwellers of similar size.</p>
               </div>
             </details>
-            <details class="faq-item" id="faq-item-inches">
+            <details class="faq-item" id="faq-item-unlisted">
               <summary
                 class="faq-trigger"
-                id="faq-question-inches"
+                id="faq-question-unlisted"
                 aria-expanded="false"
-                aria-controls="faq-panel-inches"
+                aria-controls="faq-panel-unlisted"
               >
-                What is the 'inches per gallon' rule, and why doesn’t this calculator use it?
+                What if my fish or invertebrate isn’t listed?
               </summary>
               <div
                 class="faq-panel"
-                id="faq-panel-inches"
+                id="faq-panel-unlisted"
                 role="region"
-                aria-labelledby="faq-question-inches"
+                aria-labelledby="faq-question-unlisted"
                 hidden
               >
-                <p>The old rule assumes every inch of fish creates the same load, but a hyper danio and a slow gourami do not stress a tank equally. This calculator skips that shortcut and models bioload directly, so species with higher activity or waste output move the gauge more. Using bioload instead of inches keeps the guidance conservative even when tank shapes or filtration upgrades break the outdated rule of thumb.</p>
-              </div>
-            </details>
-            <details class="faq-item" id="faq-item-chemistry">
-              <summary
-                class="faq-trigger"
-                id="faq-question-chemistry"
-                aria-expanded="false"
-                aria-controls="faq-panel-chemistry"
-              >
-                How does the Stocking Advisor handle water chemistry and compatibility?
-              </summary>
-              <div
-                class="faq-panel"
-                id="faq-panel-chemistry"
-                role="region"
-                aria-labelledby="faq-question-chemistry"
-                hidden
-              >
-                <p>The Stocking Advisor stores each species’ preferred temperature, pH, and hardness ranges and compares them against your plan. When fish fall outside a shared range, the Environmental card highlights it so you can adjust stock, remineralize, or tweak heat and flow. It also checks temperament, fin-nipping risks, and predator-prey matches so you see compatibility warnings before the fish meet.</p>
+                <p>If a species you keep isn’t included, use the closest match for general planning and note any unique needs. You can also request a new species be added through the <a href="/contact-feedback.html">Contact &amp; Feedback page</a>, especially if it’s common in the hobby or frequently requested.</p>
               </div>
             </details>
             <details class="faq-item" id="faq-item-nitrogen">
@@ -2005,9 +1992,105 @@
                 aria-labelledby="faq-question-nitrogen"
                 hidden
               >
-                <p>The nitrogen cycle is the process that turns ammonia from fish waste into nitrite and then nitrate using beneficial bacteria on your filter media and hard surfaces. The Stocking Advisor reminds you to add livestock slowly, rinse media in dechlorinated water, and keep testing so those bacteria can keep up. Staying on top of the cycle keeps nutrients from creeping beyond safe ranges while your tank matures.</p>
+                <p>The nitrogen cycle is the biological process where beneficial bacteria convert harmful ammonia into nitrite, then into nitrate. This process typically develops over several weeks. Understanding it helps determine when a tank is ready for stocking and when it’s safer to add new fish.</p>
               </div>
             </details>
+            <details class="faq-item" id="faq-item-updates">
+              <summary
+                class="faq-trigger"
+                id="faq-question-updates"
+                aria-expanded="false"
+                aria-controls="faq-panel-updates"
+              >
+                How often should I update my stocking plan?
+              </summary>
+              <div
+                class="faq-panel"
+                id="faq-panel-updates"
+                role="region"
+                aria-labelledby="faq-question-updates"
+                hidden
+              >
+                <p>Update your plan whenever your tank size, filtration, or livestock changes, or if you observe unusual behavior or concerning water test results. Significant changes in plant growth, tank maturity, or filter performance can also affect bioload and may warrant a new pass with the Advisor.</p>
+              </div>
+            </details>
+            <details class="faq-item" id="faq-item-saltwater">
+              <summary
+                class="faq-trigger"
+                id="faq-question-saltwater"
+                aria-expanded="false"
+                aria-controls="faq-panel-saltwater"
+              >
+                Can I use this tool for saltwater tanks?
+              </summary>
+              <div
+                class="faq-panel"
+                id="faq-panel-saltwater"
+                role="region"
+                aria-labelledby="faq-question-saltwater"
+                hidden
+              >
+                <p>Not yet. The Advisor currently supports freshwater systems, including community tanks, semi-aggressive setups, planted and low-tech tanks, and beginner-friendly layouts. Saltwater support may be added in a future expansion, but isn’t available in this version.</p>
+              </div>
+            </details>
+            <details class="faq-item" id="faq-item-accuracy">
+              <summary
+                class="faq-trigger"
+                id="faq-question-accuracy"
+                aria-expanded="false"
+                aria-controls="faq-panel-accuracy"
+              >
+                How accurate is the bioload calculation?
+              </summary>
+              <div
+                class="faq-panel"
+                id="faq-panel-accuracy"
+                role="region"
+                aria-labelledby="faq-question-accuracy"
+                hidden
+              >
+                <p>Bioload estimates are designed to be conservative to reduce risk for new aquarists. Accuracy is strongest with common community fish and may vary for uncommon or specialty species. Real-world results also depend on tank maturity, plant density, and filtration performance.</p>
+              </div>
+            </details>
+            <details class="faq-item" id="faq-item-bioload-rule">
+              <summary
+                class="faq-trigger"
+                id="faq-question-bioload-rule"
+                aria-expanded="false"
+                aria-controls="faq-panel-bioload-rule"
+              >
+                What’s the difference between bioload and the inch-per-gallon rule?
+              </summary>
+              <div
+                class="faq-panel"
+                id="faq-panel-bioload-rule"
+                role="region"
+                aria-labelledby="faq-question-bioload-rule"
+                hidden
+              >
+                <p>The inch-per-gallon rule treats all fish as equal based only on length. Bioload models consider activity, body mass, oxygen demand, waste production, and behavior. That makes bioload-based guidance safer and more realistic than simple length-based rules, especially in modern aquariums.</p>
+              </div>
+            </details>
+            <details class="faq-item" id="faq-item-overrides">
+              <summary
+                class="faq-trigger"
+                id="faq-question-overrides"
+                aria-expanded="false"
+                aria-controls="faq-panel-overrides"
+              >
+                Can I override compatibility warnings?
+              </summary>
+              <div
+                class="faq-panel"
+                id="faq-panel-overrides"
+                role="region"
+                aria-labelledby="faq-question-overrides"
+                hidden
+              >
+                <p>Yes. Compatibility alerts highlight potential risks but cannot account for every unique setup. Experienced aquarists may override them when they understand the species and environment well. For beginners, following the warnings is strongly recommended to reduce stress and losses.</p>
+              </div>
+            </details>
+          </div>
           </div>
         </div>
       </section>
