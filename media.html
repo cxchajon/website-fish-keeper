@@ -1,6 +1,3 @@
-<!-- PROTOTYPE: EXCLUDE FROM SITEMAP/CRAWL -->
-<!-- Updated: Applied new translucent nav resources and grouping to the Media hub. -->
-<!-- Prototype note: Social channel experiments are shelved here; Media Archive remains hidden pending automation work. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +6,7 @@
   <title>Fishkeeping Media &amp; Books — The Tank Guide</title>
   <meta name="description" content="Explore FishKeepingLifeCo videos, books, and aquarium guides in one hub designed to make aquarium science simple for every hobbyist." />
   <link rel="canonical" href="https://thetankguide.com/media.html">
+  <meta name="robots" content="index,follow">
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/logos/logo-512.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/logo-512.png">
   <link rel="apple-touch-icon" href="/assets/img/logos/apple-touch-icon.png">
@@ -1177,11 +1175,6 @@
     })();
   </script>
 
-  <!-- Prototype-only crawlable legal links -->
-  <div class="visually-hidden" aria-hidden="false">
-    <p>Privacy Policy: <a href="/privacy-legal.html">Privacy Policy</a> · Terms: <a href="/terms.html">Terms</a> · Contact: <a href="/contact-feedback.html">Contact</a></p>
-  </div>
-
 <!-- === TTG Cookie Consent START === -->
 <div id="ttg-consent" class="ttg-consent" data-consent-banner>
   <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
@@ -1304,7 +1297,7 @@
 
 <script>
   (function() {
-    var QA_MODE = true;
+    var QA_MODE = false;
     var body = document.body;
     if (QA_MODE && body) {
       body.setAttribute('data-ad-qa', 'true');
