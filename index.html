@@ -175,7 +175,9 @@
               Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium.
             </p>
             <p class="how">
-              <button type="button" id="how-it-works-button" class="how-trigger" aria-expanded="false" aria-controls="how-it-works-modal">How it works</button>
+              <button type="button" id="how-it-works-button" class="how-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="how-it-works-modal">
+                How it works
+              </button>
             </p>
           </div>
         </div>
@@ -274,7 +276,7 @@
     </div>
   </main>
 
-  <div class="how-it-works-overlay" data-how-it-works-overlay hidden aria-hidden="true">
+  <div class="how-it-works-overlay" id="hero-how-it-works-overlay" data-how-it-works-overlay hidden aria-hidden="true">
     <div class="how-it-works-modal" id="how-it-works-modal" role="dialog" aria-modal="true" aria-labelledby="how-it-works-title" aria-describedby="how-it-works-description" tabindex="-1">
       <header class="how-it-works-modal__header">
         <h2 id="how-it-works-title">How The Tank Guide Works</h2>
@@ -310,13 +312,14 @@
 
   <script>
   (function () {
-    const page = document.querySelector('.page--prototype-home');
-    if (!page) return;
+    const body = document.querySelector('body.page--prototype-home');
+    if (!body) return;
 
-    const openButton = page.querySelector('#how-it-works-button');
-    const overlay = page.querySelector('[data-how-it-works-overlay]');
+    const openButton = body.querySelector('#how-it-works-button');
+    const overlay = body.querySelector('[data-how-it-works-overlay]');
     const modal = overlay ? overlay.querySelector('.how-it-works-modal') : null;
     const closeButtons = overlay ? Array.from(overlay.querySelectorAll('[data-close-modal]')) : [];
+    const bodyScrollLockClass = 'body--modal-open';
 
     const focusableSelectors = [
       'a[href]:not([tabindex="-1"])',
@@ -395,7 +398,7 @@
         window.setTimeout(finalizeClose, 350);
       }
 
-      page.classList.remove('modal-open');
+      body.classList.remove(bodyScrollLockClass);
       document.removeEventListener('keydown', handleKeydown, true);
       setAriaState(false);
 
@@ -413,7 +416,7 @@
         overlay.classList.add('is-visible');
       });
 
-      page.classList.add('modal-open');
+      body.classList.add(bodyScrollLockClass);
       document.addEventListener('keydown', handleKeydown, true);
       setAriaState(true);
 
