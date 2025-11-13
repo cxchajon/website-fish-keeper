@@ -1,1 +1,1 @@
-- [Homepage Prototype](/prototype-home.html) — Prototype only; excluded from sitemap; noindex.
+- Homepage Prototype — retired Nov 2025 after production rollout.

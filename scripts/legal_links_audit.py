@@ -11,7 +11,6 @@ PAGES: List[Path] = [
     Path("stocking-advisor.html"),
     Path("gear/index.html"),
     Path("params.html"),
-    Path("prototype-home.html"),
     Path("about.html"),
     Path("contact-feedback.html"),
     Path("terms.html"),

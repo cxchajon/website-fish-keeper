@@ -30,7 +30,7 @@
 | 21 | /pages/university.html | The Tank Guide University — Foundation Studies | No | No | No |  |
 | 22 | /params.html | Redirecting to Cycling Coach | The Tank Guide | No | No | No | no meta description |
 | 23 | /privacy-legal.html | Privacy & Legal | The Tank Guide • FishKeepingLifeCo | No | No | Yes |  |
-| 24 | /prototype-home.html | The Tank Guide — Prototype Home | No | No | No | no canonical |
+| 24 | Prototype home (retired) | The Tank Guide — Prototype Home | No | No | No | removed 2025-11-13 |
 | 25 | /stocking-advisor.html | Aquarium Stocking Calculator: Fish Compatibility & Bioload Tool | Yes | Yes | Yes |  |
 | 26 | /store.html | Store — The Tank Guide | No | No | Yes |  |
 | 27 | /terms.html | Terms of Use | The Tank Guide | No | No | Yes |  |
@@ -47,7 +47,7 @@
 - <title>: "Page Not Found | The Tank Guide"
 - <meta name="description">: "Oops! Page not found. Return to The Tank Guide for aquarium setup, filtration, cycling, and planted tank beginner guidance."
 - <link rel="canonical">: "(not set)"
-- <meta name="robots">: "not set"
+- <meta name="robots">: "index,follow"
 - Language (html lang): en
 
 ### 2. Content Security Policy (CSP)
@@ -1936,10 +1936,10 @@ H3:
 - Total <ins class="adsbygoogle"> slots: 1
   - Slot 1:
     - data-ad-client: ca-pub-9905718149811880
-    - data-ad-slot: NEW_SLOT_ID
+    - data-ad-slot: 6411910426
     - data-ad-format: auto
     - data-full-width-responsive: true
-    - aria-label: (not set)
+    - aria-label: TTG_FeatureYourTank_Top • Slot 6411910426
     - Parent container: tag=div, class="ttg-ad-slot", id="ad-feature-footer-top", role=""
 - CSS context for ad containers:
   - Source: inline
@@ -4302,75 +4302,9 @@ H3:
 
 ---
 
-## /prototype-home.html
+## Prototype home (retired)
 
-### 1. Basic Metadata
-- File path: prototype-home.html
-- URL (assumed): https://thetankguide.com/prototype-home.html
-- <title>: "The Tank Guide — Prototype Home"
-- <meta name="description">: "Smart fishkeeping guides, planning tools, and step-by-step checklists to set up, stock, and care for your aquarium."
-- <link rel="canonical">: "(not set)"
-- <meta name="robots">: "noindex,nofollow"
-- Language (html lang): en
-
-### 2. Content Security Policy (CSP)
-- CSP present? no
-
-### 3. Analytics, Consent & Ads Scripts
-- GA4 / analytics present? no
-- Cloudflare analytics present? no
-- Consent / CMP script present? no
-- Google CMP (Funding Choices) present? no
-- AdSense global script present? no
-
-### 4. Ad Slots & Spacing
-- No <ins class="adsbygoogle"> slots found.
-- No ad-specific CSS rules detected in inline or linked stylesheets for this page.
-
-### 5. Structured Data (JSON-LD)
-- No JSON-LD blocks found.
-
-### 6. Headings & Content Structure
-H1:
-- Fishkeeping Guides & Tools — The Tank Guide
-H2:
-- Stocking Advisor
-- Gear
-- Cycling Coach
-- Media
-- About
-- Contact
-- Aquarium Science, Simplified for Everyone
-- Master the Foundation: Understanding the Nitrogen Cycle
-- Build a Balanced Community with Our Stocking Advisor
-- Learn with Us: From Our Tank to Yours
-- How The Tank Guide Works
-- About The Tank Guide
-H3:
-- Current Stock i
-
-### 7. Internal Links & Legal Links
-- Internal links:
-  - /stocking-advisor.html — text: "Plan My Stocking List"
-  - /gear/ — text: "Browse the Gear Guide"
-  - /cycling-coach/ — text: "Start the Cycling Coach"
-  - /media.html — text: "Explore the Media Hub"
-  - /about.html — text: "Learn more"
-  - /contact-feedback.html — text: "Contact & Feedback"
-  - /privacy-legal.html — text: "Privacy Policy"
-  - /terms.html — text: "Terms"
-- Legal links coverage: Privacy: yes; Terms: yes; Contact: yes
-
-### 8. Accessibility Notes (High-Level)
-- iframes: 0 total; 0 with title; 0 without title
-- images missing alt text: 0
-- Ad containers with aria-label: none detected on <ins> elements
-- Other aria-label usage: a: Plan my aquarium stocking list with the Stocking Advisor; a: Browse the aquarium Gear Guide; a: Start the Cycling Coach for step-by-step nitrogen cycling; a: Explore videos and articles in the Media Hub; a: Learn more about The Tank Guide
-
-### 9. Flags / Observations (NO FIXES)
-- No Content-Security-Policy meta tag present.
-- Missing canonical link.
-- No JSON-LD structured data.
+This experimental landing page was removed from the repository on 2025-11-13. Historical audit findings are archived offline to prevent stale SEO instructions.
 
 ---
 

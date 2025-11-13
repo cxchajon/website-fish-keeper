@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trust &amp; Security — The Tank Guide</title>
   <meta name="description" content="Learn how The Tank Guide protects community data, respects content ownership, and responds to scraping or misuse." />
+  <meta name="robots" content="index,follow" />
   <link rel="canonical" href="https://thetankguide.com/trust-security.html" />
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/logos/logo-512.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/logo-512.png">
@@ -211,5 +212,56 @@
   </noscript>
 
   <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
+
+  <!-- WebPage schema: trust and security overview -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://thetankguide.com/trust-security.html#webpage",
+    "url": "https://thetankguide.com/trust-security.html",
+    "name": "Trust & Security — The Tank Guide",
+    "description": "Learn how The Tank Guide protects community data, honors content ownership, and responds to scraping or abuse reports.",
+    "publisher": {
+      "@id": "https://thetankguide.com/#organization"
+    },
+    "author": {
+      "@id": "https://thetankguide.com/#organization"
+    },
+    "mainEntity": {
+      "@type": "ItemList",
+      "name": "Trust pillars",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "Thing",
+            "name": "Data Practices",
+            "description": "Minimal data collection with quarterly permission reviews and consent-aware analytics."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "Thing",
+            "name": "Content Ownership",
+            "description": "Community submissions remain creator-owned with DMCA and removal pathways."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "Thing",
+            "name": "Scraping & Abuse Response",
+            "description": "Rate limits, monitoring, and dedicated security contacts mitigate scraping or misuse."
+          }
+        }
+      ]
+    }
+  }
+  </script>
 </body>
 </html>
