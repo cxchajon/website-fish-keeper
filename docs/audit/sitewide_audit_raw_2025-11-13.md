@@ -1862,7 +1862,7 @@ H3:
       "@id": "https://thetankguide.com/#organization",
       "name": "The Tank Guide",
       "url": "https://thetankguide.com/",
-      "logo": "https://thetankguide.com/assets/img/logos/logo-512.png",
+      "logo": "/assets/img/Logo-Master-512×512.PNG",
       "sameAs": [
         "https://thetankguide.com/",
         "https://www.amazon.com/author/fklc",
@@ -2739,7 +2739,7 @@ H5:
           },
           "primaryImageOfPage": {
             "@type": "ImageObject",
-            "url": "https://thetankguide.com/assets/og/default.png",
+            "url": "/assets/img/Logo-Master-1200×630.PNG",
             "width": 1200,
             "height": 630
           }
