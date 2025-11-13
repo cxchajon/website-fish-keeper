@@ -199,6 +199,101 @@
     });
   });
 
+  function ensureFundingChoicesSignal(){
+    if (window.__ttgGooglefcSignal) return;
+    window.__ttgGooglefcSignal = true;
+    function signal(){
+      if (!window.frames['googlefcPresent']){
+        if (document.body){
+          var iframe = document.createElement('iframe');
+          iframe.style.cssText = 'display:none';
+          iframe.name = 'googlefcPresent';
+          document.body.appendChild(iframe);
+        } else {
+          setTimeout(signal, 0);
+        }
+      }
+    }
+    if (document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', signal);
+    } else {
+      signal();
+    }
+  }
+
+  ensureFundingChoicesSignal();
+
+  (function initLegacyConsentBridge(){
+    var allowNPA = true;
+    var LEGACY_KEY = 'ttg-ad-consent';
+
+    function setLegacyFlag(granted){
+      try {
+        localStorage.setItem(LEGACY_KEY, granted ? 'granted' : 'denied');
+      } catch (e) {}
+    }
+
+    function setAdConsent(granted){
+      document.documentElement.setAttribute('data-ad-consent', granted ? 'granted' : 'denied');
+      document.documentElement.classList.toggle('is-ads-disabled', !granted);
+      window.__TTG_ADS_DISABLED__ = !granted;
+      dispatchConsent(!!granted, null);
+    }
+
+    function hideConsentUi(){
+      try {
+        if (banner){
+          banner.hidden = true;
+          banner.classList.remove('is-open');
+        }
+        if (modal){
+          modal.hidden = true;
+        }
+      } catch (e) {}
+    }
+
+    function hookTCF(){
+      if (typeof window.__tcfapi !== 'function') return false;
+      hideConsentUi();
+
+      function applyFromTc(tcData, ok){
+        if (!ok || !tcData) return;
+        var p = (tcData.purpose && tcData.purpose.consents) || {};
+        var hasP1 = !!p[1];
+        var hasP4 = !!p[4];
+        var granted = allowNPA ? hasP1 : (hasP1 && hasP4);
+        setLegacyFlag(granted);
+        setAdConsent(granted);
+      }
+
+      try {
+        window.__tcfapi('addEventListener', 2, applyFromTc);
+        window.__tcfapi('getTCData', 2, applyFromTc);
+      } catch (e) {}
+
+      return true;
+    }
+
+    function init(){
+      if (hookTCF()) return;
+      var stored = null;
+      try {
+        stored = localStorage.getItem(LEGACY_KEY);
+      } catch (e) {}
+      if (stored){
+        setAdConsent(stored === 'granted');
+        return;
+      }
+      setAdConsent(false);
+    }
+
+    if (document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', init, { once: true });
+    } else {
+      init();
+    }
+  })();
+
   window.addEventListener('storage', function(evt){
     if (evt.key === STORE_KEY){
       syncFromStorage();
