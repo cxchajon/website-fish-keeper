@@ -11,6 +11,7 @@
   <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
   <meta charset="utf-8" />
   <meta property="og:site_name" content="The Tank Guide" />
+  <!--#include virtual="/includes/schema-organization.html" -->
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tank Journal — Legal Pad</title>
   <meta name="description" content="Browse The Tank Guide’s legal-pad journal to review maintenance notes, water tests, and everyday aquarium observations." />
@@ -176,6 +177,36 @@
       }
     }
   </style>
+  <!-- Google tag (gtag.js) — GA4 -->
+  <!--#include virtual="/includes/ga4.html" -->
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
+  <!-- End Cloudflare Web Analytics -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://thetankguide.com/journal.html#webpage",
+        "url": "https://thetankguide.com/journal.html",
+        "name": "Tank Journal — Legal Pad",
+        "description": "Browse The Tank Guide’s legal-pad journal to review maintenance notes, water tests, and everyday aquarium observations.",
+        "isPartOf": { "@id": "https://thetankguide.com/#website" },
+        "publisher": { "@id": "https://thetankguide.com/#organization" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://thetankguide.com/journal.html#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://thetankguide.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Tank Journal", "item": "https://thetankguide.com/journal.html" }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <div id="site-nav"></div>
