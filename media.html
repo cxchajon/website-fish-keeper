@@ -31,8 +31,20 @@
   <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png">
   <meta name="twitter:image:alt" content="FishKeepingLifeCo logo (1200×630).">
   <meta name="twitter:url" content="https://thetankguide.com/media.html">
-  <!-- Updated CSP on 2025-02-14 to allow Google AdSense (pagead2.googlesyndication.com, googleads.g.doubleclick.net, tpc.googlesyndication.com, adservice.google.com) while keeping legacy restrictions. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://adservice.google.com https://fundingchoicesmessages.google.com https://www.googletagservices.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://i.ytimg.com https://img.youtube.com https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net; font-src 'self' data: https://cdnjs.cloudflare.com; connect-src 'self' https://formspree.io https://www.google.com/recaptcha/ https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://fundingchoicesmessages.google.com; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://tpc.googlesyndication.com; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://adservice.google.com https://fundingchoicesmessages.google.com https://www.googletagservices.com;
+  style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+  img-src 'self' data: https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://i.ytimg.com https://img.youtube.com https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net;
+  font-src 'self' data: https://cdnjs.cloudflare.com https://fonts.gstatic.com;
+  connect-src 'self' https://formspree.io https://www.google.com/recaptcha/ https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://fundingchoicesmessages.google.com https://*.googlesyndication.com https://adservice.google.com;
+  frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://fundingchoicesmessages.google.com https://adservice.google.com;
+  form-action 'self' https://formspree.io;
+  base-uri 'self';
+  object-src 'none';
+  frame-ancestors 'self';
+  upgrade-insecure-requests
+">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="css/style.css?v=1.0.10" />
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
@@ -625,16 +637,16 @@
       display: flex;
       align-items: baseline;
       flex-wrap: wrap;
-    }
-    .now-playing-label {
       font-weight: 700;
       color: #000000;
       cursor: default;
+      margin-bottom: 0.35rem;
     }
     .now-playing-title {
       padding-left: 6px;
       font-weight: 400;
       color: #333333;
+      margin: 0 0 0.5rem;
     }
     .now-playing-title a {
       color: inherit;
@@ -815,16 +827,14 @@
         <h3 class="visually-hidden">Latest video</h3>
         <!-- FEATURED VIDEO SECTION -->
         <div class="featured-video">
-          <h3 class="now-playing">
-            <span class="now-playing-label">Now Playing:</span><br>
-            <span class="now-playing-title">
-              <a href="https://www.youtube.com/shorts/kdkC66luNa0"
-                 target="_blank"
-                 rel="noopener noreferrer nofollow">
-                How to beat Black Beard Algae. My full guide
-              </a>
-            </span>
-          </h3>
+          <h3 class="now-playing">Now Playing:</h3>
+          <p class="now-playing-title">
+            <a href="https://www.youtube.com/shorts/kdkC66luNa0"
+               target="_blank"
+               rel="noopener noreferrer nofollow">
+              How to beat Black Beard Algae. My full guide
+            </a>
+          </p>
 
           <!-- Embedded video -->
           <div class="video-embed">
@@ -936,60 +946,6 @@
       </article>
     </section>
 
-    <!-- TODO: Unhide the Media Archive section once the archive features are ready. -->
-    <!-- Hidden Media Archive section start -->
-    <!--
-    <section class="section" id="media-archive" aria-labelledby="media-archive-heading">
-      <article class="card archive-card">
-        <h2 id="media-archive-heading">Media Archive</h2>
-        <p class="subline">Organized collections launching soon. Bookmark this hub to track every video, short, reel, and future podcast drop.</p>
-        <div class="archive-grid">
-          <section class="archive-group" aria-labelledby="archive-youtube">
-            <h3 id="archive-youtube">YouTube Library</h3>
-            <div class="archive-list">
-              <div class="archive-placeholder">
-                <span>Coming Soon — Setup Series Index</span>
-                <p>Every cycling, stocking, and maintenance playlist in a single searchable feed.</p>
-              </div>
-              <div class="archive-placeholder">
-                <span>Coming Soon — Live Q&amp;A Replays</span>
-                <p>Timestamped recaps of long-form livestreams with download links for worksheets.</p>
-              </div>
-            </div>
-          </section>
-          <section class="archive-group" aria-labelledby="archive-tiktok">
-            <h3 id="archive-tiktok">TikTok Highlights</h3>
-            <div class="archive-list">
-              <div class="archive-placeholder">
-                <span>Coming Soon — Rapid Fix Vault</span>
-                <p>Quick remedies for cloudy water, algae blooms, and equipment hiccups.</p>
-              </div>
-              <div class="archive-placeholder">
-                <span>Coming Soon — 30-Day Challenges</span>
-                <p>Daily prompts to keep nano tanks thriving with minimal gear.</p>
-              </div>
-            </div>
-          </section>
-          <section class="archive-group" aria-labelledby="archive-instagram">
-            <h3 id="archive-instagram">Instagram Gallery</h3>
-            <div class="archive-list">
-              <div class="archive-placeholder">
-                <span>Coming Soon — Community Tank Tours</span>
-                <p>Reader-submitted scapes grouped by size, livestock, and filtration style.</p>
-              </div>
-              <div class="archive-placeholder">
-                <span>Coming Soon — Book + Merch Drops</span>
-                <p>Release-day photography and stories with direct purchase links.</p>
-              </div>
-            </div>
-          </section>
-        </div>
-      </article>
-    </section>
-
-    -->
-    <!-- Hidden Media Archive section end -->
-
     <!-- Community -->
     <section class="section" id="community" aria-labelledby="community-title">
       <h2 id="community-title">Community</h2>
@@ -1051,32 +1007,29 @@
 
           <div class="alib alib--table alib--compact">
             <div class="alib__tabletop">
-              <a class="alib-book" href="/blogs/">
-                <span class="visually-hidden">Blogs</span>
+              <a class="alib-book" href="/blogs/" aria-label="Browse The Tank Guide aquarium blogs for hands-on tips and setups">
                 <img
                   class="alib-book__img"
                   src="/assets/img/library-blogs.webp"
-                  alt="FishKeepingLifeCo library blogs cover artwork"
+                  alt=""
                   loading="lazy"
                   decoding="async"
                 >
               </a>
-              <a class="alib-book" href="https://thetankguide.com/pages/university.html">
-                <span class="visually-hidden">University Articles</span>
+              <a class="alib-book" href="https://thetankguide.com/pages/university.html" aria-label="Study Aquarium University articles for science-based lessons">
                 <img
                   class="alib-book__img"
                   src="/assets/img/university-articles.webp"
-                  alt="Aquarium University research articles artwork"
+                  alt=""
                   loading="lazy"
                   decoding="async"
                 >
               </a>
-              <a class="alib-book" href="/journal.html" aria-label="Open the FishKeepingLifeCo Journal">
-                <span class="visually-hidden">Journal</span>
+              <a class="alib-book" href="/journal.html" aria-label="Open The Tank Guide journal for real aquarium data and logs">
                 <img
                   class="alib-book__img"
                   src="/assets/img/library-journal.webp"
-                  alt="FishKeepingLifeCo Journal notebook artwork"
+                  alt=""
                   loading="lazy"
                   decoding="async"
                 >
@@ -1121,9 +1074,9 @@
       <div class="wrap">
         <h2 class="section-title" id="media-faq-title">Frequently Asked Questions</h2>
 
-        <div class="faq-accordion" role="tablist" aria-label="The Tank Guide FAQs">
-          <details class="faq-item" role="group">
-            <summary class="faq-summary" role="button" aria-controls="faq1" aria-expanded="false">
+        <div class="faq-accordion" aria-label="The Tank Guide FAQs">
+          <details class="faq-item">
+            <summary class="faq-summary" aria-controls="faq1" aria-expanded="false">
               What is The Tank Guide?
             </summary>
             <div id="faq1" class="faq-content">
@@ -1131,8 +1084,8 @@
             </div>
           </details>
 
-          <details class="faq-item" role="group">
-            <summary class="faq-summary" role="button" aria-controls="faq2" aria-expanded="false">
+          <details class="faq-item">
+            <summary class="faq-summary" aria-controls="faq2" aria-expanded="false">
               What is “Life in Balance” about?
             </summary>
             <div id="faq2" class="faq-content">
@@ -1140,8 +1093,8 @@
             </div>
           </details>
 
-          <details class="faq-item" role="group">
-            <summary class="faq-summary" role="button" aria-controls="faq3" aria-expanded="false">
+          <details class="faq-item">
+            <summary class="faq-summary" aria-controls="faq3" aria-expanded="false">
               Where can I find nitrogen cycle guides?
             </summary>
             <div id="faq3" class="faq-content">
@@ -1149,8 +1102,8 @@
             </div>
           </details>
 
-          <details class="faq-item" role="group">
-            <summary class="faq-summary" role="button" aria-controls="faq4" aria-expanded="false">
+          <details class="faq-item">
+            <summary class="faq-summary" aria-controls="faq4" aria-expanded="false">
               Do you feature community tanks?
             </summary>
             <div id="faq4" class="faq-content">
@@ -1158,8 +1111,8 @@
             </div>
           </details>
 
-          <details class="faq-item" role="group">
-            <summary class="faq-summary" role="button" aria-controls="faq5" aria-expanded="false">
+          <details class="faq-item">
+            <summary class="faq-summary" aria-controls="faq5" aria-expanded="false">
               What is the difference between Blogs, University, and the Journal?
             </summary>
             <div id="faq5" class="faq-content">
@@ -1167,8 +1120,8 @@
             </div>
           </details>
 
-          <details class="faq-item" role="group">
-            <summary class="faq-summary" role="button" aria-controls="faq6" aria-expanded="false">
+          <details class="faq-item">
+            <summary class="faq-summary" aria-controls="faq6" aria-expanded="false">
               How can I submit my aquarium to be featured?
             </summary>
             <div id="faq6" class="faq-content">
@@ -1176,8 +1129,8 @@
             </div>
           </details>
 
-          <details class="faq-item" role="group">
-            <summary class="faq-summary" role="button" aria-controls="faq7" aria-expanded="false">
+          <details class="faq-item">
+            <summary class="faq-summary" aria-controls="faq7" aria-expanded="false">
               Are The Tank Guide books suitable for complete beginners?
             </summary>
             <div id="faq7" class="faq-content">
