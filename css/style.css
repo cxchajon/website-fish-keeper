@@ -1,3 +1,39 @@
+/*
+ * CSS Inventory — 2024-06-XX
+ * /css/style.css — global tokens, resets, navigation, hero + card shells. Used by index.html, stocking-advisor.html,
+ *   gear/index.html, cycling-coach/index.html, media.html, journal.html, and most marketing pages.
+ * /css/site.css — shared layout modules (environment cards, footer, split grids) relied on index.html, journal.html,
+ *   stocking-advisor.html, gear/index.html, and legacy sections that include env tables.
+ * /css/utilities.css & /assets/css/utilities.css — tooltip + helper utilities injected into stocking-advisor.html,
+ *   cycling-coach/index.html, media.html, and other interactive prototypes.
+ * /assets/css/theme.css — gradients + brand color utilities for university/media hero shells. Blog hero treatments
+ *   import it through components.
+ * /css/ui.css — legacy form + table helpers piggybacked only by stocking-advisor.html.
+ * /css/stocking-advisor.css — complete layout/theme for the Stocking Advisor app shell.
+ * /gear/css/gear.v2.css — gear guide grid + CTA controls loaded by gear/index.html.
+ * /assets/css/cycling-coach.css — stepper UI for cycling-coach/index.html.
+ * /assets/css/media.css — media hub + community archive components on media.html.
+ * /css/journal.css & /css/journal-dashboard*.css — kept for experiments; journal.html currently relies on inline
+ *   legal-pad styles while journal-dashboard.html embeds its own grid/charts.
+ * Inline <style> blocks live in stocking-advisor.html (cards + prototype patch), gear/index.html (CTA buttons +
+ *   retailer badge grid), media.html (hero + storefront), journal.html (legal pad skin), and journal-dashboard.html
+ *   (dashboard layout) — all slated for consolidation/namespace in this pass.
+ * These comments keep the current scope visible while we merge/cleanup without touching JS or HTML structure.
+ */
+
+/*
+ * CSS Merge Plan — base vs. layout vs. theming
+ * - Keep /css/style.css as the canonical hub for tokens, resets, typography, buttons, cards, nav, hero sections, and
+ *   shared utility classes. Any duplicate .btn/.card/.hero styles from other files will move here.
+ * - Keep /css/site.css for site-wide layout components (sections, grids, footer, advisor environment tables). Remove
+ *   overlapping button/typography definitions there once consolidated.
+ * - Keep /assets/css/theme.css strictly for gradients, beams, overlays, and color utility helpers. Anything structural
+ *   that leaked into theme.css gets pulled back into style.css or site.css.
+ * - Page-specific CSS (Stocking Advisor, Gear Guide, Cycling Coach, Media, Journal Dashboard) stays isolated but gains
+ *   namespaces (.stocking-card, .gear-section, .cycling-step, .journal-dashboard-*) to avoid collisions.
+ * - Delete redundant selectors only when 100% unused; leave unsure ones with a /* possible legacy */ note.
+ */
+
 :root {
   --nav-text: #f3f6ff;
   --nav-muted: rgba(243, 246, 255, 0.78);
@@ -533,9 +569,12 @@ input[disabled] {
   opacity: 0.8;
 }
 
-button.btn {
+button.btn,
+button.button {
   cursor: pointer;
-  border: 1px solid var(--line);
+  border: 0;
+  width: auto;
+  background: none;
 }
 
 button.danger {
@@ -1849,11 +1888,6 @@ body.page-background #content .section {
   padding: clamp(48px, 10vw, 80px) 20px;
 }
 
-body.page-background #content .hero,
-body.page-background #content .hero.hero--tools {
-  padding: clamp(16px, 2.5vw, 28px) 20px clamp(8px, 1.5vw, 16px);
-}
-
 body.page-background #content .section--gradient {
   color: #fff;
   --muted: rgba(255,255,255,.86);
@@ -1898,27 +1932,9 @@ body.page-background #content .eyebrow {
   opacity: 0.85;
 }
 
-body.page-background #content .hero .eyebrow {
-  margin-bottom: 8px;
-  letter-spacing: 0.06em;
-}
-
-body.page-background #content .hero h1 {
-  margin: 8px 0 10px;
-  line-height: 1.15;
-}
-
-body.page-background #content .hero p.lede,
-body.page-background #content .hero .lede {
-  margin: 10px 0 14px;
-  max-width: 68ch;
-}
-
-body.page-background #content .hero .cta-line {
-  margin-top: 8px;
-  margin-bottom: 8px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+body.page-background #content .hero,
+body.page-background #content .hero.hero--tools {
+  padding: clamp(16px, 2.5vw, 28px) 20px clamp(8px, 1.5vw, 16px);
 }
 
 body.page-background #content .kicker {
@@ -2066,19 +2082,59 @@ body.page-background #content .kicker {
 /* Base button */
 .btn,
 .button,
+button.btn,
+button.button,
 a.btn,
 a.button {
-  display: inline-block;
-  padding: 14px 22px;
-  border-radius: 28px;
+  -webkit-tap-highlight-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.9rem 1.4rem;
   font-weight: 800;
   font-size: 1.05rem;
   line-height: 1;
-  text-align: center;
-  text-decoration: none;
-  transition: transform 0.05s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  border: 2px solid transparent;
+  user-select: none;
+  text-decoration: none;
+  text-align: center;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+  position: relative;
+  min-width: 0;
+  width: auto;
+  background: transparent;
+  color: inherit;
+  appearance: none;
+}
+
+.btn[disabled],
+.button[disabled],
+a.btn[aria-disabled='true'],
+a.button[aria-disabled='true'] {
+  opacity: 0.65;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn:focus-visible,
+.button:focus-visible,
+a.btn:focus-visible,
+a.button:focus-visible {
+  outline: 0;
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 0 6px #1b6fbd,
+    0 12px 22px rgba(6, 42, 77, 0.20);
 }
 
 /* Primary style used for "Launch" */
@@ -2093,7 +2149,6 @@ a.button {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
-/* Hover/focus/active states for clear affordance */
 .btn--launch:hover,
 .btn--launch:focus,
 .card .btn:hover,
@@ -2110,22 +2165,6 @@ a.button {
 .card .btn:active {
   transform: translateY(0);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18) inset;
-}
-
-/* Ensure buttons are not styled as disabled */
-.btn[disabled],
-.button[disabled] {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-/* Accessibility: visible focus ring on keyboard nav */
-.btn:focus-visible,
-.button:focus-visible,
-a.btn:focus-visible,
-a.button:focus-visible {
-  outline: 3px solid #c2e0ff;
-  outline-offset: 2px;
 }
 
 body.page-background #content .faq-list {
@@ -2361,27 +2400,6 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
   .tools-grid, .tools-section { gap: 1rem; }
 }
 
-/* --- Bubble button (neumorphic/tactile) --- */
-.btn {
-  -webkit-tap-highlight-color: transparent;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  border: 0;
-  border-radius: 999px;
-  padding: 0.9rem 1.4rem;
-  font-weight: 800;
-  font-size: 1.05rem;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  user-select: none;
-  text-decoration: none;
-  transition: transform 120ms ease, box-shadow 120ms ease, background 160ms ease;
-  position: relative;
-}
-
 .btn--primary,
 .btn--launch {
   color: #0e3b66;
@@ -2421,21 +2439,18 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
     inset 0 -1px 0 rgba(255,255,255,0.6);
 }
 
-.btn:focus-visible {
-  outline: 0;
-  box-shadow:
-    0 0 0 3px #fff,
-    0 0 0 6px #1b6fbd,
-    0 12px 22px rgba(6, 42, 77, 0.20);
-}
-
 .tool-card .btn { width: 100%; }
 @media (min-width: 768px) {
   .tool-card .btn { width: auto; min-width: 9rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn { transition: none; }
+  .btn,
+  .button,
+  button.btn,
+  button.button,
+  a.btn,
+  a.button { transition: none; }
 }
 
 .tool-card .card-actions { margin-top: 0.85rem; }
