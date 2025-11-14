@@ -264,3 +264,46 @@
     gap: 20px;
   }
 }
+/* GLOBAL TEXT COLOR — make all text white */
+body, main, section, article, p, h1, h2, h3, h4, h5, h6,
+details summary, a, li, span, button {
+    color: #ffffff !important;
+}
+
+/* NAV BAR TEXT + SUBTEXT */
+#site-nav,
+#site-nav a,
+#site-nav .brand-title,
+#site-nav .brand-subtitle {
+    color: #ffffff !important;
+}
+
+/* HAMBURGER ICON LINES */
+.menu-icon div {
+    background-color: #ffffff !important;
+}
+
+/* BUTTONS IN TOOL CARDS */
+.cta-button,
+.cta-button a,
+.card a.cta-link {
+    color: #ffffff !important;
+    border-color: rgba(255,255,255,0.5) !important;
+}
+
+/* FAQ QUESTIONS */
+details summary {
+    color: #ffffff !important;
+}
+
+/* MODAL TEXT (“How it works”) */
+#how-it-works-dialog,
+#how-it-works-dialog * {
+    color: #ffffff !important;
+}
+
+/* FOOTER TEXT */
+#site-footer,
+#site-footer * {
+    color: #ffffff !important;
+}
