@@ -296,32 +296,24 @@ details summary {
     color: #ffffff !important;
 }
 
-/* MODAL TEXT (“How it works”) */
-#how-it-works-dialog,
-#how-it-works-dialog * {
-    color: #ffffff !important;
-}
-
 /* FOOTER TEXT */
 #site-footer,
 #site-footer * {
     color: #ffffff !important;
 }
-/* RESTORE ORIGINAL MODAL COLORS */
-#how-it-works-dialog,
-#how-it-works-dialog * {
-    color: #0a1633 !important; /* deep navy for readability */
-}
 
-/* Restore the close button color */
-#how-it-works-dialog button.close-btn,
-#how-it-works-dialog .close-btn svg,
-#how-it-works-dialog .close-btn span {
+/* Override global white text for How it Works modal for readability */
+#how-it-works-modal,
+#how-it-works-modal * {
     color: #0a1633 !important;
-    fill: #0a1633 !important;
 }
 
-/* If the modal background was tinted, restore pure white */
-#how-it-works-dialog {
+#how-it-works-modal {
     background: #ffffff !important;
+}
+
+#how-it-works-modal .how-it-works-modal__close,
+#how-it-works-modal .how-it-works-modal__close span,
+#how-it-works-modal .btn-glossy {
+    color: #0a1633 !important;
 }
