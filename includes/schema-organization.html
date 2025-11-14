@@ -1,21 +1,39 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": "https://thetankguide.com/#organization",
-  "name": "The Tank Guide",
-  "alternateName": "FishKeepingLifeCo",
-  "url": "https://thetankguide.com/",
-  "logo": "/assets/img/Logo-Master-180x180.PNG",
-  "sameAs": [
-    "https://www.instagram.com/thetankguide",
-    "https://www.tiktok.com/@thetankguide",
-    "https://x.com/thetankguide",
-    "https://www.youtube.com/@thetankguide",
-    "https://www.facebook.com/thetankguide",
-    "https://www.threads.net/@thetankguide",
-    "https://www.amazon.com/author/fklc",
-    "https://chat.openai.com/g/g-the-tank-guide"
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://thetankguide.com/#organization",
+      "name": "The Tank Guide",
+      "url": "https://thetankguide.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://thetankguide.com/#logo",
+        "url": "https://thetankguide.com/assets/img/Logo-Master-180x180.PNG",
+        "width": 180,
+        "height": 180
+      },
+      "sameAs": [
+        "https://www.instagram.com/thetankguide",
+        "https://www.tiktok.com/@thetankguide",
+        "https://x.com/thetankguide",
+        "https://www.youtube.com/@thetankguide",
+        "https://www.facebook.com/thetankguide",
+        "https://www.threads.net/@thetankguide",
+        "https://www.amazon.com/author/fklc",
+        "https://chat.openai.com/g/g-the-tank-guide"
+      ],
+      "parentOrganization": {
+        "@id": "https://thetankguide.com/#fishkeepinglifeco"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://thetankguide.com/#fishkeepinglifeco",
+      "name": "FishKeepingLifeCo",
+      "url": "https://thetankguide.com/"
+    }
   ]
 }
 </script>
