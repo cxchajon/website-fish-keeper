@@ -301,19 +301,3 @@ details summary {
 #site-footer * {
     color: #ffffff !important;
 }
-
-/* Override global white text for How it Works modal for readability */
-#how-it-works-modal,
-#how-it-works-modal * {
-    color: #0a1633 !important;
-}
-
-#how-it-works-modal {
-    background: #ffffff !important;
-}
-
-#how-it-works-modal .how-it-works-modal__close,
-#how-it-works-modal .how-it-works-modal__close span,
-#how-it-works-modal .btn-glossy {
-    color: #0a1633 !important;
-}
