@@ -1,4 +1,709 @@
-/* Media page shared styles consolidated in media.html. */
+/* Media page shared styles consolidated from media.html */
+
+body.media-page {
+  --card-bg: rgba(255,255,255,.6);
+  --border: rgba(0,0,0,.08);
+  --muted: rgba(0,0,0,.65);
+  --ttg-nav-bg: rgba(10, 16, 30, 0.72);
+  --ttg-nav-text: #f2f6ff;
+  --ttg-nav-link: rgba(243, 247, 255, 0.85);
+  --lib-max: 860px;
+  --card-w: min(360px, 88vw);
+  --card-pad: 16px;
+  --card-radius: 16px;
+  --card-shadow: 0 8px 16px rgba(5, 37, 48, .12);
+  --gap: 0.75rem;
+  --alib-book-min: 148px;
+  --alib-book-max: 232px;
+  --alib-book-gap: clamp(18px, 4vw, 36px);
+}
+
+/* Background now matches the homepage gradient exactly */
+body.media-page{
+  margin:0; padding:0;
+  color:#eef3ff;
+}
+
+.media-page .wrap { max-width: 1100px; margin: 0 auto; padding: 0 18px; }
+
+/* Hero */
+.media-page .hero { padding: 64px 0 28px; text-align: left; }
+.media-page .hero h1 { margin: 0 0 8px; }
+.media-page .hero p.sub { margin: 0; opacity: .9; }
+.media-page .hero-description {
+  margin: 12px 0 0;
+  max-width: 46ch;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.media-page .marquee-title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: clamp(0.75rem, 2vw, 1.35rem) auto clamp(1.1rem, 2.8vw, 1.6rem);
+  padding: clamp(0.65rem, 2vw, 0.95rem) clamp(1.15rem, 3.2vw, 1.85rem);
+  max-width: 100%;
+  text-align: center;
+  font-weight: 700;
+  font-size: clamp(1.15rem, 2.4vw, 1.3rem);
+  letter-spacing: 0.045em;
+  color: #0b1020;
+  background: linear-gradient(135deg, rgba(250, 252, 255, 0.95), rgba(226, 238, 255, 0.9));
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(11, 16, 32, 0.16);
+}
+
+.media-page .marquee-title::after {
+  content: "";
+  position: absolute;
+  bottom: clamp(-0.6rem, -1.5vw, -0.75rem);
+  left: 12%;
+  right: 12%;
+  height: 2px;
+  background: rgba(11, 16, 32, 0.18);
+  border-radius: 999px;
+}
+
+.media-page .marquee-title a {
+  display: inline-block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.media-page .marquee-title a:focus-visible {
+  outline: 3px solid rgba(51, 102, 204, 0.85);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+/* Sections */
+.media-page .section { margin: 32px 0 28px; }
+.media-page .section h2 { margin: 0 0 8px; }
+.media-page .section p.lead { margin: 0 0 16px; color: var(--muted); }
+
+.media-page .faq-accordion { display: grid; gap: 1rem; margin-top: 1rem; }
+
+.media-page .faq-item {
+  border-radius: 16px;
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+
+.media-page .faq-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 1rem 1.25rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  position: relative;
+}
+.media-page .faq-summary::-webkit-details-marker { display: none; }
+.media-page .faq-summary::after {
+  content: "▸";
+  position: absolute;
+  right: 1.25rem;
+  transition: transform .2s ease;
+}
+.media-page .faq-item[open] .faq-summary::after { transform: rotate(90deg); }
+
+.media-page .faq-content { padding: 0 1.25rem 1.25rem; line-height: 1.55; }
+
+/* AdSense safety spacing near FAQ */
+.media-page .faq-section { margin-top: 2rem; }
+.media-page .faq-section + .ad-slot, .ad-slot + .faq-section { margin-top: 10rem; } /* ~160px */
+
+.media-page .community-archive-cta {
+  display: flex;
+  justify-content: flex-start;
+  margin: clamp(18px, 4vw, 26px) 0 0;
+}
+
+.media-page .community-archive-button {
+  --cta-bg-start: rgba(37, 99, 235, 0.92);
+  --cta-bg-end: rgba(59, 130, 246, 0.86);
+  --cta-border: rgba(255, 255, 255, 0.28);
+  --cta-shadow: 0 16px 32px rgba(8, 21, 50, 0.35);
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(10px, 2.4vw, 12px);
+  padding: clamp(12px, 3vw, 16px) clamp(22px, 6vw, 30px);
+  min-height: clamp(48px, 12vw, 60px);
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--cta-bg-start), var(--cta-bg-end));
+  border: 1px solid var(--cta-border);
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  box-shadow: var(--cta-shadow);
+  position: relative;
+  white-space: nowrap;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+  filter: none;
+}
+
+.media-page .community-archive-button__label {
+  font-size: clamp(0.95rem, 2.6vw, 1.05rem);
+}
+
+.media-page .community-archive-button:focus-visible {
+  outline: 2px solid rgba(96, 165, 250, 0.95);
+  outline-offset: 3px;
+}
+
+.media-page .community-archive-button:hover,
+.media-page .community-archive-button:focus-visible {
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 18px 38px rgba(8, 21, 50, 0.38);
+}
+
+.media-page .youtube-rewind-icon {
+  width: clamp(24px, 5.6vw, 26px);
+  height: auto;
+  flex-shrink: 0;
+  display: block;
+  color: #ffffff;
+}
+
+.media-page .youtube-rewind-icon .rewind-chevrons {
+  transform-origin: center;
+}
+
+@keyframes rewind-jiggle {
+  0%, 100% { transform: translateX(0); }
+  40% { transform: translateX(-3px); }
+  70% { transform: translateX(-1px); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .media-page .community-archive-button:hover .youtube-rewind-icon .rewind-chevrons,
+  .media-page .community-archive-button:focus-visible .youtube-rewind-icon .rewind-chevrons {
+    animation: rewind-jiggle 300ms ease-in-out forwards;
+  }
+
+  .media-page .community-archive-button:hover,
+  .media-page .community-archive-button:focus-visible {
+    filter: drop-shadow(0 10px 18px rgba(8, 21, 50, 0.3));
+  }
+}
+
+.media-page .ttg-card {
+  position: relative;
+  isolation: isolate;
+}
+
+.media-page .ad-slot {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.media-page .rounded-2xl {
+  border-radius: clamp(20px, 4vw, 28px);
+}
+
+.media-page .p-4 {
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+.media-page .ttg-ad-slot {
+  --ttg-ad-border: rgba(148, 187, 255, 0.42);
+  --ttg-ad-border-qa: rgba(148, 187, 255, 0.72);
+  --ttg-ad-bg-start: rgba(17, 34, 63, 0.88);
+  --ttg-ad-bg-end: rgba(38, 92, 156, 0.78);
+  --ttg-ad-chip-bg: rgba(10, 23, 42, 0.88);
+  --ttg-ad-chip-color: rgba(235, 243, 255, 0.96);
+  margin: clamp(9.5rem, 16vw, 12rem) auto;
+  width: min(860px, 92vw);
+  min-height: clamp(220px, 42vw, 300px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vw, 2rem);
+  position: relative;
+  border: 1px solid var(--ttg-ad-border);
+  background: linear-gradient(140deg, var(--ttg-ad-bg-start), var(--ttg-ad-bg-end));
+  box-shadow: 0 28px 68px rgba(5, 22, 39, 0.36);
+  color: rgba(238, 244, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow: hidden;
+}
+
+body.theme-light.media-page .ttg-ad-slot {
+  --ttg-ad-border: rgba(109, 161, 255, 0.38);
+  --ttg-ad-border-qa: rgba(109, 161, 255, 0.68);
+  --ttg-ad-bg-start: rgba(13, 32, 66, 0.86);
+  --ttg-ad-bg-end: rgba(39, 98, 163, 0.78);
+  --ttg-ad-chip-bg: rgba(11, 30, 58, 0.9);
+  --ttg-ad-chip-color: rgba(241, 247, 255, 0.98);
+}
+
+body.media-page[data-ad-qa="true"] .ttg-ad-slot,
+.media-page .ttg-ad-slot.ttg-ad-slot--empty {
+  border-color: var(--ttg-ad-border-qa);
+}
+
+.media-page .ttg-ad-slot::before {
+  content: attr(data-ad-label);
+  position: absolute;
+  top: clamp(1rem, 4vw, 1.5rem);
+  left: clamp(1.1rem, 5vw, 1.75rem);
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: var(--ttg-ad-chip-bg);
+  color: var(--ttg-ad-chip-color);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 18px rgba(4, 18, 38, 0.38);
+  z-index: 3;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.media-page .ttg-ad-slot ins.adsbygoogle {
+  display: block;
+  width: 100%;
+  min-height: 180px;
+  position: relative;
+  z-index: 2;
+}
+
+.media-page .ttg-ad-slot::after {
+  content: attr(data-ad-label);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 5vw, 2rem);
+  background: rgba(8, 21, 42, 0.85);
+  color: rgba(235, 243, 255, 0.96);
+  border-radius: inherit;
+  text-align: center;
+  font-size: clamp(0.95rem, 3vw, 1.1rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 4;
+  transition: opacity 0.25s ease;
+}
+
+.media-page .ttg-ad-slot.ttg-ad-slot--empty::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.media-page .stack > .ttg-ad-slot {
+  margin-block: clamp(9.5rem, 16vw, 12rem);
+}
+
+@media (max-width: 600px) {
+  .media-page .community-archive-cta {
+    margin: clamp(14px, 5vw, 18px) 0 0;
+  }
+
+  .media-page .ttg-ad-slot {
+    min-height: 200px;
+    gap: clamp(1.25rem, 6vw, 1.75rem);
+  }
+
+  .media-page .ttg-ad-slot::before {
+    top: clamp(0.9rem, 6vw, 1.25rem);
+    left: clamp(0.9rem, 6vw, 1.35rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media-page .community-archive-button:hover .youtube-rewind-icon .rewind-chevrons,
+  .media-page .community-archive-button:focus-visible .youtube-rewind-icon .rewind-chevrons {
+    animation: none !important;
+  }
+
+  .media-page .community-archive-button:hover,
+  .media-page .community-archive-button:focus-visible {
+    filter: drop-shadow(0 8px 16px rgba(8, 21, 50, 0.28));
+  }
+}
+
+/* Cards */
+.media-page .card {
+  background: var(--card-bg);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  color:#0b1020; /* card copy stays dark on light card */
+}
+/* ===== AQUARIUM LIBRARY (self-contained) ===== */
+.media-page .alib__header {
+  text-align: left;
+  margin-bottom: clamp(12px, 2.5vw, 20px);
+}
+
+.media-page .alib__header h2 {
+  margin: clamp(8px, 2vw, 16px) 0 clamp(6px, 1.8vw, 12px);
+}
+
+.media-page .alib__dek {
+  margin: 0.25rem 0 2rem;
+  opacity: .9;
+}
+
+.media-page .alib__list {
+  margin: 0 0 clamp(20px, 4vw, 28px);
+  padding-left: 1.25rem;
+  color: rgba(238, 243, 255, 0.88);
+}
+
+.media-page .alib__list li {
+  margin: 0.4rem 0;
+  line-height: 1.45;
+}
+
+/* --- Aquarium Library: Tabletop variant --- */
+
+/* wrapper to control spacing relative to section text */
+/* Wood tabletop: warm wood gradient + subtle grain + vignette edge */
+.media-page .alib__tabletop{
+  margin-inline: auto;
+  position: relative;
+
+  /* base wood color */
+  background:
+    radial-gradient(80% 120% at 50% 0%, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 55%) , /* top vignette */
+    repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 2px, transparent 2px 14px), /* faint grain lines */
+    linear-gradient(180deg, #b57a3f 0%, #9e6732 55%, #8d5c2d 100%); /* wood */
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.25), /* drop */
+    inset 0 1px 0 rgba(255,255,255,.25), /* light catch */
+    inset 0 -6px 16px rgba(0,0,0,.22);     /* edge depth */
+}
+
+/* Books: face-up with slight perspective and contact shadow */
+.media-page .alib-book{
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: clamp(var(--alib-book-min), 22vw, var(--alib-book-max));
+  aspect-ratio: 5 / 6;
+  padding: clamp(16px, 3vw, 22px);
+
+  /* gentle tilt so they feel placed on the table */
+  transform: perspective(800px) rotateX(7deg);
+  transform-origin: center center;
+  transition: transform .18s ease, filter .18s ease;
+}
+
+.media-page .alib-book__img{
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+  border-radius: clamp(12px, 3vw, 18px);
+  box-shadow: 0 12px 26px rgba(5, 37, 48, 0.16);
+}
+
+/* soft contact shadow under each book */
+.media-page .alib-book::after{
+  content:"";
+  position:absolute; left:10%; right:10%; bottom:0;
+  background: radial-gradient(50% 60% at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,0) 70%);
+  transform: translateY(40%) scaleY(.7);
+  pointer-events:none;
+}
+
+/* Desktop hover: tiny lift + stronger shadow (no layout shift) */
+@media (hover:hover) and (pointer:fine){
+  .media-page .alib-book:hover{
+    transform: perspective(800px) rotateX(6deg) translateY(-3px);
+    filter: drop-shadow(0 12px 14px rgba(0,0,0,.24));
+  }
+}
+
+.media-page .alib-book:focus-visible{
+  outline: 2px solid rgba(255,255,255,.9);
+  outline-offset: 4px;
+  transform: perspective(800px) rotateX(6deg) translateY(-3px);
+  filter: drop-shadow(0 12px 14px rgba(0,0,0,.24));
+}
+
+.media-page .alib-book:active{
+  transform: perspective(800px) rotateX(6deg) translateY(-3px);
+  filter: drop-shadow(0 12px 14px rgba(0,0,0,.24));
+}
+
+/* Layout: keep side-by-side on most phones; wrap only when necessary */
+.media-page .alib__tabletop{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-end;
+  justify-content:center;
+}
+
+/* -------- Compact tabletop tweaks -------- */
+.media-page .alib--compact {
+  /* tighten vertical spacing around the whole block */
+  margin-block: clamp(6px, 1.6vw, 14px);
+}
+
+/* smaller card, less padding, slightly smaller radius */
+.media-page .alib--compact .alib__tabletop{
+  width: min(860px, 92vw);          /* smaller card */
+  padding: clamp(12px, 3vw, 22px);  /* tighter inside */
+  border-radius: 12px;              /* a bit crisper */
+  gap: var(--alib-book-gap);        /* reduce spacing between books */
+}
+
+/* slightly smaller books (so more breathing room) */
+.media-page .alib--compact .alib-book{
+  inline-size: clamp(var(--alib-book-min), 22vw, var(--alib-book-max));
+  margin: 0;
+}
+
+/* crisper contact shadow */
+.media-page .alib--compact .alib-book::after{
+  bottom: 2%;
+  height: 8%;
+  filter: blur(5px);
+  opacity: .85;
+}
+
+/* NEW: subtle white “edge line” under each book */
+.media-page .alib--compact .alib-book::before{
+  content:"";
+  position:absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 6%;
+  height: 4px;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.55));
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.18),      /* soft shadow below the line */
+    inset 0 1px 0 rgba(255,255,255,.6);
+  pointer-events:none;
+  transform: translateY(40%) scaleY(.9);  /* sits just below the book */
+}
+
+/* Smaller phones: keep the two-up look but tighten further */
+@media (max-width: 420px){
+  .media-page .alib--compact .alib__tabletop{ width: 92vw; padding: 12px; gap: clamp(14px, 6vw, 24px); }
+  .media-page .alib--compact .alib-book{ inline-size: clamp(132px, 42vw, var(--alib-book-max)); }
+  .media-page .alib--compact .alib-book::before{ left:20%; right:20%; bottom:6%; }
+}
+
+@media (min-width: 1280px){
+  .media-page .alib--compact .alib__tabletop{
+    width: min(860px, 84vw);
+    gap: clamp(22px, 3vw, 40px);
+  }
+  .media-page .alib--compact .alib-book{
+    inline-size: clamp(170px, 18vw, var(--alib-book-max));
+  }
+}
+
+@media (max-width: 767px){
+  .media-page .alib--compact .alib__tabletop{
+    justify-content: center;
+  }
+}
+
+/* Reduce spacing before the “More sections…” line */
+.media-page .alib--compact ~ p { margin-top: clamp(8px, 1.6vw, 14px); }
+
+/* Kill any legacy panel/shelf visuals */
+.media-page .alib__panel, .alib__shelf, .library-shelf, .shelf { display:none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .media-page .alib-book {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+.media-page .stack { display: grid; gap: 14px; }
+.media-page .featured-tank-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-4);
+}
+.media-page .btn {
+  display:inline-block; padding:10px 14px; border:1px solid var(--border);
+  border-radius: 10px; text-decoration:none; font-weight:600;
+  background:#fff; color:#0b1020;
+}
+.media-page .archive-card {
+  display: grid;
+  gap: 20px;
+}
+.media-page .archive-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.media-page .archive-group {
+  display: grid;
+  gap: 12px;
+}
+.media-page .archive-list {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.media-page .archive-placeholder {
+  background: rgba(255,255,255,0.7);
+  border: 1px dashed rgba(0,0,0,0.15);
+  border-radius: 10px;
+  padding: 12px;
+  color: #0b1020;
+  min-height: 112px;
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+.media-page .archive-placeholder span {
+  font-weight: 600;
+}
+.media-page .archive-placeholder p {
+  margin: 0;
+  color: rgba(0,0,0,0.7);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+.media-page .muted { color: var(--muted); }
+.media-page .now-playing {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  font-weight: 700;
+  color: #000000;
+  cursor: default;
+  margin-bottom: 0.35rem;
+}
+.media-page .now-playing-title {
+  padding-left: 6px;
+  font-weight: 400;
+  color: #333333;
+  margin: 0 0 0.5rem;
+}
+.media-page .now-playing-title a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.media-page .center { text-align:center; }
+
+.media-page .media-storefront-hero {
+  margin: clamp(32px, 6vw, 48px) auto;
+  max-width: 1100px;
+}
+
+.media-page .media-storefront-hero img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.media-page .storefront {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+}
+
+/* Community split layout */
+.media-page #community .split {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .media-page #community .split {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+
+.media-page #community .media-thumb {
+  display: grid;
+  place-items: center;
+  min-height: 140px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.5);
+  color: #2b2b2b;
+  font-weight: 600;
+}
+
+/* media page embed fixes */
+.media-page .video-embed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  background: #000;
+}
+.media-page .video-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Featured Tanks illustration – responsive, matches card styling */
+.media-page .featured-tank-figure { margin: 0; }
+.media-page .featured-tank-figure .media-aspect {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  background: rgba(255,255,255,.6);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.05);
+  overflow: hidden;
+}
+.media-page .featured-tank-figure img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.media-page #community .card .video-embed {
+  margin-top: 12px;
+}
+
+.media-page #community .card .community-video-title {
+  margin: 16px 0 0;
+}
+
+.media-page #community .card .community-video-attribution {
+  margin: 4px 0 0;
+}
+
+.media-page #community .card .community-video-cta {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+@media (min-width: 768px) {
+  .media-page .media-storefront-hero {
+    margin: 2.5rem auto;
+  }
+}
 
 #community-video-legacy {
   margin-block: clamp(28px, 6vw, 36px);
