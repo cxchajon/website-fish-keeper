@@ -307,3 +307,21 @@ details summary {
 #site-footer * {
     color: #ffffff !important;
 }
+/* RESTORE ORIGINAL MODAL COLORS */
+#how-it-works-dialog,
+#how-it-works-dialog * {
+    color: #0a1633 !important; /* deep navy for readability */
+}
+
+/* Restore the close button color */
+#how-it-works-dialog button.close-btn,
+#how-it-works-dialog .close-btn svg,
+#how-it-works-dialog .close-btn span {
+    color: #0a1633 !important;
+    fill: #0a1633 !important;
+}
+
+/* If the modal background was tinted, restore pure white */
+#how-it-works-dialog {
+    background: #ffffff !important;
+}
