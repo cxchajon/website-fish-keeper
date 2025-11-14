@@ -793,16 +793,29 @@ body.sa-proto-modal-open {
 }
 
 .prototype-mode #fs-add-custom {
-  color: var(--bg, #0b1020) !important;
-  -webkit-text-fill-color: var(--bg, #0b1020);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 2px 6px rgba(6, 12, 24, 0.3);
+  color: var(--fg, #eef3ff) !important;
+  -webkit-text-fill-color: var(--fg, #eef3ff) !important;
+  font-weight: 600;
 }
 
-.prototype-mode #fs-add-custom:hover,
-.prototype-mode #fs-add-custom:focus-visible,
+.prototype-mode #fs-add-custom:not([disabled]):hover,
+.prototype-mode #fs-add-custom:not([disabled]):focus-visible {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.36);
+  box-shadow: 0 6px 12px rgba(8, 15, 30, 0.35);
+}
+
 .prototype-mode #fs-add-custom[aria-disabled="true"],
 .prototype-mode #fs-add-custom:disabled {
-  color: var(--bg, #0b1020) !important;
-  -webkit-text-fill-color: var(--bg, #0b1020);
+  opacity: 1;
+  color: rgba(238, 243, 255, 0.78) !important;
+  -webkit-text-fill-color: rgba(238, 243, 255, 0.78) !important;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: none;
 }
 
 .prototype-mode .btn-compact {
