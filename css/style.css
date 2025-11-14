@@ -2722,16 +2722,17 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 }
 
 .how-it-works-modal {
-  background: #fff;
-  color: #0a1a2f;
+  background: rgba(4, 12, 26, 0.96);
+  color: inherit;
   width: min(640px, 100%);
   max-height: min(90vh, 720px);
   overflow-y: auto;
   border-radius: 18px;
   padding: clamp(20px, 4vw, 36px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow:
-    0 24px 50px rgba(4, 12, 24, 0.35),
-    0 2px 12px rgba(4, 12, 24, 0.18);
+    0 24px 50px rgba(3, 6, 12, 0.55),
+    0 2px 12px rgba(3, 6, 12, 0.35);
 }
 
 .how-it-works-modal:focus {
@@ -2748,9 +2749,9 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 }
 
 .how-it-works-modal__close {
-  border: none;
-  background: rgba(7, 23, 43, 0.08);
-  color: #06162a;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
   border-radius: 999px;
   width: 38px;
   height: 38px;
@@ -2762,7 +2763,7 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 
 .how-it-works-modal__close:hover,
 .how-it-works-modal__close:focus-visible {
-  background: rgba(7, 23, 43, 0.18);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .how-it-works-modal__body {
@@ -2772,15 +2773,8 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
   line-height: 1.5;
 }
 
-.how-it-works-modal__body ol {
-  padding-left: 1.2rem;
-  margin: 0;
-  display: grid;
-  gap: 0.75rem;
-}
-
-.how-it-works-modal__body li strong {
-  color: #0a1a2f;
+.how-it-works-modal__body strong {
+  color: inherit;
 }
 
 .how-it-works-modal__cta {
