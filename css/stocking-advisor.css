@@ -792,6 +792,19 @@ body.sa-proto-modal-open {
   width: 120px;
 }
 
+.prototype-mode #fs-add-custom {
+  color: var(--bg, #0b1020) !important;
+  -webkit-text-fill-color: var(--bg, #0b1020);
+}
+
+.prototype-mode #fs-add-custom:hover,
+.prototype-mode #fs-add-custom:focus-visible,
+.prototype-mode #fs-add-custom[aria-disabled="true"],
+.prototype-mode #fs-add-custom:disabled {
+  color: var(--bg, #0b1020) !important;
+  -webkit-text-fill-color: var(--bg, #0b1020);
+}
+
 .prototype-mode .btn-compact {
   height: 44px;
   padding: 0 0.9rem;
