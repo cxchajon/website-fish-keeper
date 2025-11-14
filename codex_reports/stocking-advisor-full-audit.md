@@ -13,7 +13,7 @@
 | `meta` | name=`theme-color`, content=`#0a1020` | Sets mobile browser UI color. 【F:stocking-advisor.html†L13-L13】 |
 | `link` | rel=`manifest`, href=`https://thetankguide.com/manifest.webmanifest` | PWA manifest reference. 【F:stocking-advisor.html†L14-L14】 |
 | `link` | rel=`icon`, href=`https://thetankguide.com/favicon.ico` | Favicon. 【F:stocking-advisor.html†L15-L15】 |
-| `link` | rel=`apple-touch-icon`, sizes=`180x180`, href=`https://thetankguide.com/assets/img/Logo-Master-180x10.PNG` | Apple touch icon. 【F:stocking-advisor.html†L16-L16】 |
+| `link` | rel=`apple-touch-icon`, sizes=`180x180`, href=`https://thetankguide.com/assets/img/Logo-Master-180x180.PNG` | Apple touch icon. 【F:stocking-advisor.html†L16-L16】 |
 | `link` | rel=`canonical`, href=`https://thetankguide.com/stocking-advisor.html` | Canonical matches live URL and sitemap. 【F:stocking-advisor.html†L17-L17】【F:sitemap.xml†L118-L118】 |
 | `meta` | property=`og:*` set (`type`, `url`, `title`, `description`, `site_name`, `image`, `image:alt`, `image:width`, `image:height`, `locale`) | Comprehensive Open Graph coverage; image path currently points at missing asset (`/assets/og/stocking-advisor.png`). 【F:stocking-advisor.html†L18-L33】 |
 | `meta` | name=`twitter:*` set (`card`, `site`, `creator`, `url`, `title`, `description`, `image`, `image:alt`) | Twitter summary large card mirrors OG data. 【F:stocking-advisor.html†L31-L41】 |
