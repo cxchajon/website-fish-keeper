@@ -2629,6 +2629,52 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
   font-weight: 700;
   margin-bottom: 0.5em;
 }
+
+/* Homepage hero + tool cards: force pure white text for accessibility */
+.page--prototype-home .hero h1,
+.page--prototype-home .hero h2,
+.page--prototype-home .hero h3,
+.page--prototype-home .hero p,
+.page--prototype-home .hero a,
+.page--prototype-home .hero button,
+.page--prototype-home .hero .ttg-btn,
+.page--prototype-home .hero .cta-btn,
+.page--prototype-home .hero .how-trigger,
+.page--prototype-home .hero .tool-card-cta,
+.page--prototype-home .hero-section h1,
+.page--prototype-home .hero-section h2,
+.page--prototype-home .hero-section h3,
+.page--prototype-home .hero-section p,
+.page--prototype-home .hero-section a,
+.page--prototype-home .hero-section button,
+.page--prototype-home .hero-container h1,
+.page--prototype-home .hero-container h2,
+.page--prototype-home .hero-container h3,
+.page--prototype-home .hero-container p,
+.page--prototype-home .hero-container a,
+.page--prototype-home .hero-container button {
+  color: #ffffff !important;
+}
+
+.page--prototype-home .tools-title,
+.page--prototype-home .homepage-tools-section h2,
+.page--prototype-home .homepage-tools-section h3,
+.page--prototype-home .homepage-tools-section p,
+.page--prototype-home .homepage-tools-section a,
+.page--prototype-home .homepage-tools-section button,
+.page--prototype-home .tool-card h2,
+.page--prototype-home .tool-card h3,
+.page--prototype-home .tool-card p,
+.page--prototype-home .tool-card a,
+.page--prototype-home .tool-card button,
+.page--prototype-home .tool-card .ttg-btn,
+.page--prototype-home .tool-card .cta-btn,
+.page--prototype-home .tool-card .tool-card-cta,
+.page--prototype-home .tool-card .card-button,
+.page--prototype-home .tools .cta-btn,
+.page--prototype-home .tools .ttg-btn {
+  color: #ffffff !important;
+}
 .legal-links {
   text-align: center;
   font-size: 0.9rem;
