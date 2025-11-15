@@ -228,37 +228,37 @@ body.theme-light {
 }
 
 /* Homepage-only: ensure nav/brand/hamburger stay white on blue hero */
-.page--prototype-home #global-nav,
-.page--prototype-home #global-nav .site-brand,
-.page--prototype-home #global-nav .site-brand__title,
-.page--prototype-home #global-nav .site-brand__subtitle,
-.page--prototype-home #global-nav .site-brand__em,
-.page--prototype-home #global-nav .links .nav__link,
-.page--prototype-home #global-nav .hamburger,
-.page--prototype-home #global-nav .hamburger .hamburger__bars,
-.page--prototype-home #global-nav .hamburger .hamburger__bars::before,
-.page--prototype-home #global-nav .hamburger .hamburger__bars::after {
+.page-background #global-nav,
+.page-background #global-nav .site-brand,
+.page-background #global-nav .site-brand__title,
+.page-background #global-nav .site-brand__subtitle,
+.page-background #global-nav .site-brand__em,
+.page-background #global-nav .links .nav__link,
+.page-background #global-nav .hamburger,
+.page-background #global-nav .hamburger .hamburger__bars,
+.page-background #global-nav .hamburger .hamburger__bars::before,
+.page-background #global-nav .hamburger .hamburger__bars::after {
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.9);
 }
 
-.page--prototype-home #global-nav .hamburger {
+.page-background #global-nav .hamburger {
   background: rgba(12, 24, 40, 0.25);
 }
 
-.page--prototype-home #global-nav .links .nav__link:hover,
-.page--prototype-home #global-nav .links .nav__link:focus-visible,
-.page--prototype-home #global-nav .links .nav__link[aria-current="page"] {
+.page-background #global-nav .links .nav__link:hover,
+.page-background #global-nav .links .nav__link:focus-visible,
+.page-background #global-nav .links .nav__link[aria-current="page"] {
   color: #ffffff;
 }
 
-.page--prototype-home #global-nav #ttg-drawer,
-.page--prototype-home #global-nav #ttg-drawer .drawer-links .nav__link,
-.page--prototype-home #global-nav #ttg-drawer .drawer-title,
-.page--prototype-home #global-nav #ttg-drawer .drawer-close,
-.page--prototype-home #global-nav #ttg-drawer .drawer-links .nav__link:hover,
-.page--prototype-home #global-nav #ttg-drawer .drawer-links .nav__link:focus-visible,
-.page--prototype-home #global-nav #ttg-drawer .drawer-links .nav__link[aria-current="page"] {
+.page-background #global-nav #ttg-drawer,
+.page-background #global-nav #ttg-drawer .drawer-links .nav__link,
+.page-background #global-nav #ttg-drawer .drawer-title,
+.page-background #global-nav #ttg-drawer .drawer-close,
+.page-background #global-nav #ttg-drawer .drawer-links .nav__link:hover,
+.page-background #global-nav #ttg-drawer .drawer-links .nav__link:focus-visible,
+.page-background #global-nav #ttg-drawer .drawer-links .nav__link[aria-current="page"] {
   color: #ffffff;
 }
 
@@ -2529,15 +2529,15 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 /* ----------------------------------------------------------
    PROTOTYPE: spacing fixes apply on all sizes, incl. desktop
    ---------------------------------------------------------- */
-.page--prototype-home { margin: 0; padding: 0; }
+.page-background { margin: 0; padding: 0; }
 
 /* NAV should not contribute bottom spacing */
-.page--prototype-home #global-nav,
-.page--prototype-home .site-nav,
-.page--prototype-home header { margin-bottom: 0 !important; }
+.page-background #global-nav,
+.page-background .site-nav,
+.page-background header { margin-bottom: 0 !important; }
 
 /* HERO owns its spacing; stop margin-collapsing and kill tall min-height */
-.page--prototype-home .hero {
+.page-background .hero {
   display: flow-root;                /* new block formatting context */
   padding-block: clamp(20px, 4vw, 48px) clamp(16px, 3vw, 32px);
   min-height: initial !important;    /* neutralize any 100vh/100dvh from globals */
@@ -2545,44 +2545,44 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 
 /* Desktop: ensure no breakpoint reintroduces tall hero */
 @media (min-width: 768px) {
-  .page--prototype-home .hero {
+  .page-background .hero {
     padding-block: clamp(28px, 3.5vw, 56px) clamp(18px, 3vw, 36px);
     min-height: unset !important;
   }
 }
 
 /* Tighten hero children margins so the stack doesn’t add surprise gaps */
-.page--prototype-home .hero > * { margin-top: 0; }
-.page--prototype-home .hero .eyebrow,
-.page--prototype-home .hero .h1,
-.page--prototype-home .hero h1,
-.page--prototype-home .hero p { margin-block: 0.25em 0.6em; }
+.page-background .hero > * { margin-top: 0; }
+.page-background .hero .eyebrow,
+.page-background .hero .h1,
+.page-background .hero h1,
+.page-background .hero p { margin-block: 0.25em 0.6em; }
 
 /* Bring “How it works” and first card up */
-.page--prototype-home .tools-intro { margin: 0; padding-top: 0; margin-bottom: clamp(8px, 1.6vw, 16px); }
-.page--prototype-home .tool-card,
-.page--prototype-home .cards,
-.page--prototype-home .tools { margin-top: 0; }
+.page-background .tools-intro { margin: 0; padding-top: 0; margin-bottom: clamp(8px, 1.6vw, 16px); }
+.page-background .tool-card,
+.page-background .cards,
+.page-background .tools { margin-top: 0; }
 
 /* Use GAP for vertical rhythm so breakpoints don’t collapse margins */
-.page--prototype-home main,
-.page--prototype-home .proto-section-wrap {
+.page-background main,
+.page-background .proto-section-wrap {
   display: flex;
   flex-direction: column;
   gap: clamp(12px, 2.2vw, 24px);
 }
 
 /* Safety: no first-child top margin inside hero */
-.page--prototype-home .hero > :first-child { margin-top: 0 !important; }
+.page-background .hero > :first-child { margin-top: 0 !important; }
 
 /* -----------------------------------------------------------
    PROTOTYPE DESKTOP LAYOUT — do not affect live homepage
    ----------------------------------------------------------- */
 
 /* Base container width on prototype */
-.page--prototype-home .wrap,
-.page--prototype-home .proto-section-wrap,
-.page--prototype-home .container {
+.page-background .wrap,
+.page-background .proto-section-wrap,
+.page-background .container {
   max-width: 1080px;                /* matches live width */
   margin-inline: auto;
   padding-inline: clamp(16px, 2.2vw, 24px);
@@ -2590,17 +2590,17 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 
 /* Ensure main doesn’t force a single-column flex on desktop */
 @media (min-width: 768px) {
-  .page--prototype-home main,
-  .page--prototype-home .proto-section-wrap {
+  .page-background main,
+  .page-background .proto-section-wrap {
     display: block;                  /* stop global flex column from locking mobile layout */
     gap: 0;                          /* gap no longer needed when block */
   }
 }
 
 /* Cards grid: switch stacked cards to 2-col on tablet/desktop */
-.page--prototype-home .tools,
-.page--prototype-home .tools-grid,
-.page--prototype-home .cards {
+.page-background .tools,
+.page-background .tools-grid,
+.page-background .cards {
   display: grid;
   grid-template-columns: 1fr;        /* mobile default: one column */
   gap: clamp(14px, 2vw, 24px);
@@ -2608,22 +2608,22 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 
 /* Two columns from 900px up; breathing room */
 @media (min-width: 900px) {
-  .page--prototype-home .tools,
-  .page--prototype-home .tools-grid,
-  .page--prototype-home .cards {
+  .page-background .tools,
+  .page-background .tools-grid,
+  .page-background .cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
   }
 }
 
 /* Guard: card blocks should stretch and not set fixed widths */
-.page--prototype-home .tool-card {
+.page-background .tool-card {
   width: auto;
   max-width: none;
   margin: 0;                         /* grid controls spacing */
 }
 
-.page--prototype-home .tool-card .tool-card-cta {
+.page-background .tool-card .tool-card-cta {
   display: inline-flex;
   width: 100%;
   justify-content: center;
@@ -2642,18 +2642,18 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
   transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 }
 
-.page--prototype-home .tool-card .tool-card-cta:hover,
-.page--prototype-home .tool-card .tool-card-cta:focus-visible {
+.page-background .tool-card .tool-card-cta:hover,
+.page-background .tool-card .tool-card-cta:focus-visible {
   background: rgba(255, 255, 255, 0.24);
   box-shadow: 0 14px 30px rgba(5, 12, 28, 0.4);
 }
 
-.page--prototype-home .tool-card .tool-card-cta:focus-visible {
+.page-background .tool-card .tool-card-cta:focus-visible {
   outline: 2px solid rgba(255, 255, 255, 0.95);
   outline-offset: 3px;
 }
 
-.page--prototype-home .tool-card .tool-card-cta:active {
+.page-background .tool-card .tool-card-cta:active {
   transform: translateY(1px);
   box-shadow: 0 8px 18px rgba(5, 12, 28, 0.3);
   background: rgba(255, 255, 255, 0.2);
@@ -2661,79 +2661,79 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
 
 /* Keep the nice hero spacing we added but avoid huge desktop gaps */
 @media (min-width: 900px) {
-  .page--prototype-home .hero {
+  .page-background .hero {
     padding-block: clamp(28px, 3.5vw, 56px) clamp(18px, 3vw, 36px);
     min-height: unset !important;    /* ensure no 100vh creeps in at desktop */
   }
-  .page--prototype-home .tools-intro {
+  .page-background .tools-intro {
     margin-bottom: clamp(10px, 1.6vw, 18px);
   }
 }
 
 /* Safety: if any legacy rule sets fixed widths on cards, neutralize */
-.page--prototype-home .tool-card[style*="width"],
-.page--prototype-home .tool-card[style*="max-width"] {
+.page-background .tool-card[style*="width"],
+.page-background .tool-card[style*="max-width"] {
   width: auto !important;
   max-width: none !important;
 }
 
 /* Prototype: ensure hero paragraph is left-aligned; no spacing/visual changes */
-.page--prototype-home .hero p {
+.page-background .hero p {
   text-align: left !important;
 }
 
 /* Prototype: hero text alignment and bold eyebrow */
-.page--prototype-home .hero-copy {
+.page-background .hero-copy {
   text-align: left;
 }
-.page--prototype-home .hero-copy .eyebrow {
+.page-background .hero-copy .eyebrow {
   font-weight: 700;
   margin-bottom: 0.5em;
 }
 
 /* Homepage hero + tool cards: force pure white text for accessibility */
-.page--prototype-home .hero h1,
-.page--prototype-home .hero h2,
-.page--prototype-home .hero h3,
-.page--prototype-home .hero p,
-.page--prototype-home .hero a,
-.page--prototype-home .hero button,
-.page--prototype-home .hero .ttg-btn,
-.page--prototype-home .hero .cta-btn,
-.page--prototype-home .hero .how-trigger,
-.page--prototype-home .hero .tool-card-cta,
-.page--prototype-home .hero-section h1,
-.page--prototype-home .hero-section h2,
-.page--prototype-home .hero-section h3,
-.page--prototype-home .hero-section p,
-.page--prototype-home .hero-section a,
-.page--prototype-home .hero-section button,
-.page--prototype-home .hero-container h1,
-.page--prototype-home .hero-container h2,
-.page--prototype-home .hero-container h3,
-.page--prototype-home .hero-container p,
-.page--prototype-home .hero-container a,
-.page--prototype-home .hero-container button {
+.page-background .hero h1,
+.page-background .hero h2,
+.page-background .hero h3,
+.page-background .hero p,
+.page-background .hero a,
+.page-background .hero button,
+.page-background .hero .ttg-btn,
+.page-background .hero .cta-btn,
+.page-background .hero .how-trigger,
+.page-background .hero .tool-card-cta,
+.page-background .hero-section h1,
+.page-background .hero-section h2,
+.page-background .hero-section h3,
+.page-background .hero-section p,
+.page-background .hero-section a,
+.page-background .hero-section button,
+.page-background .hero-container h1,
+.page-background .hero-container h2,
+.page-background .hero-container h3,
+.page-background .hero-container p,
+.page-background .hero-container a,
+.page-background .hero-container button {
   color: #ffffff !important;
 }
 
-.page--prototype-home .tools-title,
-.page--prototype-home .homepage-tools-section h2,
-.page--prototype-home .homepage-tools-section h3,
-.page--prototype-home .homepage-tools-section p,
-.page--prototype-home .homepage-tools-section a,
-.page--prototype-home .homepage-tools-section button,
-.page--prototype-home .tool-card h2,
-.page--prototype-home .tool-card h3,
-.page--prototype-home .tool-card p,
-.page--prototype-home .tool-card a,
-.page--prototype-home .tool-card button,
-.page--prototype-home .tool-card .ttg-btn,
-.page--prototype-home .tool-card .cta-btn,
-.page--prototype-home .tool-card .tool-card-cta,
-.page--prototype-home .tool-card .card-button,
-.page--prototype-home .tools .cta-btn,
-.page--prototype-home .tools .ttg-btn {
+.page-background .tools-title,
+.page-background .homepage-tools-section h2,
+.page-background .homepage-tools-section h3,
+.page-background .homepage-tools-section p,
+.page-background .homepage-tools-section a,
+.page-background .homepage-tools-section button,
+.page-background .tool-card h2,
+.page-background .tool-card h3,
+.page-background .tool-card p,
+.page-background .tool-card a,
+.page-background .tool-card button,
+.page-background .tool-card .ttg-btn,
+.page-background .tool-card .cta-btn,
+.page-background .tool-card .tool-card-cta,
+.page-background .tool-card .card-button,
+.page-background .tools .cta-btn,
+.page-background .tools .ttg-btn {
   color: #ffffff !important;
 }
 .legal-links {
@@ -2849,7 +2849,7 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
   justify-content: flex-end;
 }
 
-.page--prototype-home.body--modal-open {
+.page-background.body--modal-open {
   overflow: hidden;
 }
 
