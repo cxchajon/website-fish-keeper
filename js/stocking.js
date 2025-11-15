@@ -4,7 +4,6 @@ import {
   runSanitySuite,
   runStressSuite,
   SPECIES,
-  getDefaultSpeciesId,
   calcTotalGph,
   computeTurnover,
   sanitizeFilterList,
@@ -1367,15 +1366,14 @@ function bootstrapStocking() {
   }
 
   const lengthValidator = createLengthValidator(refs.candidateChips);
-  let selectedSpeciesId = state.candidate?.id ?? null;
   let lastStockSignature = '';
   let isBootstrapped = false;
 
   if (!state.candidate || typeof state.candidate !== 'object') {
-    state.candidate = { id: getDefaultSpeciesId(), qty: '1' };
+    state.candidate = { id: null, qty: '1' };
   } else {
-    if (!state.candidate.id) {
-      state.candidate.id = getDefaultSpeciesId();
+    if (!state.candidate.id || !speciesById.has(state.candidate.id)) {
+      state.candidate.id = null;
     }
     if (state.candidate.qty === null || state.candidate.qty === undefined) {
       state.candidate.qty = '1';
@@ -1383,6 +1381,8 @@ function bootstrapStocking() {
       state.candidate.qty = String(state.candidate.qty);
     }
   }
+
+  let selectedSpeciesId = state.candidate?.id ?? null;
 
   function toDigits(value) {
     return String(value ?? '').replace(/\D+/g, '');
@@ -1405,6 +1405,7 @@ function bootstrapStocking() {
       ? state.candidate.qty
       : String(state.candidate?.qty ?? '');
     refs.qty.value = value;
+    syncCandidateControls();
   }
 
   function commitCandidateQty() {
@@ -1413,7 +1414,36 @@ function bootstrapStocking() {
     if (refs.qty) {
       refs.qty.value = normalized;
     }
+    syncCandidateControls();
     return normalized;
+  }
+
+  const qtyPattern = /^[1-9]\d*$/;
+
+  function hasValidSpeciesSelection() {
+    const candidateId = state.candidate?.id;
+    if (!candidateId) {
+      return false;
+    }
+    return speciesById.has(candidateId);
+  }
+
+  function isCandidateQtyValid() {
+    const raw = typeof state.candidate?.qty === 'string'
+      ? state.candidate.qty
+      : String(state.candidate?.qty ?? '');
+    return qtyPattern.test(raw);
+  }
+
+  function syncCandidateControls() {
+    const hasSpecies = hasValidSpeciesSelection();
+    if (refs.qty) {
+      refs.qty.disabled = !hasSpecies;
+    }
+    if (refs.addBtn) {
+      const enabled = hasSpecies && isCandidateQtyValid();
+      refs.addBtn.disabled = !enabled;
+    }
   }
 
   const updateLengthValidator = () => {
@@ -1920,30 +1950,22 @@ document.addEventListener('advisor:addCandidate', (event) => {
     state.stock.push({ id: species.id, qty });
   }
 
-  const defaultId = getDefaultSpeciesId();
-  const firstOptionId =
-    refs.speciesSelect && refs.speciesSelect.options.length > 0
-      ? refs.speciesSelect.options[0].value
-      : null;
-  const normalizedFirst = firstOptionId && speciesById.has(firstOptionId) ? firstOptionId : null;
-  const normalizedDefault = defaultId && speciesById.has(defaultId) ? defaultId : null;
-  const nextId = normalizedFirst ?? normalizedDefault ?? species.id;
-
   state.candidate = {
-    id: nextId,
+    id: null,
     qty: '1',
   };
 
   if (refs.speciesSelect) {
-    if (normalizedFirst) {
+    refs.speciesSelect.value = '';
+    try {
       refs.speciesSelect.selectedIndex = 0;
-    } else {
-      refs.speciesSelect.value = nextId;
+    } catch (_error) {
+      /* ignore selection errors */
     }
   }
   syncQtyInputFromState({ force: true });
 
-  selectedSpeciesId = state.candidate.id || null;
+  selectedSpeciesId = null;
   emitSpeciesChange(selectedSpeciesId);
   syncStockFromState();
   console.log('[StockingAdvisor] Added:', species.id, 'x', qty);
@@ -1981,9 +2003,10 @@ function pruneMarineEntries() {
   });
 
   if (!state.candidate) {
-    state.candidate = { id: getDefaultSpeciesId(), qty: '1' };
-    selectedSpeciesId = state.candidate.id || null;
+    state.candidate = { id: null, qty: '1' };
+    selectedSpeciesId = null;
     emitSpeciesChange(selectedSpeciesId);
+    syncCandidateControls();
     return;
   }
 
@@ -1992,12 +2015,18 @@ function pruneMarineEntries() {
       warnedMarineIds.add(state.candidate.id);
       console.warn('Marine species not supported:', state.candidate.id);
     }
-    state.candidate.id = getDefaultSpeciesId();
+    state.candidate.id = null;
     if (refs.speciesSelect) {
-      refs.speciesSelect.value = state.candidate.id ?? '';
+      refs.speciesSelect.value = '';
+      try {
+        refs.speciesSelect.selectedIndex = 0;
+      } catch (_error) {
+        /* ignore selection errors */
+      }
     }
-    selectedSpeciesId = state.candidate.id || null;
+    selectedSpeciesId = null;
     emitSpeciesChange(selectedSpeciesId);
+    syncCandidateControls();
   }
 
   emitStockChange();
@@ -2042,51 +2071,60 @@ function syncStateFromInputs() {
   }
 }
 
-function populateSpecies({ preserveSelection = false } = {}) {
-  if (!refs.speciesSelect) return;
+  function populateSpecies({ preserveSelection = false } = {}) {
+    if (!refs.speciesSelect) return;
 
-  const previousSelection = preserveSelection
-    ? (refs.speciesSelect.value || state.candidate?.id || null)
-    : (state.candidate?.id || refs.speciesSelect.value || null);
+    const previousSelection = preserveSelection
+      ? (refs.speciesSelect.value || state.candidate?.id || null)
+      : (state.candidate?.id || refs.speciesSelect.value || null);
 
-  const options = buildSpeciesOptionsList();
-  const fragment = document.createDocumentFragment();
-  for (const species of options) {
-    const option = document.createElement('option');
-    option.value = species.id;
-    option.textContent = species.common_name;
-    fragment.appendChild(option);
+    const placeholderSource = refs.speciesSelect.querySelector('option[data-placeholder]');
+    const placeholderText = placeholderSource
+      ? (placeholderSource.textContent || placeholderSource.getAttribute('data-placeholder') || 'Select a species…')
+      : 'Select a species…';
+
+    const options = buildSpeciesOptionsList();
+    const fragment = document.createDocumentFragment();
+    for (const species of options) {
+      const option = document.createElement('option');
+      option.value = species.id;
+      option.textContent = species.common_name;
+      fragment.appendChild(option);
+    }
+
+    refs.speciesSelect.innerHTML = '';
+
+    const placeholderOption = document.createElement('option');
+    placeholderOption.value = '';
+    placeholderOption.textContent = placeholderText;
+    placeholderOption.disabled = true;
+    placeholderOption.setAttribute('data-placeholder', 'true');
+    refs.speciesSelect.appendChild(placeholderOption);
+    refs.speciesSelect.appendChild(fragment);
+
+    let nextSelection = null;
+    if (previousSelection && options.some((item) => item.id === previousSelection)) {
+      nextSelection = previousSelection;
+    }
+
+    if (nextSelection) {
+      refs.speciesSelect.value = nextSelection;
+      placeholderOption.selected = false;
+    } else {
+      refs.speciesSelect.value = '';
+      placeholderOption.selected = true;
+    }
+
+    if (!state.candidate || typeof state.candidate !== 'object') {
+      state.candidate = { id: nextSelection ?? null, qty: '1' };
+    } else {
+      state.candidate.id = nextSelection ?? null;
+    }
+
+    selectedSpeciesId = nextSelection ?? null;
+    emitSpeciesChange(selectedSpeciesId);
+    syncCandidateControls();
   }
-
-  refs.speciesSelect.innerHTML = '';
-  refs.speciesSelect.appendChild(fragment);
-
-  let nextSelection = null;
-  if (previousSelection && options.some((item) => item.id === previousSelection)) {
-    nextSelection = previousSelection;
-  } else if (options.length) {
-    nextSelection = options[0].id;
-  }
-
-  if (nextSelection) {
-    refs.speciesSelect.value = nextSelection;
-  } else {
-    refs.speciesSelect.value = '';
-  }
-
-  if (!state.candidate || typeof state.candidate !== 'object') {
-    state.candidate = { id: nextSelection ?? getDefaultSpeciesId(), qty: '1' };
-  } else {
-    state.candidate.id = nextSelection ?? null;
-  }
-
-  if (refs.addBtn) {
-    refs.addBtn.disabled = options.length === 0;
-  }
-
-  selectedSpeciesId = nextSelection ?? null;
-  emitSpeciesChange(selectedSpeciesId);
-}
 
 function rebuildSpecies(options = {}) {
   const opts = typeof options === 'object' && options !== null ? options : {};
@@ -2138,23 +2176,21 @@ function syncToggles() {
   }
 }
 
-function renderCandidateState() {
-  const chips = computed ? computed.chips : [];
-  renderChips(refs.candidateChips, chips);
-  lengthValidator.sync();
-  if (!computed) {
+  function renderCandidateState() {
+    const chips = computed ? computed.chips : [];
+    renderChips(refs.candidateChips, chips);
+    lengthValidator.sync();
+    syncCandidateControls();
+    if (!computed) {
+      if (refs.candidateBanner) {
+        refs.candidateBanner.style.display = 'none';
+      }
+      return;
+    }
     if (refs.candidateBanner) {
       refs.candidateBanner.style.display = 'none';
     }
-    return;
   }
-  if (refs.addBtn) {
-    refs.addBtn.disabled = false;
-  }
-  if (refs.candidateBanner) {
-    refs.candidateBanner.style.display = 'none';
-  }
-}
 
 function renderStockWarningsPanel(warnings = []) {
   const container = refs.stockWarnings;
@@ -2376,29 +2412,36 @@ function bindInputs() {
     refs.speciesSearch.addEventListener('change', handleSearchInput);
   }
 
-  refs.speciesSelect.addEventListener('change', () => {
-    state.candidate.id = refs.speciesSelect.value;
-    selectedSpeciesId = state.candidate.id || null;
-    emitSpeciesChange(selectedSpeciesId);
-    scheduleUpdate();
-  });
-
-  refs.qty.addEventListener('input', (event) => {
-    const target = event.target;
-    const raw = toDigits(target.value);
-    if (target.value !== raw) {
-      target.value = raw;
-    }
-    state.candidate.qty = raw;
-  });
-
-  refs.qty.addEventListener('blur', () => {
-    const previous = state.candidate?.qty;
-    const normalized = commitCandidateQty();
-    if (previous !== normalized) {
+  if (refs.speciesSelect) {
+    refs.speciesSelect.addEventListener('change', () => {
+      const nextValue = refs.speciesSelect.value || null;
+      state.candidate.id = nextValue;
+      selectedSpeciesId = nextValue;
+      emitSpeciesChange(selectedSpeciesId);
+      syncCandidateControls();
       scheduleUpdate();
-    }
-  });
+    });
+  }
+
+  if (refs.qty) {
+    refs.qty.addEventListener('input', (event) => {
+      const target = event.target;
+      const raw = toDigits(target.value);
+      if (target.value !== raw) {
+        target.value = raw;
+      }
+      state.candidate.qty = raw;
+      syncCandidateControls();
+    });
+
+    refs.qty.addEventListener('blur', () => {
+      const previous = state.candidate?.qty;
+      const normalized = commitCandidateQty();
+      if (previous !== normalized) {
+        scheduleUpdate();
+      }
+    });
+  }
 
   if (refs.seeGear) {
     refs.seeGear.addEventListener('click', () => {
