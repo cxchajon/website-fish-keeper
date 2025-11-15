@@ -346,6 +346,21 @@ function bootstrapStocking() {
   state.filterType = state.filterType ? normalizeFilterTypeSelection(state.filterType) : null;
   state.filterId = typeof state.filterId === 'string' && state.filterId.trim() ? state.filterId.trim() : null;
   state.ratedGph = null;
+  const sanitizedCandidateQty = (() => {
+    const rawQty = state?.candidate?.qty;
+    if (typeof rawQty === 'string') {
+      const trimmed = rawQty.trim();
+      if (/^[1-9]\d*$/.test(trimmed)) {
+        return trimmed;
+      }
+    }
+    const numericQty = Number(rawQty);
+    if (Number.isFinite(numericQty) && numericQty > 0) {
+      return String(Math.floor(numericQty));
+    }
+    return '1';
+  })();
+  state.candidate = { id: null, qty: sanitizedCandidateQty };
   const qs = getQS();
   const qsFilterId = qs.get('filter_id');
   if (qsFilterId) {
