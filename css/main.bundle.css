@@ -6650,3 +6650,16 @@ body.prototype-stock-page .howto-steps strong {
 .home-page .how-it-works-btn:hover {
   background: rgba(255, 255, 255, 0.15);
 }
+/* === HOMEPAGE: HOW IT WORKS BUTTON BORDER (2025-11-15) === */
+.how-it-works-btn {
+    border: 1.5px solid rgba(255, 255, 255, 0.55) !important;
+    border-radius: 32px !important;     /* matches other hero buttons */
+    color: #fff !important;             /* ensures text contrast */
+    padding: 0.75rem 1.75rem !important;
+    backdrop-filter: saturate(180%) blur(12px);
+}
+
+.how-it-works-btn:hover {
+    border-color: rgba(255, 255, 255, 0.85) !important;
+    background: rgba(255, 255, 255, 0.1);
+}
