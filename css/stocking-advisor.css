@@ -1,5 +1,7 @@
 /* Stocking Advisor aggregated styles (migrated from prototype) */
-/* Stocking Advisor base styles */
+/* NOTE: All Stocking Advisor inline styles have been consolidated here so the page can rely on cacheable CSS.
+   This file is scoped for future bundling work—keep selectors stable so it can merge into the main bundle safely. */
+/* === Stocking Advisor: Base Tokens === */
 :root {
   color-scheme: dark;
 }
@@ -38,7 +40,7 @@ body.prototype-stock-page {
   --link: #8ec5ff;
 }
 
-/* Environmental meters */
+/* === Stocking Advisor: Environmental Card & Bars === */
 body.prototype-stock-page #env-bars,
 body.prototype-stock-page .env-bars {
   display: grid;
@@ -139,6 +141,7 @@ body.prototype-stock-page .env-bar__chips {
   gap: 8px;
 }
 
+/* === Stocking Advisor: Warnings & Chips === */
 body.prototype-stock-page .chips {
   margin-top: 14px;
   display: flex;
@@ -1757,6 +1760,7 @@ body.prototype-stock-page .ttg-tooltip[aria-expanded="true"] {
       min-height: 100vh;
     }
 
+/* === Stocking Advisor: Ad Slot Styling === */
     body.prototype-stock-page .ttg-ad-slot {
 
       --ttg-ad-border: rgba(129, 155, 211, 0.72);
@@ -1870,6 +1874,7 @@ body.prototype-stock-page .ttg-tooltip[aria-expanded="true"] {
       padding-bottom: 96px;
     }
 
+/* === Stocking Advisor: Hero & Quick Answer === */
     body.prototype-stock-page .hero {
 
       padding: 12px 0 32px;
@@ -1951,6 +1956,7 @@ body.prototype-stock-page .ttg-tooltip[aria-expanded="true"] {
       margin-top: 10px;
     }
 
+/* === Stocking Advisor: Cards & Panels === */
     body.prototype-stock-page .panel {
 
       background: var(--card);
