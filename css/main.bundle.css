@@ -6602,3 +6602,38 @@ body.prototype-stock-page .howto-steps strong {
   font-size: 1rem;
   margin-bottom: 2px;
 }
+/* === HOMEPAGE SAFETY PATCH 2025-11 === */
+.home-page .how-it-works-overlay,
+.page--prototype-home .how-it-works-overlay,
+.home-page .how-it-works-backdrop,
+.page--prototype-home .how-it-works-backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.home-page .how-it-works-modal,
+.home-page .how-it-works-dialog,
+.page--prototype-home .how-it-works-modal,
+.page--prototype-home .how-it-works-dialog {
+  background: #ffffff;
+  color: #000000;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  border: none;
+}
+
+.home-page .how-it-works-btn,
+.page--prototype-home .how-it-works-btn {
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  border-radius: 28px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  color: #ffffff !important;
+}
+
+.home-page .how-it-works-btn:hover,
+.home-page .how-it-works-btn:focus-visible,
+.page--prototype-home .how-it-works-btn:hover,
+.page--prototype-home .how-it-works-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+}
