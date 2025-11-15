@@ -643,7 +643,9 @@
           >
             <div class="control-field">
               <label id="candidate-label" for="plan-species">Species</label>
-              <select id="plan-species" class="control" data-testid="species-search"></select>
+              <select id="plan-species" class="control" data-testid="species-search">
+                <option value="" disabled selected data-placeholder="true">Select a species…</option>
+              </select>
             </div>
             <div class="control-field">
               <label for="plan-qty">Quantity</label>
