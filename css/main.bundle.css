@@ -227,6 +227,41 @@ body.theme-light {
   text-decoration-thickness: 2px;
 }
 
+/* Homepage-only: ensure nav/brand/hamburger stay white on blue hero */
+.page--prototype-home #global-nav,
+.page--prototype-home #global-nav .site-brand,
+.page--prototype-home #global-nav .site-brand__title,
+.page--prototype-home #global-nav .site-brand__subtitle,
+.page--prototype-home #global-nav .site-brand__em,
+.page--prototype-home #global-nav .links .nav__link,
+.page--prototype-home #global-nav .hamburger,
+.page--prototype-home #global-nav .hamburger .hamburger__bars,
+.page--prototype-home #global-nav .hamburger .hamburger__bars::before,
+.page--prototype-home #global-nav .hamburger .hamburger__bars::after {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.page--prototype-home #global-nav .hamburger {
+  background: rgba(12, 24, 40, 0.25);
+}
+
+.page--prototype-home #global-nav .links .nav__link:hover,
+.page--prototype-home #global-nav .links .nav__link:focus-visible,
+.page--prototype-home #global-nav .links .nav__link[aria-current="page"] {
+  color: #ffffff;
+}
+
+.page--prototype-home #global-nav #ttg-drawer,
+.page--prototype-home #global-nav #ttg-drawer .drawer-links .nav__link,
+.page--prototype-home #global-nav #ttg-drawer .drawer-title,
+.page--prototype-home #global-nav #ttg-drawer .drawer-close,
+.page--prototype-home #global-nav #ttg-drawer .drawer-links .nav__link:hover,
+.page--prototype-home #global-nav #ttg-drawer .drawer-links .nav__link:focus-visible,
+.page--prototype-home #global-nav #ttg-drawer .drawer-links .nav__link[aria-current="page"] {
+  color: #ffffff;
+}
+
 @media (max-width: 920px) {
   #global-nav .links {
     display: none;
