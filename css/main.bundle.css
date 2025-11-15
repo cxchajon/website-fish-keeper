@@ -6637,3 +6637,16 @@ body.prototype-stock-page .howto-steps strong {
 .page--prototype-home .how-it-works-btn:focus-visible {
   background: rgba(255, 255, 255, 0.12);
 }
+/* === HOMEPAGE PATCH: HOW-IT-WORKS BUTTON BORDER (2025-11) === */
+.home-page .how-it-works-btn {
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  border-radius: 28px;
+  color: #fff !important;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  backdrop-filter: saturate(180%) blur(10px);
+}
+
+.home-page .how-it-works-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
