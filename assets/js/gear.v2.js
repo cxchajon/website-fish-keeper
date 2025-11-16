@@ -7,6 +7,7 @@
   const FILTER_QUERY_KEY = 'filter_id';
   const GEAR_DATA_MODULE_PATH = '/js/gear-data.js';
   const CYCLING_COACH_URL = '/cycling-coach/';
+  const HYGGER_URL = 'https://www.hygger-online.com/?ref=FKLC';
   const TANK_QUERY_KEYS = ['tank_g', 'tank', 'size'];
   const INCH_TO_CM = 2.54;
   const gearJsonPromise = typeof fetch === 'function'
@@ -996,8 +997,9 @@
     const rawTitleText = stripUrls(option?.title || '').trim();
     const labelText = normalizeOptionTitle(rawLabelText);
     const titleText = normalizeOptionTitle(rawTitleText);
-    const productTitleLower = (option.title || '').toLowerCase();
-    const isHygger = productTitleLower.includes('hygger');
+    const brandLower = (option.brand || '').toLowerCase();
+    const productTitleLower = (option.title || option.label || '').toLowerCase();
+    const isHygger = productTitleLower.includes('hygger') || brandLower.includes('hygger');
     const displayTitle = titleText || labelText || 'this item';
     const headingHtml = labelText && titleText
       ? `<strong>${escapeHTML(labelText)} — ${escapeHTML(titleText)}</strong>`
@@ -1025,10 +1027,12 @@
         </button>
       `;
 
-    const hyggerButtonHtml = isHygger
+    const hyggerUrl = (option.hyggerUrl || '').trim() || (isHygger ? HYGGER_URL : '');
+
+    const hyggerButtonHtml = hyggerUrl
       ? `
         <a
-          href="https://www.hygger-online.com/?ref=FKLC"
+          href="${escapeHTML(hyggerUrl)}"
           class="btn-gear hygger-btn"
           target="_blank"
           rel="nofollow sponsored noopener"
@@ -2777,7 +2781,6 @@
       return;
     }
 
-    const HYGGER_URL = 'https://www.hygger-online.com/?ref=FKLC';
     const ROW_SELECTOR = '.option, .gear-addon, .gear-card';
     const XLINK_NS = 'http://www.w3.org/1999/xlink';
 

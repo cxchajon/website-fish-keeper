@@ -928,6 +928,8 @@ function normalizeRow(row, fallbackCategory) {
   const notes = (get('Notes') || get('notes') || "").toString().trim();
   const href = (get('Amazon_Link') || get('amazon_url') || get('href') || "").toString().trim();
   const image = (get('Image_URL') || get('image_url') || get('image') || "").toString().trim();
+  const brand = (get('Brand') || get('brand') || "").toString().trim();
+  const hyggerUrl = (get('hygger_url') || get('hyggerUrl') || "").toString().trim();
   const affiliate = (get('affiliate') || "").toString().trim() || "amazon";
   const tag = (get('tag') || "").toString().trim() || "fishkeepingli-20";
   let groupLabel = (get('Group_Label') || get('group_label') || "").toString().trim();
@@ -1010,6 +1012,8 @@ function normalizeRow(row, fallbackCategory) {
     notes,
     href,
     image,
+    brand,
+    hyggerUrl,
     category,
     subgroup,
     subgroupId: '',
@@ -1114,8 +1118,17 @@ function ensureOptionDefaults(item, index, fallbackCategory, fallbackKey) {
     tag: item.tag || "fishkeepingli-20",
     material: item.material || "",
     color: item.color || "",
-    source: item.source || ""
+    source: item.source || "",
+    brand: item.brand || "",
+    hyggerUrl: item.hyggerUrl || ""
   };
+
+  const brandLower = option.brand.toLowerCase();
+  const titleLower = (option.title || option.label || "").toLowerCase();
+  const isHygger = brandLower.includes("hygger") || titleLower.includes("hygger");
+  if (!option.hyggerUrl && isHygger) {
+    option.hyggerUrl = "https://www.hygger-online.com/?ref=FKLC";
+  }
 
   if (!option.label) {
     option.label = `Option ${index + 1}`;
