@@ -203,7 +203,7 @@
     }
   </script>
   <!--#include virtual="/includes/ga4.html" -->
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "fef22cbf19e3473db5ec987a8f3bf4f3"}'></script>
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
 </head>
 <body class="page--cycling-coach">
@@ -213,12 +213,12 @@
   <main id="main-content" aria-labelledby="cycling-coach-title">
     <div class="stage-wrap">
       <section class="stage-hero">
-        <h1 id="cycling-coach-title">Cycling Coach &amp; 24-Hour Challenge</h1>
-        
+        <h1 id="cycling-coach-title">Aquarium Cycling Coach &amp; 24-Hour Challenge</h1>
+
         <p>
-          The Cycling Coach guides you through the nitrogen cycle with structured inputs, clear AI-ready summaries, and a
-          science-backed readiness check. Log daily readings, understand what your data means, and finish the 24-hour challenge
-          before introducing fish.
+          Aquarium cycling is the process of growing beneficial bacteria that convert toxic ammonia from fish waste into nitrite and then into safer nitrate.
+          The Tank Guide&apos;s Cycling Coach guides you through that nitrogen cycle with structured inputs, clear, easy-to-understand summaries, and a science-backed readiness check.
+          Log daily readings, understand what your data means, and finish the 24-hour challenge before introducing fish.
         </p>
       </section>
 
@@ -241,7 +241,7 @@
                   data-testid="info-ammonia"
                 >i</button>
               </div>
-              <p class="metric-why">Ammonia is dangerous even at trace levels, and warmer, high-pH water converts more into the especially toxic NH₃ form.</p>
+              <p class="metric-why">Ammonia is a toxic waste product from fish and uneaten food. Even tiny amounts are dangerous, and warmer, high-pH water shifts more toward the especially toxic NH₃ form.</p>
               <input type="number" id="ammonia" name="ammonia" step="0.01" min="0" inputmode="decimal" data-testid="ammonia" />
               <div id="tt-ammonia" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Waste from fish/food. Even tiny amounts are toxic.</div>
             </div>
@@ -258,9 +258,9 @@
                   data-testid="info-nitrite"
                 >i</button>
               </div>
-              <p class="metric-why">Nitrite locks up hemoglobin and starves fish of oxygen, so the safe, long-term target is always an undetectable 0 ppm.</p>
+              <p class="metric-why">Nitrite blocks oxygen in fish blood and prevents fish from breathing properly, so the safe long-term target is always an undetectable 0 ppm.</p>
               <input type="number" id="nitrite" name="nitrite" step="0.01" min="0" inputmode="decimal" data-testid="nitrite" />
-              <div id="tt-nitrite" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Mid-stage of the cycle; also toxic.</div>
+              <div id="tt-nitrite" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Second stage of the nitrogen cycle; still very toxic until bacteria convert it to nitrate.</div>
             </div>
             <div class="field">
               <div class="label-row">
@@ -275,7 +275,7 @@
                   data-testid="info-nitrate"
                 >i</button>
               </div>
-              <p class="metric-why">Nitrate builds more slowly but chronic excess stresses fish, making regular water changes and plant uptake critical safeguards.</p>
+              <p class="metric-why">Nitrate builds more slowly over weeks. Chronic excess still stresses fish, so regular water changes and plant uptake are critical safeguards.</p>
               <input type="number" id="nitrate" name="nitrate" step="0.1" min="0" inputmode="decimal" data-testid="nitrate" />
               <div id="tt-nitrate" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>End product; safer but must be controlled with water changes. In planted tanks, a steady nitrate target around 10–20 ppm is common; Cycling Coach evaluates cycle completion independently of plants.</div>
             </div>
@@ -296,7 +296,7 @@
                 <option value="fishless" selected>Fishless</option>
                 <option value="fish-in">Fish-in</option>
               </select>
-              <div id="tt-method" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Fishless equals adding ammonia without fish. Fish-in means cycling with fish and requires extra care.</div>
+              <div id="tt-method" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Fishless cycling means adding ammonia to an empty tank to grow bacteria before adding fish. Fish-in cycling means growing bacteria while fish are already in the tank and requires more frequent testing and water changes.</div>
             </div>
           </div>
           <div class="form-actions cc-actions">
@@ -320,7 +320,7 @@
               data-testid="info-status"
             >i</button>
           </div>
-          <div id="tt-status" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>High-level snapshot of where your tank stands.</div>
+          <div id="tt-status" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Status shows your current cycle progress. &quot;Incomplete&quot; means your tank isn&apos;t ready for fish yet.</div>
         </div>
         <div class="status-row" aria-live="polite" data-testid="result-status">
           <span class="status-badge" id="status-badge">⚪ Incomplete</span>
@@ -361,7 +361,7 @@
         </div>
         <div id="tt-challenge" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
         <div class="challenge-card">
-          <p class="challenge-instructions" id="challengeInstruction">Dose to ~2 ppm, wait 24 hours, then enter the readings below.</p>
+          <p class="challenge-instructions" id="challengeInstruction">Dose to about 2 ppm, wait 24 hours, then enter the readings below to confirm your cycle is complete.</p>
           <button type="button" class="btn" id="challenge-start">Start 24-Hour Challenge</button>
           <div class="challenge-grid" id="challenge-form" hidden>
             <div class="field">
@@ -395,9 +395,9 @@
           </div>
           <ol class="challenge-steps">
             <li>Dose pure ammonia (or equivalent food) to 2 ppm and log the start time.</li>
-            <li>Check ammonia and nitrite at the 12-hour midpoint to confirm downward movement.</li>
+            <li>Optionally check ammonia and nitrite at the 12-hour midpoint to see if levels are dropping.</li>
             <li>Retest at 24 hours. Both ammonia and nitrite must read 0 ppm; nitrate should climb.</li>
-            <li>Perform a final polishing water change and stabilize temperature before adding fish.</li>
+            <li>Perform a final large water change and stabilize temperature before adding fish.</li>
           </ol>
         </div>
       </section>
@@ -412,7 +412,7 @@
             </div>
             <div class="field">
               <label for="temperature">Temperature</label>
-              <p class="metric-why">Stable temperature keeps metabolism predictable and preserves dissolved oxygen; swings stress fish more than a degree or two off target.</p>
+              <p class="metric-why">Stable temperature keeps bacteria working efficiently. Big swings stress fish more than being a few degrees off your target.</p>
               <div class="temp-toggle">
                 <input type="number" id="temperature" name="temperature" step="0.1" inputmode="decimal" data-testid="temp" />
                 <button type="button" id="temp-toggle" aria-label="Switch temperature unit">°F</button>
@@ -432,11 +432,11 @@
               aria-controls="tt-advanced"
               data-testid="info-advanced"
             >i</button>
-            <div id="tt-advanced" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Test kits read TAN, which is NH3 plus NH4. Only NH3 is toxic and increases with pH and temperature.</div>
+            <div id="tt-advanced" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Most test kits read total ammonia (TAN), which includes both NH₃ and NH₄⁺. Only NH₃ is toxic, and its share increases as pH and temperature rise.</div>
           </div>
           <p class="advanced-note">Advanced calculations refresh each time you update readings and toggle between °F and °C.</p>
           <p>
-            Cycling Coach calculates un-ionized ammonia (NH₃) using the Emerson formula, combining pH, temperature, and total ammonia. Values above <strong>0.02 ppm</strong> may stress fish, according to <a href="https://www.epa.gov/wqc/aquatic-life-criteria-ammonia" target="_blank" rel="noopener">EPA aquatic life criteria</a>; pause stocking plans and increase aeration if you approach that threshold.
+            Cycling Coach calculates un-ionized ammonia (NH₃) using the Emerson formula. This combines pH, temperature, and total ammonia to estimate the toxic form. Values above <strong>0.02 ppm</strong> may stress fish, according to <a href="https://www.epa.gov/wqc/aquatic-life-criteria-ammonia" target="_blank" rel="noopener">EPA aquatic life criteria</a>; pause stocking plans and increase aeration if you approach that threshold.
           </p>
           <p>
             Experienced keepers can explore water chemistry fundamentals in our <a href="/pages/university.html">University resources</a> or compare readings against expert interviews in our <a href="/media.html">Media library</a>.
@@ -457,9 +457,10 @@
           <div class="ad-placeholder" aria-hidden="true">Advertisement</div>
         </div>
       <section class="panel" id="how-to" aria-labelledby="how-to-heading">
-        <h2 id="how-to-heading">How to Use the Cycling Coach &amp; Understand the Nitrogen Cycle</h2>
+        <h2 id="how-to-heading">How to Cycle Your Aquarium Using the Cycling Coach</h2>
         <p>
-          Cycling Coach turns raw measurements into guidance so you stay ahead of spikes and keep beneficial bacteria thriving.
+          Aquarium cycling is the 4–6 week process of growing beneficial bacteria that convert fish waste (ammonia) into safer nitrate.
+          Cycling Coach turns raw measurements into guidance so you stay ahead of spikes and keep those bacteria thriving.
           Follow this loop each time you test.
         </p>
         <ol class="how-to-list">
@@ -467,6 +468,9 @@
           <li>Read the generated insights to see whether you should dose bacteria, perform water changes, or wait.</li>
           <li>After the 24-hour challenge, confirm nitrates rise while ammonia and nitrite stay at 0 ppm for a full day.</li>
         </ol>
+        <p>
+          For most aquariums, fishless cycling takes about 4–6 weeks and cycling with fish takes about 6–8 weeks. Temperature, pH, and bottled bacteria products can speed or slow that timeline, so keep testing and logging until ammonia and nitrite stay at 0 ppm for at least 24 hours.
+        </p>
         <div class="how-links" aria-label="Further reading links">
           <p><strong>Further Reading:</strong></p>
           <ul>
@@ -477,21 +481,21 @@
         </div>
         <aside class="cc-education-cta" aria-label="More aquarium education">
           <h3>More aquarium education</h3>
-          <p>Explore our guides in the <a href="/media.html">Media library</a> for deep dives on cycling science.</p>
+          <p>Explore our guides in the <a href="/media.html">Media library</a> for deep dives on cycling science from The Tank Guide and FishKeepingLifeCo.</p>
         </aside>
       </section>
 
       <section class="panel" id="new-tank-syndrome" aria-labelledby="new-tank-syndrome-heading">
         <h2 id="new-tank-syndrome-heading">What is New Tank Syndrome?</h2>
         <p>
-          New tank syndrome describes the water quality crash that happens when an aquarium is stocked before nitrifying bacteria can digest fish waste.
-          Fresh equipment, conditioned tap water, and eager new fish may look clean, but unseen ammonia quickly builds faster than the immature biofilter can process it.
-          The result is a sudden spike in toxic ammonia followed by nitrite, both of which burn gills and reduce oxygen transport.
+          New tank syndrome describes the water quality crash that happens when an aquarium is stocked before beneficial bacteria can digest fish waste.
+          Fresh equipment, conditioned tap water, and eager new fish may look clean, but unseen ammonia quickly builds faster than the developing bacteria colony can process it.
+          The result is a sudden spike in toxic ammonia followed by nitrite, both of which burn gills and reduce oxygen in the water.
           Cloudy water, labored breathing, and fish hiding near filter returns are common warning signs.
         </p>
         <p>
           Preventing the syndrome means giving bacteria time and surface area to colonize before life depends on them.
-          Fishless cycling with bottled ammonia or hardy starter media lets you monitor progress without stressing livestock.
+          Fishless cycling with bottled ammonia or bottled beneficial bacteria lets you monitor progress without stressing livestock.
           Frequent testing, logging, and water changes keep spikes controlled, while gradual stocking avoids overwhelming the still-growing colony.
           Dive into our <a href="/pages/university.html">water chemistry foundations</a> lessons to understand the nitrogen conversions at play, and review the <a href="/media.html">cycling guides and how-tos</a> for step-by-step maintenance routines.
         </p>
@@ -540,7 +544,7 @@
           <details class="cc-accordion">
             <summary>What happens after the 24-hour challenge?</summary>
             <div class="cc-accordion-body">
-              <p>Perform a polishing water change, match temperature, and acclimate fish slowly while continuing to log readings.</p>
+              <p>Perform a final large water change, match temperature, and acclimate fish slowly while continuing to log readings.</p>
             </div>
           </details>
           <details class="cc-accordion">
