@@ -996,6 +996,7 @@
     const rawTitleText = stripUrls(option?.title || '').trim();
     const labelText = normalizeOptionTitle(rawLabelText);
     const titleText = normalizeOptionTitle(rawTitleText);
+    const titleLower = titleText.toLowerCase();
     const displayTitle = titleText || labelText || 'this item';
     const headingHtml = labelText && titleText
       ? `<strong>${escapeHTML(labelText)} — ${escapeHTML(titleText)}</strong>`
@@ -1012,7 +1013,7 @@
     }
     const actionLabel = `${isAmazonAffiliate ? 'Shop' : 'Buy'} ${escapeHTML(displayTitle)} on Amazon`;
     const linkText = isAmazonAffiliate ? 'Shop on Amazon' : 'Buy on Amazon';
-    const isHyggerProduct = /\bhygger\b/i.test(`${labelText} ${titleText}`.trim());
+    const isHyggerProduct = titleLower.includes('hygger');
     const actions = [];
     const amazonAction = hasValidHref
       ? `<a class=\"${buttonClasses.join(' ')}\" href=\"${escapeHTML(href)}\" target=\"_blank\" rel=\"sponsored noopener noreferrer\" aria-label=\"${actionLabel}\">${linkText}</a>`
