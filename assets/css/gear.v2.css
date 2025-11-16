@@ -156,6 +156,11 @@ body{
   gap:1.25rem;
 }
 
+.gear-section-heading{
+  text-align:center;
+  margin:0 auto 1.75rem;
+}
+
 .gear-inline-copy{
   width:min(960px,100%);
   margin:clamp(1.75rem,5vw,2.5rem) auto clamp(2.5rem,6vw,3.5rem);
