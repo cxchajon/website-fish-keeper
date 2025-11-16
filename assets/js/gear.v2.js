@@ -1012,9 +1012,18 @@
     }
     const actionLabel = `${isAmazonAffiliate ? 'Shop' : 'Buy'} ${escapeHTML(displayTitle)} on Amazon`;
     const linkText = isAmazonAffiliate ? 'Shop on Amazon' : 'Buy on Amazon';
-    const actionsHtml = hasValidHref
+    const isHyggerProduct = /hygger/i.test(`${labelText} ${titleText}`.trim());
+    const actions = [];
+    const amazonAction = hasValidHref
       ? `<a class=\"${buttonClasses.join(' ')}\" href=\"${escapeHTML(href)}\" target=\"_blank\" rel=\"sponsored noopener noreferrer\" aria-label=\"${actionLabel}\">${linkText}</a>`
       : `<button class=\"${buttonClasses.join(' ')}\" type=\"button\" aria-disabled=\"true\" title=\"Link coming soon\">${linkText}</button>`;
+    actions.push(amazonAction);
+
+    if (isHyggerProduct) {
+      actions.push('<a href="https://www.hygger-online.com/?ref=FKLC" class="btn-gear hygger-btn" target="_blank" rel="nofollow sponsored noopener">Shop on Hygger</a>');
+    }
+
+    const actionsHtml = actions.join('');
     row.innerHTML = `
       <div class="option__title">${headingHtml}</div>
       ${noteText ? `<p class="option__note">${escapeHTML(noteText)}</p>` : ''}
