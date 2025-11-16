@@ -996,7 +996,8 @@
     const rawTitleText = stripUrls(option?.title || '').trim();
     const labelText = normalizeOptionTitle(rawLabelText);
     const titleText = normalizeOptionTitle(rawTitleText);
-    const titleLower = titleText.toLowerCase();
+    const productTitleLower = (option.title || '').toLowerCase();
+    const isHygger = productTitleLower.includes('hygger');
     const displayTitle = titleText || labelText || 'this item';
     const headingHtml = labelText && titleText
       ? `<strong>${escapeHTML(labelText)} — ${escapeHTML(titleText)}</strong>`
@@ -1006,25 +1007,38 @@
     const rawContext = options.context ?? '';
     const context = String(rawContext).toLowerCase();
     const hasValidHref = /^https?:\/\//i.test(href);
-    const isAmazonAffiliate = hasValidHref && /(amazon\.|amzn\.to)/i.test(href);
-    const buttonClasses = ['btn'];
-    if (isAmazonAffiliate) {
-      buttonClasses.push('btn-amazon', 'btn-amazon-affiliate');
-    }
-    const actionLabel = `${isAmazonAffiliate ? 'Shop' : 'Buy'} ${escapeHTML(displayTitle)} on Amazon`;
-    const linkText = isAmazonAffiliate ? 'Shop on Amazon' : 'Buy on Amazon';
-    const isHyggerProduct = titleLower.includes('hygger');
-    const actions = [];
-    const amazonAction = hasValidHref
-      ? `<a class=\"${buttonClasses.join(' ')}\" href=\"${escapeHTML(href)}\" target=\"_blank\" rel=\"sponsored noopener noreferrer\" aria-label=\"${actionLabel}\">${linkText}</a>`
-      : `<button class=\"${buttonClasses.join(' ')}\" type=\"button\" aria-disabled=\"true\" title=\"Link coming soon\">${linkText}</button>`;
-    actions.push(amazonAction);
+    const amazonButtonHtml = hasValidHref
+      ? `
+        <a
+          href="${escapeHTML(href)}"
+          class="btn btn-amazon btn-amazon-affiliate btn-gear"
+          target="_blank"
+          rel="nofollow sponsored noopener"
+          aria-label="Shop ${escapeHTML(displayTitle)} on Amazon"
+        >
+          Shop on Amazon
+        </a>
+      `
+      : `
+        <button class="btn" type="button" aria-disabled="true" title="Link coming soon">
+          Shop on Amazon
+        </button>
+      `;
 
-    if (isHyggerProduct) {
-      actions.push('<a href="https://www.hygger-online.com/?ref=FKLC" class="btn-gear hygger-btn" target="_blank" rel="nofollow sponsored noopener">Shop on Hygger</a>');
-    }
+    const hyggerButtonHtml = isHygger
+      ? `
+        <a
+          href="https://www.hygger-online.com/?ref=FKLC"
+          class="btn-gear hygger-btn"
+          target="_blank"
+          rel="nofollow sponsored noopener"
+        >
+          Shop on Hygger
+        </a>
+      `
+      : '';
 
-    const actionsHtml = actions.join('');
+    const actionsHtml = `${amazonButtonHtml}${hyggerButtonHtml}`;
     row.innerHTML = `
       <div class="option__title">${headingHtml}</div>
       ${noteText ? `<p class="option__note">${escapeHTML(noteText)}</p>` : ''}
