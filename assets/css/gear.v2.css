@@ -1050,16 +1050,6 @@ select#tank-size::-ms-expand { display: none; }
   filter: brightness(0.95);
 }
 
-.gear-page .btn-hygger {
-  background: linear-gradient(90deg, #1fb760 0%, #11a24f 45%, #f36b23 100%);
-  color: #ffffff;
-  box-shadow: 0 10px 22px -12px rgba(31, 183, 96, .35), 0 0 0 1px rgba(255, 255, 255, .08) inset;
-}
-
-.gear-page .btn-hygger:hover {
-  filter: brightness(0.97);
-}
-
 .gear-page .btn:focus-visible {
   outline: 2px solid rgba(255, 255, 255, .6);
   outline-offset: 2px;
@@ -1078,6 +1068,32 @@ select#tank-size::-ms-expand { display: none; }
 
 .gear-page .btn + .btn {
   margin-left: .5rem;
+}
+
+/* Hygger Variation */
+.hygger-btn,
+.btn-hygger {
+  margin-left: 0.6rem;
+  background: #0fd18a;
+  color: #020816;
+  border-radius: 999px;
+  box-shadow: 0 0.4rem 0.9rem rgba(0, 0, 0, 0.35);
+  padding: 0.55rem 1.5rem;
+  font-weight: 600;
+}
+
+.hygger-btn:hover,
+.hygger-btn:focus-visible,
+.btn-hygger:hover,
+.btn-hygger:focus-visible {
+  background: #10e099;
+  transform: translateY(-1px);
+}
+
+.hygger-btn:active,
+.btn-hygger:active {
+  transform: translateY(0);
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.35);
 }
 
 @media (prefers-color-scheme: light) {
