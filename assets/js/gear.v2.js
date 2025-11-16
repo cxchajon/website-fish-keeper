@@ -2648,3 +2648,346 @@
   if (document.readyState !== 'loading') start();
   else document.addEventListener('DOMContentLoaded', start);
 })();
+
+(function () {
+  function initQuickAnswerAccordions() {
+    const triggers = Array.from(document.querySelectorAll('#quick-answers .qa-card__trigger'));
+
+    if (!triggers.length) {
+      return;
+    }
+
+    const panels = new Map();
+    triggers.forEach((trigger) => {
+      const panelId = trigger.getAttribute('aria-controls');
+      if (panelId) {
+        const panel = document.getElementById(panelId);
+        if (panel) {
+          panels.set(trigger, panel);
+        }
+      }
+    });
+
+    const closeTrigger = (trigger) => {
+      const panel = panels.get(trigger);
+      if (!panel) {
+        return;
+      }
+
+      trigger.setAttribute('aria-expanded', 'false');
+      panel.setAttribute('aria-hidden', 'true');
+      panel.setAttribute('hidden', '');
+      trigger.parentElement?.classList.remove('qa-card--open');
+    };
+
+    const openTrigger = (trigger) => {
+      const panel = panels.get(trigger);
+      if (!panel) {
+        return;
+      }
+
+      trigger.setAttribute('aria-expanded', 'true');
+      panel.setAttribute('aria-hidden', 'false');
+      panel.removeAttribute('hidden');
+      trigger.parentElement?.classList.add('qa-card--open');
+    };
+
+    const handleToggle = (event) => {
+      const trigger = event.currentTarget;
+      const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+
+      triggers.forEach((btn) => {
+        if (btn !== trigger) {
+          closeTrigger(btn);
+        }
+      });
+
+      if (isExpanded) {
+        closeTrigger(trigger);
+      } else {
+        openTrigger(trigger);
+      }
+    };
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', handleToggle);
+    });
+  }
+
+  function initFaqAccordion() {
+    const container = document.getElementById('faq-accordion');
+    if (!container) {
+      return;
+    }
+
+    const triggers = Array.from(container.querySelectorAll('[data-accordion="toggle"]'));
+    if (!triggers.length) {
+      return;
+    }
+
+    const closeOthers = (activeTrigger) => {
+      triggers.forEach((trigger) => {
+        if (trigger !== activeTrigger && typeof trigger.__setExpanded === 'function') {
+          trigger.__setExpanded(false);
+        }
+      });
+    };
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        const target = mutation.target;
+        if (target.getAttribute('aria-expanded') === 'true') {
+          closeOthers(target);
+        }
+      });
+    });
+
+    triggers.forEach((trigger) => {
+      observer.observe(trigger, { attributes: true, attributeFilter: ['aria-expanded'] });
+    });
+  }
+
+  function initGearButtons() {
+    const scope = document.querySelector('.gear-page');
+    if (!scope) {
+      return;
+    }
+
+    const HYGGER_URL = 'https://www.hygger-online.com/?ref=FKLC';
+    const ROW_SELECTOR = '.option, .gear-addon, .gear-card';
+    const XLINK_NS = 'http://www.w3.org/1999/xlink';
+
+    function ensureRelTarget(anchor) {
+      const relTokens = new Set((anchor.getAttribute('rel') || '').split(/\s+/).filter(Boolean));
+      ['sponsored', 'noopener', 'noreferrer'].forEach((token) => relTokens.add(token));
+      anchor.setAttribute('rel', Array.from(relTokens).join(' '));
+      anchor.setAttribute('target', '_blank');
+    }
+
+    function setButtonContent(anchor, text, defaultText) {
+      const label = text?.trim() || defaultText;
+      anchor.textContent = '';
+      const span = document.createElement('span');
+      span.textContent = label;
+      anchor.appendChild(span);
+    }
+
+    function normalizeAmazonButton(anchor) {
+      ensureRelTarget(anchor);
+      anchor.classList.add('btn', 'btn-amazon');
+      anchor.classList.remove('btn--amazon');
+      anchor.title = anchor.title || 'Shop on Amazon';
+      setButtonContent(anchor, anchor.querySelector('span')?.textContent || anchor.textContent || 'Shop Amazon', 'Shop Amazon');
+    }
+
+    function makeHyggerButton() {
+      const anchor = document.createElement('a');
+      anchor.href = HYGGER_URL;
+      anchor.className = 'btn btn-hygger';
+      anchor.setAttribute('rel', 'sponsored noopener noreferrer');
+      anchor.setAttribute('target', '_blank');
+
+      const span = document.createElement('span');
+      span.textContent = 'Shop Hygger';
+      anchor.appendChild(span);
+
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('aria-hidden', 'true');
+      svg.setAttribute('focusable', 'false');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('width', '20');
+      svg.setAttribute('height', '20');
+
+      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+      const linearGradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+      linearGradient.setAttribute('id', 'hyggerGradient');
+      linearGradient.setAttribute('x1', '0%');
+      linearGradient.setAttribute('y1', '0%');
+      linearGradient.setAttribute('x2', '100%');
+      linearGradient.setAttribute('y2', '0%');
+
+      const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+      stop1.setAttribute('offset', '0%');
+      stop1.setAttribute('stop-color', '#1fb760');
+      linearGradient.appendChild(stop1);
+
+      const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+      stop2.setAttribute('offset', '45%');
+      stop2.setAttribute('stop-color', '#11a24f');
+      linearGradient.appendChild(stop2);
+
+      const stop3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+      stop3.setAttribute('offset', '100%');
+      stop3.setAttribute('stop-color', '#f36b23');
+      linearGradient.appendChild(stop3);
+
+      defs.appendChild(linearGradient);
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', 'M3 12c0-5 4-9 9-9s9 4 9 9-4 9-9 9-9-4-9-9z');
+      path.setAttribute('fill', 'url(#hyggerGradient)');
+
+      const logoPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      logoPath.setAttribute('fill', '#fff');
+      logoPath.setAttribute('d', 'M12.13 6.23c-.43.08-.91.42-1.4 1.03-.37.46-.8 1.06-1.18 1.69-.2.33-.38.65-.53.96l-.07.14c-.4.79-1.8 3.72-2.26 4.53l-.1.18c-.14.27-.23.45-.27.52-.16.22-.29.39-.38.51-.16.2-.18.36-.06.49.06.07.2.11.31.11.11-.01.27-.07.42-.16.25-.14.5-.34.55-.41.06-.1.17-.29.31-.56.1-.2.2-.4.3-.6l.04-.08.04-.08c.34-.63 1.59-3.21 2.05-4.06.52-.97 1.6-2.64 2.06-3.08.5-.47.61-.34.57-.26-.07.15-.19.36-.36.61-.04.05-.21.31-.37.53l-.13.19-.08.11c-.82 1.18-1.38 2.04-1.59 2.5l-.01.02c-.12.27.08.47.33.38.17-.06.37-.21.59-.46.12-.13.27-.31.47-.56l.35-.43c.2-.25.35-.45.44-.6l.02-.02.03-.05c.38-.68 1.16-1.93 1.74-2.39.07-.05.16-.12.23-.08.1.07.11.29.04.67-.13.69-.45 1.64-.63 2.09-.35.81-.7 1.7-1.08 2.58-.4.95-.99 1.83-1.37 2.05-.38.22-.37-.13-.3-.47.07-.29.18-.63.25-.81.02-.05.24-.63.35-.95l.06-.17c.11-.33-.15-.47-.37-.29-.15.13-.32.34-.49.56-.16.23-.32.51-.48.77-.36.61-1.18 1.76-1.7 2.27-.41.41-1.06.88-1.61.86-.36-.01-.89-.31-.95-.8-.02-.16.01-.32.08-.47.08-.13.26-.38.33-.48.03-.04.16-.23.33-.51.2-.33.34-.56.42-.7l.08-.16.21-.41c.18-.38.47-1 .64-1.36l.09-.18c.54-1.08 1.5-2.82 1.82-3.27.18-.26.38-.52.6-.76.36-.41.77-.79 1.21-1.12 1.04-.79 2.12-.97 2.7-.46.29.25.44.63.44 1.09 0 .57-.2 1.38-.54 2.2-.39.96-.89 1.87-1.46 2.73-.4.6-.82 1.1-1.31 1.56l-.17.17-.18.17c-.16.15-.26.25-.28.29-.11.18-.11.44.01.65.15.25.43.33.77.23.45-.13.9-.44 1.37-.92 1.2-1.19 2.34-3.07 2.6-4.04.07-.26.23-.74.33-.94l.02-.04c.13-.2.39-.21.62-.15.07.02.29.17.45.3l.1.08.04.03c.12.1.24.2.34.28l.06.05c.11.12.1.27-.02.43-.57.8-1.48 2.13-2.12 3.03-.32.45-.93 1.41-1.67 2.56l-.13.2-.07.1-.02.03-.05.08-.13.2c-.11.18-.38.56-.6.84l-.1.13-.02.02-.07.09-.14.18-.16.19-.1.11c-.35.37-.88.56-1.35.46-.28-.07-.49-.22-.62-.44-.23-.38-.19-.89.13-1.39.08-.12.2-.27.3-.39l.05-.05c.22-.26.44-.53.62-.82.62-1.04 1.5-2.54 2.01-3.14.1-.12.29-.34.47-.52l.16-.17.08-.08.08-.08c.16-.17.36-.41.46-.6l.02-.05.03-.06.05-.09.06-.11.02-.06c.09-.25 0-.33-.07-.38-.09-.06-.19-.08-.29-.06-.18.03-.4.17-.55.3l-.05.04-.05.04c-.07.06-.12.1-.13.12-.54.53-1.05 1.1-1.5 1.7-.19.26-.5.7-.76 1.08l-.12.18c-.17.25-.31.47-.34.5-.13.16-.27.33-.38.46-.5.6-1.01 1-1.51 1.18-.33.12-.66.1-.92-.06-.33-.2-.49-.58-.44-1.06.03-.29.13-.6.29-.89.15-.3.3-.56.39-.73l.06-.12c.16-.31.36-.75.52-1.1l.15-.35c.09-.21.18-.42.24-.56.11-.24.33-.76.46-1.04.12-.28.05-.51-.2-.56-.18-.04-.4.07-.59.29-.45.52-.98 1.37-1.44 2.26-.73 1.45-1.54 2.82-2.01 3.1-.1.05-.2.06-.28.02-.21-.1-.31-.33-.29-.58.02-.24.13-.56.31-.93l.05-.1.03-.06.1-.22c.03-.09.07-.17.1-.24.09-.25.17-.48.24-.69.15-.44.44-1.02.72-1.54l.11-.2.09-.16c.1-.19.19-.37.27-.55l.13-.26.08-.16c.22-.43.44-.92.55-1.23.18-.47.05-.81-.35-.91-.33-.09-.74.07-1.11.43-.13.12-.3.32-.48.55l-.13.17-.1.14c-.07.1-.12.17-.15.22l-.05.07-.05.07-.07.1-.13.21c-.28.45-.63 1.05-1 1.69l-.18.3c-.33.54-.56.95-.63 1.09l-.02.05-.06.11c-.2.32-.52.91-.61 1.33-.09.44.12.79.52.82.4.04.83-.25 1.24-.82.2-.27.41-.61.63-1 .19-.34.41-.77.66-1.25l.2-.39c.24-.47.45-.89.5-1 .14-.28.05-.4 0-.43-.12-.07-.27-.01-.38.05-.1.05-.23.17-.37.32l-.1.1-.04.04-.05.05-.2.23-.15.17-.07.08-.05.05c-.54.59-1.01 1.16-1.4 1.68l-.07.1c-.16.22-.3.42-.43.62-.14.22-.25.41-.33.57-.19.37-.52.66-.9.8-.26.09-.5.1-.69.02-.44-.17-.55-.72-.32-1.37.05-.14.13-.3.24-.47.14-.24.45-.75.68-1.15l.06-.11.04-.06.09-.16c.2-.37.53-.93.72-1.31.3-.6.61-1.13.86-1.46.2-.26.5-.58.83-.8.8-.56 1.65-.55 2.11-.01.24.28.34.69.28 1.24-.05.4-.2.87-.44 1.4-.17.4-.42.92-.82 1.55-.26.4-.56.83-.95 1.35-.15.19-.27.35-.38.49-.37.48-.4.93-.1 1.19.26.24.69.21 1.04.07.45-.18.92-.58 1.38-1.12.61-.7 1.19-1.54 1.62-2.38.1-.2.31-.54.5-.83l.06-.09c.15-.22.33-.41.52-.56.11-.08.31-.1.41-.04.05.03.16.13.06.38-.09.26-.29.62-.59 1.07-.58.91-1.06 1.58-1.46 2.11l-.13.17-.21.28-.1.12-.03.05-.09.11-.13.15c-.26.31-.44.59-.55.83-.14.32-.05.65.2.78.22.11.49.06.77-.13.34-.22.7-.61 1.1-1.19.3-.44.68-1.03 1.17-1.87.41-.77.82-1.52 1.16-2.01.34-.47.85-1.24 1.32-1.96l.1-.16.06-.08c.32-.47.5-.79.58-.97.13-.27.22-.55.25-.8.08-.65-.19-1.15-.72-1.31-.6-.18-1.36.04-2 .57-.6.48-1.2 1.28-1.59 1.86-.1.16-.22.33-.32.47l-.08.11-.05.07-.12.16-.06.07-.07.08-.09.11-.15.18-.13.15-.1.12-.12.14-.08.09-.08.1-.07.08-.11.12-.04.04-.02.02-.06.07-.13.14-.08.09-.06.07-.11.12-.06.06-.06.06-.07.07-.06.06-.09.08-.04.04-.02.02-.05.04c-.55.42-1.01.61-1.41.55-.55-.08-.83-.55-.68-1.18.05-.21.19-.5.42-.87l.1-.16c.21-.34.53-.82.78-1.15.33-.43.55-.65.79-.73.13-.05.21.04.16.18-.16.47-.45 1.29-.74 2.06-.19.51-.36.95-.53 1.37l-.12.3-.08.19c-.32.71-.48 1.23-.49 1.61-.02.55.22.97.65 1.16.35.16.77.13 1.18-.1.48-.27.96-.8 1.37-1.39.25-.36.47-.78.65-1.21.19-.44.33-.91.38-1.31.14-1.08-.22-1.88-.95-2.18-.5-.21-.94-.18-1.41.1-.5.29-.99.86-1.31 1.32-.29.42-.56.87-.79 1.33-.16.33-.3.62-.4.87l-.08.2-.07.16-.12.28c-.11.26-.2.5-.28.7-.2.49-.32.88-.38 1.18-.16.78.1 1.42.69 1.73.42.21.92.19 1.44-.06.38-.19.88-.58 1.35-1.15.34-.4.7-.91 1.1-1.6.44-.77.78-1.55.96-2.28.22-.89.15-1.6-.19-2.11-.36-.55-1.06-.75-1.76-.5-.61.22-1.17.64-1.58 1.09-.5.54-.9 1.1-1.14 1.53l-.08.15-.06.11c-.43.77-1.19 2.33-1.52 2.69-.07.07-.14.14-.2.2-.32.32-.42.55-.25.74.16.19.39.2.57.06.14-.1.29-.27.45-.54.05-.07.39-.68.52-.92.13-.26.27-.5.4-.74l.14-.28.19-.34c.12-.21.24-.41.35-.6l.2-.35c.19-.32.41-.69.49-.87.13-.27.24-.57.32-.9.2-.75.17-1.44-.08-1.94-.41-.85-1.45-1.1-2.38-.5-.58.38-1.08 1-1.6 1.89-.22.37-.45.86-.61 1.24-.15.34-.29.66-.41.95-.1.23-.19.45-.28.67-.17.4-.34.8-.52 1.2-.21.51-.32.9-.36 1.21-.09.61.17 1.16.66 1.38.46.21 1.04.11 1.59-.29.42-.32.88-.83 1.31-1.46.55-.79 1.01-1.69 1.25-2.44.24-.75.2-1.41-.08-1.92-.35-.64-1.07-.87-1.81-.57-.6.24-1.17.7-1.54 1.17-.22.28-.4.57-.57.85-.08.13-.15.26-.23.39-.16.28-.28.52-.37.72-.23.49-.38.93-.46 1.3-.14.67 0 1.21.39 1.5.37.28.84.28 1.33.01.36-.2.73-.56 1.07-1.01.26-.34.5-.73.71-1.15l.01-.03.1-.2.04-.07.03-.06.03-.07.09-.18.05-.1.04-.07c.07-.14.15-.28.23-.42.03-.05.05-.1.06-.13.14-.32.11-.62-.08-.8-.27-.27-.74-.2-1.19.18-.34.28-.66.66-.96 1.12-.26.39-.5.83-.68 1.24-.29.64-.41 1.18-.36 1.64.07.58.43.98.94 1.05.39.06.82-.1 1.24-.46.32-.27.61-.62.83-1.02.1-.17.19-.36.3-.61l.05-.11.06-.14c.12-.29.27-.61.45-.96l.12-.24.08-.17.04-.09.06-.11.02-.04.02-.03.08-.12.1-.15.04-.06.02-.03.02-.03.07-.09.04-.05c.25-.33.25-.6.02-.78-.3-.23-.78-.13-1.28.24-.3.22-.62.54-.88.88-.31.41-.56.88-.71 1.3-.19.52-.23 1-.12 1.37.15.52.52.86 1.01.92.41.06.86-.12 1.28-.52.24-.22.46-.51.64-.82.07-.1.13-.22.19-.34l.08-.16.03-.07.03-.06.12-.26.02-.05c.04-.08.07-.16.1-.24.08-.2.16-.39.24-.59.05-.11.04-.22-.04-.31-.09-.1-.25-.12-.44-.06-.22.07-.45.21-.64.38-.38.34-.73.82-1.01 1.35-.19.35-.37.76-.51 1.16-.21.64-.26 1.08-.18 1.42.1.43.42.72.85.77.38.05.8-.12 1.19-.47.31-.28.59-.66.8-1.07.07-.13.14-.28.22-.45l.07-.15.04-.08.1-.2.05-.1.03-.06.03-.05.1-.16.1-.15.04-.06.09-.12.04-.06c.23-.37.28-.73.13-.98-.2-.35-.74-.41-1.23-.12-.39.23-.74.63-1.03 1.16-.22.41-.38.88-.46 1.26-.21 1-.09 1.58.43 1.78.17.07.35.09.55.05.32-.07.65-.28.96-.61.26-.27.5-.6.7-.94.12-.21.23-.42.33-.63.05-.1.1-.21.15-.32l.04-.09c.15-.31.18-.62.08-.84-.09-.18-.25-.28-.46-.28-.23-.01-.5.12-.74.36-.25.25-.5.61-.69 1.02-.15.33-.3.76-.41 1.21-.19.7-.24 1.27-.13 1.69.12.45.42.72.82.76.38.04.82-.16 1.2-.56.24-.25.46-.58.65-.94.09-.17.18-.36.29-.6l.03-.07.14-.29c.2-.39.31-.67.35-.85.06-.29.04-.52-.08-.66-.13-.16-.37-.21-.6-.15-.23.06-.48.22-.72.45-.28.28-.54.65-.75 1.06-.32.64-.55 1.43-.64 2.02-.09.57-.07.95-.03 1.1.04.14.12.27.23.36.07.06.21.14.46.01.44-.22.87-.82 1.25-1.73.29-.68.49-1.5.54-2.2.02-.3.01-.67.01-.81-.01-.25-.07-.39-.15-.45-.13-.11-.35-.05-.55.08-.22.15-.44.4-.61.67-.21.34-.48.88-.7 1.39-.34.81-.57 1.62-.64 2.16-.07.61-.02 1.08.18 1.38.19.29.52.42.9.36.34-.05.69-.26 1-.61.12-.14.25-.32.37-.52.06-.11.14-.25.27-.47l.07-.13.06-.12.07-.12.02-.03.04-.07.04-.07.1-.18c.1-.19.2-.38.3-.56.01-.03.03-.06.04-.08.15-.31.23-.61.24-.89.01-.37-.12-.65-.36-.79-.26-.16-.62-.14-.96.06-.34.2-.66.55-.9.98-.34.6-.58 1.32-.69 1.97-.15.91-.09 1.53.22 1.83.33.32.84.23 1.33-.23.37-.34.74-.9 1.02-1.57.16-.4.33-.9.52-1.52.03-.09.06-.19.1-.31l.05-.15.07-.21.04-.12.03-.08c.11-.29.15-.55.11-.77-.05-.25-.25-.4-.51-.38-.24.02-.52.17-.76.41-.27.27-.5.64-.69 1.05-.25.55-.43 1.14-.52 1.67-.17.96-.01 1.57.46 1.82.25.13.54.1.81-.06.46-.27.91-.86 1.27-1.64.19-.42.37-.92.55-1.56.04-.16.08-.31.12-.47.01-.03.02-.06.02-.09.09-.41.06-.74-.09-1-.14-.23-.38-.35-.64-.33-.27.03-.57.21-.86.51-.26.28-.5.64-.69 1.05-.26.55-.44 1.15-.52 1.68-.14.96 0 1.56.44 1.8.26.14.59.11.9-.07.41-.25.82-.74 1.16-1.39.19-.35.35-.74.5-1.24.02-.05.06-.18.09-.3.18-.66.2-1.11.1-1.39-.04-.09-.1-.16-.18-.21-.13-.08-.28-.1-.44-.06-.19.04-.38.15-.57.33-.21.2-.41.47-.6.79-.29.52-.53 1.16-.7 1.89-.22.93-.19 1.57.11 1.88.13.14.29.2.46.2.23 0 .49-.11.74-.32.29-.24.57-.61.81-1.05.19-.35.36-.79.52-1.31.14-.46.24-.94.29-1.34.09-.73-.07-1.26-.44-1.52-.25-.18-.58-.19-.88-.04-.4.19-.78.58-1.12 1.15-.22.36-.41.77-.57 1.22-.2.6-.33 1.23-.37 1.77-.04.51.06.89.3 1.12.2.19.46.25.74.17.46-.13.93-.56 1.38-1.26.3-.47.57-1.04.81-1.71.19-.52.35-1.11.48-1.74.09-.44.12-.87.08-1.23-.03-.27-.2-.4-.47-.38-.24.02-.52.17-.76.41-.33.32-.62.78-.88 1.37-.17.39-.32.84-.45 1.32-.19.72-.28 1.34-.27 1.85.02.69.27 1.16.69 1.3.1.03.2.04.31.03.34-.04.7-.26 1.02-.64.3-.36.59-.86.83-1.46.17-.42.32-.89.46-1.4.01-.04.02-.07.03-.11l.06-.25c.12-.52.18-.93.18-1.25.01-.65-.23-.99-.49-1.11-.29-.13-.62-.05-.92.22-.28.25-.55.62-.79 1.08-.24.47-.45 1.05-.62 1.72-.14.57-.22 1.1-.26 1.55-.07.76.05 1.24.36 1.46.27.19.6.18.92-.02.23-.16.46-.43.67-.77.25-.42.48-.93.69-1.52.1-.28.23-.68.32-1 .03-.11.06-.23.1-.35');
+
+      svg.appendChild(defs);
+      svg.appendChild(path);
+      svg.appendChild(logoPath);
+
+      anchor.appendChild(svg);
+
+      return anchor;
+    }
+
+    function getRowTitle(row) {
+      const heading = row.querySelector('h2, h3, h4, h5, .gear-card__title, .option__title, [data-title]');
+      if (heading?.dataset.title) {
+        return heading.dataset.title;
+      }
+      return heading?.textContent || '';
+    }
+
+    function syncHyggerForRow(row) {
+      if (!row) {
+        return;
+      }
+
+      const ctaWrap = row.querySelector('.cta-row, .option__cta, .gear-card__header');
+      const hasHygger = /\bhygger\b/i.test(getRowTitle(row));
+      const existing = row.querySelector('.btn-hygger, .btn--hygger');
+      const primaryAmazon = row.querySelector('a[href*="amazon."][href], a[href*="amzn.to"][href]');
+
+      if (hasHygger && primaryAmazon && ctaWrap) {
+        if (existing) {
+          existing.classList.add('btn', 'btn-hygger');
+          existing.classList.remove('btn--hygger');
+          ensureRelTarget(existing);
+          setButtonContent(existing, existing.querySelector('span')?.textContent || 'Shop Hygger', 'Shop Hygger');
+        } else {
+          ctaWrap.appendChild(makeHyggerButton());
+        }
+      } else if (existing) {
+        existing.remove();
+      }
+    }
+
+    function removeStrayHygger() {
+      scope.querySelectorAll('.btn-hygger, .btn--hygger').forEach((btn) => {
+        const row = btn.closest(ROW_SELECTOR);
+        if (!row || !/\bhygger\b/i.test(getRowTitle(row))) {
+          btn.remove();
+        }
+      });
+    }
+
+    function runEnhancements() {
+      const amazonButtons = Array.from(scope.querySelectorAll('a[href*="amazon."][href], a[href*="amzn.to"][href]'));
+
+      amazonButtons.forEach((anchor) => {
+        const labelCandidate = anchor.querySelector('span')?.textContent || anchor.textContent || '';
+        const normalizedLabel = labelCandidate.replace(/\s+/g, ' ').trim().toLowerCase();
+        if (!normalizedLabel.includes('amazon')) {
+          return;
+        }
+        if (!/\b(buy|shop)\b/.test(normalizedLabel)) {
+          return;
+        }
+
+        normalizeAmazonButton(anchor);
+        const row = anchor.closest(ROW_SELECTOR);
+        syncHyggerForRow(row);
+      });
+
+      scope.querySelectorAll(ROW_SELECTOR).forEach((row) => {
+        if (!row.querySelector('a[href*="amazon."][href], a[href*="amzn.to"][href]')) {
+          const stray = row.querySelector('.btn-hygger, .btn--hygger');
+          if (stray) {
+            stray.remove();
+          }
+        }
+      });
+
+      removeStrayHygger();
+    }
+
+    let scheduled = false;
+    function schedule() {
+      if (scheduled) {
+        return;
+      }
+      scheduled = true;
+      requestAnimationFrame(() => {
+        scheduled = false;
+        runEnhancements();
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', schedule);
+    } else {
+      schedule();
+    }
+
+    window.addEventListener('load', schedule);
+
+    const observer = new MutationObserver(schedule);
+    observer.observe(scope, { childList: true, subtree: true });
+  }
+
+  function initAdSlotState() {
+    const QA_MODE = false;
+    const body = document.body;
+    if (QA_MODE && body) {
+      body.setAttribute('data-ad-qa', 'true');
+    }
+
+    const slots = document.querySelectorAll('.ttg-ad-slot');
+    if (!slots.length) {
+      return;
+    }
+
+    const evaluateSlot = function(slot, ins) {
+      if (!slot || !ins) return;
+      const hasIframe = ins.querySelector('iframe');
+      const height = ins.offsetHeight;
+      if (hasIframe && height > 40) {
+        slot.classList.remove('ttg-ad-slot--empty');
+      } else {
+        slot.classList.add('ttg-ad-slot--empty');
+      }
+    };
+
+    slots.forEach(function(slot) {
+      const ins = slot.querySelector('ins.adsbygoogle');
+      if (!ins) {
+        return;
+      }
+
+      const refresh = function() { evaluateSlot(slot, ins); };
+      refresh();
+
+      const observer = new MutationObserver(refresh);
+      observer.observe(ins, { childList: true, subtree: true });
+
+      window.addEventListener('load', function() {
+        setTimeout(refresh, 1800);
+      });
+
+      window.addEventListener('ttg:consent-change', refresh);
+    });
+  }
+
+  const run = () => {
+    initQuickAnswerAccordions();
+    initFaqAccordion();
+    initGearButtons();
+    initAdSlotState();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+})();
