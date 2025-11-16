@@ -9,6 +9,18 @@
   const CYCLING_COACH_URL = '/cycling-coach/';
   const TANK_QUERY_KEYS = ['tank_g', 'tank', 'size'];
   const INCH_TO_CM = 2.54;
+  const gearJsonPromise = typeof fetch === 'function'
+    ? fetch('/data/gear.json')
+        .then((response) => {
+          if (!response.ok) throw new Error(`Failed to load gear.json: ${response.status}`);
+          return response.json();
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.warn('[Gear] gear.json fallback unavailable:', error);
+          return null;
+        })
+    : Promise.resolve(null);
 
   const TANK_PRESETS = [
     { id:'5g',   label:'5 Gallon (19 L)',    gallons:5,   liters:19,  lengthIn:16.2,   widthIn:8.4,   heightIn:10.5,  weightLbs:62 },
@@ -2603,7 +2615,21 @@
     });
   }
 
+  function hideStaticFallbacks(){
+    document.querySelectorAll('.static-gear-list').forEach((node) => {
+      node.style.display = 'none';
+    });
+  }
+
   async function start(){
+    let staticGear = null;
+    try {
+      staticGear = await gearJsonPromise;
+      if (typeof window !== 'undefined') window.ttgGearStaticData = staticGear;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn('[Gear] gear.json load failed:', error);
+    }
     if (typeof window !== 'undefined' && window.ttgGearDataPromise) {
       try {
         await window.ttgGearDataPromise;
@@ -2614,6 +2640,9 @@
     }
     await applyFilterSelectionFromQuery();
     init();
+    if (staticGear || (typeof window !== 'undefined' && window.GEAR)) {
+      hideStaticFallbacks();
+    }
   }
 
   if (document.readyState !== 'loading') start();

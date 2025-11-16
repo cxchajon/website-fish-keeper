@@ -1,0 +1,67 @@
+{
+  "heaters": [
+    {"tank": "5-10", "label": "5–10 Gallons", "name": "50W adjustable heater", "details": "Holds 76–78°F for nano tanks."},
+    {"tank": "10-20", "label": "10–20 Gallons", "name": "100W adjustable heater", "details": "Stays accurate in rooms down to ~68°F."},
+    {"tank": "20-40", "label": "20–40 Gallons", "name": "150–200W heater", "details": "Digital readouts and faster recovery for mid-size tanks."},
+    {"tank": "40-55", "label": "40–55 Gallons", "name": "200–300W heater", "details": "Sized for wider footprints; pair with flow for even heat."},
+    {"tank": "55-75", "label": "55–75 Gallons", "name": "300–500W total", "details": "Often split across two heaters for redundancy."},
+    {"tank": "75-125", "label": "75–125 Gallons", "name": "500–800W total", "details": "Use external controllers for added protection."}
+  ],
+  "filters": [
+    {"tank": "10", "label": "10 Gallons", "name": "80–100 GPH HOB", "details": "Quiet flow with sponge prefilter."},
+    {"tank": "20", "label": "20 Gallons", "name": "160–200 GPH HOB or canister", "details": "Includes biomedia for bacteria."},
+    {"tank": "29", "label": "29 Gallons", "name": "220–260 GPH canister", "details": "Spray bar for even return."},
+    {"tank": "40b", "label": "40 Breeder", "name": "300–350 GPH canister", "details": "Keeps wide tanks circulating."},
+    {"tank": "55-75", "label": "55–75 Gallons", "name": "400–500 GPH total", "details": "Split across two filters for backup."},
+    {"tank": "75-125", "label": "75–125 Gallons", "name": "6–7× turnover", "details": "High-capacity canister or dual filters."}
+  ],
+  "air": [
+    {"label": "Dual-outlet pump", "name": "4–7W adjustable", "details": "Runs two sponges or stones with check valves."},
+    {"label": "Battery backup", "name": "Portable air pump", "details": "Keeps oxygen flowing during outages."},
+    {"label": "Airline kit", "name": "Tubing and valves", "details": "Silicone tubing with check valves and flow splits."},
+    {"label": "CO₂ safety", "name": "CO₂-rated check valves", "details": "Protects regulators from back-siphon."}
+  ],
+  "lights": [
+    {"label": "20–24 inch tanks", "name": "18–24\" LED", "details": "6,500–7,500K spectrum with timer."},
+    {"label": "30 inch tanks", "name": "24–36\" programmable LED", "details": "Moderate PAR at substrate."},
+    {"label": "36 inch tanks", "name": "36–48\" LED", "details": "Full breeder coverage."},
+    {"label": "48 inch tanks", "name": "Dual 24–36\" or 48–55\"", "details": "Even spread across long tanks."},
+    {"label": "Planted focus", "name": "Full-spectrum LED", "details": "Adjustable intensity for stems and carpets."}
+  ],
+  "substrate": [
+    {"label": "Planted tanks", "name": "Nutrient-rich aquasoil", "details": "Feeds rooted plants."},
+    {"label": "Community tanks", "name": "Inert sand or gravel", "details": "Rinses clean and keeps parameters steady."},
+    {"label": "Hardscape prep", "name": "Pre-soaked wood and rinsed stone", "details": "Test rocks for carbonate fizz first."},
+    {"label": "Depth guide", "name": "2–3\" substrate bed", "details": "Gives roots and decor a stable base."}
+  ],
+  "stands": [
+    {"label": "20–29 Gallons", "name": "200–300 lb rating", "details": "Match the footprint and use leveling feet."},
+    {"label": "40 Breeder", "name": "500–650 lb rating", "details": "Supports the wider 36×18 base."},
+    {"label": "55–75 Gallons", "name": "700–900 lb rating", "details": "Look for bracing and full top support."},
+    {"label": "125 Gallons", "name": "1,200+ lb rating", "details": "Heavy-duty frame, level surface, and padding."}
+  ],
+  "waterTreatments": [
+    {"label": "Water conditioner", "name": "Chlorine/chloramine remover", "details": "Dose every water change."},
+    {"label": "Bacteria starter", "name": "Bottled nitrifiers", "details": "Seed filters after setup or cleaning."},
+    {"label": "Ammonia detoxifier", "name": "Temporary binder", "details": "Buys time during spikes."},
+    {"label": "Test kits", "name": "Liquid tests + thermometer", "details": "Track stability week to week."}
+  ],
+  "maintenanceTools": [
+    {"label": "Gravel vacuum", "name": "Siphon sized for tank", "details": "Handles routine water changes."},
+    {"label": "Algae control", "name": "Magnetic scraper/pads", "details": "Spare blades for stubborn spots."},
+    {"label": "Bucket & hoses", "name": "Dedicated set", "details": "Labeled gear prevents cross-use."},
+    {"label": "Power safety", "name": "Check valves and drip loops", "details": "Keep strips dry and protected."}
+  ],
+  "fertilizers": [
+    {"label": "Root tabs", "name": "Slow-release nutrients", "details": "Feed heavy root feeders."},
+    {"label": "Liquid fertilizer", "name": "Macro/micro mix", "details": "Dose weekly for stems and floaters."},
+    {"label": "Liquid carbon", "name": "Supplemental carbon", "details": "Start at reduced dose for sensitive plants."},
+    {"label": "Dosing tools", "name": "Spoons or pumps", "details": "Keeps dosing consistent."}
+  ],
+  "food": [
+    {"label": "Staple diet", "name": "Slow-sinking pellets/flake", "details": "Sized for community fish."},
+    {"label": "Bottom feeders", "name": "Algae wafers & sinking tabs", "details": "Protein-rich support for cleanup crew."},
+    {"label": "Treats", "name": "Frozen or freeze-dried brine/daphnia", "details": "Adds variety each week."},
+    {"label": "Feeding tip", "name": "1–2 minute portions", "details": "Offer small amounts once or twice daily."}
+  ]
+}
