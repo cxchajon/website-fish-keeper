@@ -2783,12 +2783,12 @@
     function makeHyggerButton() {
       const anchor = document.createElement('a');
       anchor.href = HYGGER_URL;
-      anchor.className = 'btn btn-hygger';
+      anchor.className = 'btn btn-hygger hygger-btn';
       anchor.setAttribute('rel', 'sponsored noopener noreferrer');
       anchor.setAttribute('target', '_blank');
 
       const span = document.createElement('span');
-      span.textContent = 'Shop Hygger';
+      span.textContent = 'Shop on Hygger';
       anchor.appendChild(span);
 
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -2860,10 +2860,10 @@
 
       if (hasHygger && primaryAmazon && ctaWrap) {
         if (existing) {
-          existing.classList.add('btn', 'btn-hygger');
+          existing.classList.add('btn', 'btn-hygger', 'hygger-btn');
           existing.classList.remove('btn--hygger');
           ensureRelTarget(existing);
-          setButtonContent(existing, existing.querySelector('span')?.textContent || 'Shop Hygger', 'Shop Hygger');
+          setButtonContent(existing, existing.querySelector('span')?.textContent || 'Shop on Hygger', 'Shop on Hygger');
         } else {
           ctaWrap.appendChild(makeHyggerButton());
         }

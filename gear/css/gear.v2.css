@@ -421,13 +421,15 @@ body.ttg-tooltip-lock {
   filter: brightness(0.95);
 }
 
-.gear-page .btn-hygger {
+.gear-page .btn-hygger,
+.gear-page .hygger-btn {
   background: linear-gradient(90deg, #1fb760 0%, #11a24f 45%, #f36b23 100%);
   color: #ffffff;
   box-shadow: 0 10px 22px -12px rgba(31, 183, 96, .35), 0 0 0 1px rgba(255, 255, 255, .08) inset;
 }
 
-.gear-page .btn-hygger:hover {
+.gear-page .btn-hygger:hover,
+.gear-page .hygger-btn:hover {
   filter: brightness(0.97);
 }
 
