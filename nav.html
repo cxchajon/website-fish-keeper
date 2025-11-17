@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://thetankguide.com/assets/img/Logo-Master-1200x630.PNG" />
-  <meta name="twitter:image:alt" content="The Tank Guide logo" />
-  <meta property="og:image" content="https://thetankguide.com/assets/img/Logo-Master-1200x630.PNG" />
+  <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
+  <meta name="twitter:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
+  <meta property="og:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="The Tank Guide logo" />
+  <meta property="og:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
   <meta charset="utf-8" />
   <meta property="og:site_name" content="The Tank Guide" />
   <!--#include virtual="/includes/schema-organization.html" -->
@@ -26,6 +26,29 @@
     "publisher": { "@id": "https://thetankguide.com/#organization" }
   }
   </script>
+  <!-- Consent Mode defaults (load FIRST) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
+  <!-- --- Google CMP (Funding Choices) START --- -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
+  <script>
+    // Required bootstrap per Google; signals CMP presence
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
+  <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
 <body>
 <header id="global-nav">
@@ -111,5 +134,96 @@
     <a href="/contact-feedback.html">Contact</a>
   </section>
 </noscript>
+<!-- === TTG Cookie Consent START === -->
+<div id="ttg-consent" class="ttg-consent" data-consent-banner>
+  <div class="ttg-consent__inner" role="dialog" aria-labelledby="ttg-consent-title" aria-describedby="ttg-consent-desc">
+    <h3 id="ttg-consent-title">Cookies & Advertising</h3>
+    <p id="ttg-consent-desc">
+      We use cookies to run this site and (if you allow) to show relevant ads from Google AdSense. You can accept all cookies, reject personalized ads, or manage preferences anytime.
+    </p>
+    <div class="ttg-consent__actions">
+      <button type="button" class="ttg-btn ttg-btn--secondary js-consent-reject" id="ttg-consent-reject">Reject (Non-personalized)</button>
+      <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-manage">Manage</button>
+      <button type="button" class="ttg-btn ttg-btn--primary js-consent-accept" id="ttg-consent-accept">Accept All</button>
+    </div>
+  </div>
+</div>
+
+<div id="ttg-consent-modal" class="ttg-consent-modal" hidden aria-modal="true" role="dialog" aria-labelledby="ttg-consent-modal-title">
+  <div class="ttg-consent-modal__panel">
+    <h3 id="ttg-consent-modal-title">Cookie Preferences</h3>
+    <form id="ttg-consent-form">
+      <label class="ttg-row">
+        <input type="checkbox" checked disabled />
+        <span><strong>Essential</strong> — required for core site functions.</span>
+      </label>
+      <label class="ttg-row">
+        <input type="checkbox" id="ttg-c-analytics" />
+        <span><strong>Analytics</strong> — understand usage (if enabled later).</span>
+      </label>
+      <label class="ttg-row">
+        <input type="checkbox" id="ttg-c-ads" />
+        <span><strong>Advertising</strong> — allow personalized ads (Google AdSense).</span>
+      </label>
+      <div class="ttg-consent-modal__actions">
+        <button type="button" class="ttg-btn ttg-btn--ghost" id="ttg-consent-cancel">Cancel</button>
+        <button type="submit" class="ttg-btn ttg-btn--primary">Save Preferences</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- === TTG Consent Banner Controller START === -->
+  <script defer src="/assets/js/consent-banner.js"></script>
+<!-- === TTG Consent Banner Controller END === -->
+
+
+<!-- === TTG CMP Consent Bridge START === -->
+<script>
+(function(){
+  // Helper: map TCF consent to our single "ads granted" flag.
+  // We consider "granted" only when Purpose 1 (storage) AND Purpose 4 (select personalised ads)
+  // are consented. If you want to allow NON-personalised ads when only Purpose 1 is granted,
+  // set allowNPA=true below.
+  var allowNPA = true; // if true, we’ll treat Purpose 1 only as "granted" for showing slots (Google will serve NPA ads).
+
+  function setAdConsent(granted){
+    // Google CMP interface (Funding Choices) — set consent for ads_storage and ad_user_data
+    var consentState = granted ? 'granted' : 'denied';
+    if (typeof gtag === 'function') {
+      gtag('consent', 'update', {
+        'ad_storage': consentState,
+        'ad_user_data': consentState,
+        'ad_personalization': consentState
+      });
+    }
+  }
+
+  function hookTCF(){
+    // Funding Choices exposes the IAB TCF v2 interface.
+    // We hook into it to map Purpose consent to Google consent mode.
+    if (typeof __tcfapi !== 'function') return;
+
+    __tcfapi('addEventListener', 2, function(tcData, success){
+      if(!success || !tcData || tcData.eventStatus !== 'tcloaded') return;
+
+      // Purpose IDs: 1 = Storage and Access, 4 = Select Personalised Ads
+      var p1 = tcData.purpose && tcData.purpose.consents ? tcData.purpose.consents[1] : false;
+      var p4 = tcData.purpose && tcData.purpose.consents ? tcData.purpose.consents[4] : false;
+
+      var granted = allowNPA ? (p1 && (p4 || true)) : (p1 && p4);
+      setAdConsent(granted);
+    });
+  }
+
+  // Initialize once Funding Choices loads the TCF stub
+  if (typeof __tcfapi === 'function') {
+    hookTCF();
+  } else {
+    window.addEventListener('tcfapiReady', hookTCF, { once: true });
+  }
+})();
+</script>
+<!-- === TTG CMP Consent Bridge END === -->
 </body>
 </html>
