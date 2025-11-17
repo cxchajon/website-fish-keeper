@@ -2739,7 +2739,7 @@ H5:
           },
           "primaryImageOfPage": {
             "@type": "ImageObject",
-            "url": "/assets/img/Logo-Master-1200x630.PNG",
+            "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
             "width": 1200,
             "height": 630
           }
