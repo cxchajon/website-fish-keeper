@@ -369,7 +369,10 @@ body.ttg-tooltip-lock {
   margin: 1rem auto 0;
 }
 /* Inline gear page styles */
-.gear-page .btn {
+.gear-page .btn,
+.gear-page .btn-gear--hygger,
+.gear-page .hygger-btn,
+.gear-page .btn-hygger {
   display: inline-flex;
   align-items: center;
   gap: .5rem;
@@ -384,7 +387,10 @@ body.ttg-tooltip-lock {
   white-space: nowrap;
 }
 
-.gear-page .btn:active {
+.gear-page .btn:active,
+.gear-page .btn-gear--hygger:active,
+.gear-page .hygger-btn:active,
+.gear-page .btn-hygger:active {
   transform: translateY(1px);
 }
 
@@ -425,37 +431,50 @@ body.ttg-tooltip-lock {
 .btn-gear--hygger,
 .hygger-btn,
 .btn-hygger {
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.5rem;
-  border-radius: 999px;
-  background: #1fa672;
+  background: linear-gradient(135deg, #1fa672 0%, #25c48c 100%);
   color: #041018;
-  font-weight: 700;
-  text-decoration: none;
-  white-space: nowrap;
-  box-shadow: 0 10px 22px -12px rgba(31, 166, 114, .45), 0 0 0 1px rgba(0, 0, 0, .08) inset;
+  box-shadow: 0 10px 22px -12px rgba(31, 166, 114, .5), 0 0 0 1px rgba(0, 0, 0, .1) inset;
   border: none;
 }
 
 .btn-gear--hygger:hover,
-.btn-gear--hygger:focus-visible,
 .hygger-btn:hover,
+.btn-hygger:hover {
+  filter: brightness(0.95);
+  box-shadow: 0 12px 26px -14px rgba(31, 166, 114, .55), 0 0 0 1px rgba(0, 0, 0, .12) inset;
+  transform: translateY(-1px);
+}
+
+.btn-gear--hygger:focus-visible,
 .hygger-btn:focus-visible,
-.btn-hygger:hover,
 .btn-hygger:focus-visible {
-  background: #199960;
-  color: #041018;
-  filter: none;
-  outline: 2px solid rgba(255, 255, 255, .2);
+  outline: 2px solid rgba(255, 255, 255, .6);
   outline-offset: 2px;
+}
+
+.btn-gear--hygger:active,
+.hygger-btn:active,
+.btn-hygger:active {
+  box-shadow: 0 8px 18px -12px rgba(31, 166, 114, .5), 0 0 0 1px rgba(0, 0, 0, .1) inset;
 }
 
 .gear-card__actions .btn-gear--hygger,
 .gear-card__actions .hygger-btn,
 .gear-card__actions .btn-hygger {
-  margin-top: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.gear-card__actions .btn-gear + .btn-gear--hygger,
+.gear-card__actions .btn-gear + .hygger-btn,
+.gear-card__actions .btn-gear + .btn-hygger,
+.gear-card__actions .btn-gear--hygger + .btn-gear--hygger,
+.gear-card__actions .hygger-btn + .hygger-btn,
+.gear-card__actions .btn-hygger + .btn-hygger,
+.gear-card__actions .btn-gear--hygger + .hygger-btn,
+.gear-card__actions .btn-gear--hygger + .btn-hygger,
+.gear-card__actions .hygger-btn + .btn-hygger {
+  margin-top: 0.4rem;
 }
 
 .gear-page .btn:focus-visible {
