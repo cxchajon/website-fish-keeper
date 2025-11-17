@@ -279,6 +279,21 @@
       background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
       border-radius:2px; opacity:.95;
     }
+    .blogs-ad-slot{
+      margin: 22px 0 24px;
+    }
+    .blogs-ad-frame{
+      border-radius: 16px;
+      padding: 12px 10px;
+      background: radial-gradient(circle at top, rgba(255,255,255,0.06), rgba(0,0,0,0.38));
+      box-shadow:
+        0 10px 26px rgba(0,0,0,0.45),
+        inset 0 0 0 1px rgba(255,255,255,0.06);
+      min-height: 260px; /* helps reduce CLS while the responsive unit loads */
+    }
+    .blogs-ad-frame ins.adsbygoogle{
+      display:block !important;
+    }
   </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (load FIRST) -->
@@ -322,7 +337,9 @@
     })();
   </script>
   <!-- --- Google CMP (Funding Choices) END --- -->
-</head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
+          crossorigin="anonymous"></script>
+  </head>
 <body>
   <div id="site-nav"></div>
 
@@ -397,6 +414,20 @@
         </article>
       </div>
     </section>
+    <section class="blogs-ad-slot" aria-label="Advertisement: The Tank Guide blog — above Algae &amp; Problem Solving">
+      <div class="blogs-ad-frame">
+        <!-- ttg-blogs-above-algae-responsive -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-9905718149811880"
+             data-ad-slot="8429932627"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+    </section>
 
     <section id="topic-algae" class="topic-section topic-algae">
       <header class="topic-head">
@@ -424,6 +455,21 @@
             <p class="card-excerpt">Spot-dosing, lighting, and flow tweaks that finally shut down stubborn BBA.</p>
           </div>
         </article>
+      </div>
+    </section>
+
+    <section class="blogs-ad-slot" aria-label="Advertisement: The Tank Guide blog — above Product Highlights">
+      <div class="blogs-ad-frame">
+        <!-- ttg-blogs-above-product-highlights-responsive -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-9905718149811880"
+             data-ad-slot="4645889847"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
       </div>
     </section>
 
