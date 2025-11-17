@@ -85,11 +85,60 @@
   <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
   <meta name="twitter:image:alt" content="The Tank Guide logo (1200x630)." />
 
-  <!--#include virtual="/includes/schema-organization.html" -->
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://thetankguide.com/#organization",
+          "name": "FishKeepingLifeCo",
+          "url": "https://thetankguide.com",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
+            "width": 1200,
+            "height": 630
+          },
+          "alternateName": [
+            "FishKeepingLifeCo",
+            "Fish Keeping Life Co",
+            "fishkeepinglife"
+          ],
+          "description": "FishKeepingLifeCo is the educational publishing brand behind The Tank Guide and uses the X handle @fishkeepinglife for social updates.",
+          "sameAs": [
+            "https://www.tiktok.com/@fishkeepinglifeco",
+            "https://www.instagram.com/fishkeepinglifeco",
+            "https://www.youtube.com/@FishKeepingLifeCo",
+            "https://x.com/fishkeepinglife",
+            "https://www.facebook.com/FishKeepingLifeCo",
+            "https://www.threads.com/@fishkeepinglifeco?igshid=NTc4MTIwNjQ2YQ==",
+            "https://www.reddit.com/u/FishKeepingLifeCo/s/Q4JV29oiSg"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://thetankguide.com/#website",
+          "url": "https://thetankguide.com",
+          "name": "The Tank Guide",
+          "description": "The Tank Guide is an educational aquarium website offering beginner-friendly guides, interactive tools, and calculators to help freshwater hobbyists plan and maintain calm, healthy home aquariums.",
+          "publisher": {
+            "@id": "https://thetankguide.com/#organization"
+          },
+          "inLanguage": "en-US",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://thetankguide.com/search?q={search_term_string}"
+            },
+            "query-input": {
+              "@type": "PropertyValueSpecification",
+              "valueRequired": true,
+              "valueName": "search_term_string"
+            }
+          }
+        },
         {
           "@type": "CollectionPage",
           "@id": "https://thetankguide.com/gear/#webpage",
