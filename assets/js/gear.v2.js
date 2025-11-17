@@ -936,18 +936,22 @@
     const title = String(addon.title || '').trim();
     if (!title) return null;
     const href = String(addon.amazonUrl || addon.href || '').trim();
+    const isHygger = title.toLowerCase().includes('hygger');
     const notes = String(addon.notes || '').trim();
     const eyebrow = String(addon.eyebrow || 'Recommended add-on').trim() || 'Recommended add-on';
     const hasValidHref = /^https?:\/\//i.test(href);
-    const cta = hasValidHref
-      ? `<a href=\"${escapeHTML(href)}\" target=\"_blank\" rel=\"sponsored noopener noreferrer\" class=\"btn\" aria-label=\"Buy ${escapeHTML(title)} on Amazon\">Buy on Amazon</a>`
+    const amazonCta = hasValidHref
+      ? `<a href=\"${escapeHTML(href)}\" target=\"_blank\" rel=\"sponsored noopener noreferrer\" class=\"btn btn-amazon btn-amazon-affiliate btn-gear\" aria-label=\"Buy ${escapeHTML(title)} on Amazon\">Buy on Amazon</a>`
       : '<button class=\"btn\" type=\"button\" aria-disabled=\"true\" title=\"Link coming soon\">Buy on Amazon</button>';
+    const hyggerCta = isHygger
+      ? `<a href=\"${HYGGER_URL}\" target=\"_blank\" rel=\"nofollow sponsored noopener\" class=\"btn-gear hygger-btn\">Shop on Hygger</a>`
+      : '';
     const card = el('div',{ class:'gear-addon' });
     card.innerHTML = `
       <p class=\"gear-addon__eyebrow\">${escapeHTML(eyebrow)}</p>
       <h3 class=\"gear-addon__title\">${escapeHTML(title)}</h3>
       ${notes ? `<p class=\"gear-addon__notes\">${escapeHTML(notes)}</p>` : ''}
-      ${cta}
+      <div class=\"gear-card__actions\">${amazonCta}${hyggerCta}</div>
     `;
     return card;
   }
@@ -1047,7 +1051,7 @@
       <div class="option__title">${headingHtml}</div>
       ${noteText ? `<p class="option__note">${escapeHTML(noteText)}</p>` : ''}
       ${context === 'stands' && dimensionsLite ? `<p class="option__meta">Dimensions: ${escapeHTML(dimensionsLite)}</p>` : ''}
-      <div class="option__actions">${actionsHtml}</div>
+      <div class="option__actions gear-card__actions">${actionsHtml}</div>
     `;
     return row;
   }
@@ -1367,6 +1371,7 @@
       if (!title) return null;
       const notes = String(accessory?.notes ?? accessory?.note ?? '').trim();
       const href = String((accessory?.href || '').trim());
+      const isHygger = title.toLowerCase().includes('hygger');
       const rel = String(accessory?.rel || 'sponsored noopener noreferrer').trim() || 'sponsored noopener noreferrer';
       const card = el('article',{ class:'air-accessory-card' });
       card.appendChild(el('h3',{ class:'air-accessory-card__title' }, escapeHTML(title)));
@@ -1374,8 +1379,11 @@
         card.appendChild(el('p',{ class:'air-accessory-card__description' }, escapeHTML(notes)));
       }
       if (href) {
-        const actions = el('div',{ class:'air-accessory-card__actions' });
-        actions.appendChild(el('a',{ class:'btn', href, target:'_blank', rel },'Buy on Amazon'));
+        const actions = el('div',{ class:'air-accessory-card__actions gear-card__actions' });
+        actions.appendChild(el('a',{ class:'btn btn-amazon btn-amazon-affiliate btn-gear', href, target:'_blank', rel },'Buy on Amazon'));
+        if (isHygger) {
+          actions.appendChild(el('a',{ class:'btn-gear hygger-btn', href:HYGGER_URL, target:'_blank', rel:'nofollow sponsored noopener' },'Shop on Hygger'));
+        }
         card.appendChild(actions);
       }
       return card;
@@ -1861,6 +1869,7 @@
   function createExtrasItem(item = {}){
     const option = el('div',{ class:'option extras-item' });
     const title = (item?.title || '').trim();
+    const isHygger = title.toLowerCase().includes('hygger');
     const notes = (item?.notes || '').trim();
     if (title){
       option.appendChild(el('div',{ class:'option__title' }, escapeHTML(title)));
@@ -1868,13 +1877,13 @@
     if (notes){
       option.appendChild(el('p',{ class:'option__note extras-item__note' }, escapeHTML(notes)));
     }
-    const actions = el('div',{ class:'option__actions extras-item__actions' });
+    const actions = el('div',{ class:'option__actions extras-item__actions gear-card__actions' });
     const href = (item?.href || '').trim();
     const hasValidHref = /^https?:\/\//i.test(href);
     if (hasValidHref){
       actions.appendChild(
         el('a',{
-          class:'btn',
+          class:'btn btn-amazon btn-amazon-affiliate btn-gear',
           href:href,
           target:'_blank',
           rel:'sponsored noopener noreferrer',
@@ -1889,6 +1898,16 @@
           'aria-disabled':'true',
           title:'Link coming soon'
         },'Buy on Amazon')
+      );
+    }
+    if (isHygger){
+      actions.appendChild(
+        el('a',{
+          class:'btn-gear hygger-btn',
+          href:HYGGER_URL,
+          target:'_blank',
+          rel:'nofollow sponsored noopener'
+        },'Shop on Hygger')
       );
     }
     option.appendChild(actions);

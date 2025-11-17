@@ -26,10 +26,16 @@
     const href = AffiliateLinkBuilder.buildFromASIN(asin) || item.Amazon_Link || "";
     const img  = item.Image_URL || "";
     const name = item.Product_Name || "Unnamed";
+    const isHygger = name.toLowerCase().includes('hygger');
     const desc = item.Description || "";
     const notes= item.Notes || "";
     const range= item.Tank_Size_Range || "";
     const watt = item.Wattage || "";
+    const hyggerButton = isHygger
+      ? `
+            <a class="btn-gear hygger-btn" href="https://www.hygger-online.com/?ref=FKLC" target="_blank" rel="nofollow sponsored noopener">Shop on Hygger</a>
+          `
+      : '';
     return `
       <article class="gear-card" data-card data-category="Heating" data-asin="${asin}">
         <div class="gear-card__media">
@@ -40,15 +46,16 @@
           <p class="gear-card__desc">${desc}</p>
           <p class="gear-card__meta">
             ${range ? `<span class="badge">${range}</span>`:``}
-            ${watt ? `<span class="badge">${watt}</span>`:``}
-            <span class="badge">Heating</span>
-          </p>
-          ${notes ? `<p class="gear-card__notes">${notes}</p>`:``}
-          <div class="gear-card__actions">
-            <a class="btn btn-amazon buy-amazon" data-action="buy-amazon" href="${href}" target="_blank" rel="sponsored noopener noreferrer">Buy on Amazon</a>
-          </div>
+          ${watt ? `<span class="badge">${watt}</span>`:``}
+          <span class="badge">Heating</span>
+        </p>
+        ${notes ? `<p class="gear-card__notes">${notes}</p>`:``}
+        <div class="gear-card__actions">
+          <a class="btn btn-amazon buy-amazon" data-action="buy-amazon" href="${href}" target="_blank" rel="sponsored noopener noreferrer">Buy on Amazon</a>
+          ${hyggerButton}
         </div>
-      </article>
+      </div>
+    </article>
     `;
   }
 
