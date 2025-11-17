@@ -108,6 +108,11 @@
     'ALEGI Aquarium Air Pump Accessories Set 25 Feet Airline Tubing with 6 Check Valves, 6 Control Valve and 40 Connectors for Fish Tank White'
   ];
 
+  function isHyggerProduct(productTitle) {
+    if (!productTitle) return false;
+    return String(productTitle).toLowerCase().includes('hygger');
+  }
+
   const SUBSCRIPT_DIGIT_MAP = {
     '₀': '0',
     '₁': '1',
@@ -936,7 +941,7 @@
     const title = String(addon.title || '').trim();
     if (!title) return null;
     const href = String(addon.amazonUrl || addon.href || '').trim();
-    const isHygger = title.toLowerCase().includes('hygger');
+    const isHygger = isHyggerProduct(title);
     const notes = String(addon.notes || '').trim();
     const eyebrow = String(addon.eyebrow || 'Recommended add-on').trim() || 'Recommended add-on';
     const hasValidHref = /^https?:\/\//i.test(href);
@@ -944,7 +949,7 @@
       ? `<a href=\"${escapeHTML(href)}\" target=\"_blank\" rel=\"sponsored noopener noreferrer\" class=\"btn btn-amazon btn-amazon-affiliate btn-gear\" aria-label=\"Buy ${escapeHTML(title)} on Amazon\">Buy on Amazon</a>`
       : '<button class=\"btn\" type=\"button\" aria-disabled=\"true\" title=\"Link coming soon\">Buy on Amazon</button>';
     const hyggerCta = isHygger
-      ? `<a href=\"${HYGGER_URL}\" target=\"_blank\" rel=\"nofollow sponsored noopener\" class=\"btn-gear hygger-btn\">Shop on Hygger</a>`
+      ? `<a href=\"${HYGGER_URL}\" target=\"_blank\" rel=\"nofollow sponsored noopener\" class=\"btn-gear btn-gear--hygger hygger-btn\">Shop on Hygger</a>`
       : '';
     const card = el('div',{ class:'gear-addon' });
     card.innerHTML = `
@@ -1001,9 +1006,8 @@
     const rawTitleText = stripUrls(option?.title || '').trim();
     const labelText = normalizeOptionTitle(rawLabelText);
     const titleText = normalizeOptionTitle(rawTitleText);
-    const brandLower = (option.brand || '').toLowerCase();
-    const productTitleLower = (option.title || option.label || '').toLowerCase();
-    const isHygger = productTitleLower.includes('hygger') || brandLower.includes('hygger');
+    const productTitle = option.title || option.label || '';
+    const isHygger = isHyggerProduct(productTitle);
     const displayTitle = titleText || labelText || 'this item';
     const headingHtml = labelText && titleText
       ? `<strong>${escapeHTML(labelText)} — ${escapeHTML(titleText)}</strong>`
@@ -1037,7 +1041,7 @@
       ? `
         <a
           href="${escapeHTML(hyggerUrl)}"
-          class="btn-gear hygger-btn"
+          class="btn-gear btn-gear--hygger hygger-btn"
           target="_blank"
           rel="nofollow sponsored noopener"
         >
@@ -1371,7 +1375,7 @@
       if (!title) return null;
       const notes = String(accessory?.notes ?? accessory?.note ?? '').trim();
       const href = String((accessory?.href || '').trim());
-      const isHygger = title.toLowerCase().includes('hygger');
+      const isHygger = isHyggerProduct(title);
       const rel = String(accessory?.rel || 'sponsored noopener noreferrer').trim() || 'sponsored noopener noreferrer';
       const card = el('article',{ class:'air-accessory-card' });
       card.appendChild(el('h3',{ class:'air-accessory-card__title' }, escapeHTML(title)));
@@ -1382,7 +1386,7 @@
         const actions = el('div',{ class:'air-accessory-card__actions gear-card__actions' });
         actions.appendChild(el('a',{ class:'btn btn-amazon btn-amazon-affiliate btn-gear', href, target:'_blank', rel },'Buy on Amazon'));
         if (isHygger) {
-          actions.appendChild(el('a',{ class:'btn-gear hygger-btn', href:HYGGER_URL, target:'_blank', rel:'nofollow sponsored noopener' },'Shop on Hygger'));
+          actions.appendChild(el('a',{ class:'btn-gear btn-gear--hygger hygger-btn', href:HYGGER_URL, target:'_blank', rel:'nofollow sponsored noopener' },'Shop on Hygger'));
         }
         card.appendChild(actions);
       }
@@ -1869,7 +1873,7 @@
   function createExtrasItem(item = {}){
     const option = el('div',{ class:'option extras-item' });
     const title = (item?.title || '').trim();
-    const isHygger = title.toLowerCase().includes('hygger');
+    const isHygger = isHyggerProduct(title);
     const notes = (item?.notes || '').trim();
     if (title){
       option.appendChild(el('div',{ class:'option__title' }, escapeHTML(title)));
@@ -1903,7 +1907,7 @@
     if (isHygger){
       actions.appendChild(
         el('a',{
-          class:'btn-gear hygger-btn',
+          class:'btn-gear btn-gear--hygger hygger-btn',
           href:HYGGER_URL,
           target:'_blank',
           rel:'nofollow sponsored noopener'
@@ -2793,146 +2797,6 @@
       observer.observe(trigger, { attributes: true, attributeFilter: ['aria-expanded'] });
     });
   }
-
-  function initGearButtons() {
-    const scope = document.querySelector('.gear-page');
-    if (!scope) {
-      return;
-    }
-
-    const ROW_SELECTOR = '.option, .gear-addon, .gear-card';
-    const XLINK_NS = 'http://www.w3.org/1999/xlink';
-
-    function ensureRelTarget(anchor) {
-      const relTokens = new Set((anchor.getAttribute('rel') || '').split(/\s+/).filter(Boolean));
-      ['sponsored', 'noopener', 'noreferrer'].forEach((token) => relTokens.add(token));
-      anchor.setAttribute('rel', Array.from(relTokens).join(' '));
-      anchor.setAttribute('target', '_blank');
-    }
-
-    function setButtonContent(anchor, text, defaultText) {
-      const label = text?.trim() || defaultText;
-      anchor.textContent = '';
-      const span = document.createElement('span');
-      span.textContent = label;
-      anchor.appendChild(span);
-    }
-
-    function normalizeAmazonButton(anchor) {
-      ensureRelTarget(anchor);
-      anchor.classList.add('btn', 'btn-amazon');
-      anchor.classList.remove('btn--amazon');
-      anchor.title = anchor.title || 'Shop on Amazon';
-      setButtonContent(anchor, anchor.querySelector('span')?.textContent || anchor.textContent || 'Shop Amazon', 'Shop Amazon');
-    }
-
-    function makeHyggerButton() {
-      const anchor = document.createElement('a');
-      anchor.href = HYGGER_URL;
-      anchor.className = 'btn-gear hygger-btn';
-      anchor.setAttribute('rel', 'nofollow sponsored noopener');
-      anchor.setAttribute('target', '_blank');
-      anchor.textContent = 'Shop on Hygger';
-      return anchor;
-    }
-
-    function getRowTitle(row) {
-      const heading = row.querySelector('h2, h3, h4, h5, .gear-card__title, .option__title, [data-title]');
-      if (heading?.dataset.title) {
-        return heading.dataset.title;
-      }
-      return heading?.textContent || '';
-    }
-
-    function syncHyggerForRow(row) {
-      if (!row) {
-        return;
-      }
-
-      const ctaWrap = row.querySelector('.cta-row, .option__cta, .gear-card__header');
-      const hasHygger = /\bhygger\b/i.test(getRowTitle(row));
-      const existing = row.querySelector('.hygger-btn, .btn-hygger, .btn--hygger');
-      const primaryAmazon = row.querySelector('a[href*="amazon."][href], a[href*="amzn.to"][href]');
-
-      if (hasHygger && primaryAmazon && ctaWrap) {
-        if (existing) {
-          existing.className = 'btn-gear hygger-btn';
-          existing.href = HYGGER_URL;
-          existing.setAttribute('rel', 'nofollow sponsored noopener');
-          existing.setAttribute('target', '_blank');
-          existing.textContent = 'Shop on Hygger';
-          primaryAmazon.insertAdjacentElement('afterend', existing);
-        } else {
-          primaryAmazon.insertAdjacentElement('afterend', makeHyggerButton());
-        }
-      } else if (existing) {
-        existing.remove();
-      }
-    }
-
-    function removeStrayHygger() {
-      scope.querySelectorAll('.hygger-btn, .btn-hygger, .btn--hygger').forEach((btn) => {
-        const row = btn.closest(ROW_SELECTOR);
-        if (!row || !/\bhygger\b/i.test(getRowTitle(row))) {
-          btn.remove();
-        }
-      });
-    }
-
-    function runEnhancements() {
-      const amazonButtons = Array.from(scope.querySelectorAll('a[href*="amazon."][href], a[href*="amzn.to"][href]'));
-
-      amazonButtons.forEach((anchor) => {
-        const labelCandidate = anchor.querySelector('span')?.textContent || anchor.textContent || '';
-        const normalizedLabel = labelCandidate.replace(/\s+/g, ' ').trim().toLowerCase();
-        if (!normalizedLabel.includes('amazon')) {
-          return;
-        }
-        if (!/\b(buy|shop)\b/.test(normalizedLabel)) {
-          return;
-        }
-
-        normalizeAmazonButton(anchor);
-        const row = anchor.closest(ROW_SELECTOR);
-        syncHyggerForRow(row);
-      });
-
-      scope.querySelectorAll(ROW_SELECTOR).forEach((row) => {
-        if (!row.querySelector('a[href*="amazon."][href], a[href*="amzn.to"][href]')) {
-          const stray = row.querySelector('.hygger-btn, .btn-hygger, .btn--hygger');
-          if (stray) {
-            stray.remove();
-          }
-        }
-      });
-
-      removeStrayHygger();
-    }
-
-    let scheduled = false;
-    function schedule() {
-      if (scheduled) {
-        return;
-      }
-      scheduled = true;
-      requestAnimationFrame(() => {
-        scheduled = false;
-        runEnhancements();
-      });
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', schedule);
-    } else {
-      schedule();
-    }
-
-    window.addEventListener('load', schedule);
-
-    const observer = new MutationObserver(schedule);
-    observer.observe(scope, { childList: true, subtree: true });
-  }
-
   function initAdSlotState() {
     const QA_MODE = false;
     const body = document.body;
@@ -2979,7 +2843,6 @@
   const run = () => {
     initQuickAnswerAccordions();
     initFaqAccordion();
-    initGearButtons();
     initAdSlotState();
   };
 
