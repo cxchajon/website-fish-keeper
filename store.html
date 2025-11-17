@@ -3,12 +3,12 @@
 <html lang="en">
 <head>
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://thetankguide.com/assets/img/Logo-Master-1200x630.PNG" />
-  <meta name="twitter:image:alt" content="The Tank Guide logo" />
-  <meta property="og:image" content="https://thetankguide.com/assets/img/Logo-Master-1200x630.PNG" />
+  <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
+  <meta name="twitter:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
+  <meta property="og:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="The Tank Guide logo" />
+  <meta property="og:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
   <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
   <!-- Meta -->
   <meta charset="UTF-8" />
@@ -35,67 +35,8 @@
 
   <!-- Site CSS (keep your current version number) -->
   <link rel="stylesheet" href="/css/style.css?v=1.0.10" />
+  <link rel="stylesheet" href="/css/store.css?v=1.0.0" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
-
-  <!-- Page-scoped styles (do not affect other pages) -->
-  <style>
-    .store-page { --gap: 1.25rem; --radius: 14px; --wrap: 1040px; }
-    .store-wrap { max-width: var(--wrap); margin: 0 auto; padding: 24px 16px 64px; }
-
-    /* Header */
-    .store-hero { text-align: left; margin: 0 0 24px; display: grid; gap: 6px; }
-    .store-hero .title { font-size: clamp(26px, 3.2vw, 40px); line-height: 1.1; margin: 0; }
-    .store-hero .sub { color: #7a8390; font-size: clamp(14px, 1.6vw, 16px); margin: 0; }
-
-    /* Shelf + Product card */
-    .shelf { display: grid; gap: var(--gap); }
-    .product {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: var(--gap);
-      background: rgba(255,255,255,0.08);
-      -webkit-backdrop-filter: blur(8px);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: var(--radius);
-      padding: 16px;
-    }
-    .product .media {
-      aspect-ratio: 3/4;
-      border-radius: calc(var(--radius) - 4px);
-      overflow: hidden;
-      background: #0e1116;
-      display: grid;
-      place-items: center;
-    }
-    .product .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-    .product .details { display: grid; gap: 10px; align-content: start; }
-    .product .kicker { letter-spacing: .08em; text-transform: uppercase; font-size: 12px; color: #9aa3af; }
-    .product h2 { font-size: clamp(20px, 2.8vw, 28px); margin: 0; line-height: 1.2; }
-    .product .desc { color: #c8d0da; font-size: 15px; }
-    .product .bullets { margin: 6px 0 0; padding-left: 18px; color: #c8d0da; }
-    .product .meta { color: #9aa3af; font-size: 13px; }
-
-    .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 11px 16px; border-radius: 12px; font-weight: 600; text-decoration: none;
-      border: 1px solid transparent; cursor: pointer;
-    }
-    .btn.primary { background: #2dd4bf; color: #0b0f14; }
-    .btn.primary:hover { filter: brightness(0.95); }
-    .btn.secondary { background: transparent; color: #c8d0da; border-color: rgba(255,255,255,0.18); }
-    .note { color: #9aa3af; font-size: 12px; margin-top: 4px; }
-    .affiliate-disclaimer { margin: 12px 0 0; font-size: 0.9em; color: #9aa3af; }
-
-    /* Responsive: two columns on medium+ */
-    @media (min-width: 760px) {
-      .product { grid-template-columns: 360px 1fr; padding: 20px; }
-    }
-    /* Slightly wider wrap on XL */
-    @media (min-width: 1200px) { .store-wrap { max-width: 1080px; } }
-  </style>
 
   <!-- JSON-LD (WebPage + Breadcrumbs) -->
   <script type="application/ld+json">
@@ -159,7 +100,7 @@
     <!-- Header -->
     <header class="store-hero">
       <h1 class="title">Store</h1>
-      <p class="sub">The official store of FishKeepingLifeCo.</p>
+      <p class="sub">Official book store for the Life in Balance collection from FishKeepingLifeCo.</p>
     </header>
 
     <!-- Shelf -->
