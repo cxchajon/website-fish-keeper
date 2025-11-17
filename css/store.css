@@ -178,6 +178,55 @@
   }
 }
 
+@media (min-width: 900px) {
+  main[aria-labelledby="store-title"] {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+  }
+
+  .page--store .store-page {
+    padding: 40px 24px 96px;
+  }
+
+  .page--store .shelf {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem;
+    align-items: flex-start;
+  }
+
+  .page--store .product {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 24px;
+    height: 100%;
+  }
+
+  .page--store .product .details {
+    gap: 14px;
+  }
+
+  .page--store .product h2 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .page--store .product .desc {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+  }
+
+  .page--store .store-faqs {
+    margin-top: 3rem;
+    margin-bottom: 4rem;
+  }
+
+  .page--store .store-faqs details {
+    margin: 1rem 0;
+  }
+}
+
 .page--store .store-faqs {
   margin: 32px 16px 40px;
   background: rgba(255, 255, 255, 0.05);
@@ -185,24 +234,34 @@
   border-radius: var(--radius);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
   color: #e5e7eb;
+  max-width: 60rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.page--store .store-faqs .card__header h2 {
+  margin: 0 0 10px;
+  font-size: 1.25rem;
 }
 
 .page--store .store-faqs .card__body {
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
 .page--store .store-faqs details {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: calc(var(--radius) - 4px);
-  padding: 12px 14px;
+  padding: 14px 16px;
+  margin: 0.5rem 0;
 }
 
 .page--store .store-faqs summary {
   font-weight: 700;
   cursor: pointer;
   list-style: none;
+  line-height: 1.4;
 }
 
 .page--store .store-faqs summary::-webkit-details-marker {
@@ -212,4 +271,10 @@
 .page--store .store-faq-body {
   margin-top: 8px;
   color: #c8d0da;
+}
+
+.page--store .store-faqs .store-faq-body p {
+  margin: 0.4rem 0 0;
+  line-height: 1.6;
+  max-width: 65ch;
 }
