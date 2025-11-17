@@ -221,12 +221,6 @@
         "module": false
       },
       {
-        "src": "https://thetankguide.com/assets/js/consent-banner.js",
-        "async": false,
-        "defer": true,
-        "module": false
-      },
-      {
         "src": null,
         "async": false,
         "defer": false,

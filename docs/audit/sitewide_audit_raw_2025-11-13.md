@@ -5841,7 +5841,7 @@ H2:
 ### 3. Analytics, Consent & Ads Scripts
 - GA4 / analytics present? no
 - Cloudflare analytics present? no
-- Consent / CMP script present? yes — <script src="/assets/js/consent-banner.js">
+ - Consent / CMP script present? legacy TTG consent banner script noted at the time
 - Google CMP (Funding Choices) present? no
 - AdSense global script present? no
 
