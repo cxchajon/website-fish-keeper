@@ -1,6 +1,63 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <script>
+    (function() {
+      var STORE_KEY = 'ttgConsentV2';
+      var EXP_DAYS = 365;
+      var LEGAL_PATHS = ['/privacy-legal.html', '/terms.html', '/copyright-dmca.html'];
+      var ON_LEGAL_PAGE = LEGAL_PATHS.indexOf(location.pathname) !== -1;
+
+      function now() { return Date.now(); }
+
+      function readStoredConsent() {
+        try {
+          var direct = localStorage.getItem(STORE_KEY);
+          if (direct) return JSON.parse(direct);
+
+          var keys = Object.keys(localStorage || {});
+          var key = keys.find(function(k) { return /ttg.*consent/i.test(k); }) || 'ttgConsent';
+          var raw = localStorage.getItem(key);
+          if (!raw) return null;
+          return JSON.parse(raw);
+        } catch (e) { return null; }
+      }
+
+      function loadConsent() {
+        try {
+          var stored = readStoredConsent();
+          if (!stored) return null;
+          if (stored.ts && (now() - (stored.ts || 0)) > EXP_DAYS * 24 * 3600 * 1000) return null;
+          if (typeof stored.ad_storage === 'string') return stored;
+          return {
+            ad_storage: stored.advertising === true ? 'granted' : 'denied',
+            analytics_storage: stored.analytics === true ? 'granted' : 'denied',
+            ad_user_data: stored.advertising === true ? 'granted' : 'denied',
+            ad_personalization: stored.advertising === true ? 'granted' : 'denied',
+            ts: stored.ts || now()
+          };
+        } catch (e) { return null; }
+      }
+
+      var saved = ON_LEGAL_PAGE ? null : loadConsent();
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      window.gtag = window.gtag || gtag;
+
+      var defaultGranted = false;
+
+      gtag('consent', 'default', {
+        ad_storage: (saved ? saved.ad_storage : (defaultGranted ? 'granted' : 'denied')),
+        analytics_storage: (saved ? saved.analytics_storage : (defaultGranted ? 'granted' : 'denied')),
+        ad_user_data: (saved ? saved.ad_user_data : (defaultGranted ? 'granted' : 'denied')),
+        ad_personalization: (saved ? saved.ad_personalization : (defaultGranted ? 'granted' : 'denied'))
+      });
+
+      gtag('set', 'ads_data_redaction', true);
+      gtag('set', 'url_passthrough', true);
+    })();
+  </script>
   <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
   <meta charset="utf-8" />
   <title>Fish Keeping Gear Guide | The Tank Guide</title>
@@ -12,9 +69,22 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/Logo-Master-180x180.PNG">
   <link rel="apple-touch-icon" sizes="512x512" href="/assets/img/Logo-Master-512x512.PNG">
-
+  <meta property="og:type" content="website" />
   <meta property="og:site_name" content="The Tank Guide" />
-  
+  <meta property="og:title" content="Fish Keeping Gear Guide | The Tank Guide">
+  <meta property="og:description" content="Get a complete aquarium gear list for your freshwater tank. Our beginner-friendly guide covers filters, heaters, lighting, and test kits.">
+  <meta property="og:url" content="https://thetankguide.com/gear/">
+  <meta property="og:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="The Tank Guide logo (1200x630)." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Fish Keeping Gear Guide | The Tank Guide">
+  <meta name="twitter:description" content="Get a complete aquarium gear list for your freshwater tank. Our beginner-friendly guide covers filters, heaters, lighting, and test kits.">
+  <meta name="twitter:url" content="https://thetankguide.com/gear/">
+  <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
+  <meta name="twitter:image:alt" content="The Tank Guide logo (1200x630)." />
+
   <!--#include virtual="/includes/schema-organization.html" -->
   <script type="application/ld+json">
     {
@@ -103,21 +173,8 @@
       ]
     }
   </script>
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="The Tank Guide" />
-  <meta property="og:title" content="Fish Keeping Gear Guide | The Tank Guide">
-  <meta property="og:description" content="Get a complete aquarium gear list for your freshwater tank. Our beginner-friendly guide covers filters, heaters, lighting, and test kits.">
-  <meta property="og:url" content="https://thetankguide.com/gear/">
-  <meta property="og:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="The Tank Guide logo (1200x630)." />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Fish Keeping Gear Guide | The Tank Guide">
-  <meta name="twitter:description" content="Get a complete aquarium gear list for your freshwater tank. Our beginner-friendly guide covers filters, heaters, lighting, and test kits.">
-  <meta name="twitter:url" content="https://thetankguide.com/gear/">
-  <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
-  <meta name="twitter:image:alt" content="The Tank Guide logo (1200x630)." />
+
+  
   <link rel="preconnect" href="https://pagead2.googlesyndication.com">
   <link rel="preconnect" href="https://googleads.g.doubleclick.net">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -131,7 +188,7 @@
     </style>
   </noscript>
   <script defer src="/js/nav.js?v=1.1.0"></script>
-  <!-- Consent Mode defaults (load FIRST) -->
+  <!-- Consent Mode experience (post-default handlers) -->
   <script src="/assets/js/consent-mode.js" defer></script>
   <!-- Google tag (gtag.js) — GA4 -->
   <!--#include virtual="/includes/ga4.html" -->

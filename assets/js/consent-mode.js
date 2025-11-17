@@ -46,9 +46,7 @@
   var tzHintsEU = /(europe\/|gmt|bst|cet|cest)/.test(tz);
   var inEEA = regionParam ? EEA_UK_CH.indexOf(regionParam.toUpperCase()) !== -1 : tzHintsEU;
 
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){ dataLayer.push(arguments); }
-  window.gtag = window.gtag || gtag;
+  var gtag = window.gtag || function(){ (window.dataLayer = window.dataLayer || []).push(arguments); };
 
   function applyAdConsentState(granted){
     var adsGranted = !!granted;
@@ -74,18 +72,6 @@
   })();
 
   var saved = ON_LEGAL_PAGE ? null : loadConsent();
-  // Default = DENIED for everyone until explicit accept
-  var defaultGranted = false;
-
-  gtag('consent', 'default', {
-    ad_storage:         (saved ? saved.ad_storage         : (defaultGranted ? 'granted' : 'denied')),
-    analytics_storage:  (saved ? saved.analytics_storage  : (defaultGranted ? 'granted' : 'denied')),
-    ad_user_data:       (saved ? saved.ad_user_data       : (defaultGranted ? 'granted' : 'denied')),
-    ad_personalization: (saved ? saved.ad_personalization : (defaultGranted ? 'granted' : 'denied'))
-  });
-
-  gtag('set', 'ads_data_redaction', true);
-  gtag('set', 'url_passthrough', true);
   setBannerOpen(inEEA && !saved);
 
   function acceptAll(){
