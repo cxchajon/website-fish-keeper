@@ -768,6 +768,13 @@ body.ttg-tooltip-lock{
   gap:0.75rem;
 }
 
+.gear-card__actions{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:0.4rem;
+}
+
 .btn{
   display:inline-flex;
   align-items:center;
@@ -1073,29 +1080,23 @@ select#tank-size::-ms-expand { display: none; }
 /* Hygger Variation */
 .hygger-btn,
 .btn-hygger {
-  margin-left: 0.6rem;
-  background: #0fd18a;
-  color: #020816;
-  border-radius: 999px;
-  box-shadow: 0 0.4rem 0.9rem rgba(0, 0, 0, 0.35);
-  padding: 0.55rem 1.5rem;
-  font-weight: 600;
-  white-space: nowrap;
   display: inline-block;
+  margin-top: 0.4rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  background: #1fa672;
+  color: #ffffff;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .hygger-btn:hover,
-.hygger-btn:focus-visible,
+.hygger-btn:focus,
 .btn-hygger:hover,
-.btn-hygger:focus-visible {
-  background: #10e099;
-  transform: translateY(-1px);
-}
-
-.hygger-btn:active,
-.btn-hygger:active {
-  transform: translateY(0);
-  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.35);
+.btn-hygger:focus {
+  filter: brightness(1.05);
 }
 
 @media (prefers-color-scheme: light) {
