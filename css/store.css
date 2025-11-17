@@ -177,3 +177,39 @@
     max-width: 1080px;
   }
 }
+
+.page--store .store-faqs {
+  margin: 32px 16px 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+  color: #e5e7eb;
+}
+
+.page--store .store-faqs .card__body {
+  display: grid;
+  gap: 12px;
+}
+
+.page--store .store-faqs details {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: calc(var(--radius) - 4px);
+  padding: 12px 14px;
+}
+
+.page--store .store-faqs summary {
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+
+.page--store .store-faqs summary::-webkit-details-marker {
+  display: none;
+}
+
+.page--store .store-faq-body {
+  margin-top: 8px;
+  color: #c8d0da;
+}
