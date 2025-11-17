@@ -4,6 +4,11 @@
   --wrap: 1040px;
 }
 
+.page--store {
+  background: radial-gradient(120% 120% at 16% 20%, #111827 0%, #0b1220 55%, #070c16 100%);
+  color: #e5e7eb;
+}
+
 .page--store .store-hero {
   text-align: left;
   margin: 0 0 24px;
@@ -45,6 +50,7 @@
   gap: var(--gap);
   max-width: var(--wrap);
   margin: 0 auto;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
 .page--store .product {
@@ -160,7 +166,7 @@
 /* Responsive: two columns on medium+ */
 @media (min-width: 760px) {
   .page--store .product {
-    grid-template-columns: 360px 1fr;
+    grid-template-columns: minmax(300px, 1fr) 1.1fr;
     padding: 20px;
   }
 }
