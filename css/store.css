@@ -1,51 +1,57 @@
-/* Store page layout + background */
-.store-page {
+.page--store .store-layout {
   --gap: 1.25rem;
   --radius: 14px;
   --wrap: 1040px;
-
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top left,  #1e293b 0, transparent 52%),
-    radial-gradient(circle at top right, #0ea5e9 0, transparent 55%),
-    linear-gradient(180deg, #020617 0%, #020617 40%, #000814 100%);
-  color: #e5e7eb;
 }
 
-.store-wrap {
-  max-width: var(--wrap);
-  margin: 0 auto;
-  padding: 32px 16px 80px;
-}
-
-/* Header */
-.store-hero {
+.page--store .store-hero {
   text-align: left;
   margin: 0 0 24px;
   display: grid;
   gap: 6px;
 }
 
-.store-hero .title {
+.page--store .store-hero .kicker {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: #9aa3af;
+  margin: 0;
+}
+
+.page--store .store-hero .title {
   font-size: clamp(26px, 3.2vw, 40px);
   line-height: 1.1;
   margin: 0;
   color: #f9fafb;
 }
 
-.store-hero .sub {
+.page--store .store-hero .sub {
   color: #9ca3af;
   font-size: clamp(14px, 1.6vw, 16px);
   margin: 0;
 }
 
 /* Shelf + Product card */
-.shelf {
-  display: grid;
-  gap: var(--gap);
+.page--store .store-page {
+  background:
+    radial-gradient(circle at top left,  #1e293b 0, transparent 52%),
+    radial-gradient(circle at top right, #0ea5e9 0, transparent 55%),
+    linear-gradient(180deg, #020617 0%, #020617 40%, #000814 100%);
+  color: #e5e7eb;
+  padding: 32px 16px 80px;
+  border-radius: var(--radius);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
 }
 
-.product {
+.page--store .shelf {
+  display: grid;
+  gap: var(--gap);
+  max-width: var(--wrap);
+  margin: 0 auto;
+}
+
+.page--store .product {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--gap);
@@ -55,9 +61,10 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius);
   padding: 16px;
+  color: #e5e7eb;
 }
 
-.product .media {
+.page--store .product .media {
   aspect-ratio: 3 / 4;
   border-radius: calc(var(--radius) - 4px);
   overflow: hidden;
@@ -66,56 +73,56 @@
   place-items: center;
 }
 
-.product .media img {
+.page--store .product .media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.product .details {
+.page--store .product .details {
   display: grid;
   gap: 10px;
   align-content: start;
 }
 
-.product .kicker {
+.page--store .product .kicker {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: 12px;
   color: #9aa3af;
 }
 
-.product h2 {
+.page--store .product h2 {
   font-size: clamp(20px, 2.8vw, 28px);
   margin: 0;
   line-height: 1.2;
 }
 
-.product .desc {
+.page--store .product .desc {
   color: #c8d0da;
   font-size: 15px;
 }
 
-.product .bullets {
+.page--store .product .bullets {
   margin: 6px 0 0;
   padding-left: 18px;
   color: #c8d0da;
 }
 
-.product .meta {
+.page--store .product .meta {
   color: #9aa3af;
   font-size: 13px;
 }
 
-.cta-row {
+.page--store .cta-row {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 6px;
 }
 
-.btn {
+.page--store .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -127,28 +134,28 @@
   cursor: pointer;
 }
 
-.btn.primary {
+.page--store .btn.primary {
   background: #2dd4bf;
   color: #0b0f14;
 }
 
-.btn.primary:hover {
+.page--store .btn.primary:hover {
   filter: brightness(0.95);
 }
 
-.btn.secondary {
+.page--store .btn.secondary {
   background: transparent;
   color: #c8d0da;
   border-color: rgba(255, 255, 255, 0.18);
 }
 
-.note {
+.page--store .note {
   color: #9aa3af;
   font-size: 12px;
   margin-top: 4px;
 }
 
-.affiliate-disclaimer {
+.page--store .affiliate-disclaimer {
   margin: 12px 0 0;
   font-size: 0.9em;
   color: #9aa3af;
@@ -156,7 +163,7 @@
 
 /* Responsive: two columns on medium+ */
 @media (min-width: 760px) {
-  .product {
+  .page--store .product {
     grid-template-columns: 360px 1fr;
     padding: 20px;
   }
@@ -164,7 +171,7 @@
 
 /* Slightly wider wrap on XL */
 @media (min-width: 1200px) {
-  .store-wrap {
+  .page--store .shelf {
     max-width: 1080px;
   }
 }
