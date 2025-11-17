@@ -40,6 +40,43 @@
       "@context": "https://schema.org",
       "@graph": [
         {
+          "@type": "Organization",
+          "@id": "https://thetankguide.com/#organization",
+          "name": "FishKeepingLifeCo",
+          "url": "https://thetankguide.com/",
+          "logo": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
+          "sameAs": [
+            "https://x.com/FishKeepingLife",
+            "https://www.instagram.com/FishKeepingLifeCo",
+            "https://www.tiktok.com/@FishKeepingLifeCo",
+            "https://www.facebook.com/fishkeepinglifeco",
+            "https://www.youtube.com/@fishkeepinglifeco"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://thetankguide.com/#website",
+          "url": "https://thetankguide.com/",
+          "name": "The Tank Guide",
+          "description": "The Tank Guide is an educational aquarium website offering beginner-friendly guides, interactive tools, and calculators to help freshwater hobbyists plan and maintain calm, healthy home aquariums.",
+          "publisher": {
+            "@id": "https://thetankguide.com/#organization"
+          },
+          "inLanguage": "en-US",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://thetankguide.com/search?q={search_term_string}"
+            },
+            "query-input": {
+              "@type": "PropertyValueSpecification",
+              "valueRequired": true,
+              "valueName": "search_term_string"
+            }
+          }
+        },
+        {
           "@type": "WebPage",
           "@id": "https://thetankguide.com/cycling-coach/#webpage",
           "url": "https://thetankguide.com/cycling-coach/",
@@ -161,7 +198,7 @@
               "name": "Dose ammonia to 2 ppm",
               "itemListElement": {
                 "@type": "HowToDirection",
-                "text": "Add a precise ammonia source or fish food equivalent to reach 2 ppm, then record the value in Cycling Coach."
+                "text": "Dose pure ammonia (or equivalent food) to 2 ppm and log the start time."
               }
             },
             {
@@ -170,7 +207,7 @@
               "name": "Log the zero-hour readings",
               "itemListElement": {
                 "@type": "HowToDirection",
-                "text": "Enter ammonia, nitrite, nitrate, pH, and temperature immediately after dosing so the challenge timer begins."
+                "text": "Optionally check ammonia and nitrite at the 12-hour midpoint to see if levels are dropping."
               }
             },
             {
@@ -179,7 +216,7 @@
               "name": "Retest at the 24-hour mark",
               "itemListElement": {
                 "@type": "HowToDirection",
-                "text": "After 24 hours, retest the same parameters and update Cycling Coach to compare against target thresholds."
+                "text": "Retest at 24 hours. Both ammonia and nitrite must read 0 ppm; nitrate should climb."
               }
             },
             {
@@ -188,7 +225,7 @@
               "name": "Review the readiness verdict",
               "itemListElement": {
                 "@type": "HowToDirection",
-                "text": "Confirm both ammonia and nitrite are 0 ppm and nitrate is rising. Cycling Coach will mark the tank fish-ready when all goals are met."
+                "text": "Perform a final large water change and stabilize temperature before adding fish."
               }
             }
           ],
