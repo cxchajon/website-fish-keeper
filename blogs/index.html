@@ -21,7 +21,6 @@
 
   <meta property="og:site_name" content="The Tank Guide" />
   
-  <!--#include virtual="/includes/schema-organization.html" -->
   <link rel="stylesheet" href="/css/style.css?v=1.0.10" />
   <link rel="stylesheet" href="/css/blogs.css" />
   <link rel="preconnect" href="https://fundingchoicesmessages.google.com" crossorigin>
@@ -34,17 +33,108 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "@id": "https://thetankguide.com/blogs/#webpage",
-    "name": "Spotlight Blogs",
-    "description": "Spotlight blogs from The Tank Guide—short aquarium guides on cycling, filtration, and planted tanks for beginners.",
-    "url": "https://thetankguide.com/blogs/",
-    "publisher": {
-      "@id": "https://thetankguide.com/#organization"
-    },
-    "author": {
-      "@id": "https://thetankguide.com/#organization"
-    }
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://thetankguide.com/#organization",
+        "name": "FishKeepingLifeCo",
+        "url": "https://thetankguide.com",
+        "logo": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
+        "sameAs": [
+          "https://www.tiktok.com/@fishkeepinglifeco",
+          "https://www.instagram.com/fishkeepinglifeco",
+          "https://www.youtube.com/@FishKeepingLifeCo",
+          "https://x.com/fishkeepinglife",
+          "https://www.facebook.com/FishKeepingLifeCo",
+          "https://www.threads.com/@fishkeepinglifeco?igshid=NTc4MTIwNjQ2YQ==",
+          "https://www.reddit.com/u/FishKeepingLifeCo/s/Q4JV29oiSg"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://thetankguide.com/#website",
+        "url": "https://thetankguide.com",
+        "name": "The Tank Guide",
+        "publisher": {
+          "@id": "https://thetankguide.com/#organization"
+        }
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": "https://thetankguide.com/blogs/#webpage",
+        "name": "Spotlight Blogs",
+        "description": "Short reads with practical takeaways on aquarium cycling, filtration, planted tanks, and problem solving.",
+        "url": "https://thetankguide.com/blogs/",
+        "isPartOf": {
+          "@id": "https://thetankguide.com/#website"
+        },
+        "publisher": {
+          "@id": "https://thetankguide.com/#organization"
+        },
+        "author": {
+          "@id": "https://thetankguide.com/#organization"
+        },
+        "hasPart": [
+          {
+            "@type": "BlogPosting",
+            "@id": "https://thetankguide.com/blogs/betta-fish-in-a-community-tank/#blog",
+            "headline": "Betta Fish in a Community Tank",
+            "description": "Real-world lessons on keeping bettas peacefully in planted community tanks — and how balance makes them calm kings of the aquarium.",
+            "url": "https://thetankguide.com/blogs/betta-fish-in-a-community-tank.html",
+            "image": "https://thetankguide.com/assets/blogs/betta-community-tank/originals/betta-community-tank-hero.jpg",
+            "author": {
+              "@id": "https://thetankguide.com/#organization"
+            },
+            "publisher": {
+              "@id": "https://thetankguide.com/#organization"
+            },
+            "datePublished": "2025-10-31T09:00:00-04:00"
+          },
+          {
+            "@type": "BlogPosting",
+            "@id": "https://thetankguide.com/blogs/nitrogen-cycle/#blog",
+            "headline": "The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping",
+            "description": "A plain-English path from confusion to stable tanks — fishless vs fish-in, plants, seeding, and simple habits that work.",
+            "url": "https://thetankguide.com/blogs/nitrogen-cycle/",
+            "image": "https://thetankguide.com/blogs/shared/img/nitrogen-cycle-diagram.PNG",
+            "author": {
+              "@id": "https://thetankguide.com/#organization"
+            },
+            "publisher": {
+              "@id": "https://thetankguide.com/#organization"
+            }
+          },
+          {
+            "@type": "BlogPosting",
+            "@id": "https://thetankguide.com/blogs/blackbeard/#blog",
+            "headline": "Beating Black Beard Algae: What Finally Worked",
+            "description": "Spot-dosing, lighting, and flow tweaks that finally shut down stubborn BBA.",
+            "url": "https://thetankguide.com/blogs/blackbeard/",
+            "image": "https://thetankguide.com/blogs/blackbeard/img/IMG_0935.jpeg",
+            "author": {
+              "@id": "https://thetankguide.com/#organization"
+            },
+            "publisher": {
+              "@id": "https://thetankguide.com/#organization"
+            }
+          },
+          {
+            "@type": "BlogPosting",
+            "@id": "https://thetankguide.com/blogs/purigen/#blog",
+            "headline": "Purigen: Polish Your Water Clarity",
+            "description": "Showroom-level clarity with a simple placement and one honest “downside.”",
+            "url": "https://thetankguide.com/blogs/purigen/",
+            "image": "https://thetankguide.com/blogs/purigen/img/thumbs/purigen-thumb.jpeg",
+            "author": {
+              "@id": "https://thetankguide.com/#organization"
+            },
+            "publisher": {
+              "@id": "https://thetankguide.com/#organization"
+            }
+          }
+        ]
+      }
+    ]
   }
   </script>
   <!-- --- Google CMP (Funding Choices) START --- -->
@@ -93,9 +183,8 @@
         <p class="topic-sub">First steps, setup mistakes, and confidence builders.</p>
       </header>
       <div class="blogs-grid">
-        <article class="blog-card" itemscope itemtype="https://schema.org/BlogPosting">
-          <meta itemprop="author" content="The Tank Guide">
-          <a class="card-thumb-link" href="/blogs/betta-fish-in-a-community-tank.html" aria-label="Read: Betta Fish in a Community Tank" itemprop="url">
+        <article class="blog-card">
+          <a class="card-thumb-link" href="/blogs/betta-fish-in-a-community-tank.html" aria-label="Read: Betta Fish in a Community Tank">
             <span class="card-media">
               <img
                 class="blog-card-image pos-betta-head"
@@ -103,28 +192,26 @@
                 alt="Betta resting near a random flow nozzle in a planted tank"
                 loading="lazy"
                 decoding="async"
-                itemprop="image"
               >
             </span>
           </a>
           <div class="card-content">
             <p class="card-kicker">
-              <span class="card-author" itemprop="author">The Tank Guide</span>
+              <span class="card-author">The Tank Guide</span>
               <span class="meta-sep" aria-hidden="true">•</span>
-              <time datetime="2025-10-31T09:00:00-04:00" itemprop="datePublished">Oct 31, 2025</time>
+              <time datetime="2025-10-31T09:00:00-04:00">Oct 31, 2025</time>
               <span class="meta-sep" aria-hidden="true">•</span>
               <span class="card-readtime">12 min read</span>
             </p>
-            <h3 class="card-title" itemprop="headline">
+            <h3 class="card-title">
               <a href="/blogs/betta-fish-in-a-community-tank.html">Betta Fish in a Community Tank</a>
             </h3>
-            <p class="card-excerpt" itemprop="description">Real-world lessons on keeping bettas peacefully in planted community tanks — and how balance makes them calm kings of the aquarium.</p>
+            <p class="card-excerpt">Real-world lessons on keeping bettas peacefully in planted community tanks — and how balance makes them calm kings of the aquarium.</p>
             <a class="card-read" href="/blogs/betta-fish-in-a-community-tank.html">Read the blog →</a>
           </div>
         </article>
-        <article class="blog-card" itemscope itemtype="https://schema.org/BlogPosting">
-          <meta itemprop="author" content="The Tank Guide">
-          <a class="card-thumb-link" href="/blogs/nitrogen-cycle/" aria-label="Read: The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping" itemprop="url">
+        <article class="blog-card">
+          <a class="card-thumb-link" href="/blogs/nitrogen-cycle/" aria-label="Read: The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping">
             <span class="card-media">
               <img
                 class="card-thumb card-img blog-card-image"
@@ -134,16 +221,15 @@
                 decoding="async"
                 width="1200"
                 height="675"
-                itemprop="image"
               />
             </span>
           </a>
           <div class="card-content">
             <p class="card-kicker">Core Principles • ~5 min</p>
-            <h3 class="card-title" itemprop="headline">
+            <h3 class="card-title">
               <a href="/blogs/nitrogen-cycle/">The Nitrogen Cycle for Beginners: My First Real Wall in Fishkeeping</a>
             </h3>
-            <p class="card-excerpt" itemprop="description">A plain-English path from confusion to stable tanks — fishless vs fish-in, plants, seeding, and simple habits that work.</p>
+            <p class="card-excerpt">A plain-English path from confusion to stable tanks — fishless vs fish-in, plants, seeding, and simple habits that work.</p>
             <a class="card-read" href="/blogs/nitrogen-cycle/">Read the blog →</a>
           </div>
         </article>
@@ -170,9 +256,8 @@
         <p class="topic-sub">Real-world fixes and maintenance wins.</p>
       </header>
       <div class="blogs-grid">
-        <article class="blog-card" itemscope itemtype="https://schema.org/BlogPosting">
-          <meta itemprop="author" content="The Tank Guide">
-          <a class="card-thumb-link" href="/blogs/blackbeard/" aria-label="Read: Beating Black Beard Algae" itemprop="url">
+        <article class="blog-card">
+          <a class="card-thumb-link" href="/blogs/blackbeard/" aria-label="Read: Beating Black Beard Algae">
             <span class="card-media">
               <img
                 src="/blogs/blackbeard/img/IMG_0935.jpeg"
@@ -183,13 +268,12 @@
                 width="320"
                 height="180"
                 onerror="this.onerror=null;this.src='/blogs/shared/img/ph-card.png';"
-                itemprop="image"
               />
             </span>
           </a>
           <div class="card-content">
-            <h3 class="card-title" itemprop="headline"><a href="/blogs/blackbeard/" itemprop="url">Beating Black Beard Algae: What Finally Worked</a></h3>
-            <p class="card-excerpt" itemprop="description">Spot-dosing, lighting, and flow tweaks that finally shut down stubborn BBA.</p>
+            <h3 class="card-title"><a href="/blogs/blackbeard/">Beating Black Beard Algae: What Finally Worked</a></h3>
+            <p class="card-excerpt">Spot-dosing, lighting, and flow tweaks that finally shut down stubborn BBA.</p>
           </div>
         </article>
       </div>
@@ -216,9 +300,8 @@
         <p class="topic-sub">Hand-picked gear that earned a spot in the sump.</p>
       </header>
       <div class="blogs-grid">
-        <article class="blog-card" itemscope itemtype="https://schema.org/BlogPosting">
-          <meta itemprop="author" content="The Tank Guide">
-          <a class="card-thumb-link" href="/blogs/purigen/" aria-label="Read: Purigen" itemprop="url">
+        <article class="blog-card">
+          <a class="card-thumb-link" href="/blogs/purigen/" aria-label="Read: Purigen">
             <span class="card-media">
               <img class="card-thumb blog-card-image"
                    src="/blogs/purigen/img/thumbs/purigen-thumb.jpeg"
@@ -226,13 +309,12 @@
                    loading="lazy" decoding="async"
                    width="1200"
                    height="675"
-                   onerror="this.onerror=null;this.src='/blogs/purigen/img/IMG_9299.jpeg';"
-                   itemprop="image" />
+                   onerror="this.onerror=null;this.src='/blogs/purigen/img/IMG_9299.jpeg';" />
             </span>
           </a>
           <div class="card-content">
-            <h3 class="card-title" itemprop="headline"><a href="/blogs/purigen/" itemprop="url">Purigen: Polish Your Water Clarity</a></h3>
-            <p class="card-excerpt" itemprop="description">Showroom-level clarity with a simple placement and one honest “downside.”</p>
+            <h3 class="card-title"><a href="/blogs/purigen/">Purigen: Polish Your Water Clarity</a></h3>
+            <p class="card-excerpt">Showroom-level clarity with a simple placement and one honest “downside.”</p>
           </div>
         </article>
       </div>
