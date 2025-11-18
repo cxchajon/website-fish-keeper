@@ -6,19 +6,18 @@
       "@type": "Organization",
       "@id": "https://thetankguide.com/#organization",
       "name": "FishKeepingLifeCo",
+      "description": "FishKeepingLifeCo is an educational publishing brand that creates aquarium books, guides, and tools, including The Tank Guide website and its interactive tools.",
       "url": "https://thetankguide.com/",
       "logo": {
         "@type": "ImageObject",
         "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png"
       },
       "sameAs": [
-        "https://www.tiktok.com/@fishkeepinglifeco",
-        "https://www.instagram.com/fishkeepinglifeco",
-        "https://www.youtube.com/@FishKeepingLifeCo",
-        "https://x.com/fishkeepinglife",
-        "https://www.facebook.com/FishKeepingLifeCo",
-        "https://www.threads.com/@fishkeepinglifeco?igshid=NTc4MTIwNjQ2YQ==",
-        "https://www.reddit.com/u/FishKeepingLifeCo/s/Q4JV29oiSg"
+        "https://x.com/FishKeepingLife",
+        "https://www.instagram.com/FishKeepingLifeCo",
+        "https://www.tiktok.com/@FishKeepingLifeCo",
+        "https://www.facebook.com/fishkeepinglifeco",
+        "https://www.youtube.com/@fishkeepinglifeco"
       ]
     },
     {
@@ -26,8 +25,22 @@
       "@id": "https://thetankguide.com/#website",
       "url": "https://thetankguide.com/",
       "name": "The Tank Guide",
+      "description": "The Tank Guide is an educational aquarium website from FishKeepingLifeCo, offering tools, guides, and beginner-friendly resources.",
       "publisher": {
         "@id": "https://thetankguide.com/#organization"
+      },
+      "inLanguage": "en-US",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://thetankguide.com/search?q={search_term_string}"
+        },
+        "query-input": {
+          "@type": "PropertyValueSpecification",
+          "valueRequired": true,
+          "valueName": "search_term_string"
+        }
       }
     }
   ]
