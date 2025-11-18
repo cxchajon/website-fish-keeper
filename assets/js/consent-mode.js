@@ -113,27 +113,33 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();
 
-  function showFundingChoicesDialog(){
+  function invokeCmpOpen(){
     var api = window.googlefc || (window.googlefc = {});
-    if (api && typeof api.showCmpDialog === 'function') {
-      api.showCmpDialog();
+    var openers = ['showConsentPreferences', 'showCmpDialog', 'showDialog'];
+    for (var i = 0; i < openers.length; i++){
+      var fn = openers[i];
+      if (typeof api[fn] === 'function'){
+        api[fn]();
+        return true;
+      }
+    }
+    if (typeof window.__tcfapi === 'function'){
+      window.__tcfapi('displayConsentUI', 0, function(){});
       return true;
     }
-    if (api && typeof api.showDialog === 'function') {
-      api.showDialog();
-      return true;
-    }
-    if (api) {
-      api.callbackQueue = api.callbackQueue || [];
-      api.callbackQueue.push(function(){
-        if (typeof api.showCmpDialog === 'function') {
-          api.showCmpDialog();
-        } else if (typeof api.showDialog === 'function') {
-          api.showDialog();
-        }
-      });
-      return true;
-    }
+    return false;
+  }
+
+  function queueCmpOpen(){
+    var api = window.googlefc || (window.googlefc = {});
+    api.callbackQueue = api.callbackQueue || [];
+    api.callbackQueue.push(function(){ invokeCmpOpen(); });
+    return true;
+  }
+
+  function showFundingChoicesDialog(){
+    if (invokeCmpOpen()) return true;
+    if (window.googlefc) return queueCmpOpen();
     console.warn('Funding Choices CMP is not available yet.');
     return false;
   }
@@ -164,6 +170,13 @@
       gtag('consent','update', deniedState);
     }
     applyAdConsentState(false);
+
+    var api = window.googlefc || (window.googlefc = {});
+    if (api && typeof api.reset === 'function'){
+      api.reset();
+    } else if (typeof window.__tcfapi === 'function'){
+      window.__tcfapi('revokeAllChoices', 0, function(){});
+    }
   }
 
   function wireCookieSettingsButtons(){
