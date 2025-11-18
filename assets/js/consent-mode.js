@@ -138,6 +138,13 @@
     return false;
   }
 
+  // Expose the shared CMP helpers for utility pages (e.g., cookie-settings.html).
+  // These reuse the same Funding Choices hooks used elsewhere on the site so
+  // cookie management stays consistent with the main CMP bridge.
+  var ttgConsentBridge = (window.ttgConsentBridge = window.ttgConsentBridge || {});
+  ttgConsentBridge.showFundingChoicesDialog = showFundingChoicesDialog;
+  ttgConsentBridge.resetStoredConsent = resetStoredConsent;
+
   function resetStoredConsent(){
     var deniedState = {
       ad_storage:'denied',
