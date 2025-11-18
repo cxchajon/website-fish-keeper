@@ -231,16 +231,16 @@ body.theme-media.university > .skip-link:focus {
   color: var(--ttg-text-muted);
 }
 
-.university .university-shell a:not(.study-card) {
+.university main a {
   color: #ffffff;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration-line: underline;
   text-decoration-thickness: 1.5px;
-  text-underline-offset: 0.12em;
+  text-underline-offset: 0.14em;
 }
 
-.university .university-shell a:not(.study-card):hover,
-.university .university-shell a:not(.study-card):focus-visible {
+.university main a:hover,
+.university main a:focus-visible {
   text-decoration-thickness: 2px;
 }
 
@@ -259,7 +259,10 @@ body.theme-media.university > .skip-link:focus {
   border: 1px solid rgba(255, 255, 255, 0.22);
   background: linear-gradient(180deg, rgba(241, 249, 255, 0.28) 0%, rgba(241, 249, 255, 0.12) 100%);
   color: var(--ttg-text-strong);
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: var(--ttg-link-underline);
+  text-underline-offset: 0.18em;
   box-shadow: 0 18px 42px rgba(4, 16, 28, 0.22);
   transition: transform 0.6s ease, box-shadow 0.6s ease, border-color 0.6s ease, background 0.6s ease;
   overflow: hidden;
@@ -471,8 +474,10 @@ body.theme-media.university > .skip-link:focus {
 
 .university .article-list a {
   color: var(--ttg-text-strong);
-  font-weight: 600;
-  text-decoration: none;
+  font-weight: 700;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.14em;
 }
 
 .university .article-list li p {
@@ -784,42 +789,28 @@ body.theme-media.university > .skip-link:focus {
 }
 
 .university .ad-slot {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
   width: 100%;
   max-width: 100%;
   min-height: 90px;
-  margin-top: 3rem;
-  margin-bottom: 9rem;
+  margin-block: clamp(150px, 14vw, 200px);
+  padding: 8px 0;
   text-align: center;
-  position: relative;
 }
 
-.university .ad-slot::before {
-  content: "Advertisement";
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: rgba(243, 248, 255, 0.72);
+.university .ad-slot .adsbygoogle {
+  width: 100%;
+}
+
+.university .ad-placeholder {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(243, 248, 255, 0.78);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.5rem;
-}
-
-@media (max-width: 600px) {
-  .university .ad-slot {
-    margin-top: 2.5rem;
-    margin-bottom: 9rem;
-  }
-}
-
-.university .ad-slot::after {
-  content: "";
-  display: block;
-  width: 80%;
-  max-width: 640px;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.08);
-  margin: 1rem auto 0;
+  letter-spacing: 0.06em;
 }
 
 html[data-scroll-lock="on"],
