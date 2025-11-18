@@ -334,6 +334,87 @@
     data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
   <!-- End Cloudflare Web Analytics -->
 
+  <!-- IAB TCF v2.2 stub to allow __tcfapi interactions -->
+  <script>
+    (function() {
+      var TCF_LOCATOR_NAME = '__tcfapiLocator';
+      var queue = [];
+      var win = window;
+      var cmpFrame;
+
+      function addFrame() {
+        if (!win.frames[TCF_LOCATOR_NAME]) {
+          if (document.body) {
+            cmpFrame = document.createElement('iframe');
+            cmpFrame.style.cssText = 'display:none';
+            cmpFrame.name = TCF_LOCATOR_NAME;
+            document.body.appendChild(cmpFrame);
+          } else {
+            setTimeout(addFrame, 5);
+          }
+        }
+      }
+
+      function tcfAPIHandler() {
+        var gdprApplies;
+        var args = arguments;
+
+        if (!args.length) {
+          return queue;
+        }
+
+        if (args[0] === 'setGdprApplies') {
+          gdprApplies = args[1];
+          if (typeof args[2] === 'function') {
+            args[2]('set', true);
+          }
+        } else if (args[0] === 'ping') {
+          var retr = {
+            gdprApplies: gdprApplies,
+            cmpLoaded: false,
+            cmpStatus: 'stub'
+          };
+          if (typeof args[2] === 'function') {
+            args[2](retr);
+          }
+        } else {
+          queue.push(args);
+        }
+      }
+
+      function postMessageEventHandler(event) {
+        var msgIsString = typeof event.data === 'string';
+        var json = {};
+
+        try {
+          json = msgIsString ? JSON.parse(event.data) : event.data;
+        } catch (ignore) {}
+
+        var payload = json.__tcfapiCall;
+
+        if (payload) {
+          window.__tcfapi(payload.command, payload.version, function(retValue, success) {
+            var returnMsg = {
+              __tcfapiReturn: {
+                returnValue: retValue,
+                success: success,
+                callId: payload.callId
+              }
+            };
+            if (msgIsString) {
+              returnMsg = JSON.stringify(returnMsg);
+            }
+            event.source.postMessage(returnMsg, '*');
+          }, payload.parameter);
+        }
+      }
+
+      addFrame();
+      win.__tcfapi = tcfAPIHandler;
+      win.addEventListener('message', postMessageEventHandler, false);
+    })();
+  </script>
+
   <!-- --- Google CMP (Funding Choices) START --- -->
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
   <script>
@@ -442,6 +523,7 @@
             <p>TheTankGuide.com participates in affiliate programs. This means we may earn a commission if you click links and make purchases.</p>
             <ul>
               <li><strong>Amazon Associates:</strong> As an Amazon Associate, we earn from qualifying purchases.</li>
+              <li><strong>Hygger Affiliate Program:</strong> We participate in the Hygger affiliate program and earn from qualifying purchases made through links to Hygger products. These affiliate links do not change the price you pay.</li>
               <li><strong>Other Programs:</strong> We may also join other affiliate programs (such as Chewy or specialty aquarium retailers) in the future.</li>
               <li><strong>Transparency:</strong> All product recommendations are hand-selected for quality and usefulness. Affiliate partnerships do not affect the price you pay.</li>
             </ul>
