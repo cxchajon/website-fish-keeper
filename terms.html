@@ -14,7 +14,6 @@
 
   <meta property="og:site_name" content="The Tank Guide" />
   
-  <!--#include virtual="/includes/schema-organization.html" -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Terms of Use | The Tank Guide" />
   <meta property="og:description" content="Terms of Use governing The Tank Guide website, tools, and community." />
@@ -48,17 +47,90 @@
       h1{font-size:2rem;}
     }
   </style>
-  <!-- Consent Mode defaults (load FIRST) -->
+  
   <script src="/assets/js/consent-mode.js" defer></script>
-  <!-- Google tag (gtag.js) — GA4 -->
-  <!--#include virtual="/includes/ga4.html" -->
-
-  <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
     data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
-  <!-- End Cloudflare Web Analytics -->
+  <script>
+    (function() {
+      var TCF_LOCATOR_NAME = '__tcfapiLocator';
+      var queue = [];
+      var win = window;
+      var cmpFrame;
 
-  <!-- --- Google CMP (Funding Choices) START --- -->
+      function addFrame() {
+        if (!win.frames[TCF_LOCATOR_NAME]) {
+          if (document.body) {
+            cmpFrame = document.createElement('iframe');
+            cmpFrame.style.cssText = 'display:none';
+            cmpFrame.name = TCF_LOCATOR_NAME;
+            document.body.appendChild(cmpFrame);
+          } else {
+            setTimeout(addFrame, 5);
+          }
+        }
+      }
+
+      function tcfAPIHandler() {
+        var gdprApplies;
+        var args = arguments;
+
+        if (!args.length) {
+          return queue;
+        }
+
+        if (args[0] === 'setGdprApplies') {
+          gdprApplies = args[1];
+          if (typeof args[2] === 'function') {
+            args[2]('set', true);
+          }
+        } else if (args[0] === 'ping') {
+          var retr = {
+            gdprApplies: gdprApplies,
+            cmpLoaded: false,
+            cmpStatus: 'stub'
+          };
+          if (typeof args[2] === 'function') {
+            args[2](retr);
+          }
+        } else {
+          queue.push(args);
+        }
+      }
+
+      function postMessageEventHandler(event) {
+        var msgIsString = typeof event.data === 'string';
+        var json = {};
+
+        try {
+          json = msgIsString ? JSON.parse(event.data) : event.data;
+        } catch (ignore) {}
+
+        var payload = json.__tcfapiCall;
+
+        if (payload) {
+          window.__tcfapi(payload.command, payload.version, function(retValue, success) {
+            var returnMsg = {
+              __tcfapiReturn: {
+                returnValue: retValue,
+                success: success,
+                callId: payload.callId
+              }
+            };
+            if (msgIsString) {
+              returnMsg = JSON.stringify(returnMsg);
+            }
+            event.source.postMessage(returnMsg, '*');
+          }, payload.parameter);
+        }
+      }
+
+      addFrame();
+      win.__tcfapi = tcfAPIHandler;
+      win.addEventListener('message', postMessageEventHandler, false);
+    })();
+  </script>
+
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
   <script>
     // Required bootstrap per Google; signals CMP presence
@@ -78,8 +150,7 @@
       signalGooglefcPresent();
     })();
   </script>
-  <!-- --- Google CMP (Funding Choices) END --- -->
-</head>
+  </head>
 <body>
   <div id="site-nav"></div>
   <main>
