@@ -123,8 +123,11 @@
         return true;
       }
     }
+    // Funding Choices exposes the standard TCF hook with a lowercase "i" in "Ui".
+    // The previous call used an uppercase "I", which prevented the preferences
+    // panel from opening when users clicked "Manage preferences".
     if (typeof window.__tcfapi === 'function'){
-      window.__tcfapi('displayConsentUI', 0, function(){});
+      window.__tcfapi('displayConsentUi', 0, function(){});
       return true;
     }
     return false;
