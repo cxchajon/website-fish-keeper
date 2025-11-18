@@ -24,7 +24,64 @@
   <meta property="og:description" content="Manage your cookie preferences for The Tank Guide. Update consent for analytics and advertising cookies anytime." />
   <meta property="og:url" content="https://thetankguide.com/cookie-settings.html" />
   
-  <!--#include virtual="/includes/schema-organization.html" -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://thetankguide.com/#organization",
+        "name": "FishKeepingLifeCo",
+        "description": "FishKeepingLifeCo is an educational publishing brand that creates aquarium books, journals, guides, and tools, including The Tank Guide website and its interactive resources.",
+        "url": "https://thetankguide.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
+          "width": 1200,
+          "height": 630
+        },
+        "sameAs": [
+          "https://x.com/FishKeepingLife",
+          "https://www.instagram.com/FishKeepingLifeCo",
+          "https://www.tiktok.com/@FishKeepingLifeCo",
+          "https://www.facebook.com/fishkeepinglifeco",
+          "https://www.youtube.com/@fishkeepinglifeco"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://thetankguide.com/#website",
+        "url": "https://thetankguide.com/",
+        "name": "The Tank Guide",
+        "description": "The Tank Guide is an educational aquarium website from FishKeepingLifeCo, offering tools, guides, and beginner friendly resources.",
+        "publisher": { "@id": "https://thetankguide.com/#organization" },
+        "inLanguage": "en-US",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://thetankguide.com/search?q={search_term_string}"
+          },
+          "query-input": {
+            "@type": "PropertyValueSpecification",
+            "valueRequired": true,
+            "valueName": "search_term_string"
+          }
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://thetankguide.com/cookie-settings.html#webpage",
+        "url": "https://thetankguide.com/cookie-settings.html",
+        "name": "Cookie Settings — The Tank Guide",
+        "description": "Manage your cookie preferences for The Tank Guide. Update consent for analytics and advertising cookies anytime.",
+        "inLanguage": "en-US",
+        "isPartOf": { "@id": "https://thetankguide.com/#website" },
+        "publisher": { "@id": "https://thetankguide.com/#organization" }
+      }
+    ]
+  }
+  </script>
   <link rel="canonical" href="https://thetankguide.com/cookie-settings.html" />
   <meta name="robots" content="noindex,nofollow" />
   <meta name="twitter:url" content="https://thetankguide.com/cookie-settings.html" />
@@ -44,24 +101,49 @@
   <!-- Consent Mode defaults (load FIRST) -->
   <script src="/assets/js/consent-mode.js" defer></script>
   <!-- Google tag (gtag.js) — GA4 -->
-  <!--#include virtual="/includes/ga4.html" -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLDG95NKGB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+
+    // Respect Consent Mode v2 defaults. Do not send a page_view until ads/analytics are granted.
+    // Initialize with denied-by-default values; our consent-mode.js will update these on accept.
+    gtag('consent', 'default', {
+      'ad_storage': 'denied',
+      'analytics_storage': 'denied',
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied',
+      'wait_for_update': 500
+    });
+
+    // Basic GA4 bootstrap; send_page_view is false so we can gate by consent.
+    gtag('js', new Date());
+    gtag('config', 'G-JLDG95NKGB', { 'send_page_view': false });
+
+    // When our banner calls acceptAll(), consent-mode.js should emit a consent update event.
+    // Listen for that and then send a page_view once per load.
+    (function(){
+      var sent = false;
+      function trySend() {
+        if (sent) return;
+        // Minimal check: analytics_storage granted
+        var s = (window.__TTG_CONSENT_STATE__ || {}).analytics_storage;
+        if (s === 'granted') {
+          sent = true;
+          gtag('event', 'page_view');
+        }
+      }
+      window.addEventListener('ttg-consent-updated', trySend);
+      // Also attempt once on load in case consent was already saved as granted.
+      document.addEventListener('DOMContentLoaded', trySend);
+    })();
+  </script>
 
   <!-- Cloudflare Web Analytics -->
+  <!-- TODO: Insert real Cloudflare analytics token in data-cf-beacon before enabling this script. -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
     data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
   <!-- End Cloudflare Web Analytics -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": "https://thetankguide.com/cookie-settings.html#webpage",
-    "url": "https://thetankguide.com/cookie-settings.html",
-    "name": "Cookie Settings — The Tank Guide",
-    "description": "Manage your cookie preferences for The Tank Guide. Update consent for analytics and advertising cookies anytime.",
-    "isPartOf": { "@id": "https://thetankguide.com/#website" },
-    "publisher": { "@id": "https://thetankguide.com/#organization" }
-  }
-  </script>
 
   <!-- --- Google CMP (Funding Choices) START --- -->
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
