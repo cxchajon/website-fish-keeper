@@ -2,3 +2,9 @@
   color: #ffffff;
   font-weight: 600;
 }
+
+main.cookie-settings a,
+main.cookie-settings a:visited {
+  color: #ffffff;
+  font-weight: 600;
+}
