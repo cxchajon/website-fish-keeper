@@ -21,8 +21,18 @@
 
   <meta property="og:site_name" content="The Tank Guide" />
   
-  <link rel="stylesheet" href="/css/style.css?v=1.0.10" />
-  <link rel="stylesheet" href="/css/blogs.css" />
+  <link rel="preload"
+        href="/css/style.css?v=1.0.10"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload"
+        href="/css/blogs.css"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="/css/style.css?v=1.0.10">
+    <link rel="stylesheet" href="/css/blogs.css">
+  </noscript>
   <link rel="preconnect" href="https://fundingchoicesmessages.google.com" crossorigin>
   <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
   <script defer src="/js/nav.js?v=1.1.0"></script>
@@ -37,13 +47,11 @@
       {
         "@type": "Organization",
         "@id": "https://thetankguide.com/#organization",
-        "name": "The Tank Guide",
+        "name": "FishKeepingLifeCo",
         "url": "https://thetankguide.com/",
-        "logo": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
-        "parentOrganization": {
-          "@type": "Organization",
-          "@id": "https://thetankguide.com/#parent-org",
-          "name": "FishKeepingLifeCo"
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png"
         },
         "sameAs": [
           "https://www.tiktok.com/@fishkeepinglifeco",
