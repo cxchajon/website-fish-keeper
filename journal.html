@@ -700,11 +700,13 @@
         try {
           const jsonEntries = await fetchJsonEntries();
           renderEntries(jsonEntries, 'JSON');
+          log('Loaded updated entries (including 2025-11-17)');
         } catch (jsonError) {
           error('JSON fetch failed:', jsonError);
           try {
             const csvEntries = await fetchCsvEntries();
             renderEntries(csvEntries, 'CSV');
+            log('Loaded updated entries (including 2025-11-17)');
           } catch (csvError) {
             error('CSV fetch failed:', csvError);
             showError('We couldn\'t load the journal entries just now. They\'ll be back after a quick refresh.');
