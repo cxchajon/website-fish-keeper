@@ -798,6 +798,277 @@ main .blog-article,
   background: var(--tg-soft, #111);
 }
 
+/* Spotlight Blogs index page styles (moved from inline <style>) */
+body {
+  background-color: #2d2d2d;
+  background-image: none;
+  color: #f4f9fc;
+  --brand: #00c3b6;
+  --accent: #00c3b6;
+  --radius: 16px;
+}
+
+main.blogs-panel {
+  background: rgba(52, 53, 65, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.32);
+}
+
+.blog-card .card-thumb-link { display:block; }
+.blog-card .card-media {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-lg, 16px);
+  aspect-ratio: 16 / 9;
+  background: #1b1c21;
+}
+
+.blog-card .card-media::before {
+  content: none;
+}
+
+.blog-card .card-media img.blog-card-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  transition: transform 0.25s ease;
+}
+
+.blog-card:hover .card-media img.blog-card-image {
+  transform: scale(1.02);
+}
+
+.card-thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-img {
+  object-fit: cover;
+}
+
+/* Focal helpers (opt-in) */
+.blog-card .card-media img.blog-card-image.pos-center { object-position: 50% 50% !important; }
+.blog-card .card-media img.blog-card-image.pos-top { object-position: 50% 10% !important; }
+.blog-card .card-media img.blog-card-image.pos-bottom { object-position: 50% 90% !important; }
+.blog-card .card-media img.blog-card-image.pos-left { object-position: 10% 50% !important; }
+.blog-card .card-media img.blog-card-image.pos-right { object-position: 90% 50% !important; }
+.blog-card .card-media img.blog-card-image.pos-betta-head { object-position: 38% 62% !important; }
+
+.topics-nav{
+  display:flex; flex-wrap:wrap; gap:.5rem .75rem;
+  padding: 10px 0 6px;
+  margin: 8px 0 18px;
+}
+.topics-nav a{
+  display:inline-flex; align-items:center;
+  padding:.28rem .7rem; border-radius:999px;
+  background: rgba(255,255,255,.10);
+  color: var(--text, #f4f9fc); text-decoration:none; font-weight:600; font-size:.9rem;
+  border:1px solid rgba(255,255,255,.16);
+}
+.topics-nav a:hover{
+  background: rgba(255,255,255,.16);
+  border-color: rgba(255,255,255,.28);
+}
+
+.topics-nav a.topic-core,
+.topics-nav a.topic-algae,
+.topics-nav a.topic-product,
+.topics-nav a.topic-chem,
+.topics-nav a.topic-gear{
+  color: color-mix(in srgb, var(--accent) 88%, white 18%);
+  border-color: color-mix(in srgb, var(--accent) 46%, transparent);
+}
+.topics-nav a.topic-core:hover,
+.topics-nav a.topic-algae:hover,
+.topics-nav a.topic-product:hover,
+.topics-nav a.topic-chem:hover,
+.topics-nav a.topic-gear:hover{
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 36%, transparent);
+}
+
+.topic-section{
+  background: linear-gradient(180deg, rgba(0,0,0,.06), rgba(0,0,0,.02));
+  border-radius: var(--radius, 18px);
+  padding: clamp(14px,2.8vw,22px);
+  margin: 18px 0 24px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.18);
+}
+.topic-head{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  margin: 4px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+.topic-head h2{
+  margin:0; color: var(--text, #f4f9fc); letter-spacing:.3px;
+}
+.topic-sub{
+  margin:0; color: var(--muted, rgba(255,255,255,0.72)); font-size:.95rem; opacity:.9;
+}
+
+.blogs-grid{
+  display:grid;
+  gap: clamp(16px, 3vw, 26px);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+/* Maintain the magazine borders from earlier */
+.blog-card{
+  position: relative;
+  background: #343541;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.05),
+    0 14px 30px rgba(0,0,0,0.32);
+  overflow: hidden;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+.blog-card:hover{
+  transform: translateY(-4px);
+  background: rgba(52,53,65,0.95);
+  border-color: rgba(255,255,255,0.18);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 18px 36px rgba(0,0,0,0.38);
+}
+/* Headline bar on each card title */
+.blog-card .card-title{ position:relative; padding-top:10px; margin-top:8px; }
+.blog-card .card-title::before{
+  content:""; position:absolute; top:0; left:0; width:48px; height:2px;
+  background: linear-gradient(to right, var(--brand, #00c3b6), rgba(255,255,255,0));
+  border-radius:2px; opacity:.9; transition: width .3s ease, opacity .3s ease;
+}
+.blog-card:hover .card-title::before{ width:72px; opacity:1; }
+
+.blog-card .card-content{
+  display:flex;
+  flex-direction:column;
+  gap:.65rem;
+  padding: clamp(20px, 3vw, 24px);
+}
+.blog-card .card-kicker{
+  margin:0;
+  font-size:.9rem;
+  color: var(--muted, rgba(255,255,255,0.72));
+  letter-spacing:.2px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:.35rem;
+}
+.blog-card .card-kicker .meta-sep{
+  color: rgba(255,255,255,0.38);
+}
+.blog-card .card-title{
+  font-size:clamp(1.15rem, 2.6vw, 1.55rem);
+  margin:0;
+}
+.blog-card .card-title a{
+  color:inherit;
+  text-decoration:none;
+}
+.blog-card .card-title a:hover,
+.blog-card .card-title a:focus{
+  text-decoration:underline;
+}
+.blog-card .card-excerpt{
+  margin:0;
+  color: var(--text-secondary, rgba(255,255,255,0.82));
+  font-size:clamp(.95rem, 2vw, 1.05rem);
+  line-height:1.45;
+  flex-grow:1;
+}
+.blog-card .card-read{
+  margin-top:auto;
+  font-weight:600;
+  color: var(--brand, #00c3b6);
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+}
+.blog-card .card-read:hover,
+.blog-card .card-read:focus{
+  text-decoration:underline;
+}
+
+.blog-card .card-thumb-link{
+  display:block;
+}
+
+/* === Topic Accent System (Magazine) === */
+:root{
+  --accent:#8fe3ff; /* fallback */
+}
+.topic-core{ --accent:#3CAEA3; }
+.topic-algae{ --accent:#C94C4C; }
+.topic-product{ --accent:#FF8C42; }
+.topic-chem{ --accent:#5D8AA8; }
+.topic-gear{ --accent:#1F7A8C; }
+
+/* apply accent to card frame and headline bar */
+.topic-section .blog-card{ border-top:4px solid var(--accent); }
+.topic-section .blog-card .card-title::before{
+  background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
+}
+
+/* hero/button/link accents can read var(--accent) if desired */
+.topic-section .card-cta,
+.topic-section .blogs-grid a:hover{ color: var(--accent); }
+
+/* Individual article header/banner accents */
+.article-accent{
+  --accent: var(--accent);
+  border-top: 6px solid var(--accent);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.article-accent .eyebrow,
+.article-accent .meta a,
+.article-accent a:hover{ color: var(--accent); }
+
+/* Optional subtle gradient underline for article H1 */
+.article-accent h1{
+  position:relative; padding-top:14px;
+}
+.article-accent h1::before{
+  content:""; position:absolute; top:0; left:0; width:70px; height:3px;
+  background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
+  border-radius:2px; opacity:.95;
+}
+.blogs-ad-slot{
+  margin: 22px 0 24px;
+}
+.blogs-ad-frame{
+  border-radius: 16px;
+  padding: 12px 10px;
+  background: radial-gradient(circle at top, rgba(255,255,255,0.06), rgba(0,0,0,0.38));
+  box-shadow:
+    0 10px 26px rgba(0,0,0,0.45),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+  min-height: 260px; /* helps reduce CLS while the responsive unit loads */
+}
+.blogs-ad-frame ins.adsbygoogle{
+  display:block !important;
+}
+
 /* Make the hero image fill the box without overflowing */
 .blog-thumb-hero > img {
   width: 100%;
