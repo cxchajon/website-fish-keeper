@@ -112,4 +112,76 @@
     document.querySelectorAll('.js-consent-reject').forEach(function(b){ b.addEventListener('click', rejectPersonalized); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();
+
+  function showFundingChoicesDialog(){
+    var api = window.googlefc || (window.googlefc = {});
+    if (api && typeof api.showCmpDialog === 'function') {
+      api.showCmpDialog();
+      return true;
+    }
+    if (api && typeof api.showDialog === 'function') {
+      api.showDialog();
+      return true;
+    }
+    if (api) {
+      api.callbackQueue = api.callbackQueue || [];
+      api.callbackQueue.push(function(){
+        if (typeof api.showCmpDialog === 'function') {
+          api.showCmpDialog();
+        } else if (typeof api.showDialog === 'function') {
+          api.showDialog();
+        }
+      });
+      return true;
+    }
+    console.warn('Funding Choices CMP is not available yet.');
+    return false;
+  }
+
+  function resetStoredConsent(){
+    var deniedState = {
+      ad_storage:'denied',
+      analytics_storage:'denied',
+      ad_user_data:'denied',
+      ad_personalization:'denied',
+      advertising:false,
+      analytics:false,
+      ts: now()
+    };
+
+    try { localStorage.removeItem(STORE_KEY); } catch(e){}
+    try { localStorage.removeItem('ttgConsent'); } catch(e){}
+    document.cookie = STORE_KEY + '=; Max-Age=0; Path=/; SameSite=Lax';
+
+    if (typeof gtag === 'function'){
+      gtag('consent','update', deniedState);
+    }
+    applyAdConsentState(false);
+  }
+
+  function wireCookieSettingsButtons(){
+    var manageBtn = document.getElementById('cookie-open-modal');
+    var resetBtn = document.getElementById('cookie-reset');
+
+    if (manageBtn){
+      manageBtn.addEventListener('click', function(evt){
+        evt.preventDefault();
+        showFundingChoicesDialog();
+      });
+    }
+
+    if (resetBtn){
+      resetBtn.addEventListener('click', function(evt){
+        evt.preventDefault();
+        resetStoredConsent();
+        showFundingChoicesDialog();
+      });
+    }
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', wireCookieSettingsButtons);
+  } else {
+    wireCookieSettingsButtons();
+  }
 })();
