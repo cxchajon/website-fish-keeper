@@ -1,6 +1,7 @@
 # The Tank Guide — Changelog
 
 - Cycling Coach UI polish: moved Results info icon inline, fixed Advanced spacing, converted FAQs to accordions, removed duplicate legal links.
+- University page: resolved schema entity naming conflict, improved study card heading hierarchy, consolidated UF/IFAS FA100 link, and added ad preconnect hints.
 
 ## v1.9.5 — 2025-11-01 | Checklist Reconciliation Audit
 - Totals: COMPLETE=4, INCOMPLETE=3, DEFERRED=3
