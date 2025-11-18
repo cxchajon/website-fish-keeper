@@ -685,6 +685,60 @@ body.theme-media.university > .skip-link:focus {
   border-radius: 12px;
 }
 
+.university .ad-slot {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 90px;
+  margin-top: 3rem;
+  margin-bottom: 10rem;
+  text-align: center;
+  position: relative;
+}
+
+.university .ad-slot::before {
+  content: "Advertisement";
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(243, 248, 255, 0.72);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .university .ad-slot {
+    margin-top: 2.5rem;
+    margin-bottom: 10rem;
+  }
+}
+
+.university .ad-slot::after {
+  content: "";
+  display: block;
+  width: 80%;
+  max-width: 640px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 1rem auto 0;
+}
+
+.university .ad-slot .ad-placeholder {
+  display: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.is-ads-disabled.university .ad-slot .ad-placeholder,
+.is-ads-disabled .university .ad-slot .ad-placeholder,
+.is-ads-disabled .ad-slot .ad-placeholder {
+  display: inline-block;
+}
+
 html[data-scroll-lock="on"],
 html[data-scroll-lock="on"] body.university {
   overflow: hidden;
