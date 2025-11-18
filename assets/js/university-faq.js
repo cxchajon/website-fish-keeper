@@ -1,34 +1,26 @@
 (function() {
-  function toggleFaq(button, allToggles) {
-    const targetId = button.getAttribute('aria-controls');
-    const answer = targetId ? document.getElementById(targetId) : null;
+  function toggleFaq(activeToggle, togglePairs) {
+    const activeEntry = togglePairs.find(({ toggle }) => toggle === activeToggle);
 
-    if (!answer) return;
+    if (!activeEntry || !activeEntry.answer) return;
 
-    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+    const isExpanded = activeToggle.getAttribute('aria-expanded') === 'true';
     const nextState = !isExpanded;
 
     if (nextState) {
-      allToggles.forEach((other) => {
-        if (other === button) return;
-        const otherAnswerId = other.getAttribute('aria-controls');
-        const otherAnswer = otherAnswerId ? document.getElementById(otherAnswerId) : null;
-        other.setAttribute('aria-expanded', 'false');
-        if (otherAnswer) {
-          otherAnswer.hidden = true;
-        }
+      togglePairs.forEach(({ toggle, answer }) => {
+        if (toggle === activeToggle || !answer) return;
+        toggle.setAttribute('aria-expanded', 'false');
+        answer.hidden = true;
       });
     }
 
-    button.setAttribute('aria-expanded', String(nextState));
-    answer.hidden = !nextState;
+    activeToggle.setAttribute('aria-expanded', String(nextState));
+    activeEntry.answer.hidden = !nextState;
   }
 
   function initFaqAccordions() {
-    const toggles = Array.from(document.querySelectorAll('.faq-toggle'));
-    if (!toggles.length) return;
-
-    toggles.forEach((toggle) => {
+    const togglePairs = Array.from(document.querySelectorAll('.faq-toggle')).map((toggle) => {
       const targetId = toggle.getAttribute('aria-controls');
       const answer = targetId ? document.getElementById(targetId) : null;
 
@@ -37,11 +29,15 @@
       if (answer) {
         answer.hidden = true;
       }
+
+      return { toggle, answer };
     });
 
-    toggles.forEach((toggle) => {
+    if (!togglePairs.length) return;
+
+    togglePairs.forEach(({ toggle }) => {
       toggle.addEventListener('click', function() {
-        toggleFaq(toggle, toggles);
+        toggleFaq(toggle, togglePairs);
       });
     });
   }
