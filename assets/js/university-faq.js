@@ -29,6 +29,17 @@
     if (!toggles.length) return;
 
     toggles.forEach((toggle) => {
+      const targetId = toggle.getAttribute('aria-controls');
+      const answer = targetId ? document.getElementById(targetId) : null;
+
+      toggle.setAttribute('aria-expanded', 'false');
+
+      if (answer) {
+        answer.hidden = true;
+      }
+    });
+
+    toggles.forEach((toggle) => {
       toggle.addEventListener('click', function() {
         toggleFaq(toggle, toggles);
       });
