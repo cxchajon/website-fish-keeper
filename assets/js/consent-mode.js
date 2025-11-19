@@ -4,6 +4,14 @@
   var LEGAL_PATHS = ['/privacy-legal.html', '/terms.html', '/copyright-dmca.html'];
   var ON_LEGAL_PAGE = LEGAL_PATHS.indexOf(location.pathname) !== -1;
   function now(){ return Date.now(); }
+  function createDeniedPayload(){
+    return {
+      ad_storage:'denied',
+      analytics_storage:'denied',
+      ad_user_data:'denied',
+      ad_personalization:'denied'
+    };
+  }
   function readStoredConsent(){
     try{
       var direct = localStorage.getItem(STORE_KEY);
@@ -14,6 +22,41 @@
       if(!raw) return null;
       return JSON.parse(raw);
     }catch(e){ return null; }
+  }
+
+  function normalizeConsent(stored){
+    if (!stored || typeof stored !== 'object') return null;
+
+    var advertisingGranted = stored.ad_storage === 'granted' ||
+      stored.ad_personalization === 'granted' ||
+      stored.ad_user_data === 'granted' ||
+      stored.advertising === true;
+    var analyticsGranted = stored.analytics_storage === 'granted' || stored.analytics === true;
+
+    return {
+      ad_storage: advertisingGranted ? 'granted' : 'denied',
+      analytics_storage: analyticsGranted ? 'granted' : 'denied',
+      ad_user_data: advertisingGranted ? 'granted' : 'denied',
+      ad_personalization: advertisingGranted ? 'granted' : 'denied',
+      advertising: advertisingGranted,
+      analytics: analyticsGranted,
+      ts: stored.ts || now()
+    };
+  }
+
+  function buildConsentState(prefs){
+    var analyticsGranted = !!(prefs && prefs.analytics);
+    var advertisingGranted = !!(prefs && prefs.advertising);
+
+    return {
+      ad_storage: advertisingGranted ? 'granted' : 'denied',
+      analytics_storage: analyticsGranted ? 'granted' : 'denied',
+      ad_user_data: advertisingGranted ? 'granted' : 'denied',
+      ad_personalization: advertisingGranted ? 'granted' : 'denied',
+      advertising: advertisingGranted,
+      analytics: analyticsGranted,
+      ts: now()
+    };
   }
   function saveConsent(obj){
     try {
@@ -26,14 +69,7 @@
       var stored = readStoredConsent();
       if (!stored) return null;
       if (stored.ts && (now() - (stored.ts||0)) > EXP_DAYS*24*3600*1000) return null;
-      if (typeof stored.ad_storage === 'string') return stored;
-      return {
-        ad_storage: stored.advertising === true ? 'granted' : 'denied',
-        analytics_storage: stored.analytics === true ? 'granted' : 'denied',
-        ad_user_data: stored.advertising === true ? 'granted' : 'denied',
-        ad_personalization: stored.advertising === true ? 'granted' : 'denied',
-        ts: stored.ts || now()
-      };
+      return normalizeConsent(stored);
     } catch(e){ return null; }
   }
   function setBannerOpen(open){
@@ -55,15 +91,35 @@
   var consentQueue = window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || [];
 
   function createDeniedState(){
-    return {
-      ad_storage:'denied',
-      analytics_storage:'denied',
-      ad_user_data:'denied',
-      ad_personalization:'denied',
+    return Object.assign(createDeniedPayload(), {
       advertising:false,
       analytics:false,
       ts: now()
+    });
+  }
+
+  function buildUpdatePayload(state){
+    return {
+      ad_storage: state && state.ad_storage === 'granted' ? 'granted' : 'denied',
+      analytics_storage: state && state.analytics_storage === 'granted' ? 'granted' : 'denied',
+      ad_user_data: state && state.ad_user_data === 'granted' ? 'granted' : 'denied',
+      ad_personalization: state && state.ad_personalization === 'granted' ? 'granted' : 'denied'
     };
+  }
+
+  function applyGaConsent(state, options){
+    var deniedPayload = createDeniedPayload();
+    var updatePayload = buildUpdatePayload(state);
+    var defaultOnly = options && options.defaultOnly;
+    var skipDefault = options && options.applyDefault === false;
+
+    if (typeof window.gtag === 'function'){
+      if (!skipDefault) window.gtag('consent','default', deniedPayload);
+      if (!defaultOnly) window.gtag('consent','update', updatePayload);
+    } else {
+      consentQueue.push({ type: 'default', payload: deniedPayload });
+      if (!defaultOnly) consentQueue.push({ type: 'update', payload: updatePayload });
+    }
   }
 
   function emitConsentUpdate(state){
@@ -73,24 +129,6 @@
     } catch (e) {}
   }
 
-  function queueConsentUpdate(state){
-    if (typeof window.gtag === 'function'){
-      window.gtag('consent','update', state);
-    } else {
-      consentQueue.push(state);
-    }
-  }
-
-  function dispatchConsentUpdate(state){
-    queueConsentUpdate(state);
-    emitConsentUpdate(state);
-  }
-
-  window.__ttgUpdateConsentState__ = dispatchConsentUpdate;
-  window.__TTG_CONSENT_STATE__ = window.__TTG_CONSENT_STATE__ || createDeniedState();
-
-  var savedConsent = ON_LEGAL_PAGE ? null : loadConsent();
-
   function applyAdConsentState(granted){
     var adsGranted = !!granted;
     document.documentElement.setAttribute('data-ad-consent', adsGranted ? 'granted' : 'denied');
@@ -98,58 +136,47 @@
     if (document.body) toggle(); else document.addEventListener('DOMContentLoaded', toggle);
   }
 
-  (function initConsentFromStorage(){
-    var stored = savedConsent;
-    var baseState = stored ? Object.assign({}, stored) : createDeniedState();
-    if (ON_LEGAL_PAGE) {
-      baseState = createDeniedState();
-    }
+  function applyAndEmit(state, options){
+    window.__TTG_CONSENT_STATE__ = Object.assign({}, state);
+    applyGaConsent(state, options);
+    emitConsentUpdate(state);
+  }
 
-    emitConsentUpdate(baseState);
-    var adsGranted = baseState.ad_storage === 'granted';
-    applyAdConsentState(adsGranted);
+  function ensureConsentState(){
+    var savedConsent = ON_LEGAL_PAGE ? null : loadConsent();
+    var baseState = savedConsent ? Object.assign({}, savedConsent) : createDeniedState();
+    if (ON_LEGAL_PAGE) baseState = createDeniedState();
 
-    if (!ON_LEGAL_PAGE && adsGranted){
-      queueConsentUpdate({
-        ad_storage: 'granted',
-        analytics_storage: 'granted',
-        ad_user_data: 'granted',
-        ad_personalization: 'granted'
-      });
-    }
-  })();
+    applyAdConsentState(baseState.ad_storage === 'granted');
+    applyAndEmit(baseState, savedConsent ? {} : { defaultOnly: true });
+    setBannerOpen(inEEA && !savedConsent);
 
-  setBannerOpen(inEEA && !savedConsent);
+    return savedConsent;
+  }
+
+  var savedConsent = ensureConsentState();
+
+  window.__ttgUpdateConsentState__ = function(state){
+    var normalized = normalizeConsent(state) || createDeniedState();
+    applyAdConsentState(normalized.ad_storage === 'granted');
+    applyAndEmit(normalized);
+  };
+
+  function updateConsentFromPrefs(prefs){
+    var state = buildConsentState(prefs);
+    saveConsent(state);
+    applyAdConsentState(state.ad_storage === 'granted');
+    applyAndEmit(state);
+    setBannerOpen(false);
+    return state;
+  }
 
   function acceptAll(){
-    var state = {
-      ad_storage:'granted',
-      analytics_storage:'granted',
-      ad_user_data:'granted',
-      ad_personalization:'granted',
-      advertising:true,
-      analytics:true,
-      ts: now()
-    };
-    dispatchConsentUpdate(state);
-    saveConsent(state);
-    applyAdConsentState(true);
-    setBannerOpen(false);
+    updateConsentFromPrefs({ analytics: true, advertising: true });
   }
+
   function rejectPersonalized(){
-    var state = {
-      ad_storage:'denied',
-      analytics_storage:'denied',
-      ad_user_data:'denied',
-      ad_personalization:'denied',
-      advertising:false,
-      analytics:false,
-      ts: now()
-    };
-    dispatchConsentUpdate(state);
-    saveConsent(state);
-    applyAdConsentState(false);
-    setBannerOpen(false);
+    updateConsentFromPrefs({ analytics: false, advertising: false });
   }
   window.acceptAll = acceptAll;
   window.rejectPersonalized = rejectPersonalized;
@@ -201,22 +228,19 @@
   ttgConsentBridge.showFundingChoicesDialog = showFundingChoicesDialog;
   ttgConsentBridge.resetStoredConsent = resetStoredConsent;
 
+  var ttgConsent = (window.ttgConsent = window.ttgConsent || {});
+  ttgConsent.readConsent = loadConsent;
+  ttgConsent.updateConsentFromToggles = function(prefs){ return updateConsentFromPrefs(prefs); };
+  ttgConsent.defaultDenied = createDeniedState;
+
   function resetStoredConsent(){
-    var deniedState = {
-      ad_storage:'denied',
-      analytics_storage:'denied',
-      ad_user_data:'denied',
-      ad_personalization:'denied',
-      advertising:false,
-      analytics:false,
-      ts: now()
-    };
+    var deniedState = createDeniedState();
 
     try { localStorage.removeItem(STORE_KEY); } catch(e){}
     try { localStorage.removeItem('ttgConsent'); } catch(e){}
     document.cookie = STORE_KEY + '=; Max-Age=0; Path=/; SameSite=Lax';
 
-    dispatchConsentUpdate(deniedState);
+    applyAndEmit(deniedState);
     applyAdConsentState(false);
 
     var api = window.googlefc || (window.googlefc = {});

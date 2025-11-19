@@ -320,6 +320,10 @@
 
     function loadConsent() {
       try {
+        if (window.ttgConsent && typeof window.ttgConsent.readConsent === 'function') {
+          return window.ttgConsent.readConsent();
+        }
+
         var raw = localStorage.getItem(STORE_KEY);
         if (!raw) return null;
         var parsed = JSON.parse(raw);
@@ -333,15 +337,19 @@
       }
     }
 
-    function saveConsent(consent) {
-      try {
-        consent.ts = now();
-        localStorage.setItem(STORE_KEY, JSON.stringify(consent));
-        document.cookie = STORE_KEY + '=1; Max-Age=' + (EXP_DAYS * 24 * 3600) + '; Path=/; SameSite=Lax';
-        log('consent saved:', consent);
-      } catch (e) {
-        log('error saving consent:', e);
-      }
+    function buildConsentPayload(prefs){
+      var analyticsChecked = !!(prefs && prefs.analytics);
+      var advertisingChecked = !!(prefs && prefs.advertising);
+
+      return {
+        ad_storage: advertisingChecked ? 'granted' : 'denied',
+        analytics_storage: analyticsChecked ? 'granted' : 'denied',
+        ad_user_data: advertisingChecked ? 'granted' : 'denied',
+        ad_personalization: advertisingChecked ? 'granted' : 'denied',
+        analytics: analyticsChecked,
+        advertising: advertisingChecked,
+        ts: now()
+      };
     }
 
     function updateGtagConsent(consent) {
@@ -352,13 +360,22 @@
         ad_personalization: consent.ad_personalization || 'denied'
       };
 
+      var deniedPayload = {
+        ad_storage: 'denied',
+        analytics_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied'
+      };
+
       try {
         if (typeof window.__ttgUpdateConsentState__ === 'function') {
           window.__ttgUpdateConsentState__(payload);
         } else if (typeof window.gtag === 'function') {
+          window.gtag('consent', 'default', deniedPayload);
           window.gtag('consent', 'update', payload);
         } else {
-          (window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || []).push(payload);
+          (window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || []).push({ type: 'default', payload: deniedPayload });
+          window.__ttgDeferredConsentUpdates__.push({ type: 'update', payload: payload });
         }
         log('gtag consent updated');
       } catch (e) {
@@ -371,25 +388,27 @@
       var advertisingChecked = document.getElementById('cookie-advertising').checked;
 
       return {
-        ad_storage: advertisingChecked ? 'granted' : 'denied',
-        analytics_storage: analyticsChecked ? 'granted' : 'denied',
-        ad_user_data: advertisingChecked ? 'granted' : 'denied',
-        ad_personalization: advertisingChecked ? 'granted' : 'denied'
+        analytics: analyticsChecked,
+        advertising: advertisingChecked
       };
     }
 
     function updateTogglesFromConsent(consent) {
       if (!consent) {
-        // Default to ON when no saved preference exists (UI state only)
-        document.getElementById('cookie-analytics').checked = true;
-        document.getElementById('cookie-advertising').checked = true;
+        // Privacy-first defaults when no saved preference exists
+        document.getElementById('cookie-analytics').checked = false;
+        document.getElementById('cookie-advertising').checked = false;
         return;
       }
 
-      document.getElementById('cookie-analytics').checked =
-        consent.analytics_storage === 'granted';
-      document.getElementById('cookie-advertising').checked =
-        consent.ad_personalization === 'granted' || consent.ad_user_data === 'granted';
+      var analyticsGranted = consent.analytics === true || consent.analytics_storage === 'granted';
+      var advertisingGranted = consent.advertising === true ||
+        consent.ad_storage === 'granted' ||
+        consent.ad_personalization === 'granted' ||
+        consent.ad_user_data === 'granted';
+
+      document.getElementById('cookie-analytics').checked = analyticsGranted;
+      document.getElementById('cookie-advertising').checked = advertisingGranted;
     }
 
     function showStatus(message, duration) {
@@ -402,11 +421,27 @@
       }, duration || 3000);
     }
 
+    function persistConsent(prefs) {
+      var result = { payload: buildConsentPayload(prefs), handled: false };
+      try {
+        if (window.ttgConsent && typeof window.ttgConsent.updateConsentFromToggles === 'function') {
+          window.ttgConsent.updateConsentFromToggles(prefs);
+          result.handled = true;
+        } else {
+          localStorage.setItem(STORE_KEY, JSON.stringify(result.payload));
+          document.cookie = STORE_KEY + '=1; Max-Age=' + (EXP_DAYS * 24 * 3600) + '; Path=/; SameSite=Lax';
+        }
+      } catch (e) {
+        log('error saving consent:', e);
+      }
+      return result;
+    }
+
     function handleSaveSettings() {
       log('save settings clicked');
-      var consent = getConsentFromToggles();
-      saveConsent(consent);
-      updateGtagConsent(consent);
+      var prefs = getConsentFromToggles();
+      var result = persistConsent(prefs);
+      if (!result.handled) updateGtagConsent(result.payload);
       showStatus('✓ Your preferences have been saved.');
     }
 
@@ -415,9 +450,9 @@
       document.getElementById('cookie-analytics').checked = true;
       document.getElementById('cookie-advertising').checked = true;
 
-      var consent = getConsentFromToggles();
-      saveConsent(consent);
-      updateGtagConsent(consent);
+      var prefs = getConsentFromToggles();
+      var result = persistConsent(prefs);
+      if (!result.handled) updateGtagConsent(result.payload);
       showStatus('✓ All cookies enabled and saved.');
     }
 
@@ -426,9 +461,9 @@
       document.getElementById('cookie-analytics').checked = false;
       document.getElementById('cookie-advertising').checked = false;
 
-      var consent = getConsentFromToggles();
-      saveConsent(consent);
-      updateGtagConsent(consent);
+      var prefs = getConsentFromToggles();
+      var result = persistConsent(prefs);
+      if (!result.handled) updateGtagConsent(result.payload);
       showStatus('✓ Only essential cookies are enabled.');
     }
 
@@ -439,8 +474,8 @@
       updateTogglesFromConsent(saved);
 
       if (saved) {
-        var analytics = saved.analytics_storage === 'granted';
-        var ads = saved.ad_personalization === 'granted' || saved.ad_user_data === 'granted';
+        var analytics = saved.analytics === true || saved.analytics_storage === 'granted';
+        var ads = saved.advertising === true || saved.ad_storage === 'granted' || saved.ad_personalization === 'granted' || saved.ad_user_data === 'granted';
         log('loaded saved preferences:', { analytics: analytics, ads: ads });
       } else {
         log('no saved preferences found, using defaults');
