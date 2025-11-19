@@ -36,7 +36,7 @@ original_path,prototype_path,file_type,notes
 https://thetankguide.com/assets/logo.png,shared ref,img,Existing logo reference retained in JSON-LD
 https://thetankguide.com/assets/og/gear-guide.png,shared ref,img,OG/Twitter preview image hosted externally
 https://fonts.gstatic.com,shared ref,external,Font preconnect remains shared
-https://www.googletagmanager.com/gtag/js?id=G-508286504,shared ref,external,GA4 loader remains shared
+https://www.googletagmanager.com/gtag/js?id=G-PTHZ5NZFVJ,shared ref,external,GA4 loader remains shared
 https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880,shared ref,external,AdSense loader kept shared
 https://static.cloudflareinsights.com/beacon.min.js,shared ref,external,Cloudflare analytics script shared
 https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1,shared ref,external,Funding Choices CMP script shared
