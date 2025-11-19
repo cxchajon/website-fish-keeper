@@ -440,6 +440,7 @@
   </script>
   <script defer src="/assets/js/ttg-cmp-consent-bridge.js"></script>
   <!-- --- Google CMP (Funding Choices) END --- -->
+  <script defer src="https://widget.cloudinary.com/v2.0/global/all.js" id="cloudinary-widget-script"></script>
 </head>
 <body class="page-gradient">
   <a href="#feature-main" class="skip-link">Skip to main content</a>
@@ -637,9 +638,6 @@
         <div id="errorMessage" role="alert" style="display:none; margin-top:0.75rem; color:#f87171; font-weight:600;"></div>
       </section>
 
-      <!-- Cloudinary Upload Widget -->
-      <script src="https://widget.cloudinary.com/v2.0/global/all.js" id="cloudinary-widget-script"></script>
-
       <script>
       document.addEventListener('DOMContentLoaded', function() {
         // ======= Config (Cloudinary + limits) =======
@@ -749,19 +747,11 @@
           return false;
         }
 
-        if (cloudinaryScript) {
-          const readyNow = buildWidget();
-          if (!readyNow) {
-            cloudinaryScript.addEventListener('load', buildWidget);
-            cloudinaryScript.addEventListener('error', () => {
-              if (errorBox) {
-                errorBox.textContent = 'Cloudinary failed to load. Please check your connection or try again later.';
-                errorBox.style.display = 'block';
-              }
-            });
-          }
-        } else {
+        // On DOM ready, attempt initialization if Cloudinary is already loaded.
+        if (window.cloudinary && typeof cloudinary.createUploadWidget === 'function') {
           buildWidget();
+        } else {
+          console.log('Cloudinary not ready on DOMContentLoaded. Will retry on button click.');
         }
 
         // ======= Helpers: Socials =======
@@ -914,10 +904,14 @@
           syncSubmitAvailability();
         }
         function openWidget() {
-          if (!ensureWidgetReady() || !widgetInstance) {
+          if (!ensureWidgetReady()) {
             return;
           }
-          widgetInstance.open();
+          if (widgetInstance) {
+            widgetInstance.open();
+          } else {
+            alert('Uploader failed to initialize immediately. Try again.');
+          }
         }
 
         // ======= Wire events =======
