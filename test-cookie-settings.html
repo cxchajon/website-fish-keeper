@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cookie Settings Test</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background: #f5f5f5; }
+    h1 { color: #333; }
+    .test-section { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .test-result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+    .pass { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .fail { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
+    button:hover { background: #0056b3; }
+    code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-family: monospace; }
+    .info { background: #d1ecf1; padding: 10px; border-radius: 4px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>Cookie Settings Functionality Test</h1>
+
+  <div class="info">
+    <strong>Test Instructions:</strong> This page tests the cookie-settings.html functionality by simulating user interactions with localStorage.
+  </div>
+
+  <div class="test-section">
+    <h2>Manual Test Steps</h2>
+    <ol>
+      <li>Open <a href="/cookie-settings.html" target="_blank">cookie-settings.html</a> in a new tab</li>
+      <li>Open DevTools Console (F12)</li>
+      <li>Verify no JavaScript errors appear</li>
+      <li>Check that toggle switches are visible</li>
+      <li>Click "Allow all" button</li>
+      <li>Verify success message appears</li>
+      <li>Reload the page</li>
+      <li>Verify both toggles (Analytics and Advertising) are ON</li>
+      <li>Click "Reject non-essential" button</li>
+      <li>Verify both toggles are now OFF</li>
+      <li>Manually toggle Analytics to ON</li>
+      <li>Click "Save settings"</li>
+      <li>Reload and verify Analytics is ON, Advertising is OFF</li>
+    </ol>
+  </div>
+
+  <div class="test-section">
+    <h2>Automated Storage Tests</h2>
+    <button onclick="runTests()">Run Tests</button>
+    <button onclick="clearStorage()">Clear Storage</button>
+    <div id="test-results"></div>
+  </div>
+
+  <script>
+    function clearStorage() {
+      localStorage.removeItem('ttgConsentV2');
+      document.getElementById('test-results').innerHTML = '<div class="test-result pass">✓ Storage cleared</div>';
+    }
+
+    function runTests() {
+      const results = [];
+
+      // Test 1: Save consent
+      try {
+        const consent = {
+          ad_storage: 'granted',
+          analytics_storage: 'granted',
+          ad_user_data: 'granted',
+          ad_personalization: 'granted',
+          ts: Date.now()
+        };
+        localStorage.setItem('ttgConsentV2', JSON.stringify(consent));
+        results.push({ pass: true, msg: 'Can save consent to localStorage' });
+      } catch (e) {
+        results.push({ pass: false, msg: 'Failed to save consent: ' + e.message });
+      }
+
+      // Test 2: Load consent
+      try {
+        const raw = localStorage.getItem('ttgConsentV2');
+        const parsed = JSON.parse(raw);
+        const hasRequiredFields = parsed.analytics_storage && parsed.ad_personalization;
+        results.push({
+          pass: hasRequiredFields,
+          msg: hasRequiredFields ? 'Can load and parse consent from localStorage' : 'Missing required fields in consent object'
+        });
+      } catch (e) {
+        results.push({ pass: false, msg: 'Failed to load consent: ' + e.message });
+      }
+
+      // Test 3: Check consent structure
+      try {
+        const raw = localStorage.getItem('ttgConsentV2');
+        const consent = JSON.parse(raw);
+        const hasTimestamp = typeof consent.ts === 'number';
+        const hasAnalytics = consent.analytics_storage === 'granted' || consent.analytics_storage === 'denied';
+        const hasAds = consent.ad_personalization === 'granted' || consent.ad_personalization === 'denied';
+        const valid = hasTimestamp && hasAnalytics && hasAds;
+        results.push({
+          pass: valid,
+          msg: valid ? 'Consent object structure is valid' : 'Invalid consent object structure'
+        });
+      } catch (e) {
+        results.push({ pass: false, msg: 'Failed to validate structure: ' + e.message });
+      }
+
+      // Test 4: Test denial state
+      try {
+        const deniedConsent = {
+          ad_storage: 'denied',
+          analytics_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          ts: Date.now()
+        };
+        localStorage.setItem('ttgConsentV2', JSON.stringify(deniedConsent));
+        const loaded = JSON.parse(localStorage.getItem('ttgConsentV2'));
+        const allDenied = loaded.analytics_storage === 'denied' && loaded.ad_personalization === 'denied';
+        results.push({
+          pass: allDenied,
+          msg: allDenied ? 'Can save and load denied consent state' : 'Failed to save denied state'
+        });
+      } catch (e) {
+        results.push({ pass: false, msg: 'Failed denied state test: ' + e.message });
+      }
+
+      // Display results
+      const resultsHtml = results.map(r => {
+        const className = r.pass ? 'pass' : 'fail';
+        const icon = r.pass ? '✓' : '✗';
+        return `<div class="test-result ${className}">${icon} ${r.msg}</div>`;
+      }).join('');
+
+      const passCount = results.filter(r => r.pass).length;
+      const summary = `<h3>Results: ${passCount}/${results.length} tests passed</h3>`;
+
+      document.getElementById('test-results').innerHTML = summary + resultsHtml;
+    }
+  </script>
+</body>
+</html>
