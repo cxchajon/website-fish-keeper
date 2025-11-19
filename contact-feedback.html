@@ -127,7 +127,7 @@
       white-space: nowrap;
     }
 
-    form {
+      form {  
       display: grid;
       gap: 20px;
     }
@@ -481,11 +481,16 @@
       const successMsg = document.getElementById('success-message');
       const errorSummary = document.getElementById('error-summary');
       const errorList = document.getElementById('error-list');
+      const errorHeading = errorSummary.querySelector('strong');
+      const defaultErrorHeading = errorHeading ? errorHeading.textContent : '';
+      const honeypot = form.querySelector('input[name="hp_website"]');
       
       // Field IDs for validation
       const fields = ['contact-name', 'contact-email', 'contact-subject', 'contact-message'];
       
       function clearErrors() {
+        if (errorHeading) errorHeading.textContent = defaultErrorHeading;
+        successMsg.classList.remove('visible');
         errorSummary.classList.remove('visible');
         errorList.innerHTML = '';
         fields.forEach(id => {
@@ -498,7 +503,7 @@
           }
         });
       }
-      
+
       function validateEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
       }
@@ -506,86 +511,127 @@
       form.addEventListener('submit', async (e) => {
         e.preventDefault(); // Stop standard submission
         clearErrors();
-        
+
         const errors = [];
-        const data = new FormData(form);
-        
+        const formValues = {
+          name: document.getElementById('contact-name')?.value.trim() || '',
+          email: document.getElementById('contact-email')?.value.trim() || '',
+          subject: document.getElementById('contact-subject')?.value.trim() || '',
+          message: document.getElementById('contact-message')?.value.trim() || ''
+        };
+
+        // Prevent spam submissions
+        if (honeypot && honeypot.value.trim() !== '') {
+          form.reset();
+          return;
+        }
+
         // 1. Validate Name
-        if (!data.get('name').trim()) {
+        if (!formValues.name) {
           errors.push({ id: 'contact-name', msg: 'Name is required' });
         }
-        
+
         // 2. Validate Email
-        const email = data.get('email').trim();
-        if (!email) {
+        if (!formValues.email) {
           errors.push({ id: 'contact-email', msg: 'Email is required' });
-        } else if (!validateEmail(email)) {
+        } else if (!validateEmail(formValues.email)) {
           errors.push({ id: 'contact-email', msg: 'Email address is invalid' });
         }
-        
+
         // 3. Validate Subject
-        if (!data.get('subject')) {
+        if (!formValues.subject) {
           errors.push({ id: 'contact-subject', msg: 'Subject is required' });
         }
-        
+
         // 4. Validate Message
-        if (!data.get('message').trim()) {
+        if (!formValues.message) {
           errors.push({ id: 'contact-message', msg: 'Message is required' });
         }
-        
+
         // If errors exist, show them
         if (errors.length > 0) {
-          errorSummary.classList.add('visible');
           errors.forEach(err => {
             const field = document.getElementById(err.id);
             if(field) {
               field.setAttribute('aria-invalid', 'true');
               field.classList.add('has-error');
             }
-            
+
             const help = document.getElementById(`help-${err.id.split('-')[1]}`);
             if(help) help.classList.add('visible');
-            
+
             const li = document.createElement('li');
             li.textContent = err.msg;
             errorList.appendChild(li);
           });
-          
+
+          errorSummary.classList.add('visible');
           errorSummary.focus();
           return;
         }
-        
+
         // --- AJAX SUBMISSION ---
         submitBtn.disabled = true;
+        submitBtn.setAttribute('aria-disabled', 'true');
         submitBtn.textContent = 'Sending...';
-        
+
         try {
           const response = await fetch(form.action, {
-            method: form.method,
-            body: data,
+            method: 'POST',
             headers: {
+              'Content-Type': 'application/json',
               'Accept': 'application/json'
-            }
+            },
+            body: JSON.stringify(formValues)
           });
-          
-          if (response.ok) {
+
+          let jsonData = {};
+          try {
+            jsonData = await response.json();
+          } catch (parseError) {
+            jsonData = {};
+          }
+
+          const isSuccess = response.ok && (jsonData.ok === true || jsonData.next);
+
+          if (isSuccess) {
             form.reset();
             successMsg.classList.add('visible');
             successMsg.focus();
             setTimeout(() => { successMsg.classList.remove('visible'); }, 10000);
+            errorSummary.classList.remove('visible');
+            errorList.innerHTML = '';
           } else {
-            const jsonData = await response.json();
-            if (jsonData.errors) {
-               alert('There was a problem with your submission: ' + jsonData.errors.map(error => error.message).join(", "));
-            } else {
-               alert('Oops! There was a problem submitting your form');
+            if (errorHeading) {
+              errorHeading.textContent = 'We couldn’t send your message. Please try again in a moment.';
             }
+            errorList.innerHTML = '';
+
+            if (jsonData.errors && Array.isArray(jsonData.errors)) {
+              jsonData.errors.forEach(err => {
+                const li = document.createElement('li');
+                li.textContent = err.message || 'Submission failed. Please try again.';
+                errorList.appendChild(li);
+              });
+            }
+
+            errorSummary.classList.add('visible');
+            errorSummary.focus();
           }
         } catch (err) {
           console.error('Submission failed', err);
-          alert('Something went wrong connecting to the server. Please try again.');
+          if (errorHeading) {
+            errorHeading.textContent = 'We couldn’t send your message. Please try again in a moment.';
+          }
+          errorList.innerHTML = '';
+          const li = document.createElement('li');
+          li.textContent = 'Check your internet connection and try again.';
+          errorList.appendChild(li);
+          errorSummary.classList.add('visible');
+          errorSummary.focus();
         } finally {
           submitBtn.disabled = false;
+          submitBtn.removeAttribute('aria-disabled');
           submitBtn.textContent = 'Contact & Feedback';
         }
       });
