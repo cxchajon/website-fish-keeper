@@ -325,7 +325,28 @@
   <script src="/assets/js/consent-mode.js" defer></script>
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
     data-cf-beacon='{"token": "fef22cbf19e3473db5ec987a8f3bf4f3"}'></script>
+  <!-- --- Google CMP (Funding Choices) START --- -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
   <script>
+    // Required bootstrap per Google; signals CMP presence
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
+  <script>
+    // IAB TCF v2.2 stub to allow __tcfapi interactions
     (function() {
       var TCF_LOCATOR_NAME = '__tcfapiLocator';
       var queue = [];
@@ -404,26 +425,7 @@
       win.addEventListener('message', postMessageEventHandler, false);
     })();
   </script>
-
-  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
-  <script>
-    // Required bootstrap per Google; signals CMP presence
-    (function() {
-      function signalGooglefcPresent() {
-        if (!window.frames['googlefcPresent']) {
-          if (document.body) {
-            const iframe = document.createElement('iframe');
-            iframe.style.cssText = 'display:none';
-            iframe.name = 'googlefcPresent';
-            document.body.appendChild(iframe);
-          } else {
-            setTimeout(signalGooglefcPresent, 0);
-          }
-        }
-      }
-      signalGooglefcPresent();
-    })();
-  </script>
+  <script defer src="/assets/js/ttg-cmp-consent-bridge.js"></script>
   </head>
 <body>
   <div id="site-nav"></div>
@@ -497,32 +499,34 @@
             ></textarea>
             <p class="field-help" id="help-message">Let us know the details so we can help quickly.</p>
           </div>
-          <div class="field-group">
-            <div>
-              <input
-                type="checkbox"
-                id="contact-permission"
-                name="consent_contact"
-                value="yes"
-                required
-                aria-describedby="help-contact-permission"
-              />
-              <label for="contact-permission">It’s okay to email me back about this message. <span class="req">*Required</span></label>
-            </div>
-            <p class="field-help" id="help-contact-permission">We’ll only use your email to reply to this specific question or issue.</p>
-            <div>
-              <input
-                type="checkbox"
-                id="contact-newsletter"
-                name="consent_newsletter"
-                value="yes"
-                aria-describedby="help-contact-newsletter"
-              />
-              <label for="contact-newsletter">Yes, I’d like occasional email updates about new guides, tools, and books from FishKeepingLifeCo &amp; The Tank Guide.</label>
-            </div>
-            <p class="field-help" id="help-contact-newsletter">No spam — just important updates. You can unsubscribe anytime.</p>
-          </div>
         </fieldset>
+        <div class="field-group">
+          <label for="contact-permission-contact">
+            <input
+              type="checkbox"
+              id="contact-permission-contact"
+              name="permission_contact"
+              value="yes"
+              required
+              aria-describedby="help-contact-permission"
+            />
+            It’s okay to email me back about this message. <span class="req">*Required</span>
+          </label>
+          <p class="field-help" id="help-contact-permission">We’ll only use your email to reply to this specific question or issue.</p>
+        </div>
+        <div class="field-group">
+          <label for="contact-permission-newsletter">
+            <input
+              type="checkbox"
+              id="contact-permission-newsletter"
+              name="permission_newsletter"
+              value="yes"
+              aria-describedby="help-contact-newsletter"
+            />
+            Yes, I’d like occasional email updates about new guides, tools, and books from FishKeepingLifeCo &amp; The Tank Guide.
+          </label>
+          <p class="field-help" id="help-contact-newsletter">No spam — just important updates. You can unsubscribe anytime.</p>
+        </div>
         <div class="actions">
           <button type="submit" id="submit-btn">Contact &amp; Feedback</button>
         </div>
@@ -546,7 +550,7 @@
         { id: 'contact-email', label: 'Email' },
         { id: 'contact-subject', label: 'Subject' },
         { id: 'contact-message', label: 'Message' },
-        { id: 'contact-permission', label: 'Email permission', type: 'checkbox' }
+        { id: 'contact-permission-contact', label: 'Email permission', type: 'checkbox' }
       ];
 
       fields.forEach((field) => {
@@ -647,9 +651,12 @@
               const el = document.getElementById(field.id);
               resetFieldState(el);
             });
+            errorList.innerHTML = '';
+            errorSummary.classList.remove('visible');
             successMessage.classList.add('visible');
             successMessage.focus();
           } else {
+            console.error('Contact form submission failed', response.status);
             addError(form, 'There was a problem sending your message. Please try again.');
             errorSummary.classList.add('visible');
             errorSummary.focus();
