@@ -38,7 +38,7 @@
     :root {
       --page-bg-dark: #0f1c2c;
       --page-bg-light: #f4f7fb;
-      --card-bg: #f9f9f6;
+      --card-bg: #f1f3f6;
       --border-color: #c8ced6;
       --text: #1c2733;
       --accent: #2f8f83;
@@ -150,6 +150,24 @@
       display: inline-flex;
       align-items: baseline;
       gap: 6px;
+    }
+
+    .contact-card input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      accent-color: var(--accent);
+      background: #fff;
+      border: 2px solid rgba(28, 39, 51, 0.35);
+      border-radius: 4px;
+      box-shadow: 0 1px 2px rgba(15, 28, 44, 0.16);
+      margin-right: 10px;
+      transform: scale(1.05);
+    }
+
+    .contact-card input[type="checkbox"]:focus-visible {
+      outline: 3px solid rgba(56, 163, 160, 0.55);
+      outline-offset: 2px;
     }
 
     .req {
