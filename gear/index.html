@@ -237,9 +237,14 @@
     </style>
   </noscript>
   <script defer src="/js/nav.js?v=1.1.0"></script>
-<!-- Google Analytics 4 -->
-<script src="/assets/js/ga4-fallback.js" defer></script>
-<!--#include virtual="/includes/ga4.html" -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PTHZ5NZFVJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PTHZ5NZFVJ');
+</script>
   <!-- Consent Mode defaults (runs after GA loader) -->
   <script src="/assets/js/consent-mode.js" defer></script>
 
