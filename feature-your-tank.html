@@ -496,7 +496,7 @@
                 <option value="Facebook">Facebook</option>
                 <option value="Other">Other</option>
               </select>
-              <input class="channel-handle" type="text" inputmode="text"
+              <input class="channel-handle" type="url" inputmode="url"
                      placeholder="e.g., @YourChannel or full URL"
                      aria-label="Handle or URL (required)" required>
             </div>
@@ -511,7 +511,7 @@
                 <option value="Facebook">Facebook</option>
                 <option value="Other">Other</option>
               </select>
-              <input class="channel-handle" type="text" inputmode="text"
+              <input class="channel-handle" type="url" inputmode="url"
                      placeholder="e.g., @YourHandle or full URL"
                      aria-label="Handle or URL (optional)">
             </div>
@@ -526,7 +526,7 @@
                 <option value="Facebook">Facebook</option>
                 <option value="Other">Other</option>
               </select>
-              <input class="channel-handle" type="text" inputmode="text"
+              <input class="channel-handle" type="url" inputmode="url"
                      placeholder="e.g., @YourHandle or full URL"
                      aria-label="Handle or URL (optional)">
             </div>
@@ -677,8 +677,6 @@
         let uploadsInFlight = 0;
         let uploaderReady = false;
         let widgetInstance = null;
-
-        const cloudinaryScript = document.getElementById('cloudinary-widget-script');
 
         function buildWidget() {
           if (!(window.cloudinary && typeof cloudinary.createUploadWidget === 'function')) {
@@ -936,11 +934,19 @@
             return false;
           }
           // Gate on consent + uploads
-          if (!consent.checked || !contactConsent.checked || uploadsInFlight > 0) {
+          if (uploadsInFlight > 0) {
             e.preventDefault();
-            if (!consent.checked) alert('Please confirm you own the media and grant permission.');
-            if (!contactConsent.checked) alert('Please allow us to email you back about this submission.');
-            if (uploadsInFlight > 0) alert('Please wait for uploads to finish.');
+            alert('Please wait for uploads to finish.');
+            return false;
+          } else if (!consent.checked) {
+            e.preventDefault();
+            alert('Please confirm you own the media and grant permission.');
+            consent.focus();
+            return false;
+          } else if (!contactConsent.checked) {
+            e.preventDefault();
+            alert('Please allow us to email you back about this submission.');
+            contactConsent.focus();
             return false;
           }
 
