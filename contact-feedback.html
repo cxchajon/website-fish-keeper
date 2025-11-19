@@ -327,28 +327,6 @@
     data-cf-beacon='{"token": "fef22cbf19e3473db5ec987a8f3bf4f3"}'></script>
   <script>
     (function() {
-      var tfc = window;
-      tfc.__tcfapi = tfc.__tcfapi || function() {
-        var args = arguments;
-        if (!tfc.__tcfapi.queue) {
-          tfc.__tcfapi.queue = [];
-        }
-        tfc.__tcfapi.queue.push(args);
-      };
-
-      if (!window.__tcfapiLocator) {
-        var frame = document.createElement('iframe');
-        frame.style.display = 'none';
-        frame.name = '__tcfapiLocator';
-        document.body ? document.body.appendChild(frame) :
-          document.addEventListener('DOMContentLoaded', function() {
-            document.body.appendChild(frame);
-          });
-      }
-    })();
-  </script>
-  <script>
-    (function() {
       var TCF_LOCATOR_NAME = '__tcfapiLocator';
       var queue = [];
       var win = window;
