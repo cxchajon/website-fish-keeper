@@ -675,13 +675,14 @@
         let playable = [];   // safe-to-play links
         let previews = [];   // thumbnails/posters
         let uploadsInFlight = 0;
-        let uploaderReady = false;
         let widgetInstance = null;
 
         function buildWidget() {
+          if (widgetInstance) return true;
           if (!(window.cloudinary && typeof cloudinary.createUploadWidget === 'function')) {
             return false;
           }
+
           widgetInstance = cloudinary.createUploadWidget({
             cloudName: CLOUD_NAME,
             uploadPreset: UPLOAD_PRESET,
@@ -699,6 +700,7 @@
             if (result && result.event === 'queues-start') {
               lockSubmitWhileUploading(true);
             }
+
             if (result && result.event === 'success') {
               const info = result.info || {};
               const url = info && info.secure_url ? info.secure_url : null;
@@ -713,9 +715,11 @@
                 }
               }
             }
+
             if (result && (result.event === 'queues-end' || result.event === 'close')) {
               lockSubmitWhileUploading(false);
             }
+
             if (error) {
               console.error('Cloudinary widget error:', error);
               const code = (error && (error.statusText || error.message || error.http_code)) || 'unknown';
@@ -729,27 +733,19 @@
               lockSubmitWhileUploading(false);
             }
           });
-          uploaderReady = true;
+
+          console.log('Cloudinary widget initialized successfully.');
           return true;
         }
 
-        function ensureWidgetReady() {
-          if (uploaderReady && widgetInstance) return true;
-          if (buildWidget()) return true;
-          if (errorBox) {
-            errorBox.textContent = 'Uploader not ready yet. Please wait a moment and try again.';
-            errorBox.style.display = 'block';
-          } else {
-            alert('Uploader not ready yet. Please wait a moment and try again.');
-          }
-          return false;
+        function tryInit() {
+          if (!widgetInstance) buildWidget();
         }
 
-        // On DOM ready, attempt initialization if Cloudinary is already loaded.
-        if (window.cloudinary && typeof cloudinary.createUploadWidget === 'function') {
-          buildWidget();
-        } else {
-          console.log('Cloudinary not ready on DOMContentLoaded. Will retry on button click.');
+        tryInit();
+        const cloudScript = document.getElementById('cloudinary-widget-script');
+        if (cloudScript && !widgetInstance) {
+          cloudScript.addEventListener('load', tryInit);
         }
 
         // ======= Helpers: Socials =======
@@ -902,13 +898,26 @@
           syncSubmitAvailability();
         }
         function openWidget() {
-          if (!ensureWidgetReady()) {
-            return;
-          }
           if (widgetInstance) {
             widgetInstance.open();
+            return;
+          }
+
+          if (buildWidget()) {
+            setTimeout(() => {
+              if (widgetInstance) {
+                widgetInstance.open();
+              }
+            }, 50);
           } else {
-            alert('Uploader failed to initialize immediately. Try again.');
+            console.error('Cloudinary script failed to load or is blocked.');
+            if (errorBox) {
+              errorBox.textContent =
+                'Uploader is still loading (or blocked by browser). Please check your connection or wait a moment.';
+              errorBox.style.display = 'block';
+            } else {
+              alert('Uploader is not ready yet. Please check your internet connection.');
+            }
           }
         }
 
