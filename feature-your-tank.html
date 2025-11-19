@@ -317,7 +317,27 @@
     data-cf-beacon='{"token": "fef22cbf19e3473db5ec987a8f3bf4f3"}'></script>
   <!-- End Cloudflare Web Analytics -->
   <!-- --- Google CMP (Funding Choices) START --- -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
   <script>
+    // Required bootstrap per Google; signals CMP presence
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
+  <script>
+    // IAB TCF v2.2 stub to allow __tcfapi interactions
     (function() {
       var TCF_LOCATOR_NAME = '__tcfapiLocator';
       var queue = [];
@@ -340,13 +360,25 @@
       function tcfAPIHandler() {
         var gdprApplies;
         var args = arguments;
-        if (!args.length) return queue;
+
+        if (!args.length) {
+          return queue;
+        }
+
         if (args[0] === 'setGdprApplies') {
           gdprApplies = args[1];
-          if (typeof args[2] === 'function') args[2]('set', true);
+          if (typeof args[2] === 'function') {
+            args[2]('set', true);
+          }
         } else if (args[0] === 'ping') {
-          var retr = { gdprApplies: gdprApplies, cmpLoaded: false, cmpStatus: 'stub' };
-          if (typeof args[2] === 'function') args[2](retr);
+          var retr = {
+            gdprApplies: gdprApplies,
+            cmpLoaded: false,
+            cmpStatus: 'stub'
+          };
+          if (typeof args[2] === 'function') {
+            args[2](retr);
+          }
         } else {
           queue.push(args);
         }
@@ -355,10 +387,13 @@
       function postMessageEventHandler(event) {
         var msgIsString = typeof event.data === 'string';
         var json = {};
-        try { json = msgIsString ? JSON.parse(event.data) : event.data; }
-        catch (ignore) {}
+
+        try {
+          json = msgIsString ? JSON.parse(event.data) : event.data;
+        } catch (ignore) {}
 
         var payload = json.__tcfapiCall;
+
         if (payload) {
           window.__tcfapi(payload.command, payload.version, function(retValue, success) {
             var returnMsg = {
@@ -368,7 +403,9 @@
                 callId: payload.callId
               }
             };
-            if (msgIsString) returnMsg = JSON.stringify(returnMsg);
+            if (msgIsString) {
+              returnMsg = JSON.stringify(returnMsg);
+            }
             event.source.postMessage(returnMsg, '*');
           }, payload.parameter);
         }
@@ -379,25 +416,7 @@
       win.addEventListener('message', postMessageEventHandler, false);
     })();
   </script>
-  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
-  <script>
-    // Required bootstrap per Google; signals CMP presence
-    (function() {
-      function signalGooglefcPresent() {
-        if (!window.frames['googlefcPresent']) {
-          if (document.body) {
-            const iframe = document.createElement('iframe');
-            iframe.style.cssText = 'display:none';
-            iframe.name = 'googlefcPresent';
-            document.body.appendChild(iframe);
-          } else {
-            setTimeout(signalGooglefcPresent, 0);
-          }
-        }
-      }
-      signalGooglefcPresent();
-    })();
-  </script>
+  <script defer src="/assets/js/ttg-cmp-consent-bridge.js"></script>
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
 <body class="page-gradient">
@@ -566,17 +585,17 @@
             Tick this box to enable submission and let us share your media with credit.
           </p>
           <div class="consent-row">
-            <input type="checkbox" id="feature-contact-permission" name="consent_contact" value="yes" class="consent-checkbox" aria-describedby="feature-contact-help" required />
-            <label for="feature-contact-permission" class="consent-label">
-              It’s okay to email me back about this tank submission. <strong>(Required)</strong>
+            <input type="checkbox" id="feature-permission-contact" name="permission_contact" value="yes" class="consent-checkbox" aria-describedby="feature-contact-help" required />
+            <label for="feature-permission-contact" class="consent-label">
+              I consent to being contacted about this tank submission. <strong>(Required)</strong>
             </label>
           </div>
           <p id="feature-contact-help" class="consent-help">
             We’ll only use your email to follow up about this feature or ask clarifying questions.
           </p>
           <div class="consent-row">
-            <input type="checkbox" id="feature-newsletter" name="consent_newsletter" value="yes" class="consent-checkbox" aria-describedby="feature-newsletter-help" />
-            <label for="feature-newsletter" class="consent-label">
+            <input type="checkbox" id="feature-permission-newsletter" name="permission_newsletter" value="yes" class="consent-checkbox" aria-describedby="feature-newsletter-help" />
+            <label for="feature-permission-newsletter" class="consent-label">
               Yes, I’d like occasional email updates about new guides, tools, and books from FishKeepingLifeCo &amp; The Tank Guide.
             </label>
           </div>
@@ -802,7 +821,7 @@
         const previewsHidden = document.getElementById('mediaPreviewUrls');
         const urlsReadonly = document.getElementById('mediaUrlsReadonly');
         const errorBox = document.getElementById('errorMessage');
-        const contactConsent = document.getElementById('feature-contact-permission');
+        const contactConsent = document.getElementById('feature-permission-contact');
 
         if (!form || !submitBtn || !consent || !contactConsent) {
           return;
@@ -813,6 +832,19 @@
         let playable = [];   // safe-to-play links
         let previews = [];   // thumbnails/posters
         let uploadsInFlight = 0;
+        let uploaderReady = false;
+
+        function markUploaderReady() {
+          if (window.cloudinary && typeof cloudinary.createUploadWidget === 'function') {
+            uploaderReady = true;
+            return true;
+          }
+          console.error('Cloudinary uploader is not available yet.');
+          return false;
+        }
+
+        markUploaderReady();
+        window.addEventListener('load', markUploaderReady);
 
         // ======= Helpers: Socials =======
         function normHandle(val){
@@ -964,8 +996,13 @@
           syncSubmitAvailability();
         }
         function openWidget() {
-          if (!window.cloudinary) {
-            alert('Uploader not ready yet. Please wait a moment and try again.');
+          if (!uploaderReady && !markUploaderReady()) {
+            if (errorBox) {
+              errorBox.textContent = 'Uploader not ready yet. Please wait a moment and try again.';
+              errorBox.style.display = 'block';
+            } else {
+              alert('Uploader not ready yet. Please wait a moment and try again.');
+            }
             return;
           }
           const widget = cloudinary.createUploadWidget({
