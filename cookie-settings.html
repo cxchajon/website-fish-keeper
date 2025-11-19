@@ -300,108 +300,10 @@
   (function() {
     'use strict';
 
-    var STORE_KEY = 'ttgConsentV2';
-    var EXP_DAYS = 365;
-
-    function now() { return Date.now(); }
-
     function log(msg, data) {
       try {
         console.log('[cookie-settings]', msg, data || '');
       } catch (e) {}
-    }
-
-    function loadConsent() {
-      try {
-        if (window.ttgConsent && typeof window.ttgConsent.readConsent === 'function') {
-          return window.ttgConsent.readConsent();
-        }
-
-        var raw = localStorage.getItem(STORE_KEY);
-        if (!raw) return null;
-        var parsed = JSON.parse(raw);
-        if (!parsed || typeof parsed !== 'object') return null;
-        var age = now() - (parsed.ts || 0);
-        if (age > EXP_DAYS * 24 * 3600 * 1000) return null;
-        return parsed;
-      } catch (e) {
-        log('error loading consent:', e);
-        return null;
-      }
-    }
-
-    function buildConsentPayload(prefs){
-      var analyticsChecked = !!(prefs && prefs.analytics);
-      var advertisingChecked = !!(prefs && prefs.advertising);
-
-      return {
-        ad_storage: advertisingChecked ? 'granted' : 'denied',
-        analytics_storage: analyticsChecked ? 'granted' : 'denied',
-        ad_user_data: advertisingChecked ? 'granted' : 'denied',
-        ad_personalization: advertisingChecked ? 'granted' : 'denied',
-        analytics: analyticsChecked,
-        advertising: advertisingChecked,
-        ts: now()
-      };
-    }
-
-    function updateGtagConsent(consent) {
-      var payload = {
-        ad_storage: consent.ad_storage || 'denied',
-        analytics_storage: consent.analytics_storage || 'denied',
-        ad_user_data: consent.ad_user_data || 'denied',
-        ad_personalization: consent.ad_personalization || 'denied'
-      };
-
-      var deniedPayload = {
-        ad_storage: 'denied',
-        analytics_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied'
-      };
-
-      try {
-        if (typeof window.__ttgUpdateConsentState__ === 'function') {
-          window.__ttgUpdateConsentState__(payload);
-        } else if (typeof window.gtag === 'function') {
-          window.gtag('consent', 'default', deniedPayload);
-          window.gtag('consent', 'update', payload);
-        } else {
-          (window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || []).push({ type: 'default', payload: deniedPayload });
-          window.__ttgDeferredConsentUpdates__.push({ type: 'update', payload: payload });
-        }
-        log('gtag consent updated');
-      } catch (e) {
-        log('error updating gtag:', e);
-      }
-    }
-
-    function getConsentFromToggles() {
-      var analyticsChecked = document.getElementById('cookie-analytics').checked;
-      var advertisingChecked = document.getElementById('cookie-advertising').checked;
-
-      return {
-        analytics: analyticsChecked,
-        advertising: advertisingChecked
-      };
-    }
-
-    function updateTogglesFromConsent(consent) {
-      if (!consent) {
-        // Privacy-first defaults when no saved preference exists
-        document.getElementById('cookie-analytics').checked = false;
-        document.getElementById('cookie-advertising').checked = false;
-        return;
-      }
-
-      var analyticsGranted = consent.analytics === true || consent.analytics_storage === 'granted';
-      var advertisingGranted = consent.advertising === true ||
-        consent.ad_storage === 'granted' ||
-        consent.ad_personalization === 'granted' ||
-        consent.ad_user_data === 'granted';
-
-      document.getElementById('cookie-analytics').checked = analyticsGranted;
-      document.getElementById('cookie-advertising').checked = advertisingGranted;
     }
 
     function showStatus(message, duration) {
@@ -414,28 +316,51 @@
       }, duration || 3000);
     }
 
-    function persistConsent(prefs) {
-      var result = { payload: buildConsentPayload(prefs), handled: false };
-      try {
-        if (window.ttgConsent && typeof window.ttgConsent.updateConsentFromToggles === 'function') {
-          window.ttgConsent.updateConsentFromToggles(prefs);
-          result.handled = true;
-        } else {
-          localStorage.setItem(STORE_KEY, JSON.stringify(result.payload));
-          document.cookie = STORE_KEY + '=1; Max-Age=' + (EXP_DAYS * 24 * 3600) + '; Path=/; SameSite=Lax';
-        }
-      } catch (e) {
-        log('error saving consent:', e);
+    function getConsentFromToggles() {
+      return {
+        analytics: document.getElementById('cookie-analytics').checked,
+        advertising: document.getElementById('cookie-advertising').checked
+      };
+    }
+
+    function updateTogglesFromConsent(consent) {
+      var analyticsEl = document.getElementById('cookie-analytics');
+      var advertisingEl = document.getElementById('cookie-advertising');
+
+      if (!consent) {
+        // Privacy-first defaults when no saved preference exists
+        analyticsEl.checked = false;
+        advertisingEl.checked = false;
+        return;
       }
-      return result;
+
+      // Check both boolean and string formats for compatibility
+      var analyticsGranted = consent.analytics === true || consent.analytics_storage === 'granted';
+      var advertisingGranted = consent.advertising === true || consent.ad_storage === 'granted';
+
+      analyticsEl.checked = analyticsGranted;
+      advertisingEl.checked = advertisingGranted;
+    }
+
+    function saveConsent(prefs) {
+      // Use the shared consent API from consent-mode.js
+      if (window.ttgConsent && typeof window.ttgConsent.updateConsentFromToggles === 'function') {
+        window.ttgConsent.updateConsentFromToggles(prefs);
+        log('consent saved via shared API');
+        return true;
+      }
+      log('error: consent API not available');
+      return false;
     }
 
     function handleSaveSettings() {
       log('save settings clicked');
       var prefs = getConsentFromToggles();
-      var result = persistConsent(prefs);
-      if (!result.handled) updateGtagConsent(result.payload);
-      showStatus('✓ Your preferences have been saved.');
+      if (saveConsent(prefs)) {
+        showStatus('Your preferences have been saved.');
+      } else {
+        showStatus('Error saving preferences. Please refresh and try again.');
+      }
     }
 
     function handleAllowAll() {
@@ -444,9 +369,11 @@
       document.getElementById('cookie-advertising').checked = true;
 
       var prefs = getConsentFromToggles();
-      var result = persistConsent(prefs);
-      if (!result.handled) updateGtagConsent(result.payload);
-      showStatus('✓ All cookies enabled and saved.');
+      if (saveConsent(prefs)) {
+        showStatus('All cookies enabled and saved.');
+      } else {
+        showStatus('Error saving preferences. Please refresh and try again.');
+      }
     }
 
     function handleRejectOptional() {
@@ -455,25 +382,36 @@
       document.getElementById('cookie-advertising').checked = false;
 
       var prefs = getConsentFromToggles();
-      var result = persistConsent(prefs);
-      if (!result.handled) updateGtagConsent(result.payload);
-      showStatus('✓ Only essential cookies are enabled.');
+      if (saveConsent(prefs)) {
+        showStatus('Only essential cookies are enabled.');
+      } else {
+        showStatus('Error saving preferences. Please refresh and try again.');
+      }
     }
 
     function init() {
       log('initializing cookie settings page');
 
-      var saved = loadConsent();
+      // Check that consent API is available (consent-mode.js should have loaded)
+      if (!window.ttgConsent || typeof window.ttgConsent.readConsent !== 'function') {
+        log('error: consent API not available, cannot initialize');
+        return;
+      }
+
+      // Load saved consent using the shared API
+      var saved = window.ttgConsent.readConsent();
       updateTogglesFromConsent(saved);
 
       if (saved) {
-        var analytics = saved.analytics === true || saved.analytics_storage === 'granted';
-        var ads = saved.advertising === true || saved.ad_storage === 'granted' || saved.ad_personalization === 'granted' || saved.ad_user_data === 'granted';
-        log('loaded saved preferences:', { analytics: analytics, ads: ads });
+        log('loaded saved preferences:', {
+          analytics: saved.analytics,
+          advertising: saved.advertising
+        });
       } else {
-        log('no saved preferences found, using defaults');
+        log('no saved preferences found, using privacy-first defaults (all denied)');
       }
 
+      // Wire up button handlers
       document.getElementById('save-settings-btn').addEventListener('click', handleSaveSettings);
       document.getElementById('allow-all-btn').addEventListener('click', handleAllowAll);
       document.getElementById('reject-optional-btn').addEventListener('click', handleRejectOptional);
@@ -481,11 +419,9 @@
       log('event listeners wired');
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
-    }
+    // Always wait for DOMContentLoaded to ensure consent-mode.js has executed
+    // (consent-mode.js uses defer, so it runs after parsing but before DOMContentLoaded)
+    document.addEventListener('DOMContentLoaded', init);
   })();
 </script>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
