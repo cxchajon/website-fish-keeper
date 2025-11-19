@@ -394,7 +394,7 @@
       var advertisingChecked = document.getElementById('cookie-advertising').checked;
 
       return {
-        ad_storage: 'granted',
+        ad_storage: advertisingChecked ? 'granted' : 'denied',
         analytics_storage: analyticsChecked ? 'granted' : 'denied',
         ad_user_data: advertisingChecked ? 'granted' : 'denied',
         ad_personalization: advertisingChecked ? 'granted' : 'denied'
@@ -403,8 +403,9 @@
 
     function updateTogglesFromConsent(consent) {
       if (!consent) {
-        document.getElementById('cookie-analytics').checked = false;
-        document.getElementById('cookie-advertising').checked = false;
+        // Default to ON when no saved preference exists (UI state only)
+        document.getElementById('cookie-analytics').checked = true;
+        document.getElementById('cookie-advertising').checked = true;
         return;
       }
 
