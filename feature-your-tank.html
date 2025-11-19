@@ -440,7 +440,6 @@
   </script>
   <script defer src="/assets/js/ttg-cmp-consent-bridge.js"></script>
   <!-- --- Google CMP (Funding Choices) END --- -->
-  <script defer src="https://widget.cloudinary.com/v2.0/global/all.js" id="cloudinary-widget-script"></script>
 </head>
 <body class="page-gradient">
   <a href="#feature-main" class="skip-link">Skip to main content</a>
@@ -638,8 +637,9 @@
         <div id="errorMessage" role="alert" style="display:none; margin-top:0.75rem; color:#f87171; font-weight:600;"></div>
       </section>
 
-      <script>
-      document.addEventListener('DOMContentLoaded', function() {
+        <script src="https://widget.cloudinary.com/v2.0/global/all.js" id="cloudinary-widget-script"></script>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
         // ======= Config (Cloudinary + limits) =======
         const CLOUD_NAME = 'fishkeepinglifeco';
         const UPLOAD_PRESET = 'ttg_unsigned';
@@ -679,7 +679,7 @@
 
         function buildWidget() {
           if (widgetInstance) return true;
-          if (!(window.cloudinary && typeof cloudinary.createUploadWidget === 'function')) {
+          if (!(window.cloudinary && typeof window.cloudinary.createUploadWidget === 'function')) {
             return false;
           }
 
@@ -736,16 +736,6 @@
 
           console.log('Cloudinary widget initialized successfully.');
           return true;
-        }
-
-        function tryInit() {
-          if (!widgetInstance) buildWidget();
-        }
-
-        tryInit();
-        const cloudScript = document.getElementById('cloudinary-widget-script');
-        if (cloudScript && !widgetInstance) {
-          cloudScript.addEventListener('load', tryInit);
         }
 
         // ======= Helpers: Socials =======
@@ -903,21 +893,21 @@
             return;
           }
 
-          if (buildWidget()) {
+          if (buildWidget() && widgetInstance) {
             setTimeout(() => {
               if (widgetInstance) {
                 widgetInstance.open();
               }
-            }, 50);
+            }, 20);
+            return;
+          }
+
+          console.error('Cloudinary script failed to load or is blocked.');
+          if (errorBox) {
+            errorBox.textContent = 'The uploader could not load. Please allow widget.cloudinary.com or try again.';
+            errorBox.style.display = 'block';
           } else {
-            console.error('Cloudinary script failed to load or is blocked.');
-            if (errorBox) {
-              errorBox.textContent =
-                'Uploader is still loading (or blocked by browser). Please check your connection or wait a moment.';
-              errorBox.style.display = 'block';
-            } else {
-              alert('Uploader is not ready yet. Please check your internet connection.');
-            }
+            alert('The uploader could not load. Please allow widget.cloudinary.com or try again.');
           }
         }
 
