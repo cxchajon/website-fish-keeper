@@ -11,6 +11,11 @@
   <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
   <meta charset="UTF-8" />
   <meta property="og:site_name" content="The Tank Guide" />
+  <!-- Google tag (gtag.js) — GA4 -->
+  <!--#include virtual="/includes/ga4.html" -->
+  <script src="/assets/js/ga4-fallback.js" data-ga4-loader defer></script>
+  <!-- Consent Mode defaults (runs after GA loader) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Aquarium Journal Dashboard — The Tank Guide</title>
   <meta name="description" content="Internal aquarium tracker that visualizes nitrate, dosing, and feeding logs used for Tank Guide editorial experiments." />
@@ -540,12 +545,17 @@
   function setAdConsent(granted){
     // Google CMP interface (Funding Choices) — set consent for ads_storage and ad_user_data
     var consentState = granted ? 'granted' : 'denied';
-    if (typeof gtag === 'function') {
-      gtag('consent', 'update', {
-        'ad_storage': consentState,
-        'ad_user_data': consentState,
-        'ad_personalization': consentState
-      });
+    var payload = {
+      'ad_storage': consentState,
+      'ad_user_data': consentState,
+      'ad_personalization': consentState
+    };
+    if (typeof window.__ttgUpdateConsentState__ === 'function') {
+      window.__ttgUpdateConsentState__(payload);
+    } else if (typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', payload);
+    } else {
+      (window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || []).push(payload);
     }
   }
 

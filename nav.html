@@ -11,6 +11,11 @@
   <meta charset="utf-8" />
   <meta property="og:site_name" content="The Tank Guide" />
   <!--#include virtual="/includes/schema-organization.html" -->
+  <!-- Google tag (gtag.js) — GA4 -->
+  <!--#include virtual="/includes/ga4.html" -->
+  <script src="/assets/js/ga4-fallback.js" data-ga4-loader defer></script>
+  <!-- Consent Mode defaults (runs after GA loader) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
   <meta name="description" content="Quick navigation hub for The Tank Guide with links to tools, gear, store, policies, and contact options." />
   <meta name="robots" content="noindex,nofollow" />
   <title>The Tank Guide — Navigation</title>
@@ -26,8 +31,7 @@
     "publisher": { "@id": "https://thetankguide.com/#organization" }
   }
   </script>
-  <!-- Consent Mode defaults (load FIRST) -->
-  <script src="/assets/js/consent-mode.js" defer></script>
+  
   <!-- --- Google CMP (Funding Choices) START --- -->
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
   <script>
@@ -146,12 +150,17 @@
   function setAdConsent(granted){
     // Google CMP interface (Funding Choices) — set consent for ads_storage and ad_user_data
     var consentState = granted ? 'granted' : 'denied';
-    if (typeof gtag === 'function') {
-      gtag('consent', 'update', {
-        'ad_storage': consentState,
-        'ad_user_data': consentState,
-        'ad_personalization': consentState
-      });
+    var payload = {
+      'ad_storage': consentState,
+      'ad_user_data': consentState,
+      'ad_personalization': consentState
+    };
+    if (typeof window.__ttgUpdateConsentState__ === 'function') {
+      window.__ttgUpdateConsentState__(payload);
+    } else if (typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', payload);
+    } else {
+      (window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || []).push(payload);
     }
   }
 

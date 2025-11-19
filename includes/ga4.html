@@ -1,37 +1,48 @@
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JLDG95NKGB"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-508286504"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){ dataLayer.push(arguments); }
-
-  // Respect Consent Mode v2 defaults. Do not send a page_view until ads/analytics are granted.
-  // Initialize with denied-by-default values; our consent-mode.js will update these on accept.
-  gtag('consent', 'default', {
-    'ad_storage': 'denied',
-    'analytics_storage': 'denied',
-    'ad_user_data': 'denied',
-    'ad_personalization': 'denied',
-    'wait_for_update': 500
-  });
-
-  // Basic GA4 bootstrap; send_page_view is false so we can gate by consent.
-  gtag('js', new Date());
-  gtag('config', 'G-JLDG95NKGB', { 'send_page_view': false });
-
-  // When our banner calls acceptAll(), consent-mode.js should emit a consent update event.
-  // Listen for that and then send a page_view once per load.
   (function(){
-    var sent = false;
-    function trySend() {
-      if (sent) return;
-      // Minimal check: analytics_storage granted
-      var s = (window.__TTG_CONSENT_STATE__ || {}).analytics_storage;
-      if (s === 'granted') {
-        sent = true;
-        gtag('event', 'page_view');
-      }
+    var SNIPPET_PATH = '/includes/ga4.html';
+    window.__TTG_GA4_PATH__ = window.__TTG_GA4_PATH__ || SNIPPET_PATH;
+    window.__TTG_GA4_PRESENT__ = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function gtag(){ dataLayer.push(arguments); };
+
+    var defaultConsent = {
+      'ad_storage': 'denied',
+      'analytics_storage': 'denied',
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied',
+      'wait_for_update': 500
+    };
+
+    gtag('consent', 'default', defaultConsent);
+
+    var pendingUpdates = window.__ttgDeferredConsentUpdates__;
+    if (Array.isArray(pendingUpdates) && pendingUpdates.length){
+      pendingUpdates.splice(0).forEach(function(state){
+        gtag('consent', 'update', state);
+      });
     }
-    window.addEventListener('ttg-consent-updated', trySend);
-    // Also attempt once on load in case consent was already saved as granted.
-    document.addEventListener('DOMContentLoaded', trySend);
+
+    gtag('js', new Date());
+    gtag('config', 'G-508286504', { 'send_page_view': false });
+
+    window.__TTG_GA4_READY__ = true;
+    window.dispatchEvent(new CustomEvent('ttg-ga4-ready'));
+
+    (function(){
+      var sent = false;
+      function trySend(){
+        if (sent) return;
+        var state = window.__TTG_CONSENT_STATE__ || {};
+        if (state.analytics_storage === 'granted'){
+          sent = true;
+          gtag('event', 'page_view');
+        }
+      }
+      window.addEventListener('ttg-consent-updated', trySend);
+      document.addEventListener('DOMContentLoaded', trySend);
+      trySend();
+    })();
   })();
 </script>

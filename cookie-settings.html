@@ -123,46 +123,11 @@
     .save-status { margin-top: 12px; padding: 12px; background: rgba(76,175,80,.2); border: 1px solid rgba(76,175,80,.4); border-radius: 8px; font-size: 14px; display: none; }
     .save-status.show { display: block; }
   </style>
-  <!-- Consent Mode defaults (load FIRST) -->
-  <script src="/assets/js/consent-mode.js" defer></script>
   <!-- Google tag (gtag.js) — GA4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLDG95NKGB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-
-    // Respect Consent Mode v2 defaults. Do not send a page_view until ads/analytics are granted.
-    // Initialize with denied-by-default values; our consent-mode.js will update these on accept.
-    gtag('consent', 'default', {
-      'ad_storage': 'denied',
-      'analytics_storage': 'denied',
-      'ad_user_data': 'denied',
-      'ad_personalization': 'denied',
-      'wait_for_update': 500
-    });
-
-    // Basic GA4 bootstrap; send_page_view is false so we can gate by consent.
-    gtag('js', new Date());
-    gtag('config', 'G-JLDG95NKGB', { 'send_page_view': false });
-
-    // When our banner calls acceptAll(), consent-mode.js should emit a consent update event.
-    // Listen for that and then send a page_view once per load.
-    (function(){
-      var sent = false;
-      function trySend() {
-        if (sent) return;
-        // Minimal check: analytics_storage granted
-        var s = (window.__TTG_CONSENT_STATE__ || {}).analytics_storage;
-        if (s === 'granted') {
-          sent = true;
-          gtag('event', 'page_view');
-        }
-      }
-      window.addEventListener('ttg-consent-updated', trySend);
-      // Also attempt once on load in case consent was already saved as granted.
-      document.addEventListener('DOMContentLoaded', trySend);
-    })();
-  </script>
+  <!--#include virtual="/includes/ga4.html" -->
+  <script src="/assets/js/ga4-fallback.js" data-ga4-loader defer></script>
+  <!-- Consent Mode defaults (runs after GA loader) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
 
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
@@ -375,14 +340,21 @@
     }
 
     function updateGtagConsent(consent) {
-      if (typeof window.gtag !== 'function') return;
+      var payload = {
+        ad_storage: consent.ad_storage || 'denied',
+        analytics_storage: consent.analytics_storage || 'denied',
+        ad_user_data: consent.ad_user_data || 'denied',
+        ad_personalization: consent.ad_personalization || 'denied'
+      };
+
       try {
-        window.gtag('consent', 'update', {
-          ad_storage: consent.ad_storage || 'denied',
-          analytics_storage: consent.analytics_storage || 'denied',
-          ad_user_data: consent.ad_user_data || 'denied',
-          ad_personalization: consent.ad_personalization || 'denied'
-        });
+        if (typeof window.__ttgUpdateConsentState__ === 'function') {
+          window.__ttgUpdateConsentState__(payload);
+        } else if (typeof window.gtag === 'function') {
+          window.gtag('consent', 'update', payload);
+        } else {
+          (window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || []).push(payload);
+        }
         log('gtag consent updated');
       } catch (e) {
         log('error updating gtag:', e);

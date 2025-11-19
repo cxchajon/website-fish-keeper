@@ -30,6 +30,11 @@
   <meta name="twitter:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
   <link rel="stylesheet" href="css/style.css?v=1.0.10" />
   <script defer src="js/nav.js?v=1.1.0"></script>
+  <!-- Google tag (gtag.js) — GA4 -->
+  <!--#include virtual="/includes/ga4.html" -->
+  <script src="/assets/js/ga4-fallback.js" data-ga4-loader defer></script>
+  <!-- Consent Mode defaults (runs after GA loader) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
   <style>
     body{background:#0d1a29;color:#f1f5f9;font-family:"Segoe UI",Roboto,Arial,sans-serif;margin:0;}
     main{padding:80px 20px 120px;}
@@ -48,7 +53,7 @@
     }
   </style>
   
-  <script src="/assets/js/consent-mode.js" defer></script>
+  
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
     data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
   <script>
