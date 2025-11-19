@@ -11,9 +11,14 @@
   <meta charset="utf-8" />
   <meta property="og:site_name" content="The Tank Guide" />
   <!--#include virtual="/includes/schema-organization.html" -->
-  <!-- Google tag (gtag.js) — GA4 -->
-  <!--#include virtual="/includes/ga4.html" -->
-  <script src="/assets/js/ga4-fallback.js" data-ga4-loader defer></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PTHZ5NZFVJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-PTHZ5NZFVJ');
+  </script>
   <!-- Consent Mode defaults (runs after GA loader) -->
   <script src="/assets/js/consent-mode.js" defer></script>
   <meta name="description" content="Quick navigation hub for The Tank Guide with links to tools, gear, store, policies, and contact options." />
