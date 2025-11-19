@@ -497,6 +497,31 @@
             ></textarea>
             <p class="field-help" id="help-message">Let us know the details so we can help quickly.</p>
           </div>
+          <div class="field-group">
+            <div>
+              <input
+                type="checkbox"
+                id="contact-permission"
+                name="consent_contact"
+                value="yes"
+                required
+                aria-describedby="help-contact-permission"
+              />
+              <label for="contact-permission">It’s okay to email me back about this message. <span class="req">*Required</span></label>
+            </div>
+            <p class="field-help" id="help-contact-permission">We’ll only use your email to reply to this specific question or issue.</p>
+            <div>
+              <input
+                type="checkbox"
+                id="contact-newsletter"
+                name="consent_newsletter"
+                value="yes"
+                aria-describedby="help-contact-newsletter"
+              />
+              <label for="contact-newsletter">Yes, I’d like occasional email updates about new guides, tools, and books from FishKeepingLifeCo &amp; The Tank Guide.</label>
+            </div>
+            <p class="field-help" id="help-contact-newsletter">No spam — just important updates. You can unsubscribe anytime.</p>
+          </div>
         </fieldset>
         <div class="actions">
           <button type="submit" id="submit-btn">Contact &amp; Feedback</button>
@@ -506,6 +531,141 @@
   </main>
   
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('contact-form');
+      const errorSummary = document.getElementById('error-summary');
+      const errorList = document.getElementById('error-list');
+      const successMessage = document.getElementById('success-message');
+      const submitBtn = document.getElementById('submit-btn');
+
+      if (!form) return;
+
+      const fields = [
+        { id: 'contact-name', label: 'Name' },
+        { id: 'contact-email', label: 'Email' },
+        { id: 'contact-subject', label: 'Subject' },
+        { id: 'contact-message', label: 'Message' },
+        { id: 'contact-permission', label: 'Email permission', type: 'checkbox' }
+      ];
+
+      fields.forEach((field) => {
+        const el = document.getElementById(field.id);
+        if (!el) return;
+        const helpId = el.getAttribute('aria-describedby');
+        if (helpId) {
+          const help = document.getElementById(helpId);
+          if (help && !help.dataset.defaultText) {
+            help.dataset.defaultText = help.textContent;
+          }
+        }
+      });
+
+      function resetFieldState(el) {
+        if (!el) return;
+        el.classList.remove('has-error');
+        const helpId = el.getAttribute('aria-describedby');
+        if (helpId) {
+          const help = document.getElementById(helpId);
+          if (help) {
+            help.classList.remove('visible');
+            if (help.dataset.defaultText) {
+              help.textContent = help.dataset.defaultText;
+            }
+          }
+        }
+      }
+
+      function clearErrors() {
+        errorList.innerHTML = '';
+        errorSummary.classList.remove('visible');
+        fields.forEach((field) => {
+          const el = document.getElementById(field.id);
+          resetFieldState(el);
+        });
+      }
+
+      function addError(el, message) {
+        if (!el) return;
+        el.classList.add('has-error');
+        const helpId = el.getAttribute('aria-describedby');
+        if (helpId) {
+          const help = document.getElementById(helpId);
+          if (help) {
+            help.textContent = message;
+            help.classList.add('visible');
+          }
+        }
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = `#${el.id}`;
+        link.textContent = message;
+        link.addEventListener('click', function() {
+          el.focus();
+        });
+        li.appendChild(link);
+        errorList.appendChild(li);
+      }
+
+      form.addEventListener('submit', async function(event) {
+        clearErrors();
+        successMessage.classList.remove('visible');
+        let hasErrors = false;
+
+        fields.forEach((field) => {
+          const el = document.getElementById(field.id);
+          if (!el) return;
+          const value = field.type === 'checkbox' ? el.checked : (el.value || '').trim();
+          if (!value) {
+            hasErrors = true;
+            addError(el, `${field.label} is required.`);
+          }
+        });
+
+        if (hasErrors) {
+          event.preventDefault();
+          errorSummary.classList.add('visible');
+          errorSummary.focus();
+          return;
+        }
+
+        event.preventDefault();
+        submitBtn.setAttribute('aria-disabled', 'true');
+        submitBtn.disabled = true;
+
+        try {
+          const formData = new FormData(form);
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+          });
+
+          if (response.ok) {
+            form.reset();
+            fields.forEach((field) => {
+              const el = document.getElementById(field.id);
+              resetFieldState(el);
+            });
+            successMessage.classList.add('visible');
+            successMessage.focus();
+          } else {
+            addError(form, 'There was a problem sending your message. Please try again.');
+            errorSummary.classList.add('visible');
+            errorSummary.focus();
+          }
+        } catch (err) {
+          console.error(err);
+          addError(form, 'Network error. Please try again.');
+          errorSummary.classList.add('visible');
+          errorSummary.focus();
+        } finally {
+          submitBtn.removeAttribute('aria-disabled');
+          submitBtn.disabled = false;
+        }
+      });
+    });
+  </script>
   <section class="legal-links" aria-label="Site legal links">
     <a href="/privacy-legal.html">Privacy Policy</a>
     <a href="/terms.html">Terms</a>

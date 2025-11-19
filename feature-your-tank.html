@@ -565,6 +565,24 @@
           <p id="consent-help" class="consent-help">
             Tick this box to enable submission and let us share your media with credit.
           </p>
+          <div class="consent-row">
+            <input type="checkbox" id="feature-contact-permission" name="consent_contact" value="yes" class="consent-checkbox" aria-describedby="feature-contact-help" required />
+            <label for="feature-contact-permission" class="consent-label">
+              It’s okay to email me back about this tank submission. <strong>(Required)</strong>
+            </label>
+          </div>
+          <p id="feature-contact-help" class="consent-help">
+            We’ll only use your email to follow up about this feature or ask clarifying questions.
+          </p>
+          <div class="consent-row">
+            <input type="checkbox" id="feature-newsletter" name="consent_newsletter" value="yes" class="consent-checkbox" aria-describedby="feature-newsletter-help" />
+            <label for="feature-newsletter" class="consent-label">
+              Yes, I’d like occasional email updates about new guides, tools, and books from FishKeepingLifeCo &amp; The Tank Guide.
+            </label>
+          </div>
+          <p id="feature-newsletter-help" class="consent-help">
+            No spam — just important updates. You can unsubscribe anytime.
+          </p>
 
           <!-- ===== SUBMIT ===== -->
           <button type="submit" id="submitBtn" class="btn-primary" disabled aria-disabled="true">Submit Tank</button>
@@ -784,8 +802,9 @@
         const previewsHidden = document.getElementById('mediaPreviewUrls');
         const urlsReadonly = document.getElementById('mediaUrlsReadonly');
         const errorBox = document.getElementById('errorMessage');
+        const contactConsent = document.getElementById('feature-contact-permission');
 
-        if (!form || !submitBtn || !consent) {
+        if (!form || !submitBtn || !consent || !contactConsent) {
           return;
         }
 
@@ -898,7 +917,7 @@
         }
         function syncSubmitAvailability() {
           // Submit allowed only when: consent checked and uploads finished
-          const canSubmit = consent.checked && uploadsInFlight === 0;
+          const canSubmit = consent.checked && contactConsent.checked && uploadsInFlight === 0;
           setSubmitEnabled(canSubmit);
         }
         function isVideoUrl(url) {
@@ -1001,6 +1020,7 @@
 
         // ======= Wire events =======
         consent.addEventListener('change', syncSubmitAvailability);
+        contactConsent.addEventListener('change', syncSubmitAvailability);
         if (openUploaderBtn) openUploaderBtn.addEventListener('click', openWidget);
         if (clearUploadsBtn) clearUploadsBtn.addEventListener('click', function() {
           uploaded = []; playable = []; previews = [];
@@ -1020,9 +1040,10 @@
             return false;
           }
           // Gate on consent + uploads
-          if (!consent.checked || uploadsInFlight > 0) {
+          if (!consent.checked || !contactConsent.checked || uploadsInFlight > 0) {
             e.preventDefault();
             if (!consent.checked) alert('Please confirm you own the media and grant permission.');
+            if (!contactConsent.checked) alert('Please allow us to email you back about this submission.');
             if (uploadsInFlight > 0) alert('Please wait for uploads to finish.');
             return false;
           }
