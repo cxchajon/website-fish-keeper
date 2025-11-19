@@ -186,6 +186,11 @@
       resize: vertical;
     }
 
+    .has-error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+    }
+
     .field-help {
       font-size: 0.9rem;
       color: #5d6773;
@@ -294,8 +299,89 @@
 
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
-    data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
+    data-cf-beacon='{"token": "fef22cbf19e3473db5ec987a8f3bf4f3"}'></script>
   <!-- End Cloudflare Web Analytics -->
+
+  <!-- IAB TCF v2.2 stub to allow __tcfapi interactions -->
+  <script>
+    (function() {
+      var TCF_LOCATOR_NAME = '__tcfapiLocator';
+      var queue = [];
+      var win = window;
+      var cmpFrame;
+
+      function addFrame() {
+        if (!win.frames[TCF_LOCATOR_NAME]) {
+          if (document.body) {
+            cmpFrame = document.createElement('iframe');
+            cmpFrame.style.cssText = 'display:none';
+            cmpFrame.name = TCF_LOCATOR_NAME;
+            document.body.appendChild(cmpFrame);
+          } else {
+            setTimeout(addFrame, 5);
+          }
+        }
+      }
+
+      function tcfAPIHandler() {
+        var gdprApplies;
+        var args = arguments;
+
+        if (!args.length) {
+          return queue;
+        }
+
+        if (args[0] === 'setGdprApplies') {
+          gdprApplies = args[1];
+          if (typeof args[2] === 'function') {
+            args[2]('set', true);
+          }
+        } else if (args[0] === 'ping') {
+          var retr = {
+            gdprApplies: gdprApplies,
+            cmpLoaded: false,
+            cmpStatus: 'stub'
+          };
+          if (typeof args[2] === 'function') {
+            args[2](retr);
+          }
+        } else {
+          queue.push(args);
+        }
+      }
+
+      function postMessageEventHandler(event) {
+        var msgIsString = typeof event.data === 'string';
+        var json = {};
+
+        try {
+          json = msgIsString ? JSON.parse(event.data) : event.data;
+        } catch (ignore) {}
+
+        var payload = json.__tcfapiCall;
+
+        if (payload) {
+          window.__tcfapi(payload.command, payload.version, function(retValue, success) {
+            var returnMsg = {
+              __tcfapiReturn: {
+                returnValue: retValue,
+                success: success,
+                callId: payload.callId
+              }
+            };
+            if (msgIsString) {
+              returnMsg = JSON.stringify(returnMsg);
+            }
+            event.source.postMessage(returnMsg, '*');
+          }, payload.parameter);
+        }
+      }
+
+      addFrame();
+      win.__tcfapi = tcfAPIHandler;
+      win.addEventListener('message', postMessageEventHandler, false);
+    })();
+  </script>
 
   <!-- --- Google CMP (Funding Choices) START --- -->
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
@@ -334,7 +420,13 @@
       <p class="intro">Use this form to share feedback on our fishkeeping guides, report logic issues, or highlight anything that seems off in our tools.</p>
       <p class="intro">We also welcome aquarium questions so we can point you toward the right resources for your next build.</p>
       <p class="tiny" aria-live="polite">We usually reply within 1–2 business days.</p>
-      <form data-testid="contact-form" novalidate>
+      <form
+        data-testid="contact-form"
+        novalidate
+        action="https://formspree.io/f/xnngnwld"
+        method="POST"
+      >
+        <input type="text" name="hp_website" autocomplete="off" tabindex="-1" style="position:absolute; left:-9999px;" aria-hidden="true" />
         <fieldset>
           <legend class="visually-hidden">Contact &amp; Feedback form</legend>
           <div class="field-group">
@@ -399,7 +491,8 @@
       </form>
     </section>
   </main>
-<script src="/js/footer-loader.js?v=1.5.2" defer></script>
+  <script src="/js/contact-feedback.js?v=1.0.0" defer></script>
+  <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
     <a href="/privacy-legal.html">Privacy Policy</a>
     <a href="/terms.html">Terms</a>
