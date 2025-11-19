@@ -23,287 +23,12 @@
   <meta name="twitter:description" content="Submit your aquarium’s Quick Facts to be featured on The Tank Guide: size, stock, substrate, filtration, lighting, and more." />
   <meta name="twitter:url" content="https://thetankguide.com/feature-your-tank.html" />
   <link rel="canonical" href="https://thetankguide.com/feature-your-tank.html">
+  <link rel="preconnect" href="https://pagead2.googlesyndication.com">
+  <link rel="preconnect" href="https://fundingchoicesmessages.google.com">
+  <link rel="preconnect" href="https://static.cloudflareinsights.com">
+  <link rel="preconnect" href="https://widget.cloudinary.com">
   <link rel="stylesheet" href="css/style.css?v=1.0.10" />
   <script defer src="js/nav.js?v=1.1.0"></script>
-  <style>
-    body.page-gradient {
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(180deg, #0b0f12 0%, #111820 60%, #101418 100%);
-      color: #e9f0fb;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-      background-attachment: fixed;
-    }
-
-    .feature-main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 40px 16px 96px;
-    }
-
-    .panel {
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      padding: 32px 28px 40px;
-      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
-    }
-
-    .panel h1 {
-      margin: 0;
-      font-size: clamp(2rem, 2.4vw + 1rem, 3rem);
-      font-weight: 700;
-      letter-spacing: 0.01em;
-    }
-
-    .divider {
-      height: 1px;
-      background: linear-gradient(90deg, rgba(192, 192, 192, 0.6), rgba(192, 192, 192, 0.2));
-      margin: 12px 0 20px;
-    }
-
-    .tiny {
-      font-size: 0.92rem;
-      line-height: 1.6;
-      margin: 0;
-      color: rgba(233, 240, 251, 0.85);
-    }
-
-    #feature-tank-form.ft-wrap {
-      --border: rgba(255, 255, 255, 0.12);
-      --muted: #a1a1aa;
-      --text: #f3f4f6;
-      --accent: #10b981;
-      color: var(--text);
-    }
-
-    #feature-tank-form {
-      margin-top: 24px;
-    }
-
-    #feature-tank-form .ft-field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin: 14px 0;
-    }
-
-    #feature-tank-form .ft-label {
-      font-weight: 600;
-      color: rgba(241, 246, 255, 0.9);
-    }
-
-    #feature-tank-form .ft-title {
-      margin: 0 0 12px;
-      font-size: 1.4rem;
-    }
-
-    #feature-tank-form .ft-input,
-    #feature-tank-form textarea.ft-input,
-    #feature-tank-form select.ft-input,
-    #feature-tank-form textarea.urls-readonly {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid var(--border, rgba(255, 255, 255, 0.18));
-      background: rgba(6, 10, 16, 0.65);
-      color: var(--text, #f4f8ff);
-      font-size: 1rem;
-      transition: border-color 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    #feature-tank-form .ft-input::placeholder,
-    #feature-tank-form textarea.ft-input::placeholder {
-      color: rgba(244, 248, 255, 0.55);
-    }
-
-    #feature-tank-form .ft-input:focus,
-    #feature-tank-form textarea.ft-input:focus,
-    #feature-tank-form select.ft-input:focus,
-    #feature-tank-form textarea.urls-readonly:focus {
-      outline: none;
-      border-color: rgba(118, 198, 255, 0.8);
-      box-shadow: 0 0 0 3px rgba(118, 198, 255, 0.25);
-    }
-
-    #feature-tank-form .ft-grid {
-      display: grid;
-      gap: 12px;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      margin: 6px 0;
-    }
-
-    #feature-tank-form .ft-help {
-      color: var(--muted, #a1a1aa);
-      margin-top: 6px;
-    }
-
-    #feature-tank-form .ft-help.small {
-      font-size: 0.9rem;
-    }
-
-    #feature-tank-form textarea.ft-input {
-      resize: vertical;
-      min-height: 120px;
-    }
-
-    #feature-tank-form .upload-card {
-      margin: 16px 0;
-      padding: 14px;
-      border: 1px dashed var(--border, rgba(255, 255, 255, 0.12));
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.03);
-    }
-
-    #feature-tank-form .upload-head h3 {
-      margin: 0 0 4px;
-      font-size: 1.1rem;
-    }
-
-    #feature-tank-form .muted {
-      color: var(--muted, #a1a1aa);
-    }
-
-    #feature-tank-form .upload-actions {
-      display: flex;
-      gap: 10px;
-      margin: 10px 0 12px;
-    }
-
-    #feature-tank-form .btn-primary {
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
-      background: linear-gradient(180deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.08));
-      color: var(--text, #f3f4f6);
-      font-weight: 600;
-      letter-spacing: 0.2px;
-      cursor: pointer;
-    }
-
-    #feature-tank-form .btn-ghost {
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
-      background: transparent;
-      color: var(--muted, #a1a1aa);
-      cursor: pointer;
-    }
-
-    #feature-tank-form .upload-preview {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
-      gap: 10px;
-      min-height: 0;
-    }
-
-    #feature-tank-form .thumb {
-      border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
-      border-radius: 10px;
-      overflow: hidden;
-      position: relative;
-      aspect-ratio: 1 / 1;
-      display: grid;
-      place-items: center;
-      font-size: 0.8rem;
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    #feature-tank-form .thumb img,
-    #feature-tank-form .thumb video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    #feature-tank-form .thumb .badge {
-      position: absolute;
-      bottom: 6px;
-      right: 6px;
-      background: rgba(0, 0, 0, 0.55);
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-size: 0.7rem;
-    }
-
-    #feature-tank-form .consent-row {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 12px;
-      align-items: start;
-      margin: 12px 0 6px;
-    }
-
-    #feature-tank-form .consent-checkbox {
-      width: 20px;
-      height: 20px;
-      margin-top: 2px;
-      -webkit-appearance: checkbox;
-      appearance: checkbox;
-      accent-color: var(--accent, #10b981);
-      transform: scale(1.15);
-      transform-origin: top left;
-      cursor: pointer;
-    }
-
-    #feature-tank-form .consent-label {
-      user-select: none;
-      cursor: pointer;
-      line-height: 1.4;
-    }
-
-    #feature-tank-form .consent-help {
-      color: var(--muted, #a1a1aa);
-      margin: 0 0 10px;
-    }
-
-    #feature-tank-form #submitBtn[disabled] {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    #feature-tank-form .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    #thankYou {
-      margin-top: 1rem;
-      color: #10b981;
-      font-weight: 600;
-    }
-
-    @media (max-width: 720px) {
-      .panel {
-        padding: 28px 22px 36px;
-      }
-
-      .feature-main {
-        padding-top: 32px;
-      }
-
-      #feature-tank-form .upload-actions {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      #feature-tank-form .btn-primary,
-      #feature-tank-form .btn-ghost {
-        width: 100%;
-        text-align: center;
-      }
-    }
-  </style>
   <!-- Consent Mode defaults (load FIRST) -->
   <script src="/assets/js/consent-mode.js" defer></script>
   <!-- Google tag (gtag.js) — GA4 -->
@@ -420,9 +145,10 @@
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
 <body class="page-gradient">
+  <a href="#feature-main" class="skip-link">Skip to main content</a>
   <div id="site-nav"></div>
 
-  <main class="feature-main">
+  <main class="feature-main" id="feature-main">
     <section class="panel" aria-labelledby="feature-tank-title">
       <h1 id="feature-tank-title">Feature Your Tank — Quick Facts</h1>
       <div class="divider" aria-hidden="true"></div>
@@ -449,15 +175,15 @@
           </div>
 
           <!-- ===== ELIGIBILITY NOTICE ===== -->
-          <div class="notice-card" aria-label="Eligibility notice">
-            <strong>Eligibility — Please Read First</strong>
+          <aside class="eligibility-note" aria-labelledby="eligibility-heading" role="note">
+            <h2 id="eligibility-heading">Eligibility</h2>
             <ul>
               <li>You must be subscribed to our <strong>YouTube channel (@FishKeepingLifeCo)</strong> AND follow at least one other social (Instagram or TikTok).</li>
               <li>Provide your actual account handle(s) so we can verify before approval.</li>
               <li>If selected, post a story or short mention announcing your upcoming feature and <strong>tag @FishKeepingLifeCo</strong>. We’ll provide official hashtags to include.</li>
               <li>When your feature goes live, we’ll add it to our website and socials. You agree to let us tag you and keep handles taggable/visible.</li>
             </ul>
-          </div>
+          </aside>
 
           <!-- ===== SOCIALS (YouTube + one other required) ===== -->
           <div id="socials-block" class="channel-wrap">
@@ -613,184 +339,6 @@
         </div>
         <div id="errorMessage" role="alert" style="display:none; margin-top:0.75rem; color:#f87171; font-weight:600;"></div>
       </section>
-      <!-- ======= Scoped Styles (minimal) ======= -->
-      <style>
-        #feature-tank-form.ft-wrap {
-          --border: rgba(255,255,255,0.12);
-          --muted: #a1a1aa;
-          --text: #f3f4f6;
-          --accent: #10b981;
-          --accent-weak: rgba(16,185,129,0.35);
-          color: var(--text);
-        }
-        .ft-title { margin: 0 0 12px; font-size: 1.4rem; }
-        .ft-field { margin: 12px 0; }
-        .ft-label { display:block; margin-bottom:6px; }
-        .ft-input, textarea.ft-input {
-          width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
-          background: rgba(255,255,255,0.05); color: var(--text);
-        }
-        .ft-help { color: var(--muted); margin-top: 6px; }
-        .ft-help.small { font-size: .9rem; }
-        .grid-2 { display:grid; gap:10px; grid-template-columns: 1fr 1fr; }
-        .grid-3 { display:grid; gap:10px; grid-template-columns: 1fr 1fr 1fr; }
-        @media (max-width: 680px){ .grid-2, .grid-3 { grid-template-columns: 1fr; } }
-
-        /* Notice */
-        .notice-card{
-          margin:12px 0 14px; padding:12px 14px;
-          border-radius:12px; border:1px solid var(--border);
-          background: rgba(255,255,255,0.06);
-        }
-        .notice-card ul{ margin:8px 0 0 18px; padding:0; }
-        .notice-card li{ margin:6px 0; line-height:1.35; }
-
-        /* Socials */
-        .channel-wrap{ margin:12px 0 6px; }
-        .channel-title{ display:block; margin-bottom:8px; font-weight:600; }
-        .channel-row{
-          display:grid; grid-template-columns: 160px 1fr; gap:10px; align-items:center; margin-bottom:10px;
-        }
-        .channel-select, .channel-handle{
-          padding:10px 12px; border-radius:10px; border:1px solid var(--border);
-          background:rgba(255,255,255,0.05); color:var(--text); width:100%;
-        }
-        .field-note{ display:block; margin-top:6px; color:var(--muted); font-size:.9rem; }
-        @media (max-width: 480px){ .channel-row{ grid-template-columns: 1fr; } }
-
-        /* Upload */
-        .upload-card {
-          margin: 16px 0; padding: 14px; border: 1px dashed var(--border); border-radius: 12px;
-          background: rgba(255,255,255,0.03);
-        }
-        .upload-head h3 { margin: 0 0 4px; font-size: 1.1rem; }
-        .muted { color: var(--muted); }
-        .upload-actions { display:flex; gap:10px; margin:10px 0 12px; }
-        .btn-primary {
-          padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
-          background: linear-gradient(180deg, rgba(16,185,129,0.18), rgba(16,185,129,0.08));
-          color: var(--text); font-weight:600; letter-spacing:.2px; cursor:pointer;
-        }
-        .btn-ghost {
-          padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
-          background: transparent; color: var(--muted); cursor:pointer;
-        }
-        .upload-preview {
-          display:grid; grid-template-columns: repeat(auto-fill, minmax(96px,1fr));
-          gap: 10px; min-height: 0;
-        }
-        .thumb {
-          border: 1px solid var(--border); border-radius: 10px; overflow: hidden; position: relative;
-          aspect-ratio: 1/1; display:grid; place-items:center; font-size:.8rem;
-          background: rgba(255,255,255,0.04);
-        }
-        .thumb img { width: 100%; height: 100%; object-fit: cover; display:block; }
-    .thumb .badge {
-      position:absolute; bottom:6px; right:6px; background: rgba(0,0,0,0.55);
-      padding: 2px 6px; border-radius: 6px; font-size:.7rem;
-    }
-
-    /* Consent — native iOS-safe */
-    .consent-row { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start; margin: 12px 0 6px; }
-    .consent-checkbox {
-      width: 20px; height: 20px; margin-top:2px;
-      -webkit-appearance: checkbox; appearance: checkbox; accent-color: var(--accent);
-      transform: scale(1.15); transform-origin: top left; cursor:pointer;
-    }
-    .consent-label { user-select:none; cursor:pointer; line-height:1.4; }
-    .consent-help { color: var(--muted); margin: 0 0 10px; }
-
-    /* Disabled submit look */
-    #submitBtn[disabled] { opacity: .5; cursor: not-allowed; }
-
-    /* A11y helpers */
-    .sr-only {
-      position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;
-    }
-
-    .ttg-ad-slot {
-      --ttg-ad-border: rgba(129, 155, 211, 0.72);
-      --ttg-ad-bg: rgba(12, 20, 36, 0.22);
-      --ttg-ad-label-bg: rgba(12, 20, 36, 0.85);
-      --ttg-ad-label-color: rgba(226, 235, 255, 0.96);
-      margin: 10rem auto;
-      padding: clamp(1.5rem, 4vw, 2.75rem);
-      max-width: min(100%, 970px);
-      min-height: 280px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 20px;
-      border: 2px dashed transparent;
-      background: transparent;
-      text-align: center;
-      transition: background 0.3s ease, border-color 0.3s ease;
-    }
-
-    body[data-ad-qa="true"] .ttg-ad-slot,
-    .ttg-ad-slot.ttg-ad-slot--empty {
-      border-color: var(--ttg-ad-border);
-      background: var(--ttg-ad-bg);
-    }
-
-    .ttg-ad-slot::before {
-      content: "";
-      position: absolute;
-      top: 12px;
-      left: 16px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: var(--ttg-ad-label-bg);
-      color: var(--ttg-ad-label-color);
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(-6px);
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      white-space: nowrap;
-      z-index: 2;
-    }
-
-    body[data-ad-qa="true"] .ttg-ad-slot::before,
-    .ttg-ad-slot.ttg-ad-slot--empty::before {
-      content: attr(data-ad-label);
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .ttg-ad-slot::after {
-      content: attr(data-ad-label);
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: clamp(1rem, 4vw, 1.75rem);
-      background: var(--ttg-ad-label-bg);
-      color: var(--ttg-ad-label-color);
-      border-radius: inherit;
-      pointer-events: none;
-      opacity: 0;
-      visibility: hidden;
-      z-index: 1;
-    }
-
-    .ttg-ad-slot.ttg-ad-slot--empty::after {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .ttg-ad-slot ins.adsbygoogle {
-      display: block;
-      width: 100%;
-      position: relative;
-      z-index: 3;
-    }
-  </style>
 
       <!-- Cloudinary Upload Widget -->
       <script src="https://widget.cloudinary.com/v2.0/global/all.js" defer></script>
@@ -1135,6 +683,11 @@
       <p class="tiny" style="margin-top:12px;opacity:.75;">
         📌 Features are <strong>only</strong> accepted through this website. We don’t take submissions via YouTube comments or social DMs.
       </p>
+
+      <section class="feature-faq" aria-labelledby="feature-faq-heading">
+        <h2 id="feature-faq-heading">Feature Your Tank — FAQ</h2>
+        <!-- TODO: Populate common questions & answers about the submission process. -->
+      </section>
     </section>
     <div class="ttg-ad-slot" aria-label="Advertisement" id="ad-feature-your-tank-bottom" data-ad-label="TTG_FeatureYourTank_Bottom • Slot 7540927750">
       <!-- TTG_FeatureYourTank_Bottom -->
@@ -1211,6 +764,7 @@
 <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
 
   <!-- WebPage schema: Feature Your Tank submission hub -->
+  <!-- TODO: Add FAQPage schema when FAQ content is published. -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
