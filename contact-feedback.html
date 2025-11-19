@@ -278,22 +278,75 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": "https://thetankguide.com/contact-feedback.html#webpage",
-    "name": "Contact & Feedback — Fishkeeping Questions",
-    "url": "https://thetankguide.com/contact-feedback.html",
-    "description": "Reach the FishKeepingLifeCo team at The Tank Guide for fishkeeping questions, feedback, or bug reports.",
-    "publisher": {
-      "@id": "https://thetankguide.com/#organization"
-    },
-    "author": {
-      "@id": "https://thetankguide.com/#organization"
-    }
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://thetankguide.com/#organization",
+        "name": "FishKeepingLifeCo",
+        "url": "https://thetankguide.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
+          "width": 1200,
+          "height": 630
+        },
+        "sameAs": [
+          "https://x.com/FishKeepingLife",
+          "https://instagram.com/FishKeepingLifeCo",
+          "https://tiktok.com/@FishKeepingLifeCo",
+          "https://facebook.com/FishKeepingLifeCo"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://thetankguide.com/#website",
+        "url": "https://thetankguide.com/",
+        "name": "The Tank Guide",
+        "publisher": { "@id": "https://thetankguide.com/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://thetankguide.com/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://thetankguide.com/contact-feedback.html#webpage",
+        "url": "https://thetankguide.com/contact-feedback.html",
+        "name": "Contact & Feedback — Fishkeeping Questions",
+        "description": "Reach the FishKeepingLifeCo team at The Tank Guide for fishkeeping questions, feedback, or bug reports.",
+        "isPartOf": { "@id": "https://thetankguide.com/#website" },
+        "publisher": { "@id": "https://thetankguide.com/#organization" },
+        "inLanguage": "en-US"
+      }
+    ]
   }
   </script>
   <script src="/assets/js/consent-mode.js" defer></script>
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
     data-cf-beacon='{"token": "fef22cbf19e3473db5ec987a8f3bf4f3"}'></script>
+  <script>
+    (function() {
+      var tfc = window;
+      tfc.__tcfapi = tfc.__tcfapi || function() {
+        var args = arguments;
+        if (!tfc.__tcfapi.queue) {
+          tfc.__tcfapi.queue = [];
+        }
+        tfc.__tcfapi.queue.push(args);
+      };
+
+      if (!window.__tcfapiLocator) {
+        var frame = document.createElement('iframe');
+        frame.style.display = 'none';
+        frame.name = '__tcfapiLocator';
+        document.body ? document.body.appendChild(frame) :
+          document.addEventListener('DOMContentLoaded', function() {
+            document.body.appendChild(frame);
+          });
+      }
+    })();
+  </script>
   <script>
     (function() {
       var TCF_LOCATOR_NAME = '__tcfapiLocator';
