@@ -181,30 +181,4 @@
       window.__tcfapi('revokeAllChoices', 0, function(){});
     }
   }
-
-  function wireCookieSettingsButtons(){
-    var manageBtn = document.getElementById('cookie-open-modal');
-    var resetBtn = document.getElementById('cookie-reset');
-
-    if (manageBtn){
-      manageBtn.addEventListener('click', function(evt){
-        evt.preventDefault();
-        showFundingChoicesDialog();
-      });
-    }
-
-    if (resetBtn){
-      resetBtn.addEventListener('click', function(evt){
-        evt.preventDefault();
-        resetStoredConsent();
-        showFundingChoicesDialog();
-      });
-    }
-  }
-
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', wireCookieSettingsButtons);
-  } else {
-    wireCookieSettingsButtons();
-  }
 })();

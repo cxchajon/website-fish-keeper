@@ -93,13 +93,35 @@
     body.theme-light { background: radial-gradient(circle at top, rgba(15,51,82,.9), rgba(7,18,32,1)); color: #fff; }
     main.cookie-settings { max-width: 720px; margin: 0 auto; padding: 72px 20px 96px; text-align: left; }
     .cookie-settings h1 { margin: 0 0 12px; font-size: clamp(32px, 4vw, 44px); }
+    .cookie-settings h2 { margin: 32px 0 16px; font-size: clamp(24px, 3vw, 28px); }
     .cookie-settings p { margin: 0 0 16px; line-height: 1.6; color: rgba(255,255,255,.88); }
     .cookie-settings a { color: #fff; font-weight: 700; text-decoration: underline; }
     .cookie-settings a:hover,
     .cookie-settings a:focus-visible { color: #fff; text-decoration: underline; }
+
+    .cookie-categories { margin: 24px 0; }
+    .cookie-category { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; }
+    .cookie-category-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .cookie-category h3 { margin: 0; font-size: 18px; font-weight: 600; }
+    .cookie-category p { margin: 0; font-size: 14px; color: rgba(255,255,255,.7); }
+
+    .toggle-switch { position: relative; display: inline-block; width: 48px; height: 24px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,.2); transition: .3s; border-radius: 24px; }
+    .toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .toggle-slider { background-color: #4CAF50; }
+    input:checked + .toggle-slider:before { transform: translateX(24px); }
+    input:disabled + .toggle-slider { cursor: not-allowed; opacity: 0.5; }
+    .toggle-switch:has(input:focus-visible) .toggle-slider { outline: 2px solid #fff; outline-offset: 2px; }
+
     .cookie-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
-    .cookie-actions button { border-radius: 12px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.08); color: #fff; padding: 12px 18px; font-weight: 600; cursor: pointer; }
+    .cookie-actions button { border-radius: 12px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.08); color: #fff; padding: 12px 18px; font-weight: 600; cursor: pointer; font-size: 15px; transition: background .2s; }
     .cookie-actions button:hover { background: rgba(255,255,255,.16); }
+    .cookie-actions button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    .cookie-actions button.primary { background: rgba(76,175,80,.3); border-color: rgba(76,175,80,.5); }
+    .cookie-actions button.primary:hover { background: rgba(76,175,80,.4); }
+    .save-status { margin-top: 12px; padding: 12px; background: rgba(76,175,80,.2); border: 1px solid rgba(76,175,80,.4); border-radius: 8px; font-size: 14px; display: none; }
+    .save-status.show { display: block; }
   </style>
   <!-- Consent Mode defaults (load FIRST) -->
   <script src="/assets/js/consent-mode.js" defer></script>
@@ -247,25 +269,63 @@
       win.addEventListener('message', postMessageEventHandler, false);
     })();
   </script>
-  <script defer src="/assets/js/ttg-cmp-consent-bridge.js"></script>
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
 <body class="theme-light">
   <div id="site-nav"></div>
   <main class="cookie-settings" aria-labelledby="cookie-settings-title">
     <h1 id="cookie-settings-title">Cookie Settings</h1>
-    <p>You can review and change your cookie consent choices for The Tank Guide at any time. Use the buttons below to reopen the cookie preferences banner or reset your saved selections.</p>
-    <p>Essential cookies are required to run the site. Analytics and advertising cookies are optional and will only load if you grant consent.</p>
-    <div class="cookie-actions">
-      <button type="button" id="manage-preferences-btn">Manage preferences</button>
-      <button type="button" id="reset-consent-btn">Reset consent</button>
+    <p>Manage your cookie and privacy preferences for The Tank Guide. Essential cookies are always active to ensure the site functions properly. You can control optional cookies below.</p>
+
+    <div class="cookie-categories">
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <h3>Strictly Necessary</h3>
+          <label class="toggle-switch">
+            <input type="checkbox" id="cookie-necessary" checked disabled aria-label="Strictly necessary cookies (always enabled)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <p>Essential cookies required for the site to function. These cannot be disabled.</p>
+      </div>
+
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <h3>Analytics</h3>
+          <label class="toggle-switch">
+            <input type="checkbox" id="cookie-analytics" aria-label="Analytics cookies">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <p>Helps us understand how visitors interact with our site by collecting anonymized data.</p>
+      </div>
+
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <h3>Advertising & Personalization</h3>
+          <label class="toggle-switch">
+            <input type="checkbox" id="cookie-advertising" aria-label="Advertising and personalization cookies">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <p>Used to show relevant ads and personalized content based on your interests.</p>
+      </div>
     </div>
+
+    <div class="cookie-actions">
+      <button type="button" id="save-settings-btn" class="primary">Save settings</button>
+      <button type="button" id="allow-all-btn">Allow all</button>
+      <button type="button" id="reject-optional-btn">Reject non-essential</button>
+    </div>
+
+    <div id="save-status" class="save-status" role="status" aria-live="polite"></div>
+
     <section id="do-not-sell" aria-labelledby="do-not-sell-heading">
       <h2 id="do-not-sell-heading">Do Not Sell or Share My Personal Information</h2>
       <p>
-        The Tank Guide does not sell personal data. You can opt out of personalized advertising by using the
-        <strong>Manage preferences</strong> button above or by emailing
-        <a href="mailto:privacy@thetankguide.com">privacy@thetankguide.com</a> with the subject “Do Not Sell or Share.”
+        The Tank Guide does not sell personal data. You can opt out of personalized advertising by disabling
+        <strong>Advertising &amp; Personalization</strong> above and clicking <strong>Save settings</strong>, or by emailing
+        <a href="mailto:privacy@thetankguide.com">privacy@thetankguide.com</a> with the subject "Do Not Sell or Share."
       </p>
       <p>
         We honor Global Privacy Control (GPC) signals and apply your consent choices across all browsers signed in with your
@@ -274,164 +334,153 @@
     </section>
   </main>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    console.info('cookie-settings: DOM ready; wiring CMP controls');
+  (function() {
+    'use strict';
 
-    var manageBtn = document.getElementById('manage-preferences-btn');
-    var resetBtn = document.getElementById('reset-consent-btn');
+    var STORE_KEY = 'ttgConsentV2';
+    var EXP_DAYS = 365;
 
-    function logAction(action, detail) {
+    function now() { return Date.now(); }
+
+    function log(msg, data) {
       try {
-        console.log('cookie-settings:', action, detail || '');
-      } catch (err) {}
+        console.log('[cookie-settings]', msg, data || '');
+      } catch (e) {}
     }
 
-    function openViaTcfApi() {
+    function loadConsent() {
       try {
-        if (typeof window.__tcfapi === 'function') {
-          logAction('attempting __tcfapi displayConsentUi');
-          window.__tcfapi('displayConsentUi', 2, function (success) {
-            logAction('__tcfapi displayConsentUi callback', success);
-          });
-          return true;
-        }
-      } catch (err) {
-        console.error('cookie-settings: __tcfapi call failed', err);
+        var raw = localStorage.getItem(STORE_KEY);
+        if (!raw) return null;
+        var parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object') return null;
+        var age = now() - (parsed.ts || 0);
+        if (age > EXP_DAYS * 24 * 3600 * 1000) return null;
+        return parsed;
+      } catch (e) {
+        log('error loading consent:', e);
+        return null;
       }
-      return false;
     }
 
-    function openViaFundingChoices() {
-      var api = window.googlefc || {};
-
+    function saveConsent(consent) {
       try {
-        if (typeof api.showRevocationMessage === 'function') {
-          logAction('opening Funding Choices revocation message');
-          api.showRevocationMessage();
-          return true;
-        }
-        if (typeof api.showConsent === 'function') {
-          logAction('opening Funding Choices consent dialog');
-          api.showConsent();
-          return true;
-        }
-        if (api.callbackQueue) {
-          api.callbackQueue.push(function () {
-            openViaFundingChoices();
-          });
-          return true;
-        }
-      } catch (err) {
-        console.error('cookie-settings: Funding Choices fallback failed', err);
+        consent.ts = now();
+        localStorage.setItem(STORE_KEY, JSON.stringify(consent));
+        document.cookie = STORE_KEY + '=1; Max-Age=' + (EXP_DAYS * 24 * 3600) + '; Path=/; SameSite=Lax';
+        log('consent saved:', consent);
+      } catch (e) {
+        log('error saving consent:', e);
       }
-
-      logAction('Funding Choices API not available');
-      return false;
     }
 
-    function clearTcfStorage() {
-      var patterns = [/^IABTCF_/i, /^euconsent/i, /^eupubconsent/i, /^googlefc/i];
-
+    function updateGtagConsent(consent) {
+      if (typeof window.gtag !== 'function') return;
       try {
-        var keys = [];
-        for (var i = 0; i < localStorage.length; i++) {
-          keys.push(localStorage.key(i));
-        }
-        keys.forEach(function (key) {
-          if (patterns.some(function (re) { return re.test(key); })) {
-            logAction('removing localStorage key', key);
-            localStorage.removeItem(key);
-          }
+        window.gtag('consent', 'update', {
+          ad_storage: consent.ad_storage || 'denied',
+          analytics_storage: consent.analytics_storage || 'denied',
+          ad_user_data: consent.ad_user_data || 'denied',
+          ad_personalization: consent.ad_personalization || 'denied'
         });
-      } catch (err) {
-        console.error('cookie-settings: error clearing localStorage', err);
+        log('gtag consent updated');
+      } catch (e) {
+        log('error updating gtag:', e);
       }
-
-      var cookies = document.cookie ? document.cookie.split(';') : [];
-      cookies.forEach(function (cookie) {
-        var name = cookie.split('=')[0].trim();
-        if (patterns.some(function (re) { return re.test(name); })) {
-          logAction('clearing cookie', name);
-          document.cookie = name + '=; Max-Age=0; path=/; SameSite=Lax;';
-          document.cookie = name + '=; Max-Age=0; path=/; domain=.thetankguide.com; SameSite=Lax;';
-        }
-      });
     }
 
-    function resetConsentMode() {
-      var deniedState = {
-        ad_storage: 'denied',
-        analytics_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied',
-        functionality_storage: 'denied',
-        security_storage: 'denied'
+    function getConsentFromToggles() {
+      var analyticsChecked = document.getElementById('cookie-analytics').checked;
+      var advertisingChecked = document.getElementById('cookie-advertising').checked;
+
+      return {
+        ad_storage: 'granted',
+        analytics_storage: analyticsChecked ? 'granted' : 'denied',
+        ad_user_data: advertisingChecked ? 'granted' : 'denied',
+        ad_personalization: advertisingChecked ? 'granted' : 'denied'
       };
-
-      try {
-        if (typeof gtag === 'function') {
-          gtag('consent', 'update', deniedState);
-          logAction('gtag consent reset to denied');
-        }
-      } catch (err) {
-        console.error('cookie-settings: error updating consent mode', err);
-      }
     }
 
-    function handleManage(event) {
-      if (event) {
-        event.preventDefault();
-        if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+    function updateTogglesFromConsent(consent) {
+      if (!consent) {
+        document.getElementById('cookie-analytics').checked = false;
+        document.getElementById('cookie-advertising').checked = false;
+        return;
       }
 
-      if (openViaTcfApi()) return;
-      openViaFundingChoices();
+      document.getElementById('cookie-analytics').checked =
+        consent.analytics_storage === 'granted';
+      document.getElementById('cookie-advertising').checked =
+        consent.ad_personalization === 'granted' || consent.ad_user_data === 'granted';
     }
 
-    function handleReset(event) {
-      if (event) {
-        event.preventDefault();
-        if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+    function showStatus(message, duration) {
+      var status = document.getElementById('save-status');
+      if (!status) return;
+      status.textContent = message;
+      status.classList.add('show');
+      setTimeout(function() {
+        status.classList.remove('show');
+      }, duration || 3000);
+    }
+
+    function handleSaveSettings() {
+      log('save settings clicked');
+      var consent = getConsentFromToggles();
+      saveConsent(consent);
+      updateGtagConsent(consent);
+      showStatus('✓ Your preferences have been saved.');
+    }
+
+    function handleAllowAll() {
+      log('allow all clicked');
+      document.getElementById('cookie-analytics').checked = true;
+      document.getElementById('cookie-advertising').checked = true;
+
+      var consent = getConsentFromToggles();
+      saveConsent(consent);
+      updateGtagConsent(consent);
+      showStatus('✓ All cookies enabled and saved.');
+    }
+
+    function handleRejectOptional() {
+      log('reject non-essential clicked');
+      document.getElementById('cookie-analytics').checked = false;
+      document.getElementById('cookie-advertising').checked = false;
+
+      var consent = getConsentFromToggles();
+      saveConsent(consent);
+      updateGtagConsent(consent);
+      showStatus('✓ Only essential cookies are enabled.');
+    }
+
+    function init() {
+      log('initializing cookie settings page');
+
+      var saved = loadConsent();
+      updateTogglesFromConsent(saved);
+
+      if (saved) {
+        var analytics = saved.analytics_storage === 'granted';
+        var ads = saved.ad_personalization === 'granted' || saved.ad_user_data === 'granted';
+        log('loaded saved preferences:', { analytics: analytics, ads: ads });
+      } else {
+        log('no saved preferences found, using defaults');
       }
 
-      clearTcfStorage();
-      resetConsentMode();
+      document.getElementById('save-settings-btn').addEventListener('click', handleSaveSettings);
+      document.getElementById('allow-all-btn').addEventListener('click', handleAllowAll);
+      document.getElementById('reject-optional-btn').addEventListener('click', handleRejectOptional);
 
-      try {
-        if (typeof window.__tcfapi === 'function') {
-          window.__tcfapi('revokeAllChoices', 2, function (success) {
-            logAction('__tcfapi revokeAllChoices callback', success);
-          });
-        }
-      } catch (err) {
-        console.error('cookie-settings: error revoking choices via __tcfapi', err);
-      }
-
-      try {
-        if (window.googlefc && typeof window.googlefc.reset === 'function') {
-          logAction('resetting Funding Choices state');
-          window.googlefc.reset();
-        }
-      } catch (err) {
-        console.error('cookie-settings: Funding Choices reset failed', err);
-      }
-
-      setTimeout(function () {
-        logAction('reloading after consent reset');
-        window.location.reload();
-      }, 500);
+      log('event listeners wired');
     }
 
-    if (manageBtn) {
-      manageBtn.addEventListener('click', handleManage, { passive: false });
-      logAction('manage preferences button wired');
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
     }
-
-    if (resetBtn) {
-      resetBtn.addEventListener('click', handleReset, { passive: false });
-      logAction('reset consent button wired');
-    }
-  });
+  })();
 </script>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
