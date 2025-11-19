@@ -50,10 +50,11 @@
       .dmca-table{display:block;overflow-x:auto;}
     }
   </style>
-  <!-- Consent Mode defaults (load FIRST) -->
-  <script src="/assets/js/consent-mode.js" defer></script>
-  <!-- Google tag (gtag.js) — GA4 -->
+    <!-- Google tag (gtag.js) — GA4 -->
   <!--#include virtual="/includes/ga4.html" -->
+  <script src="/assets/js/ga4-fallback.js" data-ga4-loader defer></script>
+  <!-- Consent Mode defaults (runs after GA loader) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
 
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"

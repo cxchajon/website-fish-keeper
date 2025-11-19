@@ -168,7 +168,11 @@
 
   <!-- Nav / analytics / consent -->
   <script defer src="/js/nav.js?v=1.1.0"></script>
+    <!-- Google tag (gtag.js) — GA4 -->
   <!--#include virtual="/includes/ga4.html" -->
+  <script src="/assets/js/ga4-fallback.js" data-ga4-loader defer></script>
+  <!-- Consent Mode defaults (runs after GA loader) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
   <script
     defer
     src="https://static.cloudflareinsights.com/beacon.min.js"

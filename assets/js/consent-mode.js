@@ -46,7 +46,50 @@
   var tzHintsEU = /(europe\/|gmt|bst|cet|cest)/.test(tz);
   var inEEA = regionParam ? EEA_UK_CH.indexOf(regionParam.toUpperCase()) !== -1 : tzHintsEU;
 
-  var gtag = window.gtag || function(){ (window.dataLayer = window.dataLayer || []).push(arguments); };
+  window.dataLayer = window.dataLayer || [];
+  var gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
+  if (typeof window.gtag !== 'function') {
+    window.gtag = gtag;
+  }
+
+  var consentQueue = window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || [];
+
+  function createDeniedState(){
+    return {
+      ad_storage:'denied',
+      analytics_storage:'denied',
+      ad_user_data:'denied',
+      ad_personalization:'denied',
+      advertising:false,
+      analytics:false,
+      ts: now()
+    };
+  }
+
+  function emitConsentUpdate(state){
+    window.__TTG_CONSENT_STATE__ = Object.assign({}, state);
+    try {
+      window.dispatchEvent(new CustomEvent('ttg-consent-updated', { detail: state }));
+    } catch (e) {}
+  }
+
+  function queueConsentUpdate(state){
+    if (typeof window.gtag === 'function'){
+      window.gtag('consent','update', state);
+    } else {
+      consentQueue.push(state);
+    }
+  }
+
+  function dispatchConsentUpdate(state){
+    queueConsentUpdate(state);
+    emitConsentUpdate(state);
+  }
+
+  window.__ttgUpdateConsentState__ = dispatchConsentUpdate;
+  window.__TTG_CONSENT_STATE__ = window.__TTG_CONSENT_STATE__ || createDeniedState();
+
+  var savedConsent = ON_LEGAL_PAGE ? null : loadConsent();
 
   function applyAdConsentState(granted){
     var adsGranted = !!granted;
@@ -56,23 +99,27 @@
   }
 
   (function initConsentFromStorage(){
-    var stored = readStoredConsent();
-    var adsGranted = !!(stored && (stored.advertising === true || stored.ad_storage === 'granted'));
-    if (ON_LEGAL_PAGE) adsGranted = false;
+    var stored = savedConsent;
+    var baseState = stored ? Object.assign({}, stored) : createDeniedState();
+    if (ON_LEGAL_PAGE) {
+      baseState = createDeniedState();
+    }
 
+    emitConsentUpdate(baseState);
+    var adsGranted = baseState.ad_storage === 'granted';
     applyAdConsentState(adsGranted);
 
-    if (!ON_LEGAL_PAGE && typeof gtag === 'function' && adsGranted){
-      gtag('consent', 'update', {
+    if (!ON_LEGAL_PAGE && adsGranted){
+      queueConsentUpdate({
         ad_storage: 'granted',
+        analytics_storage: 'granted',
         ad_user_data: 'granted',
         ad_personalization: 'granted'
       });
     }
   })();
 
-  var saved = ON_LEGAL_PAGE ? null : loadConsent();
-  setBannerOpen(inEEA && !saved);
+  setBannerOpen(inEEA && !savedConsent);
 
   function acceptAll(){
     var state = {
@@ -84,7 +131,7 @@
       analytics:true,
       ts: now()
     };
-    gtag('consent','update',state);
+    dispatchConsentUpdate(state);
     saveConsent(state);
     applyAdConsentState(true);
     setBannerOpen(false);
@@ -99,7 +146,7 @@
       analytics:false,
       ts: now()
     };
-    gtag('consent','update',state);
+    dispatchConsentUpdate(state);
     saveConsent(state);
     applyAdConsentState(false);
     setBannerOpen(false);
@@ -169,9 +216,7 @@
     try { localStorage.removeItem('ttgConsent'); } catch(e){}
     document.cookie = STORE_KEY + '=; Max-Age=0; Path=/; SameSite=Lax';
 
-    if (typeof gtag === 'function'){
-      gtag('consent','update', deniedState);
-    }
+    dispatchConsentUpdate(deniedState);
     applyAdConsentState(false);
 
     var api = window.googlefc || (window.googlefc = {});

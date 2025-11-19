@@ -197,10 +197,11 @@
     }
   </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
-  <!-- Consent Mode defaults (load FIRST) -->
-  <script src="/assets/js/consent-mode.js" defer></script>
-  <!-- Google tag (gtag.js) — GA4 -->
+    <!-- Google tag (gtag.js) — GA4 -->
   <!--#include virtual="/includes/ga4.html" -->
+  <script src="/assets/js/ga4-fallback.js" data-ga4-loader defer></script>
+  <!-- Consent Mode defaults (runs after GA loader) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
   <!-- --- Google CMP (Funding Choices) START --- -->
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
   <script>
@@ -381,12 +382,17 @@
   function setAdConsent(granted){
     // Google CMP interface (Funding Choices) — set consent for ads_storage and ad_user_data
     var consentState = granted ? 'granted' : 'denied';
-    if (typeof gtag === 'function') {
-      gtag('consent', 'update', {
-        'ad_storage': consentState,
-        'ad_user_data': consentState,
-        'ad_personalization': consentState
-      });
+    var payload = {
+      'ad_storage': consentState,
+      'ad_user_data': consentState,
+      'ad_personalization': consentState
+    };
+    if (typeof window.__ttgUpdateConsentState__ === 'function') {
+      window.__ttgUpdateConsentState__(payload);
+    } else if (typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', payload);
+    } else {
+      (window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || []).push(payload);
     }
   }
 
