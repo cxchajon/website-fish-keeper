@@ -14,7 +14,6 @@
 
   <meta property="og:site_name" content="The Tank Guide" />
   
-  <!--#include virtual="/includes/schema-organization.html" -->
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <meta name="googlebot" content="index,follow" />
   <meta name="description" content="Contact The Tank Guide team with fishkeeping questions, share feedback on our guides, or report issues so we can improve every tool." />
@@ -292,17 +291,9 @@
     }
   }
   </script>
-  <!-- Consent Mode defaults (load FIRST) -->
   <script src="/assets/js/consent-mode.js" defer></script>
-  <!-- Google tag (gtag.js) — GA4 -->
-  <!--#include virtual="/includes/ga4.html" -->
-
-  <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
     data-cf-beacon='{"token": "fef22cbf19e3473db5ec987a8f3bf4f3"}'></script>
-  <!-- End Cloudflare Web Analytics -->
-
-  <!-- IAB TCF v2.2 stub to allow __tcfapi interactions -->
   <script>
     (function() {
       var TCF_LOCATOR_NAME = '__tcfapiLocator';
@@ -383,7 +374,6 @@
     })();
   </script>
 
-  <!-- --- Google CMP (Funding Choices) START --- -->
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
   <script>
     // Required bootstrap per Google; signals CMP presence
@@ -403,30 +393,26 @@
       signalGooglefcPresent();
     })();
   </script>
-  <!-- --- Google CMP (Funding Choices) END --- -->
-</head>
+  </head>
 <body>
   <div id="site-nav"></div>
   <main class="page-wrapper">
     <section class="contact-card" aria-labelledby="page-title">
       <div class="status-stack">
-        <div role="status" class="success" data-testid="contact-success" tabindex="-1">Thanks! Your message was sent to the team.</div>
-        <div role="alert" class="error-summary" data-testid="contact-errors">
+        <div role="status" class="success" id="success-message" tabindex="-1">Thanks! Your message was sent to the team.</div>
+        <div role="alert" class="error-summary" id="error-summary" tabindex="-1">
           <strong>There’s a bit more to complete:</strong>
-          <ul></ul>
+          <ul id="error-list"></ul>
         </div>
       </div>
       <h1 id="page-title">Contact &amp; Feedback for Fishkeeping Guides</h1>
       <p class="intro">Use this form to share feedback on our fishkeeping guides, report logic issues, or highlight anything that seems off in our tools.</p>
       <p class="intro">We also welcome aquarium questions so we can point you toward the right resources for your next build.</p>
       <p class="tiny" aria-live="polite">We usually reply within 1–2 business days.</p>
-      <form
-        data-testid="contact-form"
-        novalidate
-        action="https://formspree.io/f/xnngnwld"
-        method="POST"
-      >
+      
+      <form id="contact-form" novalidate action="https://formspree.io/f/xnngnwld" method="POST">
         <input type="text" name="hp_website" autocomplete="off" tabindex="-1" style="position:absolute; left:-9999px;" aria-hidden="true" />
+        
         <fieldset>
           <legend class="visually-hidden">Contact &amp; Feedback form</legend>
           <div class="field-group">
@@ -438,7 +424,6 @@
               autocomplete="name"
               required
               aria-describedby="help-name"
-              data-testid="contact-name"
             />
             <p class="field-help" id="help-name">Please tell us who we should reply to.</p>
           </div>
@@ -451,7 +436,6 @@
               autocomplete="email"
               required
               aria-describedby="help-email"
-              data-testid="contact-email"
             />
             <p class="field-help" id="help-email">Enter a valid email so we can reach you.</p>
           </div>
@@ -462,7 +446,6 @@
               name="subject"
               required
               aria-describedby="help-subject"
-              data-testid="contact-subject"
             >
               <option value="">Select one…</option>
               <option value="feedback">Feedback about a tool</option>
@@ -480,18 +463,135 @@
               name="message"
               required
               aria-describedby="help-message"
-              data-testid="contact-message"
             ></textarea>
             <p class="field-help" id="help-message">Let us know the details so we can help quickly.</p>
           </div>
         </fieldset>
         <div class="actions">
-          <button type="submit" data-testid="contact-submit">Contact &amp; Feedback</button>
+          <button type="submit" id="submit-btn">Contact &amp; Feedback</button>
         </div>
       </form>
     </section>
   </main>
-  <script src="/js/contact-feedback.js?v=1.0.0" defer></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('contact-form');
+      const submitBtn = document.getElementById('submit-btn');
+      const successMsg = document.getElementById('success-message');
+      const errorSummary = document.getElementById('error-summary');
+      const errorList = document.getElementById('error-list');
+      
+      // Field IDs for validation
+      const fields = ['contact-name', 'contact-email', 'contact-subject', 'contact-message'];
+      
+      function clearErrors() {
+        errorSummary.classList.remove('visible');
+        errorList.innerHTML = '';
+        fields.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.setAttribute('aria-invalid', 'false');
+            el.classList.remove('has-error');
+            const help = document.getElementById(`help-${id.split('-')[1]}`);
+            if(help) help.classList.remove('visible');
+          }
+        });
+      }
+      
+      function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      }
+      
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Stop standard submission
+        clearErrors();
+        
+        const errors = [];
+        const data = new FormData(form);
+        
+        // 1. Validate Name
+        if (!data.get('name').trim()) {
+          errors.push({ id: 'contact-name', msg: 'Name is required' });
+        }
+        
+        // 2. Validate Email
+        const email = data.get('email').trim();
+        if (!email) {
+          errors.push({ id: 'contact-email', msg: 'Email is required' });
+        } else if (!validateEmail(email)) {
+          errors.push({ id: 'contact-email', msg: 'Email address is invalid' });
+        }
+        
+        // 3. Validate Subject
+        if (!data.get('subject')) {
+          errors.push({ id: 'contact-subject', msg: 'Subject is required' });
+        }
+        
+        // 4. Validate Message
+        if (!data.get('message').trim()) {
+          errors.push({ id: 'contact-message', msg: 'Message is required' });
+        }
+        
+        // If errors exist, show them
+        if (errors.length > 0) {
+          errorSummary.classList.add('visible');
+          errors.forEach(err => {
+            const field = document.getElementById(err.id);
+            if(field) {
+              field.setAttribute('aria-invalid', 'true');
+              field.classList.add('has-error');
+            }
+            
+            const help = document.getElementById(`help-${err.id.split('-')[1]}`);
+            if(help) help.classList.add('visible');
+            
+            const li = document.createElement('li');
+            li.textContent = err.msg;
+            errorList.appendChild(li);
+          });
+          
+          errorSummary.focus();
+          return;
+        }
+        
+        // --- AJAX SUBMISSION ---
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+        
+        try {
+          const response = await fetch(form.action, {
+            method: form.method,
+            body: data,
+            headers: {
+              'Accept': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            form.reset();
+            successMsg.classList.add('visible');
+            successMsg.focus();
+            setTimeout(() => { successMsg.classList.remove('visible'); }, 10000);
+          } else {
+            const jsonData = await response.json();
+            if (jsonData.errors) {
+               alert('There was a problem with your submission: ' + jsonData.errors.map(error => error.message).join(", "));
+            } else {
+               alert('Oops! There was a problem submitting your form');
+            }
+          }
+        } catch (err) {
+          console.error('Submission failed', err);
+          alert('Something went wrong connecting to the server. Please try again.');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Contact & Feedback';
+        }
+      });
+    });
+  </script>
+
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
     <a href="/privacy-legal.html">Privacy Policy</a>
