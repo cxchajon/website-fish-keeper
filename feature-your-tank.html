@@ -12,7 +12,6 @@
   <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
   <meta charset="UTF-8" />
   <meta property="og:site_name" content="The Tank Guide" />
-  <!--#include virtual="/includes/schema-organization.html" -->
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Feature Your Tank — The Tank Guide</title>
   <meta name="description" content="Submit your aquarium’s Quick Facts to be featured on The Tank Guide: size, stock, substrate, filtration, lighting, and more." />
@@ -315,7 +314,7 @@
     crossorigin="anonymous"></script>
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
-    data-cf-beacon='{"token": "YOUR_CLOUDFLARE_TOKEN"}'></script>
+    data-cf-beacon='{"token": "fef22cbf19e3473db5ec987a8f3bf4f3"}'></script>
   <!-- End Cloudflare Web Analytics -->
   <!-- --- Google CMP (Funding Choices) START --- -->
   <script>
@@ -553,9 +552,7 @@
             <!-- Preview grid -->
             <div id="uploadPreview" class="upload-preview" aria-live="polite"></div>
 
-            <div class="ft-help small">Max 10 files, up to ~80 MB each. Allowed: jpg, jpeg, png, webp, heic, mp4, mov.<br>
-              <em>If uploads take a while, your reCAPTCHA may expire—just re-check it before submitting.</em>
-            </div>
+            <div class="ft-help small">Max 10 files, up to ~80 MB each. Allowed: jpg, jpeg, png, webp, heic, mp4, mov.</div>
           </div>
 
           <!-- ===== CONSENT ===== -->
@@ -569,13 +566,6 @@
             Tick this box to enable submission and let us share your media with credit.
           </p>
 
-          <!-- ===== reCAPTCHA (with callbacks to detect expiration) ===== -->
-          <div class="g-recaptcha"
-               data-sitekey="6LecjNUrAAAAACdwiRIn1KvR21x_gP8_hdOrtXA3"
-               data-callback="onRecaptchaSuccess"
-               data-expired-callback="onRecaptchaExpired"
-               data-error-callback="onRecaptchaExpired"></div>
-
           <!-- ===== SUBMIT ===== -->
           <button type="submit" id="submitBtn" class="btn-primary" disabled aria-disabled="true">Submit Tank</button>
         </form>
@@ -584,6 +574,7 @@
         <div id="thankYou" style="display:none; margin-top:1rem; color:#10b981; font-weight:600;">
           ✅ Thanks! Your submission has been sent. We’ll review and contact you if selected.
         </div>
+        <div id="errorMessage" role="alert" style="display:none; margin-top:0.75rem; color:#f87171; font-weight:600;"></div>
       </section>
       <!-- ======= Scoped Styles (minimal) ======= -->
       <style>
@@ -768,7 +759,7 @@
       <script src="https://widget.cloudinary.com/v2.0/global/all.js" defer></script>
 
       <script>
-      (function() {
+      document.addEventListener('DOMContentLoaded', function() {
         // ======= Config (Cloudinary + limits) =======
         const CLOUD_NAME = 'fishkeepinglifeco';
         const UPLOAD_PRESET = 'ttg_unsigned';
@@ -792,24 +783,17 @@
         const playableHidden = document.getElementById('mediaPlayableUrls');
         const previewsHidden = document.getElementById('mediaPreviewUrls');
         const urlsReadonly = document.getElementById('mediaUrlsReadonly');
+        const errorBox = document.getElementById('errorMessage');
+
+        if (!form || !submitBtn || !consent) {
+          return;
+        }
 
         // ======= State =======
         let uploaded = [];   // originals (secure_url)
         let playable = [];   // safe-to-play links
         let previews = [];   // thumbnails/posters
         let uploadsInFlight = 0;
-
-        // ======= reCAPTCHA State =======
-        let recaptchaOk = false;
-        window.onRecaptchaSuccess = function(){ recaptchaOk = true; syncSubmitAvailability(); };
-        window.onRecaptchaExpired = function(){
-          recaptchaOk = false;
-          alert('reCAPTCHA expired — please check the box again before submitting.');
-          syncSubmitAvailability();
-        };
-        function recaptchaHasToken(){
-          return (window.grecaptcha && typeof grecaptcha.getResponse === 'function' && grecaptcha.getResponse().length > 0);
-        }
 
         // ======= Helpers: Socials =======
         function normHandle(val){
@@ -913,8 +897,8 @@
           submitBtn.setAttribute('aria-disabled', String(!enabled));
         }
         function syncSubmitAvailability() {
-          // Submit allowed only when: consent checked, uploads finished, and reCAPTCHA token is active
-          const canSubmit = consent.checked && uploadsInFlight === 0 && (recaptchaOk || recaptchaHasToken());
+          // Submit allowed only when: consent checked and uploads finished
+          const canSubmit = consent.checked && uploadsInFlight === 0;
           setSubmitEnabled(canSubmit);
         }
         function isVideoUrl(url) {
@@ -1043,15 +1027,13 @@
             return false;
           }
 
-          // Ensure reCAPTCHA is still valid (tokens can expire during long uploads)
-          if (!(recaptchaOk || recaptchaHasToken())) {
-            e.preventDefault();
-            alert('Please complete the reCAPTCHA before submitting.');
-            return false;
-          }
-
           e.preventDefault();
           setSubmitEnabled(false);
+          thankYou.style.display = 'none';
+          if (errorBox) {
+            errorBox.style.display = 'none';
+            errorBox.textContent = '';
+          }
 
           try {
             const data = new FormData(form);
@@ -1066,22 +1048,31 @@
               uploaded = []; playable = []; previews = [];
               renderPreviews();
               thankYou.style.display = 'block';
-              if (window.grecaptcha && typeof grecaptcha.reset === 'function') {
-                grecaptcha.reset();
+              if (errorBox) {
+                errorBox.style.display = 'none';
               }
-              recaptchaOk = false;
             } else {
-              alert('❌ There was a problem sending your submission. Please try again.');
+              if (errorBox) {
+                errorBox.textContent = 'There was a problem sending your submission. Please try again.';
+                errorBox.style.display = 'block';
+              } else {
+                alert('❌ There was a problem sending your submission. Please try again.');
+              }
             }
           } catch (err) {
             console.error(err);
-            alert('❌ Network error. Please try again.');
+            if (errorBox) {
+              errorBox.textContent = 'Network error. Please try again.';
+              errorBox.style.display = 'block';
+            } else {
+              alert('❌ Network error. Please try again.');
+            }
           } finally {
             syncSubmitAvailability();
           }
         });
 
-      })();
+      });
       </script>
       <p class="tiny" style="margin-top:12px;opacity:.75;">
         📌 Features are <strong>only</strong> accepted through this website. We don’t take submissions via YouTube comments or social DMs.
@@ -1100,7 +1091,6 @@
       </script>
     </div>
   </main>
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
   (function() {
     var QA_MODE = false;
@@ -1168,6 +1158,37 @@
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "Organization",
+        "@id": "https://thetankguide.com/#organization",
+        "name": "FishKeepingLifeCo",
+        "url": "https://thetankguide.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
+          "width": 1200,
+          "height": 630
+        },
+        "sameAs": [
+          "https://x.com/FishKeepingLife",
+          "https://www.instagram.com/FishKeepingLifeCo",
+          "https://www.tiktok.com/@FishKeepingLifeCo",
+          "https://www.facebook.com/fishkeepinglifeco",
+          "https://www.youtube.com/@fishkeepinglifeco"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://thetankguide.com/#website",
+        "url": "https://thetankguide.com/",
+        "name": "The Tank Guide",
+        "publisher": { "@id": "https://thetankguide.com/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://thetankguide.com/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
         "@type": "WebPage",
         "@id": "https://thetankguide.com/feature-your-tank.html#webpage",
         "url": "https://thetankguide.com/feature-your-tank.html",
@@ -1175,6 +1196,7 @@
         "description": "Submit your aquarium’s Quick Facts to be featured on The Tank Guide: size, stock, substrate, filtration, lighting, and more.",
         "isPartOf": { "@id": "https://thetankguide.com/#website" },
         "publisher": { "@id": "https://thetankguide.com/#organization" },
+        "inLanguage": "en-US",
         "mainEntity": {
           "@type": "WebApplication",
           "name": "Feature Your Tank Submission Form",
