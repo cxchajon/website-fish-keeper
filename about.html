@@ -4,8 +4,8 @@
   <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>About FishKeepingLifeCo — Fishkeeping Guides &amp; Mission | The Tank Guide</title>
-  <meta name="description" content="Learn about The Tank Guide by FishKeepingLifeCo. Our mission is simple: provide trustworthy beginner aquarium care tools for stocking, cycling, and gear." />
+  <title>About The Tank Guide &amp; FishKeepingLifeCo — Aquarium Help for Beginners</title>
+  <meta name="description" content="Learn what The Tank Guide and FishKeepingLifeCo are all about: simple, science-based freshwater aquarium help for beginners, families, and hobbyists." />
   <link rel="canonical" href="https://thetankguide.com/about.html" />
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/logos/favicon-16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/favicon-32.png">
@@ -16,8 +16,8 @@
   
   <!--#include virtual="/includes/schema-organization.html" -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="About FishKeepingLifeCo — Fishkeeping Guides &amp; Mission" />
-  <meta property="og:description" content="Learn how FishKeepingLifeCo builds fishkeeping guides, mission-driven aquarium education, and tools like stocking, cycling, and gear workflows at The Tank Guide." />
+  <meta property="og:title" content="About The Tank Guide &amp; FishKeepingLifeCo" />
+  <meta property="og:description" content="Learn how The Tank Guide and FishKeepingLifeCo make freshwater aquarium care simple with science-based tools and books for beginners." />
   <meta property="og:url" content="https://thetankguide.com/about.html" />
   <meta property="og:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
   <meta property="og:image:width" content="1200" />
@@ -25,8 +25,8 @@
   <meta property="og:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://thetankguide.com/about.html" />
-  <meta name="twitter:title" content="About FishKeepingLifeCo — Fishkeeping Guides &amp; Mission" />
-  <meta name="twitter:description" content="Learn how FishKeepingLifeCo builds fishkeeping guides, mission-driven aquarium education, and tools like stocking, cycling, and gear workflows at The Tank Guide." />
+  <meta name="twitter:title" content="About The Tank Guide &amp; FishKeepingLifeCo" />
+  <meta name="twitter:description" content="Learn how The Tank Guide and FishKeepingLifeCo make freshwater aquarium care simple with science-based tools and books for beginners." />
   <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
   <meta name="twitter:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
   <link rel="stylesheet" href="css/style.css?v=1.0.10" />
@@ -67,137 +67,103 @@
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 0;
+      gap: clamp(20px, 4vw, 32px);
     }
 
-    /* ABOUT — HERO (LEFT-ALIGNED, professional/minimal) */
     .about-hero {
-      max-width: 1100px;
-      margin: clamp(24px, 6vw, 48px) auto clamp(8px, 2.5vw, 16px);
-      padding: 0 16px;
-    }
-    .about-title {
-      margin: 0;
-      font-size: clamp(28px, 3.6vw, 44px);
-      line-height: 1.12;
-      letter-spacing: 0.2px;
-      font-weight: 800;
-      color: #fff;
-      text-align: left;
-    }
-    .about-title-underline {
-      width: 72px;
-      height: 2px;
-      margin: 10px 0 10px;
-      background: rgba(255,255,255,.9);
-      border-radius: 2px;
-    }
-
-    .accordion-section {
       background: rgba(5, 18, 32, 0.45);
       border: 1px solid rgba(231, 241, 255, 0.28);
-      border-radius: 18px;
-      backdrop-filter: blur(14px);
-      box-shadow: 0 28px 64px rgba(6, 20, 44, 0.24);
-      overflow: hidden;
-    }
-
-    /* Keep accordion centered; tighten rhythm to remove gaps */
-    .accordion {
-      max-width: 800px;
-      margin: 12px auto clamp(40px, 8vw, 72px);
-      padding: 0 16px;
-      display: grid;
-      gap: 12px;
-      list-style: none;
-    }
-    .accordion-item {
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 14px;
-      background: rgba(255,255,255,.04);
-    }
-    .accordion-trigger {
-      width: 100%;
+      border-radius: 20px;
+      padding: clamp(24px, 5vw, 48px);
       text-align: left;
-      padding: 14px 16px;
-      background: transparent;
       color: #fff;
-      font-size: clamp(1.18rem, 0.9vw + 1rem, 1.5rem);
-      font-weight: 700;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      cursor: pointer;
-      letter-spacing: 0.01em;
-      transition: background-color 0.25s ease, color 0.25s ease;
-    }
-    .accordion-trigger:hover,
-    .accordion-trigger:focus-visible {
-      background: rgba(231, 241, 255, 0.08);
-    }
-    .accordion-trigger:focus-visible {
-      outline: 3px solid rgba(255, 255, 255, 0.75);
-      outline-offset: -3px;
-    }
-    .accordion-trigger::after {
-      content: "";
-      flex-shrink: 0;
-      width: 14px;
-      height: 14px;
-      border: 2px solid rgba(255, 255, 255, 0.85);
-      border-top: 0;
-      border-left: 0;
-      transform: rotate(45deg);
-      transition: transform 0.25s ease;
-    }
-    .accordion-trigger[aria-expanded="true"]::after {
-      transform: rotate(-135deg);
-    }
-    .accordion-panel[hidden] { display: none; }
-    .accordion-panel {
-      padding: 12px 16px 16px;
-      color: rgba(233,240,251,.92);
-      font-size: 1.02rem;
-      line-height: 1.68;
-      background: linear-gradient(180deg, rgba(15, 28, 49, 0.58) 0%, rgba(8, 18, 32, 0.38) 100%);
-      border-bottom-left-radius: 14px;
-      border-bottom-right-radius: 14px;
-    }
-    .accordion-panel p {
-      margin: 0 0 1.12em;
-    }
-    .accordion-panel p:last-child {
-      margin-bottom: 0;
-    }
-    .accordion-panel ul {
-      margin: 0 0 1.2em 1.2em;
-      padding: 0;
-    }
-    .accordion-panel li {
-      margin-bottom: 0.6em;
-    }
-    .accordion-panel strong {
-      color: rgba(255, 255, 255, 0.98);
     }
 
-    .about-feedback {
-      margin: clamp(12px, 4vw, 36px) auto 0;
-      padding: 0 16px;
-      text-align: center;
-      color: rgba(233,240,251,.92);
-      font-size: 1rem;
+    .about-hero h1 {
+      margin: 0 0 16px;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.15;
+      font-weight: 800;
     }
 
-    .about-feedback a {
-      color: rgba(233,240,251,.92);
+    .about-lead {
+      font-size: 1.2rem;
       font-weight: 600;
+      margin-bottom: 1rem;
+      color: rgba(255, 255, 255, 0.92);
     }
 
-    .about-feedback a:hover,
-    .about-feedback a:focus-visible {
-      color: #ffffff;
+    .about-section {
+      background: rgba(5, 18, 32, 0.3);
+      border: 1px solid rgba(231, 241, 255, 0.18);
+      border-radius: 20px;
+      padding: clamp(20px, 4.5vw, 40px);
+      color: rgba(233, 240, 251, 0.95);
+    }
+
+    .about-section h2 {
+      margin-top: 0;
+      color: #fff;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+    }
+
+    .about-section ul,
+    .about-section dl {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    .about-section li {
+      margin-bottom: 0.55rem;
+    }
+
+    .about-values-list,
+    .about-links-list {
+      list-style: disc;
+    }
+
+    .about-values-list li {
+      margin-bottom: 0.75rem;
+    }
+
+    .about-faq-list {
+      display: grid;
+      gap: 1rem;
+      padding-left: 0;
+    }
+
+    .about-faq-list dt {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .about-faq-list dd {
+      margin: 0.3rem 0 0;
+    }
+
+    .about-faq-list > div {
+      border: 1px solid rgba(231, 241, 255, 0.2);
+      border-radius: 16px;
+      padding: 1rem 1.25rem;
+      background: rgba(5, 18, 32, 0.35);
+    }
+
+    .about-links-list {
+      list-style: none;
+      padding-left: 0;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .about-links-list a {
+      color: #90c9ff;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+    }
+
+    .about-links-list a:focus-visible,
+    .about-links-list a:hover {
+      color: #fff;
     }
 
     .ttg-ad-slot {
@@ -295,14 +261,17 @@
         padding: 56px 16px 96px;
       }
 
-      .accordion {
-        padding: 0 14px;
+      .about-section,
+      .about-hero {
+        padding: 20px;
       }
     }
 
     @media (max-width: 420px) {
-      .about-hero { padding: 0 14px; }
-      .accordion { padding: 0 14px; }
+      .about-section,
+      .about-hero {
+        padding: 18px;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -318,9 +287,9 @@
   "@context": "https://schema.org",
   "@type": "WebPage",
   "@id": "https://thetankguide.com/about.html#webpage",
-  "name": "About FishKeepingLifeCo — Fishkeeping Guides & Mission",
+  "name": "About The Tank Guide & FishKeepingLifeCo — Aquarium Help for Beginners",
   "url": "https://thetankguide.com/about.html",
-  "description": "Learn about FishKeepingLifeCo and The Tank Guide mission to deliver accessible freshwater aquarium education.",
+  "description": "Learn what The Tank Guide and FishKeepingLifeCo are all about: simple, science-based freshwater aquarium help for beginners, families, and hobbyists.",
   "publisher": {
     "@id": "https://thetankguide.com/#organization"
   },
@@ -369,87 +338,121 @@
 
   <main id="main-content">
     <div class="about-wrapper">
-      <!-- HERO -->
-      <section class="about-hero">
-        <h1 class="about-title">Fishkeeping Guides — Our Story &amp; Mission</h1>
-        <div class="about-title-underline" aria-hidden="true"></div>
+      <section class="about-hero" aria-labelledby="about-title">
+        <h1 id="about-title">About The Tank Guide &amp; FishKeepingLifeCo</h1>
+        <p class="about-lead">
+          Our mission is simple: to make aquarium care easy, scientific, and accessible for every beginner.
+        </p>
+        <p>
+          The Tank Guide is an educational website created by <strong>FishKeepingLifeCo</strong>, a small independent studio that loves freshwater aquariums. We build tools, books, and guides that turn confusing fishkeeping advice into clear steps you can follow with confidence.
+        </p>
       </section>
 
-      <!-- ACCORDION -->
-      <section class="accordion-section" aria-label="About The Tank Guide">
-        <div class="accordion" id="about-accordion">
-          <div class="accordion-item">
-            <h3>
-              <button class="accordion-trigger" aria-expanded="false" aria-controls="sec-overview" id="trg-overview">About The Tank Guide</button>
-            </h3>
-            <div id="sec-overview" class="accordion-panel" role="region" aria-labelledby="trg-overview" hidden>
-              <p>The Tank Guide helps new aquarists and hobbyists make clear, safe, and confident choices in fishkeeping. We focus on practical steps—cycling, stocking, plants, and gear—designed around aquarium health and fish welfare first. Our tools and guides are tested in real setups and refined by community feedback.</p>
-              <p>Whether you’re setting up your first nano tank or dialing in a planted display, you’ll find straightforward advice without gatekeeping. Want to spotlight your setup and inspire others? Share it in our <a href="https://thetankguide.com/feature-your-tank.html">Feature Your Tank</a> community showcase.</p>
-            </div>
-          </div>
-          <div class="accordion-item">
-            <h3>
-              <button class="accordion-trigger" aria-expanded="false" aria-controls="sec-owner" id="trg-owner">Owner Story</button>
-            </h3>
-            <div id="sec-owner" class="accordion-panel" role="region" aria-labelledby="trg-owner" hidden>
-              <p>Ever since I was a kid, I was drawn to aquariums. My uncle kept guppies for years, and whenever I visited my grandmother, I’d sit and stare at them. That fascination stuck with me.</p>
-              <p>In 2011 or 2012, I caught a marathon of <em>Tanked</em> on Animal Planet. Their massive saltwater builds looked incredible, but freshwater seemed within reach. I decided it was finally time to try again—this time the right way.</p>
-              <p>I picked up a 50-gallon kit from a chain store. Tank, stand, hang-on-back filter, gravel, lights—the whole package. After hours of assembling the stand upside down, it broke as I flipped it. I nearly gave up, but I exchanged it and started over.</p>
-              <p>I filled the tank, added conditioner and “bacteria in a bottle,” and waited. A week later, nothing. Forums and YouTube became my lifeline. I tried a fishless cycle, then researched the safest way to do a fish-in cycle and chose hardy rasboras. Watching them school was amazing. Losing my first fish to a bad water change was crushing.</p>
-              <p>From there, it was nonstop learning—daily water changes, ammonia battles, flooded kitchens from siphon hoses. When I discovered planted aquariums, everything changed. Plants balanced the tank, the cycle completed, and I was hooked.</p>
-              <p>I experimented with stocking, filtration, lighting, and eventually DIY builds. Life forced me to downsize, but I kept going—bettas, shrimp, CO₂, dirted tanks, even custom sumps. Along the way I borrowed smart tricks from saltwater, like random-flow nozzles, and found pride in doing things myself.</p>
-              <p>I went from having no one to talk to about the hobby, to meeting local fishkeepers with tank-filled rooms, and eventually meeting creators I once watched on YouTube at Aquashella.</p>
-              <p>What hasn’t changed is why I keep at it: I love learning, I love tinkering, and I want to help new fishkeepers skip the mistakes I made and find the joy faster.</p>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <h3>
-              <button class="accordion-trigger" aria-expanded="false" aria-controls="sec-teaching" id="trg-teaching">Teaching &amp; Inspiration</button>
-            </h3>
-            <div id="sec-teaching" class="accordion-panel" role="region" aria-labelledby="trg-teaching" hidden>
-              <p>Outside of aquariums, I’ve also gotten to see the other side of how teachers prepare for their students—especially special education teachers. The sacrifice, patience, and dedication they show left a big impression on me.</p>
-              <p>It made me realize that teaching, in any form, is hard work. But it’s also one of the most meaningful things you can do: passing on what you’ve learned so someone else can grow. That’s the attitude I want to bring into fishkeeping—doing the work, sharing my struggles, and breaking things down so others can succeed.</p>
-              <p>That’s why I dedicated my first book to teachers. They inspired me to see this hobby not just as a passion, but as something I can teach in a way that makes a real difference.</p>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <h3>
-              <button class="accordion-trigger" aria-expanded="false" aria-controls="sec-mission" id="trg-mission">Mission &amp; Values</button>
-            </h3>
-            <div id="sec-mission" class="accordion-panel" role="region" aria-labelledby="trg-mission" hidden>
-              <p><strong>Mission:</strong><br />
-              To make fishkeeping approachable for new aquarists and inspiring for hobbyists by breaking down the complex parts into simple, practical steps—so anyone can build a thriving aquarium with confidence.</p>
-              <p><strong>Values:</strong></p>
-              <ul>
-                <li><strong>Clarity over confusion</strong> — Straightforward answers, no gatekeeping, no overcomplication.</li>
-                <li><strong>Learn by doing</strong> — Encourage DIY, experimentation, and resourcefulness.</li>
-                <li><strong>Respect for life</strong> — Promote responsible stocking, proper care, and long-term success.</li>
-                <li><strong>Community first</strong> — Share knowledge, highlight other hobbyists, and lift the whole community.</li>
-                <li><strong>Keep it fun</strong> — At its heart, fishkeeping should bring joy, curiosity, and wonder.</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <h3>
-              <button class="accordion-trigger" aria-expanded="false" aria-controls="sec-future" id="trg-future">Future Vision</button>
-            </h3>
-            <div id="sec-future" class="accordion-panel" role="region" aria-labelledby="trg-future" hidden>
-              <p>The Tank Guide is just the beginning. My vision is to turn this into a launching pad for future hobbyists—a place where newcomers can skip the frustration, find clear answers, and get inspired to keep going. I want to grow a community that shares knowledge openly, highlights the work of other hobbyists, and builds confidence through learning and DIY.</p>
-              <p>Looking ahead, I see this project expanding in a few key ways:</p>
-              <ul>
-                <li><strong>Website growth</strong> — adding more tools and resources like advanced stocking guides, gear recommendations, and water cycle coaches.</li>
-                <li><strong>Books</strong> — creating more titles that take complex aquarium topics and turn them into easy-to-understand stories, making learning fun for kids, families, and new aquarists.</li>
-                <li><strong>Community features</strong> — building a space where hobbyists can connect, exchange ideas, and learn from each other.</li>
-              </ul>
-              <p>Whether it’s through guides, stories, or hands-on tools, my goal is to make fishkeeping easier to understand and more fun to explore—for anyone at any stage of the journey.</p>
-            </div>
-          </div>
-        </div>
+      <section class="about-section" aria-labelledby="about-what-is">
+        <h2 id="about-what-is">What is The Tank Guide?</h2>
+        <p>
+          The Tank Guide is a home for beginner-friendly aquarium help. Instead of guessing at water changes or stocking rules, you can use our tools and guides to plan a healthy tank from the start.
+        </p>
+        <ul>
+          <li><strong>Stocking Advisor</strong> – helps you think through fish compatibility, bioload, and tank size instead of using “one inch per gallon”.</li>
+          <li><strong>Cycling Coach</strong> – walks you through the nitrogen cycle so you don’t rush fish into an uncycled tank.</li>
+          <li><strong>Gear Guide</strong> – explains filters, heaters, media, and other equipment in plain language.</li>
+          <li><strong>Daily Tank Journal &amp; Dashboard</strong> – encourages small, consistent habits by tracking water tests, maintenance, and dosing.</li>
+          <li><strong>Feature Your Tank</strong> – lets you share your aquarium story so other beginners can learn from real-world setups.</li>
+        </ul>
+        <p>
+          All of these live under one roof so new fishkeepers don’t have to piece together random advice from a dozen different sites.
+        </p>
       </section>
-      <p class="about-feedback"><a href="/contact-feedback.html">Contact &amp; Feedback</a></p>
+
+      <section class="about-section" aria-labelledby="about-who-runs">
+        <h2 id="about-who-runs">Who Runs The Tank Guide?</h2>
+        <p>
+          The Tank Guide is created and maintained by <strong>FishKeepingLifeCo (Founder)</strong>, a one-person studio that lives and learns through real home aquariums.
+        </p>
+        <p>
+          Over the years, that has meant full-time work, parenting, late-night water changes, and slowly building better habits one tank at a time. Instead of pretending everything is perfect, The Tank Guide is honest about mistakes, do-overs, and what it really takes to keep fish healthy in everyday life.
+        </p>
+        <p>
+          On the site and in our books, you’ll see “we” used a lot. That “we” includes the founder, the tanks themselves, and the growing community of readers who share feedback, questions, and featured setups.
+        </p>
+      </section>
+
+      <section class="about-section" aria-labelledby="about-books">
+        <h2 id="about-books">Books &amp; Learning Tools</h2>
+        <p>
+          Alongside the website, FishKeepingLifeCo publishes aquarium books and journals that match the same teaching style you see here.
+        </p>
+        <ul>
+          <li><strong>Life in Balance: The Hidden Magic of Aquariums</strong> – an illustrated storybook that explains how healthy tanks really work behind the glass.</li>
+          <li><strong>Daily Tank Journals</strong> – guided logbooks that help you track water parameters, maintenance, and patterns over time.</li>
+          <li><strong>Coloring Books &amp; Activity Pages</strong> – creative ways for kids and families to learn aquarium science together.</li>
+        </ul>
+        <p>
+          The goal is always the same: take real aquarium science and present it in a way that feels clear, calm, and doable.
+        </p>
+      </section>
+
+      <section class="about-section" aria-labelledby="about-values">
+        <h2 id="about-values">What We Believe</h2>
+        <ul class="about-values-list">
+          <li><strong>Fish welfare first.</strong> A “pretty tank” only matters if the animals inside it are calm, healthy, and respected.</li>
+          <li><strong>No gatekeeping.</strong> Beginners deserve real explanations, not “because I said so” answers.</li>
+          <li><strong>Science, but human-sized.</strong> We use real aquarium chemistry and biology, but always translate it into plain language and simple actions.</li>
+          <li><strong>Learn out loud.</strong> Mistakes and do-overs are shared so others can avoid the same problems.</li>
+          <li><strong>Small habits win.</strong> Consistent water changes, testing, and observation matter more than expensive gadgets.</li>
+        </ul>
+      </section>
+
+      <section class="about-section" aria-labelledby="about-beginners">
+        <h2 id="about-beginners">Who The Tank Guide is For</h2>
+        <p>
+          This site is built for:
+        </p>
+        <ul>
+          <li>Beginners setting up their very first freshwater tank.</li>
+          <li>Parents helping kids care for a betta or community aquarium.</li>
+          <li>Hobbyists coming back to fishkeeping after a break.</li>
+          <li>Anyone who wants calm, step-by-step help instead of conflicting advice.</li>
+        </ul>
+        <p>
+          If you’ve ever felt overwhelmed by cycling, stocking charts, or water parameters, you’re in the right place.
+        </p>
+      </section>
+
+      <section class="about-section" aria-labelledby="about-faq">
+        <h2 id="about-faq">Quick Answers</h2>
+        <dl class="about-faq-list">
+          <div>
+            <dt>Is The Tank Guide free to use?</dt>
+            <dd>Yes. The main tools, guides, and educational pages are free to access. Some books and journals are available for purchase to support the project.</dd>
+          </div>
+          <div>
+            <dt>Do you earn money from links or recommendations?</dt>
+            <dd>Sometimes. When you see a product recommendation, we may use affiliate links. Those links never change our guidance on whether something is actually a good fit for your tank.</dd>
+          </div>
+          <div>
+            <dt>Can I ask questions or share my tank?</dt>
+            <dd>Yes. You can use the contact form to send feedback or questions, and the “Feature Your Tank” page to submit your aquarium for possible inclusion in future content.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="about-section" aria-labelledby="about-next">
+        <h2 id="about-next">Where to Go Next</h2>
+        <p>
+          Ready to keep learning? Here are some helpful next steps:
+        </p>
+        <ul class="about-links-list">
+          <li><a href="/index.html">Visit the home page</a> for an overview of all tools.</li>
+          <li><a href="/stocking-advisor.html">Try the Stocking Advisor</a> to plan your future fish list.</li>
+          <li><a href="/cycling-coach.html">Use Cycling Coach</a> to walk through the nitrogen cycle step by step.</li>
+          <li><a href="/gear.html">Browse the Gear Guide</a> for beginner-friendly equipment explanations.</li>
+          <li><a href="/journal-dashboard.html">Open the Journal Dashboard</a> to see how daily tracking can help your tank.</li>
+          <li><a href="/feature-your-tank.html">Feature Your Tank</a> and share your story with other beginners.</li>
+          <li><a href="/contact-feedback.html">Contact &amp; Feedback</a> if you’d like to ask a question or suggest improvements.</li>
+        </ul>
+      </section>
     </div>
 
     <section class="seo-intro">
@@ -470,82 +473,7 @@
       </script>
     </div>
   </main>
-<script>
-    (() => {
-      const accordion = document.getElementById('about-accordion');
-      if (!accordion) {
-        return;
-      }
-
-      const triggers = Array.from(accordion.querySelectorAll('.accordion-trigger'));
-
-      const togglePanel = (trigger, expand) => {
-        if (!trigger) return;
-        const controls = trigger.getAttribute('aria-controls');
-        if (!controls) return;
-        const panel = document.getElementById(controls);
-        if (!panel) return;
-        const isExpanded = typeof expand === 'boolean' ? expand : trigger.getAttribute('aria-expanded') === 'true';
-        const nextState = typeof expand === 'boolean' ? expand : !isExpanded;
-        trigger.setAttribute('aria-expanded', String(nextState));
-        panel.hidden = !nextState;
-      };
-
-      accordion.addEventListener('click', (event) => {
-        const trigger = event.target instanceof HTMLElement ? event.target.closest('.accordion-trigger') : null;
-        if (!trigger) {
-          return;
-        }
-        event.preventDefault();
-        togglePanel(trigger);
-      });
-
-      accordion.addEventListener('keydown', (event) => {
-        const trigger = event.target instanceof HTMLElement ? event.target.closest('.accordion-trigger') : null;
-        if (!trigger) {
-          return;
-        }
-
-        const currentIndex = triggers.indexOf(trigger);
-        if (currentIndex === -1) {
-          return;
-        }
-
-        switch (event.key) {
-          case 'Enter':
-          case ' ':
-            event.preventDefault();
-            togglePanel(trigger);
-            break;
-          case 'ArrowDown': {
-            event.preventDefault();
-            const next = triggers[(currentIndex + 1) % triggers.length];
-            next?.focus();
-            break;
-          }
-          case 'ArrowUp': {
-            event.preventDefault();
-            const prevIndex = (currentIndex - 1 + triggers.length) % triggers.length;
-            const prev = triggers[prevIndex];
-            prev?.focus();
-            break;
-          }
-          case 'Home': {
-            event.preventDefault();
-            triggers[0]?.focus();
-            break;
-          }
-          case 'End': {
-            event.preventDefault();
-            triggers[triggers.length - 1]?.focus();
-            break;
-          }
-          default:
-            break;
-        }
-      });
-    })();
-  </script>
+  
 <script>
   (function() {
     var QA_MODE = false;
