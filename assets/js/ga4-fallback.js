@@ -35,6 +35,17 @@
     window.__TTG_GA4_PRESENT__ = true;
   }
 
+  function markIfExistingLoaderPresent(){
+    if (window.__TTG_GA4_PRESENT__) return true;
+    var loader = document.querySelector('script[src*="googletagmanager.com/gtag/js?id=G-PTHZ5NZFVJ"]');
+    if (loader) {
+      window.__TTG_GA4_PRESENT__ = true;
+      ensureStub();
+      return true;
+    }
+    return false;
+  }
+
   function fetchSnippet(){
     if (window.__TTG_GA4_PRESENT__ || window.__TTG_GA4_FALLBACK_STARTED__) {
       return;
@@ -50,7 +61,7 @@
 
   function ensureLoader(){
     ensureStub();
-    if (window.__TTG_GA4_PRESENT__) {
+    if (markIfExistingLoaderPresent()) {
       return;
     }
     fetchSnippet();
