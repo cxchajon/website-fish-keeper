@@ -107,3 +107,7 @@ Next: Continue connecting CSV auto-updates when stable.
 Scope: Replace generic Library paragraph with brand-aligned 3-sentence version.
 Result: Updated text live, verified tone/spacing match site standards.
 Next: Continue expanding Library descriptions under each card.
+[2025-11-19 | About Page | Schema Upgrade]
+Scope: Replaced WebPage JSON-LD with AboutPage + FAQPage structured data.
+Result: Improved AEO visibility and Rich Results eligibility.
+Next: Validate indexing in Search Console within 48 hours.

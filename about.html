@@ -282,22 +282,54 @@
     }
   </style>
 
-  <script type="application/ld+json">
-{ 
+<script type="application/ld+json">
+{
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "@id": "https://thetankguide.com/about.html#webpage",
-  "name": "About The Tank Guide & FishKeepingLifeCo — Aquarium Help for Beginners",
-  "url": "https://thetankguide.com/about.html",
-  "description": "Learn what The Tank Guide and FishKeepingLifeCo are all about: simple, science-based freshwater aquarium help for beginners, families, and hobbyists.",
-  "publisher": {
-    "@id": "https://thetankguide.com/#organization"
-  },
-  "author": {
-    "@id": "https://thetankguide.com/#organization"
-  }
+  "@graph": [
+    {
+      "@type": "AboutPage",
+      "@id": "https://thetankguide.com/about.html#webpage",
+      "url": "https://thetankguide.com/about.html",
+      "name": "About The Tank Guide & FishKeepingLifeCo",
+      "description": "Learn what The Tank Guide and FishKeepingLifeCo are all about: simple, science-based freshwater aquarium help for beginners.",
+      "isPartOf": { "@id": "https://thetankguide.com/#website" },
+      "about": { "@id": "https://thetankguide.com/#organization" },
+      "publisher": { "@id": "https://thetankguide.com/#organization" },
+      "author": { "@id": "https://thetankguide.com/#organization" }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://thetankguide.com/about.html#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is The Tank Guide free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The main tools, guides, and educational pages are free to access. Some books and journals are available for purchase to support the project."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you earn money from links or recommendations?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sometimes. When you see a product recommendation, we may use affiliate links. Those links never change our guidance on whether something is actually a good fit for your tank."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I ask questions or share my tank?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. You can use the contact form to send feedback or questions, and the 'Feature Your Tank' page to submit your aquarium for possible inclusion in future content."
+          }
+        }
+      ]
+    }
+  ]
 }
-  </script>
+</script>
   <!-- Consent Mode defaults (load FIRST) -->
   <script src="/assets/js/consent-mode.js" defer></script>
   <!-- Google tag (gtag.js) — GA4 -->
