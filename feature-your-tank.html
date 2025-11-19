@@ -28,6 +28,303 @@
   <link rel="preconnect" href="https://static.cloudflareinsights.com">
   <link rel="preconnect" href="https://widget.cloudinary.com">
   <link rel="stylesheet" href="css/style.css?v=1.0.10" />
+  <style>
+    body.page-gradient {
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 20%, rgba(54, 83, 180, 0.18), transparent 38%),
+        radial-gradient(circle at 80% 0%, rgba(29, 185, 138, 0.18), transparent 32%),
+        linear-gradient(180deg, #0b0f12 0%, #111820 60%, #101418 100%);
+      color: #e9f0fb;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background-attachment: fixed;
+    }
+
+    .feature-main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 16px 96px;
+    }
+
+    .panel {
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 32px 28px 40px;
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .panel h1 {
+      margin: 0;
+      font-size: clamp(2rem, 2.4vw + 1rem, 3rem);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, rgba(192, 192, 192, 0.6), rgba(192, 192, 192, 0.2));
+      margin: 12px 0 20px;
+    }
+
+    .tiny {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin: 0;
+      color: rgba(233, 240, 251, 0.85);
+    }
+
+    #feature-tank-form.ft-wrap {
+      --border: rgba(255, 255, 255, 0.12);
+      --muted: #a1a1aa;
+      --text: #f3f4f6;
+      --accent: #10b981;
+      --accent-weak: rgba(16, 185, 129, 0.35);
+      color: var(--text);
+    }
+
+    #feature-tank-form {
+      margin-top: 24px;
+    }
+
+    .ft-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 14px 0;
+    }
+
+    .ft-label {
+      font-weight: 600;
+      color: rgba(241, 246, 255, 0.9);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .ft-title {
+      margin: 0 0 12px;
+      font-size: 1.4rem;
+    }
+
+    .ft-input,
+    textarea.ft-input,
+    select.ft-input,
+    textarea.urls-readonly {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.18));
+      background: rgba(6, 10, 16, 0.65);
+      color: var(--text, #f4f8ff);
+      font-size: 1rem;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .feature-main ::placeholder {
+      color: rgba(244, 248, 255, 0.75);
+    }
+
+    .ft-input:focus,
+    textarea.ft-input:focus,
+    select.ft-input:focus,
+    textarea.urls-readonly:focus {
+      outline: none;
+      border-color: rgba(118, 198, 255, 0.8);
+      box-shadow: 0 0 0 3px rgba(118, 198, 255, 0.25);
+    }
+
+    .ft-grid,
+    .grid-2,
+    .grid-3 {
+      display: grid;
+      gap: 10px;
+    }
+
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    .ft-help {
+      color: var(--muted, #a1a1aa);
+      margin-top: 6px;
+    }
+
+    .ft-help.small { font-size: 0.9rem; }
+
+    textarea.ft-input { resize: vertical; min-height: 120px; }
+
+    .eligibility-note {
+      margin: 12px 0 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .eligibility-note h2 { margin: 0 0 8px; font-size: 1.15rem; }
+    .eligibility-note ul { margin: 8px 0 0 18px; padding: 0; }
+    .eligibility-note li { margin: 6px 0; line-height: 1.35; }
+
+    .channel-wrap { margin: 12px 0 6px; }
+    .channel-title { display: block; margin-bottom: 8px; font-weight: 600; }
+
+    .channel-row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .channel-select,
+    .channel-handle {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.18));
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text, #f3f4f6);
+      width: 100%;
+    }
+
+    .field-note {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted, #a1a1aa);
+      font-size: 0.9rem;
+    }
+
+    .upload-card {
+      margin: 16px 0;
+      padding: 14px;
+      border: 1px dashed var(--border, rgba(255, 255, 255, 0.12));
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .upload-head h3 { margin: 0 0 4px; font-size: 1.1rem; }
+    .muted { color: var(--muted, #a1a1aa); }
+
+    .upload-actions {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary,
+    .btn-ghost {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.12s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.08));
+      color: var(--text, #f3f4f6);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .btn-ghost { background: transparent; color: var(--muted, #a1a1aa); }
+    .btn-primary:active,
+    .btn-ghost:active { transform: translateY(1px); box-shadow: 0 6px 14px rgba(0,0,0,0.16); }
+
+    .upload-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+      gap: 10px;
+      min-height: 0;
+    }
+
+    .thumb {
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .thumb img,
+    .thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .thumb .badge {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      background: rgba(0, 0, 0, 0.55);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+    }
+
+    .consent-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      margin: 12px 0 6px;
+    }
+
+    .consent-checkbox {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      -webkit-appearance: checkbox;
+      appearance: checkbox;
+      accent-color: var(--accent, #10b981);
+      transform: scale(1.15);
+      transform-origin: top left;
+      cursor: pointer;
+    }
+
+    .consent-label { user-select: none; cursor: pointer; line-height: 1.4; }
+    .consent-help { color: var(--muted, #a1a1aa); margin: 0 0 10px; }
+
+    #submitBtn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .feature-faq {
+      margin-top: 24px;
+      padding: 18px 14px 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .feature-faq h2 { margin: 0 0 8px; font-size: 1.25rem; }
+
+    @media (max-width: 720px) {
+      .panel { padding: 28px 22px 36px; }
+      .feature-main { padding-top: 32px; }
+      .upload-actions { flex-direction: column; align-items: stretch; }
+      .btn-primary,
+      .btn-ghost { width: 100%; text-align: center; }
+    }
+
+    @media (max-width: 680px) {
+      .grid-2,
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) { .channel-row { grid-template-columns: 1fr; } }
+  </style>
   <script defer src="js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (load FIRST) -->
   <script src="/assets/js/consent-mode.js" defer></script>
@@ -341,7 +638,7 @@
       </section>
 
       <!-- Cloudinary Upload Widget -->
-      <script src="https://widget.cloudinary.com/v2.0/global/all.js" defer></script>
+      <script src="https://widget.cloudinary.com/v2.0/global/all.js" id="cloudinary-widget-script"></script>
 
       <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -381,18 +678,91 @@
         let previews = [];   // thumbnails/posters
         let uploadsInFlight = 0;
         let uploaderReady = false;
+        let widgetInstance = null;
 
-        function markUploaderReady() {
-          if (window.cloudinary && typeof cloudinary.createUploadWidget === 'function') {
-            uploaderReady = true;
-            return true;
+        const cloudinaryScript = document.getElementById('cloudinary-widget-script');
+
+        function buildWidget() {
+          if (!(window.cloudinary && typeof cloudinary.createUploadWidget === 'function')) {
+            return false;
           }
-          console.error('Cloudinary uploader is not available yet.');
+          widgetInstance = cloudinary.createUploadWidget({
+            cloudName: CLOUD_NAME,
+            uploadPreset: UPLOAD_PRESET,
+            multiple: true,
+            maxFiles: MAX_FILES,
+            // Allow both generic types and explicit extensions (some devices report generically)
+            clientAllowedFormats: ['image','video','jpg','jpeg','png','webp','heic','mp4','mov'],
+            maxFileSize: MAX_SIZE_BYTES,
+            resourceType: 'auto',
+            cropping: false,
+            folder: UPLOAD_FOLDER,
+            sources: ['local', 'camera', 'url'],
+            showPoweredBy: false
+          }, (error, result) => {
+            if (result && result.event === 'queues-start') {
+              lockSubmitWhileUploading(true);
+            }
+            if (result && result.event === 'success') {
+              const info = result.info || {};
+              const url = info && info.secure_url ? info.secure_url : null;
+              if (url) {
+                if (uploaded.length >= MAX_FILES) {
+                  alert(`You can upload up to ${MAX_FILES} files per submission.`);
+                } else {
+                  uploaded.push(url);
+                  playable.push(makePlayableUrl(url));
+                  previews.push(makePreviewUrl(url));
+                  renderPreviews();
+                }
+              }
+            }
+            if (result && (result.event === 'queues-end' || result.event === 'close')) {
+              lockSubmitWhileUploading(false);
+            }
+            if (error) {
+              console.error('Cloudinary widget error:', error);
+              const code = (error && (error.statusText || error.message || error.http_code)) || 'unknown';
+              if (/max file size/i.test(code) || error.http_code === 400) {
+                alert('Your video is too large. Please keep files at or under ~80 MB.');
+              } else if (/invalid format/i.test(code)) {
+                alert('Unsupported format. Allowed: jpg, jpeg, png, webp, heic, mp4, mov.');
+              } else {
+                alert('There was a problem uploading. Please try again.');
+              }
+              lockSubmitWhileUploading(false);
+            }
+          });
+          uploaderReady = true;
+          return true;
+        }
+
+        function ensureWidgetReady() {
+          if (uploaderReady && widgetInstance) return true;
+          if (buildWidget()) return true;
+          if (errorBox) {
+            errorBox.textContent = 'Uploader not ready yet. Please wait a moment and try again.';
+            errorBox.style.display = 'block';
+          } else {
+            alert('Uploader not ready yet. Please wait a moment and try again.');
+          }
           return false;
         }
 
-        markUploaderReady();
-        window.addEventListener('load', markUploaderReady);
+        if (cloudinaryScript) {
+          const readyNow = buildWidget();
+          if (!readyNow) {
+            cloudinaryScript.addEventListener('load', buildWidget);
+            cloudinaryScript.addEventListener('error', () => {
+              if (errorBox) {
+                errorBox.textContent = 'Cloudinary failed to load. Please check your connection or try again later.';
+                errorBox.style.display = 'block';
+              }
+            });
+          }
+        } else {
+          buildWidget();
+        }
 
         // ======= Helpers: Socials =======
         function normHandle(val){
@@ -544,63 +914,10 @@
           syncSubmitAvailability();
         }
         function openWidget() {
-          if (!uploaderReady && !markUploaderReady()) {
-            if (errorBox) {
-              errorBox.textContent = 'Uploader not ready yet. Please wait a moment and try again.';
-              errorBox.style.display = 'block';
-            } else {
-              alert('Uploader not ready yet. Please wait a moment and try again.');
-            }
+          if (!ensureWidgetReady() || !widgetInstance) {
             return;
           }
-          const widget = cloudinary.createUploadWidget({
-            cloudName: CLOUD_NAME,
-            uploadPreset: UPLOAD_PRESET,
-            multiple: true,
-            maxFiles: MAX_FILES,
-            // Allow both generic types and explicit extensions (some devices report generically)
-            clientAllowedFormats: ['image','video','jpg','jpeg','png','webp','heic','mp4','mov'],
-            maxFileSize: MAX_SIZE_BYTES,
-            resourceType: 'auto',
-            cropping: false,
-            folder: UPLOAD_FOLDER,
-            sources: ['local', 'camera', 'url'],
-            showPoweredBy: false
-          }, (error, result) => {
-            if (result && result.event === 'queues-start') {
-              lockSubmitWhileUploading(true);
-            }
-            if (result && result.event === 'success') {
-              const info = result.info || {};
-              const url = info && info.secure_url ? info.secure_url : null;
-              if (url) {
-                if (uploaded.length >= MAX_FILES) {
-                  alert(`You can upload up to ${MAX_FILES} files per submission.`);
-                } else {
-                  uploaded.push(url);
-                  playable.push(makePlayableUrl(url));
-                  previews.push(makePreviewUrl(url));
-                  renderPreviews();
-                }
-              }
-            }
-            if (result && (result.event === 'queues-end' || result.event === 'close')) {
-              lockSubmitWhileUploading(false);
-            }
-            if (error) {
-              console.error('Cloudinary widget error:', error);
-              const code = (error && (error.statusText || error.message || error.http_code)) || 'unknown';
-              if (/max file size/i.test(code) || error.http_code === 400) {
-                alert('Your video is too large. Please keep files at or under ~80 MB.');
-              } else if (/invalid format/i.test(code)) {
-                alert('Unsupported format. Allowed: jpg, jpeg, png, webp, heic, mp4, mov.');
-              } else {
-                alert('There was a problem uploading. Please try again.');
-              }
-              lockSubmitWhileUploading(false);
-            }
-          });
-          widget.open();
+          widgetInstance.open();
         }
 
         // ======= Wire events =======
