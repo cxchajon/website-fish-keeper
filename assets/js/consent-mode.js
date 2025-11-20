@@ -108,17 +108,20 @@
   }
 
   function applyGaConsent(state, options){
-    var deniedPayload = createDeniedPayload();
     var updatePayload = buildUpdatePayload(state);
     var defaultOnly = options && options.defaultOnly;
-    var skipDefault = options && options.applyDefault === false;
+
+    // Note: Consent defaults are set in includes/ga4.html BEFORE GA4 loads.
+    // This function now only handles consent UPDATES when user changes preferences.
+    if (defaultOnly) {
+      // Skip update if we're only supposed to set defaults (already done in ga4.html)
+      return;
+    }
 
     if (typeof window.gtag === 'function'){
-      if (!skipDefault) window.gtag('consent','default', deniedPayload);
-      if (!defaultOnly) window.gtag('consent','update', updatePayload);
+      window.gtag('consent','update', updatePayload);
     } else {
-      consentQueue.push({ type: 'default', payload: deniedPayload });
-      if (!defaultOnly) consentQueue.push({ type: 'update', payload: updatePayload });
+      consentQueue.push({ type: 'update', payload: updatePayload });
     }
   }
 
@@ -148,7 +151,13 @@
     if (ON_LEGAL_PAGE) baseState = createDeniedState();
 
     applyAdConsentState(baseState.ad_storage === 'granted');
-    applyAndEmit(baseState, savedConsent ? {} : { defaultOnly: true });
+
+    // GA4 consent defaults and initial update are already set in includes/ga4.html
+    // Here we just need to set up internal state, CSS classes, and events
+    // Skip the gtag update call since ga4.html already handled it
+    window.__TTG_CONSENT_STATE__ = Object.assign({}, baseState);
+    emitConsentUpdate(baseState);
+
     setBannerOpen(inEEA && !savedConsent);
 
     return savedConsent;
