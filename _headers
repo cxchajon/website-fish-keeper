@@ -1,3 +1,6 @@
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://www.youtube.com https://s.ytimg.com https://static.cloudflareinsights.com https://fundingchoicesmessages.google.com https://googleads.g.doubleclick.net https://ep1.adtrafficquality.google; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src 'self' https://www.youtube.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.googletagmanager.com/a https://www.googletagmanager.com/td https://ep1.adtrafficquality.google
+
 /ads.txt
   Content-Type: text/plain; charset=utf-8
   Cache-Control: max-age=300
