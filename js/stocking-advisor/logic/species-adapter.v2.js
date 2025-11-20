@@ -1,21 +1,38 @@
 import { BEHAVIOR_TAGS } from '/js/logic/behaviorTags.js';
 
-// Fetch species data with proper error handling
+// Species data - loaded asynchronously for Safari compatibility
 let speciesV2Raw = [];
-try {
-  const speciesResponse = await fetch('/data/stocking-advisor/species.v2.json');
-  if (!speciesResponse.ok) {
-    throw new Error(`HTTP ${speciesResponse.status}: ${speciesResponse.statusText}`);
+let speciesLoadPromise = null;
+let speciesInitialized = false;
+
+// Start loading species data immediately (non-blocking)
+function loadSpeciesData() {
+  if (speciesLoadPromise) {
+    return speciesLoadPromise;
   }
-  speciesV2Raw = await speciesResponse.json();
-  if (!Array.isArray(speciesV2Raw)) {
-    console.error('[species-adapter] Invalid species data format, expected array');
-    speciesV2Raw = [];
-  }
-} catch (error) {
-  console.error('[species-adapter] Failed to load species data:', error);
-  speciesV2Raw = [];
+
+  speciesLoadPromise = (async () => {
+    try {
+      const speciesResponse = await fetch('/data/stocking-advisor/species.v2.json');
+      if (!speciesResponse.ok) {
+        throw new Error(`HTTP ${speciesResponse.status}: ${speciesResponse.statusText}`);
+      }
+      speciesV2Raw = await speciesResponse.json();
+      if (!Array.isArray(speciesV2Raw)) {
+        console.error('[species-adapter] Invalid species data format, expected array');
+        speciesV2Raw = [];
+      }
+    } catch (error) {
+      console.error('[species-adapter] Failed to load species data:', error);
+      speciesV2Raw = [];
+    }
+  })();
+
+  return speciesLoadPromise;
 }
+
+// Start loading immediately when module is imported
+loadSpeciesData();
 
 const LEGACY_BASE = Object.freeze({
   'amano-shrimp': Object.freeze({
@@ -618,8 +635,25 @@ function mapRecord(record) {
   return Object.freeze(adapted);
 }
 
-const ADAPTED_SPECIES = Object.freeze(speciesV2Raw.map(mapRecord));
-const SPECIES_BY_SLUG = new Map(ADAPTED_SPECIES.map((entry) => [entry.slug.toLowerCase(), entry]));
+// Species collections - built after initialization
+let ADAPTED_SPECIES = [];
+let SPECIES_BY_SLUG = new Map();
+
+/**
+ * Initialize species data - must be called before using getSpeciesListV2/getSpeciesBySlugV2
+ * Safe to call multiple times (idempotent)
+ */
+export async function initializeSpecies() {
+  if (speciesInitialized) {
+    return;
+  }
+
+  await loadSpeciesData();
+
+  ADAPTED_SPECIES = Object.freeze(speciesV2Raw.map(mapRecord));
+  SPECIES_BY_SLUG = new Map(ADAPTED_SPECIES.map((entry) => [entry.slug.toLowerCase(), entry]));
+  speciesInitialized = true;
+}
 
 export function getSpeciesListV2() {
   return ADAPTED_SPECIES.map((species) => ({
