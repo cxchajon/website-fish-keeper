@@ -228,6 +228,13 @@ body.theme-light {
   }
 }
 
+/* Desktop nav spacing - increased gap between nav items for better readability */
+@media (min-width: 921px) {
+  #global-nav .links .nav__list {
+    gap: 1.75rem; /* ~28px - increased from 20px for better spacing */
+  }
+}
+
 .site-brand {
   color: inherit;
   text-decoration: none;
