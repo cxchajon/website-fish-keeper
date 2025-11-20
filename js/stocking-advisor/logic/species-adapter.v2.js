@@ -1,8 +1,21 @@
 import { BEHAVIOR_TAGS } from '/js/logic/behaviorTags.js';
 
-// Fetch species data using top-level await (ES2022)
-const speciesResponse = await fetch('/data/stocking-advisor/species.v2.json');
-const speciesV2Raw = await speciesResponse.json();
+// Fetch species data with proper error handling
+let speciesV2Raw = [];
+try {
+  const speciesResponse = await fetch('/data/stocking-advisor/species.v2.json');
+  if (!speciesResponse.ok) {
+    throw new Error(`HTTP ${speciesResponse.status}: ${speciesResponse.statusText}`);
+  }
+  speciesV2Raw = await speciesResponse.json();
+  if (!Array.isArray(speciesV2Raw)) {
+    console.error('[species-adapter] Invalid species data format, expected array');
+    speciesV2Raw = [];
+  }
+} catch (error) {
+  console.error('[species-adapter] Failed to load species data:', error);
+  speciesV2Raw = [];
+}
 
 const LEGACY_BASE = Object.freeze({
   'amano-shrimp': Object.freeze({
