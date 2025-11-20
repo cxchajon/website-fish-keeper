@@ -9,6 +9,7 @@ import {
   sanitizeFilterList,
   computeFilterFlowStats,
   normalizeFilterTypeSelection,
+  initializeCompute,
 } from './logic/compute.js';
 import { renderEnvCard } from './logic/envRecommend.js';
 import { getTankVariants } from './logic/sizeMap.js';
@@ -320,7 +321,10 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-function bootstrapStocking() {
+async function bootstrapStocking() {
+  // Initialize species data before using SPECIES
+  await initializeCompute();
+
   let state = window.appState;
   if (!state || typeof state !== 'object') {
     state = createDefaultState();
@@ -2569,7 +2573,9 @@ document.addEventListener('ttg:tooltip-close', (event) => {
   }
 });
 
-bootstrapStocking();
+bootstrapStocking().catch((error) => {
+  console.error('[stocking] Bootstrap failed:', error);
+});
 
 // Legacy info popover removed in favor of dedicated tooltip utility.
 (function compactBioAggSafe(){

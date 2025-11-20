@@ -1,5 +1,5 @@
 import * as baseCompute from './compute.legacy.js';
-import { getSpeciesListV2, getSpeciesBySlugV2 } from '/js/stocking-advisor/logic/species-adapter.v2.js';
+import { initializeSpecies, getSpeciesListV2, getSpeciesBySlugV2 } from '/js/stocking-advisor/logic/species-adapter.v2.js';
 import { compatScore } from '/js/stocking-advisor/logic/compat.v2.js';
 import { calcAggression, AGGRESSION_TOKENS } from '/js/stocking-advisor/logic/aggression.v2.js';
 import { evaluateWarningRules } from '/js/stocking-advisor/logic/warning-rules.js';
@@ -40,8 +40,16 @@ const {
 const __DEV_BIOLOAD = false;
 const DEBUG_FILTERS = Boolean(typeof window !== 'undefined' && window?.TTG?.DEBUG_FILTERS);
 
-const SPECIES_V2 = Object.freeze(getSpeciesListV2().map(({ slug }) => getSpeciesBySlugV2(slug)));
-const SPECIES_BY_KEY = (() => {
+// Species collections - built after initialization for Safari compatibility
+let SPECIES_V2 = [];
+let SPECIES_BY_KEY = new Map();
+let SPECIES_LIST_V2 = [];
+let ALL_SPECIES_V2 = [];
+let computeInitialized = false;
+
+function buildSpeciesCollections() {
+  SPECIES_V2 = Object.freeze(getSpeciesListV2().map(({ slug }) => getSpeciesBySlugV2(slug)));
+
   const map = new Map();
   for (const species of SPECIES_V2) {
     if (!species) continue;
@@ -52,14 +60,30 @@ const SPECIES_BY_KEY = (() => {
       map.set(String(species.slug).toLowerCase(), species);
     }
   }
-  return map;
-})();
-const SPECIES_LIST_V2 = Object.freeze(SPECIES_V2.map((species) => ({
-  id: species.id,
-  name: species.common_name,
-  slug: species.slug,
-})));
-const ALL_SPECIES_V2 = SPECIES_LIST_V2;
+  SPECIES_BY_KEY = map;
+
+  SPECIES_LIST_V2 = Object.freeze(SPECIES_V2.map((species) => ({
+    id: species.id,
+    name: species.common_name,
+    slug: species.slug,
+  })));
+  ALL_SPECIES_V2 = SPECIES_LIST_V2;
+}
+
+/**
+ * Initialize compute module - must be called before using species data
+ * Safe to call multiple times (idempotent)
+ */
+export async function initializeCompute() {
+  if (computeInitialized) {
+    return;
+  }
+
+  await initializeSpecies();
+  buildSpeciesCollections();
+  updateExports();
+  computeInitialized = true;
+}
 
 const resolveSpeciesById = (id) => {
   if (!id) return null;
@@ -689,20 +713,43 @@ export function buildComputedState(state) {
   return patchProtoComputed(patchComputed(raw, state));
 }
 
-const fallbackDefaultSpeciesId = (() => {
-  const legacyId = typeof legacyGetDefaultSpeciesId === 'function' ? legacyGetDefaultSpeciesId() : null;
-  return SPECIES_LIST_V2.find((item) => item.id === legacyId)?.id ?? SPECIES_LIST_V2[0]?.id ?? legacyId;
-})();
+let fallbackDefaultSpeciesId = null;
 
-export const SPECIES = SPECIES_V2;
-export const SPECIES_LIST = SPECIES_LIST_V2;
-export const ALL_SPECIES = ALL_SPECIES_V2;
+// Getter functions that return current species data (after initialization)
+export function getSpecies() {
+  return SPECIES_V2;
+}
+
+export function getSpeciesList() {
+  return SPECIES_LIST_V2;
+}
+
+export function getAllSpecies() {
+  return ALL_SPECIES_V2;
+}
+
+// Update the exported binding after initialization
+function updateExports() {
+  SPECIES = SPECIES_V2;
+  SPECIES_LIST = SPECIES_LIST_V2;
+  ALL_SPECIES = ALL_SPECIES_V2;
+}
+
+// Legacy exports - use 'let' for live bindings that update after initialization
+// Note: These will be empty until initializeCompute() is called
+export let SPECIES = [];
+export let SPECIES_LIST = [];
+export let ALL_SPECIES = [];
 
 export function getSpeciesById(id) {
   return resolveSpeciesById(id);
 }
 
 export function getDefaultSpeciesId() {
+  if (fallbackDefaultSpeciesId === null && SPECIES_LIST_V2.length > 0) {
+    const legacyId = typeof legacyGetDefaultSpeciesId === 'function' ? legacyGetDefaultSpeciesId() : null;
+    fallbackDefaultSpeciesId = SPECIES_LIST_V2.find((item) => item.id === legacyId)?.id ?? SPECIES_LIST_V2[0]?.id ?? legacyId;
+  }
   return fallbackDefaultSpeciesId;
 }
 
