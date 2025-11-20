@@ -1,11 +1,10 @@
-(function () {
-  if (typeof window === 'undefined' || typeof document === 'undefined') {
-    return;
-  }
-  if (!document.querySelector('[data-proto-popover]')) {
-    return;
-  }
+// Guard for non-browser environments
+if (typeof window === 'undefined' || typeof document === 'undefined') {
+  throw new Error('info-popover-legacy.js requires a browser environment');
+}
 
+// === Popover functionality ===
+if (document.querySelector('[data-proto-popover]')) {
   const FOCUSABLE_SELECTOR = [
     'a[href]:not([tabindex="-1"])',
     'button:not([disabled])',
@@ -349,45 +348,37 @@
   });
 
   observer.observe(document.body, { childList: true, subtree: true });
-})();
+}
 
 // === Turnover field live updates ===
-(() => {
-  if (typeof document === 'undefined') {
-    return;
+const turnoverInput = document.getElementById('turnoverValue');
+if (turnoverInput) {
+  turnoverInput.setAttribute('aria-live', 'polite');
+
+  const turnoverSource = document.querySelector('[data-role="filter-turnover-value"]');
+  if (turnoverSource) {
+    turnoverSource.hidden = true;
+    turnoverSource.setAttribute('aria-hidden', 'true');
   }
 
-  const input = document.getElementById('turnoverValue');
-  if (!input) {
-    return;
-  }
+  let lastTurnoverValue = null;
 
-  input.setAttribute('aria-live', 'polite');
-
-  const source = document.querySelector('[data-role="filter-turnover-value"]');
-  if (source) {
-    source.hidden = true;
-    source.setAttribute('aria-hidden', 'true');
-  }
-
-  let lastValue = null;
-
-  const clamp = (value) => Math.max(0, Math.min(99.9, value));
+  const clampTurnover = (value) => Math.max(0, Math.min(99.9, value));
 
   const setTurnover = (value) => {
     const numeric = Number(value);
     if (Number.isFinite(numeric)) {
-      const clamped = clamp(numeric);
+      const clamped = clampTurnover(numeric);
       const formatted = clamped.toFixed(1);
-      if (formatted !== lastValue) {
-        input.value = formatted;
-        lastValue = formatted;
+      if (formatted !== lastTurnoverValue) {
+        turnoverInput.value = formatted;
+        lastTurnoverValue = formatted;
       }
     } else {
-      if (lastValue !== null || input.value !== '') {
-        input.value = '';
+      if (lastTurnoverValue !== null || turnoverInput.value !== '') {
+        turnoverInput.value = '';
       }
-      lastValue = null;
+      lastTurnoverValue = null;
     }
   };
 
@@ -401,8 +392,8 @@
   window.__setPrototypeTurnover = setTurnover;
 
   const syncFromSource = () => {
-    if (!source) return;
-    const text = source.textContent.trim();
+    if (!turnoverSource) return;
+    const text = turnoverSource.textContent.trim();
     const parsed = parseTurnoverText(text);
     setTurnover(parsed);
     if (Number.isFinite(parsed)) {
@@ -410,11 +401,11 @@
     }
   };
 
-  if (source) {
+  if (turnoverSource) {
     syncFromSource();
-    const observer = new MutationObserver(syncFromSource);
-    observer.observe(source, { characterData: true, childList: true, subtree: true });
+    const turnoverObserver = new MutationObserver(syncFromSource);
+    turnoverObserver.observe(turnoverSource, { characterData: true, childList: true, subtree: true });
   } else if (typeof window.__initialTurnover !== 'undefined') {
     setTurnover(window.__initialTurnover);
   }
-})();
+}
