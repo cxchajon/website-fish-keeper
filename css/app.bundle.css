@@ -271,7 +271,7 @@ body.theme-light {
 /* Desktop nav spacing - increased gap between nav items for better readability */
 @media (min-width: 921px) {
   #global-nav .links .nav__list {
-    gap: 1.75rem; /* ~28px - comfortable spacing between nav items */
+    gap: 2.5rem; /* ~40px - improved spacing between nav items */
   }
 }
 
