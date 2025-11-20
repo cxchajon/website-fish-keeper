@@ -3,6 +3,8 @@ if (typeof window === 'undefined' || typeof document === 'undefined') {
   throw new Error('info-popover-legacy.js requires a browser environment');
 }
 
+let boundTriggers = new Set();
+
 // === Popover functionality ===
 if (document.querySelector('[data-proto-popover]')) {
   const FOCUSABLE_SELECTOR = [
@@ -18,8 +20,6 @@ if (document.querySelector('[data-proto-popover]')) {
     trigger: null,
     panel: null
   };
-
-  const boundTriggers = new WeakSet();
 
   function findPanel(trigger) {
     let targetId = trigger.getAttribute('aria-controls');
