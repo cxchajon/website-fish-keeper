@@ -118,5 +118,27 @@
     "date": "2025-11-17",
     "title": "Feeding, Test, Maintenance & Dosing",
     "body": "Fed flakes and brine shrimp. Nitrate tested around 40 ppm. Performed ~75% display and ~90% sump water change. Replaced Purigen and poly-fil, and removed excess poly-fil between the refugium and return pump to reduce flow restriction. Light plant trimming completed. Dosed Seachem Excel and Stability. Updated weekly fertilizer plan: switching to a single 4-pump Thrive dose this week instead of the usual 8-pump split routine."
+  },
+  {
+    "date": "2025-11-18",
+    "title": "Feeding",
+    "body": "Fed algae wafers and flakes for veggie day. Fish responded well and feeding was consistent."
+  },
+  {
+    "date": "2025-11-19",
+    "title": "Feeding, Test & Dosing",
+    "body": "Nitrate tested at 5 ppm. Fed flakes and bloodworms. Spot- and cap-dosed Seachem Excel. BBA nearly gone; only a small area remains in a sensitive plant zone, so treatment is applied carefully to avoid damaging plant tissue."
+  },
+  {
+    "date": "2025-11-20",
+    "title": "Feeding, Test & Dosing & Filtration Update",
+    "body": "Feeding: Brine shrimp + flakes. Nitrates measured around 5 ppm (low range). Dosed 4 pumps of NilocG Thrive Plus fertilizer and skipped Seachem Excel to avoid stressing sensitive plants. Added a bag of Seachem Matrix to the filter chamber to weigh down floating filter pads, expand biomedia capacity, and support long-term beneficial bacteria stability. Tank remains stable with strong feeding response; fertilizer dose increased today due to the low nitrate reading.",
+    "photos": [
+      {
+        "src": "/assets/images/filter-chamber-update-2025-11-20.jpg",
+        "alt": "Filter chamber update on November 20, 2025 showing Seachem Matrix and poly-fil in the sump compartment",
+        "caption": ""
+      }
+    ]
   }
 ]
