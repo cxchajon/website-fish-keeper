@@ -1,5 +1,8 @@
-import speciesV2Raw from '/data/stocking-advisor/species.v2.json' with { type: 'json' };
 import { BEHAVIOR_TAGS } from '/js/logic/behaviorTags.js';
+
+// Fetch species data using top-level await (ES2022)
+const speciesResponse = await fetch('/data/stocking-advisor/species.v2.json');
+const speciesV2Raw = await speciesResponse.json();
 
 const LEGACY_BASE = Object.freeze({
   'amano-shrimp': Object.freeze({
