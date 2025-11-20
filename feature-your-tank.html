@@ -935,6 +935,38 @@
 
         // ======= AJAX Submit to Formspree (no redirect) =======
         form.addEventListener('submit', async function(e) {
+          e.preventDefault();
+
+          // Validate required fields first
+          const nameInput = document.getElementById('name');
+          const emailInput = document.getElementById('email');
+
+          if (!nameInput.value.trim()) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            alert('Please enter your name.');
+            nameInput.focus();
+            return false;
+          }
+
+          if (!emailInput.value.trim()) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            alert('Please enter your email address.');
+            emailInput.focus();
+            return false;
+          }
+
+          // Basic email format validation
+          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailPattern.test(emailInput.value.trim())) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            alert('Please enter a valid email address.');
+            emailInput.focus();
+            return false;
+          }
+
           // Validate channel entries first
           if (!validateSocials()){
             e.preventDefault();
