@@ -1,61 +1,26 @@
-const AGGRESSION_SELECTORS = [
-  '[data-role="aggression-percent"]',
-  '.meter--aggression',
-  '.aggression-meter',
-  '[data-metric="aggression"]',
-];
+import { state } from './state.js';
 
-const pruneAggressionMeter = (root) => {
-  if (!root) return;
+export function updateMeters() {
+    updateBioloadMeter();
+    updateCompatibilityMeter();
+}
 
-  const toRemove = new Set();
+function updateBioloadMeter() {
+    const meter = document.querySelector('.bioload-meter-fill');
+    const label = document.querySelector('.bioload-meter-label');
+    if (!meter || !label) return;
 
-  AGGRESSION_SELECTORS.forEach((selector) => {
-    root.querySelectorAll(selector).forEach((node) => {
-      toRemove.add(node);
-      const bar = node.closest('.env-bar');
-      if (bar) {
-        toRemove.add(bar);
-      }
-    });
-  });
+    const percentage = Math.min((state.currentBioload / state.maxBioload) * 100, 100);
+    meter.style.width = `${percentage}%`;
+    label.textContent = `${state.currentBioload.toFixed(1)} / ${state.maxBioload.toFixed(1)} Bioload Units`;
+}
 
-  root.querySelectorAll('[data-info="aggression"]').forEach((infoBtn) => {
-    const container = infoBtn.closest('.env-bar');
-    if (container) {
-      toRemove.add(container);
-    }
-    toRemove.add(infoBtn);
-  });
+function updateCompatibilityMeter() {
+    const meter = document.querySelector('.compatibility-meter-fill');
+    const label = document.querySelector('.compatibility-meter-label');
+    if (!meter || !label) return;
 
-  toRemove.forEach((node) => {
-    if (node && node.parentNode) {
-      node.parentNode.removeChild(node);
-    }
-  });
-};
-
-const init = () => {
-  const barsRoot = document.getElementById('env-bars');
-  if (!barsRoot) {
-    return;
-  }
-
-  pruneAggressionMeter(barsRoot);
-
-  const observer = new MutationObserver(() => {
-    pruneAggressionMeter(barsRoot);
-  });
-
-  observer.observe(barsRoot, { childList: true, subtree: true });
-
-  window.addEventListener('beforeunload', () => {
-    observer.disconnect();
-  });
-};
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init, { once: true });
-} else {
-  init();
+    const score = state.compatibilityScore;
+    meter.style.width = `${score}%`;
+    label.textContent = `Compatibility: ${score}%`;
 }
