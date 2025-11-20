@@ -1,67 +1,61 @@
-if (typeof window !== 'undefined' && typeof document !== 'undefined' && window.__TTG_BLOCK_INIT__ !== true) {
-  const hasEnvBars = () => Boolean(document.getElementById('env-bars'));
-  if (!hasEnvBars()) {
+const AGGRESSION_SELECTORS = [
+  '[data-role="aggression-percent"]',
+  '.meter--aggression',
+  '.aggression-meter',
+  '[data-metric="aggression"]',
+];
+
+const pruneAggressionMeter = (root) => {
+  if (!root) return;
+
+  const toRemove = new Set();
+
+  AGGRESSION_SELECTORS.forEach((selector) => {
+    root.querySelectorAll(selector).forEach((node) => {
+      toRemove.add(node);
+      const bar = node.closest('.env-bar');
+      if (bar) {
+        toRemove.add(bar);
+      }
+    });
+  });
+
+  root.querySelectorAll('[data-info="aggression"]').forEach((infoBtn) => {
+    const container = infoBtn.closest('.env-bar');
+    if (container) {
+      toRemove.add(container);
+    }
+    toRemove.add(infoBtn);
+  });
+
+  toRemove.forEach((node) => {
+    if (node && node.parentNode) {
+      node.parentNode.removeChild(node);
+    }
+  });
+};
+
+const init = () => {
+  const barsRoot = document.getElementById('env-bars');
+  if (!barsRoot) {
     return;
   }
-  const AGGRESSION_SELECTORS = [
-    '[data-role="aggression-percent"]',
-    '.meter--aggression',
-    '.aggression-meter',
-    '[data-metric="aggression"]',
-  ];
 
-  const pruneAggressionMeter = (root) => {
-    if (!root) return;
+  pruneAggressionMeter(barsRoot);
 
-    const toRemove = new Set();
-
-    AGGRESSION_SELECTORS.forEach((selector) => {
-      root.querySelectorAll(selector).forEach((node) => {
-        toRemove.add(node);
-        const bar = node.closest('.env-bar');
-        if (bar) {
-          toRemove.add(bar);
-        }
-      });
-    });
-
-    root.querySelectorAll('[data-info="aggression"]').forEach((infoBtn) => {
-      const container = infoBtn.closest('.env-bar');
-      if (container) {
-        toRemove.add(container);
-      }
-      toRemove.add(infoBtn);
-    });
-
-    toRemove.forEach((node) => {
-      if (node && node.parentNode) {
-        node.parentNode.removeChild(node);
-      }
-    });
-  };
-
-  const init = () => {
-    const barsRoot = document.getElementById('env-bars');
-    if (!barsRoot) {
-      return;
-    }
-
+  const observer = new MutationObserver(() => {
     pruneAggressionMeter(barsRoot);
+  });
 
-    const observer = new MutationObserver(() => {
-      pruneAggressionMeter(barsRoot);
-    });
+  observer.observe(barsRoot, { childList: true, subtree: true });
 
-    observer.observe(barsRoot, { childList: true, subtree: true });
+  window.addEventListener('beforeunload', () => {
+    observer.disconnect();
+  });
+};
 
-    window.addEventListener('beforeunload', () => {
-      observer.disconnect();
-    });
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init, { once: true });
-  } else {
-    init();
-  }
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init, { once: true });
+} else {
+  init();
 }
