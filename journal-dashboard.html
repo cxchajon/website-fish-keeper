@@ -307,6 +307,21 @@
       .journal-dashboard .chart-card{ padding:16px; }
       .journal-dashboard .chart-wrapper{ height:280px; }
     }
+
+    /* ====== Skip Link ====== */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: #1e90ff;
+      color: white;
+      padding: 8px;
+      text-decoration: none;
+      z-index: 100;
+    }
+    .skip-link:focus {
+      top: 0;
+    }
   </style>
   <script defer src="js/nav.js?v=1.1.0"></script>
 </head>
@@ -318,7 +333,8 @@
   <!-- End Google Tag Manager (noscript) -->
   <a class="skip-link" href="#main-content">Skip to main content</a>
   <div id="site-nav"></div>
-  
+
+  <main id="main-content">
   <!-- Dashboard Header -->
   <div class="dashboard-header">
     <h1>🐠 FishKeepingLifeCo Aquarium Dashboard</h1>
@@ -411,6 +427,7 @@
 
   <script>
     // ====== JOURNAL DASHBOARD V2 — AUTO-SYNC ENGINE ======
+    console.log('🚀 Dashboard script loaded');
 
     // ====== CONFIGURATION ======
     const CONFIG = {
@@ -420,6 +437,7 @@
       cacheTimeout: 300000, // 5 minutes
       journalBaseUrl: '/journal.html'
     };
+    console.log('📋 Configuration:', CONFIG);
 
     // ====== UTILITY FUNCTIONS ======
     const fmtDate = (iso) => {
@@ -618,17 +636,17 @@
       const cacheKey = `journal-cache-${url}`;
       const cached = sessionStorage.getItem(cacheKey);
 
-      console.log(`[Dashboard] Fetching: ${url}`);
+      console.log('🔍 Attempting to fetch:', url);
 
       if (cached) {
         try {
           const { timestamp, data } = JSON.parse(cached);
           if (Date.now() - timestamp < CONFIG.cacheTimeout) {
-            console.log(`[Dashboard] Cache hit for ${url} (${data.length} entries)`);
+            console.log('📦 Cache hit for', url, '(' + data.length + ' entries)');
             return { data, fromCache: true };
           }
         } catch (e) {
-          console.warn(`[Dashboard] Cache parse error for ${url}:`, e);
+          console.warn('⚠️ Cache parse error for', url, ':', e);
           sessionStorage.removeItem(cacheKey);
         }
       }
@@ -636,16 +654,16 @@
       const response = await fetch(url);
       if (!response.ok) {
         const errorMsg = `Failed to fetch ${url}: ${response.status} ${response.statusText}`;
-        console.error(`[Dashboard] ${errorMsg}`);
+        console.error('❌ Failed to fetch:', url, response.status, response.statusText);
         throw new Error(errorMsg);
       }
 
       let data;
       try {
         data = await response.json();
-        console.log(`[Dashboard] Successfully fetched ${url}: ${data.length} entries`);
+        console.log('✅ Month loaded:', data.length, 'entries from', url);
       } catch (parseError) {
-        console.error(`[Dashboard] JSON parse error for ${url}:`, parseError);
+        console.error('❌ JSON parse error for', url, ':', parseError);
         throw new Error(`Invalid JSON in ${url}: ${parseError.message}`);
       }
 
@@ -664,9 +682,9 @@
     async function fetchAllJournalData() {
       const statusEl = document.getElementById('syncStatus');
       statusEl.className = 'sync-status loading';
-      statusEl.textContent = 'Fetching journal data...';
+      statusEl.textContent = '⏳ Loading...';
 
-      console.log('[Dashboard] Starting data fetch for months:', CONFIG.monthFiles);
+      console.log('🔄 Starting data fetch for months:', CONFIG.monthFiles);
 
       try {
         // Fetch all month files (hardcoded list)
@@ -691,10 +709,10 @@
           if (result.error) {
             failedMonths.push(result.month);
             errorDetails.push(`${result.month}: ${result.error.message}`);
+            console.error('❌ Failed to load month:', result.month, result.error.message);
           } else {
             loadedMonths.push(result.month);
             allEntries = allEntries.concat(result.data);
-            console.log(`[Dashboard] Loaded ${result.data.length} entries from ${result.month}`);
           }
         });
 
@@ -703,9 +721,9 @@
           const errorMsg = failedMonths.length > 0
             ? `No data loaded. Failed months: ${failedMonths.join(', ')}`
             : 'No journal entries found in data files';
-          console.error(`[Dashboard] ${errorMsg}`);
+          console.error('❌ Critical error:', errorMsg);
           statusEl.className = 'sync-status error';
-          statusEl.innerHTML = `<strong>Error:</strong> ${errorMsg}`;
+          statusEl.innerHTML = `❌ Failed to load: ${errorMsg}`;
           return {
             entries: [],
             loadedMonths: [],
@@ -720,20 +738,20 @@
         // Parse all entries
         const parsedEntries = allEntries.map(parseJournalEntry);
 
-        console.log(`[Dashboard] Total entries parsed: ${parsedEntries.length}`);
-        console.log(`[Dashboard] Loaded months: ${loadedMonths.join(', ')}`);
+        console.log('📊 Data summary:', parsedEntries.length, 'total entries from', loadedMonths.length, 'months');
+        console.log('📅 Loaded months:', loadedMonths.join(', '));
         if (failedMonths.length > 0) {
-          console.warn(`[Dashboard] Failed months: ${failedMonths.join(', ')}`);
+          console.warn('⚠️ Failed months:', failedMonths.join(', '));
         }
 
         // Update status
         const cacheStatus = results.some(r => r.fromCache) ? ' (cached)' : '';
         if (failedMonths.length > 0) {
           statusEl.className = 'sync-status warning';
-          statusEl.innerHTML = `Loaded ${parsedEntries.length} entries from ${loadedMonths.length}/${CONFIG.monthFiles.length} months${cacheStatus}. <br><small>Failed: ${failedMonths.join(', ')}</small>`;
+          statusEl.innerHTML = `⚠️ Loaded ${parsedEntries.length} entries from ${loadedMonths.length}/${CONFIG.monthFiles.length} months${cacheStatus}. <br><small>Failed: ${failedMonths.join(', ')}</small>`;
         } else {
           statusEl.className = 'sync-status success';
-          statusEl.textContent = `Synced ${parsedEntries.length} entries from ${loadedMonths.length} months${cacheStatus}`;
+          statusEl.textContent = `✅ Synced ${parsedEntries.length} entries from ${loadedMonths.length} months${cacheStatus}`;
         }
 
         return {
@@ -744,9 +762,9 @@
         };
 
       } catch (error) {
-        console.error('[Dashboard] Critical error fetching journal data:', error);
+        console.error('❌ Critical error fetching journal data:', error);
         statusEl.className = 'sync-status error';
-        statusEl.innerHTML = `<strong>Failed to load data:</strong> ${error.message}<br><small>Check browser console for details. Please refresh.</small>`;
+        statusEl.innerHTML = `❌ Failed to load: ${error.message}`;
         return null;
       }
     }
@@ -1087,50 +1105,93 @@
     // ====== INITIALIZATION ======
 
     async function initializeDashboard() {
-      console.log('[Dashboard] Initializing dashboard...');
-      console.log('[Dashboard] Configuration:', CONFIG);
+      console.log('🎬 Initializing dashboard...');
 
       const data = await fetchAllJournalData();
 
       if (!data) {
-        console.error('[Dashboard] No data returned from fetchAllJournalData');
+        console.error('❌ No data returned from fetchAllJournalData');
         document.getElementById('qualityMetrics').innerHTML = `
           <div class="quality-item warn">
-            <span class="icon" aria-hidden="true">⚠</span>
-            <span>Failed to load journal data. Please refresh the page.</span>
+            <span class="icon" aria-hidden="true">❌</span>
+            <span><strong>Failed to load journal data</strong></span>
+          </div>
+          <div class="quality-item info">
+            <span class="icon" aria-hidden="true">📁</span>
+            <span>Expected file paths:</span>
+          </div>
+          <div class="quality-item info" style="padding-left: 24px;">
+            <span>• ${CONFIG.dataBasePath}2025-11.json</span>
+          </div>
+          <div class="quality-item info" style="padding-left: 24px;">
+            <span>• ${CONFIG.dataBasePath}2025-10.json</span>
+          </div>
+          <div class="quality-item info" style="padding-left: 24px;">
+            <span>• ${CONFIG.dataBasePath}2025-09.json</span>
+          </div>
+          <div class="quality-item warn">
+            <span class="icon" aria-hidden="true">🔧</span>
+            <span>Check browser console (F12) for detailed error messages</span>
           </div>
         `;
         return;
       }
 
       if (data.entries.length === 0) {
-        console.warn('[Dashboard] No entries to display');
+        console.warn('⚠️ No entries to display');
         document.getElementById('qualityMetrics').innerHTML = `
           <div class="quality-item warn">
             <span class="icon" aria-hidden="true">⚠</span>
-            <span>No journal entries available. Check that data files exist at ${CONFIG.dataBasePath}</span>
+            <span>No journal entries available</span>
+          </div>
+          <div class="quality-item info">
+            <span class="icon" aria-hidden="true">📁</span>
+            <span>Expected file paths:</span>
+          </div>
+          <div class="quality-item info" style="padding-left: 24px;">
+            <span>• ${CONFIG.dataBasePath}2025-11.json</span>
+          </div>
+          <div class="quality-item info" style="padding-left: 24px;">
+            <span>• ${CONFIG.dataBasePath}2025-10.json</span>
+          </div>
+          <div class="quality-item info" style="padding-left: 24px;">
+            <span>• ${CONFIG.dataBasePath}2025-09.json</span>
           </div>
           ${data.errorDetails && data.errorDetails.length > 0 ? `
           <div class="quality-item warn">
-            <span class="icon" aria-hidden="true">⚠</span>
+            <span class="icon" aria-hidden="true">❌</span>
             <span>Errors: ${data.errorDetails.join('; ')}</span>
           </div>
           ` : ''}
+          <div class="quality-item warn">
+            <span class="icon" aria-hidden="true">🔧</span>
+            <span>Check browser console (F12) for detailed error messages</span>
+          </div>
         `;
         return;
       }
 
-      console.log('[Dashboard] Rendering dashboard with', data.entries.length, 'entries');
+      console.log('🎨 Rendering dashboard with', data.entries.length, 'entries');
 
       updateDataQuality(data);
       updateStats(data);
+
+      console.log('📈 Rendering Nitrate chart...');
       renderNitrateChart(data);
+
+      console.log('📈 Rendering Feeding chart...');
       renderFeedingChart(data);
+
+      console.log('📈 Rendering Dosing chart...');
       renderDosingChart(data);
+
+      console.log('📈 Rendering Activity chart...');
       renderActivityChart(data);
+
+      console.log('📝 Rendering Timelines...');
       renderTimelines(data);
 
-      console.log('[Dashboard] Dashboard initialization complete');
+      console.log('✅ Dashboard initialization complete');
     }
 
     // Start
@@ -1140,6 +1201,7 @@
       initializeDashboard();
     }
   </script>
+  </main>
 
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
