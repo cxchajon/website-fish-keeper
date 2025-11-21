@@ -308,7 +308,9 @@
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
   <script defer src="/js/nav.js?v=1.1.0"></script>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div id="site-nav"></div>
+  <main id="main-content">
   <div class="dashboard-header">
     <h1>Aquarium Monitoring Dashboard</h1>
     <p>Auto-synced from Live Tank Journal</p>
@@ -682,16 +684,34 @@
       statusEl.className = 'sync-status loading';
       statusEl.textContent = 'Fetching journal data...';
 
+      console.log('[Dashboard] Initializing data fetch...');
+      console.log('[Dashboard] Index URL:', CONFIG.indexUrl);
+
       try {
         // Fetch index to get available months
+        console.log('[Dashboard] Fetching index file...');
         const { data: months } = await fetchWithCache(CONFIG.indexUrl);
+        console.log('[Dashboard] Index loaded, available months:', months);
+
+        if (!months || months.length === 0) {
+          throw new Error('No months found in index.json');
+        }
 
         // Fetch all month files in parallel
-        const fetchPromises = months.map(month =>
-          fetchWithCache(`${CONFIG.dataBasePath}${month}.json`)
-            .then(result => ({ month, ...result }))
-            .catch(err => ({ month, data: [], error: err }))
-        );
+        console.log('[Dashboard] Fetching month files in parallel...');
+        const fetchPromises = months.map(month => {
+          const url = `${CONFIG.dataBasePath}${month}.json`;
+          console.log('[Dashboard] Fetching:', url);
+          return fetchWithCache(url)
+            .then(result => {
+              console.log(`[Dashboard] ${month}.json loaded:`, result.data.length, 'entries', result.fromCache ? '(cached)' : '(fresh)');
+              return { month, ...result };
+            })
+            .catch(err => {
+              console.error(`[Dashboard] Failed to load ${month}.json:`, err.message);
+              return { month, data: [], error: err };
+            });
+        });
 
         const results = await Promise.all(fetchPromises);
 
@@ -709,11 +729,33 @@
           }
         });
 
+        console.log('[Dashboard] Total raw entries:', allEntries.length);
+        console.log('[Dashboard] Loaded months:', loadedMonths);
+        console.log('[Dashboard] Failed months:', failedMonths);
+
+        if (allEntries.length === 0) {
+          statusEl.className = 'sync-status error';
+          statusEl.textContent = 'No data available. Check that JSON files exist in /data/journal/';
+          console.error('[Dashboard] No entries loaded from any month file');
+          return null;
+        }
+
         // Sort by date (oldest first for charts)
         allEntries.sort((a, b) => a.date.localeCompare(b.date));
 
         // Parse all entries
         const parsedEntries = allEntries.map(parseJournalEntry);
+
+        // Count parsed data
+        const nitrateCount = parsedEntries.filter(e => e.nitrate !== null).length;
+        const feedingCount = parsedEntries.filter(e => e.types.includes('Feeding')).length;
+        const dosingCount = parsedEntries.filter(e => e.dosing.length > 0).length;
+
+        console.log('[Dashboard] Parsing complete:');
+        console.log('  - Total entries:', parsedEntries.length);
+        console.log('  - With nitrate values:', nitrateCount);
+        console.log('  - Feeding entries:', feedingCount);
+        console.log('  - Dosing entries:', dosingCount);
 
         // Update status
         const cacheStatus = results.some(r => r.fromCache) ? ' (cached)' : '';
@@ -728,9 +770,14 @@
         };
 
       } catch (error) {
-        console.error('Failed to fetch journal data:', error);
+        console.error('[Dashboard] Critical error fetching journal data:', error);
+        console.error('[Dashboard] Error details:', {
+          message: error.message,
+          stack: error.stack,
+          indexUrl: CONFIG.indexUrl
+        });
         statusEl.className = 'sync-status error';
-        statusEl.textContent = 'Failed to load data. Using fallback.';
+        statusEl.textContent = `Failed to load data: ${error.message}`;
         return null;
       }
     }
@@ -1152,10 +1199,15 @@
     // ====== INITIALIZATION ======
 
     async function initializeDashboard() {
+      console.log('[Dashboard] === DASHBOARD INITIALIZATION STARTED ===');
+      console.log('[Dashboard] DOM ready state:', document.readyState);
+      console.log('[Dashboard] Current time:', new Date().toISOString());
+
       const data = await fetchAllJournalData();
 
       if (!data) {
         // Show error state
+        console.error('[Dashboard] No data returned, showing error state');
         document.getElementById('qualityMetrics').innerHTML = `
           <div class="quality-item warn">
             <span class="icon" aria-hidden="true">&#9888;</span>
@@ -1165,23 +1217,48 @@
         return;
       }
 
+      console.log('[Dashboard] Rendering dashboard components...');
+
       // Render all components
-      updateDataQuality(data);
-      updateStats(data);
-      renderNitrateChart(data);
-      renderFeedingChart(data);
-      renderDosingChart(data);
-      renderActivityChart(data);
-      renderTimelines(data);
+      try {
+        updateDataQuality(data);
+        console.log('[Dashboard] Data quality updated');
+
+        updateStats(data);
+        console.log('[Dashboard] Stats updated');
+
+        renderNitrateChart(data);
+        console.log('[Dashboard] Nitrate chart rendered');
+
+        renderFeedingChart(data);
+        console.log('[Dashboard] Feeding chart rendered');
+
+        renderDosingChart(data);
+        console.log('[Dashboard] Dosing chart rendered');
+
+        renderActivityChart(data);
+        console.log('[Dashboard] Activity chart rendered');
+
+        renderTimelines(data);
+        console.log('[Dashboard] Timelines rendered');
+
+        console.log('[Dashboard] === DASHBOARD INITIALIZATION COMPLETE ===');
+      } catch (renderError) {
+        console.error('[Dashboard] Error during rendering:', renderError);
+        document.getElementById('syncStatus').className = 'sync-status error';
+        document.getElementById('syncStatus').textContent = `Render error: ${renderError.message}`;
+      }
     }
 
     // Start initialization when DOM is ready
+    console.log('[Dashboard] Script loaded, DOM state:', document.readyState);
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initializeDashboard);
     } else {
       initializeDashboard();
     }
   </script>
+  </main>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
     <a href="/privacy-legal.html">Privacy Policy</a>
@@ -1189,11 +1266,8 @@
     <a href="/contact-feedback.html">Contact</a>
   </section>
   <noscript>
-    <section class="legal-links" aria-label="Site legal links (noscript)">
-      <a href="/privacy-legal.html">Privacy Policy</a>
-      <a href="/terms.html">Terms</a>
-      <a href="/contact-feedback.html">Contact</a>
-    </section>
+    <p class="legal-links__noscript">JavaScript is disabled. Visit our <a href="/privacy-legal.html">Privacy Policy</a> and
+      <a href="/terms.html">Terms</a>.</p>
   </noscript>
 
   <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
