@@ -67,6 +67,60 @@
       background-clip:text;
     }
     .journal-dashboard .dashboard-header p{ color:#8b9dc3; font-size:1.05rem; }
+    .journal-dashboard .dashboard-header .header-links{
+      margin-top:15px;
+      display:flex;
+      justify-content:center;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+    .journal-dashboard .dashboard-header .header-links a{
+      color:#3aa6ff;
+      text-decoration:none;
+      font-size:0.95rem;
+      padding:8px 16px;
+      border:1px solid rgba(58,166,255,0.3);
+      border-radius:6px;
+      transition:all 0.2s;
+    }
+    .journal-dashboard .dashboard-header .header-links a:hover{
+      background:rgba(58,166,255,0.1);
+      border-color:rgba(58,166,255,0.6);
+    }
+    .journal-dashboard .sync-status{
+      font-size:0.85rem;
+      color:#6b7c99;
+      margin-top:10px;
+    }
+    .journal-dashboard .sync-status.loading{ color:#ffd700; }
+    .journal-dashboard .sync-status.error{ color:#ff6b6b; }
+    .journal-dashboard .sync-status.success{ color:#51cf66; }
+
+    /* ====== Data Quality Indicator ====== */
+    .journal-dashboard .data-quality{
+      background:linear-gradient(135deg,#1a2332 0%, #0f1620 100%);
+      padding:20px;
+      border-radius:12px;
+      border:1px solid rgba(30,144,255,.3);
+      box-shadow:0 4px 16px rgba(0,0,0,.3);
+      margin-bottom:40px;
+    }
+    .journal-dashboard .data-quality h3{
+      color:#1e90ff;
+      font-size:1.1rem;
+      margin-bottom:12px;
+    }
+    .journal-dashboard .quality-item{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:8px;
+      font-size:0.9rem;
+    }
+    .journal-dashboard .quality-item .icon{ font-size:1rem; }
+    .journal-dashboard .quality-item.good .icon{ color:#51cf66; }
+    .journal-dashboard .quality-item.warn .icon{ color:#ffd700; }
+    .journal-dashboard .quality-item.info .icon{ color:#3aa6ff; }
 
     /* ====== Stats ====== */
     .journal-dashboard .dashboard-grid{
@@ -112,6 +166,47 @@
     .journal-dashboard .chart-wrapper{ position:relative; height:400px; }
     .journal-dashboard .full-width{ grid-column:1 / -1; }
 
+    /* ====== Custom Tooltip ====== */
+    .journal-dashboard .chart-tooltip{
+      position:absolute;
+      background:rgba(15,22,32,0.98);
+      border:1px solid rgba(58,166,255,0.5);
+      border-radius:8px;
+      padding:12px 16px;
+      max-width:320px;
+      font-size:0.85rem;
+      pointer-events:none;
+      opacity:0;
+      transition:opacity 0.2s;
+      z-index:1000;
+      box-shadow:0 8px 24px rgba(0,0,0,0.5);
+    }
+    .journal-dashboard .chart-tooltip.visible{ opacity:1; pointer-events:auto; }
+    .journal-dashboard .chart-tooltip .tooltip-date{
+      color:#3aa6ff;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+    .journal-dashboard .chart-tooltip .tooltip-value{
+      color:#e4e6eb;
+      font-size:1.1rem;
+      font-weight:600;
+      margin-bottom:8px;
+    }
+    .journal-dashboard .chart-tooltip .tooltip-snippet{
+      color:#9bb0cc;
+      font-size:0.8rem;
+      line-height:1.4;
+      margin-bottom:8px;
+      font-style:italic;
+    }
+    .journal-dashboard .chart-tooltip .tooltip-link{
+      color:#3aa6ff;
+      font-size:0.75rem;
+      text-decoration:none;
+    }
+    .journal-dashboard .chart-tooltip .tooltip-link:hover{ text-decoration:underline; }
+
     /* ====== Timelines ====== */
     .journal-dashboard .timeline-section{
       background:linear-gradient(135deg,#1a2332 0%, #0f1620 100%);
@@ -142,6 +237,27 @@
     .journal-dashboard .timeline-content{ color:#c4c8d0; line-height:1.6; }
     .journal-dashboard .milestone{ background:rgba(255,215,0,.1); border-left-color:#ffd700; }
     .journal-dashboard .milestone .timeline-type{ background:#ffd700; }
+    .journal-dashboard .timeline-link{
+      display:inline-block;
+      margin-top:8px;
+      color:#3aa6ff;
+      font-size:0.8rem;
+      text-decoration:none;
+    }
+    .journal-dashboard .timeline-link:hover{ text-decoration:underline; }
+
+    /* ====== Screen reader only ====== */
+    .journal-dashboard .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      white-space:nowrap;
+      border:0;
+    }
 
     /* ====== Responsive ====== */
     @media (max-width: 1024px){
@@ -151,6 +267,14 @@
       .journal-dashboard .chart-grid{ grid-template-columns:1fr; }
       .journal-dashboard .chart-wrapper{ height:320px; }
       .journal-dashboard .dashboard-header h1{ font-size:1.9rem; }
+      .journal-dashboard .chart-tooltip{ max-width:280px; }
+    }
+    @media (max-width: 480px){
+      body.journal-dashboard{ padding:12px; }
+      .journal-dashboard .dashboard-header{ padding:20px; }
+      .journal-dashboard .dashboard-header h1{ font-size:1.6rem; }
+      .journal-dashboard .chart-card{ padding:16px; }
+      .journal-dashboard .chart-wrapper{ height:280px; }
     }
 </style>
   <!-- Consent Mode defaults (load FIRST) -->
@@ -186,8 +310,23 @@
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <div id="site-nav"></div>
   <div class="dashboard-header">
-    <h1>🐠 Aquarium Monitoring Dashboard</h1>
-    <p>Real-time tracking of water parameters, feeding schedules, and maintenance</p>
+    <h1>Aquarium Monitoring Dashboard</h1>
+    <p>Auto-synced from Live Tank Journal</p>
+    <div class="header-links">
+      <a href="/journal.html">View Full Journal</a>
+    </div>
+    <div id="syncStatus" class="sync-status loading">Loading data...</div>
+  </div>
+
+  <!-- ====== DATA QUALITY INDICATOR ====== -->
+  <div class="data-quality" id="dataQuality" role="region" aria-label="Data quality metrics">
+    <h3>Data Completeness</h3>
+    <div id="qualityMetrics">
+      <div class="quality-item info">
+        <span class="icon" aria-hidden="true">...</span>
+        <span>Loading data quality metrics...</span>
+      </div>
+    </div>
   </div>
 
   <!-- ====== STATS ====== -->
@@ -216,24 +355,45 @@
 
   <!-- ====== CHARTS ====== -->
   <div class="chart-grid">
-    <div class="chart-card full-width">
-      <h2>📊 Nitrate Levels Over Time</h2>
-      <div class="chart-wrapper"><canvas id="nitrateChart"></canvas></div>
+    <div class="chart-card full-width" role="region" aria-label="Nitrate levels chart">
+      <h2>Nitrate Levels Over Time</h2>
+      <div class="chart-wrapper">
+        <canvas id="nitrateChart" aria-describedby="nitrate-summary"></canvas>
+        <div id="nitrate-summary" class="sr-only">
+          Chart showing nitrate levels over time from aquarium water tests.
+        </div>
+        <div id="nitrateTooltip" class="chart-tooltip" role="tooltip"></div>
+      </div>
     </div>
 
-    <div class="chart-card">
-      <h2>🍽️ Feeding Distribution</h2>
-      <div class="chart-wrapper"><canvas id="feedingChart"></canvas></div>
+    <div class="chart-card" role="region" aria-label="Feeding distribution chart">
+      <h2>Feeding Distribution</h2>
+      <div class="chart-wrapper">
+        <canvas id="feedingChart" aria-describedby="feeding-summary"></canvas>
+        <div id="feeding-summary" class="sr-only">
+          Doughnut chart showing distribution of feeding types.
+        </div>
+      </div>
     </div>
 
-    <div class="chart-card">
-      <h2>💧 Dosing Frequency</h2>
-      <div class="chart-wrapper"><canvas id="dosingChart"></canvas></div>
+    <div class="chart-card" role="region" aria-label="Dosing frequency chart">
+      <h2>Dosing Frequency</h2>
+      <div class="chart-wrapper">
+        <canvas id="dosingChart" aria-describedby="dosing-summary"></canvas>
+        <div id="dosing-summary" class="sr-only">
+          Bar chart showing frequency of different dosing products.
+        </div>
+      </div>
     </div>
 
-    <div class="chart-card full-width">
-      <h2>📅 Weekly Activity Timeline</h2>
-      <div class="chart-wrapper"><canvas id="activityChart"></canvas></div>
+    <div class="chart-card full-width" role="region" aria-label="Activity timeline chart">
+      <h2>Daily Activity Timeline</h2>
+      <div class="chart-wrapper">
+        <canvas id="activityChart" aria-describedby="activity-summary"></canvas>
+        <div id="activity-summary" class="sr-only">
+          Bar chart showing total activities per day across all recorded dates.
+        </div>
+      </div>
     </div>
   </div>
 
@@ -249,282 +409,778 @@
   </div>
 
   <script>
-    // ====== DATA (unchanged, from user) ======
-    const aquariumData = [
-      { date: '2025-09-09', type: 'Feeding', detail: 'veggie-only (zucchini/spinach or wafers)', notes: 'Scheduled feeding' },
-      { date: '2025-09-10', type: 'Feeding', detail: 'flakes + bloodworms', notes: 'Scheduled feeding' },
-      { date: '2025-09-11', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Scheduled feeding' },
-      { date: '2025-09-12', type: 'Feeding', detail: 'flakes only', notes: 'Scheduled feeding' },
-      { date: '2025-09-15', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Scheduled feeding' },
-      { date: '2025-09-16', type: 'Feeding', detail: 'veggie-only (zucchini/spinach or wafers)', notes: 'Scheduled feeding' },
-      { date: '2025-09-17', type: 'Feeding', detail: 'flakes + bloodworms', notes: 'Scheduled feeding' },
-      { date: '2025-09-18', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Scheduled feeding' },
-      { date: '2025-09-19', type: 'Feeding', detail: 'flakes only', notes: 'Scheduled feeding' },
-      { date: '2025-09-22', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Scheduled feeding' },
-      { date: '2025-09-23', type: 'Feeding', detail: 'veggie-only (zucchini/spinach or wafers)', notes: 'Scheduled feeding' },
-      { date: '2025-09-24', type: 'Feeding', detail: 'flakes + bloodworms', notes: 'Scheduled feeding' },
-      { date: '2025-09-25', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Completed feeding: flakes and ~half cube brine shrimp' },
-      { date: '2025-09-29', type: 'Dosing', detail: 'Seachem Excel — spot dose', notes: 'Method: spot dose with circulation on' },
-      { date: '2025-09-29', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Pinch of flakes + ~half cube brine shrimp' },
-      { date: '2025-09-30', type: 'Feeding', detail: 'algae wafers + flakes', notes: 'Three algae wafers and some flakes' },
-      { date: '2025-10-01', type: 'Dosing', detail: 'NilocG Thrive Plus — 4 pumps', notes: 'Routine fertilizer dose' },
-      { date: '2025-10-01', type: 'Dosing', detail: 'Seachem Excel — 1 capful + spot dose', notes: 'Method: capful + spot dose' },
-      { date: '2025-10-01', type: 'Feeding', detail: 'flakes + bloodworms', notes: 'Standard Wednesday mix' },
-      { date: '2025-10-01', type: 'Parameters', detail: 'Nitrate: 5-10 ppm', notes: 'Water test', nitrate: 7.5 },
-      { date: '2025-10-02', type: 'Dosing', detail: 'NilocG Thrive Plus — 4 pumps', notes: 'Routine fertilizer dose' },
-      { date: '2025-10-02', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Fed flakes and ~half cube brine shrimp' },
-      { date: '2025-10-02', type: 'Parameters', detail: 'Nitrate: 5-10 ppm', notes: 'Water test', nitrate: 7.5 },
-      { date: '2025-10-03', type: 'Feeding', detail: 'flakes only', notes: 'Light day' },
-      { date: '2025-10-03', type: 'Parameters', detail: 'Nitrate: 10-20 ppm (≈20)', notes: 'Water test', nitrate: 20 },
-      { date: '2025-10-06', type: 'Dosing', detail: 'Seachem Excel — 2 capfuls', notes: 'Dose at low water level during WC' },
-      { date: '2025-10-06', type: 'Feeding', detail: 'none', notes: 'Skipped feeding due to late water change' },
-      { date: '2025-10-06', type: 'Maintenance', detail: 'Water change + plant trimming', notes: 'Performed ~95% sump / ~80% display; removed dead/melted leaves' },
-      { date: '2025-10-06', type: 'Parameters', detail: 'Nitrate: 10-20 ppm (~20)', notes: 'Pre-water change', nitrate: 20 },
-      { date: '2025-10-07', type: 'Dosing', detail: 'Seachem Excel — 1 capful + spot dose', notes: 'Method: spot + cap' },
-      { date: '2025-10-07', type: 'Feeding', detail: 'flakes + algae wafers', notes: 'Veggie day deviation: included flakes' },
-      { date: '2025-10-08', type: 'Dosing', detail: 'NilocG Thrive Plus — 4 pumps', notes: 'Routine dose' },
-      { date: '2025-10-08', type: 'Feeding', detail: 'flakes + bloodworms', notes: 'Small pinch flakes + ~2 spoonfuls bloodworms' },
-      { date: '2025-10-09', type: 'Dosing', detail: 'NilocG Thrive Plus — 4 pumps', notes: 'Routine dose' },
-      { date: '2025-10-09', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Normal Thursday mix' },
-      { date: '2025-10-09', type: 'Parameters', detail: 'Nitrate: 5-10 ppm', notes: 'Water test', nitrate: 7.5 },
-      { date: '2025-10-10', type: 'Feeding', detail: 'flakes + brine shrimp + bloodworms', notes: 'High-protein pre-trip feeding; lights extended ~2 hrs' },
-      { date: '2025-10-10', type: 'Maintenance', detail: 'Water change + refugium trim + light replanting', notes: '90% sump / 80% display' },
-      { date: '2025-10-10', type: 'Parameters', detail: 'Nitrate: ~10 ppm', notes: 'Pre-water change', nitrate: 10 },
-      { date: '2025-10-14', type: 'Dosing', detail: 'NilocG Thrive Plus — 4 pumps', notes: 'Routine dose after fast' },
-      { date: '2025-10-14', type: 'Feeding', detail: 'flakes + bloodworms', notes: 'Post-vacation recovery feeding' },
-      { date: '2025-10-14', type: 'Parameters', detail: 'Nitrate: 5-10 ppm', notes: 'Water test', nitrate: 7.5 },
-      { date: '2025-10-15', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Schedule adjustment: chose brine instead of bloodworms' },
-      { date: '2025-10-15', type: 'Parameters', detail: 'Nitrate: ~10 ppm', notes: 'Water test', nitrate: 10 },
-      { date: '2025-10-16', type: 'Feeding', detail: 'algae wafers + brine shrimp + bloodworms', notes: 'Heavy mixed feeding (pre-light-day preparation)' },
-      { date: '2025-10-16', type: 'Parameters', detail: 'Nitrate: 10-20 ppm (closer to 10)', notes: 'Water test', nitrate: 12 },
-      { date: '2025-10-20', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Post-maintenance feeding; resumed routine after filter change' },
-      { date: '2025-10-20', type: 'Maintenance', detail: 'Full system reset (WC + filter change + trim/replant)', notes: '~90% sump / ~70% display; replaced all filters; added Poly-fil' },
-      { date: '2025-10-20', type: 'Parameters', detail: 'Nitrate: 20–40 ppm (closer to 20)', notes: 'Pre-water change', nitrate: 22 },
-      { date: '2025-10-20', type: 'Checkpoint', detail: 'Start of Pre-Stocking Observation Week (Oct 20–27)', notes: 'Major Maintenance Cycle', milestone: true },
-      { date: '2025-10-21', type: 'Feeding', detail: 'algae wafers + light flakes', notes: 'Fish largely ignored wafers so added small flakes' },
-      { date: '2025-10-21', type: 'Dosing', detail: 'Seachem Excel — spot dose', notes: 'Light Excel spot dose during observation phase' },
-      { date: '2025-10-22', type: 'Feeding', detail: 'flakes + bloodworms', notes: 'Pre-Stocking Observation Week' },
-      { date: '2025-10-22', type: 'Parameters', detail: 'Nitrate: 5 ppm', notes: 'Pre-Stocking Observation Week', nitrate: 5 },
-      { date: '2025-10-22', type: 'Dosing', detail: 'Seachem Excel — spot dose', notes: 'Light maintenance dose; Excel spot dose before fertilizer' },
-      { date: '2025-10-22', type: 'Dosing', detail: 'NilocG Thrive Plus — 4 pumps', notes: '2 pumps with sump off, then 2 more with sump on' },
-      { date: '2025-10-23', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Pre-Stocking Observation Week' },
-      { date: '2025-10-23', type: 'Parameters', detail: 'Nitrate: 5–10 ppm (closer to 5)', notes: 'Pre-Stocking Observation Week', nitrate: 6 },
-      { date: '2025-10-23', type: 'Dosing', detail: 'NilocG Thrive Plus — 4 pumps', notes: 'Routine fertilizer dose' },
-      { date: '2025-10-23', type: 'Dosing', detail: 'Seachem Excel — spot + 1 capful', notes: 'Spot dose before main circulation, followed by standard capful dose' },
-      { date: '2025-10-26', type: 'Maintenance', detail: 'Water change + trimming + glass cleaning', notes: '~90% sump / ~75% display; trimmed dead leaves' },
-      { date: '2025-10-26', type: 'Dosing', detail: 'Seachem Excel — general + spot treatment', notes: 'Targeting remaining BBA on equipment' },
-      { date: '2025-10-27', type: 'Parameters', detail: 'Nitrate: 5 ppm or less', notes: 'Stable post-maintenance', nitrate: 4 },
-      { date: '2025-10-27', type: 'Dosing', detail: 'Seachem Excel — spot + 1 capful', notes: 'Targeted BBA on random flow generator' },
-      { date: '2025-10-27', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Standard Monday feeding; strong appetite observed' },
-      { date: '2025-10-28', type: 'Feeding', detail: 'algae wafers + flakes', notes: 'Fed 3 algae wafers and a small amount of flakes' },
-      { date: '2025-10-28', type: 'Parameters', detail: 'Nitrate: 5 ppm', notes: 'Stable nutrient level', nitrate: 5 },
-      { date: '2025-10-28', type: 'Dosing', detail: 'NilocG Thrive Plus — 4 pumps', notes: 'Routine fertilizer dosing following water test' },
-      { date: '2025-10-29', type: 'Parameters', detail: 'Nitrate: 10 ppm', notes: 'Stable post-observation reading', nitrate: 10 },
-      { date: '2025-10-29', type: 'Dosing', detail: 'Seachem Excel — spot + 1 capful', notes: 'Targeted BBA near random flow generator' },
-      { date: '2025-10-29', type: 'Feeding', detail: 'flakes + bloodworms', notes: 'Observed normal appetite; continued balanced diet' },
-      { date: '2025-10-30', type: 'Parameters', detail: 'Nitrate: 10–20 ppm (closer to 20)', notes: 'Slight nutrient increase', nitrate: 18 },
-      { date: '2025-10-30', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Routine Thursday feeding; strong appetite observed' },
-      { date: '2025-10-30', type: 'Dosing', detail: 'Seachem Excel — spot + 1 capful', notes: 'Continued BBA treatment; algae turned fully red' },
-      { date: '2025-10-30', type: 'Checkpoint', detail: 'Post-Treatment Recovery Week', notes: 'Start of BBA die-off monitoring', milestone: true },
-      { date: '2025-10-31', type: 'Feeding', detail: 'flakes only', notes: 'End-of-week light feeding' },
-      { date: '2025-11-02', type: 'Parameters', detail: 'Nitrate: 20–40 ppm (closer to 20)', notes: 'Pre-water-change reading', nitrate: 22 },
-      { date: '2025-11-02', type: 'Maintenance', detail: 'Water change + light trimming', notes: '~95% sump / ~70% display; observed new plant growth' },
-      { date: '2025-11-02', type: 'Dosing', detail: 'Seachem Excel — spot + 1 capful', notes: 'Targeted residual BBA areas' },
-      { date: '2025-11-03', type: 'Feeding', detail: 'flakes + brine shrimp', notes: 'Standard Monday feeding; healthy appetite observed' },
-      { date: '2025-11-03', type: 'Dosing', detail: 'Seachem Excel — 2 spot doses', notes: 'Routine spot treatment; maintaining low BBA presence' },
-      { date: '2025-11-03', type: 'Observation', detail: 'Malaysian trumpet snails observed cleaning sump overflow screen', notes: 'Natural Balance Discovery milestone', milestone: true }
-    ];
+    // ====== JOURNAL DASHBOARD V2 — AUTO-SYNC ENGINE ======
 
-    // ====== Quick helpers ======
+    // ====== CONFIGURATION ======
+    const CONFIG = {
+      indexUrl: '/data/journal/index.json',
+      dataBasePath: '/data/journal/',
+      cacheTimeout: 300000, // 5 minutes
+      journalBaseUrl: '/journal.html'
+    };
+
+    // ====== UTILITY FUNCTIONS ======
     const fmtDate = (iso) => {
       try {
-        const [y,m,d] = iso.split('-');
+        const [y, m, d] = iso.split('-');
         return `${m}/${d}`;
       } catch { return iso; }
     };
-    const lastWC = new Date('2025-11-02');
-    const today = new Date('2025-11-03');
 
-    // ====== Stats ======
-    const feedings = aquariumData.filter(d => d.type === 'Feeding' && d.detail !== 'none');
-    const nitrateData = aquariumData.filter(d => d.type === 'Parameters' && typeof d.nitrate === 'number');
-    const daysSinceWC = Math.floor( (today - lastWC) / (1000*60*60*24) );
-    document.getElementById('totalFeedings').textContent = feedings.length;
-    document.getElementById('daysSinceWC').textContent = daysSinceWC;
-    document.getElementById('lastWCSub').textContent = 'Last: Nov 2, 2025';
-    document.getElementById('currentNitrate').textContent =
-      nitrateData.length ? String(nitrateData[nitrateData.length-1].nitrate) : '—';
+    const fmtFullDate = (iso) => {
+      try {
+        const date = new Date(iso + 'T00:00:00');
+        return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      } catch { return iso; }
+    };
 
-    // ====== Chart common ======
+    const getMonthFromDate = (iso) => {
+      try {
+        return iso.substring(0, 7);
+      } catch { return ''; }
+    };
+
+    // ====== NATURAL LANGUAGE PARSING ENGINE ======
+
+    // Extract nitrate value from text
+    function extractNitrate(text) {
+      if (!text) return null;
+
+      const patterns = [
+        // "Nitrate: 5 ppm" or "Nitrate 5 ppm"
+        /nitrate[s]?\s*(?::|tested|measured|registered|came\s+in|at|around)?\s*(?:at|around)?\s*[<≤]?(\d+)(?:\s*[-–—]\s*\d+)?\s*(?:ppm)?/i,
+        // "5-10 ppm (closer to 5)" or "10–20 ppm (≈20)"
+        /(\d+)\s*[-–—]\s*\d+\s*ppm\s*\((?:closer\s+to\s+|[≈~])?(\d+)\)/i,
+        // "~10 ppm" or "≈20 ppm"
+        /[~≈]\s*(\d+)\s*ppm/i,
+        // "<5 ppm" or "≤5 ppm"
+        /[<≤]\s*(\d+)\s*ppm/i,
+        // Fallback: "X ppm" pattern
+        /(\d+)\s*ppm/i
+      ];
+
+      for (let pattern of patterns) {
+        const match = text.match(pattern);
+        if (match) {
+          // If range with preference (e.g., "10-20 (closer to 20)")
+          if (match[2]) return parseFloat(match[2]);
+          // If single value
+          if (match[1]) return parseFloat(match[1]);
+        }
+      }
+      return null;
+    }
+
+    // Extract feeding type from text
+    function extractFeeding(text) {
+      if (!text) return null;
+
+      const lowerText = text.toLowerCase();
+
+      // Check for skipped feeding first
+      if (/(?:skipped|no)\s*feeding|fed:\s*none/i.test(text)) {
+        return 'none';
+      }
+
+      // Common feeding patterns
+      const feedingPatterns = [
+        { pattern: /(?:algae\s*)?wafers?\s*(?:and|\+|with)?\s*(?:light\s*)?flakes?/i, type: 'algae wafers + flakes' },
+        { pattern: /flakes?\s*(?:and|\+|with)?\s*(?:algae\s*)?wafers?/i, type: 'flakes + algae wafers' },
+        { pattern: /flakes?\s*(?:and|\+|with)?\s*brine\s*shrimp\s*(?:and|\+|with)?\s*bloodworms?/i, type: 'flakes + brine shrimp + bloodworms' },
+        { pattern: /flakes?\s*(?:and|\+|with)?\s*bloodworms?/i, type: 'flakes + bloodworms' },
+        { pattern: /flakes?\s*(?:and|\+|with)?\s*brine\s*shrimp/i, type: 'flakes + brine shrimp' },
+        { pattern: /brine\s*shrimp\s*(?:and|\+|with)?\s*flakes?/i, type: 'flakes + brine shrimp' },
+        { pattern: /algae\s*wafers?\s*(?:and|\+|with)?\s*brine\s*shrimp\s*(?:and|\+|with)?\s*bloodworms?/i, type: 'algae wafers + brine shrimp + bloodworms' },
+        { pattern: /veggie[\s-]*only|zucchini|spinach/i, type: 'veggie-only (zucchini/spinach or wafers)' },
+        { pattern: /flakes?\s*only/i, type: 'flakes only' }
+      ];
+
+      for (let { pattern, type } of feedingPatterns) {
+        if (pattern.test(text)) return type;
+      }
+
+      // Look for "Fed: X" pattern in quick_facts
+      const fedMatch = text.match(/fed[:\s]+([^·]+)/i);
+      if (fedMatch) return fedMatch[1].trim().toLowerCase();
+
+      return 'unspecified';
+    }
+
+    // Extract dosing information from text
+    function extractDosing(text) {
+      if (!text) return [];
+
+      const dosings = [];
+
+      // NilocG Thrive Plus patterns
+      const thriveMatch = text.match(/(?:nilocg\s*)?thrive\s*(?:plus)?[^·]*?(\d+)\s*pumps?/i);
+      if (thriveMatch) {
+        dosings.push({
+          product: 'NilocG Thrive Plus',
+          amount: `${thriveMatch[1]} pumps`,
+          detail: thriveMatch[0].trim()
+        });
+      }
+
+      // Seachem Excel patterns
+      const excelPatterns = [
+        /seachem\s*excel[^·]*?(\d+)\s*capfuls?/i,
+        /seachem\s*excel[^·]*?(spot\s*(?:dose|treatment|and|\+|with)?(?:\s*x\d+)?(?:\s*\+?\s*\d*\s*cap(?:ful)?)?)/i,
+        /excel[^·]*?(spot|capful|cap)/i
+      ];
+
+      for (let pattern of excelPatterns) {
+        const match = text.match(pattern);
+        if (match) {
+          dosings.push({
+            product: 'Seachem Excel',
+            amount: match[1],
+            detail: match[0].trim()
+          });
+          break;
+        }
+      }
+
+      // Seachem Stability
+      if (/stability/i.test(text)) {
+        dosings.push({
+          product: 'Seachem Stability',
+          amount: 'dose',
+          detail: 'Stability dose'
+        });
+      }
+
+      return dosings;
+    }
+
+    // Classify entry types from content
+    function classifyEntry(entry) {
+      const types = new Set();
+      const text = getEntryText(entry).toLowerCase();
+      const category = (entry.category || entry.title || '').toLowerCase();
+
+      if (/feeding|fed|food|flakes|wafers|bloodworms|brine\s*shrimp/i.test(text) || /feeding/i.test(category)) {
+        types.add('Feeding');
+      }
+      if (/nitrate|test|parameter|ppm/i.test(text) || /test/i.test(category)) {
+        types.add('Parameters');
+      }
+      if (/dos(?:e|ing)|excel|thrive|fertilizer|stability/i.test(text) || /dosing/i.test(category)) {
+        types.add('Dosing');
+      }
+      if (/water\s*change|maintenance|clean|trim|wc|poly-?fil|purigen/i.test(text) || /maintenance/i.test(category)) {
+        types.add('Maintenance');
+      }
+      if (/observation|discover|notice|behavior|milestone/i.test(text) || /observation/i.test(category)) {
+        types.add('Observation');
+      }
+      if (/checkpoint/i.test(category)) {
+        types.add('Checkpoint');
+      }
+
+      return Array.from(types);
+    }
+
+    // Get combined text from entry (handles both old and new format)
+    function getEntryText(entry) {
+      if (entry.body) {
+        return `${entry.title || ''} ${entry.body}`;
+      }
+      return `${entry.category || ''} ${entry.quick_facts || ''} ${entry.ramble || ''}`;
+    }
+
+    // Get entry snippet for tooltips
+    function getEntrySnippet(entry, maxLength = 120) {
+      const text = entry.body || entry.ramble || entry.quick_facts || '';
+      if (text.length <= maxLength) return text;
+      return text.substring(0, maxLength).trim() + '...';
+    }
+
+    // Parse a single journal entry
+    function parseJournalEntry(entry) {
+      const text = getEntryText(entry);
+      const types = classifyEntry(entry);
+
+      // Extract nitrate - first check structured field, then parse text
+      let nitrate = null;
+      if (entry.nitrate_ppm && entry.nitrate_ppm !== '') {
+        const parsed = parseFloat(entry.nitrate_ppm.replace(/[<≤~≈]/g, ''));
+        if (!isNaN(parsed)) nitrate = parsed;
+      }
+      if (nitrate === null) {
+        nitrate = extractNitrate(text);
+      }
+
+      // Extract feeding
+      let feeding = null;
+      if (types.includes('Feeding')) {
+        feeding = extractFeeding(text);
+      }
+
+      // Extract dosing
+      const dosing = extractDosing(text);
+
+      // Determine if it's a milestone
+      const isMilestone = /milestone|checkpoint|observation\s*week|recovery\s*week|pre-?stocking/i.test(text);
+
+      return {
+        date: entry.date,
+        title: entry.title || entry.category || '',
+        body: entry.body || entry.ramble || '',
+        quickFacts: entry.quick_facts || '',
+        types: types,
+        nitrate: nitrate,
+        feeding: feeding,
+        dosing: dosing,
+        isMilestone: isMilestone,
+        tags: entry.tags || '',
+        month: getMonthFromDate(entry.date),
+        snippet: getEntrySnippet(entry),
+        originalEntry: entry
+      };
+    }
+
+    // ====== DATA FETCHING & CACHING ======
+
+    async function fetchWithCache(url) {
+      const cacheKey = `journal-cache-${url}`;
+      const cached = sessionStorage.getItem(cacheKey);
+
+      if (cached) {
+        try {
+          const { timestamp, data } = JSON.parse(cached);
+          if (Date.now() - timestamp < CONFIG.cacheTimeout) {
+            return { data, fromCache: true };
+          }
+        } catch (e) {
+          sessionStorage.removeItem(cacheKey);
+        }
+      }
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${url}: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Cache the result
+      try {
+        sessionStorage.setItem(cacheKey, JSON.stringify({
+          timestamp: Date.now(),
+          data: data
+        }));
+      } catch (e) {
+        // Storage full, continue without caching
+      }
+
+      return { data, fromCache: false };
+    }
+
+    async function fetchAllJournalData() {
+      const statusEl = document.getElementById('syncStatus');
+      statusEl.className = 'sync-status loading';
+      statusEl.textContent = 'Fetching journal data...';
+
+      try {
+        // Fetch index to get available months
+        const { data: months } = await fetchWithCache(CONFIG.indexUrl);
+
+        // Fetch all month files in parallel
+        const fetchPromises = months.map(month =>
+          fetchWithCache(`${CONFIG.dataBasePath}${month}.json`)
+            .then(result => ({ month, ...result }))
+            .catch(err => ({ month, data: [], error: err }))
+        );
+
+        const results = await Promise.all(fetchPromises);
+
+        // Combine all entries
+        let allEntries = [];
+        let loadedMonths = [];
+        let failedMonths = [];
+
+        results.forEach(result => {
+          if (result.error) {
+            failedMonths.push(result.month);
+          } else {
+            loadedMonths.push(result.month);
+            allEntries = allEntries.concat(result.data);
+          }
+        });
+
+        // Sort by date (oldest first for charts)
+        allEntries.sort((a, b) => a.date.localeCompare(b.date));
+
+        // Parse all entries
+        const parsedEntries = allEntries.map(parseJournalEntry);
+
+        // Update status
+        const cacheStatus = results.some(r => r.fromCache) ? ' (cached)' : '';
+        statusEl.className = 'sync-status success';
+        statusEl.textContent = `Synced ${parsedEntries.length} entries from ${loadedMonths.length} months${cacheStatus}`;
+
+        return {
+          entries: parsedEntries,
+          loadedMonths,
+          failedMonths,
+          totalRaw: allEntries.length
+        };
+
+      } catch (error) {
+        console.error('Failed to fetch journal data:', error);
+        statusEl.className = 'sync-status error';
+        statusEl.textContent = 'Failed to load data. Using fallback.';
+        return null;
+      }
+    }
+
+    // ====== DASHBOARD RENDERING ======
+
+    function updateDataQuality(data) {
+      const metricsEl = document.getElementById('qualityMetrics');
+
+      const totalEntries = data.entries.length;
+      const entriesWithNitrate = data.entries.filter(e => e.nitrate !== null).length;
+      const nitratePercent = Math.round((entriesWithNitrate / totalEntries) * 100);
+
+      const uniqueDates = new Set(data.entries.map(e => e.date)).size;
+      const firstDate = data.entries[0]?.date;
+      const lastDate = data.entries[data.entries.length - 1]?.date;
+
+      // Calculate days tracked
+      let daysTracked = 0;
+      if (firstDate && lastDate) {
+        const first = new Date(firstDate);
+        const last = new Date(lastDate);
+        daysTracked = Math.floor((last - first) / (1000 * 60 * 60 * 24)) + 1;
+      }
+
+      metricsEl.innerHTML = `
+        <div class="quality-item good">
+          <span class="icon" aria-hidden="true">&#10003;</span>
+          <span>${totalEntries} entries loaded from ${data.loadedMonths.length} months</span>
+        </div>
+        <div class="quality-item ${nitratePercent >= 50 ? 'good' : 'warn'}">
+          <span class="icon" aria-hidden="true">${nitratePercent >= 50 ? '&#10003;' : '&#9888;'}</span>
+          <span>${entriesWithNitrate} with nitrate values (${nitratePercent}%)</span>
+        </div>
+        <div class="quality-item info">
+          <span class="icon" aria-hidden="true">&#9432;</span>
+          <span>Tracking ${daysTracked} days (${firstDate} to ${lastDate})</span>
+        </div>
+        ${data.failedMonths.length > 0 ? `
+        <div class="quality-item warn">
+          <span class="icon" aria-hidden="true">&#9888;</span>
+          <span>Failed to load: ${data.failedMonths.join(', ')}</span>
+        </div>
+        ` : ''}
+      `;
+    }
+
+    function updateStats(data) {
+      const entries = data.entries;
+      const today = new Date();
+
+      // Find feedings (exclude 'none')
+      const feedings = entries.filter(e =>
+        e.types.includes('Feeding') && e.feeding !== 'none'
+      );
+
+      // Find nitrate readings
+      const nitrateEntries = entries.filter(e => e.nitrate !== null);
+
+      // Find last water change
+      const waterChanges = entries.filter(e =>
+        e.types.includes('Maintenance') &&
+        /water\s*change|wc/i.test(getEntryText(e.originalEntry))
+      );
+
+      const lastWC = waterChanges.length > 0 ? waterChanges[waterChanges.length - 1] : null;
+      let daysSinceWC = '—';
+      let lastWCDate = '—';
+
+      if (lastWC) {
+        const wcDate = new Date(lastWC.date + 'T00:00:00');
+        daysSinceWC = Math.floor((today - wcDate) / (1000 * 60 * 60 * 24));
+        lastWCDate = `Last: ${fmtFullDate(lastWC.date)}`;
+      }
+
+      // Update UI
+      document.getElementById('totalFeedings').textContent = feedings.length;
+      document.getElementById('daysSinceWC').textContent = daysSinceWC;
+      document.getElementById('lastWCSub').textContent = lastWCDate;
+
+      if (nitrateEntries.length > 0) {
+        const latestNitrate = nitrateEntries[nitrateEntries.length - 1];
+        document.getElementById('currentNitrate').textContent = latestNitrate.nitrate;
+      }
+    }
+
+    // ====== CHART RENDERING ======
+
     Chart.register(ChartDataLabels);
     const gridColor = 'rgba(30, 144, 255, 0.12)';
     const tickColor = '#9bb0cc';
 
-    // ====== Nitrate (line + point date labels) ======
-    const nitrateCtx = document.getElementById('nitrateChart').getContext('2d');
+    let nitrateChart, feedingChart, dosingChart, activityChart;
+    let nitrateDataCache = [];
 
-    // calculate step for datalabel density based on count
-    const nCount = nitrateData.length;
-    const labelStep = nCount > 18 ? 3 : nCount > 12 ? 2 : 1;
+    function renderNitrateChart(data) {
+      const nitrateEntries = data.entries.filter(e => e.nitrate !== null);
+      nitrateDataCache = nitrateEntries;
 
-    new Chart(nitrateCtx, {
-      type: 'line',
-      data: {
-        labels: nitrateData.map(d => d.date),
-        datasets: [{
-          label: 'Nitrate (ppm)',
-          data: nitrateData.map(d => d.nitrate),
-          borderColor: '#3aa6ff',
-          backgroundColor: 'rgba(58,166,255,0.18)',
-          fill: true,
-          tension: 0.35,
-          borderWidth: 3,
-          pointRadius: 5,
-          pointHoverRadius: 7,
-          pointBackgroundColor: '#3aa6ff',
-          pointBorderColor: '#0a0e1a',
-          pointBorderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            labels: { color: '#e4e6eb', font: { size: 13 } }
-          },
-          datalabels: {
-            formatter: (v, ctx) => {
-              const i = ctx.dataIndex;
-              return (i % labelStep === 0) ? fmtDate(ctx.chart.data.labels[i]) : '';
-            },
-            align: 'top',
-            anchor: 'end',
-            offset: 4,
-            color: '#e8f3ff',
-            font: { weight: '600', size: 10 },
-            textStrokeColor: '#0a0e1a',
-            textStrokeWidth: 3,
-            clip: false
-          }
+      const ctx = document.getElementById('nitrateChart').getContext('2d');
+
+      // Calculate label step based on count
+      const nCount = nitrateEntries.length;
+      const labelStep = nCount > 18 ? 3 : nCount > 12 ? 2 : 1;
+
+      if (nitrateChart) nitrateChart.destroy();
+
+      nitrateChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: nitrateEntries.map(d => d.date),
+          datasets: [{
+            label: 'Nitrate (ppm)',
+            data: nitrateEntries.map(d => d.nitrate),
+            borderColor: '#3aa6ff',
+            backgroundColor: 'rgba(58,166,255,0.18)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 3,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#3aa6ff',
+            pointBorderColor: '#0a0e1a',
+            pointBorderWidth: 2
+          }]
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 45,
-            grid: { color: gridColor },
-            ticks: {
-              color: tickColor,
-              callback: (v) => `${v} ppm`
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
+          plugins: {
+            legend: {
+              labels: { color: '#e4e6eb', font: { size: 13 } }
+            },
+            tooltip: {
+              enabled: false,
+              external: function(context) {
+                showNitrateTooltip(context, nitrateEntries);
+              }
+            },
+            datalabels: {
+              formatter: (v, ctx) => {
+                const i = ctx.dataIndex;
+                return (i % labelStep === 0) ? fmtDate(ctx.chart.data.labels[i]) : '';
+              },
+              align: 'top',
+              anchor: 'end',
+              offset: 4,
+              color: '#e8f3ff',
+              font: { weight: '600', size: 10 },
+              textStrokeColor: '#0a0e1a',
+              textStrokeWidth: 3,
+              clip: false
             }
           },
-          x: {
-            grid: { color: gridColor },
-            ticks: { display: false } // hide bottom mush; we use datalabels
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 50,
+              grid: { color: gridColor },
+              ticks: {
+                color: tickColor,
+                callback: (v) => `${v} ppm`
+              }
+            },
+            x: {
+              grid: { color: gridColor },
+              ticks: { display: false }
+            }
           }
         }
+      });
+
+      // Update screen reader summary
+      const summary = document.getElementById('nitrate-summary');
+      if (nitrateEntries.length > 0) {
+        const min = Math.min(...nitrateEntries.map(e => e.nitrate));
+        const max = Math.max(...nitrateEntries.map(e => e.nitrate));
+        summary.textContent = `Chart showing nitrate levels ranging from ${min} to ${max} ppm across ${nitrateEntries.length} water tests from ${nitrateEntries[0].date} to ${nitrateEntries[nitrateEntries.length - 1].date}.`;
       }
+    }
+
+    function showNitrateTooltip(context, nitrateEntries) {
+      const tooltipEl = document.getElementById('nitrateTooltip');
+      const tooltipModel = context.tooltip;
+
+      if (tooltipModel.opacity === 0) {
+        tooltipEl.classList.remove('visible');
+        return;
+      }
+
+      if (tooltipModel.dataPoints && tooltipModel.dataPoints.length > 0) {
+        const dataPoint = tooltipModel.dataPoints[0];
+        const entry = nitrateEntries[dataPoint.dataIndex];
+
+        const journalLink = `${CONFIG.journalBaseUrl}#${entry.date}`;
+
+        tooltipEl.innerHTML = `
+          <div class="tooltip-date">${fmtFullDate(entry.date)}</div>
+          <div class="tooltip-value">Nitrate: ${entry.nitrate} ppm</div>
+          <div class="tooltip-snippet">"${entry.snippet}"</div>
+          <a href="${journalLink}" class="tooltip-link">View Full Entry &rarr;</a>
+        `;
+      }
+
+      const position = context.chart.canvas.getBoundingClientRect();
+      const chartArea = context.chart.chartArea;
+
+      let left = tooltipModel.caretX;
+      let top = tooltipModel.caretY - 10;
+
+      // Adjust position to stay within bounds
+      if (left + 320 > chartArea.right) {
+        left = chartArea.right - 330;
+      }
+      if (left < chartArea.left) {
+        left = chartArea.left + 10;
+      }
+
+      tooltipEl.style.left = left + 'px';
+      tooltipEl.style.top = top + 'px';
+      tooltipEl.classList.add('visible');
+    }
+
+    // Hide tooltip when mouse leaves chart area
+    document.getElementById('nitrateChart').addEventListener('mouseleave', () => {
+      document.getElementById('nitrateTooltip').classList.remove('visible');
     });
 
-    // ====== Feeding Distribution (doughnut) ======
-    const feedingTypes = {};
-    feedings.forEach(f => {
-      const key = f.detail.toLowerCase();
-      feedingTypes[key] = (feedingTypes[key] || 0) + 1;
-    });
-    const feedingCtx = document.getElementById('feedingChart').getContext('2d');
-    new Chart(feedingCtx, {
-      type: 'doughnut',
-      data: {
-        labels: Object.keys(feedingTypes),
-        datasets: [{
-          data: Object.values(feedingTypes),
-          backgroundColor: ['#3aa6ff','#00c4ff','#5fb3ff','#7ecbff','#9bd8ff','#00ced1','#5f9ea0'],
-          borderColor: '#0a0e1a',
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{
-          legend:{ position:'bottom', labels:{ color:'#e4e6eb', padding:14, font:{ size:11 } } }
+    function renderFeedingChart(data) {
+      const feedings = data.entries.filter(e =>
+        e.types.includes('Feeding') && e.feeding && e.feeding !== 'none'
+      );
+
+      const feedingTypes = {};
+      feedings.forEach(f => {
+        const key = f.feeding.toLowerCase();
+        feedingTypes[key] = (feedingTypes[key] || 0) + 1;
+      });
+
+      const ctx = document.getElementById('feedingChart').getContext('2d');
+
+      if (feedingChart) feedingChart.destroy();
+
+      feedingChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(feedingTypes),
+          datasets: [{
+            data: Object.values(feedingTypes),
+            backgroundColor: ['#3aa6ff', '#00c4ff', '#5fb3ff', '#7ecbff', '#9bd8ff', '#00ced1', '#5f9ea0', '#87ceeb', '#4682b4'],
+            borderColor: '#0a0e1a',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#e4e6eb', padding: 14, font: { size: 11 } }
+            },
+            datalabels: {
+              display: false
+            }
+          }
         }
-      }
-    });
+      });
 
-    // ====== Dosing Frequency (bar) ======
-    const dosings = aquariumData.filter(d => d.type === 'Dosing');
-    const dosingTypes = {};
-    dosings.forEach(d => {
-      const product = d.detail.split('—')[0].trim();
-      dosingTypes[product] = (dosingTypes[product] || 0) + 1;
-    });
-    const dosingCtx = document.getElementById('dosingChart').getContext('2d');
-    new Chart(dosingCtx, {
-      type: 'bar',
-      data: {
-        labels: Object.keys(dosingTypes),
-        datasets: [{
-          label: 'Doses',
-          data: Object.values(dosingTypes),
-          backgroundColor: 'rgba(58,166,255,0.75)',
-          borderColor: '#3aa6ff',
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{ legend:{ labels:{ color:'#e4e6eb' } } },
-        scales:{
-          y:{ beginAtZero:true, grid:{ color:gridColor }, ticks:{ color:tickColor, stepSize:2 } },
-          x:{ grid:{ color:gridColor }, ticks:{ color:tickColor, autoSkip:true, maxRotation:0 } }
+      // Update screen reader summary
+      const summary = document.getElementById('feeding-summary');
+      const types = Object.entries(feedingTypes).map(([type, count]) => `${type}: ${count}`).join(', ');
+      summary.textContent = `Doughnut chart showing distribution of ${feedings.length} feedings: ${types}.`;
+    }
+
+    function renderDosingChart(data) {
+      const dosingProducts = {};
+
+      data.entries.forEach(entry => {
+        entry.dosing.forEach(d => {
+          dosingProducts[d.product] = (dosingProducts[d.product] || 0) + 1;
+        });
+      });
+
+      const ctx = document.getElementById('dosingChart').getContext('2d');
+
+      if (dosingChart) dosingChart.destroy();
+
+      dosingChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(dosingProducts),
+          datasets: [{
+            label: 'Doses',
+            data: Object.values(dosingProducts),
+            backgroundColor: 'rgba(58,166,255,0.75)',
+            borderColor: '#3aa6ff',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#e4e6eb' } },
+            datalabels: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, stepSize: 5 } },
+            x: { grid: { color: gridColor }, ticks: { color: tickColor, autoSkip: true, maxRotation: 0 } }
+          }
         }
-      }
-    });
+      });
 
-    // ====== Weekly Activity Timeline (bar) ======
-    const activityByDate = {};
-    aquariumData.forEach(d => { activityByDate[d.date] = (activityByDate[d.date] || 0) + 1; });
-    const actLabels = Object.keys(activityByDate);
-    const actValues = Object.values(activityByDate);
-    const activityCtx = document.getElementById('activityChart').getContext('2d');
-    new Chart(activityCtx, {
-      type: 'bar',
-      data: { labels: actLabels, datasets: [{ label:'Total Activities', data: actValues, backgroundColor:'rgba(58,166,255,0.6)', borderColor:'#3aa6ff', borderWidth:1 }] },
-      options: {
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{ legend:{ labels:{ color:'#e4e6eb' } } },
-        scales:{
-          y:{ beginAtZero:true, grid:{ color:gridColor }, ticks:{ color:tickColor, stepSize:1 } },
-          x:{ grid:{ color:gridColor }, ticks:{ color:tickColor, autoSkip:true, maxRotation:0, callback:(v, i)=> (i%2===0? fmtDate(actLabels[i]) : '') } }
+      // Update screen reader summary
+      const summary = document.getElementById('dosing-summary');
+      const products = Object.entries(dosingProducts).map(([product, count]) => `${product}: ${count}`).join(', ');
+      summary.textContent = `Bar chart showing dosing frequency: ${products}.`;
+    }
+
+    function renderActivityChart(data) {
+      const activityByDate = {};
+      data.entries.forEach(e => {
+        activityByDate[e.date] = (activityByDate[e.date] || 0) + 1;
+      });
+
+      const dates = Object.keys(activityByDate).sort();
+      const values = dates.map(d => activityByDate[d]);
+
+      const ctx = document.getElementById('activityChart').getContext('2d');
+
+      if (activityChart) activityChart.destroy();
+
+      activityChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: dates,
+          datasets: [{
+            label: 'Total Activities',
+            data: values,
+            backgroundColor: 'rgba(58,166,255,0.6)',
+            borderColor: '#3aa6ff',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#e4e6eb' } },
+            datalabels: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, stepSize: 1 } },
+            x: {
+              grid: { color: gridColor },
+              ticks: {
+                color: tickColor,
+                autoSkip: true,
+                maxRotation: 0,
+                callback: function(value, index) {
+                  return index % 3 === 0 ? fmtDate(dates[index]) : '';
+                }
+              }
+            }
+          }
         }
+      });
+
+      // Update screen reader summary
+      const summary = document.getElementById('activity-summary');
+      summary.textContent = `Bar chart showing daily activities across ${dates.length} days from ${dates[0]} to ${dates[dates.length - 1]}.`;
+    }
+
+    // ====== TIMELINE RENDERING ======
+
+    function renderTimelines(data) {
+      // Milestones
+      const milestones = data.entries.filter(e => e.isMilestone || e.types.includes('Checkpoint'));
+      const milestonesHTML = milestones.map(m => {
+        const journalLink = `${CONFIG.journalBaseUrl}#${m.date}`;
+        return `
+          <div class="timeline-item milestone">
+            <div class="timeline-date">${fmtFullDate(m.date)}</div>
+            <div class="timeline-type">${m.types[0] || 'Milestone'}</div>
+            <div class="timeline-content">
+              <strong>${m.title}</strong><br/>
+              ${m.snippet}
+            </div>
+            <a href="${journalLink}" class="timeline-link">View Full Entry &rarr;</a>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('milestones').innerHTML = milestonesHTML || '<p style="color:#6b7c99;">No milestones recorded yet.</p>';
+
+      // Recent activity (last 15)
+      const recentActivity = data.entries.slice(-15).reverse();
+      const activityHTML = recentActivity.map(a => {
+        const journalLink = `${CONFIG.journalBaseUrl}#${a.date}`;
+        return `
+          <div class="timeline-item">
+            <div class="timeline-date">${fmtFullDate(a.date)}</div>
+            <div class="timeline-type">${a.types[0] || 'Activity'}</div>
+            <div class="timeline-content">
+              <strong>${a.title}</strong><br/>
+              ${a.snippet}
+            </div>
+            <a href="${journalLink}" class="timeline-link">View Full Entry &rarr;</a>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('recentActivity').innerHTML = activityHTML;
+    }
+
+    // ====== INITIALIZATION ======
+
+    async function initializeDashboard() {
+      const data = await fetchAllJournalData();
+
+      if (!data) {
+        // Show error state
+        document.getElementById('qualityMetrics').innerHTML = `
+          <div class="quality-item warn">
+            <span class="icon" aria-hidden="true">&#9888;</span>
+            <span>Failed to load journal data. Please refresh the page.</span>
+          </div>
+        `;
+        return;
       }
-    });
 
-    // ====== Milestones ======
-    const milestones = aquariumData.filter(d => d.milestone || d.type === 'Checkpoint');
-    const milestonesHTML = milestones.map(m => `
-      <div class="timeline-item milestone">
-        <div class="timeline-date">${m.date}</div>
-        <div class="timeline-type">${m.type}</div>
-        <div class="timeline-content"><strong>${m.detail}</strong><br/>${m.notes || ''}</div>
-      </div>
-    `).join('');
-    document.getElementById('milestones').innerHTML = milestonesHTML;
+      // Render all components
+      updateDataQuality(data);
+      updateStats(data);
+      renderNitrateChart(data);
+      renderFeedingChart(data);
+      renderDosingChart(data);
+      renderActivityChart(data);
+      renderTimelines(data);
+    }
 
-    // ====== Recent Activity (last 15) ======
-    const recentActivity = aquariumData.slice(-15).reverse();
-    const activityHTML = recentActivity.map(a => `
-      <div class="timeline-item">
-        <div class="timeline-date">${a.date}</div>
-        <div class="timeline-type">${a.type}</div>
-        <div class="timeline-content"><strong>${a.detail}</strong><br/>${a.notes || ''}</div>
-      </div>
-    `).join('');
-    document.getElementById('recentActivity').innerHTML = activityHTML;
+    // Start initialization when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeDashboard);
+    } else {
+      initializeDashboard();
+    }
   </script>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
