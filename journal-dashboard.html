@@ -125,6 +125,7 @@
     .journal-dashboard .sync-status.loading{ color:#ffd700; }
     .journal-dashboard .sync-status.error{ color:#ff6b6b; }
     .journal-dashboard .sync-status.success{ color:#51cf66; }
+    .journal-dashboard .sync-status.warning{ color:#ffa500; }
 
     /* ====== Data Quality Indicator ====== */
     .journal-dashboard .data-quality{
@@ -307,15 +308,15 @@
       .journal-dashboard .chart-wrapper{ height:280px; }
     }
   </style>
+  <script defer src="js/nav.js?v=1.1.0"></script>
 </head>
 
 <body class="journal-dashboard">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  
-  <!-- Site Navigation -->
-  <script defer src="/js/nav.js?v=1.1.0"></script>
+  <!-- End Google Tag Manager (noscript) -->
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div id="site-nav"></div>
   
   <!-- Dashboard Header -->
@@ -617,23 +618,36 @@
       const cacheKey = `journal-cache-${url}`;
       const cached = sessionStorage.getItem(cacheKey);
 
+      console.log(`[Dashboard] Fetching: ${url}`);
+
       if (cached) {
         try {
           const { timestamp, data } = JSON.parse(cached);
           if (Date.now() - timestamp < CONFIG.cacheTimeout) {
+            console.log(`[Dashboard] Cache hit for ${url} (${data.length} entries)`);
             return { data, fromCache: true };
           }
         } catch (e) {
+          console.warn(`[Dashboard] Cache parse error for ${url}:`, e);
           sessionStorage.removeItem(cacheKey);
         }
       }
 
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error(`Failed to fetch ${url}: ${response.status}`);
+        const errorMsg = `Failed to fetch ${url}: ${response.status} ${response.statusText}`;
+        console.error(`[Dashboard] ${errorMsg}`);
+        throw new Error(errorMsg);
       }
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+        console.log(`[Dashboard] Successfully fetched ${url}: ${data.length} entries`);
+      } catch (parseError) {
+        console.error(`[Dashboard] JSON parse error for ${url}:`, parseError);
+        throw new Error(`Invalid JSON in ${url}: ${parseError.message}`);
+      }
 
       try {
         sessionStorage.setItem(cacheKey, JSON.stringify({
@@ -641,7 +655,7 @@
           data: data
         }));
       } catch (e) {
-        // Storage full, continue
+        console.warn(`[Dashboard] Cache storage failed:`, e);
       }
 
       return { data, fromCache: false };
@@ -652,12 +666,17 @@
       statusEl.className = 'sync-status loading';
       statusEl.textContent = 'Fetching journal data...';
 
+      console.log('[Dashboard] Starting data fetch for months:', CONFIG.monthFiles);
+
       try {
         // Fetch all month files (hardcoded list)
         const fetchPromises = CONFIG.monthFiles.map(month =>
           fetchWithCache(`${CONFIG.dataBasePath}${month}.json`)
             .then(result => ({ month, ...result }))
-            .catch(err => ({ month, data: [], error: err }))
+            .catch(err => {
+              console.error(`[Dashboard] Failed to fetch ${month}:`, err.message);
+              return { month, data: [], error: err };
+            })
         );
 
         const results = await Promise.all(fetchPromises);
@@ -666,15 +685,34 @@
         let allEntries = [];
         let loadedMonths = [];
         let failedMonths = [];
+        let errorDetails = [];
 
         results.forEach(result => {
           if (result.error) {
             failedMonths.push(result.month);
+            errorDetails.push(`${result.month}: ${result.error.message}`);
           } else {
             loadedMonths.push(result.month);
             allEntries = allEntries.concat(result.data);
+            console.log(`[Dashboard] Loaded ${result.data.length} entries from ${result.month}`);
           }
         });
+
+        // Check if we have any data
+        if (allEntries.length === 0) {
+          const errorMsg = failedMonths.length > 0
+            ? `No data loaded. Failed months: ${failedMonths.join(', ')}`
+            : 'No journal entries found in data files';
+          console.error(`[Dashboard] ${errorMsg}`);
+          statusEl.className = 'sync-status error';
+          statusEl.innerHTML = `<strong>Error:</strong> ${errorMsg}`;
+          return {
+            entries: [],
+            loadedMonths: [],
+            failedMonths,
+            errorDetails
+          };
+        }
 
         // Sort by date
         allEntries.sort((a, b) => a.date.localeCompare(b.date));
@@ -682,21 +720,33 @@
         // Parse all entries
         const parsedEntries = allEntries.map(parseJournalEntry);
 
+        console.log(`[Dashboard] Total entries parsed: ${parsedEntries.length}`);
+        console.log(`[Dashboard] Loaded months: ${loadedMonths.join(', ')}`);
+        if (failedMonths.length > 0) {
+          console.warn(`[Dashboard] Failed months: ${failedMonths.join(', ')}`);
+        }
+
         // Update status
         const cacheStatus = results.some(r => r.fromCache) ? ' (cached)' : '';
-        statusEl.className = 'sync-status success';
-        statusEl.textContent = `Synced ${parsedEntries.length} entries from ${loadedMonths.length} months${cacheStatus}`;
+        if (failedMonths.length > 0) {
+          statusEl.className = 'sync-status warning';
+          statusEl.innerHTML = `Loaded ${parsedEntries.length} entries from ${loadedMonths.length}/${CONFIG.monthFiles.length} months${cacheStatus}. <br><small>Failed: ${failedMonths.join(', ')}</small>`;
+        } else {
+          statusEl.className = 'sync-status success';
+          statusEl.textContent = `Synced ${parsedEntries.length} entries from ${loadedMonths.length} months${cacheStatus}`;
+        }
 
         return {
           entries: parsedEntries,
           loadedMonths,
-          failedMonths
+          failedMonths,
+          errorDetails
         };
 
       } catch (error) {
-        console.error('Failed to fetch journal data:', error);
+        console.error('[Dashboard] Critical error fetching journal data:', error);
         statusEl.className = 'sync-status error';
-        statusEl.textContent = 'Failed to load data. Please refresh.';
+        statusEl.innerHTML = `<strong>Failed to load data:</strong> ${error.message}<br><small>Check browser console for details. Please refresh.</small>`;
         return null;
       }
     }
@@ -1037,9 +1087,13 @@
     // ====== INITIALIZATION ======
 
     async function initializeDashboard() {
+      console.log('[Dashboard] Initializing dashboard...');
+      console.log('[Dashboard] Configuration:', CONFIG);
+
       const data = await fetchAllJournalData();
 
       if (!data) {
+        console.error('[Dashboard] No data returned from fetchAllJournalData');
         document.getElementById('qualityMetrics').innerHTML = `
           <div class="quality-item warn">
             <span class="icon" aria-hidden="true">⚠</span>
@@ -1049,6 +1103,25 @@
         return;
       }
 
+      if (data.entries.length === 0) {
+        console.warn('[Dashboard] No entries to display');
+        document.getElementById('qualityMetrics').innerHTML = `
+          <div class="quality-item warn">
+            <span class="icon" aria-hidden="true">⚠</span>
+            <span>No journal entries available. Check that data files exist at ${CONFIG.dataBasePath}</span>
+          </div>
+          ${data.errorDetails && data.errorDetails.length > 0 ? `
+          <div class="quality-item warn">
+            <span class="icon" aria-hidden="true">⚠</span>
+            <span>Errors: ${data.errorDetails.join('; ')}</span>
+          </div>
+          ` : ''}
+        `;
+        return;
+      }
+
+      console.log('[Dashboard] Rendering dashboard with', data.entries.length, 'entries');
+
       updateDataQuality(data);
       updateStats(data);
       renderNitrateChart(data);
@@ -1056,6 +1129,8 @@
       renderDosingChart(data);
       renderActivityChart(data);
       renderTimelines(data);
+
+      console.log('[Dashboard] Dashboard initialization complete');
     }
 
     // Start
@@ -1066,7 +1141,6 @@
     }
   </script>
 
-  <!-- Site Footer -->
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
     <a href="/privacy-legal.html">Privacy Policy</a>
@@ -1074,11 +1148,8 @@
     <a href="/contact-feedback.html">Contact</a>
   </section>
   <noscript>
-    <section class="legal-links" aria-label="Site legal links (noscript)">
-      <a href="/privacy-legal.html">Privacy Policy</a>
-      <a href="/terms.html">Terms</a>
-      <a href="/contact-feedback.html">Contact</a>
-    </section>
+    <p class="legal-links__noscript">JavaScript is disabled. Visit our <a href="/privacy-legal.html">Privacy Policy</a> and
+      <a href="/terms.html">Terms</a>.</p>
   </noscript>
   <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
 
