@@ -403,14 +403,6 @@
         <div id="dosing-summary" class="sr-only">Bar chart showing dosing products.</div>
       </div>
     </div>
-
-    <div class="chart-card full-width" role="region" aria-label="Activity timeline chart">
-      <h2>📅 Daily Activity Timeline</h2>
-      <div class="chart-wrapper">
-        <canvas id="activityChart" aria-describedby="activity-summary"></canvas>
-        <div id="activity-summary" class="sr-only">Bar chart showing daily activities.</div>
-      </div>
-    </div>
   </div>
 
   <!-- Milestones -->
@@ -866,7 +858,7 @@
     const gridColor = 'rgba(30, 144, 255, 0.12)';
     const tickColor = '#9bb0cc';
 
-    let nitrateChart, feedingChart, dosingChart, activityChart;
+    let nitrateChart, feedingChart, dosingChart;
 
     function renderNitrateChart(data) {
       const nitrateEntries = data.entries.filter(e => e.nitrate !== null);
@@ -1012,56 +1004,6 @@
       });
     }
 
-    function renderActivityChart(data) {
-      const activityByDate = {};
-      data.entries.forEach(e => {
-        activityByDate[e.date] = (activityByDate[e.date] || 0) + 1;
-      });
-
-      const dates = Object.keys(activityByDate).sort();
-      const values = dates.map(d => activityByDate[d]);
-
-      const ctx = document.getElementById('activityChart').getContext('2d');
-
-      if (activityChart) activityChart.destroy();
-
-      activityChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: dates,
-          datasets: [{
-            label: 'Total Activities',
-            data: values,
-            backgroundColor: 'rgba(58,166,255,0.6)',
-            borderColor: '#3aa6ff',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: '#e4e6eb' } },
-            datalabels: { display: false }
-          },
-          scales: {
-            y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, stepSize: 1 } },
-            x: {
-              grid: { color: gridColor },
-              ticks: {
-                color: tickColor,
-                autoSkip: true,
-                maxRotation: 0,
-                callback: function(value, index) {
-                  return index % 3 === 0 ? fmtDate(dates[index]) : '';
-                }
-              }
-            }
-          }
-        }
-      });
-    }
-
     // ====== TIMELINE RENDERING ======
 
     function renderTimelines(data) {
@@ -1184,9 +1126,6 @@
 
       console.log('📈 Rendering Dosing chart...');
       renderDosingChart(data);
-
-      console.log('📈 Rendering Activity chart...');
-      renderActivityChart(data);
 
       console.log('📝 Rendering Timelines...');
       renderTimelines(data);
