@@ -119,3 +119,7 @@ Next: Run Gemini + Lighthouse audits on updated pages if needed.
 Scope: Added SoftwareApplication JSON-LD node for The Tank Guide Assistant on /assistant.html.
 Result: Schema enriched per Gemini audit recommendation; all prior green statuses preserved. Node @id: https://thetankguide.com/assistant.html#app; declares free web-based educational assistant with proper publisher reference.
 Next: Optional external structured data test and periodic re-audit with Gemini.
+[2025-11-22 | The Tank Guide | Full site sitemap update]
+Scope: Scanned all public pages, updated sitemap.xml and robots.txt alignment for current production URLs.
+Result: Added assistant.html and journal-dashboard.html to sitemap; removed prototype-home.html (now has noindex). Sitemap and robots now accurately reflect live, indexable content and match canonical tags. 27 total URLs.
+Next: Optional — resubmit sitemap in Google Search Console and monitor indexing.
