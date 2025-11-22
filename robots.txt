@@ -1,41 +1,19 @@
 # As a condition of accessing this website, you agree to abide by the following
-# content signals:
-
-# (a)  If a content-signal = yes, you may collect content for the corresponding
-#      use.
-# (b)  If a content-signal = no, you may not collect content for the
-#      corresponding use.
-# (c)  If the website operator does not include a content signal for a
-#      corresponding use, the website operator neither grants nor restricts
-#      permission via content signal with respect to the corresponding use.
-
-# The content signals and their meanings are:
-
-# search:   building a search index and providing search results (e.g., returning
-#           hyperlinks and short excerpts from your website's contents). Search does not
-#           include providing AI-generated search summaries.
-# ai-input: inputting content into one or more AI models (e.g., retrieval
-#           augmented generation, grounding, or other real-time taking of content for
-#           generative AI search answers).
-# ai-train: training or fine-tuning AI models.
-
-# ANY RESTRICTIONS EXPRESSED VIA CONTENT SIGNALS ARE EXPRESS RESERVATIONS OF
-# RIGHTS UNDER ARTICLE 4 OF THE EUROPEAN UNION DIRECTIVE 2019/790 ON COPYRIGHT
-# AND RELATED RIGHTS IN THE DIGITAL SINGLE MARKET.
+# content signals: (a) content-signal = yes means collection allowed.
 
 # =============================================================================
 # GOOGLE CRAWLERS - CRITICAL FOR ADSENSE & SEO
 # =============================================================================
 
-# General Google web crawler
+# General Google web crawler (Search & AI Retrieval)
 User-agent: Googlebot
 Allow: /
 
-# Google image indexing
-User-agent: Googlebot-Image
+# Google Inspection Tool (Used by Gemini live audits & Search Console)
+User-agent: Google-InspectionTool
 Allow: /
 
-# AdSense content verification crawler (CRITICAL FOR ADSENSE APPROVAL)
+# AdSense content verification (CRITICAL)
 User-agent: Mediapartners-Google
 Allow: /
 
@@ -47,31 +25,27 @@ Allow: /
 User-agent: AdsBot-Google-Mobile
 Allow: /
 
-# Google News (if applicable)
-User-agent: Googlebot-News
+# Google Image/Video/News
+User-agent: Googlebot-Image
 Allow: /
-
-# Google video indexing
 User-agent: Googlebot-Video
+Allow: /
+User-agent: Googlebot-News
 Allow: /
 
 # =============================================================================
 # OTHER MAJOR SEARCH ENGINES
 # =============================================================================
 
-# Bing
 User-agent: Bingbot
 Allow: /
 
-# Yahoo (uses Bing)
 User-agent: Slurp
 Allow: /
 
-# DuckDuckGo
 User-agent: DuckDuckBot
 Allow: /
 
-# Yandex
 User-agent: YandexBot
 Allow: /
 
@@ -79,22 +53,16 @@ Allow: /
 # BENEFICIAL AI CRAWLERS
 # =============================================================================
 
-# Anthropic (Claude, Gemini auditing)
+# Anthropic (Claude)
 User-agent: ClaudeBot
 Allow: /
-
 User-agent: Anthropic-AI
 Allow: /
 
-# OpenAI (ChatGPT, GPT models)
+# OpenAI (ChatGPT)
 User-agent: GPTBot
 Allow: /
-
 User-agent: ChatGPT-User
-Allow: /
-
-# Google AI (SGE, Gemini, Bard)
-User-agent: Google-Extended
 Allow: /
 
 # Perplexity AI
@@ -106,40 +74,27 @@ User-agent: cohere-ai
 Allow: /
 
 # =============================================================================
-# DEFAULT POLICY - ALL OTHER BOTS ALLOWED
-# =============================================================================
-
-User-agent: *
-Allow: /
-
-# =============================================================================
 # AGGRESSIVE COMMERCIAL SCRAPERS - BLOCKED
 # =============================================================================
 
-# Amazon scraper (steals affiliate links)
 User-agent: Amazonbot
 Disallow: /
 
-# Apple AI training (aggressive)
 User-agent: Applebot-Extended
 Disallow: /
 
-# ByteDance/TikTok (ignores crawl delays)
 User-agent: Bytespider
 Disallow: /
 
-# Common Crawl (open dataset for resale)
 User-agent: CCBot
 Disallow: /
 
-# Meta/Facebook AI scraper
 User-agent: meta-externalagent
 Disallow: /
 
 User-agent: FacebookBot
 Disallow: /
 
-# Commercial scraping services
 User-agent: Diffbot
 Disallow: /
 
@@ -164,12 +119,19 @@ Disallow: /
 # =============================================================================
 # PROTECTED DIRECTORIES
 # =============================================================================
+# Note: Do not block .json files generally, as this breaks tool data loading.
 
 User-agent: *
 Disallow: /prototype/
 Disallow: /admin/
 Disallow: /api/
-Disallow: /*.json$
+
+# =============================================================================
+# DEFAULT POLICY (Must be last)
+# =============================================================================
+
+User-agent: *
+Allow: /
 
 # =============================================================================
 # SITEMAP
