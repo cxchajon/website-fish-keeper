@@ -43,13 +43,16 @@
   <link rel="stylesheet" href="/assets/css/media.css" />
   <!-- Media page layout lives in /assets/css/media.css -->
   <style>
+    /* Base media icon size is 140px — increase by exactly 15% = 161px */
     .dashboard-thumb {
-      width: 175px;
+      width: 161px;
       height: auto;
     }
+
     @media (max-width: 480px) {
+      /* Mobile adjustment: 15% larger than mobile default of 120px = 138px */
       .dashboard-thumb {
-        width: 150px;
+        width: 138px;
       }
     }
   </style>
