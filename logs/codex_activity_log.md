@@ -115,3 +115,7 @@ Next: Validate indexing in Search Console within 48 hours.
 Scope: Standardized footer across pages and resolved footer lock failures.
 Result: All main pages share a single canonical footer implementation. Fixed assistant.html footer-loader.js script order (must appear before placeholder).
 Next: Run Gemini + Lighthouse audits on updated pages if needed.
+[2025-11-22 | The Tank Guide | Assistant SoftwareApplication schema]
+Scope: Added SoftwareApplication JSON-LD node for The Tank Guide Assistant on /assistant.html.
+Result: Schema enriched per Gemini audit recommendation; all prior green statuses preserved. Node @id: https://thetankguide.com/assistant.html#app; declares free web-based educational assistant with proper publisher reference.
+Next: Optional external structured data test and periodic re-audit with Gemini.
