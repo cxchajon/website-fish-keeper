@@ -600,9 +600,9 @@
     <div id="milestones"></div>
   </div>
 
-  <!-- Recent Activity (LAST 5 ENTRIES) -->
+  <!-- Recent Activity (LAST 3 ENTRIES) -->
   <div class="timeline-section">
-    <h2>📝 Recent Activity Log (Last 5 Entries)</h2>
+    <h2>📝 Recent Activity Log (Last 3 Entries)</h2>
     <div id="recentActivity"></div>
   </div>
 
@@ -1304,8 +1304,8 @@
       }).join('');
       document.getElementById('milestones').innerHTML = milestonesHTML || '<p style="color:#6b7c99;">No milestones recorded yet.</p>';
 
-      // Recent activity - LAST 5 ENTRIES ONLY
-      const recentActivity = data.entries.slice(-5).reverse();
+      // Recent activity - LAST 3 ENTRIES ONLY
+      const recentActivity = data.entries.slice(-3).reverse();
       const activityHTML = recentActivity.map(a => {
         const journalLink = `${CONFIG.journalBaseUrl}#${a.date}`;
         return `
