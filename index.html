@@ -55,33 +55,11 @@
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "Organization",
-          "@id": "https://thetankguide.com/#organization",
-          "name": "FishKeepingLifeCo",
-          "alternateName": "The Tank Guide",
-          "url": "https://thetankguide.com/",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
-            "width": 1200,
-            "height": 630
-          },
-          "sameAs": [
-            "https://www.tiktok.com/@fishkeepinglifeco",
-            "https://www.instagram.com/fishkeepinglifeco",
-            "https://www.youtube.com/@FishKeepingLifeCo",
-            "https://x.com/fishkeepinglife",
-            "https://www.facebook.com/FishKeepingLifeCo",
-            "https://www.threads.com/@fishkeepinglifeco?igshid=NTc4MTIwNjQ2YQ==",
-            "https://www.reddit.com/u/FishKeepingLifeCo/s/Q4JV29oiSg"
-          ]
-        },
-        {
           "@type": "WebSite",
           "@id": "https://thetankguide.com/#website",
-          "url": "https://thetankguide.com/",
+          "url": "https://thetankguide.com",
           "name": "The Tank Guide",
-          "description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
+          "description": "Smart fishkeeping guides and interactive tools for thriving aquariums. Beginner-friendly aquarium science backed by real-world experience.",
           "publisher": {
             "@id": "https://thetankguide.com/#organization"
           },
@@ -89,36 +67,47 @@
             "@type": "SearchAction",
             "target": {
               "@type": "EntryPoint",
-              "urlTemplate": "https://thetankguide.com/search?q={search_term_string}"
+              "urlTemplate": "https://thetankguide.com/?s={search_term_string}"
             },
-            "query-input": {
-              "@type": "PropertyValueSpecification",
-              "valueRequired": true,
-              "valueName": "search_term_string"
-            }
+            "query-input": "required name=search_term_string"
           }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://thetankguide.com/#organization",
+          "name": "FishKeepingLifeCo",
+          "alternateName": ["The Tank Guide", "Fish Keeping Life Co", "fishkeepinglife"],
+          "description": "FishKeepingLifeCo is an educational publishing company specializing in beginner-friendly aquarium science. The Tank Guide is our flagship website providing interactive tools and research-backed fishkeeping guidance for families and new hobbyists.",
+          "url": "https://thetankguide.com",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG",
+            "width": 512,
+            "height": 512
+          },
+          "sameAs": [
+            "https://www.tiktok.com/@fishkeepinglifeco",
+            "https://www.instagram.com/fishkeepinglifeco",
+            "https://www.youtube.com/@FishKeepingLifeCo",
+            "https://x.com/fishkeepinglife",
+            "https://www.facebook.com/FishKeepingLifeCo",
+            "https://www.threads.net/@fishkeepinglifeco",
+            "https://www.reddit.com/u/FishKeepingLifeCo"
+          ]
         },
         {
           "@type": "WebPage",
           "@id": "https://thetankguide.com/#webpage",
           "url": "https://thetankguide.com/",
-          "name": "Fishkeeping Guides \u0026 Tools — The Tank Guide",
-          "description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
+          "name": "Fishkeeping Guides & Tools — The Tank Guide",
           "isPartOf": {
             "@id": "https://thetankguide.com/#website"
           },
-          "publisher": {
+          "about": {
             "@id": "https://thetankguide.com/#organization"
           },
-          "author": {
-            "@id": "https://thetankguide.com/#organization"
-          },
-          "primaryImageOfPage": {
-            "@type": "ImageObject",
-            "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
-            "width": 1200,
-            "height": 630
-          }
+          "description": "Smart fishkeeping guides and interactive tools for thriving aquariums. Beginner-friendly aquarium science backed by real-world experience.",
+          "inLanguage": "en-US"
         },
         {
           "@type": "FAQPage",

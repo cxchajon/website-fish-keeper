@@ -61,51 +61,24 @@
           "@type": "Organization",
           "@id": "https://thetankguide.com/#organization",
           "name": "FishKeepingLifeCo",
+          "alternateName": ["The Tank Guide", "Fish Keeping Life Co", "fishkeepinglife"],
+          "description": "FishKeepingLifeCo is an educational publishing company specializing in beginner-friendly aquarium science. The Tank Guide is our flagship website providing interactive tools and research-backed fishkeeping guidance for families and new hobbyists.",
           "url": "https://thetankguide.com",
           "logo": {
             "@type": "ImageObject",
-            "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
-            "width": 1200,
-            "height": 630
+            "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG",
+            "width": 512,
+            "height": 512
           },
-          "alternateName": [
-            "FishKeepingLifeCo",
-            "Fish Keeping Life Co",
-            "fishkeepinglife"
-          ],
-          "description": "FishKeepingLifeCo is the educational publishing brand behind The Tank Guide and uses the X handle @fishkeepinglife for social updates.",
           "sameAs": [
             "https://www.tiktok.com/@fishkeepinglifeco",
             "https://www.instagram.com/fishkeepinglifeco",
             "https://www.youtube.com/@FishKeepingLifeCo",
             "https://x.com/fishkeepinglife",
             "https://www.facebook.com/FishKeepingLifeCo",
-            "https://www.threads.com/@fishkeepinglifeco?igshid=NTc4MTIwNjQ2YQ==",
-            "https://www.reddit.com/u/FishKeepingLifeCo/s/Q4JV29oiSg"
+            "https://www.threads.net/@fishkeepinglifeco",
+            "https://www.reddit.com/u/FishKeepingLifeCo"
           ]
-        },
-        {
-          "@type": "WebSite",
-          "@id": "https://thetankguide.com/#website",
-          "url": "https://thetankguide.com",
-          "name": "The Tank Guide",
-          "description": "The Tank Guide is an educational aquarium website offering beginner-friendly guides, interactive tools, and calculators to help freshwater hobbyists plan and maintain calm, healthy home aquariums.",
-          "publisher": {
-            "@id": "https://thetankguide.com/#organization"
-          },
-          "inLanguage": "en-US",
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": {
-              "@type": "EntryPoint",
-              "urlTemplate": "https://thetankguide.com/search?q={search_term_string}"
-            },
-            "query-input": {
-              "@type": "PropertyValueSpecification",
-              "valueRequired": true,
-              "valueName": "search_term_string"
-            }
-          }
         },
         {
           "@type": "ImageObject",
@@ -119,11 +92,14 @@
           "@id": "https://thetankguide.com/stocking-advisor.html#webpage",
           "url": "https://thetankguide.com/stocking-advisor.html",
           "name": "Stocking Advisor Calculator — The Tank Guide",
-          "description": "The Tank Guide by FishKeepingLifeCo built Stocking Advisor, an interactive tank stocking calculator to plan bioload, compatibility, and safer community mixes.",
-          "inLanguage": "en-US",
           "isPartOf": {
             "@id": "https://thetankguide.com/#website"
           },
+          "about": {
+            "@id": "https://thetankguide.com/#organization"
+          },
+          "description": "The Tank Guide by FishKeepingLifeCo built Stocking Advisor, an interactive tank stocking calculator to plan bioload, compatibility, and safer community mixes.",
+          "inLanguage": "en-US",
           "primaryImageOfPage": {
             "@id": "https://thetankguide.com/stocking-advisor.html#primaryimage"
           },
@@ -138,13 +114,8 @@
               "@id": "https://thetankguide.com/stocking-advisor.html#faq"
             }
           ],
-          "dateModified": "2025-02-14T00:00:00Z",
-          "publisher": {
-            "@id": "https://thetankguide.com/#organization"
-          },
-          "author": {
-            "@id": "https://thetankguide.com/#organization"
-          }
+          "datePublished": "2024-09-15",
+          "dateModified": "2025-11-07"
         },
         {
           "@type": "WebApplication",
@@ -172,17 +143,13 @@
               "@type": "ListItem",
               "position": 1,
               "name": "Home",
-              "item": {
-                "@id": "https://thetankguide.com/#website"
-              }
+              "item": "https://thetankguide.com/"
             },
             {
               "@type": "ListItem",
               "position": 2,
               "name": "Stocking Advisor",
-              "item": {
-                "@id": "https://thetankguide.com/stocking-advisor.html#webpage"
-              }
+              "item": "https://thetankguide.com/stocking-advisor.html"
             }
           ]
         },
