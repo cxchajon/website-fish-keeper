@@ -451,28 +451,6 @@ body.media-page[data-ad-qa="true"] .ttg-ad-slot,
   justify-content:center;
 }
 
-/* Inline card so the Journal Dashboard icon matches the other library entries */
-.media-page .library-card {
-  display: grid;
-  place-items: center;
-  gap: 8px;
-  inline-size: clamp(var(--alib-book-min), 22vw, var(--alib-book-max));
-  padding: clamp(16px, 3vw, 22px);
-  text-decoration: none;
-  color: #0b1020;
-}
-
-.media-page .library-thumb {
-  width: 140px;
-  height: auto;
-  display: block;
-}
-
-.media-page .library-label {
-  font-weight: 700;
-  text-align: center;
-}
-
 /* -------- Compact tabletop tweaks -------- */
 .media-page .alib--compact {
   /* tighten vertical spacing around the whole block */
