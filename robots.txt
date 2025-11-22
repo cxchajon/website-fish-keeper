@@ -24,15 +24,59 @@
 # AND RELATED RIGHTS IN THE DIGITAL SINGLE MARKET.
 
 # =============================================================================
-# DEFAULT POLICY - ALLOW SEARCH ENGINES & AI
+# GOOGLE CRAWLERS - CRITICAL FOR ADSENSE & SEO
 # =============================================================================
 
-User-agent: *
-Content-signal: search=yes,ai-input=yes,ai-train=yes
+# General Google web crawler
+User-agent: Googlebot
+Allow: /
+
+# Google image indexing
+User-agent: Googlebot-Image
+Allow: /
+
+# AdSense content verification crawler (CRITICAL FOR ADSENSE APPROVAL)
+User-agent: Mediapartners-Google
+Allow: /
+
+# AdSense quality checker
+User-agent: AdsBot-Google
+Allow: /
+
+# AdSense mobile crawler
+User-agent: AdsBot-Google-Mobile
+Allow: /
+
+# Google News (if applicable)
+User-agent: Googlebot-News
+Allow: /
+
+# Google video indexing
+User-agent: Googlebot-Video
 Allow: /
 
 # =============================================================================
-# BENEFICIAL AI CRAWLERS - EXPLICITLY ALLOWED
+# OTHER MAJOR SEARCH ENGINES
+# =============================================================================
+
+# Bing
+User-agent: Bingbot
+Allow: /
+
+# Yahoo (uses Bing)
+User-agent: Slurp
+Allow: /
+
+# DuckDuckGo
+User-agent: DuckDuckBot
+Allow: /
+
+# Yandex
+User-agent: YandexBot
+Allow: /
+
+# =============================================================================
+# BENEFICIAL AI CRAWLERS
 # =============================================================================
 
 # Anthropic (Claude, Gemini auditing)
@@ -59,6 +103,14 @@ Allow: /
 
 # Cohere AI
 User-agent: cohere-ai
+Allow: /
+
+# =============================================================================
+# DEFAULT POLICY (FALLBACK FOR UNLISTED BOTS)
+# =============================================================================
+
+User-agent: *
+Content-signal: search=yes,ai-input=yes,ai-train=yes
 Allow: /
 
 # =============================================================================
@@ -102,6 +154,12 @@ User-agent: SemrushBot
 Disallow: /
 
 User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
 Disallow: /
 
 # =============================================================================
