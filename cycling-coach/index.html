@@ -49,59 +49,43 @@
           "@type": "Organization",
           "@id": "https://thetankguide.com/#organization",
           "name": "FishKeepingLifeCo",
-          "description": "FishKeepingLifeCo is an educational publishing brand that creates aquarium books, guides, and tools, including The Tank Guide website and its Cycling Coach tool.",
-          "url": "https://thetankguide.com/",
-          "logo": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
-          "sameAs": [
-            "https://x.com/FishKeepingLife",
-            "https://www.instagram.com/FishKeepingLifeCo",
-            "https://www.tiktok.com/@FishKeepingLifeCo",
-            "https://www.facebook.com/fishkeepinglifeco",
-            "https://www.youtube.com/@fishkeepinglifeco"
-          ]
-        },
-        {
-          "@type": "WebSite",
-          "@id": "https://thetankguide.com/#website",
-          "url": "https://thetankguide.com/",
-          "name": "The Tank Guide",
-          "description": "The Tank Guide is an educational aquarium website from FishKeepingLifeCo, offering tools like the Cycling Coach, stocking advice, and beginner-friendly guides.",
-          "publisher": {
-            "@id": "https://thetankguide.com/#organization"
+          "alternateName": ["The Tank Guide", "Fish Keeping Life Co", "fishkeepinglife"],
+          "description": "FishKeepingLifeCo is an educational publishing company specializing in beginner-friendly aquarium science. The Tank Guide is our flagship website providing interactive tools and research-backed fishkeeping guidance for families and new hobbyists.",
+          "url": "https://thetankguide.com",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG",
+            "width": 512,
+            "height": 512
           },
-          "inLanguage": "en-US",
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": {
-              "@type": "EntryPoint",
-              "urlTemplate": "https://thetankguide.com/search?q={search_term_string}"
-            },
-            "query-input": {
-              "@type": "PropertyValueSpecification",
-              "valueRequired": true,
-              "valueName": "search_term_string"
-            }
-          }
+          "sameAs": [
+            "https://www.tiktok.com/@fishkeepinglifeco",
+            "https://www.instagram.com/fishkeepinglifeco",
+            "https://www.youtube.com/@FishKeepingLifeCo",
+            "https://x.com/fishkeepinglife",
+            "https://www.facebook.com/FishKeepingLifeCo",
+            "https://www.threads.net/@fishkeepinglifeco",
+            "https://www.reddit.com/u/FishKeepingLifeCo"
+          ]
         },
         {
           "@type": "WebPage",
           "@id": "https://thetankguide.com/cycling-coach/#webpage",
           "url": "https://thetankguide.com/cycling-coach/",
           "name": "Aquarium Cycling Coach & Nitrogen Cycle Tracker | The Tank Guide",
-          "description": "Track your aquarium's nitrogen cycle. Enter ammonia, nitrite, and nitrate levels to see if your fishless or fish-in cycle is complete.",
-          "inLanguage": "en-US",
           "isPartOf": {
             "@id": "https://thetankguide.com/#website"
           },
+          "about": {
+            "@id": "https://thetankguide.com/#organization"
+          },
+          "description": "Track your aquarium's nitrogen cycle. Enter ammonia, nitrite, and nitrate levels to see if your fishless or fish-in cycle is complete.",
+          "inLanguage": "en-US",
           "mainEntity": {
             "@id": "https://thetankguide.com/cycling-coach/#webapp"
           },
-          "publisher": {
-            "@id": "https://thetankguide.com/#organization"
-          },
-          "author": {
-            "@id": "https://thetankguide.com/#organization"
-          }
+          "datePublished": "2024-10-01",
+          "dateModified": "2025-11-10"
         },
         {
           "@type": "WebApplication",
