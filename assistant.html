@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-KTRVCMQN');</script>
+  <!-- End Google Tag Manager -->
+  <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="index,follow" />
+  <title>The Tank Guide Assistant — AI Aquarium Helper by FishKeepingLifeCo</title>
+  <meta name="description" content="Meet The Tank Guide Assistant, a calm AI helper from FishKeepingLifeCo that answers beginner aquarium questions with science-backed tips, cycling help, and simple routines." />
+  <link rel="canonical" href="https://thetankguide.com/assistant.html" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/logos/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/Logo-Master-180x180.PNG">
+  <link rel="apple-touch-icon" sizes="512x512" href="/assets/img/Logo-Master-512x512.PNG">
+
+  <meta property="og:site_name" content="The Tank Guide" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="The Tank Guide Assistant — AI Aquarium Helper by FishKeepingLifeCo" />
+  <meta property="og:description" content="Beginner-friendly, science-based aquarium answers from The Tank Guide Assistant by FishKeepingLifeCo." />
+  <meta property="og:url" content="https://thetankguide.com/assistant.html" />
+  <meta property="og:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://thetankguide.com/assistant.html" />
+  <meta name="twitter:title" content="The Tank Guide Assistant — AI Aquarium Helper by FishKeepingLifeCo" />
+  <meta name="twitter:description" content="Beginner-friendly, science-based aquarium answers from The Tank Guide Assistant by FishKeepingLifeCo." />
+  <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
+  <meta name="twitter:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
+
+  <!--#include virtual="/includes/schema-organization.html" -->
+  <!--#include virtual="/includes/ga4.html" -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://pagead2.googlesyndication.com">
+  <link rel="preconnect" href="https://fundingchoicesmessages.google.com">
+  <link rel="preconnect" href="https://static.cloudflareinsights.com">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" as="style">
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+        media="print"
+        onload="this.media='all'">
+  <link rel="stylesheet" href="/css/main.bundle.css?v=2025-11-07">
+  <script defer src="/js/nav.js?v=1.1.0"></script>
+  <!-- Consent Mode defaults (runs after GA loader) -->
+  <script src="/assets/js/consent-mode.js" defer></script>
+
+  <!-- AdSense loader (keep one global instance only) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
+    crossorigin="anonymous"></script>
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon='{"token": "fef22cbf19e3473db5ec987a8f3bf4f3"}'></script>
+  <!-- End Cloudflare Web Analytics -->
+  <!-- --- Google CMP (Funding Choices) START --- -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
+  <script>
+    // Required bootstrap per Google; signals CMP presence
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
+  <!-- --- Google CMP (Funding Choices) END --- -->
+
+  <style>
+    :root {
+      --assistant-surface: rgba(255, 255, 255, 0.06);
+      --assistant-border: rgba(255, 255, 255, 0.12);
+      --assistant-fg: #e8f1ff;
+      --assistant-muted: rgba(232, 241, 255, 0.82);
+      --assistant-accent: #82d6ff;
+    }
+
+    body.assistant-page {
+      background: radial-gradient(circle at 20% 10%, rgba(130, 214, 255, 0.16), transparent 45%),
+        radial-gradient(circle at 80% 15%, rgba(109, 164, 255, 0.18), transparent 40%),
+        linear-gradient(160deg, #071024 0%, #0b132b 50%, #060f21 100%);
+      color: var(--assistant-fg);
+    }
+
+    .assistant-shell {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 96px 20px 120px;
+      display: grid;
+      gap: clamp(28px, 4vw, 38px);
+    }
+
+    .assistant-hero {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.07));
+      border: 1px solid var(--assistant-border);
+      border-radius: 24px;
+      padding: clamp(28px, 6vw, 52px);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.38);
+    }
+
+    .assistant-hero h1 {
+      font-size: clamp(2.1rem, 5vw, 3.2rem);
+      margin: 0 0 12px;
+      color: #fff;
+    }
+
+    .assistant-hero p {
+      margin: 0 0 12px;
+      color: var(--assistant-muted);
+      line-height: 1.65;
+    }
+
+    .assistant-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .assistant-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--assistant-border);
+      background: linear-gradient(120deg, rgba(130, 214, 255, 0.16), rgba(89, 158, 255, 0.2));
+      color: #0b132b;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+      box-shadow: 0 10px 30px rgba(9, 20, 45, 0.35);
+    }
+
+    .assistant-btn:hover,
+    .assistant-btn:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 34px rgba(9, 20, 45, 0.4);
+      outline: none;
+    }
+
+    .assistant-link {
+      color: var(--assistant-accent);
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+    }
+
+    .assistant-section {
+      background: var(--assistant-surface);
+      border: 1px solid var(--assistant-border);
+      border-radius: 20px;
+      padding: clamp(20px, 4vw, 30px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .assistant-section h2 {
+      margin-top: 0;
+      color: #fff;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+    }
+
+    .feature-grid,
+    .how-grid,
+    .prompt-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .feature-card,
+    .how-card,
+    .prompt-card,
+    .faq-card,
+    .about-card,
+    .cta-card {
+      background: rgba(12, 20, 36, 0.6);
+      border: 1px solid var(--assistant-border);
+      border-radius: 16px;
+      padding: 16px 18px;
+      color: var(--assistant-fg);
+      line-height: 1.6;
+    }
+
+    .feature-card h3,
+    .how-card h3,
+    .prompt-card h3,
+    .faq-card h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: #fff;
+      font-size: 1.1rem;
+    }
+
+    .prompt-list {
+      list-style: disc;
+      margin: 8px 0 0 18px;
+      padding: 0;
+      color: var(--assistant-muted);
+    }
+
+    details {
+      background: rgba(12, 20, 36, 0.7);
+      border: 1px solid var(--assistant-border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: var(--assistant-fg);
+    }
+
+    details + details {
+      margin-top: 10px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      outline: none;
+    }
+
+    summary:focus-visible {
+      outline: 2px solid var(--assistant-accent);
+      outline-offset: 6px;
+      border-radius: 10px;
+    }
+
+    .ttg-ad-slot {
+      --ttg-ad-border: rgba(129, 155, 211, 0.72);
+      --ttg-ad-bg: rgba(12, 20, 36, 0.22);
+      --ttg-ad-label-bg: rgba(12, 20, 36, 0.85);
+      --ttg-ad-label-color: rgba(226, 235, 255, 0.96);
+      margin: 6rem auto;
+      padding: clamp(1.5rem, 4vw, 2.75rem);
+      max-width: min(100%, 970px);
+      min-height: 280px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      border: 2px dashed transparent;
+      background: transparent;
+      text-align: center;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .cta-card {
+      text-align: left;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(130, 214, 255, 0.2), rgba(12, 20, 36, 0.9));
+    }
+
+    .cta-card h2 {
+      margin-top: 0;
+    }
+
+    @media (max-width: 640px) {
+      .assistant-shell {
+        padding-top: 84px;
+      }
+    }
+  </style>
+</head>
+<body class="assistant-page theme-dark">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <a class="skip-link" href="#assistant-main">Skip to content</a>
+  <div id="site-nav"></div>
+
+  <main id="assistant-main" class="assistant-shell" aria-labelledby="assistant-title">
+    <section class="assistant-hero" aria-labelledby="assistant-title">
+      <h1 id="assistant-title">The Tank Guide Assistant</h1>
+      <p>Meet your calm aquarium helper. The Tank Guide Assistant is tuned for beginners and powered by the same science-first mindset we use across The Tank Guide.</p>
+      <p>Ask one question at a time, get clear steps, and keep your fish stress-free while you learn.</p>
+      <div class="assistant-actions">
+        <a class="assistant-btn" href="https://chatgpt.com/g/g-ZWv0ghbdo-the-tank-guide" target="_blank" rel="noopener noreferrer">Launch The Tank Guide GPT</a>
+        <a class="assistant-link" href="https://thetankguide.com/">Visit TheTankGuide.com</a>
+      </div>
+    </section>
+
+    <section class="assistant-section" aria-labelledby="assistant-why">
+      <h2 id="assistant-why">Why the assistant exists</h2>
+      <p>The Tank Guide Assistant keeps things calm and simple for first-time aquarists. It translates aquarium science into plain language so you can act confidently without feeling overwhelmed.</p>
+      <p>Built by FishKeepingLifeCo and The Tank Guide, it shares the same safety guardrails, beginner tone, and evidence-based recommendations you see across our guides.</p>
+      <p>Use it to double-check your plan, get reminders for cycling, and catch common mistakes before they harm your fish.</p>
+    </section>
+
+    <section class="assistant-section" aria-labelledby="assistant-features">
+      <h2 id="assistant-features">What it can help with</h2>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <h3>Stocking Advice</h3>
+          <p>Draft peaceful stocking lists matched to tank size, temperament, and water needs.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Cycling Help</h3>
+          <p>Step-by-step cycling guidance with test checkpoints and safer dosing reminders.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Troubleshooting</h3>
+          <p>Calm walkthroughs for cloudy water, algae blooms, or stressed fish, with next actions.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Tank Size Planning</h3>
+          <p>Right-size tanks, filters, and heaters before you buy to avoid costly repurchasing.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Maintenance Routines</h3>
+          <p>Weekly and monthly care plans tailored to your tank volume and bioload.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Beginner Questions</h3>
+          <p>Quick, judgment-free answers to the basics: dechlorinators, gravel rinsing, and more.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Display Ad: TTG_Assistant_Mid — Slot 8930237876 -->
+    <div class="ttg-ad-slot" id="ad-assistant-mid" data-ad-label="TTG_Assistant_Mid • Slot 8930237876" aria-label="Advertisement">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9905718149811880"
+           data-ad-slot="8930237876"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
+    <section class="assistant-section" aria-labelledby="assistant-how">
+      <h2 id="assistant-how">How it works</h2>
+      <div class="how-grid">
+        <article class="how-card">
+          <h3>1. Open the assistant</h3>
+          <p>Launch The Tank Guide GPT in a new tab so you can keep this guide open.</p>
+        </article>
+        <article class="how-card">
+          <h3>2. Tell it about your tank</h3>
+          <p>Share tank size, filter type, heater wattage, and current water test numbers if you have them.</p>
+        </article>
+        <article class="how-card">
+          <h3>3. Ask one question at a time</h3>
+          <p>Stay focused on one topic—stocking, cycling, or maintenance—to get the clearest steps.</p>
+        </article>
+        <article class="how-card">
+          <h3>4. Save your plan</h3>
+          <p>Copy the recommendations into your tank journal or checklist so you can follow them later.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="assistant-section" aria-labelledby="assistant-prompts">
+      <h2 id="assistant-prompts">Starter prompts</h2>
+      <div class="prompt-grid">
+        <article class="prompt-card">
+          <h3>Stock list help</h3>
+          <ul class="prompt-list">
+            <li>“Help me stock a peaceful 20-gallon community tank.”</li>
+            <li>“Check if these fish mix well together.”</li>
+          </ul>
+        </article>
+        <article class="prompt-card">
+          <h3>Cycling walkthrough</h3>
+          <ul class="prompt-list">
+            <li>“Walk me through a fishless cycle with ammonia drops.”</li>
+            <li>“What should my test kit read before adding fish?”</li>
+          </ul>
+        </article>
+        <article class="prompt-card">
+          <h3>Cloudy water troubleshooting</h3>
+          <ul class="prompt-list">
+            <li>“My new tank is cloudy—help me clear it without harming fish.”</li>
+            <li>“Is this bacterial bloom or overfeeding?”</li>
+          </ul>
+        </article>
+        <article class="prompt-card">
+          <h3>Maintenance schedule</h3>
+          <ul class="prompt-list">
+            <li>“Build a weekly and monthly care routine for a 40 breeder.”</li>
+            <li>“What should I log in my journal after each water change?”</li>
+          </ul>
+        </article>
+        <article class="prompt-card">
+          <h3>Nitrogen cycle explanation</h3>
+          <ul class="prompt-list">
+            <li>“Explain the nitrogen cycle like I’m brand new to aquariums.”</li>
+            <li>“What are safe ranges for ammonia, nitrite, and nitrate?”</li>
+          </ul>
+        </article>
+        <article class="prompt-card">
+          <h3>Tank size decision help</h3>
+          <ul class="prompt-list">
+            <li>“Which tank size fits a pair of dwarf gourami?”</li>
+            <li>“How does filtration change if I upgrade from 10 to 29 gallons?”</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="assistant-section" aria-labelledby="assistant-faq">
+      <h2 id="assistant-faq">FAQ</h2>
+      <div class="faq-card">
+        <details>
+          <summary>Is this free?</summary>
+          <p>Yes. We created The Tank Guide Assistant to give beginners a safe, no-cost starting point. Standard ChatGPT access is enough.</p>
+        </details>
+        <details>
+          <summary>Do I need ChatGPT Plus?</summary>
+          <p>No. The assistant works with free ChatGPT accounts. If you already have Plus, it will work there too.</p>
+        </details>
+        <details>
+          <summary>Is this a veterinarian?</summary>
+          <p>No. The assistant is educational only and does not replace professional veterinary care. Always consult a qualified vet for animal health decisions.</p>
+        </details>
+        <details>
+          <summary>Can it read water tests?</summary>
+          <p>It cannot read images. Type in your test numbers, and it will help you interpret ammonia, nitrite, nitrate, and pH ranges.</p>
+        </details>
+        <details>
+          <summary>Does it replace research?</summary>
+          <p>No. Use the assistant to guide your learning, then cross-check with trusted sources like The Tank Guide, manufacturer manuals, and experienced hobbyists.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Display Ad: TTG_Assistant_Bottom — Slot 9864045598 -->
+    <div class="ttg-ad-slot" id="ad-assistant-bottom" data-ad-label="TTG_Assistant_Bottom • Slot 9864045598" aria-label="Advertisement">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9905718149811880"
+           data-ad-slot="9864045598"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
+    <section class="assistant-section" aria-labelledby="assistant-about">
+      <h2 id="assistant-about">About FishKeepingLifeCo &amp; The Tank Guide</h2>
+      <div class="about-card">
+        <p>FishKeepingLifeCo publishes The Tank Guide, the Life in Balance freshwater handbook, coloring books for young aquarists, and daily Tank Journals. Everything we make focuses on calm, beginner-friendly fishkeeping.</p>
+        <p>Explore our tools and resources: <a class="assistant-link" href="/" aria-label="Visit The Tank Guide home">The Tank Guide</a>, <a class="assistant-link" href="/store.html" aria-label="Visit The Tank Guide store">Store</a>, <a class="assistant-link" href="/journal.html" aria-label="Visit the Tank Journal">Tank Journals</a>, and <a class="assistant-link" href="/media.html" aria-label="Visit media hub">Media hub</a>.</p>
+      </div>
+    </section>
+
+    <section class="assistant-section cta-card" aria-labelledby="assistant-cta">
+      <h2 id="assistant-cta">Ready to start your healthy tank journey?</h2>
+      <p>Open The Tank Guide GPT, ask one question, and keep your fish calm and thriving with step-by-step help.</p>
+      <div class="assistant-actions">
+        <a class="assistant-btn" href="https://chatgpt.com/g/g-ZWv0ghbdo-the-tank-guide" target="_blank" rel="noopener noreferrer">Launch The Tank Guide GPT</a>
+        <a class="assistant-link" href="https://thetankguide.com/tools/">Explore tools on TheTankGuide.com</a>
+      </div>
+    </section>
+  </main>
+
+  <section class="legal-links" aria-label="Site legal links">
+    <a href="/privacy-legal.html">Privacy Policy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/contact-feedback.html">Contact</a>
+  </section>
+  <noscript>
+    <section class="legal-links" aria-label="Site legal links (noscript)">
+      <a href="/privacy-legal.html">Privacy Policy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/contact-feedback.html">Contact</a>
+    </section>
+  </noscript>
+
+  <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
+  <script src="/js/footer-loader.js?v=1.5.2" defer></script>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://thetankguide.com/#website",
+          "url": "https://thetankguide.com/",
+          "name": "The Tank Guide",
+          "publisher": { "@id": "https://thetankguide.com/#organization" }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://thetankguide.com/assistant.html#webpage",
+          "url": "https://thetankguide.com/assistant.html",
+          "name": "The Tank Guide Assistant — AI Aquarium Helper by FishKeepingLifeCo",
+          "description": "Meet The Tank Guide Assistant, a calm AI helper for aquarium beginners with cycling help, stocking advice, and science-based troubleshooting.",
+          "isPartOf": { "@id": "https://thetankguide.com/#website" },
+          "publisher": { "@id": "https://thetankguide.com/#organization" },
+          "primaryImageOfPage": {
+            "@type": "ImageObject",
+            "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
+            "width": 1200,
+            "height": 630
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://thetankguide.com/assistant.html#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Is this free?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. We created The Tank Guide Assistant to give beginners a safe, no-cost starting point. Standard ChatGPT access is enough."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do I need ChatGPT Plus?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. The assistant works with free ChatGPT accounts. If you already have Plus, it will work there too."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is this a veterinarian?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. The assistant is educational only and does not replace professional veterinary care. Always consult a qualified vet for animal health decisions."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can it read water tests?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "It cannot read images. Type in your test numbers, and it will help you interpret ammonia, nitrite, nitrate, and pH ranges."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does it replace research?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Use the assistant to guide your learning, then cross-check with trusted sources like The Tank Guide, manufacturer manuals, and experienced hobbyists."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  </script>
+
+  <!-- === TTG CMP Consent Bridge START === -->
+  <script>
+  (function(){
+    // Helper: map TCF consent to our single "ads granted" flag.
+    // We consider "granted" only when Purpose 1 (storage) AND Purpose 4 (select personalised ads)
+    // are consented. If you want to allow NON-personalised ads when only Purpose 1 is granted,
+    // set allowNPA=true below.
+    var allowNPA = true; // if true, we’ll treat Purpose 1 only as "granted" for showing slots (Google will serve NPA ads).
+
+    function setAdConsent(granted){
+      // Google CMP interface (Funding Choices) — set consent for ads_storage and ad_user_data
+      var consentState = granted ? 'granted' : 'denied';
+      var payload = {
+        'ad_storage': consentState,
+        'ad_user_data': consentState,
+        'ad_personalization': consentState
+      };
+      if (typeof window.__ttgUpdateConsentState__ === 'function') {
+        window.__ttgUpdateConsentState__(payload);
+      } else if (typeof window.gtag === 'function') {
+        window.gtag('consent', 'update', payload);
+      } else {
+        (window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || []).push(payload);
+      }
+    }
+
+    function hookTCF(){
+      // Funding Choices exposes the IAB TCF v2 interface.
+      // We hook into it to map Purpose consent to Google consent mode.
+      if (typeof __tcfapi !== 'function') return;
+
+      __tcfapi('addEventListener', 2, function(tcData, success){
+        if(!success || !tcData || tcData.eventStatus !== 'tcloaded') return;
+
+        // Purpose IDs: 1 = Storage and Access, 4 = Select Personalised Ads
+        var p1 = tcData.purpose && tcData.purpose.consents ? tcData.purpose.consents[1] : false;
+        var p4 = tcData.purpose && tcData.purpose.consents ? tcData.purpose.consents[4] : false;
+
+        var granted = allowNPA ? (p1 && (p4 || true)) : (p1 && p4);
+        setAdConsent(granted);
+      });
+    }
+
+    // Initialize once Funding Choices loads the TCF stub
+    if (typeof __tcfapi === 'function') {
+      hookTCF();
+    } else {
+      window.addEventListener('tcfapiReady', hookTCF, { once: true });
+    }
+  })();
+  </script>
+  <!-- === TTG CMP Consent Bridge END === -->
+</body>
+</html>
