@@ -106,11 +106,10 @@ User-agent: cohere-ai
 Allow: /
 
 # =============================================================================
-# DEFAULT POLICY (FALLBACK FOR UNLISTED BOTS)
+# DEFAULT POLICY - ALL OTHER BOTS ALLOWED
 # =============================================================================
 
 User-agent: *
-Content-signal: search=yes,ai-input=yes,ai-train=yes
 Allow: /
 
 # =============================================================================
