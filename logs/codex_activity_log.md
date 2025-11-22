@@ -111,3 +111,7 @@ Next: Continue expanding Library descriptions under each card.
 Scope: Replaced WebPage JSON-LD with AboutPage + FAQPage structured data.
 Result: Improved AEO visibility and Rich Results eligibility.
 Next: Validate indexing in Search Console within 48 hours.
+[2025-11-22 | The Tank Guide | Footer lock fix]
+Scope: Standardized footer across pages and resolved footer lock failures.
+Result: All main pages share a single canonical footer implementation. Fixed assistant.html footer-loader.js script order (must appear before placeholder).
+Next: Run Gemini + Lighthouse audits on updated pages if needed.
