@@ -415,6 +415,58 @@
       font-style: italic;
     }
 
+    /* ====== Status Summary ====== */
+    .journal-dashboard .status-summary {
+      background: linear-gradient(135deg, #1a2332 0%, #0f1620 100%);
+      padding: 25px 30px;
+      border-radius: 12px;
+      border: 1px solid rgba(30, 144, 255, 0.3);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      margin-bottom: 40px;
+    }
+
+    .journal-dashboard .status-summary h2 {
+      color: #1e90ff;
+      font-size: 1.25rem;
+      margin-bottom: 18px;
+      border-bottom: 2px solid rgba(30, 144, 255, 0.2);
+      padding-bottom: 8px;
+    }
+
+    .journal-dashboard .summary-content {
+      color: #c4c8d0;
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+
+    .journal-dashboard .summary-content p {
+      margin-bottom: 12px;
+    }
+
+    .journal-dashboard .summary-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .journal-dashboard .summary-content strong {
+      color: #3aa6ff;
+      font-weight: 600;
+    }
+
+    .journal-dashboard .summary-content .metric {
+      color: #1e90ff;
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .journal-dashboard .status-summary {
+        padding: 20px;
+      }
+
+      .journal-dashboard .summary-content {
+        font-size: 1rem;
+      }
+    }
+
     /* ====== Responsive ====== */
     @media (max-width: 1024px){
       .journal-dashboard .chart-wrapper{ height:360px; }
@@ -533,6 +585,14 @@
       </div>
     </div>
   </div>
+
+  <!-- Current Status Summary -->
+  <section class="status-summary" role="region" aria-label="Current aquarium status summary">
+    <h2>📋 Current Status Summary</h2>
+    <div id="statusSummaryContent" class="summary-content">
+      <p>Loading current status...</p>
+    </div>
+  </section>
 
   <!-- Milestones -->
   <div class="timeline-section">
@@ -1013,6 +1073,62 @@
         document.getElementById('systemStatus').innerHTML = `${statusIcon} ${statusText}`;
         document.getElementById('statusDetail').textContent = statusDetail;
       }
+
+      // Generate human-readable status summary
+      function generateStatusSummary(data, feedings, nitrateEntries, lastWC, daysSinceWC) {
+        const summaryEl = document.getElementById('statusSummaryContent');
+
+        if (!summaryEl) return;
+
+        const totalEntries = data.entries.length;
+        const firstDate = data.entries[0]?.date;
+        const lastDate = data.entries[data.entries.length - 1]?.date;
+
+        let summaryHTML = '';
+
+        // Current nitrate status
+        if (nitrateEntries.length > 0) {
+          const latestNitrate = nitrateEntries[nitrateEntries.length - 1];
+          summaryHTML += `<p><strong>Current Nitrate Level:</strong> <span class="metric">${latestNitrate.nitrate} ppm</span> as of ${fmtFullDate(latestNitrate.date)}.`;
+
+          if (latestNitrate.nitrate >= 40) {
+            summaryHTML += ` Levels are elevated — water change recommended.`;
+          } else if (latestNitrate.nitrate >= 20) {
+            summaryHTML += ` Levels are moderate — monitoring closely.`;
+          } else if (latestNitrate.nitrate < 5) {
+            summaryHTML += ` Levels are low — may need additional fertilization.`;
+          } else {
+            summaryHTML += ` System is stable and healthy.`;
+          }
+          summaryHTML += `</p>`;
+        }
+
+        // Water change status
+        if (lastWC) {
+          summaryHTML += `<p><strong>Last Water Change:</strong> ${fmtFullDate(lastWC.date)}`;
+          if (daysSinceWC !== '—') {
+            summaryHTML += ` (<span class="metric">${daysSinceWC} days ago</span>)`;
+          }
+          summaryHTML += `.`;
+
+          if (daysSinceWC > 10) {
+            summaryHTML += ` Next water change due soon.`;
+          }
+          summaryHTML += `</p>`;
+        }
+
+        // Feeding summary
+        summaryHTML += `<p><strong>Total Feedings:</strong> <span class="metric">${feedings.length} feedings</span> logged since ${fmtFullDate(firstDate)}, maintaining dietary variety with flakes, bloodworms, brine shrimp, algae wafers, and vegetables.</p>`;
+
+        // Tracking duration
+        const trackingDays = Math.floor((new Date(lastDate) - new Date(firstDate)) / (1000 * 60 * 60 * 24)) + 1;
+        summaryHTML += `<p><strong>Tracking Duration:</strong> <span class="metric">${trackingDays} days</span> of continuous monitoring across <span class="metric">${totalEntries} journal entries</span> from ${fmtFullDate(firstDate)} to ${fmtFullDate(lastDate)}.</p>`;
+
+        summaryEl.innerHTML = summaryHTML;
+      }
+
+      // Call the summary generator
+      generateStatusSummary(data, feedings, nitrateEntries, lastWC, daysSinceWC);
     }
 
     // ====== CHART RENDERING ======
@@ -1239,6 +1355,7 @@
             <span>Check browser console (F12) for detailed error messages</span>
           </div>
         `;
+        document.getElementById('statusSummaryContent').innerHTML = '<p>Unable to load current status. Please refresh the page.</p>';
         return;
       }
 
@@ -1273,6 +1390,7 @@
             <span>Check browser console (F12) for detailed error messages</span>
           </div>
         `;
+        document.getElementById('statusSummaryContent').innerHTML = '<p>Unable to load current status. Please refresh the page.</p>';
         return;
       }
 
