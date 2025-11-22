@@ -9,26 +9,33 @@
   },
   {
     "date": "2025-11-20",
-    "title": "Weekly Parameters Check",
-    "body": "Tested water today. Nitrate came in at 15 ppm, looking good. Did a 25% water change to keep things stable.",
-    "category": "Parameters",
-    "quick_facts": "",
-    "nitrate_ppm": "15"
+    "title": "Feeding, Test & Dosing & Filtration Update",
+    "body": "Feeding: Brine shrimp + flakes. Nitrates measured around 5 ppm (low range). Dosed 4 pumps of NilocG Thrive Plus fertilizer and skipped Seachem Excel to avoid stressing sensitive plants. Added a bag of Seachem Matrix to the filter chamber to weigh down floating filter pads, expand biomedia capacity, and support long-term beneficial bacteria stability. Tank remains stable with strong feeding response; fertilizer dose increased today due to the low nitrate reading.",
+    "category": "Maintenance",
+    "quick_facts": "Fed: brine shrimp + flakes. Dosing: Thrive 4 pumps",
+    "nitrate_ppm": "5",
+    "photos": [
+      {
+        "src": "/assets/images/filter-chamber-update-2025-11-20-matrix.jpeg",
+        "alt": "Filter chamber update with Seachem Matrix bag installed (November 20, 2025)",
+        "caption": ""
+      }
+    ]
   },
   {
     "date": "2025-11-19",
-    "title": "Evening Feeding",
-    "body": "Fed: flakes and bloodworms. Everyone ate well, tetras are very active today.",
-    "category": "Feeding",
-    "quick_facts": "Fed: flakes + bloodworms",
-    "nitrate_ppm": ""
+    "title": "Feeding, Test & Dosing",
+    "body": "Nitrate tested at 5 ppm. Fed flakes and bloodworms. Spot- and cap-dosed Seachem Excel. BBA nearly gone; only a small area remains in a sensitive plant zone, so treatment is applied carefully to avoid damaging plant tissue.",
+    "category": "Parameters",
+    "quick_facts": "Fed: flakes + bloodworms. Dosing: Excel spot + cap",
+    "nitrate_ppm": "5"
   },
   {
     "date": "2025-11-18",
-    "title": "Weekly Maintenance",
-    "body": "Water change 30%. Dosed NilocG Thrive Plus 3 pumps and Seachem Excel 1 capful for algae control.",
-    "category": "Maintenance",
-    "quick_facts": "Dosing: Thrive 3 pumps, Excel 1 cap",
+    "title": "Feeding",
+    "body": "Fed algae wafers and flakes for veggie day. Fish responded well and feeding was consistent.",
+    "category": "Feeding",
+    "quick_facts": "Fed: algae wafers + flakes",
     "nitrate_ppm": ""
   },
   {
@@ -80,11 +87,79 @@
     "nitrate_ppm": ""
   },
   {
+    "date": "2025-11-09",
+    "title": "Maintenance",
+    "body": "Pre-water-change nitrate tested at 40 ppm, prompting a deep clean with roughly 90% of the sump and 75% of the display refreshed.\n\nInstalled a new poly-fil barrier to keep debris out of the pump chamber and maintain water clarity as the system settles post-maintenance.",
+    "category": "Maintenance",
+    "quick_facts": "",
+    "nitrate_ppm": "40",
+    "photos": [
+      {
+        "src": "/assets/images/2025-11-09-sump-top-poly.jpg",
+        "alt": "Top-down view of the sump after installing the new poly-fil barrier. Plants visible in the refugium section.",
+        "caption": "Top view — new poly-fil layer added above the refugium for debris control."
+      },
+      {
+        "src": "/assets/images/2025-11-09-sump-front-poly.jpg",
+        "alt": "Front view showing the sump chambers with fresh poly-fil installed for mechanical filtration and flow clarity.",
+        "caption": "Front view — poly-fil barrier placed to prevent debris from reaching the pump chamber."
+      },
+      {
+        "src": "/assets/images/2025-11-09-sump-filled-poly.jpg",
+        "alt": "Full sump setup showing all chambers after refill. Clear flow path and new filter media in place.",
+        "caption": "System refilled — flow restored and water clarity improving post-maintenance."
+      }
+    ]
+  },
+  {
     "date": "2025-11-08",
     "title": "Weekly Test",
     "body": "Nitrate measured at 20 ppm. Time for a water change this weekend. All fish looking healthy.",
     "category": "Parameters",
     "quick_facts": "",
+    "nitrate_ppm": "20"
+  },
+  {
+    "date": "2025-11-06",
+    "title": "Feeding, Test & Dosing",
+    "body": "Nitrate measured at 20 ppm with the community fed flakes and brine shrimp alongside a spot dose of Seachem Excel.\n\nThe last traces of BBA near the random flow generator have cleared, closing out the Post-Treatment Recovery Week on a high note.",
+    "category": "Parameters",
+    "quick_facts": "Fed: flakes + brine shrimp. Dosing: Excel spot",
+    "nitrate_ppm": "20"
+  },
+  {
+    "date": "2025-11-05",
+    "title": "Feeding & Dosing",
+    "body": "Fed flakes and bloodworms with a targeted spot dose of Seachem Excel to keep algae pressure light.\n\nFish activity and appetite remain strong as the system holds steady through Post-Treatment Recovery Week.",
+    "category": "Feeding",
+    "quick_facts": "Fed: flakes + bloodworms. Dosing: Excel spot",
+    "nitrate_ppm": ""
+  },
+  {
+    "date": "2025-11-04",
+    "title": "Feeding, Test & Dosing",
+    "body": "Nitrate tested under 5 ppm. Dosed four pumps of NilocG Thrive Plus and added a spot dose of Seachem Excel.\n\nFed algae wafers with a pinch of flakes so every fish got a share, keeping nutrients low yet stable during Post-Treatment Recovery Week.",
+    "category": "Parameters",
+    "quick_facts": "Fed: algae wafers + flakes. Dosing: Thrive 4 pumps, Excel spot",
+    "nitrate_ppm": "5"
+  },
+  {
+    "date": "2025-11-03",
+    "title": "Feeding, Dosing & Observation",
+    "body": "Fed flakes and brine shrimp with two spot doses of Seachem Excel to keep BBA in check.\n\nMalaysian trumpet snails naturally polished the sump overflow screen, keeping debris away and signaling a \"Natural Balance Discovery\" milestone as the system self-regulates during Post-Treatment Recovery Week.",
+    "category": "Observation",
+    "quick_facts": "Fed: flakes + brine shrimp. Dosing: Excel 2 spot doses",
+    "nitrate_ppm": "",
+    "media": "/assets/images/mts-on-strainer-2025-11-03.jpg",
+    "media_alt": "Malaysian trumpet snails cleaning the overflow screen",
+    "media_caption": ""
+  },
+  {
+    "date": "2025-11-02",
+    "title": "Maintenance & Dosing",
+    "body": "Pre-water-change nitrate tested between 20–40 ppm (closer to 20). Completed roughly 95% sump and 70% display water changes with a light trim.\n\nPerformed spot and cap doses of Seachem Excel as a routine post-change treatment and noted fresh plant growth emerging.",
+    "category": "Maintenance",
+    "quick_facts": "Water change: 95% sump, 70% display. Dosing: Excel spot + cap",
     "nitrate_ppm": "20"
   }
 ]
