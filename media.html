@@ -42,6 +42,17 @@
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
   <link rel="stylesheet" href="/assets/css/media.css" />
   <!-- Media page layout lives in /assets/css/media.css -->
+  <style>
+    .dashboard-thumb {
+      width: 175px;
+      height: auto;
+    }
+    @media (max-width: 480px) {
+      .dashboard-thumb {
+        width: 150px;
+      }
+    }
+  </style>
 
   <script defer src="js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (runs after GA loader) -->
@@ -324,7 +335,7 @@
               </a>
               <a class="alib-book" href="/journal-dashboard.html" aria-label="Open the Journal Dashboard for all aquarium logs and entries">
                 <img
-                  class="alib-book__img"
+                  class="alib-book__img library-thumb dashboard-thumb"
                   src="/assets/img/journal-dashboard-card.png"
                   alt="Journal Dashboard"
                   loading="lazy"
