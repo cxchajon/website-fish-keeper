@@ -59,6 +59,8 @@
       '/contact-feedback.html': '/contact-feedback.html',
       '/about': '/about.html',
       '/about.html': '/about.html',
+      '/assistant': '/assistant.html',
+      '/assistant.html': '/assistant.html',
       '/privacy-legal': '/privacy-legal.html',
       '/privacy-legal.html': '/privacy-legal.html',
       '/terms': '/terms.html',
