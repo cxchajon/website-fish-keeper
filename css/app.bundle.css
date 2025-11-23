@@ -10416,7 +10416,7 @@ body {
   margin: 10rem auto;
   padding: clamp(1.5rem, 4vw, 2.75rem);
   max-width: min(100%, 970px);
-  min-height: 280px;
+  min-height: 250px;
   position: relative;
   display: flex;
   align-items: center;
@@ -10426,12 +10426,18 @@ body {
   background: transparent;
   text-align: center;
   transition: background 0.3s ease, border-color 0.3s ease;
+  contain: layout;
 }
 
 body[data-ad-qa="true"] .ttg-ad-slot,
 .ttg-ad-slot.ttg-ad-slot--empty {
   border-color: var(--ttg-ad-border);
   background: var(--ttg-ad-bg);
+  min-height: 0;
+}
+
+#site-footer {
+  min-height: 200px;
 }
 
 .ttg-ad-slot::before {
