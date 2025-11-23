@@ -223,6 +223,7 @@ body.theme-light {
 #global-nav .links .nav__list {
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
   gap: var(--nav-inline-gap);
   list-style: none;
   margin: 0;
@@ -237,8 +238,9 @@ body.theme-light {
   color: var(--nav-muted);
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.95rem;
-  padding: 12px 0;
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+  white-space: nowrap;
   position: relative;
 }
 
@@ -295,10 +297,10 @@ body.theme-light {
   }
 }
 
-/* Desktop nav spacing - increased gap between nav items for better readability */
+/* Desktop nav spacing - tighter gap to prevent wrapping */
 @media (min-width: 921px) {
   #global-nav .links .nav__list {
-    gap: 2.5rem; /* ~40px - improved spacing between nav items */
+    gap: 1.25rem; /* ~20px - tighter spacing to fit all items */
   }
 }
 
