@@ -11622,3 +11622,91 @@ button:focus-visible:not(.info-btn),
 #stocking-page #env-card.info-open .env-bars .bar-row:last-child {
   margin-bottom: 0;
 }
+
+/* ==========================================================================
+   Mobile Horizontal Overflow Prevention
+   Fixes side-to-side scrolling on mobile devices (iPhone 15, etc.)
+   ========================================================================== */
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+/* Ensure all main containers stay within viewport */
+body * {
+  max-width: 100%;
+}
+
+/* Word wrapping for all text content */
+p,
+h1, h2, h3, h4, h5, h6,
+li,
+td, th,
+span,
+label,
+summary {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Force long URLs and strings to break */
+a {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Specific fix for very long URLs like GPT links */
+.assistant-btn,
+.assistant-link,
+.assistant-actions a,
+.how-card a,
+.feature-card a,
+.about-card a {
+  word-break: break-all;
+}
+
+/* Ensure assistant page containers don't overflow */
+.assistant-shell,
+.assistant-hero,
+.assistant-section,
+.feature-card,
+.how-card,
+.prompt-card,
+.faq-card,
+.about-card,
+.cta-card {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Prevent flex children from causing overflow */
+.assistant-actions,
+.feature-grid,
+.how-grid,
+.prompt-grid {
+  min-width: 0;
+}
+
+/* Mobile-specific overflow fixes */
+@media (max-width: 640px) {
+  html,
+  body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  .assistant-shell {
+    padding-left: 16px;
+    padding-right: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .assistant-hero,
+  .assistant-section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
