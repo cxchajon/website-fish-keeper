@@ -613,5 +613,47 @@ details.advanced p {
   opacity: 0.85;
 }
 
+/* === AdSense Pending Approval Layout Fix ===
+ * Prevents horizontal overflow when AdSense containers render as
+ * empty placeholders with fixed dimensions during account approval.
+ * Safe to keep after approval - won't affect live ads.
+ */
+
+/* Prevent page-level horizontal overflow */
+.page--cycling-coach main {
+  overflow-x: hidden;
+}
+
+.page--cycling-coach .stage-wrap {
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Constrain ad slot containers */
+.page--cycling-coach .ad-slot {
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Constrain AdSense ins element */
+.page--cycling-coach .ad-slot ins.adsbygoogle {
+  max-width: 100%;
+  width: 100% !important;
+  overflow: hidden;
+  display: block;
+}
+
+/* Prevent AdSense-generated iframes/divs from causing overflow */
+.page--cycling-coach .ad-slot ins.adsbygoogle > *,
+.page--cycling-coach .ad-slot ins.adsbygoogle iframe,
+.page--cycling-coach .ad-slot ins.adsbygoogle ins {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* === End AdSense Pending Approval Layout Fix === */
+
 /* stylelint-enable selector-class-pattern */
 
