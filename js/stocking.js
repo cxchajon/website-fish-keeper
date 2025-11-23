@@ -1987,7 +1987,6 @@ document.addEventListener('advisor:addCandidate', (event) => {
   selectedSpeciesId = null;
   emitSpeciesChange(selectedSpeciesId);
   syncStockFromState();
-  console.log('[StockingAdvisor] Added:', species.id, 'x', qty);
   scheduleUpdate();
 });
 
@@ -1998,7 +1997,6 @@ document.addEventListener('advisor:removeCandidate', (event) => {
   }
   state.stock = state.stock.filter((entry) => entry.id !== id);
   syncStockFromState();
-  console.log('[StockingAdvisor] Removed:', id);
   scheduleUpdate();
 });
 
