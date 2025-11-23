@@ -110,6 +110,18 @@ body {
   contain: content;
 }
 
+/* Primary nav minimum height to prevent CLS */
+#primary-nav,
+.site-nav {
+  min-height: 60px;
+}
+
+/* Global image constraints to prevent overflow */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 body.theme-dark {
   --page-bg: radial-gradient(140% 100% at 0% 0%, #091421 0%, #0b1b2b 45%, #0a0f18 100%);
   background: var(--page-bg);
