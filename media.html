@@ -19,6 +19,11 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/Logo-Master-180x180.PNG">
   <link rel="apple-touch-icon" sizes="512x512" href="/assets/img/Logo-Master-512x512.PNG">
 
+  <!-- Preconnect hints for external domains -->
+  <link rel="preconnect" href="https://www.youtube.com">
+  <link rel="preconnect" href="https://i.ytimg.com">
+  <link rel="preconnect" href="https://img.youtube.com">
+
   <meta property="og:site_name" content="The Tank Guide">
   <meta property="og:locale" content="en_US">
   <!--#include virtual="/includes/schema-organization.html" -->
@@ -59,7 +64,7 @@
 
   <script defer src="js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (runs after GA loader) -->
-  <script src="/assets/js/consent-mode.js" defer></script>
+  <script src="/assets/js/consent-mode.js?v=1.5.2" defer></script>
 
   <!-- AdSense loader (keep one global instance only) -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
@@ -354,7 +359,7 @@
 
     <section class="media-storefront-hero">
       <a href="/store.html" aria-label="Visit the FishKeepingLifeCo Store for educational books and journals">
-        <img src="/assets/img/fishkeepinglifeco-storefront.webp" alt="FishKeepingLifeCo storefront illustration showing educational aquarium books and journals" width="1080" height="1080">
+        <img src="/assets/img/fishkeepinglifeco-storefront.webp" alt="FishKeepingLifeCo storefront illustration showing educational aquarium books and journals" width="1080" height="1080" loading="lazy" decoding="async">
       </a>
     </section>
 
@@ -489,7 +494,7 @@
   </script>
 
 <!-- === TTG Ad Slot View Tracking START === -->
-<script src="/js/ad-slot-view-tracking.js"></script>
+<script src="/js/ad-slot-view-tracking.js?v=1.5.2"></script>
 <!-- === TTG Ad Slot View Tracking END === -->
 
 <script>
