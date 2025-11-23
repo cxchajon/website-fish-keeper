@@ -501,9 +501,7 @@ function refreshDatasets() {
   });
   state.dataState = datasets;
   const sample = datasets.meta?.sampleByDate?.get('2025-10-26');
-  if (sample) {
-    console.log('29G Dashboard sample (2025-10-26)', sample);
-  }
+  // Debug log removed for production
   render();
 }
 
