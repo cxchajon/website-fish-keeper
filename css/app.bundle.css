@@ -95,6 +95,21 @@ body {
   transform: translateY(0);
 }
 
+/* Global AdSense layout shift fix */
+.ttg-ad-slot {
+  min-height: 250px;
+  contain: layout;
+}
+
+.ttg-ad-slot:not(.ttg-ad-slot--empty) {
+  min-height: 0;
+}
+
+#site-footer {
+  min-height: 200px;
+  contain: content;
+}
+
 body.theme-dark {
   --page-bg: radial-gradient(140% 100% at 0% 0%, #091421 0%, #0b1b2b 45%, #0a0f18 100%);
   background: var(--page-bg);
