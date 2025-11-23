@@ -20,3 +20,57 @@ ins.adsbygoogle,
   min-height:90px;
   filter:grayscale(0.3);
 }
+
+/* ============================================================
+   GLOBAL AD CONTAINER SAFETY RULES
+   ============================================================
+   Prevents horizontal overflow when AdSense containers render as
+   empty placeholders with fixed dimensions during account approval.
+   Safe to keep after approval - won't affect live ads.
+   ============================================================ */
+
+/* ---- Base safety for all ad container types ---- */
+.ad-slot,
+.ttg-ad-slot,
+.ttg-adunit,
+.blogs-ad-slot,
+.blogs-ad-frame,
+.ad-container,
+.ad-hero,
+.ad-wrapper {
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ---- Constrain AdSense ins element globally ---- */
+ins.adsbygoogle {
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ---- Prevent AdSense-generated content from causing overflow ---- */
+ins.adsbygoogle > *,
+ins.adsbygoogle iframe,
+ins.adsbygoogle ins,
+.ad-slot ins.adsbygoogle > *,
+.ad-slot ins.adsbygoogle iframe,
+.ttg-ad-slot ins.adsbygoogle > *,
+.ttg-ad-slot ins.adsbygoogle iframe,
+.blogs-ad-frame ins.adsbygoogle > *,
+.blogs-ad-frame ins.adsbygoogle iframe {
+  max-width: 100% !important;
+}
+
+/* ---- Ensure responsive ad units scale properly ---- */
+ins.adsbygoogle[data-ad-format="auto"],
+ins.adsbygoogle[data-ad-format="fluid"],
+ins.adsbygoogle[data-ad-format="rectangle"] {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* ============================================================
+   END GLOBAL AD CONTAINER SAFETY RULES
+   ============================================================ */
