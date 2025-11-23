@@ -1287,8 +1287,8 @@
     // ====== TIMELINE RENDERING ======
 
     function renderTimelines(data) {
-      // Milestones
-      const milestones = data.entries.filter(e => e.isMilestone || e.types.includes('Checkpoint'));
+      // Milestones - Last 5 only
+      const milestones = data.entries.filter(e => e.isMilestone || e.types.includes('Checkpoint')).slice(-5).reverse();
       const milestonesHTML = milestones.map(m => {
         const journalLink = `${CONFIG.journalBaseUrl}#${m.date}`;
         return `
