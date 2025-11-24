@@ -35,7 +35,8 @@
     "publisher": { "@id": "https://thetankguide.com/#organization" }
   }
   </script>
-  <!-- Consent Mode defaults (runs after GA loader) -->
+  <script defer src="js/nav.js?v=1.1.0"></script>
+  <!-- Consent Mode defaults (runs after GA loader) -->
   <script src="/assets/js/consent-mode.js" defer></script>
   <!-- --- Google CMP (Funding Choices) START --- -->
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
@@ -64,6 +65,18 @@
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+  <div id="site-nav"></div>
+  <noscript>
+    <nav aria-label="Main navigation (fallback)">
+      <a href="/">Home</a>
+      <a href="/stocking-advisor.html">Stocking Advisor</a>
+      <a href="/gear/">Gear</a>
+      <a href="/cycling-coach/">Cycling Coach</a>
+      <a href="/media.html">Media</a>
+      <a href="/store.html">Store</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </noscript>
   <!-- Deprecated: replaced by /cycling-coach/ on 2025-11-10 -->
   <p>If you are not redirected, <a href="/cycling-coach/">visit the Cycling Coach</a>.</p>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>

@@ -25,6 +25,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="canonical" href="https://thetankguide.com/404.html" />
     <link rel="stylesheet" href="/css/main.css?v=1.5.2" />
+    <script defer src="js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (runs after GA loader) -->
   <script src="/assets/js/consent-mode.js?v=1.5.2" defer></script>
     <!-- Cloudflare Web Analytics -->
@@ -82,7 +83,20 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <main class="container">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div id="site-nav"></div>
+    <noscript>
+      <nav aria-label="Main navigation (fallback)">
+        <a href="/">Home</a>
+        <a href="/stocking-advisor.html">Stocking Advisor</a>
+        <a href="/gear/">Gear</a>
+        <a href="/cycling-coach/">Cycling Coach</a>
+        <a href="/media.html">Media</a>
+        <a href="/store.html">Store</a>
+        <a href="/about.html">About</a>
+      </nav>
+    </noscript>
+    <main class="container" id="main-content">
       <h1>Page Not Found</h1>
       <p>The page you requested could not be found.</p>
       <p><a href="/">Return to The Tank Guide homepage</a></p>
