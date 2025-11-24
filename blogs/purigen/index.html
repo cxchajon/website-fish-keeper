@@ -47,7 +47,6 @@
   <link rel="apple-touch-icon" sizes="512x512" href="/assets/img/Logo-Master-512x512.PNG">
 
   <!-- Preconnect hints for external domains -->
-  <link rel="preconnect" href="https://m.media-amazon.com">
   <link rel="preconnect" href="https://www.amazon.com">
 
   <!--#include virtual="/includes/schema-organization.html" -->
@@ -178,7 +177,77 @@
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <div id="site-nav"></div>
+  <header id="global-nav">
+    <div class="inner">
+      <button
+        id="ttg-nav-open"
+        class="hamburger"
+        type="button"
+        aria-controls="ttg-drawer"
+        aria-expanded="false"
+        aria-label="Open menu"
+        data-nav="hamburger"
+      >
+        <span class="hamburger__bars" aria-hidden="true"></span>
+      </button>
+      <a class="site-brand brand" href="/" aria-label="The Tank Guide — Home">
+        <span class="site-brand__title">The Tank Guide</span>
+        <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
+      </a>
+      <nav class="site-links links" aria-label="Primary">
+        <ul class="nav__list">
+          <li class="nav__item"><a href="/" class="nav__link" data-nav="home">Home</a></li>
+          <li class="nav__item"><a href="/stocking-advisor.html" class="nav__link" data-nav="stocking">Stocking Advisor</a></li>
+          <li class="nav__item"><a href="/gear/" class="nav__link" data-nav="gear">Gear</a></li>
+          <li class="nav__item"><a href="/cycling-coach/" class="nav__link" data-nav="params">Cycling Coach</a></li>
+          <li class="nav__item"><a href="/feature-your-tank.html" class="nav__link" data-nav="feature-your-tank">Feature Your Tank</a></li>
+          <li class="nav__item"><a href="/media.html" class="nav__link active" data-nav="media">Media</a></li>
+          <li class="nav__item"><a href="/store.html" class="nav__link" data-nav="store">Store</a></li>
+          <li class="nav__item"><a href="/about.html" class="nav__link" data-nav="about">About</a></li>
+          <li class="nav__item"><a href="/assistant.html" class="nav__link" data-nav="assistant">AI Assistant</a></li>
+        </ul>
+      </nav>
+    </div>
+    <aside
+      id="ttg-drawer"
+      aria-label="Site"
+      data-nav="drawer"
+      aria-hidden="true"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="drawer-title"
+    >
+      <h2 id="drawer-title" class="ttg-visually-hidden">Site navigation</h2>
+      <div class="drawer-head">
+        <span class="drawer-title">The Tank Guide</span>
+        <button id="drawer-close" class="drawer-close" type="button" aria-label="Close menu" data-nav="drawer-close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <nav class="drawer-links" aria-label="Mobile">
+        <ul class="nav__list nav__list--drawer">
+          <li class="nav__item"><a id="drawer-first" href="/" class="nav__link" data-nav="home">Home</a></li>
+          <li class="nav__item"><a href="/stocking-advisor.html" class="nav__link" data-nav="stocking">Stocking Advisor</a></li>
+          <li class="nav__item"><a href="/gear/" class="nav__link" data-nav="gear">Gear</a></li>
+          <li class="nav__item"><a href="/cycling-coach/" class="nav__link" data-nav="params">Cycling Coach</a></li>
+          <li class="nav__item"><a href="/feature-your-tank.html" class="nav__link" data-nav="feature-your-tank">Feature Your Tank</a></li>
+          <li class="nav__item"><a href="/media.html" class="nav__link active" data-nav="media">Media</a></li>
+          <li class="nav__item"><a href="/store.html" class="nav__link" data-nav="store">Store</a></li>
+          <li class="nav__item"><a href="/about.html" class="nav__link" data-nav="about">About</a></li>
+          <li class="nav__item"><a href="/assistant.html" class="nav__link" data-nav="assistant">AI Assistant</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <div id="ttg-overlay" data-nav="overlay" aria-hidden="true"></div>
+  </header>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.ttgInitNav) {
+        window.ttgInitNav();
+      }
+    });
+  </script>
 
   <nav aria-label="Breadcrumb" class="breadcrumb" style="max-width: 820px; margin: 20px auto 0; padding: 0 20px;">
     <ol style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.9rem; color: var(--muted, #b9b9b9);">
@@ -260,15 +329,14 @@
 
         <section class="ad-cards" aria-label="Product mentions">
           <div class="ad-card">
-            <img src="https://m.media-amazon.com/images/I/71c7GlRaoNL._UF894,1000_QL80_.jpg" alt="Seachem Purigen product image" width="200" height="200" loading="lazy" />
             <div class="txt">
-              <strong>Seachem Purigen</strong> — Polishes water clarity without altering chemistry. <a href="https://amzn.to/3J7sMye" rel="nofollow">Shop on Amazon →</a>
+              <img src="/assets/images/purigen-before-after-aquarium-filter-media.jpeg" alt="Fresh and exhausted Purigen resin compared" width="200" height="200" loading="lazy" />
+              <strong>Seachem Purigen</strong> — Polishes water clarity without altering chemistry. <a href="https://amzn.to/3J7sMye" target="_blank" rel="nofollow noopener">Shop on Amazon →</a>
             </div>
           </div>
           <div class="ad-card">
-            <img src="https://m.media-amazon.com/images/I/61JbGyLvTvL._UF894,1000_QL80_.jpg" alt="Seachem Stability product image" width="200" height="200" loading="lazy" />
             <div class="txt">
-              <strong>Seachem Stability</strong> — Helps establish and maintain a healthy biofilter. <a href="https://amzn.to/4q6U3Se" rel="nofollow">Shop on Amazon →</a>
+              <strong>Seachem Stability</strong> — Helps establish and maintain a healthy biofilter. <a href="https://amzn.to/4q6U3Se" target="_blank" rel="nofollow noopener">Shop on Amazon →</a>
             </div>
           </div>
         </section>
