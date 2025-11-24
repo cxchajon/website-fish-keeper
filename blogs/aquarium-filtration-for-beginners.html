@@ -402,6 +402,16 @@
   <!-- End Google Tag Manager (noscript) -->
   <div id="site-nav"></div>
 
+  <nav aria-label="Breadcrumb" class="breadcrumb" style="max-width: 880px; margin: 20px auto 0; padding: 0 20px;">
+    <ol style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.9rem; color: #b9b9b9;">
+      <li><a href="/" style="color: var(--blog-accent, #00c3b6); text-decoration: none;">Home</a></li>
+      <li style="color: #666;">/</li>
+      <li><a href="/media.html" style="color: var(--blog-accent, #00c3b6); text-decoration: none;">Media</a></li>
+      <li style="color: #666;">/</li>
+      <li aria-current="page">Aquarium Filtration for Beginners</li>
+    </ol>
+  </nav>
+
   <main class="article-layout">
     <article>
       <a class="back-link" href="/blogs/" aria-label="Back to all blog posts">← Back to all posts</a>
@@ -679,8 +689,63 @@
 
         <div class="section-split" aria-hidden="true"></div>
       </div>
+
+      <section class="related-articles" style="margin-top: 2rem; padding: 1.5rem; background: rgba(25,25,25,0.35); border-radius: 14px;">
+        <h2 style="margin-top: 0; color: #fff;">Related Articles</h2>
+        <div class="related-grid" style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+
+          <article class="related-card" style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+            <a href="/blogs/nitrogen-cycle/" style="text-decoration: none; color: inherit;">
+              <h3 style="margin: 0 0 0.5rem; color: var(--blog-accent, #00c3b6); font-size: 1.1rem;">Understanding the Nitrogen Cycle</h3>
+              <p style="margin: 0; color: #b9b9b9; font-size: 0.9rem;">Deep dive into the biological foundation of aquarium filtration</p>
+            </a>
+          </article>
+
+          <article class="related-card" style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+            <a href="/blogs/betta-fish-in-a-community-tank.html" style="text-decoration: none; color: inherit;">
+              <h3 style="margin: 0 0 0.5rem; color: var(--blog-accent, #00c3b6); font-size: 1.1rem;">Betta Fish in a Community Tank</h3>
+              <p style="margin: 0; color: #b9b9b9; font-size: 0.9rem;">How to choose compatible tankmates and set up proper filtration</p>
+            </a>
+          </article>
+
+          <article class="related-card" style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+            <a href="/blogs/purigen/" style="text-decoration: none; color: inherit;">
+              <h3 style="margin: 0 0 0.5rem; color: var(--blog-accent, #00c3b6); font-size: 1.1rem;">Seachem Purigen Guide</h3>
+              <p style="margin: 0; color: #b9b9b9; font-size: 0.9rem;">Alternative filter media for crystal-clear water</p>
+            </a>
+          </article>
+
+        </div>
+      </section>
     </article>
   </main>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://thetankguide.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Media",
+        "item": "https://thetankguide.com/media.html"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Aquarium Filtration for Beginners",
+        "item": "https://thetankguide.com/blogs/aquarium-filtration-for-beginners.html"
+      }
+    ]
+  }
+  </script>
 
   <div class="blog-footer-fade" aria-hidden="true"></div>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>

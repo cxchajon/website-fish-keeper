@@ -1,140 +1,17 @@
-# As a condition of accessing this website, you agree to abide by the following
-# content signals: (a) content-signal = yes means collection allowed.
+User-agent: *
+Allow: /
 
-# =============================================================================
-# GOOGLE CRAWLERS - CRITICAL FOR ADSENSE & SEO
-# =============================================================================
+# Sitemaps
+Sitemap: https://thetankguide.com/sitemap.xml
 
-# General Google web crawler (Search & AI Retrieval)
+# Block admin/config if needed
+Disallow: /admin/
+Disallow: /.git/
+Disallow: /includes/
+
+# Allow search engines full access
 User-agent: Googlebot
 Allow: /
 
-# Google Inspection Tool (Used by Gemini live audits & Search Console)
-User-agent: Google-InspectionTool
-Allow: /
-
-# AdSense content verification (CRITICAL)
-User-agent: Mediapartners-Google
-Allow: /
-
-# AdSense quality checker
-User-agent: AdsBot-Google
-Allow: /
-
-# AdSense mobile crawler
-User-agent: AdsBot-Google-Mobile
-Allow: /
-
-# Google Image/Video/News
-User-agent: Googlebot-Image
-Allow: /
-User-agent: Googlebot-Video
-Allow: /
-User-agent: Googlebot-News
-Allow: /
-
-# =============================================================================
-# OTHER MAJOR SEARCH ENGINES
-# =============================================================================
-
 User-agent: Bingbot
 Allow: /
-
-User-agent: Slurp
-Allow: /
-
-User-agent: DuckDuckBot
-Allow: /
-
-User-agent: YandexBot
-Allow: /
-
-# =============================================================================
-# BENEFICIAL AI CRAWLERS
-# =============================================================================
-
-# Anthropic (Claude)
-User-agent: ClaudeBot
-Allow: /
-User-agent: Anthropic-AI
-Allow: /
-
-# OpenAI (ChatGPT)
-User-agent: GPTBot
-Allow: /
-User-agent: ChatGPT-User
-Allow: /
-
-# Perplexity AI
-User-agent: PerplexityBot
-Allow: /
-
-# Cohere AI
-User-agent: cohere-ai
-Allow: /
-
-# =============================================================================
-# AGGRESSIVE COMMERCIAL SCRAPERS - BLOCKED
-# =============================================================================
-
-User-agent: Amazonbot
-Disallow: /
-
-User-agent: Applebot-Extended
-Disallow: /
-
-User-agent: Bytespider
-Disallow: /
-
-User-agent: CCBot
-Disallow: /
-
-User-agent: meta-externalagent
-Disallow: /
-
-User-agent: FacebookBot
-Disallow: /
-
-User-agent: Diffbot
-Disallow: /
-
-User-agent: ImagesiftBot
-Disallow: /
-
-User-agent: Omgilibot
-Disallow: /
-
-User-agent: SemrushBot
-Disallow: /
-
-User-agent: AhrefsBot
-Disallow: /
-
-User-agent: MJ12bot
-Disallow: /
-
-User-agent: DotBot
-Disallow: /
-
-# =============================================================================
-# PROTECTED DIRECTORIES
-# =============================================================================
-# Note: Do not block .json files generally, as this breaks tool data loading.
-
-User-agent: *
-Disallow: /prototype/
-Disallow: /admin/
-Disallow: /api/
-
-# =============================================================================
-# DEFAULT POLICY (Must be last)
-# =============================================================================
-
-User-agent: *
-Allow: /
-
-# =============================================================================
-# SITEMAP
-# =============================================================================
-
-Sitemap: https://thetankguide.com/sitemap.xml
