@@ -123,3 +123,7 @@ Next: Optional external structured data test and periodic re-audit with Gemini.
 Scope: Scanned all public pages, updated sitemap.xml and robots.txt alignment for current production URLs.
 Result: Added assistant.html and journal-dashboard.html to sitemap; removed prototype-home.html (now has noindex). Sitemap and robots now accurately reflect live, indexable content and match canonical tags. 27 total URLs.
 Next: Optional — resubmit sitemap in Google Search Console and monitor indexing.
+[2025-11-24 | The Tank Guide | Blog Nav Fix]
+Scope: Unified blog templates with global nav/footer and removed duplicate “Site navigation” block on /blogs/*.
+Result: Blog pages now share the same header/footer and responsive nav as core site pages; duplication removed.
+Next: Extend styling refinements to future blog templates and confirm new posts automatically inherit the correct layout.
