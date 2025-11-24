@@ -344,6 +344,16 @@
   <!-- End Google Tag Manager (noscript) -->
   <div id="site-nav"></div>
 
+  <nav aria-label="Breadcrumb" class="breadcrumb" style="max-width: 880px; margin: 20px auto 0; padding: 0 20px;">
+    <ol style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.9rem; color: #b9b9b9;">
+      <li><a href="/" style="color: var(--blog-accent, #00c3b6); text-decoration: none;">Home</a></li>
+      <li style="color: #666;">/</li>
+      <li><a href="/media.html" style="color: var(--blog-accent, #00c3b6); text-decoration: none;">Media</a></li>
+      <li style="color: #666;">/</li>
+      <li aria-current="page">Betta Fish in a Community Tank</li>
+    </ol>
+  </nav>
+
   <main class="article-layout">
     <article>
       <a class="back-link" href="/blogs/" aria-label="Back to all blog posts">← Back to all posts</a>
@@ -450,10 +460,10 @@
         <div class="section-split" aria-hidden="true"></div>
 
         <h2>🌿 Why Bettas Belong in Planted Communities</h2>
-        <p class="tg-block">Here’s what made it work:</p>
+        <p class="tg-block">Here's what made it work:</p>
         <ul class="tg-block">
           <li>✅ <strong>Give space</strong> — especially horizontal swimming room. Bettas breathe from the surface using their labyrinth organ, but they patrol horizontally across their territory.</li>
-          <li>✅ <strong>Keep water pristine.</strong> Don’t rely on their “hardy” label; they tolerate poor conditions briefly, but thrive only with consistency. Ammonia spikes and temperature swings stress them quickly.</li>
+          <li>✅ <strong>Keep water pristine.</strong> Don't rely on their "hardy" label; they tolerate poor conditions briefly, but thrive only with consistency. Ammonia spikes and temperature swings stress them quickly. Proper filtration is crucial for community tanks. Learn more in our <a href="/blogs/aquarium-filtration-for-beginners.html">complete filtration guide</a>.</li>
           <li>✅ <strong>Provide plants with broad leaves</strong> — like java fern or anubias — they love to rest or perch on them.</li>
           <li>✅ <strong>Avoid fin-nippers or flashy fish</strong> — tiger barbs, male guppies, angelfish, or other long-finned species often trigger aggression.</li>
           <li>✅ <strong>Add the betta last.</strong> Let the community aquarium setup establish first so the betta blends in rather than claiming the whole tank.</li>
@@ -496,6 +506,34 @@
   </noscript>
 
   <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://thetankguide.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Media",
+        "item": "https://thetankguide.com/media.html"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Betta Fish in a Community Tank",
+        "item": "https://thetankguide.com/blogs/betta-fish-in-a-community-tank.html"
+      }
+    ]
+  }
+  </script>
+
 <!-- === TTG CMP Consent Bridge START === -->
 <script>
 (function(){
