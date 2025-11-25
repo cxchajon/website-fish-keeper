@@ -208,6 +208,9 @@ body.theme-light {
   font-size: 0.95rem;
   padding: 12px 0;
   position: relative;
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
 #global-nav .links .nav__link:hover,
@@ -480,6 +483,9 @@ body.theme-light {
   text-decoration: none;
   border-radius: 12px;
   transition: background 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
 #global-nav #ttg-drawer .drawer-links .nav__link:hover,
