@@ -18,8 +18,6 @@
   const prevBtn = document.getElementById('prevBtn');
   const errorBox = document.getElementById('errorMessage');
   const duplicateWarning = document.getElementById('duplicateWarning');
-  const blogOptions = form.querySelector('.blog-options');
-  const videoOptions = form.querySelector('.video-options');
   const pricingList = document.getElementById('pricingBreakdown');
   const reviewList = document.getElementById('reviewList');
   const totalDisplay = document.getElementById('totalPriceDisplay');
@@ -34,10 +32,7 @@
   const extraPhotosAdditional = document.getElementById('extraPhotosAdditional');
   const additionalTanks = document.getElementById('additionalTanks');
   const checkoutMessage = document.getElementById('checkoutMessage');
-  const typeCards = Array.from(form.querySelectorAll('.selection-card--choice input[name="submission_type"]'));
-  const typeChoiceGrid = form.querySelector('.ft-step[data-step="1"] .selection-grid');
-  const environmentGrid = form.querySelector('.environment-grid');
-  const environmentCards = Array.from(form.querySelectorAll('.environment-option input[name="environment"]'));
+  const confirmationDetails = document.getElementById('confirmationDetails');
 
   let currentStep = 1;
 
@@ -54,47 +49,13 @@
       return;
     }
 
-    if (stepNumber === 1 && !form.querySelector('input[name="submission_type"]:checked')) {
-      nextBtn.disabled = true;
-    } else {
-      nextBtn.disabled = false;
-    }
-  }
-
-  function updateTypeSelectionUI() {
-    typeCards.forEach((input) => {
-      const card = input.closest('.selection-card--choice');
-      if (!card) return;
-      const isSelected = input.checked;
-      card.classList.toggle('is-selected', isSelected);
-      card.setAttribute('aria-checked', isSelected ? 'true' : 'false');
-    });
-    updateNextButtonState();
-  }
-
-  function updateEnvironmentSelectionUI() {
-    environmentCards.forEach((input) => {
-      const card = input.closest('.selection-card--choice');
-      const isSelected = input.checked;
-      if (!card) return;
-      card.classList.toggle('is-selected', isSelected);
-      card.setAttribute('aria-checked', isSelected ? 'true' : 'false');
-    });
+    nextBtn.disabled = false;
   }
 
   function formatEnvironment(value) {
     if (value === 'planted') return 'Planted';
     if (value === 'unplanted') return 'Unplanted';
     return value || '—';
-  }
-
-  function syncTypeVisibility() {
-    const val = (form.querySelector('input[name="submission_type"]:checked') || {}).value;
-    const showBlog = !val || val === 'blog';
-    const showVideo = !val || val === 'video';
-    if (blogOptions) blogOptions.style.display = showBlog ? 'block' : 'none';
-    if (videoOptions) videoOptions.style.display = showVideo ? 'block' : 'none';
-    updateTypeSelectionUI();
   }
 
   function setStepVisibility(stepNumber) {
@@ -176,29 +137,81 @@
   function renderSelectedFiles() {
     if (!selectedFiles || !photoUpload) return;
     selectedFiles.innerHTML = '';
+
     const files = Array.from(photoUpload.files || []);
+
     if (!files.length) {
       const help = document.createElement('p');
       help.className = 'ft-help';
-      help.textContent = 'No files selected yet.';
+      help.textContent = 'No photos selected yet.';
       selectedFiles.appendChild(help);
       return;
     }
 
-    files.slice(0, 10).forEach((file) => {
+    const status = document.createElement('p');
+    status.className = 'ft-help';
+    status.style.marginBottom = '10px';
+    status.textContent = `${files.length} photo${files.length !== 1 ? 's' : ''} selected`;
+    selectedFiles.appendChild(status);
+
+    const grid = document.createElement('div');
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(100px, 1fr))';
+    grid.style.gap = '8px';
+
+    files.slice(0, 10).forEach((file, i) => {
       const thumb = document.createElement('div');
       thumb.className = 'thumb';
-      thumb.textContent = file.name;
-      selectedFiles.appendChild(thumb);
+      thumb.style.position = 'relative';
+      thumb.style.aspectRatio = '1';
+      thumb.style.borderRadius = '8px';
+      thumb.style.overflow = 'hidden';
+      thumb.style.background = 'rgba(255,255,255,0.05)';
+      thumb.style.display = 'flex';
+      thumb.style.alignItems = 'center';
+      thumb.style.justifyContent = 'center';
+
+      if (file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.src = URL.createObjectURL(file);
+        thumb.appendChild(img);
+
+        if (i === 0) {
+          const badge = document.createElement('div');
+          badge.textContent = 'Hero';
+          badge.style.position = 'absolute';
+          badge.style.bottom = '4px';
+          badge.style.right = '4px';
+          badge.style.background = 'rgba(16,185,129,0.9)';
+          badge.style.color = 'white';
+          badge.style.padding = '2px 6px';
+          badge.style.borderRadius = '4px';
+          badge.style.fontSize = '0.7rem';
+          badge.style.fontWeight = '600';
+          thumb.appendChild(badge);
+        }
+      } else {
+        thumb.textContent = file.name;
+        thumb.style.fontSize = '0.75rem';
+        thumb.style.padding = '4px';
+        thumb.style.textAlign = 'center';
+      }
+
+      grid.appendChild(thumb);
     });
+
+    selectedFiles.appendChild(grid);
   }
 
   function computePricing() {
-    const type = (form.querySelector('input[name="submission_type"]:checked') || {}).value || '';
+    clampAdditional();
     const isFirst = (form.querySelector('input[name="is_first_tank"]:checked') || {}).value !== 'no';
     const additionalCount = Math.max(0, parseInt(additionalTanks.value || '0', 10));
-    const wantsEditing = type === 'blog' && (form.querySelector('input[name="text_source"]:checked') || {}).value === 'fklc';
-    const wantsExtraPhotos = type === 'blog' && extraPhotos.checked;
+    const wantsEditing = (form.querySelector('input[name="text_source"]:checked') || {}).value === 'fklc';
+    const wantsExtraPhotos = extraPhotos.checked;
     const wantsAdditionalExtra = additionalCount > 0 && extraPhotosAdditional.checked;
 
     let total = 0;
@@ -259,11 +272,9 @@
   }
 
   function updateReview() {
-    const type = (form.querySelector('input[name="submission_type"]:checked') || {}).value || '—';
     const envValue = (form.querySelector('input[name="environment"]:checked') || {}).value || '';
     const env = formatEnvironment(envValue);
     const lines = [
-      `Feature Type: ${type}`,
       `Name: ${form.name.value.trim() || '—'}`,
       `Email: ${form.email.value.trim() || '—'}`,
       `Tank Name: ${form.tank_name.value.trim() || '—'}`,
@@ -276,16 +287,11 @@
       if (val.trim()) lines.push(`${id.charAt(0).toUpperCase() + id.slice(1)}: ${val.trim()}`);
     });
 
-    if (type === 'blog') {
-      const textChoice = (form.querySelector('input[name="text_source"]:checked') || {}).value;
-      lines.push(`Story: ${textChoice === 'fklc' ? 'FKLC writes with editing package' : 'Self-written'}`);
-      if (extraPhotos.checked) lines.push('Extra photos: +2 slots selected');
-      const uploadedCount = photoUpload.files ? photoUpload.files.length : 0;
-      lines.push(`Photos selected: ${uploadedCount} file(s)`);
-    } else {
-      lines.push(`Video link: ${(form.video_link || {}).value || '—'}`);
-      if ((form.video_notes || {}).value) lines.push(`Notes: ${form.video_notes.value}`);
-    }
+    const textChoice = (form.querySelector('input[name="text_source"]:checked') || {}).value;
+    lines.push(`Story: ${textChoice === 'fklc' ? 'FKLC writes with editing package' : 'Self-written'}`);
+    if (extraPhotos.checked) lines.push('Extra photos: +2 slots selected');
+    const uploadedCount = photoUpload.files ? photoUpload.files.length : 0;
+    lines.push(`Photos selected: ${uploadedCount} file(s)`);
 
     const additionalCount = Math.max(0, parseInt(additionalTanks.value || '0', 10));
     if ((form.querySelector('input[name="is_first_tank"]:checked') || {}).value === 'no') {
@@ -305,10 +311,8 @@
   function validateStep(step) {
     setError('');
     if (step === 1) {
-      if (!form.querySelector('input[name="submission_type"]:checked')) {
-        setError('Please choose a feature type to continue.');
-        return false;
-      }
+      // Step 1 is informational only, always valid
+      return true;
     } else if (step === 2) {
       const requiredFields = ['name', 'email', 'tank_name', 'tank_size'];
       for (const field of requiredFields) {
@@ -333,18 +337,15 @@
       }
       checkDuplicates();
     } else if (step === 3) {
-      const type = (form.querySelector('input[name="submission_type"]:checked') || {}).value;
-      if (type === 'blog') {
-        const count = photoUpload.files ? photoUpload.files.length : 0;
-        if (count < 3) {
-          setError('Please add at least 3 photos for a blog feature.');
-          return false;
-        }
-      } else if (type === 'video') {
-        if (!form.video_link.value.trim()) {
-          setError('Add your ready-to-publish video link.');
-          return false;
-        }
+      const count = photoUpload.files ? photoUpload.files.length : 0;
+      if (count < 3) {
+        setError('Please upload at least 3 photos for your tank feature.');
+        return false;
+      }
+
+      if (!form.querySelector('input[name="text_source"]:checked')) {
+        setError('Please select how you want to create your story.');
+        return false;
       }
     } else if (step === 4) {
       const requiredBoxes = ['licenseConfirm', 'guidelinesConfirm', 'contactConsent', 'pricingConfirm'];
@@ -370,53 +371,71 @@
     setStepVisibility(currentStep);
   }
 
-  function launchStripePlaceholder(total) {
-    if (!checkoutMessage) return;
-    if (total > 0) {
-      checkoutMessage.textContent = 'Stripe Checkout integration coming soon. We will route paid submissions once payment is enabled.';
-    } else {
-      checkoutMessage.textContent = 'No payment required — your submission was queued successfully.';
-    }
-  }
-
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!validateStep(5)) return;
+
+    clampAdditional();
     updateReview();
     computePricing();
-    clampAdditional();
 
     const email = form.email.value.trim();
     const tankName = form.tank_name.value.trim();
     const size = form.tank_size.value.trim();
+
+    // Store for duplicate detection
     const stored = JSON.parse(localStorage.getItem('ttg-feature-submissions') || '[]');
     stored.push({ email, tank: tankName, size });
     localStorage.setItem('ttg-feature-submissions', JSON.stringify(stored.slice(-10)));
 
-    const totalValue = parseFloat(totalPrice.value || '0') || 0;
-    const submissionData = {};
     const fd = new FormData(form);
-    fd.forEach((value, key) => {
-      if (submissionData[key]) {
-        submissionData[key] = [].concat(submissionData[key], value);
-      } else {
-        submissionData[key] = value;
-      }
-    });
 
-    console.info('Feature Your Tank submission', submissionData);
+    console.info('Feature Your Tank submission', Object.fromEntries(fd));
 
-    fetch(form.action, { method: 'POST', body: fd, headers: { Accept: 'application/json' } })
-      .then((resp) => {
-        if (!resp.ok) throw new Error('Submission failed');
-        currentStep = 6;
-        setStepVisibility(currentStep);
-        setError('');
-        launchStripePlaceholder(totalValue);
-        return resp;
-      })
-      .catch(() => {
-        setError('There was a problem sending your submission. Please try again.');
+    try {
+      // Call new API endpoint
+      const response = await fetch('https://feature-tank-api.thetankguide.workers.dev/api/submissions/create', {
+        method: 'POST',
+        body: fd,
+        credentials: 'include',
       });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Submission failed');
+      }
+
+      const data = await response.json();
+
+      // Move to confirmation step
+      currentStep = 6;
+      setStepVisibility(currentStep);
+      setError('');
+
+      // Handle payment redirect or show confirmation
+      if (data.checkout_url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.checkout_url;
+      } else {
+        // Free submission - show confirmation
+        if (checkoutMessage) {
+          checkoutMessage.textContent = 'Your submission is 100% free! We\'ll email you within 5-7 days with next steps.';
+        }
+        if (confirmationDetails) {
+          confirmationDetails.innerHTML = `
+            <p class="ft-help"><strong>Submission ID:</strong> ${data.submission_id}</p>
+            <p class="ft-help"><strong>What happens next:</strong></p>
+            <ul style="margin:8px 0 0 20px;color:#e5e7eb;">
+              <li>We\'ll review your submission within 2-4 weeks</li>
+              <li>You\'ll receive an email confirmation shortly</li>
+              <li>Your permanent page will be published after approval</li>
+            </ul>
+          `;
+        }
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      setError(error.message || 'There was a problem sending your submission. Please try again.');
+    }
   }
 
   if (photoUploadTrigger && photoUpload) {
@@ -427,47 +446,15 @@
     photoUpload.addEventListener('change', renderSelectedFiles);
   }
 
-  environmentCards.forEach((input) => {
-    input.addEventListener('change', updateEnvironmentSelectionUI);
-  });
-
   form.addEventListener('change', (event) => {
-    if (event.target.name === 'submission_type') {
-      syncTypeVisibility();
-    }
     if (
-      ['submission_type', 'text_source', 'is_first_tank', 'additional_tanks', 'extra_photos', 'extra_photos_additional']
-        .includes(event.target.name)
+      ['text_source', 'is_first_tank', 'additional_tanks', 'extra_photos', 'extra_photos_additional'].includes(
+        event.target.name
+      )
     ) {
       computePricing();
     }
   });
-
-  if (typeChoiceGrid) {
-    typeChoiceGrid.addEventListener('click', (event) => {
-      const card = event.target.closest('.selection-card--choice');
-      if (!card || !typeChoiceGrid.contains(card)) return;
-      const input = card.querySelector('input[name="submission_type"]');
-      if (input) {
-        input.checked = true;
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-        updateTypeSelectionUI();
-      }
-    });
-  }
-
-  if (environmentGrid) {
-    environmentGrid.addEventListener('click', (event) => {
-      const card = event.target.closest('.selection-card--choice');
-      if (!card || !environmentGrid.contains(card)) return;
-      const input = card.querySelector('input[name="environment"]');
-      if (input) {
-        input.checked = true;
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-        updateEnvironmentSelectionUI();
-      }
-    });
-  }
 
   nextBtn.addEventListener('click', () => {
     if (currentStep === 5) {
@@ -483,10 +470,7 @@
     handleSubmit();
   });
 
-  syncTypeVisibility();
   renderSelectedFiles();
   computePricing();
   setStepVisibility(currentStep);
-  updateTypeSelectionUI();
-  updateEnvironmentSelectionUI();
 })();
