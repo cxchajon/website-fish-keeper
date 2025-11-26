@@ -373,6 +373,35 @@
       cursor: pointer;
     }
 
+    .selection-card--choice {
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .selection-card--choice::before {
+      content: '';
+      display: block;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: -4px -2px 6px;
+      transition: background-color 0.2s ease;
+    }
+
+    .selection-card--choice.is-selected {
+      border-color: var(--accent, #10b981);
+      box-shadow: 0 0 0 3px var(--accent-weak, rgba(16, 185, 129, 0.35)), 0 12px 28px rgba(0, 0, 0, 0.35);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .selection-card--choice.is-selected::before { background: var(--accent, #10b981); }
+
+    .selection-card--choice:focus-within {
+      outline: 2px solid rgba(118, 198, 255, 0.9);
+      outline-offset: 2px;
+    }
+
     .selection-card input { accent-color: var(--accent, #10b981); }
     .selection-title { font-weight: 700; font-size: 1.05rem; }
     .selection-copy { margin: 0; color: var(--muted, #a1a1aa); }
@@ -613,14 +642,14 @@
           <section class="ft-step" data-step="1" aria-label="Step 1: Choose feature type">
             <p class="ft-help">Choose the path that matches what you want to publish.</p>
             <div class="selection-grid">
-              <label class="selection-card">
+              <label class="selection-card selection-card--choice">
                 <input type="radio" name="submission_type" value="blog" required />
                 <div>
                   <div class="selection-title">Blog Feature</div>
                   <p class="selection-copy">Photos + written story. Supports editing credits and extra photos.</p>
                 </div>
               </label>
-              <label class="selection-card">
+              <label class="selection-card selection-card--choice">
                 <input type="radio" name="submission_type" value="video" />
                 <div>
                   <div class="selection-title">Video Feature</div>
