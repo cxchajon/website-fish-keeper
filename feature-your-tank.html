@@ -682,12 +682,19 @@
               </div>
             </div>
 
-            <div class="ft-field">
+            <div class="ft-field" role="radiogroup" aria-label="Environment">
               <span class="ft-label">Environment</span>
-              <div class="radio-row">
-                <label><input type="radio" name="environment" value="freshwater" required /> Freshwater</label>
-                <label><input type="radio" name="environment" value="saltwater" /> Saltwater</label>
-                <label><input type="radio" name="environment" value="brackish" /> Brackish</label>
+              <div class="selection-grid environment-grid">
+                <label class="selection-card selection-card--choice environment-option" role="radio" aria-checked="false">
+                  <input type="radio" name="environment" value="planted" required />
+                  <div class="selection-title">Planted</div>
+                  <p class="selection-copy">Live plants are a core part of the aquascape.</p>
+                </label>
+                <label class="selection-card selection-card--choice environment-option" role="radio" aria-checked="false">
+                  <input type="radio" name="environment" value="unplanted" />
+                  <div class="selection-title">Unplanted</div>
+                  <p class="selection-copy">No live plants, or only incidental plants.</p>
+                </label>
               </div>
             </div>
 

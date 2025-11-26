@@ -36,6 +36,8 @@
   const checkoutMessage = document.getElementById('checkoutMessage');
   const typeCards = Array.from(form.querySelectorAll('.selection-card--choice input[name="submission_type"]'));
   const typeChoiceGrid = form.querySelector('.ft-step[data-step="1"] .selection-grid');
+  const environmentGrid = form.querySelector('.environment-grid');
+  const environmentCards = Array.from(form.querySelectorAll('.environment-option input[name="environment"]'));
 
   let currentStep = 1;
 
@@ -68,6 +70,22 @@
       card.setAttribute('aria-checked', isSelected ? 'true' : 'false');
     });
     updateNextButtonState();
+  }
+
+  function updateEnvironmentSelectionUI() {
+    environmentCards.forEach((input) => {
+      const card = input.closest('.selection-card--choice');
+      const isSelected = input.checked;
+      if (!card) return;
+      card.classList.toggle('is-selected', isSelected);
+      card.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+    });
+  }
+
+  function formatEnvironment(value) {
+    if (value === 'planted') return 'Planted';
+    if (value === 'unplanted') return 'Unplanted';
+    return value || '—';
   }
 
   function syncTypeVisibility() {
@@ -242,7 +260,8 @@
 
   function updateReview() {
     const type = (form.querySelector('input[name="submission_type"]:checked') || {}).value || '—';
-    const env = (form.querySelector('input[name="environment"]:checked') || {}).value || '—';
+    const envValue = (form.querySelector('input[name="environment"]:checked') || {}).value || '';
+    const env = formatEnvironment(envValue);
     const lines = [
       `Feature Type: ${type}`,
       `Name: ${form.name.value.trim() || '—'}`,
@@ -408,6 +427,10 @@
     photoUpload.addEventListener('change', renderSelectedFiles);
   }
 
+  environmentCards.forEach((input) => {
+    input.addEventListener('change', updateEnvironmentSelectionUI);
+  });
+
   form.addEventListener('change', (event) => {
     if (event.target.name === 'submission_type') {
       syncTypeVisibility();
@@ -433,6 +456,19 @@
     });
   }
 
+  if (environmentGrid) {
+    environmentGrid.addEventListener('click', (event) => {
+      const card = event.target.closest('.selection-card--choice');
+      if (!card || !environmentGrid.contains(card)) return;
+      const input = card.querySelector('input[name="environment"]');
+      if (input) {
+        input.checked = true;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        updateEnvironmentSelectionUI();
+      }
+    });
+  }
+
   nextBtn.addEventListener('click', () => {
     if (currentStep === 5) {
       handleSubmit();
@@ -452,4 +488,5 @@
   computePricing();
   setStepVisibility(currentStep);
   updateTypeSelectionUI();
+  updateEnvironmentSelectionUI();
 })();
