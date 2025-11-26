@@ -403,25 +403,28 @@
     }
 
     .radio-group {
-      display: grid;
-      gap: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
     }
 
     .radio-option {
-      display: grid;
-      grid-template-columns: 24px 1fr;
+      display: flex;
+      align-items: flex-start;
       gap: 12px;
-      align-items: start;
-      padding: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.03);
+      padding: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
       cursor: pointer;
-      transition: border-color 0.2s ease, background-color 0.2s ease;
+      transition: all 0.2s ease;
+      position: relative;
     }
 
     .radio-option:hover {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.25);
     }
 
     .radio-option input[type="radio"] {
@@ -429,23 +432,35 @@
       height: 20px;
       margin-top: 2px;
       cursor: pointer;
-      accent-color: var(--accent, #10b981);
+      flex-shrink: 0;
+      accent-color: #10b981;
     }
 
-    .radio-label {
+    .radio-option input[type="radio"]:checked + .radio-content {
+      color: rgba(241, 246, 255, 1);
+    }
+
+    .radio-option:has(input[type="radio"]:checked) {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .radio-content {
       display: flex;
       flex-direction: column;
       gap: 4px;
+      flex: 1;
     }
 
     .radio-title {
       font-weight: 600;
+      font-size: 1.05rem;
       color: rgba(241, 246, 255, 0.95);
     }
 
     .radio-desc {
       font-size: 0.9rem;
-      color: var(--muted, #a1a1aa);
+      color: rgba(161, 161, 170, 0.9);
       line-height: 1.4;
     }
 
@@ -632,40 +647,6 @@
         <div class="pill">💳 Stripe Checkout (test mode) for paid add-ons</div>
       </div>
 
-      <section aria-labelledby="addon-title" style="margin-top:18px;">
-        <h2 id="addon-title" class="ft-title">Optional Add-On Services</h2>
-        <p class="tiny" style="margin-bottom:12px;">
-          You can optionally add extra services to your tank feature. These small add-ons help us cover hosting, editing time,
-          and long-term maintenance, while giving your tank even more visibility.
-        </p>
-        <div class="selection-grid">
-          <div class="selection-card">
-            <div class="selection-title">Additional Tank Feature</div>
-            <p class="selection-copy">Add another tank to your Feature Your Tank spotlight. Each additional tank gets its own permanent page with professional editing and up to 3 rounds of revisions.</p>
-            <p class="selection-copy"><strong>Price:</strong> $2 (one-time)</p>
-            <div class="upload-actions" style="margin:8px 0 0;">
-              <a class="btn-primary" href="#" data-stripe-product-id="prod_TUSoZwYlU4LdKU" data-stripe-price-id="price_1SXTswDHdZPeBj86YLBay2kY">Add Additional Tank</a>
-            </div>
-          </div>
-          <div class="selection-card">
-            <div class="selection-title">Tank Feature – Extra Photos</div>
-            <p class="selection-copy">Upgrade from 3 photos to 5 photos for your featured tank page. Includes hosting and storage for two additional high-quality images.</p>
-            <p class="selection-copy"><strong>Price:</strong> $1 (one-time)</p>
-            <div class="upload-actions" style="margin:8px 0 0;">
-              <a class="btn-primary" href="#" data-stripe-product-id="prod_TUSniVrHoD1vbx" data-stripe-price-id="price_1SXTreDHdZPeBj86pb1aK1Qo">Add Extra Photos</a>
-            </div>
-          </div>
-          <div class="selection-card">
-            <div class="selection-title">Tank Feature – Editing Package</div>
-            <p class="selection-copy">Send your notes, rambles, or bullet points — we’ll turn them into a polished, readable story for your tank feature. Includes the first draft plus up to 3 revision rounds. Your editing credit stays tied to your tank forever, so you can request updates later.</p>
-            <p class="selection-copy"><strong>Price:</strong> $1 (one-time)</p>
-            <div class="upload-actions" style="margin:8px 0 0;">
-              <a class="btn-primary" href="#" data-stripe-product-id="prod_TUSlFMdIqwU0TR" data-stripe-price-id="price_1SXTqDDHdZPeBj86fgxbsIqU">Add Editing Package</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section id="feature-tank-form" class="ft-wrap" aria-labelledby="ft-title">
         <h2 id="ft-title" class="ft-title">Start Your Submission</h2>
 
@@ -732,19 +713,19 @@
               </div>
             </div>
 
-            <div class="ft-field" role="radiogroup" aria-label="Environment">
+            <div class="ft-field">
               <span class="ft-label">Environment *</span>
-              <div class="radio-group">
+              <div class="radio-group" role="radiogroup" aria-label="Environment">
                 <label class="radio-option">
                   <input type="radio" name="environment" value="planted" required />
-                  <span class="radio-label">
+                  <span class="radio-content">
                     <span class="radio-title">Planted</span>
                     <span class="radio-desc">Live plants are a core part</span>
                   </span>
                 </label>
                 <label class="radio-option">
                   <input type="radio" name="environment" value="unplanted" />
-                  <span class="radio-label">
+                  <span class="radio-content">
                     <span class="radio-title">Unplanted</span>
                     <span class="radio-desc">No live plants or only incidental</span>
                   </span>
@@ -776,6 +757,40 @@
           </section>
 
           <section class="ft-step" data-step="3" aria-label="Step 3: Feature options">
+            <section aria-labelledby="addon-title" class="addon-section">
+              <h2 id="addon-title" class="ft-title">Optional Add-On Services</h2>
+              <p class="tiny" style="margin-bottom:12px;">
+                You can optionally add extra services to your tank feature. These small add-ons help us cover hosting, editing time,
+                and long-term maintenance, while giving your tank even more visibility.
+              </p>
+              <div class="selection-grid">
+                <div class="selection-card">
+                  <div class="selection-title">Additional Tank Feature</div>
+                  <p class="selection-copy">Add another tank to your Feature Your Tank spotlight. Each additional tank gets its own permanent page with professional editing and up to 3 rounds of revisions.</p>
+                  <p class="selection-copy"><strong>Price:</strong> $2 (one-time)</p>
+                  <div class="upload-actions" style="margin:8px 0 0;">
+                    <a class="btn-primary" href="#" data-stripe-product-id="prod_TUSoZwYlU4LdKU" data-stripe-price-id="price_1SXTswDHdZPeBj86YLBay2kY">Add Additional Tank</a>
+                  </div>
+                </div>
+                <div class="selection-card">
+                  <div class="selection-title">Tank Feature – Extra Photos</div>
+                  <p class="selection-copy">Upgrade from 3 photos to 5 photos for your featured tank page. Includes hosting and storage for two additional high-quality images.</p>
+                  <p class="selection-copy"><strong>Price:</strong> $1 (one-time)</p>
+                  <div class="upload-actions" style="margin:8px 0 0;">
+                    <a class="btn-primary" href="#" data-stripe-product-id="prod_TUSniVrHoD1vbx" data-stripe-price-id="price_1SXTreDHdZPeBj86pb1aK1Qo">Add Extra Photos</a>
+                  </div>
+                </div>
+                <div class="selection-card">
+                  <div class="selection-title">Tank Feature – Editing Package</div>
+                  <p class="selection-copy">Send your notes, rambles, or bullet points — we’ll turn them into a polished, readable story for your tank feature. Includes the first draft plus up to 3 revision rounds. Your editing credit stays tied to your tank forever, so you can request updates later.</p>
+                  <p class="selection-copy"><strong>Price:</strong> $1 (one-time)</p>
+                  <div class="upload-actions" style="margin:8px 0 0;">
+                    <a class="btn-primary" href="#" data-stripe-product-id="prod_TUSlFMdIqwU0TR" data-stripe-price-id="price_1SXTqDDHdZPeBj86fgxbsIqU">Add Editing Package</a>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             <div class="blog-options" data-option="blog">
               <div class="ft-field">
                 <label for="photoUpload" class="ft-label">Upload Photos (3 required)</label>

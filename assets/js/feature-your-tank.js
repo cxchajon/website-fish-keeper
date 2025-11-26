@@ -36,6 +36,18 @@
 
   let currentStep = 1;
 
+  document.querySelectorAll('.radio-option').forEach((label) => {
+    label.addEventListener('click', (e) => {
+      if (e.target.type !== 'radio') {
+        const input = label.querySelector('input[type="radio"]');
+        if (input) {
+          input.checked = true;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+    });
+  });
+
   function updateNextButtonState(stepNumber = currentStep) {
     if (!nextBtn || !prevBtn) return;
 
