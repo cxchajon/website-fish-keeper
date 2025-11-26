@@ -4,6 +4,8 @@
  * Drives the 6-step submission flow, validates inputs inline,
  * computes pricing, and prepares a Stripe-ready placeholder.
  * The markup is the canonical submission path for the site.
+ * 
+ * v1.0.1 - Fixed: iOS multi-photo selection, visible radio buttons
  */
 
 (function() {
@@ -35,8 +37,25 @@
   const confirmationDetails = document.getElementById('confirmationDetails');
 
   let currentStep = 1;
+  
+  // FIXED: Accumulate files across multiple selections (iOS workaround)
+  // iOS photo picker often only allows single selection, so we accumulate
+  let accumulatedFiles = [];
 
   document.querySelectorAll('.radio-option').forEach((label) => {
+    label.addEventListener('click', (e) => {
+      if (e.target.type !== 'radio') {
+        const input = label.querySelector('input[type="radio"]');
+        if (input) {
+          input.checked = true;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+    });
+  });
+
+  // Also handle clicks on .selection-inline and .radio-row labels
+  document.querySelectorAll('.selection-inline, .radio-row label').forEach((label) => {
     label.addEventListener('click', (e) => {
       if (e.target.type !== 'radio') {
         const input = label.querySelector('input[type="radio"]');
@@ -146,16 +165,23 @@
     additionalTanks.value = Number.isNaN(value) ? 0 : value;
   }
 
+  // FIXED: Remove a specific file from the accumulated list
+  function removeFile(index) {
+    accumulatedFiles.splice(index, 1);
+    renderSelectedFiles();
+  }
+
   function renderSelectedFiles() {
-    if (!selectedFiles || !photoUpload) return;
+    if (!selectedFiles) return;
     selectedFiles.innerHTML = '';
 
-    const files = Array.from(photoUpload.files || []);
+    const files = accumulatedFiles;
+    const maxPhotos = extraPhotos && extraPhotos.checked ? 5 : 3;
 
     if (!files.length) {
       const help = document.createElement('p');
       help.className = 'ft-help';
-      help.textContent = 'No photos selected yet.';
+      help.textContent = 'No photos selected yet. Tap "Upload Photos" to add images.';
       selectedFiles.appendChild(help);
       return;
     }
@@ -163,7 +189,14 @@
     const status = document.createElement('p');
     status.className = 'ft-help';
     status.style.marginBottom = '10px';
-    status.textContent = `${files.length} photo${files.length !== 1 ? 's' : ''} selected`;
+    status.innerHTML = `<strong>${files.length} photo${files.length !== 1 ? 's' : ''} selected</strong> (${files.length < 3 ? 'need at least 3' : files.length <= maxPhotos ? '✓ ready' : 'max ' + maxPhotos})`;
+    if (files.length < 3) {
+      status.style.color = '#fbbf24'; // Yellow warning
+    } else if (files.length <= maxPhotos) {
+      status.style.color = '#10b981'; // Green success
+    } else {
+      status.style.color = '#f87171'; // Red warning
+    }
     selectedFiles.appendChild(status);
 
     const grid = document.createElement('div');
@@ -205,6 +238,33 @@
           badge.style.fontWeight = '600';
           thumb.appendChild(badge);
         }
+
+        // Add remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.textContent = '×';
+        removeBtn.style.position = 'absolute';
+        removeBtn.style.top = '4px';
+        removeBtn.style.right = '4px';
+        removeBtn.style.width = '24px';
+        removeBtn.style.height = '24px';
+        removeBtn.style.borderRadius = '50%';
+        removeBtn.style.border = 'none';
+        removeBtn.style.background = 'rgba(248, 113, 113, 0.9)';
+        removeBtn.style.color = 'white';
+        removeBtn.style.fontSize = '16px';
+        removeBtn.style.fontWeight = 'bold';
+        removeBtn.style.cursor = 'pointer';
+        removeBtn.style.display = 'flex';
+        removeBtn.style.alignItems = 'center';
+        removeBtn.style.justifyContent = 'center';
+        removeBtn.style.lineHeight = '1';
+        removeBtn.setAttribute('aria-label', 'Remove this photo');
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          removeFile(i);
+        });
+        thumb.appendChild(removeBtn);
       } else {
         thumb.textContent = file.name;
         thumb.style.fontSize = '0.75rem';
@@ -216,6 +276,20 @@
     });
 
     selectedFiles.appendChild(grid);
+
+    // Add "Add More Photos" button if under limit
+    if (files.length < maxPhotos) {
+      const addMoreBtn = document.createElement('button');
+      addMoreBtn.type = 'button';
+      addMoreBtn.className = 'btn-ghost';
+      addMoreBtn.style.marginTop = '12px';
+      addMoreBtn.style.width = '100%';
+      addMoreBtn.textContent = `+ Add More Photos (${maxPhotos - files.length} more allowed)`;
+      addMoreBtn.addEventListener('click', () => {
+        if (photoUpload) photoUpload.click();
+      });
+      selectedFiles.appendChild(addMoreBtn);
+    }
   }
 
   function computePricing() {
@@ -302,7 +376,9 @@
     const textChoice = (form.querySelector('input[name="text_source"]:checked') || {}).value;
     lines.push(`Story: ${textChoice === 'fklc' ? 'FKLC writes with editing package' : 'Self-written'}`);
     if (extraPhotos.checked) lines.push('Extra photos: +2 slots selected');
-    const uploadedCount = photoUpload.files ? photoUpload.files.length : 0;
+    
+    // FIXED: Use accumulated files count
+    const uploadedCount = accumulatedFiles.length;
     lines.push(`Photos selected: ${uploadedCount} file(s)`);
 
     const additionalCount = Math.max(0, parseInt(additionalTanks.value || '0', 10));
@@ -349,7 +425,8 @@
       }
       checkDuplicates();
     } else if (step === 3) {
-      const count = photoUpload.files ? photoUpload.files.length : 0;
+      // FIXED: Use accumulated files count
+      const count = accumulatedFiles.length;
       if (count < 3) {
         setError('Please upload at least 3 photos for your tank feature.');
         return false;
@@ -400,6 +477,12 @@
     localStorage.setItem('ttg-feature-submissions', JSON.stringify(stored.slice(-10)));
 
     const fd = new FormData(form);
+    
+    // FIXED: Remove existing photos and add accumulated files
+    fd.delete('photos');
+    accumulatedFiles.forEach((file, i) => {
+      fd.append('photos', file, file.name);
+    });
 
     console.info('Feature Your Tank submission', Object.fromEntries(fd));
 
@@ -455,7 +538,34 @@
   }
 
   if (photoUpload) {
-    photoUpload.addEventListener('change', renderSelectedFiles);
+    // FIXED: Accumulate files instead of replacing them
+    photoUpload.addEventListener('change', () => {
+      const newFiles = Array.from(photoUpload.files || []);
+      const maxPhotos = extraPhotos && extraPhotos.checked ? 5 : 3;
+      
+      // Add new files to accumulated list (avoid duplicates by name+size)
+      newFiles.forEach((newFile) => {
+        const isDuplicate = accumulatedFiles.some(
+          (existing) => existing.name === newFile.name && existing.size === newFile.size
+        );
+        if (!isDuplicate && accumulatedFiles.length < 10) { // Hard cap at 10
+          accumulatedFiles.push(newFile);
+        }
+      });
+      
+      // Clear the input so the same file can be selected again if removed
+      photoUpload.value = '';
+      
+      renderSelectedFiles();
+    });
+  }
+
+  // Update max photos when extra photos checkbox changes
+  if (extraPhotos) {
+    extraPhotos.addEventListener('change', () => {
+      renderSelectedFiles();
+      computePricing();
+    });
   }
 
   form.addEventListener('change', (event) => {
