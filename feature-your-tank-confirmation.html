@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Submission Confirmed — The Tank Guide</title>
+  <link rel="stylesheet" href="css/style.css?v=1.0.10" />
+  <style>
+    body.page-gradient {
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 20%, rgba(54, 83, 180, 0.18), transparent 38%),
+        radial-gradient(circle at 80% 0%, rgba(29, 185, 138, 0.18), transparent 32%),
+        linear-gradient(180deg, #0b0f12 0%, #111820 60%, #101418 100%);
+      color: #e9f0fb;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background-attachment: fixed;
+    }
+    .confirmation-main {
+      max-width: 720px;
+      margin: 60px auto;
+      padding: 40px 16px;
+    }
+    .panel {
+      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 32px 28px 40px;
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+    }
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      background: rgba(16, 185, 129, 0.2);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 32px;
+    }
+    h1 { margin: 0 0 12px; text-align: center; font-size: 2rem; }
+    .info-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .btn-primary {
+      display: inline-block;
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.08));
+      color: #f3f4f6;
+      padding: 12px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body class="page-gradient">
+  <div id="site-nav"></div>
+  <main class="confirmation-main">
+    <section class="panel">
+      <div class="success-icon">✓</div>
+      <h1>Submission Confirmed!</h1>
+      
+      <div class="info-box">
+        <p><strong>Your payment was successful.</strong></p>
+        <p id="sessionDetails">Loading submission details...</p>
+      </div>
+
+      <div class="info-box">
+        <h3 style="margin: 0 0 10px; font-size: 1.1rem;">What Happens Next:</h3>
+        <ul style="margin: 0; padding-left: 20px;">
+          <li>You'll receive a confirmation email shortly</li>
+          <li>We'll review your submission within 5-7 days</li>
+          <li>Your editing credits will be noted in the email</li>
+          <li>Your permanent page will be published after approval</li>
+          <li>Credits never expire - save them for future updates!</li>
+        </ul>
+      </div>
+
+      <div style="text-align: center;">
+        <a href="/" class="btn-primary">Return to Home</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Parse session_id from URL
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+    
+    if (sessionId) {
+      document.getElementById('sessionDetails').innerHTML = `
+        <p>Stripe Session ID: <code style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">${sessionId}</code></p>
+        <p>Check your email for your submission ID and next steps.</p>
+      `;
+    } else {
+      document.getElementById('sessionDetails').textContent = 'Confirmation received. Check your email for details.';
+    }
+  </script>
+  <script defer src="/js/nav.js?v=1.1.0"></script>
+  <script src="/js/footer-loader.js?v=1.5.2" defer></script>
+  <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
+</body>
+</html>

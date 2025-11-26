@@ -358,8 +358,6 @@
 
     .ft-step { display: block; }
     .js-feature-wizard .ft-step { display: none; }
-    .js-feature-wizard .blog-options,
-    .js-feature-wizard .video-options { display: none; }
 
     .selection-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 
@@ -373,41 +371,83 @@
       cursor: pointer;
     }
 
-    .selection-card--choice {
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-    }
-
-    .selection-card--choice::before {
-      content: '';
-      display: block;
-      height: 6px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.1);
-      margin: -4px -2px 6px;
-      transition: background-color 0.2s ease;
-    }
-
-    .selection-card--choice.is-selected {
-      border-color: var(--accent, #10b981);
-      box-shadow: 0 0 0 3px var(--accent-weak, rgba(16, 185, 129, 0.35)), 0 12px 28px rgba(0, 0, 0, 0.35);
-      background: rgba(16, 185, 129, 0.08);
-    }
-
-    .selection-card--choice.is-selected::before { background: var(--accent, #10b981); }
-
-    .selection-card--choice:focus-within {
-      outline: 2px solid rgba(118, 198, 255, 0.9);
-      outline-offset: 2px;
-    }
-
     .selection-card input { accent-color: var(--accent, #10b981); }
     .selection-title { font-weight: 700; font-size: 1.05rem; }
     .selection-copy { margin: 0; color: var(--muted, #a1a1aa); }
     .selection-inline { display: block; margin: 6px 0; }
 
     .radio-row { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+
+    .intro-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .intro-card h4 {
+      margin: 0 0 10px;
+      font-size: 1.1rem;
+      color: var(--accent, #10b981);
+    }
+
+    .intro-card ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .intro-card li {
+      margin: 6px 0;
+      line-height: 1.5;
+    }
+
+    .radio-group {
+      display: grid;
+      gap: 10px;
+    }
+
+    .radio-option {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      cursor: pointer;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .radio-option:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .radio-option input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      cursor: pointer;
+      accent-color: var(--accent, #10b981);
+    }
+
+    .radio-label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .radio-title {
+      font-weight: 600;
+      color: rgba(241, 246, 255, 0.95);
+    }
+
+    .radio-desc {
+      font-size: 0.9rem;
+      color: var(--muted, #a1a1aa);
+      line-height: 1.4;
+    }
 
     .summary-card {
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -629,9 +669,9 @@
       <section id="feature-tank-form" class="ft-wrap" aria-labelledby="ft-title">
         <h2 id="ft-title" class="ft-title">Start Your Submission</h2>
 
-        <form id="featureForm" action="https://formspree.io/f/xnngnwld" method="POST" novalidate>
+        <form id="featureForm" action="/api/submissions/create" method="POST" novalidate>
           <div class="ft-steps" role="list">
-            <div class="step" data-step="1" role="listitem"><span class="step-number">1</span><span>Type</span></div>
+            <div class="step" data-step="1" role="listitem"><span class="step-number">1</span><span>Welcome</span></div>
             <div class="step" data-step="2" role="listitem"><span class="step-number">2</span><span>User & Tank</span></div>
             <div class="step" data-step="3" role="listitem"><span class="step-number">3</span><span>Options</span></div>
             <div class="step" data-step="4" role="listitem"><span class="step-number">4</span><span>Consent</span></div>
@@ -639,23 +679,33 @@
             <div class="step" data-step="6" role="listitem"><span class="step-number">6</span><span>Done</span></div>
           </div>
 
-          <section class="ft-step" data-step="1" aria-label="Step 1: Choose feature type">
-            <p class="ft-help">Choose the path that matches what you want to publish.</p>
-            <div class="selection-grid">
-              <label class="selection-card selection-card--choice">
-                <input type="radio" name="submission_type" value="blog" required />
-                <div>
-                  <div class="selection-title">Blog Feature</div>
-                  <p class="selection-copy">Photos + written story. Supports editing credits and extra photos.</p>
-                </div>
-              </label>
-              <label class="selection-card selection-card--choice">
-                <input type="radio" name="submission_type" value="video" />
-                <div>
-                  <div class="selection-title">Video Feature</div>
-                  <p class="selection-copy">Ready-to-publish video link with optional notes.</p>
-                </div>
-              </label>
+          <section class="ft-step" data-step="1" aria-label="Step 1: Welcome">
+            <h3 class="ft-title">Feature Your Tank — Get Your Own Page</h3>
+            <input type="hidden" name="submission_type" value="blog" />
+
+            <div class="intro-card">
+              <h4>What You'll Get:</h4>
+              <ul>
+                <li>✓ Permanent page on TheTankGuide.com</li>
+                <li>✓ Photos of your tank + your story</li>
+                <li>✓ Credit with your name and social links</li>
+                <li>✓ Free updates forever</li>
+              </ul>
+            </div>
+
+            <div class="intro-card">
+              <h4>100% Free Option:</h4>
+              <p>Submit up to 3 photos and write your own tank story. That's it!</p>
+            </div>
+
+            <div class="intro-card">
+              <h4>Optional Paid Upgrades:</h4>
+              <ul>
+                <li><strong>Editing Package ($1):</strong> We write your story for you. Includes first draft + 3 revision rounds that never expire.</li>
+                <li><strong>Extra Photos ($1):</strong> Upgrade from 3 to 5 photos total.</li>
+                <li><strong>Additional Tanks ($2 each):</strong> Feature multiple tanks, each with editing included.</li>
+              </ul>
+              <p class="ft-help">All credits stay with your tank forever for future updates.</p>
             </div>
           </section>
 
@@ -683,17 +733,21 @@
             </div>
 
             <div class="ft-field" role="radiogroup" aria-label="Environment">
-              <span class="ft-label">Environment</span>
-              <div class="selection-grid environment-grid">
-                <label class="selection-card selection-card--choice environment-option" role="radio" aria-checked="false">
+              <span class="ft-label">Environment *</span>
+              <div class="radio-group">
+                <label class="radio-option">
                   <input type="radio" name="environment" value="planted" required />
-                  <div class="selection-title">Planted</div>
-                  <p class="selection-copy">Live plants are a core part of the aquascape.</p>
+                  <span class="radio-label">
+                    <span class="radio-title">Planted</span>
+                    <span class="radio-desc">Live plants are a core part</span>
+                  </span>
                 </label>
-                <label class="selection-card selection-card--choice environment-option" role="radio" aria-checked="false">
+                <label class="radio-option">
                   <input type="radio" name="environment" value="unplanted" />
-                  <div class="selection-title">Unplanted</div>
-                  <p class="selection-copy">No live plants, or only incidental plants.</p>
+                  <span class="radio-label">
+                    <span class="radio-title">Unplanted</span>
+                    <span class="radio-desc">No live plants or only incidental</span>
+                  </span>
                 </label>
               </div>
             </div>
@@ -726,7 +780,7 @@
               <div class="ft-field">
                 <label for="photoUpload" class="ft-label">Upload Photos (3 required)</label>
                 <button type="button" id="photoUploadTrigger" class="btn-primary" aria-controls="photoUpload">Upload Photos</button>
-                <input type="file" id="photoUpload" name="photos" accept="image/*,video/*" class="ft-input" multiple aria-describedby="photoHelper" />
+                <input type="file" id="photoUpload" name="photos" accept="image/*" class="ft-input" multiple aria-describedby="photoHelper" />
                 <small class="ft-help" id="photoHelper">Free tier includes 3 photo slots (hero + 2). Check below to add two more.</small>
                 <div id="selectedFiles" class="upload-preview" aria-live="polite"></div>
               </div>
@@ -747,18 +801,6 @@
                   <li>3 revision rounds included; request changes when needed.</li>
                   <li>Credits stay tied to this tank forever for future updates.</li>
                 </ul>
-              </div>
-            </div>
-
-            <div class="video-options" data-option="video">
-              <div class="ft-field">
-                <label for="videoLink" class="ft-label">Video Link</label>
-                <input id="videoLink" name="video_link" type="url" class="ft-input" placeholder="https://..." />
-                <small class="ft-help">Video must be 100% complete, family-friendly, and 2–10 minutes.</small>
-              </div>
-              <div class="ft-field">
-                <label for="videoNotes" class="ft-label">Optional Notes</label>
-                <textarea id="videoNotes" name="video_notes" class="ft-input" rows="3" placeholder="Context, timestamps, or caption guidance"></textarea>
               </div>
             </div>
 
@@ -817,6 +859,7 @@
               <p class="ft-help">If your total was above $0, we’ll route you to Stripe Checkout next. Otherwise you’re all set and we’ll email your submission ID.</p>
               <p class="ft-help">Editing credits for this tank will appear in your confirmation email and never expire.</p>
               <p class="ft-help" id="checkoutMessage"></p>
+              <div id="confirmationDetails"></div>
             </div>
           </section>
 
@@ -850,10 +893,10 @@
         </p>
 
         <dl class="feature-faq-list">
-          <dt>How do the two submission paths work?</dt>
+          <dt>How does the submission flow work?</dt>
           <dd>
-            <p><strong>Blog Feature:</strong> upload 3 photos (optionally add 2 more for $1), choose to self-write or let FKLC craft the story (+$1 editing package).</p>
-            <p><strong>Video Feature:</strong> paste a ready-to-publish 2–10 minute video link with optional notes.</p>
+            <p>Upload at least 3 photos (optionally add 2 more for $1), then choose to self-write your story or have FKLC craft it for you with the $1 editing package.</p>
+            <p>Optional upgrades include extra photos, editing credits, and additional tanks with editing included.</p>
           </dd>
 
           <dt>What’s included in the $1 editing package?</dt>
@@ -885,7 +928,7 @@
             <p>Expect the first draft or review note within 5–7 days. Credits remain available for future tweaks even after publication.</p>
           </dd>
 
-          <dt>Do I keep ownership of my photos and videos?</dt>
+          <dt>Do I keep ownership of my photos?</dt>
           <dd>
             <p>You keep ownership. You grant us a non-exclusive license so we can host, credit, and promote your feature across The Tank Guide channels.</p>
           </dd>
@@ -1128,10 +1171,10 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "How do the two submission paths work?",
+            "name": "How does the submission flow work?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Blog features accept 3–5 photos plus a story (self-written or FKLC-written). Video features require a ready-to-publish 2–10 minute link with optional notes."
+              "text": "Upload at least 3 photos (optionally 5 with the extra photo upgrade), then choose to self-write or have FKLC write your story with the $1 editing package. Optional upgrades include extra photos and additional tanks with editing included."
             }
           },
           {
@@ -1168,7 +1211,7 @@
           },
           {
             "@type": "Question",
-            "name": "Do I keep ownership of my photos and videos?",
+            "name": "Do I keep ownership of my photos?",
             "acceptedAnswer": {
               "@type": "Answer",
               "text": "Yes. You retain ownership and grant FishKeepingLifeCo a non-exclusive license so we can host, credit, and promote your feature."
