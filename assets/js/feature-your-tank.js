@@ -34,8 +34,41 @@
   const extraPhotosAdditional = document.getElementById('extraPhotosAdditional');
   const additionalTanks = document.getElementById('additionalTanks');
   const checkoutMessage = document.getElementById('checkoutMessage');
+  const typeCards = Array.from(form.querySelectorAll('.selection-card--choice input[name="submission_type"]'));
+  const typeChoiceGrid = form.querySelector('.ft-step[data-step="1"] .selection-grid');
 
   let currentStep = 1;
+
+  function updateNextButtonState(stepNumber = currentStep) {
+    if (!nextBtn || !prevBtn) return;
+
+    nextBtn.textContent = stepNumber === 5 ? 'Submit & Pay' : 'Next';
+
+    const isFinalStep = stepNumber === 6;
+    prevBtn.disabled = stepNumber === 1 || isFinalStep;
+
+    if (isFinalStep) {
+      nextBtn.disabled = true;
+      return;
+    }
+
+    if (stepNumber === 1 && !form.querySelector('input[name="submission_type"]:checked')) {
+      nextBtn.disabled = true;
+    } else {
+      nextBtn.disabled = false;
+    }
+  }
+
+  function updateTypeSelectionUI() {
+    typeCards.forEach((input) => {
+      const card = input.closest('.selection-card--choice');
+      if (!card) return;
+      const isSelected = input.checked;
+      card.classList.toggle('is-selected', isSelected);
+      card.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+    });
+    updateNextButtonState();
+  }
 
   function syncTypeVisibility() {
     const val = (form.querySelector('input[name="submission_type"]:checked') || {}).value;
@@ -43,6 +76,7 @@
     const showVideo = !val || val === 'video';
     if (blogOptions) blogOptions.style.display = showBlog ? 'block' : 'none';
     if (videoOptions) videoOptions.style.display = showVideo ? 'block' : 'none';
+    updateTypeSelectionUI();
   }
 
   function setStepVisibility(stepNumber) {
@@ -59,15 +93,7 @@
       chip.setAttribute('aria-current', matches ? 'step' : 'false');
     });
 
-    prevBtn.disabled = stepNumber === 1;
-    nextBtn.textContent = stepNumber === 5 ? 'Submit & Pay' : 'Next';
-
-    if (stepNumber === 6) {
-      prevBtn.disabled = true;
-      nextBtn.disabled = true;
-    } else {
-      nextBtn.disabled = false;
-    }
+    updateNextButtonState(stepNumber);
   }
 
   function setError(message) {
@@ -394,6 +420,19 @@
     }
   });
 
+  if (typeChoiceGrid) {
+    typeChoiceGrid.addEventListener('click', (event) => {
+      const card = event.target.closest('.selection-card--choice');
+      if (!card || !typeChoiceGrid.contains(card)) return;
+      const input = card.querySelector('input[name="submission_type"]');
+      if (input) {
+        input.checked = true;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        updateTypeSelectionUI();
+      }
+    });
+  }
+
   nextBtn.addEventListener('click', () => {
     if (currentStep === 5) {
       handleSubmit();
@@ -412,4 +451,5 @@
   renderSelectedFiles();
   computePricing();
   setStepVisibility(currentStep);
+  updateTypeSelectionUI();
 })();
