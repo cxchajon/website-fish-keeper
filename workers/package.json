@@ -1,0 +1,15 @@
+{
+  "name": "feature-tank-api",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for tank submission system",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240512.0",
+    "wrangler": "^3.57.0"
+  }
+}
