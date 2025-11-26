@@ -356,7 +356,10 @@
     .step.active { border-color: rgba(16, 185, 129, 0.7); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25); }
     .step-number { width: 24px; height: 24px; border-radius: 8px; background: rgba(16, 185, 129, 0.2); display:grid; place-items:center; }
 
-    .ft-step { display: none; }
+    .ft-step { display: block; }
+    .js-feature-wizard .ft-step { display: none; }
+    .js-feature-wizard .blog-options,
+    .js-feature-wizard .video-options { display: none; }
 
     .selection-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 
@@ -652,8 +655,10 @@
             <div class="blog-options" data-option="blog">
               <div class="ft-field">
                 <label for="photoUpload" class="ft-label">Upload Photos (3 required)</label>
-                <input type="file" id="photoUpload" name="photos" accept="image/*" class="ft-input" multiple />
-                <small class="ft-help">Free tier includes 3 photo slots (hero + 2). Check below to add two more.</small>
+                <button type="button" id="photoUploadTrigger" class="btn-primary" aria-controls="photoUpload">Upload Photos</button>
+                <input type="file" id="photoUpload" name="photos" accept="image/*,video/*" class="ft-input" multiple aria-describedby="photoHelper" />
+                <small class="ft-help" id="photoHelper">Free tier includes 3 photo slots (hero + 2). Check below to add two more.</small>
+                <div id="selectedFiles" class="upload-preview" aria-live="polite"></div>
               </div>
               <label class="consent-row">
                 <input type="checkbox" id="extraPhotos" name="extra_photos" value="yes" class="consent-checkbox" />
@@ -675,7 +680,7 @@
               </div>
             </div>
 
-            <div class="video-options" data-option="video" style="display:none;">
+            <div class="video-options" data-option="video">
               <div class="ft-field">
                 <label for="videoLink" class="ft-label">Video Link</label>
                 <input id="videoLink" name="video_link" type="url" class="ft-input" placeholder="https://..." />
@@ -736,11 +741,12 @@
             <input type="hidden" name="duplicate_flag" id="duplicateFlag" value="false" />
           </section>
 
-          <section class="ft-step" data-step="6" aria-label="Step 6: Confirmation" style="display:none;">
+          <section class="ft-step" data-step="6" aria-label="Step 6: Confirmation">
             <div class="summary-card" aria-live="polite">
               <h3>✓ Submission queued</h3>
               <p class="ft-help">If your total was above $0, we’ll route you to Stripe Checkout next. Otherwise you’re all set and we’ll email your submission ID.</p>
               <p class="ft-help">Editing credits for this tank will appear in your confirmation email and never expire.</p>
+              <p class="ft-help" id="checkoutMessage"></p>
             </div>
           </section>
 
@@ -752,282 +758,9 @@
           <div id="errorMessage" role="alert" class="alert" style="display:none;"></div>
         </form>
 
-        <script>
-          document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('featureForm');
-            const steps = Array.from(document.querySelectorAll('.ft-step'));
-            const stepChips = Array.from(document.querySelectorAll('.step'));
-            const nextBtn = document.getElementById('nextBtn');
-            const prevBtn = document.getElementById('prevBtn');
-            const errorBox = document.getElementById('errorMessage');
-            const duplicateWarning = document.getElementById('duplicateWarning');
-            const blogOptions = document.querySelector('.blog-options');
-            const videoOptions = document.querySelector('.video-options');
-            const pricingList = document.getElementById('pricingBreakdown');
-            const reviewList = document.getElementById('reviewList');
-            const totalDisplay = document.getElementById('totalPriceDisplay');
-            const pricingHidden = document.getElementById('pricingHidden');
-            const totalPrice = document.getElementById('totalPrice');
-            const duplicateFlag = document.getElementById('duplicateFlag');
-            const creditSummary = document.getElementById('creditSummary');
-            const photoUpload = document.getElementById('photoUpload');
-            const extraPhotos = document.getElementById('extraPhotos');
-            const extraPhotosAdditional = document.getElementById('extraPhotosAdditional');
-            const additionalTanks = document.getElementById('additionalTanks');
+        <script src="/assets/js/feature-your-tank.js?v=1.0.0" defer></script>
 
-            let currentStep = 1;
 
-            function showStep(step) {
-              steps.forEach(s => s.style.display = Number(s.dataset.step) === step ? 'block' : 'none');
-              stepChips.forEach(c => {
-                const idx = Number(c.dataset.step);
-                c.classList.toggle('active', idx === step);
-              });
-              prevBtn.disabled = step === 1;
-              nextBtn.textContent = step === 5 ? 'Submit & Pay' : 'Next';
-              if (step === 6) {
-                prevBtn.disabled = true;
-                nextBtn.disabled = true;
-              }
-            }
-
-            function similarity(a, b) {
-              if (!a || !b) return 0;
-              const s1 = a.toLowerCase();
-              const s2 = b.toLowerCase();
-              const pairs = (str) => {
-                const arr = [];
-                for (let i = 0; i < str.length - 1; i++) arr.push(str.slice(i, i + 2));
-                return arr;
-              };
-              const p1 = pairs(s1);
-              const p2 = pairs(s2);
-              const map = new Map();
-              p1.forEach(p => map.set(p, (map.get(p) || 0) + 1));
-              let intersection = 0;
-              p2.forEach(p => {
-                const count = map.get(p) || 0;
-                if (count > 0) {
-                  map.set(p, count - 1);
-                  intersection += 1;
-                }
-              });
-              return (2 * intersection) / (p1.length + p2.length || 1);
-            }
-
-            function checkDuplicates() {
-              const email = document.getElementById('email').value.trim();
-              const tankName = document.getElementById('tank_name').value.trim();
-              const size = document.getElementById('tank_size').value.trim();
-              const stored = JSON.parse(localStorage.getItem('ttg-feature-submissions') || '[]');
-              const hit = stored.find(entry => entry.email === email && (similarity(entry.tank, tankName) > 0.8 || entry.size === size));
-              if (hit) {
-                duplicateWarning.style.display = 'block';
-                duplicateWarning.textContent = 'Heads up: this looks similar to a previous submission. We will flag it for review.';
-                duplicateFlag.value = 'true';
-                return true;
-              }
-              duplicateWarning.style.display = 'none';
-              duplicateFlag.value = 'false';
-              return false;
-            }
-
-            function computePricing() {
-              const type = (form.querySelector('input[name="submission_type"]:checked') || {}).value || '';
-              const isFirst = (form.querySelector('input[name="is_first_tank"]:checked') || {}).value !== 'no';
-              const additionalCount = Math.max(0, parseInt(additionalTanks.value || '0', 10));
-              const wantsEditing = type === 'blog' && (form.querySelector('input[name="text_source"]:checked') || {}).value === 'fklc';
-              const wantsExtraPhotos = type === 'blog' && extraPhotos.checked;
-              const wantsAdditionalExtra = additionalCount > 0 && extraPhotosAdditional.checked;
-              let total = 0;
-              let credits = 0;
-              const lines = [];
-
-              if (isFirst) {
-                lines.push('First tank submission: FREE');
-                if (wantsEditing) { total += 1; credits += 3; lines.push('Editing package (+$1): first draft + 3 revisions'); }
-              } else {
-                total += 2; credits += 3; lines.push('Additional tank: $2 (includes editing + 3 revisions)');
-              }
-
-              if (additionalCount > 0) {
-                total += additionalCount * 2;
-                credits += additionalCount * 3;
-                lines.push(`${additionalCount} additional tank(s): $${(additionalCount * 2).toFixed(2)}`);
-              }
-
-              if (wantsExtraPhotos) { total += 1; lines.push('Extra photos for main tank: +$1'); }
-              if (wantsAdditionalExtra) { total += additionalCount * 1; lines.push('Extra photos for additional tanks: +$' + (additionalCount * 1).toFixed(2)); }
-
-              totalDisplay.textContent = `$${total.toFixed(2)}`;
-              pricingHidden.value = lines.join(' | ');
-              totalPrice.value = total.toFixed(2);
-              creditSummary.textContent = credits > 0 ? `${credits} editing credits included for this submission.` : 'No editing credits selected for this submission.';
-
-              pricingList.innerHTML = '';
-              lines.forEach(item => {
-                const li = document.createElement('li');
-                const parts = item.split(':');
-                if (parts.length > 1) {
-                  li.innerHTML = `<span>${parts[0]}</span><span>${parts.slice(1).join(':').trim()}</span>`;
-                } else {
-                  li.textContent = item;
-                }
-                pricingList.appendChild(li);
-              });
-            }
-
-            function updateReview() {
-              const type = (form.querySelector('input[name="submission_type"]:checked') || {}).value || '—';
-              const env = (form.querySelector('input[name="environment"]:checked') || {}).value || '—';
-              const lines = [
-                `Feature Type: ${type}`,
-                `Name: ${form.name.value.trim() || '—'}`,
-                `Email: ${form.email.value.trim() || '—'}`,
-                `Tank Name: ${form.tank_name.value.trim() || '—'}`,
-                `Tank Size: ${form.tank_size.value.trim() || '—'} gallons`,
-                `Environment: ${env}`
-              ];
-              ['youtube','instagram','tiktok'].forEach(id => {
-                const val = (form[id] || {}).value || '';
-                if (val.trim()) lines.push(`${id.charAt(0).toUpperCase()+id.slice(1)}: ${val.trim()}`);
-              });
-              if (type === 'blog') {
-                const textChoice = (form.querySelector('input[name="text_source"]:checked') || {}).value;
-                lines.push(`Story: ${textChoice === 'fklc' ? 'FKLC writes with editing package' : 'Self-written'}`);
-                if (extraPhotos.checked) lines.push('Extra photos: +2 slots selected');
-                const uploadedCount = photoUpload.files ? photoUpload.files.length : 0;
-                lines.push(`Photos selected: ${uploadedCount} file(s)`);
-              } else {
-                lines.push(`Video link: ${(form.video_link || {}).value || '—'}`);
-              }
-              const additionalCount = Math.max(0, parseInt(additionalTanks.value || '0', 10));
-              if ((form.querySelector('input[name="is_first_tank"]:checked') || {}).value === 'no') lines.push('Marked as additional tank');
-              if (additionalCount > 0) lines.push(`Extra tanks added: ${additionalCount}`);
-              if (extraPhotosAdditional.checked && additionalCount > 0) lines.push('Extra photos for additional tanks selected');
-
-              reviewList.innerHTML = '';
-              lines.forEach(text => {
-                const div = document.createElement('div');
-                div.textContent = text;
-                reviewList.appendChild(div);
-              });
-            }
-
-            function validateStep(step) {
-              errorBox.style.display = 'none';
-              errorBox.textContent = '';
-              if (step === 1) {
-                if (!form.querySelector('input[name="submission_type"]:checked')) {
-                  errorBox.textContent = 'Please choose a feature type to continue.';
-                }
-              } else if (step === 2) {
-                const requiredFields = ['name','email','tank_name','tank_size'];
-                for (const field of requiredFields) {
-                  const el = form[field];
-                  if (!el || !el.value.trim()) { errorBox.textContent = 'Please complete all required contact and tank details.'; break; }
-                }
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!errorBox.textContent && !emailPattern.test(form.email.value.trim())) {
-                  errorBox.textContent = 'Enter a valid email address.';
-                }
-                if (!errorBox.textContent && !form.querySelector('input[name="environment"]:checked')) {
-                  errorBox.textContent = 'Select your environment.';
-                }
-                if (!errorBox.textContent && !document.getElementById('newTankConfirm').checked) {
-                  errorBox.textContent = 'Please confirm this is a new tank.';
-                }
-                if (!errorBox.textContent) checkDuplicates();
-              } else if (step === 3) {
-                const type = (form.querySelector('input[name="submission_type"]:checked') || {}).value;
-                if (type === 'blog') {
-                  const count = photoUpload.files ? photoUpload.files.length : 0;
-                  if (count < 1) {
-                    errorBox.textContent = 'Please add at least one photo (3 recommended).';
-                  }
-                } else if (type === 'video') {
-                  if (!form.video_link.value.trim()) {
-                    errorBox.textContent = 'Add your ready-to-publish video link.';
-                  }
-                }
-              } else if (step === 4) {
-                const requiredBoxes = ['licenseConfirm','guidelinesConfirm','contactConsent','pricingConfirm'];
-                const missing = requiredBoxes.some(id => {
-                  const el = document.getElementById(id);
-                  return !el || !el.checked;
-                });
-                if (missing) errorBox.textContent = 'Please agree to all required permissions.';
-              }
-
-              if (errorBox.textContent) {
-                errorBox.style.display = 'block';
-                return false;
-              }
-              return true;
-            }
-
-            function handleNav(direction) {
-              if (direction === 1 && !validateStep(currentStep)) return;
-              currentStep = Math.min(Math.max(currentStep + direction, 1), 6);
-              if (currentStep === 5) {
-                updateReview();
-                computePricing();
-              }
-              showStep(currentStep);
-            }
-
-            function handleSubmit() {
-              if (!validateStep(5)) return;
-              updateReview();
-              computePricing();
-              const email = form.email.value.trim();
-              const tankName = form.tank_name.value.trim();
-              const size = form.tank_size.value.trim();
-              const stored = JSON.parse(localStorage.getItem('ttg-feature-submissions') || '[]');
-              stored.push({ email, tank: tankName, size });
-              localStorage.setItem('ttg-feature-submissions', JSON.stringify(stored.slice(-10)));
-
-              const data = new FormData(form);
-              fetch(form.action, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
-                .then(resp => {
-                  if (!resp.ok) throw new Error('Submission failed');
-                  currentStep = 6;
-                  showStep(currentStep);
-                  errorBox.style.display = 'none';
-                  return resp;
-                })
-                .catch(() => {
-                  errorBox.textContent = 'There was a problem sending your submission. Please try again.';
-                  errorBox.style.display = 'block';
-                });
-            }
-
-            form.addEventListener('change', (event) => {
-              if (event.target.name === 'submission_type') {
-                const val = event.target.value;
-                blogOptions.style.display = val === 'blog' ? 'block' : 'none';
-                videoOptions.style.display = val === 'video' ? 'block' : 'none';
-              }
-              if (['submission_type','text_source','is_first_tank','additional_tanks','extra_photos','extra_photos_additional'].includes(event.target.name)) {
-                computePricing();
-              }
-            });
-
-            nextBtn.addEventListener('click', () => {
-              if (currentStep === 5) {
-                handleSubmit();
-              } else {
-                handleNav(1);
-              }
-            });
-
-            prevBtn.addEventListener('click', () => handleNav(-1));
-            form.addEventListener('submit', (e) => { e.preventDefault(); handleSubmit(); });
-
-            computePricing();
-            showStep(currentStep);
-          });
-        </script>
       </section>
 
       <div class="eligibility-note" style="margin-top:18px;">
