@@ -30,15 +30,22 @@
     <priority>0.9</priority>
   </url>
 
-  <url>
-    <loc>https://thetankguide.com/feature-your-tank.html</loc>
-    <lastmod>2025-11-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+    <url>
+      <loc>https://thetankguide.com/submit-your-tank.html</loc>
+      <lastmod>2025-11-24</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+    </url>
 
-  <url>
-    <loc>https://thetankguide.com/media.html</loc>
+    <url>
+      <loc>https://thetankguide.com/community-tanks.html</loc>
+      <lastmod>2025-11-24</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.6</priority>
+    </url>
+
+    <url>
+      <loc>https://thetankguide.com/media.html</loc>
     <lastmod>2025-11-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

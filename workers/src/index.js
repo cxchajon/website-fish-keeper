@@ -83,7 +83,7 @@ async function createStripeSession({
   params.append('customer_email', email);
   params.append('mode', 'payment');
   params.append('success_url', 'https://thetankguide.com/feature-your-tank-confirmation?session_id={CHECKOUT_SESSION_ID}');
-  params.append('cancel_url', 'https://thetankguide.com/feature-your-tank?cancelled=true');
+  params.append('cancel_url', 'https://thetankguide.com/submit-your-tank.html?cancelled=true');
 
   lineItems.forEach((item, index) => {
     params.append(`line_items[${index}][price]`, item.price);

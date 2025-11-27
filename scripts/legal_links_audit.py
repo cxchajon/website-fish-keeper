@@ -7,7 +7,7 @@ from typing import List
 PAGES: List[Path] = [
     Path("index.html"),
     Path("store.html"),
-    Path("feature-your-tank.html"),
+    Path("submit-your-tank.html"),
     Path("stocking-advisor.html"),
     Path("gear/index.html"),
     Path("params.html"),

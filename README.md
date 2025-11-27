@@ -18,7 +18,7 @@ The Tank Guide is a FishKeepingLifeCo product that blends practical aquarium too
 - Live Tank Journal: `/journal.html` (live notebook for the 29-gallon planted aquarium)
 - Journal archives (static monthly snapshots): `/journal/2025-09.html`, `/journal/2025-10.html`, `/journal/2025-11.html`
 - Blog collection: `/blogs/` plus individual posts under `/blogs/`
-- Additional public pages: `/feature-your-tank.html`, `/store.html`, `/about.html`, `/contact-feedback.html`, `/privacy-legal.html`, `/terms.html`, `/copyright-dmca.html`, `/trust-security.html`, `/cookie-settings.html`
+- Additional public pages: `/submit-your-tank.html`, `/store.html`, `/about.html`, `/contact-feedback.html`, `/privacy-legal.html`, `/terms.html`, `/copyright-dmca.html`, `/trust-security.html`, `/cookie-settings.html`
 
 ## Key Pages & Tools
 - **Stocking Advisor:** Calculates safe fish stocking plans based on tank size, filtration, and species data.
