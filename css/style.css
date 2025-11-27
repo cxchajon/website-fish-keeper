@@ -191,6 +191,7 @@ body.theme-light {
 #global-nav .links .nav__list {
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
   gap: var(--nav-inline-gap);
   list-style: none;
   margin: 0;
@@ -205,8 +206,8 @@ body.theme-light {
   color: var(--nav-muted);
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.95rem;
-  padding: 12px 0;
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
   position: relative;
   white-space: nowrap;
   word-break: normal;
@@ -234,7 +235,7 @@ body.theme-light {
 /* Desktop nav spacing - increased gap between nav items for better readability */
 @media (min-width: 921px) {
   #global-nav .links .nav__list {
-    gap: 2.5rem; /* ~40px - improved spacing between nav items */
+    gap: 1.25rem; /* Match homepage nav spacing */
   }
 }
 
@@ -245,6 +246,7 @@ body.theme-light {
   flex-direction: column;
   gap: 2px;
   min-width: 0;
+  flex-shrink: 0;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
   justify-content: center;
   min-height: 48px;
