@@ -35,6 +35,9 @@
   <link rel="preconnect" href="https://static.cloudflareinsights.com">
   <link rel="preconnect" href="https://widget.cloudinary.com">
   <link rel="stylesheet" href="css/style.css?v=1.0.10" />
+  <!-- AdSense loader (keep one global instance only) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
+    crossorigin="anonymous"></script>
   <style>
     body.page-gradient {
       min-height: 100vh;
@@ -102,7 +105,9 @@
     .btn-primary:active { transform: translateY(1px); box-shadow: 0 6px 14px rgba(0,0,0,0.16); }
 
     .ttg-ad-slot {
-      margin-top: 36px;
+      margin: 48px auto;
+      text-align: center;
+      max-width: 960px;
     }
   </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
@@ -169,11 +174,12 @@
       </p>
     </section>
 
+    <!-- Community Tanks Ad Slot (moved from Feature Your Tank submission page) -->
     <div class="ttg-ad-slot" aria-label="Advertisement">
       <ins class="adsbygoogle"
            style="display:block"
            data-ad-client="ca-pub-9905718149811880"
-           data-ad-slot="YOUR_SLOT_ID"
+           data-ad-slot="6411910426"
            data-ad-format="auto"
            data-full-width-responsive="true"></ins>
       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
