@@ -117,6 +117,85 @@
       text-align: center;
       max-width: 960px;
     }
+
+    .tank-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+      margin: 32px 0 8px;
+    }
+
+    .tank-card {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tank-card-image {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tank-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .tank-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: linear-gradient(135deg, rgba(54, 83, 180, 0.8), rgba(29, 185, 138, 0.9));
+      color: #f8fafc;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32);
+    }
+
+    .tank-card-body {
+      padding: 18px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tank-card-title {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .tank-card-title a {
+      color: #e9f0fb;
+      text-decoration: none;
+    }
+
+    .tank-card-title a:hover { color: rgba(16, 185, 129, 0.95); }
+
+    .tank-card-description {
+      margin: 0;
+      line-height: 1.6;
+      color: rgba(233, 240, 251, 0.9);
+    }
+
+    .tank-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: auto;
+    }
   </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
@@ -160,22 +239,60 @@
 
   <main class="feature-main" id="community-main">
     <section class="panel">
-      <h1>Community Tank Gallery — Coming Soon!</h1>
-      <p>We're building a showcase of amazing aquariums from hobbyists like you. Be one of the first to be featured!</p>
+      <h1>Community Tank Gallery</h1>
+      <p>
+        Real aquariums from real hobbyists. Browse setups, learn from experiences, and get inspired 
+        for your next build. Every tank tells a story.
+      </p>
 
       <a href="/submit-your-tank.html" class="btn-primary" style="display:inline-block;margin:24px 0;padding:16px 32px;">
         Submit Your Tank
       </a>
 
       <div class="intro-card">
-        <h3>What's Coming:</h3>
+        <h3>What You'll Find Here</h3>
+        <p>
+          Our Community Tanks showcase features detailed aquarium setups from hobbyists of all experience levels. 
+          Each feature includes:
+        </p>
         <ul>
-          <li>📸 Browse real aquarium setups from the community</li>
-          <li>🐠 Learn from other hobbyists' experiences</li>
-          <li>💡 Get inspiration for your next tank</li>
-          <li>🌟 Share your own tank and help others</li>
+          <li>📸 High-quality photos of real tanks in real homes</li>
+          <li>🐠 Complete livestock and equipment details</li>
+          <li>📖 Personal stories about the setup, challenges, and successes</li>
+          <li>💡 Maintenance routines and lessons learned</li>
+          <li>🔗 Links to owners' social channels for follow-up questions</li>
         </ul>
+        <p>
+          Whether you're planning your first tank or your tenth, there's inspiration and practical knowledge here.
+        </p>
       </div>
+
+      <section class="tank-grid" aria-label="Community tank gallery">
+        <article class="tank-card">
+          <a href="/tanks/project-tank-000.html" class="tank-card-image">
+            <span class="tank-badge">Founder's Showcase</span>
+            <img 
+              src="https://res.cloudinary.com/fishkeepinglifeco/image/upload/c_limit,w_800,q_auto,f_auto/v1764225678/feature-your-tank/y6dnxpm2vvjd8tp2xufr.jpg" 
+              alt="Project Tank #000 - 29-gallon DIY sump ecosystem by FishKeepingLifeCo"
+              loading="lazy"
+            />
+          </a>
+          <div class="tank-card-body">
+            <h3 class="tank-card-title">
+              <a href="/tanks/project-tank-000.html">Project Tank #000 — DIY Sump Ecosystem</a>
+            </h3>
+            <p class="tank-card-description">
+              The prototype that sparked FishKeepingLifeCo. Features custom 5-gallon DIY sump, undergravel hybrid 
+              filtration, and thriving no-CO₂ planted ecosystem. Built for stability during unpredictable schedules, 
+              this 29-gallon community houses betta, cardinals, cherry barbs, loaches, and shrimp.
+            </p>
+            <div class="tank-card-footer">
+              <a href="/tanks/project-tank-000.html" class="btn-primary" style="padding:10px 14px;">View Feature</a>
+              <span aria-label="Premium badge" class="tank-badge" style="position:static; box-shadow:none;">Founder's Showcase</span>
+            </div>
+          </div>
+        </article>
+      </section>
 
       <p style="margin-top:24px;">
         Have a tank you're proud of? <a href="/submit-your-tank.html">Submit it now</a> and be part of our growing community!
