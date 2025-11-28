@@ -535,6 +535,7 @@ body.media-page[data-ad-qa="true"] .ttg-ad-slot,
 .media-page .stack { display: grid; gap: 14px; }
 .media-page .featured-tank-cta {
   display: flex;
+  gap: 12px;
   justify-content: center;
   margin-top: var(--space-4);
 }
@@ -542,6 +543,18 @@ body.media-page[data-ad-qa="true"] .ttg-ad-slot,
   display:inline-block; padding:10px 14px; border:1px solid var(--border);
   border-radius: 10px; text-decoration:none; font-weight:600;
   background:#fff; color:#0b1020;
+}
+
+@media (max-width: 600px) {
+  .media-page .featured-tank-cta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .media-page .featured-tank-cta .btn {
+    width: 100%;
+    text-align: center;
+  }
 }
 .media-page .archive-card {
   display: grid;
