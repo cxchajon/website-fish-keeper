@@ -985,9 +985,25 @@
 
           <section class="ft-step" data-step="6" aria-label="Step 6: Confirmation">
             <div class="summary-card" aria-live="polite">
-              <h3>✓ Submission queued</h3>
-              <p class="ft-help">If your total was above $0, we'll route you to Stripe Checkout next. Otherwise you're all set and we'll email your submission ID.</p>
-              <p class="ft-help">Editing credits for this tank will appear in your confirmation email and never expire.</p>
+              <h3>✓ Submission Received!</h3>
+
+              <!-- Message for paid submissions -->
+              <div id="paid-confirmation" style="display: none;">
+                <p class="ft-help"><strong>Next Steps:</strong></p>
+                <ul class="ft-help" style="margin: 8px 0 12px 20px; line-height: 1.6;">
+                  <li>Check your email for a secure Stripe payment link</li>
+                  <li>Your feature page will be created once payment is received</li>
+                  <li>Editing credits will be included in your confirmation email and never expire</li>
+                  <li>Expect your feature to go live within 5-7 business days after payment</li>
+                </ul>
+              </div>
+
+              <!-- Message for free submissions -->
+              <div id="free-confirmation" style="display: none;">
+                <p class="ft-help">✓ Your free submission is complete! Check your email for confirmation.</p>
+                <p class="ft-help">We'll review your submission and create your feature page within 5-7 business days.</p>
+              </div>
+
               <p class="ft-help" id="checkoutMessage"></p>
               <div id="confirmationDetails"></div>
             </div>
