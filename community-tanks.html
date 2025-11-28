@@ -54,7 +54,12 @@
         linear-gradient(180deg, #0b0f12 0%, #111820 60%, #101418 100%);
       color: #e9f0fb;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-      background-attachment: fixed;
+    }
+
+    @media (min-width: 1024px) {
+      body.page-gradient {
+        background-attachment: fixed;
+      }
     }
 
     .feature-main {
@@ -236,7 +241,8 @@
             "@type": "ListItem",
             "position": 1,
             "url": "https://thetankguide.com/tanks/project-tank-000.html",
-            "name": "Project Tank #000 — DIY Sump Ecosystem"
+            "name": "Project Tank #000 — DIY Sump Ecosystem",
+            "image": "https://res.cloudinary.com/fishkeepinglifeco/image/upload/c_limit,w_800,q_auto,f_auto/v1764225678/feature-your-tank/y6dnxpm2vvjd8tp2xufr.jpg"
           }
         ]
       }
@@ -261,13 +267,6 @@
         }
       }
       signalGooglefcPresent();
-    })();
-  </script>
-  <script>
-    (function() {
-      var e = !1;
-      function t(){if(!e){var t=document.createElement("script");t.src="https://pagead2.googlesyndication.com/pagead/managed/js/adsense/m202411040101/show_ads_impl_fy2021.js";var a=document.getElementsByTagName("script")[0];t.async=!0,a.parentNode.insertBefore(t,a),e=!0}}
-      window.pintrk ? t() : ((window.pintrk = function () {window.pintrk.queue.push(Array.prototype.slice.call(arguments))}), window.pintrk.queue=[], window.pintrk.version="3.0", window.pintrk.l="script", window.pintrk._a={}, window.pintrk.b="https://s.pinimg.com/ct/core.js", window.pintrk._c=!0, window.pintrk.s=(new Date).getTime(),t())
     })();
   </script>
   <script defer src="/assets/js/ttg-cmp-consent-bridge.js?v=1.5.2"></script>
@@ -316,9 +315,11 @@
           <a href="/tanks/project-tank-000.html" class="tank-card-image">
             <span class="tank-badge">Founder's Showcase</span>
             <img
-              src="https://res.cloudinary.com/fishkeepinglifeco/image/upload/c_limit,w_800,q_auto,f_auto/v1764225678/feature-your-tank/y6dnxpm2vvjd8tp2xufr.jpg" 
+              src="https://res.cloudinary.com/fishkeepinglifeco/image/upload/c_limit,w_800,q_auto,f_auto/v1764225678/feature-your-tank/y6dnxpm2vvjd8tp2xufr.jpg"
               alt="Project Tank #000 - 29-gallon DIY sump ecosystem by FishKeepingLifeCo"
               loading="lazy"
+              width="800"
+              height="600"
             />
           </a>
           <div class="tank-card-body">
@@ -345,6 +346,7 @@
 
     <!-- Community Tanks Ad Slot (moved from Feature Your Tank submission page) -->
     <div class="ttg-ad-slot" aria-label="Advertisement">
+      <p style="margin: 0 0 8px; color: rgba(233, 240, 251, 0.75); font-size: 0.9rem; letter-spacing: 0.2px;">Advertisement</p>
       <ins class="adsbygoogle"
            style="display:block"
            data-ad-client="ca-pub-9905718149811880"
