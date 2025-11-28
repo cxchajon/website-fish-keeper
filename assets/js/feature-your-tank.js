@@ -566,8 +566,28 @@
     // Update button states
     updateButtons();
 
+    // Update confirmation messaging when reaching final step
+    if (currentStep === 6) {
+      showConfirmationMessage();
+    }
+
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Show appropriate confirmation message based on total
+  function showConfirmationMessage() {
+    const totalPrice = parseFloat(document.getElementById('totalPrice')?.value || 0);
+    const paidConfirmation = document.getElementById('paid-confirmation');
+    const freeConfirmation = document.getElementById('free-confirmation');
+
+    if (totalPrice > 0) {
+      if (paidConfirmation) paidConfirmation.style.display = 'block';
+      if (freeConfirmation) freeConfirmation.style.display = 'none';
+    } else {
+      if (paidConfirmation) paidConfirmation.style.display = 'none';
+      if (freeConfirmation) freeConfirmation.style.display = 'block';
+    }
   }
 
   /**
@@ -975,11 +995,14 @@
 
     if (checkoutMessage) {
       if (total === 0) {
-        checkoutMessage.innerHTML = '<strong>✓ Your free submission is complete!</strong> Check your email for confirmation. We\'ll review your submission within 2-4 weeks.';
+        checkoutMessage.innerHTML = '<strong>✓ Your free submission is complete!</strong> Check your email for confirmation. We\'ll review your submission and create your feature within 5-7 business days.';
       } else {
-        checkoutMessage.innerHTML = `<strong>💳 Payment Required: $${total}</strong><br>Stripe integration coming soon! For now, we'll email you a Stripe invoice link to complete your payment. Your submission is saved and will be processed once payment is received.`;
+        checkoutMessage.innerHTML = `<strong>💳 Payment Required: $${total}</strong><br>We\'ll email you a secure Stripe payment link to complete your purchase. Your submission is saved and will be processed once payment is received. Expect your feature to go live within 5-7 business days after payment.`;
       }
     }
+
+    // Ensure confirmation panels reflect the current total
+    showConfirmationMessage();
   }
 
   /**
