@@ -1,6 +1,6 @@
 /**
  * Feature Your Tank - Multi-step submission wizard
- * Version: 1.0.2
+ * Version: 1.0.3
  *
  * Handles 6-step form wizard with:
  * - Cloudinary photo upload integration
@@ -306,6 +306,127 @@
       radio.addEventListener('change', updatePricing);
     });
   }
+
+  // Listen for story source changes
+  document.addEventListener('DOMContentLoaded', function() {
+    const textSourceRadios = document.querySelectorAll('input[name="text_source"]');
+    const blogOptions = document.querySelector('.blog-options');
+
+    if (textSourceRadios.length && blogOptions) {
+      // Create text areas if they don't exist
+      let userTextArea = document.getElementById('user-story-text');
+      let fklcNotesArea = document.getElementById('fklc-notes-text');
+
+      if (!userTextArea) {
+        const userContainer = document.createElement('div');
+        userContainer.id = 'user-story-container';
+        userContainer.className = 'ft-field';
+        userContainer.style.display = 'none';
+        userContainer.innerHTML = `
+        <label for="user-story-text" class="ft-label">Your Tank Story</label>
+        <textarea 
+          id="user-story-text" 
+          name="user_story" 
+          class="ft-input" 
+          rows="10" 
+          placeholder="Tell us about your tank setup, equipment, livestock, plants, challenges, maintenance routine, and what you've learned..."
+          minlength="50"
+        ></textarea>
+        <small class="ft-help">
+          Minimum 50 characters. Write about your experience, challenges, and successes.
+        </small>
+        <div class="character-count" style="text-align: right; font-size: 0.9rem; color: #a1a1aa; margin-top: 6px;">
+          <span id="user-story-count">0</span> characters
+        </div>
+      `;
+
+        // Insert after the radio buttons
+        const radioGroup = blogOptions.querySelector('[role="radiogroup"]');
+        radioGroup.parentNode.insertBefore(userContainer, radioGroup.nextSibling);
+      }
+
+      if (!fklcNotesArea) {
+        const fklcContainer = document.createElement('div');
+        fklcContainer.id = 'fklc-notes-container';
+        fklcContainer.className = 'ft-field';
+        fklcContainer.style.display = 'none';
+        fklcContainer.innerHTML = `
+        <div class="intro-card" style="margin-bottom: 16px;">
+          <h4>📝 How the $1 Editing Package Works</h4>
+          <ul>
+            <li><strong>Step 1:</strong> Provide basic notes below about your tank</li>
+            <li><strong>Step 2:</strong> We write a professional first draft (FREE - doesn't use a credit)</li>
+            <li><strong>Step 3:</strong> You get 3 revision rounds that NEVER expire</li>
+            <li><strong>Step 4:</strong> Use your credits anytime for updates to your feature</li>
+          </ul>
+          <p class="ft-help">
+            Credits stay tied to your tank forever. First draft is on us!
+          </p>
+        </div>
+        <label for="fklc-notes-text" class="ft-label">Notes for FKLC Writing Team</label>
+        <textarea 
+          id="fklc-notes-text" 
+          name="fklc_notes" 
+          class="ft-input" 
+          rows="6" 
+          placeholder="Example: 29 gallon planted, running 2 years, DIY sump filtration, betta + tetras + shrimp, no CO2 but plants grow well, biggest challenge was balancing light..."
+          minlength="30"
+        ></textarea>
+        <small class="ft-help">
+          Give us the basics - we'll turn it into a great story! Minimum 30 characters.
+        </small>
+        <div class="character-count" style="text-align: right; font-size: 0.9rem; color: #a1a1aa; margin-top: 6px;">
+          <span id="fklc-notes-count">0</span> characters
+        </div>
+      `;
+
+        // Insert after user story container
+        const userContainer = document.getElementById('user-story-container');
+        userContainer.parentNode.insertBefore(fklcContainer, userContainer.nextSibling);
+      }
+
+      // Set up change handlers
+      function updateTextBoxes() {
+        const selectedValue = document.querySelector('input[name="text_source"]:checked')?.value;
+        const userContainer = document.getElementById('user-story-container');
+        const fklcContainer = document.getElementById('fklc-notes-container');
+
+        if (selectedValue === 'user') {
+          if (userContainer) userContainer.style.display = 'block';
+          if (fklcContainer) fklcContainer.style.display = 'none';
+        } else if (selectedValue === 'fklc') {
+          if (userContainer) userContainer.style.display = 'none';
+          if (fklcContainer) fklcContainer.style.display = 'block';
+        }
+      }
+
+      // Add change listeners
+      textSourceRadios.forEach(radio => {
+        radio.addEventListener('change', updateTextBoxes);
+      });
+
+      // Initial state
+      updateTextBoxes();
+
+      // Character counters
+      const userStoryText = document.getElementById('user-story-text');
+      const userStoryCount = document.getElementById('user-story-count');
+      const fklcNotesText = document.getElementById('fklc-notes-text');
+      const fklcNotesCount = document.getElementById('fklc-notes-count');
+
+      if (userStoryText && userStoryCount) {
+        userStoryText.addEventListener('input', function() {
+          userStoryCount.textContent = this.value.length;
+        });
+      }
+
+      if (fklcNotesText && fklcNotesCount) {
+        fklcNotesText.addEventListener('input', function() {
+          fklcNotesCount.textContent = this.value.length;
+        });
+      }
+    }
+  });
 
   /**
    * Calculate and update pricing
