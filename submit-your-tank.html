@@ -825,7 +825,7 @@
                 <li><strong>Editing Package ($1):</strong> We write your story for you. Includes first draft + 3 revision rounds that never expire.</li>
                 <li><strong>Extra Photos ($1):</strong> Upgrade from 3 to 5 photos total.</li>
                 <li><strong>Additional Tanks ($2 each):</strong> Per extra tank added by the same user. Every user gets one tank uploaded free.</li>
-                <li><strong>Ad-Free Page ($3):</strong> We run your tank’s page without ads or referral links, keeping your story completely clean.<br>If you add this later (after the page goes live), ad removal is a one-time <strong>$5</strong> upgrade.</li>
+                <li><strong>Ad-Free Page ($3):</strong> We run your tank's page without ads or referral links, keeping your story completely clean.<br>If you add this later (after the page goes live), ad removal is a one-time <strong>$5</strong> upgrade.</li>
               </ul>
               <p class="ft-help">All credits stay with your tank forever for future updates.</p>
             </div>
@@ -922,51 +922,31 @@
               </p>
             </section>
 
-            <!-- ADD-ON CARDS GRID -->
-            <div class="selection-grid" style="margin-bottom: 24px;">
-              <div class="selection-card">
-                <div class="selection-title">Additional Tank Feature</div>
-                <p class="selection-copy">Add another tank to your Submit Your Tank spotlight. Each additional tank gets its own permanent page with professional editing and up to 3 rounds of revisions.</p>
-                <p class="selection-copy"><strong>Price:</strong> $2 (one-time)</p>
-                <div class="upload-actions" style="margin:8px 0 0;">
-                  <a class="btn-primary" href="#" data-stripe-product-id="prod_TUSoZwYlU4LdKU" data-stripe-price-id="price_1SXTswDHdZPeBj86YLBay2kY">Add Additional Tank</a>
-                </div>
-              </div>
-
-              <div class="selection-card">
-                <div class="selection-title">Tank Feature – Extra Photos</div>
-                <p class="selection-copy">Upgrade from 3 photos to 5 photos for your featured tank page. Includes hosting and storage for two additional high-quality images.</p>
-                <p class="selection-copy"><strong>Price:</strong> $1 (one-time)</p>
-                <div class="upload-actions" style="margin:8px 0 0;">
-                  <a class="btn-primary" href="#" data-stripe-product-id="prod_TUSniVrHoD1vbx" data-stripe-price-id="price_1SXTreDHdZPeBj86pb1aK1Qo">Add Extra Photos</a>
-                </div>
-              </div>
-
-              <div class="selection-card">
-                <div class="selection-title">Tank Feature – Editing Package</div>
-                <p class="selection-copy">Send your notes, rambles, or bullet points — we'll turn them into a polished, readable story for your tank feature. Includes the first draft plus up to 3 revision rounds. Your editing credit stays tied to your tank forever, so you can request updates later.</p>
-                <p class="selection-copy"><strong>Price:</strong> $1 (one-time)</p>
-                <div class="upload-actions" style="margin:8px 0 0;">
-                  <a class="btn-primary" href="#" data-stripe-product-id="prod_TUSlFMdIqwU0TR" data-stripe-price-id="price_1SXTqDDHdZPeBj86fgxbsIqU">Add Editing Package</a>
-                </div>
-              </div>
-
-              <div class="selection-card">
-                <div class="selection-title">Tank Feature – Ad-Free Page</div>
-                <p class="selection-copy">
-                  Run your tank's feature page without ads or affiliate links. Keep your story completely 
-                  clean and focused on your aquarium. Perfect for professional portfolios or if you prefer 
-                  a minimalist presentation.
-                </p>
-                <p class="selection-copy"><strong>Price:</strong> $3 (one-time)</p>
-                <p class="selection-copy" style="font-size: 0.85rem; color: #a1a1aa;">
-                  Note: Adding ad-free after your page goes live is $5 (includes page republishing).
-                </p>
-                <div class="upload-actions" style="margin:8px 0 0;">
-                  <a class="btn-primary" href="#" data-stripe-product-id="prod_ADFREE_PLACEHOLDER" data-stripe-price-id="price_ADFREE_PLACEHOLDER">
-                    Make Page Ad-Free
-                  </a>
-                </div>
+            <!-- AD-FREE PAGE OPTION -->
+            <div class="ft-field">
+              <span class="ft-label">Ad-Free Page Option</span>
+              <div class="radio-group" role="radiogroup" aria-label="Ad-Free Page">
+                <label class="radio-option">
+                  <input type="radio" name="ad_free_option" value="yes" />
+                  <span class="radio-content">
+                    <span class="radio-title">Tank Feature – Ad-Free Page (+$3)</span>
+                    <span class="radio-desc">
+                      Run your tank's feature page without ads or affiliate links. Keep your story completely 
+                      clean and focused on your aquarium. Perfect for professional portfolios or if you prefer 
+                      a minimalist presentation.
+                    </span>
+                    <span class="radio-desc" style="margin-top: 8px; font-size: 0.85rem; color: #a1a1aa;">
+                      Note: Adding ad-free after your page goes live is $5 (includes page republishing).
+                    </span>
+                  </span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="ad_free_option" value="no" checked />
+                  <span class="radio-content">
+                    <span class="radio-title">Standard Page (Free)</span>
+                    <span class="radio-desc">Your page will include ads and affiliate links as part of our standard feature format.</span>
+                  </span>
+                </label>
               </div>
             </div>
 
