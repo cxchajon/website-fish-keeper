@@ -288,6 +288,15 @@
       });
     }
 
+    // Ad-free page option
+    const adFreeRadios = document.querySelectorAll('input[name="ad_free_option"]');
+    adFreeRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        updatePricing();
+        updateReview();
+      });
+    });
+
     // Additional tanks input
     const additionalTanksInput = document.getElementById('additionalTanks');
     if (additionalTanksInput) {
@@ -465,6 +474,13 @@
     if (extraPhotos && extraPhotos.checked) {
       total += 1;
       breakdown.push({ label: 'Extra photos (2 additional slots)', amount: 1 });
+    }
+
+    // Ad-free page: +$3
+    const adFreeOption = document.querySelector('input[name="ad_free_option"]:checked');
+    if (adFreeOption && adFreeOption.value === 'yes') {
+      total += 3;
+      breakdown.push({ label: 'Ad-Free Page', amount: 3 });
     }
 
     // Additional tanks: $2 each
@@ -873,6 +889,7 @@
     const tankSize = document.getElementById('tank_size')?.value || 'Not provided';
     const environment = document.querySelector('input[name="environment"]:checked')?.value || 'Not selected';
     const textSource = document.querySelector('input[name="text_source"]:checked')?.value || 'user';
+    const adFreeOption = document.querySelector('input[name="ad_free_option"]:checked')?.value || 'no';
     const photoCount = uploadedPhotos.length;
 
     const youtube = document.getElementById('youtube')?.value || '';
@@ -888,6 +905,8 @@
       `Photos Uploaded: ${photoCount}`,
       `Story: ${textSource === 'fklc' ? 'FKLC will write it (editing package)' : 'Self-written'}`
     ];
+
+    lines.push(`Ad-Free Page: ${adFreeOption === 'yes' ? 'Yes (+$3)' : 'No (Standard)'}`);
 
     if (youtube.trim()) lines.push(`YouTube: ${youtube}`);
     if (instagram.trim()) lines.push(`Instagram: ${instagram}`);
@@ -925,6 +944,10 @@
 
       // Prepare form data
       const formData = new FormData(form);
+
+      // Ensure ad-free option is captured
+      const adFreeOption = document.querySelector('input[name="ad_free_option"]:checked');
+      formData.set('ad_free_option', adFreeOption ? adFreeOption.value : 'no');
 
       // Add photo URLs as JSON string
       formData.set('photo_urls', JSON.stringify(uploadedPhotos.map(p => p.url)));
