@@ -39,6 +39,21 @@
  * - Delete redundant selectors only when 100% unused; leave unsure ones with a /* possible legacy */ note.
  */
 
+/* Temporarily hide AdSense slots during content expansion phase */
+.ttg-ad-slot,
+.ad-slot,
+div[class*="ad-slot"],
+div[id*="ad-"],
+div[data-ad-label],
+div[aria-label="Advertisement"] {
+  display: none !important;
+}
+
+/* Also hide any ad placeholders */
+.ad-placeholder {
+  display: none !important;
+}
+
 :root {
   --nav-text: #f3f6ff;
   --nav-muted: rgba(243, 246, 255, 0.78);
