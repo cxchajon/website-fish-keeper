@@ -577,10 +577,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const outcome = isZero(ammonia) && isZero(nitrite) ? 'challengePass' : 'challengeFail';
       renderList(challengeList, ACTION_SETS[outcome]);
       if (challengeMessage) {
-        challengeMessage.textContent =
+        challengeMessage.innerHTML =
           outcome === 'challengePass'
-            ? 'PASS — ammonia and nitrite both reached 0 within 24 hours.'
-            : 'Keep cycling — ammonia or nitrite is still above 0 after 24 hours.';
+            ? '<span style="color: #16a34a; font-weight: 600;"><strong><u>PASS</u></strong> — ammonia and nitrite both reached 0 within 24 hours.</span>'
+            : '<span style="color: #ca8a04; font-weight: 500;">Keep cycling — ammonia or nitrite is still above 0 after 24 hours.</span>';
       }
       challengeResults.hidden = false;
     });
