@@ -1,0 +1,484 @@
+/* ========================================
+   JOURNAL PAGE STYLES - CARD GRID LAYOUT
+   ======================================== */
+
+/* Page Header */
+.journal-header {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);
+    border-bottom: 3px solid #2c7a7b;
+}
+
+.journal-header h1 {
+    font-size: 2.5rem;
+    color: #1a202c;
+    margin: 0 0 0.5rem 0;
+}
+
+.journal-subtitle {
+    font-size: 1.1rem;
+    color: #4a5568;
+    margin: 0;
+}
+
+/* ========================================
+   STICKY DASHBOARD
+   ======================================== */
+
+.dashboard-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #ffffff;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 1.5rem 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-sticky.is-pinned {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-card {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.dashboard-card h2 {
+    font-size: 1.3rem;
+    color: #2c7a7b;
+    margin: 0 0 1rem 0;
+}
+
+/* Parameters Card */
+.param-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.param-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.param-list li:last-child {
+    border-bottom: none;
+}
+
+.param-value {
+    color: #2c7a7b;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.status-good {
+    color: #38a169;
+    font-weight: 700;
+}
+
+.status-warning {
+    color: #d69e2e;
+    font-weight: 700;
+}
+
+.status-alert {
+    color: #e53e3e;
+    font-weight: 700;
+}
+
+/* Feeding Card */
+.feeding-update {
+    font-size: 0.9rem;
+    color: #718096;
+    margin: 0 0 1rem 0;
+}
+
+.feeding-schedule {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.feeding-schedule td {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.feeding-schedule tr:last-child td {
+    border-bottom: none;
+}
+
+.feeding-schedule td:first-child {
+    font-weight: 600;
+    color: #2d3748;
+    width: 35%;
+}
+
+.feeding-schedule td:last-child {
+    color: #4a5568;
+}
+
+/* ========================================
+   MONTH NAVIGATION
+   ======================================== */
+
+.month-nav {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    padding: 0 1rem;
+}
+
+.month-nav-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.month-nav a {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    background: #f7fafc;
+    color: #2c7a7b;
+    text-decoration: none;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.month-nav a:hover {
+    background: #e6fffa;
+    border-color: #2c7a7b;
+}
+
+.month-nav a.active {
+    background: #2c7a7b;
+    color: #ffffff;
+    border-color: #2c7a7b;
+}
+
+/* ========================================
+   MONTH SECTIONS
+   ======================================== */
+
+.month-section {
+    max-width: 1200px;
+    margin: 0 auto 4rem;
+    padding: 0 1rem;
+    scroll-margin-top: 180px; /* Account for sticky header */
+}
+
+.month-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #2c7a7b;
+}
+
+.month-header h2 {
+    font-size: 2rem;
+    color: #1a202c;
+    margin: 0 0 0.5rem 0;
+}
+
+.month-description {
+    font-size: 1.1rem;
+    color: #4a5568;
+    margin: 0;
+}
+
+/* ========================================
+   CARD GRID
+   ======================================== */
+
+.journal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Base Card Styles */
+.journal-card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.journal-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Header */
+.card-header {
+    padding: 1.5rem;
+    background: #f7fafc;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.card-icon {
+    font-size: 1.5rem;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.card-header h3 {
+    font-size: 1.3rem;
+    color: #1a202c;
+    margin: 0.5rem 0;
+}
+
+.card-header time {
+    display: block;
+    font-size: 0.9rem;
+    color: #718096;
+    margin-top: 0.5rem;
+}
+
+/* Card Body */
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-body p {
+    line-height: 1.7;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.card-body ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.card-body li {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+}
+
+/* Recap Sections (for weekly cards) */
+.recap-section {
+    margin: 1.5rem 0;
+}
+
+.recap-section:first-child {
+    margin-top: 0;
+}
+
+.recap-section h4 {
+    font-size: 1.1rem;
+    color: #2c7a7b;
+    margin: 0 0 0.75rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.recap-section p {
+    margin-bottom: 0.5rem;
+}
+
+.recap-section ul {
+    margin-top: 0.5rem;
+}
+
+/* Card Footer */
+.card-footer {
+    padding: 1rem 1.5rem;
+    background: #f7fafc;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.card-tag {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 6px;
+    background: #e2e8f0;
+    color: #2d3748;
+}
+
+.tag-achievement {
+    background: #fef5e7;
+    color: #d69e2e;
+    border: 1px solid #d69e2e;
+}
+
+.tag-algae {
+    background: #e6fffa;
+    color: #2c7a7b;
+    border: 1px solid #2c7a7b;
+}
+
+.tag-maintenance {
+    background: #ebf8ff;
+    color: #3182ce;
+    border: 1px solid #3182ce;
+}
+
+.tag-water-change {
+    background: #e0f2fe;
+    color: #0891b2;
+    border: 1px solid #0891b2;
+}
+
+/* ========================================
+   STANDOUT MOMENT CARDS
+   ======================================== */
+
+.standout-moment {
+    border-left: 6px solid #e53e3e;
+    grid-column: span 1; /* Can make span 2 on larger screens if desired */
+}
+
+.standout-moment .card-header {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+}
+
+.standout-moment .card-icon {
+    color: #e53e3e;
+}
+
+.standout-moment .celebration {
+    background: #fef5e7;
+    border-left: 4px solid #d69e2e;
+    padding: 1rem;
+    margin-top: 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    color: #744210;
+}
+
+/* ========================================
+   WEEKLY RECAP CARDS
+   ======================================== */
+
+.weekly-recap {
+    border-left: 4px solid #2c7a7b;
+}
+
+.weekly-recap .card-header {
+    background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);
+}
+
+.weekly-recap .card-icon {
+    color: #2c7a7b;
+}
+
+/* ========================================
+   ARCHIVE MONTH SECTION
+   ======================================== */
+
+.archive-month {
+    background: #f7fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+.archive-link {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: #2c7a7b;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+}
+
+.archive-link:hover {
+    background: #285e61;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+    .journal-header h1 {
+        font-size: 2rem;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .journal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .month-nav-list {
+        flex-direction: column;
+    }
+
+    .month-nav a {
+        text-align: center;
+    }
+
+    .card-header h3 {
+        font-size: 1.2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    /* Allow standout moments to span 2 columns on large screens */
+    .standout-moment {
+        grid-column: span 2;
+    }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Focus styles */
+a:focus,
+button:focus {
+    outline: 3px solid #4299e1;
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    .dashboard-sticky,
+    .month-nav {
+        position: static;
+    }
+
+    .journal-card {
+        break-inside: avoid;
+    }
+}
