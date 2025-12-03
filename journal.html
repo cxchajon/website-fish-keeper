@@ -154,9 +154,17 @@
   <main class="journal-main">
 
       <!-- Page Header -->
-      <header class="journal-header">
+      <header class="journal-header" style="position: relative;">
           <h1>🐠 Aquarium Journal</h1>
           <p class="journal-subtitle">Real-time maintenance logs from a 29-gallon planted community tank</p>
+
+          <!-- Dashboard Discovery Icon -->
+          <a href="/journal-dashboard.html"
+             class="dashboard-icon"
+             aria-label="View Parameter Dashboard"
+             title="📊 Dashboard">
+              📊
+          </a>
       </header>
 
       <!-- STICKY SECTION: Tank Status Dashboard -->
@@ -165,7 +173,11 @@
           <div class="dashboard-grid">
 
               <!-- Current Parameters Card -->
-              <div class="dashboard-card parameters-card">
+              <div class="dashboard-card parameters-card"
+                   data-current-nitrate="5"
+                   data-test-date="2025-11-30"
+                   data-tank-health="excellent"
+                   data-next-water-change="2025-12-07">
                   <h2>🧪 Current Parameters</h2>
                   <ul class="param-list">
                       <li><strong>Nitrates:</strong> <span class="param-value">5 ppm</span></li>
@@ -216,7 +228,11 @@
           <div class="journal-grid">
 
               <!-- Standout Moment 1: Cherry Barb Farewell -->
-              <article class="journal-card standout-moment" data-date="2025-12-03">
+              <article class="journal-card standout-moment"
+                       data-date="2025-12-03"
+                       data-type="milestone"
+                       data-category="fish-health"
+                       data-event="cherry-barb-loss">
                   <div class="card-header">
                       <span class="card-icon">🐟</span>
                       <h3>Farewell to Original Cherry Barb</h3>
@@ -245,7 +261,11 @@
               </article>
 
               <!-- Standout Moment 2: BBA Progress -->
-              <article class="journal-card standout-moment" data-date="2025-12-03">
+              <article class="journal-card standout-moment"
+                       data-date="2025-12-03"
+                       data-type="achievement"
+                       data-category="algae-control"
+                       data-bba-status="95">
                   <div class="card-header">
                       <span class="card-icon">🧵</span>
                       <h3>BBA Reduced to Minimal Levels</h3>

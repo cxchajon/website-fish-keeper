@@ -500,6 +500,33 @@
     .skip-link:focus {
       top: 0;
     }
+
+    /* ====== Dashboard Navigation ====== */
+    .journal-dashboard .dashboard-nav {
+      padding: 1rem;
+      background: rgba(26, 35, 50, 0.5);
+      border-bottom: 1px solid rgba(30, 144, 255, 0.2);
+      margin-bottom: 1rem;
+    }
+    .journal-dashboard .back-to-journal {
+      color: #3aa6ff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .journal-dashboard .back-to-journal:hover {
+      color: #00bfff;
+      transform: translateX(-4px);
+    }
+    .journal-dashboard .back-to-journal:focus {
+      outline: 2px solid #3aa6ff;
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
   </style>
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
@@ -517,6 +544,14 @@
   <div id="site-nav"></div>
 
   <main id="main-content">
+  <!-- Navigation back to Journal -->
+  <nav class="dashboard-nav">
+    <a href="/journal.html" class="back-to-journal">
+      <span aria-hidden="true">←</span>
+      <span>Back to Journal</span>
+    </a>
+  </nav>
+
   <!-- Dashboard Header -->
   <div class="dashboard-header">
     <h1>🐠 FishKeepingLifeCo Aquarium Dashboard</h1>

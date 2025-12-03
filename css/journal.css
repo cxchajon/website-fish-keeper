@@ -79,6 +79,66 @@
 }
 
 /* ========================================
+   DASHBOARD DISCOVERY ICON
+   ======================================== */
+
+.dashboard-icon {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-size: 2rem;
+    text-decoration: none;
+    opacity: 0.4;
+    transition: all 0.3s ease;
+    z-index: 50;
+    cursor: pointer;
+    filter: grayscale(0.3);
+}
+
+.dashboard-icon:hover {
+    opacity: 1;
+    transform: scale(1.15) rotate(5deg);
+    filter: grayscale(0);
+}
+
+.dashboard-icon:focus {
+    opacity: 1;
+    outline: 2px solid #2c7a7b;
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+/* Subtle pulse animation for discoverability */
+@keyframes subtle-pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.6; }
+}
+
+.dashboard-icon {
+    animation: subtle-pulse 4s ease-in-out infinite;
+}
+
+.dashboard-icon:hover {
+    animation: none;
+}
+
+/* Mobile positioning */
+@media (max-width: 768px) {
+    .dashboard-icon {
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.5rem;
+    }
+}
+
+/* Print: hide the icon */
+@media print {
+    .dashboard-icon {
+        display: none;
+    }
+}
+
+/* ========================================
    STICKY DASHBOARD
    ======================================== */
 
