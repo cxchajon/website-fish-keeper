@@ -2,24 +2,78 @@
    JOURNAL PAGE STYLES - CARD GRID LAYOUT
    ======================================== */
 
-/* Page Header */
+/* ========================================
+   LEGAL PAD BACKGROUND TREATMENT
+   ======================================== */
+
+/* Main journal body background */
+.journal-main {
+    background: linear-gradient(to bottom, #fef9e7 0%, #fdf5d9 100%);
+    position: relative;
+}
+
+/* Legal pad paper texture overlay */
+.journal-main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        /* Horizontal lines */
+        repeating-linear-gradient(
+            transparent,
+            transparent 31px,
+            #e8d5b5 31px,
+            #e8d5b5 32px
+        );
+    pointer-events: none;
+    opacity: 0.4;
+    z-index: 0;
+}
+
+/* Red margin line (left side) */
+.journal-main::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 80px;
+    bottom: 0;
+    width: 2px;
+    background: #e74c3c;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Ensure content sits above background */
+.journal-main > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Page Header - Sits on legal pad */
 .journal-header {
     text-align: center;
     padding: 3rem 1rem 2rem;
-    background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);
+    background: transparent;
     border-bottom: 3px solid #2c7a7b;
+    margin-bottom: 0;
 }
 
 .journal-header h1 {
     font-size: 2.5rem;
     color: #1a202c;
     margin: 0 0 0.5rem 0;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .journal-subtitle {
     font-size: 1.1rem;
     color: #4a5568;
     margin: 0;
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.6);
 }
 
 /* ========================================
@@ -30,11 +84,12 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: #ffffff;
-    border-bottom: 2px solid #e2e8f0;
+    background: rgba(254, 249, 231, 0.98);
+    backdrop-filter: blur(8px);
+    border-bottom: 2px solid #d4af37;
     padding: 1.5rem 1rem;
     margin-bottom: 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .dashboard-sticky.is-pinned {
@@ -50,16 +105,41 @@
 }
 
 .dashboard-card {
-    background: #f7fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    background: #fffef9;
+    border: 2px solid #e8d5b5;
+    border-radius: 8px;
     padding: 1.5rem;
+    box-shadow: 
+        2px 2px 4px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    position: relative;
+}
+
+/* Paper texture on cards */
+.dashboard-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(
+            transparent,
+            transparent 31px,
+            rgba(232, 213, 181, 0.15) 31px,
+            rgba(232, 213, 181, 0.15) 32px
+        );
+    pointer-events: none;
+    border-radius: 8px;
 }
 
 .dashboard-card h2 {
     font-size: 1.3rem;
     color: #2c7a7b;
     margin: 0 0 1rem 0;
+    position: relative;
+    z-index: 1;
 }
 
 /* Parameters Card */
@@ -109,11 +189,14 @@
 .feeding-schedule {
     width: 100%;
     border-collapse: collapse;
+    position: relative;
+    z-index: 1;
 }
 
 .feeding-schedule td {
     padding: 0.6rem 0.75rem;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e8d5b5;
+    background: transparent;
 }
 
 .feeding-schedule tr:last-child td {
@@ -124,10 +207,16 @@
     font-weight: 600;
     color: #2d3748;
     width: 35%;
+    border-right: 1px solid #e8d5b5;
 }
 
 .feeding-schedule td:last-child {
     color: #4a5568;
+}
+
+/* Alternating row tint for readability */
+.feeding-schedule tr:nth-child(even) {
+    background: rgba(232, 213, 181, 0.08);
 }
 
 /* ========================================
@@ -138,6 +227,8 @@
     max-width: 1200px;
     margin: 0 auto 2rem;
     padding: 0 1rem;
+    position: relative;
+    z-index: 1;
 }
 
 .month-nav-list {
@@ -152,24 +243,51 @@
 .month-nav a {
     display: block;
     padding: 0.75rem 1.5rem;
-    background: #f7fafc;
+    background: #fffef9;
     color: #2c7a7b;
     text-decoration: none;
-    border-radius: 8px;
-    border: 2px solid #e2e8f0;
+    border-radius: 8px 8px 0 0;
+    border: 2px solid #e8d5b5;
+    border-bottom: none;
     font-weight: 600;
     transition: all 0.2s;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* Paper tab lines */
+.month-nav a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(
+            transparent,
+            transparent 15px,
+            rgba(232, 213, 181, 0.2) 15px,
+            rgba(232, 213, 181, 0.2) 16px
+        );
+    pointer-events: none;
+    border-radius: 8px 8px 0 0;
 }
 
 .month-nav a:hover {
-    background: #e6fffa;
-    border-color: #2c7a7b;
+    background: #fef9e7;
+    transform: translateY(-2px);
+    box-shadow: 2px -2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .month-nav a.active {
     background: #2c7a7b;
     color: #ffffff;
     border-color: #2c7a7b;
+}
+
+.month-nav a.active::before {
+    display: none;
 }
 
 /* ========================================
@@ -190,8 +308,10 @@
 }
 
 .month-header h2 {
-    font-size: 2rem;
-    color: #1a202c;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: #2c7a7b;
     margin: 0 0 0.5rem 0;
 }
 
@@ -209,27 +329,66 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;
+    position: relative;
+}
+
+.journal-grid::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 5px;
+    right: -5px;
+    bottom: 5px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    z-index: -1;
 }
 
 /* Base Card Styles */
 .journal-card {
-    background: #ffffff;
-    border-radius: 12px;
+    background: #fffef9;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 
+        3px 3px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
     transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid #e8d5b5;
+    position: relative;
+}
+
+.journal-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(
+            transparent,
+            transparent 31px,
+            rgba(232, 213, 181, 0.12) 31px,
+            rgba(232, 213, 181, 0.12) 32px
+        );
+    pointer-events: none;
+    z-index: 0;
 }
 
 .journal-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px) rotate(0.5deg);
+    box-shadow: 
+        4px 8px 16px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 /* Card Header */
 .card-header {
     padding: 1.5rem;
-    background: #f7fafc;
-    border-bottom: 2px solid #e2e8f0;
+    background: rgba(247, 242, 232, 0.8);
+    border-bottom: 2px solid #e8d5b5;
+    position: relative;
+    z-index: 1;
 }
 
 .card-icon {
@@ -254,12 +413,16 @@
 /* Card Body */
 .card-body {
     padding: 1.5rem;
+    position: relative;
+    z-index: 1;
+    background: transparent;
 }
 
 .card-body p {
     line-height: 1.7;
     color: #2d3748;
     margin-bottom: 1rem;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 .card-body ul {
@@ -286,7 +449,9 @@
     color: #2c7a7b;
     margin: 0 0 0.75rem 0;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px dashed #e2e8f0;
+    position: relative;
+    z-index: 1;
 }
 
 .recap-section p {
@@ -300,11 +465,13 @@
 /* Card Footer */
 .card-footer {
     padding: 1rem 1.5rem;
-    background: #f7fafc;
-    border-top: 1px solid #e2e8f0;
+    background: rgba(247, 242, 232, 0.6);
+    border-top: 1px solid #e8d5b5;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    position: relative;
+    z-index: 1;
 }
 
 .card-tag {
@@ -312,33 +479,51 @@
     padding: 0.35rem 0.75rem;
     font-size: 0.85rem;
     font-weight: 600;
-    border-radius: 6px;
+    border-radius: 4px;
     background: #e2e8f0;
     color: #2d3748;
+    box-shadow: 
+        1px 1px 3px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* Sticker shine effect */
+.card-tag::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 50%;
+    height: 40%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%);
+    border-radius: 3px 0 0 0;
+    pointer-events: none;
 }
 
 .tag-achievement {
-    background: #fef5e7;
+    background: linear-gradient(135deg, #fef5e7 0%, #fcedd6 100%);
     color: #d69e2e;
-    border: 1px solid #d69e2e;
+    border-color: #d69e2e;
 }
 
 .tag-algae {
-    background: #e6fffa;
+    background: linear-gradient(135deg, #e6fffa 0%, #d1f5ee 100%);
     color: #2c7a7b;
-    border: 1px solid #2c7a7b;
+    border-color: #2c7a7b;
 }
 
 .tag-maintenance {
-    background: #ebf8ff;
+    background: linear-gradient(135deg, #ebf8ff 0%, #d6f0ff 100%);
     color: #3182ce;
-    border: 1px solid #3182ce;
+    border-color: #3182ce;
 }
 
 .tag-water-change {
-    background: #e0f2fe;
+    background: linear-gradient(135deg, #e0f2fe 0%, #c7e9ff 100%);
     color: #0891b2;
-    border: 1px solid #0891b2;
+    border-color: #0891b2;
 }
 
 /* ========================================
@@ -348,10 +533,11 @@
 .standout-moment {
     border-left: 6px solid #e53e3e;
     grid-column: span 1; /* Can make span 2 on larger screens if desired */
+    background: #fffbf0;
 }
 
 .standout-moment .card-header {
-    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+    background: linear-gradient(135deg, rgba(255, 245, 230, 0.95) 0%, rgba(255, 250, 240, 0.85) 100%);
 }
 
 .standout-moment .card-icon {
@@ -359,13 +545,34 @@
 }
 
 .standout-moment .celebration {
-    background: #fef5e7;
+    background: linear-gradient(to right, transparent 0%, #fff4cc 3%, #fff4cc 97%, transparent 100%);
     border-left: 4px solid #d69e2e;
     padding: 1rem;
     margin-top: 1rem;
-    border-radius: 6px;
+    border-radius: 4px;
     font-weight: 600;
     color: #744210;
+    position: relative;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.standout-moment .celebration::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 220, 100, 0.1) 2px,
+            rgba(255, 220, 100, 0.1) 4px
+        );
+    pointer-events: none;
+    border-radius: 4px;
 }
 
 /* ========================================
@@ -374,10 +581,11 @@
 
 .weekly-recap {
     border-left: 4px solid #2c7a7b;
+    background: #fffef9;
 }
 
 .weekly-recap .card-header {
-    background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);
+    background: rgba(240, 253, 250, 0.6);
 }
 
 .weekly-recap .card-icon {
@@ -389,10 +597,33 @@
    ======================================== */
 
 .archive-month {
-    background: #f7fafc;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
+    background: linear-gradient(135deg, #faf7f0 0%, #f5f0e6 100%);
+    border: 2px solid #d4af37;
+    border-radius: 8px;
     padding: 2rem;
+    box-shadow: 
+        3px 3px 8px rgba(0, 0, 0, 0.15),
+        inset 0 0 20px rgba(212, 175, 55, 0.1);
+    position: relative;
+}
+
+/* Aged paper texture */
+.archive-month::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(
+            transparent,
+            transparent 31px,
+            rgba(180, 150, 100, 0.08) 31px,
+            rgba(180, 150, 100, 0.08) 32px
+        );
+    pointer-events: none;
+    border-radius: 8px;
 }
 
 .archive-link {
@@ -401,14 +632,19 @@
     background: #2c7a7b;
     color: #ffffff;
     text-decoration: none;
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: 600;
     font-size: 1.1rem;
-    transition: background 0.2s;
+    transition: all 0.2s;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
 }
 
 .archive-link:hover {
     background: #285e61;
+    transform: translateY(-2px);
+    box-shadow: 3px 4px 8px rgba(0, 0, 0, 0.25);
 }
 
 /* ========================================
@@ -420,12 +656,35 @@
         font-size: 2rem;
     }
 
+    /* Reduce red margin line position on mobile */
+    .journal-main::after {
+        left: 20px;
+    }
+
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
 
     .journal-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* Adjust card spacing */
+    .journal-card {
+        margin: 0 0.5rem;
+    }
+
+    /* Smaller paper texture lines on mobile */
+    .journal-main::before,
+    .dashboard-card::before,
+    .journal-card::before {
+        background-image: 
+            repeating-linear-gradient(
+                transparent,
+                transparent 27px,
+                rgba(232, 213, 181, 0.3) 27px,
+                rgba(232, 213, 181, 0.3) 28px
+            );
     }
 
     .month-nav-list {
@@ -478,7 +737,21 @@ button:focus {
         position: static;
     }
 
+    .journal-main::before,
+    .journal-main::after,
+    .dashboard-card::before,
+    .journal-card::before,
+    .archive-month::before {
+        display: none;
+    }
+
+    .journal-main {
+        background: white;
+    }
+
     .journal-card {
         break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
     }
 }
