@@ -351,6 +351,69 @@
     z-index: -1;
 }
 
+/* ========================================
+   COMING SOON NOTICE CARD
+   ======================================== */
+
+.journal-notice {
+    background: linear-gradient(135deg, #f0fdfa 0%, #e6fffa 100%);
+    border: 2px dashed #2c7a7b;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: center;
+    grid-column: 1 / -1; /* Span full width */
+    position: relative;
+}
+
+/* Paper texture on notice */
+.journal-notice::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(
+            transparent,
+            transparent 31px,
+            rgba(44, 122, 123, 0.05) 31px,
+            rgba(44, 122, 123, 0.05) 32px
+        );
+    pointer-events: none;
+    border-radius: 12px;
+}
+
+.journal-notice h3 {
+    color: #2c7a7b;
+    margin: 0 0 1rem 0;
+    font-size: 1.4rem;
+    position: relative;
+    z-index: 1;
+    font-weight: 700;
+}
+
+.journal-notice p {
+    color: #1a202c;
+    line-height: 1.7;
+    margin: 0.75rem 0;
+    position: relative;
+    z-index: 1;
+}
+
+.journal-notice strong {
+    color: #2c7a7b;
+    font-weight: 700;
+}
+
+.notice-subtext {
+    font-size: 0.95rem;
+    color: #4a5568;
+    font-style: italic;
+    margin-top: 1rem;
+}
+
 /* Base Card Styles */
 .journal-card {
     background: #fffef9;
@@ -559,6 +622,19 @@
     background: linear-gradient(135deg, #e0f2fe 0%, #c7e9ff 100%);
     color: #0891b2;
     border-color: #0891b2;
+}
+
+/* Additional card tags for new categories */
+.tag-milestone {
+    background: linear-gradient(135deg, #fef5e7 0%, #fcf3cf 100%);
+    color: #7d6608;
+    border-color: #d4af37;
+}
+
+.tag-reflection {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    color: #6a1b9a;
+    border-color: #9c27b0;
 }
 
 /* ========================================
@@ -914,6 +990,14 @@
     }
 
     .card-header h3 {
+        font-size: 1.2rem;
+    }
+
+    .journal-notice {
+        padding: 1.5rem;
+    }
+    
+    .journal-notice h3 {
         font-size: 1.2rem;
     }
 }
