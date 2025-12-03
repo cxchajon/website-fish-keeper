@@ -30,6 +30,30 @@
   <meta name="twitter:description" content="Study real aquarium logs from FishKeepingLifeCo’s home tanks: water tests, maintenance, and livestock changes that power The Tank Guide’s tools and journals." />
   <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
   <meta name="twitter:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
+
+  <!-- Schema.org structured data for monthly recaps -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Aquarium Journal - The Tank Guide",
+    "description": "Real-time maintenance logs and monthly recaps from a 29-gallon planted community aquarium",
+    "url": "https://thetankguide.com/journal.html",
+    "hasPart": [
+      {
+        "@type": "Article",
+        "headline": "29G Aquarium — November 2025 Wrap-Up",
+        "datePublished": "2025-11-30",
+        "author": {
+          "@type": "Person",
+          "name": "X"
+        },
+        "description": "Major maintenance and stabilization month. BBA nearly eliminated through targeted treatment."
+      }
+    ]
+  }
+  </script>
+
   <script src="/js/nav.js?v=1.1.0" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -225,6 +249,213 @@
         font-size: 0.85rem;
       }
     }
+
+    /* Monthly Archives Table of Contents */
+    #monthly-archives-toc {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.5);
+      border-left: 4px solid #2c7a7b;
+      border-radius: 8px;
+    }
+
+    #monthly-archives-toc h2 {
+      margin-top: 0;
+      color: #2c7a7b;
+      font-family: inherit;
+    }
+
+    .recap-index {
+      list-style: none;
+      padding: 0;
+    }
+
+    .recap-index li {
+      margin: 0.75rem 0;
+    }
+
+    .recap-index a {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2c7a7b;
+      text-decoration: none;
+    }
+
+    .recap-index a:hover {
+      text-decoration: underline;
+    }
+
+    .recap-index .coming-soon {
+      color: #718096;
+      font-style: italic;
+    }
+
+    /* Monthly Recap Articles */
+    .monthly-recap {
+      margin: 3rem 0;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(168, 196, 255, 0.3);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .recap-header {
+      border-bottom: 2px solid #2c7a7b;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .recap-header h2 {
+      margin: 0 0 0.5rem 0;
+      color: #1a202c;
+      font-family: inherit;
+    }
+
+    .recap-subtitle {
+      font-size: 1.1rem;
+      color: #4a5568;
+      margin: 0.5rem 0;
+    }
+
+    .recap-header time {
+      font-size: 0.9rem;
+      color: #718096;
+    }
+
+    /* Recap Sections */
+    .recap-section {
+      margin: 2rem 0;
+    }
+
+    .recap-section h3 {
+      color: #2d3748;
+      margin-bottom: 1rem;
+      font-family: inherit;
+    }
+
+    .recap-section ul {
+      line-height: 1.8;
+    }
+
+    .recap-section p,
+    .recap-section li {
+      font-family: "Patrick Hand", "Kalam", system-ui, sans-serif;
+      font-size: 20px;
+      line-height: 1.9;
+      letter-spacing: 0.15px;
+      color: #252525;
+    }
+
+    /* BBA Progress Bar */
+    .bba-progress {
+      margin: 1rem 0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 24px;
+      background: rgba(226, 232, 240, 0.6);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #48bb78, #38a169);
+      transition: width 0.3s ease;
+    }
+
+    .progress-label {
+      margin-top: 0.5rem;
+      font-weight: 600;
+      color: #38a169;
+      font-family: inherit;
+    }
+
+    /* Feeding Schedule Table */
+    .feeding-schedule {
+      width: 100%;
+      margin: 1rem 0;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .feeding-schedule td {
+      padding: 0.75rem;
+      border: 1px solid rgba(168, 196, 255, 0.3);
+      font-family: "Patrick Hand", "Kalam", system-ui, sans-serif;
+      font-size: 20px;
+      line-height: 1.9;
+      letter-spacing: 0.15px;
+    }
+
+    .feeding-schedule td:first-child {
+      font-weight: 600;
+      background: rgba(247, 250, 252, 0.6);
+      width: 30%;
+    }
+
+    /* Final Status Section */
+    .final-status {
+      background: rgba(240, 255, 244, 0.7);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border-left: 4px solid #38a169;
+    }
+
+    .status-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .status-list li {
+      padding: 0.5rem 0;
+    }
+
+    /* Section Divider */
+    .section-divider {
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .jump-to-daily {
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      background: #2c7a7b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+
+    .jump-to-daily:hover {
+      background: #285e61;
+    }
+
+    /* Daily Entries Section */
+    #daily-entries {
+      scroll-margin-top: 2rem;
+    }
+
+    /* Mobile Responsive for Monthly Archives */
+    @media (max-width: 768px) {
+      .monthly-recap {
+        padding: 1rem;
+      }
+
+      .feeding-schedule td:first-child {
+        width: 40%;
+      }
+
+      .recap-section p,
+      .recap-section li,
+      .feeding-schedule td {
+        font-size: 18px;
+      }
+    }
   </style>
   <!-- Consent Mode defaults (runs after GA loader) -->
   <script src="/assets/js/consent-mode.js" defer></script>
@@ -274,9 +505,149 @@
       </nav>
     </header>
 
-    <div id="journal-entries" class="jp-list" aria-live="polite"></div>
+    <!-- Monthly Archives Table of Contents -->
+    <section id="monthly-archives-toc">
+      <h2>Monthly Recaps</h2>
+      <ul class="recap-index">
+        <li><a href="#november-2025">November 2025</a></li>
+        <li class="coming-soon">December 2025 (coming soon)</li>
+      </ul>
+    </section>
 
-    <article class="entry">
+    <!-- Monthly Recaps Container -->
+    <section id="monthly-recaps">
+
+      <article id="november-2025" class="monthly-recap">
+        <header class="recap-header">
+          <h2>29G Aquarium — November 2025 Wrap-Up</h2>
+          <p class="recap-subtitle">Major maintenance and stabilization month. BBA nearly eliminated through targeted treatment.</p>
+          <time datetime="2025-11-30">Month End: November 30, 2025</time>
+        </header>
+
+        <div class="recap-body">
+
+          <section class="recap-section">
+            <h3>🧪 Water Parameters & Testing</h3>
+            <ul>
+              <li>Nitrates ranged: <strong>5 ppm → 40 ppm</strong>, trending downward with increased consistency</li>
+              <li>Highest reading: <strong>40 ppm</strong> before large water changes</li>
+              <li>Lowest reading: <strong>&lt;5 ppm</strong> after recovery and stabilization</li>
+              <li>Final week: consistently <strong>5–10 ppm</strong></li>
+            </ul>
+          </section>
+
+          <section class="recap-section">
+            <h3>💧 Water Changes (Major)</h3>
+            <ul>
+              <li><strong>75% display / 90% sump</strong> performed most weeks</li>
+              <li>Heavy trims and glass cleaning early in month</li>
+              <li>Poly-fil adjustments, new coarse sponge added to return chamber</li>
+              <li>Prime used for every water change (standard routine)</li>
+            </ul>
+          </section>
+
+          <section class="recap-section">
+            <h3>⚙️ Filter Media Updates</h3>
+            <ul>
+              <li>Removed poly-fil from refugium chamber (too restrictive)</li>
+              <li>Added <strong>coarse sponge block</strong> to stabilize return pump chamber</li>
+              <li>Added bag of <strong>Seachem Matrix</strong> for additional biomedia</li>
+              <li>Replaced Purigen once during the month</li>
+              <li>Dosed <strong>Stability</strong> with each media addition</li>
+            </ul>
+          </section>
+
+          <section class="recap-section">
+            <h3>🌱 Fertilizer & Dosing Routine</h3>
+            <ul>
+              <li>Excel spot dosing continued for targeted BBA areas</li>
+              <li>Standard capfuls maintained between spot treatments</li>
+              <li>Thrive Plus dosing refined:
+                <ul>
+                  <li>Switched from split 4+4 pumps to <strong>single 4-pump doses</strong></li>
+                  <li>Later adjusted down to <strong>2-pump doses</strong> on low-nitrate days</li>
+                </ul>
+              </li>
+              <li>Plant response: Noticeable new growth, healthier green tone in stem plants</li>
+            </ul>
+          </section>
+
+          <section class="recap-section">
+            <h3>🧵 BBA Status Throughout the Month</h3>
+            <div class="bba-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 95%;" aria-label="95% BBA-free"></div>
+              </div>
+              <p class="progress-label">Month Progress: 95% BBA-Free</p>
+            </div>
+            <ul>
+              <li><strong>Beginning:</strong> Medium patches around hardware and high-flow zones</li>
+              <li><strong>Mid-month:</strong> Excel spot-dosed daily → sections turned fully red</li>
+              <li><strong>Final week:</strong> Main problem area completely BBA-free</li>
+              <li><strong>End result:</strong> ~95% BBA-free, expected full clearance by early December</li>
+            </ul>
+          </section>
+
+          <section class="recap-section">
+            <h3>🐌 Cleanup Crew Activity</h3>
+            <ul>
+              <li>Malaysian trumpet snails helping keep overflow screen clean</li>
+              <li>Mystery snail losses (2) may have contributed to short nitrate spike</li>
+              <li>Snail/shrimp populations stable; grazing increased as algae declined</li>
+            </ul>
+          </section>
+
+          <section class="recap-section">
+            <h3>🍽️ Feeding Pattern Changes</h3>
+            <p><strong>New schedule activated mid-month:</strong></p>
+            <table class="feeding-schedule">
+              <tr><td>Monday</td><td>Wafers + Flakes</td></tr>
+              <tr><td>Tuesday</td><td>Brine Shrimp + Flakes</td></tr>
+              <tr><td>Wednesday</td><td>Wafers + Flakes</td></tr>
+              <tr><td>Thursday</td><td>Bloodworms + Flakes</td></tr>
+              <tr><td>Friday</td><td>Wafers + Flakes</td></tr>
+              <tr><td>Weekend</td><td>Light or optional flakes</td></tr>
+            </table>
+            <p><strong>Results:</strong> Fish behavior remained strong, cleanup crew activity increased. Schedule worked extremely well.</p>
+          </section>
+
+          <section class="recap-section">
+            <h3>📌 Key Observations</h3>
+            <ul>
+              <li>Excel spot treatment + shrimp grazing = most effective BBA combo</li>
+              <li>Removing poly-fil significantly improved flow and reduced micro-debris</li>
+              <li>New coarse sponge collecting debris that previously bypassed chambers</li>
+              <li>Stability dosing helped smooth transitions after media changes</li>
+              <li>Algae wafer rotation kept snails active while preventing overfeeding</li>
+            </ul>
+          </section>
+
+          <section class="recap-section final-status">
+            <h3>🟢 End-of-Month Status (Nov 30, 2025)</h3>
+            <ul class="status-list">
+              <li><strong>Nitrates:</strong> 5 ppm</li>
+              <li><strong>Feeding:</strong> flakes + wafers</li>
+              <li><strong>BBA:</strong> minimal, isolated (clearing)</li>
+              <li><strong>Overall tank health:</strong> Excellent</li>
+              <li><strong>System readiness:</strong> Perfectly balanced for December</li>
+            </ul>
+          </section>
+
+        </div>
+      </article>
+
+    </section>
+
+    <!-- Divider -->
+    <div class="section-divider">
+      <button class="jump-to-daily">↓ Jump to Daily Entries</button>
+    </div>
+
+    <!-- Daily Journal Entries Section -->
+    <section id="daily-entries">
+      <div id="journal-entries" class="jp-list" aria-live="polite"></div>
+
+      <article class="entry">
       <h2 class="entry-title">2025-11-29 | Maintenance, Test &amp; Dosing</h2>
       <div class="entry-body">
         <p>Pre-water-change nitrate measured between 20–40 ppm, closer to 20. Removed the poly-fil from the refugium chamber and added a piece of coarse sponge media to the return pump chamber to help reduce byproducts entering the pump area.</p>
@@ -445,6 +816,7 @@
         <p>Fed flakes and brine shrimp while the tank remained stable post-maintenance.</p>
       </div>
     </article>
+    </section>
   </main>
 
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
@@ -846,6 +1218,29 @@
       }
     ]
   }
+  </script>
+
+  <!-- Smooth Scrolling for Monthly Archives -->
+  <script>
+    // Smooth scroll for jump button
+    document.querySelector('.jump-to-daily')?.addEventListener('click', function() {
+      document.getElementById('daily-entries').scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+
+    // Smooth scroll for TOC links
+    document.querySelectorAll('.recap-index a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        target?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      });
+    });
   </script>
 <!-- === TTG CMP Consent Bridge START === -->
 <script>
