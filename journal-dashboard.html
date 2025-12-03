@@ -340,6 +340,48 @@
     }
     .journal-dashboard .chart-tooltip .tooltip-link:hover{ text-decoration:underline; }
 
+    /* ====== Refresh Controls ====== */
+    .refresh-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      background: #2c7a7b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      z-index: 100;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .refresh-btn:hover {
+      background: #285e61;
+    }
+
+    .refresh-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #38a169;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .refresh-indicator.active {
+      opacity: 1;
+      animation: pulse 1s ease;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.5); }
+    }
+
     /* ====== Timelines ====== */
     .journal-dashboard .timeline-section{
       background:linear-gradient(135deg,#1a2332 0%, #0f1620 100%);
@@ -552,6 +594,11 @@
     </a>
   </nav>
 
+  <button id="refresh-dashboard" class="refresh-btn" aria-label="Refresh data">
+    🔄 Refresh
+    <span class="refresh-indicator" aria-hidden="true"></span>
+  </button>
+
   <!-- Dashboard Header -->
   <div class="dashboard-header">
     <h1>🐠 FishKeepingLifeCo Aquarium Dashboard</h1>
@@ -575,12 +622,13 @@
     <div class="dashboard-card">
       <div class="dashboard-label">Current Nitrate</div>
       <div class="dashboard-value" id="currentNitrate">—</div>
-      <div class="dashboard-subtext">ppm</div>
+      <div class="dashboard-subtext">ppm • <span id="lastTestDate">Last test: —</span></div>
     </div>
     <div class="dashboard-card">
       <div class="dashboard-label">Days Since WC</div>
       <div class="dashboard-value" id="daysSinceWC">—</div>
       <div class="dashboard-subtext" id="lastWCSub">Last: —</div>
+      <div class="dashboard-subtext" id="nextWaterChange">Next: —</div>
     </div>
     <div class="dashboard-card">
       <div class="dashboard-label">Total Feedings</div>
@@ -690,6 +738,8 @@
     console.log('📅 Auto-generated months:', CONFIG.monthFiles);
     console.log('📋 Configuration:', CONFIG);
 
+    let journalDataAvailable = false;
+
     // ====== UTILITY FUNCTIONS ======
     const fmtDate = (iso) => {
       try {
@@ -710,6 +760,292 @@
         return iso.substring(0, 7);
       } catch { return ''; }
     };
+
+    // ====== DASHBOARD DATA SYNC FROM JOURNAL PAGE ======
+
+    async function updateDashboardData() {
+      try {
+        showRefreshIndicator();
+
+        const response = await fetch('/journal.html');
+        const html = await response.text();
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        const paramCard = doc.querySelector('.dashboard-card.parameters-card');
+
+        if (paramCard) {
+          journalDataAvailable = true;
+
+          const nitrateValue = paramCard.dataset.currentNitrate ||
+            paramCard.querySelector('.param-value')?.textContent.match(/\d+/)?.[0];
+
+          const lastTestDate = paramCard.dataset.testDate ||
+            paramCard.querySelector('time[datetime]')?.getAttribute('datetime');
+
+          const nextWaterChange = paramCard.dataset.nextWaterChange ||
+            paramCard.querySelectorAll('time[datetime]')[1]?.getAttribute('datetime');
+
+          const tankHealth = paramCard.dataset.tankHealth ||
+            paramCard.querySelector('.status-good, .status-warning, .status-alert')?.textContent;
+
+          updateNitrateDisplay(parseInt(nitrateValue, 10));
+          updateLastTestDate(lastTestDate);
+          updateNextWaterChange(nextWaterChange);
+          updateSystemStatus(parseInt(nitrateValue, 10), tankHealth);
+          updateDaysSinceWaterChange(lastTestDate);
+
+          console.log('Dashboard updated:', {
+            nitrate: nitrateValue,
+            lastTest: lastTestDate,
+            nextWC: nextWaterChange,
+            health: tankHealth
+          });
+        } else {
+          journalDataAvailable = false;
+          console.error('Could not find parameters card in journal page');
+        }
+
+        updateHistoricalData(doc);
+      } catch (error) {
+        console.error('Error fetching journal data:', error);
+        displayErrorState();
+        journalDataAvailable = false;
+      }
+    }
+
+    function updateNitrateDisplay(nitrate) {
+      const nitrateElement = document.querySelector('#currentNitrate') ||
+        document.querySelector('#current-nitrate') ||
+        document.querySelector('.nitrate-value');
+      if (nitrateElement && !Number.isNaN(nitrate)) {
+        nitrateElement.textContent = nitrate;
+      }
+    }
+
+    function updateLastTestDate(dateString) {
+      const dateElement = document.querySelector('#lastTestDate') ||
+        document.querySelector('#last-test-date') ||
+        document.querySelector('.last-test');
+      if (dateElement && dateString) {
+        const date = new Date(dateString);
+        dateElement.textContent = date.toLocaleDateString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric'
+        });
+      }
+    }
+
+    function updateNextWaterChange(dateString) {
+      const wcElement = document.querySelector('#nextWaterChange') ||
+        document.querySelector('#next-water-change') ||
+        document.querySelector('.next-wc');
+      if (wcElement && dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const daysDiff = Math.ceil((date - now) / (1000 * 60 * 60 * 24));
+
+        wcElement.textContent = `${daysDiff} days (${date.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric'
+        })})`;
+      }
+    }
+
+    function updateSystemStatus(nitrate, healthStatus) {
+      const statusElement = document.querySelector('#systemStatus') ||
+        document.querySelector('#system-status') ||
+        document.querySelector('.system-status');
+      const statusTextElement = document.querySelector('#statusDetail') ||
+        document.querySelector('#status-text') ||
+        document.querySelector('.status-message');
+
+      if (!statusElement) return;
+
+      statusElement.classList.remove('status-good', 'status-warning', 'status-elevated', 'status-critical');
+
+      let status = healthStatus || 'Stable';
+      let message = 'System healthy';
+      let className = 'status-good';
+
+      if (!Number.isNaN(nitrate)) {
+        if (nitrate < 10) {
+          status = 'Excellent';
+          message = 'Optimal nitrate levels';
+          className = 'status-good';
+        } else if (nitrate < 20) {
+          status = 'Good';
+          message = 'Healthy nitrate range';
+          className = 'status-good';
+        } else if (nitrate < 40) {
+          status = 'Moderate';
+          message = 'Water change due soon';
+          className = 'status-warning';
+        } else if (nitrate < 80) {
+          status = 'Elevated';
+          message = 'Water change recommended';
+          className = 'status-elevated';
+        } else {
+          status = 'Critical';
+          message = 'Immediate water change needed';
+          className = 'status-critical';
+        }
+      }
+
+      statusElement.textContent = status;
+      statusElement.classList.add(className);
+
+      if (statusTextElement) {
+        statusTextElement.textContent = message;
+      }
+    }
+
+    function updateDaysSinceWaterChange(lastWCDate) {
+      const daysSinceElement = document.querySelector('#daysSinceWC') ||
+        document.querySelector('#days-since-wc') ||
+        document.querySelector('.days-count');
+      const lastWCElement = document.querySelector('#lastWCSub') ||
+        document.querySelector('#last-wc-date') ||
+        document.querySelector('.last-wc-date');
+
+      if (lastWCDate) {
+        const lastDate = new Date(lastWCDate);
+        const now = new Date();
+        const daysDiff = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
+
+        if (daysSinceElement) {
+          daysSinceElement.textContent = daysDiff;
+        }
+
+        if (lastWCElement) {
+          lastWCElement.textContent = `Last: ${lastDate.toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+          })}`;
+        }
+      }
+    }
+
+    function updateHistoricalData(doc) {
+      const weeklyCards = doc.querySelectorAll('.journal-card.weekly-recap[data-date]');
+      const historicalData = [];
+
+      weeklyCards.forEach(card => {
+        const date = card.dataset.date;
+        const nitrateBefore = parseInt(card.dataset.nitrateBefore, 10);
+        const nitrateAfter = parseInt(card.dataset.nitrateAfter, 10);
+
+        if (date && !Number.isNaN(nitrateBefore) && !Number.isNaN(nitrateAfter)) {
+          historicalData.push({
+            date,
+            before: nitrateBefore,
+            after: nitrateAfter
+          });
+        }
+      });
+
+      if (historicalData.length > 0) {
+        updateNitrateChart(historicalData);
+      }
+
+      console.log('Historical data loaded:', historicalData);
+    }
+
+    function updateNitrateChart(historicalData) {
+      const canvas = document.getElementById('nitrateChart');
+      if (!canvas || typeof Chart === 'undefined') return;
+
+      const labels = historicalData.map(d => fmtFullDate(d.date));
+      const beforeData = historicalData.map(d => d.before);
+      const afterData = historicalData.map(d => d.after);
+
+      if (typeof nitrateChart !== 'undefined' && nitrateChart) {
+        nitrateChart.destroy();
+      }
+
+      const chartCtx = canvas.getContext('2d');
+      nitrateChart = new Chart(chartCtx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Before WC',
+              data: beforeData,
+              borderColor: '#ffa500',
+              backgroundColor: 'rgba(255,165,0,0.12)',
+              tension: 0.3,
+              borderWidth: 3,
+              pointRadius: 4
+            },
+            {
+              label: 'After WC',
+              data: afterData,
+              borderColor: '#3aa6ff',
+              backgroundColor: 'rgba(58,166,255,0.18)',
+              tension: 0.3,
+              borderWidth: 3,
+              pointRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#e4e6eb', font: { size: 13 } } },
+            datalabels: {
+              formatter: (v, ctx) => fmtDate(historicalData[ctx.dataIndex].date),
+              align: 'top',
+              anchor: 'end',
+              color: '#e8f3ff',
+              font: { weight: '600', size: 10 },
+              textStrokeColor: '#0a0e1a',
+              textStrokeWidth: 3,
+              clip: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 80,
+              grid: { color: typeof gridColor !== 'undefined' ? gridColor : 'rgba(30, 144, 255, 0.12)' },
+              ticks: { color: typeof tickColor !== 'undefined' ? tickColor : '#9bb0cc', callback: (v) => `${v} ppm` }
+            },
+            x: { grid: { color: typeof gridColor !== 'undefined' ? gridColor : 'rgba(30, 144, 255, 0.12)' } }
+          }
+        }
+      });
+    }
+
+    function displayErrorState() {
+      const nitrateElement = document.querySelector('#currentNitrate') ||
+        document.querySelector('#current-nitrate');
+      const statusElement = document.querySelector('#systemStatus') ||
+        document.querySelector('#system-status');
+
+      if (nitrateElement) {
+        nitrateElement.textContent = '--';
+      }
+
+      if (statusElement) {
+        statusElement.textContent = 'Unable to load data';
+        statusElement.classList.add('status-error');
+      }
+
+      console.error('Dashboard: Could not fetch data from journal page');
+    }
+
+    function showRefreshIndicator() {
+      const indicator = document.querySelector('.refresh-indicator');
+      if (indicator) {
+        indicator.classList.add('active');
+        setTimeout(() => indicator.classList.remove('active'), 1000);
+      }
+    }
 
     // ====== NATURAL LANGUAGE PARSING ENGINE ======
 
@@ -1087,10 +1423,12 @@
       }
 
       document.getElementById('totalFeedings').textContent = feedings.length;
-      document.getElementById('daysSinceWC').textContent = daysSinceWC;
-      document.getElementById('lastWCSub').textContent = lastWCDate;
+      if (!journalDataAvailable) {
+        document.getElementById('daysSinceWC').textContent = daysSinceWC;
+        document.getElementById('lastWCSub').textContent = lastWCDate;
+      }
 
-      if (nitrateEntries.length > 0) {
+      if (nitrateEntries.length > 0 && !journalDataAvailable) {
         const latestNitrate = nitrateEntries[nitrateEntries.length - 1];
         document.getElementById('currentNitrate').textContent = latestNitrate.nitrate;
 
@@ -1364,6 +1702,8 @@
     async function initializeDashboard() {
       console.log('🎬 Initializing dashboard...');
 
+      await updateDashboardData();
+
       const data = await fetchAllJournalData();
 
       if (!data) {
@@ -1436,7 +1776,9 @@
       updateStats(data);
 
       console.log('📈 Rendering Nitrate chart...');
-      renderNitrateChart(data);
+      if (!journalDataAvailable) {
+        renderNitrateChart(data);
+      }
 
       console.log('📈 Rendering Feeding chart...');
       renderFeedingChart(data);
@@ -1450,11 +1792,20 @@
       console.log('✅ Dashboard initialization complete');
     }
 
+    document.getElementById('refresh-dashboard')?.addEventListener('click', () => {
+      showRefreshIndicator();
+      updateDashboardData();
+    });
+
     // Start
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initializeDashboard);
+      document.addEventListener('DOMContentLoaded', () => {
+        initializeDashboard();
+        setInterval(updateDashboardData, 30000);
+      });
     } else {
       initializeDashboard();
+      setInterval(updateDashboardData, 30000);
     }
   </script>
   </main>
