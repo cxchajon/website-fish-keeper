@@ -16,7 +16,7 @@ The Tank Guide is a FishKeepingLifeCo product that blends practical aquarium too
 - University pages: `/university/` and the legacy research hub at `/pages/university.html`
 - Community Video Picks: `/pages/community-video-picks.html`
 - Live Tank Journal: `/journal.html` (live notebook for the 29-gallon planted aquarium)
-- Journal archives (static monthly snapshots): `/journal/2025-09.html`, `/journal/2025-10.html`, `/journal/2025-11.html`
+- Journal archives (static monthly snapshots): `/journal/2025-10.html`, `/journal/2025-11.html`
 - Blog collection: `/blogs/` plus individual posts under `/blogs/`
 - Additional public pages: `/submit-your-tank.html`, `/store.html`, `/about.html`, `/contact-feedback.html`, `/privacy-legal.html`, `/terms.html`, `/copyright-dmca.html`, `/trust-security.html`, `/cookie-settings.html`
 

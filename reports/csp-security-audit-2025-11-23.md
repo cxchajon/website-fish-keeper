@@ -169,14 +169,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 11. `gear/index.html` - Gear guide styles
 12. `journal-dashboard.html` - Dashboard styles
 13. `journal.html` - Journal list styles
-14. `journal/2025-09.html` - Journal entry styles
-15. `journal/2025-10.html` - Journal entry styles
-16. `journal/2025-11.html` - Journal entry styles
-17. `media.html` - Media hub styles
-18. `pages/community-video-picks.html` - Video picks styles
-19. `privacy-legal.html` - Legal page styles
-20. `terms.html` - Terms page styles
-21. `trust-security.html` - Trust page styles
+14. `journal/2025-10.html` - Journal entry styles
+15. `journal/2025-11.html` - Journal entry styles
+16. `media.html` - Media hub styles
+17. `pages/community-video-picks.html` - Video picks styles
+18. `privacy-legal.html` - Legal page styles
+19. `terms.html` - Terms page styles
+20. `trust-security.html` - Trust page styles
 
 **Solution Options:**
 1. **Preferred:** Move all to `/css/pages/*.css` and import via `main.bundle.css`
