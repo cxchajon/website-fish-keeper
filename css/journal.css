@@ -64,16 +64,18 @@
 
 .journal-header h1 {
     font-size: 2.5rem;
-    color: #1a202c;
+    color: #000000;
     margin: 0 0 0.5rem 0;
-    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+    text-shadow: none;
+    font-weight: 700;
 }
 
 .journal-subtitle {
     font-size: 1.1rem;
-    color: #4a5568;
+    color: #2d3748;
     margin: 0;
-    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.6);
+    text-shadow: none;
+    font-weight: 400;
 }
 
 /* ========================================
@@ -136,10 +138,11 @@
 
 .dashboard-card h2 {
     font-size: 1.3rem;
-    color: #2c7a7b;
+    color: #1a202c;
     margin: 0 0 1rem 0;
     position: relative;
     z-index: 1;
+    font-weight: 700;
 }
 
 /* Parameters Card */
@@ -151,7 +154,8 @@
 
 .param-list li {
     padding: 0.5rem 0;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #cbd5e0;
+    color: #1a202c;
 }
 
 .param-list li:last-child {
@@ -195,8 +199,9 @@
 
 .feeding-schedule td {
     padding: 0.6rem 0.75rem;
-    border-bottom: 1px solid #e8d5b5;
+    border-bottom: 1px solid #cbd5e0;
     background: transparent;
+    color: #1a202c;
 }
 
 .feeding-schedule tr:last-child td {
@@ -204,14 +209,15 @@
 }
 
 .feeding-schedule td:first-child {
-    font-weight: 600;
-    color: #2d3748;
+    font-weight: 700;
+    color: #000000;
     width: 35%;
-    border-right: 1px solid #e8d5b5;
+    border-right: 1px solid #cbd5e0;
 }
 
 .feeding-schedule td:last-child {
-    color: #4a5568;
+    color: #2d3748;
+    font-weight: 400;
 }
 
 /* Alternating row tint for readability */
@@ -311,14 +317,15 @@
     font-family: 'Caveat', cursive;
     font-weight: 700;
     font-size: 2.5rem;
-    color: #2c7a7b;
+    color: #000000;
     margin: 0 0 0.5rem 0;
 }
 
 .month-description {
     font-size: 1.1rem;
-    color: #4a5568;
+    color: #2d3748;
     margin: 0;
+    font-weight: 400;
 }
 
 /* ========================================
@@ -399,15 +406,18 @@
 
 .card-header h3 {
     font-size: 1.3rem;
-    color: #1a202c;
+    color: #000000;
     margin: 0.5rem 0;
+    text-shadow: none;
+    font-weight: 700;
 }
 
 .card-header time {
     display: block;
     font-size: 0.9rem;
-    color: #718096;
+    color: #4a5568;
     margin-top: 0.5rem;
+    font-weight: 500;
 }
 
 /* Card Body */
@@ -420,19 +430,37 @@
 
 .card-body p {
     line-height: 1.7;
-    color: #2d3748;
+    color: #1a202c;
     margin-bottom: 1rem;
-    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+    text-shadow: none;
+    font-weight: 400;
 }
 
 .card-body ul {
     margin: 1rem 0;
     padding-left: 1.5rem;
+    list-style-type: disc;
 }
 
 .card-body li {
     margin: 0.5rem 0;
     line-height: 1.6;
+    color: #1a202c;
+    font-weight: 400;
+}
+
+.card-body ul ul {
+    margin-top: 0.5rem;
+    padding-left: 1.5rem;
+}
+
+.card-body ul ul li {
+    color: #2d3748;
+}
+
+.card-body li strong {
+    color: #000000;
+    font-weight: 700;
 }
 
 /* Recap Sections (for weekly cards) */
@@ -449,17 +477,24 @@
     color: #2c7a7b;
     margin: 0 0 0.75rem 0;
     padding-bottom: 0.5rem;
-    border-bottom: 2px dashed #e2e8f0;
+    border-bottom: 2px dashed #2c7a7b;
     position: relative;
     z-index: 1;
 }
 
 .recap-section p {
     margin-bottom: 0.5rem;
+    color: #1a202c;
+    font-weight: 400;
 }
 
 .recap-section ul {
     margin-top: 0.5rem;
+}
+
+.recap-section li {
+    color: #1a202c;
+    font-weight: 400;
 }
 
 /* Card Footer */
@@ -550,8 +585,8 @@
     padding: 1rem;
     margin-top: 1rem;
     border-radius: 4px;
-    font-weight: 600;
-    color: #744210;
+    font-weight: 700;
+    color: #5a2a0a;
     position: relative;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
@@ -607,6 +642,15 @@
     position: relative;
 }
 
+.archive-month .month-header h2 {
+    color: #000000;
+}
+
+.archive-month .month-description {
+    color: #2d3748;
+    font-weight: 400;
+}
+
 /* Aged paper texture */
 .archive-month::before {
     content: '';
@@ -645,6 +689,180 @@
     background: #285e61;
     transform: translateY(-2px);
     box-shadow: 3px 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* ========================================
+   MONTHLY ARCHIVE FULL PAGE
+   ======================================== */
+
+.monthly-archive-full {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fffef9;
+    border: 2px solid #e8d5b5;
+    border-radius: 12px;
+    box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+
+/* Paper texture on archive page */
+.monthly-archive-full::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(
+            transparent,
+            transparent 31px,
+            rgba(232, 213, 181, 0.12) 31px,
+            rgba(232, 213, 181, 0.12) 32px
+        );
+    pointer-events: none;
+    border-radius: 12px;
+}
+
+.archive-header {
+    border-bottom: 3px solid #2c7a7b;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.breadcrumb {
+    margin-bottom: 1rem;
+}
+
+.breadcrumb a {
+    color: #2c7a7b;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.archive-header h1 {
+    font-size: 2.2rem;
+    color: #000000;
+    margin: 0.5rem 0;
+    font-weight: 700;
+}
+
+.archive-subtitle {
+    font-size: 1.15rem;
+    color: #2d3748;
+    margin: 0.5rem 0;
+    line-height: 1.6;
+}
+
+.archive-header time {
+    display: block;
+    font-size: 0.95rem;
+    color: #4a5568;
+    margin-top: 0.75rem;
+    font-weight: 500;
+}
+
+.archive-body {
+    position: relative;
+    z-index: 1;
+}
+
+.archive-section {
+    margin: 2.5rem 0;
+}
+
+.archive-section h2 {
+    font-size: 1.5rem;
+    color: #2c7a7b;
+    margin: 0 0 1rem 0;
+    font-weight: 700;
+    border-bottom: 2px solid #e8d5b5;
+    padding-bottom: 0.5rem;
+}
+
+.archive-section p {
+    line-height: 1.8;
+    color: #1a202c;
+    margin-bottom: 1rem;
+}
+
+.archive-section ul {
+    margin: 1rem 0;
+    padding-left: 1.75rem;
+}
+
+.archive-section li {
+    margin: 0.75rem 0;
+    line-height: 1.7;
+    color: #1a202c;
+}
+
+.archive-footer {
+    border-top: 2px solid #e8d5b5;
+    padding-top: 2rem;
+    margin-top: 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.archive-nav {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.nav-button {
+    display: inline-block;
+    padding: 0.875rem 1.5rem;
+    background: #2c7a7b;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.2s;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-button:hover {
+    background: #285e61;
+    transform: translateY(-2px);
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.nav-button.next {
+    background: #38a169;
+}
+
+.nav-button.next:hover {
+    background: #2f855a;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .monthly-archive-full {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .archive-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .archive-nav {
+        flex-direction: column;
+    }
+    
+    .nav-button {
+        text-align: center;
+    }
 }
 
 /* ========================================
