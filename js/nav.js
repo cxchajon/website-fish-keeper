@@ -74,7 +74,11 @@
       '/copyright-dmca': '/copyright-dmca.html',
       '/copyright-dmca.html': '/copyright-dmca.html',
       '/store': '/store.html',
-      '/store.html': '/store.html'
+      '/store.html': '/store.html',
+      '/journal': '/journal.html',
+      '/journal.html': '/journal.html',
+      '/journal-dashboard': '/journal-dashboard.html',
+      '/journal-dashboard.html': '/journal-dashboard.html'
     };
     return map[normalized] ?? normalized;
   }
