@@ -540,290 +540,512 @@
     </footer>
 
     <script>
-        // ============================================
-        // DATA LOADER
-        // ============================================
+    // ============================================
+    // DATA LOADER WITH DEBUGGING
+    // ============================================
 
-        class JournalDataLoader {
-            constructor() {
-                this.allReadings = [];
-                this.currentParams = null;
+    class JournalDataLoader {
+        constructor() {
+            this.allReadings = [];
+            this.currentParams = null;
+            console.log('🔧 DataLoader initialized');
+        }
+
+        async loadAllData() {
+            console.log('📥 Starting data load...');
+
+            try {
+                // Load main journal
+                console.log('🔍 Attempting to load /data/journal.json');
+                await this.loadJSON('/data/journal.json');
+
+                // Load monthly files
+                console.log('🔍 Attempting to load monthly files');
+                await this.loadJSON('/data/journal/2025-09.json', true);
+                await this.loadJSON('/data/journal/2025-10.json', true);
+                await this.loadJSON('/data/journal/2025-11.json', true);
+
+                console.log(`✅ Total readings loaded: ${this.allReadings.length}`);
+                console.log('📊 Sample readings:', this.allReadings.slice(0, 3));
+
+                if (this.allReadings.length === 0) {
+                    throw new Error('No readings found in any JSON file');
+                }
+
+                // Sort by date
+                this.allReadings.sort((a, b) => new Date(a.date) - new Date(b.date));
+                console.log('✅ Readings sorted by date');
+                console.log('📅 Date range:', this.allReadings[0].date, '→', this.allReadings[this.allReadings.length - 1].date);
+
+                // Set current params from most recent reading
+                const latest = this.allReadings[this.allReadings.length - 1];
+                this.currentParams = {
+                    nitrate: latest.ppm,
+                    date: latest.date,
+                    status: this.getStatus(latest.ppm),
+                    wc: latest.wc
+                };
+
+                console.log('✅ Current params set:', this.currentParams);
+
+                return {
+                    readings: this.allReadings,
+                    current: this.currentParams
+                };
+
+            } catch (error) {
+                console.error('❌ Data load error:', error);
+                throw error;
             }
+        }
 
-            async loadAllData() {
-                try {
-                    // Load main journal
-                    await this.loadJSON('/data/journal.json');
+        async loadJSON(url, isMonthly = false) {
+            try {
+                console.log(`  Fetching: ${url}`);
+                const res = await fetch(url);
 
-                    // Load monthly files
-                    await this.loadJSON('/data/journal/2025-09.json', true);
-                    await this.loadJSON('/data/journal/2025-10.json', true);
-                    await this.loadJSON('/data/journal/2025-11.json', true);
+                if (!res.ok) {
+                    console.warn(`  ⚠️ ${url} returned ${res.status}`);
+                    return;
+                }
 
-                    // Sort by date
-                    this.allReadings.sort((a, b) => new Date(a.date) - new Date(b.date));
+                const data = await res.json();
+                console.log(`  ✓ Loaded ${url}`);
 
-                    // Set current params
-                    if (this.allReadings.length > 0) {
-                        const latest = this.allReadings[this.allReadings.length - 1];
-                        this.currentParams = {
-                            nitrate: latest.ppm,
-                            date: latest.date,
-                            status: this.getStatus(latest.ppm)
-                        };
+                let addedCount = 0;
+
+                if (isMonthly) {
+                    // Monthly JSON format: array of entries
+                    if (!Array.isArray(data)) {
+                        console.warn(`  ⚠️ ${url} is not an array`);
+                        return;
                     }
 
-                    return {
-                        readings: this.allReadings,
-                        current: this.currentParams
-                    };
+                    data.forEach(entry => {
+                        if (entry.nitrate_ppm && entry.nitrate_ppm !== "") {
+                            const ppm = parseFloat(entry.nitrate_ppm);
+                            if (!isNaN(ppm)) {
+                                // Check for duplicates
+                                const isDuplicate = this.allReadings.some(r =>
+                                    r.date === entry.date && Math.abs(r.ppm - ppm) < 0.01
+                                );
 
-                } catch (error) {
-                    console.error('Data load error:', error);
-                    throw error;
-                }
-            }
-
-            async loadJSON(url, isMonthly = false) {
-                try {
-                    const res = await fetch(url);
-                    if (!res.ok) return;
-
-                    const data = await res.json();
-
-                    if (isMonthly) {
-                        data.forEach(entry => {
-                            if (entry.nitrate_ppm && entry.nitrate_ppm !== "") {
-                                const ppm = parseFloat(entry.nitrate_ppm);
-                                if (!isNaN(ppm)) {
+                                if (!isDuplicate) {
                                     this.allReadings.push({
                                         date: entry.date,
                                         ppm: ppm,
-                                        wc: entry.category === 'Maintenance'
+                                        wc: entry.category === 'Maintenance',
+                                        source: url
                                     });
+                                    addedCount++;
                                 }
                             }
-                        });
-                    } else {
-                        if (data.nitrate) {
-                            data.nitrate.forEach(r => {
+                        }
+                    });
+
+                    console.log(`    Added ${addedCount} readings from ${url}`);
+
+                } else {
+                    // Main journal.json format: has nitrate array
+                    if (data.nitrate && Array.isArray(data.nitrate)) {
+                        data.nitrate.forEach(r => {
+                            const isDuplicate = this.allReadings.some(reading =>
+                                reading.date === r.date && Math.abs(reading.ppm - r.ppm) < 0.01
+                            );
+
+                            if (!isDuplicate) {
                                 this.allReadings.push({
                                     date: r.date,
                                     ppm: r.ppm,
-                                    wc: r.wc
+                                    wc: r.wc,
+                                    source: url
                                 });
-                            });
-                        }
+                                addedCount++;
+                            }
+                        });
+
+                        console.log(`    Added ${addedCount} readings from ${url}`);
+                    } else {
+                        console.warn(`    ⚠️ ${url} has no nitrate array`);
                     }
-                } catch (e) {
-                    console.warn(`Could not load ${url}:`, e);
                 }
-            }
 
-            getStatus(ppm) {
-                if (ppm < 10) return 'Excellent';
-                if (ppm < 20) return 'Good';
-                if (ppm < 40) return 'Moderate';
-                if (ppm < 80) return 'Elevated';
-                return 'Critical';
+            } catch (e) {
+                console.error(`  ❌ Error loading ${url}:`, e);
             }
         }
 
-        // ============================================
-        // DASHBOARD CONTROLLER
-        // ============================================
+        getStatus(ppm) {
+            if (ppm < 10) return 'Excellent';
+            if (ppm < 20) return 'Good';
+            if (ppm < 40) return 'Moderate';
+            if (ppm < 80) return 'Elevated';
+            return 'Critical';
+        }
+    }
 
-        async function updateDashboard() {
-            try {
-                const loader = new JournalDataLoader();
-                const data = await loader.loadAllData();
+    // ============================================
+    // DASHBOARD CONTROLLER
+    // ============================================
 
-                if (data.readings.length === 0) {
-                    throw new Error('No data found');
-                }
+    async function updateDashboard() {
+        console.log('🎯 updateDashboard() called');
 
-                updateHeroMetric(data.current);
-                updateMetricsBar(data.readings, data.current);
-                updateChart(data.readings);
-                updateQuickStats(data.readings);
+        try {
+            const loader = new JournalDataLoader();
+            const data = await loader.loadAllData();
 
-                // Hide loading
-                document.getElementById('loading-overlay').style.display = 'none';
+            console.log('📊 Data loaded successfully:', {
+                totalReadings: data.readings.length,
+                currentNitrate: data.current.nitrate,
+                currentDate: data.current.date,
+                status: data.current.status
+            });
 
-            } catch (error) {
-                showError(error.message);
+            if (data.readings.length === 0) {
+                throw new Error('No data found in JSON files');
             }
+
+            // Update all sections
+            console.log('🔄 Updating hero metric...');
+            updateHeroMetric(data.current);
+
+            console.log('🔄 Updating metrics bar...');
+            updateMetricsBar(data.readings, data.current);
+
+            console.log('🔄 Updating chart...');
+            updateChart(data.readings);
+
+            console.log('🔄 Updating quick stats...');
+            updateQuickStats(data.readings);
+
+            // Hide loading overlay
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+                console.log('✅ Loading overlay hidden');
+            }
+
+            console.log('✅ Dashboard update complete');
+
+        } catch (error) {
+            console.error('❌ Dashboard update failed:', error);
+            showError(error.message);
+        }
+    }
+
+    function updateHeroMetric(current) {
+        console.log('  Updating hero metric with:', current);
+
+        const nitrateEl = document.getElementById('hero-nitrate');
+        const statusEl = document.getElementById('status-text');
+        const dateEl = document.getElementById('hero-date');
+        const dotEl = document.getElementById('status-dot');
+
+        if (nitrateEl) {
+            nitrateEl.textContent = current.nitrate;
+            console.log('    ✓ Hero nitrate set to:', current.nitrate);
         }
 
-        function updateHeroMetric(current) {
-            document.getElementById('hero-nitrate').textContent = current.nitrate;
-            document.getElementById('status-text').textContent = current.status;
-            document.getElementById('hero-date').textContent = new Date(current.date).toLocaleDateString('en-US', {
+        if (statusEl) {
+            statusEl.textContent = current.status;
+            console.log('    ✓ Status text set to:', current.status);
+        }
+
+        if (dateEl) {
+            const formattedDate = new Date(current.date).toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',
                 year: 'numeric'
             });
-
-            // Status dot color
-            const dot = document.getElementById('status-dot');
-            dot.className = 'status-dot status-' + current.status.toLowerCase();
+            dateEl.textContent = formattedDate;
+            console.log('    ✓ Date set to:', formattedDate);
         }
 
-        function updateMetricsBar(readings, current) {
-            // Days since last reading
-            const daysSince = Math.floor((new Date() - new Date(current.date)) / (1000 * 60 * 60 * 24));
-            document.getElementById('days-since').textContent = daysSince;
-            document.getElementById('last-wc-date').textContent = new Date(current.date).toLocaleDateString('en-US', {
+        // Status dot color
+        if (dotEl) {
+            dotEl.className = 'status-dot status-' + current.status.toLowerCase();
+            console.log('    ✓ Status dot class set to:', dotEl.className);
+        }
+    }
+
+    function updateMetricsBar(readings, current) {
+        console.log('  Updating metrics bar...');
+
+        // Days since last reading
+        const daysSince = Math.floor((new Date() - new Date(current.date)) / (1000 * 60 * 60 * 24));
+        const daysSinceEl = document.getElementById('days-since');
+        if (daysSinceEl) {
+            daysSinceEl.textContent = daysSince;
+            console.log('    ✓ Days since:', daysSince);
+        }
+
+        const lastWCDateEl = document.getElementById('last-wc-date');
+        if (lastWCDateEl) {
+            const formattedDate = new Date(current.date).toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric'
             });
+            lastWCDateEl.textContent = formattedDate;
+            console.log('    ✓ Last WC date:', formattedDate);
+        }
 
-            // Next WC (7 days from last)
-            const nextWC = new Date(current.date);
-            nextWC.setDate(nextWC.getDate() + 7);
-            const daysUntil = Math.ceil((nextWC - new Date()) / (1000 * 60 * 60 * 24));
-            document.getElementById('next-wc-days').textContent = daysUntil;
-            document.getElementById('next-wc-date').textContent = nextWC.toLocaleDateString('en-US', {
+        // Next WC (7 days from last)
+        const nextWC = new Date(current.date);
+        nextWC.setDate(nextWC.getDate() + 7);
+        const daysUntil = Math.ceil((nextWC - new Date()) / (1000 * 60 * 60 * 24));
+
+        const nextWCDaysEl = document.getElementById('next-wc-days');
+        if (nextWCDaysEl) {
+            nextWCDaysEl.textContent = daysUntil;
+            console.log('    ✓ Days until next WC:', daysUntil);
+        }
+
+        const nextWCDateEl = document.getElementById('next-wc-date');
+        if (nextWCDateEl) {
+            const formattedDate = nextWC.toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric'
             });
+            nextWCDateEl.textContent = formattedDate;
+            console.log('    ✓ Next WC date:', formattedDate);
+        }
 
-            // Trend
-            if (readings.length >= 2) {
-                const recent = readings.slice(-5);
-                const avg = recent.reduce((sum, r) => sum + r.ppm, 0) / recent.length;
-                const trend = current.nitrate < avg ? '↘️' : current.nitrate > avg ? '↗️' : '→';
-                document.getElementById('trend-indicator').textContent = trend;
-                document.getElementById('trend-text').textContent = current.nitrate < avg ? 'Improving' : current.nitrate > avg ? 'Rising' : 'Stable';
+        // Trend calculation
+        if (readings.length >= 5) {
+            const recent = readings.slice(-5);
+            const avg = recent.reduce((sum, r) => sum + r.ppm, 0) / recent.length;
+
+            let trend, trendText;
+            if (current.nitrate < avg - 2) {
+                trend = '↘️';
+                trendText = 'Improving';
+            } else if (current.nitrate > avg + 2) {
+                trend = '↗️';
+                trendText = 'Rising';
+            } else {
+                trend = '→';
+                trendText = 'Stable';
             }
 
-            // Total readings
-            document.getElementById('total-readings').textContent = readings.length;
+            const trendIndicatorEl = document.getElementById('trend-indicator');
+            if (trendIndicatorEl) {
+                trendIndicatorEl.textContent = trend;
+            }
+
+            const trendTextEl = document.getElementById('trend-text');
+            if (trendTextEl) {
+                trendTextEl.textContent = trendText;
+            }
+
+            console.log('    ✓ Trend:', trend, trendText, `(current: ${current.nitrate}, avg of last 5: ${avg.toFixed(1)})`);
         }
 
-        function updateChart(readings) {
-            const canvas = document.getElementById('nitrate-chart');
-            const ctx = canvas.getContext('2d');
+        // Total readings
+        const totalReadingsEl = document.getElementById('total-readings');
+        if (totalReadingsEl) {
+            totalReadingsEl.textContent = readings.length;
+            console.log('    ✓ Total readings:', readings.length);
+        }
+    }
 
-            const labels = readings.map(r => new Date(r.date).toLocaleDateString('en-US', {
+    function updateChart(readings) {
+        console.log('  Updating chart with', readings.length, 'data points');
+
+        const canvas = document.getElementById('nitrate-chart');
+        if (!canvas) {
+            console.error('    ❌ Chart canvas not found');
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
+
+        const labels = readings.map(r => {
+            const date = new Date(r.date);
+            return date.toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric'
-            }));
-
-            const colors = readings.map(r => r.wc ? '#38a169' : '#4299e1');
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Nitrate (ppm)',
-                        data: readings.map(r => r.ppm),
-                        borderColor: '#4299e1',
-                        backgroundColor: 'rgba(66, 153, 225, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        pointBackgroundColor: colors,
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: { color: '#e2e8f0' }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                            titleColor: '#e2e8f0',
-                            bodyColor: '#cbd5e0',
-                            callbacks: {
-                                afterLabel: function(context) {
-                                    return readings[context.dataIndex].wc ? '(Water Change)' : '(Test Reading)';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Nitrate (ppm)',
-                                color: '#e2e8f0'
-                            },
-                            ticks: { color: '#94a3b8' },
-                            grid: { color: '#334155' }
-                        },
-                        x: {
-                            ticks: {
-                                color: '#94a3b8',
-                                maxRotation: 45,
-                                minRotation: 45
-                            },
-                            grid: { color: '#334155' }
-                        }
-                    }
-                }
             });
+        });
+
+        const colors = readings.map(r => r.wc ? '#38a169' : '#4299e1');
+
+        // Destroy existing chart
+        if (window.dashboardChart) {
+            window.dashboardChart.destroy();
+            console.log('    ✓ Previous chart destroyed');
         }
 
-        function updateQuickStats(readings) {
-            const wcCount = readings.filter(r => r.wc).length;
-            const avgNitrate = (readings.reduce((sum, r) => sum + r.ppm, 0) / readings.length).toFixed(1);
-            const firstDate = new Date(readings[0].date).toLocaleDateString('en-US', {
-                month: 'short',
-                year: 'numeric'
-            });
+        window.dashboardChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Nitrate (ppm)',
+                    data: readings.map(r => r.ppm),
+                    borderColor: '#4299e1',
+                    backgroundColor: 'rgba(66, 153, 225, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    pointBackgroundColor: colors,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#e2e8f0' }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleColor: '#e2e8f0',
+                        bodyColor: '#cbd5e0',
+                        borderColor: '#4299e1',
+                        borderWidth: 1,
+                        callbacks: {
+                            afterLabel: function(context) {
+                                const reading = readings[context.dataIndex];
+                                return reading.wc ? '(Water Change)' : '(Test Reading)';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Nitrate (ppm)',
+                            color: '#e2e8f0'
+                        },
+                        ticks: { color: '#94a3b8' },
+                        grid: { color: '#334155' }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#94a3b8',
+                            maxRotation: 45,
+                            minRotation: 45
+                        },
+                        grid: { color: '#334155' }
+                    }
+                }
+            }
+        });
 
-            document.getElementById('total-wc').textContent = wcCount;
-            document.getElementById('avg-nitrate').textContent = avgNitrate + ' ppm';
-            document.getElementById('data-since').textContent = firstDate;
-            document.getElementById('last-updated').textContent = new Date().toLocaleTimeString('en-US', {
+        console.log('    ✅ Chart rendered successfully');
+    }
+
+    function updateQuickStats(readings) {
+        console.log('  Updating quick stats...');
+
+        const wcCount = readings.filter(r => r.wc).length;
+        const avgNitrate = (readings.reduce((sum, r) => sum + r.ppm, 0) / readings.length).toFixed(1);
+        const firstDate = new Date(readings[0].date).toLocaleDateString('en-US', {
+            month: 'short',
+            year: 'numeric'
+        });
+
+        const totalWCEl = document.getElementById('total-wc');
+        if (totalWCEl) {
+            totalWCEl.textContent = wcCount;
+        }
+
+        const avgNitrateEl = document.getElementById('avg-nitrate');
+        if (avgNitrateEl) {
+            avgNitrateEl.textContent = avgNitrate + ' ppm';
+        }
+
+        const dataSinceEl = document.getElementById('data-since');
+        if (dataSinceEl) {
+            dataSinceEl.textContent = firstDate;
+        }
+
+        const lastUpdatedEl = document.getElementById('last-updated');
+        if (lastUpdatedEl) {
+            const timeStr = new Date().toLocaleTimeString('en-US', {
                 hour: 'numeric',
                 minute: '2-digit',
                 hour12: true
             });
+            lastUpdatedEl.textContent = timeStr;
         }
 
-        function showError(message) {
-            document.getElementById('loading-overlay').style.display = 'none';
-            const banner = document.getElementById('error-banner');
-            banner.textContent = `⚠️ Error loading data: ${message}. Check console for details.`;
+        console.log('    ✓ Stats:', {
+            wcCount,
+            avgNitrate,
+            firstDate
+        });
+    }
+
+    function showError(message) {
+        console.error('🚨 Showing error:', message);
+
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
+
+        const banner = document.getElementById('error-banner');
+        if (banner) {
+            banner.textContent = `⚠️ Error: ${message}. Open browser console (F12) for details.`;
             banner.style.display = 'block';
         }
+    }
 
-        // ============================================
-        // INIT
-        // ============================================
+    // ============================================
+    // INITIALIZATION
+    // ============================================
 
-        document.addEventListener('DOMContentLoaded', () => {
-            updateDashboard();
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('🚀 Dashboard initializing...');
+        console.log('📍 Current URL:', window.location.href);
+        console.log('📍 Base URL:', window.location.origin);
 
-            // Refresh button
-            document.getElementById('refresh-btn').addEventListener('click', async () => {
-                const btn = document.getElementById('refresh-btn');
-                btn.disabled = true;
-                btn.textContent = '⏳ Refreshing...';
+        // Initial load
+        updateDashboard();
 
-                await updateDashboard();
+        // Refresh button
+        const refreshBtn = document.getElementById('refresh-btn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', async () => {
+                console.log('🔄 Manual refresh triggered');
+                refreshBtn.disabled = true;
+                refreshBtn.textContent = '⏳ Refreshing...';
 
-                btn.textContent = '✓ Refreshed';
-                setTimeout(() => {
-                    btn.textContent = '🔄 Refresh';
-                    btn.disabled = false;
-                }, 2000);
+                try {
+                    await updateDashboard();
+                    refreshBtn.textContent = '✓ Refreshed';
+                    setTimeout(() => {
+                        refreshBtn.textContent = '🔄 Refresh';
+                        refreshBtn.disabled = false;
+                    }, 2000);
+                } catch (error) {
+                    refreshBtn.textContent = '❌ Error';
+                    setTimeout(() => {
+                        refreshBtn.textContent = '🔄 Refresh';
+                        refreshBtn.disabled = false;
+                    }, 2000);
+                }
             });
+            console.log('✅ Refresh button listener attached');
+        }
 
-            // Auto-refresh every 5 minutes
-            setInterval(updateDashboard, 5 * 60 * 1000);
-        });
-    </script>
+        // Auto-refresh every 5 minutes
+        setInterval(() => {
+            console.log('⏰ Auto-refresh triggered');
+            updateDashboard();
+        }, 5 * 60 * 1000);
+
+        console.log('✅ Dashboard initialization complete');
+    });
+</script>
 
 </body>
 </html>
