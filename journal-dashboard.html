@@ -1,1417 +1,748 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-KTRVCMQN');</script>
-  <!-- End Google Tag Manager -->
-
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-  <!-- Primary Meta Tags -->
-  <title>FishKeepingLifeCo Aquarium Dashboard — Live Tank Data | The Tank Guide</title>
-  <meta name="description" content="Real-time water parameters, feeding schedules, and maintenance data from FishKeepingLifeCo's active 29-gallon planted aquarium that powers The Tank Guide's research." />
-  <meta name="robots" content="index,follow" />
-  <link rel="canonical" href="https://thetankguide.com/journal-dashboard.html" />
-
-  <!-- Favicons -->
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/logos/favicon-16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logos/favicon-32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/Logo-Master-180x180.PNG">
-  <link rel="apple-touch-icon" sizes="512x512" href="/assets/img/Logo-Master-512x512.PNG">
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:site_name" content="The Tank Guide" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="FishKeepingLifeCo Aquarium Dashboard — Live Tank Data | The Tank Guide" />
-  <meta property="og:description" content="Real-time water parameters, feeding schedules, and maintenance data from FishKeepingLifeCo's active 29-gallon planted aquarium." />
-  <meta property="og:url" content="https://thetankguide.com/journal-dashboard.html" />
-  <meta property="og:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://thetankguide.com/journal-dashboard.html" />
-  <meta name="twitter:title" content="FishKeepingLifeCo Aquarium Dashboard — Live Tank Data | The Tank Guide" />
-  <meta name="twitter:description" content="Real-time water parameters, feeding schedules, and maintenance data from FishKeepingLifeCo's active 29-gallon planted aquarium." />
-  <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
-  <meta name="twitter:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
-
-  <!-- Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": "https://thetankguide.com/#organization",
-        "name": "FishKeepingLifeCo",
-        "alternateName": ["The Tank Guide", "Fish Keeping Life Co", "fishkeepinglife"],
-        "description": "FishKeepingLifeCo is an educational publishing company specializing in beginner-friendly aquarium science. The Tank Guide is our flagship website providing interactive tools and research-backed fishkeeping guidance for families and new hobbyists.",
-        "url": "https://thetankguide.com",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG",
-          "width": 512,
-          "height": 512
-        },
-        "sameAs": [
-          "https://www.tiktok.com/@fishkeepinglifeco",
-          "https://www.instagram.com/fishkeepinglifeco",
-          "https://www.youtube.com/@FishKeepingLifeCo",
-          "https://x.com/fishkeepinglife",
-          "https://www.facebook.com/FishKeepingLifeCo",
-          "https://www.threads.net/@fishkeepinglifeco",
-          "https://www.reddit.com/u/FishKeepingLifeCo"
-        ]
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://thetankguide.com/#website",
-        "url": "https://thetankguide.com/",
-        "name": "The Tank Guide",
-        "description": "The Tank Guide by FishKeepingLifeCo delivers fishkeeping guides, a stocking advisor, cycling coach, and gear tips to plan thriving freshwater aquariums.",
-        "publisher": {
-          "@id": "https://thetankguide.com/#organization"
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Aquarium Dashboard | The Tank Guide</title>
+    <meta name="description" content="Real-time aquarium monitoring dashboard tracking water parameters, feeding, and maintenance data.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    
+    <style>
+        /* ========================================
+           DASHBOARD STYLES
+           ======================================== */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-      },
-      {
-        "@type": "WebPage",
-        "@id": "https://thetankguide.com/journal-dashboard.html#webpage",
-        "url": "https://thetankguide.com/journal-dashboard.html",
-        "name": "FishKeepingLifeCo Aquarium Dashboard — Live Tank Data | The Tank Guide",
-        "description": "Real-time water parameters, feeding schedules, and maintenance data from FishKeepingLifeCo's active 29-gallon planted aquarium that powers The Tank Guide's research.",
-        "isPartOf": {
-          "@id": "https://thetankguide.com/#website"
-        },
-        "publisher": {
-          "@id": "https://thetankguide.com/#organization"
-        },
-        "author": {
-          "@id": "https://thetankguide.com/#organization"
-        },
-        "primaryImageOfPage": {
-          "@type": "ImageObject",
-          "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
-          "width": 1200,
-          "height": 630
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 1rem;
         }
-      },
-      {
-        "@type": "BreadcrumbList",
-        "@id": "https://thetankguide.com/journal-dashboard.html#breadcrumb",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://thetankguide.com/"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Aquarium Dashboard"
-          }
-        ]
-      }
-    ]
-  }
-  </script>
-
-  <!-- Preconnect -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://pagead2.googlesyndication.com">
-  <link rel="preconnect" href="https://fundingchoicesmessages.google.com">
-  <link rel="preconnect" href="https://static.cloudflareinsights.com">
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;display=swap" as="style">
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;display=swap"
-    media="print"
-    onload="this.media='all'">
-  <link rel="stylesheet" href="/css/app.bundle.css?v=2025-11-07">
-  <meta name="x-build" content="dashboard-v1.0">
-
-  <!-- Preload -->
-  <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
-
-  <!-- Consent Mode (load FIRST) -->
-  <script src="/assets/js/consent-mode.js" defer></script>
-
-  <!-- Google CMP (Funding Choices) -->
-  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
-  <script>
-    (function() {
-      function signalGooglefcPresent() {
-        if (!window.frames['googlefcPresent']) {
-          if (document.body) {
-            const iframe = document.createElement('iframe');
-            iframe.style.cssText = 'display:none';
-            iframe.name = 'googlefcPresent';
-            document.body.appendChild(iframe);
-          } else {
-            setTimeout(signalGooglefcPresent, 0);
-          }
+        
+        .dashboard-header {
+            background: rgba(44, 122, 123, 0.1);
+            border: 2px solid #2c7a7b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-      }
-      signalGooglefcPresent();
-    })();
-  </script>
-
-  <!-- Chart.js + Datalabels -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
-
-  <style>
-    /* ====== Base / Background ====== */
-    .journal-dashboard *,
-    .journal-dashboard *::before,
-    .journal-dashboard *::after { margin:0; padding:0; box-sizing:border-box; }
-
-    body.journal-dashboard{
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-      background:#0a0e1a;
-      color:#e4e6eb;
-      padding:20px;
-      padding-bottom:80px;
-      background-image:
-        linear-gradient(rgba(30,144,255,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(30,144,255,.05) 1px, transparent 1px);
-      background-size:50px 50px;
-      line-height:1.6;
-    }
-
-    /* ====== Header ====== */
-    .journal-dashboard .dashboard-header{
-      text-align:center;
-      margin-bottom:40px;
-      padding:30px;
-      background:linear-gradient(135deg,#1a2332 0%, #0f1620 100%);
-      border-radius:15px;
-      border:1px solid rgba(30,144,255,.2);
-      box-shadow:0 8px 32px rgba(0,0,0,.4);
-    }
-    .journal-dashboard .dashboard-header h1{
-      font-size:2.4rem;
-      margin-bottom:10px;
-      background:linear-gradient(90deg,#1e90ff,#00bfff);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      background-clip:text;
-      font-weight:700;
-    }
-    .journal-dashboard .dashboard-header p{
-      color:#8b9dc3;
-      font-size:1.05rem;
-      margin-bottom:5px;
-    }
-    .journal-dashboard .dashboard-header p a{
-      color:#3aa6ff;
-      text-decoration:underline;
-    }
-    .journal-dashboard .dashboard-header p a:hover{
-      color:#00bfff;
-    }
-    .journal-dashboard .sync-status{
-      font-size:0.85rem;
-      color:#6b7c99;
-      margin-top:15px;
-    }
-    .journal-dashboard .sync-status.loading{ color:#ffd700; }
-    .journal-dashboard .sync-status.error{ color:#ff6b6b; }
-    .journal-dashboard .sync-status.success{ color:#51cf66; }
-    .journal-dashboard .sync-status.warning{ color:#ffa500; }
-
-    /* ====== Data Quality Indicator ====== */
-    .journal-dashboard .data-quality{
-      background:linear-gradient(135deg,#1a2332 0%, #0f1620 100%);
-      padding:20px;
-      border-radius:12px;
-      border:1px solid rgba(30,144,255,.3);
-      box-shadow:0 4px 16px rgba(0,0,0,.3);
-      margin-bottom:40px;
-    }
-    .journal-dashboard .data-quality h3{
-      color:#1e90ff;
-      font-size:1.1rem;
-      margin-bottom:12px;
-    }
-    .journal-dashboard .quality-item{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      margin-bottom:8px;
-      font-size:0.9rem;
-    }
-    .journal-dashboard .quality-item .icon{ font-size:1rem; }
-    .journal-dashboard .quality-item.good .icon{ color:#51cf66; }
-    .journal-dashboard .quality-item.warn .icon{ color:#ffd700; }
-    .journal-dashboard .quality-item.info .icon{ color:#3aa6ff; }
-
-    /* ====== Stats ====== */
-    .journal-dashboard .dashboard-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
-      gap:20px;
-      margin-bottom:40px;
-    }
-    .journal-dashboard .dashboard-card{
-      background:linear-gradient(135deg,#1a2332 0%, #0f1620 100%);
-      padding:20px;
-      border-radius:12px;
-      border:1px solid rgba(30,144,255,.3);
-      box-shadow:0 4px 16px rgba(0,0,0,.3);
-      transition:transform .2s, box-shadow .2s;
-    }
-    .journal-dashboard .dashboard-card:hover{ transform:translateY(-4px); box-shadow:0 8px 20px rgba(30,144,255,.25); }
-    .journal-dashboard .dashboard-label{ color:#8b9dc3; font-size:.9rem; margin-bottom:8px; text-transform:uppercase; letter-spacing:.06em; }
-    .journal-dashboard .dashboard-value{ font-size:2rem; font-weight:700; color:#1e90ff; }
-    .journal-dashboard .dashboard-subtext{ color:#6b7c99; font-size:.85rem; margin-top:6px; }
-
-    /* ====== Charts ====== */
-    .journal-dashboard .chart-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(520px,1fr));
-      gap:25px;
-      margin-bottom:40px;
-    }
-    .journal-dashboard .chart-card{
-      background:linear-gradient(135deg,#1a2332 0%, #0f1620 100%);
-      padding:24px;
-      border-radius:12px;
-      border:1px solid rgba(30,144,255,.3);
-      box-shadow:0 4px 16px rgba(0,0,0,.3);
-    }
-    .journal-dashboard .chart-card h2{
-      color:#1e90ff;
-      font-size:1.25rem;
-      margin-bottom:14px;
-      border-bottom:2px solid rgba(30,144,255,.2);
-      padding-bottom:8px;
-    }
-    .journal-dashboard .chart-wrapper{ position:relative; height:400px; }
-    .journal-dashboard .full-width{ grid-column:1 / -1; }
-
-    /* ====== Custom Tooltip ====== */
-    .journal-dashboard .chart-tooltip{
-      position:absolute;
-      background:rgba(15,22,32,0.98);
-      border:1px solid rgba(58,166,255,0.5);
-      border-radius:8px;
-      padding:12px 16px;
-      max-width:320px;
-      font-size:0.85rem;
-      pointer-events:none;
-      opacity:0;
-      transition:opacity 0.2s;
-      z-index:1000;
-      box-shadow:0 8px 24px rgba(0,0,0,0.5);
-    }
-    .journal-dashboard .chart-tooltip.visible{ opacity:1; }
-    .journal-dashboard .chart-tooltip .tooltip-date{
-      color:#3aa6ff;
-      font-weight:700;
-      margin-bottom:8px;
-    }
-    .journal-dashboard .chart-tooltip .tooltip-value{
-      color:#e4e6eb;
-      font-size:1.1rem;
-      font-weight:600;
-      margin-bottom:8px;
-    }
-    .journal-dashboard .chart-tooltip .tooltip-snippet{
-      color:#9bb0cc;
-      font-size:0.8rem;
-      line-height:1.4;
-      margin-bottom:8px;
-      font-style:italic;
-    }
-    .journal-dashboard .chart-tooltip .tooltip-link{
-      color:#3aa6ff;
-      font-size:0.75rem;
-      text-decoration:none;
-    }
-    .journal-dashboard .chart-tooltip .tooltip-link:hover{ text-decoration:underline; }
-
-    /* ====== Refresh Controls ====== */
-    .refresh-btn {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      padding: 0.5rem 1rem;
-      background: #2c7a7b;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      z-index: 100;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .refresh-btn:hover {
-      background: #285e61;
-    }
-
-    .refresh-indicator {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      background: #38a169;
-      border-radius: 50%;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .refresh-indicator.active {
-      opacity: 1;
-      animation: pulse 1s ease;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.5); }
-    }
-
-    /* ====== Timelines ====== */
-    .journal-dashboard .timeline-section{
-      background:linear-gradient(135deg,#1a2332 0%, #0f1620 100%);
-      padding:25px;
-      border-radius:12px;
-      border:1px solid rgba(30,144,255,.3);
-      box-shadow:0 4px 16px rgba(0,0,0,.3);
-      margin-bottom:40px;
-    }
-    .journal-dashboard .timeline-section h2{
-      color:#1e90ff;
-      margin-bottom:15px;
-      border-bottom:2px solid rgba(30,144,255,.2);
-      padding-bottom:8px;
-    }
-    .journal-dashboard .timeline-item{
-      background:rgba(30,144,255,.05);
-      border-left:4px solid #1e90ff;
-      padding:15px;
-      margin-bottom:12px;
-      border-radius:8px;
-    }
-    .journal-dashboard .timeline-date{ color:#1e90ff; font-weight:700; margin-bottom:5px; }
-    .journal-dashboard .timeline-type{
-      display:inline-block; background:#1e90ff; color:#0a0e1a;
-      padding:4px 10px; border-radius:5px; font-size:.85rem; font-weight:700; margin-bottom:8px;
-    }
-    .journal-dashboard .timeline-content{ color:#c4c8d0; line-height:1.6; }
-    .journal-dashboard .milestone{ background:rgba(255,215,0,.1); border-left-color:#ffd700; }
-    .journal-dashboard .milestone .timeline-type{ background:#ffd700; }
-    .journal-dashboard .timeline-link{
-      display:inline-block;
-      margin-top:8px;
-      color:#3aa6ff;
-      font-size:0.8rem;
-      text-decoration:none;
-    }
-    .journal-dashboard .timeline-link:hover{ text-decoration:underline; }
-
-    /* ====== Screen reader only ====== */
-    .journal-dashboard .sr-only{
-      position:absolute;
-      width:1px;
-      height:1px;
-      padding:0;
-      margin:-1px;
-      overflow:hidden;
-      clip:rect(0,0,0,0);
-      white-space:nowrap;
-      border:0;
-    }
-
-    /* ====== Dashboard Intro Section ====== */
-    .journal-dashboard .dashboard-intro h2 {
-      color: #1e90ff;
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-    }
-    .journal-dashboard .dashboard-intro h3 {
-      color: #3aa6ff;
-      font-size: 1.2rem;
-      margin-top: 24px;
-      margin-bottom: 12px;
-    }
-    .journal-dashboard .dashboard-intro p {
-      margin-bottom: 16px;
-    }
-    .journal-dashboard .dashboard-intro strong {
-      color: #e4e6eb;
-      font-weight: 600;
-    }
-    .journal-dashboard .dashboard-intro em {
-      color: #8b9dc3;
-      font-style: italic;
-    }
-
-    /* ====== Status Summary ====== */
-    .journal-dashboard .status-summary {
-      background: linear-gradient(135deg, #1a2332 0%, #0f1620 100%);
-      padding: 25px 30px;
-      border-radius: 12px;
-      border: 1px solid rgba(30, 144, 255, 0.3);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-      margin-bottom: 40px;
-    }
-
-    .journal-dashboard .status-summary h2 {
-      color: #1e90ff;
-      font-size: 1.25rem;
-      margin-bottom: 18px;
-      border-bottom: 2px solid rgba(30, 144, 255, 0.2);
-      padding-bottom: 8px;
-    }
-
-    .journal-dashboard .summary-content {
-      color: #c4c8d0;
-      font-size: 1.05rem;
-      line-height: 1.8;
-    }
-
-    .journal-dashboard .summary-content p {
-      margin-bottom: 12px;
-    }
-
-    .journal-dashboard .summary-content p:last-child {
-      margin-bottom: 0;
-    }
-
-    .journal-dashboard .summary-content strong {
-      color: #3aa6ff;
-      font-weight: 600;
-    }
-
-    .journal-dashboard .summary-content .metric {
-      color: #1e90ff;
-      font-weight: 700;
-    }
-
-    @media (max-width: 768px) {
-      .journal-dashboard .status-summary {
-        padding: 20px;
-      }
-
-      .journal-dashboard .summary-content {
-        font-size: 1rem;
-      }
-    }
-
-    /* ====== Responsive ====== */
-    @media (max-width: 1024px){
-      .journal-dashboard .chart-wrapper{ height:360px; }
-    }
-    @media (max-width: 768px){
-      .journal-dashboard .chart-grid{ grid-template-columns:1fr; }
-      .journal-dashboard .chart-wrapper{ height:320px; }
-      .journal-dashboard .dashboard-header h1{ font-size:1.9rem; }
-      .journal-dashboard .chart-tooltip{ max-width:280px; }
-    }
-    @media (max-width: 480px){
-      body.journal-dashboard{ padding:12px; }
-      .journal-dashboard .dashboard-header{ padding:20px; }
-      .journal-dashboard .dashboard-header h1{ font-size:1.6rem; }
-      .journal-dashboard .chart-card{ padding:16px; }
-      .journal-dashboard .chart-wrapper{ height:280px; }
-    }
-
-    /* ====== Skip Link ====== */
-    .skip-link {
-      position: absolute;
-      top: -40px;
-      left: 0;
-      background: #1e90ff;
-      color: white;
-      padding: 8px;
-      text-decoration: none;
-      z-index: 100;
-    }
-    .skip-link:focus {
-      top: 0;
-    }
-
-    /* ====== Dashboard Navigation ====== */
-    .journal-dashboard .dashboard-nav {
-      padding: 1rem;
-      background: rgba(26, 35, 50, 0.5);
-      border-bottom: 1px solid rgba(30, 144, 255, 0.2);
-      margin-bottom: 1rem;
-    }
-    .journal-dashboard .back-to-journal {
-      color: #3aa6ff;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.2s;
-    }
-    .journal-dashboard .back-to-journal:hover {
-      color: #00bfff;
-      transform: translateX(-4px);
-    }
-    .journal-dashboard .back-to-journal:focus {
-      outline: 2px solid #3aa6ff;
-      outline-offset: 4px;
-      border-radius: 4px;
-    }
-  </style>
-  <!-- Cloudflare Web Analytics -->
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
-    data-cf-beacon='{"token": "fef22cbf19e3473db5ec987a8f3bf4f3"}'></script>
-  <!-- End Cloudflare Web Analytics -->
-  <script defer src="/js/nav.js?v=1.1.0"></script>
+        
+        .dashboard-header h1 {
+            font-size: 1.8rem;
+            color: #4299e1;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .back-link, .refresh-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .back-link {
+            background: #2c7a7b;
+            color: white;
+        }
+        
+        .back-link:hover {
+            background: #285e61;
+        }
+        
+        .refresh-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .refresh-btn:hover {
+            background: #3182ce;
+        }
+        
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Status Cards Grid */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .status-card {
+            background: #2d3748;
+            border: 2px solid #4a5568;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .status-card h3 {
+            font-size: 0.9rem;
+            color: #a0aec0;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4299e1;
+            margin: 0.5rem 0;
+        }
+        
+        .stat-unit {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        
+        .stat-meta {
+            font-size: 0.85rem;
+            color: #a0aec0;
+            margin-top: 0.5rem;
+        }
+        
+        /* Status Colors */
+        .status-good {
+            color: #38a169 !important;
+        }
+        
+        .status-warning {
+            color: #d69e2e !important;
+        }
+        
+        .status-elevated {
+            color: #f6ad55 !important;
+        }
+        
+        .status-critical {
+            color: #e53e3e !important;
+        }
+        
+        /* Chart Sections */
+        .chart-section {
+            background: #2d3748;
+            border: 2px solid #4a5568;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-section h2 {
+            font-size: 1.5rem;
+            color: #4299e1;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            border-radius: 12px;
+            border: 2px dashed #4a5568;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            color: #e2e8f0;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state p {
+            color: #a0aec0;
+            line-height: 1.6;
+        }
+        
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #a0aec0;
+            font-style: italic;
+        }
+        
+        /* Error State */
+        .error-message {
+            background: rgba(229, 62, 62, 0.1);
+            border: 2px solid #e53e3e;
+            border-radius: 8px;
+            padding: 1rem;
+            color: #fc8181;
+            margin: 1rem 0;
+        }
+        
+        /* Footer */
+        .dashboard-footer {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .dashboard-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+        }
+    </style>
 </head>
+<body>
 
-<body class="journal-dashboard">
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
-  <a class="skip-link" href="#main-content">Skip to main content</a>
-  <div id="site-nav"></div>
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <h1>🐠 Aquarium Dashboard</h1>
+        <nav class="header-nav">
+            <a href="/journal.html" class="back-link">← Back to Journal</a>
+            <button id="refresh-dashboard" class="refresh-btn">🔄 Refresh</button>
+        </nav>
+    </header>
 
-  <main id="main-content">
-  <!-- Navigation back to Journal -->
-  <nav class="dashboard-nav">
-    <a href="/journal.html" class="back-to-journal">
-      <span aria-hidden="true">←</span>
-      <span>Back to Journal</span>
-    </a>
-  </nav>
-
-  <button id="refresh-dashboard" class="refresh-btn" aria-label="Refresh data">
-    🔄 Refresh
-    <span class="refresh-indicator" aria-hidden="true"></span>
-  </button>
-
-  <!-- Dashboard Header -->
-  <div class="dashboard-header">
-    <h1>🐠 FishKeepingLifeCo Aquarium Dashboard</h1>
-    <p>Real-time data from our live 29-gallon planted tank • <a href="/journal.html">View Full Journal</a></p>
-    <div id="syncStatus" class="sync-status loading">Loading data...</div>
-  </div>
-
-  <!-- Data Quality Indicator -->
-  <div class="data-quality" id="dataQuality" role="region" aria-label="Data quality metrics">
-    <h3>📊 Data Completeness</h3>
-    <div id="qualityMetrics">
-      <div class="quality-item info">
-        <span class="icon" aria-hidden="true">⋯</span>
-        <span>Loading data quality metrics...</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stats Grid -->
-  <div class="dashboard-grid">
-    <div class="dashboard-card">
-      <div class="dashboard-label">Current Nitrate</div>
-      <div class="dashboard-value" id="currentNitrate">—</div>
-      <div class="dashboard-subtext">ppm • <span id="lastTestDate">Last test: —</span></div>
-    </div>
-    <div class="dashboard-card">
-      <div class="dashboard-label">Days Since WC</div>
-      <div class="dashboard-value" id="daysSinceWC">—</div>
-      <div class="dashboard-subtext" id="lastWCSub">Last: —</div>
-      <div class="dashboard-subtext" id="nextWaterChange">Next: —</div>
-    </div>
-    <div class="dashboard-card">
-      <div class="dashboard-label">Total Feedings</div>
-      <div class="dashboard-value" id="totalFeedings">—</div>
-      <div class="dashboard-subtext">Since Sep 9</div>
-    </div>
-    <div class="dashboard-card">
-      <div class="dashboard-label">System Status</div>
-      <div class="dashboard-value" id="systemStatus" style="font-size:1.5rem;">—</div>
-      <div class="dashboard-subtext" id="statusDetail">Analyzing...</div>
-    </div>
-  </div>
-
-  <!-- Charts -->
-  <div class="chart-grid">
-    <div class="chart-card full-width" role="region" aria-label="Nitrate levels chart">
-      <h2>📊 Nitrate Levels Over Time</h2>
-      <div class="chart-wrapper">
-        <canvas id="nitrateChart" aria-describedby="nitrate-summary"></canvas>
-        <div id="nitrate-summary" class="sr-only">Chart showing nitrate levels over time.</div>
-        <div id="nitrateTooltip" class="chart-tooltip" role="tooltip"></div>
-      </div>
+    <!-- Status Cards Grid -->
+    <div class="status-grid">
+        
+        <div class="status-card">
+            <h3>Current Nitrate</h3>
+            <div class="stat-value" id="current-nitrate">--</div>
+            <div class="stat-unit">ppm</div>
+            <div class="stat-meta">Last test: <span id="last-test-date">--</span></div>
+        </div>
+        
+        <div class="status-card">
+            <h3>Days Since WC</h3>
+            <div class="stat-value" id="days-since-wc">--</div>
+            <div class="stat-unit">days</div>
+            <div class="stat-meta">Last: <span id="last-wc-date">--</span></div>
+        </div>
+        
+        <div class="status-card">
+            <h3>System Status</h3>
+            <div class="stat-value" id="system-status">--</div>
+            <div class="stat-meta" id="status-message">Analyzing...</div>
+        </div>
+        
+        <div class="status-card">
+            <h3>Total Readings</h3>
+            <div class="stat-value" id="total-readings">--</div>
+            <div class="stat-unit">recorded</div>
+        </div>
+        
     </div>
 
-    <div class="chart-card" role="region" aria-label="Feeding distribution chart">
-      <h2>🍽️ Feeding Distribution</h2>
-      <div class="chart-wrapper">
-        <canvas id="feedingChart" aria-describedby="feeding-summary"></canvas>
-        <div id="feeding-summary" class="sr-only">Doughnut chart showing feeding types.</div>
-      </div>
-    </div>
+    <!-- Nitrate Chart -->
+    <section class="chart-section">
+        <h2>📊 Nitrate Levels Over Time</h2>
+        <div class="chart-container">
+            <canvas id="nitrate-chart" style="display: none;"></canvas>
+            <div id="chart-empty-state" class="empty-state" style="display: none;">
+                <div class="empty-icon">📈</div>
+                <h3>No Data Available</h3>
+                <p>Chart will display once journal data loads.</p>
+            </div>
+            <div id="chart-loading" class="loading">
+                Loading chart data...
+            </div>
+        </div>
+    </section>
 
-    <div class="chart-card" role="region" aria-label="Dosing frequency chart">
-      <h2>💧 Dosing Frequency</h2>
-      <div class="chart-wrapper">
-        <canvas id="dosingChart" aria-describedby="dosing-summary"></canvas>
-        <div id="dosing-summary" class="sr-only">Bar chart showing dosing products.</div>
-      </div>
-    </div>
-  </div>
+    <!-- Error Display -->
+    <div id="dashboard-error" class="error-message" style="display: none;"></div>
 
-  <!-- Current Status Summary -->
-  <section class="status-summary" role="region" aria-label="Current aquarium status summary">
-    <h2>📋 Current Status Summary</h2>
-    <div id="statusSummaryContent" class="summary-content">
-      <p>Loading current status...</p>
-    </div>
-  </section>
+    <!-- Footer -->
+    <section class="dashboard-footer" aria-label="Dashboard footer">
+        <p>Last updated: <span id="last-refresh">--</span></p>
+        <p>Data source: Journal JSON files</p>
+    </section>
 
-  <!-- Milestones -->
-  <div class="timeline-section">
-    <h2>🎯 Recent Milestones & Key Events</h2>
-    <div id="milestones"></div>
-  </div>
+    <script src="/js/footer-loader.js?v=1.5.2" defer></script>
+    <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
 
-  <!-- Recent Activity (LAST 3 ENTRIES) -->
-  <div class="timeline-section">
-    <h2>📝 Recent Activity Log (Last 3 Entries)</h2>
-    <div id="recentActivity"></div>
-  </div>
-
-  <!-- Static Content for SEO & AdSense -->
-  <section class="dashboard-intro" style="background: linear-gradient(135deg,#1a2332 0%, #0f1620 100%); padding: 30px; border-radius: 12px; border: 1px solid rgba(30,144,255,.3); margin-bottom: 40px; line-height: 1.8;">
-    <h2 style="color: #1e90ff; font-size: 1.5rem; margin-bottom: 20px;">Real-Time Aquarium Data Tracking</h2>
-
-    <p style="margin-bottom: 16px;">This live aquarium dashboard provides real-time monitoring of water parameters, feeding schedules, and maintenance data from our active 29-gallon planted freshwater aquarium. By tracking key metrics like nitrate levels, feeding frequency, and dosing schedules, we maintain optimal water quality for our thriving community of neon tetras, panda cory catfish, and various live plants including java fern, anubias, and java moss.</p>
-
-    <h3 style="color: #3aa6ff; font-size: 1.2rem; margin-top: 24px; margin-bottom: 12px;">Why We Track These Parameters</h3>
-
-    <p style="margin-bottom: 16px;"><strong>Nitrate Monitoring:</strong> Nitrate is the end product of the nitrogen cycle and the most important parameter for planted tank health. We track nitrate levels weekly to ensure they stay within the optimal range of 5-20 ppm. Elevated nitrate above 40 ppm can stress fish and promote algae growth, while levels below 5 ppm may indicate insufficient nutrients for plant growth. Our dashboard automatically flags elevated readings and recommends water changes when needed.</p>
-
-    <p style="margin-bottom: 16px;"><strong>Feeding Schedule:</strong> Consistent feeding is crucial for fish health and water quality management. We track every feeding event, including the type of food provided (flakes, bloodworms, brine shrimp, algae wafers, and vegetables). This data helps us maintain dietary variety, prevent overfeeding, and correlate feeding patterns with water parameter changes. Our cory catfish particularly enjoy algae wafers, while the tetras eagerly consume flakes and frozen foods.</p>
-
-    <p style="margin-bottom: 16px;"><strong>Maintenance & Dosing:</strong> Regular maintenance is the foundation of aquarium success. We log all water changes (typically 25-30% weekly), filter cleaning, plant trimming, and fertilizer dosing. Our dosing regimen includes NilocG Thrive Plus (comprehensive liquid fertilizer) administered 2-3 times weekly and occasional Seachem Excel for carbon supplementation and algae control. By tracking these activities, we can identify patterns and optimize our maintenance schedule.</p>
-
-    <h3 style="color: #3aa6ff; font-size: 1.2rem; margin-top: 24px; margin-bottom: 12px;">What Beginners Can Learn</h3>
-
-    <p style="margin-bottom: 16px;">This dashboard demonstrates real-world aquarium management in action. New aquarists often struggle with knowing <em>when</em> to perform maintenance or <em>how often</em> to feed. Our transparent tracking shows that successful fishkeeping isn't about perfection—it's about consistent observation and timely response. Notice how our nitrate levels gradually rise between water changes, then drop after maintenance. This predictable pattern is the sign of a stable, cycled aquarium.</p>
-
-    <p style="margin-bottom: 0;">The data spans from September 2025 (when we completed the nitrogen cycle and added our first fish) through the present day, providing a complete timeline of tank establishment and maturation. Every milestone, from the first water change to adding new species, is documented here as part of our commitment to transparent, science-based fishkeeping education.</p>
-  </section>
-
-  <script>
-    // ============================================
-    // JOURNAL DATA LOADER - JSON VERSION
-    // ============================================
-
-    class JournalDataLoader {
-        constructor() {
-            this.allNitrateReadings = [];
-            this.currentParameters = {
-                nitrate: null,
-                testDate: null,
-                tankHealth: 'Unknown',
-                nextWaterChange: null
-            };
-            this.waterChangeHistory = [];
-            this.dosingHistory = [];
-            this.feedingHistory = [];
-        }
-
-        async loadAllData() {
-            console.log('Loading journal data from JSON files...');
-
-            try {
-                // Load the main journal.json (Oct-Nov data)
-                await this.loadMainJournal();
-
-                // Load monthly JSON files
-                await this.loadMonthlyData('2025-09');
-                await this.loadMonthlyData('2025-10');
-                await this.loadMonthlyData('2025-11');
-                await this.loadMonthlyData('2025-12');
-
-                // Sort all readings by date
-                this.allNitrateReadings.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-                // Set current parameters from most recent reading
-                this.setCurrentParameters();
-
-                console.log(`✓ Loaded ${this.allNitrateReadings.length} nitrate readings`);
-                console.log(`✓ Loaded ${this.waterChangeHistory.length} water changes`);
-
-                return {
-                    nitrateReadings: this.allNitrateReadings,
-                    currentParameters: this.currentParameters,
-                    waterChangeHistory: this.waterChangeHistory,
-                    dosingHistory: this.dosingHistory,
-                    feedingHistory: this.feedingHistory
+    <!-- Dashboard JavaScript -->
+    <script>
+        // ============================================
+        // JOURNAL DATA LOADER
+        // ============================================
+        
+        class JournalDataLoader {
+            constructor() {
+                this.allNitrateReadings = [];
+                this.currentParameters = {
+                    nitrate: null,
+                    testDate: null,
+                    tankHealth: 'Unknown'
                 };
-
-            } catch (error) {
-                console.error('Error loading journal data:', error);
-                throw error;
             }
-        }
-
-        async loadMainJournal() {
-            try {
-                const response = await fetch('/data/journal.json');
-                if (!response.ok) throw new Error('journal.json not found');
-
-                const data = await response.json();
-
-                // Load nitrate readings
-                if (data.nitrate) {
-                    data.nitrate.forEach(reading => {
-                        this.allNitrateReadings.push({
-                            date: reading.date,
-                            ppm: reading.ppm,
-                            waterChange: reading.wc,
-                            source: 'journal.json'
-                        });
-
-                        // Track water changes
-                        if (reading.wc) {
-                            this.waterChangeHistory.push({
+            
+            async loadAllData() {
+                console.log('🔄 Loading journal data from JSON files...');
+                
+                try {
+                    // Try loading main journal.json
+                    await this.loadMainJournal();
+                    
+                    // Try loading monthly files
+                    await this.loadMonthlyData('2025-09');
+                    await this.loadMonthlyData('2025-10');
+                    await this.loadMonthlyData('2025-11');
+                    
+                    // Sort by date
+                    this.allNitrateReadings.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    
+                    // Set current parameters
+                    this.setCurrentParameters();
+                    
+                    console.log(`✅ Loaded ${this.allNitrateReadings.length} nitrate readings`);
+                    
+                    return {
+                        nitrateReadings: this.allNitrateReadings,
+                        currentParameters: this.currentParameters
+                    };
+                    
+                } catch (error) {
+                    console.error('❌ Error loading journal data:', error);
+                    throw error;
+                }
+            }
+            
+            async loadMainJournal() {
+                try {
+                    const response = await fetch('/data/journal.json');
+                    if (!response.ok) {
+                        console.warn('⚠️ journal.json not found');
+                        return;
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.nitrate && Array.isArray(data.nitrate)) {
+                        data.nitrate.forEach(reading => {
+                            this.allNitrateReadings.push({
                                 date: reading.date,
-                                ppm: reading.ppm
+                                ppm: reading.ppm,
+                                waterChange: reading.wc,
+                                source: 'journal.json'
                             });
-                        }
-                    });
+                        });
+                    }
+                    
+                    console.log('✅ Loaded journal.json');
+                    
+                } catch (error) {
+                    console.warn('⚠️ Could not load journal.json:', error.message);
                 }
-
-                // Load dosing data
-                if (data.dosing) {
-                    this.dosingHistory = data.dosing;
-                }
-
-                // Load maintenance records
-                if (data.maintenance) {
-                    data.maintenance.forEach(m => {
-                        if (m.type.toLowerCase().includes('water change') ||
-                            m.type.toLowerCase().includes('wc')) {
-                            this.waterChangeHistory.push({
-                                date: m.date,
-                                type: m.type,
-                                details: m.details
-                            });
-                        }
-                    });
-                }
-
-                console.log('✓ Loaded journal.json');
-
-            } catch (error) {
-                console.warn('Could not load journal.json:', error);
             }
-        }
-
-        async loadMonthlyData(monthKey) {
-            try {
-                const response = await fetch(`/data/journal/${monthKey}.json`);
-                if (!response.ok) {
-                    console.log(`${monthKey}.json not found, skipping`);
+            
+            async loadMonthlyData(monthKey) {
+                try {
+                    const response = await fetch(`/data/journal/${monthKey}.json`);
+                    if (!response.ok) {
+                        console.warn(`⚠️ ${monthKey}.json not found`);
+                        return;
+                    }
+                    
+                    const entries = await response.json();
+                    
+                    if (!Array.isArray(entries)) {
+                        console.warn(`⚠️ ${monthKey}.json is not an array`);
+                        return;
+                    }
+                    
+                    entries.forEach(entry => {
+                        if (entry.nitrate_ppm && entry.nitrate_ppm !== "") {
+                            const ppm = parseFloat(entry.nitrate_ppm);
+                            if (!isNaN(ppm)) {
+                                // Avoid duplicates
+                                const exists = this.allNitrateReadings.some(r => 
+                                    r.date === entry.date && r.ppm === ppm
+                                );
+                                
+                                if (!exists) {
+                                    this.allNitrateReadings.push({
+                                        date: entry.date,
+                                        ppm: ppm,
+                                        waterChange: entry.category === 'Maintenance',
+                                        title: entry.title,
+                                        source: monthKey
+                                    });
+                                }
+                            }
+                        }
+                    });
+                    
+                    console.log(`✅ Loaded ${monthKey}.json (${entries.length} entries)`);
+                    
+                } catch (error) {
+                    console.warn(`⚠️ Could not load ${monthKey}.json:`, error.message);
+                }
+            }
+            
+            setCurrentParameters() {
+                if (this.allNitrateReadings.length === 0) {
+                    console.warn('⚠️ No nitrate readings found');
                     return;
                 }
-
-                const entries = await response.json();
-
-                entries.forEach(entry => {
-                    // Extract nitrate readings
-                    if (entry.nitrate_ppm && entry.nitrate_ppm !== "") {
-                        const ppm = parseFloat(entry.nitrate_ppm);
-                        if (!isNaN(ppm)) {
-                            // Check if this reading already exists
-                            const exists = this.allNitrateReadings.some(r =>
-                                r.date === entry.date && r.ppm === ppm
-                            );
-
-                            if (!exists) {
-                                this.allNitrateReadings.push({
-                                    date: entry.date,
-                                    ppm: ppm,
-                                    waterChange: entry.category === 'Maintenance',
-                                    title: entry.title,
-                                    source: monthKey
-                                });
+                
+                const latest = this.allNitrateReadings[this.allNitrateReadings.length - 1];
+                
+                this.currentParameters.nitrate = latest.ppm;
+                this.currentParameters.testDate = latest.date;
+                
+                // Determine health status
+                if (latest.ppm < 10) {
+                    this.currentParameters.tankHealth = 'Excellent';
+                } else if (latest.ppm < 20) {
+                    this.currentParameters.tankHealth = 'Good';
+                } else if (latest.ppm < 40) {
+                    this.currentParameters.tankHealth = 'Moderate';
+                } else if (latest.ppm < 80) {
+                    this.currentParameters.tankHealth = 'Elevated';
+                } else {
+                    this.currentParameters.tankHealth = 'Critical';
+                }
+                
+                console.log('✅ Current parameters set:', this.currentParameters);
+            }
+        }
+        
+        // ============================================
+        // DASHBOARD UPDATE FUNCTIONS
+        // ============================================
+        
+        async function updateDashboard() {
+            console.log('🔄 Starting dashboard update...');
+            
+            try {
+                const loader = new JournalDataLoader();
+                const data = await loader.loadAllData();
+                
+                if (data.nitrateReadings.length === 0) {
+                    throw new Error('No nitrate data found in JSON files');
+                }
+                
+                updateCurrentParameters(data.currentParameters);
+                updateNitrateChart(data.nitrateReadings);
+                updateStats(data.nitrateReadings);
+                updateLastRefresh();
+                
+                console.log('✅ Dashboard updated successfully');
+                
+            } catch (error) {
+                console.error('❌ Dashboard update failed:', error);
+                showErrorState(error.message);
+            }
+        }
+        
+        function updateCurrentParameters(params) {
+            // Current nitrate
+            const nitrateEl = document.getElementById('current-nitrate');
+            if (nitrateEl && params.nitrate !== null) {
+                nitrateEl.textContent = params.nitrate;
+            }
+            
+            // Last test date
+            const testDateEl = document.getElementById('last-test-date');
+            if (testDateEl && params.testDate) {
+                const date = new Date(params.testDate);
+                testDateEl.textContent = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+            }
+            
+            // Days since test
+            if (params.testDate) {
+                const daysSince = Math.floor((new Date() - new Date(params.testDate)) / (1000 * 60 * 60 * 24));
+                const daysSinceEl = document.getElementById('days-since-wc');
+                if (daysSinceEl) {
+                    daysSinceEl.textContent = daysSince;
+                }
+                
+                const lastWCDateEl = document.getElementById('last-wc-date');
+                if (lastWCDateEl) {
+                    lastWCDateEl.textContent = new Date(params.testDate).toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                }
+            }
+            
+            // System status
+            updateSystemStatus(params);
+        }
+        
+        function updateSystemStatus(params) {
+            const statusEl = document.getElementById('system-status');
+            const messageEl = document.getElementById('status-message');
+            
+            if (!statusEl || params.nitrate === null) return;
+            
+            // Remove all status classes
+            statusEl.className = 'stat-value';
+            
+            let message, className;
+            
+            if (params.nitrate < 10) {
+                message = 'Optimal nitrate levels';
+                className = 'status-good';
+            } else if (params.nitrate < 20) {
+                message = 'Healthy nitrate range';
+                className = 'status-good';
+            } else if (params.nitrate < 40) {
+                message = 'Water change due soon';
+                className = 'status-warning';
+            } else if (params.nitrate < 80) {
+                message = 'Water change recommended';
+                className = 'status-elevated';
+            } else {
+                message = 'Immediate water change needed';
+                className = 'status-critical';
+            }
+            
+            statusEl.textContent = params.tankHealth;
+            statusEl.classList.add(className);
+            
+            if (messageEl) {
+                messageEl.textContent = message;
+            }
+        }
+        
+        function updateStats(readings) {
+            const totalReadingsEl = document.getElementById('total-readings');
+            if (totalReadingsEl) {
+                totalReadingsEl.textContent = readings.length;
+            }
+        }
+        
+        function updateNitrateChart(readings) {
+            const canvas = document.getElementById('nitrate-chart');
+            const emptyState = document.getElementById('chart-empty-state');
+            const loadingState = document.getElementById('chart-loading');
+            
+            // Hide loading
+            if (loadingState) loadingState.style.display = 'none';
+            
+            if (!readings || readings.length === 0) {
+                if (canvas) canvas.style.display = 'none';
+                if (emptyState) {
+                    emptyState.style.display = 'block';
+                    emptyState.querySelector('p').textContent = 'No nitrate readings found in JSON files.';
+                }
+                return;
+            }
+            
+            // Show chart
+            if (canvas) canvas.style.display = 'block';
+            if (emptyState) emptyState.style.display = 'none';
+            
+            // Prepare chart data
+            const labels = readings.map(r => {
+                const date = new Date(r.date);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+            
+            const dataPoints = readings.map(r => r.ppm);
+            const pointColors = readings.map(r => r.waterChange ? '#38a169' : '#4299e1');
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Destroy existing chart
+            if (window.nitrateChart) {
+                window.nitrateChart.destroy();
+            }
+            
+            // Create new chart
+            window.nitrateChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nitrate (ppm)',
+                        data: dataPoints,
+                        borderColor: '#4299e1',
+                        backgroundColor: 'rgba(66, 153, 225, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        pointBackgroundColor: pointColors,
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e2e8f0'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(26, 32, 44, 0.95)',
+                            titleColor: '#e2e8f0',
+                            bodyColor: '#cbd5e0',
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    const reading = readings[context.dataIndex];
+                                    return reading.waterChange ? '(Water Change)' : '(Test Reading)';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Nitrate (ppm)',
+                                color: '#e2e8f0'
+                            },
+                            ticks: {
+                                color: '#a0aec0'
+                            },
+                            grid: {
+                                color: 'rgba(160, 174, 192, 0.15)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                color: '#e2e8f0'
+                            },
+                            ticks: {
+                                color: '#a0aec0',
+                                maxRotation: 45,
+                                minRotation: 45
+                            },
+                            grid: {
+                                color: 'rgba(160, 174, 192, 0.1)'
                             }
                         }
                     }
-
-                    // Extract feeding data
-                    if (entry.category === 'Feeding' || entry.quick_facts?.includes('Fed:')) {
-                        this.feedingHistory.push({
-                            date: entry.date,
-                            details: entry.quick_facts || entry.body
-                        });
+                }
+            });
+            
+            console.log(`✅ Chart rendered with ${readings.length} data points`);
+        }
+        
+        function updateLastRefresh() {
+            const refreshEl = document.getElementById('last-refresh');
+            if (refreshEl) {
+                refreshEl.textContent = new Date().toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
+        }
+        
+        function showErrorState(message) {
+            const errorEl = document.getElementById('dashboard-error');
+            if (errorEl) {
+                errorEl.style.display = 'block';
+                errorEl.textContent = `⚠️ Error: ${message}. Check browser console for details.`;
+            }
+            
+            // Hide loading states
+            const loadingEl = document.getElementById('chart-loading');
+            if (loadingEl) loadingEl.style.display = 'none';
+        }
+        
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🐠 Dashboard initializing...');
+            
+            // Initial load
+            updateDashboard();
+            
+            // Auto-refresh every 5 minutes
+            setInterval(updateDashboard, 5 * 60 * 1000);
+            
+            // Manual refresh button
+            const refreshBtn = document.getElementById('refresh-dashboard');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', async () => {
+                    refreshBtn.disabled = true;
+                    refreshBtn.textContent = '🔄 Refreshing...';
+                    
+                    try {
+                        await updateDashboard();
+                        refreshBtn.textContent = '✓ Refreshed';
+                        setTimeout(() => {
+                            refreshBtn.textContent = '🔄 Refresh';
+                        }, 2000);
+                    } catch (error) {
+                        refreshBtn.textContent = '❌ Error';
+                        setTimeout(() => {
+                            refreshBtn.textContent = '🔄 Refresh';
+                        }, 2000);
+                    } finally {
+                        refreshBtn.disabled = false;
                     }
                 });
-
-                console.log(`✓ Loaded ${monthKey}.json (${entries.length} entries)`);
-
-            } catch (error) {
-                console.warn(`Could not load ${monthKey}.json:`, error);
-            }
-        }
-
-        setCurrentParameters() {
-            if (this.allNitrateReadings.length === 0) return;
-
-            // Get most recent reading
-            const latest = this.allNitrateReadings[this.allNitrateReadings.length - 1];
-
-            this.currentParameters.nitrate = latest.ppm;
-            this.currentParameters.testDate = latest.date;
-
-            // Determine tank health based on nitrate
-            if (latest.ppm < 10) {
-                this.currentParameters.tankHealth = 'Excellent';
-            } else if (latest.ppm < 20) {
-                this.currentParameters.tankHealth = 'Good';
-            } else if (latest.ppm < 40) {
-                this.currentParameters.tankHealth = 'Moderate';
-            } else if (latest.ppm < 80) {
-                this.currentParameters.tankHealth = 'Elevated';
-            } else {
-                this.currentParameters.tankHealth = 'Critical';
-            }
-
-            // Calculate next water change (assume weekly - every 7 days from last WC)
-            if (this.waterChangeHistory.length > 0) {
-                const lastWC = new Date(this.waterChangeHistory[this.waterChangeHistory.length - 1].date);
-                const nextWC = new Date(lastWC);
-                nextWC.setDate(nextWC.getDate() + 7);
-                this.currentParameters.nextWaterChange = nextWC.toISOString().split('T')[0];
-            }
-        }
-    }
-
-    // ============================================
-    // DASHBOARD UPDATE FUNCTIONS
-    // ============================================
-
-    async function updateDashboard() {
-        try {
-            const loader = new JournalDataLoader();
-            const data = await loader.loadAllData();
-
-            // Update data quality section
-            updateDataQuality(data);
-
-            // Update all dashboard sections
-            updateCurrentParameters(data.currentParameters);
-            updateNitrateChart(data.nitrateReadings);
-            updateWaterChangeStats(data.waterChangeHistory);
-            updateSystemStatus(data.currentParameters);
-            updateDosingChart(data.dosingHistory);
-            updateFeedingStats(data.feedingHistory);
-            updateStatusSummary(data);
-
-            // Update timestamp
-            updateLastRefresh();
-
-            console.log('✓ Dashboard updated successfully');
-
-        } catch (error) {
-            console.error('Dashboard update failed:', error);
-            showErrorState(error.message);
-        }
-    }
-
-    function updateDataQuality(data) {
-        const metricsEl = document.getElementById('qualityMetrics');
-        if (!metricsEl) return;
-
-        const totalReadings = data.nitrateReadings.length;
-        const totalFeedings = data.feedingHistory.length;
-        const totalWaterChanges = data.waterChangeHistory.length;
-
-        const firstDate = data.nitrateReadings[0]?.date;
-        const lastDate = data.nitrateReadings[data.nitrateReadings.length - 1]?.date;
-
-        let daysTracked = 0;
-        if (firstDate && lastDate) {
-            const first = new Date(firstDate);
-            const last = new Date(lastDate);
-            daysTracked = Math.floor((last - first) / (1000 * 60 * 60 * 24)) + 1;
-        }
-
-        metricsEl.innerHTML = `
-            <div class="quality-item good">
-                <span class="icon" aria-hidden="true">✓</span>
-                <span>${totalReadings} nitrate readings loaded from JSON files</span>
-            </div>
-            <div class="quality-item good">
-                <span class="icon" aria-hidden="true">✓</span>
-                <span>${totalFeedings} feeding records tracked</span>
-            </div>
-            <div class="quality-item info">
-                <span class="icon" aria-hidden="true">ℹ</span>
-                <span>Tracking ${daysTracked} days (${formatFullDate(firstDate)} to ${formatFullDate(lastDate)})</span>
-            </div>
-            <div class="quality-item good">
-                <span class="icon" aria-hidden="true">✓</span>
-                <span>${totalWaterChanges} water changes recorded</span>
-            </div>
-        `;
-    }
-
-    function updateStatusSummary(data) {
-        const summaryEl = document.getElementById('statusSummaryContent');
-        if (!summaryEl) return;
-
-        const params = data.currentParameters;
-        const totalReadings = data.nitrateReadings.length;
-        const totalFeedings = data.feedingHistory.length;
-        const firstDate = data.nitrateReadings[0]?.date;
-        const lastDate = data.nitrateReadings[data.nitrateReadings.length - 1]?.date;
-
-        let summaryHTML = '';
-
-        // Current nitrate status
-        if (params.nitrate !== null) {
-            summaryHTML += `<p><strong>Current Nitrate Level:</strong> <span class="metric">${params.nitrate} ppm</span> as of ${formatFullDate(params.testDate)}.`;
-
-            if (params.nitrate >= 40) {
-                summaryHTML += ` Levels are elevated — water change recommended.`;
-            } else if (params.nitrate >= 20) {
-                summaryHTML += ` Levels are moderate — monitoring closely.`;
-            } else if (params.nitrate < 5) {
-                summaryHTML += ` Levels are low — may need additional fertilization.`;
-            } else {
-                summaryHTML += ` System is stable and healthy.`;
-            }
-            summaryHTML += `</p>`;
-        }
-
-        // Water change status
-        if (data.waterChangeHistory.length > 0) {
-            const lastWC = data.waterChangeHistory[data.waterChangeHistory.length - 1];
-            const daysSince = Math.floor((new Date() - new Date(lastWC.date)) / (1000 * 60 * 60 * 24));
-            summaryHTML += `<p><strong>Last Water Change:</strong> ${formatFullDate(lastWC.date)}`;
-            summaryHTML += ` (<span class="metric">${daysSince} days ago</span>)`;
-            summaryHTML += `.`;
-
-            if (daysSince > 10) {
-                summaryHTML += ` Next water change due soon.`;
-            }
-            summaryHTML += `</p>`;
-        }
-
-        // Feeding summary
-        summaryHTML += `<p><strong>Total Feedings:</strong> <span class="metric">${totalFeedings} feedings</span> logged since ${formatFullDate(firstDate)}, maintaining dietary variety with flakes, bloodworms, brine shrimp, algae wafers, and vegetables.</p>`;
-
-        // Tracking duration
-        const trackingDays = Math.floor((new Date(lastDate) - new Date(firstDate)) / (1000 * 60 * 60 * 24)) + 1;
-        summaryHTML += `<p><strong>Tracking Duration:</strong> <span class="metric">${trackingDays} days</span> of continuous monitoring across <span class="metric">${totalReadings} nitrate readings</span> from ${formatFullDate(firstDate)} to ${formatFullDate(lastDate)}.</p>`;
-
-        summaryEl.innerHTML = summaryHTML;
-    }
-
-    function formatFullDate(iso) {
-        if (!iso) return '';
-        try {
-            const date = new Date(iso + 'T00:00:00');
-            return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-        } catch {
-            return iso;
-        }
-    }
-
-    function updateCurrentParameters(params) {
-        // Current nitrate
-        const nitrateEl = document.querySelector('#currentNitrate');
-        if (nitrateEl && params.nitrate !== null) {
-            nitrateEl.textContent = params.nitrate;
-        }
-
-        // Last test date
-        const testDateEl = document.querySelector('#lastTestDate');
-        if (testDateEl && params.testDate) {
-            const date = new Date(params.testDate);
-            testDateEl.textContent = date.toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric'
-            });
-        }
-
-        // Days since last water change
-        if (params.testDate) {
-            const daysSince = Math.floor((new Date() - new Date(params.testDate)) / (1000 * 60 * 60 * 24));
-            const daysSinceEl = document.querySelector('#daysSinceWC');
-            if (daysSinceEl) {
-                daysSinceEl.textContent = daysSince;
-            }
-
-            const lastWCDateEl = document.querySelector('#lastWCSub');
-            if (lastWCDateEl) {
-                lastWCDateEl.textContent = `Last: ${new Date(params.testDate).toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric'
-                })}`;
-            }
-        }
-
-        // Next water change
-        if (params.nextWaterChange) {
-            const nextWCEl = document.querySelector('#nextWaterChange');
-            if (nextWCEl) {
-                const nextDate = new Date(params.nextWaterChange);
-                const daysUntil = Math.ceil((nextDate - new Date()) / (1000 * 60 * 60 * 24));
-                nextWCEl.textContent = `${daysUntil} days (${nextDate.toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric'
-                })})`;
-            }
-        }
-    }
-
-    function updateNitrateChart(readings) {
-        const canvas = document.getElementById('nitrateChart');
-        const emptyState = document.getElementById('chart-empty-state');
-
-        if (!readings || readings.length === 0) {
-            if (canvas) canvas.style.display = 'none';
-            if (emptyState) emptyState.style.display = 'block';
-            console.warn('No nitrate readings available for chart');
-            return;
-        }
-
-        // Show chart, hide empty state
-        if (canvas) canvas.style.display = 'block';
-        if (emptyState) emptyState.style.display = 'none';
-
-        // Prepare chart data
-        const labels = readings.map(r => {
-            const date = new Date(r.date);
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        });
-
-        const dataPoints = readings.map(r => r.ppm);
-
-        // Color points based on water change status
-        const pointColors = readings.map(r =>
-            r.waterChange ? '#38a169' : '#4299e1' // Green for water changes, blue for tests
-        );
-
-        const chartData = {
-            labels: labels,
-            datasets: [{
-                label: 'Nitrate (ppm)',
-                data: dataPoints,
-                borderColor: '#4299e1',
-                backgroundColor: 'rgba(66, 153, 225, 0.1)',
-                borderWidth: 2,
-                tension: 0.3,
-                pointBackgroundColor: pointColors,
-                pointBorderColor: '#ffffff',
-                pointBorderWidth: 2,
-                pointRadius: 5,
-                pointHoverRadius: 8,
-                fill: true
-            }]
-        };
-
-        renderNitrateChart(canvas, chartData, readings);
-    }
-
-    function renderNitrateChart(canvas, chartData, readings) {
-        const ctx = canvas.getContext('2d');
-
-        // Destroy existing chart
-        if (window.nitrateChart) {
-            window.nitrateChart.destroy();
-        }
-
-        // Create new chart
-        window.nitrateChart = new Chart(ctx, {
-            type: 'line',
-            data: chartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        labels: {
-                            color: '#e2e8f0',
-                            font: {
-                                size: 12
-                            }
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(26, 32, 44, 0.95)',
-                        titleColor: '#e2e8f0',
-                        bodyColor: '#cbd5e0',
-                        borderColor: '#4299e1',
-                        borderWidth: 1,
-                        callbacks: {
-                            afterLabel: function(context) {
-                                const reading = readings[context.dataIndex];
-                                return reading.waterChange ? '(Water Change)' : '(Test Reading)';
-                            }
-                        }
-                    },
-                    datalabels: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Nitrate (ppm)',
-                            color: '#e2e8f0',
-                            font: {
-                                size: 14,
-                                weight: 'bold'
-                            }
-                        },
-                        ticks: {
-                            color: '#a0aec0',
-                            stepSize: 10
-                        },
-                        grid: {
-                            color: 'rgba(160, 174, 192, 0.15)'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Date',
-                            color: '#e2e8f0',
-                            font: {
-                                size: 14,
-                                weight: 'bold'
-                            }
-                        },
-                        ticks: {
-                            color: '#a0aec0',
-                            maxRotation: 45,
-                            minRotation: 45,
-                            font: {
-                                size: 10
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(160, 174, 192, 0.1)'
-                        }
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                }
             }
         });
+    </script>
 
-        console.log(`✓ Chart rendered with ${readings.length} data points`);
-    }
-
-    function updateWaterChangeStats(history) {
-        const totalWCEl = document.querySelector('#total-water-changes');
-        if (totalWCEl) {
-            totalWCEl.textContent = history.length;
-        }
-    }
-
-    function updateFeedingStats(feedingHistory) {
-        const totalFeedingsEl = document.querySelector('#totalFeedings');
-        if (totalFeedingsEl) {
-            totalFeedingsEl.textContent = feedingHistory.length;
-        }
-    }
-
-    function updateSystemStatus(params) {
-        const statusEl = document.querySelector('#systemStatus');
-        const messageEl = document.querySelector('#statusDetail');
-
-        if (!statusEl || params.nitrate === null) return;
-
-        // Remove all status classes
-        statusEl.classList.remove('status-good', 'status-warning', 'status-elevated', 'status-critical');
-
-        let message, className;
-
-        if (params.nitrate < 10) {
-            message = 'Optimal nitrate levels';
-            className = 'status-good';
-        } else if (params.nitrate < 20) {
-            message = 'Healthy nitrate range';
-            className = 'status-good';
-        } else if (params.nitrate < 40) {
-            message = 'Water change due soon';
-            className = 'status-warning';
-        } else if (params.nitrate < 80) {
-            message = 'Water change recommended';
-            className = 'status-elevated';
-        } else {
-            message = 'Immediate water change needed';
-            className = 'status-critical';
-        }
-
-        statusEl.textContent = params.tankHealth;
-        statusEl.classList.add(className);
-
-        if (messageEl) {
-            messageEl.textContent = message;
-        }
-    }
-
-    function updateDosingChart(dosingHistory) {
-        // Optional: Create a chart showing Thrive/Excel dosing over time
-        // Implementation depends on if you want this visualization
-        console.log(`Dosing history available: ${dosingHistory.length} weeks`);
-    }
-
-    function updateLastRefresh() {
-        const refreshEl = document.querySelector('#last-refresh');
-        if (refreshEl) {
-            refreshEl.textContent = new Date().toLocaleString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            });
-        }
-    }
-
-    function showErrorState(message) {
-        const errorEl = document.querySelector('#dashboard-error');
-        if (errorEl) {
-            errorEl.style.display = 'block';
-            errorEl.textContent = `Error loading dashboard: ${message}. Please refresh the page.`;
-        }
-    }
-
-    function showRefreshIndicator() {
-        const indicator = document.querySelector('.refresh-indicator');
-        if (indicator) {
-            indicator.classList.add('active');
-            setTimeout(() => indicator.classList.remove('active'), 1000);
-        }
-    }
-
-    // ============================================
-    // INITIALIZATION
-    // ============================================
-
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('🐠 Dashboard initializing...');
-
-        // Update sync status
-        const syncStatusEl = document.getElementById('syncStatus');
-        if (syncStatusEl) {
-            syncStatusEl.className = 'sync-status loading';
-            syncStatusEl.textContent = 'Loading data from JSON files...';
-        }
-
-        // Initial load
-        updateDashboard().then(() => {
-            if (syncStatusEl) {
-                syncStatusEl.className = 'sync-status success';
-                syncStatusEl.textContent = '✅ Data loaded successfully from JSON files';
-            }
-        }).catch(error => {
-            console.error('Dashboard initialization error:', error);
-            if (syncStatusEl) {
-                syncStatusEl.className = 'sync-status error';
-                syncStatusEl.textContent = '❌ Error loading data';
-            }
-        });
-
-        // Auto-refresh every 5 minutes
-        setInterval(updateDashboard, 5 * 60 * 1000);
-
-        // Manual refresh button
-        const refreshBtn = document.querySelector('#refresh-dashboard');
-        if (refreshBtn) {
-            refreshBtn.addEventListener('click', async () => {
-                refreshBtn.disabled = true;
-                refreshBtn.textContent = '🔄 Refreshing...';
-
-                try {
-                    showRefreshIndicator();
-                    await updateDashboard();
-                    refreshBtn.textContent = '🔄 Refresh';
-                } catch (error) {
-                    refreshBtn.textContent = '❌ Error';
-                    setTimeout(() => {
-                        refreshBtn.textContent = '🔄 Refresh';
-                    }, 2000);
-                } finally {
-                    refreshBtn.disabled = false;
-                }
-            });
-        }
-    });
-  </script>
-  </main>
-
-  <script src="/js/footer-loader.js?v=1.5.2" defer></script>
-  <section class="legal-links" aria-label="Site legal links">
-    <a href="/privacy-legal.html">Privacy Policy</a>
-    <a href="/terms.html">Terms</a>
-    <a href="/contact-feedback.html">Contact</a>
-  </section>
-  <noscript>
-    <p class="legal-links__noscript">JavaScript is disabled. Visit our <a href="/privacy-legal.html">Privacy Policy</a> and
-      <a href="/terms.html">Terms</a>.</p>
-  </noscript>
-  <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
-
-  <!-- CMP Consent Bridge -->
-  <script>
-  (function(){
-    var allowNPA = true;
-    function setAdConsent(granted){
-      var consentState = granted ? 'granted' : 'denied';
-      var payload = {
-        'ad_storage': consentState,
-        'ad_user_data': consentState,
-        'ad_personalization': consentState
-      };
-      if (typeof window.__ttgUpdateConsentState__ === 'function') {
-        window.__ttgUpdateConsentState__(payload);
-      } else if (typeof window.gtag === 'function') {
-        window.gtag('consent', 'update', payload);
-      } else {
-        (window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || []).push(payload);
-      }
-    }
-    function hookTCF(){
-      if (typeof __tcfapi !== 'function') return;
-      __tcfapi('addEventListener', 2, function(tcData, success){
-        if(!success || !tcData || tcData.eventStatus !== 'tcloaded') return;
-        var p1 = tcData.purpose && tcData.purpose.consents ? tcData.purpose.consents[1] : false;
-        var p4 = tcData.purpose && tcData.purpose.consents ? tcData.purpose.consents[4] : false;
-        var granted = allowNPA ? (p1 && (p4 || true)) : (p1 && p4);
-        setAdConsent(granted);
-      });
-    }
-    if (typeof __tcfapi === 'function') {
-      hookTCF();
-    } else {
-      window.addEventListener('tcfapiReady', hookTCF, { once: true });
-    }
-  })();
-  </script>
 </body>
 </html>
