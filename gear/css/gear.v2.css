@@ -428,35 +428,39 @@ body.ttg-tooltip-lock {
 }
 
 
+/* Hygger Brand Colors - Official teal/cyan palette */
 .btn-gear--hygger,
 .hygger-btn,
 .btn-hygger {
   justify-content: center;
-  background: linear-gradient(135deg, #1fa672 0%, #25c48c 100%);
-  color: #041018;
-  box-shadow: 0 10px 22px -12px rgba(31, 166, 114, .5), 0 0 0 1px rgba(0, 0, 0, .1) inset;
+  background: linear-gradient(135deg, #00a0a0 0%, #00c4c4 50%, #00d4d4 100%);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 10px 22px -12px rgba(0, 160, 160, .5), 0 0 0 1px rgba(0, 0, 0, .1) inset;
   border: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .15);
 }
 
 .btn-gear--hygger:hover,
 .hygger-btn:hover,
 .btn-hygger:hover {
-  filter: brightness(0.95);
-  box-shadow: 0 12px 26px -14px rgba(31, 166, 114, .55), 0 0 0 1px rgba(0, 0, 0, .12) inset;
+  background: linear-gradient(135deg, #008f8f 0%, #00b3b3 50%, #00c4c4 100%);
+  box-shadow: 0 12px 26px -14px rgba(0, 160, 160, .6), 0 0 0 1px rgba(0, 0, 0, .12) inset;
   transform: translateY(-1px);
 }
 
 .btn-gear--hygger:focus-visible,
 .hygger-btn:focus-visible,
 .btn-hygger:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, .6);
+  outline: 2px solid rgba(0, 196, 196, .8);
   outline-offset: 2px;
 }
 
 .btn-gear--hygger:active,
 .hygger-btn:active,
 .btn-hygger:active {
-  box-shadow: 0 8px 18px -12px rgba(31, 166, 114, .5), 0 0 0 1px rgba(0, 0, 0, .1) inset;
+  transform: translateY(1px);
+  box-shadow: 0 6px 16px -10px rgba(0, 160, 160, .5), 0 0 0 1px rgba(0, 0, 0, .1) inset;
 }
 
 .gear-card__actions .btn-gear--hygger,
