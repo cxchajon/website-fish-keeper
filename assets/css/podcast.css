@@ -393,6 +393,7 @@ body.podcast-page {
   gap: clamp(16px, 3vw, 20px);
   margin-top: 18px;
   grid-template-columns: 1fr;
+  justify-items: start;
 }
 
 @media (min-width: 640px) {
@@ -402,33 +403,40 @@ body.podcast-page {
 }
 
 .platform-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 14px;
-  transition: all 0.2s ease;
-  min-height: 110px;
-  height: 110px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  transition: transform 0.2s ease;
+  min-height: 0;
+  height: auto;
+  justify-self: start;
 }
 
 .platform-badge:hover,
 .platform-badge:focus-visible {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(63, 211, 218, 0.4);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
-.podcast-platform-logo {
+.platform-badge:focus-visible {
+  outline: 2px solid var(--podcast-accent);
+  outline-offset: 6px;
+}
+
+.podcast-platform-badge {
   width: auto;
-  height: 50px;
-  max-width: 180px;
+  height: 52px;
+  max-width: 200px;
   object-fit: contain;
 }
 
-.podcast-platform-logo--iheart {
-  height: 42px;
+.podcast-platform-badge--iheart {
+  height: 54px;
 }
