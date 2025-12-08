@@ -2852,3 +2852,233 @@
     run();
   }
 })();
+
+/* ============================================
+   Bundle Controller - Tank Size First UI
+   ============================================ */
+(function() {
+  const STOCKING_TANK_SESSION_KEY = 'ttg:tank_g';
+  const HYGGER_URL = 'https://www.hygger-online.com/?ref=FKLC';
+
+  function isHyggerProduct(title) {
+    if (!title) return false;
+    return String(title).toLowerCase().includes('hygger');
+  }
+
+  function selectTier(tierId) {
+    // Update UI state
+    document.querySelectorAll('.tier-btn').forEach(btn => {
+      btn.classList.toggle('tier-btn--selected', btn.dataset.tier === tierId);
+    });
+
+    // Wait for gear data to load
+    if (!window.ttgGearDataPromise) {
+      console.warn('[Bundle] Gear data not available');
+      return;
+    }
+
+    window.ttgGearDataPromise.then(() => {
+      if (typeof window.buildTankBundle !== 'function') {
+        console.warn('[Bundle] buildTankBundle not available');
+        return;
+      }
+
+      const bundle = window.buildTankBundle(tierId);
+      if (!bundle) {
+        console.warn('[Bundle] No bundle for tier:', tierId);
+        return;
+      }
+
+      renderBundle(bundle);
+
+      // Show bundle section
+      const bundleSection = document.getElementById('gear-bundle');
+      if (bundleSection) {
+        bundleSection.hidden = false;
+        bundleSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }).catch(err => {
+      console.error('[Bundle] Error loading bundle:', err);
+    });
+  }
+
+  function renderBundle(bundle) {
+    // Update tier name
+    const tierNameEl = document.getElementById('bundle-tier-name');
+    if (tierNameEl) {
+      tierNameEl.textContent = bundle.tier.label;
+    }
+
+    // Render heater
+    renderProduct('heater', bundle.heater, bundle.heaterAlts);
+
+    // Render filter
+    renderProduct('filter', bundle.filter, bundle.filterAlts);
+
+    // Render light
+    renderProduct('light', bundle.light, bundle.lightAlts);
+
+    // Render air
+    renderProduct('air', bundle.airBackup, []);
+
+    // Render extras
+    renderExtras(bundle.extras);
+  }
+
+  function renderProduct(category, primary, alternatives) {
+    const nameEl = document.getElementById(`${category}-name`);
+    const noteEl = document.getElementById(`${category}-note`);
+    const specEl = document.getElementById(`${category}-spec`);
+    const amazonBtn = document.getElementById(`${category}-amazon`);
+    const hyggerBtn = document.getElementById(`${category}-hygger`);
+    const altsEl = document.getElementById(`${category}-alts`);
+
+    if (!nameEl) return;
+
+    if (!primary) {
+      nameEl.textContent = 'No recommendation available';
+      if (noteEl) noteEl.textContent = '';
+      if (amazonBtn) amazonBtn.hidden = true;
+      if (hyggerBtn) hyggerBtn.hidden = true;
+      return;
+    }
+
+    // Set product name (truncate if needed)
+    const title = primary.title || primary.label || 'Product';
+    nameEl.textContent = title.length > 80 ? title.substring(0, 77) + '...' : title;
+
+    // Set notes
+    if (noteEl) {
+      noteEl.textContent = primary.notes || primary.note || '';
+    }
+
+    // Set spec if available
+    if (specEl && primary.spec) {
+      specEl.textContent = primary.spec;
+    }
+
+    // Amazon button
+    if (amazonBtn) {
+      const href = primary.href || primary.amazon_url || primary.amazonUrl || '';
+      if (href) {
+        amazonBtn.href = href;
+        amazonBtn.hidden = false;
+      } else {
+        amazonBtn.hidden = true;
+      }
+    }
+
+    // Hygger button (show if it's a hygger product)
+    if (hyggerBtn) {
+      if (isHyggerProduct(title)) {
+        hyggerBtn.href = HYGGER_URL;
+        hyggerBtn.hidden = false;
+      } else {
+        hyggerBtn.hidden = true;
+      }
+    }
+
+    // Render alternatives
+    if (altsEl && Array.isArray(alternatives) && alternatives.length > 0) {
+      altsEl.innerHTML = alternatives.map(alt => {
+        const altTitle = alt.title || alt.label || 'Alternative';
+        const altHref = alt.href || alt.amazon_url || '';
+        const shortTitle = altTitle.length > 70 ? altTitle.substring(0, 67) + '...' : altTitle;
+
+        return `
+          <div class="alt-product">
+            <p class="alt-product__name">${escapeHtml(shortTitle)}</p>
+            <div class="alt-product__actions">
+              ${altHref ? `<a class="btn btn-amazon" href="${escapeHtml(altHref)}" target="_blank" rel="sponsored noopener">Amazon</a>` : ''}
+              ${isHyggerProduct(altTitle) ? `<a class="btn btn-hygger" href="${HYGGER_URL}" target="_blank" rel="sponsored noopener">Hygger</a>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    } else if (altsEl) {
+      altsEl.innerHTML = '<p class="alt-product__name" style="color: var(--muted);">No alternatives available</p>';
+    }
+  }
+
+  function renderExtras(extras) {
+    const listEl = document.getElementById('extras-list');
+    if (!listEl) return;
+
+    if (!Array.isArray(extras) || extras.length === 0) {
+      listEl.innerHTML = '<li>No extras available</li>';
+      return;
+    }
+
+    listEl.innerHTML = extras.map(item => {
+      const title = item.title || 'Item';
+      const href = item.href || '';
+      if (href) {
+        return `<li><a href="${escapeHtml(href)}" target="_blank" rel="sponsored noopener">${escapeHtml(title)}</a></li>`;
+      }
+      return `<li>${escapeHtml(title)}</li>`;
+    }).join('');
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function toggleAlternatives(btn) {
+    const category = btn.dataset.alts;
+    const panel = document.getElementById(`${category}-alts`);
+    if (!panel) return;
+
+    const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', !isExpanded);
+    panel.hidden = isExpanded;
+  }
+
+  function initBundleController() {
+    // Check sessionStorage for stocking advisor handshake
+    let autoSelectTier = null;
+    try {
+      const savedGallons = sessionStorage.getItem(STOCKING_TANK_SESSION_KEY);
+      if (savedGallons && typeof window.findTierByGallons === 'function') {
+        const matchedTier = window.findTierByGallons(Number(savedGallons));
+        if (matchedTier) {
+          autoSelectTier = matchedTier.id;
+        }
+        sessionStorage.removeItem(STOCKING_TANK_SESSION_KEY); // Clear after use
+      }
+    } catch (e) {
+      // Ignore sessionStorage errors
+    }
+
+    // Set up tier button listeners
+    document.querySelectorAll('.tier-btn').forEach(btn => {
+      btn.addEventListener('click', () => selectTier(btn.dataset.tier));
+    });
+
+    // Set up alternatives toggles
+    document.querySelectorAll('.bundle-card__alts-toggle').forEach(btn => {
+      btn.addEventListener('click', () => toggleAlternatives(btn));
+    });
+
+    // Auto-select tier from stocking advisor if available
+    if (autoSelectTier) {
+      // Wait a bit for data to load, then select
+      setTimeout(() => {
+        if (window.ttgGearDataPromise) {
+          window.ttgGearDataPromise.then(() => {
+            selectTier(autoSelectTier);
+          });
+        }
+      }, 100);
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBundleController);
+  } else {
+    initBundleController();
+  }
+})();
