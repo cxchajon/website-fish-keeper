@@ -2858,74 +2858,180 @@
    ============================================ */
 (function() {
   const STOCKING_TANK_SESSION_KEY = 'ttg:tank_g';
-  const HYGGER_URL = 'https://www.hygger-online.com/?ref=FKLC';
 
-  function isHyggerProduct(title) {
-    if (!title) return false;
-    return String(title).toLowerCase().includes('hygger');
+  function logDebug(...args) {
+    try {
+      console.log('[Bundle]', ...args);
+    } catch (_error) {
+      /* no-op */
+    }
   }
 
-  function selectTier(tierId) {
-    // Update UI state
-    document.querySelectorAll('.tier-btn').forEach(btn => {
-      btn.classList.toggle('tier-btn--selected', btn.dataset.tier === tierId);
-    });
+  function readSessionGallons() {
+    try {
+      const raw = sessionStorage.getItem(STOCKING_TANK_SESSION_KEY);
+      if (!raw) return null;
+      const parsed = Number(raw);
+      return Number.isFinite(parsed) ? parsed : null;
+    } catch (_error) {
+      return null;
+    }
+  }
 
-    // Wait for gear data to load
-    if (!window.ttgGearDataPromise) {
-      console.warn('[Bundle] Gear data not available');
+  async function waitForGearData() {
+    if (typeof window === 'undefined') return null;
+    if (window.ttgGearDataPromise) {
+      try {
+        const gear = await window.ttgGearDataPromise;
+        logDebug('Gear data loaded', gear);
+        return gear;
+      } catch (error) {
+        console.error('[Bundle] Failed to load gear data:', error);
+      }
+    }
+    return window.GEAR || null;
+  }
+
+  function findTier(tierId) {
+    const tiers = Array.isArray(window.BUNDLE_TIERS) ? window.BUNDLE_TIERS : [];
+    return tiers.find((tier) => tier.id === tierId) || null;
+  }
+
+  function selectTier(tierId, { clearSession = true } = {}) {
+    logDebug('Selecting tier', tierId);
+    const tier = findTier(tierId);
+    if (!tier) {
+      console.error('[Bundle] Unknown tier:', tierId);
       return;
     }
 
-    window.ttgGearDataPromise.then(() => {
-      if (typeof window.buildTankBundle !== 'function') {
-        console.warn('[Bundle] buildTankBundle not available');
-        return;
-      }
+    document.querySelectorAll('.tier-btn').forEach((btn) => {
+      btn.classList.toggle('tier-btn--selected', btn.dataset.tier === tierId);
+    });
 
-      const bundle = window.buildTankBundle(tierId);
-      if (!bundle) {
-        console.warn('[Bundle] No bundle for tier:', tierId);
-        return;
-      }
+    waitForGearData()
+      .then((gear) => {
+        const bundleBuilder = typeof window.buildTankBundle === 'function' ? window.buildTankBundle : null;
+        const bundle = bundleBuilder ? bundleBuilder(tierId) : buildBundleFromGear(tier, gear);
 
-      renderBundle(bundle);
+        if (!bundle) {
+          console.error('[Bundle] No bundle available for tier:', tierId);
+          return;
+        }
 
-      // Show bundle section
-      const bundleSection = document.getElementById('gear-bundle');
-      if (bundleSection) {
-        bundleSection.hidden = false;
-        bundleSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }).catch(err => {
-      console.error('[Bundle] Error loading bundle:', err);
+        const normalizedBundle = Object.assign({}, bundle, {
+          tier: bundle.tier || tier,
+          air: bundle.air || bundle.airBackup || null,
+          extras: bundle.extras || []
+        });
+
+        logDebug('Rendering bundle', normalizedBundle);
+        renderBundle(normalizedBundle);
+
+        const bundleSection = document.getElementById('gear-bundle');
+        if (bundleSection) {
+          bundleSection.hidden = false;
+          bundleSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        if (clearSession) {
+          try {
+            sessionStorage.removeItem(STOCKING_TANK_SESSION_KEY);
+          } catch (_error) {
+            /* ignore */
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('[Bundle] Error selecting tier:', error);
+      });
+  }
+
+  function buildBundleFromGear(tier, gear) {
+    if (!tier || !gear) return null;
+    return {
+      tier,
+      heater: getPrimaryProduct(gear, 'heaters', tier.gallonRange),
+      heaterAlts: getAlternativeProducts(gear, 'heaters', tier.gallonRange),
+      filter: getPrimaryProduct(gear, 'filters', tier.gallonRange),
+      filterAlts: getAlternativeProducts(gear, 'filters', tier.gallonRange),
+      light: getPrimaryProduct(gear, 'lights', tier.lightRanges),
+      lightAlts: getAlternativeProducts(gear, 'lights', tier.lightRanges),
+      air: getPrimaryProduct(gear, 'air', null),
+      extras: getExtrasProducts(gear)
+    };
+  }
+
+  function getPrimaryProduct(gear, category, rangeKey) {
+    const products = getProductsForCategory(gear, category, rangeKey);
+    if (!products.length) return null;
+    return (
+      products.find((product) => Number(product.priority) === 1) ||
+      products[0]
+    );
+  }
+
+  function getAlternativeProducts(gear, category, rangeKey) {
+    const products = getProductsForCategory(gear, category, rangeKey);
+    return products.filter((product, index) => {
+      const priority = Number(product.priority);
+      return priority > 1 || (!product.priority && index > 0);
     });
   }
 
+  function getProductsForCategory(gear, category, rangeKey) {
+    if (!gear) return [];
+    if (category === 'heaters' && gear.heaters?.buckets) {
+      const bucket = gear.heaters.buckets.find((b) => b.id === rangeKey);
+      return bucket?.options || [];
+    }
+    if (category === 'filters' && gear.filters?.buckets) {
+      const bucket = gear.filters.buckets.find((b) => b.id === rangeKey);
+      return bucket?.options || [];
+    }
+    if (category === 'lights' && gear.lights?.ranges) {
+      const ranges = Array.isArray(rangeKey) ? rangeKey : [rangeKey];
+      for (const rk of ranges) {
+        const range = gear.lights.ranges.find((r) => r.id === rk);
+        if (range?.options?.length) return range.options;
+      }
+      return [];
+    }
+    if (category === 'air' && gear.air?.options) {
+      return gear.air.options;
+    }
+    return [];
+  }
+
+  function getExtrasProducts(gear) {
+    if (!gear?.extras?.accordions?.length) return [];
+    const extrasGroup = gear.extras.accordions[0];
+    if (!extrasGroup?.subgroups) return [];
+    const items = [];
+    extrasGroup.subgroups.forEach((subgroup) => {
+      (subgroup.items || []).forEach((item) => {
+        if (item.title) {
+          items.push(item);
+        }
+      });
+    });
+    return items;
+  }
+
   function renderBundle(bundle) {
-    // Update tier name
     const tierNameEl = document.getElementById('bundle-tier-name');
-    if (tierNameEl) {
+    if (tierNameEl && bundle.tier) {
       tierNameEl.textContent = bundle.tier.label;
     }
 
-    // Render heater
-    renderProduct('heater', bundle.heater, bundle.heaterAlts);
-
-    // Render filter
-    renderProduct('filter', bundle.filter, bundle.filterAlts);
-
-    // Render light
-    renderProduct('light', bundle.light, bundle.lightAlts);
-
-    // Render air
-    renderProduct('air', bundle.airBackup, []);
-
-    // Render extras
-    renderExtras(bundle.extras);
+    renderProduct('heater', bundle.heater, bundle.heaterAlts, bundle.tier?.heaterSpec);
+    renderProduct('filter', bundle.filter, bundle.filterAlts, bundle.tier?.filterSpec);
+    renderProduct('light', bundle.light, bundle.lightAlts, null);
+    renderProduct('air', bundle.air, [], null);
+    renderExtras(bundle.extras || []);
   }
 
-  function renderProduct(category, primary, alternatives) {
+  function renderProduct(category, primary, alternatives, specOverride) {
     const nameEl = document.getElementById(`${category}-name`);
     const noteEl = document.getElementById(`${category}-note`);
     const specEl = document.getElementById(`${category}-spec`);
@@ -2936,30 +3042,28 @@
     if (!nameEl) return;
 
     if (!primary) {
-      nameEl.textContent = 'No recommendation available';
+      nameEl.textContent = 'No product available';
       if (noteEl) noteEl.textContent = '';
+      if (specEl) specEl.textContent = specOverride || '';
       if (amazonBtn) amazonBtn.hidden = true;
       if (hyggerBtn) hyggerBtn.hidden = true;
+      if (altsEl) altsEl.innerHTML = '';
       return;
     }
 
-    // Set product name (truncate if needed)
     const title = primary.title || primary.label || 'Product';
-    nameEl.textContent = title.length > 80 ? title.substring(0, 77) + '...' : title;
+    nameEl.textContent = title;
 
-    // Set notes
     if (noteEl) {
-      noteEl.textContent = primary.notes || primary.note || '';
+      noteEl.textContent = primary.notes || primary.note || primary.description || '';
     }
 
-    // Set spec if available
-    if (specEl && primary.spec) {
-      specEl.textContent = primary.spec;
+    if (specEl) {
+      specEl.textContent = specOverride || primary.spec || '';
     }
 
-    // Amazon button
     if (amazonBtn) {
-      const href = primary.href || primary.amazon_url || primary.amazonUrl || '';
+      const href = primary.amazon_url || primary.href || primary.amazonUrl || '';
       if (href) {
         amazonBtn.href = href;
         amazonBtn.hidden = false;
@@ -2968,33 +3072,33 @@
       }
     }
 
-    // Hygger button (show if it's a hygger product)
     if (hyggerBtn) {
-      if (isHyggerProduct(title)) {
-        hyggerBtn.href = HYGGER_URL;
+      const hyggerLink = primary.hygger_url || '';
+      if (hyggerLink) {
+        hyggerBtn.href = hyggerLink;
         hyggerBtn.hidden = false;
       } else {
         hyggerBtn.hidden = true;
       }
     }
 
-    // Render alternatives
     if (altsEl && Array.isArray(alternatives) && alternatives.length > 0) {
-      altsEl.innerHTML = alternatives.map(alt => {
-        const altTitle = alt.title || alt.label || 'Alternative';
-        const altHref = alt.href || alt.amazon_url || '';
-        const shortTitle = altTitle.length > 70 ? altTitle.substring(0, 67) + '...' : altTitle;
-
-        return `
-          <div class="alt-product">
-            <p class="alt-product__name">${escapeHtml(shortTitle)}</p>
-            <div class="alt-product__actions">
-              ${altHref ? `<a class="btn btn-amazon" href="${escapeHtml(altHref)}" target="_blank" rel="sponsored noopener">Amazon</a>` : ''}
-              ${isHyggerProduct(altTitle) ? `<a class="btn btn-hygger" href="${HYGGER_URL}" target="_blank" rel="sponsored noopener">Hygger</a>` : ''}
+      altsEl.innerHTML = alternatives
+        .map((alt) => {
+          const altTitle = alt.title || alt.label || 'Alternative';
+          const altAmazon = alt.amazon_url || alt.href || '';
+          const altHygger = alt.hygger_url || '';
+          return `
+            <div class="alt-product">
+              <p class="alt-product__name">${escapeHtml(altTitle)}</p>
+              <div class="alt-product__actions">
+                ${altAmazon ? `<a class="btn btn-amazon" href="${escapeHtml(altAmazon)}" target="_blank" rel="sponsored noopener">Amazon</a>` : ''}
+                ${altHygger ? `<a class="btn btn-hygger" href="${escapeHtml(altHygger)}" target="_blank" rel="sponsored noopener">Hygger</a>` : ''}
+              </div>
             </div>
-          </div>
-        `;
-      }).join('');
+          `;
+        })
+        .join('');
     } else if (altsEl) {
       altsEl.innerHTML = '<p class="alt-product__name" style="color: var(--muted);">No alternatives available</p>';
     }
@@ -3009,14 +3113,16 @@
       return;
     }
 
-    listEl.innerHTML = extras.map(item => {
-      const title = item.title || 'Item';
-      const href = item.href || '';
-      if (href) {
-        return `<li><a href="${escapeHtml(href)}" target="_blank" rel="sponsored noopener">${escapeHtml(title)}</a></li>`;
-      }
-      return `<li>${escapeHtml(title)}</li>`;
-    }).join('');
+    listEl.innerHTML = extras
+      .map((item) => {
+        const title = item.title || item.name || 'Item';
+        const href = item.amazon_url || item.href || item.url || '';
+        if (href) {
+          return `<li><a href="${escapeHtml(href)}" target="_blank" rel="sponsored noopener">${escapeHtml(title)}</a></li>`;
+        }
+        return `<li>${escapeHtml(title)}</li>`;
+      })
+      .join('');
   }
 
   function escapeHtml(str) {
@@ -3036,46 +3142,29 @@
     panel.hidden = isExpanded;
   }
 
-  function initBundleController() {
-    // Check sessionStorage for stocking advisor handshake
-    let autoSelectTier = null;
-    try {
-      const savedGallons = sessionStorage.getItem(STOCKING_TANK_SESSION_KEY);
-      if (savedGallons && typeof window.findTierByGallons === 'function') {
-        const matchedTier = window.findTierByGallons(Number(savedGallons));
-        if (matchedTier) {
-          autoSelectTier = matchedTier.id;
-        }
-        sessionStorage.removeItem(STOCKING_TANK_SESSION_KEY); // Clear after use
+  async function initBundleController() {
+    await waitForGearData();
+
+    const savedGallons = readSessionGallons();
+    if (savedGallons !== null && typeof window.findTierByGallons === 'function') {
+      const matchedTier = window.findTierByGallons(savedGallons);
+      if (matchedTier) {
+        selectTier(matchedTier.id);
       }
-    } catch (e) {
-      // Ignore sessionStorage errors
     }
 
-    // Set up tier button listeners
-    document.querySelectorAll('.tier-btn').forEach(btn => {
-      btn.addEventListener('click', () => selectTier(btn.dataset.tier));
+    document.querySelectorAll('.tier-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        logDebug('Tier button clicked', btn.dataset.tier);
+        selectTier(btn.dataset.tier);
+      });
     });
 
-    // Set up alternatives toggles
-    document.querySelectorAll('.bundle-card__alts-toggle').forEach(btn => {
+    document.querySelectorAll('.bundle-card__alts-toggle').forEach((btn) => {
       btn.addEventListener('click', () => toggleAlternatives(btn));
     });
-
-    // Auto-select tier from stocking advisor if available
-    if (autoSelectTier) {
-      // Wait a bit for data to load, then select
-      setTimeout(() => {
-        if (window.ttgGearDataPromise) {
-          window.ttgGearDataPromise.then(() => {
-            selectTier(autoSelectTier);
-          });
-        }
-      }, 100);
-    }
   }
 
-  // Initialize when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initBundleController);
   } else {
