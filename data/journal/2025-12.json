@@ -1,5 +1,13 @@
 [
   {
+    "date": "2025-12-08",
+    "title": "Post-Water-Change Weekly Recap",
+    "body": "Conducted the first weekly check-in after the December 7 water change. Nitrate held steady around 5–10 ppm, and fish showed strong appetite with flakes and bloodworms. Plants are pushing fresh growth where older leaves were trimmed back, and the sump sponge rinse kept flow unchanged. Dosed a maintenance cap of Seachem Excel; no additional water change needed today.",
+    "category": "Maintenance",
+    "quick_facts": "Nitrate 5–10 ppm; Excel maintenance dose; strong feeding response",
+    "nitrate_ppm": "5-10"
+  },
+  {
     "date": "2025-12-07",
     "title": "Maintenance & Livestock Update",
     "body": "Pre–water change nitrate reading came in at 10 ppm. Performed a large water change: ~75% from the display tank and ~90% from the sump. One red cherry barb was lost today — part of the original aging group. Rinsed the sponge filters in tank water since replacements are currently unavailable (biofilm preserved). Light equipment wipe-down completed; no real algae present aside from a small amount of diatoms. System remains stable.",
