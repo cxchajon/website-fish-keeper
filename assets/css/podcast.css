@@ -425,8 +425,8 @@ body.podcast-page {
 
 .podcast-platform-badge {
   width: auto;
-  height: 50px;
-  max-width: 200px;
+  height: 70px;
+  max-width: 220px;
   object-fit: contain;
 }
 
