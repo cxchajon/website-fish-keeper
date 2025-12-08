@@ -3078,6 +3078,7 @@
       const hyggerLink = primary.hygger_url || primary.hyggerUrl || '';
       if (hyggerLink) {
         hyggerBtn.href = hyggerLink;
+        hyggerBtn.classList.add('btn-hygger');
         hyggerBtn.hidden = false;
       } else {
         hyggerBtn.hidden = true;
