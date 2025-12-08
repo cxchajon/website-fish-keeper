@@ -3041,6 +3041,8 @@
 
     if (!nameEl) return;
 
+    console.log(`[${category}] Rendering product:`, primary?.title || 'No product', 'hyggerUrl:', primary?.hyggerUrl, 'hygger_url:', primary?.hygger_url);
+
     if (!primary) {
       nameEl.textContent = 'No product available';
       if (noteEl) noteEl.textContent = '';
@@ -3073,7 +3075,7 @@
     }
 
     if (hyggerBtn) {
-      const hyggerLink = primary.hygger_url || '';
+      const hyggerLink = primary.hygger_url || primary.hyggerUrl || '';
       if (hyggerLink) {
         hyggerBtn.href = hyggerLink;
         hyggerBtn.hidden = false;
@@ -3087,7 +3089,7 @@
         .map((alt) => {
           const altTitle = alt.title || alt.label || 'Alternative';
           const altAmazon = alt.amazon_url || alt.href || '';
-          const altHygger = alt.hygger_url || '';
+          const altHygger = alt.hygger_url || alt.hyggerUrl || '';
           return `
             <div class="alt-product">
               <p class="alt-product__name">${escapeHtml(altTitle)}</p>

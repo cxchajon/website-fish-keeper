@@ -1996,12 +1996,21 @@ function getPrimaryProduct(gear, category, rangeKey) {
     items = bucket?.options || [];
   } else if (category === 'lights' && gear.lights?.ranges) {
     const ranges = Array.isArray(rangeKey) ? rangeKey : [rangeKey];
+    console.log('[Lights] Looking for ranges:', ranges);
+    console.log('[Lights] Available ranges:', gear.lights.ranges.map(r => ({ id: r.id, count: r.options?.length || 0 })));
     for (const rk of ranges) {
-      const range = gear.lights.ranges.find(r => r.id === rk);
+      // Normalize the range key to match the format used in lights data (hyphens)
+      const normalizedRk = normalizeLightRangeId(rk);
+      console.log(`[Lights] Normalized '${rk}' to '${normalizedRk}'`);
+      const range = gear.lights.ranges.find(r => r.id === normalizedRk);
       if (range?.options?.length) {
+        console.log(`[Lights] Found range '${normalizedRk}' with ${range.options.length} options`);
         items = range.options;
         break;
       }
+    }
+    if (items.length === 0) {
+      console.warn('[Lights] No products found for ranges:', ranges);
     }
   } else if (category === 'air' && gear.air?.options) {
     items = gear.air.options;
@@ -2025,7 +2034,9 @@ function getAlternativeProducts(gear, category, rangeKey) {
   } else if (category === 'lights' && gear.lights?.ranges) {
     const ranges = Array.isArray(rangeKey) ? rangeKey : [rangeKey];
     for (const rk of ranges) {
-      const range = gear.lights.ranges.find(r => r.id === rk);
+      // Normalize the range key to match the format used in lights data (hyphens)
+      const normalizedRk = normalizeLightRangeId(rk);
+      const range = gear.lights.ranges.find(r => r.id === normalizedRk);
       if (range?.options?.length) {
         items = range.options;
         break;
