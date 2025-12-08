@@ -1934,7 +1934,8 @@ const BUNDLE_TIERS = [
     tankIds: ['5g', '10g'],
     gallonRange: 'g_5_10',
     lightRanges: ['l_12_18', 'l_18_24'],
-    description: 'Nano tanks and desktop setups'
+    heaterSpec: '25-50W adjustable',
+    filterSpec: '50-100 GPH'
   },
   {
     id: 'tier_20',
@@ -1942,7 +1943,8 @@ const BUNDLE_TIERS = [
     tankIds: ['15g', '20h', '20l'],
     gallonRange: 'g_10_20',
     lightRanges: ['l_18_24', 'l_24_36'],
-    description: 'Popular beginner community tanks'
+    heaterSpec: '100W adjustable',
+    filterSpec: '100-200 GPH'
   },
   {
     id: 'tier_29',
@@ -1950,7 +1952,8 @@ const BUNDLE_TIERS = [
     tankIds: ['29g'],
     gallonRange: 'g_20_40',
     lightRanges: ['l_24_36'],
-    description: 'Versatile mid-size showcase'
+    heaterSpec: '150W adjustable',
+    filterSpec: '150-250 GPH'
   },
   {
     id: 'tier_40b',
@@ -1958,7 +1961,8 @@ const BUNDLE_TIERS = [
     tankIds: ['40b'],
     gallonRange: 'g_40_55',
     lightRanges: ['l_36_48'],
-    description: 'Wide footprint for aquascaping'
+    heaterSpec: '200W adjustable',
+    filterSpec: '200-300 GPH'
   },
   {
     id: 'tier_55',
@@ -1966,7 +1970,8 @@ const BUNDLE_TIERS = [
     tankIds: ['55g'],
     gallonRange: 'g_55_75',
     lightRanges: ['l_48_55'],
-    description: 'Classic large community tank'
+    heaterSpec: '300W adjustable',
+    filterSpec: '300-400 GPH'
   },
   {
     id: 'tier_75_plus',
@@ -1974,7 +1979,8 @@ const BUNDLE_TIERS = [
     tankIds: ['75g', '90g', '125g'],
     gallonRange: 'g_75_125',
     lightRanges: ['l_48_55'],
-    description: 'Large displays and monster fish'
+    heaterSpec: '400-500W total',
+    filterSpec: '400-600 GPH'
   }
 ];
 
