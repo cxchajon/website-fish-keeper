@@ -401,18 +401,22 @@ body.podcast-page {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 8px 14px;
+  padding: 0;
   background: none;
   border: none;
   border-radius: 12px;
   transition: transform 0.2s ease;
-  flex: 0 1 auto;
+  flex: 1 1 200px;
 }
 
 .podcast-platform-button {
-  min-height: 74px;
-  padding-inline: 16px;
-  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 86px;
+  min-width: 200px;
+  padding: 12px 20px;
+  border-radius: 18px;
 }
 
 .platform-badge:hover,
@@ -426,14 +430,16 @@ body.podcast-page {
 }
 
 .platform-badge img {
-  width: auto;
-  height: 48px;
-  object-fit: contain;
-  border-radius: 12px;
+  display: block;
 }
 
 .podcast-platform-logo {
-  height: 48px;
+  max-height: 56px;
   width: auto;
+  height: auto;
   object-fit: contain;
+}
+
+.podcast-platform-logo--iheart {
+  max-height: 60px;
 }
