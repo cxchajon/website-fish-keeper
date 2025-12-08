@@ -88,6 +88,14 @@ body.podcast-page {
   gap: 10px;
 }
 
+.podcast-hero__subline {
+  margin: clamp(4px, 1vw, 8px) 0 clamp(14px, 3vw, 18px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--podcast-muted);
+}
+
 .podcast-hero__icon {
   display: inline-flex;
   width: clamp(46px, 10vw, 60px);
