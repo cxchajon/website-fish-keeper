@@ -803,3 +803,386 @@ body[data-ad-qa="true"] .ttg-ad-slot::before,
   position: absolute !important;
   white-space: nowrap !important;
 }
+
+/* ============================================
+   Gear Page Redesign - Bundle System Styles
+   ============================================ */
+
+/* Hero Section */
+.gear-hero {
+  width: min(960px, 100%);
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 3rem) 16px;
+}
+
+.gear-hero__content {
+  text-align: center;
+}
+
+.gear-hero__content h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+.gear-hero__tagline {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+.gear-hero .affiliate-disclosure {
+  margin: 0 auto 2rem;
+  padding: 0;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* Tier Selector */
+.tier-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.tier-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 1rem 0.75rem;
+  background: rgba(17, 24, 39, 0.88);
+  border: 2px solid rgba(148, 163, 184, 0.24);
+  border-radius: 14px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.tier-btn:hover {
+  border-color: rgba(96, 165, 250, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -12px rgba(96, 165, 250, 0.4);
+}
+
+.tier-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.tier-btn--selected {
+  background: rgba(96, 165, 250, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px -12px rgba(96, 165, 250, 0.5);
+}
+
+.tier-btn__label {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.tier-btn__desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* Bundle Section */
+.gear-bundle {
+  width: min(960px, 100%);
+  margin: 0 auto 2rem;
+  padding: 0 16px;
+}
+
+.bundle-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.bundle-title {
+  margin: 0 0 0.25rem;
+  font-size: clamp(1.5rem, 3vw, 1.8rem);
+  font-weight: 700;
+}
+
+.bundle-subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+/* Bundle Grid */
+.bundle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Bundle Card */
+.bundle-card {
+  background: rgba(17, 24, 39, 0.88);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bundle-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0;
+  cursor: default;
+}
+
+.bundle-card__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.bundle-card__spec {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.bundle-card__product {
+  flex: 1;
+}
+
+.bundle-card__name {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.bundle-card__note {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+/* Bundle Card Actions */
+.bundle-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.bundle-card__actions .btn {
+  flex: 1;
+  min-width: 100px;
+  justify-content: center;
+}
+
+/* Alternatives Toggle */
+.bundle-card__alts-toggle {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.5rem 0 0;
+  text-align: left;
+  transition: color 0.15s ease;
+}
+
+.bundle-card__alts-toggle:hover {
+  color: #93c5fd;
+}
+
+.bundle-card__alts-toggle[aria-expanded="true"]::after {
+  content: " ▾";
+}
+
+.bundle-card__alts-toggle[aria-expanded="false"]::after {
+  content: " ▸";
+}
+
+/* Alternatives Panel */
+.bundle-card__alts {
+  border-top: 1px solid var(--line);
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.bundle-card__alts[hidden] {
+  display: none;
+}
+
+.alt-product {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.alt-product:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.alt-product__name {
+  margin: 0 0 0.35rem;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.alt-product__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.alt-product__actions .btn {
+  padding: 0.5rem 0.85rem;
+  font-size: 0.85rem;
+}
+
+/* Extras Card */
+.bundle-card--extras {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 768px) {
+  .bundle-card--extras {
+    grid-column: span 2;
+  }
+}
+
+.extras-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.extras-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.extras-list li a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.extras-list li a:hover {
+  text-decoration: underline;
+}
+
+/* FAQ Section (visible, no accordion) */
+.gear-faq {
+  width: min(960px, 100%);
+  margin: 3rem auto;
+  padding: 0 16px;
+}
+
+.gear-faq h2 {
+  margin: 0 0 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.faq-list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.faq-item {
+  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+}
+
+.faq-item dt {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.faq-item dd {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Cross-links Section */
+.gear-crosslinks {
+  width: min(960px, 100%);
+  margin: 2rem auto 3rem;
+  padding: 1.5rem;
+  background: rgba(17, 24, 39, 0.5);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  border-radius: 14px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: calc(100% - 32px);
+}
+
+.gear-crosslinks p {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.gear-crosslinks p:last-child {
+  margin-bottom: 0;
+}
+
+.gear-crosslinks a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.gear-crosslinks a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .tier-selector {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tier-btn {
+    padding: 0.85rem 0.5rem;
+  }
+
+  .tier-btn__label {
+    font-size: 0.9rem;
+  }
+
+  .tier-btn__desc {
+    font-size: 0.75rem;
+  }
+
+  .bundle-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bundle-card--extras {
+    grid-column: 1;
+  }
+
+  .extras-list {
+    grid-template-columns: 1fr;
+  }
+}

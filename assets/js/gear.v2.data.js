@@ -26,11 +26,11 @@ const RANGES_FILTERS = FILTER_BUCKETS.map((bucket) => ({
 }));
 
 const RANGES_LIGHTS = [
-  { id: "l-12-18", label: "12–18 inches", min: 12, max: 18, sort: 18 },
-  { id: "l-18-24", label: "18–24 inches", min: 18, max: 24, sort: 24 },
-  { id: "l-24-36", label: "24–36 inches", min: 24, max: 36, sort: 36 },
-  { id: "l-36-48", label: "36–48 inches", min: 36, max: 48, sort: 48 },
-  { id: "l-48-55", label: "48–55 inches", min: 48, max: 55, sort: 55 }
+  { id: "l_12_18", label: "12–18 inches", min: 12, max: 18, sort: 18 },
+  { id: "l_18_24", label: "18–24 inches", min: 18, max: 24, sort: 24 },
+  { id: "l_24_36", label: "24–36 inches", min: 24, max: 36, sort: 36 },
+  { id: "l_36_48", label: "36–48 inches", min: 36, max: 48, sort: 48 },
+  { id: "l_48_55", label: "48–55 inches", min: 48, max: 55, sort: 55 }
 ];
 
 const LIGHT_RANGE_IDS = RANGES_LIGHTS.map((range) => range.id);
@@ -63,20 +63,30 @@ const LIGHT_RANGE_ALIAS_ENTRIES = LIGHT_RANGE_IDS.flatMap((id) => {
 });
 
 const LEGACY_LIGHT_RANGE_ALIASES = [
-  ['l-12-20', 'l-12-18'],
-  ['12-20', 'l-12-18'],
-  ['l-20-24', 'l-18-24'],
-  ['20-24', 'l-18-24'],
-  ['l-24-30', 'l-24-36'],
-  ['24-30', 'l-24-36'],
-  ['l-30-36', 'l-24-36'],
-  ['30-36', 'l-24-36'],
-  ['l-36-48', 'l-36-48'],
-  ['36-48', 'l-36-48'],
-  ['l-48-up', 'l-48-55'],
-  ['48-up', 'l-48-55'],
-  ['l-48-60', 'l-48-55'],
-  ['48-60', 'l-48-55']
+  ['l-12-20', 'l_12_18'],
+  ['l_12_20', 'l_12_18'],
+  ['12-20', 'l_12_18'],
+  ['l-12-18', 'l_12_18'],
+  ['l-20-24', 'l_18_24'],
+  ['l_20_24', 'l_18_24'],
+  ['20-24', 'l_18_24'],
+  ['l-18-24', 'l_18_24'],
+  ['l-24-30', 'l_24_36'],
+  ['l_24_30', 'l_24_36'],
+  ['24-30', 'l_24_36'],
+  ['l-24-36', 'l_24_36'],
+  ['l-30-36', 'l_24_36'],
+  ['l_30_36', 'l_24_36'],
+  ['30-36', 'l_24_36'],
+  ['l-36-48', 'l_36_48'],
+  ['36-48', 'l_36_48'],
+  ['l-48-up', 'l_48_55'],
+  ['l_48_up', 'l_48_55'],
+  ['48-up', 'l_48_55'],
+  ['l-48-55', 'l_48_55'],
+  ['l-48-60', 'l_48_55'],
+  ['l_48_60', 'l_48_55'],
+  ['48-60', 'l_48_55']
 ];
 
 const LIGHT_RANGE_ALIAS_MAP = new Map([...LIGHT_RANGE_ALIAS_ENTRIES, ...LEGACY_LIGHT_RANGE_ALIASES]);
@@ -263,11 +273,11 @@ const FILTER_BUCKET_ALIASES = new Map([
 ]);
 
 const LIGHT_RANGE_META = new Map([
-  ["l-12-18", { label: "Recommended Lights for 12–18 inch Tanks", tip: "" }],
-  ["l-18-24", { label: "Recommended Lights for 18–24 inch Tanks", tip: "" }],
-  ["l-24-36", { label: "Recommended Lights for 24–36 inch Tanks", tip: "" }],
-  ["l-36-48", { label: "Recommended Lights for 36–48 inch Tanks", tip: "For 36–48 inch tanks, choose lights with adjustable brackets or a slight overhang. Longer tanks may benefit from dual fixtures or higher wattage to maintain even brightness and plant growth." }],
-  ["l-48-55", { label: "Recommended Lights for 48–55 inch Tanks", tip: "For 48–55 inch tanks, look for extendable arms or brackets to cover the full span. Consider pairing fixtures or upgrading output for dense planting." }]
+  ["l_12_18", { label: "Recommended Lights for 12–18 inch Tanks", tip: "" }],
+  ["l_18_24", { label: "Recommended Lights for 18–24 inch Tanks", tip: "" }],
+  ["l_24_36", { label: "Recommended Lights for 24–36 inch Tanks", tip: "" }],
+  ["l_36_48", { label: "Recommended Lights for 36–48 inch Tanks", tip: "For 36–48 inch tanks, choose lights with adjustable brackets or a slight overhang. Longer tanks may benefit from dual fixtures or higher wattage to maintain even brightness and plant growth." }],
+  ["l_48_55", { label: "Recommended Lights for 48–55 inch Tanks", tip: "For 48–55 inch tanks, look for extendable arms or brackets to cover the full span. Consider pairing fixtures or upgrading output for dense planting." }]
 ]);
 
 const HEATERS_ADDON = {
@@ -1916,12 +1926,187 @@ async function loadStandsData() {
   }
 }
 
+/* Bundle tier configuration for tank-size-first gear selection */
+const BUNDLE_TIERS = [
+  {
+    id: 'tier_5_10',
+    label: '5–10 Gallon',
+    tankIds: ['5g', '10g'],
+    gallonRange: 'g_5_10',
+    lightRanges: ['l_12_18', 'l_18_24'],
+    description: 'Nano tanks and desktop setups'
+  },
+  {
+    id: 'tier_20',
+    label: '20 Gallon',
+    tankIds: ['15g', '20h', '20l'],
+    gallonRange: 'g_10_20',
+    lightRanges: ['l_18_24', 'l_24_36'],
+    description: 'Popular beginner community tanks'
+  },
+  {
+    id: 'tier_29',
+    label: '29 Gallon',
+    tankIds: ['29g'],
+    gallonRange: 'g_20_40',
+    lightRanges: ['l_24_36'],
+    description: 'Versatile mid-size showcase'
+  },
+  {
+    id: 'tier_40b',
+    label: '40 Breeder',
+    tankIds: ['40b'],
+    gallonRange: 'g_40_55',
+    lightRanges: ['l_36_48'],
+    description: 'Wide footprint for aquascaping'
+  },
+  {
+    id: 'tier_55',
+    label: '55 Gallon',
+    tankIds: ['55g'],
+    gallonRange: 'g_55_75',
+    lightRanges: ['l_48_55'],
+    description: 'Classic large community tank'
+  },
+  {
+    id: 'tier_75_plus',
+    label: '75+ Gallon',
+    tankIds: ['75g', '90g', '125g'],
+    gallonRange: 'g_75_125',
+    lightRanges: ['l_48_55'],
+    description: 'Large displays and monster fish'
+  }
+];
+
+function getPrimaryProduct(gear, category, rangeKey) {
+  if (!gear) return null;
+
+  let items = [];
+  if (category === 'heaters' && gear.heaters?.buckets) {
+    const bucket = gear.heaters.buckets.find(b => b.id === rangeKey);
+    items = bucket?.options || [];
+  } else if (category === 'filters' && gear.filters?.buckets) {
+    const bucket = gear.filters.buckets.find(b => b.id === rangeKey);
+    items = bucket?.options || [];
+  } else if (category === 'lights' && gear.lights?.ranges) {
+    const ranges = Array.isArray(rangeKey) ? rangeKey : [rangeKey];
+    for (const rk of ranges) {
+      const range = gear.lights.ranges.find(r => r.id === rk);
+      if (range?.options?.length) {
+        items = range.options;
+        break;
+      }
+    }
+  } else if (category === 'air' && gear.air?.options) {
+    items = gear.air.options;
+  }
+
+  // Find priority 1 item, or first item
+  const primary = items.find(item => item.priority === 1 || item.priority === '1');
+  return primary || items[0] || null;
+}
+
+function getAlternativeProducts(gear, category, rangeKey) {
+  if (!gear) return [];
+
+  let items = [];
+  if (category === 'heaters' && gear.heaters?.buckets) {
+    const bucket = gear.heaters.buckets.find(b => b.id === rangeKey);
+    items = bucket?.options || [];
+  } else if (category === 'filters' && gear.filters?.buckets) {
+    const bucket = gear.filters.buckets.find(b => b.id === rangeKey);
+    items = bucket?.options || [];
+  } else if (category === 'lights' && gear.lights?.ranges) {
+    const ranges = Array.isArray(rangeKey) ? rangeKey : [rangeKey];
+    for (const rk of ranges) {
+      const range = gear.lights.ranges.find(r => r.id === rk);
+      if (range?.options?.length) {
+        items = range.options;
+        break;
+      }
+    }
+  } else if (category === 'air' && gear.air?.options) {
+    items = gear.air.options;
+  }
+
+  // Return items with priority > 1 or all except the first
+  const alternatives = items.filter(item => {
+    const priority = Number(item.priority);
+    return priority > 1 || (!item.priority && items.indexOf(item) > 0);
+  });
+  return alternatives;
+}
+
+function getStaticProduct(productId) {
+  if (productId === 'api_master_kit') {
+    return {
+      id: 'api_master_kit',
+      title: 'API Freshwater Master Test Kit',
+      notes: 'Benchmark ammonia, nitrite, nitrate, and pH with lab-style droppers.',
+      href: 'https://amzn.to/47yJmzh',
+      affiliate: 'amazon',
+      tag: 'fishkeepingli-20'
+    };
+  }
+  return null;
+}
+
+function getExtrasBundle(gear) {
+  if (!gear?.extras?.accordions?.length) return [];
+  const extrasGroup = gear.extras.accordions[0];
+  if (!extrasGroup?.subgroups) return [];
+
+  const items = [];
+  extrasGroup.subgroups.forEach(subgroup => {
+    (subgroup.items || []).forEach(item => {
+      if (item.title && item.href) {
+        items.push({
+          title: item.title,
+          notes: item.notes || '',
+          href: item.href
+        });
+      }
+    });
+  });
+  return items;
+}
+
+function buildTankBundle(tierId, gear) {
+  const tier = BUNDLE_TIERS.find(t => t.id === tierId);
+  if (!tier || !gear) return null;
+
+  return {
+    tier: tier,
+    heater: getPrimaryProduct(gear, 'heaters', tier.gallonRange),
+    heaterAlts: getAlternativeProducts(gear, 'heaters', tier.gallonRange),
+    filter: getPrimaryProduct(gear, 'filters', tier.gallonRange),
+    filterAlts: getAlternativeProducts(gear, 'filters', tier.gallonRange),
+    light: getPrimaryProduct(gear, 'lights', tier.lightRanges),
+    lightAlts: getAlternativeProducts(gear, 'lights', tier.lightRanges),
+    testKit: getStaticProduct('api_master_kit'),
+    airBackup: getPrimaryProduct(gear, 'air', null),
+    extras: getExtrasBundle(gear)
+  };
+}
+
+function findTierByGallons(gallons) {
+  if (gallons <= 10) return BUNDLE_TIERS.find(t => t.id === 'tier_5_10');
+  if (gallons <= 20) return BUNDLE_TIERS.find(t => t.id === 'tier_20');
+  if (gallons <= 29) return BUNDLE_TIERS.find(t => t.id === 'tier_29');
+  if (gallons <= 40) return BUNDLE_TIERS.find(t => t.id === 'tier_40b');
+  if (gallons <= 55) return BUNDLE_TIERS.find(t => t.id === 'tier_55');
+  return BUNDLE_TIERS.find(t => t.id === 'tier_75_plus');
+}
+
 const gearDataPromise = (async () => {
   const [normalized, stands] = await Promise.all([loadGearData(), loadStandsData()]);
   const gear = buildGear(normalized, stands);
   if (typeof window !== 'undefined') {
     window.GEAR = gear;
     window.ttgGearNormalized = normalized;
+    window.BUNDLE_TIERS = BUNDLE_TIERS;
+    window.buildTankBundle = (tierId) => buildTankBundle(tierId, gear);
+    window.findTierByGallons = findTierByGallons;
   }
   return gear;
 })().catch((error) => {
@@ -1931,6 +2116,9 @@ const gearDataPromise = (async () => {
   if (typeof window !== 'undefined') {
     window.GEAR = fallback;
     window.ttgGearNormalized = new Map();
+    window.BUNDLE_TIERS = BUNDLE_TIERS;
+    window.buildTankBundle = (tierId) => buildTankBundle(tierId, fallback);
+    window.findTierByGallons = findTierByGallons;
   }
   return fallback;
 });

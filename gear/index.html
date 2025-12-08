@@ -159,50 +159,34 @@
           "mainEntity": [
             {
               "@type": "Question",
-              "name": "What size heater do I need for a 20-gallon aquarium?",
+              "name": "What size heater do I need?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Choose a 100W adjustable heater. This can hold a steady 76–78°F in a typical room (down to 68°F), which is ideal for most community fish."
+                "text": "Use 5 watts per gallon as a baseline. A 20-gallon tank needs ~100W."
               }
             },
             {
               "@type": "Question",
-              "name": "How much filtration should I run on a 40 breeder?",
+              "name": "How much filtration is enough?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Aim for a filter rated for 5–7 times the tank volume per hour (GPH). For a 40-gallon breeder, this is 200–280 GPH. We recommend a canister filter or a large HOB with good biomedia."
+                "text": "Aim for 5-7x tank volume per hour (GPH). A 40-gallon needs 200-280 GPH."
               }
             },
             {
               "@type": "Question",
-              "name": "Can I skip an air pump if my filter agitates the surface?",
+              "name": "Do I need an air pump?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "A strong filter return can provide enough oxygen. However, a battery-backed air pump is a smart, inexpensive backup that keeps fish safe during power outages or summer heat waves."
+                "text": "If your filter agitates the surface, you have enough oxygen. But a battery-backed air pump is smart insurance for power outages."
               }
             },
             {
               "@type": "Question",
-              "name": "What light spectrum grows easy aquarium plants?",
+              "name": "What light spectrum grows plants?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Look for a full-spectrum LED light in the 6,500K–7,500K range. For low-to-medium light plants (like Anubias or Java Fern), a light with a PAR value of 30–50 at the substrate is perfect."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "How often should I replace filter media?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Never replace all your media at once. Rinse sponges or ceramic media in old tank water every 2–4 weeks. Only replace disposable carbon or polishing pads when they are clogged and reducing flow."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Do I need a lid on my community tank?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Yes, we highly recommend a lid. It reduces evaporation, keeps jumpy fish safe, and helps your heater work more efficiently by trapping warmth."
+                "text": "Full-spectrum LED in the 6,500K-7,500K range. For easy plants, aim for PAR 30-50 at substrate."
               }
             }
           ]
@@ -270,32 +254,47 @@
   </svg>
   <div id="site-nav"></div>
   <main id="gear-main" class="gear-page" aria-labelledby="gear-title">
-    <div class="gear-intro">
-      <h1 id="gear-title">Fish Keeping Gear Guide</h1>
-      <p class="pub-credit">Published by <strong>FishKeepingLifeCo</strong>.</p>
-      <p class="gear-intro__blurb intro-text">Build a resilient freshwater setup with reliable filters, heaters, lighting, and monitoring tools. Clear picks, beginner friendly, gear-only guidance.</p>
-      <p class="affiliate-disclosure">
-        <strong>Disclosure:</strong> As an Amazon Associate, we earn from qualifying purchases.
-      </p>
-      <p class="affiliate-disclosure">
-        We also participate in the Hygger affiliate program and earn from qualifying purchases.
-      </p>
-    </div>
 
-    <div class="trust-note" aria-labelledby="trust-note-heading">
-      <div class="trust-note__panel">
-        <p id="trust-note-heading" class="sr-only">How We Vet Gear</p>
-        <section class="gear-about">
-          <h2>How We Choose Aquarium Gear</h2>
-          <p>
-            Gear on The Tank Guide is chosen based on real-world use and recommendations from experienced hobbyists. We feature only equipment that’s proven reliable, efficient, and a good value for the everyday aquarist.
-          </p>
-        </section>
+    <!-- Hero: Tank Selector -->
+    <section class="gear-hero" aria-labelledby="gear-title">
+      <div class="gear-hero__content">
+        <h1 id="gear-title">Fish Keeping Gear Guide</h1>
+        <p class="gear-hero__tagline">Select your tank size for a complete equipment list</p>
+        <p class="affiliate-disclosure">
+          <strong>Disclosure:</strong> As an Amazon Associate, we earn from qualifying purchases. We also participate in the Hygger affiliate program.
+        </p>
+
+        <div class="tier-selector" role="listbox" aria-label="Select tank size">
+          <button class="tier-btn" data-tier="tier_5_10" type="button">
+            <span class="tier-btn__label">5-10 Gallon</span>
+            <span class="tier-btn__desc">Nano &amp; desktop</span>
+          </button>
+          <button class="tier-btn" data-tier="tier_20" type="button">
+            <span class="tier-btn__label">20 Gallon</span>
+            <span class="tier-btn__desc">Beginner favorite</span>
+          </button>
+          <button class="tier-btn" data-tier="tier_29" type="button">
+            <span class="tier-btn__label">29 Gallon</span>
+            <span class="tier-btn__desc">Mid-size showcase</span>
+          </button>
+          <button class="tier-btn" data-tier="tier_40b" type="button">
+            <span class="tier-btn__label">40 Breeder</span>
+            <span class="tier-btn__desc">Aquascaper's pick</span>
+          </button>
+          <button class="tier-btn" data-tier="tier_55" type="button">
+            <span class="tier-btn__label">55 Gallon</span>
+            <span class="tier-btn__desc">Classic large tank</span>
+          </button>
+          <button class="tier-btn" data-tier="tier_75_plus" type="button">
+            <span class="tier-btn__label">75+ Gallon</span>
+            <span class="tier-btn__desc">Big displays</span>
+          </button>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Display Ad: TTG_Gear_Top — Slot 7692943403 -->
-    <div class="ttg-ad-slot" id="ad-gear-top" data-ad-label="TTG_Gear_Top • Slot 7692943403" aria-label="Advertisement">
+    <!-- Display Ad: TTG_Gear_Top - Slot 7692943403 -->
+    <div class="ttg-ad-slot" id="ad-gear-top" data-ad-label="TTG_Gear_Top - Slot 7692943403" aria-label="Advertisement">
       <ins class="adsbygoogle"
            style="display:none"
            data-ad-client="ca-pub-9905718149811880"
@@ -307,467 +306,137 @@
       </script>
     </div>
 
-    <section id="tank-ref" class="tank-ref" aria-label="Interactive tank gear finder">
-      <div class="card card--tank">
-        <h2 class="card-title">Interactive Gear Finder</h2>
-        <div class="card-field">
-          <h3 class="field-label">Tank Size</h3>
-          <label for="tank-size" class="sr-only">Tank Size</label>
-          <div id="gear-tank-select-wrap" class="select-wrap">
-            <select id="tank-size" class="select-tank-size" name="tank-size" data-role="tank-size" aria-label="Tank Size">
-              <option value="">Select a tank size…</option>
-            </select>
-            <svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-              <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </div>
-          <p id="gear-tank-meta" class="tank-meta" aria-live="polite" hidden></p>
-        </div>
-      </div>
-    </section>
+    <!-- Bundle Display (hidden until selection) -->
+    <section id="gear-bundle" class="gear-bundle" hidden aria-live="polite">
+      <header class="bundle-header">
+        <h2 class="bundle-title">Your <span id="bundle-tier-name">20 Gallon</span> Gear Bundle</h2>
+        <p class="bundle-subtitle">Everything you need to run this tank reliably</p>
+      </header>
 
-    <section id="core-equipment" class="gear-cluster" aria-labelledby="core-equipment-title">
-      <h2 id="core-equipment-title" class="gear-section-heading">Core Equipment Recommendations</h2>
-      <div class="gear-shell">
-        <section class="gear-card" data-gear="heaters">
-          <header class="gear-card__header">
-            <button
-              class="gear-card__trigger"
-              type="button"
-              data-accordion="toggle"
-              aria-controls="heaters-body"
-              aria-expanded="false"
-            >
-              <h3 class="gear-card__title">Heaters &amp; Temperature Control</h3>
-              <span class="chevron" aria-hidden="true">▸</span>
-            </button>
-            <button class="info-btn" type="button" aria-label="Heater tip" aria-haspopup="dialog" data-tip="heaters">i</button>
+      <div class="bundle-grid">
+        <!-- Heater Card -->
+        <article class="bundle-card" data-category="heater">
+          <header class="bundle-card__header">
+            <h3 class="bundle-card__title">Heater</h3>
+            <span class="bundle-card__spec" id="heater-spec"></span>
           </header>
-          <p class="gear-card__intro proto-card-intro">Stable temperatures within a 1–2°F window reduce stress responses, so these picks focus on heaters that recover quickly from room swings and keep tropical fish steady.</p>
-          <div id="heaters-body" class="gear-card__body" hidden>
-            <ul class="static-gear-list heaters-static">
-              <li><strong>5–10 Gallons:</strong> 50W adjustable heaters sized for nano tanks to hold 76–78°F.</li>
-              <li><strong>10–20 Gallons:</strong> 100W adjustable heater that keeps community tanks stable in rooms down to ~68°F.</li>
-              <li><strong>20–40 Gallons:</strong> 150–200W heaters matched for mid-size tanks, with digital readouts for accuracy.</li>
-              <li><strong>40–55 Gallons:</strong> 200–300W options to cover larger footprints; pair with flow for even heat.</li>
-              <li><strong>55–75 Gallons:</strong> 300–500W total heating, often split across two units for redundancy.</li>
-              <li><strong>75–125 Gallons:</strong> 500–800W total output, with external controllers for added safety.</li>
-            </ul>
-            <noscript>
-              <p>JavaScript is disabled, so the interactive heater filters are unavailable. You can still use these heater matches by tank size:</p>
-              <ul>
-                <li>5–10 gal: 50W adjustable heater</li>
-                <li>10–20 gal: 100W adjustable heater</li>
-                <li>20–40 gal: 150–200W heater</li>
-                <li>40–55 gal: 200–300W heater</li>
-                <li>55–75 gal: 300–500W total (split across two units when possible)</li>
-                <li>75–125 gal: 500–800W total with controller</li>
-              </ul>
-            </noscript>
+          <div class="bundle-card__product">
+            <p class="bundle-card__name" id="heater-name">Loading...</p>
+            <p class="bundle-card__note" id="heater-note"></p>
           </div>
-        </section>
-
-        <section class="gear-card" data-gear="filters">
-          <header class="gear-card__header">
-            <button
-              class="gear-card__trigger"
-              type="button"
-              data-accordion="toggle"
-              aria-controls="filters-body"
-              aria-expanded="false"
-            >
-              <h3 class="gear-card__title">Filtration &amp; Flow Management</h3>
-              <span class="chevron" aria-hidden="true">▸</span>
-            </button>
-            <button class="info-btn" type="button" aria-label="Filter tip" aria-haspopup="dialog" data-tip="filters">i</button>
-          </header>
-          <p class="gear-card__intro proto-card-intro">Filtration is the tank’s life support—each recommendation balances mechanical polishing, biological capacity, and adjustable flow so waste never outruns your biofilter.</p>
-          <div id="filters-body" class="gear-card__body" hidden>
-            <ul class="static-gear-list filters-static">
-              <li><strong>10 Gallons:</strong> Quiet hang-on-back rated 80–100 GPH with a sponge prefilter.</li>
-              <li><strong>20 Gallons:</strong> Compact HOB or canister pushing 160–200 GPH with biomedia.</li>
-              <li><strong>29 Gallons:</strong> Canister filter around 220–260 GPH with spray bar for even return.</li>
-              <li><strong>40 Breeder:</strong> 300–350 GPH canister or dual-outlet HOB to keep corners circulating.</li>
-              <li><strong>55–75 Gallons:</strong> 400–500 GPH total flow, split across two filters for redundancy.</li>
-              <li><strong>75–125 Gallons:</strong> High-capacity canister or dual filters delivering 6–7× turnover.</li>
-            </ul>
-            <noscript>
-              <p>JavaScript is disabled, so interactive filter matching is unavailable. Use these baseline flow targets:</p>
-              <ul>
-                <li>10 gal: 80–100 GPH</li>
-                <li>20 gal: 160–200 GPH</li>
-                <li>29 gal: 220–260 GPH</li>
-                <li>40 breeder: ~300–350 GPH</li>
-                <li>55–75 gal: 400–500 GPH split across filters</li>
-                <li>75–125 gal: 6–7× tank volume per hour</li>
-              </ul>
-            </noscript>
+          <div class="bundle-card__actions">
+            <a id="heater-amazon" class="btn btn-amazon" href="#" target="_blank" rel="sponsored noopener">
+              Amazon
+            </a>
+            <a id="heater-hygger" class="btn btn-hygger" href="https://www.hygger-online.com/?ref=FKLC" target="_blank" rel="sponsored noopener" hidden>
+              Hygger
+            </a>
           </div>
-        </section>
+          <button class="bundle-card__alts-toggle" data-alts="heater" type="button" aria-expanded="false">
+            See alternatives
+          </button>
+          <div class="bundle-card__alts" id="heater-alts" hidden></div>
+        </article>
 
-        <section class="gear-card" data-gear="air">
-          <header class="gear-card__header">
-            <button
-              class="gear-card__trigger"
-              type="button"
-              data-accordion="toggle"
-              aria-controls="air-body"
-              aria-expanded="false"
-            >
-              <h3 class="gear-card__title">Air &amp; Circulation Backup</h3>
-              <span class="chevron" aria-hidden="true">▸</span>
-            </button>
-            <button class="info-btn" type="button" aria-label="Air and aeration tip" aria-haspopup="dialog" data-tip="air">i</button>
+        <!-- Filter Card -->
+        <article class="bundle-card" data-category="filter">
+          <header class="bundle-card__header">
+            <h3 class="bundle-card__title">Filter</h3>
+            <span class="bundle-card__spec" id="filter-spec"></span>
           </header>
-          <div id="air-body" class="gear-card__body" hidden>
-            <ul class="static-gear-list air-static">
-              <li><strong>Dual-outlet pump:</strong> Adjustable 4–7W pump to run two sponge filters or air stones with check valves.</li>
-              <li><strong>Battery backup:</strong> Portable air pump to protect fish during outages or heat waves.</li>
-              <li><strong>Airline kit:</strong> Silicone tubing with check valves and flow controls to balance multiple devices.</li>
-              <li><strong>CO₂ safety:</strong> CO₂-rated check valves to protect regulators and prevent back-siphon.</li>
-            </ul>
-            <noscript>
-              <p>JavaScript is disabled; here’s the aeration list without filters:</p>
-              <ul>
-                <li>Adjustable dual-outlet pump (4–7W)</li>
-                <li>Battery-backed emergency pump</li>
-                <li>Silicone airline tubing, check valves, and flow splitters</li>
-                <li>CO₂-safe check valves for pressurized setups</li>
-              </ul>
-            </noscript>
+          <div class="bundle-card__product">
+            <p class="bundle-card__name" id="filter-name">Loading...</p>
+            <p class="bundle-card__note" id="filter-note"></p>
           </div>
-        </section>
-
-        <section class="gear-card" data-gear="lights">
-          <header class="gear-card__header">
-            <button
-              class="gear-card__trigger"
-              type="button"
-              data-accordion="toggle"
-              aria-controls="lights-body"
-              aria-expanded="false"
-            >
-              <h3 class="gear-card__title">Lighting for Plants &amp; Fish</h3>
-              <span class="chevron" aria-hidden="true">▸</span>
-            </button>
-            <button class="info-btn" type="button" aria-label="Light tip" aria-haspopup="dialog" data-tip="lights">i</button>
-          </header>
-          <p class="gear-card__intro proto-card-intro">Lighting needs shift between fish-only and planted tanks, so we flag fixtures with timers and spectrum control that showcase fish while fueling plant growth when you need it.</p>
-          <div id="lights-body" class="gear-card__body" hidden>
-            <ul class="static-gear-list lights-static">
-              <li><strong>20–24 inch tanks:</strong> 18–24&quot; LED with 6,500–7,500K spectrum and built-in timer.</li>
-              <li><strong>30 inch tanks:</strong> 24–36&quot; programmable LED for moderate PAR at substrate.</li>
-              <li><strong>36 inch tanks:</strong> 36–48&quot; light covering the full breeder footprint.</li>
-              <li><strong>48 inch tanks:</strong> Dual 24–36&quot; lights or a high-output 48–55&quot; fixture for even spread.</li>
-              <li><strong>Planted focus:</strong> Full-spectrum LEDs with adjustable intensity to dial in PAR for stems and carpets.</li>
-            </ul>
-            <noscript>
-              <p>JavaScript is disabled; use these static lighting pairings:</p>
-              <ul>
-                <li>20–24" tanks: 18–24" LED (6,500–7,500K) with timer</li>
-                <li>30" tanks: 24–36" programmable LED</li>
-                <li>36" tanks: 36–48" LED for full coverage</li>
-                <li>48"+ tanks: two staggered 24–36" lights or one 48–55" high-output unit</li>
-                <li>Planted tanks: full spectrum with dimming to match PAR goals</li>
-              </ul>
-            </noscript>
+          <div class="bundle-card__actions">
+            <a id="filter-amazon" class="btn btn-amazon" href="#" target="_blank" rel="sponsored noopener">
+              Amazon
+            </a>
+            <a id="filter-hygger" class="btn btn-hygger" href="https://www.hygger-online.com/?ref=FKLC" target="_blank" rel="sponsored noopener" hidden>
+              Hygger
+            </a>
           </div>
-        </section>
+          <button class="bundle-card__alts-toggle" data-alts="filter" type="button" aria-expanded="false">
+            See alternatives
+          </button>
+          <div class="bundle-card__alts" id="filter-alts" hidden></div>
+        </article>
 
-        <section class="gear-card" data-gear="substrate">
-          <header class="gear-card__header">
-            <button
-              class="gear-card__trigger"
-              type="button"
-              data-accordion="toggle"
-              aria-controls="substrate-body"
-              aria-expanded="false"
-            >
-              <h3 class="gear-card__title">Substrate &amp; Aquascaping Materials</h3>
-              <span class="chevron" aria-hidden="true">▸</span>
-            </button>
-            <button class="info-btn" type="button" aria-label="Substrate and aquascaping tip" aria-haspopup="dialog" data-tip="substrate">i</button>
+        <!-- Light Card -->
+        <article class="bundle-card" data-category="light">
+          <header class="bundle-card__header">
+            <h3 class="bundle-card__title">Light</h3>
+            <span class="bundle-card__spec" id="light-spec"></span>
           </header>
-          <div id="substrate-body" class="gear-card__body" hidden>
-            <ul class="static-gear-list substrate-static">
-              <li><strong>Planted tanks:</strong> Nutrient-rich aquasoil or mineralized substrate for rooted plants.</li>
-              <li><strong>Community tanks:</strong> Inert sand or gravel that rinses clean and keeps parameters stable.</li>
-              <li><strong>Hardscape prep:</strong> Pre-soak driftwood and rinse stones; test rocks for carbonate fizz before use.</li>
-              <li><strong>Depth guide:</strong> Aim for 2–3&quot; depth for rooted plants and secure decor.</li>
-            </ul>
-            <noscript>
-              <p>JavaScript is disabled, so here are the substrate basics:</p>
-              <ul>
-                <li>Aquasoil for planted tanks</li>
-                <li>Inert sand/gravel for community tanks</li>
-                <li>Rinse and pre-soak hardscape; avoid fizzing rocks if you need soft water</li>
-                <li>Keep 2–3&quot; depth where plants will root</li>
-              </ul>
-            </noscript>
+          <div class="bundle-card__product">
+            <p class="bundle-card__name" id="light-name">Loading...</p>
+            <p class="bundle-card__note" id="light-note"></p>
           </div>
-        </section>
-
-        <section class="gear-card" data-gear="stands">
-          <header class="gear-card__header">
-            <button
-              class="gear-card__trigger"
-              type="button"
-              data-accordion="toggle"
-              aria-controls="stands-body"
-              aria-expanded="false"
-            >
-              <h3 class="gear-card__title">Stands &amp; Cabinets</h3>
-              <span class="chevron" aria-hidden="true">▸</span>
-            </button>
-            <button class="info-btn" type="button" aria-label="Stand sizing tip" aria-haspopup="dialog" data-tip="stands">i</button>
-          </header>
-          <div id="stands-body" class="gear-card__body" hidden>
-            <ul class="static-gear-list stands-static">
-              <li><strong>20–29 Gallons:</strong> Stands rated 200–300 lbs with matching footprint and leveling feet.</li>
-              <li><strong>40 Breeder:</strong> Cabinet stands rated 500–650 lbs to support the wider base.</li>
-              <li><strong>55–75 Gallons:</strong> 700–900 lb capacity with bracing; verify full top support.</li>
-              <li><strong>125 Gallons:</strong> Heavy-duty stands rated 1,200+ lbs with proper leveling and padding.</li>
-            </ul>
-            <noscript>
-              <p>JavaScript is disabled; choose stands using these capacity checks:</p>
-              <ul>
-                <li>20–29 gal: 200–300 lb rating</li>
-                <li>40 breeder: 500–650 lb rating</li>
-                <li>55–75 gal: 700–900 lb rating</li>
-                <li>125 gal: 1,200+ lb rating and level support</li>
-              </ul>
-            </noscript>
+          <div class="bundle-card__actions">
+            <a id="light-amazon" class="btn btn-amazon" href="#" target="_blank" rel="sponsored noopener">
+              Amazon
+            </a>
+            <a id="light-hygger" class="btn btn-hygger" href="https://www.hygger-online.com/?ref=FKLC" target="_blank" rel="sponsored noopener" hidden>
+              Hygger
+            </a>
           </div>
-        </section>
-      </div>
-    </section>
+          <button class="bundle-card__alts-toggle" data-alts="light" type="button" aria-expanded="false">
+            See alternatives
+          </button>
+          <div class="bundle-card__alts" id="light-alts" hidden></div>
+        </article>
 
-    <section id="water-quality" class="gear-cluster" aria-labelledby="water-quality-title">
-      <h2 id="water-quality-title" class="gear-section-heading">Testing Kits &amp; Monitoring</h2>
-      <div class="gear-shell">
-        <article class="gear-card gear-card--static">
-          <header class="gear-card__header">
-            <h3 class="gear-card__title">Testing Kits: Your Tank’s Dashboard</h3>
+        <!-- Test Kit Card -->
+        <article class="bundle-card" data-category="test-kit">
+          <header class="bundle-card__header">
+            <h3 class="bundle-card__title">Test Kit</h3>
+            <span class="bundle-card__spec">Essential monitoring</span>
           </header>
-          <div class="gear-card__body">
-            <p>Testing weekly keeps surprises out of your aquarium. The <a href="https://amzn.to/47yJmzh" target="_blank" rel="sponsored noopener noreferrer">API Freshwater Master Test Kit</a> pairs with simple digital tools so you can catch swings before they stress fish.</p>
-            <ul>
-              <li><strong>API Freshwater Master Test Kit:</strong> Benchmark ammonia, nitrite, nitrate, and pH with lab-style droppers.</li>
-              <li><strong>Digital Thermometer:</strong> Verify that heaters hold steady temperatures between maintenance days.</li>
-              <li><strong>TDS Pen:</strong> Track dissolved solids in planted or shrimp tanks to fine-tune water changes.</li>
-            </ul>
+          <div class="bundle-card__product">
+            <p class="bundle-card__name">API Freshwater Master Test Kit</p>
+            <p class="bundle-card__note">Benchmark ammonia, nitrite, nitrate, and pH with lab-style droppers.</p>
+          </div>
+          <div class="bundle-card__actions">
+            <a class="btn btn-amazon" href="https://amzn.to/47yJmzh" target="_blank" rel="sponsored noopener">
+              Amazon
+            </a>
           </div>
         </article>
 
-        <section class="gear-card" data-gear="water-treatments">
-          <header class="gear-card__header">
-            <button
-              class="gear-card__trigger"
-              type="button"
-              data-accordion="toggle"
-              aria-controls="water-treatments-body"
-              aria-expanded="false"
-            >
-              <h3 class="gear-card__title">Water Treatments &amp; Beneficial Bacteria</h3>
-              <span class="chevron" aria-hidden="true">▸</span>
-            </button>
-            <button class="info-btn" type="button" aria-label="Water treatment tip" aria-haspopup="dialog" data-tip="water-treatments">i</button>
+        <!-- Air Backup Card -->
+        <article class="bundle-card" data-category="air">
+          <header class="bundle-card__header">
+            <h3 class="bundle-card__title">Air Backup</h3>
+            <span class="bundle-card__spec" id="air-spec">Emergency oxygen</span>
           </header>
-          <div id="water-treatments-body" class="gear-card__body" hidden>
-            <ul class="static-gear-list water-treatments-static">
-              <li><strong>Water conditioner:</strong> Neutralizes chlorine/chloramine at every water change.</li>
-              <li><strong>Bacteria starter:</strong> Bottled nitrifiers to seed filters after setup or media cleaning.</li>
-              <li><strong>Ammonia detoxifier:</strong> Temporary binder for spikes while you troubleshoot.</li>
-              <li><strong>Test kits:</strong> Pair liquid tests with a digital thermometer for quick diagnostics.</li>
-            </ul>
-            <noscript>
-              <p>JavaScript is disabled; keep these treatment staples on hand:</p>
-              <ul>
-                <li>Dechlorinator for tap water</li>
-                <li>Bacteria starter after new setups or deep cleans</li>
-                <li>Ammonia binder for emergencies</li>
-                <li>Liquid tests and thermometer to confirm stability</li>
-              </ul>
-            </noscript>
+          <div class="bundle-card__product">
+            <p class="bundle-card__name" id="air-name">Loading...</p>
+            <p class="bundle-card__note" id="air-note"></p>
           </div>
-        </section>
-
-        <section class="gear-card" data-gear="maintenance-tools">
-          <header class="gear-card__header">
-            <button
-              class="gear-card__trigger"
-              type="button"
-              data-accordion="toggle"
-              aria-controls="maintenance-tools-body"
-              aria-expanded="false"
-            >
-              <h3 class="gear-card__title">Routine Cleaning Checklist</h3>
-              <span class="chevron" aria-hidden="true">▸</span>
-            </button>
-            <button class="info-btn" type="button" aria-label="Maintenance and tools tip" aria-haspopup="dialog" data-tip="maintenance-tools">i</button>
-          </header>
-          <div id="maintenance-tools-body" class="gear-card__body" hidden>
-            <ul class="static-gear-list maintenance-static">
-              <li><strong>Gravel vacuum:</strong> Siphon sized for your tank to manage weekly water changes.</li>
-              <li><strong>Algae control:</strong> Magnetic scraper or pad plus spare blades for stubborn spots.</li>
-              <li><strong>Bucket &amp; hoses:</strong> Dedicated, labeled tools to prevent cross-contamination.</li>
-              <li><strong>Power safety:</strong> Check valves, drip loops, and a surge-protected strip kept dry.</li>
-            </ul>
-            <noscript>
-              <p>JavaScript is disabled; here’s the routine cleaning kit:</p>
-              <ul>
-                <li>Gravel vac for water changes</li>
-                <li>Magnetic algae scraper</li>
-                <li>Dedicated bucket and tubing</li>
-                <li>Check valves and drip loops for electrical safety</li>
-              </ul>
-            </noscript>
-          </div>
-        </section>
-      </div>
-    </section>
-    <section id="supporting-gear" class="gear-cluster" aria-labelledby="supporting-gear-title">
-      <h2 id="supporting-gear-title" class="gear-section-heading">Supporting Gear</h2>
-      <div class="gear-shell">
-        <section class="gear-card" data-gear="fertilizers">
-          <header class="gear-card__header">
-            <button
-              class="gear-card__trigger"
-              type="button"
-              data-accordion="toggle"
-              aria-controls="fertilizers-body"
-              aria-expanded="false"
-            >
-              <h3 class="gear-card__title">Plant Nutrient Support</h3>
-              <span class="chevron" aria-hidden="true">▸</span>
-            </button>
-            <button class="info-btn" type="button" aria-label="Fertilizer dosing tip" aria-haspopup="dialog" data-tip="fertilizers">i</button>
-          </header>
-          <div id="fertilizers-body" class="gear-card__body" hidden>
-            <ul class="static-gear-list fertilizers-static">
-              <li><strong>Root tabs:</strong> Slow-release nutrients for heavy root feeders like swords and crypts.</li>
-              <li><strong>Liquid fertilizer:</strong> Balanced macro/micro mix dosed weekly for stems and floaters.</li>
-              <li><strong>Liquid carbon:</strong> Supplemental carbon source; start at reduced dose for sensitive plants.</li>
-              <li><strong>Dosing tools:</strong> Measuring spoons or pumps to keep routines consistent.</li>
-            </ul>
-            <noscript>
-              <p>JavaScript is disabled; follow these fertilizer basics:</p>
-              <ul>
-                <li>Use root tabs for rooted plants</li>
-                <li>Dose liquid fertilizer weekly for stems/floaters</li>
-                <li>Add liquid carbon cautiously</li>
-                <li>Measure doses for consistency</li>
-              </ul>
-            </noscript>
-          </div>
-        </section>
-
-        <section id="gear_food" class="gear-card" data-gear="food">
-          <header class="gear-card__header">
-            <button
-              class="gear-card__trigger"
-              type="button"
-              data-accordion="toggle"
-              aria-controls="food-body"
-              aria-expanded="false"
-            >
-              <h3 class="gear-card__title">Feeding Variety &amp; Nutrition</h3>
-              <span class="chevron" aria-hidden="true">▸</span>
-            </button>
-            <button class="info-btn" type="button" aria-label="Feeding guidance" aria-haspopup="dialog" data-tip="food">i</button>
-          </header>
-          <div id="food-body" class="gear-card__body" hidden>
-            <ul class="static-gear-list food-static">
-              <li><strong>Staple diet:</strong> Slow-sinking pellets or flakes sized for community fish.</li>
-              <li><strong>Bottom feeders:</strong> Algae wafers and protein-rich sinking tabs.</li>
-              <li><strong>Treats:</strong> Frozen or freeze-dried brine shrimp/daphnia for variety.</li>
-              <li><strong>Feeding tip:</strong> Offer what fish can finish within 1–2 minutes, 1–2× daily.</li>
-            </ul>
-            <noscript>
-              <p>JavaScript is disabled; here’s the feeding rotation:</p>
-              <ul>
-                <li>Community staple pellet/flake</li>
-                <li>Algae wafers and sinking tabs for bottom feeders</li>
-                <li>Occasional frozen or freeze-dried protein treats</li>
-                <li>Feed small amounts that disappear in 1–2 minutes</li>
-              </ul>
-            </noscript>
-          </div>
-        </section>
-
-        <article class="gear-card gear-card--static proto-card">
-          <header class="gear-card__header">
-            <h3 class="gear-card__title">Maintenance &amp; Safety Toolkit</h3>
-          </header>
-          <div class="gear-card__body">
-            <p>Keep a dedicated maintenance kit so water changes stay quick, clean, and safe for everyone in the room.</p>
-            <ul class="list-flush">
-              <li><strong>Microfiber Towels:</strong> <a href="https://www.amazon.com/dp/B08BRJHJF9/?tag=fishkeepingli-20" target="_blank" rel="sponsored noopener noreferrer">Ultra-soft cloths</a> protect glass from streaks during wipe-downs.</li>
-              <li><strong>Nitrile Gloves:</strong> <a href="https://www.amazon.com/dp/B0C9S5PMSD/?tag=fishkeepingli-20" target="_blank" rel="sponsored noopener noreferrer">Powder-free gloves</a> keep skin oils and cleaners out of the tank.</li>
-              <li><strong>Dedicated Bucket:</strong> <a href="https://www.amazon.com/dp/B0F8W7H4MT/?tag=fishkeepingli-20" target="_blank" rel="sponsored noopener noreferrer">Reserve a five-gallon bucket</a> only for aquarium water changes.</li>
-              <li><strong>Waterproof Label:</strong> <a href="https://www.amazon.com/dp/B0FPXQ3Z6P/?tag=fishkeepingli-20" target="_blank" rel="sponsored noopener noreferrer">Mark gear-only supplies</a> so no one repurposes them for household chores.</li>
-              <li><strong>Silicone Mat:</strong> <a href="https://www.amazon.com/dp/B0D9B5Z615/?tag=fishkeepingli-20" target="_blank" rel="sponsored noopener noreferrer">Stage tools on a grippy mat</a> to contain drips and keep electronics safe.</li>
-            </ul>
+          <div class="bundle-card__actions">
+            <a id="air-amazon" class="btn btn-amazon" href="#" target="_blank" rel="sponsored noopener">
+              Amazon
+            </a>
+            <a id="air-hygger" class="btn btn-hygger" href="https://www.hygger-online.com/?ref=FKLC" target="_blank" rel="sponsored noopener" hidden>
+              Hygger
+            </a>
           </div>
         </article>
-      </div>
-    </section>
 
-    <section class="compatibility-tips">
-      <h2>Stocking &amp; Compatibility Tips</h2>
-      <h3>Matching Gear to Your Fish</h3>
-      <p>Use our <a href="https://thetankguide.com/stocking-advisor.html">Stocking Advisor</a> to estimate your tank’s bioload, then choose equipment that fits your fish. Once your setup is complete, you can prepare it for fish with our <a href="https://thetankguide.com/cycling-coach/">Cycling Coach</a>.</p>
-    </section>
-
-    <section id="quick-answers" class="gear-quick-answers" aria-labelledby="quick-answers-title">
-      <h2 id="quick-answers-title">Quick Gear Checklists by Tank Size</h2>
-      <p class="quick-answers__intro">Scan these ready-to-run lists before you buy. Each one covers the heat, filtration, lighting, and monitoring pieces that keep common freshwater tanks running smoothly.</p>
-      <div class="tank-checklists" role="list">
-        <article class="tank-checklist" role="listitem">
-          <h3>10-Gallon Community Tank</h3>
-          <ul>
-            <li><strong>Heat:</strong> 50W adjustable heater to hold 76–78°F.</li>
-            <li><strong>Filter:</strong> Quiet HOB rated 80–100 GPH with sponge prefilter.</li>
-            <li><strong>Lighting:</strong> 15–20W LED with timer for low-light plants.</li>
-            <li><strong>Monitoring:</strong> Liquid master kit plus stick-on thermometer.</li>
-            <li><strong>Backup:</strong> Air stone with check valve for emergency oxygen.</li>
-          </ul>
-        </article>
-        <article class="tank-checklist" role="listitem">
-          <h3>20-Gallon Freshwater Tank</h3>
-          <ul>
-            <li><strong>Heat:</strong> 100W heater with reliable thermostat protection.</li>
-            <li><strong>Filter:</strong> HOB or compact canister pushing 160–200 GPH.</li>
-            <li><strong>Lighting:</strong> 20–30W LED that toggles between planted and fish-only modes.</li>
-            <li><strong>Monitoring:</strong> Liquid tests and digital thermometer for daily spot checks.</li>
-            <li><strong>Backup:</strong> Dual-outlet air pump with check valves for redundancy.</li>
-          </ul>
-        </article>
-        <article class="tank-checklist" role="listitem">
-          <h3>29-Gallon Showcase Tank</h3>
-          <ul>
-            <li><strong>Heat:</strong> 150W adjustable heater with protective guard.</li>
-            <li><strong>Filter:</strong> Canister rated 220–260 GPH with spray bar for even flow.</li>
-            <li><strong>Lighting:</strong> 30–40W LED with programmable day/night schedule.</li>
-            <li><strong>Monitoring:</strong> Liquid kit plus TDS meter to watch dissolved solids.</li>
-            <li><strong>Backup:</strong> Gravel vacuum and magnetic algae cleaner for weekly tune-ups.</li>
-          </ul>
-        </article>
-        <article class="tank-checklist" role="listitem">
-          <h3>40 Breeder Community Tank</h3>
-          <ul>
-            <li><strong>Heat:</strong> Two 150W heaters or a 200W unit with external controller.</li>
-            <li><strong>Filter:</strong> Canister delivering ~300 GPH plus circulation pump for corners.</li>
-            <li><strong>Lighting:</strong> 40–50W LED that covers the full 36-inch footprint.</li>
-            <li><strong>Monitoring:</strong> Liquid kit, digital thermometer, and TDS pen for planted setups.</li>
-            <li><strong>Backup:</strong> Battery-backed air pump and stand rated 600+ lbs.</li>
+        <!-- Extras Card -->
+        <article class="bundle-card bundle-card--extras" data-category="extras">
+          <header class="bundle-card__header">
+            <h3 class="bundle-card__title">Maintenance Essentials</h3>
+          </header>
+          <ul class="extras-list" id="extras-list">
+            <!-- Extras injected here -->
           </ul>
         </article>
       </div>
     </section>
 
-    <!-- Display Ad: TTG_Gear_Bottom — Slot 1762971638 -->
-    <div class="ttg-ad-slot" id="ad-gear-bottom" data-ad-label="TTG_Gear_Bottom • Slot 1762971638" aria-label="Advertisement">
+    <!-- Display Ad: TTG_Gear_Bottom - Slot 1762971638 -->
+    <div class="ttg-ad-slot" id="ad-gear-bundle" data-ad-label="TTG_Gear_Bottom - Slot 1762971638" aria-label="Advertisement">
       <ins class="adsbygoogle"
            style="display:none"
            data-ad-client="ca-pub-9905718149811880"
@@ -779,100 +448,33 @@
       </script>
     </div>
 
-    <section id="faqs" class="gear-inline-copy" aria-labelledby="faq-title">
-      <h2 id="faq-title">FAQs About Fishkeeping Gear</h2>
-      <section id="faq-accordion" class="faq-accordion qa-card-list" role="list">
-        <article id="faq-item-1" class="qa-card faq-accordion__item" role="listitem">
-          <button
-            type="button"
-            class="qa-card__trigger faq-accordion__trigger"
-            data-accordion="toggle"
-            aria-expanded="false"
-            aria-controls="faq-q1"
-          >
-            <span class="qa-card__title">What size heater do I need for a 20-gallon aquarium?</span>
-            <span class="qa-card__icon faq-accordion__icon" aria-hidden="true">▸</span>
-          </button>
-          <div id="faq-q1" class="qa-panel faq-accordion__panel" aria-hidden="true" hidden>
-            <p>Choose a 100W adjustable heater. This can hold a steady 76–78°F in a typical room (down to 68°F), which is ideal for most community fish.</p>
-          </div>
-        </article>
-        <article id="faq-item-2" class="qa-card faq-accordion__item" role="listitem">
-          <button
-            type="button"
-            class="qa-card__trigger faq-accordion__trigger"
-            data-accordion="toggle"
-            aria-expanded="false"
-            aria-controls="faq-q2"
-          >
-            <span class="qa-card__title">How much filtration should I run on a 40 breeder?</span>
-            <span class="qa-card__icon faq-accordion__icon" aria-hidden="true">▸</span>
-          </button>
-          <div id="faq-q2" class="qa-panel faq-accordion__panel" aria-hidden="true" hidden>
-            <p>Aim for a filter rated for 5–7 times the tank volume per hour (GPH). For a 40-gallon breeder, this is 200–280 GPH. We recommend a canister filter or a large HOB with good biomedia.</p>
-          </div>
-        </article>
-        <article id="faq-item-3" class="qa-card faq-accordion__item" role="listitem">
-          <button
-            type="button"
-            class="qa-card__trigger faq-accordion__trigger"
-            data-accordion="toggle"
-            aria-expanded="false"
-            aria-controls="faq-q3"
-          >
-            <span class="qa-card__title">Can I skip an air pump if my filter agitates the surface?</span>
-            <span class="qa-card__icon faq-accordion__icon" aria-hidden="true">▸</span>
-          </button>
-          <div id="faq-q3" class="qa-panel faq-accordion__panel" aria-hidden="true" hidden>
-            <p>A strong filter return can provide enough oxygen. However, a battery-backed air pump is a smart, inexpensive backup that keeps fish safe during power outages or summer heat waves.</p>
-          </div>
-        </article>
-        <article id="faq-item-4" class="qa-card faq-accordion__item" role="listitem">
-          <button
-            type="button"
-            class="qa-card__trigger faq-accordion__trigger"
-            data-accordion="toggle"
-            aria-expanded="false"
-            aria-controls="faq-q4"
-          >
-            <span class="qa-card__title">What light spectrum grows easy aquarium plants?</span>
-            <span class="qa-card__icon faq-accordion__icon" aria-hidden="true">▸</span>
-          </button>
-          <div id="faq-q4" class="qa-panel faq-accordion__panel" aria-hidden="true" hidden>
-            <p>Look for a full-spectrum LED light in the 6,500K–7,500K range. For low-to-medium light plants (like Anubias or Java Fern), a light with a PAR value of 30–50 at the substrate is perfect.</p>
-          </div>
-        </article>
-        <article id="faq-item-5" class="qa-card faq-accordion__item" role="listitem">
-          <button
-            type="button"
-            class="qa-card__trigger faq-accordion__trigger"
-            data-accordion="toggle"
-            aria-expanded="false"
-            aria-controls="faq-q5"
-          >
-            <span class="qa-card__title">How often should I replace filter media?</span>
-            <span class="qa-card__icon faq-accordion__icon" aria-hidden="true">▸</span>
-          </button>
-          <div id="faq-q5" class="qa-panel faq-accordion__panel" aria-hidden="true" hidden>
-            <p>Never replace all your media at once. Rinse sponges or ceramic media in old tank water every 2–4 weeks. Only replace disposable carbon or polishing pads when they are clogged and reducing flow.</p>
-          </div>
-        </article>
-        <article id="faq-item-6" class="qa-card faq-accordion__item" role="listitem">
-          <button
-            type="button"
-            class="qa-card__trigger faq-accordion__trigger"
-            data-accordion="toggle"
-            aria-expanded="false"
-            aria-controls="faq-q6"
-          >
-            <span class="qa-card__title">Do I need a lid on my community tank?</span>
-            <span class="qa-card__icon faq-accordion__icon" aria-hidden="true">▸</span>
-          </button>
-          <div id="faq-q6" class="qa-panel faq-accordion__panel" aria-hidden="true" hidden>
-            <p>Yes, we highly recommend a lid. It reduces evaporation, keeps jumpy fish safe, and helps your heater work more efficiently by trapping warmth.</p>
-          </div>
-        </article>
-      </section>
+    <!-- Condensed FAQ (no accordions, always visible) -->
+    <section class="gear-faq" aria-labelledby="faq-title">
+      <h2 id="faq-title">Quick Answers</h2>
+      <dl class="faq-list">
+        <div class="faq-item">
+          <dt>What size heater do I need?</dt>
+          <dd>Use 5 watts per gallon as a baseline. A 20-gallon tank needs ~100W.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>How much filtration is enough?</dt>
+          <dd>Aim for 5-7x tank volume per hour (GPH). A 40-gallon needs 200-280 GPH.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Do I need an air pump?</dt>
+          <dd>If your filter agitates the surface, you have enough oxygen. But a battery-backed air pump is smart insurance for power outages.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>What light spectrum grows plants?</dt>
+          <dd>Full-spectrum LED in the 6,500K-7,500K range. For easy plants, aim for PAR 30-50 at substrate.</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- Cross-links -->
+    <section class="gear-crosslinks">
+      <p>Use our <a href="/stocking-advisor.html">Stocking Advisor</a> to plan your fish, then come back for matched gear.</p>
+      <p>Ready to set up? The <a href="/cycling-coach/">Cycling Coach</a> walks you through preparation.</p>
     </section>
 
   </main>
