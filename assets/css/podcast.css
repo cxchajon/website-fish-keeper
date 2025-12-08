@@ -431,6 +431,6 @@ body.podcast-page {
 }
 
 .podcast-platform-badge--iheart {
-  height: 65px;
-  max-width: 220px;
+  height: 46px;
+  width: auto;
 }
