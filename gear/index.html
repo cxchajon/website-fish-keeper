@@ -301,9 +301,6 @@
            data-ad-slot="7692943403"
            data-ad-format="auto"
            data-full-width-responsive="true"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
     </div>
 
     <!-- Bundle Display (hidden until selection) -->
@@ -443,9 +440,6 @@
            data-ad-slot="1762971638"
            data-ad-format="auto"
            data-full-width-responsive="true"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
     </div>
 
     <!-- Condensed FAQ (no accordions, always visible) -->
@@ -482,6 +476,22 @@
   <script type="module" src="/js/ui/tooltip.js?v=1.5.2"></script>
   <script defer src="/assets/js/gear.v2.js?v=2025-11-17a"></script>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
+  <script>
+    (function() {
+      function pushAds() {
+        var adSlots = document.querySelectorAll('.ttg-ad-slot ins.adsbygoogle');
+        adSlots.forEach(function() {
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        });
+      }
+
+      if (document.readyState === 'complete') {
+        pushAds();
+      } else {
+        window.addEventListener('load', pushAds, { once: true });
+      }
+    })();
+  </script>
   <section class="legal-links" aria-label="Site legal links">
     <a href="/privacy-legal.html">Privacy Policy</a>
     <a href="/terms.html">Terms</a>
