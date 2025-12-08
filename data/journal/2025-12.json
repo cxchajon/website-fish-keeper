@@ -1,6 +1,14 @@
 [
   {
     "date": "2025-12-08",
+    "title": "December 2025 Weekly Recaps Begin",
+    "body": "Completed December's first water change on December 7, 2025 and launched the weekly recap cycle. Recaps will now track nitrates and key parameters, plant health and growth, BBA control spot-checks, and any livestock observations. Tank stable at 5 ppm nitrates with BBA nearly eliminated; all fish healthy with bright colors. December logs will focus on confirming long-term stability after BBA control.",
+    "category": "Weekly Recap",
+    "quick_facts": "Recaps live; nitrates 5 ppm; BBA nearly gone",
+    "nitrate_ppm": "5"
+  },
+  {
+    "date": "2025-12-08",
     "title": "Post-Water-Change Weekly Recap",
     "body": "Conducted the first weekly check-in after the December 7 water change. Nitrate held steady around 5–10 ppm, and fish showed strong appetite with flakes and bloodworms. Plants are pushing fresh growth where older leaves were trimmed back, and the sump sponge rinse kept flow unchanged. Dosed a maintenance cap of Seachem Excel; no additional water change needed today.",
     "category": "Maintenance",
