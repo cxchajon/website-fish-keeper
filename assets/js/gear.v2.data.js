@@ -687,6 +687,11 @@ function normalizeLightRangeId(value) {
     next = LIGHT_RANGE_ALIAS_MAP.get(next) || '';
   }
 
+  // If we already have a valid range ID after alias mapping, return it immediately
+  if (LIGHT_RANGE_ID_SET.has(next)) {
+    return next;
+  }
+
   if (next.startsWith('l') && !next.startsWith('l-')) {
     next = `l-${next.slice(1)}`;
   }
