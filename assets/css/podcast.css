@@ -424,13 +424,9 @@ body.podcast-page {
 }
 
 .podcast-platform-badge {
-  width: auto;
-  height: 70px;
-  max-width: 220px;
+  width: 220px;
+  height: auto;
+  max-width: 100%;
+  display: block;
   object-fit: contain;
-}
-
-.podcast-platform-badge--iheart {
-  height: 46px;
-  width: auto;
 }
