@@ -2077,7 +2077,7 @@ function getExtrasBundle(gear) {
   return items;
 }
 
-function buildTankBundle(tierId, gear) {
+function buildTankBundleForGear(tierId, gear) {
   const tier = BUNDLE_TIERS.find(t => t.id === tierId);
   if (!tier || !gear) return null;
 
@@ -2092,6 +2092,12 @@ function buildTankBundle(tierId, gear) {
     testKit: getStaticProduct('api_master_kit'),
     airBackup: getPrimaryProduct(gear, 'air', null),
     extras: getExtrasBundle(gear)
+  };
+}
+
+function createBundleBuilder(gear) {
+  return function bundleBuilder(tierId) {
+    return buildTankBundleForGear(tierId, gear);
   };
 }
 
@@ -2111,7 +2117,7 @@ const gearDataPromise = (async () => {
     window.GEAR = gear;
     window.ttgGearNormalized = normalized;
     window.BUNDLE_TIERS = BUNDLE_TIERS;
-    window.buildTankBundle = (tierId) => buildTankBundle(tierId, gear);
+    window.buildTankBundle = createBundleBuilder(gear);
     window.findTierByGallons = findTierByGallons;
   }
   return gear;
@@ -2123,7 +2129,7 @@ const gearDataPromise = (async () => {
     window.GEAR = fallback;
     window.ttgGearNormalized = new Map();
     window.BUNDLE_TIERS = BUNDLE_TIERS;
-    window.buildTankBundle = (tierId) => buildTankBundle(tierId, fallback);
+    window.buildTankBundle = createBundleBuilder(fallback);
     window.findTierByGallons = findTierByGallons;
   }
   return fallback;
