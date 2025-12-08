@@ -332,18 +332,23 @@ body.podcast-page {
 .player-embed {
   position: relative;
   width: 100%;
-  height: 232px;
   border-radius: 16px;
-  overflow: hidden;
   border: 1px dashed rgba(255, 255, 255, 0.24);
   background: radial-gradient(120% 80% at 18% 30%, rgba(63, 211, 218, 0.12) 0%, rgba(63, 211, 218, 0) 60%), #0f172a;
 }
 
-.player-embed iframe {
+.podcast-player-frame {
+  position: relative;
+  height: 184px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.podcast-player-frame iframe {
   position: absolute;
   inset: 0;
   width: 100%;
-  height: 100%;
+  height: 248px;
   border: 0;
   background: transparent;
 }
@@ -396,12 +401,18 @@ body.podcast-page {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 6px 0;
+  padding: 8px 14px;
   background: none;
   border: none;
   border-radius: 12px;
   transition: transform 0.2s ease;
   flex: 0 1 auto;
+}
+
+.podcast-platform-button {
+  min-height: 74px;
+  padding-inline: 16px;
+  border-radius: 14px;
 }
 
 .platform-badge:hover,
@@ -416,7 +427,13 @@ body.podcast-page {
 
 .platform-badge img {
   width: auto;
-  height: 56px;
+  height: 48px;
   object-fit: contain;
   border-radius: 12px;
+}
+
+.podcast-platform-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
 }
