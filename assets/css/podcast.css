@@ -425,11 +425,12 @@ body.podcast-page {
 
 .podcast-platform-badge {
   width: auto;
-  height: 52px;
+  height: 50px;
   max-width: 200px;
   object-fit: contain;
 }
 
 .podcast-platform-badge--iheart {
-  height: 60px;
+  height: 65px;
+  max-width: 220px;
 }
