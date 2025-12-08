@@ -428,39 +428,50 @@ body.ttg-tooltip-lock {
 }
 
 
-/* Hygger Brand Colors - Official teal/cyan palette */
+/* Hygger Brand Button - Teal background ALWAYS */
+.btn-hygger,
 .btn-gear--hygger,
-.hygger-btn,
-.btn-hygger {
+.hygger-btn {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #00a0a0 0%, #00c4c4 50%, #00d4d4 100%);
-  color: #ffffff;
+  gap: 0.5rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: 999px;
   font-weight: 700;
-  box-shadow: 0 10px 22px -12px rgba(0, 160, 160, .5), 0 0 0 1px rgba(0, 0, 0, .1) inset;
+  text-decoration: none;
+  cursor: pointer;
+  line-height: 1;
+  white-space: nowrap;
   border: none;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+
+  /* TEAL BACKGROUND - Default state */
+  background: linear-gradient(135deg, #00a0a0 0%, #00c4c4 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 22px -12px rgba(0, 160, 160, 0.5), 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
+.btn-hygger:hover,
 .btn-gear--hygger:hover,
-.hygger-btn:hover,
-.btn-hygger:hover {
-  background: linear-gradient(135deg, #008f8f 0%, #00b3b3 50%, #00c4c4 100%);
-  box-shadow: 0 12px 26px -14px rgba(0, 160, 160, .6), 0 0 0 1px rgba(0, 0, 0, .12) inset;
-  transform: translateY(-1px);
+.hygger-btn:hover {
+  background: linear-gradient(135deg, #008a8a 0%, #00b0b0 100%) !important;
+  box-shadow: 0 12px 26px -14px rgba(0, 160, 160, 0.6), 0 0 0 1px rgba(0, 0, 0, 0.12) inset;
+  transform: translateY(-2px);
 }
 
-.btn-gear--hygger:focus-visible,
-.hygger-btn:focus-visible,
-.btn-hygger:focus-visible {
-  outline: 2px solid rgba(0, 196, 196, .8);
-  outline-offset: 2px;
-}
-
+.btn-hygger:active,
 .btn-gear--hygger:active,
-.hygger-btn:active,
-.btn-hygger:active {
+.hygger-btn:active {
   transform: translateY(1px);
-  box-shadow: 0 6px 16px -10px rgba(0, 160, 160, .5), 0 0 0 1px rgba(0, 0, 0, .1) inset;
+}
+
+.btn-hygger:focus-visible,
+.btn-gear--hygger:focus-visible,
+.hygger-btn:focus-visible {
+  outline: 2px solid rgba(0, 196, 196, 0.9);
+  outline-offset: 2px;
 }
 
 .gear-card__actions .btn-gear--hygger,
