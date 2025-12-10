@@ -500,7 +500,7 @@
 
         class JournalDataLoader {
             constructor() {
-                this.sources = [
+                this.legacySources = [
                     '/data/journal.json',
                     '/data/reads.json',
                     '/data/journal-archive-sept2024.json',
@@ -510,10 +510,121 @@
                 this.allReadings = [];
             }
 
+            async loadMonthlyFiles() {
+                console.log('📅 Loading monthly files...');
+                try {
+                    const response = await fetch('/data/journal/index.json');
+                    if (!response.ok) {
+                        console.warn('⚠️ Could not load monthly index');
+                        return;
+                    }
+                    const months = await response.json();
+                    console.log(`   Found ${months.length} monthly files`);
+
+                    for (const month of months) {
+                        await this.loadMonthFile(month);
+                    }
+                } catch (e) {
+                    console.error('❌ Error loading monthly files:', e);
+                }
+            }
+
+            async loadMonthFile(month) {
+                const url = `/data/journal/${month}.json`;
+                console.log(`📆 Loading ${url}...`);
+
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`Failed to load ${url}`);
+                    }
+
+                    const entries = await response.json();
+                    let addedCount = 0;
+
+                    for (const entry of entries) {
+                        const testDate = entry.date;
+                        if (!testDate || isNaN(new Date(testDate))) continue;
+
+                        // Check for nitrate_ppm field
+                        let ppm = null;
+                        if (entry.nitrate_ppm) {
+                            // Handle ranges like "5-10" by taking first number
+                            const ppmStr = String(entry.nitrate_ppm);
+                            const match = ppmStr.match(/^(\d+)/);
+                            if (match) {
+                                ppm = parseFloat(match[1]);
+                            }
+                        }
+
+                        // Check body text for nitrate patterns
+                        if (ppm === null && entry.body) {
+                            const bodyLower = entry.body.toLowerCase();
+                            const patterns = [
+                                /nitrate[s]?\s+(?:tested|measured|reading|at|came in at|held steady around)\s+(?:at\s+)?(\d+)/i,
+                                /(\d+)\s*(?:–|-)\s*\d+\s*ppm/i,
+                                /nitrate[s]?\s+(\d+)\s*ppm/i
+                            ];
+                            for (const pattern of patterns) {
+                                const match = entry.body.match(pattern);
+                                if (match) {
+                                    ppm = parseFloat(match[1]);
+                                    break;
+                                }
+                            }
+                        }
+
+                        // Detect water changes
+                        const isWaterChange = (entry.category && entry.category.includes('Maintenance')) ||
+                            (entry.body && entry.body.toLowerCase().includes('water change'));
+
+                        // Add reading if we found a nitrate value
+                        if (ppm !== null && !isNaN(ppm)) {
+                            const isDuplicate = this.allReadings.some(reading =>
+                                reading.date === testDate && Math.abs(reading.ppm - ppm) < 0.01
+                            );
+
+                            if (!isDuplicate) {
+                                this.allReadings.push({
+                                    date: testDate,
+                                    ppm,
+                                    wc: isWaterChange,
+                                    source: url
+                                });
+                                addedCount++;
+                            }
+                        } else if (isWaterChange) {
+                            // Add water change entry without ppm if not already present
+                            const isDuplicate = this.allReadings.some(reading =>
+                                reading.date === testDate && reading.wc === true
+                            );
+
+                            if (!isDuplicate) {
+                                this.allReadings.push({
+                                    date: testDate,
+                                    ppm: 0,
+                                    wc: true,
+                                    source: url
+                                });
+                                addedCount++;
+                            }
+                        }
+                    }
+
+                    console.log(`   ✅ Added ${addedCount} readings from ${url}`);
+                } catch (e) {
+                    console.error(`❌ Error loading ${url}:`, e);
+                }
+            }
+
             async loadAllData() {
                 console.log('🚀 Starting data load...');
 
-                for (const source of this.sources) {
+                // Load monthly files first (newest data)
+                await this.loadMonthlyFiles();
+
+                // Then load legacy sources
+                for (const source of this.legacySources) {
                     await this.loadFile(source);
                 }
 
@@ -837,6 +948,12 @@
                 return;
             }
 
+            // Destroy existing chart if present
+            const existingChart = Chart.getChart(ctx);
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
             const labels = readings.map(r => formatDate(r.date));
             const data = readings.map(r => r.ppm);
 
@@ -909,7 +1026,9 @@
             const lastUpdatedEl = document.getElementById('last-updated');
 
             const wcCount = readings.filter(r => r.wc === true).length;
-            const avg = readings.reduce((sum, r) => sum + (r.ppm || 0), 0) / (readings.length || 1);
+            // Filter out zero ppm readings (water change markers) for average calculation
+            const nonZeroReadings = readings.filter(r => r.ppm > 0);
+            const avg = nonZeroReadings.reduce((sum, r) => sum + r.ppm, 0) / (nonZeroReadings.length || 1);
 
             if (totalWcEl) {
                 totalWcEl.textContent = wcCount;
