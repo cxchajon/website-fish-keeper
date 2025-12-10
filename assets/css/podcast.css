@@ -438,3 +438,31 @@ body.podcast-page {
   display: block;
   object-fit: contain;
 }
+
+.podcast-card--faq {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.faq-item {
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.faq-question {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f7fbff;
+}
+
+.faq-answer {
+  margin: 0;
+  color: rgba(233, 242, 255, 0.9);
+  line-height: 1.6;
+}

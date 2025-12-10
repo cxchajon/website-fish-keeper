@@ -79,6 +79,7 @@
   {
     "@context": "https://schema.org",
     "@type": "PodcastSeries",
+    "@id": "https://thetankguide.com/podcast/#series",
     "name": "Tank Guide Life",
     "description": "The freshwater aquarium podcast where science meets stories. Hosted by FishKeepingLifeCo and powered by TheTankGuide.com.",
     "url": "https://thetankguide.com/podcast/",
@@ -92,28 +93,26 @@
       "@type": "Organization",
       "name": "FishKeepingLifeCo"
     },
-    "genre": "Science",
-    "distribution": "Spotify",
+    "genre": ["Science", "Education", "Hobbies"],
+    "sameAs": [
+      "https://open.spotify.com/show/60ZmDdZra2qrFi6lHMS6aQ",
+      "https://podcasts.apple.com/us/podcast/tank-guide-life-a-product-of-fishkeepinglifeco/id1859119015",
+      "https://www.iheart.com/podcast/269-tank-guide-life-a-product-311249099/",
+      "https://music.amazon.com/podcasts/e40761f6-083b-42ff-a2f0-9f4882c368ed/tank-guide-life-a-product-of-fishkeepinglifeco"
+    ],
     "image": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
-        "potentialAction": {
-      "@type": "ListenAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://open.spotify.com/show/60ZmDdZra2qrFi6lHMS6aQ",
-        "actionPlatform": ["http://schema.org/DesktopWebPlatform", "http://schema.org/MobileWebPlatform"]
-      }
-    },
+    "webFeed": "https://open.spotify.com/show/60ZmDdZra2qrFi6lHMS6aQ",
     "episode": [
       {
         "@type": "PodcastEpisode",
         "name": "Episode 000 — Welcome to Tank Guide Life",
         "episodeNumber": 0,
-        "description": "Introduction to FishKeepingLifeCo and TheTankGuide.com with a science-backed approach to the hobby.",
-        "url": "https://open.spotify.com/show/60ZmDdZra2qrFi6lHMS6aQ",
-        "isPartOf": { "@id": "https://thetankguide.com/podcast/#series" }
+        "description": "This is where it all begins. We're pulling back the curtain on FishKeepingLifeCo and TheTankGuide.com—why we built free tools like the Cycling Coach and Stocking Advisor, and your introduction to a science-backed way to enjoy the hobby.",
+        "url": "https://open.spotify.com/episode/5dYRrI94FCo7f88qEtwIcU",
+        "datePublished": "2024-12-05",
+        "duration": "PT7M55S"
       }
-    ],
-    "@id": "https://thetankguide.com/podcast/#series"
+    ]
   }
   </script>
 </head>
@@ -134,7 +133,7 @@
         <p class="podcast-hero__subline hero__eyebrow">A PRODUCT OF FISHKEEPINGLIFECO</p>
         <div class="podcast-hero__copy">
           <p class="podcast-hero__subtitle">Where science meets the tank.</p>
-          <p class="podcast-hero__lede">Freshwater aquarium stories and science in one clean, weekly listen.</p>
+          <p class="podcast-hero__lede">Freshwater aquarium stories and science in one clean, data-backed listen.</p>
         </div>
       </div>
     </header>
@@ -146,9 +145,11 @@
             <span class="podcast-card__accent" aria-hidden="true"></span>
             <h2 id="about-title">About the podcast</h2>
           </div>
-          <p>The freshwater aquarium podcast where science meets stories.</p>
-          <p>We believe fishkeeping is more than maintenance—it's a pursuit of balance. Through candid conversations with local fish store owners, deep dives into the nitrogen cycle, gear reviews, and real-time tank journals, we explore the beautiful complexity of this hobby.</p>
-          <p>Hosted by FishKeepingLifeCo and powered by TheTankGuide.com, this is your audio companion for unpacking the science behind the tank and sharing honest lessons from the journey.</p>
+          <p>The freshwater aquarium podcast where science meets stories. Each episode captures what actually happens inside glass boxes, from the invisible microbial shifts that keep water stable to the day-to-day choices that help fish and plants thrive.</p>
+          <p>We believe fishkeeping is more than maintenance—it's a pursuit of balance. Through candid conversations with local fish store owners, deep dives into the nitrogen cycle, gear reviews, and real-time tank journals, we explore the beautiful complexity of this hobby with the calm, deliberate pacing it deserves.</p>
+          <p>Hosted by FishKeepingLifeCo and powered by TheTankGuide.com, this is your audio companion for unpacking the science behind the tank and sharing honest lessons from the journey. You'll hear how we use the Cycling Coach to guide new aquarists through the first thirty days, how the Stocking Advisor shapes responsible livestock decisions, and why water testing data is the backbone of everything we publish.</p>
+          <p>We also spend time on the human side of freshwater aquariums: the way families build rituals around feeding schedules, how college students maintain nano tanks in dorm rooms, and the creative solutions apartment dwellers use to manage tap water chemistry. If you keep tanks in the suburbs, a city high-rise, or a rural home with well water, you'll find practical steps you can replicate.</p>
+          <p>Every story is backed by notes from our 29-gallon planted community tank, the experiments that succeed, and the mistakes we correct in public. Expect discussion of filtration upgrades, planted tank fertilization that matches actual test results, and conversations with shop owners who specialize in Midwest water conditions as well as coastal soft-water setups. The goal is simple: actionable guidance you can trust, wherever you are.</p>
         </div>
       </div>
     </section>
@@ -202,6 +203,94 @@
         </div>
       </div>
     </section>
+
+    <section class="podcast-section" aria-labelledby="content-title">
+      <div class="wrap">
+        <div class="section-inner podcast-card podcast-card--about">
+          <div class="podcast-card__heading">
+            <span class="podcast-card__accent" aria-hidden="true"></span>
+            <h2 id="content-title">What you’ll hear</h2>
+          </div>
+          <p>Tank Guide Life is recorded with aquarists in mind who want clear answers, not hype. The debut episode focuses on the first seven minutes of any new tank's life: sourcing conditioned water, establishing beneficial bacteria, and designing a filtration plan that matches the bioload you intend to keep. We spell out the reasoning behind every step so you can repeat it at home without guesswork.</p>
+          <p>We reference real numbers from our lab-grade test kit, noting how pH, KH, GH, and ammonia shift during cycling. You will also hear a breakdown of why we prefer gentle flow for planted tanks, how we monitor biofilm growth during the first two weeks, and which adjustments matter when you maintain aquariums in hard-water regions versus softer municipal systems. The goal is to deliver guidance that works across the United States and beyond without pretending every source water is identical.</p>
+          <p>Beyond the science, we talk through the decision tree that keeps stocking humane. That includes how we set up quarantine for new fish, what size tanks we use for nano community species, and the gear that actually lasts under continuous use. Expect mention of power filters, sponge filters, and plant-safe fertilization schedules, plus the exact steps we follow to avoid algae blooms while still feeding generously.</p>
+          <p>Each narrative is paired with real-world troubleshooting. If a heater sticks on, we describe the symptoms and the backup systems that prevent a crash. When a plant struggles, we walk through the light spectrum and CO₂ tweaks we make before buying new equipment. We call out the common pitfalls new aquarists hit and the precise order we resolve them, so answer engines and humans alike can surface the right fix quickly.</p>
+          <p>As the series grows, episodes will spotlight conversations with store owners who specialize in regional water chemistry, aquascapers who build ADA-style layouts, and breeders who focus on community-safe species. You will hear how they serve beginners in busy cities as well as rural keepers on well water, giving the podcast geographic context without promising an unrealistic publishing cadence. The intent is to document aquarium science responsibly and keep the learning evergreen.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="podcast-section" aria-labelledby="faq-title">
+      <div class="wrap">
+        <div class="section-inner podcast-card podcast-card--faq">
+          <div class="podcast-card__heading">
+            <span class="podcast-card__accent" aria-hidden="true"></span>
+            <h2 id="faq-title">Frequently asked questions</h2>
+          </div>
+          
+          <div class="faq-item">
+            <h3 class="faq-question">Where can I listen to Tank Guide Life?</h3>
+            <p class="faq-answer">Tank Guide Life is available on all major podcast platforms including Spotify, Apple Podcasts, iHeartRadio, and Amazon Music. Choose your preferred platform above to start listening.</p>
+          </div>
+          
+          <div class="faq-item">
+            <h3 class="faq-question">Who creates Tank Guide Life?</h3>
+            <p class="faq-answer">Tank Guide Life is produced by FishKeepingLifeCo, the small operation behind TheTankGuide.com. We're dedicated to making freshwater aquarium science accessible through free tools, educational content, and real tank experience.</p>
+          </div>
+          
+          <div class="faq-item">
+            <h3 class="faq-question">What topics does the podcast cover?</h3>
+            <p class="faq-answer">Episodes cover nitrogen cycle science, equipment reviews, water chemistry, planted tank maintenance, and candid conversations with local fish store owners. We also share real-time updates from our 29-gallon planted community tank, documenting actual challenges and solutions.</p>
+          </div>
+          
+          <div class="faq-item">
+            <h3 class="faq-question">Is the podcast narrated by AI?</h3>
+            <p class="faq-answer">Yes, Tank Guide Life uses the FKLC Digital Voice System—our purpose-built narrator designed to deliver clear, consistent educational content without distractions. The focus stays on the science and information you need.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Where can I listen to Tank Guide Life?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tank Guide Life is available on all major podcast platforms including Spotify, Apple Podcasts, iHeartRadio, and Amazon Music."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Who creates Tank Guide Life?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tank Guide Life is produced by FishKeepingLifeCo, the small operation behind TheTankGuide.com. We're dedicated to making freshwater aquarium science accessible through free tools, educational content, and real tank experience."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What topics does the podcast cover?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Episodes cover nitrogen cycle science, equipment reviews, water chemistry, planted tank maintenance, and candid conversations with local fish store owners. We also share real-time updates from our 29-gallon planted community tank."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the podcast narrated by AI?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Tank Guide Life uses the FKLC Digital Voice System—our purpose-built narrator designed to deliver clear, consistent educational content without distractions."
+          }
+        }
+      ]
+    }
+    </script>
 
     <section class="podcast-section" aria-labelledby="narration-title">
       <div class="wrap">
