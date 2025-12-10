@@ -431,7 +431,8 @@ body.podcast-page {
   outline-offset: 6px;
 }
 
-.podcast-platform-badge {
+.podcast-platform-badge,
+.podcast-platform-logo {
   width: 220px;
   height: auto;
   max-width: 100%;
