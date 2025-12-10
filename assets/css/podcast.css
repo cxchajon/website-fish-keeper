@@ -439,6 +439,32 @@ body.podcast-page {
   object-fit: contain;
 }
 
+.podcast-card--topics {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.podcast-card--topics p {
+  margin: 0 0 14px;
+}
+
+.podcast-card--topics p:last-child {
+  margin-bottom: 0;
+}
+
+.podcast-card--topics a {
+  color: var(--podcast-accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--podcast-underline);
+  transition: all 0.2s ease;
+}
+
+.podcast-card--topics a:hover,
+.podcast-card--topics a:focus-visible {
+  color: #fff;
+  border-bottom-color: var(--podcast-accent);
+}
+
 .podcast-card--faq {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
   border: 1px solid rgba(255, 255, 255, 0.18);
