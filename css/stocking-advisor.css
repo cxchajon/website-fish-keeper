@@ -1777,9 +1777,9 @@ body.prototype-stock-page .ttg-tooltip[aria-expanded="true"] {
       --ttg-ad-label-color: rgba(226, 235, 255, 0.96);
       width: 100%;
       max-width: 970px;
-      min-height: 280px;
-      margin: clamp(3.5rem, 6vw, 6rem) auto;
-      padding: clamp(1.5rem, 4vw, 2.75rem);
+      min-height: 200px;
+      margin: clamp(1.75rem, 3vw, 3rem) auto;
+      padding: clamp(1.1rem, 3vw, 2rem);
       position: relative;
       display: flex;
       align-items: center;
@@ -1858,6 +1858,18 @@ body.prototype-stock-page .ttg-tooltip[aria-expanded="true"] {
       width: 100%;
       position: relative;
       z-index: 3;
+    }
+
+    @media (max-width: 768px) {
+
+      body.prototype-stock-page .ttg-ad-slot {
+
+        margin-top: clamp(1rem, 3vw, 1.5rem);
+        margin-bottom: clamp(1.25rem, 4vw, 1.75rem);
+        padding: clamp(0.9rem, 3vw, 1.4rem);
+        min-height: 180px;
+      }
+
     }
 
     body.prototype-stock-page a {
