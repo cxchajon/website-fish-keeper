@@ -17,7 +17,7 @@ ins.adsbygoogle,
 .ttg-ad-slot {
   width: 100%;
   max-width: 970px;
-  min-height: 280px;
+  min-height: 210px;
   margin: clamp(3.5rem, 6vw, 6rem) auto;
   padding: clamp(1.5rem, 4vw, 2.75rem);
   display: flex;
@@ -33,6 +33,7 @@ ins.adsbygoogle,
 
 .ttg-ad-slot img {
   width: 100%;
+  max-height: 210px;
   height: auto;
   display: block;
 }
