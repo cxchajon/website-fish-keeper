@@ -219,9 +219,10 @@ body.media-page{
   --ttg-ad-bg-end: rgba(38, 92, 156, 0.78);
   --ttg-ad-chip-bg: rgba(10, 23, 42, 0.88);
   --ttg-ad-chip-color: rgba(235, 243, 255, 0.96);
-  margin: clamp(9.5rem, 16vw, 12rem) auto;
-  width: min(860px, 92vw);
-  min-height: clamp(220px, 42vw, 300px);
+  width: 100%;
+  max-width: 970px;
+  min-height: 280px;
+  margin: clamp(3.5rem, 6vw, 6rem) auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -314,7 +315,6 @@ body.media-page[data-ad-qa="true"] .ttg-ad-slot,
   }
 
   .media-page .ttg-ad-slot {
-    min-height: 200px;
     gap: clamp(1.25rem, 6vw, 1.75rem);
   }
 
