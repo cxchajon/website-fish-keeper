@@ -367,23 +367,23 @@
     /* Compact promo banner - not AdSense */
     .ttg-ad-slot:has(.ttg-ad-banner-link) {
       min-height: auto;
-      padding: clamp(1.5rem, 3vw, 2rem);
+      padding: clamp(1.25rem, 2.5vw, 2rem);
       margin: clamp(2rem, 4vw, 3rem) auto;
-      max-width: 720px;
+      max-width: min(90vw, 800px);
     }
 
     .ttg-ad-banner-link {
       display: block;
-      padding: 8px;
-      border: 2px solid rgba(16, 185, 129, 0.2);
-      border-radius: 14px;
-      background: rgba(16, 185, 129, 0.03);
+      padding: 10px;
+      border: 2px solid rgba(16, 185, 129, 0.25);
+      border-radius: 16px;
+      background: rgba(16, 185, 129, 0.04);
       transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease;
     }
 
     .ttg-ad-banner-link:hover,
     .ttg-ad-banner-link:focus-visible {
-      transform: scale(1.02);
+      transform: scale(1.025);
       box-shadow: 0 20px 50px rgba(16, 185, 129, 0.24), 0 12px 30px rgba(0, 0, 0, 0.35);
       border-color: rgba(16, 185, 129, 0.35);
       outline: none;
@@ -393,6 +393,13 @@
       max-width: 100%;
       height: auto;
       border-radius: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .ttg-ad-slot:has(.ttg-ad-banner-link) {
+        max-width: 95vw;
+        margin: clamp(2rem, 5vw, 3.5rem) auto;
+      }
     }
   </style>
 
