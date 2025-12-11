@@ -363,6 +363,20 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* Compact promo banner - not AdSense */
+    .ttg-ad-slot:has(.ttg-ad-banner-link) {
+      min-height: auto;
+      padding: clamp(1rem, 2vw, 1.5rem);
+      margin: clamp(2rem, 4vw, 3rem) auto;
+      max-width: 600px;
+    }
+
+    .ttg-ad-slot .ttg-ad-img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+    }
   </style>
 
   <script defer src="/js/nav.js?v=1.1.0"></script>
