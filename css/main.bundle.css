@@ -3991,11 +3991,6 @@ main.stocking-page {
   text-decoration-thickness: 2px;
 }
 
-.ad-hero {
-  text-align: center;
-  margin: 1.5rem 0;
-}
-
 .ad-label:not(.sr-only) {
   display: inline-block;
   background: var(--accent-dark, #1a237e);
