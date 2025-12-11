@@ -5244,12 +5244,16 @@ body.prototype-stock-page .ttg-tooltip[aria-expanded="true"] {
 
     /* Global AdSense layout shift fix for all pages */
     .ttg-ad-slot {
-      min-height: 250px;
+      width: 100%;
+      max-width: 970px;
+      min-height: 280px;
+      margin: clamp(3.5rem, 6vw, 6rem) auto;
+      padding: clamp(1.5rem, 4vw, 2.75rem);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       contain: layout;
-    }
-
-    .ttg-ad-slot:not(.ttg-ad-slot--empty) {
-      min-height: 0;
+      box-sizing: border-box;
     }
 
     #site-footer {
@@ -5269,10 +5273,11 @@ body.prototype-stock-page .ttg-tooltip[aria-expanded="true"] {
       --ttg-ad-bg: rgba(12, 20, 36, 0.22);
       --ttg-ad-label-bg: rgba(12, 20, 36, 0.85);
       --ttg-ad-label-color: rgba(226, 235, 255, 0.96);
-      margin: 10rem auto;
-      padding: clamp(1.5rem, 4vw, 2.75rem);
-      max-width: min(100%, 970px);
+      width: 100%;
+      max-width: 970px;
       min-height: 280px;
+      margin: clamp(3.5rem, 6vw, 6rem) auto;
+      padding: clamp(1.5rem, 4vw, 2.75rem);
       position: relative;
       display: flex;
       align-items: center;
