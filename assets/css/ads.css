@@ -41,6 +41,7 @@ ins.adsbygoogle,
 .ttg-ad-banner-link {
   display: block;
   width: 100%;
+  overflow: hidden;
   cursor: pointer;
   transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
   will-change: transform, box-shadow;
@@ -108,6 +109,36 @@ ins.adsbygoogle[data-ad-format="fluid"],
 ins.adsbygoogle[data-ad-format="rectangle"] {
   width: 100% !important;
   max-width: 100% !important;
+}
+
+/* ============================================================
+   House Ads — rotating promo slots
+   ============================================================ */
+.ttg-house-ad-slot {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.ttg-house-ad-slot .ttg-ad-banner-link {
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.ttg-house-ad-slot .ttg-ad-img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+}
+
+@media (min-width: 768px) {
+  .ttg-house-ad-slot .ttg-ad-img {
+    height: 250px;
+    max-height: 280px;
+  }
 }
 
 /* ============================================================
