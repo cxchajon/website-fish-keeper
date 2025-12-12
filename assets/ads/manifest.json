@@ -1,0 +1,32 @@
+[
+  {
+    "id": "ttg-house-ad-coloring-books",
+    "src": "/assets/img/ads/Coloring-books.JPG",
+    "href": "/store.html",
+    "alt": "Aquarium coloring books promo banner"
+  },
+  {
+    "id": "ttg-house-ad-daily-journal",
+    "src": "/assets/img/ads/Daily-tank-journal-ad.PNG",
+    "href": "/store.html",
+    "alt": "Daily Tank Journal promo banner"
+  },
+  {
+    "id": "ttg-house-ad-storefront",
+    "src": "/assets/img/ads/fishkeepinglifeco-storefront.webp",
+    "href": "/store.html",
+    "alt": "FishKeepingLifeCo storefront promo banner"
+  },
+  {
+    "id": "ttg-house-ad-life-in-balance",
+    "src": "/assets/img/ads/IMG_2870.jpeg",
+    "href": "https://www.amazon.com/dp/B0FR299HW7/ref=cm_sw_r_as_gl_api_gl_i_XAD96V0ES00XR0ZGM8AT?linkCode=ml1&tag=fishkeepingli-20&linkId=49a3f894baf2831850d234ec7c63d26d",
+    "alt": "Life in Balance – The Hidden Magic of Aquariums book promo banner"
+  },
+  {
+    "id": "ttg-house-ad-planted-journal",
+    "src": "/assets/img/ads/Planted-daily-tank-journal-ad.PNG",
+    "href": "/store.html",
+    "alt": "Planted Daily Tank Journal promo banner"
+  }
+]

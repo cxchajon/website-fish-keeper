@@ -18,6 +18,7 @@
     "test:report": "npx playwright show-report",
     "audit:amazon:img": "node tests/verify-amazon-image-links.cjs",
     "build:stands": "node scripts/build-gear-stands.mjs",
+    "build:ads-manifest": "node scripts/build-ads-manifest.mjs",
     "audit:filters": "node scripts/audit-filters-catalog.mjs",
     "sync:filters": "node ./scripts/extract-gear-filters.mjs",
     "sync:filters:check": "node ./scripts/extract-gear-filters.mjs --dry-run",
