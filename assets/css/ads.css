@@ -111,5 +111,43 @@ ins.adsbygoogle[data-ad-format="rectangle"] {
 }
 
 /* ============================================================
+   Cycling Coach — empty ad slot placeholders
+   ============================================================ */
+.page-cycling-coach .ttg-ad-slot.ttg-ad-slot--empty {
+  min-height: clamp(170px, 28vw, 220px);
+  margin: clamp(2rem, 4vw, 3.25rem) auto;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px dashed rgba(16, 185, 129, 0.3);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  color: rgba(16, 185, 129, 0.78);
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .page-cycling-coach .ttg-ad-slot.ttg-ad-slot--empty {
+    min-height: 150px;
+    padding: clamp(1rem, 3vw, 1.5rem);
+  }
+}
+
+.page-cycling-coach .ttg-ad-slot.ttg-ad-slot--empty::before {
+  content: "Ad";
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(16, 185, 129, 0.55);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* ============================================================
    END GLOBAL AD CONTAINER SAFETY RULES
    ============================================================ */

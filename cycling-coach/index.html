@@ -235,7 +235,7 @@
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "fef22cbf19e3473db5ec987a8f3bf4f3"}'></script>
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
 </head>
-<body class="page--cycling-coach">
+<body class="page--cycling-coach page-cycling-coach">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -575,6 +575,46 @@
     <a href="/terms.html">Terms</a>
     <a href="/contact-feedback.html">Contact</a>
   </section>
+
+  <script>
+    (function() {
+      var slots = document.querySelectorAll('.ttg-ad-slot');
+      if (!slots.length) {
+        return;
+      }
+
+      function evaluateSlot(slot, ins) {
+        if (!slot || !ins) return;
+        var hasIframe = ins.querySelector('iframe');
+        var height = ins.offsetHeight;
+        if (hasIframe && height > 40) {
+          slot.classList.remove('ttg-ad-slot--empty');
+        } else {
+          slot.classList.add('ttg-ad-slot--empty');
+        }
+      }
+
+      slots.forEach(function(slot) {
+        var ins = slot.querySelector('ins.adsbygoogle');
+        if (!ins) {
+          return;
+        }
+
+        var refresh = function() { evaluateSlot(slot, ins); };
+        slot.classList.add('ttg-ad-slot--empty');
+        refresh();
+
+        var observer = new MutationObserver(refresh);
+        observer.observe(ins, { childList: true, subtree: true });
+
+        window.addEventListener('load', function() {
+          setTimeout(refresh, 1600);
+        });
+
+        window.addEventListener('ttg:consent-change', refresh);
+      });
+    })();
+  </script>
   <noscript>
     <section class="legal-links" aria-label="Site legal links (noscript)">
       <a href="/privacy-legal.html">Privacy Policy</a>
