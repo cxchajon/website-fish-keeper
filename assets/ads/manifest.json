@@ -1,5 +1,11 @@
 [
   {
+    "id": "ttg-house-ad-podcast",
+    "src": "/assets/img/ads/ad-podcast-cover.png",
+    "href": "https://open.spotify.com/show/60ZmDdZra2qrFi6lHMS6aQ",
+    "alt": "Listen to The Tank Guide Podcast on Spotify"
+  },
+  {
     "id": "ttg-house-ad-coloring-books",
     "src": "/assets/img/ads/Coloring-books.JPG",
     "href": "/store.html",
