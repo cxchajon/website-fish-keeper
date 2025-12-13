@@ -307,6 +307,38 @@
     return template.content.querySelector('#global-nav');
   }
 
+  const AD_ROTATOR_SELECTOR = '[data-ttg-ad-rotator="true"]';
+  const AD_ROTATOR_SRC = '/assets/js/ad-rotator.js?v=1.0.0';
+
+  function hasAdRotatorScript() {
+    const scripts = document.querySelectorAll('script[src]');
+    for (let i = 0; i < scripts.length; i += 1) {
+      const src = scripts[i].getAttribute('src') || '';
+      if (src.indexOf('ad-rotator.js') !== -1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function ensureAdRotator() {
+    const hasRotatingSlots = document.querySelector(AD_ROTATOR_SELECTOR);
+    if (!hasRotatingSlots || hasAdRotatorScript() || window.__TTG_AD_ROTATOR_LOADING__) {
+      return;
+    }
+
+    window.__TTG_AD_ROTATOR_LOADING__ = true;
+
+    const script = document.createElement('script');
+    script.src = AD_ROTATOR_SRC;
+    script.defer = true;
+    script.onload = function() {
+      window.__TTG_AD_ROTATOR_READY__ = true;
+    };
+
+    document.head.appendChild(script);
+  }
+
   async function mountNav() {
     const host = document.getElementById(NAV_PLACEHOLDER_ID);
     if (!host) {
@@ -332,10 +364,15 @@
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', mountNav);
-  } else {
+  function onReady() {
     mountNav();
+    ensureAdRotator();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onReady);
+  } else {
+    onReady();
   }
 
   window.ttgInitNav = initNav;
