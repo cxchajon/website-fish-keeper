@@ -1,12 +1,6 @@
 (function() {
   var HOUSE_ADS = [
     {
-      id: 'ttg-house-ad-storefront',
-      src: '/assets/img/ads/fishkeepinglifeco-storefront.webp',
-      href: '/store.html',
-      alt: 'FishKeepingLifeCo storefront promo banner'
-    },
-    {
       id: 'ttg-house-ad-daily-journal',
       src: '/assets/img/ads/Daily-tank-journal-ad.PNG',
       href: '/store.html',
