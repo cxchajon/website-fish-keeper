@@ -40,6 +40,37 @@
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
   <link rel="stylesheet" href="/assets/css/cycling-coach.css?v=1.0.0" media="print" onload="this.media='all'" />
   <style>
+    /* Cycling Coach ad styling (page scoped) */
+    body.page-cycling-coach #ad-cycling-top {
+      margin: 1.5rem auto 2rem;
+      max-width: min(100%, 728px);
+      min-height: 280px;
+    }
+
+    body.page-cycling-coach #ad-cycling-top img {
+      width: 100%;
+      height: auto;
+      min-height: 280px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    body.page-cycling-coach #ad-cycling-top .ttg-ad-banner-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Tighter spacing between hero and ad */
+    body.page-cycling-coach .stage-hero {
+      margin-bottom: 1rem;
+    }
+
+    /* Tighter spacing between ad and first card */
+    body.page-cycling-coach #ad-cycling-top + .card {
+      margin-top: 1.5rem;
+    }
+
     /* Cycling Coach ad QA visuals (page scoped) */
     body.page-cycling-coach .ttg-ad-qa-label { display: none; }
 
