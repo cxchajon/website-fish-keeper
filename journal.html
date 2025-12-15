@@ -180,10 +180,10 @@
                    data-next-water-change="2025-12-14">
                   <h2>🧪 Current Parameters</h2>
                   <ul class="param-list">
-                      <li><strong>Nitrates:</strong> <span class="param-value">5 ppm</span></li>
-                      <li><strong>Last Test:</strong> <time datetime="2025-12-07">Dec 7, 2025</time></li>
-                      <li><strong>Tank Health:</strong> <span class="status-good">Excellent</span></li>
-                      <li><strong>Next Water Change:</strong> <time datetime="2025-12-14">Dec 14, 2025</time></li>
+                      <li><strong>Nitrates:</strong> <span id="param-nitrates" class="param-value">5 ppm</span></li>
+                      <li><strong>Last Test:</strong> <time id="param-last-test" datetime="2025-12-07">Dec 7, 2025</time></li>
+                      <li><strong>Tank Health:</strong> <span id="param-tank-health" class="status-good">Excellent</span></li>
+                      <li><strong>Next Water Change:</strong> <time id="param-next-water-change" datetime="2025-12-14">Dec 14, 2025</time></li>
                   </ul>
               </div>
 
@@ -449,6 +449,221 @@
       );
       const dashboard = document.getElementById('tank-dashboard');
       if (dashboard) observer.observe(dashboard);
+  </script>
+
+  <script>
+    (() => {
+      const elements = {
+        nitrates: document.getElementById('param-nitrates'),
+        lastTest: document.getElementById('param-last-test'),
+        tankHealth: document.getElementById('param-tank-health'),
+        nextWaterChange: document.getElementById('param-next-water-change')
+      };
+
+      if (!elements.nitrates || !elements.lastTest || !elements.tankHealth || !elements.nextWaterChange) return;
+
+      const statusClasses = ['status-good', 'status-warning', 'status-alert'];
+      const statusClassMap = {
+        Excellent: 'status-good',
+        Good: 'status-good',
+        Moderate: 'status-warning',
+        Elevated: 'status-alert',
+        Critical: 'status-alert',
+        Unknown: ''
+      };
+
+      const formatDate = (value) => {
+        const date = value instanceof Date ? value : new Date(value);
+        if (Number.isNaN(date.getTime())) return '--';
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      };
+
+      const addDays = (value, days) => {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return null;
+        date.setDate(date.getDate() + days);
+        return date;
+      };
+
+      class JournalDataLoader {
+        constructor() {
+          this.allReadings = [];
+          this.legacySources = [
+            '/data/journal.json',
+            '/data/reads.json',
+            '/data/journal-archive-sept2024.json',
+            '/data/journal-archive-aug2024.json',
+            '/data/journal-archive-jul2024.json'
+          ];
+        }
+
+        async loadAllData() {
+          await this.loadMonthlyFiles();
+
+          for (const source of this.legacySources) {
+            await this.loadFile(source);
+          }
+
+          this.allReadings.sort((a, b) => new Date(a.date) - new Date(b.date));
+          return this.allReadings;
+        }
+
+        async loadMonthlyFiles() {
+          try {
+            const response = await fetch('/data/journal/index.json', { cache: 'no-store' });
+            if (!response.ok) return;
+            const months = await response.json();
+
+            for (const month of months) {
+              await this.loadFile(`/data/journal/${month}.json`);
+            }
+          } catch (error) {
+            console.error('Error loading monthly journal index', error);
+          }
+        }
+
+        extractPpm(entry) {
+          if (entry.nitrate_ppm) {
+            const match = String(entry.nitrate_ppm).match(/^(\d+(?:\.\d+)?)/);
+            if (match) return parseFloat(match[1]);
+          }
+
+          if (Array.isArray(entry.parameters)) {
+            const nitrateParam = entry.parameters.find((p) => p?.name && p.name.toLowerCase().includes('nitrate'));
+            if (nitrateParam?.value != null) {
+              const cleaned = String(nitrateParam.value).replace(/ppm/i, '').trim();
+              const num = parseFloat(cleaned);
+              if (!Number.isNaN(num)) return num;
+            }
+          }
+
+          if (entry.body) {
+            const patterns = [
+              /(\d+(?:\.\d+)?)\s*ppm/i,
+              /nitrate[s]?\s+(?:tested|measured|reading|at|came in at|held steady around)\s+(?:at\s+)?(\d+(?:\.\d+)?)/i,
+              /(\d+(?:\.\d+)?)\s*(?:–|-)\s*\d+\s*ppm/i
+            ];
+            for (const pattern of patterns) {
+              const match = entry.body.match(pattern);
+              if (match) return parseFloat(match[1]);
+            }
+          }
+
+          return null;
+        }
+
+        addReading(reading) {
+          if (!reading.date || Number.isNaN(new Date(reading.date).getTime())) return;
+          const ppm = typeof reading.ppm === 'number' ? reading.ppm : parseFloat(reading.ppm);
+          if (Number.isNaN(ppm)) return;
+
+          const exists = this.allReadings.some((r) => r.date === reading.date && Math.abs(r.ppm - ppm) < 0.01 && r.wc === reading.wc);
+          if (!exists) {
+            this.allReadings.push({ ...reading, ppm });
+          }
+        }
+
+        processEntry(entry, source) {
+          const testDate = entry.date || entry.test_date;
+          if (!testDate || Number.isNaN(new Date(testDate).getTime())) return;
+
+          const ppm = this.extractPpm(entry);
+          const isWaterChange =
+            entry.water_change === true ||
+            (entry.category && entry.category.toLowerCase().includes('maintenance')) ||
+            (entry.body && entry.body.toLowerCase().includes('water change'));
+
+          if (ppm !== null && !Number.isNaN(ppm)) {
+            this.addReading({ date: testDate, ppm, wc: isWaterChange, source });
+          } else if (isWaterChange) {
+            this.addReading({ date: testDate, ppm: 0, wc: true, source });
+          }
+        }
+
+        async loadFile(url) {
+          try {
+            const response = await fetch(`${url}?cb=${Date.now()}`, { cache: 'no-store' });
+            if (!response.ok) return;
+            const data = await response.json();
+
+            if (Array.isArray(data)) {
+              data.forEach((entry) => this.processEntry(entry, url));
+            } else if (Array.isArray(data.entries)) {
+              data.entries.forEach((entry) => this.processEntry(entry, url));
+            } else if (Array.isArray(data.nitrate)) {
+              data.nitrate.forEach((r) => {
+                if (!r.date || Number.isNaN(new Date(r.date).getTime())) return;
+                const ppm = typeof r.ppm === 'number' ? r.ppm : parseFloat(r.ppm);
+                if (Number.isNaN(ppm)) return;
+                this.addReading({ date: r.date, ppm, wc: Boolean(r.wc), source: url });
+              });
+            }
+          } catch (error) {
+            console.error('Error loading journal data from', url, error);
+          }
+        }
+
+        getStatus(ppm) {
+          if (ppm < 10) return 'Excellent';
+          if (ppm < 20) return 'Good';
+          if (ppm < 40) return 'Moderate';
+          if (ppm < 80) return 'Elevated';
+          return 'Critical';
+        }
+      }
+
+      const updateStatus = (status) => {
+        const className = statusClassMap[status] || '';
+        statusClasses.forEach((cls) => elements.tankHealth.classList.remove(cls));
+        if (className) elements.tankHealth.classList.add(className);
+        elements.tankHealth.textContent = status;
+      };
+
+      const updateTimeElement = (el, date) => {
+        if (!el) return;
+        const formatted = formatDate(date);
+        el.textContent = formatted;
+
+        const parsed = new Date(date);
+        if (!Number.isNaN(parsed.getTime())) {
+          el.setAttribute('datetime', parsed.toISOString().slice(0, 10));
+        }
+      };
+
+      const updateCard = (readings, loader) => {
+        if (!readings.length) return;
+
+        const latest = [...readings].reverse().find((r) => typeof r.ppm === 'number' && !Number.isNaN(r.ppm));
+        const lastWaterChange = [...readings].reverse().find((r) => r.wc === true);
+
+        if (latest) {
+          elements.nitrates.textContent = `${latest.ppm} ppm`;
+          updateTimeElement(elements.lastTest, latest.date);
+          updateStatus(loader.getStatus(latest.ppm));
+        }
+
+        if (lastWaterChange) {
+          const nextDate = addDays(lastWaterChange.date, 7);
+          if (nextDate) updateTimeElement(elements.nextWaterChange, nextDate);
+        }
+      };
+
+      const init = async () => {
+        try {
+          const loader = new JournalDataLoader();
+          const readings = await loader.loadAllData();
+          updateCard(readings, loader);
+        } catch (error) {
+          console.error('Unable to update Current Parameters card', error);
+        }
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
   </script>
 
   <script type="application/ld+json">
