@@ -396,7 +396,7 @@
           <!-- Chart Section -->
           <div class="chart-section">
               <div class="section-header">
-                  <h2 class="section-title">📊 70-Day Nitrate History</h2>
+                  <h2 class="section-title">📊 30-Day Nitrate History</h2>
               </div>
               <div class="chart-container">
                   <canvas id="nitrate-chart"></canvas>
@@ -475,6 +475,16 @@
                 month: 'short',
                 day: 'numeric',
                 year: 'numeric'
+            });
+        }
+
+        function filterReadingsByDays(readings, days) {
+            const cutoff = new Date();
+            cutoff.setDate(cutoff.getDate() - days);
+
+            return readings.filter(reading => {
+                const readingDate = new Date(reading.date);
+                return !isNaN(readingDate) && readingDate >= cutoff;
             });
         }
 
@@ -830,7 +840,9 @@
                 updateMetricsBar(data.readings, data.current);
 
                 console.log('🔄 Updating chart...');
-                updateChart(data.readings);
+                const thirtyDayReadings = filterReadingsByDays(data.readings, 30);
+                const chartReadings = thirtyDayReadings.length > 0 ? thirtyDayReadings : data.readings.slice(-30);
+                updateChart(chartReadings);
 
                 console.log('🔄 Updating quick stats...');
                 updateQuickStats(data.readings);
@@ -1004,7 +1016,13 @@
                     },
                     scales: {
                         x: {
-                            ticks: { color: '#94a3b8' },
+                            ticks: {
+                                color: '#94a3b8',
+                                autoSkip: true,
+                                maxTicksLimit: 8,
+                                maxRotation: 0,
+                                minRotation: 0
+                            },
                             grid: { color: 'rgba(148, 163, 184, 0.2)' }
                         },
                         y: {
