@@ -3174,3 +3174,36 @@
     initBundleController();
   }
 })();
+
+// =============================================
+// Quick Answers Accordion Functionality
+// =============================================
+
+(function initQuickAnswersAccordion() {
+  const accordionItems = document.querySelectorAll('.qa-accordion__item');
+  
+  if (!accordionItems.length) return;
+
+  accordionItems.forEach(item => {
+    const trigger = item.querySelector('.qa-accordion__trigger');
+    const panel = item.querySelector('.qa-accordion__panel');
+    
+    if (!trigger || !panel) return;
+
+    trigger.addEventListener('click', () => {
+      const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+      
+      // Toggle current item
+      trigger.setAttribute('aria-expanded', !isExpanded);
+      panel.hidden = isExpanded;
+    });
+
+    // Keyboard support
+    trigger.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        trigger.click();
+      }
+    });
+  });
+})();
