@@ -196,6 +196,38 @@
                 "@type": "Answer",
                 "text": "Not directly. Cycling depends on bacterial growth, which takes time regardless of how many filters you add. A second filter can increase biological capacity and future stability, but it won't skip the cycling process. Patience and proper setup matter more than adding equipment."
               }
+            },
+            {
+              "@type": "Question",
+              "name": "What size heater do I need?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Use 5 watts per gallon as a baseline. A 20-gallon tank needs ~100W."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How much filtration is enough?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Aim for 5-7x tank volume per hour (GPH). A 40-gallon needs 200-280 GPH."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do I need an air pump?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "If your filter agitates the surface, you have enough oxygen. But a battery-backed air pump is smart insurance for power outages."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What light spectrum grows plants?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Full-spectrum LED in the 6,500K-7,500K range. For easy plants, aim for PAR 30-50 at substrate."
+              }
             }
           ]
         }
@@ -519,6 +551,65 @@
         <img src="/assets/img/ads/Daily-tank-journal-ad.PNG" alt="Daily Tank Journal promotion" loading="lazy">
       </a>
     </div>
+
+    <!-- Quick Answers Accordion -->
+    <section class="gear-quick-answers" aria-labelledby="quick-answers-title">
+      <h2 id="quick-answers-title">Quick Answers</h2>
+      
+      <div class="qa-accordion">
+        <!-- Q1: Heater Size -->
+        <div class="qa-accordion__item">
+          <button class="qa-accordion__trigger" type="button" aria-expanded="false" aria-controls="qa-heater">
+            <span class="qa-accordion__question">What size heater do I need?</span>
+            <svg class="qa-accordion__icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="qa-accordion__panel" id="qa-heater" hidden>
+            <p>Use 5 watts per gallon as a baseline. A 20-gallon tank needs ~100W.</p>
+          </div>
+        </div>
+
+        <!-- Q2: Filtration -->
+        <div class="qa-accordion__item">
+          <button class="qa-accordion__trigger" type="button" aria-expanded="false" aria-controls="qa-filtration">
+            <span class="qa-accordion__question">How much filtration is enough?</span>
+            <svg class="qa-accordion__icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="qa-accordion__panel" id="qa-filtration" hidden>
+            <p>Aim for 5-7x tank volume per hour (GPH). A 40-gallon needs 200-280 GPH.</p>
+          </div>
+        </div>
+
+        <!-- Q3: Air Pump -->
+        <div class="qa-accordion__item">
+          <button class="qa-accordion__trigger" type="button" aria-expanded="false" aria-controls="qa-air">
+            <span class="qa-accordion__question">Do I need an air pump?</span>
+            <svg class="qa-accordion__icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="qa-accordion__panel" id="qa-air" hidden>
+            <p>If your filter agitates the surface, you have enough oxygen. But a battery-backed air pump is smart insurance for power outages.</p>
+          </div>
+        </div>
+
+        <!-- Q4: Light Spectrum -->
+        <div class="qa-accordion__item">
+          <button class="qa-accordion__trigger" type="button" aria-expanded="false" aria-controls="qa-light">
+            <span class="qa-accordion__question">What light spectrum grows plants?</span>
+            <svg class="qa-accordion__icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="qa-accordion__panel" id="qa-light" hidden>
+            <p>Full-spectrum LED in the 6,500K-7,500K range. For easy plants, aim for PAR 30-50 at substrate.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
   </main>
   <script defer src="/assets/js/gear.v2.data.js?v=2025-11-17a"></script>

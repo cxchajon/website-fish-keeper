@@ -1258,3 +1258,130 @@ a[class*="btn-hygger"],
   outline: 2px solid rgba(76, 175, 80, 0.8);
   outline-offset: 2px;
 }
+
+/* =============================================
+   Quick Answers Accordion Section
+   ============================================= */
+
+.gear-quick-answers {
+  width: min(960px, 100%);
+  margin: 3rem auto 3rem;
+  padding: 0 16px;
+}
+
+.gear-quick-answers h2 {
+  margin: 0 0 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* Accordion Container */
+.qa-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Accordion Item */
+.qa-accordion__item {
+  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.qa-accordion__item:hover {
+  border-color: rgba(148, 163, 184, 0.4);
+}
+
+/* Accordion Trigger Button */
+.qa-accordion__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: none;
+  border: none;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.qa-accordion__trigger:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.qa-accordion__trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.qa-accordion__trigger[aria-expanded="true"] {
+  background: rgba(96, 165, 250, 0.08);
+}
+
+/* Question Text */
+.qa-accordion__question {
+  flex: 1;
+  line-height: 1.4;
+}
+
+/* Chevron Icon */
+.qa-accordion__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-left: 1rem;
+  transition: transform 0.25s ease;
+  opacity: 0.7;
+}
+
+.qa-accordion__trigger[aria-expanded="true"] .qa-accordion__icon {
+  transform: rotate(180deg);
+}
+
+/* Accordion Panel */
+.qa-accordion__panel {
+  padding: 0 1.25rem 1.25rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.qa-accordion__panel[hidden] {
+  display: none;
+}
+
+.qa-accordion__panel p {
+  margin: 0;
+}
+
+/* Mobile Optimization */
+@media (max-width: 600px) {
+  .gear-quick-answers {
+    margin: 2.5rem auto 2.5rem;
+  }
+
+  .qa-accordion__trigger {
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .qa-accordion__icon {
+    width: 18px;
+    height: 18px;
+    margin-left: 0.75rem;
+  }
+
+  .qa-accordion__panel {
+    padding: 0 1rem 1rem;
+    font-size: 0.9rem;
+  }
+}
