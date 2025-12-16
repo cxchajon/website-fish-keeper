@@ -40,38 +40,55 @@
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
   <link rel="stylesheet" href="/assets/css/cycling-coach.css?v=1.0.0" media="print" onload="this.media='all'" />
   <style>
-    /* Cycling Coach ad styling (page scoped) */
-    body.page-cycling-coach #ad-cycling-top {
-      margin: 1rem auto 1.5rem;
-      max-width: min(100%, 728px);
-      min-height: 350px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.2);
+    /* Cycling Coach ad styling - matches Stocking Advisor (page scoped) */
+    body.page-cycling-coach .ttg-ad-slot:has(.ttg-ad-banner-link) {
+      min-height: auto;
+      padding: clamp(0.125rem, 0.5vw, 0.25rem);
+      margin: clamp(0.375rem, 0.75vw, 0.5rem) auto;
     }
 
-    body.page-cycling-coach #ad-cycling-top img {
-      width: 100%;
+    body.page-cycling-coach .ttg-ad-slot .ttg-ad-img {
+      width: auto;
+      max-width: 100%;
+      max-height: 280px;
       height: auto;
-      max-height: 400px;
-      object-fit: contain;
-      border-radius: 8px;
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    body.page-cycling-coach .ttg-ad-banner-link {
+      display: block;
+      width: fit-content;
+      margin: 0 auto;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    body.page-cycling-coach .ttg-ad-banner-link:hover,
+    body.page-cycling-coach .ttg-ad-banner-link:focus-visible {
+      transform: scale(1.02);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Tighter spacing for top ad banner specifically */
+    body.page-cycling-coach #ad-cycling-top {
+      margin: 0.5rem auto !important;
+      padding: 0.25rem !important;
     }
 
     body.page-cycling-coach #ad-cycling-top .ttg-ad-banner-link {
-      display: block;
-      width: 100%;
+      margin: 0 !important;
     }
 
-    /* Tighter spacing between hero and ad */
+    /* Reduce hero section spacing for tighter layout */
     body.page-cycling-coach .stage-hero {
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
     }
 
     /* Tighter spacing between ad and first card */
     body.page-cycling-coach #ad-cycling-top + .card {
-      margin-top: 1rem;
+      margin-top: 0.5rem;
     }
 
     /* Cycling Coach ad QA visuals (page scoped) */
