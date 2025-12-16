@@ -273,6 +273,49 @@
       z-index: 3;
     }
 
+    /* About page ad slots - compact, centered styling */
+    body.theme-light .ttg-ad-slot:has(.ttg-ad-banner-link) {
+      min-height: auto;
+      padding: clamp(0.125rem, 0.5vw, 0.25rem);
+      border: none;
+      background: transparent;
+      margin: clamp(2rem, 4vw, 3rem) auto;
+    }
+
+    body.theme-light .ttg-ad-slot .ttg-ad-img,
+    body.theme-light .ttg-ad-slot img {
+      width: auto;
+      max-width: 100%;
+      max-height: 280px;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    body.theme-light .ttg-ad-banner-link {
+      display: block;
+      width: fit-content;
+      margin: 0 auto;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    body.theme-light .ttg-ad-banner-link:hover,
+    body.theme-light .ttg-ad-banner-link:focus-visible {
+      transform: scale(1.02);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Specific spacing for each ad slot */
+    #ad-about-values {
+      margin: 2.5rem auto !important;
+    }
+
+    #ad-about-beginners {
+      margin: 2.5rem auto !important;
+    }
+
     @media (max-width: 599px) {
       main {
         padding: 56px 16px 96px;
@@ -455,6 +498,22 @@
         </ul>
       </section>
 
+      <!-- First Ad Slot: After What We Believe -->
+      <div class="ttg-ad-slot ttg-house-ad-slot"
+           id="ad-about-values"
+           data-ad-position="mid-1"
+           data-ttg-ad-rotator="true"
+           data-ttg-ad-manifest="/assets/ads/manifest.json"
+           data-ttg-ad-interval="10000"
+           aria-label="Advertisement">
+        <a class="ttg-ad-banner-link" href="/store.html">
+          <img class="ttg-ad-img"
+               src="/assets/img/ads/Daily-tank-journal-ad.PNG"
+               alt="Daily Tank Journal promotion"
+               loading="lazy">
+        </a>
+      </div>
+
       <section class="about-section" aria-labelledby="about-beginners">
         <h2 id="about-beginners">Who The Tank Guide is For</h2>
         <p>
@@ -470,6 +529,22 @@
           If you’ve ever felt overwhelmed by cycling, stocking charts, or water parameters, you’re in the right place.
         </p>
       </section>
+
+      <!-- Second Ad Slot: After Who The Tank Guide is For -->
+      <div class="ttg-ad-slot ttg-house-ad-slot"
+           id="ad-about-beginners"
+           data-ad-position="mid-2"
+           data-ttg-ad-rotator="true"
+           data-ttg-ad-manifest="/assets/ads/manifest.json"
+           data-ttg-ad-interval="10000"
+           aria-label="Advertisement">
+        <a class="ttg-ad-banner-link" href="/store.html">
+          <img class="ttg-ad-img"
+               src="/assets/img/ads/Daily-tank-journal-ad.PNG"
+               alt="Daily Tank Journal promotion"
+               loading="lazy">
+        </a>
+      </div>
 
       <section class="about-section" aria-labelledby="about-faq">
         <h2 id="about-faq">Quick Answers</h2>
