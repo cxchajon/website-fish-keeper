@@ -44,21 +44,23 @@
     body.page-cycling-coach #ad-cycling-top {
       margin: 1.5rem auto 2rem;
       max-width: min(100%, 728px);
-      min-height: 280px;
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     body.page-cycling-coach #ad-cycling-top img {
       width: 100%;
       height: auto;
-      min-height: 280px;
-      object-fit: cover;
+      max-height: 280px;
+      object-fit: contain;
       border-radius: 8px;
     }
 
     body.page-cycling-coach #ad-cycling-top .ttg-ad-banner-link {
       display: block;
       width: 100%;
-      height: 100%;
     }
 
     /* Tighter spacing between hero and ad */
