@@ -216,23 +216,27 @@
       </div>
     </section>
 
-    <!-- Podcast Page Custom Ad Slot -->
-    <div class="podcast-ad-slot" 
-         id="podcast-ad-main"
-         data-ad-position="mid-page"
-         data-ad-rotator="true"
-         data-ad-manifest="/assets/ads/manifest.json"
-         data-ad-interval="10000"
-         role="region"
-         aria-label="Advertisement">
-      <!-- House Ad Content (rotate via data attributes or swap manually) -->
-      <a class="podcast-ad-link" href="/store.html" aria-label="Shop our products">
-        <img src="/assets/img/ads/Daily-tank-journal-ad.PNG" 
-             alt="Daily Tank Journal - Track your aquarium maintenance" 
-             loading="lazy"
-             width="970"
-             height="250">
-      </a>
+    <!-- TOP AD SLOT: House Ad Only -->
+    <div class="wrap">
+      <div class="ttg-ad-slot ttg-house-ad-slot"
+           id="ad-podcast-top"
+           data-ad-position="top"
+           data-ttg-ad-rotator="true"
+           data-ttg-ad-manifest="/assets/ads/manifest.json"
+           data-ttg-ad-interval="10000"
+           role="region"
+           aria-label="Advertisement">
+        <a class="ttg-ad-banner-link"
+           href="/store.html"
+           aria-label="Explore The Tank Guide store">
+          <img class="ttg-ad-img"
+               src="/assets/img/ads/ad-podcast-cover.png"
+               alt="Tank Guide Life podcast — listen on your favorite platform"
+               loading="lazy"
+               width="1940"
+               height="560">
+        </a>
+      </div>
     </div>
 
     <section class="podcast-section" aria-labelledby="topics-title">
@@ -332,6 +336,28 @@
     </script>
 
   </main>
+
+  <!-- BOTTOM AD SLOT: AdSense-Ready (Currently House Ad) -->
+  <div class="ttg-ad-slot ttg-house-ad-slot ttg-ad-slot--adsense-ready"
+       id="ad-podcast-bottom"
+       data-ad-position="bottom"
+       data-ttg-ad-rotator="true"
+       data-ttg-ad-manifest="/assets/ads/manifest.json"
+       data-ttg-ad-interval="10000"
+       role="region"
+       aria-label="Advertisement">
+    <!-- House ad content (remove when converting to AdSense) -->
+    <a class="ttg-ad-banner-link"
+       href="/podcast/"
+       aria-label="Follow Tank Guide Life">
+      <img class="ttg-ad-img"
+           src="/assets/img/ads/Daily-tank-journal-ad.PNG"
+           alt="Daily Tank Journal — track your aquarium maintenance"
+           loading="lazy"
+           width="3840"
+           height="1088">
+    </a>
+  </div>
 
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
