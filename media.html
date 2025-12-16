@@ -69,6 +69,49 @@
         width: 173px;
       }
     }
+
+    /* Media page ad slots - compact, centered styling */
+    .media-page .ttg-ad-slot:has(.ttg-ad-banner-link) {
+      min-height: auto;
+      padding: clamp(0.125rem, 0.5vw, 0.25rem);
+      margin: clamp(0.375rem, 0.75vw, 0.5rem) auto;
+    }
+
+    .media-page .ttg-ad-slot .ttg-ad-img,
+    .media-page .ttg-ad-slot img {
+      width: auto;
+      max-width: 100%;
+      max-height: 280px;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .media-page .ttg-ad-banner-link {
+      display: block;
+      width: fit-content;
+      margin: 0 auto;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .media-page .ttg-ad-banner-link:hover,
+    .media-page .ttg-ad-banner-link:focus-visible {
+      transform: scale(1.02);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Specific spacing for each ad slot */
+    .media-page #ad-media-feature-your-tank {
+      margin: 1.5rem auto !important;
+      padding: 0.25rem !important;
+    }
+
+    .media-page #ad-media-faq-top {
+      margin: 2rem auto !important;
+      padding: 0.25rem !important;
+    }
   </style>
 
   <script defer src="/js/nav.js?v=1.1.0"></script>
@@ -298,10 +341,19 @@
 
         </div>
 
-        <!-- Display Ad for Feature Your Tank — Slot 6411910426 -->
-        <div class="ttg-card ad-slot rounded-2xl p-4 ttg-ad-slot ttg-house-ad-slot" id="ad-media-feature-your-tank" data-ad-label="TTG_MediaProto_FeatureYourTank1 • Slot 6411910426" data-ttg-ad-rotator="true" data-ttg-ad-manifest="/assets/ads/manifest.json" data-ttg-ad-interval="10000" aria-label="Advertisement">
+        <!-- First Ad Slot: House Ad Only -->
+        <div class="ttg-ad-slot ttg-house-ad-slot"
+             id="ad-media-feature-your-tank"
+             data-ad-position="mid-1"
+             data-ttg-ad-rotator="true"
+             data-ttg-ad-manifest="/assets/ads/manifest.json"
+             data-ttg-ad-interval="10000"
+             aria-label="Advertisement">
           <a class="ttg-ad-banner-link" href="/store.html">
-            <img src="/assets/img/ads/Daily-tank-journal-ad.PNG" alt="Daily Tank Journal promotion" loading="lazy">
+            <img class="ttg-ad-img"
+                 src="/assets/img/ads/Daily-tank-journal-ad.PNG"
+                 alt="Daily Tank Journal promotion"
+                 loading="lazy">
           </a>
         </div>
 
@@ -380,10 +432,19 @@
       <p><a href="/store.html">Explore the full collection of guides and journals on our Store page.</a></p>
     </section>
 
-    <!-- Display Ad for FAQ Top — Slot 6497764235 -->
-    <div class="ttg-card ad-slot rounded-2xl p-4 ttg-ad-slot ttg-house-ad-slot" id="ad-media-faq-top" data-ad-label="TTG_MediaProto_FAQ_Top • Slot 6497764235" data-ttg-ad-rotator="true" data-ttg-ad-manifest="/assets/ads/manifest.json" data-ttg-ad-interval="10000" aria-label="Advertisement">
+    <!-- Second Ad Slot: House Ad Only -->
+    <div class="ttg-ad-slot ttg-house-ad-slot"
+         id="ad-media-faq-top"
+         data-ad-position="mid-2"
+         data-ttg-ad-rotator="true"
+         data-ttg-ad-manifest="/assets/ads/manifest.json"
+         data-ttg-ad-interval="10000"
+         aria-label="Advertisement">
       <a class="ttg-ad-banner-link" href="/store.html">
-        <img src="/assets/img/ads/Daily-tank-journal-ad.PNG" alt="Daily Tank Journal promotion" loading="lazy">
+        <img class="ttg-ad-img"
+             src="/assets/img/ads/Daily-tank-journal-ad.PNG"
+             alt="Daily Tank Journal promotion"
+             loading="lazy">
       </a>
     </div>
 
