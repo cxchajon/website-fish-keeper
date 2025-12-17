@@ -801,22 +801,70 @@ body.theme-media.university > .skip-link:focus {
   border-radius: 12px;
 }
 
-.university .ttg-ad-slot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
+/* Compact house ad slots - matching stocking advisor layout */
+.university .ttg-ad-slot:has(.ttg-ad-banner-link) {
+  min-height: auto;
+  padding: clamp(0.125rem, 0.5vw, 0.25rem);
+  margin: clamp(0.375rem, 0.75vw, 0.5rem) auto;
   max-width: 970px;
-  min-height: 280px;
-  margin: clamp(3.5rem, 6vw, 6rem) auto;
-  padding: clamp(1.5rem, 4vw, 2.75rem);
-  text-align: center;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
 }
 
-.university .ttg-ad-slot .adsbygoogle {
-  width: 100%;
+.university .ttg-ad-slot .ttg-ad-img {
+  width: auto;
+  max-width: 100%;
+  max-height: 280px;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto;
+}
+
+.university .ttg-ad-banner-link {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.university .ttg-ad-banner-link:hover,
+.university .ttg-ad-banner-link:focus-visible {
+  transform: scale(1.02);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Tighter spacing for top ad slot */
+.university #ad-university-waterchem-top {
+  margin: 0.5rem auto !important;
+  padding: 0.25rem !important;
+}
+
+/* Mobile-specific tighter spacing */
+@media (max-width: 768px) {
+  .university .ttg-ad-slot:has(.ttg-ad-banner-link) {
+    margin: 0.375rem auto;
+    padding: 0.125rem;
+  }
+
+  .university .ttg-ad-slot .ttg-ad-img {
+    max-height: 240px;
+  }
+}
+
+@media (max-width: 520px) {
+  .university .ttg-ad-slot:has(.ttg-ad-banner-link) {
+    margin: 0.25rem auto;
+    padding: 0.0625rem;
+  }
+
+  .university .ttg-ad-slot .ttg-ad-img {
+    max-height: 200px;
+  }
 }
 
 .university .ad-placeholder {
