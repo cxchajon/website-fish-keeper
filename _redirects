@@ -5,7 +5,8 @@
 /404.html / 301
 /media-prototype.html   /media.html   301
 /prototype/stocking-prototype.html  /stocking-advisor.html  301
-/university/ /pages/university.html 301
-/university /pages/university.html 301
+/university.html /pages/university.html 301
+/university/     /pages/university.html 301
+/university      /pages/university.html 301
 /params.html  /cycling-coach/  301!
 /staging/cycling-coach/*  /cycling-coach/  301!
