@@ -47,6 +47,7 @@
       '/stocking-advisor': '/stocking-advisor.html',
       '/stocking.html': '/stocking-advisor.html',
       '/stocking': '/stocking-advisor.html',
+      '/gear.html': '/gear/',
       '/gear': '/gear/',
       '/gear/': '/gear/',
       '/gear/index.html': '/gear/',
