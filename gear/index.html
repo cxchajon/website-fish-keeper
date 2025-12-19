@@ -660,7 +660,7 @@
         <article class="bundle-card bundle-card--catalog" data-category="stands">
           <header class="bundle-card__header">
             <h3 class="bundle-card__title">Aquarium Stands</h3>
-            <span class="bundle-card__spec">8 options</span>
+            <span class="bundle-card__spec">17 options</span>
           </header>
           <div class="bundle-card__products-grid" data-csv-category="stands">
             <div class="catalog-loading">Loading stands...</div>
@@ -695,7 +695,7 @@
         <article class="bundle-card bundle-card--catalog" data-category="substrate">
           <header class="bundle-card__header">
             <h3 class="bundle-card__title">Aquarium Substrate</h3>
-            <span class="bundle-card__spec">7 options</span>
+            <span class="bundle-card__spec">18 options</span>
           </header>
           <p class="bundle-card__note">Natural gravels, planted tank substrates, and sand for your aquascape foundation.</p>
           <div class="bundle-card__products-grid" data-csv-category="substrate">
@@ -874,11 +874,11 @@
     // CATALOG CONFIGURATION
     // ========================================
     const CATALOG_DATA_SOURCES = {
-      'stands': '/data/products/stands.csv',
-      'aeration': '/data/products/aeration.csv',
-      'media': '/data/products/filter-media.csv',
-      'substrate': '/data/products/substrate.csv',
-      'food': '/data/products/fish-food.csv'
+      'stands': '/data/gear_stands.csv',
+      'aeration': '/data/gear_aeration.csv',
+      'media': '/data/gear_filters.csv',
+      'substrate': '/data/gear_substrate.csv',
+      'food': '/data/gear_food.csv'
     };
 
     const AMAZON_TAG = 'thetankguide-20';
@@ -916,20 +916,42 @@
     }
 
     // ========================================
-    // CSV PARSER
+    // CSV PARSER (handles quoted fields with commas)
     // ========================================
+    function parseCSVLine(line) {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      result.push(current.trim());
+      return result;
+    }
+
     function parseCSV(text) {
-      const lines = text.trim().split('\n');
+      const lines = text.trim().split(/\r?\n/);
       if (lines.length < 2) return [];
 
-      const headers = lines[0].split(',').map(h => h.trim());
+      const headers = parseCSVLine(lines[0]);
       const data = [];
 
       for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(',');
+        if (!lines[i].trim()) continue; // Skip empty lines
+        const values = parseCSVLine(lines[i]);
         const row = {};
         headers.forEach((header, idx) => {
-          row[header] = values[idx] ? values[idx].trim() : '';
+          row[header] = values[idx] || '';
         });
         data.push(row);
       }
@@ -969,12 +991,29 @@
 
     function renderMiniProducts(products, container) {
       const html = products.map(product => {
-        const asin = product.ASIN || product.asin || '';
-        const title = product.Title || product.title || 'Product';
-        const imageUrl = product.ImageURL || product.image ||
-                         `https://images-na.ssl-images-amazon.com/images/P/${asin}.jpg`;
+        // Handle different CSV column name possibilities
+        const title = product.title || product.Product_Name || product.Title || 'Product';
 
-        const amazonUrl = `https://www.amazon.com/dp/${asin}?tag=${AMAZON_TAG}`;
+        // Get Amazon URL from various column names
+        let amazonUrl = product.amazon_url || product.Amazon_Link || product.amazon_link || '';
+
+        // Extract ASIN from Amazon URL if present
+        let asin = product.ASIN || product.asin || '';
+        if (!asin && amazonUrl) {
+          const asinMatch = amazonUrl.match(/\/dp\/([A-Z0-9]{10})|\/([A-Z0-9]{10})\?/);
+          if (asinMatch) {
+            asin = asinMatch[1] || asinMatch[2];
+          }
+        }
+
+        // Image URL handling - try bucket_key or construct from ASIN
+        let imageUrl = product.ImageURL || product.image || product.bucket_key || '';
+        if (!imageUrl && asin) {
+          imageUrl = `https://images-na.ssl-images-amazon.com/images/P/${asin}.jpg`;
+        } else if (!imageUrl) {
+          // Fallback placeholder
+          imageUrl = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3C/svg%3E';
+        }
 
         return `
             <article class="mini-product-card">
