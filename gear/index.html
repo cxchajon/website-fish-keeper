@@ -971,20 +971,18 @@
       const html = products.map(product => {
         const asin = product.ASIN || product.asin || '';
         const title = product.Title || product.title || 'Product';
-        const price = product.Price || product.price || '';
         const imageUrl = product.ImageURL || product.image ||
                          `https://images-na.ssl-images-amazon.com/images/P/${asin}.jpg`;
 
         const amazonUrl = `https://www.amazon.com/dp/${asin}?tag=${AMAZON_TAG}`;
 
         return `
-          <article class="mini-product-card">
-            <img src="${imageUrl}" alt="${title}" class="mini-product-card__image" loading="lazy">
-            <h4 class="mini-product-card__title">${title}</h4>
-            ${price ? `<p class="mini-product-card__price">${price}</p>` : ''}
-            <a href="${amazonUrl}" target="_blank" rel="noopener sponsored" class="mini-product-card__link">
-              View
-            </a>
+            <article class="mini-product-card">
+              <img src="${imageUrl}" alt="${title}" class="mini-product-card__image" loading="lazy">
+              <h4 class="mini-product-card__title">${title}</h4>
+              <a href="${amazonUrl}" target="_blank" rel="noopener sponsored" class="mini-product-card__link">
+                View
+              </a>
           </article>
         `;
       }).join('');

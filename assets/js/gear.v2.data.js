@@ -1138,6 +1138,21 @@ function ensureOptionDefaults(item, index, fallbackCategory, fallbackKey) {
     hyggerUrl: item.hyggerUrl || ""
   };
 
+  const priceFields = [
+    'price',
+    'Price',
+    'priceText',
+    'price_text',
+    'cost',
+    'msrp',
+    'amount'
+  ];
+  priceFields.forEach((field) => {
+    if (field in option) {
+      delete option[field];
+    }
+  });
+
   const brandLower = option.brand.toLowerCase();
   const titleLower = (option.title || option.label || "").toLowerCase();
   const isHygger = brandLower.includes("hygger") || titleLower.includes("hygger");
