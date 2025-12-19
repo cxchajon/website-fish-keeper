@@ -992,36 +992,23 @@
     function renderMiniProducts(products, container) {
       const html = products.map(product => {
         // Handle different CSV column name possibilities
-        const title = product.title || product.Product_Name || product.Title || 'Product';
+        const asin = product.ASIN || product.asin || '';
+        const title = product.Title || product.title || product.name || 'Product';
+        const price = product.Price || product.price || '';
 
-        // Get Amazon URL from various column names
-        let amazonUrl = product.amazon_url || product.Amazon_Link || product.amazon_link || '';
-
-        // Extract ASIN from Amazon URL if present
-        let asin = product.ASIN || product.asin || '';
-        if (!asin && amazonUrl) {
-          const asinMatch = amazonUrl.match(/\/dp\/([A-Z0-9]{10})|\/([A-Z0-9]{10})\?/);
-          if (asinMatch) {
-            asin = asinMatch[1] || asinMatch[2];
-          }
-        }
-
-        // Image URL handling - try bucket_key or construct from ASIN
-        let imageUrl = product.ImageURL || product.image || product.bucket_key || '';
-        if (!imageUrl && asin) {
-          imageUrl = `https://images-na.ssl-images-amazon.com/images/P/${asin}.jpg`;
-        } else if (!imageUrl) {
-          // Fallback placeholder
-          imageUrl = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3C/svg%3E';
+        // Build Amazon URL from ASIN or use existing amazon_url
+        let amazonUrl = product.amazon_url || product.amazon_link || '';
+        if (!amazonUrl && asin) {
+          amazonUrl = `https://www.amazon.com/dp/${asin}?tag=${AMAZON_TAG}`;
         }
 
         return `
-            <article class="mini-product-card">
-              <img src="${imageUrl}" alt="${title}" class="mini-product-card__image" loading="lazy">
-              <h4 class="mini-product-card__title">${title}</h4>
-              <a href="${amazonUrl}" target="_blank" rel="noopener sponsored" class="mini-product-card__link">
-                View
-              </a>
+          <article class="mini-product-card">
+            <h4 class="mini-product-card__title">${title}</h4>
+            ${price ? `<p class="mini-product-card__price">${price}</p>` : ''}
+            <a href="${amazonUrl}" target="_blank" rel="noopener sponsored" class="mini-product-card__link">
+              View on Amazon
+            </a>
           </article>
         `;
       }).join('');
