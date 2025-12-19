@@ -1450,9 +1450,15 @@ a[class*="btn-hygger"],
   margin: 0;
 }
 
+.mini-product-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .mini-product-card__link {
   display: block;
-  padding: 0.5rem;
+  padding: 0.6rem;
   background: #ff9900;
   color: #131921;
   text-align: center;
@@ -1460,11 +1466,28 @@ a[class*="btn-hygger"],
   border-radius: 6px;
   font-size: 0.85rem;
   font-weight: 600;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
 }
 
 .mini-product-card__link:hover {
   background: #e88b00;
+  transform: translateY(-1px);
+}
+
+.mini-product-card__link:active {
+  transform: translateY(1px);
+}
+
+/* Hygger button variant */
+.mini-product-card__link--hygger {
+  background: linear-gradient(135deg, #2E7D32 0%, #43A047 50%, #4CAF50 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px -6px rgba(46, 125, 50, 0.4);
+}
+
+.mini-product-card__link--hygger:hover {
+  background: linear-gradient(135deg, #256029 0%, #388E3C 50%, #43A047 100%) !important;
+  box-shadow: 0 6px 16px -6px rgba(46, 125, 50, 0.5);
 }
 
 /* Subtitle for grouped sections within cards */
