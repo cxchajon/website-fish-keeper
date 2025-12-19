@@ -567,7 +567,7 @@
             </a>
           </div>
           <button class="bundle-card__alts-toggle" data-alts="water-treatment" type="button" aria-expanded="false">
-            See alternatives
+            See more
           </button>
           <div class="bundle-card__alts" id="water-treatment-alts" hidden>
 
@@ -647,48 +647,17 @@
           </div>
         </article>
 
-        <!-- Aquarium Stands - Grouped by Size -->
+        <!-- Aquarium Stands - Dynamic Size Display -->
         <article class="bundle-card bundle-card--catalog" data-category="stands">
           <header class="bundle-card__header">
             <h3 class="bundle-card__title">Aquarium Stands</h3>
-            <span class="bundle-card__spec">17 options</span>
+            <span class="bundle-card__spec" id="stands-count">Loading...</span>
           </header>
           <p class="bundle-card__note">Sturdy metal and wood stands. Weight capacity ranges from 300lbs to 2,200lbs. Built-in storage and power outlets available.</p>
 
-          <!-- 5-10 Gallon Stands -->
-          <h4 class="bundle-card__subtitle">5-10 Gallon Stands</h4>
-          <div class="bundle-card__products-grid" data-csv-category="stands" data-size-filter="5-10">
-            <div class="catalog-loading">Loading 5-10G stands...</div>
-          </div>
-
-          <!-- 10-20 Gallon Stands -->
-          <h4 class="bundle-card__subtitle">10-20 Gallon Stands</h4>
-          <div class="bundle-card__products-grid" data-csv-category="stands" data-size-filter="10-20">
-            <div class="catalog-loading">Loading 10-20G stands...</div>
-          </div>
-
-          <!-- 20-40 Gallon Stands -->
-          <h4 class="bundle-card__subtitle">20-40 Gallon Stands</h4>
-          <div class="bundle-card__products-grid" data-csv-category="stands" data-size-filter="20-40">
-            <div class="catalog-loading">Loading 20-40G stands...</div>
-          </div>
-
-          <!-- 40-55 Gallon Stands -->
-          <h4 class="bundle-card__subtitle">40-55 Gallon Stands</h4>
-          <div class="bundle-card__products-grid" data-csv-category="stands" data-size-filter="40-55">
-            <div class="catalog-loading">Loading 40-55G stands...</div>
-          </div>
-
-          <!-- 55-75 Gallon Stands -->
-          <h4 class="bundle-card__subtitle">55-75 Gallon Stands</h4>
-          <div class="bundle-card__products-grid" data-csv-category="stands" data-size-filter="55-75">
-            <div class="catalog-loading">Loading 55-75G stands...</div>
-          </div>
-
-          <!-- 75+ Gallon Stands -->
-          <h4 class="bundle-card__subtitle">75+ Gallon Stands</h4>
-          <div class="bundle-card__products-grid" data-csv-category="stands" data-size-filter="75+">
-            <div class="catalog-loading">Loading 75+G stands...</div>
+          <h4 class="bundle-card__subtitle" id="stands-size-label">Loading...</h4>
+          <div class="bundle-card__products-grid" id="stands-grid" data-csv-category="stands">
+            <div class="catalog-loading">Loading stands...</div>
           </div>
         </article>
 
@@ -884,6 +853,24 @@
 
     const AMAZON_TAG = 'thetankguide-20';
 
+    // Map tiers to stand size ranges
+    const TIER_TO_STAND_SIZE = {
+      'tier_5_10': '5-10',
+      'tier_20': '20-40',
+      'tier_29': '20-40',
+      'tier_40b': '40-55',
+      'tier_55': '55-75',
+      'tier_75_plus': '75+'
+    };
+
+    const STAND_SIZE_LABELS = {
+      '5-10': '5-10 Gallon Stands',
+      '20-40': '20-40 Gallon Stands',
+      '40-55': '40-55 Gallon Stands',
+      '55-75': '55-75 Gallon Stands',
+      '75+': '75+ Gallon Stands'
+    };
+
     // ========================================
     // LOAD CATALOG PRODUCTS ON BUNDLE REVEAL
     // ========================================
@@ -905,14 +892,35 @@
       if (gearBundle) {
         observer.observe(gearBundle, { attributes: true });
       }
+
+      // Listen for tier button clicks to reload stands
+      document.querySelectorAll('.tier-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          // Small delay to ensure window.currentSelectedTier is set
+          setTimeout(function() {
+            const standsContainer = document.getElementById('stands-grid');
+            if (standsContainer && window.currentSelectedTier) {
+              const sizeRange = TIER_TO_STAND_SIZE[window.currentSelectedTier];
+              loadStandsForSize(sizeRange, standsContainer);
+            }
+          }, 100);
+        });
+      });
     });
 
     function loadAllCatalogProducts() {
+      // Get current tier from bundle
+      const currentTier = window.currentSelectedTier || 'tier_20'; // fallback
+
       document.querySelectorAll('.bundle-card__products-grid').forEach(container => {
         const category = container.dataset.csvCategory;
-        const sizeFilter = container.dataset.sizeFilter;
-        if (category && CATALOG_DATA_SOURCES[category]) {
-          loadCategoryProducts(category, container, sizeFilter);
+
+        if (category === 'stands') {
+          // Special handling for stands - filter by tier
+          const sizeRange = TIER_TO_STAND_SIZE[currentTier];
+          loadStandsForSize(sizeRange, container);
+        } else if (category && CATALOG_DATA_SOURCES[category]) {
+          loadCategoryProducts(category, container);
         }
       });
     }
@@ -962,11 +970,46 @@
     }
 
     // ========================================
-    // SIZE FILTERING FOR STANDS
+    // STANDS LOADING AND FILTERING
     // ========================================
-    function filterProductsBySize(products, sizeRange) {
-      // Extract gallon numbers from product titles
-      // Size ranges: "5-10", "10-20", "20-40", "40-55", "55-75", "75+"
+    async function loadStandsForSize(sizeRange, container) {
+      const csvPath = CATALOG_DATA_SOURCES['stands'];
+      if (!csvPath) {
+        container.innerHTML = '<p class="catalog-error">No data source configured.</p>';
+        return;
+      }
+
+      try {
+        const response = await fetch(csvPath);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const text = await response.text();
+        let products = parseCSV(text);
+
+        // Filter by size range
+        products = filterStandsBySize(products, sizeRange);
+
+        // Update label and count
+        const label = document.getElementById('stands-size-label');
+        const count = document.getElementById('stands-count');
+        if (label) label.textContent = STAND_SIZE_LABELS[sizeRange] || 'Aquarium Stands';
+        if (count) count.textContent = `${products.length} options`;
+
+        if (products.length === 0) {
+          container.innerHTML = '<p class="catalog-empty">No stands available for this tank size.</p>';
+          return;
+        }
+
+        renderMiniProducts(products, container);
+
+      } catch (error) {
+        console.error('Failed to load stands:', error);
+        container.innerHTML = '<p class="catalog-error">Unable to load stands.</p>';
+      }
+    }
+
+    function filterStandsBySize(products, sizeRange) {
+      if (!sizeRange) return products;
 
       const [minSize, maxSize] = sizeRange.split('-').map(s => s.replace('+', ''));
       const min = parseInt(minSize);
@@ -975,19 +1018,28 @@
       return products.filter(product => {
         const title = (product.Title || product.title || '').toLowerCase();
 
-        // Extract gallon numbers from title
-        const gallonMatch = title.match(/(\d+)\s*g(?:al)?/i);
-        if (!gallonMatch) return false;
+        // Extract gallon numbers from title (matches "10 gallon", "20G", "40-50 gallon", etc.)
+        const gallonMatches = title.match(/(\d+)(?:\s*-\s*(\d+))?\s*g(?:al|allon)?/gi);
+        if (!gallonMatches) return false;
 
-        const gallons = parseInt(gallonMatch[1]);
-        return gallons >= min && gallons <= max;
+        // Get all numbers from matches
+        const numbers = [];
+        gallonMatches.forEach(match => {
+          const nums = match.match(/\d+/g);
+          if (nums) numbers.push(...nums.map(n => parseInt(n)));
+        });
+
+        if (numbers.length === 0) return false;
+
+        // Check if any number falls within range
+        return numbers.some(num => num >= min && num <= max);
       });
     }
 
     // ========================================
     // LOAD AND RENDER PRODUCTS
     // ========================================
-    async function loadCategoryProducts(category, container, sizeFilter = null) {
+    async function loadCategoryProducts(category, container) {
       const csvPath = CATALOG_DATA_SOURCES[category];
       if (!csvPath) {
         container.innerHTML = '<p class="catalog-error">No data source configured.</p>';
@@ -1001,13 +1053,8 @@
         const text = await response.text();
         let products = parseCSV(text);
 
-        // Filter by size if specified
-        if (sizeFilter && category === 'stands') {
-          products = filterProductsBySize(products, sizeFilter);
-        }
-
         if (products.length === 0) {
-          container.innerHTML = '<p class="catalog-empty">No products available in this size range.</p>';
+          container.innerHTML = '<p class="catalog-empty">No products available.</p>';
           return;
         }
 
@@ -1023,22 +1070,33 @@
       const html = products.map(product => {
         // Handle different CSV column name possibilities
         const asin = product.ASIN || product.asin || '';
-        const title = product.Title || product.title || product.name || 'Product';
+        const title = product.Title || product.title || product.name || product.Product_Name || 'Product';
         const price = product.Price || product.price || '';
 
         // Build Amazon URL from ASIN or use existing amazon_url
-        let amazonUrl = product.amazon_url || product.amazon_link || '';
+        let amazonUrl = product.amazon_url || product.amazon_link || product.Amazon_Link || '';
         if (!amazonUrl && asin) {
           amazonUrl = `https://www.amazon.com/dp/${asin}?tag=${AMAZON_TAG}`;
         }
+
+        // Check if product is Hygger (case-insensitive)
+        const isHygger = title.toLowerCase().includes('hygger');
+        const hyggerUrl = 'https://www.hygger-online.com/?ref=FKLC';
 
         return `
           <article class="mini-product-card">
             <h4 class="mini-product-card__title">${title}</h4>
             ${price ? `<p class="mini-product-card__price">${price}</p>` : ''}
-            <a href="${amazonUrl}" target="_blank" rel="noopener sponsored" class="mini-product-card__link">
-              View on Amazon
-            </a>
+            <div class="mini-product-card__actions">
+              <a href="${amazonUrl}" target="_blank" rel="noopener sponsored" class="mini-product-card__link">
+                View on Amazon
+              </a>
+              ${isHygger ? `
+                <a href="${hyggerUrl}" target="_blank" rel="noopener sponsored" class="mini-product-card__link mini-product-card__link--hygger">
+                  Hygger Direct
+                </a>
+              ` : ''}
+            </div>
           </article>
         `;
       }).join('');

@@ -2905,6 +2905,9 @@
       return;
     }
 
+    // Store current tier globally for stands filtering
+    window.currentSelectedTier = tierId;
+
     document.querySelectorAll('.tier-btn').forEach((btn) => {
       btn.classList.toggle('tier-btn--selected', btn.dataset.tier === tierId);
     });
