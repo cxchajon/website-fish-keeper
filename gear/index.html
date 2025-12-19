@@ -504,9 +504,16 @@
           </div>
 
           <!-- Additional CSV Products -->
-          <h4 class="bundle-card__subtitle">More Filter Media Options</h4>
-          <div class="bundle-card__products-grid" data-csv-category="media">
-            <div class="catalog-loading">Loading additional filter media...</div>
+          <button class="catalog-expand-btn" type="button" aria-expanded="false" aria-controls="filter-media-more">
+            <span class="catalog-expand-btn__text">More Filter Media Options</span>
+            <svg class="catalog-expand-btn__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.212l3.71-3.98a.75.75 0 0 1 1.08 1.04l-4.24 4.54a.75.75 0 0 1-1.08 0l-4.24-4.54a.75.75 0 0 1 .02-1.06Z" fill="currentColor" />
+            </svg>
+          </button>
+          <div class="catalog-expandable" id="filter-media-more" hidden>
+            <div class="bundle-card__products-grid" data-csv-category="media">
+              <div class="catalog-loading">Loading additional filter media...</div>
+            </div>
           </div>
         </article>
 
@@ -915,6 +922,11 @@
       document.querySelectorAll('.bundle-card__products-grid').forEach(container => {
         const category = container.dataset.csvCategory;
 
+        const expandableParent = container.closest('.catalog-expandable');
+        if (expandableParent && expandableParent.hidden) {
+          return;
+        }
+
         if (category === 'stands') {
           // Special handling for stands - filter by tier
           const sizeRange = TIER_TO_STAND_SIZE[currentTier];
@@ -924,6 +936,35 @@
         }
       });
     }
+
+    // Handle collapsible catalog sections
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.catalog-expand-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const isExpanded = this.getAttribute('aria-expanded') === 'true';
+          const targetId = this.getAttribute('aria-controls');
+          const target = document.getElementById(targetId);
+          
+          if (!target) return;
+          
+          // Toggle visibility
+          this.setAttribute('aria-expanded', !isExpanded);
+          target.hidden = isExpanded;
+          
+          // Load products if opening for first time
+          if (!isExpanded && !target.dataset.loaded) {
+            const productsContainer = target.querySelector('.bundle-card__products-grid');
+            if (productsContainer) {
+              const category = productsContainer.dataset.csvCategory;
+              if (category && CATALOG_DATA_SOURCES[category]) {
+                loadCategoryProducts(category, productsContainer);
+                target.dataset.loaded = 'true';
+              }
+            }
+          }
+        });
+      });
+    });
 
     // ========================================
     // CSV PARSER (handles quoted fields with commas)
@@ -1093,7 +1134,7 @@
               </a>
               ${isHygger ? `
                 <a href="${hyggerUrl}" target="_blank" rel="noopener sponsored" class="mini-product-card__link mini-product-card__link--hygger">
-                  Hygger Direct
+                  Hygger
                 </a>
               ` : ''}
             </div>
