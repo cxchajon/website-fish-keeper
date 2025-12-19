@@ -1506,8 +1506,20 @@ a[class*="btn-hygger"],
   border-top: none;
 }
 
+.catalog-expandable {
+  margin-top: 1rem;
+}
+
 .catalog-expandable[hidden] {
   display: none;
+}
+
+.catalog-expandable .mini-product-card:first-child {
+  margin-bottom: 1rem;
+}
+
+.catalog-expandable .bundle-card__products-grid {
+  margin-top: 0;
 }
 
 /* Inline hardcoded products grid */
