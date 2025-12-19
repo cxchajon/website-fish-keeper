@@ -1389,6 +1389,32 @@ a[class*="btn-hygger"],
 /* ========================================
    CATALOG SECTION STYLES
    ======================================== */
+
+/* Products Transition Section - Natural Bridge */
+.gear-to-products-transition {
+  max-width: 960px;
+  margin: 3rem auto 2.5rem;
+  padding: 0 16px;
+  text-align: center;
+}
+
+.gear-to-products-transition h2 {
+  font-size: clamp(1.5rem, 3vw, 1.8rem);
+  color: var(--ink);
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.01em;
+}
+
+.gear-to-products-transition p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Legacy catalog-section wrapper (deprecated) */
 .catalog-section {
   max-width: 1200px;
   margin: 4rem auto;
@@ -1414,7 +1440,9 @@ a[class*="btn-hygger"],
 
 /* Category accordion */
 .catalog-category {
-  margin-bottom: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto 1.5rem;
+  padding: 0 16px;
   border: 1px solid rgba(148, 163, 184, 0.24);
   border-radius: 8px;
   background: rgba(17, 24, 39, 0.88);
