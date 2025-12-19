@@ -624,25 +624,31 @@
         <!-- Air Pumps & Accessories - NEW -->
         <article class="bundle-card bundle-card--catalog" data-category="aeration">
           <header class="bundle-card__header">
-            <h3 class="bundle-card__title">Air Pumps & Battery Backup</h3>
-            <span class="bundle-card__spec">6+ products</span>
+            <h3 class="bundle-card__title">Air Pumps & Accessories</h3>
+            <span class="bundle-card__spec">7 products</span>
           </header>
           <p class="bundle-card__note">Ultra-quiet air pumps (4W-11W) with adjustable flow, plus battery-backed emergency pumps for power outages. Includes check valves, airline tubing, and flow controls.</p>
 
-          <div class="filter-boosters-inline">
-            <article class="mini-product-card">
-              <h4 class="mini-product-card__title" id="air-name">HITOP 4W Aquarium Air Pump with Battery Backup</h4>
-              <p class="mini-product-card__note" id="air-note">Dual-outlet USB pump with 72-hour battery backup. Keeps fish alive during power outages.</p>
+          <button class="bundle-card__alts-toggle" type="button" aria-expanded="false" aria-controls="aeration-products">
+            View Air Pump Options
+          </button>
+
+          <div class="catalog-expandable" id="aeration-products" hidden>
+            <!-- Featured: HITOP 4W Air Pump -->
+            <div class="mini-product-card">
+              <h4 class="mini-product-card__title">HITOP 4W 110GPH Powerful Aquarium Air Pump</h4>
+              <p class="mini-product-card__note">Quiet 2-outlet aerator with adjustable flow. Includes accessories for 20-200 gallon tanks.</p>
               <div class="mini-product-card__actions">
-                <a href="https://www.amazon.com/HITOP-Aquarium-Battery-Operated-Emergencies/dp/B0CQ28LZBY?crid=2RSLVZ84OG4YU&dib=eyJ2IjoiMSJ9.2GUb1DFIAQ2yN7sB8v57OXR9mR8nBbBfqPJY2s9l5pFJkWPJdfzYhgGZ96fJ6G2yK8fUfuO_g2w3pHpQ2KQDnpJ8oX5bPCl39qdJhLQLYHPqphyM7RCN__sC9s_Bt2ATSj8qAJEqq4LwHQdZ1rEQpJBjZKHZj2c8w-7xUQsQLKIXI_NYHl8LRVGJ0eECy_EhobIXB4Lb_Bc0nR6zT0xAlEb8cRFGqH_YZJWyLBM.xrXK4fOhY7uPZOaBxwYl52fsFOXCzSkIY41LWKmHq8A&dib_tag=se&keywords=battery+backup+aquarium+air+pump&qid=1734454003&sprefix=battery+backup+aquarium+air+pump%2Caps%2C144&sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1&linkCode=ll1&tag=thetankguide-20&linkId=92ffef4af41b3ebfaff3a3feacbc1d14&language=en_US&ref_=as_li_ss_tl" target="_blank" rel="sponsored noopener" class="mini-product-card__link">View on Amazon</a>
+                <a href="https://www.amazon.com/dp/B08HMZSH9J/ref=cm_sw_r_as_gl_api_gl_i_B6C5H0NXCP3RHG3H1CJ5?linkCode=ml1&tag=fishkeepingli-20&linkId=e36489824bc9a1c4b1cef8050456bcf9" target="_blank" rel="sponsored noopener" class="mini-product-card__link">
+                  View on Amazon
+                </a>
               </div>
-            </article>
-          </div>
+            </div>
 
-          <h4 class="bundle-card__subtitle">Standard Air Pumps & Accessories</h4>
-
-          <div class="bundle-card__products-grid" data-csv-category="aeration">
-            <div class="catalog-loading">Loading air pumps...</div>
+            <!-- CSV Products Grid -->
+            <div class="bundle-card__products-grid" data-csv-category="aeration">
+              <div class="catalog-loading">Loading air pumps...</div>
+            </div>
           </div>
         </article>
 
@@ -943,21 +949,29 @@
       });
     }
 
-    // Handle collapsible catalog sections
+    // Handle collapsible catalog sections (using bundle-card__alts-toggle)
     document.addEventListener('DOMContentLoaded', function() {
-      document.querySelectorAll('.catalog-expand-btn').forEach(btn => {
+      // Use delegation or direct selection
+      document.querySelectorAll('.bundle-card__alts-toggle').forEach(btn => {
         btn.addEventListener('click', function() {
           const isExpanded = this.getAttribute('aria-expanded') === 'true';
           const targetId = this.getAttribute('aria-controls');
           const target = document.getElementById(targetId);
-          
-          if (!target) return;
-          
+
+          if (!target) {
+            console.warn('No target found for:', targetId);
+            return;
+          }
+
           // Toggle visibility
           this.setAttribute('aria-expanded', !isExpanded);
-          target.hidden = isExpanded;
-          
-          // Load products if opening for first time
+          if (isExpanded) {
+            target.hidden = true;
+          } else {
+            target.hidden = false;
+          }
+
+          // Load products if opening for first time (for catalog sections)
           if (!isExpanded && !target.dataset.loaded) {
             const productsContainer = target.querySelector('.bundle-card__products-grid');
             if (productsContainer) {
