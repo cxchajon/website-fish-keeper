@@ -48,6 +48,24 @@
   <link rel="stylesheet" href="/css/style.css?v=1.0.10">
   <link rel="stylesheet" href="/css/blogs.css?v=1.5.2">
   <style>
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: 10px;
+      padding: 10px 14px;
+      background: #0c1424;
+      color: #ffffff;
+      font-weight: 600;
+      border-radius: 8px;
+      z-index: 1000;
+      text-decoration: none;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+    }
+
+    .skip-link:focus {
+      left: 16px;
+    }
+
     .article-layout {
       display: flex;
       flex-direction: column;
@@ -217,7 +235,8 @@
       z-index: 1;
     }
 
-    .blog-body .ttg-ad-slot {
+    .blog-body .ttg-ad-slot,
+    .footer-ad-band .ttg-ad-slot {
       --ttg-ad-border: rgba(129, 155, 211, 0.72);
       --ttg-ad-bg: rgba(12, 20, 36, 0.22);
       --ttg-ad-label-bg: rgba(12, 20, 36, 0.85);
@@ -237,6 +256,12 @@
       text-align: center;
       box-sizing: border-box;
       gap: 12px;
+    }
+
+    .footer-ad-band {
+      max-width: 970px;
+      margin: clamp(2.5rem, 6vw, 3.5rem) auto clamp(3rem, 8vw, 4.5rem);
+      padding: 0 20px;
     }
 
     .blog-body .ttg-ad-slot .ttg-ad-img,
@@ -277,11 +302,13 @@
     "image": "https://thetankguide.com/assets/images/Best-Holiday-Aquarium-Gift.png",
     "author": {
       "@type": "Organization",
-      "name": "The Tank Guide Team"
+      "name": "The Tank Guide Team",
+      "url": "https://thetankguide.com"
     },
     "publisher": {
       "@type": "Organization",
-      "name": "TheTankGuide.com",
+      "name": "FishKeepingLifeCo",
+      "url": "https://thetankguide.com",
       "logo": {
         "@type": "ImageObject",
         "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG"
@@ -353,6 +380,7 @@
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
 <body class="blog-article">
+  <a href="#main-content" class="skip-link">Skip to content</a>
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -369,14 +397,14 @@
     </ol>
   </nav>
 
-  <main class="article-layout">
+  <main class="article-layout" id="main-content">
     <article>
       <a class="back-link" href="/blogs/" aria-label="Back to all blog posts">← Back to all posts</a>
 
       <header class="article-header">
         <h1>A Thoughtful Holiday Gift Guide for Aquarium Lovers: What to Buy (and What to Avoid)</h1>
         <p class="deck">By The Tank Guide Team | Updated December 2025</p>
-        <p class="affiliate-disclosure">Disclosure: This article contains affiliate links. As an Amazon Associate, we earn from qualifying purchases.</p>
+        <p class="affiliate-disclosure">Affiliate disclosure: Some links on this page may be affiliate links. If you buy through them, we may earn a small commission at no extra cost to you.</p>
       </header>
 
       <figure class="tg-figure tg-figure--hero">
@@ -400,20 +428,6 @@
         <p>Aquariums are more than just home decor—they are living ecosystems built with intention, patience, and care. Because of this, the most meaningful aquarium gifts aren't always the biggest or most expensive. In many cases, they aren't "things" at all.</p>
 
         <p>This guide is written for those outside the hobby who want to give a gift that shows support for their loved one's passion—without accidentally creating stress for the keeper or risk for the fish.</p>
-
-        <div class="ttg-ad-slot ttg-house-ad-slot"
-             id="ad-holiday-gift-guide-inline"
-             data-ttg-ad-rotator="true"
-             data-ttg-ad-manifest="/assets/ads/manifest.json"
-             data-ttg-ad-interval="10000"
-             aria-label="Advertisement">
-          <a class="ttg-ad-banner-link" href="/store.html">
-            <img class="ttg-ad-img"
-                 src="/assets/img/ads/Daily-tank-journal-ad.PNG"
-                 alt="Daily Tank Journal promotion"
-                 loading="lazy">
-          </a>
-        </div>
 
         <h2>1. The Best Gifts Are Free: Show Genuine Interest</h2>
         <p>Before looking at price tags, consider this: aquarium keepers are often deeply passionate about their tanks but rarely have someone outside the hobby to share it with. One of the most valued gifts you can give costs nothing: active listening.</p>
@@ -517,6 +531,22 @@
     ]
   }
   </script>
+
+  <section class="footer-ad-band">
+    <div class="ttg-ad-slot ttg-house-ad-slot"
+         id="ad-holiday-gift-guide-footer-band"
+         data-ttg-ad-rotator="true"
+         data-ttg-ad-manifest="/assets/ads/manifest.json"
+         data-ttg-ad-interval="10000"
+         aria-label="Advertisement">
+      <a class="ttg-ad-banner-link" href="/store.html">
+        <img class="ttg-ad-img"
+             src="/assets/img/ads/Daily-tank-journal-ad.PNG"
+             alt="Daily Tank Journal promotion"
+             loading="lazy">
+      </a>
+    </div>
+  </section>
 
   <div class="blog-footer-fade" aria-hidden="true"></div>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
