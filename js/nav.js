@@ -2,6 +2,73 @@
   const NAV_VERSION = '1.1.0';
   const NAV_PLACEHOLDER_ID = 'site-nav';
   const HOME_PATH = '/index.html';
+  const ENTITY_GRAPH_ID = 'ttg-entity-graph';
+  const ENTITY_GRAPH_JSON = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': 'https://thetankguide.com/#organization',
+        name: 'FishKeepingLifeCo',
+        alternateName: ['The Tank Guide', 'Fish Keeping Life Co', 'fishkeepinglife'],
+        description:
+          'FishKeepingLifeCo is an educational publishing company specializing in beginner-friendly aquarium science. The Tank Guide is our flagship website providing interactive tools and research-backed fishkeeping guidance for families and new hobbyists.',
+        url: 'https://thetankguide.com/',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://thetankguide.com/assets/img/Logo-Master-512x512.PNG',
+          width: 512,
+          height: 512
+        },
+        sameAs: [
+          'https://www.tiktok.com/@fishkeepinglifeco',
+          'https://www.instagram.com/fishkeepinglifeco',
+          'https://www.youtube.com/@FishKeepingLifeCo',
+          'https://x.com/fishkeepinglife',
+          'https://www.facebook.com/FishKeepingLifeCo',
+          'https://www.threads.net/@fishkeepinglifeco',
+          'https://www.reddit.com/u/FishKeepingLifeCo'
+        ]
+      },
+      {
+        '@type': 'Brand',
+        '@id': 'https://thetankguide.com/#brand',
+        name: 'The Tank Guide',
+        url: 'https://thetankguide.com/',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://thetankguide.com/assets/img/Logo-Master-512x512.PNG'
+        },
+        parentOrganization: {
+          '@id': 'https://thetankguide.com/#organization'
+        }
+      },
+      {
+        '@type': 'WebSite',
+        '@id': 'https://thetankguide.com/#website',
+        url: 'https://thetankguide.com/',
+        name: 'The Tank Guide',
+        description:
+          'The Tank Guide is an educational aquarium website from FishKeepingLifeCo, offering tools, guides, and beginner-friendly resources.',
+        publisher: {
+          '@id': 'https://thetankguide.com/#organization'
+        },
+        inLanguage: 'en-US',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: {
+            '@type': 'EntryPoint',
+            urlTemplate: 'https://thetankguide.com/search?q={search_term_string}'
+          },
+          'query-input': {
+            '@type': 'PropertyValueSpecification',
+            valueRequired: true,
+            valueName: 'search_term_string'
+          }
+        }
+      }
+    ]
+  });
   const PRIVACY_SECTION_IDS = [
     'privacy-policy',
     'cookies-tracking',
@@ -19,6 +86,19 @@
     return;
   }
   window.__TTG_NAV_LOADER__ = true;
+
+  const ensureEntityGraph = () => {
+    const hasEntityGraph = document.getElementById(ENTITY_GRAPH_ID);
+    if (hasEntityGraph) {
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = ENTITY_GRAPH_ID;
+    script.textContent = ENTITY_GRAPH_JSON;
+    document.head.appendChild(script);
+  };
 
   function normalizePath(path) {
     if (!path) {
@@ -366,6 +446,7 @@
   }
 
   function onReady() {
+    ensureEntityGraph();
     mountNav();
     ensureAdRotator();
   }
