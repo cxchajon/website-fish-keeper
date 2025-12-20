@@ -100,6 +100,12 @@
       margin-top: clamp(2.2rem, 5vw, 3rem);
     }
 
+    .article-header .affiliate-disclosure {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #b9b9b9;
+    }
+
     .article-layout p {
       margin: clamp(0.9rem, 2.4vw, 1.2rem) 0;
     }
@@ -211,6 +217,38 @@
       z-index: 1;
     }
 
+    .blog-body .ttg-ad-slot {
+      --ttg-ad-border: rgba(129, 155, 211, 0.72);
+      --ttg-ad-bg: rgba(12, 20, 36, 0.22);
+      --ttg-ad-label-bg: rgba(12, 20, 36, 0.85);
+      --ttg-ad-label-color: rgba(226, 235, 255, 0.96);
+      width: 100%;
+      max-width: 900px;
+      min-height: auto;
+      margin: clamp(1.8rem, 4vw, 2.2rem) auto;
+      padding: clamp(0.75rem, 2vw, 1.25rem);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      border: 1px dashed rgba(129, 155, 211, 0.5);
+      background: rgba(12, 20, 36, 0.12);
+      text-align: center;
+      box-sizing: border-box;
+      gap: 12px;
+    }
+
+    .blog-body .ttg-ad-slot .ttg-ad-img,
+    .blog-body .ttg-ad-slot img {
+      width: 100%;
+      height: auto;
+      max-height: 260px;
+      object-fit: contain;
+      border-radius: 10px;
+      display: block;
+    }
+
     @media (max-width: 640px) {
       main {
         padding-inline: clamp(1.2rem, 6vw, 2rem);
@@ -306,6 +344,7 @@
       <header class="article-header">
         <h1>A Thoughtful Holiday Gift Guide for Aquarium Lovers: What to Buy (and What to Avoid)</h1>
         <p class="deck">By The Tank Guide Team | Updated December 2025</p>
+        <p class="affiliate-disclosure">Disclosure: This article contains affiliate links. As an Amazon Associate, we earn from qualifying purchases.</p>
       </header>
 
       <figure class="tg-figure tg-figure--hero">
@@ -329,6 +368,20 @@
         <p>Aquariums are more than just home decor—they are living ecosystems built with intention, patience, and care. Because of this, the most meaningful aquarium gifts aren't always the biggest or most expensive. In many cases, they aren't "things" at all.</p>
 
         <p>This guide is written for those outside the hobby who want to give a gift that shows support for their loved one's passion—without accidentally creating stress for the keeper or risk for the fish.</p>
+
+        <div class="ttg-ad-slot ttg-house-ad-slot"
+             id="ad-holiday-gift-guide-inline"
+             data-ttg-ad-rotator="true"
+             data-ttg-ad-manifest="/assets/ads/manifest.json"
+             data-ttg-ad-interval="10000"
+             aria-label="Advertisement">
+          <a class="ttg-ad-banner-link" href="/store.html">
+            <img class="ttg-ad-img"
+                 src="/assets/img/ads/Daily-tank-journal-ad.PNG"
+                 alt="Daily Tank Journal promotion"
+                 loading="lazy">
+          </a>
+        </div>
 
         <h2>1. The Best Gifts Are Free: Show Genuine Interest</h2>
         <p>Before looking at price tags, consider this: aquarium keepers are often deeply passionate about their tanks but rarely have someone outside the hobby to share it with. One of the most valued gifts you can give costs nothing: active listening.</p>
