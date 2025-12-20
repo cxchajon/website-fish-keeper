@@ -3,7 +3,8 @@
   --blog-bg-alt: #343541;
   --blog-text: #f5f5f5;
   --blog-accent: #00c3b6;   /* Tank Guide teal accent */
-  --blog-muted: #9ea3aa;
+  --blog-muted: #d2d7e0;
+  --blog-muted-strong: #e2e6ee;
   --blog-footer-fade-start: #2d2d2d;
   --blog-footer-fade-mid: #343541;
   --blog-footer-fade-end: #111111; /* Matches global footer base */
@@ -53,7 +54,7 @@ figure {
 }
 
 figcaption {
-  color: var(--blog-muted);
+  color: var(--blog-muted-strong);
   font-size: 0.9rem;
   margin-top: 6px;
   text-align: center;
