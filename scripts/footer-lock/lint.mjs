@@ -215,6 +215,12 @@ const lint = () => {
       continue;
     }
 
+    const hasEntityInclude = /schema-organization\.html/.test(text) || /id="ttg-entity-graph"/.test(text);
+    const hasEntityInjector = /\bnav\.js\b/.test(text);
+    if (!hasEntityInclude && !hasEntityInjector) {
+      issues.push({ file, message: 'Missing entity pack reference (schema include or nav loader).' });
+    }
+
     const placeholderMatches = [...text.matchAll(/<div\s+id="site-footer"/gi)];
     if (placeholderMatches.length === 0) {
       issues.push({ file, message: 'Missing <div id="site-footer"> placeholder.' });
