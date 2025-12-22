@@ -599,6 +599,17 @@ html[data-scroll-lock="on"] body {
   overflow: hidden;
 }
 
+/* Mobile header fix: prevent NO GLYPH artifact from rogue pseudo-elements */
+#global-nav::before,
+#global-nav::after,
+#global-nav .inner::before,
+#global-nav .inner::after,
+#site-nav::before,
+#site-nav::after {
+  content: none !important;
+  display: none !important;
+}
+
 .about-box {
   max-width: 800px;
   margin: 0 auto;
