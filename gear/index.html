@@ -927,6 +927,14 @@
       });
     });
 
+    const CANONICAL_HYGGER_URL = 'https://www.hygger-online.com/?ref=FKLC';
+
+    function escapeHtml(value) {
+      const div = document.createElement('div');
+      div.textContent = value == null ? '' : String(value);
+      return div.innerHTML;
+    }
+
     function loadAllCatalogProducts() {
       // Get current tier from bundle
       const currentTier = window.currentSelectedTier || 'tier_20'; // fallback
@@ -1132,7 +1140,9 @@
         // Handle different CSV column name possibilities
         const asin = product.ASIN || product.asin || '';
         const title = product.Title || product.title || product.name || product.Product_Name || 'Product';
+        const safeTitle = escapeHtml(title);
         const price = product.Price || product.price || '';
+        const priceText = escapeHtml(price);
 
         // Build Amazon URL from ASIN or use existing amazon_url
         let amazonUrl = product.amazon_url || product.amazon_link || product.Amazon_Link || '';
@@ -1140,18 +1150,23 @@
           amazonUrl = `https://www.amazon.com/dp/${asin}?tag=${AMAZON_TAG}`;
         }
 
+        const amazonLink = escapeHtml(amazonUrl.trim());
+        const hasAmazonLink = !!amazonLink;
+
         // Check if product is Hygger (case-insensitive, exclude HITOP)
         const isHygger = title.toLowerCase().includes('hygger') && !title.toLowerCase().includes('hitop');
-        const hyggerUrl = 'https://www.hygger-online.com/?ref=FKLC';
+        const hyggerUrl = CANONICAL_HYGGER_URL;
 
         return `
           <article class="mini-product-card">
-            <h4 class="mini-product-card__title">${title}</h4>
-            ${price ? `<p class="mini-product-card__price">${price}</p>` : ''}
+            <h4 class="mini-product-card__title">${safeTitle}</h4>
+            ${price ? `<p class="mini-product-card__price">${priceText}</p>` : ''}
             <div class="mini-product-card__actions">
-              <a href="${amazonUrl}" target="_blank" rel="noopener sponsored" class="mini-product-card__link">
-                View on Amazon
-              </a>
+              ${hasAmazonLink ? `
+                <a href="${amazonLink}" target="_blank" rel="noopener sponsored" class="mini-product-card__link">
+                  View on Amazon
+                </a>
+              ` : ''}
               ${isHygger ? `
                 <a href="${hyggerUrl}" target="_blank" rel="noopener sponsored" class="mini-product-card__link mini-product-card__link--hygger">
                   Hygger
