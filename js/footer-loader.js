@@ -1,6 +1,8 @@
 (() => {
   const FOOTER_HOST_ID = 'site-footer';
   const CANONICAL_FOOTER_SRC = '/footer.html?v=1.5.2';
+  const LEGAL_LINKS_SELECTOR = '.legal-links';
+  const INHOUSE_AD_SELECTOR = '.inhouse-ad-wrap';
 
   const getFooterSource = (host) => {
     const candidate = (host.dataset.footerSrc || '').trim();
@@ -13,6 +15,36 @@
   };
 
   const sanitizeHtml = (html) => html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+
+  const moveLegalLinksBelowInhouseAd = () => {
+    const legalLinks = document.querySelector(LEGAL_LINKS_SELECTOR);
+    const inhouseAd = document.querySelector(INHOUSE_AD_SELECTOR);
+
+    if (!legalLinks || !inhouseAd || !inhouseAd.parentNode) {
+      return;
+    }
+
+    // Keep the legal links grouped with their noscript fallback if it exists.
+    const fragment = document.createDocumentFragment();
+    const noscriptFallback =
+      legalLinks.nextElementSibling && legalLinks.nextElementSibling.tagName === 'NOSCRIPT'
+        ? legalLinks.nextElementSibling
+        : null;
+
+    fragment.appendChild(legalLinks);
+    if (noscriptFallback) {
+      fragment.appendChild(noscriptFallback);
+    }
+
+    const { parentNode } = inhouseAd;
+    const nextNode = inhouseAd.nextSibling;
+
+    if (nextNode) {
+      parentNode.insertBefore(fragment, nextNode);
+    } else {
+      parentNode.appendChild(fragment);
+    }
+  };
 
   const injectFooter = async () => {
     const host = document.getElementById(FOOTER_HOST_ID);
@@ -36,8 +68,16 @@
   };
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injectFooter, { once: true });
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => {
+        moveLegalLinksBelowInhouseAd();
+        void injectFooter();
+      },
+      { once: true }
+    );
   } else {
+    moveLegalLinksBelowInhouseAd();
     void injectFooter();
   }
 })();
