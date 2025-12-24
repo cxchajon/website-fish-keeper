@@ -235,6 +235,54 @@
       z-index: 1;
     }
 
+    .blog-inline-cta {
+      position: relative;
+      z-index: 1;
+      margin: clamp(1.6rem, 4vw, 2.4rem) 0 clamp(1.6rem, 4vw, 2.4rem);
+      padding: clamp(1.1rem, 3vw, 1.6rem);
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(0, 195, 182, 0.1), rgba(12, 20, 36, 0.55));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .blog-inline-cta h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      color: #ffffff;
+    }
+
+    .blog-inline-cta p {
+      margin: 0;
+      color: #d8e6f2;
+      line-height: 1.6;
+    }
+
+    .blog-inline-cta .cta-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .blog-inline-cta .tool-card-cta {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.65);
+      color: #ffffff;
+      padding: 0.7rem 1.4rem;
+      font-size: 1rem;
+      text-decoration: none;
+    }
+
+    .blog-inline-cta .tool-card-cta:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 3px;
+    }
+
+
     @media (max-width: 640px) {
       main {
         padding-inline: clamp(1.2rem, 6vw, 2rem);
@@ -508,6 +556,16 @@
 
         <h2>Affiliate Disclosure</h2>
         <p>This article contains affiliate links. We participate in the Amazon Associates and Hygger affiliate programs, which means we may earn a small commission from qualifying purchases at no extra cost to you. These commissions help support the creation of free educational resources. Our recommendations are always based on real-world use and fish welfare considerations.</p>
+
+        <section class="blog-inline-cta" aria-label="Gear Guide call to action">
+          <div>
+            <h3>Put This Into Practice</h3>
+            <p>Ready to apply what you learned? Use our Gear Guide to match heaters and controllers to your tank size—built with safety in mind.</p>
+          </div>
+          <div class="cta-actions">
+            <a class="tool-card-cta" href="/gear/">Explore the Gear Guide</a>
+          </div>
+        </section>
 
       </div>
     </article>
