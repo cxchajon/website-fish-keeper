@@ -66,6 +66,9 @@
 
   function applyEntry(container, linkEl, imgEl, entry, maxHeight) {
     if (!entry) return;
+    if (imgEl && !imgEl.classList.contains('inhouse-ad-img')) {
+      imgEl.classList.add('inhouse-ad-img');
+    }
     linkEl.href = entry.href || '/store.html';
     linkEl.target = isExternal(linkEl.href) ? '_blank' : '_self';
     linkEl.rel = isExternal(linkEl.href) ? 'noopener sponsored' : 'noopener';
@@ -93,7 +96,7 @@
     link.className = 'ttg-ad-banner-link ttg-ad-rotator__link';
 
     var img = document.createElement('img');
-    img.className = 'ttg-ad-img ttg-ad-rotator__img';
+    img.className = 'ttg-ad-img ttg-ad-rotator__img inhouse-ad-img';
     img.loading = 'lazy';
     img.decoding = 'async';
 

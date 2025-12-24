@@ -3372,6 +3372,65 @@ body[data-ad-qa="true"] .ttg-ad-slot::before,
   z-index: 3;
 }
 
+.inhouse-ad-wrap {
+  max-width: min(100%, 940px);
+  margin: clamp(2.5rem, 5vw, 3.5rem) auto;
+  padding: clamp(1rem, 3vw, 1.8rem) clamp(1.25rem, 4vw, 2rem);
+}
+
+.inhouse-ad-wrap .ttg-ad-slot {
+  margin: 0;
+  padding: clamp(1.5rem, 3vw, 2.2rem);
+  max-width: 900px;
+  min-height: clamp(160px, 26vh, 240px);
+  background: rgba(12, 20, 36, 0.18);
+  border: 1px solid rgba(129, 155, 211, 0.35);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+}
+
+.inhouse-ad-wrap .ttg-ad-rotator,
+.inhouse-ad-wrap .ttg-ad-banner-link {
+  display: block;
+  width: 100%;
+}
+
+.inhouse-ad-wrap .ttg-ad-rotator__img,
+.inhouse-ad-wrap .inhouse-ad-img,
+.inhouse-ad-wrap img.ttg-ad-img {
+  display: block;
+  width: 100%;
+  height: clamp(140px, 24vh, 220px);
+  max-height: clamp(160px, 28vh, 240px);
+  object-fit: contain;
+  object-position: center;
+  border-radius: 12px;
+  background: #0c1424;
+}
+
+.inhouse-ad-wrap .ttg-ad-slot:has(.ttg-ad-banner-link) {
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .inhouse-ad-wrap {
+    padding: clamp(0.75rem, 4vw, 1.25rem) clamp(1rem, 5vw, 1.5rem);
+    margin: clamp(1.75rem, 6vw, 2.25rem) auto;
+  }
+
+  .inhouse-ad-wrap .ttg-ad-slot {
+    min-height: clamp(140px, 24vh, 210px);
+    padding: clamp(1.2rem, 4vw, 1.6rem);
+  }
+
+  .inhouse-ad-wrap .ttg-ad-rotator__img,
+  .inhouse-ad-wrap .inhouse-ad-img,
+  .inhouse-ad-wrap img.ttg-ad-img {
+    height: clamp(120px, 22vh, 200px);
+    max-height: clamp(140px, 25vh, 210px);
+  }
+}
+
 @media (max-width: 720px) {
   .panel {
     padding: 28px 22px 36px;
