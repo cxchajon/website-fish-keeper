@@ -97,11 +97,12 @@
       position: relative;
       width: 100%;
       aspect-ratio: 1344 / 3168;
-      min-height: clamp(800px, 220vw, 2400px);
+      height: clamp(820px, 120vh, 1120px);
+      min-height: clamp(820px, 120vh, 1120px);
       background-image: url('assets/media/IMG_3428.png');
       background-repeat: no-repeat;
       background-position: center top;
-      background-size: 100% auto;
+      background-size: auto 100%;
       isolation: isolate;
     }
 
@@ -135,8 +136,8 @@
     }
 
     .shelf-lane--top a {
-      width: clamp(92px, 22vw, 140px);
-      transform: scale(0.88);
+      width: clamp(82px, 20vw, 125px);
+      transform: scale(0.92);
     }
 
     .shelf-lane--bottom {
@@ -145,8 +146,8 @@
     }
 
     .shelf-lane--bottom a {
-      width: clamp(96px, 24vw, 150px);
-      transform: scale(0.84);
+      width: clamp(84px, 21vw, 130px);
+      transform: scale(0.9);
     }
 
     /* Individual shelf */
@@ -220,8 +221,10 @@
       }
 
       .shelf-stage {
-        min-height: clamp(1500px, 130vh, 2400px);
-        background-size: min(1050px, 100%) auto;
+        height: clamp(980px, 118vh, 1340px);
+        min-height: clamp(980px, 118vh, 1340px);
+        background-size: auto 100%;
+        background-position: center top;
       }
 
       .shelf-lane {
@@ -234,8 +237,8 @@
       }
 
       .shelf-lane--top a {
-        width: clamp(110px, 16vw, 180px);
-        transform: scale(0.9);
+        width: clamp(100px, 15vw, 165px);
+        transform: scale(0.94);
       }
 
       .shelf-lane--bottom {
@@ -244,8 +247,8 @@
       }
 
       .shelf-lane--bottom a {
-        width: clamp(120px, 18vw, 190px);
-        transform: scale(0.86);
+        width: clamp(108px, 17vw, 175px);
+        transform: scale(0.92);
       }
     }
 
