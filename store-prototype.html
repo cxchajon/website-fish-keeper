@@ -64,6 +64,8 @@
       background-repeat: no-repeat;
       background-attachment: fixed;
       padding-top: clamp(96px, 14vw, 180px);
+      --shelf1-drop: 13px;
+      --shelf2-drop: 12px;
     }
 
     /* Header overlay */
@@ -105,17 +107,29 @@
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      gap: 20px;
+      gap: clamp(14px, 4vw, 28px);
       min-height: 200px;
       flex-wrap: wrap;
+      padding-bottom: 22px;
+      overflow: visible;
     }
 
-    .shelf[data-shelf="1"] {
+    .shelf.shelf-1 {
       padding-top: 6px;
+      padding-bottom: 28px;
     }
 
-    .shelf[data-shelf="2"] {
+    .shelf.shelf-1 .book {
+      --book-drop: var(--shelf1-drop);
+    }
+
+    .shelf.shelf-2 {
       padding-top: 4px;
+      padding-bottom: 24px;
+    }
+
+    .shelf.shelf-2 .book {
+      --book-drop: var(--shelf2-drop);
     }
 
     /* Book item */
@@ -124,6 +138,7 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
       max-width: 180px;
+      transform: translateY(var(--book-drop, 0px));
     }
 
     .book img {
@@ -131,12 +146,13 @@
       width: 100%;
       height: auto;
       border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.42);
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,0.25));
     }
 
     /* Hover effect - lift book slightly */
     .book:hover {
-      transform: translateY(-15px);
+      transform: translateY(calc(var(--book-drop, 0px) - 15px));
     }
 
     .book:hover img {
@@ -159,16 +175,19 @@
       }
 
       .shelf {
-        gap: 15px;
+        gap: 16px;
         min-height: 180px;
+        padding-bottom: 18px;
       }
 
-      .shelf[data-shelf="1"] {
+      .shelf.shelf-1 {
         padding-top: 0;
+        padding-bottom: 24px;
       }
 
-      .shelf[data-shelf="2"] {
+      .shelf.shelf-2 {
         padding-top: 2px;
+        padding-bottom: 20px;
       }
 
       .book {
@@ -190,10 +209,13 @@
         background-position: center top;
         background-size: 100% auto;
         padding-top: clamp(82px, 18vw, 150px);
+        --shelf1-drop: 14px;
+        --shelf2-drop: 13px;
       }
 
       .shelf {
         gap: 12px;
+        padding-bottom: 16px;
       }
 
       .shelves {
@@ -201,8 +223,13 @@
         gap: 82px;
       }
 
-      .shelf[data-shelf="2"] {
+      .shelf.shelf-1 {
+        padding-bottom: 20px;
+      }
+
+      .shelf.shelf-2 {
         padding-top: 0;
+        padding-bottom: 18px;
       }
 
       .book {
@@ -214,6 +241,8 @@
       .bookshelf-container {
         background-position: center top;
         background-size: min(1050px, 100%) auto;
+        --shelf1-drop: 9px;
+        --shelf2-drop: 8px;
       }
 
       .shelves {
@@ -222,7 +251,16 @@
       }
 
       .shelf {
-        gap: 24px;
+        gap: 22px;
+        padding-bottom: 18px;
+      }
+
+      .shelf.shelf-1 {
+        padding-bottom: 22px;
+      }
+
+      .shelf.shelf-2 {
+        padding-bottom: 20px;
       }
 
       .book {
@@ -725,8 +763,9 @@
     // Create shelves and populate with books
     shelfDistribution.forEach((shelfBooks, index) => {
       const shelf = document.createElement('div');
-      shelf.className = 'shelf';
-      shelf.setAttribute('data-shelf', index + 1);
+      const shelfIndex = index + 1;
+      shelf.className = `shelf shelf-${shelfIndex}`;
+      shelf.setAttribute('data-shelf', shelfIndex);
 
       shelfBooks.forEach(product => {
         const bookLink = document.createElement('a');
