@@ -64,8 +64,6 @@
       background-repeat: no-repeat;
       background-attachment: fixed;
       padding-top: clamp(96px, 14vw, 180px);
-      --shelf1-drop: 13px;
-      --shelf2-drop: 12px;
     }
 
     /* Header overlay */
@@ -106,36 +104,31 @@
     .shelf {
       display: flex;
       justify-content: center;
-      align-items: flex-end;
+      align-items: center;
       gap: clamp(14px, 4vw, 28px);
-      min-height: 200px;
+      height: var(--lane-height, 200px);
       flex-wrap: wrap;
-      padding-bottom: 22px;
+      padding: 0;
+      transform: translateY(var(--lane-offset, 0px));
       overflow: visible;
     }
 
     .shelf.shelf-1 {
-      padding-top: 6px;
-      padding-bottom: 28px;
+      --lane-height: 210px;
+      --lane-offset: 8px;
     }
 
     .shelf.shelf-1 .book {
-      --book-drop: var(--shelf1-drop);
       --book-scale: 0.88;
-      --book-settle: 6px;
-      --book-img-nudge: 2px;
     }
 
     .shelf.shelf-2 {
-      padding-top: 4px;
-      padding-bottom: 24px;
+      --lane-height: 190px;
+      --lane-offset: 6px;
     }
 
     .shelf.shelf-2 .book {
-      --book-drop: var(--shelf2-drop);
       --book-scale: 0.83;
-      --book-settle: 7px;
-      --book-img-nudge: 3px;
     }
 
     /* Book item */
@@ -145,8 +138,8 @@
       cursor: pointer;
       max-width: 180px;
       --book-scale: 0.9;
-      --book-settle: 4px;
-      transform: translateY(calc(var(--book-drop, 0px) + var(--book-settle, 0px)));
+      --book-nudge: 0px;
+      transform: translateY(var(--book-nudge));
     }
 
     .book img {
@@ -156,13 +149,13 @@
       border-radius: 4px;
       box-shadow: 0 6px 14px rgba(0,0,0,0.42);
       filter: drop-shadow(0 8px 10px rgba(0,0,0,0.25));
-      transform: translateY(var(--book-img-nudge, 0px)) scale(var(--book-scale, 1));
+      transform: scale(var(--book-scale, 1));
       transform-origin: center bottom;
     }
 
     /* Hover effect - lift book slightly */
     .book:hover {
-      transform: translateY(calc(var(--book-drop, 0px) + var(--book-settle, 0px) - 15px));
+      transform: translateY(calc(var(--book-nudge) - 12px));
     }
 
     .book:hover img {
@@ -186,18 +179,17 @@
 
       .shelf {
         gap: 16px;
-        min-height: 180px;
-        padding-bottom: 18px;
+        height: var(--lane-height-mobile, 180px);
       }
 
       .shelf.shelf-1 {
-        padding-top: 0;
-        padding-bottom: 24px;
+        --lane-height-mobile: 180px;
+        --lane-offset: 4px;
       }
 
       .shelf.shelf-2 {
-        padding-top: 2px;
-        padding-bottom: 20px;
+        --lane-height-mobile: 160px;
+        --lane-offset: 2px;
       }
 
       .book {
@@ -206,12 +198,10 @@
 
       .shelf.shelf-1 .book {
         --book-scale: 0.86;
-        --book-settle: 6px;
       }
 
       .shelf.shelf-2 .book {
         --book-scale: 0.8;
-        --book-settle: 7px;
       }
     }
 
@@ -229,13 +219,10 @@
         background-position: center top;
         background-size: 100% auto;
         padding-top: clamp(82px, 18vw, 150px);
-        --shelf1-drop: 14px;
-        --shelf2-drop: 13px;
       }
 
       .shelf {
         gap: 12px;
-        padding-bottom: 16px;
       }
 
       .shelves {
@@ -244,12 +231,13 @@
       }
 
       .shelf.shelf-1 {
-        padding-bottom: 20px;
+        --lane-height-mobile: 170px;
+        --lane-offset: 2px;
       }
 
       .shelf.shelf-2 {
-        padding-top: 0;
-        padding-bottom: 18px;
+        --lane-height-mobile: 150px;
+        --lane-offset: 0px;
       }
 
       .book {
@@ -258,12 +246,10 @@
 
       .shelf.shelf-1 .book {
         --book-scale: 0.84;
-        --book-settle: 6px;
       }
 
       .shelf.shelf-2 .book {
         --book-scale: 0.78;
-        --book-settle: 7px;
       }
     }
 
@@ -271,8 +257,6 @@
       .bookshelf-container {
         background-position: center top;
         background-size: min(1050px, 100%) auto;
-        --shelf1-drop: 9px;
-        --shelf2-drop: 8px;
       }
 
       .shelves {
@@ -282,31 +266,31 @@
 
       .shelf {
         gap: 22px;
-        padding-bottom: 18px;
+        height: var(--lane-height-desktop, var(--lane-height, 200px));
       }
 
       .shelf.shelf-1 {
-        padding-bottom: 22px;
+        --lane-height-desktop: 230px;
+        --lane-offset: 10px;
       }
 
       .shelf.shelf-2 {
-        padding-bottom: 20px;
+        --lane-height-desktop: 205px;
+        --lane-offset: 8px;
       }
 
       .book {
         max-width: 190px;
         --book-scale: 0.9;
-        --book-settle: 5px;
+        --book-nudge: 2px;
       }
 
       .shelf.shelf-1 .book {
         --book-scale: 0.9;
-        --book-settle: 6px;
       }
 
       .shelf.shelf-2 .book {
         --book-scale: 0.85;
-        --book-settle: 7px;
       }
     }
 
