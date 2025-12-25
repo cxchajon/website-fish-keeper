@@ -59,10 +59,11 @@
       position: relative;
       min-height: 100vh;
       background-image: url('assets/media/IMG_3428.png');
-      background-size: cover;
-      background-position: center 12%;
+      background-size: 100% auto;
+      background-position: center top;
       background-repeat: no-repeat;
       background-attachment: fixed;
+      padding-top: clamp(96px, 14vw, 180px);
     }
 
     /* Header overlay */
@@ -186,7 +187,9 @@
 
       .bookshelf-container {
         background-attachment: scroll;
-        background-position: center 10%;
+        background-position: center top;
+        background-size: 100% auto;
+        padding-top: clamp(82px, 18vw, 150px);
       }
 
       .shelf {
@@ -209,7 +212,8 @@
 
     @media (min-width: 1024px) {
       .bookshelf-container {
-        background-position: center 8%;
+        background-position: center top;
+        background-size: min(1050px, 100%) auto;
       }
 
       .shelves {
