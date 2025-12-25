@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Prototype - The Tank Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1a1a1a;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .bookshelf-container {
+            position: relative;
+            width: 100%;
+            background-image: url('assets/media/IMG_3428.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            aspect-ratio: 665 / 1559;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .shelf {
+            position: absolute;
+            left: 5%;
+            right: 5%;
+            height: 18%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 0 20px;
+        }
+
+        .shelf-1 { top: 21%; }
+        .shelf-2 { top: 38%; }
+        .shelf-3 { top: 54%; }
+        .shelf-4 { top: 71%; }
+
+        .product {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 12px;
+            width: 140px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .product img {
+            width: 100%;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 8px;
+        }
+
+        .product-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        .product-price {
+            font-size: 12px;
+            color: #27ae60;
+            font-weight: 700;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            .product {
+                width: 100px;
+                padding: 8px;
+            }
+
+            .product img {
+                height: 70px;
+            }
+
+            .product-title {
+                font-size: 9px;
+            }
+
+            .product-price {
+                font-size: 10px;
+            }
+
+            .shelf {
+                gap: 8px;
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 The Tank Guide Store</h1>
+            <p>Curated aquarium books & resources</p>
+        </div>
+
+        <div class="bookshelf-container">
+            <div class="shelf shelf-1" id="shelf-1"></div>
+            <div class="shelf shelf-2" id="shelf-2"></div>
+            <div class="shelf shelf-3" id="shelf-3"></div>
+            <div class="shelf shelf-4" id="shelf-4"></div>
+        </div>
+    </div>
+
+    <script>
+        // Real products from The Tank Guide store
+        const products = [
+            {
+                title: "Life in Balance: The Hidden Magic of Aquariums",
+                image: "assets/books/book-cover-web.jpg",
+                price: "View on Amazon",
+                link: "https://amzn.to/4oPo5sF"
+            },
+            {
+                title: "Life in Balance Coloring Book Vol. 1",
+                image: "assets/books/Front%20of%20coloring%20book%20vol.1.jpeg",
+                price: "View on Amazon",
+                link: "https://www.amazon.com/dp/B0FZ2PQDVZ/ref=cm_sw_r_as_gl_api_gl_i_K2WHJH1XE9EVG25Q52FQ?linkCode=ml1&tag=fishkeepingli-20&linkId=ecb4921e0ff99c3109ff35125da2965f"
+            },
+            {
+                title: "Life in Balance Coloring Book Vol. 2",
+                image: "assets/books/coloring-book-vol2-cover-front.jpg",
+                price: "View on Amazon",
+                link: "https://amzn.to/3LHR6aZ"
+            },
+            {
+                title: "The Daily Tank Journal",
+                image: "assets/books/daily-tank-journal-unplanted-cover-front.jpg",
+                price: "View on Amazon",
+                link: "https://amzn.to/4o6oK7V"
+            },
+            {
+                title: "The Daily Tank Journal: Planted Edition",
+                image: "assets/books/daily-tank-journal-planted-cover-front.jpg",
+                price: "View on Amazon",
+                link: "https://amzn.to/3LSH72B"
+            }
+        ];
+
+        function renderProducts() {
+            const shelves = ['shelf-1', 'shelf-2', 'shelf-3', 'shelf-4'];
+            const itemsPerShelf = Math.ceil(products.length / shelves.length);
+
+            shelves.forEach((shelfId, index) => {
+                const shelf = document.getElementById(shelfId);
+                const startIdx = index * itemsPerShelf;
+                const shelfProducts = products.slice(startIdx, startIdx + itemsPerShelf);
+
+                shelfProducts.forEach(product => {
+                    const productEl = document.createElement('a');
+                    productEl.className = 'product';
+                    productEl.href = product.link;
+                    productEl.target = '_blank';
+                    productEl.rel = 'sponsored noopener noreferrer';
+
+                    productEl.innerHTML = `
+                        <img src="${product.image}" alt="${product.title}">
+                        <div class="product-title">${product.title}</div>
+                        <div class="product-price">${product.price}</div>
+                    `;
+
+                    shelf.appendChild(productEl);
+                });
+            });
+        }
+
+        // Render products on page load
+        renderProducts();
+    </script>
+</body>
+</html>
