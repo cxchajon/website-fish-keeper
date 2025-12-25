@@ -17,13 +17,48 @@
       background: #2a2520;
     }
 
+    /* Skip link for accessibility */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: #000;
+      color: #fff;
+      padding: 8px;
+      text-decoration: none;
+      z-index: 100;
+    }
+
+    .skip-link:focus {
+      top: 0;
+    }
+
+    /* Legal links */
+    .legal-links {
+      text-align: center;
+      padding: 20px;
+      background: rgba(0,0,0,0.3);
+      margin-top: 40px;
+    }
+
+    .legal-links a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 0.9rem;
+    }
+
+    .legal-links a:hover {
+      text-decoration: underline;
+    }
+
     /* Full-page bookshelf background */
     .bookshelf-container {
       position: relative;
       min-height: 100vh;
       background-image: url('assets/media/IMG_3428.png');
       background-size: cover;
-      background-position: center top;
+      background-position: center center;
       background-repeat: no-repeat;
       background-attachment: fixed;
     }
@@ -148,7 +183,10 @@
   </style>
 </head>
 <body>
-  <div class="bookshelf-container">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div id="site-nav"></div>
+
+  <div class="bookshelf-container" id="main-content">
     <!-- Header -->
     <header class="store-header">
       <h1>The Tank Guide Bookshelf</h1>
@@ -191,19 +229,24 @@
       }
     ];
 
-    // Distribute books across 4 shelves
-    const NUM_SHELVES = 4;
-    const booksPerShelf = Math.ceil(products.length / NUM_SHELVES);
+    // Distribute books across 4 shelves with specific placement
     const shelvesContainer = document.getElementById('shelves-container');
 
-    // Create shelves and distribute books
-    for (let i = 0; i < NUM_SHELVES; i++) {
+    // Shelf 1: Life in Balance books (first 3 books)
+    // Shelf 2: Daily Tank Journals (next 2 books)
+    // Shelf 3 & 4: Empty for now (can add more books later)
+    const shelfDistribution = [
+      products.slice(0, 3),  // Shelf 1: 3 Life in Balance books
+      products.slice(3, 5),  // Shelf 2: 2 Daily Tank Journals
+      [],                    // Shelf 3: Empty
+      []                     // Shelf 4: Empty
+    ];
+
+    // Create shelves and populate with books
+    shelfDistribution.forEach((shelfBooks, index) => {
       const shelf = document.createElement('div');
       shelf.className = 'shelf';
-
-      const startIdx = i * booksPerShelf;
-      const endIdx = Math.min(startIdx + booksPerShelf, products.length);
-      const shelfBooks = products.slice(startIdx, endIdx);
+      shelf.setAttribute('data-shelf', index + 1);
 
       shelfBooks.forEach(product => {
         const bookLink = document.createElement('a');
@@ -222,7 +265,27 @@
       });
 
       shelvesContainer.appendChild(shelf);
-    }
+    });
   </script>
+
+  <!-- Footer and Navigation Scripts -->
+  <script defer src="/js/nav.js?v=1.1.0"></script>
+  <script src="/js/footer-loader.js?v=1.5.2" defer></script>
+
+  <section class="legal-links" aria-label="Site legal links">
+    <a href="/privacy-legal.html">Privacy Policy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/contact-feedback.html">Contact</a>
+  </section>
+
+  <noscript>
+    <section class="legal-links" aria-label="Site legal links (noscript)">
+      <a href="/privacy-legal.html">Privacy Policy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/contact-feedback.html">Contact</a>
+    </section>
+  </noscript>
+
+  <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
 </body>
 </html>
