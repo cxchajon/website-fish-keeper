@@ -121,6 +121,9 @@
 
     .shelf.shelf-1 .book {
       --book-drop: var(--shelf1-drop);
+      --book-scale: 0.88;
+      --book-settle: 6px;
+      --book-img-nudge: 2px;
     }
 
     .shelf.shelf-2 {
@@ -130,6 +133,9 @@
 
     .shelf.shelf-2 .book {
       --book-drop: var(--shelf2-drop);
+      --book-scale: 0.83;
+      --book-settle: 7px;
+      --book-img-nudge: 3px;
     }
 
     /* Book item */
@@ -138,7 +144,9 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
       max-width: 180px;
-      transform: translateY(var(--book-drop, 0px));
+      --book-scale: 0.9;
+      --book-settle: 4px;
+      transform: translateY(calc(var(--book-drop, 0px) + var(--book-settle, 0px)));
     }
 
     .book img {
@@ -148,11 +156,13 @@
       border-radius: 4px;
       box-shadow: 0 6px 14px rgba(0,0,0,0.42);
       filter: drop-shadow(0 8px 10px rgba(0,0,0,0.25));
+      transform: translateY(var(--book-img-nudge, 0px)) scale(var(--book-scale, 1));
+      transform-origin: center bottom;
     }
 
     /* Hover effect - lift book slightly */
     .book:hover {
-      transform: translateY(calc(var(--book-drop, 0px) - 15px));
+      transform: translateY(calc(var(--book-drop, 0px) + var(--book-settle, 0px) - 15px));
     }
 
     .book:hover img {
@@ -192,6 +202,16 @@
 
       .book {
         max-width: 130px;
+      }
+
+      .shelf.shelf-1 .book {
+        --book-scale: 0.86;
+        --book-settle: 6px;
+      }
+
+      .shelf.shelf-2 .book {
+        --book-scale: 0.8;
+        --book-settle: 7px;
       }
     }
 
@@ -235,6 +255,16 @@
       .book {
         max-width: 115px;
       }
+
+      .shelf.shelf-1 .book {
+        --book-scale: 0.84;
+        --book-settle: 6px;
+      }
+
+      .shelf.shelf-2 .book {
+        --book-scale: 0.78;
+        --book-settle: 7px;
+      }
     }
 
     @media (min-width: 1024px) {
@@ -265,6 +295,18 @@
 
       .book {
         max-width: 190px;
+        --book-scale: 0.9;
+        --book-settle: 5px;
+      }
+
+      .shelf.shelf-1 .book {
+        --book-scale: 0.9;
+        --book-settle: 6px;
+      }
+
+      .shelf.shelf-2 .book {
+        --book-scale: 0.85;
+        --book-settle: 7px;
       }
     }
 
