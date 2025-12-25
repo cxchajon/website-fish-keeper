@@ -89,32 +89,40 @@
       position: relative;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 20px clamp(280px, 34vw, 420px);
-      min-height: clamp(980px, 130vh, 1520px);
+      padding: 0 20px 140px;
     }
 
     .shelf-stage {
       position: relative;
       width: 100%;
-      aspect-ratio: 1344 / 3168;
-      height: clamp(820px, 120vh, 1120px);
-      min-height: clamp(820px, 120vh, 1120px);
-      background-image: url('assets/media/IMG_3428.png');
-      background-repeat: no-repeat;
-      background-position: center top;
-      background-size: auto 100%;
+      height: clamp(760px, 92vh, 1160px);
+      overflow: hidden;
       isolation: isolate;
+      background: #201a14;
+    }
+
+    .shelf-art {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
     }
 
     .shelf-lane {
       position: absolute;
-      left: 8%;
-      width: 84%;
+      left: 6%;
+      width: 88%;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: clamp(10px, 2.4vw, 18px);
       pointer-events: auto;
+      z-index: 1;
     }
 
     .shelf-lane a {
@@ -127,26 +135,27 @@
       display: block;
       border-radius: 8px;
       box-shadow: 0 6px 14px rgba(0,0,0,0.42);
-      filter: drop-shadow(0 8px 10px rgba(0,0,0,0.25));
+      filter: drop-shadow(0 6px 8px rgba(0,0,0,0.28));
+      transform: translateY(2px);
     }
 
     .shelf-lane--top {
-      top: 22%;
+      top: 185px;
       height: 18%;
     }
 
     .shelf-lane--top a {
-      width: clamp(82px, 20vw, 125px);
-      transform: scale(0.92);
+      width: clamp(78px, 19vw, 122px);
+      transform: scale(0.9);
     }
 
     .shelf-lane--bottom {
-      top: 40.5%;
+      top: 430px;
       height: 17%;
     }
 
     .shelf-lane--bottom a {
-      width: clamp(84px, 21vw, 130px);
+      width: clamp(82px, 20vw, 128px);
       transform: scale(0.9);
     }
 
@@ -216,15 +225,11 @@
       }
 
       .shelves {
-        padding: 160px 30px clamp(340px, 26vw, 460px);
-        min-height: clamp(1180px, 130vh, 1680px);
+        padding: 160px 30px 200px;
       }
 
       .shelf-stage {
-        height: clamp(980px, 118vh, 1340px);
-        min-height: clamp(980px, 118vh, 1340px);
-        background-size: auto 100%;
-        background-position: center top;
+        height: clamp(900px, 96vh, 1280px);
       }
 
       .shelf-lane {
@@ -232,22 +237,22 @@
       }
 
       .shelf-lane--top {
-        top: 22.5%;
+        top: 210px;
         height: 17%;
       }
 
       .shelf-lane--top a {
-        width: clamp(100px, 15vw, 165px);
-        transform: scale(0.94);
+        width: clamp(96px, 14vw, 158px);
+        transform: scale(0.92);
       }
 
       .shelf-lane--bottom {
-        top: 34.5%;
+        top: 470px;
         height: 16%;
       }
 
       .shelf-lane--bottom a {
-        width: clamp(108px, 17vw, 175px);
+        width: clamp(102px, 16vw, 168px);
         transform: scale(0.92);
       }
     }
@@ -698,6 +703,7 @@
     <!-- Shelves with books -->
     <div class="shelves" id="shelves-container">
       <div class="shelf-stage" aria-label="Bookshelf display area">
+        <img class="shelf-art" src="assets/media/IMG_3428.png" alt="" aria-hidden="true" decoding="async" loading="eager">
         <div class="shelf-lane shelf-lane--top" id="shelfTop" aria-label="Top shelf books"></div>
         <div class="shelf-lane shelf-lane--bottom" id="shelfBottom" aria-label="Lower shelf journals"></div>
       </div>
