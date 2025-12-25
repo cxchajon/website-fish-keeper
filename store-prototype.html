@@ -92,74 +92,87 @@
     /* Shelves container */
     .shelves {
       position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 125px;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 140px 20px 190px;
+      padding: 0 20px clamp(280px, 34vw, 420px);
+      min-height: clamp(980px, 130vh, 1520px);
+    }
+
+    .shelf-stage {
+      position: relative;
+      width: 100%;
+      min-height: clamp(880px, 120vh, 1400px);
+      isolation: isolate;
+    }
+
+    .shelf-lane {
+      position: absolute;
+      left: 8%;
+      width: 84%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(12px, 3vw, 22px);
+      pointer-events: auto;
+    }
+
+    .shelf-lane a {
+      display: block;
+    }
+
+    .shelf-lane img {
+      height: auto;
+      max-width: 100%;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.42);
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,0.25));
+    }
+
+    .shelf-lane--top {
+      top: 110px;
+      height: 190px;
+    }
+
+    .shelf-lane--top a {
+      width: clamp(92px, 22vw, 140px);
+    }
+
+    .shelf-lane--bottom {
+      top: 520px;
+      height: 210px;
+    }
+
+    .shelf-lane--bottom a {
+      width: clamp(96px, 24vw, 150px);
     }
 
     /* Individual shelf */
     .shelf {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: clamp(14px, 4vw, 28px);
-      height: var(--lane-height, 200px);
-      flex-wrap: wrap;
+      position: static !important;
+      display: block;
+      transform: none !important;
       padding: 0;
-      transform: translateY(var(--lane-offset, 0px));
-      overflow: visible;
-    }
-
-    .shelf.shelf-1 {
-      --lane-height: 210px;
-      --lane-offset: 8px;
-    }
-
-    .shelf.shelf-1 .book {
-      --book-scale: 0.88;
-    }
-
-    .shelf.shelf-2 {
-      --lane-height: 190px;
-      --lane-offset: 6px;
-    }
-
-    .shelf.shelf-2 .book {
-      --book-scale: 0.83;
+      margin: 0;
+      height: auto;
     }
 
     /* Book item */
     .book {
       display: block;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
-      max-width: 180px;
-      --book-scale: 0.9;
-      --book-nudge: 0px;
-      transform: translateY(var(--book-nudge));
+      max-width: none;
+      position: static;
+      transform: none !important;
+      top: auto !important;
+      left: auto !important;
     }
 
     .book img {
       display: block;
       width: 100%;
       height: auto;
-      border-radius: 4px;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.42);
-      filter: drop-shadow(0 8px 10px rgba(0,0,0,0.25));
-      transform: scale(var(--book-scale, 1));
-      transform-origin: center bottom;
-    }
-
-    /* Hover effect - lift book slightly */
-    .book:hover {
-      transform: translateY(calc(var(--book-nudge) - 12px));
-    }
-
-    .book:hover img {
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      border-radius: 8px;
     }
 
     /* Mobile optimization */
@@ -173,35 +186,7 @@
       }
 
       .shelves {
-        padding: 100px 15px 150px;
-        gap: 100px;
-      }
-
-      .shelf {
-        gap: 16px;
-        height: var(--lane-height-mobile, 180px);
-      }
-
-      .shelf.shelf-1 {
-        --lane-height-mobile: 180px;
-        --lane-offset: 4px;
-      }
-
-      .shelf.shelf-2 {
-        --lane-height-mobile: 160px;
-        --lane-offset: 2px;
-      }
-
-      .book {
-        max-width: 130px;
-      }
-
-      .shelf.shelf-1 .book {
-        --book-scale: 0.86;
-      }
-
-      .shelf.shelf-2 .book {
-        --book-scale: 0.8;
+        padding: 80px 15px clamp(240px, 34vw, 340px);
       }
     }
 
@@ -221,35 +206,8 @@
         padding-top: clamp(82px, 18vw, 150px);
       }
 
-      .shelf {
-        gap: 12px;
-      }
-
       .shelves {
-        padding: 80px 12px 120px;
-        gap: 82px;
-      }
-
-      .shelf.shelf-1 {
-        --lane-height-mobile: 170px;
-        --lane-offset: 2px;
-      }
-
-      .shelf.shelf-2 {
-        --lane-height-mobile: 150px;
-        --lane-offset: 0px;
-      }
-
-      .book {
-        max-width: 115px;
-      }
-
-      .shelf.shelf-1 .book {
-        --book-scale: 0.84;
-      }
-
-      .shelf.shelf-2 .book {
-        --book-scale: 0.78;
+        padding: 70px 12px clamp(220px, 40vw, 320px);
       }
     }
 
@@ -260,37 +218,34 @@
       }
 
       .shelves {
-        padding: 170px 30px 220px;
-        gap: 140px;
+        padding: 160px 30px clamp(340px, 26vw, 460px);
+        min-height: clamp(1180px, 130vh, 1680px);
       }
 
-      .shelf {
-        gap: 22px;
-        height: var(--lane-height-desktop, var(--lane-height, 200px));
+      .shelf-stage {
+        min-height: clamp(1200px, 140vh, 1800px);
       }
 
-      .shelf.shelf-1 {
-        --lane-height-desktop: 230px;
-        --lane-offset: 10px;
+      .shelf-lane {
+        gap: clamp(16px, 2vw, 28px);
       }
 
-      .shelf.shelf-2 {
-        --lane-height-desktop: 205px;
-        --lane-offset: 8px;
+      .shelf-lane--top {
+        top: 270px;
+        height: 220px;
       }
 
-      .book {
-        max-width: 190px;
-        --book-scale: 0.9;
-        --book-nudge: 2px;
+      .shelf-lane--top a {
+        width: clamp(110px, 16vw, 180px);
       }
 
-      .shelf.shelf-1 .book {
-        --book-scale: 0.9;
+      .shelf-lane--bottom {
+        top: 1250px;
+        height: 260px;
       }
 
-      .shelf.shelf-2 .book {
-        --book-scale: 0.85;
+      .shelf-lane--bottom a {
+        width: clamp(120px, 18vw, 190px);
       }
     }
 
@@ -739,7 +694,10 @@
 
     <!-- Shelves with books -->
     <div class="shelves" id="shelves-container">
-      <!-- Shelves will be generated by JavaScript -->
+      <div class="shelf-stage" aria-label="Bookshelf display area">
+        <div class="shelf-lane shelf-lane--top" id="shelfTop" aria-label="Top shelf books"></div>
+        <div class="shelf-lane shelf-lane--bottom" id="shelfBottom" aria-label="Lower shelf journals"></div>
+      </div>
     </div>
   </div>
 
@@ -773,27 +731,17 @@
       }
     ];
 
-    // Distribute books across 4 shelves with specific placement
-    const shelvesContainer = document.getElementById('shelves-container');
+    // Place books into explicit shelf lanes
+    const shelfTop = document.getElementById('shelfTop');
+    const shelfBottom = document.getElementById('shelfBottom');
 
-    // Shelf 1: Life in Balance books (first 3 books)
-    // Shelf 2: Daily Tank Journals (next 2 books)
-    // Shelf 3 & 4: Empty for now (can add more books later)
-    const shelfDistribution = [
-      products.slice(0, 3),  // Shelf 1: 3 Life in Balance books
-      products.slice(3, 5),  // Shelf 2: 2 Daily Tank Journals
-      [],                    // Shelf 3: Empty
-      []                     // Shelf 4: Empty
+    const shelfGroups = [
+      { lane: shelfTop, items: products.slice(0, 3) },
+      { lane: shelfBottom, items: products.slice(3, 5) }
     ];
 
-    // Create shelves and populate with books
-    shelfDistribution.forEach((shelfBooks, index) => {
-      const shelf = document.createElement('div');
-      const shelfIndex = index + 1;
-      shelf.className = `shelf shelf-${shelfIndex}`;
-      shelf.setAttribute('data-shelf', shelfIndex);
-
-      shelfBooks.forEach(product => {
+    shelfGroups.forEach(group => {
+      group.items.forEach(product => {
         const bookLink = document.createElement('a');
         bookLink.href = product.link;
         bookLink.className = 'book';
@@ -806,10 +754,8 @@
         bookImg.loading = 'lazy';
 
         bookLink.appendChild(bookImg);
-        shelf.appendChild(bookLink);
+        group.lane.appendChild(bookLink);
       });
-
-      shelvesContainer.appendChild(shelf);
     });
   </script>
 
