@@ -58,11 +58,6 @@
     .bookshelf-container {
       position: relative;
       min-height: 100vh;
-      background-image: url('assets/media/IMG_3428.png');
-      background-size: 100% auto;
-      background-position: center top;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
       padding-top: clamp(96px, 14vw, 180px);
     }
 
@@ -101,7 +96,12 @@
     .shelf-stage {
       position: relative;
       width: 100%;
-      min-height: clamp(880px, 120vh, 1400px);
+      aspect-ratio: 1344 / 3168;
+      min-height: clamp(800px, 220vw, 2400px);
+      background-image: url('assets/media/IMG_3428.png');
+      background-repeat: no-repeat;
+      background-position: center top;
+      background-size: 100% auto;
       isolation: isolate;
     }
 
@@ -130,8 +130,8 @@
     }
 
     .shelf-lane--top {
-      top: 110px;
-      height: 190px;
+      top: 22%;
+      height: 18%;
     }
 
     .shelf-lane--top a {
@@ -139,8 +139,8 @@
     }
 
     .shelf-lane--bottom {
-      top: 520px;
-      height: 210px;
+      top: 40.5%;
+      height: 17%;
     }
 
     .shelf-lane--bottom a {
@@ -200,9 +200,6 @@
       }
 
       .bookshelf-container {
-        background-attachment: scroll;
-        background-position: center top;
-        background-size: 100% auto;
         padding-top: clamp(82px, 18vw, 150px);
       }
 
@@ -213,8 +210,6 @@
 
     @media (min-width: 1024px) {
       .bookshelf-container {
-        background-position: center top;
-        background-size: min(1050px, 100%) auto;
       }
 
       .shelves {
@@ -223,7 +218,8 @@
       }
 
       .shelf-stage {
-        min-height: clamp(1200px, 140vh, 1800px);
+        min-height: clamp(1500px, 130vh, 2400px);
+        background-size: min(1050px, 100%) auto;
       }
 
       .shelf-lane {
@@ -231,8 +227,8 @@
       }
 
       .shelf-lane--top {
-        top: 270px;
-        height: 220px;
+        top: 22.5%;
+        height: 17%;
       }
 
       .shelf-lane--top a {
@@ -240,8 +236,8 @@
       }
 
       .shelf-lane--bottom {
-        top: 1250px;
-        height: 260px;
+        top: 34.5%;
+        height: 16%;
       }
 
       .shelf-lane--bottom a {
