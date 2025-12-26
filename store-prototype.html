@@ -85,22 +85,24 @@
 
     /* Shelves container */
     .shelves {
-      position: relative;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 20px 100px;
+      padding: 0 20px 40px;
     }
 
+    /* Pinned stage: aspect ratio locks shelf plank positions across devices */
     .shelf-stage {
       position: relative;
       width: 100%;
       aspect-ratio: 461 / 1000;
-      max-width: 520px;
+      max-width: 500px;
       margin: 0 auto;
       overflow: hidden;
+      background: #201a14;
       isolation: isolate;
     }
 
+    /* Shelf artwork is pinned and cannot move */
     .shelf-art {
       position: absolute;
       inset: 0;
@@ -112,70 +114,50 @@
       user-select: none;
     }
 
+    /* Lanes sit on exact shelf floors */
     .shelf-lane {
       position: absolute;
-      left: 8%;
-      width: 84%;
+      left: 10%;
+      width: 80%;
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      gap: 12px;
-      z-index: 5;
+      gap: 10px;
+      z-index: 10;
       pointer-events: auto;
     }
 
+    /* TOP SHELF (#1) */
     .shelf-lane--top {
-      top: 38.5%;
+      top: 23%;
       height: 14%;
     }
 
+    /* SECOND SHELF (#2) */
     .shelf-lane--bottom {
-      top: 55.5%;
+      top: 39.5%;
       height: 14%;
     }
 
-    .shelf-lane a.book {
-      height: 100%;
-      display: block;
-    }
-
-    .shelf-lane a.book img {
-      height: 100%;
-      width: auto;
-      display: block;
-      border-radius: 2px 4px 4px 2px;
-      filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.4));
-      box-shadow:
-        inset 3px 0 5px rgba(0,0,0,0.1),
-        0 8px 6px -4px rgba(0,0,0,0.7);
-    }
-
-    /* Individual shelf */
-    .shelf {
-      position: static !important;
-      display: block;
-      transform: none !important;
-      padding: 0;
-      margin: 0;
-      height: auto;
-    }
-
-    /* Book item */
+    /* Books scale by lane height -> smaller, more realistic */
     .book {
       display: block;
-      cursor: pointer;
-      max-width: none;
-      position: static;
-      transform: none !important;
-      top: auto !important;
-      left: auto !important;
+      height: 100%;
+      transition: transform 0.2s ease;
     }
 
     .book img {
       display: block;
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
+      width: auto;
+      height: 100%;
+      border-radius: 2px 4px 4px 2px;
+      filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+      box-shadow: 0 10px 8px -6px rgba(0,0,0,0.8);
+    }
+
+    .book:hover {
+      transform: translateY(-5px) scale(1.05);
+      z-index: 20;
     }
 
     /* Mobile optimization */
@@ -186,10 +168,6 @@
 
       .store-header p {
         font-size: 1rem;
-      }
-
-      .shelves {
-        padding: 60px 15px 80px;
       }
     }
 
@@ -205,20 +183,9 @@
       .bookshelf-container {
         padding-top: clamp(82px, 18vw, 150px);
       }
-
-      .shelves {
-        padding: 50px 12px 70px;
-      }
     }
 
     @media (min-width: 1024px) {
-      .shelves {
-        padding: 120px 30px 140px;
-      }
-
-      .shelf-stage {
-        max-width: 640px;
-      }
     }
 
     /* Prototype-only nav/footer fixes (scoped) */
