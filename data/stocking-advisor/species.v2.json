@@ -189,6 +189,140 @@
     }
   },
   {
+    "name": "Blue Ram (German Blue Ram)",
+    "slug": "blue-ram",
+    "id": "blue-ram",
+    "tags": [
+      "cichlid",
+      "centerpiece",
+      "colorful",
+      "sensitive",
+      "bottom_dweller",
+      "shrimp_risk",
+      "snail_safe",
+      "low_flow"
+    ],
+    "aggression": {
+      "baseline": 0.34,
+      "vectors": {
+        "intraspecificMale": 0.55,
+        "interspecificGeneral": 0.30,
+        "finNipperRisk": 0.10,
+        "invertebratePredator": 0.50
+      }
+    },
+    "bioload": {
+      "multiplier": 1.30,
+      "components": {
+        "sizeFactor": 1.10,
+        "metabolismFactor": 1.20,
+        "dietFactor": 1.00
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [5.0, 7.0],
+        "tolerable": [5.0, 7.0],
+        "preferred": 6.0
+      },
+      "temperature": {
+        "optimal": [80.6, 86.0],
+        "tolerable": [80.6, 86.0],
+        "preferred": 83.3
+      },
+      "kh": { "optimal": [1, 5], "tolerable": [1, 5], "unit": "dKH" },
+      "gh": { "optimal": [1, 10], "tolerable": [1, 10], "unit": "dGH" },
+      "flow": "low"
+    },
+    "min_tank_liters": 60,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (all sizes)"],
+      "incompatibilities": [],
+      "notes": "Extremely sensitive to nitrates and water fluctuations. Requires high temperatures (27C+) which limits tank mate options."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Bolivian Ram",
+    "slug": "bolivian-ram",
+    "id": "bolivian-ram",
+    "tags": [
+      "cichlid",
+      "centerpiece",
+      "beginner",
+      "peaceful",
+      "bottom_dweller",
+      "shrimp_risk",
+      "snail_safe",
+      "low_flow"
+    ],
+    "aggression": {
+      "baseline": 0.32,
+      "vectors": {
+        "intraspecificMale": 0.48,
+        "interspecificGeneral": 0.28,
+        "finNipperRisk": 0.08,
+        "invertebratePredator": 0.45
+      }
+    },
+    "bioload": {
+      "multiplier": 1.50,
+      "components": {
+        "sizeFactor": 1.40,
+        "metabolismFactor": 1.15,
+        "dietFactor": 1.10
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 7.5],
+        "tolerable": [6.0, 7.5],
+        "preferred": 6.8
+      },
+      "temperature": {
+        "optimal": [71.6, 78.8],
+        "tolerable": [71.6, 78.8],
+        "preferred": 75.2
+      },
+      "kh": { "optimal": [3, 10], "tolerable": [3, 10], "unit": "dKH" },
+      "gh": { "optimal": [5, 15], "tolerable": [5, 15], "unit": "dGH" },
+      "flow": "low"
+    },
+    "min_tank_liters": 75,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (all sizes)"],
+      "incompatibilities": [],
+      "notes": "Much hardier and more temperature-flexible than the Blue Ram. Excellent beginner cichlid for community tanks."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
     "name": "Betta (Female)",
     "slug": "betta-female",
     "id": "betta_female",
@@ -745,6 +879,73 @@
     "sources": {
       "primary": ["FishBase", "SeriouslyFish"],
       "secondary": ["Aquarium Co-Op", "The Planted Tank"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Cockatoo Cichlid (Apisto)",
+    "slug": "cockatoo-cichlid",
+    "id": "cockatoo-cichlid",
+    "tags": [
+      "cichlid",
+      "apisto",
+      "colorful",
+      "centerpiece",
+      "bottom_dweller",
+      "shrimp_risk",
+      "snail_safe",
+      "low_flow"
+    ],
+    "aggression": {
+      "baseline": 0.38,
+      "vectors": {
+        "intraspecificMale": 0.55,
+        "interspecificGeneral": 0.32,
+        "finNipperRisk": 0.12,
+        "invertebratePredator": 0.45
+      }
+    },
+    "bioload": {
+      "multiplier": 1.60,
+      "components": {
+        "sizeFactor": 1.40,
+        "metabolismFactor": 1.15,
+        "dietFactor": 1.10
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 7.8],
+        "tolerable": [6.0, 7.8],
+        "preferred": 6.9
+      },
+      "temperature": {
+        "optimal": [73.4, 82.4],
+        "tolerable": [73.4, 82.4],
+        "preferred": 77.9
+      },
+      "kh": { "optimal": [2, 10], "tolerable": [2, 10], "unit": "dKH" },
+      "gh": { "optimal": [5, 15], "tolerable": [5, 15], "unit": "dGH" },
+      "flow": "low"
+    },
+    "min_tank_liters": 60,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (all sizes)"],
+      "incompatibilities": [],
+      "notes": "One of the most adaptable Apistogramma species regarding water hardness. Best kept in harems (1 male to 2+ females)."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
       "dateVerified": "2025-10-30"
     }
   },
@@ -1311,6 +1512,71 @@
     }
   },
   {
+    "name": "Keyhole Cichlid",
+    "slug": "keyhole-cichlid",
+    "id": "keyhole-cichlid",
+    "tags": [
+      "cichlid",
+      "shy",
+      "peaceful",
+      "community",
+      "snail_safe",
+      "low_flow"
+    ],
+    "aggression": {
+      "baseline": 0.18,
+      "vectors": {
+        "intraspecificMale": 0.25,
+        "interspecificGeneral": 0.18,
+        "finNipperRisk": 0.05,
+        "invertebratePredator": 0.20
+      }
+    },
+    "bioload": {
+      "multiplier": 1.90,
+      "components": {
+        "sizeFactor": 1.80,
+        "metabolismFactor": 0.95,
+        "dietFactor": 1.00
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 7.5],
+        "tolerable": [6.0, 7.5],
+        "preferred": 6.8
+      },
+      "temperature": {
+        "optimal": [71.6, 82.4],
+        "tolerable": [71.6, 82.4],
+        "preferred": 77.0
+      },
+      "kh": { "optimal": [2, 8], "tolerable": [2, 8], "unit": "dKH" },
+      "gh": { "optimal": [5, 15], "tolerable": [5, 15], "unit": "dGH" },
+      "flow": "low"
+    },
+    "min_tank_liters": 115,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": [],
+      "notes": "One of the shyest and most peaceful cichlids available. Will change color/pattern significantly when stressed or hiding."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
     "name": "Kuhli Loach",
     "slug": "kuhli-loach",
     "id": "kuhli_loach",
@@ -1369,6 +1635,73 @@
     "sources": {
       "primary": ["Loaches Online", "SeriouslyFish"],
       "secondary": ["Aquarium Co-Op", "Reddit r/Loaches"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Kribensis (Krib)",
+    "slug": "kribensis",
+    "id": "kribensis",
+    "tags": [
+      "cichlid",
+      "cave_spawner",
+      "colorful",
+      "hardy",
+      "bottom_dweller",
+      "shrimp_risk",
+      "snail_safe",
+      "requires_cover"
+    ],
+    "aggression": {
+      "baseline": 0.55,
+      "vectors": {
+        "intraspecificMale": 0.70,
+        "interspecificGeneral": 0.55,
+        "finNipperRisk": 0.18,
+        "invertebratePredator": 0.60
+      }
+    },
+    "bioload": {
+      "multiplier": 2.20,
+      "components": {
+        "sizeFactor": 1.80,
+        "metabolismFactor": 1.20,
+        "dietFactor": 1.10
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 8.0],
+        "tolerable": [6.0, 8.0],
+        "preferred": 7.0
+      },
+      "temperature": {
+        "optimal": [75.2, 80.6],
+        "tolerable": [75.2, 80.6],
+        "preferred": 77.9
+      },
+      "kh": { "optimal": [4, 12], "tolerable": [4, 12], "unit": "dKH" },
+      "gh": { "optimal": [5, 20], "tolerable": [5, 20], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "min_tank_liters": 75,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (all sizes)"],
+      "incompatibilities": [],
+      "notes": "Generally peaceful but becomes very aggressive when breeding. Requires caves (coconut shells, pots) to feel secure."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
       "dateVerified": "2025-10-30"
     }
   },
