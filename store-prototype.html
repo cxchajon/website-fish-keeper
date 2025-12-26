@@ -90,7 +90,7 @@
       padding: 0 20px 40px;
     }
 
-    /* --- Shelf stage: static art + percent-calibrated lanes --- */
+    /* Container Lock */
     .shelf-stage {
       position: relative;
       width: 100%;
@@ -117,38 +117,56 @@
       position: absolute;
       left: 10%;
       width: 80%;
-      height: 15%;
+      height: 16%;
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      gap: 10px;
+      gap: 12px;
       z-index: 10;
+      perspective: 1000px;
     }
 
-    /* Calibrated shelf floors (adjust ONLY these later if needed) */
-    .shelf-1 { top: 25.5%; } /* Top shelf with lights */
-    .shelf-2 { top: 43.5%; } /* Second shelf */
-    .shelf-3 { top: 61.5%; } /* Third shelf */
-    .shelf-4 { top: 79.5%; } /* Bottom shelf */
+    /* CALIBRATED POSITIONS */
+    .shelf-1 { top: 28.2%; }
+    .shelf-2 { top: 45.8%; }
+    .shelf-3 { top: 63.4%; }
+    .shelf-4 { top: 81.0%; }
 
+    /* Top shelf glow (lamp warmth) */
+    .shelf-1::after {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: radial-gradient(circle at 50% 0%, rgba(255,240,200,0.3) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    /* Books “sit” and feel weighted */
     .book {
       display: block;
-      height: 90%;
-      transition: transform 0.2s ease;
+      height: 85%;
+      transform-origin: bottom center;
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      filter: drop-shadow(2px 5px 8px rgba(0,0,0,0.4));
+      z-index: 10;
     }
 
     .book img {
       display: block;
       width: auto;
       height: 100%;
-      border-radius: 2px 4px 4px 2px;
-      filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
-      box-shadow: 0 8px 6px -4px rgba(0,0,0,0.8);
+      border-radius: 2px 5px 5px 2px;
+      box-shadow: 0 12px 10px -6px rgba(0,0,0,0.9);
     }
 
     .book:hover {
-      transform: translateY(-8px) scale(1.05);
-      z-index: 20;
+      z-index: 100;
+      filter: brightness(1.05) drop-shadow(10px 15px 20px rgba(0,0,0,0.5));
+      transform: translateY(-8px) scale(1.03);
     }
 
     /* Mobile optimization */
