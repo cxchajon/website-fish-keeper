@@ -127,10 +127,10 @@
     }
 
     /* CALIBRATED POSITIONS */
-    .shelf-1 { top: 11.5%; }
-    .shelf-2 { top: 29.0%; }
-    .shelf-3 { top: 46.5%; }
-    .shelf-4 { top: 64.0%; }
+    .shelf-1 { top: 28.5%; }
+    .shelf-2 { top: 46.0%; }
+    .shelf-3 { top: 63.5%; }
+    .shelf-4 { top: 81.0%; }
 
     /* Top shelf glow (lamp warmth) */
     .shelf-1::after {
@@ -145,26 +145,8 @@
       z-index: 15;
     }
 
-    /* Ghost boxes ONLY when test-mode is enabled */
-    .shelf-stage.test-mode .book {
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      height: 90%;
-      width: 80px;
-      background: rgba(255, 0, 0, 0.2);
-      border: 2px dashed red;
-      border-radius: 4px;
-      transform: none;
-      filter: none;
-    }
-
-    .shelf-stage.test-mode .book img {
-      display: none;
-    }
-
-    /* Production mode: normal covers */
-    .shelf-stage:not(.test-mode) .book {
+    /* Book covers */
+    .book {
       display: block;
       height: 90%;
       --tilt-rotateX: 0deg;
@@ -178,7 +160,7 @@
       z-index: 10;
     }
 
-    .shelf-stage:not(.test-mode) .book img {
+    .book img {
       display: block;
       width: auto;
       height: 100%;
@@ -187,7 +169,7 @@
       filter: drop-shadow(0 10px 8px rgba(0,0,0,0.5));
     }
 
-    .shelf-stage:not(.test-mode) .book:hover {
+    .book:hover {
       z-index: 100;
       filter: brightness(1.05) drop-shadow(10px 15px 20px rgba(0,0,0,0.5));
       --hover-translate: -8px;
@@ -679,9 +661,6 @@
   </div>
 
   <script>
-    const TEST_MODE_DEFAULT = false; // set true to force calibration mode
-    const TEST_MODE = new URLSearchParams(window.location.search).get('testMode') === '1' || TEST_MODE_DEFAULT;
-
     // Product data extracted from store.html
     const products = [
       {
@@ -712,10 +691,6 @@
     ];
 
     const shelfStage = document.getElementById('shelf-container');
-    if (shelfStage) {
-      shelfStage.classList.toggle('test-mode', TEST_MODE);
-    }
-
     const maxPerShelf = 3; // top shelves fill first
 
     const shelfElements = [
@@ -730,17 +705,6 @@
     const shelvesCapacity = maxPerShelf * shelfElements.length;
 
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
-    const addGhostBooks = () => {
-      for (let i = 0; i < shelvesCapacity; i++) {
-        const shelfIndex = Math.floor(i / maxPerShelf);
-        const shelf = shelfElements[shelfIndex];
-        if (!shelf) continue;
-        const ghost = document.createElement('div');
-        ghost.className = 'book';
-        shelf.appendChild(ghost);
-      }
-    };
 
     const addProductBooks = () => {
       products.slice(0, shelvesCapacity).forEach((product, index) => {
@@ -764,14 +728,10 @@
       });
     };
 
-    if (TEST_MODE) {
-      addGhostBooks();
-    } else {
-      addProductBooks();
-    }
+    addProductBooks();
 
     const activateTilt = () => {
-      if (!shelfStage || shelfStage.classList.contains('test-mode')) return;
+      if (!shelfStage) return;
       const books = Array.from(shelfStage.querySelectorAll('.book'));
       if (!books.length) return;
 
