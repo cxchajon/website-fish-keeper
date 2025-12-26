@@ -372,6 +372,70 @@
     }
   },
   {
+    "name": "Celestial Pearl Danio",
+    "slug": "celestial-pearl-danio",
+    "id": "celestial_pearl_danio",
+    "tags": [
+      "nano",
+      "schooling",
+      "shrimp_risk",
+      "snail_safe"
+    ],
+    "schooling_min": 6,
+    "aggression": {
+      "baseline": 0.10,
+      "vectors": {
+        "intraspecificMale": 0.10,
+        "interspecificGeneral": 0.10,
+        "finNipperRisk": 0.05,
+        "invertebratePredator": 0.10
+      }
+    },
+    "bioload": {
+      "multiplier": 0.50,
+      "components": {
+        "sizeFactor": 0.45,
+        "metabolismFactor": 0.70,
+        "dietFactor": 0.45
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.5, 7.5],
+        "tolerable": [6.5, 7.5],
+        "preferred": 7.0
+      },
+      "temperature": {
+        "optimal": [68.0, 78.8],
+        "tolerable": [68.0, 78.8],
+        "preferred": 73.4
+      },
+      "kh": { "optimal": [3, 10], "tolerable": [3, 10], "unit": "dKH" },
+      "gh": { "optimal": [5, 12], "tolerable": [5, 12], "unit": "dGH" },
+      "flow": "low"
+    },
+    "min_tank_liters": 20,
+    "behavior": {
+      "schoolingMinimum": 6,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": [],
+      "notes": "Can be shy; thrives best in heavily decorated tanks with hiding spots."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
     "name": "Cherry Barb",
     "slug": "cherry-barb",
     "id": "cherry_barb",
@@ -669,6 +733,67 @@
       "predationRisks": ["Predators: large fish"],
       "incompatibilities": ["Large boisterous tankmates"],
       "notes": "Excellent for small tanks; best color displays in soft, acidic water."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Freshwater Angelfish",
+    "slug": "freshwater-angelfish",
+    "id": "freshwater_angelfish",
+    "tags": [
+      "shrimp_risk",
+      "snail_safe"
+    ],
+    "aggression": {
+      "baseline": 0.45,
+      "vectors": {
+        "intraspecificMale": 0.65,
+        "interspecificGeneral": 0.45,
+        "finNipperRisk": 0.20,
+        "invertebratePredator": 0.65
+      }
+    },
+    "bioload": {
+      "multiplier": 2.20,
+      "components": {
+        "sizeFactor": 2.20,
+        "metabolismFactor": 1.20,
+        "dietFactor": 1.10
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 7.4],
+        "tolerable": [6.0, 7.4],
+        "preferred": 6.7
+      },
+      "temperature": {
+        "optimal": [75.2, 86.0],
+        "tolerable": [75.2, 86.0],
+        "preferred": 80.6
+      },
+      "kh": { "optimal": [2, 8], "tolerable": [2, 8], "unit": "dKH" },
+      "gh": { "optimal": [3, 10], "tolerable": [3, 10], "unit": "dGH" },
+      "flow": "low"
+    },
+    "min_tank_liters": 150,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": 24,
+      "predationRisks": ["Shrimp (all sizes)", "Small fish (e.g., Neon Tetras)"],
+      "incompatibilities": [],
+      "notes": "Requires tall tanks due to vertical fin span. Will eat small fish like Neon Tetras as they mature."
     },
     "confidence": {
       "overall": 8,
@@ -1362,6 +1487,71 @@
     }
   },
   {
+    "name": "Pygmy Corydoras",
+    "slug": "pygmy-corydoras",
+    "id": "pygmy_corydoras",
+    "tags": [
+      "nano",
+      "schooling",
+      "bottom_dweller",
+      "shrimp_safe",
+      "snail_safe"
+    ],
+    "schooling_min": 8,
+    "aggression": {
+      "baseline": 0.10,
+      "vectors": {
+        "intraspecificMale": 0.10,
+        "interspecificGeneral": 0.12,
+        "finNipperRisk": 0.05,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 0.55,
+      "components": {
+        "sizeFactor": 0.50,
+        "metabolismFactor": 0.80,
+        "dietFactor": 0.60
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 7.4],
+        "tolerable": [6.0, 7.4],
+        "preferred": 6.7
+      },
+      "temperature": {
+        "optimal": [71.6, 78.8],
+        "tolerable": [71.6, 78.8],
+        "preferred": 75.2
+      },
+      "kh": { "optimal": [2, 8], "tolerable": [2, 8], "unit": "dKH" },
+      "gh": { "optimal": [2, 15], "tolerable": [2, 15], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "min_tank_liters": 20,
+    "behavior": {
+      "schoolingMinimum": 8,
+      "territorySize": null,
+      "predationRisks": [],
+      "incompatibilities": [],
+      "notes": "Unlike most cories, this species swims frequently in the mid-water column."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["PlanetCatfish", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Reddit r/Corydoras"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
     "name": "Rummynose Tetra",
     "slug": "rummynose-tetra",
     "id": "rummynose_tetra",
@@ -1414,6 +1604,132 @@
       "overall": 8,
       "aggression": 8,
       "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Swordtail",
+    "slug": "swordtail",
+    "id": "swordtail",
+    "tags": [
+      "active_swimmer",
+      "shrimp_risk",
+      "snail_safe"
+    ],
+    "aggression": {
+      "baseline": 0.20,
+      "vectors": {
+        "intraspecificMale": 0.25,
+        "interspecificGeneral": 0.20,
+        "finNipperRisk": 0.08,
+        "invertebratePredator": 0.18
+      }
+    },
+    "bioload": {
+      "multiplier": 1.30,
+      "components": {
+        "sizeFactor": 1.30,
+        "metabolismFactor": 1.20,
+        "dietFactor": 1.10
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [7.0, 8.3],
+        "tolerable": [7.0, 8.3],
+        "preferred": 7.7
+      },
+      "temperature": {
+        "optimal": [64.4, 82.4],
+        "tolerable": [64.4, 82.4],
+        "preferred": 73.4
+      },
+      "kh": { "optimal": [8, 15], "tolerable": [8, 15], "unit": "dKH" },
+      "gh": { "optimal": [12, 30], "tolerable": [12, 30], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "min_tank_liters": 75,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": [],
+      "notes": "Active swimmers that require horizontal space. Known jumpers; a tight-fitting lid is required."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "White Cloud Mountain Minnow",
+    "slug": "white-cloud-mountain-minnow",
+    "id": "white_cloud_mountain_minnow",
+    "tags": [
+      "schooling",
+      "active_swimmer",
+      "shrimp_safe",
+      "snail_safe"
+    ],
+    "schooling_min": 6,
+    "aggression": {
+      "baseline": 0.16,
+      "vectors": {
+        "intraspecificMale": 0.18,
+        "interspecificGeneral": 0.16,
+        "finNipperRisk": 0.08,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 0.85,
+      "components": {
+        "sizeFactor": 0.70,
+        "metabolismFactor": 1.00,
+        "dietFactor": 0.75
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 8.0],
+        "tolerable": [6.0, 8.0],
+        "preferred": 7.0
+      },
+      "temperature": {
+        "optimal": [59.0, 71.6],
+        "tolerable": [59.0, 71.6],
+        "preferred": 65.3
+      },
+      "kh": { "optimal": [4, 12], "tolerable": [4, 12], "unit": "dKH" },
+      "gh": { "optimal": [5, 19], "tolerable": [5, 19], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "min_tank_liters": 40,
+    "behavior": {
+      "schoolingMinimum": 6,
+      "territorySize": null,
+      "predationRisks": [],
+      "incompatibilities": [],
+      "notes": "Does not require a heater; high temperatures above 24C shorten lifespan significantly."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
       "parameters": 8,
       "behavior": 8
     },
