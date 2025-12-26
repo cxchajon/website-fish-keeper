@@ -580,6 +580,24 @@ function deriveInvertSafety(record, legacy) {
   return true;
 }
 
+function mergeTags(legacyTags, recordTags) {
+  const list = [];
+  const seen = new Set();
+  for (const source of [legacyTags, recordTags]) {
+    if (!Array.isArray(source)) continue;
+    for (const value of source) {
+      if (typeof value !== 'string') continue;
+      const tag = value.trim();
+      if (!tag) continue;
+      const key = tag.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      list.push(tag);
+    }
+  }
+  return Object.freeze(list);
+}
+
 function mapRecord(record) {
   const legacy = LEGACY_BASE[record.slug] || null;
   const legacyId = legacy?.id || record.slug.replace(/[^a-z0-9]+/gi, '_').toLowerCase();
@@ -621,7 +639,7 @@ function mapRecord(record) {
     flow: record.parameters?.flow || legacy?.flow || 'moderate',
     blackwater: legacy?.blackwater || 'neutral',
     aggression: Math.round(record.aggression?.baseline * 100),
-    tags: Array.isArray(legacy?.tags) ? [...legacy.tags] : [],
+    tags: mergeTags(legacy?.tags, record?.tags),
     behavior: Array.isArray(legacy?.behavior) ? [...legacy.behavior] : undefined,
     group,
     min_group: minGroup,

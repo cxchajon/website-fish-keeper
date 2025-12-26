@@ -2,6 +2,7 @@ const FEMALE_BETTA_IDS = new Set(['betta_female', 'betta-female']);
 const MALE_BETTA_IDS = new Set(['betta_male', 'betta-male']);
 const BETTA_IDS = new Set([...FEMALE_BETTA_IDS, ...MALE_BETTA_IDS]);
 const FIN_NIPPER_TAG = 'fin_nipper';
+const BETTA_SHAPE_TRIGGER_TAG = 'betta_shape_trigger';
 
 const normalizeId = (value) => {
   if (!value) return '';
@@ -57,6 +58,19 @@ const hasFinNipper = (context) => {
   return false;
 };
 
+const hasBettaShapeTriggerMate = (context) => {
+  for (const item of context) {
+    if (!item || BETTA_IDS.has(item.id)) {
+      continue;
+    }
+    const tags = Array.isArray(item.species?.tags) ? item.species.tags : [];
+    if (tags.some((tag) => typeof tag === 'string' && tag.toLowerCase() === BETTA_SHAPE_TRIGGER_TAG)) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const createFemaleSororityWarning = () => {
   const message =
     'Female bettas should only be kept together in groups of 5 or more to diffuse aggression. 2–4 is high risk of fighting and stress.';
@@ -83,6 +97,21 @@ const createFinNipperWarning = () => {
     title: 'Fin-nippers present with betta',
     message,
     text: `Fin-nippers present with betta — ${message}`,
+  };
+};
+
+const createBettaShapeTriggerWarning = () => {
+  const message =
+    'Male bettas may attack fish with long fins or similar body profiles. Use heavy cover, monitor closely, and be prepared to separate.';
+  return {
+    id: 'betta.shapeTrigger',
+    severity: 'danger',
+    icon: 'alert',
+    kind: 'compatibility',
+    chips: ['Compatibility'],
+    title: 'Betta aggression risk: fin-shape / silhouette trigger',
+    message,
+    text: `Betta aggression risk: fin-shape / silhouette trigger — ${message}`,
   };
 };
 
@@ -117,7 +146,24 @@ export const rule_betta_fin_nippers = ({ entries, candidate } = {}) => {
   return [createFinNipperWarning()];
 };
 
-const WARNING_RULES = Object.freeze([rule_betta_female_sorority, rule_betta_fin_nippers]);
+export const rule_betta_shape_trigger = ({ entries, candidate } = {}) => {
+  const context = gatherContext(entries, candidate);
+  if (!context.some((item) => MALE_BETTA_IDS.has(item.id))) {
+    return [];
+  }
+
+  if (!hasBettaShapeTriggerMate(context)) {
+    return [];
+  }
+
+  return [createBettaShapeTriggerWarning()];
+};
+
+const WARNING_RULES = Object.freeze([
+  rule_betta_female_sorority,
+  rule_betta_fin_nippers,
+  rule_betta_shape_trigger,
+]);
 
 export const evaluateWarningRules = (context) => {
   if (!context || typeof context !== 'object') {

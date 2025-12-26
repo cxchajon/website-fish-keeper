@@ -958,7 +958,8 @@
       "low_flow",
       "longfin_target",
       "shrimp_risk",
-      "sensitive"
+      "sensitive",
+      "betta_shape_trigger"
     ],
     "aggression": {
       "baseline": 0.35,
@@ -1271,7 +1272,8 @@
     "tags": [
       "active_swimmer",
       "longfin_target",
-      "shrimp_risk"
+      "shrimp_risk",
+      "betta_shape_trigger"
     ],
     "aggression": {
       "baseline": 0.20,
@@ -1457,7 +1459,8 @@
       "labyrinth",
       "low_flow",
       "shrimp_risk",
-      "snail_safe"
+      "snail_safe",
+      "betta_shape_trigger"
     ],
     "aggression": {
       "baseline": 0.22,
@@ -2150,7 +2153,8 @@
       "labyrinth",
       "low_flow",
       "longfin_target",
-      "shrimp_risk"
+      "shrimp_risk",
+      "betta_shape_trigger"
     ],
     "aggression": {
       "baseline": 0.28,
