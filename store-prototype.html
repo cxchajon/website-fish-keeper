@@ -90,7 +90,7 @@
       padding: 0 20px 40px;
     }
 
-    /* Pinned stage: aspect ratio locks shelf plank positions across devices */
+    /* --- Shelf stage: static art + percent-calibrated lanes --- */
     .shelf-stage {
       position: relative;
       width: 100%;
@@ -102,7 +102,6 @@
       isolation: isolate;
     }
 
-    /* Shelf artwork is pinned and cannot move */
     .shelf-art {
       position: absolute;
       inset: 0;
@@ -114,35 +113,27 @@
       user-select: none;
     }
 
-    /* Lanes sit on exact shelf floors */
     .shelf-lane {
       position: absolute;
       left: 10%;
       width: 80%;
+      height: 15%;
       display: flex;
       justify-content: center;
       align-items: flex-end;
       gap: 10px;
       z-index: 10;
-      pointer-events: auto;
     }
 
-    /* TOP SHELF (#1) */
-    .shelf-lane--top {
-      top: 23%;
-      height: 14%;
-    }
+    /* Calibrated shelf floors (adjust ONLY these later if needed) */
+    .shelf-1 { top: 25.5%; } /* Top shelf with lights */
+    .shelf-2 { top: 43.5%; } /* Second shelf */
+    .shelf-3 { top: 61.5%; } /* Third shelf */
+    .shelf-4 { top: 79.5%; } /* Bottom shelf */
 
-    /* SECOND SHELF (#2) */
-    .shelf-lane--bottom {
-      top: 39.5%;
-      height: 14%;
-    }
-
-    /* Books scale by lane height -> smaller, more realistic */
     .book {
       display: block;
-      height: 100%;
+      height: 90%;
       transition: transform 0.2s ease;
     }
 
@@ -152,11 +143,11 @@
       height: 100%;
       border-radius: 2px 4px 4px 2px;
       filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
-      box-shadow: 0 10px 8px -6px rgba(0,0,0,0.8);
+      box-shadow: 0 8px 6px -4px rgba(0,0,0,0.8);
     }
 
     .book:hover {
-      transform: translateY(-5px) scale(1.05);
+      transform: translateY(-8px) scale(1.05);
       z-index: 20;
     }
 
@@ -634,9 +625,12 @@
     <!-- Shelves with books -->
     <div class="shelves" id="shelves-container">
       <div class="shelf-stage" aria-label="Bookshelf display area">
-        <img class="shelf-art" src="assets/media/IMG_3428.png" alt="" aria-hidden="true" decoding="async" loading="eager">
-        <div class="shelf-lane shelf-lane--top" id="shelfTop" aria-label="Top shelf books"></div>
-        <div class="shelf-lane shelf-lane--bottom" id="shelfBottom" aria-label="Lower shelf journals"></div>
+        <img class="shelf-art" src="assets/media/IMG_3428.png" alt="" aria-hidden="true">
+
+        <div class="shelf-lane shelf-1" id="shelf-1" aria-label="Shelf 1"></div>
+        <div class="shelf-lane shelf-2" id="shelf-2" aria-label="Shelf 2"></div>
+        <div class="shelf-lane shelf-3" id="shelf-3" aria-label="Shelf 3"></div>
+        <div class="shelf-lane shelf-4" id="shelf-4" aria-label="Shelf 4"></div>
       </div>
     </div>
   </div>
@@ -671,31 +665,35 @@
       }
     ];
 
-    // Place books into explicit shelf lanes
-    const shelfTop = document.getElementById('shelfTop');
-    const shelfBottom = document.getElementById('shelfBottom');
+    const maxPerShelf = 3;
 
-    const shelfGroups = [
-      { lane: shelfTop, items: products.slice(0, 3) },
-      { lane: shelfBottom, items: products.slice(3, 5) }
+    const shelfElements = [
+      document.getElementById('shelf-1'),
+      document.getElementById('shelf-2'),
+      document.getElementById('shelf-3'),
+      document.getElementById('shelf-4')
     ];
 
-    shelfGroups.forEach(group => {
-      group.items.forEach(product => {
-        const bookLink = document.createElement('a');
-        bookLink.href = product.link;
-        bookLink.className = 'book';
-        bookLink.target = '_blank';
-        bookLink.rel = 'sponsored noopener noreferrer';
+    shelfElements.forEach(s => { if (s) s.innerHTML = ''; });
 
-        const bookImg = document.createElement('img');
-        bookImg.src = product.image;
-        bookImg.alt = product.title;
-        bookImg.loading = 'lazy';
+    products.forEach((product, index) => {
+      const shelfIndex = Math.floor(index / maxPerShelf);
+      const shelf = shelfElements[shelfIndex];
+      if (!shelf) return;
 
-        bookLink.appendChild(bookImg);
-        group.lane.appendChild(bookLink);
-      });
+      const bookLink = document.createElement('a');
+      bookLink.href = product.link;
+      bookLink.className = 'book';
+      bookLink.target = '_blank';
+      bookLink.rel = 'sponsored noopener noreferrer';
+
+      const bookImg = document.createElement('img');
+      bookImg.src = product.image;
+      bookImg.alt = product.title;
+      bookImg.loading = 'lazy';
+
+      bookLink.appendChild(bookImg);
+      shelf.appendChild(bookLink);
     });
   </script>
 
