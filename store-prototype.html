@@ -54,7 +54,6 @@
       text-decoration: underline;
     }
 
-    /* Full-page bookshelf background */
     .bookshelf-container {
       position: relative;
       min-height: 100vh;
@@ -89,16 +88,17 @@
       position: relative;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 20px 140px;
+      padding: 0 20px 100px;
     }
 
     .shelf-stage {
       position: relative;
       width: 100%;
-      height: clamp(760px, 92vh, 1160px);
+      aspect-ratio: 461 / 1000;
+      max-width: 520px;
+      margin: 0 auto;
       overflow: hidden;
       isolation: isolate;
-      background: #201a14;
     }
 
     .shelf-art {
@@ -107,56 +107,47 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center top;
+      z-index: 0;
       pointer-events: none;
       user-select: none;
-      z-index: 0;
     }
 
     .shelf-lane {
       position: absolute;
-      left: 6%;
-      width: 88%;
+      left: 8%;
+      width: 84%;
       display: flex;
       justify-content: center;
-      align-items: center;
-      gap: clamp(10px, 2.4vw, 18px);
+      align-items: flex-end;
+      gap: 12px;
+      z-index: 5;
       pointer-events: auto;
-      z-index: 1;
-    }
-
-    .shelf-lane a {
-      display: block;
-    }
-
-    .shelf-lane img {
-      height: auto;
-      max-width: 100%;
-      display: block;
-      border-radius: 8px;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.42);
-      filter: drop-shadow(0 6px 8px rgba(0,0,0,0.28));
-      transform: translateY(2px);
     }
 
     .shelf-lane--top {
-      top: 185px;
-      height: 18%;
-    }
-
-    .shelf-lane--top a {
-      width: clamp(78px, 19vw, 122px);
-      transform: scale(0.9);
+      top: 38.5%;
+      height: 14%;
     }
 
     .shelf-lane--bottom {
-      top: 430px;
-      height: 17%;
+      top: 55.5%;
+      height: 14%;
     }
 
-    .shelf-lane--bottom a {
-      width: clamp(82px, 20vw, 128px);
-      transform: scale(0.9);
+    .shelf-lane a.book {
+      height: 100%;
+      display: block;
+    }
+
+    .shelf-lane a.book img {
+      height: 100%;
+      width: auto;
+      display: block;
+      border-radius: 2px 4px 4px 2px;
+      filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.4));
+      box-shadow:
+        inset 3px 0 5px rgba(0,0,0,0.1),
+        0 8px 6px -4px rgba(0,0,0,0.7);
     }
 
     /* Individual shelf */
@@ -198,7 +189,7 @@
       }
 
       .shelves {
-        padding: 80px 15px clamp(240px, 34vw, 340px);
+        padding: 60px 15px 80px;
       }
     }
 
@@ -216,44 +207,17 @@
       }
 
       .shelves {
-        padding: 70px 12px clamp(220px, 40vw, 320px);
+        padding: 50px 12px 70px;
       }
     }
 
     @media (min-width: 1024px) {
-      .bookshelf-container {
-      }
-
       .shelves {
-        padding: 160px 30px 200px;
+        padding: 120px 30px 140px;
       }
 
       .shelf-stage {
-        height: clamp(900px, 96vh, 1280px);
-      }
-
-      .shelf-lane {
-        gap: clamp(16px, 2vw, 28px);
-      }
-
-      .shelf-lane--top {
-        top: 210px;
-        height: 17%;
-      }
-
-      .shelf-lane--top a {
-        width: clamp(96px, 14vw, 158px);
-        transform: scale(0.92);
-      }
-
-      .shelf-lane--bottom {
-        top: 470px;
-        height: 16%;
-      }
-
-      .shelf-lane--bottom a {
-        width: clamp(102px, 16vw, 168px);
-        transform: scale(0.92);
+        max-width: 640px;
       }
     }
 
