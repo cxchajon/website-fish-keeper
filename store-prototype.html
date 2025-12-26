@@ -97,8 +97,8 @@
       aspect-ratio: 461 / 1000;
       max-width: 500px;
       margin: 0 auto;
-      overflow: hidden;
       background: #201a14;
+      overflow: hidden;
       isolation: isolate;
     }
 
@@ -107,7 +107,7 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain; /* calibration mode */
       z-index: 0;
       pointer-events: none;
       user-select: none;
@@ -117,20 +117,19 @@
       position: absolute;
       left: 10%;
       width: 80%;
-      height: 16%;
+      height: 14%;
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      gap: 12px;
+      gap: 10px;
       z-index: 10;
-      perspective: 1000px;
     }
 
     /* CALIBRATED POSITIONS */
-    .shelf-1 { top: 28.2%; }
-    .shelf-2 { top: 45.8%; }
-    .shelf-3 { top: 63.4%; }
-    .shelf-4 { top: 81.0%; }
+    .shelf-1 { top: 27.5%; }
+    .shelf-2 { top: 44.8%; }
+    .shelf-3 { top: 62.2%; }
+    .shelf-4 { top: 79.5%; }
 
     /* Top shelf glow (lamp warmth) */
     .shelf-1::after {
@@ -145,25 +144,39 @@
       z-index: 15;
     }
 
-    /* Books “sit” and feel weighted */
-    .book {
+    /* Ghost boxes ONLY when test-mode is enabled */
+    .shelf-stage.test-mode .book {
       display: block;
-      height: 85%;
+      height: 90%;
+      width: 80px;
+      background: rgba(255, 0, 0, 0.3);
+      border: 2px dashed #ff0000;
+    }
+
+    .shelf-stage.test-mode .book img {
+      display: none;
+    }
+
+    /* Production mode: normal covers */
+    .shelf-stage:not(.test-mode) .book {
+      display: block;
+      height: 90%;
       transform-origin: bottom center;
       transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       filter: drop-shadow(2px 5px 8px rgba(0,0,0,0.4));
       z-index: 10;
     }
 
-    .book img {
+    .shelf-stage:not(.test-mode) .book img {
       display: block;
       width: auto;
       height: 100%;
       border-radius: 2px 5px 5px 2px;
       box-shadow: 0 12px 10px -6px rgba(0,0,0,0.9);
+      filter: drop-shadow(0 10px 8px rgba(0,0,0,0.5));
     }
 
-    .book:hover {
+    .shelf-stage:not(.test-mode) .book:hover {
       z-index: 100;
       filter: brightness(1.05) drop-shadow(10px 15px 20px rgba(0,0,0,0.5));
       transform: translateY(-8px) scale(1.03);
@@ -642,7 +655,7 @@
 
     <!-- Shelves with books -->
     <div class="shelves" id="shelves-container">
-      <div class="shelf-stage" aria-label="Bookshelf display area">
+      <div class="shelf-stage" id="shelf-container" aria-label="Bookshelf display area">
         <img class="shelf-art" src="assets/media/IMG_3428.png" alt="" aria-hidden="true">
 
         <div class="shelf-lane shelf-1" id="shelf-1" aria-label="Shelf 1"></div>
@@ -654,6 +667,8 @@
   </div>
 
   <script>
+    const TEST_MODE = true;  // switch to false to restore real products
+
     // Product data extracted from store.html
     const products = [
       {
@@ -683,6 +698,11 @@
       }
     ];
 
+    const shelfStage = document.getElementById('shelf-container');
+    if (shelfStage) {
+      shelfStage.classList.toggle('test-mode', TEST_MODE);
+    }
+
     const maxPerShelf = 3;
 
     const shelfElements = [
@@ -694,25 +714,37 @@
 
     shelfElements.forEach(s => { if (s) s.innerHTML = ''; });
 
-    products.forEach((product, index) => {
-      const shelfIndex = Math.floor(index / maxPerShelf);
-      const shelf = shelfElements[shelfIndex];
-      if (!shelf) return;
+    if (TEST_MODE) {
+      const dummyCount = 12; // 3 per shelf for 4 shelves
+      for (let i = 0; i < dummyCount; i++) {
+        const shelfIndex = Math.floor(i / maxPerShelf);
+        const shelf = shelfElements[shelfIndex];
+        if (!shelf) continue;
+        const ghost = document.createElement('div');
+        ghost.className = 'book';
+        shelf.appendChild(ghost);
+      }
+    } else {
+      products.forEach((product, index) => {
+        const shelfIndex = Math.floor(index / maxPerShelf);
+        const shelf = shelfElements[shelfIndex];
+        if (!shelf) return;
 
-      const bookLink = document.createElement('a');
-      bookLink.href = product.link;
-      bookLink.className = 'book';
-      bookLink.target = '_blank';
-      bookLink.rel = 'sponsored noopener noreferrer';
+        const bookLink = document.createElement('a');
+        bookLink.href = product.link;
+        bookLink.className = 'book';
+        bookLink.target = '_blank';
+        bookLink.rel = 'sponsored noopener noreferrer';
 
-      const bookImg = document.createElement('img');
-      bookImg.src = product.image;
-      bookImg.alt = product.title;
-      bookImg.loading = 'lazy';
+        const bookImg = document.createElement('img');
+        bookImg.src = product.image;
+        bookImg.alt = product.title;
+        bookImg.loading = 'lazy';
 
-      bookLink.appendChild(bookImg);
-      shelf.appendChild(bookLink);
-    });
+        bookLink.appendChild(bookImg);
+        shelf.appendChild(bookLink);
+      });
+    }
   </script>
 
   <!-- Footer and Navigation Scripts -->
