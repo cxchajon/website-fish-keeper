@@ -200,7 +200,7 @@ function evaluatePair(a, b) {
   const qtyB = Number.isFinite(b.shoalMin) && b.shoalMin > 0 ? Math.max(1, Math.round(b.shoalMin)) : 2;
   entries.push({ speciesId: a.id, count: qtyA });
   entries.push({ speciesId: b.id, count: qtyB });
-  return evaluateCompatibility({ gallons: 29, planted: false, entries });
+  return evaluateCompatibility({ gallons: 29, entries });
 }
 
 function blockerMatchesReason(blockers, reasonIncludes) {
@@ -224,7 +224,7 @@ function evaluatePlanCompatibility(plan) {
     const qty = Number(entry.count ?? entry.qty ?? 0);
     entries.push({ speciesId: species.id, count: Math.max(1, qty) });
   }
-  return evaluateCompatibility({ gallons: Number(plan.gallons) || 0, planted: Boolean(plan.planted), entries });
+  return evaluateCompatibility({ gallons: Number(plan.gallons) || 0, entries });
 }
 
 function buildBioloadExamples() {
@@ -284,7 +284,7 @@ function buildBioloadExamples() {
       ],
     },
     {
-      name: '75g lush planted',
+      name: '75g lush community',
       gallons: 75,
       entries: [
         { id: 'cardinal', count: 24 },
@@ -456,24 +456,18 @@ function run() {
         }
       } else if (test.type === 'plan_compatible') {
         for (const plan of test.plans ?? []) {
-          const plantedStates = Array.isArray(plan.plantedStates) && plan.plantedStates.length
-            ? plan.plantedStates
-            : [false];
-          for (const planted of plantedStates) {
-            const evalPlan = { ...plan, planted };
-            const result = evaluatePlanCompatibility(evalPlan);
-            stats.tested += 1;
-            if (!result.ok) {
-              stats.failCount += 1;
-              expectationFailures += 1;
-            }
-            planResults.push({
-              name: plan.name,
-              planted,
-              ok: result.ok,
-              blockers: result.blockers,
-            });
+          const evalPlan = { ...plan };
+          const result = evaluatePlanCompatibility(evalPlan);
+          stats.tested += 1;
+          if (!result.ok) {
+            stats.failCount += 1;
+            expectationFailures += 1;
           }
+          planResults.push({
+            name: plan.name,
+            ok: result.ok,
+            blockers: result.blockers,
+          });
         }
       }
     }
@@ -512,14 +506,11 @@ function run() {
   const bioloadRows = [];
   for (const example of bioloadExamples) {
     const entries = example.entries.map((item) => ({ speciesId: item.id, count: item.count }));
-    const base = computeBioload({ gallons: example.gallons, planted: false, entries });
-    const planted = computeBioload({ gallons: example.gallons, planted: true, entries });
+    const base = computeBioload({ gallons: example.gallons, entries });
     bioloadRows.push({
       Scenario: example.name,
       Gallons: example.gallons,
-      'Base %': formatPercent(base.percent, 1),
-      'Planted %': formatPercent(planted.percent, 1),
-      Delta: formatPercent(planted.percent - base.percent, 1),
+      'Bioload %': formatPercent(base.percent, 1),
     });
   }
 
@@ -570,16 +561,15 @@ function run() {
     .map(([dimension, stats]) => renderHeatmapRow(dimension, stats));
 
   const highlightTable = markdownTable(['Species A', 'Species B', 'Reason'], topHighlight);
-  const bioloadTable = markdownTable(['Scenario', 'Gallons', 'Base %', 'Planted %', 'Delta'], bioloadRows);
+  const bioloadTable = markdownTable(['Scenario', 'Gallons', 'Bioload %'], bioloadRows);
   const turnoverTable = markdownTable(['Scenario', 'Gallons', 'GPH', 'Turnover (x)', 'Rec Min', 'Rec Max', 'Status'], turnoverRows);
   const heatmapTable = markdownTable(['Dimension', 'Tested', 'Skipped', 'Failures', 'Status'], heatmapRows);
   const planRows = planResults.map((result) => ({
     Plan: result.name,
-    Planted: result.planted ? 'on' : 'off',
     Status: result.ok ? '✓' : '✗',
     Notes: result.ok ? '' : (result.blockers ?? []).join('; '),
   }));
-  const planTable = planRows.length ? markdownTable(['Plan', 'Planted', 'Status', 'Notes'], planRows) : '';
+  const planTable = planRows.length ? markdownTable(['Plan', 'Status', 'Notes'], planRows) : '';
 
   const reportLines = [];
   reportLines.push(`# Stocking Tests – Extended (${runId})`);
@@ -622,7 +612,7 @@ function run() {
     reportLines.push(planTable);
     reportLines.push('');
   }
-  reportLines.push('## Bioload spot checks (planted vs. base)');
+  reportLines.push('## Bioload spot checks (baseline)');
   reportLines.push('');
   reportLines.push(bioloadTable);
   reportLines.push('');

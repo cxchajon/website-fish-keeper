@@ -86,23 +86,6 @@ test.describe('Stocking Advisor accessibility flows', () => {
     await capture(page, testInfo, 'stocking-load.png');
   });
 
-  test('Planted mode toggle supports mouse and keyboard', async ({ page }, testInfo) => {
-    const toggle = page.getByTestId('toggle-planted');
-    await expect(toggle).toBeVisible();
-
-    await toggle.click();
-    await expect(toggle).toHaveAttribute('aria-checked', 'true');
-    await capture(page, testInfo, 'toggle-planted-pointer.png');
-
-    await focusByTab(page, 'toggle-planted');
-    await expect(toggle).toBeFocused();
-    await page.keyboard.press('Space');
-    await expect(toggle).toHaveAttribute('aria-checked', 'false');
-    await page.keyboard.press('Enter');
-    await expect(toggle).toHaveAttribute('aria-checked', 'true');
-    await capture(page, testInfo, 'toggle-planted-keyboard.png');
-  });
-
   test('Tank selection updates summary and stock meters', async ({ page }, testInfo) => {
     await selectTank(page, 40);
 
@@ -247,7 +230,7 @@ test('Contextual info buttons reveal guidance on demand', async ({ page }) => {
       contentType: 'application/json',
     });
     const normalized = sequence.filter(Boolean);
-    const expected = ['toggle-planted', 'tank-gallons', 'species-search', 'btn-add-species', 'btn-gear'];
+    const expected = ['tank-gallons', 'species-search', 'btn-add-species', 'btn-gear'];
     for (const id of expected) {
       expect(normalized).toContain(id);
     }

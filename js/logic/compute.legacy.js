@@ -2,7 +2,7 @@ import { FISH_DB } from "../fish-data.js";
 import { validateSpeciesRecord } from "./speciesSchema.js";
 import { EMPTY_TANK } from '../stocking/tankStore.js';
 import { canonicalizeFilterType, sumGph, weightedMixFactor } from '../utils.js';
-import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent, PLANTED_CAPACITY_BONUS, computeFiltrationFactor } from '../bioload.js';
+import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent, computeFiltrationFactor } from '../bioload.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import { BEHAVIOR_TAGS } from './behaviorTags.js';
 import { evaluateStockWarnings } from './warnings.js';
@@ -336,7 +336,6 @@ function calcTank(state, entries, overrideVariant) {
   const gallons = clamp(gallonsSource, 0, 999);
   const tankId = tankState?.id ?? null;
   const sump = clamp(Number(state.sumpGallons) || 0, 0, 400);
-  const planted = Boolean(state.planted);
   const filterId = state?.filterId ?? null;
   const filterType = normalizeFilterTypeSelection(state.filterType);
   const manualRatedValue = Number(state?.ratedGph);
@@ -362,8 +361,7 @@ function calcTank(state, entries, overrideVariant) {
   const width = Number.isFinite(widthIn) ? widthIn : 0;
   const height = Number.isFinite(heightIn) ? heightIn : 0;
   const volume = gallons + 0.7 * sump;
-  const plantedMultiplier = planted ? (1 + PLANTED_CAPACITY_BONUS) : 1;
-  const effectiveGallons = getEffectiveGallons(gallons, { planted });
+  const effectiveGallons = getEffectiveGallons(gallons);
   const baseCapacity = effectiveGallons;
   const capacity = effectiveGallons;
   const recommendedCapacity = effectiveGallons;
@@ -410,7 +408,6 @@ function calcTank(state, entries, overrideVariant) {
   return {
     gallons,
     sump,
-    planted,
     variant,
     presetId: tankState.id ?? null,
     presetLabel: tankState.label ?? '',
@@ -423,7 +420,6 @@ function calcTank(state, entries, overrideVariant) {
     volume,
     turnover,
     multiplier,
-    plantedMultiplier,
     baseCapacity,
     capacity,
     recommendedCapacity,
@@ -507,9 +503,6 @@ function turnoverBand(tank) {
   const turnover = tank.turnover;
   if (turnover >= 9) {
     return { band: 'heavy/messy', range: [9, 10] };
-  }
-  if (tank.planted) {
-    return { band: 'planted', range: [6, 8] };
   }
   if (turnover <= 6) {
     return { band: 'low-flow', range: [4, 6] };
@@ -718,17 +711,15 @@ function computeBioload(tank, entries, candidate, filterState = {}) {
   const candidateLoad = getTotalGE(candidateStock, SPECIES_MAP);
   const proposed = getTotalGE(proposedStock, SPECIES_MAP);
 
-  const effectiveGallons = getEffectiveGallons(tank.gallons, { planted: tank.planted });
+  const effectiveGallons = getEffectiveGallons(tank.gallons);
   const capacity = Math.max(effectiveGallons, 0.0001);
   const currentPercentValue = computeBioloadPercent({
     gallons: tank.gallons,
-    planted: tank.planted,
     currentStock,
     speciesMap: SPECIES_MAP,
   });
   const proposedPercentValue = computeBioloadPercent({
     gallons: tank.gallons,
-    planted: tank.planted,
     currentStock: proposedStock,
     speciesMap: SPECIES_MAP,
   });
@@ -1435,7 +1426,6 @@ export function runSanitySuite(baseState) {
   const scenario1 = runScenario(base, {
     gallons: 20,
     turnover: 5,
-    planted: false,
     stock: [{ id: 'cardinal', qty: 12 }],
   });
   results.push(`1) 20g, 12 cardinal tetras → Load ${roundTo(scenario1.bioload.proposed, 3)} | Usage ${formatPercent(scenario1.bioload.proposedPercent)}`);
@@ -1443,7 +1433,6 @@ export function runSanitySuite(baseState) {
   const scenario2 = runScenario(base, {
     gallons: 20,
     turnover: 5,
-    planted: false,
     stock: [
       { id: 'cardinal', qty: 12 },
       { id: 'betta_male', qty: 1 },
@@ -1451,21 +1440,9 @@ export function runSanitySuite(baseState) {
   });
   results.push(`2) + Betta → Load ${roundTo(scenario2.bioload.proposed, 3)} | Usage ${formatPercent(scenario2.bioload.proposedPercent)}`);
 
-  const scenario2p = runScenario(base, {
-    gallons: 20,
-    turnover: 5,
-    planted: true,
-    stock: [
-      { id: 'cardinal', qty: 12 },
-      { id: 'betta_male', qty: 1 },
-    ],
-  });
-  results.push(`   Planted → Usage ${formatPercent(scenario2p.bioload.proposedPercent)}`);
-
   const scenario3 = runScenario(base, {
     gallons: 20,
     turnover: 5,
-    planted: false,
     stock: [
       { id: 'cardinal', qty: 12 },
       { id: 'betta_male', qty: 1 },
@@ -1474,22 +1451,9 @@ export function runSanitySuite(baseState) {
   });
   results.push(`3) +6 panda corys → Load ${roundTo(scenario3.bioload.proposed, 3)} | Usage ${formatPercent(scenario3.bioload.proposedPercent)}`);
 
-  const scenario3p = runScenario(base, {
-    gallons: 20,
-    turnover: 5,
-    planted: true,
-    stock: [
-      { id: 'cardinal', qty: 12 },
-      { id: 'betta_male', qty: 1 },
-      { id: 'cory_panda', qty: 6 },
-    ],
-  });
-  results.push(`   Planted → Usage ${formatPercent(scenario3p.bioload.proposedPercent)}`);
-
   const scenario4 = runScenario(base, {
     gallons: 20,
     turnover: 5,
-    planted: false,
     stock: [
       { id: 'cardinal', qty: 12 },
       { id: 'cory_panda', qty: 6 },
@@ -1501,7 +1465,6 @@ export function runSanitySuite(baseState) {
   const scenario5 = runScenario(base, {
     gallons: 10,
     turnover: 4,
-    planted: false,
     stock: [{ id: 'betta_male', qty: 1 }],
   });
   results.push(`5) 10g solo betta → Bioload ${formatPercent(scenario5.bioload.proposedPercent)} | Agg ${scenario5.aggression.label}`);
@@ -1509,7 +1472,6 @@ export function runSanitySuite(baseState) {
   const scenario6a = runScenario(base, {
     gallons: 20,
     turnover: 5,
-    planted: false,
     water: { temperature: 78, pH: 7.6, gH: 6, kH: 3, salinity: 'fresh', flow: 'moderate', blackwater: false },
     stock: [{ id: 'cardinal', qty: 10 }],
   });
@@ -1517,7 +1479,6 @@ export function runSanitySuite(baseState) {
   const scenario6b = runScenario(base, {
     gallons: 20,
     turnover: 5,
-    planted: false,
     water: { temperature: 78, pH: 7.6, gH: 12, kH: 5, salinity: 'brackish-low', flow: 'moderate', blackwater: false },
     stock: [{ id: 'nerite', qty: 2 }],
   });
@@ -1531,7 +1492,6 @@ export function runStressSuite(baseState) {
   const scenario = runScenario(baseState, {
     gallons: 40,
     turnover: 9.5,
-    planted: false,
     stock: [{ id: 'cardinal', qty: 30 }],
   });
   results.push(`40g heavy stock → Delivered ${roundTo(scenario.tank.deliveredGph, 1)} gph | Rated ${roundTo(scenario.tank.ratedGph, 1)} gph | Mult ${roundTo(scenario.tank.multiplier, 3)}`);
@@ -1544,7 +1504,6 @@ export function createDefaultState() {
     liters: 0,
     selectedTankId: null,
     tank: EMPTY_TANK,
-    planted: false,
     showTips: false,
     turnover: 5,
     filterType: 'hob',

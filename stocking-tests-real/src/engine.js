@@ -2,7 +2,6 @@ import { randomInt } from 'crypto';
 import { speciesList } from './adapter.js';
 
 export const DEFAULT_DISPLACEMENT = 0.1;
-export const PLANTED_CAPACITY_BONUS = 0.15;
 export const TURNOVER_RECOMMENDATION = { min: 4, max: 8 };
 
 const speciesMap = new Map(speciesList.map((s) => [s.id, s]));
@@ -28,7 +27,7 @@ function activityMultiplier(species) {
 
 function effectiveCapacity(plan) {
   const base = Math.max(0, plan.gallons) * (1 - DEFAULT_DISPLACEMENT);
-  return plan.planted ? base * (1 + PLANTED_CAPACITY_BONUS) : base;
+  return base;
 }
 
 export function computeBioload(plan) {

@@ -25,7 +25,7 @@
 Key selectors exercised by the suite:
 - `#ttg-howitworks-opener`, `.ttg-howitworks-link`, `.ttg-overlay`
 - `#ttg-nav-open`, `#ttg-drawer`
-- `input[name="gallons"]`, `input[name="planted"]`, `button:has-text("See Gear")`
+- `input[name="gallons"]`, `button:has-text("See Gear")`
 - `#consent_feature`, `#submit_feature`
 - Footer anchors targeting Instagram, TikTok, YouTube, Facebook, Amazon
 

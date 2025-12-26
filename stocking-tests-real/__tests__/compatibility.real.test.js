@@ -5,7 +5,6 @@ function planWithEntries(entries) {
     id: 'compat-plan',
     name: 'Compatibility case',
     gallons: 40,
-    planted: false,
     entries,
   };
 }

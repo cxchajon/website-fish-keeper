@@ -44,19 +44,8 @@ The adapter flagged **0** species records. Ranges and flags normalized without s
 | Amano Shrimp | Guppy (Male) | shrimp predation risk |
 | Zebra Danio | Cherry Shrimp | shrimp predation risk |
 
-## Bioload Sanity (planted vs. base)
-| Plan | Gallons | Base % | Planted % |
-| --- | ---: | ---: | ---: |
-| Betta w/ nano shoal | 20 | 40.0 | 34.8 |
-| Community tetra | 29 | 52.4 | 45.6 |
-| Tiger barb squad | 40 | 51.1 | 44.4 |
-| Peaceful rasbora | 25 | 45.9 | 39.9 |
-| Algae team | 30 | 16.0 | 13.9 |
-| Shrimp colony | 12 | 53.3 | 46.4 |
-| Livebearer mix | 29 | 40.2 | 34.9 |
-| Gourami pair | 36 | 50.0 | 43.5 |
-| School & snails | 40 | 27.8 | 24.2 |
-| Dwarf gourami center | 32 | 50.0 | 43.5 |
+## Bioload Sanity (baseline)
+- Bioload percentages now use displacement-only effective capacity; planted bonuses have been removed from the model.
 
 ## Turnover Sanity Samples
 | Gallons | Flow (GPH) | Turnover (x/h) | Recommended Min (GPH) | Recommended Max (GPH) |

@@ -89,9 +89,6 @@ function deriveContextFromStocking(stock) {
   if (tankSize) {
     next.tankSize = tankSize;
   }
-  if (typeof stock.tank?.planted === 'boolean') {
-    next.planted = Boolean(stock.tank.planted);
-  }
   const bioLoad = deriveBioLoadFromStocking(stock);
   if (bioLoad) {
     next.bioLoad = bioLoad;
@@ -118,6 +115,10 @@ function hydrateFromStocking() {
     // eslint-disable-next-line no-console
     console.warn('Stocking state unreadable', error);
     return null;
+  }
+  if (snapshot?.tank && typeof snapshot.tank === 'object' && 'planted' in snapshot.tank) {
+    snapshot.tank = { ...snapshot.tank };
+    delete snapshot.tank.planted;
   }
   const contextPatch = deriveContextFromStocking(snapshot);
   const patch = { stocking: snapshot };

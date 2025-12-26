@@ -5,7 +5,6 @@ const plans = [
     id: 'tropical-peaceful',
     name: 'Tropical peaceful community',
     gallons: 36,
-    planted: true,
     entries: [
       { speciesId: 'cardinal', count: 12 },
       { speciesId: 'cory_panda', count: 8 },
@@ -16,7 +15,6 @@ const plans = [
     id: 'semi-aggressive',
     name: 'Semi-aggressive schooling tank',
     gallons: 55,
-    planted: false,
     entries: [
       { speciesId: 'tiger_barb', count: 12 },
       { speciesId: 'zebra', count: 10 },
@@ -26,7 +24,6 @@ const plans = [
     id: 'shrimp-nano',
     name: 'Shrimp nano',
     gallons: 10,
-    planted: true,
     entries: [
       { speciesId: 'neocaridina', count: 20 },
       { speciesId: 'chili', count: 12 },
