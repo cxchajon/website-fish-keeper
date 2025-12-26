@@ -62,6 +62,133 @@
     }
   },
   {
+    "name": "Assassin Snail",
+    "slug": "assassin-snail",
+    "id": "assassin_snail",
+    "tags": [
+      "shrimp_safe",
+      "utility",
+      "predatory",
+      "snail_control"
+    ],
+    "aggression": {
+      "baseline": 0.18,
+      "vectors": {
+        "intraspecificMale": 0.25,
+        "interspecificGeneral": 0.18,
+        "finNipperRisk": 0.00,
+        "invertebratePredator": 0.65
+      }
+    },
+    "bioload": {
+      "multiplier": 0.28,
+      "components": {
+        "sizeFactor": 0.35,
+        "metabolismFactor": 0.45,
+        "dietFactor": 0.50
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [7.2, 7.8],
+        "tolerable": [7.0, 8.0],
+        "preferred": 7.5
+      },
+      "temperature": {
+        "optimal": [74, 79],
+        "tolerable": [72, 81],
+        "preferred": 77
+      },
+      "kh": { "optimal": [3, 9], "tolerable": [2, 10], "unit": "dKH" },
+      "gh": { "optimal": [9, 13], "tolerable": [8, 15], "unit": "dGH" },
+      "flow": "low"
+    },
+    "min_tank_liters": 10,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": ["Snails"],
+      "incompatibilities": [],
+      "notes": "Used primarily to control pest snail populations. Will hunt and eat other snail species."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["Invertebrates Magazine", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Snail Keepers Group"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Bamboo Shrimp",
+    "slug": "bamboo-shrimp",
+    "id": "bamboo_shrimp",
+    "tags": [
+      "snail_safe",
+      "shrimp_safe",
+      "filter_feeder",
+      "peaceful",
+      "specialized"
+    ],
+    "aggression": {
+      "baseline": 0.05,
+      "vectors": {
+        "intraspecificMale": 0.05,
+        "interspecificGeneral": 0.05,
+        "finNipperRisk": 0.00,
+        "invertebratePredator": 0.10
+      }
+    },
+    "bioload": {
+      "multiplier": 0.40,
+      "components": {
+        "sizeFactor": 0.50,
+        "metabolismFactor": 0.55,
+        "dietFactor": 0.50
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.7, 7.3],
+        "tolerable": [6.5, 7.5],
+        "preferred": 7.0
+      },
+      "temperature": {
+        "optimal": [75, 80],
+        "tolerable": [73, 82],
+        "preferred": 78
+      },
+      "kh": { "optimal": [4, 9], "tolerable": [3, 10], "unit": "dKH" },
+      "gh": { "optimal": [7, 13], "tolerable": [6, 15], "unit": "dGH" },
+      "flow": "high"
+    },
+    "min_tank_liters": 75,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": [],
+      "incompatibilities": [],
+      "notes": "Requires high water flow and a \"perch\" to filter food from the current. If it is scouring the substrate, it is starving."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["SeriouslyFish", "FishBase"],
+      "secondary": ["Aquarium Co-Op", "Shrimp Keepers Forum"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
     "name": "Betta (Female)",
     "slug": "betta-female",
     "id": "betta_female",
@@ -809,6 +936,70 @@
     }
   },
   {
+    "name": "Ghost Shrimp",
+    "slug": "ghost-shrimp",
+    "id": "ghost_shrimp",
+    "tags": [
+      "snail_safe",
+      "shrimp_risk",
+      "beginner",
+      "scavenger",
+      "low_cost"
+    ],
+    "aggression": {
+      "baseline": 0.05,
+      "vectors": {
+        "intraspecificMale": 0.05,
+        "interspecificGeneral": 0.05,
+        "finNipperRisk": 0.00,
+        "invertebratePredator": 0.10
+      }
+    },
+    "bioload": {
+      "multiplier": 0.22,
+      "components": {
+        "sizeFactor": 0.25,
+        "metabolismFactor": 0.65,
+        "dietFactor": 0.30
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [7.2, 7.8],
+        "tolerable": [7.0, 8.0],
+        "preferred": 7.4
+      },
+      "temperature": {
+        "optimal": [66, 79],
+        "tolerable": [64, 81],
+        "preferred": 73
+      },
+      "kh": { "optimal": [4, 9], "tolerable": [3, 10], "unit": "dKH" },
+      "gh": { "optimal": [7, 13], "tolerable": [5, 15], "unit": "dGH" },
+      "flow": "low"
+    },
+    "min_tank_liters": 10,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": [],
+      "incompatibilities": [],
+      "notes": "Very hardy and transparent. Occasionally \"whisker shrimp\" are mislabeled as Ghost Shrimp; those can be aggressive toward small fish."
+    },
+    "confidence": {
+      "overall": 7,
+      "aggression": 7,
+      "bioload": 7,
+      "parameters": 7,
+      "behavior": 7
+    },
+    "sources": {
+      "primary": ["SeriouslyFish", "FishBase"],
+      "secondary": ["Aquarium Co-Op", "Shrimp Keepers Forum"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
     "name": "Guppy (Male)",
     "slug": "guppy-male",
     "id": "guppy_male",
@@ -1112,6 +1303,70 @@
     "sources": {
       "primary": ["FishBase", "SeriouslyFish"],
       "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Mystery Snail",
+    "slug": "mystery-snail",
+    "id": "mystery_snail",
+    "tags": [
+      "snail_safe",
+      "shrimp_safe",
+      "beginner",
+      "scavenger",
+      "centerpiece_snail"
+    ],
+    "aggression": {
+      "baseline": 0.02,
+      "vectors": {
+        "intraspecificMale": 0.02,
+        "interspecificGeneral": 0.02,
+        "finNipperRisk": 0.00,
+        "invertebratePredator": 0.10
+      }
+    },
+    "bioload": {
+      "multiplier": 0.60,
+      "components": {
+        "sizeFactor": 0.60,
+        "metabolismFactor": 0.70,
+        "dietFactor": 0.65
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [7.2, 8.2],
+        "tolerable": [7.0, 8.4],
+        "preferred": 7.7
+      },
+      "temperature": {
+        "optimal": [70, 80],
+        "tolerable": [68, 82],
+        "preferred": 75
+      },
+      "kh": { "optimal": [5, 10], "tolerable": [4, 12], "unit": "dKH" },
+      "gh": { "optimal": [10, 16], "tolerable": [8, 18], "unit": "dGH" },
+      "flow": "low"
+    },
+    "min_tank_liters": 20,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": [],
+      "incompatibilities": [],
+      "notes": "Requires calcium for shell health. Unlike many snails, they have a higher bioload; do not overstock in small volumes."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 9,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["Invertebrates Magazine", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Snail Keepers Group"],
       "dateVerified": "2025-10-30"
     }
   },
@@ -1548,6 +1803,70 @@
     "sources": {
       "primary": ["PlanetCatfish", "SeriouslyFish"],
       "secondary": ["Aquarium Co-Op", "Reddit r/Corydoras"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Ramshorn Snail",
+    "slug": "ramshorn-snail",
+    "id": "ramshorn_snail",
+    "tags": [
+      "snail_safe",
+      "shrimp_safe",
+      "beginner",
+      "scavenger",
+      "prolific"
+    ],
+    "aggression": {
+      "baseline": 0.02,
+      "vectors": {
+        "intraspecificMale": 0.02,
+        "interspecificGeneral": 0.02,
+        "finNipperRisk": 0.00,
+        "invertebratePredator": 0.10
+      }
+    },
+    "bioload": {
+      "multiplier": 0.25,
+      "components": {
+        "sizeFactor": 0.30,
+        "metabolismFactor": 0.55,
+        "dietFactor": 0.35
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [7.2, 7.8],
+        "tolerable": [7.0, 8.0],
+        "preferred": 7.4
+      },
+      "temperature": {
+        "optimal": [61, 80],
+        "tolerable": [59, 82],
+        "preferred": 71
+      },
+      "kh": { "optimal": [3, 10], "tolerable": [2, 12], "unit": "dKH" },
+      "gh": { "optimal": [7, 18], "tolerable": [5, 20], "unit": "dGH" },
+      "flow": "low"
+    },
+    "min_tank_liters": 5,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": [],
+      "incompatibilities": [],
+      "notes": "Excellent cleaners but can reproduce rapidly if the tank is overfed."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 9,
+      "bioload": 7,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["Invertebrates Magazine", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Snail Keepers Group"],
       "dateVerified": "2025-10-30"
     }
   },
