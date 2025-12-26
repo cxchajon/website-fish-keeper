@@ -187,6 +187,68 @@
     }
   },
   {
+    "name": "Bristlenose Pleco",
+    "slug": "bristlenose-pleco",
+    "id": "bristlenose_pleco",
+    "tags": [
+      "algae_eater",
+      "bottom_dweller",
+      "shrimp_safe",
+      "snail_safe"
+    ],
+    "aggression": {
+      "baseline": 0.22,
+      "vectors": {
+        "intraspecificMale": 0.35,
+        "interspecificGeneral": 0.20,
+        "finNipperRisk": 0.05,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 2.40,
+      "components": {
+        "sizeFactor": 2.30,
+        "metabolismFactor": 1.10,
+        "dietFactor": 1.80
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.5, 7.5],
+        "tolerable": [6.5, 7.5],
+        "preferred": 7.0
+      },
+      "temperature": {
+        "optimal": [73, 81],
+        "tolerable": [73, 81],
+        "preferred": 77
+      },
+      "kh": { "optimal": [3, 8], "tolerable": [3, 8], "unit": "dKH" },
+      "gh": { "optimal": [6, 10], "tolerable": [6, 10], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": 18,
+      "predationRisks": [],
+      "incompatibilities": [],
+      "notes": "Requires driftwood for digestion; minimum 100 L recommended; produces significant waste despite its cleaner reputation."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["PlanetCatfish", "Aquarium Co-Op"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
     "name": "Bronze Corydoras",
     "slug": "bronze-corydoras",
     "id": "cory_bronze",
@@ -559,6 +621,69 @@
     }
   },
   {
+    "name": "Ember Tetra",
+    "slug": "ember-tetra",
+    "id": "ember_tetra",
+    "tags": [
+      "schooling",
+      "nano",
+      "shrimp_safe",
+      "snail_safe"
+    ],
+    "schooling_min": 6,
+    "aggression": {
+      "baseline": 0.10,
+      "vectors": {
+        "intraspecificMale": 0.10,
+        "interspecificGeneral": 0.10,
+        "finNipperRisk": 0.05,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 0.50,
+      "components": {
+        "sizeFactor": 0.45,
+        "metabolismFactor": 0.70,
+        "dietFactor": 0.45
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [5.5, 7.0],
+        "tolerable": [5.5, 7.0],
+        "preferred": 6.3
+      },
+      "temperature": {
+        "optimal": [73, 82],
+        "tolerable": [73, 82],
+        "preferred": 78
+      },
+      "kh": { "optimal": [2, 8], "tolerable": [2, 8], "unit": "dKH" },
+      "gh": { "optimal": [5, 12], "tolerable": [5, 12], "unit": "dGH" },
+      "flow": "low"
+    },
+    "behavior": {
+      "schoolingMinimum": 6,
+      "territorySize": null,
+      "predationRisks": ["Predators: large fish"],
+      "incompatibilities": ["Large boisterous tankmates"],
+      "notes": "Excellent for small tanks; best color displays in soft, acidic water."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
     "name": "Guppy (Male)",
     "slug": "guppy-male",
     "id": "guppy_male",
@@ -681,6 +806,68 @@
     }
   },
   {
+    "name": "Honey Gourami",
+    "slug": "honey-gourami",
+    "id": "honey_gourami",
+    "tags": [
+      "labyrinth",
+      "low_flow",
+      "shrimp_risk",
+      "snail_safe"
+    ],
+    "aggression": {
+      "baseline": 0.22,
+      "vectors": {
+        "intraspecificMale": 0.30,
+        "interspecificGeneral": 0.18,
+        "finNipperRisk": 0.08,
+        "invertebratePredator": 0.25
+      }
+    },
+    "bioload": {
+      "multiplier": 1.10,
+      "components": {
+        "sizeFactor": 1.00,
+        "metabolismFactor": 1.10,
+        "dietFactor": 1.00
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 7.5],
+        "tolerable": [6.0, 7.5],
+        "preferred": 6.8
+      },
+      "temperature": {
+        "optimal": [72, 82],
+        "tolerable": [72, 82],
+        "preferred": 77
+      },
+      "kh": { "optimal": [2, 10], "tolerable": [2, 10], "unit": "dKH" },
+      "gh": { "optimal": [4, 15], "tolerable": [4, 15], "unit": "dGH" },
+      "flow": "low"
+    },
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": 12,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": ["Aggressive gouramis"],
+      "notes": "Significantly more peaceful and hardy than the Dwarf Gourami (Trichogaster lalius)."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
     "name": "Kuhli Loach",
     "slug": "kuhli-loach",
     "id": "kuhli_loach",
@@ -739,6 +926,67 @@
     "sources": {
       "primary": ["Loaches Online", "SeriouslyFish"],
       "secondary": ["Aquarium Co-Op", "Reddit r/Loaches"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Molly",
+    "slug": "molly",
+    "id": "molly",
+    "tags": [
+      "algae_eater",
+      "shrimp_risk",
+      "snail_safe"
+    ],
+    "aggression": {
+      "baseline": 0.24,
+      "vectors": {
+        "intraspecificMale": 0.28,
+        "interspecificGeneral": 0.22,
+        "finNipperRisk": 0.10,
+        "invertebratePredator": 0.22
+      }
+    },
+    "bioload": {
+      "multiplier": 2.10,
+      "components": {
+        "sizeFactor": 2.00,
+        "metabolismFactor": 1.40,
+        "dietFactor": 1.50
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [7.5, 8.5],
+        "tolerable": [7.5, 8.5],
+        "preferred": 8.0
+      },
+      "temperature": {
+        "optimal": [75, 82],
+        "tolerable": [75, 82],
+        "preferred": 79
+      },
+      "kh": { "optimal": [10, 20], "tolerable": [10, 20], "unit": "dKH" },
+      "gh": { "optimal": [15, 30], "tolerable": [15, 30], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": [],
+      "notes": "Prefers hard water or slightly brackish conditions; susceptible to shimmies in soft, acidic water."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "TFH Magazine"],
       "dateVerified": "2025-10-30"
     }
   },
@@ -1050,6 +1298,66 @@
     "sources": {
       "primary": ["FishBase", "SeriouslyFish"],
       "secondary": ["Aquarium Co-Op", "Practical Fishkeeping"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Platy",
+    "slug": "platy",
+    "id": "platy",
+    "tags": [
+      "shrimp_risk",
+      "snail_safe"
+    ],
+    "aggression": {
+      "baseline": 0.18,
+      "vectors": {
+        "intraspecificMale": 0.22,
+        "interspecificGeneral": 0.18,
+        "finNipperRisk": 0.08,
+        "invertebratePredator": 0.18
+      }
+    },
+    "bioload": {
+      "multiplier": 1.05,
+      "components": {
+        "sizeFactor": 1.00,
+        "metabolismFactor": 1.05,
+        "dietFactor": 1.10
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [7.0, 8.2],
+        "tolerable": [7.0, 8.2],
+        "preferred": 7.6
+      },
+      "temperature": {
+        "optimal": [70, 82],
+        "tolerable": [70, 82],
+        "preferred": 76
+      },
+      "kh": { "optimal": [5, 15], "tolerable": [5, 15], "unit": "dKH" },
+      "gh": { "optimal": [10, 25], "tolerable": [10, 25], "unit": "dGH" },
+      "flow": "low"
+    },
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": [],
+      "notes": "Hardy species but prolific breeder; population can grow rapidly if both sexes are present."
+    },
+    "confidence": {
+      "overall": 8,
+      "aggression": 8,
+      "bioload": 8,
+      "parameters": 8,
+      "behavior": 8
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Platy Keepers Forum"],
       "dateVerified": "2025-10-30"
     }
   },
