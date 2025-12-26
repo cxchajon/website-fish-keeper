@@ -100,6 +100,7 @@
       background: #201a14;
       overflow: hidden;
       isolation: isolate;
+      perspective: 1400px;
     }
 
     .shelf-art {
@@ -126,10 +127,10 @@
     }
 
     /* CALIBRATED POSITIONS */
-    .shelf-1 { top: 27.5%; }
-    .shelf-2 { top: 44.8%; }
-    .shelf-3 { top: 62.2%; }
-    .shelf-4 { top: 79.5%; }
+    .shelf-1 { top: 11.5%; }
+    .shelf-2 { top: 29.0%; }
+    .shelf-3 { top: 46.5%; }
+    .shelf-4 { top: 64.0%; }
 
     /* Top shelf glow (lamp warmth) */
     .shelf-1::after {
@@ -146,11 +147,16 @@
 
     /* Ghost boxes ONLY when test-mode is enabled */
     .shelf-stage.test-mode .book {
-      display: block;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
       height: 90%;
       width: 80px;
-      background: rgba(255, 0, 0, 0.3);
-      border: 2px dashed #ff0000;
+      background: rgba(255, 0, 0, 0.2);
+      border: 2px dashed red;
+      border-radius: 4px;
+      transform: none;
+      filter: none;
     }
 
     .shelf-stage.test-mode .book img {
@@ -161,7 +167,12 @@
     .shelf-stage:not(.test-mode) .book {
       display: block;
       height: 90%;
+      --tilt-rotateX: 0deg;
+      --tilt-rotateY: 0deg;
+      --hover-translate: 0px;
+      --hover-scale: 1;
       transform-origin: bottom center;
+      transform: perspective(1200px) translateY(var(--hover-translate)) scale(var(--hover-scale)) rotateX(var(--tilt-rotateX)) rotateY(var(--tilt-rotateY));
       transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       filter: drop-shadow(2px 5px 8px rgba(0,0,0,0.4));
       z-index: 10;
@@ -179,7 +190,8 @@
     .shelf-stage:not(.test-mode) .book:hover {
       z-index: 100;
       filter: brightness(1.05) drop-shadow(10px 15px 20px rgba(0,0,0,0.5));
-      transform: translateY(-8px) scale(1.03);
+      --hover-translate: -8px;
+      --hover-scale: 1.03;
     }
 
     /* Mobile optimization */
@@ -667,7 +679,8 @@
   </div>
 
   <script>
-    const TEST_MODE = true;  // switch to false to restore real products
+    const TEST_MODE_DEFAULT = false; // set true to force calibration mode
+    const TEST_MODE = new URLSearchParams(window.location.search).get('testMode') === '1' || TEST_MODE_DEFAULT;
 
     // Product data extracted from store.html
     const products = [
@@ -703,7 +716,7 @@
       shelfStage.classList.toggle('test-mode', TEST_MODE);
     }
 
-    const maxPerShelf = 3;
+    const maxPerShelf = 3; // top shelves fill first
 
     const shelfElements = [
       document.getElementById('shelf-1'),
@@ -714,9 +727,12 @@
 
     shelfElements.forEach(s => { if (s) s.innerHTML = ''; });
 
-    if (TEST_MODE) {
-      const dummyCount = 12; // 3 per shelf for 4 shelves
-      for (let i = 0; i < dummyCount; i++) {
+    const shelvesCapacity = maxPerShelf * shelfElements.length;
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const addGhostBooks = () => {
+      for (let i = 0; i < shelvesCapacity; i++) {
         const shelfIndex = Math.floor(i / maxPerShelf);
         const shelf = shelfElements[shelfIndex];
         if (!shelf) continue;
@@ -724,8 +740,10 @@
         ghost.className = 'book';
         shelf.appendChild(ghost);
       }
-    } else {
-      products.forEach((product, index) => {
+    };
+
+    const addProductBooks = () => {
+      products.slice(0, shelvesCapacity).forEach((product, index) => {
         const shelfIndex = Math.floor(index / maxPerShelf);
         const shelf = shelfElements[shelfIndex];
         if (!shelf) return;
@@ -744,7 +762,44 @@
         bookLink.appendChild(bookImg);
         shelf.appendChild(bookLink);
       });
+    };
+
+    if (TEST_MODE) {
+      addGhostBooks();
+    } else {
+      addProductBooks();
     }
+
+    const activateTilt = () => {
+      if (!shelfStage || shelfStage.classList.contains('test-mode')) return;
+      const books = Array.from(shelfStage.querySelectorAll('.book'));
+      if (!books.length) return;
+
+      const handleTilt = (event) => {
+        const rect = shelfStage.getBoundingClientRect();
+        const xRatio = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+        const yRatio = ((event.clientY - rect.top) / rect.height - 0.65) * 2;
+        const rotateY = clamp(xRatio, -1, 1) * 10;
+        const rotateX = clamp(-yRatio, -1, 1) * 8;
+
+        books.forEach(book => {
+          book.style.setProperty('--tilt-rotateY', `${rotateY}deg`);
+          book.style.setProperty('--tilt-rotateX', `${rotateX}deg`);
+        });
+      };
+
+      const resetTilt = () => {
+        books.forEach(book => {
+          book.style.setProperty('--tilt-rotateY', '0deg');
+          book.style.setProperty('--tilt-rotateX', '0deg');
+        });
+      };
+
+      shelfStage.addEventListener('pointermove', handleTilt);
+      shelfStage.addEventListener('pointerleave', resetTilt);
+    };
+
+    activateTilt();
   </script>
 
   <!-- Footer and Navigation Scripts -->
