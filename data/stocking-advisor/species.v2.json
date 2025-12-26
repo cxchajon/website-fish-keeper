@@ -1000,6 +1000,70 @@
     }
   },
   {
+    "name": "Glass Catfish",
+    "slug": "glass-catfish",
+    "id": "glass_catfish",
+    "tags": [
+      "oddball",
+      "schooling",
+      "peaceful",
+      "sensitive"
+    ],
+    "schooling_min": 6,
+    "aggression": {
+      "baseline": 0.10,
+      "vectors": {
+        "intraspecificMale": 0.10,
+        "interspecificGeneral": 0.10,
+        "finNipperRisk": 0.05,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 0.95,
+      "components": {
+        "sizeFactor": 1.00,
+        "metabolismFactor": 0.85,
+        "dietFactor": 0.90
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 7.0],
+        "tolerable": [6.0, 7.0],
+        "preferred": 6.5
+      },
+      "temperature": {
+        "optimal": [75.2, 82.4],
+        "tolerable": [75.2, 82.4],
+        "preferred": 78.8
+      },
+      "kh": { "optimal": [2, 6], "tolerable": [2, 6], "unit": "dKH" },
+      "gh": { "optimal": [4, 10], "tolerable": [4, 10], "unit": "dGH" },
+      "flow": "moderate"
+    },
+    "min_tank_liters": 75,
+    "behavior": {
+      "schoolingMinimum": 6,
+      "territorySize": null,
+      "predationRisks": [],
+      "incompatibilities": [],
+      "notes": "Almost entirely transparent. Extremely sensitive to water quality changes and must be kept in groups or they will stop eating due to stress."
+    },
+    "confidence": {
+      "overall": 7,
+      "aggression": 7,
+      "bioload": 7,
+      "parameters": 7,
+      "behavior": 7
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Practical Fishkeeping"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
     "name": "Guppy (Male)",
     "slug": "guppy-male",
     "id": "guppy_male",
@@ -1118,6 +1182,69 @@
     "sources": {
       "primary": ["FishBase", "SeriouslyFish"],
       "secondary": ["Aquarium Co-Op", "Practical Fishkeeping"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Hillstream Loach (Reticulated)",
+    "slug": "hillstream-loach",
+    "id": "hillstream_loach",
+    "tags": [
+      "oddball",
+      "algae_eater",
+      "cold_water",
+      "high_flow"
+    ],
+    "aggression": {
+      "baseline": 0.18,
+      "vectors": {
+        "intraspecificMale": 0.20,
+        "interspecificGeneral": 0.18,
+        "finNipperRisk": 0.05,
+        "invertebratePredator": 0.05
+      }
+    },
+    "bioload": {
+      "multiplier": 1.00,
+      "components": {
+        "sizeFactor": 1.00,
+        "metabolismFactor": 1.10,
+        "dietFactor": 0.70
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.5, 8.0],
+        "tolerable": [6.5, 8.0],
+        "preferred": 7.3
+      },
+      "temperature": {
+        "optimal": [64.4, 75.2],
+        "tolerable": [64.4, 75.2],
+        "preferred": 69.8
+      },
+      "kh": { "optimal": [4, 10], "tolerable": [4, 10], "unit": "dKH" },
+      "gh": { "optimal": [8, 15], "tolerable": [8, 15], "unit": "dGH" },
+      "flow": "high"
+    },
+    "min_tank_liters": 55,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": null,
+      "predationRisks": [],
+      "incompatibilities": [],
+      "notes": "Resembles a miniature stingray. Requires high oxygen levels and fast-moving water. Feeds primarily on \"aufwuchs\" (algae and biofilm) on smooth rocks."
+    },
+    "confidence": {
+      "overall": 7,
+      "aggression": 7,
+      "bioload": 7,
+      "parameters": 7,
+      "behavior": 7
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Loaches Online"],
       "dateVerified": "2025-10-30"
     }
   },
@@ -1620,6 +1747,69 @@
     }
   },
   {
+    "name": "Pea Puffer (Dwarf Puffer)",
+    "slug": "pea-puffer",
+    "id": "pea_puffer",
+    "tags": [
+      "nano",
+      "aggressive",
+      "oddball",
+      "predatory"
+    ],
+    "aggression": {
+      "baseline": 0.70,
+      "vectors": {
+        "intraspecificMale": 0.85,
+        "interspecificGeneral": 0.70,
+        "finNipperRisk": 0.90,
+        "invertebratePredator": 0.80
+      }
+    },
+    "bioload": {
+      "multiplier": 1.10,
+      "components": {
+        "sizeFactor": 0.80,
+        "metabolismFactor": 1.20,
+        "dietFactor": 1.30
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [7.0, 8.0],
+        "tolerable": [7.0, 8.0],
+        "preferred": 7.5
+      },
+      "temperature": {
+        "optimal": [75.2, 82.4],
+        "tolerable": [75.2, 82.4],
+        "preferred": 78.8
+      },
+      "kh": { "optimal": [3, 10], "tolerable": [3, 10], "unit": "dKH" },
+      "gh": { "optimal": [5, 15], "tolerable": [5, 15], "unit": "dGH" },
+      "flow": "low"
+    },
+    "min_tank_liters": 20,
+    "behavior": {
+      "schoolingMinimum": 1,
+      "territorySize": 12,
+      "predationRisks": ["Shrimp (all sizes)", "Snails"],
+      "incompatibilities": [],
+      "notes": "Despite their size, they are very aggressive and usually best kept in a species-only tank. They require live or frozen foods (snails, bloodworms)."
+    },
+    "confidence": {
+      "overall": 7,
+      "aggression": 7,
+      "bioload": 7,
+      "parameters": 7,
+      "behavior": 7
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "Practical Fishkeeping"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
     "name": "Pearl Gourami",
     "slug": "pearl-gourami",
     "id": "pearl_gourami",
@@ -1991,6 +2181,70 @@
     "sources": {
       "primary": ["FishBase", "SeriouslyFish"],
       "secondary": ["Aquarium Co-Op", "TFH Magazine"],
+      "dateVerified": "2025-10-30"
+    }
+  },
+  {
+    "name": "Upside-Down Catfish",
+    "slug": "upside-down-catfish",
+    "id": "upside_down_catfish",
+    "tags": [
+      "oddball",
+      "nocturnal",
+      "peaceful",
+      "scavenger"
+    ],
+    "schooling_min": 4,
+    "aggression": {
+      "baseline": 0.16,
+      "vectors": {
+        "intraspecificMale": 0.18,
+        "interspecificGeneral": 0.16,
+        "finNipperRisk": 0.05,
+        "invertebratePredator": 0.18
+      }
+    },
+    "bioload": {
+      "multiplier": 1.30,
+      "components": {
+        "sizeFactor": 1.30,
+        "metabolismFactor": 1.00,
+        "dietFactor": 1.00
+      }
+    },
+    "parameters": {
+      "pH": {
+        "optimal": [6.0, 7.5],
+        "tolerable": [6.0, 7.5],
+        "preferred": 6.8
+      },
+      "temperature": {
+        "optimal": [71.6, 80.6],
+        "tolerable": [71.6, 80.6],
+        "preferred": 76.1
+      },
+      "kh": { "optimal": [3, 10], "tolerable": [3, 10], "unit": "dKH" },
+      "gh": { "optimal": [5, 15], "tolerable": [5, 15], "unit": "dGH" },
+      "flow": "low"
+    },
+    "min_tank_liters": 75,
+    "behavior": {
+      "schoolingMinimum": 4,
+      "territorySize": null,
+      "predationRisks": ["Shrimp (juvenile)"],
+      "incompatibilities": [],
+      "notes": "Famous for swimming upside-down to graze on the underside of leaves and driftwood. Very shy; requires plenty of hiding spots to feel secure."
+    },
+    "confidence": {
+      "overall": 7,
+      "aggression": 7,
+      "bioload": 7,
+      "parameters": 7,
+      "behavior": 7
+    },
+    "sources": {
+      "primary": ["FishBase", "SeriouslyFish"],
+      "secondary": ["Aquarium Co-Op", "PlanetCatfish"],
       "dateVerified": "2025-10-30"
     }
   },
