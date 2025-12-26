@@ -377,6 +377,14 @@ async function bootstrapStocking() {
   state.gallons = initialTank.gallons ?? 0;
   state.liters = initialTank.liters ?? 0;
   state.selectedTankId = initialTank.id ?? null;
+  if ('planted' in state) {
+    delete state.planted;
+  }
+  if (state.tank && typeof state.tank === 'object' && 'planted' in state.tank) {
+    const nextTank = { ...state.tank };
+    delete nextTank.planted;
+    state.tank = nextTank;
+  }
   let computed = null;
   const debugMode = getQueryFlag('debug');
   let assumptionScrubInitialized = false;
@@ -384,8 +392,6 @@ async function bootstrapStocking() {
 
   const refs = {
     pageTitle: document.getElementById('page-title'),
-    plantIcon: document.getElementById('plant-icon'),
-    planted: document.getElementById('stocking-planted'),
     filterSetup: document.querySelector('[data-role="filter-setup"]'),
     filterProductSelect:
       document.getElementById('filterProduct') || document.getElementById('filter-product'),
@@ -2049,22 +2055,6 @@ function pruneMarineEntries() {
   emitStockChange();
 }
 
-function updateToggle(control, value) {
-  if (!control) return;
-  const active = Boolean(value);
-  if (control instanceof HTMLInputElement && control.type === 'checkbox') {
-    control.checked = active;
-    control.setAttribute('aria-checked', active ? 'true' : 'false');
-    return;
-  }
-  control.dataset.active = active ? 'true' : 'false';
-  control.setAttribute('aria-checked', active ? 'true' : 'false');
-  const label = control.querySelector('span:last-of-type');
-  if (label) {
-    label.textContent = active ? 'On' : 'Off';
-  }
-}
-
   function applyEnvTipsState(open) {
     const panel = refs.envTips;
     const card = refs.envCard;
@@ -2184,12 +2174,8 @@ advisorApi.getVisibleSpecies = () => buildSpeciesOptionsList().map((species) => 
 window.advisor = advisorApi;
 
 function syncToggles() {
-  updateToggle(refs.planted, state.planted);
   if (refs.envTips || refs.envInfoToggle || refs.envCard) {
     applyEnvTipsState(state.showTips);
-  }
-  if (refs.plantIcon) {
-    refs.plantIcon.style.display = state.planted ? 'inline-flex' : 'none';
   }
 }
 
@@ -2411,14 +2397,6 @@ window.addEventListener('ttg:recompute', () => {
   });
 
 function bindInputs() {
-  if (refs.planted) {
-    refs.planted.addEventListener('change', () => {
-      state.planted = Boolean(refs.planted.checked);
-      syncToggles();
-      scheduleUpdate();
-    });
-  }
-
   if (refs.speciesSearch) {
     const handleSearchInput = (event) => {
       speciesSearchTerm = sanitizeSearchTerm(event.target.value);
@@ -2491,7 +2469,6 @@ function buildGearPayload() {
     tank: {
       gallons_total: tank.gallons,
       length_in: tank.length,
-      planted: tank.planted,
       sump_gal: tank.sump,
     },
     targets: {

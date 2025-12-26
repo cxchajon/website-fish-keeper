@@ -266,17 +266,3 @@ if (!immediateSelect) {
 
   applySelection(initialId);
 })();
-
-(function wirePlantedOverlay(){
-  const page = document.getElementById('stocking-page');
-  const planted = document.getElementById('stocking-planted');
-  if (!page || !planted) return;
-
-  const apply = () => {
-    page.classList.toggle('is-planted', !!planted.checked);
-  };
-
-  apply();
-
-  planted.addEventListener('change', apply, { passive: true });
-})();

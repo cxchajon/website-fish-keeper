@@ -1,7 +1,6 @@
 import { clamp, sumGph, weightedMixFactor } from './utils.js';
 
 export const DEFAULT_DISPLACEMENT = 0.10;       // 10% volume lost to substrate/scape
-export const PLANTED_CAPACITY_BONUS = 0.15;     // +15% effective capacity when "Planted" is ON
 export const MIN_RENDERED_PERCENT = 0.1;        // floor for display; values below still show as "<0.1%"
 
 function toNumber(value) {
@@ -9,11 +8,9 @@ function toNumber(value) {
   return Number.isFinite(num) ? num : 0;
 }
 
-export function getEffectiveGallons(rawGallons, { planted = false, displacement = DEFAULT_DISPLACEMENT } = {}) {
+export function getEffectiveGallons(rawGallons, { displacement = DEFAULT_DISPLACEMENT } = {}) {
   const gallons = Math.max(0, toNumber(rawGallons));
-  const base = Math.max(0, gallons * (1 - displacement));
-  const withPlants = planted ? base * (1 + PLANTED_CAPACITY_BONUS) : base;
-  return withPlants;
+  return Math.max(0, gallons * (1 - displacement));
 }
 
 function lookupSpecies(speciesMap, speciesId) {
@@ -37,8 +34,8 @@ export function getTotalGE(currentStock = [], speciesMap) {
   }, 0);
 }
 
-export function computeBioloadPercent({ gallons, planted = false, currentStock = [], speciesMap, displacement } = {}) {
-  const eff = getEffectiveGallons(gallons, { planted, displacement });
+export function computeBioloadPercent({ gallons, currentStock = [], speciesMap, displacement } = {}) {
+  const eff = getEffectiveGallons(gallons, { displacement });
   const totalGE = getTotalGE(currentStock, speciesMap);
   if (eff <= 0) return 0;
   const pct = (totalGE / eff) * 100;

@@ -25,7 +25,6 @@ describe('fuzzed compatibility checks', () => {
         id: `pair-${i}`,
         name: 'Random pair',
         gallons: 29,
-        planted: false,
         entries: [
           { speciesId: a.id, count: 2 },
           { speciesId: b.id, count: 2 },
@@ -49,7 +48,6 @@ describe('fuzzed compatibility checks', () => {
       id: 'shoal-test',
       name: 'Shoal minimum test',
       gallons: 20,
-      planted: false,
       entries: [
         { speciesId: shoaling.id, count: Math.max(1, Math.floor((shoaling.shoalMin ?? 3) / 2)) },
       ],
@@ -74,7 +72,6 @@ describe('fuzzed compatibility checks', () => {
       id: 'salinity-test',
       name: 'Salinity mismatch',
       gallons: 15,
-      planted: false,
       entries: [
         { speciesId: brackish.id, count: 3 },
         { speciesId: fresh.id, count: 3 },

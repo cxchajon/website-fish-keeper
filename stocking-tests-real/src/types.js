@@ -32,7 +32,6 @@
  *   id: string,
  *   name: string,
  *   gallons: number,
- *   planted: boolean,
  *   entries: StockingEntry[],
  * }} StockingPlan
  *

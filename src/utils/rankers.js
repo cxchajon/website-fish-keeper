@@ -23,7 +23,7 @@ const TANK_ALIASES = new Map([
 
 export const CONTEXT_DEFAULTS = {
   tankSize: '20g',
-  planted: true,
+  planted: false,
   bioLoad: 'Moderate',
   budget: 'Any',
 };

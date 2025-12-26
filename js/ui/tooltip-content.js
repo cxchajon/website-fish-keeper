@@ -1,16 +1,5 @@
 const TOOLTIP_COPY = new Map([
   [
-    'planted',
-    {
-      title: 'Planted tank toggle',
-      body: [
-        'Live plants consume ammonia and nitrite, buffering waste spikes and adding oxygen.',
-        'Turn this on when you keep live plants so we allow a little more bioload and widen matching parameters.',
-      ],
-      ariaLabel: 'More info about planted tanks',
-    },
-  ],
-  [
     'filter-product',
     {
       title: 'Filter product list',
