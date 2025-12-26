@@ -52,25 +52,49 @@ const SALINITY_LABEL = {
   dual: 'Dual',
 };
 
-export const SPECIES = Object.freeze(
+export let SPECIES = Object.freeze(
   FISH_DB.filter((s) => validateSpeciesRecord(s) === true && s.salinity !== 'marine')
 );
 
-const NORMALIZED_SPECIES = SPECIES.map(normalizeSpecies);
-const SPECIES_MAP = new Map(NORMALIZED_SPECIES.map((species) => [species.id, species]));
-const ENGINE_SPECIES = Object.freeze(NORMALIZED_SPECIES);
+let NORMALIZED_SPECIES = SPECIES.map(normalizeSpecies);
+let SPECIES_MAP = new Map(NORMALIZED_SPECIES.map((species) => [species.id, species]));
+let ENGINE_SPECIES = Object.freeze(NORMALIZED_SPECIES);
 
 export function getSpeciesById(id) {
   return SPECIES_MAP.get(id) ?? null;
 }
 
-export const SPECIES_LIST = ENGINE_SPECIES.map((species) => ({
+export let SPECIES_LIST = ENGINE_SPECIES.map((species) => ({
   id: species.id,
   name: species.common_name,
 }));
 
 export function getDefaultSpeciesId() {
   return ENGINE_SPECIES[0]?.id ?? null;
+}
+export let ALL_SPECIES = SPECIES_LIST;
+
+function rebuildSpeciesDataset(records) {
+  SPECIES = Object.freeze(records);
+  NORMALIZED_SPECIES = SPECIES.map(normalizeSpecies);
+  SPECIES_MAP = new Map(NORMALIZED_SPECIES.map((species) => [species.id, species]));
+  ENGINE_SPECIES = Object.freeze(NORMALIZED_SPECIES);
+  SPECIES_LIST = ENGINE_SPECIES.map((species) => ({
+    id: species.id,
+    name: species.common_name,
+  }));
+  ALL_SPECIES = SPECIES_LIST;
+}
+
+export function overrideSpeciesDataset(records = []) {
+  const valid = Array.isArray(records)
+    ? records.filter((s) => validateSpeciesRecord(s) === true && s.salinity !== 'marine')
+    : [];
+  if (!valid.length) {
+    return false;
+  }
+  rebuildSpeciesDataset(valid);
+  return true;
 }
 
 export function autoBioloadUnit(species) {
@@ -702,7 +726,7 @@ function mapEntriesToStock(entries = []) {
   return entries.map((entry) => ({ speciesId: entry.id, count: entry.qty }));
 }
 
-function computeBioload(tank, entries, candidate, filterState = {}) {
+export function computeBioload(tank, entries, candidate, filterState = {}) {
   const currentStock = mapEntriesToStock(entries);
   const candidateStock = candidate ? [{ speciesId: candidate.id, count: candidate.qty }] : [];
   const proposedStock = candidate ? [...currentStock, ...candidateStock] : currentStock;
@@ -1518,5 +1542,3 @@ export function createDefaultState() {
     water: { temperature: 78, pH: 7.2, gH: 6, kH: 3, salinity: 'fresh', flow: 'moderate', blackwater: false },
   };
 }
-
-export const ALL_SPECIES = SPECIES_LIST;

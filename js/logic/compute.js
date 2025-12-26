@@ -32,6 +32,7 @@ const {
   runSanitySuite: baseRunSanitySuite,
   runStressSuite: baseRunStressSuite,
   createDefaultState: baseCreateDefaultState,
+  overrideSpeciesDataset,
   FILTER_TURNOVER_MULTIPLIERS,
   TURNOVER_BANDS,
   MIN_TURNOVER_FLOOR,
@@ -68,6 +69,9 @@ function buildSpeciesCollections() {
     slug: species.slug,
   })));
   ALL_SPECIES_V2 = SPECIES_LIST_V2;
+  if (typeof overrideSpeciesDataset === 'function' && SPECIES_V2.length > 0) {
+    overrideSpeciesDataset(SPECIES_V2);
+  }
 }
 
 /**
