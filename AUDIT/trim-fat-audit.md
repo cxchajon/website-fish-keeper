@@ -28,7 +28,7 @@ Top 20 by size:
 20. `workers/node_modules/wrangler/wrangler-dist/cli.js` — 5.52 MB
 
 ## High-confidence unused (SAFE TO DELETE NOW)
-- Zero-byte placeholder images duplicated across blogs: `blogs/blackbeard/img/Refugium_placeholder.jpg`, `blogs/shared/img/24hour_aquarist_placeholder.jpg`, `blogs/shared/img/seachem_excel_placeholder.jpg`, `blogs/shared/img/finnex_247_placeholder.jpg`. No references found; MD5 duplicates.
+- Zero-byte placeholder images duplicated across blogs (now removed). No references found; MD5 duplicates.
 
 ## Medium-confidence unused (VERIFY FIRST)
 - Unreferenced brand/utility art: `assets/doodles/*.svg`, `assets/icons/youtube-replay.svg`, `assets/icons/youtube-rewind.svg`.
@@ -66,7 +66,7 @@ Top 20 by size:
 - Sitemap/robots: `sitemap.xml`, `robots.txt`, `_redirects`, `_headers`.
 
 ## Proposed deletion plan (Phase 1 / Phase 2)
-- **Phase 1: Safe Now** — Remove zero-byte duplicate placeholders (`blogs/*/Refugium_placeholder.jpg`, `blogs/shared/img/*_placeholder.jpg`). Estimated impact: none (not referenced, 0-byte). Rollback: restore from Git if any template expects file presence.
+- **Phase 1: Safe Now** — Remove zero-byte duplicate placeholders. Estimated impact: none (not referenced, 0-byte). Rollback: restore from Git if any template expects file presence.
 - **Phase 2: Verify First** — Confirm usage before removal or rename: doodle/icon SVGs, manifest logo files with “×” naming, oversized blog diagrams, prototype directories (`proto_edits/`, `dist/prototype/`, `store-prototype.html`), unreferenced CSS/JS bundles (`dist/css/*.css`, `css/*bundle*.css`, `assets/js/*`, `js/logic/*`). Impact: potential missing icons/styles or broken prototype links. Verification: search CDN logs or analytics for direct hits; run local build to see if bundler imports; check manifest/assets in Lighthouse/PWA; ensure redirects for `/gear.html` `/stocking.html` exist before removing related references.
 
 ## Verification checklist (before/after)

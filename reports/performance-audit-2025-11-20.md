@@ -514,11 +514,7 @@ Delete or don't load:
 
 ### 4. Delete Zero-Byte Placeholders (5 minutes)
 
-Remove empty files:
-- `/blogs/shared/img/24hour_aquarist_placeholder.jpg`
-- `/blogs/shared/img/finnex_247_placeholder.jpg`
-- `/blogs/shared/img/seachem_excel_placeholder.jpg`
-- `/blogs/blackbeard/img/Refugium_placeholder.jpg`
+Remove empty blog placeholder files (all zero-byte duplicates already cleared).
 
 **Impact:** Clean repository, no broken images
 
