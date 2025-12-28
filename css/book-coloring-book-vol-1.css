@@ -1,0 +1,91 @@
+/*
+ * Coloring Book Vol. 1 Page - Background Design System
+ * Scoped to .page--coloring-book-vol-1 to avoid global side effects
+ */
+
+/* Ensure background extends full viewport height */
+html:has(.page--coloring-book-vol-1),
+body.page--coloring-book-vol-1 {
+  min-height: 100vh;
+}
+
+.page--coloring-book-vol-1 {
+  /* Base background: EXACT match to Life in Balance page */
+  background: radial-gradient(120% 120% at 16% 20%, #111827 0%, #0b1220 55%, #070c16 100%);
+  color: #e5e7eb;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Background pattern layer - subtle repeating book cover tiles */
+.page--coloring-book-vol-1::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/books/Front of coloring book vol.1.jpeg');
+  background-repeat: repeat;
+  background-size: 80px 120px; /* Tile size for book cover pattern */
+  background-position: 0 0;
+  opacity: 0.18; /* Pattern visibility: matches Life in Balance */
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Blue overlay layer for text readability */
+.page--coloring-book-vol-1::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(11, 18, 32, 0.18) 0%, rgba(7, 12, 22, 0.22) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Ensure content sits above background layers */
+.page--coloring-book-vol-1 > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Mobile: increased overlay opacity for better readability */
+@media (max-width: 768px) {
+  .page--coloring-book-vol-1::after {
+    background: linear-gradient(180deg, rgba(11, 18, 32, 0.30) 0%, rgba(7, 12, 22, 0.40) 100%);
+  }
+}
+
+/* Page-specific content styles */
+.page--coloring-book-vol-1 .book-hero {
+  text-align: center;
+  padding: 4rem 1.5rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page--coloring-book-vol-1 .book-hero h1 {
+  font-size: clamp(28px, 5vw, 48px);
+  line-height: 1.2;
+  margin: 0 0 1rem;
+  color: #f9fafb;
+  font-weight: 700;
+}
+
+.page--coloring-book-vol-1 .book-hero .subtitle {
+  font-size: clamp(16px, 2.5vw, 20px);
+  color: #9ca3af;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .page--coloring-book-vol-1 .book-hero {
+    padding: 3rem 1rem 1.5rem;
+  }
+}
