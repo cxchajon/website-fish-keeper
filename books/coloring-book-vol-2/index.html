@@ -159,6 +159,56 @@
   }
   </script>
 
+  <!-- BreadcrumbList JSON-LD Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://thetankguide.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Books",
+        "item": "https://thetankguide.com/books/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Coloring Book Vol. 2",
+        "item": "https://thetankguide.com/books/coloring-book-vol-2/"
+      }
+    ]
+  }
+  </script>
+
+  <!-- WebPage JSON-LD Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://thetankguide.com/books/coloring-book-vol-2/#webpage",
+    "url": "https://thetankguide.com/books/coloring-book-vol-2/",
+    "name": "Life in Balance: The Hidden Magic in Aquariums — Coloring Book Vol. 2",
+    "description": "An educational coloring resource designed to introduce hobbyists to the functional roles of invertebrates and plants within a freshwater ecosystem.",
+    "isPartOf": {
+      "@id": "https://thetankguide.com/#website"
+    },
+    "about": {
+      "@id": "https://thetankguide.com/books/coloring-book-vol-2/#book"
+    },
+    "publisher": {
+      "@id": "https://thetankguide.com/#organization"
+    },
+    "inLanguage": "en"
+  }
+  </script>
+
   <!-- Styles -->
   <link rel="stylesheet" href="/css/app.bundle.css?v=2025-11-07" />
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
@@ -303,6 +353,11 @@
       </div>
     </section>
   </main>
+
+  <!-- Publisher Clarification -->
+  <section class="publisher-info" style="text-align: center; padding: 1.5rem 1rem; color: #ffffff; font-size: 0.875rem;">
+    <p>The Tank Guide is a publication of FishKeepingLifeCo.</p>
+  </section>
 
   <!-- Amazon Associates Disclosure -->
   <section class="amazon-disclosure" style="text-align: center; padding: 2rem 1rem; color: #ffffff; font-size: 0.875rem;">
