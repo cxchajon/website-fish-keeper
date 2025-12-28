@@ -89,25 +89,23 @@
       padding: 0 20px 40px;
     }
 
-    /* Container Lock with calibrated shelf centerlines */
+    /* Container Lock with floor-based shelf positioning */
     body[data-page="store-prototype"] {
-      --lane-h: 18%;        /* tuneable lane height */
-      --book-h: 75%;        /* books at 75% of lane height */
+      --lane-h: 16%;        /* tuneable lane height */
+      --book-h: 68%;        /* books at 68% of lane height for pocket fit */
 
-      /* Shelf centerlines from user's marked screenshot */
-      --s1-center: 31.2%;
-      --s2-center: 47.1%;
-      --s3-center: 63.0%;   /* extrapolated spacing */
-      --s4-center: 78.9%;   /* extrapolated spacing */
-
-      /* Visual floor offset: shifts book bottoms up to align with illustrated shelf surface */
-      --shelf-floor-offset: 4px;
+      /* Shelf floor positions (bottom edge of each shelf pocket) */
+      --s1-floor: 37.0%;
+      --s2-floor: 58.4%;
+      --s3-floor: 79.8%;
+      --s4-floor: 93.0%;
     }
 
     .shelf-stage {
       position: relative;
-      width: min(520px, 92vw);
-      aspect-ratio: 1344 / 3168;  /* Exact dimensions of IMG_3428.png */
+      width: 100%;
+      max-width: 520px;
+      aspect-ratio: 461 / 1000;
       margin: 0 auto;
       background: #201a14;
       overflow: hidden;
@@ -120,7 +118,7 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
       z-index: 0;
       pointer-events: none;
       user-select: none;
@@ -139,12 +137,12 @@
       pointer-events: auto;
     }
 
-    /* CALIBRATED POSITIONS - book centers align to shelf centerlines */
-    /* Formula: lane_top = center - (lane_h * 0.625) for 75% book height */
-    .shelf-1 { top: calc(var(--s1-center) - (var(--lane-h) * 0.625)); }
-    .shelf-2 { top: calc(var(--s2-center) - (var(--lane-h) * 0.625)); }
-    .shelf-3 { top: calc(var(--s3-center) - (var(--lane-h) * 0.625)); }
-    .shelf-4 { top: calc(var(--s4-center) - (var(--lane-h) * 0.625)); }
+    /* FLOOR-BASED POSITIONS - lane bottom aligns to shelf floor line */
+    /* Formula: lane_top = floor - lane_h (bottom of lane at floor position) */
+    .shelf-1 { top: calc(var(--s1-floor) - var(--lane-h)); }
+    .shelf-2 { top: calc(var(--s2-floor) - var(--lane-h)); }
+    .shelf-3 { top: calc(var(--s3-floor) - var(--lane-h)); }
+    .shelf-4 { top: calc(var(--s4-floor) - var(--lane-h)); }
 
     /* Per-shelf floor offset overrides (optional customization) */
     /* Example: .shelf-1 .book { --shelf-floor-offset: 6px; } */
@@ -166,6 +164,7 @@
     .book {
       display: block;
       height: var(--book-h);
+      width: clamp(84px, 20vw, 128px);
       text-decoration: none;
       transform-origin: bottom center;
       --tilt-rotateX: 0deg;
@@ -224,14 +223,15 @@
       background: rgba(255, 0, 0, 0.05);
     }
 
+    /* Debug: show floor line for each shelf (using ::before to avoid conflicts) */
     body[data-page="store-prototype"].debug-shelves .shelf-lane::before {
       content: '';
       position: absolute;
-      left: 0;
-      right: 0;
-      top: 50%;
+      left: -50%;
+      right: -50%;
+      bottom: 0;
       height: 1px;
-      background: rgba(0, 255, 0, 0.7);
+      background: rgba(0, 255, 255, 0.8);
       z-index: 100;
       pointer-events: none;
     }
