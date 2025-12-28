@@ -150,6 +150,30 @@ body.page--coloring-book-vol-1 {
   color: #f3f4f6;
 }
 
+/* FAQ Section Styles */
+.page--coloring-book-vol-1 .book-content .faq-item {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(156, 163, 175, 0.2);
+}
+
+.page--coloring-book-vol-1 .book-content .faq-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.page--coloring-book-vol-1 .book-content .faq-item h4 {
+  font-size: clamp(18px, 2.5vw, 22px);
+  line-height: 1.4;
+  margin: 0 0 0.75rem;
+  color: #f9fafb;
+  font-weight: 600;
+}
+
+.page--coloring-book-vol-1 .book-content .faq-item p {
+  margin: 0;
+}
+
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .page--coloring-book-vol-1 .book-hero {
@@ -166,5 +190,10 @@ body.page--coloring-book-vol-1 {
 
   .page--coloring-book-vol-1 .book-content h3 {
     margin-top: 1.5rem;
+  }
+
+  .page--coloring-book-vol-1 .book-content .faq-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
   }
 }
