@@ -56,8 +56,7 @@
 
     .bookshelf-container {
       position: relative;
-      min-height: 100vh;
-      padding-top: clamp(96px, 14vw, 180px);
+      padding-top: 0;
     }
 
     /* Header overlay */
@@ -90,18 +89,16 @@
       padding: 0 20px 40px;
     }
 
-    /* Container Lock */
-    :root {
-      --s1: 15.0%;
-      --s2: 37.1%;
-      --s3: 54.7%;
-      --s4: 72.3%;
+    /* Container Lock with calibrated shelf centerlines */
+    body[data-page="store-prototype"] {
+      --lane-h: 18%;        /* tuneable lane height */
+      --book-h: 75%;        /* books at 75% of lane height */
 
-      --slot1: 14%;
-      --slot2: 40%;
-      --slot3: 66%;
-      --pocketH: 16%;
-      --bookH: 75%;
+      /* Shelf centerlines from user's marked screenshot */
+      --s1-center: 31.2%;
+      --s2-center: 47.1%;
+      --s3-center: 63.0%;   /* extrapolated spacing */
+      --s4-center: 78.9%;   /* extrapolated spacing */
 
       /* Visual floor offset: shifts book bottoms up to align with illustrated shelf surface */
       --shelf-floor-offset: 4px;
@@ -109,9 +106,8 @@
 
     .shelf-stage {
       position: relative;
-      width: 100%;
-      aspect-ratio: 461 / 1000;
-      max-width: 500px;
+      width: min(520px, 92vw);
+      aspect-ratio: 1344 / 3168;  /* Exact dimensions of IMG_3428.png */
       margin: 0 auto;
       background: #201a14;
       overflow: hidden;
@@ -132,19 +128,23 @@
 
     .shelf-lane {
       position: absolute;
-      left: 0;
-      width: 100%;
-      height: var(--pocketH);
-      display: block;
-      z-index: 10;
-      pointer-events: none;
+      left: 10%;
+      width: 80%;
+      height: var(--lane-h);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;  /* keep bottoms grounded */
+      gap: clamp(10px, 2.4vw, 18px);
+      z-index: 2;
+      pointer-events: auto;
     }
 
-    /* CALIBRATED POSITIONS */
-    .shelf-1 { top: var(--s1); }
-    .shelf-2 { top: var(--s2); }
-    .shelf-3 { top: var(--s3); }
-    .shelf-4 { top: var(--s4); }
+    /* CALIBRATED POSITIONS - book centers align to shelf centerlines */
+    /* Formula: lane_top = center - (lane_h * 0.625) for 75% book height */
+    .shelf-1 { top: calc(var(--s1-center) - (var(--lane-h) * 0.625)); }
+    .shelf-2 { top: calc(var(--s2-center) - (var(--lane-h) * 0.625)); }
+    .shelf-3 { top: calc(var(--s3-center) - (var(--lane-h) * 0.625)); }
+    .shelf-4 { top: calc(var(--s4-center) - (var(--lane-h) * 0.625)); }
 
     /* Per-shelf floor offset overrides (optional customization) */
     /* Example: .shelf-1 .book { --shelf-floor-offset: 6px; } */
@@ -164,29 +164,26 @@
 
     /* Book covers */
     .book {
-      position: absolute;
-      bottom: var(--shelf-floor-offset);
-      height: var(--bookH);
-      width: auto;
-      pointer-events: auto;
+      display: block;
+      height: var(--book-h);
+      text-decoration: none;
+      transform-origin: bottom center;
       --tilt-rotateX: 0deg;
       --tilt-rotateY: 0deg;
       --hover-translate: 0px;
       --hover-scale: 1;
-      transform-origin: bottom center;
       transform: perspective(1200px) translateY(var(--hover-translate)) scale(var(--hover-scale)) rotateX(var(--tilt-rotateX)) rotateY(var(--tilt-rotateY));
       transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       filter: drop-shadow(2px 5px 8px rgba(0,0,0,0.4));
-      z-index: 10;
     }
 
     .book img {
-      display: block;
-      width: auto;
       height: 100%;
-      border-radius: 2px 5px 5px 2px;
-      box-shadow: 0 12px 10px -6px rgba(0,0,0,0.9);
-      filter: drop-shadow(0 10px 8px rgba(0,0,0,0.5));
+      width: auto;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 10px 14px rgba(0,0,0,0.45);
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,0.25));
     }
 
     .book:hover {
@@ -215,13 +212,28 @@
       .store-header h1 {
         font-size: 1.75rem;
       }
-
-      .bookshelf-container {
-        padding-top: clamp(82px, 18vw, 150px);
-      }
     }
 
     @media (min-width: 1024px) {
+    }
+
+    /* Debug mode for shelf alignment testing (OFF by default) */
+    /* To enable: add class="debug-shelves" to body[data-page="store-prototype"] */
+    body[data-page="store-prototype"].debug-shelves .shelf-lane {
+      outline: 2px dashed rgba(255, 0, 0, 0.6);
+      background: rgba(255, 0, 0, 0.05);
+    }
+
+    body[data-page="store-prototype"].debug-shelves .shelf-lane::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1px;
+      background: rgba(0, 255, 0, 0.7);
+      z-index: 100;
+      pointer-events: none;
     }
 
     /* Prototype-only nav/footer fixes (scoped) */
@@ -729,7 +741,6 @@
     const addProductBooks = () => {
       products.slice(0, shelvesCapacity).forEach((product, index) => {
         const shelfIndex = Math.floor(index / maxPerShelf);
-        const slotIndex = index % maxPerShelf;
         const shelf = shelfElements[shelfIndex];
         if (!shelf) return;
 
@@ -738,8 +749,6 @@
         bookLink.className = 'book';
         bookLink.target = '_blank';
         bookLink.rel = 'sponsored noopener noreferrer';
-        const slotLeft = ["var(--slot1)", "var(--slot2)", "var(--slot3)"][slotIndex];
-        bookLink.style.left = slotLeft;
 
         const bookImg = document.createElement('img');
         bookImg.src = product.image;
