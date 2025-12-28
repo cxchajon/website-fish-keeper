@@ -3,6 +3,11 @@
  * Scoped to .page--life-in-balance to avoid global side effects
  */
 
+/* Ensure full viewport coverage for background layers */
+html, body {
+  min-height: 100vh;
+}
+
 .page--life-in-balance {
   /* Base background: EXACT match to Store page */
   background: radial-gradient(120% 120% at 16% 20%, #111827 0%, #0b1220 55%, #070c16 100%);
@@ -14,16 +19,16 @@
 /* Background pattern layer - subtle repeating book cover tiles */
 .page--life-in-balance::before {
   content: '';
-  position: absolute;
+  position: fixed; /* Changed to fixed to cover full viewport */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/assets/books/book-cover-web-tile.jpg');
+  background-image: url('/assets/books/book-cover-web.jpg');
   background-repeat: repeat;
-  background-size: 80px 120px; /* Tile size matches generated asset */
+  background-size: 80px 120px; /* Small tile size for subtle pattern */
   background-position: 0 0;
-  opacity: 0.05; /* Subtle 5% opacity - in 3-8% target range */
+  opacity: 0.12; /* DEBUG: Increased to 12% for visibility testing */
   z-index: 0;
   pointer-events: none;
 }
@@ -31,7 +36,7 @@
 /* Blue overlay layer for text readability */
 .page--life-in-balance::after {
   content: '';
-  position: absolute;
+  position: fixed; /* Changed to fixed to cover full viewport */
   top: 0;
   left: 0;
   width: 100%;
