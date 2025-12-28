@@ -49,7 +49,7 @@ body.page--coloring-book-vol-2 {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/assets/books/coloring-book-vol-2-cover.jpeg');
+  background-image: url('/assets/books/coloring-book-vol2-cover-front.jpg');
   background-repeat: repeat;
   background-size: 80px 120px; /* Tile size for book cover pattern */
   background-position: 0 0;
