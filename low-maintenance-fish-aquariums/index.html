@@ -224,6 +224,21 @@
       display: block;
     }
 
+    #faq,
+    #aeo-nitrogen-cycle {
+      margin: clamp(1.6rem, 4vw, 2.4rem) auto;
+      max-width: 900px;
+      padding: 0 4px;
+    }
+
+    .faq-item {
+      margin: 1rem 0;
+    }
+
+    .faq-item h3 {
+      margin: 0 0 0.35rem;
+    }
+
     @media (max-width: 640px) {
       main.article-layout {
         padding-inline: clamp(1.2rem, 6vw, 2rem);
@@ -291,6 +306,30 @@
         "position": 3,
         "name": "Low Maintenance Fish for Aquariums: Low Bioload, Not Tougher Fish",
         "item": "https://thetankguide.com/low-maintenance-fish-aquariums/"
+      }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What are the best low maintenance fish for beginners?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The best low maintenance fish are those with a low bioload, such as small Tetras, Rasboras, or a single Betta. Stability comes from a low rate of waste production relative to the water volume, rather than the \"toughness\" of the fish."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does a larger tank require more maintenance?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Actually, larger tanks are often lower maintenance because the higher water volume dilutes toxins like ammonia more effectively, providing a larger safety margin for beginners."
+        }
       }
     ]
   }
@@ -502,6 +541,38 @@
         <h3>Final Thought</h3>
 
         <p><strong>A low maintenance aquarium comes from aligning the system, the species, and your expectations—before the first fish goes in.</strong></p>
+
+        <hr>
+
+        <section id="faq" aria-labelledby="faq-heading">
+          <h2 id="faq-heading">Frequently Asked Questions</h2>
+
+          <div class="faq-item">
+            <h3>What are the best low maintenance fish for beginners?</h3>
+            <p>The best low maintenance fish are those with a low bioload, such as small Tetras, Rasboras, or a single Betta. Stability comes from a low rate of waste production relative to the water volume, rather than the "toughness" of the fish.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Does a larger tank require more maintenance?</h3>
+            <p>Actually, larger tanks are often lower maintenance because the higher water volume dilutes toxins like ammonia more effectively, providing a larger safety margin for beginners.</p>
+          </div>
+        </section>
+
+        <section id="aeo-nitrogen-cycle">
+          <h2>Understanding the Nitrogen Cycle</h2>
+          <p>To keep a low-maintenance tank, you must respect the nitrogen cycle. Beneficial bacteria convert toxic ammonia (from fish waste) into nitrites, and then into less harmful nitrates. Managing bioload ensures this cycle is never overwhelmed.</p>
+          <figure class="tg-figure">
+            <img
+              src="/blogs/shared/img/nitrogen-cycle-diagram.PNG"
+              alt="Diagram showing the aquarium nitrogen cycle: ammonia to nitrite to nitrate"
+              class="tg-img"
+              width="2625"
+              height="3375"
+              loading="lazy"
+              decoding="async"
+            >
+          </figure>
+        </section>
       </div>
     </article>
   </main>
