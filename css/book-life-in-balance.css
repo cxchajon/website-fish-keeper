@@ -29,7 +29,7 @@ body.page--life-in-balance {
   background-repeat: repeat;
   background-size: 80px 120px; /* Tile size for book cover pattern */
   background-position: 0 0;
-  opacity: 0.13; /* Pattern visibility: increased by ~30% for better visual weight */
+  opacity: 0.18; /* Pattern visibility: darkened by additional 5% for better contrast */
   z-index: 0;
   pointer-events: none;
 }
