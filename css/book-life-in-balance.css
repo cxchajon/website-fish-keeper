@@ -9,6 +9,27 @@ body.page--life-in-balance {
   min-height: 100vh;
 }
 
+/* Skip-to-content link styling - matches site-wide pattern */
+.page--life-in-balance .skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #ffffff;
+  color: #000000;
+  border-radius: 6px;
+  font-weight: 500;
+  text-decoration: none;
+  z-index: 10000;
+  transform: translateY(-200%);
+  transition: transform 0.2s ease;
+}
+
+.page--life-in-balance .skip-link:focus,
+.page--life-in-balance .skip-link:focus-visible {
+  transform: translateY(0);
+}
+
 .page--life-in-balance {
   /* Base background: EXACT match to Store page */
   background: radial-gradient(120% 120% at 16% 20%, #111827 0%, #0b1220 55%, #070c16 100%);
@@ -29,7 +50,7 @@ body.page--life-in-balance {
   background-repeat: repeat;
   background-size: 80px 120px; /* Tile size for book cover pattern */
   background-position: 0 0;
-  opacity: 0.07; /* Pattern visibility: subtle but readable */
+  opacity: 0.10; /* Pattern visibility: subtle but readable */
   z-index: 0;
   pointer-events: none;
 }
