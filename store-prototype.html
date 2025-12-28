@@ -102,6 +102,9 @@
       --slot3: 66%;
       --pocketH: 16%;
       --bookH: 75%;
+
+      /* Visual floor offset: shifts book bottoms up to align with illustrated shelf surface */
+      --shelf-floor-offset: 4px;
     }
 
     .shelf-stage {
@@ -143,6 +146,9 @@
     .shelf-3 { top: var(--s3); }
     .shelf-4 { top: var(--s4); }
 
+    /* Per-shelf floor offset overrides (optional customization) */
+    /* Example: .shelf-1 .book { --shelf-floor-offset: 6px; } */
+
     /* Top shelf glow (lamp warmth) */
     .shelf-1::after {
       content: '';
@@ -159,7 +165,7 @@
     /* Book covers */
     .book {
       position: absolute;
-      bottom: 0;
+      bottom: var(--shelf-floor-offset);
       height: var(--bookH);
       width: auto;
       pointer-events: auto;
