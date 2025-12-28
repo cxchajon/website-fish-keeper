@@ -31,7 +31,7 @@ Top 20 by size:
 - Zero-byte placeholder images duplicated across blogs (now removed). No references found; MD5 duplicates.
 
 ## Medium-confidence unused (VERIFY FIRST)
-- Unreferenced brand/utility art: `assets/doodles/*.svg`, `assets/icons/youtube-replay.svg`, `assets/icons/youtube-rewind.svg`.
+- Unreferenced brand/utility art: `assets/icons/youtube-replay.svg`, `assets/icons/youtube-rewind.svg`.
 - Manifest/logo mismatch: actual files `assets/img/logos/web-app-manifest-192x192.png` and `assets/img/logos/web-app-manifest-512x512.png` are referenced but filenames contain the “×” character (times symbol) rather than `x` and were not detected in text searches. Verify whether production uses differently named assets or if manifest links are broken.
 - Large blog diagram assets with no filename matches in the repo body text: `blogs/shared/img/Water change.PNG` and `blogs/shared/img/Nitrite to nitrate.png` (also appear in “Largest items”)—validate if loaded via CMS or external embed before removal.
 - PWA icon drift: `assets/img/Logo-Master-512×512.PNG` not referenced anywhere; confirm if superseded by `/assets/img/logos/logo-1200x630.png` or apple-touch icons before removal.
@@ -51,7 +51,7 @@ Top 20 by size:
 
 ## Asset reference map (images/fonts/icons)
 - Referenced icons (manifest/meta): `/assets/img/logos/favicon-16.png`, `/assets/img/logos/favicon-32.png`, `/assets/img/Logo-Master-180x180.PNG`, `/assets/img/Logo-Master-512x512.PNG`, `/assets/img/logos/logo-1200x630.png`.
-- Potentially orphaned art: `assets/doodles/*.svg`, `assets/icons/youtube-*.svg`, `assets/img/logos/web-app-manifest-*.png` (naming mismatch), `assets/img/Logo-Master-512×512.PNG`.
+- Potentially orphaned art: `assets/icons/youtube-*.svg`, `assets/img/logos/web-app-manifest-*.png` (naming mismatch), `assets/img/Logo-Master-512×512.PNG`.
 - Blog media heavyweights: several 8–12 MB PNG/JPGs in `blogs/blackbeard/img/` and `blogs/shared/img/` remain; validate CDN optimization before removal.
 
 ## Redirects + sitemap/robots sanity checks
@@ -67,12 +67,12 @@ Top 20 by size:
 
 ## Proposed deletion plan (Phase 1 / Phase 2)
 - **Phase 1: Safe Now** — Remove zero-byte duplicate placeholders. Estimated impact: none (not referenced, 0-byte). Rollback: restore from Git if any template expects file presence.
-- **Phase 2: Verify First** — Confirm usage before removal or rename: doodle/icon SVGs, manifest logo files with “×” naming, oversized blog diagrams, prototype directories (`proto_edits/`, `dist/prototype/`, `store-prototype.html`), unreferenced CSS/JS bundles (`dist/css/*.css`, `css/*bundle*.css`, `assets/js/*`, `js/logic/*`). Impact: potential missing icons/styles or broken prototype links. Verification: search CDN logs or analytics for direct hits; run local build to see if bundler imports; check manifest/assets in Lighthouse/PWA; ensure redirects for `/gear.html` `/stocking.html` exist before removing related references.
+- **Phase 2: Verify First** — Confirm usage before removal or rename: icon SVGs, manifest logo files with "×" naming, oversized blog diagrams, prototype directories (`proto_edits/`, `dist/prototype/`, `store-prototype.html`), unreferenced CSS/JS bundles (`dist/css/*.css`, `css/*bundle*.css`, `assets/js/*`, `js/logic/*`). Impact: potential missing icons/styles or broken prototype links. Verification: search CDN logs or analytics for direct hits; run local build to see if bundler imports; check manifest/assets in Lighthouse/PWA; ensure redirects for `/gear.html` `/stocking.html` exist before removing related references.
 
 ## Verification checklist (before/after)
 - Before deletion: crawl site locally to capture 200/301 map; export Cloudflare/Netlify redirect tables; run `rg`/Lighthouse to confirm manifest icons resolve; check nav/footer for references to prototype assets.
 - After Phase 1: run link checker and image requests to confirm no 404s; re-run sitemap validation; spot-check blog pages previously hosting placeholders.
-- Before Phase 2 deletions: verify unreferenced CSS/JS not bundled by build tool (`package.json` scripts), check network panel for doodle/icon requests, confirm no runtime `fetch`/dynamic import uses filenames.
+- Before Phase 2 deletions: verify unreferenced CSS/JS not bundled by build tool (`package.json` scripts), check network panel for icon requests, confirm no runtime `fetch`/dynamic import uses filenames.
 
 ## Rollback plan
 - Keep branch/tag before cleanup; revert specific files via `git checkout -- <path>` if any regression appears.
