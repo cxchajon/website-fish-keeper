@@ -1,0 +1,78 @@
+/*
+ * Life in Balance Book Page - Background Design System
+ * Scoped to .page--life-in-balance to avoid global side effects
+ */
+
+.page--life-in-balance {
+  /* Base background: EXACT match to Store page */
+  background: radial-gradient(120% 120% at 16% 20%, #111827 0%, #0b1220 55%, #070c16 100%);
+  color: #e5e7eb;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Background pattern layer - subtle repeating book cover tiles */
+.page--life-in-balance::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/books/book-cover-web-tile.jpg');
+  background-repeat: repeat;
+  background-size: 80px 120px; /* Tile size matches generated asset */
+  background-position: 0 0;
+  opacity: 0.05; /* Subtle 5% opacity - in 3-8% target range */
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Blue overlay layer for text readability */
+.page--life-in-balance::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(11, 18, 32, 0.3) 0%, rgba(7, 12, 22, 0.5) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Ensure content sits above background layers */
+.page--life-in-balance > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Mobile: increased overlay opacity for better readability */
+@media (max-width: 768px) {
+  .page--life-in-balance::after {
+    background: linear-gradient(180deg, rgba(11, 18, 32, 0.5) 0%, rgba(7, 12, 22, 0.7) 100%);
+  }
+}
+
+/* Page-specific content styles */
+.page--life-in-balance .book-hero {
+  text-align: center;
+  padding: 4rem 1.5rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page--life-in-balance .book-hero h1 {
+  font-size: clamp(28px, 5vw, 48px);
+  line-height: 1.2;
+  margin: 0 0 1rem;
+  color: #f9fafb;
+  font-weight: 700;
+}
+
+.page--life-in-balance .book-hero .subtitle {
+  font-size: clamp(16px, 2.5vw, 20px);
+  color: #9ca3af;
+  margin: 0;
+  line-height: 1.5;
+}
