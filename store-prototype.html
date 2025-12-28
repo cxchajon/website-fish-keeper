@@ -92,13 +92,14 @@
     /* Container Lock with floor-based shelf positioning */
     body[data-page="store-prototype"] {
       --lane-h: 16%;        /* tuneable lane height */
-      --book-h: 68%;        /* books at 68% of lane height for pocket fit */
+      --book-h: 0.68;       /* books at 68% of lane height for pocket fit */
 
       /* Shelf floor positions (bottom edge of each shelf pocket) */
       --s1-floor: 37.0%;
       --s2-floor: 58.4%;
       --s3-floor: 79.8%;
       --s4-floor: 93.0%;
+      --s2-nudge: -4.5%;
     }
 
     .shelf-stage {
@@ -140,7 +141,7 @@
     /* FLOOR-BASED POSITIONS - lane bottom aligns to shelf floor line */
     /* Formula: lane_top = floor - lane_h (bottom of lane at floor position) */
     .shelf-1 { top: calc(var(--s1-floor) - var(--lane-h)); }
-    .shelf-2 { top: calc(var(--s2-floor) - var(--lane-h)); }
+    .shelf-2 { top: calc(var(--s2-floor) - var(--lane-h) + var(--s2-nudge)); }
     .shelf-3 { top: calc(var(--s3-floor) - var(--lane-h)); }
     .shelf-4 { top: calc(var(--s4-floor) - var(--lane-h)); }
 
@@ -163,7 +164,7 @@
     /* Book covers */
     .book {
       display: block;
-      height: var(--book-h);
+      height: calc(var(--book-h) * 100%);
       width: clamp(84px, 20vw, 128px);
       text-decoration: none;
       transform-origin: bottom center;
@@ -234,6 +235,19 @@
       background: rgba(0, 255, 255, 0.8);
       z-index: 100;
       pointer-events: none;
+    }
+
+    /* Debug centerline for shelf 2 only */
+    body.debug-s2 .shelf-2::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.9);
+      pointer-events: none;
+      bottom: calc((1 - var(--book-h)) * 50%);
+      z-index: 50;
     }
 
     /* Prototype-only nav/footer fixes (scoped) */
