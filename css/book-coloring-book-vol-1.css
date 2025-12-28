@@ -150,19 +150,94 @@ body.page--coloring-book-vol-1 {
   color: #f3f4f6;
 }
 
+/* Amazon CTA Section */
+.page--coloring-book-vol-1 .amazon-cta {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page--coloring-book-vol-1 .amazon-cta .container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.page--coloring-book-vol-1 .amazon-cta h2 {
+  font-size: clamp(28px, 4vw, 36px);
+  line-height: 1.3;
+  margin: 0 0 1rem;
+  color: #f9fafb;
+  font-weight: 700;
+}
+
+.page--coloring-book-vol-1 .amazon-cta p {
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.6;
+  margin: 0 0 2rem;
+  color: #d1d5db;
+}
+
+.page--coloring-book-vol-1 .amazon-cta .btn-amazon {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  font-size: clamp(16px, 2vw, 18px);
+  font-weight: 600;
+  color: #0b1220;
+  background: linear-gradient(135deg, #ff9900 0%, #ff7700 100%);
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(255, 153, 0, 0.3), 0 2px 4px -1px rgba(255, 153, 0, 0.2);
+}
+
+.page--coloring-book-vol-1 .amazon-cta .btn-amazon:hover {
+  background: linear-gradient(135deg, #ffaa00 0%, #ff8800 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px -2px rgba(255, 153, 0, 0.4), 0 3px 6px -2px rgba(255, 153, 0, 0.3);
+}
+
+.page--coloring-book-vol-1 .amazon-cta .btn-amazon:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px -1px rgba(255, 153, 0, 0.3);
+}
+
 /* FAQ Section Styles */
-.page--coloring-book-vol-1 .book-content .faq-item {
+.page--coloring-book-vol-1 .faq-section {
+  padding: 3rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page--coloring-book-vol-1 .faq-section .container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.page--coloring-book-vol-1 .faq-section h2 {
+  font-size: clamp(28px, 4vw, 36px);
+  line-height: 1.3;
+  margin: 0 0 2.5rem;
+  color: #f9fafb;
+  font-weight: 700;
+  text-align: center;
+}
+
+.page--coloring-book-vol-1 .faq-section .faq-item {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid rgba(156, 163, 175, 0.2);
 }
 
-.page--coloring-book-vol-1 .book-content .faq-item:last-child {
+.page--coloring-book-vol-1 .faq-section .faq-item:last-child {
   border-bottom: none;
   margin-bottom: 0;
 }
 
-.page--coloring-book-vol-1 .book-content .faq-item h4 {
+.page--coloring-book-vol-1 .faq-section .faq-item h3 {
   font-size: clamp(18px, 2.5vw, 22px);
   line-height: 1.4;
   margin: 0 0 0.75rem;
@@ -170,8 +245,11 @@ body.page--coloring-book-vol-1 {
   font-weight: 600;
 }
 
-.page--coloring-book-vol-1 .book-content .faq-item p {
+.page--coloring-book-vol-1 .faq-section .faq-item p {
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.7;
   margin: 0;
+  color: #d1d5db;
 }
 
 /* Mobile adjustments */
@@ -192,7 +270,27 @@ body.page--coloring-book-vol-1 {
     margin-top: 1.5rem;
   }
 
-  .page--coloring-book-vol-1 .book-content .faq-item {
+  .page--coloring-book-vol-1 .amazon-cta {
+    padding: 2rem 1rem;
+  }
+
+  .page--coloring-book-vol-1 .amazon-cta p {
+    margin-bottom: 1.5rem;
+  }
+
+  .page--coloring-book-vol-1 .amazon-cta .btn-amazon {
+    padding: 0.875rem 2rem;
+  }
+
+  .page--coloring-book-vol-1 .faq-section {
+    padding: 2rem 1rem;
+  }
+
+  .page--coloring-book-vol-1 .faq-section h2 {
+    margin-bottom: 2rem;
+  }
+
+  .page--coloring-book-vol-1 .faq-section .faq-item {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
   }
