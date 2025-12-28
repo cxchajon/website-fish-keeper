@@ -1,0 +1,321 @@
+/*
+ * The Daily Tank Journal (Unplanted) Page - Background Design System
+ * Scoped to .page--daily-tank-journal-unplanted to avoid global side effects
+ */
+
+/* Skip-to-content link - accessible, hidden by default, visible on focus */
+.page--daily-tank-journal-unplanted .skip-to-content {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translate(-50%, -200%);
+  padding: 0.75rem 1.5rem;
+  background-color: #111827;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 4px;
+  border: 2px solid #ffffff;
+  z-index: 9999;
+  transition: transform 0.2s ease-in-out;
+}
+
+.page--daily-tank-journal-unplanted .skip-to-content:focus {
+  transform: translate(-50%, 0);
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* Ensure background extends full viewport height */
+html:has(.page--daily-tank-journal-unplanted),
+body.page--daily-tank-journal-unplanted {
+  min-height: 100vh;
+}
+
+.page--daily-tank-journal-unplanted {
+  /* Base background: EXACT match to other book pages */
+  background: radial-gradient(120% 120% at 16% 20%, #111827 0%, #0b1220 55%, #070c16 100%);
+  color: #e5e7eb;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Background pattern layer - subtle repeating book cover tiles */
+.page--daily-tank-journal-unplanted::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/books/daily-tank-journal-unplanted-cover-front.jpg');
+  background-repeat: repeat;
+  background-size: 80px 120px; /* Tile size for book cover pattern */
+  background-position: 0 0;
+  opacity: 0.17; /* Pattern visibility: 5% darker than standard (was 0.18) */
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Blue overlay layer for text readability */
+.page--daily-tank-journal-unplanted::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(11, 18, 32, 0.18) 0%, rgba(7, 12, 22, 0.22) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Ensure content sits above background layers */
+.page--daily-tank-journal-unplanted > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Mobile: increased overlay opacity for better readability */
+@media (max-width: 768px) {
+  .page--daily-tank-journal-unplanted::after {
+    background: linear-gradient(180deg, rgba(11, 18, 32, 0.30) 0%, rgba(7, 12, 22, 0.40) 100%);
+  }
+}
+
+/* Page-specific content styles (ready for future content) */
+.page--daily-tank-journal-unplanted .book-hero {
+  text-align: center;
+  padding: 4rem 1.5rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page--daily-tank-journal-unplanted .book-hero h1 {
+  font-size: clamp(28px, 5vw, 48px);
+  line-height: 1.2;
+  margin: 0 0 1rem;
+  color: #f9fafb;
+  font-weight: 700;
+}
+
+.page--daily-tank-journal-unplanted .book-hero .subtitle {
+  font-size: clamp(16px, 2.5vw, 20px);
+  color: #9ca3af;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Interior Spread Image Section */
+.page--daily-tank-journal-unplanted .interior-spread {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page--daily-tank-journal-unplanted .interior-spread img {
+  width: 100%;
+  max-width: 1000px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+/* Book Content Section */
+.page--daily-tank-journal-unplanted .book-content {
+  padding: 3rem 1.5rem;
+}
+
+.page--daily-tank-journal-unplanted .book-content .container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.page--daily-tank-journal-unplanted .book-content h2 {
+  font-size: clamp(24px, 4vw, 36px);
+  line-height: 1.3;
+  margin: 0 0 1.5rem;
+  color: #f9fafb;
+  font-weight: 700;
+}
+
+.page--daily-tank-journal-unplanted .book-content h3 {
+  font-size: clamp(20px, 3vw, 28px);
+  line-height: 1.4;
+  margin: 2rem 0 1rem;
+  color: #f3f4f6;
+  font-weight: 600;
+}
+
+.page--daily-tank-journal-unplanted .book-content p {
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.7;
+  margin: 0 0 1.25rem;
+  color: #d1d5db;
+}
+
+.page--daily-tank-journal-unplanted .book-content ul {
+  margin: 0 0 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.page--daily-tank-journal-unplanted .book-content li {
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+  color: #d1d5db;
+}
+
+.page--daily-tank-journal-unplanted .book-content li strong {
+  color: #f3f4f6;
+}
+
+/* Amazon CTA Section */
+.page--daily-tank-journal-unplanted .amazon-cta {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page--daily-tank-journal-unplanted .amazon-cta .container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.page--daily-tank-journal-unplanted .amazon-cta h2 {
+  font-size: clamp(28px, 4vw, 36px);
+  line-height: 1.3;
+  margin: 0 0 1rem;
+  color: #f9fafb;
+  font-weight: 700;
+}
+
+.page--daily-tank-journal-unplanted .amazon-cta p {
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.6;
+  margin: 0 0 2rem;
+  color: #d1d5db;
+}
+
+.page--daily-tank-journal-unplanted .amazon-cta .btn-amazon {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  font-size: clamp(16px, 2vw, 18px);
+  font-weight: 600;
+  color: #0b1220;
+  background: linear-gradient(135deg, #ff9900 0%, #ff7700 100%);
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(255, 153, 0, 0.3), 0 2px 4px -1px rgba(255, 153, 0, 0.2);
+}
+
+.page--daily-tank-journal-unplanted .amazon-cta .btn-amazon:hover {
+  background: linear-gradient(135deg, #ffaa00 0%, #ff8800 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px -2px rgba(255, 153, 0, 0.4), 0 3px 6px -2px rgba(255, 153, 0, 0.3);
+}
+
+.page--daily-tank-journal-unplanted .amazon-cta .btn-amazon:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px -1px rgba(255, 153, 0, 0.3);
+}
+
+/* FAQ Section Styles */
+.page--daily-tank-journal-unplanted .faq-section {
+  padding: 3rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page--daily-tank-journal-unplanted .faq-section .container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.page--daily-tank-journal-unplanted .faq-section h2 {
+  font-size: clamp(28px, 4vw, 36px);
+  line-height: 1.3;
+  margin: 0 0 2.5rem;
+  color: #f9fafb;
+  font-weight: 700;
+  text-align: center;
+}
+
+.page--daily-tank-journal-unplanted .faq-section .faq-item {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(156, 163, 175, 0.2);
+}
+
+.page--daily-tank-journal-unplanted .faq-section .faq-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.page--daily-tank-journal-unplanted .faq-section .faq-item h3 {
+  font-size: clamp(18px, 2.5vw, 22px);
+  line-height: 1.4;
+  margin: 0 0 0.75rem;
+  color: #f9fafb;
+  font-weight: 600;
+}
+
+.page--daily-tank-journal-unplanted .faq-section .faq-item p {
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.7;
+  margin: 0;
+  color: #d1d5db;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .page--daily-tank-journal-unplanted .book-hero {
+    padding: 3rem 1rem 1.5rem;
+  }
+
+  .page--daily-tank-journal-unplanted .interior-spread {
+    padding: 1.5rem 1rem;
+  }
+
+  .page--daily-tank-journal-unplanted .book-content {
+    padding: 2rem 1rem;
+  }
+
+  .page--daily-tank-journal-unplanted .book-content h3 {
+    margin-top: 1.5rem;
+  }
+
+  .page--daily-tank-journal-unplanted .amazon-cta {
+    padding: 2rem 1rem;
+  }
+
+  .page--daily-tank-journal-unplanted .amazon-cta p {
+    margin-bottom: 1.5rem;
+  }
+
+  .page--daily-tank-journal-unplanted .amazon-cta .btn-amazon {
+    padding: 0.875rem 2rem;
+  }
+
+  .page--daily-tank-journal-unplanted .faq-section {
+    padding: 2rem 1rem;
+  }
+
+  .page--daily-tank-journal-unplanted .faq-section h2 {
+    margin-bottom: 2rem;
+  }
+
+  .page--daily-tank-journal-unplanted .faq-section .faq-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+  }
+}
