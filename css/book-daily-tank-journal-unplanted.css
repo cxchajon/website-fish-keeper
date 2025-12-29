@@ -58,7 +58,7 @@ body.page--daily-tank-journal-unplanted {
   pointer-events: none;
 }
 
-/* Blue overlay layer for text readability */
+/* Blue overlay layer for text readability - darkened by 30% for improved contrast */
 .page--daily-tank-journal-unplanted::after {
   content: '';
   position: absolute;
@@ -66,7 +66,7 @@ body.page--daily-tank-journal-unplanted {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, rgba(11, 18, 32, 0.48) 0%, rgba(7, 12, 22, 0.52) 100%);
+  background: linear-gradient(180deg, rgba(11, 18, 32, 0.62) 0%, rgba(7, 12, 22, 0.68) 100%);
   z-index: 1;
   pointer-events: none;
 }
@@ -77,10 +77,10 @@ body.page--daily-tank-journal-unplanted {
   z-index: 2;
 }
 
-/* Mobile: increased overlay opacity for better readability */
+/* Mobile: increased overlay opacity for better readability - darkened by 30% */
 @media (max-width: 768px) {
   .page--daily-tank-journal-unplanted::after {
-    background: linear-gradient(180deg, rgba(11, 18, 32, 0.60) 0%, rgba(7, 12, 22, 0.70) 100%);
+    background: linear-gradient(180deg, rgba(11, 18, 32, 0.78) 0%, rgba(7, 12, 22, 0.91) 100%);
   }
 }
 
