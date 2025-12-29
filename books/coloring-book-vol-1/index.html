@@ -157,6 +157,34 @@
   }
   </script>
 
+  <!-- BreadcrumbList JSON-LD Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://thetankguide.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Books",
+        "item": "https://thetankguide.com/books/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Coloring Book Vol. 1",
+        "item": "https://thetankguide.com/books/coloring-book-vol-1/"
+      }
+    ]
+  }
+  </script>
+
   <!-- Styles -->
   <link rel="stylesheet" href="/css/app.bundle.css?v=2025-11-07" />
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
@@ -202,7 +230,6 @@
       <img
         src="/assets/books/coloring-book-vol-1-betta-spread-01.JPEG"
         alt="Interior coloring page from Life in Balance: The Hidden Magic in Aquariums Coloring Book Vol. 1 featuring betta fish illustrations"
-        loading="lazy"
       />
     </section>
 
