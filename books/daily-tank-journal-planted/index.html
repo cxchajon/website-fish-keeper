@@ -67,6 +67,123 @@
   <!-- Shared Organization / WebSite schema -->
   <!--#include virtual="/includes/schema-organization.html" -->
 
+  <!-- Book-specific JSON-LD Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Book",
+    "@id": "https://thetankguide.com/books/daily-tank-journal-planted/#book",
+    "name": "The Daily Tank Journal: Planted Edition",
+    "description": "A comprehensive planted aquarium journal for tracking plant growth, CO₂ systems, fertilizer dosing, and aquascaping maintenance alongside core water chemistry.",
+    "url": "https://thetankguide.com/books/daily-tank-journal-planted/",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://thetankguide.com/books/daily-tank-journal-planted/#webpage"
+    },
+    "image": "https://thetankguide.com/assets/books/daily-tank-journal-planted-cover-front.jpg",
+    "inLanguage": "en",
+    "bookFormat": "Paperback",
+    "author": {
+      "@type": "Organization",
+      "@id": "https://thetankguide.com/#organization"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "@id": "https://thetankguide.com/#organization"
+    },
+    "sameAs": "https://amzn.to/4o6oK7V"
+  }
+  </script>
+
+  <!-- FAQPage JSON-LD Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "about": {
+      "@id": "https://thetankguide.com/books/daily-tank-journal-planted/#book"
+    },
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What makes the Planted Edition different from the standard Daily Tank Journal?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Planted Edition includes dedicated tracking fields for CO₂ injection rates, fertilizer dosing schedules (macros and micros), PAR measurements, plant growth observations, and aquascaping maintenance. It's designed for high-tech planted tanks that require precision documentation beyond basic water chemistry."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need a CO₂ system to use this journal?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "While this journal is optimized for high-tech planted tanks with CO₂ injection, it can also be valuable for low-tech setups with demanding plant species. You can use the sections relevant to your setup and skip fields that don't apply (like CO₂ tracking if you're running a low-tech tank)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I track both plants and fish welfare?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The Planted Edition includes all core water chemistry parameters (pH, ammonia, nitrite, nitrate, temperature) and livestock observation fields from the standard edition, plus expanded plant-specific sections. This ensures you can monitor both plant health and fish welfare in one journal."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What fertilizer dosing methods does this journal support?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The journal provides flexible dosing logs that work with EI (Estimative Index), PPS-Pro, lean dosing methods, or custom regimens. You can document both liquid and dry fertilizers, track macro/micro schedules separately, and note any adjustments based on plant response."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this journal suitable for beginners?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This journal is designed for planted tank enthusiasts who are already familiar with CO₂ systems, fertilizer dosing, and plant care fundamentals. If you're new to planted tanks, consider starting with the standard Daily Tank Journal and upgrading to the Planted Edition once you introduce CO₂ or more demanding plant species."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does this journal last?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Like the standard edition, this journal is designed for six months of daily logging. The extended tracking fields for plants and dosing schedules make it a comprehensive record of your aquascape's evolution over that period."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- BreadcrumbList JSON-LD Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://thetankguide.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Books",
+        "item": "https://thetankguide.com/books/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "The Daily Tank Journal: Planted Edition",
+        "item": "https://thetankguide.com/books/daily-tank-journal-planted/"
+      }
+    ]
+  }
+  </script>
+
   <!-- Styles -->
   <link rel="stylesheet" href="/css/app.bundle.css?v=2025-11-07" />
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
@@ -105,6 +222,7 @@
     <!-- Hero Section -->
     <header class="book-hero">
       <h1 id="page-title">The Daily Tank Journal: Planted Edition</h1>
+      <p style="font-size: 1.1rem; margin-top: 1rem; max-width: 800px; margin-left: auto; margin-right: auto;">The Daily Tank Journal: Planted Edition is a comprehensive aquarium logbook designed to help planted tank hobbyists maintain ecosystem balance and plant health through structured tracking of water chemistry, CO₂ systems, and fertilizer dosing over a six-month period.</p>
     </header>
 
     <!-- Interior Spread Image (TOP - immediately after title) -->
@@ -129,7 +247,7 @@
           <li><strong>Detailed Livestock & Flora Inventories:</strong> Maintain accurate records of fish, shrimp, snails, and aquatic plants as your community matures.</li>
           <li><strong>Aquascape Planning & Design:</strong> Dedicated space for layout sketches, equipment wish lists, and future hardware upgrades.</li>
           <li><strong>Quick-Reference Care Sheet:</strong> A centralized overview of dosing schedules and welfare routines, essential for consistent care or when using a tank-sitter.</li>
-          <li><strong>QR-Linked Educational Resources:</strong> Direct access to the Cycling Coach, Stocking Advisor, and other science-backed tools at TheTankGuide.com.</li>
+          <li><strong>QR-Linked Educational Resources:</strong> Direct access to the <a href="https://thetankguide.com/cycling-coach/">Cycling Coach</a>, <a href="https://thetankguide.com/stocking-advisor/">Stocking Advisor</a>, and other science-backed tools at TheTankGuide.com.</li>
         </ul>
 
         <h2>Designed by Hobbyists for Ecosystem Success</h2>
