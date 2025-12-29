@@ -53,12 +53,12 @@ body.page--daily-tank-journal-planted {
   background-repeat: repeat;
   background-size: 80px 120px; /* Tile size for book cover pattern */
   background-position: 0 0;
-  opacity: 0.47; /* Pattern visibility: darkened by 30% for improved contrast */
+  opacity: 0.71; /* Pattern visibility: darkened by 50% for improved contrast */
   z-index: 0;
   pointer-events: none;
 }
 
-/* Blue overlay layer for text readability - darkened by 30% for improved contrast */
+/* Blue overlay layer for text readability - darkened by 50% for improved contrast */
 .page--daily-tank-journal-planted::after {
   content: '';
   position: absolute;
@@ -66,7 +66,7 @@ body.page--daily-tank-journal-planted {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, rgba(11, 18, 32, 0.62) 0%, rgba(7, 12, 22, 0.68) 100%);
+  background: linear-gradient(180deg, rgba(11, 18, 32, 0.93) 0%, rgba(7, 12, 22, 1.0) 100%);
   z-index: 1;
   pointer-events: none;
 }
@@ -77,10 +77,10 @@ body.page--daily-tank-journal-planted {
   z-index: 2;
 }
 
-/* Mobile: increased overlay opacity for better readability - darkened by 30% */
+/* Mobile: increased overlay opacity for better readability - darkened by 50% */
 @media (max-width: 768px) {
   .page--daily-tank-journal-planted::after {
-    background: linear-gradient(180deg, rgba(11, 18, 32, 0.78) 0%, rgba(7, 12, 22, 0.91) 100%);
+    background: linear-gradient(180deg, rgba(11, 18, 32, 1.0) 0%, rgba(7, 12, 22, 1.0) 100%);
   }
 }
 
