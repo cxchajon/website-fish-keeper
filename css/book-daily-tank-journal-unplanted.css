@@ -53,7 +53,7 @@ body.page--daily-tank-journal-unplanted {
   background-repeat: repeat;
   background-size: 80px 120px; /* Tile size for book cover pattern */
   background-position: 0 0;
-  opacity: 0.17; /* Pattern visibility: 5% darker than standard (was 0.18) */
+  opacity: 0.47; /* Pattern visibility: darkened by 30% for improved contrast (was 0.17) */
   z-index: 0;
   pointer-events: none;
 }
@@ -66,7 +66,7 @@ body.page--daily-tank-journal-unplanted {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, rgba(11, 18, 32, 0.18) 0%, rgba(7, 12, 22, 0.22) 100%);
+  background: linear-gradient(180deg, rgba(11, 18, 32, 0.48) 0%, rgba(7, 12, 22, 0.52) 100%);
   z-index: 1;
   pointer-events: none;
 }
@@ -80,7 +80,7 @@ body.page--daily-tank-journal-unplanted {
 /* Mobile: increased overlay opacity for better readability */
 @media (max-width: 768px) {
   .page--daily-tank-journal-unplanted::after {
-    background: linear-gradient(180deg, rgba(11, 18, 32, 0.30) 0%, rgba(7, 12, 22, 0.40) 100%);
+    background: linear-gradient(180deg, rgba(11, 18, 32, 0.60) 0%, rgba(7, 12, 22, 0.70) 100%);
   }
 }
 
