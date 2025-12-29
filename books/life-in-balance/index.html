@@ -74,20 +74,23 @@
   {
     "@context": "https://schema.org",
     "@type": "Book",
+    "@id": "https://thetankguide.com/books/life-in-balance/#book",
     "name": "Life in Balance: The Hidden Magic of Aquariums",
     "description": "Life in Balance is an illustrated aquarium book that explains the science behind a healthy tank using visuals and plain language. It helps beginners understand the nitrogen cycle, water changes, and the role of plants and beneficial bacteria.",
     "url": "https://thetankguide.com/books/life-in-balance/",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://thetankguide.com/books/life-in-balance/#webpage"
+    },
     "image": "https://thetankguide.com/assets/books/book-cover-web.jpg",
     "inLanguage": "en",
     "author": {
       "@type": "Organization",
-      "name": "FishKeepingLifeCo",
-      "url": "https://thetankguide.com"
+      "@id": "https://thetankguide.com/#organization"
     },
     "publisher": {
       "@type": "Organization",
-      "name": "FishKeepingLifeCo",
-      "url": "https://thetankguide.com"
+      "@id": "https://thetankguide.com/#organization"
     },
     "about": [
       {
@@ -123,6 +126,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    "about": {
+      "@id": "https://thetankguide.com/books/life-in-balance/#book"
+    },
     "mainEntity": [
       {
         "@type": "Question",
@@ -168,6 +174,34 @@
   }
   </script>
 
+  <!-- BreadcrumbList JSON-LD Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://thetankguide.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Books",
+        "item": "https://thetankguide.com/books/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Life in Balance",
+        "item": "https://thetankguide.com/books/life-in-balance/"
+      }
+    ]
+  }
+  </script>
+
   <!-- Styles -->
   <link rel="stylesheet" href="/css/app.bundle.css?v=2025-11-07" />
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
@@ -199,10 +233,8 @@
   <!-- End Google Tag Manager (noscript) -->
   <div id="site-nav"></div>
 
-  <!-- Inline skip-to-content link (scoped to this page only) -->
-  <div style="text-align: center; padding: 0.75rem 1rem;">
-    <a href="#main-content" style="color: #9ca3af; font-size: 14px; text-decoration: underline;">Skip to content</a>
-  </div>
+  <!-- Skip-to-content link (accessible, hidden by default, visible on focus) -->
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
 
   <main id="main-content" aria-labelledby="page-title">
     <!-- Placeholder Hero Section - Testing Background Contrast -->
@@ -222,7 +254,6 @@
       <img
         src="/assets/books/life-in-balance-interior-spread-01.JPEG"
         alt="Interior spread from Life in Balance showing illustrated aquarium science concepts"
-        loading="lazy"
       />
     </section>
 
