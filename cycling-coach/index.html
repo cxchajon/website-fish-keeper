@@ -73,7 +73,7 @@
 
     /* Tighter spacing for top ad banner specifically */
     body.page-cycling-coach #ad-cycling-top {
-      margin: 0.5rem auto !important;
+      margin: clamp(0.5rem, 1.5vw, 0.75rem) auto !important;
       padding: 0.25rem !important;
     }
 
@@ -81,20 +81,14 @@
       margin: 0 !important;
     }
 
-    /* Mid ad slot spacing */
-    body.page-cycling-coach #ad-cycling-mid {
-      margin: 1.5rem auto !important;
-      padding: 0.25rem !important;
-    }
-
     /* Reduce hero section spacing for tighter layout */
     body.page-cycling-coach .stage-hero {
-      margin-bottom: 0.5rem;
+      margin-bottom: 0;
     }
 
     /* Tighter spacing between ad and first card */
     body.page-cycling-coach #ad-cycling-top + .card {
-      margin-top: 0.5rem;
+      margin-top: 0;
     }
 
     /* Cycling Coach ad QA visuals (page scoped) */
@@ -368,22 +362,6 @@
       <p class="metric-why">
         <a href="https://youtu.be/bNotFJdlSAc?si=ss6TJ6Mz5pnhgf0R">How to use Cycling Coach video</a>
       </p>
-
-      <!-- MID AD SLOT: House Ad Only -->
-      <div class="ttg-ad-slot ttg-house-ad-slot"
-           id="ad-cycling-mid"
-           data-ad-position="mid"
-           data-ttg-ad-rotator="true"
-           data-ttg-ad-manifest="/assets/ads/manifest.json"
-           data-ttg-ad-interval="10000"
-           aria-label="Advertisement">
-        <a class="ttg-ad-banner-link" href="/store.html">
-          <img class="ttg-ad-img"
-               src="/assets/img/ads/Daily-tank-journal-ad.PNG"
-               alt="Daily Tank Journal promotion"
-               loading="lazy">
-        </a>
-      </div>
 
       <!-- TOP AD SLOT: House Ad Only -->
       <div class="ttg-ad-slot ttg-house-ad-slot"
