@@ -48,245 +48,7 @@
   <link rel="stylesheet" href="/css/blog-theme.css?v=1.2">
   <link rel="stylesheet" href="/css/style.css?v=1.0.10">
   <link rel="stylesheet" href="/css/blogs.css?v=1.5.2">
-  <style>
-    .article-layout {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .article-layout article {
-      display: flex;
-      flex-direction: column;
-      gap: clamp(1.4rem, 3vw, 2rem);
-    }
-
-    .back-link {
-      align-self: flex-start;
-      color: var(--blog-accent);
-      text-decoration: none;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .back-link:hover,
-    .back-link:focus {
-      text-decoration: underline;
-    }
-
-    .article-header {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-bottom: clamp(1.5rem, 4vw, 2.2rem);
-    }
-
-    .article-header h1 {
-      margin: 0;
-      font-size: clamp(2.1rem, 4.8vw, 3rem);
-      line-height: 1.1;
-    }
-
-    .deck {
-      margin: 0;
-      font-size: clamp(1.05rem, 2.3vw, 1.3rem);
-      line-height: 1.5;
-      color: var(--blog-text);
-    }
-
-    .deck a {
-      color: var(--blog-accent);
-    }
-
-    .article-layout h2,
-    .article-layout h3 {
-      margin-top: clamp(2.2rem, 5vw, 3rem);
-    }
-
-    .article-layout p {
-      margin: clamp(0.9rem, 2.4vw, 1.2rem) 0;
-    }
-
-    .article-layout ul,
-    .article-layout ol {
-      margin: clamp(1.1rem, 2.8vw, 1.5rem) 0;
-      padding-left: 1.2rem;
-    }
-
-    .article-layout ul li,
-    .article-layout ol li {
-      margin: 0.55rem 0;
-    }
-
-    .article-layout a {
-      color: var(--blog-accent);
-    }
-
-    .pro-tip {
-      margin: clamp(1.5rem, 3.5vw, 2rem) 0;
-      padding: 1rem 1.25rem;
-      border-radius: 14px;
-      background: rgba(0, 195, 182, 0.12);
-      border: 1px solid rgba(0, 195, 182, 0.3);
-    }
-
-    .pro-tip strong {
-      color: var(--blog-accent);
-    }
-
-    @media (max-width: 640px) {
-      main {
-        padding-inline: clamp(1.2rem, 6vw, 2rem);
-      }
-
-      .article-header {
-        text-align: left;
-      }
-
-      .hero figcaption {
-        padding: 0;
-      }
-    }
-
-    /* Scoped to this article page */
-    main {
-      max-width: 880px;
-      margin: auto;
-      padding: 40px 20px;
-    }
-
-    hr {
-      border: 0;
-      border-top: 1px solid rgba(255, 255, 255, .10);
-      margin: 36px 0;
-    }
-
-    .tg-figure{margin:28px 0;background:#333;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
-    .tg-figure--hero{margin-top:0}
-    .tg-figure figcaption{font-size:.95rem;color:#b9b9b9;padding:12px 14px;background:#2a2a2a}
-
-    .tg-img{display:block;width:100%;height:auto}
-    .tg-img--hero{
-      aspect-ratio: 16/9;
-      object-fit: cover;
-      object-position: center;
-      border-radius: 12px 12px 0 0;
-    }
-
-    .section-split{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);margin:28px 0}
-    .tg-block{padding:4px 0}
-    .tg-figure + .tg-block{margin-top:20px}
-
-    /* extra breathing room between images & headings */
-    h2, h3{margin-top:40px}
-
-    .blog-body {
-      position: relative;
-      background: rgba(25,25,25,0.35);
-      border-radius: 14px;
-      padding: 28px 22px;
-      margin: 24px auto;
-      max-width: 900px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      overflow: hidden;
-    }
-
-    .blog-body::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 120px;
-      background: linear-gradient(to bottom,
-        rgba(25,25,25,0.3) 0%,
-        rgba(25,25,25,0.15) 40%,
-        rgba(25,25,25,0.0) 100%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .blog-body p {
-      line-height: 1.7;
-      color: #d8d8d8;
-      position: relative;
-      z-index: 1;
-    }
-
-    .blog-body h2,
-    .blog-body h3 {
-      margin-top: 36px;
-      color: #ffffff;
-      position: relative;
-      z-index: 1;
-    }
-
-    .blog-body figure {
-      margin: 28px 0;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.10);
-      position: relative;
-      z-index: 1;
-    }
-
-    .blog-body ul,
-    .blog-body ol {
-      position: relative;
-      z-index: 1;
-    }
-
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      position: relative;
-      z-index: 1;
-    }
-
-    .blog-body th,
-    .blog-body td {
-      padding: 12px;
-      text-align: left;
-      border: 1px solid rgba(255,255,255,0.15);
-    }
-
-    .blog-body th {
-      background: rgba(0, 195, 182, 0.2);
-      font-weight: 600;
-    }
-
-    .blog-body td {
-      background: rgba(255,255,255,0.05);
-    }
-
-    @media (max-width: 640px) {
-      .blog-body {
-        padding: 20px 16px;
-        border-radius: 12px;
-      }
-
-      .blog-body table {
-        font-size: 0.85rem;
-      }
-
-      .blog-body th,
-      .blog-body td {
-        padding: 8px;
-      }
-    }
-
-    /* Optional subtle divider before body */
-    .section-split {
-      height: 8px;
-      background: linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
-      margin-bottom: 16px;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/blog-article-template.css?v=1.0.0">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -396,23 +158,24 @@
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
 <body class="blog-article">
+  <a href="#main-content" class="skip-link">Skip to content</a>
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
   <div id="site-nav"></div>
 
-  <nav aria-label="Breadcrumb" class="breadcrumb" style="max-width: 880px; margin: 20px auto 0; padding: 0 20px;">
-    <ol style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.9rem; color: #b9b9b9;">
-      <li><a href="/" style="color: var(--blog-accent, #00c3b6); text-decoration: none;">Home</a></li>
+  <nav aria-label="Breadcrumb" class="breadcrumb blog-breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
       <li style="color: #666;">/</li>
-      <li><a href="/media.html" style="color: var(--blog-accent, #00c3b6); text-decoration: none;">Media</a></li>
+      <li><a href="/blogs/">Blog</a></li>
       <li style="color: #666;">/</li>
       <li aria-current="page">Aquarium Filtration for Beginners</li>
     </ol>
   </nav>
 
-  <main class="article-layout">
+  <main class="article-layout" id="main-content">
     <article>
       <a class="back-link" href="/blogs/" aria-label="Back to all blog posts">← Back to all posts</a>
 
@@ -734,8 +497,8 @@
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Media",
-        "item": "https://thetankguide.com/media.html"
+        "name": "Blog",
+        "item": "https://thetankguide.com/blogs/"
       },
       {
         "@type": "ListItem",

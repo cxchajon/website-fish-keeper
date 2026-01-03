@@ -52,114 +52,8 @@
   <link rel="stylesheet" href="/css/blog-theme.css?v=1.2" />
   <link rel="stylesheet" href="/css/style.css?v=1.0.10" />
   <link rel="stylesheet" href="/css/blogs.css?v=1.5.2" />
-  <style>
-    .gear-links .gear-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-    @media (min-width: 640px) {
-      .gear-links .gear-grid { grid-template-columns: 1fr 1fr; }
-    }
-    .gear-links .product-card {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: #222;
-      color: #fff;
-      text-decoration: none;
-      box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 2px 10px rgba(0,0,0,.25);
-      transition: transform 0.2s ease;
-    }
-    .gear-links .product-card:hover { transform: translateY(-1px); }
-    .gear-links .product-card .thumb {
-      flex: 0 0 96px;
-      width: 96px;
-      height: 64px;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #111;
-    }
-    .gear-links .product-card .thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .gear-links .product-card .meta { flex: 1 1 auto; }
-    .gear-links .product-card .title {
-      font-weight: 700;
-      line-height: 1.2;
-      margin: 0 0 4px 0;
-    }
-    .gear-links .product-card .desc {
-      margin: 0;
-      opacity: .9;
-    }
-    .gear-links .product-card .cta {
-      display: inline-block;
-      margin-top: 6px;
-      opacity: .9;
-      text-decoration: underline;
-    }
-
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      color: var(--accent, #8fe3ff);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .back-link:hover,
-    .back-link:focus {
-      text-decoration: underline;
-    }
-
-    /* === Topic Accent System (Magazine) === */
-    :root{
-      --accent:#8fe3ff; /* fallback */
-    }
-    .topic-core{ --accent:#3CAEA3; }
-    .topic-algae{ --accent:#C94C4C; }
-    .topic-product{ --accent:#FF8C42; }
-    .topic-chem{ --accent:#5D8AA8; }
-    .topic-gear{ --accent:#1F7A8C; }
-
-    /* apply accent to card frame and headline bar */
-    .topic-section .blog-card{ border-top:4px solid var(--accent); }
-    .topic-section .blog-card .card-title::before{
-      background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
-    }
-
-    /* hero/button/link accents can read var(--accent) if desired */
-    .topic-section .card-cta,
-    .topic-section .blogs-grid a:hover{ color: var(--accent); }
-
-    /* Individual article header/banner accents */
-    .article-accent{
-      --accent: var(--accent);
-      border-top: 6px solid var(--accent);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
-      padding: 12px 0 6px;
-    }
-    .article-accent .eyebrow,
-    .article-accent .meta a,
-    .article-accent a:hover{ color: var(--accent); }
-
-    /* Optional subtle gradient underline for article H1 */
-    .article-accent h1{
-      position:relative; padding-top:14px; margin-bottom:.6rem;
-    }
-    .article-accent h1::before{
-      content:""; position:absolute; top:0; left:0; width:70px; height:3px;
-      background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
-      border-radius:2px; opacity:.95;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/blog-article-template.css?v=1.0.0">
+  
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <script type="application/ld+json">
   {
@@ -197,8 +91,8 @@
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Media",
-        "item": "https://thetankguide.com/media.html"
+        "name": "Blog",
+        "item": "https://thetankguide.com/blogs/"
       },
       {
         "@type": "ListItem",
@@ -234,32 +128,46 @@
   <!-- --- Google CMP (Funding Choices) END --- -->
 </head>
 <body class="blog-article blog-open-page topic-algae">
+  <a href="#main-content" class="skip-link">Skip to content</a>
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
   <div id="site-nav"></div>
 
-  <nav aria-label="Breadcrumb" class="breadcrumb" style="max-width: 820px; margin: 20px auto 0; padding: 0 20px;">
-    <ol style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.9rem; color: #b9b9b9;">
-      <li><a href="/" style="color: var(--accent, #8fe3ff); text-decoration: none;">Home</a></li>
+  <nav aria-label="Breadcrumb" class="breadcrumb blog-breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
       <li style="color: #666;">/</li>
-      <li><a href="/media.html" style="color: var(--accent, #8fe3ff); text-decoration: none;">Media</a></li>
+      <li><a href="/blogs/">Blog</a></li>
       <li style="color: #666;">/</li>
       <li aria-current="page">BBA Gone: How I Finally Beat Black Beard Algae</li>
     </ol>
   </nav>
 
-  <main class="blog-open">
-    <article class="blog-article" itemscope itemtype="https://schema.org/BlogPosting">
+  <main class="article-layout" id="main-content">
+    <article itemscope itemtype="https://schema.org/BlogPosting">
 
-      <p><a class="back-link" href="/blogs/">← Back to all posts</a></p>
+      <a class="back-link" href="/blogs/" aria-label="Back to all blog posts">← Back to all posts</a>
 
-      <div class="article-accent">
+      <header class="article-header">
         <h1 itemprop="headline">BBA Gone: How I Finally Beat Black Beard Algae (Spot Dose Guide)</h1>
-        <p class="kicker" itemprop="description">My exact spot-dosing routine, lighting &amp; flow fixes, and sump refugium tweaks that finally beat BBA—safely.</p>
-        <p style="font-size: 0.95rem; color: #b9b9b9; margin-top: 0.5rem;">By FishKeepingLifeCo | Part of the <a href="https://www.amazon.com/dp/B0FR299HW7?tag=fishkeepingli-20" target="_blank" rel="noopener" style="color: var(--accent, #8fe3ff);">Life in Balance Ecosystem</a> at <a href="/" style="color: var(--accent, #8fe3ff);">TheTankGuide.com</a> — Oct 2025</p>
-      </div>
+        <p class="deck" itemprop="description">My exact spot-dosing routine, lighting &amp; flow fixes, and sump refugium tweaks that finally beat BBA—safely.</p>
+        <p class="deck">By FishKeepingLifeCo | Part of the <a href="https://www.amazon.com/dp/B0FR299HW7?tag=fishkeepingli-20" target="_blank" rel="noopener">Life in Balance Ecosystem</a> at <a href="/">TheTankGuide.com</a> — Oct 2025</p>
+      </header>
+
+      <figure class="tg-figure tg-figure--hero">
+        <img
+          src="/blogs/blackbeard/img/IMG_9610.png"
+          alt="Before photo of planted aquarium with heavy Black Beard Algae growth"
+          class="tg-img tg-img--hero"
+          width="1200"
+          height="630"
+          loading="lazy"
+          decoding="async"
+        >
+        <figcaption>Before photo of planted aquarium with heavy Black Beard Algae growth</figcaption>
+      </figure>
 
       <div class="section-split" aria-hidden="true"></div>
 
@@ -440,28 +348,28 @@
         <p><a class="back-link" href="/blogs/">← Back to all posts</a></p>
       </div>
 
-      <section class="related-articles" style="margin-top: 2rem; padding: 1.5rem; background: rgba(25,25,25,0.35); border-radius: 14px;">
-        <h2 style="margin-top: 0; color: #fff;">Related Articles</h2>
-        <div class="related-grid" style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+      <section class="related-articles">
+        <h2>Related Articles</h2>
+        <div class="related-grid">
 
-          <article class="related-card" style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+          <article class="related-card">
             <a href="/blogs/aquarium-filtration-for-beginners.html" style="text-decoration: none; color: inherit;">
-              <h3 style="margin: 0 0 0.5rem; color: var(--accent, #8fe3ff); font-size: 1.1rem;">Aquarium Filtration for Beginners</h3>
-              <p style="margin: 0; color: #b9b9b9; font-size: 0.9rem;">Complete guide to filter types, maintenance, and media</p>
+              <h3>Aquarium Filtration for Beginners</h3>
+              <p>Complete guide to filter types, maintenance, and media</p>
             </a>
           </article>
 
-          <article class="related-card" style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+          <article class="related-card">
             <a href="/blogs/purigen/" style="text-decoration: none; color: inherit;">
-              <h3 style="margin: 0 0 0.5rem; color: var(--accent, #8fe3ff); font-size: 1.1rem;">Purigen: Polish Your Water Clarity</h3>
-              <p style="margin: 0; color: #b9b9b9; font-size: 0.9rem;">Alternative filter media for crystal-clear water</p>
+              <h3>Purigen: Polish Your Water Clarity</h3>
+              <p>Alternative filter media for crystal-clear water</p>
             </a>
           </article>
 
-          <article class="related-card" style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+          <article class="related-card">
             <a href="/blogs/nitrogen-cycle/" style="text-decoration: none; color: inherit;">
-              <h3 style="margin: 0 0 0.5rem; color: var(--accent, #8fe3ff); font-size: 1.1rem;">Understanding the Nitrogen Cycle</h3>
-              <p style="margin: 0; color: #b9b9b9; font-size: 0.9rem;">The biological foundation of aquarium health</p>
+              <h3>Understanding the Nitrogen Cycle</h3>
+              <p>The biological foundation of aquarium health</p>
             </a>
           </article>
 

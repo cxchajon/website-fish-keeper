@@ -52,75 +52,7 @@
 
   <!--#include virtual="/includes/schema-organization.html" -->
   <link rel="stylesheet" href="/css/blogs.css?v=1.5.2" />
-  <style>
-    :root{
-      --ink:#e4ebf2; --muted:rgba(200,210,220,0.72); --soft:rgba(255,255,255,0.08); --line:rgba(255,255,255,0.12); --link:#8fc6ff; --max:820px;
-      --card-line:rgba(255,255,255,0.14); --card-bg:rgba(16,24,32,0.82); --card-pad:12px; --radius:10px;
-    }
-    html,body{margin:0;padding:0}
-    body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
-    .back-link{display:inline-flex;align-items:center;gap:0.35rem;margin:0 0 12px;color:var(--link);text-decoration:none;font-weight:600}
-    .back-link:hover,.back-link:focus{text-decoration:underline}
-    h1{margin:.1rem 0 .6rem;line-height:1.15}
-    .subhed{color:var(--muted);margin:0 0 1.25rem}
-    p{line-height:1.65;margin:.85rem 0;color:var(--ink)}
-    .tip{background:var(--soft);border-left:4px solid rgba(143,198,255,0.45);padding:.95rem 1.05rem;border-radius:10px;margin:1.1rem 0}
-    .figure{margin:1rem 0}
-    .figure img{width:100%;height:auto;border-radius:12px;display:block;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12)}
-    .figure .muted{color:var(--muted);font-size:.92rem}
-    hr{border:0;border-top:1px solid var(--line);margin:1.35rem 0}
-    .muted{color:var(--muted)}
-    /* Inline ad cards (small image next to text) */
-    .ad-cards{display:grid;gap:12px;margin-top:.5rem}
-    .ad-card{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--card-line);border-radius:var(--radius);padding:var(--card-pad);background:var(--card-bg);box-shadow:0 8px 20px rgba(0,0,0,0.28)}
-    .ad-card img{width:56px;height:auto;border-radius:8px;flex:0 0 auto;object-fit:cover}
-    .ad-card .txt{font-size:.95rem;line-height:1.45}
-    .ad-card a{color:var(--link);text-decoration:none}
-    .ad-card a:hover,.ad-card a:focus{text-decoration:underline}
-    @media (min-width:680px){ .ad-cards{grid-template-columns:1fr 1fr} }
-
-    /* === Topic Accent System (Magazine) === */
-    :root{
-      --accent:#8fe3ff; /* fallback */
-    }
-    .topic-core{ --accent:#3CAEA3; }
-    .topic-algae{ --accent:#C94C4C; }
-    .topic-product{ --accent:#FF8C42; }
-    .topic-chem{ --accent:#5D8AA8; }
-    .topic-gear{ --accent:#1F7A8C; }
-
-    /* apply accent to card frame and headline bar */
-    .topic-section .blog-card{ border-top:4px solid var(--accent); }
-    .topic-section .blog-card .card-title::before{
-      background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
-    }
-
-    /* hero/button/link accents can read var(--accent) if desired */
-    .topic-section .card-cta,
-    .topic-section .blogs-grid a:hover{ color: var(--accent); }
-
-    /* Individual article header/banner accents */
-    .article-accent{
-      --accent: var(--accent);
-      border-top: 6px solid var(--accent);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
-      padding: 12px 0 8px;
-      margin-bottom: 12px;
-    }
-    .article-accent .eyebrow,
-    .article-accent .meta a,
-    .article-accent a:hover{ color: var(--accent); }
-
-    /* Optional subtle gradient underline for article H1 */
-    .article-accent h1{
-      position:relative; padding-top:14px;
-    }
-    .article-accent h1::before{
-      content:""; position:absolute; top:0; left:0; width:70px; height:3px;
-      background: linear-gradient(to right, var(--accent), rgba(255,255,255,0));
-      border-radius:2px; opacity:.95;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/blog-article-template.css?v=1.0.0">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -169,35 +101,37 @@
   <script defer src="/js/nav.js?v=1.1.0"></script>
 </head>
 <body class="blog-article blog-open-page topic-product">
+  <a href="#main-content" class="skip-link">Skip to content</a>
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
   <div id="site-nav"></div>
 
-  <nav aria-label="Breadcrumb" class="breadcrumb" style="max-width: 820px; margin: 20px auto 0; padding: 0 20px;">
-    <ol style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.9rem; color: var(--muted, #b9b9b9);">
-      <li><a href="/" style="color: var(--link, #8fc6ff); text-decoration: none;">Home</a></li>
+  <nav aria-label="Breadcrumb" class="breadcrumb blog-breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
       <li style="color: #666;">/</li>
-      <li><a href="/media.html" style="color: var(--link, #8fc6ff); text-decoration: none;">Media</a></li>
+      <li><a href="/blogs/">Blog</a></li>
       <li style="color: #666;">/</li>
       <li aria-current="page">Purigen: Polish Your Water Clarity</li>
     </ol>
   </nav>
 
-  <main class="blog-open">
-    <article class="blog-article" itemscope itemtype="https://schema.org/BlogPosting">
-      <a class="back-link" href="/blogs/">← Back to all posts</a>
-      <div class="article-accent">
+  <main class="article-layout" id="main-content">
+    <article itemscope itemtype="https://schema.org/BlogPosting">
+      <a class="back-link" href="/blogs/" aria-label="Back to all blog posts">← Back to all posts</a>
+      <header class="article-header">
         <h1 itemprop="headline">Chasing Crystal Clear Aquarium Water (And What Finally Worked)</h1>
-        <p class="subhed">You can — and it's easier than you think. Just a simple addition in the right place of your filtration setup can take your tank from clear… to showroom-level clarity.</p>
-        <p style="font-size: 0.95rem; color: var(--muted, #b9b9b9); margin-top: 0.5rem;">By FishKeepingLifeCo | Part of the <a href="https://www.amazon.com/dp/B0FR299HW7?tag=fishkeepingli-20" target="_blank" rel="noopener" style="color: var(--link, #8fc6ff);">Life in Balance Ecosystem</a> at <a href="/" style="color: var(--link, #8fc6ff);">TheTankGuide.com</a> — Oct 2025</p>
-      </div>
+        <p class="deck">You can — and it's easier than you think. Just a simple addition in the right place of your filtration setup can take your tank from clear… to showroom-level clarity.</p>
+        <p class="deck">By FishKeepingLifeCo | Part of the <a href="https://www.amazon.com/dp/B0FR299HW7?tag=fishkeepingli-20" target="_blank" rel="noopener">Life in Balance Ecosystem</a> at <a href="/">TheTankGuide.com</a> — Oct 2025</p>
+      </header>
 
-      <figure class="blog-hero">
+      <figure class="tg-figure tg-figure--hero">
         <img src="/blogs/purigen/img/IMG_9299.jpeg"
              alt="Resin placement in sump filtration chamber for clear aquarium water"
              width="800" height="600"
+             class="tg-img tg-img--hero"
              loading="lazy" decoding="async" />
         <figcaption>Sump layout showing sponge layers (coarse to ultra-fine) with the Purigen bag on top before water flows to the refugium.</figcaption>
       </figure>
@@ -225,7 +159,7 @@
 
         <h2>Quick Teach: What This Resin Actually Does (It’s Not Carbon)</h2>
 
-        <blockquote class="tip"><strong>Quick Teach:</strong> It’s not carbon. It’s a synthetic resin that traps dissolved organics before they break down into nitrates. Think of it as a polish — not a crutch.</blockquote>
+        <div class="pro-tip"><strong>Quick Teach:</strong> It’s not carbon. It’s a synthetic resin that traps dissolved organics before they break down into nitrates. Think of it as a polish — not a crutch.</div>
 
         <h2>The Unexpected Downside (When Clarity Becomes Too Clear)</h2>
 
@@ -268,28 +202,28 @@
         </section>
       </div>
 
-      <section class="related-articles" style="margin-top: 2rem; padding: 1.5rem; background: rgba(25,25,25,0.35); border-radius: 14px;">
-        <h2 style="margin-top: 0; color: #fff;">Related Articles</h2>
-        <div class="related-grid" style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+      <section class="related-articles">
+        <h2>Related Articles</h2>
+        <div class="related-grid">
 
-          <article class="related-card" style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+          <article class="related-card">
             <a href="/blogs/aquarium-filtration-for-beginners.html" style="text-decoration: none; color: inherit;">
-              <h3 style="margin: 0 0 0.5rem; color: var(--link, #8fc6ff); font-size: 1.1rem;">Aquarium Filtration for Beginners</h3>
-              <p style="margin: 0; color: var(--muted, #b9b9b9); font-size: 0.9rem;">Complete guide to filter types, maintenance, and media</p>
+              <h3>Aquarium Filtration for Beginners</h3>
+              <p>Complete guide to filter types, maintenance, and media</p>
             </a>
           </article>
 
-          <article class="related-card" style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+          <article class="related-card">
             <a href="/blogs/nitrogen-cycle/" style="text-decoration: none; color: inherit;">
-              <h3 style="margin: 0 0 0.5rem; color: var(--link, #8fc6ff); font-size: 1.1rem;">Understanding the Nitrogen Cycle</h3>
-              <p style="margin: 0; color: var(--muted, #b9b9b9); font-size: 0.9rem;">The biological foundation of aquarium filtration</p>
+              <h3>Understanding the Nitrogen Cycle</h3>
+              <p>The biological foundation of aquarium filtration</p>
             </a>
           </article>
 
-          <article class="related-card" style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+          <article class="related-card">
             <a href="/gear/" style="text-decoration: none; color: inherit;">
-              <h3 style="margin: 0 0 0.5rem; color: var(--link, #8fc6ff); font-size: 1.1rem;">Gear Guide</h3>
-              <p style="margin: 0; color: var(--muted, #b9b9b9); font-size: 0.9rem;">Recommended equipment for your aquarium setup</p>
+              <h3>Gear Guide</h3>
+              <p>Recommended equipment for your aquarium setup</p>
             </a>
           </article>
 
@@ -329,8 +263,8 @@
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Media",
-        "item": "https://thetankguide.com/media.html"
+        "name": "Blog",
+        "item": "https://thetankguide.com/blogs/"
       },
       {
         "@type": "ListItem",
