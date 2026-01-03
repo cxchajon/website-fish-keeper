@@ -45,10 +45,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/blog-theme.css?v=1.2" />
-  <link rel="stylesheet" href="/css/style.css?v=1.0.10" />
-  <link rel="stylesheet" href="/css/blogs.css?v=1.5.2" />
-  <link rel="stylesheet" href="/css/blog-article-template.css?v=1.0.0">
+  <link rel="stylesheet" href="/css/blogs-bundle.min.css?v=1.0.0">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -59,9 +56,28 @@
     "author": {
       "@type": "Organization",
       "@id": "https://thetankguide.com/#brand",
-      "name": "The Tank Guide Team"
+      "name": "The Tank Guide"
     },
-    "publisher": { "@id": "https://thetankguide.com/#organization" },
+    "publisher": {
+      "@type": "Organization",
+      "@id": "https://thetankguide.com/#organization",
+      "name": "FishKeepingLifeCo",
+      "url": "https://thetankguide.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://www.instagram.com/FishKeepingLifeCo",
+        "https://www.tiktok.com/@FishKeepingLifeCo",
+        "https://x.com/fishkeepinglife",
+        "https://www.youtube.com/@fishkeepinglifeco",
+        "https://www.facebook.com/fishkeepinglifeco"
+      ]
+    },
+    "brand": { "@id": "https://thetankguide.com/#brand" },
     "datePublished": "2025-10-01",
     "dateModified": "2025-11-24",
     "mainEntityOfPage": {
@@ -75,7 +91,7 @@
   
   
   <script defer src="/js/nav.js?v=1.1.0"></script>
-  <!-- Consent Mode defaults (runs after GA loader) -->
+  <!-- Consent Mode defaults (runs after GA loader) -->
   <script src="/assets/js/consent-mode.js?v=1.5.2" defer></script>
   <!-- --- Google CMP (Funding Choices) START --- -->
   <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
@@ -130,12 +146,13 @@
         <p class="deck">By FishKeepingLifeCo | Part of the <a href="https://www.amazon.com/dp/B0FR299HW7?tag=fishkeepingli-20" target="_blank" rel="noopener">Life in Balance Ecosystem</a> at <a href="/">TheTankGuide.com</a> — Oct 2025</p>
       </header>
 
-      <figure class="tg-figure tg-figure--nocrop">
+      <figure class="tg-figure tg-figure--hero tg-figure--nocrop">
         <img
           class="tg-img tg-img--nocrop"
           src="/blogs/shared/img/nitrogen-cycle-diagram.PNG"
           alt="Simplified nitrogen cycle diagram from fish waste to clean water: ammonia → nitrite → nitrate → water change"
-          loading="lazy"
+          loading="eager"
+          decoding="async"
           width="2625"
           height="3375"
         />

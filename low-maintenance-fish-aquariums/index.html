@@ -38,222 +38,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/blog-theme.css?v=1.2">
-  <link rel="stylesheet" href="/css/style.css?v=1.0.10">
-  <link rel="stylesheet" href="/css/blogs.css?v=1.5.2">
-  <style>
-    .article-layout {
-      display: flex;
-      flex-direction: column;
-      gap: clamp(1.4rem, 3vw, 2rem);
-    }
+  <link rel="stylesheet" href="/css/blogs-bundle.min.css?v=1.0.0">
 
-    main.article-layout {
-      max-width: 880px;
-      margin: auto;
-      padding: 40px 20px 60px;
-    }
-
-    .back-link {
-      align-self: flex-start;
-      color: var(--blog-accent);
-      text-decoration: none;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .back-link:hover,
-    .back-link:focus {
-      text-decoration: underline;
-    }
-
-    .article-header {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-bottom: clamp(1.5rem, 4vw, 2.2rem);
-    }
-
-    .article-header h1 {
-      margin: 0;
-      font-size: clamp(2.1rem, 4.8vw, 3rem);
-      line-height: 1.1;
-    }
-
-    .article-header h3 {
-      margin: 0;
-      font-size: clamp(1.2rem, 2.8vw, 1.5rem);
-      font-weight: 600;
-      color: #d8d8d8;
-    }
-
-    .article-layout p {
-      margin: clamp(0.9rem, 2.4vw, 1.2rem) 0;
-    }
-
-    .article-layout ul,
-    .article-layout ol {
-      margin: clamp(1.1rem, 2.8vw, 1.5rem) 0;
-      padding-left: 1.2rem;
-    }
-
-    .article-layout ul li,
-    .article-layout ol li {
-      margin: 0.55rem 0;
-    }
-
-    .tg-figure {
-      margin: 28px auto;
-      background: #333;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.1);
-      max-width: 900px;
-    }
-
-    .tg-figure--section-hero {
-      margin-top: 36px;
-    }
-
-    .tg-img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    .blog-body {
-      position: relative;
-      background: rgba(25,25,25,0.35);
-      border-radius: 14px;
-      padding: 28px 22px;
-      margin: 24px auto;
-      max-width: 900px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      overflow: hidden;
-    }
-
-    .blog-body::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 120px;
-      background: linear-gradient(to bottom,
-        rgba(25,25,25,0.3) 0%,
-        rgba(25,25,25,0.15) 40%,
-        rgba(25,25,25,0.0) 100%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .blog-body p,
-    .blog-body li {
-      line-height: 1.7;
-      color: #d8d8d8;
-      position: relative;
-      z-index: 1;
-    }
-
-    .blog-body h2,
-    .blog-body h3 {
-      margin-top: 36px;
-      color: #ffffff;
-      position: relative;
-      z-index: 1;
-    }
-
-    .blog-body ul,
-    .blog-body ol {
-      position: relative;
-      z-index: 1;
-    }
-
-    hr {
-      border: 0;
-      border-top: 1px solid rgba(255,255,255,.10);
-      margin: 32px 0;
-      position: relative;
-      z-index: 1;
-    }
-
-    .footer-ad-band {
-      max-width: 970px;
-      margin: clamp(1.6rem, 4vw, 2.4rem) auto clamp(2.2rem, 5vw, 3.2rem);
-      padding: 0 20px;
-    }
-
-    .footer-ad-band .ttg-ad-slot {
-      --ttg-ad-bg: rgba(16, 20, 28, 0.24);
-      --ttg-ad-border: rgba(173, 186, 202, 0.35);
-      width: 100%;
-      max-width: 900px;
-      min-height: clamp(180px, 30vw, 230px);
-      margin: 0 auto;
-      padding: clamp(0.9rem, 2.6vw, 1.3rem);
-      border-radius: 14px;
-      border: 1px solid var(--ttg-ad-border);
-      background: var(--ttg-ad-bg);
-      box-shadow: 0 18px 48px rgba(0,0,0,0.32);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    .footer-ad-band .ttg-ad-slot .ttg-ad-banner-link {
-      display: block;
-      width: 100%;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .footer-ad-band .ttg-ad-slot .ttg-ad-img,
-    .footer-ad-band .ttg-ad-slot img {
-      width: 100%;
-      height: 100%;
-      max-height: 240px;
-      object-fit: cover;
-      border-radius: 12px;
-      display: block;
-    }
-
-    #faq,
-    #aeo-nitrogen-cycle {
-      margin: clamp(1.6rem, 4vw, 2.4rem) auto;
-      max-width: 900px;
-      padding: 0 4px;
-    }
-
-    .faq-item {
-      margin: 1rem 0;
-    }
-
-    .faq-item h3 {
-      margin: 0 0 0.35rem;
-    }
-
-    @media (max-width: 640px) {
-      main.article-layout {
-        padding-inline: clamp(1.2rem, 6vw, 2rem);
-      }
-
-      .article-header {
-        text-align: left;
-      }
-
-      .blog-body {
-        padding: 20px 16px;
-        border-radius: 12px;
-      }
-    }
-  </style>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -264,24 +50,38 @@
     ],
     "description": "Low maintenance aquariums aren’t about tougher fish. Learn how bioload, tank size, and planning create stability—and why “hardy” is the wrong term for beginners.",
     "author": {
-      "@type": "Person",
-      "name": "FishKeepingLifeCo",
-      "url": "https://thetankguide.com/about/"
+      "@type": "Organization",
+      "@id": "https://thetankguide.com/#brand",
+      "name": "The Tank Guide",
+      "url": "https://thetankguide.com/"
     },
     "publisher": {
       "@type": "Organization",
-      "name": "The Tank Guide",
+      "@id": "https://thetankguide.com/#organization",
+      "name": "FishKeepingLifeCo",
+      "url": "https://thetankguide.com/",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG"
-      }
+        "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://www.instagram.com/FishKeepingLifeCo",
+        "https://www.tiktok.com/@FishKeepingLifeCo",
+        "https://x.com/fishkeepinglife",
+        "https://www.youtube.com/@fishkeepinglifeco",
+        "https://www.facebook.com/fishkeepinglifeco"
+      ]
     },
+    "brand": { "@id": "https://thetankguide.com/#brand" },
     "datePublished": "2025-12-27T10:00:00-05:00",
     "dateModified": "2025-12-27T10:00:00-05:00",
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "https://thetankguide.com/low-maintenance-fish-aquariums/"
-    }
+    },
+    "isPartOf": { "@id": "https://thetankguide.com/#website" }
   }
   </script>
   <script type="application/ld+json">
@@ -363,11 +163,11 @@
   <!-- End Google Tag Manager (noscript) -->
   <div id="site-nav"></div>
 
-  <nav aria-label="Breadcrumb" class="breadcrumb" style="max-width: 880px; margin: 20px auto 0; padding: 0 20px;">
-    <ol style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.9rem; color: #b9b9b9;">
-      <li><a href="/" style="color: var(--blog-accent, #00c3b6); text-decoration: none;">Home</a></li>
+  <nav aria-label="Breadcrumb" class="breadcrumb blog-breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
       <li style="color: #666;">/</li>
-      <li><a href="/blogs/" style="color: var(--blog-accent, #00c3b6); text-decoration: none;">Blogs</a></li>
+      <li><a href="/blogs/">Blog</a></li>
       <li style="color: #666;">/</li>
       <li aria-current="page">Low Maintenance Fish for Aquariums</li>
     </ol>
@@ -379,8 +179,24 @@
 
       <header class="article-header">
         <h1>Low Maintenance Fish for Aquariums: Low Bioload, Not Tougher Fish</h1>
-        <h3>Why “Hardy” Is the Wrong Term — and What Actually Makes a Fish Low Maintenance</h3>
+        <p class="deck">Why “Hardy” Is the Wrong Term — and What Actually Makes a Fish Low Maintenance</p>
+        <p class="deck">By FishKeepingLifeCo — Dec 2025</p>
       </header>
+
+      <figure class="tg-figure tg-figure--hero">
+        <img
+          src="/assets/images/low-bioload-fish-and-invertebrates-reference-grid.PNG"
+          alt="Reference grid showing low-bioload fish and invertebrates commonly suited for stable aquarium setups"
+          class="tg-img tg-img--hero"
+          width="2816"
+          height="1536"
+          loading="eager"
+          decoding="async"
+        >
+        <figcaption>Low-bioload fish and invertebrates that ease early aquarium stability.</figcaption>
+      </figure>
+
+      <div class="section-split" aria-hidden="true"></div>
 
       <div class="blog-body">
         <p>When people search for low maintenance fish for aquariums, they’re usually looking for a safer way to get started. A lot of beginners say the same thing: “I want an aquarium, but I don’t want to kill the fish.”</p>
@@ -452,18 +268,6 @@
         <p>Low bioload reduces risk, not responsibility.</p>
 
         <hr>
-
-        <figure class="tg-figure tg-figure--section-hero">
-          <img
-            src="/assets/images/low-bioload-fish-and-invertebrates-reference-grid.PNG"
-            alt="Reference grid showing low-bioload fish and invertebrates commonly suited for stable aquarium setups"
-            class="tg-img"
-            width="2816"
-            height="1536"
-            loading="lazy"
-            decoding="async"
-          >
-        </figure>
 
         <h2>Examples of Low-Bioload Fish (With a Responsible Setup)</h2>
 
