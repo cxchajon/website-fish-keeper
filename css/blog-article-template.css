@@ -616,6 +616,96 @@ body.blog-article .faq-item h3 {
   margin: 0 0 0.35rem;
 }
 
+body.blog-article .blog-house-promo {
+  max-width: var(--article-body-max);
+  margin: clamp(2.4rem, 6vw, 3.6rem) auto 0;
+  padding: clamp(1.25rem, 3vw, 1.8rem);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(12, 18, 32, 0.55));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.32);
+}
+
+body.blog-article .blog-house-promo__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  margin: 0 0 10px 0;
+  border-radius: 999px;
+  background: rgba(0, 195, 182, 0.16);
+  color: var(--blog-accent, #00c3b6);
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+body.blog-article .blog-house-promo__head {
+  margin-bottom: 10px;
+}
+
+body.blog-article .blog-house-promo__head h2 {
+  margin: 0 0 6px 0;
+  color: #ffffff;
+}
+
+body.blog-article .blog-house-promo__head p {
+  margin: 0;
+  color: var(--blog-muted-strong, #e2e6ee);
+}
+
+body.blog-article .blog-house-promo__grid {
+  display: grid;
+  gap: clamp(0.9rem, 2vw, 1.2rem);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-top: 12px;
+}
+
+body.blog-article .blog-house-promo__card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  display: grid;
+  gap: 8px;
+}
+
+body.blog-article .blog-house-promo__card h3 {
+  margin: 0;
+  color: var(--blog-accent, #00c3b6);
+}
+
+body.blog-article .blog-house-promo__card p {
+  margin: 0;
+  color: var(--blog-muted-strong, #e2e6ee);
+  line-height: 1.55;
+}
+
+body.blog-article .blog-house-promo__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--blog-text, #f5f5f5);
+  text-decoration: none;
+  padding-top: 6px;
+}
+
+body.blog-article .blog-house-promo__link::after {
+  content: "→";
+  font-size: 0.95em;
+  color: var(--blog-accent, #00c3b6);
+}
+
+body.blog-article .blog-house-promo__link:hover,
+body.blog-article .blog-house-promo__link:focus-visible {
+  color: var(--blog-accent, #00c3b6);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 body.blog-article .footer-ad-band {
   max-width: 970px;
   margin: clamp(2.5rem, 6vw, 3.5rem) auto clamp(3rem, 8vw, 4.5rem);
