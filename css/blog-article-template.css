@@ -711,6 +711,15 @@ body.blog-article .footer-ad-band {
   margin: clamp(2.5rem, 6vw, 3.5rem) auto clamp(3rem, 8vw, 4.5rem);
   padding: 0 20px;
 }
+body.blog-article .blog-cta-row {
+  max-width: var(--article-body-max);
+  margin: clamp(1.2rem, 3vw, 1.8rem) auto 0;
+  display: flex;
+  justify-content: flex-start;
+}
+body.blog-article .footer-ad-band .ttg-ad-slot {
+  margin: clamp(1.2rem, 3vw, 1.6rem) auto;
+}
 
 body.blog-article .ttg-ad-slot {
   --ttg-ad-border: rgba(129, 155, 211, 0.72);
