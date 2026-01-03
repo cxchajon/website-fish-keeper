@@ -29,21 +29,16 @@
   <meta property="og:site_name" content="The Tank Guide" />
   
   <link rel="preload"
-        href="/css/style.css?v=1.0.10"
-        as="style"
-        onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload"
-        href="/css/blogs.css?v=1.5.2"
+        href="/css/blogs-bundle.min.css?v=1.0.0"
         as="style"
         onload="this.onload=null;this.rel='stylesheet'">
   <noscript>
-    <link rel="stylesheet" href="/css/style.css?v=1.0.10">
-    <link rel="stylesheet" href="/css/blogs.css?v=1.5.2">
+    <link rel="stylesheet" href="/css/blogs-bundle.min.css?v=1.0.0">
   </noscript>
   <link rel="preconnect" href="https://fundingchoicesmessages.google.com" crossorigin>
   <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
   <script defer src="/js/nav.js?v=1.1.0"></script>
-  <!-- Consent Mode defaults (runs after GA loader) -->
+  <!-- Consent Mode defaults (runs after GA loader) -->
   <script src="/assets/js/consent-mode.js?v=1.5.2" defer></script>
   <script type="application/ld+json">
 
@@ -54,9 +49,9 @@
         "@type": "Organization",
         "@id": "https://thetankguide.com/#organization",
         "name": "FishKeepingLifeCo",
-        "alternateName": ["The Tank Guide", "Fish Keeping Life Co", "fishkeepinglife"],
-        "description": "FishKeepingLifeCo is an educational publishing company specializing in beginner-friendly aquarium science. The Tank Guide is our flagship website providing interactive tools and research-backed fishkeeping guidance for families and new hobbyists.",
-        "url": "https://thetankguide.com",
+        "alternateName": ["The Tank Guide", "TheTankGuide", "Tank Guide", "Fish Keeping Life Co", "fishkeepinglife"],
+        "description": "FishKeepingLifeCo is an educational publisher behind The Tank Guide, focused on beginner-friendly aquarium science, interactive tools, and research-backed guidance.",
+        "url": "https://thetankguide.com/",
         "logo": {
           "@type": "ImageObject",
           "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG",
@@ -64,13 +59,28 @@
           "height": 512
         },
         "sameAs": [
-          "https://www.tiktok.com/@fishkeepinglifeco",
-          "https://www.instagram.com/fishkeepinglifeco",
-          "https://www.youtube.com/@FishKeepingLifeCo",
+          "https://www.instagram.com/FishKeepingLifeCo",
+          "https://www.tiktok.com/@FishKeepingLifeCo",
           "https://x.com/fishkeepinglife",
-          "https://www.facebook.com/FishKeepingLifeCo",
-          "https://www.threads.net/@fishkeepinglifeco",
-          "https://www.reddit.com/u/FishKeepingLifeCo"
+          "https://www.youtube.com/@fishkeepinglifeco",
+          "https://www.facebook.com/fishkeepinglifeco"
+        ]
+      },
+      {
+        "@type": "Brand",
+        "@id": "https://thetankguide.com/#brand",
+        "name": "The Tank Guide",
+        "url": "https://thetankguide.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG"
+        },
+        "parentOrganization": { "@id": "https://thetankguide.com/#organization" },
+        "sameAs": [
+          "https://www.instagram.com/FishKeepingLifeCo",
+          "https://www.tiktok.com/@FishKeepingLifeCo",
+          "https://x.com/fishkeepinglife",
+          "https://www.youtube.com/@fishkeepinglifeco"
         ]
       },
       {
@@ -81,6 +91,9 @@
         "description": "The Tank Guide is an educational aquarium website from FishKeepingLifeCo, offering tools like the Cycling Coach, stocking advice, and beginner-friendly guides.",
         "publisher": {
           "@id": "https://thetankguide.com/#organization"
+        },
+        "brand": {
+          "@id": "https://thetankguide.com/#brand"
         },
         "inLanguage": "en-US",
         "potentialAction": {
@@ -111,6 +124,9 @@
         },
         "author": {
           "@id": "https://thetankguide.com/#organization"
+        },
+        "brand": {
+          "@id": "https://thetankguide.com/#brand"
         },
         "hasPart": [
           {

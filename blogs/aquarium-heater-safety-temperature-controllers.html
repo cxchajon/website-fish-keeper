@@ -44,10 +44,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/blog-theme.css?v=1.2">
-  <link rel="stylesheet" href="/css/style.css?v=1.0.10">
-  <link rel="stylesheet" href="/css/blogs.css?v=1.5.2">
-  <link rel="stylesheet" href="/css/blog-article-template.css?v=1.0.0">
+  <link rel="stylesheet" href="/css/blogs-bundle.min.css?v=1.0.0">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -63,10 +60,29 @@
     "author": {
       "@type": "Organization",
       "@id": "https://thetankguide.com/#brand",
-      "name": "The Tank Guide Team",
+      "name": "The Tank Guide",
       "url": "https://thetankguide.com"
     },
-    "publisher": { "@id": "https://thetankguide.com/#organization" },
+    "publisher": {
+      "@type": "Organization",
+      "@id": "https://thetankguide.com/#organization",
+      "name": "FishKeepingLifeCo",
+      "url": "https://thetankguide.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://www.instagram.com/FishKeepingLifeCo",
+        "https://www.tiktok.com/@FishKeepingLifeCo",
+        "https://x.com/fishkeepinglife",
+        "https://www.youtube.com/@fishkeepinglifeco",
+        "https://www.facebook.com/fishkeepinglifeco"
+      ]
+    },
+    "brand": { "@id": "https://thetankguide.com/#brand" },
     "datePublished": "2025-12-24",
     "dateModified": "2025-12-25",
     "mainEntityOfPage": {
@@ -147,6 +163,19 @@
         <h1>Aquarium Heater Safety: Why Temperature Controllers Matter</h1>
         <p class="deck">Aquarium heaters are one of the most common single-point failures in fishkeeping. When they fail, they often don’t shut off — they stay on.</p>
       </header>
+
+      <figure class="tg-figure tg-figure--hero">
+        <img
+          class="tg-img tg-img--hero"
+          src="/assets/images/inkbird-itc-306a-aquarium-temperature-controller-installed.png"
+          alt="Inkbird ITC-306A temperature controller mounted near an aquarium setup."
+          width="1290"
+          height="2796"
+          loading="eager"
+          decoding="async"
+        >
+        <figcaption>A temperature controller sits between your outlet and heater, adding a fail-safe cutoff.</figcaption>
+      </figure>
 
       <div class="section-split" aria-hidden="true"></div>
 
@@ -231,19 +260,6 @@
         </ol>
 
         <p>If a heater’s internal thermostat fails and remains on, the controller detects the rising temperature and physically cuts power to the heater.</p>
-
-        <figure class="tg-figure">
-          <img
-            class="tg-img tg-img--tall"
-            src="/assets/images/inkbird-itc-306a-aquarium-temperature-controller-installed.png"
-            alt="Inkbird ITC-306A temperature controller mounted near aquarium setup."
-            width="1290"
-            height="2796"
-            loading="lazy"
-            decoding="async"
-          >
-          <figcaption>The controller sits between the outlet and heater, providing a cutoff layer that doesn’t change your maintenance routine.</figcaption>
-        </figure>
 
         <div class="section-split" aria-hidden="true"></div>
 

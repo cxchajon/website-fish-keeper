@@ -1,4 +1,9 @@
 /* Shared blog article template styles derived from the holiday gift guide layout */
+body.blog-article {
+  --article-shell-max: 960px;
+  --article-body-max: 900px;
+}
+
 body.blog-article .skip-link {
   position: absolute;
   left: -999px;
@@ -49,6 +54,9 @@ body.blog-article .article-header {
   flex-direction: column;
   gap: 1rem;
   margin-bottom: clamp(1.5rem, 4vw, 2.2rem);
+  max-width: var(--article-body-max);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 body.blog-article .article-header h1 {
@@ -103,10 +111,28 @@ body.blog-article .tg-figure {
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,.1);
+  max-width: var(--article-body-max);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 body.blog-article .tg-figure--hero {
   margin-top: 0;
+  width: 100%;
+  max-width: var(--article-body-max);
+}
+
+body.blog-article .tg-figure--hero .tg-img {
+  width: 100%;
+}
+
+body.blog-article .tg-figure--hero.tg-figure--nocrop .tg-img--nocrop {
+  max-height: min(620px, 65vh);
+  object-fit: contain !important;
+}
+
+body.blog-article .tg-figure--section-hero {
+  margin-top: clamp(2.2rem, 4vw, 2.8rem);
 }
 
 body.blog-article .tg-figure figcaption {
@@ -127,6 +153,7 @@ body.blog-article .tg-img--hero {
   object-fit: cover;
   object-position: center;
   border-radius: 12px 12px 0 0;
+  max-width: 100%;
 }
 
 body.blog-article .section-split {
@@ -136,7 +163,7 @@ body.blog-article .section-split {
 }
 
 body.blog-article main.article-layout {
-  max-width: 880px;
+  max-width: var(--article-shell-max);
   margin: auto;
   padding: 40px 20px;
 }
@@ -147,7 +174,7 @@ body.blog-article .blog-body {
   border-radius: 14px;
   padding: 28px 22px;
   margin: 24px auto;
-  max-width: 900px;
+  max-width: var(--article-body-max);
   box-shadow: 0 6px 18px rgba(0,0,0,0.25);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -553,7 +580,7 @@ body.blog-article .gear-links .product-card .cta {
 }
 
 body.blog-article .blog-breadcrumb {
-  max-width: 880px;
+  max-width: var(--article-body-max);
   margin: 20px auto 0;
   padding: 0 20px;
 }
@@ -572,6 +599,21 @@ body.blog-article .blog-breadcrumb ol {
 body.blog-article .blog-breadcrumb a {
   color: var(--blog-accent, #00c3b6);
   text-decoration: none;
+}
+
+body.blog-article #faq,
+body.blog-article #aeo-nitrogen-cycle {
+  margin: clamp(1.6rem, 4vw, 2.4rem) auto;
+  max-width: var(--article-body-max);
+  padding: 0 4px;
+}
+
+body.blog-article .faq-item {
+  margin: 1rem 0;
+}
+
+body.blog-article .faq-item h3 {
+  margin: 0 0 0.35rem;
 }
 
 body.blog-article .footer-ad-band {
