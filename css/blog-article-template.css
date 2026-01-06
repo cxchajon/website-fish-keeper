@@ -31,6 +31,10 @@ body.blog-article .article-layout article {
   display: flex;
   flex-direction: column;
   gap: clamp(1.4rem, 3vw, 2rem);
+  max-width: var(--article-shell-max);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
 body.blog-article .back-link {
@@ -225,10 +229,23 @@ body.blog-article .blog-body table {
   z-index: 1;
 }
 
+body.blog-article .blog-body .table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1.5rem 0;
+  padding-bottom: 6px;
+}
+
 body.blog-article .blog-body table {
   width: 100%;
   border-collapse: collapse;
   margin: 1.5rem 0;
+}
+
+body.blog-article .blog-body .table-wrap table {
+  margin: 0;
+  min-width: 540px;
 }
 
 body.blog-article .blog-body th,
