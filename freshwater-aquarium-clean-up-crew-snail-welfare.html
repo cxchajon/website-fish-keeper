@@ -87,6 +87,64 @@
     "isPartOf": { "@id": "https://thetankguide.com/#website" }
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Make Snello (Calcium-Rich Snail Food)",
+    "description": "A step-by-step guide to making homemade calcium-rich snail food to help support shell integrity and long-term invertebrate welfare in freshwater aquariums.",
+    "image": "https://thetankguide.com/assets/images/snello-recipe-calcium-food-for-aquarium-snails.PNG",
+    "totalTime": "PT2H20M",
+    "estimatedCost": {
+      "@type": "MonetaryAmount",
+      "currency": "USD",
+      "value": "5.00"
+    },
+    "supply": [
+      { "@type": "HowToSupply", "name": "4 oz calcium-rich baby food (green beans or peas)" },
+      { "@type": "HowToSupply", "name": "1 packet unflavored gelatin" },
+      { "@type": "HowToSupply", "name": "1 tbsp calcium carbonate (no Vitamin D3)" },
+      { "@type": "HowToSupply", "name": "1 tbsp crushed fish flakes or spirulina" }
+    ],
+    "tool": [
+      { "@type": "HowToTool", "name": "Small saucepan or microwave-safe bowl" },
+      { "@type": "HowToTool", "name": "Mixing spoon" },
+      { "@type": "HowToTool", "name": "Knife or spatula" }
+    ],
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Heat the base",
+        "text": "Heat the calcium-rich baby food in a saucepan or bowl. Do not allow it to reach a boil.",
+        "url": "https://thetankguide.com/freshwater-aquarium-clean-up-crew-snail-welfare#step1"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Add gelatin",
+        "text": "Stir in one packet of unflavored gelatin thoroughly until completely dissolved.",
+        "url": "https://thetankguide.com/freshwater-aquarium-clean-up-crew-snail-welfare#step2"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Mix nutrients",
+        "text": "Mix in the calcium carbonate and your protein source (fish flakes or spirulina).",
+        "url": "https://thetankguide.com/freshwater-aquarium-clean-up-crew-snail-welfare#step3"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Set and chill",
+        "text": "Pour the mixture into a flat container and refrigerate for approximately 2 hours until firm.",
+        "url": "https://thetankguide.com/freshwater-aquarium-clean-up-crew-snail-welfare#step4"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Portion and store",
+        "text": "Cut the snello into 1 cm cubes and move to the freezer for long-term storage.",
+        "url": "https://thetankguide.com/freshwater-aquarium-clean-up-crew-snail-welfare#step5"
+      }
+    ]
+  }
+  </script>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!-- Consent Mode defaults (runs after GA loader) -->
   <script src="/assets/js/consent-mode.js?v=1.5.2" defer></script>
@@ -386,41 +444,43 @@
 
         <hr>
 
-        <h2>Feeding Snails: The “Snello” Standard</h2>
+        <section id="how-to-make-snello">
+          <h2>Feeding Snails: The “Snello” Standard</h2>
 
-        <figure class="tg-figure" style="max-width: 720px; margin: 0 auto;">
-          <img
-            src="/assets/images/snello-recipe-calcium-food-for-aquarium-snails.PNG"
-            alt="Homemade snello recipe using calcium-rich ingredients for aquarium snails"
-            class="tg-img"
-            loading="lazy"
-            decoding="async"
-          >
-        </figure>
+          <figure class="tg-figure" style="max-width: 720px; margin: 0 auto;">
+            <img
+              src="/assets/images/snello-recipe-calcium-food-for-aquarium-snails.PNG"
+              alt="Homemade snello recipe using calcium-rich ingredients for aquarium snails"
+              class="tg-img"
+              loading="lazy"
+              decoding="async"
+            >
+          </figure>
 
-        <p>Snails cannot live on algae alone indefinitely.</p>
+          <p>Snails cannot live on algae alone indefinitely.</p>
 
-        <h3>Standard Snello Recipe</h3>
-        <ul>
-          <li>4 oz calcium-rich baby food (green beans or peas)</li>
-          <li>1 packet unflavored gelatin</li>
-          <li>1 tbsp calcium carbonate (no Vitamin D₃)</li>
-          <li>1 tbsp crushed fish flakes or spirulina</li>
-        </ul>
+          <h3>Standard Snello Recipe</h3>
+          <ul>
+            <li>4 oz calcium-rich baby food (green beans or peas)</li>
+            <li>1 packet unflavored gelatin</li>
+            <li>1 tbsp calcium carbonate (no Vitamin D₃)</li>
+            <li>1 tbsp crushed fish flakes or spirulina</li>
+          </ul>
 
-        <h3>Preparation</h3>
-        <ol>
-          <li>Heat baby food (do not boil)</li>
-          <li>Stir in gelatin</li>
-          <li>Mix in calcium and protein</li>
-          <li>Refrigerate ~2 hours</li>
-          <li>Cut into ~1 cm cubes and freeze</li>
-        </ol>
+          <h3>Preparation</h3>
+          <ol>
+            <li id="step1">Heat baby food (do not boil)</li>
+            <li id="step2">Stir in gelatin</li>
+            <li id="step3">Mix in calcium and protein</li>
+            <li id="step4">Refrigerate ~2 hours</li>
+            <li id="step5">Cut into ~1 cm cubes and freeze</li>
+          </ol>
 
-        <p><strong>Feeding guidance:</strong><br>
-        Feed 1–2 cubes per 5–10 snails, 2–3 times per week, adjusting based on natural algae availability.</p>
+          <p><strong>Feeding guidance:</strong><br>
+          Feed 1–2 cubes per 5–10 snails, 2–3 times per week, adjusting based on natural algae availability.</p>
 
-        <p>Remove uneaten food within 12–24 hours.</p>
+          <p>Remove uneaten food within 12–24 hours.</p>
+        </section>
 
         <hr>
 
