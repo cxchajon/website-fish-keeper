@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-01-11",
+    "title": "Weekly Maintenance & Livestock Update",
+    "body": "Performed routine maintenance and a partial water change. Pre–water change nitrate levels tested between 20–40 ppm (below 40), and the display tank was drained by about 50%, less than usual, because extra filter maintenance was completed during this session. All filter media were temporarily removed and gently squeezed out in tank water, and the filter chamber was cleaned to remove accumulated detritus and suspended particles, making this a maintenance-focused reset rather than a corrective water change. Newly added shrimp introduced 2–3 days prior are acclimating well and showing active, exploratory behavior throughout the tank. Inkbird temperature probes were moved from the sump back into the display tank to improve monitoring and regulation during water changes, with a dedicated sump heater considered for the future.",
+    "category": "Maintenance",
+    "quick_facts": "Nitrate 20–40 ppm (pre-WC); ~50% display WC; filter media rinse + chamber clean; shrimp acclimating; probes moved to display",
+    "nitrate_ppm": "20-40"
+  },
+  {
     "date": "2026-01-05",
     "title": "Lighting, Refugium & System Tuning",
     "body": "Updated the display and sump/refugium lighting schedule with a gentle, split increase to encourage soft green algae as a natural food source for snails and shrimp while keeping the system balanced. Extended the photoperiod by adding 15 minutes to both dawn and dusk, and lengthened refugium lighting with intentional overlap. Moss growth in the refugium has been strong, signaling the system can handle the slightly longer light window.",
