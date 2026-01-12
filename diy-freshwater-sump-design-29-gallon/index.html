@@ -34,7 +34,76 @@
   <meta name="twitter:title" content="DIY Freshwater Sump Design: Building a 5-Gallon Sump for a 29-Gallon Aquarium" />
   <meta name="twitter:description" content="A real-world account of designing a 5-gallon sump for a 29-gallon planted aquarium—covering refugium integration, gravity-fed overflows, custom media stacks, and stability results inspired by saltwater systems." />
 
-  <!--#include virtual="/includes/schema-organization.html" -->
+  <script id="ttg-entity-graph" type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://thetankguide.com/#organization",
+        "name": "FishKeepingLifeCo",
+        "alternateName": ["The Tank Guide", "TheTankGuide", "Tank Guide", "Fish Keeping Life Co", "fishkeepinglife"],
+        "description": "FishKeepingLifeCo is an educational publisher behind The Tank Guide, focused on beginner-friendly aquarium science, interactive tools, and research-backed guidance.",
+        "url": "https://thetankguide.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG",
+          "width": 512,
+          "height": 512
+        },
+        "sameAs": [
+          "https://www.instagram.com/FishKeepingLifeCo",
+          "https://www.tiktok.com/@FishKeepingLifeCo",
+          "https://x.com/fishkeepinglife",
+          "https://www.youtube.com/@fishkeepinglifeco",
+          "https://www.facebook.com/fishkeepinglifeco"
+        ]
+      },
+      {
+        "@type": "Brand",
+        "@id": "https://thetankguide.com/#brand",
+        "name": "The Tank Guide",
+        "url": "https://thetankguide.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG"
+        },
+        "parentOrganization": {
+          "@id": "https://thetankguide.com/#organization"
+        },
+        "sameAs": [
+          "https://www.instagram.com/FishKeepingLifeCo",
+          "https://www.tiktok.com/@FishKeepingLifeCo",
+          "https://x.com/fishkeepinglife",
+          "https://www.youtube.com/@fishkeepinglifeco"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://thetankguide.com/#website",
+        "url": "https://thetankguide.com/",
+        "name": "The Tank Guide",
+        "description": "The Tank Guide is an educational aquarium website offering tools, guides, and beginner-friendly resources.",
+        "publisher": {
+          "@id": "https://thetankguide.com/#organization"
+        },
+        "inLanguage": "en-US",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://thetankguide.com/search?q={search_term_string}"
+          },
+          "query-input": {
+            "@type": "PropertyValueSpecification",
+            "valueRequired": true,
+            "valueName": "search_term_string"
+          }
+        }
+      }
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -43,12 +112,15 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": "BlogPosting",
     "headline": "DIY Freshwater Sump Design: Building a 5-Gallon Sump for a 29-Gallon Aquarium",
     "description": "A real-world account of designing a 5-gallon sump for a 29-gallon planted aquarium—covering refugium integration, gravity-fed overflows, custom media stacks, and stability results inspired by saltwater systems.",
+    "image": "https://thetankguide.com/assets/images/diy-freshwater-5-gallon-sump-29-gallon-aquarium-refugium.JPEG",
     "author": {
       "@type": "Organization",
-      "name": "FishKeepingLifeCo"
+      "@id": "https://thetankguide.com/#organization",
+      "name": "FishKeepingLifeCo",
+      "url": "https://thetankguide.com/"
     },
     "publisher": {
       "@type": "Organization",
@@ -397,6 +469,24 @@
         <p><strong>Understanding my system did.</strong></p>
 
         <p>And sometimes, building something yourself is the fastest — and most affordable — way to get there.</p>
+      </div>
+
+      <div class="ttg-ad-slot ttg-house-ad-slot"
+           id="ad-diy-sump-rotator"
+           data-ttg-ad-rotator="true"
+           data-ttg-ad-manifest="/assets/ads/manifest.json"
+           data-ttg-ad-interval="10000"
+           aria-label="Advertisement">
+        <a class="ttg-ad-banner-link" href="/store.html">
+          <img class="ttg-ad-img"
+               src="/assets/img/ads/Daily-tank-journal-ad.PNG"
+               alt="Daily Tank Journal promotion"
+               loading="lazy">
+        </a>
+        <div>
+          <strong>Tools to track a stable sump system.</strong>
+          <p style="margin: 6px 0 0;">Log parameters, feeding, and maintenance with our journals and guides.</p>
+        </div>
       </div>
     </article>
   </main>
