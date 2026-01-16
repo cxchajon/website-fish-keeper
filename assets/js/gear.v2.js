@@ -3079,7 +3079,8 @@
 
     if (hyggerBtn) {
       const hyggerLink = primary.hygger_url || primary.hyggerUrl || '';
-      if (hyggerLink) {
+      const allowPrimaryHygger = category !== 'light';
+      if (hyggerLink && allowPrimaryHygger) {
         hyggerBtn.href = hyggerLink;
         hyggerBtn.classList.add('btn-hygger');
         hyggerBtn.hidden = false;
