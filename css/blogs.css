@@ -1157,6 +1157,11 @@ main.blogs-panel {
   background: var(--tg-soft, rgba(0, 0, 0, 0.35));
 }
 
+.blog-hero.blog-hero--tall {
+  aspect-ratio: 4 / 3;
+  max-height: 70vh;
+}
+
 .blog-hero img {
   width: 100%;
   height: 100%;
@@ -1171,9 +1176,30 @@ main.blogs-panel {
     max-height: 60vh;
   }
 
+  .blog-hero.blog-hero--tall {
+    padding-top: 75%;
+    max-height: 70vh;
+  }
+
   .blog-hero img {
     position: absolute;
     inset: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .blog-hero.blog-hero--tall {
+    aspect-ratio: 1 / 1;
+    max-height: 75vh;
+  }
+}
+
+@supports not (aspect-ratio: 1 / 1) {
+  @media (max-width: 640px) {
+    .blog-hero.blog-hero--tall {
+      padding-top: 100%;
+      max-height: 75vh;
+    }
   }
 }
 
