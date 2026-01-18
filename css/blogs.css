@@ -1150,7 +1150,7 @@ main.blogs-panel {
 .blog-hero {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3;
   max-height: 60vh;
   overflow: hidden;
   border-radius: 14px;
@@ -1161,13 +1161,14 @@ main.blogs-panel {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
   display: block;
 }
 
 @supports not (aspect-ratio: 1 / 1) {
   .blog-hero {
     height: 0;
-    padding-top: 56.25%;
+    padding-top: 75%;
     max-height: 60vh;
   }
 
