@@ -37,6 +37,32 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/blogs-bundle.min.css?v=1.0.0">
+  <style>
+    .blog-hero--contain {
+      aspect-ratio: auto;
+      height: auto;
+      max-height: 70vh;
+      overflow: hidden;
+    }
+
+    .blog-hero--contain img {
+      height: auto;
+      max-height: 70vh;
+      object-fit: contain;
+      width: 100%;
+    }
+
+    @supports not (aspect-ratio: 1 / 1) {
+      .blog-hero--contain {
+        height: auto;
+        padding-top: 0;
+      }
+
+      .blog-hero--contain img {
+        position: static;
+      }
+    }
+  </style>
 
   <script type="application/ld+json">
   {
@@ -171,7 +197,7 @@
     <article>
       <header class="article-header">
         <h1>Rethinking Undergravel Filters: A Planted Aquarium Case Study</h1>
-        <figure class="blog-hero">
+        <figure class="blog-hero blog-hero--contain">
           <img
             src="/assets/images/undergravel-filter-planted-tank-case-study-hero.jpeg"
             alt="Undergravel filter planted aquarium case study showing substrate flow and plant growth"
