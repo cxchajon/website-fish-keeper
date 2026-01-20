@@ -48,7 +48,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/assets/css/university.page.css?v=2025-11-17" />
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <!-- nav.js dynamically loads /nav.html -->
-  <!-- Consent Mode defaults (runs after GA loader) -->
+  <!-- Consent Mode defaults (runs after GA loader) -->
   <script src="/assets/js/consent-mode.js" defer></script>
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
@@ -173,10 +173,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <li>
               <a href="https://edis.ifas.ufl.edu/publication/FA031" target="_blank" rel="noopener noreferrer" aria-label="Read 'UF/IFAS Extension — Ammonia in Aquatic Systems' at UF/IFAS Extension (opens in a new tab)">UF/IFAS Extension — Ammonia in Aquatic Systems</a>
               <p>Explores ammonia sources, nitrification stages, and mitigation practices in recirculating habitats.</p>
-            </li>
-            <li>
-              <a href="https://users.cs.duke.edu/~narten/faq/chemistry.html" target="_blank" rel="noopener noreferrer" aria-label="Read 'Buffering &amp; Hardness Quick Reference (Duke University)' at Duke University (opens in a new tab)">Buffering &amp; Hardness Quick Reference (Duke University)</a>
-              <p>Summarizes how KH supports pH stability and GH guides adjusting mineral content for fish compatibility.</p>
             </li>
           </ul>
         </article>
@@ -717,13 +713,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (typeof __tcfapi !== 'function') return;
 
     __tcfapi('addEventListener', 2, function(tcData, success){
-      if(!success || !tcData || tcData.eventStatus !== 'tcloaded') return;
+      if (!success || !tcData || !tcData.eventStatus) return;
+      var shouldUpdate = tcData.eventStatus === 'tcloaded'
+        || tcData.eventStatus === 'useractioncomplete'
+        || tcData.eventStatus === 'cmpuishown';
+      if (!shouldUpdate) return;
 
       // Purpose IDs: 1 = Storage and Access, 4 = Select Personalised Ads
       var p1 = tcData.purpose && tcData.purpose.consents ? tcData.purpose.consents[1] : false;
       var p4 = tcData.purpose && tcData.purpose.consents ? tcData.purpose.consents[4] : false;
 
-      var granted = allowNPA ? (p1 && (p4 || true)) : (p1 && p4);
+      var granted = allowNPA ? p1 : (p1 && p4);
       setAdConsent(granted);
     });
   }
