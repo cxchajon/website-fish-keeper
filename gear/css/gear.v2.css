@@ -848,6 +848,21 @@ body[data-ad-qa="true"] .ttg-ad-slot::before,
   font-size: 1.1rem;
 }
 
+.gear-hero__helper {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.gear-hero__helper a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.gear-hero__helper a:hover,
+.gear-hero__helper a:focus-visible {
+  text-decoration: underline;
+}
+
 .gear-hero .affiliate-disclosure {
   margin: 0 auto 2rem;
   padding: 0;
