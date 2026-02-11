@@ -71,7 +71,7 @@
     }
     linkEl.href = entry.href || '/store.html';
     linkEl.target = isExternal(linkEl.href) ? '_blank' : '_self';
-    linkEl.rel = isExternal(linkEl.href) ? 'noopener sponsored' : 'noopener';
+    linkEl.rel = isExternal(linkEl.href) ? 'noopener sponsored nofollow' : 'noopener';
 
     if (entry.id) {
       linkEl.dataset.ttgAdId = entry.id;
