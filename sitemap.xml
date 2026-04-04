@@ -214,6 +214,12 @@
     <priority>0.8</priority>
   </url>
 
+  <url>
+    <loc>https://thetankguide.com/diy-sump-lessons-learned/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
 
   <url>
     <loc>https://thetankguide.com/neocaridina-shrimp-diet-biofilm-guide/</loc>
