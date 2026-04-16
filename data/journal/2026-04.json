@@ -1,0 +1,10 @@
+[
+  {
+    "date": "2026-04-11",
+    "title": "Maintenance Reset & Start of Nitrate-Control Experiment (Day 0)",
+    "body": "Performed a standard maintenance water change with additional filter and plant adjustments. Pre–water change nitrate levels measured between 40–80 ppm, indicating elevated nutrient buildup. Completed the usual large-volume change: ~90%+ sump drain; ~70–75% display drain. 🔧 Filtration Updates: Replaced polyfill layer; Replaced 5-in-1 filter sponge (Temu media) positioned before the polyfill; Dosed Stability to support bacterial re-establishment following media replacement; Dosed Prime during refill as usual. 🌱 Plant Maintenance: Trimmed Java moss in both sump and display; Removed and discarded browned/decaying sections; Transferred healthy moss from display into sump to maintain refugium density. Plant mass remains strong and actively growing. 🧪 Experiment Begins — Day 0: Transitioning from schedule-based water changes → nitrate-driven water changes. Goal: Reduce unnecessary large water changes; Allow system to find natural nutrient balance; Track nitrate accumulation under current lower bioload + high plant mass. 📊 Follow-Up Reading: April 14, 2026 (Day 3): Nitrates measured at ~5–10 ppm. This indicates strong nutrient uptake from plants, effective reset from the April 11 water change, and readiness for controlled observation phase. 📌 System Status: Filtration refreshed; Plant mass redistributed and cleaned; Nitrates reset to low range; System stable. Tank is now officially in a controlled nitrate-monitoring phase.",
+    "category": "Journal Update",
+    "quick_facts": "Maintenance reset completed; pre-WC nitrate 40–80 ppm; ~90%+ sump / ~70–75% display water change; polyfill and 5-in-1 sponge replaced; Stability and Prime dosed; moss trimmed and redistributed; nitrate-driven experiment started; day-3 nitrate ~5–10 ppm",
+    "nitrate_ppm": "5–10 (Day 3 follow-up)"
+  }
+]
