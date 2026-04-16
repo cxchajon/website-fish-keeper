@@ -282,28 +282,6 @@
             opacity: 0.5;
         }
 
-        /* Dashboard refresh button in nav (if adding to site nav) */
-        .refresh-btn-nav {
-            background: #2c7a7b;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .refresh-btn-nav:hover {
-            background: #285e61;
-        }
-
-        .refresh-btn-nav:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .dashboard-content .hero-value {
@@ -348,9 +326,6 @@
           <div style="text-align: center; margin: 2rem 0;">
               <h1 style="color: #4299e1; font-size: 2rem; margin: 0;">Aquarium Dashboard</h1>
               <p style="color: #94a3b8; margin: 0.5rem 0;">Real-time monitoring from a 29-gallon planted community tank</p>
-              <div style="margin-top: 1rem;">
-                <button id="refresh-btn" class="refresh-btn-nav">🔄 Refresh Data</button>
-              </div>
           </div>
 
           <!-- Hero Metric -->
@@ -372,12 +347,6 @@
                   <div class="metric-label">Days Since WC</div>
                   <div class="metric-value" id="days-since">--</div>
                   <div class="metric-subtext" id="last-wc-date">--</div>
-              </div>
-
-              <div class="metric-card">
-                  <div class="metric-label">Next Water Change</div>
-                  <div class="metric-value" id="next-wc-days">--</div>
-                  <div class="metric-subtext" id="next-wc-date">--</div>
               </div>
 
               <div class="metric-card">
@@ -941,36 +910,21 @@
         function updateMetricsBar(readings, current) {
             console.log('  Updating metrics bar...');
 
+            const lastWaterChangeDate = new Date('2026-04-11T00:00:00');
             const daysSinceEl = document.getElementById('days-since');
             const lastWcDateEl = document.getElementById('last-wc-date');
-            const nextWcDaysEl = document.getElementById('next-wc-days');
-            const nextWcDateEl = document.getElementById('next-wc-date');
             const trendIndicator = document.getElementById('trend-indicator');
             const trendText = document.getElementById('trend-text');
             const totalReadingsEl = document.getElementById('total-readings');
 
-            // Days since water change (using WC flag)
-            const lastWcEntry = [...readings].reverse().find(r => r.wc === true);
-            if (lastWcEntry) {
-                const days = daysBetween(new Date(lastWcEntry.date), new Date());
-                if (daysSinceEl) {
-                    daysSinceEl.textContent = days;
-                    console.log('    ✓ Days since WC:', days);
-                }
-                if (lastWcDateEl) {
-                    lastWcDateEl.textContent = `Last WC: ${formatDate(lastWcEntry.date)}`;
-                }
-
-                // Next WC (every 7 days)
-                const nextWcDate = new Date(lastWcEntry.date);
-                nextWcDate.setDate(nextWcDate.getDate() + 7);
-                const daysUntilNext = Math.max(0, daysBetween(new Date(), nextWcDate));
-                if (nextWcDaysEl) {
-                    nextWcDaysEl.textContent = daysUntilNext;
-                }
-                if (nextWcDateEl) {
-                    nextWcDateEl.textContent = `Next WC: ${formatDate(nextWcDate)}`;
-                }
+            // Days since water change
+            const daysSinceLastWc = daysBetween(lastWaterChangeDate, new Date());
+            if (daysSinceEl) {
+                daysSinceEl.textContent = daysSinceLastWc;
+                console.log('    ✓ Days since WC:', daysSinceLastWc);
+            }
+            if (lastWcDateEl) {
+                lastWcDateEl.textContent = `Last WC: ${formatDate(lastWaterChangeDate)}`;
             }
 
             // Trend analysis (last 5 readings)
@@ -1132,31 +1086,6 @@
 
             // Kick off initial load
             updateDashboard();
-
-            // Refresh button handler
-            const refreshBtn = document.getElementById('refresh-btn');
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', async () => {
-                    console.log('🔄 Manual refresh triggered');
-                    refreshBtn.disabled = true;
-                    refreshBtn.textContent = '⏳ Refreshing...';
-
-                    try {
-                        await updateDashboard();
-                        refreshBtn.textContent = '✓ Refreshed';
-                        setTimeout(() => {
-                            refreshBtn.textContent = '🔄 Refresh';
-                            refreshBtn.disabled = false;
-                        }, 1500);
-                    } catch (error) {
-                        refreshBtn.textContent = '❌ Error';
-                        setTimeout(() => {
-                            refreshBtn.textContent = '🔄 Refresh';
-                            refreshBtn.disabled = false;
-                        }, 1500);
-                    }
-                });
-            }
 
             // Auto-refresh every 5 minutes
             setInterval(() => {
