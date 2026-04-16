@@ -520,15 +520,57 @@
                 this.allReadings = [];
             }
 
+            async loadCanonicalMonthList() {
+                const monthSet = new Set();
+
+                // Primary month list from index.json
+                try {
+                    const response = await fetch(`/data/journal/index.json?t=${Date.now()}`, { cache: 'no-store' });
+                    if (response.ok) {
+                        const months = await response.json();
+                        if (Array.isArray(months)) {
+                            months.forEach(month => {
+                                if (typeof month === 'string' && /^\d{4}-\d{2}$/.test(month)) {
+                                    monthSet.add(month);
+                                }
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.warn('⚠️ Could not load monthly index:', e);
+                }
+
+                // Fallback/verification source from canonical CSV dates
+                try {
+                    const response = await fetch(`/data/journal.csv?t=${Date.now()}`, { cache: 'no-store' });
+                    if (response.ok) {
+                        const csv = await response.text();
+                        const lines = csv.split(/\r?\n/).filter(Boolean);
+                        if (lines.length > 1) {
+                            for (let i = 1; i < lines.length; i++) {
+                                const row = lines[i];
+                                const match = row.match(/^"?(\d{4}-\d{2})(?:-\d{2})?"?,/);
+                                if (match) {
+                                    monthSet.add(match[1]);
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn('⚠️ Could not load journal CSV month fallback:', e);
+                }
+
+                return [...monthSet].sort((a, b) => b.localeCompare(a));
+            }
+
             async loadMonthlyFiles() {
                 console.log('📅 Loading monthly files...');
                 try {
-                    const response = await fetch('/data/journal/index.json');
-                    if (!response.ok) {
-                        console.warn('⚠️ Could not load monthly index');
+                    const months = await this.loadCanonicalMonthList();
+                    if (!months.length) {
+                        console.warn('⚠️ No monthly files discovered');
                         return;
                     }
-                    const months = await response.json();
                     console.log(`   Found ${months.length} monthly files`);
 
                     for (const month of months) {
@@ -540,7 +582,7 @@
             }
 
             async loadMonthFile(month) {
-                const url = `/data/journal/${month}.json`;
+                const url = `/data/journal/${month}.json?t=${Date.now()}`;
                 console.log(`📆 Loading ${url}...`);
 
                 try {
@@ -680,7 +722,7 @@
                 console.log(`🗺️ Loading ${url}...`);
 
                 try {
-                    const response = await fetch(url);
+                    const response = await fetch(`${url}?t=${Date.now()}`, { cache: 'no-store' });
                     if (!response.ok) {
                         throw new Error(`Failed to load ${url}`);
                     }
