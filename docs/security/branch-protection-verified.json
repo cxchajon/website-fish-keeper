@@ -1,0 +1,21 @@
+{
+  "date": "2025-10-19",
+  "branch": "main",
+  "protection_summary": {
+    "require_pull_request_before_merge": true,
+    "required_approvals": 1,
+    "status_checks": [
+      "Security Headers Verify / Verify Cloudflare Security Headers",
+      "pages-build-deployment / build"
+    ],
+    "require_branch_up_to_date": true,
+    "block_force_pushes": true,
+    "restrict_deletions": true,
+    "admins_included": true,
+    "bypass_list": "none",
+    "merge_methods_allowed": ["merge", "squash", "rebase"]
+  },
+  "enforcement": "enabled",
+  "cloudflare_integration": "active (security headers verified + CSP enforced)",
+  "verdict": "Main branch verified — all critical protections enforced (A+ security posture)."
+}
