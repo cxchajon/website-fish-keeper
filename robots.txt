@@ -15,3 +15,12 @@ Allow: /
 
 User-agent: Bingbot
 Allow: /
+
+Disallow: /node_modules/
+Disallow: /workers/node_modules/
+Disallow: /footer.html
+Disallow: /nav.html
+Disallow: /params.html
+Disallow: /store-prototype.html
+Disallow: /feature-your-tank-confirmation.html
+Disallow: /404.html
