@@ -187,14 +187,12 @@
               <div class="dashboard-card parameters-card"
                    data-current-nitrate="5"
                    data-test-date="2025-12-07"
-                   data-tank-health="excellent"
-                   data-next-water-change="2025-12-14">
+                   data-tank-health="excellent">
                   <h2>🧪 Current Parameters</h2>
                   <ul class="param-list">
                       <li><strong>Nitrates:</strong> <span id="param-nitrates" class="param-value">5 ppm</span></li>
                       <li><strong>Last Test:</strong> <time id="param-last-test" datetime="2025-12-07">Dec 7, 2025</time></li>
                       <li><strong>Tank Health:</strong> <span id="param-tank-health" class="status-good">Excellent</span></li>
-                      <li><strong>Next Water Change:</strong> <time id="param-next-water-change" datetime="2025-12-14">Dec 14, 2025</time></li>
                   </ul>
               </div>
 
@@ -1436,11 +1434,10 @@
       const elements = {
         nitrates: document.getElementById('param-nitrates'),
         lastTest: document.getElementById('param-last-test'),
-        tankHealth: document.getElementById('param-tank-health'),
-        nextWaterChange: document.getElementById('param-next-water-change')
+        tankHealth: document.getElementById('param-tank-health')
       };
 
-      if (!elements.nitrates || !elements.lastTest || !elements.tankHealth || !elements.nextWaterChange) return;
+      if (!elements.nitrates || !elements.lastTest || !elements.tankHealth) return;
 
       const statusClasses = ['status-good', 'status-warning', 'status-alert'];
       const statusClassMap = {
@@ -1456,13 +1453,6 @@
         const date = value instanceof Date ? value : new Date(value);
         if (Number.isNaN(date.getTime())) return '--';
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      };
-
-      const addDays = (value, days) => {
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) return null;
-        date.setDate(date.getDate() + days);
-        return date;
       };
 
       class JournalDataLoader {
@@ -1614,17 +1604,11 @@
         if (!readings.length) return;
 
         const latest = [...readings].reverse().find((r) => typeof r.ppm === 'number' && !Number.isNaN(r.ppm));
-        const lastWaterChange = [...readings].reverse().find((r) => r.wc === true);
 
         if (latest) {
           elements.nitrates.textContent = `${latest.ppm} ppm`;
           updateTimeElement(elements.lastTest, latest.date);
           updateStatus(loader.getStatus(latest.ppm));
-        }
-
-        if (lastWaterChange) {
-          const nextDate = addDays(lastWaterChange.date, 7);
-          if (nextDate) updateTimeElement(elements.nextWaterChange, nextDate);
         }
       };
 
