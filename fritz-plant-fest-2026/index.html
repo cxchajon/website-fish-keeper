@@ -40,6 +40,42 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/blogs-bundle.min.css?v=1.0.0">
 
+  <style>
+    body.blog-article .article-header {
+      gap: clamp(0.8rem, 2.5vw, 1.15rem);
+    }
+
+    body.blog-article .article-hero {
+      width: min(100%, 780px);
+      margin: clamp(0.65rem, 2vw, 0.95rem) auto 0;
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
+      padding: 0;
+    }
+
+    body.blog-article .article-hero img {
+      width: 100%;
+      height: clamp(220px, 36vw, 420px);
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    @media (max-width: 640px) {
+      body.blog-article .article-hero {
+        width: min(100%, 620px);
+        margin-top: 0.5rem;
+      }
+
+      body.blog-article .article-hero img {
+        height: clamp(180px, 48vw, 250px);
+      }
+    }
+  </style>
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
