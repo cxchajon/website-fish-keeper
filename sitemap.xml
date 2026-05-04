@@ -371,6 +371,13 @@
     <priority>0.6</priority>
   </url>
 
+  <url>
+    <loc>https://thetankguide.com/fritz-plant-fest-2026/</loc>
+    <lastmod>2026-05-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <!-- Legal Pages -->
   <url>
     <loc>https://thetankguide.com/copyright-dmca.html</loc>
