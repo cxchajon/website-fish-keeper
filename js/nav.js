@@ -27,7 +27,8 @@
           'https://x.com/fishkeepinglife',
           'https://www.facebook.com/FishKeepingLifeCo',
           'https://www.threads.net/@fishkeepinglifeco',
-          'https://www.reddit.com/u/FishKeepingLifeCo'
+          'https://www.reddit.com/u/FishKeepingLifeCo',
+          'https://fishkeepinglifeshop.etsy.com'
         ]
       },
       {
