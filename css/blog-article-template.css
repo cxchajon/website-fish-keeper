@@ -829,3 +829,20 @@ body.blog-article .blog-house-slot__cta:focus-visible {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* Keep the shared open-article shell centered across pages and breakpoints. */
+body.blog-article main.article-layout {
+  box-sizing: border-box;
+  width: min(100%, var(--article-shell-max));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body.blog-article .article-layout article,
+body.blog-article .article-header,
+body.blog-article .tg-figure--hero,
+body.blog-article .section-split,
+body.blog-article .blog-body {
+  margin-left: auto;
+  margin-right: auto;
+}
