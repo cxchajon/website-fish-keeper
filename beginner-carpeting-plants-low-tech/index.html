@@ -25,6 +25,29 @@
   <meta name="twitter:description" content="Want a lush aquarium carpet without expensive CO₂ or high lighting? Discover the 5 best beginner-friendly carpeting plants for low-tech tanks.">
 
   <link rel="stylesheet" href="/css/blogs-bundle.min.css?v=1.0.0">
+  <style>
+    @media (min-width: 900px) {
+      body.carpeting-left-layout .blog-breadcrumb,
+      body.carpeting-left-layout main.article-layout {
+        width: min(calc(100% - clamp(4rem, 18vw, 18rem)), var(--article-shell-max));
+        margin-left: clamp(2rem, 8vw, 8rem);
+        margin-right: auto;
+      }
+
+      body.carpeting-left-layout .article-layout article,
+      body.carpeting-left-layout .article-header,
+      body.carpeting-left-layout .tg-figure--hero,
+      body.carpeting-left-layout .section-split,
+      body.carpeting-left-layout .blog-body {
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      body.carpeting-left-layout .article-header {
+        text-align: left;
+      }
+    }
+  </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
   <script src="/assets/js/consent-mode.js?v=1.5.2" defer></script>
 
@@ -112,7 +135,7 @@
   }
   </script>
 </head>
-<body class="blog-article blog-open-page topic-core">
+<body class="blog-article blog-open-page topic-core carpeting-left-layout">
   <a href="#main-content" class="skip-link">Skip to content</a>
   <div id="site-nav"></div>
 
