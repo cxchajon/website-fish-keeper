@@ -240,8 +240,10 @@ body.blog-article .blog-body table {
   z-index: 1;
 }
 
-body.blog-article .blog-body .table-wrap {
+body.blog-article .blog-body .table-wrap,
+body.blog-article .blog-body .table-scroll-container {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   margin: 1.5rem 0;
@@ -258,21 +260,25 @@ body.blog-article .blog-body table {
   background: transparent;
 }
 
-body.blog-article .blog-body .table-wrap table {
+body.blog-article .blog-body .table-wrap table,
+body.blog-article .blog-body .table-scroll-container table {
   margin: 0;
   min-width: 540px;
 }
 
-body.blog-article .blog-body .table-wrap::-webkit-scrollbar {
+body.blog-article .blog-body .table-wrap::-webkit-scrollbar,
+body.blog-article .blog-body .table-scroll-container::-webkit-scrollbar {
   height: 10px;
 }
 
-body.blog-article .blog-body .table-wrap::-webkit-scrollbar-thumb {
+body.blog-article .blog-body .table-wrap::-webkit-scrollbar-thumb,
+body.blog-article .blog-body .table-scroll-container::-webkit-scrollbar-thumb {
   background: rgba(255,255,255,0.28);
   border-radius: 999px;
 }
 
-body.blog-article .blog-body .table-wrap::-webkit-scrollbar-track {
+body.blog-article .blog-body .table-wrap::-webkit-scrollbar-track,
+body.blog-article .blog-body .table-scroll-container::-webkit-scrollbar-track {
   background: rgba(255,255,255,0.06);
   border-radius: 999px;
 }
