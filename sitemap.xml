@@ -216,10 +216,10 @@
 
   <url>
     <loc>https://thetankguide.com/diy-sump-lessons-learned.html</loc>
+    <lastmod>2026-01-20</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
+    <priority>0.8</priority>
   </url>
-
 
   <url>
     <loc>https://thetankguide.com/neocaridina-shrimp-diet-biofilm-guide/</loc>
@@ -271,7 +271,7 @@
   </url>
 
   <url>
-    <loc>https://thetankguide.com/reduce-aquarium-nitrates-pothos-guide.html</loc>
+    <loc>https://thetankguide.com/reduce-aquarium-nitrates-pothos-guide</loc>
     <lastmod>2026-01-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -417,6 +417,13 @@
   <url>
     <loc>https://thetankguide.com/why-goldfish-are-misunderstood/</loc>
     <lastmod>2026-05-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://thetankguide.com/beginner-carpeting-plants-low-tech/</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
