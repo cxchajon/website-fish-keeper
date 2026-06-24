@@ -114,6 +114,14 @@
         "publisher": { "@id": "https://thetankguide.com/#organization" }
       },
       {
+        "@type": "Organization",
+        "@id": "https://thetankguide.com/#editorial-team",
+        "name": "The Tank Guide Editorial Team",
+        "url": "https://thetankguide.com/about.html",
+        "parentOrganization": { "@id": "https://thetankguide.com/#organization" },
+        "isPartOf": { "@id": "https://thetankguide.com/#website" }
+      },
+      {
         "@type": "WebPage",
         "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage",
         "url": "https://thetankguide.com/beginner-carpeting-plants-low-tech/",
@@ -124,6 +132,7 @@
         "breadcrumb": { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#breadcrumb" },
         "mainEntity": [
           { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#article" },
+          { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#howto" },
           { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#faq" }
         ]
       },
@@ -138,8 +147,25 @@
         "mainEntityOfPage": { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage" },
         "isPartOf": { "@id": "https://thetankguide.com/#website" },
         "publisher": { "@id": "https://thetankguide.com/#organization" },
-        "author": { "@id": "https://thetankguide.com/#organization" },
+        "author": { "@id": "https://thetankguide.com/#editorial-team" },
         "keywords": ["beginner carpeting plants", "low-tech carpeting plants", "carpeting plants without CO₂", "easy aquarium carpeting plants", "low-tech aquarium plants", "beginner aquarium plants", "freshwater carpeting plants", "aquarium foreground plants", "carpeting plants for shrimp tanks"]
+      },
+      {
+        "@type": "HowTo",
+        "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#howto",
+        "url": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#how-to-help-carpeting-plants-spread-in-a-low-tech-tank",
+        "name": "How to Help Carpeting Plants Spread in a Low-Tech Tank",
+        "description": "A visible step-by-step section for encouraging low-tech aquarium carpeting plants to spread through root nutrition, lighting, dense planting, trimming, stability, and patience.",
+        "isPartOf": { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage" },
+        "mainEntityOfPage": { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage" },
+        "step": [
+          { "@type": "HowToStep", "position": 1, "name": "Use root nutrition", "text": "Root tabs or nutrient-rich substrate help runner plants establish and spread, especially in inert sand or gravel." },
+          { "@type": "HowToStep", "position": 2, "name": "Provide enough light", "text": "Lighting affects spread versus vertical growth. Too little light often causes plants to stretch upward instead of carpeting." },
+          { "@type": "HowToStep", "position": 3, "name": "Plant densely when possible", "text": "Starting with more small plant portions shortens the time it takes for the foreground to fill in." },
+          { "@type": "HowToStep", "position": 4, "name": "Trim and replant stem plants", "text": "Pearl Weed needs regular trimming and replanting to stay low and carpet-like." },
+          { "@type": "HowToStep", "position": 5, "name": "Keep conditions stable", "text": "Low-tech tanks grow more slowly, so stability matters more than chasing high-tech results." },
+          { "@type": "HowToStep", "position": 6, "name": "Be patient", "text": "Most low-tech carpets take months, not days, to look established." }
+        ]
       },
       {
         "@type": "FAQPage",
@@ -175,21 +201,87 @@
 </head>
 <body class="blog-article blog-open-page topic-core carpeting-left-layout">
   <a href="#main-content" class="skip-link">Skip to content</a>
-  <div id="site-nav"></div>
+  <div id="site-nav">
+    <header id="global-nav">
+      <div class="inner">
+        <button
+          id="ttg-nav-open"
+          class="hamburger"
+          type="button"
+          aria-controls="ttg-drawer"
+          aria-expanded="false"
+          aria-label="Open menu"
+          data-nav="hamburger"
+        >
+          <span class="hamburger__bars" aria-hidden="true"></span>
+        </button>
+        <a class="site-brand brand" href="/" aria-label="The Tank Guide — Home">
+          <span class="site-brand__title">The Tank Guide</span>
+          <span class="site-brand__subtitle">a product of <span class="site-brand__em">FishKeepingLifeCo</span></span>
+        </a>
+        <nav class="site-links links" aria-label="Primary">
+          <ul class="nav__list">
+            <li class="nav__item"><a href="/" class="nav__link" data-nav="home">Home</a></li>
+            <li class="nav__item"><a href="/stocking-advisor.html" class="nav__link" data-nav="stocking">Stocking Advisor</a></li>
+            <li class="nav__item"><a href="/gear/" class="nav__link" data-nav="gear">Gear</a></li>
+            <li class="nav__item"><a href="/cycling-coach/" class="nav__link" data-nav="params">Cycling Coach</a></li>
+            <li class="nav__item"><a href="/community-tanks.html" class="nav__link" data-nav="community-tanks">Community Tanks</a></li>
+            <li class="nav__item"><a href="/podcast/" class="nav__link" data-nav="podcast">Podcast</a></li>
+            <li class="nav__item"><a href="/media.html" class="nav__link" data-nav="media">Media</a></li>
+            <li class="nav__item"><a href="/store.html" class="nav__link" data-nav="store">Store</a></li>
+            <li class="nav__item"><a href="/about.html" class="nav__link" data-nav="about">About</a></li>
+            <li class="nav__item"><a href="/assistant.html" class="nav__link" data-nav="assistant">AI Assistant</a></li>
+          </ul>
+        </nav>
+      </div>
+      <aside
+        id="ttg-drawer"
+        aria-label="Site"
+        data-nav="drawer"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawer-title"
+      >
+        <h2 id="drawer-title" class="ttg-visually-hidden">Site navigation</h2>
+        <div class="drawer-head">
+          <span class="drawer-title">The Tank Guide</span>
+          <button id="drawer-close" class="drawer-close" type="button" aria-label="Close menu" data-nav="drawer-close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <nav class="drawer-links" aria-label="Mobile">
+          <ul class="nav__list nav__list--drawer">
+            <li class="nav__item"><a id="drawer-first" href="/" class="nav__link" data-nav="home">Home</a></li>
+            <li class="nav__item"><a href="/stocking-advisor.html" class="nav__link" data-nav="stocking">Stocking Advisor</a></li>
+            <li class="nav__item"><a href="/gear/" class="nav__link" data-nav="gear">Gear</a></li>
+            <li class="nav__item"><a href="/cycling-coach/" class="nav__link" data-nav="params">Cycling Coach</a></li>
+            <li class="nav__item"><a href="/community-tanks.html" class="nav__link" data-nav="community-tanks">Community Tanks</a></li>
+            <li class="nav__item"><a href="/podcast/" class="nav__link" data-nav="podcast">Podcast</a></li>
+            <li class="nav__item"><a href="/media.html" class="nav__link" data-nav="media">Media</a></li>
+            <li class="nav__item"><a href="/store.html" class="nav__link" data-nav="store">Store</a></li>
+            <li class="nav__item"><a href="/about.html" class="nav__link" data-nav="about">About</a></li>
+            <li class="nav__item"><a href="/assistant.html" class="nav__link" data-nav="assistant">AI Assistant</a></li>
+          </ul>
+        </nav>
+      </aside>
+      <div id="ttg-overlay" data-nav="overlay" aria-hidden="true"></div>
+    </header>
+  </div>
 
   <nav aria-label="Breadcrumb" class="breadcrumb blog-breadcrumb">
     <ol>
       <li><a href="/">Home</a></li>
-      <li style="color: #666;">/</li>
+      <li style="color: #666;" aria-hidden="true">/</li>
       <li><a href="/blogs/">Blog</a></li>
-      <li style="color: #666;">/</li>
+      <li style="color: #666;" aria-hidden="true">/</li>
       <li aria-current="page">5 Best Beginner Carpeting Plants for Low-Tech Aquariums</li>
     </ol>
   </nav>
 
   <main class="article-layout" id="main-content">
     <article>
-      <a class="back-link" href="/blogs/" aria-label="Back to all blog posts">← Back to all posts</a>
+      <a class="back-link" href="/blogs/" aria-label="Back to all blog posts"><span aria-hidden="true">← </span>Back to all posts</a>
 
       <header class="article-header">
         <h1>5 Best Beginner Carpeting Plants for Low-Tech Aquariums</h1>
@@ -362,7 +454,7 @@
           >
         </figure>
 
-        <h2>How to Help Carpeting Plants Spread in a Low-Tech Tank</h2>
+        <h2 id="how-to-help-carpeting-plants-spread-in-a-low-tech-tank">How to Help Carpeting Plants Spread in a Low-Tech Tank</h2>
         <p>A successful planted aquarium isn’t built by choosing the most demanding plants. It’s built through patience, consistency, and creating a stable environment where plants can thrive.</p>
         <ul>
           <li><strong>Use root nutrition.</strong> Root tabs or nutrient-rich substrate help runner plants establish and spread, especially in inert sand or gravel.</li>
@@ -425,6 +517,18 @@
     <a href="/terms.html">Terms</a>
     <a href="/contact-feedback.html">Contact</a>
   </section>
-  <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
+  <div id="site-footer" data-footer-src="/footer.html?v=1.5.2">
+    <nav class="footer-links" aria-label="Footer fallback links">
+      <a href="/trust-security.html">Trust &amp; Security</a>
+      <span class="dot" aria-hidden="true">·</span>
+      <a href="/cookie-settings.html">Cookie Settings</a>
+      <span class="dot" aria-hidden="true">·</span>
+      <a href="/cookie-settings.html">Do Not Sell or Share My Personal Information</a>
+      <span class="dot" aria-hidden="true">·</span>
+      <a href="/store.html">Store</a>
+      <span class="dot" aria-hidden="true">·</span>
+      <a href="/copyright-dmca.html">Copyright &amp; DMCA</a>
+    </nav>
+  </div>
 </body>
 </html>
