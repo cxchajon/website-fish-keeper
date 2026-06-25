@@ -1117,3 +1117,50 @@ button:focus {
         border: 1px solid #ccc;
     }
 }
+
+/* ========================================
+   BALANCE EXPERIMENT JOURNAL ENTRY FIXES
+   ========================================
+   Keep long-form journal entries on the legal-pad theme even when the
+   shared app bundle applies dark-theme heading/link overrides globally.
+*/
+
+.journal-card,
+.journal-card:hover,
+.journal-card:focus-within {
+    transform: none;
+}
+
+.card-header h3,
+.card-header h3 a,
+.card-body h4,
+.card-body h5,
+.card-body h6 {
+    color: #2c7a7b !important;
+    -webkit-text-fill-color: #2c7a7b !important;
+    text-decoration: none;
+    text-shadow: none;
+}
+
+.card-header h3 a:hover,
+.card-header h3 a:focus {
+    color: #285e61 !important;
+    -webkit-text-fill-color: #285e61 !important;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.18em;
+}
+
+.card-body h4,
+.card-body h5,
+.card-body h6 {
+    margin: 1.25rem 0 0.75rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.card-body h4:first-child,
+.card-body h5:first-child,
+.card-body h6:first-child {
+    margin-top: 0;
+}
