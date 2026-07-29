@@ -40,6 +40,61 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/blogs-bundle.min.css?v=1.0.0">
   <style>
+    @media (max-width: 640px) {
+      body.carpeting-left-layout .blog-breadcrumb,
+      body.carpeting-left-layout main.article-layout {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: var(--article-shell-max);
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      body.carpeting-left-layout main.article-layout {
+        padding-left: clamp(1rem, 5vw, 1.5rem);
+        padding-right: clamp(1rem, 5vw, 1.5rem);
+      }
+
+      body.carpeting-left-layout .blog-breadcrumb {
+        padding-left: clamp(1rem, 5vw, 1.5rem);
+        padding-right: clamp(1rem, 5vw, 1.5rem);
+      }
+
+      body.carpeting-left-layout .article-layout article,
+      body.carpeting-left-layout .article-header,
+      body.carpeting-left-layout .tg-figure--hero,
+      body.carpeting-left-layout .section-split,
+      body.carpeting-left-layout .blog-body {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: var(--article-body-max);
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    @media (min-width: 900px) {
+      body.carpeting-left-layout .blog-breadcrumb,
+      body.carpeting-left-layout main.article-layout {
+        width: min(calc(100% - clamp(4rem, 18vw, 18rem)), var(--article-shell-max));
+        margin-left: clamp(2rem, 8vw, 8rem);
+        margin-right: auto;
+      }
+
+      body.carpeting-left-layout .article-layout article,
+      body.carpeting-left-layout .article-header,
+      body.carpeting-left-layout .tg-figure--hero,
+      body.carpeting-left-layout .section-split,
+      body.carpeting-left-layout .blog-body {
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      body.carpeting-left-layout .article-header {
+        text-align: left;
+      }
+    }
+
     .houseplant-comparison { min-width: 760px !important; }
     .houseplant-comparison th,
     .houseplant-comparison td { min-width: 125px; }
@@ -98,7 +153,7 @@
   </script>
   <script defer src="/js/nav.js?v=1.1.0"></script>
 </head>
-<body class="blog-article blog-open-page topic-core">
+<body class="blog-article blog-open-page topic-core carpeting-left-layout">
   <a href="#main-content" class="skip-link">Skip to content</a>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div id="site-nav"></div>
