@@ -31,8 +31,18 @@
   <link rel="stylesheet" href="/css/blogs-bundle.min.css?v=1.0.0">
   <style>
     html, body { max-width: 100%; overflow-x: clip; }
+    body.houseplants-responsive main.article-layout,
+    body.houseplants-responsive main.article-layout > article,
+    body.houseplants-responsive .blog-body { min-width: 0; }
+    body.houseplants-responsive .blog-body img { max-width: 100%; height: auto; }
+    body.houseplants-responsive .blog-body p,
+    body.houseplants-responsive .blog-body li,
+    body.houseplants-responsive .blog-body summary,
+    body.houseplants-responsive .blog-body a { overflow-wrap: anywhere; }
     .cluster-kicker { border-left: 3px solid #0f766e; padding-left: .85rem; }
     .affiliate-disclosure { border-left: 3px solid #0f766e; background: rgba(15,118,110,.12); padding: .85rem 1rem; }
+    .table-scroll-container { box-sizing: border-box; max-width: 100%; }
+    .table-scroll-container:focus-visible { outline: 2px solid #00c3b6; outline-offset: 3px; }
     .houseplant-comparison { min-width: 760px !important; }
     .houseplant-comparison th, .houseplant-comparison td { min-width: 125px; }
     .houseplant-comparison th:last-child, .houseplant-comparison td:last-child { min-width: 220px; }
@@ -41,7 +51,35 @@
     .faq-list details p:last-child { margin-bottom: .25rem; }
     .spoke-navigation { display: flex; justify-content: space-between; gap: 1rem; border-top: 1px solid #d7e2e2; margin-top: 2rem; padding-top: 1.25rem; }
     .spoke-navigation a { min-width: 0; overflow-wrap: anywhere; }
-    @media (max-width: 640px) { .spoke-navigation { flex-direction: column; } }
+    @media (max-width: 640px) {
+      body.houseplants-responsive .blog-breadcrumb,
+      body.houseplants-responsive main.article-layout {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: var(--article-shell-max);
+        margin-left: auto;
+        margin-right: auto;
+      }
+      body.houseplants-responsive main.article-layout {
+        padding-left: clamp(1rem, 5vw, 1.5rem);
+        padding-right: clamp(1rem, 5vw, 1.5rem);
+      }
+      body.houseplants-responsive .blog-breadcrumb {
+        padding-left: clamp(1rem, 5vw, 1.5rem);
+        padding-right: clamp(1rem, 5vw, 1.5rem);
+      }
+      body.houseplants-responsive .article-layout article,
+      body.houseplants-responsive .article-header,
+      body.houseplants-responsive .section-split,
+      body.houseplants-responsive .blog-body {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: var(--article-body-max);
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .spoke-navigation { flex-direction: column; }
+    }
   </style>
   <script type="application/ld+json">
   {
@@ -64,7 +102,7 @@
   </script>
   <script defer src="/js/nav.js?v=1.1.0"></script>
 </head>
-<body class="blog-article blog-open-page topic-core">
+<body class="blog-article blog-open-page topic-core houseplants-responsive">
   <a href="#main-content" class="skip-link">Skip to content</a>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div id="site-nav"></div>
