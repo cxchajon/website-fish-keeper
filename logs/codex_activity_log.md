@@ -75,9 +75,6 @@ Result: journal live (unlinked).
 [2025-10-26 | Journal] Added Maintenance & Dosing entry; rebuilt CSV/JSON and 2025-10.json; verified monthly render and nav.
 
 [2025-10-27 | Journal] Added entry; rebuilt CSV/JSON and 2025-10.json; verified Journal render (chips+notes de-dup) and month nav; dashboard refreshed.
-[2025-10-28 | TheTankGuide | Journal dashboard charts] Scope: Align x-ticks/grid to data; improve mobile readability. Result: Vertical gridlines at each date; taller mobile charts; clean labels. Next: Consider pinch-zoom toggle if future months add too many dates.
-[2025-10-28 | TheTankGuide | Journal Dashboard Rebuild] Scope: Rebuilt journal-dashboard with Chart.js tabs; restored original style; removed duplicate footer. Result: One global footer; charts auto-update from /data/journal.csv; guard passes. Next: Wire weekly auto-regeneration of /data/journal.csv in the journal workflow (if not already).
-[2025-10-28 | TheTankGuide | Rebuilt journal dashboard]
 Scope: Restore original dashboard, local Chart.js, auto data, footer-safe.
 Result: Charts render; footer-lock pass.
 Next: Hook date controls to fetch previous month slice when backend is ready.
@@ -94,7 +91,6 @@ Scope: Add 10/30 feeding/test/dosing entry (Post-Treatment Recovery Week start).
 Result: Data updated + dashboard synced.
 Next: None.
 [2025-10-30 | Label Position Update]
-Summary: Moved date labels from the x-axis to sit beside each data point on the journal dashboard charts.
 Changes: Disabled x-axis ticks, added custom point labels with accent colors tied to each dataset.
 Result: Dates render clearly near each reading without overlapping or crowding the chart base.
 Next: Fine-tune spacing for denser data sets and validate on smaller mobile breakpoints.
@@ -121,7 +117,6 @@ Result: Schema enriched per Gemini audit recommendation; all prior green statuse
 Next: Optional external structured data test and periodic re-audit with Gemini.
 [2025-11-22 | The Tank Guide | Full site sitemap update]
 Scope: Scanned all public pages, updated sitemap.xml and robots.txt alignment for current production URLs.
-Result: Added assistant.html and journal-dashboard.html to sitemap; removed prototype-home.html (now has noindex). Sitemap and robots now accurately reflect live, indexable content and match canonical tags. 27 total URLs.
 Next: Optional — resubmit sitemap in Google Search Console and monitor indexing.
 [2025-11-24 | The Tank Guide | Blog Nav Fix]
 Scope: Unified blog templates with global nav/footer and removed duplicate “Site navigation” block on /blogs/*.

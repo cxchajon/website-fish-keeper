@@ -18,10 +18,9 @@
  * /gear/css/gear.v2.css — gear guide grid + CTA controls loaded by gear/index.html.
  * /assets/css/cycling-coach.css — stepper UI for cycling-coach/index.html.
  * /assets/css/media.css — media hub + community archive components on media.html.
- * /css/journal.css & /css/journal-dashboard*.css — kept for experiments; journal.html currently relies on inline
- *   legal-pad styles while journal-dashboard.html embeds its own grid/charts.
+ * /css/journal.css — retained for journal-specific styling.
  * Inline <style> blocks live in stocking-advisor.html (cards + prototype patch), gear/index.html (CTA buttons +
- *   retailer badge grid), media.html (hero + storefront), journal.html (legal pad skin), and journal-dashboard.html
+ *   retailer badge grid), media.html (hero + storefront), journal.html (legal pad skin)
  *   (dashboard layout) — all slated for consolidation/namespace in this pass.
  * These comments keep the current scope visible while we merge/cleanup without touching JS or HTML structure.
  */
@@ -34,8 +33,8 @@
  *   overlapping button/typography definitions there once consolidated.
  * - Keep /assets/css/theme.css strictly for gradients, beams, overlays, and color utility helpers. Anything structural
  *   that leaked into theme.css gets pulled back into style.css or site.css.
- * - Page-specific CSS (Stocking Advisor, Gear Guide, Cycling Coach, Media, Journal Dashboard) stays isolated but gains
- *   namespaces (.stocking-card, .gear-section, .cycling-step, .journal-dashboard-*) to avoid collisions.
+ * - Page-specific CSS (Stocking Advisor, Gear Guide, Cycling Coach, Media) stays isolated but gains
+ *   namespaces (.stocking-card, .gear-section, .cycling-step) to avoid collisions.
  * - Delete redundant selectors only when 100% unused; leave unsure ones with a /* possible legacy */ note.
  */
 

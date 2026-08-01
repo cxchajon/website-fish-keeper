@@ -12,3 +12,4 @@
 /university       /pages/university.html  301
 /params.html  /cycling-coach/  301!
 /staging/cycling-coach/*  /cycling-coach/  301!
+/journal-dashboard.html /journal.html 301

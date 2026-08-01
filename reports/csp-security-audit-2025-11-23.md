@@ -167,7 +167,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 9. `copyright-dmca.html` - Legal page styles
 10. `feature-your-tank.html` - Feature form styles
 11. `gear/index.html` - Gear guide styles
-12. `journal-dashboard.html` - Dashboard styles
 13. `journal.html` - Journal list styles
 14. `journal/2025-10.html` - Journal entry styles
 15. `journal/2025-11.html` - Journal entry styles

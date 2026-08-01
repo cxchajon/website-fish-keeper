@@ -72,15 +72,6 @@
     "http_status_hint": "200"
   },
   {
-    "path": "/journal-dashboard.html",
-    "source_path": "journal-dashboard.html",
-    "title": "29G Aquarium Dashboard \u2014 The Tank Guide",
-    "has_canonical": true,
-    "canonical": "https://thetankguide.com/journal-dashboard.html",
-    "robots_meta": null,
-    "http_status_hint": "200"
-  },
-  {
     "path": "/pages/university.html",
     "source_path": "pages/university.html",
     "title": "The Tank Guide University \u2014 Foundation Studies",
