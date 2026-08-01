@@ -1164,3 +1164,18 @@ button:focus {
 .card-body h6:first-child {
     margin-top: 0;
 }
+
+/* Long-form experiment flow diagrams stay readable without overflowing. */
+.long-form-entry .journal-flow {
+    display: grid;
+    gap: 0.35rem;
+    margin: 1rem 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+.long-form-entry .finding-divider {
+    border-top-style: dashed;
+    opacity: 0.65;
+}
