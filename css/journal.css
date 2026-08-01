@@ -1107,3 +1107,59 @@ button:focus {
     border-top-style: dashed;
     opacity: 0.65;
 }
+
+/* Standalone journal entries */
+.journal-entry-page {
+    min-height: 70vh;
+    padding-bottom: 3rem;
+}
+
+.journal-publication {
+    margin: 0 0 0.75rem;
+    color: #4a5568;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.journal-entry-shell {
+    width: min(100% - 2rem, 920px);
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+.journal-entry-shell .journal-card {
+    margin-top: 1rem;
+}
+
+.back-to-journal,
+.read-full-entry {
+    color: #155e63;
+    font-weight: 700;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+}
+
+.back-to-journal {
+    display: inline-block;
+    padding: 0.65rem 0;
+}
+
+.back-to-journal-bottom {
+    margin-top: 1.25rem;
+}
+
+.journal-card-summary p:first-child {
+    margin-top: 0;
+}
+
+@media (max-width: 640px) {
+    .journal-entry-shell {
+        width: min(100% - 1rem, 920px);
+        padding-top: 1rem;
+    }
+
+    .journal-entry-page .journal-header h1 {
+        font-size: 1.75rem;
+    }
+}
