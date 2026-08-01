@@ -23,7 +23,6 @@ PAGES: List[Path] = [
     Path("pages/community-video-picks.html"),
     Path("university/index.html"),
     Path("journal.html"),
-    Path("journal-dashboard.html"),
     Path("cycling-coach/index.html"),
     Path("blogs/index.html"),
     Path("blogs/betta-fish-in-a-community-tank.html"),

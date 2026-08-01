@@ -162,9 +162,7 @@
       '/store': '/store.html',
       '/store.html': '/store.html',
       '/journal': '/journal.html',
-      '/journal.html': '/journal.html',
-      '/journal-dashboard': '/journal-dashboard.html',
-      '/journal-dashboard.html': '/journal-dashboard.html'
+      '/journal.html': '/journal.html'
     };
     return map[normalized] ?? normalized;
   }

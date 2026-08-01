@@ -22,7 +22,6 @@
 | 13 | /footer.html | (none) | No | No | No | no meta description; no canonical |
 | 14 | /gear/index.html | Fish Keeping Gear Guide | The Tank Guide | Yes | Yes | Yes |  |
 | 15 | /index.html | Fishkeeping Guides & Tools — The Tank Guide | Yes | No | Yes |  |
-| 16 | /journal-dashboard.html | Aquarium Tracker Dashboard | No | No | No | no meta description; no canonical |
 | 17 | /journal.html | Tank Journal — Legal Pad | No | No | No | no meta description; no canonical |
 | 18 | /media.html | YouTube Rewind — View past Community Video Picks | Yes | Yes | Yes |  |
 | 19 | /nav.html | The Tank Guide — Navigation | No | No | No | no meta description; no canonical |
@@ -2820,66 +2819,6 @@ H3:
 ### 9. Flags / Observations (NO FIXES)
 - No Content-Security-Policy meta tag present.
 - AdSense loader present but no <ins class="adsbygoogle"> slots detected.
-
----
-
-## /journal-dashboard.html
-
-### 1. Basic Metadata
-- File path: journal-dashboard.html
-- URL (assumed): https://thetankguide.com/journal-dashboard.html
-- <title>: "Aquarium Tracker Dashboard"
-- <meta name="description">: "(not set)"
-- <link rel="canonical">: "(not set)"
-- <meta name="robots">: "not set"
-- Language (html lang): en
-
-### 2. Content Security Policy (CSP)
-- CSP present? no
-
-### 3. Analytics, Consent & Ads Scripts
-- GA4 / analytics present? no
-- Cloudflare analytics present? no
-- Consent / CMP script present? no
-- Google CMP (Funding Choices) present? no
-- AdSense global script present? no
-
-### 4. Ad Slots & Spacing
-- No <ins class="adsbygoogle"> slots found.
-- No ad-specific CSS rules detected in inline or linked stylesheets for this page.
-
-### 5. Structured Data (JSON-LD)
-- No JSON-LD blocks found.
-
-### 6. Headings & Content Structure
-H1:
-- 🐠 Aquarium Monitoring Dashboard
-H2:
-- 📊 Nitrate Levels Over Time
-- 🍽️ Feeding Distribution
-- 💧 Dosing Frequency
-- 📅 Weekly Activity Timeline
-- 🎯 Recent Milestones & Key Events
-- 📝 Recent Activity Log
-
-### 7. Internal Links & Legal Links
-- Internal links:
-  - /privacy-legal.html — text: "Privacy Policy"
-  - /terms.html — text: "Terms"
-  - /contact-feedback.html — text: "Contact"
-- Legal links coverage: Privacy: yes; Terms: yes; Contact: yes
-
-### 8. Accessibility Notes (High-Level)
-- iframes: 0 total; 0 with title; 0 without title
-- images missing alt text: 0
-- Ad containers with aria-label: none detected on <ins> elements
-- Other aria-label usage: section: Site legal links; section: Site legal links (noscript)
-
-### 9. Flags / Observations (NO FIXES)
-- No Content-Security-Policy meta tag present.
-- Missing meta description.
-- Missing canonical link.
-- No JSON-LD structured data.
 
 ---
 

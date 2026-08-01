@@ -45,7 +45,6 @@
 - **University** (`/university/`) - Curated research hub bridging academic science with practical fishkeeping
 - **Blogs** (`/blogs/`) - In-depth articles on specific topics
 - **Journal** (`/journal.html`) - Real-world tank logs with daily entries
-- **Journal Dashboard** (`/journal-dashboard.html`) - Live water parameters and feeding schedules
 
 ### Blog Articles
 - Nitrogen Cycle for Beginners
