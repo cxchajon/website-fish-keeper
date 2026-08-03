@@ -35,9 +35,7 @@
   <meta name="twitter:description" content="Beginner-friendly, science-based aquarium answers from The Tank Guide Assistant by FishKeepingLifeCo." />
   <meta name="twitter:image" content="https://thetankguide.com/assets/img/logos/logo-1200x630.png" />
   <meta name="twitter:image:alt" content="FishKeepingLifeCo logo (1200×630)." />
-
-  <!--#include virtual="/includes/schema-organization.html" -->
-  <!--#include virtual="/includes/ga4.html" -->
+<!--#include virtual="/includes/ga4.html" -->
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -283,6 +281,9 @@
       }
     }
   </style>
+<script id="ttg-entity-graph" type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://thetankguide.com/#fishkeepinglifeco","name":"FishKeepingLifeCo","alternateName":["Fish Keeping Life Co","fishkeepinglife"],"description":"FishKeepingLifeCo is the parent company and publisher of The Tank Guide.","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG","width":512,"height":512},"brand":{"@id":"https://thetankguide.com/#brand"},"owns":{"@id":"https://thetankguide.com/#website"},"sameAs":["https://www.instagram.com/FishKeepingLifeCo","https://www.tiktok.com/@FishKeepingLifeCo","https://x.com/fishkeepinglife","https://www.youtube.com/@fishkeepinglifeco","https://www.facebook.com/fishkeepinglifeco"]},{"@type":"Brand","@id":"https://thetankguide.com/#brand","name":"The Tank Guide","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG"},"parentOrganization":{"@id":"https://thetankguide.com/#fishkeepinglifeco"}},{"@type":"WebSite","@id":"https://thetankguide.com/#website","url":"https://thetankguide.com/","name":"The Tank Guide","description":"The Tank Guide is an educational aquarium website offering tools, guides, and beginner-friendly resources.","publisher":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"creator":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"brand":{"@id":"https://thetankguide.com/#brand"},"owner":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"inLanguage":"en-US","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://thetankguide.com/search?q={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}}]}
+</script>
 </head>
 <body class="assistant-page theme-dark">
   <!-- Google Tag Manager (noscript) -->
@@ -590,126 +591,125 @@
   <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
 
   <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
+      "@type": "WebPage",
+      "@id": "https://thetankguide.com/assistant.html#webpage",
+      "url": "https://thetankguide.com/assistant.html",
+      "name": "The Tank Guide Assistant — AI Aquarium Helper by FishKeepingLifeCo",
+      "description": "Meet The Tank Guide Assistant, a calm AI helper for aquarium beginners with cycling help, stocking advice, and science-based troubleshooting.",
+      "isPartOf": {
+        "@id": "https://thetankguide.com/#website"
+      },
+      "publisher": {
+        "@id": "https://thetankguide.com/#fishkeepinglifeco"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
+        "width": 1200,
+        "height": 630
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://thetankguide.com/assistant.html#faq",
+      "mainEntity": [
         {
-          "@type": "WebSite",
-          "@id": "https://thetankguide.com/#website",
-          "url": "https://thetankguide.com/",
-          "name": "The Tank Guide",
-          "publisher": { "@id": "https://thetankguide.com/#organization" }
-        },
-        {
-          "@type": "WebPage",
-          "@id": "https://thetankguide.com/assistant.html#webpage",
-          "url": "https://thetankguide.com/assistant.html",
-          "name": "The Tank Guide Assistant — AI Aquarium Helper by FishKeepingLifeCo",
-          "description": "Meet The Tank Guide Assistant, a calm AI helper for aquarium beginners with cycling help, stocking advice, and science-based troubleshooting.",
-          "isPartOf": { "@id": "https://thetankguide.com/#website" },
-          "publisher": { "@id": "https://thetankguide.com/#organization" },
-          "primaryImageOfPage": {
-            "@type": "ImageObject",
-            "url": "https://thetankguide.com/assets/img/logos/logo-1200x630.png",
-            "width": 1200,
-            "height": 630
+          "@type": "Question",
+          "name": "Is this free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. We created The Tank Guide Assistant to give beginners a safe, no-cost starting point. Standard ChatGPT access is enough."
           }
         },
         {
-          "@type": "FAQPage",
-          "@id": "https://thetankguide.com/assistant.html#faq",
-          "mainEntity": [
-            {
-              "@type": "Question",
-              "name": "Is this free?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Yes. We created The Tank Guide Assistant to give beginners a safe, no-cost starting point. Standard ChatGPT access is enough."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Do I need ChatGPT Plus?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "No. The assistant works with free ChatGPT accounts. If you already have Plus, it will work there too."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Is this a veterinarian?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "No. The assistant is educational only and does not replace professional veterinary care. Always consult a qualified vet for animal health decisions."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Can it read water tests?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "It cannot read images. Type in your test numbers, and it will help you interpret ammonia, nitrite, nitrate, and pH ranges."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Does it replace research?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "No. Use the assistant to guide your learning, then cross-check with trusted sources like The Tank Guide, manufacturer manuals, and experienced hobbyists."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "How does it know about The Tank Guide's tools and content?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "The assistant is trained on The Tank Guide's complete knowledge base—including how the Stocking Advisor calculates bioload, what the Cycling Coach tracks, gear testing results, nitrogen cycle explanations, and real tank maintenance logs. It references these resources and directs you to specific tools when calculations or tracking are needed."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "What if it gives me different advice than the website?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "The assistant follows the same principles and safety guidelines as The Tank Guide. If you notice conflicting information, trust the website tools for calculations (Stocking Advisor, Cycling Coach) and use the assistant for explanations and planning help. You can also check the specific blog or guide it references."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Does it remember my previous conversations?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Yes, within the same chat session. The assistant remembers context from earlier in your conversation, so you can ask follow-up questions. However, it doesn't retain information between separate chat sessions—you'll need to re-share your tank specs if you start a new conversation."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Can it help me choose between products?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Yes. The assistant knows which gear The Tank Guide has tested and recommended, including Seachem products (Stability, Prime, Purigen, Excel), filter brands (Fluval, AquaClear, Seachem Tidal), and when to prioritize budget vs. premium options. It can explain the practical differences based on real-world use."
-              }
-            }
-          ]
+          "@type": "Question",
+          "name": "Do I need ChatGPT Plus?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The assistant works with free ChatGPT accounts. If you already have Plus, it will work there too."
+          }
         },
         {
-          "@type": "SoftwareApplication",
-          "@id": "https://thetankguide.com/assistant.html#app",
-          "name": "The Tank Guide Assistant",
-          "description": "A calm AI helper for aquarium beginners with cycling help, stocking advice, and science-based troubleshooting.",
-          "applicationCategory": "EducationalApplication",
-          "operatingSystem": "Any (Web-based)",
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-          },
-          "publisher": { "@id": "https://thetankguide.com/#organization" }
+          "@type": "Question",
+          "name": "Is this a veterinarian?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The assistant is educational only and does not replace professional veterinary care. Always consult a qualified vet for animal health decisions."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can it read water tests?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It cannot read images. Type in your test numbers, and it will help you interpret ammonia, nitrite, nitrate, and pH ranges."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does it replace research?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Use the assistant to guide your learning, then cross-check with trusted sources like The Tank Guide, manufacturer manuals, and experienced hobbyists."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does it know about The Tank Guide's tools and content?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The assistant is trained on The Tank Guide's complete knowledge base—including how the Stocking Advisor calculates bioload, what the Cycling Coach tracks, gear testing results, nitrogen cycle explanations, and real tank maintenance logs. It references these resources and directs you to specific tools when calculations or tracking are needed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What if it gives me different advice than the website?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The assistant follows the same principles and safety guidelines as The Tank Guide. If you notice conflicting information, trust the website tools for calculations (Stocking Advisor, Cycling Coach) and use the assistant for explanations and planning help. You can also check the specific blog or guide it references."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does it remember my previous conversations?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, within the same chat session. The assistant remembers context from earlier in your conversation, so you can ask follow-up questions. However, it doesn't retain information between separate chat sessions—you'll need to re-share your tank specs if you start a new conversation."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can it help me choose between products?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The assistant knows which gear The Tank Guide has tested and recommended, including Seachem products (Stability, Prime, Purigen, Excel), filter brands (Fluval, AquaClear, Seachem Tidal), and when to prioritize budget vs. premium options. It can explain the practical differences based on real-world use."
+          }
         }
       ]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://thetankguide.com/assistant.html#app",
+      "name": "The Tank Guide Assistant",
+      "description": "A calm AI helper for aquarium beginners with cycling help, stocking advice, and science-based troubleshooting.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any (Web-based)",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "publisher": {
+        "@id": "https://thetankguide.com/#fishkeepinglifeco"
+      }
     }
-  </script>
+  ]
+}
+</script>
 
   <!-- === TTG CMP Consent Bridge START === -->
   <script>

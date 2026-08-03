@@ -68,97 +68,106 @@
   <meta name="twitter:image:alt" content="The Tank Guide logo (1200×630)." />
 
   <!-- Shared Organization / WebSite schema -->
-  <!--#include virtual="/includes/schema-organization.html" -->
-
-  <script type="application/ld+json">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
+      "@type": "WebPage",
+      "@id": "https://thetankguide.com/store/#webpage",
+      "url": "https://thetankguide.com/store/",
+      "name": "Aquarium Books & Journals | Official Store — The Tank Guide",
+      "description": "Official aquarium books and journals from The Tank Guide. Explore Life in Balance and the Daily Tank Journals, published by FishKeepingLifeCo.",
+      "isPartOf": {
+        "@id": "https://thetankguide.com/#website"
+      },
+      "about": {
+        "@id": "https://thetankguide.com/#fishkeepinglifeco"
+      },
+      "mainEntity": {
+        "@id": "https://thetankguide.com/store/#faq"
+      },
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://thetankguide.com/store/#breadcrumb",
+      "itemListElement": [
         {
-          "@type": "WebPage",
-          "@id": "https://thetankguide.com/store/#webpage",
-          "url": "https://thetankguide.com/store/",
-          "name": "Aquarium Books & Journals | Official Store — The Tank Guide",
-          "description": "Official aquarium books and journals from The Tank Guide. Explore Life in Balance and the Daily Tank Journals, published by FishKeepingLifeCo.",
-          "isPartOf": { "@id": "https://thetankguide.com/#website" },
-          "about": { "@id": "https://thetankguide.com/#organization" },
-          "mainEntity": { "@id": "https://thetankguide.com/store/#faq" },
-          "inLanguage": "en-US"
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thetankguide.com/"
         },
         {
-          "@type": "BreadcrumbList",
-          "@id": "https://thetankguide.com/store/#breadcrumb",
-          "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://thetankguide.com/" },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Store",
-              "item": "https://thetankguide.com/store/"
-            }
-          ]
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Store",
+          "item": "https://thetankguide.com/store/"
         }
       ]
     }
-  </script>
+  ]
+}
+</script>
 
   <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://thetankguide.com/store/#faq",
+  "mainEntity": [
     {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "@id": "https://thetankguide.com/store/#faq",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Who are these books for?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Beginners setting up their first tank, families learning together, and hobbyists who want a simple, guided way to track aquarium care without designing their own layout. Everyone from kids to adults will find something useful here."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What’s the difference between the Daily Tank Journal and the Planted Edition?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Both help you track water parameters and daily care. The Planted Edition adds dedicated sections for CO₂ dosing, lighting schedules, nutrient tracking, and plant growth—perfect for anyone keeping or planning to keep live aquatic plants."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Do I need both journals or just one?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Most people choose the one that matches their setup. If you have a fish-only freshwater tank, the standard journal is perfect. If you’re adding plants soon, the Planted Edition gives you room for CO₂, lighting, and nutrient notes. If you’re staying unplanted for now but might try plants later, start with the regular journal—you can always upgrade to the Planted Edition when you’re ready."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Are the books beginner-friendly?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Absolutely. Everything is written in simple, clear language. Even the storybook Life in Balance teaches aquarium fundamentals in a way that kids, parents, and brand-new hobbyists can all understand and enjoy."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Do the coloring books actually teach fishkeeping?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes! Every page includes real aquarium concepts—species information, ecosystem balance, and care basics. They’re designed to be both fun and genuinely educational for all ages."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is there a recommended order to use these books?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Not at all—each book stands alone. That said, many people start with Life in Balance to learn the core concepts, then pick up a journal or coloring book based on what fits their interests or tank type."
-          }
-        }
-      ]
+      "@type": "Question",
+      "name": "Who are these books for?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Beginners setting up their first tank, families learning together, and hobbyists who want a simple, guided way to track aquarium care without designing their own layout. Everyone from kids to adults will find something useful here."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What’s the difference between the Daily Tank Journal and the Planted Edition?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both help you track water parameters and daily care. The Planted Edition adds dedicated sections for CO₂ dosing, lighting schedules, nutrient tracking, and plant growth—perfect for anyone keeping or planning to keep live aquatic plants."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need both journals or just one?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most people choose the one that matches their setup. If you have a fish-only freshwater tank, the standard journal is perfect. If you’re adding plants soon, the Planted Edition gives you room for CO₂, lighting, and nutrient notes. If you’re staying unplanted for now but might try plants later, start with the regular journal—you can always upgrade to the Planted Edition when you’re ready."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are the books beginner-friendly?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely. Everything is written in simple, clear language. Even the storybook Life in Balance teaches aquarium fundamentals in a way that kids, parents, and brand-new hobbyists can all understand and enjoy."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do the coloring books actually teach fishkeeping?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Every page includes real aquarium concepts—species information, ecosystem balance, and care basics. They’re designed to be both fun and genuinely educational for all ages."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a recommended order to use these books?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not at all—each book stands alone. That said, many people start with Life in Balance to learn the core concepts, then pick up a journal or coloring book based on what fits their interests or tank type."
+      }
     }
-  </script>
+  ]
+}
+</script>
 
   <!-- Styles -->
   <link rel="stylesheet" href="/css/app.bundle.css?v=2025-11-07" />
@@ -187,6 +196,9 @@
     src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"
   ></script>
   <script src="/assets/js/consent-mode.js" defer></script>
+<script id="ttg-entity-graph" type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://thetankguide.com/#fishkeepinglifeco","name":"FishKeepingLifeCo","alternateName":["Fish Keeping Life Co","fishkeepinglife"],"description":"FishKeepingLifeCo is the parent company and publisher of The Tank Guide.","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG","width":512,"height":512},"brand":{"@id":"https://thetankguide.com/#brand"},"owns":{"@id":"https://thetankguide.com/#website"},"sameAs":["https://www.instagram.com/FishKeepingLifeCo","https://www.tiktok.com/@FishKeepingLifeCo","https://x.com/fishkeepinglife","https://www.youtube.com/@fishkeepinglifeco","https://www.facebook.com/fishkeepinglifeco"]},{"@type":"Brand","@id":"https://thetankguide.com/#brand","name":"The Tank Guide","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG"},"parentOrganization":{"@id":"https://thetankguide.com/#fishkeepinglifeco"}},{"@type":"WebSite","@id":"https://thetankguide.com/#website","url":"https://thetankguide.com/","name":"The Tank Guide","description":"The Tank Guide is an educational aquarium website offering tools, guides, and beginner-friendly resources.","publisher":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"creator":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"brand":{"@id":"https://thetankguide.com/#brand"},"owner":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"inLanguage":"en-US","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://thetankguide.com/search?q={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}}]}
+</script>
 </head>
 
 <body class="theme-light page--store">
