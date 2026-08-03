@@ -3,13 +3,13 @@
     {
       id: 'ttg-house-ad-daily-journal',
       src: '/assets/img/ads/Daily-tank-journal-ad.PNG',
-      href: '/store.html',
+      href: '/store/',
       alt: 'Daily Tank Journal promo banner'
     },
     {
       id: 'ttg-house-ad-planted-journal',
       src: '/assets/img/ads/Planted-daily-tank-journal-ad.PNG',
-      href: '/store.html',
+      href: '/store/',
       alt: 'Planted Daily Tank Journal promo banner'
     },
     {
@@ -21,7 +21,7 @@
     {
       id: 'ttg-house-ad-coloring-books',
       src: '/assets/img/ads/Coloring-books.JPG',
-      href: '/store.html',
+      href: '/store/',
       alt: 'Aquarium coloring books promo banner'
     }
   ];

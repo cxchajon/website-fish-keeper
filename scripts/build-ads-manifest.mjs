@@ -10,7 +10,7 @@ const ADS_IMG_DIR = path.join(ROOT_DIR, 'assets', 'img', 'ads');
 const ADS_MANIFEST_DIR = path.join(ROOT_DIR, 'assets', 'ads');
 const LINKS_CSV_PATH = path.join(ADS_MANIFEST_DIR, 'links.csv');
 const MANIFEST_PATH = path.join(ADS_MANIFEST_DIR, 'manifest.json');
-const DEFAULT_HREF = '/store.html';
+const DEFAULT_HREF = '/store/';
 const DEFAULT_ALT = 'FishKeepingLifeCo promo';
 const IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.webp', '.PNG', '.JPG', '.JPEG', '.WEBP']);
 

@@ -79,8 +79,8 @@
       '/trust-security.html': '/trust-security.html',
       '/copyright-dmca': '/copyright-dmca.html',
       '/copyright-dmca.html': '/copyright-dmca.html',
-      '/store': '/store.html',
-      '/store.html': '/store.html',
+      '/store': '/store/',
+      '/store/': '/store/',
       '/journal': '/journal.html',
       '/journal.html': '/journal.html'
     };
