@@ -38,7 +38,7 @@
 4. **Cycling Coach** (`/cycling-coach/`) - Nitrogen cycle tracker and guidance
 5. **Submit Your Tank** (`/submit-your-tank.html`) - User submission form
 6. **Media** (`/media.html`) - Video and content hub
-7. **Store** (`/store.html`) - Official books and journals
+7. **Store** (`/store/`) - Official books and journals
 8. **About** (`/about.html`) - Company background and mission
 
 ### Content Sections

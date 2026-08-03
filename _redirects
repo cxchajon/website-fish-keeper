@@ -13,3 +13,5 @@
 /params.html  /cycling-coach/  301!
 /staging/cycling-coach/*  /cycling-coach/  301!
 /journal-dashboard.html /journal.html 301
+
+/store.html   /store/   301

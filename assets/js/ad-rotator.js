@@ -69,7 +69,7 @@
     if (imgEl && !imgEl.classList.contains('inhouse-ad-img')) {
       imgEl.classList.add('inhouse-ad-img');
     }
-    linkEl.href = entry.href || '/store.html';
+    linkEl.href = entry.href || '/store/';
     linkEl.target = isExternal(linkEl.href) ? '_blank' : '_self';
     linkEl.rel = isExternal(linkEl.href) ? 'noopener sponsored nofollow' : 'noopener';
 

@@ -16,7 +16,7 @@ const EXPECTED_NAV_HREFS = [
   '/trust-security.html',
   '/cookie-settings.html',
   '/cookie-settings.html',
-  '/store.html',
+  '/store/',
   '/copyright-dmca.html',
 ];
 
