@@ -89,115 +89,254 @@
   <script src="/assets/js/consent-mode.js?v=1.5.2" defer></script>
 
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": "https://thetankguide.com/#organization",
-        "name": "FishKeepingLifeCo",
-        "alternateName": ["Fish Keeping Life Co", "fishkeepinglife"],
-        "url": "https://thetankguide.com/",
-        "sameAs": [
-          "https://www.instagram.com/FishKeepingLifeCo",
-          "https://www.tiktok.com/@FishKeepingLifeCo",
-          "https://x.com/fishkeepinglife",
-          "https://www.youtube.com/@fishkeepinglifeco",
-          "https://www.facebook.com/fishkeepinglifeco"
-        ]
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://thetankguide.com/#editorial-team",
+      "name": "The Tank Guide Editorial Team",
+      "url": "https://thetankguide.com/about.html",
+      "parentOrganization": {
+        "@id": "https://thetankguide.com/#fishkeepinglifeco"
       },
-      {
-        "@type": "WebSite",
-        "@id": "https://thetankguide.com/#website",
-        "url": "https://thetankguide.com/",
-        "name": "The Tank Guide",
-        "publisher": { "@id": "https://thetankguide.com/#organization" }
-      },
-      {
-        "@type": "Organization",
-        "@id": "https://thetankguide.com/#editorial-team",
-        "name": "The Tank Guide Editorial Team",
-        "url": "https://thetankguide.com/about.html",
-        "parentOrganization": { "@id": "https://thetankguide.com/#organization" },
-        "isPartOf": { "@id": "https://thetankguide.com/#website" }
-      },
-      {
-        "@type": "WebPage",
-        "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage",
-        "url": "https://thetankguide.com/beginner-carpeting-plants-low-tech/",
-        "name": "5 Best Beginner Carpeting Plants for Low-Tech Aquariums",
-        "description": "Want a lush aquarium carpet without expensive CO₂ or high lighting? Discover the 5 best beginner-friendly carpeting plants for low-tech tanks.",
-        "isPartOf": { "@id": "https://thetankguide.com/#website" },
-        "about": { "@id": "https://thetankguide.com/#organization" },
-        "breadcrumb": { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#breadcrumb" },
-        "mainEntity": [
-          { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#article" },
-          { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#howto" },
-          { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#faq" }
-        ]
-      },
-      {
-        "@type": "Article",
-        "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#article",
-        "headline": "5 Best Beginner Carpeting Plants for Low-Tech Aquariums",
-        "description": "Want a lush aquarium carpet without expensive CO₂ or high lighting? Discover the 5 best beginner-friendly carpeting plants for low-tech tanks.",
-        "image": "https://thetankguide.com/assets/images/5-best-beginner-carpeting-plants-low-tech-aquariums.jpeg",
-        "datePublished": "2026-06-15",
-        "dateModified": "2026-06-15",
-        "mainEntityOfPage": { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage" },
-        "isPartOf": { "@id": "https://thetankguide.com/#website" },
-        "publisher": { "@id": "https://thetankguide.com/#organization" },
-        "author": { "@id": "https://thetankguide.com/#editorial-team" },
-        "keywords": ["beginner carpeting plants", "low-tech carpeting plants", "carpeting plants without CO₂", "easy aquarium carpeting plants", "low-tech aquarium plants", "beginner aquarium plants", "freshwater carpeting plants", "aquarium foreground plants", "carpeting plants for shrimp tanks"]
-      },
-      {
-        "@type": "HowTo",
-        "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#howto",
-        "url": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#how-to-help-carpeting-plants-spread-in-a-low-tech-tank",
-        "name": "How to Help Carpeting Plants Spread in a Low-Tech Tank",
-        "description": "A visible step-by-step section for encouraging low-tech aquarium carpeting plants to spread through root nutrition, lighting, dense planting, trimming, stability, and patience.",
-        "isPartOf": { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage" },
-        "mainEntityOfPage": { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage" },
-        "step": [
-          { "@type": "HowToStep", "position": 1, "name": "Use root nutrition", "text": "Root tabs or nutrient-rich substrate help runner plants establish and spread, especially in inert sand or gravel." },
-          { "@type": "HowToStep", "position": 2, "name": "Provide enough light", "text": "Lighting affects spread versus vertical growth. Too little light often causes plants to stretch upward instead of carpeting." },
-          { "@type": "HowToStep", "position": 3, "name": "Plant densely when possible", "text": "Starting with more small plant portions shortens the time it takes for the foreground to fill in." },
-          { "@type": "HowToStep", "position": 4, "name": "Trim and replant stem plants", "text": "Pearl Weed needs regular trimming and replanting to stay low and carpet-like." },
-          { "@type": "HowToStep", "position": 5, "name": "Keep conditions stable", "text": "Low-tech tanks grow more slowly, so stability matters more than chasing high-tech results." },
-          { "@type": "HowToStep", "position": 6, "name": "Be patient", "text": "Most low-tech carpets take months, not days, to look established." }
-        ]
-      },
-      {
-        "@type": "FAQPage",
-        "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#faq",
-        "url": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#faq",
-        "isPartOf": { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage" },
-        "mainEntityOfPage": { "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage" },
-        "mainEntity": [
-          {"@type":"Question","name":"Can you grow an aquarium carpet without CO₂?","acceptedAnswer":{"@type":"Answer","text":"Yes. Several carpeting plants can spread and form attractive foreground coverage without injected CO₂, though growth is usually slower than in high-tech setups."}},
-          {"@type":"Question","name":"What is the easiest carpeting plant for beginners?","acceptedAnswer":{"@type":"Answer","text":"Dwarf Sagittaria is often considered one of the easiest carpeting plants because it spreads through runners, adapts well to different conditions, and grows reliably in low-tech aquariums."}},
-          {"@type":"Question","name":"How long does it take for a carpeting plant to spread?","acceptedAnswer":{"@type":"Answer","text":"Most low-tech carpeting plants take anywhere from a few months to six months or more to establish a noticeable carpet, depending on lighting, nutrients, and plant selection."}},
-          {"@type":"Question","name":"Do carpeting plants need aquasoil?","acceptedAnswer":{"@type":"Answer","text":"No. Many carpeting plants can grow in sand or gravel when supplemented with root tabs or other nutrient sources."}},
-          {"@type":"Question","name":"Are carpeting plants good for shrimp tanks?","acceptedAnswer":{"@type":"Answer","text":"Yes. Carpeting plants create additional surface area for biofilm growth and provide natural grazing areas for shrimp."}},
-          {"@type":"Question","name":"Why is my carpeting plant growing upward instead of spreading?","acceptedAnswer":{"@type":"Answer","text":"Insufficient lighting is one of the most common causes. Plants may stretch vertically in search of more light rather than spreading across the substrate."}},
-          {"@type":"Question","name":"What is the fastest-growing carpeting plant on this list?","acceptedAnswer":{"@type":"Answer","text":"Dwarf Sagittaria is typically the fastest true carpeting plant on this list, while Pearl Weed grows fastest overall but requires trimming and replanting."}},
-          {"@type":"Question","name":"Can Pearl Weed really be used as a carpet?","acceptedAnswer":{"@type":"Answer","text":"Yes. While it is a stem plant rather than a true carpeting plant, regular trimming and replanting can create a dense carpet-like appearance."}},
-          {"@type":"Question","name":"Why is Cryptocoryne parva considered beginner friendly if it grows slowly?","acceptedAnswer":{"@type":"Answer","text":"Its slow growth is balanced by its low maintenance requirements and ability to thrive in stable low-tech aquariums."}},
-          {"@type":"Question","name":"What carpeting plants should beginners avoid?","acceptedAnswer":{"@type":"Answer","text":"Monte Carlo, HC Cuba, Glossostigma, and often Dwarf Hairgrass tend to perform best in higher-tech aquariums with stronger lighting and injected CO₂."}}
-        ]
-      },
-      {
-        "@type": "BreadcrumbList",
-        "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#breadcrumb",
-        "itemListElement": [
-          {"@type":"ListItem","position":1,"name":"Home","item":"https://thetankguide.com/"},
-          {"@type":"ListItem","position":2,"name":"Blog","item":"https://thetankguide.com/blogs/"},
-          {"@type":"ListItem","position":3,"name":"5 Best Beginner Carpeting Plants for Low-Tech Aquariums","item":"https://thetankguide.com/beginner-carpeting-plants-low-tech/"}
-        ]
+      "isPartOf": {
+        "@id": "https://thetankguide.com/#website"
       }
-    ]
-  }
-  </script>
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage",
+      "url": "https://thetankguide.com/beginner-carpeting-plants-low-tech/",
+      "name": "5 Best Beginner Carpeting Plants for Low-Tech Aquariums",
+      "description": "Want a lush aquarium carpet without expensive CO₂ or high lighting? Discover the 5 best beginner-friendly carpeting plants for low-tech tanks.",
+      "isPartOf": {
+        "@id": "https://thetankguide.com/#website"
+      },
+      "about": {
+        "@id": "https://thetankguide.com/#fishkeepinglifeco"
+      },
+      "breadcrumb": {
+        "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#breadcrumb"
+      },
+      "mainEntity": [
+        {
+          "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#article"
+        },
+        {
+          "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#howto"
+        },
+        {
+          "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#faq"
+        }
+      ]
+    },
+    {
+      "@type": "Article",
+      "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#article",
+      "headline": "5 Best Beginner Carpeting Plants for Low-Tech Aquariums",
+      "description": "Want a lush aquarium carpet without expensive CO₂ or high lighting? Discover the 5 best beginner-friendly carpeting plants for low-tech tanks.",
+      "image": "https://thetankguide.com/assets/images/5-best-beginner-carpeting-plants-low-tech-aquariums.jpeg",
+      "datePublished": "2026-06-15",
+      "dateModified": "2026-06-15",
+      "mainEntityOfPage": {
+        "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage"
+      },
+      "isPartOf": {
+        "@id": "https://thetankguide.com/#website"
+      },
+      "publisher": {
+        "@id": "https://thetankguide.com/#fishkeepinglifeco"
+      },
+      "author": {
+        "@id": "https://thetankguide.com/#editorial-team"
+      },
+      "keywords": [
+        "beginner carpeting plants",
+        "low-tech carpeting plants",
+        "carpeting plants without CO₂",
+        "easy aquarium carpeting plants",
+        "low-tech aquarium plants",
+        "beginner aquarium plants",
+        "freshwater carpeting plants",
+        "aquarium foreground plants",
+        "carpeting plants for shrimp tanks"
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#howto",
+      "url": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#how-to-help-carpeting-plants-spread-in-a-low-tech-tank",
+      "name": "How to Help Carpeting Plants Spread in a Low-Tech Tank",
+      "description": "A visible step-by-step section for encouraging low-tech aquarium carpeting plants to spread through root nutrition, lighting, dense planting, trimming, stability, and patience.",
+      "isPartOf": {
+        "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage"
+      },
+      "mainEntityOfPage": {
+        "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage"
+      },
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Use root nutrition",
+          "text": "Root tabs or nutrient-rich substrate help runner plants establish and spread, especially in inert sand or gravel."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Provide enough light",
+          "text": "Lighting affects spread versus vertical growth. Too little light often causes plants to stretch upward instead of carpeting."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Plant densely when possible",
+          "text": "Starting with more small plant portions shortens the time it takes for the foreground to fill in."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Trim and replant stem plants",
+          "text": "Pearl Weed needs regular trimming and replanting to stay low and carpet-like."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Keep conditions stable",
+          "text": "Low-tech tanks grow more slowly, so stability matters more than chasing high-tech results."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 6,
+          "name": "Be patient",
+          "text": "Most low-tech carpets take months, not days, to look established."
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#faq",
+      "url": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#faq",
+      "isPartOf": {
+        "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage"
+      },
+      "mainEntityOfPage": {
+        "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#webpage"
+      },
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Can you grow an aquarium carpet without CO₂?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Several carpeting plants can spread and form attractive foreground coverage without injected CO₂, though growth is usually slower than in high-tech setups."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the easiest carpeting plant for beginners?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Dwarf Sagittaria is often considered one of the easiest carpeting plants because it spreads through runners, adapts well to different conditions, and grows reliably in low-tech aquariums."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does it take for a carpeting plant to spread?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most low-tech carpeting plants take anywhere from a few months to six months or more to establish a noticeable carpet, depending on lighting, nutrients, and plant selection."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do carpeting plants need aquasoil?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Many carpeting plants can grow in sand or gravel when supplemented with root tabs or other nutrient sources."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are carpeting plants good for shrimp tanks?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Carpeting plants create additional surface area for biofilm growth and provide natural grazing areas for shrimp."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is my carpeting plant growing upward instead of spreading?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Insufficient lighting is one of the most common causes. Plants may stretch vertically in search of more light rather than spreading across the substrate."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the fastest-growing carpeting plant on this list?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Dwarf Sagittaria is typically the fastest true carpeting plant on this list, while Pearl Weed grows fastest overall but requires trimming and replanting."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can Pearl Weed really be used as a carpet?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. While it is a stem plant rather than a true carpeting plant, regular trimming and replanting can create a dense carpet-like appearance."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is Cryptocoryne parva considered beginner friendly if it grows slowly?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Its slow growth is balanced by its low maintenance requirements and ability to thrive in stable low-tech aquariums."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What carpeting plants should beginners avoid?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Monte Carlo, HC Cuba, Glossostigma, and often Dwarf Hairgrass tend to perform best in higher-tech aquariums with stronger lighting and injected CO₂."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://thetankguide.com/beginner-carpeting-plants-low-tech/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thetankguide.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Blog",
+          "item": "https://thetankguide.com/blogs/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "5 Best Beginner Carpeting Plants for Low-Tech Aquariums",
+          "item": "https://thetankguide.com/beginner-carpeting-plants-low-tech/"
+        }
+      ]
+    }
+  ]
+}
+</script>
+<script id="ttg-entity-graph" type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://thetankguide.com/#fishkeepinglifeco","name":"FishKeepingLifeCo","alternateName":["Fish Keeping Life Co","fishkeepinglife"],"description":"FishKeepingLifeCo is the parent company and publisher of The Tank Guide.","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG","width":512,"height":512},"brand":{"@id":"https://thetankguide.com/#brand"},"owns":{"@id":"https://thetankguide.com/#website"},"sameAs":["https://www.instagram.com/FishKeepingLifeCo","https://www.tiktok.com/@FishKeepingLifeCo","https://x.com/fishkeepinglife","https://www.youtube.com/@fishkeepinglifeco","https://www.facebook.com/fishkeepinglifeco"]},{"@type":"Brand","@id":"https://thetankguide.com/#brand","name":"The Tank Guide","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG"},"parentOrganization":{"@id":"https://thetankguide.com/#fishkeepinglifeco"}},{"@type":"WebSite","@id":"https://thetankguide.com/#website","url":"https://thetankguide.com/","name":"The Tank Guide","description":"The Tank Guide is an educational aquarium website offering tools, guides, and beginner-friendly resources.","publisher":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"creator":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"brand":{"@id":"https://thetankguide.com/#brand"},"owner":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"inLanguage":"en-US","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://thetankguide.com/search?q={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}}]}
+</script>
 </head>
 <body class="blog-article blog-open-page topic-core carpeting-left-layout">
   <a href="#main-content" class="skip-link">Skip to content</a>
