@@ -9,6 +9,7 @@
 /* Main journal body background */
 .journal-main {
     background: linear-gradient(to bottom, #fef9e7 0%, #fdf5d9 100%);
+    color: #1a202c;
     position: relative;
 }
 
@@ -405,6 +406,7 @@
 /* Base Card Styles */
 .journal-card {
     background: #fffef9;
+    color: #1a202c;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 
@@ -560,7 +562,8 @@
     z-index: 1;
 }
 
-.card-tag {
+.card-tag,
+.tag {
     display: inline-block;
     padding: 0.35rem 0.75rem;
     font-size: 0.85rem;
@@ -590,7 +593,7 @@
 
 .tag-achievement {
     background: linear-gradient(135deg, #fef5e7 0%, #fcedd6 100%);
-    color: #d69e2e;
+    color: #7d6608;
     border-color: #d69e2e;
 }
 
@@ -602,14 +605,14 @@
 
 .tag-maintenance {
     background: linear-gradient(135deg, #ebf8ff 0%, #d6f0ff 100%);
-    color: #3182ce;
-    border-color: #3182ce;
+    color: #155e63;
+    border-color: #155e63;
 }
 
 .tag-water-change {
     background: linear-gradient(135deg, #e0f2fe 0%, #c7e9ff 100%);
-    color: #0891b2;
-    border-color: #0891b2;
+    color: #155e63;
+    border-color: #155e63;
 }
 
 /* Additional card tags for new categories */
@@ -1138,6 +1141,15 @@ button:focus {
     font-weight: 700;
     text-decoration-thickness: 2px;
     text-underline-offset: 0.2em;
+}
+
+/* Links that sit directly on journal paper must not inherit the dark theme. */
+.journal-header a,
+.dashboard-card a,
+.month-header a,
+.journal-notice a,
+.journal-card .card-body a {
+    color: #155e63;
 }
 
 .back-to-journal {
