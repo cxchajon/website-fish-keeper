@@ -43,6 +43,7 @@
         onload="this.media='all'">
   <link rel="stylesheet" href="/css/app.bundle.css?v=2025-11-07">
   <link rel="stylesheet" href="css/style.css?v=1.0.10" />
+  <link rel="stylesheet" href="/css/faq-accordion.css?v=1.0.0">
   <style>
     body.page-gradient {
       min-height: 100vh;
@@ -1086,69 +1087,57 @@
         </ul>
       </div>
 
-      <section id="feature-your-tank-faq" class="feature-faq feature-card feature-card--faq" aria-labelledby="faq-title">
-        <h2 id="faq-title">Submit Your Tank — FAQ</h2>
+      <section id="feature-your-tank-faq" class="feature-faq feature-card feature-card--faq u-faq-section" aria-labelledby="faq-title">
+        <h2 id="faq-title">Frequently Asked Questions</h2>
 
         <p class="feature-faq-intro">
           Quick answers about the new 6-step submission, duplicate protection, and editing credits.
         </p>
 
-        <dl class="feature-faq-list">
-          <dt>How does the submission flow work?</dt>
-          <dd>
-            <p>Upload at least 3 photos (optionally add 2 more for $1), then choose to self-write your story or have FKLC craft it for you with the $1 editing package.</p>
-            <p>Optional upgrades include extra photos, editing credits, and additional tanks with editing included.</p>
-          </dd>
-
-          <dt>What's included in the $1 editing package?</dt>
-          <dd>
-            <ul>
-              <li>Professional first draft (does not use a credit).</li>
-              <li>3 revision rounds that never expire and stay tied to the tank.</li>
-              <li>Credits can be used later for updates to the same feature.</li>
-            </ul>
-          </dd>
-
-          <dt>How are duplicates prevented?</dt>
-          <dd>
-            <p>We cross-check email + tank name similarity and tank size. If we spot a potential match (>80% similarity), you'll see a warning before payment and we'll flag it for admin review.</p>
-          </dd>
-
-          <dt>Are these prices permanent?</dt>
-          <dd>
-            <p>
-              <strong>No - these are special launch promotion prices!</strong> Current rates
-              ($1 editing package, $1 extra photos, $2 additional tanks) are introductory
-              pricing to help build the Community Tanks feature. Prices may increase as the
-              feature grows and more submissions come in.
-            </p>
-            <p>
-              Submit now to lock in promotional pricing. Credits and features purchased at
-              promotional rates stay with your tank forever at the price you paid.
-            </p>
-          </dd>
-
-          <dt>How is pricing calculated?</dt>
-          <dd>
-            <ul>
-              <li>First tank: free when you self-write + 3 photos.</li>
-              <li>Editing package: +$1 (first tank only).</li>
-              <li>Extra photos: +$1 for 2 extra slots per tank.</li>
-              <li><strong>Ad-Free Page: +$3 (one-time) to remove all ads and affiliate links. ($5 if added after publication)</strong></li>
-              <li>Each additional tank: $2 (includes editing + 3 revisions) with optional +$1 extra photos per additional tank.</li>
-            </ul>
-          </dd>
-
-          <dt>When will I hear back?</dt>
-          <dd>
-            <p>Expect the first draft or review note within 5–7 days. Credits remain available for future tweaks even after publication.</p>
-          </dd>
-
-          <dt>Do I keep ownership of my photos?</dt>
-          <dd>
-            <p>You keep ownership. You grant us a non-exclusive license so we can host, credit, and promote your feature across The Tank Guide channels.</p>
-          </dd>
-        </dl>
+        <div class="u-faq-accordion">
+          <details class="u-faq-item">
+            <summary>How does the submission flow work?</summary>
+            <div class="u-faq-answer">
+              <p>Upload at least 3 photos (optionally 5 with the extra photo upgrade), then choose to self-write or have FKLC write your story with the $1 editing package. Optional upgrades include extra photos and additional tanks with editing included.</p>
+            </div>
+          </details>
+          <details class="u-faq-item">
+            <summary>What is included in the $1 editing package?</summary>
+            <div class="u-faq-answer">
+              <p>FKLC writes the first draft (no credit used) and includes 3 revision credits that never expire and stay tied to that tank for future updates.</p>
+            </div>
+          </details>
+          <details class="u-faq-item">
+            <summary>How do you detect duplicate submissions?</summary>
+            <div class="u-faq-answer">
+              <p>We check email + tank name similarity and tank size before payment. Anything over an 80% match is flagged for admin review and shown to the user.</p>
+            </div>
+          </details>
+          <details class="u-faq-item">
+            <summary>Are these prices permanent?</summary>
+            <div class="u-faq-answer">
+              <p><strong>No - these are special launch promotion prices!</strong> Current rates ($1 editing package, $1 extra photos, $2 additional tanks) are introductory pricing to help build the Community Tanks feature. Prices may increase as the feature grows and more submissions come in.<br><br>Submit now to lock in promotional pricing. Credits and features purchased at promotional rates stay with your tank forever at the price you paid.</p>
+            </div>
+          </details>
+          <details class="u-faq-item">
+            <summary>How is pricing calculated?</summary>
+            <div class="u-faq-answer">
+              <p>First tank is free when you self-write and use 3 photos. Editing package is +$1; extra photos are +$1; Ad-Free Page is +$3 (or $5 after publication). Each additional tank is $2 (editing included) with optional +$1 for extra photos.</p>
+            </div>
+          </details>
+          <details class="u-faq-item">
+            <summary>When will I hear back?</summary>
+            <div class="u-faq-answer">
+              <p>Expect a first draft or review note within 5–7 days. Editing credits remain available for later updates even after publication.</p>
+            </div>
+          </details>
+          <details class="u-faq-item">
+            <summary>Do I keep ownership of my photos?</summary>
+            <div class="u-faq-answer">
+              <p>Yes. You retain ownership and grant FishKeepingLifeCo a non-exclusive license so we can host, credit, and promote your feature.</p>
+            </div>
+          </details>
+        </div>
       </section>
     </section>
   </main>

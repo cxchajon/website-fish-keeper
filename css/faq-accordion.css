@@ -1,0 +1,77 @@
+/* Shared native FAQ accordion presentation. Content remains readable without this stylesheet. */
+.u-faq-section {
+  width: 100%;
+  max-width: var(--article-body-max, 900px);
+  margin: clamp(2rem, 5vw, 3rem) auto 0;
+  position: relative;
+  z-index: 1;
+}
+
+.u-faq-section > h2 {
+  margin-top: 0;
+}
+
+.u-faq-accordion {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.u-faq-accordion .u-faq-item {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.u-faq-accordion summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  color: inherit;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  list-style: none;
+}
+
+.u-faq-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.u-faq-accordion summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  color: var(--blog-accent, #00c3b6);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.u-faq-accordion .u-faq-item[open] summary::after {
+  content: "−";
+}
+
+.u-faq-accordion summary:focus-visible {
+  outline: 3px solid var(--blog-accent, #00c3b6);
+  outline-offset: -3px;
+}
+
+.u-faq-answer {
+  padding: 0 1rem 1rem;
+}
+
+.u-faq-answer p {
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .u-faq-accordion summary {
+    padding: 0.85rem;
+  }
+
+  .u-faq-answer {
+    padding: 0 0.85rem 0.85rem;
+  }
+}
