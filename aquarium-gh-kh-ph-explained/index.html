@@ -68,14 +68,24 @@
       margin-bottom: 0;
     }
 
-    .blog-inline-figure {
+    .blog-inline-figure--landscape,
+    .blog-inline-figure--square {
       box-sizing: border-box;
-      width: calc(100% - 1rem);
-      max-width: 720px;
       margin: 1.75rem auto;
     }
 
-    .blog-inline-figure .tg-img {
+    .blog-inline-figure--landscape {
+      width: 80%;
+      max-width: 620px;
+    }
+
+    .blog-inline-figure--square {
+      width: 60%;
+      max-width: 420px;
+    }
+
+    .blog-inline-figure--landscape .tg-img,
+    .blog-inline-figure--square .tg-img {
       display: block;
       width: 100%;
       max-width: 100%;
@@ -393,7 +403,7 @@
         <p>GH is not pH, and it's not KH, and — as the TDS point above shows — it's not simply another name for total dissolved solids either. A tank can have plenty of calcium and magnesium and still swing in pH, or carry very little mineral content and sit at a completely stable pH. The three don't move together the way it's easy to assume.</p>
         <h2>What Does KH Actually Tell You?</h2>
         <p>KH — carbonate hardness, also called alkalinity — measures your water's capacity to resist a drop in pH when acid is introduced. Despite the name, it isn't a hardness measurement in the calcium-and-magnesium sense at all.</p>
-        <figure class="tg-figure blog-inline-figure">
+        <figure class="tg-figure blog-inline-figure--square">
           <img src="/assets/images/The%20KH%20Reserve.jpeg" alt="Aquarium illustration showing KH as a buffering reserve that absorbs acid" class="tg-img" width="1024" height="1024" loading="lazy" decoding="async">
         </figure>
         <p>It works as a reserve. A running aquarium produces acid more or less constantly, mostly as a byproduct of the nitrogen cycle, and that acid gets absorbed by the KH reserve instead of immediately showing up as a falling pH reading. Higher KH means more of that reserve on hand, which makes pH more resistant to change — but it isn't a lock that holds pH in place forever. It's a supply that gets used up over time and needs to be replenished, either through water changes or a mineral source that slowly dissolves.</p>
@@ -404,7 +414,7 @@
         <p>It also means two aquariums can read the exact same pH and have almost nothing else in common. One might be soft and barely buffered, ready to move the moment something in the tank changes. The other might be hard and heavily buffered, much more resistant to whatever acid shows up next. Same number on the test kit, completely different situation underneath it.</p>
         <h2>How Do GH, KH &amp; pH Work Together?</h2>
         <p>None of the three can be reliably predicted from either of the other two.</p>
-        <figure class="tg-figure blog-inline-figure">
+        <figure class="tg-figure blog-inline-figure--square">
           <img src="/assets/images/The%20Relationship%20Panel.jpeg" alt="Planted aquarium panel representing the relationship among GH, KH, and pH" class="tg-img" width="1024" height="1024" loading="lazy" decoding="async">
         </figure>
         <div class="table-scroll-container" tabindex="0" role="region" aria-label="GH, KH, and pH comparison table"><table><caption>What GH, KH, and pH tell you about aquarium water</caption><thead><tr><th scope="col">Parameter</th><th scope="col">What It Tells You</th><th scope="col">What It Doesn't Tell You</th></tr></thead><tbody><tr><th scope="row">GH</th><td>How much calcium and magnesium is dissolved in the water</td><td>Your pH, or how resistant the water is to pH changes</td></tr><tr><th scope="row">KH</th><td>How much buffering capacity the water has against pH swings</td><td>How much overall mineral (calcium/magnesium) is present</td></tr><tr><th scope="row">pH</th><td>How acidic or basic the water is right now</td><td>Whether the water is hard or soft, or how stable it is</td></tr></tbody></table></div>
@@ -425,7 +435,7 @@
         <p>For many established aquariums, leaving stable water alone is often the better decision.</p>
         <p>That tends to be the case when your fish are eating, active, colored up normally, and behaving the way they should — even if a number on a chart doesn't quite match what your test kit says. It also tends to hold when the only reason you're considering a change is that a care sheet gave one figure and your tap water gave another, when your GH looks "high" only because you compared it to a figure from a forum post rather than anything your actual fish need, or when you're chasing a specific value because someone else's tank runs at that number rather than because anything in your own tank points to a problem.</p>
         <p>There's a practical reason beyond just "don't fix what isn't broken." Adjusted water is often less stable than water you simply left alone, because most adjustment methods either need to be repeated indefinitely to hold, or work against your water's existing buffering rather than with it. A tank that's been chemically nudged toward a target every week is frequently less consistent than one that's just been allowed to sit at whatever its source water naturally provides.</p>
-        <figure class="tg-figure blog-inline-figure">
+        <figure class="tg-figure blog-inline-figure--landscape">
           <img src="/assets/images/The%20Pattern%20Behind%20%E2%80%9CDon%E2%80%99t%20Chase%20pH%E2%80%9D.jpeg" alt="Side-by-side aquariums comparing stable water with repeated chemical pH adjustment" class="tg-img" width="1376" height="768" loading="lazy" decoding="async">
         </figure>
         <div class="table-scroll-container" tabindex="0" role="region" aria-label="Water adjustment decision table"><table><caption>Situations where aquarium water adjustment may or may not be appropriate</caption><thead><tr><th scope="col">Situation</th><th scope="col">Investigate Further?</th><th scope="col">Adjustment Likely Appropriate?</th><th scope="col">Why</th></tr></thead><tbody>
@@ -433,7 +443,7 @@
         <h2>Three Aquarium Sayings Worth Understanding, Not Just Repeating</h2>
         <h3>"Don't Chase pH"</h3>
         <p>This advice exists because of how pH-adjusting products can behave in buffered water. If your KH is providing meaningful buffering capacity, a dose of pH-down is often absorbed by that reserve almost immediately — the reading barely moves, so it can look like the product isn't working. Add more, and the same thing tends to happen again. Each dose quietly spends some of that buffering capacity rather than doing much to the pH itself, until there's little buffering left. At that point, a dose similar in size to the ones before it can drop the pH sharply and unpredictably, because there's finally little left to absorb it. How quickly this happens, and how dramatic the eventual drop is, depends on the product, the dose, and how much buffering the water started with — it doesn't play out identically in every tank.</p>
-        <figure class="tg-figure blog-inline-figure">
+        <figure class="tg-figure blog-inline-figure--landscape">
           <img src="/assets/images/Ph%20Down%20liquid.jpeg" alt="Dropper bottle of pH-down liquid beside an aquarium illustrating dose-by-dose pH adjustment" class="tg-img" width="1376" height="768" loading="lazy" decoding="async">
         </figure>
         <p>The advice is really about method, not goal. Repeatedly dosing chemicals against your water's existing buffering doesn't tend to work well, and that's where this saying earns its keep. Changing the water that's actually going into the tank — through dilution, remineralization, or a substrate designed for the job — is a different approach entirely, and it's generally a more controlled way to make a deliberate water chemistry change than reacting to the tank's pH reading over and over.</p>
