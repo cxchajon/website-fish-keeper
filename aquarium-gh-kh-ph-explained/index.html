@@ -92,6 +92,36 @@
       height: auto;
     }
 
+    /* Keep this article's complete editorial flow in one shared column. */
+    body.chemistry-single-column .article-layout > article {
+      width: 100%;
+      max-width: var(--article-body-max);
+    }
+
+    body.chemistry-single-column .article-header,
+    body.chemistry-single-column .tg-figure--hero,
+    body.chemistry-single-column .section-split,
+    body.chemistry-single-column .blog-body {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    body.chemistry-single-column .blog-body {
+      padding-right: 0;
+      padding-left: 0;
+      background: transparent;
+      border-radius: 0;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      overflow: visible;
+    }
+
+    body.chemistry-single-column .blog-body::after {
+      content: none;
+    }
+
 
 
   </style>
@@ -317,7 +347,7 @@
     }
   ]
 }</script>
-</head><body class="blog-article blog-open-page topic-core">
+</head><body class="blog-article blog-open-page topic-core chemistry-single-column">
   <a href="#main-content" class="skip-link">Skip to content</a>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTRVCMQN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div id="site-nav">
