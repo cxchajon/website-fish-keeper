@@ -871,10 +871,14 @@ body.blog-article .article-layout article > .back-link {
 }
 
 body.blog-article .article-layout article > .article-header,
-body.blog-article .article-layout article > .tg-figure--hero,
-body.blog-article .article-layout article > .section-split {
+body.blog-article .article-layout article > .tg-figure--hero {
   margin-top: 0;
   margin-bottom: clamp(1.4rem, 3vw, 2rem);
+}
+
+body.blog-article .article-layout article > .section-split {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 body.blog-article .article-layout article > .blog-body {
