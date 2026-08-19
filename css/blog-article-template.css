@@ -852,3 +852,32 @@ body.blog-article .blog-body {
   margin-left: auto;
   margin-right: auto;
 }
+
+/*
+ * Article shell rhythm
+ *
+ * Direct article children already carry their own margins. A flex gap on the
+ * same parent compounded those margins around the header, optional hero,
+ * divider, and body card. Keep one explicit rhythm here so articles with and
+ * without a hero follow the same natural flow and future posts do not need
+ * page-specific spacing or typography overrides.
+ */
+body.blog-article .article-layout article {
+  gap: 0;
+}
+
+body.blog-article .article-layout article > .back-link {
+  margin-bottom: clamp(1.4rem, 3vw, 2rem);
+}
+
+body.blog-article .article-layout article > .article-header,
+body.blog-article .article-layout article > .tg-figure--hero,
+body.blog-article .article-layout article > .section-split {
+  margin-top: 0;
+  margin-bottom: clamp(1.4rem, 3vw, 2rem);
+}
+
+body.blog-article .article-layout article > .blog-body {
+  margin-top: 0;
+  margin-bottom: 0;
+}
