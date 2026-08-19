@@ -163,6 +163,7 @@
       overlay.classList.remove('is-open');
       overlay.setAttribute('aria-hidden', 'true');
       drawer.setAttribute('aria-hidden', 'true');
+      drawer.inert = true;
       openBtn.setAttribute('aria-expanded', 'false');
       delete document.documentElement.dataset.scrollLock;
       document.documentElement.style.overflow = '';
@@ -186,6 +187,7 @@
       overlay.classList.add('is-open');
       overlay.setAttribute('aria-hidden', 'false');
       drawer.setAttribute('aria-hidden', 'false');
+      drawer.inert = false;
       openBtn.setAttribute('aria-expanded', 'true');
       document.documentElement.dataset.scrollLock = 'on';
       document.documentElement.style.overflow = 'hidden';
@@ -287,6 +289,7 @@
     markActiveLinks(root);
     root.dataset.navReady = 'true';
     drawer.setAttribute('aria-hidden', 'true');
+    drawer.inert = true;
     overlay.setAttribute('aria-hidden', 'true');
   }
 

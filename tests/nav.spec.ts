@@ -101,11 +101,30 @@ test('drawer opens on hamburger click and locks scroll', async ({ page }) => {
 
   await hamburger.click();
   await expect(drawer).toHaveClass(/is-open/);
+  await expect(drawer).not.toHaveAttribute('inert', '');
   await expect(overlay).toHaveClass(/is-open/);
 
   await expect(page.locator('html')).toHaveAttribute('data-scroll-lock', 'on');
   const bodyOverflow = await page.evaluate(() => document.body.style.overflow);
   expect(bodyOverflow).toBe('hidden');
+});
+
+test('closed drawer is inert and its links cannot receive focus', async ({ page }) => {
+  await gotoAbout(page);
+  const drawer = page.locator('[data-nav="drawer"]');
+  const firstLink = drawer.locator('a').first();
+
+  await expect(drawer).toHaveAttribute('inert', '');
+  await firstLink.focus();
+  await expect(firstLink).not.toBeFocused();
+
+  await page.locator('[data-nav="hamburger"]').click();
+  await expect(drawer).not.toHaveAttribute('inert', '');
+  await expect(firstLink).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(drawer).toHaveAttribute('inert', '');
+  await expect(page.locator('[data-nav="hamburger"]')).toBeFocused();
 });
 
 test('overlay click closes the drawer', async ({ page }) => {
