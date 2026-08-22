@@ -904,6 +904,8 @@ main.blogs-panel {
 }
 
 .topics-nav a.topic-core,
+.topics-nav a.topic-shrimp,
+.topics-nav a.topic-planted,
 .topics-nav a.topic-diy,
 .topics-nav a.topic-algae,
 .topics-nav a.topic-product,
@@ -914,6 +916,8 @@ main.blogs-panel {
   border-color: color-mix(in srgb, var(--accent) 46%, transparent);
 }
 .topics-nav a.topic-core:hover,
+.topics-nav a.topic-shrimp:hover,
+.topics-nav a.topic-planted:hover,
 .topics-nav a.topic-diy:hover,
 .topics-nav a.topic-algae:hover,
 .topics-nav a.topic-product:hover,
@@ -1048,6 +1052,8 @@ main.blogs-panel {
   --accent:#8fe3ff; /* fallback */
 }
 .topic-core{ --accent:#3CAEA3; }
+.topic-shrimp{ --accent:#E8788F; }
+.topic-planted{ --accent:#6FBF73; }
 .topic-diy{ --accent:#4DA3FF; }
 .topic-algae{ --accent:#C94C4C; }
 .topic-product{ --accent:#FF8C42; }
