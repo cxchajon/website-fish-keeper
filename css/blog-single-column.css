@@ -1,0 +1,17 @@
+/* Shared modifier for open articles that use one continuous editorial column. */
+body.blog-single-column main.article-layout {
+  width: min(100%, var(--article-body-max));
+  padding-inline: 20px;
+}
+
+body.blog-single-column .article-layout > article,
+body.blog-single-column .article-header,
+body.blog-single-column .blog-body {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+body.blog-single-column .article-header {
+  text-align: left;
+}
