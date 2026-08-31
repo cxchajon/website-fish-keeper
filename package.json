@@ -9,6 +9,7 @@
     "pw:install": "playwright install --with-deps",
     "guard:live": "node scripts/guard-live-files.js",
     "guard:blog-ads": "node scripts/guard-blog-ads.mjs",
+    "audit:controls": "node scripts/check-control-characters.mjs",
     "test": "npm run guard:live && npm run guard:blog-ads && playwright test",
     "test:stocking:extended": "node stocking-tests-extended/runner/index.js",
     "test:e2e": "playwright test --config=playwright.e2e.config.ts",

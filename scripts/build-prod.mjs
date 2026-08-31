@@ -1,5 +1,6 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import { assertNoUnintendedControlCharacters } from './check-control-characters.mjs';
 
 const ROOT = process.cwd();
 
@@ -44,6 +45,8 @@ async function ensurePrototypeExcluded() {
 }
 
 async function buildAll() {
+  await assertNoUnintendedControlCharacters(ROOT);
+
   const created = [];
   for (const { input, output } of CSS_TARGETS) {
     const absIn = path.resolve(ROOT, input);
