@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:desktop-layer": "node scripts/build-desktop-layer.mjs",
+    "bump:bundle-cache": "node scripts/bump-bundle-cache.mjs",
     "lint:css": "stylelint '**/*.css'",
     "precommit": "npm run lint:css",
     "pw:install": "playwright install --with-deps",
