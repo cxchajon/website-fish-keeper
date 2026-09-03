@@ -3508,6 +3508,10 @@ body[data-ad-qa="true"] .ttg-ad-slot::before,
     font-size: clamp(19px, 1.4vw, 24px);
   }
 
+  body.page-background #global-nav {
+    background: rgb(10, 14, 22);
+  }
+
   .wrap,
   .container {
     box-sizing: border-box;
