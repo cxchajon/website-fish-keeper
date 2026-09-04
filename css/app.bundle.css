@@ -11847,6 +11847,62 @@ a {
   .university-shell li {
     max-width: var(--ttg-measure);
   }
+
+  .page-background .hero--prototype {
+    padding-block: clamp(48px, 7vw, 112px) clamp(32px, 4vw, 64px);
+  }
+
+  .page-background .hero-copy {
+    max-width: var(--ttg-measure-wide);
+  }
+
+  .page-background .hero-lede {
+    max-width: 60ch;
+    font-size: clamp(1.05rem, 1.2vw, 1.3rem);
+    line-height: 1.55;
+  }
+
+  .page-background .tools-title {
+    margin-top: clamp(32px, 5vw, 72px);
+    margin-bottom: clamp(18px, 2vw, 30px);
+  }
+
+  .page-background .tools {
+    gap: var(--ttg-grid-gap);
+    align-items: stretch;
+  }
+
+  .page-background .tool-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin-bottom: 0;
+    padding: clamp(22px, 2.4vw, 34px);
+  }
+
+  .page-background .tool-card .tool-card-cta {
+    margin-top: auto;
+  }
+
+  .page-background .proto-section {
+    padding-block: var(--ttg-section-y);
+  }
+
+  .page-background .proto-section:nth-of-type(even) {
+    padding-inline: clamp(24px, 3vw, 48px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--ttg-card-radius);
+    background: rgba(7, 28, 54, 0.18);
+  }
+
+  .page-background #beginner-faq {
+    margin-top: var(--ttg-section-y);
+    padding-bottom: var(--ttg-section-y);
+  }
+
+  .page-background .deep-blurb {
+    padding-block: var(--ttg-section-y);
+  }
 }
 
 @media (min-width: 1200px) {
@@ -11869,6 +11925,17 @@ a {
     width: 100%;
     justify-content: space-between;
     gap: clamp(12px, 1.8vw, 36px);
+  }
+}
+
+@media (min-width: 1100px) {
+  .page-background .tools {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .page-background #beginner-faq .faq-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--ttg-grid-gap);
   }
 }
 
