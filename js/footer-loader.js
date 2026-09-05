@@ -46,6 +46,20 @@
     }
   };
 
+  const moveLegalLinksIntoFooter = () => {
+    const footer = document.querySelector('.site-footer');
+    const legalLinks = document.querySelector(LEGAL_LINKS_SELECTOR);
+    const affiliateNote = [...(footer?.querySelectorAll('.affiliate-note') || [])].find(
+      (note) => !note.closest('.footer-care-notice')
+    );
+
+    if (!footer || !legalLinks || !affiliateNote) {
+      return;
+    }
+
+    affiliateNote.insertAdjacentElement('afterend', legalLinks);
+  };
+
   const injectFooter = async () => {
     const host = document.getElementById(FOOTER_HOST_ID);
     if (!host) {
@@ -62,6 +76,7 @@
       const html = await response.text();
       const cleaned = sanitizeHtml(html);
       host.outerHTML = cleaned;
+      moveLegalLinksIntoFooter();
     } catch (error) {
       console.error('[Footer] load failed:', error);
     }
