@@ -1,0 +1,39 @@
+.ttg-author-byline {
+  max-width: 72ch;
+  margin: 1.25rem 0 1.75rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid rgba(142, 197, 221, 0.26);
+  border-radius: 12px;
+  background: rgba(15, 35, 55, 0.5);
+  color: inherit;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.ttg-author-byline p {
+  margin: 0;
+}
+
+.ttg-author-byline p + p {
+  margin-top: 0.5rem;
+}
+
+.ttg-author-byline__name {
+  font-weight: 700;
+}
+
+.ttg-author-byline__meta {
+  font-size: 0.85rem;
+  opacity: 0.86;
+}
+
+.ttg-author-byline a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.ttg-author-byline a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
