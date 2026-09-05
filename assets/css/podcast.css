@@ -627,3 +627,212 @@ body.podcast-page {
   color: var(--ad-label-color);
   font-weight: 600;
 }
+
+/* Listen & Read archive */
+.podcast-archive {
+  padding-bottom: clamp(28px, 6vw, 44px);
+}
+
+.podcast-archive__intro {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.podcast-archive__title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.podcast-archive__brand-mark {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24);
+}
+
+.podcast-archive__title-row h2 {
+  margin: 0;
+  font-size: clamp(1.55rem, 3vw, 2rem);
+}
+
+.podcast-archive__intro > p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--podcast-muted);
+  line-height: 1.65;
+}
+
+.podcast-archive__grid {
+  display: grid;
+  gap: 18px;
+}
+
+.podcast-archive-card {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.92fr) minmax(0, 1.08fr);
+  overflow: hidden;
+  background: var(--podcast-panel);
+  border: 1px solid var(--podcast-border);
+  border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(4, 16, 28, 0.24);
+}
+
+.podcast-archive-card__image {
+  position: relative;
+  display: block;
+  min-height: 246px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.podcast-archive-card__image img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  transition: transform 180ms ease;
+}
+
+.podcast-archive-card__image > span {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  left: 14px;
+  width: fit-content;
+  max-width: calc(100% - 28px);
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 999px;
+  background: rgba(6, 20, 39, 0.88);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.podcast-archive-card__image:hover img,
+.podcast-archive-card__image:focus-visible img {
+  transform: scale(1.035);
+}
+
+.podcast-archive-card__content {
+  display: grid;
+  align-content: center;
+  gap: 11px;
+  padding: clamp(20px, 3.2vw, 30px);
+}
+
+.podcast-archive-card__content p,
+.podcast-archive-card__content h3 {
+  margin: 0;
+}
+
+.podcast-archive-card__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--podcast-accent) !important;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+}
+
+.podcast-archive-card__guide-label {
+  color: var(--podcast-muted) !important;
+  font-size: 0.83rem;
+  line-height: 1.4;
+}
+
+.podcast-archive-card__content h3 {
+  color: var(--podcast-ink);
+  font-size: clamp(1.16rem, 2.2vw, 1.42rem);
+  line-height: 1.25;
+}
+
+.podcast-archive-card__content > p:not(.podcast-archive-card__eyebrow):not(.podcast-archive-card__guide-label) {
+  color: rgba(233, 242, 255, 0.9);
+  line-height: 1.58;
+}
+
+.podcast-archive-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-top: 4px;
+}
+
+.podcast-archive-card__guide,
+.podcast-archive-card__spotify {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.podcast-archive-card__guide {
+  color: #dffcff;
+  border-bottom: 1px solid var(--podcast-accent);
+}
+
+.podcast-archive-card__spotify {
+  padding: 10px 15px;
+  border: 1px solid #71f3a0;
+  border-radius: 999px;
+  background: #1db954;
+  color: #061427;
+}
+
+.podcast-archive-card__spotify:hover {
+  background: #71f3a0;
+  color: #061427;
+}
+
+.podcast-archive-card__image:focus-visible,
+.podcast-archive-card__guide:focus-visible,
+.podcast-archive-card__spotify:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (max-width: 700px) {
+  .podcast-archive-card {
+    grid-template-columns: 1fr;
+  }
+
+  .podcast-archive-card__image {
+    min-height: 210px;
+  }
+
+  .podcast-archive-card__content {
+    align-content: start;
+  }
+}
+
+@media (max-width: 480px) {
+  .podcast-archive__brand-mark {
+    width: 46px;
+    height: 46px;
+    flex-basis: 46px;
+    border-radius: 12px;
+  }
+
+  .podcast-archive-card__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .podcast-archive-card__guide,
+  .podcast-archive-card__spotify {
+    width: fit-content;
+  }
+}
