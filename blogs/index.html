@@ -35,6 +35,104 @@
   <noscript>
     <link rel="stylesheet" href="/css/blogs-bundle.min.css?v=2026-09-03-desktop-2">
   </noscript>
+  <style>
+    .blogs-podcast-feature {
+      margin: 1.5rem 0 2rem;
+      overflow: hidden;
+      border: 1px solid rgba(125, 238, 207, 0.28);
+      border-radius: 20px;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(29, 185, 84, 0.22), transparent 38%),
+        linear-gradient(135deg, #123c39, #1e2d38);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.25);
+    }
+
+    .blogs-podcast-feature__inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1.5rem;
+      align-items: center;
+      padding: clamp(1.35rem, 4vw, 2.25rem);
+    }
+
+    .blogs-podcast-feature__eyebrow {
+      margin: 0 0 0.45rem;
+      color: #a0f4de;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .blogs-podcast-feature h2 {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(1.4rem, 3vw, 2.05rem);
+      line-height: 1.15;
+    }
+
+    .blogs-podcast-feature__copy {
+      max-width: 68ch;
+      margin: 0.85rem 0 1.25rem;
+      color: rgba(242, 255, 251, 0.88);
+      line-height: 1.65;
+    }
+
+    .blogs-podcast-feature__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+
+    .blogs-podcast-feature__button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0.7rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      color: #fff;
+      font-weight: 750;
+      text-decoration: none;
+    }
+
+    .blogs-podcast-feature__button:hover,
+    .blogs-podcast-feature__button:focus-visible {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+      text-decoration: none;
+    }
+
+    .blogs-podcast-feature__button--spotify {
+      border-color: #1db954;
+      background: #1db954;
+      color: #062f17;
+    }
+
+    .blogs-podcast-feature__button--spotify:hover,
+    .blogs-podcast-feature__button--spotify:focus-visible {
+      background: #20c85a;
+      color: #062f17;
+    }
+
+    .blogs-podcast-feature__icon {
+      display: grid;
+      width: clamp(78px, 12vw, 128px);
+      aspect-ratio: 1;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.16);
+      color: #a0f4de;
+      font-size: clamp(2.6rem, 6vw, 4.5rem);
+    }
+
+    @media (max-width: 620px) {
+      .blogs-podcast-feature__inner { grid-template-columns: 1fr; }
+      .blogs-podcast-feature__icon { display: none; }
+    }
+  </style>
   <link rel="preconnect" href="https://fundingchoicesmessages.google.com" crossorigin>
   <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
   <script defer src="/js/nav.js?v=1.1.0"></script>
@@ -369,6 +467,20 @@
       "datePublished": "2026-03-10"
     },
     {
+      "@type": "PodcastSeries",
+      "@id": "https://thetankguide.com/podcast/#series",
+      "name": "Tank Guide Life",
+      "description": "A freshwater aquarium podcast from FishKeepingLifeCo, with practical conversations about aquarium setup, water chemistry, planted tanks, filtration, stocking, and fish welfare.",
+      "url": "https://thetankguide.com/podcast/",
+      "inLanguage": "en-US",
+      "publisher": {
+        "@id": "https://thetankguide.com/#fishkeepinglifeco"
+      },
+      "sameAs": [
+        "https://open.spotify.com/show/60ZmDdZra2qrFi6lHMS6aQ"
+      ]
+    },
+    {
       "@type": "FAQPage",
       "@id": "https://thetankguide.com/blogs/#faq",
       "url": "https://thetankguide.com/blogs/#faq",
@@ -402,6 +514,14 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "Visit our University resources for water chemistry fundamentals or browse the Media library for long-form guides and interviews."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does The Tank Guide have an aquarium podcast?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Tank Guide Life is the freshwater aquarium podcast from FishKeepingLifeCo. Listen on The Tank Guide podcast page or on Spotify for practical discussions about aquarium setup, water chemistry, planted tanks, filtration, stocking, and fish welfare."
           }
         }
       ]
@@ -1320,6 +1440,21 @@
         </article>
       </div>
     </section>
+    <section class="blogs-podcast-feature" aria-labelledby="blogs-podcast-heading">
+      <div class="blogs-podcast-feature__inner">
+        <div>
+          <p class="blogs-podcast-feature__eyebrow">Tank Guide Life by FishKeepingLifeCo</p>
+          <h2 id="blogs-podcast-heading">Set Up Smarter with the Tank Guide Life Podcast</h2>
+          <p class="blogs-podcast-feature__copy">Starting a fish tank, learning the nitrogen cycle, choosing aquarium plants, or troubleshooting water quality? Tank Guide Life brings practical, ecosystem-first aquarium conversations into an easy-to-follow listen while you build and care for your tank.</p>
+          <div class="blogs-podcast-feature__actions">
+            <a class="blogs-podcast-feature__button" href="/podcast/">Explore the podcast on The Tank Guide</a>
+            <a class="blogs-podcast-feature__button blogs-podcast-feature__button--spotify" href="https://open.spotify.com/show/60ZmDdZra2qrFi6lHMS6aQ" target="_blank" rel="noopener noreferrer">Listen on Spotify <span aria-hidden="true">&rarr;</span></a>
+          </div>
+        </div>
+        <div class="blogs-podcast-feature__icon" aria-hidden="true">&#127911;</div>
+      </div>
+    </section>
+
     <section class="seo-intro">
       <div class="wrap">
         <p>Ready to level up your fishkeeping? The Tank Guide blog offers science-backed guides on planted tanks, aquarium setup, and beginner education.</p>
@@ -1340,6 +1475,10 @@
           <div>
             <dt>Where can I go deeper after reading a blog?</dt>
             <dd>Visit our University resources for water chemistry fundamentals or browse the Media library for long-form guides and interviews.</dd>
+          </div>
+          <div>
+            <dt>Does The Tank Guide have an aquarium podcast?</dt>
+            <dd>Yes. <a href="/podcast/">Tank Guide Life</a> is the freshwater aquarium podcast from FishKeepingLifeCo. Listen on <a href="/podcast/">The Tank Guide podcast page</a> or <a href="https://open.spotify.com/show/60ZmDdZra2qrFi6lHMS6aQ" target="_blank" rel="noopener noreferrer">listen on Spotify</a> for practical discussions about aquarium setup, water chemistry, planted tanks, filtration, stocking, and fish welfare.</dd>
           </div>
         </dl>
       </div>
