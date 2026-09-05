@@ -242,7 +242,7 @@
           "name": "What happens after the 24-hour challenge?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Perform a polishing water change, match temperature, and acclimate fish slowly while continuing to log readings."
+            "text": "In a fishless aquarium, perform a final large water change as needed to reduce accumulated nitrate, stabilize temperature, and confirm ammonia and nitrite remain at 0 ppm. Then add livestock slowly while continuing to test and log readings. Do not run the ammonia challenge in an aquarium containing fish or invertebrates."
           }
         },
         {
@@ -259,15 +259,15 @@
       "@type": "HowTo",
       "@id": "https://thetankguide.com/cycling-coach/#howto",
       "name": "How to Do the 24-Hour Aquarium Cycle Test",
-      "description": "Confirm your aquarium is ready for fish by completing the Cycling Coach 24-hour challenge steps.",
+      "description": "In an empty, fishless aquarium, use the Cycling Coach 24-hour challenge to confirm ammonia and nitrite can be processed within a day.",
       "step": [
         {
           "@type": "HowToStep",
           "position": 1,
-          "name": "Dose ammonia to 2 ppm",
+          "name": "Dose ammonia in an empty, fishless aquarium",
           "itemListElement": {
             "@type": "HowToDirection",
-            "text": "Dose pure ammonia (or equivalent food) to 2 ppm and log the start time."
+            "text": "In an empty, fishless aquarium, dose pure ammonia or an appropriate ammonia source to about 2 ppm and log the start time."
           }
         },
         {
@@ -332,12 +332,6 @@
         <p class="pub-credit">
           By <strong>The Tank Guide</strong>, from <strong>FishKeepingLifeCo</strong>.
         </p>
-
-        <aside class="ttg-author-byline" aria-label="Author and update information">
-          <p class="ttg-author-byline__name">Written by FishKeepingLifeCo</p>
-          <p>FishKeepingLifeCo is the owner and publisher of The Tank Guide, creating beginner-friendly freshwater aquarium education shaped by real fishkeeping experience, careful research, and a welfare-first approach.</p>
-          <p class="ttg-author-byline__meta"><a href="/about.html">About FishKeepingLifeCo and The Tank Guide</a> · <time datetime="2026-09-05">Last updated: September 5, 2026</time></p>
-        </aside>
 
         <p>
           The Tank Guide&apos;s Cycling Coach guides you through that nitrogen cycle with structured inputs, clear, easy-to-understand summaries, and a science-backed readiness check.
@@ -436,7 +430,9 @@
                 <option value="fishless" selected>Fishless</option>
                 <option value="fish-in">Fish-in</option>
               </select>
-              <div id="tt-method" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Fishless cycling means adding ammonia to an empty tank to grow bacteria before adding fish. Fish-in cycling means growing bacteria while fish are already in the tank and requires more frequent testing and water changes.</div>
+              <p class="metric-why">Fishless cycling grows beneficial bacteria in an empty aquarium before fish are introduced. It uses an ammonia source only when no livestock is in the tank.</p>
+              <p class="metric-why">Fish-in cycling is used only when fish are already present in an uncycled aquarium. It carries more risk because ammonia and nitrite can harm livestock, so it requires frequent testing, careful water changes when readings rise, dechlorinated water, and close observation. Never add an ammonia dose to an aquarium that contains fish or invertebrates.</p>
+              <div id="tt-method" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Fishless cycling grows beneficial bacteria in an empty aquarium before fish are introduced. It uses an ammonia source only when no livestock is in the tank. Fish-in cycling is used only when fish are already present in an uncycled aquarium. It carries more risk because ammonia and nitrite can harm livestock, so it requires frequent testing, careful water changes when readings rise, dechlorinated water, and close observation. Never add an ammonia dose to an aquarium that contains fish or invertebrates.</div>
             </div>
           </div>
           <div class="form-actions cc-actions">
@@ -502,6 +498,7 @@
         <div id="tt-challenge" class="ttg-tooltip" data-tooltip-panel role="tooltip" hidden>Shows your filter can process two ppm ammonia to zero ammonia and zero nitrite in twenty-four hours.</div>
         <div class="challenge-card">
           <p class="challenge-instructions" id="challengeInstruction">Dose to about 2 ppm, wait 24 hours, then enter the readings below to confirm your cycle is complete.</p>
+          <p class="challenge-instructions"><strong>Important:</strong> This challenge is for an empty, fishless aquarium only. Do not dose ammonia to 2 ppm or run this test while fish, shrimp, snails, or other livestock are in the aquarium.</p>
           <button type="button" class="btn" id="challenge-start">Start 24-Hour Challenge</button>
           <div class="challenge-grid" id="challenge-form" hidden>
             <div class="field">
@@ -534,7 +531,7 @@
             <ul class="actions-list" id="challenge-list"></ul>
           </div>
           <ol class="challenge-steps">
-            <li>Dose pure ammonia (or equivalent food) to 2 ppm and log the start time.</li>
+            <li>In an empty, fishless aquarium, dose pure ammonia or an appropriate ammonia source to about 2 ppm and log the start time.</li>
             <li>Optionally check ammonia and nitrite at the 12-hour midpoint to see if levels are dropping.</li>
             <li>Retest at 24 hours. Both ammonia and nitrite must read 0 ppm; nitrate should climb.</li>
             <li>Perform a final large water change and stabilize temperature before adding fish.</li>
@@ -599,6 +596,12 @@
         <p>
           For most aquariums, fishless cycling takes about 4–6 weeks and cycling with fish takes about 6–8 weeks. Temperature, pH, and bottled bacteria products can speed or slow that timeline, so keep testing and logging until ammonia and nitrite stay at 0 ppm for at least 24 hours.
         </p>
+        <section class="cc-education-cta" aria-labelledby="cycling-limits-heading">
+          <h3 id="cycling-limits-heading">Important limits and fish-safety notes</h3>
+          <p>Cycling Coach turns common water-test readings into practical education, but it cannot diagnose fish illness, measure your aquarium’s oxygen level, verify test-kit accuracy, or see what is happening inside your specific tank. Use its guidance alongside your own test results, product-label directions, and careful observation of your livestock.</p>
+          <p>A result that suggests progress does not guarantee that an aquarium is ready for fish. Before stocking, confirm that ammonia and nitrite are both 0 ppm, temperature is stable, and the aquarium can process waste without a spike. Add livestock gradually so the biological filter has time to adjust.</p>
+          <p>If fish are gasping, lying over, showing severe distress, or experiencing a sudden water-quality emergency, treat the situation as urgent. Test the water, increase safe aeration where appropriate, follow the instructions for any product you use, and seek help from an aquatic veterinarian or qualified professional for illness, injury, persistent distress, or uncertainty about treatment.</p>
+        </section>
         <div class="how-links" aria-label="Further reading links">
           <p><strong>Further Reading:</strong></p>
           <ul>
@@ -659,7 +662,7 @@
           <details class="cc-accordion">
             <summary>What happens after the 24-hour challenge?</summary>
             <div class="cc-accordion-body">
-              <p>Perform a final large water change, match temperature, and acclimate fish slowly while continuing to log readings.</p>
+              <p>In a fishless aquarium, perform a final large water change as needed to reduce accumulated nitrate, stabilize temperature, and confirm ammonia and nitrite remain at 0 ppm. Then add livestock slowly while continuing to test and log readings. Do not run the ammonia challenge in an aquarium containing fish or invertebrates.</p>
             </div>
           </details>
           <details class="cc-accordion">
@@ -671,8 +674,14 @@
         </div>
       </section>
 
+      <aside class="ttg-author-byline" aria-label="Author and update information">
+        <p class="ttg-author-byline__name">Written by FishKeepingLifeCo</p>
+        <p>FishKeepingLifeCo is the owner and publisher of The Tank Guide, creating beginner-friendly freshwater aquarium education shaped by real fishkeeping experience, careful research, and a welfare-first approach.</p>
+        <p class="ttg-author-byline__meta"><a href="/about.html">About FishKeepingLifeCo and The Tank Guide</a> · <time datetime="2026-09-05">Last updated: September 5, 2026</time></p>
+      </aside>
+
     </div>
-    <p class="last-updated">Last updated: November 10, 2025</p>
+    <p class="last-updated">Last updated: September 2026</p>
   </main>
 
   <!-- BOTTOM AD SLOT: AdSense-Ready (Currently House Ad) -->
