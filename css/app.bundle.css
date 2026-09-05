@@ -924,6 +924,19 @@ select.control {
   overflow: hidden;
 }
 
+/* Keep Stocking Advisor's native option menus legible in the dark interface. */
+#stocking-page select.control,
+#stocking-page select.control option {
+  color-scheme: dark;
+  background-color: #142033;
+  color: #eef3ff;
+}
+
+#stocking-page select.control option:checked {
+  background-color: #176b9b;
+  color: #ffffff;
+}
+
 /* High-contrast focus */
 .control:focus {
   border-color: var(--accent, #30e1a1);

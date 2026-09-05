@@ -50,7 +50,7 @@
         media="print"
         onload="this.media='all'">
 
-  <link rel="stylesheet" href="/css/app.bundle.css?v=2026-09-03-desktop-2">
+  <link rel="stylesheet" href="/css/app.bundle.css?v=2026-09-05-stock-select">
 
 <script defer src="/js/nav.js?v=1.1.0"></script>
   <script type="application/ld+json">
@@ -220,7 +220,7 @@
           "name": "How accurate is the bioload calculation?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Bioload estimates are intentionally conservative to keep beginners safe. They’re most accurate with common community fish. Results will vary based on your tank’s maturity, plant growth, and filter performance."
+            "text": "Bioload estimates are intentionally conservative to keep beginners safe. They’re most accurate with common community fish. Results will vary based on your tank’s maturity, plant growth, and filter performance. Treat the result as a cautious starting point and verify it with regular ammonia, nitrite, nitrate, and behavior checks after any stocking change."
           }
         },
         {
@@ -705,7 +705,7 @@
           <li><strong>Add your filter.</strong> Select a model or type in a custom gallons-per-hour value so the tool can estimate water circulation.</li>
           <li><strong>Enter current and planned fish.</strong> Search for species, set quantities, and keep the list updated as your ideas change.</li>
           <li><strong>Review the cards.</strong> Check the bioload meter, compatibility banner, and Environmental Recommendations for temperature, pH, and hardness overlap.</li>
-          <li><strong>Tune your plan.</strong> Adjust fish choices, water chemistry targets, or equipment until alerts clear and the ranges fall into the shared safe zone.</li>
+          <li><strong>Use the result as a planning screen.</strong> Adjust fish choices, equipment, or water targets when alerts appear, then verify adult size, behavior, tank footprint, and your own water tests before buying or adding livestock.</li>
         </ol>
 
         <h2>The Science Behind the Recommendations</h2>
@@ -725,6 +725,11 @@
           Compatibility and behavior
         </h3>
         <p>The Advisor warns about known problem pairs—fin nippers with long fins, shrimp-unsafe hunters with inverts, or aggressive fish with peaceful schooling species—so you can fix issues before they’re in the water.</p>
+
+        <h2>Important limits before you stock</h2>
+        <p>The Stocking Advisor is a conservative planning tool, not a guarantee that a fish community will thrive. A result can help you spot likely bioload, compatibility, and water-parameter problems early, but it cannot see your aquarium’s true biological maturity, maintenance routine, plant growth, oxygen level, individual fish behavior, or the condition of livestock at purchase.</p>
+        <p>Before adding fish or invertebrates, confirm each species’ adult size, minimum tank footprint, social-group needs, temperament, and long-term care requirements. Test your actual water, make sure ammonia and nitrite are both 0 ppm, introduce livestock gradually, and pause if fish show stress, illness, aggression, or breathing difficulty.</p>
+        <p>Do not use a cleared result to justify overcrowding, mixing fish with incompatible welfare needs, or adding livestock to an uncycled aquarium.</p>
 
         <p>
           When your plan looks good, head to the
@@ -898,7 +903,7 @@
                 aria-labelledby="faq-question-accuracy"
                 hidden
               >
-                <p>Bioload estimates are intentionally conservative to keep beginners safe. They’re most accurate with common community fish. Results will vary based on your tank’s maturity, plant growth, and filter performance.</p>
+                <p>Bioload estimates are intentionally conservative to keep beginners safe. They’re most accurate with common community fish. Results will vary based on your tank’s maturity, plant growth, and filter performance. Treat the result as a cautious starting point and verify it with regular ammonia, nitrite, nitrate, and behavior checks after any stocking change.</p>
               </div>
             </details>
             <details class="faq-item" id="faq-item-bioload-rule">
@@ -1031,6 +1036,7 @@
   <script src="/js/stocking-advisor/info-tooltip.js?v=1.5.2" defer></script>
   <script src="/js/stocking-advisor/info-popover-legacy.js?v=1.5.2" defer></script>
   <script src="/js/stocking-advisor/init.js?v=1.5.2" defer></script>
+  <script src="/js/stocking-advisor/faq-accordion.js?v=1.5.2" defer></script>
 
 <!-- === TTG Ad Slot View Tracking START === -->
 <script src="/js/ad-slot-view-tracking.js?v=1.5.2" defer></script>
