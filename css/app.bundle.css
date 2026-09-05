@@ -2942,6 +2942,7 @@ ul,ol{ margin: var(--space-3) 0 var(--space-3) 1.25rem; }
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
+  align-items: start;
 }
 
 @media (min-width: 768px) {
