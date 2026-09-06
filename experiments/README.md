@@ -1,1 +1,0 @@
-- Homepage Prototype — retired Nov 2025 after production rollout.
