@@ -144,7 +144,7 @@
           "name": "My filter says it's rated for my tank size — why do people recommend more?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Manufacturer \"gallon ratings\" are often tied to frequent filter media replacements and simplified assumptions about bioload. In real aquariums, flow naturally drops over time and fish produce more waste than those ratings account for. We recommend slightly more filtration because having a buffer helps keep water parameters stable — and stability is always better for fish health than running at the edge."
+            "text": "Manufacturer \"gallon ratings\" are often tied to frequent filter media replacements and simplified assumptions about bioload. In real aquariums, flow naturally drops over time and fish produce more waste than those ratings account for. A modest filtration buffer can help support stable water parameters instead of running at the edge."
           }
         },
         {
@@ -216,7 +216,7 @@
           "name": "Should I upgrade my filter media?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Stock cartridges work, but custom media often performs better long-term. Cut-to-fit sponges support larger bacterial colonies, Purigen polishes water crystal-clear, and bio-rings like Matrix or BioMax add biological capacity. Upgrade when you want more stability or clearer water between maintenance."
+            "text": "Stock cartridges work, but custom media can offer more flexibility long-term. Cut-to-fit sponges support larger bacterial colonies, Purigen can help remove dissolved organic compounds, and bio-rings like Matrix or BioMax add biological capacity. Choose media based on your filter, maintenance routine, and aquarium needs."
           }
         },
         {
@@ -224,7 +224,7 @@
           "name": "Do I really need water conditioner for every water change?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. Tap water contains chlorine or chloramine that kills beneficial bacteria and harms fish. Even small water changes need conditioning. Prime is highly concentrated—just 5ml treats 50 gallons—making it cost-effective and safe for daily use."
+            "text": "Treat tap water for chlorine or chloramine according to the conditioner label before it enters the aquarium. Measure for the amount of new water you are adding and confirm the product fits your aquarium’s needs."
           }
         },
         {
@@ -232,7 +232,7 @@
           "name": "What water conditioner should I use?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Seachem Prime. It's the most concentrated, detoxifies ammonia/chlorine/chloramine, and is safe for fish and beneficial bacteria."
+            "text": "Seachem Prime is a concentrated water conditioner that treats chlorine and chloramine when used according to the product label. Measure for your actual water volume and confirm that it fits your aquarium’s needs."
           }
         }
       ]
@@ -322,7 +322,7 @@
             <span class="tier-btn__label">5-10 Gallon</span>
             <span class="tier-btn__desc">Nano &amp; desktop</span>
           </button>
-          <button class="tier-btn" data-tier="tier_20" type="button">
+          <button class="tier-btn tier-btn--selected" data-tier="tier_20" type="button" aria-selected="true">
             <span class="tier-btn__label">20 Gallon</span>
             <span class="tier-btn__desc">Beginner favorite</span>
           </button>
@@ -359,8 +359,8 @@
       </a>
     </div>
 
-    <!-- Bundle Display (hidden until selection) -->
-    <section id="gear-bundle" class="gear-bundle" hidden aria-live="polite">
+    <!-- Default 20-gallon bundle is present in the initial HTML; JavaScript enhances other sizes. -->
+    <section id="gear-bundle" class="gear-bundle" aria-live="polite">
       <header class="bundle-header">
         <h2 class="bundle-title">Your <span id="bundle-tier-name">20 Gallon</span> Gear Bundle</h2>
         <p class="bundle-subtitle">Everything you need to run this tank reliably</p>
@@ -374,11 +374,11 @@
             <span class="bundle-card__spec" id="heater-spec"></span>
           </header>
           <div class="bundle-card__product">
-            <p class="bundle-card__name" id="heater-name">Loading...</p>
-            <p class="bundle-card__note" id="heater-note"></p>
+            <p class="bundle-card__name" id="heater-name">Hitop 100W Adjustable Aquarium Heater</p>
+            <p class="bundle-card__note" id="heater-note">An adjustable submersible heater listed for 10–30 gallons. Its 100W rating is a practical starting point for many 20-gallon aquariums; verify the temperature with a separate thermometer and follow the product’s water-level instructions.</p>
           </div>
           <div class="bundle-card__actions">
-            <a id="heater-amazon" class="btn btn-amazon" href="/gear-products.html" target="_blank" rel="sponsored noopener">
+            <a id="heater-amazon" class="btn btn-amazon" href="https://amzn.to/4nXCmT2" target="_blank" rel="sponsored noopener" aria-label="View the Hitop 100W adjustable aquarium heater on Amazon">
               Amazon
             </a>
             <a id="heater-hygger" class="btn btn-hygger" href="https://www.hygger-online.com/?ref=FKLC" target="_blank" rel="sponsored noopener" hidden>
@@ -399,7 +399,7 @@
           </header>
           <div class="bundle-card__product">
             <p class="bundle-card__name">Inkbird ITC-306A WiFi Temperature Controller</p>
-            <p class="bundle-card__note">Dual-probe WiFi controller with phone alerts. Auto-shutoff prevents heater malfunctions from cooking your fish.</p>
+            <p class="bundle-card__note">A temperature controller can provide an added safeguard by managing heater operation and alerting you to temperature changes. Set it up carefully and verify its readings with a separate thermometer.</p>
           </div>
           <div class="bundle-card__actions">
             <a class="btn btn-amazon" href="https://www.amazon.com/dp/B07X1JT372?&linkCode=ll1&tag=fishkeepingli-20&linkId=537e658cc93e902ad68106f1985c133d&language=en_US&ref_=as_li_ss_tl" target="_blank" rel="sponsored noopener">
@@ -429,11 +429,11 @@
           </header>
           <p class="bundle-card__note">Not sure <a href="/blogs/aquarium-filtration-for-beginners.html">which filter type actually fits your tank</a>? Use the filtration guide before comparing the options here.</p>
           <div class="bundle-card__product">
-            <p class="bundle-card__name" id="filter-name">Loading...</p>
-            <p class="bundle-card__note" id="filter-note"></p>
+            <p class="bundle-card__name" id="filter-name">Fluval AC30 Power Filter</p>
+            <p class="bundle-card__note" id="filter-note">A hang-on-back power filter listed for 10–30 gallon aquariums. It suits many 20-gallon setups; match the flow to your fish and redirect or reduce it for slow-swimming species.</p>
           </div>
           <div class="bundle-card__actions">
-            <a id="filter-amazon" class="btn btn-amazon" href="/gear-products.html" target="_blank" rel="sponsored noopener">
+            <a id="filter-amazon" class="btn btn-amazon" href="https://amzn.to/4n9MXK9" target="_blank" rel="sponsored noopener" aria-label="View the Fluval AC30 power filter on Amazon">
               Amazon
             </a>
             <a id="filter-hygger" class="btn btn-hygger" href="https://www.hygger-online.com/?ref=FKLC" target="_blank" rel="sponsored noopener" hidden>
@@ -452,13 +452,13 @@
             <h3 class="bundle-card__title">Filter Media & Boosters</h3>
             <span class="bundle-card__spec">13+ options</span>
           </header>
-          <p class="bundle-card__note">Upgrade your filter with cut-to-fit sponges, bio-rings, Purigen, Matrix, and multi-layer pads. All these products enhance your existing filter's performance.</p>
+          <p class="bundle-card__note">These options can support mechanical, biological, or chemical filtration depending on your aquarium’s needs and how the media is maintained.</p>
 
           <!-- Hardcoded Filter Boosters (from original card) -->
           <div class="filter-boosters-inline">
             <article class="mini-product-card">
               <h4 class="mini-product-card__title">Hygger 5-Layer Filter Media Pad</h4>
-              <p class="mini-product-card__note">12" x 68" multi-layer pad. Cut to fit any filter. Polishes cloudy water.</p>
+              <p class="mini-product-card__note">12" x 68" multi-layer pad. Cut it to fit a compatible filter and maintain it as directed.</p>
               <div class="mini-product-card__actions">
                 <a href="https://www.amazon.com/hygger-Aquarium-Multi-Layer-Polishing-Canister/dp/B0DRSFZQFZ?crid=2JAZUVY7VYQAG&dib=eyJ2IjoiMSJ9.KrxilooqFvLICoaKWCKnC64fOyVh7JTImcGYpz24mM657F_ufbmYWaMRFtZDOajwH6PbEezneE1GrC8Pd6sNUf-orqNc4LJYc_ceJ1Mc-cHrvZaeKerZfiuPECMhv28b6MS6rtjcx-rUDy6S-2lbaucGKeLrTgkqIc4SzAoPwM5ztbMh62VX2r3PnmWdTuCdeRgEx_p1y95u0RK99_HYMPCVc_bkgoF5MLYXeC2JxSHuO7GO3l5o61Gtsi_YAof5qbQhXiUOpKmv4KiXfL81CTf4nheg25lOC2kG5nWCj-4.vQSHEeLVjX6CzXL0gwVYztxCP-MkRjQpT5VgLZdPDII&dib_tag=se&keywords=filter%2Bmedia%2Bfor%2Bfish%2Btank&qid=1766037502&sprefix=filter%2Bmedia%2Caps%2C140&sr=8-5-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&th=1&linkCode=ll1&tag=thetankguide-20&linkId=67e7dc9cd79a4ab09c25e380d33af7cd&language=en_US&ref_=as_li_ss_tl" target="_blank" rel="sponsored noopener" class="mini-product-card__link">View on Amazon</a>
                 <a href="https://www.hygger-online.com/?ref=FKLC" target="_blank" rel="sponsored noopener" class="mini-product-card__link mini-product-card__link--hygger">Hygger</a>
@@ -467,13 +467,13 @@
 
             <article class="mini-product-card">
               <h4 class="mini-product-card__title">AQUANEAT Bio Sponge Foam - Cut-to-Fit</h4>
-              <p class="mini-product-card__note">17" x 11" sponge. Massive surface area for beneficial bacteria.</p>
+              <p class="mini-product-card__note">17" x 11" sponge that can provide surface area for beneficial bacteria when sized and maintained for the filter.</p>
               <a href="https://www.amazon.com/AQUANEAT-Aquarium-Sponge-Filter-Media/dp/B093CXB6ZL?dib=eyJ2IjoiMSJ9.d3SX7jsKXfJ5oUITqb0BPB34qzfvwZi3dqoGZ-PzeTcL9plnMppROaYtcIRGDvLV6btEvY8HI8mUWcxUh2Fkjqe4VLsCmLvkNYgDdyWRPr_Cl9agnZdJAmc-Plo2dhB723dCQFOGoO-bF1BzL1i2Jhm1tnkR8K008LOcC73Ewb1xc3oJ0Mnb697dL59b03Ri.-TqBPE6STcxdkoELOi20ZmRAqax7B0KSyEoh6B1Y7vw&dib_tag=se&keywords=filter%2Bmedia%2Bfor%2Bfish%2Btank&qid=1766038321&sr=8-27&xpid=KCP9YsGk46dSE&linkCode=ll1&tag=thetankguide-20&linkId=6175db2b92309d98b0cd48a16ee4f24d&language=en_US&ref_=as_li_ss_tl" target="_blank" rel="sponsored noopener" class="mini-product-card__link">View on Amazon</a>
             </article>
 
             <article class="mini-product-card">
               <h4 class="mini-product-card__title">Premium 8-Layer Filter Pads</h4>
-              <p class="mini-product-card__note">Multi-stage filtration. Polish water to crystal clarity.</p>
+              <p class="mini-product-card__note">Multi-stage filter pads that can support mechanical filtration when cut and maintained for the filter.</p>
               <a href="https://www.amazon.com/sunjojo-Aquarium-Premium-6-Layer-Accessories/dp/B09J5CJZT1?dib=eyJ2IjoiMSJ9.DXI7PPf3sIG9NC6XRqZVXQhBl_utjZrNUZgMd9FwhpH6ZxwDS2hq6Y50GOG8cMA-4a5JTj-_D9x-q2OTp2AatG1WPJ8y6LsoFPKPaRHAtDoD6zHIzmw7unZA06Fin491NJBNcuMIQNCnGOX1NxhCv7HNmBny99ZMci31-JxR_wZxCqhpqPgEqbPXpIreyEV1Jk80mLqeObxYezVTVmCXDsF_ai6CVxGrgRL5O71Cdyk.JWOvoYFDUB--jUqYweGDHjq5kkwpG6px3Igl_enpflE&dib_tag=se&keywords=filter%2Bmedia%2Bfor%2Bfish%2Btank&qid=1766038172&sr=8-15&th=1&linkCode=ll1&tag=thetankguide-20&linkId=76456e48bed182ed20e13831b86e078f&language=en_US&ref_=as_li_ss_tl" target="_blank" rel="sponsored noopener" class="mini-product-card__link">View on Amazon</a>
             </article>
 
@@ -485,13 +485,13 @@
 
             <article class="mini-product-card">
               <h4 class="mini-product-card__title">Seachem Purigen (100ml)</h4>
-              <p class="mini-product-card__note">Crystal clear water polish. Removes organics and tannins.</p>
+              <p class="mini-product-card__note">Helps remove dissolved organic compounds and can improve water clarity when used and maintained as directed.</p>
               <a href="https://www.amazon.com/Seachem-Purigen-Organic-Filtration-Resin/dp/B0002A5VK2?crid=T5NW54BFPM6Z&dib=eyJ2IjoiMSJ9.BIfBnVhW8eiAi79BBzBQrshXRrN6iBjOwrhdBDBfV8-chLwqaYnIxyXTIsp3y6RqI7IVJ_8JaqNyDjROY16w_4U7iykVuQigp6tHxYUj_meKF-xf86G6PCat6XBV7KPt3Xo2d-TGQqEtuClB-UJoe97pdnZtn2y_hiah0ClKbdh8eEcl10joIy9SzydZHZwUcGQl2sC2j-HgdgFPsTbBGyOHE7hGA8pWrqDPc-y_VNg.nAPmKufN8P4UU6USuZIBRcbyMQIaGsYTbIJNNo4v1PA&dib_tag=se&keywords=seachem%2Bpurigen&qid=1766038370&sprefix=seachem%2Bpuri%2Caps%2C126&sr=8-1&th=1&linkCode=ll1&tag=thetankguide-20&linkId=07131b9738bdce13ad970e0e591a2a77&language=en_US&ref_=as_li_ss_tl" target="_blank" rel="sponsored noopener" class="mini-product-card__link">View on Amazon</a>
             </article>
 
             <article class="mini-product-card">
               <h4 class="mini-product-card__title">Seachem Matrix (2L)</h4>
-              <p class="mini-product-card__note">Ultra-porous bio-media. Maximum bacterial colonization.</p>
+              <p class="mini-product-card__note">Porous bio-media that can add surface area for beneficial bacteria in a compatible filter.</p>
               <a href="https://www.amazon.com/Matrix-2-L-67-6-oz/dp/B0002A5VIY?crid=1BR6BOJRVD4L1&dib=eyJ2IjoiMSJ9.z23ny9zyGkEeydjpzPyZHtUXL4HUJnklF_AdGs1EzBb8LbJI5VxX9xVGX2AGxrcmGugAAIwyXWPl_TF5V9ThGeI_UZ48OoEagWJ1sDQYs4Efh1HX8pyOldQrA5wdWJexGShZCVOF9-Rb8UATPttX5DAn61Zmxy3fXQd1S33pnaHSa44qgv6YPv7q9hBk_Yqh_d30eY1q3P_axqaXXyZia4OVqEjkL26nx75MXoilV5c.RvNDu6xRYF9dVcl9paU4JRZ8sWb0UowvXKS4Slua5GM&dib_tag=se&keywords=seachem%2Bmatrix&qid=1766038414&sprefix=seachem%2Bma%2Caps%2C142&sr=8-1&th=1&linkCode=ll1&tag=thetankguide-20&linkId=8d5a4a9b8e502633b26a88c898e95197&language=en_US&ref_=as_li_ss_tl" target="_blank" rel="sponsored noopener" class="mini-product-card__link">View on Amazon</a>
             </article>
           </div>
@@ -502,7 +502,7 @@
           </button>
           <div class="catalog-expandable" id="filter-media-more" hidden>
             <div class="bundle-card__products-grid" data-csv-category="media">
-              <div class="catalog-loading">Loading additional filter media...</div>
+              <p class="catalog-empty">Additional verified filter-media options appear here when requested.</p>
             </div>
           </div>
         </article>
@@ -514,11 +514,11 @@
             <span class="bundle-card__spec" id="light-spec"></span>
           </header>
           <div class="bundle-card__product">
-            <p class="bundle-card__name" id="light-name">Loading...</p>
-            <p class="bundle-card__note" id="light-note"></p>
+            <p class="bundle-card__name" id="light-name">NICREW C10 Plants LED Aquarium Light, 18–24 in</p>
+            <p class="bundle-card__note" id="light-note">A 13W full-spectrum LED with timer and adjustable brightness for 18–24 inch aquariums. It fits a standard 20-gallon high; measure a 20-long and choose a longer fixture if needed.</p>
           </div>
           <div class="bundle-card__actions">
-            <a id="light-amazon" class="btn btn-amazon" href="/gear-products.html" target="_blank" rel="sponsored noopener">
+            <a id="light-amazon" class="btn btn-amazon" href="https://amzn.to/3WpCKxX" target="_blank" rel="sponsored noopener" aria-label="View the NICREW C10 18 to 24 inch aquarium light on Amazon">
               Amazon
             </a>
             <a id="light-hygger" class="btn btn-hygger" href="https://www.hygger-online.com/?ref=FKLC" target="_blank" rel="sponsored noopener" hidden>
@@ -539,7 +539,7 @@
           </header>
           <div class="bundle-card__product">
             <p class="bundle-card__name">API Freshwater Master Test Kit</p>
-            <p class="bundle-card__note">Benchmark ammonia, nitrite, nitrate, and pH with lab-style droppers.</p>
+            <p class="bundle-card__note">A liquid freshwater test kit for checking ammonia, nitrite, nitrate, and pH. Use it to establish your own water values before and after stocking changes.</p>
           </div>
           <div class="bundle-card__actions">
             <a class="btn btn-amazon" href="https://amzn.to/47yJmzh" target="_blank" rel="sponsored noopener">
@@ -556,7 +556,7 @@
           </header>
           <div class="bundle-card__product">
             <p class="bundle-card__name">Seachem Prime Water Conditioner (500ml)</p>
-            <p class="bundle-card__note">Detoxifies chlorine, chloramine, and ammonia. The most concentrated conditioner on the market—5ml treats 50 gallons. Essential for every water change.</p>
+            <p class="bundle-card__note">A concentrated water conditioner that treats chlorine and chloramine when used according to the product label. Measure for your actual water volume and confirm that it fits your aquarium’s needs.</p>
           </div>
           <div class="bundle-card__actions">
             <a class="btn btn-amazon" href="https://www.amazon.com/Seachem-Prime-Fresh-Saltwater-Conditioner/dp/B00025694O?crid=2EQICVL6XT0YO&dib=eyJ2IjoiMSJ9.BIfBnVhW8eiAi79BBzBQrvKI-npvIFAgNDJUFhHMe4xkU3S0QrsSdSNJ7NzPCU-0BfgfvcMjK3f_8FaQ9o02_uzEhlNpl5Tep5tZBFE-WKwvXualT1NYIB6HEVkhJ0Vyd_vsKq4uNrUdw9NAm-DOxozpePhcjRcZ0HpcAQRpqDVleSBmmcqMdM5o9IY05vtW1pWPqvdAMgF6ARCjJ1aYbmzASpP9sd-baFU9bJLBwFI.IuOlx4AYuld0SRM0JTptbG3wAEZJxV4znqEpgVd6IZo&dib_tag=se&keywords=seachem&qid=1766039428&sprefix=seachem%2Caps%2C114&sr=8-8&th=1&linkCode=ll1&tag=fishkeepingli-20&linkId=5e069b94ab6fac7bc83b1b228e391063&language=en_US&ref_=as_li_ss_tl" target="_blank" rel="sponsored noopener">
@@ -608,6 +608,14 @@
             <span class="bundle-card__spec">5 products</span>
           </header>
           <p class="bundle-card__note">Liquid and root-based fertilizers to support healthy plant growth in freshwater planted aquariums, including shrimp-safe and substrate options.</p>
+
+          <div class="mini-product-card">
+            <h4 class="mini-product-card__title">Thrive Planted Aquarium Fertilizer — All-in-One Liquid</h4>
+            <p class="mini-product-card__note">An all-in-one liquid fertilizer for planted freshwater aquariums. For a 20-gallon planted tank, dose to the product label and adjust for plant growth and your water tests.</p>
+            <div class="mini-product-card__actions">
+              <a href="https://www.amazon.com/dp/B01DSFMNHQ/ref=cm_sw_r_as_gl_api_gl_i_8WHFJHC3RG9PNK4T1TM0?linkCode=ml1&tag=fishkeepingli-20&linkId=969b44e455c1cece7c3b776d45a69eab" target="_blank" rel="sponsored nofollow noopener" class="mini-product-card__link" aria-label="View Thrive Planted Aquarium Fertilizer on Amazon">Amazon</a>
+            </div>
+          </div>
 
           <button class="bundle-card__alts-toggle" type="button" aria-expanded="false" aria-controls="fertilizer-products">
             View Fertilizer Options
@@ -662,7 +670,9 @@
             <h3 class="bundle-card__title">Maintenance Essentials</h3>
           </header>
           <ul class="extras-list" id="extras-list">
-            <!-- Extras injected here -->
+            <li><a href="https://www.amazon.com/Amazon-Basics-Microfiber-Absorbent-Non-Abrasive/dp/B009FUF6DM?tag=fishkeepingli-20" target="_blank" rel="sponsored noopener" aria-label="View microfiber towels for aquarium maintenance on Amazon">Microfiber towels</a> — for aquarium glass and cleanup.</li>
+            <li><a href="https://www.amazon.com/5-Gallon-Container-Heavy-Duty-Carrying-Multi-Use/dp/B0DPXTWRV2?tag=fishkeepingli-20" target="_blank" rel="sponsored noopener" aria-label="View a dedicated five-gallon aquarium maintenance bucket on Amazon">Dedicated 5-gallon bucket</a> — keep it for aquarium-only use.</li>
+            <li>Waterproof labels and cable ties — organize tank-only supplies and keep drip loops clear.</li>
           </ul>
         </article>
 
@@ -672,7 +682,15 @@
             <h3 class="bundle-card__title">Air Pumps & Accessories</h3>
             <span class="bundle-card__spec">7 products</span>
           </header>
-          <p class="bundle-card__note">Ultra-quiet air pumps (4W-11W) with adjustable flow, plus battery-backed emergency pumps for power outages. Includes check valves, airline tubing, and flow controls.</p>
+          <p class="bundle-card__note">Air pumps can run an air stone or sponge filter when your setup benefits from more surface agitation. Choose output for the devices you run and include a check valve where the airline could siphon water.</p>
+
+          <div class="mini-product-card">
+            <h4 class="mini-product-card__title">HITOP 4W 110GPH Powerful Aquarium Air Pump</h4>
+            <p class="mini-product-card__note">An adjustable two-outlet air pump for air stones or sponge filters. It can serve a 20-gallon setup; reduce output if the current is too strong for its livestock.</p>
+            <div class="mini-product-card__actions">
+              <a href="https://www.amazon.com/dp/B08HMZSH9J/ref=cm_sw_r_as_gl_api_gl_i_B6C5H0NXCP3RHG3H1CJ5?linkCode=ml1&tag=fishkeepingli-20&linkId=e36489824bc9a1c4b1cef8050456bcf9" target="_blank" rel="sponsored noopener" class="mini-product-card__link" aria-label="View the HITOP 4W aquarium air pump on Amazon">View on Amazon</a>
+            </div>
+          </div>
 
           <button class="bundle-card__alts-toggle" type="button" aria-expanded="false" aria-controls="aeration-products">
             View Air Pump Options
@@ -692,7 +710,7 @@
 
             <!-- CSV Products Grid -->
             <div class="bundle-card__products-grid" data-csv-category="aeration">
-              <div class="catalog-loading">Loading air pumps...</div>
+              <p class="catalog-empty">Additional verified air-pump options appear here when requested.</p>
             </div>
           </div>
         </article>
@@ -701,13 +719,19 @@
         <article class="bundle-card bundle-card--catalog" data-category="stands">
           <header class="bundle-card__header">
             <h3 class="bundle-card__title">Aquarium Stands</h3>
-            <span class="bundle-card__spec" id="stands-count">Loading...</span>
+            <span class="bundle-card__spec" id="stands-count">3 options</span>
           </header>
-          <p class="bundle-card__note">Sturdy metal and wood stands. Weight capacity ranges from 300lbs to 2,200lbs. Built-in storage and power outlets available.</p>
+          <p class="bundle-card__note">Choose a stand based on the exact aquarium footprint and its filled weight, not gallons alone. Confirm the manufacturer’s capacity and level the stand before filling.</p>
 
-          <h4 class="bundle-card__subtitle" id="stands-size-label">Loading...</h4>
+          <h4 class="bundle-card__subtitle" id="stands-size-label">20–40 Gallon Stands</h4>
           <div class="bundle-card__products-grid" id="stands-grid" data-csv-category="stands">
-            <div class="catalog-loading">Loading stands...</div>
+            <article class="mini-product-card">
+              <h4 class="mini-product-card__title">YITAHOME 30-inch Metal Aquarium Stand with Power Outlet</h4>
+              <p class="mini-product-card__note">A metal-and-wood stand with storage and a built-in outlet. Its 30-inch top can suit many 20-gallon aquariums; compare its dimensions and rated capacity with your exact tank before purchase.</p>
+              <div class="mini-product-card__actions">
+                <a href="https://amzn.to/4nOZOSX?tag=fishkeepingli-20" target="_blank" rel="sponsored noopener" class="mini-product-card__link" aria-label="View the YITAHOME 30-inch aquarium stand on Amazon">View on Amazon</a>
+              </div>
+            </article>
           </div>
         </article>
 
@@ -717,7 +741,14 @@
             <h3 class="bundle-card__title">Aquarium Substrate</h3>
             <span class="bundle-card__spec">18 options</span>
           </header>
-          <p class="bundle-card__note">Natural gravels, planted tank substrates, and sand for your aquascape foundation.</p>
+          <p class="bundle-card__note">Substrate supports your planting plan and affects how the aquarium looks and is maintained. Choose material and grain size for your livestock, plants, and water targets.</p>
+          <div class="mini-product-card">
+            <h4 class="mini-product-card__title">Fluval Plant and Shrimp Stratum</h4>
+            <p class="mini-product-card__note">A porous volcanic substrate for planted freshwater or shrimp-focused tanks. It may influence water chemistry, so confirm it fits the needs of your livestock before using it in a 20-gallon setup.</p>
+            <div class="mini-product-card__actions">
+              <a href="https://amzn.to/4gXDMuF" target="_blank" rel="sponsored noopener" class="mini-product-card__link" aria-label="View Fluval Plant and Shrimp Stratum on Amazon">View on Amazon</a>
+            </div>
+          </div>
           
           <button class="bundle-card__alts-toggle" type="button" aria-expanded="false" aria-controls="substrate-products">
             View Substrate Options
@@ -725,7 +756,7 @@
           
           <div class="catalog-expandable" id="substrate-products" hidden>
             <div class="bundle-card__products-grid" data-csv-category="substrate">
-              <div class="catalog-loading">Loading substrate...</div>
+              <p class="catalog-empty">Additional verified substrate options appear here when requested.</p>
             </div>
           </div>
         </article>
@@ -736,7 +767,14 @@
             <h3 class="bundle-card__title">Fish Food</h3>
             <span class="bundle-card__spec">10 options</span>
           </header>
-          <p class="bundle-card__note">Daily staples, bottom feeder wafers, and high-protein treats for community tanks.</p>
+          <p class="bundle-card__note">Choose food for the species and feeding level in your aquarium, then adjust portions based on what is eaten and your water quality.</p>
+          <div class="mini-product-card">
+            <h4 class="mini-product-card__title">Tetra TetraMin Plus Tropical Flakes</h4>
+            <p class="mini-product-card__note">A daily flake staple for many community fish in a 20-gallon aquarium. Feed small portions and vary foods when your species’ needs call for it.</p>
+            <div class="mini-product-card__actions">
+              <a href="https://amzn.to/4o5Ulqx" target="_blank" rel="sponsored noopener" class="mini-product-card__link" aria-label="View Tetra TetraMin Plus Tropical Flakes on Amazon">View on Amazon</a>
+            </div>
+          </div>
           
           <button class="bundle-card__alts-toggle" type="button" aria-expanded="false" aria-controls="food-products">
             View Food Options
@@ -744,7 +782,7 @@
           
           <div class="catalog-expandable" id="food-products" hidden>
             <div class="bundle-card__products-grid" data-csv-category="food">
-              <div class="catalog-loading">Loading fish food...</div>
+              <p class="catalog-empty">Additional verified fish-food options appear here when requested.</p>
             </div>
           </div>
         </article>
@@ -757,7 +795,7 @@
       <dl class="faq-list">
         <div class="faq-item">
           <dt>My filter says it's rated for my tank size — why do people recommend more?</dt>
-          <dd>Manufacturer "gallon ratings" are often tied to frequent filter media replacements and simplified assumptions about bioload. In real aquariums, flow naturally drops over time and fish produce more waste than those ratings account for. We recommend slightly more filtration because having a buffer helps keep water parameters stable — and stability is always better for fish health than running at the edge.</dd>
+          <dd>Manufacturer "gallon ratings" are often tied to frequent filter media replacements and simplified assumptions about bioload. In real aquariums, flow naturally drops over time and fish produce more waste than those ratings account for. A modest filtration buffer can help support stable water parameters instead of running at the edge.</dd>
         </div>
         <div class="faq-item">
           <dt>Can you have too much filtration?</dt>
@@ -777,11 +815,11 @@
         </div>
         <div class="faq-item">
           <dt>Should I upgrade my filter media?</dt>
-          <dd>Stock cartridges work, but custom media often performs better long-term. Cut-to-fit sponges support larger bacterial colonies, Purigen polishes water crystal-clear, and bio-rings like Matrix or BioMax add biological capacity. Upgrade when you want more stability or clearer water between maintenance.</dd>
+          <dd>Stock cartridges work, but custom media can offer more flexibility long-term. Cut-to-fit sponges support larger bacterial colonies, Purigen can help remove dissolved organic compounds, and bio-rings like Matrix or BioMax add biological capacity. Choose media based on your filter, maintenance routine, and aquarium needs.</dd>
         </div>
         <div class="faq-item">
           <dt>Do I really need water conditioner for every water change?</dt>
-          <dd>Yes. Tap water contains chlorine or chloramine that kills beneficial bacteria and harms fish. Even "small" water changes need conditioning. Prime is highly concentrated—just 5ml treats 50 gallons—making it cost-effective and safe for daily use.</dd>
+          <dd>Treat tap water for chlorine or chloramine according to the conditioner label before it enters the aquarium. Measure for the amount of new water you are adding and confirm the product fits your aquarium’s needs.</dd>
         </div>
       </dl>
     </section>
@@ -872,7 +910,7 @@
             </svg>
           </button>
           <div class="qa-accordion__panel" id="qa-conditioner" hidden>
-            <p>Seachem Prime. It's the most concentrated, detoxifies ammonia/chlorine/chloramine, and is safe for fish and beneficial bacteria.</p>
+            <p>Seachem Prime is a concentrated water conditioner that treats chlorine and chloramine when used according to the product label. Measure for your actual water volume and confirm that it fits your aquarium’s needs.</p>
           </div>
         </div>
       </div>
@@ -885,9 +923,9 @@
     </aside>
 
   </main>
-  <script defer src="/assets/js/gear.v2.data.js?v=2025-11-17a"></script>
+  <script defer src="/assets/js/gear.v2.data.js?v=2026-09-05-gear-static"></script>
   <script type="module" src="/js/ui/tooltip.js?v=1.5.2"></script>
-  <script defer src="/assets/js/gear.v2.js?v=2025-11-17a"></script>
+  <script defer src="/assets/js/gear.v2.js?v=2026-09-05-gear-static"></script>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <script>
     (function() {
@@ -930,7 +968,7 @@
       'tier_29': '20-40',
       'tier_40b': '40-55',
       'tier_55': '55-75',
-      'tier_75_plus': '75+'
+      'tier_75_plus': '75-up'
     };
 
     const STAND_SIZE_LABELS = {
@@ -938,7 +976,7 @@
       '20-40': '20-40 Gallon Stands',
       '40-55': '40-55 Gallon Stands',
       '55-75': '55-75 Gallon Stands',
-      '75+': '75+ Gallon Stands'
+      '75-up': '75+ Gallon Stands'
     };
 
     // ========================================
@@ -963,18 +1001,13 @@
         observer.observe(gearBundle, { attributes: true });
       }
 
-      // Listen for tier button clicks to reload stands
-      document.querySelectorAll('.tier-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          // Small delay to ensure window.currentSelectedTier is set
-          setTimeout(function() {
-            const standsContainer = document.getElementById('stands-grid');
-            if (standsContainer && window.currentSelectedTier) {
-              const sizeRange = TIER_TO_STAND_SIZE[window.currentSelectedTier];
-              loadStandsForSize(sizeRange, standsContainer);
-            }
-          }, 100);
-        });
+      window.addEventListener('ttg:gear-tier-change', function(event) {
+        const standsContainer = document.getElementById('stands-grid');
+        const tierId = event.detail && event.detail.tierId;
+        const sizeRange = TIER_TO_STAND_SIZE[tierId];
+        if (standsContainer && sizeRange) {
+          loadStandsForSize(sizeRange, standsContainer);
+        }
       });
     });
 
@@ -1136,6 +1169,12 @@
       const max = maxSize ? parseInt(maxSize) : Infinity;
 
       return products.filter(product => {
+        const declaredRange = product.tank_range || product.Tank_Range || product.tankRange || '';
+        if (declaredRange) {
+          const normalizedRange = String(declaredRange).replace(/\s/g, '').replace(/–/g, '-');
+          return normalizedRange === sizeRange;
+        }
+
         const title = (product.Title || product.title || '').toLowerCase();
 
         // Extract gallon numbers from title (matches "10 gallon", "20G", "40-50 gallon", etc.)
@@ -1187,6 +1226,7 @@
     }
 
     function renderMiniProducts(products, container) {
+      const category = container.dataset.csvCategory || '';
       const html = products.map(product => {
         // Handle different CSV column name possibilities
         const asin = product.ASIN || product.asin || '';
@@ -1194,6 +1234,8 @@
         const safeTitle = escapeHtml(title);
         const price = product.Price || product.price || '';
         const priceText = escapeHtml(price);
+        const note = product.Notes || product.notes || product.description || getCatalogFallbackNote(category);
+        const safeNote = escapeHtml(note);
 
         // Build Amazon URL from ASIN or use existing amazon_url
         let amazonUrl = product.amazon_url || product.amazon_link || product.Amazon_Link || '';
@@ -1211,10 +1253,11 @@
         return `
           <article class="mini-product-card">
             <h4 class="mini-product-card__title">${safeTitle}</h4>
+            <p class="mini-product-card__note">${safeNote}</p>
             ${price ? `<p class="mini-product-card__price">${priceText}</p>` : ''}
             <div class="mini-product-card__actions">
               ${hasAmazonLink ? `
-                <a href="${amazonLink}" target="_blank" rel="noopener sponsored" class="mini-product-card__link">
+                <a href="${amazonLink}" target="_blank" rel="noopener sponsored" class="mini-product-card__link" aria-label="View ${safeTitle} on Amazon">
                   View on Amazon
                 </a>
               ` : ''}
@@ -1229,6 +1272,17 @@
       }).join('');
 
       container.innerHTML = html;
+    }
+
+    function getCatalogFallbackNote(category) {
+      const notes = {
+        media: 'Choose media for the mechanical, biological, or chemical role it will have in your existing filter.',
+        aeration: 'Choose air equipment for the devices you run and use a check valve where back-siphoning is possible.',
+        substrate: 'Choose substrate for your livestock, plants, and water targets, then follow the preparation instructions.',
+        food: 'Choose food for the species you keep and adjust portions based on what is eaten and your water quality.',
+        stands: 'Confirm the stand’s dimensions and rated capacity match your exact aquarium before purchase.'
+      };
+      return notes[category] || 'Compare the product instructions with your aquarium’s actual needs before use.';
     }
   </script>
 

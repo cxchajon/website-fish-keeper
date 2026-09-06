@@ -2897,7 +2897,7 @@
     return tiers.find((tier) => tier.id === tierId) || null;
   }
 
-  function selectTier(tierId, { clearSession = true } = {}) {
+  function selectTier(tierId, { clearSession = true, scroll = true } = {}) {
     logDebug('Selecting tier', tierId);
     const tier = findTier(tierId);
     if (!tier) {
@@ -2907,9 +2907,11 @@
 
     // Store current tier globally for stands filtering
     window.currentSelectedTier = tierId;
+    window.dispatchEvent(new CustomEvent('ttg:gear-tier-change', { detail: { tierId } }));
 
     document.querySelectorAll('.tier-btn').forEach((btn) => {
       btn.classList.toggle('tier-btn--selected', btn.dataset.tier === tierId);
+      btn.setAttribute('aria-selected', btn.dataset.tier === tierId ? 'true' : 'false');
     });
 
     waitForGearData()
@@ -2934,7 +2936,9 @@
         const bundleSection = document.getElementById('gear-bundle');
         if (bundleSection) {
           bundleSection.hidden = false;
-          bundleSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (scroll) {
+            bundleSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
         }
 
         if (clearSession) {
@@ -3047,8 +3051,10 @@
     console.log(`[${category}] Rendering product:`, primary?.title || 'No product', 'hyggerUrl:', primary?.hyggerUrl, 'hygger_url:', primary?.hygger_url);
 
     if (!primary) {
-      nameEl.textContent = 'No product available';
-      if (noteEl) noteEl.textContent = '';
+      nameEl.textContent = 'Recommendation in progress.';
+      if (noteEl) {
+        noteEl.textContent = 'Use the related guide to choose this item based on your aquarium’s actual needs.';
+      }
       if (specEl) specEl.textContent = specOverride || '';
       if (amazonBtn) amazonBtn.hidden = true;
       if (hyggerBtn) hyggerBtn.hidden = true;
@@ -3060,7 +3066,7 @@
     nameEl.textContent = title;
 
     if (noteEl) {
-      noteEl.textContent = primary.notes || primary.note || primary.description || '';
+      noteEl.textContent = primary.notes || primary.note || primary.description || getProductFallbackNote(category, specOverride);
     }
 
     if (specEl) {
@@ -3071,6 +3077,7 @@
       const href = primary.amazon_url || primary.href || primary.amazonUrl || '';
       if (href) {
         amazonBtn.href = href;
+        amazonBtn.setAttribute('aria-label', `View ${title} on Amazon`);
         amazonBtn.hidden = false;
       } else {
         amazonBtn.hidden = true;
@@ -3082,6 +3089,7 @@
       const allowPrimaryHygger = category !== 'light';
       if (hyggerLink && allowPrimaryHygger) {
         hyggerBtn.href = hyggerLink;
+        hyggerBtn.setAttribute('aria-label', `View ${title} from Hygger`);
         hyggerBtn.classList.add('btn-hygger');
         hyggerBtn.hidden = false;
       } else {
@@ -3098,9 +3106,10 @@
           return `
             <div class="alt-product">
               <p class="alt-product__name">${escapeHtml(altTitle)}</p>
+              <p class="alt-product__note">${escapeHtml(alt.notes || alt.note || alt.description || getProductFallbackNote(category, specOverride))}</p>
               <div class="alt-product__actions">
-                ${altAmazon ? `<a class="btn btn-amazon" href="${escapeHtml(altAmazon)}" target="_blank" rel="sponsored noopener">Amazon</a>` : ''}
-                ${altHygger ? `<a class="btn btn-hygger" href="${escapeHtml(altHygger)}" target="_blank" rel="sponsored noopener">Hygger</a>` : ''}
+                ${altAmazon ? `<a class="btn btn-amazon" href="${escapeHtml(altAmazon)}" target="_blank" rel="sponsored noopener" aria-label="View ${escapeHtml(altTitle)} on Amazon">Amazon</a>` : ''}
+                ${altHygger ? `<a class="btn btn-hygger" href="${escapeHtml(altHygger)}" target="_blank" rel="sponsored noopener" aria-label="View ${escapeHtml(altTitle)} from Hygger">Hygger</a>` : ''}
               </div>
             </div>
           `;
@@ -3109,6 +3118,17 @@
     } else if (altsEl) {
       altsEl.innerHTML = '<p class="alt-product__name" style="color: var(--muted);">No alternatives available</p>';
     }
+  }
+
+  function getProductFallbackNote(category, specOverride) {
+    const sizeNote = specOverride ? ` This bundle targets ${specOverride}.` : '';
+    const notes = {
+      heater: 'Compare the heater’s listed range with your water volume and verify the temperature with a separate thermometer.',
+      filter: 'Compare the filter’s listed capacity and flow with your aquarium and livestock, then direct flow gently where needed.',
+      light: 'Match the fixture length to the aquarium and adjust intensity and duration for the plants you keep.',
+      air: 'Choose output for the air stones or sponge filters you run and use a check valve where back-siphoning is possible.'
+    };
+    return (notes[category] || 'Compare the product instructions with your aquarium’s actual needs before use.') + sizeNote;
   }
 
   function renderExtras(extras) {
@@ -3158,6 +3178,12 @@
       if (matchedTier) {
         selectTier(matchedTier.id);
       }
+    } else {
+      window.currentSelectedTier = 'tier_20';
+      document.querySelectorAll('.tier-btn').forEach((btn) => {
+        btn.classList.toggle('tier-btn--selected', btn.dataset.tier === 'tier_20');
+        btn.setAttribute('aria-selected', btn.dataset.tier === 'tier_20' ? 'true' : 'false');
+      });
     }
 
     document.querySelectorAll('.tier-btn').forEach((btn) => {
