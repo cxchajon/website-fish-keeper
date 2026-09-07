@@ -1,8 +1,2 @@
-# Prototype gear work is intentionally open to the full web team.
-/prototype/gear/**    @cxchajon @webteam
-
-# Guardrail configuration stays with the OWNER so overrides are reviewed.
-/.guard/**            @cxchajon
-
-# Everything else requires OWNER approval while the prototype lock is active.
+# Default ownership.
 *                     @cxchajon

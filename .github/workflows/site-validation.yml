@@ -1,4 +1,4 @@
-name: Prototype Guard
+name: Site Validation
 
 on:
   pull_request:
