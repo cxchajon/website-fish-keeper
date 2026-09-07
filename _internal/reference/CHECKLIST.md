@@ -28,7 +28,7 @@
 - ❌ **D1** — Missing `/AUDIT/qa-clickthrough-2025-10.md`; recreate October desktop/mobile log.
 - ❌ **E1** — No repository log captures the v2.1 tool-page optimization backlog; document plan.
 - ❌ **E2** — No documentation outlines the homepage Quick Q&A block plan; capture planning notes.
-- ✅ **E3** — `docs/CHANGELOG.md` (2025-10-23) tracks the FAQPage JSON-LD follow-up.
+- ✅ **E3** — `_internal/docs/CHANGELOG.md` (2025-10-23) tracks the FAQPage JSON-LD follow-up.
 
 ### Must Fix Next
 - ❌ **D1** — Restore `/AUDIT/qa-clickthrough-2025-10.md` with October desktop/mobile QA passes.

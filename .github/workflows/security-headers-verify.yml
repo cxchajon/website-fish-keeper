@@ -46,6 +46,7 @@ jobs:
         if: github.event_name == 'schedule'
         run: |
           timestamp="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          mkdir -p _internal/docs
           echo "✅ ${timestamp} — Scheduled security headers verification completed. Artifact: security-headers-verify" >> _internal/docs/CHANNEL_LOG.md
 
       - name: Commit latest report into _internal/docs/security
