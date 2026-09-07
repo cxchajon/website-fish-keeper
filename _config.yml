@@ -1,0 +1,29 @@
+# GitHub Pages / Jekyll build configuration for The Tank Guide.
+#
+# This site builds on Jekyll 3, where a custom `exclude` list REPLACES the
+# default exclusion list rather than merging with it. The ten Jekyll 3
+# defaults are therefore restated below so they are not silently lost,
+# followed by the site-specific internal paths.
+#
+# Excluding a path affects only the published site. Every file below stays
+# in the repository at its current path, so tests, imports, scripts, and
+# workflows continue to read and write them exactly as before.
+
+exclude:
+  # --- Jekyll 3 default exclusions, restated in full ---
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+  # --- internal-only content: kept in Git, kept off the public site ---
+  - tests/
+  - stocking-tests-real/
+  - assets/data/gear/filters.summary.md
+  - README.md
