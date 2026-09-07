@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
-REPORTS_DIR = Path(__file__).resolve().parent.parent / "reports"
+REPORTS_DIR = Path(__file__).resolve().parent.parent / "_internal" / "reports"
 AFFILIATE_TAG = "fishkeepingli-20"
 CANONICAL_LINK_TEMPLATE = "https://www.amazon.com/dp/{asin}?tag=" + AFFILIATE_TAG
 ASIN_PATTERN = re.compile(r"[A-Za-z0-9]{10}")

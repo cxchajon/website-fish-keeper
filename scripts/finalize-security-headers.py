@@ -10,8 +10,8 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SOURCE_FILE = REPO_ROOT / "gha-security-headers-result.json"
-DOCS_DIR = REPO_ROOT / "docs" / "security"
-CHANNEL_LOG = REPO_ROOT / "docs" / "CHANNEL_LOG.md"
+DOCS_DIR = REPO_ROOT / "_internal" / "docs" / "security"
+CHANNEL_LOG = REPO_ROOT / "_internal" / "docs" / "CHANNEL_LOG.md"
 
 
 def load_result() -> dict:

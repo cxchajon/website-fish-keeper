@@ -12,7 +12,7 @@ from typing import Dict, Iterable, List, Sequence, Tuple
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
-REPORTS_DIR = BASE_DIR / "reports"
+REPORTS_DIR = BASE_DIR / "_internal" / "reports"
 
 MASTER_CSV = DATA_DIR / "gear_master.csv"
 

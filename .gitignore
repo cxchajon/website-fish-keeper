@@ -1,7 +1,7 @@
 node_modules/
 *.log
 backups/
-docs/screens/
+_internal/docs/screens/
 static-qa-*.*
 playwright-report/
 test-results/

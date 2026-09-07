@@ -778,7 +778,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate homepage audit artifacts")
     parser.add_argument("--input", required=True, help="Path to HTML file")
     parser.add_argument("--slug", required=True, help="Slug prefix for output files")
-    parser.add_argument("--output", default="docs/audits", help="Output directory")
+    parser.add_argument("--output", default="_internal/docs/audits", help="Output directory")
     parser.add_argument(
         "--default-base",
         default="https://thetankguide.com/",

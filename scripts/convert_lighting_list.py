@@ -14,8 +14,8 @@ from typing import Dict, Iterable, List, Optional, Tuple
 REPO_ROOT = Path(__file__).resolve().parents[1]
 INPUT_FILE = REPO_ROOT / "data/raw/LIGHTS.csv"
 OUTPUT_FILE = REPO_ROOT / "gear_master.csv"
-MISSING_ASINS_FILE = REPO_ROOT / "reports/missing_asins.txt"
-SUMMARY_FILE = REPO_ROOT / "reports/summary.txt"
+MISSING_ASINS_FILE = REPO_ROOT / "_internal/reports/missing_asins.txt"
+SUMMARY_FILE = REPO_ROOT / "_internal/reports/summary.txt"
 
 CATEGORY = "Lighting"
 SOURCE_LIST = "Lighting"

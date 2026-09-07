@@ -2,7 +2,7 @@ import sys, subprocess, os, csv, argparse, shutil, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
-REPORTS = ROOT / "reports"
+REPORTS = ROOT / "_internal" / "reports"
 AUDITOR = SCRIPTS / "link_audit.py"
 
 PACKAGE_TO_MODULE = {

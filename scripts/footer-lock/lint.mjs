@@ -61,11 +61,11 @@ const isPage = (relativePath) => {
     return false;
   }
 
-  if (relativePath.startsWith('legacy/') || relativePath.startsWith('AUDIT/') || relativePath.startsWith('docs/')) {
+  if (relativePath.startsWith('legacy/') || relativePath.startsWith('AUDIT/') || relativePath.startsWith('_internal/docs/')) {
     return false;
   }
 
-  if (relativePath.startsWith('reports/') || relativePath.startsWith('tests/') || relativePath.startsWith('dist/')) {
+  if (relativePath.startsWith('_internal/reports/') || relativePath.startsWith('tests/') || relativePath.startsWith('dist/')) {
     return false;
   }
 

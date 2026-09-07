@@ -46,14 +46,14 @@ jobs:
         if: github.event_name == 'schedule'
         run: |
           timestamp="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-          echo "✅ ${timestamp} — Scheduled security headers verification completed. Artifact: security-headers-verify" >> docs/CHANNEL_LOG.md
+          echo "✅ ${timestamp} — Scheduled security headers verification completed. Artifact: security-headers-verify" >> _internal/docs/CHANNEL_LOG.md
 
-      - name: Commit latest report into docs/security
+      - name: Commit latest report into _internal/docs/security
         run: |
-          mkdir -p docs/security
-          mv security-headers-output.json docs/security/security-headers-verify-latest.json
+          mkdir -p _internal/docs/security
+          mv security-headers-output.json _internal/docs/security/security-headers-verify-latest.json
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add docs/security/security-headers-verify-latest.json docs/CHANNEL_LOG.md
+          git add _internal/docs/security/security-headers-verify-latest.json _internal/docs/CHANNEL_LOG.md
           git commit -m "chore(security): update security headers verification report" || echo "No changes to commit"
           git push || echo "Push skipped (PR flow or no changes)"

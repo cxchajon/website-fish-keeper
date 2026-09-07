@@ -87,7 +87,7 @@ class Summary:
         self.missing_asins.append(entry)
 
     def write_reports(self, base_dir: Path) -> None:
-        reports_dir = base_dir / "reports"
+        reports_dir = base_dir / "_internal" / "reports"
         reports_dir.mkdir(parents=True, exist_ok=True)
         summary_lines = ["Gear conversion summary", "======================", ""]
         total_duplicates = sum(self.duplicates.values())

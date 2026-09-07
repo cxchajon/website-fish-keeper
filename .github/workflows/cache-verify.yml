@@ -70,13 +70,13 @@ jobs:
           name: cache-verify-output
           path: cache-verify-output.json
 
-      - name: Commit verification into docs/security
+      - name: Commit verification into _internal/docs/security
         if: always()
         run: |
           set -e
-          mkdir -p docs/security
+          mkdir -p _internal/docs/security
           TS="$(date -u +'%Y-%m-%d')"
-          DEST="docs/security/cache-verify-$TS.json"
+          DEST="_internal/docs/security/cache-verify-$TS.json"
           cp cache-verify-output.json "$DEST"
           git config user.name "codex-bot"
           git config user.email "codex-bot@users.noreply.github.com"

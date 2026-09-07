@@ -24,7 +24,7 @@ const harnessRoot = path.resolve(__dirname, '..');
 const packsDir = path.join(harnessRoot, 'packs');
 const outDir = path.join(harnessRoot, 'out');
 const repoRoot = path.resolve(harnessRoot, '..');
-const reportsDir = path.join(repoRoot, 'reports');
+const reportsDir = path.join(repoRoot, '_internal', 'reports');
 
 ensureDir(outDir);
 ensureDir(reportsDir);

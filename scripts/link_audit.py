@@ -1,8 +1,8 @@
 # scripts/link_audit.py
 # Validate product links in gear CSVs by expanding short URLs and comparing page titles to Product_Name.
 # Writes two reports:
-#   reports/link_audit.csv  (detailed rows)
-#   reports/link_audit.txt  (human-readable summary)
+#   _internal/reports/link_audit.csv  (detailed rows)
+#   _internal/reports/link_audit.txt  (human-readable summary)
 
 import csv, os, sys, time, re, argparse, json
 from urllib.parse import urlparse
@@ -298,9 +298,9 @@ def main():
         rows = [r for r in rows if (r.get("Category", "").strip().casefold() == target)]
         src = f"{src} [category={args.category}]"
 
-    ensure_dir("reports")
-    out_csv = "reports/link_audit.csv"
-    out_txt = "reports/link_audit.txt"
+    ensure_dir("_internal/reports")
+    out_csv = "_internal/reports/link_audit.csv"
+    out_txt = "_internal/reports/link_audit.txt"
 
     session = _get_session()
     session.headers.update({"User-Agent": UA})

@@ -12,7 +12,7 @@ const SOURCE_FILES = [
   { path: 'data/gear_filters_ranges.csv', kind: 'gear', parser: parseGearFiltersRangesCsv },
   { path: 'data/gear_filters.csv', kind: 'gear', parser: parseGearFiltersCsv },
   { path: 'data/gear_master.csv', kind: 'gear', parser: parseGearFiltrationCsv },
-  { path: 'reports/samples_after.csv', kind: 'reports', parser: parseGearFiltrationCsv },
+  { path: '_internal/reports/samples_after.csv', kind: 'reports', parser: parseGearFiltrationCsv },
   { path: 'data/raw/exportedList_1K6C25CO6ESSX.csv', kind: 'raw', parser: parseAmazonExportCsv },
 ];
 
