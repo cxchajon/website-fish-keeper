@@ -31,3 +31,28 @@ body.blog-single-column .blog-body {
 body.blog-single-column .blog-body::after {
   content: none;
 }
+
+/* Shared inline-image hierarchy used by current Tank Guide articles. */
+body.blog-single-column .blog-inline-figure--landscape,
+body.blog-single-column .blog-inline-figure--square {
+  box-sizing: border-box;
+  margin: 1.75rem auto;
+}
+
+body.blog-single-column .blog-inline-figure--landscape {
+  width: 80%;
+  max-width: 620px;
+}
+
+body.blog-single-column .blog-inline-figure--square {
+  width: 60%;
+  max-width: 420px;
+}
+
+body.blog-single-column .blog-inline-figure--landscape .tg-img,
+body.blog-single-column .blog-inline-figure--square .tg-img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
