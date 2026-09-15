@@ -15,3 +15,19 @@ body.blog-single-column .blog-body {
 body.blog-single-column .article-header {
   text-align: left;
 }
+
+/* A single-column article is one continuous surface, not a nested content card. */
+body.blog-single-column .blog-body {
+  margin-block: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  overflow: visible;
+}
+
+body.blog-single-column .blog-body::after {
+  content: none;
+}
