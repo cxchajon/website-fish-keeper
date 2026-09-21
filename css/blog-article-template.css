@@ -631,13 +631,13 @@ body.blog-article .gear-links .product-card .cta {
   text-decoration: underline;
 }
 
-body.blog-article .blog-breadcrumb {
+.blog-breadcrumb {
   max-width: var(--article-body-max);
   margin: 20px auto 0;
   padding: 0 20px;
 }
 
-body.blog-article .blog-breadcrumb ol {
+.blog-breadcrumb ol {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -648,9 +648,14 @@ body.blog-article .blog-breadcrumb ol {
   color: var(--blog-muted-strong, #e2e6ee);
 }
 
-body.blog-article .blog-breadcrumb a {
+.blog-breadcrumb a {
   color: var(--blog-accent, #00c3b6);
   text-decoration: none;
+}
+
+.blog-breadcrumb li[aria-current="page"] {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 body.blog-article #faq,
