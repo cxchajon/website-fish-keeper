@@ -47,7 +47,8 @@
       "original_package_citation": "Cited in the original research package's bibliography (carries an original_package_key such as S1–S16).",
       "supplementary_verification_source": "Added later during an independent verification pass to support a claim whose original citation was mismatched. Not an original package citation; carries no original_package_key."
     },
-    "original_package_key": "Object recording how the source is identified in its package. Summer Heat: key is the package's S# number. PKG-2026-08-gh-kh-ph: the package has no source numbering, so key is the bibliography entry's own author–year (or organization + title) label (key_type 'bibliography_entry_label'), with bibliography_tier, bibliography_tier_position and bibliography_entry_verbatim preserved."
+    "original_package_key": "Object recording how the source is identified in its package. Summer Heat: key is the package's S# number. PKG-2026-08-gh-kh-ph: the package has no source numbering, so key is the bibliography entry's own author–year (or organization + title) label (key_type 'bibliography_entry_label'), with bibliography_tier, bibliography_tier_position and bibliography_entry_verbatim preserved.",
+    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. The original package citation is never rewritten; it stays in original_package_key."
   },
   "sources": [
     {
@@ -551,20 +552,31 @@
         "bibliography_entry_verbatim": "Duarte, R. M., Smith, D. S., Val, A. L., & Wood, C. M. (2016). Dissolved organic carbon from the upper Rio Negro protects zebrafish (Danio rerio) against ionoregulatory disturbances caused by low pH exposure. Scientific Reports, 6, 20377. DOI: 10.1038/srep20377. https://www.nature.com/articles/srep20377"
       },
       "title": "Dissolved organic carbon from the upper Rio Negro protects zebrafish (Danio rerio) against ionoregulatory disturbances caused by low pH exposure",
-      "author_or_organization": "Duarte, R. M.; Smith, D. S.; Val, A. L.; Wood, C. M.",
+      "author_or_organization": "Duarte, Rafael M.; Smith, D. Scott; Val, Adalberto L.; Wood, Chris M.",
+      "authors": [
+        "Rafael M. Duarte",
+        "D. Scott Smith",
+        "Adalberto L. Val",
+        "Chris M. Wood"
+      ],
       "publication_or_publisher": "Scientific Reports, 6, 20377",
       "year": 2016,
+      "journal": "Scientific Reports",
+      "volume": "6",
+      "article_number": "20377",
+      "publication_date": "2016-02-08",
       "source_type": "peer_reviewed",
       "url": "https://www.nature.com/articles/srep20377",
       "doi": "10.1038/srep20377",
       "access_type": null,
       "evidence_role": "peer_reviewed_primary_study",
       "package_description": "Cited in-text for Rio Negro DOC providing near-complete protection against ionoregulatory disturbance in zebrafish acutely exposed to pH 4.0 in ion-poor water (Sections 10.3, 16.6, 27.2).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified",
+      "verification_note": "The primary publisher record confirms the citation. The study found that upper Rio Negro dissolved organic carbon provided near-complete protection against ionoregulatory disturbances in zebrafish exposed acutely to pH 4.0 in ion-poor water, including reduced Na+ and Cl− losses and stimulation of Na+ uptake. The study does not establish that ordinary aquarium botanicals reproduce the same effect.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "The package calls the DOC finding 'one of the most significant findings in this research' and cautions that extrapolation from Rio Negro DOC to aquarium leaf litter is an inference, not a demonstrated result (Section 16.6, tagged [CON])."
+        "[Registration note; superseded by GH/KH/pH verification batch 1] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "The package calls the DOC finding 'one of the most significant findings in this research' and cautions that extrapolation from Rio Negro DOC to aquarium leaf litter is an inference, not a demonstrated result (Section 16.6, tagged [CON]).",
+        "GH/KH/pH verification batch 1 (2026-09-25): citation confirmed against the primary publisher record (Nature / Scientific Reports). Registered package metadata (title, authors, journal, volume, article number, year, DOI, URL) was correct; no correction required. Published February 8, 2016."
       ]
     },
     {
@@ -578,21 +590,37 @@
         "bibliography_tier_position": 2,
         "bibliography_entry_verbatim": "Wood, C. M., Matsuo, A. Y. O., Wilson, R. W., Gonzalez, R. J., Patrick, M. L., Playle, R. C., & Val, A. L. (2003). Protection by natural blackwater against disturbances in ion fluxes caused by low pH exposure in freshwater stingrays endemic to the Rio Negro. Physiological and Biochemical Zoology, 76(1), 12–27. DOI: 10.1086/367946"
       },
-      "title": "Protection by natural blackwater against disturbances in ion fluxes caused by low pH exposure in freshwater stingrays endemic to the Rio Negro",
-      "author_or_organization": "Wood, C. M.; Matsuo, A. Y. O.; Wilson, R. W.; Gonzalez, R. J.; Patrick, M. L.; Playle, R. C.; Val, A. L.",
+      "title": "Protection by Natural Blackwater against Disturbances in Ion Fluxes Caused by Low pH Exposure in Freshwater Stingrays Endemic to the Rio Negro",
+      "author_or_organization": "Wood, Chris M.; Matsuo, Aline Y. O.; Wilson, Rod W.; Gonzalez, R. J.; Patrick, Marjorie L.; Playle, Richard C.; Val, Adalberto Luis",
+      "authors": [
+        "Chris M. Wood",
+        "Aline Y. O. Matsuo",
+        "Rod W. Wilson",
+        "R. J. Gonzalez",
+        "Marjorie L. Patrick",
+        "Richard C. Playle",
+        "Adalberto Luis Val"
+      ],
       "publication_or_publisher": "Physiological and Biochemical Zoology, 76(1), 12–27",
       "year": 2003,
+      "journal": "Physiological and Biochemical Zoology",
+      "volume": "76",
+      "issue": "1",
+      "page_range": "12–27",
       "source_type": "peer_reviewed",
-      "url": null,
+      "url": "https://www.journals.uchicago.edu/doi/10.1086/367946",
       "doi": "10.1086/367946",
       "access_type": null,
       "evidence_role": "peer_reviewed_primary_study",
       "package_description": "Cited in-text as parallel work finding comparable protection by natural blackwater in Rio Negro stingrays (Sections 10.3, 16.6).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified",
+      "verification_note": "The publisher record confirms that the study investigated the protective role of natural Rio Negro blackwater against low-pH ionoregulatory disturbance in freshwater stingrays.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No URL given in the package; DOI only."
+        "[Registration note; superseded by GH/KH/pH verification batch 1] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 1] No URL given in the package; DOI only.",
+        "GH/KH/pH verification batch 1 (2026-09-25): citation confirmed against the publisher record (University of Chicago Press). Registered package metadata (authors and order, journal, volume, issue, pages, year, DOI) was correct; no substantive correction required.",
+        "Title recorded in the publisher's title case; the package gave the same title in sentence case. Capitalization only; not a substantive correction.",
+        "Canonical URL added from the publisher record (the package gave DOI only)."
       ]
     },
     {
@@ -606,22 +634,37 @@
         "bibliography_tier_position": 3,
         "bibliography_entry_verbatim": "Morris, C., Val, A. L., Brauner, C. J., & Wood, C. M. (2021). The physiology of fish in acidic waters rich in dissolved organic carbon, with specific reference to the Amazon basin: Ionoregulation, acid-base regulation, ammonia excretion, and metal toxicity. Journal of Experimental Zoology Part A: Ecological and Integrative Physiology, 335(9–10), 843–863. DOI: 10.1002/jez.2468"
       },
-      "title": "The physiology of fish in acidic waters rich in dissolved organic carbon, with specific reference to the Amazon basin: Ionoregulation, acid-base regulation, ammonia excretion, and metal toxicity",
-      "author_or_organization": "Morris, C.; Val, A. L.; Brauner, C. J.; Wood, C. M.",
+      "title": "The physiology of fish in acidic waters rich in dissolved organic carbon, with specific reference to the Amazon basin: Ionoregulation, acid–base regulation, ammonia excretion, and metal toxicity",
+      "author_or_organization": "Morris, Carolyn; Val, Adalberto L.; Brauner, Colin J.; Wood, Chris M.",
+      "authors": [
+        "Carolyn Morris",
+        "Adalberto L. Val",
+        "Colin J. Brauner",
+        "Chris M. Wood"
+      ],
       "publication_or_publisher": "Journal of Experimental Zoology Part A: Ecological and Integrative Physiology, 335(9–10), 843–863",
       "year": 2021,
+      "journal": "Journal of Experimental Zoology Part A: Ecological and Integrative Physiology",
+      "volume": "335",
+      "issue": "9–10",
+      "page_range": "843–863",
+      "publication_date": "2021-05-10",
+      "publication_date_role": "first_published_online",
       "source_type": "peer_reviewed",
-      "url": null,
+      "url": "https://doi.org/10.1002/jez.2468",
       "doi": "10.1002/jez.2468",
       "access_type": null,
       "evidence_role": "peer_reviewed_review",
       "package_description": "Cited in-text as a review covering Amazonian fish physiology in acidic, DOC-rich water (Section 16.6).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified",
+      "verification_note": "This is a peer-reviewed review of fish physiology in acidic, DOC-rich waters, particularly Amazonian blackwaters. It reviews DOC-related ionoregulatory protection and other physiological effects.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No URL given in the package; DOI only.",
-        "Evidence role 'peer_reviewed_review' reflects the package's own description ('Reviews of Amazonian fish physiology…')."
+        "[Registration note; superseded by GH/KH/pH verification batch 1] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 1] No URL given in the package; DOI only.",
+        "Evidence role 'peer_reviewed_review' reflects the package's own description ('Reviews of Amazonian fish physiology…').",
+        "GH/KH/pH verification batch 1 (2026-09-25): citation confirmed. Registered package metadata (authors and order, journal, volume, issue, pages, year, DOI) was correct; no substantive correction required. First published May 10, 2021.",
+        "Title recorded with an en dash in 'acid–base' as published; the package used a hyphen ('acid-base'). Typography only; not a substantive correction.",
+        "Canonical URL (DOI resolver) added; the package gave DOI only."
       ]
     },
     {
@@ -635,21 +678,54 @@
         "bibliography_tier_position": 4,
         "bibliography_entry_verbatim": "Gonzalez, R. J., Wood, C. M., Patrick, M. L., & Val, A. L. (2002). Diverse strategies for ion regulation in fish collected from the ion-poor, acidic Rio Negro. Physiological and Biochemical Zoology, 75(1), 37–47."
       },
-      "title": "Diverse strategies for ion regulation in fish collected from the ion-poor, acidic Rio Negro",
-      "author_or_organization": "Gonzalez, R. J.; Wood, C. M.; Patrick, M. L.; Val, A. L.",
+      "title": "Diverse Strategies for Ion Regulation in Fish Collected from the Ion-Poor, Acidic Rio Negro",
+      "author_or_organization": "Gonzalez, R. J.; Wilson, R. W.; Wood, C. M.; Patrick, M. L.; Val, A. L.",
+      "authors": [
+        "R. J. Gonzalez",
+        "R. W. Wilson",
+        "C. M. Wood",
+        "M. L. Patrick",
+        "A. L. Val"
+      ],
       "publication_or_publisher": "Physiological and Biochemical Zoology, 75(1), 37–47",
       "year": 2002,
+      "journal": "Physiological and Biochemical Zoology",
+      "volume": "75",
+      "issue": "1",
+      "page_range": "37–47",
+      "metadata_correction": {
+        "correction_type": "author_list",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 1 (2026-09-25)",
+        "original_package_authors": [
+          "Gonzalez, R. J.",
+          "Wood, C. M.",
+          "Patrick, M. L.",
+          "Val, A. L."
+        ],
+        "corrected_authors": [
+          "R. J. Gonzalez",
+          "R. W. Wilson",
+          "C. M. Wood",
+          "M. L. Patrick",
+          "A. L. Val"
+        ],
+        "note": "The original package bibliography omitted R. W. Wilson and listed the remaining authors in a different order (Gonzalez, Wood, Patrick, Val). The publisher record lists five authors: Gonzalez, Wilson, Wood, Patrick, Val. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "peer_reviewed",
-      "url": null,
-      "doi": null,
+      "url": "https://www.journals.uchicago.edu/doi/10.1086/339216",
+      "doi": "10.1086/339216",
       "access_type": null,
       "evidence_role": "peer_reviewed_primary_study",
       "package_description": "Not cited by name in the body. Candidate member of the collective reference in Section 27.3 ('a substantial body of work by Gonzalez, Wood, Wilson, Val and colleagues from the 1990s to the 2020s; see the bibliography').",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The primary publisher record confirms that the study compared ion-regulatory strategies among multiple Rio Negro fish species and documented substantial species-level differences in ion uptake, acclimation and low-pH sensitivity. METADATA CORRECTION: the original package bibliography omitted R. W. Wilson; the corrected author list is Gonzalez, R. J.; Wilson, R. W.; Wood, C. M.; Patrick, M. L.; Val, A. L.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No URL or DOI given in the package."
+        "[Registration note; superseded by GH/KH/pH verification batch 1] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 1] No URL or DOI given in the package.",
+        "AUTHOR-LIST CORRECTION (GH/KH/pH verification batch 1 (2026-09-25)): the original package bibliography omitted R. W. Wilson and placed the remaining authors in a different order. Package: Gonzalez, Wood, Patrick & Val. Publisher record: Gonzalez, Wilson, Wood, Patrick & Val. The package's bibliography entry and key are preserved verbatim in original_package_key for historical traceability; the archived PDF is unchanged.",
+        "DOI 10.1086/339216 and canonical URL added from the publisher record (the package gave neither).",
+        "Title recorded in the publisher's title case; the package gave the same title in sentence case. Capitalization only."
       ]
     },
     {
@@ -663,21 +739,40 @@
         "bibliography_tier_position": 5,
         "bibliography_entry_verbatim": "Gonzalez, R. J., Wilson, R. W., & Wood, C. M. (2005). Ionoregulation in tropical fishes from ion-poor, acidic blackwaters. In A. L. Val, V. M. F. Almeida-Val, & D. J. Randall (Eds.), The Physiology of Tropical Fishes (Fish Physiology Vol. 21, pp. 397–442). Academic Press. DOI: 10.1016/S1546-5098(05)21009-9"
       },
-      "title": "Ionoregulation in tropical fishes from ion-poor, acidic blackwaters",
+      "title": "Ionoregulation in Tropical Fishes from Ion-Poor, Acidic Blackwaters",
       "author_or_organization": "Gonzalez, R. J.; Wilson, R. W.; Wood, C. M.",
+      "authors": [
+        "R. J. Gonzalez",
+        "R. W. Wilson",
+        "C. M. Wood"
+      ],
       "publication_or_publisher": "In A. L. Val, V. M. F. Almeida-Val, & D. J. Randall (Eds.), The Physiology of Tropical Fishes (Fish Physiology Vol. 21, pp. 397–442). Academic Press",
       "year": 2005,
+      "book_series": "Fish Physiology",
+      "volume": "21",
+      "book_title": "The Physiology of Tropical Fishes",
+      "editors": [
+        "A. L. Val",
+        "V. M. F. Almeida-Val",
+        "D. J. Randall"
+      ],
+      "page_range": "397–442",
+      "publisher": "Academic Press",
       "source_type": "book_or_book_chapter",
-      "url": null,
+      "url": "https://doi.org/10.1016/S1546-5098(05)21009-9",
       "doi": "10.1016/S1546-5098(05)21009-9",
       "access_type": null,
       "evidence_role": "peer_reviewed_review",
       "package_description": "Not cited by name in the body. Candidate member of the collective reference in Section 27.3.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified",
+      "verification_note": "This is a scientific book chapter reviewing ion regulation in tropical fishes living in ion-poor acidic blackwaters. The package's placement of the chapter under its “Peer-Reviewed Scientific Literature” evidence tier is preserved, while source_type remains book_or_book_chapter.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Book chapter listed by the package under its 'Peer-Reviewed Scientific Literature' tier; the tier placement is preserved as the package gave it."
+        "[Registration note; superseded by GH/KH/pH verification batch 1] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Book chapter listed by the package under its 'Peer-Reviewed Scientific Literature' tier; the tier placement is preserved as the package gave it.",
+        "GH/KH/pH verification batch 1 (2026-09-25): citation confirmed. Registered package metadata (authors and order, editors, book, series and volume, pages, publisher, year, DOI) was correct; no substantive correction required.",
+        "source_type retained as book_or_book_chapter; the package's bibliography tier ('Peer-Reviewed Scientific Literature') is preserved unchanged in original_package_key.bibliography_tier.",
+        "Title recorded in the publisher's title case; the package gave the same title in sentence case. Capitalization only.",
+        "Canonical URL (DOI resolver) added; the package gave DOI only."
       ]
     },
     {
@@ -1789,6 +1884,34 @@
       "description": "Initial registry extraction of the GH/KH/pH package bibliography. No outside verification performed.",
       "source_ids_added": 43,
       "source_ids_reused": []
+    }
+  ],
+  "verification_batches": [
+    {
+      "package_id": "PKG-2026-08-gh-kh-ph",
+      "batch": 1,
+      "date": "2026-09-25",
+      "description": "First independent-verification batch for the GH/KH/pH package: five peer-reviewed physiology sources on DOC/blackwater protection and ion regulation in Rio Negro fishes.",
+      "source_ids": [
+        "SRC-duarte-2016-rio-negro-doc-zebrafish",
+        "SRC-wood-2003-blackwater-stingrays",
+        "SRC-morris-2021-amazon-doc-fish-physiology-review",
+        "SRC-gonzalez-2002-rio-negro-ion-regulation-strategies",
+        "SRC-gonzalez-2005-tropical-fish-ionoregulation-chapter"
+      ],
+      "substantive_metadata_corrections": [
+        "SRC-gonzalez-2002-rio-negro-ion-regulation-strategies"
+      ],
+      "usage_ids_reviewed": [
+        "USE-ghkhph-019",
+        "USE-ghkhph-020",
+        "USE-ghkhph-026",
+        "USE-ghkhph-027",
+        "USE-ghkhph-028",
+        "USE-ghkhph-048",
+        "USE-ghkhph-049",
+        "USE-ghkhph-050"
+      ]
     }
   ]
 }

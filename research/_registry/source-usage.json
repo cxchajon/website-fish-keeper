@@ -38,7 +38,8 @@
     "package_evidence_status_by_package": {
       "PKG-2026-08-gh-kh-ph": "Verbatim evidence tag(s) the package attaches to the claim where the citation appears — from its Evidence Classification Key ([EST], [STR], [INF], [AQC], [VET], [HOB], [ANC], [CON], [MYTH], including compound/variant forms), or the verbatim Section 32 'Classification:' text for Section 32 claims. 'UNTAGGED_IN_PACKAGE' when the claim carries no explicit tag; null for listing-only relationships. package_evidence_status_note explains mixed or inherited tags."
     },
-    "bibliography_tier": "PKG-2026-08-gh-kh-ph only: the verbatim bibliography tier heading under which the package lists the source."
+    "bibliography_tier": "PKG-2026-08-gh-kh-ph only: the verbatim bibliography tier heading under which the package lists the source.",
+    "support_limitation": "Optional. Verification-pass statement of what the source does not establish for this use, recorded alongside support_status."
   },
   "usage": [
     {
@@ -1468,9 +1469,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "Duarte 2016 directly reports near-complete DOC protection against low-pH ionoregulatory disturbance in zebrafish.",
+      "replacement_source_needed": false,
       "notes": [
-        "The package's consequence statement ('pure RO water is not equivalent to natural blackwater') is tagged [INF]."
+        "The package's consequence statement ('pure RO water is not equivalent to natural blackwater') is tagged [INF].",
+        "GH/KH/pH verification batch 1 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1494,8 +1498,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "Wood 2003 directly reports protective effects of natural Rio Negro blackwater in freshwater stingrays exposed to low pH.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 1 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-021",
@@ -1650,9 +1658,13 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "Duarte 2016 directly supports the physiological DOC-protection finding.",
+      "support_limitation": "The later inference that aquarium botanicals provide equivalent protection is not demonstrated by this study and remains an inference.",
+      "replacement_source_needed": false,
       "notes": [
-        "Section 16.8 evidence summary: 'DOC protects fish ionoregulation in acidic, ion-poor water [STR] — demonstrated for Rio Negro DOC'; 'Aquarium botanicals provide the same DOC protection [INF] — plausible, not demonstrated'."
+        "Section 16.8 evidence summary: 'DOC protects fish ionoregulation in acidic, ion-poor water [STR] — demonstrated for Rio Negro DOC'; 'Aquarium botanicals provide the same DOC protection [INF] — plausible, not demonstrated'.",
+        "GH/KH/pH verification batch 1 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1676,8 +1688,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "Wood 2003 directly supports protection by natural blackwater in Rio Negro stingrays.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 1 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-028",
@@ -1700,8 +1716,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "Morris et al. 2021 is explicitly a review of this physiological topic and directly supports the statement that the subject is covered in the scientific literature.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 1 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-029",
@@ -2225,8 +2245,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "Duarte 2016 directly reports reduced Na+ and Cl− loss and stimulated Na+ uptake associated with Rio Negro DOC.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 1 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-049",
@@ -2249,9 +2273,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "partial_support",
+      "support_reason": "Gonzalez et al. 2002 directly demonstrates species-specific ion-regulatory strategies and differences in low-pH tolerance among Rio Negro fishes, but this usage is a broad collective reference to a larger body of work. This single paper supports part of that collective statement rather than the entire literature-wide claim.",
+      "replacement_source_needed": false,
       "notes": [
-        "Collective reference: the package points to the bibliography without naming individual works. This entry is recorded as a candidate because its authors and subject (ion regulation in fish from the ion-poor, acidic Rio Negro/blackwaters) match the description. Other bibliography entries by these authors (e.g., Wood et al. 2002, 2003; Wood, Al-Reasi & Smith 2011; Duarte et al. 2016; Morris et al. 2021) may also fall within it; the package does not specify."
+        "Collective reference: the package points to the bibliography without naming individual works. This entry is recorded as a candidate because its authors and subject (ion regulation in fish from the ion-poor, acidic Rio Negro/blackwaters) match the description. Other bibliography entries by these authors (e.g., Wood et al. 2002, 2003; Wood, Al-Reasi & Smith 2011; Duarte et al. 2016; Morris et al. 2021) may also fall within it; the package does not specify.",
+        "GH/KH/pH verification batch 1 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2275,9 +2302,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "partial_support",
+      "support_reason": "The 2005 chapter reviews adaptation and ionoregulation in tropical fishes from ion-poor acidic blackwaters and is appropriately part of the cited body of work, but it is only one component of the package's broad collective-reference statement.",
+      "replacement_source_needed": false,
       "notes": [
-        "Collective reference: the package points to the bibliography without naming individual works. This entry is recorded as a candidate because its authors and subject (ion regulation in fish from the ion-poor, acidic Rio Negro/blackwaters) match the description. Other bibliography entries by these authors (e.g., Wood et al. 2002, 2003; Wood, Al-Reasi & Smith 2011; Duarte et al. 2016; Morris et al. 2021) may also fall within it; the package does not specify."
+        "Collective reference: the package points to the bibliography without naming individual works. This entry is recorded as a candidate because its authors and subject (ion regulation in fish from the ion-poor, acidic Rio Negro/blackwaters) match the description. Other bibliography entries by these authors (e.g., Wood et al. 2002, 2003; Wood, Al-Reasi & Smith 2011; Duarte et al. 2016; Morris et al. 2021) may also fall within it; the package does not specify.",
+        "GH/KH/pH verification batch 1 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
