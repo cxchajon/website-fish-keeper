@@ -48,7 +48,7 @@
       "supplementary_verification_source": "Added later during an independent verification pass to support a claim whose original citation was mismatched. Not an original package citation; carries no original_package_key."
     },
     "original_package_key": "Object recording how the source is identified in its package. Summer Heat: key is the package's S# number. PKG-2026-08-gh-kh-ph: the package has no source numbering, so key is the bibliography entry's own author–year (or organization + title) label (key_type 'bibliography_entry_label'), with bibliography_tier, bibliography_tier_position and bibliography_entry_verbatim preserved.",
-    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), section (section or chapter grouping within a reference work), full_review_date and last_updated_date (ISO year-month of a living online reference's last full review and latest update), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. evidence_role_correction (object) records a change to the registry-assigned evidence_role made at verification: the original and corrected roles and a note. The original package citation is never rewritten; it stays in original_package_key."
+    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), section (section or chapter grouping within a reference work), full_review_date and last_updated_date (ISO year-month of a living online reference's last full review and latest update), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. evidence_role_correction (object) records a change to the registry-assigned evidence_role made at verification: the original and corrected roles and a note. Added in GH/KH/pH verification batch 4: manual_version (edition/audience version of a reference manual, e.g. Merck 'Pet Owner Version' vs 'Professional Version'), peer_reviewers (list of named reviewers shown on a reference page), author_credentials (post-nominal credentials as published), author_status ('unresolved' when no author can be documented; authors then stays null and no author is inferred), conference, conference_location, conference_dates, proceedings_organization, proceedings_year, abstract_code (congress abstract/session code), vin_document_id (VIN document identifier), and historical_package_url (the URL as given in the package when the canonical url differs). The original package citation is never rewritten; it stays in original_package_key."
   },
   "sources": [
     {
@@ -1352,20 +1352,45 @@
         "bibliography_entry_verbatim": "Merck Veterinary Manual. Disorders and Diseases of Fish. All Other Pets. (Source for the Old Tank Syndrome definition and parameter profile.) https://www.merckvetmanual.com/all-other-pets/fish/disorders-and-diseases-of-fish"
       },
       "title": "Disorders and Diseases of Fish",
-      "author_or_organization": "Merck Veterinary Manual",
-      "publication_or_publisher": "Merck Veterinary Manual — All Other Pets",
-      "year": null,
+      "author_or_organization": "Francis-Floyd, Ruth; Petty, Barbara D.",
+      "publication_or_publisher": "Merck Veterinary Manual (Pet Owner Version) — All Other Pets — Fish",
+      "year": 2026,
+      "authors": [
+        "Ruth Francis-Floyd",
+        "Barbara D. Petty"
+      ],
+      "publisher": "Merck Veterinary Manual",
+      "manual_version": "Pet Owner Version",
+      "section": "All Other Pets — Fish",
+      "full_review_date": "2020-02",
+      "last_updated_date": "2026-04",
+      "metadata_correction": {
+        "correction_type": "missing_authors_version_and_revision_dates",
+        "substantive": false,
+        "applied_in": "GH/KH/pH verification batch 4 (2026-09-25)",
+        "original_package_authors": null,
+        "corrected_authors": [
+          "Ruth Francis-Floyd",
+          "Barbara D. Petty"
+        ],
+        "original_package_year": null,
+        "corrected_year": 2026,
+        "note": "The package named only the publication and the 'All Other Pets' section and gave no authors, edition/version or revision date. The chapter authors, the manual version (Pet Owner Version) and the living-reference dates (full review February 2020; last updated April 2026) have been added; year records the current-version year. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "veterinary_or_professional",
       "url": "https://www.merckvetmanual.com/all-other-pets/fish/disorders-and-diseases-of-fish",
       "doi": null,
       "access_type": null,
       "evidence_role": "veterinary_clinical_guidance",
       "package_description": "Bibliography annotation: '(Source for the Old Tank Syndrome definition and parameter profile.)' Cited in-text in Sections 4.2 and 21.1.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The current page directly states that: Old Tank Syndrome is characterized by high ammonia but differs from New Tank Syndrome; it is associated with a drastic pH drop, often below 6.0; the loss of buffering capacity is caused by improper water changes, especially replacing evaporation by topping off without actually removing old aquarium water; organic acids accumulate and consume buffering capacity; when total alkalinity reaches zero, pH drops sharply and the biofilter can fail; and a typical Old Tank Syndrome profile is ammonia often above 10 mg/L, little or no alkalinity, pH below 6.0 and total hardness of several hundred mg/L. Findings are recorded only as stated on the page and are not extended beyond it. METADATA CORRECTION: authors (Ruth Francis-Floyd, Barbara D. Petty), manual version (Pet Owner Version) and revision dates (full review February 2020; last updated April 2026) added; the package gave none.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No author, edition or revision date given in the package."
+        "[Registration note; superseded by GH/KH/pH verification batch 4] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 4] No author, edition or revision date given in the package.",
+        "GH/KH/pH verification batch 4 (2026-09-25): chapter located at the package URL (unchanged; canonical URL https://www.merckvetmanual.com/all-other-pets/fish/disorders-and-diseases-of-fish). Authors recorded as Ruth Francis-Floyd and Barbara D. Petty.",
+        "MANUAL VERSION: the current page is the Merck Veterinary Manual's Pet Owner Version (section All Other Pets — Fish), authored by veterinarians, not the Professional Version. It is a veterinarian-written consumer-facing reference; source_type (veterinary_or_professional) and evidence_role (veterinary_clinical_guidance) are kept.",
+        "LIVING REFERENCE: this is a living online reference. The registered current-version year is 2026 (last updated April 2026), while the full-review date is February 2020. Verification applies to the version current at the time of this batch; later revisions may change wording."
       ]
     },
     {
@@ -1380,20 +1405,47 @@
         "bibliography_entry_verbatim": "Merck Veterinary Manual. Management of Aquarium Fish. Exotic and Laboratory Animals. https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquarium-fish/management-of-aquarium-fish"
       },
       "title": "Management of Aquarium Fish",
-      "author_or_organization": "Merck Veterinary Manual",
-      "publication_or_publisher": "Merck Veterinary Manual — Exotic and Laboratory Animals",
-      "year": null,
+      "author_or_organization": "Petty, Barbara D.; Francis-Floyd, Ruth; Yanong, Roy P. E.",
+      "publication_or_publisher": "Merck Veterinary Manual (Professional Version) — Exotic and Laboratory Animals — Aquarium Fish",
+      "year": 2026,
+      "authors": [
+        "Barbara D. Petty",
+        "Ruth Francis-Floyd",
+        "Roy P. E. Yanong"
+      ],
+      "publisher": "Merck Veterinary Manual",
+      "manual_version": "Professional Version",
+      "section": "Exotic and Laboratory Animals — Aquarium Fish",
+      "full_review_date": "2022-05",
+      "last_updated_date": "2026-06",
+      "metadata_correction": {
+        "correction_type": "missing_authors_and_revision_dates",
+        "substantive": false,
+        "applied_in": "GH/KH/pH verification batch 4 (2026-09-25)",
+        "original_package_authors": null,
+        "corrected_authors": [
+          "Barbara D. Petty",
+          "Ruth Francis-Floyd",
+          "Roy P. E. Yanong"
+        ],
+        "original_package_year": null,
+        "corrected_year": 2026,
+        "note": "The package named only the publication and gave no authors, edition or revision date. The chapter authors and the living-reference dates (full review May 2022; last updated June 2026) have been added; year records the current-version year. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "veterinary_or_professional",
       "url": "https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquarium-fish/management-of-aquarium-fish",
       "doi": null,
       "access_type": null,
       "evidence_role": "veterinary_clinical_guidance",
       "package_description": "Cited in-text as 'Merck’s companion aquarium-management chapter' for gradual vs. rapid pH decline in Old Tank Syndrome and its prevalence in tanks with large carnivorous fish (Section 21.1).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The current page directly states that: Old Tank Syndrome can occur when water changes are small and infrequent; in some tanks no water is exchanged and evaporation is replaced only by topping off; it can occur in any tank but is common in tanks with large carnivorous fish; high protein input and TAN production contribute to bicarbonate depletion through biofiltration; declining bicarbonate reduces total alkalinity and can cause gradual or dramatic pH decline; if pH declines gradually, fish may adapt with no outward sign of distress; if pH declines rapidly, the result can be death; and existing Old Tank Syndrome should be corrected carefully with daily small water changes to reduce the risk of pH shock and ammonia toxicosis as pH rises. METADATA CORRECTION: authors (Barbara D. Petty, Ruth Francis-Floyd, Roy P. E. Yanong) and revision dates (full review May 2022; last updated June 2026) added; the package gave none.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No author, edition or revision date given in the package."
+        "[Registration note; superseded by GH/KH/pH verification batch 4] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 4] No author, edition or revision date given in the package.",
+        "GH/KH/pH verification batch 4 (2026-09-25): chapter located at the package URL (unchanged; canonical URL https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquarium-fish/management-of-aquarium-fish). Merck Veterinary Manual Professional Version. Authors recorded as Barbara D. Petty, Ruth Francis-Floyd and Roy P. E. Yanong.",
+        "LIVING REFERENCE: this is a living online veterinary reference. The current page is last updated June 2026, while the full review is dated May 2022. year records the current-version year (2026); verification applies to the version current in June 2026, and later revisions may change wording.",
+        "Source type (veterinary_or_professional) and evidence role (veterinary_clinical_guidance) confirmed."
       ]
     },
     {
@@ -1408,21 +1460,55 @@
         "bibliography_entry_verbatim": "Merck Veterinary Manual. Equipment Needed for Aquatic Systems and Water Analysis; and tables A Summary of Water Quality Tests and Recommended Use and “Normal” Reference Ranges for Routine Water Quality Analysis. https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquatic-systems/equipment-needed-for-aquatic-systems-and-water-analysis"
       },
       "title": "Equipment Needed for Aquatic Systems and Water Analysis (with tables 'A Summary of Water Quality Tests and Recommended Use' and '“Normal” Reference Ranges for Routine Water Quality Analysis')",
-      "author_or_organization": "Merck Veterinary Manual",
-      "publication_or_publisher": "Merck Veterinary Manual — Exotic and Laboratory Animals",
-      "year": null,
+      "author_or_organization": "Francis-Floyd, Ruth; Yanong, Roy P. E.; Petty, Barbara D.",
+      "publication_or_publisher": "Merck Veterinary Manual (Professional Version) — Exotic and Laboratory Animals — Aquatic Systems",
+      "year": 2026,
+      "authors": [
+        "Ruth Francis-Floyd",
+        "Roy P. E. Yanong",
+        "Barbara D. Petty"
+      ],
+      "peer_reviewers": [
+        "Angel Abuelo"
+      ],
+      "publisher": "Merck Veterinary Manual",
+      "manual_version": "Professional Version",
+      "section": "Exotic and Laboratory Animals — Aquatic Systems",
+      "full_review_date": "2023-05",
+      "last_updated_date": "2026-06",
+      "metadata_correction": {
+        "correction_type": "missing_authors_reviewer_and_revision_dates",
+        "substantive": false,
+        "applied_in": "GH/KH/pH verification batch 4 (2026-09-25)",
+        "original_package_authors": null,
+        "corrected_authors": [
+          "Ruth Francis-Floyd",
+          "Roy P. E. Yanong",
+          "Barbara D. Petty"
+        ],
+        "corrected_peer_reviewers": [
+          "Angel Abuelo"
+        ],
+        "original_package_year": null,
+        "corrected_year": 2026,
+        "note": "The package named only the publication, chapter and two tables and gave no authors, reviewer or revision date. The chapter authors, peer reviewer and living-reference dates (full review May 2023; last updated June 2026) have been added; year records the current-version year. title is left as registered (chapter plus the two tables named in the package entry). The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "veterinary_or_professional",
       "url": "https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquatic-systems/equipment-needed-for-aquatic-systems-and-water-analysis",
       "doi": null,
       "access_type": null,
       "evidence_role": "veterinary_clinical_guidance",
       "package_description": "Listed in the bibliography only; this chapter is not cited by title in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The current Merck chapter and its water-quality table directly list pH, total alkalinity and total hardness among basic aquatic-system water-quality parameters. The table describes total alkalinity as a measure of buffering capacity, primarily carbonates, and states that it is required for biological filtration. It describes total hardness as measuring divalent earth minerals, primarily calcium and magnesium. SCOPE: the historical package lists this source in the bibliography only; verification of the source does not create a body-claim mapping. METADATA CORRECTION: authors (Ruth Francis-Floyd, Roy P. E. Yanong, Barbara D. Petty), peer reviewer (Angel Abuelo) and revision dates (full review May 2023; last updated June 2026) added; the package gave none.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "One bibliography entry naming a chapter plus two tables; registered as a single source to preserve the package's single entry.",
-        "Candidate (not confirmed) for the unattributed 'Merck’s water-quality guidance' mention in Section 4.7; see the package record's unresolved_named_source_mentions."
+        "[Registration note; superseded by GH/KH/pH verification batch 4] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 4] One bibliography entry naming a chapter plus two tables; registered as a single source to preserve the package's single entry.",
+        "[Registration note; superseded by GH/KH/pH verification batch 4] Candidate (not confirmed) for the unattributed 'Merck’s water-quality guidance' mention in Section 4.7; see the package record's unresolved_named_source_mentions.",
+        "GH/KH/pH verification batch 4 (2026-09-25): chapter located at the package URL (unchanged; canonical URL https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquatic-systems/equipment-needed-for-aquatic-systems-and-water-analysis). Merck Veterinary Manual Professional Version. Authors recorded as Ruth Francis-Floyd, Roy P. E. Yanong and Barbara D. Petty; peer reviewer Angel Abuelo.",
+        "LIVING REFERENCE: this is a living online veterinary reference. The current page is last updated June 2026, while the full review is dated May 2023. year records the current-version year (2026); verification applies to the version current at the time of this batch.",
+        "BIBLIOGRAPHY-ONLY: the historical package lists this source in its bibliography only (USE-ghkhph-061). It is NOT retroactively assigned to Section 4.7 or any other body claim merely because it is a plausible source for an unattributed 'Merck' statement. The Section 4.7 'Merck’s water-quality guidance' mention remains an unresolved named-source mention in the package record; the package itself does not provide enough evidence to identify the chapter.",
+        "Source type (veterinary_or_professional) and evidence role (veterinary_clinical_guidance) confirmed."
       ]
     },
     {
@@ -1438,19 +1524,45 @@
       },
       "title": "Water Quality Assessment in Aquatic Vet Medicine",
       "author_or_organization": null,
-      "publication_or_publisher": "WSAVA 2018 Congress proceedings (via VIN)",
+      "publication_or_publisher": "Proceedings of the 43rd World Small Animal Veterinary Association Congress and 9th FASAVA Congress (World Small Animal Veterinary Association; hosted on VIN)",
       "year": 2018,
+      "authors": null,
+      "author_status": "unresolved",
+      "conference": "43rd World Small Animal Veterinary Association Congress and 9th FASAVA Congress",
+      "conference_location": "Singapore",
+      "conference_dates": "September 25–28, 2018",
+      "proceedings_organization": "World Small Animal Veterinary Association",
+      "proceedings_year": 2018,
+      "abstract_code": "WSV18-0277",
+      "vin_document_id": "8896487",
+      "historical_package_url": "https://www.vin.com/apputil/content/defaultadv1.aspx?pId=22915&id=8896487",
+      "metadata_correction": {
+        "correction_type": "missing_proceedings_details_and_canonical_url",
+        "substantive": false,
+        "applied_in": "GH/KH/pH verification batch 4 (2026-09-25)",
+        "original_package_url": "https://www.vin.com/apputil/content/defaultadv1.aspx?pId=22915&id=8896487",
+        "corrected_url": "https://www.vin.com/doc/?id=8896487",
+        "original_package_authors": null,
+        "corrected_authors": null,
+        "original_package_year": 2018,
+        "corrected_year": 2018,
+        "note": "The package gave the title, 'WSAVA 2018 Congress proceedings, via VIN' and a VIN application URL. The full congress name (43rd WSAVA Congress and 9th FASAVA Congress), dates (September 25–28, 2018), location (Singapore), proceedings organization, VIN document ID (8896487) and WSAVA abstract code (WSV18-0277) have been added, and the canonical VIN document URL recorded; the package's VIN URL is preserved as historical_package_url. Year 2018 unchanged. No author is added: the individual author remains unresolved. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "conference_proceedings",
-      "url": "https://www.vin.com/apputil/content/defaultadv1.aspx?pId=22915&id=8896487",
+      "url": "https://www.vin.com/doc/?id=8896487",
       "doi": null,
       "access_type": null,
       "evidence_role": "veterinary_clinical_guidance",
       "package_description": "Cited in-text as a WSAVA aquatic veterinary presentation framing roughly 100–250 mg/L alkalinity (≈ 5.6–14 dKH) as a working target for most freshwater species (Sections 3.3, 25.3).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The 2018 proceedings directly state that: alkalinity measures negative ions such as hydroxide, carbonate and bicarbonate that buffer against pH shifts; 'ideal alkalinity' is 100–250 mg/L for most freshwater fish species; biological filtration uses carbonates; alkalinity is reduced over time; falling alkalinity may allow sudden and potentially deadly pH shifts; and buffering can be increased by adding carbonates or by water changes with water containing greater alkalinity. LIMITATION: the 100–250 mg/L value is a veterinary-conference recommendation, not a universal scientific requirement for every freshwater aquarium; the package's own '[CON] Important disagreement to record' between veterinary/aquaculture recommendations and successful specialist soft-water practice (Section 3.3) is preserved. AUTHOR: unresolved — see notes. METADATA CORRECTION: congress, dates, location, proceedings organization, VIN document ID, abstract code and canonical URL added.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Package names no presenter/author."
+        "[Registration note; superseded by GH/KH/pH verification batch 4] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 4] Package names no presenter/author.",
+        "GH/KH/pH verification batch 4 (2026-09-25): proceedings abstract located on VIN (document ID 8896487; canonical URL https://www.vin.com/doc/?id=8896487; WSAVA abstract code WSV18-0277). The package's VIN URL is preserved as historical_package_url.",
+        "AUTHOR UNRESOLVED: the currently retrievable VIN record identifies the speaker as 'unknown', and the official WSAVA proceedings text available during verification does not expose an author name for this abstract. author_or_organization and authors are therefore left null and author_status is 'unresolved'. No presenter has been inferred; the lecture is NOT attributed to Gregory Lewbart, Richmond Loh or any other aquatic veterinarian without documentary evidence.",
+        "The 100–250 mg/L 'ideal alkalinity' range is recorded as a veterinary-conference recommendation. It is not converted into a universal requirement for every freshwater aquarium; the package's disagreement between veterinary/aquaculture recommendations and successful specialist soft-water practice is preserved in USE-ghkhph-013.",
+        "Source type (conference_proceedings) and evidence role (veterinary_clinical_guidance) confirmed."
       ]
     },
     {
@@ -1465,20 +1577,41 @@
         "bibliography_entry_verbatim": "Introduction to pet fish medicine and surgery (Proceedings). dvm360. https://www.dvm360.com/view/introduction-pet-fish-medicine-and-surgery-proceedings"
       },
       "title": "Introduction to pet fish medicine and surgery (Proceedings)",
-      "author_or_organization": null,
+      "author_or_organization": "Lewbart, Gregory A.",
       "publication_or_publisher": "dvm360",
-      "year": null,
+      "year": 2011,
+      "authors": [
+        "Gregory A. Lewbart"
+      ],
+      "author_credentials": "VMD, MS, DACZM",
+      "publication_date": "2011-08-01",
+      "publisher": "dvm360",
+      "metadata_correction": {
+        "correction_type": "missing_author_and_date",
+        "substantive": false,
+        "applied_in": "GH/KH/pH verification batch 4 (2026-09-25)",
+        "original_package_authors": null,
+        "corrected_authors": [
+          "Gregory A. Lewbart"
+        ],
+        "original_package_year": null,
+        "corrected_year": 2011,
+        "note": "The package gave the title, publisher and URL but no author or date. The author (Gregory A. Lewbart, VMD, MS, DACZM) and publication date (August 1, 2011) shown on the dvm360 page have been added. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "conference_proceedings",
       "url": "https://www.dvm360.com/view/introduction-pet-fish-medicine-and-surgery-proceedings",
       "doi": null,
       "access_type": null,
       "evidence_role": "veterinary_clinical_guidance",
       "package_description": "Listed in the bibliography only; not cited in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The dvm360 page identifies Gregory A. Lewbart as the author and August 1, 2011 as the publication date. The document is a broad pet-fish medicine and surgery proceedings reference and includes water-quality testing among clinical assessment practices. SCOPE: the historical package lists this source in its bibliography only; verification of the source does not create a body-claim mapping. METADATA CORRECTION: author and publication date added; the package gave none.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Package names no author and no date."
+        "[Registration note; superseded by GH/KH/pH verification batch 4] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 4] Package names no author and no date.",
+        "GH/KH/pH verification batch 4 (2026-09-25): proceedings article located at the package URL (unchanged; canonical URL https://www.dvm360.com/view/introduction-pet-fish-medicine-and-surgery-proceedings). Author Gregory A. Lewbart, VMD, MS, DACZM; published August 1, 2011.",
+        "BIBLIOGRAPHY-ONLY: the historical package lists this source in its bibliography only (USE-ghkhph-062). It is not retroactively assigned to any specific GH/KH/pH claim.",
+        "Source type (conference_proceedings) and evidence role (veterinary_clinical_guidance) confirmed."
       ]
     },
     {
@@ -2247,6 +2380,37 @@
         "USE-ghkhph-058",
         "USE-ghkhph-059",
         "USE-ghkhph-060"
+      ]
+    },
+    {
+      "package_id": "PKG-2026-08-gh-kh-ph",
+      "batch": 4,
+      "date": "2026-09-25",
+      "description": "Fourth independent-verification batch for the GH/KH/pH package: three Merck Veterinary Manual chapters (Disorders and Diseases of Fish; Management of Aquarium Fish; Equipment Needed for Aquatic Systems and Water Analysis), the WSAVA 2018 water-quality proceedings abstract and the dvm360 pet-fish medicine proceedings.",
+      "source_ids": [
+        "SRC-merck-vet-disorders-diseases-of-fish",
+        "SRC-merck-vet-management-of-aquarium-fish",
+        "SRC-merck-vet-equipment-water-analysis",
+        "SRC-wsava-2018-water-quality-assessment-aquatic-vet",
+        "SRC-dvm360-intro-pet-fish-medicine-surgery"
+      ],
+      "substantive_metadata_corrections": [],
+      "evidence_role_corrections": [],
+      "unresolved_items": [
+        "SRC-wsava-2018-water-quality-assessment-aquatic-vet: individual author unresolved (VIN lists speaker as 'unknown'; WSAVA proceedings text exposes no author).",
+        "Section 4.7 unattributed 'Merck’s water-quality guidance' mention remains unresolved; not assigned to SRC-merck-vet-equipment-water-analysis."
+      ],
+      "usage_ids_reviewed": [
+        "USE-ghkhph-013",
+        "USE-ghkhph-014",
+        "USE-ghkhph-037",
+        "USE-ghkhph-038",
+        "USE-ghkhph-039",
+        "USE-ghkhph-040",
+        "USE-ghkhph-041",
+        "USE-ghkhph-042",
+        "USE-ghkhph-061",
+        "USE-ghkhph-062"
       ]
     }
   ]
