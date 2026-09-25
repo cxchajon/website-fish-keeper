@@ -48,7 +48,7 @@
       "supplementary_verification_source": "Added later during an independent verification pass to support a claim whose original citation was mismatched. Not an original package citation; carries no original_package_key."
     },
     "original_package_key": "Object recording how the source is identified in its package. Summer Heat: key is the package's S# number. PKG-2026-08-gh-kh-ph: the package has no source numbering, so key is the bibliography entry's own author–year (or organization + title) label (key_type 'bibliography_entry_label'), with bibliography_tier, bibliography_tier_position and bibliography_entry_verbatim preserved.",
-    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. The original package citation is never rewritten; it stays in original_package_key."
+    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. The original package citation is never rewritten; it stays in original_package_key."
   },
   "sources": [
     {
@@ -790,18 +790,30 @@
       "author_or_organization": "Gonzalez, R. J.; Wilson, R. W.",
       "publication_or_publisher": "Journal of Fish Biology, 58(6), 1680–1690",
       "year": 2001,
+      "authors": [
+        "R. J. Gonzalez",
+        "R. W. Wilson"
+      ],
+      "journal": "Journal of Fish Biology",
+      "volume": "58",
+      "issue": "6",
+      "page_range": "1680–1690",
+      "publication_date": "2001-06",
       "source_type": "peer_reviewed",
-      "url": null,
-      "doi": null,
+      "url": "https://onlinelibrary.wiley.com/doi/10.1111/j.1095-8649.2001.tb02322.x",
+      "doi": "10.1111/j.1095-8649.2001.tb02322.x",
       "access_type": null,
       "evidence_role": "peer_reviewed_primary_study",
       "package_description": "Cited in-text as the summary of 'Gonzalez and colleagues, 1997–2021' work on species-specific exceptions to the calcium-tightens-gills model (Section 2.5.1).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The primary Wiley record confirms the title, authors, journal, volume, issue, pages and 2001 publication year. The study directly compares cardinal tetras and angelfish from the Rio Negro and demonstrates substantial species-specific differences in Na+ uptake, acid tolerance and the role of environmental calcium. METADATA CORRECTION: the package bibliography omitted the DOI and URL; DOI 10.1111/j.1095-8649.2001.tb02322.x and the canonical Wiley URL have now been added.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No URL or DOI given in the package.",
-        "Not to be confused with the excluded, unlocatable 'claimed 2021 Journal of Fish Biology study' on cortisol elevation (see the package record's excluded_sources); this 2001 article is a listed bibliography source."
+        "[Registration note; superseded by GH/KH/pH verification batch 2] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 2] No URL or DOI given in the package.",
+        "Not to be confused with the excluded, unlocatable 'claimed 2021 Journal of Fish Biology study' on cortisol elevation (see the package record's excluded_sources); this 2001 article is a listed bibliography source.",
+        "GH/KH/pH verification batch 2 (2026-09-25): citation confirmed against the primary Wiley record. Title, authors (R. J. Gonzalez; R. W. Wilson), journal, volume 58, issue 6, pages 1680–1690 and 2001 publication year were correct as given in the package.",
+        "DOI 10.1111/j.1095-8649.2001.tb02322.x and canonical Wiley URL added; the package bibliography gave neither.",
+        "Publication year is 2001 (journal issue: June 2001). Wiley's later online-display date is not the scientific publication year and is not recorded as such."
       ]
     },
     {
@@ -816,20 +828,51 @@
         "bibliography_entry_verbatim": "Platek, A., et al. (2017). Environmental calcium regulates gill remodeling in a euryhaline teleost fish. Journal of Experimental Zoology Part A: Ecological and Integrative Physiology. DOI: 10.1002/jez.2079. https://onlinelibrary.wiley.com/doi/10.1002/jez.2079"
       },
       "title": "Environmental calcium regulates gill remodeling in a euryhaline teleost fish",
-      "author_or_organization": "Platek, A., et al.",
-      "publication_or_publisher": "Journal of Experimental Zoology Part A: Ecological and Integrative Physiology",
+      "author_or_organization": "Platek, Alexis; Turko, Andy J.; Donini, Andrew; Kelly, Scott; Wright, Patricia A.",
+      "publication_or_publisher": "Journal of Experimental Zoology Part A: Ecological and Integrative Physiology, 327(2–3), 139–142",
       "year": 2017,
+      "authors": [
+        "Alexis Platek",
+        "Andy J. Turko",
+        "Andrew Donini",
+        "Scott Kelly",
+        "Patricia A. Wright"
+      ],
+      "journal": "Journal of Experimental Zoology Part A: Ecological and Integrative Physiology",
+      "volume": "327",
+      "issue": "2–3",
+      "page_range": "139–142",
+      "metadata_correction": {
+        "correction_type": "author_list_completion_and_missing_locators",
+        "substantive": false,
+        "applied_in": "GH/KH/pH verification batch 2 (2026-09-25)",
+        "original_package_authors": [
+          "Platek, A., et al."
+        ],
+        "corrected_authors": [
+          "Alexis Platek",
+          "Andy J. Turko",
+          "Andrew Donini",
+          "Scott Kelly",
+          "Patricia A. Wright"
+        ],
+        "original_package_locators": null,
+        "corrected_locators": "327(2–3), 139–142",
+        "note": "The package citation was substantially correct but abbreviated the co-authors as 'et al.' and gave no volume, issue or pages. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "peer_reviewed",
-      "url": "https://onlinelibrary.wiley.com/doi/10.1002/jez.2079",
+      "url": "https://doi.org/10.1002/jez.2079",
       "doi": "10.1002/jez.2079",
       "access_type": null,
       "evidence_role": "peer_reviewed_primary_study",
       "package_description": "Cited in-text for mangrove rivulus gill remodeling (interlamellar cell mass) in response to environmental calcium (Section 2.5.1).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The study experimentally acclimated mangrove rivulus (Kryptolebias marmoratus) to different environmental calcium conditions. Fish in hard water had significantly lower interlamellar cell mass height than fish in low-calcium water, supporting an effect of environmental calcium on gill remodeling and exposed gill surface area. METADATA CORRECTION: the original package citation was substantially correct but abbreviated the authors ('Platek, A., et al.') and omitted volume, issue and pages; the full author list (Platek, Turko, Donini, Kelly, Wright) and 327(2–3), 139–142 have been added.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Package gives no volume or page numbers; co-authors abbreviated as 'et al.'."
+        "[Registration note; superseded by GH/KH/pH verification batch 2] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 2] Package gives no volume or page numbers; co-authors abbreviated as 'et al.'.",
+        "GH/KH/pH verification batch 2 (2026-09-25): title, journal, year and DOI confirmed as given in the package. Abbreviated author listing replaced with the full five-author list; volume 327, issue 2–3 and pages 139–142 added.",
+        "Canonical URL set to the DOI resolver (https://doi.org/10.1002/jez.2079). The package's Wiley URL remains preserved verbatim in original_package_key.bibliography_entry_verbatim."
       ]
     },
     {
@@ -844,20 +887,38 @@
         "bibliography_entry_verbatim": "Eddy, F. B. (1975). The effect of calcium on gill potentials and on sodium and chloride fluxes in the goldfish, Carassius auratus. Journal of Comparative Physiology A, 96, 131–142. DOI: 10.1007/BF00706593"
       },
       "title": "The effect of calcium on gill potentials and on sodium and chloride fluxes in the goldfish, Carassius auratus",
-      "author_or_organization": "Eddy, F. B.",
-      "publication_or_publisher": "Journal of Comparative Physiology A, 96, 131–142",
+      "author_or_organization": "Eddy, Forrest Brian",
+      "publication_or_publisher": "Journal of Comparative Physiology B, 96(2), 131–142",
       "year": 1975,
+      "authors": [
+        "Forrest Brian Eddy"
+      ],
+      "journal": "Journal of Comparative Physiology B",
+      "volume": "96",
+      "issue": "2",
+      "page_range": "131–142",
+      "metadata_correction": {
+        "correction_type": "journal_division",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 2 (2026-09-25)",
+        "original_package_journal": "Journal of Comparative Physiology A",
+        "corrected_journal": "Journal of Comparative Physiology B",
+        "note": "The package incorrectly identified the journal as Journal of Comparative Physiology A rather than Journal of Comparative Physiology B. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "peer_reviewed",
-      "url": null,
+      "url": "https://doi.org/10.1007/BF00706593",
       "doi": "10.1007/BF00706593",
       "access_type": null,
       "evidence_role": "peer_reviewed_primary_study",
       "package_description": "Cited in-text for calcium cutting sodium and chloride efflux in goldfish and shifting transepithelial potential from roughly −10 mV to +10 mV (Section 2.5.1).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The study directly measured transepithelial potential and sodium/chloride efflux in goldfish. Calcium strongly affected transepithelial potential, changing it from approximately −10 mV without calcium to approximately +10 mV with 10 mM calcium. Addition of calcium greatly reduced both sodium and chloride efflux. METADATA CORRECTION: the package incorrectly identified the journal as Journal of Comparative Physiology A; the correct journal division is Journal of Comparative Physiology B.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No URL given in the package; DOI only."
+        "[Registration note; superseded by GH/KH/pH verification batch 2] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 2] No URL given in the package; DOI only.",
+        "JOURNAL CORRECTION (GH/KH/pH verification batch 2 (2026-09-25)): the package bibliography and in-text citation identify the journal as 'Journal of Comparative Physiology A'. The article was published in Journal of Comparative Physiology B, 96(2), 131–142. The package's bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered.",
+        "Title, author, volume 96, pages 131–142, 1975 year and DOI 10.1007/BF00706593 confirmed as given in the package; issue 2 added. Author recorded with full name (Forrest Brian Eddy).",
+        "Canonical URL (DOI resolver) added; the package gave DOI only."
       ]
     },
     {
@@ -872,20 +933,61 @@
         "bibliography_entry_verbatim": "Nguyen, et al. (2019). Effect of water pH and calcium on ion balance in five fish species of the Mekong Delta. Comparative Biochemistry and Physiology Part A. https://www.sciencedirect.com/science/article/abs/pii/S1095643318302678"
       },
       "title": "Effect of water pH and calcium on ion balance in five fish species of the Mekong Delta",
-      "author_or_organization": "Nguyen, et al.",
-      "publication_or_publisher": "Comparative Biochemistry and Physiology Part A",
+      "author_or_organization": "Yanagitsuru, Yuzo R.; Hewitt, Charles R.; Gam, Le Thi Hong; Phuong-Linh, Pham; Rodgers, Essie M.; Wang, Tobias; Bayley, Mark; Huong, Do Thi Thanh; Phuong, Nguyen Thanh; Brauner, Colin J.",
+      "publication_or_publisher": "Comparative Biochemistry and Physiology Part A: Molecular & Integrative Physiology, 232, 34–39",
       "year": 2019,
+      "authors": [
+        "Yuzo R. Yanagitsuru",
+        "Charles R. Hewitt",
+        "Le Thi Hong Gam",
+        "Pham Phuong-Linh",
+        "Essie M. Rodgers",
+        "Tobias Wang",
+        "Mark Bayley",
+        "Do Thi Thanh Huong",
+        "Nguyen Thanh Phuong",
+        "Colin J. Brauner"
+      ],
+      "journal": "Comparative Biochemistry and Physiology Part A: Molecular & Integrative Physiology",
+      "volume": "232",
+      "page_range": "34–39",
+      "pmid": "30876844",
+      "metadata_correction": {
+        "correction_type": "author_attribution",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 2 (2026-09-25)",
+        "original_package_authors": [
+          "Nguyen, et al."
+        ],
+        "corrected_authors": [
+          "Yuzo R. Yanagitsuru",
+          "Charles R. Hewitt",
+          "Le Thi Hong Gam",
+          "Pham Phuong-Linh",
+          "Essie M. Rodgers",
+          "Tobias Wang",
+          "Mark Bayley",
+          "Do Thi Thanh Huong",
+          "Nguyen Thanh Phuong",
+          "Colin J. Brauner"
+        ],
+        "note": "The package attributed this paper to 'Nguyen, et al. (2019)', which is misleading: the first author is Yuzo R. Yanagitsuru, and Nguyen Thanh Phuong is the ninth of ten authors. The legacy source ID containing 'nguyen' is retained for registry stability. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "peer_reviewed",
-      "url": "https://www.sciencedirect.com/science/article/abs/pii/S1095643318302678",
-      "doi": null,
+      "url": "https://www.sciencedirect.com/science/article/pii/S1095643318302678",
+      "doi": "10.1016/j.cbpa.2019.02.026",
       "access_type": null,
       "evidence_role": "peer_reviewed_primary_study",
       "package_description": "Cited in-text ('see e.g. Nguyen et al., 2019') for the working model that Ca²⁺ at gill tight junctions lowers paracellular ion permeability and H⁺ displaces it at low pH (Section 2.5.1).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The study examined low-pH tolerance and ion loss in five Mekong fish species; the calcium experiment was conducted on two of those species. Low water calcium increased ion loss at pH 3.5 in Chitala ornata but had no detected effect in Trichogaster pectoralis. This directly demonstrates that the role of environmental calcium in acid-related ion loss is species-dependent. However, this study does NOT by itself directly establish the package's more detailed molecular mechanism that Ca2+ occupies tight-junction binding sites and H+ displaces it; that mechanistic statement relies on broader prior literature. METADATA CORRECTION: the package's attribution 'Nguyen, et al. (2019)' is misleading; the verified first author is Yuzo R. Yanagitsuru (Nguyen Thanh Phuong is the ninth of ten authors).",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Package gives no author initials, co-authors, volume, pages or DOI."
+        "[Registration note; superseded by GH/KH/pH verification batch 2] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 2] Package gives no author initials, co-authors, volume, pages or DOI.",
+        "AUTHOR-ATTRIBUTION CORRECTION (GH/KH/pH verification batch 2 (2026-09-25)): the package labels this source 'Nguyen, et al. (2019)'. The verified first author is Yuzo R. Yanagitsuru; the full author list is Yanagitsuru, Hewitt, Gam, Phuong-Linh, Rodgers, Wang, Bayley, Huong, Phuong & Brauner. The package's bibliography entry and key are preserved verbatim in original_package_key for historical traceability; the archived PDF is unchanged.",
+        "STABLE ID RETAINED: the legacy source ID 'SRC-nguyen-2019-mekong-ph-calcium-ion-balance' reflects the original package attribution and is retained unchanged for registry stability. It does not indicate authorship; see authors.",
+        "Volume 232, pages 34–39, DOI 10.1016/j.cbpa.2019.02.026 and PMID 30876844 added; the package gave none of these. Full journal title recorded.",
+        "Canonical URL set to the ScienceDirect article page (the package's '/abs/' abstract URL remains preserved verbatim in original_package_key.bibliography_entry_verbatim)."
       ]
     },
     {
@@ -900,21 +1002,60 @@
         "bibliography_entry_verbatim": "Duarte, R. M., et al. Effect of water calcium, copper, and silver on branchial Na⁺ permeability in a characid and cichlid fish. Comparative Biochemistry and Physiology Part A. https://www.sciencedirect.com/science/article/abs/pii/S1095643323001861"
       },
       "title": "Effect of water calcium, copper, and silver on branchial Na⁺ permeability in a characid and cichlid fish",
-      "author_or_organization": "Duarte, R. M., et al.",
-      "publication_or_publisher": "Comparative Biochemistry and Physiology Part A",
-      "year": null,
+      "author_or_organization": "Ambach, A.; Celo, K.; Lim, M.; Marbach, J.; Tikekar, Z.; Gonzalez, R. J.",
+      "publication_or_publisher": "Comparative Biochemistry and Physiology Part A: Molecular & Integrative Physiology, 288, 111553",
+      "year": 2024,
+      "authors": [
+        "A. Ambach",
+        "K. Celo",
+        "M. Lim",
+        "J. Marbach",
+        "Z. Tikekar",
+        "R. J. Gonzalez"
+      ],
+      "journal": "Comparative Biochemistry and Physiology Part A: Molecular & Integrative Physiology",
+      "volume": "288",
+      "article_number": "111553",
+      "publication_date": "2024-02",
+      "first_published_online_date": "2023-11-11",
+      "pmid": "37956900",
+      "metadata_correction": {
+        "correction_type": "author_attribution_and_year",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 2 (2026-09-25)",
+        "original_package_authors": [
+          "Duarte, R. M., et al."
+        ],
+        "corrected_authors": [
+          "A. Ambach",
+          "K. Celo",
+          "M. Lim",
+          "J. Marbach",
+          "Z. Tikekar",
+          "R. J. Gonzalez"
+        ],
+        "original_package_year": null,
+        "corrected_year": 2024,
+        "note": "The package incorrectly attributed this paper to 'Duarte, R. M., et al.'; no R. M. Duarte appears in the verified author list. The package also gave no year; the verified publication year is 2024 (article online November 11, 2023; issue February 2024). The legacy source ID containing 'duarte' is retained for registry stability. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "peer_reviewed",
-      "url": "https://www.sciencedirect.com/science/article/abs/pii/S1095643323001861",
-      "doi": null,
+      "url": "https://www.sciencedirect.com/science/article/pii/S1095643323001861",
+      "doi": "10.1016/j.cbpa.2023.111553",
       "access_type": null,
       "evidence_role": "peer_reviewed_primary_study",
       "package_description": "Listed in the bibliography only; not cited by name in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The study tested black neon tetras and convict cichlids. Environmental calcium affected branchial Na+ permeability in convict cichlids under some conditions, but the results did not clearly support the same calcium effect in black neon tetras. The study therefore reinforces the package's important species-specific caveat concerning calcium and gill permeability. MAJOR CITATION CORRECTION: the package attributes this source to 'Duarte, R. M., et al.', which is incorrect. The verified authors are A. Ambach, K. Celo, M. Lim, J. Marbach, Z. Tikekar and R. J. Gonzalez; there is no R. M. Duarte in the author list. The package gave no year; the publication year is 2024 (volume 288, February 2024; article online November 11, 2023).",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Package gives no year, volume, pages or DOI. Year is not inferred here.",
-        "Topically adjacent to the calcium-effect caveat for characids and cichlids in Sections 2.5.1 and 27.3, but the package does not tie this entry to either section."
+        "[Registration note; superseded by GH/KH/pH verification batch 2] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 2] Package gives no year, volume, pages or DOI. Year is not inferred here.",
+        "Topically adjacent to the calcium-effect caveat for characids and cichlids in Sections 2.5.1 and 27.3, but the package does not tie this entry to either section.",
+        "MAJOR AUTHOR-ATTRIBUTION CORRECTION (GH/KH/pH verification batch 2 (2026-09-25)): the package bibliography attributes this paper to 'Duarte, R. M., et al.'. That attribution is incorrect. The verified authors are Ambach, Celo, Lim, Marbach, Tikekar & Gonzalez; R. M. Duarte is not an author. The package's bibliography entry and key are preserved verbatim in original_package_key for historical traceability; the archived PDF is unchanged.",
+        "STABLE ID RETAINED: the source ID 'SRC-duarte-calcium-copper-silver-na-permeability' predates verification and is retained unchanged for registry stability. The 'duarte' portion reflects the incorrect package attribution and does not indicate authorship; see authors.",
+        "Publication year 2024 recorded (volume 288, article 111553, issue dated February 2024). The article first appeared online November 11, 2023; that online date is recorded separately and is not the publication year. The package gave no year.",
+        "Volume, article number, DOI 10.1016/j.cbpa.2023.111553 and PMID 37956900 added; the package gave none of these. Full journal title recorded.",
+        "Canonical URL set to the ScienceDirect article page (the package's '/abs/' abstract URL remains preserved verbatim in original_package_key.bibliography_entry_verbatim).",
+        "Title recorded with superscript Na⁺ as registered; the verified title reads 'Na+' in plain-text rendering. Typography only."
       ]
     },
     {
@@ -1911,6 +2052,32 @@
         "USE-ghkhph-048",
         "USE-ghkhph-049",
         "USE-ghkhph-050"
+      ]
+    },
+    {
+      "package_id": "PKG-2026-08-gh-kh-ph",
+      "batch": 2,
+      "date": "2026-09-25",
+      "description": "Second independent-verification batch for the GH/KH/pH package: five peer-reviewed physiology sources on environmental calcium, gill permeability and species-specific ion regulation.",
+      "source_ids": [
+        "SRC-gonzalez-wilson-2001-rio-negro-acidophilic-fish",
+        "SRC-platek-2017-calcium-gill-remodeling",
+        "SRC-eddy-1975-calcium-goldfish-gill-fluxes",
+        "SRC-nguyen-2019-mekong-ph-calcium-ion-balance",
+        "SRC-duarte-calcium-copper-silver-na-permeability"
+      ],
+      "substantive_metadata_corrections": [
+        "SRC-eddy-1975-calcium-goldfish-gill-fluxes",
+        "SRC-nguyen-2019-mekong-ph-calcium-ion-balance",
+        "SRC-duarte-calcium-copper-silver-na-permeability"
+      ],
+      "usage_ids_reviewed": [
+        "USE-ghkhph-007",
+        "USE-ghkhph-008",
+        "USE-ghkhph-009",
+        "USE-ghkhph-010",
+        "USE-ghkhph-051",
+        "USE-ghkhph-056"
       ]
     }
   ]
