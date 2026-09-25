@@ -941,7 +941,8 @@
               "SRC-merck-vet-management-of-aquarium-fish",
               "SRC-merck-vet-disorders-diseases-of-fish"
             ],
-            "note": "Chapter not named; four Merck chapters are in the bibliography."
+            "note": "Chapter not named; four Merck chapters are in the bibliography.",
+            "closure_audit_attribution_status": "unresolved_chapter_attribution_preserved"
           },
           {
             "mention": "The Merck Veterinary Manual’s recommended handling of Old Tank Syndrome — relocate the fish and rebuild the system, rather than adjust the water around them",
@@ -951,7 +952,8 @@
               "SRC-merck-vet-disorders-diseases-of-fish",
               "SRC-merck-vet-management-of-aquarium-fish"
             ],
-            "note": "Chapter not named; the OTS definition and profile are attributed to 'Disorders and Diseases of Fish', but the handling recommendation is not explicitly attributed."
+            "note": "Chapter not named; the OTS definition and profile are attributed to 'Disorders and Diseases of Fish', but the handling recommendation is not explicitly attributed.",
+            "closure_audit_attribution_status": "unresolved_chapter_attribution_preserved"
           },
           {
             "mention": "The Merck Veterinary Manual notes that calcium hydroxide will rapidly drive pH above 10 and kill all fish present",
@@ -963,7 +965,8 @@
               "SRC-merck-vet-disorders-diseases-of-fish",
               "SRC-merck-vet-equipment-water-analysis"
             ],
-            "note": "Chapter not named."
+            "note": "Chapter not named.",
+            "closure_audit_attribution_status": "unresolved_chapter_attribution_preserved"
           },
           {
             "mention": "Merck recommends relocating fish and rebuilding the system for genuine OTS with ammonia above 10 mg/L",
@@ -973,7 +976,8 @@
               "SRC-merck-vet-disorders-diseases-of-fish",
               "SRC-merck-vet-management-of-aquarium-fish"
             ],
-            "note": "Chapter not named."
+            "note": "Chapter not named.",
+            "closure_audit_attribution_status": "unresolved_chapter_attribution_preserved"
           },
           {
             "mention": "In severe cases (Merck’s >10 mg/L threshold), relocating the fish to properly conditioned water is safer",
@@ -983,7 +987,8 @@
               "SRC-merck-vet-disorders-diseases-of-fish",
               "SRC-merck-vet-management-of-aquarium-fish"
             ],
-            "note": "Chapter not named; the >10 mg/L ammonia value appears in the Disorders-attributed OTS profile."
+            "note": "Chapter not named; the >10 mg/L ammonia value appears in the Disorders-attributed OTS profile.",
+            "closure_audit_attribution_status": "unresolved_chapter_attribution_preserved"
           },
           {
             "mention": "Directly stated in veterinary literature (alkalinity depletion causes progressive pH decline)",
@@ -992,7 +997,8 @@
             "candidate_source_ids": [
               "SRC-merck-vet-disorders-diseases-of-fish"
             ],
-            "note": "Generic 'veterinary literature'."
+            "note": "Generic 'veterinary literature'.",
+            "closure_audit_attribution_status": "unresolved_chapter_attribution_preserved"
           },
           {
             "mention": "the specific practice veterinary literature identifies as causal (topping off instead of water changes)",
@@ -1001,7 +1007,8 @@
             "candidate_source_ids": [
               "SRC-merck-vet-disorders-diseases-of-fish"
             ],
-            "note": "Generic 'veterinary literature'."
+            "note": "Generic 'veterinary literature'.",
+            "closure_audit_attribution_status": "unresolved_chapter_attribution_preserved"
           }
         ],
         "bibliography_metadata_gaps": [
@@ -1027,7 +1034,15 @@
           "SRC-oata-how-to-test-freshwater-water-quality",
           "SRC-aquariumscience-org-kh-ph-co2-buffering-substrates"
         ],
-        "bibliography_entries_not_tied_to_claims_note": "13 bibliography sources are listed but not cited in the body, annotated to a section, or explicitly cross-referenced; they carry a single bibliography_listing_only usage record each."
+        "bibliography_entries_not_tied_to_claims_note": "13 bibliography sources are listed but not cited in the body, annotated to a section, or explicitly cross-referenced; they carry a single bibliography_listing_only usage record each.",
+        "in_text_citations_without_bibliography_entry_handling_policy": [
+          "Preserve these items in extraction_observations for historical traceability.",
+          "Do not create normal source records from incomplete or unnamed citations unless they are separately identified and independently verified.",
+          "Do not imply that the current bibliography independently supports those uncited claims.",
+          "If a future public Research Library exposes one of these claims, either verify and register a proper supporting source first, or clearly identify the statement as package-derived/unverified context where appropriate.",
+          "Future source additions must be additive and must not rewrite what the original package cited."
+        ],
+        "in_text_citations_without_bibliography_entry_handling_policy_note": "Adopted at the GH/KH/pH final closure audit (2026-09-25); see OPEN-gh-kh-ph-007. No complete citation was reconstructed from incomplete package text."
       },
       "related_tank_guide_content": [
         {
@@ -1038,9 +1053,13 @@
           "path": "/aquarium-gh-kh-ph-explained/",
           "repo_file": "aquarium-gh-kh-ph-explained/index.html",
           "date_published": "2026-08-18",
-          "relationship": "possible_content_developed_from_package",
-          "verification_status": "needs_verification",
+          "relationship": "master_research_source_for_article",
+          "relationship_statement": "The GH/KH/pH master research package was used as the research source for development of “GH, KH & pH in Your Aquarium: What They Actually Tell You.”",
+          "verification_status": "confirmed",
+          "confirmation_provenance": "creator_confirmation",
+          "confirmation_note": "Confirmed directly by the creator. This production-history confirmation did not come from repository evidence; the repository evidence below (topic/structure overlap and cross-links) is preserved separately and on its own does not establish that the article was written from this package.",
           "evidence": [
+            "Creator confirmation: the creator confirmed that this GH/KH/pH master research package was used to create this article.",
             "Topic match: the article covers what GH, KH and pH each measure and how they interact (package Sections 1–4).",
             "Structural overlap: the article's sections '\"Don't Chase pH\"', '\"Stable pH Is More Important Than the Correct pH\"' and '\"Fish Will Adapt\"' correspond to package Section 7, Section 6 and Section 32 Claims 1–3; 'When Does Adjusting Your Water Actually Make Sense?' / 'When Is Leaving the Water Alone the Better Call?' correspond to package Section 34.",
             "Timing: article datePublished is 2026-08-18; the package says 'Compiled: August 2026' and its PDF creation date is 2026-08-16.",
@@ -1048,8 +1067,22 @@
             "Not confirmed in repo: the package does not name this article or give its URL, and nothing in the repository states that the article was written from this package. Unlike the Summer Heat packet, this package does not quote or fact-check an existing Tank Guide article.",
             "A keyword search of the article HTML found none of several package-specific details (e.g., '17.848', 'Merck', 'Old Tank Syndrome', 'Rio Negro', 'comammox'); this neither confirms nor rules out package use."
           ],
+          "verification_status_history": [
+            {
+              "relationship": "possible_content_developed_from_package",
+              "status": "needs_verification",
+              "note": "Status at registration (extraction stage), recorded from repository topic/structure overlap only."
+            },
+            {
+              "relationship": "master_research_source_for_article",
+              "status": "confirmed",
+              "provenance": "creator_confirmation",
+              "note": "Confirmed directly by the creator (2026-09-25). See OPEN-gh-kh-ph-003 (resolved)."
+            }
+          ],
           "notes": [
-            "Relationship is recorded from subject/structure overlap only and must not be treated as confirmed production history."
+            "[Superseded by creator confirmation] Relationship is recorded from subject/structure overlap only and must not be treated as confirmed production history.",
+            "Section-level mapping between package sections and article headings has not been recorded; per-usage section_mapping values in source-usage.json remain needs_verification."
           ]
         },
         {
@@ -1059,14 +1092,33 @@
           "path": "/how-to-raise-lower-aquarium-gh-kh-ph/",
           "repo_file": "how-to-raise-lower-aquarium-gh-kh-ph/index.html",
           "date_published": "2026-08-19",
-          "relationship": "possible_content_developed_from_package",
-          "verification_status": "needs_verification",
+          "relationship": "master_research_source_for_article",
+          "relationship_statement": "The GH/KH/pH master research package was used as the research source for development of “How to Raise or Lower GH, KH, and pH in Your Aquarium (Without Making Things Worse).”",
+          "verification_status": "confirmed",
+          "confirmation_provenance": "creator_confirmation",
+          "confirmation_note": "Confirmed directly by the creator. This production-history confirmation did not come from repository evidence; the repository evidence below (topic/structure overlap and cross-links) is preserved separately and on its own does not establish that the article was written from this package.",
           "evidence": [
+            "Creator confirmation: the creator confirmed that this GH/KH/pH master research package was used to create this article.",
             "Confirmed in repo: linked from /aquarium-gh-kh-ph-explained/ as its 'companion guide'.",
             "Topic/structure overlap: sections on raising/lowering GH, KH and pH, crushed coral, and RO remineralization correspond to package Sections 10–15 and 17.",
             "Not confirmed in repo: the package does not name this article; no repository record links the two."
           ],
-          "notes": []
+          "verification_status_history": [
+            {
+              "relationship": "possible_content_developed_from_package",
+              "status": "needs_verification",
+              "note": "Status at registration (extraction stage), recorded from repository topic/structure overlap only."
+            },
+            {
+              "relationship": "master_research_source_for_article",
+              "status": "confirmed",
+              "provenance": "creator_confirmation",
+              "note": "Confirmed directly by the creator (2026-09-25). See OPEN-gh-kh-ph-003 (resolved)."
+            }
+          ],
+          "notes": [
+            "Section-level mapping between package sections and article headings has not been recorded; per-usage section_mapping values in source-usage.json remain needs_verification."
+          ]
         },
         {
           "content_id": "TG-ARTICLE-hard-water-vs-soft-water-aquarium-fish",
@@ -1075,14 +1127,31 @@
           "path": "/hard-water-vs-soft-water-aquarium-fish/",
           "repo_file": "hard-water-vs-soft-water-aquarium-fish/index.html",
           "date_published": "2026-08-19",
-          "relationship": "possible_related_content",
-          "verification_status": "needs_verification",
+          "relationship": "master_research_source_for_article",
+          "relationship_statement": "The GH/KH/pH master research package was used as the research source for development of “Hard Water vs. Soft Water: Does Your Livestock Actually Need Something Different?”",
+          "verification_status": "confirmed",
+          "confirmation_provenance": "creator_confirmation",
+          "confirmation_note": "Confirmed directly by the creator. This production-history confirmation did not come from repository evidence; the repository evidence below (topic/structure overlap and cross-links) is preserved separately and on its own does not establish that the article was written from this package.",
           "evidence": [
+            "Creator confirmation: the creator confirmed that this GH/KH/pH master research package was used to create this article.",
             "Topic/structure overlap: sections on soft- vs hard-water fish, 'Survival, Thriving, and Breeding Aren't the Same Question', shrimp and snails, captive-bred stock, and where care-sheet numbers come from correspond to package Sections 8, 28 and 30.",
             "Not confirmed in repo: the package does not name this article; no repository record links the two."
           ],
+          "verification_status_history": [
+            {
+              "relationship": "possible_related_content",
+              "status": "needs_verification",
+              "note": "Status at registration (extraction stage), recorded from repository topic/structure overlap only."
+            },
+            {
+              "relationship": "master_research_source_for_article",
+              "status": "confirmed",
+              "provenance": "creator_confirmation",
+              "note": "Confirmed directly by the creator (2026-09-25). See OPEN-gh-kh-ph-003 (resolved)."
+            }
+          ],
           "notes": [
-            "Listed as possibly related only; lower confidence than the two GH/KH/pH articles."
+            "Section-level mapping between package sections and article headings has not been recorded; per-usage section_mapping values in source-usage.json remain needs_verification."
           ]
         },
         {
@@ -1095,17 +1164,35 @@
             "aquarium-gh-kh-ph-explained/index.html (podcast companion section, heading 'Confused by GH, KH, or pH? Listen Before You Adjust')",
             "podcast/index.html (archive card labeled 'MATCHING PODCAST EPISODE', companion guide /aquarium-gh-kh-ph-explained/)"
           ],
-          "relationship": "possible_episode_developed_from_package",
-          "verification_status": "needs_verification",
+          "relationship": "master_research_source_for_episode",
+          "relationship_statement": "The GH/KH/pH master research package was used as the master research source for development of the Tank Guide Life episode “Confused by GH, KH, or pH? Listen Before You Adjust.”",
+          "verification_status": "confirmed",
+          "confirmation_provenance": "creator_confirmation",
+          "confirmation_note": "This production-history confirmation came directly from the creator/producer and is not being represented as repository-derived evidence. The repository alone does not state that the episode was produced from this package; it confirms only that the episode is paired with /aquarium-gh-kh-ph-explained/.",
           "evidence": [
+            "Creator confirmation: the creator/producer of The Tank Guide Life episode confirmed that this package was the master research source used to develop the episode.",
             "Confirmed in repo: the episode is paired with /aquarium-gh-kh-ph-explained/ as its matching episode / companion guide.",
             "Package cover: 'Compiled as source material for Tank Guide Life, a production of FishKeepingLifeCo.'",
             "Package Document Notes: 'Intended use: ingestion into NotebookLM as a retrieval corpus for podcast and content development. Not intended for direct publication.'",
             "Package 'Purpose and Scope': 'No editorial conclusion is drawn about what a podcast episode should say.'",
-            "Not confirmed in repo: the package does not name any specific episode, and nothing in the repository states that this episode was produced from this package. Subject match alone is not treated as proof."
+            "Not confirmed in repo: the package does not name any specific episode, and nothing in the repository states that this episode was produced from this package. Subject match alone is not treated as proof.",
+            "The package-to-episode confirmation rests on creator confirmation, not on repository evidence."
+          ],
+          "verification_status_history": [
+            {
+              "relationship": "possible_episode_developed_from_package",
+              "status": "needs_verification",
+              "note": "Status at registration (extraction stage); repository evidence alone could not confirm the connection."
+            },
+            {
+              "relationship": "master_research_source_for_episode",
+              "status": "confirmed",
+              "provenance": "creator_confirmation",
+              "note": "Confirmed directly by the creator/producer of the episode (2026-09-25). See OPEN-gh-kh-ph-002 (resolved)."
+            }
           ],
           "notes": [
-            "Creator confirmation or production records (e.g., the NotebookLM notebook for the episode) are needed before this can be marked confirmed. See OPEN-gh-kh-ph-002."
+            "[Superseded by creator confirmation] Creator confirmation or production records (e.g., the NotebookLM notebook for the episode) are needed before this can be marked confirmed. See OPEN-gh-kh-ph-002."
           ]
         }
       ],
@@ -1203,27 +1290,191 @@
       "original_source_keys_note": "The package has no numeric or S# source keys. Keys here are the bibliography's own author–year (or organization + title) labels; full verbatim entries are in sources.json original_package_key.bibliography_entry_verbatim.",
       "reused_source_ids": [],
       "reused_source_ids_note": "Checked against all 18 existing registry sources (Summer Heat S1–S16 plus two supplementary USGS sources). No exact match. Closest: USGS Water Science School 'Hardness of Water' vs the Summer Heat 'Dissolved Oxygen and Water' page — same series, different page, so not reused.",
-      "verification_status": "registered_extraction_only_sources_not_verified",
-      "verification_status_notes": "Package registered and its bibliography extracted. None of the 43 external sources, and none of the claim-to-source relationships, has received the independent verification pass. All source records carry verification_status 'unverified_citation_from_package'; all claim relationships carry support_status 'needs_review' (listing-only relationships carry 'not_applicable_listing_only').",
+      "verification_status": "audit_complete_with_documented_limitations",
+      "verification_status_notes": "Full package audit complete with documented limitations: source extraction complete; source-verification pass complete for all 43 bibliography sources (8 verified, 30 verified_with_metadata_correction, 1 verified_limited_scope, 4 unable_to_verify, 0 unverified); claim-support review complete for all 68 usage relationships (7 deliberately retained as needs_review); Tank Guide production relationships resolved by creator confirmation; residual limitations recorded in final_audit_summary.documented_limitations.",
+      "final_audit_summary": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "audit_date": "2026-09-25",
+        "final_package_status": "audit_complete_with_documented_limitations",
+        "summary": "Source extraction complete; independent source-verification pass complete for all 43 bibliography sources; claim-support review complete for all 68 source-usage relationships; Tank Guide production relationships resolved by creator confirmation; residual evidentiary limitations explicitly documented. All nine audit items (OPEN-gh-kh-ph-001 to -009) are resolved. Resolution means each audit question received a documented disposition; it does not mean every original package claim was proven.",
+        "bibliography_sources": 43,
+        "source_verification": {
+          "verified": 8,
+          "verified_with_metadata_correction": 30,
+          "verified_limited_scope": 1,
+          "unable_to_verify": 4,
+          "unverified_citation_from_package": 0
+        },
+        "source_verification_note": "The initial independent verification pass is complete for all 43 bibliography sources. unable_to_verify is a completed audit disposition.",
+        "source_usage_relationships": 68,
+        "support_review": {
+          "direct_support": 31,
+          "partial_support": 10,
+          "unsupported_or_mismatched": 1,
+          "manufacturer_feature_documentation": 5,
+          "background_support": 1,
+          "not_applicable_listing_only": 13,
+          "needs_review": 7
+        },
+        "support_review_note": "The seven needs_review relationships were reviewed and deliberately retained at that status because the available historical evidence is insufficient for stronger attribution; they are not unreviewed.",
+        "retained_needs_review_usage_ids": [
+          "USE-ghkhph-025",
+          "USE-ghkhph-031",
+          "USE-ghkhph-036",
+          "USE-ghkhph-046",
+          "USE-ghkhph-047",
+          "USE-ghkhph-053",
+          "USE-ghkhph-054"
+        ],
+        "unable_to_verify_source_ids": [
+          "SRC-tucker-1984-carbon-dioxide-for-fish-farmers",
+          "SRC-apc-accuracy-ph-kh-relation-co2-thread",
+          "SRC-aquarium-forum-ph-relationship-kh-chart",
+          "SRC-specialist-shrimp-keeping-resources-unnamed"
+        ],
+        "verified_limited_scope_source_ids": [
+          "SRC-timmons-2018-recirculating-aquaculture-4th-ed"
+        ],
+        "unsupported_or_mismatched_usage_ids": [
+          "USE-ghkhph-011"
+        ],
+        "production_relationships_confirmed_by_creator": [
+          {
+            "content_id": "TGL-EPISODE-confused-by-gh-kh-ph",
+            "relationship": "master_research_source_for_episode",
+            "confirmation_provenance": "creator_confirmation"
+          },
+          {
+            "content_id": "TG-ARTICLE-aquarium-gh-kh-ph-explained",
+            "path": "/aquarium-gh-kh-ph-explained/",
+            "relationship": "master_research_source_for_article",
+            "confirmation_provenance": "creator_confirmation"
+          },
+          {
+            "content_id": "TG-ARTICLE-how-to-raise-lower-aquarium-gh-kh-ph",
+            "path": "/how-to-raise-lower-aquarium-gh-kh-ph/",
+            "relationship": "master_research_source_for_article",
+            "confirmation_provenance": "creator_confirmation"
+          },
+          {
+            "content_id": "TG-ARTICLE-hard-water-vs-soft-water-aquarium-fish",
+            "path": "/hard-water-vs-soft-water-aquarium-fish/",
+            "relationship": "master_research_source_for_article",
+            "confirmation_provenance": "creator_confirmation"
+          }
+        ],
+        "production_relationships_note": "Creator confirmations are production-history statements from the creator/producer and are not represented as repository-derived evidence.",
+        "resolved_open_items": [
+          "OPEN-gh-kh-ph-001",
+          "OPEN-gh-kh-ph-002",
+          "OPEN-gh-kh-ph-003",
+          "OPEN-gh-kh-ph-004",
+          "OPEN-gh-kh-ph-005",
+          "OPEN-gh-kh-ph-006",
+          "OPEN-gh-kh-ph-007",
+          "OPEN-gh-kh-ph-008",
+          "OPEN-gh-kh-ph-009"
+        ],
+        "documented_limitations": [
+          {
+            "limitation": "Four bibliography sources ended unable_to_verify.",
+            "source_ids": [
+              "SRC-tucker-1984-carbon-dioxide-for-fish-farmers",
+              "SRC-apc-accuracy-ph-kh-relation-co2-thread",
+              "SRC-aquarium-forum-ph-relationship-kh-chart",
+              "SRC-specialist-shrimp-keeping-resources-unnamed"
+            ],
+            "detail": "Tucker 1984 is corroborated by citation in SRAC 464 but the original 1984 publication was not located; the Aquatic Plant Central thread, the Aquarium Forum thread and the unnamed specialist shrimp-keeping resources could not be recovered."
+          },
+          {
+            "limitation": "Timmons 2018 is verified_limited_scope.",
+            "source_ids": [
+              "SRC-timmons-2018-recirculating-aquaculture-4th-ed"
+            ],
+            "usage_ids": [
+              "USE-ghkhph-036"
+            ],
+            "detail": "Bibliographic identity is verified, but the exact 4th-edition passage was not directly inspected; USE-ghkhph-036 remains needs_review for strict provenance."
+          },
+          {
+            "limitation": "USE-ghkhph-011 is unsupported_or_mismatched with replacement_source_needed = true.",
+            "usage_ids": [
+              "USE-ghkhph-011"
+            ],
+            "source_ids": [
+              "SRC-wurts-alkalinity-hardness-production-ponds"
+            ],
+            "detail": "Wurts 2002 does not support the package's hormonal / gonadal-development / gamete-production claim. The historical citation is preserved; no replacement source has been registered."
+          },
+          {
+            "limitation": "The peat/atomic-absorption claim remains unresolved.",
+            "usage_ids": [
+              "USE-ghkhph-025",
+              "USE-ghkhph-054"
+            ],
+            "source_ids": [
+              "SRC-aquarium-forum-ph-relationship-kh-chart"
+            ],
+            "detail": "It needs a traceable replacement source before being publicly represented as externally supported."
+          },
+          {
+            "limitation": "The unnamed shrimp-resource group's numerical target ranges cannot be independently audited from the surviving record.",
+            "usage_ids": [
+              "USE-ghkhph-046",
+              "USE-ghkhph-047",
+              "USE-ghkhph-053"
+            ],
+            "source_ids": [
+              "SRC-specialist-shrimp-keeping-resources-unnamed"
+            ]
+          },
+          {
+            "limitation": "Several incomplete in-text citations remain preserved as historical extraction observations rather than being reconstructed.",
+            "detail": "See extraction_observations.in_text_citations_without_bibliography_entry and its handling policy (OPEN-gh-kh-ph-007). Generic 'Merck' / 'veterinary literature' mentions likewise remain without a chapter attribution (OPEN-gh-kh-ph-005)."
+          },
+          {
+            "limitation": "Not all sources are peer-reviewed aquarium research.",
+            "detail": "Some sources are manufacturer, hobby publication, community discussion, professional association, veterinary, aquaculture, or wastewater-process sources rather than peer-reviewed aquarium research. Manufacturer documentation verifies what the manufacturer states, not independent scientific validation."
+          },
+          {
+            "limitation": "Section-level mapping to the confirmed Tank Guide content has not been recorded.",
+            "detail": "Production relationships are confirmed at the package level by creator confirmation; per-usage related_tank_guide_content entries in source-usage.json still carry their registration-time package_relationship and section_mapping values (needs_verification) and were not rewritten in this closure audit."
+          }
+        ],
+        "preserved_unchanged": [
+          "source IDs and usage IDs",
+          "original_package_key values",
+          "bibliography_entry_verbatim text",
+          "package evidence tags (package_evidence_status)",
+          "disclosed_citation_problems and excluded_sources",
+          "archived package PDF"
+        ]
+      },
       "notes": [
-        "Extraction-stage registry record. Content transcribed from the package without outside research, correction or expansion.",
+        "[Registration note; superseded by the final closure audit] Extraction-stage registry record. Content transcribed from the package without outside research, correction or expansion.",
         "The package PDF remains the archived research package; no copies of outside sources are stored.",
         "The package's own evidence terminology (claim tags [EST]…[MYTH], bibliography tier headings, Section 32 classifications) is preserved verbatim and is not mapped onto the Summer Heat Claim Audit terminology.",
         "Two manufacturer sources (Seachem Equilibrium; SaltyShrimp Bee Shrimp Mineral GH+) are cited for product composition and dosing only; the package itself discloses their dosing figures as unverified manufacturer claims.",
         "Four hobbyist/community entries are, by the package's own tier heading, not scientific evidence; one of them is an unnamed group of sites.",
         "Excluded/fabricated references are recorded only in excluded_sources and are not registered as sources.",
-        "The PDF has 94 pages (p. 6 blank). Page numbers in usage records are PDF page numbers."
+        "The PDF has 94 pages (p. 6 blank). Page numbers in usage records are PDF page numbers.",
+        "FINAL CLOSURE AUDIT (2026-09-25): package status set to audit_complete_with_documented_limitations. All 43 source records carry a verification_status and verification_note in sources.json and all 68 usage records carry a support_status in source-usage.json. Historical citation relationships, original package keys, verbatim bibliography text and the package's own evidence tags are unchanged. See final_audit_summary."
       ],
       "verification_status_history": [
         {
           "status": "registered_extraction_only_sources_not_verified",
-          "note": "Status at registration (2026-09-25): package and bibliography extracted; independent verification pass not yet performed."
+          "note": "Status at registration (2026-09-25): package and bibliography extracted; independent verification pass not yet performed.",
+          "status_notes_at_registration": "Package registered and its bibliography extracted. None of the 43 external sources, and none of the claim-to-source relationships, has received the independent verification pass. All source records carry verification_status 'unverified_citation_from_package'; all claim relationships carry support_status 'needs_review' (listing-only relationships carry 'not_applicable_listing_only')."
+        },
+        {
+          "status": "audit_complete_with_documented_limitations",
+          "note": "Independent source-verification batches 1–8 completed; final closure audit (2026-09-25) resolved all nine open items (OPEN-gh-kh-ph-001 to -009); production relationships confirmed by creator confirmation. See final_audit_summary."
         }
       ],
       "open_items": [
         {
           "item_id": "OPEN-gh-kh-ph-001",
-          "description": "Run the independent source-verification pass on all 43 bibliography sources (locate each at its official location; check title, authors, year, publisher, URL and DOI) and assign verification_status and verification_note.",
+          "description": "Resolved. The initial independent source-verification pass is complete for all 43 bibliography sources (GH/KH/pH verification batches 1–8, 2026-09-25). Final breakdown: 8 verified; 30 verified_with_metadata_correction; 1 verified_limited_scope; 4 unable_to_verify; 0 unverified_citation_from_package. unable_to_verify is a valid completed audit disposition (the source was sought and its outcome documented in verification_note); it does not mean the audit itself remains incomplete.",
           "related": [
             "SRC-duarte-2016-rio-negro-doc-zebrafish",
             "SRC-wood-2003-blackwater-stingrays",
@@ -1269,29 +1520,47 @@
             "SRC-aquarium-forum-ph-relationship-kh-chart",
             "SRC-specialist-shrimp-keeping-resources-unnamed"
           ],
-          "status": "open"
+          "status": "resolved",
+          "final_breakdown": {
+            "verified": 8,
+            "verified_with_metadata_correction": 30,
+            "verified_limited_scope": 1,
+            "unable_to_verify": 4,
+            "unverified_citation_from_package": 0
+          },
+          "unable_to_verify_source_ids": [
+            "SRC-tucker-1984-carbon-dioxide-for-fish-farmers",
+            "SRC-apc-accuracy-ph-kh-relation-co2-thread",
+            "SRC-aquarium-forum-ph-relationship-kh-chart",
+            "SRC-specialist-shrimp-keeping-resources-unnamed"
+          ],
+          "original_description": "Run the independent source-verification pass on all 43 bibliography sources (locate each at its official location; check title, authors, year, publisher, URL and DOI) and assign verification_status and verification_note."
         },
         {
           "item_id": "OPEN-gh-kh-ph-002",
-          "description": "Confirm or reject the package-to-episode relationship for Tank Guide Life 'Confused by GH, KH, or pH? Listen Before You Adjust'. Repository evidence confirms only the episode–article pairing. Creator confirmation or production records are required.",
+          "description": "Resolved. The package-to-episode relationship was confirmed directly by the creator: the GH/KH/pH master research package was used as the master research source for development of the Tank Guide Life episode “Confused by GH, KH, or pH? Listen Before You Adjust.” Provenance: creator_confirmation (not repository evidence). Repository evidence continues to confirm only the episode–article pairing with /aquarium-gh-kh-ph-explained/.",
           "related": [
             "TGL-EPISODE-confused-by-gh-kh-ph"
           ],
-          "status": "open"
+          "status": "resolved",
+          "resolution_provenance": "creator_confirmation",
+          "original_description": "Confirm or reject the package-to-episode relationship for Tank Guide Life 'Confused by GH, KH, or pH? Listen Before You Adjust'. Repository evidence confirms only the episode–article pairing. Creator confirmation or production records are required."
         },
         {
           "item_id": "OPEN-gh-kh-ph-003",
-          "description": "Confirm or reject the package-to-article relationships for /aquarium-gh-kh-ph-explained/, /how-to-raise-lower-aquarium-gh-kh-ph/ and /hard-water-vs-soft-water-aquarium-fish/, and record section-level mapping if confirmed.",
+          "description": "Resolved. Creator confirmation established that the GH/KH/pH master research package was used to create all three Tank Guide articles: /aquarium-gh-kh-ph-explained/, /how-to-raise-lower-aquarium-gh-kh-ph/ and /hard-water-vs-soft-water-aquarium-fish/. Provenance: creator_confirmation (not repository evidence; the repository alone shows only topic/structure overlap and cross-links). Section-level mapping between package sections and article headings has not been recorded; per-usage section_mapping values in source-usage.json remain needs_verification.",
           "related": [
             "TG-ARTICLE-aquarium-gh-kh-ph-explained",
             "TG-ARTICLE-how-to-raise-lower-aquarium-gh-kh-ph",
             "TG-ARTICLE-hard-water-vs-soft-water-aquarium-fish"
           ],
-          "status": "open"
+          "status": "resolved",
+          "resolution_provenance": "creator_confirmation",
+          "original_description": "Confirm or reject the package-to-article relationships for /aquarium-gh-kh-ph-explained/, /how-to-raise-lower-aquarium-gh-kh-ph/ and /hard-water-vs-soft-water-aquarium-fish/, and record section-level mapping if confirmed."
         },
         {
           "item_id": "OPEN-gh-kh-ph-004",
-          "description": "Classify support (direct/partial/background/etc.) for every claim relationship currently marked needs_review, including the restatement mappings (named_source_restatement) and the Section 27.3 collective-reference candidates.",
+          "description": "Resolved. The independent support-review pass was completed across all 68 GH/KH/pH source-usage relationships (verification batches 1–8). Final support-status breakdown: 31 direct_support; 10 partial_support; 1 unsupported_or_mismatched (USE-ghkhph-011, replacement_source_needed = true); 5 manufacturer_feature_documentation; 1 background_support; 13 not_applicable_listing_only; 7 needs_review. The seven needs_review relationships were reviewed and intentionally retained at that status because the available historical evidence is insufficient for stronger attribution: USE-ghkhph-025 and USE-ghkhph-054 (unrecovered Aquarium Forum citation); USE-ghkhph-031 (unrecovered Aquatic Plant Central thread); USE-ghkhph-036 (exact Timmons 2018 4th-edition passage not directly inspected); USE-ghkhph-046, USE-ghkhph-047 and USE-ghkhph-053 (unnamed original shrimp-resource group cannot be reconstructed). These are documented residual limitations of a completed audit, not unreviewed or forgotten records.",
           "related": [
             "USE-ghkhph-001",
             "USE-ghkhph-002",
@@ -1349,37 +1618,89 @@
             "USE-ghkhph-054",
             "USE-ghkhph-055"
           ],
-          "status": "open"
+          "status": "resolved",
+          "final_breakdown": {
+            "direct_support": 31,
+            "partial_support": 10,
+            "unsupported_or_mismatched": 1,
+            "manufacturer_feature_documentation": 5,
+            "background_support": 1,
+            "not_applicable_listing_only": 13,
+            "needs_review": 7
+          },
+          "retained_needs_review_usage_ids": [
+            "USE-ghkhph-025",
+            "USE-ghkhph-031",
+            "USE-ghkhph-036",
+            "USE-ghkhph-046",
+            "USE-ghkhph-047",
+            "USE-ghkhph-053",
+            "USE-ghkhph-054"
+          ],
+          "original_description": "Classify support (direct/partial/background/etc.) for every claim relationship currently marked needs_review, including the restatement mappings (named_source_restatement) and the Section 27.3 collective-reference candidates."
         },
         {
           "item_id": "OPEN-gh-kh-ph-005",
-          "description": "Resolve which Merck Veterinary Manual chapter supports each unattributed 'Merck' mention (Sections 4.7, 6.5, 13.2.4, 21.4, 21.5) — see extraction_observations.unresolved_named_source_mentions.",
+          "description": "Resolved. The Merck attribution audit is complete. Explicitly attributable statements were mapped during source verification (including the Old Tank Syndrome definition/profile, gradual vs rapid pH decline, alkalinity guidance and the pH lethal-limit guidance; see merck_mapped_usage_ids). Remaining generic “Merck” mentions (“Merck”, “Merck’s water-quality guidance”, “Merck recommends”, generic “veterinary literature”) cannot be assigned to a specific chapter with sufficient historical confidence and are preserved as unresolved attribution rather than guessed. They remain recorded in extraction_observations.unresolved_named_source_mentions (each now marked closure_audit_attribution_status = unresolved_chapter_attribution_preserved); no chapter mapping was invented and no new usage record was created for them.",
           "related": [
             "SRC-merck-vet-environmental-diseases-aquatic-systems",
             "SRC-merck-vet-disorders-diseases-of-fish",
             "SRC-merck-vet-management-of-aquarium-fish",
             "SRC-merck-vet-equipment-water-analysis"
           ],
-          "status": "open"
+          "status": "resolved",
+          "resolution": "audit_complete_with_unresolved_historical_attribution",
+          "merck_mapped_usage_ids": [
+            "USE-ghkhph-002",
+            "USE-ghkhph-012",
+            "USE-ghkhph-014",
+            "USE-ghkhph-016",
+            "USE-ghkhph-017",
+            "USE-ghkhph-018",
+            "USE-ghkhph-037",
+            "USE-ghkhph-038",
+            "USE-ghkhph-039",
+            "USE-ghkhph-040",
+            "USE-ghkhph-041",
+            "USE-ghkhph-043",
+            "USE-ghkhph-052"
+          ],
+          "original_description": "Resolve which Merck Veterinary Manual chapter supports each unattributed 'Merck' mention (Sections 4.7, 6.5, 13.2.4, 21.4, 21.5) — see extraction_observations.unresolved_named_source_mentions."
         },
         {
           "item_id": "OPEN-gh-kh-ph-006",
-          "description": "Verify the manufacturer dosing figures the package itself disclosed as unverified (Seachem Equilibrium; SaltyShrimp Bee Shrimp Mineral GH+) against current official manufacturer documentation, keeping them labeled as manufacturer claims.",
+          "description": "Resolved. Official manufacturer documentation was located for both Seachem Equilibrium and SaltyShrimp Bee Shrimp Mineral GH+ (verification batch 8). The package's dosing/product claims were verified as manufacturer documentation, and their evidence status is preserved as manufacturer_feature_documentation. This verifies what the manufacturers state; it is not independent scientific validation of the products or of the dosing recommendations. The package's own disclosure that these figures are manufacturer claims is preserved in disclosed_citation_problems.",
           "related": [
             "SRC-seachem-equilibrium-documentation",
             "SRC-saltyshrimp-bee-shrimp-mineral-gh-plus"
           ],
-          "status": "open"
+          "status": "resolved",
+          "related_usage_ids": [
+            "USE-ghkhph-021",
+            "USE-ghkhph-022",
+            "USE-ghkhph-023",
+            "USE-ghkhph-024",
+            "USE-ghkhph-055"
+          ],
+          "original_description": "Verify the manufacturer dosing figures the package itself disclosed as unverified (Seachem Equilibrium; SaltyShrimp Bee Shrimp Mineral GH+) against current official manufacturer documentation, keeping them labeled as manufacturer claims."
         },
         {
           "item_id": "OPEN-gh-kh-ph-007",
-          "description": "Decide how to handle in-text citations that have no bibliography entry (Hunn 1985, Wood 1989, the unnamed koi-pond source, SaltyShrimp GH/KH+, comammox, CO₂-analyser measurements, etc.) — see extraction_observations.in_text_citations_without_bibliography_entry.",
+          "description": "Resolved. A handling policy has been established for package statements and in-text references without a usable bibliography entry (Hunn 1985; Wood 1989; the unnamed koi-pond source; SaltyShrimp GH/KH+; “RO Right”-type products; Terminalia catappa antimicrobial literature; comammox Nitrospira / archaeal ammonia oxidisers; unnamed wastewater literature; direct dissolved-CO₂ analyser measurements; the Safe Drinking Water Act / nitrate fact; the phosphate/carbonate-dissolution claim; nephrocalcinosis literature). The incomplete in-text citations remain preserved in extraction_observations rather than guessed; no source records were created from them. Policy recorded in extraction_observations.in_text_citations_without_bibliography_entry_handling_policy.",
           "related": [],
-          "status": "open"
+          "status": "resolved",
+          "handling_policy": [
+            "Preserve these items in extraction_observations for historical traceability.",
+            "Do not create normal source records from incomplete or unnamed citations unless they are separately identified and independently verified.",
+            "Do not imply that the current bibliography independently supports those uncited claims.",
+            "If a future public Research Library exposes one of these claims, either verify and register a proper supporting source first, or clearly identify the statement as package-derived/unverified context where appropriate.",
+            "Future source additions must be additive and must not rewrite what the original package cited."
+          ],
+          "original_description": "Decide how to handle in-text citations that have no bibliography entry (Hunn 1985, Wood 1989, the unnamed koi-pond source, SaltyShrimp GH/KH+, comammox, CO₂-analyser measurements, etc.) — see extraction_observations.in_text_citations_without_bibliography_entry."
         },
         {
           "item_id": "OPEN-gh-kh-ph-008",
-          "description": "Fill bibliographic metadata gaps and check the SRAC 4100 title/URL mismatch ('Liming' vs 'Lining') without guessing missing years or authors.",
+          "description": "Resolved. The bibliographic metadata pass is complete (verification batches 1–8). The audit corrected the SRAC 4100 title/URL issue (canonical title 'Liming Ponds for Aquaculture'; the historical 'Lining' URL filename preserved as package history); corrected author metadata errors; filled years, DOIs, volume and page data where verifiable; preserved stable source IDs even where the original package attribution was wrong; left fields null where reliable metadata could not be established; and retained unable_to_verify where appropriate instead of guessing. Not every field for every source is populated: several sources still have null author, year or other fields because no reliable value could be established.",
           "related": [
             "SRC-srac-4100-liming-ponds-aquaculture",
             "SRC-nguyen-2019-mekong-ph-calcium-ion-balance",
@@ -1387,11 +1708,12 @@
             "SRC-wurts-alkalinity-hardness-production-ponds",
             "SRC-platek-2017-calcium-gill-remodeling"
           ],
-          "status": "open"
+          "status": "resolved",
+          "original_description": "Fill bibliographic metadata gaps and check the SRAC 4100 title/URL mismatch ('Liming' vs 'Lining') without guessing missing years or authors."
         },
         {
           "item_id": "OPEN-gh-kh-ph-009",
-          "description": "Determine whether the 13 bibliography-only sources underlie any uncited package content, or remain listing-only.",
+          "description": "Resolved. The bibliography-only audit is complete. All 13 historical bibliography-only sources remain listing-only because no sufficient package evidence supports retroactive assignment to a specific claim. No source-to-claim mapping was created on topical relevance alone.",
           "related": [
             "SRC-duarte-calcium-copper-silver-na-permeability",
             "SRC-perry-2003-gill-kidney-channels-pumps",
@@ -1407,7 +1729,23 @@
             "SRC-oata-how-to-test-freshwater-water-quality",
             "SRC-aquariumscience-org-kh-ph-co2-buffering-substrates"
           ],
-          "status": "open"
+          "status": "resolved",
+          "related_usage_ids": [
+            "USE-ghkhph-056",
+            "USE-ghkhph-057",
+            "USE-ghkhph-058",
+            "USE-ghkhph-059",
+            "USE-ghkhph-060",
+            "USE-ghkhph-061",
+            "USE-ghkhph-062",
+            "USE-ghkhph-063",
+            "USE-ghkhph-064",
+            "USE-ghkhph-065",
+            "USE-ghkhph-066",
+            "USE-ghkhph-067",
+            "USE-ghkhph-068"
+          ],
+          "original_description": "Determine whether the 13 bibliography-only sources underlie any uncited package content, or remain listing-only."
         }
       ]
     }
