@@ -32,11 +32,16 @@
       "preparedness_context": "Contextual background for severe-weather preparedness; not aquarium-specific.",
       "analogous_guidance_limited_scope": "Non-aquarium guidance used only for a narrowly stated principle.",
       "manufacturer_product_documentation": "Vendor documentation of its own product features. Not independent scientific evidence."
+    },
+    "source_origin": {
+      "original_package_citation": "Cited in the original research package's bibliography (carries an original_package_key such as S1–S16).",
+      "supplementary_verification_source": "Added later during an independent verification pass to support a claim whose original citation was mismatched. Not an original package citation; carries no original_package_key."
     }
   },
   "sources": [
     {
       "source_id": "SRC-usgs-nfm-a6-2-dissolved-oxygen",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S1"
@@ -60,11 +65,13 @@
         "Title as registered from the package: 'Chapter A6.2, Dissolved Oxygen, National Field Manual for the Collection of Water-Quality Data'.",
         "Series: Techniques and Methods 9-A6.2 (USGS National Field Manual for the Collection of Water-Quality Data). Revised October 2020.",
         "Alternate/archive URL (direct PDF, as registered from the package): https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
-        "Verification pass: S1 does not support the package's evaporative-fan-cooling claim (USE-summer-heat-014 marked unsupported_or_mismatched; replacement source needed). The historical citation is preserved."
+        "Verification pass: S1 does not support the package's evaporative-fan-cooling claim (USE-summer-heat-014 marked unsupported_or_mismatched; replacement source needed). The historical citation is preserved.",
+        "Fan-cooling gap resolved: USE-summer-heat-014 remains unsupported_or_mismatched as a historical citation; the claim now has supplementary support from SRC-usgs-evaporation-water-surfaces-1898 and SRC-usgs-evaporation-water-cycle-2019."
       ]
     },
     {
       "source_id": "SRC-usgs-do-and-water",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S2"
@@ -89,6 +96,7 @@
     },
     {
       "source_id": "SRC-epa-caddis-dissolved-oxygen",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S3"
@@ -108,11 +116,13 @@
       "notes": [
         "Year not stated in the package. Web page; publication/update date not recorded.",
         "Package also relies on this source for 'fish gulping air' as a biological effect associated with low dissolved oxygen (Section 4).",
-        "Verification pass: S3 does not support the package's evaporative-fan-cooling claim (USE-summer-heat-015 marked unsupported_or_mismatched; replacement source needed). The historical citation is preserved."
+        "Verification pass: S3 does not support the package's evaporative-fan-cooling claim (USE-summer-heat-015 marked unsupported_or_mismatched; replacement source needed). The historical citation is preserved.",
+        "Fan-cooling gap resolved: USE-summer-heat-015 remains unsupported_or_mismatched as a historical citation; the claim now has supplementary support from SRC-usgs-evaporation-water-surfaces-1898 and SRC-usgs-evaporation-water-cycle-2019."
       ]
     },
     {
       "source_id": "SRC-schulte-2015",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S4"
@@ -141,6 +151,7 @@
     },
     {
       "source_id": "SRC-uf-ifas-fa002-dissolved-oxygen",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S5"
@@ -167,6 +178,7 @@
     },
     {
       "source_id": "SRC-usda-nrcs-uapb-pond-aeration",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S6"
@@ -193,6 +205,7 @@
     },
     {
       "source_id": "SRC-epa-caddis-ammonia",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S7"
@@ -215,6 +228,7 @@
     },
     {
       "source_id": "SRC-epa-ammonia-criteria-2013",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S8"
@@ -240,6 +254,7 @@
     },
     {
       "source_id": "SRC-osu-aquaculture-water-quality",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S9"
@@ -268,6 +283,7 @@
     },
     {
       "source_id": "SRC-afs-aifrb-asih-fishes-in-research-2014",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S10"
@@ -293,6 +309,7 @@
     },
     {
       "source_id": "SRC-ccac-fish-guidelines",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S11"
@@ -320,6 +337,7 @@
     },
     {
       "source_id": "SRC-fema-ready-gov-power-outages",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S12"
@@ -344,6 +362,7 @@
     },
     {
       "source_id": "SRC-cdc-emergency-water-supply",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S13"
@@ -369,6 +388,7 @@
     },
     {
       "source_id": "SRC-inkbird-itc-306a",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S14"
@@ -396,6 +416,7 @@
     },
     {
       "source_id": "SRC-inkbird-itc-308-wifi",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S15"
@@ -422,6 +443,7 @@
     },
     {
       "source_id": "SRC-nws-hurricane-safety",
+      "source_origin": "original_package_citation",
       "original_package_key": {
         "package_id": "PKG-2026-07-summer-heat",
         "key": "S16"
@@ -442,6 +464,51 @@
         "Year not stated in the package. Web page; publication/update date not recorded.",
         "Cited in Section 9 alongside S12, although the Section 9 prose names only 'FEMA/Ready.gov'. Not aquarium-specific."
       ]
+    },
+    {
+      "source_id": "SRC-usgs-evaporation-water-surfaces-1898",
+      "source_origin": "supplementary_verification_source",
+      "original_package_key": null,
+      "added_for_package": "PKG-2026-07-summer-heat",
+      "title": "Instructions for measuring the rate of evaporation from water surfaces",
+      "author_or_organization": "Water Resources Division, U.S. Geological Survey",
+      "publication_or_publisher": "U.S. Geological Survey",
+      "year": 1898,
+      "source_type": "government",
+      "url": "https://www.usgs.gov/publications/instructions-measuring-rate-evaporation-water-surfaces",
+      "doi": "10.3133/70046398",
+      "access_type": null,
+      "evidence_role": "scientific_principle",
+      "package_description": null,
+      "verification_status": "verified",
+      "verification_note": "USGS states that evaporation from water surfaces varies with water temperature, dryness of the air, and velocity of the wind at the water surface.",
+      "notes": [
+        "SUPPLEMENTARY VERIFICATION SOURCE: not cited in the original research package and not part of the S1–S16 bibliography. Added during the independent verification pass to resolve the evaporative-fan-cooling source gap (USE-summer-heat-014, USE-summer-heat-015).",
+        "This is not aquarium-specific research.",
+        "Its value to the Summer Heat package is the physical principle that increased air movement across an exposed water surface can increase evaporation."
+      ]
+    },
+    {
+      "source_id": "SRC-usgs-evaporation-water-cycle-2019",
+      "source_origin": "supplementary_verification_source",
+      "original_package_key": null,
+      "added_for_package": "PKG-2026-07-summer-heat",
+      "title": "Evaporation and the Water Cycle",
+      "author_or_organization": "Water Science School",
+      "publication_or_publisher": "U.S. Geological Survey",
+      "year": 2019,
+      "source_type": "government",
+      "url": "https://www.usgs.gov/water-science-school/science/evaporation-and-water-cycle",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "scientific_principle",
+      "package_description": null,
+      "verification_status": "verified",
+      "verification_note": "USGS explains that evaporation requires energy and removes heat from the environment, producing net cooling. The page also describes evaporative cooling systems in which a fan moves air across wet material and causes water to evaporate, and notes that evaporation is used to cool heated water in cooling-tower applications.",
+      "notes": [
+        "SUPPLEMENTARY VERIFICATION SOURCE: not cited in the original research package and not part of the S1–S16 bibliography. Added during the independent verification pass to resolve the evaporative-fan-cooling source gap (USE-summer-heat-014, USE-summer-heat-015).",
+        "This is not an aquarium-specific experiment."
+      ]
     }
   ],
   "verification_pass": {
@@ -449,6 +516,13 @@
     "scope": "All 16 sources registered for PKG-2026-07-summer-heat.",
     "fields_added": [
       "verification_note"
+    ]
+  },
+  "supplementary_sources_added": {
+    "description": "Supplementary verification sources added after the independent verification pass to resolve the evaporative-fan-cooling source gap. Not original package citations.",
+    "source_ids": [
+      "SRC-usgs-evaporation-water-surfaces-1898",
+      "SRC-usgs-evaporation-water-cycle-2019"
     ]
   }
 }

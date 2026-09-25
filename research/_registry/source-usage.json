@@ -8,7 +8,8 @@
       "research_basis_limited_scope": "Listed in a 'Research basis:' line, with the package explicitly limiting what the source supports.",
       "figure_data_source": "Named as 'Source:' for a figure or table.",
       "manufacturer_guidance": "Manufacturer documentation cited for product features; not independent scientific evidence.",
-      "claim_audit_named_source": "Named (by document or organization) in a Claim Audit editorial note, where the package key is unambiguous."
+      "claim_audit_named_source": "Named (by document or organization) in a Claim Audit editorial note, where the package key is unambiguous.",
+      "verification_replacement_source": "Supplementary source added during an independent verification pass to support a claim whose original package citation was mismatched. Not an original package citation; does not replace or rewrite the historical citation record."
     },
     "package_evidence_status": "Verbatim Claim Audit status(es) from package Section 12 that apply to the claim; NOT_RATED_IN_CLAIM_AUDIT when the section has no Claim Audit row.",
     "support_status": {
@@ -23,7 +24,8 @@
     },
     "replacement_source_needed": "Boolean. true when the cited source does not adequately support the claim and a replacement or additional source is required before the claim is represented publicly as externally supported.",
     "support_reason": "Verification-pass explanation of the assigned support_status (null when none was recorded).",
-    "evidence_relationship_note": "evidence_relationship records how the package cited the source (historical fact) and is never changed by verification; support_status separately records how well the source supports that use."
+    "evidence_relationship_note": "evidence_relationship records how the package cited the source (historical fact) and is never changed by verification; support_status separately records how well the source supports that use.",
+    "replacement_source_ids": "Supplementary source IDs that now provide verified support for a claim whose original citation remains unsupported_or_mismatched."
   },
   "usage": [
     {
@@ -403,12 +405,17 @@
       ],
       "support_status": "unsupported_or_mismatched",
       "support_reason": "USGS S1 supports dissolved-oxygen solubility and measurement. It does not directly establish that blowing a fan across an aquarium cools the water through evaporation.",
-      "replacement_source_needed": true,
+      "replacement_source_needed": false,
+      "replacement_source_ids": [
+        "SRC-usgs-evaporation-water-surfaces-1898",
+        "SRC-usgs-evaporation-water-cycle-2019"
+      ],
       "notes": [
         "The 'Research basis: S1, S3' line appears at the end of the fan subsection, before 'Reduce avoidable heat input'. The other Section 5 subsections (heat input, frozen bottles, cooler water change) carry no source citation.",
         "Package: do not promise a universal 2°F to 5°F drop.",
         "FLAG FOR REVIEW: the package's own description of S1 covers oxygen solubility by temperature/pressure, not evaporative cooling. Recorded as cited; relevance to the evaporative-cooling claim needs verification.",
-        "VERIFICATION RESULT: flag resolved as unsupported_or_mismatched. The package cited S1 for this claim (historical citation preserved); S1 does not support this specific claim strongly enough. Replacement source needed before public representation as externally supported."
+        "VERIFICATION RESULT: flag resolved as unsupported_or_mismatched. The package cited S1 for this claim (historical citation preserved); S1 does not support this specific claim strongly enough. Replacement source needed before public representation as externally supported.",
+        "GAP RESOLVED (supplementary support): the original S1 citation remains unsupported_or_mismatched and is preserved as the historical citation. The evaporative-fan-cooling claim now has independently verified supplementary support from SRC-usgs-evaporation-water-surfaces-1898 (USE-summer-heat-033) and SRC-usgs-evaporation-water-cycle-2019 (USE-summer-heat-034). The aquarium recommendation remains a PHYSICS-BASED PRACTICAL INFERENCE, not a directly tested aquarium result."
       ]
     },
     {
@@ -432,12 +439,17 @@
       ],
       "support_status": "unsupported_or_mismatched",
       "support_reason": "EPA S3 supports turbulence, gas exchange and temperature effects on dissolved oxygen. It does not directly establish evaporative fan cooling.",
-      "replacement_source_needed": true,
+      "replacement_source_needed": false,
+      "replacement_source_ids": [
+        "SRC-usgs-evaporation-water-surfaces-1898",
+        "SRC-usgs-evaporation-water-cycle-2019"
+      ],
       "notes": [
         "The 'Research basis: S1, S3' line appears at the end of the fan subsection, before 'Reduce avoidable heat input'. The other Section 5 subsections (heat input, frozen bottles, cooler water change) carry no source citation.",
         "Package: do not promise a universal 2°F to 5°F drop.",
         "FLAG FOR REVIEW: the package's own description of S3 covers oxygen absorption, turbulence, and temperature effects on solubility, not evaporative cooling. Recorded as cited; relevance to the evaporative-cooling claim needs verification.",
-        "VERIFICATION RESULT: flag resolved as unsupported_or_mismatched. The package cited S3 for this claim (historical citation preserved); S3 does not support this specific claim strongly enough. Replacement source needed before public representation as externally supported."
+        "VERIFICATION RESULT: flag resolved as unsupported_or_mismatched. The package cited S3 for this claim (historical citation preserved); S3 does not support this specific claim strongly enough. Replacement source needed before public representation as externally supported.",
+        "GAP RESOLVED (supplementary support): the original S3 citation remains unsupported_or_mismatched and is preserved as the historical citation. The evaporative-fan-cooling claim now has independently verified supplementary support from SRC-usgs-evaporation-water-surfaces-1898 (USE-summer-heat-033) and SRC-usgs-evaporation-water-cycle-2019 (USE-summer-heat-034). The aquarium recommendation remains a PHYSICS-BASED PRACTICAL INFERENCE, not a directly tested aquarium result."
       ]
     },
     {
@@ -893,6 +905,72 @@
       "replacement_source_needed": false,
       "notes": [
         "'EPA 2013 document' maps unambiguously to S8."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-033",
+      "source_id": "SRC-usgs-evaporation-water-surfaces-1898",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": null,
+      "section_or_claim": "Section 5 — Cooling: Fan across the surface",
+      "citation_statement": null,
+      "package_page": 5,
+      "evidence_relationship": "verification_replacement_source",
+      "package_evidence_status": [
+        "SUPPORTED BY PHYSICAL PRINCIPLE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "support_status": "direct_support",
+      "claim": "Air movement across an exposed water surface can increase evaporation.",
+      "support_reason": "USGS states that evaporation from water surfaces varies with water temperature, dryness of the air, and velocity of the wind at the water surface.",
+      "replacement_source_needed": false,
+      "supplements_usage_ids": [
+        "USE-summer-heat-014",
+        "USE-summer-heat-015"
+      ],
+      "notes": [
+        "This source establishes the airflow/wind-to-evaporation part of the mechanism. It does not test aquarium fans specifically.",
+        "SUPPLEMENTARY VERIFICATION SOURCE: not cited by the original package (no original_package_key; citation_statement is null). Added during the independent verification pass; the historical S1/S3 citations in USE-summer-heat-014 and USE-summer-heat-015 are unchanged.",
+        "Public-facing characterization of the aquarium fan-cooling recommendation remains PHYSICS-BASED PRACTICAL INFERENCE."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-034",
+      "source_id": "SRC-usgs-evaporation-water-cycle-2019",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": null,
+      "section_or_claim": "Section 5 — Cooling: Fan across the surface",
+      "citation_statement": null,
+      "package_page": 5,
+      "evidence_relationship": "verification_replacement_source",
+      "package_evidence_status": [
+        "SUPPORTED BY PHYSICAL PRINCIPLE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "support_status": "direct_support",
+      "claim": "Evaporation removes heat and produces cooling.",
+      "support_reason": "USGS explains that evaporation requires energy and removes heat from the environment, producing net cooling, and describes fan-driven evaporative cooling systems.",
+      "replacement_source_needed": false,
+      "supplements_usage_ids": [
+        "USE-summer-heat-014",
+        "USE-summer-heat-015"
+      ],
+      "notes": [
+        "This source establishes the evaporation-to-cooling part of the mechanism and describes fan-driven evaporative cooling. It does not constitute a controlled aquarium fan-cooling trial.",
+        "SUPPLEMENTARY VERIFICATION SOURCE: not cited by the original package (no original_package_key; citation_statement is null). Added during the independent verification pass; the historical S1/S3 citations in USE-summer-heat-014 and USE-summer-heat-015 are unchanged.",
+        "Public-facing characterization of the aquarium fan-cooling recommendation remains PHYSICS-BASED PRACTICAL INFERENCE."
       ]
     }
   ]
