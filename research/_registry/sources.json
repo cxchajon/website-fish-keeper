@@ -48,7 +48,7 @@
       "supplementary_verification_source": "Added later during an independent verification pass to support a claim whose original citation was mismatched. Not an original package citation; carries no original_package_key."
     },
     "original_package_key": "Object recording how the source is identified in its package. Summer Heat: key is the package's S# number. PKG-2026-08-gh-kh-ph: the package has no source numbering, so key is the bibliography entry's own author–year (or organization + title) label (key_type 'bibliography_entry_label'), with bibliography_tier, bibliography_tier_position and bibliography_entry_verbatim preserved.",
-    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), section (section or chapter grouping within a reference work), full_review_date and last_updated_date (ISO year-month of a living online reference's last full review and latest update), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. evidence_role_correction (object) records a change to the registry-assigned evidence_role made at verification: the original and corrected roles and a note. Added in GH/KH/pH verification batch 4: manual_version (edition/audience version of a reference manual, e.g. Merck 'Pet Owner Version' vs 'Professional Version'), peer_reviewers (list of named reviewers shown on a reference page), author_credentials (post-nominal credentials as published), author_status ('unresolved' when no author can be documented; authors then stays null and no author is inferred), conference, conference_location, conference_dates, proceedings_organization, proceedings_year, abstract_code (congress abstract/session code), vin_document_id (VIN document identifier), and historical_package_url (the URL as given in the package when the canonical url differs). The original package citation is never rewritten; it stays in original_package_key. Added in GH/KH/pH verification batch 5: publication_number (extension/series publication number, e.g. SRAC '464'), edition_status (e.g. 'Revision'), page_count (integer page length of a short publication), pagination (pagination statement as given in library catalog records, e.g. 'vii, 359 pages') and publication_place."
+    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), section (section or chapter grouping within a reference work), full_review_date and last_updated_date (ISO year-month of a living online reference's last full review and latest update), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. evidence_role_correction (object) records a change to the registry-assigned evidence_role made at verification: the original and corrected roles and a note. Added in GH/KH/pH verification batch 4: manual_version (edition/audience version of a reference manual, e.g. Merck 'Pet Owner Version' vs 'Professional Version'), peer_reviewers (list of named reviewers shown on a reference page), author_credentials (post-nominal credentials as published), author_status ('unresolved' when no author can be documented; authors then stays null and no author is inferred), conference, conference_location, conference_dates, proceedings_organization, proceedings_year, abstract_code (congress abstract/session code), vin_document_id (VIN document identifier), and historical_package_url (the URL as given in the package when the canonical url differs). The original package citation is never rewritten; it stays in original_package_key. Added in GH/KH/pH verification batch 5: publication_number (extension/series publication number, e.g. SRAC '464'), edition_status (e.g. 'Revision'), page_count (integer page length of a short publication), pagination (pagination statement as given in library catalog records, e.g. 'vii, 359 pages') and publication_place. Added in GH/KH/pH verification batch 6: edition (edition statement of a book), isbn_10 and isbn_13, organizations (list of affiliated/issuing organizations as published), first_published_date and last_reviewed_date (ISO year-month of an extension publication's first publication and latest review), current_version_year (year of the living web page version inspected at verification), document_id (agency document identifier), subtitle, historical_package_url_status (status of the package URL at verification, e.g. 'returns_404_at_verification'), historical_package_update_date (ISO date of an update date given only in the package) and historical_package_update_date_reverified (boolean; false when the verified location does not expose or confirm that date)."
   },
   "sources": [
     {
@@ -1844,21 +1844,37 @@
         "bibliography_tier_position": 6,
         "bibliography_entry_verbatim": "Timmons, M. B., Guerdat, T., & Vinci, B. J. (2018). Recirculating Aquaculture (4th ed.). (Source for nitrification stoichiometry: 7.14 mg alkalinity as CaCO₃ and 4.57 mg O₂ per mg ammonia-nitrogen oxidised.)"
       },
-      "title": "Recirculating Aquaculture (4th ed.)",
-      "author_or_organization": "Timmons, M. B.; Guerdat, T.; Vinci, B. J.",
-      "publication_or_publisher": null,
+      "title": "Recirculating Aquaculture",
+      "author_or_organization": "Timmons, Michael B.; Guerdat, Todd; Vinci, Brian J.",
+      "publication_or_publisher": "Ithaca Publishing Company LLC (NRAC Publication No. 401-2018)",
       "year": 2018,
+      "edition": "4th edition",
+      "authors": [
+        "Michael B. Timmons",
+        "Todd Guerdat",
+        "Brian J. Vinci"
+      ],
+      "publisher": "Ithaca Publishing Company LLC",
+      "publication_place": "Ithaca, New York",
+      "publication_number": "NRAC 401-2018",
+      "isbn_10": "0971264678",
+      "isbn_13": "9780971264670",
+      "page_count": 779,
       "source_type": "book_or_book_chapter",
       "url": null,
       "doi": null,
       "access_type": null,
       "evidence_role": "reference_data",
       "package_description": "Bibliography annotation: '(Source for nitrification stoichiometry: 7.14 mg alkalinity as CaCO₃ and 4.57 mg O₂ per mg ammonia-nitrogen oxidised.)' Cited in-text in Section 20.1.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_limited_scope",
+      "verification_note": "The book's existence, authors (Michael B. Timmons, Todd Guerdat, Brian J. Vinci), 4th-edition status, publisher (Ithaca Publishing Company LLC, Ithaca, New York) and 2018 publication year are independently confirmed by USDA ARS, Cornell aquaculture resources, WorldCat and bibliographic records (NRAC Publication No. 401-2018; ISBN-10 0971264678; ISBN-13 9780971264670; 779 pages). USDA ARS records the book as: Timmons, M.B., Guerdat, T., Vinci, B.J. 2018. Recirculating Aquaculture (4th edition). Ithaca: Ithaca Publishing Company. LIMITATION: the exact 4th-edition book text was not directly inspected during this verification pass. The commonly reported nitrification stoichiometry of approximately 4.57 g O₂ consumed and 7.14 g alkalinity as CaCO₃ consumed per g ammonia-nitrogen oxidized is independently corroborated in recirculating-aquaculture training material associated with the same technical literature and in other aquaculture literature, but because the exact passage inside the 2018 4th edition was not inspected, the claim-to-book relationship is NOT represented as fully independently verified. No page number is recorded.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Package names no publisher, URL or ISBN."
+        "[Registration note; superseded by GH/KH/pH verification batch 6] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 6] Package names no publisher, URL or ISBN.",
+        "GH/KH/pH verification batch 6 (2026-09-25): bibliographically verified against USDA ARS, Cornell aquaculture resources, WorldCat and other bibliographic records. Title 'Recirculating Aquaculture'; edition 4th; authors Michael B. Timmons, Todd Guerdat, Brian J. Vinci; publisher Ithaca Publishing Company LLC; Ithaca, New York; 2018; NRAC Publication No. 401-2018; ISBN-10 0971264678; ISBN-13 9780971264670; 779 pages. The edition is recorded in the edition field; the package's '(4th ed.)' title form is preserved in original_package_key.",
+        "STATUS verified_limited_scope: bibliographic identity verified; the exact passage containing the 4.57 g O₂ / 7.14 g alkalinity (as CaCO₃) per g NH₄⁺-N stoichiometry was not directly inspected in the 2018 4th edition. The figures themselves are corroborated by related recirculating-aquaculture technical literature and by the verified MPCA source (SRC-mpca-wq-wwprm8-04-lsts-process-guidance, 7.14 figure). No page number is recorded or inferred.",
+        "No URL or DOI recorded; none is established for this book.",
+        "Source type (book_or_book_chapter) and evidence role (reference_data) confirmed."
       ]
     },
     {
@@ -1873,20 +1889,59 @@
         "bibliography_entry_verbatim": "Virginia Cooperative Extension. Liming Farm and Recreational Ponds. VCE Publication CNRE-126. https://www.pubs.ext.vt.edu/CNRE/CNRE-126/CNRE-126.html"
       },
       "title": "Liming Farm and Recreational Ponds",
-      "author_or_organization": "Virginia Cooperative Extension",
-      "publication_or_publisher": "VCE Publication CNRE-126",
-      "year": null,
+      "author_or_organization": "Crosby, David; Nerrie, Brian; Gregg, Cynthia L.",
+      "publication_or_publisher": "Virginia Cooperative Extension Publication CNRE-126NP (Virginia State University; Virginia Cooperative Extension)",
+      "year": 2026,
+      "authors": [
+        "David Crosby",
+        "Brian Nerrie",
+        "Cynthia L. Gregg"
+      ],
+      "organizations": [
+        "Virginia State University",
+        "Virginia Cooperative Extension"
+      ],
+      "publisher": "Virginia Cooperative Extension",
+      "publication_number": "CNRE-126NP",
+      "first_published_date": "2020-12",
+      "last_reviewed_date": "2026-05",
+      "publication_date": "2026-05-08",
+      "publication_date_role": "current_publication_date_shown_by_vce",
+      "metadata_correction": {
+        "correction_type": "missing_authors_dates_and_publication_id",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 6 (2026-09-25)",
+        "original_package_author_or_organization": "Virginia Cooperative Extension",
+        "corrected_authors": [
+          "David Crosby",
+          "Brian Nerrie",
+          "Cynthia L. Gregg"
+        ],
+        "original_package_publication_id": "CNRE-126",
+        "corrected_publication_id": "CNRE-126NP",
+        "original_package_year": null,
+        "corrected_dates": {
+          "first_published": "2020-12",
+          "last_reviewed": "2026-05",
+          "current_publication_date": "2026-05-08"
+        },
+        "note": "The package gave only the organization, the title and 'VCE Publication CNRE-126', with no author or year. The current VCE page names David Crosby, Brian Nerrie and Cynthia L. Gregg (Virginia State University; Virginia Cooperative Extension), gives the publication ID CNRE-126NP, and shows first published December 2020, last reviewed May 2026 (publication date May 8, 2026). year is set to the current publication date shown by VCE (2026); the first-publication date is recorded separately. Title and canonical URL are unchanged. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "university_extension",
       "url": "https://www.pubs.ext.vt.edu/CNRE/CNRE-126/CNRE-126.html",
       "doi": null,
       "access_type": null,
       "evidence_role": "applied_guidance",
       "package_description": "Listed in the bibliography only; not cited by name in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The current Virginia Cooperative Extension page (https://www.pubs.ext.vt.edu/CNRE/CNRE-126/CNRE-126.html) identifies David Crosby, Brian Nerrie and Cynthia L. Gregg as the authors (Virginia State University; Virginia Cooperative Extension). The publication was first published in December 2020 and last reviewed in May 2026; VCE shows a current publication date of May 8, 2026. The current publication identifier is CNRE-126NP rather than the package's shorter CNRE-126 label. The page discusses pond alkalinity, hardness and pH buffering and cites SRAC 464 and SRAC 4100 among its references. SCOPE: the historical GH/KH/pH package lists this source in its bibliography only; verification of the source does not create a body-claim mapping.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Package gives no year or author."
+        "[Registration note; superseded by GH/KH/pH verification batch 6] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 6] Package gives no year or author.",
+        "GH/KH/pH verification batch 6 (2026-09-25): verified at the package URL (unchanged; canonical URL retained). Authors David Crosby, Brian Nerrie, Cynthia L. Gregg; organizations Virginia State University and Virginia Cooperative Extension; publication ID CNRE-126NP; first published December 2020; last reviewed May 2026; current publication date May 8, 2026.",
+        "METADATA CORRECTION: authors and dates added; publication ID corrected from the package's 'CNRE-126' to the current 'CNRE-126NP'. The package's label is preserved verbatim in original_package_key.",
+        "BIBLIOGRAPHY-ONLY: remains listing-only in the historical package (USE-ghkhph-065). No body-claim mapping is created retroactively.",
+        "Source type (university_extension) and evidence role (applied_guidance) confirmed."
       ]
     },
     {
@@ -1901,21 +1956,39 @@
         "bibliography_entry_verbatim": "U.S. Geological Survey. Hardness of Water. Water Science School. https://www.usgs.gov/water-science-school/science/hardness-water"
       },
       "title": "Hardness of Water",
-      "author_or_organization": "U.S. Geological Survey",
+      "author_or_organization": "Water Science School, U.S. Geological Survey",
       "publication_or_publisher": "U.S. Geological Survey — Water Science School",
-      "year": null,
+      "year": 2026,
+      "publisher": "U.S. Geological Survey",
+      "publication_date": "2026-08-24",
+      "publication_date_role": "current_page_date",
+      "current_version_year": 2026,
+      "metadata_correction": {
+        "correction_type": "missing_page_date_and_author_unit",
+        "substantive": false,
+        "applied_in": "GH/KH/pH verification batch 6 (2026-09-25)",
+        "original_package_year": null,
+        "corrected_year": 2026,
+        "corrected_publication_date": "2026-08-24",
+        "original_package_author_or_organization": "U.S. Geological Survey",
+        "corrected_author_or_organization": "Water Science School, U.S. Geological Survey",
+        "note": "The package gave no date for this living web page. The current USGS Water Science School page is dated August 24, 2026; that current version is recorded (year 2026). This records the page version inspected at verification, not necessarily the version the package authors consulted. Title and canonical URL are unchanged. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim."
+      },
       "source_type": "government",
       "url": "https://www.usgs.gov/water-science-school/science/hardness-water",
       "doi": null,
       "access_type": null,
       "evidence_role": "explanatory_background",
       "package_description": "Cited in-text for hardness being essentially the quantity of dissolved calcium and magnesium (Section 2.1).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The current USGS Water Science School page (dated August 24, 2026) directly states that the simple definition of water hardness is the amount of dissolved calcium and magnesium in water, and that hardness is caused primarily by compounds of calcium and magnesium, with other metals contributing. It also gives general descriptive hardness classifications as CaCO₃: 0–60 mg/L soft; 61–120 mg/L moderately hard; 121–180 mg/L hard; more than 180 mg/L very hard. LIMITATION: these are descriptive water-quality terms, not aquarium species-care guidance.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Web page; package gives no publication/update date.",
-        "Different source from SRC-usgs-do-and-water (Summer Heat S2, 'Dissolved Oxygen and Water'); same USGS Water Science School series, different page. Not reused."
+        "[Registration note; superseded by GH/KH/pH verification batch 6] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 6] Web page; package gives no publication/update date.",
+        "Different source from SRC-usgs-do-and-water (Summer Heat S2, 'Dissolved Oxygen and Water'); same USGS Water Science School series, different page. Not reused.",
+        "GH/KH/pH verification batch 6 (2026-09-25): verified at the package URL (unchanged; canonical URL retained). Author unit Water Science School, U.S. Geological Survey; current page date August 24, 2026 (current-version year 2026).",
+        "The four hardness bands (0–60, 61–120, 121–180, >180 mg/L as CaCO₃) are independently present on this page; this corroborates the band values cited in the package to the USGS FAQ (see SRC-usgs-faq-water-hardness-united-states, USE-ghkhph-006).",
+        "Source type (government) and evidence role (explanatory_background) confirmed."
       ]
     },
     {
@@ -1931,19 +2004,39 @@
       },
       "title": "Do you have information about water hardness in the United States?",
       "author_or_organization": "U.S. Geological Survey",
-      "publication_or_publisher": "U.S. Geological Survey — FAQ",
+      "publication_or_publisher": "U.S. Geological Survey — FAQ (verified replacement location: official USGS legacy FAQ page, water.usgs.gov/owq/FAQ.htm)",
       "year": 2025,
+      "publisher": "U.S. Geological Survey",
+      "historical_package_url": "https://www.usgs.gov/faqs/do-you-have-information-about-water-hardness-united-states",
+      "historical_package_url_status": "returns_404_at_verification",
+      "historical_package_update_date": "2025-08-05",
+      "historical_package_update_date_reverified": false,
+      "metadata_correction": {
+        "correction_type": "broken_package_url_replacement_location",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 6 (2026-09-25)",
+        "original_package_url": "https://www.usgs.gov/faqs/do-you-have-information-about-water-hardness-united-states",
+        "original_package_url_status": "returns 404 at verification",
+        "corrected_url": "https://water.usgs.gov/owq/FAQ.htm",
+        "original_package_update_date": "2025-08-05",
+        "note": "The package URL currently returns 404. The official, currently accessible USGS legacy FAQ page (https://water.usgs.gov/owq/FAQ.htm) contains the same named question and answer and is recorded as the verified replacement location (canonical url). The package URL is preserved verbatim as historical_package_url, in metadata_correction.original_package_url and in original_package_key.bibliography_entry_verbatim. DATE: the package's 'updated 5 August 2025' is preserved as historical package metadata (historical_package_update_date; year 2025 remains the package-derived year). The legacy FAQ page does not expose or confirm that update date, so the date has NOT been independently reverified. Title is unchanged. The archived package PDF is not altered."
+      },
       "source_type": "government",
-      "url": "https://www.usgs.gov/faqs/do-you-have-information-about-water-hardness-united-states",
+      "url": "https://water.usgs.gov/owq/FAQ.htm",
       "doi": null,
       "access_type": null,
       "evidence_role": "reference_data",
       "package_description": "Cited in-text for the four USGS hardness bands (0–60, 61–120, 121–180, >180 mg/L as CaCO₃) and for the EPA setting no legal limit for hardness (Section 2.2); the bands are also reused as a descriptive column/category in Sections 2.2, 2.3 and 25.3.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The package URL (https://www.usgs.gov/faqs/do-you-have-information-about-water-hardness-united-states) currently returns 404. The official, currently accessible USGS legacy FAQ page (https://water.usgs.gov/owq/FAQ.htm) contains the same named question, 'Do you have information about water hardness in the United States?', and its answer states that EPA has not set a legal limit or standard for hardness in water, primarily because the constituents contributing to hardness, generally calcium and magnesium ions, are not toxic; and that water is commonly described as soft, moderately hard, hard or very hard. The exact four numerical bands (0–60, 61–120, 121–180, >180 mg/L as CaCO₃) are independently present on the current USGS Hardness of Water page (SRC-usgs-hardness-of-water). DATE LIMITATION: the package's 'updated 5 August 2025' date belongs to the now-broken page; the legacy FAQ page does not expose or confirm it, so that date is preserved as historical package metadata only and is not represented as reverified.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Year 2025 taken from the package's 'updated 5 August 2025'."
+        "[Registration note; superseded by GH/KH/pH verification batch 6] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 6] Year 2025 taken from the package's 'updated 5 August 2025'.",
+        "GH/KH/pH verification batch 6 (2026-09-25): package URL returns 404. Verified replacement location recorded as the canonical URL: official USGS legacy FAQ page https://water.usgs.gov/owq/FAQ.htm, which carries the same named question and answer.",
+        "HISTORICAL URL PRESERVED: the package URL is kept verbatim in historical_package_url, metadata_correction.original_package_url and original_package_key.bibliography_entry_verbatim for traceability. It is not the canonical URL.",
+        "DATE NOT REVERIFIED: 'updated 5 August 2025' is recorded as historical_package_update_date (historical_package_update_date_reverified: false). The year 2025 remains package-derived; the replacement page does not confirm it.",
+        "NUMERICAL BANDS: the FAQ answer names the four descriptive categories; the exact 0–60 / 61–120 / 121–180 / >180 mg/L as CaCO₃ bands are independently confirmed on SRC-usgs-hardness-of-water.",
+        "Source type (government) and evidence role (reference_data) confirmed."
       ]
     },
     {
@@ -1957,22 +2050,44 @@
         "bibliography_tier_position": 3,
         "bibliography_entry_verbatim": "Minnesota Pollution Control Agency. Large subsurface wastewater treatment system process guidance (wq-wwprm8-04). (Nitrification alkalinity consumption.) https://www.pca.state.mn.us/sites/default/files/wq-wwprm8-04.pdf"
       },
-      "title": "Large subsurface wastewater treatment system process guidance (wq-wwprm8-04)",
+      "title": "Large subsurface wastewater treatment system process control monitoring for nitrogen",
       "author_or_organization": "Minnesota Pollution Control Agency",
       "publication_or_publisher": "Minnesota Pollution Control Agency",
-      "year": null,
+      "year": 2018,
+      "subtitle": "Troubleshooting guidance",
+      "publisher": "Minnesota Pollution Control Agency",
+      "document_id": "wq-wwprm8-04",
+      "publication_date": "2018-01",
+      "page_count": 3,
+      "metadata_correction": {
+        "correction_type": "inexact_title_and_missing_date",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 6 (2026-09-25)",
+        "original_package_title": "Large subsurface wastewater treatment system process guidance (wq-wwprm8-04)",
+        "corrected_title": "Large subsurface wastewater treatment system process control monitoring for nitrogen",
+        "corrected_subtitle": "Troubleshooting guidance",
+        "original_package_year": null,
+        "corrected_year": 2018,
+        "corrected_publication_date": "2018-01",
+        "note": "The package's shorter title ('Large subsurface wastewater treatment system process guidance (wq-wwprm8-04)') is not the document's official title. The official MPCA document wq-wwprm8-04 is titled 'Large subsurface wastewater treatment system process control monitoring for nitrogen' (troubleshooting guidance), January 2018, 3 pages. Document ID and canonical URL are unchanged. The package title is preserved verbatim in original_package_key; the archived package PDF is not altered."
+      },
       "source_type": "government",
       "url": "https://www.pca.state.mn.us/sites/default/files/wq-wwprm8-04.pdf",
       "doi": null,
       "access_type": null,
       "evidence_role": "reference_data",
       "package_description": "Bibliography annotation: '(Nitrification alkalinity consumption.)' Cited in-text in Section 20.1 for ~7.14 mg alkalinity as CaCO₃ consumed per mg ammonia-nitrogen oxidised.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The official MPCA document wq-wwprm8-04, 'Large subsurface wastewater treatment system process control monitoring for nitrogen' (troubleshooting guidance; January 2018; 3 pages), directly states: “Nitrification will consume 7.14 milligrams (mg) of alkalinity per 1 mg of ammonia converted to nitrate.” It also states that alkalinity acts as a buffer controlling pH change and recommends at least 50 mg/L effluent alkalinity, with 100 mg/L preferred, for the wastewater systems covered by the guidance. LIMITATION: the document concerns large subsurface wastewater treatment systems. The nitrification stoichiometry is transferable chemistry; the 50/100 mg/L effluent-alkalinity figures are wastewater-process recommendations and must not be presented as aquarium targets. METADATA CORRECTION: title corrected to the official document title; publication date (January 2018) and length (3 pages) added.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 6] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
         "Wastewater-engineering context, not aquarium-specific.",
-        "Package gives no year."
+        "[Registration note; superseded by GH/KH/pH verification batch 6] Package gives no year.",
+        "GH/KH/pH verification batch 6 (2026-09-25): official PDF located at the package URL (unchanged; canonical URL retained). Official title 'Large subsurface wastewater treatment system process control monitoring for nitrogen'; subtitle/context 'Troubleshooting guidance'; Minnesota Pollution Control Agency; document ID wq-wwprm8-04; January 2018; 3 pages.",
+        "TITLE CORRECTION: the package's shorter/inexact title is preserved verbatim in original_package_key (key and bibliography_entry_verbatim) and in metadata_correction.original_package_title.",
+        "SCOPE LIMITATION: the 7.14 mg alkalinity per mg ammonia converted to nitrate figure is nitrification stoichiometry and transfers. The document's ≥50 mg/L (100 mg/L preferred) effluent-alkalinity recommendation is a wastewater-process target and is not an aquarium target.",
+        "The 4.57 mg O₂ per mg ammonia-nitrogen figure is not attributed to this document.",
+        "Source type (government) and evidence role (reference_data) confirmed."
       ]
     },
     {
@@ -2529,6 +2644,44 @@
         "USE-ghkhph-045",
         "USE-ghkhph-063",
         "USE-ghkhph-064"
+      ]
+    },
+    {
+      "package_id": "PKG-2026-08-gh-kh-ph",
+      "batch": 6,
+      "date": "2026-09-25",
+      "description": "Sixth independent-verification batch for the GH/KH/pH package: Timmons, Guerdat & Vinci 2018 Recirculating Aquaculture (4th ed.), Virginia Cooperative Extension CNRE-126NP, USGS Hardness of Water, the USGS water-hardness FAQ and the MPCA wq-wwprm8-04 nitrification guidance.",
+      "source_ids": [
+        "SRC-timmons-2018-recirculating-aquaculture-4th-ed",
+        "SRC-vce-cnre-126-liming-farm-recreational-ponds",
+        "SRC-usgs-hardness-of-water",
+        "SRC-usgs-faq-water-hardness-united-states",
+        "SRC-mpca-wq-wwprm8-04-lsts-process-guidance"
+      ],
+      "substantive_metadata_corrections": [
+        "SRC-vce-cnre-126-liming-farm-recreational-ponds",
+        "SRC-usgs-faq-water-hardness-united-states",
+        "SRC-mpca-wq-wwprm8-04-lsts-process-guidance"
+      ],
+      "evidence_role_corrections": [],
+      "source_type_corrections": [],
+      "url_replacements": [
+        "SRC-usgs-faq-water-hardness-united-states"
+      ],
+      "limited_scope": [
+        "SRC-timmons-2018-recirculating-aquaculture-4th-ed"
+      ],
+      "unable_to_verify": [],
+      "unresolved_items": [
+        "SRC-timmons-2018-recirculating-aquaculture-4th-ed / USE-ghkhph-036: exact 2018 4th-edition passage containing the 4.57 g O₂ / 7.14 g alkalinity stoichiometry not directly inspected; usage remains needs_review for strict provenance. No replacement needed for the claim itself.",
+        "SRC-usgs-faq-water-hardness-united-states: the package's 'updated 5 August 2025' date belongs to the now-404 page and is not exposed or confirmed by the legacy FAQ replacement location; preserved as historical package metadata only."
+      ],
+      "usage_ids_reviewed": [
+        "USE-ghkhph-005",
+        "USE-ghkhph-006",
+        "USE-ghkhph-033",
+        "USE-ghkhph-036",
+        "USE-ghkhph-065"
       ]
     }
   ]
