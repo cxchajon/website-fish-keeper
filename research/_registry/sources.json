@@ -11,7 +11,12 @@
       "institutional_guideline",
       "manufacturer",
       "conference_proceedings",
-      "other"
+      "other",
+      "book_or_book_chapter",
+      "professional_association",
+      "aquarium_hobby_publication",
+      "hobbyist_community_discussion",
+      "grouped_unspecified_sources"
     ],
     "verification_status": {
       "verified": "Source located at its official location; citation metadata as registered is correct and the content supports the use described in verification_note.",
@@ -20,7 +25,7 @@
       "broken_or_moved": "Registered URL no longer resolves to the cited source and no verified replacement location has been recorded.",
       "citation_problem": "Citation metadata could not be reconciled with the source located (wrong title, author, or document).",
       "unable_to_verify": "Source could not be located or checked during verification.",
-      "unverified_citation_from_package": "Legacy pre-verification status: citation metadata recorded as given in the package and not yet checked against the live source. No longer assigned to any Summer Heat pilot record."
+      "unverified_citation_from_package": "Pre-verification status: citation metadata recorded as given in the package and not yet checked against the live source. No longer assigned to any Summer Heat pilot record; assigned to PKG-2026-08-gh-kh-ph source records at registration (extraction stage)."
     },
     "evidence_role": {
       "reference_data": "Source of specific numeric values or relationships used by the package.",
@@ -32,12 +37,17 @@
       "preparedness_and_safety_guidance": "General emergency-preparedness or safety guidance; not aquarium-specific.",
       "preparedness_context": "Contextual background for severe-weather preparedness; not aquarium-specific.",
       "analogous_guidance_limited_scope": "Non-aquarium guidance used only for a narrowly stated principle.",
-      "manufacturer_product_documentation": "Vendor documentation of its own product features. Not independent scientific evidence."
+      "manufacturer_product_documentation": "Vendor documentation of its own product features. Not independent scientific evidence.",
+      "peer_reviewed_primary_study": "Peer-reviewed primary research article.",
+      "veterinary_clinical_guidance": "Veterinary reference or proceedings giving clinical/husbandry guidance.",
+      "hobby_publication_context": "Aquarium trade, hobby publication or retailer material cited for practical context; not independent scientific evidence.",
+      "hobbyist_discussion_not_evidence": "Hobbyist forum or community material the package used to identify recurring questions and practices, explicitly not as scientific evidence."
     },
     "source_origin": {
       "original_package_citation": "Cited in the original research package's bibliography (carries an original_package_key such as S1–S16).",
       "supplementary_verification_source": "Added later during an independent verification pass to support a claim whose original citation was mismatched. Not an original package citation; carries no original_package_key."
-    }
+    },
+    "original_package_key": "Object recording how the source is identified in its package. Summer Heat: key is the package's S# number. PKG-2026-08-gh-kh-ph: the package has no source numbering, so key is the bibliography entry's own author–year (or organization + title) label (key_type 'bibliography_entry_label'), with bibliography_tier, bibliography_tier_position and bibliography_entry_verbatim preserved."
   },
   "sources": [
     {
@@ -528,6 +538,1233 @@
         "SUPPLEMENTARY VERIFICATION SOURCE: not cited in the original research package and not part of the S1–S16 bibliography. Added during the independent verification pass to resolve the evaporative-fan-cooling source gap (USE-summer-heat-014, USE-summer-heat-015).",
         "This is not an aquarium-specific experiment."
       ]
+    },
+    {
+      "source_id": "SRC-duarte-2016-rio-negro-doc-zebrafish",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Duarte, R. M., Smith, D. S., Val, A. L., & Wood, C. M. (2016)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 1,
+        "bibliography_entry_verbatim": "Duarte, R. M., Smith, D. S., Val, A. L., & Wood, C. M. (2016). Dissolved organic carbon from the upper Rio Negro protects zebrafish (Danio rerio) against ionoregulatory disturbances caused by low pH exposure. Scientific Reports, 6, 20377. DOI: 10.1038/srep20377. https://www.nature.com/articles/srep20377"
+      },
+      "title": "Dissolved organic carbon from the upper Rio Negro protects zebrafish (Danio rerio) against ionoregulatory disturbances caused by low pH exposure",
+      "author_or_organization": "Duarte, R. M.; Smith, D. S.; Val, A. L.; Wood, C. M.",
+      "publication_or_publisher": "Scientific Reports, 6, 20377",
+      "year": 2016,
+      "source_type": "peer_reviewed",
+      "url": "https://www.nature.com/articles/srep20377",
+      "doi": "10.1038/srep20377",
+      "access_type": null,
+      "evidence_role": "peer_reviewed_primary_study",
+      "package_description": "Cited in-text for Rio Negro DOC providing near-complete protection against ionoregulatory disturbance in zebrafish acutely exposed to pH 4.0 in ion-poor water (Sections 10.3, 16.6, 27.2).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "The package calls the DOC finding 'one of the most significant findings in this research' and cautions that extrapolation from Rio Negro DOC to aquarium leaf litter is an inference, not a demonstrated result (Section 16.6, tagged [CON])."
+      ]
+    },
+    {
+      "source_id": "SRC-wood-2003-blackwater-stingrays",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Wood, C. M., Matsuo, A. Y. O., Wilson, R. W., Gonzalez, R. J., Patrick, M. L., Playle, R. C., & Val, A. L. (2003)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 2,
+        "bibliography_entry_verbatim": "Wood, C. M., Matsuo, A. Y. O., Wilson, R. W., Gonzalez, R. J., Patrick, M. L., Playle, R. C., & Val, A. L. (2003). Protection by natural blackwater against disturbances in ion fluxes caused by low pH exposure in freshwater stingrays endemic to the Rio Negro. Physiological and Biochemical Zoology, 76(1), 12–27. DOI: 10.1086/367946"
+      },
+      "title": "Protection by natural blackwater against disturbances in ion fluxes caused by low pH exposure in freshwater stingrays endemic to the Rio Negro",
+      "author_or_organization": "Wood, C. M.; Matsuo, A. Y. O.; Wilson, R. W.; Gonzalez, R. J.; Patrick, M. L.; Playle, R. C.; Val, A. L.",
+      "publication_or_publisher": "Physiological and Biochemical Zoology, 76(1), 12–27",
+      "year": 2003,
+      "source_type": "peer_reviewed",
+      "url": null,
+      "doi": "10.1086/367946",
+      "access_type": null,
+      "evidence_role": "peer_reviewed_primary_study",
+      "package_description": "Cited in-text as parallel work finding comparable protection by natural blackwater in Rio Negro stingrays (Sections 10.3, 16.6).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No URL given in the package; DOI only."
+      ]
+    },
+    {
+      "source_id": "SRC-morris-2021-amazon-doc-fish-physiology-review",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Morris, C., Val, A. L., Brauner, C. J., & Wood, C. M. (2021)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 3,
+        "bibliography_entry_verbatim": "Morris, C., Val, A. L., Brauner, C. J., & Wood, C. M. (2021). The physiology of fish in acidic waters rich in dissolved organic carbon, with specific reference to the Amazon basin: Ionoregulation, acid-base regulation, ammonia excretion, and metal toxicity. Journal of Experimental Zoology Part A: Ecological and Integrative Physiology, 335(9–10), 843–863. DOI: 10.1002/jez.2468"
+      },
+      "title": "The physiology of fish in acidic waters rich in dissolved organic carbon, with specific reference to the Amazon basin: Ionoregulation, acid-base regulation, ammonia excretion, and metal toxicity",
+      "author_or_organization": "Morris, C.; Val, A. L.; Brauner, C. J.; Wood, C. M.",
+      "publication_or_publisher": "Journal of Experimental Zoology Part A: Ecological and Integrative Physiology, 335(9–10), 843–863",
+      "year": 2021,
+      "source_type": "peer_reviewed",
+      "url": null,
+      "doi": "10.1002/jez.2468",
+      "access_type": null,
+      "evidence_role": "peer_reviewed_review",
+      "package_description": "Cited in-text as a review covering Amazonian fish physiology in acidic, DOC-rich water (Section 16.6).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No URL given in the package; DOI only.",
+        "Evidence role 'peer_reviewed_review' reflects the package's own description ('Reviews of Amazonian fish physiology…')."
+      ]
+    },
+    {
+      "source_id": "SRC-gonzalez-2002-rio-negro-ion-regulation-strategies",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Gonzalez, R. J., Wood, C. M., Patrick, M. L., & Val, A. L. (2002)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 4,
+        "bibliography_entry_verbatim": "Gonzalez, R. J., Wood, C. M., Patrick, M. L., & Val, A. L. (2002). Diverse strategies for ion regulation in fish collected from the ion-poor, acidic Rio Negro. Physiological and Biochemical Zoology, 75(1), 37–47."
+      },
+      "title": "Diverse strategies for ion regulation in fish collected from the ion-poor, acidic Rio Negro",
+      "author_or_organization": "Gonzalez, R. J.; Wood, C. M.; Patrick, M. L.; Val, A. L.",
+      "publication_or_publisher": "Physiological and Biochemical Zoology, 75(1), 37–47",
+      "year": 2002,
+      "source_type": "peer_reviewed",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "peer_reviewed_primary_study",
+      "package_description": "Not cited by name in the body. Candidate member of the collective reference in Section 27.3 ('a substantial body of work by Gonzalez, Wood, Wilson, Val and colleagues from the 1990s to the 2020s; see the bibliography').",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No URL or DOI given in the package."
+      ]
+    },
+    {
+      "source_id": "SRC-gonzalez-2005-tropical-fish-ionoregulation-chapter",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Gonzalez, R. J., Wilson, R. W., & Wood, C. M. (2005)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 5,
+        "bibliography_entry_verbatim": "Gonzalez, R. J., Wilson, R. W., & Wood, C. M. (2005). Ionoregulation in tropical fishes from ion-poor, acidic blackwaters. In A. L. Val, V. M. F. Almeida-Val, & D. J. Randall (Eds.), The Physiology of Tropical Fishes (Fish Physiology Vol. 21, pp. 397–442). Academic Press. DOI: 10.1016/S1546-5098(05)21009-9"
+      },
+      "title": "Ionoregulation in tropical fishes from ion-poor, acidic blackwaters",
+      "author_or_organization": "Gonzalez, R. J.; Wilson, R. W.; Wood, C. M.",
+      "publication_or_publisher": "In A. L. Val, V. M. F. Almeida-Val, & D. J. Randall (Eds.), The Physiology of Tropical Fishes (Fish Physiology Vol. 21, pp. 397–442). Academic Press",
+      "year": 2005,
+      "source_type": "book_or_book_chapter",
+      "url": null,
+      "doi": "10.1016/S1546-5098(05)21009-9",
+      "access_type": null,
+      "evidence_role": "peer_reviewed_review",
+      "package_description": "Not cited by name in the body. Candidate member of the collective reference in Section 27.3.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Book chapter listed by the package under its 'Peer-Reviewed Scientific Literature' tier; the tier placement is preserved as the package gave it."
+      ]
+    },
+    {
+      "source_id": "SRC-gonzalez-wilson-2001-rio-negro-acidophilic-fish",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Gonzalez, R. J., & Wilson, R. W. (2001)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 6,
+        "bibliography_entry_verbatim": "Gonzalez, R. J., & Wilson, R. W. (2001). Patterns of ion regulation in acidophilic fish native to the ion-poor, acidic Rio Negro. Journal of Fish Biology, 58(6), 1680–1690."
+      },
+      "title": "Patterns of ion regulation in acidophilic fish native to the ion-poor, acidic Rio Negro",
+      "author_or_organization": "Gonzalez, R. J.; Wilson, R. W.",
+      "publication_or_publisher": "Journal of Fish Biology, 58(6), 1680–1690",
+      "year": 2001,
+      "source_type": "peer_reviewed",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "peer_reviewed_primary_study",
+      "package_description": "Cited in-text as the summary of 'Gonzalez and colleagues, 1997–2021' work on species-specific exceptions to the calcium-tightens-gills model (Section 2.5.1).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No URL or DOI given in the package.",
+        "Not to be confused with the excluded, unlocatable 'claimed 2021 Journal of Fish Biology study' on cortisol elevation (see the package record's excluded_sources); this 2001 article is a listed bibliography source."
+      ]
+    },
+    {
+      "source_id": "SRC-platek-2017-calcium-gill-remodeling",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Platek, A., et al. (2017)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 7,
+        "bibliography_entry_verbatim": "Platek, A., et al. (2017). Environmental calcium regulates gill remodeling in a euryhaline teleost fish. Journal of Experimental Zoology Part A: Ecological and Integrative Physiology. DOI: 10.1002/jez.2079. https://onlinelibrary.wiley.com/doi/10.1002/jez.2079"
+      },
+      "title": "Environmental calcium regulates gill remodeling in a euryhaline teleost fish",
+      "author_or_organization": "Platek, A., et al.",
+      "publication_or_publisher": "Journal of Experimental Zoology Part A: Ecological and Integrative Physiology",
+      "year": 2017,
+      "source_type": "peer_reviewed",
+      "url": "https://onlinelibrary.wiley.com/doi/10.1002/jez.2079",
+      "doi": "10.1002/jez.2079",
+      "access_type": null,
+      "evidence_role": "peer_reviewed_primary_study",
+      "package_description": "Cited in-text for mangrove rivulus gill remodeling (interlamellar cell mass) in response to environmental calcium (Section 2.5.1).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Package gives no volume or page numbers; co-authors abbreviated as 'et al.'."
+      ]
+    },
+    {
+      "source_id": "SRC-eddy-1975-calcium-goldfish-gill-fluxes",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Eddy, F. B. (1975)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 8,
+        "bibliography_entry_verbatim": "Eddy, F. B. (1975). The effect of calcium on gill potentials and on sodium and chloride fluxes in the goldfish, Carassius auratus. Journal of Comparative Physiology A, 96, 131–142. DOI: 10.1007/BF00706593"
+      },
+      "title": "The effect of calcium on gill potentials and on sodium and chloride fluxes in the goldfish, Carassius auratus",
+      "author_or_organization": "Eddy, F. B.",
+      "publication_or_publisher": "Journal of Comparative Physiology A, 96, 131–142",
+      "year": 1975,
+      "source_type": "peer_reviewed",
+      "url": null,
+      "doi": "10.1007/BF00706593",
+      "access_type": null,
+      "evidence_role": "peer_reviewed_primary_study",
+      "package_description": "Cited in-text for calcium cutting sodium and chloride efflux in goldfish and shifting transepithelial potential from roughly −10 mV to +10 mV (Section 2.5.1).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No URL given in the package; DOI only."
+      ]
+    },
+    {
+      "source_id": "SRC-nguyen-2019-mekong-ph-calcium-ion-balance",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Nguyen, et al. (2019)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 9,
+        "bibliography_entry_verbatim": "Nguyen, et al. (2019). Effect of water pH and calcium on ion balance in five fish species of the Mekong Delta. Comparative Biochemistry and Physiology Part A. https://www.sciencedirect.com/science/article/abs/pii/S1095643318302678"
+      },
+      "title": "Effect of water pH and calcium on ion balance in five fish species of the Mekong Delta",
+      "author_or_organization": "Nguyen, et al.",
+      "publication_or_publisher": "Comparative Biochemistry and Physiology Part A",
+      "year": 2019,
+      "source_type": "peer_reviewed",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S1095643318302678",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "peer_reviewed_primary_study",
+      "package_description": "Cited in-text ('see e.g. Nguyen et al., 2019') for the working model that Ca²⁺ at gill tight junctions lowers paracellular ion permeability and H⁺ displaces it at low pH (Section 2.5.1).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Package gives no author initials, co-authors, volume, pages or DOI."
+      ]
+    },
+    {
+      "source_id": "SRC-duarte-calcium-copper-silver-na-permeability",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Duarte, R. M., et al. (no year given)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 10,
+        "bibliography_entry_verbatim": "Duarte, R. M., et al. Effect of water calcium, copper, and silver on branchial Na⁺ permeability in a characid and cichlid fish. Comparative Biochemistry and Physiology Part A. https://www.sciencedirect.com/science/article/abs/pii/S1095643323001861"
+      },
+      "title": "Effect of water calcium, copper, and silver on branchial Na⁺ permeability in a characid and cichlid fish",
+      "author_or_organization": "Duarte, R. M., et al.",
+      "publication_or_publisher": "Comparative Biochemistry and Physiology Part A",
+      "year": null,
+      "source_type": "peer_reviewed",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S1095643323001861",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "peer_reviewed_primary_study",
+      "package_description": "Listed in the bibliography only; not cited by name in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Package gives no year, volume, pages or DOI. Year is not inferred here.",
+        "Topically adjacent to the calcium-effect caveat for characids and cichlids in Sections 2.5.1 and 27.3, but the package does not tie this entry to either section."
+      ]
+    },
+    {
+      "source_id": "SRC-perry-2003-gill-kidney-channels-pumps",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Perry, S. F., Shahsavarani, A., Georgalis, T., Bayaa, M., Furimsky, M., & Thomas, S. L. (2003)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 11,
+        "bibliography_entry_verbatim": "Perry, S. F., Shahsavarani, A., Georgalis, T., Bayaa, M., Furimsky, M., & Thomas, S. L. (2003). Channels, pumps, and exchangers in the gill and kidney of freshwater fishes: their role in ionic and acid-base regulation. Journal of Experimental Zoology Part A, 300(1), 53–62. DOI: 10.1002/jez.a.10309"
+      },
+      "title": "Channels, pumps, and exchangers in the gill and kidney of freshwater fishes: their role in ionic and acid-base regulation",
+      "author_or_organization": "Perry, S. F.; Shahsavarani, A.; Georgalis, T.; Bayaa, M.; Furimsky, M.; Thomas, S. L.",
+      "publication_or_publisher": "Journal of Experimental Zoology Part A, 300(1), 53–62",
+      "year": 2003,
+      "source_type": "peer_reviewed",
+      "url": null,
+      "doi": "10.1002/jez.a.10309",
+      "access_type": null,
+      "evidence_role": "peer_reviewed_review",
+      "package_description": "Listed in the bibliography only; not cited by name in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Evidence role inferred from the title only (overview of gill and kidney transport); to be confirmed during verification."
+      ]
+    },
+    {
+      "source_id": "SRC-bleich-2012-calcium-tight-junction-permeability",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Bleich, M., Shan, Q., & Himmerkus, N. (2012)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 12,
+        "bibliography_entry_verbatim": "Bleich, M., Shan, Q., & Himmerkus, N. (2012). Calcium regulation of tight junction permeability. Annals of the New York Academy of Sciences, 1258, 93–99."
+      },
+      "title": "Calcium regulation of tight junction permeability",
+      "author_or_organization": "Bleich, M.; Shan, Q.; Himmerkus, N.",
+      "publication_or_publisher": "Annals of the New York Academy of Sciences, 1258, 93–99",
+      "year": 2012,
+      "source_type": "peer_reviewed",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "peer_reviewed_primary_study",
+      "package_description": "Listed in the bibliography only; not cited by name in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No URL or DOI given in the package.",
+        "Topically adjacent to the gill tight-junction calcium model in Section 2.5.1, but the package does not tie this entry to that section."
+      ]
+    },
+    {
+      "source_id": "SRC-wood-2011-two-faces-of-doc",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Wood, C. M., Al-Reasi, H. A., & Smith, D. S. (2011)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 13,
+        "bibliography_entry_verbatim": "Wood, C. M., Al-Reasi, H. A., & Smith, D. S. (2011). The two faces of DOC. Aquatic Toxicology, 105S, 3–8."
+      },
+      "title": "The two faces of DOC",
+      "author_or_organization": "Wood, C. M.; Al-Reasi, H. A.; Smith, D. S.",
+      "publication_or_publisher": "Aquatic Toxicology, 105S, 3–8",
+      "year": 2011,
+      "source_type": "peer_reviewed",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "peer_reviewed_review",
+      "package_description": "Listed in the bibliography only; not cited by name in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No URL or DOI given in the package.",
+        "Topically adjacent to the DOC discussion in Sections 16.6 and 36.2, but the package does not tie this entry to those sections."
+      ]
+    },
+    {
+      "source_id": "SRC-wood-2002-potamotrygon-ion-transport",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Wood, C. M., et al. (2002)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Peer-Reviewed Scientific Literature",
+        "bibliography_tier_position": 14,
+        "bibliography_entry_verbatim": "Wood, C. M., et al. (2002). Mechanisms of ion transport in Potamotrygon, a stenohaline freshwater elasmobranch native to the ion-poor blackwaters of the Rio Negro. Journal of Experimental Biology, 205, 3039–3054."
+      },
+      "title": "Mechanisms of ion transport in Potamotrygon, a stenohaline freshwater elasmobranch native to the ion-poor blackwaters of the Rio Negro",
+      "author_or_organization": "Wood, C. M., et al.",
+      "publication_or_publisher": "Journal of Experimental Biology, 205, 3039–3054",
+      "year": 2002,
+      "source_type": "peer_reviewed",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "peer_reviewed_primary_study",
+      "package_description": "Listed in the bibliography only; not cited by name in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No URL or DOI given in the package.",
+        "Authored by Wood and colleagues, so it may fall within the Section 27.3 collective reference; the package does not say so, and 27.3 describes characid and cichlid findings rather than stingrays."
+      ]
+    },
+    {
+      "source_id": "SRC-merck-vet-environmental-diseases-aquatic-systems",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Merck Veterinary Manual. Environmental Diseases of Aquatic Animals in Aquatic Systems",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquatic Veterinary Sources",
+        "bibliography_tier_position": 1,
+        "bibliography_entry_verbatim": "Merck Veterinary Manual. Environmental Diseases of Aquatic Animals in Aquatic Systems. Exotic and Laboratory Animals. https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquatic-systems/environmental-diseases-of-aquatic-animals-in-aquatic-systems"
+      },
+      "title": "Environmental Diseases of Aquatic Animals in Aquatic Systems",
+      "author_or_organization": "Merck Veterinary Manual",
+      "publication_or_publisher": "Merck Veterinary Manual — Exotic and Laboratory Animals",
+      "year": null,
+      "source_type": "veterinary_or_professional",
+      "url": "https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquatic-systems/environmental-diseases-of-aquatic-animals-in-aquatic-systems",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "veterinary_clinical_guidance",
+      "package_description": "Cited in-text for diurnal CO₂/pH cycling (Section 1.6), the ≥100 mg/L alkalinity benchmark (Section 3.3), and lethal limits near pH 4 and pH 10 for many species (Section 6.2).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No author, edition or revision date given in the package."
+      ]
+    },
+    {
+      "source_id": "SRC-merck-vet-disorders-diseases-of-fish",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Merck Veterinary Manual. Disorders and Diseases of Fish",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquatic Veterinary Sources",
+        "bibliography_tier_position": 2,
+        "bibliography_entry_verbatim": "Merck Veterinary Manual. Disorders and Diseases of Fish. All Other Pets. (Source for the Old Tank Syndrome definition and parameter profile.) https://www.merckvetmanual.com/all-other-pets/fish/disorders-and-diseases-of-fish"
+      },
+      "title": "Disorders and Diseases of Fish",
+      "author_or_organization": "Merck Veterinary Manual",
+      "publication_or_publisher": "Merck Veterinary Manual — All Other Pets",
+      "year": null,
+      "source_type": "veterinary_or_professional",
+      "url": "https://www.merckvetmanual.com/all-other-pets/fish/disorders-and-diseases-of-fish",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "veterinary_clinical_guidance",
+      "package_description": "Bibliography annotation: '(Source for the Old Tank Syndrome definition and parameter profile.)' Cited in-text in Sections 4.2 and 21.1.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No author, edition or revision date given in the package."
+      ]
+    },
+    {
+      "source_id": "SRC-merck-vet-management-of-aquarium-fish",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Merck Veterinary Manual. Management of Aquarium Fish",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquatic Veterinary Sources",
+        "bibliography_tier_position": 3,
+        "bibliography_entry_verbatim": "Merck Veterinary Manual. Management of Aquarium Fish. Exotic and Laboratory Animals. https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquarium-fish/management-of-aquarium-fish"
+      },
+      "title": "Management of Aquarium Fish",
+      "author_or_organization": "Merck Veterinary Manual",
+      "publication_or_publisher": "Merck Veterinary Manual — Exotic and Laboratory Animals",
+      "year": null,
+      "source_type": "veterinary_or_professional",
+      "url": "https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquarium-fish/management-of-aquarium-fish",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "veterinary_clinical_guidance",
+      "package_description": "Cited in-text as 'Merck’s companion aquarium-management chapter' for gradual vs. rapid pH decline in Old Tank Syndrome and its prevalence in tanks with large carnivorous fish (Section 21.1).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No author, edition or revision date given in the package."
+      ]
+    },
+    {
+      "source_id": "SRC-merck-vet-equipment-water-analysis",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Merck Veterinary Manual. Equipment Needed for Aquatic Systems and Water Analysis",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquatic Veterinary Sources",
+        "bibliography_tier_position": 4,
+        "bibliography_entry_verbatim": "Merck Veterinary Manual. Equipment Needed for Aquatic Systems and Water Analysis; and tables A Summary of Water Quality Tests and Recommended Use and “Normal” Reference Ranges for Routine Water Quality Analysis. https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquatic-systems/equipment-needed-for-aquatic-systems-and-water-analysis"
+      },
+      "title": "Equipment Needed for Aquatic Systems and Water Analysis (with tables 'A Summary of Water Quality Tests and Recommended Use' and '“Normal” Reference Ranges for Routine Water Quality Analysis')",
+      "author_or_organization": "Merck Veterinary Manual",
+      "publication_or_publisher": "Merck Veterinary Manual — Exotic and Laboratory Animals",
+      "year": null,
+      "source_type": "veterinary_or_professional",
+      "url": "https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquatic-systems/equipment-needed-for-aquatic-systems-and-water-analysis",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "veterinary_clinical_guidance",
+      "package_description": "Listed in the bibliography only; this chapter is not cited by title in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "One bibliography entry naming a chapter plus two tables; registered as a single source to preserve the package's single entry.",
+        "Candidate (not confirmed) for the unattributed 'Merck’s water-quality guidance' mention in Section 4.7; see the package record's unresolved_named_source_mentions."
+      ]
+    },
+    {
+      "source_id": "SRC-wsava-2018-water-quality-assessment-aquatic-vet",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Water Quality Assessment in Aquatic Vet Medicine. WSAVA 2018 Congress proceedings, via VIN",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquatic Veterinary Sources",
+        "bibliography_tier_position": 5,
+        "bibliography_entry_verbatim": "Water Quality Assessment in Aquatic Vet Medicine. WSAVA 2018 Congress proceedings, via VIN. https://www.vin.com/apputil/content/defaultadv1.aspx?pId=22915&id=8896487"
+      },
+      "title": "Water Quality Assessment in Aquatic Vet Medicine",
+      "author_or_organization": null,
+      "publication_or_publisher": "WSAVA 2018 Congress proceedings (via VIN)",
+      "year": 2018,
+      "source_type": "conference_proceedings",
+      "url": "https://www.vin.com/apputil/content/defaultadv1.aspx?pId=22915&id=8896487",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "veterinary_clinical_guidance",
+      "package_description": "Cited in-text as a WSAVA aquatic veterinary presentation framing roughly 100–250 mg/L alkalinity (≈ 5.6–14 dKH) as a working target for most freshwater species (Sections 3.3, 25.3).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Package names no presenter/author."
+      ]
+    },
+    {
+      "source_id": "SRC-dvm360-intro-pet-fish-medicine-surgery",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Introduction to pet fish medicine and surgery (Proceedings). dvm360",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquatic Veterinary Sources",
+        "bibliography_tier_position": 6,
+        "bibliography_entry_verbatim": "Introduction to pet fish medicine and surgery (Proceedings). dvm360. https://www.dvm360.com/view/introduction-pet-fish-medicine-and-surgery-proceedings"
+      },
+      "title": "Introduction to pet fish medicine and surgery (Proceedings)",
+      "author_or_organization": null,
+      "publication_or_publisher": "dvm360",
+      "year": null,
+      "source_type": "conference_proceedings",
+      "url": "https://www.dvm360.com/view/introduction-pet-fish-medicine-and-surgery-proceedings",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "veterinary_clinical_guidance",
+      "package_description": "Listed in the bibliography only; not cited in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Package names no author and no date."
+      ]
+    },
+    {
+      "source_id": "SRC-srac-464-ph-co2-alkalinity-hardness-fish-ponds",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Wurts, W. A., & Durborow, R. M. (1992)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquaculture and Fisheries Sources",
+        "bibliography_tier_position": 1,
+        "bibliography_entry_verbatim": "Wurts, W. A., & Durborow, R. M. (1992). Interactions of pH, Carbon Dioxide, Alkalinity and Hardness in Fish Ponds. Southern Regional Aquaculture Center Publication No. 464. https://srac.msstate.edu/pdfs/Fact%20Sheets/464%20Interactions%20of%20pH,%20Carbon%20Dioxide,%20Alkalinity%20and%20Hardness%20in%20Fish%20Ponds.pdf"
+      },
+      "title": "Interactions of pH, Carbon Dioxide, Alkalinity and Hardness in Fish Ponds",
+      "author_or_organization": "Wurts, W. A.; Durborow, R. M.",
+      "publication_or_publisher": "Southern Regional Aquaculture Center Publication No. 464",
+      "year": 1992,
+      "source_type": "university_extension",
+      "url": "https://srac.msstate.edu/pdfs/Fact%20Sheets/464%20Interactions%20of%20pH,%20Carbon%20Dioxide,%20Alkalinity%20and%20Hardness%20in%20Fish%20Ponds.pdf",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "applied_guidance",
+      "package_description": "Cited in-text for the pH definition (Section 1.1), for ponds under ~20 mg/L alkalinity swinging roughly pH 6–10 daily with associated stress, depressed growth and mortality (Section 1.6), and as 'the strongest empirical support' for the stable-pH claim (Section 6.2).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "The package itself cautions that pond data transfer by mechanism but not magnitude to home aquariums (Section 1.6 'Important caveat')."
+      ]
+    },
+    {
+      "source_id": "SRC-srac-4100-liming-ponds-aquaculture",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Wurts, W. A., & Masser, M. P. (2013)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquaculture and Fisheries Sources",
+        "bibliography_tier_position": 2,
+        "bibliography_entry_verbatim": "Wurts, W. A., & Masser, M. P. (2013). Liming Ponds for Aquaculture. Southern Regional Aquaculture Center Publication No. 4100. https://srac.msstate.edu/pdfs/Fact%20Sheets/4100%20Lining%20Ponds%20for%20Aquaculture.pdf"
+      },
+      "title": "Liming Ponds for Aquaculture",
+      "author_or_organization": "Wurts, W. A.; Masser, M. P.",
+      "publication_or_publisher": "Southern Regional Aquaculture Center Publication No. 4100",
+      "year": 2013,
+      "source_type": "university_extension",
+      "url": "https://srac.msstate.edu/pdfs/Fact%20Sheets/4100%20Lining%20Ponds%20for%20Aquaculture.pdf",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "applied_guidance",
+      "package_description": "Cited in-text alongside SRAC 464 for low-alkalinity ponds swinging roughly pH 6–10 within a day (Section 1.6).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "CITATION DISCREPANCY AS GIVEN IN THE PACKAGE (not corrected here): the title reads 'Liming Ponds for Aquaculture' but the URL filename reads '4100 Lining Ponds for Aquaculture.pdf'. To be checked during verification."
+      ]
+    },
+    {
+      "source_id": "SRC-wurts-alkalinity-hardness-production-ponds",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Wurts, W. A. Alkalinity and Hardness in Production Ponds",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquaculture and Fisheries Sources",
+        "bibliography_tier_position": 3,
+        "bibliography_entry_verbatim": "Wurts, W. A. Alkalinity and Hardness in Production Ponds. World Aquaculture. (Review; cited in this document for the alkalinity-and-reproduction claim, which is flagged as directional rather than quantitative.)"
+      },
+      "title": "Alkalinity and Hardness in Production Ponds",
+      "author_or_organization": "Wurts, W. A.",
+      "publication_or_publisher": "World Aquaculture",
+      "year": null,
+      "source_type": "other",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "applied_guidance",
+      "package_description": "Bibliography annotation: '(Review; cited in this document for the alkalinity-and-reproduction claim, which is flagged as directional rather than quantitative.)' Cited in-text in Section 2.5.5.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Package gives no year, volume, pages, URL or DOI. Year is not inferred here.",
+        "Source type recorded as 'other' (trade/society magazine article, per the publication name given); to be confirmed during verification."
+      ]
+    },
+    {
+      "source_id": "SRC-boyd-1979-water-quality-warmwater-fish-ponds",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Boyd, C. E. (1979)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquaculture and Fisheries Sources",
+        "bibliography_tier_position": 4,
+        "bibliography_entry_verbatim": "Boyd, C. E. (1979). Water Quality in Warmwater Fish Ponds. Auburn University Agricultural Experiment Station."
+      },
+      "title": "Water Quality in Warmwater Fish Ponds",
+      "author_or_organization": "Boyd, C. E.",
+      "publication_or_publisher": "Auburn University Agricultural Experiment Station",
+      "year": 1979,
+      "source_type": "book_or_book_chapter",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "applied_guidance",
+      "package_description": "Listed in the bibliography only; not cited by name in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No URL or DOI given in the package."
+      ]
+    },
+    {
+      "source_id": "SRC-tucker-1984-carbon-dioxide-for-fish-farmers",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Tucker, C. S. (1984)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquaculture and Fisheries Sources",
+        "bibliography_tier_position": 5,
+        "bibliography_entry_verbatim": "Tucker, C. S. (1984). Carbon dioxide. In T. L. Wellborn, Jr. & J. R. MacMillan (Eds.), For Fish Farmers 84-2. Mississippi Cooperative Extension Service."
+      },
+      "title": "Carbon dioxide",
+      "author_or_organization": "Tucker, C. S.",
+      "publication_or_publisher": "In T. L. Wellborn, Jr. & J. R. MacMillan (Eds.), For Fish Farmers 84-2. Mississippi Cooperative Extension Service",
+      "year": 1984,
+      "source_type": "university_extension",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "applied_guidance",
+      "package_description": "Listed in the bibliography only; not cited by name in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "No URL or DOI given in the package."
+      ]
+    },
+    {
+      "source_id": "SRC-timmons-2018-recirculating-aquaculture-4th-ed",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Timmons, M. B., Guerdat, T., & Vinci, B. J. (2018)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquaculture and Fisheries Sources",
+        "bibliography_tier_position": 6,
+        "bibliography_entry_verbatim": "Timmons, M. B., Guerdat, T., & Vinci, B. J. (2018). Recirculating Aquaculture (4th ed.). (Source for nitrification stoichiometry: 7.14 mg alkalinity as CaCO₃ and 4.57 mg O₂ per mg ammonia-nitrogen oxidised.)"
+      },
+      "title": "Recirculating Aquaculture (4th ed.)",
+      "author_or_organization": "Timmons, M. B.; Guerdat, T.; Vinci, B. J.",
+      "publication_or_publisher": null,
+      "year": 2018,
+      "source_type": "book_or_book_chapter",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "reference_data",
+      "package_description": "Bibliography annotation: '(Source for nitrification stoichiometry: 7.14 mg alkalinity as CaCO₃ and 4.57 mg O₂ per mg ammonia-nitrogen oxidised.)' Cited in-text in Section 20.1.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Package names no publisher, URL or ISBN."
+      ]
+    },
+    {
+      "source_id": "SRC-vce-cnre-126-liming-farm-recreational-ponds",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Virginia Cooperative Extension. Liming Farm and Recreational Ponds",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Aquaculture and Fisheries Sources",
+        "bibliography_tier_position": 7,
+        "bibliography_entry_verbatim": "Virginia Cooperative Extension. Liming Farm and Recreational Ponds. VCE Publication CNRE-126. https://www.pubs.ext.vt.edu/CNRE/CNRE-126/CNRE-126.html"
+      },
+      "title": "Liming Farm and Recreational Ponds",
+      "author_or_organization": "Virginia Cooperative Extension",
+      "publication_or_publisher": "VCE Publication CNRE-126",
+      "year": null,
+      "source_type": "university_extension",
+      "url": "https://www.pubs.ext.vt.edu/CNRE/CNRE-126/CNRE-126.html",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "applied_guidance",
+      "package_description": "Listed in the bibliography only; not cited by name in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Package gives no year or author."
+      ]
+    },
+    {
+      "source_id": "SRC-usgs-hardness-of-water",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "U.S. Geological Survey. Hardness of Water",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Government and Water Treatment Authorities",
+        "bibliography_tier_position": 1,
+        "bibliography_entry_verbatim": "U.S. Geological Survey. Hardness of Water. Water Science School. https://www.usgs.gov/water-science-school/science/hardness-water"
+      },
+      "title": "Hardness of Water",
+      "author_or_organization": "U.S. Geological Survey",
+      "publication_or_publisher": "U.S. Geological Survey — Water Science School",
+      "year": null,
+      "source_type": "government",
+      "url": "https://www.usgs.gov/water-science-school/science/hardness-water",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "explanatory_background",
+      "package_description": "Cited in-text for hardness being essentially the quantity of dissolved calcium and magnesium (Section 2.1).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Web page; package gives no publication/update date.",
+        "Different source from SRC-usgs-do-and-water (Summer Heat S2, 'Dissolved Oxygen and Water'); same USGS Water Science School series, different page. Not reused."
+      ]
+    },
+    {
+      "source_id": "SRC-usgs-faq-water-hardness-united-states",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "U.S. Geological Survey. Do you have information about water hardness in the United States?",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Government and Water Treatment Authorities",
+        "bibliography_tier_position": 2,
+        "bibliography_entry_verbatim": "U.S. Geological Survey. Do you have information about water hardness in the United States? FAQ, updated 5 August 2025. https://www.usgs.gov/faqs/do-you-have-information-about-water-hardness-united-states"
+      },
+      "title": "Do you have information about water hardness in the United States?",
+      "author_or_organization": "U.S. Geological Survey",
+      "publication_or_publisher": "U.S. Geological Survey — FAQ",
+      "year": 2025,
+      "source_type": "government",
+      "url": "https://www.usgs.gov/faqs/do-you-have-information-about-water-hardness-united-states",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "reference_data",
+      "package_description": "Cited in-text for the four USGS hardness bands (0–60, 61–120, 121–180, >180 mg/L as CaCO₃) and for the EPA setting no legal limit for hardness (Section 2.2); the bands are also reused as a descriptive column/category in Sections 2.2, 2.3 and 25.3.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Year 2025 taken from the package's 'updated 5 August 2025'."
+      ]
+    },
+    {
+      "source_id": "SRC-mpca-wq-wwprm8-04-lsts-process-guidance",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Minnesota Pollution Control Agency. Large subsurface wastewater treatment system process guidance (wq-wwprm8-04)",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Government and Water Treatment Authorities",
+        "bibliography_tier_position": 3,
+        "bibliography_entry_verbatim": "Minnesota Pollution Control Agency. Large subsurface wastewater treatment system process guidance (wq-wwprm8-04). (Nitrification alkalinity consumption.) https://www.pca.state.mn.us/sites/default/files/wq-wwprm8-04.pdf"
+      },
+      "title": "Large subsurface wastewater treatment system process guidance (wq-wwprm8-04)",
+      "author_or_organization": "Minnesota Pollution Control Agency",
+      "publication_or_publisher": "Minnesota Pollution Control Agency",
+      "year": null,
+      "source_type": "government",
+      "url": "https://www.pca.state.mn.us/sites/default/files/wq-wwprm8-04.pdf",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "reference_data",
+      "package_description": "Bibliography annotation: '(Nitrification alkalinity consumption.)' Cited in-text in Section 20.1 for ~7.14 mg alkalinity as CaCO₃ consumed per mg ammonia-nitrogen oxidised.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Wastewater-engineering context, not aquarium-specific.",
+        "Package gives no year."
+      ]
+    },
+    {
+      "source_id": "SRC-nysdec-lis-nitrogen-removal-module-4",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "New York State Department of Environmental Conservation. Long Island Sound Nitrogen Removal Training Program, Module 4",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Government and Water Treatment Authorities",
+        "bibliography_tier_position": 4,
+        "bibliography_entry_verbatim": "New York State Department of Environmental Conservation. Long Island Sound Nitrogen Removal Training Program, Module 4. (Total alkalinity requirement 7.14 lb as CaCO₃ per lb N oxidised.) https://extapps.dec.ny.gov/docs/water_pdf/module4.pdf"
+      },
+      "title": "Long Island Sound Nitrogen Removal Training Program, Module 4",
+      "author_or_organization": "New York State Department of Environmental Conservation",
+      "publication_or_publisher": "New York State Department of Environmental Conservation",
+      "year": null,
+      "source_type": "government",
+      "url": "https://extapps.dec.ny.gov/docs/water_pdf/module4.pdf",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "reference_data",
+      "package_description": "Bibliography annotation: '(Total alkalinity requirement 7.14 lb as CaCO₃ per lb N oxidised.)' Cited in-text in Section 20.1.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Wastewater-engineering training material, not aquarium-specific.",
+        "Package gives no year."
+      ]
+    },
+    {
+      "source_id": "SRC-cwea-how-alkalinity-affects-nitrification",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "California Water Environment Association. How Alkalinity Affects Nitrification",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Government and Water Treatment Authorities",
+        "bibliography_tier_position": 5,
+        "bibliography_entry_verbatim": "California Water Environment Association. How Alkalinity Affects Nitrification. https://www.cwea.org/news/how-alkalinity-affects-nitrification/"
+      },
+      "title": "How Alkalinity Affects Nitrification",
+      "author_or_organization": "California Water Environment Association",
+      "publication_or_publisher": "California Water Environment Association",
+      "year": null,
+      "source_type": "professional_association",
+      "url": "https://www.cwea.org/news/how-alkalinity-affects-nitrification/",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "reference_data",
+      "package_description": "Cited in-text in Section 20.1 as one of the independent sources for the ~7.14 mg alkalinity per mg ammonia-nitrogen figure.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Listed by the package under 'Government and Water Treatment Authorities'; CWEA is a professional association rather than a government agency. The tier placement is preserved as given.",
+        "Package gives no year or author."
+      ]
+    },
+    {
+      "source_id": "SRC-mgs-hardness",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Maryland Geological Survey. Hardness",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Government and Water Treatment Authorities",
+        "bibliography_tier_position": 6,
+        "bibliography_entry_verbatim": "Maryland Geological Survey. Hardness. https://www.mgs.md.gov/groundwater/hardness.html"
+      },
+      "title": "Hardness",
+      "author_or_organization": "Maryland Geological Survey",
+      "publication_or_publisher": "Maryland Geological Survey",
+      "year": null,
+      "source_type": "government",
+      "url": "https://www.mgs.md.gov/groundwater/hardness.html",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "explanatory_background",
+      "package_description": "Listed in the bibliography only; not cited by name in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Package gives no year."
+      ]
+    },
+    {
+      "source_id": "SRC-oata-how-to-test-freshwater-water-quality",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Ornamental Aquatic Trade Association (OATA). How to test water quality in your freshwater tank/aquarium",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Established Aquarium Organizations and Reputable Publications",
+        "bibliography_tier_position": 1,
+        "bibliography_entry_verbatim": "Ornamental Aquatic Trade Association (OATA). How to test water quality in your freshwater tank/aquarium. https://ornamentalfish.org/what-we-do/advice-information/care-sheets/caresheets-tropical-freshwater-fish/how-to-test-water-quality-in-your-freshwater-tank-aquarium/"
+      },
+      "title": "How to test water quality in your freshwater tank/aquarium",
+      "author_or_organization": "Ornamental Aquatic Trade Association (OATA)",
+      "publication_or_publisher": "Ornamental Aquatic Trade Association",
+      "year": null,
+      "source_type": "aquarium_hobby_publication",
+      "url": "https://ornamentalfish.org/what-we-do/advice-information/care-sheets/caresheets-tropical-freshwater-fish/how-to-test-water-quality-in-your-freshwater-tank-aquarium/",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "hobby_publication_context",
+      "package_description": "Listed in the bibliography only; not cited by name in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Trade association care-sheet guidance. Package gives no year."
+      ]
+    },
+    {
+      "source_id": "SRC-pfk-co2-striking-the-balance",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Practical Fishkeeping. CO₂: Striking the balance",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Established Aquarium Organizations and Reputable Publications",
+        "bibliography_tier_position": 2,
+        "bibliography_entry_verbatim": "Practical Fishkeeping. CO₂: Striking the balance. https://www.practicalfishkeeping.co.uk/features/co2-striking-the-balance/"
+      },
+      "title": "CO₂: Striking the balance",
+      "author_or_organization": "Practical Fishkeeping",
+      "publication_or_publisher": "Practical Fishkeeping",
+      "year": null,
+      "source_type": "aquarium_hobby_publication",
+      "url": "https://www.practicalfishkeeping.co.uk/features/co2-striking-the-balance/",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "hobby_publication_context",
+      "package_description": "Cited in-text for the point that the pH/KH/CO₂ relationship presumes carbonic acid is the only acidifying compound (Section 19.4).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Package gives no author or year."
+      ]
+    },
+    {
+      "source_id": "SRC-2hr-aquarist-wrong-way-read-ph-kh-chart",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "2Hr Aquarist. The wrong way to read the pH/KH chart",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Established Aquarium Organizations and Reputable Publications",
+        "bibliography_tier_position": 3,
+        "bibliography_entry_verbatim": "2Hr Aquarist. The wrong way to read the pH/KH chart. https://www.2hraquarist.com/blogs/choosing-co2-why/the-wrong-way-to-read-the-ph-kh-chart"
+      },
+      "title": "The wrong way to read the pH/KH chart",
+      "author_or_organization": "2Hr Aquarist",
+      "publication_or_publisher": "2Hr Aquarist",
+      "year": null,
+      "source_type": "aquarium_hobby_publication",
+      "url": "https://www.2hraquarist.com/blogs/choosing-co2-why/the-wrong-way-to-read-the-ph-kh-chart",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "hobby_publication_context",
+      "package_description": "Cited in-text for aquasoil rendering the pH/KH/CO₂ table effectively useless because fulvic and humic acids lower pH without contributing CO₂ (Section 19.4).",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Commercial aquarium retailer's blog, listed by the package under 'Established Aquarium Organizations and Reputable Publications'. Package gives no author or year."
+      ]
+    },
+    {
+      "source_id": "SRC-aquariumscience-org-kh-ph-co2-buffering-substrates",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Aquarium Science. 15.6.2 KH pH CO₂ Relationships; 14.2.3 Buffering Substrates",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Established Aquarium Organizations and Reputable Publications",
+        "bibliography_tier_position": 4,
+        "bibliography_entry_verbatim": "Aquarium Science. 15.6.2 KH pH CO₂ Relationships; 14.2.3 Buffering Substrates. https://aquariumscience.org/"
+      },
+      "title": "15.6.2 KH pH CO₂ Relationships; 14.2.3 Buffering Substrates",
+      "author_or_organization": "Aquarium Science",
+      "publication_or_publisher": "aquariumscience.org",
+      "year": null,
+      "source_type": "aquarium_hobby_publication",
+      "url": "https://aquariumscience.org/",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "hobby_publication_context",
+      "package_description": "Listed in the bibliography only; not cited by name in the body.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "One bibliography entry naming two sections of the site; registered as a single source to preserve the package's single entry. URL given is the site root only.",
+        "Package gives no author or year."
+      ]
+    },
+    {
+      "source_id": "SRC-seachem-equilibrium-documentation",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Seachem. Equilibrium product documentation",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Manufacturer Technical Documentation",
+        "bibliography_tier_position": 1,
+        "bibliography_entry_verbatim": "Seachem. Equilibrium product documentation. (Dosing: 16 g per 80 L raises GH by 3 dH; does not raise KH.)"
+      },
+      "title": "Equilibrium product documentation",
+      "author_or_organization": "Seachem",
+      "publication_or_publisher": "Seachem (manufacturer)",
+      "year": null,
+      "source_type": "manufacturer",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "manufacturer_product_documentation",
+      "package_description": "Bibliography annotation: '(Dosing: 16 g per 80 L raises GH by 3 dH; does not raise KH.)' Named as a GH-only remineralizer example (Section 10.4.1) and a GH supplement example (Section 29.4); dosing figure reproduced in Section 10.4.4.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "MANUFACTURER SOURCE — not independent scientific evidence.",
+        "PACKAGE-DISCLOSED CAVEAT (Section 10.4.4): 'These are manufacturer figures and are reproduced here as manufacturer claims; independent verification was not located.' Document Notes: 'Manufacturer dosing figures are reproduced as manufacturer claims and were not independently verified.'",
+        "Package gives no URL, document title/version or date."
+      ]
+    },
+    {
+      "source_id": "SRC-saltyshrimp-bee-shrimp-mineral-gh-plus",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "SaltyShrimp. Bee Shrimp Mineral GH+ product documentation",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Manufacturer Technical Documentation",
+        "bibliography_tier_position": 2,
+        "bibliography_entry_verbatim": "SaltyShrimp. Bee Shrimp Mineral GH+ product documentation. (Dosing: approximately 3 g per 20 L for approximately 6 dGH and 200 µS/cm.)"
+      },
+      "title": "Bee Shrimp Mineral GH+ product documentation",
+      "author_or_organization": "SaltyShrimp",
+      "publication_or_publisher": "SaltyShrimp (manufacturer)",
+      "year": null,
+      "source_type": "manufacturer",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "manufacturer_product_documentation",
+      "package_description": "Bibliography annotation: '(Dosing: approximately 3 g per 20 L for approximately 6 dGH and 200 µS/cm.)' Named as a GH-only remineralizer example (Section 10.4.1); dosing figure reproduced in Section 10.4.4.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "MANUFACTURER SOURCE — not independent scientific evidence.",
+        "PACKAGE-DISCLOSED CAVEAT (Section 10.4.4): manufacturer figures reproduced as manufacturer claims; independent verification was not located.",
+        "Section 10.4.2 also names 'SaltyShrimp GH/KH+' (a different product) and '“RO Right”-type products'; neither has its own bibliography entry.",
+        "Package gives no URL, document title/version or date."
+      ]
+    },
+    {
+      "source_id": "SRC-apc-accuracy-ph-kh-relation-co2-thread",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Aquatic Plant Central, Accuracy of pH/KH relation for CO₂ discussion thread",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Hobbyist and Community Sources — Used for Identifying Recurring Questions and Practices, Not as Scientific Evidence",
+        "bibliography_tier_position": 1,
+        "bibliography_entry_verbatim": "Aquatic Plant Central, Accuracy of pH/KH relation for CO₂ discussion thread. (Source of the organic-acid interference discussion.)"
+      },
+      "title": "Accuracy of pH/KH relation for CO₂ (discussion thread)",
+      "author_or_organization": null,
+      "publication_or_publisher": "Aquatic Plant Central (forum)",
+      "year": null,
+      "source_type": "hobbyist_community_discussion",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "hobbyist_discussion_not_evidence",
+      "package_description": "Bibliography annotation: '(Source of the organic-acid interference discussion.)'",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "HOBBYIST/COMMUNITY SOURCE — the package's own tier heading states these were 'Used for Identifying Recurring Questions and Practices, Not as Scientific Evidence'.",
+        "Package gives no URL, thread author or date."
+      ]
+    },
+    {
+      "source_id": "SRC-barr-report-co2-ph-kh-table-discussion",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Barr Report forum, CO₂/pH/KH table discussion",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Hobbyist and Community Sources — Used for Identifying Recurring Questions and Practices, Not as Scientific Evidence",
+        "bibliography_tier_position": 2,
+        "bibliography_entry_verbatim": "Barr Report forum, CO₂/pH/KH table discussion. (Non-carbonate KH discussion; Tom Barr and contributors.)"
+      },
+      "title": "CO₂/pH/KH table discussion",
+      "author_or_organization": "Tom Barr and contributors",
+      "publication_or_publisher": "Barr Report forum",
+      "year": null,
+      "source_type": "hobbyist_community_discussion",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "hobbyist_discussion_not_evidence",
+      "package_description": "Bibliography annotation: '(Non-carbonate KH discussion; Tom Barr and contributors.)'",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "HOBBYIST/COMMUNITY SOURCE — used for identifying recurring questions and practices, not as scientific evidence (package tier heading).",
+        "Package gives no URL or date."
+      ]
+    },
+    {
+      "source_id": "SRC-aquarium-forum-ph-relationship-kh-chart",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Aquarium Forum, pH relationship and the KH on a chart",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Hobbyist and Community Sources — Used for Identifying Recurring Questions and Practices, Not as Scientific Evidence",
+        "bibliography_tier_position": 3,
+        "bibliography_entry_verbatim": "Aquarium Forum, pH relationship and the KH on a chart. (Source of the peat/atomic-absorption claim recorded as contested in Section 12.2.3 and Claim 32.)"
+      },
+      "title": "pH relationship and the KH on a chart",
+      "author_or_organization": null,
+      "publication_or_publisher": "Aquarium Forum",
+      "year": null,
+      "source_type": "hobbyist_community_discussion",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "hobbyist_discussion_not_evidence",
+      "package_description": "Bibliography annotation: '(Source of the peat/atomic-absorption claim recorded as contested in Section 12.2.3 and Claim 32.)'",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "HOBBYIST/COMMUNITY SOURCE — used for identifying recurring questions and practices, not as scientific evidence (package tier heading).",
+        "The package itself classifies the claim this source supplied as contested and unverified: 'could not be traced to a peer-reviewed source in this research. Classification: plausible, mechanistically sensible, unverified.'",
+        "Package gives no URL, author or date."
+      ]
+    },
+    {
+      "source_id": "SRC-specialist-shrimp-keeping-resources-unnamed",
+      "source_origin": "original_package_citation",
+      "original_package_key": {
+        "package_id": "PKG-2026-08-gh-kh-ph",
+        "key": "Specialist shrimp-keeping resources",
+        "key_type": "bibliography_entry_label",
+        "bibliography_tier": "Hobbyist and Community Sources — Used for Identifying Recurring Questions and Practices, Not as Scientific Evidence",
+        "bibliography_tier_position": 4,
+        "bibliography_entry_verbatim": "Specialist shrimp-keeping resources, consulted for the range of commonly cited Neocaridina and Caridina parameter targets. The disagreement between these sources is documented in Sections 26.5 and 28.3 and is itself treated as data about the reliability of hobby conventions."
+      },
+      "title": "Specialist shrimp-keeping resources (unnamed group)",
+      "author_or_organization": null,
+      "publication_or_publisher": null,
+      "year": null,
+      "source_type": "grouped_unspecified_sources",
+      "url": null,
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "hobbyist_discussion_not_evidence",
+      "package_description": "Bibliography entry describing an unnamed group of specialist shrimp-keeping resources consulted for commonly cited Neocaridina and Caridina parameter targets.",
+      "verification_status": "unverified_citation_from_package",
+      "verification_note": null,
+      "notes": [
+        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "GROUPED, UNNAMED BIBLIOGRAPHY ENTRY: no individual site, title, author, URL or date is given, so this record cannot be verified as a specific source. It is registered so the package's bibliography is complete and traceable, not as independent evidence.",
+        "The package treats these sources' disagreement (e.g., Neocaridina GH given as 4–10, 6–12, 6–14 and 7–15 dGH) as 'data about the reliability of hobby conventions', and labels the targets as hobby convention with untraceable provenance."
+      ]
     }
   ],
   "verification_pass": {
@@ -543,5 +1780,15 @@
       "SRC-usgs-evaporation-water-surfaces-1898",
       "SRC-usgs-evaporation-water-cycle-2019"
     ]
-  }
+  },
+  "package_registrations": [
+    {
+      "package_id": "PKG-2026-08-gh-kh-ph",
+      "stage": "extraction",
+      "date": "2026-09-25",
+      "description": "Initial registry extraction of the GH/KH/pH package bibliography. No outside verification performed.",
+      "source_ids_added": 43,
+      "source_ids_reused": []
+    }
+  ]
 }

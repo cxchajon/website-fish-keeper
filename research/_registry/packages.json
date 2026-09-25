@@ -422,6 +422,994 @@
           "note": "Physical principle verified by supplementary USGS sources; the home-aquarium application is a practical inference. Not a direct aquarium experiment or controlled aquarium study. The package's own Claim Audit status (SUPPORTED BY PHYSICAL PRINCIPLE) is preserved verbatim in claim_audit."
         }
       ]
+    },
+    {
+      "package_id": "PKG-2026-08-gh-kh-ph",
+      "title": "GH, KH and pH in Freshwater Aquariums — A Master Research Reference and Data Compilation",
+      "publisher": "FishKeepingLifeCo / Tank Guide Life",
+      "publisher_notes": "Cover: 'Compiled as source material for Tank Guide Life, a production of FishKeepingLifeCo.' The package names no individual author.",
+      "current_file_path": "research/packages/GH-KH-pH-Freshwater-Aquarium-Research-Reference.pdf",
+      "page_count": 94,
+      "page_count_notes": "94 PDF pages: cover (p. 1), table of contents (pp. 2–5), a blank page (p. 6), body (pp. 7–91), bibliography (pp. 92–93), Document Notes (p. 94). Package page numbers in this registry are PDF page numbers.",
+      "document_type": "master_research_reference_compilation",
+      "document_date": "2026-08",
+      "document_date_notes": "Cover says 'August 2026'; Document Notes say 'Compiled: August 2026.' PDF metadata creation date is 2026-08-16 (generated with wkhtmltopdf 0.12.6).",
+      "main_topics": [
+        "Fundamentals of pH (logarithmic scale, temperature-dependent neutral point, measurement methods, degassing, diurnal swing)",
+        "Fundamentals of GH (units, ion conversions, what GH is not, biological roles of calcium and magnesium)",
+        "Fundamentals of KH / alkalinity (terminology, units, consumption and replenishment, GH–KH divergence)",
+        "How pH, GH and KH relate (nine water profiles, diagnostic logic)",
+        "Buffering (capacity vs. intensity; low-KH systems)",
+        "Evaluation of 'A stable pH is more important than the correct pH' and 'Don't chase pH'",
+        "Species requirements; survival vs. thriving vs. breeding",
+        "Tap, well, softened and blended source water",
+        "RO, RO/DI and distilled water; remineralization",
+        "Raising and lowering GH, KH and pH (methods, dosing arithmetic, risks)",
+        "Driftwood, botanicals and dissolved organic carbon (DOC)",
+        "Crushed coral and carbonate saturation state",
+        "Aquasoils and active substrates",
+        "Planted aquariums and CO₂ (pH/KH/CO₂ table limitations)",
+        "Nitrogen cycle alkalinity consumption; Old Tank Syndrome and pH crashes",
+        "Water changes, top-offs and evaporation",
+        "Testing, units and conversions; TDS and conductivity",
+        "Osmoregulation",
+        "Shrimp, snails and aquarium plants",
+        "Care-sheet parameter ranges and acclimation",
+        "Myths and controversies (34 claims), scenario library (18 scenarios), decision-making reference",
+        "Additional questions and topics discovered during research, including fabricated citations in aquarium content"
+      ],
+      "core_message": "Each of the three parameters answers a different question — pH: how acidic is the water right now; GH: how much calcium and magnesium is dissolved; KH: how much acid the water can absorb before pH moves. Knowing one tells you very little about the other two; knowing all three tells you a great deal.",
+      "core_message_notes": "Paraphrased from Section 4.1 ('The Core Insight'), which the package calls the integration point of the document. The package states that 'No editorial conclusion is drawn about what a podcast episode should say', so this is recorded as the document's central organizing insight, not an editorial verdict.",
+      "intended_use": [
+        "A research reference compilation, 'not an article, not a script, and not a narrative'; it exists to serve as a retrieval corpus (Purpose and Scope).",
+        "Written for machine retrieval first and human reading second: terminology repeated deliberately, synonyms stated explicitly, conclusions close to evidence, intentional redundancy, uncertainty labeled (Purpose and Scope).",
+        "Ingestion into NotebookLM as a retrieval corpus for podcast and content development; not intended for direct publication (Document Notes).",
+        "Compiled as source material for Tank Guide Life, a production of FishKeepingLifeCo (cover).",
+        "No editorial conclusion is drawn about what a podcast episode should say; where evidence conflicts, both positions are documented (Purpose and Scope)."
+      ],
+      "evidence_framework_used": {
+        "summary": "Every substantive claim is intended to carry a claim-level evidence tag from a nine-category Evidence Classification Key; the bibliography is separately grouped by evidentiary tier (seven source tiers); Section 32 applies a six-level classification scale to 34 hobby claims; several sections carry their own verdicts or evidence summaries. The package also states up-front source-reliability problems (circular hobby citation; fabricated citations) and a rule for how numbers are sourced.",
+        "citation_convention": "Inline parenthetical author–year or title citations (e.g., '(Wurts & Durborow, 1992, SRAC 464)', '(Merck Veterinary Manual, Environmental Diseases of Aquatic Animals in Aquatic Systems)', '(Duarte, Smith, Val & Wood, 2016, Scientific Reports 6:20377, DOI 10.1038/srep20377)'). There are NO numeric or S# source keys and no numbered bibliography. Some bibliography entries carry parenthetical annotations stating what they were used for. Several in-text mentions name only an organization (e.g., 'Merck') or a body of work ('Gonzalez, Wood, Wilson, Val and colleagues … see the bibliography').",
+        "original_source_key_convention": "Because the package uses no source numbering, each source's original_package_key.key in this registry is the bibliography entry's own author–year (or organization + title) label, and original_package_key.bibliography_entry_verbatim preserves the full entry text. bibliography_tier and bibliography_tier_position record where the entry sits in the package's tiered bibliography. No registry-invented keys (such as S1) are assigned.",
+        "claim_evidence_classification_key": {
+          "source": "About This Document — Evidence Classification Key (p. 7)",
+          "instruction_verbatim": "Every substantive claim in this document is intended to fall into one of the following categories. Where a claim is not explicitly tagged, its category should be inferred from the surrounding language (“established,” “commonly reported,” “anecdotal,” etc.).",
+          "tags": [
+            {
+              "tag": "[EST]",
+              "label": "Established scientific principle",
+              "meaning": "Textbook chemistry or physiology; not seriously disputed",
+              "example": "The pH scale is logarithmic"
+            },
+            {
+              "tag": "[STR]",
+              "label": "Strong evidence",
+              "meaning": "Multiple peer-reviewed studies or authoritative agency consensus",
+              "example": "Nitrification consumes alkalinity"
+            },
+            {
+              "tag": "[INF]",
+              "label": "Reasonable inference",
+              "meaning": "Sound extrapolation from established principles to the aquarium case, but not directly tested in aquariums",
+              "example": "Therefore a heavily stocked, rarely-changed aquarium will lose KH over time"
+            },
+            {
+              "tag": "[AQC]",
+              "label": "Aquaculture / fisheries practice",
+              "meaning": "Standard commercial or agency practice, well documented, but usually developed for ponds/RAS rather than glass aquariums",
+              "example": "Liming ponds to raise alkalinity above 20 mg/L"
+            },
+            {
+              "tag": "[VET]",
+              "label": "Aquatic veterinary source",
+              "meaning": "Clinical guidance from veterinary references",
+              "example": "Old Tank Syndrome parameter profile"
+            },
+            {
+              "tag": "[HOB]",
+              "label": "Common aquarium practice",
+              "meaning": "Widely used by hobbyists, plausible mechanism, limited formal testing",
+              "example": "Crushed coral in a filter bag"
+            },
+            {
+              "tag": "[ANC]",
+              "label": "Anecdotal observation",
+              "meaning": "Reported experience without controlled comparison",
+              "example": "“My shrimp colony crashed after a large water change”"
+            },
+            {
+              "tag": "[CON]",
+              "label": "Contested claim",
+              "meaning": "Credible sources actively disagree",
+              "example": "Whether a 1.0-unit pH change is inherently dangerous"
+            },
+            {
+              "tag": "[MYTH]",
+              "label": "Unsupported or misleading folklore",
+              "meaning": "Repeated widely; mechanism absent, backwards, or overstated",
+              "example": "“KH controls pH”"
+            }
+          ],
+          "tag_occurrence_counts_in_extracted_text": {
+            "[INF]": 189,
+            "[EST]": 125,
+            "[CON]": 44,
+            "[STR]": 30,
+            "[HOB]": 30,
+            "[MYTH]": 9,
+            "[VET]": 8,
+            "[AQC]": 3,
+            "[ANC]": 2
+          },
+          "compound_and_variant_tags_used": [
+            "[EST/INF]",
+            "[STR/INF]",
+            "[INF/STR]",
+            "[EST/STR]",
+            "[STR/VET]",
+            "[STR/HOB]",
+            "[STR/CON]",
+            "[STR, AQC]",
+            "[HOB/INF]",
+            "[HOB/STR]",
+            "[HOB/CON]",
+            "[AQC/CON]",
+            "[EST, derived]",
+            "[HOB, mechanism EST]",
+            "[HOB, well-established in practice]",
+            "[HOB, very consistently reported]",
+            "[HOB, extremely widely reported]",
+            "[HOB — manufacturer documentation]",
+            "[HOB — hobby convention, provenance not traceable to primary research]",
+            "[VET, but context-dependent]",
+            "[MYTH-adjacent]",
+            "[Oversimplified]"
+          ],
+          "notes": [
+            "Counts are occurrences of exact single tags in text extracted from the PDF and are approximate; compound tags are listed separately.",
+            "'[Oversimplified]' (Sections 21.4, 31.6) and '[MYTH-adjacent]' (Section 12.2.6) are used in the body but are not defined in the Evidence Classification Key.",
+            "These claim-level tags are the package's own evidence terminology and are preserved verbatim in source-usage.json package_evidence_status. They are not mapped onto the Summer Heat Claim Audit statuses."
+          ]
+        },
+        "bibliography_evidence_tiers": {
+          "source": "Bibliography (pp. 92–93)",
+          "instruction_verbatim": "Sources are grouped by evidentiary tier. URLs and access details are given where available. Where a claim in this document could not be traced to a citable source, it is labelled in the text as anecdotal, contested, or hobby convention rather than being attributed to a fabricated citation.",
+          "tiers": [
+            {
+              "bibliography_tier": "Peer-Reviewed Scientific Literature",
+              "tier_order": 1,
+              "source_count": 14,
+              "source_ids": [
+                "SRC-duarte-2016-rio-negro-doc-zebrafish",
+                "SRC-wood-2003-blackwater-stingrays",
+                "SRC-morris-2021-amazon-doc-fish-physiology-review",
+                "SRC-gonzalez-2002-rio-negro-ion-regulation-strategies",
+                "SRC-gonzalez-2005-tropical-fish-ionoregulation-chapter",
+                "SRC-gonzalez-wilson-2001-rio-negro-acidophilic-fish",
+                "SRC-platek-2017-calcium-gill-remodeling",
+                "SRC-eddy-1975-calcium-goldfish-gill-fluxes",
+                "SRC-nguyen-2019-mekong-ph-calcium-ion-balance",
+                "SRC-duarte-calcium-copper-silver-na-permeability",
+                "SRC-perry-2003-gill-kidney-channels-pumps",
+                "SRC-bleich-2012-calcium-tight-junction-permeability",
+                "SRC-wood-2011-two-faces-of-doc",
+                "SRC-wood-2002-potamotrygon-ion-transport"
+              ]
+            },
+            {
+              "bibliography_tier": "Aquatic Veterinary Sources",
+              "tier_order": 2,
+              "source_count": 6,
+              "source_ids": [
+                "SRC-merck-vet-environmental-diseases-aquatic-systems",
+                "SRC-merck-vet-disorders-diseases-of-fish",
+                "SRC-merck-vet-management-of-aquarium-fish",
+                "SRC-merck-vet-equipment-water-analysis",
+                "SRC-wsava-2018-water-quality-assessment-aquatic-vet",
+                "SRC-dvm360-intro-pet-fish-medicine-surgery"
+              ]
+            },
+            {
+              "bibliography_tier": "Aquaculture and Fisheries Sources",
+              "tier_order": 3,
+              "source_count": 7,
+              "source_ids": [
+                "SRC-srac-464-ph-co2-alkalinity-hardness-fish-ponds",
+                "SRC-srac-4100-liming-ponds-aquaculture",
+                "SRC-wurts-alkalinity-hardness-production-ponds",
+                "SRC-boyd-1979-water-quality-warmwater-fish-ponds",
+                "SRC-tucker-1984-carbon-dioxide-for-fish-farmers",
+                "SRC-timmons-2018-recirculating-aquaculture-4th-ed",
+                "SRC-vce-cnre-126-liming-farm-recreational-ponds"
+              ]
+            },
+            {
+              "bibliography_tier": "Government and Water Treatment Authorities",
+              "tier_order": 4,
+              "source_count": 6,
+              "source_ids": [
+                "SRC-usgs-hardness-of-water",
+                "SRC-usgs-faq-water-hardness-united-states",
+                "SRC-mpca-wq-wwprm8-04-lsts-process-guidance",
+                "SRC-nysdec-lis-nitrogen-removal-module-4",
+                "SRC-cwea-how-alkalinity-affects-nitrification",
+                "SRC-mgs-hardness"
+              ]
+            },
+            {
+              "bibliography_tier": "Established Aquarium Organizations and Reputable Publications",
+              "tier_order": 5,
+              "source_count": 4,
+              "source_ids": [
+                "SRC-oata-how-to-test-freshwater-water-quality",
+                "SRC-pfk-co2-striking-the-balance",
+                "SRC-2hr-aquarist-wrong-way-read-ph-kh-chart",
+                "SRC-aquariumscience-org-kh-ph-co2-buffering-substrates"
+              ]
+            },
+            {
+              "bibliography_tier": "Manufacturer Technical Documentation",
+              "tier_order": 6,
+              "source_count": 2,
+              "source_ids": [
+                "SRC-seachem-equilibrium-documentation",
+                "SRC-saltyshrimp-bee-shrimp-mineral-gh-plus"
+              ]
+            },
+            {
+              "bibliography_tier": "Hobbyist and Community Sources — Used for Identifying Recurring Questions and Practices, Not as Scientific Evidence",
+              "tier_order": 7,
+              "source_count": 4,
+              "source_ids": [
+                "SRC-apc-accuracy-ph-kh-relation-co2-thread",
+                "SRC-barr-report-co2-ph-kh-table-discussion",
+                "SRC-aquarium-forum-ph-relationship-kh-chart",
+                "SRC-specialist-shrimp-keeping-resources-unnamed"
+              ]
+            }
+          ],
+          "notes": [
+            "Tier headings are preserved verbatim and in package order. The package does not number the tiers; tier_order is the order in which they appear.",
+            "The hobbyist tier heading itself states those sources were used 'for Identifying Recurring Questions and Practices, Not as Scientific Evidence'.",
+            "A 'Sources Deliberately Excluded' section follows the tiers; it is recorded in excluded_sources, not as a tier of evidence."
+          ]
+        },
+        "claim_classification_scale_section_32": {
+          "source": "Section 32: Myths and Controversies — Evidence Evaluation (pp. 76–78)",
+          "scale_verbatim": [
+            "Strongly supported",
+            "Generally supported but context-dependent",
+            "Plausible but oversimplified",
+            "Primarily anecdotal",
+            "Misleading",
+            "Unsupported (myth)"
+          ],
+          "claims_evaluated": 34,
+          "claims_note": "Claims 1–19 are the listed claims; Claims 20–34 are under 'Additional Claims Identified During Research'. Several classifications extend or depart from the scale wording, e.g., 'Strongly supported as method guidance; misleading as a universal prohibition' (Claim 2), 'Misleading as stated; supported with a KH qualification' (Claim 11), 'Same as Claim 11' (Claim 12), 'Primarily anecdotal — origin untraceable' (Claim 15), 'The conclusion is broadly right; the usual explanation is wrong' (Claim 17), 'Plausible but impractical' (Claim 21), 'Conflates two different states' (Claim 27), 'Contested' (Claim 32), 'Plausible but incomplete' (Claim 34)."
+        },
+        "section_verdicts": [
+          {
+            "section": "6.8",
+            "claim": "A stable pH is more important than the correct pH.",
+            "classification_verbatim": "Generally supported but context-dependent — and supported partly for reasons other than the ones usually given."
+          },
+          {
+            "section": "7.6",
+            "claim": "Don’t chase pH.",
+            "classification_verbatim": "Strongly supported as method guidance; oversimplified as a universal prohibition."
+          }
+        ],
+        "section_evidence_summaries": [
+          "Section 16.8 — Evidence Summary for This Section (botanicals/DOC claims with tags).",
+          "Section 21.4 — Which Old Tank Syndrome Claims Are Supported (claims table with tags).",
+          "Section 31.6 — Separating Tradition From Evidence (acclimation practices with tags).",
+          "Section 8.5 — Survival vs. Thriving vs. Breeding (three-tier framework with an 'Evidence quality' column: survival 'Reasonably good', thriving 'Poor', breeding 'Moderate')."
+        ],
+        "source_reliability_problems_stated": [
+          {
+            "problem": "Problem 1: Circular hobby citation.",
+            "summary": "A very large fraction of aquarium care-sheet content is copied from other care-sheet content; when the document reports a 'commonly cited range', that means commonly cited, not empirically validated (About This Document, p. 7; see Section 30)."
+          },
+          {
+            "problem": "Problem 2: Fabricated or unverifiable citations on aquarium content sites.",
+            "summary": "Multiple recently published aquarium websites were found citing specific-sounding studies that could not be located in any indexed literature database; these claims are not reproduced as facts anywhere in the document (About This Document, p. 7; Section 36.14; Sources Deliberately Excluded)."
+          }
+        ],
+        "numeric_claim_rule_verbatim": "Consequence for this document: where a number is given, this document either (a) cites a traceable authoritative source, (b) shows the arithmetic derivation, or (c) explicitly labels the number as a hobby convention of unknown provenance.",
+        "evidence_handling_verbatim": "claims are tagged by evidence tier throughout. Where credible sources disagree, the disagreement is documented rather than resolved. Where a commonly repeated figure could not be traced to a primary source, it is labelled as hobby convention.",
+        "hobby_conventions_flagged_by_package": [
+          "'Never change pH more than 0.2 per day', '0.3 per day' and '1.0 is deadly' — could not be traced to a controlled study (Sections 6.4, 32 Claims 14–16).",
+          "Raise GH ~1–2 dGH per week (Section 11.4) and KH no more than ~1–2 dKH per day (Section 13.3) — convention rather than validated science.",
+          "Shrimp TDS/GH/KH targets — hobby convention, provenance not traceable to primary research (Sections 26.5, 28.3).",
+          "'Never change TDS by more than 20 ppm at once' — convention without traceable evidentiary basis (Section 26.6).",
+          "Snail shell minimum of roughly 6+ dGH with pH not persistently below ~7.0 — hobby convention (Section 28.5).",
+          "Ca:Mg target of roughly 3:1 to 4:1 — practitioner consensus; evidence for a specific optimum is weak (Section 11.3).",
+          "Aquasoil lifespan ranges — hobby-reported, not manufacturer specifications or measured data (Section 18.3).",
+          "Specific drip rates ('2 drops per second') — convention, not evidence (Section 31.6)."
+        ],
+        "research_limitations": [
+          "The physiological literature cited is weighted toward Amazonian and temperate model species, because that is where the research exists. Southeast Asian, Central American and African species are less well covered by ionoregulation research.",
+          "Very little controlled research exists on the “thriving” tier for ornamental species (Section 8.5). Much of what the hobby believes about long-term effects of chronic parameter mismatch is inference.",
+          "Manufacturer dosing figures are reproduced as manufacturer claims and were not independently verified.",
+          "Specific numeric thresholds widely used in the hobby (rate-of-change limits, shrimp TDS targets, snail GH minimums) are labelled as conventions because their provenance could not be established. This should not be read as evidence they are wrong — only that they are unverified."
+        ],
+        "research_limitations_source": "Document Notes — 'Known limitations of this document' (p. 94), transcribed verbatim."
+      },
+      "excluded_sources": [
+        {
+          "excluded_item": "A claimed 2020 study from a named university documenting a specific percentage increase in shrimp molting mortality below a specific dGH.",
+          "found_where": "Cited by 'several recently published aquarium websites' located during research.",
+          "reason_excluded": "The cited study could not be found in any indexed literature database.",
+          "used_as_supporting_evidence": false,
+          "package_statement": "These claims are not reproduced anywhere in this document.",
+          "package_locations": [
+            "About This Document — Problem 2 (p. 7)",
+            "Section 36.14 (p. 88)",
+            "Sources Deliberately Excluded (p. 93)"
+          ],
+          "registry_handling": "Not registered in sources.json and has no source-usage record. The package does not name the university, the websites or the percentage, and none is supplied here."
+        },
+        {
+          "excluded_item": "A claimed 2021 Journal of Fish Biology study reporting a specific percentage cortisol elevation in fish outside “optimal hardness.”",
+          "found_where": "Cited by 'several recently published aquarium websites' located during research.",
+          "reason_excluded": "The cited study could not be found in any indexed literature database.",
+          "used_as_supporting_evidence": false,
+          "package_statement": "These claims are not reproduced anywhere in this document.",
+          "package_locations": [
+            "About This Document — Problem 2 (p. 7)",
+            "Section 36.14 (p. 88)",
+            "Sources Deliberately Excluded (p. 93)"
+          ],
+          "registry_handling": "Not registered in sources.json and has no source-usage record. Distinct from the listed Gonzalez & Wilson (2001) Journal of Fish Biology article, which is a bibliography source."
+        },
+        {
+          "excluded_item": "The aquarium websites citing the above claims (unnamed).",
+          "found_where": "Located during research.",
+          "reason_excluded": "They cited specific-sounding studies with named institutions, years and precise percentages that could not be located; the package describes this as 'a growing contamination problem in AI-assisted hobby content'.",
+          "used_as_supporting_evidence": false,
+          "package_statement": "Precise statistics on hobby sites without a traceable primary citation should be treated as unreliable (Section 36.14).",
+          "package_locations": [
+            "About This Document — Problem 2 (p. 7)",
+            "Section 30.1 ('AI-generated with fabricated citations' row, p. 72)",
+            "Section 36.14 (p. 88)",
+            "Sources Deliberately Excluded (p. 93)"
+          ],
+          "registry_handling": "Not registered; the package does not name the sites."
+        }
+      ],
+      "disclosed_citation_problems": [
+        {
+          "problem": "Manufacturer dosing figures not independently verified.",
+          "detail": "Seachem Equilibrium (16 g per 80 L raises GH by 3 dH) and SaltyShrimp Bee Shrimp Mineral GH+ (~3 g per 20 L for ~6 dGH and ~200 µS/cm) are 'reproduced here as manufacturer claims; independent verification was not located.'",
+          "package_locations": [
+            "Section 10.4.4 (p. 32)",
+            "Document Notes (p. 94)"
+          ],
+          "related_usage_ids": [
+            "USE-ghkhph-023",
+            "USE-ghkhph-024"
+          ]
+        },
+        {
+          "problem": "Fabricated/unlocatable citations found on aquarium websites were excluded.",
+          "detail": "See excluded_sources.",
+          "package_locations": [
+            "About This Document (p. 7)",
+            "Section 36.14 (p. 88)",
+            "Sources Deliberately Excluded (p. 93)"
+          ],
+          "related_usage_ids": []
+        },
+        {
+          "problem": "Peat/atomic-absorption claim untraceable to peer-reviewed work.",
+          "detail": "Found in experienced-hobbyist technical discussion (Aquarium Forum); 'could not be traced to a peer-reviewed source in this research'; classified 'plausible, mechanistically sensible, unverified' and, in Claim 32, 'Contested'.",
+          "package_locations": [
+            "Section 12.2.3 (p. 37)",
+            "Section 32 Claim 32 (p. 78)"
+          ],
+          "related_usage_ids": [
+            "USE-ghkhph-025",
+            "USE-ghkhph-054"
+          ]
+        },
+        {
+          "problem": "Alkalinity-and-reproduction claim flagged as directional only.",
+          "detail": "Wurts, 'Alkalinity and Hardness in Production Ponds' is 'a broad claim in a review rather than a controlled aquarium finding, and should be treated as directional rather than quantitative.'",
+          "package_locations": [
+            "Section 2.5.5 (pp. 12–13)",
+            "Bibliography annotation (p. 92)"
+          ],
+          "related_usage_ids": [
+            "USE-ghkhph-011"
+          ]
+        },
+        {
+          "problem": "Hobby numeric conventions with untraceable provenance.",
+          "detail": "See evidence_framework_used.hobby_conventions_flagged_by_package; the package states these are unverified, not shown to be wrong.",
+          "package_locations": [
+            "Document Notes (p. 94)",
+            "Sections 6.4, 11.4, 13.3, 26.5, 26.6, 28.5, 32"
+          ],
+          "related_usage_ids": [
+            "USE-ghkhph-046",
+            "USE-ghkhph-047",
+            "USE-ghkhph-053"
+          ]
+        },
+        {
+          "problem": "Hobbyist and community sources are not scientific evidence.",
+          "detail": "The bibliography tier heading states these were 'Used for Identifying Recurring Questions and Practices, Not as Scientific Evidence'.",
+          "package_locations": [
+            "Bibliography (p. 93)"
+          ],
+          "related_usage_ids": [
+            "USE-ghkhph-025",
+            "USE-ghkhph-031",
+            "USE-ghkhph-032",
+            "USE-ghkhph-046",
+            "USE-ghkhph-047",
+            "USE-ghkhph-053",
+            "USE-ghkhph-054"
+          ]
+        },
+        {
+          "problem": "Aquaculture/wastewater data over-applied in hobby writing.",
+          "detail": "Section 1.6: pond swing magnitudes do not transfer to aquariums ('The mechanism transfers; the magnitude does not'); Section 20.3: the wastewater 'pH 6.5 stops nitrification' figure 'should not be quoted as an aquarium fact'.",
+          "package_locations": [
+            "Section 1.6 (pp. 9–10)",
+            "Section 20.3 (p. 52)",
+            "Section 32 Claim 33 (p. 78)"
+          ],
+          "related_usage_ids": [
+            "USE-ghkhph-003",
+            "USE-ghkhph-004"
+          ]
+        }
+      ],
+      "extraction_observations": {
+        "description": "Citation observations recorded during extraction from the PDF itself. They are not corrections and not outside verification; they identify items for the independent verification pass.",
+        "in_text_citations_without_bibliography_entry": [
+          {
+            "citation": "Hunn, 1985 (review)",
+            "location": "Section 2.5.1 (p. 12)",
+            "context": "'reviews by Hunn, 1985 and Wood, 1989' on calcium at gill tight junctions."
+          },
+          {
+            "citation": "Wood, 1989 (review)",
+            "location": "Section 2.5.1 (p. 12)",
+            "context": "Same sentence; no Wood 1989 entry in the bibliography (listed Wood entries are 2002, 2003 and 2011)."
+          },
+          {
+            "citation": "'Gonzalez and colleagues, 1997–2021'",
+            "location": "Section 2.5.1 (p. 12)",
+            "context": "Date range extends beyond the listed Gonzalez entries (2001, 2002, 2005)."
+          },
+          {
+            "citation": "'a koi-pond source' (1 tablespoon baking soda per 100 gallons ≈ +1 dKH)",
+            "location": "Section 13.1 (p. 39)",
+            "context": "Unnamed source used as a cross-check; not in the bibliography and cannot be identified from the package."
+          },
+          {
+            "citation": "SaltyShrimp GH/KH+ and '“RO Right”-type products'",
+            "location": "Section 10.4.2 (p. 32)",
+            "context": "Named GH/KH remineralizer examples; the bibliography lists only SaltyShrimp Bee Shrimp Mineral GH+ and Seachem Equilibrium."
+          },
+          {
+            "citation": "Real literature on antimicrobial properties of Terminalia catappa extracts",
+            "location": "Section 16.4 (pp. 44–45); Section 32 Claim 12 (p. 76)",
+            "context": "Referred to but not cited."
+          },
+          {
+            "citation": "Comammox Nitrospira 'discovered in 2015' / archaeal ammonia oxidisers",
+            "location": "Sections 20.3 (p. 52), 36.3 (p. 87), Glossary (p. 89)",
+            "context": "Tagged [STR] in Section 36.3 but no source cited."
+          },
+          {
+            "citation": "'Wastewater engineering literature' on nitrification inhibition below ~pH 6.5 and optimum ~7.5–8.5",
+            "location": "Section 20.3 (p. 52)",
+            "context": "General reference; no specific source."
+          },
+          {
+            "citation": "Direct dissolved-CO₂ analyser measurements (~5 ppm in crowded and soil-based tanks; ~2–3 ppm typical)",
+            "location": "Section 19.4 (p. 51)",
+            "context": "Reported without a citation."
+          },
+          {
+            "citation": "US Safe Drinking Water Act Consumer Confidence Reports; municipal nitrate limit of 10 mg/L nitrate-nitrogen",
+            "location": "Section 9.2 (p. 29); Section 35 (p. 85)",
+            "context": "Regulatory facts stated without citation."
+          },
+          {
+            "citation": "Phosphate inhibition of carbonate dissolution 'reported in aquarium literature'",
+            "location": "Section 17.2 (p. 46)",
+            "context": "No specific source."
+          },
+          {
+            "citation": "Nephrocalcinosis 'well documented in salmonids in aquaculture'",
+            "location": "Section 6.3 (p. 22)",
+            "context": "No specific source."
+          }
+        ],
+        "unresolved_named_source_mentions": [
+          {
+            "mention": "Merck’s water-quality guidance explicitly flags this: if system pH is below source pH, alkalinity should be checked",
+            "location": "Section 4.7 (p. 19)",
+            "package_tag": "[INF]",
+            "candidate_source_ids": [
+              "SRC-merck-vet-equipment-water-analysis",
+              "SRC-merck-vet-environmental-diseases-aquatic-systems",
+              "SRC-merck-vet-management-of-aquarium-fish",
+              "SRC-merck-vet-disorders-diseases-of-fish"
+            ],
+            "note": "Chapter not named; four Merck chapters are in the bibliography."
+          },
+          {
+            "mention": "The Merck Veterinary Manual’s recommended handling of Old Tank Syndrome — relocate the fish and rebuild the system, rather than adjust the water around them",
+            "location": "Section 6.5 (p. 23)",
+            "package_tag": "[EST]",
+            "candidate_source_ids": [
+              "SRC-merck-vet-disorders-diseases-of-fish",
+              "SRC-merck-vet-management-of-aquarium-fish"
+            ],
+            "note": "Chapter not named; the OTS definition and profile are attributed to 'Disorders and Diseases of Fish', but the handling recommendation is not explicitly attributed."
+          },
+          {
+            "mention": "The Merck Veterinary Manual notes that calcium hydroxide will rapidly drive pH above 10 and kill all fish present",
+            "location": "Section 13.2.4 (p. 39)",
+            "package_tag": "[AQC]",
+            "candidate_source_ids": [
+              "SRC-merck-vet-environmental-diseases-aquatic-systems",
+              "SRC-merck-vet-management-of-aquarium-fish",
+              "SRC-merck-vet-disorders-diseases-of-fish",
+              "SRC-merck-vet-equipment-water-analysis"
+            ],
+            "note": "Chapter not named."
+          },
+          {
+            "mention": "Merck recommends relocating fish and rebuilding the system for genuine OTS with ammonia above 10 mg/L",
+            "location": "Section 21.4 (p. 55)",
+            "package_tag": "[VET, but context-dependent]",
+            "candidate_source_ids": [
+              "SRC-merck-vet-disorders-diseases-of-fish",
+              "SRC-merck-vet-management-of-aquarium-fish"
+            ],
+            "note": "Chapter not named."
+          },
+          {
+            "mention": "In severe cases (Merck’s >10 mg/L threshold), relocating the fish to properly conditioned water is safer",
+            "location": "Section 21.5 (p. 55)",
+            "package_tag": "[INF]",
+            "candidate_source_ids": [
+              "SRC-merck-vet-disorders-diseases-of-fish",
+              "SRC-merck-vet-management-of-aquarium-fish"
+            ],
+            "note": "Chapter not named; the >10 mg/L ammonia value appears in the Disorders-attributed OTS profile."
+          },
+          {
+            "mention": "Directly stated in veterinary literature (alkalinity depletion causes progressive pH decline)",
+            "location": "Section 21.4 (p. 55)",
+            "package_tag": "[STR/VET]",
+            "candidate_source_ids": [
+              "SRC-merck-vet-disorders-diseases-of-fish"
+            ],
+            "note": "Generic 'veterinary literature'."
+          },
+          {
+            "mention": "the specific practice veterinary literature identifies as causal (topping off instead of water changes)",
+            "location": "Section 22.5 (p. 57); similar wording in Section 23.2 (p. 58) and Section 32 Claim 10 (p. 76)",
+            "package_tag": "[EST]/[INF]",
+            "candidate_source_ids": [
+              "SRC-merck-vet-disorders-diseases-of-fish"
+            ],
+            "note": "Generic 'veterinary literature'."
+          }
+        ],
+        "bibliography_metadata_gaps": [
+          "No year: Duarte et al. (calcium, copper, silver); Wurts, 'Alkalinity and Hardness in Production Ponds'; all four Merck chapters; dvm360; VCE CNRE-126; MPCA; NYSDEC; CWEA; Maryland Geological Survey; OATA; Practical Fishkeeping; 2Hr Aquarist; Aquarium Science; both manufacturer documents; all hobbyist sources.",
+          "Incomplete authorship ('et al.' or none): Nguyen et al. (2019); Platek et al. (2017); Duarte et al. (no year); Wood et al. (2002); WSAVA 2018; dvm360.",
+          "No URL or DOI: Gonzalez et al. (2002); Gonzalez & Wilson (2001); Bleich et al. (2012); Wood et al. (2011); Wood et al. (2002); Boyd (1979); Tucker (1984); Timmons et al. (2018); Wurts (Alkalinity and Hardness); Seachem; SaltyShrimp; all four hobbyist entries.",
+          "No volume/pages: Platek et al. (2017); Nguyen et al. (2019); Duarte et al. (no year).",
+          "Title/URL mismatch as given: SRAC 4100 title 'Liming Ponds for Aquaculture' vs URL filename '4100 Lining Ponds for Aquaculture.pdf'.",
+          "Grouped unnamed entry: 'Specialist shrimp-keeping resources' names no individual source."
+        ],
+        "bibliography_entries_not_tied_to_claims": [
+          "SRC-duarte-calcium-copper-silver-na-permeability",
+          "SRC-perry-2003-gill-kidney-channels-pumps",
+          "SRC-bleich-2012-calcium-tight-junction-permeability",
+          "SRC-wood-2011-two-faces-of-doc",
+          "SRC-wood-2002-potamotrygon-ion-transport",
+          "SRC-merck-vet-equipment-water-analysis",
+          "SRC-dvm360-intro-pet-fish-medicine-surgery",
+          "SRC-boyd-1979-water-quality-warmwater-fish-ponds",
+          "SRC-tucker-1984-carbon-dioxide-for-fish-farmers",
+          "SRC-vce-cnre-126-liming-farm-recreational-ponds",
+          "SRC-mgs-hardness",
+          "SRC-oata-how-to-test-freshwater-water-quality",
+          "SRC-aquariumscience-org-kh-ph-co2-buffering-substrates"
+        ],
+        "bibliography_entries_not_tied_to_claims_note": "13 bibliography sources are listed but not cited in the body, annotated to a section, or explicitly cross-referenced; they carry a single bibliography_listing_only usage record each."
+      },
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-aquarium-gh-kh-ph-explained",
+          "content_type": "blog_article",
+          "title": "GH, KH & pH in Your Aquarium: What They Actually Tell You",
+          "html_title": "GH, KH & pH Explained: What Your Aquarium Water Is Actually Telling You",
+          "path": "/aquarium-gh-kh-ph-explained/",
+          "repo_file": "aquarium-gh-kh-ph-explained/index.html",
+          "date_published": "2026-08-18",
+          "relationship": "possible_content_developed_from_package",
+          "verification_status": "needs_verification",
+          "evidence": [
+            "Topic match: the article covers what GH, KH and pH each measure and how they interact (package Sections 1–4).",
+            "Structural overlap: the article's sections '\"Don't Chase pH\"', '\"Stable pH Is More Important Than the Correct pH\"' and '\"Fish Will Adapt\"' correspond to package Section 7, Section 6 and Section 32 Claims 1–3; 'When Does Adjusting Your Water Actually Make Sense?' / 'When Is Leaving the Water Alone the Better Call?' correspond to package Section 34.",
+            "Timing: article datePublished is 2026-08-18; the package says 'Compiled: August 2026' and its PDF creation date is 2026-08-16.",
+            "Confirmed in repo: this article hosts the podcast companion section for the Tank Guide Life episode 'Confused by GH, KH, or pH? Listen Before You Adjust'.",
+            "Not confirmed in repo: the package does not name this article or give its URL, and nothing in the repository states that the article was written from this package. Unlike the Summer Heat packet, this package does not quote or fact-check an existing Tank Guide article.",
+            "A keyword search of the article HTML found none of several package-specific details (e.g., '17.848', 'Merck', 'Old Tank Syndrome', 'Rio Negro', 'comammox'); this neither confirms nor rules out package use."
+          ],
+          "notes": [
+            "Relationship is recorded from subject/structure overlap only and must not be treated as confirmed production history."
+          ]
+        },
+        {
+          "content_id": "TG-ARTICLE-how-to-raise-lower-aquarium-gh-kh-ph",
+          "content_type": "blog_article",
+          "title": "How to Raise or Lower GH, KH, and pH in Your Aquarium (Without Making Things Worse)",
+          "path": "/how-to-raise-lower-aquarium-gh-kh-ph/",
+          "repo_file": "how-to-raise-lower-aquarium-gh-kh-ph/index.html",
+          "date_published": "2026-08-19",
+          "relationship": "possible_content_developed_from_package",
+          "verification_status": "needs_verification",
+          "evidence": [
+            "Confirmed in repo: linked from /aquarium-gh-kh-ph-explained/ as its 'companion guide'.",
+            "Topic/structure overlap: sections on raising/lowering GH, KH and pH, crushed coral, and RO remineralization correspond to package Sections 10–15 and 17.",
+            "Not confirmed in repo: the package does not name this article; no repository record links the two."
+          ],
+          "notes": []
+        },
+        {
+          "content_id": "TG-ARTICLE-hard-water-vs-soft-water-aquarium-fish",
+          "content_type": "blog_article",
+          "title": "Hard Water vs. Soft Water: Does Your Livestock Actually Need Something Different?",
+          "path": "/hard-water-vs-soft-water-aquarium-fish/",
+          "repo_file": "hard-water-vs-soft-water-aquarium-fish/index.html",
+          "date_published": "2026-08-19",
+          "relationship": "possible_related_content",
+          "verification_status": "needs_verification",
+          "evidence": [
+            "Topic/structure overlap: sections on soft- vs hard-water fish, 'Survival, Thriving, and Breeding Aren't the Same Question', shrimp and snails, captive-bred stock, and where care-sheet numbers come from correspond to package Sections 8, 28 and 30.",
+            "Not confirmed in repo: the package does not name this article; no repository record links the two."
+          ],
+          "notes": [
+            "Listed as possibly related only; lower confidence than the two GH/KH/pH articles."
+          ]
+        },
+        {
+          "content_id": "TGL-EPISODE-confused-by-gh-kh-ph",
+          "content_type": "podcast_episode",
+          "series": "Tank Guide Life by FishKeepingLifeCo",
+          "title": "Confused by GH, KH, or pH? Listen Before You Adjust",
+          "url": "https://open.spotify.com/episode/1TsCk9mlgci1ncg3VqMy5m",
+          "repo_references": [
+            "aquarium-gh-kh-ph-explained/index.html (podcast companion section, heading 'Confused by GH, KH, or pH? Listen Before You Adjust')",
+            "podcast/index.html (archive card labeled 'MATCHING PODCAST EPISODE', companion guide /aquarium-gh-kh-ph-explained/)"
+          ],
+          "relationship": "possible_episode_developed_from_package",
+          "verification_status": "needs_verification",
+          "evidence": [
+            "Confirmed in repo: the episode is paired with /aquarium-gh-kh-ph-explained/ as its matching episode / companion guide.",
+            "Package cover: 'Compiled as source material for Tank Guide Life, a production of FishKeepingLifeCo.'",
+            "Package Document Notes: 'Intended use: ingestion into NotebookLM as a retrieval corpus for podcast and content development. Not intended for direct publication.'",
+            "Package 'Purpose and Scope': 'No editorial conclusion is drawn about what a podcast episode should say.'",
+            "Not confirmed in repo: the package does not name any specific episode, and nothing in the repository states that this episode was produced from this package. Subject match alone is not treated as proof."
+          ],
+          "notes": [
+            "Creator confirmation or production records (e.g., the NotebookLM notebook for the episode) are needed before this can be marked confirmed. See OPEN-gh-kh-ph-002."
+          ]
+        }
+      ],
+      "source_ids": [
+        "SRC-duarte-2016-rio-negro-doc-zebrafish",
+        "SRC-wood-2003-blackwater-stingrays",
+        "SRC-morris-2021-amazon-doc-fish-physiology-review",
+        "SRC-gonzalez-2002-rio-negro-ion-regulation-strategies",
+        "SRC-gonzalez-2005-tropical-fish-ionoregulation-chapter",
+        "SRC-gonzalez-wilson-2001-rio-negro-acidophilic-fish",
+        "SRC-platek-2017-calcium-gill-remodeling",
+        "SRC-eddy-1975-calcium-goldfish-gill-fluxes",
+        "SRC-nguyen-2019-mekong-ph-calcium-ion-balance",
+        "SRC-duarte-calcium-copper-silver-na-permeability",
+        "SRC-perry-2003-gill-kidney-channels-pumps",
+        "SRC-bleich-2012-calcium-tight-junction-permeability",
+        "SRC-wood-2011-two-faces-of-doc",
+        "SRC-wood-2002-potamotrygon-ion-transport",
+        "SRC-merck-vet-environmental-diseases-aquatic-systems",
+        "SRC-merck-vet-disorders-diseases-of-fish",
+        "SRC-merck-vet-management-of-aquarium-fish",
+        "SRC-merck-vet-equipment-water-analysis",
+        "SRC-wsava-2018-water-quality-assessment-aquatic-vet",
+        "SRC-dvm360-intro-pet-fish-medicine-surgery",
+        "SRC-srac-464-ph-co2-alkalinity-hardness-fish-ponds",
+        "SRC-srac-4100-liming-ponds-aquaculture",
+        "SRC-wurts-alkalinity-hardness-production-ponds",
+        "SRC-boyd-1979-water-quality-warmwater-fish-ponds",
+        "SRC-tucker-1984-carbon-dioxide-for-fish-farmers",
+        "SRC-timmons-2018-recirculating-aquaculture-4th-ed",
+        "SRC-vce-cnre-126-liming-farm-recreational-ponds",
+        "SRC-usgs-hardness-of-water",
+        "SRC-usgs-faq-water-hardness-united-states",
+        "SRC-mpca-wq-wwprm8-04-lsts-process-guidance",
+        "SRC-nysdec-lis-nitrogen-removal-module-4",
+        "SRC-cwea-how-alkalinity-affects-nitrification",
+        "SRC-mgs-hardness",
+        "SRC-oata-how-to-test-freshwater-water-quality",
+        "SRC-pfk-co2-striking-the-balance",
+        "SRC-2hr-aquarist-wrong-way-read-ph-kh-chart",
+        "SRC-aquariumscience-org-kh-ph-co2-buffering-substrates",
+        "SRC-seachem-equilibrium-documentation",
+        "SRC-saltyshrimp-bee-shrimp-mineral-gh-plus",
+        "SRC-apc-accuracy-ph-kh-relation-co2-thread",
+        "SRC-barr-report-co2-ph-kh-table-discussion",
+        "SRC-aquarium-forum-ph-relationship-kh-chart",
+        "SRC-specialist-shrimp-keeping-resources-unnamed"
+      ],
+      "source_ids_note": "All 43 bibliography entries, in package order (tier by tier). None is a reused Summer Heat source; no supplementary verification sources have been added. Excluded/fabricated references are not listed here (see excluded_sources).",
+      "original_source_keys": {
+        "Duarte, R. M., Smith, D. S., Val, A. L., & Wood, C. M. (2016)": "SRC-duarte-2016-rio-negro-doc-zebrafish",
+        "Wood, C. M., Matsuo, A. Y. O., Wilson, R. W., Gonzalez, R. J., Patrick, M. L., Playle, R. C., & Val, A. L. (2003)": "SRC-wood-2003-blackwater-stingrays",
+        "Morris, C., Val, A. L., Brauner, C. J., & Wood, C. M. (2021)": "SRC-morris-2021-amazon-doc-fish-physiology-review",
+        "Gonzalez, R. J., Wood, C. M., Patrick, M. L., & Val, A. L. (2002)": "SRC-gonzalez-2002-rio-negro-ion-regulation-strategies",
+        "Gonzalez, R. J., Wilson, R. W., & Wood, C. M. (2005)": "SRC-gonzalez-2005-tropical-fish-ionoregulation-chapter",
+        "Gonzalez, R. J., & Wilson, R. W. (2001)": "SRC-gonzalez-wilson-2001-rio-negro-acidophilic-fish",
+        "Platek, A., et al. (2017)": "SRC-platek-2017-calcium-gill-remodeling",
+        "Eddy, F. B. (1975)": "SRC-eddy-1975-calcium-goldfish-gill-fluxes",
+        "Nguyen, et al. (2019)": "SRC-nguyen-2019-mekong-ph-calcium-ion-balance",
+        "Duarte, R. M., et al. (no year given)": "SRC-duarte-calcium-copper-silver-na-permeability",
+        "Perry, S. F., Shahsavarani, A., Georgalis, T., Bayaa, M., Furimsky, M., & Thomas, S. L. (2003)": "SRC-perry-2003-gill-kidney-channels-pumps",
+        "Bleich, M., Shan, Q., & Himmerkus, N. (2012)": "SRC-bleich-2012-calcium-tight-junction-permeability",
+        "Wood, C. M., Al-Reasi, H. A., & Smith, D. S. (2011)": "SRC-wood-2011-two-faces-of-doc",
+        "Wood, C. M., et al. (2002)": "SRC-wood-2002-potamotrygon-ion-transport",
+        "Merck Veterinary Manual. Environmental Diseases of Aquatic Animals in Aquatic Systems": "SRC-merck-vet-environmental-diseases-aquatic-systems",
+        "Merck Veterinary Manual. Disorders and Diseases of Fish": "SRC-merck-vet-disorders-diseases-of-fish",
+        "Merck Veterinary Manual. Management of Aquarium Fish": "SRC-merck-vet-management-of-aquarium-fish",
+        "Merck Veterinary Manual. Equipment Needed for Aquatic Systems and Water Analysis": "SRC-merck-vet-equipment-water-analysis",
+        "Water Quality Assessment in Aquatic Vet Medicine. WSAVA 2018 Congress proceedings, via VIN": "SRC-wsava-2018-water-quality-assessment-aquatic-vet",
+        "Introduction to pet fish medicine and surgery (Proceedings). dvm360": "SRC-dvm360-intro-pet-fish-medicine-surgery",
+        "Wurts, W. A., & Durborow, R. M. (1992)": "SRC-srac-464-ph-co2-alkalinity-hardness-fish-ponds",
+        "Wurts, W. A., & Masser, M. P. (2013)": "SRC-srac-4100-liming-ponds-aquaculture",
+        "Wurts, W. A. Alkalinity and Hardness in Production Ponds": "SRC-wurts-alkalinity-hardness-production-ponds",
+        "Boyd, C. E. (1979)": "SRC-boyd-1979-water-quality-warmwater-fish-ponds",
+        "Tucker, C. S. (1984)": "SRC-tucker-1984-carbon-dioxide-for-fish-farmers",
+        "Timmons, M. B., Guerdat, T., & Vinci, B. J. (2018)": "SRC-timmons-2018-recirculating-aquaculture-4th-ed",
+        "Virginia Cooperative Extension. Liming Farm and Recreational Ponds": "SRC-vce-cnre-126-liming-farm-recreational-ponds",
+        "U.S. Geological Survey. Hardness of Water": "SRC-usgs-hardness-of-water",
+        "U.S. Geological Survey. Do you have information about water hardness in the United States?": "SRC-usgs-faq-water-hardness-united-states",
+        "Minnesota Pollution Control Agency. Large subsurface wastewater treatment system process guidance (wq-wwprm8-04)": "SRC-mpca-wq-wwprm8-04-lsts-process-guidance",
+        "New York State Department of Environmental Conservation. Long Island Sound Nitrogen Removal Training Program, Module 4": "SRC-nysdec-lis-nitrogen-removal-module-4",
+        "California Water Environment Association. How Alkalinity Affects Nitrification": "SRC-cwea-how-alkalinity-affects-nitrification",
+        "Maryland Geological Survey. Hardness": "SRC-mgs-hardness",
+        "Ornamental Aquatic Trade Association (OATA). How to test water quality in your freshwater tank/aquarium": "SRC-oata-how-to-test-freshwater-water-quality",
+        "Practical Fishkeeping. CO₂: Striking the balance": "SRC-pfk-co2-striking-the-balance",
+        "2Hr Aquarist. The wrong way to read the pH/KH chart": "SRC-2hr-aquarist-wrong-way-read-ph-kh-chart",
+        "Aquarium Science. 15.6.2 KH pH CO₂ Relationships; 14.2.3 Buffering Substrates": "SRC-aquariumscience-org-kh-ph-co2-buffering-substrates",
+        "Seachem. Equilibrium product documentation": "SRC-seachem-equilibrium-documentation",
+        "SaltyShrimp. Bee Shrimp Mineral GH+ product documentation": "SRC-saltyshrimp-bee-shrimp-mineral-gh-plus",
+        "Aquatic Plant Central, Accuracy of pH/KH relation for CO₂ discussion thread": "SRC-apc-accuracy-ph-kh-relation-co2-thread",
+        "Barr Report forum, CO₂/pH/KH table discussion": "SRC-barr-report-co2-ph-kh-table-discussion",
+        "Aquarium Forum, pH relationship and the KH on a chart": "SRC-aquarium-forum-ph-relationship-kh-chart",
+        "Specialist shrimp-keeping resources": "SRC-specialist-shrimp-keeping-resources-unnamed"
+      },
+      "original_source_keys_note": "The package has no numeric or S# source keys. Keys here are the bibliography's own author–year (or organization + title) labels; full verbatim entries are in sources.json original_package_key.bibliography_entry_verbatim.",
+      "reused_source_ids": [],
+      "reused_source_ids_note": "Checked against all 18 existing registry sources (Summer Heat S1–S16 plus two supplementary USGS sources). No exact match. Closest: USGS Water Science School 'Hardness of Water' vs the Summer Heat 'Dissolved Oxygen and Water' page — same series, different page, so not reused.",
+      "verification_status": "registered_extraction_only_sources_not_verified",
+      "verification_status_notes": "Package registered and its bibliography extracted. None of the 43 external sources, and none of the claim-to-source relationships, has received the independent verification pass. All source records carry verification_status 'unverified_citation_from_package'; all claim relationships carry support_status 'needs_review' (listing-only relationships carry 'not_applicable_listing_only').",
+      "notes": [
+        "Extraction-stage registry record. Content transcribed from the package without outside research, correction or expansion.",
+        "The package PDF remains the archived research package; no copies of outside sources are stored.",
+        "The package's own evidence terminology (claim tags [EST]…[MYTH], bibliography tier headings, Section 32 classifications) is preserved verbatim and is not mapped onto the Summer Heat Claim Audit terminology.",
+        "Two manufacturer sources (Seachem Equilibrium; SaltyShrimp Bee Shrimp Mineral GH+) are cited for product composition and dosing only; the package itself discloses their dosing figures as unverified manufacturer claims.",
+        "Four hobbyist/community entries are, by the package's own tier heading, not scientific evidence; one of them is an unnamed group of sites.",
+        "Excluded/fabricated references are recorded only in excluded_sources and are not registered as sources.",
+        "The PDF has 94 pages (p. 6 blank). Page numbers in usage records are PDF page numbers."
+      ],
+      "verification_status_history": [
+        {
+          "status": "registered_extraction_only_sources_not_verified",
+          "note": "Status at registration (2026-09-25): package and bibliography extracted; independent verification pass not yet performed."
+        }
+      ],
+      "open_items": [
+        {
+          "item_id": "OPEN-gh-kh-ph-001",
+          "description": "Run the independent source-verification pass on all 43 bibliography sources (locate each at its official location; check title, authors, year, publisher, URL and DOI) and assign verification_status and verification_note.",
+          "related": [
+            "SRC-duarte-2016-rio-negro-doc-zebrafish",
+            "SRC-wood-2003-blackwater-stingrays",
+            "SRC-morris-2021-amazon-doc-fish-physiology-review",
+            "SRC-gonzalez-2002-rio-negro-ion-regulation-strategies",
+            "SRC-gonzalez-2005-tropical-fish-ionoregulation-chapter",
+            "SRC-gonzalez-wilson-2001-rio-negro-acidophilic-fish",
+            "SRC-platek-2017-calcium-gill-remodeling",
+            "SRC-eddy-1975-calcium-goldfish-gill-fluxes",
+            "SRC-nguyen-2019-mekong-ph-calcium-ion-balance",
+            "SRC-duarte-calcium-copper-silver-na-permeability",
+            "SRC-perry-2003-gill-kidney-channels-pumps",
+            "SRC-bleich-2012-calcium-tight-junction-permeability",
+            "SRC-wood-2011-two-faces-of-doc",
+            "SRC-wood-2002-potamotrygon-ion-transport",
+            "SRC-merck-vet-environmental-diseases-aquatic-systems",
+            "SRC-merck-vet-disorders-diseases-of-fish",
+            "SRC-merck-vet-management-of-aquarium-fish",
+            "SRC-merck-vet-equipment-water-analysis",
+            "SRC-wsava-2018-water-quality-assessment-aquatic-vet",
+            "SRC-dvm360-intro-pet-fish-medicine-surgery",
+            "SRC-srac-464-ph-co2-alkalinity-hardness-fish-ponds",
+            "SRC-srac-4100-liming-ponds-aquaculture",
+            "SRC-wurts-alkalinity-hardness-production-ponds",
+            "SRC-boyd-1979-water-quality-warmwater-fish-ponds",
+            "SRC-tucker-1984-carbon-dioxide-for-fish-farmers",
+            "SRC-timmons-2018-recirculating-aquaculture-4th-ed",
+            "SRC-vce-cnre-126-liming-farm-recreational-ponds",
+            "SRC-usgs-hardness-of-water",
+            "SRC-usgs-faq-water-hardness-united-states",
+            "SRC-mpca-wq-wwprm8-04-lsts-process-guidance",
+            "SRC-nysdec-lis-nitrogen-removal-module-4",
+            "SRC-cwea-how-alkalinity-affects-nitrification",
+            "SRC-mgs-hardness",
+            "SRC-oata-how-to-test-freshwater-water-quality",
+            "SRC-pfk-co2-striking-the-balance",
+            "SRC-2hr-aquarist-wrong-way-read-ph-kh-chart",
+            "SRC-aquariumscience-org-kh-ph-co2-buffering-substrates",
+            "SRC-seachem-equilibrium-documentation",
+            "SRC-saltyshrimp-bee-shrimp-mineral-gh-plus",
+            "SRC-apc-accuracy-ph-kh-relation-co2-thread",
+            "SRC-barr-report-co2-ph-kh-table-discussion",
+            "SRC-aquarium-forum-ph-relationship-kh-chart",
+            "SRC-specialist-shrimp-keeping-resources-unnamed"
+          ],
+          "status": "open"
+        },
+        {
+          "item_id": "OPEN-gh-kh-ph-002",
+          "description": "Confirm or reject the package-to-episode relationship for Tank Guide Life 'Confused by GH, KH, or pH? Listen Before You Adjust'. Repository evidence confirms only the episode–article pairing. Creator confirmation or production records are required.",
+          "related": [
+            "TGL-EPISODE-confused-by-gh-kh-ph"
+          ],
+          "status": "open"
+        },
+        {
+          "item_id": "OPEN-gh-kh-ph-003",
+          "description": "Confirm or reject the package-to-article relationships for /aquarium-gh-kh-ph-explained/, /how-to-raise-lower-aquarium-gh-kh-ph/ and /hard-water-vs-soft-water-aquarium-fish/, and record section-level mapping if confirmed.",
+          "related": [
+            "TG-ARTICLE-aquarium-gh-kh-ph-explained",
+            "TG-ARTICLE-how-to-raise-lower-aquarium-gh-kh-ph",
+            "TG-ARTICLE-hard-water-vs-soft-water-aquarium-fish"
+          ],
+          "status": "open"
+        },
+        {
+          "item_id": "OPEN-gh-kh-ph-004",
+          "description": "Classify support (direct/partial/background/etc.) for every claim relationship currently marked needs_review, including the restatement mappings (named_source_restatement) and the Section 27.3 collective-reference candidates.",
+          "related": [
+            "USE-ghkhph-001",
+            "USE-ghkhph-002",
+            "USE-ghkhph-003",
+            "USE-ghkhph-004",
+            "USE-ghkhph-005",
+            "USE-ghkhph-006",
+            "USE-ghkhph-007",
+            "USE-ghkhph-008",
+            "USE-ghkhph-009",
+            "USE-ghkhph-010",
+            "USE-ghkhph-011",
+            "USE-ghkhph-012",
+            "USE-ghkhph-013",
+            "USE-ghkhph-014",
+            "USE-ghkhph-015",
+            "USE-ghkhph-016",
+            "USE-ghkhph-017",
+            "USE-ghkhph-018",
+            "USE-ghkhph-019",
+            "USE-ghkhph-020",
+            "USE-ghkhph-021",
+            "USE-ghkhph-022",
+            "USE-ghkhph-023",
+            "USE-ghkhph-024",
+            "USE-ghkhph-025",
+            "USE-ghkhph-026",
+            "USE-ghkhph-027",
+            "USE-ghkhph-028",
+            "USE-ghkhph-029",
+            "USE-ghkhph-030",
+            "USE-ghkhph-031",
+            "USE-ghkhph-032",
+            "USE-ghkhph-033",
+            "USE-ghkhph-034",
+            "USE-ghkhph-035",
+            "USE-ghkhph-036",
+            "USE-ghkhph-037",
+            "USE-ghkhph-038",
+            "USE-ghkhph-039",
+            "USE-ghkhph-040",
+            "USE-ghkhph-041",
+            "USE-ghkhph-042",
+            "USE-ghkhph-043",
+            "USE-ghkhph-044",
+            "USE-ghkhph-045",
+            "USE-ghkhph-046",
+            "USE-ghkhph-047",
+            "USE-ghkhph-048",
+            "USE-ghkhph-049",
+            "USE-ghkhph-050",
+            "USE-ghkhph-051",
+            "USE-ghkhph-052",
+            "USE-ghkhph-053",
+            "USE-ghkhph-054",
+            "USE-ghkhph-055"
+          ],
+          "status": "open"
+        },
+        {
+          "item_id": "OPEN-gh-kh-ph-005",
+          "description": "Resolve which Merck Veterinary Manual chapter supports each unattributed 'Merck' mention (Sections 4.7, 6.5, 13.2.4, 21.4, 21.5) — see extraction_observations.unresolved_named_source_mentions.",
+          "related": [
+            "SRC-merck-vet-environmental-diseases-aquatic-systems",
+            "SRC-merck-vet-disorders-diseases-of-fish",
+            "SRC-merck-vet-management-of-aquarium-fish",
+            "SRC-merck-vet-equipment-water-analysis"
+          ],
+          "status": "open"
+        },
+        {
+          "item_id": "OPEN-gh-kh-ph-006",
+          "description": "Verify the manufacturer dosing figures the package itself disclosed as unverified (Seachem Equilibrium; SaltyShrimp Bee Shrimp Mineral GH+) against current official manufacturer documentation, keeping them labeled as manufacturer claims.",
+          "related": [
+            "SRC-seachem-equilibrium-documentation",
+            "SRC-saltyshrimp-bee-shrimp-mineral-gh-plus"
+          ],
+          "status": "open"
+        },
+        {
+          "item_id": "OPEN-gh-kh-ph-007",
+          "description": "Decide how to handle in-text citations that have no bibliography entry (Hunn 1985, Wood 1989, the unnamed koi-pond source, SaltyShrimp GH/KH+, comammox, CO₂-analyser measurements, etc.) — see extraction_observations.in_text_citations_without_bibliography_entry.",
+          "related": [],
+          "status": "open"
+        },
+        {
+          "item_id": "OPEN-gh-kh-ph-008",
+          "description": "Fill bibliographic metadata gaps and check the SRAC 4100 title/URL mismatch ('Liming' vs 'Lining') without guessing missing years or authors.",
+          "related": [
+            "SRC-srac-4100-liming-ponds-aquaculture",
+            "SRC-nguyen-2019-mekong-ph-calcium-ion-balance",
+            "SRC-duarte-calcium-copper-silver-na-permeability",
+            "SRC-wurts-alkalinity-hardness-production-ponds",
+            "SRC-platek-2017-calcium-gill-remodeling"
+          ],
+          "status": "open"
+        },
+        {
+          "item_id": "OPEN-gh-kh-ph-009",
+          "description": "Determine whether the 13 bibliography-only sources underlie any uncited package content, or remain listing-only.",
+          "related": [
+            "SRC-duarte-calcium-copper-silver-na-permeability",
+            "SRC-perry-2003-gill-kidney-channels-pumps",
+            "SRC-bleich-2012-calcium-tight-junction-permeability",
+            "SRC-wood-2011-two-faces-of-doc",
+            "SRC-wood-2002-potamotrygon-ion-transport",
+            "SRC-merck-vet-equipment-water-analysis",
+            "SRC-dvm360-intro-pet-fish-medicine-surgery",
+            "SRC-boyd-1979-water-quality-warmwater-fish-ponds",
+            "SRC-tucker-1984-carbon-dioxide-for-fish-farmers",
+            "SRC-vce-cnre-126-liming-farm-recreational-ponds",
+            "SRC-mgs-hardness",
+            "SRC-oata-how-to-test-freshwater-water-quality",
+            "SRC-aquariumscience-org-kh-ph-co2-buffering-substrates"
+          ],
+          "status": "open"
+        }
+      ]
     }
   ]
 }
