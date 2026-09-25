@@ -335,7 +335,8 @@
         "Independent source-verification pass applied: all 16 source records now carry a verification_status and verification_note in sources.json, and all 32 usage records carry a support_status in source-usage.json. Historical citation relationships (evidence_relationship) are unchanged.",
         "[Verification-pass note; resolved — see FAN-COOLING GAP RESOLVED] FAN-COOLING CITATION PROBLEM: The independent verification pass found that S1 and S3 are legitimate authoritative sources, but neither directly supports the package's specific evaporative-fan-cooling claim (USE-summer-heat-014, USE-summer-heat-015: unsupported_or_mismatched, replacement_source_needed = true). The historical citation must remain preserved. A replacement source is needed before this claim is represented publicly in The Tank Guide University Research Library as externally supported.",
         "FAN-COOLING GAP RESOLVED: The original S1/S3 citation mismatch remains preserved for transparency (USE-summer-heat-014 and USE-summer-heat-015 stay unsupported_or_mismatched). The gap was resolved during the independent verification pass using two supplementary USGS sources: SRC-usgs-evaporation-water-surfaces-1898 (USE-summer-heat-033), establishing that wind velocity at a water surface affects evaporation rate, and SRC-usgs-evaporation-water-cycle-2019 (USE-summer-heat-034), establishing that evaporation removes heat and produces cooling. These are supplementary verification sources, not original package citations. The public-facing evidence characterization for the aquarium fan-cooling recommendation remains PHYSICS-BASED PRACTICAL INFERENCE; no direct aquarium experiment or controlled aquarium study is claimed.",
-        "S9 ATTRIBUTION CORRECTION: The source originally registered as an Ohio State aquaculture reference is actually “Water Quality Considerations for Aquaculture” by Robert C. Summerfelt of Iowa State University. Ohio State University South Centers is only the current PDF host. The source ID (SRC-osu-aquaculture-water-quality) remains unchanged for registry stability. The publication year remains unresolved and must not be guessed."
+        "[Year statement superseded — see S9 BIBLIOGRAPHIC RESOLUTION] S9 ATTRIBUTION CORRECTION: The source originally registered as an Ohio State aquaculture reference is actually “Water Quality Considerations for Aquaculture” by Robert C. Summerfelt of Iowa State University. Ohio State University South Centers is only the current PDF host. The source ID (SRC-osu-aquaculture-water-quality) remains unchanged for registry stability. The publication year remains unresolved and must not be guessed.",
+        "S9 BIBLIOGRAPHIC RESOLUTION: Publication year resolved as 1997 (Third North Central Regional Aquaculture Conference, Indianapolis, February 6–7, 1997; proceedings ed. LaDon Swann, Illinois-Indiana Sea Grant Program Publication CES-305). Later secondary dates (ResearchGate January 1998; some bibliographies 2000) are preserved only as secondary-date notes in sources.json. See OPEN-summer-heat-002 (resolved)."
       ],
       "verification_status_history": [
         {
@@ -362,11 +363,12 @@
         },
         {
           "item_id": "OPEN-summer-heat-002",
-          "description": "Resolve the exact bibliographic year/publication context for Robert C. Summerfelt's “Water Quality Considerations for Aquaculture.”",
+          "description": "Resolved. Bibliographic context: Robert C. Summerfelt, “Water Quality Considerations for Aquaculture,” Third North Central Regional Aquaculture Conference, Indianapolis, Indiana, February 6–7, 1997; associated with the 1997 conference proceedings edited by LaDon Swann, Illinois-Indiana Sea Grant Program Publication CES-305.",
           "related": [
             "SRC-osu-aquaculture-water-quality"
           ],
-          "status": "open"
+          "status": "resolved",
+          "original_description": "Resolve the exact bibliographic year/publication context for Robert C. Summerfelt's “Water Quality Considerations for Aquaculture.”"
         },
         {
           "item_id": "OPEN-summer-heat-003",
