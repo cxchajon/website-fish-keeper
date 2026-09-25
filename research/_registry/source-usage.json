@@ -1830,8 +1830,13 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "The Practical Fishkeeping article directly states that the pH/KH/CO2 relationship assumes carbonic acid from CO2 is the only acidifying compound and explains that nitric, humic and other organic acids can invalidate the table's inferred CO2 value.",
+      "support_limitation": "The claim is directly supported by the cited article, but the source itself is an aquarium hobby publication rather than a peer-reviewed scientific source.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 7 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer. The package's historical [STR] tag is not reinterpreted or downgraded; source_type (aquarium_hobby_publication) records the evidence class of the source."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-030",
@@ -1961,10 +1966,14 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "The CWEA-hosted Evans and Sober article directly states that approximately 7.14 mg alkalinity as CaCO3 is consumed per milligram of ammonia oxidized during nitrification.",
+      "support_limitation": "This is wastewater-treatment process guidance rather than aquarium-specific research. The article's 8-to-1 alkalinity-to-ammonia rule of thumb is an operational wastewater heuristic, not an aquarium target.",
+      "replacement_source_needed": false,
       "notes": [
         "The same 7.14 figure is restated without citation in Sections 3.4, 5.3, 20.2 and 20.5 and in the Glossary.",
-        "Wastewater-engineering source applied to aquarium arithmetic; the package itself warns (Section 20.3) that some wastewater nitrification figures do not transfer cleanly to aquariums."
+        "Wastewater-engineering source applied to aquarium arithmetic; the package itself warns (Section 20.3) that some wastewater nitrification figures do not transfer cleanly to aquariums.",
+        "GH/KH/pH verification batch 7 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1988,10 +1997,14 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "The official NYSDEC training material directly states a theoretical total alkalinity requirement of 7.14 lb as CaCO3 per lb nitrogen oxidized during nitrification.",
+      "support_limitation": "The source is wastewater-process training rather than aquarium-specific research. The module also notes that actual overall alkalinity consumption may be less than the theoretical 7.14 figure; operational fixed-film wastewater guidance is not an aquarium husbandry target.",
+      "replacement_source_needed": false,
       "notes": [
         "The same 7.14 figure is restated without citation in Sections 3.4, 5.3, 20.2 and 20.5 and in the Glossary.",
-        "Wastewater-engineering source applied to aquarium arithmetic; the package itself warns (Section 20.3) that some wastewater nitrification figures do not transfer cleanly to aquariums."
+        "Wastewater-engineering source applied to aquarium arithmetic; the package itself warns (Section 20.3) that some wastewater nitrification figures do not transfer cleanly to aquariums.",
+        "GH/KH/pH verification batch 7 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2789,7 +2802,8 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 7 (2026-09-25): the Maryland Geological Survey source has now been independently verified, but it remains bibliography-only in the historical GH/KH/pH package. support_status kept as not_applicable_listing_only; no body-claim relationship is created retroactively."
       ]
     },
     {
@@ -2808,7 +2822,8 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 7 (2026-09-25): the OATA source has now been independently verified and reclassified as professional_association, but it remains bibliography-only in the historical GH/KH/pH package. support_status kept as not_applicable_listing_only; no body-claim relationship is created retroactively."
       ]
     },
     {

@@ -48,7 +48,7 @@
       "supplementary_verification_source": "Added later during an independent verification pass to support a claim whose original citation was mismatched. Not an original package citation; carries no original_package_key."
     },
     "original_package_key": "Object recording how the source is identified in its package. Summer Heat: key is the package's S# number. PKG-2026-08-gh-kh-ph: the package has no source numbering, so key is the bibliography entry's own author–year (or organization + title) label (key_type 'bibliography_entry_label'), with bibliography_tier, bibliography_tier_position and bibliography_entry_verbatim preserved.",
-    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), section (section or chapter grouping within a reference work), full_review_date and last_updated_date (ISO year-month of a living online reference's last full review and latest update), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. evidence_role_correction (object) records a change to the registry-assigned evidence_role made at verification: the original and corrected roles and a note. Added in GH/KH/pH verification batch 4: manual_version (edition/audience version of a reference manual, e.g. Merck 'Pet Owner Version' vs 'Professional Version'), peer_reviewers (list of named reviewers shown on a reference page), author_credentials (post-nominal credentials as published), author_status ('unresolved' when no author can be documented; authors then stays null and no author is inferred), conference, conference_location, conference_dates, proceedings_organization, proceedings_year, abstract_code (congress abstract/session code), vin_document_id (VIN document identifier), and historical_package_url (the URL as given in the package when the canonical url differs). The original package citation is never rewritten; it stays in original_package_key. Added in GH/KH/pH verification batch 5: publication_number (extension/series publication number, e.g. SRAC '464'), edition_status (e.g. 'Revision'), page_count (integer page length of a short publication), pagination (pagination statement as given in library catalog records, e.g. 'vii, 359 pages') and publication_place. Added in GH/KH/pH verification batch 6: edition (edition statement of a book), isbn_10 and isbn_13, organizations (list of affiliated/issuing organizations as published), first_published_date and last_reviewed_date (ISO year-month of an extension publication's first publication and latest review), current_version_year (year of the living web page version inspected at verification), document_id (agency document identifier), subtitle, historical_package_url_status (status of the package URL at verification, e.g. 'returns_404_at_verification'), historical_package_update_date (ISO date of an update date given only in the package) and historical_package_update_date_reverified (boolean; false when the verified location does not expose or confirm that date)."
+    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), section (section or chapter grouping within a reference work), full_review_date and last_updated_date (ISO year-month of a living online reference's last full review and latest update), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. evidence_role_correction (object) records a change to the registry-assigned evidence_role made at verification: the original and corrected roles and a note. Added in GH/KH/pH verification batch 4: manual_version (edition/audience version of a reference manual, e.g. Merck 'Pet Owner Version' vs 'Professional Version'), peer_reviewers (list of named reviewers shown on a reference page), author_credentials (post-nominal credentials as published), author_status ('unresolved' when no author can be documented; authors then stays null and no author is inferred), conference, conference_location, conference_dates, proceedings_organization, proceedings_year, abstract_code (congress abstract/session code), vin_document_id (VIN document identifier), and historical_package_url (the URL as given in the package when the canonical url differs). The original package citation is never rewritten; it stays in original_package_key. Added in GH/KH/pH verification batch 5: publication_number (extension/series publication number, e.g. SRAC '464'), edition_status (e.g. 'Revision'), page_count (integer page length of a short publication), pagination (pagination statement as given in library catalog records, e.g. 'vii, 359 pages') and publication_place. Added in GH/KH/pH verification batch 6: edition (edition statement of a book), isbn_10 and isbn_13, organizations (list of affiliated/issuing organizations as published), first_published_date and last_reviewed_date (ISO year-month of an extension publication's first publication and latest review), current_version_year (year of the living web page version inspected at verification), document_id (agency document identifier), subtitle, historical_package_url_status (status of the package URL at verification, e.g. 'returns_404_at_verification'), historical_package_update_date (ISO date of an update date given only in the package) and historical_package_update_date_reverified (boolean; false when the verified location does not expose or confirm that date). Added in GH/KH/pH verification batch 7: program_partners (list of program/training partner organizations shown on a document), training_location and training_dates (ISO date interval of a training session a document was prepared for), original_publication_organization and original_publication_date (ISO year-month of an article's original publication when it is now hosted elsewhere), current_host (organization currently hosting a republished article), publication_date_status ('secondary_corroboration' when the year is established only from independent citations and not exposed on the current primary page) and secondary_reported_publication_date (ISO date given only by a secondary reference; not directly verified from the primary page)."
   },
   "sources": [
     {
@@ -2101,22 +2101,46 @@
         "bibliography_tier_position": 4,
         "bibliography_entry_verbatim": "New York State Department of Environmental Conservation. Long Island Sound Nitrogen Removal Training Program, Module 4. (Total alkalinity requirement 7.14 lb as CaCO₃ per lb N oxidised.) https://extapps.dec.ny.gov/docs/water_pdf/module4.pdf"
       },
-      "title": "Long Island Sound Nitrogen Removal Training Program, Module 4",
+      "title": "Long Island Sound Nitrogen Removal Training Program — Module 4: Fixed Film Operational Strategies",
       "author_or_organization": "New York State Department of Environmental Conservation",
       "publication_or_publisher": "New York State Department of Environmental Conservation",
-      "year": null,
+      "year": 1997,
+      "publisher": "New York State Department of Environmental Conservation",
+      "program_partners": [
+        "SUNY Farmingdale",
+        "Stearns & Wheler, LLC"
+      ],
+      "training_location": "SUNY Farmingdale",
+      "training_dates": "1997-02-12/1997-02-13",
+      "page_count": 61,
+      "metadata_correction": {
+        "correction_type": "inexact_title_and_missing_date",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 7 (2026-09-25)",
+        "original_package_title": "Long Island Sound Nitrogen Removal Training Program, Module 4",
+        "corrected_title": "Long Island Sound Nitrogen Removal Training Program — Module 4: Fixed Film Operational Strategies",
+        "original_package_year": null,
+        "corrected_year": 1997,
+        "corrected_training_dates": "February 12–13, 1997",
+        "note": "The package gave the program and module number only, with no year. The official NYSDEC-hosted PDF identifies the module as 'Module 4: Fixed Film Operational Strategies', presented at SUNY Farmingdale on February 12–13, 1997, with SUNY Farmingdale and Stearns & Wheler, LLC shown as program/training partners; 61 PDF pages. Primary organization, source type and canonical URL are unchanged. The package title is preserved verbatim in original_package_key; the archived package PDF is not altered."
+      },
       "source_type": "government",
       "url": "https://extapps.dec.ny.gov/docs/water_pdf/module4.pdf",
       "doi": null,
       "access_type": null,
       "evidence_role": "reference_data",
       "package_description": "Bibliography annotation: '(Total alkalinity requirement 7.14 lb as CaCO₃ per lb N oxidised.)' Cited in-text in Section 20.1.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The official NYSDEC-hosted Module 4 PDF (https://extapps.dec.ny.gov/docs/water_pdf/module4.pdf; 61 PDF pages) was directly inspected. Its nitrification transparency states 'Total Oxygen Requirement = 4.57 lbs per lb N oxidized' and 'Total Alkalinity Requirement = 7.14 lbs as CaCO3 per lb N oxidized.' A later module page also states that overall alkalinity consumption may be less than the theoretical 7.14 lbs as CaCO3 per lb ammonia-N nitrified. LIMITATION: this is wastewater-treatment training material for fixed-film processes, not aquarium-specific research. The stoichiometric relationship is relevant chemistry/process data; operational wastewater guidance must not automatically be converted into aquarium husbandry targets. METADATA CORRECTION: full module title (Fixed Film Operational Strategies), training dates (February 12–13, 1997), training location (SUNY Farmingdale), program partners and length added.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 7] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
         "Wastewater-engineering training material, not aquarium-specific.",
-        "Package gives no year."
+        "[Registration note; superseded by GH/KH/pH verification batch 7] Package gives no year.",
+        "GH/KH/pH verification batch 7 (2026-09-25): official NYSDEC-hosted PDF directly inspected at the package URL (unchanged; canonical URL retained). Title 'Long Island Sound Nitrogen Removal Training Program — Module 4: Fixed Film Operational Strategies'; primary organization New York State Department of Environmental Conservation; program/training partners SUNY Farmingdale and Stearns & Wheler, LLC; training at SUNY Farmingdale, February 12–13, 1997; 61 PDF pages.",
+        "TITLE CORRECTION: the package's shorter title is preserved verbatim in original_package_key (key and bibliography_entry_verbatim) and in metadata_correction.original_package_title.",
+        "STOICHIOMETRY: 7.14 lb alkalinity as CaCO3 and 4.57 lb O2 per lb N oxidized are stated directly. The document also notes that actual overall alkalinity consumption may be less than the theoretical 7.14 figure.",
+        "SCOPE LIMITATION: fixed-film wastewater-process training material; operational wastewater guidance is not an aquarium husbandry target.",
+        "Source type (government) and evidence role (reference_data) confirmed."
       ]
     },
     {
@@ -2131,21 +2155,46 @@
         "bibliography_entry_verbatim": "California Water Environment Association. How Alkalinity Affects Nitrification. https://www.cwea.org/news/how-alkalinity-affects-nitrification/"
       },
       "title": "How Alkalinity Affects Nitrification",
-      "author_or_organization": "California Water Environment Association",
-      "publication_or_publisher": "California Water Environment Association",
-      "year": null,
+      "author_or_organization": "Evans, Mary; Sober, Gary",
+      "publication_or_publisher": "California Water Environment Association (current host); originally Water Environment Federation / WEF Headquarters, June 2015",
+      "year": 2015,
+      "authors": [
+        "Mary Evans",
+        "Gary Sober"
+      ],
+      "original_publication_organization": "Water Environment Federation (WEF Headquarters)",
+      "original_publication_date": "2015-06",
+      "current_host": "California Water Environment Association",
+      "metadata_correction": {
+        "correction_type": "missing_authors_and_original_publication_context",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 7 (2026-09-25)",
+        "original_package_author_or_organization": "California Water Environment Association",
+        "corrected_authors": [
+          "Mary Evans",
+          "Gary Sober"
+        ],
+        "original_package_year": null,
+        "corrected_year": 2015,
+        "corrected_original_publication_context": "Water Environment Federation / WEF Headquarters, June 2015",
+        "note": "The package attributed the article to the California Water Environment Association with no author or year. The current CWEA-hosted article identifies Mary Evans and Gary Sober as the authors; independent copies from Water Environment Federation-related associations identify the original article as WEF Headquarters, June 2015. CWEA is recorded as the current host. Title and canonical URL are unchanged. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "professional_association",
       "url": "https://www.cwea.org/news/how-alkalinity-affects-nitrification/",
       "doi": null,
       "access_type": null,
       "evidence_role": "reference_data",
       "package_description": "Cited in-text in Section 20.1 as one of the independent sources for the ~7.14 mg alkalinity per mg ammonia-nitrogen figure.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The current CWEA-hosted article (https://www.cwea.org/news/how-alkalinity-affects-nitrification/) directly states that nitrification destroys approximately 7.14 mg alkalinity as CaCO3 for every milligram of ammonium oxidized. It also states that approximately 7.14 mg/L alkalinity is consumed for every mg/L ammonia oxidized and describes an 8-to-1 alkalinity-to-ammonia operational rule of thumb. The article identifies Mary Evans and Gary Sober as the authors. Independent copies from Water Environment Federation-related associations identify the original article as WEF Headquarters, June 2015. CLASSIFICATION: the package grouped this source under 'Government and Water Treatment Authorities', but CWEA is a professional association, not a government agency; the package's bibliography tier is preserved unchanged while source_type remains professional_association. LIMITATION: wastewater-treatment process guidance; the 8-to-1 rule of thumb is an operational wastewater heuristic, not an aquarium target.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 7] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
         "Listed by the package under 'Government and Water Treatment Authorities'; CWEA is a professional association rather than a government agency. The tier placement is preserved as given.",
-        "Package gives no year or author."
+        "[Registration note; superseded by GH/KH/pH verification batch 7] Package gives no year or author.",
+        "GH/KH/pH verification batch 7 (2026-09-25): verified at the package URL (unchanged; canonical URL retained). Authors Mary Evans and Gary Sober; original publication context Water Environment Federation / WEF Headquarters, June 2015 (from independent WEF-related association copies); current host California Water Environment Association.",
+        "METADATA CORRECTION: authors and original publication context/date added. The package's organization-only attribution is preserved verbatim in original_package_key.",
+        "BIBLIOGRAPHY TIER PRESERVED: original_package_key.bibliography_tier remains 'Government and Water Treatment Authorities' as given in the package; source_type remains professional_association.",
+        "Source type (professional_association) and evidence role (reference_data) confirmed."
       ]
     },
     {
@@ -2169,11 +2218,15 @@
       "access_type": null,
       "evidence_role": "explanatory_background",
       "package_description": "Listed in the bibliography only; not cited by name in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified",
+      "verification_note": "The current Maryland Geological Survey page (https://www.mgs.md.gov/groundwater/hardness.html) directly states that hardness is attributed mainly to dissolved calcium and magnesium ions. It reports hardness primarily as mg/L CaCO3 and gives the descriptive bands 0–60 mg/L soft, 61–120 mg/L moderately hard, 121–180 mg/L hard and greater than 180 mg/L very hard. It also states that hard water does not pose a health hazard. DATE: the page provides no clear publication or revision date, so year remains null; no year is inferred from the website copyright footer. SCOPE: listed only in the GH/KH/pH bibliography; verification does not create a body-claim mapping.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Package gives no year."
+        "[Registration note; superseded by GH/KH/pH verification batch 7] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 7] Package gives no year.",
+        "GH/KH/pH verification batch 7 (2026-09-25): verified at the package URL (unchanged; canonical URL retained). Title 'Hardness'; organization Maryland Geological Survey. Registered citation metadata is correct as given; no correction required.",
+        "YEAR NULL: the page exposes no clear publication or revision date. The website copyright footer is not used to infer a publication year.",
+        "BIBLIOGRAPHY-ONLY: remains listing-only in the historical package (USE-ghkhph-066). No body-claim mapping is created retroactively.",
+        "Source type (government) and evidence role (explanatory_background) confirmed."
       ]
     },
     {
@@ -2187,21 +2240,39 @@
         "bibliography_tier_position": 1,
         "bibliography_entry_verbatim": "Ornamental Aquatic Trade Association (OATA). How to test water quality in your freshwater tank/aquarium. https://ornamentalfish.org/what-we-do/advice-information/care-sheets/caresheets-tropical-freshwater-fish/how-to-test-water-quality-in-your-freshwater-tank-aquarium/"
       },
-      "title": "How to test water quality in your freshwater tank/aquarium",
-      "author_or_organization": "Ornamental Aquatic Trade Association (OATA)",
-      "publication_or_publisher": "Ornamental Aquatic Trade Association",
+      "title": "How to test water quality in your freshwater tank / aquarium",
+      "author_or_organization": "Ornamental Aquatic Trade Association Ltd (OATA)",
+      "publication_or_publisher": "Ornamental Aquatic Trade Association Ltd (OATA)",
       "year": null,
-      "source_type": "aquarium_hobby_publication",
+      "publisher": "Ornamental Aquatic Trade Association Ltd (OATA)",
+      "metadata_correction": {
+        "correction_type": "source_type_and_organization_name",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 7 (2026-09-25)",
+        "original_registry_source_type": "aquarium_hobby_publication",
+        "corrected_source_type": "professional_association",
+        "original_package_author_or_organization": "Ornamental Aquatic Trade Association (OATA)",
+        "corrected_author_or_organization": "Ornamental Aquatic Trade Association Ltd (OATA)",
+        "original_package_title": "How to test water quality in your freshwater tank/aquarium",
+        "corrected_title": "How to test water quality in your freshwater tank / aquarium",
+        "note": "Source type corrected from the registration value 'aquarium_hobby_publication' to 'professional_association': OATA is the UK ornamental-aquatics trade association, and the page is trade-association husbandry guidance rather than a hobby publication. Organization name recorded as published ('Ornamental Aquatic Trade Association Ltd'); title spacing recorded as shown on the page. The package bibliography tier ('Established Aquarium Organizations and Reputable Publications') is preserved unchanged. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
+      "source_type": "professional_association",
       "url": "https://ornamentalfish.org/what-we-do/advice-information/care-sheets/caresheets-tropical-freshwater-fish/how-to-test-water-quality-in-your-freshwater-tank-aquarium/",
       "doi": null,
       "access_type": null,
       "evidence_role": "hobby_publication_context",
       "package_description": "Listed in the bibliography only; not cited by name in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The current OATA page is live and is produced by the UK ornamental-aquatics trade association. It provides aquarium-specific water-quality guidance covering ammonia, nitrite, nitrate, pH, water hardness, dissolved oxygen, water-quality testing and species-specific water requirements. It states that each fish species is adapted to water of a particular hardness or softness and recommends testing aquarium water regularly. The page states that the information was compiled using industry knowledge and checked and endorsed by veterinary professionals. CLASSIFICATION: professional/trade-association husbandry guidance rather than primary scientific evidence. DATE: the current page does not expose a reliable publication or revision date, so year remains null. SCOPE: listed only in the GH/KH/pH bibliography; verification does not create a body-claim mapping. METADATA CORRECTION: source_type corrected from aquarium_hobby_publication to professional_association.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Trade association care-sheet guidance. Package gives no year."
+        "[Registration note; superseded by GH/KH/pH verification batch 7] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 7] Trade association care-sheet guidance. Package gives no year.",
+        "GH/KH/pH verification batch 7 (2026-09-25): verified at the package URL (unchanged; canonical URL retained). Organization Ornamental Aquatic Trade Association Ltd (OATA); title 'How to test water quality in your freshwater tank / aquarium'.",
+        "SOURCE TYPE CORRECTION: aquarium_hobby_publication → professional_association (trade association). evidence_role hobby_publication_context is retained: the material is practical husbandry context, not independent scientific evidence.",
+        "BIBLIOGRAPHY TIER PRESERVED: original_package_key.bibliography_tier remains 'Established Aquarium Organizations and Reputable Publications'.",
+        "YEAR NULL: no reliable publication or revision date is exposed on the current page; none is inferred.",
+        "BIBLIOGRAPHY-ONLY: remains listing-only in the historical package (USE-ghkhph-067). No body-claim mapping is created retroactively."
       ]
     },
     {
@@ -2215,21 +2286,42 @@
         "bibliography_tier_position": 2,
         "bibliography_entry_verbatim": "Practical Fishkeeping. CO₂: Striking the balance. https://www.practicalfishkeeping.co.uk/features/co2-striking-the-balance/"
       },
-      "title": "CO₂: Striking the balance",
-      "author_or_organization": "Practical Fishkeeping",
+      "title": "CO2: Striking the balance",
+      "author_or_organization": "Farmer, George",
       "publication_or_publisher": "Practical Fishkeeping",
-      "year": null,
+      "year": 2016,
+      "authors": [
+        "George Farmer"
+      ],
+      "publication_date_status": "secondary_corroboration",
+      "secondary_reported_publication_date": "2016-06-13",
+      "metadata_correction": {
+        "correction_type": "missing_author_and_year",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 7 (2026-09-25)",
+        "original_package_author_or_organization": "Practical Fishkeeping",
+        "corrected_authors": [
+          "George Farmer"
+        ],
+        "original_package_year": null,
+        "corrected_year": 2016,
+        "year_basis": "secondary_corroboration",
+        "note": "The package gave only the publication name and title, with no author or year. The currently accessible Practical Fishkeeping page identifies George Farmer as the author but does not expose a publication date in the accessible page text. Independent citations to this same article consistently date it to 2016, and one secondary archival reference gives June 13, 2016; year 2016 is therefore recorded on secondary corroboration, and June 13, 2016 is recorded only as secondary_reported_publication_date, NOT as a date directly verified from the current page. Title and canonical URL are unchanged apart from the CO2 rendering shown on the page. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "aquarium_hobby_publication",
       "url": "https://www.practicalfishkeeping.co.uk/features/co2-striking-the-balance/",
       "doi": null,
       "access_type": null,
       "evidence_role": "hobby_publication_context",
       "package_description": "Cited in-text for the point that the pH/KH/CO₂ relationship presumes carbonic acid is the only acidifying compound (Section 19.4).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The current Practical Fishkeeping article (https://www.practicalfishkeeping.co.uk/features/co2-striking-the-balance/) by George Farmer directly states that the pH/KH/CO2 relationship assumes carbonic acid from CO2 is the only acidifying compound; that this assumption does not hold in typical aquarium water; that nitric acids, humic acids and other organic matter also contribute to acidification; and that this can produce a pH reading lower than the table assumes and therefore a false CO2 calculation. CLASSIFICATION: aquarium hobby publication guidance, not peer-reviewed scientific evidence; its evidence class is not upgraded. DATE LIMITATION: the current page does not expose a publication date in the accessible page text. Year 2016 rests on consistent independent citations to the same article (secondary corroboration); one secondary archival reference gives June 13, 2016, which is not directly verified from the current page. METADATA CORRECTION: author (George Farmer) and year (2016, secondary corroboration) added.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Package gives no author or year."
+        "[Registration note; superseded by GH/KH/pH verification batch 7] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 7] Package gives no author or year.",
+        "GH/KH/pH verification batch 7 (2026-09-25): verified at the package URL (unchanged; canonical URL retained). Author George Farmer; publication Practical Fishkeeping.",
+        "DATE HANDLING: year 2016 recorded with publication_date_status 'secondary_corroboration'. The current page does not expose a date; June 13, 2016 (secondary_reported_publication_date) comes from one secondary archival reference and is not presented as directly verified.",
+        "NOT PEER REVIEWED: aquarium hobby publication; source_type (aquarium_hobby_publication) and evidence role (hobby_publication_context) confirmed and not upgraded."
       ]
     },
     {
@@ -2682,6 +2774,43 @@
         "USE-ghkhph-033",
         "USE-ghkhph-036",
         "USE-ghkhph-065"
+      ]
+    },
+    {
+      "package_id": "PKG-2026-08-gh-kh-ph",
+      "batch": 7,
+      "date": "2026-09-25",
+      "description": "Seventh independent-verification batch for the GH/KH/pH package: NYSDEC Long Island Sound Nitrogen Removal Training Program Module 4 (1997), the CWEA-hosted Evans & Sober 'How Alkalinity Affects Nitrification' (WEF, 2015), Maryland Geological Survey 'Hardness', the OATA freshwater water-quality care sheet and Practical Fishkeeping 'CO2: Striking the balance' (Farmer, 2016).",
+      "source_ids": [
+        "SRC-nysdec-lis-nitrogen-removal-module-4",
+        "SRC-cwea-how-alkalinity-affects-nitrification",
+        "SRC-mgs-hardness",
+        "SRC-oata-how-to-test-freshwater-water-quality",
+        "SRC-pfk-co2-striking-the-balance"
+      ],
+      "substantive_metadata_corrections": [
+        "SRC-nysdec-lis-nitrogen-removal-module-4",
+        "SRC-cwea-how-alkalinity-affects-nitrification",
+        "SRC-oata-how-to-test-freshwater-water-quality",
+        "SRC-pfk-co2-striking-the-balance"
+      ],
+      "evidence_role_corrections": [],
+      "source_type_corrections": [
+        "SRC-oata-how-to-test-freshwater-water-quality"
+      ],
+      "url_replacements": [],
+      "limited_scope": [],
+      "unable_to_verify": [],
+      "unresolved_items": [
+        "SRC-pfk-co2-striking-the-balance: publication year 2016 rests on secondary corroboration; the current Practical Fishkeeping page does not expose a publication date, and June 13, 2016 is recorded only as a secondary-reported date.",
+        "SRC-mgs-hardness and SRC-oata-how-to-test-freshwater-water-quality: no reliable publication or revision date exposed; year remains null."
+      ],
+      "usage_ids_reviewed": [
+        "USE-ghkhph-029",
+        "USE-ghkhph-034",
+        "USE-ghkhph-035",
+        "USE-ghkhph-066",
+        "USE-ghkhph-067"
       ]
     }
   ]
