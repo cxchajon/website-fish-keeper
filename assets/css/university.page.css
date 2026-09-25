@@ -513,6 +513,25 @@ body.theme-media.university > .skip-link:focus {
   border-radius: 10px;
 }
 
+.university .study-section__subtitle {
+  margin: 24px 0 12px;
+}
+
+.university .learning-path {
+  counter-reset: learning-step;
+  margin-bottom: 8px;
+}
+
+.university .learning-path li {
+  counter-increment: learning-step;
+}
+
+.university .learning-path li::before {
+  content: counter(learning-step) ". ";
+  font-weight: 700;
+  color: var(--ttg-text-strong);
+}
+
 @keyframes cardFadeUp {
   0% {
     opacity: 0;
