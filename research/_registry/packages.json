@@ -275,15 +275,22 @@
             "cool-down-fish-tank/index.html (podcast companion section)",
             "podcast/index.html (archive card labeled 'MATCHING PODCAST EPISODE', companion guide /cool-down-fish-tank/)"
           ],
-          "relationship": "possible_episode_developed_from_package",
-          "verification_status": "needs_verification",
+          "relationship": "master_research_source_for_episode",
+          "relationship_description": "The Summer Heat research packet was used as the master research source for development of the Tank Guide Life episode “Tank Running Hot? Listen Before You Cool It Down.”",
+          "previous_relationship": "possible_episode_developed_from_package",
+          "verification_status": "confirmed",
+          "confirmation_provenance": "creator_confirmation",
+          "confirmation_provenance_note": "Confirmed directly by the creator/producer of The Tank Guide Life episode. This confirmation did not come from repository evidence; the repository alone establishes only the episode–article pairing.",
+          "previous_verification_status": "needs_verification",
           "evidence": [
             "Confirmed in repo: this episode is paired with /cool-down-fish-tank/ as its matching episode.",
             "Package states it is 'a source document for NotebookLM when developing the next Tank Guide Life podcast episode'.",
-            "Not confirmed in repo: nothing in the repository states that this episode was produced from this package."
+            "Not confirmed in repo: nothing in the repository states that this episode was produced from this package.",
+            "Creator confirmation: the creator/producer of The Tank Guide Life episode confirmed directly that this package was the master research source used to develop the episode."
           ],
           "notes": [
-            "Confirm with the episode's production notes/NotebookLM notebook before marking confirmed."
+            "[Superseded by creator confirmation] Confirm with the episode's production notes/NotebookLM notebook before marking confirmed.",
+            "Relationship confirmed by creator_confirmation, not by repository evidence. The repository-evidence statements above remain accurate as a description of what the repository itself shows."
           ]
         }
       ],
@@ -325,7 +332,7 @@
         "S15": "SRC-inkbird-itc-308-wifi",
         "S16": "SRC-nws-hurricane-safety"
       },
-      "verification_status": "source_verification_complete_with_open_items",
+      "verification_status": "pilot_audit_complete",
       "notes": [
         "Pilot registry record. Content transcribed from the package without outside correction or expansion.",
         "The package PDF remains the archived research package; no copies of outside sources are stored.",
@@ -346,6 +353,10 @@
         {
           "status": "source_verification_complete_with_open_items",
           "note": "Independent source-verification pass (applied 2026-09-25); open items listed in open_items."
+        },
+        {
+          "status": "pilot_audit_complete",
+          "note": "All three Summer Heat pilot open items resolved (OPEN-summer-heat-001, -002, -003). Episode relationship confirmed by creator_confirmation."
         }
       ],
       "open_items": [
@@ -372,11 +383,12 @@
         },
         {
           "item_id": "OPEN-summer-heat-003",
-          "description": "The Tank Guide Life episode-to-package connection remains needs_verification unless separate production records prove it.",
+          "description": "Resolved. The package-to-episode relationship was confirmed directly by the creator: the Summer Heat research packet was the master research source used to develop the Tank Guide Life episode “Tank Running Hot? Listen Before You Cool It Down.” Provenance: creator_confirmation (not repository evidence).",
           "related": [
             "TGL-EPISODE-tank-running-hot"
           ],
-          "status": "open"
+          "status": "resolved",
+          "original_description": "The Tank Guide Life episode-to-package connection remains needs_verification unless separate production records prove it."
         }
       ],
       "supplementary_source_ids": [
