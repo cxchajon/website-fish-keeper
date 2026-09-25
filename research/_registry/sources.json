@@ -25,7 +25,7 @@
       "broken_or_moved": "Registered URL no longer resolves to the cited source and no verified replacement location has been recorded.",
       "citation_problem": "Citation metadata could not be reconciled with the source located (wrong title, author, or document).",
       "unable_to_verify": "Source could not be located or checked during verification.",
-      "unverified_citation_from_package": "Pre-verification status: citation metadata recorded as given in the package and not yet checked against the live source. No longer assigned to any Summer Heat pilot record; assigned to PKG-2026-08-gh-kh-ph source records at registration (extraction stage)."
+      "unverified_citation_from_package": "Pre-verification status: citation metadata recorded as given in the package and not yet checked against the live source. No longer assigned to any Summer Heat pilot record; assigned to PKG-2026-08-gh-kh-ph source records at registration (extraction stage). As of GH/KH/pH verification batch 8 (2026-09-25) no PKG-2026-08-gh-kh-ph record carries this status."
     },
     "evidence_role": {
       "reference_data": "Source of specific numeric values or relationships used by the package.",
@@ -48,7 +48,7 @@
       "supplementary_verification_source": "Added later during an independent verification pass to support a claim whose original citation was mismatched. Not an original package citation; carries no original_package_key."
     },
     "original_package_key": "Object recording how the source is identified in its package. Summer Heat: key is the package's S# number. PKG-2026-08-gh-kh-ph: the package has no source numbering, so key is the bibliography entry's own author–year (or organization + title) label (key_type 'bibliography_entry_label'), with bibliography_tier, bibliography_tier_position and bibliography_entry_verbatim preserved.",
-    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), section (section or chapter grouping within a reference work), full_review_date and last_updated_date (ISO year-month of a living online reference's last full review and latest update), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. evidence_role_correction (object) records a change to the registry-assigned evidence_role made at verification: the original and corrected roles and a note. Added in GH/KH/pH verification batch 4: manual_version (edition/audience version of a reference manual, e.g. Merck 'Pet Owner Version' vs 'Professional Version'), peer_reviewers (list of named reviewers shown on a reference page), author_credentials (post-nominal credentials as published), author_status ('unresolved' when no author can be documented; authors then stays null and no author is inferred), conference, conference_location, conference_dates, proceedings_organization, proceedings_year, abstract_code (congress abstract/session code), vin_document_id (VIN document identifier), and historical_package_url (the URL as given in the package when the canonical url differs). The original package citation is never rewritten; it stays in original_package_key. Added in GH/KH/pH verification batch 5: publication_number (extension/series publication number, e.g. SRAC '464'), edition_status (e.g. 'Revision'), page_count (integer page length of a short publication), pagination (pagination statement as given in library catalog records, e.g. 'vii, 359 pages') and publication_place. Added in GH/KH/pH verification batch 6: edition (edition statement of a book), isbn_10 and isbn_13, organizations (list of affiliated/issuing organizations as published), first_published_date and last_reviewed_date (ISO year-month of an extension publication's first publication and latest review), current_version_year (year of the living web page version inspected at verification), document_id (agency document identifier), subtitle, historical_package_url_status (status of the package URL at verification, e.g. 'returns_404_at_verification'), historical_package_update_date (ISO date of an update date given only in the package) and historical_package_update_date_reverified (boolean; false when the verified location does not expose or confirm that date). Added in GH/KH/pH verification batch 7: program_partners (list of program/training partner organizations shown on a document), training_location and training_dates (ISO date interval of a training session a document was prepared for), original_publication_organization and original_publication_date (ISO year-month of an article's original publication when it is now hosted elsewhere), current_host (organization currently hosting a republished article), publication_date_status ('secondary_corroboration' when the year is established only from independent citations and not exposed on the current primary page) and secondary_reported_publication_date (ISO date given only by a secondary reference; not directly verified from the primary page)."
+    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), section (section or chapter grouping within a reference work), full_review_date and last_updated_date (ISO year-month of a living online reference's last full review and latest update), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. evidence_role_correction (object) records a change to the registry-assigned evidence_role made at verification: the original and corrected roles and a note. Added in GH/KH/pH verification batch 4: manual_version (edition/audience version of a reference manual, e.g. Merck 'Pet Owner Version' vs 'Professional Version'), peer_reviewers (list of named reviewers shown on a reference page), author_credentials (post-nominal credentials as published), author_status ('unresolved' when no author can be documented; authors then stays null and no author is inferred), conference, conference_location, conference_dates, proceedings_organization, proceedings_year, abstract_code (congress abstract/session code), vin_document_id (VIN document identifier), and historical_package_url (the URL as given in the package when the canonical url differs). The original package citation is never rewritten; it stays in original_package_key. Added in GH/KH/pH verification batch 5: publication_number (extension/series publication number, e.g. SRAC '464'), edition_status (e.g. 'Revision'), page_count (integer page length of a short publication), pagination (pagination statement as given in library catalog records, e.g. 'vii, 359 pages') and publication_place. Added in GH/KH/pH verification batch 6: edition (edition statement of a book), isbn_10 and isbn_13, organizations (list of affiliated/issuing organizations as published), first_published_date and last_reviewed_date (ISO year-month of an extension publication's first publication and latest review), current_version_year (year of the living web page version inspected at verification), document_id (agency document identifier), subtitle, historical_package_url_status (status of the package URL at verification, e.g. 'returns_404_at_verification'), historical_package_update_date (ISO date of an update date given only in the package) and historical_package_update_date_reverified (boolean; false when the verified location does not expose or confirm that date). Added in GH/KH/pH verification batch 7: program_partners (list of program/training partner organizations shown on a document), training_location and training_dates (ISO date interval of a training session a document was prepared for), original_publication_organization and original_publication_date (ISO year-month of an article's original publication when it is now hosted elsewhere), current_host (organization currently hosting a republished article), publication_date_status ('secondary_corroboration' when the year is established only from independent citations and not exposed on the current primary page) and secondary_reported_publication_date (ISO date given only by a secondary reference; not directly verified from the primary page). Added in GH/KH/pH verification batch 8: verified_component_urls (list of {component, title, url, status} for a single bibliography entry naming several separately located pages; the stable source is not split), product_name and manufacturer (manufacturer product documentation), thread_starter, forum and thread_start_date (ISO date a forum thread was started)."
   },
   "sources": [
     {
@@ -2335,9 +2335,10 @@
         "bibliography_tier_position": 3,
         "bibliography_entry_verbatim": "2Hr Aquarist. The wrong way to read the pH/KH chart. https://www.2hraquarist.com/blogs/choosing-co2-why/the-wrong-way-to-read-the-ph-kh-chart"
       },
-      "title": "The wrong way to read the pH/KH chart",
-      "author_or_organization": "2Hr Aquarist",
-      "publication_or_publisher": "2Hr Aquarist",
+      "title": "The wrong way to read the pH/KH chart.",
+      "author_or_organization": "The 2Hr Aquarist",
+      "publication_or_publisher": "The 2Hr Aquarist",
+      "author_status": "unresolved",
       "year": null,
       "source_type": "aquarium_hobby_publication",
       "url": "https://www.2hraquarist.com/blogs/choosing-co2-why/the-wrong-way-to-read-the-ph-kh-chart",
@@ -2345,11 +2346,14 @@
       "access_type": null,
       "evidence_role": "hobby_publication_context",
       "package_description": "Cited in-text for aquasoil rendering the pH/KH/CO₂ table effectively useless because fulvic and humic acids lower pH without contributing CO₂ (Section 19.4).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified",
+      "verification_note": "The current 2Hr Aquarist article (https://www.2hraquarist.com/blogs/choosing-co2-why/the-wrong-way-to-read-the-ph-kh-chart) directly explains that the pH/KH/CO2 table assumes CO2 and alkalinity are the primary determinants of the measured relationship. It explains that real aquariums contain additional substances that affect pH, including fertilizers, tannins and organic by-products, and specifically states that weak acids may lower pH without significantly changing KH. It specifically uses aquasoil as an example and explains that fulvic and humic acids can substantially lower pH, making direct pH/KH-table CO2 estimates unreliable. This directly supports the package's historical use (Section 19.4). The source is a commercial planted-aquarium publication, not peer-reviewed scientific evidence.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Commercial aquarium retailer's blog, listed by the package under 'Established Aquarium Organizations and Reputable Publications'. Package gives no author or year."
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "Commercial aquarium retailer's blog, listed by the package under 'Established Aquarium Organizations and Reputable Publications'. Package gives no author or year.",
+        "GH/KH/pH verification batch 8 (2026-09-25): verified at the package URL (unchanged; canonical URL retained). Title 'The wrong way to read the pH/KH chart.'; organization/publisher The 2Hr Aquarist. Registered citation metadata is correct in substance; organization name recorded as published ('The 2Hr Aquarist').",
+        "AUTHOR AND YEAR NULL: the currently accessible page does not clearly expose an individual author or a publication date sufficient for strict bibliographic verification. author_status 'unresolved'; no author or year is inferred.",
+        "NOT PEER REVIEWED: commercial planted-aquarium publication; source_type (aquarium_hobby_publication) and evidence role (hobby_publication_context) confirmed and not upgraded."
       ]
     },
     {
@@ -2363,22 +2367,55 @@
         "bibliography_tier_position": 4,
         "bibliography_entry_verbatim": "Aquarium Science. 15.6.2 KH pH CO₂ Relationships; 14.2.3 Buffering Substrates. https://aquariumscience.org/"
       },
-      "title": "15.6.2 KH pH CO₂ Relationships; 14.2.3 Buffering Substrates",
+      "title": "15.6.2. KH pH CO2 Relationships; 14.2.3. Buffering Substrates",
       "author_or_organization": "Aquarium Science",
-      "publication_or_publisher": "aquariumscience.org",
+      "publication_or_publisher": "Aquarium Science (aquariumscience.org)",
+      "author_status": "unresolved",
+      "metadata_correction": {
+        "correction_type": "combined_entry_component_urls_and_section_titles",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 8 (2026-09-25)",
+        "original_package_title": "15.6.2 KH pH CO₂ Relationships; 14.2.3 Buffering Substrates",
+        "corrected_title": "15.6.2. KH pH CO2 Relationships; 14.2.3. Buffering Substrates",
+        "original_package_url": "https://aquariumscience.org/",
+        "verified_component_urls": [
+          "https://aquariumscience.org/15-6-2-kh-ph-co2-relationships/",
+          "https://aquariumscience.org/14-2-3-buffering-substrates/"
+        ],
+        "note": "The package registered one bibliography entry naming two Aquarium Science site sections and gave only the site root URL. Both sections were located at their own URLs and are recorded in verified_component_urls. Section titles recorded as published. The package's root URL is preserved in original_package_key.bibliography_entry_verbatim and remains in url; the stable source ID is not split into two sources."
+      },
       "year": null,
       "source_type": "aquarium_hobby_publication",
       "url": "https://aquariumscience.org/",
+      "verified_component_urls": [
+        {
+          "component": 1,
+          "title": "15.6.2. KH pH CO2 Relationships",
+          "url": "https://aquariumscience.org/15-6-2-kh-ph-co2-relationships/",
+          "status": "verified"
+        },
+        {
+          "component": 2,
+          "title": "14.2.3. Buffering Substrates",
+          "url": "https://aquariumscience.org/14-2-3-buffering-substrates/",
+          "status": "verified"
+        }
+      ],
       "doi": null,
       "access_type": null,
       "evidence_role": "hobby_publication_context",
       "package_description": "Listed in the bibliography only; not cited by name in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "Both Aquarium Science site sections named by the package exist and are live: '15.6.2. KH pH CO2 Relationships' (https://aquariumscience.org/15-6-2-kh-ph-co2-relationships/) and '14.2.3. Buffering Substrates' (https://aquariumscience.org/14-2-3-buffering-substrates/). The KH/pH/CO2 section discusses limitations and complications in using the KH/pH/CO2 relationship. The Buffering Substrates section discusses calcium-carbonate materials such as crushed coral, aragonite and limestone affecting aquarium buffering/pH. The package lists this combined source only in its bibliography; no body-claim mapping is created.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
         "One bibliography entry naming two sections of the site; registered as a single source to preserve the package's single entry. URL given is the site root only.",
-        "Package gives no author or year."
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Package gives no author or year.",
+        "GH/KH/pH verification batch 8 (2026-09-25): both named component sections independently located and verified; component URLs recorded in verified_component_urls. Publisher/site Aquarium Science.",
+        "COMBINED ENTRY PRESERVED: registered as a single stable source (not split into two new source IDs). The package's root URL (https://aquariumscience.org/) is preserved in original_package_key.bibliography_entry_verbatim and retained in url.",
+        "AUTHOR AND YEAR NULL: no individual author or publication date is recorded; none is inferred. author_status 'unresolved'.",
+        "BIBLIOGRAPHY-ONLY: remains listing-only in the historical package (USE-ghkhph-068). No body-claim mapping is created retroactively merely because the material is topically relevant.",
+        "Source type (aquarium_hobby_publication) and evidence role (hobby_publication_context) confirmed."
       ]
     },
     {
@@ -2392,23 +2429,41 @@
         "bibliography_tier_position": 1,
         "bibliography_entry_verbatim": "Seachem. Equilibrium product documentation. (Dosing: 16 g per 80 L raises GH by 3 dH; does not raise KH.)"
       },
-      "title": "Equilibrium product documentation",
-      "author_or_organization": "Seachem",
-      "publication_or_publisher": "Seachem (manufacturer)",
+      "title": "Equilibrium (product documentation)",
+      "author_or_organization": "Seachem Laboratories, Inc.",
+      "publication_or_publisher": "Seachem Laboratories, Inc. (manufacturer)",
+      "product_name": "Equilibrium",
+      "manufacturer": "Seachem Laboratories, Inc.",
+      "metadata_correction": {
+        "correction_type": "missing_url_and_manufacturer_name",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 8 (2026-09-25)",
+        "original_package_title": "Equilibrium product documentation",
+        "corrected_title": "Equilibrium (product documentation)",
+        "original_package_author_or_organization": "Seachem",
+        "corrected_author_or_organization": "Seachem Laboratories, Inc.",
+        "original_package_url": null,
+        "corrected_url": "https://www.seachem.com/equilibrium.php",
+        "note": "The package named only 'Seachem. Equilibrium product documentation' with no URL, document title/version or date. The official Seachem product page was located and recorded as the canonical URL; manufacturer name recorded as Seachem Laboratories, Inc. No publication year is inferred."
+      },
       "year": null,
       "source_type": "manufacturer",
-      "url": null,
+      "url": "https://www.seachem.com/equilibrium.php",
       "doi": null,
       "access_type": null,
       "evidence_role": "manufacturer_product_documentation",
       "package_description": "Bibliography annotation: '(Dosing: 16 g per 80 L raises GH by 3 dH; does not raise KH.)' Named as a GH-only remineralizer example (Section 10.4.1) and a GH supplement example (Section 29.4); dosing figure reproduced in Section 10.4.4.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The current official Seachem product documentation for Equilibrium (https://www.seachem.com/equilibrium.php) states that Equilibrium raises mineral content/general hardness. Directions state that 16 g per 80 L (20 US gallons) raises GH by 1 meq/L, which Seachem identifies as approximately 3 dH. The documentation confirms that Equilibrium contains potassium, calcium, magnesium, iron and manganese, derived from potassium sulfate, calcium sulfate, magnesium sulfate, ferric sulfate and manganese sulfate, and treats the product as a GH/mineral supplement; for KH, Seachem directs users to a separate Alkaline Buffer product. Official Seachem technical-support material also explicitly states that Equilibrium increases GH and does not increase KH. These are manufacturer claims/documentation: verification confirms what Seachem says about its own product and is not independent scientific validation of the formulation or husbandry recommendation.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
         "MANUFACTURER SOURCE — not independent scientific evidence.",
         "PACKAGE-DISCLOSED CAVEAT (Section 10.4.4): 'These are manufacturer figures and are reproduced here as manufacturer claims; independent verification was not located.' Document Notes: 'Manufacturer dosing figures are reproduced as manufacturer claims and were not independently verified.'",
-        "Package gives no URL, document title/version or date."
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Package gives no URL, document title/version or date.",
+        "GH/KH/pH verification batch 8 (2026-09-25): located at the official Seachem product page (https://www.seachem.com/equilibrium.php); manufacturer Seachem Laboratories, Inc.; product Equilibrium. The package's bibliography annotation (16 g per 80 L raises GH by 3 dH; does not raise KH) matches the manufacturer's documentation.",
+        "DOSING WORDING: Seachem states 1 meq/L (approximately 3 dH) per 16 g per 80 L. The package's '≈50 ppm' conversion (Section 10.4.4) is the package's own calculation/rounding, not Seachem wording.",
+        "YEAR NULL: no publication year is exposed or inferred.",
+        "MANUFACTURER DOCUMENTATION CONFIRMED: source_type (manufacturer) and evidence role (manufacturer_product_documentation) confirmed; verification establishes the manufacturer's own statements only, not independent scientific validation."
       ]
     },
     {
@@ -2422,24 +2477,39 @@
         "bibliography_tier_position": 2,
         "bibliography_entry_verbatim": "SaltyShrimp. Bee Shrimp Mineral GH+ product documentation. (Dosing: approximately 3 g per 20 L for approximately 6 dGH and 200 µS/cm.)"
       },
-      "title": "Bee Shrimp Mineral GH+ product documentation",
+      "title": "Bee Shrimp Mineral GH+ (product documentation)",
       "author_or_organization": "SaltyShrimp",
       "publication_or_publisher": "SaltyShrimp (manufacturer)",
+      "product_name": "Bee Shrimp Mineral GH+",
+      "manufacturer": "SaltyShrimp",
+      "metadata_correction": {
+        "correction_type": "missing_url",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 8 (2026-09-25)",
+        "original_package_title": "Bee Shrimp Mineral GH+ product documentation",
+        "corrected_title": "Bee Shrimp Mineral GH+ (product documentation)",
+        "original_package_url": null,
+        "corrected_url": "https://www.saltyshrimp.de/english/beesalt_bee_shrimp_mineral_gh_plus.html",
+        "note": "The package named only 'SaltyShrimp. Bee Shrimp Mineral GH+ product documentation' with no URL, document title/version or date. The official SaltyShrimp English product page was located and recorded as the canonical URL. No publication date or year is inferred."
+      },
       "year": null,
       "source_type": "manufacturer",
-      "url": null,
+      "url": "https://www.saltyshrimp.de/english/beesalt_bee_shrimp_mineral_gh_plus.html",
       "doi": null,
       "access_type": null,
       "evidence_role": "manufacturer_product_documentation",
       "package_description": "Bibliography annotation: '(Dosing: approximately 3 g per 20 L for approximately 6 dGH and 200 µS/cm.)' Named as a GH-only remineralizer example (Section 10.4.1); dosing figure reproduced in Section 10.4.4.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The current official SaltyShrimp product page for Bee Shrimp Mineral GH+ (https://www.saltyshrimp.de/english/beesalt_bee_shrimp_mineral_gh_plus.html) states that the product raises total hardness without significantly influencing carbonate hardness. The manufacturer gives a target total hardness of approximately 6 dH and conductivity around 200 +/- 50 µS, and its instructions state that approximately 3 g per 20 L is sufficient to reach that target when remineralizing RO, rainwater or fully desalinated water. This verifies the manufacturer's own dosing claim; it is not independent scientific validation of the product's dosing recommendation.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
         "MANUFACTURER SOURCE — not independent scientific evidence.",
         "PACKAGE-DISCLOSED CAVEAT (Section 10.4.4): manufacturer figures reproduced as manufacturer claims; independent verification was not located.",
         "Section 10.4.2 also names 'SaltyShrimp GH/KH+' (a different product) and '“RO Right”-type products'; neither has its own bibliography entry.",
-        "Package gives no URL, document title/version or date."
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Package gives no URL, document title/version or date.",
+        "GH/KH/pH verification batch 8 (2026-09-25): located at the official SaltyShrimp English product page; manufacturer SaltyShrimp; product Bee Shrimp Mineral GH+. The package's bibliography annotation (approximately 3 g per 20 L for approximately 6 dGH and 200 µS/cm) matches the manufacturer's documentation (the manufacturer states the conductivity as 200 +/- 50 µS).",
+        "YEAR NULL: no publication date or year is exposed or inferred.",
+        "MANUFACTURER DOCUMENTATION CONFIRMED: source_type (manufacturer) and evidence role (manufacturer_product_documentation) confirmed; verification establishes the manufacturer's own claims only, not independent scientific validation."
       ]
     },
     {
@@ -2463,12 +2533,15 @@
       "access_type": null,
       "evidence_role": "hobbyist_discussion_not_evidence",
       "package_description": "Bibliography annotation: '(Source of the organic-acid interference discussion.)'",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "unable_to_verify",
+      "verification_note": "The GH/KH/pH package identifies an Aquatic Plant Central discussion titled or described as 'Accuracy of pH/KH relation for CO₂' and states that it supplied discussion of organic-acid interference. A reliable exact thread matching this bibliography entry could not be located during the independent verification pass. Because the package supplied no URL, author or date, the specific historical forum source cannot presently be verified. This does not mean the underlying chemistry claim is necessarily false; it means this specific historical community-source citation cannot be independently recovered. The package already classifies this tier as hobbyist/community material rather than scientific evidence.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
         "HOBBYIST/COMMUNITY SOURCE — the package's own tier heading states these were 'Used for Identifying Recurring Questions and Practices, Not as Scientific Evidence'.",
-        "Package gives no URL, thread author or date."
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Package gives no URL, thread author or date.",
+        "GH/KH/pH verification batch 8 (2026-09-25): unable_to_verify. No exact matching thread was reliably located; url, author and year remain null and none is inferred.",
+        "NO SUBSTITUTE INSERTED: no other forum thread or modern source has been substituted for this citation. Other verified sources in this package that discuss organic-acid interference (2Hr Aquarist, Practical Fishkeeping, Barr Report) are separate registry records and do not verify this thread.",
+        "HOBBYIST/COMMUNITY CLASSIFICATION PRESERVED: source_type (hobbyist_community_discussion) and evidence role (hobbyist_discussion_not_evidence) unchanged."
       ]
     },
     {
@@ -2482,22 +2555,43 @@
         "bibliography_tier_position": 2,
         "bibliography_entry_verbatim": "Barr Report forum, CO₂/pH/KH table discussion. (Non-carbonate KH discussion; Tom Barr and contributors.)"
       },
-      "title": "CO₂/pH/KH table discussion",
-      "author_or_organization": "Tom Barr and contributors",
-      "publication_or_publisher": "Barr Report forum",
-      "year": null,
+      "title": "CO2/pH/KH table",
+      "author_or_organization": "Tom Barr (thread starter) and forum participants",
+      "publication_or_publisher": "Barr Report Forum — Aquarium Plants",
+      "year": 2013,
+      "thread_starter": "Tom Barr",
+      "forum": "Barr Report Forum — Aquarium Plants",
+      "thread_start_date": "2013-02-15",
+      "metadata_correction": {
+        "correction_type": "missing_url_date_and_exact_thread_title",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 8 (2026-09-25)",
+        "original_package_title": "CO₂/pH/KH table discussion",
+        "corrected_title": "CO2/pH/KH table",
+        "original_package_author_or_organization": "Tom Barr and contributors",
+        "corrected_thread_starter": "Tom Barr",
+        "original_package_year": null,
+        "corrected_year": 2013,
+        "corrected_thread_start_date": "2013-02-15",
+        "original_package_url": null,
+        "corrected_url": "https://barrreport.com/threads/co2-ph-kh-table.10717/",
+        "note": "The package gave only a descriptive label with no URL or date. The identified Barr Report thread 'CO2/pH/KH table', started by Tom Barr on February 15, 2013 in the Aquarium Plants forum, matches the package's bibliography annotation (non-carbonate KH discussion; Tom Barr and contributors)."
+      },
       "source_type": "hobbyist_community_discussion",
-      "url": null,
+      "url": "https://barrreport.com/threads/co2-ph-kh-table.10717/",
       "doi": null,
       "access_type": null,
       "evidence_role": "hobbyist_discussion_not_evidence",
       "package_description": "Bibliography annotation: '(Non-carbonate KH discussion; Tom Barr and contributors.)'",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The identified Barr Report thread 'CO2/pH/KH table' (https://barrreport.com/threads/co2-ph-kh-table.10717/), started by Tom Barr on February 15, 2013 in the Barr Report Forum — Aquarium Plants, directly contains discussion of the pH/KH/CO2 table. Tom Barr and participants explicitly discuss KH not necessarily being entirely carbonate hardness, non-carbonate alkalinity affecting interpretation, driftwood/tannins and acids affecting pH, and limitations in treating measured KH and pH as a simple direct CO2 reading. This matches the general subject described in the package bibliography annotation. This is a hobbyist expert/community discussion, which the package itself places in the tier 'Hobbyist and Community Sources — Used for Identifying Recurring Questions and Practices, Not as Scientific Evidence'.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
         "HOBBYIST/COMMUNITY SOURCE — used for identifying recurring questions and practices, not as scientific evidence (package tier heading).",
-        "Package gives no URL or date."
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Package gives no URL or date.",
+        "GH/KH/pH verification batch 8 (2026-09-25): thread identified and verified: title 'CO2/pH/KH table'; thread starter Tom Barr; forum Barr Report Forum — Aquarium Plants; start date 2013-02-15.",
+        "EXACT-USE CAVEAT: the package's bibliography annotation does not identify which body section this discussion was intended to support; the source and its topical relevance are verified, but the registry's section mapping (USE-ghkhph-032) remains contextual rather than a precise historical inline citation.",
+        "HOBBYIST/COMMUNITY CLASSIFICATION PRESERVED: source_type (hobbyist_community_discussion) and evidence role (hobbyist_discussion_not_evidence) confirmed and not upgraded."
       ]
     },
     {
@@ -2521,13 +2615,16 @@
       "access_type": null,
       "evidence_role": "hobbyist_discussion_not_evidence",
       "package_description": "Bibliography annotation: '(Source of the peat/atomic-absorption claim recorded as contested in Section 12.2.3 and Claim 32.)'",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "unable_to_verify",
+      "verification_note": "The package identifies a forum discussion described as 'pH relationship and the KH on a chart' and attributes to it a hobby-technical observation that peat-treated water may titrate as softer while measured total calcium by atomic absorption remains unchanged. The exact historical forum thread could not be reliably located during independent verification. Independent research located scientific material involving atomic-absorption analysis of peat, but no source was found that verifies this specific aquarium experiment/observation. The historical forum citation therefore remains unable_to_verify. The package already labels the claim contested, plausible/mechanistically sensible, unverified and not traced to peer-reviewed work; those warnings are preserved.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
         "HOBBYIST/COMMUNITY SOURCE — used for identifying recurring questions and practices, not as scientific evidence (package tier heading).",
         "The package itself classifies the claim this source supplied as contested and unverified: 'could not be traced to a peer-reviewed source in this research. Classification: plausible, mechanistically sensible, unverified.'",
-        "Package gives no URL, author or date."
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Package gives no URL, author or date.",
+        "GH/KH/pH verification batch 8 (2026-09-25): unable_to_verify. No exact matching thread was reliably located; url, author, forum identity and year remain null/as given and none is inferred.",
+        "NO SUBSTITUTE INSERTED: scientific material on atomic-absorption analysis of peat does not verify the specific aquarium observation and is not recorded as a replacement source.",
+        "PACKAGE WARNINGS PRESERVED: the claim remains contested, plausible/mechanistically sensible, unverified and not traced to peer-reviewed work (Section 12.2.3 [CON]; Section 32 Claim 32 'Classification: Contested.')."
       ]
     },
     {
@@ -2551,12 +2648,14 @@
       "access_type": null,
       "evidence_role": "hobbyist_discussion_not_evidence",
       "package_description": "Bibliography entry describing an unnamed group of specialist shrimp-keeping resources consulted for commonly cited Neocaridina and Caridina parameter targets.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "unable_to_verify",
+      "verification_note": "This bibliography entry is an unnamed group of specialist shrimp-keeping resources rather than an identifiable source. The package supplies no individual site names, article titles, authors, URLs or publication dates, so individual source verification is impossible from the surviving package record. The registry record is retained solely so the package's bibliography remains complete and historically traceable. The package itself uses the disagreement among these hobby resources as evidence of inconsistency in hobby parameter conventions rather than as scientific evidence for a specific GH/KH/TDS target.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 8] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
         "GROUPED, UNNAMED BIBLIOGRAPHY ENTRY: no individual site, title, author, URL or date is given, so this record cannot be verified as a specific source. It is registered so the package's bibliography is complete and traceable, not as independent evidence.",
-        "The package treats these sources' disagreement (e.g., Neocaridina GH given as 4–10, 6–12, 6–14 and 7–15 dGH) as 'data about the reliability of hobby conventions', and labels the targets as hobby convention with untraceable provenance."
+        "The package treats these sources' disagreement (e.g., Neocaridina GH given as 4–10, 6–12, 6–14 and 7–15 dGH) as 'data about the reliability of hobby conventions', and labels the targets as hobby convention with untraceable provenance.",
+        "GH/KH/pH verification batch 8 (2026-09-25): unable_to_verify. Grouped, unnamed entry; no individual source can be identified from the package record.",
+        "NO RECONSTRUCTION: the missing source list has not been reconstructed and no modern shrimp websites have been substituted for the original consulted set."
       ]
     }
   ],
@@ -2811,6 +2910,60 @@
         "USE-ghkhph-035",
         "USE-ghkhph-066",
         "USE-ghkhph-067"
+      ]
+    },
+    {
+      "package_id": "PKG-2026-08-gh-kh-ph",
+      "batch": 8,
+      "date": "2026-09-25",
+      "description": "Eighth and final initial independent-verification batch for the GH/KH/pH package: 2Hr Aquarist 'The wrong way to read the pH/KH chart.', the combined Aquarium Science entry (15.6.2 KH pH CO2 Relationships; 14.2.3 Buffering Substrates), Seachem Equilibrium and SaltyShrimp Bee Shrimp Mineral GH+ manufacturer documentation, the Barr Report 'CO2/pH/KH table' thread (Tom Barr, 2013), and the three unrecoverable hobbyist/grouped citations (Aquatic Plant Central thread, Aquarium Forum peat/atomic-absorption thread, unnamed specialist shrimp-keeping resources). After this batch no PKG-2026-08-gh-kh-ph source record remains unverified_citation_from_package.",
+      "source_ids": [
+        "SRC-2hr-aquarist-wrong-way-read-ph-kh-chart",
+        "SRC-aquariumscience-org-kh-ph-co2-buffering-substrates",
+        "SRC-seachem-equilibrium-documentation",
+        "SRC-saltyshrimp-bee-shrimp-mineral-gh-plus",
+        "SRC-apc-accuracy-ph-kh-relation-co2-thread",
+        "SRC-barr-report-co2-ph-kh-table-discussion",
+        "SRC-aquarium-forum-ph-relationship-kh-chart",
+        "SRC-specialist-shrimp-keeping-resources-unnamed"
+      ],
+      "substantive_metadata_corrections": [
+        "SRC-aquariumscience-org-kh-ph-co2-buffering-substrates",
+        "SRC-seachem-equilibrium-documentation",
+        "SRC-saltyshrimp-bee-shrimp-mineral-gh-plus",
+        "SRC-barr-report-co2-ph-kh-table-discussion"
+      ],
+      "evidence_role_corrections": [],
+      "source_type_corrections": [],
+      "url_replacements": [],
+      "limited_scope": [],
+      "unable_to_verify": [
+        "SRC-apc-accuracy-ph-kh-relation-co2-thread",
+        "SRC-aquarium-forum-ph-relationship-kh-chart",
+        "SRC-specialist-shrimp-keeping-resources-unnamed"
+      ],
+      "unresolved_items": [
+        "SRC-apc-accuracy-ph-kh-relation-co2-thread: exact Aquatic Plant Central thread not recoverable (package gives no URL, author or date).",
+        "SRC-aquarium-forum-ph-relationship-kh-chart: exact forum thread not recoverable; the peat/atomic-absorption observation remains unverified and needs a traceable replacement source before public presentation as externally supported.",
+        "SRC-specialist-shrimp-keeping-resources-unnamed: unnamed group; original consulted sites need to be recovered, or a new transparent sample documented separately, before the parameter spread is presented publicly.",
+        "SRC-2hr-aquarist-wrong-way-read-ph-kh-chart and SRC-aquariumscience-org-kh-ph-co2-buffering-substrates: no individual author or publication date exposed; author and year remain null.",
+        "SRC-seachem-equilibrium-documentation and SRC-saltyshrimp-bee-shrimp-mineral-gh-plus: no publication year exposed; year remains null."
+      ],
+      "usage_ids_reviewed": [
+        "USE-ghkhph-021",
+        "USE-ghkhph-022",
+        "USE-ghkhph-023",
+        "USE-ghkhph-024",
+        "USE-ghkhph-025",
+        "USE-ghkhph-030",
+        "USE-ghkhph-031",
+        "USE-ghkhph-032",
+        "USE-ghkhph-046",
+        "USE-ghkhph-047",
+        "USE-ghkhph-053",
+        "USE-ghkhph-054",
+        "USE-ghkhph-055",
+        "USE-ghkhph-068"
       ]
     }
   ]
