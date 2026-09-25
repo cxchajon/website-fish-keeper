@@ -39,7 +39,8 @@
       "PKG-2026-08-gh-kh-ph": "Verbatim evidence tag(s) the package attaches to the claim where the citation appears — from its Evidence Classification Key ([EST], [STR], [INF], [AQC], [VET], [HOB], [ANC], [CON], [MYTH], including compound/variant forms), or the verbatim Section 32 'Classification:' text for Section 32 claims. 'UNTAGGED_IN_PACKAGE' when the claim carries no explicit tag; null for listing-only relationships. package_evidence_status_note explains mixed or inherited tags."
     },
     "bibliography_tier": "PKG-2026-08-gh-kh-ph only: the verbatim bibliography tier heading under which the package lists the source.",
-    "support_limitation": "Optional. Verification-pass statement of what the source does not establish for this use, recorded alongside support_status."
+    "support_limitation": "Optional. Verification-pass statement of what the source does not establish for this use, recorded alongside support_status.",
+    "replacement_source_needed_reason": "Optional. Verification-pass explanation of the replacement_source_needed value where it is not self-evident from support_status."
   },
   "usage": [
     {
@@ -1126,8 +1127,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "The current USGS Hardness of Water page directly defines water hardness as generally the amount of dissolved calcium and magnesium in water.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 6 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-006",
@@ -1150,10 +1155,15 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "Official USGS materials directly support both components of the package statement: the descriptive hardness bands (0–60, 61–120, 121–180, >180 mg/L as CaCO₃) are present on the current USGS Hardness of Water page, and the official USGS FAQ (legacy location https://water.usgs.gov/owq/FAQ.htm) states that EPA has not established a legal hardness standard because the principal hardness ions (generally calcium and magnesium) are not toxic.",
+      "support_limitation": "The package itself correctly notes that these drinking-water hardness categories are descriptive rather than aquarium husbandry targets.",
+      "replacement_source_needed": false,
       "notes": [
         "The same bands supply the 'USGS descriptive category' column of the Section 2.2 conversion table and the 'USGS category' labels in worked examples in Sections 2.3 (p. 12) and 25.3 (p. 62).",
-        "Package caveat in the same section: the USGS categories were built for drinking water and household plumbing and 'should be used descriptively, not prescriptively.'"
+        "Package caveat in the same section: the USGS categories were built for drinking water and household plumbing and 'should be used descriptively, not prescriptively.'",
+        "The package's cited FAQ URL now returns 404; the same named question and answer are verified at the official USGS legacy FAQ page (see source record). The citation statement's 'updated 5 August 2025' is preserved verbatim as historical package text and has not been reverified.",
+        "GH/KH/pH verification batch 6 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1920,10 +1930,14 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "The MPCA document directly states that nitrification consumes 7.14 mg alkalinity per 1 mg ammonia converted to nitrate.",
+      "support_limitation": "The source is wastewater-engineering guidance rather than aquarium-specific research, but the cited relationship is nitrification stoichiometry rather than a species husbandry recommendation. The document's 50/100 mg/L effluent-alkalinity recommendations are wastewater-process targets, not aquarium targets.",
+      "replacement_source_needed": false,
       "notes": [
         "The same 7.14 figure is restated without citation in Sections 3.4, 5.3, 20.2 and 20.5 and in the Glossary.",
-        "Wastewater-engineering source applied to aquarium arithmetic; the package itself warns (Section 20.3) that some wastewater nitrification figures do not transfer cleanly to aquariums."
+        "Wastewater-engineering source applied to aquarium arithmetic; the package itself warns (Section 20.3) that some wastewater nitrification figures do not transfer cleanly to aquariums.",
+        "GH/KH/pH verification batch 6 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2002,9 +2016,13 @@
         }
       ],
       "support_status": "needs_review",
+      "support_reason": "The 2018 book's bibliographic identity is verified, and the 4.57 g O₂ / 7.14 g alkalinity nitrification stoichiometry is strongly corroborated by related recirculating-aquaculture technical literature. However, the exact passage in the 2018 4th edition was not directly inspected, so this specific source-to-claim relationship remains needs_review for strict provenance.",
+      "replacement_source_needed": false,
+      "replacement_source_needed_reason": "The numerical claim is independently supported elsewhere in this registry, including the verified Minnesota Pollution Control Agency source (SRC-mpca-wq-wwprm8-04-lsts-process-guidance; USE-ghkhph-033), so no replacement is needed for the claim itself. This open point concerns exact attribution to the 2018 book.",
       "notes": [
         "The same 7.14 figure is restated without citation in Sections 3.4, 5.3, 20.2 and 20.5 and in the Glossary.",
-        "Bibliography annotation also attributes '4.57 mg O₂ per mg ammonia-nitrogen oxidised' to this source; that figure appears in Section 20.1 'Related figures worth recording' ([STR])."
+        "Bibliography annotation also attributes '4.57 mg O₂ per mg ammonia-nitrogen oxidised' to this source; that figure appears in Section 20.1 'Related figures worth recording' ([STR]).",
+        "GH/KH/pH verification batch 6 (2026-09-25): reviewed; support_status deliberately kept as needs_review (not upgraded to direct_support) because the exact 4th-edition passage was not inspected. No page number is recorded. package_evidence_status (the package's own evidence tags) is unchanged."
       ]
     },
     {
@@ -2751,7 +2769,8 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 6 (2026-09-25): the Virginia Cooperative Extension source has now been independently verified and its current authorship/publication metadata corrected (see source record), but it remains bibliography-only in the historical GH/KH/pH package. support_status kept as not_applicable_listing_only; no body-claim relationship is created retroactively."
       ]
     },
     {
