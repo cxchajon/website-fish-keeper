@@ -1,8 +1,8 @@
 import * as baseCompute from './compute.legacy.js';
-import { initializeSpecies, getSpeciesListV2, getSpeciesBySlugV2 } from '/js/stocking-advisor/logic/species-adapter.v2.js';
-import { compatScore } from '/js/stocking-advisor/logic/compat.v2.js';
-import { calcAggression, AGGRESSION_TOKENS } from '/js/stocking-advisor/logic/aggression.v2.js';
-import { evaluateWarningRules } from '/js/stocking-advisor/logic/warning-rules.js';
+import { initializeSpecies, getSpeciesListV2, getSpeciesBySlugV2 } from '../stocking-advisor/logic/species-adapter.v2.js';
+import { compatScore } from '../stocking-advisor/logic/compat.v2.js';
+import { calcAggression, AGGRESSION_TOKENS } from '../stocking-advisor/logic/aggression.v2.js';
+import { evaluateWarningRules } from '../stocking-advisor/logic/warning-rules.js';
 import { formatBioloadPercent } from '../bioload.js';
 import { getBandColor } from './utils.js';
 import { weightedMixFactor } from '../utils.js';
@@ -15,7 +15,7 @@ import {
   normalizeFilters,
   getTotalGPH,
   MAX_CAPACITY_BONUS,
-} from '/js/stocking-advisor/filtration/math.js';
+} from '../stocking-advisor/filtration/math.js';
 
 const {
   computeBioload: baseComputeBioload,

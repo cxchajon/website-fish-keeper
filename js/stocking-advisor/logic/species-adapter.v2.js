@@ -1,4 +1,4 @@
-import { BEHAVIOR_TAGS } from '/js/logic/behaviorTags.js';
+import { BEHAVIOR_TAGS } from '../../logic/behaviorTags.js';
 
 // Species data - loaded asynchronously for Safari compatibility
 let speciesV2Raw = [];

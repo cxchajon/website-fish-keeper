@@ -1,4 +1,4 @@
-import { initInfoTooltips } from '/js/ui/tooltip.js';
+import { initInfoTooltips } from './ui/tooltip.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (

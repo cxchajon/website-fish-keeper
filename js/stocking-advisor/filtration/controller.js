@@ -1,4 +1,4 @@
-import { canonicalizeFilterType, weightedMixFactor } from '/js/utils.js';
+import { canonicalizeFilterType, weightedMixFactor } from '../../utils.js';
 import {
   computeTurnover,
   getTotalGPH,
@@ -13,7 +13,7 @@ import {
   sortByTypeBrandGph,
   CATALOG_SOURCES,
 } from '../catalog-loader.js';
-import { populateFilterDropdown } from '/js/gear-data.js';
+import { populateFilterDropdown } from '../../gear-data.js';
 import { isDebugEnabled, onDebugToggle } from '../devtools.js';
 
 const DEBUG_FILTERS = Boolean(window?.TTG?.DEBUG_FILTERS);

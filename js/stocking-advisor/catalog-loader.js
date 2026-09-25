@@ -4,7 +4,7 @@ import {
   filterGearByTank,
   sortGearItems,
   CATALOG_SOURCES,
-} from '/js/gear-data.js';
+} from '../gear-data.js';
 
 let cachedResult = null;
 let inflightPromise = null;
