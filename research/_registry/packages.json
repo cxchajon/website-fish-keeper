@@ -1,0 +1,336 @@
+{
+  "registry": "The Tank Guide University Research Library",
+  "schema_version": "0.1.0-pilot",
+  "last_updated": "2026-09-25",
+  "packages": [
+    {
+      "package_id": "PKG-2026-07-summer-heat",
+      "title": "Aquarium Summer Heat, Low Oxygen & Power Outages — Fact-Checked Research Packet for NotebookLM and Podcast Development",
+      "publisher": "The Tank Guide / FishKeepingLifeCo",
+      "current_file_path": "research/packages/Aquarium_Summer_Heat_NotebookLM_Research_Packet.pdf",
+      "page_count": 13,
+      "document_type": "fact_checked_research_packet",
+      "document_date": "2026-07",
+      "document_date_notes": "Cover says 'Prepared July 2026'. PDF metadata creation date is 2026-07-13.",
+      "main_topics": [
+        "Dissolved oxygen solubility and temperature ('thermal oxygen squeeze')",
+        "Temperature and fish metabolism / oxygen demand",
+        "Surface agitation, gas exchange, and aeration",
+        "Low-oxygen warning signs (non-diagnostic)",
+        "Cooling methods: fan/evaporation, reducing heat input, frozen bottles, cooler small water changes",
+        "Ammonia speciation (NH3 vs NH4+) with pH and temperature",
+        "Feeding during extreme heat",
+        "Power outages and emergency aeration",
+        "Storm and blackout preparation, including pre-staged water",
+        "Temperature controllers and alerts (INKBIRD as brand example)"
+      ],
+      "core_message": "In summer heat, do not focus on temperature alone. The dangerous squeeze is that warmer water can hold less dissolved oxygen while fish and other aerobic life may demand more oxygen.",
+      "intended_use": [
+        "Source document for NotebookLM when developing the next Tank Guide Life podcast episode (not a verbatim script).",
+        "Separates well-supported science from practical hobby guidance and calls out claims that need cautious wording.",
+        "Fact-check of The Tank Guide's summer aquarium heat article (editorial baseline).",
+        "Sources section intended for NotebookLM citations and follow-up source tracing."
+      ],
+      "evidence_framework_used": {
+        "summary": "Section-level 'Research basis: S#' citations, a Claim Audit that assigns a fact-check status to each article idea, a 'Claims to Avoid or Soften' table with verdicts, stated source-prioritization rules, and explicit research limitations.",
+        "citation_convention": "Each research section ends with 'Research basis: S#, S#'. Figures carry 'Source: S#'. Sources are numbered S1–S16 in Section 14.",
+        "source_prioritization": "Sources were prioritized toward U.S. government agencies, university extension/aquaculture guidance, a peer-reviewed review, recognized fish-research guidance, emergency-preparedness agencies, and official product documentation. Commercial aquarium blogs were not used as scientific authorities.",
+        "claim_audit_statuses_used": [
+          "SUPPORTED",
+          "SUPPORTED WITH NUANCE",
+          "PHYSICS-BASED PRACTICAL INFERENCE",
+          "SUPPORTED BY PHYSICAL PRINCIPLE",
+          "PRACTICAL HUSBANDRY METHOD",
+          "SUPPORTED / PRACTICAL",
+          "STRONGLY REASONABLE",
+          "SUPPORTED PRINCIPLE / PRACTICAL INFERENCE",
+          "PRACTICAL PREPAREDNESS"
+        ],
+        "claims_to_avoid_verdicts_used": [
+          "Avoid",
+          "Too absolute",
+          "Do not guarantee",
+          "Too prescriptive",
+          "Unsupported universal schedule",
+          "Too universal",
+          "Incorrect",
+          "Misleading"
+        ],
+        "claim_audit": [
+          {
+            "article_idea": "Warm water holds less dissolved oxygen.",
+            "status": "SUPPORTED",
+            "editorial_note": "Strongly supported by USGS and EPA.",
+            "package_sections": [
+              "1"
+            ],
+            "named_sources_resolved": [],
+            "named_sources_unresolved": "'USGS' (S1 and S2 are both USGS) and 'EPA' (S3, S7, S8 are EPA) are named by organization only; Section 1 research basis lists S1, S2, S3."
+          },
+          {
+            "article_idea": "Higher temperatures can increase fish metabolism and oxygen demand.",
+            "status": "SUPPORTED WITH NUANCE",
+            "editorial_note": "Do not assign a universal doubling rate.",
+            "package_sections": [
+              "1",
+              "2"
+            ],
+            "named_sources_resolved": [],
+            "named_sources_unresolved": null
+          },
+          {
+            "article_idea": "Surface agitation can improve gas exchange.",
+            "status": "SUPPORTED",
+            "editorial_note": "EPA and NRCS describe turbulence/agitation as enhancing atmospheric oxygen transfer.",
+            "package_sections": [
+              "3"
+            ],
+            "named_sources_resolved": [
+              "S6"
+            ],
+            "named_sources_unresolved": "'EPA' named by organization only; Section 3 research basis lists S3."
+          },
+          {
+            "article_idea": "Pointing filter output upward or using HOB return splash can increase surface disturbance.",
+            "status": "PHYSICS-BASED PRACTICAL INFERENCE",
+            "editorial_note": "Reasonable aquarium application of the supported aeration principle.",
+            "package_sections": [
+              "3"
+            ],
+            "named_sources_resolved": [],
+            "named_sources_unresolved": null
+          },
+          {
+            "article_idea": "A fan can cool an aquarium through evaporation.",
+            "status": "SUPPORTED BY PHYSICAL PRINCIPLE",
+            "editorial_note": "Do not promise a fixed temperature drop.",
+            "package_sections": [
+              "5"
+            ],
+            "named_sources_resolved": [],
+            "named_sources_unresolved": null
+          },
+          {
+            "article_idea": "A sealed frozen bottle can be used for emergency cooling.",
+            "status": "PRACTICAL HUSBANDRY METHOD",
+            "editorial_note": "Monitor temperature and avoid abrupt swings.",
+            "package_sections": [
+              "5"
+            ],
+            "named_sources_resolved": [],
+            "named_sources_unresolved": null
+          },
+          {
+            "article_idea": "A slightly cooler small water change may help lower tank temperature.",
+            "status": "PRACTICAL HUSBANDRY METHOD",
+            "editorial_note": "Condition source water and avoid drastic temperature change.",
+            "package_sections": [
+              "5"
+            ],
+            "named_sources_resolved": [],
+            "named_sources_unresolved": null
+          },
+          {
+            "article_idea": "Higher pH and temperature increase the fraction of total ammonia present as NH3.",
+            "status": "SUPPORTED",
+            "editorial_note": "EPA 2013 document provides the chemistry relationship.",
+            "package_sections": [
+              "6"
+            ],
+            "named_sources_resolved": [
+              "S8"
+            ],
+            "named_sources_unresolved": null
+          },
+          {
+            "article_idea": "Feeding less can reduce waste and post-feeding oxygen demand.",
+            "status": "SUPPORTED / PRACTICAL",
+            "editorial_note": "Do not create a universal fasting rule.",
+            "package_sections": [
+              "7"
+            ],
+            "named_sources_resolved": [],
+            "named_sources_unresolved": null
+          },
+          {
+            "article_idea": "Battery-operated air pumps are useful in outages.",
+            "status": "STRONGLY REASONABLE",
+            "editorial_note": "Backup aeration aligns with aquatic life-support contingency guidance.",
+            "package_sections": [
+              "8"
+            ],
+            "named_sources_resolved": [],
+            "named_sources_unresolved": null
+          },
+          {
+            "article_idea": "Manual scoop-and-pour agitation can temporarily promote gas exchange.",
+            "status": "SUPPORTED PRINCIPLE / PRACTICAL INFERENCE",
+            "editorial_note": "Agitation supplies aeration; treat as a temporary stopgap.",
+            "package_sections": [
+              "8"
+            ],
+            "named_sources_resolved": [],
+            "named_sources_unresolved": null
+          },
+          {
+            "article_idea": "Pre-filled aquarium water can help before a forecast blackout.",
+            "status": "PRACTICAL PREPAREDNESS",
+            "editorial_note": "Use clean covered dedicated containers and frame as short-term storm prep.",
+            "package_sections": [
+              "9"
+            ],
+            "named_sources_resolved": [],
+            "named_sources_unresolved": null
+          }
+        ],
+        "claims_to_avoid": [
+          {
+            "tempting_claim": "Fish metabolism doubles from 75°F to 86°F.",
+            "verdict": "Avoid",
+            "better_wording": "Higher temperatures can increase metabolism and oxygen demand; the response varies by species and conditions."
+          },
+          {
+            "tempting_claim": "Air-stone bubbles do not add any oxygen.",
+            "verdict": "Too absolute",
+            "better_wording": "Aeration works through circulation, turbulence, surface renewal, and gas transfer; focus the listener on surface movement."
+          },
+          {
+            "tempting_claim": "A fan will lower the tank 2°F to 5°F.",
+            "verdict": "Do not guarantee",
+            "better_wording": "A fan can cool through evaporation; the amount depends on humidity, airflow, surface area, and room conditions."
+          },
+          {
+            "tempting_claim": "Lower a HOB tank exactly one or two inches.",
+            "verdict": "Too prescriptive",
+            "better_wording": "Slightly lower the level enough to increase surface disturbance while keeping the filter operating properly."
+          },
+          {
+            "tempting_claim": "Do the scoop-and-pour method every hour for several minutes.",
+            "verdict": "Unsupported universal schedule",
+            "better_wording": "Repeat periodically and respond to fish behavior; tank demand varies."
+          },
+          {
+            "tempting_claim": "Stop feeding all fish during a heat wave.",
+            "verdict": "Too universal",
+            "better_wording": "Consider feeding less during extreme heat and watch water quality."
+          },
+          {
+            "tempting_claim": "Heat makes ammonia.",
+            "verdict": "Incorrect",
+            "better_wording": "Higher pH and temperature can shift a greater fraction of existing total ammonia toward toxic NH3."
+          },
+          {
+            "tempting_claim": "Loose ice is dangerous because cold itself is toxic.",
+            "verdict": "Misleading",
+            "better_wording": "Avoid untreated ice and uncontrolled temperature swings; use monitored, gradual cooling."
+          },
+          {
+            "tempting_claim": "Every blackout needs a water change.",
+            "verdict": "Incorrect",
+            "better_wording": "Prepared water gives you options; use testing and tank conditions to decide."
+          }
+        ],
+        "research_limitations": [
+          "Aquaculture pond and research-facility sources are used for underlying water chemistry, aeration, physiology, and life-support principles. A home aquarium is a smaller system, so practical application should remain cautious.",
+          "Species-specific safe temperatures are intentionally not generalized. The podcast should tell listeners to know the temperature requirements of the exact livestock they keep.",
+          "No universal dissolved-oxygen emergency threshold is proposed for all aquarium fish. Species and life stages differ.",
+          "No universal manual-aeration interval is proposed. A small, heavily stocked warm tank can decline differently from a large, lightly stocked aquarium.",
+          "Product features are model-specific. INKBIRD is a brand example, not a claim that every INKBIRD controller has the same alarms, connectivity, or outputs.",
+          "Prepared water advice is short-term storm readiness, not a blanket recommendation for indefinite storage."
+        ],
+        "uncited_package_content": [
+          "Executive Research Takeaways (summary; no per-item citations).",
+          "Section 5 subsections 'Reduce avoidable heat input', 'Frozen bottles and ice', and 'Small water changes with slightly cooler water' (no research-basis line; frozen bottle and cooler water change rated PRACTICAL HUSBANDRY METHOD).",
+          "Section 11 Claims to Avoid or Soften (editorial verdicts; no citations).",
+          "Section 13 Podcast Story Map (editorial; no citations)."
+        ]
+      },
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "content_type": "blog_article",
+          "title": "How to Keep Your Aquarium Safe During a Summer Heat Wave",
+          "path": "/cool-down-fish-tank/",
+          "repo_file": "cool-down-fish-tank/index.html",
+          "relationship": "editorial_baseline_and_fact_check_target",
+          "verification_status": "confirmed",
+          "evidence": [
+            "Package cover: 'Editorial baseline: The Tank Guide's summer aquarium heat article.'",
+            "Package Section 1 quotes 'the blog's rounded comparison of roughly 8.3 mg/L at 75°F (24°C) and roughly 7.5 mg/L at 86°F (30°C)'; cool-down-fish-tank/index.html contains that exact comparison.",
+            "Package Section 10 discusses 'The article's INKBIRD recommendation'; the article recommends an INKBIRD temperature controller.",
+            "Article datePublished is 2026-07-13; the package PDF creation date is 2026-07-13 and the cover says 'Prepared July 2026'.",
+            "Article section headings match the package topics (warm water and oxygen, surface agitation, warning signs, fan, heat sources, ice/frozen bottles, water change, feeding, power-outage aeration, manual agitation, storm preparation)."
+          ],
+          "notes": [
+            "The package does not state the article URL; the connection is confirmed from content matches in the repository. Section-level mapping between package sections and article headings has not been recorded yet."
+          ]
+        },
+        {
+          "content_id": "TGL-EPISODE-tank-running-hot",
+          "content_type": "podcast_episode",
+          "series": "Tank Guide Life by FishKeepingLifeCo",
+          "title": "Tank Running Hot? Listen Before You Cool It Down",
+          "url": "https://open.spotify.com/episode/70U3fsvN09cwxggFJHt0tB",
+          "repo_references": [
+            "cool-down-fish-tank/index.html (podcast companion section)",
+            "podcast/index.html (archive card labeled 'MATCHING PODCAST EPISODE', companion guide /cool-down-fish-tank/)"
+          ],
+          "relationship": "possible_episode_developed_from_package",
+          "verification_status": "needs_verification",
+          "evidence": [
+            "Confirmed in repo: this episode is paired with /cool-down-fish-tank/ as its matching episode.",
+            "Package states it is 'a source document for NotebookLM when developing the next Tank Guide Life podcast episode'.",
+            "Not confirmed in repo: nothing in the repository states that this episode was produced from this package."
+          ],
+          "notes": [
+            "Confirm with the episode's production notes/NotebookLM notebook before marking confirmed."
+          ]
+        }
+      ],
+      "source_ids": [
+        "SRC-usgs-nfm-a6-2-dissolved-oxygen",
+        "SRC-usgs-do-and-water",
+        "SRC-epa-caddis-dissolved-oxygen",
+        "SRC-schulte-2015",
+        "SRC-uf-ifas-fa002-dissolved-oxygen",
+        "SRC-usda-nrcs-uapb-pond-aeration",
+        "SRC-epa-caddis-ammonia",
+        "SRC-epa-ammonia-criteria-2013",
+        "SRC-osu-aquaculture-water-quality",
+        "SRC-afs-aifrb-asih-fishes-in-research-2014",
+        "SRC-ccac-fish-guidelines",
+        "SRC-fema-ready-gov-power-outages",
+        "SRC-cdc-emergency-water-supply",
+        "SRC-inkbird-itc-306a",
+        "SRC-inkbird-itc-308-wifi",
+        "SRC-nws-hurricane-safety"
+      ],
+      "original_source_keys": {
+        "S1": "SRC-usgs-nfm-a6-2-dissolved-oxygen",
+        "S2": "SRC-usgs-do-and-water",
+        "S3": "SRC-epa-caddis-dissolved-oxygen",
+        "S4": "SRC-schulte-2015",
+        "S5": "SRC-uf-ifas-fa002-dissolved-oxygen",
+        "S6": "SRC-usda-nrcs-uapb-pond-aeration",
+        "S7": "SRC-epa-caddis-ammonia",
+        "S8": "SRC-epa-ammonia-criteria-2013",
+        "S9": "SRC-osu-aquaculture-water-quality",
+        "S10": "SRC-afs-aifrb-asih-fishes-in-research-2014",
+        "S11": "SRC-ccac-fish-guidelines",
+        "S12": "SRC-fema-ready-gov-power-outages",
+        "S13": "SRC-cdc-emergency-water-supply",
+        "S14": "SRC-inkbird-itc-306a",
+        "S15": "SRC-inkbird-itc-308-wifi",
+        "S16": "SRC-nws-hurricane-safety"
+      },
+      "verification_status": "registered_pilot_needs_editorial_review",
+      "notes": [
+        "Pilot registry record. Content transcribed from the package without outside correction or expansion.",
+        "The package PDF remains the archived research package; no copies of outside sources are stored.",
+        "Source citation metadata (titles, organizations, URLs) is recorded as given in the package and has not been independently checked against the live sources.",
+        "Two manufacturer sources (S14, S15: INKBIRD product pages) are cited only for model-specific product features and are not independent scientific evidence.",
+        "Package cites S1 and S3 as research basis for evaporative fan cooling; the package's own descriptions of those sources do not mention evaporation. Flagged in source-usage.json for review."
+      ]
+    }
+  ]
+}
