@@ -48,7 +48,7 @@
       "supplementary_verification_source": "Added later during an independent verification pass to support a claim whose original citation was mismatched. Not an original package citation; carries no original_package_key."
     },
     "original_package_key": "Object recording how the source is identified in its package. Summer Heat: key is the package's S# number. PKG-2026-08-gh-kh-ph: the package has no source numbering, so key is the bibliography entry's own author–year (or organization + title) label (key_type 'bibliography_entry_label'), with bibliography_tier, bibliography_tier_position and bibliography_entry_verbatim preserved.",
-    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. The original package citation is never rewritten; it stays in original_package_key."
+    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), section (section or chapter grouping within a reference work), full_review_date and last_updated_date (ISO year-month of a living online reference's last full review and latest update), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. evidence_role_correction (object) records a change to the registry-assigned evidence_role made at verification: the original and corrected roles and a note. The original package citation is never rewritten; it stays in original_package_key."
   },
   "sources": [
     {
@@ -1070,20 +1070,47 @@
         "bibliography_entry_verbatim": "Perry, S. F., Shahsavarani, A., Georgalis, T., Bayaa, M., Furimsky, M., & Thomas, S. L. (2003). Channels, pumps, and exchangers in the gill and kidney of freshwater fishes: their role in ionic and acid-base regulation. Journal of Experimental Zoology Part A, 300(1), 53–62. DOI: 10.1002/jez.a.10309"
       },
       "title": "Channels, pumps, and exchangers in the gill and kidney of freshwater fishes: their role in ionic and acid-base regulation",
-      "author_or_organization": "Perry, S. F.; Shahsavarani, A.; Georgalis, T.; Bayaa, M.; Furimsky, M.; Thomas, S. L.",
-      "publication_or_publisher": "Journal of Experimental Zoology Part A, 300(1), 53–62",
+      "author_or_organization": "Perry, S. F.; Shahsavarani, A.; Georgalis, T.; Bayaa, M.; Furimsky, M.; Thomas, S. L. Y.",
+      "publication_or_publisher": "Journal of Experimental Zoology Part A: Comparative Experimental Biology, 300A(1), 53–62",
       "year": 2003,
+      "authors": [
+        "S. F. Perry",
+        "A. Shahsavarani",
+        "T. Georgalis",
+        "M. Bayaa",
+        "M. Furimsky",
+        "S. L. Y. Thomas"
+      ],
+      "journal": "Journal of Experimental Zoology Part A: Comparative Experimental Biology",
+      "volume": "300A",
+      "issue": "1",
+      "page_range": "53–62",
+      "first_published_online_date": "2003-10-29",
+      "metadata_correction": {
+        "correction_type": "journal_subtitle_author_initials_and_canonical_url",
+        "substantive": false,
+        "applied_in": "GH/KH/pH verification batch 3 (2026-09-25)",
+        "original_package_journal": "Journal of Experimental Zoology Part A",
+        "corrected_journal": "Journal of Experimental Zoology Part A: Comparative Experimental Biology",
+        "original_package_author_initials": "Thomas, S. L.",
+        "corrected_author_initials": "S. L. Y. Thomas",
+        "note": "The package citation was substantially correct. The full journal subtitle, the canonical DOI URL and the complete S. L. Y. Thomas initials have been recorded. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "peer_reviewed",
-      "url": null,
+      "url": "https://doi.org/10.1002/jez.a.10309",
       "doi": "10.1002/jez.a.10309",
       "access_type": null,
       "evidence_role": "peer_reviewed_review",
       "package_description": "Listed in the bibliography only; not cited by name in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "This is a peer-reviewed review summarizing branchial and renal ion transport and acid-base regulation in freshwater fishes, including ion channels, pumps, exchangers, gill ion uptake and renal bicarbonate regulation. METADATA CORRECTION: the package citation was substantially correct; the full journal subtitle (Comparative Experimental Biology), the canonical DOI URL and the complete S. L. Y. Thomas initials have been recorded.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Evidence role inferred from the title only (overview of gill and kidney transport); to be confirmed during verification."
+        "[Registration note; superseded by GH/KH/pH verification batch 3] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 3] Evidence role inferred from the title only (overview of gill and kidney transport); to be confirmed during verification.",
+        "GH/KH/pH verification batch 3 (2026-09-25): title, first five authors, volume 300A, issue 1, pages 53–62, 2003 year and DOI 10.1002/jez.a.10309 confirmed as given in the package. Full journal subtitle and complete S. L. Y. Thomas initials recorded; article first published online October 29, 2003.",
+        "Evidence role confirmed as peer_reviewed_review.",
+        "Canonical URL (DOI resolver) added; the package gave DOI only.",
+        "Remains bibliography-only in the package (see USE-ghkhph-057); no body-claim mapping is created on the basis of topical relevance."
       ]
     },
     {
@@ -1098,21 +1125,48 @@
         "bibliography_entry_verbatim": "Bleich, M., Shan, Q., & Himmerkus, N. (2012). Calcium regulation of tight junction permeability. Annals of the New York Academy of Sciences, 1258, 93–99."
       },
       "title": "Calcium regulation of tight junction permeability",
-      "author_or_organization": "Bleich, M.; Shan, Q.; Himmerkus, N.",
-      "publication_or_publisher": "Annals of the New York Academy of Sciences, 1258, 93–99",
+      "author_or_organization": "Bleich, Markus; Shan, Qixian; Himmerkus, Nina",
+      "publication_or_publisher": "Annals of the New York Academy of Sciences, 1258(1), 93–99",
       "year": 2012,
+      "authors": [
+        "Markus Bleich",
+        "Qixian Shan",
+        "Nina Himmerkus"
+      ],
+      "journal": "Annals of the New York Academy of Sciences",
+      "volume": "1258",
+      "issue": "1",
+      "page_range": "93–99",
+      "publication_date": "2012-07",
+      "metadata_correction": {
+        "correction_type": "missing_locators_and_evidence_role",
+        "substantive": false,
+        "applied_in": "GH/KH/pH verification batch 3 (2026-09-25)",
+        "original_package_locators": "1258, 93–99 (no issue, no DOI)",
+        "corrected_locators": "1258(1), 93–99; DOI 10.1111/j.1749-6632.2012.06539.x",
+        "note": "The package citation was correct as far as it went but omitted the issue and DOI; both have been added along with the canonical DOI URL. Separately, the registry's extraction-stage evidence_role (peer_reviewed_primary_study) was corrected to peer_reviewed_review (see evidence_role_correction). The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
+      "evidence_role_correction": {
+        "applied_in": "GH/KH/pH verification batch 3 (2026-09-25)",
+        "original_registry_evidence_role": "peer_reviewed_primary_study",
+        "corrected_evidence_role": "peer_reviewed_review",
+        "note": "The article is a review of calcium regulation of tight-junction permeability, not a primary experimental study, and it is not fish-specific. The original role was assigned by the registry at extraction, not by the package."
+      },
       "source_type": "peer_reviewed",
-      "url": null,
-      "doi": null,
+      "url": "https://doi.org/10.1111/j.1749-6632.2012.06539.x",
+      "doi": "10.1111/j.1749-6632.2012.06539.x",
       "access_type": null,
-      "evidence_role": "peer_reviewed_primary_study",
+      "evidence_role": "peer_reviewed_review",
       "package_description": "Listed in the bibliography only; not cited by name in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "This article reviews calcium regulation of tight-junction permeability, particularly paracellular calcium transport and claudin-mediated tight-junction regulation. It is not a fish-specific experimental study. The package lists it only in the bibliography and does not explicitly attach it to a fish claim. METADATA CORRECTION: issue 1, DOI 10.1111/j.1749-6632.2012.06539.x and the canonical DOI URL added (the package gave none); evidence_role corrected from peer_reviewed_primary_study to peer_reviewed_review.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No URL or DOI given in the package.",
-        "Topically adjacent to the gill tight-junction calcium model in Section 2.5.1, but the package does not tie this entry to that section."
+        "[Registration note; superseded by GH/KH/pH verification batch 3] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 3] No URL or DOI given in the package.",
+        "Topically adjacent to the gill tight-junction calcium model in Section 2.5.1, but the package does not tie this entry to that section.",
+        "GH/KH/pH verification batch 3 (2026-09-25): title, authors, journal, volume 1258, pages 93–99 and 2012 year confirmed as given in the package. Issue 1, July 2012 publication month, DOI and canonical URL added; full author names recorded.",
+        "EVIDENCE-ROLE CORRECTION: evidence_role changed from peer_reviewed_primary_study to peer_reviewed_review. The article is a review and is not fish-specific.",
+        "Remains bibliography-only in the package (see USE-ghkhph-058). It is NOT retroactively mapped to Section 2.5.1 merely because it is topically relevant to the gill tight-junction calcium model."
       ]
     },
     {
@@ -1127,21 +1181,43 @@
         "bibliography_entry_verbatim": "Wood, C. M., Al-Reasi, H. A., & Smith, D. S. (2011). The two faces of DOC. Aquatic Toxicology, 105S, 3–8."
       },
       "title": "The two faces of DOC",
-      "author_or_organization": "Wood, C. M.; Al-Reasi, H. A.; Smith, D. S.",
-      "publication_or_publisher": "Aquatic Toxicology, 105S, 3–8",
+      "author_or_organization": "Wood, Chris M.; Al-Reasi, H. A.; Smith, D. Scott",
+      "publication_or_publisher": "Aquatic Toxicology, 105(3–4 Supplement), 3–8",
       "year": 2011,
+      "authors": [
+        "Chris M. Wood",
+        "H. A. Al-Reasi",
+        "D. Scott Smith"
+      ],
+      "journal": "Aquatic Toxicology",
+      "volume": "105",
+      "issue": "3–4 Supplement",
+      "page_range": "3–8",
+      "publication_date": "2011-10",
+      "pmid": "22099339",
+      "metadata_correction": {
+        "correction_type": "missing_locators",
+        "substantive": false,
+        "applied_in": "GH/KH/pH verification batch 3 (2026-09-25)",
+        "original_package_locators": "105S, 3–8",
+        "corrected_locators": "105(3–4 Supplement), 3–8; DOI 10.1016/j.aquatox.2011.03.007",
+        "note": "The package's '105S' is a compressed rendering of volume 105, issues 3–4 Supplement. Issue designation, DOI, PMID and canonical DOI URL have been added. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "peer_reviewed",
-      "url": null,
-      "doi": null,
+      "url": "https://doi.org/10.1016/j.aquatox.2011.03.007",
+      "doi": "10.1016/j.aquatox.2011.03.007",
       "access_type": null,
       "evidence_role": "peer_reviewed_review",
       "package_description": "Listed in the bibliography only; not cited by name in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The article reviews how dissolved organic carbon can reduce metal bioavailability and toxicity while emphasizing that different DOC sources differ substantially in protective effectiveness. This is relevant background to the package's DOC discussion, but the package lists it only in the bibliography and does not explicitly cite it for a body claim. METADATA CORRECTION: the package's '105S' recorded as volume 105, issues 3–4 Supplement; DOI 10.1016/j.aquatox.2011.03.007, PMID 22099339 and the canonical DOI URL added (the package gave none).",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No URL or DOI given in the package.",
-        "Topically adjacent to the DOC discussion in Sections 16.6 and 36.2, but the package does not tie this entry to those sections."
+        "[Registration note; superseded by GH/KH/pH verification batch 3] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 3] No URL or DOI given in the package.",
+        "Topically adjacent to the DOC discussion in Sections 16.6 and 36.2, but the package does not tie this entry to those sections.",
+        "GH/KH/pH verification batch 3 (2026-09-25): title, authors, journal, pages 3–8 and 2011 year confirmed as given in the package. Volume/issue recorded as 105, 3–4 Supplement (package: '105S'); October 2011 publication, DOI, PMID and canonical URL added; fuller author names recorded.",
+        "Evidence role confirmed as peer_reviewed_review.",
+        "Remains bibliography-only in the package (see USE-ghkhph-059); this historical distinction is preserved. No body-claim mapping to the DOC discussion (Sections 16.6, 36.2) is created on the basis of topical relevance."
       ]
     },
     {
@@ -1156,21 +1232,57 @@
         "bibliography_entry_verbatim": "Wood, C. M., et al. (2002). Mechanisms of ion transport in Potamotrygon, a stenohaline freshwater elasmobranch native to the ion-poor blackwaters of the Rio Negro. Journal of Experimental Biology, 205, 3039–3054."
       },
       "title": "Mechanisms of ion transport in Potamotrygon, a stenohaline freshwater elasmobranch native to the ion-poor blackwaters of the Rio Negro",
-      "author_or_organization": "Wood, C. M., et al.",
-      "publication_or_publisher": "Journal of Experimental Biology, 205, 3039–3054",
+      "author_or_organization": "Wood, Chris M.; Matsuo, Aline Y. O.; Gonzalez, R. J.; Wilson, Rod W.; Patrick, Marjorie L.; Val, Adalberto Luis",
+      "publication_or_publisher": "Journal of Experimental Biology, 205(19), 3039–3054",
       "year": 2002,
+      "authors": [
+        "Chris M. Wood",
+        "Aline Y. O. Matsuo",
+        "R. J. Gonzalez",
+        "Rod W. Wilson",
+        "Marjorie L. Patrick",
+        "Adalberto Luis Val"
+      ],
+      "journal": "Journal of Experimental Biology",
+      "volume": "205",
+      "issue": "19",
+      "page_range": "3039–3054",
+      "publication_date": "2002-10",
+      "pmid": "12200407",
+      "metadata_correction": {
+        "correction_type": "author_list_completion_and_missing_locators",
+        "substantive": false,
+        "applied_in": "GH/KH/pH verification batch 3 (2026-09-25)",
+        "original_package_authors": [
+          "Wood, C. M., et al."
+        ],
+        "corrected_authors": [
+          "Chris M. Wood",
+          "Aline Y. O. Matsuo",
+          "R. J. Gonzalez",
+          "Rod W. Wilson",
+          "Marjorie L. Patrick",
+          "Adalberto Luis Val"
+        ],
+        "original_package_locators": "205, 3039–3054",
+        "corrected_locators": "205(19), 3039–3054; DOI 10.1242/jeb.205.19.3039",
+        "note": "The package citation was substantially correct but abbreviated the co-authors as 'et al.' and gave no issue, DOI or URL. The full six-author list, issue 19, DOI, PMID and canonical DOI URL have been added. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "peer_reviewed",
-      "url": null,
-      "doi": null,
+      "url": "https://doi.org/10.1242/jeb.205.19.3039",
+      "doi": "10.1242/jeb.205.19.3039",
       "access_type": null,
       "evidence_role": "peer_reviewed_primary_study",
       "package_description": "Listed in the bibliography only; not cited by name in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "This is a primary study of freshwater stingrays from the ion-poor blackwaters of the Rio Negro and their mechanisms of ion regulation. The source is scientifically relevant to the broader blackwater-ionoregulation literature. However, the GH/KH/pH package lists it only in the bibliography and does not explicitly assign it to a body claim. METADATA CORRECTION: the abbreviated 'Wood, C. M., et al.' replaced with the full six-author list (Wood, Matsuo, Gonzalez, Wilson, Patrick, Val); issue 19, DOI 10.1242/jeb.205.19.3039, PMID 12200407 and the canonical DOI URL added.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No URL or DOI given in the package.",
-        "Authored by Wood and colleagues, so it may fall within the Section 27.3 collective reference; the package does not say so, and 27.3 describes characid and cichlid findings rather than stingrays."
+        "[Registration note; superseded by GH/KH/pH verification batch 3] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 3] No URL or DOI given in the package.",
+        "Authored by Wood and colleagues, so it may fall within the Section 27.3 collective reference; the package does not say so, and 27.3 describes characid and cichlid findings rather than stingrays.",
+        "GH/KH/pH verification batch 3 (2026-09-25): title, journal, volume 205, pages 3039–3054 and 2002 year confirmed as given in the package. Abbreviated author listing replaced with the full six-author list; issue 19, October 2002 publication, DOI, PMID and canonical URL added.",
+        "Evidence role confirmed as peer_reviewed_primary_study.",
+        "Remains bibliography-only in the package (see USE-ghkhph-060). The listing is NOT retroactively converted into an inline citation or a Section 27.3 collective-reference mapping."
       ]
     },
     {
@@ -1185,20 +1297,47 @@
         "bibliography_entry_verbatim": "Merck Veterinary Manual. Environmental Diseases of Aquatic Animals in Aquatic Systems. Exotic and Laboratory Animals. https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquatic-systems/environmental-diseases-of-aquatic-animals-in-aquatic-systems"
       },
       "title": "Environmental Diseases of Aquatic Animals in Aquatic Systems",
-      "author_or_organization": "Merck Veterinary Manual",
-      "publication_or_publisher": "Merck Veterinary Manual — Exotic and Laboratory Animals",
-      "year": null,
+      "author_or_organization": "Francis-Floyd, Ruth; Yanong, Roy P. E.; Petty, Barbara D.",
+      "publication_or_publisher": "Merck Veterinary Manual — Exotic and Laboratory Animals — Aquatic Systems",
+      "year": 2026,
+      "authors": [
+        "Ruth Francis-Floyd",
+        "Roy P. E. Yanong",
+        "Barbara D. Petty"
+      ],
+      "publisher": "Merck Veterinary Manual",
+      "section": "Exotic and Laboratory Animals — Aquatic Systems",
+      "full_review_date": "2023-05",
+      "last_updated_date": "2026-06",
+      "metadata_correction": {
+        "correction_type": "missing_authors_and_revision_dates",
+        "substantive": false,
+        "applied_in": "GH/KH/pH verification batch 3 (2026-09-25)",
+        "original_package_authors": null,
+        "corrected_authors": [
+          "Ruth Francis-Floyd",
+          "Roy P. E. Yanong",
+          "Barbara D. Petty"
+        ],
+        "original_package_year": null,
+        "corrected_year": 2026,
+        "note": "The package named only the publication and gave no authors, edition or revision date. The chapter authors and the living-reference dates (full review May 2023; last updated June 2026) have been added; year records the current-version year. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
       "source_type": "veterinary_or_professional",
       "url": "https://www.merckvetmanual.com/exotic-and-laboratory-animals/aquatic-systems/environmental-diseases-of-aquatic-animals-in-aquatic-systems",
       "doi": null,
       "access_type": null,
       "evidence_role": "veterinary_clinical_guidance",
       "package_description": "Cited in-text for diurnal CO₂/pH cycling (Section 1.6), the ≥100 mg/L alkalinity benchmark (Section 3.3), and lethal limits near pH 4 and pH 10 for many species (Section 6.2).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The current page directly states that: in systems containing algae or plants, CO2 fluctuates diurnally; during daylight photosynthesis CO2 falls and pH rises; overnight respiration increases CO2 and pH declines; for most fish, water should have moderate alkalinity; lack of alkalinity can impair biological filtration and result in ammonia accumulation; freshwater total alkalinity should be at least 100 mg/L; most freshwater fish can tolerate reasonable pH fluctuations; and approximate lethal pH limits for many freshwater species are pH 4 and pH 10. LIMITATION: the ≥100 mg/L alkalinity value is veterinary/aquatic-system guidance and should not automatically be presented as a universal minimum KH requirement for every home freshwater aquarium; the package itself records this disagreement and contextual limitation (Section 3.3). METADATA CORRECTION: authors (Ruth Francis-Floyd, Roy P. E. Yanong, Barbara D. Petty) and revision dates (full review May 2023; last updated June 2026) added; the package gave none.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No author, edition or revision date given in the package."
+        "[Registration note; superseded by GH/KH/pH verification batch 3] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 3] No author, edition or revision date given in the package.",
+        "GH/KH/pH verification batch 3 (2026-09-25): chapter located at the package URL (unchanged). Authors recorded as Ruth Francis-Floyd, DVM, DACZM; Roy P. E. Yanong, VMD; Barbara D. Petty, DVM.",
+        "LIVING REFERENCE: this is a living online veterinary reference. The current page is last updated June 2026, while the full review is dated May 2023. year records the current-version year (2026); verification applies to the version current at the time of this batch, and later revisions may change wording.",
+        "Source type (veterinary_or_professional) and evidence role (veterinary_clinical_guidance) confirmed.",
+        "The ≥100 mg/L freshwater alkalinity value is veterinary/aquatic-system guidance, not a universal minimum KH requirement for every home freshwater aquarium. The package's own '[CON] Important disagreement to record' (Section 3.3) is preserved in USE-ghkhph-012."
       ]
     },
     {
@@ -2078,6 +2217,36 @@
         "USE-ghkhph-010",
         "USE-ghkhph-051",
         "USE-ghkhph-056"
+      ]
+    },
+    {
+      "package_id": "PKG-2026-08-gh-kh-ph",
+      "batch": 3,
+      "date": "2026-09-25",
+      "description": "Third independent-verification batch for the GH/KH/pH package: four bibliography-only peer-reviewed sources (gill/kidney transport review, tight-junction calcium review, DOC review, Potamotrygon ion transport) and the Merck Veterinary Manual environmental-diseases chapter.",
+      "source_ids": [
+        "SRC-perry-2003-gill-kidney-channels-pumps",
+        "SRC-bleich-2012-calcium-tight-junction-permeability",
+        "SRC-wood-2011-two-faces-of-doc",
+        "SRC-wood-2002-potamotrygon-ion-transport",
+        "SRC-merck-vet-environmental-diseases-aquatic-systems"
+      ],
+      "substantive_metadata_corrections": [],
+      "evidence_role_corrections": [
+        "SRC-bleich-2012-calcium-tight-junction-permeability"
+      ],
+      "usage_ids_reviewed": [
+        "USE-ghkhph-002",
+        "USE-ghkhph-012",
+        "USE-ghkhph-016",
+        "USE-ghkhph-017",
+        "USE-ghkhph-018",
+        "USE-ghkhph-043",
+        "USE-ghkhph-052",
+        "USE-ghkhph-057",
+        "USE-ghkhph-058",
+        "USE-ghkhph-059",
+        "USE-ghkhph-060"
       ]
     }
   ]

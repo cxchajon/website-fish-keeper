@@ -1032,8 +1032,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "Merck directly describes daytime photosynthesis lowering CO2 and raising pH and overnight respiration increasing CO2 and lowering pH.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 3 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-003",
@@ -1309,9 +1313,14 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "Merck directly states that lack of alkalinity can impair biological filtration and cause ammonia accumulation and recommends freshwater total alkalinity ≥100 mg/L.",
+      "support_limitation": "This verifies the veterinary-reference statement, not a universal requirement that all successful home freshwater aquariums maintain ≥100 mg/L alkalinity.",
+      "replacement_source_needed": false,
       "notes": [
-        "Immediately followed by '[CON] Important disagreement to record': veterinary/aquaculture targets are much higher than many successful soft-water aquariums run (0–2 dKH). The package reconciles the views as optimised for different systems ([INF])."
+        "Immediately followed by '[CON] Important disagreement to record': veterinary/aquaculture targets are much higher than many successful soft-water aquariums run (0–2 dKH). The package reconciles the views as optimised for different systems ([INF]).",
+        "The package's own [CON] disagreement and [INF] reconciliation following this citation are preserved unchanged and remain the package's position.",
+        "GH/KH/pH verification batch 3 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1411,8 +1420,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "Merck directly states that most freshwater fish tolerate reasonable pH fluctuation and gives approximate lethal limits of pH 4 and pH 10 for many species.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 3 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-017",
@@ -1435,9 +1448,14 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "This is a restatement of the same Merck pH 4–10 information verified in the source.",
+      "replacement_source_needed": false,
       "notes": [
-        "Chapter not named at this location; mapped to Environmental Diseases of Aquatic Animals in Aquatic Systems because Section 6.2 explicitly attributes the identical pH 4/pH 10 claim to that chapter. Confirm during verification."
+        "Chapter not named at this location; mapped to Environmental Diseases of Aquatic Animals in Aquatic Systems because Section 6.2 explicitly attributes the identical pH 4/pH 10 claim to that chapter. Confirm during verification.",
+        "Mapping confirmed: the pH 4–10 lethal envelope is present in the Environmental Diseases of Aquatic Animals in Aquatic Systems chapter.",
+        "The package's [INF] tag is preserved separately; the inference that most aquarium incidents are nowhere near this boundary is the package's own, not a Merck statement.",
+        "GH/KH/pH verification batch 3 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1461,10 +1479,15 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "The underlying factual statement concerning approximate lethal pH limits is directly present in Merck.",
+      "support_limitation": "Support covers only the Merck lethal-limit statement. The package's broader survival/thriving/breeding framework is its own inference ([INF]) and is not established by Merck.",
+      "replacement_source_needed": false,
       "notes": [
         "Chapter not named at this location; mapped via the identical claim explicitly cited in Section 6.2. Confirm during verification.",
-        "The package's three-tier framework rates evidence quality for the survival tier as 'Reasonably good', the thriving tier as 'Poor', and the breeding tier as 'Moderate'."
+        "The package's three-tier framework rates evidence quality for the survival tier as 'Reasonably good', the thriving tier as 'Poor', and the breeding tier as 'Moderate'.",
+        "Mapping confirmed: the pH 4/pH 10 lethal limits are present in the Environmental Diseases of Aquatic Animals in Aquatic Systems chapter.",
+        "GH/KH/pH verification batch 3 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2128,9 +2151,15 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "Merck directly states that alkalinity should be ≥100 mg/L in freshwater systems.",
+      "replacement_source_needed": false,
       "notes": [
-        "Quoted without attribution at this location; mapped to the Section 3.3 citation of this benchmark to Environmental Diseases of Aquatic Animals in Aquatic Systems. Confirm during verification."
+        "Quoted without attribution at this location; mapped to the Section 3.3 citation of this benchmark to Environmental Diseases of Aquatic Animals in Aquatic Systems. Confirm during verification.",
+        "Mapping confirmed: the ≥100 mg/L freshwater alkalinity statement is present in the Environmental Diseases of Aquatic Animals in Aquatic Systems chapter.",
+        "The conversion from 100 mg/L as CaCO3 to approximately 5.6 dKH is a package calculation, not a number printed by Merck.",
+        "As with USE-ghkhph-012, the ≥100 mg/L value is veterinary/aquatic-system guidance, not a universal minimum KH requirement for every home freshwater aquarium.",
+        "GH/KH/pH verification batch 3 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2380,9 +2409,15 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "partial_support",
+      "support_reason": "Merck directly supports the narrow factual component that many freshwater fish have approximate lethal pH limits near 4 and 10 and can tolerate reasonable pH fluctuation.",
+      "support_limitation": "Merck does not itself establish the package's broader hobby claim that 'fish adapt to any pH', nor does it independently establish the package's full 'Misleading' classification.",
+      "replacement_source_needed": false,
       "notes": [
-        "Chapter not named at this location; mapped via the identical claim explicitly cited in Section 6.2. Confirm during verification."
+        "Chapter not named at this location; mapped via the identical claim explicitly cited in Section 6.2. Confirm during verification.",
+        "Mapping confirmed: the pH 4/pH 10 lethal limits are present in the Environmental Diseases of Aquatic Animals in Aquatic Systems chapter.",
+        "The package's Section 32 classification ('Misleading.') is preserved verbatim in package_evidence_status and is not altered by this assessment.",
+        "GH/KH/pH verification batch 3 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2482,7 +2517,8 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 3 (2026-09-25): the source itself (Perry et al. (2003)) has now been independently verified (see source record), but it remains bibliography-only in the historical package. support_status kept as not_applicable_listing_only; no body-claim mapping is created merely because the source is topically relevant."
       ]
     },
     {
@@ -2501,7 +2537,9 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 3 (2026-09-25): the source itself (Bleich, Shan & Himmerkus (2012)) has now been independently verified (see source record), but it remains bibliography-only in the historical package. support_status kept as not_applicable_listing_only; no body-claim mapping is created merely because the source is topically relevant.",
+        "Not retroactively mapped to Section 2.5.1: the package does not attach this review to any fish claim, and the review is not fish-specific."
       ]
     },
     {
@@ -2520,7 +2558,8 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 3 (2026-09-25): the source itself (Wood, Al-Reasi & Smith (2011)) has now been independently verified (see source record), but it remains bibliography-only in the historical package. support_status kept as not_applicable_listing_only; no body-claim mapping is created merely because the source is topically relevant."
       ]
     },
     {
@@ -2539,7 +2578,9 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 3 (2026-09-25): the source itself (Wood et al. (2002)) has now been independently verified (see source record), but it remains bibliography-only in the historical package. support_status kept as not_applicable_listing_only; no body-claim mapping is created merely because the source is topically relevant.",
+        "Not retroactively converted into an inline citation or into the Section 27.3 collective reference (USE-ghkhph-051 records only Gonzalez & Wilson 2001 as a candidate)."
       ]
     },
     {
