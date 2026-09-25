@@ -414,6 +414,18 @@ body.media-page[data-ad-qa="true"] .ttg-ad-slot,
   box-shadow: 0 12px 26px rgba(5, 37, 48, 0.16);
 }
 
+/* The University cover includes transparent canvas space; scale only its artwork
+   to match the visible footprint of the other tabletop books. */
+.media-page .alib-book__img--university {
+  inline-size: 165%;
+  block-size: auto;
+  max-inline-size: none;
+  transform: translateY(12%);
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 12px 26px rgba(5, 37, 48, 0.16));
+}
+
 /* soft contact shadow under each book */
 .media-page .alib-book::after{
   content:"";
