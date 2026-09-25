@@ -1,6 +1,6 @@
 {
   "registry": "The Tank Guide University Research Library",
-  "schema_version": "0.1.0-pilot",
+  "schema_version": "0.2.0-pilot",
   "last_updated": "2026-09-25",
   "packages": [
     {
@@ -323,13 +323,53 @@
         "S15": "SRC-inkbird-itc-308-wifi",
         "S16": "SRC-nws-hurricane-safety"
       },
-      "verification_status": "registered_pilot_needs_editorial_review",
+      "verification_status": "source_verification_complete_with_open_items",
       "notes": [
         "Pilot registry record. Content transcribed from the package without outside correction or expansion.",
         "The package PDF remains the archived research package; no copies of outside sources are stored.",
-        "Source citation metadata (titles, organizations, URLs) is recorded as given in the package and has not been independently checked against the live sources.",
+        "[Registration note; superseded by the independent verification pass] Source citation metadata (titles, organizations, URLs) is recorded as given in the package and has not been independently checked against the live sources.",
         "Two manufacturer sources (S14, S15: INKBIRD product pages) are cited only for model-specific product features and are not independent scientific evidence.",
-        "Package cites S1 and S3 as research basis for evaporative fan cooling; the package's own descriptions of those sources do not mention evaporation. Flagged in source-usage.json for review."
+        "[Registration note; superseded by the independent verification pass] Package cites S1 and S3 as research basis for evaporative fan cooling; the package's own descriptions of those sources do not mention evaporation. Flagged in source-usage.json for review.",
+        "Independent source-verification pass applied: all 16 source records now carry a verification_status and verification_note in sources.json, and all 32 usage records carry a support_status in source-usage.json. Historical citation relationships (evidence_relationship) are unchanged.",
+        "FAN-COOLING CITATION PROBLEM: The independent verification pass found that S1 and S3 are legitimate authoritative sources, but neither directly supports the package's specific evaporative-fan-cooling claim (USE-summer-heat-014, USE-summer-heat-015: unsupported_or_mismatched, replacement_source_needed = true). The historical citation must remain preserved. A replacement source is needed before this claim is represented publicly in The Tank Guide University Research Library as externally supported.",
+        "S9 ATTRIBUTION CORRECTION: The source originally registered as an Ohio State aquaculture reference is actually “Water Quality Considerations for Aquaculture” by Robert C. Summerfelt of Iowa State University. Ohio State University South Centers is only the current PDF host. The source ID (SRC-osu-aquaculture-water-quality) remains unchanged for registry stability. The publication year remains unresolved and must not be guessed."
+      ],
+      "verification_status_history": [
+        {
+          "status": "registered_pilot_needs_editorial_review",
+          "note": "Status at pilot registration."
+        },
+        {
+          "status": "source_verification_complete_with_open_items",
+          "note": "Independent source-verification pass (applied 2026-09-25); open items listed in open_items."
+        }
+      ],
+      "open_items": [
+        {
+          "item_id": "OPEN-summer-heat-001",
+          "description": "Find a direct source for evaporative fan cooling.",
+          "related": [
+            "USE-summer-heat-014",
+            "USE-summer-heat-015"
+          ],
+          "status": "open"
+        },
+        {
+          "item_id": "OPEN-summer-heat-002",
+          "description": "Resolve the exact bibliographic year/publication context for Robert C. Summerfelt's “Water Quality Considerations for Aquaculture.”",
+          "related": [
+            "SRC-osu-aquaculture-water-quality"
+          ],
+          "status": "open"
+        },
+        {
+          "item_id": "OPEN-summer-heat-003",
+          "description": "The Tank Guide Life episode-to-package connection remains needs_verification unless separate production records prove it.",
+          "related": [
+            "TGL-EPISODE-tank-running-hot"
+          ],
+          "status": "open"
+        }
       ]
     }
   ]

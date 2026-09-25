@@ -1,6 +1,6 @@
 {
   "registry": "The Tank Guide University Research Library",
-  "schema_version": "0.1.0-pilot",
+  "schema_version": "0.2.0-pilot",
   "last_updated": "2026-09-25",
   "vocabularies": {
     "evidence_relationship": {
@@ -10,7 +10,20 @@
       "manufacturer_guidance": "Manufacturer documentation cited for product features; not independent scientific evidence.",
       "claim_audit_named_source": "Named (by document or organization) in a Claim Audit editorial note, where the package key is unambiguous."
     },
-    "package_evidence_status": "Verbatim Claim Audit status(es) from package Section 12 that apply to the claim; NOT_RATED_IN_CLAIM_AUDIT when the section has no Claim Audit row."
+    "package_evidence_status": "Verbatim Claim Audit status(es) from package Section 12 that apply to the claim; NOT_RATED_IN_CLAIM_AUDIT when the section has no Claim Audit row.",
+    "support_status": {
+      "direct_support": "The source directly states what the package uses it for.",
+      "partial_support": "The source directly supports part of the cited claim but not all of it.",
+      "background_support": "The source provides general context but does not state the specific claim.",
+      "practical_translation": "The source establishes the underlying principle; the package's specific recommendation is a Tank Guide practical application, not something the source directly tested or prescribes.",
+      "limited_analogy": "The source addresses a different context (e.g., human emergency water) and is used only as an analogy.",
+      "manufacturer_feature_documentation": "Official manufacturer documentation verifying model-specific features only; not independent evidence.",
+      "unsupported_or_mismatched": "The source is legitimate but does not support this specific claim strongly enough. The historical citation is preserved.",
+      "needs_review": "Support has not yet been assessed."
+    },
+    "replacement_source_needed": "Boolean. true when the cited source does not adequately support the claim and a replacement or additional source is required before the claim is represented publicly as externally supported.",
+    "support_reason": "Verification-pass explanation of the assigned support_status (null when none was recorded).",
+    "evidence_relationship_note": "evidence_relationship records how the package cited the source (historical fact) and is never changed by verification; support_status separately records how well the source supports that use."
   },
   "usage": [
     {
@@ -33,6 +46,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "partial_support",
+      "support_reason": "Supports temperature-related dissolved-oxygen solubility, but not the metabolism half of the combined claim.",
+      "replacement_source_needed": false,
       "notes": [
         "Section-level citation. The package does not assign individual keys to the solubility claim versus the metabolism claim; both Claim Audit rows apply to this section.",
         "Claim Audit: 'Warm water holds less dissolved oxygen' = SUPPORTED ('Strongly supported by USGS and EPA'). 'Higher temperatures can increase fish metabolism and oxygen demand' = SUPPORTED WITH NUANCE ('Do not assign a universal doubling rate')."
@@ -58,6 +74,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "partial_support",
+      "support_reason": "Directly supports warmer water holding less dissolved oxygen, but not the metabolism half of the combined claim.",
+      "replacement_source_needed": false,
       "notes": [
         "Section-level citation. The package does not assign individual keys to the solubility claim versus the metabolism claim; both Claim Audit rows apply to this section.",
         "Claim Audit: 'Warm water holds less dissolved oxygen' = SUPPORTED ('Strongly supported by USGS and EPA'). 'Higher temperatures can increase fish metabolism and oxygen demand' = SUPPORTED WITH NUANCE ('Do not assign a universal doubling rate')."
@@ -83,6 +102,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "partial_support",
+      "support_reason": "Directly supports warmer water holding less DO, but not the metabolism half of the combined claim.",
+      "replacement_source_needed": false,
       "notes": [
         "Section-level citation. The package does not assign individual keys to the solubility claim versus the metabolism claim; both Claim Audit rows apply to this section.",
         "Claim Audit: 'Warm water holds less dissolved oxygen' = SUPPORTED ('Strongly supported by USGS and EPA'). 'Higher temperatures can increase fish metabolism and oxygen demand' = SUPPORTED WITH NUANCE ('Do not assign a universal doubling rate')."
@@ -108,6 +130,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "partial_support",
+      "support_reason": "Supports the temperature/aerobic-metabolism half of the combined claim, but not water oxygen solubility.",
+      "replacement_source_needed": false,
       "notes": [
         "Section-level citation. The package does not assign individual keys to the solubility claim versus the metabolism claim; both Claim Audit rows apply to this section.",
         "Claim Audit: 'Warm water holds less dissolved oxygen' = SUPPORTED ('Strongly supported by USGS and EPA'). 'Higher temperatures can increase fish metabolism and oxygen demand' = SUPPORTED WITH NUANCE ('Do not assign a universal doubling rate')."
@@ -133,6 +158,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": "UF/IFAS explicitly states both that warm water holds less oxygen and that fish metabolic rate/oxygen demand rises at higher temperature.",
+      "replacement_source_needed": false,
       "notes": [
         "Section-level citation. The package does not assign individual keys to the solubility claim versus the metabolism claim; both Claim Audit rows apply to this section.",
         "Claim Audit: 'Warm water holds less dissolved oxygen' = SUPPORTED ('Strongly supported by USGS and EPA'). 'Higher temperatures can increase fish metabolism and oxygen demand' = SUPPORTED WITH NUANCE ('Do not assign a universal doubling rate')."
@@ -157,6 +185,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": "USGS dissolved-oxygen reference data are appropriate for the oxygen-solubility figure/table use.",
+      "replacement_source_needed": false,
       "notes": [
         "Package caveat: 'These are saturation values, not guaranteed aquarium DO readings.'",
         "Package notes the article's rounded 8.3 / 7.5 mg/L values are 'directionally and numerically reasonable'; precise USGS values are 8.42 and 7.56 mg/L."
@@ -181,8 +212,12 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": null,
+      "replacement_source_needed": false,
       "notes": [
-        "Package: avoid 'Your fish's metabolism doubles over this temperature jump.' Variability by species, size, activity, feeding status, acclimation, and temperature range."
+        "Package: avoid 'Your fish's metabolism doubles over this temperature jump.' Variability by species, size, activity, feeding status, acclimation, and temperature range.",
+        "Limitation (verification pass): Peer-reviewed ectotherm review; broader than ornamental aquarium fish."
       ]
     },
     {
@@ -204,6 +239,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": null,
+      "replacement_source_needed": false,
       "notes": [
         "Package: avoid 'Your fish's metabolism doubles over this temperature jump.' Variability by species, size, activity, feeding status, acclimation, and temperature range."
       ]
@@ -227,6 +265,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": "Summerfelt explicitly states that respiratory rate increases with temperature and following feeding.",
+      "replacement_source_needed": false,
       "notes": [
         "Package: avoid 'Your fish's metabolism doubles over this temperature jump.' Variability by species, size, activity, feeding status, acclimation, and temperature range."
       ]
@@ -251,6 +292,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": "EPA directly states that turbulence enhances atmospheric oxygen absorption.",
+      "replacement_source_needed": false,
       "notes": [
         "The cited sources support the aeration principle (Claim Audit: SUPPORTED). The aquarium applications that follow (air stone, lowering HOB water level, angling nozzle/spray bar) are rated PHYSICS-BASED PRACTICAL INFERENCE, not directly sourced.",
         "Package: do not prescribe a universal one- or two-inch HOB water-level drop."
@@ -276,6 +320,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": "NRCS directly describes turbulence, agitation, bubbling and splashing as increasing oxygen transfer.",
+      "replacement_source_needed": false,
       "notes": [
         "The cited sources support the aeration principle (Claim Audit: SUPPORTED). The aquarium applications that follow (air stone, lowering HOB water level, angling nozzle/spray bar) are rated PHYSICS-BASED PRACTICAL INFERENCE, not directly sourced.",
         "Package: do not prescribe a universal one- or two-inch HOB water-level drop."
@@ -300,6 +347,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "partial_support",
+      "support_reason": "EPA directly documents low-DO biological signs including fish gulping air. The broader statement that these signs are non-diagnostic requires comparison with other stressors.",
+      "replacement_source_needed": false,
       "notes": [
         "Package framing: behaviors 'are not exclusive to heat or hypoxia'; ammonia, nitrite, disease, gill damage, and toxins can produce overlapping signs.",
         "The listed aquarium warning signs (rapid gill movement, surface gathering, lethargy, appetite change, clustering near moving water) are presented as 'reasonable warning signs to discuss', not as sourced diagnostic criteria."
@@ -324,6 +374,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "partial_support",
+      "support_reason": "EPA ammonia material documents increased breathing and other overlapping stress effects, supporting the non-specificity concept, but it is not itself evidence of low DO.",
+      "replacement_source_needed": false,
       "notes": [
         "Package framing: behaviors 'are not exclusive to heat or hypoxia'; ammonia, nitrite, disease, gill damage, and toxins can produce overlapping signs.",
         "The listed aquarium warning signs (rapid gill movement, surface gathering, lethargy, appetite change, clustering near moving water) are presented as 'reasonable warning signs to discuss', not as sourced diagnostic criteria."
@@ -348,10 +401,14 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "unsupported_or_mismatched",
+      "support_reason": "USGS S1 supports dissolved-oxygen solubility and measurement. It does not directly establish that blowing a fan across an aquarium cools the water through evaporation.",
+      "replacement_source_needed": true,
       "notes": [
         "The 'Research basis: S1, S3' line appears at the end of the fan subsection, before 'Reduce avoidable heat input'. The other Section 5 subsections (heat input, frozen bottles, cooler water change) carry no source citation.",
         "Package: do not promise a universal 2°F to 5°F drop.",
-        "FLAG FOR REVIEW: the package's own description of S1 covers oxygen solubility by temperature/pressure, not evaporative cooling. Recorded as cited; relevance to the evaporative-cooling claim needs verification."
+        "FLAG FOR REVIEW: the package's own description of S1 covers oxygen solubility by temperature/pressure, not evaporative cooling. Recorded as cited; relevance to the evaporative-cooling claim needs verification.",
+        "VERIFICATION RESULT: flag resolved as unsupported_or_mismatched. The package cited S1 for this claim (historical citation preserved); S1 does not support this specific claim strongly enough. Replacement source needed before public representation as externally supported."
       ]
     },
     {
@@ -373,10 +430,14 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "unsupported_or_mismatched",
+      "support_reason": "EPA S3 supports turbulence, gas exchange and temperature effects on dissolved oxygen. It does not directly establish evaporative fan cooling.",
+      "replacement_source_needed": true,
       "notes": [
         "The 'Research basis: S1, S3' line appears at the end of the fan subsection, before 'Reduce avoidable heat input'. The other Section 5 subsections (heat input, frozen bottles, cooler water change) carry no source citation.",
         "Package: do not promise a universal 2°F to 5°F drop.",
-        "FLAG FOR REVIEW: the package's own description of S3 covers oxygen absorption, turbulence, and temperature effects on solubility, not evaporative cooling. Recorded as cited; relevance to the evaporative-cooling claim needs verification."
+        "FLAG FOR REVIEW: the package's own description of S3 covers oxygen absorption, turbulence, and temperature effects on solubility, not evaporative cooling. Recorded as cited; relevance to the evaporative-cooling claim needs verification.",
+        "VERIFICATION RESULT: flag resolved as unsupported_or_mismatched. The package cited S3 for this claim (historical citation preserved); S3 does not support this specific claim strongly enough. Replacement source needed before public representation as externally supported."
       ]
     },
     {
@@ -398,6 +459,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "partial_support",
+      "support_reason": "EPA CADDIS supports the importance of pH and temperature in ammonia chemistry/toxicity, but the more precise NH3/NH4+ calculation is better supported by S8.",
+      "replacement_source_needed": false,
       "notes": [
         "Claim Audit: 'Higher pH and temperature increase the fraction of total ammonia present as NH3' = SUPPORTED ('EPA 2013 document provides the chemistry relationship').",
         "Package: 'That does not mean heat creates ammonia. It means the chemical form of existing total ammonia shifts.'"
@@ -422,6 +486,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": null,
+      "replacement_source_needed": false,
       "notes": [
         "Claim Audit: 'Higher pH and temperature increase the fraction of total ammonia present as NH3' = SUPPORTED ('EPA 2013 document provides the chemistry relationship').",
         "Package: 'That does not mean heat creates ammonia. It means the chemical form of existing total ammonia shifts.'"
@@ -446,9 +513,13 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": null,
+      "replacement_source_needed": false,
       "notes": [
         "Derived calculation by the package, not a table reproduced from the source.",
-        "Package caveat: 'a chemistry illustration, not a safe-exposure chart.'"
+        "Package caveat: 'a chemistry illustration, not a safe-exposure chart.'",
+        "Verification pass: The numerical table was calculated by the Tank Guide research package using EPA's equation. It is derived data, not an EPA table."
       ]
     },
     {
@@ -470,6 +541,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "practical_translation",
+      "support_reason": "Summerfelt directly supports increased oxygen consumption following feeding. “Feed lighter during extreme heat” is a practical aquarium translation from that mechanism, not a directly tested recommendation in this source.",
+      "replacement_source_needed": false,
       "notes": [
         "Claim Audit: 'Feeding less can reduce waste and post-feeding oxygen demand' = SUPPORTED / PRACTICAL ('Do not create a universal fasting rule')."
       ]
@@ -493,6 +567,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": "AFS explicitly discusses aeration by compressed air, oxygen or agitation and backup power/generators for fish-holding systems.",
+      "replacement_source_needed": false,
       "notes": [
         "Claim Audit: 'Battery-operated air pumps are useful in outages' = STRONGLY REASONABLE ('Backup aeration aligns with aquatic life-support contingency guidance').",
         "Sources are research-facility guidelines; the hobby recommendations (battery pump, batteries, UPS/power station, load prioritization) are the package's practical translation."
@@ -517,6 +594,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": "CCAC directly calls for emergency contingency capacity maintaining aerated/filtered water and emergency power for life support.",
+      "replacement_source_needed": false,
       "notes": [
         "Claim Audit: 'Battery-operated air pumps are useful in outages' = STRONGLY REASONABLE ('Backup aeration aligns with aquatic life-support contingency guidance').",
         "Sources are research-facility guidelines; the hobby recommendations (battery pump, batteries, UPS/power station, load prioritization) are the package's practical translation."
@@ -541,6 +621,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": "Ready.gov directly supports the generator-outdoors / 20-feet safety statement.",
+      "replacement_source_needed": false,
       "notes": [
         "General household safety guidance, not aquarium-specific."
       ]
@@ -564,6 +647,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "practical_translation",
+      "support_reason": "EPA establishes turbulence/agitation as a gas-transfer mechanism. Manual aquarium scoop-and-pour is a practical application of that principle, not a directly studied method in the source.",
+      "replacement_source_needed": false,
       "notes": [
         "Claim Audit: 'Manual scoop-and-pour agitation can temporarily promote gas exchange' = SUPPORTED PRINCIPLE / PRACTICAL INFERENCE ('Agitation supplies aeration; treat as a temporary stopgap').",
         "Package: no universal manual-aeration interval is proposed; not equivalent to continuous powered aeration."
@@ -588,6 +674,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "practical_translation",
+      "support_reason": "NRCS directly supports splashing/agitation increasing oxygen transfer, but manual scoop-and-pour in a home aquarium is the Tank Guide's translation.",
+      "replacement_source_needed": false,
       "notes": [
         "Claim Audit: 'Manual scoop-and-pour agitation can temporarily promote gas exchange' = SUPPORTED PRINCIPLE / PRACTICAL INFERENCE ('Agitation supplies aeration; treat as a temporary stopgap').",
         "Package: no universal manual-aeration interval is proposed; not equivalent to continuous powered aeration."
@@ -612,6 +701,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "practical_translation",
+      "support_reason": "AFS states that agitation can provide aeration. Manual scoop-and-pour is a hobby-scale translation.",
+      "replacement_source_needed": false,
       "notes": [
         "Claim Audit: 'Manual scoop-and-pour agitation can temporarily promote gas exchange' = SUPPORTED PRINCIPLE / PRACTICAL INFERENCE ('Agitation supplies aeration; treat as a temporary stopgap').",
         "Package: no universal manual-aeration interval is proposed; not equivalent to continuous powered aeration."
@@ -636,6 +728,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "practical_translation",
+      "support_reason": "Ready.gov supports advance outage preparation, supplies, charged devices and alternate power. An aquarium-specific storm kit is the Tank Guide's application of that preparedness principle.",
+      "replacement_source_needed": false,
       "notes": [
         "Sources are general emergency-preparedness guidance; the aquarium storm kit is the package's own translation ('the same preparation mindset can be translated into a dedicated tank emergency kit')."
       ]
@@ -659,6 +754,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "practical_translation",
+      "support_reason": "NWS recommends preparing before hurricane season, assembling an emergency kit and checking emergency equipment. Applying that to aquarium-specific supplies is a Tank Guide translation.",
+      "replacement_source_needed": false,
       "notes": [
         "Sources are general emergency-preparedness guidance; the aquarium storm kit is the package's own translation ('the same preparation mindset can be translated into a dedicated tank emergency kit').",
         "Section 9 prose names 'FEMA/Ready.gov' only; S16 (National Weather Service) is cited in the research-basis line without being named in the prose."
@@ -683,6 +781,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "limited_analogy",
+      "support_reason": "CDC clean-container and covered-storage guidance is written for human emergency drinking water, not aquarium husbandry.",
+      "replacement_source_needed": false,
       "notes": [
         "Package: CDC guidance 'supports the broader clean-container and covered-storage principle, but it is written for human emergency water, not aquarium husbandry.'",
         "Package: 'do not present this as an indefinite water-storage protocol.'"
@@ -707,6 +808,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "manufacturer_feature_documentation",
+      "support_reason": "Official INKBIRD documentation verifies model-specific features only.",
+      "replacement_source_needed": false,
       "notes": [
         "MANUFACTURER SOURCE: supports only what specific product models are advertised to do. Not independent scientific evidence of efficacy or safety.",
         "Package: 'supportable as a brand-specific example, but model features must be described carefully'; 'The episode should say depending on the model.'"
@@ -731,6 +835,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "manufacturer_feature_documentation",
+      "support_reason": "Official INKBIRD documentation verifies model-specific features only.",
+      "replacement_source_needed": false,
       "notes": [
         "MANUFACTURER SOURCE: supports only what specific product models are advertised to do. Not independent scientific evidence of efficacy or safety.",
         "Package: 'supportable as a brand-specific example, but model features must be described carefully'; 'The episode should say depending on the model.'"
@@ -755,6 +862,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": "NRCS directly describes atmospheric oxygen transfer being increased by turbulence and mechanical agitation.",
+      "replacement_source_needed": false,
       "notes": [
         "'NRCS' maps unambiguously to S6 (the only NRCS source). 'EPA' is not mapped here because the package has three EPA sources (S3, S7, S8); see packages.json claim_audit for the unresolved mapping."
       ]
@@ -778,6 +888,9 @@
           "section_mapping": "needs_verification"
         }
       ],
+      "support_status": "direct_support",
+      "support_reason": "EPA explicitly provides the freshwater NH3/NH4+ relationship using pH and temperature.",
+      "replacement_source_needed": false,
       "notes": [
         "'EPA 2013 document' maps unambiguously to S8."
       ]
