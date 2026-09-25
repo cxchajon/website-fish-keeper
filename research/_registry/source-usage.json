@@ -1160,9 +1160,16 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "partial_support",
+      "support_reason": "The 2019 Mekong study (Yanagitsuru et al.) directly demonstrates that environmental calcium can alter low-pH ion loss and that this effect differs by species.",
+      "support_limitation": "It does not directly establish the full molecular statement that calcium occupies tight-junction binding sites and is displaced by H+; that mechanistic model relies on broader prior literature.",
+      "replacement_source_needed": false,
       "notes": [
-        "The same sentence also cites 'reviews by Hunn, 1985 and Wood, 1989', neither of which appears in the bibliography; they are recorded at package level (in_text_citations_without_bibliography_entry) and not registered as sources."
+        "The same sentence also cites 'reviews by Hunn, 1985 and Wood, 1989', neither of which appears in the bibliography; they are recorded at package level (in_text_citations_without_bibliography_entry) and not registered as sources.",
+        "The package's own [STR] tag is preserved unchanged in package_evidence_status and is separate from this support_status assessment.",
+        "The package also cites Hunn 1985 and Wood 1989 for the broader mechanistic model, but those references are not currently present in the bibliography registry.",
+        "Attribution: the package cites this paper as 'Nguyen et al., 2019'; the verified first author is Yuzo R. Yanagitsuru (see source record). original_package_key is preserved verbatim.",
+        "GH/KH/pH verification batch 2 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1186,8 +1193,13 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "Eddy directly measured the stated changes in sodium/chloride efflux and transepithelial potential following changes in environmental calcium.",
+      "replacement_source_needed": false,
+      "notes": [
+        "The package's in-text citation names 'Journal of Comparative Physiology A'; the correct journal is Journal of Comparative Physiology B (see source record). The citation statement is preserved verbatim.",
+        "GH/KH/pH verification batch 2 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-009",
@@ -1210,10 +1222,13 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "partial_support",
+      "support_reason": "The paper directly demonstrates major species-specific differences between cardinal tetras and angelfish in ion regulation, low-pH tolerance and calcium-related permeability. However, the package sentence refers broadly to 'Gonzalez and colleagues, 1997–2021,' so this one paper supports part of a larger body-of-literature statement rather than the whole statement.",
+      "replacement_source_needed": false,
       "notes": [
         "The package describes this as 'one of the most important nuances in this entire document.'",
-        "'Gonzalez and colleagues, 1997–2021' spans works outside the bibliography's listed Gonzalez entries (2001, 2002, 2005); only Gonzalez & Wilson (2001) is named here."
+        "'Gonzalez and colleagues, 1997–2021' spans works outside the bibliography's listed Gonzalez entries (2001, 2002, 2005); only Gonzalez & Wilson (2001) is named here.",
+        "GH/KH/pH verification batch 2 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1237,8 +1252,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "The study directly demonstrates environmental-calcium-dependent gill remodeling in mangrove rivulus.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 2 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-011",
@@ -2331,9 +2350,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "partial_support",
+      "support_reason": "This paper is legitimately part of the larger literature demonstrating species-specific ionoregulatory adaptation in acidic, ion-poor waters, but the package explicitly cites a broader multi-decade body of work.",
+      "replacement_source_needed": false,
       "notes": [
-        "Collective reference: the package points to the bibliography without naming individual works. This entry is recorded as a candidate because its authors and subject (ion regulation in fish from the ion-poor, acidic Rio Negro/blackwaters) match the description. Other bibliography entries by these authors (e.g., Wood et al. 2002, 2003; Wood, Al-Reasi & Smith 2011; Duarte et al. 2016; Morris et al. 2021) may also fall within it; the package does not specify."
+        "Collective reference: the package points to the bibliography without naming individual works. This entry is recorded as a candidate because its authors and subject (ion regulation in fish from the ion-poor, acidic Rio Negro/blackwaters) match the description. Other bibliography entries by these authors (e.g., Wood et al. 2002, 2003; Wood, Al-Reasi & Smith 2011; Duarte et al. 2016; Morris et al. 2021) may also fall within it; the package does not specify.",
+        "GH/KH/pH verification batch 2 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2439,7 +2461,9 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 2 (2026-09-25): support_status kept as not_applicable_listing_only because the package lists this source in the bibliography but does not explicitly connect it to a body claim. Although the verified study (Ambach et al. 2024) is highly relevant to the package's species-specific calcium caveat, historical traceability must be preserved. Do not retroactively claim that the package cited it for a specific section when it did not.",
+        "Attribution: the package's key 'Duarte, R. M., et al. (no year given)' is preserved verbatim; the verified authors are Ambach, Celo, Lim, Marbach, Tikekar & Gonzalez (2024). See source record."
       ]
     },
     {
