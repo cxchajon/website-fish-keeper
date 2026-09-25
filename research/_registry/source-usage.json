@@ -1344,9 +1344,15 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "The WSAVA proceedings directly state an “ideal alkalinity” range of 100–250 mg/L for most freshwater fish species, explain that biological filtration consumes carbonates, and describe falling alkalinity as a risk for sudden pH shifts.",
+      "support_limitation": "This verifies the conference recommendation itself. It does not establish 100–250 mg/L as a universal aquarium requirement across all species and specialist soft-water systems.",
+      "replacement_source_needed": false,
       "notes": [
-        "Followed by the package's '[CON] Important disagreement to record' between veterinary/aquaculture targets and specialist soft-water hobby practice."
+        "Followed by the package's '[CON] Important disagreement to record' between veterinary/aquaculture targets and specialist soft-water hobby practice.",
+        "The package's own [CON] disagreement between veterinary/aquaculture recommendations and specialist soft-water practice is preserved unchanged and remains the package's position.",
+        "The ≈5.6–14 dKH conversion in the citation statement is the package's calculation, not WSAVA wording.",
+        "GH/KH/pH verification batch 4 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1372,8 +1378,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "Merck directly describes the Old Tank Syndrome combination of low or absent alkalinity, low pH, high ammonia and high total hardness.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 4 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-015",
@@ -1994,9 +2004,13 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "Merck directly identifies loss of buffering capacity associated with improper water changes and topping off without removing old water as the cause of Old Tank Syndrome.",
+      "replacement_source_needed": false,
       "notes": [
-        "Section 22.5 (p. 57) later refers to top-offs as 'the specific practice veterinary literature identifies as causal' without naming the chapter."
+        "Section 22.5 (p. 57) later refers to top-offs as 'the specific practice veterinary literature identifies as causal' without naming the chapter.",
+        "Merck also directly states that when total alkalinity reaches zero, pH drops sharply and the biofilter can fail.",
+        "GH/KH/pH verification batch 4 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2020,9 +2034,13 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "Merck directly provides the characteristic Old Tank Syndrome parameter profile: ammonia often >10 mg/L, little or no alkalinity, pH below 6.0 and total hardness of several hundred mg/L.",
+      "replacement_source_needed": false,
       "notes": [
-        "Chapter not named in this sentence; the bibliography annotation for this entry states it is the 'Source for the Old Tank Syndrome definition and parameter profile.'"
+        "Chapter not named in this sentence; the bibliography annotation for this entry states it is the 'Source for the Old Tank Syndrome definition and parameter profile.'",
+        "Mapping confirmed: the parameter profile is present in the Disorders and Diseases of Fish page, consistent with the bibliography annotation.",
+        "GH/KH/pH verification batch 4 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2046,8 +2064,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "Merck directly states that gradual pH decline may allow fish to adapt without outward distress, rapid decline may be fatal, and Old Tank Syndrome is particularly common in tanks with large carnivorous fish.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 4 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-040",
@@ -2070,10 +2092,15 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "The two factual components mapped to this source — topping off without actual water replacement and the characteristic Old Tank Syndrome parameter profile — are explicitly described by Merck.",
+      "support_limitation": "Support covers only the two rows mapped to this source. The package's wider Section 21.4 table classifications (other rows and their tags) are the package's own and are preserved separately; they are not assessed by this usage record.",
+      "replacement_source_needed": false,
       "notes": [
         "Chapter not named in the table; mapped via the explicit Section 21.1 attributions and the bibliography annotation. Confirm during verification.",
-        "Other rows of the same table: 'Alkalinity depletion causes progressive pH decline' [STR/VET] ('Directly stated in veterinary literature'); 'A large water change on such a tank can kill the fish' [STR/VET]; 'Nitrate itself is the acidifier' [MYTH]; '\"Never do a large water change on an old tank\"' [Oversimplified]; 'Old tanks are \"seasoned\" and better' [MYTH]; 'The tank must be torn down completely' [VET, but context-dependent] — the Merck mention in that last row is recorded as an unresolved named-source mention at package level."
+        "Other rows of the same table: 'Alkalinity depletion causes progressive pH decline' [STR/VET] ('Directly stated in veterinary literature'); 'A large water change on such a tank can kill the fish' [STR/VET]; 'Nitrate itself is the acidifier' [MYTH]; '\"Never do a large water change on an old tank\"' [Oversimplified]; 'Old tanks are \"seasoned\" and better' [MYTH]; 'The tank must be torn down completely' [VET, but context-dependent] — the Merck mention in that last row is recorded as an unresolved named-source mention at package level.",
+        "Mapping confirmed for both rows: topping off without water removal and the parameter profile are present in the Disorders and Diseases of Fish page. The unresolved Merck mention in the 'torn down completely' row remains unresolved at package level.",
+        "GH/KH/pH verification batch 4 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2097,9 +2124,13 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "This is a direct restatement of Merck's statement that fish may adapt to gradual pH decline with no outward sign of distress.",
+      "replacement_source_needed": false,
       "notes": [
-        "Chapter not named in the table; mapped via the explicit Section 21.1 attribution of this point to 'Management of Aquarium Fish'. Confirm during verification."
+        "Chapter not named in the table; mapped via the explicit Section 21.1 attribution of this point to 'Management of Aquarium Fish'. Confirm during verification.",
+        "Mapping confirmed: the gradual-decline/no-outward-distress statement is present in the Management of Aquarium Fish chapter.",
+        "GH/KH/pH verification batch 4 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2124,9 +2155,14 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "The source directly supplies the 100–250 mg/L range.",
+      "replacement_source_needed": false,
       "notes": [
-        "Restates the Section 3.3 WSAVA citation as a unit-conversion example."
+        "Restates the Section 3.3 WSAVA citation as a unit-conversion example.",
+        "The conversion of 100–250 mg/L to approximately 5.6–14.0 dKH is a calculation performed by the GH/KH/pH package, not wording printed by WSAVA.",
+        "As with USE-ghkhph-013, the range is a veterinary-conference recommendation, not a universal aquarium requirement.",
+        "GH/KH/pH verification batch 4 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2599,7 +2635,9 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 4 (2026-09-25): the source itself (Equipment Needed for Aquatic Systems and Water Analysis) has now been independently verified (see source record), but it remains bibliography-only in the historical package. support_status kept as not_applicable_listing_only; no body-claim mapping is created merely because the source is topically relevant.",
+        "Not retroactively assigned to the unattributed 'Merck’s water-quality guidance' mention in Section 4.7, which remains unresolved at package level."
       ]
     },
     {
@@ -2618,7 +2656,8 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 4 (2026-09-25): the source itself (Introduction to pet fish medicine and surgery (Proceedings)) has now been independently verified (see source record), but it remains bibliography-only in the historical package. support_status kept as not_applicable_listing_only; no body-claim mapping is created merely because the source is topically relevant."
       ]
     },
     {
