@@ -1,0 +1,786 @@
+{
+  "registry": "The Tank Guide University Research Library",
+  "schema_version": "0.1.0-pilot",
+  "last_updated": "2026-09-25",
+  "vocabularies": {
+    "evidence_relationship": {
+      "research_basis": "Listed in a section's 'Research basis:' line in the package.",
+      "research_basis_limited_scope": "Listed in a 'Research basis:' line, with the package explicitly limiting what the source supports.",
+      "figure_data_source": "Named as 'Source:' for a figure or table.",
+      "manufacturer_guidance": "Manufacturer documentation cited for product features; not independent scientific evidence.",
+      "claim_audit_named_source": "Named (by document or organization) in a Claim Audit editorial note, where the package key is unambiguous."
+    },
+    "package_evidence_status": "Verbatim Claim Audit status(es) from package Section 12 that apply to the claim; NOT_RATED_IN_CLAIM_AUDIT when the section has no Claim Audit row."
+  },
+  "usage": [
+    {
+      "usage_id": "USE-summer-heat-001",
+      "source_id": "SRC-usgs-nfm-a6-2-dissolved-oxygen",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S1",
+      "section_or_claim": "Section 1 — The 'Thermal Oxygen Squeeze' (warm water holds less dissolved oxygen; temperature can increase fish metabolic rate and oxygen demand)",
+      "citation_statement": "Research basis: S1, S2, S3, S4, S5",
+      "package_page": 3,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED",
+        "SUPPORTED WITH NUANCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Section-level citation. The package does not assign individual keys to the solubility claim versus the metabolism claim; both Claim Audit rows apply to this section.",
+        "Claim Audit: 'Warm water holds less dissolved oxygen' = SUPPORTED ('Strongly supported by USGS and EPA'). 'Higher temperatures can increase fish metabolism and oxygen demand' = SUPPORTED WITH NUANCE ('Do not assign a universal doubling rate')."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-002",
+      "source_id": "SRC-usgs-do-and-water",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S2",
+      "section_or_claim": "Section 1 — The 'Thermal Oxygen Squeeze' (warm water holds less dissolved oxygen; temperature can increase fish metabolic rate and oxygen demand)",
+      "citation_statement": "Research basis: S1, S2, S3, S4, S5",
+      "package_page": 3,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED",
+        "SUPPORTED WITH NUANCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Section-level citation. The package does not assign individual keys to the solubility claim versus the metabolism claim; both Claim Audit rows apply to this section.",
+        "Claim Audit: 'Warm water holds less dissolved oxygen' = SUPPORTED ('Strongly supported by USGS and EPA'). 'Higher temperatures can increase fish metabolism and oxygen demand' = SUPPORTED WITH NUANCE ('Do not assign a universal doubling rate')."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-003",
+      "source_id": "SRC-epa-caddis-dissolved-oxygen",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S3",
+      "section_or_claim": "Section 1 — The 'Thermal Oxygen Squeeze' (warm water holds less dissolved oxygen; temperature can increase fish metabolic rate and oxygen demand)",
+      "citation_statement": "Research basis: S1, S2, S3, S4, S5",
+      "package_page": 3,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED",
+        "SUPPORTED WITH NUANCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Section-level citation. The package does not assign individual keys to the solubility claim versus the metabolism claim; both Claim Audit rows apply to this section.",
+        "Claim Audit: 'Warm water holds less dissolved oxygen' = SUPPORTED ('Strongly supported by USGS and EPA'). 'Higher temperatures can increase fish metabolism and oxygen demand' = SUPPORTED WITH NUANCE ('Do not assign a universal doubling rate')."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-004",
+      "source_id": "SRC-schulte-2015",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S4",
+      "section_or_claim": "Section 1 — The 'Thermal Oxygen Squeeze' (warm water holds less dissolved oxygen; temperature can increase fish metabolic rate and oxygen demand)",
+      "citation_statement": "Research basis: S1, S2, S3, S4, S5",
+      "package_page": 3,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED",
+        "SUPPORTED WITH NUANCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Section-level citation. The package does not assign individual keys to the solubility claim versus the metabolism claim; both Claim Audit rows apply to this section.",
+        "Claim Audit: 'Warm water holds less dissolved oxygen' = SUPPORTED ('Strongly supported by USGS and EPA'). 'Higher temperatures can increase fish metabolism and oxygen demand' = SUPPORTED WITH NUANCE ('Do not assign a universal doubling rate')."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-005",
+      "source_id": "SRC-uf-ifas-fa002-dissolved-oxygen",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S5",
+      "section_or_claim": "Section 1 — The 'Thermal Oxygen Squeeze' (warm water holds less dissolved oxygen; temperature can increase fish metabolic rate and oxygen demand)",
+      "citation_statement": "Research basis: S1, S2, S3, S4, S5",
+      "package_page": 3,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED",
+        "SUPPORTED WITH NUANCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Section-level citation. The package does not assign individual keys to the solubility claim versus the metabolism claim; both Claim Audit rows apply to this section.",
+        "Claim Audit: 'Warm water holds less dissolved oxygen' = SUPPORTED ('Strongly supported by USGS and EPA'). 'Higher temperatures can increase fish metabolism and oxygen demand' = SUPPORTED WITH NUANCE ('Do not assign a universal doubling rate')."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-006",
+      "source_id": "SRC-usgs-nfm-a6-2-dissolved-oxygen",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S1",
+      "section_or_claim": "Figure 1 and tropical-tank table — USGS freshwater oxygen-solubility values at 760 mm Hg",
+      "citation_statement": "Source: S1",
+      "package_page": 3,
+      "evidence_relationship": "figure_data_source",
+      "package_evidence_status": [
+        "SUPPORTED"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Package caveat: 'These are saturation values, not guaranteed aquarium DO readings.'",
+        "Package notes the article's rounded 8.3 / 7.5 mg/L values are 'directionally and numerically reasonable'; precise USGS values are 8.42 and 7.56 mg/L."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-007",
+      "source_id": "SRC-schulte-2015",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S4",
+      "section_or_claim": "Section 2 — Fish Metabolism: What We Can Safely Say (higher temperatures can increase metabolism and oxygen demand; response varies)",
+      "citation_statement": "Research basis: S4, S5, S9",
+      "package_page": 4,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED WITH NUANCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Package: avoid 'Your fish's metabolism doubles over this temperature jump.' Variability by species, size, activity, feeding status, acclimation, and temperature range."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-008",
+      "source_id": "SRC-uf-ifas-fa002-dissolved-oxygen",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S5",
+      "section_or_claim": "Section 2 — Fish Metabolism: What We Can Safely Say (higher temperatures can increase metabolism and oxygen demand; response varies)",
+      "citation_statement": "Research basis: S4, S5, S9",
+      "package_page": 4,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED WITH NUANCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Package: avoid 'Your fish's metabolism doubles over this temperature jump.' Variability by species, size, activity, feeding status, acclimation, and temperature range."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-009",
+      "source_id": "SRC-osu-aquaculture-water-quality",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S9",
+      "section_or_claim": "Section 2 — Fish Metabolism: What We Can Safely Say (higher temperatures can increase metabolism and oxygen demand; response varies)",
+      "citation_statement": "Research basis: S4, S5, S9",
+      "package_page": 4,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED WITH NUANCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Package: avoid 'Your fish's metabolism doubles over this temperature jump.' Variability by species, size, activity, feeding status, acclimation, and temperature range."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-010",
+      "source_id": "SRC-epa-caddis-dissolved-oxygen",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S3",
+      "section_or_claim": "Section 3 — Surface Agitation, Gas Exchange, and Aeration (turbulence/agitation enhances atmospheric oxygen transfer)",
+      "citation_statement": "Research basis: S3, S6",
+      "package_page": 4,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED",
+        "PHYSICS-BASED PRACTICAL INFERENCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "The cited sources support the aeration principle (Claim Audit: SUPPORTED). The aquarium applications that follow (air stone, lowering HOB water level, angling nozzle/spray bar) are rated PHYSICS-BASED PRACTICAL INFERENCE, not directly sourced.",
+        "Package: do not prescribe a universal one- or two-inch HOB water-level drop."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-011",
+      "source_id": "SRC-usda-nrcs-uapb-pond-aeration",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S6",
+      "section_or_claim": "Section 3 — Surface Agitation, Gas Exchange, and Aeration (turbulence/agitation enhances atmospheric oxygen transfer)",
+      "citation_statement": "Research basis: S3, S6",
+      "package_page": 4,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED",
+        "PHYSICS-BASED PRACTICAL INFERENCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "The cited sources support the aeration principle (Claim Audit: SUPPORTED). The aquarium applications that follow (air stone, lowering HOB water level, angling nozzle/spray bar) are rated PHYSICS-BASED PRACTICAL INFERENCE, not directly sourced.",
+        "Package: do not prescribe a universal one- or two-inch HOB water-level drop."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-012",
+      "source_id": "SRC-epa-caddis-dissolved-oxygen",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S3",
+      "section_or_claim": "Section 4 — Warning Signs: Useful Clues, Not a Diagnosis (low-DO behaviors such as gulping air; signs overlap with other stressors)",
+      "citation_statement": "Research basis: S3, S7",
+      "package_page": 5,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "NOT_RATED_IN_CLAIM_AUDIT"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Package framing: behaviors 'are not exclusive to heat or hypoxia'; ammonia, nitrite, disease, gill damage, and toxins can produce overlapping signs.",
+        "The listed aquarium warning signs (rapid gill movement, surface gathering, lethargy, appetite change, clustering near moving water) are presented as 'reasonable warning signs to discuss', not as sourced diagnostic criteria."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-013",
+      "source_id": "SRC-epa-caddis-ammonia",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S7",
+      "section_or_claim": "Section 4 — Warning Signs: Useful Clues, Not a Diagnosis (low-DO behaviors such as gulping air; signs overlap with other stressors)",
+      "citation_statement": "Research basis: S3, S7",
+      "package_page": 5,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "NOT_RATED_IN_CLAIM_AUDIT"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Package framing: behaviors 'are not exclusive to heat or hypoxia'; ammonia, nitrite, disease, gill damage, and toxins can produce overlapping signs.",
+        "The listed aquarium warning signs (rapid gill movement, surface gathering, lethargy, appetite change, clustering near moving water) are presented as 'reasonable warning signs to discuss', not as sourced diagnostic criteria."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-014",
+      "source_id": "SRC-usgs-nfm-a6-2-dissolved-oxygen",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S1",
+      "section_or_claim": "Section 5 — Cooling: Fan across the surface (evaporative cooling; no fixed temperature drop)",
+      "citation_statement": "Research basis: S1, S3",
+      "package_page": 5,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED BY PHYSICAL PRINCIPLE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "The 'Research basis: S1, S3' line appears at the end of the fan subsection, before 'Reduce avoidable heat input'. The other Section 5 subsections (heat input, frozen bottles, cooler water change) carry no source citation.",
+        "Package: do not promise a universal 2°F to 5°F drop.",
+        "FLAG FOR REVIEW: the package's own description of S1 covers oxygen solubility by temperature/pressure, not evaporative cooling. Recorded as cited; relevance to the evaporative-cooling claim needs verification."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-015",
+      "source_id": "SRC-epa-caddis-dissolved-oxygen",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S3",
+      "section_or_claim": "Section 5 — Cooling: Fan across the surface (evaporative cooling; no fixed temperature drop)",
+      "citation_statement": "Research basis: S1, S3",
+      "package_page": 5,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED BY PHYSICAL PRINCIPLE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "The 'Research basis: S1, S3' line appears at the end of the fan subsection, before 'Reduce avoidable heat input'. The other Section 5 subsections (heat input, frozen bottles, cooler water change) carry no source citation.",
+        "Package: do not promise a universal 2°F to 5°F drop.",
+        "FLAG FOR REVIEW: the package's own description of S3 covers oxygen absorption, turbulence, and temperature effects on solubility, not evaporative cooling. Recorded as cited; relevance to the evaporative-cooling claim needs verification."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-016",
+      "source_id": "SRC-epa-caddis-ammonia",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S7",
+      "section_or_claim": "Section 6 — The Ammonia Chemistry Worth Teaching (NH3/NH4+ balance depends on pH and temperature; heat does not create ammonia)",
+      "citation_statement": "Research basis: S7, S8",
+      "package_page": 6,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Claim Audit: 'Higher pH and temperature increase the fraction of total ammonia present as NH3' = SUPPORTED ('EPA 2013 document provides the chemistry relationship').",
+        "Package: 'That does not mean heat creates ammonia. It means the chemical form of existing total ammonia shifts.'"
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-017",
+      "source_id": "SRC-epa-ammonia-criteria-2013",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S8",
+      "section_or_claim": "Section 6 — The Ammonia Chemistry Worth Teaching (NH3/NH4+ balance depends on pH and temperature; heat does not create ammonia)",
+      "citation_statement": "Research basis: S7, S8",
+      "package_page": 6,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Claim Audit: 'Higher pH and temperature increase the fraction of total ammonia present as NH3' = SUPPORTED ('EPA 2013 document provides the chemistry relationship').",
+        "Package: 'That does not mean heat creates ammonia. It means the chemical form of existing total ammonia shifts.'"
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-018",
+      "source_id": "SRC-epa-ammonia-criteria-2013",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S8",
+      "section_or_claim": "Figure 2 — Approximate NH3 fraction table (pH 7.0–9.0 at 24°C and 30°C), calculated by the package authors from the EPA 2013 freshwater relationship",
+      "citation_statement": "Source: S8",
+      "package_page": 6,
+      "evidence_relationship": "figure_data_source",
+      "package_evidence_status": [
+        "SUPPORTED"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Derived calculation by the package, not a table reproduced from the source.",
+        "Package caveat: 'a chemistry illustration, not a safe-exposure chart.'"
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-019",
+      "source_id": "SRC-osu-aquaculture-water-quality",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S9",
+      "section_or_claim": "Section 7 — Feeding During Extreme Heat (oxygen consumption increases after feeding; lighter feeding is defensible, universal fasting is not)",
+      "citation_statement": "Research basis: S9",
+      "package_page": 7,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED / PRACTICAL"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Claim Audit: 'Feeding less can reduce waste and post-feeding oxygen demand' = SUPPORTED / PRACTICAL ('Do not create a universal fasting rule')."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-020",
+      "source_id": "SRC-afs-aifrb-asih-fishes-in-research-2014",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S10",
+      "section_or_claim": "Section 8 — Power Outages: Oxygenation Becomes the Priority (aeration by compressed air, oxygen, or agitation; emergency contingency and tested backup power)",
+      "citation_statement": "Research basis: S10, S11",
+      "package_page": 7,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "STRONGLY REASONABLE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Claim Audit: 'Battery-operated air pumps are useful in outages' = STRONGLY REASONABLE ('Backup aeration aligns with aquatic life-support contingency guidance').",
+        "Sources are research-facility guidelines; the hobby recommendations (battery pump, batteries, UPS/power station, load prioritization) are the package's practical translation."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-021",
+      "source_id": "SRC-ccac-fish-guidelines",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S11",
+      "section_or_claim": "Section 8 — Power Outages: Oxygenation Becomes the Priority (aeration by compressed air, oxygen, or agitation; emergency contingency and tested backup power)",
+      "citation_statement": "Research basis: S10, S11",
+      "package_page": 7,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "STRONGLY REASONABLE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Claim Audit: 'Battery-operated air pumps are useful in outages' = STRONGLY REASONABLE ('Backup aeration aligns with aquatic life-support contingency guidance').",
+        "Sources are research-facility guidelines; the hobby recommendations (battery pump, batteries, UPS/power station, load prioritization) are the package's practical translation."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-022",
+      "source_id": "SRC-fema-ready-gov-power-outages",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S12",
+      "section_or_claim": "Section 8 — Generator safety note (generator outdoors, at least 20 feet from building openings; general outage preparation)",
+      "citation_statement": "Research basis: S12",
+      "package_page": 7,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "NOT_RATED_IN_CLAIM_AUDIT"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "General household safety guidance, not aquarium-specific."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-023",
+      "source_id": "SRC-epa-caddis-dissolved-oxygen",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S3",
+      "section_or_claim": "Section 8 — No battery pump? Manual scoop-and-pour agitation as a temporary stopgap",
+      "citation_statement": "Research basis: S3, S6, S10",
+      "package_page": 8,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED PRINCIPLE / PRACTICAL INFERENCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Claim Audit: 'Manual scoop-and-pour agitation can temporarily promote gas exchange' = SUPPORTED PRINCIPLE / PRACTICAL INFERENCE ('Agitation supplies aeration; treat as a temporary stopgap').",
+        "Package: no universal manual-aeration interval is proposed; not equivalent to continuous powered aeration."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-024",
+      "source_id": "SRC-usda-nrcs-uapb-pond-aeration",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S6",
+      "section_or_claim": "Section 8 — No battery pump? Manual scoop-and-pour agitation as a temporary stopgap",
+      "citation_statement": "Research basis: S3, S6, S10",
+      "package_page": 8,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED PRINCIPLE / PRACTICAL INFERENCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Claim Audit: 'Manual scoop-and-pour agitation can temporarily promote gas exchange' = SUPPORTED PRINCIPLE / PRACTICAL INFERENCE ('Agitation supplies aeration; treat as a temporary stopgap').",
+        "Package: no universal manual-aeration interval is proposed; not equivalent to continuous powered aeration."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-025",
+      "source_id": "SRC-afs-aifrb-asih-fishes-in-research-2014",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S10",
+      "section_or_claim": "Section 8 — No battery pump? Manual scoop-and-pour agitation as a temporary stopgap",
+      "citation_statement": "Research basis: S3, S6, S10",
+      "package_page": 8,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "SUPPORTED PRINCIPLE / PRACTICAL INFERENCE"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Claim Audit: 'Manual scoop-and-pour agitation can temporarily promote gas exchange' = SUPPORTED PRINCIPLE / PRACTICAL INFERENCE ('Agitation supplies aeration; treat as a temporary stopgap').",
+        "Package: no universal manual-aeration interval is proposed; not equivalent to continuous powered aeration."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-026",
+      "source_id": "SRC-fema-ready-gov-power-outages",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S12",
+      "section_or_claim": "Section 9 — Storm and Blackout Preparation (prepare batteries and emergency supplies before an outage; aquarium storm kit)",
+      "citation_statement": "Research basis: S12, S16",
+      "package_page": 8,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "NOT_RATED_IN_CLAIM_AUDIT"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Sources are general emergency-preparedness guidance; the aquarium storm kit is the package's own translation ('the same preparation mindset can be translated into a dedicated tank emergency kit')."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-027",
+      "source_id": "SRC-nws-hurricane-safety",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S16",
+      "section_or_claim": "Section 9 — Storm and Blackout Preparation (prepare batteries and emergency supplies before an outage; aquarium storm kit)",
+      "citation_statement": "Research basis: S12, S16",
+      "package_page": 8,
+      "evidence_relationship": "research_basis",
+      "package_evidence_status": [
+        "NOT_RATED_IN_CLAIM_AUDIT"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Sources are general emergency-preparedness guidance; the aquarium storm kit is the package's own translation ('the same preparation mindset can be translated into a dedicated tank emergency kit').",
+        "Section 9 prose names 'FEMA/Ready.gov' only; S16 (National Weather Service) is cited in the research-basis line without being named in the prose."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-028",
+      "source_id": "SRC-cdc-emergency-water-supply",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S13",
+      "section_or_claim": "Section 9 — Pre-staging water in buckets (clean, dedicated, covered containers as short-term storm preparation)",
+      "citation_statement": "Research basis: S13",
+      "package_page": 8,
+      "evidence_relationship": "research_basis_limited_scope",
+      "package_evidence_status": [
+        "PRACTICAL PREPAREDNESS"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "Package: CDC guidance 'supports the broader clean-container and covered-storage principle, but it is written for human emergency water, not aquarium husbandry.'",
+        "Package: 'do not present this as an indefinite water-storage protocol.'"
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-029",
+      "source_id": "SRC-inkbird-itc-306a",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S14",
+      "section_or_claim": "Section 10 — Temperature Controllers and Alerts (INKBIRD as a brand-specific example; features vary by model)",
+      "citation_statement": "Research basis: S14, S15",
+      "package_page": 8,
+      "evidence_relationship": "manufacturer_guidance",
+      "package_evidence_status": [
+        "NOT_RATED_IN_CLAIM_AUDIT"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "MANUFACTURER SOURCE: supports only what specific product models are advertised to do. Not independent scientific evidence of efficacy or safety.",
+        "Package: 'supportable as a brand-specific example, but model features must be described carefully'; 'The episode should say depending on the model.'"
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-030",
+      "source_id": "SRC-inkbird-itc-308-wifi",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S15",
+      "section_or_claim": "Section 10 — Temperature Controllers and Alerts (INKBIRD as a brand-specific example; features vary by model)",
+      "citation_statement": "Research basis: S14, S15",
+      "package_page": 8,
+      "evidence_relationship": "manufacturer_guidance",
+      "package_evidence_status": [
+        "NOT_RATED_IN_CLAIM_AUDIT"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "MANUFACTURER SOURCE: supports only what specific product models are advertised to do. Not independent scientific evidence of efficacy or safety.",
+        "Package: 'supportable as a brand-specific example, but model features must be described carefully'; 'The episode should say depending on the model.'"
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-031",
+      "source_id": "SRC-usda-nrcs-uapb-pond-aeration",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S6",
+      "section_or_claim": "Section 12 Claim Audit row — 'Surface agitation can improve gas exchange' (editorial note names 'EPA and NRCS')",
+      "citation_statement": "Editorial note: 'EPA and NRCS describe turbulence/agitation as enhancing atmospheric oxygen transfer.'",
+      "package_page": 10,
+      "evidence_relationship": "claim_audit_named_source",
+      "package_evidence_status": [
+        "SUPPORTED"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "'NRCS' maps unambiguously to S6 (the only NRCS source). 'EPA' is not mapped here because the package has three EPA sources (S3, S7, S8); see packages.json claim_audit for the unresolved mapping."
+      ]
+    },
+    {
+      "usage_id": "USE-summer-heat-032",
+      "source_id": "SRC-epa-ammonia-criteria-2013",
+      "package_id": "PKG-2026-07-summer-heat",
+      "original_package_key": "S8",
+      "section_or_claim": "Section 12 Claim Audit row — 'Higher pH and temperature increase the fraction of total ammonia present as NH3' (editorial note names 'EPA 2013 document')",
+      "citation_statement": "Editorial note: 'EPA 2013 document provides the chemistry relationship.'",
+      "package_page": 10,
+      "evidence_relationship": "claim_audit_named_source",
+      "package_evidence_status": [
+        "SUPPORTED"
+      ],
+      "related_tank_guide_content": [
+        {
+          "content_id": "TG-ARTICLE-cool-down-fish-tank",
+          "path": "/cool-down-fish-tank/",
+          "section_mapping": "needs_verification"
+        }
+      ],
+      "notes": [
+        "'EPA 2013 document' maps unambiguously to S8."
+      ]
+    }
+  ]
+}

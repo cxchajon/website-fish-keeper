@@ -1,0 +1,392 @@
+{
+  "registry": "The Tank Guide University Research Library",
+  "schema_version": "0.1.0-pilot",
+  "last_updated": "2026-09-25",
+  "vocabularies": {
+    "source_type": [
+      "peer_reviewed",
+      "government",
+      "university_extension",
+      "veterinary_or_professional",
+      "institutional_guideline",
+      "manufacturer",
+      "other"
+    ],
+    "verification_status": {
+      "unverified_citation_from_package": "Citation metadata recorded as given in the package; not yet checked against the live source."
+    },
+    "evidence_role": {
+      "reference_data": "Source of specific numeric values or relationships used by the package.",
+      "explanatory_background": "General explanatory material.",
+      "scientific_principle": "Describes the underlying scientific mechanism.",
+      "peer_reviewed_review": "Peer-reviewed scientific review.",
+      "applied_guidance": "Extension/aquaculture applied guidance; context differs from home aquariums.",
+      "life_support_guideline": "Research-facility aquatic life-support guideline.",
+      "preparedness_and_safety_guidance": "General emergency-preparedness or safety guidance; not aquarium-specific.",
+      "preparedness_context": "Contextual background for severe-weather preparedness; not aquarium-specific.",
+      "analogous_guidance_limited_scope": "Non-aquarium guidance used only for a narrowly stated principle.",
+      "manufacturer_product_documentation": "Vendor documentation of its own product features. Not independent scientific evidence."
+    }
+  },
+  "sources": [
+    {
+      "source_id": "SRC-usgs-nfm-a6-2-dissolved-oxygen",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S1"
+      },
+      "title": "Chapter A6.2, Dissolved Oxygen, National Field Manual for the Collection of Water-Quality Data",
+      "author_or_organization": "U.S. Geological Survey",
+      "publication_or_publisher": "U.S. Geological Survey — National Field Manual for the Collection of Water-Quality Data",
+      "year": null,
+      "source_type": "government",
+      "url": "https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "reference_data",
+      "package_description": "Table 6.2-2 provides freshwater oxygen solubility by temperature and atmospheric pressure.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "Year not stated in the package.",
+        "Package uses Table 6.2-2 values at 760 mm Hg (8.42 mg/L at 24°C, 7.56 mg/L at 30°C) and is the stated source for Figure 1 and the tropical-tank table.",
+        "Package also cites S1 as research basis for the fan/evaporative-cooling subsection; the package's own description of S1 covers oxygen solubility only, so that relationship is recorded as cited but flagged for review in source-usage.json."
+      ]
+    },
+    {
+      "source_id": "SRC-usgs-do-and-water",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S2"
+      },
+      "title": "Dissolved Oxygen and Water",
+      "author_or_organization": "U.S. Geological Survey",
+      "publication_or_publisher": "U.S. Geological Survey — Water Science School",
+      "year": null,
+      "source_type": "government",
+      "url": "https://www.usgs.gov/water-science-school/science/dissolved-oxygen-and-water",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "explanatory_background",
+      "package_description": "Explains that cold water can hold more dissolved oxygen than warm water.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "Year not stated in the package. Web page; publication/update date not recorded."
+      ]
+    },
+    {
+      "source_id": "SRC-epa-caddis-dissolved-oxygen",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S3"
+      },
+      "title": "CADDIS: Dissolved Oxygen",
+      "author_or_organization": "U.S. Environmental Protection Agency",
+      "publication_or_publisher": "U.S. Environmental Protection Agency — CADDIS",
+      "year": null,
+      "source_type": "government",
+      "url": "https://www.epa.gov/caddis/dissolved-oxygen",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "scientific_principle",
+      "package_description": "Describes atmospheric oxygen absorption, enhancement by turbulence, and high-temperature reduction in oxygen solubility.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "Year not stated in the package. Web page; publication/update date not recorded.",
+        "Package also relies on this source for 'fish gulping air' as a biological effect associated with low dissolved oxygen (Section 4)."
+      ]
+    },
+    {
+      "source_id": "SRC-schulte-2015",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S4"
+      },
+      "title": "The effects of temperature on aerobic metabolism",
+      "author_or_organization": "Schulte, P. M.",
+      "publication_or_publisher": "Journal of Experimental Biology",
+      "year": 2015,
+      "source_type": "peer_reviewed",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26085663/",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "peer_reviewed_review",
+      "package_description": "Peer-reviewed review describing temperature-metabolism relationships and thermal performance.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "DOI not given in the package; URL is a PubMed record, not the publisher page.",
+        "Volume, issue, and pages not given in the package.",
+        "Package uses this source to support 'aerobic metabolic rate generally rises with temperature and then can decline at higher temperatures' and explicitly rejects a universal 'metabolism doubles' claim."
+      ]
+    },
+    {
+      "source_id": "SRC-uf-ifas-fa002-dissolved-oxygen",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S5"
+      },
+      "title": "Dissolved Oxygen for Fish Production",
+      "author_or_organization": "University of Florida IFAS Extension",
+      "publication_or_publisher": "University of Florida IFAS Extension (publication FA002, per URL)",
+      "year": null,
+      "source_type": "university_extension",
+      "url": "https://ask.ifas.ufl.edu/publication/FA002",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "applied_guidance",
+      "package_description": "Discusses warm water holding less oxygen and increasing fish physiological oxygen demand.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "Year and authors not stated in the package.",
+        "Aquaculture/fish-production context; package limitations note that home aquariums are smaller systems and application should remain cautious."
+      ]
+    },
+    {
+      "source_id": "SRC-usda-nrcs-uapb-pond-aeration",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S6"
+      },
+      "title": "Aeration of Ponds Used in Aquaculture",
+      "author_or_organization": "USDA Natural Resources Conservation Service / University of Arkansas at Pine Bluff",
+      "publication_or_publisher": "USDA Natural Resources Conservation Service (hosted by University of Arkansas at Pine Bluff)",
+      "year": null,
+      "source_type": "government",
+      "url": "https://uapb.edu/wp-content/uploads/2023/07/NRCS-AEN-3-Aeration-of-Ponds-Used-in-Aquaculture.pdf",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "applied_guidance",
+      "package_description": "Describes diffusion, turbulence, and physical agitation of surface water as mechanisms of atmospheric oxygen transfer.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "Package attributes the document jointly to USDA-NRCS and UAPB; classified as government because the package text and file name identify it as NRCS guidance (NRCS-AEN-3). University co-attribution retained; needs verification.",
+        "Year and authors not stated in the package. The '2023/07' in the URL is the host upload path, not a confirmed publication date.",
+        "Pond aquaculture context; package cautions that home-aquarium application should remain cautious."
+      ]
+    },
+    {
+      "source_id": "SRC-epa-caddis-ammonia",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S7"
+      },
+      "title": "CADDIS: Ammonia",
+      "author_or_organization": "U.S. Environmental Protection Agency",
+      "publication_or_publisher": "U.S. Environmental Protection Agency — CADDIS",
+      "year": null,
+      "source_type": "government",
+      "url": "https://www.epa.gov/caddis/ammonia",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "scientific_principle",
+      "package_description": "Explains ammonia forms, the more toxic un-ionized NH3 form, and effects of pH and temperature.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "Year not stated in the package. Web page; publication/update date not recorded."
+      ]
+    },
+    {
+      "source_id": "SRC-epa-ammonia-criteria-2013",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S8"
+      },
+      "title": "Aquatic Life Ambient Water Quality Criteria for Ammonia - Freshwater 2013",
+      "author_or_organization": "U.S. Environmental Protection Agency",
+      "publication_or_publisher": "U.S. Environmental Protection Agency",
+      "year": 2013,
+      "source_type": "government",
+      "url": "https://www.epa.gov/sites/default/files/2015-08/documents/aquatic-life-ambient-water-quality-criteria-for-ammonia-freshwater-2013.pdf",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "reference_data",
+      "package_description": "Includes ammonia speciation relationships, pH effects, and temperature equation.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "Year 2013 is taken from the document title as given in the package.",
+        "Package uses this source for the '~tenfold per pH unit, ~twofold per 10°C (0–30°C)' relationship and as the basis for its own calculated Figure 2 NH3-fraction table.",
+        "Package caveat: the Figure 2 table is 'a chemistry illustration, not a safe-exposure chart.'"
+      ]
+    },
+    {
+      "source_id": "SRC-osu-aquaculture-water-quality",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S9"
+      },
+      "title": "Water Quality Considerations for Aquaculture",
+      "author_or_organization": "Ohio State University / aquaculture water-quality guidance",
+      "publication_or_publisher": "Ohio State University (OSU South Centers, per URL)",
+      "year": null,
+      "source_type": "university_extension",
+      "url": "https://southcenters.osu.edu/sites/southc/files/site-library/site-images/WaterQualityConsiderations.pdf",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "applied_guidance",
+      "package_description": "Notes increased fish oxygen consumption after feeding and other drivers of oxygen demand.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "Package attribution is itself hedged ('Ohio State University / aquaculture water-quality guidance'); authorship and original publisher need verification.",
+        "Classified university_extension because the package calls it 'Ohio State aquaculture guidance' hosted on an OSU South Centers site; needs verification.",
+        "Year not stated in the package."
+      ]
+    },
+    {
+      "source_id": "SRC-afs-aifrb-asih-fishes-in-research-2014",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S10"
+      },
+      "title": "Guidelines for the Use of Fishes in Research",
+      "author_or_organization": "American Fisheries Society, American Institute of Fishery Research Biologists, and American Society of Ichthyologists and Herpetologists",
+      "publication_or_publisher": "American Fisheries Society et al. (copy hosted by UC Santa Barbara research office)",
+      "year": 2014,
+      "source_type": "institutional_guideline",
+      "url": "https://www.research.ucsb.edu/sites/default/files/policies/iacuc/Guidelines-for-Use-of-Fishes.pdf",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "life_support_guideline",
+      "package_description": "States sufficient aeration can be supplied by compressed air, oxygen, or agitation.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "URL is a third-party institutional copy (UCSB IACUC), not the publishing societies' own site.",
+        "Research-facility context; package cautions that home-aquarium application should remain cautious."
+      ]
+    },
+    {
+      "source_id": "SRC-ccac-fish-guidelines",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S11"
+      },
+      "title": "Guidelines on: the care and use of fish in research, teaching and testing",
+      "author_or_organization": "Canadian Council on Animal Care",
+      "publication_or_publisher": "Canadian Council on Animal Care (copy hosted by Oregon State University research office)",
+      "year": null,
+      "source_type": "institutional_guideline",
+      "url": "https://research.oregonstate.edu/sites/research.oregonstate.edu/files/iacuc/files/aaalac-ccac-fish-2005.pdf",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "life_support_guideline",
+      "package_description": "Recommends emergency contingency capacity, backup power, and longer-outage plans for aquatic life support.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "Year not stated in the package. The URL file name contains '2005', which may indicate the edition but is not confirmed by the package.",
+        "URL is a third-party institutional copy (Oregon State University IACUC), not the CCAC's own site.",
+        "Research-facility context; package cautions that home-aquarium application should remain cautious."
+      ]
+    },
+    {
+      "source_id": "SRC-fema-ready-gov-power-outages",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S12"
+      },
+      "title": "Power Outages",
+      "author_or_organization": "FEMA / Ready.gov",
+      "publication_or_publisher": "Ready.gov (FEMA)",
+      "year": null,
+      "source_type": "government",
+      "url": "https://www.ready.gov/power-outages",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "preparedness_and_safety_guidance",
+      "package_description": "General outage preparation and generator safety guidance.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "Year not stated in the package. Web page; publication/update date not recorded.",
+        "Package uses it for the generator placement safety note (outdoors, at least 20 feet from building openings) and general outage preparation; not aquarium-specific."
+      ]
+    },
+    {
+      "source_id": "SRC-cdc-emergency-water-supply",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S13"
+      },
+      "title": "How to Create and Store an Emergency Water Supply",
+      "author_or_organization": "U.S. Centers for Disease Control and Prevention",
+      "publication_or_publisher": "U.S. Centers for Disease Control and Prevention",
+      "year": null,
+      "source_type": "government",
+      "url": "https://www.cdc.gov/water-emergency/about/how-to-create-and-store-an-emergency-water-supply.html",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "analogous_guidance_limited_scope",
+      "package_description": "Used only for clean-container and covered-storage preparedness principles; it is not aquarium-specific guidance.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "Package explicitly limits this source's use: 'written for human emergency water, not aquarium husbandry.'",
+        "Year not stated in the package."
+      ]
+    },
+    {
+      "source_id": "SRC-inkbird-itc-306a",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S14"
+      },
+      "title": "WiFi Aquarium Temperature Controller ITC-306A (official product page)",
+      "author_or_organization": "INKBIRD",
+      "publication_or_publisher": "INKBIRD (manufacturer website)",
+      "year": null,
+      "source_type": "manufacturer",
+      "url": "https://www.inkbird.com/products/wifi-aquarium-temperature-controller-itc-306a",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "manufacturer_product_documentation",
+      "package_description": "Documents model-specific Wi-Fi/app features.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "MANUFACTURER SOURCE — not independent scientific evidence. Documents the vendor's own advertised product features only.",
+        "Package: the INKBIRD recommendation is 'supportable as a brand-specific example'; features are model-specific and not every controller has Wi-Fi, alerts, dual relays, or heating-and-cooling control.",
+        "The Tank Guide article that relies on this package recommends INKBIRD by name; any commercial relationship is not recorded in the package and is not assessed here.",
+        "Product pages change without versioning; no capture date recorded in the package."
+      ]
+    },
+    {
+      "source_id": "SRC-inkbird-itc-308-wifi",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S15"
+      },
+      "title": "ITC-308 Wi-Fi with Aquarium Probe (official product page)",
+      "author_or_organization": "INKBIRD",
+      "publication_or_publisher": "INKBIRD (manufacturer website)",
+      "year": null,
+      "source_type": "manufacturer",
+      "url": "https://www.inkbird.com/products/itc-308-wifi-with-aquarium-probe",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "manufacturer_product_documentation",
+      "package_description": "Documents model-specific heating and cooling control.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "MANUFACTURER SOURCE — not independent scientific evidence. Documents the vendor's own advertised product features only.",
+        "Package: features are model-specific; INKBIRD is 'a brand example, not a claim that every INKBIRD controller has the same alarms, connectivity, or outputs.'",
+        "Product pages change without versioning; no capture date recorded in the package."
+      ]
+    },
+    {
+      "source_id": "SRC-nws-hurricane-safety",
+      "original_package_key": {
+        "package_id": "PKG-2026-07-summer-heat",
+        "key": "S16"
+      },
+      "title": "Hurricane Safety Tips and Resources",
+      "author_or_organization": "National Weather Service",
+      "publication_or_publisher": "National Weather Service (weather.gov)",
+      "year": null,
+      "source_type": "government",
+      "url": "https://www.weather.gov/safety/hurricane",
+      "doi": null,
+      "access_type": null,
+      "evidence_role": "preparedness_context",
+      "package_description": "Notes Atlantic hurricane season timing and severe-weather preparedness context.",
+      "verification_status": "unverified_citation_from_package",
+      "notes": [
+        "Year not stated in the package. Web page; publication/update date not recorded.",
+        "Cited in Section 9 alongside S12, although the Section 9 prose names only 'FEMA/Ready.gov'. Not aquarium-specific."
+      ]
+    }
+  ]
+}
