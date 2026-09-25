@@ -1612,9 +1612,13 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "manufacturer_feature_documentation",
+      "support_reason": "Official Seachem documentation confirms Equilibrium as a GH/mineral supplement containing calcium, magnesium and potassium salts and confirms its relevant product role.",
+      "replacement_source_needed": false,
       "notes": [
-        "Composition statement is the package's description of the product; not independent evidence."
+        "Composition statement is the package's description of the product; not independent evidence.",
+        "MANUFACTURER SOURCE: this is manufacturer documentation, not independent scientific evidence.",
+        "GH/KH/pH verification batch 8 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1638,8 +1642,13 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "manufacturer_feature_documentation",
+      "support_reason": "Official SaltyShrimp documentation confirms Bee Shrimp Mineral GH+ as a remineralizer that primarily raises GH while having little effect on KH.",
+      "replacement_source_needed": false,
+      "notes": [
+        "MANUFACTURER SOURCE: this is manufacturer documentation, not independent scientific evidence.",
+        "GH/KH/pH verification batch 8 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-023",
@@ -1662,9 +1671,15 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "manufacturer_feature_documentation",
+      "support_reason": "Official Seachem directions directly state that 16 g per 80 L raises GH by approximately 3 dH (1 meq/L). Official manufacturer material also confirms that Equilibrium does not raise KH.",
+      "support_limitation": "The package's approximation of 3 dH as approximately 50 ppm is the package's own calculation/rounding rather than Seachem wording. Verification confirms the manufacturer's statements only, not independent validation of the dosing figure.",
+      "replacement_source_needed": false,
       "notes": [
-        "PACKAGE-DISCLOSED CITATION WARNING: manufacturer dosing figure, independent verification not located (Section 10.4.4; repeated in Document Notes, p. 94). Preserved as disclosed; not corrected."
+        "PACKAGE-DISCLOSED CITATION WARNING: manufacturer dosing figure, independent verification not located (Section 10.4.4; repeated in Document Notes, p. 94). Preserved as disclosed; not corrected.",
+        "MANUFACTURER SOURCE: this is manufacturer documentation, not independent scientific evidence.",
+        "The package's original manufacturer-caveat language ('These are manufacturer figures and are reproduced here as manufacturer claims; independent verification was not located.') is preserved verbatim in citation_statement.",
+        "GH/KH/pH verification batch 8 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1688,9 +1703,14 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "manufacturer_feature_documentation",
+      "support_reason": "Official manufacturer documentation directly states that approximately 3 g per 20 L is used to reach about 6 dH and approximately 200 +/- 50 µS conductivity.",
+      "support_limitation": "This verifies the manufacturer's claim only. The package's disclosure that these values are manufacturer figures rather than independently validated dosing research is preserved.",
+      "replacement_source_needed": false,
       "notes": [
-        "PACKAGE-DISCLOSED CITATION WARNING: manufacturer dosing figure, independent verification not located (Section 10.4.4; repeated in Document Notes, p. 94). Preserved as disclosed; not corrected."
+        "PACKAGE-DISCLOSED CITATION WARNING: manufacturer dosing figure, independent verification not located (Section 10.4.4; repeated in Document Notes, p. 94). Preserved as disclosed; not corrected.",
+        "MANUFACTURER SOURCE: this is manufacturer documentation, not independent scientific evidence.",
+        "GH/KH/pH verification batch 8 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1715,9 +1735,12 @@
         }
       ],
       "support_status": "needs_review",
+      "support_reason": "The historical forum source could not be recovered, and the specific aquarium claim that peat lowers titrated hardness while atomic-absorption calcium remains unchanged has not been independently verified. A traceable replacement source is needed before this observation is publicly presented as externally supported.",
+      "replacement_source_needed": true,
       "notes": [
         "Source identified via the bibliography annotation ('Source of the peat/atomic-absorption claim recorded as contested in Section 12.2.3 and Claim 32'); the body text does not name the forum.",
-        "Hobbyist source — the package states such sources were used for identifying recurring questions and practices, not as scientific evidence."
+        "Hobbyist source — the package states such sources were used for identifying recurring questions and practices, not as scientific evidence.",
+        "GH/KH/pH verification batch 8 (2026-09-25): source unable_to_verify; support_status remains needs_review. The package's historical [CON] tag and 'plausible, mechanistically sensible, unverified' classification are preserved."
       ]
     },
     {
@@ -1859,8 +1882,13 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "The cited 2Hr Aquarist article directly states that aquasoil and its fulvic/humic acids can lower pH independently of CO2 and make direct use of the pH/KH/CO2 table unreliable.",
+      "support_limitation": "The claim is directly supported by the cited publication, but the source is aquarium hobby/commercial educational content rather than peer-reviewed science.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 8 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer. The package's historical [STR] tag is not reinterpreted or downgraded; source_type (aquarium_hobby_publication) records the evidence class of the source."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-031",
@@ -1883,9 +1911,13 @@
         }
       ],
       "support_status": "needs_review",
+      "support_reason": "The exact historical Aquatic Plant Central thread could not be recovered, so its specific source-to-package mapping cannot be independently assessed. No replacement is required merely to preserve the package's historical record because this source was explicitly used as hobbyist/community context rather than scientific evidence.",
+      "replacement_source_needed": false,
       "notes": [
         "The body text does not name this thread. The bibliography annotation ties it to 'the organic-acid interference discussion', which the registry maps to Section 19.4 (p. 51); the package does not give a section number, so the mapping needs review.",
-        "Hobbyist source — used for identifying recurring questions and practices, not as scientific evidence (package tier heading)."
+        "Hobbyist source — used for identifying recurring questions and practices, not as scientific evidence (package tier heading).",
+        "GH/KH/pH verification batch 8 (2026-09-25): source unable_to_verify; support_status remains needs_review.",
+        "The broader organic-acid/pH-KH-CO2 issue is independently discussed by other verified aquarium sources in this package, including 2Hr Aquarist, Practical Fishkeeping and the verified Barr Report discussion. That fact is not used to mark the original APC thread verified."
       ]
     },
     {
@@ -1908,10 +1940,14 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "background_support",
+      "support_reason": "The identified Barr Report thread directly contains discussion of non-carbonate alkalinity and other factors that complicate interpretation of the pH/KH/CO2 relationship. However, the GH/KH/pH package bibliography annotation does not identify exactly which body section this forum discussion was intended to support.",
+      "support_limitation": "The source itself and its topical relevance are verified, but the registry's broad body-section mapping remains contextual rather than a precise historical inline citation. Hobbyist/community discussion; not scientific evidence.",
+      "replacement_source_needed": false,
       "notes": [
         "The body text does not name this forum. The package does not state which section the 'non-carbonate KH discussion' supports; Sections 3.1 (p. 14), 19.4 (p. 51) and 36.5 (p. 87) discuss non-carbonate alkalinity. Mapping needs review.",
-        "Hobbyist source — used for identifying recurring questions and practices, not as scientific evidence (package tier heading)."
+        "Hobbyist source — used for identifying recurring questions and practices, not as scientific evidence (package tier heading).",
+        "GH/KH/pH verification batch 8 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer. The historical hobbyist/community classification is preserved."
       ]
     },
     {
@@ -2341,9 +2377,13 @@
         }
       ],
       "support_status": "needs_review",
+      "support_reason": "The package's claimed spread of shrimp parameter recommendations cannot be independently audited because the individual specialist sources were not named. If the numerical ranges or disagreement are eventually surfaced publicly, the original consulted sites need to be recovered or a new transparent sample of current specialist sources must be documented separately.",
+      "replacement_source_needed": true,
       "notes": [
         "Grouped, unnamed bibliography entry; the bibliography explicitly ties it to Sections 26.5 and 28.3.",
-        "The package treats the disagreement between these sources as data about the unreliability of hobby conventions, not as evidence for any specific target."
+        "The package treats the disagreement between these sources as data about the unreliability of hobby conventions, not as evidence for any specific target.",
+        "GH/KH/pH verification batch 8 (2026-09-25): source unable_to_verify (unnamed group); support_status remains needs_review.",
+        "The original source set has not been silently replaced with newly selected websites. The package's historical evidence labels and classifications are preserved."
       ]
     },
     {
@@ -2369,9 +2409,13 @@
         }
       ],
       "support_status": "needs_review",
+      "support_reason": "The package's claimed spread of shrimp parameter recommendations cannot be independently audited because the individual specialist sources were not named. If the numerical ranges or disagreement are eventually surfaced publicly, the original consulted sites need to be recovered or a new transparent sample of current specialist sources must be documented separately.",
+      "replacement_source_needed": true,
       "notes": [
         "Grouped, unnamed bibliography entry; the bibliography explicitly ties it to Sections 26.5 and 28.3.",
-        "The package treats the disagreement between these sources as data about the unreliability of hobby conventions, not as evidence for any specific target."
+        "The package treats the disagreement between these sources as data about the unreliability of hobby conventions, not as evidence for any specific target.",
+        "GH/KH/pH verification batch 8 (2026-09-25): source unable_to_verify (unnamed group); support_status remains needs_review.",
+        "The original source set has not been silently replaced with newly selected websites. The package's historical evidence labels and classifications are preserved."
       ]
     },
     {
@@ -2538,8 +2582,12 @@
       "package_evidence_status_note": "Section 32 uses its own classification scale; the verbatim classification for this claim is preserved.",
       "related_tank_guide_content": [],
       "support_status": "needs_review",
+      "support_reason": "The package's claimed spread of shrimp parameter recommendations cannot be independently audited because the individual specialist sources were not named. If the numerical ranges or disagreement are eventually surfaced publicly, the original consulted sites need to be recovered or a new transparent sample of current specialist sources must be documented separately.",
+      "replacement_source_needed": true,
       "notes": [
-        "Grouped, unnamed bibliography entry; this claim restates Section 26.5, which the bibliography explicitly ties to these sources."
+        "Grouped, unnamed bibliography entry; this claim restates Section 26.5, which the bibliography explicitly ties to these sources.",
+        "GH/KH/pH verification batch 8 (2026-09-25): source unable_to_verify (unnamed group); support_status remains needs_review.",
+        "The original source set has not been silently replaced with newly selected websites. The package's historical evidence labels and classifications are preserved."
       ]
     },
     {
@@ -2558,9 +2606,12 @@
       "package_evidence_status_note": "Section 32 uses its own classification scale; the verbatim classification for this claim is preserved.",
       "related_tank_guide_content": [],
       "support_status": "needs_review",
+      "support_reason": "The same unrecovered forum citation is the basis for the package's Claim 32 discussion; the specific peat/atomic-absorption observation has not been independently verified.",
+      "replacement_source_needed": true,
       "notes": [
         "Bibliography annotation explicitly ties this source to Claim 32.",
-        "Hobbyist source — used for identifying recurring questions and practices, not as scientific evidence (package tier heading)."
+        "Hobbyist source — used for identifying recurring questions and practices, not as scientific evidence (package tier heading).",
+        "GH/KH/pH verification batch 8 (2026-09-25): source unable_to_verify; support_status remains needs_review. The package's historical 'Classification: Contested.' is unchanged and is not upgraded based on mechanism alone."
       ]
     },
     {
@@ -2577,9 +2628,14 @@
         "[INF]"
       ],
       "related_tank_guide_content": [],
-      "support_status": "needs_review",
+      "support_status": "manufacturer_feature_documentation",
+      "support_reason": "Official Seachem documentation confirms Equilibrium as a product supplying calcium, magnesium and potassium while raising GH rather than KH.",
+      "support_limitation": "This confirms the named product example, not the package's broader inference about when GH supplementation is the correct remedy.",
+      "replacement_source_needed": false,
       "notes": [
-        "Product named as an example; not independent evidence."
+        "Product named as an example; not independent evidence.",
+        "MANUFACTURER SOURCE: this is manufacturer documentation, not independent scientific evidence.",
+        "GH/KH/pH verification batch 8 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer. The package's historical [INF] tag is not reinterpreted."
       ]
     },
     {
@@ -2842,7 +2898,8 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 8 (2026-09-25): both named Aquarium Science component pages (15.6.2 KH pH CO2 Relationships; 14.2.3 Buffering Substrates) have now been independently located and verified, but the historical GH/KH/pH package does not explicitly tie this bibliography entry to a body claim. No retroactive body-claim mapping is created; support_status remains not_applicable_listing_only."
       ]
     }
   ]
