@@ -205,7 +205,7 @@ def check_sitemap() -> Dict[str, object]:
         (loc.text or "").strip()
         for loc in root.findall("sm:url/sm:loc", namespace)
     ]
-    has_university = any(loc.endswith("/pages/university.html") for loc in locs)
+    has_university = any(loc.endswith("/university/") for loc in locs)
     legacy_terms = [
         "copyright.html",
         "privacy.html",
