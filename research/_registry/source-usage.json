@@ -1008,8 +1008,12 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "direct_support",
+      "support_reason": "SRAC 464 directly defines pH as the negative logarithm of molar hydrogen ion concentration.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 5 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-002",
@@ -1060,9 +1064,13 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "partial_support",
+      "support_reason": "SRAC 464 supports the relationship between alkalinity, buffering and wide diurnal pH swings.",
+      "support_limitation": "SRAC 464 does not directly contain the full combined wording that <20 mg/L produces pH 6–10 swings specifically associated with stress, depressed growth and mortality. The co-cited 2013 SRAC 4100 source (USE-ghkhph-004) supplies stronger direct support for the <20 mg/L and approximately pH 6–10 portion.",
+      "replacement_source_needed": false,
       "notes": [
-        "Package caveat in the same section: 'The mechanism transfers; the magnitude does not.' The 20 mg/L ≈ 1.1 dKH aquarium translation that follows is tagged [INF]."
+        "Package caveat in the same section: 'The mechanism transfers; the magnitude does not.' The 20 mg/L ≈ 1.1 dKH aquarium translation that follows is tagged [INF].",
+        "GH/KH/pH verification batch 5 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1086,10 +1094,15 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "partial_support",
+      "support_reason": "SRAC 4100 directly states that total alkalinity below 20 mg/L can allow pH to swing approximately 6–10 during the day and that large daily changes can stress aquatic animals.",
+      "support_limitation": "SRAC 4100 does not directly contain the package's added 'depressed growth and mortality' wording.",
+      "replacement_source_needed": false,
       "notes": [
         "Co-cited with SRAC 464; the package does not assign separate parts of the statement to each source.",
-        "See the SRAC 4100 source record for the title/URL discrepancy as given in the package."
+        "See the SRAC 4100 source record for the title/URL discrepancy as given in the package.",
+        "The SRAC 4100 title/URL discrepancy noted at registration is resolved in the source record: the title is correct and the package URL filename ('Lining') was the error; the canonical URL has been corrected and the package URL preserved as historical_package_url.",
+        "GH/KH/pH verification batch 5 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1286,10 +1299,16 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "unsupported_or_mismatched",
+      "support_reason": "The cited Wurts 2002 article does not support the package's stated hormonal, gonadal-development, or gamete-production claim. It discusses alkalinity/hardness, pH swings, stress, poor growth, mortality, osmoregulation and pond productivity, but not the reproductive mechanism attributed to it.",
+      "replacement_source_needed": true,
       "notes": [
         "Package qualification immediately following: '[CON] This is a broad claim in a review rather than a controlled aquarium finding, and should be treated as directional rather than quantitative.' (continues on p. 13).",
-        "Bibliography annotation repeats that this source is 'cited in this document for the alkalinity-and-reproduction claim, which is flagged as directional rather than quantitative.'"
+        "Bibliography annotation repeats that this source is 'cited in this document for the alkalinity-and-reproduction claim, which is flagged as directional rather than quantitative.'",
+        "The historical citation relationship is preserved because the archived GH/KH/pH package actually cites Wurts 2002 here. The citation statement and package evidence tags are not deleted or rewritten.",
+        "No replacement source is substituted in this batch. A replacement source must be separately verified before this reproductive claim can be publicly represented as externally supported.",
+        "The package's original [AQC] and [CON] labels are preserved separately in package_evidence_status and are unchanged; they record the package's own classification, not the verification result.",
+        "GH/KH/pH verification batch 5 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -1406,8 +1425,13 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
-      "notes": []
+      "support_status": "partial_support",
+      "support_reason": "SRAC 464 directly supports low alkalinity being associated with wide or dangerous pH fluctuations and discusses water chemistry effects on fish stress and health.",
+      "support_limitation": "SRAC 464 does not explicitly state the package's full 'stress, reduced growth, and mortality' formulation as a direct result of the diurnal swings.",
+      "replacement_source_needed": false,
+      "notes": [
+        "GH/KH/pH verification batch 5 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
+      ]
     },
     {
       "usage_id": "USE-ghkhph-016",
@@ -2220,9 +2244,15 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "partial_support",
+      "support_reason": "SRAC 464 directly states that 20 mg/L or more total alkalinity is necessary for good pond productivity and explains that low alkalinity permits wide pH fluctuations.",
+      "support_limitation": "SRAC 464 does not phrase the exact combined statement as 'below 20 mg/L large diurnal pH swings become likely.'",
+      "replacement_source_needed": false,
       "notes": [
-        "Quoted without attribution at this location; restates the Section 1.6 threshold co-cited to Wurts & Durborow (1992) and Wurts & Masser (2013). The package does not say which of the two supplies the quoted wording. Confirm during verification."
+        "Quoted without attribution at this location; restates the Section 1.6 threshold co-cited to Wurts & Durborow (1992) and Wurts & Masser (2013). The package does not say which of the two supplies the quoted wording. Confirm during verification.",
+        "The conversion 20 mg/L ÷ 17.848 ≈ 1.1 dKH is the GH/KH/pH package’s calculation, not wording from SRAC.",
+        "Registration flag resolved in batch 5: the quoted 'no lower than 20 mg/L as CaCO₃ in production ponds' wording is not attributed to SRAC 464; SRAC 464 supports the threshold only as described in support_reason.",
+        "GH/KH/pH verification batch 5 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2247,9 +2277,14 @@
           "package_relationship": "needs_verification"
         }
       ],
-      "support_status": "needs_review",
+      "support_status": "direct_support",
+      "support_reason": "SRAC 4100 directly identifies 20 mg/L as the minimum stated alkalinity/hardness concentration in the aquaculture-pond context and explicitly states that below 20 mg/L alkalinity, large daily pH swings can occur.",
+      "replacement_source_needed": false,
       "notes": [
-        "Quoted without attribution at this location; restates the Section 1.6 threshold co-cited to Wurts & Durborow (1992) and Wurts & Masser (2013). The package does not say which of the two supplies the quoted wording. Confirm during verification."
+        "Quoted without attribution at this location; restates the Section 1.6 threshold co-cited to Wurts & Durborow (1992) and Wurts & Masser (2013). The package does not say which of the two supplies the quoted wording. Confirm during verification.",
+        "The conversion to approximately 1.1 dKH is the package’s calculation rather than wording printed by SRAC.",
+        "Registration flag resolved in batch 5: SRAC 4100 (2013 revision) directly supports the threshold and the pH-swing consequence restated here.",
+        "GH/KH/pH verification batch 5 (2026-09-25): support_status assigned. package_evidence_status (the package's own evidence tags) is unchanged; support_status is the independent verification layer."
       ]
     },
     {
@@ -2676,7 +2711,8 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 5 (2026-09-25): the source itself (Boyd 1979, Water Quality in Warmwater Fish Ponds) has now been independently verified bibliographically (see source record), but it remains bibliography-only in the historical GH/KH/pH package. support_status kept as not_applicable_listing_only; no body-claim mapping is created retroactively."
       ]
     },
     {
@@ -2695,7 +2731,8 @@
       "support_status": "not_applicable_listing_only",
       "notes": [
         "Purely descriptive relationship: the source is listed in the package bibliography but no in-text citation, bibliography annotation or explicit cross-reference ties it to a specific claim.",
-        "The independent verification pass should determine whether it underlies any uncited content."
+        "The independent verification pass should determine whether it underlies any uncited content.",
+        "GH/KH/pH verification batch 5 (2026-09-25): the Tucker (1984) citation is corroborated by the SRAC 464 reference list, but the original 1984 source itself remains unable_to_verify (see source record). support_status kept as not_applicable_listing_only; no body-claim mapping is created for Tucker."
       ]
     },
     {
