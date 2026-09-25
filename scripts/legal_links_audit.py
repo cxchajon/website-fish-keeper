@@ -19,7 +19,6 @@ PAGES: List[Path] = [
     Path("trust-security.html"),
     Path("copyright-dmca.html"),
     Path("media.html"),
-    Path("pages/university.html"),
     Path("pages/community-video-picks.html"),
     Path("university/index.html"),
     Path("journal.html"),
