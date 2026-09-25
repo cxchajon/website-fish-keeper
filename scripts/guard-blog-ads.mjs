@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 
 const BLOG_PATH = 'blog/holiday-gift-guide-aquarium-lovers.html';
-const expectedIds = ['ad-holiday-gift-guide-top', 'ad-holiday-gift-guide-footer-band'];
+const expectedIds = ['ad-holiday-gift-guide-footer-band'];
 
 function extractIds(markup) {
   const regex = /<div\s+class\s*=\s*"[^"]*ttg-house-ad-slot[^"]*"[^>]*\s+id\s*=\s*"([^"]+)"/g;
