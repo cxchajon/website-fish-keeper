@@ -48,7 +48,7 @@
       "supplementary_verification_source": "Added later during an independent verification pass to support a claim whose original citation was mismatched. Not an original package citation; carries no original_package_key."
     },
     "original_package_key": "Object recording how the source is identified in its package. Summer Heat: key is the package's S# number. PKG-2026-08-gh-kh-ph: the package has no source numbering, so key is the bibliography entry's own author–year (or organization + title) label (key_type 'bibliography_entry_label'), with bibliography_tier, bibliography_tier_position and bibliography_entry_verbatim preserved.",
-    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), section (section or chapter grouping within a reference work), full_review_date and last_updated_date (ISO year-month of a living online reference's last full review and latest update), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. evidence_role_correction (object) records a change to the registry-assigned evidence_role made at verification: the original and corrected roles and a note. Added in GH/KH/pH verification batch 4: manual_version (edition/audience version of a reference manual, e.g. Merck 'Pet Owner Version' vs 'Professional Version'), peer_reviewers (list of named reviewers shown on a reference page), author_credentials (post-nominal credentials as published), author_status ('unresolved' when no author can be documented; authors then stays null and no author is inferred), conference, conference_location, conference_dates, proceedings_organization, proceedings_year, abstract_code (congress abstract/session code), vin_document_id (VIN document identifier), and historical_package_url (the URL as given in the package when the canonical url differs). The original package citation is never rewritten; it stays in original_package_key."
+    "verified_bibliographic_fields": "Optional fields added when a source is independently verified: authors (ordered list of full names as published), journal, volume, issue, article_number, page_range, publication_date (ISO date; publication_date_role qualifies it when it is not the issue date), first_published_online_date (ISO date the article first appeared online, recorded when it differs from the issue date or publication year), pmid (PubMed identifier), section (section or chapter grouping within a reference work), full_review_date and last_updated_date (ISO year-month of a living online reference's last full review and latest update), book_series, book_title, editors, publisher. metadata_correction (object) records a substantive citation correction: correction_type, the original package values, the corrected values and a note. evidence_role_correction (object) records a change to the registry-assigned evidence_role made at verification: the original and corrected roles and a note. Added in GH/KH/pH verification batch 4: manual_version (edition/audience version of a reference manual, e.g. Merck 'Pet Owner Version' vs 'Professional Version'), peer_reviewers (list of named reviewers shown on a reference page), author_credentials (post-nominal credentials as published), author_status ('unresolved' when no author can be documented; authors then stays null and no author is inferred), conference, conference_location, conference_dates, proceedings_organization, proceedings_year, abstract_code (congress abstract/session code), vin_document_id (VIN document identifier), and historical_package_url (the URL as given in the package when the canonical url differs). The original package citation is never rewritten; it stays in original_package_key. Added in GH/KH/pH verification batch 5: publication_number (extension/series publication number, e.g. SRAC '464'), edition_status (e.g. 'Revision'), page_count (integer page length of a short publication), pagination (pagination statement as given in library catalog records, e.g. 'vii, 359 pages') and publication_place."
   },
   "sources": [
     {
@@ -1626,20 +1626,31 @@
         "bibliography_entry_verbatim": "Wurts, W. A., & Durborow, R. M. (1992). Interactions of pH, Carbon Dioxide, Alkalinity and Hardness in Fish Ponds. Southern Regional Aquaculture Center Publication No. 464. https://srac.msstate.edu/pdfs/Fact%20Sheets/464%20Interactions%20of%20pH,%20Carbon%20Dioxide,%20Alkalinity%20and%20Hardness%20in%20Fish%20Ponds.pdf"
       },
       "title": "Interactions of pH, Carbon Dioxide, Alkalinity and Hardness in Fish Ponds",
-      "author_or_organization": "Wurts, W. A.; Durborow, R. M.",
+      "author_or_organization": "Wurts, William A.; Durborow, Robert M.",
       "publication_or_publisher": "Southern Regional Aquaculture Center Publication No. 464",
       "year": 1992,
+      "authors": [
+        "William A. Wurts",
+        "Robert M. Durborow"
+      ],
+      "publisher": "Southern Regional Aquaculture Center",
+      "publication_number": "464",
+      "publication_date": "1992-12",
+      "page_count": 4,
       "source_type": "university_extension",
       "url": "https://srac.msstate.edu/pdfs/Fact%20Sheets/464%20Interactions%20of%20pH,%20Carbon%20Dioxide,%20Alkalinity%20and%20Hardness%20in%20Fish%20Ponds.pdf",
       "doi": null,
       "access_type": null,
       "evidence_role": "applied_guidance",
       "package_description": "Cited in-text for the pH definition (Section 1.1), for ponds under ~20 mg/L alkalinity swinging roughly pH 6–10 daily with associated stress, depressed growth and mortality (Section 1.6), and as 'the strongest empirical support' for the stable-pH claim (Section 6.2).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified",
+      "verification_note": "The official SRAC PDF confirms the citation (Southern Regional Aquaculture Center Publication No. 464, December 1992, 4 pages). It directly defines pH as the negative logarithm of the molar hydrogen ion concentration; describes daily pond pH cycling caused by photosynthesis and respiration; states that a total alkalinity of 20 mg/L or more is necessary for good pond productivity and gives a desirable aquaculture range of 75–200 mg/L as CaCO₃; and explains that well-buffered water does not fluctuate widely in pH, while low-alkalinity water can reach dangerously low or high pH. LIMITATION: the 1992 source does not itself explicitly state the package's full wording that low alkalinity causes pH 6–10 swings associated specifically with 'stress, depressed growth, and mortality'; that combined formulation is not attributed to this source here.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "The package itself cautions that pond data transfer by mechanism but not magnitude to home aquariums (Section 1.6 'Important caveat')."
+        "[Registration note; superseded by GH/KH/pH verification batch 5] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "The package itself cautions that pond data transfer by mechanism but not magnitude to home aquariums (Section 1.6 'Important caveat').",
+        "GH/KH/pH verification batch 5 (2026-09-25): official SRAC PDF located at the package URL (unchanged; canonical URL retained). Title, authors (William A. Wurts, Robert M. Durborow), publisher, publication number 464, 1992 year confirmed as given in the package; publication date (December 1992) and length (4 pages) added.",
+        "SCOPE LIMITATION: SRAC 464 supports the pH definition, diurnal pH cycling, the 20 mg/L productivity threshold, the 75–200 mg/L desirable range and the buffering/low-alkalinity fluctuation relationship. It does not explicitly contain the package's combined '<20 mg/L → pH 6–10 swings → stress, depressed growth and mortality' statement; the co-cited 2013 SRAC 4100 revision is the stronger direct source for the <20 mg/L and approximately pH 6–10 portion (see USE-ghkhph-003, USE-ghkhph-004).",
+        "Source type (university_extension) and evidence role (applied_guidance) confirmed. The package's own caveat that pond data transfer by mechanism but not magnitude to home aquariums is unchanged."
       ]
     },
     {
@@ -1654,20 +1665,43 @@
         "bibliography_entry_verbatim": "Wurts, W. A., & Masser, M. P. (2013). Liming Ponds for Aquaculture. Southern Regional Aquaculture Center Publication No. 4100. https://srac.msstate.edu/pdfs/Fact%20Sheets/4100%20Lining%20Ponds%20for%20Aquaculture.pdf"
       },
       "title": "Liming Ponds for Aquaculture",
-      "author_or_organization": "Wurts, W. A.; Masser, M. P.",
-      "publication_or_publisher": "Southern Regional Aquaculture Center Publication No. 4100",
+      "author_or_organization": "Wurts, William A.; Masser, Michael P.",
+      "publication_or_publisher": "Southern Regional Aquaculture Center Publication No. 4100 (Revision, August 2013)",
       "year": 2013,
+      "authors": [
+        "William A. Wurts",
+        "Michael P. Masser"
+      ],
+      "publisher": "Southern Regional Aquaculture Center",
+      "publication_number": "4100",
+      "edition_status": "Revision",
+      "publication_date": "2013-08",
+      "historical_package_url": "https://srac.msstate.edu/pdfs/Fact%20Sheets/4100%20Lining%20Ponds%20for%20Aquaculture.pdf",
+      "metadata_correction": {
+        "correction_type": "package_url_filename_and_canonical_url",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 5 (2026-09-25)",
+        "original_package_url": "https://srac.msstate.edu/pdfs/Fact%20Sheets/4100%20Lining%20Ponds%20for%20Aquaculture.pdf",
+        "corrected_url": "https://extension.rwfm.tamu.edu/wp-content/uploads/sites/8/2013/09/SRAC-Publication-No.-4100-Liming-Ponds-for-Aquaculture.pdf",
+        "original_package_url_filename_title": "4100 Lining Ponds for Aquaculture",
+        "corrected_title": "Liming Ponds for Aquaculture",
+        "note": "The package bibliography gives the correct title ('Liming Ponds for Aquaculture') but a URL whose filename reads '4100 Lining Ponds for Aquaculture.pdf'. The verified Texas A&M-hosted SRAC PDF of the August 2013 revision is recorded as the canonical URL; the package URL is preserved verbatim as historical_package_url and in original_package_key.bibliography_entry_verbatim for historical traceability only. Title, authors, publication number and 2013 year are unchanged; edition status (Revision) and publication date (August 2013) added. The archived package PDF is not altered."
+      },
       "source_type": "university_extension",
-      "url": "https://srac.msstate.edu/pdfs/Fact%20Sheets/4100%20Lining%20Ponds%20for%20Aquaculture.pdf",
+      "url": "https://extension.rwfm.tamu.edu/wp-content/uploads/sites/8/2013/09/SRAC-Publication-No.-4100-Liming-Ponds-for-Aquaculture.pdf",
       "doi": null,
       "access_type": null,
       "evidence_role": "applied_guidance",
       "package_description": "Cited in-text alongside SRAC 464 for low-alkalinity ponds swinging roughly pH 6–10 within a day (Section 1.6).",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The official 2013 revision of SRAC Publication No. 4100 directly states that alkalinity below 20 mg/L often leads to large daily pH swings; that pH can swing widely from approximately 6 to 10 during the day when total alkalinity is below 20 mg/L; that these large daily pH changes can stress aquatic animals; that raising alkalinity buffers the water and reduces pH swings; and that 20 mg/L is the minimum stated concentration for both alkalinity and hardness in the aquaculture-pond context. LIMITATION: this source directly supports the pH 6–10 and stress portions of the package statement but does not explicitly state the package's additional 'depressed growth and mortality' wording in that same claim. METADATA CORRECTION: the package URL filename reads 'Lining' rather than 'Liming'; the verified Texas A&M-hosted SRAC PDF is recorded as the canonical URL and the package URL is preserved as historical_package_url.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "CITATION DISCREPANCY AS GIVEN IN THE PACKAGE (not corrected here): the title reads 'Liming Ponds for Aquaculture' but the URL filename reads '4100 Lining Ponds for Aquaculture.pdf'. To be checked during verification."
+        "[Registration note; superseded by GH/KH/pH verification batch 5] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 5] CITATION DISCREPANCY AS GIVEN IN THE PACKAGE (not corrected here): the title reads 'Liming Ponds for Aquaculture' but the URL filename reads '4100 Lining Ponds for Aquaculture.pdf'. To be checked during verification. RESOLVED in batch 5: the title is correct; the URL filename ('Lining') is the error.",
+        "GH/KH/pH verification batch 5 (2026-09-25): August 2013 revision located as a Texas A&M-hosted SRAC PDF; canonical URL https://extension.rwfm.tamu.edu/wp-content/uploads/sites/8/2013/09/SRAC-Publication-No.-4100-Liming-Ponds-for-Aquaculture.pdf. Authors William A. Wurts and Michael P. Masser; Southern Regional Aquaculture Center Publication No. 4100; edition status Revision.",
+        "URL CORRECTION: the historical package URL (with the 'Lining' filename) is preserved verbatim only for traceability, in historical_package_url, metadata_correction.original_package_url and original_package_key.bibliography_entry_verbatim. It is not the canonical URL.",
+        "SCOPE LIMITATION: supports <20 mg/L alkalinity allowing daily pH swings of approximately 6–10 and those swings stressing aquatic animals; does not itself state the package's added 'depressed growth and mortality' wording.",
+        "Source type (university_extension) and evidence role (applied_guidance) confirmed."
       ]
     },
     {
@@ -1682,21 +1716,45 @@
         "bibliography_entry_verbatim": "Wurts, W. A. Alkalinity and Hardness in Production Ponds. World Aquaculture. (Review; cited in this document for the alkalinity-and-reproduction claim, which is flagged as directional rather than quantitative.)"
       },
       "title": "Alkalinity and Hardness in Production Ponds",
-      "author_or_organization": "Wurts, W. A.",
-      "publication_or_publisher": "World Aquaculture",
-      "year": null,
-      "source_type": "other",
+      "author_or_organization": "Wurts, William A.",
+      "publication_or_publisher": "World Aquaculture, 33(1), 16–17",
+      "year": 2002,
+      "authors": [
+        "William A. Wurts"
+      ],
+      "journal": "World Aquaculture",
+      "volume": "33",
+      "issue": "1",
+      "page_range": "16–17",
+      "publication_date": "2002-03",
+      "metadata_correction": {
+        "correction_type": "missing_year_volume_issue_pages_and_source_type",
+        "substantive": true,
+        "applied_in": "GH/KH/pH verification batch 5 (2026-09-25)",
+        "original_package_year": null,
+        "corrected_year": 2002,
+        "original_package_volume_issue_pages": null,
+        "corrected_volume_issue_pages": "33(1), 16–17",
+        "original_registry_source_type": "other",
+        "corrected_source_type": "professional_association",
+        "note": "The package gave only author, title and 'World Aquaculture', annotated as a '(Review ...)'. Verified metadata added: World Aquaculture 33(1):16–17, March 2002. Source type corrected from the registration placeholder 'other' to 'professional_association' (World Aquaculture is the World Aquaculture Society's magazine). This is not a peer-reviewed scientific article and not a controlled study; the package's word 'Review' is preserved only in the verbatim bibliography entry. No DOI has been established and no official World Aquaculture Society article URL has been independently established, so url and doi remain null. The original bibliography entry is preserved verbatim in original_package_key.bibliography_entry_verbatim; the archived package PDF is not altered."
+      },
+      "source_type": "professional_association",
       "url": null,
       "doi": null,
       "access_type": null,
       "evidence_role": "applied_guidance",
       "package_description": "Bibliography annotation: '(Review; cited in this document for the alkalinity-and-reproduction claim, which is flagged as directional rather than quantitative.)' Cited in-text in Section 2.5.5.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified_with_metadata_correction",
+      "verification_note": "The article directly states that production-pond alkalinity should be no lower than 20 mg/L as CaCO₃; that when alkalinity is below this level, pond pH can swing roughly from 6 to 10 during the day; and that large daily pH changes can cause stress, poor growth and even death of farmed aquatic animals. It also discusses hardness, calcium, osmoregulation, shell hardening, nutrient availability, phytoplankton and pond productivity. CITATION MISMATCH: the article contains no discussion of hormonal regulation, gonad development, egg or sperm production, or gamete production as an effect of alkalinity fluctuation, and therefore does not support the reproductive claim the package attributes to it (see USE-ghkhph-011). CLASSIFICATION: a World Aquaculture (World Aquaculture Society magazine) article giving applied guidance; not a peer-reviewed scientific article and not a controlled study. METADATA CORRECTION: year (2002), volume 33, issue 1, pages 16–17 and publication date (March 2002) added; source type corrected to professional_association.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "Package gives no year, volume, pages, URL or DOI. Year is not inferred here.",
-        "Source type recorded as 'other' (trade/society magazine article, per the publication name given); to be confirmed during verification."
+        "[Registration note; superseded by GH/KH/pH verification batch 5] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 5] Package gives no year, volume, pages, URL or DOI. Year is not inferred here.",
+        "[Registration note; superseded by GH/KH/pH verification batch 5] Source type recorded as 'other' (trade/society magazine article, per the publication name given); to be confirmed during verification.",
+        "GH/KH/pH verification batch 5 (2026-09-25): verified as Wurts, William A. (2002). Alkalinity and Hardness in Production Ponds. World Aquaculture 33(1):16–17, March 2002.",
+        "NOT PEER REVIEWED: the package bibliography annotation calls this a '(Review ...)'. It is a professional-association magazine article, not a peer-reviewed review and not a controlled study. evidence_role remains applied_guidance.",
+        "NO DOI / NO CANONICAL URL: no DOI has been established and no official World Aquaculture Society article URL has been independently established during verification; url and doi remain null rather than invented.",
+        "CITATION MISMATCH (USE-ghkhph-011): the package cites this article for alkalinity swings disturbing hormonal regulation, gonad development and gamete production. The article does not contain that claim. The historical citation is preserved; no replacement source has been assigned in this batch."
       ]
     },
     {
@@ -1711,20 +1769,30 @@
         "bibliography_entry_verbatim": "Boyd, C. E. (1979). Water Quality in Warmwater Fish Ponds. Auburn University Agricultural Experiment Station."
       },
       "title": "Water Quality in Warmwater Fish Ponds",
-      "author_or_organization": "Boyd, C. E.",
+      "author_or_organization": "Boyd, Claude E.",
       "publication_or_publisher": "Auburn University Agricultural Experiment Station",
       "year": 1979,
+      "authors": [
+        "Claude E. Boyd"
+      ],
+      "publisher": "Auburn University Agricultural Experiment Station",
+      "publication_place": "Auburn, Alabama",
+      "pagination": "vii, 359 pages",
       "source_type": "book_or_book_chapter",
       "url": null,
       "doi": null,
       "access_type": null,
       "evidence_role": "applied_guidance",
       "package_description": "Listed in the bibliography only; not cited by name in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "verified",
+      "verification_note": "Independent bibliographic records from the National Agricultural Library/AGRIS and other library catalogs confirm the 1979 Auburn University Agricultural Experiment Station monograph Water Quality in Warmwater Fish Ponds by Claude E. Boyd (Auburn, Alabama; vii, 359 pages). SCOPE: the historical package lists Boyd 1979 in the bibliography only and does not explicitly cite it for a body claim; verification of the source does not create a body-claim mapping.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No URL or DOI given in the package."
+        "[Registration note; superseded by GH/KH/pH verification batch 5] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 5] No URL or DOI given in the package.",
+        "GH/KH/pH verification batch 5 (2026-09-25): bibliographically verified against National Agricultural Library/AGRIS and other library catalog records. Author Claude E. Boyd; publisher Auburn University Agricultural Experiment Station; place Auburn, Alabama; 1979; vii, 359 pages. Title, author, publisher and year confirmed as given in the package.",
+        "No URL or DOI recorded; none is established for this monograph.",
+        "BIBLIOGRAPHY-ONLY: remains listing-only in the historical package (USE-ghkhph-063). No body-claim mapping is created retroactively.",
+        "Source type (book_or_book_chapter) and evidence role (applied_guidance) confirmed."
       ]
     },
     {
@@ -1742,17 +1810,27 @@
       "author_or_organization": "Tucker, C. S.",
       "publication_or_publisher": "In T. L. Wellborn, Jr. & J. R. MacMillan (Eds.), For Fish Farmers 84-2. Mississippi Cooperative Extension Service",
       "year": 1984,
+      "book_title": "For Fish Farmers 84-2",
+      "editors": [
+        "T. L. Wellborn, Jr.",
+        "J. R. MacMillan"
+      ],
+      "publisher": "Mississippi Cooperative Extension Service",
       "source_type": "university_extension",
       "url": null,
       "doi": null,
       "access_type": null,
       "evidence_role": "applied_guidance",
       "package_description": "Listed in the bibliography only; not cited by name in the body.",
-      "verification_status": "unverified_citation_from_package",
-      "verification_note": null,
+      "verification_status": "unable_to_verify",
+      "verification_note": "The bibliographic citation is independently corroborated by the official 1992 SRAC Publication No. 464 (SRC-srac-464-ph-co2-alkalinity-hardness-fish-ponds), which cites Tucker (1984) in its reference list and attributes carbon-dioxide tables/material to Tucker (1984). However, the original 1984 'For Fish Farmers 84-2' publication itself was not located in an accessible primary archive during this verification pass. The source's existence and citation are therefore well corroborated, but its original document content and complete publication metadata have not been independently inspected. Metadata is kept exactly as given in the package; no URL, DOI, page range, additional authors or other publication details have been added. Status remains unable_to_verify until an original or authoritative archived copy is located.",
       "notes": [
-        "Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
-        "No URL or DOI given in the package."
+        "[Registration note; superseded by GH/KH/pH verification batch 5] Extraction stage: citation metadata recorded exactly as given in the package bibliography; not checked against the live source. Fields the package does not provide are null.",
+        "[Registration note; superseded by GH/KH/pH verification batch 5] No URL or DOI given in the package.",
+        "GH/KH/pH verification batch 5 (2026-09-25): NOT VERIFIED. Package metadata preserved: C. S. Tucker; 'Carbon dioxide'; 1984; in For Fish Farmers 84-2, T. L. Wellborn, Jr. & J. R. MacMillan (Eds.); Mississippi Cooperative Extension Service. book_title, editors and publisher are split out from the package's own entry, not from an inspected original.",
+        "CORROBORATION ONLY: the 1992 SRAC 464 reference list cites Tucker (1984) and SRAC 464 attributes carbon-dioxide tables/material to it. This corroborates the citation's existence but is not an inspection of the original document.",
+        "Do not add a URL, DOI, page range, additional authors or other publication details until the original 1984 publication or an authoritative archived copy has been inspected.",
+        "BIBLIOGRAPHY-ONLY: remains listing-only in the historical package (USE-ghkhph-064). No body-claim mapping is created."
       ]
     },
     {
@@ -2411,6 +2489,46 @@
         "USE-ghkhph-042",
         "USE-ghkhph-061",
         "USE-ghkhph-062"
+      ]
+    },
+    {
+      "package_id": "PKG-2026-08-gh-kh-ph",
+      "batch": 5,
+      "date": "2026-09-25",
+      "description": "Fifth independent-verification batch for the GH/KH/pH package: the aquaculture and fisheries sources (SRAC 464, SRAC 4100 2013 revision, Wurts 2002 World Aquaculture, Boyd 1979 Auburn monograph and Tucker 1984 For Fish Farmers).",
+      "source_ids": [
+        "SRC-srac-464-ph-co2-alkalinity-hardness-fish-ponds",
+        "SRC-srac-4100-liming-ponds-aquaculture",
+        "SRC-wurts-alkalinity-hardness-production-ponds",
+        "SRC-boyd-1979-water-quality-warmwater-fish-ponds",
+        "SRC-tucker-1984-carbon-dioxide-for-fish-farmers"
+      ],
+      "substantive_metadata_corrections": [
+        "SRC-srac-4100-liming-ponds-aquaculture",
+        "SRC-wurts-alkalinity-hardness-production-ponds"
+      ],
+      "evidence_role_corrections": [],
+      "source_type_corrections": [
+        "SRC-wurts-alkalinity-hardness-production-ponds"
+      ],
+      "unable_to_verify": [
+        "SRC-tucker-1984-carbon-dioxide-for-fish-farmers"
+      ],
+      "unresolved_items": [
+        "SRC-tucker-1984-carbon-dioxide-for-fish-farmers: original 1984 'For Fish Farmers 84-2' publication not located in an accessible primary archive; citation corroborated only via the SRAC 464 reference list.",
+        "USE-ghkhph-011: Wurts 2002 does not support the hormonal/gonad/gamete reproductive claim; replacement source needed and must be separately verified. No replacement assigned in this batch.",
+        "SRC-wurts-alkalinity-hardness-production-ponds: no DOI and no official World Aquaculture Society article URL established."
+      ],
+      "usage_ids_reviewed": [
+        "USE-ghkhph-001",
+        "USE-ghkhph-003",
+        "USE-ghkhph-004",
+        "USE-ghkhph-011",
+        "USE-ghkhph-015",
+        "USE-ghkhph-044",
+        "USE-ghkhph-045",
+        "USE-ghkhph-063",
+        "USE-ghkhph-064"
       ]
     }
   ]
