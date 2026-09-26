@@ -1411,7 +1411,7 @@
     "adult_size_basis": "standard_length",
     "min_tank_liters": 200,
     "min_tank_basis": "unspecified",
-    "min_tank_length_in": 39.4,
+    "min_tank_length_in": 39,
     "min_tank_length_basis": "source",
     "blackwater": null,
     "husbandry_review": {
@@ -1430,7 +1430,7 @@
             "min_tank_length_in",
             "adult_size_in"
           ],
-          "claim": "An aquarium measuring 100 × 40 × 50 cm (~200 L) should be the smallest considered; max 150 mm SL."
+          "claim": "An aquarium measuring 100 × 40 × 50 cm (39 × 16 in base, ~200 L) should be the smallest considered; max 150 mm SL."
         },
         {
           "title": "Aquarium Co-Op — Care Guide for Freshwater Angelfish",
@@ -1527,7 +1527,7 @@
     "adult_size_basis": "body_length",
     "min_tank_liters": 19,
     "min_tank_basis": "group",
-    "min_tank_length_in": 12,
+    "min_tank_length_in": 11.8,
     "min_tank_length_basis": "source",
     "blackwater": null,
     "husbandry_review": {
@@ -1871,7 +1871,7 @@
     "adult_size_basis": "total_length",
     "min_tank_liters": 68,
     "min_tank_basis": "unspecified",
-    "min_tank_length_in": 30,
+    "min_tank_length_in": 29.5,
     "min_tank_length_basis": "source",
     "blackwater": null,
     "husbandry_review": {
@@ -3372,7 +3372,7 @@
     "adult_size_basis": "total_length",
     "min_tank_liters": 108,
     "min_tank_basis": "unspecified",
-    "min_tank_length_in": 47.2,
+    "min_tank_length_in": 48,
     "min_tank_length_basis": "source",
     "blackwater": null,
     "sex_ratio_guidance": "If both sexes are kept, more females than males.",
@@ -3392,7 +3392,7 @@
             "min_tank_length_in",
             "adult_size_in"
           ],
-          "claim": "Surface dimensions of 120 × 30 cm or equivalent should be the smallest considered (108 L); males to 14 cm, females to 16 cm TL."
+          "claim": "Surface dimensions of 120 × 30 cm (48 × 12 in) or equivalent should be the smallest considered (108 L); males to 14 cm, females to 16 cm TL."
         },
         {
           "title": "Fishkeeper UK — Swordtail",

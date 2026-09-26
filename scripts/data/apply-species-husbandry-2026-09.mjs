@@ -121,11 +121,11 @@ const SPECIES = {
   'freshwater-angelfish': {
     scientific_name: 'Pterophyllum scalare', category: 'fish',
     adult_size_in: 6.0, adult_size_basis: 'standard_length',
-    min_tank_liters: 200, min_tank_basis: 'unspecified', min_tank_length_in: 39.4, min_tank_length_basis: 'source',
+    min_tank_liters: 200, min_tank_basis: 'unspecified', min_tank_length_in: 39, min_tank_length_basis: 'source',
     canonical_tank_source: 'Seriously Fish — Pterophyllum scalare',
     addTags: ['cichlid', 'territorial', 'longfin_target'],
     sources: [
-      src(1, 'Seriously Fish — Pterophyllum “scalare” (Angelfish)', SF('pterophyllum-scalare'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in'], 'An aquarium measuring 100 × 40 × 50 cm (~200 L) should be the smallest considered; max 150 mm SL.'),
+      src(1, 'Seriously Fish — Pterophyllum “scalare” (Angelfish)', SF('pterophyllum-scalare'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in'], 'An aquarium measuring 100 × 40 × 50 cm (39 × 16 in base, ~200 L) should be the smallest considered; max 150 mm SL.'),
       src(2, 'Aquarium Co-Op — Care Guide for Freshwater Angelfish', 'https://www.aquariumcoop.com/blogs/aquarium/angelfish-care-guide', ['min_tank_liters'], 'In a 29-gallon community tank keep no more than four adult angelfish.'),
       src(2, 'AquaInfo — Pterophyllum scalare', 'https://aquainfo.nl/en/article/pterophyllum-scalare-angelfish/', ['min_tank_length_in'], 'Groups need ~150 cm length and 50–60 cm height.', SUMMARY),
     ],
@@ -134,7 +134,7 @@ const SPECIES = {
   'ghost-shrimp': {
     scientific_name: 'Palaemonetes paludosus (syn. Palaemon paludosus)', category: 'shrimp',
     adult_size_in: 1.6, adult_size_basis: 'body_length',
-    min_tank_liters: 19, min_tank_basis: 'group', min_tank_length_in: 12, min_tank_length_basis: 'source',
+    min_tank_liters: 19, min_tank_basis: 'group', min_tank_length_in: 11.8, min_tank_length_basis: 'source',
     canonical_tank_source: 'FishLore — Ghost Shrimp profile (no higher-tier tank value found)',
     sources: [
       src(4, 'FishLore — Ghost Shrimp Care', 'https://www.fishlore.com/profile-ghostshrimp.htm', ['min_tank_liters'], 'Minimum aquarium size 5 gallons; about three per gallon.', SUMMARY),
@@ -158,7 +158,7 @@ const SPECIES = {
   'hillstream-loach': {
     scientific_name: 'Sewellia lineolata', category: 'fish',
     adult_size_in: 2.8, adult_size_basis: 'total_length',
-    min_tank_liters: 68, min_tank_basis: 'unspecified', min_tank_length_in: 30, min_tank_length_basis: 'source',
+    min_tank_liters: 68, min_tank_basis: 'unspecified', min_tank_length_in: 29.5, min_tank_length_basis: 'source',
     canonical_tank_source: 'Seriously Fish — Sewellia lineolata',
     sources: [
       src(1, 'Seriously Fish — Sewellia lineolata (Tiger Hillstream Loach)', SF('sewellia-lineolata'), ['min_tank_liters', 'min_tank_length_in', 'flow'], 'Minimum base dimensions of 75 × 30 cm (68 L by the site’s convention); strong, well-oxygenated flow.'),
@@ -279,12 +279,12 @@ const SPECIES = {
   'swordtail': {
     scientific_name: 'Xiphophorus hellerii', category: 'fish',
     adult_size_in: 6.3, adult_size_basis: 'total_length',
-    min_tank_liters: 108, min_tank_basis: 'unspecified', min_tank_length_in: 47.2, min_tank_length_basis: 'source',
+    min_tank_liters: 108, min_tank_basis: 'unspecified', min_tank_length_in: 48, min_tank_length_basis: 'source',
     canonical_tank_source: 'Seriously Fish — Xiphophorus hellerii',
     schoolingMinimum: 1, addTags: ['livebearer'],
     sex_ratio_guidance: 'If both sexes are kept, more females than males.',
     sources: [
-      src(1, 'Seriously Fish — Xiphophorus hellerii (Green Swordtail)', SF('xiphophorus-hellerii/'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in'], 'Surface dimensions of 120 × 30 cm or equivalent should be the smallest considered (108 L); males to 14 cm, females to 16 cm TL.'),
+      src(1, 'Seriously Fish — Xiphophorus hellerii (Green Swordtail)', SF('xiphophorus-hellerii/'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in'], 'Surface dimensions of 120 × 30 cm (48 × 12 in) or equivalent should be the smallest considered (108 L); males to 14 cm, females to 16 cm TL.'),
       src(2, 'Fishkeeper UK — Swordtail', 'https://www.fishkeeper.co.uk/fish/freshwater/livebearers/swordtail', ['min_tank_length_in'], 'Minimum 3 ft (90 cm) tank length.', SUMMARY),
     ],
     disagreements: 'General guides give 75 L / 90 cm; Seriously Fish (tier 1) selected. Reviewer also reported 108 L / 48 × 12 in.',
