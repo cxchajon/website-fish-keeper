@@ -422,3 +422,15 @@ precision than the model has; whole percent would be more honest.
    These should be green before any Stocking Advisor deploy.
 4. **Review of the relative table (§7)** by the site owner, especially Swordtail, Angelfish, Kuhli
    Loach and Mystery Snail, which move most and depend on size data.
+
+## 17. Test results
+
+- Unit (`npm run test:unit`): 57 pass, 0 fail, 1 todo (Pea Puffer crowding gap, §11).
+- `guard:live`, `audit:controls`: pass. FAQPage JSON-LD parses.
+- Stocking gate (`test:e2e:stocking-gate`, desktop + mobile Chromium): 9–10 of 11 pass on this branch.
+  The same two tests fail on unmodified `main`: the 20-long test (stale warning ID after #2207,
+  verified against commit 7e3f0f9) and an intermittent mobile "tank-too-small visible" check.
+- `tests/e2e.spec.js` + `tests/stocking-env-header.spec.ts` (Chromium): 11 of 12 fail, and the
+  **same 11 fail on `main`**, including the unrelated Contact & Feedback tests. The suite is stale
+  and was not changed here.
+- Old cached JS + new JSON was checked: the previous adapter still loads and calculates.
