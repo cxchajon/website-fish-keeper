@@ -42,8 +42,8 @@ test('A: Blue Ram ("Shrimp (all sizes)") + Cherry Shrimp is red, before and afte
 });
 
 test('B: juvenile-only data ("Shrimp (juvenile)") is amber and says juvenile', () => {
-  assert.ok(risks('molly').includes('Shrimp (juvenile)'));
-  const w = find(run([['neocaridina', 10], ['molly', 3]]), 'predation.shrimp.molly.neocaridina');
+  assert.deepEqual(risks('cardinal-tetra'), ['Shrimp (juvenile)']);
+  const w = find(run([['neocaridina', 10], ['cardinal', 6]]), 'predation.shrimp.cardinal.neocaridina');
   assert.equal(w.severity, 'warn');
   assert.match(w.title, /may eat juvenile Cherry Shrimp/);
   assert.match(w.message, /Adult Cherry Shrimp may coexist, but shrimplets are at risk/);
@@ -59,8 +59,6 @@ test('C/D: a named shrimp type is red for that type only', () => {
   // turn it back into a generic warning.
   const amano = run([['amano', 6], ['betta_male', 1]]);
   assert.equal(find(amano, 'predation.shrimp.betta_male.amano'), undefined);
-  // Cherry Barb names both types.
-  assert.equal(find(run([['amano', 6], ['cherrybarb', 6]]), 'predation.shrimp.cherrybarb.amano').severity, 'danger');
 });
 
 test('E: Pea Puffer is caught from its explicit data although its raw tags lack shrimp_risk', () => {
@@ -92,4 +90,86 @@ test('explicit data beats a contradictory shrimp_safe tag; a tag alone stays amb
 test('species with no shrimp/snail data or tag produce no invert predation warning', () => {
   const computed = run([['neocaridina', 10], ['nerite', 2], ['otocinclus', 6], ['cory_panda', 6]]);
   assert.equal(computed.status.warnings.filter((w) => /^predation\.(shrimp|snail)\./.test(w.id)).length, 0);
+});
+
+// Phase 2G batch 1: corrections from directly reviewed sources (Phase 2F audit, R1–R3).
+const shrimpWarnings = (computed) => computed.status.warnings.filter((w) => /^predation\.shrimp\./.test(w.id));
+const bothWays = (preyId, preyQty, predatorId, predatorQty) => [
+  run([[preyId, preyQty]], [predatorId, predatorQty]),
+  run([[preyId, preyQty], [predatorId, predatorQty]]),
+];
+
+test('Phase 2G: Cardinal Tetra + Cherry Shrimp is amber (juvenile), no longer red', () => {
+  assert.ok(!risks('cardinal-tetra').includes('Shrimp (cherry)'));
+  for (const computed of bothWays('neocaridina', 10, 'cardinal', 6)) {
+    const w = find(computed, 'predation.shrimp.cardinal.neocaridina');
+    assert.equal(w.severity, 'warn');
+    assert.equal(w.basis, 'juvenile');
+    assert.match(w.title, /Cardinal Tetra may eat juvenile Cherry Shrimp/);
+    assert.ok(!shrimpWarnings(computed).some((x) => x.severity === 'danger'), 'Cardinal never makes shrimp red');
+  }
+});
+
+test('Phase 2G: Cardinal Tetra is never red with any shrimp; juvenile amber applies to every shrimp', () => {
+  for (const prey of ['amano', 'ghost_shrimp', 'bamboo_shrimp']) {
+    for (const computed of bothWays(prey, 6, 'cardinal', 6)) {
+      const w = find(computed, `predation.shrimp.cardinal.${prey}`);
+      assert.equal(w.severity, 'warn', `${prey}: juvenile only, never an adult-risk red`);
+      assert.equal(w.basis, 'juvenile');
+    }
+  }
+});
+
+test('Phase 2G: Cherry Barb + Cherry Shrimp stays red (named)', () => {
+  assert.deepEqual(risks('cherry-barb'), ['Shrimp (cherry)']);
+  for (const computed of bothWays('neocaridina', 10, 'cherrybarb', 6)) {
+    const w = find(computed, 'predation.shrimp.cherrybarb.neocaridina');
+    assert.equal(w.severity, 'danger');
+    assert.equal(w.basis, 'named');
+    assert.match(w.title, /Cherry Barb may prey on Cherry Shrimp/);
+  }
+});
+
+test('Phase 2G: Cherry Barb has no predation warning with Amano, Ghost or Bamboo Shrimp', () => {
+  for (const prey of ['amano', 'ghost_shrimp', 'bamboo_shrimp']) {
+    for (const computed of bothWays(prey, 6, 'cherrybarb', 6)) {
+      assert.equal(find(computed, `predation.shrimp.cherrybarb.${prey}`), undefined, prey);
+    }
+  }
+});
+
+test('Phase 2G: Molly + Cherry Shrimp is red; the named entry outranks the juvenile entry', () => {
+  assert.deepEqual(risks('molly'), ['Shrimp (cherry)', 'Shrimp (juvenile)']);
+  for (const computed of bothWays('neocaridina', 10, 'molly', 3)) {
+    const w = find(computed, 'predation.shrimp.molly.neocaridina');
+    assert.equal(w.severity, 'danger');
+    assert.equal(w.basis, 'named');
+    assert.match(w.title, /Molly may prey on Cherry Shrimp/);
+    assert.equal(computed.status.warnings.filter((x) => x.id === w.id).length, 1, 'one warning per pair');
+  }
+});
+
+test('Phase 2G: Molly + non-Cherry shrimp does not inherit the Cherry-specific red', () => {
+  for (const prey of ['amano', 'ghost_shrimp', 'bamboo_shrimp']) {
+    for (const computed of bothWays(prey, 6, 'molly', 3)) {
+      const w = find(computed, `predation.shrimp.molly.${prey}`);
+      assert.equal(w.severity, 'warn', `${prey}: juvenile amber only`);
+      assert.equal(w.basis, 'juvenile');
+    }
+  }
+  // Mixed stock: Cherry red and Amano amber side by side.
+  const mixed = run([['neocaridina', 10], ['amano', 6], ['molly', 3]]);
+  assert.equal(find(mixed, 'predation.shrimp.molly.neocaridina').severity, 'danger');
+  assert.equal(find(mixed, 'predation.shrimp.molly.amano').severity, 'warn');
+});
+
+test('Phase 2G: each correction cites its direct source', () => {
+  const record = (slug) => RAW.find((r) => r.slug === slug);
+  assert.match(record('cardinal-tetra').behavior.notes, /https:\/\/www\.aquariumcoop\.com\/blogs\/aquarium\/cardinal-tetra\b/);
+  assert.match(record('cherry-barb').behavior.notes, /https:\/\/www\.aquariumcoop\.com\/blogs\/aquarium\/cherry-barb\b/);
+  const molly = record('molly').husbandry_review;
+  const source = molly.sources.find((s) => s.fields.includes('shrimp_risk'));
+  assert.equal(source.url, 'https://www.aquariumcoop.com/blogs/aquarium/molly-fish-care');
+  assert.equal(source.verification, 'reviewer-reported');
+  assert.match(molly.notes, /larger\* mollies/);
 });

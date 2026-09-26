@@ -214,8 +214,11 @@ const SPECIES = {
     sources: [
       src(1, 'Seriously Fish — Poecilia sphenops (Short-finned Molly)', SF('poecilia-sphenops'), ['min_tank_liters', 'min_tank_length_in', 'gH', 'pH'], 'Smallest recommended tank base 90 × 30 cm (81 L); hard, alkaline water.'),
       src(2, 'Aquarium Co-Op — Care Guide for Mollies', 'https://www.aquariumcoop.com/blogs/aquarium/molly-fish-care', ['sex_ratio_guidance'], 'Get at least two to three females for every male.'),
+      // Phase 2G (predation batch 1): page read directly by the project owner; paraphrase, not a quote.
+      src(2, 'Aquarium Co-Op — Care Guide for Mollies', 'https://www.aquariumcoop.com/blogs/aquarium/molly-fish-care', ['shrimp_risk'], 'Larger mollies will most likely eat smaller animals such as Cherry Shrimp (reviewer paraphrase). Supports the named “Shrimp (cherry)” predation entry.', REVIEWER),
     ],
     disagreements: 'General guides give 20 gal (75 L); Seriously Fish (tier 1) selected. “1 male : 2–3 females” is sex-ratio guidance, not a schooling minimum.',
+    notes: 'SCHEMA LIMITATION (predation): the Aquarium Co-Op source says *larger* mollies will likely eat Cherry Shrimp. The data model cannot express predator size, so the named “Shrimp (cherry)” entry (red) applies to every planned Molly. “Shrimp (juvenile)” is kept, so other shrimp get only the amber shrimplet warning.',
   },
   'mystery-snail': {
     scientific_name: 'Pomacea diffusa', category: 'snail',
