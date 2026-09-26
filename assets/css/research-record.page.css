@@ -29,10 +29,6 @@
   min-width: 0;
 }
 
-.research-record main.university-bg {
-  padding-top: clamp(28px, 6vw, 72px);
-}
-
 /* Breadcrumb + back link */
 .research-record .rr-breadcrumb ol {
   display: flex;
