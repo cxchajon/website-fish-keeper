@@ -89,6 +89,25 @@ function rebuildSpeciesDataset(records) {
 // Records offered to the engine that it could not accept, keyed by id: { id, name, reason }.
 let REJECTED_SPECIES = new Map();
 
+// Where the engine's species records came from:
+//   'legacy-default' — js/fish-data.js, before the advisor supplied its dataset (direct/unit use)
+//   'loaded'         — the advisor's species.v2.json records (overrideSpeciesDataset)
+//   'unavailable'    — species.v2.json failed to load; nothing can be evaluated
+let DATASET_STATUS = { state: 'legacy-default', error: null };
+
+export function getSpeciesDatasetStatus() {
+  return { ...DATASET_STATUS };
+}
+
+// Called when the advisor's species data cannot be loaded. The engine is emptied rather than left
+// on the legacy js/fish-data.js records, so every selection is reported as unevaluable and every
+// result is marked unavailable instead of quietly using the old 20-species dataset.
+export function markSpeciesDatasetUnavailable(error) {
+  REJECTED_SPECIES = new Map();
+  rebuildSpeciesDataset([]);
+  DATASET_STATUS = { state: 'unavailable', error: error ? String(error) : 'species data failed to load' };
+}
+
 export function getRejectedSpecies() {
   return Array.from(REJECTED_SPECIES.values());
 }
@@ -113,6 +132,7 @@ export function overrideSpeciesDataset(records = []) {
     rejected.set(id, { id, name: record.common_name || record.name || id, reason: verdict });
   }
   REJECTED_SPECIES = rejected;
+  DATASET_STATUS = { state: 'loaded', error: null };
   if (rejected.size > 0) {
     console.error('[StockingAdvisor] Species records failed validation and cannot be evaluated:', getRejectedSpecies());
   }
@@ -379,7 +399,9 @@ function unevaluatedEntry(entry, isCandidate) {
     id: entry.id,
     qty: Number(entry.qty),
     name: rejected?.name || entry.name || entry.common_name || String(entry.id),
-    reason: rejected ? `failed validation (${rejected.reason})` : 'no species record found',
+    reason: rejected
+      ? `failed validation (${rejected.reason})`
+      : DATASET_STATUS.state === 'unavailable' ? 'could not be loaded' : 'has no record',
     isCandidate,
   };
 }
@@ -403,12 +425,23 @@ const UNEVALUATED_NOTE = 'Results incomplete — not every selected species coul
 // red warning per species, forces the overall status to bad, and labels the bioload figure as
 // incomplete. Safe to call more than once on the same state.
 export function flagUnevaluatedSpecies(computed) {
-  const missing = computed?.unevaluatedSpecies;
-  if (!Array.isArray(missing) || missing.length === 0) {
+  if (!computed) return computed;
+  const missing = Array.isArray(computed.unevaluatedSpecies) ? computed.unevaluatedSpecies : [];
+  const unavailable = DATASET_STATUS.state === 'unavailable';
+  if (missing.length === 0 && !unavailable) {
     return computed;
   }
   const names = missing.map((item) => item.name).join(', ');
-  const additions = missing.map((item) => ({
+  const additions = unavailable ? [{
+    id: 'species.dataUnavailable',
+    severity: 'danger',
+    icon: 'alert',
+    kind: 'data',
+    title: 'Species data failed to load',
+    message: 'The Stocking Advisor could not load its species data, so no stocking level, compatibility, or water check can be calculated. Reload the page; if this keeps happening, please try again later.',
+    text: 'Species data failed to load — results are unavailable.',
+  }] : [];
+  additions.push(...missing.map((item) => ({
     id: `species.unevaluated.${item.id}`,
     severity: 'danger',
     icon: 'alert',
@@ -416,14 +449,17 @@ export function flagUnevaluatedSpecies(computed) {
     title: `${item.name} could not be evaluated`,
     message: `${item.name} is selected but its species data ${item.reason}, so it is not counted in bioload, compatibility, or water checks. The results shown are incomplete — do not rely on them for this stock.`,
     text: `${item.name} could not be evaluated — results are incomplete.`,
-  }));
+  })));
   const warnings = mergeWarnings(computed.status?.warnings ?? [], additions);
   const status = {
     ...(computed.status || {}),
     severity: 'bad',
-    label: `${calcSeverityIcon('bad')} Could not evaluate: ${names}. Results are incomplete.`,
+    label: unavailable
+      ? `${calcSeverityIcon('bad')} Species data failed to load. Results are unavailable.`
+      : `${calcSeverityIcon('bad')} Could not evaluate: ${names}. Results are incomplete.`,
     warnings,
     incomplete: true,
+    unavailable,
   };
   const bioload = computed.bioload
     ? {
@@ -439,30 +475,79 @@ export function flagUnevaluatedSpecies(computed) {
   return { ...computed, status, bioload };
 }
 
-// Evaluated species whose record still relies on generic defaults for size-dependent fields
-// (see data_gaps in species-adapter.v2.js). Surfaced as a notice so size and tank-length checks
-// are not mistaken for species-specific results.
-function speciesDataGapWarning(entries, candidate) {
-  const names = [];
+const LITERS_PER_US_GALLON = 3.78541;
+
+function formatGallons(liters) {
+  const gallons = liters / LITERS_PER_US_GALLON;
+  return `${Math.round(gallons * 10) / 10} gal`;
+}
+
+// Tank suitability per selected species, from the species' own minimums. Volume and length are
+// separate requirements and checked separately: a tank below the minimum volume is unsuitable
+// (red); a tank shorter than the species' minimum swimming length is flagged amber. Minimums are
+// per species, not scaled by how many are planned — bioload and group rules cover numbers.
+function evaluateTankSuitability(tank, entries, candidate) {
+  const issues = [];
+  const warnings = [];
+  const gallons = Number(tank?.gallons);
+  // Whole litres: minimums quoted as "10 gal (38 L)" must pass a 10 gal (37.85 L) tank.
+  const tankLiters = Number.isFinite(gallons) && gallons > 0 ? Math.round(gallons * LITERS_PER_US_GALLON) : null;
+  const tankLength = Number.isFinite(tank?.length) && tank.length > 0 ? tank.length : null;
+  const tooSmallFor = [];
   const seen = new Set();
   for (const entry of [...entries, candidate]) {
     const species = entry?.species;
     if (!species || seen.has(species.id)) continue;
-    const gaps = Array.isArray(species.data_gaps) ? species.data_gaps : [];
-    if (!gaps.includes('adult_size_in') && !gaps.includes('min_tank_length_in')) continue;
     seen.add(species.id);
-    names.push(species.common_name || species.id);
+    const name = species.common_name || species.id;
+    const minLiters = Number(species.min_tank_liters);
+    if (tankLiters != null && Number.isFinite(minLiters) && minLiters > 0 && tankLiters < minLiters) {
+      const message = `${name} needs at least ${Math.round(minLiters)} L (${formatGallons(minLiters)}); this tank is ${Math.round(tankLiters)} L (${formatGallons(tankLiters)}).`;
+      issues.push({ severity: 'bad', message: `Tank too small for ${name}` });
+      tooSmallFor.push(name);
+      warnings.push({
+        id: `tank.volume.${species.id}`,
+        severity: 'danger',
+        icon: 'alert',
+        kind: 'tank',
+        title: `Tank too small for ${name}`,
+        message,
+        text: `Tank too small for ${name} — ${message}`,
+      });
+    }
+    const minLength = Number(species.min_tank_length_in);
+    if (tankLength != null && Number.isFinite(minLength) && minLength > 0 && tankLength < minLength) {
+      const message = `${name} needs a tank at least ${minLength}″ long for swimming space; this tank is ${Math.round(tankLength * 10) / 10}″.`;
+      issues.push({ severity: 'warn', message: `Tank too short for ${name}` });
+      warnings.push({
+        id: `tank.length.${species.id}`,
+        severity: 'warn',
+        icon: 'alert',
+        kind: 'tank',
+        title: `Tank too short for ${name}`,
+        message,
+        text: `Tank too short for ${name} — ${message}`,
+      });
+    }
   }
-  if (!names.length) return [];
-  return [{
-    id: 'species.dataGaps',
-    severity: 'warn',
-    icon: 'info',
-    kind: 'data',
-    title: 'Limited species data',
-    message: `Adult size and minimum tank length are not yet in our species data for ${names.join(', ')}. Generic defaults are used, so size-based and tank-length checks for ${names.length === 1 ? 'this species' : 'these species'} may be inaccurate.`,
-    text: `Limited size data for ${names.join(', ')}.`,
-  }];
+  return { issues, warnings, tooSmallFor: [...new Set(tooSmallFor)] };
+}
+
+// A capacity percentage is not meaningful for a tank a selected species cannot live in, so the
+// bioload figure is marked as such (red, with the reason) rather than shown in its normal colour.
+export function flagUnsuitableTank(computed) {
+  const names = computed?.tankSuitability?.tooSmallFor;
+  if (!Array.isArray(names) || names.length === 0 || !computed.bioload) {
+    return computed;
+  }
+  const suffix = `(tank too small for ${names.join(', ')})`;
+  const text = computed.bioload.text && !computed.bioload.text.includes(suffix)
+    ? `${computed.bioload.text} ${suffix}`
+    : computed.bioload.text;
+  return {
+    ...computed,
+    bioload: { ...computed.bioload, tankUnsuitable: true, severity: 'bad', text },
+  };
 }
 
 function buildCandidate(candidate) {
@@ -1402,8 +1487,8 @@ function mergeWarnings(base, additions) {
   return target;
 }
 
-function computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck, flowCheck, blackwaterCheck }) {
-  const issues = [];
+function computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck, flowCheck, blackwaterCheck, tankIssues = [] }) {
+  const issues = [...tankIssues];
   issues.push({ severity: bioload.severity, message: bioload.severity === 'bad' ? 'Bioload exceeds recommended capacity' : 'Bioload nearing limit' });
   issues.push({ severity: aggression.severity, message: aggression.label });
   const conditionIssue = conditions.conditions.find((item) => item.severity === 'bad' || item.severity === 'warn');
@@ -1518,14 +1603,15 @@ export function buildComputedState(state) {
   if (invertCheck.severity !== 'ok') {
     chips.push({ tone: invertCheck.severity === 'bad' ? 'bad' : 'warn', text: invertCheck.reason });
   }
-  const status = computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck });
-  const stockWarnings = [...evaluateStockWarnings({ entries, candidate }), ...speciesDataGapWarning(entries, candidate)];
+  const tankSuitability = evaluateTankSuitability(tank, entries, candidate);
+  const status = computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck, tankIssues: tankSuitability.issues });
+  const stockWarnings = [...evaluateStockWarnings({ entries, candidate }), ...tankSuitability.warnings];
   const mergedWarnings = mergeWarnings(status.warnings, stockWarnings);
   const statusWithWarnings = mergedWarnings === status.warnings ? status : { ...status, warnings: mergedWarnings };
 
   const diagnostics = computeDiagnostics({ tank, bioload, aggression, status: statusWithWarnings, candidate, entries });
 
-  return flagUnevaluatedSpecies({
+  return flagUnevaluatedSpecies(flagUnsuitableTank({
     tank,
     entries,
     candidate,
@@ -1540,8 +1626,9 @@ export function buildComputedState(state) {
     filtering,
     turnover: turnoverBand(tank),
     stockCount: entries.length,
+    tankSuitability,
     unevaluatedSpecies: findUnevaluatedSpecies(state.stock, state.candidate),
-  });
+  }));
 }
 
 export function runScenario(baseState, overrides) {

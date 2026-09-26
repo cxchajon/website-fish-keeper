@@ -375,6 +375,7 @@ export function deriveEnv(stock = [], options = {}) {
     bioloadLabel,
     bioloadSeverity,
     bioloadIncomplete: computed?.bioload?.incomplete === true,
+    bioloadTankUnsuitable: computed?.bioload?.tankUnsuitable === true,
     aggressionPct,
     aggressionLabel,
     aggressionSeverity,
@@ -500,8 +501,10 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   const bioloadPct = isEmpty ? 0 : sanitizePercent(rawBioloadPct);
   const aggressionPct = isEmpty ? 0 : sanitizePercent(env.aggressionPct);
   const bioloadIncomplete = !isEmpty && env.bioloadIncomplete === true;
-  const bioloadColor = bioloadIncomplete ? colorForSeverity('bad') : getBandColor(bioloadPct / 100);
-  const bioloadDisplay = `${formatBioloadPercent(Math.max(0, Math.min(200, rawBioloadPct)))}${bioloadIncomplete ? ' (incomplete)' : ''}`;
+  const bioloadTankUnsuitable = !isEmpty && env.bioloadTankUnsuitable === true;
+  const bioloadColor = bioloadIncomplete || bioloadTankUnsuitable ? colorForSeverity('bad') : getBandColor(bioloadPct / 100);
+  const bioloadSuffix = bioloadIncomplete ? ' (incomplete)' : bioloadTankUnsuitable ? ' (tank too small)' : '';
+  const bioloadDisplay = `${formatBioloadPercent(Math.max(0, Math.min(200, rawBioloadPct)))}${bioloadSuffix}`;
   const bioloadAria = Number.isFinite(bioloadPct) ? Number(bioloadPct.toFixed(2)) : 0;
   const bioloadNotes = isEmpty ? '' : renderChips(env.barNotes?.bioload ?? []);
   const generalChips = isEmpty ? '' : renderChips(env.detailChips ?? []);
@@ -868,21 +871,31 @@ function buildBlackwater(entries) {
   return { condition: { label: 'Blackwater / Tannins', value }, status, noteCodes };
 }
 
+const hasTag = (species, tag) => Array.isArray(species?.tags) && species.tags.includes(tag);
+
+// Invertebrate predation, from the canonical shrimp_risk / snail_risk tags (see normalizeTraits in
+// species-adapter.v2.js). A predator is never flagged against its own species.
 function evaluateInvertSafety(entries) {
   const warnings = [];
   const chips = [];
-  const shrimp = entries.filter((entry) => entry.species.category === 'shrimp');
-  if (!shrimp.length) {
-    return { warnings, chips };
+  const checks = [
+    { category: 'shrimp', tag: 'shrimp_risk', label: 'Shrimp', chip: 'shrimp at risk' },
+    { category: 'snail', tag: 'snail_risk', label: 'Snail', chip: 'snails at risk' },
+  ];
+  for (const { category, tag, label, chip } of checks) {
+    const prey = entries.filter((entry) => entry.species.category === category);
+    if (!prey.length) continue;
+    const predators = entries.filter((entry) => hasTag(entry.species, tag)
+      && prey.some((item) => item.species.id !== entry.species.id));
+    if (!predators.length) continue;
+    const predatorIds = new Set(predators.map((entry) => entry.species.id));
+    const preyNames = prey.filter((entry) => !predatorIds.has(entry.species.id))
+      .map((entry) => entry.species.common_name).join(', ');
+    if (!preyNames) continue;
+    const predatorNames = predators.map((entry) => entry.species.common_name).join(', ');
+    warnings.push({ type: 'soft', text: `${label} predation risk: ${predatorNames} vs ${preyNames}.` });
+    chips.push(chip);
   }
-  const predators = entries.filter((entry) => entry.species.category !== 'shrimp' && entry.species.invert_safe === false);
-  if (!predators.length) {
-    return { warnings, chips };
-  }
-  const shrimpNames = shrimp.map((entry) => entry.species.common_name).join(', ');
-  const predatorNames = predators.map((entry) => entry.species.common_name).join(', ');
-  warnings.push({ type: 'soft', text: `Shrimp predation risk: ${predatorNames} vs ${shrimpNames}.` });
-  chips.push('shrimp at risk');
   return { warnings, chips };
 }
 

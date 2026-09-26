@@ -25,6 +25,7 @@ const legacy = await import('../../js/logic/compute.legacy.js');
 const { validateSpeciesRecord } = await import('../../js/logic/speciesSchema.js');
 const { FISH_DB } = await import('../../js/fish-data.js');
 const { getTankById } = await import('../../js/utils.js');
+const { deriveEnv } = await import('../../js/logic/envRecommend.js');
 
 await compute.initializeCompute();
 
@@ -42,9 +43,30 @@ function stateFor(tankId, stock, candidate = null) {
   return state;
 }
 
-test('dropdown offers every record in species.v2.json', () => {
-  assert.equal(DROPDOWN.length, RAW_SPECIES.length);
-  assert.ok(DROPDOWN.length >= 44, `expected at least 44 species, got ${DROPDOWN.length}`);
+// Canonical identity = slug (the v2 record key). The engine keys records by id, so both are checked.
+const idsOf = (list, key) => list.map((item) => item[key]);
+const duplicates = (list) => list.filter((value, index) => list.indexOf(value) !== index);
+
+test('dropdown offers exactly the records in species.v2.json', () => {
+  const jsonSlugs = idsOf(RAW_SPECIES, 'slug');
+  const dropdownSlugs = idsOf(DROPDOWN, 'slug');
+  assert.deepEqual(duplicates(jsonSlugs), [], 'duplicate slugs in species.v2.json');
+  assert.deepEqual(duplicates(dropdownSlugs), [], 'duplicate species in the dropdown');
+  assert.deepEqual([...dropdownSlugs].sort(), [...jsonSlugs].sort());
+  assert.equal(DROPDOWN.length, 44);
+});
+
+test('engine species set matches the dropdown exactly by identity', () => {
+  const dropdownIds = idsOf(DROPDOWN, 'id');
+  const engineIds = idsOf(legacy.SPECIES, 'id');
+  assert.deepEqual(duplicates(dropdownIds), [], 'two dropdown species map to the same engine id');
+  assert.deepEqual(duplicates(engineIds), [], 'duplicate engine ids');
+  assert.deepEqual([...engineIds].sort(), [...dropdownIds].sort());
+  assert.deepEqual(
+    [...idsOf(legacy.SPECIES, 'slug')].sort(),
+    [...idsOf(DROPDOWN, 'slug')].sort(),
+    'engine records must be the dropdown records',
+  );
 });
 
 test('every dropdown species passes validation', () => {
@@ -121,11 +143,111 @@ test('audit case C: all four species in a 20 long reach the engine', () => {
   assert.ok(computed.bioload.proposedPercent > onlyLegacy.bioload.proposedPercent);
 });
 
-test('species relying on default size data are called out', () => {
+test('no selectable species is calculated with placeholder husbandry data', () => {
+  const legacyIds = new Set(FISH_DB.map((record) => record.id));
+  for (const species of DROPDOWN) {
+    const raw = RAW_SPECIES.find((record) => record.slug === species.slug);
+    assert.ok(species.scientific_name, `${species.id} scientific_name`);
+    assert.ok(Number.isFinite(species.adult_size_in) && species.adult_size_in > 0, `${species.id} adult_size_in`);
+    assert.ok(['fish', 'shrimp', 'snail'].includes(species.category), `${species.id} category`);
+    assert.ok(['requires', 'prefers', 'neutral'].includes(species.blackwater), `${species.id} blackwater`);
+    if (species.tank_length_not_applicable) {
+      assert.equal(species.category, 'snail', `${species.id}: only crawling snails may skip tank length`);
+    } else {
+      assert.ok(Number.isFinite(species.min_tank_length_in) && species.min_tank_length_in > 0, `${species.id} min_tank_length_in`);
+    }
+    if (!legacyIds.has(species.id)) {
+      // Newer species: every value must come from the reviewed v2 record, never an adapter default.
+      for (const key of ['scientific_name', 'adult_size_in', 'category', 'blackwater', 'min_tank_liters']) {
+        assert.equal(species[key], raw[key], `${species.id} ${key} must come from species.v2.json`);
+      }
+      assert.ok(raw.husbandry_review?.sources?.length >= 2, `${species.id} needs documented sources`);
+      assert.ok(Number.isFinite(raw.min_tank_liters) && raw.min_tank_liters > 0, `${species.id} min_tank_liters`);
+    }
+  }
+});
+
+test('a record missing a required husbandry value is rejected and flagged, not defaulted', () => {
+  const broken = DROPDOWN.map((species) => (
+    species.id === 'molly' ? { ...species, adult_size_in: null } : species
+  ));
+  try {
+    legacy.overrideSpeciesDataset(broken);
+    assert.deepEqual(compute.getRejectedSpecies(), [{ id: 'molly', name: 'Molly', reason: 'bad adult_size_in' }]);
+    const computed = compute.buildComputedState(stateFor('29g', [['molly', 3]]));
+    const warning = computed.status.warnings.find((w) => w.id === 'species.unevaluated.molly');
+    assert.equal(warning?.severity, 'danger');
+    assert.equal(computed.status.severity, 'bad');
+  } finally {
+    legacy.overrideSpeciesDataset(DROPDOWN);
+  }
+});
+
+test('newer species bioload sits on the calibrated scale of the original species', () => {
+  const ge = (id) => legacy.getSpeciesById(id).bioloadGE;
+  // A 6" angelfish or 5" pleco must outweigh a 3" tiger barb; nano fish stay near neon tetras.
+  assert.ok(ge('freshwater_angelfish') > ge('tiger_barb'));
+  assert.ok(ge('bristlenose_pleco') > ge('tiger_barb'));
+  assert.ok(ge('molly') > ge('guppy_male') * 3);
+  assert.ok(ge('ember_tetra') <= ge('neon'));
+  assert.ok(ge('ramshorn_snail') < ge('nerite'));
+});
+
+test('predation uses one vocabulary: shrimp_risk / snail_risk', () => {
+  const tags = (id) => legacy.getSpeciesById(id).tags;
+  for (const species of legacy.SPECIES) {
+    assert.ok(!species.tags.some((tag) => tag.startsWith('predator_')), `${species.id} uses retired predator_* tag`);
+    assert.ok(!(species.tags.includes('shrimp_risk') && species.tags.includes('shrimp_safe')), `${species.id} shrimp contradiction`);
+    assert.ok(!(species.tags.includes('snail_risk') && species.tags.includes('snail_safe')), `${species.id} snail contradiction`);
+    assert.equal(species.invert_safe, !species.tags.includes('shrimp_risk') && !species.tags.includes('snail_risk'));
+  }
+  assert.ok(tags('pea_puffer').includes('snail_risk') && tags('pea_puffer').includes('shrimp_risk'));
+  assert.ok(tags('assassin_snail').includes('snail_risk'));
+  assert.ok(!tags('assassin_snail').includes('shrimp_risk'), 'assassin snails are not shrimp predators');
+  for (const id of ['molly', 'platy', 'swordtail', 'guppy_male']) assert.ok(tags(id).includes('livebearer'), id);
+  assert.ok(tags('freshwater_angelfish').includes('cichlid'));
+});
+
+test('invert predation is reported for shrimp and snails', () => {
+  const stock = [['pea_puffer', 1], ['mystery_snail', 1], ['neocaridina', 10]];
+  const computed = compute.buildComputedState(stateFor('29g', stock));
+  const env = deriveEnv(stock.map(([id, qty]) => ({ species: legacy.getSpeciesById(id), qty })), { computed });
+  const texts = env.warnings.map((warning) => warning.text);
+  assert.ok(texts.some((text) => /Shrimp predation risk: Pea Puffer/.test(text)), texts.join(' | '));
+  assert.ok(texts.some((text) => /Snail predation risk: Pea Puffer/.test(text)), texts.join(' | '));
+});
+
+const warningIds = (computed) => computed.status.warnings.map((warning) => warning.id);
+
+test('safety case: 6 angelfish in a 20 gallon is not a normal result', () => {
   const computed = compute.buildComputedState(stateFor('20h', [['freshwater_angelfish', 6]]));
-  const notice = computed.status.warnings.find((w) => w.id === 'species.dataGaps');
-  assert.ok(notice, 'expected a limited-data notice');
-  assert.match(notice.message, /Freshwater Angelfish/);
+  assert.equal(computed.status.severity, 'bad');
+  assert.ok(warningIds(computed).includes('tank.volume.freshwater_angelfish'));
+  assert.ok(warningIds(computed).includes('tank.length.freshwater_angelfish'));
+  assert.equal(computed.bioload.tankUnsuitable, true);
+  assert.equal(computed.bioload.severity, 'bad');
+  assert.match(computed.aggression.label, /Territory crowding among Freshwater Angelfish/);
+});
+
+test('safety cases: 6 of each species in a 5 gallon fail tank suitability', () => {
+  for (const id of ['bristlenose_pleco', 'molly', 'swordtail', 'platy']) {
+    const computed = compute.buildComputedState(stateFor('5g', [[id, 6]]));
+    assert.equal(computed.status.severity, 'bad', id);
+    assert.ok(warningIds(computed).includes(`tank.volume.${id}`), id);
+    assert.equal(computed.bioload.severity, 'bad', id);
+  }
+  const puffers = compute.buildComputedState(stateFor('5g', [['pea_puffer', 6]]));
+  assert.equal(puffers.bioload.severity, 'bad', 'six pea puffers overload a 5 gallon');
+  const onePuffer = compute.buildComputedState(stateFor('5g', [['pea_puffer', 1]]));
+  assert.ok(!warningIds(onePuffer).includes('tank.volume.pea_puffer'), 'one pea puffer fits a 5 gallon minimum');
+});
+
+test('livebearers get hardness warnings in soft water', () => {
+  for (const id of ['molly', 'swordtail', 'platy']) {
+    const computed = compute.buildComputedState(stateFor('29g', [[id, 3]]));
+    const gh = computed.conditions.conditions.find((item) => item.key === 'gH' || /gH/.test(item.label));
+    assert.equal(gh?.severity, 'bad', `${id} at the default gH 6`);
+  }
 });
 
 test('a selected species with no engine record produces a red warning, not a silent drop', () => {

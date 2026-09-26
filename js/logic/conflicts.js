@@ -74,22 +74,22 @@ export function evaluatePair(candidate, incumbent, tankContext) {
     result.reasons.push('Territorial overlap');
   }
 
-  if (aTags.has('predator_shrimp') && b.category === 'shrimp') {
+  if (aTags.has('shrimp_risk') && b.category === 'shrimp') {
     result.severity = maxSeverity(result.severity, 'bad');
     result.reasons.push('Predation risk (shrimp)');
   }
 
-  if (bTags.has('predator_shrimp') && a.category === 'shrimp') {
+  if (bTags.has('shrimp_risk') && a.category === 'shrimp') {
     result.severity = maxSeverity(result.severity, 'bad');
     result.reasons.push('Predation risk (shrimp)');
   }
 
-  if (aTags.has('predator_snail') && b.category === 'snail') {
+  if (aTags.has('snail_risk') && b.category === 'snail') {
     result.severity = maxSeverity(result.severity, 'bad');
     result.reasons.push('Predation risk (snail)');
   }
 
-  if (bTags.has('predator_snail') && a.category === 'snail') {
+  if (bTags.has('snail_risk') && a.category === 'snail') {
     result.severity = maxSeverity(result.severity, 'bad');
     result.reasons.push('Predation risk (snail)');
   }
