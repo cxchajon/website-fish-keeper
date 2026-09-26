@@ -705,15 +705,37 @@ function conditionState(actual, range, options = {}) {
   return 'ok';
 }
 
-function describeConditionHint(level) {
-  switch (level) {
-    case 'bad':
-      return '✖ Outside range';
-    case 'warn':
-      return '⚠ Slightly outside';
-    default:
-      return '✔ Within range';
-  }
+// Species ranges combine as highest minimum → lowest maximum. No overlap is a species-to-species
+// conflict, known from species data alone. Same test as the environment card (intersectRanges in
+// envRecommend.js), and only when at least two species have a range.
+const RANGE_OVERLAP_EPSILON = 0.01;
+
+function hasSpeciesRangeConflict(range, contributors) {
+  const [min, max] = range;
+  if (contributors < 2 || !Number.isFinite(min) || !Number.isFinite(max)) return false;
+  return !(max - min > RANGE_OVERLAP_EPSILON);
+}
+
+// status: 'not-entered' (the user gave no value: not evaluated), 'no-range' (no species data),
+// 'species-conflict' (the species share no range), 'within' / 'outside' (the user's value vs the
+// shared range). Only an entered value can be within or outside.
+const CONDITION_HINTS = {
+  'not-entered': 'Not entered',
+  'no-range': 'No species range',
+  within: '✔ Your water is within the shared range',
+  outside: {
+    warn: '⚠ Your water is slightly outside the shared range',
+    bad: '✖ Your water is outside the shared range',
+  },
+  'species-conflict': {
+    warn: '⚠ No shared range between these species',
+    bad: '✖ No shared range between these species',
+  },
+};
+
+function describeConditionHint(status, severity) {
+  const hint = CONDITION_HINTS[status] ?? '';
+  return typeof hint === 'string' ? hint : (hint[severity] ?? hint.bad);
 }
 
 function gatherIssues(...entries) {
@@ -872,7 +894,7 @@ function buildFilteringState(state, tank, entries) {
   };
 }
 
-function createConditionItem({ key, label, range, actual, infoKey, severity, extra }) {
+function createConditionItem({ key, label, range, actual, infoKey, severity, status, measured, extra }) {
   return {
     key,
     label,
@@ -880,45 +902,109 @@ function createConditionItem({ key, label, range, actual, infoKey, severity, ext
     actual,
     infoKey,
     severity,
-    hint: describeConditionHint(severity),
+    status,
+    measured,
+    hint: describeConditionHint(status, severity),
     extra,
   };
+}
+
+function countRangeContributors(entries, selector) {
+  let count = 0;
+  for (const entry of entries) {
+    const [min, max] = selector(entry.species) ?? [];
+    if (Number.isFinite(min) && Number.isFinite(max)) count += 1;
+  }
+  return count;
+}
+
+// One measured parameter vs the combined species range.
+function evaluateParameter({ value, range, contributors, conflictSeverity, thresholds }) {
+  const measured = Number.isFinite(value);
+  if (hasSpeciesRangeConflict(range, contributors)) {
+    return { measured, status: 'species-conflict', severity: conflictSeverity };
+  }
+  if (!Number.isFinite(range[0]) || !Number.isFinite(range[1])) {
+    return { measured, status: measured ? 'no-range' : 'not-entered', severity: 'ok' };
+  }
+  if (!measured) {
+    return { measured, status: 'not-entered', severity: 'ok' };
+  }
+  const severity = conditionState(value, range, thresholds);
+  return { measured, status: severity === 'ok' ? 'within' : 'outside', severity };
+}
+
+const NOT_ENTERED = 'Not entered';
+
+function formatMeasured(value, format) {
+  return Number.isFinite(value) ? format(value) : NOT_ENTERED;
 }
 
 function computeConditions(state, entries, candidate, water, showMore) {
   const combined = candidate ? [...entries, candidate] : [...entries];
   const baseRange = (selector) => calcConditionRange(combined, selector);
+  const contributors = (selector) => countRangeContributors(combined, selector);
 
-  const tempRange = baseRange((species) => species.temperature);
-  const tempSeverity = conditionState(water.temperature, tempRange, { warnThreshold: 2, badThreshold: 2.01 });
+  const tempSelector = (species) => species.temperature;
+  const tempRange = baseRange(tempSelector);
+  const temp = evaluateParameter({
+    value: water.temperature,
+    range: tempRange,
+    contributors: contributors(tempSelector),
+    conflictSeverity: 'bad',
+    thresholds: { warnThreshold: 2, badThreshold: 2.01 },
+  });
 
-  const pHRange = baseRange((species) => species.pH);
+  const pHSelector = (species) => species.pH;
+  const pHRange = baseRange(pHSelector);
   const sensitive = listSensitiveSpecies(combined, 'pH');
   const warn = sensitive.length ? 0.2 : 0.5;
   let bad = sensitive.length ? 0.2 : 0.5;
-  if ((water.kH ?? 0) >= 3) {
+  // Only a KH the user entered can buffer pH swings.
+  if (Number.isFinite(water.kH) && water.kH >= 3) {
     bad += 0.2;
   }
-  const phSeverity = conditionState(water.pH, pHRange, { warnThreshold: warn, badThreshold: bad });
+  // As on the environment card, a pH clash is hard only when a pH-sensitive species is involved.
+  const ph = evaluateParameter({
+    value: water.pH,
+    range: pHRange,
+    contributors: contributors(pHSelector),
+    conflictSeverity: sensitive.length ? 'bad' : 'warn',
+    thresholds: { warnThreshold: warn, badThreshold: bad },
+  });
 
-  const ghRange = baseRange((species) => species.gH);
-  const ghSeverity = conditionState(water.gH, ghRange, { warnThreshold: 2, badThreshold: 2.01 });
+  const ghSelector = (species) => species.gH;
+  const ghRange = baseRange(ghSelector);
+  const gh = evaluateParameter({
+    value: water.gH,
+    range: ghRange,
+    contributors: contributors(ghSelector),
+    conflictSeverity: 'bad',
+    thresholds: { warnThreshold: 2, badThreshold: 2.01 },
+  });
 
-  const khRange = baseRange((species) => species.kH);
-  const khSeverity = conditionState(water.kH, khRange, { warnThreshold: 2, badThreshold: 2.01 });
+  const khSelector = (species) => species.kH;
+  const khRange = baseRange(khSelector);
+  const kh = evaluateParameter({
+    value: water.kH,
+    range: khRange,
+    contributors: contributors(khSelector),
+    conflictSeverity: 'bad',
+    thresholds: { warnThreshold: 2, badThreshold: 2.01 },
+  });
 
   const salinityCheck = evaluateSalinity(candidate ?? { species: null }, { water });
   const flowCheck = evaluateFlow(candidate ?? { species: null }, water);
   const blackwaterCheck = evaluateBlackwater(candidate ?? { species: null }, water);
 
   const conditions = [
-    createConditionItem({ key: 'temperature', label: 'Temperature', range: tempRange, actual: `${formatNumber(water.temperature, { maximumFractionDigits: 1 })}°F`, severity: tempSeverity }),
-    createConditionItem({ key: 'pH', label: 'pH', range: pHRange, actual: `${formatNumber(water.pH, { maximumFractionDigits: 2 })}`, infoKey: sensitive.length ? 'ph-sensitive' : null, severity: phSeverity, extra: sensitive.length ? `Sensitive: ${sensitive.join(', ')}` : null }),
-    createConditionItem({ key: 'gH', label: 'gH', range: ghRange, actual: `${formatNumber(water.gH, { maximumFractionDigits: 1 })} dGH`, infoKey: 'gh', severity: ghSeverity }),
+    createConditionItem({ key: 'temperature', label: 'Temperature', range: tempRange, actual: formatMeasured(water.temperature, (v) => `${formatNumber(v, { maximumFractionDigits: 1 })}°F`), ...temp }),
+    createConditionItem({ key: 'pH', label: 'pH', range: pHRange, actual: formatMeasured(water.pH, (v) => `${formatNumber(v, { maximumFractionDigits: 2 })}`), infoKey: sensitive.length ? 'ph-sensitive' : null, ...ph, extra: sensitive.length ? `Sensitive: ${sensitive.join(', ')}` : null }),
+    createConditionItem({ key: 'gH', label: 'gH', range: ghRange, actual: formatMeasured(water.gH, (v) => `${formatNumber(v, { maximumFractionDigits: 1 })} dGH`), infoKey: 'gh', ...gh }),
   ];
 
   const optional = [];
-  optional.push(createConditionItem({ key: 'kH', label: 'kH', range: khRange, actual: `${formatNumber(water.kH, { maximumFractionDigits: 1 })} dKH`, infoKey: 'kh', severity: khSeverity }));
+  optional.push(createConditionItem({ key: 'kH', label: 'kH', range: khRange, actual: formatMeasured(water.kH, (v) => `${formatNumber(v, { maximumFractionDigits: 1 })} dKH`), infoKey: 'kh', ...kh }));
   const salinityActual = SUPPORTED_SALINITY.has(water.salinity)
     ? (SALINITY_LABEL[water.salinity] ?? water.salinity)
     : '— (See warning)';
@@ -931,23 +1017,27 @@ function computeConditions(state, entries, candidate, water, showMore) {
     severity: salinityCheck.severity,
     hint: salinityCheck.severity === 'ok' ? '✔ Matching category' : salinityCheck.reason,
   });
+  const flowEntered = FLOW_VALUES.has(water.flow);
   optional.push({
     key: 'flow',
     label: 'Flow',
     range: [NaN, NaN],
-    actual: water.flow,
+    actual: flowEntered ? water.flow : NOT_ENTERED,
     infoKey: null,
     severity: flowCheck.severity,
-    hint: flowCheck.severity === 'ok' ? '✔ Suitable' : flowCheck.reason,
+    measured: flowEntered,
+    hint: !flowEntered ? NOT_ENTERED : flowCheck.severity === 'ok' ? '✔ Suitable' : flowCheck.reason,
   });
+  const blackwaterEntered = typeof water.blackwater === 'boolean';
   optional.push({
     key: 'blackwater',
     label: 'Blackwater / Tannins',
     range: [NaN, NaN],
-    actual: water.blackwater ? 'Enabled' : 'Off',
+    actual: !blackwaterEntered ? NOT_ENTERED : water.blackwater ? 'Enabled' : 'Off',
     infoKey: 'blackwater',
     severity: blackwaterCheck.severity,
-    hint: blackwaterCheck.severity === 'ok' ? (candidate?.species?.blackwater === 'prefers' ? 'Tip: benefits from tannins' : '✔ Balanced') : blackwaterCheck.reason,
+    measured: blackwaterEntered,
+    hint: blackwaterCheck.severity === 'ok' ? (blackwaterCheck.tip ?? '✔ Balanced') : blackwaterCheck.reason,
   });
 
   const filteredOptional = optional.filter((item) => {
@@ -959,7 +1049,39 @@ function computeConditions(state, entries, candidate, water, showMore) {
     return false;
   });
 
-  return { conditions: [...conditions, ...filteredOptional], salinityCheck, flowCheck, blackwaterCheck, phSeverity, tempSeverity, ghSeverity, khSeverity };
+  return { conditions: [...conditions, ...filteredOptional], salinityCheck, flowCheck, blackwaterCheck, phSeverity: ph.severity, tempSeverity: temp.severity, ghSeverity: gh.severity, khSeverity: kh.severity };
+}
+
+const WATER_WARNING_TEXT = {
+  temperature: { name: 'temperature', format: (v) => `${formatNumber(v, { maximumFractionDigits: 1 })}°F`, unit: '°F', digits: 1 },
+  pH: { name: 'pH', format: (v) => `pH ${formatNumber(v, { maximumFractionDigits: 2 })}`, unit: '', digits: 1 },
+  gH: { name: 'GH (general hardness)', format: (v) => `${formatNumber(v, { maximumFractionDigits: 1 })} dGH`, unit: ' dGH', digits: 0 },
+  kH: { name: 'KH (carbonate hardness)', format: (v) => `${formatNumber(v, { maximumFractionDigits: 1 })} dKH`, unit: ' dKH', digits: 0 },
+};
+
+// Warnings about the user's own water. They exist only for a value the user entered that falls
+// outside the stock's shared range; an unentered parameter never produces one.
+function buildWaterWarnings(conditions, water) {
+  const warnings = [];
+  for (const item of conditions) {
+    if (item?.status !== 'outside' || !item.measured) continue;
+    const copy = WATER_WARNING_TEXT[item.key];
+    if (!copy) continue;
+    const [min, max] = item.range;
+    const shared = `${formatNumber(min, { maximumFractionDigits: copy.digits })}–${formatNumber(max, { maximumFractionDigits: copy.digits })}${copy.unit}`;
+    const title = `Your ${copy.name} is outside this stock's range`;
+    const message = `You entered ${copy.format(water[item.key])}. Shared species range: ${shared}. Change your water slowly, or choose fish that suit it.`;
+    warnings.push({
+      id: `water.${item.key}.outside`,
+      severity: item.severity === 'bad' ? 'danger' : 'warn',
+      icon: 'alert',
+      kind: 'water',
+      title,
+      message,
+      text: `${title} — ${message}`,
+    });
+  }
+  return warnings;
 }
 
 function mapEntriesToStock(entries = []) {
@@ -1569,20 +1691,47 @@ function computeDiagnostics({ tank, bioload, aggression, status, candidate, entr
   return lines;
 }
 
-function sanitizeWater(state) {
-  return {
-    temperature: Number(state.temperature) || 78,
-    pH: Number(state.pH) || 7,
-    gH: Number(state.gH) || 6,
-    kH: Number(state.kH) || 3,
+// Plausible bounds for a value the user typed; anything else is treated as not entered.
+const WATER_BOUNDS = Object.freeze({
+  temperature: [32, 110],
+  pH: [0, 14],
+  gH: [0, 60],
+  kH: [0, 60],
+});
+const FLOW_VALUES = new Set(['low', 'moderate', 'high']);
+
+function readMeasurement(raw, [lo, hi]) {
+  if (raw === null || raw === undefined || raw === '' || typeof raw === 'boolean') return null;
+  const value = Number(raw);
+  return Number.isFinite(value) && value >= lo && value <= hi ? value : null;
+}
+
+// The user's water, exactly as entered. temperature / pH / gH / kH / flow / blackwater are null when
+// the user has not entered them, and nothing downstream substitutes an assumed value. Salinity
+// defaults to freshwater: it is the tool's scope (marine species are excluded), not a measurement.
+export function sanitizeWater(state = {}) {
+  const water = {
+    temperature: readMeasurement(state.temperature, WATER_BOUNDS.temperature),
+    pH: readMeasurement(state.pH, WATER_BOUNDS.pH),
+    gH: readMeasurement(state.gH, WATER_BOUNDS.gH),
+    kH: readMeasurement(state.kH, WATER_BOUNDS.kH),
     salinity: (() => {
       const raw = typeof state.salinity === 'string' ? state.salinity : 'fresh';
       if (raw === 'marine') return 'marine';
       return SUPPORTED_SALINITY.has(raw) ? raw : 'fresh';
     })(),
-    flow: state.flow || 'moderate',
-    blackwater: Boolean(state.blackwater),
+    flow: FLOW_VALUES.has(state.flow) ? state.flow : null,
+    blackwater: typeof state.blackwater === 'boolean' ? state.blackwater : null,
   };
+  water.entered = Object.freeze({
+    temperature: water.temperature !== null,
+    pH: water.pH !== null,
+    gH: water.gH !== null,
+    kH: water.kH !== null,
+    flow: water.flow !== null,
+    blackwater: water.blackwater !== null,
+  });
+  return water;
 }
 
 export function buildComputedState(state) {
@@ -1627,7 +1776,8 @@ export function buildComputedState(state) {
     message: warning.title,
   }));
   const status = computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck, extraIssues: [...fishPredation.issues, ...tankSuitability.issues, ...filtrationIssues] });
-  const stockWarnings = [...evaluateStockWarnings({ entries, candidate }), ...fishPredation.warnings, ...tankSuitability.warnings, ...filtering.warnings];
+  const waterWarnings = buildWaterWarnings(conditions.conditions, water);
+  const stockWarnings = [...evaluateStockWarnings({ entries, candidate }), ...fishPredation.warnings, ...tankSuitability.warnings, ...filtering.warnings, ...waterWarnings];
   const mergedWarnings = mergeWarnings(status.warnings, stockWarnings);
   const statusWithWarnings = mergedWarnings === status.warnings ? status : { ...status, warnings: mergedWarnings };
 
@@ -1767,6 +1917,7 @@ export function createDefaultState() {
     variantId: null,
     stock: [],
     candidate: { id: getDefaultSpeciesId(), qty: '1' },
-    water: { temperature: 78, pH: 7.2, gH: 6, kH: 3, salinity: 'fresh', flow: 'moderate', blackwater: false },
+    // Not entered: the advisor knows nothing about the user's water until they enter it.
+    water: { temperature: null, pH: null, gH: null, kH: null, salinity: 'fresh', flow: null, blackwater: null },
   };
 }

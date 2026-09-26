@@ -387,6 +387,110 @@ test.describe('desktop: catalog product filter', () => {
   });
 });
 
+// Phase 2D: water parameters are unknown until the user enters them. The page has no water inputs
+// yet, so values are entered the way a future input would: on the calculator state, then recompute.
+async function setWater(page: Page, water: Record<string, number | string | boolean | null>) {
+  await page.evaluate((values) => {
+    const w = window as unknown as { appState: { water: Record<string, unknown> }; recomputeAll: () => void };
+    Object.assign(w.appState.water, values);
+    w.recomputeAll();
+  }, water);
+}
+const waterWarnings = (page: Page) => page.locator('#stock-warnings .status-strip[data-warning-id^="water."]');
+const WATER_CHIP_TEXT = /\bpH\b|\bgH\b|\bkH\b|temperature|hardness|tannin|flow|your water/i;
+
+// Previewing a species (selected, not yet added) is where the candidate chips list water checks.
+async function previewSpecies(page: Page, id: string, qty: number) {
+  await page.selectOption('#plan-species', id);
+  await page.fill('#plan-qty', String(qty));
+  await page.locator('#plan-qty').blur();
+  await expect(page.locator('#candidate-chips')).not.toBeEmpty();
+  await settle(page);
+}
+
+async function expectNoWaterChips(page: Page) {
+  const texts = await page.locator('#candidate-chips').allInnerTexts();
+  expect(texts.join(' ')).not.toMatch(WATER_CHIP_TEXT);
+}
+
+test.describe('desktop: water parameters', () => {
+  test.skip(({ isMobile }) => isMobile, 'desktop checks');
+
+  test('a new session with fish and no water entered makes no water claim', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '20h');
+    await previewSpecies(page, 'neon', 8);
+    await expectNoWaterChips(page);
+    await page.click('#plan-add');
+    await settle(page);
+    const water = await page.evaluate(() => (window as unknown as { appState: { water: Record<string, unknown> } }).appState.water);
+    expect([water.temperature, water.pH, water.gH, water.kH]).toEqual([null, null, null, null]);
+    await expect(waterWarnings(page)).toHaveCount(0);
+    await expectNoWaterChips(page);
+    await expect(bioloadLabel(page)).toHaveText(/%/);
+    // Shared species range is still shown from species data alone.
+    await expect(page.locator('#env-reco')).toContainText('4.8–7.2');
+  });
+
+  test('an entered incompatible pH warns, and clearing it returns pH to unknown', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '20h');
+    await addSpecies(page, 'neon', 8);
+    const before = await bioloadLabel(page).textContent();
+    await setWater(page, { pH: 8.5 });
+    const alert = warning(page, 'water.pH.outside');
+    await expect(alert).toBeVisible();
+    await expect(alert).toHaveAttribute('data-state', 'bad');
+    await expect(alert).toContainText('Your pH is outside this stock');
+    await expect(alert).toContainText('You entered pH 8.5');
+    await expect(bioloadLabel(page)).toHaveText(before ?? '');
+    await setWater(page, { pH: null });
+    await expect(waterWarnings(page)).toHaveCount(0);
+    const status = await page.evaluate(async () => {
+      const compute = await import('/js/logic/compute.js');
+      const w = window as unknown as { appState: Record<string, unknown> };
+      const computed = compute.buildComputedState(w.appState);
+      return computed.conditions.conditions.find((item: { key: string }) => item.key === 'pH')?.status;
+    });
+    expect(status).toBe('not-entered');
+    await expect(bioloadLabel(page)).toHaveText(before ?? '');
+  });
+
+  test('Molly with no GH entered gets no false hardness warning', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '29g');
+    await previewSpecies(page, 'molly', 3);
+    await expectNoWaterChips(page);
+    await setWater(page, { gH: 3 });
+    await expect(page.locator('#candidate-chips')).toContainText('gH: ✖ Your water is outside the shared range');
+    await setWater(page, { gH: null });
+    await expectNoWaterChips(page);
+    await page.click('#plan-add');
+    await settle(page);
+    await expect(waterWarnings(page)).toHaveCount(0);
+    await setWater(page, { gH: 3 });
+    await expect(warning(page, 'water.gH.outside')).toHaveAttribute('data-state', 'bad');
+    await expect(warning(page, 'water.gH.outside')).toContainText('Your GH (general hardness) is outside this stock');
+  });
+
+  test('entered water is not persisted across a reload', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '20h');
+    await addSpecies(page, 'neon', 8);
+    await setWater(page, { pH: 8.5 });
+    await expect(warning(page, 'water.pH.outside')).toBeVisible();
+    await page.reload();
+    await waitForSpecies(page);
+    const water = await page.evaluate(() => (window as unknown as { appState: { water: Record<string, unknown> } }).appState.water);
+    expect(water.pH).toBeNull();
+    await expect(waterWarnings(page)).toHaveCount(0);
+  });
+});
+
 test.describe('mobile', () => {
   test.skip(({ isMobile }) => !isMobile, 'mobile checks');
 

@@ -403,11 +403,18 @@ test('quantity_space is sourced data, validated, and only used for species that 
   }
 });
 
-test('livebearers get hardness warnings in soft water', () => {
+test('livebearers get hardness warnings when the user enters soft water, and none before', () => {
   for (const id of ['molly', 'swordtail', 'platy']) {
-    const computed = compute.buildComputedState(stateFor('29g', [[id, 3]]));
-    const gh = computed.conditions.conditions.find((item) => item.key === 'gH' || /gH/.test(item.label));
-    assert.equal(gh?.severity, 'bad', `${id} at the default gH 6`);
+    const unknown = compute.buildComputedState(stateFor('29g', [[id, 3]]));
+    const ghUnknown = unknown.conditions.conditions.find((item) => item.key === 'gH');
+    assert.equal(ghUnknown?.severity, 'ok', `${id} with no GH entered`);
+    assert.equal(ghUnknown?.status, 'not-entered', `${id} with no GH entered`);
+
+    const state = stateFor('29g', [[id, 3]]);
+    state.water = { ...state.water, gH: 6 };
+    const soft = compute.buildComputedState(state);
+    const gh = soft.conditions.conditions.find((item) => item.key === 'gH');
+    assert.equal(gh?.severity, 'bad', `${id} at an entered GH of 6`);
   }
 });
 

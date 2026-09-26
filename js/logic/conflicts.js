@@ -107,8 +107,9 @@ export function evaluatePair(candidate, incumbent, tankContext) {
 export function evaluateInvertSafety(species, tankContext) {
   if (!species) return { severity: 'ok', reason: '' };
   if (species.category === 'snail') {
-    const gh = tankContext?.water?.gH ?? 0;
-    if (gh < 6) {
+    // Only a GH the user entered can be too low; an unentered GH is unknown, not soft.
+    const gh = tankContext?.water?.gH;
+    if (typeof gh === 'number' && Number.isFinite(gh) && gh < 6) {
       return { severity: 'warn', reason: 'Low gH risks shell health' };
     }
   }
@@ -149,11 +150,14 @@ export function evaluateSalinity(candidate, tank) {
   return { severity: 'warn', reason: SALINITY_MIX_REASON, code: 'mixed' };
 }
 
+// Compares a species' circulation preference with the tank's flow, only when the user has said what
+// that flow is. There is no assumed "moderate" tank: unknown flow is not evaluated.
 export function evaluateFlow(candidate, water) {
   if (!candidate?.species) return { severity: 'ok', reason: '' };
-  const preference = candidate.species.flow ?? 'moderate';
-  const current = water?.flow ?? 'moderate';
   const ladder = ['low', 'moderate', 'high'];
+  const current = water?.flow;
+  if (!ladder.includes(current)) return { severity: 'ok', reason: '', code: 'not-entered' };
+  const preference = candidate.species.flow ?? 'moderate';
   const diff = Math.abs(ladder.indexOf(preference) - ladder.indexOf(current));
   if (diff >= 2) {
     return { severity: 'bad', reason: 'Flow rate unsuitable' };
@@ -164,16 +168,21 @@ export function evaluateFlow(candidate, water) {
   return { severity: 'ok', reason: '' };
 }
 
+// water.blackwater: true (tannins present), false (the user said no tannins) or null/undefined (not
+// entered). A preference is a tip, never a failure. A species that requires tannins is a husbandry
+// requirement: it is flagged when the tank is unknown and is red only when the user said tannins are off.
 export function evaluateBlackwater(candidate, water) {
   if (!candidate?.species) return { severity: 'ok', reason: '' };
   const preference = candidate.species.blackwater;
   if (!preference) return { severity: 'ok', reason: '' };
-  const active = Boolean(water?.blackwater);
-  if (preference === 'requires' && !active) {
-    return { severity: 'bad', reason: 'Requires tannins / blackwater' };
+  const current = water?.blackwater;
+  if (preference === 'requires') {
+    if (current === true) return { severity: 'ok', reason: '' };
+    if (current === false) return { severity: 'bad', reason: 'Requires tannins / blackwater' };
+    return { severity: 'warn', reason: 'Needs tannin-stained (blackwater) water — plan for botanicals such as leaf litter' };
   }
-  if (preference === 'prefers' && !active) {
-    return { severity: 'warn', reason: 'Prefers tannin-rich water' };
+  if (preference === 'prefers' && current !== true) {
+    return { severity: 'ok', reason: '', tip: 'Tip: benefits from tannins' };
   }
   return { severity: 'ok', reason: '' };
 }

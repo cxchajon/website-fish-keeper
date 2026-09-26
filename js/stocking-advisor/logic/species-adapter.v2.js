@@ -417,7 +417,7 @@ const LEGACY_BASE = Object.freeze({
     kH: Object.freeze({ min_dKH: 1, max_dKH: 8 }),
     salinity: 'fresh',
     flow: 'moderate',
-    blackwater: 'requires',
+    blackwater: 'prefers',
     tags: Object.freeze(['shoaler', 'fast_swimmer']),
     behavior: undefined,
     group: Object.freeze({ type: 'shoal', min: 10 }),
