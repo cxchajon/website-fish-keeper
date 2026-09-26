@@ -46,6 +46,15 @@ async function expectScrolledIntoView(locator: Locator) {
   }).toPass();
 }
 const bioloadLabel = (page: Page) => page.locator('[data-role="bioload-percent"]').first();
+
+// Phase 2C: filtration is its own check and never changes the bioload figure.
+async function addCustomFilter(page: Page, type: string, gph: number) {
+  await page.selectOption('#fs-type', type);
+  await page.fill('#fs-gph', String(gph));
+  await page.click('#fs-add-custom');
+}
+const filterChips = (page: Page) => page.locator('[data-role="proto-filter-chips"] .proto-filter-chip');
+const filtrationWarnings = (page: Page) => page.locator('#stock-warnings .status-strip[data-warning-id^="filtration."]');
 const bioloadFill = (page: Page) => page.locator('#env-bars .env-bar__fill').first();
 
 // A "normal green" result would have no red warning, a band-coloured bioload bar and no qualifier.
@@ -192,6 +201,58 @@ test.describe('desktop: space and cache', () => {
   });
 });
 
+test.describe('desktop: filtration', () => {
+  test.skip(({ isMobile }) => isMobile, 'desktop checks');
+
+  test('a powerhead alone adds no biological filtration and leaves bioload unchanged', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '20h');
+    await addSpecies(page, 'neon', 10);
+    await expect(warning(page, 'filtration.none')).toBeVisible();
+    const before = await bioloadLabel(page).textContent();
+    await addCustomFilter(page, 'Powerhead', 200);
+    await expect(filterChips(page)).toHaveCount(1);
+    await expect(filterChips(page).first()).toContainText('Powerhead 200');
+    const alert = warning(page, 'filtration.circulation_only');
+    await expect(alert).toHaveAttribute('data-state', 'bad');
+    await expect(alert).toContainText('No biological filter');
+    await expect(page.locator('[data-role="proto-filter-summary"]')).toHaveText(/^Filtration: 0 GPH • 0\.0×\/h \(\+200 GPH circulation only\)$/);
+    await expect(bioloadLabel(page)).toHaveText(before ?? '');
+  });
+
+  test('a 1 GPH canister is not treated like a properly flowing canister', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '20h');
+    await addSpecies(page, 'neon', 10);
+    const before = await bioloadLabel(page).textContent();
+    await addCustomFilter(page, 'Canister', 1);
+    const alert = warning(page, 'filtration.very_low');
+    await expect(alert).toHaveAttribute('data-state', 'bad');
+    await expect(alert).toContainText('Filter flow too low');
+    await expect(bioloadLabel(page)).toHaveText(before ?? '');
+    await page.click('[data-role="proto-filter-chips"] [data-remove-filter]');
+    await expect(filterChips(page)).toHaveCount(0);
+    await addCustomFilter(page, 'Canister', 150);
+    await expect(filterChips(page)).toHaveCount(1);
+    await expect(page.locator('[data-role="proto-filter-summary"]')).toHaveText('Filtration: 150 GPH • 7.5×/h');
+    await expect(filtrationWarnings(page)).toHaveCount(0);
+    await expect(bioloadLabel(page)).toHaveText(before ?? '');
+  });
+
+  test('a large filter does not clear a red tank-size result', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '20h');
+    await addSpecies(page, 'freshwater_angelfish', 6);
+    await addCustomFilter(page, 'Canister', 1500);
+    await expect(filterChips(page)).toHaveCount(1);
+    await expect(warning(page, 'tank.volume.freshwater_angelfish')).toHaveAttribute('data-state', 'bad');
+    await expectNotNormalGreen(page, /tank too small/i);
+  });
+});
+
 test.describe('mobile', () => {
   test.skip(({ isMobile }) => !isMobile, 'mobile checks');
 
@@ -213,6 +274,17 @@ test.describe('mobile', () => {
     await addSpecies(page, 'freshwater_angelfish', 2);
     await addSpecies(page, 'neon', 10);
     const alert = warning(page, 'predation.fish.freshwater_angelfish.neon');
+    await expectScrolledIntoView(alert);
+    await expect(alert).toHaveAttribute('data-state', 'bad');
+  });
+
+  test('a critical filtration warning is visible on a phone', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '20h');
+    await addSpecies(page, 'neon', 10);
+    await addCustomFilter(page, 'Canister', 1);
+    const alert = warning(page, 'filtration.very_low');
     await expectScrolledIntoView(alert);
     await expect(alert).toHaveAttribute('data-state', 'bad');
   });

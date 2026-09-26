@@ -1117,10 +1117,11 @@ async function bootstrapStocking() {
     finalize();
   }
 
+  // Turnover through filter media (powerheads excluded), as assessed by the engine.
   function computeTurnoverEstimate() {
-    const computedTurnover = computed?.filtering?.turnover ?? computed?.bioload?.flowAdjustment?.turnover;
-    if (Number.isFinite(computedTurnover) && computedTurnover > 0) {
-      return computedTurnover;
+    if (computed?.filtering) {
+      const computedTurnover = computed.filtering.turnover;
+      return Number.isFinite(computedTurnover) && computedTurnover > 0 ? computedTurnover : null;
     }
     const gallons = getSelectedTankGallons();
     if (!Number.isFinite(gallons) || gallons <= 0) {

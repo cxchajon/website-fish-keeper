@@ -644,7 +644,7 @@ function ensureTips(el) {
       <li>Lock in one salinity profile; avoid mixing freshwater and brackish species unless they are noted as dual-tolerant.</li>
       <li>Blackwater lovers appreciate botanicals and tinted water; only mark it required when tannin-dependent species are present.</li>
       <li>Blend flow zones when low- and high-flow species are mixed—use spray bars or directional pumps to create calm refuges.</li>
-      <li>Stay within the green bioload zone for stability and increase filtration or planting before pushing higher loads.</li>
+      <li>Stay within the green bioload zone for stability—a bigger filter does not raise that limit.</li>
     </ul>`;
   el.dataset.bound = 'true';
 }

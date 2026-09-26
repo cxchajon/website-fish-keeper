@@ -185,12 +185,12 @@ test('load scales linearly with quantity', () => {
   }
 });
 
-test('filtration only rescales the figure; the species load itself is unchanged', () => {
+test('filtration changes neither the species load nor the bioload figure (Phase 2C)', () => {
   const stock = [['neon', 10], ['cory_bronze', 6], ['betta_male', 1]];
   const base = run('29g', stock).bioload;
   const filtered = run('29g', stock, [{ id: 'hob', type: 'HOB', rated_gph: 145 }]).bioload;
   assert.equal(filtered.proposed, base.proposed);
-  assert.ok(filtered.proposedPercent <= base.proposedPercent);
+  assert.equal(filtered.proposedPercent, base.proposedPercent);
 });
 
 test('safety scenarios A–F: tank suitability and compatibility still act independently of bioload', () => {

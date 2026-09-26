@@ -1,5 +1,3 @@
-import { clamp, sumGph, weightedMixFactor } from './utils.js';
-
 export const DEFAULT_DISPLACEMENT = 0.10;       // 10% volume lost to substrate/scape
 export const MIN_RENDERED_PERCENT = 0.1;        // floor for display; values below still show as "<0.1%"
 
@@ -51,20 +49,4 @@ export function formatBioloadPercent(pct) {
     return '<0.1%';
   }
   return `${clamped.toFixed(1)}%`;
-}
-
-export function computeFiltrationFactor({ filters = [], totalGph = null, turnover = null } = {}) {
-  const list = Array.isArray(filters) ? filters.filter((item) => item && typeof item === 'object') : [];
-  const total = Number.isFinite(totalGph) && totalGph > 0 ? totalGph : sumGph(list);
-  const mixFactor = weightedMixFactor(list, total);
-  const typeFactor = Number.isFinite(mixFactor) && mixFactor > 0 ? mixFactor : 1;
-  const flowFactor = 1;
-  const combined = clamp(typeFactor * flowFactor, 0.9, 1.1);
-  return {
-    typeFactor,
-    flowFactor,
-    totalFactor: combined,
-    mixFactor: typeFactor,
-    turnover: Number.isFinite(turnover) ? turnover : null,
-  };
 }

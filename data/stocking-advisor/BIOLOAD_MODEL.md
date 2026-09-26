@@ -125,8 +125,8 @@ zero in, the calculation.
 ## 6. What this model does not cover
 
 - **Tank capacity side.** The percentage divides by effective gallons = 90 % of nominal gallons (a
-  fixed substrate/decor displacement assumption) and then applies filtration capacity bonuses. Both
-  are outside this model and are scheduled for separate review.
+  fixed substrate/decor displacement assumption), which is outside this model and scheduled for
+  separate review. Filtration no longer changes the percentage (Phase 2C, see FILTRATION_MODEL.md).
 - **Size data quality.** Adult sizes are the record's maximum figures and their basis varies (SL, TL,
   unspecified). Swordtail (6.3 in, female maximum TL) and Angelfish (6 in SL maximum) are the most
   affected. Correcting sizes is a data task, not a model change.
