@@ -34,7 +34,8 @@ Rules:
 | Field | Meaning |
 |---|---|
 | `adult_size_in` | Maximum adult length as stated by its source, in inches. `adult_size_basis` records what was measured: `standard_length` (SL, snout to tail base), `total_length` (TL, including tail), `maximum_length_unspecified` (source gives a size without saying SL or TL), `body_length` (shrimp), `shell_length` / `shell_diameter` (snails). Values with different bases are not directly comparable. |
-| `min_tank_liters` | The smallest tank the canonical source recommends **for keeping the species at all**, i.e. for its minimum keeping unit. `min_tank_basis` records which unit the source stated it for: `single`, `pair`, `pair_or_small_group`, `group` (the species' minimum social group), or `unspecified` (source gives one minimum without naming the unit). The engine applies it once per species; it is **not** scaled by the number planned. |
+| `min_tank_liters` | The smallest tank the canonical source recommends **for keeping the species at all**, i.e. for its minimum keeping unit. `min_tank_basis` records which unit the source stated it for: `single`, `pair`, `pair_or_small_group`, `group` (the species' minimum social group), or `unspecified` (source gives one minimum without naming the unit). The engine applies it once per species; it is **not** scaled by the number planned (see `quantity_space`). |
+| `quantity_space` | Optional, for species whose sources give territorial space **per fish**: `{ liters_per_fish, source, basis }`. The engine requires max(`min_tank_liters`, quantity × `liters_per_fish`) and reports a shortfall as a red “Not enough space for N × species” tank-suitability warning. It is a space rule and never changes bioload. A source’s own range uses its upper figure (rule 3). Currently only Pea Puffer (Seriously Fish: 2–3 US gal per puffer → 3 gal = 11.36 L). |
 | `min_tank_length_in` | The recommended minimum horizontal length of the tank. `min_tank_length_basis`: `source` (an explicit base/footprint dimension from a cited source), `inferred_standard_tank` (no source gives dimensions; the length of the standard US tank of the canonical volume is used and flagged), or `not_applicable` (crawling snails; value is `null`). |
 | Length units | When a source quotes its own inch equivalent (Seriously Fish: “90 × 30 cm (36 × 12 in)”), that figure is used; centimetre-only values are converted exactly and rounded to 0.1 in. |
 | `tank_length_not_applicable` | `true` only when `min_tank_length_basis` is `not_applicable`. |
@@ -57,9 +58,10 @@ prey are planned together the advisor shows a red compatibility warning.
 
 ## 4. Bioload
 
-The GE values for newer species are a **provisional calibration bridge** (see
-`fitBioloadCalibration` in `js/stocking-advisor/logic/species-adapter.v2.js`), not a validated
-model. The original 20 species keep their own GE values.
+Every species' bioload comes from one model — adult size, category and the record's
+`bioload_profile` — documented in `BIOLOAD_MODEL.md`. The former provisional calibration bridge and
+hand-set GE values are no longer used. Bioload and tank space are separate: territorial space needs
+belong in `min_tank_liters` / `quantity_space`, never in the bioload inputs.
 
 ## 5. Verification methods
 

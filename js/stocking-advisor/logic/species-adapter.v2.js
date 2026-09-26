@@ -1,4 +1,9 @@
 import { BEHAVIOR_TAGS } from '../../logic/behaviorTags.js';
+import { computeSpeciesBioload } from './bioload-model.js';
+
+// Cache-policy marker read by the one-time stale-cache guard in stocking-advisor.html. It means "this
+// copy was served under the revalidating /js/ policy (see _headers)"; it is never bumped per release.
+(globalThis.__ttgRevalidatedModules ||= {})['species-adapter'] = true;
 
 // Species data - loaded asynchronously for Safari compatibility
 let speciesV2Raw = [];
@@ -59,7 +64,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: null,
     ph_sensitive: false,
-    bioloadGE: 0.12,
   }),
   'betta-female': Object.freeze({
     id: 'betta_female',
@@ -81,7 +85,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.25,
     ph_sensitive: false,
-    bioloadGE: 2.0,
   }),
   'betta-male': Object.freeze({
     id: 'betta_male',
@@ -107,7 +110,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.3,
     ph_sensitive: false,
-    bioloadGE: 2.5,
   }),
   'bronze-corydoras': Object.freeze({
     id: 'cory_bronze',
@@ -129,7 +131,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: 0.15,
     ph_sensitive: false,
-    bioloadGE: 1.2,
   }),
   'cardinal-tetra': Object.freeze({
     id: 'cardinal',
@@ -151,7 +152,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.15,
     ph_sensitive: true,
-    bioloadGE: 0.6,
   }),
   'cherry-barb': Object.freeze({
     id: 'cherrybarb',
@@ -173,7 +173,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.2,
     ph_sensitive: false,
-    bioloadGE: 0.6,
   }),
   'cherry-shrimp': Object.freeze({
     id: 'neocaridina',
@@ -195,7 +194,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: null,
     ph_sensitive: true,
-    bioloadGE: 0.08,
   }),
   'chili-rasbora': Object.freeze({
     id: 'chili',
@@ -217,7 +215,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: 0.05,
     ph_sensitive: true,
-    bioloadGE: 0.3,
   }),
   'dwarf-gourami': Object.freeze({
     id: 'dgourami',
@@ -239,7 +236,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.3,
     ph_sensitive: false,
-    bioloadGE: 2.0,
   }),
   'guppy-male': Object.freeze({
     id: 'guppy_male',
@@ -261,7 +257,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.15,
     ph_sensitive: false,
-    bioloadGE: 0.5,
   }),
   'harlequin-rasbora': Object.freeze({
     id: 'harlequin',
@@ -283,7 +278,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.2,
     ph_sensitive: false,
-    bioloadGE: 0.5,
   }),
   'kuhli-loach': Object.freeze({
     id: 'kuhli',
@@ -305,7 +299,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: 0.1,
     ph_sensitive: false,
-    bioloadGE: 0.8,
   }),
   'neon-tetra': Object.freeze({
     id: 'neon',
@@ -327,7 +320,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.1,
     ph_sensitive: true,
-    bioloadGE: 0.6,
   }),
   'nerite-snail': Object.freeze({
     id: 'nerite',
@@ -349,7 +341,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: null,
     ph_sensitive: false,
-    bioloadGE: 0.25,
   }),
   'otocinclus': Object.freeze({
     id: 'otocinclus',
@@ -371,7 +362,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: null,
     ph_sensitive: false,
-    bioloadGE: 0.4,
   }),
   'panda-corydoras': Object.freeze({
     id: 'cory_panda',
@@ -393,7 +383,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: 0.1,
     ph_sensitive: false,
-    bioloadGE: 1.0,
   }),
   'pearl-gourami': Object.freeze({
     id: 'pgourami',
@@ -415,7 +404,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.5,
     ph_sensitive: false,
-    bioloadGE: 4.0,
   }),
   'rummynose-tetra': Object.freeze({
     id: 'rummynose',
@@ -437,7 +425,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.2,
     ph_sensitive: true,
-    bioloadGE: 0.8,
   }),
   'tiger-barb': Object.freeze({
     id: 'tiger_barb',
@@ -463,7 +450,6 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.3,
     ph_sensitive: false,
-    bioloadGE: 1.6,
   }),
   'zebra-danio': Object.freeze({
     id: 'zebra',
@@ -485,18 +471,8 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.2,
     ph_sensitive: false,
-    bioloadGE: 0.7,
   }),
 });
-
-// Fallback v2-multiplier → GE conversion, used only if the calibration below cannot be fitted.
-const LEGACY_BIOLOAD_SCALE = 0.6;
-const MIN_CALIBRATION_PAIRS = 5;
-
-function round(value, precision = 3) {
-  const factor = 10 ** precision;
-  return Math.round(Number(value ?? 0) * factor) / factor;
-}
 
 function cloneRange(range, fallback) {
   if (Array.isArray(range) && range.length === 2) {
@@ -538,7 +514,7 @@ function normalizeGroup(record, legacy) {
   };
 }
 
-function buildProtoMeta(record, normalizedBioload) {
+function buildProtoMeta(record) {
   const predationRisks = Array.isArray(record?.behavior?.predationRisks)
     ? Object.freeze([...record.behavior.predationRisks])
     : Object.freeze([]);
@@ -547,8 +523,6 @@ function buildProtoMeta(record, normalizedBioload) {
     : Object.freeze([]);
   return Object.freeze({
     slug: record.slug,
-    normalizedBioload,
-    bioloadComponents: Object.freeze({ ...record.bioload.components }),
     aggression: Object.freeze({
       baseline: record.aggression.baseline,
       vectors: Object.freeze({ ...record.aggression.vectors }),
@@ -701,37 +675,6 @@ function normalizeTraits(record, legacy) {
   };
 }
 
-// PROVISIONAL CALIBRATION BRIDGE — not a biological model and not validated. It maps the v2 bioload
-// multiplier onto the engine's existing GE scale for species that have no legacy GE value, using a
-// log-log least-squares fit GE = a · multiplier^b over the species that do (LEGACY_BASE). It exists
-// only because the flat ×0.6 conversion placed larger, deep-bodied fish far below the original
-// species (e.g. an angelfish at half a betta). The original species keep their own GE values. The
-// resulting GE values for newer species are rough placeholders until the bioload model is redesigned.
-export function fitBioloadCalibration(records) {
-  const points = [];
-  for (const record of Array.isArray(records) ? records : []) {
-    const ge = LEGACY_BASE[record?.slug]?.bioloadGE;
-    const multiplier = Number(record?.bioload?.multiplier);
-    if (Number.isFinite(ge) && ge > 0 && Number.isFinite(multiplier) && multiplier > 0) {
-      points.push([Math.log(multiplier), Math.log(ge)]);
-    }
-  }
-  if (points.length < MIN_CALIBRATION_PAIRS) {
-    console.warn('[species-adapter] Too few calibration species; using the flat ×0.6 bioload scale.');
-    return { a: LEGACY_BIOLOAD_SCALE, b: 1, pairs: points.length, calibrated: false };
-  }
-  const meanX = points.reduce((sum, [x]) => sum + x, 0) / points.length;
-  const meanY = points.reduce((sum, [, y]) => sum + y, 0) / points.length;
-  let sxy = 0;
-  let sxx = 0;
-  for (const [x, y] of points) {
-    sxy += (x - meanX) * (y - meanY);
-    sxx += (x - meanX) ** 2;
-  }
-  const b = sxy / sxx;
-  return { a: Math.exp(meanY - b * meanX), b, pairs: points.length, calibrated: true };
-}
-
 // A value is taken from the v2 record first, then LEGACY_BASE. Missing values stay null — never a
 // plausible-looking default — so validateSpeciesRecord rejects the record and the advisor shows
 // the species as "could not be evaluated" instead of calculating with invented numbers.
@@ -751,12 +694,10 @@ function rangeOrNull(range, legacyRange, minKey, maxKey) {
   return { [minKey]: null, [maxKey]: null };
 }
 
-function mapRecord(record, calibration, fishNames = []) {
+function mapRecord(record, fishNames = []) {
   const legacy = LEGACY_BASE[record.slug] || null;
   const legacyId = legacy?.id || record.slug.replace(/[^a-z0-9]+/gi, '_').toLowerCase();
 
-  const normalizedBioload = round(record.bioload.multiplier);
-  const calibratedBioload = round(calibration.a * normalizedBioload ** calibration.b);
   const { group, minGroup } = normalizeGroup(record, legacy);
   const traits = normalizeTraits(record, legacy);
   const fishPrey = resolveFishPrey(record, fishNames);
@@ -764,17 +705,22 @@ function mapRecord(record, calibration, fishNames = []) {
     ? Object.freeze([...traits.tags, 'fish_risk'])
     : traits.tags;
   const lengthNotApplicable = record.tank_length_not_applicable === true;
+  const category = pick(record, legacy, 'category');
+  const adultSizeIn = pick(record, legacy, 'adult_size_in');
+  const bioloadProfile = record.bioload_profile ?? null;
 
   const adapted = {
     id: legacyId,
     slug: record.slug,
     common_name: record.name,
     scientific_name: pick(record, legacy, 'scientific_name'),
-    category: pick(record, legacy, 'category'),
-    adult_size_in: pick(record, legacy, 'adult_size_in'),
+    category,
+    adult_size_in: adultSizeIn,
     min_tank_length_in: lengthNotApplicable ? null : pick(record, legacy, 'min_tank_length_in'),
     tank_length_not_applicable: lengthNotApplicable,
     min_tank_liters: pick(record, legacy, 'min_tank_liters'),
+    // Sourced quantity-dependent space rule (territorial species), checked by tank suitability only.
+    quantity_space: record.quantity_space ? Object.freeze({ ...record.quantity_space }) : null,
     // Field semantics: data/stocking-advisor/SPECIES_DATA_POLICY.md
     adult_size_basis: record.adult_size_basis ?? null,
     min_tank_basis: record.min_tank_basis ?? null,
@@ -797,10 +743,11 @@ function mapRecord(record, calibration, fishNames = []) {
     // No engine rule reads mouth size; left null rather than estimated for the newer species.
     mouth_size_in: legacy?.mouth_size_in ?? null,
     ph_sensitive: legacy?.ph_sensitive ?? false,
-    // Species the engine already evaluated keep their GE; newer species get the provisional
-    // bridge value from fitBioloadCalibration (see the caveat there).
-    bioloadGE: legacy?.bioloadGE ?? calibratedBioload,
-    protoV2: buildProtoMeta(record, normalizedBioload),
+    // One model for every species (data/stocking-advisor/BIOLOAD_MODEL.md). NaN when the inputs are
+    // incomplete, so validateSpeciesRecord rejects the record and the advisor flags it.
+    bioload_profile: bioloadProfile ? Object.freeze({ ...bioloadProfile }) : null,
+    bioloadGE: computeSpeciesBioload({ adultSizeIn, category, profile: bioloadProfile }),
+    protoV2: buildProtoMeta(record),
   };
 
   return Object.freeze(adapted);
@@ -809,7 +756,6 @@ function mapRecord(record, calibration, fishNames = []) {
 // Species collections - built after initialization
 let ADAPTED_SPECIES = [];
 let SPECIES_BY_SLUG = new Map();
-let BIOLOAD_CALIBRATION = null;
 
 /**
  * Initialize species data - must be called before using getSpeciesListV2/getSpeciesBySlugV2
@@ -822,15 +768,10 @@ export async function initializeSpecies() {
 
   await loadSpeciesData();
 
-  BIOLOAD_CALIBRATION = fitBioloadCalibration(speciesV2Raw);
   const fishNames = buildFishNameIndex(speciesV2Raw);
-  ADAPTED_SPECIES = Object.freeze(speciesV2Raw.map((record) => mapRecord(record, BIOLOAD_CALIBRATION, fishNames)));
+  ADAPTED_SPECIES = Object.freeze(speciesV2Raw.map((record) => mapRecord(record, fishNames)));
   SPECIES_BY_SLUG = new Map(ADAPTED_SPECIES.map((entry) => [entry.slug.toLowerCase(), entry]));
   speciesInitialized = true;
-}
-
-export function getBioloadCalibration() {
-  return BIOLOAD_CALIBRATION ? { ...BIOLOAD_CALIBRATION } : null;
 }
 
 export function getSpeciesLoadStatus() {
@@ -842,7 +783,7 @@ export function getSpeciesListV2() {
     id: species.id,
     slug: species.slug,
     name: species.common_name,
-    normalizedBioload: species.protoV2.normalizedBioload,
+    bioloadGE: species.bioloadGE,
     aggressionScore: species.aggression,
   }));
 }

@@ -112,7 +112,7 @@ const TOOLTIP_COPY = new Map([
     {
       title: 'Bioload gauge',
       body: [
-        'Shows how much of your tank’s capacity is used based on species size and waste output.',
+        'Estimates how much of your tank’s capacity is used, based on each species’ adult size, body shape and waste output. It is a planning estimate, not a measurement.',
         'Staying in the green keeps extra buffer for filtration, oxygen, and future growth.',
       ],
       ariaLabel: 'More info about the bioload gauge',

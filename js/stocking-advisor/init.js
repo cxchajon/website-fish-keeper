@@ -23,7 +23,7 @@ const fireProtoEvent = (eventName) => {
 };
 
 const BIOLOAD_TIP_TEXT =
-  "Shows how much of your tank's capacity is used based on species size and waste output. Staying in the green keeps extra buffer for filtration, oxygen, and future growth.";
+  "Estimates how much of your tank's capacity is used, based on each species' adult size, body shape and waste output. It is a planning estimate, not a measurement. Staying in the green keeps extra buffer for filtration, oxygen, and future growth.";
 
 const upgradeInfoBadge = (node, tipText) => {
   if (!(node instanceof HTMLElement)) {

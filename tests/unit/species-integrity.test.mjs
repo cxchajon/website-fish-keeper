@@ -103,11 +103,11 @@ test('each dropdown species participates in calculation as stock and as candidat
   }
 });
 
-test('species the engine already evaluated keep their bioload values', () => {
+test('every original species is still in the engine (bioload now comes from the model, not fish-data.js)', () => {
   for (const record of FISH_DB) {
     const engineRecord = legacy.getSpeciesById(record.id);
     assert.ok(engineRecord, `${record.id} missing from engine`);
-    assert.equal(engineRecord.bioloadGE, record.bioloadGE, `${record.id} bioloadGE changed`);
+    assert.ok(Number.isFinite(engineRecord.bioloadGE) && engineRecord.bioloadGE > 0, `${record.id} bioloadGE`);
   }
 });
 
@@ -291,17 +291,6 @@ test('a record missing a required husbandry value is rejected and flagged, not d
   }
 });
 
-test('provisional bioload bridge keeps obvious size relationships (not a validated model)', () => {
-  // Sanity checks only — the GE values for newer species are a provisional bridge, so no exact
-  // numbers are asserted. Large-bodied fish must not weigh less than much smaller ones.
-  const ge = (id) => legacy.getSpeciesById(id).bioloadGE;
-  assert.ok(ge('freshwater_angelfish') > ge('tiger_barb'));
-  assert.ok(ge('bristlenose_pleco') > ge('tiger_barb'));
-  assert.ok(ge('molly') > ge('guppy_male') * 3);
-  assert.ok(ge('ember_tetra') <= ge('neon'));
-  assert.ok(ge('ramshorn_snail') < ge('nerite'));
-});
-
 test('predation uses one vocabulary: shrimp_risk / snail_risk', () => {
   const tags = (id) => legacy.getSpeciesById(id).tags;
   for (const species of legacy.SPECIES) {
@@ -354,10 +343,63 @@ test('safety cases: 6 of each species in a 5 gallon fail tank suitability', () =
     assert.ok(warningIds(computed).includes(`tank.volume.${id}`), id);
     assert.equal(computed.bioload.severity, 'bad', id);
   }
-  const puffers = compute.buildComputedState(stateFor('5g', [['pea_puffer', 6]]));
-  assert.equal(puffers.bioload.severity, 'bad', 'six pea puffers overload a 5 gallon');
   const onePuffer = compute.buildComputedState(stateFor('5g', [['pea_puffer', 1]]));
   assert.ok(!warningIds(onePuffer).includes('tank.volume.pea_puffer'), 'one pea puffer fits a 5 gallon minimum');
+});
+
+// Pea puffers: group space is a sourced tank-suitability rule (quantity_space), separate from bioload.
+// Required volume = max(single-fish minimum, quantity × 3 US gal) — Seriously Fish "2–3 gal per puffer".
+test('pea puffer space scales with the number planned, independently of bioload', () => {
+  const groupWarning = (computed) => computed.status.warnings.find((w) => w.id === 'tank.group_volume.pea_puffer');
+  const volumeIds = (computed) => warningIds(computed).filter((id) => /^tank\.(group_)?volume\.pea_puffer$/.test(id));
+
+  const one = compute.buildComputedState(stateFor('5g', [['pea_puffer', 1]]));
+  assert.deepEqual(volumeIds(one), [], 'one puffer fits a 5 gallon');
+  assert.equal(one.status.severity, 'ok');
+
+  for (const qty of [3, 6]) {
+    const crowded = compute.buildComputedState(stateFor('5g', [['pea_puffer', qty]]));
+    const warning = groupWarning(crowded);
+    assert.ok(warning, `${qty} puffers in a 5 gallon need a space warning`);
+    assert.equal(warning.severity, 'danger');
+    assert.match(warning.title, new RegExp(`Not enough space for ${qty} × Pea Puffer`));
+    assert.match(warning.message, /space limit for the number of fish, not a waste \(bioload\) limit/);
+    assert.equal(crowded.status.severity, 'bad');
+  }
+
+  // Aquarium Co-Op examples agree: 3 in a 10 gallon, 6–7 in a 20 gallon.
+  assert.deepEqual(volumeIds(compute.buildComputedState(stateFor('10g', [['pea_puffer', 3]]))), []);
+  assert.ok(groupWarning(compute.buildComputedState(stateFor('10g', [['pea_puffer', 4]]))));
+  for (const tank of ['20h', '20l']) {
+    assert.deepEqual(volumeIds(compute.buildComputedState(stateFor(tank, [['pea_puffer', 6]]))), [], tank);
+  }
+
+  // Stock and preview quantities add up.
+  const preview = compute.buildComputedState(stateFor('10g', [['pea_puffer', 2]], ['pea_puffer', 2]));
+  assert.match(groupWarning(preview)?.title ?? '', /4 × Pea Puffer/);
+
+  // The rule does not touch bioload: load stays linear in quantity and equal to six single puffers.
+  const single = compute.buildComputedState(stateFor('125g', [['pea_puffer', 1]])).bioload.proposed;
+  const six = compute.buildComputedState(stateFor('5g', [['pea_puffer', 6]])).bioload;
+  assert.ok(Math.abs(six.proposed - 6 * single) < 1e-9);
+  assert.ok(six.proposedPercent < 1, 'six puffers are not a waste overload of a 5 gallon');
+});
+
+test('quantity_space is sourced data, validated, and only used for species that have it', () => {
+  const withRule = RAW_SPECIES.filter((record) => record.quantity_space);
+  assert.deepEqual(withRule.map((record) => record.slug), ['pea-puffer']);
+  const rule = withRule[0].quantity_space;
+  assert.ok(Math.abs(rule.liters_per_fish - 3 * 3.785411784) < 0.01, '3 US gal per puffer');
+  assert.ok(withRule[0].husbandry_review.sources.some((source) => source.tier === 1 && source.fields.includes('quantity_space')));
+  const broken = DROPDOWN.map((species) => (
+    species.id === 'pea_puffer' ? { ...species, quantity_space: { liters_per_fish: 0, source: 'x' } } : species
+  ));
+  try {
+    legacy.overrideSpeciesDataset(broken);
+    assert.deepEqual(compute.getRejectedSpecies().map((s) => [s.id, s.reason]), [['pea_puffer', 'bad quantity_space.liters_per_fish']]);
+  } finally {
+    legacy.overrideSpeciesDataset(DROPDOWN);
+  }
 });
 
 test('livebearers get hardness warnings in soft water', () => {
