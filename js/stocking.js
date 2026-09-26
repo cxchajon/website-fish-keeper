@@ -10,6 +10,7 @@ import {
   computeFilterFlowStats,
   normalizeFilterTypeSelection,
   initializeCompute,
+  getSpeciesDatasetStatus,
 } from './logic/compute.js';
 import { renderEnvCard } from './logic/envRecommend.js';
 import { getTankVariants } from './logic/sizeMap.js';
@@ -321,9 +322,38 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
+// Shown when the species dataset cannot be loaded: the advisor must not look usable (or fall back
+// to older data), so species selection is disabled and a red alert explains why.
+function showSpeciesDataUnavailable(reason) {
+  if (typeof document === 'undefined' || document.getElementById('species-data-error')) return;
+  const select = document.getElementById('plan-species');
+  const addButton = document.getElementById('plan-add');
+  if (select) select.disabled = true;
+  if (addButton) addButton.disabled = true;
+  const alert = document.createElement('div');
+  alert.id = 'species-data-error';
+  alert.className = 'status-strip';
+  alert.dataset.state = 'bad';
+  alert.setAttribute('role', 'alert');
+  alert.dataset.testid = 'species-data-error';
+  alert.innerHTML = '<span class="warning-title">Species data failed to load</span>'
+    + '<span class="warning-message">The Stocking Advisor cannot calculate stocking levels, compatibility, or water needs right now. Please reload the page or try again later.</span>';
+  const anchor = select?.closest('.card, .ttg-card, section') ?? document.getElementById('stocking-page');
+  if (anchor) {
+    anchor.prepend(alert);
+  } else {
+    document.body.prepend(alert);
+  }
+  console.error('[stocking] Species data unavailable:', reason);
+}
+
 async function bootstrapStocking() {
   // Initialize species data before using SPECIES
   await initializeCompute();
+  const datasetStatus = getSpeciesDatasetStatus();
+  if (datasetStatus.state === 'unavailable') {
+    showSpeciesDataUnavailable(datasetStatus.error);
+  }
 
   let state = window.appState;
   if (!state || typeof state !== 'object') {
@@ -2550,6 +2580,7 @@ document.addEventListener('ttg:tooltip-close', (event) => {
 
 bootstrapStocking().catch((error) => {
   console.error('[stocking] Bootstrap failed:', error);
+  showSpeciesDataUnavailable(error?.message || error);
 });
 
 // Legacy info popover removed in favor of dedicated tooltip utility.

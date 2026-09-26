@@ -1,5 +1,5 @@
 import * as baseCompute from './compute.legacy.js';
-import { initializeSpecies, getSpeciesListV2, getSpeciesBySlugV2 } from '../stocking-advisor/logic/species-adapter.v2.js';
+import { initializeSpecies, getSpeciesListV2, getSpeciesBySlugV2, getSpeciesLoadStatus } from '../stocking-advisor/logic/species-adapter.v2.js';
 import { compatScore } from '../stocking-advisor/logic/compat.v2.js';
 import { calcAggression, AGGRESSION_TOKENS } from '../stocking-advisor/logic/aggression.v2.js';
 import { evaluateWarningRules } from '../stocking-advisor/logic/warning-rules.js';
@@ -33,6 +33,11 @@ const {
   runStressSuite: baseRunStressSuite,
   createDefaultState: baseCreateDefaultState,
   overrideSpeciesDataset,
+  flagUnevaluatedSpecies,
+  flagUnsuitableTank,
+  getRejectedSpecies,
+  getSpeciesDatasetStatus,
+  markSpeciesDatasetUnavailable,
   FILTER_TURNOVER_MULTIPLIERS,
   TURNOVER_BANDS,
   MIN_TURNOVER_FLOOR,
@@ -85,6 +90,12 @@ export async function initializeCompute() {
 
   await initializeSpecies();
   buildSpeciesCollections();
+  // Never fall back to the legacy js/fish-data.js list: if species.v2.json did not load, the engine
+  // is put into an explicit unavailable state and every result says so.
+  const loadStatus = getSpeciesLoadStatus();
+  if (!loadStatus.ok || SPECIES_V2.length === 0) {
+    markSpeciesDatasetUnavailable(loadStatus.error || 'species data is empty');
+  }
   updateExports();
   computeInitialized = true;
 }
@@ -714,7 +725,8 @@ export function computeBioload(tank, entries, candidate, filterState = {}) {
 
 export function buildComputedState(state) {
   const raw = baseBuildComputedState(state);
-  return patchProtoComputed(patchComputed(raw, state));
+  // Re-flag after patching: patchBioload rebuilds the bioload text/severity from scratch.
+  return flagUnevaluatedSpecies(flagUnsuitableTank(patchProtoComputed(patchComputed(raw, state))));
 }
 
 let fallbackDefaultSpeciesId = null;
@@ -758,6 +770,8 @@ export function getDefaultSpeciesId() {
 }
 
 export {
+  getRejectedSpecies,
+  getSpeciesDatasetStatus,
   autoBioloadUnit,
   listSensitiveSpecies,
   normalizeFilterTypeSelection,

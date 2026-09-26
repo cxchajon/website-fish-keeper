@@ -5,12 +5,28 @@ export const REQUIRED_FIELDS = [
 
 import { BEHAVIOR_TAG_VALUES } from "./behaviorTags.js";
 
-const ALLOWED_TAGS = new Set([
+// Tags used by the legacy engine rules (js/fish-data.js + LEGACY_BASE in the v2 adapter).
+export const LEGACY_TAGS = Object.freeze([
   "betta","betta_male","livebearer","labyrinth","algae_specialist","nano",
   "shoaler","schooling_shoaler","bottom_dweller","fast_swimmer","nocturnal","territorial",
-  "fin_nipper","fin_sensitive","predator_shrimp","predator_snail","invert_safe","cichlid",
+  "fin_nipper","fin_sensitive","invert_safe","cichlid",
   "long_fins","slow_long_fins","aggressive","semi_aggressive"
 ]);
+
+// Tags used by data/stocking-advisor/species.v2.json (the dataset behind the species dropdown).
+// Every record the advisor offers must validate, so any new tag added to the JSON must be listed
+// here too — tests/unit/species-integrity.test.mjs fails if one is missing.
+export const V2_TAGS = Object.freeze([
+  "active_swimmer","aggressive","algae_eater","apisto","beginner","betta_shape_trigger",
+  "bottom_dweller","cave_spawner","centerpiece","centerpiece_snail","cichlid","cold_water",
+  "colorful","community","filter_feeder","fin_nipper","hardy","high_flow","labyrinth",
+  "livebearer","longfin_target","low_cost","low_flow","nano","nocturnal","oddball","peaceful",
+  "predatory","prolific","requires_cover","scavenger","schooling","semi_nipper","sensitive",
+  "shrimp_risk","shrimp_safe","shy","snail_control","snail_risk","snail_safe","specialized",
+  "territorial","utility","fish_risk"
+]);
+
+const ALLOWED_TAGS = new Set([...LEGACY_TAGS, ...V2_TAGS]);
 
 const ALLOWED_BEHAVIOR_TAGS = new Set(BEHAVIOR_TAG_VALUES);
 
@@ -41,8 +57,18 @@ export function validateSpeciesRecord(s) {
     if (!rng(s.kH))          return "bad kH";
     if (!SUPPORTED_SALINITY.has(s.salinity)) return "bad salinity";
     if (!["low","moderate","high"].includes(s.flow)) return "bad flow";
-    if (!["requires","prefers","neutral"].includes(s.blackwater)) return "bad blackwater";
-    if (!(num(s.adult_size_in) && num(s.min_tank_length_in) && num(s.aggression))) return "bad numbers";
+    // null = not assessed (no source makes a tannin claim); the engine applies no blackwater rule.
+    if (s.blackwater !== null && !["requires","prefers","neutral"].includes(s.blackwater)) return "bad blackwater";
+    if (typeof s.scientific_name !== "string" || !s.scientific_name.trim()) return "missing scientific_name";
+    if (!(num(s.adult_size_in) && s.adult_size_in > 0)) return "bad adult_size_in";
+    // A tank length may only be absent when the record says it does not apply (crawling snails).
+    if (s.min_tank_length_in === null) {
+      if (s.tank_length_not_applicable !== true) return "missing min_tank_length_in";
+    } else if (!(num(s.min_tank_length_in) && s.min_tank_length_in > 0)) {
+      return "bad min_tank_length_in";
+    }
+    if (s.min_tank_liters != null && !(num(s.min_tank_liters) && s.min_tank_liters > 0)) return "bad min_tank_liters";
+    if (!num(s.aggression)) return "bad numbers";
     if (!Array.isArray(s.tags)) return "bad tags";
     for (const t of s.tags) {
       if (!ALLOWED_TAGS.has(t)) return `bad tag:${t}`;

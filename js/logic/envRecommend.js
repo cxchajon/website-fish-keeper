@@ -35,7 +35,8 @@ export function defaultEnvModel() {
 }
 
 const FLOW_LABEL = { low: 'Low', moderate: 'Moderate', high: 'High' };
-const BLACK_LABEL = { off: 'Off', neutral: 'Off', prefers: 'Recommended', recommended: 'Recommended', required: 'Required' };
+// Keyed by the canonical species vocabulary (see validateSpeciesRecord): requires / prefers / neutral.
+const BLACK_LABEL = { off: 'Off', neutral: 'Off', prefers: 'Recommended', requires: 'Required' };
 const SALINITY_LABEL = {
   fresh: 'Freshwater',
   'brackish-low': 'Brackish-low',
@@ -115,7 +116,9 @@ function toggleEnvCompact({ env, bioloadPercent, aggressionPercent }) {
 export function renderEnvCard({ stock = [], stockCount = null, computed = null } = {}) {
   const env = deriveEnv(stock, { computed });
   const derivedCount = typeof stockCount === 'number' ? stockCount : env.stockLength ?? (Array.isArray(stock) ? stock.length : 0);
-  const isEmpty = derivedCount === 0;
+  // Selected species the engine could not evaluate still count as stock, so the bars show an
+  // incomplete result instead of an empty 0% tank.
+  const isEmpty = derivedCount === 0 && !env.bioloadIncomplete;
   if (typeof document === 'undefined') {
     return env;
   }
@@ -372,6 +375,8 @@ export function deriveEnv(stock = [], options = {}) {
     bioloadPct,
     bioloadLabel,
     bioloadSeverity,
+    bioloadIncomplete: computed?.bioload?.incomplete === true,
+    bioloadTankUnsuitable: computed?.bioload?.tankUnsuitable === true,
     aggressionPct,
     aggressionLabel,
     aggressionSeverity,
@@ -496,8 +501,11 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   const rawBioloadPct = isEmpty ? 0 : Number(env.bioloadPct) || 0;
   const bioloadPct = isEmpty ? 0 : sanitizePercent(rawBioloadPct);
   const aggressionPct = isEmpty ? 0 : sanitizePercent(env.aggressionPct);
-  const bioloadColor = getBandColor(bioloadPct / 100);
-  const bioloadDisplay = formatBioloadPercent(Math.max(0, Math.min(200, rawBioloadPct)));
+  const bioloadIncomplete = !isEmpty && env.bioloadIncomplete === true;
+  const bioloadTankUnsuitable = !isEmpty && env.bioloadTankUnsuitable === true;
+  const bioloadColor = bioloadIncomplete || bioloadTankUnsuitable ? colorForSeverity('bad') : getBandColor(bioloadPct / 100);
+  const bioloadSuffix = bioloadIncomplete ? ' (incomplete)' : bioloadTankUnsuitable ? ' (tank too small)' : '';
+  const bioloadDisplay = `${formatBioloadPercent(Math.max(0, Math.min(200, rawBioloadPct)))}${bioloadSuffix}`;
   const bioloadAria = Number.isFinite(bioloadPct) ? Number(bioloadPct.toFixed(2)) : 0;
   const bioloadNotes = isEmpty ? '' : renderChips(env.barNotes?.bioload ?? []);
   const generalChips = isEmpty ? '' : renderChips(env.detailChips ?? []);
@@ -842,43 +850,48 @@ function buildFlow(entries) {
   return { condition: { label: 'Flow', value, badges }, chips, noteCodes, code };
 }
 
-function buildBlackwater(entries) {
+export function buildBlackwater(entries) {
+  // null (not assessed) and 'neutral' add no requirement.
   const flags = entries.map((entry) => entry.species.blackwater).filter(Boolean);
-  if (!flags.length) {
-    return { condition: { label: 'Blackwater / Tannins', value: 'Off' }, status: 'off', noteCodes: [] };
-  }
-  let value = 'Off';
+  let value = BLACK_LABEL.off;
   let status = 'off';
   const noteCodes = [];
-  if (flags.includes('required')) {
-    value = BLACK_LABEL.required;
+  if (flags.includes('requires')) {
+    value = BLACK_LABEL.requires;
     status = 'req';
     noteCodes.push('req');
   } else if (flags.includes('prefers')) {
-    value = BLACK_LABEL.recommended;
+    value = BLACK_LABEL.prefers;
     status = 'pref';
-  } else if (flags.includes('recommended')) {
-    value = BLACK_LABEL.recommended;
-    status = 'rec';
   }
   return { condition: { label: 'Blackwater / Tannins', value }, status, noteCodes };
 }
 
+const hasTag = (species, tag) => Array.isArray(species?.tags) && species.tags.includes(tag);
+
+// Invertebrate predation, from the canonical shrimp_risk / snail_risk tags (see normalizeTraits in
+// species-adapter.v2.js). A predator is never flagged against its own species.
 function evaluateInvertSafety(entries) {
   const warnings = [];
   const chips = [];
-  const shrimp = entries.filter((entry) => entry.species.category === 'shrimp');
-  if (!shrimp.length) {
-    return { warnings, chips };
+  const checks = [
+    { category: 'shrimp', tag: 'shrimp_risk', label: 'Shrimp', chip: 'shrimp at risk' },
+    { category: 'snail', tag: 'snail_risk', label: 'Snail', chip: 'snails at risk' },
+  ];
+  for (const { category, tag, label, chip } of checks) {
+    const prey = entries.filter((entry) => entry.species.category === category);
+    if (!prey.length) continue;
+    const predators = entries.filter((entry) => hasTag(entry.species, tag)
+      && prey.some((item) => item.species.id !== entry.species.id));
+    if (!predators.length) continue;
+    const predatorIds = new Set(predators.map((entry) => entry.species.id));
+    const preyNames = prey.filter((entry) => !predatorIds.has(entry.species.id))
+      .map((entry) => entry.species.common_name).join(', ');
+    if (!preyNames) continue;
+    const predatorNames = predators.map((entry) => entry.species.common_name).join(', ');
+    warnings.push({ type: 'soft', text: `${label} predation risk: ${predatorNames} vs ${preyNames}.` });
+    chips.push(chip);
   }
-  const predators = entries.filter((entry) => entry.species.category !== 'shrimp' && entry.species.invert_safe === false);
-  if (!predators.length) {
-    return { warnings, chips };
-  }
-  const shrimpNames = shrimp.map((entry) => entry.species.common_name).join(', ');
-  const predatorNames = predators.map((entry) => entry.species.common_name).join(', ');
-  warnings.push({ type: 'soft', text: `Shrimp predation risk: ${predatorNames} vs ${shrimpNames}.` });
-  chips.push('shrimp at risk');
   return { warnings, chips };
 }
 
@@ -890,6 +903,8 @@ function evaluateGroupNeeds(entries) {
     if (!group) continue;
     if (group.type === 'shoal' && qty < group.min) {
       chips.push(`shoal min not met: ${species.common_name}`);
+    } else if (group.type === 'social' && qty < group.min) {
+      chips.push(`keep ${group.min}+ together: ${species.common_name}`);
     } else if (group.type === 'harem' && qty < group.min) {
       chips.push(`harem ratio needed: ${species.common_name}`);
     }

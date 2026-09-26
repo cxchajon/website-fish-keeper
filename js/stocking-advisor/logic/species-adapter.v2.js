@@ -4,6 +4,9 @@ import { BEHAVIOR_TAGS } from '../../logic/behaviorTags.js';
 let speciesV2Raw = [];
 let speciesLoadPromise = null;
 let speciesInitialized = false;
+// Outcome of loading species.v2.json: { ok, count, error }. Callers must not present results
+// when ok is false (see initializeCompute in js/logic/compute.js).
+let speciesLoadStatus = { ok: false, count: 0, error: 'not loaded' };
 
 // Start loading species data immediately (non-blocking)
 function loadSpeciesData() {
@@ -18,13 +21,14 @@ function loadSpeciesData() {
         throw new Error(`HTTP ${speciesResponse.status}: ${speciesResponse.statusText}`);
       }
       speciesV2Raw = await speciesResponse.json();
-      if (!Array.isArray(speciesV2Raw)) {
-        console.error('[species-adapter] Invalid species data format, expected array');
-        speciesV2Raw = [];
+      if (!Array.isArray(speciesV2Raw) || speciesV2Raw.length === 0) {
+        throw new Error('invalid species data format, expected a non-empty array');
       }
+      speciesLoadStatus = { ok: true, count: speciesV2Raw.length, error: null };
     } catch (error) {
       console.error('[species-adapter] Failed to load species data:', error);
       speciesV2Raw = [];
+      speciesLoadStatus = { ok: false, count: 0, error: error?.message || String(error) };
     }
   })();
 
@@ -55,6 +59,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: null,
     ph_sensitive: false,
+    bioloadGE: 0.12,
   }),
   'betta-female': Object.freeze({
     id: 'betta_female',
@@ -76,6 +81,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.25,
     ph_sensitive: false,
+    bioloadGE: 2.0,
   }),
   'betta-male': Object.freeze({
     id: 'betta_male',
@@ -101,6 +107,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.3,
     ph_sensitive: false,
+    bioloadGE: 2.5,
   }),
   'bronze-corydoras': Object.freeze({
     id: 'cory_bronze',
@@ -122,6 +129,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: 0.15,
     ph_sensitive: false,
+    bioloadGE: 1.2,
   }),
   'cardinal-tetra': Object.freeze({
     id: 'cardinal',
@@ -143,6 +151,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.15,
     ph_sensitive: true,
+    bioloadGE: 0.6,
   }),
   'cherry-barb': Object.freeze({
     id: 'cherrybarb',
@@ -164,6 +173,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.2,
     ph_sensitive: false,
+    bioloadGE: 0.6,
   }),
   'cherry-shrimp': Object.freeze({
     id: 'neocaridina',
@@ -185,6 +195,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: null,
     ph_sensitive: true,
+    bioloadGE: 0.08,
   }),
   'chili-rasbora': Object.freeze({
     id: 'chili',
@@ -206,6 +217,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: 0.05,
     ph_sensitive: true,
+    bioloadGE: 0.3,
   }),
   'dwarf-gourami': Object.freeze({
     id: 'dgourami',
@@ -227,6 +239,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.3,
     ph_sensitive: false,
+    bioloadGE: 2.0,
   }),
   'guppy-male': Object.freeze({
     id: 'guppy_male',
@@ -248,6 +261,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.15,
     ph_sensitive: false,
+    bioloadGE: 0.5,
   }),
   'harlequin-rasbora': Object.freeze({
     id: 'harlequin',
@@ -269,6 +283,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.2,
     ph_sensitive: false,
+    bioloadGE: 0.5,
   }),
   'kuhli-loach': Object.freeze({
     id: 'kuhli',
@@ -290,6 +305,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: 0.1,
     ph_sensitive: false,
+    bioloadGE: 0.8,
   }),
   'neon-tetra': Object.freeze({
     id: 'neon',
@@ -311,6 +327,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.1,
     ph_sensitive: true,
+    bioloadGE: 0.6,
   }),
   'nerite-snail': Object.freeze({
     id: 'nerite',
@@ -332,6 +349,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: null,
     ph_sensitive: false,
+    bioloadGE: 0.25,
   }),
   'otocinclus': Object.freeze({
     id: 'otocinclus',
@@ -353,6 +371,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: null,
     ph_sensitive: false,
+    bioloadGE: 0.4,
   }),
   'panda-corydoras': Object.freeze({
     id: 'cory_panda',
@@ -374,6 +393,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: true,
     mouth_size_in: 0.1,
     ph_sensitive: false,
+    bioloadGE: 1.0,
   }),
   'pearl-gourami': Object.freeze({
     id: 'pgourami',
@@ -395,6 +415,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.5,
     ph_sensitive: false,
+    bioloadGE: 4.0,
   }),
   'rummynose-tetra': Object.freeze({
     id: 'rummynose',
@@ -416,6 +437,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.2,
     ph_sensitive: true,
+    bioloadGE: 0.8,
   }),
   'tiger-barb': Object.freeze({
     id: 'tiger_barb',
@@ -441,6 +463,7 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.3,
     ph_sensitive: false,
+    bioloadGE: 1.6,
   }),
   'zebra-danio': Object.freeze({
     id: 'zebra',
@@ -462,10 +485,13 @@ const LEGACY_BASE = Object.freeze({
     invert_safe: false,
     mouth_size_in: 0.2,
     ph_sensitive: false,
+    bioloadGE: 0.7,
   }),
 });
 
-const LEGACY_BIOLOAD_SCALE = 0.6; // keeps prototype math aligned with legacy GE baseline
+// Fallback v2-multiplier → GE conversion, used only if the calibration below cannot be fitted.
+const LEGACY_BIOLOAD_SCALE = 0.6;
+const MIN_CALIBRATION_PAIRS = 5;
 
 function round(value, precision = 3) {
   const factor = 10 ** precision;
@@ -492,6 +518,13 @@ function asNumber(value, fallback) {
 
 function normalizeGroup(record, legacy) {
   const behaviorMin = asNumber(record?.behavior?.schoolingMinimum, null);
+  // socialMinimum: a documented conspecific minimum for a species that does not school (e.g. honey
+  // gourami, “buy no fewer than 4–6”). Represented as its own group type so it is never labelled a
+  // shoal; schoolingMinimum takes precedence when both are set.
+  const socialMin = asNumber(record?.behavior?.socialMinimum, null);
+  if (socialMin > 1 && !(behaviorMin > 1) && !legacy?.group) {
+    return { group: { type: 'social', min: socialMin }, minGroup: socialMin };
+  }
   const legacyMin = asNumber(legacy?.group?.min ?? legacy?.min_group, null);
   const min = behaviorMin && behaviorMin > 1 ? behaviorMin : legacyMin;
   if (!min || min < 1) {
@@ -569,15 +602,48 @@ function deriveSalinity(slug, legacy) {
   return 'fresh';
 }
 
-function deriveInvertSafety(record, legacy) {
+// Whether a record's own predation list says it eats `prey` ("Shrimp (juvenile)", "Snails").
+// Entries such as "Predators: large fish" describe what eats this species and are ignored.
+function preysOn(record, prey) {
   const risks = record?.behavior?.predationRisks;
-  if (Array.isArray(risks) && risks.some((risk) => /shrimp|snail|invert/i.test(risk))) {
-    return false;
+  if (!Array.isArray(risks)) return false;
+  const pattern = new RegExp(prey, 'i');
+  return risks.some((risk) => typeof risk === 'string' && !/^\s*predators?\s*:/i.test(risk) && pattern.test(risk));
+}
+
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// Selectable fish that a record's own predation list explicitly names as prey, e.g.
+// "Small fish (e.g., Neon Tetras)" → Neon Tetra. Only exact common-name matches (singular or plural)
+// count — there is no size-based inference, and "Predators: …" entries are ignored.
+function resolveFishPrey(record, fishNames) {
+  const risks = record?.behavior?.predationRisks;
+  if (!Array.isArray(risks)) return [];
+  const prey = [];
+  for (const risk of risks) {
+    if (typeof risk !== 'string' || /^\s*predators?\s*:/i.test(risk)) continue;
+    for (const { id, slug, name } of fishNames) {
+      if (slug === record.slug) continue;
+      const pattern = new RegExp(`\\b${escapeRegExp(name)}(e?s)?\\b`, 'i');
+      if (pattern.test(risk)) prey.push({ id, evidence: risk });
+    }
   }
-  if (typeof legacy?.invert_safe === 'boolean') {
-    return legacy.invert_safe;
+  return prey;
+}
+
+// Fish species in the dataset, keyed for prey matching: engine id + common name without any
+// parenthetical ("Blue Ram (German Blue Ram)" → "Blue Ram").
+function buildFishNameIndex(records) {
+  const list = [];
+  for (const record of Array.isArray(records) ? records : []) {
+    const legacy = LEGACY_BASE[record?.slug] || null;
+    const category = record?.category ?? legacy?.category ?? null;
+    if (category !== 'fish' || typeof record?.name !== 'string') continue;
+    const name = record.name.replace(/\s*\(.*\)\s*/g, ' ').trim();
+    if (!name) continue;
+    list.push({ id: legacy?.id || record.slug.replace(/[^a-z0-9]+/gi, '_').toLowerCase(), slug: record.slug, name });
   }
-  return true;
+  return list;
 }
 
 function mergeTags(legacyTags, recordTags) {
@@ -595,58 +661,145 @@ function mergeTags(legacyTags, recordTags) {
       list.push(tag);
     }
   }
-  return Object.freeze(list);
+  return list;
 }
 
-function mapRecord(record) {
+// Normalises the v2 vocabulary onto the traits the engine rules read, so each concept has one
+// meaning:
+//   shrimp_risk / snail_risk — documented predation on shrimp / snails. Only explicit evidence
+//                              counts: the v2 tag or a prey entry in behavior.predationRisks. The
+//                              broad legacy invert_safe flag is NOT evidence of shrimp predation.
+//                              A contradicting shrimp_safe / snail_safe tag is dropped.
+//   longfin_target           — long_fins + LONG_FIN_VULNERABLE (fin-nipper target)
+//   semi_nipper              — semi_aggressive (may nip long fins)
+//   territorial / fin_nipper — TERRITORIAL / FIN_NIPPER behaviour
+function normalizeTraits(record, legacy) {
+  const tags = mergeTags(legacy?.tags, record?.tags);
+  const has = (tag) => tags.includes(tag);
+  const add = (tag) => { if (!has(tag)) tags.push(tag); };
+  const drop = (tag) => { const index = tags.indexOf(tag); if (index >= 0) tags.splice(index, 1); };
+
+  const shrimpRisk = has('shrimp_risk') || preysOn(record, 'shrimp');
+  const snailRisk = has('snail_risk') || preysOn(record, 'snail');
+  if (shrimpRisk) { add('shrimp_risk'); drop('shrimp_safe'); }
+  if (snailRisk) { add('snail_risk'); drop('snail_safe'); }
+  if (shrimpRisk || snailRisk) drop('invert_safe');
+  if (has('longfin_target')) add('long_fins');
+  if (has('semi_nipper')) add('semi_aggressive');
+
+  const behavior = new Set(Array.isArray(legacy?.behavior) ? legacy.behavior : []);
+  if (has('long_fins')) behavior.add(BEHAVIOR_TAGS.LONG_FIN_VULNERABLE);
+  if (has('territorial')) behavior.add(BEHAVIOR_TAGS.TERRITORIAL);
+  if (has('fin_nipper')) behavior.add(BEHAVIOR_TAGS.FIN_NIPPER);
+
+  return {
+    tags: Object.freeze(tags),
+    behavior: behavior.size ? Object.freeze([...behavior]) : undefined,
+    // Generic "safe with invertebrates" flag, kept separate from the predation tags above. It keeps
+    // its legacy meaning where a legacy record exists; no current rule reads it for predation.
+    invertSafe: typeof legacy?.invert_safe === 'boolean' ? legacy.invert_safe : !shrimpRisk && !snailRisk,
+  };
+}
+
+// PROVISIONAL CALIBRATION BRIDGE — not a biological model and not validated. It maps the v2 bioload
+// multiplier onto the engine's existing GE scale for species that have no legacy GE value, using a
+// log-log least-squares fit GE = a · multiplier^b over the species that do (LEGACY_BASE). It exists
+// only because the flat ×0.6 conversion placed larger, deep-bodied fish far below the original
+// species (e.g. an angelfish at half a betta). The original species keep their own GE values. The
+// resulting GE values for newer species are rough placeholders until the bioload model is redesigned.
+export function fitBioloadCalibration(records) {
+  const points = [];
+  for (const record of Array.isArray(records) ? records : []) {
+    const ge = LEGACY_BASE[record?.slug]?.bioloadGE;
+    const multiplier = Number(record?.bioload?.multiplier);
+    if (Number.isFinite(ge) && ge > 0 && Number.isFinite(multiplier) && multiplier > 0) {
+      points.push([Math.log(multiplier), Math.log(ge)]);
+    }
+  }
+  if (points.length < MIN_CALIBRATION_PAIRS) {
+    console.warn('[species-adapter] Too few calibration species; using the flat ×0.6 bioload scale.');
+    return { a: LEGACY_BIOLOAD_SCALE, b: 1, pairs: points.length, calibrated: false };
+  }
+  const meanX = points.reduce((sum, [x]) => sum + x, 0) / points.length;
+  const meanY = points.reduce((sum, [, y]) => sum + y, 0) / points.length;
+  let sxy = 0;
+  let sxx = 0;
+  for (const [x, y] of points) {
+    sxy += (x - meanX) * (y - meanY);
+    sxx += (x - meanX) ** 2;
+  }
+  const b = sxy / sxx;
+  return { a: Math.exp(meanY - b * meanX), b, pairs: points.length, calibrated: true };
+}
+
+// A value is taken from the v2 record first, then LEGACY_BASE. Missing values stay null — never a
+// plausible-looking default — so validateSpeciesRecord rejects the record and the advisor shows
+// the species as "could not be evaluated" instead of calculating with invented numbers.
+function pick(record, legacy, key) {
+  if (record?.[key] != null) return record[key];
+  if (legacy?.[key] != null) return legacy[key];
+  return null;
+}
+
+function rangeOrNull(range, legacyRange, minKey, maxKey) {
+  if (Array.isArray(range) && range.length === 2 && range.every(Number.isFinite)) {
+    return { [minKey]: range[0], [maxKey]: range[1] };
+  }
+  if (legacyRange && Number.isFinite(legacyRange[minKey]) && Number.isFinite(legacyRange[maxKey])) {
+    return { [minKey]: legacyRange[minKey], [maxKey]: legacyRange[maxKey] };
+  }
+  return { [minKey]: null, [maxKey]: null };
+}
+
+function mapRecord(record, calibration, fishNames = []) {
   const legacy = LEGACY_BASE[record.slug] || null;
   const legacyId = legacy?.id || record.slug.replace(/[^a-z0-9]+/gi, '_').toLowerCase();
 
   const normalizedBioload = round(record.bioload.multiplier);
-  const legacyBioload = round(normalizedBioload * LEGACY_BIOLOAD_SCALE);
-  const [tempMin, tempMax] = cloneRange(record.parameters?.temperature?.tolerable, legacy?.temperature && [legacy.temperature.min_f, legacy.temperature.max_f]);
-  const [phMin, phMax] = cloneRange(record.parameters?.pH?.tolerable, legacy?.ph && [legacy.ph.min, legacy.ph.max]);
-  const [ghMin, ghMax] = cloneRange(record.parameters?.gh?.tolerable, legacy?.gH && [legacy.gH.min_dGH, legacy.gH.max_dGH]);
-  const [khMin, khMax] = cloneRange(record.parameters?.kh?.tolerable, legacy?.kH && [legacy.kH.min_dKH, legacy.kH.max_dKH]);
-
+  const calibratedBioload = round(calibration.a * normalizedBioload ** calibration.b);
   const { group, minGroup } = normalizeGroup(record, legacy);
+  const traits = normalizeTraits(record, legacy);
+  const fishPrey = resolveFishPrey(record, fishNames);
+  const tags = fishPrey.length && !traits.tags.includes('fish_risk')
+    ? Object.freeze([...traits.tags, 'fish_risk'])
+    : traits.tags;
+  const lengthNotApplicable = record.tank_length_not_applicable === true;
 
   const adapted = {
     id: legacyId,
     slug: record.slug,
     common_name: record.name,
-    scientific_name: legacy?.scientific_name || '',
-    category: legacy?.category || 'fish',
-    adult_size_in: legacy?.adult_size_in ?? 2.5,
-    min_tank_length_in: legacy?.min_tank_length_in ?? 24,
-    temperature: {
-      min_f: asNumber(tempMin, legacy?.temperature?.min_f ?? 72),
-      max_f: asNumber(tempMax, legacy?.temperature?.max_f ?? 78),
-    },
-    ph: {
-      min: asNumber(phMin, legacy?.ph?.min ?? 6.0),
-      max: asNumber(phMax, legacy?.ph?.max ?? 7.5),
-    },
-    gH: {
-      min_dGH: asNumber(ghMin, legacy?.gH?.min_dGH ?? 3),
-      max_dGH: asNumber(ghMax, legacy?.gH?.max_dGH ?? 12),
-    },
-    kH: {
-      min_dKH: asNumber(khMin, legacy?.kH?.min_dKH ?? 2),
-      max_dKH: asNumber(khMax, legacy?.kH?.max_dKH ?? 8),
-    },
+    scientific_name: pick(record, legacy, 'scientific_name'),
+    category: pick(record, legacy, 'category'),
+    adult_size_in: pick(record, legacy, 'adult_size_in'),
+    min_tank_length_in: lengthNotApplicable ? null : pick(record, legacy, 'min_tank_length_in'),
+    tank_length_not_applicable: lengthNotApplicable,
+    min_tank_liters: pick(record, legacy, 'min_tank_liters'),
+    // Field semantics: data/stocking-advisor/SPECIES_DATA_POLICY.md
+    adult_size_basis: record.adult_size_basis ?? null,
+    min_tank_basis: record.min_tank_basis ?? null,
+    min_tank_length_basis: record.min_tank_length_basis ?? null,
+    temperature: rangeOrNull(record.parameters?.temperature?.tolerable, legacy?.temperature, 'min_f', 'max_f'),
+    ph: rangeOrNull(record.parameters?.pH?.tolerable, legacy?.ph, 'min', 'max'),
+    gH: rangeOrNull(record.parameters?.gh?.tolerable, legacy?.gH, 'min_dGH', 'max_dGH'),
+    kH: rangeOrNull(record.parameters?.kh?.tolerable, legacy?.kH, 'min_dKH', 'max_dKH'),
     salinity: deriveSalinity(record.slug, legacy),
-    flow: record.parameters?.flow || legacy?.flow || 'moderate',
-    blackwater: legacy?.blackwater || 'neutral',
+    flow: record.parameters?.flow || legacy?.flow || null,
+    blackwater: pick(record, legacy, 'blackwater'),
     aggression: Math.round(record.aggression?.baseline * 100),
-    tags: mergeTags(legacy?.tags, record?.tags),
-    behavior: Array.isArray(legacy?.behavior) ? [...legacy.behavior] : undefined,
+    tags,
+    // fish_risk: documented predation on other selectable fish (see resolveFishPrey).
+    preys_on_species: Object.freeze(fishPrey.map((item) => Object.freeze({ ...item }))),
+    behavior: traits.behavior,
     group,
     min_group: minGroup,
-    invert_safe: deriveInvertSafety(record, legacy),
+    invert_safe: traits.invertSafe,
+    // No engine rule reads mouth size; left null rather than estimated for the newer species.
     mouth_size_in: legacy?.mouth_size_in ?? null,
     ph_sensitive: legacy?.ph_sensitive ?? false,
-    bioloadGE: legacyBioload,
+    // Species the engine already evaluated keep their GE; newer species get the provisional
+    // bridge value from fitBioloadCalibration (see the caveat there).
+    bioloadGE: legacy?.bioloadGE ?? calibratedBioload,
     protoV2: buildProtoMeta(record, normalizedBioload),
   };
 
@@ -656,6 +809,7 @@ function mapRecord(record) {
 // Species collections - built after initialization
 let ADAPTED_SPECIES = [];
 let SPECIES_BY_SLUG = new Map();
+let BIOLOAD_CALIBRATION = null;
 
 /**
  * Initialize species data - must be called before using getSpeciesListV2/getSpeciesBySlugV2
@@ -668,9 +822,19 @@ export async function initializeSpecies() {
 
   await loadSpeciesData();
 
-  ADAPTED_SPECIES = Object.freeze(speciesV2Raw.map(mapRecord));
+  BIOLOAD_CALIBRATION = fitBioloadCalibration(speciesV2Raw);
+  const fishNames = buildFishNameIndex(speciesV2Raw);
+  ADAPTED_SPECIES = Object.freeze(speciesV2Raw.map((record) => mapRecord(record, BIOLOAD_CALIBRATION, fishNames)));
   SPECIES_BY_SLUG = new Map(ADAPTED_SPECIES.map((entry) => [entry.slug.toLowerCase(), entry]));
   speciesInitialized = true;
+}
+
+export function getBioloadCalibration() {
+  return BIOLOAD_CALIBRATION ? { ...BIOLOAD_CALIBRATION } : null;
+}
+
+export function getSpeciesLoadStatus() {
+  return { ...speciesLoadStatus };
 }
 
 export function getSpeciesListV2() {
