@@ -33,6 +33,8 @@ const {
   runStressSuite: baseRunStressSuite,
   createDefaultState: baseCreateDefaultState,
   overrideSpeciesDataset,
+  flagUnevaluatedSpecies,
+  getRejectedSpecies,
   FILTER_TURNOVER_MULTIPLIERS,
   TURNOVER_BANDS,
   MIN_TURNOVER_FLOOR,
@@ -714,7 +716,8 @@ export function computeBioload(tank, entries, candidate, filterState = {}) {
 
 export function buildComputedState(state) {
   const raw = baseBuildComputedState(state);
-  return patchProtoComputed(patchComputed(raw, state));
+  // Re-flag after patching: patchBioload rebuilds the bioload text/severity from scratch.
+  return flagUnevaluatedSpecies(patchProtoComputed(patchComputed(raw, state)));
 }
 
 let fallbackDefaultSpeciesId = null;
@@ -758,6 +761,7 @@ export function getDefaultSpeciesId() {
 }
 
 export {
+  getRejectedSpecies,
   autoBioloadUnit,
   listSensitiveSpecies,
   normalizeFilterTypeSelection,

@@ -115,7 +115,9 @@ function toggleEnvCompact({ env, bioloadPercent, aggressionPercent }) {
 export function renderEnvCard({ stock = [], stockCount = null, computed = null } = {}) {
   const env = deriveEnv(stock, { computed });
   const derivedCount = typeof stockCount === 'number' ? stockCount : env.stockLength ?? (Array.isArray(stock) ? stock.length : 0);
-  const isEmpty = derivedCount === 0;
+  // Selected species the engine could not evaluate still count as stock, so the bars show an
+  // incomplete result instead of an empty 0% tank.
+  const isEmpty = derivedCount === 0 && !env.bioloadIncomplete;
   if (typeof document === 'undefined') {
     return env;
   }
@@ -372,6 +374,7 @@ export function deriveEnv(stock = [], options = {}) {
     bioloadPct,
     bioloadLabel,
     bioloadSeverity,
+    bioloadIncomplete: computed?.bioload?.incomplete === true,
     aggressionPct,
     aggressionLabel,
     aggressionSeverity,
@@ -496,8 +499,9 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
   const rawBioloadPct = isEmpty ? 0 : Number(env.bioloadPct) || 0;
   const bioloadPct = isEmpty ? 0 : sanitizePercent(rawBioloadPct);
   const aggressionPct = isEmpty ? 0 : sanitizePercent(env.aggressionPct);
-  const bioloadColor = getBandColor(bioloadPct / 100);
-  const bioloadDisplay = formatBioloadPercent(Math.max(0, Math.min(200, rawBioloadPct)));
+  const bioloadIncomplete = !isEmpty && env.bioloadIncomplete === true;
+  const bioloadColor = bioloadIncomplete ? colorForSeverity('bad') : getBandColor(bioloadPct / 100);
+  const bioloadDisplay = `${formatBioloadPercent(Math.max(0, Math.min(200, rawBioloadPct)))}${bioloadIncomplete ? ' (incomplete)' : ''}`;
   const bioloadAria = Number.isFinite(bioloadPct) ? Number(bioloadPct.toFixed(2)) : 0;
   const bioloadNotes = isEmpty ? '' : renderChips(env.barNotes?.bioload ?? []);
   const generalChips = isEmpty ? '' : renderChips(env.detailChips ?? []);

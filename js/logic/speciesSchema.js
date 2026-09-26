@@ -5,12 +5,27 @@ export const REQUIRED_FIELDS = [
 
 import { BEHAVIOR_TAG_VALUES } from "./behaviorTags.js";
 
-const ALLOWED_TAGS = new Set([
+// Tags used by the legacy engine rules (js/fish-data.js + LEGACY_BASE in the v2 adapter).
+export const LEGACY_TAGS = Object.freeze([
   "betta","betta_male","livebearer","labyrinth","algae_specialist","nano",
   "shoaler","schooling_shoaler","bottom_dweller","fast_swimmer","nocturnal","territorial",
   "fin_nipper","fin_sensitive","predator_shrimp","predator_snail","invert_safe","cichlid",
   "long_fins","slow_long_fins","aggressive","semi_aggressive"
 ]);
+
+// Tags used by data/stocking-advisor/species.v2.json (the dataset behind the species dropdown).
+// Every record the advisor offers must validate, so any new tag added to the JSON must be listed
+// here too — tests/unit/species-integrity.test.mjs fails if one is missing.
+export const V2_TAGS = Object.freeze([
+  "active_swimmer","aggressive","algae_eater","apisto","beginner","betta_shape_trigger",
+  "bottom_dweller","cave_spawner","centerpiece","centerpiece_snail","cichlid","cold_water",
+  "colorful","community","filter_feeder","fin_nipper","hardy","high_flow","labyrinth",
+  "longfin_target","low_cost","low_flow","nano","nocturnal","oddball","peaceful","predatory",
+  "prolific","requires_cover","scavenger","schooling","semi_nipper","sensitive","shrimp_risk",
+  "shrimp_safe","shy","snail_control","snail_safe","specialized","utility"
+]);
+
+const ALLOWED_TAGS = new Set([...LEGACY_TAGS, ...V2_TAGS]);
 
 const ALLOWED_BEHAVIOR_TAGS = new Set(BEHAVIOR_TAG_VALUES);
 
