@@ -563,6 +563,207 @@ function evaluateFishPredation(entries, candidate) {
   return { issues, warnings };
 }
 
+// The plan warnings below re-state existing rules as persistent warnings over stock + candidate, so an
+// issue stays in the stock warnings after Add instead of living only in a candidate chip or the
+// Environmental card. Each keeps the severity its rule already assigns; none adds a relationship.
+
+const GROUP_SEVERITY = { warn: 'warn', bad: 'danger' };
+
+// Group / social / colony minimums and harem guidance: checkGroupRule, evaluated once per species on
+// the combined planned quantity.
+function evaluateGroupWarnings(entries, candidate) {
+  const issues = [];
+  const warnings = [];
+  const combined = candidate ? [...entries, candidate] : [...entries];
+  const seen = new Set();
+  for (const entry of combined) {
+    const species = entry?.species;
+    if (!species || seen.has(species.id)) continue;
+    seen.add(species.id);
+    const rule = checkGroupRule({ species, qty: 0 }, combined);
+    if (!rule) continue;
+    const severity = GROUP_SEVERITY[rule.severity] ?? 'warn';
+    const name = species.common_name || species.id;
+    const { type, min } = species.group;
+    const planned = combined
+      .filter((item) => item?.species?.id === species.id)
+      .reduce((total, item) => total + (Number(item.qty) || 0), 0);
+    let title;
+    let message;
+    if (type === 'harem') {
+      title = `Harem balance: ${name}`;
+      message = `${name}: ${rule.message}.`;
+    } else if (type === 'social') {
+      title = `Group too small: ${name}`;
+      message = `${name} is not a schooling fish, but should be kept in a group of at least ${min}. Planned: ${planned}.`;
+    } else if (type === 'colony') {
+      title = `Colony too small: ${name}`;
+      message = `${name} does best in a colony of at least ${min}. Planned: ${planned}.`;
+    } else {
+      title = `Group too small: ${name}`;
+      message = `${name} needs a group of at least ${min}. Planned: ${planned}.`;
+    }
+    issues.push({ severity: rule.severity, message: title });
+    warnings.push({
+      id: `group.${type === 'harem' ? 'harem' : 'min'}.${species.id}`,
+      severity,
+      icon: 'alert',
+      kind: 'group',
+      title,
+      message,
+      text: `${title} — ${message}`,
+    });
+  }
+  return { issues, warnings };
+}
+
+const INVERT_PREY = [
+  { category: 'shrimp', tag: 'shrimp_risk', pattern: /shrimp/i, label: 'shrimp' },
+  { category: 'snail', tag: 'snail_risk', pattern: /snail/i, label: 'snail' },
+];
+
+// What one explicit predationRisks entry ("Shrimp (all sizes)", "Shrimp (juvenile)", "Shrimp (cherry)",
+// "Snails") says about one prey species. Returns null when the entry does not cover that prey.
+//   all sizes / plain "Snails"            → bad: the planned animals themselves are at risk
+//   juvenile                               → warn: adults may coexist, offspring are at risk
+//   a named type ("cherry", "amano")       → bad, but only for prey of that type
+function readPreyEntry(entry, prey) {
+  const qualifier = (entry.match(/\(([^)]*)\)/)?.[1] ?? '').trim().toLowerCase();
+  if (!qualifier || /\ball\b/.test(qualifier)) return { scope: 'all', severity: 'bad' };
+  if (/juvenile|young|baby|fry|shrimplet/.test(qualifier)) return { scope: 'juvenile', severity: 'warn' };
+  const preyName = `${prey.common_name || ''} ${prey.id || ''} ${prey.slug || ''}`.toLowerCase();
+  if (preyName.includes(qualifier)) return { scope: 'named', severity: 'bad', qualifier };
+  return null;
+}
+
+const SCOPE_RANK = { all: 3, named: 3, juvenile: 2, tag: 1 };
+
+// Shrimp / snail predation. A predator's own behavior.predationRisks is the evidence: when it names
+// the prey category at all, only those entries decide (the strongest matching entry wins), whatever
+// the generic shrimp_risk / snail_risk / *_safe tags say. The shrimp_risk / snail_risk tag is only a
+// fallback for a record with no explicit entry for that category (amber). A species is never flagged
+// against itself, and no relationship is added beyond what the data states.
+function evaluateInvertPredation(entries, candidate) {
+  const issues = [];
+  const warnings = [];
+  const selected = new Map();
+  for (const entry of [...entries, candidate]) {
+    if (entry?.species && !selected.has(entry.species.id)) selected.set(entry.species.id, entry.species);
+  }
+  const all = [...selected.values()];
+  for (const { category, tag, pattern, label } of INVERT_PREY) {
+    for (const predator of all) {
+      const explicit = (predator.protoV2?.behavior?.predationRisks ?? [])
+        .filter((risk) => typeof risk === 'string' && !/^\s*predators?\s*:/i.test(risk) && pattern.test(risk));
+      const tagged = Array.isArray(predator.tags) && predator.tags.includes(tag);
+      if (!explicit.length && !tagged) continue;
+      for (const prey of all) {
+        if (prey.category !== category || prey.id === predator.id) continue;
+        let match = null;
+        if (explicit.length) {
+          for (const entry of explicit) {
+            const read = readPreyEntry(entry, prey);
+            if (read && (!match || SCOPE_RANK[read.scope] > SCOPE_RANK[match.scope])) match = { ...read, evidence: entry };
+          }
+        } else {
+          match = { scope: 'tag', severity: 'warn' };
+        }
+        if (!match) continue;
+        const predatorName = predator.common_name || predator.id;
+        const preyName = prey.common_name || prey.id;
+        let title;
+        let message;
+        if (match.scope === 'all') {
+          title = `${predatorName} may eat ${preyName}`;
+          message = category === 'snail'
+            ? `Species data lists snails as prey (“${match.evidence}”), so the ${preyName} you plan are at risk.`
+            : `Species data lists shrimp of all sizes as prey (“${match.evidence}”), so adult ${preyName} are at risk, not just shrimplets.`;
+        } else if (match.scope === 'named') {
+          title = `${predatorName} may prey on ${preyName}`;
+          message = `Species data names ${match.qualifier} ${label} as prey (“${match.evidence}”).`;
+        } else if (match.scope === 'juvenile') {
+          title = `${predatorName} may eat juvenile ${preyName}`;
+          message = `Species data lists juvenile ${label} as prey (“${match.evidence}”). Adult ${preyName} may coexist, but ${label === 'shrimp' ? 'shrimplets' : 'young snails'} are at risk.`;
+        } else {
+          title = `${predatorName} may eat ${preyName}`;
+          message = `${predatorName} is tagged as a ${label} predator in species data, with no detail on which sizes it eats. Watch ${preyName} closely, especially young ones.`;
+        }
+        issues.push({ severity: match.severity, message: title });
+        warnings.push({
+          id: `predation.${label}.${predator.id}.${prey.id}`,
+          severity: match.severity === 'bad' ? 'danger' : 'warn',
+          icon: 'alert',
+          kind: 'compatibility',
+          basis: match.scope,
+          title,
+          message,
+          text: `${title} — ${message}`,
+        });
+      }
+    }
+  }
+  return { issues, warnings };
+}
+
+const RANGE_CONFLICT_COPY = {
+  temperature: { name: 'temperature', select: (species) => species.temperature, prefix: '', unit: '°F' },
+  pH: { name: 'pH', select: (species) => species.pH, prefix: 'pH ', unit: '' },
+  gH: { name: 'GH (general hardness)', select: (species) => species.gH, prefix: '', unit: ' dGH' },
+  kH: { name: 'KH (carbonate hardness)', select: (species) => species.kH, prefix: '', unit: ' dKH' },
+};
+
+// Species-to-species range conflicts (condition status 'species-conflict'), with the severity the
+// water model assigned. They come from species data only, never from the user's water.
+function buildRangeConflictWarnings(conditions, entries, candidate) {
+  const warnings = [];
+  const combined = candidate ? [...entries, candidate] : [...entries];
+  for (const item of conditions) {
+    if (item?.status !== 'species-conflict') continue;
+    const copy = RANGE_CONFLICT_COPY[item.key];
+    if (!copy) continue;
+    let low = null;
+    let high = null;
+    for (const entry of combined) {
+      const [min, max] = copy.select(entry.species) ?? [];
+      if (!Number.isFinite(min) || !Number.isFinite(max)) continue;
+      if (!low || max < low.max) low = { species: entry.species, min, max };
+      if (!high || min > high.min) high = { species: entry.species, min, max };
+    }
+    if (!low || !high || low.species.id === high.species.id) continue;
+    const number = (value) => formatNumber(value, { maximumFractionDigits: 1 });
+    const describe = ({ species, min, max }) => `${species.common_name} (${copy.prefix}${number(min)}–${number(max)}${copy.unit})`;
+    const title = `No shared ${copy.name} range: ${low.species.common_name} and ${high.species.common_name}`;
+    const message = `${describe(low)} and ${describe(high)} need different water, so one of them will always be kept outside its range. This comes from species data, not from your water.`;
+    warnings.push({
+      id: `range.${item.key}.conflict`,
+      severity: item.severity === 'bad' ? 'danger' : 'warn',
+      icon: 'alert',
+      kind: 'water',
+      title,
+      message,
+      text: `${title} — ${message}`,
+    });
+  }
+  return warnings;
+}
+
+// More than one male betta: the HARD_CONFLICTS self-pair and calcAggression's fatal token, which the
+// pair loop (one group per species) cannot see once they are in the stock.
+function evaluateMaleBettas(entries, candidate) {
+  const total = [...entries, candidate]
+    .filter((entry) => entry?.species?.id === 'betta_male')
+    .reduce((sum, entry) => sum + (Number(entry.qty) || 0), 0);
+  if (total < 2 || !HARD_CONFLICTS.has(keyPair('betta_male', 'betta_male'))) {
+    return { issues: [], warnings: [] };
+  }
+  const title = `${total} male bettas planned`;
+  const message = 'Male bettas must be housed individually. Two or more will fight, often to injury or death. Keep only one male betta per tank.';
+  return {
+    issues: [{ severity: 'bad', message: title }],
+    warnings: [{ id: 'betta.multipleMales', severity: 'danger', icon: 'alert', kind: 'aggression', title, message, text: `${title} — ${message}` }],
+  };
+}
+
 function buildCandidate(candidate) {
   const resolved = resolveEntry(candidate);
   if (!resolved) return null;
@@ -1548,7 +1749,8 @@ function computeChips({ tank, candidate, entries, groupRule, salinityCheck, flow
   const chips = [];
   if (candidate) {
     if (groupRule) {
-      chips.push({ tone: groupRule.severity === 'bad' ? 'bad' : 'warn', text: groupRule.message });
+      const id = candidate.species?.id;
+      chips.push({ tone: groupRule.severity === 'bad' ? 'bad' : 'warn', text: groupRule.message, covers: [`group.min.${id}`, `group.harem.${id}`] });
     }
     if (salinityCheck?.severity && salinityCheck.severity !== 'ok') {
       chips.push({ tone: salinityCheck.severity === 'bad' ? 'bad' : 'warn', text: salinityCheck.reason });
@@ -1572,17 +1774,19 @@ function computeChips({ tank, candidate, entries, groupRule, salinityCheck, flow
         if (!message) continue;
         const text = `Aggression conflict: ${message}`;
         const id = conflict.id || `aggr:${conflict.aId ?? ''}:${conflict.bId ?? ''}:${conflict.rule ?? message}`;
-        chips.push({ tone, text, kind: 'aggression', id });
+        chips.push({ tone, text, kind: 'aggression', id, covers: [id] });
       }
     }
     const conditionIssues = conditions.conditions.filter((item) => item.severity !== 'ok');
     for (const condition of conditionIssues) {
-      chips.push({ tone: condition.severity === 'bad' ? 'bad' : 'warn', text: `${condition.label}: ${condition.hint}` });
+      const covers = condition.status === 'species-conflict' ? [`range.${condition.key}.conflict`]
+        : condition.status === 'outside' ? [`water.${condition.key}.outside`] : [];
+      chips.push({ tone: condition.severity === 'bad' ? 'bad' : 'warn', text: `${condition.label}: ${condition.hint}`, covers });
     }
   }
 
   if (Array.isArray(entries) && entries.length > 0 && filtering?.chip) {
-    chips.push(filtering.chip);
+    chips.push({ ...filtering.chip, covers: [filtering.chip.id] });
   }
   return chips;
 }
@@ -1659,11 +1863,15 @@ function computeStatus({ bioload, aggression, conditions, groupRule, salinityChe
       seen.add(id);
       const aName = getSpeciesById(conflict.aId)?.common_name ?? conflict.aId;
       const bName = getSpeciesById(conflict.bId)?.common_name ?? conflict.bId;
+      const title = `Aggression conflict: ${aName} and ${bName}`;
+      const reasons = conflict.message.charAt(0).toUpperCase() + conflict.message.slice(1);
       warnings.push({
         id,
         severity: conflict.severity === 'error' ? 'danger' : 'warn',
         icon: 'alert',
         kind: 'aggression',
+        title,
+        message: `${reasons}.`,
         text: `Aggression conflict: ${aName} vs ${bName} — ${conflict.message}`,
       });
     }
@@ -1775,9 +1983,13 @@ export function buildComputedState(state) {
     severity: warning.severity === 'danger' ? 'bad' : 'warn',
     message: warning.title,
   }));
-  const status = computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck, extraIssues: [...fishPredation.issues, ...tankSuitability.issues, ...filtrationIssues] });
+  const groupWarnings = evaluateGroupWarnings(entries, candidate);
+  const invertPredation = evaluateInvertPredation(entries, candidate);
+  const maleBettas = evaluateMaleBettas(entries, candidate);
+  const status = computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck, extraIssues: [...fishPredation.issues, ...tankSuitability.issues, ...filtrationIssues, ...groupWarnings.issues, ...invertPredation.issues, ...maleBettas.issues] });
   const waterWarnings = buildWaterWarnings(conditions.conditions, water);
-  const stockWarnings = [...evaluateStockWarnings({ entries, candidate }), ...fishPredation.warnings, ...tankSuitability.warnings, ...filtering.warnings, ...waterWarnings];
+  const rangeWarnings = buildRangeConflictWarnings(conditions.conditions, entries, candidate);
+  const stockWarnings = [...evaluateStockWarnings({ entries, candidate }), ...fishPredation.warnings, ...invertPredation.warnings, ...maleBettas.warnings, ...tankSuitability.warnings, ...groupWarnings.warnings, ...filtering.warnings, ...rangeWarnings, ...waterWarnings];
   const mergedWarnings = mergeWarnings(status.warnings, stockWarnings);
   const statusWithWarnings = mergedWarnings === status.warnings ? status : { ...status, warnings: mergedWarnings };
 
