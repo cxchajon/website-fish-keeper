@@ -1,6 +1,9 @@
 const OPTIMAL_STATUS = Object.freeze({ score: 100, status: 'Optimal' });
 const TOLERABLE_STATUS = Object.freeze({ score: 70, status: 'Tolerable (not ideal)' });
 const INCOMPATIBLE_STATUS = Object.freeze({ score: 0, status: 'Incompatible' });
+// The user has not entered this parameter: nothing is known about their water, so it neither passes
+// nor fails.
+const NOT_EVALUATED_STATUS = Object.freeze({ score: null, status: 'Not evaluated' });
 
 function toRange(range) {
   if (!Array.isArray(range) || range.length !== 2) {
@@ -19,6 +22,9 @@ function toRange(range) {
 }
 
 function valueFromInput(input) {
+  if (input === null || input === undefined || input === '') {
+    return NaN;
+  }
   if (Array.isArray(input) && input.length === 2) {
     const mid = (Number(input[0]) + Number(input[1])) / 2;
     return Number.isFinite(mid) ? mid : NaN;
@@ -45,7 +51,7 @@ export function compatScore(specParam, tankValue) {
   const value = valueFromInput(tankValue);
 
   if (!Number.isFinite(value)) {
-    return OPTIMAL_STATUS;
+    return NOT_EVALUATED_STATUS;
   }
 
   if (optimalRange && inRange(value, optimalRange)) {

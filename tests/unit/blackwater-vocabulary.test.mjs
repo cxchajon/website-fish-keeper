@@ -12,18 +12,24 @@ const candidate = (blackwater) => ({ species: { blackwater } });
 const entries = (...values) => values.map((blackwater) => ({ species: { blackwater } }));
 const TANNINS_OFF = { blackwater: false };
 const TANNINS_ON = { blackwater: true };
+const TANNINS_NOT_ENTERED = { blackwater: null };
 
-test('"requires" is red when tannins are off and shown as Required', () => {
+test('"requires" is red when the user says tannins are off and shown as Required', () => {
   assert.equal(evaluateBlackwater(candidate('requires'), TANNINS_OFF).severity, 'bad');
   assert.equal(evaluateBlackwater(candidate('requires'), TANNINS_ON).severity, 'ok');
+  // Not entered: still a requirement to plan for, but not a claim that the user's tank lacks tannins.
+  assert.equal(evaluateBlackwater(candidate('requires'), TANNINS_NOT_ENTERED).severity, 'warn');
+  assert.equal(evaluateBlackwater(candidate('requires'), {}).severity, 'warn');
   const card = buildBlackwater(entries('requires'));
   assert.equal(card.condition.value, 'Required');
   assert.equal(card.status, 'req');
 });
 
-test('"prefers" is amber when tannins are off and shown as Recommended', () => {
-  assert.equal(evaluateBlackwater(candidate('prefers'), TANNINS_OFF).severity, 'warn');
-  assert.equal(evaluateBlackwater(candidate('prefers'), TANNINS_ON).severity, 'ok');
+test('"prefers" is a tip, never a failure, and shown as Recommended', () => {
+  for (const water of [TANNINS_OFF, TANNINS_ON, TANNINS_NOT_ENTERED, {}]) {
+    assert.equal(evaluateBlackwater(candidate('prefers'), water).severity, 'ok', JSON.stringify(water));
+  }
+  assert.match(evaluateBlackwater(candidate('prefers'), TANNINS_NOT_ENTERED).tip, /benefits from tannins/);
   const card = buildBlackwater(entries('prefers'));
   assert.equal(card.condition.value, 'Recommended');
   assert.equal(card.status, 'pref');

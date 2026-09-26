@@ -119,6 +119,8 @@ const cloneEntryWithSpecies = (entry) => {
   return { ...entry, species };
 };
 
+// computed.water holds only what the user entered (null = not entered), so an unentered parameter is
+// scored "Not evaluated" rather than against an assumed value.
 const buildCompatibilityMap = (species, water) => {
   if (!species?.protoV2?.parameters) {
     return null;
@@ -136,10 +138,13 @@ const buildCompatibilityChips = (compatibility) => {
   if (!compatibility) return [];
   const chips = [];
   for (const [key, result] of Object.entries(compatibility)) {
-    if (!result || !result.status || result.status === 'Optimal') continue;
-    const tone = result.status === 'Incompatible' ? 'bad' : 'warn';
+    if (!result || !result.status || result.status === 'Optimal' || !Number.isFinite(result.score)) continue;
+    const incompatible = result.status === 'Incompatible';
     const label = PARAMETER_LABELS[key] || key;
-    chips.push({ tone, text: `${label}: ${result.status}` });
+    const text = incompatible
+      ? `${label}: your water is outside this species' range`
+      : `${label}: your water is tolerable, not ideal`;
+    chips.push({ tone: incompatible ? 'bad' : 'warn', text });
   }
   return chips;
 };
