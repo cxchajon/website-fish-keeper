@@ -29,7 +29,7 @@ const TOOLTIP_COPY = new Map([
         'Turnover = rated GPH of your filters ÷ tank gallons. Powerheads move water but hold no filter media, so they are not counted.',
         'Rated GPH is the maker’s figure; real flow through loaded media is lower.',
         'Filtration does not change the bioload %: a bigger filter cannot make a crowded tank safe.',
-        'Targets: general 5–7×/h • active species 8×+.',
+        'The filter check needs at least 2×/h through filter media. Circulation guide: most community fish 5–7×/h, active species 8×+ (a powerhead can supply the extra).',
         'If turnover is low, consider upsizing filtration or adding circulation.',
         'Recheck after cycling and after major stock/plant changes.',
       ],

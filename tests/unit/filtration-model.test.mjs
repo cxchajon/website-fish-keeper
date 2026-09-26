@@ -74,6 +74,22 @@ test('raw livestock bioload is identical for every filtration choice (cases A–
   }
 });
 
+test('cases A–H: filtration outcome and status as specified', () => {
+  const expected = {
+    A: ['filtration.none'], B: ['filtration.very_low'], C: [], D: ['filtration.circulation_only'],
+    E: [], F: [], G: [], H: [],
+  };
+  const noFilter = run('29g', BASE_STOCK, CASES.A);
+  for (const [name, filters] of Object.entries(CASES)) {
+    const computed = run('29g', BASE_STOCK, filters);
+    assert.deepEqual(filtrationIds(computed), expected[name], name);
+    // Only the Phase 2B tank-length warning remains besides filtration.
+    assert.deepEqual(nonFiltrationWarnings(computed), nonFiltrationWarnings(noFilter), name);
+  }
+  assert.equal(noFilter.status.warnings.find((w) => w.id === 'filtration.none').severity, 'warn');
+  assert.equal(run('29g', BASE_STOCK, CASES.G).filtering.turnover, run('29g', BASE_STOCK, CASES.C).filtering.turnover);
+});
+
 test('no capacity bonus remains in the filtration module', () => {
   for (const name of ['RBC_TABLE', 'MAX_CAPACITY_BONUS', 'effectiveCapacity', 'rbcForFilter', 'describeFilterCapacity']) {
     assert.equal(name in math, false, name);
@@ -132,18 +148,41 @@ test('a 100 GPH HOB on 20 gallons behaves differently from a 1 GPH canister', ()
 });
 
 test('a sponge filter counts as a biological filter at its entered flow', () => {
-  const sponge = math.assessFiltration({ filters: [f('Sponge', 200)], gallons: 20, targetRange: [5, 8] });
+  const sponge = math.assessFiltration({ filters: [f('Sponge', 200)], gallons: 20 });
   assert.equal(sponge.level, math.FILTRATION_LEVELS.ADEQUATE);
   assert.equal(sponge.hasSponge, true);
   assert.equal(sponge.biologicalGph, 200);
 });
 
-test('turnover below the stock target warns, at or above it does not', () => {
-  const low = run('29g', [['cory_bronze', 6]], [f('HOB', 100)]); // 3.4×, target 5× for moderate-flow species
-  assert.equal(low.filtering.level, math.FILTRATION_LEVELS.LOW);
-  assert.ok(filtrationIds(low).includes('filtration.low'));
-  const ok = run('29g', [['cory_bronze', 6]], [f('HOB', 150)]);
-  assert.equal(ok.filtering.level, math.FILTRATION_LEVELS.ADEQUATE);
+test('the biological floor is 2× through media, whatever the species flow tags', () => {
+  // One of each flow tag: low (neon), moderate (bronze cory), high (tiger barb).
+  for (const stock of [[['neon', 10]], [['cory_bronze', 6]], [['tiger_barb', 6]]]) {
+    const below = run('29g', stock, [f('HOB', 57)]); // 1.97×
+    const at = run('29g', stock, [f('HOB', 58)]); // 2.0×
+    const label = stock[0][0];
+    assert.equal(below.entries.length, 1, `${label} is evaluated`);
+    assert.equal(below.filtering.level, math.FILTRATION_LEVELS.VERY_LOW, label);
+    assert.ok(filtrationIds(below).includes('filtration.very_low'), label);
+    assert.equal(at.filtering.level, math.FILTRATION_LEVELS.ADEQUATE, label);
+    assert.deepEqual(filtrationIds(at), [], label);
+  }
+  assert.equal('LOW' in math.FILTRATION_LEVELS, false, 'no species-target level remains');
+});
+
+test('a high-flow species does not need its circulation preference from the filter itself', () => {
+  const stock = [['tiger_barb', 6]]; // tagged high-flow (8–12× circulation band)
+  const filterOnly = run('29g', stock, [f('HOB', 120)]); // 4.1× through media
+  const withPowerhead = run('29g', stock, [f('HOB', 120), f('Powerhead', 300)]);
+  assert.equal(filterOnly.entries.length, 1, 'species is evaluated');
+  assert.equal(filterOnly.filtering.band.key, 'H', 'species is tagged high-flow');
+  for (const computed of [filterOnly, withPowerhead]) {
+    assert.equal(computed.filtering.level, math.FILTRATION_LEVELS.ADEQUATE);
+    assert.deepEqual(filtrationIds(computed), []);
+    assert.ok(Math.abs(computed.filtering.turnover - 120 / 29) < 1e-9, 'filter turnover counts the HOB only');
+  }
+  assert.ok(withPowerhead.filtering.totalTurnover > filterOnly.filtering.totalTurnover);
+  assert.equal(withPowerhead.status.severity, filterOnly.status.severity);
+  assert.equal(withPowerhead.bioload.proposedPercent, filterOnly.bioload.proposedPercent);
 });
 
 test('multiple real filters add flow through media; duplicates cannot inflate the bioload figure', () => {
@@ -158,12 +197,15 @@ test('multiple real filters add flow through media; duplicates cannot inflate th
   }
 });
 
-test('very high flow never lowers the load and warns when gentle-flow species are kept', () => {
-  const gentle = run('10g', [['betta_male', 1]], [f('Canister', 500)]); // 50×
-  assert.ok(ids(gentle).includes('filtration.high_flow'));
-  assert.equal(gentle.bioload.proposedPercent, run('10g', [['betta_male', 1]]).bioload.proposedPercent);
-  const strong = run('29g', [['zebra_danio', 8]], [f('Canister', 580)]); // 20×, high-flow species
-  assert.deepEqual(filtrationIds(strong), []);
+test('high total turnover never changes the status or the load, even with gentle-flow species', () => {
+  const stock = [['betta_male', 1]];
+  const normal = run('10g', stock, [f('HOB', 50)]); // 5×
+  for (const filters of [[f('Canister', 500)], [f('Canister', 100), f('Powerhead', 400)]]) { // 50×
+    const high = run('10g', stock, filters);
+    assert.deepEqual(filtrationIds(high), []);
+    assert.equal(high.status.severity, normal.status.severity);
+    assert.equal(high.bioload.proposedPercent, normal.bioload.proposedPercent);
+  }
 });
 
 test('extreme and invalid flow values stay finite and cannot create capacity', () => {

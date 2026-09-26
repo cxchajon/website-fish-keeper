@@ -87,6 +87,13 @@ Filter" is typed CANISTER. None of this matters for capacity any more, as type n
 **Chosen: 4 (with option 2's rule that filtration never changes the percentage).** The capacity bonus is
 removed entirely.
 
+**Review revision.** The first version of the adequacy check reused the species flow bands (3–5 / 5–8 /
+8–12×) as targets for *biological-filter* turnover and raised an amber note when total turnover passed
+10× with a low-flow species. Both mixed circulation back into filtration: a high-flow species with a
+good 4–5× filter plus a powerhead was told "Filter flow below target", and total GPH ÷ volume does not
+say how strong the current is where the fish swim. Both were removed (`filtration.low`,
+`filtration.high_flow`). The check is now only: biological filter present, and ≥ 2× through media.
+
 ## 3. Comparison cases — 29 gal, 10 Neon Tetra, 6 Bronze Corydoras, 1 Betta (male)
 
 Livestock load 14.48 GE; effective capacity 26.1 gal. Old = page before this change.
@@ -98,9 +105,14 @@ Livestock load 14.48 GE; effective capacity 26.1 gal. Old = page before this cha
 | C 150 HOB | 48.2 % | +15 / +15 | 55.5 % | 5.17× | adequate | — | amber (tank length) |
 | D 150 powerhead | 48.2 % | +15 / +30 | 55.5 % | 0 (5.17×) | circulation-only | red `filtration.circulation_only` | **red** |
 | E 150 sponge | 46.2 % | +20 / +20 | 55.5 % | 5.17× | adequate | — | amber (tank length) |
-| F 300 canister | **34.7 %** | +60 / +60 | 55.5 % | 10.34× | adequate | amber `filtration.high_flow` | amber |
-| G 150 HOB + 150 powerhead | 45.3 % | +22.5 / +37.5 | 55.5 % | 5.17× (10.34×) | adequate | amber `filtration.high_flow` | amber |
-| H 2 × 150 HOB | 45.3 % | +22.5 / +22.5 | 55.5 % | 10.34× | adequate | amber `filtration.high_flow` | amber |
+| F 300 canister | **34.7 %** | +60 / +60 | 55.5 % | 10.34× | adequate | — | amber (tank length) |
+| G 150 HOB + 150 powerhead | 45.3 % | +22.5 / +37.5 | 55.5 % | 5.17× (10.34×) | adequate (HOB only) | — | amber (tank length) |
+| H 2 × 150 HOB | 45.3 % | +22.5 / +22.5 | 55.5 % | 10.34× | adequate | — | amber (tank length) |
+
+High-flow species check (29 gal, 6 Tiger Barbs, tagged high-flow): 120 GPH HOB alone (4.1×) and the
+same HOB + 300 GPH powerhead both pass the filtration check with no filtration warning, the same
+status and the same bioload; filter turnover is 4.1× in both, total turnover rises only with the
+powerhead.
 
 Raw livestock load is 14.48 GE in every case. Every case also keeps the Phase 2B amber
 `tank.length.cory_bronze` warning. Old status was amber (tank length) in all eight; B's only filtration
@@ -114,8 +126,8 @@ signal was a bar note.
 | −50 GPH | previously accepted as **50 GPH** (minus stripped); now rejected |
 | 1 / 10 GPH | red `filtration.very_low` (0.03× / 0.34×); 55.5 % |
 | 150 GPH HOB | adequate, 5.2×; 55.5 % |
-| 580 / 1450 GPH (20× / 50×) | adequate + amber high-flow note (low-flow species); 55.5 % |
-| 99,999,999 GPH | capped at 1,500 (51.7×); 55.5 % |
+| 580 / 1450 GPH (20× / 50×) | adequate, no warning; 55.5 % |
+| 99,999,999 GPH | capped at 1,500 (51.7×), adequate; 55.5 % |
 | 3 × 800 GPH powerheads | red circulation-only, "(+2400 GPH circulation only)"; 55.5 % |
 
 No NaN, Infinity or negative value appears in any output (unit test sweeps 16 values × 7 types).

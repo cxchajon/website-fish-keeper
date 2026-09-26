@@ -15,6 +15,11 @@
  *   - flow: the manufacturer's rated GPH, treated as an upper-bound estimate of the flow through
  *     the media (real flow is lower once media loads and head loss apply).
  *   - turnover: rated GPH ÷ nominal tank gallons (the size the user selected).
+ *
+ * Biological-filter adequacy is only a conservative floor on flow through media. It does not use
+ * species flow preferences (those describe circulation, which a powerhead can supply), and total
+ * turnover is not treated as a measure of the current a fish feels: outlet type, spray bars, baffles
+ * and pump direction change local flow at the same turnover.
  */
 
 export const FILTER_ROLES = Object.freeze({
@@ -29,10 +34,6 @@ const CIRCULATION_ONLY_TYPES = new Set(['POWERHEAD', 'WAVEMAKER', 'CIRCULATIONPU
 // unfiltered (the long-standing "turnover < 2×" floor of the advisor).
 export const MIN_BIOLOGICAL_TURNOVER = 2;
 
-// Above this total turnover a gentle-flow species (e.g. Betta) is likely to be pushed around.
-// Twice the top of the low-flow band (3–5×/h).
-export const LOW_FLOW_SPECIES_MAX_TURNOVER = 10;
-
 // Per-device input ceiling, matching the entry field.
 export const MAX_DEVICE_GPH = 1500;
 
@@ -40,8 +41,7 @@ export const FILTRATION_LEVELS = Object.freeze({
   NONE: 'none', // nothing entered
   CIRCULATION_ONLY: 'circulation-only', // only powerheads entered
   VERY_LOW: 'very-low', // biological turnover below MIN_BIOLOGICAL_TURNOVER
-  LOW: 'low', // below the stock's turnover target
-  ADEQUATE: 'adequate',
+  ADEQUATE: 'adequate', // at or above the floor
 });
 
 export function clamp(value, min, max) {
@@ -151,17 +151,9 @@ export function computePercent(baseBioload, capacity) {
  * @param {object} input
  * @param {Array} input.filters  devices as entered (any shape normalizeFilter accepts)
  * @param {number} input.gallons nominal tank gallons
- * @param {number[]|null} input.targetRange turnover target [low, high] for the current stock
- * @param {boolean} input.hasLowFlowSpecies stock includes a species that needs gentle flow
  * @param {boolean} input.hasStock at least one species is planned
  */
-export function assessFiltration({
-  filters = [],
-  gallons = 0,
-  targetRange = null,
-  hasLowFlowSpecies = false,
-  hasStock = false,
-} = {}) {
+export function assessFiltration({ filters = [], gallons = 0, hasStock = false } = {}) {
   const list = normalizeFilters(filters);
   const totals = getTotalGPH(list, { normalized: true });
   const biologicalTurnover = turnoverX(totals.biological, gallons);
@@ -169,7 +161,6 @@ export function assessFiltration({
   const biologicalCount = list.filter((entry) => entry.role === FILTER_ROLES.BIOLOGICAL).length;
   const circulationCount = list.length - biologicalCount;
   const hasSponge = list.some((entry) => entry.role === FILTER_ROLES.BIOLOGICAL && entry.type?.startsWith('SPONGE'));
-  const targetLow = Array.isArray(targetRange) && Number.isFinite(targetRange[0]) ? targetRange[0] : null;
 
   let level;
   if (list.length === 0) {
@@ -178,13 +169,9 @@ export function assessFiltration({
     level = FILTRATION_LEVELS.CIRCULATION_ONLY;
   } else if (biologicalTurnover < MIN_BIOLOGICAL_TURNOVER) {
     level = FILTRATION_LEVELS.VERY_LOW;
-  } else if (targetLow !== null && biologicalTurnover < targetLow) {
-    level = FILTRATION_LEVELS.LOW;
   } else {
     level = FILTRATION_LEVELS.ADEQUATE;
   }
-
-  const highFlowForStock = hasLowFlowSpecies && totalTurnover > LOW_FLOW_SPECIES_MAX_TURNOVER;
 
   return {
     level,
@@ -194,12 +181,11 @@ export function assessFiltration({
     biologicalGph: totals.biological,
     circulationGph: totals.circulation,
     biologicalTurnover,
+    // Circulation estimate (all devices); shown, never scored.
     totalTurnover,
     biologicalCount,
     circulationCount,
     hasSponge,
-    targetRange: Array.isArray(targetRange) ? targetRange.slice(0, 2) : null,
-    highFlowForStock,
     hasStock: Boolean(hasStock),
     // Nothing here scales the bioload percentage.
     capacityAdjustment: 0,

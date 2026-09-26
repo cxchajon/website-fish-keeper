@@ -798,7 +798,8 @@ function formatTurnoverPhrase(value) {
 // Filtration warnings. They sit beside the bioload percentage and never change it: a bigger filter
 // cannot make a heavily stocked tank lighter, and a missing or weak one does not change how much
 // waste the livestock produce.
-function buildFiltrationWarnings(assessment, entries, band) {
+// Species flow preferences are not used here: they describe circulation, not biological filtration.
+function buildFiltrationWarnings(assessment) {
   const warnings = [];
   const gallons = formatGallonsValue(assessment.gallons);
   const push = (id, severity, title, message) => {
@@ -817,19 +818,8 @@ function buildFiltrationWarnings(assessment, entries, band) {
       push('filtration.very_low', 'danger', 'Filter flow too low',
         `${Math.round(assessment.biologicalGph)} GPH through filter media turns this ${gallons}-gallon tank over ${formatTurnoverPhrase(assessment.biologicalTurnover)} per hour, below the ${MIN_BIOLOGICAL_TURNOVER}× minimum. Check the flow value, or use a filter sized for this tank.`);
       break;
-    case FILTRATION_LEVELS.LOW:
-      push('filtration.low', 'warn', 'Filter flow below target',
-        `About ${assessment.biologicalTurnover.toFixed(1)}× per hour through filter media; ${band?.label ?? 'this stock'} usually do best with at least ${band?.range?.[0]}×. Rated flow is the maker's figure — real flow through loaded media is lower.`);
-      break;
     default:
       break;
-  }
-  if (assessment.highFlowForStock) {
-    const names = [...new Set(entries
-      .filter((entry) => entry?.species?.flow === 'low')
-      .map((entry) => entry.species.common_name || entry.species.id))];
-    push('filtration.high_flow', 'warn', 'Strong current for gentle-flow fish',
-      `Total flow is ${formatTurnoverPhrase(assessment.totalTurnover)} the tank volume per hour. ${names.join(', ')} prefer${names.length === 1 ? 's' : ''} gentle water movement — use a spray bar, baffle or adjustable flow.`);
   }
   return warnings;
 }
@@ -840,15 +830,9 @@ function buildFilteringState(state, tank, entries) {
   const gallons = Number.isFinite(tank?.gallons) && tank.gallons > 0 ? tank.gallons : 0;
   const stockCount = Array.isArray(entries) ? entries.length : 0;
   const band = resolveTurnoverBand(entries);
-  const assessment = assessFiltration({
-    filters: sanitized,
-    gallons,
-    targetRange: band?.range ?? null,
-    hasLowFlowSpecies: stockCount > 0 && entries.some((entry) => entry?.species?.flow === 'low'),
-    hasStock: stockCount > 0,
-  });
+  const assessment = assessFiltration({ filters: sanitized, gallons, hasStock: stockCount > 0 });
   const hasFlowData = assessment.totalGph > 0;
-  const warnings = stockCount > 0 && gallons > 0 ? buildFiltrationWarnings(assessment, entries, band) : [];
+  const warnings = stockCount > 0 && gallons > 0 ? buildFiltrationWarnings(assessment) : [];
 
   let statusTone = 'neutral';
   let statusText = 'Add filter flow to estimate turnover.';
@@ -856,14 +840,14 @@ function buildFilteringState(state, tank, entries) {
     statusTone = 'warn';
     statusText = 'Select a tank to calculate turnover.';
   } else if (hasFlowData && stockCount === 0) {
-    statusText = 'No stock yet — turnover targets will apply once species are added.';
+    statusText = 'No stock yet — filter flow is checked once species are added.';
   } else if (warnings.length) {
     const top = warnings.find((warning) => warning.severity === 'danger') ?? warnings[0];
     statusTone = top.severity === 'danger' ? 'bad' : 'warn';
     statusText = top.title;
   } else if (hasFlowData) {
     statusTone = 'good';
-    statusText = 'Filter flow meets the target for this stock.';
+    statusText = `Filter flow meets the ${MIN_BIOLOGICAL_TURNOVER}× minimum.`;
   }
   const top = warnings.find((warning) => warning.severity === 'danger') ?? warnings[0] ?? null;
 
@@ -879,6 +863,7 @@ function buildFilteringState(state, tank, entries) {
     level: assessment.level,
     assessment,
     status: { tone: statusTone, text: statusText },
+    // Species flow band: circulation guidance only, never a filtration requirement.
     band,
     warning: warnings.length > 0,
     warnings,

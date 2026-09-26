@@ -29,7 +29,7 @@ have, and it would tell beginners that buying a bigger filter makes a crowded ta
 | Device type | catalog `type` or the custom "Filter type" menu | role only (below) |
 | Rated GPH | catalog `gphRated` or the custom GPH field | manufacturer's estimate; an upper bound on real flow |
 | Tank gallons | the selected tank's nominal gallons | turnover denominator |
-| Stock flow needs | species `flow` (low / moderate / high) | turnover target and high-flow note |
+| Species flow preference | species `flow` (low / moderate / high) | **not used** by the filtration check (§3) |
 
 Role: **circulation** for Powerhead (and Wavemaker); **biological** for every other type (HOB, canister,
 internal, sponge, undergravel). Nothing else about the type is used: a canister and a HOB with the
@@ -41,22 +41,33 @@ non-numeric values are rejected and the device is not counted.
 ## 3. Calculation
 
 ```
-biological GPH   = Σ rated GPH of biological devices
-turnover (filter) = biological GPH ÷ tank gallons          (shown as "Filtration: X GPH • Y×/h")
-total turnover    = Σ rated GPH of all devices ÷ tank gallons (circulation shown as "+N GPH circulation only")
-target            = turnover band of the stock: high-flow species present → 8–12×; else moderate → 5–8×; else low → 3–5×
+biological GPH    = Σ rated GPH of biological devices
+turnover (filter) = biological GPH ÷ tank gallons           (shown as "Filtration: X GPH • Y×/h")
+total turnover    = Σ rated GPH of all devices ÷ tank gallons (circulation, shown as "+N GPH circulation only")
 ```
+
+Biological-filter turnover and circulation are separate. The filtration check asks one question —
+is water moving through biological media at all? — using a conservative minimum of **2× per hour
+through filter media** (the advisor's long-standing floor; nothing in the research above supports a
+different single number):
 
 | Level | Condition (only when species are planned) | Warning id | Severity |
 | --- | --- | --- | --- |
 | none | no device entered | `filtration.none` | amber |
 | circulation-only | devices entered, none biological | `filtration.circulation_only` | red |
 | very-low | filter turnover < 2× | `filtration.very_low` | red |
-| low | filter turnover below the stock target | `filtration.low` | amber |
-| adequate | otherwise | — | — |
+| adequate | filter turnover ≥ 2× | — | — |
 
-Additionally `filtration.high_flow` (amber) when the stock includes a low-flow species and total
-turnover exceeds 10× (twice the top of the low-flow band), with a spray bar / baffle suggestion.
+**Species flow preference is not used to award or deny filtration adequacy.** The low / moderate /
+high tags (3–5×, 5–8×, 8–12×) describe the circulation a species likes, which a powerhead can
+supply; they are not a requirement on the filter. A high-flow species kept with a 4× filter plus a
+powerhead passes the filtration check exactly as it does with the filter alone. The species flow
+tags remain in the data for environment and circulation guidance.
+
+**Total turnover alone cannot determine local current strength.** The same GPH delivered through a
+spray bar, a baffled or split return, a broad outlet or a directional powerhead produces very
+different current where the fish are. The advisor therefore shows total turnover as a circulation
+estimate but never raises a warning or changes the status from it.
 
 "No filter entered" is amber rather than red because the page starts with no filter and the user may
 simply not have entered it yet. Entering equipment that provides under 2× flow through media (a
@@ -90,15 +101,17 @@ checked against the publication abstracts and search-indexed text.
 | Sponge-filter flow is set by the air pump, not by the sponge's label | https://www.fishlore.com/aquariumfishforum/threads/gph-of-sponge-filter.428970/ ; airlift behaviour: https://arxiv.org/pdf/2302.12655 |
 | Hobby turnover guidance: roughly 4–10× per hour for community tanks, less for bettas and long-finned fish | https://theaquariumguide.com/articles/filter-flow-rate-guide ; https://www.marineandreef.com/Articles.asp?ID=391 |
 
-Hobby sources support only the order of magnitude of turnover targets; the advisor's existing bands
-(3–5 / 5–8 / 8–12×) and 2× floor were kept rather than re-tuned.
+Hobby turnover figures are circulation rules of thumb, not measured biological requirements, so they
+are not used as filtration targets. The advisor keeps its existing 2× floor as a conservative "is water
+moving through the media at all" check; the species flow bands stay in the data for circulation
+guidance only.
 
 ## 6. Limitations
 
 - Rated GPH overstates real flow; the model does not derate it (any fixed derating would be invented
   precision). The warning text says so.
 - Sponge-filter GPH figures in the catalog (60–200) are tank-size marketing, not measured flow.
-- Species `flow` tags are broad (24 of 44 species are "low", including Neon Tetra), so the
-  high-flow note appears often.
+- There is no circulation or current-strength check; species flow preference is left to the
+  environment guidance.
 - Media quantity, maintenance, clogging and maturity are unknown and not modelled.
 - A sump or a planted-tank effect is not modelled (neither is selectable).
