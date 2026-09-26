@@ -19,6 +19,7 @@
     "test": "npm run test:unit && npm run guard:live && npm run guard:blog-ads && npm run audit:blog-breadcrumbs && npm run audit:images && playwright test",
     "test:stocking:extended": "node stocking-tests-extended/runner/index.js",
     "test:e2e": "playwright test --config=playwright.e2e.config.ts",
+    "test:e2e:stocking-gate": "playwright test --config=playwright.stocking-gate.config.ts",
     "test:consent": "playwright test tests/consent-ads.spec.ts --project=chromium",
     "serve:static": "npx http-server -p 8080 -c-1 .",
     "test:headed": "npx playwright test --headed",

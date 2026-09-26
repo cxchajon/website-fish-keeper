@@ -624,8 +624,10 @@ function mergeTags(legacyTags, recordTags) {
 
 // Normalises the v2 vocabulary onto the traits the engine rules read, so each concept has one
 // meaning:
-//   shrimp_risk / snail_risk — preys on shrimp / snails (replaces the old predator_* tags);
-//                              a contradicting shrimp_safe / snail_safe tag is dropped.
+//   shrimp_risk / snail_risk — documented predation on shrimp / snails. Only explicit evidence
+//                              counts: the v2 tag or a prey entry in behavior.predationRisks. The
+//                              broad legacy invert_safe flag is NOT evidence of shrimp predation.
+//                              A contradicting shrimp_safe / snail_safe tag is dropped.
 //   longfin_target           — long_fins + LONG_FIN_VULNERABLE (fin-nipper target)
 //   semi_nipper              — semi_aggressive (may nip long fins)
 //   territorial / fin_nipper — TERRITORIAL / FIN_NIPPER behaviour
@@ -635,7 +637,7 @@ function normalizeTraits(record, legacy) {
   const add = (tag) => { if (!has(tag)) tags.push(tag); };
   const drop = (tag) => { const index = tags.indexOf(tag); if (index >= 0) tags.splice(index, 1); };
 
-  const shrimpRisk = has('shrimp_risk') || preysOn(record, 'shrimp') || legacy?.invert_safe === false;
+  const shrimpRisk = has('shrimp_risk') || preysOn(record, 'shrimp');
   const snailRisk = has('snail_risk') || preysOn(record, 'snail');
   if (shrimpRisk) { add('shrimp_risk'); drop('shrimp_safe'); }
   if (snailRisk) { add('snail_risk'); drop('snail_safe'); }
@@ -651,14 +653,18 @@ function normalizeTraits(record, legacy) {
   return {
     tags: Object.freeze(tags),
     behavior: behavior.size ? Object.freeze([...behavior]) : undefined,
-    invertSafe: !shrimpRisk && !snailRisk,
+    // Generic "safe with invertebrates" flag, kept separate from the predation tags above. It keeps
+    // its legacy meaning where a legacy record exists; no current rule reads it for predation.
+    invertSafe: typeof legacy?.invert_safe === 'boolean' ? legacy.invert_safe : !shrimpRisk && !snailRisk,
   };
 }
 
-// Calibrates the v2 bioload multiplier against the GE values of the species the engine already
-// had (LEGACY_BASE), as a log-log least-squares fit GE = a · multiplier^b. The plain ×0.6 scale
-// matched small fish but undercounted larger, deep-bodied fish 1.7–2.8× (e.g. a 6" angelfish came
-// out at half a betta), so new species are placed on the calibrated curve instead.
+// PROVISIONAL CALIBRATION BRIDGE — not a biological model and not validated. It maps the v2 bioload
+// multiplier onto the engine's existing GE scale for species that have no legacy GE value, using a
+// log-log least-squares fit GE = a · multiplier^b over the species that do (LEGACY_BASE). It exists
+// only because the flat ×0.6 conversion placed larger, deep-bodied fish far below the original
+// species (e.g. an angelfish at half a betta). The original species keep their own GE values. The
+// resulting GE values for newer species are rough placeholders until the bioload model is redesigned.
 export function fitBioloadCalibration(records) {
   const points = [];
   for (const record of Array.isArray(records) ? records : []) {
@@ -723,6 +729,10 @@ function mapRecord(record, calibration) {
     min_tank_length_in: lengthNotApplicable ? null : pick(record, legacy, 'min_tank_length_in'),
     tank_length_not_applicable: lengthNotApplicable,
     min_tank_liters: pick(record, legacy, 'min_tank_liters'),
+    // Field semantics: data/stocking-advisor/SPECIES_DATA_POLICY.md
+    adult_size_basis: record.adult_size_basis ?? null,
+    min_tank_basis: record.min_tank_basis ?? null,
+    min_tank_length_basis: record.min_tank_length_basis ?? null,
     temperature: rangeOrNull(record.parameters?.temperature?.tolerable, legacy?.temperature, 'min_f', 'max_f'),
     ph: rangeOrNull(record.parameters?.pH?.tolerable, legacy?.ph, 'min', 'max'),
     gH: rangeOrNull(record.parameters?.gh?.tolerable, legacy?.gH, 'min_dGH', 'max_dGH'),
@@ -739,8 +749,8 @@ function mapRecord(record, calibration) {
     // No engine rule reads mouth size; left null rather than estimated for the newer species.
     mouth_size_in: legacy?.mouth_size_in ?? null,
     ph_sensitive: legacy?.ph_sensitive ?? false,
-    // Species the engine already evaluated keep their calibrated GE; newer species are placed on
-    // the curve fitted to those values (fitBioloadCalibration).
+    // Species the engine already evaluated keep their GE; newer species get the provisional
+    // bridge value from fitBioloadCalibration (see the caveat there).
     bioloadGE: legacy?.bioloadGE ?? calibratedBioload,
     protoV2: buildProtoMeta(record, normalizedBioload),
   };

@@ -57,7 +57,8 @@ export function validateSpeciesRecord(s) {
     if (!rng(s.kH))          return "bad kH";
     if (!SUPPORTED_SALINITY.has(s.salinity)) return "bad salinity";
     if (!["low","moderate","high"].includes(s.flow)) return "bad flow";
-    if (!["requires","prefers","neutral"].includes(s.blackwater)) return "bad blackwater";
+    // null = not assessed (no source makes a tannin claim); the engine applies no blackwater rule.
+    if (s.blackwater !== null && !["requires","prefers","neutral"].includes(s.blackwater)) return "bad blackwater";
     if (typeof s.scientific_name !== "string" || !s.scientific_name.trim()) return "missing scientific_name";
     if (!(num(s.adult_size_in) && s.adult_size_in > 0)) return "bad adult_size_in";
     // A tank length may only be absent when the record says it does not apply (crawling snails).

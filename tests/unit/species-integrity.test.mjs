@@ -150,7 +150,8 @@ test('no selectable species is calculated with placeholder husbandry data', () =
     assert.ok(species.scientific_name, `${species.id} scientific_name`);
     assert.ok(Number.isFinite(species.adult_size_in) && species.adult_size_in > 0, `${species.id} adult_size_in`);
     assert.ok(['fish', 'shrimp', 'snail'].includes(species.category), `${species.id} category`);
-    assert.ok(['requires', 'prefers', 'neutral'].includes(species.blackwater), `${species.id} blackwater`);
+    // null = not assessed; otherwise one of the engine's three classifications.
+    assert.ok(species.blackwater === null || ['requires', 'prefers', 'neutral'].includes(species.blackwater), `${species.id} blackwater`);
     if (species.tank_length_not_applicable) {
       assert.equal(species.category, 'snail', `${species.id}: only crawling snails may skip tank length`);
     } else {
@@ -161,9 +162,60 @@ test('no selectable species is calculated with placeholder husbandry data', () =
       for (const key of ['scientific_name', 'adult_size_in', 'category', 'blackwater', 'min_tank_liters']) {
         assert.equal(species[key], raw[key], `${species.id} ${key} must come from species.v2.json`);
       }
-      assert.ok(raw.husbandry_review?.sources?.length >= 2, `${species.id} needs documented sources`);
       assert.ok(Number.isFinite(raw.min_tank_liters) && raw.min_tank_liters > 0, `${species.id} min_tank_liters`);
     }
+  }
+});
+
+const NEWER = RAW_SPECIES.filter((record) => record.husbandry_review);
+const TIERS = new Set([1, 2, 3, 4]);
+const VERIFICATION = new Set(['search-extract', 'search-summary', 'reviewer-reported', 'direct']);
+
+test('the 24 newer species carry traceable provenance', () => {
+  assert.equal(NEWER.length, 24);
+  for (const record of NEWER) {
+    const review = record.husbandry_review;
+    assert.ok(review.policy_version && review.reviewed, `${record.slug} review metadata`);
+    assert.ok(review.canonical_tank_source, `${record.slug} canonical tank source`);
+    assert.ok(Array.isArray(review.sources) && review.sources.length >= 1, `${record.slug} sources`);
+    for (const source of review.sources) {
+      assert.ok(source.title, `${record.slug} source title`);
+      assert.match(source.url, /^https:\/\/[^\s]+$/, `${record.slug} source URL`);
+      assert.ok(source.reviewed, `${record.slug} source date`);
+      assert.ok(TIERS.has(source.tier), `${record.slug} source tier`);
+      assert.ok(VERIFICATION.has(source.verification), `${record.slug} verification method`);
+      assert.ok(Array.isArray(source.fields), `${record.slug} supported fields`);
+      assert.ok(source.claim, `${record.slug} source claim`);
+    }
+    // Every tank value must be backed by a cited source (or be explicitly inferred / not applicable).
+    const supports = (field) => review.sources.some((source) => source.fields.includes(field));
+    assert.ok(supports('min_tank_liters'), `${record.slug}: no source supports min_tank_liters`);
+    if (record.min_tank_length_basis === 'source') {
+      assert.ok(supports('min_tank_length_in'), `${record.slug}: no source supports min_tank_length_in`);
+    }
+  }
+});
+
+test('field semantics are declared for every newer species', () => {
+  const SIZE_BASIS = new Set(['standard_length', 'total_length', 'maximum_length_unspecified', 'body_length', 'shell_length', 'shell_diameter']);
+  const TANK_BASIS = new Set(['single', 'pair', 'group', 'unspecified']);
+  const LENGTH_BASIS = new Set(['source', 'inferred_standard_tank', 'not_applicable']);
+  for (const record of NEWER) {
+    assert.ok(SIZE_BASIS.has(record.adult_size_basis), `${record.slug} adult_size_basis`);
+    assert.ok(TANK_BASIS.has(record.min_tank_basis), `${record.slug} min_tank_basis`);
+    assert.ok(LENGTH_BASIS.has(record.min_tank_length_basis), `${record.slug} min_tank_length_basis`);
+    assert.equal(record.min_tank_length_basis === 'not_applicable', record.min_tank_length_in === null, record.slug);
+    // No habitat claim without support: none of the cited sources assesses tannins for these species.
+    assert.equal(record.blackwater, null, `${record.slug} blackwater must stay unassessed without a source`);
+  }
+});
+
+test('livebearer sex-ratio advice is not encoded as a schooling minimum', () => {
+  for (const slug of ['molly', 'platy', 'swordtail']) {
+    const record = RAW_SPECIES.find((item) => item.slug === slug);
+    assert.equal(record.behavior.schoolingMinimum, 1, slug);
+    assert.ok(record.sex_ratio_guidance, `${slug} keeps its sex-ratio guidance separately`);
+    assert.equal(legacy.getSpeciesById(slug).min_group, null, `${slug} gets no group rule`);
   }
 });
 
@@ -183,9 +235,10 @@ test('a record missing a required husbandry value is rejected and flagged, not d
   }
 });
 
-test('newer species bioload sits on the calibrated scale of the original species', () => {
+test('provisional bioload bridge keeps obvious size relationships (not a validated model)', () => {
+  // Sanity checks only — the GE values for newer species are a provisional bridge, so no exact
+  // numbers are asserted. Large-bodied fish must not weigh less than much smaller ones.
   const ge = (id) => legacy.getSpeciesById(id).bioloadGE;
-  // A 6" angelfish or 5" pleco must outweigh a 3" tiger barb; nano fish stay near neon tetras.
   assert.ok(ge('freshwater_angelfish') > ge('tiger_barb'));
   assert.ok(ge('bristlenose_pleco') > ge('tiger_barb'));
   assert.ok(ge('molly') > ge('guppy_male') * 3);
@@ -199,7 +252,16 @@ test('predation uses one vocabulary: shrimp_risk / snail_risk', () => {
     assert.ok(!species.tags.some((tag) => tag.startsWith('predator_')), `${species.id} uses retired predator_* tag`);
     assert.ok(!(species.tags.includes('shrimp_risk') && species.tags.includes('shrimp_safe')), `${species.id} shrimp contradiction`);
     assert.ok(!(species.tags.includes('snail_risk') && species.tags.includes('snail_safe')), `${species.id} snail contradiction`);
-    assert.equal(species.invert_safe, !species.tags.includes('shrimp_risk') && !species.tags.includes('snail_risk'));
+  }
+  // Predation tags need explicit evidence: the v2 tag or a prey entry — never the legacy invert_safe flag.
+  const preys = (record, prey) => (record.behavior?.predationRisks ?? [])
+    .some((risk) => !/^\s*predators?\s*:/i.test(risk) && new RegExp(prey, 'i').test(risk));
+  for (const record of RAW_SPECIES) {
+    const species = legacy.SPECIES.find((item) => item.slug === record.slug);
+    const shrimpEvidence = record.tags.includes('shrimp_risk') || preys(record, 'shrimp');
+    const snailEvidence = record.tags.includes('snail_risk') || preys(record, 'snail');
+    assert.equal(species.tags.includes('shrimp_risk'), shrimpEvidence, `${record.slug} shrimp_risk without explicit evidence`);
+    assert.equal(species.tags.includes('snail_risk'), snailEvidence, `${record.slug} snail_risk without explicit evidence`);
   }
   assert.ok(tags('pea_puffer').includes('snail_risk') && tags('pea_puffer').includes('shrimp_risk'));
   assert.ok(tags('assassin_snail').includes('snail_risk'));

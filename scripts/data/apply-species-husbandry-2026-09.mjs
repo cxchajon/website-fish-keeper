@@ -1,205 +1,403 @@
-// One-off data migration (Phase 2A, 2026-09): fills the species-specific husbandry fields the
-// Stocking Advisor engine needs for the 24 species.v2.json records that had no legacy record.
-// Values were cross-checked against several care references (see `husbandry_review.sources`);
-// where references disagreed the more conservative (welfare-first) figure was used and the
-// disagreement recorded in `husbandry_review.notes`. Re-running is idempotent.
+// Data migration for the 24 species.v2.json records that have no legacy (js/fish-data.js) record.
+// Writes the reviewed husbandry fields and their provenance. Field meanings and the source-selection
+// policy are defined in data/stocking-advisor/SPECIES_DATA_POLICY.md — read that before editing.
+//
+// Re-running is idempotent: fields written by earlier runs are removed and re-inserted.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const FILE = fileURLToPath(new URL('../../data/stocking-advisor/species.v2.json', import.meta.url));
 const REVIEWED = '2026-09-26';
+const POLICY_VERSION = '2026-09-26';
 
-// size = upper end of the normal adult range (inches); liters / lengthIn = single-species minimum.
-const UPDATES = {
+// Verification methods (see policy): direct page access to most care references was blocked from the
+// review environment, so values were read from search-engine extracts of the cited page.
+const EXTRACT = 'search-extract';   // search result attributed the claim to this exact page
+const SUMMARY = 'search-summary';   // claim appeared in a multi-source search summary listing this page;
+                                    // exact page attribution not confirmed — corroboration only
+const REVIEWER = 'reviewer-reported';
+
+const src = (tier, title, url, fields, claim, verification = EXTRACT) => ({
+  title, url, tier, reviewed: REVIEWED, verification, fields, claim,
+});
+
+const SF = (slug) => `https://www.seriouslyfish.com/species/${slug}`;
+
+// Per species. `tank` holds the canonical tank-size selection; `sources` every source consulted.
+const SPECIES = {
   'assassin-snail': {
-    scientific_name: 'Anentome helena', category: 'snail', adult_size_in: 1.2, min_tank_liters: 38,
-    min_tank_length_in: null, tank_length_not_applicable: true, addTags: ['snail_risk'],
-    sources: ['Aquarium Co-Op care guide', 'The Shrimp Farm care guide', 'Shrimp and Snail Breeder (aquariumbreeder.com)', 'Wikipedia: Anentome helena'],
-    notes: 'Minimum volume: 5 gal cited as absolute minimum, 10 gal as a stable starting point; 10 gal (38 L) used. Eats snails its size or smaller and can overpower larger snails; generally safe with healthy adult shrimp (risk to moulting shrimp/shrimplets). Crawling invertebrate: no swimming-length requirement.',
+    scientific_name: 'Anentome helena', category: 'snail',
+    adult_size_in: 1.0, adult_size_basis: 'shell_length',
+    min_tank_liters: 19, min_tank_basis: 'pair', min_tank_length_in: null, min_tank_length_basis: 'not_applicable',
+    canonical_tank_source: 'The Shrimp Farm — Assassin Snail care',
+    addTags: ['snail_risk'],
+    sources: [
+      src(3, 'The Shrimp Farm — Assassin Snail (Clea helena) Care', 'https://www.theshrimpfarm.com/posts/assassin-snail-care/', ['min_tank_liters', 'adult_size_in', 'snail_risk'], '5 gallons or up is fine for one or two assassin snails; they eat other snails; reach about 1 in.', SUMMARY),
+      src(2, 'Aquarium Co-Op — Care Guide for Assassin Snails', 'https://www.aquariumcoop.com/blogs/aquarium/assassin-snail', ['snail_risk'], 'Snail-eating snail used to control pest snails; shrimp safety debated (risk to shrimplets/moulting shrimp).', SUMMARY),
+    ],
+    disagreements: 'Minimum volume: 5 gal (one or two) vs 10 gal “comfortable starting point” in other guides; 5 gal selected per policy (tier-3 specialist retained over general guides).',
+    notes: 'Crawling invertebrate: no swimming-length requirement.',
   },
   'bamboo-shrimp': {
-    scientific_name: 'Atyopsis moluccensis', category: 'shrimp', adult_size_in: 3.0, min_tank_liters: 76, min_tank_length_in: 24,
-    sources: ['The Shrimp Farm care guide', 'Aquarium Tidings care guide', 'Shrimp and Snail Breeder (aquariumbreeder.com)', 'ShrimpKeepers species profile'],
-    notes: 'Adult size 2–3 in (some report 3.5 in). Minimum 20 US gal (76 L); one source gives 20 imperial gal (90 L). Long tank preferred for the sustained current it filter-feeds from; 24 in = 20 gal footprint.',
+    scientific_name: 'Atyopsis moluccensis', category: 'shrimp',
+    adult_size_in: 3.0, adult_size_basis: 'body_length',
+    min_tank_liters: 76, min_tank_basis: 'group', min_tank_length_in: 24, min_tank_length_basis: 'inferred_standard_tank',
+    canonical_tank_source: 'The Shrimp Farm — Bamboo Shrimp care',
+    sources: [
+      src(3, 'The Shrimp Farm — Bamboo Shrimp Care 101', 'https://www.theshrimpfarm.com/posts/bamboo-shrimp-care/', ['min_tank_liters', 'adult_size_in', 'flow'], 'At least around 20 gallons to keep a group; heavy water flow needed for filter feeding; 2–3 in.'),
+    ],
+    disagreements: 'Some guides cite 20 imperial gal (90 L); not selected (lower tier).',
+    notes: 'No source gives base dimensions; length is the 24 in footprint of a standard 20 US gal tank (flagged as inferred).',
   },
   'blue-ram': {
-    scientific_name: 'Mikrogeophagus ramirezi', adult_size_in: 3.0, min_tank_liters: 75, min_tank_length_in: 24, addTags: ['territorial'],
-    sources: ['Aquarium Co-Op ram care guide', 'Tropical Fish Hobbyist Magazine', 'FishLore profile', 'Cichlid Room Companion'],
-    notes: 'Minimum volume 60 L/60 cm (one source) vs 20 gal/75 L (others); 75 L used. Males are territorial, especially when spawning. Needs 80–86 °F, which v2 already reflects.',
+    scientific_name: 'Mikrogeophagus ramirezi', category: 'fish',
+    adult_size_in: 3.0, adult_size_basis: 'total_length',
+    min_tank_liters: 54, min_tank_basis: 'pair', min_tank_length_in: 24, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Mikrogeophagus ramirezi',
+    addTags: ['territorial'],
+    sources: [
+      src(1, 'Seriously Fish — Mikrogeophagus ramirezi (Ram)', SF('mikrogeophagus-ramirezi/'), ['min_tank_liters', 'min_tank_length_in'], 'A base of 60 × 30 cm or equivalent is sufficient for a single pair (54 L).'),
+      src(2, 'Aquarium Co-Op — Care Guide for German Blue Rams', 'https://www.aquariumcoop.com/blogs/aquarium/ram-cichlid-care-guide', ['adult_size_in', 'temperature'], '2–3 in; 80–86 °F.', SUMMARY),
+    ],
+    disagreements: 'Other guides give 20 gal (75 L); Seriously Fish (tier 1) selected.',
   },
   'bolivian-ram': {
-    scientific_name: 'Mikrogeophagus altispinosus', adult_size_in: 3.2, min_tank_liters: 110, min_tank_length_in: 32,
-    sources: ['Seriously Fish species profile', 'AquaInfo profile', 'Aquatic Arts profile', 'Wikipedia: Mikrogeophagus altispinosus'],
-    notes: 'Previous v2 minimum was 75 L. References give 80 cm (~30 gal) for a pair and 120 cm for a group; 80 cm / ~110 L used.',
+    scientific_name: 'Mikrogeophagus altispinosus', category: 'fish',
+    adult_size_in: 3.2, adult_size_basis: 'maximum_length_unspecified',
+    min_tank_liters: 182, min_tank_basis: 'pair', min_tank_length_in: 36, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Mikrogeophagus altispinosus',
+    sources: [
+      src(1, 'Seriously Fish — Mikrogeophagus altispinosus (Bolivian Ram)', SF('mikrogeophagus-altispinosus'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in', 'group'], 'Base of at least 90 × 45 cm for an individual or a pair (182 L); a mixed group of 6–8 only in 120 cm+ tanks; max ~8 cm.'),
+    ],
+    disagreements: 'Other references give 80 cm / ~110 L for a pair; Seriously Fish (tier 1) selected. Reviewer also reported 182 L / 36 × 18 in.',
   },
   'bristlenose-pleco': {
-    scientific_name: 'Ancistrus sp. (usually traded as A. cf. cirrhosus)', adult_size_in: 5.0, min_tank_liters: 100, min_tank_length_in: 24, addTags: ['territorial'],
-    sources: ['PlanetCatfish forum/profile', 'Aquascapedia profile', 'Aqua-Fish.net profile', 'Wikipedia: Ancistrus'],
-    notes: 'Adult size 4–6 in (13 cm typical maximum). Minimum volume cited from 45 L to 113 L; 75 L/60 cm is the most common minimum and v2 notes already recommended 100 L — 100 L used. Males defend caves/territory from other males.',
+    scientific_name: 'Ancistrus sp. (usually traded as A. cf. cirrhosus)', category: 'fish',
+    adult_size_in: 5.0, adult_size_basis: 'total_length',
+    min_tank_liters: 54, min_tank_basis: 'pair', min_tank_length_in: 24, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Ancistrus sp. 3',
+    addTags: ['territorial'],
+    sources: [
+      src(1, "Seriously Fish — Ancistrus sp. '3' (Common Bristlenose)", SF('ancistrus-cf-cirrhosus/'), ['min_tank_liters', 'min_tank_length_in'], 'A base of 60 × 30 cm or equivalent houses a single specimen or breeding pair; larger for a group.'),
+      src(4, 'PlanetCatfish forum — Bristlenose aquarium size discussion', 'https://planetcatfish.com/forum/viewtopic.php?t=49047', ['adult_size_in'], 'Adults to about 13 cm.', SUMMARY),
+    ],
+    disagreements: 'General guides range 45–113 L and the original v2 note said 100 L; Seriously Fish (tier 1) selected. Males defend territory from each other.',
   },
   'celestial-pearl-danio': {
-    scientific_name: 'Danio margaritatus', adult_size_in: 1.2, min_tank_liters: 54, min_tank_length_in: 24,
-    sources: ['Tetra Fishkeeper blog', 'Aquadiction species profile', 'KJE Aquatics', 'Glassbox Diaries care guide'],
-    notes: 'Minimum volume 40 L (10 gal) vs 54 L; 54 L used. Length taken from the standard 54 L (60 cm) footprint because no reference gives a separate length. Group of 6 minimum, 10+ recommended.',
+    scientific_name: 'Danio margaritatus (syn. Celestichthys margaritatus)', category: 'fish',
+    adult_size_in: 1.2, adult_size_basis: 'total_length',
+    min_tank_liters: 54, min_tank_basis: 'group', min_tank_length_in: 24, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Celestichthys margaritatus (value unconfirmed)',
+    sources: [
+      src(1, "Seriously Fish — Celestichthys margaritatus (Celestial Pearl 'Danio')", SF('celestichthys-margaritatus'), ['min_tank_liters', 'min_tank_length_in'], 'Two search extracts attribute “base dimensions of 60 × 30 cm or equivalent … since this species is very active and should be maintained in numbers” to this page.'),
+      src(1, "Seriously Fish — Celestichthys margaritatus (Celestial Pearl 'Danio')", SF('celestichthys-margaritatus'), ['min_tank_liters', 'min_tank_length_in'], 'Production review reports ~41 L with an 18 × 12 in (45 × 30 cm) footprint.', REVIEWER),
+      src(2, 'Tetra Fishkeeper blog — Celestial pearl danio', 'https://blog.tetra.net/en-en/celestial-pearl-danio-danio-margaritatus/', ['adult_size_in', 'group'], 'Up to ~3 cm; keep in groups of at least 6.', SUMMARY),
+    ],
+    disagreements: 'UNRESOLVED: the two readings of the same Seriously Fish page conflict (60 × 30 cm vs 45 × 30 cm). Value kept at 60 × 30 / 54 L pending a direct read of the page.',
+    open_question: true,
   },
   'cockatoo-cichlid': {
-    scientific_name: 'Apistogramma cacatuoides', adult_size_in: 3.5, min_tank_liters: 76, min_tank_length_in: 24, addTags: ['territorial'],
-    sources: ['Aquarium Co-Op Apistogramma guide', 'FishLore profile', 'Wikipedia: Apistogramma cacatuoides', 'Guidarium profile'],
-    notes: 'Males to 8–9 cm, females smaller. Minimum 60 L/60 cm (one source) vs 20 gal (76 L) per pair; 76 L used. Males territorial; best as harem.',
+    scientific_name: 'Apistogramma cacatuoides', category: 'fish',
+    adult_size_in: 3.5, adult_size_basis: 'total_length',
+    min_tank_liters: 54, min_tank_basis: 'pair', min_tank_length_in: 24, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Apistogramma cacatuoides',
+    addTags: ['territorial'],
+    sources: [
+      src(1, 'Seriously Fish — Apistogramma cacatuoides (Cockatoo Cichlid)', SF('apistogramma-cacatuoides'), ['min_tank_liters', 'min_tank_length_in'], 'Base of 60 × 30 cm or more acceptable for a single pair; a group needs more space.'),
+      src(2, 'Aquarium Co-Op — Apistogramma dwarf cichlid care guide', 'https://www.aquariumcoop.com/blogs/aquarium/apistogramma-dwarf-cichlid', ['adult_size_in'], 'Males to about 3–3.5 in.', SUMMARY),
+    ],
+    disagreements: 'Some guides give 20 gal (76 L) per pair; Seriously Fish (tier 1) selected.',
   },
   'ember-tetra': {
-    scientific_name: 'Hyphessobrycon amandae', adult_size_in: 1.2, min_tank_liters: 45, min_tank_length_in: 20,
-    sources: ['Aquarium Co-Op care guide', 'FishLore profile', 'Green Aqua profile', 'Wikipedia: Ember tetra'],
-    notes: 'Minimum 38–45 L; 45 L used. No reference gives a separate length; 20 in = standard 10 gal footprint.',
+    scientific_name: 'Hyphessobrycon amandae', category: 'fish',
+    adult_size_in: 1.2, adult_size_basis: 'total_length',
+    min_tank_liters: 41, min_tank_basis: 'group', min_tank_length_in: 18, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Hyphessobrycon amandae',
+    sources: [
+      src(1, 'Seriously Fish — Hyphessobrycon amandae (Ember Tetra)', SF('hyphessobrycon-amandae'), ['min_tank_liters', 'min_tank_length_in'], 'Base dimensions of at least 45 × 30 cm or equivalent (41 L by the site’s L × W × W convention).'),
+      src(2, 'Aquarium Co-Op — Care Guide for Ember Tetras', 'https://www.aquariumcoop.com/blogs/aquarium/ember-tetra', ['adult_size_in', 'group'], 'Nano schooling fish under ~0.8–1.2 in; keep a group of at least 6.', SUMMARY),
+    ],
   },
   'freshwater-angelfish': {
-    scientific_name: 'Pterophyllum scalare', adult_size_in: 6.0, min_tank_liters: 150, min_tank_length_in: 40, addTags: ['cichlid', 'territorial', 'longfin_target'],
-    sources: ['Seriously Fish species profile', 'AquaInfo profile', 'Tropical Fish Hobbyist Magazine', 'Aquarium Co-Op care guide', 'Tetra Fishkeeper blog'],
-    notes: 'Body length 12–15 cm, height with fins ~20–25 cm. Minimum footprint 100 × 40 × 50 cm (Seriously Fish) up to 150 cm for groups (AquaInfo); single adult 30 gal minimum, pairs/groups 55–75 gal. 150 L and 100 cm (40 in) used; tanks should also be at least 50 cm (20 in) tall — height is not checked by the engine. Long fins are a target for fin-nippers (e.g. tiger barbs). Eats small fish such as neon tetras as it matures.',
+    scientific_name: 'Pterophyllum scalare', category: 'fish',
+    adult_size_in: 6.0, adult_size_basis: 'standard_length',
+    min_tank_liters: 200, min_tank_basis: 'unspecified', min_tank_length_in: 39.4, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Pterophyllum scalare',
+    addTags: ['cichlid', 'territorial', 'longfin_target'],
+    sources: [
+      src(1, 'Seriously Fish — Pterophyllum “scalare” (Angelfish)', SF('pterophyllum-scalare'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in'], 'An aquarium measuring 100 × 40 × 50 cm (~200 L) should be the smallest considered; max 150 mm SL.'),
+      src(2, 'Aquarium Co-Op — Care Guide for Freshwater Angelfish', 'https://www.aquariumcoop.com/blogs/aquarium/angelfish-care-guide', ['min_tank_liters'], 'In a 29-gallon community tank keep no more than four adult angelfish.'),
+      src(2, 'AquaInfo — Pterophyllum scalare', 'https://aquainfo.nl/en/article/pterophyllum-scalare-angelfish/', ['min_tank_length_in'], 'Groups need ~150 cm length and 50–60 cm height.', SUMMARY),
+    ],
+    disagreements: 'Genuine conflict: Seriously Fish (≈200 L, 100 cm) vs Aquarium Co-Op (up to four adults in 29 gal ≈ 110 L, 30 in). Seriously Fish selected per policy (tier 1, explicit dimensions); the Co-Op figure is retained here. Tanks should also be ≥50 cm tall — height is not checked by the engine.',
   },
   'ghost-shrimp': {
-    scientific_name: 'Palaemonetes paludosus (syn. Palaemon paludosus)', category: 'shrimp', adult_size_in: 1.6, min_tank_liters: 19, min_tank_length_in: 12,
-    sources: ['FishLore profile', 'Shrimp and Snail Breeder (aquariumbreeder.com)', 'Guidarium profile', 'Wikipedia: Palaemon paludosus'],
-    notes: 'Adult ~1.5 in (4 cm max). Minimum 19 L with at least 30 cm length. Adults eat larvae and small shrimplets of other shrimp.',
+    scientific_name: 'Palaemonetes paludosus (syn. Palaemon paludosus)', category: 'shrimp',
+    adult_size_in: 1.6, adult_size_basis: 'body_length',
+    min_tank_liters: 19, min_tank_basis: 'group', min_tank_length_in: 12, min_tank_length_basis: 'source',
+    canonical_tank_source: 'FishLore — Ghost Shrimp profile (no higher-tier tank value found)',
+    sources: [
+      src(4, 'FishLore — Ghost Shrimp Care', 'https://www.fishlore.com/profile-ghostshrimp.htm', ['min_tank_liters'], 'Minimum aquarium size 5 gallons; about three per gallon.', SUMMARY),
+      src(4, 'Guidarium — Ghost Shrimp', 'https://guidarium.com/fishes/ghost-shrimp', ['min_tank_length_in', 'adult_size_in'], 'Minimum 19 L with a tank length of at least 30 cm; about 4 cm.', SUMMARY),
+      src(3, 'The Shrimp Farm — Ghost Shrimp (Palaemon) Care', 'https://www.theshrimpfarm.com/posts/shrimp-caresheet-ghost-shrimp-palaemonetes-sp/', ['shrimp_risk'], 'Adults eat larvae and small shrimplets.', SUMMARY),
+    ],
+    notes: 'Only general-hobby references gave tank values; flagged for review.',
+    open_question: true,
   },
   'glass-catfish': {
-    scientific_name: 'Kryptopterus vitreolus', adult_size_in: 3.2, min_tank_liters: 114, min_tank_length_in: 36,
-    sources: ['Seriously Fish species profile', 'FishLore profile', 'Fishkeeping World care sheet', 'Wikipedia: Kryptopterus vitreolus'],
-    notes: 'Adults 6.5–8 cm SL (8–10 cm TL reported). Minimum cited as 75 L (20 gal) by some, 30 gal (114 L) by most; 114 L used, 36 in = standard 30 gal footprint. Must be kept in a group of 6+.',
+    scientific_name: 'Kryptopterus vitreolus', category: 'fish',
+    adult_size_in: 3.2, adult_size_basis: 'standard_length',
+    min_tank_liters: 81, min_tank_basis: 'group', min_tank_length_in: 36, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Kryptopterus vitreolus',
+    sources: [
+      src(1, 'Seriously Fish — Kryptopterus vitreolus (Glass Catfish)', SF('kryptopterus-vitreolus/'), ['min_tank_liters', 'min_tank_length_in', 'group'], 'Base of 90 × 30 cm or equivalent should be the smallest considered (81 L); a group of 6+ is the minimum.'),
+      src(4, 'Wikipedia — Kryptopterus vitreolus', 'https://en.wikipedia.org/wiki/Kryptopterus_vitreolus', ['adult_size_in'], 'Up to ~8 cm SL, usually ~6.5 cm.', SUMMARY),
+    ],
+    disagreements: 'Other guides give 20–30 gal; Seriously Fish (tier 1) selected. Reviewer also reported 81 L / 36 × 12 in.',
   },
   'hillstream-loach': {
-    scientific_name: 'Sewellia lineolata', adult_size_in: 2.8, min_tank_liters: 100, min_tank_length_in: 32,
-    sources: ['Aquarium Co-Op hillstream loach guide', 'Aquatic Arts care guide', 'LiveAquaria profile', 'AquariumLesson profile'],
-    notes: 'Minimum volume cited as 20 gal, 26 gal (100 L)/80 cm, and 30 gal; 100 L / 80 cm used. Cool (64–75 °F), fast, well-oxygenated water.',
+    scientific_name: 'Sewellia lineolata', category: 'fish',
+    adult_size_in: 2.8, adult_size_basis: 'total_length',
+    min_tank_liters: 68, min_tank_basis: 'unspecified', min_tank_length_in: 30, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Sewellia lineolata',
+    sources: [
+      src(1, 'Seriously Fish — Sewellia lineolata (Tiger Hillstream Loach)', SF('sewellia-lineolata'), ['min_tank_liters', 'min_tank_length_in', 'flow'], 'Minimum base dimensions of 75 × 30 cm (68 L by the site’s convention); strong, well-oxygenated flow.'),
+      src(2, 'Aquarium Co-Op — Hillstream loach care guide', 'https://www.aquariumcoop.com/blogs/aquarium/hillstream-loaches', ['adult_size_in', 'temperature'], 'Up to ~2–3 in; cooler water.', SUMMARY),
+    ],
+    disagreements: 'General guides give 20–30 gal / 80 cm; Seriously Fish (tier 1) selected.',
   },
   'honey-gourami': {
-    scientific_name: 'Trichogaster chuna', adult_size_in: 2.0, min_tank_liters: 54, min_tank_length_in: 24,
-    sources: ['Seriously Fish species profile', 'Tetra Fishkeeper blog', 'Tropical Fish Hobbyist Magazine', 'Aquarium Co-Op care guide'],
-    notes: 'Usually 1.5–2 in (rarely 2.75 in). Minimum 40–54 L for a pair; 54 L used with a 60 × 30 cm footprint.',
+    scientific_name: 'Trichogaster chuna', category: 'fish',
+    adult_size_in: 2.0, adult_size_basis: 'total_length',
+    min_tank_liters: 38, min_tank_basis: 'single', min_tank_length_in: 20, min_tank_length_basis: 'inferred_standard_tank',
+    canonical_tank_source: 'Aquarium Co-Op — Honey Gourami care (Seriously Fish value not retrievable)',
+    sources: [
+      src(2, 'Aquarium Co-Op — Care Guide for Honey Gouramis', 'https://www.aquariumcoop.com/blogs/aquarium/honey-gourami', ['min_tank_liters'], 'A single honey gourami can live in a 5- or 10-gallon tank; a group of three does better in 20 gallons.'),
+      src(1, 'Seriously Fish — Trichogaster chuna (Honey Gourami)', SF('trichogaster-chuna'), ['adult_size_in'], 'Aquarium dimensions not retrievable from the review environment.'),
+    ],
+    disagreements: 'Other guides give 40–54 L for a pair. Co-Op states “5- or 10-gallon”; the upper figure of that single source’s stated range (10 gal) is used — no averaging.',
+    notes: 'No source gave base dimensions; length is the 20 in footprint of a standard 10 US gal tank (flagged as inferred).',
+    open_question: true,
   },
   'keyhole-cichlid': {
-    scientific_name: 'Cleithracara maronii', adult_size_in: 4.7, min_tank_liters: 115, min_tank_length_in: 36,
-    sources: ['Seriously Fish species profile', 'Fishkeeper UK profile', 'Aqua-Fish.net profile', 'River Park Aquatics'],
-    notes: 'Adults 10–12 cm (some sources 15 cm). Minimum base 90 × 30 cm; one source recommends 75 gal. v2 115 L retained with 90 cm (36 in) length.',
+    scientific_name: 'Cleithracara maronii', category: 'fish',
+    adult_size_in: 4.7, adult_size_basis: 'total_length',
+    min_tank_liters: 81, min_tank_basis: 'unspecified', min_tank_length_in: 36, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Cleithracara maronii',
+    sources: [
+      src(1, 'Seriously Fish — Cleithracara maronii (Keyhole Cichlid)', SF('cleithracara-maronii'), ['min_tank_liters', 'min_tank_length_in'], 'Base dimensions of 90 × 30 cm or equivalent should be the smallest considered (81 L).'),
+      src(2, 'Fishkeeper UK — Keyhole Cichlid', 'https://www.fishkeeper.co.uk/fish/freshwater/cichlids/keyhole-cichlid', ['adult_size_in'], 'Adults 10–12 cm.', SUMMARY),
+    ],
+    disagreements: 'One general guide recommends 75 gal; not selected (lower tier).',
   },
   'kribensis': {
-    scientific_name: 'Pelvicachromis pulcher', adult_size_in: 4.0, min_tank_liters: 120, min_tank_length_in: 32, addTags: ['territorial'],
-    sources: ['Seriously Fish species profile', 'AquaInfo profile', 'The Aquarium Adviser', 'AquariumLesson profile'],
-    notes: 'Males ~10 cm, females 6–7 cm. Minimum cited as 60–75 L for a pair up to 120 L / 80 cm; 120 L / 80 cm used because pairs become very territorial when breeding.',
+    scientific_name: 'Pelvicachromis pulcher', category: 'fish',
+    adult_size_in: 4.0, adult_size_basis: 'total_length',
+    min_tank_liters: 76, min_tank_basis: 'pair', min_tank_length_in: 31.5, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Aquarium Co-Op (volume) + AquaInfo (length); Seriously Fish lists no tank size',
+    addTags: ['territorial'],
+    sources: [
+      src(1, 'Seriously Fish — Pelvicachromis pulcher (Kribensis)', SF('pelvicachromis-pulcher/'), [], 'Tank base listed as “not recorded”.'),
+      src(2, 'Aquarium Co-Op — Top 10 cichlids for 29-gallon tanks', 'https://www.aquariumcoop.com/blogs/aquarium/top-10-cichlids', ['min_tank_liters'], 'A breeding pair in a 20-gallon tank, or a group of four to five in a 29-gallon.'),
+      src(2, 'AquaInfo — Pelvicachromis pulcher', 'https://aquainfo.nl/en/article/pelvicachromis-pulcher-kribensis/', ['min_tank_length_in', 'adult_size_in'], 'Minimum aquarium length 80 cm because pairs become aggressive with young; males ~10 cm.'),
+    ],
+    disagreements: 'Same-tier sources disagree on footprint: Co-Op’s 20 gal pair tank (typically 24–30 in long) vs AquaInfo’s explicit 80 cm length. Per policy the explicit horizontal dimension (AquaInfo) sets length and the only explicit volume (Co-Op) sets volume.',
   },
   'molly': {
-    scientific_name: 'Poecilia sphenops (trade mollies are often hybrids with P. latipinna / P. velifera)', adult_size_in: 4.0, min_tank_liters: 75, min_tank_length_in: 36, schoolingMinimum: 3, addTags: ['livebearer'],
-    sources: ['Seriously Fish species profile', 'FishLore profile', 'Aquariadise care sheet', 'Aquendium care guide'],
-    notes: 'Adults 6–10 cm. Minimum 75 L (20 gal), 20–30 gal for groups; one source requires 90 cm length — 36 in used. Needs hard, alkaline water (GH 10–30, pH 7.5–8.4). Keep at least 1 male : 2 females.',
+    scientific_name: 'Poecilia sphenops (trade mollies are often hybrids with P. latipinna / P. velifera)', category: 'fish',
+    adult_size_in: 4.0, adult_size_basis: 'total_length',
+    min_tank_liters: 81, min_tank_basis: 'unspecified', min_tank_length_in: 36, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Poecilia sphenops',
+    schoolingMinimum: 1, addTags: ['livebearer'],
+    sex_ratio_guidance: 'If both sexes are kept, at least 2–3 females per male.',
+    sources: [
+      src(1, 'Seriously Fish — Poecilia sphenops (Short-finned Molly)', SF('poecilia-sphenops'), ['min_tank_liters', 'min_tank_length_in', 'gH', 'pH'], 'Smallest recommended tank base 90 × 30 cm (81 L); hard, alkaline water.'),
+      src(2, 'Aquarium Co-Op — Care Guide for Mollies', 'https://www.aquariumcoop.com/blogs/aquarium/molly-fish-care', ['sex_ratio_guidance'], 'Get at least two to three females for every male.'),
+    ],
+    disagreements: 'General guides give 20 gal (75 L); Seriously Fish (tier 1) selected. “1 male : 2–3 females” is sex-ratio guidance, not a schooling minimum.',
   },
   'mystery-snail': {
-    scientific_name: 'Pomacea diffusa', category: 'snail', adult_size_in: 2.0, min_tank_liters: 38,
-    min_tank_length_in: null, tank_length_not_applicable: true,
-    sources: ['Aquarium Co-Op care guide', 'The Shrimp Farm care guide', 'Fishkeeping World profile', 'Tropical Fish Keeping'],
-    notes: 'Shell 4–5 cm wide, 4.5–6.5 cm tall. Minimum cited as 5 gal for one or two, 10 gal for the first snail more commonly; 10 gal (38 L) used. Crawling invertebrate: no swimming-length requirement.',
+    scientific_name: 'Pomacea diffusa', category: 'snail',
+    adult_size_in: 2.5, adult_size_basis: 'shell_diameter',
+    min_tank_liters: 19, min_tank_basis: 'pair', min_tank_length_in: null, min_tank_length_basis: 'not_applicable',
+    canonical_tank_source: 'Aquarium Co-Op — Mystery Snail care',
+    sources: [
+      src(2, 'Aquarium Co-Op — Care Guide for Mystery Snails', 'https://www.aquariumcoop.com/blogs/aquarium/mystery-snail', ['min_tank_liters'], 'One or two mystery snails can live in a 5-gallon aquarium or larger with a tight-fitting lid.', SUMMARY),
+      src(3, 'The Shrimp Farm — Mystery Snail Aquarium Care 101', 'https://www.theshrimpfarm.com/posts/mystery-snail-care/', ['adult_size_in', 'min_tank_liters'], 'Up to golf-ball size (~2.5 in); rule of thumb 10 gal for the first snail plus 2 gal per additional snail.', SUMMARY),
+    ],
+    disagreements: '5 gal (Co-Op, tier 2) vs 10 gal (Shrimp Farm, tier 3); Co-Op selected per policy.',
+    notes: 'Crawling invertebrate: no swimming-length requirement.',
   },
   'pea-puffer': {
-    scientific_name: 'Carinotetraodon travancoricus', adult_size_in: 1.4, min_tank_liters: 19, min_tank_length_in: 12, addTags: ['territorial', 'fin_nipper', 'snail_risk'],
-    sources: ['Seriously Fish species profile', 'Aquarium Co-Op care guide', 'FishLore (aquarium magazine)', 'Puffer Fish Enthusiasts Worldwide'],
-    notes: 'Max 3.5 cm TL, usually ~2.5 cm. Single fish: 30 × 20 × 20 cm (12.6 L) minimum up to 5 gal per puffer; 5 gal (19 L) used for one. Groups of 6 need 15–20 gal — the engine checks a single-species minimum only. Territorial, nips fins, eats snails and shrimp.',
+    scientific_name: 'Carinotetraodon travancoricus', category: 'fish',
+    adult_size_in: 1.0, adult_size_basis: 'total_length',
+    min_tank_liters: 13, min_tank_basis: 'single', min_tank_length_in: 12, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Carinotetraodon travancoricus',
+    addTags: ['territorial', 'fin_nipper', 'snail_risk'],
+    sources: [
+      src(1, 'Seriously Fish — Carinotetraodon travancoricus (Dwarf Puffer)', SF('carinotetraodon-travancoricus/'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in'], 'A single fish can be kept in a tank as small as 30 × 20 × 20 cm (12.6 L); groups need 2–3 gal per puffer; adult ~1 in.'),
+      src(2, 'Aquarium Co-Op — Pea Puffer care guide', 'https://www.aquariumcoop.com/blogs/aquarium/pea-puffer', ['snail_risk', 'shrimp_risk', 'fin_nipper'], 'Eats snails; fin-nipping and territorial; best in a species tank.', SUMMARY),
+    ],
+    disagreements: 'General guides give 5 gal per puffer; Seriously Fish (tier 1) selected. The engine checks a single-species minimum only — group volume (2–3 gal per puffer) is not scaled.',
   },
   'platy': {
-    scientific_name: 'Xiphophorus maculatus', adult_size_in: 2.8, min_tank_liters: 54, min_tank_length_in: 24, schoolingMinimum: 3, addTags: ['livebearer'],
-    sources: ['Seriously Fish species profile', 'Wikipedia: Platy (fish)', 'AquariumLife profile', 'Aquatic Arts profile'],
-    notes: 'Adults 5–7 cm. Minimum cited as 10 gal for a trio, 54 L, and (one source) 20 gal; 54 L / 60 cm used — the 20 gal figure was not corroborated. Keep at least a trio with more females than males.',
+    scientific_name: 'Xiphophorus maculatus', category: 'fish',
+    adult_size_in: 2.8, adult_size_basis: 'total_length',
+    min_tank_liters: 54, min_tank_basis: 'unspecified', min_tank_length_in: 24, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Xiphophorus maculatus',
+    schoolingMinimum: 1, addTags: ['livebearer'],
+    sex_ratio_guidance: 'If both sexes are kept, at least 2 females per male.',
+    sources: [
+      src(1, 'Seriously Fish — Xiphophorus maculatus (Platy)', SF('xiphophorus-maculatus'), ['min_tank_liters', 'min_tank_length_in'], 'Base 60 × 30 cm (~54 L).'),
+      src(2, 'Aquarium Co-Op — Care Guide for Platy Fish', 'https://www.aquariumcoop.com/blogs/aquarium/platy-care-guide', ['sex_ratio_guidance'], 'A group of three to six is a good starting point; keep at least two females per male.'),
+    ],
+    disagreements: '“Three to six” is a starting suggestion and 1 : 2 a sex ratio — neither is encoded as a schooling minimum.',
   },
   'pygmy-corydoras': {
-    scientific_name: 'Corydoras pygmaeus', adult_size_in: 1.2, min_tank_liters: 38, min_tank_length_in: 18,
-    sources: ['Aquarium Co-Op care guide', 'Aquariadise care sheet', 'Fishkeeping World profile', 'Guidarium profile'],
-    notes: 'Adults 2–3 cm (some sources to 4 cm). Minimum 38 L with 45 cm length (previous v2 value 20 L was below every reference). Group of 6–8+.',
+    scientific_name: 'Corydoras pygmaeus', category: 'fish',
+    adult_size_in: 1.2, adult_size_basis: 'total_length',
+    min_tank_liters: 41, min_tank_basis: 'group', min_tank_length_in: 18, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Corydoras pygmaeus',
+    schoolingMinimum: 6,
+    sources: [
+      src(1, 'Seriously Fish — Corydoras pygmaeus (Pygmy Cory)', SF('corydoras-pygmaeus/'), ['min_tank_liters', 'min_tank_length_in', 'group'], 'A large group can be kept in 45 × 30 × 30 cm (~41 L); buy at least 6, preferably 10+.'),
+      src(2, 'Aquarium Co-Op — Care Guide for Pygmy Corydoras', 'https://www.aquariumcoop.com/blogs/aquarium/pygmy-corydoras', ['adult_size_in'], 'About 1 in.', SUMMARY),
+    ],
+    disagreements: 'Previous group minimum 8 came from the original v2 record; Seriously Fish states at least 6 (10+ preferred).',
   },
   'ramshorn-snail': {
-    scientific_name: 'Planorbella duryi (other Planorbidae are also sold as ramshorns)', category: 'snail', adult_size_in: 1.0, min_tank_liters: 19,
-    min_tank_length_in: null, tank_length_not_applicable: true,
-    sources: ['The Shrimp Farm care guide', 'Garnelio profiles', 'Aquarium Source care guide', 'Wikipedia: Planorbella duryi'],
-    notes: 'P. duryi shell ~2–2.5 cm; the larger Planorbarius corneus reaches 4 cm. Minimum 5 gal (19 L) — previous v2 value 5 L was below every reference. Crawling invertebrate: no swimming-length requirement.',
+    scientific_name: 'Planorbella duryi (other Planorbidae are also sold as ramshorns)', category: 'snail',
+    adult_size_in: 1.0, adult_size_basis: 'shell_diameter',
+    min_tank_liters: 19, min_tank_basis: 'group', min_tank_length_in: null, min_tank_length_basis: 'not_applicable',
+    canonical_tank_source: 'The Shrimp Farm — Ramshorn Snail care',
+    sources: [
+      src(3, 'The Shrimp Farm — Ramshorn Snail Care Guide', 'https://www.theshrimpfarm.com/posts/ramshorn-snail-care/', ['min_tank_liters'], 'A few can live in 2.5 gal; at least 5 gal recommended.'),
+      src(4, 'Wikipedia — Planorbella duryi', 'https://en.wikipedia.org/wiki/Planorbella_duryi', ['adult_size_in'], 'Shell about 2–2.5 cm.', SUMMARY),
+    ],
+    notes: 'Crawling invertebrate: no swimming-length requirement.',
   },
   'swordtail': {
-    scientific_name: 'Xiphophorus hellerii', adult_size_in: 5.0, min_tank_liters: 75, min_tank_length_in: 36, schoolingMinimum: 3, addTags: ['livebearer'],
-    sources: ['Fishkeeper UK profile', 'Aquatic Arts profile', 'EasyClean Aquatics encyclopedia', 'Aqulator care guide'],
-    notes: 'Females 12–13 cm; males ~10 cm plus sword. Minimum 75 L and a 3 ft (90 cm) tank length for this fast, active swimmer. Keep at least a trio.',
+    scientific_name: 'Xiphophorus hellerii', category: 'fish',
+    adult_size_in: 6.3, adult_size_basis: 'total_length',
+    min_tank_liters: 108, min_tank_basis: 'unspecified', min_tank_length_in: 47.2, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Xiphophorus hellerii',
+    schoolingMinimum: 1, addTags: ['livebearer'],
+    sex_ratio_guidance: 'If both sexes are kept, more females than males.',
+    sources: [
+      src(1, 'Seriously Fish — Xiphophorus hellerii (Green Swordtail)', SF('xiphophorus-hellerii/'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in'], 'Surface dimensions of 120 × 30 cm or equivalent should be the smallest considered (108 L); males to 14 cm, females to 16 cm TL.'),
+      src(2, 'Fishkeeper UK — Swordtail', 'https://www.fishkeeper.co.uk/fish/freshwater/livebearers/swordtail', ['min_tank_length_in'], 'Minimum 3 ft (90 cm) tank length.', SUMMARY),
+    ],
+    disagreements: 'General guides give 75 L / 90 cm; Seriously Fish (tier 1) selected. Reviewer also reported 108 L / 48 × 12 in.',
   },
   'upside-down-catfish': {
-    scientific_name: 'Synodontis nigriventris', adult_size_in: 4.0, min_tank_liters: 100, min_tank_length_in: 30,
-    sources: ['Seriously Fish species profile', 'FishLore profile', 'Wikipedia: Synodontis nigriventris', 'Real Aquatics profile'],
-    notes: 'Max 9.6 cm. Minimum 70 L (75 × 30 × 30 cm) for one; 100 L for the small group it should be kept in; 100 L / 75 cm used. Group of 3–5+.',
+    scientific_name: 'Synodontis nigriventris', category: 'fish',
+    adult_size_in: 3.8, adult_size_basis: 'total_length',
+    min_tank_liters: 114, min_tank_basis: 'group', min_tank_length_in: 36, min_tank_length_basis: 'inferred_standard_tank',
+    canonical_tank_source: 'FishLore — Upside Down Catfish (Seriously Fish lists no aquarium size)',
+    schoolingMinimum: 5,
+    sources: [
+      src(1, 'Seriously Fish — Synodontis nigriventris (Upside-down Catfish)', SF('synodontis-nigriventris'), [], 'Page notes that aquarium size is missing.'),
+      src(4, 'FishLore — Upside Down Catfish Care', 'https://www.fishlore.com/profile-upside-down-catfish.htm', ['min_tank_liters', 'group', 'adult_size_in'], '30 gallons or larger; do well in groups of 5 or more; about 3.75 in (9.6 cm).', SUMMARY),
+    ],
+    disagreements: 'Other guides give 70–100 L. Only a general-hobby source gave a value; flagged for review.',
+    notes: 'No source gave base dimensions; length is the 36 in footprint of a standard 30 US gal tank (flagged as inferred).',
+    open_question: true,
   },
   'white-cloud-mountain-minnow': {
-    scientific_name: 'Tanichthys albonubes', adult_size_in: 2.0, min_tank_liters: 40, min_tank_length_in: 24,
-    sources: ['FishBase summary', 'FishLore profile', 'Practical Fishkeeping', 'Aquadiction species profile'],
-    notes: 'Up to 5 cm. Minimum 10 gal (38–40 L) with 60 cm length (FishBase). Cool water, thrives at 64–72 °F.',
+    scientific_name: 'Tanichthys albonubes', category: 'fish',
+    adult_size_in: 2.0, adult_size_basis: 'total_length',
+    min_tank_liters: 38, min_tank_basis: 'group', min_tank_length_in: 23.6, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Aquarium Co-Op (volume) + FishBase (length); Seriously Fish value not retrievable',
+    sources: [
+      src(2, 'Aquarium Co-Op — Care Guide for White Cloud Mountain Minnows', 'https://www.aquariumcoop.com/blogs/aquarium/white-cloud-mountain-minnow-care', ['min_tank_liters', 'group'], 'Keep a group of at least six in a 10-gallon tank or larger.', SUMMARY),
+      src(2, 'FishBase — Tanichthys albonubes', 'https://www.fishbase.org/summary/4758', ['min_tank_length_in'], 'Minimum aquarium size 60 cm.'),
+      src(4, 'FishLore — White Cloud Mountain Minnow', 'https://www.fishlore.com/Profiles-WhiteClouds.htm', ['adult_size_in', 'temperature'], 'Up to 2 in; cool water 64–72 °F.', SUMMARY),
+    ],
   },
 };
 
-// Species whose v2 record already carried the legacy-classification tag in LEGACY_BASE only.
+// Livebearer tag belongs on the male guppy's v2 record too (it was only in LEGACY_BASE).
 const ORIGINAL_TAG_FIXES = { 'guppy-male': ['livebearer'] };
 
-// The JSON is hand-formatted, so edit it textually per record instead of re-serialising it.
-let text = readFileSync(FILE, 'utf8');
-const records = JSON.parse(text);
-const seen = new Set();
+const REVIEWED_KEYS = [
+  'scientific_name', 'category', 'adult_size_in', 'adult_size_basis', 'min_tank_liters', 'min_tank_basis',
+  'min_tank_length_in', 'min_tank_length_basis', 'tank_length_not_applicable', 'blackwater', 'sex_ratio_guidance',
+];
 
 function recordBounds(source, slug) {
-  const marker = `"slug": "${slug}",`;
-  const at = source.indexOf(marker);
+  const at = source.indexOf(`"slug": "${slug}",`);
   if (at < 0) throw new Error(`slug not found: ${slug}`);
   const start = source.lastIndexOf('\n  {', at);
   const next = source.indexOf('\n  {', at);
   return [start, next < 0 ? source.lastIndexOf('\n]') : next];
 }
 
-const fieldLines = (update) => {
-  const review = {
-    date: REVIEWED,
-    sources: update.sources,
-    notes: update.notes,
-  };
-  const lines = [
-    ['scientific_name', update.scientific_name],
-    ['category', update.category ?? 'fish'],
-    ['adult_size_in', update.adult_size_in],
-    ['min_tank_liters', update.min_tank_liters],
-    ['min_tank_length_in', update.min_tank_length_in],
-    ...(update.tank_length_not_applicable ? [['tank_length_not_applicable', true]] : []),
-    // None of the 24 require tannins; several tolerate them. Reviewed value, not a default.
-    ['blackwater', 'neutral'],
-  ].map(([key, value]) => `    ${JSON.stringify(key)}: ${JSON.stringify(value)},`);
-  const reviewJson = JSON.stringify(review, null, 2).replace(/\n/g, '\n    ');
-  lines.push(`    "husbandry_review": ${reviewJson},`);
-  return lines.join('\n');
-};
+function stripReviewed(block) {
+  let out = block;
+  for (const key of REVIEWED_KEYS) {
+    out = out.replace(new RegExp(`\\n    "${key}": [^\\n]*,(?=\\n)`, 'g'), '');
+  }
+  // Remove a previous husbandry_review object (4-space indented key, closing "    },").
+  out = out.replace(/\n {4}"husbandry_review": \{[\s\S]*?\n {4}\},(?=\n)/, '');
+  return out;
+}
 
+function fieldBlock(spec) {
+  const fields = {
+    scientific_name: spec.scientific_name,
+    category: spec.category,
+    adult_size_in: spec.adult_size_in,
+    adult_size_basis: spec.adult_size_basis,
+    min_tank_liters: spec.min_tank_liters,
+    min_tank_basis: spec.min_tank_basis,
+    min_tank_length_in: spec.min_tank_length_in,
+    min_tank_length_basis: spec.min_tank_length_basis,
+  };
+  if (spec.min_tank_length_basis === 'not_applicable') fields.tank_length_not_applicable = true;
+  // Not assessed: none of the cited sources makes a tannin/blackwater claim for these species.
+  fields.blackwater = null;
+  if (spec.sex_ratio_guidance) fields.sex_ratio_guidance = spec.sex_ratio_guidance;
+  const lines = Object.entries(fields).map(([key, value]) => `    ${JSON.stringify(key)}: ${JSON.stringify(value)},`);
+  const review = {
+    policy_version: POLICY_VERSION,
+    reviewed: REVIEWED,
+    canonical_tank_source: spec.canonical_tank_source,
+    sources: spec.sources,
+    ...(spec.disagreements ? { disagreements: spec.disagreements } : {}),
+    ...(spec.notes ? { notes: spec.notes } : {}),
+    open_question: spec.open_question === true,
+  };
+  lines.push(`    "husbandry_review": ${JSON.stringify(review, null, 2).replace(/\n/g, '\n    ')},`);
+  return lines.join('\n');
+}
+
+let text = readFileSync(FILE, 'utf8');
+const records = JSON.parse(text);
+const seen = new Set();
 for (const record of records) {
-  const update = UPDATES[record.slug];
-  const extraTags = [...(update?.addTags ?? []), ...(ORIGINAL_TAG_FIXES[record.slug] ?? [])]
+  const spec = SPECIES[record.slug];
+  const extraTags = [...(spec?.addTags ?? []), ...(ORIGINAL_TAG_FIXES[record.slug] ?? [])]
     .filter((tag) => !record.tags.includes(tag));
-  if (!update && !extraTags.length) continue;
+  if (!spec && !extraTags.length) continue;
   const [from, to] = recordBounds(text, record.slug);
   let block = text.slice(from, to);
   if (extraTags.length) {
-    block = block.replace(/("tags": \[)([\s\S]*?)(\n    \])/, (_, open, body, close) =>
+    block = block.replace(/("tags": \[)([\s\S]*?)(\n {4}\])/, (_, open, body, close) =>
       `${open}${body},\n${extraTags.map((tag) => `      ${JSON.stringify(tag)}`).join(',\n')}${close}`);
   }
-  if (update) {
+  if (spec) {
     seen.add(record.slug);
-    if (!('husbandry_review' in record)) {
-      // min_tank_liters moves up with the other reviewed fields; drop the old line.
-      block = block.replace(/\n    "min_tank_liters": [\d.]+,/, '');
-      block = block.replace(/(\n    "id": "[^"]+",)/, `$1\n${fieldLines(update)}`);
-    }
-    if (update.schoolingMinimum) {
-      block = block.replace(/"schoolingMinimum": \d+/, `"schoolingMinimum": ${update.schoolingMinimum}`);
+    block = stripReviewed(block);
+    block = block.replace(/\n {4}"min_tank_liters": [\d.]+,/, '');
+    block = block.replace(/(\n {4}"id": "[^"]+",)/, `$1\n${fieldBlock(spec)}`);
+    if (spec.schoolingMinimum) {
+      block = block.replace(/"schoolingMinimum": \d+/, `"schoolingMinimum": ${spec.schoolingMinimum}`);
     }
   }
   text = text.slice(0, from) + block + text.slice(to);
 }
-const missing = Object.keys(UPDATES).filter((slug) => !seen.has(slug));
+const missing = Object.keys(SPECIES).filter((slug) => !seen.has(slug));
 if (missing.length) throw new Error(`unknown slugs: ${missing.join(', ')}`);
-JSON.parse(text); // must still be valid JSON
+JSON.parse(text);
 writeFileSync(FILE, text);
 console.log(`updated ${seen.size} species`);
