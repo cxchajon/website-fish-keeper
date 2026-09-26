@@ -639,16 +639,43 @@ test.describe('warnings (desktop and mobile)', () => {
     await addSpecies(page, 'neocaridina', 10);
     await previewCandidate(page, 'blue_ram', 1);
     const id = 'predation.shrimp.blue_ram.neocaridina';
-    // Severity as classified by the existing shrimp_risk rule (amber); the UI does not upgrade it.
-    await expectShown(candidateWarning(page, id), 'warn');
+    // Blue Ram's own data: "Shrimp (all sizes)" → red.
+    await expectShown(candidateWarning(page, id), 'bad');
     await expect(candidateWarning(page, id)).toContainText('may eat Cherry Shrimp');
+    await expect(candidateWarning(page, id)).toContainText('shrimp of all sizes');
     await page.click('#plan-add');
-    await expectPersists(page, warning(page, id), 'warn');
+    await expectPersists(page, warning(page, id), 'bad');
     // The Environmental card no longer repeats it (or hides it behind "more").
     await expect(page.locator('#env-warnings')).not.toContainText('predation');
     await page.click('[data-remove-id="blue_ram"]');
     await settle(page);
     await expect(anyWarning(page, id)).toHaveCount(0);
+  });
+
+  // Severity follows each predator's own predationRisks entry.
+  for (const [label, stockId, qty, predatorId, predatorQty, id, state, text] of [
+    ['juvenile-only shrimp risk is amber', 'neocaridina', 10, 'molly', 3, 'predation.shrimp.molly.neocaridina', 'warn', 'may eat juvenile Cherry Shrimp'],
+    ['a named shrimp type is red for that type', 'neocaridina', 10, 'betta_male', 1, 'predation.shrimp.betta_male.neocaridina', 'bad', 'may prey on Cherry Shrimp'],
+    ['Pea Puffer is caught from its explicit shrimp data', 'neocaridina', 10, 'pea_puffer', 1, 'predation.shrimp.pea_puffer.neocaridina', 'bad', 'shrimp of all sizes'],
+    ['Assassin Snail with another snail is red', 'nerite', 2, 'assassin_snail', 2, 'predation.snail.assassin_snail.nerite', 'bad', 'lists snails as prey'],
+  ] as const) {
+    test(`invert predation: ${label}, before and after Add`, async ({ page }) => {
+      await selectTank(page, '75g');
+      await addSpecies(page, stockId, qty);
+      await previewCandidate(page, predatorId, predatorQty);
+      await expectShown(candidateWarning(page, id), state);
+      await expect(candidateWarning(page, id)).toContainText(text);
+      await page.click('#plan-add');
+      await expectPersists(page, warning(page, id), state);
+    });
+  }
+
+  test('invert predation: cherry-specific data is not applied to Amano Shrimp', async ({ page }) => {
+    await selectTank(page, '75g');
+    await addSpecies(page, 'amano', 6);
+    await addSpecies(page, 'betta_male', 1);
+    await settle(page);
+    await expect(anyWarning(page, 'predation.shrimp.betta_male.amano')).toHaveCount(0);
   });
 
   test('hard compatibility conflict: red before and after Add, never a gray chip', async ({ page }) => {

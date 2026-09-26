@@ -59,10 +59,39 @@ bioload text/severity/%, filtration level/turnover/status, water condition statu
 pre-existing warning id + severity and every chip are identical. Only `status.severity` differs (409
 cases): 369 ok→warn (under-minimum groups, shrimp/snail predators) and 40 →bad (2+ male bettas).
 
-## 4. Open questions
+## 4. Shrimp / snail predation precedence (follow-up)
 
-- Shrimp/snail predation is amber because that is the only live classification (env card "soft").
-  `conflicts.evaluatePair` (dead code) classifies it `bad`. Many "predators" only take juveniles
-  ("Shrimp (juvenile)"). Making any of it red is a rule decision, not a UI one.
+A predator's own `behavior.predationRisks` is the evidence. When it has any entry for the prey category,
+only those entries decide (strongest match wins), whatever the generic tags say:
+
+| Entry | Prey | Result |
+|---|---|---|
+| "Shrimp (all sizes)" | any shrimp | red — adult shrimp at risk |
+| "Snails" | any other snail | red |
+| "Shrimp (cherry)" / "Shrimp (amano)" | that named type | red |
+| same | a different shrimp type | no warning from that entry |
+| "Shrimp (juvenile)" | any shrimp | amber — adults may coexist, shrimplets at risk |
+| none; `shrimp_risk` / `snail_risk` tag only | category | amber (fallback) |
+
+Result matrix (predator → prey): all-sizes predators (Blue Ram, Bolivian Ram, Cockatoo, Angelfish,
+Kribensis, Tiger Barb, Pea Puffer) red with every shrimp; Pea Puffer and Assassin Snail red with every
+other snail; cherry-named predators (Bettas, Cardinal, Neon, Dwarf/Pearl Gourami) red with Cherry Shrimp
+only; Cherry Barb red with Cherry and Amano; juvenile-only species amber with every shrimp; Ghost Shrimp
+(tag only) amber. Compared with the previous commit over 7,040 cases, only `predation.shrimp|snail.*`
+changed (1,000 raised to red, 360 cherry-only pairings with other shrimp removed); everything else is
+identical.
+
+### Tag / data contradictions (not edited — for a separate dataset clean-up)
+
+- `shrimp_safe` tag with explicit shrimp prey: chili-rasbora, harlequin-rasbora, rummynose-tetra,
+  zebra-danio (juvenile), neon-tetra (cherry).
+- Explicit shrimp prey with no `shrimp_risk` tag: cardinal-tetra, cherry-barb, chili-rasbora,
+  harlequin-rasbora, keyhole-cichlid, kuhli-loach, neon-tetra, pea-puffer (all sizes), rummynose-tetra,
+  tiger-barb (all sizes), upside-down-catfish, zebra-danio.
+- `shrimp_risk` tag with no explicit shrimp data: ghost-shrimp.
+- Snail data and tags agree (assassin-snail, pea-puffer).
+
+## 5. Open questions
+
 - Species behaviour chips ("Predation risk: Shrimp (cherry)") appear amber on a preview even when no
   prey is planned. They were left unchanged.

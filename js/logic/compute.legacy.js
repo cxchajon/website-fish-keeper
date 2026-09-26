@@ -622,9 +622,27 @@ const INVERT_PREY = [
   { category: 'snail', tag: 'snail_risk', pattern: /snail/i, label: 'snail' },
 ];
 
-// Shrimp / snail predation from the canonical shrimp_risk / snail_risk tags (the same data and the
-// same amber classification the Environmental card has always used). A species is never flagged
-// against itself.
+// What one explicit predationRisks entry ("Shrimp (all sizes)", "Shrimp (juvenile)", "Shrimp (cherry)",
+// "Snails") says about one prey species. Returns null when the entry does not cover that prey.
+//   all sizes / plain "Snails"            → bad: the planned animals themselves are at risk
+//   juvenile                               → warn: adults may coexist, offspring are at risk
+//   a named type ("cherry", "amano")       → bad, but only for prey of that type
+function readPreyEntry(entry, prey) {
+  const qualifier = (entry.match(/\(([^)]*)\)/)?.[1] ?? '').trim().toLowerCase();
+  if (!qualifier || /\ball\b/.test(qualifier)) return { scope: 'all', severity: 'bad' };
+  if (/juvenile|young|baby|fry|shrimplet/.test(qualifier)) return { scope: 'juvenile', severity: 'warn' };
+  const preyName = `${prey.common_name || ''} ${prey.id || ''} ${prey.slug || ''}`.toLowerCase();
+  if (preyName.includes(qualifier)) return { scope: 'named', severity: 'bad', qualifier };
+  return null;
+}
+
+const SCOPE_RANK = { all: 3, named: 3, juvenile: 2, tag: 1 };
+
+// Shrimp / snail predation. A predator's own behavior.predationRisks is the evidence: when it names
+// the prey category at all, only those entries decide (the strongest matching entry wins), whatever
+// the generic shrimp_risk / snail_risk / *_safe tags say. The shrimp_risk / snail_risk tag is only a
+// fallback for a record with no explicit entry for that category (amber). A species is never flagged
+// against itself, and no relationship is added beyond what the data states.
 function evaluateInvertPredation(entries, candidate) {
   const issues = [];
   const warnings = [];
@@ -635,23 +653,48 @@ function evaluateInvertPredation(entries, candidate) {
   const all = [...selected.values()];
   for (const { category, tag, pattern, label } of INVERT_PREY) {
     for (const predator of all) {
-      if (!Array.isArray(predator.tags) || !predator.tags.includes(tag)) continue;
-      const evidence = (predator.protoV2?.behavior?.predationRisks ?? [])
-        .find((risk) => typeof risk === 'string' && !/^\s*predators?\s*:/i.test(risk) && pattern.test(risk));
+      const explicit = (predator.protoV2?.behavior?.predationRisks ?? [])
+        .filter((risk) => typeof risk === 'string' && !/^\s*predators?\s*:/i.test(risk) && pattern.test(risk));
+      const tagged = Array.isArray(predator.tags) && predator.tags.includes(tag);
+      if (!explicit.length && !tagged) continue;
       for (const prey of all) {
         if (prey.category !== category || prey.id === predator.id) continue;
+        let match = null;
+        if (explicit.length) {
+          for (const entry of explicit) {
+            const read = readPreyEntry(entry, prey);
+            if (read && (!match || SCOPE_RANK[read.scope] > SCOPE_RANK[match.scope])) match = { ...read, evidence: entry };
+          }
+        } else {
+          match = { scope: 'tag', severity: 'warn' };
+        }
+        if (!match) continue;
         const predatorName = predator.common_name || predator.id;
         const preyName = prey.common_name || prey.id;
-        const title = `${predatorName} may eat ${preyName}`;
-        const message = evidence
-          ? `${predatorName} is a known ${label} predator (species data: “${evidence}”), so ${preyName} may be eaten or harassed.`
-          : `${predatorName} is a known ${label} predator, so ${preyName} may be eaten or harassed.`;
-        issues.push({ severity: 'warn', message: title });
+        let title;
+        let message;
+        if (match.scope === 'all') {
+          title = `${predatorName} may eat ${preyName}`;
+          message = category === 'snail'
+            ? `Species data lists snails as prey (“${match.evidence}”), so the ${preyName} you plan are at risk.`
+            : `Species data lists shrimp of all sizes as prey (“${match.evidence}”), so adult ${preyName} are at risk, not just shrimplets.`;
+        } else if (match.scope === 'named') {
+          title = `${predatorName} may prey on ${preyName}`;
+          message = `Species data names ${match.qualifier} ${label} as prey (“${match.evidence}”).`;
+        } else if (match.scope === 'juvenile') {
+          title = `${predatorName} may eat juvenile ${preyName}`;
+          message = `Species data lists juvenile ${label} as prey (“${match.evidence}”). Adult ${preyName} may coexist, but ${label === 'shrimp' ? 'shrimplets' : 'young snails'} are at risk.`;
+        } else {
+          title = `${predatorName} may eat ${preyName}`;
+          message = `${predatorName} is tagged as a ${label} predator in species data, with no detail on which sizes it eats. Watch ${preyName} closely, especially young ones.`;
+        }
+        issues.push({ severity: match.severity, message: title });
         warnings.push({
           id: `predation.${label}.${predator.id}.${prey.id}`,
-          severity: 'warn',
+          severity: match.severity === 'bad' ? 'danger' : 'warn',
           icon: 'alert',
           kind: 'compatibility',
+          basis: match.scope,
           title,
           message,
           text: `${title} — ${message}`,
