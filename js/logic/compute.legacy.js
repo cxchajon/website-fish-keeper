@@ -25,6 +25,10 @@ import {
   keyPair,
 } from './conflicts.js';
 
+// Cache-policy marker read by the one-time stale-cache guard in stocking-advisor.html. It means "this
+// copy was served under the revalidating /js/ policy (see _headers)"; it is never bumped per release.
+(globalThis.__ttgRevalidatedModules ||= {})['compute-legacy'] = true;
+
 function toRange(source, minKey, maxKey) {
   if (!source) return [NaN, NaN];
   const min = Number(source[minKey]);
@@ -479,7 +483,9 @@ function formatGallons(liters) {
 // Tank suitability per selected species, from the species' own minimums. Volume and length are
 // separate requirements and checked separately: a tank below the minimum volume is unsuitable
 // (red); a tank shorter than the species' minimum swimming length is flagged amber. Minimums are
-// per species, not scaled by how many are planned — bioload and group rules cover numbers.
+// per species, not scaled by how many are planned — except where a species record carries a
+// sourced `quantity_space` rule (territorial space per fish): then the required volume is
+// max(min_tank_liters, quantity × liters_per_fish). That is a space check, independent of bioload.
 function evaluateTankSuitability(tank, entries, candidate) {
   const issues = [];
   const warnings = [];
@@ -489,13 +495,36 @@ function evaluateTankSuitability(tank, entries, candidate) {
   const tankLength = Number.isFinite(tank?.length) && tank.length > 0 ? tank.length : null;
   const tooSmallFor = [];
   const seen = new Set();
+  const quantities = new Map();
+  for (const entry of [...entries, candidate]) {
+    const id = entry?.species?.id;
+    if (id) quantities.set(id, (quantities.get(id) || 0) + (Number(entry.qty) || 0));
+  }
   for (const entry of [...entries, candidate]) {
     const species = entry?.species;
     if (!species || seen.has(species.id)) continue;
     seen.add(species.id);
     const name = species.common_name || species.id;
     const minLiters = Number(species.min_tank_liters);
-    if (tankLiters != null && Number.isFinite(minLiters) && minLiters > 0 && tankLiters < minLiters) {
+    const quantity = quantities.get(species.id) || 0;
+    const perFish = Number(species.quantity_space?.liters_per_fish);
+    const groupLiters = Number.isFinite(perFish) && perFish > 0 ? quantity * perFish : 0;
+    if (tankLiters != null && groupLiters > minLiters && tankLiters < groupLiters) {
+      // The number planned needs more room than the single-fish minimum: report the space shortfall.
+      const needed = Math.ceil(groupLiters);
+      const message = `${quantity} × ${name} need at least ${needed} L (${formatGallons(needed)}) of territory — ${formatGallons(perFish)} per fish; this tank is ${Math.round(tankLiters)} L (${formatGallons(tankLiters)}). This is a space limit for the number of fish, not a waste (bioload) limit.`;
+      issues.push({ severity: 'bad', message: `Not enough space for ${quantity} × ${name}` });
+      tooSmallFor.push(`${quantity} × ${name}`);
+      warnings.push({
+        id: `tank.group_volume.${species.id}`,
+        severity: 'danger',
+        icon: 'alert',
+        kind: 'tank',
+        title: `Not enough space for ${quantity} × ${name}`,
+        message,
+        text: `Not enough space for ${quantity} × ${name} — ${message}`,
+      });
+    } else if (tankLiters != null && Number.isFinite(minLiters) && minLiters > 0 && tankLiters < minLiters) {
       const message = `${name} needs at least ${Math.round(minLiters)} L (${formatGallons(minLiters)}); this tank is ${Math.round(tankLiters)} L (${formatGallons(tankLiters)}).`;
       issues.push({ severity: 'bad', message: `Tank too small for ${name}` });
       tooSmallFor.push(name);

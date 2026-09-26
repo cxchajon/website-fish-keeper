@@ -116,9 +116,10 @@ zero in, the calculation.
   adult size and its basis first — most surprises trace back to a maximum or total-length figure.
 - The profiles are written by `scripts/data/apply-bioload-profiles-2026-09.mjs` (idempotent).
 - The older v2 `bioload` block (`multiplier`, `components`) is retired: no calculation reads it. It
-  stays in the JSON only because `/js/*` is served with a one-year immutable cache and nested module
-  imports are unversioned, so returning visitors may still run the previous adapter, which needs it.
-  Remove it once module URLs are versioned (or the cache has expired). The 20 hand-set GE values
+  stays in the JSON because `/js/*` used to be served with a one-year immutable cache: a returning
+  browser may run the previous adapter once (which needs that block) before the stale-cache guard in
+  `stocking-advisor.html` refreshes its modules. `/js/*` now revalidates (see `_headers`); the block
+  can be removed once a year has passed since that change. The 20 hand-set GE values
   remain only in `js/fish-data.js`, the engine's pre-load default dataset, for reference.
 
 ## 6. What this model does not cover

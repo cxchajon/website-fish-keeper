@@ -14,9 +14,17 @@
 /css/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Cache JavaScript files for 1 year
+# JavaScript: revalidate on every use. File names under /js/ are not content-hashed and ES-module
+# imports use plain paths (no ?v=), so a long-lived or immutable cache would keep old modules in
+# returning visitors' browsers after a deploy — with the new modules only partly loaded. The
+# browser still stores the file and gets a cheap 304 when it has not changed.
 /js/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Data files read by the page at run time (e.g. the Stocking Advisor species dataset) must stay in
+# step with the JavaScript above, so they use the same revalidation policy.
+/data/*
+  Cache-Control: public, max-age=0, must-revalidate
 
 # Cache images for 1 year
 /assets/img/*

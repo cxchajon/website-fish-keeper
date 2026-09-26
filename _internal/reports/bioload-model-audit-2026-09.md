@@ -434,3 +434,56 @@ precision than the model has; whole percent would be more honest.
   **same 11 fail on `main`**, including the unrelated Contact & Feedback tests. The suite is stale
   and was not changed here.
 - Old cached JS + new JSON was checked: the previous adapter still loads and calculates.
+
+## 18. Follow-up: release blockers fixed (same branch)
+
+### Stale JavaScript caching
+
+- **Confirmed bug.** `_headers` served `/js/*` with `Cache-Control: public, max-age=31536000, immutable`.
+  No file under `/js/` is content-hashed; 209 of 212 `<script src="/js/…">` tags carry a `?v=` query
+  but it is not maintained (`stocking.js?v=2024-09-01` although the file changed in 2026), and all 52
+  static ES-module imports use plain paths, which a query on the importing script does not change.
+  A returning browser therefore kept every previously fetched module for up to a year after a deploy.
+  Reproduced with a real HTTP cache: old deploy with the immutable header, then the new deploy — the
+  browser requested **0** JS files and still showed the bridge value (10 Pea Puffers / 29 gal: 35.8 %).
+- **Fix.** `/js/*` → `Cache-Control: public, max-age=0, must-revalidate` (Cloudflare Pages' own default
+  for assets: stored, revalidated on each use, 304 when unchanged). New explicit `/data/*` rule with
+  the same value. Security headers, CSS, image, font and HTML rules unchanged. No path receives two
+  `Cache-Control` values (Cloudflare comma-joins repeats). Guarded by `tests/unit/cache-headers.test.mjs`.
+- **Species JSON.** `/data/*` previously had no rule, so it already got the Pages default
+  (revalidate every use); it is now explicit. The JSON was never the stale half.
+- **Browsers already holding immutable copies.** A header change cannot reach them (they do not
+  re-request). `stocking-advisor.html` (revalidated hourly) now carries a small guard: the current
+  `species-adapter.v2.js` and `compute.legacy.js` set a fixed marker; if it is missing after load, the
+  page re-fetches every `/js/` URL it loaded with `fetch(url, { cache: 'reload' })` (which overwrites the
+  HTTP cache entry) and reloads once per session. No version numbers, no module list. Same real-cache
+  test: returning visit then showed the new value (13.0 %); without the guard it stayed at 35.8 %.
+
+### Pea Puffer group space
+
+- `quantity_space` (optional, sourced) on the species record: `{ liters_per_fish, source, basis }`.
+  Required volume = max(`min_tank_liters`, quantity × `liters_per_fish`), checked in
+  `evaluateTankSuitability` with stock and preview quantities summed. Shortfall → red
+  `tank.group_volume.<id>` "Not enough space for N × <species>", message stating it is a space limit,
+  not a bioload limit. Bioload inputs, formula and filtration untouched.
+- Pea Puffer: Seriously Fish (tier 1) "groups need 2–3 gal per puffer" → upper figure 3 US gal =
+  11.36 L (policy rule 3). Aquarium Co-Op (tier 2, reviewer-reported) corroborates via its examples.
+
+| Case | Required | Tank | Result | Bioload (unchanged) |
+|---|---:|---:|---|---:|
+| 1 / 5 gal | 13 L | 19 L | pass | 7.5 % |
+| 3 / 5 gal | 34 L | 19 L | **red: Not enough space for 3 × Pea Puffer** | 22.5 % |
+| 6 / 5 gal | 69 L | 19 L | **red: Not enough space for 6 × Pea Puffer** | 45.1 % |
+| 6 / 20 gal | 69 L | 76 L | pass | 11.3 % |
+| 3 / 10 gal · 4 / 10 gal | 34 L · 46 L | 38 L | pass · red | — |
+
+### Dedicated gate
+
+- 20-long test: exact pair ids replaced by an order-independent match (rule + both species).
+- Mobile flake: diagnosed as a race, not a UI bug. Adding a species renders immediately and again
+  after the 160 ms debounced recompute, replacing the warning nodes once with identical ones (measured:
+  one replacement 250–320 ms after the add, then stable). The test scrolled a node that was about to
+  be replaced ("Element is not attached to the DOM", 2 of 12 runs). The scroll-and-see-in-viewport
+  check is now retried as a whole with `expect(...).toPass()`.
+- Added gate tests: Pea Puffer space warning (5 gal) and pass (20 gal); current modules set the cache
+  marker and never trigger the guard reload.

@@ -1,6 +1,6 @@
 // Production gate for the Stocking Advisor species pipeline (run with
 // `npm run test:e2e:stocking-gate`). Uses the page's current selectors; independent of the main suite.
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 
 const SPECIES_JSON = /\/data\/stocking-advisor\/species\.v2\.json$/;
 
@@ -29,6 +29,22 @@ async function addSpecies(page: Page, id: string, qty: number) {
 }
 
 const warning = (page: Page, id: string) => page.locator(`#stock-warnings .status-strip[data-warning-id="${id}"]`);
+// A pair warning names both species in its id; their order follows species ordering (it changed when
+// "Freshwater Angelfish" was renamed "Angelfish"), so match the rule and both species, not the order.
+const pairWarning = (page: Page, rule: string, a: string, b: string) => page.locator(
+  `#stock-warnings .status-strip[data-warning-id^="aggr:"][data-warning-id$=":${rule}"]`
+  + `[data-warning-id*=":${a}:"][data-warning-id*=":${b}:"]`,
+);
+
+// Adding a species renders at once and again after the debounced recompute (~160 ms), which replaces
+// the warning nodes with identical ones. Retry "scroll to it and see it on screen" as a whole until it
+// holds for the settled page, instead of acting on a node that may be about to be replaced.
+async function expectScrolledIntoView(locator: Locator) {
+  await expect(async () => {
+    await locator.scrollIntoViewIfNeeded({ timeout: 1000 });
+    await expect(locator).toBeInViewport({ timeout: 1000 });
+  }).toPass();
+}
 const bioloadLabel = (page: Page) => page.locator('[data-role="bioload-percent"]').first();
 const bioloadFill = (page: Page) => page.locator('#env-bars .env-bar__fill').first();
 
@@ -80,8 +96,10 @@ test.describe('desktop', () => {
     await expect(page.locator('[data-testid="species-row"]')).toHaveCount(4);
     // Each species is evaluated: tank, compatibility and group rules fire for every one of them.
     await expect(warning(page, 'tank.volume.freshwater_angelfish')).toBeVisible();
-    await expect(warning(page, 'aggr:freshwater_angelfish:tiger_barb:fin_nip')).toBeVisible();
-    await expect(warning(page, 'aggr:bristlenose_pleco:freshwater_angelfish:aggressive_pair')).toBeVisible();
+    await expect(pairWarning(page, 'fin_nip', 'freshwater_angelfish', 'tiger_barb')).toHaveCount(1);
+    await expect(pairWarning(page, 'fin_nip', 'freshwater_angelfish', 'tiger_barb')).toBeVisible();
+    await expect(pairWarning(page, 'aggressive_pair', 'freshwater_angelfish', 'bristlenose_pleco')).toHaveCount(1);
+    await expect(pairWarning(page, 'aggressive_pair', 'freshwater_angelfish', 'bristlenose_pleco')).toBeVisible();
     await expect(warning(page, 'tank.length.tiger_barb')).toBeVisible();
     await expect(bioloadLabel(page)).toHaveText(/tank too small for Angelfish/i);
     await expect(page.locator('#stock-warnings [data-warning-id^="species.unevaluated."]')).toHaveCount(0);
@@ -139,6 +157,41 @@ test.describe('desktop', () => {
   });
 });
 
+test.describe('desktop: space and cache', () => {
+  test.skip(({ isMobile }) => isMobile, 'desktop checks');
+
+  test('6 pea puffers in a 5 gallon fail on space, not on bioload', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '5g');
+    await addSpecies(page, 'pea_puffer', 6);
+    const alert = warning(page, 'tank.group_volume.pea_puffer');
+    await expect(alert).toHaveAttribute('data-state', 'bad');
+    await expect(alert).toContainText('Not enough space for 6 × Pea Puffer');
+    await expect(alert).toContainText('not a waste (bioload) limit');
+    await expect(bioloadLabel(page)).toHaveText(/^45\.1%/);
+  });
+
+  test('6 pea puffers in a 20 gallon pass the space rule', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '20h');
+    await addSpecies(page, 'pea_puffer', 6);
+    await expect(page.locator('#stock-warnings [data-warning-id^="tank."]')).toHaveCount(0);
+  });
+
+  test('current calculator modules do not trigger the stale-cache reload', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await page.waitForLoadState('load');
+    const state = await page.evaluate(() => ({
+      marks: (window as unknown as { __ttgRevalidatedModules?: Record<string, boolean> }).__ttgRevalidatedModules,
+      refreshed: sessionStorage.getItem('ttg-advisor-cache-refresh'),
+    }));
+    expect(state).toEqual({ marks: { 'species-adapter': true, 'compute-legacy': true }, refreshed: null });
+  });
+});
+
 test.describe('mobile', () => {
   test.skip(({ isMobile }) => !isMobile, 'mobile checks');
 
@@ -148,10 +201,8 @@ test.describe('mobile', () => {
     await selectTank(page, '20h');
     await addSpecies(page, 'freshwater_angelfish', 6);
     const alert = warning(page, 'tank.volume.freshwater_angelfish');
-    await alert.scrollIntoViewIfNeeded();
-    await expect(alert).toBeVisible();
+    await expectScrolledIntoView(alert);
     await expect(alert).toHaveAttribute('data-state', 'bad');
-    await expect(alert).toBeInViewport();
     await expect(bioloadLabel(page)).toHaveText(/tank too small/i);
   });
 
@@ -162,8 +213,7 @@ test.describe('mobile', () => {
     await addSpecies(page, 'freshwater_angelfish', 2);
     await addSpecies(page, 'neon', 10);
     const alert = warning(page, 'predation.fish.freshwater_angelfish.neon');
-    await alert.scrollIntoViewIfNeeded();
-    await expect(alert).toBeInViewport();
+    await expectScrolledIntoView(alert);
     await expect(alert).toHaveAttribute('data-state', 'bad');
   });
 
@@ -171,9 +221,7 @@ test.describe('mobile', () => {
     await page.route(SPECIES_JSON, (route) => route.fulfill({ status: 503, body: 'unavailable' }));
     await openAdvisor(page);
     const alert = page.locator('#species-data-error');
-    await alert.scrollIntoViewIfNeeded();
-    await expect(alert).toBeVisible();
-    await expect(alert).toBeInViewport();
+    await expectScrolledIntoView(alert);
     await expect(page.locator('#plan-species')).toBeDisabled();
   });
 });

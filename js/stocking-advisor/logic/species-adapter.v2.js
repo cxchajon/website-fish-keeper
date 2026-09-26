@@ -1,6 +1,10 @@
 import { BEHAVIOR_TAGS } from '../../logic/behaviorTags.js';
 import { computeSpeciesBioload } from './bioload-model.js';
 
+// Cache-policy marker read by the one-time stale-cache guard in stocking-advisor.html. It means "this
+// copy was served under the revalidating /js/ policy (see _headers)"; it is never bumped per release.
+(globalThis.__ttgRevalidatedModules ||= {})['species-adapter'] = true;
+
 // Species data - loaded asynchronously for Safari compatibility
 let speciesV2Raw = [];
 let speciesLoadPromise = null;
@@ -715,6 +719,8 @@ function mapRecord(record, fishNames = []) {
     min_tank_length_in: lengthNotApplicable ? null : pick(record, legacy, 'min_tank_length_in'),
     tank_length_not_applicable: lengthNotApplicable,
     min_tank_liters: pick(record, legacy, 'min_tank_liters'),
+    // Sourced quantity-dependent space rule (territorial species), checked by tank suitability only.
+    quantity_space: record.quantity_space ? Object.freeze({ ...record.quantity_space }) : null,
     // Field semantics: data/stocking-advisor/SPECIES_DATA_POLICY.md
     adult_size_basis: record.adult_size_basis ?? null,
     min_tank_basis: record.min_tank_basis ?? null,

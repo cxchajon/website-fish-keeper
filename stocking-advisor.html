@@ -1033,6 +1033,30 @@
 
   <div id="turnover-tip" class="ttg-tooltip" data-tooltip-panel data-role="info-tip" role="tooltip" hidden data-info="turnover"></div>
 
+  <script>
+    // One-time stale-cache recovery. /js/ used to be served with a one-year immutable cache, and
+    // module imports are unversioned, so a returning browser may still run calculator modules from
+    // before that policy changed. Current modules set a marker; if it is missing, refresh every /js/
+    // file this page loaded straight from the server and reload once per session.
+    window.addEventListener('load', function () {
+      var marks = window.__ttgRevalidatedModules || {};
+      if (marks['species-adapter'] && marks['compute-legacy']) return;
+      try {
+        if (sessionStorage.getItem('ttg-advisor-cache-refresh')) return;
+        sessionStorage.setItem('ttg-advisor-cache-refresh', '1');
+      } catch (error) {
+        return;
+      }
+      var urls = performance.getEntriesByType('resource').map(function (entry) { return entry.name; })
+        .filter(function (url) {
+          var parsed = new URL(url);
+          return parsed.origin === location.origin && /^\/js\/.*\.js$/.test(parsed.pathname);
+        });
+      Promise.all(urls.map(function (url) {
+        return fetch(url, { cache: 'reload' }).catch(function () { return null; });
+      })).then(function () { location.reload(); });
+    });
+  </script>
   <script type="module" src="/js/logic/compute.js?v=1.5.2"></script>
   <script type="module" src="/js/logic/conflicts.js?v=1.5.2"></script>
   <script type="module" src="/js/stocking.js?v=2024-09-01" id="js-stocking"></script>

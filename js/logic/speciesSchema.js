@@ -69,6 +69,11 @@ export function validateSpeciesRecord(s) {
       return "bad min_tank_length_in";
     }
     if (s.min_tank_liters != null && !(num(s.min_tank_liters) && s.min_tank_liters > 0)) return "bad min_tank_liters";
+    if (s.quantity_space != null) {
+      const q = s.quantity_space;
+      if (!(num(q.liters_per_fish) && q.liters_per_fish > 0)) return "bad quantity_space.liters_per_fish";
+      if (typeof q.source !== "string" || !q.source.trim()) return "quantity_space needs a source";
+    }
     if (!num(s.aggression)) return "bad numbers";
     // Advisor records carry bioload_profile and a model-derived bioloadGE; a record whose model inputs
     // are incomplete is rejected here (and flagged to the user), never counted as zero load.

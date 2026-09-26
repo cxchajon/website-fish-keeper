@@ -233,13 +233,20 @@ const SPECIES = {
     scientific_name: 'Carinotetraodon travancoricus', category: 'fish',
     adult_size_in: 1.0, adult_size_basis: 'total_length',
     min_tank_liters: 13, min_tank_basis: 'single', min_tank_length_in: 12, min_tank_length_basis: 'source',
+    // 3 US gal (upper figure of Seriously Fish's own "2–3 gal per puffer", policy rule 3) = 11.36 L.
+    quantity_space: {
+      liters_per_fish: 11.36,
+      source: 'Seriously Fish — Carinotetraodon travancoricus',
+      basis: 'Groups need 2–3 US gal per puffer (Seriously Fish, tier 1); the upper figure of the source’s own range, 3 US gal (11.36 L), is used per policy rule 3. Territorial space, not bioload.',
+    },
     canonical_tank_source: 'Seriously Fish — Carinotetraodon travancoricus',
     addTags: ['territorial', 'fin_nipper', 'snail_risk'],
     sources: [
-      src(1, 'Seriously Fish — Carinotetraodon travancoricus (Dwarf Puffer)', SF('carinotetraodon-travancoricus/'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in'], 'A single fish can be kept in a tank as small as 30 × 20 × 20 cm (12.6 L); groups need 2–3 gal per puffer; adult ~1 in.'),
+      src(1, 'Seriously Fish — Carinotetraodon travancoricus (Dwarf Puffer)', SF('carinotetraodon-travancoricus/'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in', 'quantity_space'], 'A single fish can be kept in a tank as small as 30 × 20 × 20 cm (12.6 L); groups need 2–3 gal per puffer; adult ~1 in.'),
       src(2, 'Aquarium Co-Op — Pea Puffer care guide', 'https://www.aquariumcoop.com/blogs/aquarium/pea-puffer', ['snail_risk', 'shrimp_risk', 'fin_nipper'], 'Eats snails; fin-nipping and territorial; best in a species tank.', SUMMARY),
+      src(2, 'Aquarium Co-Op — Pea Puffer care guide', 'https://www.aquariumcoop.com/blogs/aquarium/pea-puffer', ['quantity_space'], 'One pea puffer: 5 gal; about 3 gal for each additional puffer (e.g. 3 in a 10 gal, 6–7 in a 20 gal); heavy planting / broken sight lines because they are territorial.', REVIEWER),
     ],
-    disagreements: 'General guides give 5 gal per puffer; Seriously Fish (tier 1) selected. The engine checks a single-species minimum only — group volume (2–3 gal per puffer) is not scaled.',
+    disagreements: 'Single-fish minimum: general guides give 5 gal; Seriously Fish (tier 1, 12.6 L) selected. Group space: Seriously Fish (tier 1) “2–3 gal per puffer” selected, upper figure 3 gal per policy rule 3. Aquarium Co-Op (tier 2) states “5 gal + ~3 gal per additional puffer”; its own examples (3 in 10 gal, 6–7 in 20 gal) agree with ~3 gal per puffer, while its formula would put 3 puffers at 11 gal. Required volume = max(single minimum, quantity × 3 gal).',
   },
   'platy': {
     scientific_name: 'Xiphophorus maculatus', category: 'fish',
@@ -322,6 +329,7 @@ const ORIGINAL_TAG_FIXES = { 'guppy-male': ['livebearer'] };
 const REVIEWED_KEYS = [
   'scientific_name', 'category', 'adult_size_in', 'adult_size_basis', 'min_tank_liters', 'min_tank_basis',
   'min_tank_length_in', 'min_tank_length_basis', 'tank_length_not_applicable', 'blackwater', 'sex_ratio_guidance',
+  'quantity_space',
 ];
 
 function recordBounds(source, slug) {
@@ -357,6 +365,8 @@ function fieldBlock(spec) {
   // Not assessed: none of the cited sources makes a tannin/blackwater claim for these species.
   fields.blackwater = null;
   if (spec.sex_ratio_guidance) fields.sex_ratio_guidance = spec.sex_ratio_guidance;
+  // Quantity-dependent space: required volume = max(min_tank_liters, quantity × liters_per_fish).
+  if (spec.quantity_space) fields.quantity_space = spec.quantity_space;
   const lines = Object.entries(fields).map(([key, value]) => `    ${JSON.stringify(key)}: ${JSON.stringify(value)},`);
   const review = {
     policy_version: POLICY_VERSION,

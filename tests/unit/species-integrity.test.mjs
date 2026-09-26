@@ -347,13 +347,59 @@ test('safety cases: 6 of each species in a 5 gallon fail tank suitability', () =
   assert.ok(!warningIds(onePuffer).includes('tank.volume.pea_puffer'), 'one pea puffer fits a 5 gallon minimum');
 });
 
-// KNOWN GAP (Phase 2B audit): six pea puffers in a 5 gallon used to turn red only because the
-// provisional bridge gave a 1 in puffer ~3× the load of a neon tetra. Under the bioload model six
-// 1 in fish are ~45% of a 5 gallon, which is not a waste overload; the real problem is territorial
-// crowding, and the sourced "2–3 gal per puffer" group guidance is not encoded as a tank rule yet.
-test('six pea puffers in a 5 gallon are flagged by a space/territory rule', { todo: 'needs a per-fish group-volume rule for pea puffers' }, () => {
-  const puffers = compute.buildComputedState(stateFor('5g', [['pea_puffer', 6]]));
-  assert.equal(puffers.status.severity, 'bad');
+// Pea puffers: group space is a sourced tank-suitability rule (quantity_space), separate from bioload.
+// Required volume = max(single-fish minimum, quantity × 3 US gal) — Seriously Fish "2–3 gal per puffer".
+test('pea puffer space scales with the number planned, independently of bioload', () => {
+  const groupWarning = (computed) => computed.status.warnings.find((w) => w.id === 'tank.group_volume.pea_puffer');
+  const volumeIds = (computed) => warningIds(computed).filter((id) => /^tank\.(group_)?volume\.pea_puffer$/.test(id));
+
+  const one = compute.buildComputedState(stateFor('5g', [['pea_puffer', 1]]));
+  assert.deepEqual(volumeIds(one), [], 'one puffer fits a 5 gallon');
+  assert.equal(one.status.severity, 'ok');
+
+  for (const qty of [3, 6]) {
+    const crowded = compute.buildComputedState(stateFor('5g', [['pea_puffer', qty]]));
+    const warning = groupWarning(crowded);
+    assert.ok(warning, `${qty} puffers in a 5 gallon need a space warning`);
+    assert.equal(warning.severity, 'danger');
+    assert.match(warning.title, new RegExp(`Not enough space for ${qty} × Pea Puffer`));
+    assert.match(warning.message, /space limit for the number of fish, not a waste \(bioload\) limit/);
+    assert.equal(crowded.status.severity, 'bad');
+  }
+
+  // Aquarium Co-Op examples agree: 3 in a 10 gallon, 6–7 in a 20 gallon.
+  assert.deepEqual(volumeIds(compute.buildComputedState(stateFor('10g', [['pea_puffer', 3]]))), []);
+  assert.ok(groupWarning(compute.buildComputedState(stateFor('10g', [['pea_puffer', 4]]))));
+  for (const tank of ['20h', '20l']) {
+    assert.deepEqual(volumeIds(compute.buildComputedState(stateFor(tank, [['pea_puffer', 6]]))), [], tank);
+  }
+
+  // Stock and preview quantities add up.
+  const preview = compute.buildComputedState(stateFor('10g', [['pea_puffer', 2]], ['pea_puffer', 2]));
+  assert.match(groupWarning(preview)?.title ?? '', /4 × Pea Puffer/);
+
+  // The rule does not touch bioload: load stays linear in quantity and equal to six single puffers.
+  const single = compute.buildComputedState(stateFor('125g', [['pea_puffer', 1]])).bioload.proposed;
+  const six = compute.buildComputedState(stateFor('5g', [['pea_puffer', 6]])).bioload;
+  assert.ok(Math.abs(six.proposed - 6 * single) < 1e-9);
+  assert.ok(six.proposedPercent < 1, 'six puffers are not a waste overload of a 5 gallon');
+});
+
+test('quantity_space is sourced data, validated, and only used for species that have it', () => {
+  const withRule = RAW_SPECIES.filter((record) => record.quantity_space);
+  assert.deepEqual(withRule.map((record) => record.slug), ['pea-puffer']);
+  const rule = withRule[0].quantity_space;
+  assert.ok(Math.abs(rule.liters_per_fish - 3 * 3.785411784) < 0.01, '3 US gal per puffer');
+  assert.ok(withRule[0].husbandry_review.sources.some((source) => source.tier === 1 && source.fields.includes('quantity_space')));
+  const broken = DROPDOWN.map((species) => (
+    species.id === 'pea_puffer' ? { ...species, quantity_space: { liters_per_fish: 0, source: 'x' } } : species
+  ));
+  try {
+    legacy.overrideSpeciesDataset(broken);
+    assert.deepEqual(compute.getRejectedSpecies().map((s) => [s.id, s.reason]), [['pea_puffer', 'bad quantity_space.liters_per_fish']]);
+  } finally {
+    legacy.overrideSpeciesDataset(DROPDOWN);
+  }
 });
 
 test('livebearers get hardness warnings in soft water', () => {
