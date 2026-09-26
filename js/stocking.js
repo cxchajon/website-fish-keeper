@@ -2470,6 +2470,12 @@ function bindInputs() {
       }
       state.candidate.qty = raw;
       syncCandidateControls();
+      // state.candidate.qty is the only owner of the quantity; recompute the preview from it on every
+      // valid edit. The debounced recompute reads state when it fires, so rapid edits settle on the
+      // latest value. An empty or partial entry waits for blur, which normalizes it and recomputes.
+      if (isCandidateQtyValid()) {
+        scheduleUpdate();
+      }
     });
 
     refs.qty.addEventListener('blur', () => {

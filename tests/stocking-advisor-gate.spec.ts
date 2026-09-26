@@ -701,11 +701,7 @@ test.describe('warnings (desktop and mobile)', () => {
     test(`species trait: ${label} is a neutral note, not a warning`, async ({ page }) => {
       await withFilter(page);
       await previewCandidate(page, speciesId, qty);
-      // Known app race (not covered here): if the species-change render runs before the quantity is
-      // typed, blurring the quantity does not recompute, so the preview can keep qty 1 and show a
-      // group warning. Recompute explicitly so this test checks the species notes only.
       await settle(page);
-      await page.evaluate(() => (window as unknown as { recomputeAll: () => void }).recomputeAll());
       await expect(note(page, noteText)).toBeVisible();
       await expect(note(page, noteText)).toContainText('Species note');
       await expect(activeChip(page, /prey|avoid|predation|incompatib/i)).toHaveCount(0);
@@ -832,5 +828,189 @@ test.describe('warnings (desktop and mobile)', () => {
     await page.evaluate(() => (window as unknown as { recomputeAll: () => void }).recomputeAll());
     await settle(page);
     expect(await alert.evaluate((el) => (el as HTMLElement & { __marker?: boolean }).__marker === true)).toBe(true);
+  });
+});
+
+// Candidate quantity preview. The preview used to recompute only when the species or another control
+// changed: typing a new quantity after the preview had rendered updated state.candidate.qty but never
+// scheduled a recompute (blur did not either, since the value was already in state), so the preview
+// kept evaluating the old quantity. These tests change the quantity only after the species preview has
+// fully rendered, never blur, and read what is on screen.
+const candidateLead = (page: Page) => page.locator('[data-role="candidate-warning-lead"]');
+const qtyInput = (page: Page) => page.locator('#plan-qty');
+
+async function selectCandidateAndSettle(page: Page, id: string) {
+  await page.selectOption('#plan-species', id);
+  await settle(page);
+}
+
+// Keystrokes, as a user types them: select what is there, then type the new value.
+async function typeQty(page: Page, value: string) {
+  await qtyInput(page).click({ clickCount: 3 });
+  await page.keyboard.type(value);
+}
+
+async function expectPreviewQty(page: Page, qty: number, name: string) {
+  await expect(candidateLead(page)).toHaveText(`If you add ${qty} × ${name}:`);
+  await expect(qtyInput(page)).toHaveValue(String(qty));
+  expect(await page.evaluate(() => (window as unknown as { appState: { candidate: { qty: string } } }).appState.candidate.qty))
+    .toBe(String(qty));
+}
+
+async function expectNoOverflowOrDuplicates(page: Page) {
+  await expect(page.locator('#plan-qty')).toHaveCount(1);
+  await expect(page.locator('#plan-species')).toHaveCount(1);
+  await expect(page.locator('#plan-add')).toHaveCount(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
+}
+
+test.describe('candidate quantity preview (desktop and mobile)', () => {
+  test.beforeEach(async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '20h');
+    await settle(page);
+  });
+
+  test('A: changing the quantity after the preview rendered re-evaluates it', async ({ page }) => {
+    await selectCandidateAndSettle(page, 'cardinal');
+    await expectPreviewQty(page, 1, 'Cardinal Tetra');
+    await expect(candidateWarning(page, 'group.min.cardinal')).toContainText('Planned: 1.');
+    await qtyInput(page).fill('6');
+    await settle(page);
+    await expectPreviewQty(page, 6, 'Cardinal Tetra');
+    await expect(anyWarning(page, 'group.min.cardinal')).toHaveCount(0);
+    await expectNoOverflowOrDuplicates(page);
+  });
+
+  test('B: direct typing re-evaluates the preview without leaving the field', async ({ page }) => {
+    await selectCandidateAndSettle(page, 'neon');
+    await expect(candidateWarning(page, 'group.min.neon')).toContainText('Planned: 1.');
+    await typeQty(page, '3');
+    await expect(candidateWarning(page, 'group.min.neon')).toContainText('Planned: 3.');
+    await expectPreviewQty(page, 3, 'Neon Tetra');
+    await typeQty(page, '6');
+    await settle(page);
+    await expectPreviewQty(page, 6, 'Neon Tetra');
+    await expect(anyWarning(page, 'group.min.neon')).toHaveCount(0);
+    await expect(qtyInput(page)).toBeFocused();
+  });
+
+  test('C: editing digits in place (Backspace, then new digits) updates the same state', async ({ page }) => {
+    // The candidate row has no +/- buttons; incremental keyboard edits are its step control. Each edit
+    // goes through the same input handler and the same state.candidate.qty.
+    await selectCandidateAndSettle(page, 'tiger_barb');
+    await qtyInput(page).click();
+    await page.keyboard.press('End');
+    await page.keyboard.press('Backspace');
+    await page.keyboard.type('7');
+    await expect(candidateWarning(page, 'group.min.tiger_barb')).toContainText('Planned: 7.');
+    await page.keyboard.press('Backspace');
+    await page.keyboard.type('8');
+    await settle(page);
+    await expectPreviewQty(page, 8, 'Tiger Barb');
+    await expect(anyWarning(page, 'group.min.tiger_barb')).toHaveCount(0);
+    // The stock-row +/- controls still drive the stock quantity (and its warning) after Add.
+    await page.click('#plan-add');
+    await clickQty(page, 'tiger_barb', 'minus');
+    await expect(warning(page, 'group.min.tiger_barb')).toContainText('Planned: 7.');
+    await clickQty(page, 'tiger_barb', 'plus');
+    await settle(page);
+    await expect(anyWarning(page, 'group.min.tiger_barb')).toHaveCount(0);
+  });
+
+  test('D: species A → quantity 6 → species B keeps the entered quantity for B', async ({ page }) => {
+    // Intended behaviour (unchanged): changing species keeps the quantity; only Add resets it to 1.
+    await selectCandidateAndSettle(page, 'cardinal');
+    await typeQty(page, '6');
+    await settle(page);
+    await expectPreviewQty(page, 6, 'Cardinal Tetra');
+    await selectCandidateAndSettle(page, 'tiger_barb');
+    await expectPreviewQty(page, 6, 'Tiger Barb');
+    await expect(candidateWarning(page, 'group.min.tiger_barb')).toContainText('Planned: 6.');
+  });
+
+  test('E: Add uses exactly the quantity entered after the preview rendered', async ({ page }) => {
+    await selectCandidateAndSettle(page, 'cory_bronze');
+    await typeQty(page, '6');
+    await settle(page);
+    await expectPreviewQty(page, 6, 'Bronze Corydoras');
+    await page.click('#plan-add');
+    await expect(page.locator('[data-testid="species-row"][data-row-id="cory_bronze"] .qtyval')).toHaveText('6');
+    await settle(page);
+    // Add resets the candidate to no species and quantity 1.
+    await expect(qtyInput(page)).toHaveValue('1');
+    await expect(qtyInput(page)).toBeDisabled();
+    await expect(page.locator('[data-testid="species-row"][data-row-id="cory_bronze"] .qtyval')).toHaveText('6');
+    // Enter in the field adds too, with the typed quantity.
+    await selectCandidateAndSettle(page, 'molly');
+    await typeQty(page, '4');
+    await settle(page);
+    await expectPreviewQty(page, 4, 'Molly');
+    await page.keyboard.press('Enter');
+    await expect(page.locator('[data-testid="species-row"][data-row-id="molly"] .qtyval')).toHaveText('4');
+  });
+
+  test('F: rapid changes 1 → 3 → 6 → 8 settle on the last value', async ({ page }) => {
+    await selectCandidateAndSettle(page, 'tiger_barb');
+    for (const value of ['3', '6', '8']) {
+      await typeQty(page, value);
+    }
+    await settle(page);
+    await expectPreviewQty(page, 8, 'Tiger Barb');
+    await expect(anyWarning(page, 'group.min.tiger_barb')).toHaveCount(0);
+    // And back down, faster than the debounce: the last value wins, not an earlier one.
+    await qtyInput(page).fill('2');
+    await qtyInput(page).fill('5');
+    await settle(page);
+    await expectPreviewQty(page, 5, 'Tiger Barb');
+    await expect(candidateWarning(page, 'group.min.tiger_barb')).toContainText('Planned: 5.');
+    await expectNoOverflowOrDuplicates(page);
+  });
+
+  test('clearing the field waits for blur, which restores 1 and re-evaluates', async ({ page }) => {
+    await selectCandidateAndSettle(page, 'neon');
+    await typeQty(page, '6');
+    await settle(page);
+    await expect(anyWarning(page, 'group.min.neon')).toHaveCount(0);
+    await qtyInput(page).fill('');
+    await expect(page.locator('#plan-add')).toBeDisabled();
+    await qtyInput(page).blur();
+    await settle(page);
+    await expectPreviewQty(page, 1, 'Neon Tetra');
+    await expect(candidateWarning(page, 'group.min.neon')).toContainText('Planned: 1.');
+  });
+
+  test('pea puffer: the quantity-space rule evaluates the typed quantity', async ({ page }) => {
+    await selectTank(page, '5g');
+    await selectCandidateAndSettle(page, 'pea_puffer');
+    await expect(anyWarning(page, 'tank.group_volume.pea_puffer')).toHaveCount(0);
+    await typeQty(page, '6');
+    await expectShown(candidateWarning(page, 'tank.group_volume.pea_puffer'), 'bad');
+    await typeQty(page, '1');
+    await settle(page);
+    await expect(anyWarning(page, 'tank.group_volume.pea_puffer')).toHaveCount(0);
+  });
+
+  test('angelfish: the typed quantity drives the projected stocking load', async ({ page, isMobile }) => {
+    await selectTank(page, '29g');
+    await addSpecies(page, 'neon', 8);
+    await selectCandidateAndSettle(page, 'freshwater_angelfish');
+    await expectShown(candidateWarning(page, 'tank.volume.freshwater_angelfish'), 'bad');
+    // Desktop shows "current → projected"; the phone bar shows current stock only, so read the
+    // projection the page computed from its own state there.
+    const projected = async () => (isMobile
+      ? page.evaluate(async () => {
+        const compute = await import('/js/logic/compute.js');
+        const appState = (window as unknown as { appState: unknown }).appState;
+        return compute.buildComputedState(appState).bioload.proposedPercent * 100;
+      })
+      : Number(((await bioloadLabel(page).textContent()) ?? '').match(/→\s*([\d.]+)%/)?.[1]));
+    const atOne = await projected();
+    await typeQty(page, '3');
+    await settle(page);
+    await expectPreviewQty(page, 3, 'Angelfish');
+    expect(await projected()).toBeGreaterThan(atOne);
+    await expectShown(candidateWarning(page, 'tank.volume.freshwater_angelfish'), 'bad');
   });
 });
