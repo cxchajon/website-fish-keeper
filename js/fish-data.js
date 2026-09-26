@@ -38,7 +38,7 @@ export const FISH_DB = [
     aggression:5, tags:["shoaler","fin_sensitive","nano"], group:{type:"shoal",min:6}, invert_safe:false, mouth_size_in:0.1, ph_sensitive:true, bioloadGE:0.6 },
   { id:"rummynose", common_name:"Rummynose Tetra", scientific_name:"Hemigrammus/Petitella spp.", category:"fish",
     adult_size_in:2.5, min_tank_length_in:30, temperature:{min_f:75,max_f:81}, ph:{min:5.5,max:7.0},
-    gH:{min_dGH:2,max_dGH:15}, kH:{min_dKH:1,max_dKH:8}, salinity:"fresh", flow:"moderate", blackwater:"requires",
+    gH:{min_dGH:2,max_dGH:15}, kH:{min_dKH:1,max_dKH:8}, salinity:"fresh", flow:"moderate", blackwater:"prefers",
     aggression:5, tags:["shoaler","fast_swimmer"], group:{type:"shoal",min:10}, invert_safe:false, mouth_size_in:0.2, ph_sensitive:true, bioloadGE:0.8 },
   { id:"harlequin", common_name:"Harlequin Rasbora", scientific_name:"Trigonostigma heteromorpha", category:"fish",
     adult_size_in:2.0, min_tank_length_in:24, temperature:{min_f:72,max_f:80}, ph:{min:6.0,max:7.5},

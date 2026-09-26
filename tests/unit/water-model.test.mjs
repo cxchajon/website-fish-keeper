@@ -176,13 +176,13 @@ test('H: a blackwater-preferring species is never failed for missing tannins', (
   }
 });
 
-test('a species that requires blackwater stays flagged, red only when the user says tannins are off', () => {
-  const unknown = run('55g', [], { candidate: ['rummynose', 8] });
-  assert.equal(unknown.conditions.blackwaterCheck.severity, 'warn');
-  const off = run('55g', [], { water: { blackwater: false }, candidate: ['rummynose', 8] });
-  assert.equal(off.conditions.blackwaterCheck.severity, 'bad');
-  const on = run('55g', [], { water: { blackwater: true }, candidate: ['rummynose', 8] });
-  assert.equal(on.conditions.blackwaterCheck.severity, 'ok');
+test('Rummynose (prefers blackwater) gets no tannin failure whether tannins are unknown, off or on', () => {
+  for (const blackwater of [null, false, true]) {
+    const computed = run('55g', [], { water: { blackwater }, candidate: ['rummynose', 8] });
+    assert.equal(computed.conditions.blackwaterCheck.severity, 'ok', String(blackwater));
+    assert.ok(!computed.chips.some((chip) => /tannin|blackwater/i.test(chip.text) && chip.tone !== 'ok'), String(blackwater));
+    assert.ok(!/tannin|blackwater/i.test(computed.status.label), computed.status.label);
+  }
 });
 
 test('snails get no shell-health warning until a low GH is entered', () => {

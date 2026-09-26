@@ -52,7 +52,7 @@ Measured on `main` (each species previewed alone in a 125 gallon with an adequat
 
 | | before | after |
 | --- | --- | --- |
-| Species showing ≥ 1 water chip from hidden values | **39 / 44** | 1 / 44 (Rummynose: requires blackwater, amber) |
+| Species showing ≥ 1 water chip from hidden values | **39 / 44** | 0 / 44 |
 | …with a red water chip | **13** | 0 |
 | Species whose engine status is red from water alone (in stock, no candidate) | **6** — Molly, Platy, Swordtail, White Cloud, Hillstream Loach, Blue Ram | 0 |
 
@@ -81,7 +81,24 @@ each, pH ×10, Temperature ×9, "Prefers tannin-rich water" ×7, gH ×6, kH ×3,
   GH 61, KH 58, pH 50 (12 red, 38 amber).
 - Flow compared only with an entered tank flow. Blackwater "prefers" is a tip; "requires" is amber when
   unknown, red only when the user says tannins are off. Snail shell warning only with an entered GH < 6.
+- Data correction: Rummynose Tetra blackwater `requires` → `prefers` (§5a). No selectable species now
+  has a sourced `requires` value; the rule remains for a future sourced case.
 - Salinity `'fresh'` kept as the tool's scope (marine excluded; brackish mixing is detected from species).
+
+## 5a. Rummynose Tetra blackwater correction
+
+Old path: the `species.v2.json` record had no `blackwater` key, so `species-adapter.v2.js → pick()`
+fell back to the adapter's built-in legacy table (`'rummynose-tetra'` entry, `blackwater: 'requires'`),
+a copy of `js/fish-data.js` (`id:"rummynose"`, `blackwater:"requires"`). The normalized record reached
+`evaluateBlackwater()` as `requires`: red on `main` (tannins assumed off), amber earlier in this phase
+(tannins unknown).
+
+Evidence: Seriously Fish describes blackwater habitat and a blackwater-style biotope set-up, but also
+says the species does well in a more standard planted aquarium — a preference, not a captive
+requirement. Fix at the source: `species.v2.json` now states `"blackwater": "prefers"` explicitly, and
+the adapter's legacy entry and `js/fish-data.js` were changed to `prefers` so no layer disagrees. No
+other species was touched. With tannins unknown, off or on, Rummynose now gets no amber/red result.
+It was the only `requires` value in any layer, so no selectable species has a sourced requirement.
 
 ## 6. Unchanged (verified)
 

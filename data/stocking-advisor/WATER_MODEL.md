@@ -108,6 +108,14 @@ shown on the Environmental card ("flow zones needed"). Filtration turnover is a 
 A preference is never a failure. A requirement is a husbandry fact about the species (like salinity),
 so it stays visible when the tank is unknown, and is red only when the user said tannins are off.
 
+**Currently no selectable species has a sourced `requires` value**, so the `requires` row is an
+unused code path kept for a future species whose sources genuinely establish a captive requirement.
+Rummynose Tetra was `requires` (inherited from the legacy table) and is now `prefers`: Seriously Fish
+describes a blackwater habitat and biotope set-up but says the species also does well in a standard
+planted aquarium. The value is explicit in `species.v2.json`, and the adapter's legacy table and
+`js/fish-data.js` agree with it. The species whose value is `prefers` (Cardinal, Chili Rasbora,
+Harlequin Rasbora, Kuhli Loach, Neon, Panda Cory, Pearl Gourami, Rummynose) are never warned.
+
 **Snail shell health.** "Low gH risks shell health" appears only when the user entered GH < 6.
 
 ## 5. Salinity
@@ -120,4 +128,4 @@ still red.
 ## 6. Status
 
 Water affects the overall status only through a user value outside the shared range, a species
-conflict (§3), or a blackwater requirement (§4). An unentered parameter never does.
+conflict (§3), or a sourced blackwater requirement (§4; none today). An unentered parameter never does.

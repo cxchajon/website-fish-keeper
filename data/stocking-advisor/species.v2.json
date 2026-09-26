@@ -3491,6 +3491,7 @@
     "name": "Rummynose Tetra",
     "slug": "rummynose-tetra",
     "id": "rummynose_tetra",
+    "blackwater": "prefers",
     "tags": [
       "schooling",
       "sensitive",
