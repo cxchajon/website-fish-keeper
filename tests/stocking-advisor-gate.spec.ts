@@ -53,6 +53,80 @@ async function addCustomFilter(page: Page, type: string, gph: number) {
   await page.fill('#fs-gph', String(gph));
   await page.click('#fs-add-custom');
 }
+// Catalog-product filtration: the path a real user takes (product dropdown → Add Selected → chip).
+// Visitors often have the filter catalog cached while species data is still downloading, so the
+// filtration controller starts before stocking.js. Delaying the species file reproduces that
+// start-up order on every run instead of leaving it to chance.
+async function delaySpeciesData(page: Page, ms = 1500) {
+  await page.route(SPECIES_JSON, async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, ms));
+    await route.fallback();
+  });
+}
+
+const productSelect = (page: Page) => page.locator('#filter-product');
+
+// Pick the first product the dropdown offers, as a user would. If the list is rebuilt under the
+// pick (the selection resets), pick again from the list that is now on screen.
+async function selectFirstProduct(page: Page): Promise<string> {
+  let chosen = '';
+  await expect(async () => {
+    const id = await productSelect(page).locator('option:not([value=""])').first().getAttribute('value', { timeout: 1000 });
+    expect(id).toBeTruthy();
+    chosen = id as string;
+    await page.selectOption('#filter-product', chosen, { timeout: 1000 });
+    await page.waitForTimeout(300);
+    await expect(productSelect(page)).toHaveValue(chosen, { timeout: 100 });
+    await expect(page.locator('#filter-product-add')).toBeEnabled({ timeout: 100 });
+  }).toPass({ timeout: 10000 });
+  return chosen;
+}
+
+async function addSelectedProduct(page: Page): Promise<string> {
+  const id = await selectFirstProduct(page);
+  await page.click('#filter-product-add');
+  await expect(page.locator(`[data-role="proto-filter-chips"] .proto-filter-chip[data-filter-id="${id}"]`)).toBeVisible();
+  return id;
+}
+
+// Long enough for the immediate render, the animation-frame ttg:recompute, the 160 ms debounced
+// stocking recompute, the filtration render and the filter-catalog refresh that follows it.
+async function settle(page: Page) {
+  await page.waitForTimeout(1500);
+}
+
+// What the calculator itself sees: the shared filter list and the engine's filtration assessment.
+async function calculatorFiltration(page: Page) {
+  return page.evaluate(async () => {
+    const compute = await import('/js/logic/compute.js');
+    const appState = (window as unknown as { appState: { filters?: Array<{ id?: string | null }> } }).appState;
+    const computed = compute.buildComputedState(appState);
+    return {
+      filterIds: (appState.filters ?? []).map((filter) => filter.id ?? null),
+      level: computed?.filtering?.level ?? null,
+      chipIds: Array.from(document.querySelectorAll<HTMLElement>('[data-role="proto-filter-chips"] .proto-filter-chip'))
+        .map((chip) => chip.dataset.filterId ?? ''),
+    };
+  });
+}
+
+// Every visible chip must be a filter the calculator counts, and vice versa.
+async function expectChipsMatchCalculator(page: Page, expectedIds: string[]) {
+  const seen = await calculatorFiltration(page);
+  expect(seen.chipIds).toEqual(expectedIds);
+  expect(seen.filterIds).toEqual(expectedIds);
+  return seen;
+}
+
+async function startProductScenario(page: Page, tankId = '10g') {
+  await delaySpeciesData(page);
+  await openAdvisor(page);
+  await waitForSpecies(page);
+  await selectTank(page, tankId);
+  await addSpecies(page, 'neon', 6);
+  await expect(warning(page, 'filtration.none')).toBeVisible();
+}
+
 const filterChips = (page: Page) => page.locator('[data-role="proto-filter-chips"] .proto-filter-chip');
 const filtrationWarnings = (page: Page) => page.locator('#stock-warnings .status-strip[data-warning-id^="filtration."]');
 const bioloadFill = (page: Page) => page.locator('#env-bars .env-bar__fill').first();
@@ -253,6 +327,66 @@ test.describe('desktop: filtration', () => {
   });
 });
 
+test.describe('desktop: catalog product filter', () => {
+  test.skip(({ isMobile }) => isMobile, 'desktop checks');
+
+  test('a catalog product added with Add Selected is counted by the calculator', async ({ page }) => {
+    await startProductScenario(page);
+    const before = await bioloadLabel(page).textContent();
+    const id = await addSelectedProduct(page);
+    await settle(page);
+    const seen = await expectChipsMatchCalculator(page, [id]);
+    expect(seen.level).toBe('adequate');
+    await expect(warning(page, 'filtration.none')).toHaveCount(0);
+    await expect(filtrationWarnings(page)).toHaveCount(0);
+    await expect(bioloadLabel(page)).toHaveText(before ?? '');
+    // Later recomputes (another stock change) must not drop it either.
+    await addSpecies(page, 'cory_bronze', 3);
+    await settle(page);
+    await expectChipsMatchCalculator(page, [id]);
+    await expect(warning(page, 'filtration.none')).toHaveCount(0);
+  });
+
+  test('removing the only product filter brings back "No filter added"', async ({ page }) => {
+    await startProductScenario(page);
+    const id = await addSelectedProduct(page);
+    await settle(page);
+    await expectChipsMatchCalculator(page, [id]);
+    await page.click(`[data-role="proto-filter-chips"] [data-remove-filter="${id}"]`);
+    await expect(filterChips(page)).toHaveCount(0);
+    await settle(page);
+    const seen = await expectChipsMatchCalculator(page, []);
+    expect(seen.level).toBe('none');
+    await expect(warning(page, 'filtration.none')).toBeVisible();
+  });
+
+  test('a product and a custom filter both stay in the calculation', async ({ page }) => {
+    await startProductScenario(page);
+    const id = await addSelectedProduct(page);
+    await addCustomFilter(page, 'Sponge', 40);
+    await expect(filterChips(page)).toHaveCount(2);
+    await settle(page);
+    const seen = await calculatorFiltration(page);
+    expect(seen.filterIds).toHaveLength(2);
+    expect(seen.filterIds[0]).toBe(id);
+    expect(seen.chipIds).toEqual(seen.filterIds);
+    await expect(filtrationWarnings(page)).toHaveCount(0);
+  });
+
+  test('a product filter survives a reload', async ({ page }) => {
+    await startProductScenario(page);
+    const id = await addSelectedProduct(page);
+    await settle(page);
+    await page.reload();
+    await waitForSpecies(page);
+    await expect(page.locator(`[data-role="proto-filter-chips"] .proto-filter-chip[data-filter-id="${id}"]`)).toBeVisible();
+    await settle(page);
+    const seen = await expectChipsMatchCalculator(page, [id]);
+    expect(seen.level).toBe('adequate');
+    await expect(filtrationWarnings(page)).toHaveCount(0);
+  });
+});
+
 test.describe('mobile', () => {
   test.skip(({ isMobile }) => !isMobile, 'mobile checks');
 
@@ -287,6 +421,14 @@ test.describe('mobile', () => {
     const alert = warning(page, 'filtration.very_low');
     await expectScrolledIntoView(alert);
     await expect(alert).toHaveAttribute('data-state', 'bad');
+  });
+
+  test('a catalog product filter clears "No filter added" on a phone', async ({ page }) => {
+    await startProductScenario(page);
+    const id = await addSelectedProduct(page);
+    await settle(page);
+    await expectChipsMatchCalculator(page, [id]);
+    await expect(warning(page, 'filtration.none')).toHaveCount(0);
   });
 
   test('species data failure is visible on a phone', async ({ page }) => {

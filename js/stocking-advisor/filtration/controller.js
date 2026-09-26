@@ -8,6 +8,7 @@ import {
 } from '../catalog-loader.js';
 import { populateFilterDropdown } from '../../gear-data.js';
 import { isDebugEnabled, onDebugToggle } from '../devtools.js';
+import { getTankSnapshot } from '../../stocking/tankStore.js';
 
 const DEBUG_FILTERS = Boolean(window?.TTG?.DEBUG_FILTERS);
 
@@ -35,6 +36,9 @@ const state = {
   },
 };
 
+// This controller owns the filter list: the product dropdown, Add Selected, custom filters and the
+// chips. It writes the list to window.appState.filters, the calculator's source of truth. The flag
+// tells js/stocking.js to keep its legacy product picker from touching that dropdown or the list.
 window.disableLegacyFilterRows = true;
 
 const refs = {
@@ -403,6 +407,13 @@ function applyFiltersToApp() {
 }
 
 function getTankGallons() {
+  // The tank store is updated before ttg:tank:changed fires; appState.tank only after it. Reading
+  // appState first listed products for the previous tank size in the dropdown.
+  const snapshot = getTankSnapshot();
+  if (snapshot) {
+    const snapshotGallons = Number(snapshot.gallons);
+    return Number.isFinite(snapshotGallons) && snapshotGallons > 0 ? snapshotGallons : 0;
+  }
   const appState = window.appState || {};
   const fromTank = appState?.tank?.gallons;
   if (Number.isFinite(fromTank) && fromTank > 0) {
@@ -976,10 +987,26 @@ async function loadCatalog() {
   return catalogPromise;
 }
 
+function readStoredFilters() {
+  if (typeof localStorage === 'undefined') {
+    return [];
+  }
+  try {
+    const parsed = JSON.parse(localStorage.getItem(FILTER_STORAGE_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_error) {
+    return [];
+  }
+}
+
 function hydrateFromAppState() {
   const appState = window.appState;
   if (!appState) return;
-  const existing = Array.isArray(appState.filters) ? appState.filters : [];
+  // stocking.js loads the saved filters into appState.filters once species data is ready. When this
+  // runs first, restore from the same saved list so the empty list written back does not erase it.
+  const existing = Array.isArray(appState.filters) && appState.filters.length
+    ? appState.filters
+    : readStoredFilters();
   const next = [];
   existing.forEach((entry) => {
     const gph = clampGph(entry?.rated_gph ?? entry?.gphRated ?? entry?.gph);
