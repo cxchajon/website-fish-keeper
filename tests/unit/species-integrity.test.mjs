@@ -344,7 +344,7 @@ test('safety case: 6 angelfish in a 20 gallon is not a normal result', () => {
   assert.ok(warningIds(computed).includes('tank.length.freshwater_angelfish'));
   assert.equal(computed.bioload.tankUnsuitable, true);
   assert.equal(computed.bioload.severity, 'bad');
-  assert.match(computed.aggression.label, /Territory crowding among Freshwater Angelfish/);
+  assert.match(computed.aggression.label, /Territory crowding among Angelfish/);
 });
 
 test('safety cases: 6 of each species in a 5 gallon fail tank suitability', () => {

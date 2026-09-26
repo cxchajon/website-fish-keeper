@@ -45,7 +45,10 @@ test.describe('desktop', () => {
   test('dropdown offers all 44 species', async ({ page }) => {
     await openAdvisor(page);
     await waitForSpecies(page);
-    await expect(page.locator('#plan-species option:not([value=""])')).toHaveCount(44);
+    const options = page.locator('#plan-species option:not([value=""])');
+    await expect(options).toHaveCount(44);
+    await expect(options.nth(1)).toHaveText('Angelfish');
+    await expect(options.nth(1)).toHaveAttribute('value', 'freshwater_angelfish');
   });
 
   test('6 angelfish in a 20 gallon is not a normal green result', async ({ page }) => {
@@ -80,7 +83,7 @@ test.describe('desktop', () => {
     await expect(warning(page, 'aggr:freshwater_angelfish:tiger_barb:fin_nip')).toBeVisible();
     await expect(warning(page, 'aggr:bristlenose_pleco:freshwater_angelfish:aggressive_pair')).toBeVisible();
     await expect(warning(page, 'tank.length.tiger_barb')).toBeVisible();
-    await expect(bioloadLabel(page)).toHaveText(/tank too small for Freshwater Angelfish/i);
+    await expect(bioloadLabel(page)).toHaveText(/tank too small for Angelfish/i);
     await expect(page.locator('#stock-warnings [data-warning-id^="species.unevaluated."]')).toHaveCount(0);
   });
 
@@ -93,7 +96,7 @@ test.describe('desktop', () => {
     const alert = warning(page, 'predation.fish.freshwater_angelfish.neon');
     await expect(alert).toBeVisible();
     await expect(alert).toHaveAttribute('data-state', 'bad');
-    await expect(alert).toContainText('Freshwater Angelfish may eat Neon Tetra');
+    await expect(alert).toContainText('Angelfish may eat Neon Tetra');
   });
 
   test('angelfish with a non-prey tankmate has no predation warning', async ({ page }) => {
