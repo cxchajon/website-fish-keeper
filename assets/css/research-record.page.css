@@ -728,6 +728,96 @@
   margin-top: 4px;
 }
 
+/*
+ * Research transparency: secondary, FAQ-style native disclosures (mirrors the shared
+ * .u-faq-accordion look in /css/faq-accordion.css). Deliberately no study-section card
+ * and no .rr-disclosure styling, so it reads as supporting detail, not a Source Library group.
+ */
+.research-record .rr-transparency__title {
+  margin: 0 0 12px;
+  font-family: var(--ttg-font-serif);
+  font-weight: 600;
+  font-size: clamp(1.25rem, 2.6vw, 1.5rem);
+  color: var(--rr-text);
+  text-shadow: 0 1px 3px rgba(4, 18, 34, 0.6);
+}
+
+.research-record .rr-faq {
+  display: grid;
+  gap: 10px;
+  max-width: var(--rr-measure);
+}
+
+.research-record .rr-faq__item {
+  margin: 0;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--rr-radius-sm);
+  background: rgba(6, 22, 38, 0.55);
+  scroll-margin-top: 24px;
+}
+
+.research-record .rr-faq__item > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 44px;
+  padding: 0.8rem 1rem;
+  border-radius: var(--rr-radius-sm);
+  color: var(--rr-text);
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  list-style: none;
+}
+
+.research-record .rr-faq__item > summary::-webkit-details-marker {
+  display: none;
+}
+
+.research-record .rr-faq__item > summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  color: var(--rr-accent);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.research-record .rr-faq__item[open] > summary::after {
+  content: "\2212";
+}
+
+.research-record .rr-faq__item > summary:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.research-record .rr-faq__item > summary:focus-visible {
+  outline-offset: -3px;
+}
+
+.research-record .rr-faq__answer {
+  padding: 0 1rem 1rem;
+  font-size: 0.95rem;
+}
+
+.research-record .rr-faq__note {
+  margin: 12px 0 0;
+  font-size: inherit;
+  max-width: var(--rr-measure);
+  color: var(--rr-text-subtle);
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .research-record .rr-faq__item > summary {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .research-record .rr-faq__answer {
+    padding: 0 0.85rem 0.85rem;
+  }
+}
+
 .research-record .ttg-author-byline {
   margin: 0;
   max-width: none;
