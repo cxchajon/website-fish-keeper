@@ -948,7 +948,21 @@ async function bootstrapStocking() {
     updateDebugDownloadLink(report, hasDifferences);
   }
 
+  // The filtration controller (js/stocking-advisor/filtration/controller.js) owns the filter product
+  // dropdown, Add Selected, the chips and the filter list, and writes that list to appState.filters,
+  // the calculator's single source of truth. It announces this with window.disableLegacyFilterRows.
+  // While it does, the legacy product picker below must not repopulate that dropdown or change
+  // appState.filters: it would drop any filter missing from its own tank-matched catalog view,
+  // leaving a visible chip the calculator no longer counts ("No filter added").
+  function filtrationControllerOwnsFilters() {
+    return typeof window !== 'undefined' && window.disableLegacyFilterRows === true;
+  }
+
   function refreshFiltrationUI(options = {}) {
+    if (filtrationControllerOwnsFilters()) {
+      syncFiltrationUI();
+      return;
+    }
     const opts = typeof options === 'object' && options !== null ? options : {};
     const preserveSelection = Object.prototype.hasOwnProperty.call(opts, 'preserveSelection')
       ? Boolean(opts.preserveSelection)
@@ -1135,6 +1149,9 @@ async function bootstrapStocking() {
   }
 
   function handleFilterProductChange(event) {
+    if (filtrationControllerOwnsFilters()) {
+      return;
+    }
     const value = event?.target?.value ?? '';
     const product = value ? getFilterProductById(value) : null;
     filterProductStatusMessage = '';
@@ -1190,6 +1207,9 @@ async function bootstrapStocking() {
   }
 
   function syncFilterControl() {
+    if (filtrationControllerOwnsFilters()) {
+      return;
+    }
     ensureFilterControl();
     const product = state.filterId ? getFilterProductById(state.filterId) : null;
     const derivedRated = deriveRatedGphFromProduct(product);
