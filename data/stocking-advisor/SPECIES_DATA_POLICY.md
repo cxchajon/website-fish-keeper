@@ -34,12 +34,13 @@ Rules:
 | Field | Meaning |
 |---|---|
 | `adult_size_in` | Maximum adult length as stated by its source, in inches. `adult_size_basis` records what was measured: `standard_length` (SL, snout to tail base), `total_length` (TL, including tail), `maximum_length_unspecified` (source gives a size without saying SL or TL), `body_length` (shrimp), `shell_length` / `shell_diameter` (snails). Values with different bases are not directly comparable. |
-| `min_tank_liters` | The smallest tank the canonical source recommends **for keeping the species at all**, i.e. for its minimum keeping unit. `min_tank_basis` records which unit the source stated it for: `single`, `pair`, `group` (the species' minimum social group), or `unspecified` (source gives one minimum without naming the unit). The engine applies it once per species; it is **not** scaled by the number planned. |
+| `min_tank_liters` | The smallest tank the canonical source recommends **for keeping the species at all**, i.e. for its minimum keeping unit. `min_tank_basis` records which unit the source stated it for: `single`, `pair`, `pair_or_small_group`, `group` (the species' minimum social group), or `unspecified` (source gives one minimum without naming the unit). The engine applies it once per species; it is **not** scaled by the number planned. |
 | `min_tank_length_in` | The recommended minimum horizontal length of the tank. `min_tank_length_basis`: `source` (an explicit base/footprint dimension from a cited source), `inferred_standard_tank` (no source gives dimensions; the length of the standard US tank of the canonical volume is used and flagged), or `not_applicable` (crawling snails; value is `null`). |
 | Length units | When a source quotes its own inch equivalent (Seriously Fish: “90 × 30 cm (36 × 12 in)”), that figure is used; centimetre-only values are converted exactly and rounded to 0.1 in. |
 | `tank_length_not_applicable` | `true` only when `min_tank_length_basis` is `not_applicable`. |
 | `behavior.schoolingMinimum` | The genuine social minimum — the smallest group the species should be kept in because it is a shoaling/social species. Sex-ratio advice (e.g. livebearers' "two females per male") is **not** a schooling minimum and lives in `sex_ratio_guidance`, which the engine does not enforce. |
-| `blackwater` | Engine meaning: `requires` → red warning when tannins are off; `prefers` → amber; `neutral` → assessed as having no tannin preference. `null` → **not assessed** (no cited source makes a tannin/habitat claim); the engine applies no blackwater rule. "Does not require tannins" is not evidence for `neutral`. |
+| `behavior.socialMinimum` | A documented conspecific minimum for a species that is **not** schooling (e.g. honey gourami: “not a schooling fish … buy no fewer than 4–6”). The lowest directly supported number is used. The engine represents it as a `social` group (“Not a schooling fish, but keep N+ together”), never as a shoal. `schoolingMinimum` takes precedence when both are set. |
+| `blackwater` | Canonical vocabulary (validator, conditions rule and environment card all use it; the old `required` / `recommended` spellings are invalid). Engine meaning: `requires` → red warning when tannins are off; `prefers` → amber; `neutral` → assessed as having no tannin preference. `null` → **not assessed** (no cited source makes a tannin/habitat claim); the engine applies no blackwater rule. "Does not require tannins" is not evidence for `neutral`. |
 | Seriously Fish volumes | Seriously Fish states base dimensions (length × width); its quoted litres are length × width × height with height = width unless stated. Where only dimensions were retrievable, the volume is computed the same way. |
 
 ## 3. Predation vocabulary
@@ -48,6 +49,11 @@ Rules:
 v2 tag, or a prey entry in `behavior.predationRisks` (entries starting "Predators:" describe what
 eats the species and are ignored). The broad legacy `invert_safe` flag is kept as a separate generic
 field and is not evidence of predation.
+
+Fish-on-fish predation (`fish_risk`, `preys_on_species`) uses the same evidence rule: a prey entry in
+`behavior.predationRisks` that names a selectable fish by its exact common name (singular or plural),
+e.g. “Small fish (e.g., Neon Tetras)” → Neon Tetra. There is no size-based inference. When predator and
+prey are planned together the advisor shows a red compatibility warning.
 
 ## 4. Bioload
 

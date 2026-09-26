@@ -35,7 +35,8 @@ export function defaultEnvModel() {
 }
 
 const FLOW_LABEL = { low: 'Low', moderate: 'Moderate', high: 'High' };
-const BLACK_LABEL = { off: 'Off', neutral: 'Off', prefers: 'Recommended', recommended: 'Recommended', required: 'Required' };
+// Keyed by the canonical species vocabulary (see validateSpeciesRecord): requires / prefers / neutral.
+const BLACK_LABEL = { off: 'Off', neutral: 'Off', prefers: 'Recommended', requires: 'Required' };
 const SALINITY_LABEL = {
   fresh: 'Freshwater',
   'brackish-low': 'Brackish-low',
@@ -849,24 +850,19 @@ function buildFlow(entries) {
   return { condition: { label: 'Flow', value, badges }, chips, noteCodes, code };
 }
 
-function buildBlackwater(entries) {
+export function buildBlackwater(entries) {
+  // null (not assessed) and 'neutral' add no requirement.
   const flags = entries.map((entry) => entry.species.blackwater).filter(Boolean);
-  if (!flags.length) {
-    return { condition: { label: 'Blackwater / Tannins', value: 'Off' }, status: 'off', noteCodes: [] };
-  }
-  let value = 'Off';
+  let value = BLACK_LABEL.off;
   let status = 'off';
   const noteCodes = [];
-  if (flags.includes('required')) {
-    value = BLACK_LABEL.required;
+  if (flags.includes('requires')) {
+    value = BLACK_LABEL.requires;
     status = 'req';
     noteCodes.push('req');
   } else if (flags.includes('prefers')) {
-    value = BLACK_LABEL.recommended;
+    value = BLACK_LABEL.prefers;
     status = 'pref';
-  } else if (flags.includes('recommended')) {
-    value = BLACK_LABEL.recommended;
-    status = 'rec';
   }
   return { condition: { label: 'Blackwater / Tannins', value }, status, noteCodes };
 }
@@ -907,6 +903,8 @@ function evaluateGroupNeeds(entries) {
     if (!group) continue;
     if (group.type === 'shoal' && qty < group.min) {
       chips.push(`shoal min not met: ${species.common_name}`);
+    } else if (group.type === 'social' && qty < group.min) {
+      chips.push(`keep ${group.min}+ together: ${species.common_name}`);
     } else if (group.type === 'harem' && qty < group.min) {
       chips.push(`harem ratio needed: ${species.common_name}`);
     }

@@ -518,6 +518,13 @@ function asNumber(value, fallback) {
 
 function normalizeGroup(record, legacy) {
   const behaviorMin = asNumber(record?.behavior?.schoolingMinimum, null);
+  // socialMinimum: a documented conspecific minimum for a species that does not school (e.g. honey
+  // gourami, “buy no fewer than 4–6”). Represented as its own group type so it is never labelled a
+  // shoal; schoolingMinimum takes precedence when both are set.
+  const socialMin = asNumber(record?.behavior?.socialMinimum, null);
+  if (socialMin > 1 && !(behaviorMin > 1) && !legacy?.group) {
+    return { group: { type: 'social', min: socialMin }, minGroup: socialMin };
+  }
   const legacyMin = asNumber(legacy?.group?.min ?? legacy?.min_group, null);
   const min = behaviorMin && behaviorMin > 1 ? behaviorMin : legacyMin;
   if (!min || min < 1) {
@@ -602,6 +609,41 @@ function preysOn(record, prey) {
   if (!Array.isArray(risks)) return false;
   const pattern = new RegExp(prey, 'i');
   return risks.some((risk) => typeof risk === 'string' && !/^\s*predators?\s*:/i.test(risk) && pattern.test(risk));
+}
+
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// Selectable fish that a record's own predation list explicitly names as prey, e.g.
+// "Small fish (e.g., Neon Tetras)" → Neon Tetra. Only exact common-name matches (singular or plural)
+// count — there is no size-based inference, and "Predators: …" entries are ignored.
+function resolveFishPrey(record, fishNames) {
+  const risks = record?.behavior?.predationRisks;
+  if (!Array.isArray(risks)) return [];
+  const prey = [];
+  for (const risk of risks) {
+    if (typeof risk !== 'string' || /^\s*predators?\s*:/i.test(risk)) continue;
+    for (const { id, slug, name } of fishNames) {
+      if (slug === record.slug) continue;
+      const pattern = new RegExp(`\\b${escapeRegExp(name)}(e?s)?\\b`, 'i');
+      if (pattern.test(risk)) prey.push({ id, evidence: risk });
+    }
+  }
+  return prey;
+}
+
+// Fish species in the dataset, keyed for prey matching: engine id + common name without any
+// parenthetical ("Blue Ram (German Blue Ram)" → "Blue Ram").
+function buildFishNameIndex(records) {
+  const list = [];
+  for (const record of Array.isArray(records) ? records : []) {
+    const legacy = LEGACY_BASE[record?.slug] || null;
+    const category = record?.category ?? legacy?.category ?? null;
+    if (category !== 'fish' || typeof record?.name !== 'string') continue;
+    const name = record.name.replace(/\s*\(.*\)\s*/g, ' ').trim();
+    if (!name) continue;
+    list.push({ id: legacy?.id || record.slug.replace(/[^a-z0-9]+/gi, '_').toLowerCase(), slug: record.slug, name });
+  }
+  return list;
 }
 
 function mergeTags(legacyTags, recordTags) {
@@ -709,7 +751,7 @@ function rangeOrNull(range, legacyRange, minKey, maxKey) {
   return { [minKey]: null, [maxKey]: null };
 }
 
-function mapRecord(record, calibration) {
+function mapRecord(record, calibration, fishNames = []) {
   const legacy = LEGACY_BASE[record.slug] || null;
   const legacyId = legacy?.id || record.slug.replace(/[^a-z0-9]+/gi, '_').toLowerCase();
 
@@ -717,6 +759,10 @@ function mapRecord(record, calibration) {
   const calibratedBioload = round(calibration.a * normalizedBioload ** calibration.b);
   const { group, minGroup } = normalizeGroup(record, legacy);
   const traits = normalizeTraits(record, legacy);
+  const fishPrey = resolveFishPrey(record, fishNames);
+  const tags = fishPrey.length && !traits.tags.includes('fish_risk')
+    ? Object.freeze([...traits.tags, 'fish_risk'])
+    : traits.tags;
   const lengthNotApplicable = record.tank_length_not_applicable === true;
 
   const adapted = {
@@ -741,7 +787,9 @@ function mapRecord(record, calibration) {
     flow: record.parameters?.flow || legacy?.flow || null,
     blackwater: pick(record, legacy, 'blackwater'),
     aggression: Math.round(record.aggression?.baseline * 100),
-    tags: traits.tags,
+    tags,
+    // fish_risk: documented predation on other selectable fish (see resolveFishPrey).
+    preys_on_species: Object.freeze(fishPrey.map((item) => Object.freeze({ ...item }))),
     behavior: traits.behavior,
     group,
     min_group: minGroup,
@@ -775,7 +823,8 @@ export async function initializeSpecies() {
   await loadSpeciesData();
 
   BIOLOAD_CALIBRATION = fitBioloadCalibration(speciesV2Raw);
-  ADAPTED_SPECIES = Object.freeze(speciesV2Raw.map((record) => mapRecord(record, BIOLOAD_CALIBRATION)));
+  const fishNames = buildFishNameIndex(speciesV2Raw);
+  ADAPTED_SPECIES = Object.freeze(speciesV2Raw.map((record) => mapRecord(record, BIOLOAD_CALIBRATION, fishNames)));
   SPECIES_BY_SLUG = new Map(ADAPTED_SPECIES.map((entry) => [entry.slug.toLowerCase(), entry]));
   speciesInitialized = true;
 }

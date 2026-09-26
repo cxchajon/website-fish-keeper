@@ -23,7 +23,7 @@ export const V2_TAGS = Object.freeze([
   "livebearer","longfin_target","low_cost","low_flow","nano","nocturnal","oddball","peaceful",
   "predatory","prolific","requires_cover","scavenger","schooling","semi_nipper","sensitive",
   "shrimp_risk","shrimp_safe","shy","snail_control","snail_risk","snail_safe","specialized",
-  "territorial","utility"
+  "territorial","utility","fish_risk"
 ]);
 
 const ALLOWED_TAGS = new Set([...LEGACY_TAGS, ...V2_TAGS]);

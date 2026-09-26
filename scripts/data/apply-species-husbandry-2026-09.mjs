@@ -85,16 +85,15 @@ const SPECIES = {
   },
   'celestial-pearl-danio': {
     scientific_name: 'Danio margaritatus (syn. Celestichthys margaritatus)', category: 'fish',
-    adult_size_in: 1.2, adult_size_basis: 'total_length',
-    min_tank_liters: 54, min_tank_basis: 'group', min_tank_length_in: 24, min_tank_length_basis: 'source',
-    canonical_tank_source: 'Seriously Fish — Celestichthys margaritatus (value unconfirmed)',
+    adult_size_in: 0.8, adult_size_basis: 'standard_length',
+    min_tank_liters: 41, min_tank_basis: 'group', min_tank_length_in: 18, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Celestichthys margaritatus',
     sources: [
-      src(1, "Seriously Fish — Celestichthys margaritatus (Celestial Pearl 'Danio')", SF('celestichthys-margaritatus'), ['min_tank_liters', 'min_tank_length_in'], 'Two search extracts attribute “base dimensions of 60 × 30 cm or equivalent … since this species is very active and should be maintained in numbers” to this page.'),
-      src(1, "Seriously Fish — Celestichthys margaritatus (Celestial Pearl 'Danio')", SF('celestichthys-margaritatus'), ['min_tank_liters', 'min_tank_length_in'], 'Production review reports ~41 L with an 18 × 12 in (45 × 30 cm) footprint.', REVIEWER),
-      src(2, 'Tetra Fishkeeper blog — Celestial pearl danio', 'https://blog.tetra.net/en-en/celestial-pearl-danio-danio-margaritatus/', ['adult_size_in', 'group'], 'Up to ~3 cm; keep in groups of at least 6.', SUMMARY),
+      src(1, "Seriously Fish — Celestichthys margaritatus (Celestial Pearl 'Danio')", SF('celestichthys-margaritatus'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in'], 'Read directly by the production review: 21 mm (0.8 in) SL; aquarium base 45 × 30 cm (18 × 12 in), ~41 L (11 US gal); a group should not be kept in a smaller footprint because dominant males can be combative.', REVIEWER),
+      src(1, 'Seriously Fish — Celestichthys erythromicron', SF('celestichthys-erythromicron'), [], 'Different species: its profile gives 60 × 30 cm (~54 L). Recorded only to document the earlier mix-up.', REVIEWER),
+      src(2, 'Tetra Fishkeeper blog — Celestial pearl danio', 'https://blog.tetra.net/en-en/celestial-pearl-danio-danio-margaritatus/', ['group'], 'Keep in groups of at least 6.', SUMMARY),
     ],
-    disagreements: 'UNRESOLVED: the two readings of the same Seriously Fish page conflict (60 × 30 cm vs 45 × 30 cm). Value kept at 60 × 30 / 54 L pending a direct read of the page.',
-    open_question: true,
+    notes: 'Corrected 2026-09: the former 54 L / 24 in value came from search extracts that had conflated this page with the C. erythromicron profile (60 × 30 cm, ~54 L). A direct read of both profiles distinguished them; the C. margaritatus figures (45 × 30 cm, ~41 L, 21 mm SL) are now used.',
   },
   'cockatoo-cichlid': {
     scientific_name: 'Apistogramma cacatuoides', category: 'fish',
@@ -134,14 +133,16 @@ const SPECIES = {
   'ghost-shrimp': {
     scientific_name: 'Palaemonetes paludosus (syn. Palaemon paludosus)', category: 'shrimp',
     adult_size_in: 1.6, adult_size_basis: 'body_length',
-    min_tank_liters: 19, min_tank_basis: 'group', min_tank_length_in: 11.8, min_tank_length_basis: 'source',
-    canonical_tank_source: 'FishLore — Ghost Shrimp profile (no higher-tier tank value found)',
+    min_tank_liters: 38, min_tank_basis: 'unspecified', min_tank_length_in: 11.8, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Aqueon — Freshwater Shrimp Care Guide (volume); Guidarium (length, tier 4)',
     sources: [
+      src(2, 'Aqueon — Freshwater Shrimp Care Guide', 'https://www.aqueon.com/resources/care-guides/shrimp-freshwater', ['min_tank_liters'], 'Names basic ghost shrimp (Palaemonetes paludosus); larger species such as ghost, Amano and bamboo shrimp can be kept in aquariums of 10 to 55 gallons.'),
       src(4, 'FishLore — Ghost Shrimp Care', 'https://www.fishlore.com/profile-ghostshrimp.htm', ['min_tank_liters'], 'Minimum aquarium size 5 gallons; about three per gallon.', SUMMARY),
       src(4, 'Guidarium — Ghost Shrimp', 'https://guidarium.com/fishes/ghost-shrimp', ['min_tank_length_in', 'adult_size_in'], 'Minimum 19 L with a tank length of at least 30 cm; about 4 cm.', SUMMARY),
       src(3, 'The Shrimp Farm — Ghost Shrimp (Palaemon) Care', 'https://www.theshrimpfarm.com/posts/shrimp-caresheet-ghost-shrimp-palaemonetes-sp/', ['shrimp_risk'], 'Adults eat larvae and small shrimplets.', SUMMARY),
     ],
-    notes: 'Only general-hobby references gave tank values; flagged for review.',
+    disagreements: 'Volume: Aqueon (tier 2, 10–55 gal range → 10 gal minimum) replaces FishLore’s 5 gal (tier 4).',
+    notes: 'LIMITATION: the tank length and adult size still rest on a tier-4 source (Guidarium); no stronger source gives a footprint, and no source gives a social minimum, so none is set.',
     open_question: true,
   },
   'glass-catfish': {
@@ -168,16 +169,16 @@ const SPECIES = {
   },
   'honey-gourami': {
     scientific_name: 'Trichogaster chuna', category: 'fish',
-    adult_size_in: 2.0, adult_size_basis: 'total_length',
-    min_tank_liters: 38, min_tank_basis: 'single', min_tank_length_in: 20, min_tank_length_basis: 'inferred_standard_tank',
-    canonical_tank_source: 'Aquarium Co-Op — Honey Gourami care (Seriously Fish value not retrievable)',
+    adult_size_in: 2.2, adult_size_basis: 'standard_length',
+    min_tank_liters: 54, min_tank_basis: 'pair_or_small_group', min_tank_length_in: 24, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Trichogaster chuna',
+    socialMinimum: 4,
     sources: [
+      src(1, 'Seriously Fish — Trichogaster chuna (Honey Gourami)', SF('trichogaster-chuna'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in', 'social_minimum', 'blackwater'], 'Read directly by the production review: 55 mm (2.2 in) SL; base 60 × 30 cm (24 × 12 in), ~54 L (14 US gal), sufficient for a pair or small group; not a schooling fish but benefits from conspecifics — buy no fewer than 4–6; dried leaf litter recommended, tannins released during decomposition are thought beneficial.', REVIEWER),
       src(2, 'Aquarium Co-Op — Care Guide for Honey Gouramis', 'https://www.aquariumcoop.com/blogs/aquarium/honey-gourami', ['min_tank_liters'], 'A single honey gourami can live in a 5- or 10-gallon tank; a group of three does better in 20 gallons.'),
-      src(1, 'Seriously Fish — Trichogaster chuna (Honey Gourami)', SF('trichogaster-chuna'), ['adult_size_in'], 'Aquarium dimensions not retrievable from the review environment.'),
     ],
-    disagreements: 'Other guides give 40–54 L for a pair. Co-Op states “5- or 10-gallon”; the upper figure of that single source’s stated range (10 gal) is used — no averaging.',
-    notes: 'No source gave base dimensions; length is the 20 in footprint of a standard 10 US gal tank (flagged as inferred).',
-    open_question: true,
+    disagreements: 'Aquarium Co-Op allows 5–10 gal for a single fish; Seriously Fish (tier 1) selected.',
+    notes: 'Not a schooling species (schoolingMinimum stays 1). socialMinimum 4 = lowest figure of Seriously Fish’s “no fewer than 4–6” conspecific recommendation. Blackwater left unassessed: “tannins … thought beneficial” is weaker than the engine’s “prefers”, which warns whenever tannins are off.',
   },
   'keyhole-cichlid': {
     scientific_name: 'Cleithracara maronii', category: 'fish',
@@ -291,17 +292,16 @@ const SPECIES = {
   },
   'upside-down-catfish': {
     scientific_name: 'Synodontis nigriventris', category: 'fish',
-    adult_size_in: 3.8, adult_size_basis: 'total_length',
-    min_tank_liters: 114, min_tank_basis: 'group', min_tank_length_in: 36, min_tank_length_basis: 'inferred_standard_tank',
-    canonical_tank_source: 'FishLore — Upside Down Catfish (Seriously Fish lists no aquarium size)',
-    schoolingMinimum: 5,
+    adult_size_in: 3.9, adult_size_basis: 'standard_length',
+    min_tank_liters: 70, min_tank_basis: 'single', min_tank_length_in: 30, min_tank_length_basis: 'source',
+    canonical_tank_source: 'Seriously Fish — Synodontis nigriventris',
+    schoolingMinimum: 1, socialMinimum: 4,
     sources: [
-      src(1, 'Seriously Fish — Synodontis nigriventris (Upside-down Catfish)', SF('synodontis-nigriventris'), [], 'Page notes that aquarium size is missing.'),
-      src(4, 'FishLore — Upside Down Catfish Care', 'https://www.fishlore.com/profile-upside-down-catfish.htm', ['min_tank_liters', 'group', 'adult_size_in'], '30 gallons or larger; do well in groups of 5 or more; about 3.75 in (9.6 cm).', SUMMARY),
+      src(1, 'Seriously Fish — Synodontis nigriventris (Upside-down Catfish)', SF('synodontis-nigriventris'), ['min_tank_liters', 'min_tank_length_in', 'adult_size_in', 'social_minimum'], 'Read directly by the production review: ~100 mm (3.9 in) SL; 30 × 12 × 12 in (75 × 30 × 30 cm), ~70 L for one specimen; should really be kept in a group — groups of at least 3–4 recommended.', REVIEWER),
+      src(2, 'FishBase — Synodontis nigriventris', 'https://www.fishbase.se/summary/Synodontis-nigriventris.html', ['min_tank_length_in', 'social_minimum', 'adult_size_in'], 'Max 9.6 cm TL; keep in groups of 5 or more; minimum aquarium size 80 cm.', REVIEWER),
     ],
-    disagreements: 'Other guides give 70–100 L. Only a general-hobby source gave a value; flagged for review.',
-    notes: 'No source gave base dimensions; length is the 36 in footprint of a standard 30 US gal tank (flagged as inferred).',
-    open_question: true,
+    disagreements: 'Seriously Fish (tier 1): 75 cm / 70 L for one fish, groups of at least 3–4. FishBase (tier 2): 80 cm minimum, groups of 5+. Per policy tier 1 sets each field: length 30 in, volume 70 L, social minimum 4 (upper figure of the source’s own “3–4”). FishBase values retained here, not averaged.',
+    notes: 'MODELLING GAP: the only sourced volume is for a single specimen, while the species should be kept in a group; no source gives a group volume, so none is invented. The engine checks this single-specimen minimum; group size is covered by socialMinimum.',
   },
   'white-cloud-mountain-minnow': {
     scientific_name: 'Tanichthys albonubes', category: 'fish',
@@ -392,6 +392,11 @@ for (const record of records) {
     block = block.replace(/(\n {4}"id": "[^"]+",)/, `$1\n${fieldBlock(spec)}`);
     if (spec.schoolingMinimum) {
       block = block.replace(/"schoolingMinimum": \d+/, `"schoolingMinimum": ${spec.schoolingMinimum}`);
+    }
+    // socialMinimum: documented conspecific minimum for a non-schooling species (see policy).
+    block = block.replace(/\n {6}"socialMinimum": \d+,/, '');
+    if (spec.socialMinimum) {
+      block = block.replace(/(\n {6}"schoolingMinimum": \d+,)/, `$1\n      "socialMinimum": ${spec.socialMinimum},`);
     }
   }
   text = text.slice(0, from) + block + text.slice(to);

@@ -550,6 +550,39 @@ export function flagUnsuitableTank(computed) {
   };
 }
 
+// Fish-on-fish predation from explicit species data only: a predator's preys_on_species lists the
+// selectable fish its own record names as prey (species-adapter.v2.js → resolveFishPrey). There is
+// no size-based inference. Likely predation is red.
+function evaluateFishPredation(entries, candidate) {
+  const issues = [];
+  const warnings = [];
+  const selected = new Map();
+  for (const entry of [...entries, candidate]) {
+    if (entry?.species && !selected.has(entry.species.id)) selected.set(entry.species.id, entry.species);
+  }
+  for (const predator of selected.values()) {
+    const prey = Array.isArray(predator.preys_on_species) ? predator.preys_on_species : [];
+    for (const { id, evidence } of prey) {
+      const target = selected.get(id);
+      if (!target || id === predator.id) continue;
+      const predatorName = predator.common_name || predator.id;
+      const preyName = target.common_name || id;
+      const message = `${predatorName} is documented to eat ${preyName} (species data: “${evidence}”). Do not keep them together.`;
+      issues.push({ severity: 'bad', message: `Predation risk: ${predatorName} may eat ${preyName}` });
+      warnings.push({
+        id: `predation.fish.${predator.id}.${id}`,
+        severity: 'danger',
+        icon: 'alert',
+        kind: 'compatibility',
+        title: `Predation risk: ${predatorName} may eat ${preyName}`,
+        message,
+        text: `Predation risk: ${predatorName} may eat ${preyName} — ${message}`,
+      });
+    }
+  }
+  return { issues, warnings };
+}
+
 function buildCandidate(candidate) {
   const resolved = resolveEntry(candidate);
   if (!resolved) return null;
@@ -1487,8 +1520,8 @@ function mergeWarnings(base, additions) {
   return target;
 }
 
-function computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck, flowCheck, blackwaterCheck, tankIssues = [] }) {
-  const issues = [...tankIssues];
+function computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck, flowCheck, blackwaterCheck, extraIssues = [] }) {
+  const issues = [...extraIssues];
   issues.push({ severity: bioload.severity, message: bioload.severity === 'bad' ? 'Bioload exceeds recommended capacity' : 'Bioload nearing limit' });
   issues.push({ severity: aggression.severity, message: aggression.label });
   const conditionIssue = conditions.conditions.find((item) => item.severity === 'bad' || item.severity === 'warn');
@@ -1604,8 +1637,9 @@ export function buildComputedState(state) {
     chips.push({ tone: invertCheck.severity === 'bad' ? 'bad' : 'warn', text: invertCheck.reason });
   }
   const tankSuitability = evaluateTankSuitability(tank, entries, candidate);
-  const status = computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck, tankIssues: tankSuitability.issues });
-  const stockWarnings = [...evaluateStockWarnings({ entries, candidate }), ...tankSuitability.warnings];
+  const fishPredation = evaluateFishPredation(entries, candidate);
+  const status = computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck, extraIssues: [...fishPredation.issues, ...tankSuitability.issues] });
+  const stockWarnings = [...evaluateStockWarnings({ entries, candidate }), ...fishPredation.warnings, ...tankSuitability.warnings];
   const mergedWarnings = mergeWarnings(status.warnings, stockWarnings);
   const statusWithWarnings = mergedWarnings === status.warnings ? status : { ...status, warnings: mergedWarnings };
 

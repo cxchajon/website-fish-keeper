@@ -195,6 +195,13 @@ export function checkGroupRule(candidate, existingList) {
     };
   }
 
+  if (group.type === 'social' && group.min && proposedTotal < group.min) {
+    return {
+      severity: 'warn',
+      message: `Not a schooling fish, but keep ${group.min}+ together (planned ${proposedTotal})`,
+    };
+  }
+
   if (group.type === 'colony' && group.min && proposedTotal < group.min) {
     return {
       severity: 'warn',

@@ -828,30 +828,18 @@
     "id": "celestial_pearl_danio",
     "scientific_name": "Danio margaritatus (syn. Celestichthys margaritatus)",
     "category": "fish",
-    "adult_size_in": 1.2,
-    "adult_size_basis": "total_length",
-    "min_tank_liters": 54,
+    "adult_size_in": 0.8,
+    "adult_size_basis": "standard_length",
+    "min_tank_liters": 41,
     "min_tank_basis": "group",
-    "min_tank_length_in": 24,
+    "min_tank_length_in": 18,
     "min_tank_length_basis": "source",
     "blackwater": null,
     "husbandry_review": {
       "policy_version": "2026-09-26",
       "reviewed": "2026-09-26",
-      "canonical_tank_source": "Seriously Fish — Celestichthys margaritatus (value unconfirmed)",
+      "canonical_tank_source": "Seriously Fish — Celestichthys margaritatus",
       "sources": [
-        {
-          "title": "Seriously Fish — Celestichthys margaritatus (Celestial Pearl 'Danio')",
-          "url": "https://www.seriouslyfish.com/species/celestichthys-margaritatus",
-          "tier": 1,
-          "reviewed": "2026-09-26",
-          "verification": "search-extract",
-          "fields": [
-            "min_tank_liters",
-            "min_tank_length_in"
-          ],
-          "claim": "Two search extracts attribute “base dimensions of 60 × 30 cm or equivalent … since this species is very active and should be maintained in numbers” to this page."
-        },
         {
           "title": "Seriously Fish — Celestichthys margaritatus (Celestial Pearl 'Danio')",
           "url": "https://www.seriouslyfish.com/species/celestichthys-margaritatus",
@@ -860,9 +848,19 @@
           "verification": "reviewer-reported",
           "fields": [
             "min_tank_liters",
-            "min_tank_length_in"
+            "min_tank_length_in",
+            "adult_size_in"
           ],
-          "claim": "Production review reports ~41 L with an 18 × 12 in (45 × 30 cm) footprint."
+          "claim": "Read directly by the production review: 21 mm (0.8 in) SL; aquarium base 45 × 30 cm (18 × 12 in), ~41 L (11 US gal); a group should not be kept in a smaller footprint because dominant males can be combative."
+        },
+        {
+          "title": "Seriously Fish — Celestichthys erythromicron",
+          "url": "https://www.seriouslyfish.com/species/celestichthys-erythromicron",
+          "tier": 1,
+          "reviewed": "2026-09-26",
+          "verification": "reviewer-reported",
+          "fields": [],
+          "claim": "Different species: its profile gives 60 × 30 cm (~54 L). Recorded only to document the earlier mix-up."
         },
         {
           "title": "Tetra Fishkeeper blog — Celestial pearl danio",
@@ -871,14 +869,13 @@
           "reviewed": "2026-09-26",
           "verification": "search-summary",
           "fields": [
-            "adult_size_in",
             "group"
           ],
-          "claim": "Up to ~3 cm; keep in groups of at least 6."
+          "claim": "Keep in groups of at least 6."
         }
       ],
-      "disagreements": "UNRESOLVED: the two readings of the same Seriously Fish page conflict (60 × 30 cm vs 45 × 30 cm). Value kept at 60 × 30 / 54 L pending a direct read of the page.",
-      "open_question": true
+      "notes": "Corrected 2026-09: the former 54 L / 24 in value came from search extracts that had conflated this page with the C. erythromicron profile (60 × 30 cm, ~54 L). A direct read of both profiles distinguished them; the C. margaritatus figures (45 × 30 cm, ~41 L, 21 mm SL) are now used.",
+      "open_question": false
     },
     "tags": [
       "nano",
@@ -1525,16 +1522,27 @@
     "category": "shrimp",
     "adult_size_in": 1.6,
     "adult_size_basis": "body_length",
-    "min_tank_liters": 19,
-    "min_tank_basis": "group",
+    "min_tank_liters": 38,
+    "min_tank_basis": "unspecified",
     "min_tank_length_in": 11.8,
     "min_tank_length_basis": "source",
     "blackwater": null,
     "husbandry_review": {
       "policy_version": "2026-09-26",
       "reviewed": "2026-09-26",
-      "canonical_tank_source": "FishLore — Ghost Shrimp profile (no higher-tier tank value found)",
+      "canonical_tank_source": "Aqueon — Freshwater Shrimp Care Guide (volume); Guidarium (length, tier 4)",
       "sources": [
+        {
+          "title": "Aqueon — Freshwater Shrimp Care Guide",
+          "url": "https://www.aqueon.com/resources/care-guides/shrimp-freshwater",
+          "tier": 2,
+          "reviewed": "2026-09-26",
+          "verification": "search-extract",
+          "fields": [
+            "min_tank_liters"
+          ],
+          "claim": "Names basic ghost shrimp (Palaemonetes paludosus); larger species such as ghost, Amano and bamboo shrimp can be kept in aquariums of 10 to 55 gallons."
+        },
         {
           "title": "FishLore — Ghost Shrimp Care",
           "url": "https://www.fishlore.com/profile-ghostshrimp.htm",
@@ -1570,7 +1578,8 @@
           "claim": "Adults eat larvae and small shrimplets."
         }
       ],
-      "notes": "Only general-hobby references gave tank values; flagged for review.",
+      "disagreements": "Volume: Aqueon (tier 2, 10–55 gal range → 10 gal minimum) replaces FishLore’s 5 gal (tier 4).",
+      "notes": "LIMITATION: the tank length and adult size still rest on a tier-4 source (Guidarium); no stronger source gives a footprint, and no source gives a social minimum, so none is set.",
       "open_question": true
     },
     "tags": [
@@ -1972,18 +1981,33 @@
     "id": "honey_gourami",
     "scientific_name": "Trichogaster chuna",
     "category": "fish",
-    "adult_size_in": 2,
-    "adult_size_basis": "total_length",
-    "min_tank_liters": 38,
-    "min_tank_basis": "single",
-    "min_tank_length_in": 20,
-    "min_tank_length_basis": "inferred_standard_tank",
+    "adult_size_in": 2.2,
+    "adult_size_basis": "standard_length",
+    "min_tank_liters": 54,
+    "min_tank_basis": "pair_or_small_group",
+    "min_tank_length_in": 24,
+    "min_tank_length_basis": "source",
     "blackwater": null,
     "husbandry_review": {
       "policy_version": "2026-09-26",
       "reviewed": "2026-09-26",
-      "canonical_tank_source": "Aquarium Co-Op — Honey Gourami care (Seriously Fish value not retrievable)",
+      "canonical_tank_source": "Seriously Fish — Trichogaster chuna",
       "sources": [
+        {
+          "title": "Seriously Fish — Trichogaster chuna (Honey Gourami)",
+          "url": "https://www.seriouslyfish.com/species/trichogaster-chuna",
+          "tier": 1,
+          "reviewed": "2026-09-26",
+          "verification": "reviewer-reported",
+          "fields": [
+            "min_tank_liters",
+            "min_tank_length_in",
+            "adult_size_in",
+            "social_minimum",
+            "blackwater"
+          ],
+          "claim": "Read directly by the production review: 55 mm (2.2 in) SL; base 60 × 30 cm (24 × 12 in), ~54 L (14 US gal), sufficient for a pair or small group; not a schooling fish but benefits from conspecifics — buy no fewer than 4–6; dried leaf litter recommended, tannins released during decomposition are thought beneficial."
+        },
         {
           "title": "Aquarium Co-Op — Care Guide for Honey Gouramis",
           "url": "https://www.aquariumcoop.com/blogs/aquarium/honey-gourami",
@@ -1994,22 +2018,11 @@
             "min_tank_liters"
           ],
           "claim": "A single honey gourami can live in a 5- or 10-gallon tank; a group of three does better in 20 gallons."
-        },
-        {
-          "title": "Seriously Fish — Trichogaster chuna (Honey Gourami)",
-          "url": "https://www.seriouslyfish.com/species/trichogaster-chuna",
-          "tier": 1,
-          "reviewed": "2026-09-26",
-          "verification": "search-extract",
-          "fields": [
-            "adult_size_in"
-          ],
-          "claim": "Aquarium dimensions not retrievable from the review environment."
         }
       ],
-      "disagreements": "Other guides give 40–54 L for a pair. Co-Op states “5- or 10-gallon”; the upper figure of that single source’s stated range (10 gal) is used — no averaging.",
-      "notes": "No source gave base dimensions; length is the 20 in footprint of a standard 10 US gal tank (flagged as inferred).",
-      "open_question": true
+      "disagreements": "Aquarium Co-Op allows 5–10 gal for a single fish; Seriously Fish (tier 1) selected.",
+      "notes": "Not a schooling species (schoolingMinimum stays 1). socialMinimum 4 = lowest figure of Seriously Fish’s “no fewer than 4–6” conspecific recommendation. Blackwater left unassessed: “tannins … thought beneficial” is weaker than the engine’s “prefers”, which warns whenever tannins are off.",
+      "open_question": false
     },
     "tags": [
       "labyrinth",
@@ -2052,6 +2065,7 @@
     },
     "behavior": {
       "schoolingMinimum": 1,
+      "socialMinimum": 4,
       "territorySize": 12,
       "predationRisks": ["Shrimp (juvenile)"],
       "incompatibilities": ["Aggressive gouramis"],
@@ -3473,44 +3487,49 @@
     "id": "upside_down_catfish",
     "scientific_name": "Synodontis nigriventris",
     "category": "fish",
-    "adult_size_in": 3.8,
-    "adult_size_basis": "total_length",
-    "min_tank_liters": 114,
-    "min_tank_basis": "group",
-    "min_tank_length_in": 36,
-    "min_tank_length_basis": "inferred_standard_tank",
+    "adult_size_in": 3.9,
+    "adult_size_basis": "standard_length",
+    "min_tank_liters": 70,
+    "min_tank_basis": "single",
+    "min_tank_length_in": 30,
+    "min_tank_length_basis": "source",
     "blackwater": null,
     "husbandry_review": {
       "policy_version": "2026-09-26",
       "reviewed": "2026-09-26",
-      "canonical_tank_source": "FishLore — Upside Down Catfish (Seriously Fish lists no aquarium size)",
+      "canonical_tank_source": "Seriously Fish — Synodontis nigriventris",
       "sources": [
         {
           "title": "Seriously Fish — Synodontis nigriventris (Upside-down Catfish)",
           "url": "https://www.seriouslyfish.com/species/synodontis-nigriventris",
           "tier": 1,
           "reviewed": "2026-09-26",
-          "verification": "search-extract",
-          "fields": [],
-          "claim": "Page notes that aquarium size is missing."
-        },
-        {
-          "title": "FishLore — Upside Down Catfish Care",
-          "url": "https://www.fishlore.com/profile-upside-down-catfish.htm",
-          "tier": 4,
-          "reviewed": "2026-09-26",
-          "verification": "search-summary",
+          "verification": "reviewer-reported",
           "fields": [
             "min_tank_liters",
-            "group",
+            "min_tank_length_in",
+            "adult_size_in",
+            "social_minimum"
+          ],
+          "claim": "Read directly by the production review: ~100 mm (3.9 in) SL; 30 × 12 × 12 in (75 × 30 × 30 cm), ~70 L for one specimen; should really be kept in a group — groups of at least 3–4 recommended."
+        },
+        {
+          "title": "FishBase — Synodontis nigriventris",
+          "url": "https://www.fishbase.se/summary/Synodontis-nigriventris.html",
+          "tier": 2,
+          "reviewed": "2026-09-26",
+          "verification": "reviewer-reported",
+          "fields": [
+            "min_tank_length_in",
+            "social_minimum",
             "adult_size_in"
           ],
-          "claim": "30 gallons or larger; do well in groups of 5 or more; about 3.75 in (9.6 cm)."
+          "claim": "Max 9.6 cm TL; keep in groups of 5 or more; minimum aquarium size 80 cm."
         }
       ],
-      "disagreements": "Other guides give 70–100 L. Only a general-hobby source gave a value; flagged for review.",
-      "notes": "No source gave base dimensions; length is the 36 in footprint of a standard 30 US gal tank (flagged as inferred).",
-      "open_question": true
+      "disagreements": "Seriously Fish (tier 1): 75 cm / 70 L for one fish, groups of at least 3–4. FishBase (tier 2): 80 cm minimum, groups of 5+. Per policy tier 1 sets each field: length 30 in, volume 70 L, social minimum 4 (upper figure of the source’s own “3–4”). FishBase values retained here, not averaged.",
+      "notes": "MODELLING GAP: the only sourced volume is for a single specimen, while the species should be kept in a group; no source gives a group volume, so none is invented. The engine checks this single-specimen minimum; group size is covered by socialMinimum.",
+      "open_question": false
     },
     "tags": [
       "oddball",
@@ -3552,7 +3571,8 @@
       "flow": "low"
     },
     "behavior": {
-      "schoolingMinimum": 5,
+      "schoolingMinimum": 1,
+      "socialMinimum": 4,
       "territorySize": null,
       "predationRisks": ["Shrimp (juvenile)"],
       "incompatibilities": [],

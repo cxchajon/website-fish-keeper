@@ -198,7 +198,7 @@ test('the 24 newer species carry traceable provenance', () => {
 
 test('field semantics are declared for every newer species', () => {
   const SIZE_BASIS = new Set(['standard_length', 'total_length', 'maximum_length_unspecified', 'body_length', 'shell_length', 'shell_diameter']);
-  const TANK_BASIS = new Set(['single', 'pair', 'group', 'unspecified']);
+  const TANK_BASIS = new Set(['single', 'pair', 'pair_or_small_group', 'group', 'unspecified']);
   const LENGTH_BASIS = new Set(['source', 'inferred_standard_tank', 'not_applicable']);
   for (const record of NEWER) {
     assert.ok(SIZE_BASIS.has(record.adult_size_basis), `${record.slug} adult_size_basis`);
@@ -207,6 +207,62 @@ test('field semantics are declared for every newer species', () => {
     assert.equal(record.min_tank_length_basis === 'not_applicable', record.min_tank_length_in === null, record.slug);
     // No habitat claim without support: none of the cited sources assesses tannins for these species.
     assert.equal(record.blackwater, null, `${record.slug} blackwater must stay unassessed without a source`);
+  }
+});
+
+test('a documented conspecific minimum is a social group, not a shoal', () => {
+  for (const [slug, min] of [['honey-gourami', 4], ['upside-down-catfish', 4]]) {
+    const record = RAW_SPECIES.find((item) => item.slug === slug);
+    assert.equal(record.behavior.schoolingMinimum, 1, `${slug} is not a schooling species`);
+    assert.equal(record.behavior.socialMinimum, min, slug);
+    const species = legacy.SPECIES.find((item) => item.slug === slug);
+    assert.deepEqual(species.group, { type: 'social', min }, slug);
+  }
+  const two = compute.buildComputedState(stateFor('29g', [], ['honey_gourami', 2]));
+  assert.equal(two.chips.some((chip) => /Not a schooling fish, but keep 4\+ together/.test(chip.text)), true);
+  assert.equal(two.chips.some((chip) => /shoal/i.test(chip.text)), false);
+});
+
+test('corrected records use the directly read Seriously Fish values', () => {
+  const get = (slug) => RAW_SPECIES.find((item) => item.slug === slug);
+  const cpd = get('celestial-pearl-danio');
+  assert.deepEqual([cpd.adult_size_in, cpd.adult_size_basis, cpd.min_tank_liters, cpd.min_tank_length_in, cpd.min_tank_basis], [0.8, 'standard_length', 41, 18, 'group']);
+  assert.match(cpd.husbandry_review.notes, /erythromicron/);
+  const honey = get('honey-gourami');
+  assert.deepEqual([honey.adult_size_in, honey.adult_size_basis, honey.min_tank_liters, honey.min_tank_length_in, honey.min_tank_basis], [2.2, 'standard_length', 54, 24, 'pair_or_small_group']);
+  const catfish = get('upside-down-catfish');
+  assert.deepEqual([catfish.adult_size_in, catfish.min_tank_liters, catfish.min_tank_length_in, catfish.min_tank_basis], [3.9, 70, 30, 'single']);
+  assert.ok(get('ghost-shrimp').husbandry_review.sources.some((source) => /aqueon\.com/.test(source.url) && source.tier === 2));
+});
+
+const predationWarnings = (computed) => computed.status.warnings.filter((w) => w.id.startsWith('predation.fish.'));
+
+test('fish predation A: angelfish with neon tetras is a red compatibility warning', () => {
+  const computed = compute.buildComputedState(stateFor('75g', [['freshwater_angelfish', 2], ['neon', 10]]));
+  const warnings = predationWarnings(computed);
+  assert.deepEqual(warnings.map((w) => w.id), ['predation.fish.freshwater_angelfish.neon']);
+  assert.equal(warnings[0].severity, 'danger');
+  assert.match(warnings[0].message, /Small fish \(e\.g\., Neon Tetras\)/);
+  assert.equal(computed.status.severity, 'bad');
+  // Also when the neon tetra is only being previewed.
+  const preview = compute.buildComputedState(stateFor('75g', [['freshwater_angelfish', 2]], ['neon', 10]));
+  assert.equal(predationWarnings(preview).length, 1);
+});
+
+test('fish predation B: no warning just because the angelfish is larger', () => {
+  const computed = compute.buildComputedState(stateFor('75g', [
+    ['freshwater_angelfish', 2], ['cory_bronze', 6], ['bristlenose_pleco', 1], ['cherrybarb', 6], ['harlequin', 8],
+  ]));
+  assert.deepEqual(predationWarnings(computed), []);
+});
+
+test('fish predation is evidence-only: prey links come from explicit prey entries', () => {
+  const linked = legacy.SPECIES.filter((species) => species.preys_on_species.length > 0);
+  assert.deepEqual(linked.map((species) => species.id), ['freshwater_angelfish']);
+  for (const species of linked) {
+    for (const { evidence } of species.preys_on_species) {
+      assert.doesNotMatch(evidence, /^\s*predators?\s*:/i, 'entries naming predators OF a species are not prey');
+    }
   }
 });
 

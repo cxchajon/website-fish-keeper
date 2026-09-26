@@ -84,6 +84,27 @@ test.describe('desktop', () => {
     await expect(page.locator('#stock-warnings [data-warning-id^="species.unevaluated."]')).toHaveCount(0);
   });
 
+  test('angelfish with neon tetras shows a red predation warning', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '75g');
+    await addSpecies(page, 'freshwater_angelfish', 2);
+    await addSpecies(page, 'neon', 10);
+    const alert = warning(page, 'predation.fish.freshwater_angelfish.neon');
+    await expect(alert).toBeVisible();
+    await expect(alert).toHaveAttribute('data-state', 'bad');
+    await expect(alert).toContainText('Freshwater Angelfish may eat Neon Tetra');
+  });
+
+  test('angelfish with a non-prey tankmate has no predation warning', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '75g');
+    await addSpecies(page, 'freshwater_angelfish', 2);
+    await addSpecies(page, 'cory_bronze', 6);
+    await expect(page.locator('#stock-warnings [data-warning-id^="predation.fish."]')).toHaveCount(0);
+  });
+
   test('an invalid species record produces the red incomplete state', async ({ page }) => {
     await page.route(SPECIES_JSON, async (route) => {
       const response = await route.fetch();
@@ -129,6 +150,18 @@ test.describe('mobile', () => {
     await expect(alert).toHaveAttribute('data-state', 'bad');
     await expect(alert).toBeInViewport();
     await expect(bioloadLabel(page)).toHaveText(/tank too small/i);
+  });
+
+  test('fish predation warning is visible on a phone', async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+    await selectTank(page, '75g');
+    await addSpecies(page, 'freshwater_angelfish', 2);
+    await addSpecies(page, 'neon', 10);
+    const alert = warning(page, 'predation.fish.freshwater_angelfish.neon');
+    await alert.scrollIntoViewIfNeeded();
+    await expect(alert).toBeInViewport();
+    await expect(alert).toHaveAttribute('data-state', 'bad');
   });
 
   test('species data failure is visible on a phone', async ({ page }) => {
