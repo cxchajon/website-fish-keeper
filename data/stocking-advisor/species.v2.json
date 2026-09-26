@@ -848,9 +848,9 @@
     "behavior": {
       "schoolingMinimum": 6,
       "territorySize": null,
-      "predationRisks": ["Shrimp (cherry)"],
+      "predationRisks": ["Shrimp (juvenile)"],
       "incompatibilities": [],
-      "notes": "Peaceful schooling fish."
+      "notes": "Peaceful schooling fish. Predation (Phase 2G, 2026-09-26): generally leaves adult dwarf shrimp alone when cover is available, but opportunistically eats baby shrimp. Source: Aquarium Co-Op Cardinal Tetra care guide, https://www.aquariumcoop.com/blogs/aquarium/cardinal-tetra (tier 2, reviewer-reported paraphrase, not a quote)."
     },
     "confidence": {
       "overall": 9,
@@ -1031,9 +1031,9 @@
     "behavior": {
       "schoolingMinimum": 6,
       "territorySize": null,
-      "predationRisks": ["Shrimp (cherry)", "Shrimp (amano)"],
+      "predationRisks": ["Shrimp (cherry)"],
       "incompatibilities": ["Long-finned bettas"],
-      "notes": "Active midwater barb; males can spar in tight spaces."
+      "notes": "Active midwater barb; males can spar in tight spaces. Predation (Phase 2G, 2026-09-26): adult Cherry Shrimp may be pursued or eaten; larger Amano Shrimp generally do okay, so there is no Amano entry. Source: Aquarium Co-Op Cherry Barb care guide, https://www.aquariumcoop.com/blogs/aquarium/cherry-barb (tier 2, reviewer-reported paraphrase, not a quote)."
     },
     "confidence": {
       "overall": 8,
@@ -2523,9 +2523,21 @@
             "sex_ratio_guidance"
           ],
           "claim": "Get at least two to three females for every male."
+        },
+        {
+          "title": "Aquarium Co-Op — Care Guide for Mollies",
+          "url": "https://www.aquariumcoop.com/blogs/aquarium/molly-fish-care",
+          "tier": 2,
+          "reviewed": "2026-09-26",
+          "verification": "reviewer-reported",
+          "fields": [
+            "shrimp_risk"
+          ],
+          "claim": "Larger mollies will most likely eat smaller animals such as Cherry Shrimp (reviewer paraphrase). Supports the named “Shrimp (cherry)” predation entry."
         }
       ],
       "disagreements": "General guides give 20 gal (75 L); Seriously Fish (tier 1) selected. “1 male : 2–3 females” is sex-ratio guidance, not a schooling minimum.",
+      "notes": "SCHEMA LIMITATION (predation): the Aquarium Co-Op source says *larger* mollies will likely eat Cherry Shrimp. The data model cannot express predator size, so the named “Shrimp (cherry)” entry (red) applies to every planned Molly. “Shrimp (juvenile)” is kept, so other shrimp get only the amber shrimplet warning.",
       "open_question": false
     },
     "tags": [
@@ -2573,7 +2585,7 @@
     "behavior": {
       "schoolingMinimum": 1,
       "territorySize": null,
-      "predationRisks": ["Shrimp (juvenile)"],
+      "predationRisks": ["Shrimp (cherry)", "Shrimp (juvenile)"],
       "incompatibilities": [],
       "notes": "Prefers hard water or slightly brackish conditions; susceptible to shimmies in soft, acidic water."
     },
