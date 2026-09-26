@@ -1,8 +1,9 @@
 import { FISH_DB } from "../fish-data.js";
 import { validateSpeciesRecord } from "./speciesSchema.js";
 import { EMPTY_TANK } from '../stocking/tankStore.js';
-import { canonicalizeFilterType, sumGph, weightedMixFactor } from '../utils.js';
-import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent, computeFiltrationFactor } from '../bioload.js';
+import { canonicalizeFilterType, sumGph } from '../utils.js';
+import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent } from '../bioload.js';
+import { assessFiltration, FILTRATION_LEVELS, MIN_BIOLOGICAL_TURNOVER } from '../stocking-advisor/filtration/math.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import { BEHAVIOR_TAGS } from './behaviorTags.js';
 import { evaluateStockWarnings } from './warnings.js';
@@ -163,50 +164,11 @@ export function listSensitiveSpecies(speciesEntries, parameter) {
   return results;
 }
 
-// --- Filtration model (canonical) -------------------------------------------
-const FILTER_BASE = {
-  canister: 0.35,  // highest media capacity
-  hob:      0.25,  // hang-on-back
-  internal: 0.18,  // small internal/power filter
-  sponge:   0.12,  // air-driven sponge
-  ugf:      0.15,  // undergravel (optional)
-  none:     0.00
-};
-
 // Clamp helper
 function clamp(n, lo, hi) { return Math.min(hi, Math.max(lo, n)); }
 
-/**
- * Returns a MULTIPLIER to apply to base bioload.
- * Lower multiplier = more filtration headroom (better).
- *
- * - type: 'canister' | 'hob' | 'internal' | 'sponge' | 'ugf' | 'none'
- * - gph: rated flow in gallons per hour
- * - tankGallons: display volume in gallons
- *
- * Baseline turnover: 5x/hour for freshwater. Scale efficiency around that.
- * Hard-cap effective efficiency to avoid impossible reductions.
- */
-function filtrationMultiplier({ type = 'none', gph = 0, tankGallons = 0 }) {
-  const base = FILTER_BASE[type] ?? 0;
-  const turnover = tankGallons > 0 ? (gph / tankGallons) : 0;   // x per hour
-  const scale = clamp(turnover / 5, 0.4, 1.3);                  // normalize to ~5x
-  const eff = clamp(base * scale, 0, 0.6);                      // cap max 60% reduction
-  return 1 - eff;                                               // multiply base bioload by this
-}
-
-// Example: baseBioload * filtrationMultiplier({type, gph, tankGallons})
-// ---------------------------------------------------------------------------
-
-if (typeof window !== 'undefined' && window?.TTG?.DEBUG_FILTERS) {
-  const sample = { tankGallons: 29, gph: 200 };
-  const canister = filtrationMultiplier({ ...sample, type: 'canister' });
-  const hob = filtrationMultiplier({ ...sample, type: 'hob' });
-  const sponge = filtrationMultiplier({ ...sample, type: 'sponge' });
-  if (!(canister < hob && hob < sponge)) {
-    console.warn('[TTG] Filtration multiplier order unexpected', { canister, hob, sponge });
-  }
-}
+// Filtration never scales the bioload percentage; it is assessed separately in
+// buildFilteringState (see js/stocking-advisor/filtration/math.js).
 
 const FILTER_TYPE_KEYS = new Set(['canister', 'hob', 'internal', 'sponge', 'ugf', 'none']);
 
@@ -265,16 +227,12 @@ export function computeFilterFlowStats(gallons, filterType, overrideGph = null) 
   const baseGph = hasGallons ? gallonValue * multiplier : 0;
   const actualGph = hasOverride ? overrideValue : baseGph;
   const idealGph = hasGallons ? gallonValue * IDEAL_TURNOVER_MULTIPLIER : null;
-  const tankGallons = hasGallons ? gallonValue : 0;
-  const gphForMultiplier = hasOverride ? overrideValue : baseGph;
-  const factor = filtrationMultiplier({ type, gph: gphForMultiplier, tankGallons });
   return {
     type,
     multiplier,
     idealMultiplier: IDEAL_TURNOVER_MULTIPLIER,
     actualGph: actualGph > 0 ? actualGph : null,
     idealGph,
-    factor,
   };
 }
 
@@ -284,7 +242,7 @@ export const TURNOVER_BANDS = Object.freeze({
   H: [8, 12],
 });
 
-export const MIN_TURNOVER_FLOOR = 2;
+export const MIN_TURNOVER_FLOOR = MIN_BIOLOGICAL_TURNOVER;
 
 function clampFlowRate(value) {
   const num = Number(value);
@@ -314,8 +272,7 @@ export function sanitizeFilterList(filters) {
 function summarizeFilters(filters) {
   const sanitized = sanitizeFilterList(filters);
   const totalGph = sumGph(sanitized);
-  const mixFactor = weightedMixFactor(sanitized, totalGph);
-  return { sanitized, totalGph, mixFactor };
+  return { sanitized, totalGph };
 }
 
 export function calcTotalGph(filters) {
@@ -829,65 +786,104 @@ function resolveTurnoverBand(entries) {
   return null;
 }
 
+function formatGallonsValue(value) {
+  return String(Math.round(value * 10) / 10);
+}
+
+// "about 5.2×", or "less than 0.1×" so a near-zero flow never reads as a plain 0.
+function formatTurnoverPhrase(value) {
+  return value < 0.1 ? 'less than 0.1×' : `about ${value.toFixed(1)}×`;
+}
+
+// Filtration warnings. They sit beside the bioload percentage and never change it: a bigger filter
+// cannot make a heavily stocked tank lighter, and a missing or weak one does not change how much
+// waste the livestock produce.
+function buildFiltrationWarnings(assessment, entries, band) {
+  const warnings = [];
+  const gallons = formatGallonsValue(assessment.gallons);
+  const push = (id, severity, title, message) => {
+    warnings.push({ id, severity, icon: 'alert', kind: 'filtration', title, message, text: `${title} — ${message}` });
+  };
+  switch (assessment.level) {
+    case FILTRATION_LEVELS.NONE:
+      push('filtration.none', 'warn', 'No filter added',
+        'Add your filter so its flow can be checked. The bioload % assumes a working, established (cycled) filter; without one, waste builds up much faster.');
+      break;
+    case FILTRATION_LEVELS.CIRCULATION_ONLY:
+      push('filtration.circulation_only', 'danger', 'No biological filter',
+        'A powerhead moves water but holds no filter media, so it does not process fish waste. Add a filter (sponge, hang-on-back, internal or canister) for this stock.');
+      break;
+    case FILTRATION_LEVELS.VERY_LOW:
+      push('filtration.very_low', 'danger', 'Filter flow too low',
+        `${Math.round(assessment.biologicalGph)} GPH through filter media turns this ${gallons}-gallon tank over ${formatTurnoverPhrase(assessment.biologicalTurnover)} per hour, below the ${MIN_BIOLOGICAL_TURNOVER}× minimum. Check the flow value, or use a filter sized for this tank.`);
+      break;
+    case FILTRATION_LEVELS.LOW:
+      push('filtration.low', 'warn', 'Filter flow below target',
+        `About ${assessment.biologicalTurnover.toFixed(1)}× per hour through filter media; ${band?.label ?? 'this stock'} usually do best with at least ${band?.range?.[0]}×. Rated flow is the maker's figure — real flow through loaded media is lower.`);
+      break;
+    default:
+      break;
+  }
+  if (assessment.highFlowForStock) {
+    const names = [...new Set(entries
+      .filter((entry) => entry?.species?.flow === 'low')
+      .map((entry) => entry.species.common_name || entry.species.id))];
+    push('filtration.high_flow', 'warn', 'Strong current for gentle-flow fish',
+      `Total flow is ${formatTurnoverPhrase(assessment.totalTurnover)} the tank volume per hour. ${names.join(', ')} prefer${names.length === 1 ? 's' : ''} gentle water movement — use a spray bar, baffle or adjustable flow.`);
+  }
+  return warnings;
+}
+
 function buildFilteringState(state, tank, entries) {
-  const { sanitized, totalGph, mixFactor } = summarizeFilters(state.filters);
-  const turnover = computeTurnover(tank?.effectiveGallons ?? null, sanitized);
-  const hasFlowData = Number.isFinite(totalGph) && totalGph > 0;
+  const { sanitized, totalGph } = summarizeFilters(state.filters);
+  // Turnover uses the nominal tank size the user selected, the basis of turnover rules of thumb.
+  const gallons = Number.isFinite(tank?.gallons) && tank.gallons > 0 ? tank.gallons : 0;
   const stockCount = Array.isArray(entries) ? entries.length : 0;
   const band = resolveTurnoverBand(entries);
-  const gallonsKnown = Number.isFinite(tank?.effectiveGallons) && tank.effectiveGallons > 0;
+  const assessment = assessFiltration({
+    filters: sanitized,
+    gallons,
+    targetRange: band?.range ?? null,
+    hasLowFlowSpecies: stockCount > 0 && entries.some((entry) => entry?.species?.flow === 'low'),
+    hasStock: stockCount > 0,
+  });
+  const hasFlowData = assessment.totalGph > 0;
+  const warnings = stockCount > 0 && gallons > 0 ? buildFiltrationWarnings(assessment, entries, band) : [];
 
-  let statusTone = hasFlowData ? 'good' : 'neutral';
-  let statusText = hasFlowData
-    ? 'Turnover meets recommended flow.'
-    : 'Add filter flow to estimate turnover.';
-  let chip = null;
-  let warning = false;
-
-  if (hasFlowData && !gallonsKnown) {
+  let statusTone = 'neutral';
+  let statusText = 'Add filter flow to estimate turnover.';
+  if (hasFlowData && gallons <= 0) {
     statusTone = 'warn';
     statusText = 'Select a tank to calculate turnover.';
-  }
-
-  if (hasFlowData && stockCount === 0 && gallonsKnown) {
-    statusTone = 'neutral';
+  } else if (hasFlowData && stockCount === 0) {
     statusText = 'No stock yet — turnover targets will apply once species are added.';
+  } else if (warnings.length) {
+    const top = warnings.find((warning) => warning.severity === 'danger') ?? warnings[0];
+    statusTone = top.severity === 'danger' ? 'bad' : 'warn';
+    statusText = top.title;
+  } else if (hasFlowData) {
+    statusTone = 'good';
+    statusText = 'Filter flow meets the target for this stock.';
   }
-
-  if (hasFlowData && stockCount > 0 && gallonsKnown) {
-    if (turnover <= 0) {
-      statusTone = 'warn';
-      statusText = 'Enter rated flow values to calculate turnover.';
-    } else if (turnover < MIN_TURNOVER_FLOOR) {
-      const text = 'Filtration too low: turnover <2×/h';
-      chip = { id: 'turnover-floor', tone: 'bad', text };
-      statusTone = 'bad';
-      statusText = text;
-      warning = true;
-    } else if (band && Array.isArray(band.range) && band.range.length >= 2) {
-      const targetLow = band.range[0];
-      if (Number.isFinite(targetLow) && turnover < targetLow) {
-        const flowLabel = band.label ?? 'current stock';
-        const text = `Turnover below ${targetLow}× target for ${flowLabel}`;
-        chip = { id: `turnover-low-${band.key}`, tone: 'warn', text };
-        statusTone = 'warn';
-        statusText = text;
-        warning = true;
-      }
-    }
-  }
+  const top = warnings.find((warning) => warning.severity === 'danger') ?? warnings[0] ?? null;
 
   return {
     filters: sanitized,
     gphTotal: totalGph,
-    turnover,
+    biologicalGph: assessment.biologicalGph,
+    circulationGph: assessment.circulationGph,
+    // Turnover through filter media (circulation-only devices excluded).
+    turnover: assessment.biologicalTurnover,
+    totalTurnover: assessment.totalTurnover,
     hasData: hasFlowData,
+    level: assessment.level,
+    assessment,
     status: { tone: statusTone, text: statusText },
     band,
-    warning,
-    chip,
+    warning: warnings.length > 0,
+    warnings,
+    chip: top ? { id: top.id, tone: top.severity === 'danger' ? 'bad' : 'warn', text: top.title } : null,
     target: band ? { key: band.key, range: band.range } : null,
-    mixFactor,
   };
 }
 
@@ -1019,9 +1015,6 @@ export function computeBioload(tank, entries, candidate, filterState = {}) {
       ? flow.actualGph
       : 0;
   const filtersList = Array.isArray(filterState.filters) ? filterState.filters : [];
-  const totalRatedGph = Number.isFinite(filterState.totalGph) && filterState.totalGph > 0
-    ? filterState.totalGph
-    : calcTotalGph(filtersList);
   const turnoverCandidate = Number.isFinite(filterState.turnover)
     ? filterState.turnover
     : Number.isFinite(tank?.turnover)
@@ -1031,26 +1024,13 @@ export function computeBioload(tank, entries, candidate, filterState = {}) {
         : tankGallons > 0 && deliveredGph > 0
           ? deliveredGph / tankGallons
           : null;
-  const filtration = computeFiltrationFactor({
-    filters: filtersList,
-    totalGph: totalRatedGph,
-    turnover: turnoverCandidate,
-  });
-  const applyFiltrationFactor = (value) => {
-    if (!Number.isFinite(value)) {
-      return 0;
-    }
-    return clamp(value * filtration.totalFactor, 0, 200);
-  };
-  const adjustedCurrentPercentValue = applyFiltrationFactor(currentPercentValue);
-  const adjustedProposedPercentValue = applyFiltrationFactor(proposedPercentValue);
-  const currentPercent = adjustedCurrentPercentValue / 100;
-  const proposedPercent = adjustedProposedPercentValue / 100;
+  // Livestock load only: filtration is assessed separately (buildFilteringState) and never scales it.
+  const currentPercent = (Number.isFinite(currentPercentValue) ? currentPercentValue : 0) / 100;
+  const proposedPercent = (Number.isFinite(proposedPercentValue) ? proposedPercentValue : 0) / 100;
   const color = getBandColor(proposedPercent);
-  const turnoverIssue = tank.turnover < 2;
-  const severity = proposedPercent > 1.1 ? 'bad' : proposedPercent > 0.9 ? 'warn' : turnoverIssue ? 'warn' : 'ok';
-  const text = `${formatBioloadPercent(adjustedCurrentPercentValue)} → ${formatBioloadPercent(adjustedProposedPercentValue)} of capacity`;
-  const message = turnoverIssue ? 'Turnover below 2× — upgrade filtration' : undefined;
+  const severity = proposedPercent > 1.1 ? 'bad' : proposedPercent > 0.9 ? 'warn' : 'ok';
+  const text = `${formatBioloadPercent(currentPercentValue)} → ${formatBioloadPercent(proposedPercentValue)} of capacity`;
+  const message = undefined;
   const badge = candidate && !Number.isFinite(candidate.species.bioloadGE) ? 'estimated' : null;
   const ratedGphValue = Number.isFinite(flow?.ratedGph) && flow.ratedGph > 0
     ? flow.ratedGph
@@ -1066,10 +1046,6 @@ export function computeBioload(tank, entries, candidate, filterState = {}) {
     ratedGph: ratedGphValue,
     turnover: Number.isFinite(turnoverCandidate) ? turnoverCandidate : null,
     hasProduct,
-    typeFactor: filtration.typeFactor,
-    flowFactor: filtration.flowFactor,
-    totalFactor: filtration.totalFactor,
-    mixFactor: filtration.mixFactor,
   };
   return {
     currentLoad,
@@ -1084,8 +1060,8 @@ export function computeBioload(tank, entries, candidate, filterState = {}) {
     text,
     message,
     badge,
-    adjustedCurrentLoad: currentLoad * filtration.totalFactor,
-    adjustedProposed: proposed * filtration.totalFactor,
+    adjustedCurrentLoad: currentLoad,
+    adjustedProposed: proposed,
     flowAdjustment,
     baseCurrentPercent: currentPercentValue / 100,
     baseProposedPercent: proposedPercentValue / 100,
@@ -1661,8 +1637,12 @@ export function buildComputedState(state) {
   }
   const tankSuitability = evaluateTankSuitability(tank, entries, candidate);
   const fishPredation = evaluateFishPredation(entries, candidate);
-  const status = computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck, extraIssues: [...fishPredation.issues, ...tankSuitability.issues] });
-  const stockWarnings = [...evaluateStockWarnings({ entries, candidate }), ...fishPredation.warnings, ...tankSuitability.warnings];
+  const filtrationIssues = filtering.warnings.map((warning) => ({
+    severity: warning.severity === 'danger' ? 'bad' : 'warn',
+    message: warning.title,
+  }));
+  const status = computeStatus({ bioload, aggression, conditions, groupRule, salinityCheck: conditions.salinityCheck, flowCheck: conditions.flowCheck, blackwaterCheck: conditions.blackwaterCheck, extraIssues: [...fishPredation.issues, ...tankSuitability.issues, ...filtrationIssues] });
+  const stockWarnings = [...evaluateStockWarnings({ entries, candidate }), ...fishPredation.warnings, ...tankSuitability.warnings, ...filtering.warnings];
   const mergedWarnings = mergeWarnings(status.warnings, stockWarnings);
   const statusWithWarnings = mergedWarnings === status.warnings ? status : { ...status, warnings: mergedWarnings };
 

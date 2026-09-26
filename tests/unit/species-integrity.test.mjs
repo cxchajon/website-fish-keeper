@@ -353,7 +353,8 @@ test('pea puffer space scales with the number planned, independently of bioload'
   const groupWarning = (computed) => computed.status.warnings.find((w) => w.id === 'tank.group_volume.pea_puffer');
   const volumeIds = (computed) => warningIds(computed).filter((id) => /^tank\.(group_)?volume\.pea_puffer$/.test(id));
 
-  const one = compute.buildComputedState(stateFor('5g', [['pea_puffer', 1]]));
+  // With a filter entered, so the separate "no filter added" check does not affect the status.
+  const one = compute.buildComputedState({ ...stateFor('5g', [['pea_puffer', 1]]), filters: [{ type: 'HOB', rated_gph: 20 }] });
   assert.deepEqual(volumeIds(one), [], 'one puffer fits a 5 gallon');
   assert.equal(one.status.severity, 'ok');
 

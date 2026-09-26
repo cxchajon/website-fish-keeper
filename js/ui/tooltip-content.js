@@ -26,8 +26,9 @@ const TOOLTIP_COPY = new Map([
     {
       title: 'Estimated turnover',
       bullets: [
-        'Filtration increases your tank’s capacity to process waste. The Stocking % shown here uses your effective biological capacity (RBC).',
-        'Turnover = total GPH ÷ tank gallons.',
+        'Turnover = rated GPH of your filters ÷ tank gallons. Powerheads move water but hold no filter media, so they are not counted.',
+        'Rated GPH is the maker’s figure; real flow through loaded media is lower.',
+        'Filtration does not change the bioload %: a bigger filter cannot make a crowded tank safe.',
         'Targets: general 5–7×/h • active species 8×+.',
         'If turnover is low, consider upsizing filtration or adding circulation.',
         'Recheck after cycling and after major stock/plant changes.',
@@ -41,7 +42,7 @@ const TOOLTIP_COPY = new Map([
       title: 'Filtration summary chip',
       body: [
         'We total every filter you add and convert it into gallons per hour and estimated turnover.',
-        'Sponge filters get a softer weighting because their flow is diffuse, so the turnover chip reflects that gentler output.',
+        'Powerheads are shown separately as circulation only. A sponge filter’s real flow depends on its air pump.',
       ],
       ariaLabel: 'More info about the filtration summary',
     },

@@ -342,19 +342,16 @@ const FILTER_TYPE_CANONICAL = new Map([
   ['CANISTERFILTER', 'CANISTER'],
   ['SPONGE', 'SPONGE'],
   ['SPONGEFILTER', 'SPONGE'],
-  ['INTERNAL', 'HOB'],
-  ['INTERNALFILTER', 'HOB'],
-  ['UGF', 'HOB'],
-  ['UNDERGRAVEL', 'HOB'],
-  ['UNDERGRAVELFILTER', 'HOB'],
+  ['INTERNAL', 'INTERNAL'],
+  ['INTERNALFILTER', 'INTERNAL'],
+  ['UGF', 'UGF'],
+  ['UNDERGRAVEL', 'UGF'],
+  ['UNDERGRAVELFILTER', 'UGF'],
+  // Circulation only: moves water but holds no filter media (see filtration/math.js).
+  ['POWERHEAD', 'POWERHEAD'],
+  ['WAVEMAKER', 'POWERHEAD'],
   ['NONE', 'HOB'],
 ]);
-
-const FILTER_TYPE_FACTORS = Object.freeze({
-  CANISTER: 1.1,
-  HOB: 1.0,
-  SPONGE: 0.9,
-});
 
 export function canonicalizeFilterType(value) {
   if (typeof value === 'string') {
@@ -386,31 +383,6 @@ export function sumGph(filters = []) {
     }
   }
   return total;
-}
-
-export function typeFactor(filterType) {
-  const canonical = canonicalizeFilterType(filterType);
-  return FILTER_TYPE_FACTORS[canonical] ?? 1;
-}
-
-export function weightedMixFactor(filters = [], totalOverride = null) {
-  const total = Number.isFinite(totalOverride) && totalOverride > 0
-    ? totalOverride
-    : sumGph(filters);
-  if (!Number.isFinite(total) || total <= 0) {
-    return 1;
-  }
-  let factor = 0;
-  for (const filter of filters || []) {
-    const raw = filter?.rated_gph ?? filter?.gph;
-    const gph = Number(raw);
-    if (!Number.isFinite(gph) || gph <= 0) {
-      continue;
-    }
-    const share = gph / total;
-    factor += typeFactor(filter?.type ?? filter?.kind) * share;
-  }
-  return factor > 0 ? factor : 1;
 }
 
 const FILTER_TYPE_SORT_ORDER = new Map([

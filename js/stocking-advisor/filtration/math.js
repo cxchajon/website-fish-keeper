@@ -1,51 +1,48 @@
 /**
- * Developer Note — Gemini RBC Rollout (Oct 2025)
+ * Stocking Advisor filtration model (Phase 2C). Methodology: data/stocking-advisor/FILTRATION_MODEL.md
  *
- * The previous prototype math reduced "bioload" by subtracting a filter relief
- * factor from the numerator. That approach was fragile — it compounded string
- * concatenation bugs, made sponge filters appear to raise stocking %, and was
- * impossible to reason about when multiple filters stacked. The Gemini rebuild
- * flips the model to biological capacity boosts: we always recalc stocking from
- * the immutable base load and expand the tank's effective capacity via Relative
- * Biological Capacity (RBC) modifiers.
+ * Filtration does NOT change the bioload percentage. The percentage is livestock load ÷ tank
+ * capacity only; filtration is reported as its own adequacy check beside it, so choosing a filter
+ * can raise a warning but can never make a heavily stocked tank look lighter.
+ *
+ * The earlier "Relative Biological Capacity" model multiplied capacity by up to 1.6× from the filter
+ * TYPE alone (a canister entered at 1 GPH got the full bonus, a powerhead got +30 %). The tool cannot
+ * see media volume, media condition or whether the filter is cycled, so no capacity bonus remains.
+ *
+ * What the model does use:
+ *   - role: a device either holds biological media ("biological") or only moves water
+ *     ("circulation": powerheads/wavemakers). Only biological devices count as filtration.
+ *   - flow: the manufacturer's rated GPH, treated as an upper-bound estimate of the flow through
+ *     the media (real flow is lower once media loads and head loss apply).
+ *   - turnover: rated GPH ÷ nominal tank gallons (the size the user selected).
  */
 
-export const RBC_TABLE = Object.freeze({
-  SPONGE_SMALL: 0.2,
-  SPONGE_LARGE: 0.4,
-  HOB_SMALL_CARTRIDGE: 0.15,
-  HOB_LARGE_BASKET: 0.6,
-  CANISTER_MID: 0.75,
-  CANISTER_LARGE: 1.25,
+export const FILTER_ROLES = Object.freeze({
+  BIOLOGICAL: 'biological',
+  CIRCULATION: 'circulation',
 });
 
-export const MAX_CAPACITY_BONUS = 0.6; // Cap total filtration benefit at +60%
+// Device types that move water but hold no filter media.
+const CIRCULATION_ONLY_TYPES = new Set(['POWERHEAD', 'WAVEMAKER', 'CIRCULATIONPUMP', 'CIRCULATION']);
 
-const DIMINISHING_WEIGHT_BASE = 2;
-const DEFAULT_RBC = RBC_TABLE.HOB_SMALL_CARTRIDGE;
-const MAX_SINGLE_RBC = RBC_TABLE.CANISTER_LARGE;
+// Below this many biological-filter tank volumes per hour a stocked tank is treated as effectively
+// unfiltered (the long-standing "turnover < 2×" floor of the advisor).
+export const MIN_BIOLOGICAL_TURNOVER = 2;
 
-const MEDIA_VOLUME_KEYS = [
-  'mediaVolumeL',
-  'mediaVolume',
-  'media_volume_l',
-  'mediaVolumeLiters',
-  'media_l',
-];
+// Above this total turnover a gentle-flow species (e.g. Betta) is likely to be pushed around.
+// Twice the top of the low-flow band (3–5×/h).
+export const LOW_FLOW_SPECIES_MAX_TURNOVER = 10;
 
-const FLOW_KEYS = ['rated_gph', 'ratedGph', 'gph', 'flow', 'flowGPH', 'gphRated'];
+// Per-device input ceiling, matching the entry field.
+export const MAX_DEVICE_GPH = 1500;
 
-function toLowerSafe(value) {
-  return typeof value === 'string' ? value.trim().toLowerCase() : '';
-}
-
-function normalizeType(value) {
-  if (typeof value !== 'string') {
-    return null;
-  }
-  const trimmed = value.trim();
-  return trimmed ? trimmed : null;
-}
+export const FILTRATION_LEVELS = Object.freeze({
+  NONE: 'none', // nothing entered
+  CIRCULATION_ONLY: 'circulation-only', // only powerheads entered
+  VERY_LOW: 'very-low', // biological turnover below MIN_BIOLOGICAL_TURNOVER
+  LOW: 'low', // below the stock's turnover target
+  ADEQUATE: 'adequate',
+});
 
 export function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -56,269 +53,160 @@ export function toNum(value, fallback = 0) {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-function parseMediaVolume(filter) {
-  for (const key of MEDIA_VOLUME_KEYS) {
-    if (key in (filter ?? {})) {
-      const candidate = toNum(filter[key]);
-      if (Number.isFinite(candidate) && candidate > 0) {
-        return candidate;
-      }
-    }
-  }
-  return 0;
-}
-
-function hasLargeHint(typeText, sizeText) {
-  const type = toLowerSafe(typeText);
-  const size = toLowerSafe(sizeText);
-  return type.includes('large') || size.includes('large') || type.includes('xl');
-}
-
-function inferRbcFromVolume(volumeL) {
-  if (!Number.isFinite(volumeL) || volumeL <= 0) {
-    return 0;
-  }
-  if (volumeL >= 3.9) {
-    return RBC_TABLE.CANISTER_LARGE;
-  }
-  if (volumeL >= 1.8) {
-    return RBC_TABLE.CANISTER_MID;
-  }
-  if (volumeL >= 1.0) {
-    return RBC_TABLE.HOB_LARGE_BASKET;
-  }
-  if (volumeL >= 0.8) {
-    return RBC_TABLE.SPONGE_LARGE;
-  }
-  if (volumeL >= 0.3) {
-    return RBC_TABLE.SPONGE_SMALL;
-  }
-  return RBC_TABLE.HOB_SMALL_CARTRIDGE;
-}
-
-function inferRbcByType(filter) {
-  const rawType =
-    normalizeType(filter?.archetype)
-    ?? normalizeType(filter?.resolvedType)
-    ?? normalizeType(filter?.kind)
-    ?? normalizeType(filter?.type)
-    ?? normalizeType(filter?.filterType)
-    ?? normalizeType(filter?.sourceType);
-
-  const type = toLowerSafe(rawType);
-  const size = filter?.size;
-  const volume = parseMediaVolume(filter);
-  const hasBasket = Boolean(filter?.hasBasket || filter?.basket || filter?.mediaBasket);
-
-  if (type.includes('canister')) {
-    return hasLargeHint(rawType, size) || volume >= 3.9
-      ? RBC_TABLE.CANISTER_LARGE
-      : RBC_TABLE.CANISTER_MID;
-  }
-  if (type.includes('sponge')) {
-    return hasLargeHint(rawType, size) || volume >= 0.8
-      ? RBC_TABLE.SPONGE_LARGE
-      : RBC_TABLE.SPONGE_SMALL;
-  }
-  if (type.includes('hob') || type.includes('hang')) {
-    if (hasBasket || type.includes('basket') || hasLargeHint(rawType, size) || volume >= 1.0) {
-      return RBC_TABLE.HOB_LARGE_BASKET;
-    }
-    if (volume > 0) {
-      return volume >= 1.0 ? RBC_TABLE.HOB_LARGE_BASKET : RBC_TABLE.HOB_SMALL_CARTRIDGE;
-    }
-    return RBC_TABLE.HOB_SMALL_CARTRIDGE;
-  }
-  if (type.includes('ugf') || type.includes('undergravel')) {
-    return 0.35;
-  }
-  if (type.includes('internal') || type.includes('powerhead')) {
-    return 0.3;
-  }
-  if (volume > 0) {
-    return inferRbcFromVolume(volume);
-  }
-  if (!type) {
-    return volume > 0 ? inferRbcFromVolume(volume) : DEFAULT_RBC;
-  }
-  return DEFAULT_RBC;
-}
-
-export function rbcForFilter(filter) {
-  if (!filter) {
-    return 0;
-  }
-  const direct = toNum(filter?.rbc ?? filter?.RBC);
-  if (Number.isFinite(direct) && direct > 0) {
-    return clamp(direct, 0, MAX_SINGLE_RBC);
-  }
-  const volume = parseMediaVolume(filter);
-  const inferred = inferRbcByType({ ...filter, mediaVolumeL: volume });
-  return clamp(inferred || DEFAULT_RBC, 0, MAX_SINGLE_RBC);
-}
+const FLOW_KEYS = ['rated_gph', 'ratedGph', 'gph', 'gphRated', 'flow', 'flowGPH'];
+const TYPE_KEYS = ['type', 'kind', 'filterType', 'resolvedType'];
 
 function parseFlow(filter) {
   for (const key of FLOW_KEYS) {
-    if (key in (filter ?? {})) {
-      const candidate = toNum(filter[key]);
+    if (filter && key in filter) {
+      const candidate = toNum(filter[key], NaN);
       if (Number.isFinite(candidate) && candidate > 0) {
-        return candidate;
+        return Math.min(candidate, MAX_DEVICE_GPH);
       }
     }
   }
   return 0;
 }
 
+// Upper-case letters only, e.g. "Hang-on-back" -> "HANGONBACK".
+export function filterTypeKey(filter) {
+  const source = typeof filter === 'string' ? { type: filter } : filter ?? {};
+  for (const key of TYPE_KEYS) {
+    const value = source[key];
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim().toUpperCase().replace(/[^A-Z]/g, '');
+    }
+  }
+  return '';
+}
+
+export function filterRole(filter) {
+  return CIRCULATION_ONLY_TYPES.has(filterTypeKey(filter)) ? FILTER_ROLES.CIRCULATION : FILTER_ROLES.BIOLOGICAL;
+}
+
 export function normalizeFilter(filter) {
-  if (!filter) {
+  if (!filter || typeof filter !== 'object') {
     return null;
   }
-  const id = typeof filter?.id === 'string' && filter.id ? filter.id : null;
-  const source = typeof filter?.source === 'string' && filter.source ? filter.source : null;
-  const label = typeof filter?.label === 'string' && filter.label ? filter.label : null;
-  const type =
-    normalizeType(filter?.archetype)
-    ?? normalizeType(filter?.resolvedType)
-    ?? normalizeType(filter?.kind)
-    ?? normalizeType(filter?.type)
-    ?? normalizeType(filter?.filterType)
-    ?? null;
-  const mediaVolumeL = parseMediaVolume(filter);
-  const rbc = rbcForFilter({ ...filter, mediaVolumeL });
   const ratedGph = parseFlow(filter);
   return {
-    id,
-    source,
-    label,
-    type,
-    mediaVolumeL,
+    id: typeof filter.id === 'string' && filter.id ? filter.id : null,
+    source: typeof filter.source === 'string' && filter.source ? filter.source : null,
+    label: typeof filter.label === 'string' && filter.label ? filter.label : null,
+    type: filterTypeKey(filter) || null,
+    role: filterRole(filter),
     ratedGph,
-    rbc,
+    rated_gph: ratedGph,
   };
 }
 
+// Devices without a positive flow are dropped: they cannot be assessed.
 export function normalizeFilters(filters) {
-  if (!Array.isArray(filters) || filters.length === 0) {
+  if (!Array.isArray(filters)) {
     return [];
   }
-  const normalized = [];
-  for (const filter of filters) {
-    const entry = normalizeFilter(filter);
-    if (!entry) {
-      continue;
+  return filters.map(normalizeFilter).filter((entry) => entry && entry.ratedGph > 0);
+}
+
+export function getTotalGPH(filters, { normalized = false } = {}) {
+  const list = normalized && Array.isArray(filters) ? filters : normalizeFilters(filters);
+  const totals = { rated: 0, biological: 0, circulation: 0 };
+  for (const entry of list) {
+    const gph = entry.ratedGph > 0 ? entry.ratedGph : 0;
+    totals.rated += gph;
+    if (entry.role === FILTER_ROLES.CIRCULATION) {
+      totals.circulation += gph;
+    } else {
+      totals.biological += gph;
     }
-    if (entry.rbc <= 0 && entry.ratedGph <= 0) {
-      continue;
-    }
-    normalized.push(entry);
   }
-  return normalized;
+  return totals;
 }
 
-function diminishingWeight(index) {
-  if (index <= 0) {
-    return 1;
-  }
-  return 1 / DIMINISHING_WEIGHT_BASE ** index;
-}
-
-export function describeFilterCapacity(filters, { cap = MAX_CAPACITY_BONUS, normalized = false } = {}) {
-  const list = normalized ? filters.slice() : normalizeFilters(filters);
-  if (!list.length) {
-    return { total: 0, breakdown: [] };
-  }
-  const sorted = [...list].sort((a, b) => {
-    if (b.rbc === a.rbc) {
-      return (b.ratedGph || 0) - (a.ratedGph || 0);
-    }
-    return b.rbc - a.rbc;
-  });
-  const contributions = [];
-  let rawTotal = 0;
-  sorted.forEach((entry, index) => {
-    const weight = diminishingWeight(index);
-    const weighted = entry.rbc * weight;
-    rawTotal += weighted;
-    contributions.push({ ...entry, weight, weighted });
-  });
-  const capped = clamp(rawTotal, 0, cap);
-  const scale = rawTotal > 0 ? capped / rawTotal : 1;
-  const breakdown = contributions.map((entry) => ({
-    id: entry.id,
-    source: entry.source,
-    type: entry.type,
-    label: entry.label,
-    mediaVolumeL: entry.mediaVolumeL,
-    ratedGph: entry.ratedGph,
-    rbc: entry.rbc,
-    weight: entry.weight,
-    weighted: entry.weighted,
-    applied: entry.weighted * scale,
-  }));
-  return { total: capped, breakdown };
-}
-
-export function combinedRbc(filters, options = {}) {
-  const { cap = MAX_CAPACITY_BONUS, normalized = false, includeBreakdown = false } = options;
-  const details = describeFilterCapacity(filters, { cap, normalized });
-  return includeBreakdown ? details : details.total;
-}
-
-export function effectiveCapacity(baseCapacity, filters, options = {}) {
-  const base = Math.max(0, toNum(baseCapacity));
-  const { cap = MAX_CAPACITY_BONUS, normalized = false, includeBreakdown = false } = options;
-  const details = describeFilterCapacity(filters, { cap, normalized });
-  const effective = base * (1 + details.total);
-  if (includeBreakdown) {
-    return {
-      base,
-      effective,
-      modifier: details.total,
-      filters: details.breakdown,
-    };
-  }
-  return effective;
-}
-
+// Tank volumes per hour; 0 when either value is missing or not positive.
 export function turnoverX(totalGph, gallons) {
-  const flow = Math.max(0, toNum(totalGph));
-  const volume = Math.max(1, toNum(gallons));
+  const flow = toNum(totalGph);
+  const volume = toNum(gallons);
+  if (!(flow > 0) || !(volume > 0)) {
+    return 0;
+  }
   return flow / volume;
 }
 
-export const computeTurnover = turnoverX; // Backwards-compatible alias
+export const computeTurnover = turnoverX;
 
-export function getTotalGPH(filters, { normalized = false } = {}) {
-  const list = normalized ? filters.slice() : normalizeFilters(filters);
-  if (!list.length) {
-    return { rated: 0, actual: 0 };
-  }
-  return list.reduce(
-    (acc, entry) => {
-      const rated = entry.ratedGph > 0 ? entry.ratedGph : 0;
-      acc.rated += rated;
-      acc.actual += rated;
-      return acc;
-    },
-    { rated: 0, actual: 0 },
-  );
-}
-
+// Bioload percentage: livestock load ÷ capacity. Filtration is deliberately not an input.
 export function computePercent(baseBioload, capacity) {
   const load = Math.max(0, toNum(baseBioload));
-  const cap = Math.max(1, toNum(capacity));
-  const percent = (load / cap) * 100;
-  return clamp(percent, 0, 2000);
+  const cap = toNum(capacity);
+  if (!(cap > 0)) {
+    return 0;
+  }
+  return clamp((load / cap) * 100, 0, 2000);
 }
 
-export function stockingPercent(baseBioload, capacity) {
-  return computePercent(baseBioload, capacity);
+/**
+ * Filtration adequacy for a tank and stock. Never changes the bioload percentage.
+ *
+ * @param {object} input
+ * @param {Array} input.filters  devices as entered (any shape normalizeFilter accepts)
+ * @param {number} input.gallons nominal tank gallons
+ * @param {number[]|null} input.targetRange turnover target [low, high] for the current stock
+ * @param {boolean} input.hasLowFlowSpecies stock includes a species that needs gentle flow
+ * @param {boolean} input.hasStock at least one species is planned
+ */
+export function assessFiltration({
+  filters = [],
+  gallons = 0,
+  targetRange = null,
+  hasLowFlowSpecies = false,
+  hasStock = false,
+} = {}) {
+  const list = normalizeFilters(filters);
+  const totals = getTotalGPH(list, { normalized: true });
+  const biologicalTurnover = turnoverX(totals.biological, gallons);
+  const totalTurnover = turnoverX(totals.rated, gallons);
+  const biologicalCount = list.filter((entry) => entry.role === FILTER_ROLES.BIOLOGICAL).length;
+  const circulationCount = list.length - biologicalCount;
+  const hasSponge = list.some((entry) => entry.role === FILTER_ROLES.BIOLOGICAL && entry.type?.startsWith('SPONGE'));
+  const targetLow = Array.isArray(targetRange) && Number.isFinite(targetRange[0]) ? targetRange[0] : null;
+
+  let level;
+  if (list.length === 0) {
+    level = FILTRATION_LEVELS.NONE;
+  } else if (biologicalCount === 0) {
+    level = FILTRATION_LEVELS.CIRCULATION_ONLY;
+  } else if (biologicalTurnover < MIN_BIOLOGICAL_TURNOVER) {
+    level = FILTRATION_LEVELS.VERY_LOW;
+  } else if (targetLow !== null && biologicalTurnover < targetLow) {
+    level = FILTRATION_LEVELS.LOW;
+  } else {
+    level = FILTRATION_LEVELS.ADEQUATE;
+  }
+
+  const highFlowForStock = hasLowFlowSpecies && totalTurnover > LOW_FLOW_SPECIES_MAX_TURNOVER;
+
+  return {
+    level,
+    gallons: Math.max(0, toNum(gallons)),
+    filters: list,
+    totalGph: totals.rated,
+    biologicalGph: totals.biological,
+    circulationGph: totals.circulation,
+    biologicalTurnover,
+    totalTurnover,
+    biologicalCount,
+    circulationCount,
+    hasSponge,
+    targetRange: Array.isArray(targetRange) ? targetRange.slice(0, 2) : null,
+    highFlowForStock,
+    hasStock: Boolean(hasStock),
+    // Nothing here scales the bioload percentage.
+    capacityAdjustment: 0,
+  };
 }
 
 export function toTurnoverLabel(totalGph, gallons) {
   const ratio = turnoverX(totalGph, gallons);
-  if (!Number.isFinite(ratio) || ratio <= 0) {
-    return '0.0';
-  }
-  return ratio.toFixed(1);
+  return ratio > 0 ? ratio.toFixed(1) : '0.0';
 }
