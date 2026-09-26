@@ -2,7 +2,9 @@
 
 Date: 2026-09-26 · Branch: `claude/species-predation-audit-p15sj0` · Status: **audit only — no data,
 engine, severity or precedence changes.** `species.v2.json` is untouched. · **Revision 1** (same day):
-source-quality correction after direct external review of the key source pages (see §0).
+source-quality correction after direct external review of the key source pages (see §0). ·
+**Revision 2 (final)**: exact reviewed pages recorded for every direct source, plus implementation
+readiness (§11) and final status (§12).
 
 Inputs: `_internal/docs/species-predation-data-cleanup.md` (starting inventory),
 `data/stocking-advisor/species.v2.json`, `data/stocking-advisor/SPECIES_DATA_POLICY.md`,
@@ -33,6 +35,17 @@ when a directly read page names the species.** Group-level statements ("dwarf ci
 | 8 | Table used A–F only; 15 "well supported" | Re-bucketed into the five evidence tiers (§6). "Well supported" is no longer used for group-level or extract-only evidence. |
 | 9 | Warning preview | Re-run with the revised proposals, plus two sensitivity runs (§7). |
 
+**Revision 2 (final documentation cleanup).** No conclusion was reversed. Presumed and missing source
+pages were replaced with the exact pages reviewed:
+
+| Item | Revision 1 | Revision 2 |
+|---|---|---|
+| Assassin Snail, larger snails / Nerites (R8) | Practical Fishkeeping, URL not supplied | "Natural born killers": https://www.practicalfishkeeping.co.uk/features/natural-born-killers/ |
+| Assassin Snail, shrimplets (R9) | Practical Fishkeeping, URL not supplied | "How do I deal with aquarium snails?": https://www.practicalfishkeeping.co.uk/fishkeeping-answers/how-do-i-deal-with-aquarium-snails/. Establishes shrimplet predation only, not adult shrimp. |
+| Neon Tetra (R4) | SF URL to be confirmed | Confirmed: https://www.seriouslyfish.com/species/paracheirodon-innesi/. Natural diet only. Adult Cherry Shrimp stays **unsupported**, juvenile stays **plausible / general**. |
+| Blue Ram (R7) | Presumed record pages | Confirmed: SF https://www.seriouslyfish.com/species/mikrogeophagus-ramirezi/ and ACO https://www.aquariumcoop.com/blogs/aquarium/ram-cichlid-care-guide. Neither establishes all-size prey. Stays **group-level only + manual review**. |
+| General shrimp-community guidance (R5) | Presumed ACO tank-mates page (S1) | **Corrected**: ACO "Cherry Shrimp Care Guide", https://www.aquariumcoop.com/blogs/aquarium/cherry-shrimp-care. General evidence only, never species-specific Neon evidence. The dwarf-cichlid caution comes from S1 / S2 (search extracts), not R5. |
+
 ---
 
 ## 1. Executive summary (revised)
@@ -61,9 +74,12 @@ when a directly read page names the species.** Group-level statements ("dwarf ci
   size-aware rule exists.
 - The binary `shrimp_safe` / `shrimp_risk` vocabulary is too coarse (§8).
 - **Source access:** this environment still cannot open the source hosts. Items marked
-  `reviewer-reported` were read directly by the project owner outside this environment. Their exact
-  wording and, where noted, their URLs still need to be copied into `husbandry_review` when
-  implementing. No quotation in this report is verbatim.
+  `reviewer-reported` (R1–R9, §4.3) were read directly by the project owner outside this
+  environment. Every one now names its exact page URL. Items marked S (§4.2) are search-level
+  evidence only. Exact sentences still need to be copied into `husbandry_review` when implementing.
+  No quotation in this report is verbatim.
+- **Implementation readiness:** only **Cardinal Tetra, Cherry Barb and Molly** are ready for the first
+  production data patch (§11).
 
 ---
 
@@ -184,7 +200,7 @@ statement to that exact page, and **`search-summary`** when the summary merges s
 are paraphrases. **Nothing below is a verbatim quote.** Where a summary appeared to extrapolate (e.g. it
 applied a Green Neon statement to Neon Tetra), that is flagged.
 
-### 4.2 Evidence log (by source) — search-level evidence from the original audit; see §4.3 for direct reviews that supersede rows S1, S3, S8, S13, S15, S17, S18
+### 4.2 Evidence log (by source) — search-level evidence from the original audit; see §4.3 for direct reviews that supersede rows S3, S8, S13, S15, S17 (shrimp part), S18 (S1 is a different page from R5 and stays search-extract)
 
 | ID | Source (tier) | URL | Claim as extracted (paraphrase) | Level | Species it bears on |
 |---|---|---|---|---|---|
@@ -227,7 +243,11 @@ useful for aquarium-context predation on dwarf shrimp.
 
 ---
 
-### 4.3 Direct source reviews (reviewer-reported, Revision 1)
+### 4.3 Direct source reviews (reviewer-reported, Revisions 1–2)
+
+Revision 2 (final): every R-row now names the exact page that was reviewed. No presumed or missing
+URLs remain. The R rows are **direct page reviews**, and S rows (§4.2) are **search-level evidence**. An
+S row never outranks an R row for the same page.
 
 These pages were read directly by the project owner outside this environment (2026-09-26). They are
 logged at the `reviewer-reported` verification level and **take precedence over the search extracts
@@ -238,12 +258,13 @@ in §4.2** for the same page. Wording below is the reviewer's paraphrase, not a 
 | R1 | Aquarium Co-Op — Cardinal Tetra care guide (T2) | https://www.aquariumcoop.com/blogs/aquarium/cardinal-tetra | Cardinal Tetras generally leave adult dwarf shrimp alone when cover is available, but opportunistically eat baby shrimp. | S3 | Cardinal Tetra |
 | R2 | Aquarium Co-Op — Cherry Barb care guide (T2) | https://www.aquariumcoop.com/blogs/aquarium/cherry-barb | Larger Amano shrimp generally do okay with Cherry Barbs; adult Cherry Shrimp may be pursued/eaten. | S8 | Cherry Barb |
 | R3 | Aquarium Co-Op — Molly care guide (T2) | https://www.aquariumcoop.com/blogs/aquarium/molly-fish-care | Larger mollies will most likely eat smaller animals such as Cherry Shrimp. | S13 | Molly |
-| R4 | Seriously Fish — *Paracheirodon innesi* (T1) | https://www.seriouslyfish.com/species/paracheirodon-innesi/ (canonical SF path; **URL to be confirmed by reviewer**) | Small crustaceans are part of the Neon Tetra's natural diet. (Natural diet, not an aquarium tankmate statement.) | — | Neon Tetra |
-| R5 | Aquarium Co-Op — Cherry Shrimp guidance (T2) | https://www.aquariumcoop.com/blogs/aquarium/cherry-shrimp-tankmates (presumed = S1; **reviewer to confirm which Cherry Shrimp page**) | Almost all fish may eat baby shrimp; small peaceful fish are discussed as possible tank mates for adult shrimp; caution with dwarf cichlids. | S1 (in part) | Neon (general), dwarf cichlids (group) |
+| R4 | Seriously Fish — *Paracheirodon innesi* — Neon Tetra (T1) | https://www.seriouslyfish.com/species/paracheirodon-innesi/ (page confirmed) | Small crustaceans occur in the natural diet. This is a natural-diet statement: it does **not** establish adult Cherry Shrimp as prey, and on its own it does not confirm juvenile-shrimp risk. | — | Neon Tetra |
+| R5 | Aquarium Co-Op — Cherry Shrimp Care Guide (T2) | https://www.aquariumcoop.com/blogs/aquarium/cherry-shrimp-care (page confirmed; **not** the tank-mates page S1) | General shrimp-community guidance: almost all fish may eat baby shrimp; small peaceful fish can sometimes coexist with adult shrimp; shrimp cover matters; adult compatibility and shrimplet survival are different questions. **General evidence only. Not species-specific Neon evidence.** | — (distinct page from S1; S1 stays search-extract) | General (all small fish) |
 | R6 | Seriously Fish — *Carinotetraodon travancoricus* (T1) | https://www.seriouslyfish.com/species/carinotetraodon-travancoricus/ | Small snails should be fed regularly; there are reports of cohabitation with freshwater shrimp with varying degrees of success. | S15 | Pea Puffer |
-| R7 | Blue Ram care pages (T1/T2) | presumed the pages already cited in the record: https://www.seriouslyfish.com/species/mikrogeophagus-ramirezi/ · https://www.aquariumcoop.com/blogs/aquarium/ram-cichlid-care-guide (**reviewer to confirm**) | Do **not** explicitly state that adult shrimp, or shrimp of all sizes, are prey. | — | Blue Ram |
-| R8 | Practical Fishkeeping — Assassin Snail article (T2) | **URL not supplied — record before implementation** | Assassin Snails usually target snails of similar size or smaller and generally ignore Nerites and other larger snail species. | S18 (attribution corrected: this statement is Practical Fishkeeping's, not The Shrimp Farm's) | Assassin Snail |
-| R9 | Practical Fishkeeping — second article (T2) | **URL not supplied — record before implementation** | Assassin Snails have been known to eat shrimplets. | S17 (shrimp part) | Assassin Snail |
+| R7a | Seriously Fish — *Mikrogeophagus ramirezi* (T1) | https://www.seriouslyfish.com/species/mikrogeophagus-ramirezi/ (page confirmed) | Does not establish "Shrimp (all sizes)" as a documented prey relationship. | — | Blue Ram |
+| R7b | Aquarium Co-Op — Ram Cichlid Care Guide (T2) | https://www.aquariumcoop.com/blogs/aquarium/ram-cichlid-care-guide (page confirmed) | Does not establish "Shrimp (all sizes)" as a documented prey relationship. | — | Blue Ram |
+| R8 | Practical Fishkeeping — "Natural born killers" (T2) | https://www.practicalfishkeeping.co.uk/features/natural-born-killers/ (page confirmed) | Assassin Snails generally target snails of similar size or smaller; Nerites and other larger snails are generally ignored. General snail predation remains supported. The blanket Assassin Snail → Nerite red is too broad. | S18 (attribution corrected: this statement is Practical Fishkeeping's, not The Shrimp Farm's) | Assassin Snail |
+| R9 | Practical Fishkeeping — "How do I deal with aquarium snails?" (T2) | https://www.practicalfishkeeping.co.uk/fishkeeping-answers/how-do-i-deal-with-aquarium-snails/ (page confirmed) | Assassin Snails have been known to eat shrimplets, so `shrimp_safe` is too absolute. Does **not** establish adult-shrimp predation. | S17 (shrimp part) | Assassin Snail |
 
 Note on S17: the Aquarium Co-Op search extract said that groups of Assassin Snails can take down
 larger snails such as mystery and nerite snails. That page has not been read directly. It conflicts
@@ -265,15 +286,15 @@ species-specific scope** (all sizes vs juvenile).
 
 | # | Predator → prey (stored entry) | Class | Key evidence | Tier |
 |---|---|---|---|---|
-| 1 | Neon → Cherry Shrimp as adult-risk ("Shrimp (cherry)") | **E** | R4 is natural diet only; R5 is general. No source names Neon as a predator of adult shrimp. | Unsupported |
-| 2 | Neon → shrimp (juvenile) (proposed) | B (general only) | R5 "almost all fish eat baby shrimp"; S7 (T4) and S6 (congener) are extracts only. | Plausible, not species-specific |
+| 1 | Neon → Cherry Shrimp as adult-risk ("Shrimp (cherry)") | **E** | R4 (SF Neon page) is natural diet only; R5 (ACO Cherry Shrimp Care Guide) is general. No source names Neon as a predator of adult shrimp. | Unsupported |
+| 2 | Neon → shrimp (juvenile) (proposed) | B (general only) | R5 "almost all fish may eat baby shrimp" (general, not Neon-specific); R4 natural diet includes small crustaceans; S7 (T4) and S6 (congener) are extracts only. | Plausible, not species-specific |
 | 3 | Cardinal → adult Cherry Shrimp | **E (directly negated)** | R1: generally leaves adult dwarf shrimp alone. | Confirmed (direct) |
 | 4 | Cardinal → shrimp (juvenile) | **B** | R1: opportunistically eats baby shrimp. | Confirmed (direct) |
 | 5 | Chili Rasbora → shrimp (juvenile) | B | S5 names the species (extract). | Manual review (species-named extract) |
 | 6 | Harlequin → shrimp (juvenile) | B | S2 "rasboras" (group). | Group-level |
 | 7 | Rummynose → shrimp (juvenile) | B | S4 names the species (extract). | Manual review (species-named extract) |
 | 8 | Zebra Danio → shrimp (juvenile) | B (+ harassment) | S1 names zebra danios (extract); S2 "small danios". | Manual review (species-named extract) |
-| 9 | Blue Ram → shrimp (all sizes) | **F (scope uncertain)** | R7: species pages silent on adult/all-size prey; S1/S2/R5 dwarf cichlids (group). | Group-level |
+| 9 | Blue Ram → shrimp (all sizes) | **F (scope uncertain)** | R7a/R7b (SF and ACO Blue Ram pages): neither establishes all-size prey. S1/S2 "dwarf cichlids" (group, extracts). | Group-level |
 | 10 | Bolivian Ram → shrimp (all sizes) | F (scope uncertain) | Group only; the species-named statement was forum-only. | Group-level |
 | 11 | Cockatoo Cichlid → shrimp (all sizes) | F (scope uncertain) | S11 is genus-level *Apistogramma* (extract); group. | Group-level |
 | 12 | Angelfish → shrimp (all sizes) | A | S12 and S2 name angelfish (extracts). | Manual review (species-named extract) |
@@ -317,7 +338,7 @@ for snail predators), simulated in §7. Verification: `RR` = reviewer-reported d
 | 21, 22 | Cherry Barb | — | Shrimp (cherry), Shrimp (amano) | R2 | https://www.aquariumcoop.com/blogs/aquarium/cherry-barb | T2 / RR | C (cherry adults); Amano negated | **yes (Cherry)**; **no (Amano)** | yes | no | (optional) add shrimp_risk | **remove "Shrimp (amano)"**; keep "Shrimp (cherry)" | Cherry red → red; **Amano red → none** | medium-high | Cherry evidence is not generalised to Ghost / Bamboo (no warning for those, unchanged). |
 | 28 | Molly | shrimp_risk, snail_safe | Shrimp (juvenile) | R3 | https://www.aquariumcoop.com/blogs/aquarium/molly-fish-care | T2 / RR | C (larger mollies) | **yes (Cherry, larger mollies)** | yes | no | none | **add "Shrimp (cherry)"**, keep "Shrimp (juvenile)" | Cherry **amber → red**; others amber | medium | Source is specific to *larger* mollies. The schema cannot express size, so red applies to every planned molly. |
 | 16 | Pea Puffer (snails) | snail_risk, predatory | Snails | R6 | https://www.seriouslyfish.com/species/carinotetraodon-travancoricus/ | T1 / RR | A (small snails) | — | — | **yes** | none | none | Nerite red → red | high (general); prey size open | R6 speaks of *small* snails. Whether large Nerites are really at risk is not settled. |
-| 33, 35 | Assassin Snail | shrimp_safe, snail_risk, predatory, snail_control | Snails | R8, R9 | URLs **not supplied** (Practical Fishkeeping) | T2 / RR | A (small snails); B (shrimplets) | no | **yes** | **yes (similar size or smaller)** | **remove shrimp_safe** (too absolute) | keep "Snails"; *optional* add "Shrimp (juvenile)" | snails red → red; Cherry **none → amber** if the optional entry is added | medium-high (pending URLs) | Nerite: see 6.5 (#34). |
+| 33, 35 | Assassin Snail | shrimp_safe, snail_risk, predatory, snail_control | Snails | R8, R9 | https://www.practicalfishkeeping.co.uk/features/natural-born-killers/ · https://www.practicalfishkeeping.co.uk/fishkeeping-answers/how-do-i-deal-with-aquarium-snails/ | T2 / RR | A (small snails); B (shrimplets) | no | **yes** | **yes (similar size or smaller)** | **remove shrimp_safe** (too absolute) | keep "Snails"; *optional* add "Shrimp (juvenile)" | snails red → red; Cherry **none → amber** if the optional entry is added | medium-high | R9 does not establish adult-shrimp predation. Nerite: see 6.5 (#34). |
 
 ### 6.2 SUPPORTED ONLY BY GROUP / GENERAL HUSBANDRY EVIDENCE (7)
 
@@ -326,7 +347,7 @@ No data change is proposed for any of these. All stay as manual-review items. "S
 
 | # | Species | Current tags | Current predationRisks | Strongest source (group) | URL | Tier / verif. | Class | Adult? | Juvenile? | Proposed change | Outcome now → proposed | Confidence | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 9 | Blue Ram | shrimp_risk, snail_safe | Shrimp (all sizes) | R5 / S1 / S2 "dwarf cichlids" | https://www.practicalfishkeeping.co.uk/features/what-can-i-keep-with-shrimp/ | T2 / SE+RR | F (scope) | uncertain | yes (general) | none now | red → red | low (for "all sizes"); meaningful risk: medium | R7: species pages don't state adult prey. |
+| 9 | Blue Ram | shrimp_risk, snail_safe | Shrimp (all sizes) | S1 / S2 "dwarf cichlids" (group); species pages R7a/R7b silent | https://www.practicalfishkeeping.co.uk/features/what-can-i-keep-with-shrimp/ | T2 / SE (group) + RR (species pages: no support) | F (scope) | uncertain | yes (general) | none now | red → red | low (for "all sizes"); meaningful risk: medium | GROUP-LEVEL ONLY + MANUAL REVIEW. SF and ACO Blue Ram pages (R7a, R7b) do not establish all-size prey. |
 | 10 | Bolivian Ram | shrimp_risk, snail_safe | Shrimp (all sizes) | same | same | T2 / SE | F (scope) | uncertain | yes (general) | none now | red → red | low (scope) | Species-named evidence was forum-only. |
 | 11 | Cockatoo Cichlid | shrimp_risk, snail_safe | Shrimp (all sizes) | S11 (*Apistogramma*, genus) | https://www.aquariumcoop.com/blogs/aquarium/apistogramma-dwarf-cichlid | T2 / SE | F (scope) | uncertain (genus: "hunt dwarf shrimp") | yes | none now | red → red | low–medium | Closest to species-level of this group. A direct read of S11 could promote it. |
 | 13 | Kribensis | shrimp_risk, snail_safe | Shrimp (all sizes) | S2 "cichlids" | as Blue Ram | T2 / SE | F (scope) | uncertain | yes (general) | none now | red → red | low | SF species page silent (S25). |
@@ -340,7 +361,7 @@ Rests only on the general statement that almost all fish eat baby shrimp (R5), o
 
 | # | Species | Current tags | Current predationRisks | Basis | Class | Adult? | Juvenile? | Proposed change | Outcome now → proposed | Confidence | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| 1→2 | **Neon Tetra** | shrimp_safe | Shrimp (cherry) | R4 (natural diet), R5 (general) | E for adults; B general | **unsupported** | plausible | "Shrimp (cherry)" → **"Shrimp (juvenile)" — PROVISIONAL** pending a Neon-specific husbandry source; `shrimp_safe` correct for adults but misleading | **red → amber** | low–medium | The current red is overstated whatever the final juvenile decision. |
+| 1→2 | **Neon Tetra** | shrimp_safe | Shrimp (cherry) | R4 (SF Neon page, natural diet), R5 (ACO Cherry Shrimp Care Guide, general) | E for adults; B general | **unsupported** | plausible | "Shrimp (cherry)" → **"Shrimp (juvenile)" — PROVISIONAL** pending a Neon-specific husbandry source; `shrimp_safe` correct for adults but misleading | **red → amber** | low–medium | The current red is overstated whatever the final juvenile decision. |
 | 18 | Betta (Female) | shrimp_risk | Shrimp (cherry), Juvenile fry | Male-betta evidence extrapolated | C (extrapolated) | uncertain | yes (general) | none | red → red | low–medium | No source distinguishes sex. |
 | 26 | Keyhole Cichlid | snail_safe | Shrimp (juvenile) | R5 general only | B general | uncertain | plausible | none now | amber → amber | low | |
 | 29 | Platy | shrimp_risk, snail_safe | Shrimp (juvenile) | R5 general only | B general | uncertain | plausible | none now | amber → amber | low | |
@@ -351,7 +372,7 @@ Rests only on the general statement that almost all fish eat baby shrimp (R5), o
 
 | # | Relationship | Current effect | Finding | Proposed |
 |---|---|---|---|---|
-| 1 | Neon Tetra → adult Cherry Shrimp (the adult-level red produced by "Shrimp (cherry)") | red | No reviewed source supports it. R4 is natural diet (small crustaceans). R5 discusses small peaceful fish as possible adult-shrimp tank mates. | Remove the adult-level claim (via the provisional juvenile replacement in 6.3). |
+| 1 | Neon Tetra → adult Cherry Shrimp (the adult-level red produced by "Shrimp (cherry)") | red | No reviewed source supports it. R4 (SF Neon page) is natural diet only (small crustaceans). R5 (ACO Cherry Shrimp Care Guide) says small peaceful fish can sometimes coexist with adult shrimp. | Remove the adult-level claim (via the provisional juvenile replacement in 6.3). |
 
 (Betta → Amano and Cherry Barb → Amano have no supporting evidence either. Betta → Amano has no stored
 claim and produces no warning, which is correct. Cherry Barb → Amano is directly negated, see 6.1.)
@@ -470,16 +491,17 @@ Items 1–3 below are **already directly reviewed** (R1–R3). They only need ex
 
 1. **Cardinal Tetra, Cherry Barb, Molly.** Copy the exact sentences from R1–R3 into `husbandry_review`
    (`verification: reviewer-reported` or `direct`).
-2. **Assassin Snail.** Record the two Practical Fishkeeping URLs (R8, R9): **not yet supplied**.
-   Record the S17 (Aquarium Co-Op) vs R8 disagreement.
+2. **Assassin Snail.** Pages identified (R8 "Natural born killers", R9 "How do I deal with aquarium
+   snails?"). Record the S17 (Aquarium Co-Op, search extract) vs R8 disagreement. Implementation is
+   blocked on the size-aware modelling decision (§11), not on sources.
 3. **Neon Tetra.** Find a **Neon-specific husbandry source** on shrimp or shrimplets. Until then the
-   juvenile entry is provisional. Confirm the R4 URL.
+   juvenile entry is provisional. (R4 page confirmed: natural diet only.)
 4. **Pea Puffer shrimp.** Read further sources (Aquarium Co-Op pea puffer guide, The Shrimp Farm pea
    puffer page S16, Practical Fishkeeping dwarf puffer article) to decide all-size vs juvenile vs
    uncertain. Record the R6 caveat either way.
 5. **Dwarf cichlids and Tiger Barb** (Blue Ram, Bolivian Ram, Cockatoo, Kribensis, Tiger Barb). A
    species-named source is needed before "all sizes" can be called confirmed. Cockatoo (S11,
-   genus-level) is the closest. Confirm the R7 URLs.
+   genus-level) is the closest. (Blue Ram pages R7a/R7b confirmed: no all-size statement.)
 6. **Species-named extracts** (§6.5, 11 items). Read each page directly to promote it to confirmed.
 7. **Pearl Gourami, Betta (Female), Keyhole, Platy, Swordtail, Upside-Down Catfish, Harlequin.**
    Need species-level sources, or the §8.5 policy decision.
@@ -492,8 +514,9 @@ Practical Fishkeeping, Fishkeeper UK, AquaInfo.
 
 ## 10. Recommended implementation order (for a later phase — not started)
 
-1. **Record exact wording and URLs** for R1–R3, R8, R9 (§9 items 1–2).
-2. **Directly confirmed, warning-visible corrections:**
+1. **Record exact wording** for R1–R3 (URLs are in §4.3).
+2. **First production data patch (new branch, after this audit is merged): directly confirmed,
+   warning-visible corrections:**
    - Cardinal "Shrimp (cherry)" → "Shrimp (juvenile)".
    - Cherry Barb: drop "Shrimp (amano)".
    - Molly: add "Shrimp (cherry)".
@@ -510,3 +533,53 @@ Practical Fishkeeping, Fishkeeper UK, AquaInfo.
    (§8.5); juvenile warnings against non-breeding prey (§8.4); size-aware predation (§8.2, §8.8).
 7. **Pea Puffer and dwarf cichlid / Tiger Barb "all sizes"**: only after §9 items 4–5.
 8. **Tag hygiene** (13 contradictions) after step 6, then vocabulary redesign as its own phase.
+
+---
+
+## 11. Implementation readiness
+
+### READY FOR FIRST PRODUCTION DATA PATCH
+
+| Species | Direct source | Proposed data change | Warning change (current engine) |
+|---|---|---|---|
+| **Cardinal Tetra** | R1, ACO Cardinal Tetra guide: https://www.aquariumcoop.com/blogs/aquarium/cardinal-tetra. Adult dwarf shrimp generally left alone; baby shrimp may be eaten. | "Shrimp (cherry)" → "Shrimp (juvenile)" | Cardinal + Cherry: red → amber. Side effect: new amber vs Amano / Ghost / Bamboo (§7.2, §8.4). |
+| **Cherry Barb** | R2, ACO Cherry Barb guide: https://www.aquariumcoop.com/blogs/aquarium/cherry-barb. Adult Cherry Shrimp may be pursued / eaten; larger Amano generally do okay. | Keep "Shrimp (cherry)" (adult risk); remove "Shrimp (amano)" | Cherry Barb + Cherry: red (unchanged); Cherry Barb + Amano: red → none. Test C/D in `invert-predation.test.mjs` must be updated. |
+| **Molly** | R3, ACO Molly guide: https://www.aquariumcoop.com/blogs/aquarium/molly-fish-care. Larger mollies may eat Cherry Shrimp. | Add named "Shrimp (cherry)" adult-risk entry; keep "Shrimp (juvenile)" | Molly + Cherry: amber → red. The schema cannot represent predator size ("larger mollies"), so red applies to every planned molly. Record this limitation in the record's notes. |
+
+### NOT READY — NEEDS MORE MODELLING OR SOURCE REVIEW
+
+| Species / relationship | Why not ready |
+|---|---|
+| **Neon Tetra** | Adult Cherry Shrimp predation is **unsupported** (R4: natural diet only; R5: general). The current red is overstated, but the juvenile replacement rests on general evidence only. Needs a Neon-specific husbandry source or an owner decision to accept general evidence. |
+| **Blue Ram** | SF and ACO species pages (R7a/R7b) do not establish "Shrimp (all sizes)". Group-level dwarf-cichlid evidence only; adult-vs-juvenile scope uncertain. Manual review. |
+| **Bolivian Ram** | Group-level only; species-named statement was forum-only. |
+| **Cockatoo Cichlid** | Genus-level (*Apistogramma*) search extract only (S11); needs a direct read / species source. |
+| **Kribensis** | Group-level only; SF species page silent (S25). |
+| **Tiger Barb** | Group-level only ("barbs"); ACO species page silent (S26). |
+| **Pea Puffer → shrimp** | Contradictory: SF (R6) reports cohabitation with varying success. "All sizes" not confirmed. (Pea Puffer → snails **is** confirmed and needs no change.) |
+| **Assassin Snail → larger snails / Nerites** | Evidence is now well understood (R8: generally ignores Nerites and larger snails; general snail predation confirmed). But narrowing the warning needs an **engine / data-model decision** on size-aware predation, not a species-data edit. The obvious data-only change ("Snails (small)") would silently remove every Assassin Snail warning, including those against pest snails (§7.3, §8.8). |
+| **Assassin Snail → shrimplets / `shrimp_safe`** | R9 supports shrimplet predation (not adult). Removing `shrimp_safe` has no engine effect, and the optional "Shrimp (juvenile)" entry adds new ambers, so it should go with the snail modelling decision rather than batch 1. |
+| **Ghost Shrimp** | Tag-only record. Proposed "Shrimp (juvenile)" rests on a T3 search summary (S19). Needs a direct read. |
+| **Pearl Gourami, Betta (Female)** | No species-level (or sex-level) source. |
+| **Keyhole Cichlid, Platy, Swordtail, Upside-Down Catfish, Harlequin Rasbora** | Juvenile entries rest on general / group evidence only. Needs species sources or the §8.5 policy decision. |
+| **Chili Rasbora, Rummynose, Zebra Danio, Angelfish, Betta (Male), Dwarf Gourami, CPD, Guppy, Honey Gourami, Kuhli Loach** | Species-named, but seen only in search extracts (§6.5). Current data is likely right but needs direct reads before being called confirmed. No change proposed. |
+| **Tag hygiene (13 tag ↔ data contradictions)** | No engine effect. Wait for the vocabulary / juvenile-policy decisions (§8) to avoid churning tags twice. |
+
+---
+
+## 12. Final Phase 2F status
+
+**Phase 2F AUDIT COMPLETE.**
+
+The audit itself is ready to merge as documentation.
+
+Production species-data corrections have **NOT** been implemented. `species.v2.json`, the species
+adapter, `fish-data.js`, the warning engine and the tests are unchanged on this branch.
+
+The first proposed implementation batch is:
+
+1. Cardinal Tetra
+2. Cherry Barb
+3. Molly
+
+Those changes must occur on a **NEW branch after the audit branch is merged**.
