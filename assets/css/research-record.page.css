@@ -23,6 +23,17 @@
   --rr-measure: 72ch;
 }
 
+/*
+ * university.page.css gives main.university-bg `overflow: hidden`, which makes it a
+ * scroll container. The pillar overlay (inset bottom: -30vh) and beams give it hidden
+ * scrollable overflow, so any in-page jump (TOC link, #fragment load, scroll restore)
+ * scrolls main itself and clips the breadcrumb, eyebrow and top of the H1 while the
+ * window stays at scrollY 0. `overflow: clip` paints identically but is not scrollable.
+ */
+.research-record main.university-bg {
+  overflow: clip;
+}
+
 .research-record .university-shell {
   width: min(1040px, 100%);
   gap: clamp(28px, 5vw, 48px);
