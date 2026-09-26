@@ -1,0 +1,52 @@
+name: Stocking Advisor Live Verify
+
+# Manual, read-only production check. It never runs on push, pull requests or a schedule, changes no
+# files and commits nothing; results go to the job summary and a workflow artifact.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch live headers and bodies
+        run: bash tests/live/stocking-advisor-live-headers.sh
+
+      - name: Check live content
+        run: node tests/live/stocking-advisor-live-content.mjs
+
+      - name: Set up Node.js
+        if: always()
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies and Chromium
+        if: always()
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Live behaviour checks
+        if: always()
+        run: npx playwright test --config=playwright.live.config.ts
+
+      - name: Publish summary
+        if: always()
+        run: cat live-verify/summary.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stocking-advisor-live-verify
+          path: |
+            live-verify/
+            test-results/
+          if-no-files-found: ignore
