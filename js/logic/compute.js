@@ -149,6 +149,20 @@ const buildCompatibilityChips = (compatibility) => {
   return chips;
 };
 
+// "Shrimp (cherry)" → "cherry shrimp", "Shrimp (all sizes)" → "shrimp of all sizes",
+// "Small fish (e.g., Neon Tetras)" → "small fish (e.g., Neon Tetras)".
+const describeTrait = (text) => {
+  const value = String(text).trim();
+  const match = value.match(/^([^()]+?)\s*\(([^()]+)\)$/);
+  const lower = (part) => part.charAt(0).toLowerCase() + part.slice(1);
+  if (match && /^all sizes$/i.test(match[2])) return `${lower(match[1])} of all sizes`;
+  if (match && !/[,.]/.test(match[2])) return `${match[2].toLowerCase()} ${lower(match[1])}`;
+  return lower(value);
+};
+
+// Species-care notes from the record's own behaviour data. They describe the species, not the plan,
+// so they are informational: a real predation / compatibility problem with the planned stock is a
+// warning from the engine. A prey note is dropped when that warning is shown (covers).
 const buildBehaviorChips = (species) => {
   const behavior = species?.protoV2?.behavior;
   if (!behavior) return [];
@@ -156,13 +170,19 @@ const buildBehaviorChips = (species) => {
   if (Array.isArray(behavior.predationRisks)) {
     for (const risk of behavior.predationRisks) {
       if (!risk) continue;
-      chips.push({ tone: 'warn', text: `Predation risk: ${risk}` });
+      const eatenBy = String(risk).match(/^\s*predators?\s*:\s*(.+)$/i);
+      if (eatenBy) {
+        chips.push({ tone: 'info', kind: 'trait', text: `Eaten by: ${describeTrait(eatenBy[1])}` });
+        continue;
+      }
+      const category = /shrimp/i.test(risk) ? 'shrimp' : /snail/i.test(risk) ? 'snail' : 'fish';
+      chips.push({ tone: 'info', kind: 'trait', text: `May prey on: ${describeTrait(risk)}`, covers: [`predation.${category}.${species.id}.*`] });
     }
   }
   if (Array.isArray(behavior.incompatibilities)) {
     for (const item of behavior.incompatibilities) {
       if (!item) continue;
-      chips.push({ tone: 'warn', text: `Incompatibility: ${item}` });
+      chips.push({ tone: 'info', kind: 'trait', text: `Avoid with: ${describeTrait(item)}` });
     }
   }
   return chips;

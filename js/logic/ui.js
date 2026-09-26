@@ -115,6 +115,7 @@ export function renderStatus(strip, status) {
 const CHIP_TONE_LABELS = Object.freeze({
   bad: { icon: '✖', text: 'Problem' },
   warn: { icon: '⚠', text: 'Warning' },
+  info: { icon: 'ℹ', text: 'Species note' },
 });
 
 export function renderChips(container, chips) {

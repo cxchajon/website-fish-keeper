@@ -91,7 +91,15 @@ identical.
 - `shrimp_risk` tag with no explicit shrimp data: ghost-shrimp.
 - Snail data and tags agree (assassin-snail, pea-puffer).
 
-## 5. Open questions
+The data clean-up is recorded as a separate task: `_internal/docs/species-predation-data-cleanup.md`.
 
-- Species behaviour chips ("Predation risk: Shrimp (cherry)") appear amber on a preview even when no
-  prey is planned. They were left unchanged.
+## 5. Species traits are notes, not warnings (follow-up)
+
+Preview chips built from a species' own `behavior.predationRisks` / `behavior.incompatibilities`
+("Predation risk: Shrimp (cherry)", "Incompatibility: Long-finned species") were amber "⚠ Warning"
+chips even when no prey or incompatible fish was planned. They never affected the engine status.
+They are now neutral "ℹ Species note" chips: "May prey on: cherry shrimp", "May prey on: juvenile
+shrimp", "Avoid with: long-finned species", and "Eaten by: large fish" for "Predators: …" entries.
+A prey note is dropped while the engine shows the real predation warning for that predator and prey
+category. Incompatibility notes are free text with no rule id, so they are not suppressed next to a
+real conflict. Over 7,040 cases only these chips changed; status and every warning are identical.

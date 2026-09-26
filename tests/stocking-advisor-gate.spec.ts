@@ -678,6 +678,64 @@ test.describe('warnings (desktop and mobile)', () => {
     await expect(anyWarning(page, 'predation.shrimp.betta_male.amano')).toHaveCount(0);
   });
 
+  // Species traits (behavior.predationRisks / incompatibilities) are neutral notes; only a real
+  // predation or compatibility problem with the planned stock is a red / amber warning.
+  const note = (page: Page, text: string) => page.locator('#candidate-chips .chip[data-tone="info"]', { hasText: text });
+  const activeChip = (page: Page, text: RegExp) => page.locator('#candidate-chips .chip[data-tone="warn"], #candidate-chips .chip[data-tone="bad"]', { hasText: text });
+  const noPlanWarnings = async (page: Page) => {
+    await expect(page.locator('#candidate-warnings .status-strip, #stock-warnings .status-strip')).toHaveCount(0);
+  };
+  const withFilter = async (page: Page) => {
+    await selectTank(page, '75g');
+    await addCustomFilter(page, 'Canister', 400);
+  };
+
+  for (const [label, speciesId, qty, noteText] of [
+    ['Betta with no shrimp', 'betta_male', 1, 'May prey on: cherry shrimp'],
+    ['Molly with no shrimp', 'molly', 3, 'May prey on: juvenile shrimp'],
+    ['Tiger Barb with no long-finned fish', 'tiger_barb', 8, 'Avoid with: long-finned species'],
+  ] as const) {
+    test(`species trait: ${label} is a neutral note, not a warning`, async ({ page }) => {
+      await withFilter(page);
+      await previewCandidate(page, speciesId, qty);
+      await expect(note(page, noteText)).toBeVisible();
+      await expect(note(page, noteText)).toContainText('Species note');
+      await expect(activeChip(page, /prey|avoid|predation|incompatib/i)).toHaveCount(0);
+      await settle(page);
+      await noPlanWarnings(page);
+    });
+  }
+
+  test('species trait: Betta + Cherry Shrimp shows the red warning without a duplicate prey note', async ({ page }) => {
+    await withFilter(page);
+    await addSpecies(page, 'neocaridina', 10);
+    await previewCandidate(page, 'betta_male', 1);
+    await expectShown(candidateWarning(page, 'predation.shrimp.betta_male.neocaridina'), 'bad');
+    await expect(note(page, 'cherry shrimp')).toHaveCount(0);
+    await expect(activeChip(page, /prey|predation/i)).toHaveCount(0);
+    await page.click('#plan-add');
+    await expectPersists(page, warning(page, 'predation.shrimp.betta_male.neocaridina'), 'bad');
+  });
+
+  test('species trait: Betta + Amano keeps only the neutral note', async ({ page }) => {
+    await withFilter(page);
+    await addSpecies(page, 'amano', 6);
+    await previewCandidate(page, 'betta_male', 1);
+    await expect(note(page, 'May prey on: cherry shrimp')).toBeVisible();
+    await settle(page);
+    await noPlanWarnings(page);
+  });
+
+  test('species trait: Molly + Cherry Shrimp is an amber juvenile warning', async ({ page }) => {
+    await withFilter(page);
+    await addSpecies(page, 'neocaridina', 10);
+    await previewCandidate(page, 'molly', 3);
+    await expectShown(candidateWarning(page, 'predation.shrimp.molly.neocaridina'), 'warn');
+    await expect(note(page, 'juvenile shrimp')).toHaveCount(0);
+    await page.click('#plan-add');
+    await expectPersists(page, warning(page, 'predation.shrimp.molly.neocaridina'), 'warn');
+  });
+
   test('hard compatibility conflict: red before and after Add, never a gray chip', async ({ page }) => {
     await selectTank(page, '29g');
     await addSpecies(page, 'betta_male', 1);

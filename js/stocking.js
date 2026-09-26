@@ -2163,7 +2163,11 @@ function syncToggles() {
   // warning strip carries the engine severity, the species names and the full message.
   function renderCandidateState(shownWarningIds = new Set()) {
     const chips = computed ? computed.chips : [];
-    const visibleChips = chips.filter((chip) => !(Array.isArray(chip?.covers) && chip.covers.some((id) => shownWarningIds.has(id))));
+    // A covers entry ending in "*" matches any shown warning id with that prefix.
+    const isShown = (id) => (id.endsWith('*')
+      ? [...shownWarningIds].some((shown) => shown.startsWith(id.slice(0, -1)))
+      : shownWarningIds.has(id));
+    const visibleChips = chips.filter((chip) => !(Array.isArray(chip?.covers) && chip.covers.some(isShown)));
     renderChips(refs.candidateChips, visibleChips);
     syncCandidateControls();
     if (refs.candidateBanner) {
