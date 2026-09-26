@@ -140,17 +140,11 @@ export function overrideSpeciesDataset(records = []) {
   return valid.length > 0;
 }
 
+// Per-animal load in GE. Every evaluable record has a validated bioloadGE (see validateSpeciesRecord),
+// so there is no size-based fallback estimate here.
 export function autoBioloadUnit(species) {
   if (!species) return 0;
-  if (Number.isFinite(species.bioloadGE)) {
-    return species.bioloadGE;
-  }
-  if (Number.isFinite(species.bioload_unit)) {
-    return species.bioload_unit;
-  }
-  const size = Number.isFinite(species.adult_size_in) ? species.adult_size_in : 2.5;
-  const density = Number.isFinite(species.density_factor) ? species.density_factor : 0.01;
-  return size ** 3 * density;
+  return Number.isFinite(species.bioloadGE) ? species.bioloadGE : NaN;
 }
 
 export function listSensitiveSpecies(speciesEntries, parameter) {

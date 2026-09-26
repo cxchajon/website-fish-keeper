@@ -26,6 +26,11 @@
         "dietFactor": 0.30
       }
     },
+    "bioload_profile": {
+      "body_build": null,
+      "waste_class": "low",
+      "rationale": "Grazes biofilm, algae and detritus already produced in the tank rather than relying on added food, so it adds less new nitrogen than a fed animal of the same size."
+    },
     "parameters": {
       "pH": {
         "optimal": [6.6, 7.2],
@@ -133,6 +138,10 @@
         "dietFactor": 0.50
       }
     },
+    "bioload_profile": {
+      "body_build": null,
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [7.2, 7.8],
@@ -227,6 +236,11 @@
         "metabolismFactor": 0.55,
         "dietFactor": 0.50
       }
+    },
+    "bioload_profile": {
+      "body_build": null,
+      "waste_class": "low",
+      "rationale": "Filter feeder that fans suspended particles from the current rather than eating added food."
     },
     "parameters": {
       "pH": {
@@ -337,6 +351,10 @@
         "dietFactor": 1.00
       }
     },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [5.0, 7.0],
@@ -435,6 +453,10 @@
         "dietFactor": 1.10
       }
     },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [6.0, 7.5],
@@ -498,6 +520,10 @@
         "dietFactor": 1.10
       }
     },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [6.2, 7.2],
@@ -559,6 +585,10 @@
         "metabolismFactor": 1.35,
         "dietFactor": 1.20
       }
+    },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -664,6 +694,11 @@
         "dietFactor": 1.80
       }
     },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "high",
+      "rationale": "Loricariid grazer that rasps algae and wood and eats vegetable foods with a high food throughput, producing heavy solid waste for its size."
+    },
     "parameters": {
       "pH": {
         "optimal": [6.5, 7.5],
@@ -726,6 +761,10 @@
         "dietFactor": 1.30
       }
     },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [6.2, 7.4],
@@ -786,6 +825,10 @@
         "metabolismFactor": 1.00,
         "dietFactor": 1.00
       }
+    },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -901,6 +944,10 @@
         "dietFactor": 0.45
       }
     },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [6.5, 7.5],
@@ -961,6 +1008,10 @@
         "metabolismFactor": 0.95,
         "dietFactor": 0.80
       }
+    },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -1024,6 +1075,11 @@
         "dietFactor": 0.25
       }
     },
+    "bioload_profile": {
+      "body_build": null,
+      "waste_class": "low",
+      "rationale": "Grazes biofilm, algae and detritus already produced in the tank rather than relying on added food, so it adds less new nitrogen than a fed animal of the same size."
+    },
     "parameters": {
       "pH": {
         "optimal": [6.4, 7.4],
@@ -1086,6 +1142,10 @@
         "metabolismFactor": 0.70,
         "dietFactor": 0.40
       }
+    },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -1195,6 +1255,10 @@
         "dietFactor": 1.10
       }
     },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [6.0, 7.8],
@@ -1258,6 +1322,10 @@
         "metabolismFactor": 1.40,
         "dietFactor": 1.20
       }
+    },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -1362,6 +1430,10 @@
         "metabolismFactor": 0.70,
         "dietFactor": 0.45
       }
+    },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -1478,6 +1550,10 @@
         "metabolismFactor": 1.20,
         "dietFactor": 1.10
       }
+    },
+    "bioload_profile": {
+      "body_build": "disc",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -1606,6 +1682,10 @@
         "dietFactor": 0.30
       }
     },
+    "bioload_profile": {
+      "body_build": null,
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [7.2, 7.8],
@@ -1711,6 +1791,10 @@
         "dietFactor": 0.90
       }
     },
+    "bioload_profile": {
+      "body_build": "slender",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [6.0, 7.0],
@@ -1774,6 +1858,10 @@
         "dietFactor": 0.75
       }
     },
+    "bioload_profile": {
+      "body_build": "slender",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [7.0, 7.8],
@@ -1834,6 +1922,10 @@
         "metabolismFactor": 0.95,
         "dietFactor": 0.90
       }
+    },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -1939,6 +2031,10 @@
         "metabolismFactor": 1.10,
         "dietFactor": 0.70
       }
+    },
+    "bioload_profile": {
+      "body_build": "slender",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -2048,6 +2144,10 @@
         "dietFactor": 1.00
       }
     },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [6.0, 7.5],
@@ -2154,6 +2254,10 @@
         "dietFactor": 1.00
       }
     },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [6.0, 7.5],
@@ -2215,6 +2319,10 @@
         "metabolismFactor": 1.10,
         "dietFactor": 1.00
       }
+    },
+    "bioload_profile": {
+      "body_build": "elongate",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -2333,6 +2441,10 @@
         "dietFactor": 1.10
       }
     },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [6.0, 8.0],
@@ -2438,6 +2550,10 @@
         "metabolismFactor": 1.40,
         "dietFactor": 1.50
       }
+    },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -2545,6 +2661,10 @@
         "dietFactor": 0.65
       }
     },
+    "bioload_profile": {
+      "body_build": null,
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [7.2, 8.2],
@@ -2607,6 +2727,10 @@
         "dietFactor": 0.95
       }
     },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [5.2, 6.8],
@@ -2667,6 +2791,11 @@
         "metabolismFactor": 0.60,
         "dietFactor": 0.45
       }
+    },
+    "bioload_profile": {
+      "body_build": null,
+      "waste_class": "low",
+      "rationale": "Grazes biofilm, algae and detritus already produced in the tank rather than relying on added food, so it adds less new nitrogen than a fed animal of the same size. Nerites graze algae films."
     },
     "parameters": {
       "pH": {
@@ -2731,6 +2860,11 @@
         "dietFactor": 0.50
       }
     },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "low",
+      "rationale": "Grazes biofilm, algae and detritus already produced in the tank rather than relying on added food, so it adds less new nitrogen than a fed animal of the same size. Otocinclus feed mainly on biofilm and soft algae."
+    },
     "parameters": {
       "pH": {
         "optimal": [6.0, 7.2],
@@ -2793,6 +2927,10 @@
         "metabolismFactor": 1.40,
         "dietFactor": 1.10
       }
+    },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -2903,6 +3041,11 @@
         "dietFactor": 1.30
       }
     },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "high",
+      "rationale": "Carnivore fed snails and frozen meaty foods; messy feeder with high-protein food and leftovers, so waste is high for its size."
+    },
     "parameters": {
       "pH": {
         "optimal": [7.0, 8.0],
@@ -2965,6 +3108,10 @@
         "metabolismFactor": 1.90,
         "dietFactor": 1.70
       }
+    },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -3068,6 +3215,10 @@
         "metabolismFactor": 1.05,
         "dietFactor": 1.10
       }
+    },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -3175,6 +3326,10 @@
         "dietFactor": 0.60
       }
     },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [6.0, 7.4],
@@ -3279,6 +3434,11 @@
         "dietFactor": 0.35
       }
     },
+    "bioload_profile": {
+      "body_build": null,
+      "waste_class": "low",
+      "rationale": "Grazes biofilm, algae and detritus already produced in the tank rather than relying on added food, so it adds less new nitrogen than a fed animal of the same size. Ramshorns graze algae, biofilm and decaying plant matter."
+    },
     "parameters": {
       "pH": {
         "optimal": [7.2, 7.8],
@@ -3340,6 +3500,10 @@
         "metabolismFactor": 1.10,
         "dietFactor": 1.00
       }
+    },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -3445,6 +3609,10 @@
         "metabolismFactor": 1.20,
         "dietFactor": 1.10
       }
+    },
+    "bioload_profile": {
+      "body_build": "standard",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -3554,6 +3722,10 @@
         "metabolismFactor": 1.00,
         "dietFactor": 1.00
       }
+    },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {
@@ -3671,6 +3843,10 @@
         "dietFactor": 0.75
       }
     },
+    "bioload_profile": {
+      "body_build": "slender",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [6.0, 8.0],
@@ -3733,6 +3909,10 @@
         "dietFactor": 1.20
       }
     },
+    "bioload_profile": {
+      "body_build": "deep",
+      "waste_class": "standard"
+    },
     "parameters": {
       "pH": {
         "optimal": [6.4, 7.4],
@@ -3794,6 +3974,10 @@
         "metabolismFactor": 1.05,
         "dietFactor": 0.80
       }
+    },
+    "bioload_profile": {
+      "body_build": "slender",
+      "waste_class": "standard"
     },
     "parameters": {
       "pH": {

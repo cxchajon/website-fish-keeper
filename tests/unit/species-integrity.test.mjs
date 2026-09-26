@@ -103,11 +103,11 @@ test('each dropdown species participates in calculation as stock and as candidat
   }
 });
 
-test('species the engine already evaluated keep their bioload values', () => {
+test('every original species is still in the engine (bioload now comes from the model, not fish-data.js)', () => {
   for (const record of FISH_DB) {
     const engineRecord = legacy.getSpeciesById(record.id);
     assert.ok(engineRecord, `${record.id} missing from engine`);
-    assert.equal(engineRecord.bioloadGE, record.bioloadGE, `${record.id} bioloadGE changed`);
+    assert.ok(Number.isFinite(engineRecord.bioloadGE) && engineRecord.bioloadGE > 0, `${record.id} bioloadGE`);
   }
 });
 
@@ -291,17 +291,6 @@ test('a record missing a required husbandry value is rejected and flagged, not d
   }
 });
 
-test('provisional bioload bridge keeps obvious size relationships (not a validated model)', () => {
-  // Sanity checks only — the GE values for newer species are a provisional bridge, so no exact
-  // numbers are asserted. Large-bodied fish must not weigh less than much smaller ones.
-  const ge = (id) => legacy.getSpeciesById(id).bioloadGE;
-  assert.ok(ge('freshwater_angelfish') > ge('tiger_barb'));
-  assert.ok(ge('bristlenose_pleco') > ge('tiger_barb'));
-  assert.ok(ge('molly') > ge('guppy_male') * 3);
-  assert.ok(ge('ember_tetra') <= ge('neon'));
-  assert.ok(ge('ramshorn_snail') < ge('nerite'));
-});
-
 test('predation uses one vocabulary: shrimp_risk / snail_risk', () => {
   const tags = (id) => legacy.getSpeciesById(id).tags;
   for (const species of legacy.SPECIES) {
@@ -354,10 +343,17 @@ test('safety cases: 6 of each species in a 5 gallon fail tank suitability', () =
     assert.ok(warningIds(computed).includes(`tank.volume.${id}`), id);
     assert.equal(computed.bioload.severity, 'bad', id);
   }
-  const puffers = compute.buildComputedState(stateFor('5g', [['pea_puffer', 6]]));
-  assert.equal(puffers.bioload.severity, 'bad', 'six pea puffers overload a 5 gallon');
   const onePuffer = compute.buildComputedState(stateFor('5g', [['pea_puffer', 1]]));
   assert.ok(!warningIds(onePuffer).includes('tank.volume.pea_puffer'), 'one pea puffer fits a 5 gallon minimum');
+});
+
+// KNOWN GAP (Phase 2B audit): six pea puffers in a 5 gallon used to turn red only because the
+// provisional bridge gave a 1 in puffer ~3× the load of a neon tetra. Under the bioload model six
+// 1 in fish are ~45% of a 5 gallon, which is not a waste overload; the real problem is territorial
+// crowding, and the sourced "2–3 gal per puffer" group guidance is not encoded as a tank rule yet.
+test('six pea puffers in a 5 gallon are flagged by a space/territory rule', { todo: 'needs a per-fish group-volume rule for pea puffers' }, () => {
+  const puffers = compute.buildComputedState(stateFor('5g', [['pea_puffer', 6]]));
+  assert.equal(puffers.status.severity, 'bad');
 });
 
 test('livebearers get hardness warnings in soft water', () => {

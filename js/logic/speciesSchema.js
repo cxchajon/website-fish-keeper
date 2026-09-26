@@ -4,6 +4,7 @@ export const REQUIRED_FIELDS = [
 ];
 
 import { BEHAVIOR_TAG_VALUES } from "./behaviorTags.js";
+import { validateBioloadInputs } from "../stocking-advisor/logic/bioload-model.js";
 
 // Tags used by the legacy engine rules (js/fish-data.js + LEGACY_BASE in the v2 adapter).
 export const LEGACY_TAGS = Object.freeze([
@@ -69,6 +70,13 @@ export function validateSpeciesRecord(s) {
     }
     if (s.min_tank_liters != null && !(num(s.min_tank_liters) && s.min_tank_liters > 0)) return "bad min_tank_liters";
     if (!num(s.aggression)) return "bad numbers";
+    // Advisor records carry bioload_profile and a model-derived bioloadGE; a record whose model inputs
+    // are incomplete is rejected here (and flagged to the user), never counted as zero load.
+    if (s.bioload_profile !== undefined) {
+      const inputs = validateBioloadInputs({ adultSizeIn: s.adult_size_in, category: s.category, profile: s.bioload_profile });
+      if (inputs !== true) return inputs;
+    }
+    if (!(num(s.bioloadGE) && s.bioloadGE > 0)) return "bad bioloadGE";
     if (!Array.isArray(s.tags)) return "bad tags";
     for (const t of s.tags) {
       if (!ALLOWED_TAGS.has(t)) return `bad tag:${t}`;
