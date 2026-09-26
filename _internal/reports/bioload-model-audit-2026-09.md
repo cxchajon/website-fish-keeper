@@ -487,3 +487,12 @@ precision than the model has; whole percent would be more honest.
   check is now retried as a whole with `expect(...).toPass()`.
 - Added gate tests: Pea Puffer space warning (5 gal) and pass (20 gal); current modules set the cache
   marker and never trigger the guard reload.
+
+### Follow-up test results
+
+- Dedicated gate (`test:e2e:stocking-gate`, desktop + mobile Chromium): 14/14 applicable tests pass;
+  **10 consecutive full runs: 140 passed, 0 failed, 0 flaky** (140 skipped = desktop tests in the
+  mobile project and vice versa, by design). The mobile test had failed 2 of 12 runs before the fix.
+- Unit: 63/63 pass, 0 todo (bioload-model 13, species-integrity 30, cache-headers 4,
+  species-load-failure 4, others). `guard:live`, `audit:controls` pass.
+- `test:stocking:extended`: 105 pairs, 0 failures. `stocking-tests-real`: 12/12 pass.
