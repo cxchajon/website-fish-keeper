@@ -465,8 +465,12 @@ test.describe('desktop: water parameters', () => {
     await previewSpecies(page, 'molly', 3);
     await expectNoWaterChips(page);
     await setWater(page, { gH: 3 });
-    await expect(page.locator('#candidate-chips')).toContainText('gH: ✖ Your water is outside the shared range');
+    // Phase 2E: the preview shows this as a candidate warning strip, not a repeated chip.
+    const preview = page.locator('#candidate-warnings .status-strip[data-warning-id="water.gH.outside"]');
+    await expect(preview).toHaveAttribute('data-state', 'bad');
+    await expect(preview).toContainText('Your GH (general hardness) is outside this stock');
     await setWater(page, { gH: null });
+    await expect(preview).toHaveCount(0);
     await expectNoWaterChips(page);
     await page.click('#plan-add');
     await settle(page);
@@ -541,5 +545,175 @@ test.describe('mobile', () => {
     const alert = page.locator('#species-data-error');
     await expectScrolledIntoView(alert);
     await expect(page.locator('#plan-species')).toBeDisabled();
+  });
+});
+
+// Phase 2E: what a user sees for each warning category, on desktop AND on a phone. Every case checks
+// the warning id, its engine severity (data-state), that it is on screen, that it survives the
+// debounced recompute, and that it clears when the condition is resolved.
+const candidateWarning = (page: Page, id: string) => page.locator(`#candidate-warnings .status-strip[data-warning-id="${id}"]`);
+const anyWarning = (page: Page, id: string) => page.locator(`.status-strip[data-warning-id="${id}"]`);
+
+async function expectShown(locator: Locator, state: 'bad' | 'warn') {
+  await expectScrolledIntoView(locator);
+  await expect(locator).toHaveAttribute('data-state', state);
+  // Severity in words, not colour alone.
+  await expect(locator.locator('.warning-severity')).toHaveText(state === 'bad' ? '✖ Problem:' : '⚠ Warning:');
+  // Readable: the strip text is not the old dark-on-dark colour, and nothing is clipped.
+  const box = await locator.evaluate((el) => ({
+    color: getComputedStyle(el).color,
+    clipped: el.scrollWidth > el.clientWidth + 1,
+    overflowX: document.documentElement.scrollWidth > window.innerWidth,
+  }));
+  expect(box.color).not.toBe('rgb(11, 18, 40)');
+  expect(box.clipped).toBe(false);
+  expect(box.overflowX).toBe(false);
+}
+
+// Still the same, still on screen after the debounced recompute has run again.
+async function expectPersists(page: Page, locator: Locator, state: 'bad' | 'warn') {
+  await settle(page);
+  await page.evaluate(() => (window as unknown as { recomputeAll: () => void }).recomputeAll());
+  await settle(page);
+  await expect(locator).toHaveCount(1);
+  await expectShown(locator, state);
+}
+
+async function previewCandidate(page: Page, id: string, qty: number) {
+  await page.selectOption('#plan-species', id);
+  await page.fill('#plan-qty', String(qty));
+  await page.locator('#plan-qty').blur();
+}
+
+async function clickQty(page: Page, id: string, direction: 'plus' | 'minus', times = 1) {
+  for (let i = 0; i < times; i += 1) {
+    await page.click(`[data-qty-${direction}="${id}"]`);
+    await page.waitForTimeout(250);
+  }
+}
+
+test.describe('warnings (desktop and mobile)', () => {
+  test.beforeEach(async ({ page }) => {
+    await openAdvisor(page);
+    await waitForSpecies(page);
+  });
+
+  test('group minimum: amber before and after Add, updates with quantity, clears at the minimum', async ({ page }) => {
+    await selectTank(page, '20h');
+    await previewCandidate(page, 'neon', 3);
+    await expectShown(candidateWarning(page, 'group.min.neon'), 'warn');
+    await expect(candidateWarning(page, 'group.min.neon')).toContainText('Neon Tetra needs a group of at least 6. Planned: 3.');
+    await page.click('#plan-add');
+    const alert = warning(page, 'group.min.neon');
+    await expectPersists(page, alert, 'warn');
+    await expect(candidateWarning(page, 'group.min.neon')).toHaveCount(0);
+    await clickQty(page, 'neon', 'plus');
+    await expect(alert).toContainText('Planned: 4.');
+    await expectPersists(page, alert, 'warn');
+    await clickQty(page, 'neon', 'plus', 2);
+    await settle(page);
+    await expect(anyWarning(page, 'group.min.neon')).toHaveCount(0);
+    await clickQty(page, 'neon', 'minus');
+    await expectShown(warning(page, 'group.min.neon'), 'warn');
+    await expect(warning(page, 'group.min.neon')).toContainText('Planned: 5.');
+  });
+
+  test('tank length: amber in the shared warning style, never a separate chip', async ({ page }) => {
+    await selectTank(page, '29g');
+    await previewCandidate(page, 'cory_bronze', 6);
+    await expectShown(candidateWarning(page, 'tank.length.cory_bronze'), 'warn');
+    await expect(page.locator('[data-role="stock-warning-length"], [data-testid="tank-length-warning"]')).toHaveCount(0);
+    await page.click('#plan-add');
+    const alert = warning(page, 'tank.length.cory_bronze');
+    await expectPersists(page, alert, 'warn');
+    await expect(alert).toContainText('Bronze Corydoras needs a tank at least 36″ long');
+    await selectTank(page, '40b');
+    await settle(page);
+    await expect(anyWarning(page, 'tank.length.cory_bronze')).toHaveCount(0);
+    await selectTank(page, '29g');
+    await expectShown(warning(page, 'tank.length.cory_bronze'), 'warn');
+  });
+
+  test('shrimp predation: named, visible before and after Add, clears on removal', async ({ page }) => {
+    await selectTank(page, '29g');
+    await addSpecies(page, 'neocaridina', 10);
+    await previewCandidate(page, 'blue_ram', 1);
+    const id = 'predation.shrimp.blue_ram.neocaridina';
+    // Severity as classified by the existing shrimp_risk rule (amber); the UI does not upgrade it.
+    await expectShown(candidateWarning(page, id), 'warn');
+    await expect(candidateWarning(page, id)).toContainText('may eat Cherry Shrimp');
+    await page.click('#plan-add');
+    await expectPersists(page, warning(page, id), 'warn');
+    // The Environmental card no longer repeats it (or hides it behind "more").
+    await expect(page.locator('#env-warnings')).not.toContainText('predation');
+    await page.click('[data-remove-id="blue_ram"]');
+    await settle(page);
+    await expect(anyWarning(page, id)).toHaveCount(0);
+  });
+
+  test('hard compatibility conflict: red before and after Add, never a gray chip', async ({ page }) => {
+    await selectTank(page, '29g');
+    await addSpecies(page, 'betta_male', 1);
+    await previewCandidate(page, 'tiger_barb', 8);
+    const preview = page.locator('#candidate-warnings .status-strip[data-warning-id$=":hard_pair"][data-warning-id*=":betta_male:"][data-warning-id*=":tiger_barb:"]');
+    await expectShown(preview, 'bad');
+    await expect(page.locator('#candidate-chips .chip:not([data-tone])', { hasText: /aggression|conflict/i })).toHaveCount(0);
+    await page.click('#plan-add');
+    const alert = pairWarning(page, 'hard_pair', 'betta_male', 'tiger_barb');
+    await expectPersists(page, alert, 'bad');
+    await expect(alert).toContainText('Betta (Male) and Tiger Barb');
+    await expect(alert).toHaveAttribute('role', 'alert');
+    await page.click('[data-remove-id="tiger_barb"]');
+    await settle(page);
+    await expect(page.locator('.status-strip[data-warning-id$=":hard_pair"]')).toHaveCount(0);
+  });
+
+  test('quantity-space: red, persistent, clears when the quantity fits', async ({ page }) => {
+    await selectTank(page, '5g');
+    await addSpecies(page, 'pea_puffer', 6);
+    const alert = warning(page, 'tank.group_volume.pea_puffer');
+    await expectPersists(page, alert, 'bad');
+    await clickQty(page, 'pea_puffer', 'minus', 5);
+    await settle(page);
+    await expect(anyWarning(page, 'tank.group_volume.pea_puffer')).toHaveCount(0);
+    await clickQty(page, 'pea_puffer', 'plus', 5);
+    await expectShown(warning(page, 'tank.group_volume.pea_puffer'), 'bad');
+  });
+
+  test('filtration: no filter amber, 1 GPH red, both clear with a real filter', async ({ page }) => {
+    await selectTank(page, '20h');
+    await addSpecies(page, 'neon', 10);
+    await expectPersists(page, warning(page, 'filtration.none'), 'warn');
+    await addCustomFilter(page, 'Canister', 1);
+    await expectPersists(page, warning(page, 'filtration.very_low'), 'bad');
+    await page.click('[data-role="proto-filter-chips"] [data-remove-filter]');
+    await expectShown(warning(page, 'filtration.none'), 'warn');
+    await addCustomFilter(page, 'Canister', 150);
+    await settle(page);
+    await expect(filtrationWarnings(page)).toHaveCount(0);
+  });
+
+  test('safe stock leaves no warning nodes behind', async ({ page }) => {
+    await selectTank(page, '29g');
+    await addSpecies(page, 'freshwater_angelfish', 1);
+    await expect(warning(page, 'tank.volume.freshwater_angelfish')).toBeVisible();
+    await page.click('[data-remove-id="freshwater_angelfish"]');
+    await addSpecies(page, 'neon', 8);
+    await addCustomFilter(page, 'Canister', 200);
+    await settle(page);
+    await expect(page.locator('#stock-warnings .status-strip, #candidate-warnings .status-strip')).toHaveCount(0);
+    await expect(page.locator('#stock-warnings')).toBeHidden();
+    await expect(page.locator('#candidate-warnings')).toBeHidden();
+  });
+
+  test('a recompute does not re-create (re-announce) an unchanged warning', async ({ page }) => {
+    await selectTank(page, '20h');
+    await addSpecies(page, 'neon', 3);
+    await settle(page);
+    const alert = warning(page, 'group.min.neon');
+    await alert.evaluate((el) => { (el as HTMLElement & { __marker?: boolean }).__marker = true; });
+    await page.evaluate(() => (window as unknown as { recomputeAll: () => void }).recomputeAll());
+    await settle(page);
+    expect(await alert.evaluate((el) => (el as HTMLElement & { __marker?: boolean }).__marker === true)).toBe(true);
   });
 });

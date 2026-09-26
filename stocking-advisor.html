@@ -50,7 +50,7 @@
         media="print"
         onload="this.media='all'">
 
-  <link rel="stylesheet" href="/css/app.bundle.css?v=2026-09-05-stock-select">
+  <link rel="stylesheet" href="/css/app.bundle.css?v=2026-09-26-warnings">
   <link rel="stylesheet" href="/css/author-byline.css?v=2026-09-05">
 
 <script defer src="/js/nav.js?v=1.1.0"></script>
@@ -679,6 +679,10 @@
             >
               Add to Stock
             </button>
+          </div>
+          <div id="candidate-warnings" class="candidate-warnings" data-testid="candidate-warnings" aria-live="polite" hidden>
+            <p class="candidate-warnings__lead" data-role="candidate-warning-lead"></p>
+            <div class="stock-warnings candidate-warnings__list" data-role="candidate-warning-list"></div>
           </div>
           <div class="chips" id="candidate-chips"></div>
           <div

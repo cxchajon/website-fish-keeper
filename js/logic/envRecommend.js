@@ -261,15 +261,10 @@ export function deriveEnv(stock = [], options = {}) {
   }
   const blackwaterStatus = blackResult.status ?? 'off';
 
+  // Invert predation, group size, tank fit and aggression conflicts are stock warnings
+  // (#stock-warnings, owned by the engine); the card no longer repeats them as neutral chips.
   const invertResult = evaluateInvertSafety(entries);
   warnings.push(...invertResult.warnings);
-  detailChips.push(...invertResult.chips);
-
-  const groupResult = evaluateGroupNeeds(entries);
-  detailChips.push(...groupResult.chips);
-
-  const tankResult = evaluateTankFit(entries, computed);
-  detailChips.push(...tankResult.chips);
 
   for (const entry of entries) {
     if (!entry?.species?.id) continue;
@@ -308,8 +303,7 @@ export function deriveEnv(stock = [], options = {}) {
     const bName = nameMap.get(conflict.bId) ?? conflict.bId;
     const text = `Aggression conflict: ${aName} vs ${bName} — ${conflict.message}`;
     const severity = conflict.severity === 'error' ? 'danger' : 'warn';
-    detailChips.push({ id: conflictId, text, severity, icon: 'alert', kind: 'aggression' });
-    warnings.push({ id: `warn:${conflictId}`, type: severity === 'danger' ? 'hard' : 'soft', text });
+    warnings.push({ id: `warn:${conflictId}`, type: severity === 'danger' ? 'hard' : 'soft', text, owner: 'stock' });
   }
 
   let totalIndividuals = 0;
@@ -355,6 +349,7 @@ export function deriveEnv(stock = [], options = {}) {
       actions: warningActions,
       docs: { ref: 'betta_male_conflict' },
       text: warningText,
+      owner: 'stock',
     });
     notes.aggression.push('Multiple male bettas detected — keep only one male betta per tank.');
   } else if (maleBettaCount === 1 && totalIndividuals === 1) {
@@ -583,49 +578,24 @@ function renderBars(root, env, { isMobile = false, isEmpty = false } = {}) {
     </div>`;
 }
 
+// Warnings the engine also reports (owner: 'stock') are shown once, in #stock-warnings. Whatever
+// remains is rendered in full: a warning is never collapsed behind a "more" toggle.
 function renderWarnings(root, warnings) {
   if (!root) return;
-  if (!warnings.length) {
+  const own = warnings.filter((warning) => warning.owner !== 'stock');
+  if (!own.length) {
     root.hidden = true;
     root.innerHTML = '';
     return;
   }
   root.hidden = false;
-  const [first, ...rest] = warnings;
-  const firstClass = first.type === 'hard' ? ' env-warn-hard' : '';
-  let html = `<p class="env-warn-primary${firstClass}">${escapeHtml(first.text)}</p>`;
-  if (rest.length) {
-    const items = rest
-      .map((warning) => {
-        const cls = warning.type === 'hard' ? ' class="env-warn-hard"' : '';
-        return `<li${cls}>${escapeHtml(warning.text)}</li>`;
-      })
-      .join('');
-    html += ` <button type="button" class="linklike env-warn-more" data-expanded="false" aria-expanded="false">(+${rest.length} more)</button>`;
-    html += `<ul class="env-warn-list" hidden>${items}</ul>`;
-  }
-  root.innerHTML = html;
-
-  if (rest.length) {
-    const toggle = root.querySelector('.env-warn-more');
-    const list = root.querySelector('.env-warn-list');
-    if (toggle && list) {
-      toggle.addEventListener('click', () => {
-        const expanded = toggle.getAttribute('data-expanded') === 'true';
-        if (expanded) {
-          list.setAttribute('hidden', '');
-          toggle.setAttribute('data-expanded', 'false');
-          toggle.setAttribute('aria-expanded', 'false');
-          toggle.textContent = `(+${rest.length} more)`;
-        } else {
-          list.removeAttribute('hidden');
-          toggle.setAttribute('data-expanded', 'true');
-          toggle.setAttribute('aria-expanded', 'true');
-          toggle.textContent = 'Hide';
-        }
-      });
-    }
-  }
+  root.innerHTML = `<ul class="env-warn-list">${own
+    .map((warning) => {
+      const hard = warning.type === 'hard';
+      const label = hard ? '✖ Problem' : '⚠ Warning';
+      return `<li class="env-warn${hard ? ' env-warn-hard' : ''}" data-state="${hard ? 'bad' : 'warn'}"><span class="warning-severity">${label}:</span> ${escapeHtml(warning.text)}</li>`;
+    })
+    .join('')}</ul>`;
 }
 
 function ensureTips(el) {
@@ -736,7 +706,7 @@ function buildRangeCondition({ label, ranges, digits, conflictPrefix, warningBui
   const conflictText = warningBuilder(conflict.low, conflict.high) || `${conflictPrefix}: adjust stock for compatibility.`;
   return {
     condition: { label, value: `${compromise} (compromise)`, badges: [] },
-    warnings: [{ type: 'hard', text: conflictText }],
+    warnings: [{ type: 'hard', text: conflictText, owner: 'stock' }],
   };
 }
 
@@ -761,9 +731,10 @@ function buildPhCondition(ranges, sensitiveSpecies) {
     const warning = {
       type: 'hard',
       text: `pH clash for sensitive species: ${formatRangeGroup(conflict.low, '')} vs ${formatRangeGroup(conflict.high, '')}.`,
+      owner: 'stock',
     };
     return {
-      condition: { label, value: 'No shared band (see warnings)', badges },
+      condition: { label, value: 'No shared band (see Current Stock warnings)', badges },
       warnings: [warning],
       notes,
     };
@@ -873,12 +844,11 @@ const hasTag = (species, tag) => Array.isArray(species?.tags) && species.tags.in
 // species-adapter.v2.js). A predator is never flagged against its own species.
 function evaluateInvertSafety(entries) {
   const warnings = [];
-  const chips = [];
   const checks = [
-    { category: 'shrimp', tag: 'shrimp_risk', label: 'Shrimp', chip: 'shrimp at risk' },
-    { category: 'snail', tag: 'snail_risk', label: 'Snail', chip: 'snails at risk' },
+    { category: 'shrimp', tag: 'shrimp_risk', label: 'Shrimp' },
+    { category: 'snail', tag: 'snail_risk', label: 'Snail' },
   ];
-  for (const { category, tag, label, chip } of checks) {
+  for (const { category, tag, label } of checks) {
     const prey = entries.filter((entry) => entry.species.category === category);
     if (!prey.length) continue;
     const predators = entries.filter((entry) => hasTag(entry.species, tag)
@@ -889,42 +859,9 @@ function evaluateInvertSafety(entries) {
       .map((entry) => entry.species.common_name).join(', ');
     if (!preyNames) continue;
     const predatorNames = predators.map((entry) => entry.species.common_name).join(', ');
-    warnings.push({ type: 'soft', text: `${label} predation risk: ${predatorNames} vs ${preyNames}.` });
-    chips.push(chip);
+    warnings.push({ type: 'soft', text: `${label} predation risk: ${predatorNames} vs ${preyNames}.`, owner: 'stock' });
   }
-  return { warnings, chips };
-}
-
-function evaluateGroupNeeds(entries) {
-  const chips = [];
-  for (const entry of entries) {
-    const { species, qty } = entry;
-    const group = species.group;
-    if (!group) continue;
-    if (group.type === 'shoal' && qty < group.min) {
-      chips.push(`shoal min not met: ${species.common_name}`);
-    } else if (group.type === 'social' && qty < group.min) {
-      chips.push(`keep ${group.min}+ together: ${species.common_name}`);
-    } else if (group.type === 'harem' && qty < group.min) {
-      chips.push(`harem ratio needed: ${species.common_name}`);
-    }
-  }
-  return { chips };
-}
-
-function evaluateTankFit(entries, computed) {
-  const chips = [];
-  const tankLength = computed?.tank?.length;
-  if (!Number.isFinite(tankLength)) {
-    return { chips };
-  }
-  for (const entry of entries) {
-    const needed = Number(entry.species.min_tank_length_in);
-    if (Number.isFinite(needed) && needed > tankLength) {
-      chips.push(`tank length short for ${entry.species.common_name}`);
-    }
-  }
-  return { chips };
+  return { warnings };
 }
 
 function computeBioloadPct(computed) {

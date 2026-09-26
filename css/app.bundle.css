@@ -11776,6 +11776,82 @@ a {
   }
 }
 
+/* ==========================================================================
+   Stocking Advisor warnings (Phase 2E): one visual language for every warning.
+   Readable text on the dark theme, severity in words as well as colour, long
+   text wraps, and nothing is hidden or clipped at phone widths.
+   ========================================================================== */
+#stocking-page #stock-warnings .status-strip,
+#stocking-page .candidate-warnings .status-strip {
+  width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+#stocking-page #stock-warnings .warning-title,
+#stocking-page .candidate-warnings .warning-title {
+  font-weight: 700;
+}
+
+#stocking-page #stock-warnings .warning-message,
+#stocking-page .candidate-warnings .warning-message {
+  font-size: 0.96rem;
+  font-weight: 500;
+  opacity: 1;
+}
+
+#stocking-page .warning-severity {
+  white-space: nowrap;
+}
+
+#stocking-page .status-strip[data-state="bad"] .warning-severity,
+#stocking-page .env-warn[data-state="bad"] .warning-severity {
+  color: var(--chip-bad-text);
+}
+
+#stocking-page .status-strip[data-state="warn"] .warning-severity,
+#stocking-page .env-warn[data-state="warn"] .warning-severity {
+  color: var(--chip-warn-text);
+}
+
+#stocking-page .candidate-warnings {
+  margin-top: 14px;
+}
+
+#stocking-page .candidate-warnings__lead {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+#stocking-page .candidate-warnings__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm, 8px);
+}
+
+#stocking-page #env-warnings .env-warn-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#stocking-page #env-warnings .env-warn {
+  overflow-wrap: anywhere;
+}
+
+body.prototype-stock-page .chip {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 /* ===== TTG DESKTOP LAYER v1 — generated from css/ttg-desktop.css, do not hand-edit ===== */
 /*
  * The Tank Guide desktop foundation.

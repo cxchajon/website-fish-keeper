@@ -189,7 +189,7 @@ const toAggressionContext = (tank) => ({
 const buildAggressionChips = (result, species) => {
   if (!result) return [];
   if (result.error === AGGRESSION_TOKENS.FATAL_INCOMPATIBLE_BETTA_MALE) {
-    return [{ tone: 'bad', text: ERROR_CHIP_TEXT[AGGRESSION_TOKENS.FATAL_INCOMPATIBLE_BETTA_MALE] }];
+    return [{ tone: 'bad', text: ERROR_CHIP_TEXT[AGGRESSION_TOKENS.FATAL_INCOMPATIBLE_BETTA_MALE], covers: ['betta.multipleMales'] }];
   }
   const chips = [];
   if (Array.isArray(result.tokens)) {

@@ -112,6 +112,11 @@ export function renderStatus(strip, status) {
   strip.textContent = status.label;
 }
 
+const CHIP_TONE_LABELS = Object.freeze({
+  bad: { icon: '✖', text: 'Problem' },
+  warn: { icon: '⚠', text: 'Warning' },
+});
+
 export function renderChips(container, chips) {
   container.innerHTML = '';
   for (const chip of chips) {
@@ -120,7 +125,19 @@ export function renderChips(container, chips) {
     if (chip.tone) {
       node.dataset.tone = chip.tone;
     }
-    node.textContent = chip.text;
+    // Severity is also given in text, never by colour alone.
+    const label = CHIP_TONE_LABELS[chip.tone];
+    if (label) {
+      const icon = document.createElement('span');
+      icon.className = 'chip__icon';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.textContent = label.icon;
+      const sr = document.createElement('span');
+      sr.className = 'sr-only';
+      sr.textContent = `${label.text}: `;
+      node.append(icon, sr);
+    }
+    node.append(chip.text);
     container.appendChild(node);
   }
 }

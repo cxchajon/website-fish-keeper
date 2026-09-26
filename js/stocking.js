@@ -18,7 +18,6 @@ import { debounce, getQueryFlag, roundCapacity, nowTimestamp, byCommonName } fro
 import { renderConditions, renderChips } from './logic/ui.js';
 import { getTankSnapshot, EMPTY_TANK, loadFilterSnapshot, saveFilterSnapshot } from './stocking/tankStore.js';
 import { EVENTS, dispatchEvent as dispatchStockingEvent } from './stocking/events.js';
-import { tankLengthStatus } from './stocking/validators.js';
 import { initInfoTooltips } from './ui/tooltip.js';
 import { renderFiltrationTrigger, renderFiltrationDrawer, bindFiltrationEvents } from './ui/filter-drawer.js';
 import {
@@ -251,66 +250,6 @@ function guarded(handler){
   };
 }
 
-function createLengthValidator(container) {
-  if (!container) {
-    return {
-      evaluate() {},
-      sync() {},
-    };
-  }
-  let chip = null;
-  let visible = false;
-  let text = '';
-
-  const ensureChip = () => {
-    if (chip) return chip;
-    chip = document.createElement('span');
-    chip.className = 'chip';
-    chip.dataset.tone = 'bad';
-    chip.dataset.role = 'stock-warning-length';
-    chip.dataset.field = 'length-warning';
-    chip.setAttribute('data-testid', 'tank-length-warning');
-    return chip;
-  };
-
-  const attach = () => {
-    if (!visible) return;
-    const node = ensureChip();
-    node.textContent = text;
-    if (!node.isConnected) {
-      container.prepend(node);
-    }
-  };
-
-  const detach = () => {
-    if (chip && chip.isConnected) {
-      chip.remove();
-    }
-  };
-
-  return {
-    evaluate({ tank, species }) {
-      const result = tankLengthStatus({ tank, species });
-      if (!result.show) {
-        visible = false;
-        text = '';
-        detach();
-        return;
-      }
-      visible = true;
-      text = result.message;
-      attach();
-    },
-    sync() {
-      if (visible) {
-        attach();
-      } else {
-        detach();
-      }
-    },
-  };
-}
-
 window.addEventListener('keydown', (e) => {
   const platform = typeof navigator !== 'undefined' ? navigator.platform : '';
   const isMac = platform.toUpperCase().includes('MAC');
@@ -443,6 +382,7 @@ async function bootstrapStocking() {
     addBtn: document.getElementById('plan-add'),
     stockList: document.getElementById('stock-list'),
     stockWarnings: document.getElementById('stock-warnings'),
+    candidateWarnings: document.getElementById('candidate-warnings'),
     seeGear: document.getElementById('btn-gear'),
     envReco: document.getElementById('env-reco'),
     envTips: document.querySelector('#env-legend, #env-more-tips, [data-role="env-legend"]'),
@@ -1441,7 +1381,6 @@ async function bootstrapStocking() {
     }
   }
 
-  const lengthValidator = createLengthValidator(refs.candidateChips);
   let lastStockSignature = '';
   let isBootstrapped = false;
 
@@ -1522,12 +1461,6 @@ async function bootstrapStocking() {
     }
   }
 
-  const updateLengthValidator = () => {
-    const tank = state.tank ?? EMPTY_TANK;
-    const species = selectedSpeciesId ? speciesById.get(selectedSpeciesId) ?? null : null;
-    lengthValidator.evaluate({ tank, species });
-  };
-
   const emitSpeciesChange = (id) => {
     const normalized = typeof id === 'string' ? id : id ? String(id) : null;
     dispatchStockingEvent(EVENTS.SPECIES_CHANGED, { speciesId: normalized });
@@ -1572,7 +1505,6 @@ async function bootstrapStocking() {
     syncGearLink();
     resetSpeciesFilters();
     populateSpecies();
-    updateLengthValidator();
     if (isBootstrapped) {
       requestEventRecompute();
     }
@@ -1581,7 +1513,6 @@ async function bootstrapStocking() {
   window.addEventListener(EVENTS.SPECIES_CHANGED, (event) => {
     const nextId = event.detail?.speciesId ?? null;
     selectedSpeciesId = typeof nextId === 'string' && nextId ? nextId : null;
-    updateLengthValidator();
   });
 
   window.addEventListener(EVENTS.STOCK_CHANGED, () => {
@@ -1589,8 +1520,6 @@ async function bootstrapStocking() {
       requestEventRecompute();
     }
   });
-
-  updateLengthValidator();
 
   function ensureTankAssumptionScrubbed(){
     const gallons = computed?.tank?.gallons ?? state?.tank?.gallons ?? null;
@@ -2230,70 +2159,124 @@ function syncToggles() {
   }
 }
 
-  function renderCandidateState() {
+  // Candidate chips that repeat a warning already shown (same issue, same state) are dropped: the
+  // warning strip carries the engine severity, the species names and the full message.
+  function renderCandidateState(shownWarningIds = new Set()) {
     const chips = computed ? computed.chips : [];
-    renderChips(refs.candidateChips, chips);
-    lengthValidator.sync();
+    const visibleChips = chips.filter((chip) => !(Array.isArray(chip?.covers) && chip.covers.some((id) => shownWarningIds.has(id))));
+    renderChips(refs.candidateChips, visibleChips);
     syncCandidateControls();
-    if (!computed) {
-      if (refs.candidateBanner) {
-        refs.candidateBanner.style.display = 'none';
-      }
-      return;
-    }
     if (refs.candidateBanner) {
       refs.candidateBanner.style.display = 'none';
     }
   }
 
+const WARNING_SEVERITY_LABELS = Object.freeze({ bad: '✖ Problem', warn: '⚠ Warning', ok: 'ℹ Note' });
+
+function warningState(warning) {
+  const severity = typeof warning?.severity === 'string' ? warning.severity.toLowerCase() : '';
+  if (severity === 'danger' || severity === 'bad' || severity === 'error' || severity === 'critical') return 'bad';
+  if (severity === 'warn' || severity === 'warning') return 'warn';
+  return 'ok';
+}
+
+function warningParts(warning) {
+  const title = typeof warning.title === 'string' && warning.title.trim() ? warning.title.trim() : '';
+  const message = typeof warning.message === 'string' && warning.message.trim() ? warning.message.trim() : '';
+  const fallback = typeof warning.text === 'string' && warning.text.trim() ? warning.text.trim() : '';
+  const heading = title || fallback || 'Warning';
+  const body = title ? message : message && message !== fallback ? message : (fallback && fallback !== heading ? fallback : '');
+  return { heading, body };
+}
+
+function buildWarningNode(warning, tone, heading, body) {
+  const node = document.createElement('div');
+  node.className = 'status-strip';
+  node.dataset.state = tone;
+  // Red problems are alerts; the containers are polite live regions for the rest. Nodes are reused
+  // across recomputes (see renderWarningList), so an unchanged warning is not announced again.
+  if (tone === 'bad') node.setAttribute('role', 'alert');
+  if (warning.id) node.dataset.warningId = warning.id;
+  const header = document.createElement('span');
+  header.className = 'warning-title';
+  const badge = document.createElement('span');
+  badge.className = 'warning-severity';
+  badge.textContent = `${WARNING_SEVERITY_LABELS[tone]}:`;
+  header.append(badge, ` ${heading}`);
+  node.appendChild(header);
+  if (body) {
+    const text = document.createElement('span');
+    text.className = 'warning-message';
+    text.textContent = body;
+    node.appendChild(text);
+  }
+  return node;
+}
+
+// Keyed render: a warning whose id, severity and text are unchanged keeps its DOM node, so repeated
+// recomputes neither flash nor re-announce it, and a resolved warning's node is removed.
+function renderWarningList(container, warnings = []) {
+  if (!container) return;
+  const list = (Array.isArray(warnings) ? warnings : []).filter(Boolean);
+  const existing = new Map();
+  for (const child of Array.from(container.children)) {
+    if (child.dataset.signature) existing.set(child.dataset.key, child);
+  }
+  const desired = list.map((warning, index) => {
+    const tone = warningState(warning);
+    const { heading, body } = warningParts(warning);
+    const key = warning.id ? `id:${warning.id}` : `text:${heading}:${index}`;
+    const signature = `${tone}|${heading}|${body}`;
+    let node = existing.get(key);
+    if (!node || node.dataset.signature !== signature) {
+      node = buildWarningNode(warning, tone, heading, body);
+      node.dataset.key = key;
+      node.dataset.signature = signature;
+    }
+    return node;
+  });
+  const keep = new Set(desired);
+  for (const child of Array.from(container.children)) {
+    if (!keep.has(child)) child.remove();
+  }
+  desired.forEach((node, index) => {
+    if (container.children[index] !== node) {
+      container.insertBefore(node, container.children[index] ?? null);
+    }
+  });
+  container.hidden = desired.length === 0;
+}
+
 function renderStockWarningsPanel(warnings = []) {
-  const container = refs.stockWarnings;
-  if (!container) {
-    return;
+  renderWarningList(refs.stockWarnings, warnings);
+}
+
+// Warnings that the previewed species would add (or change) before it is added. After Add the same
+// warning ids appear in #stock-warnings instead.
+function renderCandidateWarningsPanel(warnings = [], candidateEntry = null) {
+  const root = refs.candidateWarnings;
+  if (!root) return;
+  const listEl = root.querySelector('[data-role="candidate-warning-list"]');
+  const lead = root.querySelector('[data-role="candidate-warning-lead"]');
+  renderWarningList(listEl, warnings);
+  const name = candidateEntry?.species?.common_name;
+  if (lead) {
+    const text = name ? `If you add ${candidateEntry.qty} × ${name}:` : 'If you add this species:';
+    if (lead.textContent !== text) lead.textContent = text;
   }
-  container.innerHTML = '';
-  const list = Array.isArray(warnings) ? warnings : [];
-  if (!list.length) {
-    container.hidden = true;
-    return;
-  }
-  const fragment = document.createDocumentFragment();
-  for (const warning of list) {
-    if (!warning) continue;
-    const node = document.createElement('div');
-    node.className = 'status-strip';
-    node.dataset.state = (() => {
-      const severity = typeof warning.severity === 'string' ? warning.severity.toLowerCase() : '';
-      if (severity === 'danger' || severity === 'bad' || severity === 'error') return 'bad';
-      if (severity === 'warn' || severity === 'warning') return 'warn';
-      return 'ok';
-    })();
-    node.setAttribute('role', 'alert');
-    if (warning.id) {
-      node.dataset.warningId = warning.id;
-    }
-    const title = typeof warning.title === 'string' && warning.title.trim() ? warning.title.trim() : '';
-    const message = typeof warning.message === 'string' && warning.message.trim() ? warning.message.trim() : '';
-    const fallback = typeof warning.text === 'string' && warning.text.trim() ? warning.text.trim() : '';
-    const header = document.createElement('span');
-    header.className = 'warning-title';
-    if (title) {
-      header.textContent = title;
-    } else {
-      header.textContent = fallback || 'Warning';
-    }
-    node.appendChild(header);
-    const bodyText = title ? message : message && message !== fallback ? message : (fallback && fallback !== header.textContent ? fallback : '');
-    if (bodyText) {
-      const body = document.createElement('span');
-      body.className = 'warning-message';
-      body.textContent = bodyText;
-      node.appendChild(body);
-    }
-    fragment.appendChild(node);
-  }
-  container.appendChild(fragment);
-  container.hidden = false;
+  root.hidden = !warnings.length;
+}
+
+// Plan warnings belong to the stock as it is; candidate warnings are the ones a preview adds or
+// changes (same id, different text — e.g. the planned group size).
+function splitWarnings(fullComputed, planComputed) {
+  const full = fullComputed?.status?.warnings ?? [];
+  if (!planComputed) return { plan: full, candidate: [] };
+  const plan = planComputed?.status?.warnings ?? [];
+  const planText = new Map(plan.map((warning) => [warning?.id, warning?.text ?? warning?.message ?? '']));
+  const candidate = full.filter((warning) => warning && (!warning.id || !planText.has(warning.id)
+    || planText.get(warning.id) !== (warning.text ?? warning.message ?? '')));
+  return { plan, candidate };
 }
 
 function renderDiagnostics() {
@@ -2326,6 +2309,7 @@ function renderAll() {
     renderCandidateState();
     syncStockFromState();
     renderStockWarningsPanel([]);
+    renderCandidateWarningsPanel([]);
     renderDiagnostics();
     renderEnvironmentPanels();
     ensureTankAssumptionScrubbed();
@@ -2337,12 +2321,16 @@ function renderAll() {
     return;
   }
   computed = buildComputedState(state);
+  const planComputed = computed?.candidate ? buildComputedState({ ...state, candidate: null }) : null;
+  const { plan: planWarnings, candidate: candidateWarnings } = splitWarnings(computed, planComputed);
   if (refs.conditions) {
     renderConditions(refs.conditions, computed.conditions.conditions);
   }
-  renderCandidateState();
+  const shownWarningIds = new Set([...planWarnings, ...candidateWarnings].map((warning) => warning?.id).filter(Boolean));
+  renderCandidateState(shownWarningIds);
   syncStockFromState();
-  renderStockWarningsPanel(computed?.status?.warnings ?? []);
+  renderStockWarningsPanel(planWarnings);
+  renderCandidateWarningsPanel(candidateWarnings, computed.candidate);
   renderDiagnostics();
   renderEnvironmentPanels();
   ensureTankAssumptionScrubbed();
