@@ -701,11 +701,7 @@ test.describe('warnings (desktop and mobile)', () => {
     test(`species trait: ${label} is a neutral note, not a warning`, async ({ page }) => {
       await withFilter(page);
       await previewCandidate(page, speciesId, qty);
-      // Known app race (not covered here): if the species-change render runs before the quantity is
-      // typed, blurring the quantity does not recompute, so the preview can keep qty 1 and show a
-      // group warning. Recompute explicitly so this test checks the species notes only.
       await settle(page);
-      await page.evaluate(() => (window as unknown as { recomputeAll: () => void }).recomputeAll());
       await expect(note(page, noteText)).toBeVisible();
       await expect(note(page, noteText)).toContainText('Species note');
       await expect(activeChip(page, /prey|avoid|predation|incompatib/i)).toHaveCount(0);
