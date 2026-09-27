@@ -1,14 +1,15 @@
 import { defineConfig, devices } from '@playwright/test';
 
 // Focused production gate for the Stocking Advisor species pipeline. Independent of the main
-// Playwright suite: it starts its own static server and runs only tests/stocking-advisor-gate.spec.ts.
+// Playwright suite: it starts its own static server and runs only tests/stocking-advisor-gate.spec.ts
+// and tests/stocking-advisor-saved-filters.spec.ts (saved filter state v2).
 // Set PW_CHROMIUM_PATH to use a locally installed Chromium instead of Playwright's download.
 const PORT = 4174;
 const launchOptions = process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {};
 
 export default defineConfig({
   testDir: 'tests',
-  testMatch: 'stocking-advisor-gate.spec.ts',
+  testMatch: ['stocking-advisor-gate.spec.ts', 'stocking-advisor-saved-filters.spec.ts'],
   timeout: 60000,
   expect: { timeout: 10000 },
   reporter: [['list']],

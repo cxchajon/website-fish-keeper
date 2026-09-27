@@ -1,3 +1,5 @@
+import { hasUnsupportedCapacityMethod, pickPassthroughFields } from './stocking-advisor/filtration/math.js';
+
 const DATA_URL = '/assets/data/gearCatalog.json';
 const STORAGE_KEY = 'ttg.gear.catalog.v1';
 const STORAGE_TIMESTAMP_KEY = 'ttg.gear.catalog.timestamp';
@@ -69,6 +71,10 @@ function sanitizeItem(raw) {
   if (!Number.isFinite(gphRated) || gphRated <= 0) {
     return null;
   }
+  // A capacity method this code doesn't support is never offered as a flow-rated product.
+  if (hasUnsupportedCapacityMethod(raw)) {
+    return null;
+  }
   const minGallonsRaw = toNumber(raw.minGallons, 0);
   const maxGallonsRaw = toNumber(raw.maxGallons, Infinity);
   const minGallons = Math.max(0, Number.isFinite(minGallonsRaw) ? minGallonsRaw : 0);
@@ -89,6 +95,14 @@ function sanitizeItem(raw) {
   if (raw?.tags && Array.isArray(raw.tags)) {
     entry.tags = raw.tags.slice();
   }
+  // Capacity metadata (sponge migration design section 7.3) is carried when a record has it, so a
+  // restored filter can take it from the current catalog. No record has it yet; nothing scores it.
+  const capacity = pickPassthroughFields(raw);
+  ['capacityMethod', 'manufacturerMaxGallons', 'manufacturerMinGallons', 'ratingStatus'].forEach((key) => {
+    if (capacity[key] !== undefined) {
+      entry[key] = capacity[key];
+    }
+  });
   return entry;
 }
 

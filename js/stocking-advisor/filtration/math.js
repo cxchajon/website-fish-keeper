@@ -84,11 +84,74 @@ export function filterRole(filter) {
   return CIRCULATION_ONLY_TYPES.has(filterTypeKey(filter)) ? FILTER_ROLES.CIRCULATION : FILTER_ROLES.BIOLOGICAL;
 }
 
+// How a device's filtration capacity is expressed (sponge-filter migration design, sections 7–9).
+// Every filter scores by flow today; the other methods are carried through saved state and the
+// compute path but are not read by the scoring below yet (sponge migration phase B).
+export const CAPACITY_METHODS = Object.freeze({
+  FLOW: 'flow',
+  MANUFACTURER_RATING: 'manufacturer_rating',
+  TANK_COMPATIBILITY: 'tank_compatibility',
+});
+const KNOWN_CAPACITY_METHODS = new Set(Object.values(CAPACITY_METHODS));
+const KNOWN_RATING_STATUSES = new Set(['verified', 'needs_review', 'needed']);
+const MAX_RATED_GALLONS = 10000;
+const MAX_ID_LENGTH = 128;
+
+function hasCapacityMethod(filter) {
+  return Boolean(filter) && filter.capacityMethod !== undefined && filter.capacityMethod !== null;
+}
+
+// An explicitly stated method this code doesn't support (e.g. "banana", or one from a newer
+// release). Such a device fails closed: it is never treated as a flow filter and adds no GPH.
+export function hasUnsupportedCapacityMethod(filter) {
+  if (!hasCapacityMethod(filter)) return false;
+  const value = typeof filter.capacityMethod === 'string' ? filter.capacityMethod.trim() : '';
+  return !KNOWN_CAPACITY_METHODS.has(value);
+}
+
+// A known method; FLOW when absent (every legacy/v1 filter); null when explicitly unsupported.
+export function resolveCapacityMethod(filter) {
+  if (!hasCapacityMethod(filter)) return CAPACITY_METHODS.FLOW;
+  return hasUnsupportedCapacityMethod(filter) ? null : filter.capacityMethod.trim();
+}
+
+function cleanId(value) {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed && trimmed.length <= MAX_ID_LENGTH ? trimmed : null;
+}
+
+function cleanGallons(value) {
+  if (value === null || value === undefined || value === '' || typeof value === 'boolean') return null;
+  const num = Number(value);
+  return Number.isFinite(num) && num > 0 && num <= MAX_RATED_GALLONS ? num : null;
+}
+
+// Identity and future capacity fields that must survive every sanitising step unchanged. Only valid
+// values are copied, so an entry without them keeps its current shape. Nothing here is scored.
+export function pickPassthroughFields(filter) {
+  const out = {};
+  if (!filter || typeof filter !== 'object') return out;
+  const instanceId = cleanId(filter.instanceId);
+  if (instanceId) out.instanceId = instanceId;
+  const productId = cleanId(filter.productId);
+  if (productId) out.productId = productId;
+  const method = typeof filter.capacityMethod === 'string' ? filter.capacityMethod.trim() : '';
+  if (KNOWN_CAPACITY_METHODS.has(method)) out.capacityMethod = method;
+  const maxGallons = cleanGallons(filter.manufacturerMaxGallons ?? filter.ratedMaxGallons);
+  if (maxGallons !== null) out.manufacturerMaxGallons = maxGallons;
+  const minGallons = cleanGallons(filter.manufacturerMinGallons);
+  if (minGallons !== null) out.manufacturerMinGallons = minGallons;
+  if (KNOWN_RATING_STATUSES.has(filter.ratingStatus)) out.ratingStatus = filter.ratingStatus;
+  return out;
+}
+
 export function normalizeFilter(filter) {
   if (!filter || typeof filter !== 'object') {
     return null;
   }
-  const ratedGph = parseFlow(filter);
+  // An unsupported capacity method contributes no flow (normalizeFilters then leaves it out).
+  const ratedGph = hasUnsupportedCapacityMethod(filter) ? 0 : parseFlow(filter);
   return {
     id: typeof filter.id === 'string' && filter.id ? filter.id : null,
     source: typeof filter.source === 'string' && filter.source ? filter.source : null,
@@ -97,6 +160,7 @@ export function normalizeFilter(filter) {
     role: filterRole(filter),
     ratedGph,
     rated_gph: ratedGph,
+    ...pickPassthroughFields(filter),
   };
 }
 

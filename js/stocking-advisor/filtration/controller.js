@@ -1,5 +1,13 @@
 import { canonicalizeFilterType } from '../../utils.js';
-import { computeTurnover, getTotalGPH, normalizeFilters } from './math.js';
+import {
+  computeTurnover,
+  getTotalGPH,
+  hasUnsupportedCapacityMethod,
+  normalizeFilters,
+  pickPassthroughFields,
+  resolveCapacityMethod,
+} from './math.js';
+import { createInstanceId, readSavedFilters, writeSavedFilters } from './saved-state.js';
 import {
   loadFilterCatalog as fetchFilterCatalog,
   filterByTank as filterCatalogByTank,
@@ -12,7 +20,6 @@ import { getTankSnapshot } from '../../stocking/tankStore.js';
 
 const DEBUG_FILTERS = Boolean(window?.TTG?.DEBUG_FILTERS);
 
-const FILTER_STORAGE_KEY = 'ttg.stocking.filters.v1';
 const FILTER_SOURCES = Object.freeze({
   PRODUCT: 'product',
   CUSTOM: 'custom',
@@ -304,6 +311,15 @@ function setButtonState(button, enabled) {
   }
 }
 
+// Identity and capacity fields an item carries through the calculator and saved state. Scoring
+// still reads only type and GPH (sponge migration phase A).
+function capacityFields(item) {
+  return {
+    ...pickPassthroughFields(item),
+    capacityMethod: resolveCapacityMethod(item),
+  };
+}
+
 function toAppFilter(item) {
   const gph = clampGph(item?.gph);
   const source = normalizeSource(item?.source);
@@ -316,30 +332,22 @@ function toAppFilter(item) {
     rated_gph: gph ?? 0,
     kind: efficiencyType,
     source,
+    ...capacityFields(item),
   };
 }
 
-function persistAppFilters(filters) {
-  if (typeof localStorage === 'undefined') {
-    return;
-  }
-  try {
-    const payload = Array.isArray(filters)
-      ? filters.map((entry) => ({
-          id: entry.id ?? null,
-          type: canonicalizeFilterType(entry.type),
-          rated_gph: clampGph(entry.rated_gph) ?? 0,
-        }))
-      : [];
-    const meaningful = payload.filter((item) => item.id || item.rated_gph > 0);
-    if (!meaningful.length) {
-      localStorage.removeItem(FILTER_STORAGE_KEY);
-      return;
-    }
-    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(meaningful));
-  } catch (_error) {
-    // ignore storage failures
-  }
+// Saved as ttg.stocking.filters.v2, with the v1 mirror older scripts read (see saved-state.js).
+// A custom filter also keeps its chip label there.
+function persistAppFilters(items) {
+  const saved = Array.isArray(items)
+    ? items.map((item) => {
+        const appFilter = toAppFilter(item);
+        return appFilter.source === FILTER_SOURCES.CUSTOM && item?.label
+          ? { ...appFilter, label: item.label }
+          : appFilter;
+      })
+    : [];
+  writeSavedFilters(undefined, saved);
 }
 
 function scheduleRecompute() {
@@ -402,7 +410,7 @@ function applyFiltersToApp() {
   appState.actualGph = stats.totalGph > 0 ? stats.totalGph : null;
   appState.turnover = Number.isFinite(stats.turnover) && stats.turnover > 0 ? stats.turnover : null;
   logFilterDebug({ filters: appState.filters, ...state.totals });
-  persistAppFilters(appFilters);
+  persistAppFilters(state.filters);
   scheduleRecompute();
 }
 
@@ -679,9 +687,11 @@ function setFilters(nextFilters) {
   }
   const sanitized = [];
   const seen = new Set();
+  const instanceIds = new Set();
 
   nextFilters.forEach((raw) => {
-    if (!raw) return;
+    // An explicitly unsupported capacity method never becomes a flow filter.
+    if (!raw || hasUnsupportedCapacityMethod(raw)) return;
     const source = normalizeSource(raw.source);
     const gph = clampGph(raw.gph ?? raw.rated_gph ?? raw.gphRated);
     if (!Number.isFinite(gph) || gph <= 0) {
@@ -704,6 +714,14 @@ function setFilters(nextFilters) {
       return;
     }
     seen.add(key);
+    // Stable per-instance id, separate from the product id. The same product still can't be added
+    // twice (the key above); repeated instances arrive in phase D.
+    const fields = capacityFields(raw);
+    const instanceId = fields.instanceId && !instanceIds.has(fields.instanceId)
+      ? fields.instanceId
+      : createInstanceId(instanceIds);
+    instanceIds.add(instanceId);
+    const productId = source === FILTER_SOURCES.PRODUCT ? id : fields.productId;
     sanitized.push({
       id,
       source,
@@ -711,6 +729,9 @@ function setFilters(nextFilters) {
       gph,
       type,
       efficiencyType,
+      ...fields,
+      instanceId,
+      ...(productId ? { productId } : {}),
     });
   });
 
@@ -733,6 +754,9 @@ function createProductFilter(product) {
     gph: rated,
     type: canonicalizeFilterType(product.type ?? 'HOB'),
     efficiencyType: resolveEfficiencyType(product.type ?? 'HOB'),
+    ...pickPassthroughFields(product),
+    capacityMethod: resolveCapacityMethod(product),
+    productId: product.id,
   };
 }
 
@@ -988,15 +1012,29 @@ async function loadCatalog() {
 }
 
 function readStoredFilters() {
-  if (typeof localStorage === 'undefined') {
-    return [];
+  return readSavedFilters();
+}
+
+// Catalog metadata wins for a restored product; a capacity field the catalog doesn't define keeps
+// the saved value. The instance keeps its saved instanceId.
+function restoreProductItem(product, entry) {
+  const productItem = createProductFilter(product);
+  if (!productItem) return null;
+  const saved = pickPassthroughFields(entry);
+  const fromCatalog = pickPassthroughFields(product);
+  const merged = { ...productItem };
+  ['manufacturerMaxGallons', 'manufacturerMinGallons', 'ratingStatus'].forEach((key) => {
+    if (fromCatalog[key] === undefined && saved[key] !== undefined) {
+      merged[key] = saved[key];
+    }
+  });
+  if (typeof product.capacityMethod !== 'string' && saved.capacityMethod) {
+    merged.capacityMethod = saved.capacityMethod;
   }
-  try {
-    const parsed = JSON.parse(localStorage.getItem(FILTER_STORAGE_KEY) || '[]');
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (_error) {
-    return [];
+  if (saved.instanceId) {
+    merged.instanceId = saved.instanceId;
   }
+  return merged;
 }
 
 function hydrateFromAppState() {
@@ -1009,6 +1047,9 @@ function hydrateFromAppState() {
     : readStoredFilters();
   const next = [];
   existing.forEach((entry) => {
+    if (hasUnsupportedCapacityMethod(entry)) {
+      return;
+    }
     const gph = clampGph(entry?.rated_gph ?? entry?.gphRated ?? entry?.gph);
     if (!gph) {
       return;
@@ -1016,7 +1057,7 @@ function hydrateFromAppState() {
     const id = typeof entry?.id === 'string' && entry.id ? entry.id : null;
     const product = id ? findProductById(id) : null;
     if (product) {
-      const productItem = createProductFilter(product);
+      const productItem = restoreProductItem(product, entry);
       if (productItem) {
         next.push(productItem);
       }
@@ -1024,6 +1065,8 @@ function hydrateFromAppState() {
     }
     const type = canonicalizeFilterType(entry?.type ?? 'HOB');
     const efficiencyType = resolveEfficiencyType(entry?.kind ?? entry?.efficiencyType ?? entry?.type ?? 'HOB');
+    // An id the catalog doesn't know (custom, or a product it can't resolve right now) keeps its
+    // stored GPH, as before. A product id is kept so a later catalog load can still resolve it.
     const manual = {
       id: id ?? `manual-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
       source: FILTER_SOURCES.CUSTOM,
@@ -1031,6 +1074,7 @@ function hydrateFromAppState() {
       gph,
       type,
       efficiencyType,
+      ...capacityFields(entry),
     };
     next.push(manual);
   });
