@@ -18,6 +18,10 @@ This report resolves the three rules the sponge audit proposed but that were **n
 adding sponge ratings together, converting powered GPH into "covered gallons", and adding sponge
 gallons to powered-filter gallons. **It revises the sponge audit on all three** (section 1).
 
+**Status: final product decisions locked (2026-09-27 review).** Section 1 is the authoritative
+decision record. Where the analysis sections compare options, the locked decision is marked
+**LOCKED**. Nothing is implemented; production work follows the phase order in section 15.
+
 No new web research was possible beyond the three reports (the egress proxy blocks the relevant
 manufacturer and hobby sites, as recorded in those reports). Evidence grades used below are the
 reports' scale: A verified on manufacturer page · B manufacturer/distributor text via search index
@@ -25,26 +29,63 @@ reports' scale: A verified on manufacturer page · B manufacturer/distributor te
 
 ---
 
-## 1. Product decision summary
+## 1. Product decision summary (LOCKED)
 
-| Question | Sponge audit (proposed) | **This design (recommended)** |
+### 1.1 Locked decisions
+
+| # | Decision | Locked rule |
 | --- | --- | --- |
-| Can one correctly rated sponge pass on its own? | Yes | **Yes** — "Rated for this tank". No evidence that an appropriately sized air-driven sponge is categorically inadequate (section 2.4). |
-| Are sponge ratings additive? | Yes, "combined rating" | **No, not as a capacity number.** A tiered, non-additive rule: one sponge rated ≥ tank → *rated*; several sponges whose printed ratings together reach the tank size → a separate, softer **"Likely adequate — several sponges"** status. The sum is used as a *threshold test only* and is never displayed as "combined rating N gal". |
-| Sponge + powered filter | Coverage sum (sponge gal + GPH ÷ 2) | **Independent dimensions, either path can satisfy.** Powered filter judged by the unchanged Phase 2C flow floor; sponge judged by its rating; overall passes if **either** path passes on its own. The other device is shown as supplemental. No combined number. |
-| Convert powered GPH to gallons? | Yes (GPH ÷ 2) | **No.** It would turn an unvalidated floor (2×) into a capacity equivalence the threshold research shows is contradicted by manufacturers (EHEIM 2213 1.76× at its own max tank). |
-| Neither path passes alone (weak HOB + small sponge) | Coverage sum might pass | **"Review" (amber)**, never green, never a combined number. Severity drops from danger to warn because a second biological filter exists. |
-| Stocking Load | Never changes capacity | Same. It may only change **copy / severity of a non-passing or "likely" status**, never pass/fail (section 5). |
-| Measured GPH for sponges | Optional scored override | **Not scored; omit from first release** (section 6.3). |
-| Same product twice | Allow for sponges | **Allow for all filter types** except UGF, with per-instance IDs (section 10). |
-| UGF | Rating check, separate type | **Separate rating check, eligibility by tank preset footprint, never combined with sponges** (section 11). |
+| D1 | **One rated sponge can pass alone** | If **one** sponge has a verified manufacturer maximum tank rating ≥ the nominal tank size, overall filtration may pass from that sponge alone: **✓ Rated for this tank** (green). No powered filter is required. No turnover is shown for the sponge. The rating is never converted into GPH. |
+| D2 | **Multiple undersized sponges** | If no single sponge is rated for the tank but two or more sponge ratings together are ≥ the tank size: **⚠ Likely adequate — multiple sponge filters** (**amber**, intermediate). Each sponge's own rating is listed. **No combined gallon number is displayed.** Not green / not "verified adequate"; not red / not a failure. The sum is an acknowledged heuristic used only as a yes/no test. |
+| D3 | **Below rating** | If the only known sponge filtration is below the tank size (and D2 does not apply): **⚠ Below manufacturer rating** (**amber**), showing "Filter rating: Up to X gal · Tank: Y gal". Never red on the manufacturer rating alone. |
+| D4 | **Unknown rating** | A sponge with no usable rating: **○ Rating needed** (**neutral**, not evaluated). Never "adequate", never "unsafe". If it is the only biological filtration, overall filtration = **Not evaluated — rating needed**, neither green nor red. |
+| D5 | **Mixed powered + sponge** | Powered filters: existing Phase 2C flow model, unchanged. Sponges: manufacturer rating. Powered passes on its own → overall **adequate**, sponge supplemental. One sponge covers the tank on its own → overall **adequate**, powered filter supplemental. Neither passes on its own → **⚠ Review filtration** (amber) with each device's individual reason. |
+| D6 | **No GPH → gallons conversion, ever** | No "GPH ÷ 2 = gallons covered" or any other exchange rate. No adding powered-filter gallons to sponge gallons. No combined numerical capacity. The 2× floor is a Phase 2C powered-filter rule only, not a unit conversion. |
+| D7 | **Stocking Load** | In the first implementation Stocking Load changes **neither** sponge pass/fail **nor** warning severity. Filtration adequacy and Stocking Load stay separate. May be revisited with evidence. |
+| D8 | **Custom sponge input** | Type = Sponge asks **"Rated for up to ___ gallons"**. No GPH field. **No measured-GPH override** in the first implementation. |
+| D9 | **"X gallons and up" wording** | A minimum-only rating does **not** establish a maximum and is never stored as `manufacturerMaxGallons`. Such a product stays **NEEDS SOURCE / PRODUCT REVIEW** (runtime: Rating needed) until a usable maximum or another defensible capacity method is established. No invented maximum. |
+| D10 | **Saved state / stale cache** | v2 + type-wins strategy (sections 8–9) kept. Known sponge ids ignore historical GPH; type / `capacityMethod` wins over any stale `gphRated`; stale cached fake sponge GPH is never scored as turnover after migration; old custom sponges with only a GPH become Rating needed; historical GPH may be shown once as "old value — not used", never trusted as measured flow. |
+| D11 | **Duplicate instances** | Later phase (D). Multiple instances of the same catalog product, each with a unique instance id and the same product id; most important for sponges. Not built in the initial plumbing phase except where migration safety needs it (section 10). |
+| D12 | **UGF** | Separate dedicated tank-compatibility rule; no fake GPH; never combined arithmetically with sponge ratings; saved product id remains resolvable. Not forced into the sponge model. |
 
-One-line decision logic (detail in section 4.4):
+"Verified" in D1 means the catalog rating has been confirmed at grade A or B (manufacturer page /
+manual or manufacturer-distributor text) during the catalog data batch. A catalog sponge whose
+maximum cannot be confirmed carries `ratingStatus: "needs_review"` and is treated as **Rating
+needed** (D4), not as rated. For a **custom** sponge the user's entry of the number printed on
+the box is the rating; it is labelled as user-entered.
 
-> **Filtration passes if (a) the powered filters pass the existing flow floor, or (b) one sponge is
-> rated for the tank. If neither, several sponges whose ratings together reach the tank size give
-> "Likely adequate". Otherwise the result is "Review" (some biological filter present) or the
-> existing none / circulation-only states.**
+### 1.2 Status and colour summary
+
+| Situation | Status | Tone |
+| --- | --- | --- |
+| One sponge rated ≥ tank | ✓ Rated for this tank | **Green** |
+| Powered filter passes Phase 2C floor on its own | ✓ Filtration appears adequate | **Green** |
+| Several undersized sponges, ratings together ≥ tank | ⚠ Likely adequate — multiple sponge filters | **Amber** |
+| Sponge(s) only, below rating, D2 not met | ⚠ Below manufacturer rating | **Amber** |
+| Powered and sponge both present, neither passes alone | ⚠ Review filtration | **Amber** |
+| Only biological filtration is an unrated sponge | ○ Not evaluated — rating needed | **Neutral** |
+| Powered filters only, below the 2× floor | Filter flow too low (existing) | **Red** (unchanged Phase 2C) |
+| Powerheads only | No biological filter (existing) | **Red** (unchanged) |
+| Nothing entered | No filter added (existing) | existing warn (unchanged) |
+
+### 1.3 Changes from the sponge audit's proposal
+
+| Question | Sponge audit (proposed) | Locked here |
+| --- | --- | --- |
+| Sponge ratings additive? | Yes, "combined rating" | No. Sum used only as the D2 threshold; amber; never displayed. |
+| Sponge + powered filter | Coverage sum (sponge gal + GPH ÷ 2) | Independent paths, either may pass (D5); no combined number (D6). |
+| Powered GPH to gallons | GPH ÷ 2 | Never (D6). |
+| Measured GPH for sponges | Optional scored override | Not in first implementation (D8). |
+| Same product twice | Allow for sponges | Allow for all filter types except UGF, later phase (D11). |
+
+### 1.4 Decision logic in one line
+
+> **Green** if the powered filters pass the existing flow floor, or one sponge is rated for the
+> tank (or the UGF is compatible with the tank). Otherwise **amber** "Likely adequate — multiple
+> sponge filters" when several sponge ratings together reach the tank size; otherwise **amber**
+> "Review filtration" (powered + sponge) or "Below manufacturer rating" (sponges only); **neutral**
+> "Rating needed" when the only biological filtration is unrated; existing **red** states for
+> powered-only below the floor and for no biological filtration.
 
 ---
 
@@ -85,23 +126,23 @@ Current values from `assets/data/gearCatalog.json`; ratings from the sponge audi
 - The hygger ranges are the widest in the set (a double sponge "10–40") and are the main example of
   brand inconsistency. The design does not correct maker ratings; it states them as the maker's.
 
-### 2.3 Model A — single sponge rating check
+### 2.3 Model A — single sponge rating check (LOCKED as D1 / D3)
 
-Rule: `manufacturerMaxGallons ≥ tank gallons` → **"Rated for this tank"**; otherwise
-**"Below manufacturer rating"**.
+Rule: verified `manufacturerMaxGallons ≥ nominal tank gallons` → **✓ Rated for this tank**
+(green); otherwise **⚠ Below manufacturer rating** (amber) unless the multi-sponge tier (D2) or
+another device applies.
 
 | Criterion | Assessment |
 | --- | --- |
 | Transparent? | **Yes.** Both numbers are shown ("Rated up to 20 gal · Tank 29 gal"); the user can check them against the box. No derived number. |
 | Overstates precision? | No, provided the word is "rated", not "adequate capacity" or "turnover". |
-| Evidence | Strong for the *rule form* — every maker and every hobby source found sizes sponges this way (sponge audit §4–5). Weak for the *numbers* (marketing-grade, brand-inconsistent). |
-| Failure mode | Only handles one sponge; on its own it fails two 10-gal sponges on a 20-gal tank, an ordinary setup (section 3). |
+| Evidence | Strong for the *rule form* — every maker and every hobby source found sizes sponges this way (sponge audit §4–5). Weak for the *numbers* (marketing-grade, brand-inconsistent), hence the "verified" requirement in D1. |
+| Failure mode | Handles one sponge only; the multi-sponge amber tier (section 3) covers ordinary multi-sponge setups. |
 | Nominal vs actual gallons | Use the **nominal** tank size the user selected, as makers rate against nominal sizes and Phase 2C turnover already uses nominal gallons. |
-| Min rating | Ignored for adequacy. An oversized sponge in a small tank is not a filtration problem (section 7.2). |
+| Min rating | Ignored for adequacy. An oversized sponge in a small tank is not a filtration problem (section 7.2). A *minimum-only* rating is not a maximum (D9, section 7.4). |
+| Severity when below | Amber, never red on the rating alone (D3): ratings are marketing-grade and a shortfall is a margin question, not "effectively unfiltered". |
 
-**Verdict: production-ready as the core check**, provided (1) it is paired with the multi-sponge
-tier and the independent powered path, and (2) the result is labelled "rated", with the rating and
-the tank both visible.
+**Verdict: locked as the core check.**
 
 ### 2.4 Should a sponge alone be able to pass? (Step 8)
 
@@ -129,52 +170,54 @@ filtration state by itself.** The UI word should be "Rated for this tank" rather
 
 | Rule | Definition |
 | --- | --- |
-| **A. Additive** | Status and display use Σ ratings as "combined rating N gal". |
+| **A. Additive** | Status and display use Σ ratings as "combined rating N gal"; passing = green. |
 | **B. Largest only** | Only the largest single rating counts. |
 | **C. Redundancy, no capacity** | Extra sponges are acknowledged ("additional biological filtration") but never change the status. |
-| **D. Tiered** (recommended) | Largest rating ≥ tank → *Rated for this tank* (+ "additional sponge" line). Else Σ ratings ≥ tank → ***Likely adequate — several sponges***, a distinct status that shows each sponge's own rating and never a combined number. Else → *Below manufacturer rating*. |
+| **D. Tiered** (**LOCKED**, D1 + D2) | Largest rating ≥ tank → **✓ Rated for this tank** (green, + "additional sponge" line). Else Σ ratings ≥ tank → **⚠ Likely adequate — multiple sponge filters** (**amber**), listing each sponge's own rating and never a combined number. Else → **⚠ Below manufacturer rating** (amber). |
 
 ### 3.2 Identical sponges (Step 4)
 
-| Tank | Setup | A. Additive | B. Largest only | C. Redundancy only | **D. Tiered** |
+| Tank | Setup | A. Additive | B. Largest only | C. Redundancy only | **D. Tiered (locked)** |
 | --- | --- | --- | --- | --- | --- |
-| 10 gal | 2 × 10-gal | ✓ combined 20 gal | ✓ rated (10 ≥ 10) | ✓ rated + additional sponge | **✓ Rated for this tank · + 1 additional sponge** |
-| 20 gal | 2 × 10-gal | ✓ combined 20 gal | ⚠ below rating | ⚠ below rating (+ "you have 2 sponges") | **✓ Likely adequate — 2 sponges, each rated up to 10 gal** |
-| 29 gal | 2 × 20-gal | ✓ combined 40 gal | ⚠ below rating | ⚠ below rating | **✓ Likely adequate — 2 sponges, each rated up to 20 gal** |
-| 55 gal | 2 × 40-gal | ✓ combined 80 gal | ⚠ below rating | ⚠ below rating | **✓ Likely adequate — 2 sponges, each rated up to 40 gal** |
+| 10 gal | 2 × 10-gal | ✓ combined 20 gal | ✓ rated (10 ≥ 10) | ✓ rated + additional sponge | **✓ Rated for this tank (green) · + 1 additional sponge** |
+| 20 gal | 2 × 10-gal | ✓ combined 20 gal | ⚠ below rating | ⚠ below rating (+ "you have 2 sponges") | **⚠ Likely adequate — multiple sponge filters (amber); each rated up to 10 gal** |
+| 29 gal | 2 × 20-gal | ✓ combined 40 gal | ⚠ below rating | ⚠ below rating | **⚠ Likely adequate — multiple sponge filters (amber); each rated up to 20 gal** |
+| 55 gal | 2 × 40-gal | ✓ combined 80 gal | ⚠ below rating | ⚠ below rating | **⚠ Likely adequate — multiple sponge filters (amber); each rated up to 40 gal** |
 
 ### 3.3 Different sponges (Step 5)
 
-| Tank | Setup | A. Additive | B. Largest only | C. Redundancy only | **D. Tiered** |
+| Tank | Setup | A. Additive | B. Largest only | C. Redundancy only | **D. Tiered (locked)** |
 | --- | --- | --- | --- | --- | --- |
 | 20 gal | 10 + 20 | ✓ combined 30 | ✓ rated (20) | ✓ rated + additional | **✓ Rated for this tank (20-gal sponge) · + additional sponge** |
 | 29 gal | 20 + 40 | ✓ combined 60 | ✓ rated (40) | ✓ rated + additional | **✓ Rated for this tank (40-gal sponge) · + additional sponge** |
-| 55 gal | 20 + 40 | ✓ combined 60 | ⚠ below rating | ⚠ below rating | **✓ Likely adequate — 2 sponges (up to 40 and up to 20 gal)** |
+| 55 gal | 20 + 40 | ✓ combined 60 | ⚠ below rating | ⚠ below rating | **⚠ Likely adequate — multiple sponge filters (amber); up to 40 gal and up to 20 gal** |
 
-The same tiered rule works unchanged for mixed sizes: the "rated" tier is decided by the largest
-sponge, the "likely" tier by the sum used as a threshold only.
+The same tiered rule works unchanged for mixed sizes: the green tier is decided by the largest
+sponge, the amber "likely" tier by the sum used as a threshold only.
 
-### 3.4 Why tiered, not additive or largest-only
+### 3.4 Why tiered, and why the multi-sponge tier is amber
 
 - **Against pure additivity (A):** no manufacturer states that ratings add; the ratings themselves
   are marketing classes that differ by brand for similar sponges (hygger S "10–40" vs AQUANEAT
   nano "≤10"). Displaying "combined rating 80 gal" presents the sum of two marketing figures as a
   measured capacity — exactly the kind of invented precision this migration removes. It is also
   gameable (five 10-gal sponges "rate" a 50-gal tank).
-- **Against largest-only (B) and redundancy-only (C):** both fail the most ordinary multi-sponge
-  setups (two sponges on a 20-gal breeder; two large sponges on a 55), contradicting the common
-  hobby practice the sponge audit documents. They are conservative in a way the evidence does not
-  support — colonised surface and airlift count really do scale with the number of sponges.
-- **For tiered (D):** it keeps the only strongly supported statement ("this sponge is sold for this
-  tank") as the top tier, and gives multi-sponge setups a positive but honestly softer status. The
-  sum is used only as a yes/no threshold, the display lists each sponge's own rating, and nothing
-  claims a combined capacity.
+- **Against largest-only (B) and redundancy-only (C):** both treat the most ordinary multi-sponge
+  setups (two sponges on a 20-gal breeder; two large sponges on a 55) exactly like a single
+  undersized sponge, ignoring that each extra sponge really adds colonised media, an airlift and
+  redundancy.
+- **Why amber, not green (D2):** summing nominal ratings is an acknowledged heuristic; it is **not
+  validated as additive biological capacity**. The tier exists because multiple sponges clearly
+  add media and redundancy, while the exact biological capacity is unknown. Amber says "probably
+  fine, not confirmed" — the honest level of evidence. It is deliberately **not red**: nothing
+  suggests such setups fail, and hobby practice uses them routinely.
+- The sum is used only as a yes/no threshold, the display lists each sponge's own rating, and
+  nothing claims a combined capacity.
 
 Guard against stacking many tiny sponges: **no numeric coefficient** (none has a source). The
-"likely" tier always lists every sponge and its rating, so five 10-gal sponges on a 50 read as
-exactly that. Optional copy-only note when the largest sponge is rated for well under the tank
-("Several small sponges: make sure each one gets good air flow") — the cut-off (e.g. under half the
-tank) is a judgement call and is listed as an open decision (section 16).
+amber tier always lists every sponge and its rating, so five 10-gal sponges on a 50 read as exactly
+that. A copy-only note for many small sponges is a later option, not part of the first
+implementation (section 16).
 
 ### 3.5 Maintenance and redundancy (Step 10)
 
@@ -189,8 +232,8 @@ Two sponges have legitimate advantages that do not require a capacity number:
 
 **The UI should recognise this**, as a line, not a status change:
 "+ Additional sponge filter — a second sponge adds backup; rinse them on different weeks."
-It appears under any passing or "likely" state, and never raises a below-rating result to passing
-on its own (the tier rule does that, or nothing does).
+It appears under green and amber multi-sponge states and never changes the status by itself (the
+tier rule decides the status).
 
 ---
 
@@ -208,82 +251,90 @@ on its own (the tier rule does that, or nothing does).
 per path with its own evidence (GPH and rated turnover for powered filters, "rated up to N gal"
 for sponges).
 
-### 4.2 Should powered GPH ever be converted into gallon capacity?
+### 4.2 Should powered GPH ever be converted into gallon capacity? — LOCKED as D6: never
 
-**Not now, and not via turnover.** The only defensible future route to putting powered filters and
-sponges on one scale is the **manufacturer tank rating** that powered filters also carry (catalog
-fix batch 1 recorded real manufacturer ranges for AC70, Fluval 307, EHEIM 2213). That is a
-separate, future research question (does "rated for 70 gal" + "rated for 20 gal" mean anything
-together?) and it has the same additivity problem as sponges. Until then the two paths stay
-independent.
+**No.** No "GPH ÷ 2 = gallons covered" or any other exchange rate, no adding powered-filter gallons
+to sponge gallons, and no combined numerical capacity. The 2× floor is a Phase 2C rule for powered
+filters only; it is a pass/fail floor, not a unit conversion, and it is itself weakly evidenced
+(the threshold research shows it contradicts EHEIM's own 2213 rating at 1.76×).
 
-### 4.3 When neither path passes alone
+If powered and sponge filters are ever compared on a common basis, the only candidate is the
+powered filters' own **manufacturer tank ratings** (catalog fix batch 1 recorded real ranges for
+AC70, Fluval 307, EHEIM 2213) — a separate future research question with the same additivity
+problem as sponges, and still not a GPH conversion. Until then the two paths stay independent.
+
+### 4.3 When neither path passes alone (LOCKED as D5 / D6)
 
 Example: 29 gal, 40 GPH HOB (1.4×, below the floor) + one 20-gal sponge (below rating).
 
-- No combined number is computed.
-- Status: **"⚠ Review filtration"** (warn). Today's `very-low` is danger; the downgrade to warn is
-  justified only by the presence of a second, independent biological filter, not by any arithmetic.
-- Copy: "Neither filter is sized for a 29-gal tank on its own. Together they may be enough for light
-  stock; a filter rated for this tank is the safer choice."
+- No combined number is computed; GPH is never converted into gallons (D6).
+- Status: **⚠ Review filtration** (amber), listing each device's individual reason. Today's
+  powered-only `very-low` is red; with a second, independent biological filter present the result
+  is amber — justified by the presence of that filter, not by any arithmetic.
+- Copy: "Neither filter is sized for a 29-gal tank on its own: the HOB's 40 GPH is 1.4× / hour
+  (rated), below the 2× minimum; the sponge is rated up to 20 gal. A filter rated for this tank is
+  the safer choice."
 
-### 4.4 Recommended overall decision logic (pseudo-code, not implemented)
+### 4.4 Locked overall decision logic (pseudo-code, not implemented)
 
 ```text
 bio      = biological devices (not powerheads/wavemakers)
-powered  = bio with capacityMethod 'flow'      (HOB, CANISTER, INTERNAL, OTHER, custom powered)
-sponges  = bio with capacityMethod 'manufacturer_rating' and type SPONGE, rating known
-unrated  = bio with capacityMethod 'manufacturer_rating' and rating unknown   ("rating needed")
-ugf      = bio with type UGF (own check, section 11)
+powered  = bio with capacityMethod 'flow'   (HOB, CANISTER, INTERNAL, OTHER, custom powered)
+sponges  = bio of type SPONGE with a usable (verified or user-entered) ratedMaxGallons
+unrated  = bio of rating-method type with no usable rating   ("rating needed")
+ugf      = bio of type UGF (own compatibility rule, section 11)
 
-poweredPass  = powered.length > 0 and Σ powered GPH ÷ nominal gal ≥ MIN_BIOLOGICAL_TURNOVER (unchanged 2)
+poweredPass  = powered non-empty and Σ powered GPH ÷ nominal gal ≥ MIN_BIOLOGICAL_TURNOVER (unchanged 2)
 spongeRated  = any sponge.ratedMaxGallons ≥ nominal gal
 spongeLikely = !spongeRated and sponges.length ≥ 2 and Σ sponge.ratedMaxGallons ≥ nominal gal
 ugfRated     = ugf compatible with the selected tank preset
 
-if no devices                          → NONE                ("No filter added")          unchanged
-else if bio is empty                   → CIRCULATION_ONLY     ("No biological filter")     unchanged
+if no devices                              → NONE              "No filter added"            (existing)
+else if bio is empty                       → CIRCULATION_ONLY  "No biological filter"       red (existing)
 else if poweredPass or spongeRated or ugfRated
-                                       → ADEQUATE / RATED     (headline names the path that passes)
-else if spongeLikely                   → LIKELY               ("Likely adequate — several sponges")
-else if unrated non-empty and nothing else passes
-                                       → RATING_NEEDED        ("Sponge filter — rating needed")
-else if bio.length ≥ 2                 → REVIEW (warn)        (several filters, none sized alone)
-else if only powered                   → VERY_LOW (danger)    unchanged Phase 2C
-else (only sponges, below rating)      → BELOW_RATING (warn)
+                                           → ADEQUATE          green; headline names the passing path
+else if spongeLikely                       → LIKELY            amber "Likely adequate — multiple sponge filters"
+else if powered non-empty and (sponges or ugf) non-empty
+                                           → REVIEW            amber "Review filtration" + individual reasons
+else if powered non-empty                  → VERY_LOW          red "Filter flow too low" (existing Phase 2C; powered-only)
+else if sponges non-empty                  → BELOW_RATING      amber "Below manufacturer rating"
+else                                       → NOT_EVALUATED     neutral "Rating needed" (only unrated rating-method devices)
 ```
 
+- Unrated devices never pass and never fail; they appear as a neutral "rating needed" line under
+  whatever headline the evaluable devices produce (D4). A powered filter below the floor next to
+  an unrated sponge is still `VERY_LOW` for the powered filter, shown with the unrated sponge line;
+  whether an unrated sponge should soften that to amber is left open (section 16).
 - The powered floor, its value and its copy are **unchanged** by this design (threshold research
   questions remain open separately).
 - Sponges never contribute GPH to `biologicalGph` / turnover; they are removed from the flow sum.
-- `capacityAdjustment` stays 0. Nothing here touches the bioload percentage.
-- Supplemental lines: every device not needed for the verdict is listed ("Additional sponge
-  filter: rated up to 20 gal"); an unrated sponge next to a passing powered filter shows "rating
-  needed" as a neutral line, not a warning.
-- Severity of `BELOW_RATING`: **warn**, not danger — the ratings are marketing-grade and a 40-gal
-  sponge on a 55 is a margin question, not "effectively unfiltered". Red stays for no filter /
-  circulation only / powered-only below the floor.
+- `capacityAdjustment` stays 0. Nothing here touches the bioload percentage, and no branch reads
+  Stocking Load (D7).
+- Supplemental lines: every device not needed for the verdict is listed ("+ Additional sponge
+  filter: rated up to 20 gal"); a supplemental sponge below its own rating is **not** flagged.
 
 ### 4.5 Common-case simulations (Step 7)
 
 Powered turnover uses the unchanged 2× rated floor. "Additive" = sponge-audit coverage model
-(sponge gal + GPH ÷ 2). "Independent (no tiers)" = model B without the "likely" tier.
+(sponge gal + GPH ÷ 2) — **rejected (D6)**, shown for comparison only. "Largest only +
+independent" = either path, no multi-sponge tier.
 
-| # | Tank | Setup | Today (fake GPH) | Additive coverage | Largest only + independent | Independent, no tiers | **Recommended (B + tiers)** |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| A | 29 | 150 GPH HOB | 5.2× adequate | 75/29 ✓ | ✓ (HOB) | ✓ (HOB) | **✓ adequate (HOB)** |
-| B | 29 | 150 HOB + 20-gal sponge | 9.3× adequate | 95/29 ✓ | ✓ (HOB) | ✓ (HOB) | **✓ adequate (HOB) + sponge supplemental** |
-| C | 29 | 100 HOB + 40-gal sponge | 10.3× adequate | 90/29 ✓ | ✓ (both) | ✓ | **✓ adequate (HOB 3.4× and sponge rated)** |
-| D | 55 | 200 canister + 40-gal sponge | 7.3× adequate | 140/55 ✓ | ✓ (canister) | ✓ | **✓ adequate (canister) + sponge supplemental** |
-| E | 55 | one 40-gal sponge | 3.6× adequate (fake 200) | 40/55 ✗ | ⚠ below | ⚠ below | **⚠ Below manufacturer rating** |
-| F | 55 | two 40-gal sponges | 7.3× adequate | 80/55 ✓ | ⚠ below | ⚠ below | **✓ Likely adequate — 2 sponges** |
-| G | 20 | one 20-gal sponge | 6.0× adequate | 20/20 ✓ | ✓ rated | ✓ rated | **✓ Rated for this tank** |
-| H* | 29 | 40 HOB + 20-gal sponge | 5.5× adequate | 40/29 ✓ | ⚠ review | ⚠ review | **⚠ Review filtration** |
+| # | Tank | Setup | Today (fake GPH) | Additive coverage (rejected) | Largest only + independent | **Locked model** |
+| --- | --- | --- | --- | --- | --- | --- |
+| A | 29 | 150 GPH HOB | 5.2× adequate | 75/29 ✓ | ✓ (HOB) | **✓ adequate — green (HOB)** |
+| B | 29 | 150 HOB + 20-gal sponge | 9.3× adequate | 95/29 ✓ | ✓ (HOB) | **✓ adequate — green (HOB); sponge supplemental** |
+| C | 29 | 100 HOB + 40-gal sponge | 10.3× adequate | 90/29 ✓ | ✓ (both) | **✓ adequate — green (HOB 3.4× and sponge rated)** |
+| D | 55 | 200 canister + 40-gal sponge | 7.3× adequate | 140/55 ✓ | ✓ (canister) | **✓ adequate — green (canister); sponge supplemental** |
+| E | 55 | one 40-gal sponge | 3.6× adequate | 40/55 ✗ | ⚠ below | **⚠ Below manufacturer rating — amber** |
+| F | 55 | two 40-gal sponges | 7.3× adequate | 80/55 ✓ | ⚠ below | **⚠ Likely adequate — multiple sponge filters — amber** |
+| G | 20 | one 20-gal sponge | 6.0× adequate | 20/20 ✓ | ✓ rated | **✓ Rated for this tank — green** |
+| H* | 29 | 40 HOB + 20-gal sponge | 5.5× adequate | 40/29 ✓ | ⚠ review | **⚠ Review filtration — amber** |
+| U* | 20 | one sponge, rating unknown | depends on old GPH | — | — | **○ Not evaluated — rating needed — neutral** |
 
-(* extra case, section 4.3.) Case B/C/D/E/F "today" figures use the catalog's fake sponge GPH
-(AQUANEAT Large 200 standing in for a "40-gal" sponge; AQUANEAT Middle 120 for "20-gal").
+(* extra cases.) Case B–H "today" figures use the catalog's fake sponge GPH (AQUANEAT Large 200
+standing in for a "40-gal" sponge; AQUANEAT Middle 120 for "20-gal").
 
-**Exactly what the user would see (recommended model; UI not built, wording from section 12):**
+**Exactly what the user would see (locked model; UI not built, wording from section 12):**
 
 ```
 A  29 gal · HOB 150 GPH
@@ -309,64 +360,81 @@ D  55 gal · canister 200 GPH + sponge (up to 40 gal)
    + Additional sponge filter: rated up to 40 gal
    Filtration supports your livestock but does not increase stocking capacity.
 
-E  55 gal · sponge (up to 40 gal)
+E  55 gal · sponge (up to 40 gal)                              [amber]
    ⚠ Below manufacturer rating
-   Sponge filter rating: up to 40 gal · Tank: 55 gal
+   Filter rating: up to 40 gal
+   Tank: 55 gal
    Add a second sponge or a filter rated for this tank.
    Filtration supports your livestock but does not increase stocking capacity.
 
-F  55 gal · 2 × sponge (up to 40 gal each)
-   ✓ Likely adequate — 2 sponge filters
-   Each sponge is rated up to 40 gal · Tank: 55 gal
-   No single sponge is rated for this tank, but together they cover its size.
-   Two sponges also give backup — rinse them on different weeks.
+F  55 gal · 2 × sponge (up to 40 gal each)                     [amber]
+   ⚠ Likely adequate — multiple sponge filters
+   Sponge 1: rated up to 40 gal
+   Sponge 2: rated up to 40 gal
+   Tank: 55 gal
+   No single sponge is rated for this tank. Several sponges add media and backup,
+   but their combined capacity isn't verified.
    Filtration supports your livestock but does not increase stocking capacity.
 
 G  20 gal · sponge (up to 20 gal)
    ✓ Rated for this tank
-   Sponge filter rating: up to 20 gal · Tank: 20 gal
+   Manufacturer rating: up to 20 gal
+   Tank: 20 gal
    Sponge filters are sized by tank; water flow isn't estimated.
+   Filtration supports your livestock but does not increase stocking capacity.
+
+H  29 gal · HOB 40 GPH + sponge (up to 20 gal)                 [amber]
+   ⚠ Review filtration
+   Powered filter: 40 GPH · 1.4× / hour (rated) — below the 2× minimum
+   Sponge filter: rated up to 20 gal — below this 29 gal tank
+   Neither filter is sized for this tank on its own. A filter rated for this tank is the safer choice.
+   Filtration supports your livestock but does not increase stocking capacity.
+
+U  20 gal · sponge, rating unknown                             [neutral]
+   ○ Not evaluated — rating needed
+   Enter the tank size this sponge is rated for (printed on the box).
    Filtration supports your livestock but does not increase stocking capacity.
 ```
 
 Case-by-case notes: C passes on *both* paths — the headline stays one line. D's sponge is below
-its own rating for 55 gal but is not flagged, because it is not carrying the tank. E is the only
-sponge-alone warning, and it is amber, not red.
+its own rating for 55 gal but is not flagged, because it is not carrying the tank. No sponge result
+is red; red remains only for the existing powered-only-below-floor and no-biological-filter states.
 
 ---
 
-## 5. Stocking Load interaction (Step 9)
+## 5. Stocking Load interaction (Step 9) — LOCKED as D7
 
-Rule kept from all three reports: **filtration never changes Stocking Load, never adds capacity,
-never gives a bonus.** Stocking Load may only change *how loudly* a non-certain filtration result is
-worded — the threshold research's "severity only" use (§11, §17).
+**First implementation: Stocking Load changes neither sponge pass/fail nor any filtration warning
+severity.** Filtration adequacy and Stocking Load remain separate outputs.
 
-| Filtration result | Low / moderate Stocking Load | High Stocking Load | Over capacity |
-| --- | --- | --- | --- |
-| Rated for this tank / powered passes | ✓ no note | ✓ + neutral note: "Heavily stocked: rinse sponges regularly; a second filter adds headroom." | ✓ status unchanged; the existing over-capacity warning carries the message |
-| Likely adequate — several sponges | ✓ (info) | **amber candidate**: "Several sponges at a high stocking level — a filter rated for this tank adds margin." | as left |
-| Below rating / review | ⚠ warn | ⚠ warn, stronger copy | ⚠ warn |
+Reason: there is not enough evidence to define how a manufacturer sponge rating should scale with
+stocking level. The threshold research (§11) supports only the *direction* (more waste → more
+media / flow), not numbers; the manufacturer ratings themselves carry no stated stocking
+assumption; and the threshold research's own candidate load band (70 %) is unapproved.
 
-- No evidence supports changing pass/fail by load (sponge audit, threshold research §11: direction
-  supported, numbers not). So load never turns a pass into a fail or vice versa.
-- The "high" band edge is not chosen here. The threshold research's candidate (70 %) is itself
-  unapproved; implementation should reuse whatever band the advisor already displays rather than
-  introduce a new one. Listed as an open decision.
-- If the product owner prefers zero load coupling in the first release, the table collapses to the
-  left column plus the existing over-capacity warning; nothing else in the design depends on it.
+What stays true regardless:
+
+- Filtration never changes Stocking Load, never adds capacity, never gives a bonus
+  (`capacityAdjustment: 0`).
+- The existing over-capacity / high-load messaging is the Stocking Load card's job and is unchanged.
+- The permanent line "Filtration supports your livestock but does not increase stocking capacity."
+  appears on every filtration state.
+
+Considered and **deferred** (not in the first implementation): a neutral maintenance note for
+green sponge states at high load, and raising the amber multi-sponge tier's wording at high load.
+Revisit only with evidence (section 16).
 
 ---
 
-## 6. Custom input design (Step 11)
+## 6. Custom input design (Step 11) — LOCKED as D8
 
 ### 6.1 Flow (not built)
 
 ```
 Filter type:  [ Sponge ▾ ]
 
-What size aquarium is this sponge filter rated for?
-Rated for up to [ 20 ] gal          ← required, integer 1–300
-Hint: printed on the box or in the listing title, e.g. "up to 20 gallons".
+Rated for up to:  [ 20 ] gallons        ← required, integer 1–300
+Hint: the tank size printed on the box or in the listing title, e.g. "up to 20 gallons".
       If it gives a range like "10–40 gal", enter the larger number.
 
 [ Add filter ]
@@ -374,29 +442,31 @@ Hint: printed on the box or in the listing title, e.g. "up to 20 gallons".
 
 - Selecting **Sponge** swaps the GPH field for the rating field (same position, same Add button).
   Every other type keeps the GPH field unchanged.
-- Label on the chip: "Sponge · rated up to 20 gal".
+- **No GPH is asked for a sponge. No measured-GPH / advanced override** in the first
+  implementation.
+- Label on the chip: "Sponge · rated up to 20 gal (entered)".
 - Validation copy: "Enter the tank size the sponge is rated for (the number on the box)."
 - The `canAddManual` rule becomes type-aware: Sponge requires a rating, not a GPH.
-- "X gal and up" ratings (Aquarium Co-Op style minimum sizes): not in the catalog today; the hint
-  cannot turn a minimum into a maximum. First release: no special handling beyond the hint;
-  listed as an open item (section 16).
+- A box that says only "X gallons and up" gives no maximum (D9). The hint must not tell users to
+  enter that number as "up to". First implementation: the field is optional-to-leave-empty for such
+  users — they can add the sponge with no rating and get **Rating needed** (neutral). Wording for
+  this case is a copy decision for the UI phase.
 
 ### 6.2 Custom UGF
 
-The custom type list has no UGF option today; do not add one in the first release (section 11).
+The custom type list has no UGF option today; do not add one (section 11).
 
-### 6.3 Optional "measured water flow" override — recommendation: omit
+### 6.3 Measured water flow override — not in the first implementation
 
 | For | Against |
 | --- | --- |
 | Real jug-and-timer data is valid. | Very few users measure it; it changes weekly with clogging. |
-| Engages advanced users. | There is **no validated turnover threshold for sponges**. A real measured 30 GPH on a 20-gal tank (1.5×) would fail the powered floor while the sponge is rated for the tank — the override would create a contradiction the advisor cannot resolve. |
+| Engages advanced users. | There is **no validated turnover threshold for sponges**. A real measured 30 GPH on a 20-gal tank (1.5×) would fail the powered floor while the sponge is rated for the tank — a contradiction the advisor cannot resolve. |
 | | A GPH box next to a sponge invites users to paste a listing or air-pump number, recreating the problem being removed. |
 | | Old saved custom sponges carry exactly such a GPH (section 9); a measured-GPH field would blur that migration. |
 
-**Recommendation: do not include a measured-flow field in the first release.** If ever added, it
-should be display-only ("Measured flow: 30 GPH — not used for the rating check"), which makes its
-value marginal. Revisit only if users ask for it.
+**Locked: excluded from the first implementation.** If ever added it would be display-only
+("Measured flow: 30 GPH — not used for the rating check"); revisit only if users ask.
 
 ---
 
@@ -414,9 +484,9 @@ The user picks the product; the catalog supplies the rating. Chip / card line:
 - An oversized sponge in a small tank is not a filtration problem (it may simply not fit — a
   physical question the advisor doesn't model).
 - An undersized sponge must stay **selectable**: two 10-gal sponges on a 20-gal tank is a supported
-  configuration (section 3). Today `filterGearByTank` would hide it.
+  (amber) configuration (section 3). Today `filterGearByTank` would hide it.
 - Recommended picker behaviour for sponges: show all sponges on every tank, grouped
-  "Rated for this tank" first, then "Smaller than this tank (use more than one)".
+  "Rated for this tank" first, then "Smaller than this tank".
 - Keep the maker's printed minimum as **display metadata only** (`manufacturerMinGallons`), so a
   range like hygger's "10–40 gal" can be shown as printed.
 
@@ -429,13 +499,14 @@ The user picks the product; the catalog supplies the rating. Chip / card line:
   "name": "…(Middle up to 20Gal)",
   "type": "SPONGE",                           // SPONGE | UGF are rating-method types
   "capacityMethod": "manufacturer_rating",    // "flow" is the default when absent
-  "manufacturerMaxGallons": 20,               // the only number used for adequacy
+  "manufacturerMaxGallons": 20,               // the only number used for adequacy; null if none
   "manufacturerMinGallons": null,             // display only; null when the maker gives none
-  "ratingExpression": "up_to",                // up_to | range | min_only
+  "ratingExpression": "up_to",                // up_to | range | min_only | unclear
+  "ratingStatus": "verified",                 // verified | needs_review
   "ratingSource": "https://…",                // required for new rating-method records
-  "ratingConfidence": "C",                    // report grade; review-only, not shown to users
+  "ratingConfidence": "B",                    // report grade; review-only, not shown to users
 
-  // legacy, retained for ONE release so an old JS bundle still loads the record (section 9.3);
+  // legacy, retained until phase E so an old JS bundle still loads the record (section 9.3);
   // ignored by new code for every capacityMethod "manufacturer_rating" record:
   "gphRated": 120,
   "minGallons": 0,
@@ -443,7 +514,24 @@ The user picks the product; the catalog supplies the rating. Chip / card line:
 }
 ```
 
-Powered filters: unchanged. `capacityMethod` may be omitted (defaults to `flow`).
+- A rating is used for green (D1) only when `ratingStatus` is `verified` and
+  `manufacturerMaxGallons` is a positive number. Anything else is **Rating needed**.
+- Powered filters: unchanged. `capacityMethod` may be omitted (defaults to `flow`).
+
+### 7.4 Non-maximum wording ("20 gallons and up") — LOCKED as D9
+
+| Wording | Meaning | Stored as |
+| --- | --- | --- |
+| "Up to 20 gal" | maximum | `manufacturerMaxGallons: 20`, `ratingExpression: "up_to"` |
+| "10–40 gal" | range with maximum | `manufacturerMinGallons: 10`, `manufacturerMaxGallons: 40`, `"range"` |
+| "20 gallons and up" (e.g. Aquarium Co-Op size classes) | **minimum only — no maximum** | `manufacturerMinGallons: 20`, **`manufacturerMaxGallons: null`**, `"min_only"`, `ratingStatus: "needs_review"` |
+| no size stated / contradictory | unclear | `manufacturerMaxGallons: null`, `"unclear"`, `ratingStatus: "needs_review"` |
+
+- "And up" is **never** reinterpreted as a maximum and no maximum is invented.
+- Such a record is **NEEDS SOURCE / PRODUCT REVIEW**; at runtime it is **Rating needed** (neutral)
+  until a usable maximum rating or another defensible capacity method is established.
+- None of the 7 current catalog sponges uses "and up" wording (section 2.2); the rule governs
+  future products and custom-entry copy.
 
 ---
 
@@ -505,7 +593,8 @@ Rules:
   as v1 already does for GPH. So a later rating correction reaches saved plans automatically.
 - `legacyGph` is kept only for a one-time "previously entered … (not used)" note; it is never read
   by the engine.
-- `instanceId`: short random id, unique within the list; `productId` may repeat.
+- `instanceId`: short random id, unique within the list; `productId` may repeat. Phase A only
+  reserves the field (one instance per product, as today); repeats arrive in phase D (section 10).
 
 ### 8.3 Compatibility
 
@@ -521,6 +610,17 @@ Rules:
 ---
 
 ## 9. Stale-cache and old-saved-filter protection (Steps 14, 15)
+
+### 9.0 Locked rules (D10)
+
+1. **Known catalog sponge ids ignore historical GPH** — they are re-resolved from current catalog
+   rating metadata.
+2. **Filter type / `capacityMethod` wins over any stale `gphRated`** — from the catalog, a cached
+   catalog, saved state, `appState` or session storage.
+3. **Stale cached fake sponge GPH is never scored as turnover** once the new model ships.
+4. **Old custom sponges with only a GPH become Rating needed** (neutral).
+5. **Historical GPH** may be shown once as "old value — not used"; it is **never** treated as a
+   trusted measured flow, never converted to gallons and never read by the engine.
 
 ### 9.1 Principle: type wins over GPH, everywhere
 
@@ -571,10 +671,11 @@ Evaluation of "rating needed":
   (it may be a copied listing figure or a guess), and not converted to gallons.
 - **Not destructive**: the user's sponge stays visible; they are asked one question they can answer.
 - **Scoring**: if another path passes, the headline passes and the unrated sponge is a neutral line.
-  If the unrated sponge is the only biological device, headline "Sponge filter added — enter its
-  rated tank size to check it" (info/warn tone), never "No filter added", never "adequate".
+  If the unrated sponge is the only biological device, overall filtration is **Not evaluated —
+  rating needed** (neutral): never "No filter added", never "adequate", never "unsafe" (D4).
 - **Accepted cost**: a user who really did measure their sponge's flow loses that number from
-  scoring. That is the correct trade (section 6.3), and the note shows the old value once.
+  scoring. That is the correct trade (section 6.3), and the note shows the old value once as
+  "old value — not used".
 
 ### 9.3 Deployment-order protections
 
@@ -600,13 +701,13 @@ exact failure the sponge audit §15 warns about):
 
 Additional protections:
 
-1. **Code before data.** The runtime (type-wins, rating path, v2) ships first or in the same release
-   as the rating fields.
-2. **Keep legacy `gphRated` in the data for one release** after the rating fields are added. New
+1. **Code before data.** v2 plumbing (phase A) ships first; the runtime (type-wins, rating path)
+   ships in the same release as the rating fields (phase B).
+2. **Keep legacy `gphRated` in the data until phase E**, at least one release after phase B. New
    code ignores it for rating-method records; an old JS bundle still in a tab (JS and `/data` are
    `must-revalidate`, so this window is short) keeps today's behaviour instead of dropping sponges
    or turning saved sponges into custom-with-old-GPH.
-3. **Then** remove `gphRated` from the 8 records and bump the catalog cache key to
+3. **Then (phase E)** remove `gphRated` from the 8 records and bump the catalog cache key to
    `ttg.gear.catalog.v2` (belt and braces — type-wins already neutralises the old cache).
 4. Tests: stale cached sponge with GPH and no rating → rating needed; v1 catalog sponge id → catalog
    rating; v1 custom sponge → rating needed + `legacyGph`; sponge GPH never appears in
@@ -614,219 +715,248 @@ Additional protections:
 
 ---
 
-## 10. Duplicate-instance design (Step 16)
+## 10. Duplicate-instance design (Step 16) — LOCKED as D11, later phase
 
-**Recommendation: allow the same catalog product more than once for all filter types, except UGF.**
+**Allow the same catalog product more than once for all filter types, except UGF — in phase D,
+not in the initial plumbing phase.**
 
-- Sponges: two identical sponges is the canonical multi-sponge setup (section 3).
+- Sponges: two identical sponges is the canonical multi-sponge setup (section 3); most important
+  case.
 - Powered filters: two identical HOBs on a large tank is also normal, and Phase 2C already sums
-  powered GPH, so a repeat is simply counted. Blocking it today forces users into custom entries.
+  powered GPH, so a repeat is simply counted.
 - Powerheads: repeats are normal (circulation, not scored).
 - UGF: one plate set per tank; keep the block.
 
-Design:
+Design (phase D):
 
-- State holds **instances**: `{instanceId, productId, …}`. `instanceId` is generated on add
-  (`f-` + short random, checked unique in the list); `productId` repeats.
+- State holds **instances**: `{instanceId, productId, …}`. `instanceId` is unique within the list
+  (`f-` + short random, checked); `productId` repeats.
 - Every identity operation moves from `id` to `instanceId`: `setFilters` de-dupe, `removeFilterById`
   (remove **one** instance), chip keys, saved state.
 - UI: identical products render as one chip with a count, "AQUANEAT Middle ×2", with a remove-one
   control; Add Selected on an already-added product increments instead of saying "Already added".
-- v1 → v2 migration assigns fresh instanceIds; since v1 could not hold repeats, no collision exists.
 - Gear-page `?filter=<id>` hand-off adds one instance, unchanged.
 
-Because the "likely" tier (section 3) is otherwise reachable only with custom entries or two
-different products, duplicate support should ship **with or immediately after** the rating model,
-not at the end (section 15).
+What phase A does and does not do:
+
+- Migration safety does **not** require duplicates: v1 cannot hold repeats, so no collision exists.
+- Phase A may **reserve** the `instanceId` field in the v2 format (written for each entry, one per
+  product as today) so phase D does not need a second saved-state format change. The picker's
+  "Already added" block and id-based de-duplication stay exactly as they are until phase D.
+
+Interim consequence (accepted): between phases B and D the amber multi-sponge tier is reachable
+only with two different sponge products or custom sponges.
 
 ---
 
-## 11. UGF recommendation (Step 17)
+## 11. UGF recommendation (Step 17) — LOCKED as D12
 
 `penn-plax-ugf-20-29`: rated "20 Long – 29 gal", two 14" × 11.1" plates (28" × 11.1" total), two
 lift tubes, air pump not included (sponge audit §11, grade C). Stored GPH 150 is unsupported.
 
 | Option | Assessment |
 | --- | --- |
-| **A. Manufacturer-rating model like sponges** (`maxGallons 29 ≥ tank`) | Simple, but wrong in both directions: a 20 High (24" × 12") is ≤ 29 gal yet the 28" plates don't fit; a 10-gal passes the gallon test but the plates can't fit either. UGF capacity is plate/bed **area**, not volume. |
-| **B. Dedicated UGF model: stated tank compatibility / footprint** | Matches the product: rated for specific tank footprints. The advisor's tank presets carry ids like `20l`, `29g` and dimensions, so compatibility can be a preset list (`compatibleTanks: ["20l","29g"]`) or a plate-footprint check. |
+| A. Manufacturer-rating model like sponges (`maxGallons 29 ≥ tank`) | Wrong in both directions: a 20 High (24" × 12") is ≤ 29 gal yet the 28" plates don't fit; a 10-gal passes the gallon test but the plates can't fit either. UGF capacity is plate/bed **area**, not volume. **Not used.** |
+| **B. Dedicated UGF model: stated tank compatibility** (**locked**) | Matches the product: rated for specific tank footprints. The advisor's tank presets have ids such as `20l` and `29g`, so compatibility is a preset list. |
 
-**Recommended near-term treatment:** B in its simplest form.
+Locked near-term treatment:
 
-- `type: "UGF"`, `capacityMethod: "manufacturer_rating"` (so type-wins removes the fake GPH),
-  plus `compatibleTanks: ["20l", "29g"]`.
-- Status: "✓ Undergravel filter rated for this tank (20 Long–29 gal)" on a compatible preset;
-  "Rating needed / not rated for this tank size" otherwise. Offered in the picker only for
-  compatible presets.
-- **Never combined** with sponge ratings (a UGF is a whole-bottom filter; the tiers in section 3
-  are sponge-only). It is its own passing path in section 4.4.
+- `type: "UGF"`, `capacityMethod: "manufacturer_rating"` (so type-wins removes the fake GPH), plus
+  `compatibleTanks: ["20l", "29g"]` (preset ids to be confirmed in phase F).
+- **No fake GPH**, and **never combined arithmetically** with sponge ratings (a UGF is a
+  whole-bottom filter; the multi-sponge tier is sponge-only). It is its own passing path in 4.4.
+- Status: "✓ Undergravel filter rated for this tank (20 Long–29 gal)" (green) on a compatible
+  preset; neutral "Rating needed — this undergravel filter isn't listed for this tank size" otherwise.
+- **The saved product id stays resolvable** in every phase, so saved plans never turn it into a
+  custom filter with 150 GPH.
+- Between phase B (type-wins live) and phase F (UGF rule built), the UGF resolves as a
+  rating-method device with no usable rating → **Rating needed**. That is the safe interim state.
 - No custom UGF option; powerhead-driven UGFs are not modelled.
-- If the product owner would rather not maintain a one-record special case, **removing the record**
-  is equally safe — provided the id remains resolvable so saved plans show "rating needed" instead
-  of a custom filter with 150 GPH.
 
 ---
 
-## 12. Status-language examples (Step 18) — proposals only, no card built
+## 12. Status-language examples (Step 18) — wording proposals, no card built
 
-Rules: say "rated" for manufacturer ratings and "rated" for GPH-based turnover; never show a
-turnover or GPH for a sponge; never show a combined gallon figure; keep the permanent line
-"Filtration supports your livestock but does not increase stocking capacity." on every state.
+Rules: say "rated" for manufacturer ratings and "(rated)" beside GPH-based turnover; never show a
+turnover or GPH for a sponge; **never show a combined gallon figure**; list each sponge's own
+rating; keep the permanent line "Filtration supports your livestock but does not increase stocking
+capacity." on every state.
 
 ```
-SPONGE FILTER                                  ✓ Rated for this tank
+SPONGE FILTER                                  ✓ Rated for this tank            [green]
 Manufacturer rating: up to 40 gal
 Tank: 29 gal
 Sponge filters are sized by tank; water flow isn't estimated.
 ```
 
 ```
-SPONGE FILTER                                  ⚠ Below manufacturer rating
+SPONGE FILTERS                                 ⚠ Likely adequate — multiple sponge filters   [amber]
+Sponge 1: rated up to 20 gal
+Sponge 2: rated up to 20 gal
+Tank: 29 gal
+No single sponge is rated for this tank. Several sponges add media and backup,
+but their combined capacity isn't verified.
+```
+
+(Alternative headline, same meaning: "⚠ Multiple sponge filters may provide adequate filtration".)
+
+```
+SPONGE FILTER                                  ⚠ Below manufacturer rating      [amber]
 Filter rating: up to 20 gal
 Tank: 29 gal
 Add a second sponge or a filter rated for this tank.
 ```
 
 ```
-SPONGE FILTERS                                 ✓ Likely adequate — 2 sponges
-Each rated up to 20 gal · Tank: 29 gal
-No single sponge is rated for this tank, but together they cover its size.
-Two sponges also give backup — rinse them on different weeks.
+SPONGE FILTER                                  ○ Rating needed                  [neutral]
+Filtration not evaluated.
+Enter the tank size this sponge is rated for (printed on the box).
+Old value 120 GPH — not used for sponge filters.
 ```
 
 ```
-FILTRATION                                     ✓ Filtration appears adequate
+FILTRATION                                     ✓ Filtration appears adequate    [green]
 Powered filter: 150 GPH · 5.2× / hour (rated)
 + Additional sponge filter: rated up to 20 gal
 Filtration supports your livestock but does not increase stocking capacity.
 ```
 
 ```
-FILTRATION                                     ⚠ Review filtration
-Powered filter: 40 GPH · 1.4× / hour (rated)
-Sponge filter: rated up to 20 gal · Tank: 29 gal
-Neither filter is sized for this tank on its own. Together they may be enough for light stock;
-a filter rated for this tank is the safer choice.
+FILTRATION                                     ⚠ Review filtration              [amber]
+Powered filter: 40 GPH · 1.4× / hour (rated) — below the 2× minimum
+Sponge filter: rated up to 20 gal — below this 29 gal tank
+Neither filter is sized for this tank on its own. A filter rated for this tank is the safer choice.
 ```
 
 ```
-SPONGE FILTER                                  ○ Rating needed
-Sponge — rating needed
-Enter the tank size this sponge is rated for (printed on the box).
-Previously entered 120 GPH — no longer used for sponge filters.
-```
-
-```
-UNDERGRAVEL FILTER                             ✓ Rated for this tank
+UNDERGRAVEL FILTER                             ✓ Rated for this tank            [green]
 Rated for: 20 Long – 29 gal tanks · Tank: 29 gal
 ```
 
-Warning ids (for `compute.legacy.js`, future): `filtration.below_rating` (warn),
-`filtration.review` (warn), `filtration.rating_needed` (info), `filtration.likely` (info, no
-warning by default). Existing `filtration.none`, `filtration.circulation_only`,
-`filtration.very_low` unchanged; `very_low` applies only when powered filters are the only
-biological devices.
+Warning ids (for `compute.legacy.js`, future): `filtration.likely_multi_sponge` (warn / amber),
+`filtration.below_rating` (warn / amber), `filtration.review` (warn / amber),
+`filtration.rating_needed` (info / neutral, not a warning). Existing `filtration.none`,
+`filtration.circulation_only`, `filtration.very_low` unchanged; `very_low` applies only when
+powered filters are the only evaluable biological devices.
 
 ---
 
 ## 13. Decision matrix (Step 19)
 
+### 13.1 Final decisions by situation (LOCKED)
+
+| Situation | Result | Tone |
+| --- | --- | --- |
+| ONE appropriately (verified) rated sponge | Rated for this tank / adequate | **GREEN** |
+| Multiple undersized sponges whose nominal ratings together cover the tank | Likely adequate — multiple sponge filters | **AMBER** |
+| Sponge below rating (and the above does not apply) | Below manufacturer rating | **AMBER** |
+| Unknown sponge rating (only biological filtration) | Not evaluated — rating needed | **NEUTRAL** |
+| Powered filter independently adequate | Filtration appears adequate | **GREEN** |
+| Sponge independently adequate (with or without a powered filter) | Filtration appears adequate / rated for this tank | **GREEN** |
+| Neither powered nor sponge independently adequate | Review filtration | **AMBER** |
+| Powered filters only, below the 2× floor | Filter flow too low (existing Phase 2C) | **RED** (unchanged) |
+| No biological filtration (powerheads only) | No biological filter (existing) | **RED** (unchanged) |
+| Nothing entered | No filter added (existing) | existing (unchanged) |
+
+### 13.2 Option comparison (why the tiered rule was locked)
+
 Qualitative scores: ●●● strong / good, ●● moderate, ● weak / poor.
 
-| Criterion | 1. Additive ratings | 2. Largest sponge only | 3. Independent, non-additive | 4. **Tiered combined interpretation** |
+| Criterion | 1. Additive ratings | 2. Largest sponge only | 3. Independent, non-additive | 4. **Tiered, amber multi-sponge tier (locked)** |
 | --- | --- | --- | --- | --- |
-| Evidence strength | ● no maker states additivity; sums marketing figures | ●● rule form well supported; ignores real multi-sponge practice | ●●● only claims what each rating says | ●●● top tier = rule makers use; lower tier explicitly softer |
+| Evidence strength | ● no maker states additivity; sums marketing figures | ●● rule form well supported; ignores real multi-sponge practice | ●●● only claims what each rating says | ●●● green = rule makers use; amber = honestly unverified |
 | User clarity | ●● one number, but a misleading one | ●● clear, but "below rating" on normal setups confuses | ●● clear per device; no answer for 2 × undersized | ●●● one headline; each sponge's own rating shown |
-| Mathematical honesty | ● presents Σ marketing classes as capacity | ●●● no invented arithmetic | ●●● none | ●● sum used only as a yes/no threshold, never displayed |
-| Common hobby setups | ●●● passes all | ● fails 2 × 10 on 20, 2 × 40 on 55 | ● same as 2 | ●●● passes them, as "likely" |
-| Saved-state complexity | ●● needs instances + rating | ●● same | ●● same | ●● same (all four need instances and ratings) |
+| Mathematical honesty | ● presents Σ marketing classes as capacity | ●●● no invented arithmetic | ●●● none | ●●● sum only a yes/no threshold for an amber state; never displayed, never green |
+| Common hobby setups | ●●● passes all | ● fails 2 × 10 on 20, 2 × 40 on 55 | ● same as 2 | ●●● amber "likely", not failure |
+| Saved-state complexity | ●● needs instances + rating | ●● same | ●● same | ●● same |
 | Ease of implementation | ●●● | ●●● | ●● | ●● one extra level and copy |
-| Gaming resistance (many tiny sponges) | ● | ●●● | ●●● | ●● listed per sponge; optional copy note |
+| Gaming resistance (many tiny sponges) | ● | ●●● | ●●● | ●● amber only; listed per sponge |
 
-Coding simplicity alone would pick 1 or 2. **4 is recommended**: the only option that is both
-honest about precision and correct on ordinary setups. Saved-state cost is identical for all four.
+Coding simplicity alone would pick 1 or 2. Option 4 was locked because it is both honest about
+precision (the unverified case is amber) and fair to ordinary setups.
 
 ---
 
-## 14. Common-case simulations (summary)
+## 14. Common-case simulations (summary, locked model)
 
 Full user-facing output is in section 4.5; multi-sponge cases in 3.2–3.3.
 
-| Case | Tank | Setup | Recommended result |
-| --- | --- | --- | --- |
-| A | 29 | 150 GPH HOB | ✓ adequate (HOB) |
-| B | 29 | 150 HOB + 20-gal sponge | ✓ adequate (HOB) + sponge supplemental |
-| C | 29 | 100 HOB + 40-gal sponge | ✓ adequate (both paths) |
-| D | 55 | 200 canister + 40-gal sponge | ✓ adequate (canister) + sponge supplemental |
-| E | 55 | 1 × 40-gal sponge | ⚠ below manufacturer rating (warn) |
-| F | 55 | 2 × 40-gal sponges | ✓ likely adequate — 2 sponges |
-| G | 20 | 1 × 20-gal sponge | ✓ rated for this tank |
-| H | 29 | 40 HOB + 20-gal sponge | ⚠ review filtration (warn) |
-| 4a | 10 | 2 × 10-gal | ✓ rated + additional sponge |
-| 4b | 20 | 2 × 10-gal | ✓ likely adequate |
-| 4c | 29 | 2 × 20-gal | ✓ likely adequate |
-| 4d | 55 | 2 × 40-gal | ✓ likely adequate |
-| 5a | 20 | 10 + 20 | ✓ rated (20) + additional |
-| 5b | 29 | 20 + 40 | ✓ rated (40) + additional |
-| 5c | 55 | 20 + 40 | ✓ likely adequate |
-| M1 | any | v1 custom sponge 120 GPH only | ○ rating needed |
-| M2 | any | v1 catalog sponge id + fake GPH | re-resolved from catalog rating |
-| M3 | 29 | stale cached sponge record, no rating field | ○ rating needed for one load, then rated |
+| Case | Tank | Setup | Result | Tone |
+| --- | --- | --- | --- | --- |
+| A | 29 | 150 GPH HOB | Filtration appears adequate (HOB) | green |
+| B | 29 | 150 HOB + 20-gal sponge | adequate (HOB) + sponge supplemental | green |
+| C | 29 | 100 HOB + 40-gal sponge | adequate (both paths) | green |
+| D | 55 | 200 canister + 40-gal sponge | adequate (canister) + sponge supplemental | green |
+| E | 55 | 1 × 40-gal sponge | Below manufacturer rating | amber |
+| F | 55 | 2 × 40-gal sponges | Likely adequate — multiple sponge filters | amber |
+| G | 20 | 1 × 20-gal sponge | Rated for this tank | green |
+| H | 29 | 40 HOB + 20-gal sponge | Review filtration | amber |
+| U | 20 | 1 sponge, rating unknown | Not evaluated — rating needed | neutral |
+| 4a | 10 | 2 × 10-gal | Rated for this tank + additional sponge | green |
+| 4b | 20 | 2 × 10-gal | Likely adequate — multiple sponge filters | amber |
+| 4c | 29 | 2 × 20-gal | Likely adequate — multiple sponge filters | amber |
+| 4d | 55 | 2 × 40-gal | Likely adequate — multiple sponge filters | amber |
+| 5a | 20 | 10 + 20 | Rated (20) + additional | green |
+| 5b | 29 | 20 + 40 | Rated (40) + additional | green |
+| 5c | 55 | 20 + 40 | Likely adequate — multiple sponge filters | amber |
+| M1 | any | v1 custom sponge, 120 GPH only | Rating needed; "old value 120 GPH — not used" | neutral |
+| M2 | any | v1 catalog sponge id + fake GPH | re-resolved from catalog rating | per rating |
+| M3 | 29 | stale cached sponge record, no rating field | Rating needed for one load, then per rating | neutral → per rating |
+| M4 | any | future "20 gal and up" product | Rating needed (needs source/product review) | neutral |
 
 Compared with today: every "adequate" that today depends on an invented sponge GPH (sponge audit
-§8) is replaced by a rating statement; the only sponge-alone warnings are E-type cases where the
-sponge really is under its maker's rating and nothing else carries the tank.
+§8) is replaced by a rating statement; no sponge result is red.
 
 ---
 
-## 15. Recommended rollout phases (Step 20)
+## 15. Final implementation sequence (Step 20) — LOCKED order
 
-The suggested A–G order is adjusted: saved-state plumbing and duplicates move earlier (the new
-model needs instances and a place to store a rating), and legacy GPH removal moves later (old-JS
-safety). Each phase is a separate PR with tests; none changes Stocking Load.
+Each phase is a separate PR with tests; none changes Stocking Load. **None is implemented yet.**
 
 | Phase | Content | User-visible? | Depends on |
 | --- | --- | --- | --- |
-| **1. Plumbing** | Shared v2 serializer (both writers), v1 → v2 read/migrate, `instanceId`s, pass-through of new fields in `sanitizeFilter` / `normalizeFilter`. Engine and scoring unchanged; sponges still use GPH. | No | — |
-| **2. Rating engine + data fields (switch-over release)** | Type-wins rule; rating path; tiered sponge logic; either-path verdict; new levels + warning copy; every GPH gate in §9.3; custom Sponge input asks rated gallons; v1 custom sponges → rating needed; catalog gets `capacityMethod`, `manufacturerMaxGallons`, `manufacturerMinGallons`, `ratingExpression`, `ratingSource` for the 7 sponges (**legacy `gphRated` retained, ignored**). UGF typed rating-method with `compatibleTanks`. Ratings re-verified before merge. | Yes | 1 |
-| **3. Duplicate instances** | Same product more than once (not UGF); grouped chip ×N; remove-one. Sponge picker stops hiding undersized sponges. | Yes | 1, 2 |
-| **4. Legacy GPH removal** | Remove `gphRated` and GPH-bucket `minGallons`/`maxGallons` from the 8 air-driven records; bump catalog cache key; stop v1 mirror writes after a grace period; correct `FILTRATION_MODEL.md` §6. | No | 2 shipped ≥ 1 release |
-| **5. Filtration status card** | The card in section 12 (per-path lines, supplemental lines, redundancy line, Stocking Load copy). | Yes | 2, 3 |
-| **6. Follow-ups** | Min-only ("X and up") ratings; optional measured-flow display; retire `tools/build_filter_catalog.py` override table (already queued). | — | — |
+| **A. Saved-state v2 plumbing + capacity-method support** | Shared v2 serializer for both writers (controller, `tankStore`); v1 → v2 read/migrate; `capacityMethod` / `ratedMaxGallons` / `ratingStatus` recognised and passed through `normalizeFilter`, `sanitizeFilter`, persistence; `instanceId` field reserved (one per product). No scoring change; sponges still score as today. | No | — |
+| **B. Rating-based sponge engine + catalog metadata + custom sponge input** (one coordinated release) | Type-wins rule; locked decision logic (4.4) and levels; warning copy; every GPH gate in 9.3 so rating-method records neither disappear nor become fake-GPH custom filters; catalog rating fields for the 7 sponges with **verified** ratings (unverifiable → `needs_review`); legacy `gphRated` **retained but ignored**; custom Sponge input "Rated for up to ___ gallons"; UGF resolves as rating-method (Rating needed until F). | Yes | A |
+| **C. Stale-cache / legacy saved-state migration validation** | Tests and manual checks: stale cached catalog with fake GPH; v1 catalog sponge ids; v1 custom sponges → Rating needed + old value note; unknown/removed ids; UGF id; old-JS + new-data window; `capacityAdjustment` 0 and Stocking Load identical with/without sponges. Fixes only if gaps are found. | No | B |
+| **D. Same-product multiple instances** | Instance ids in the picker and chips; grouped ×N chip; remove-one; sponge picker stops hiding undersized sponges. Not UGF. | Yes | A–C |
+| **E. Remove legacy sponge GPH** | Remove `gphRated` and GPH-bucket `minGallons`/`maxGallons` from the air-driven records once B–C protection is live for ≥ 1 release; bump catalog cache key; stop v1 mirror writes after grace period; correct `FILTRATION_MODEL.md` §6. | No | B, C |
+| **F. UGF model** | `compatibleTanks` rule, status copy, picker eligibility; id stays resolvable. | Yes | B |
+| **G. Filtration-status UI** | The card in section 12 (per-path lines, supplemental lines, redundancy line). | Yes | B, D, F |
 
-Phase 2 is necessarily one release: splitting the engine from the data would make every sponge
-"rating needed" for a release, and splitting the custom input from the engine would strand old
-custom sponges with no way to enter a rating.
+Phase B cannot be split: shipping the engine without the data makes every sponge "rating needed";
+shipping the data without the engine lets old gates drop null-GPH sponges or restore saved ones as
+custom filters carrying the fake GPH; shipping either without the custom input strands old custom
+sponges with no way to enter a rating.
 
 ---
 
-## 16. Remaining uncertainties
+## 16. Remaining uncertainties / open items
 
-1. **Ratings are grade C.** All seven sponge ratings and the UGF compatibility come from listing
-   titles / mirrors. Re-verify each against a manufacturer page (A/B) before phase 2 merges.
+Locked decisions are not re-opened here; these are inputs or copy still needed.
+
+1. **Rating verification (blocks phase B data).** All seven sponge ratings and the UGF
+   compatibility are grade C. Each must be confirmed at A/B before it can produce green; anything
+   not confirmable ships as `needs_review` (Rating needed).
 2. **Brand inconsistency.** hygger's ranges are generous relative to similar sponges; the design
    reports the maker's number and does not correct it.
-3. **"Likely adequate" tier** rests on a physical argument (more sponges = more media and more
-   airlifts) and hobby practice, not on published additivity. It is labelled accordingly.
-4. **Many tiny sponges**: whether to add the copy-only note, and its cut-off, is a product call.
-5. **Severity choices**: below-rating = warn (not danger); review = warn; rating-needed = info.
-   These are judgement calls to confirm.
-6. **Stocking Load coupling**: whether to include the high-load copy / amber candidate at all, and
-   which existing band to reuse.
-7. **Min-only ratings** (Aquarium Co-Op "40 gal and up") have no maximum; not in the catalog, but a
-   custom entry or future product needs a rule.
-8. **Powered-filter path is unchanged** and inherits the open threshold questions (2× floor vs.
+3. **Unrated sponge beside a failing powered filter** (4.4): the locked logic shows red for the
+   powered path with a neutral unrated-sponge line; whether that should read amber "Review" is a
+   minor open call.
+4. **Many tiny sponges** copy note — deferred; not in the first implementation.
+5. **Stocking Load coupling** — deferred (D7); revisit only with evidence.
+6. **"And up" products** — stay needs-review (D9) until a maximum or another defensible capacity
+   method exists; custom-input wording for them is a UI-phase copy decision.
+7. **Powered-filter path is unchanged** and inherits the open threshold questions (2× floor vs.
    EHEIM 2213 at 1.76×; the 2×–4× "low" band). This design does not resolve them.
-9. **UGF footprint**: preset ids for compatible tanks must be confirmed against the tank preset
-   list; powerhead-driven UGFs are unmodelled.
-10. **Legacy picker / drawer code** (`js/stocking.js` product picker, `js/ui/filter-drawer.js`) is
-    disabled while the controller owns filters; phase 2 must confirm neither path can still write
+8. **UGF preset ids** for compatible tanks to be confirmed against the tank preset list in phase F.
+9. **Legacy picker / drawer code** (`js/stocking.js` product picker, `js/ui/filter-drawer.js`) is
+    disabled while the controller owns filters; phase B must confirm neither path can still write
     sponge GPH into `appState.filters`.
 
 ---
 
 ## Files changed
 
-- `_internal/reports/stocking-advisor-sponge-filter-migration-design-2026-09.md` (this report, new).
+- `_internal/reports/stocking-advisor-sponge-filter-migration-design-2026-09.md` (this report).
 
 No production code, catalog data, tests, saved-state format or UI changed.
