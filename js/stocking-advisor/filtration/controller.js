@@ -2,6 +2,7 @@ import { canonicalizeFilterType } from '../../utils.js';
 import {
   computeTurnover,
   getTotalGPH,
+  hasUnsupportedCapacityMethod,
   normalizeFilters,
   pickPassthroughFields,
   resolveCapacityMethod,
@@ -689,7 +690,8 @@ function setFilters(nextFilters) {
   const instanceIds = new Set();
 
   nextFilters.forEach((raw) => {
-    if (!raw) return;
+    // An explicitly unsupported capacity method never becomes a flow filter.
+    if (!raw || hasUnsupportedCapacityMethod(raw)) return;
     const source = normalizeSource(raw.source);
     const gph = clampGph(raw.gph ?? raw.rated_gph ?? raw.gphRated);
     if (!Number.isFinite(gph) || gph <= 0) {
@@ -1045,6 +1047,9 @@ function hydrateFromAppState() {
     : readStoredFilters();
   const next = [];
   existing.forEach((entry) => {
+    if (hasUnsupportedCapacityMethod(entry)) {
+      return;
+    }
     const gph = clampGph(entry?.rated_gph ?? entry?.gphRated ?? entry?.gph);
     if (!gph) {
       return;

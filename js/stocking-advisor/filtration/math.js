@@ -97,10 +97,22 @@ const KNOWN_RATING_STATUSES = new Set(['verified', 'needs_review', 'needed']);
 const MAX_RATED_GALLONS = 10000;
 const MAX_ID_LENGTH = 128;
 
-// A known method, or FLOW (the only method scored today) when absent or unrecognised.
+function hasCapacityMethod(filter) {
+  return Boolean(filter) && filter.capacityMethod !== undefined && filter.capacityMethod !== null;
+}
+
+// An explicitly stated method this code doesn't support (e.g. "banana", or one from a newer
+// release). Such a device fails closed: it is never treated as a flow filter and adds no GPH.
+export function hasUnsupportedCapacityMethod(filter) {
+  if (!hasCapacityMethod(filter)) return false;
+  const value = typeof filter.capacityMethod === 'string' ? filter.capacityMethod.trim() : '';
+  return !KNOWN_CAPACITY_METHODS.has(value);
+}
+
+// A known method; FLOW when absent (every legacy/v1 filter); null when explicitly unsupported.
 export function resolveCapacityMethod(filter) {
-  const value = typeof filter?.capacityMethod === 'string' ? filter.capacityMethod.trim() : '';
-  return KNOWN_CAPACITY_METHODS.has(value) ? value : CAPACITY_METHODS.FLOW;
+  if (!hasCapacityMethod(filter)) return CAPACITY_METHODS.FLOW;
+  return hasUnsupportedCapacityMethod(filter) ? null : filter.capacityMethod.trim();
 }
 
 function cleanId(value) {
@@ -138,7 +150,8 @@ export function normalizeFilter(filter) {
   if (!filter || typeof filter !== 'object') {
     return null;
   }
-  const ratedGph = parseFlow(filter);
+  // An unsupported capacity method contributes no flow (normalizeFilters then leaves it out).
+  const ratedGph = hasUnsupportedCapacityMethod(filter) ? 0 : parseFlow(filter);
   return {
     id: typeof filter.id === 'string' && filter.id ? filter.id : null,
     source: typeof filter.source === 'string' && filter.source ? filter.source : null,

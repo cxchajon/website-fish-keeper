@@ -277,13 +277,112 @@ test('future capacity fields survive save, restore, sanitize and compute prepara
   assert.equal(again.map.has(V1), false, 'no flow-method entries → no v1 mirror');
 });
 
-test('capacityMethod: current filters resolve to flow; known values kept; unknown values fall back', () => {
+// Absent capacityMethod = legacy data → flow. An explicitly unsupported value is malformed and fails
+// closed: never converted to flow, never scored, and only that entry is lost.
+const methodEntry = (capacityMethod, extra = {}) => ({
+  instanceId: 'f-method', source: 'custom', legacyId: 'manual-m', type: 'HOB', gph: 150,
+  ...(capacityMethod === undefined ? {} : { capacityMethod }), ...extra,
+});
+const readV2 = (filters) => saved.readSavedFilterState(memoryStorage({ [V2]: JSON.stringify({ v: 2, filters }) }));
+
+test('capacityMethod A: missing → flow (legacy compatibility)', () => {
   assert.deepEqual(Object.values(math.CAPACITY_METHODS).sort(), ['flow', 'manufacturer_rating', 'tank_compatibility']);
   assert.equal(math.resolveCapacityMethod({ type: 'HOB' }), 'flow');
   assert.equal(math.resolveCapacityMethod({ type: 'SPONGE' }), 'flow', 'phase A: sponges keep the flow method');
-  assert.equal(math.resolveCapacityMethod({ capacityMethod: 'manufacturer_rating' }), 'manufacturer_rating');
-  assert.equal(math.resolveCapacityMethod({ capacityMethod: 'warp_drive' }), 'flow');
+  assert.equal(math.resolveCapacityMethod({ capacityMethod: null }), 'flow');
   assert.equal(math.resolveCapacityMethod(null), 'flow');
+  assert.equal(math.hasUnsupportedCapacityMethod({ type: 'HOB' }), false);
+  const state = readV2([methodEntry(undefined)]);
+  assert.deepEqual(state.filters.map((entry) => [entry.capacityMethod, entry.rated_gph]), [['flow', 150]]);
+});
+
+test('capacityMethod B: "flow" accepted', () => {
+  assert.equal(math.resolveCapacityMethod({ capacityMethod: 'flow' }), 'flow');
+  const state = readV2([methodEntry('flow')]);
+  assert.deepEqual(state.filters.map((entry) => [entry.capacityMethod, entry.rated_gph]), [['flow', 150]]);
+  assert.equal(score(restore(state.filters)).filtering.biologicalGph, 150);
+});
+
+test('capacityMethod C + D: manufacturer_rating and tank_compatibility preserved (and not scored differently)', () => {
+  for (const method of ['manufacturer_rating', 'tank_compatibility']) {
+    assert.equal(math.resolveCapacityMethod({ capacityMethod: method }), method);
+    assert.equal(math.hasUnsupportedCapacityMethod({ capacityMethod: method }), false);
+    const state = readV2([methodEntry(method, { manufacturerMaxGallons: 20 })]);
+    assert.equal(state.filters[0].capacityMethod, method);
+    assert.equal(math.normalizeFilter(state.filters[0]).capacityMethod, method);
+    assert.equal(compute.sanitizeFilterList(state.filters)[0].capacityMethod, method);
+    // Phase A: its GPH is still scored exactly as a flow filter's would be.
+    assert.equal(score(restore(state.filters)).filtering.biologicalGph, 150);
+  }
+});
+
+test('capacityMethod E: an unsupported value is not converted to flow and adds no GPH', () => {
+  for (const bad of ['banana', 'FLOW ', 'Flow', '', 42, true, {}, []]) {
+    const filter = { id: 'manual-bad', type: 'HOB', rated_gph: 150, gph: 150, capacityMethod: bad };
+    if (bad === 'FLOW ') {
+      // Whitespace-only differences of a known value are the same value; case is not.
+      continue;
+    }
+    assert.equal(math.hasUnsupportedCapacityMethod(filter), true, JSON.stringify(bad));
+    assert.equal(math.resolveCapacityMethod(filter), null, 'never becomes flow');
+    assert.equal(math.normalizeFilter(filter).ratedGph, 0);
+    assert.equal(math.normalizeFilter(filter).capacityMethod, undefined);
+    assert.deepEqual(math.normalizeFilters([filter]), []);
+    assert.equal(compute.sanitizeFilterList([filter])[0].rated_gph, 0);
+    assert.equal(compute.calcTotalGph([filter]), 0);
+    assert.equal(math.assessFiltration({ filters: [filter], gallons: 20, hasStock: true }).level, 'none');
+    // Through the whole calculator: identical to having no filter at all.
+    const state = compute.createDefaultState();
+    const tank = getTankById('20l');
+    Object.assign(state, { tank: { ...tank }, gallons: tank.gallons, selectedTankId: tank.id, stock: [{ id: 'neon', qty: 10 }], filters: [filter] });
+    const withBad = compute.buildComputedState(state);
+    const none = compute.buildComputedState({ ...state, filters: [] });
+    assert.equal(withBad.filtering.gphTotal, 0);
+    assert.equal(withBad.filtering.level, none.filtering.level);
+    assert.deepEqual(withBad.status.warnings.map((w) => w.id), none.status.warnings.map((w) => w.id));
+    // Stocking Load identical. (bioload.flowAdjustment.hasProduct is a descriptive flag read from raw
+    // ids, never a load input; the saved-state and controller paths drop such an entry before compute.)
+    const load = (c) => [c.bioload.currentPercent, c.bioload.proposedPercent, c.bioload.text, c.bioload.severity];
+    assert.deepEqual(load(withBad), load(none));
+    // Never written back either.
+    const storage = memoryStorage();
+    saved.writeSavedFilters(storage, [filter]);
+    assert.equal(storage.map.has(V2), false);
+    assert.equal(storage.map.has(V1), false);
+  }
+  assert.doesNotThrow(() => readV2([methodEntry('banana')]));
+  assert.deepEqual(readV2([methodEntry('banana')]).filters, []);
+});
+
+test('capacityMethod F: a v2 payload with one valid and one invalid-method filter keeps only the valid one', () => {
+  const storage = memoryStorage({ [V2]: JSON.stringify({ v: 2, filters: [
+    { instanceId: 'f-good01', source: 'product', productId: HOB_ID, type: 'HOB', capacityMethod: 'flow', gph: 100 },
+    { instanceId: 'f-bad001', source: 'custom', legacyId: 'manual-bad', type: 'CANISTER', capacityMethod: 'banana', gph: 900 },
+  ] }), [V1]: JSON.stringify([{ id: 'manual-x', type: 'HOB', rated_gph: 5 }]) });
+  const state = saved.readSavedFilterState(storage);
+  assert.equal(state.version, 2, 'still a valid v2 payload; v1 is not used');
+  assert.deepEqual(storage.reads, [V2]);
+  assert.deepEqual(state.filters.map((entry) => [entry.instanceId, entry.id]), [['f-good01', HOB_ID]]);
+  const restored = restore(state.filters);
+  assert.deepEqual(score(restored), score([productItem(HOB_ID)]), 'scores exactly as the valid filter alone');
+  assert.ok(!JSON.stringify(score(restored)).includes('900'));
+});
+
+test('capacityMethod G: an old v1 payload still migrates every entry to flow exactly as before', () => {
+  const v1 = [
+    { id: SPONGE_ID, type: 'SPONGE', rated_gph: 120 },
+    { id: 'manual-a', type: 'HOB', rated_gph: 150 },
+    { id: 'manual-b', type: 'Powerhead', rated_gph: 300 },
+  ];
+  const state = saved.readSavedFilterState(memoryStorage({ [V1]: JSON.stringify(v1) }));
+  assert.equal(state.version, 1);
+  assert.deepEqual(state.filters.map((entry) => [entry.id, entry.type, entry.rated_gph, entry.capacityMethod]), [
+    [SPONGE_ID, 'SPONGE', 120, 'flow'],
+    ['manual-a', 'HOB', 150, 'flow'],
+    ['manual-b', 'POWERHEAD', 300, 'flow'],
+  ]);
+  const legacy = restore(v1.map((entry) => ({ ...entry, type: canonicalizeFilterType(entry.type) })));
+  assert.deepEqual(score(restore(state.filters)), score(legacy));
 });
 
 test('scoring never reads the capacity fields (math.assessFiltration)', () => {
@@ -315,7 +414,8 @@ test('storage failures are safe: malformed, missing fields, unknown values, dupl
     { source: 'custom', type: 'HOB', gph: -40 },
     { source: 'custom', type: 'HOB', gph: 'abc' },
     { source: 'product', type: 'HOB', gph: 0 }, // product without productId and no GPH → dropped
-    { source: 'custom', type: 'HOB', gph: 90, manufacturerMaxGallons: 'lots', manufacturerMinGallons: -5, capacityMethod: 'warp' },
+    { source: 'custom', type: 'HOB', gph: 90, manufacturerMaxGallons: 'lots', manufacturerMinGallons: -5 },
+    { source: 'custom', type: 'HOB', gph: 95, capacityMethod: 'warp' }, // unsupported method → dropped (fails closed)
     { source: 'custom', type: 'SPACESHIP', gph: 70 }, // unknown type: canonicalised as v1 always did
     { source: 'product', productId: 'no-such-product', type: 'CANISTER', gph: 250 }, // stale product id
     { source: 'custom', type: 'HOB', gph: 99999 },

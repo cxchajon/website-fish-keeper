@@ -95,7 +95,9 @@ Field names follow the design report (`capacityMethod`, `manufacturerMaxGallons`
 and `ratedMaxGallons` from design §8.2 as an alias of `manufacturerMaxGallons`).
 
 Capacity methods recognised structurally (`math.CAPACITY_METHODS`): `flow`, `manufacturer_rating`,
-`tank_compatibility`. A missing or unknown value resolves to `flow` (`resolveCapacityMethod`).
+`tank_compatibility`. **Absent** (`undefined` / `null`) resolves to `flow`, for legacy / v1
+compatibility. An **explicitly present but unsupported** value (e.g. `"banana"`, `""`, a number, a
+method from a newer release) is invalid and fails closed — see section 6.1.
 Powerheads are also `flow` (their role, not their method, keeps them circulation-only).
 
 ## 3. Storage keys (step 4)
@@ -134,6 +136,29 @@ Recognised, validated and carried; **not read by any scoring code**. `assessFilt
 `MIN_BIOLOGICAL_TURNOVER`, the filtration levels and warning copy are untouched. A unit test feeds
 the same devices with and without capacity fields (including `manufacturer_rating` + a 500-gallon
 rating) and gets identical assessments.
+
+### 6.1 Absent vs. unsupported capacityMethod (review fix)
+
+| `capacityMethod` | Result |
+| --- | --- |
+| absent (`undefined` / `null`) | `flow` — every legacy/v1 filter; behaviour unchanged |
+| `flow` | accepted |
+| `manufacturer_rating`, `tank_compatibility` | preserved; phase A still scores the entry's GPH exactly as today |
+| anything else (`"banana"`, `""`, `"Flow"`, `42`, `true`, an object…) | **invalid; fails closed** |
+
+`math.hasUnsupportedCapacityMethod` is the single test; `resolveCapacityMethod` returns `null` (never
+`flow`) for such an entry. Fail-closed handling, smallest change per layer:
+
+- **v2 read** (`saved-state.js` `buildEntry`): the malformed entry is dropped; every other entry is
+  kept and the payload is still treated as valid v2 (v1 is not consulted). Writing never emits one.
+- **Controller** (`setFilters`, `hydrateFromAppState`): such an entry is skipped, so it gets no chip.
+- **Scoring inputs** (`math.normalizeFilter`, `compute.legacy.js` `sanitizeFilter`): its flow is 0, so
+  `normalizeFilters` / `sumGph` / `assessFiltration` count nothing from it — identical to no filter.
+- **Catalog** (`gear-data.js` `sanitizeItem`): such a record is skipped, like a GPH ≤ 0 record (no
+  current record has the field).
+
+No other capacity method is invented and no visible "Rating needed" state is created (that is phase
+B). A malformed v2 entry therefore cannot become a flow-scored filter.
 
 ## 7. Sanitisation changes (step 8)
 
@@ -175,8 +200,8 @@ plus `instanceId`/`capacityMethod`/`productId`.
 
 ## 10. Round-trip results (steps 12, 13, 16)
 
-`tests/unit/filter-saved-state.test.mjs` (15 tests, module + real compute) and
-`tests/stocking-advisor-saved-filters.spec.ts` (7 tests × desktop + mobile, real page, added to the
+`tests/unit/filter-saved-state.test.mjs` (20 tests, module + real compute) and
+`tests/stocking-advisor-saved-filters.spec.ts` (8 tests × desktop + mobile, real page, added to the
 stocking gate config):
 
 | Case | Unit | Browser |
@@ -189,7 +214,8 @@ stocking gate config):
 | F v1 payload → v2, same scoring, v1 mirror identical to the v1 input | pass | pass |
 | G v2 payload loads directly; storage spy shows v1 never read | pass | pass |
 | Future-field fixture (`manufacturer_rating`, max 20, min 10, `tank_compatibility`) survives read → restore → `normalizeFilter` → `sanitizeFilter` → re-save; scoring identical to the same devices without the fields; sponge still scored at catalog GPH; excluded from v1 | pass | pass |
-| Malformed v2 JSON (falls back to v1), wrong envelope/version, missing fields, negative/junk GPH, junk ratings, unknown `capacityMethod` (→ flow), unknown type (→ HOB, as v1), stale product id, duplicated instanceId, oversized GPH (→ 1500, as v1), throwing storage, no storage | pass | malformed + no-localStorage pages load, no page errors, no invented filter |
+| capacityMethod A–G (6.1): absent → flow; `flow` accepted; `manufacturer_rating` / `tank_compatibility` preserved; `"banana"` and other unsupported values never become flow, add 0 GPH, give the same result as no filter and are never saved; valid + invalid v2 payload keeps only the valid filter (scores as that filter alone); v1 still migrates every entry to flow | pass | valid + `"banana"` payload: one chip, 150 GPH, only the valid entry re-saved, no page errors |
+| Malformed v2 JSON (falls back to v1), wrong envelope/version, missing fields, negative/junk GPH, junk ratings, unsupported `capacityMethod` (entry dropped, see 6.1), unknown type (→ HOB, as v1), stale product id, duplicated instanceId, oversized GPH (→ 1500, as v1), throwing storage, no storage | pass | malformed + no-localStorage pages load, no page errors, no invented filter |
 
 ## 11. Differential behaviour results (step 14)
 
@@ -210,6 +236,12 @@ stocking gate config):
 
 No user-visible difference found.
 
+Re-run after the capacityMethod fix (6.1), which touches the shared normalisers: compute
+differential **0 of 2,940**; UI differential **0 field differences** in two consecutive runs against
+`main`. (One intermediate run showed `role`/`source` null on a v1-seeded page with identical ids,
+types and GPH — the same start-up race in which stocking.js or the controller writes
+`appState.filters` last; it did not reproduce.)
+
 ## 12. Cache / versioning findings (step 17)
 
 - Affected JS: `js/stocking-advisor/filtration/controller.js`, `…/filtration/math.js`,
@@ -227,12 +259,12 @@ No user-visible difference found.
 
 ## 13. Regression (step 18)
 
-- Unit suite `npm run test:unit`: **141 / 141 pass** (126 existing + 15 new), including filtration
+- Unit suite `npm run test:unit`: **146 / 146 pass** (126 existing + 20 new), including filtration
   model, filter-catalog batch 1, Tetra IQ 45 (215 GPH), species integrity (44 species), bioload
   model (Phase 2B Stocking Load), water model (2D), warnings (2E), invert predation (2G).
 - `npm run test:stocking:extended`: 105 pairs, 0 failures (generated report not committed).
 - Stocking gate `npm run test:e2e:stocking-gate` (desktop + mobile Chromium, final code):
-  **109 passed, 0 failed, 27 skipped** — 95 existing gate runs + 14 new saved-filters runs; the
+  **111 passed, 0 failed, 27 skipped** — 95 existing gate runs + 16 new saved-filters runs; the
   skips are the gate's own desktop-only / mobile-only splits. Covers the 44-species dropdown,
   Phase 2B Stocking Load, 2C filtration, 2D water, 2E warnings, 2G predation, the quantity-preview
   fix and the catalog-product filter path.
@@ -257,7 +289,11 @@ No user-visible difference found.
   capacityMethod on items; catalog-first restore that keeps saved capacity fields.
 - `js/stocking/tankStore.js`: `loadFilterSnapshot` / `saveFilterSnapshot` delegate to the shared module.
 - `js/logic/compute.legacy.js`: `sanitizeFilter` passes the fields through.
-- `js/gear-data.js`: carries catalog capacity fields when present.
+- `js/gear-data.js`: carries catalog capacity fields when present; skips a record with an
+  unsupported capacityMethod.
+- Review fix (6.1) touched `math.js` (`hasUnsupportedCapacityMethod`, `resolveCapacityMethod`,
+  `normalizeFilter`), `saved-state.js`, `controller.js`, `compute.legacy.js`, `gear-data.js`, the unit
+  test and the browser spec.
 - `tests/unit/filter-saved-state.test.mjs` (new), `tests/stocking-advisor-saved-filters.spec.ts` (new),
   `playwright.stocking-gate.config.ts` (runs the new spec).
 - `_internal/reports/stocking-advisor-sponge-migration-phase-a-2026-09.md` (this report).

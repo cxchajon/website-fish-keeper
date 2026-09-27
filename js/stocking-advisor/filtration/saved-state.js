@@ -16,7 +16,13 @@
  * same powered filters. It holds only flow-method entries and only the three fields old code reads.
  */
 import { canonicalizeFilterType } from '../../utils.js';
-import { CAPACITY_METHODS, MAX_DEVICE_GPH, pickPassthroughFields, resolveCapacityMethod } from './math.js';
+import {
+  CAPACITY_METHODS,
+  MAX_DEVICE_GPH,
+  hasUnsupportedCapacityMethod,
+  pickPassthroughFields,
+  resolveCapacityMethod,
+} from './math.js';
 
 export const FILTER_STORAGE_KEY_V1 = 'ttg.stocking.filters.v1';
 export const FILTER_STORAGE_KEY_V2 = 'ttg.stocking.filters.v2';
@@ -82,6 +88,11 @@ function resolveProductId(filter, extra) {
 }
 
 function buildEntry(filter, { typeValue, gphValue }) {
+  // A missing capacityMethod means flow (legacy data). An explicitly unsupported one is malformed:
+  // the entry is dropped rather than turned into a flow filter; the rest of the list is kept.
+  if (hasUnsupportedCapacityMethod(filter)) {
+    return null;
+  }
   const extra = pickPassthroughFields(filter);
   const productId = resolveProductId(filter, extra);
   const gph = clampGph(gphValue);

@@ -182,6 +182,25 @@ test.describe('saved filters v2', () => {
     await reloadAndCompare(page);
   });
 
+  test('a v2 entry with an unsupported capacityMethod is dropped; the valid entry is kept', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    await seedStorage(page, { [V2]: JSON.stringify({ v: 2, filters: [
+      { instanceId: 'f-good01', source: 'custom', legacyId: 'manual-good', type: 'HOB', capacityMethod: 'flow', gph: 150 },
+      { instanceId: 'f-bad001', source: 'custom', legacyId: 'manual-bad', type: 'CANISTER', capacityMethod: 'banana', gph: 900 },
+    ] }) });
+    await openAdvisor(page);
+    await setUpTank(page);
+    await settle(page);
+    const state = await snapshot(page);
+    expect(state.chips.map((chip) => chip.split('|')[0])).toEqual(['manual-good']);
+    expect(state.scoring).toEqual([['manual-good', 'HOB', 150]]);
+    expect(state.gph).toEqual([150, 150, 0]);
+    const saved = JSON.parse((await stored(page, V2)) as string);
+    expect(saved.filters.map((entry: { instanceId: string }) => entry.instanceId)).toEqual(['f-good01']);
+    expect(errors).toEqual([]);
+  });
+
   test('malformed or hostile saved data never breaks the page or invents a filter', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));

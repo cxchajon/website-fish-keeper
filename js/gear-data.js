@@ -1,4 +1,4 @@
-import { pickPassthroughFields } from './stocking-advisor/filtration/math.js';
+import { hasUnsupportedCapacityMethod, pickPassthroughFields } from './stocking-advisor/filtration/math.js';
 
 const DATA_URL = '/assets/data/gearCatalog.json';
 const STORAGE_KEY = 'ttg.gear.catalog.v1';
@@ -69,6 +69,10 @@ function sanitizeItem(raw) {
   const type = normalizeType(raw.type);
   const gphRated = toNumber(raw.gphRated ?? raw.rated_gph ?? raw.ratedGph, NaN);
   if (!Number.isFinite(gphRated) || gphRated <= 0) {
+    return null;
+  }
+  // A capacity method this code doesn't support is never offered as a flow-rated product.
+  if (hasUnsupportedCapacityMethod(raw)) {
     return null;
   }
   const minGallonsRaw = toNumber(raw.minGallons, 0);

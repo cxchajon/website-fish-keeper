@@ -3,7 +3,7 @@ import { validateSpeciesRecord } from "./speciesSchema.js";
 import { EMPTY_TANK } from '../stocking/tankStore.js';
 import { canonicalizeFilterType, sumGph } from '../utils.js';
 import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent } from '../bioload.js';
-import { assessFiltration, FILTRATION_LEVELS, MIN_BIOLOGICAL_TURNOVER, pickPassthroughFields } from '../stocking-advisor/filtration/math.js';
+import { assessFiltration, FILTRATION_LEVELS, MIN_BIOLOGICAL_TURNOVER, pickPassthroughFields, hasUnsupportedCapacityMethod } from '../stocking-advisor/filtration/math.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import { BEHAVIOR_TAGS } from './behaviorTags.js';
 import { evaluateStockWarnings } from './warnings.js';
@@ -256,7 +256,8 @@ function sanitizeFilter(filter) {
   }
   const id = typeof filter.id === 'string' && filter.id.trim() ? filter.id.trim() : null;
   const type = canonicalizeFilterType(filter.type ?? filter.kind ?? filter.filterType);
-  const rated_gph = clampFlowRate(filter.rated_gph ?? filter.gph);
+  // An explicitly unsupported capacity method fails closed: no flow is counted for it.
+  const rated_gph = hasUnsupportedCapacityMethod(filter) ? 0 : clampFlowRate(filter.rated_gph ?? filter.gph);
   // Scoring reads only id, type and rated_gph. Identity and future capacity fields (instanceId,
   // productId, capacityMethod, manufacturer ratings) ride along so later phases can use them.
   return {
