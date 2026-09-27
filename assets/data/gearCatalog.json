@@ -23,8 +23,8 @@
     "name": "Eheim Classic External Canister Filter 2213",
     "type": "CANISTER",
     "gphRated": 116,
-    "minGallons": 0,
-    "maxGallons": 20
+    "minGallons": 21,
+    "maxGallons": 66
   },
   {
     "id": "fluval-107",
@@ -60,7 +60,7 @@
     "type": "CANISTER",
     "gphRated": 303,
     "minGallons": 40,
-    "maxGallons": 75
+    "maxGallons": 70
   },
   {
     "id": "fluval-407-1",
@@ -168,7 +168,7 @@
     "type": "HOB",
     "gphRated": 300,
     "minGallons": 40,
-    "maxGallons": 75
+    "maxGallons": 70
   },
   {
     "id": "aquaclear-70-1",
@@ -177,7 +177,7 @@
     "type": "HOB",
     "gphRated": 300,
     "minGallons": 40,
-    "maxGallons": 75
+    "maxGallons": 70
   },
   {
     "id": "aqueon-quietflow-75",
