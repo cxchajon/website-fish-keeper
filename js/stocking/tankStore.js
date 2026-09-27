@@ -1,5 +1,6 @@
 import { EVENTS, dispatchEvent } from './events.js';
-import { getTankById, canonicalizeFilterType } from '../utils.js';
+import { getTankById } from '../utils.js';
+import { readSavedFilters, writeSavedFilters } from '../stocking-advisor/filtration/saved-state.js';
 
 const roundTo = (value, precision) => {
   const factor = 10 ** precision;
@@ -27,8 +28,6 @@ const EMPTY = Object.freeze({
 
 let currentTank = EMPTY;
 const subscribers = new Set();
-
-const FILTER_STORAGE_KEY = 'ttg.stocking.filters.v1';
 
 function ensureNumber(value) {
   if (typeof value === 'number') {
@@ -182,56 +181,12 @@ export function subscribeTank(listener) {
 
 export const EMPTY_TANK = EMPTY;
 
-function parseFiltersPayload(raw) {
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter((item) => item && typeof item === 'object');
-  } catch (_error) {
-    return [];
-  }
-}
-
-function normalizeStoredFilter(filter) {
-  if (!filter || typeof filter !== 'object') {
-    return null;
-  }
-  const id = typeof filter.id === 'string' && filter.id.trim() ? filter.id.trim() : null;
-  const type = canonicalizeFilterType(filter.type ?? filter.kind);
-  const value = Number(filter.rated_gph ?? filter.gph);
-  const rated = Number.isFinite(value) && value > 0 ? Math.min(Math.round(value), 1500) : 0;
-  return { id, type, rated_gph: rated };
-}
-
+// The saved filter list (ttg.stocking.filters.v2 plus its v1 mirror) has one serializer, shared with
+// the filtration controller: js/stocking-advisor/filtration/saved-state.js.
 export function loadFilterSnapshot() {
-  if (typeof localStorage === 'undefined') {
-    return [];
-  }
-  try {
-    const raw = localStorage.getItem(FILTER_STORAGE_KEY);
-    return parseFiltersPayload(raw)
-      .map((item) => normalizeStoredFilter(item))
-      .filter((item) => item);
-  } catch (_error) {
-    return [];
-  }
+  return readSavedFilters();
 }
 
 export function saveFilterSnapshot(filters) {
-  if (typeof localStorage === 'undefined') {
-    return;
-  }
-  try {
-    const normalized = Array.isArray(filters)
-      ? filters.map((item) => normalizeStoredFilter(item)).filter((item) => item)
-      : [];
-    if (normalized.length === 0) {
-      localStorage.removeItem(FILTER_STORAGE_KEY);
-      return;
-    }
-    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(normalized));
-  } catch (_error) {
-    /* no-op */
-  }
+  writeSavedFilters(undefined, Array.isArray(filters) ? filters : []);
 }

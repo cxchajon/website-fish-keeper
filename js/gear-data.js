@@ -1,3 +1,5 @@
+import { pickPassthroughFields } from './stocking-advisor/filtration/math.js';
+
 const DATA_URL = '/assets/data/gearCatalog.json';
 const STORAGE_KEY = 'ttg.gear.catalog.v1';
 const STORAGE_TIMESTAMP_KEY = 'ttg.gear.catalog.timestamp';
@@ -89,6 +91,14 @@ function sanitizeItem(raw) {
   if (raw?.tags && Array.isArray(raw.tags)) {
     entry.tags = raw.tags.slice();
   }
+  // Capacity metadata (sponge migration design section 7.3) is carried when a record has it, so a
+  // restored filter can take it from the current catalog. No record has it yet; nothing scores it.
+  const capacity = pickPassthroughFields(raw);
+  ['capacityMethod', 'manufacturerMaxGallons', 'manufacturerMinGallons', 'ratingStatus'].forEach((key) => {
+    if (capacity[key] !== undefined) {
+      entry[key] = capacity[key];
+    }
+  });
   return entry;
 }
 

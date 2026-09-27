@@ -84,6 +84,56 @@ export function filterRole(filter) {
   return CIRCULATION_ONLY_TYPES.has(filterTypeKey(filter)) ? FILTER_ROLES.CIRCULATION : FILTER_ROLES.BIOLOGICAL;
 }
 
+// How a device's filtration capacity is expressed (sponge-filter migration design, sections 7–9).
+// Every filter scores by flow today; the other methods are carried through saved state and the
+// compute path but are not read by the scoring below yet (sponge migration phase B).
+export const CAPACITY_METHODS = Object.freeze({
+  FLOW: 'flow',
+  MANUFACTURER_RATING: 'manufacturer_rating',
+  TANK_COMPATIBILITY: 'tank_compatibility',
+});
+const KNOWN_CAPACITY_METHODS = new Set(Object.values(CAPACITY_METHODS));
+const KNOWN_RATING_STATUSES = new Set(['verified', 'needs_review', 'needed']);
+const MAX_RATED_GALLONS = 10000;
+const MAX_ID_LENGTH = 128;
+
+// A known method, or FLOW (the only method scored today) when absent or unrecognised.
+export function resolveCapacityMethod(filter) {
+  const value = typeof filter?.capacityMethod === 'string' ? filter.capacityMethod.trim() : '';
+  return KNOWN_CAPACITY_METHODS.has(value) ? value : CAPACITY_METHODS.FLOW;
+}
+
+function cleanId(value) {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed && trimmed.length <= MAX_ID_LENGTH ? trimmed : null;
+}
+
+function cleanGallons(value) {
+  if (value === null || value === undefined || value === '' || typeof value === 'boolean') return null;
+  const num = Number(value);
+  return Number.isFinite(num) && num > 0 && num <= MAX_RATED_GALLONS ? num : null;
+}
+
+// Identity and future capacity fields that must survive every sanitising step unchanged. Only valid
+// values are copied, so an entry without them keeps its current shape. Nothing here is scored.
+export function pickPassthroughFields(filter) {
+  const out = {};
+  if (!filter || typeof filter !== 'object') return out;
+  const instanceId = cleanId(filter.instanceId);
+  if (instanceId) out.instanceId = instanceId;
+  const productId = cleanId(filter.productId);
+  if (productId) out.productId = productId;
+  const method = typeof filter.capacityMethod === 'string' ? filter.capacityMethod.trim() : '';
+  if (KNOWN_CAPACITY_METHODS.has(method)) out.capacityMethod = method;
+  const maxGallons = cleanGallons(filter.manufacturerMaxGallons ?? filter.ratedMaxGallons);
+  if (maxGallons !== null) out.manufacturerMaxGallons = maxGallons;
+  const minGallons = cleanGallons(filter.manufacturerMinGallons);
+  if (minGallons !== null) out.manufacturerMinGallons = minGallons;
+  if (KNOWN_RATING_STATUSES.has(filter.ratingStatus)) out.ratingStatus = filter.ratingStatus;
+  return out;
+}
+
 export function normalizeFilter(filter) {
   if (!filter || typeof filter !== 'object') {
     return null;
@@ -97,6 +147,7 @@ export function normalizeFilter(filter) {
     role: filterRole(filter),
     ratedGph,
     rated_gph: ratedGph,
+    ...pickPassthroughFields(filter),
   };
 }
 
