@@ -13,47 +13,97 @@ Base: `main` @ `062078d`. Research dates: 2026-09-28 (initial pass and final cle
 
 ---
 
-## 0. Final classification (phase B0 result)
+## 0. Final classification (phase B0 result — LOCKED)
 
-### 0.1 Status vocabulary (three separate categories — never collapsed)
+### 0.1 Two separate concepts: evidence classification vs runtime rating status
 
-| Status | Meaning | Data shape proposed for phase B |
-| --- | --- | --- |
-| **VERIFIED** | Directly defensible **manufacturer** rating: the maker's own page / manual publishes the number for the exact size variant. | `ratingStatus: "verified"`, `manufacturerMaxGallons` set |
-| **SUPPORTED** | Strong **exact-product, exact-variant** evidence from retailer / marketplace / distributor / manual-mirror sources, but source ownership by the manufacturer is **not** established (§1.4). | `ratingStatus: "supported"`, `manufacturerMaxGallons` set |
-| **RATING NEEDED** | Not strong enough for green evaluation: product identity unresolved, ratings conflict, or provenance too weak. | `ratingStatus: "needs_review"`, `manufacturerMaxGallons: null` |
+Evidence quality and runtime usability are **different questions** and use **different fields**.
 
-**SUPPORTED is not VERIFIED.** The locked design (D1) allows green only for verified ratings.
-Whether a SUPPORTED product may show green in phase B **remains a product decision** (§5); until it
-is made, phase B must treat SUPPORTED exactly like RATING NEEDED for adequacy.
+**Evidence classification** (`ratingEvidence`) — *how good is the source?* Review metadata; never
+read by the calculator.
 
-### 0.2 Per product
+| `ratingEvidence` | Meaning |
+| --- | --- |
+| `verified` | Directly defensible **manufacturer** rating: the maker's own official page / manual publishes the number for the exact size variant. |
+| `supported` | Strong **exact-product, exact-variant** evidence from retailer / marketplace / distributor / third-party-manual sources, but manufacturer ownership of the source is **not** established (§1.4). |
+| `needs_review` | Not strong enough: product identity unresolved, ratings conflict, or provenance too weak. |
+| `unusable` | Evidence contradicts the product or is demonstrably wrong (none of the 7 today). |
 
-| id | Exact product | Rating | Final status | Basis |
-| --- | --- | --- | --- | --- |
-| `hygger-double-sponge-s` | ASIN **B07RFL4JMM** (hygger Double Sponge, **S**) | **10–40 gal** | **VERIFIED** | Two official hygger pages (HG256, HG908 family) both publish Small = 10–40 gal. Historical SKU mapping still worth confirming; does not affect the maximum. |
-| `hygger-double-sponge-m` | ASIN **B07RKT6QPV** (hygger Double Sponge, **M**) | **15–55 gal** | **VERIFIED** | Same two official pages: Medium = 15–55 gal. Same SKU-mapping note. |
-| `aquaneat-sponge-60` | ASIN **B071HVZVMP**, model **SF-A004** (Large) | **40–60 gal** | **SUPPORTED** | Manual text via third-party mirror + exact-ASIN listing; no AQUANEAT-controlled source read. |
-| `aquaneat-sponge-20` | ASIN **B078Q29JT4**, model **SF-A001** (Middle) | **up to 20 gal** | **SUPPORTED** | Exact-ASIN listing only; provenance not established. |
-| `aquaneat-sponge-10` | **Unresolved** | — | **RATING NEEDED** | Exact product not identified; catalog name is not evidence. |
-| `pawfly-sponge-10` | ASIN **B09BNCRLZY** | likely max ≈ 10 gal (**under review, not metadata**) | **RATING NEEDED** — pending stronger source provenance | Marketplace/index text only; inconsistent titles across listings. |
-| `powkoo-dual-sponge-40` | **Unresolved** | — | **RATING NEEDED** — pending exact product identity | No listing matches the catalog product; Powkoo listings conflict. |
+**Runtime rating status** (`ratingStatus`) — *can the calculator use the rating?* This is the
+**existing phase A vocabulary**, unchanged (`KNOWN_RATING_STATUSES` in
+`js/stocking-advisor/filtration/math.js:96`). **No new runtime value is proposed** — in particular
+there is **no** `ratingStatus: "supported"`.
 
-### 0.3 Counts
+| `ratingStatus` | Meaning in phase B |
+| --- | --- |
+| `verified` | Calculator may use `manufacturerMaxGallons` for ✓ Rated for this tank / ⚠ Below manufacturer rating. |
+| `needs_review` | A rating number may be stored as review metadata, but the calculator **must not use it**; evaluates as ○ Rating needed. |
+| `needed` | No usable rating at all (`manufacturerMaxGallons` null); evaluates as ○ Rating needed. |
 
-| Status | Count | ids |
+**Mapping (locked):**
+
+| Evidence | Runtime `ratingStatus` | Max stored? | Phase B v1 result |
+| --- | --- | --- | --- |
+| `verified` | `verified` | yes | Rating-based evaluation; may be green |
+| `supported` | `needs_review` | yes (review metadata only) | ○ Rating needed |
+| `needs_review` | `needed` | **no** (null) | ○ Rating needed |
+| `unusable` | `needed` | no | ○ Rating needed |
+
+Engine consequence for phase B: the adequacy check must gate on **`ratingStatus === "verified"`**,
+never on the mere presence of `manufacturerMaxGallons` — a SUPPORTED record carries a max it is not
+allowed to use.
+
+### 0.2 Green eligibility — LOCKED for the first phase B release
+
+- **Only VERIFIED manufacturer ratings** may independently produce **✓ Rated for this tank**.
+- **SUPPORTED ratings do not produce green** in phase B v1. SUPPORTED products stay **selectable** and
+  evaluate as **○ Rating needed** (neutral), exactly like unrated products.
+- This is intentionally conservative. Promoting a SUPPORTED product later needs either
+  manufacturer-controlled evidence (→ `verified`) or a separate, explicit product decision.
+
+### 0.3 Per product
+
+| id | Exact product | Evidence | Runtime `ratingStatus` | Min–max stored | Phase B v1 |
+| --- | --- | --- | --- | --- | --- |
+| `hygger-double-sponge-s` | ASIN **B07RFL4JMM** (hygger Double Sponge, **S**) | **VERIFIED** | `verified` | 10–40 | **Green-eligible** |
+| `hygger-double-sponge-m` | ASIN **B07RKT6QPV** (hygger Double Sponge, **M**) | **VERIFIED** | `verified` | 15–55 | **Green-eligible** |
+| `aquaneat-sponge-60` | ASIN **B071HVZVMP**, model **SF-A004** | **SUPPORTED** | `needs_review` | 40–60 (review only) | Rating needed |
+| `aquaneat-sponge-20` | ASIN **B078Q29JT4**, model **SF-A001** (owner-supplied) | **SUPPORTED** | `needs_review` | — / 20 (review only) | Rating needed |
+| `aquaneat-sponge-10` | **Unresolved** | **NEEDS REVIEW** | `needed` | null / null | Rating needed |
+| `pawfly-sponge-10` | ASIN **B09BNCRLZY** | **NEEDS REVIEW** | `needed` | null / null | Rating needed |
+| `powkoo-dual-sponge-40` | **Unresolved** | **NEEDS REVIEW** | `needed` | null / null | Rating needed |
+
+### 0.4 Counts (not collapsed)
+
+| Classification | Count | ids |
 | --- | --- | --- |
 | **VERIFIED** | **2** | `hygger-double-sponge-s`, `hygger-double-sponge-m` |
 | **SUPPORTED** | **2** | `aquaneat-sponge-60`, `aquaneat-sponge-20` |
-| **RATING NEEDED** | **3** | `aquaneat-sponge-10`, `pawfly-sponge-10`, `powkoo-dual-sponge-40` |
+| **RATING NEEDED / NEEDS REVIEW** | **3** | `aquaneat-sponge-10`, `pawfly-sponge-10`, `powkoo-dual-sponge-40` |
+
+Green-eligible in phase B v1: **2**. Rating needed in phase B v1: **5** (2 SUPPORTED + 3 NEEDS REVIEW).
 
 - Exact product identity is **unresolved for 2 products** (`aquaneat-sponge-10`, `powkoo-dual-sponge-40`).
-- **Two catalog display names embed an unverified gallon claim** ("…(Up to 10G)", "…(20–55G)"), §7.
-- No source anywhere publishes a **water-flow GPH** for any of the seven; phase B's plan to ignore
-  sponge `gphRated` is unaffected.
+- **Two catalog display names embed an unverified gallon claim** ("…(Up to 10G)", "…(20–55G)"); more
+  broadly, sponge display names should carry no capacity claim at all (§7).
+- No source anywhere publishes a **water-flow GPH** for any of the seven.
+
+### 0.5 Phase B readiness
+
+**Phase B can proceed with the conservative model.** It does **not** require all 7 catalog products
+to have verified ratings. Phase B should:
+
+- switch **all** sponge filters away from fake GPH (type-wins / `capacityMethod: "manufacturer_rating"`);
+- allow **only the 2 VERIFIED hygger ratings** to green-pass from catalog metadata;
+- keep the other **5** products **selectable**;
+- show **○ Rating needed** for those 5;
+- preserve SUPPORTED rating evidence (AQUANEAT 60 / 20) as **review metadata** (`needs_review` + stored max);
+- let custom-sponge users enter their own manufacturer-rated tank size ("Rated for up to ___ gallons",
+  labelled user-entered);
+- **neutralize gallon claims in sponge display names** (ids unchanged, §7);
+- **never fall back to historical sponge GPH** — for any sponge, any status, any saved state.
 
 ---
-
 ## 1. Method, limits and source rule
 
 ### 1.1 What was tried
@@ -68,20 +118,20 @@ is made, phase B must treat SUPPORTED exactly like RATING NEEDED for adequacy.
 
 The six `amzn.to` affiliate links in the repo **could not be resolved** from this environment.
 
-### 1.2 Grade scale (unchanged from the earlier reports)
+### 1.2 Historical grade scale (research notes only — not production metadata)
 
-| Grade | Meaning |
+The earlier reports and the first B0 pass used letter grades. They are kept here only to read that
+history; **they are not part of the proposed phase B metadata** (§8), because a letter mixes source
+quality with how the source happened to be accessed (e.g. "B" meant "manufacturer text, but only via
+search index"). Phase B records explicit provenance instead (`ratingEvidence` + `ratingSourceKind`).
+
+| Grade (historical) | Meaning |
 | --- | --- |
 | A | Read directly on the manufacturer's page or manual |
 | B | Manufacturer or manufacturer-document text via search index |
 | C | Retailer / marketplace listing, secondary site, forum |
 | D | Derived by repo code |
 | E | No source |
-
-Mapping to status: VERIFIED needs A, or B where the text is on the manufacturer's **own** domain.
-A manual read only through a third-party mirror is SUPPORTED (the document's provenance is
-plausible but not established). C can at best be SUPPORTED, and only under §1.4.
-
 ### 1.3 Evidence-type tags used in §3
 
 - **[MFR-SITE]** manufacturer's own domain (hygger-online.com, theaquaneat.com, thepawfly.com)
@@ -146,7 +196,7 @@ not, unless ownership is shown.
 | Supporting | **[MKT]** Amazon B07RFL4JMM "suggested for 10 to 40 gallon". **[RETAIL]** Aquatic Motiv "Hygger Sponge Filter 10 to 40 Gallons". |
 | Earlier conflict — resolved | The initial pass saw an S 5–20 / M 20–55 / L 55–125 range attributed to a "Biochemical" page. That range belongs to hygger's separate **single** "Aquarium Biochemical Sponge Filter" (`/product/aquarium-biochemical-sponge-filter/`, three sizes with depth / air-pump limits), not to HG256 (`/hygger-aquarium-biochemical-sponge-filter/`) or HG908. It is not a rating for the catalog item. |
 | SKU mapping | **Not proven** whether historical B07RFL4JMM is HG256 or HG908-D-S. The affiliate link `amzn.to/46Qxf0a` could not be resolved. **This does not affect the rating:** both official families publish the same Small maximum (40) and the same minimum (10). |
-| Status | **VERIFIED numerically** — `manufacturerMinGallons: 10`, `manufacturerMaxGallons: 40`, `ratingExpression: "range"`. Historical product-family / SKU mapping still worth confirming. |
+| Status | **VERIFIED** (evidence `verified`, runtime `ratingStatus: "verified"`, `ratingSourceKind: "manufacturer_official"`) — `manufacturerMinGallons: 10`, `manufacturerMaxGallons: 40`, `ratingExpression: "range"`. **Green-eligible.** Historical HG256 vs HG908 mapping is a provenance note only; it does not downgrade the rating. |
 
 ### 3.2 `hygger-double-sponge-m` — **VERIFIED, 15–55 gal**
 
@@ -156,9 +206,9 @@ not, unless ownership is shown.
 | Official evidence | **[MFR-SITE] [OWNER]** HG256 page: **Medium: 15–55 gallons**. HG908 page: **Dual Medium: 15–55 gallons**. Search index: *"The medium double sponge filter is 6.3″ x 9″ x 14″, suggested for 15 to 55 gallon fish tanks."* |
 | Supporting | **[MKT]** Amazon B07RKT6QPV; Walmart 209243859 "… Double Sponge Filter, M"; **[RETAIL]** Supply AG, Aquanature (same title). |
 | Open items | (a) HG256 vs HG908-D-M mapping not proven — same maximum either way. (b) The repo holds **two different affiliate links** for this id (§2). If either resolves to hygger's newer "Upgraded … – M" (ASIN B0FJCZJ3C3) or to a different product, that link should be corrected in a separate content change; the catalog id's rating stays tied to B07RKT6QPV. |
-| Status | **VERIFIED numerically** — `manufacturerMinGallons: 15`, `manufacturerMaxGallons: 55`, `ratingExpression: "range"`. SKU mapping and the duplicate link worth confirming. |
+| Status | **VERIFIED** (evidence `verified`, runtime `ratingStatus: "verified"`, `ratingSourceKind: "manufacturer_official"`) — `manufacturerMinGallons: 15`, `manufacturerMaxGallons: 55`, `ratingExpression: "range"`. **Green-eligible.** SKU mapping and the duplicate link are provenance notes only; they do not downgrade the rating. |
 
-### 3.3 `aquaneat-sponge-60` — **SUPPORTED, 40–60 gal**
+### 3.3 `aquaneat-sponge-60` — **SUPPORTED, 40–60 gal (Rating needed in phase B v1)**
 
 | Item | Finding |
 | --- | --- |
@@ -166,9 +216,9 @@ not, unless ownership is shown.
 | Rating | **[MFR-DOC-MIRROR]** manuals.plus/asin/B071HVZVMP "AQUANEAT Aquarium Bio Sponge Filter Instruction Manual (Large up to 60 Gallons)": *recommended for 40 to 60-gallon aquariums*; ~4.5" D × 8.0" H. **[MKT]** Amazon title "Large up to 60Gal". |
 | Other listings | **[MKT]** Walmart 186627441 "… 60 gal"; Walmart 5040531230 "… **50 Gal**" (identity unknown — not the catalog item); Amazon B07234RMMT 4-pack "(Large up to 60Gal)". |
 | Why not VERIFIED | No AQUANEAT-controlled source was read. theaquaneat.com indexes only its home page; the manual was seen only through a third-party mirror via search index; Amazon provenance not established (§1.4). |
-| Status | **SUPPORTED** — `manufacturerMinGallons: 40`, `manufacturerMaxGallons: 60`, `ratingExpression: "range"`. |
+| Status | **SUPPORTED** (evidence `supported`, runtime `ratingStatus: "needs_review"`, `ratingSourceKind: retailer_exact_product + third_party_manual`) — `manufacturerMinGallons: 40`, `manufacturerMaxGallons: 60` kept as review metadata, `ratingExpression: "range"`. **Not green-eligible in phase B v1** → ○ Rating needed. |
 
-### 3.4 `aquaneat-sponge-20` — **SUPPORTED, up to 20 gal**
+### 3.4 `aquaneat-sponge-20` — **SUPPORTED, up to 20 gal (Rating needed in phase B v1)**
 
 | Item | Finding |
 | --- | --- |
@@ -176,17 +226,17 @@ not, unless ownership is shown.
 | Rating | **[MKT]** title "Middle up to 20Gal"; indexed description *recommended tank size: up to 20 gallons*; 3.0" D × 6.5" H. No manual or AQUANEAT-site page found. |
 | Conflicts | None on the value. Several *other* AQUANEAT products are also "up to 20 gal" (corner B079M732S6, air-powered B07L565N7H) — different products, not substitutes. |
 | Why not VERIFIED | Marketplace text only; provenance not established (§1.4). |
-| Status | **SUPPORTED** — `manufacturerMinGallons: null`, `manufacturerMaxGallons: 20`, `ratingExpression: "up_to"`. |
+| Status | **SUPPORTED** (evidence `supported`, runtime `ratingStatus: "needs_review"`, `ratingSourceKind: retailer_exact_product`) — `manufacturerMinGallons: null`, `manufacturerMaxGallons: 20` kept as review metadata, `ratingExpression: "up_to"`. **Not green-eligible in phase B v1** → ○ Rating needed. |
 
-### 3.5 `aquaneat-sponge-10` — **RATING NEEDED**
+### 3.5 `aquaneat-sponge-10` — **NEEDS REVIEW → Rating needed**
 
 | Item | Finding |
 | --- | --- |
 | Identity | **Unresolved.** No AQUANEAT listing is titled "Single Sponge Filter". No affiliate link. ASIN B01N7Q0IPR (earlier audit) not corroborated. Candidates include B078HDL21V (Small, 3-pack), B078X7H8XG (corner, 2.25" × 2.25" × 5.00"), B07P5WS1RH / B07KS1Y1JN (double, small), B08F79B7MS, Walmart 711096713 (2.0" D × 4.75" H), Walmart 964127842. |
 | Rating | Each candidate is marketed "up to 10 gal". **This is not used**: the exact product must not be inferred from the fact that every candidate appears to share a rating, and the catalog display name "(Up to 10G)" is not evidence. |
-| Status | **RATING NEEDED** — `manufacturerMaxGallons: null`, `ratingStatus: "needs_review"`. To change: the owner selects the exact product (ASIN + link), then it is sourced under §1.4. |
+| Status | **NEEDS REVIEW → Rating needed** (evidence `needs_review`, runtime `ratingStatus: "needed"`) — `manufacturerMinGallons: null`, `manufacturerMaxGallons: null`. To change: the owner selects the exact product (ASIN + link), then it is sourced under §1.4. |
 
-### 3.6 `pawfly-sponge-10` — **RATING NEEDED (pending stronger source provenance)**
+### 3.6 `pawfly-sponge-10` — **NEEDS REVIEW → Rating needed (pending stronger source provenance)**
 
 | Item | Finding |
 | --- | --- |
@@ -194,51 +244,46 @@ not, unless ownership is shown.
 | Evidence under review (not metadata) | **[MKT]** title "up to 10 Gallon"; description "2" D × 4.8" H, designed for 5–10 gallon tanks". **[OWNER]** listings describing approximately **20–40 L** (≈ 5–10.5 gal). **[REVIEW]** reviewaqua "(10 Gallon)". Likely maximum ≈ **10 gal**. |
 | Inconsistencies | Search-index title text varies across listings for the family: Walmart 1476406157 "… up to **5–60** Gallon" (variant family), 3-pack B0BDDYQQYC "up to **3** Gallon" (different item), B098SGW6QS 3-pack "up to 10 Gallon". thepawfly.com indexed, no product page found. |
 | Why not SUPPORTED | Provenance weaker than the AQUANEAT items and titles inconsistent within the family; no Pawfly-controlled listing established. |
-| Status | **RATING NEEDED** — `manufacturerMaxGallons: null`, `ratingStatus: "needs_review"`. The ≈ 10 gal figure stays in this report only. |
+| Status | **NEEDS REVIEW → Rating needed** (evidence `needs_review`, runtime `ratingStatus: "needed"`) — `manufacturerMinGallons: null`, `manufacturerMaxGallons: null`. The ≈ 10 gal figure stays in these research notes only and is **not** used for phase B scoring. |
 
-### 3.7 `powkoo-dual-sponge-40` — **RATING NEEDED (pending exact product identity)**
+### 3.7 `powkoo-dual-sponge-40` — **NEEDS REVIEW → Rating needed (pending exact product identity)**
 
 | Item | Finding |
 | --- | --- |
 | Identity | **Unresolved.** No Powkoo listing is titled "Dual Sponge Filter (20–55G)". No affiliate link. ASIN B07KXDRFXP (earlier audit) not corroborated. |
 | Conflicting Powkoo listings | B01M32L1LC "… Up to 55 Gallon" on amazon.com but "Large … Up to **40** Gallon" / "10 to 40 gallons" on **amazon.ca** (same ASIN); B01N6MJYWC (no rating in title); B01M3VALFU; B07MYTKZT5; B01F8PGL6I "Up to 20 Gallon"; an indexed Powkoo description "15 to 55 gallons" with no clear ASIN; eBay "up to 60 Gallons". **"20–55" appears in no source.** |
 | Rule | Do not encode 20–55; do not substitute another Powkoo ASIN because it looks similar. |
-| Status | **RATING NEEDED** — `manufacturerMaxGallons: null`, `ratingStatus: "needs_review"`. |
+| Status | **NEEDS REVIEW → Rating needed** (evidence `needs_review`, runtime `ratingStatus: "needed"`) — `manufacturerMinGallons: null`, `manufacturerMaxGallons: null`. Do not encode 20–55. |
 
 ---
 
-## 4. Eligibility for rating-based evaluation
+## 4. Eligibility for rating-based evaluation (phase B v1)
 
-| id | Status | Max used by engine in phase B | Can show green under locked D1? |
-| --- | --- | --- | --- |
-| `hygger-double-sponge-s` | VERIFIED | 40 | **Yes** |
-| `hygger-double-sponge-m` | VERIFIED | 55 | **Yes** |
-| `aquaneat-sponge-60` | SUPPORTED | 60 (stored) | **Not until §5 is decided** — treat as Rating needed meanwhile |
-| `aquaneat-sponge-20` | SUPPORTED | 20 (stored) | **Not until §5 is decided** — treat as Rating needed meanwhile |
-| `aquaneat-sponge-10` | RATING NEEDED | — | No |
-| `pawfly-sponge-10` | RATING NEEDED | — | No |
-| `powkoo-dual-sponge-40` | RATING NEEDED | — | No |
+| id | Evidence | Runtime `ratingStatus` | Max the engine may use | Green-eligible in phase B v1 |
+| --- | --- | --- | --- | --- |
+| `hygger-double-sponge-s` | VERIFIED | `verified` | 40 | **Yes** |
+| `hygger-double-sponge-m` | VERIFIED | `verified` | 55 | **Yes** |
+| `aquaneat-sponge-60` | SUPPORTED | `needs_review` | none (60 stored, not used) | **No** — Rating needed |
+| `aquaneat-sponge-20` | SUPPORTED | `needs_review` | none (20 stored, not used) | **No** — Rating needed |
+| `aquaneat-sponge-10` | NEEDS REVIEW | `needed` | none | **No** — Rating needed |
+| `pawfly-sponge-10` | NEEDS REVIEW | `needed` | none | **No** — Rating needed |
+| `powkoo-dual-sponge-40` | NEEDS REVIEW | `needed` | none | **No** — Rating needed |
 
-Users can still enter the number printed on their own box through the phase B custom sponge input
-("Rated for up to ___ gallons"), labelled as user-entered; that path is unaffected by these statuses.
-
----
-
-## 5. Open product decision: may SUPPORTED show green?
-
-The locked design (D1) says green requires a *verified* rating. This report adds SUPPORTED as a
-distinct status and **does not** treat it as verified. Options for phase B:
-
-| Option | AQUANEAT 60 / 20 at runtime | Note |
-| --- | --- | --- |
-| **A. Strict (default until decided)** | Rating needed (neutral) | Honest to the locked rule; the stored max is kept for later. |
-| **B. SUPPORTED may pass, with provenance shown** | ✓ Rated for this tank / ⚠ Below manufacturer rating, with a "listed rating" qualifier | Requires amending D1; copy must not say "manufacturer-verified". |
-| **C. SUPPORTED shown as amber only** | Never green; amber "Listed rating — not manufacturer-verified" | Middle ground; requires new copy. |
-
-This is the owner's decision; phase B0 does not make it.
+All seven remain selectable. Users can enter the number printed on their own box through the phase B
+custom sponge input ("Rated for up to ___ gallons"), labelled as user-entered; that path is
+unaffected by these statuses.
 
 ---
 
+## 5. SUPPORTED and green — decision LOCKED
+
+Decided at the phase B0 review (2026-09-28): **SUPPORTED does not produce green in the first phase B
+release.** It maps to runtime `needs_review` (§0.1) and evaluates as ○ Rating needed. The earlier
+options (SUPPORTED passes with a qualifier; SUPPORTED amber-only) are **not adopted** for v1. Any later
+change requires either manufacturer-controlled evidence that moves the product to `verified`, or a
+new explicit product decision recorded in a report.
+
+---
 ## 6. Checks still worth doing (normal browser; not blocking the B0 report)
 
 1. Resolve `amzn.to/46Qxf0a` (expect B07RFL4JMM) and **both** `amzn.to/3VTKSXo` / `amzn.to/46XUzsV`
@@ -254,114 +299,161 @@ This is the owner's decision; phase B0 does not make it.
 
 ---
 
-## 7. Catalog display-name warning (strengthened)
+## 7. Product display names — phase B recommendation
+
+### 7.1 Finding
 
 Two current display names **contain an unverified gallon claim** that no source ties to the product:
 
-| id | Display name | Final status | Problem |
+| id | Display name | Evidence | Problem |
 | --- | --- | --- | --- |
-| `aquaneat-sponge-10` | AQUANEAT Single Sponge Filter **(Up to 10G)** | RATING NEEDED | Name asserts a rating for a product whose identity is unknown. |
-| `powkoo-dual-sponge-40` | Powkoo Dual Sponge Filter **(20–55G)** | RATING NEEDED | Name asserts a range **found in no source**; conflicting Powkoo listings say 55, 40, 20 or 60. |
+| `aquaneat-sponge-10` | AQUANEAT Single Sponge Filter **(Up to 10G)** | NEEDS REVIEW | Name asserts a rating for a product whose identity is unknown. |
+| `powkoo-dual-sponge-40` | Powkoo Dual Sponge Filter **(20–55G)** | NEEDS REVIEW | Name asserts a range **found in no source**; Powkoo listings say 55, 40, 20 or 60. |
 
-The other five names are the real listing titles; their gallon text agrees with the evidence
-(AQUANEAT "Middle up to 20Gal" / "Large up to 60Gal", Pawfly "up to 10 Gallon", hygger (S)/(M)).
-Pawfly's title still carries a rating while the product is RATING NEEDED — lower severity, since it is
-the listing's own title, but the same display rule should apply.
+The other names are real listing titles, but four of them also carry capacity text
+("Middle up to 20Gal", "Large up to 60Gal", "up to 10 Gallon") on products that will show
+**○ Rating needed** in phase B v1.
 
-Phase B **must not** render a contradiction such as:
+### 7.2 Recommendation (for phase B)
 
+**Sponge-filter display names should not carry tank-capacity claims.** The tank rating is shown only
+through structured rating metadata (the status line, driven by `ratingStatus` and
+`manufacturerMaxGallons`). This removes contradictions such as:
+
+> AQUANEAT … (Middle up to 20Gal) — ○ Rating needed
+>
 > Powkoo Dual Sponge Filter (20–55G) — ○ Rating needed
 
-Phase B must do one of:
+Phase B should neutralize gallon claims in every sponge display name, **keeping product ids
+unchanged**. Conceptual examples (exact wording is a phase B edit):
 
-- **Replace** the unverified rating text in the display name with a neutral product name
-  (e.g. "Powkoo Dual Sponge Filter", "AQUANEAT Sponge Filter (small)") — ids unchanged; or
-- **Keep** the product as Rating needed and treat the name explicitly as **historical catalog text**,
-  e.g. strip a trailing parenthetical gallon claim at render time for any record whose status is not
-  VERIFIED, so the only rating the user sees is the status line.
+| id | Current name | Neutral name (concept) |
+| --- | --- | --- |
+| `aquaneat-sponge-10` | AQUANEAT Single Sponge Filter (Up to 10G) | AQUANEAT Single Sponge Filter |
+| `aquaneat-sponge-20` | AQUANEAT … Nano Fish Tank (Middle up to 20Gal) | AQUANEAT Bio Sponge Filter — Middle |
+| `aquaneat-sponge-60` | AQUANEAT … Nano Fish Tank (Large up to 60Gal) | AQUANEAT Bio Sponge Filter — Large |
+| `pawfly-sponge-10` | Pawfly … Foam Filter for Tiny Fish Tank up to 10 Gallon | Pawfly Nano Bio Sponge Filter |
+| `powkoo-dual-sponge-40` | Powkoo Dual Sponge Filter (20–55G) | Powkoo Dual Sponge Filter |
+| `hygger-double-sponge-s` | hygger … Comes with 2 Spare Sponges (S) | unchanged (no capacity claim; size letter only) |
+| `hygger-double-sponge-m` | hygger … Salt-Water Fish Tank (M) | unchanged (no capacity claim; size letter only) |
 
-Recommendation: rename in the phase B data change (first option) — simpler, and it also fixes the
-gear page. **The catalog is not edited in phase B0.**
+- Size / variant words (S, M, Middle, Large) stay: they identify the product, not its capacity.
+- **Ids never change** — saved state, links and phase A v2 entries resolve by id.
+- The catalog is **not** edited in phase B0.
 
 Related, out of scope: `data/gear_filters_ranges.csv` places hygger (S) in the 5–10 gal range and
 hygger (M) in both 10–20 and 20–40; inconsistent with hygger's 10–40 / 15–55. Gear-page content pass.
 
 ---
 
-## 8. Proposed phase B rating metadata
+## 8. Proposed phase B rating metadata (final)
 
-Design §7.3 fields are kept. Changes proposed by B0:
+### 8.1 Fields
 
-- `ratingStatus` gains a third value: `"verified" | "supported" | "needs_review"`.
-- Engine rule (until §5 is decided): only `verified` + positive `manufacturerMaxGallons` is evaluated;
-  `supported` and `needs_review` both resolve to Rating needed.
-- Three additive, review-only fields (not read by the engine):
+Runtime fields (already recognised and passed through by phase A — `pickPassthroughFields` in
+`math.js`, catalog copy in `js/gear-data.js:101`):
 
-| Field | Type | Purpose |
+| Field | Values | Read by engine? |
 | --- | --- | --- |
-| `productRef` | `{ "asin": string \| null, "model": string \| null }` | Exact product the rating belongs to. Missing → identity unresolved → `needs_review`. |
-| `ratingSourceKind` | `"manufacturer_site" \| "manufacturer_manual_mirror" \| "marketplace" \| "retailer" \| "user"` | §1.3 evidence type, auditable without this report. |
+| `capacityMethod` | `"manufacturer_rating"` for every sponge | yes |
+| `manufacturerMinGallons` | number \| null | display only |
+| `manufacturerMaxGallons` | number \| null | **only when `ratingStatus === "verified"`** |
+| `ratingStatus` | `"verified" \| "needs_review" \| "needed"` (existing enum, **not extended**) | yes |
+| `ratingExpression` | `"range" \| "up_to" \| "min_only" \| "unclear"` | no |
+
+Review-only provenance fields (not read by the engine; phase A's catalog loader does not copy them
+into runtime entries, which is fine):
+
+| Field | Values | Purpose |
+| --- | --- | --- |
+| `ratingEvidence` | `"verified" \| "supported" \| "needs_review" \| "unusable"` | Evidence classification (§0.1). |
+| `ratingSourceKind` | `"manufacturer_official" \| "third_party_manual" \| "retailer_exact_product" \| "search_index_only" \| "none"` (array allowed when several apply) | Explicit provenance — replaces letter grades. |
+| `ratingSource` | URL \| null | Primary source. |
+| `productRef` | `{ "asin": string \| null, "model": string \| null }` | Exact product the rating belongs to. |
 | `ratingCheckedAt` | ISO date | Marketplace text can drift. |
+| `ratingNote` | string (optional) | Provenance caveats (e.g. SKU mapping). |
 
-- When `ratingStatus` is `needs_review`, `manufacturerMaxGallons` **must be null** — no candidate
-  number in the data.
+**No letter grades** (`A/B/C`, the design's former `ratingConfidence`) in the proposed production
+metadata.
 
-Proposed values (legacy `gphRated` / `minGallons` / `maxGallons` retained unchanged per design §7.3
-until phase E):
+Rules:
+
+- `ratingStatus: "verified"` requires `ratingEvidence: "verified"` and a positive `manufacturerMaxGallons`.
+- `ratingStatus: "needs_review"` may carry a stored max (SUPPORTED evidence); the engine ignores it.
+- `ratingStatus: "needed"` → `manufacturerMinGallons` and `manufacturerMaxGallons` are **null**.
+- Legacy `gphRated` / `minGallons` / `maxGallons` stay in the data until phase E (design §7.3) and are
+  **never** read for a `manufacturer_rating` record.
+
+### 8.2 Values (locked)
 
 ```jsonc
-// hygger-double-sponge-s — VERIFIED
-{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": 10, "manufacturerMaxGallons": 40,
-  "ratingExpression": "range", "ratingStatus": "verified", "ratingConfidence": "A",
+// hygger-double-sponge-s — VERIFIED → green-eligible
+{ "capacityMethod": "manufacturer_rating",
+  "manufacturerMinGallons": 10, "manufacturerMaxGallons": 40, "ratingExpression": "range",
+  "ratingStatus": "verified",
+  "ratingEvidence": "verified", "ratingSourceKind": "manufacturer_official",
   "ratingSource": "https://www.hygger-online.com/product/hygger-aquarium-biochemical-sponge-filter/",
-  "ratingSourceKind": "manufacturer_site",
-  "productRef": { "asin": "B07RFL4JMM", "model": null },   // HG256 vs HG908-D-S not proven
+  "productRef": { "asin": "B07RFL4JMM", "model": null },
+  "ratingNote": "Official hygger HG256 and HG908 pages both publish Small 10–40 gal; historical HG256 vs HG908-D-S mapping of this ASIN not proven.",
   "ratingCheckedAt": "2026-09-28" }
 
-// hygger-double-sponge-m — VERIFIED
-{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": 15, "manufacturerMaxGallons": 55,
-  "ratingExpression": "range", "ratingStatus": "verified", "ratingConfidence": "A",
+// hygger-double-sponge-m — VERIFIED → green-eligible
+{ "capacityMethod": "manufacturer_rating",
+  "manufacturerMinGallons": 15, "manufacturerMaxGallons": 55, "ratingExpression": "range",
+  "ratingStatus": "verified",
+  "ratingEvidence": "verified", "ratingSourceKind": "manufacturer_official",
   "ratingSource": "https://www.hygger-online.com/product/hygger-aquarium-biochemical-sponge-filter/",
-  "ratingSourceKind": "manufacturer_site",
-  "productRef": { "asin": "B07RKT6QPV", "model": null },   // HG256 vs HG908-D-M not proven
+  "productRef": { "asin": "B07RKT6QPV", "model": null },
+  "ratingNote": "Official hygger HG256 and HG908 pages both publish Medium 15–55 gal; HG256 vs HG908-D-M mapping not proven; repo has two affiliate links for this id.",
   "ratingCheckedAt": "2026-09-28" }
 
-// aquaneat-sponge-60 — SUPPORTED
-{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": 40, "manufacturerMaxGallons": 60,
-  "ratingExpression": "range", "ratingStatus": "supported", "ratingConfidence": "B",
-  "ratingSource": "https://manuals.plus/asin/B071HVZVMP", "ratingSourceKind": "manufacturer_manual_mirror",
-  "productRef": { "asin": "B071HVZVMP", "model": "SF-A004" }, "ratingCheckedAt": "2026-09-28" }
+// aquaneat-sponge-60 — SUPPORTED → Rating needed in phase B v1
+{ "capacityMethod": "manufacturer_rating",
+  "manufacturerMinGallons": 40, "manufacturerMaxGallons": 60, "ratingExpression": "range",
+  "ratingStatus": "needs_review",
+  "ratingEvidence": "supported", "ratingSourceKind": ["retailer_exact_product", "third_party_manual"],
+  "ratingSource": "https://manuals.plus/asin/B071HVZVMP",
+  "productRef": { "asin": "B071HVZVMP", "model": "SF-A004" },
+  "ratingCheckedAt": "2026-09-28" }
 
-// aquaneat-sponge-20 — SUPPORTED
-{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": null, "manufacturerMaxGallons": 20,
-  "ratingExpression": "up_to", "ratingStatus": "supported", "ratingConfidence": "C",
-  "ratingSource": "https://www.amazon.com/dp/B078Q29JT4", "ratingSourceKind": "marketplace",
-  "productRef": { "asin": "B078Q29JT4", "model": "SF-A001" }, "ratingCheckedAt": "2026-09-28" }
+// aquaneat-sponge-20 — SUPPORTED → Rating needed in phase B v1
+{ "capacityMethod": "manufacturer_rating",
+  "manufacturerMinGallons": null, "manufacturerMaxGallons": 20, "ratingExpression": "up_to",
+  "ratingStatus": "needs_review",
+  "ratingEvidence": "supported", "ratingSourceKind": "retailer_exact_product",
+  "ratingSource": "https://www.amazon.com/dp/B078Q29JT4",
+  "productRef": { "asin": "B078Q29JT4", "model": "SF-A001" },
+  "ratingNote": "Model SF-A001 is owner-supplied provenance.",
+  "ratingCheckedAt": "2026-09-28" }
 
-// aquaneat-sponge-10 — RATING NEEDED (identity unresolved)
-{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": null, "manufacturerMaxGallons": null,
-  "ratingExpression": "unclear", "ratingStatus": "needs_review", "ratingConfidence": "E",
-  "ratingSource": null, "ratingSourceKind": null,
-  "productRef": { "asin": null, "model": null }, "ratingCheckedAt": "2026-09-28" }
+// aquaneat-sponge-10 — NEEDS REVIEW → Rating needed (identity unresolved)
+{ "capacityMethod": "manufacturer_rating",
+  "manufacturerMinGallons": null, "manufacturerMaxGallons": null, "ratingExpression": "unclear",
+  "ratingStatus": "needed",
+  "ratingEvidence": "needs_review", "ratingSourceKind": "none",
+  "ratingSource": null, "productRef": { "asin": null, "model": null },
+  "ratingNote": "Exact product unresolved; catalog display-name rating is not evidence.",
+  "ratingCheckedAt": "2026-09-28" }
 
-// pawfly-sponge-10 — RATING NEEDED (provenance); likely ≈ 10 gal kept in this report only
-{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": null, "manufacturerMaxGallons": null,
-  "ratingExpression": "unclear", "ratingStatus": "needs_review", "ratingConfidence": "C",
-  "ratingSource": "https://www.amazon.com/dp/B09BNCRLZY", "ratingSourceKind": "marketplace",
-  "productRef": { "asin": "B09BNCRLZY", "model": null }, "ratingCheckedAt": "2026-09-28" }
+// pawfly-sponge-10 — NEEDS REVIEW → Rating needed (provenance); ≈10 gal kept in research notes only
+{ "capacityMethod": "manufacturer_rating",
+  "manufacturerMinGallons": null, "manufacturerMaxGallons": null, "ratingExpression": "unclear",
+  "ratingStatus": "needed",
+  "ratingEvidence": "needs_review", "ratingSourceKind": "search_index_only",
+  "ratingSource": null, "productRef": { "asin": "B09BNCRLZY", "model": null },
+  "ratingCheckedAt": "2026-09-28" }
 
-// powkoo-dual-sponge-40 — RATING NEEDED (identity unresolved; do not encode 20–55)
-{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": null, "manufacturerMaxGallons": null,
-  "ratingExpression": "unclear", "ratingStatus": "needs_review", "ratingConfidence": "E",
-  "ratingSource": null, "ratingSourceKind": null,
-  "productRef": { "asin": null, "model": null }, "ratingCheckedAt": "2026-09-28" }
+// powkoo-dual-sponge-40 — NEEDS REVIEW → Rating needed (identity unresolved; do not encode 20–55)
+{ "capacityMethod": "manufacturer_rating",
+  "manufacturerMinGallons": null, "manufacturerMaxGallons": null, "ratingExpression": "unclear",
+  "ratingStatus": "needed",
+  "ratingEvidence": "needs_review", "ratingSourceKind": "none",
+  "ratingSource": null, "productRef": { "asin": null, "model": null },
+  "ratingNote": "Exact product unresolved; conflicting Powkoo listings; 20–55 appears in no source.",
+  "ratingCheckedAt": "2026-09-28" }
 ```
 
-`ratingConfidence: "A"` for hygger reflects the owner's direct reading of hygger's own pages
-(§1.1); this environment itself could only read them via search index.
-
 ---
-
 ## 9. What this report does not change
 
 - No edits to `assets/data/gearCatalog.json`, `assets/data/gear/filters.json`, `data/filters.json`
