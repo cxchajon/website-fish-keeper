@@ -1,4 +1,4 @@
-import { hasUnsupportedCapacityMethod, isSpongeFilter, pickPassthroughFields } from './stocking-advisor/filtration/math.js';
+import { hasUnsupportedCapacityMethod, isKnownSpongeProductId, isSpongeFilter, pickPassthroughFields } from './stocking-advisor/filtration/math.js';
 
 const DATA_URL = '/assets/data/gearCatalog.json';
 // v2 since sponge migration phase B: the sponge records gained rating metadata, so a cache written by
@@ -70,7 +70,8 @@ function sanitizeItem(raw) {
   }
   const brand = typeof raw.brand === 'string' ? raw.brand.trim() : '';
   const name = typeof raw.name === 'string' ? raw.name.trim() : '';
-  const type = normalizeType(raw.type);
+  // A known sponge product is a sponge even in a stale or damaged cached record (phase C).
+  const type = isKnownSpongeProductId(id) ? 'SPONGE' : normalizeType(raw.type);
   const gphRatedRaw = toNumber(raw.gphRated ?? raw.rated_gph ?? raw.ratedGph, NaN);
   const hasFlow = Number.isFinite(gphRatedRaw) && gphRatedRaw > 0;
   // A sponge is rated by tank size, not flow, so it is kept without a GPH (phase E removes the

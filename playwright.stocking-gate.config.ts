@@ -2,15 +2,16 @@ import { defineConfig, devices } from '@playwright/test';
 
 // Focused production gate for the Stocking Advisor species pipeline. Independent of the main
 // Playwright suite: it starts its own static server and runs only tests/stocking-advisor-gate.spec.ts
-// tests/stocking-advisor-saved-filters.spec.ts (saved filter state v2) and
-// tests/stocking-advisor-sponge-phase-b.spec.ts (sponge migration phase B).
+// tests/stocking-advisor-saved-filters.spec.ts (saved filter state v2),
+// tests/stocking-advisor-sponge-phase-b.spec.ts (sponge migration phase B) and
+// tests/stocking-advisor-sponge-phase-c.spec.ts (sponge migration phase C, stale / legacy data).
 // Set PW_CHROMIUM_PATH to use a locally installed Chromium instead of Playwright's download.
 const PORT = 4174;
 const launchOptions = process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {};
 
 export default defineConfig({
   testDir: 'tests',
-  testMatch: ['stocking-advisor-gate.spec.ts', 'stocking-advisor-saved-filters.spec.ts', 'stocking-advisor-sponge-phase-b.spec.ts'],
+  testMatch: ['stocking-advisor-gate.spec.ts', 'stocking-advisor-saved-filters.spec.ts', 'stocking-advisor-sponge-phase-b.spec.ts', 'stocking-advisor-sponge-phase-c.spec.ts'],
   timeout: 60000,
   expect: { timeout: 10000 },
   reporter: [['list']],

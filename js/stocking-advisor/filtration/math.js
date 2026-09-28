@@ -135,6 +135,26 @@ export function isSpongeFilter(filter) {
   return SPONGE_TYPE_KEYS.has(filterTypeKey(filter));
 }
 
+// Phase C (stale / legacy data): the catalog products typed SPONGE, by id. A saved or cached record
+// with one of these ids is a sponge whatever type it carries (stale "HOB", a missing or nonsense
+// type), so its historical GPH can never be scored — even when the catalog can't be loaded to say
+// so. Identity only: no rating or other metadata comes from here. Must equal the SPONGE ids of
+// assets/data/gearCatalog.json (unit-tested).
+export const KNOWN_SPONGE_PRODUCT_IDS = Object.freeze([
+  'aquaneat-sponge-10',
+  'aquaneat-sponge-20',
+  'aquaneat-sponge-60',
+  'hygger-double-sponge-s',
+  'hygger-double-sponge-m',
+  'pawfly-sponge-10',
+  'powkoo-dual-sponge-40',
+]);
+const KNOWN_SPONGE_PRODUCT_ID_SET = new Set(KNOWN_SPONGE_PRODUCT_IDS);
+
+export function isKnownSpongeProductId(id) {
+  return typeof id === 'string' && KNOWN_SPONGE_PRODUCT_ID_SET.has(id.trim());
+}
+
 // TYPE WINS (phase B): a SPONGE is always evaluated by its manufacturer tank rating, even when
 // stale data (an old catalog cache, a v1 plan, a phase A v2 plan, an old tab) says capacityMethod
 // "flow" or carries gph / rated_gph / gphRated. Those GPH values are never read for a sponge.
@@ -196,9 +216,10 @@ export function pickPassthroughFields(filter) {
 export function resolveSpongeRating(filter) {
   const fields = pickPassthroughFields(filter);
   const max = fields.manufacturerMaxGallons ?? null;
-  if (fields.ratingStatus === RATING_STATUSES.VERIFIED && max !== null) {
-    const min = fields.manufacturerMinGallons ?? null;
-    return { status: RATING_STATUSES.VERIFIED, maxGallons: max, minGallons: min !== null && min <= max ? min : null };
+  const min = fields.manufacturerMinGallons ?? null;
+  // A minimum above the maximum is a damaged rating (no writer produces one): fail closed (phase C).
+  if (fields.ratingStatus === RATING_STATUSES.VERIFIED && max !== null && (min === null || min <= max)) {
+    return { status: RATING_STATUSES.VERIFIED, maxGallons: max, minGallons: min };
   }
   const status = fields.ratingStatus === RATING_STATUSES.NEEDS_REVIEW ? RATING_STATUSES.NEEDS_REVIEW : RATING_STATUSES.NEEDED;
   return { status, maxGallons: null, minGallons: null };
