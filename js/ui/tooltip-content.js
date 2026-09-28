@@ -4,8 +4,8 @@ const TOOLTIP_COPY = new Map([
     {
       title: 'Filter product list',
       body: [
-        'We filter the catalog to products that suit your tank size.',
-        'Picking one saves its type and rated flow so you can compare turnover instantly.',
+        'Powered filters are listed for your tank size; picking one saves its type and rated flow (GPH) for the turnover check.',
+        'Sponge filters are listed for every tank size and are checked by the manufacturer’s tank-size rating, not by flow.',
       ],
       ariaLabel: 'More info about choosing a filter product',
     },
@@ -15,8 +15,8 @@ const TOOLTIP_COPY = new Map([
     {
       title: 'Rated flow (GPH)',
       body: [
-        'This is the manufacturer’s gallons-per-hour specification for the filter.',
-        'We auto-fill it from the product you choose; only adjust if you have a measured value.',
+        'For powered filters and powerheads: the manufacturer’s gallons-per-hour specification.',
+        'Sponge filters don’t use GPH: enter the tank size the manufacturer rates them for instead.',
       ],
       ariaLabel: 'More info about rated flow',
     },
@@ -26,10 +26,11 @@ const TOOLTIP_COPY = new Map([
     {
       title: 'Estimated turnover',
       bullets: [
-        'Turnover = rated GPH of your filters ÷ tank gallons. Powerheads move water but hold no filter media, so they are not counted.',
+        'Turnover = rated GPH of your powered filters ÷ tank gallons. Powerheads move water but hold no filter media, so they are not counted.',
+        'Sponge filters are not part of turnover: they are checked by the manufacturer’s tank-size rating.',
         'Rated GPH is the maker’s figure; real flow through loaded media is lower.',
         'Filtration does not change the bioload %: a bigger filter cannot make a crowded tank safe.',
-        'The filter check needs at least 2×/h through filter media. Circulation guide: most community fish 5–7×/h, active species 8×+ (a powerhead can supply the extra).',
+        'The powered-filter check needs at least 2×/h through filter media. Circulation guide: most community fish 5–7×/h, active species 8×+ (a powerhead can supply the extra).',
         'If turnover is low, consider upsizing filtration or adding circulation.',
         'Recheck after cycling and after major stock/plant changes.',
       ],
@@ -41,8 +42,9 @@ const TOOLTIP_COPY = new Map([
     {
       title: 'Filtration summary chip',
       body: [
-        'We total every filter you add and convert it into gallons per hour and estimated turnover.',
-        'Powerheads are shown separately as circulation only. A sponge filter’s real flow depends on its air pump.',
+        'Powered filters are totalled in gallons per hour with an estimated turnover.',
+        'Sponge filters are counted separately and checked by their manufacturer tank-size rating; no flow is estimated for them.',
+        'Powerheads are shown separately as circulation only. Filtration does not change Stocking Load.',
       ],
       ariaLabel: 'More info about the filtration summary',
     },

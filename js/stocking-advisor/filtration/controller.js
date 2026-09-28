@@ -741,7 +741,7 @@ function formatSummary(stats) {
   return stats.circulationGph > 0 ? `${base} (+${formatGph(stats.circulationGph)} GPH circulation only)` : base;
 }
 
-const SUMMARY_TITLE = 'Rated flow through filter media per hour. Powerheads add circulation only. Filtration does not change the bioload %.';
+const SUMMARY_TITLE = 'Powered filters: rated flow through filter media (GPH) and turnover per hour. Sponge filters: checked by the manufacturer tank-size rating; no flow or turnover is estimated. Powerheads add circulation only. Filtration does not change Stocking Load.';
 
 function renderSummary() {
   if (!refs.summary) return;

@@ -583,10 +583,10 @@ async function bootstrapStocking() {
     const turnover = computeTurnover(gallonsForCalc, sanitized);
     const hasData = Number.isFinite(gphTotal) && gphTotal > 0;
     let tone = hasData ? 'neutral' : 'neutral';
-    let text = hasData ? 'Turnover meets recommended flow.' : 'Add filter flow to estimate turnover.';
+    let text = hasData ? 'Turnover meets recommended flow.' : 'Add a filter to check filtration.';
     if (hasData && gallonsForCalc <= 0) {
       tone = 'warn';
-      text = 'Select a tank to calculate turnover.';
+      text = 'Select a tank to check filtration.';
     }
     return {
       filters: sanitized,
@@ -1200,7 +1200,7 @@ async function bootstrapStocking() {
       } else if (!Number.isFinite(getSelectedTankGallons())) {
         refs.filterProductNote.textContent = 'Select a tank size to view matching products.';
       } else {
-        refs.filterProductNote.textContent = 'Choose a filter matched to your tank size to auto-fill GPH.';
+        refs.filterProductNote.textContent = 'Choose a filter matched to your tank size.';
       }
     }
 

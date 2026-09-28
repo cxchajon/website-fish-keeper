@@ -1159,12 +1159,12 @@ function buildFilteringState(state, tank, entries) {
   const alerts = warnings.filter((warning) => warning.severity === 'danger' || warning.severity === 'warn');
 
   let statusTone = 'neutral';
-  let statusText = 'Add filter flow to estimate turnover.';
+  let statusText = 'Add a filter to check filtration.';
   if (hasDevices && gallons <= 0) {
     statusTone = 'warn';
-    statusText = 'Select a tank to calculate turnover.';
+    statusText = 'Select a tank to check filtration.';
   } else if (hasDevices && stockCount === 0) {
-    statusText = 'No stock yet — filter flow is checked once species are added.';
+    statusText = 'Filtration is checked once species are added.';
   } else if (alerts.length) {
     const top = alerts.find((warning) => warning.severity === 'danger') ?? alerts[0];
     statusTone = top.severity === 'danger' ? 'bad' : 'warn';
