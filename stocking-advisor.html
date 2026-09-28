@@ -145,7 +145,7 @@
         {
           "@type": "HowToStep",
           "name": "Add your filter",
-          "text": "Pick a catalog filter or enter a custom gallons-per-hour number so the tool can estimate water circulation."
+          "text": "Pick a catalog filter or add a custom one: powered filters are checked by their rated gallons-per-hour flow, and sponge filters by the manufacturer's tank-size rating."
         },
         {
           "@type": "HowToStep",
@@ -443,9 +443,10 @@
                     </header>
                     <div role="document" aria-labelledby="pop-filter-product-title">
                       <ul>
-                        <li>Select a model rated for your tank volume, or one size larger if you plan to keep many fish.</li>
-                        <li>Choosing a product fills in its gallons-per-hour (GPH) flow rate, so water circulation estimates stay accurate.</li>
-                        <li>Switch to a custom entry if you run multiple filters or adjust the flow rate.</li>
+                        <li>Powered filters (hang-on-back, canister, internal) are checked by their rated flow in gallons per hour (GPH) and the turnover it gives your tank.</li>
+                        <li>Sponge filters are checked by the manufacturer&rsquo;s tank-size rating, not by flow. Their water flow is not estimated.</li>
+                        <li>Powerheads move water but hold no filter media, so they count as circulation only.</li>
+                        <li>Not in the list? Add a custom filter: enter GPH for a powered filter, or the rated tank size in gallons for a sponge.</li>
                       </ul>
                     </div>
                   </div>
@@ -471,7 +472,7 @@
               <p class="filter-product-note" id="filter-product-note">Choose a filter matched to your tank size and use Add Selected when ready.</p>
             </div>
             <div class="filter-setup">
-              <p class="muted">Add your filter to check it has enough flow for your stock. Powerheads count as circulation only.</p>
+              <p class="muted">Add your filter to check it for your stock. Powered filters are checked by their flow (GPH); sponge filters by their manufacturer tank rating. Powerheads count as circulation only.</p>
 
               <div class="filter-setup__row" role="group" aria-label="Add custom filter">
                 <label class="sr-only" for="fs-type">Filter type</label>
@@ -493,6 +494,20 @@
                   placeholder="GPH"
                   aria-describedby="fs-gph-hint"
                 >
+
+                <!-- Sponge filters (phase B): the manufacturer's tank-size rating replaces the GPH field. -->
+                <span class="fs-rating-field" data-role="fs-rating-field" hidden>
+                  <label for="fs-rated-gallons">Rated for up to</label>
+                  <input
+                    id="fs-rated-gallons"
+                    class="fs-input fs-gph"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="e.g. 20"
+                    aria-describedby="fs-gph-hint"
+                  >
+                  <span aria-hidden="true">gallons</span>
+                </span>
 
                 <button id="fs-add-custom" type="button" class="btn btn-primary btn-compact" aria-disabled="true">
                   Add custom
@@ -707,7 +722,7 @@
         <h2>How to use the Stocking Advisor</h2>
         <ol class="howto-steps">
           <li><strong>Choose your tank size.</strong> Pick a preset volume or enter a custom gallon value so every card uses the right baseline.</li>
-          <li><strong>Add your filter.</strong> Select a model or type in a custom gallons-per-hour value so the tool can estimate water circulation.</li>
+          <li><strong>Add your filter.</strong> Select a model or add a custom filter: enter gallons per hour for a powered filter, or the manufacturer&rsquo;s rated tank size for a sponge filter.</li>
           <li><strong>Enter current and planned fish.</strong> Search for species, set quantities, and keep the list updated as your ideas change.</li>
           <li><strong>Review the cards.</strong> Check the bioload meter, compatibility banner, and Environmental Recommendations for temperature, pH, and hardness overlap.</li>
           <li><strong>Use the result as a planning screen.</strong> Adjust fish choices, equipment, or water targets when alerts appear, then verify adult size, behavior, tank footprint, and your own water tests before buying or adding livestock.</li>
@@ -1019,7 +1034,7 @@
         <button type="button" class="proto-info-panel__close" aria-label="Close" data-info-close>×</button>
       </header>
       <div class="proto-info-panel__body">
-        <p>The bioload % compares your livestock’s waste with your tank size. Your filter is checked separately: it needs enough flow through its media for your stock, but a bigger filter does not make a crowded tank safe or lower the percentage.</p>
+        <p>The bioload % compares your livestock’s waste with your tank size. Your filter is checked separately: a powered filter needs enough flow through its media, and a sponge filter is checked against its manufacturer tank rating. A bigger filter does not make a crowded tank safe or lower the percentage.</p>
         <p><strong>Heads-up:</strong> The bioload % assumes an established (cycled) filter. A new filter takes several weeks to grow the bacteria that process waste, so add fish gradually and keep testing your water. A bigger filter does not raise the bioload limit.</p>
       </div>
     </div>

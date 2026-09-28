@@ -9,19 +9,31 @@
  *
  * A v2 entry records the instance, not a copy of the catalog: a catalog filter is re-resolved from
  * the current catalog by productId when the page restores it (its stored gph is used only when the
- * product can't be found, exactly as v1 does). Phase A stores gph for every entry that has one,
- * because gph is still the only scoring input. Capacity fields are carried, never scored.
+ * product can't be found, exactly as v1 does).
+ *
+ * Sponges (phase B, type wins): every SPONGE entry is written and read as capacityMethod
+ * "manufacturer_rating" and never carries gph, whatever an old v1 / phase A entry says.
+ *   catalog sponge  {instanceId, source:"product", productId, type:"SPONGE", capacityMethod}
+ *                   identity only; the rating is always re-resolved from the current catalog.
+ *   custom sponge   {instanceId, source:"custom", label, legacyId, type:"SPONGE", capacityMethod,
+ *                    manufacturerMaxGallons, ratingStatus:"verified"}   (user-entered rating), or
+ *                   {…, ratingStatus:"needed", legacyGph}   an old custom sponge that only had a GPH:
+ *                   legacyGph is kept for one migration cycle, never scored, never shown as flow.
  *
  * The v1 mirror is kept until phase E so a tab still running the previous JavaScript restores the
- * same powered filters. It holds only flow-method entries and only the three fields old code reads.
+ * same powered filters. It holds only flow-method entries and only the three fields old code reads;
+ * a rating-based sponge is never written to it (no manufacturer gallons in rated_gph).
  */
 import { canonicalizeFilterType } from '../../utils.js';
 import {
   CAPACITY_METHODS,
   MAX_DEVICE_GPH,
+  RATING_STATUSES,
   hasUnsupportedCapacityMethod,
+  isSpongeFilter,
   pickPassthroughFields,
   resolveCapacityMethod,
+  resolveSpongeRating,
 } from './math.js';
 
 export const FILTER_STORAGE_KEY_V1 = 'ttg.stocking.filters.v1';
@@ -109,6 +121,9 @@ function buildEntry(filter, { typeValue, gphValue }) {
     if (isManualId(legacyId)) entry.legacyId = legacyId;
   }
   entry.type = canonicalizeFilterType(typeValue);
+  if (isSpongeFilter({ type: entry.type })) {
+    return buildSpongeEntry(entry, extra, gph);
+  }
   entry.capacityMethod = resolveCapacityMethod(filter);
   if (gph > 0) entry.gph = gph;
   if (extra.manufacturerMaxGallons !== undefined) entry.manufacturerMaxGallons = extra.manufacturerMaxGallons;
@@ -118,6 +133,35 @@ function buildEntry(filter, { typeValue, gphValue }) {
   if (!entry.productId && !(gph > 0) && entry.manufacturerMaxGallons === undefined) {
     return null;
   }
+  return entry;
+}
+
+// Type wins: a sponge is a rating-method entry whatever capacityMethod / gph the input carried. Its
+// stored GPH (from v1, phase A v2, an old tab) is never written back as gph.
+function buildSpongeEntry(entry, extra, gph) {
+  entry.capacityMethod = CAPACITY_METHODS.MANUFACTURER_RATING;
+  if (entry.productId) {
+    // Catalog sponge: identity only. The current catalog supplies the rating on restore; stored
+    // rating fields are not trusted.
+    return entry;
+  }
+  // Custom sponge: the user-entered rating is its data. Only a verified (user-entered) rating is
+  // kept as usable; anything else is a sponge that still needs a rating.
+  const rating = resolveSpongeRating(extra);
+  if (rating.status === RATING_STATUSES.VERIFIED) {
+    entry.manufacturerMaxGallons = rating.maxGallons;
+    if (rating.minGallons !== null) entry.manufacturerMinGallons = rating.minGallons;
+    entry.ratingStatus = RATING_STATUSES.VERIFIED;
+  } else {
+    entry.ratingStatus = RATING_STATUSES.NEEDED;
+  }
+  // An old custom sponge's GPH is kept once as legacy metadata (never scored, never converted to
+  // gallons); it is dropped as soon as the sponge has a rating.
+  const legacyGph = extra.legacyGph ?? (gph > 0 ? gph : undefined);
+  if (entry.ratingStatus === RATING_STATUSES.NEEDED && legacyGph !== undefined) {
+    entry.legacyGph = Math.min(Math.round(legacyGph), MAX_DEVICE_GPH);
+  }
+  // A custom sponge is kept even with no numbers at all: it is still a biological filter.
   return entry;
 }
 
@@ -159,6 +203,7 @@ function toAppFilter(entry) {
   };
   if (entry.productId) appFilter.productId = entry.productId;
   if (entry.label) appFilter.label = entry.label;
+  if (entry.legacyGph !== undefined) appFilter.legacyGph = entry.legacyGph;
   if (entry.manufacturerMaxGallons !== undefined) appFilter.manufacturerMaxGallons = entry.manufacturerMaxGallons;
   if (entry.manufacturerMinGallons !== undefined) appFilter.manufacturerMinGallons = entry.manufacturerMinGallons;
   if (entry.ratingStatus !== undefined) appFilter.ratingStatus = entry.ratingStatus;
@@ -182,9 +227,10 @@ function parseV2Entry(raw) {
   return buildEntry(filter, { typeValue: raw.type ?? raw.filterType, gphValue: raw.gph ?? raw.rated_gph });
 }
 
-// v1 {id, type, rated_gph} → v2 entry. Phase A keeps today's meaning exactly: every entry (sponges
-// included) stays a flow filter with its stored GPH; a known product is re-resolved from the
-// catalog on restore, an unknown id falls back to its stored GPH, as v1 does.
+// v1 {id, type, rated_gph} → v2 entry. A powered entry keeps its meaning exactly: a flow filter with
+// its stored GPH; a known product is re-resolved from the catalog on restore, an unknown id falls
+// back to its stored GPH, as v1 does. A SPONGE entry becomes a rating-method entry (buildEntry):
+// a catalog id is re-resolved from the catalog, a custom one needs a rating; its GPH is not scored.
 export function migrateV1Entry(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
   const filter = {

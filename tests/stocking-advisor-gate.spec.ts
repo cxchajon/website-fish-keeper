@@ -48,9 +48,11 @@ async function expectScrolledIntoView(locator: Locator) {
 const bioloadLabel = (page: Page) => page.locator('[data-role="bioload-percent"]').first();
 
 // Phase 2C: filtration is its own check and never changes the bioload figure.
-async function addCustomFilter(page: Page, type: string, gph: number) {
+// A custom sponge takes its rated tank size in gallons (sponge migration phase B); every other
+// type takes GPH.
+async function addCustomFilter(page: Page, type: string, value: number) {
   await page.selectOption('#fs-type', type);
-  await page.fill('#fs-gph', String(gph));
+  await page.fill(type === 'Sponge' ? '#fs-rated-gallons' : '#fs-gph', String(value));
   await page.click('#fs-add-custom');
 }
 // Catalog-product filtration: the path a real user takes (product dropdown → Add Selected → chip).
