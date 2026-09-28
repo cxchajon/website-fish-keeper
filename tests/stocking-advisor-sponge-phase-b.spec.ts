@@ -33,12 +33,17 @@ async function settle(page: Page) {
   await page.waitForTimeout(1500);
 }
 
+// Retried as a whole: on a slow start-up the first Add can land before the plan is ready.
 async function setUpTank(page: Page, tankId: string) {
   await page.selectOption('#tank-size', tankId);
-  await page.selectOption('#plan-species', 'neon');
-  await page.fill('#plan-qty', '8');
-  await page.click('#plan-add');
-  await expect(page.locator('[data-testid="species-row"][data-row-id="neon"]')).toBeVisible();
+  const row = page.locator('[data-testid="species-row"][data-row-id="neon"]');
+  await expect(async () => {
+    if (await row.count()) return;
+    await page.selectOption('#plan-species', 'neon', { timeout: 2000 });
+    await page.fill('#plan-qty', '8', { timeout: 2000 });
+    await page.click('#plan-add', { timeout: 2000 });
+    await expect(row).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 20000 });
 }
 
 async function addProduct(page: Page, id: string) {
