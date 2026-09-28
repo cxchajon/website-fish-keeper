@@ -1,7 +1,11 @@
-import { hasUnsupportedCapacityMethod, pickPassthroughFields } from './stocking-advisor/filtration/math.js';
+import { hasUnsupportedCapacityMethod, isSpongeFilter, pickPassthroughFields } from './stocking-advisor/filtration/math.js';
 
 const DATA_URL = '/assets/data/gearCatalog.json';
-const STORAGE_KEY = 'ttg.gear.catalog.v1';
+// v2 since sponge migration phase B: the sponge records gained rating metadata, so a cache written by
+// earlier code (records without it) is not reused. Earlier code keeps reading its own v1 key. New code
+// is safe with a stale v1-shaped record anyway: a SPONGE without a verified rating is "Rating needed",
+// never scored by its old GPH (filtration/math.js effectiveCapacityMethod).
+const STORAGE_KEY = 'ttg.gear.catalog.v2';
 const STORAGE_TIMESTAMP_KEY = 'ttg.gear.catalog.timestamp';
 
 export const CATALOG_SOURCES = Object.freeze({
@@ -67,10 +71,15 @@ function sanitizeItem(raw) {
   const brand = typeof raw.brand === 'string' ? raw.brand.trim() : '';
   const name = typeof raw.name === 'string' ? raw.name.trim() : '';
   const type = normalizeType(raw.type);
-  const gphRated = toNumber(raw.gphRated ?? raw.rated_gph ?? raw.ratedGph, NaN);
-  if (!Number.isFinite(gphRated) || gphRated <= 0) {
+  const gphRatedRaw = toNumber(raw.gphRated ?? raw.rated_gph ?? raw.ratedGph, NaN);
+  const hasFlow = Number.isFinite(gphRatedRaw) && gphRatedRaw > 0;
+  // A sponge is rated by tank size, not flow, so it is kept without a GPH (phase E removes the
+  // legacy sponge gphRated). Its gphRated, when present, is legacy compatibility data for older
+  // scripts only: the filtration code never scores or shows it.
+  if (!hasFlow && !isSpongeFilter({ type })) {
     return null;
   }
+  const gphRated = hasFlow ? gphRatedRaw : 0;
   // A capacity method this code doesn't support is never offered as a flow-rated product.
   if (hasUnsupportedCapacityMethod(raw)) {
     return null;
@@ -96,7 +105,8 @@ function sanitizeItem(raw) {
     entry.tags = raw.tags.slice();
   }
   // Capacity metadata (sponge migration design section 7.3) is carried when a record has it, so a
-  // restored filter can take it from the current catalog. No record has it yet; nothing scores it.
+  // restored filter takes it from the current catalog. The seven sponge records have it (phase B);
+  // review-only evidence fields (ratingEvidence, ratingSource, …) are not copied.
   const capacity = pickPassthroughFields(raw);
   ['capacityMethod', 'manufacturerMaxGallons', 'manufacturerMinGallons', 'ratingStatus'].forEach((key) => {
     if (capacity[key] !== undefined) {
@@ -255,6 +265,11 @@ export function filterGearByTank(items, gallons) {
     return list.slice();
   }
   return list.filter((item) => {
+    // A sponge's minGallons / maxGallons are legacy GPH-bucket values, not a rating. Sponges stay
+    // selectable on every tank: an undersized sponge is valid as one of several (phase B).
+    if (isSpongeFilter(item)) {
+      return true;
+    }
     const minRaw = Number(item?.minGallons ?? 0);
     const maxRaw = Number(item?.maxGallons ?? Infinity);
     const min = Number.isFinite(minRaw) ? minRaw : 0;

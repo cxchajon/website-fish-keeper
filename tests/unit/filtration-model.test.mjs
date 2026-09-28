@@ -77,7 +77,8 @@ test('raw livestock bioload is identical for every filtration choice (cases A–
 test('cases A–H: filtration outcome and status as specified', () => {
   const expected = {
     A: ['filtration.none'], B: ['filtration.very_low'], C: [], D: ['filtration.circulation_only'],
-    E: [], F: [], G: [], H: [],
+    // Sponge migration phase B: a sponge with no rating (its 150 "GPH" is ignored) is not evaluated.
+    E: ['filtration.rating_needed'], F: [], G: [], H: [],
   };
   const noFilter = run('29g', BASE_STOCK, CASES.A);
   for (const [name, filters] of Object.entries(CASES)) {
@@ -147,11 +148,14 @@ test('a 100 GPH HOB on 20 gallons behaves differently from a 1 GPH canister', ()
   assert.notEqual(hob.filtering.level, run('20h', [['cory_bronze', 6]], [f('Canister', 1)]).filtering.level);
 });
 
-test('a sponge filter counts as a biological filter at its entered flow', () => {
+test('a sponge filter is biological filtration but its GPH is never counted (phase B)', () => {
   const sponge = math.assessFiltration({ filters: [f('Sponge', 200)], gallons: 20 });
-  assert.equal(sponge.level, math.FILTRATION_LEVELS.ADEQUATE);
+  assert.equal(sponge.level, math.FILTRATION_LEVELS.NOT_EVALUATED);
   assert.equal(sponge.hasSponge, true);
-  assert.equal(sponge.biologicalGph, 200);
+  assert.equal(sponge.hasBiologicalFiltration, true);
+  assert.equal(sponge.hasBiologicalGph, false);
+  assert.equal(sponge.biologicalGph, 0);
+  assert.equal(sponge.biologicalTurnover, 0);
 });
 
 test('the biological floor is 2× through media, whatever the species flow tags', () => {
@@ -190,7 +194,7 @@ test('multiple real filters add flow through media; duplicates cannot inflate th
   const two = run('29g', BASE_STOCK, [f('HOB', 150), f('HOB', 150)]);
   const mixed = run('29g', BASE_STOCK, [f('Canister', 150), f('Sponge', 150)]);
   assert.ok(Math.abs(two.filtering.turnover - 2 * one.filtering.turnover) < 1e-9);
-  assert.equal(mixed.filtering.biologicalGph, 300);
+  assert.equal(mixed.filtering.biologicalGph, 150, 'the sponge adds no GPH (phase B)');
   const many = run('29g', BASE_STOCK, Array.from({ length: 20 }, () => f('Canister', 1500)));
   for (const computed of [one, two, mixed, many]) {
     assert.equal(computed.bioload.proposedPercent, one.bioload.proposedPercent);

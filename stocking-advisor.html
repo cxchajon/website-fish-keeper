@@ -471,7 +471,7 @@
               <p class="filter-product-note" id="filter-product-note">Choose a filter matched to your tank size and use Add Selected when ready.</p>
             </div>
             <div class="filter-setup">
-              <p class="muted">Add your filter to check it has enough flow for your stock. Powerheads count as circulation only.</p>
+              <p class="muted">Add your filter to check it has enough flow for your stock. Sponge filters are checked by their manufacturer tank rating instead. Powerheads count as circulation only.</p>
 
               <div class="filter-setup__row" role="group" aria-label="Add custom filter">
                 <label class="sr-only" for="fs-type">Filter type</label>
@@ -493,6 +493,20 @@
                   placeholder="GPH"
                   aria-describedby="fs-gph-hint"
                 >
+
+                <!-- Sponge filters (phase B): the manufacturer's tank-size rating replaces the GPH field. -->
+                <span class="fs-rating-field" data-role="fs-rating-field" hidden>
+                  <label for="fs-rated-gallons">Rated for up to</label>
+                  <input
+                    id="fs-rated-gallons"
+                    class="fs-input fs-gph"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="e.g. 20"
+                    aria-describedby="fs-gph-hint"
+                  >
+                  <span aria-hidden="true">gallons</span>
+                </span>
 
                 <button id="fs-add-custom" type="button" class="btn btn-primary btn-compact" aria-disabled="true">
                   Add custom

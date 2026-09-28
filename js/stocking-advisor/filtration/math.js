@@ -40,8 +40,13 @@ export const MAX_DEVICE_GPH = 1500;
 export const FILTRATION_LEVELS = Object.freeze({
   NONE: 'none', // nothing entered
   CIRCULATION_ONLY: 'circulation-only', // only powerheads entered
-  VERY_LOW: 'very-low', // biological turnover below MIN_BIOLOGICAL_TURNOVER
-  ADEQUATE: 'adequate', // at or above the floor
+  VERY_LOW: 'very-low', // powered filters only, below MIN_BIOLOGICAL_TURNOVER
+  ADEQUATE: 'adequate', // powered filters meet the floor, or one verified sponge is rated for the tank
+  // Sponge migration phase B (design report sections 1, 4.4):
+  LIKELY_MULTI_SPONGE: 'likely-multi-sponge', // amber: no single sponge rated, verified ratings together reach the tank
+  BELOW_RATING: 'below-rating', // amber: rated sponge(s) only, below the tank size
+  REVIEW: 'review', // amber: powered filter below the floor next to a sponge that doesn't carry the tank
+  NOT_EVALUATED: 'not-evaluated', // neutral: the only biological filtration is a sponge without a usable rating
 });
 
 export function clamp(value, min, max) {
@@ -85,16 +90,22 @@ export function filterRole(filter) {
 }
 
 // How a device's filtration capacity is expressed (sponge-filter migration design, sections 7–9).
-// Every filter scores by flow today; the other methods are carried through saved state and the
-// compute path but are not read by the scoring below yet (sponge migration phase B).
+// Powered filters score by flow. Since phase B every SPONGE scores by its manufacturer tank rating,
+// whatever its data says (see effectiveCapacityMethod). tank_compatibility is carried, not scored.
 export const CAPACITY_METHODS = Object.freeze({
   FLOW: 'flow',
   MANUFACTURER_RATING: 'manufacturer_rating',
   TANK_COMPATIBILITY: 'tank_compatibility',
 });
 const KNOWN_CAPACITY_METHODS = new Set(Object.values(CAPACITY_METHODS));
-const KNOWN_RATING_STATUSES = new Set(['verified', 'needs_review', 'needed']);
+export const RATING_STATUSES = Object.freeze({
+  VERIFIED: 'verified', // the rating may be used for evaluation
+  NEEDS_REVIEW: 'needs_review', // a number may be stored as review metadata; never used for evaluation
+  NEEDED: 'needed', // no usable rating
+});
+const KNOWN_RATING_STATUSES = new Set(Object.values(RATING_STATUSES));
 const MAX_RATED_GALLONS = 10000;
+const MAX_LEGACY_GPH = MAX_DEVICE_GPH;
 const MAX_ID_LENGTH = 128;
 
 function hasCapacityMethod(filter) {
@@ -110,9 +121,33 @@ export function hasUnsupportedCapacityMethod(filter) {
 }
 
 // A known method; FLOW when absent (every legacy/v1 filter); null when explicitly unsupported.
+// Type-blind: use effectiveCapacityMethod for anything that decides how a device is evaluated.
 export function resolveCapacityMethod(filter) {
   if (!hasCapacityMethod(filter)) return CAPACITY_METHODS.FLOW;
   return hasUnsupportedCapacityMethod(filter) ? null : filter.capacityMethod.trim();
+}
+
+// Sponge filters are air-driven: their catalog / saved "GPH" is not a water flow (sponge audit).
+// Canonical type SPONGE only; an undergravel filter is not a sponge (its own model is phase F).
+const SPONGE_TYPE_KEYS = new Set(['SPONGE', 'SPONGEFILTER']);
+
+export function isSpongeFilter(filter) {
+  return SPONGE_TYPE_KEYS.has(filterTypeKey(filter));
+}
+
+// TYPE WINS (phase B): a SPONGE is always evaluated by its manufacturer tank rating, even when
+// stale data (an old catalog cache, a v1 plan, a phase A v2 plan, an old tab) says capacityMethod
+// "flow" or carries gph / rated_gph / gphRated. Those GPH values are never read for a sponge.
+// An explicitly unsupported method still fails closed (null), as in phase A.
+export function effectiveCapacityMethod(filter) {
+  if (hasUnsupportedCapacityMethod(filter)) return null;
+  if (isSpongeFilter(filter)) return CAPACITY_METHODS.MANUFACTURER_RATING;
+  return resolveCapacityMethod(filter);
+}
+
+// A sponge counted as biological filtration without flow. Unsupported-method entries are not.
+export function isRatingBasedSponge(filter) {
+  return isSpongeFilter(filter) && effectiveCapacityMethod(filter) === CAPACITY_METHODS.MANUFACTURER_RATING;
 }
 
 function cleanId(value) {
@@ -143,7 +178,42 @@ export function pickPassthroughFields(filter) {
   const minGallons = cleanGallons(filter.manufacturerMinGallons);
   if (minGallons !== null) out.manufacturerMinGallons = minGallons;
   if (KNOWN_RATING_STATUSES.has(filter.ratingStatus)) out.ratingStatus = filter.ratingStatus;
+  // An old custom sponge's historical GPH, kept for one migration cycle only. Never a flow input:
+  // it is not one of the keys parseFlow reads, and sponges never parse a flow anyway.
+  const legacyGph = cleanGallons(filter.legacyGph);
+  if (legacyGph !== null && legacyGph <= MAX_LEGACY_GPH) out.legacyGph = legacyGph;
   return out;
+}
+
+/**
+ * The tank rating a sponge may be evaluated with. VERIFIED only: a positive manufacturerMaxGallons
+ * alone is not enough (SUPPORTED catalog records store review numbers with status needs_review).
+ * Stale flow data (gph, rated_gph, gphRated) is never consulted.
+ *
+ * @returns {{ status: 'verified'|'needs_review'|'needed', maxGallons: number|null, minGallons: number|null }}
+ *   maxGallons / minGallons are null unless status is 'verified'; minGallons is display-only.
+ */
+export function resolveSpongeRating(filter) {
+  const fields = pickPassthroughFields(filter);
+  const max = fields.manufacturerMaxGallons ?? null;
+  if (fields.ratingStatus === RATING_STATUSES.VERIFIED && max !== null) {
+    const min = fields.manufacturerMinGallons ?? null;
+    return { status: RATING_STATUSES.VERIFIED, maxGallons: max, minGallons: min !== null && min <= max ? min : null };
+  }
+  const status = fields.ratingStatus === RATING_STATUSES.NEEDS_REVIEW ? RATING_STATUSES.NEEDS_REVIEW : RATING_STATUSES.NEEDED;
+  return { status, maxGallons: null, minGallons: null };
+}
+
+function roundGallons(value) {
+  return Math.round(value * 10) / 10;
+}
+
+// "10–40 gal" when a verified minimum exists, else "up to 40 gal"; null without a verified rating.
+export function formatSpongeRating(rating, { withUpTo = true } = {}) {
+  if (!rating || rating.status !== RATING_STATUSES.VERIFIED || !(rating.maxGallons > 0)) return null;
+  const max = roundGallons(rating.maxGallons);
+  if (rating.minGallons > 0) return `${roundGallons(rating.minGallons)}–${max} gal`;
+  return withUpTo ? `up to ${max} gal` : `${max} gal`;
 }
 
 export function normalizeFilter(filter) {
@@ -151,8 +221,10 @@ export function normalizeFilter(filter) {
     return null;
   }
   // An unsupported capacity method contributes no flow (normalizeFilters then leaves it out).
-  const ratedGph = hasUnsupportedCapacityMethod(filter) ? 0 : parseFlow(filter);
-  return {
+  // A sponge never contributes flow: type wins over any stored GPH (phase B).
+  const sponge = isRatingBasedSponge(filter);
+  const ratedGph = sponge || hasUnsupportedCapacityMethod(filter) ? 0 : parseFlow(filter);
+  const entry = {
     id: typeof filter.id === 'string' && filter.id ? filter.id : null,
     source: typeof filter.source === 'string' && filter.source ? filter.source : null,
     label: typeof filter.label === 'string' && filter.label ? filter.label : null,
@@ -162,14 +234,26 @@ export function normalizeFilter(filter) {
     rated_gph: ratedGph,
     ...pickPassthroughFields(filter),
   };
+  if (sponge) {
+    entry.capacityMethod = CAPACITY_METHODS.MANUFACTURER_RATING;
+  }
+  return entry;
 }
 
-// Devices without a positive flow are dropped: they cannot be assessed.
+// Flow devices without a positive flow are dropped: they cannot be assessed. A sponge is kept with
+// zero flow: it is biological filtration evaluated by its tank rating, not by GPH.
 export function normalizeFilters(filters) {
   if (!Array.isArray(filters)) {
     return [];
   }
-  return filters.map(normalizeFilter).filter((entry) => entry && entry.ratedGph > 0);
+  // The sponge test reads the input (not the normalized copy), so a sponge with an unsupported
+  // capacityMethod still fails closed.
+  const out = [];
+  for (const filter of filters) {
+    const entry = normalizeFilter(filter);
+    if (entry && (entry.ratedGph > 0 || isRatingBasedSponge(filter))) out.push(entry);
+  }
+  return out;
 }
 
 export function getTotalGPH(filters, { normalized = false } = {}) {
@@ -209,8 +293,47 @@ export function computePercent(baseBioload, capacity) {
   return clamp((load / cap) * 100, 0, 2000);
 }
 
+// Headline wording per level (locked in the design report, section 1.2 / 12). The engine warnings
+// in compute.legacy.js and the filtration summary use these.
+export const FILTRATION_STATUS = Object.freeze({
+  [FILTRATION_LEVELS.NONE]: { icon: '', text: 'No filter added', tone: 'warn' },
+  [FILTRATION_LEVELS.CIRCULATION_ONLY]: { icon: '', text: 'No biological filter', tone: 'bad' },
+  [FILTRATION_LEVELS.VERY_LOW]: { icon: '', text: 'Filter flow too low', tone: 'bad' },
+  POWERED_ADEQUATE: { icon: '✓', text: 'Filtration appears adequate', tone: 'good' },
+  SPONGE_RATED: { icon: '✓', text: 'Rated for this tank', tone: 'good' },
+  [FILTRATION_LEVELS.LIKELY_MULTI_SPONGE]: { icon: '⚠', text: 'Likely adequate — multiple sponge filters', tone: 'warn' },
+  [FILTRATION_LEVELS.BELOW_RATING]: { icon: '⚠', text: 'Below manufacturer rating', tone: 'warn' },
+  [FILTRATION_LEVELS.REVIEW]: { icon: '⚠', text: 'Review filtration', tone: 'warn' },
+  [FILTRATION_LEVELS.NOT_EVALUATED]: { icon: '○', text: 'Not evaluated — rating needed', tone: 'neutral' },
+  RATING_NEEDED: { icon: '○', text: 'Rating needed', tone: 'neutral' },
+});
+
+// One sponge as the evaluation sees it. Only a verified rating carries numbers.
+function describeSponge(entry, gallons) {
+  const rating = resolveSpongeRating(entry);
+  const verified = rating.status === RATING_STATUSES.VERIFIED;
+  return {
+    id: entry.id ?? null,
+    instanceId: entry.instanceId ?? null,
+    productId: entry.productId ?? null,
+    label: entry.label ?? null,
+    ratingStatus: rating.status,
+    manufacturerMaxGallons: rating.maxGallons,
+    manufacturerMinGallons: rating.minGallons,
+    ratingText: formatSpongeRating(rating),
+    // The manufacturer minimum is informational: a sponge is never failed for a small tank.
+    coversTank: verified && gallons > 0 && rating.maxGallons >= gallons,
+  };
+}
+
 /**
  * Filtration adequacy for a tank and stock. Never changes the bioload percentage.
+ *
+ * Two independent paths (design D5/D6), never added together and never converted into each other:
+ *   powered  HOB / canister / internal / custom powered: Phase 2C flow floor, unchanged
+ *            (biological GPH ÷ nominal gallons ≥ MIN_BIOLOGICAL_TURNOVER).
+ *   sponge   manufacturer tank rating, VERIFIED ratings only; sponges contribute 0 GPH.
+ * Powerheads stay circulation only.
  *
  * @param {object} input
  * @param {Array} input.filters  devices as entered (any shape normalizeFilter accepts)
@@ -220,26 +343,67 @@ export function computePercent(baseBioload, capacity) {
 export function assessFiltration({ filters = [], gallons = 0, hasStock = false } = {}) {
   const list = normalizeFilters(filters);
   const totals = getTotalGPH(list, { normalized: true });
+  const tankGallons = Math.max(0, toNum(gallons));
+  // Sponges carry 0 GPH, so the biological flow is the powered filters' flow only.
   const biologicalTurnover = turnoverX(totals.biological, gallons);
   const totalTurnover = turnoverX(totals.rated, gallons);
-  const biologicalCount = list.filter((entry) => entry.role === FILTER_ROLES.BIOLOGICAL).length;
+  const biological = list.filter((entry) => entry.role === FILTER_ROLES.BIOLOGICAL);
+  const biologicalCount = biological.length;
   const circulationCount = list.length - biologicalCount;
-  const hasSponge = list.some((entry) => entry.role === FILTER_ROLES.BIOLOGICAL && entry.type?.startsWith('SPONGE'));
+  const spongeEntries = biological.filter((entry) => isRatingBasedSponge(entry));
+  const poweredEntries = biological.filter((entry) => !isRatingBasedSponge(entry));
+  const hasSponge = spongeEntries.length > 0;
+
+  const poweredPasses = poweredEntries.length > 0 && biologicalTurnover >= MIN_BIOLOGICAL_TURNOVER;
+  const sponges = spongeEntries.map((entry) => describeSponge(entry, tankGallons));
+  const verified = sponges.filter((sponge) => sponge.ratingStatus === RATING_STATUSES.VERIFIED);
+  const unrated = sponges.filter((sponge) => sponge.ratingStatus !== RATING_STATUSES.VERIFIED);
+  const spongeRated = verified.some((sponge) => sponge.coversTank);
+  // Heuristic only (D2): the sum decides yes/no for the amber tier and is never reported.
+  const verifiedSum = verified.reduce((sum, sponge) => sum + sponge.manufacturerMaxGallons, 0);
+  const spongeLikely = !spongeRated && verified.length >= 2 && tankGallons > 0 && verifiedSum >= tankGallons;
+
+  let spongeStatus = 'none';
+  if (sponges.length) {
+    if (spongeRated) spongeStatus = 'rated';
+    else if (spongeLikely) spongeStatus = 'likely-multi';
+    else if (verified.length) spongeStatus = 'below-rating';
+    else spongeStatus = 'rating-needed';
+  }
 
   let level;
   if (list.length === 0) {
     level = FILTRATION_LEVELS.NONE;
   } else if (biologicalCount === 0) {
     level = FILTRATION_LEVELS.CIRCULATION_ONLY;
-  } else if (biologicalTurnover < MIN_BIOLOGICAL_TURNOVER) {
-    level = FILTRATION_LEVELS.VERY_LOW;
-  } else {
+  } else if (poweredPasses || spongeRated) {
     level = FILTRATION_LEVELS.ADEQUATE;
+  } else if (spongeLikely) {
+    level = FILTRATION_LEVELS.LIKELY_MULTI_SPONGE;
+  } else if (poweredEntries.length && sponges.length) {
+    level = FILTRATION_LEVELS.REVIEW;
+  } else if (poweredEntries.length) {
+    level = FILTRATION_LEVELS.VERY_LOW;
+  } else if (verified.length) {
+    level = FILTRATION_LEVELS.BELOW_RATING;
+  } else {
+    level = FILTRATION_LEVELS.NOT_EVALUATED;
+  }
+
+  let adequateBy = null;
+  if (level === FILTRATION_LEVELS.ADEQUATE) {
+    adequateBy = poweredPasses && spongeRated ? 'both' : poweredPasses ? 'powered' : 'sponge';
+  }
+  let status = FILTRATION_STATUS[level];
+  if (level === FILTRATION_LEVELS.ADEQUATE) {
+    status = adequateBy === 'sponge' ? FILTRATION_STATUS.SPONGE_RATED : FILTRATION_STATUS.POWERED_ADEQUATE;
   }
 
   return {
     level,
-    gallons: Math.max(0, toNum(gallons)),
+    status: { ...status },
+    adequateBy,
+    gallons: tankGallons,
     filters: list,
     totalGph: totals.rated,
     biologicalGph: totals.biological,
@@ -249,7 +413,26 @@ export function assessFiltration({ filters = [], gallons = 0, hasStock = false }
     totalTurnover,
     biologicalCount,
     circulationCount,
+    // "Has biological filtration" is not "has biological GPH": a sponge is the first without the second.
+    hasBiologicalFiltration: biologicalCount > 0,
+    hasBiologicalGph: totals.biological > 0,
     hasSponge,
+    powered: {
+      count: poweredEntries.length,
+      gph: totals.biological,
+      turnover: biologicalTurnover,
+      passes: poweredPasses,
+      belowFloor: poweredEntries.length > 0 && !poweredPasses,
+    },
+    sponge: {
+      count: sponges.length,
+      verifiedCount: verified.length,
+      unratedCount: unrated.length,
+      status: spongeStatus,
+      rated: spongeRated,
+      likelyMulti: spongeLikely,
+      entries: sponges,
+    },
     hasStock: Boolean(hasStock),
     // Nothing here scales the bioload percentage.
     capacityAdjustment: 0,

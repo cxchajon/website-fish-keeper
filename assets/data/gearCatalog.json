@@ -263,65 +263,173 @@
   {
     "id": "aquaneat-sponge-10",
     "brand": "AQUANEAT",
-    "name": "AQUANEAT Single Sponge Filter (Up to 10G)",
+    "name": "AQUANEAT Single Sponge Filter",
     "type": "SPONGE",
+    "capacityMethod": "manufacturer_rating",
+    "manufacturerMinGallons": null,
+    "manufacturerMaxGallons": null,
+    "ratingStatus": "needed",
+    "ratingExpression": "unclear",
+    "ratingEvidence": "needs_review",
+    "ratingSourceKind": "none",
+    "ratingSource": null,
+    "productRef": {
+      "asin": null,
+      "model": null
+    },
+    "ratingNote": "Exact product unresolved; the former display-name rating is not evidence.",
+    "ratingCheckedAt": "2026-09-28",
     "gphRated": 60,
     "minGallons": 0,
-    "maxGallons": 20
+    "maxGallons": 20,
+    "legacyFieldsNote": "gphRated, minGallons and maxGallons are pre-phase-B compatibility values for older cached scripts only (not a water flow, not a rating). Current code ignores them for SPONGE; removal is phase E."
   },
   {
     "id": "aquaneat-sponge-20",
     "brand": "AQUANEAT",
-    "name": "AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Middle up to 20Gal)",
+    "name": "AQUANEAT Bio Sponge Filter — Middle",
     "type": "SPONGE",
+    "capacityMethod": "manufacturer_rating",
+    "manufacturerMinGallons": null,
+    "manufacturerMaxGallons": 20,
+    "ratingStatus": "needs_review",
+    "ratingExpression": "up_to",
+    "ratingEvidence": "supported",
+    "ratingSourceKind": "retailer_exact_product",
+    "ratingSource": "https://www.amazon.com/dp/B078Q29JT4",
+    "productRef": {
+      "asin": "B078Q29JT4",
+      "model": "SF-A001"
+    },
+    "ratingNote": "Model SF-A001 is owner-supplied provenance. SUPPORTED evidence: review metadata only; not used for evaluation (ratingStatus needs_review).",
+    "ratingCheckedAt": "2026-09-28",
     "gphRated": 120,
     "minGallons": 0,
-    "maxGallons": 20
+    "maxGallons": 20,
+    "legacyFieldsNote": "gphRated, minGallons and maxGallons are pre-phase-B compatibility values for older cached scripts only (not a water flow, not a rating). Current code ignores them for SPONGE; removal is phase E."
   },
   {
     "id": "aquaneat-sponge-60",
     "brand": "AQUANEAT",
-    "name": "AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Large up to 60Gal)",
+    "name": "AQUANEAT Bio Sponge Filter — Large",
     "type": "SPONGE",
+    "capacityMethod": "manufacturer_rating",
+    "manufacturerMinGallons": 40,
+    "manufacturerMaxGallons": 60,
+    "ratingStatus": "needs_review",
+    "ratingExpression": "range",
+    "ratingEvidence": "supported",
+    "ratingSourceKind": [
+      "retailer_exact_product",
+      "third_party_manual"
+    ],
+    "ratingSource": "https://manuals.plus/asin/B071HVZVMP",
+    "productRef": {
+      "asin": "B071HVZVMP",
+      "model": "SF-A004"
+    },
+    "ratingNote": "SUPPORTED evidence: review metadata only; not used for evaluation (ratingStatus needs_review).",
+    "ratingCheckedAt": "2026-09-28",
     "gphRated": 200,
     "minGallons": 20,
-    "maxGallons": 40
+    "maxGallons": 40,
+    "legacyFieldsNote": "gphRated, minGallons and maxGallons are pre-phase-B compatibility values for older cached scripts only (not a water flow, not a rating). Current code ignores them for SPONGE; removal is phase E."
   },
   {
     "id": "hygger-double-sponge-s",
     "brand": "Hygger",
     "name": "hygger Aquarium Double Sponge Filter, Comes with 2 Spare Sponges (S)",
     "type": "SPONGE",
+    "capacityMethod": "manufacturer_rating",
+    "manufacturerMinGallons": 10,
+    "manufacturerMaxGallons": 40,
+    "ratingStatus": "verified",
+    "ratingExpression": "range",
+    "ratingEvidence": "verified",
+    "ratingSourceKind": "manufacturer_official",
+    "ratingSource": "https://www.hygger-online.com/product/hygger-aquarium-biochemical-sponge-filter/",
+    "productRef": {
+      "asin": "B07RFL4JMM",
+      "model": null
+    },
+    "ratingNote": "Official hygger HG256 and HG908 pages both publish Small 10–40 gal; historical HG256 vs HG908-D-S mapping of this ASIN not proven.",
+    "ratingCheckedAt": "2026-09-28",
     "gphRated": 80,
     "minGallons": 0,
-    "maxGallons": 20
+    "maxGallons": 20,
+    "legacyFieldsNote": "gphRated, minGallons and maxGallons are pre-phase-B compatibility values for older cached scripts only (not a water flow, not a rating). Current code ignores them for SPONGE; removal is phase E."
   },
   {
     "id": "hygger-double-sponge-m",
     "brand": "Hygger",
     "name": "hygger Aquarium Double Sponge Filter for Fresh Water and Salt-Water Fish Tank (M)",
     "type": "SPONGE",
+    "capacityMethod": "manufacturer_rating",
+    "manufacturerMinGallons": 15,
+    "manufacturerMaxGallons": 55,
+    "ratingStatus": "verified",
+    "ratingExpression": "range",
+    "ratingEvidence": "verified",
+    "ratingSourceKind": "manufacturer_official",
+    "ratingSource": "https://www.hygger-online.com/product/hygger-aquarium-biochemical-sponge-filter/",
+    "productRef": {
+      "asin": "B07RKT6QPV",
+      "model": null
+    },
+    "ratingNote": "Official hygger HG256 and HG908 pages both publish Medium 15–55 gal; HG256 vs HG908-D-M mapping not proven; repo has two affiliate links for this id.",
+    "ratingCheckedAt": "2026-09-28",
     "gphRated": 120,
     "minGallons": 0,
-    "maxGallons": 20
+    "maxGallons": 20,
+    "legacyFieldsNote": "gphRated, minGallons and maxGallons are pre-phase-B compatibility values for older cached scripts only (not a water flow, not a rating). Current code ignores them for SPONGE; removal is phase E."
   },
   {
     "id": "pawfly-sponge-10",
     "brand": "Pawfly",
-    "name": "Pawfly Aquarium Nano Bio Sponge Filter Quiet Betta Fry Shrimp and Small Fish Foam Filter for Tiny Fish Tank up to 10 Gallon",
+    "name": "Pawfly Nano Bio Sponge Filter",
     "type": "SPONGE",
+    "capacityMethod": "manufacturer_rating",
+    "manufacturerMinGallons": null,
+    "manufacturerMaxGallons": null,
+    "ratingStatus": "needed",
+    "ratingExpression": "unclear",
+    "ratingEvidence": "needs_review",
+    "ratingSourceKind": "search_index_only",
+    "ratingSource": null,
+    "productRef": {
+      "asin": "B09BNCRLZY",
+      "model": null
+    },
+    "ratingNote": "Likely ~10 gal research figure kept out of runtime data pending stronger source provenance.",
+    "ratingCheckedAt": "2026-09-28",
     "gphRated": 60,
     "minGallons": 0,
-    "maxGallons": 20
+    "maxGallons": 20,
+    "legacyFieldsNote": "gphRated, minGallons and maxGallons are pre-phase-B compatibility values for older cached scripts only (not a water flow, not a rating). Current code ignores them for SPONGE; removal is phase E."
   },
   {
     "id": "powkoo-dual-sponge-40",
     "brand": "Powkoo",
-    "name": "Powkoo Dual Sponge Filter (20–55G)",
+    "name": "Powkoo Dual Sponge Filter",
     "type": "SPONGE",
+    "capacityMethod": "manufacturer_rating",
+    "manufacturerMinGallons": null,
+    "manufacturerMaxGallons": null,
+    "ratingStatus": "needed",
+    "ratingExpression": "unclear",
+    "ratingEvidence": "needs_review",
+    "ratingSourceKind": "none",
+    "ratingSource": null,
+    "productRef": {
+      "asin": null,
+      "model": null
+    },
+    "ratingNote": "Exact product unresolved; conflicting Powkoo listings; 20–55 appears in no source.",
+    "ratingCheckedAt": "2026-09-28",
     "gphRated": 150,
     "minGallons": 20,
-    "maxGallons": 40
+    "maxGallons": 40,
+    "legacyFieldsNote": "gphRated, minGallons and maxGallons are pre-phase-B compatibility values for older cached scripts only (not a water flow, not a rating). Current code ignores them for SPONGE; removal is phase E."
   },
   {
     "id": "penn-plax-ugf-20-29",

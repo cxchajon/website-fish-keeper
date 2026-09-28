@@ -1,6 +1,8 @@
 // Saved filter state v2 on the real page (sponge-filter migration phase A). Part of the Stocking
 // Advisor gate (`npm run test:e2e:stocking-gate`). Save → reload must give the same chips, the same
 // calculator input and the same filtration result as before the reload; v1 plans must still load.
+// Sponge expectations follow phase B (rated by tank size, never by GPH): see
+// tests/stocking-advisor-sponge-phase-b.spec.ts for the full phase B browser checks.
 import { test, expect, type Page } from '@playwright/test';
 
 const V1 = 'ttg.stocking.filters.v1';
@@ -65,9 +67,10 @@ async function setUpTank(page: Page, tankId = '20l') {
   await expect(page.locator('[data-testid="species-row"][data-row-id="neon"]')).toBeVisible();
 }
 
-async function addCustom(page: Page, type: string, gph: number) {
+// A custom sponge takes its rated tank size (phase B); every other type takes GPH.
+async function addCustom(page: Page, type: string, value: number) {
   await page.selectOption('#fs-type', type);
-  await page.fill('#fs-gph', String(gph));
+  await page.fill(type === 'Sponge' ? '#fs-rated-gallons' : '#fs-gph', String(value));
   await page.click('#fs-add-custom');
 }
 
@@ -123,18 +126,21 @@ test.describe('saved filters v2', () => {
     await addCustom(page, 'HOB', 150);
     await addCustom(page, 'Sponge', 60);
     const after = await reloadAndCompare(page, '20l');
-    expect(after.scoring.map((row) => [row[1], row[2]])).toEqual([['HOB', 150], ['SPONGE', 60]]);
+    // Phase B: the custom sponge is rated "up to 60 gal" and carries no GPH.
+    expect(after.scoring.map((row) => [row[1], row[2]])).toEqual([['HOB', 150], ['SPONGE', 0]]);
+    expect(after.capacity[1]).toEqual(['manufacturer_rating', 60, null]);
   });
 
-  test('D: a catalog sponge still scores its current catalog GPH after reload', async ({ page }) => {
+  test('D: a catalog sponge is re-resolved by rating after reload (phase B: never its catalog GPH)', async ({ page }) => {
     await seedStorage(page, {});
     await openAdvisor(page);
     await setUpTank(page, '10g');
     await addProduct(page, 'aquaneat-sponge-20');
     const after = await reloadAndCompare(page, '10g');
-    expect(after.scoring[0][1]).toBe('SPONGE');
-    expect(after.scoring[0][2]).toBeGreaterThan(0);
-    expect(after.capacity[0]).toEqual(['flow', null, null]);
+    expect(after.scoring[0]).toEqual(['aquaneat-sponge-20', 'SPONGE', 0]);
+    // The catalog's review-only max (needs_review) rides along as metadata; it is not scored.
+    expect(after.capacity[0]).toEqual(['manufacturer_rating', 20, null]);
+    expect(after.level).toBe('not-evaluated');
   });
 
   test('F: an old v1 plan loads, scores as before and is written back as v2 (v1 kept)', async ({ page }) => {
@@ -148,16 +154,17 @@ test.describe('saved filters v2', () => {
     await settle(page);
     const first = await snapshot(page);
     expect(first.scoring.map((row) => row[0])).toEqual(['aquaneat-sponge-20', 'manual-old1', 'retired-product']);
-    expect(first.scoring[0][2]).not.toBe(999);
+    expect(first.scoring[0][2]).toBe(0);
     expect(first.scoring.slice(1).map((row) => row[2])).toEqual([150, 250]);
     const v2 = JSON.parse((await stored(page, V2)) as string);
-    expect(v2.filters.map((entry: { capacityMethod: string }) => entry.capacityMethod)).toEqual(['flow', 'flow', 'flow']);
+    expect(v2.filters.map((entry: { capacityMethod: string }) => entry.capacityMethod)).toEqual(['manufacturer_rating', 'flow', 'flow']);
+    // Phase B: the v1 mirror keeps the powered filters only.
     expect(JSON.parse((await stored(page, V1)) as string).map((entry: { id: string }) => entry.id))
-      .toEqual(['aquaneat-sponge-20', 'manual-old1', 'retired-product']);
+      .toEqual(['manual-old1', 'retired-product']);
     await reloadAndCompare(page);
   });
 
-  test('G + future fields: a v2 fixture loads directly; capacity fields survive but are not scored', async ({ page }) => {
+  test('G + capacity fields: a v2 fixture loads directly; a catalog sponge takes the catalog rating, not saved fields', async ({ page }) => {
     const fixture = {
       v: 2,
       filters: [
@@ -172,11 +179,12 @@ test.describe('saved filters v2', () => {
     const first = await snapshot(page);
     expect(first.scoring.map((row) => row[0])).toEqual(['aquaneat-sponge-20', 'manual-fixt']);
     expect(first.instanceIds).toEqual(['f-fixt01', 'f-fixt02']);
-    expect(first.capacity).toEqual([['manufacturer_rating', 20, 10], ['flow', null, null]]);
-    // The sponge is still scored at the catalog GPH (not the stored 1, not a rating).
-    expect(first.scoring[0][2]).toBeGreaterThan(1);
+    // Phase B: the catalog sponge's rating comes from the current catalog (max 20, needs_review),
+    // not the saved max 20 / min 10; it scores no GPH.
+    expect(first.capacity).toEqual([['manufacturer_rating', 20, null], ['flow', null, null]]);
+    expect(first.scoring[0][2]).toBe(0);
     const saved = JSON.parse((await stored(page, V2)) as string);
-    expect(saved.filters[0]).toMatchObject({ instanceId: 'f-fixt01', capacityMethod: 'manufacturer_rating', manufacturerMaxGallons: 20, manufacturerMinGallons: 10 });
+    expect(saved.filters[0]).toEqual({ instanceId: 'f-fixt01', source: 'product', productId: 'aquaneat-sponge-20', type: 'SPONGE', capacityMethod: 'manufacturer_rating' });
     // Rating-method entries never reach the v1 mirror.
     expect(JSON.parse((await stored(page, V1)) as string).map((entry: { id: string }) => entry.id)).toEqual(['manual-fixt']);
     await reloadAndCompare(page);

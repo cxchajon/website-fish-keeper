@@ -1,13 +1,26 @@
 import { canonicalizeFilterType } from '../../utils.js';
 import {
   computeTurnover,
+  effectiveCapacityMethod,
   getTotalGPH,
   hasUnsupportedCapacityMethod,
+  isRatingBasedSponge,
+  isSpongeFilter,
   normalizeFilters,
   pickPassthroughFields,
   resolveCapacityMethod,
 } from './math.js';
 import { createInstanceId, readSavedFilters, writeSavedFilters } from './saved-state.js';
+import {
+  SPONGE_ITEM_LABEL,
+  buildCustomSpongeItem,
+  buildSpongeProductItem,
+  needsCustomRating,
+  parseRatedGallons,
+  restoreSpongeItem,
+  spongeChipBadge,
+  spongeOptionDetails,
+} from './sponge-items.js';
 import {
   loadFilterCatalog as fetchFilterCatalog,
   filterByTank as filterCatalogByTank,
@@ -53,6 +66,8 @@ const refs = {
   productAddBtn: null,
   manualType: null,
   manualInput: null,
+  manualRatingField: null,
+  manualRatingInput: null,
   manualAddBtn: null,
   manualNote: null,
   productNote: null,
@@ -77,6 +92,12 @@ let productStatusTimer = 0;
 let lastOptionsSignature = '';
 let productDebugText = '';
 let productDebugVisible = false;
+// A custom sponge (restored from an old plan, "Rating needed") whose rating the user is entering:
+// Add replaces it in place instead of adding a second sponge.
+let pendingRatingTargetId = '';
+const SPONGE_MANUAL_NOTE = 'Rated for up to ___ gallons: enter the tank size the manufacturer rates this sponge for (printed on the box or listing, e.g. \u201cup to 20 gallons\u201d; for a range like 10\u201340 gal, enter 40). Sponge filters are checked by this rating; water flow isn\u2019t estimated.';
+const SPONGE_RATING_ERROR = 'Enter the tank size this sponge is rated for: a whole number of gallons from 1 to 999.';
+const FLOW_ERROR = 'Select a filter type and enter a positive flow value (GPH).';
 
 const catalogMeta = {
   source: CATALOG_SOURCES.FALLBACK,
@@ -241,6 +262,10 @@ function formatGallonsRange(min, max) {
 
 function formatProductOption(item) {
   const label = item?.name ? item.name : item?.id ?? '';
+  // Sponges show their rating state, never the legacy catalog GPH or the GPH-bucket tank range.
+  if (isSpongeFilter(item)) {
+    return label ? `${label} • ${spongeOptionDetails(item)}` : spongeOptionDetails(item);
+  }
   const details = [];
   if (Number.isFinite(item?.gphRated) && item.gphRated > 0) {
     details.push(`${formatGph(item.gphRated)} GPH`);
@@ -279,7 +304,15 @@ function formatFilterTypeLabel(value) {
 
 function computeManualLabel(type, gph) {
   const labelType = formatFilterTypeLabel(type);
+  // A custom sponge is named without any flow: its GPH (if an old plan had one) is not used.
+  if (labelType === 'Sponge') {
+    return SPONGE_ITEM_LABEL;
+  }
   return `${labelType} ${formatGph(gph)} GPH`;
+}
+
+function isManualSpongeType(type) {
+  return canonicalizeFilterType(type) === 'SPONGE';
 }
 
 // Powerheads stay distinct from filters: they add circulation, not biological filtration.
@@ -294,9 +327,14 @@ function canAddProduct(product) {
   return !state.filters.some((entry) => entry.source === FILTER_SOURCES.PRODUCT && entry.id === product.id);
 }
 
-function canAddManual(type, gph) {
+// Powered / circulation types need a positive GPH; a sponge needs its rated tank size instead.
+function canAddManual(type, value) {
+  if (typeof type !== 'string' || !type.trim()) return false;
+  if (isManualSpongeType(type)) {
+    return parseRatedGallons(value) !== null;
+  }
   const canonicalType = canonicalizeFilterType(type);
-  const rated = clampGph(gph);
+  const rated = clampGph(value);
   return Boolean(canonicalType) && Number.isFinite(rated) && rated > 0;
 }
 
@@ -311,22 +349,28 @@ function setButtonState(button, enabled) {
   }
 }
 
-// Identity and capacity fields an item carries through the calculator and saved state. Scoring
-// still reads only type and GPH (sponge migration phase A).
+// Identity and capacity fields an item carries through the calculator and saved state. A sponge
+// always resolves to manufacturer_rating (type wins over stale "flow" data, phase B).
 function capacityFields(item) {
   return {
     ...pickPassthroughFields(item),
-    capacityMethod: resolveCapacityMethod(item),
+    capacityMethod: effectiveCapacityMethod(item),
   };
 }
 
+function isSpongeItem(item) {
+  return isSpongeFilter({ type: canonicalizeFilterType(item?.type ?? 'HOB') });
+}
+
 function toAppFilter(item) {
-  const gph = clampGph(item?.gph);
   const source = normalizeSource(item?.source);
   const baseType = item?.type ?? (source === FILTER_SOURCES.PRODUCT ? item?.type : 'HOB');
   const type = canonicalizeFilterType(baseType);
   const efficiencyType = resolveEfficiencyType(item?.efficiencyType ?? baseType);
-  return {
+  // A sponge carries no flow, whatever its item holds.
+  const sponge = isSpongeFilter({ type });
+  const gph = sponge ? null : clampGph(item?.gph);
+  const appFilter = {
     id: typeof item?.id === 'string' && item.id ? item.id : null,
     type,
     rated_gph: gph ?? 0,
@@ -334,6 +378,11 @@ function toAppFilter(item) {
     source,
     ...capacityFields(item),
   };
+  // The engine names each sponge in its rating messages.
+  if (sponge && typeof item?.label === 'string' && item.label) {
+    appFilter.label = item.label;
+  }
+  return appFilter;
 }
 
 // Saved as ttg.stocking.filters.v2, with the v1 mirror older scripts read (see saved-state.js).
@@ -373,6 +422,9 @@ function computeFilterStats(appFilters, { gallons = state.tankGallons } = {}) {
     circulationGph: totals.circulation,
     turnover: totals.rated > 0 && hasVolume ? computeTurnover(totals.biological, volume) : null,
     totalTurnover: totals.rated > 0 && hasVolume ? computeTurnover(totals.rated, volume) : null,
+    // Sponges are counted, never measured in GPH.
+    spongeCount: normalizedFilters.filter((entry) => isRatingBasedSponge(entry)).length,
+    poweredCount: normalizedFilters.filter((entry) => entry.role === 'biological' && !isRatingBasedSponge(entry)).length,
     normalizedFilters: normalizedFilters.map((entry) => ({ ...entry })),
   };
 }
@@ -400,7 +452,8 @@ function applyFiltersToApp() {
   if (primaryProduct) {
     appState.filterId = primaryProduct.id ?? null;
     appState.filterType = canonicalizeFilterType(primaryProduct.type ?? 'HOB');
-    appState.ratedGph = clampGph(primaryProduct.gph);
+    // A sponge has no rated flow: its legacy catalog GPH is never handed to the calculator.
+    appState.ratedGph = isSpongeItem(primaryProduct) ? null : clampGph(primaryProduct.gph);
   } else {
     appState.filterId = null;
     appState.filterType = null;
@@ -447,6 +500,12 @@ function ensureRefs() {
   if (!refs.manualInput) {
     refs.manualInput = document.getElementById('fs-gph');
   }
+  if (!refs.manualRatingField) {
+    refs.manualRatingField = document.querySelector('[data-role="fs-rating-field"]');
+  }
+  if (!refs.manualRatingInput) {
+    refs.manualRatingInput = document.getElementById('fs-rated-gallons');
+  }
   if (!refs.manualAddBtn) {
     refs.manualAddBtn = document.getElementById('fs-add-custom');
   }
@@ -482,21 +541,58 @@ function ensureRefs() {
 function updateProductLabel(productItem) {
   productDebugVisible = Boolean(productItem);
   productDebugText = productItem
-    ? `${productItem.label} • ${formatGph(productItem.gph)} GPH`
+    ? `${productItem.label} • ${isSpongeItem(productItem) ? spongeChipBadge(productItem) : `${formatGph(productItem.gph)} GPH`}`
     : '';
   syncProductDebug();
+}
+
+function manualTypeIsSponge() {
+  return isManualSpongeType(refs.manualType?.value || '');
+}
+
+// The field that is active for the chosen custom type: rated gallons for a sponge, GPH otherwise.
+function activeManualInput() {
+  return manualTypeIsSponge() && refs.manualRatingInput ? refs.manualRatingInput : refs.manualInput;
+}
+
+// The note under the custom row matches the active field.
+function defaultManualNote() {
+  return manualTypeIsSponge() ? SPONGE_MANUAL_NOTE : baseManualNote;
 }
 
 function setManualNote(message, { isError = false } = {}) {
   if (refs.manualNote && typeof message === 'string') {
     refs.manualNote.textContent = message;
   }
-  if (refs.manualInput) {
-    if (isError) {
-      refs.manualInput.setAttribute('aria-invalid', 'true');
+  [refs.manualInput, refs.manualRatingInput].forEach((input) => {
+    if (!input) return;
+    if (isError && input === activeManualInput()) {
+      input.setAttribute('aria-invalid', 'true');
     } else {
-      refs.manualInput.removeAttribute('aria-invalid');
+      input.removeAttribute('aria-invalid');
     }
+  });
+}
+
+// Sponge → "Rated for up to ___ gallons"; every other type → GPH. A value typed for one field is
+// never carried into the other: switching type clears the field being hidden.
+function syncManualFields() {
+  const sponge = manualTypeIsSponge();
+  if (refs.manualRatingField) {
+    refs.manualRatingField.hidden = !sponge;
+    refs.manualRatingField.style.display = sponge ? 'inline-flex' : 'none';
+  }
+  if (refs.manualInput) {
+    if (sponge && refs.manualInput.value) refs.manualInput.value = '';
+    refs.manualInput.hidden = sponge;
+    const gphLabel = document.querySelector('label[for="fs-gph"]');
+    if (gphLabel) gphLabel.hidden = sponge;
+  }
+  if (refs.manualRatingInput && !sponge && refs.manualRatingInput.value) {
+    refs.manualRatingInput.value = '';
+  }
+  if (!sponge) {
+    pendingRatingTargetId = '';
   }
 }
 
@@ -543,6 +639,9 @@ function showProductStatus(message, { duration = 2400 } = {}) {
 
 function renderChips() {
   if (!refs.chips) return;
+  if (pendingRatingTargetId && !state.filters.some((item) => item.id === pendingRatingTargetId)) {
+    pendingRatingTargetId = '';
+  }
   refs.chips.innerHTML = '';
   const hasFilters = state.filters.length > 0;
   refs.chips.dataset.hasFilters = hasFilters ? 'true' : 'false';
@@ -576,7 +675,6 @@ function renderChips() {
     const gph = document.createElement('span');
     gph.className = 'proto-filter-chip__gph fp-chip__badge';
     gph.setAttribute('aria-hidden', 'true');
-    gph.innerHTML = `${formatGph(item.gph)}&nbsp;GPH`;
 
     const remove = document.createElement('button');
     remove.type = 'button';
@@ -585,9 +683,33 @@ function renderChips() {
     remove.setAttribute('aria-label', `Remove ${item.label}`);
     remove.textContent = '×';
 
+    let rate = null;
+    if (isSpongeItem(item)) {
+      // A sponge shows its manufacturer rating (or "Rating needed"), never a GPH.
+      const badge = spongeChipBadge(item);
+      gph.textContent = badge;
+      gph.dataset.rating = badge === 'Rating needed' ? 'needed' : 'rated';
+      gph.removeAttribute('aria-hidden');
+      label.setAttribute('title', `${item.label} — ${badge}`);
+      remove.setAttribute('aria-label', `Remove ${item.label} (${badge})`);
+      if (needsCustomRating(item)) {
+        // An old custom sponge (no rating): let the user enter the number printed on the box.
+        rate = document.createElement('button');
+        rate.type = 'button';
+        rate.className = 'proto-filter-chip__rate';
+        rate.dataset.rateFilter = item.id ?? '';
+        rate.textContent = 'Add rating';
+        rate.setAttribute('aria-label', `Add the manufacturer tank rating for ${item.label}`);
+        rate.style.cssText = 'flex:0 0 auto;width:auto;min-width:0;min-height:0;height:auto;margin:0;white-space:nowrap;border:1px solid currentColor;background:transparent;color:inherit;border-radius:6px;font-size:12px;line-height:1.2;padding:2px 6px;cursor:pointer;';
+      }
+    } else {
+      gph.innerHTML = `${formatGph(item.gph)}&nbsp;GPH`;
+    }
+
     chip.appendChild(icon);
     chip.appendChild(label);
     chip.appendChild(gph);
+    if (rate) chip.appendChild(rate);
     chip.appendChild(remove);
     refs.chips.appendChild(chip);
   });
@@ -607,8 +729,15 @@ function currentStats() {
 }
 
 // "Filtration: 150 GPH • 5.2×/h" counts filters only; powerheads are listed as circulation.
+// Sponges (phase B) are listed by count: they are rated by tank size and have no flow or turnover.
 function formatSummary(stats) {
-  const base = `Filtration: ${formatGph(stats.biologicalGph)} GPH • ${formatTurnover(stats.turnover)}×/h`;
+  const spongeCount = stats.spongeCount ?? 0;
+  const sponges = `${spongeCount} sponge filter${spongeCount === 1 ? '' : 's'} (rated by tank size)`;
+  const flow = `${formatGph(stats.biologicalGph)} GPH • ${formatTurnover(stats.turnover)}×/h`;
+  let base = `Filtration: ${flow}`;
+  if (spongeCount > 0) {
+    base = (stats.poweredCount ?? 0) > 0 ? `Filtration: ${flow} + ${sponges}` : `Filtration: ${sponges}`;
+  }
   return stats.circulationGph > 0 ? `${base} (+${formatGph(stats.circulationGph)} GPH circulation only)` : base;
 }
 
@@ -652,8 +781,8 @@ function updateManualAddButton() {
   const button = refs.manualAddBtn;
   if (!button) return;
   const typeValue = refs.manualType?.value || '';
-  const gphValue = refs.manualInput?.value || '';
-  const enabled = canAddManual(typeValue, gphValue);
+  const value = activeManualInput()?.value || '';
+  const enabled = canAddManual(typeValue, value);
   setButtonState(button, enabled);
 }
 
@@ -693,22 +822,28 @@ function setFilters(nextFilters) {
     // An explicitly unsupported capacity method never becomes a flow filter.
     if (!raw || hasUnsupportedCapacityMethod(raw)) return;
     const source = normalizeSource(raw.source);
-    const gph = clampGph(raw.gph ?? raw.rated_gph ?? raw.gphRated);
-    if (!Number.isFinite(gph) || gph <= 0) {
+    const inputType = raw.type ?? (source === FILTER_SOURCES.PRODUCT ? raw.type : 'HOB');
+    const type = canonicalizeFilterType(inputType);
+    // A sponge is kept with zero flow (it is rated by tank size); its stored GPH is never read.
+    // Powered filters still need a positive GPH.
+    const sponge = isSpongeFilter({ type });
+    const gph = sponge ? 0 : clampGph(raw.gph ?? raw.rated_gph ?? raw.gphRated);
+    if (!sponge && (!Number.isFinite(gph) || gph <= 0)) {
       return;
     }
     let id = typeof raw.id === 'string' && raw.id ? raw.id : null;
     if (!id) {
       id = `manual-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
     }
-    const inputType = raw.type ?? (source === FILTER_SOURCES.PRODUCT ? raw.type : 'HOB');
-    const type = canonicalizeFilterType(inputType);
     const efficiencyType = resolveEfficiencyType(raw.efficiencyType ?? inputType);
-    const label = typeof raw.label === 'string' && raw.label
-      ? raw.label
-      : source === FILTER_SOURCES.PRODUCT
-        ? raw.name ?? id
-        : computeManualLabel(efficiencyType, gph);
+    // Custom labels are generated, so a custom sponge's old "Sponge 120 GPH" label is replaced.
+    const label = source !== FILTER_SOURCES.PRODUCT && sponge
+      ? SPONGE_ITEM_LABEL
+      : typeof raw.label === 'string' && raw.label
+        ? raw.label
+        : source === FILTER_SOURCES.PRODUCT
+          ? raw.name ?? id
+          : computeManualLabel(efficiencyType, gph);
     const key = `${source}:${id}`;
     if (seen.has(key)) {
       return;
@@ -742,6 +877,10 @@ function setFilters(nextFilters) {
 
 function createProductFilter(product) {
   if (!product || !product.id) return null;
+  // A catalog sponge carries its catalog rating, never its legacy catalog GPH (phase B).
+  if (isSpongeFilter({ type: canonicalizeFilterType(product.type ?? 'HOB') })) {
+    return buildSpongeProductItem(product);
+  }
   const rated = clampGph(product.rated_gph ?? product.ratedGph ?? product.gphRated);
   if (!rated) {
     return null;
@@ -767,15 +906,50 @@ function removeFilterById(id) {
   updateProductAddButton();
 }
 
+function newManualId() {
+  return `manual-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+}
+
+// Custom sponge: "Rated for up to ___ gallons" (the manufacturer's tank-size rating), no GPH.
+function addManualSponge(value) {
+  const target = pendingRatingTargetId
+    ? state.filters.find((item) => item.id === pendingRatingTargetId && needsCustomRating(item))
+    : null;
+  const sponge = buildCustomSpongeItem({ id: target?.id ?? newManualId(), ratedGallons: value });
+  if (!sponge) {
+    setManualNote(SPONGE_RATING_ERROR, { isError: true });
+    return false;
+  }
+  if (refs.manualRatingInput) {
+    refs.manualRatingInput.value = '';
+    refs.manualRatingInput.removeAttribute('aria-invalid');
+  }
+  pendingRatingTargetId = '';
+  setManualNote(defaultManualNote());
+  if (target) {
+    // Rating an old custom sponge replaces it in place (same chip, same instance).
+    const rated = { ...sponge, instanceId: target.instanceId };
+    setFilters(state.filters.map((item) => (item === target ? rated : item)));
+  } else {
+    setFilters(state.filters.concat([sponge]));
+  }
+  updateManualAddButton();
+  refs.manualRatingInput?.focus({ preventScroll: true });
+  return true;
+}
+
 function addManualFilter(typeValue, value) {
+  if (isManualSpongeType(typeValue)) {
+    return addManualSponge(value);
+  }
   const efficiencyType = resolveEfficiencyType(typeValue);
   const canonicalType = canonicalizeFilterType(typeValue);
   const rated = clampGph(value);
-  if (!canAddManual(canonicalType, rated)) {
-    setManualNote('Select a filter type and enter a positive flow value (GPH).', { isError: true });
+  if (!canAddManual(typeValue, rated)) {
+    setManualNote(FLOW_ERROR, { isError: true });
     return false;
   }
-  const id = `manual-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+  const id = newManualId();
   const manual = {
     id,
     source: FILTER_SOURCES.CUSTOM,
@@ -810,7 +984,12 @@ window.renderFiltration = function renderFiltration() {
 
 function tryAddCustom() {
   const typeValue = refs.manualType?.value || '';
-  const value = refs.manualInput?.value?.trim() || '';
+  if (!typeValue) {
+    setManualNote(FLOW_ERROR, { isError: true });
+    updateManualAddButton();
+    return;
+  }
+  const value = activeManualInput()?.value?.trim() || '';
   const added = addManualFilter(typeValue, value);
   if (!added) {
     updateManualAddButton();
@@ -861,9 +1040,12 @@ function renderProductOptions() {
   const tankGallons = Number.isFinite(state.tankGallons) && state.tankGallons > 0
     ? state.tankGallons
     : getTankGallons();
+  // Sponges are offered on every tank (their legacy GPH-bucket range is ignored, phase B). The
+  // fall-back to the whole catalog still depends on powered products only, as before.
   const filteredForTank = filterCatalogByTank(catalogItems, tankGallons);
   const matchCount = filteredForTank.length;
-  const items = matchCount ? filteredForTank : catalogItems.slice();
+  const poweredMatches = filteredForTank.filter((item) => !isSpongeFilter(item)).length;
+  const items = poweredMatches ? filteredForTank : catalogItems.slice();
   updateCatalogDebug({ matchedCount: matchCount, totalCount: catalogItems.length });
   if (!items.length) {
     showProductDropdownUnavailable('Filters unavailable');
@@ -883,6 +1065,12 @@ function renderProductOptions() {
     selectedValue: previousValue,
     mapOption: (item) => {
       const dataset = {};
+      if (isSpongeFilter(item)) {
+        // No GPH and no GPH-bucket range for a sponge: only its rating state.
+        dataset.filterType = item.type;
+        dataset.ratingStatus = spongeChipBadge(item) === 'Rating needed' ? 'needed' : 'verified';
+        return { value: item.id, label: formatProductOption(item), dataset };
+      }
       if (Number.isFinite(item.minGallons)) {
         dataset.minGallons = String(Math.max(0, Math.round(item.minGallons)));
       }
@@ -1016,8 +1204,12 @@ function readStoredFilters() {
 }
 
 // Catalog metadata wins for a restored product; a capacity field the catalog doesn't define keeps
-// the saved value. The instance keeps its saved instanceId.
+// the saved value. The instance keeps its saved instanceId. A catalog sponge takes its rating from
+// the current catalog only (restoreSpongeItem): a saved rating or GPH is never trusted for it.
 function restoreProductItem(product, entry) {
+  if (isSpongeFilter({ type: canonicalizeFilterType(product?.type ?? 'HOB') })) {
+    return restoreSpongeItem(entry, product);
+  }
   const productItem = createProductFilter(product);
   if (!productItem) return null;
   const saved = pickPassthroughFields(entry);
@@ -1050,12 +1242,23 @@ function hydrateFromAppState() {
     if (hasUnsupportedCapacityMethod(entry)) {
       return;
     }
+    const id = typeof entry?.id === 'string' && entry.id ? entry.id : null;
+    const product = id ? findProductById(id) : null;
+    // Type wins (phase B): a saved sponge is restored by rating, with or without a stored GPH, and
+    // that GPH is never scored. A known catalog sponge takes the current catalog record.
+    if (isSpongeFilter({ type: canonicalizeFilterType(entry?.type ?? 'HOB') })
+      && (!product || isSpongeFilter({ type: canonicalizeFilterType(product.type ?? 'HOB') }))) {
+      const item = restoreSpongeItem(entry, product);
+      if (item) {
+        if (!item.id) item.id = newManualId();
+        next.push(item);
+      }
+      return;
+    }
     const gph = clampGph(entry?.rated_gph ?? entry?.gphRated ?? entry?.gph);
     if (!gph) {
       return;
     }
-    const id = typeof entry?.id === 'string' && entry.id ? entry.id : null;
-    const product = id ? findProductById(id) : null;
     if (product) {
       const productItem = restoreProductItem(product, entry);
       if (productItem) {
@@ -1081,11 +1284,44 @@ function hydrateFromAppState() {
   setFilters(next);
 }
 
+// "Add rating" on an old custom sponge: switch the custom row to Sponge and focus the rating field;
+// Add then gives that sponge its rating in place.
+function startRatingEntry(id) {
+  const target = state.filters.find((item) => item.id === id && needsCustomRating(item));
+  if (!target || !refs.manualType) return;
+  const spongeOption = Array.from(refs.manualType.options || []).find((option) => isManualSpongeType(option.value || option.textContent || ''));
+  if (spongeOption) {
+    refs.manualType.value = spongeOption.value;
+  }
+  syncManualFields();
+  pendingRatingTargetId = target.id;
+  setManualNote(`Enter the tank size this sponge is rated for, then Add custom. ${SPONGE_MANUAL_NOTE}`);
+  updateManualAddButton();
+  refs.manualRatingInput?.focus({ preventScroll: false });
+}
+
 function handleChipClick(event) {
+  const rateButton = event.target.closest('[data-rate-filter]');
+  if (rateButton) {
+    startRatingEntry(rateButton.dataset.rateFilter || '');
+    return;
+  }
   const button = event.target.closest('[data-remove-filter]');
   if (!button) return;
   const id = button.dataset.removeFilter || '';
   removeFilterById(id);
+}
+
+function handleManualInput(input) {
+  if (input?.value) {
+    input.removeAttribute('aria-invalid');
+    if (refs.manualNote) {
+      refs.manualNote.textContent = pendingRatingTargetId && input === refs.manualRatingInput
+        ? refs.manualNote.textContent
+        : defaultManualNote();
+    }
+  }
+  updateManualAddButton();
 }
 
 function attachEventListeners() {
@@ -1097,21 +1333,31 @@ function attachEventListeners() {
       }
     });
     refs.manualInput.addEventListener('input', () => {
-      if (refs.manualInput?.value) {
-        refs.manualInput.removeAttribute('aria-invalid');
-        if (refs.manualNote && baseManualNote) {
-          refs.manualNote.textContent = baseManualNote;
-        }
+      handleManualInput(refs.manualInput);
+    });
+  }
+  if (refs.manualRatingInput) {
+    refs.manualRatingInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        tryAddCustom();
       }
-      updateManualAddButton();
+    });
+    refs.manualRatingInput.addEventListener('input', () => {
+      handleManualInput(refs.manualRatingInput);
     });
   }
   if (refs.manualType) {
+    let wasSponge = manualTypeIsSponge();
     refs.manualType.addEventListener('change', () => {
-      if (canAddManual(refs.manualType.value, refs.manualInput?.value)) {
-        setManualNote(baseManualNote);
-        refs.manualInput?.removeAttribute('aria-invalid');
+      // Switching between Sponge and a flow type swaps the field, clears the hidden one and resets
+      // the note so its message matches the active field. Flow → flow keeps the previous behaviour.
+      const isSponge = manualTypeIsSponge();
+      syncManualFields();
+      if (isSponge !== wasSponge || canAddManual(refs.manualType.value, activeManualInput()?.value)) {
+        setManualNote(defaultManualNote());
       }
+      wasSponge = isSponge;
       updateManualAddButton();
     });
   }
@@ -1161,6 +1407,7 @@ async function init() {
   if (refs.manualInput) {
     refs.manualInput.removeAttribute('readonly');
   }
+  syncManualFields();
   updateCatalogDebug();
   await loadCatalog();
   hydrateFromAppState();

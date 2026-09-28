@@ -3,7 +3,7 @@ import { validateSpeciesRecord } from "./speciesSchema.js";
 import { EMPTY_TANK } from '../stocking/tankStore.js';
 import { canonicalizeFilterType, sumGph } from '../utils.js';
 import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent } from '../bioload.js';
-import { assessFiltration, FILTRATION_LEVELS, MIN_BIOLOGICAL_TURNOVER, pickPassthroughFields, hasUnsupportedCapacityMethod } from '../stocking-advisor/filtration/math.js';
+import { assessFiltration, FILTRATION_LEVELS, FILTRATION_STATUS, MIN_BIOLOGICAL_TURNOVER, CAPACITY_METHODS, pickPassthroughFields, hasUnsupportedCapacityMethod, isSpongeFilter } from '../stocking-advisor/filtration/math.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import { BEHAVIOR_TAGS } from './behaviorTags.js';
 import { evaluateStockWarnings } from './warnings.js';
@@ -250,22 +250,39 @@ function clampFlowRate(value) {
   return Math.min(Math.round(num), 1500);
 }
 
+const UNSUPPORTED_CAPACITY_METHOD = 'unsupported';
+
 function sanitizeFilter(filter) {
   if (!filter || typeof filter !== 'object') {
     return { id: null, type: 'HOB', rated_gph: 0 };
   }
   const id = typeof filter.id === 'string' && filter.id.trim() ? filter.id.trim() : null;
   const type = canonicalizeFilterType(filter.type ?? filter.kind ?? filter.filterType);
-  // An explicitly unsupported capacity method fails closed: no flow is counted for it.
-  const rated_gph = hasUnsupportedCapacityMethod(filter) ? 0 : clampFlowRate(filter.rated_gph ?? filter.gph);
-  // Scoring reads only id, type and rated_gph. Identity and future capacity fields (instanceId,
-  // productId, capacityMethod, manufacturer ratings) ride along so later phases can use them.
-  return {
+  const unsupported = hasUnsupportedCapacityMethod(filter);
+  // Type wins (sponge migration phase B): a SPONGE never carries flow, whatever gph / rated_gph /
+  // capacityMethod "flow" stale data holds. It stays in the list with 0 GPH and is evaluated by its
+  // manufacturer tank rating. An explicitly unsupported capacity method fails closed: no flow.
+  const sponge = !unsupported && isSpongeFilter({ type });
+  const rated_gph = unsupported || sponge ? 0 : clampFlowRate(filter.rated_gph ?? filter.gph);
+  // Flow scoring reads id, type and rated_gph; the sponge rating reads the capacity fields. Identity
+  // fields (instanceId, productId) ride along.
+  const sanitized = {
     id,
     type,
     rated_gph,
     ...pickPassthroughFields(filter),
   };
+  if (unsupported && isSpongeFilter({ type })) {
+    // Keep the entry failing closed downstream: without a method a SPONGE would resolve to
+    // manufacturer_rating again. The marker is itself an unsupported value.
+    sanitized.capacityMethod = UNSUPPORTED_CAPACITY_METHOD;
+  }
+  if (sponge) {
+    sanitized.capacityMethod = CAPACITY_METHODS.MANUFACTURER_RATING;
+    // Names each sponge in the multi-sponge / below-rating messages.
+    if (typeof filter.label === 'string' && filter.label.trim()) sanitized.label = filter.label.trim();
+  }
+  return sanitized;
 }
 
 export function sanitizeFilterList(filters) {
@@ -1026,12 +1043,48 @@ function formatTurnoverPhrase(value) {
 // cannot make a heavily stocked tank lighter, and a missing or weak one does not change how much
 // waste the livestock produce.
 // Species flow preferences are not used here: they describe circulation, not biological filtration.
+function spongeName(sponge, index) {
+  return sponge.label || `Sponge filter ${index + 1}`;
+}
+
+// Each sponge's own rating, never a sum. Repeated names (two custom "Sponge filter"s) are numbered.
+function listSpongeRatings(sponges) {
+  const names = sponges.map((sponge, index) => spongeName(sponge, index));
+  const seen = new Map();
+  return sponges.map((sponge, index) => {
+    const name = names[index];
+    const repeated = names.filter((other) => other === name).length > 1;
+    const count = (seen.get(name) ?? 0) + 1;
+    seen.set(name, count);
+    return `${repeated ? `${name} ${count}` : name}: rated ${sponge.ratingText}`;
+  }).join('; ');
+}
+
+function poweredFlowSentence(assessment, gallons) {
+  return `${Math.round(assessment.biologicalGph)} GPH through filter media turns this ${gallons}-gallon tank over ${formatTurnoverPhrase(assessment.biologicalTurnover)} per hour, below the ${MIN_BIOLOGICAL_TURNOVER}× minimum.`;
+}
+
+const FILTRATION_SUPPORT_NOTE = 'Filtration supports your livestock but does not increase stocking capacity.';
+const RATING_NEEDED_HINT = 'For a custom sponge, enter the tank size the manufacturer rates it for (printed on the box or listing).';
+
+// Filtration warnings. They sit beside the bioload percentage and never change it: a bigger filter
+// cannot make a heavily stocked tank lighter, and a missing or weak one does not change how much
+// waste the livestock produce.
+// Species flow preferences are not used here: they describe circulation, not biological filtration.
+// Sponge states (phase B) use the manufacturer tank rating; no sponge state is red, and no sponge
+// GPH, turnover or combined gallon figure is ever shown.
 function buildFiltrationWarnings(assessment) {
   const warnings = [];
   const gallons = formatGallonsValue(assessment.gallons);
   const push = (id, severity, title, message) => {
     warnings.push({ id, severity, icon: 'alert', kind: 'filtration', title, message, text: `${title} — ${message}` });
   };
+  const sponges = assessment.sponge?.entries ?? [];
+  const verified = sponges.filter((sponge) => sponge.ratingStatus === 'verified');
+  const unratedCount = sponges.length - verified.length;
+  const unratedNote = unratedCount > 0
+    ? ` ${unratedCount === 1 ? 'One sponge has' : `${unratedCount} sponges have`} no verified rating yet, so ${unratedCount === 1 ? 'it isn\'t' : 'they aren\'t'} evaluated.`
+    : '';
   switch (assessment.level) {
     case FILTRATION_LEVELS.NONE:
       push('filtration.none', 'warn', 'No filter added',
@@ -1045,6 +1098,46 @@ function buildFiltrationWarnings(assessment) {
       push('filtration.very_low', 'danger', 'Filter flow too low',
         `${Math.round(assessment.biologicalGph)} GPH through filter media turns this ${gallons}-gallon tank over ${formatTurnoverPhrase(assessment.biologicalTurnover)} per hour, below the ${MIN_BIOLOGICAL_TURNOVER}× minimum. Check the flow value, or use a filter sized for this tank.`);
       break;
+    case FILTRATION_LEVELS.ADEQUATE: {
+      // Powered filters meeting the floor stay exactly as before (no note). A sponge carrying the
+      // tank on its own gets a neutral confirmation line, since there is no flow figure to show.
+      if (assessment.adequateBy !== 'sponge') break;
+      const rated = verified.find((sponge) => sponge.coversTank);
+      const poweredNote = assessment.powered?.belowFloor
+        ? ` The powered filter's flow is below the ${MIN_BIOLOGICAL_TURNOVER}× minimum, but the sponge is rated for this tank on its own.`
+        : '';
+      push('filtration.sponge_rated', 'info', `${FILTRATION_STATUS.SPONGE_RATED.icon} ${FILTRATION_STATUS.SPONGE_RATED.text}`,
+        `Manufacturer rating: ${rated.ratingText} · Tank: ${gallons} gal. Sponge filters are sized by tank; water flow isn't estimated.${poweredNote} ${FILTRATION_SUPPORT_NOTE}`);
+      break;
+    }
+    case FILTRATION_LEVELS.LIKELY_MULTI_SPONGE: {
+      const poweredNote = assessment.powered?.belowFloor ? ` ${poweredFlowSentence(assessment, gallons)}` : '';
+      push('filtration.likely_multi_sponge', 'warn', FILTRATION_STATUS[FILTRATION_LEVELS.LIKELY_MULTI_SPONGE].text,
+        `${listSpongeRatings(verified)}. Tank: ${gallons} gal. No single sponge is rated for this tank. Several sponges add media and backup, but their combined capacity isn't verified.${poweredNote}${unratedNote}`);
+      break;
+    }
+    case FILTRATION_LEVELS.BELOW_RATING: {
+      const ratingLine = verified.length === 1
+        ? `Filter rating: ${verified[0].ratingText} · Tank: ${gallons} gal.`
+        : `${listSpongeRatings(verified)}. Tank: ${gallons} gal.`;
+      push('filtration.below_rating', 'warn', FILTRATION_STATUS[FILTRATION_LEVELS.BELOW_RATING].text,
+        `${ratingLine} Add a second sponge or a filter rated for this tank.${unratedNote}`);
+      break;
+    }
+    case FILTRATION_LEVELS.REVIEW: {
+      const spongeLine = verified.length
+        ? `Sponge filter: ${listSpongeRatings(verified)} — below this ${gallons}-gallon tank.${unratedNote}`
+        : `Sponge filter: rating needed, so it can't be evaluated yet. ${RATING_NEEDED_HINT}`;
+      push('filtration.review', 'warn', FILTRATION_STATUS[FILTRATION_LEVELS.REVIEW].text,
+        `Powered filter: ${poweredFlowSentence(assessment, gallons)} ${spongeLine} Neither filter is shown to be sized for this tank on its own.`);
+      break;
+    }
+    case FILTRATION_LEVELS.NOT_EVALUATED: {
+      const status = FILTRATION_STATUS[FILTRATION_LEVELS.NOT_EVALUATED];
+      push('filtration.rating_needed', 'info', `${status.icon} ${status.text}`,
+        `${sponges.length === 1 ? 'This sponge filter has' : 'These sponge filters have'} no verified manufacturer tank rating, so filtration isn't evaluated — not adequate, not unsafe. ${RATING_NEEDED_HINT}`);
+      break;
+    }
     default:
       break;
   }
@@ -1058,25 +1151,35 @@ function buildFilteringState(state, tank, entries) {
   const stockCount = Array.isArray(entries) ? entries.length : 0;
   const band = resolveTurnoverBand(entries);
   const assessment = assessFiltration({ filters: sanitized, gallons, hasStock: stockCount > 0 });
+  // Flow data (GPH/turnover) and "has a filter" are different since phase B: a sponge is biological
+  // filtration with no flow figure.
   const hasFlowData = assessment.totalGph > 0;
+  const hasDevices = assessment.filters.length > 0;
   const warnings = stockCount > 0 && gallons > 0 ? buildFiltrationWarnings(assessment) : [];
+  const alerts = warnings.filter((warning) => warning.severity === 'danger' || warning.severity === 'warn');
 
   let statusTone = 'neutral';
   let statusText = 'Add filter flow to estimate turnover.';
-  if (hasFlowData && gallons <= 0) {
+  if (hasDevices && gallons <= 0) {
     statusTone = 'warn';
     statusText = 'Select a tank to calculate turnover.';
-  } else if (hasFlowData && stockCount === 0) {
+  } else if (hasDevices && stockCount === 0) {
     statusText = 'No stock yet — filter flow is checked once species are added.';
-  } else if (warnings.length) {
-    const top = warnings.find((warning) => warning.severity === 'danger') ?? warnings[0];
+  } else if (alerts.length) {
+    const top = alerts.find((warning) => warning.severity === 'danger') ?? alerts[0];
     statusTone = top.severity === 'danger' ? 'bad' : 'warn';
     statusText = top.title;
+  } else if (assessment.level === FILTRATION_LEVELS.NOT_EVALUATED) {
+    statusText = FILTRATION_STATUS[FILTRATION_LEVELS.NOT_EVALUATED].text;
+  } else if (assessment.adequateBy === 'sponge') {
+    statusTone = 'good';
+    statusText = FILTRATION_STATUS.SPONGE_RATED.text;
   } else if (hasFlowData) {
     statusTone = 'good';
     statusText = `Filter flow meets the ${MIN_BIOLOGICAL_TURNOVER}× minimum.`;
   }
-  const top = warnings.find((warning) => warning.severity === 'danger') ?? warnings[0] ?? null;
+  // Neutral notes ("Rated for this tank", "Rating needed") are shown but never become the chip.
+  const top = alerts.find((warning) => warning.severity === 'danger') ?? alerts[0] ?? null;
 
   return {
     filters: sanitized,
@@ -1983,8 +2086,9 @@ export function buildComputedState(state) {
   }
   const tankSuitability = evaluateTankSuitability(tank, entries, candidate);
   const fishPredation = evaluateFishPredation(entries, candidate);
+  // A neutral filtration note (severity "info": rated sponge, rating needed) is not an issue.
   const filtrationIssues = filtering.warnings.map((warning) => ({
-    severity: warning.severity === 'danger' ? 'bad' : 'warn',
+    severity: warning.severity === 'danger' ? 'bad' : warning.severity === 'warn' ? 'warn' : 'ok',
     message: warning.title,
   }));
   const groupWarnings = evaluateGroupWarnings(entries, candidate);

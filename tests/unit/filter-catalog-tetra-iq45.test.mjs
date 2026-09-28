@@ -57,12 +57,15 @@ test('tetra-whisper-iq-45 stores the manufacturer 215 GPH, type HOB, range uncha
 });
 
 test('no other runtime catalog record changed', () => {
-  const others = RAW.filter((item) => item.id !== ID);
+  // The seven SPONGE records changed intentionally in sponge migration phase B (rating metadata,
+  // neutral names; pinned in filter-sponge-phase-b.test.mjs). Every other record is unchanged.
+  const others = RAW.filter((item) => item.id !== ID && item.type !== 'SPONGE');
   assert.equal(RAW.length, 41);
-  // Fingerprint of every other record as of main @ 634f4f2. An intentional catalog edit elsewhere
-  // must update this value in the same change.
+  assert.equal(others.length, 33);
+  // Fingerprint of every other non-sponge record as of main @ f24098e (identical to 634f4f2 for
+  // these records). An intentional catalog edit elsewhere must update this value in the same change.
   const digest = createHash('sha256').update(JSON.stringify(others)).digest('hex');
-  assert.equal(digest, 'a13a41ebfad28b795fadfce3efda676f17d802c6f1c1e707a597006357fc14d1');
+  assert.equal(digest, '35d3fccf9a362d6bc55d1134f29e3945fb1bd9aef6058b350a74a4e625dd99ef');
   // Batch 1 values stay pinned.
   const gph = (id) => RAW.find((item) => item.id === id).gphRated;
   assert.equal(gph('aquaclear-70'), 300);
