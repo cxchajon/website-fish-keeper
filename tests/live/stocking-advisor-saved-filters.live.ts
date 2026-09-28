@@ -1,6 +1,6 @@
-// Live check of the saved-filter v2 plumbing and the sponge migration phase B rating model against
-// production. Each test runs in a fresh browser context, so it only touches its own throwaway
-// localStorage.
+// Live check of the saved-filter v2 plumbing, the sponge migration phase B rating model and the
+// phase C stale-data fallback against production. Each test runs in a fresh browser context, so it
+// only touches its own throwaway localStorage.
 import { test, expect, type Page } from '@playwright/test';
 
 const V1 = 'ttg.stocking.filters.v1';
@@ -420,6 +420,105 @@ test('a phase A v2 catalog sponge (capacityMethod flow, gph 120) restores by rat
   ] });
   expect(await stored(page, V1)).toBeNull();
   expect(errors).toEqual({ page: [], console: [] });
+});
+
+// Sponge migration phase C (report: _internal/reports/stocking-advisor-sponge-migration-phase-c-2026-09.md).
+// The catalog-unavailable fallback: with no catalog to re-resolve the id, a known sponge saved with a
+// contradictory powered type and a fake GPH must still restore as a 0-GPH sponge (before phase C it
+// restored as a 900 GPH HOB and was saved back that way).
+test('phase C: catalog unavailable — a known sponge id saved as a 900 GPH HOB fails safe as a sponge (0 GPH, Rating needed)', async ({ page }) => {
+  const errors = trackErrors(page);
+  const CATALOG_PATH = '/assets/data/gearCatalog.json';
+  let catalogRequests = 0;
+  // Only the filter catalog data request fails; the page and every JS module load normally.
+  await page.route((url) => url.pathname === CATALOG_PATH, (route) => {
+    catalogRequests += 1;
+    return route.abort('failed');
+  });
+  // Fresh context: there is no cached catalog (ttg.gear.catalog.v2) to fall back on either.
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem('__phaseC_seeded')) return;
+    sessionStorage.setItem('__phaseC_seeded', '1');
+    localStorage.removeItem('ttg.gear.catalog.v2');
+    localStorage.removeItem('ttg.gear.catalog.v1');
+    localStorage.removeItem('ttg.stocking.filters.v1');
+    localStorage.setItem('ttg.stocking.filters.v2', JSON.stringify({ v: 2, filters: [
+      { instanceId: 'f-phasec', source: 'product', productId: 'aquaneat-sponge-20', type: 'HOB', capacityMethod: 'flow', gph: 900 },
+    ] }));
+  });
+  await openAdvisor(page);
+  await setUp(page, '10g');
+  await settle(page);
+
+  // The fallback path really ran: the catalog request failed and nothing resolved the product.
+  expect(catalogRequests).toBeGreaterThan(0);
+  await expect(page.locator('#filter-product')).toHaveAttribute('data-catalog-ready', '0');
+  expect(await stored(page, 'ttg.gear.catalog.v2')).toBeNull();
+
+  const state = await snapshot(page);
+  expect(state.scoring).toEqual([['aquaneat-sponge-20', 'SPONGE', 0]]);
+  expect(state.capacity).toEqual([['aquaneat-sponge-20', 'manufacturer_rating', 'needed']]);
+  // The fake 900 GPH adds nothing: no biological GPH, no turnover, not adequate from flow.
+  expect(state.gph).toEqual([0, 0, 0]);
+  expect(state.turnover).toBe(0);
+  expect(state.level).toBe('not-evaluated');
+  expect(state.adequateBy).toBeNull();
+  expect(state.spongeStatus).toBe('rating-needed');
+  expect(state.spongeRated).toBe(false);
+  expect(state.status.tone).not.toBe('good');
+  expect(state.filtrationWarnings).toEqual([['filtration.rating_needed', 'info']]);
+  // Still biological filtration: never "No biological filter" / "No filter added".
+  expect(filtrationWarningIds(state)).not.toContain('filtration.circulation_only');
+  expect(filtrationWarningIds(state)).not.toContain('filtration.none');
+  const engine = await page.evaluate(async () => {
+    const compute = await import('/js/logic/compute.js');
+    const appState = (window as unknown as { appState: Record<string, unknown> }).appState;
+    const computed = compute.buildComputedState(appState);
+    const withoutFilters = compute.buildComputedState({ ...appState, filters: [] });
+    const load = (c: { bioload: Record<string, unknown> }) => [c.bioload.currentPercent, c.bioload.proposedPercent, c.bioload.text, c.bioload.severity];
+    return {
+      hasBiologicalFiltration: computed.filtering.assessment?.hasBiologicalFiltration ?? null,
+      hasBiologicalGph: computed.filtering.assessment?.hasBiologicalGph ?? null,
+      load: load(computed),
+      loadWithoutFilters: load(withoutFilters),
+    };
+  });
+  expect(engine.hasBiologicalFiltration).toBe(true);
+  expect(engine.hasBiologicalGph).toBe(false);
+  // Stocking Load is exactly what the same stock gives with no filter at all.
+  expect(engine.load).toEqual(engine.loadWithoutFilters);
+  // Nothing shows the fake flow.
+  await expect(chip(page, 'aquaneat-sponge-20').locator('.proto-filter-chip__gph')).toHaveText('Rating needed');
+  expect(state.summary).toBe('Filtration: 1 sponge filter (rated by tank size)');
+  expect(state.filterText).not.toMatch(/900|×\/h/);
+  expect(state.bodyText).not.toMatch(/\b900\s*GPH\b/i);
+
+  // Saved back as a rating sponge (identity only), never as a 900 GPH flow filter; no v1 mirror entry.
+  const v2 = await storedJson(page, V2);
+  expect(v2).toEqual({ v: 2, filters: [
+    { instanceId: 'f-phasec', source: 'product', productId: 'aquaneat-sponge-20', type: 'SPONGE', capacityMethod: 'manufacturer_rating' },
+  ] });
+  expect(await stored(page, V1)).toBeNull();
+
+  // Still offline after a reload: the same fail-safe result, nothing rewritten as flow.
+  await reloadWithStock(page, '10g');
+  const after = await snapshot(page);
+  expect(evaluation(after)).toEqual(evaluation(state));
+  expect(await storedJson(page, V2)).toEqual(v2);
+
+  // Removing the sponge leaves the Stocking Load label unchanged.
+  const loadWithSponge = after.load;
+  await chip(page, 'aquaneat-sponge-20').locator('[data-remove-filter]').click();
+  await expect(chip(page, 'aquaneat-sponge-20')).toHaveCount(0);
+  await settle(page);
+  expect((await snapshot(page)).load).toBe(loadWithSponge);
+
+  // The only allowed console errors are the ones caused by the catalog request this test deliberately
+  // failed: the network error itself and stocking.js's own report of it. Anything else fails.
+  const inducedByOutage = (message: string) => message.includes(CATALOG_PATH)
+    || (message.startsWith('[Stocking] Filter catalog load failed: TypeError: Failed to fetch'));
+  expect(errors.page).toEqual([]);
+  expect(errors.console.filter((message) => !inducedByOutage(message))).toEqual([]);
 });
 
 test('regression: 44 species, Tetra IQ 45 at 215 GPH in the live catalog, no errors on load', async ({ page }) => {

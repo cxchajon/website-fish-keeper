@@ -340,10 +340,29 @@ paths: an existing v1 plan (sponge by rating, powered unchanged, v1 flow-only), 
 sponge (Rating needed, rewritten), an unsupported `capacityMethod`, verified / needs-review catalog
 sponges and custom sponge save / reload. **Not expanded in this phase.**
 
-Recommendation for after phase C ships (not added): one live check that a known sponge id saved as
-`type:"HOB"` with a large GPH restores as a 0-GPH sponge (H1), since it is the only phase C fix whose
-failure would re-introduce scored sponge GPH in production. Everything else in phase C is covered
-by the unit and gate suites and needs no production probe.
+**Follow-up (after review): one permanent live test added** for H1, the only phase C fix whose
+failure would re-introduce scored sponge GPH in production:
+`phase C: catalog unavailable — a known sponge id saved as a 900 GPH HOB fails safe as a sponge`.
+
+- Fixture (seeded before any page script, fresh context): `ttg.stocking.filters.v2` =
+  `{v:2, filters:[{instanceId:"f-phasec", source:"product", productId:"aquaneat-sponge-20",
+  type:"HOB", capacityMethod:"flow", gph:900}]}`; `ttg.gear.catalog.v2` / `.v1` and
+  `ttg.stocking.filters.v1` removed.
+- Catalog unavailable: `page.route` aborts only `/assets/data/gearCatalog.json`; the page and all JS
+  modules load normally. The test asserts the request was attempted and failed, the product picker
+  is `data-catalog-ready="0"` and no catalog cache was written.
+- Asserts: `['aquaneat-sponge-20', 'SPONGE', 0]`, `manufacturer_rating` / `needed`, GPH `[0,0,0]`,
+  turnover 0, level `not-evaluated`, not adequate, `filtration.rating_needed` only, biological
+  filtration without biological GPH, chip "Rating needed", no "900" in the filter area and no
+  "900 GPH" on the page, saved v2 identity-only SPONGE, no v1 mirror, identical after an offline
+  reload, Stocking Load equal to the same stock with no filter (engine) and unchanged when the chip
+  is removed (label), no page errors, no site console errors except the two caused by the induced
+  outage (the network error and `stocking.js`'s existing "Filter catalog load failed" log).
+- Local validation (`BASE_URL` = a local static server, desktop Chromium): **passes on the phase C
+  branch** (3 / 3 runs; the whole live file 11 / 11); **fails on `main` @ `9af3166`** at the first
+  scoring assertion (`['aquaneat-sponge-20', 'HOB', 900]`). Not run against production, which does
+  not contain phase C yet.
+- The live suite runs only under `playwright.live.config.ts`, so gate counts are unchanged.
 
 ## 18. Deferred issues
 
@@ -374,4 +393,5 @@ by the unit and gate suites and needs no production probe.
 - `js/logic/compute.legacy.js` — `sanitizeFilter` types known sponge ids SPONGE.
 - `js/gear-data.js` — `sanitizeItem` types known sponge ids SPONGE.
 - `tests/unit/filter-sponge-phase-c.test.mjs` (new), `tests/stocking-advisor-sponge-phase-c.spec.ts` (new), `playwright.stocking-gate.config.ts` (runs the new spec).
+- Follow-up: `tests/live/stocking-advisor-saved-filters.live.ts` (one phase C live test, §17).
 - `_internal/reports/stocking-advisor-sponge-migration-phase-c-2026-09.md` (this report).
