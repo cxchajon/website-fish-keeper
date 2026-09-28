@@ -1,6 +1,6 @@
 # Stocking Advisor — sponge catalog rating evidence verification (phase B0, 2026-09)
 
-Documentation / evidence only. Resolves (as far as this environment allows) open item 1 of
+Documentation / evidence only. Resolves (as far as the evidence allows) open item 1 of
 `stocking-advisor-sponge-filter-migration-design-2026-09.md` §16: *"All seven sponge ratings …
 are grade C. Each must be confirmed at A/B before it can produce green; anything not confirmable
 ships as `needs_review` (Rating needed)."*
@@ -9,35 +9,52 @@ ships as `needs_review` (Rating needed)."*
 behaviour, the custom sponge UI and every existing sponge `gphRated` value are untouched. No phase B
 implementation is started.
 
-Base: `main` @ `062078d`. Research date: 2026-09-28.
+Base: `main` @ `062078d`. Research dates: 2026-09-28 (initial pass and final cleanup).
 
 ---
 
-## 0. Summary
+## 0. Final classification (phase B0 result)
 
-| id | Exact product identity | Rating found | Grade | Identity confidence | Phase B status |
-| --- | --- | --- | --- | --- | --- |
-| `aquaneat-sponge-60` | AQUANEAT Bio Sponge Filter, **Large up to 60 Gal**, model **SF-A004**, ASIN **B071HVZVMP** | **40–60 gal** (manual) / "up to 60 gal" (title) — max agrees | **B** | High | **Eligible** — `manufacturerMaxGallons: 60`, min 40 display-only |
-| `hygger-double-sponge-s` | hygger Aquarium Double Sponge Filter, 2 spare sponges, **(S)**, ASIN **B07RFL4JMM** | **10–40 gal** | **B** (with attribution caveat) | Medium-high | **Eligible, conditional** on the §6 identity check |
-| `hygger-double-sponge-m` | hygger Aquarium Double Sponge Filter **(M)**, ASIN **B07RKT6QPV** | **15–55 gal** | **B** (with attribution caveat) | **Medium** (two different affiliate links in repo) | **Eligible, conditional** on the §6 identity check |
-| `aquaneat-sponge-20` | AQUANEAT Bio Sponge Filter, **Middle up to 20 Gal**, ASIN **B078Q29JT4** | up to 20 gal | C | High | **Rating needed** under the locked A/B rule (see §5 policy question) |
-| `pawfly-sponge-10` | Pawfly Nano Bio Sponge Filter … up to 10 Gallon, ASIN **B09BNCRLZY** | up to 10 gal ("5–10 gal" in description) | C | High | **Rating needed** under the locked A/B rule (see §5) |
-| `aquaneat-sponge-10` | **Unresolved.** Catalog name "Single Sponge Filter (Up to 10G)" is not a real listing title; ≥ 5 AQUANEAT 10-gal candidates | up to 10 gal (every candidate) | C | **Low** | **Rating needed** |
-| `powkoo-dual-sponge-40` | **Unresolved.** Catalog name "Dual Sponge Filter (20–55G)" is not a real listing title; ≥ 4 Powkoo double-sponge candidates with conflicting ratings | 15–55 / "up to 55" / 10–40 / "up to 40" / "up to 20" depending on listing | C / conflict | **Low** | **Rating needed** |
+### 0.1 Status vocabulary (three separate categories — never collapsed)
 
-- **Strict (locked) rule — A/B only:** 3 of 7 can use rating-based evaluation
-  (`aquaneat-sponge-60`, `hygger-double-sponge-s`, `hygger-double-sponge-m`), the two hygger ones only
-  after the §6 identity check. **4 stay "Rating needed".**
-- **No product reaches grade A.** Every direct page fetch was refused by the egress proxy (§1).
-- **No evidence found for any sponge water-flow GPH.** The phase B plan to ignore `gphRated` for
-  sponges is unaffected.
-- Two identity problems were found that the earlier reports did not surface: the AQUANEAT 10 and
-  Powkoo catalog names do not match any real listing, and the repo holds **two different affiliate
-  short links for hygger (M)**.
+| Status | Meaning | Data shape proposed for phase B |
+| --- | --- | --- |
+| **VERIFIED** | Directly defensible **manufacturer** rating: the maker's own page / manual publishes the number for the exact size variant. | `ratingStatus: "verified"`, `manufacturerMaxGallons` set |
+| **SUPPORTED** | Strong **exact-product, exact-variant** evidence from retailer / marketplace / distributor / manual-mirror sources, but source ownership by the manufacturer is **not** established (§1.4). | `ratingStatus: "supported"`, `manufacturerMaxGallons` set |
+| **RATING NEEDED** | Not strong enough for green evaluation: product identity unresolved, ratings conflict, or provenance too weak. | `ratingStatus: "needs_review"`, `manufacturerMaxGallons: null` |
+
+**SUPPORTED is not VERIFIED.** The locked design (D1) allows green only for verified ratings.
+Whether a SUPPORTED product may show green in phase B **remains a product decision** (§5); until it
+is made, phase B must treat SUPPORTED exactly like RATING NEEDED for adequacy.
+
+### 0.2 Per product
+
+| id | Exact product | Rating | Final status | Basis |
+| --- | --- | --- | --- | --- |
+| `hygger-double-sponge-s` | ASIN **B07RFL4JMM** (hygger Double Sponge, **S**) | **10–40 gal** | **VERIFIED** | Two official hygger pages (HG256, HG908 family) both publish Small = 10–40 gal. Historical SKU mapping still worth confirming; does not affect the maximum. |
+| `hygger-double-sponge-m` | ASIN **B07RKT6QPV** (hygger Double Sponge, **M**) | **15–55 gal** | **VERIFIED** | Same two official pages: Medium = 15–55 gal. Same SKU-mapping note. |
+| `aquaneat-sponge-60` | ASIN **B071HVZVMP**, model **SF-A004** (Large) | **40–60 gal** | **SUPPORTED** | Manual text via third-party mirror + exact-ASIN listing; no AQUANEAT-controlled source read. |
+| `aquaneat-sponge-20` | ASIN **B078Q29JT4**, model **SF-A001** (Middle) | **up to 20 gal** | **SUPPORTED** | Exact-ASIN listing only; provenance not established. |
+| `aquaneat-sponge-10` | **Unresolved** | — | **RATING NEEDED** | Exact product not identified; catalog name is not evidence. |
+| `pawfly-sponge-10` | ASIN **B09BNCRLZY** | likely max ≈ 10 gal (**under review, not metadata**) | **RATING NEEDED** — pending stronger source provenance | Marketplace/index text only; inconsistent titles across listings. |
+| `powkoo-dual-sponge-40` | **Unresolved** | — | **RATING NEEDED** — pending exact product identity | No listing matches the catalog product; Powkoo listings conflict. |
+
+### 0.3 Counts
+
+| Status | Count | ids |
+| --- | --- | --- |
+| **VERIFIED** | **2** | `hygger-double-sponge-s`, `hygger-double-sponge-m` |
+| **SUPPORTED** | **2** | `aquaneat-sponge-60`, `aquaneat-sponge-20` |
+| **RATING NEEDED** | **3** | `aquaneat-sponge-10`, `pawfly-sponge-10`, `powkoo-dual-sponge-40` |
+
+- Exact product identity is **unresolved for 2 products** (`aquaneat-sponge-10`, `powkoo-dual-sponge-40`).
+- **Two catalog display names embed an unverified gallon claim** ("…(Up to 10G)", "…(20–55G)"), §7.
+- No source anywhere publishes a **water-flow GPH** for any of the seven; phase B's plan to ignore
+  sponge `gphRated` is unaffected.
 
 ---
 
-## 1. Method and limits
+## 1. Method, limits and source rule
 
 ### 1.1 What was tried
 
@@ -45,318 +62,346 @@ Base: `main` @ `062078d`. Research date: 2026-09-28.
 | --- | --- |
 | `curl` via agent proxy: hygger-online.com, theaquaneat.com / aquaneat.com, pawfly.com, powkoo.com, amazon.com, manuals.plus, `amzn.to` short links | **All refused** (`connect_rejected`, organisation egress policy) |
 | `WebFetch`: hygger-online.com, `amzn.to`, supplyag.com, reviewaqua.com | **All refused** (`EGRESS_BLOCKED`) |
-| `WebSearch` (search-index titles + snippets) | **Works.** All evidence below comes from here. |
+| `WebSearch` (search-index titles + snippets) | Works; used for every product. |
+| **Owner-supplied direct reading** (phase B0 review, 2026-09-28) | hygger official pages (HG256, HG908) read directly by the site owner; exact-ASIN product records for B07RFL4JMM / B07RKT6QPV; AQUANEAT Middle model SF-A001; Pawfly B09BNCRLZY "≈ 20–40 L" text. Recorded as such in §3. |
 | Repo trail (`data/gear_filters_ranges.csv`, `assets/data/gear/filters.json`, `data/filters.json`, `gear/index.html`, earlier reports) | Read in full for the 7 ids |
 
-Consequences:
-
-- **No grade A is possible in this environment.** A product page or manual could not be opened and read.
-- Search snippets are paraphrased by the search tool. Where the same figure appears in several
-  independent queries and in the indexed page title, that is recorded; where the tool attributed a
-  figure to one of two similar pages from the same maker, that is flagged as an **attribution caveat**.
-- The six `amzn.to` affiliate links in the repo **could not be resolved** to ASINs. Product identity is
-  therefore inferred from **exact title match** between the catalog name and an indexed listing title.
+The six `amzn.to` affiliate links in the repo **could not be resolved** from this environment.
 
 ### 1.2 Grade scale (unchanged from the earlier reports)
 
 | Grade | Meaning |
 | --- | --- |
 | A | Read directly on the manufacturer's page or manual |
-| B | Manufacturer or manufacturer-document text via search index (manufacturer domain, or the manufacturer's manual via a manual mirror) |
-| C | Retailer / marketplace listing (incl. brand-authored Amazon listings), secondary site, forum |
+| B | Manufacturer or manufacturer-document text via search index |
+| C | Retailer / marketplace listing, secondary site, forum |
 | D | Derived by repo code |
 | E | No source |
 
-### 1.3 Evidence-type separation
+Mapping to status: VERIFIED needs A, or B where the text is on the manufacturer's **own** domain.
+A manual read only through a third-party mirror is SUPPORTED (the document's provenance is
+plausible but not established). C can at best be SUPPORTED, and only under §1.4.
 
-Each finding in §3 is tagged:
+### 1.3 Evidence-type tags used in §3
 
 - **[MFR-SITE]** manufacturer's own domain (hygger-online.com, theaquaneat.com, thepawfly.com)
-- **[MFR-DOC]** manufacturer's manual, via a third-party mirror (manuals.plus)
-- **[MKT-BRAND]** Amazon/Walmart listing authored by the brand (brand-owned but a retail surface)
-- **[RETAIL]** third-party retailer (eBay, Supply AG, Aquatic Motiv, Aquanature, GoSupps, …)
-- **[REVIEW]** hobby/review site
+- **[MFR-DOC-MIRROR]** a manufacturer manual hosted by a third party (manuals.plus, device.report)
+- **[MKT]** marketplace listing (Amazon, Walmart, eBay) — brand field shown, operator not established
+- **[RETAIL]** third-party retailer / distributor
+- **[REVIEW]** hobby / review site
+- **[OWNER]** read directly by the site owner during phase B0 review
 
-All of these were read **via search index**, never by direct fetch.
+### 1.4 Marketplace source rule — **LOCKED (phase B0 review, 2026-09-28)**
+
+A marketplace listing can count as **manufacturer-grade (Tier 2) evidence only when there is
+evidence that all three hold:**
+
+1. the exact product / ASIN is identified;
+2. the exact size variant is identified;
+3. the listing is operated / published by the manufacturer or brand, or equivalent provenance is clear.
+
+A listing merely showing "Brand: AQUANEAT", "Brand: Pawfly" or "Brand: Powkoo" does **not** prove the
+listing itself is manufacturer-operated. Therefore:
+
+- **Search-result text from Amazon alone is never enough for VERIFIED.**
+- A strong exact-product, exact-variant retailer / distributor / marketplace listing may support
+  **SUPPORTED**, not VERIFIED, unless source ownership is established.
+- A catalog display name is **never** evidence (it was written by this site, §2).
+
+This supersedes the initial pass's §5 question ("does a brand-authored listing count as B?"): it does
+not, unless ownership is shown.
 
 ---
 
 ## 2. Repo identity trail for the 7 runtime products
 
-| id | Catalog name (`gearCatalog.json`) | Affiliate link in repo | Where | Other repo copies |
-| --- | --- | --- | --- | --- |
-| `aquaneat-sponge-10` | AQUANEAT Single Sponge Filter (Up to 10G) | **none** | — | `data/filters.json`, `assets/data/gear/filters.json` (no `url`) |
-| `aquaneat-sponge-20` | AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Middle up to 20Gal) | `https://amzn.to/4mTK28f` | `data/gear_filters_ranges.csv:7`, `assets/data/gear/filters.json` | — |
-| `aquaneat-sponge-60` | … (Large up to 60Gal) | `https://amzn.to/3KTUjUi` | `data/gear_filters_ranges.csv:11`, `assets/data/gear/filters.json` | — |
-| `hygger-double-sponge-s` | hygger Aquarium Double Sponge Filter, Comes with 2 Spare Sponges (S) | `https://amzn.to/46Qxf0a` | `data/gear_filters_ranges.csv:3`, `assets/data/gear/filters.json` | — |
-| `hygger-double-sponge-m` | hygger Aquarium Double Sponge Filter for Fresh Water and Salt-Water Fish Tank (M) | **two different links:** `https://amzn.to/3VTKSXo` (10–20 gal row) and `https://amzn.to/46XUzsV` (20–40 gal row) | `data/gear_filters_ranges.csv:6` and `:8`; `assets/data/gear/filters.json` uses `46XUzsV` | — |
-| `pawfly-sponge-10` | Pawfly Aquarium Nano Bio Sponge Filter Quiet Betta Fry Shrimp and Small Fish Foam Filter for Tiny Fish Tank up to 10 Gallon | `https://amzn.to/3IXHtns` | `data/gear_filters_ranges.csv:2`, `assets/data/gear/filters.json` | — |
-| `powkoo-dual-sponge-40` | Powkoo Dual Sponge Filter (20–55G) | **none** | — | `data/filters.json`, `assets/data/gear/filters.json` (no `url`) |
-
-Notes:
+| id | Catalog name (`gearCatalog.json`) | Affiliate link in repo | Where |
+| --- | --- | --- | --- |
+| `aquaneat-sponge-10` | AQUANEAT Single Sponge Filter (Up to 10G) | **none** | `data/filters.json`, `assets/data/gear/filters.json` (no `url`) |
+| `aquaneat-sponge-20` | AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Middle up to 20Gal) | `https://amzn.to/4mTK28f` | `data/gear_filters_ranges.csv:7`, `assets/data/gear/filters.json` |
+| `aquaneat-sponge-60` | … (Large up to 60Gal) | `https://amzn.to/3KTUjUi` | `data/gear_filters_ranges.csv:11`, `assets/data/gear/filters.json` |
+| `hygger-double-sponge-s` | hygger Aquarium Double Sponge Filter, Comes with 2 Spare Sponges (S) | `https://amzn.to/46Qxf0a` | `data/gear_filters_ranges.csv:3`, `assets/data/gear/filters.json` |
+| `hygger-double-sponge-m` | hygger Aquarium Double Sponge Filter for Fresh Water and Salt-Water Fish Tank (M) | **two different links:** `https://amzn.to/3VTKSXo` (10–20 gal row) and `https://amzn.to/46XUzsV` (20–40 gal row) | `data/gear_filters_ranges.csv:6` and `:8`; `assets/data/gear/filters.json` uses `46XUzsV` |
+| `pawfly-sponge-10` | Pawfly Aquarium Nano Bio Sponge Filter Quiet Betta Fry Shrimp and Small Fish Foam Filter for Tiny Fish Tank up to 10 Gallon | `https://amzn.to/3IXHtns` | `data/gear_filters_ranges.csv:2`, `assets/data/gear/filters.json` |
+| `powkoo-dual-sponge-40` | Powkoo Dual Sponge Filter (20–55G) | **none** | `data/filters.json`, `assets/data/gear/filters.json` (no `url`) |
 
 - `aquaneat-sponge-10` and `powkoo-dual-sponge-40` were hand-entered on 2025-10-12 (commit `5a00e35d`,
-  per the sponge model audit §3) with **short, invented display names** and no link. Their names
-  contain a rating ("Up to 10G", "20–55G") that no source ties to a specific product.
-- The two hygger (M) links may resolve to the same ASIN (e.g. one created with a different tag or at a
-  different time) or to different products (e.g. the older M and hygger's newer "Upgraded … – M",
-  ASIN B0FJCZJ3C3, §3.5). This cannot be decided without resolving the links.
+  sponge model audit §3) with **short, invented display names** and no link. The gallon text in those
+  names is not tied to any source.
 - The earlier sponge audit cited ASINs **B01N7Q0IPR** (AQUANEAT 10) and **B07KXDRFXP** (Powkoo). A
-  direct search for each ASIN returned **no listing carrying that ASIN**; neither is corroborated.
+  direct search for each returned **no listing carrying that ASIN**; neither is corroborated, and
+  neither is adopted here.
 
 ---
 
 ## 3. Per-product evidence
 
-### 3.1 `aquaneat-sponge-60` — AQUANEAT Bio Sponge Filter (Large up to 60 Gal)
+### 3.1 `hygger-double-sponge-s` — **VERIFIED, 10–40 gal**
 
 | Item | Finding |
 | --- | --- |
-| Identity | Title match: Amazon ASIN **B071HVZVMP** "AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Large up to 60Gal)" — identical to the catalog name. Model **SF-A004** (manual). |
-| Rating | **[MFR-DOC]** manuals.plus/asin/B071HVZVMP, "AQUANEAT Aquarium Bio Sponge Filter Instruction Manual (Large up to 60 Gallons)": *recommended for 40 to 60-gallon aquariums*; ~4.5" D × 8.0" H. **[MKT-BRAND]** Amazon title "Large up to 60Gal". |
-| Other listings | **[MKT-BRAND]** Walmart 186627441 "… Nano Fish Tank 60 gal"; Walmart 5040531230 "… Nano Fish Tank **50 Gal**"; Amazon B07234RMMT 4-pack "(Large up to 60Gal)"; Amazon B07L56LB5G "Air Powered Sponge Filter … (Up to 60Gal)" (different product line). |
-| Conflicts | Walmart "50 Gal" listing — a separate listing whose product identity is unknown; not the catalog item. Manual gives a minimum (40) the title omits. |
-| Grade | **B** (manufacturer manual text, via mirror, via search index). Consistent with title. |
-| Proposed rating | `manufacturerMaxGallons: 60`, `manufacturerMinGallons: 40` (display only), `ratingExpression: "range"` |
-| Phase B | **Eligible for rating-based evaluation.** Pre-merge check: resolve `amzn.to/3KTUjUi` → expect B071HVZVMP. |
+| Identity | Catalog ASIN **B07RFL4JMM** — Amazon title "Hygger Aquarium Double Sponge Filter, Comes with 2 Spare Sponges, 1 Bag of Bio Ceramic Media Balls, … (S)". **[OWNER]** independent exact-ASIN product records identify B07RFL4JMM as the **Small / 40-gallon** product. |
+| Official evidence 1 | **[MFR-SITE] [OWNER]** https://www.hygger-online.com/product/hygger-aquarium-biochemical-sponge-filter/ — hygger **SKU HG256**, **Small: 10–40 gallons**, Medium: 15–55 gallons. Search index independently corroborates: *"The small double sponge filter is 6″ x 9″ x 14″, suggested for 10 to 40 gallon fish tanks … HG256 … fits tanks with a capacity of 10 to 55 gallons."* |
+| Official evidence 2 | **[MFR-SITE] [OWNER]** https://www.hygger-online.com/product/fish-tank-water-filter/ — hygger **HG908** family, **Dual Small: 10–40 gallons**, Dual Medium: 15–55 gallons. Search index: HG-908 "0.5–55 gallons" family text; distributor Isaan Aquatics lists **HG-908-D-S** "Double Sponge Filter" (dual small). |
+| Supporting | **[MKT]** Amazon B07RFL4JMM "suggested for 10 to 40 gallon". **[RETAIL]** Aquatic Motiv "Hygger Sponge Filter 10 to 40 Gallons". |
+| Earlier conflict — resolved | The initial pass saw an S 5–20 / M 20–55 / L 55–125 range attributed to a "Biochemical" page. That range belongs to hygger's separate **single** "Aquarium Biochemical Sponge Filter" (`/product/aquarium-biochemical-sponge-filter/`, three sizes with depth / air-pump limits), not to HG256 (`/hygger-aquarium-biochemical-sponge-filter/`) or HG908. It is not a rating for the catalog item. |
+| SKU mapping | **Not proven** whether historical B07RFL4JMM is HG256 or HG908-D-S. The affiliate link `amzn.to/46Qxf0a` could not be resolved. **This does not affect the rating:** both official families publish the same Small maximum (40) and the same minimum (10). |
+| Status | **VERIFIED numerically** — `manufacturerMinGallons: 10`, `manufacturerMaxGallons: 40`, `ratingExpression: "range"`. Historical product-family / SKU mapping still worth confirming. |
 
-### 3.2 `hygger-double-sponge-s` — hygger Double Sponge Filter (S)
-
-| Item | Finding |
-| --- | --- |
-| Identity | Title match: Amazon ASIN **B07RFL4JMM** "Hygger Aquarium Double Sponge Filter, Comes with 2 Spare Sponges, 1 Bag of Bio Ceramic Media Balls, Quiet Submersible Foam Filter for Fresh Water and Salt-Water Fish Tank (S)"; retailer mirror Happy Paws "…(S)" at `/products/b07rfl4jmm`. |
-| Rating | **[MFR-SITE]** hygger-online.com "Fish Tank Double Sponge Water Filter" (`/product/fish-tank-water-filter/`): *Small … suggested for 10 to 40 gallon fish tanks*; package *1 double sponge filter with 2 containers, 1 bag of ceramic media balls, 2 spare sponges* (matches the catalog product). **[MKT-BRAND]** Amazon B07RFL4JMM: *6" W, 9"–13" H … suggested for 10 to 40 gallon*. **[RETAIL]** Aquatic Motiv "Hygger Sponge Filter 10 to 40 Gallons". |
-| Conflicts | hygger sells **a different product**, "Aquarium (Double) Biochemical Sponge Filter" (`/product/hygger-aquarium-biochemical-sponge-filter/`, `/product/aquarium-biochemical-sponge-filter/`), indexed with **S 5–20 / M 20–55 / L 55–125 gal**, with depth and air-pump limits. In one search the tool attached the 10–40 / 15–55 figures to the "Double Biochemical" name — **attribution caveat**. Across four queries, 10–40 (S) / 15–55 (M) consistently co-occur with the "Double Sponge (Water) Filter" title, the 2-container + ceramic-balls + 2-spare-sponges package, and the ASINs above; 5–20 / 20–55 / 55–125 consistently co-occur with the Biochemical line's S/M/L and depth limits. eBay bundles S+M as "10–55 Gal" (range union, not a rating). Indexed S dimension "6 × 9 × 14 in" looks like a package size, not the unit. |
-| Grade | **B** for the rating value (manufacturer domain, via search index), with the attribution caveat above. |
-| Proposed rating | `manufacturerMaxGallons: 40`, `manufacturerMinGallons: 10`, `ratingExpression: "range"` |
-| Phase B | **Eligible, conditional:** resolve `amzn.to/46Qxf0a` → expect B07RFL4JMM. If it resolves to a Biochemical-line product, the rating becomes **20** (S 5–20) and must be re-sourced. Brand-inconsistency note from the design (§16.2) stands: a 10–40 gal double sponge is generous. |
-
-### 3.3 `hygger-double-sponge-m` — hygger Double Sponge Filter (M)
+### 3.2 `hygger-double-sponge-m` — **VERIFIED, 15–55 gal**
 
 | Item | Finding |
 | --- | --- |
-| Identity | Title match: Amazon ASIN **B07RKT6QPV** "hygger Aquarium Double Sponge Filter for Fresh Water and Salt-Water Fish Tank (M)" — identical to catalog name. Same title at Supply AG; Walmart 209243859 "Hygger … Double Sponge Filter, M"; Aquanature "…(M)". |
-| Rating | **[MFR-SITE]** hygger-online.com "Fish Tank Double Sponge Water Filter": *Medium … 6.3" × 9" × 14", suggested for 15 to 55 gallon fish tanks*. **[MKT-BRAND]** Amazon B07RKT6QPV (same text per index). |
-| Conflicts | Same Biochemical-line conflict as §3.2 (Biochemical **M = 20–55**; max agrees at 55, min differs). hygger's newer **"Upgraded Sponge Filter with Larger Filtration Area … – M"**, ASIN **B0FJCZJ3C3**, is a different product; its rating was not found. **Two different affiliate links** in the repo (§2). |
-| Grade | **B** (same caveat as §3.2). |
-| Proposed rating | `manufacturerMaxGallons: 55`, `manufacturerMinGallons: 15`, `ratingExpression: "range"` |
-| Phase B | **Eligible, conditional:** resolve **both** `amzn.to/3VTKSXo` and `amzn.to/46XUzsV`. If both → B07RKT6QPV: eligible. If either → B0FJCZJ3C3 or a Biochemical item: needs_review until that product's own rating is found. Note that for this product both candidate hygger lines end at 55, so the **maximum** is robust; only identity is open. |
+| Identity | Catalog ASIN **B07RKT6QPV** — Amazon title "hygger Aquarium Double Sponge Filter for Fresh Water and Salt-Water Fish Tank (M)", identical to the catalog name. **[OWNER]** independent exact-ASIN product records identify B07RKT6QPV as the **Medium / 55-gallon** product. |
+| Official evidence | **[MFR-SITE] [OWNER]** HG256 page: **Medium: 15–55 gallons**. HG908 page: **Dual Medium: 15–55 gallons**. Search index: *"The medium double sponge filter is 6.3″ x 9″ x 14″, suggested for 15 to 55 gallon fish tanks."* |
+| Supporting | **[MKT]** Amazon B07RKT6QPV; Walmart 209243859 "… Double Sponge Filter, M"; **[RETAIL]** Supply AG, Aquanature (same title). |
+| Open items | (a) HG256 vs HG908-D-M mapping not proven — same maximum either way. (b) The repo holds **two different affiliate links** for this id (§2). If either resolves to hygger's newer "Upgraded … – M" (ASIN B0FJCZJ3C3) or to a different product, that link should be corrected in a separate content change; the catalog id's rating stays tied to B07RKT6QPV. |
+| Status | **VERIFIED numerically** — `manufacturerMinGallons: 15`, `manufacturerMaxGallons: 55`, `ratingExpression: "range"`. SKU mapping and the duplicate link worth confirming. |
 
-### 3.4 `aquaneat-sponge-20` — AQUANEAT Bio Sponge Filter (Middle up to 20 Gal)
-
-| Item | Finding |
-| --- | --- |
-| Identity | Title match: Amazon ASIN **B078Q29JT4** "AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Middle up to 20Gal)" — identical to catalog name. eBay 117319977278 same title. |
-| Rating | **[MKT-BRAND]** Amazon title "Middle up to 20Gal"; indexed description *recommended tank size is up to 20 gallons*. No manual and no manufacturer-site page found (theaquaneat.com is indexed only at its home page). |
-| Conflicts | None on the value. No dimensions found. |
-| Grade | **C** (brand-authored marketplace listing only). |
-| Proposed rating | `manufacturerMaxGallons: 20`, `ratingExpression: "up_to"` — **if** the §5 policy is amended; otherwise `null` + `needs_review`. |
-| Phase B | **Rating needed** under the locked A/B rule. |
-
-### 3.5 `pawfly-sponge-10` — Pawfly Nano Bio Sponge Filter (up to 10 Gallon)
+### 3.3 `aquaneat-sponge-60` — **SUPPORTED, 40–60 gal**
 
 | Item | Finding |
 | --- | --- |
-| Identity | Title match: Amazon ASIN **B09BNCRLZY** "Pawfly Aquarium Nano Bio Sponge Filter Quiet Betta Fry Shrimp and Small Fish Foam Filter for Tiny Fish Tank up to 10 Gallon" — identical to catalog name (amazon.com and amazon.ca). |
-| Rating | **[MKT-BRAND]** title "up to 10 Gallon"; indexed description *2" D × 4.8" H, designed for 5–10 gallon tanks*. **[REVIEW]** reviewaqua.com "… (10 Gallon)". Pawfly's site (thepawfly.com) is indexed but returned no product page for this item. |
-| Conflicts | Walmart 1476406157 "… for Fish Tank up to **5–60** Gallon" is a multi-size variant family listing (Pawfly sells separate 20, 50 and 60 gal sponges: B09T928T19, B09GLR2CMP, B098367LTZ), not a rating for this unit. Minimum 5 appears only in description text. Pawfly's 3-pack B0BDDYQQYC is "up to **3** Gallon" — a different (smaller) item; do not confuse. |
-| Grade | **C**. |
-| Proposed rating | `manufacturerMaxGallons: 10`, `manufacturerMinGallons: null` (or 5 display-only), `ratingExpression: "up_to"` — **if** the §5 policy is amended. |
-| Phase B | **Rating needed** under the locked A/B rule. Pre-merge: resolve `amzn.to/3IXHtns` → expect B09BNCRLZY. |
+| Identity | ASIN **B071HVZVMP** "AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Large up to 60Gal)" — identical to catalog name. Model **SF-A004**. |
+| Rating | **[MFR-DOC-MIRROR]** manuals.plus/asin/B071HVZVMP "AQUANEAT Aquarium Bio Sponge Filter Instruction Manual (Large up to 60 Gallons)": *recommended for 40 to 60-gallon aquariums*; ~4.5" D × 8.0" H. **[MKT]** Amazon title "Large up to 60Gal". |
+| Other listings | **[MKT]** Walmart 186627441 "… 60 gal"; Walmart 5040531230 "… **50 Gal**" (identity unknown — not the catalog item); Amazon B07234RMMT 4-pack "(Large up to 60Gal)". |
+| Why not VERIFIED | No AQUANEAT-controlled source was read. theaquaneat.com indexes only its home page; the manual was seen only through a third-party mirror via search index; Amazon provenance not established (§1.4). |
+| Status | **SUPPORTED** — `manufacturerMinGallons: 40`, `manufacturerMaxGallons: 60`, `ratingExpression: "range"`. |
 
-### 3.6 `aquaneat-sponge-10` — "AQUANEAT Single Sponge Filter (Up to 10G)"
-
-| Item | Finding |
-| --- | --- |
-| Identity | **Unresolved.** No AQUANEAT listing is titled "Single Sponge Filter". No affiliate link. ASIN B01N7Q0IPR (earlier audit) not corroborated. Candidates, all AQUANEAT and all "up to 10 gal": **B078HDL21V** (Bio Sponge Filter, Small up to 10Gal, 3-pack), **B078X7H8XG** (Bio **Corner** Sponge Filter, up to 10Gal, 2.25" × 2.25" × 5.00"), **B07P5WS1RH** / **B07KS1Y1JN** (**Double** Bio Sponge Filter, Small up to 10 Gal), **B08F79B7MS** (earlier audit), Walmart 711096713 (Bio Oxygen Sponge Filter 10 gal, **2.0" D × 4.75" H**), Walmart 964127842 (up to 10Gal with accessories). |
-| Rating | Every candidate: **up to 10 gal** [MKT-BRAND]. The earlier audit's "2.0" D × 4.75" H" matches the Walmart "Bio Oxygen" listing, i.e. the single round "Small" sponge — the most likely match, but not proven. |
-| Conflicts | Identity only; the value is consistent across candidates. |
-| Grade | **C**; identity **low**. |
-| Phase B | **Rating needed.** To become eligible: pick the exact product (ASIN + affiliate link) and source it; if the owner confirms it is the single round Small sponge (the Middle/Large family's small size), the value 10 is consistent, but a grade A/B source is still missing. |
-
-### 3.7 `powkoo-dual-sponge-40` — "Powkoo Dual Sponge Filter (20–55G)"
+### 3.4 `aquaneat-sponge-20` — **SUPPORTED, up to 20 gal**
 
 | Item | Finding |
 | --- | --- |
-| Identity | **Unresolved.** No Powkoo listing is titled "Dual Sponge Filter (20–55G)". No affiliate link. ASIN B07KXDRFXP (earlier audit) not corroborated. Candidates: **B01M32L1LC** "Double Bio Sponge Filter with 2 Media Cups … Up to 55 Gallon" (amazon.com) but "Large … Up to **40** Gallon" / "**10 to 40** gallons" on **amazon.ca** for the **same ASIN**; **B01N6MJYWC** "Aquarium Double Sponge Filter … 1 Bag Bio Media" (no rating in title; earlier audit cited it); **B01M3VALFU** "Double Sponge Filter … 2 Media Chambers"; **B07MYTKZT5** "… 2 Media Chambers and 2 Bag Bio Balls"; **B01F8PGL6I** "Up to 20 Gallon". An indexed Powkoo description says *fits fish tank sizes from 15 to 55 gallons* (80 ppi) without a clear ASIN. eBay "up to 60 Gallons". |
-| Rating | 15–55, up to 55, 10–40, up to 40, up to 20, up to 60 — depending on listing and marketplace. **No "20–55" found anywhere**; the catalog's "20–55G" appears to be invented or a mis-copy of 15–55. |
-| Conflicts | **Material**: the same ASIN carries a 55-gal maximum in the US and a 40-gal maximum in Canada. |
-| Grade | **C / conflicting**; identity **low**. |
-| Phase B | **Rating needed.** Do not ship 55 as a verified maximum. |
+| Identity | ASIN **B078Q29JT4** "AQUANEAT Aquarium Bio Sponge Filter Breeding Fry Betta Shrimp Nano Fish Tank (Middle up to 20Gal)" — identical to catalog name. Model **SF-A001** **[OWNER]** (not found by model number in the search index). |
+| Rating | **[MKT]** title "Middle up to 20Gal"; indexed description *recommended tank size: up to 20 gallons*; 3.0" D × 6.5" H. No manual or AQUANEAT-site page found. |
+| Conflicts | None on the value. Several *other* AQUANEAT products are also "up to 20 gal" (corner B079M732S6, air-powered B07L565N7H) — different products, not substitutes. |
+| Why not VERIFIED | Marketplace text only; provenance not established (§1.4). |
+| Status | **SUPPORTED** — `manufacturerMinGallons: null`, `manufacturerMaxGallons: 20`, `ratingExpression: "up_to"`. |
+
+### 3.5 `aquaneat-sponge-10` — **RATING NEEDED**
+
+| Item | Finding |
+| --- | --- |
+| Identity | **Unresolved.** No AQUANEAT listing is titled "Single Sponge Filter". No affiliate link. ASIN B01N7Q0IPR (earlier audit) not corroborated. Candidates include B078HDL21V (Small, 3-pack), B078X7H8XG (corner, 2.25" × 2.25" × 5.00"), B07P5WS1RH / B07KS1Y1JN (double, small), B08F79B7MS, Walmart 711096713 (2.0" D × 4.75" H), Walmart 964127842. |
+| Rating | Each candidate is marketed "up to 10 gal". **This is not used**: the exact product must not be inferred from the fact that every candidate appears to share a rating, and the catalog display name "(Up to 10G)" is not evidence. |
+| Status | **RATING NEEDED** — `manufacturerMaxGallons: null`, `ratingStatus: "needs_review"`. To change: the owner selects the exact product (ASIN + link), then it is sourced under §1.4. |
+
+### 3.6 `pawfly-sponge-10` — **RATING NEEDED (pending stronger source provenance)**
+
+| Item | Finding |
+| --- | --- |
+| Identity | ASIN **B09BNCRLZY** "Pawfly Aquarium Nano Bio Sponge Filter Quiet Betta Fry Shrimp and Small Fish Foam Filter for Tiny Fish Tank up to 10 Gallon" (amazon.com and amazon.ca). |
+| Evidence under review (not metadata) | **[MKT]** title "up to 10 Gallon"; description "2" D × 4.8" H, designed for 5–10 gallon tanks". **[OWNER]** listings describing approximately **20–40 L** (≈ 5–10.5 gal). **[REVIEW]** reviewaqua "(10 Gallon)". Likely maximum ≈ **10 gal**. |
+| Inconsistencies | Search-index title text varies across listings for the family: Walmart 1476406157 "… up to **5–60** Gallon" (variant family), 3-pack B0BDDYQQYC "up to **3** Gallon" (different item), B098SGW6QS 3-pack "up to 10 Gallon". thepawfly.com indexed, no product page found. |
+| Why not SUPPORTED | Provenance weaker than the AQUANEAT items and titles inconsistent within the family; no Pawfly-controlled listing established. |
+| Status | **RATING NEEDED** — `manufacturerMaxGallons: null`, `ratingStatus: "needs_review"`. The ≈ 10 gal figure stays in this report only. |
+
+### 3.7 `powkoo-dual-sponge-40` — **RATING NEEDED (pending exact product identity)**
+
+| Item | Finding |
+| --- | --- |
+| Identity | **Unresolved.** No Powkoo listing is titled "Dual Sponge Filter (20–55G)". No affiliate link. ASIN B07KXDRFXP (earlier audit) not corroborated. |
+| Conflicting Powkoo listings | B01M32L1LC "… Up to 55 Gallon" on amazon.com but "Large … Up to **40** Gallon" / "10 to 40 gallons" on **amazon.ca** (same ASIN); B01N6MJYWC (no rating in title); B01M3VALFU; B07MYTKZT5; B01F8PGL6I "Up to 20 Gallon"; an indexed Powkoo description "15 to 55 gallons" with no clear ASIN; eBay "up to 60 Gallons". **"20–55" appears in no source.** |
+| Rule | Do not encode 20–55; do not substitute another Powkoo ASIN because it looks similar. |
+| Status | **RATING NEEDED** — `manufacturerMaxGallons: null`, `ratingStatus: "needs_review"`. |
 
 ---
 
-## 4. Eligibility for rating-based evaluation (locked rule D1: A/B only)
+## 4. Eligibility for rating-based evaluation
 
-| id | Grade | Identity | `ratingStatus` for phase B | Runtime result |
-| --- | --- | --- | --- | --- |
-| `aquaneat-sponge-60` | B | High | `verified` | Rating-based (max 60) |
-| `hygger-double-sponge-s` | B | Medium-high | `verified` **after** §6 check 2 passes; else `needs_review` | Rating-based (max 40) |
-| `hygger-double-sponge-m` | B | Medium | `verified` **after** §6 check 3 passes; else `needs_review` | Rating-based (max 55) |
-| `aquaneat-sponge-20` | C | High | `needs_review` | **Rating needed** |
-| `pawfly-sponge-10` | C | High | `needs_review` | **Rating needed** |
-| `aquaneat-sponge-10` | C | Low | `needs_review` | **Rating needed** |
-| `powkoo-dual-sponge-40` | C / conflict | Low | `needs_review` | **Rating needed** |
+| id | Status | Max used by engine in phase B | Can show green under locked D1? |
+| --- | --- | --- | --- |
+| `hygger-double-sponge-s` | VERIFIED | 40 | **Yes** |
+| `hygger-double-sponge-m` | VERIFIED | 55 | **Yes** |
+| `aquaneat-sponge-60` | SUPPORTED | 60 (stored) | **Not until §5 is decided** — treat as Rating needed meanwhile |
+| `aquaneat-sponge-20` | SUPPORTED | 20 (stored) | **Not until §5 is decided** — treat as Rating needed meanwhile |
+| `aquaneat-sponge-10` | RATING NEEDED | — | No |
+| `pawfly-sponge-10` | RATING NEEDED | — | No |
+| `powkoo-dual-sponge-40` | RATING NEEDED | — | No |
 
-Effect on users under this outcome: the two ~10-gal nano sponges and the 20-gal AQUANEAT — the ones
-most often chosen for nano/betta/shrimp tanks — would all show neutral **"Rating needed"** in phase B.
-That is the honest reading of the evidence under the locked rule, but it is a noticeable UX cost;
-§5 sets out the one decision that changes it.
+Users can still enter the number printed on their own box through the phase B custom sponge input
+("Rated for up to ___ gallons"), labelled as user-entered; that path is unaffected by these statuses.
 
 ---
 
-## 5. Decision needed: does a brand-authored marketplace listing count as grade B?
+## 5. Open product decision: may SUPPORTED show green?
 
-AQUANEAT, Pawfly and Powkoo are essentially **Amazon-native brands**: their manufacturer sites index
-little or no product detail, and the brand-authored Amazon listing (title + "About this item") is the
-manufacturer's primary published specification. The earlier reports and this one grade that as **C**.
+The locked design (D1) says green requires a *verified* rating. This report adds SUPPORTED as a
+distinct status and **does not** treat it as verified. Options for phase B:
 
-| Option | 3.4 AQUANEAT 20 | 3.5 Pawfly 10 | 3.6 AQUANEAT 10 | 3.7 Powkoo | Risk |
-| --- | --- | --- | --- | --- | --- |
-| **Keep strict (current lock)** | Rating needed | Rating needed | Rating needed | Rating needed | Nano sponges unrated; users can still enter the box number via the custom input |
-| **Accept brand listing as B *only when* identity is high, the rating is in the title, and no conflict exists** (recommended if a change is wanted) | Eligible (20) | Eligible (10) | Rating needed (identity) | Rating needed (identity + conflict) | Relies on text that can change; title ratings are marketing figures (already true for every maker) |
-| Accept any listing | Eligible | Eligible | Eligible (10) | Eligible (55?) | **Not recommended** — ships an unproven identity and a known US/CA conflict |
+| Option | AQUANEAT 60 / 20 at runtime | Note |
+| --- | --- | --- |
+| **A. Strict (default until decided)** | Rating needed (neutral) | Honest to the locked rule; the stored max is kept for later. |
+| **B. SUPPORTED may pass, with provenance shown** | ✓ Rated for this tank / ⚠ Below manufacturer rating, with a "listed rating" qualifier | Requires amending D1; copy must not say "manufacturer-verified". |
+| **C. SUPPORTED shown as amber only** | Never green; amber "Listed rating — not manufacturer-verified" | Middle ground; requires new copy. |
 
-Recommendation: **either** keep strict **or** adopt the narrow middle option; in both cases
-`aquaneat-sponge-10` and `powkoo-dual-sponge-40` stay "Rating needed" until their identity is fixed.
-This is a product decision for the owner; it does not re-open the locked decisions, it only defines
-what "manufacturer text" means for Amazon-native brands.
+This is the owner's decision; phase B0 does not make it.
 
 ---
 
-## 6. Checks that must happen before phase B data lands (need a normal browser)
+## 6. Checks still worth doing (normal browser; not blocking the B0 report)
 
-These cannot be done from this environment (all fetches blocked) and are cheap for a human:
-
-1. Resolve `amzn.to/3KTUjUi` → expect **B071HVZVMP** (AQUANEAT Large up to 60). Open the manual if
-   linked from the listing; confirm "40–60".
-2. Resolve `amzn.to/46Qxf0a` → expect **B07RFL4JMM** (hygger Double Sponge S). On the listing or
-   hygger-online.com `/product/fish-tank-water-filter/`, confirm "S … 10 to 40 gallon". **→ grade A.**
-3. Resolve **both** `amzn.to/3VTKSXo` and `amzn.to/46XUzsV` → expect **B07RKT6QPV** (hygger M).
-   Confirm "M … 15 to 55 gallon". If one points to B0FJCZJ3C3 (Upgraded M) or a Biochemical item,
-   decide which product the catalog id represents and fix the link (content change, separate PR).
-4. Resolve `amzn.to/4mTK28f` → expect **B078Q29JT4** and `amzn.to/3IXHtns` → expect **B09BNCRLZY**.
-5. `aquaneat-sponge-10`: choose the exact product (most likely the single round Small, 2.0" × 4.75")
-   and add an ASIN + link; otherwise leave it Rating needed.
-6. `powkoo-dual-sponge-40`: choose the exact product (B01M32L1LC is the only double-sponge listing
-   carrying 55) and read its **US** listing; given the amazon.ca "up to 40" conflict, it should stay
-   `needs_review` unless the maker's own text (packaging/manual photo) states 55.
-7. Record, per product, the URL read, the date, and a verbatim quote — that turns B into **A**.
+1. Resolve `amzn.to/46Qxf0a` (expect B07RFL4JMM) and **both** `amzn.to/3VTKSXo` / `amzn.to/46XUzsV`
+   (expect B07RKT6QPV); note whether each maps to HG256 or HG908-D-S / -M. Correct any link that
+   points to a different product in a separate content change.
+2. Resolve `amzn.to/3KTUjUi` (expect B071HVZVMP) and `amzn.to/4mTK28f` (expect B078Q29JT4). Look for an
+   AQUANEAT-controlled source (brand store ownership, official manual PDF, packaging) — that would move
+   either to VERIFIED.
+3. Resolve `amzn.to/3IXHtns` (expect B09BNCRLZY); look for a Pawfly-controlled source.
+4. `aquaneat-sponge-10` / `powkoo-dual-sponge-40`: the owner decides which exact product each id
+   represents (or retires / renames it); only then can a rating be sourced.
+5. For every product record URL, date and a verbatim quote.
 
 ---
 
-## 7. Proposed phase B rating metadata
+## 7. Catalog display-name warning (strengthened)
 
-The design's §7.3 fields are kept as-is. This report proposes three **additive, review-only** fields so
-the evidence trail travels with the data (none is read by the engine; the engine reads only
-`capacityMethod`, `manufacturerMaxGallons`, `ratingStatus`):
+Two current display names **contain an unverified gallon claim** that no source ties to the product:
+
+| id | Display name | Final status | Problem |
+| --- | --- | --- | --- |
+| `aquaneat-sponge-10` | AQUANEAT Single Sponge Filter **(Up to 10G)** | RATING NEEDED | Name asserts a rating for a product whose identity is unknown. |
+| `powkoo-dual-sponge-40` | Powkoo Dual Sponge Filter **(20–55G)** | RATING NEEDED | Name asserts a range **found in no source**; conflicting Powkoo listings say 55, 40, 20 or 60. |
+
+The other five names are the real listing titles; their gallon text agrees with the evidence
+(AQUANEAT "Middle up to 20Gal" / "Large up to 60Gal", Pawfly "up to 10 Gallon", hygger (S)/(M)).
+Pawfly's title still carries a rating while the product is RATING NEEDED — lower severity, since it is
+the listing's own title, but the same display rule should apply.
+
+Phase B **must not** render a contradiction such as:
+
+> Powkoo Dual Sponge Filter (20–55G) — ○ Rating needed
+
+Phase B must do one of:
+
+- **Replace** the unverified rating text in the display name with a neutral product name
+  (e.g. "Powkoo Dual Sponge Filter", "AQUANEAT Sponge Filter (small)") — ids unchanged; or
+- **Keep** the product as Rating needed and treat the name explicitly as **historical catalog text**,
+  e.g. strip a trailing parenthetical gallon claim at render time for any record whose status is not
+  VERIFIED, so the only rating the user sees is the status line.
+
+Recommendation: rename in the phase B data change (first option) — simpler, and it also fixes the
+gear page. **The catalog is not edited in phase B0.**
+
+Related, out of scope: `data/gear_filters_ranges.csv` places hygger (S) in the 5–10 gal range and
+hygger (M) in both 10–20 and 20–40; inconsistent with hygger's 10–40 / 15–55. Gear-page content pass.
+
+---
+
+## 8. Proposed phase B rating metadata
+
+Design §7.3 fields are kept. Changes proposed by B0:
+
+- `ratingStatus` gains a third value: `"verified" | "supported" | "needs_review"`.
+- Engine rule (until §5 is decided): only `verified` + positive `manufacturerMaxGallons` is evaluated;
+  `supported` and `needs_review` both resolve to Rating needed.
+- Three additive, review-only fields (not read by the engine):
 
 | Field | Type | Purpose |
 | --- | --- | --- |
-| `productRef` | `{ "asin": string \| null, "model": string \| null }` | The exact product the rating belongs to. Missing → identity unresolved → `needs_review`. |
-| `ratingSourceKind` | `"manufacturer_site" \| "manufacturer_manual" \| "brand_listing" \| "retailer" \| "user"` | Section 1.3 evidence type, so a grade can be audited without this report. |
-| `ratingCheckedAt` | ISO date | When the source was last read; ratings on marketplace text can drift. |
+| `productRef` | `{ "asin": string \| null, "model": string \| null }` | Exact product the rating belongs to. Missing → identity unresolved → `needs_review`. |
+| `ratingSourceKind` | `"manufacturer_site" \| "manufacturer_manual_mirror" \| "marketplace" \| "retailer" \| "user"` | §1.3 evidence type, auditable without this report. |
+| `ratingCheckedAt` | ISO date | Marketplace text can drift. |
 
-Proposed values (strict outcome; legacy `gphRated` / `minGallons` / `maxGallons` retained unchanged
-per design §7.3 and phase E):
+- When `ratingStatus` is `needs_review`, `manufacturerMaxGallons` **must be null** — no candidate
+  number in the data.
+
+Proposed values (legacy `gphRated` / `minGallons` / `maxGallons` retained unchanged per design §7.3
+until phase E):
 
 ```jsonc
-// aquaneat-sponge-60
-{ "capacityMethod": "manufacturer_rating", "manufacturerMaxGallons": 60, "manufacturerMinGallons": 40,
-  "ratingExpression": "range", "ratingStatus": "verified", "ratingConfidence": "B",
-  "ratingSource": "https://manuals.plus/asin/B071HVZVMP", "ratingSourceKind": "manufacturer_manual",
+// hygger-double-sponge-s — VERIFIED
+{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": 10, "manufacturerMaxGallons": 40,
+  "ratingExpression": "range", "ratingStatus": "verified", "ratingConfidence": "A",
+  "ratingSource": "https://www.hygger-online.com/product/hygger-aquarium-biochemical-sponge-filter/",
+  "ratingSourceKind": "manufacturer_site",
+  "productRef": { "asin": "B07RFL4JMM", "model": null },   // HG256 vs HG908-D-S not proven
+  "ratingCheckedAt": "2026-09-28" }
+
+// hygger-double-sponge-m — VERIFIED
+{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": 15, "manufacturerMaxGallons": 55,
+  "ratingExpression": "range", "ratingStatus": "verified", "ratingConfidence": "A",
+  "ratingSource": "https://www.hygger-online.com/product/hygger-aquarium-biochemical-sponge-filter/",
+  "ratingSourceKind": "manufacturer_site",
+  "productRef": { "asin": "B07RKT6QPV", "model": null },   // HG256 vs HG908-D-M not proven
+  "ratingCheckedAt": "2026-09-28" }
+
+// aquaneat-sponge-60 — SUPPORTED
+{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": 40, "manufacturerMaxGallons": 60,
+  "ratingExpression": "range", "ratingStatus": "supported", "ratingConfidence": "B",
+  "ratingSource": "https://manuals.plus/asin/B071HVZVMP", "ratingSourceKind": "manufacturer_manual_mirror",
   "productRef": { "asin": "B071HVZVMP", "model": "SF-A004" }, "ratingCheckedAt": "2026-09-28" }
 
-// hygger-double-sponge-s   (verified only after §6 check 2)
-{ "capacityMethod": "manufacturer_rating", "manufacturerMaxGallons": 40, "manufacturerMinGallons": 10,
-  "ratingExpression": "range", "ratingStatus": "verified", "ratingConfidence": "B",
-  "ratingSource": "https://www.hygger-online.com/product/fish-tank-water-filter/",
-  "ratingSourceKind": "manufacturer_site",
-  "productRef": { "asin": "B07RFL4JMM", "model": null }, "ratingCheckedAt": "2026-09-28" }
+// aquaneat-sponge-20 — SUPPORTED
+{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": null, "manufacturerMaxGallons": 20,
+  "ratingExpression": "up_to", "ratingStatus": "supported", "ratingConfidence": "C",
+  "ratingSource": "https://www.amazon.com/dp/B078Q29JT4", "ratingSourceKind": "marketplace",
+  "productRef": { "asin": "B078Q29JT4", "model": "SF-A001" }, "ratingCheckedAt": "2026-09-28" }
 
-// hygger-double-sponge-m   (verified only after §6 check 3)
-{ "capacityMethod": "manufacturer_rating", "manufacturerMaxGallons": 55, "manufacturerMinGallons": 15,
-  "ratingExpression": "range", "ratingStatus": "verified", "ratingConfidence": "B",
-  "ratingSource": "https://www.hygger-online.com/product/fish-tank-water-filter/",
-  "ratingSourceKind": "manufacturer_site",
-  "productRef": { "asin": "B07RKT6QPV", "model": null }, "ratingCheckedAt": "2026-09-28" }
-
-// aquaneat-sponge-20   (strict: needs_review; the listed max is kept as a candidate, not used)
-{ "capacityMethod": "manufacturer_rating", "manufacturerMaxGallons": null, "manufacturerMinGallons": null,
-  "ratingExpression": "up_to", "ratingStatus": "needs_review", "ratingConfidence": "C",
-  "ratingSource": "https://www.amazon.com/dp/B078Q29JT4", "ratingSourceKind": "brand_listing",
-  "productRef": { "asin": "B078Q29JT4", "model": null }, "ratingCheckedAt": "2026-09-28" }
-  // candidate max if §5 middle option is adopted: 20
-
-// pawfly-sponge-10     (strict: needs_review; candidate max 10)
-{ "capacityMethod": "manufacturer_rating", "manufacturerMaxGallons": null, "manufacturerMinGallons": null,
-  "ratingExpression": "up_to", "ratingStatus": "needs_review", "ratingConfidence": "C",
-  "ratingSource": "https://www.amazon.com/dp/B09BNCRLZY", "ratingSourceKind": "brand_listing",
-  "productRef": { "asin": "B09BNCRLZY", "model": null }, "ratingCheckedAt": "2026-09-28" }
-
-// aquaneat-sponge-10   (identity unresolved)
-{ "capacityMethod": "manufacturer_rating", "manufacturerMaxGallons": null, "manufacturerMinGallons": null,
-  "ratingExpression": "unclear", "ratingStatus": "needs_review", "ratingConfidence": "C",
-  "ratingSource": null, "ratingSourceKind": "brand_listing",
+// aquaneat-sponge-10 — RATING NEEDED (identity unresolved)
+{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": null, "manufacturerMaxGallons": null,
+  "ratingExpression": "unclear", "ratingStatus": "needs_review", "ratingConfidence": "E",
+  "ratingSource": null, "ratingSourceKind": null,
   "productRef": { "asin": null, "model": null }, "ratingCheckedAt": "2026-09-28" }
 
-// powkoo-dual-sponge-40 (identity unresolved + conflicting ratings)
-{ "capacityMethod": "manufacturer_rating", "manufacturerMaxGallons": null, "manufacturerMinGallons": null,
+// pawfly-sponge-10 — RATING NEEDED (provenance); likely ≈ 10 gal kept in this report only
+{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": null, "manufacturerMaxGallons": null,
   "ratingExpression": "unclear", "ratingStatus": "needs_review", "ratingConfidence": "C",
-  "ratingSource": null, "ratingSourceKind": "brand_listing",
+  "ratingSource": "https://www.amazon.com/dp/B09BNCRLZY", "ratingSourceKind": "marketplace",
+  "productRef": { "asin": "B09BNCRLZY", "model": null }, "ratingCheckedAt": "2026-09-28" }
+
+// powkoo-dual-sponge-40 — RATING NEEDED (identity unresolved; do not encode 20–55)
+{ "capacityMethod": "manufacturer_rating", "manufacturerMinGallons": null, "manufacturerMaxGallons": null,
+  "ratingExpression": "unclear", "ratingStatus": "needs_review", "ratingConfidence": "E",
+  "ratingSource": null, "ratingSourceKind": null,
   "productRef": { "asin": null, "model": null }, "ratingCheckedAt": "2026-09-28" }
 ```
 
-Notes for phase B (not done here):
-
-- Keep a candidate maximum out of `manufacturerMaxGallons` whenever `ratingStatus` is `needs_review`,
-  so no code path can accidentally read it. If it is useful to keep, put it in the report, not the data.
-- Two catalog **display names** embed an unverified rating ("…(Up to 10G)", "…(20–55G)"). Once the
-  status shows "Rating needed", the name would contradict it; phase B should either rename these two
-  to the real listing title after identity is fixed, or show the name without the parenthetical.
-  (Ids never change.)
-- `data/gear_filters_ranges.csv` places hygger (S) in the 5–10 gal range and hygger (M) in both 10–20
-  and 20–40; those gear-page placements are unrelated to the advisor but are inconsistent with the
-  maker's ranges. Out of scope; noted for a gear-page content pass.
+`ratingConfidence: "A"` for hygger reflects the owner's direct reading of hygger's own pages
+(§1.1); this environment itself could only read them via search index.
 
 ---
 
-## 8. What this report does not change
+## 9. What this report does not change
 
 - No edits to `assets/data/gearCatalog.json`, `assets/data/gear/filters.json`, `data/filters.json`
-  or any CSV.
+  or any CSV; no display name is renamed.
 - No change to filtration scoring, thresholds, saved state v1/v2, the custom sponge input, or
   Stocking Load.
-- Every existing sponge `gphRated` value stays in place (to be ignored in phase B, removed in phase E).
+- Every existing sponge `gphRated` value stays in place (ignored in phase B, removed in phase E).
 - No phase B code.
 
 ---
 
-## 9. Sources (all read via search index on 2026-09-28; direct fetch blocked)
+## 10. Sources
 
-Manufacturer / manufacturer document:
-- hygger — Fish Tank Double Sponge Water Filter: https://www.hygger-online.com/product/fish-tank-water-filter/
-- hygger — Aquarium Double Biochemical Sponge Filter (conflicting line): https://www.hygger-online.com/product/hygger-aquarium-biochemical-sponge-filter/
-- hygger — Aquarium Biochemical Sponge Filter: https://www.hygger-online.com/product/aquarium-biochemical-sponge-filter/
-- AQUANEAT Large manual (SF-A004) mirror: https://manuals.plus/asin/B071HVZVMP
-- AQUANEAT official site (home page only indexed): https://theaquaneat.com/
-- Pawfly official site (no product page indexed): https://thepawfly.com/
+Manufacturer (hygger official):
+- hygger HG256 — Aquarium Double Biochemical Sponge Filter: https://www.hygger-online.com/product/hygger-aquarium-biochemical-sponge-filter/ **[MFR-SITE][OWNER]**
+- hygger HG908 — Fish Tank Double Sponge Water Filter: https://www.hygger-online.com/product/fish-tank-water-filter/ **[MFR-SITE][OWNER]**
+- hygger single Aquarium Biochemical Sponge Filter (the 5–20 / 20–55 / 55–125 line; not a catalog item): https://www.hygger-online.com/product/aquarium-biochemical-sponge-filter/
+- hygger HG-908 manual mirror: https://manuals.plus/hygger/hg-908-aquarium-double-sponge-filter-manual
 
-Brand-authored marketplace listings:
-- AQUANEAT Large up to 60: https://www.amazon.com/Aquaneat-Aquarium-Sponge-Filter-Breeding/dp/B071HVZVMP
-- AQUANEAT Middle up to 20: https://www.amazon.com/Aquaneat-Sponge-Filter-Breeding-Aquarium/dp/B078Q29JT4
-- AQUANEAT 10-gal candidates: https://www.amazon.com/clp/B078HDL21V · https://www.amazon.com/Aquaneat-Aquarium-Sponge-Filter-Breeding/dp/B078X7H8XG · https://www.amazon.com/Aquaneat-Sponge-Filter-Aquarium-Accessories/dp/B07P5WS1RH · https://amazon.com/Aquaneat-Sponge-Filter-Aquarium-Accessories/dp/B07KS1Y1JN · https://www.walmart.com/ip/Aquaneat-Aquarium-Bio-Oxygen-Sponge-Filter-Breeding-Fry-Betta-Shrimp-Nano-Fish-Tank-10-gal/711096713
+Manufacturer sites with no usable product page indexed:
+- AQUANEAT: https://theaquaneat.com/ · Pawfly: https://thepawfly.com/
+
+Manual mirror:
+- AQUANEAT Large (SF-A004): https://manuals.plus/asin/B071HVZVMP
+
+Marketplace listings (provenance not established):
+- AQUANEAT Large: https://www.amazon.com/Aquaneat-Aquarium-Sponge-Filter-Breeding/dp/B071HVZVMP
+- AQUANEAT Middle: https://www.amazon.com/Aquaneat-Sponge-Filter-Breeding-Aquarium/dp/B078Q29JT4
+- AQUANEAT 10-gal candidates (unresolved): https://www.amazon.com/clp/B078HDL21V · https://www.amazon.com/Aquaneat-Aquarium-Sponge-Filter-Breeding/dp/B078X7H8XG · https://www.amazon.com/Aquaneat-Sponge-Filter-Aquarium-Accessories/dp/B07P5WS1RH · https://amazon.com/Aquaneat-Sponge-Filter-Aquarium-Accessories/dp/B07KS1Y1JN · https://www.walmart.com/ip/Aquaneat-Aquarium-Bio-Oxygen-Sponge-Filter-Breeding-Fry-Betta-Shrimp-Nano-Fish-Tank-10-gal/711096713
 - AQUANEAT 50 gal Walmart listing: https://www.walmart.com/ip/Aquaneat-Aquarium-Bio-Sponge-Filter-Breeding-Fry-Betta-Shrimp-Nano-Fish-Tank-50-Gal/5040531230
 - hygger S: https://www.amazon.com/Hygger-Aquarium-Sponges-Submersible-Salt-Water/dp/B07RFL4JMM
 - hygger M: https://www.amazon.com/Hygger-Aquarium-Sponges-Submersible-Salt-Water/dp/B07RKT6QPV
-- hygger Upgraded M: https://www.amazon.com/hygger-Aquarium-Double-Sponge-Filter/dp/B0FJCZJ3C3
+- hygger Upgraded M (different product): https://www.amazon.com/hygger-Aquarium-Double-Sponge-Filter/dp/B0FJCZJ3C3
 - Pawfly nano: https://www.amazon.com/clp/B09BNCRLZY · https://www.amazon.ca/Pawfly-Biochemical-Sponge-Filter-Breeding/dp/B09BNCRLZY
 - Pawfly Walmart variant family: https://www.walmart.com/ip/Pawfly-Aquarium-Nano-Bio-Sponge-Filter-Quiet-Betta-Fry-Shrimp-and-Small-Fish-Foam-Filter-for-Fish-Tank-up-to-5-60-Gallon/1476406157
-- Powkoo candidates: https://www.amazon.com/Powkoo-Double-Biochemical-Aquarium-Gallons/dp/B01M32L1LC · https://www.amazon.ca/Powkoo-Biochemical-Pre-Filter-Canister-Aquarium/dp/B01M32L1LC · https://www.amazon.com/Powkoo-Double-Sponge-Filter-Aquarium/dp/B01N6MJYWC · https://www.amazon.com/Powkoo-Double-Biochemical-Aquarium-Gallons/dp/B01M3VALFU · https://www.amazon.com/Powkoo-Aquarium-Filters-Sponge-Container/dp/B07MYTKZT5 · https://www.amazon.com/Powkoo-Sponge-Filter-Aquarium-Gallons/dp/B01F8PGL6I
+- Powkoo candidates (unresolved): https://www.amazon.com/Powkoo-Double-Biochemical-Aquarium-Gallons/dp/B01M32L1LC · https://www.amazon.ca/Powkoo-Biochemical-Pre-Filter-Canister-Aquarium/dp/B01M32L1LC · https://www.amazon.com/Powkoo-Double-Sponge-Filter-Aquarium/dp/B01N6MJYWC · https://www.amazon.com/Powkoo-Double-Biochemical-Aquarium-Gallons/dp/B01M3VALFU · https://www.amazon.com/Powkoo-Aquarium-Filters-Sponge-Container/dp/B07MYTKZT5 · https://www.amazon.com/Powkoo-Sponge-Filter-Aquarium-Gallons/dp/B01F8PGL6I
 
-Retailer / review:
+Retailer / distributor / review:
+- Isaan Aquatics (HG-908-D-S): https://www.isaanaquatics.com/product-page/aquarium-biochemical-sponge-filter-dual-small
 - Aquatic Motiv (hygger 10–40): https://aquaticmotiv.com/products/hygger-sponge-filter-10-40-gallons
 - Supply AG (hygger M): https://www.supplyag.com/products/hygger-aquarium-double-sponge-filter-for-fresh-water-and-salt-water-fish-tank-m
 - Happy Paws (hygger S): https://www.happypawsboutiqueshop.com/products/b07rfl4jmm
-- eBay hygger "10–55 Gal": https://www.ebay.com/itm/187341969631
 - reviewaqua (Pawfly 10): https://www.reviewaqua.com/aquarium-pumps/aquarium-sponge-filter/pawfly-nano-bio-sponge-filter-quiet-foam-filter-for-tiny-fish-tank-10-gallon/
