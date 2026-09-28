@@ -10,10 +10,13 @@
  *   custom sponge   the user-entered "Rated for up to ___ gallons" value, ratingStatus "verified"
  *   old custom sponge (only a GPH) → ratingStatus "needed"; the GPH is kept as legacyGph, never used
  */
+import { canonicalizeFilterType } from '../../utils.js';
 import {
   CAPACITY_METHODS,
   RATING_STATUSES,
   formatSpongeRating,
+  hasUnsupportedCapacityMethod,
+  isKnownSpongeProductId,
   isSpongeFilter,
   pickPassthroughFields,
   resolveSpongeRating,
@@ -106,10 +109,11 @@ export function restoreSpongeItem(entry, product) {
     capacityMethod: CAPACITY_METHODS.MANUFACTURER_RATING,
   };
   if (fields.instanceId) item.instanceId = fields.instanceId;
-  if (fields.productId) {
+  const productId = fields.productId ?? (isKnownSpongeProductId(id) ? id : null);
+  if (productId) {
     // A catalog id the catalog can't resolve right now (removed product, catalog not loaded): keep
-    // the identity so it re-resolves later, and never trust a stored rating for it.
-    item.productId = fields.productId;
+    // the identity so it re-resolves later, and never trust a stored rating or GPH for it.
+    item.productId = productId;
     item.ratingStatus = RATING_STATUSES.NEEDED;
     return item;
   }
@@ -126,6 +130,34 @@ export function restoreSpongeItem(entry, product) {
     if (legacy) item.legacyGph = legacy;
   }
   return item;
+}
+
+export const RESTORE_KINDS = Object.freeze({
+  PRODUCT: 'product', // rebuilt from the current catalog record (its type, GPH, rating)
+  SPONGE: 'sponge', // restoreSpongeItem without a catalog record: custom, or unresolved product id
+  FLOW: 'flow', // custom / unresolved powered filter at its stored GPH (still needs GPH > 0)
+  DROP: 'drop',
+});
+
+/**
+ * How a saved entry is restored (phase C source-of-truth order):
+ *   1. an unsupported capacityMethod fails closed (dropped);
+ *   2. a product the current catalog resolves is that catalog record: catalog type wins over the
+ *      saved type, capacityMethod, GPH and rating, in both directions;
+ *   3. otherwise a sponge (saved type SPONGE, or a known catalog sponge id) is a rating sponge whose
+ *      stored GPH is never scored;
+ *   4. otherwise a powered filter keeps its stored GPH (legacy behaviour).
+ * @param {object} entry  saved entry in app-filter shape ({id, type, rated_gph, productId, …})
+ * @param {object|null} product  the current catalog record for its id, when found
+ */
+export function restoreKind(entry, product) {
+  if (!entry || typeof entry !== 'object' || hasUnsupportedCapacityMethod(entry)) return RESTORE_KINDS.DROP;
+  if (product) return RESTORE_KINDS.PRODUCT;
+  if (isSpongeFilter({ type: canonicalizeFilterType(entry.type ?? 'HOB') })
+    || isKnownSpongeProductId(entry.productId ?? entry.id)) {
+    return RESTORE_KINDS.SPONGE;
+  }
+  return RESTORE_KINDS.FLOW;
 }
 
 function legacyFlowValue(entry) {

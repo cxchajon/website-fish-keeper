@@ -3,7 +3,7 @@ import { validateSpeciesRecord } from "./speciesSchema.js";
 import { EMPTY_TANK } from '../stocking/tankStore.js';
 import { canonicalizeFilterType, sumGph } from '../utils.js';
 import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent } from '../bioload.js';
-import { assessFiltration, FILTRATION_LEVELS, FILTRATION_STATUS, MIN_BIOLOGICAL_TURNOVER, CAPACITY_METHODS, pickPassthroughFields, hasUnsupportedCapacityMethod, isSpongeFilter } from '../stocking-advisor/filtration/math.js';
+import { assessFiltration, FILTRATION_LEVELS, FILTRATION_STATUS, MIN_BIOLOGICAL_TURNOVER, CAPACITY_METHODS, pickPassthroughFields, hasUnsupportedCapacityMethod, isKnownSpongeProductId, isSpongeFilter } from '../stocking-advisor/filtration/math.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import { BEHAVIOR_TAGS } from './behaviorTags.js';
 import { evaluateStockWarnings } from './warnings.js';
@@ -257,7 +257,10 @@ function sanitizeFilter(filter) {
     return { id: null, type: 'HOB', rated_gph: 0 };
   }
   const id = typeof filter.id === 'string' && filter.id.trim() ? filter.id.trim() : null;
-  const type = canonicalizeFilterType(filter.type ?? filter.kind ?? filter.filterType);
+  // A known catalog sponge id is a sponge whatever type stale data stored (phase C).
+  const type = isKnownSpongeProductId(filter.productId ?? id)
+    ? 'SPONGE'
+    : canonicalizeFilterType(filter.type ?? filter.kind ?? filter.filterType);
   const unsupported = hasUnsupportedCapacityMethod(filter);
   // Type wins (sponge migration phase B): a SPONGE never carries flow, whatever gph / rated_gph /
   // capacityMethod "flow" stale data holds. It stays in the list with 0 GPH and is evaluated by its

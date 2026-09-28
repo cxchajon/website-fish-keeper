@@ -30,6 +30,7 @@ import {
   MAX_DEVICE_GPH,
   RATING_STATUSES,
   hasUnsupportedCapacityMethod,
+  isKnownSpongeProductId,
   isSpongeFilter,
   pickPassthroughFields,
   resolveCapacityMethod,
@@ -46,6 +47,7 @@ export const SAVED_FILTER_SOURCES = Object.freeze({
 });
 
 const MANUAL_ID_PREFIX = 'manual-';
+const SPONGE_TYPE = 'SPONGE';
 const MAX_LABEL_LENGTH = 120;
 
 function clampGph(value) {
@@ -120,7 +122,8 @@ function buildEntry(filter, { typeValue, gphValue }) {
     const legacyId = cleanString(filter?.id, 128);
     if (isManualId(legacyId)) entry.legacyId = legacyId;
   }
-  entry.type = canonicalizeFilterType(typeValue);
+  // A known catalog sponge id stays a sponge whatever type old data stored (phase C).
+  entry.type = productId && isKnownSpongeProductId(productId) ? SPONGE_TYPE : canonicalizeFilterType(typeValue);
   if (isSpongeFilter({ type: entry.type })) {
     return buildSpongeEntry(entry, extra, gph);
   }
@@ -238,7 +241,7 @@ export function migrateV1Entry(raw) {
     label: raw.label,
     capacityMethod: CAPACITY_METHODS.FLOW,
   };
-  return buildEntry(filter, { typeValue: raw.type ?? raw.kind, gphValue: raw.rated_gph ?? raw.gph });
+  return buildEntry(filter, { typeValue: raw.type ?? raw.kind ?? raw.filterType, gphValue: raw.rated_gph ?? raw.gph });
 }
 
 function parseJson(raw) {

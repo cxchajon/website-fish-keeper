@@ -17,6 +17,8 @@ import {
   buildSpongeProductItem,
   needsCustomRating,
   parseRatedGallons,
+  RESTORE_KINDS,
+  restoreKind,
   restoreSpongeItem,
   spongeChipBadge,
   spongeOptionDetails,
@@ -1203,9 +1205,10 @@ function readStoredFilters() {
   return readSavedFilters();
 }
 
-// Catalog metadata wins for a restored product; a capacity field the catalog doesn't define keeps
-// the saved value. The instance keeps its saved instanceId. A catalog sponge takes its rating from
-// the current catalog only (restoreSpongeItem): a saved rating or GPH is never trusted for it.
+// A restored product is rebuilt from the current catalog record: its type, GPH and capacity
+// metadata all come from the catalog, never from the saved entry (phase C: a saved capacityMethod,
+// rating or GPH is historical data). The instance keeps its saved instanceId. A catalog sponge takes
+// its rating from the current catalog only (restoreSpongeItem).
 function restoreProductItem(product, entry) {
   if (isSpongeFilter({ type: canonicalizeFilterType(product?.type ?? 'HOB') })) {
     return restoreSpongeItem(entry, product);
@@ -1213,20 +1216,7 @@ function restoreProductItem(product, entry) {
   const productItem = createProductFilter(product);
   if (!productItem) return null;
   const saved = pickPassthroughFields(entry);
-  const fromCatalog = pickPassthroughFields(product);
-  const merged = { ...productItem };
-  ['manufacturerMaxGallons', 'manufacturerMinGallons', 'ratingStatus'].forEach((key) => {
-    if (fromCatalog[key] === undefined && saved[key] !== undefined) {
-      merged[key] = saved[key];
-    }
-  });
-  if (typeof product.capacityMethod !== 'string' && saved.capacityMethod) {
-    merged.capacityMethod = saved.capacityMethod;
-  }
-  if (saved.instanceId) {
-    merged.instanceId = saved.instanceId;
-  }
-  return merged;
+  return saved.instanceId ? { ...productItem, instanceId: saved.instanceId } : productItem;
 }
 
 function hydrateFromAppState() {
@@ -1239,16 +1229,26 @@ function hydrateFromAppState() {
     : readStoredFilters();
   const next = [];
   existing.forEach((entry) => {
-    if (hasUnsupportedCapacityMethod(entry)) {
-      return;
-    }
     const id = typeof entry?.id === 'string' && entry.id ? entry.id : null;
     const product = id ? findProductById(id) : null;
+    const kind = restoreKind(entry, product);
+    if (kind === RESTORE_KINDS.DROP) {
+      return;
+    }
+    // Catalog type wins (phase C): a product the current catalog resolves is restored as that
+    // catalog record, whatever type, capacityMethod, GPH or rating the saved entry holds. A known
+    // sponge never becomes a powered filter and a known powered filter never becomes a sponge.
+    if (kind === RESTORE_KINDS.PRODUCT) {
+      const productItem = restoreProductItem(product, entry);
+      if (productItem) {
+        next.push(productItem);
+      }
+      return;
+    }
     // Type wins (phase B): a saved sponge is restored by rating, with or without a stored GPH, and
-    // that GPH is never scored. A known catalog sponge takes the current catalog record.
-    if (isSpongeFilter({ type: canonicalizeFilterType(entry?.type ?? 'HOB') })
-      && (!product || isSpongeFilter({ type: canonicalizeFilterType(product.type ?? 'HOB') }))) {
-      const item = restoreSpongeItem(entry, product);
+    // that GPH is never scored. An unresolved sponge product id keeps its identity, Rating needed.
+    if (kind === RESTORE_KINDS.SPONGE) {
+      const item = restoreSpongeItem(entry, null);
       if (item) {
         if (!item.id) item.id = newManualId();
         next.push(item);
@@ -1257,13 +1257,6 @@ function hydrateFromAppState() {
     }
     const gph = clampGph(entry?.rated_gph ?? entry?.gphRated ?? entry?.gph);
     if (!gph) {
-      return;
-    }
-    if (product) {
-      const productItem = restoreProductItem(product, entry);
-      if (productItem) {
-        next.push(productItem);
-      }
       return;
     }
     const type = canonicalizeFilterType(entry?.type ?? 'HOB');
