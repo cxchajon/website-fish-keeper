@@ -73,13 +73,17 @@ operation: `withUniqueInstanceIds`, `findInstance`, `removeInstance`, `replaceIn
   Add Selected to add this filter.". "Already added" is no longer shown for ordinary products.
 - No quantity control was added.
 
-**Exception — undergravel plates (review point).** The design (D11, section 10) locks "all filter
+**Exception — undergravel plates (LOCKED after review).** The design (D11, section 10) locks "all filter
 types, **except UGF**". The only UGF product (`penn-plax-ugf-20-29`) is one plate set per tank and its
 150 GPH is an unsupported legacy number (UGF model is phase F), so a second copy would double a flow
 that isn't real. It therefore keeps a one-per-tank block: Add Selected is disabled once it is in the
 list, with "Already added. An undergravel filter is one plate set per tank." A saved plan holding two
-copies restores one (catalog loaded or not). This preserves `main`'s behaviour for UGF exactly. If
-review prefers UGF duplicates too, it is a two-line change (`canAddProduct`, `hydrateFromAppState`).
+copies restores one (catalog loaded or not). This preserves `main`'s behaviour for UGF exactly.
+
+**Decision locked in review:** the undergravel filter remains **one instance per tank** in phase D;
+duplicate UGF products are not enabled. Reasons: its 150 GPH is a legacy / unsupported value,
+duplicates would numerically double an untrusted flow, and the proper UGF model is phase F. Phase D
+duplicate support applies to powered filters, powerheads, sponge filters and custom filters, not UGF.
 
 ## 4. Add Selected behaviour (step 3)
 
@@ -254,7 +258,7 @@ and `legacyGph: 120`.
 | saved-state / phase B / phase C unit files | 20 / 20, 26 / 26, 23 / 23 (unchanged, inside the 217) |
 | Stocking gate (desktop + mobile) | **165 passed, 0 failed, 27 skipped** (143 existing + 22 new) |
 | `npm run test:stocking:extended` | 105 pairs, 0 failures (generated report not committed) |
-| Live files run locally against the branch (`BASE_URL` = local static server) | `stocking-advisor-saved-filters.live.ts` 11 / 11, `stocking-advisor.live.ts` 5 / 5 |
+| Live files run locally against the branch (`BASE_URL` = local static server) | `stocking-advisor-saved-filters.live.ts` 12 / 12 (11 + the phase D test), `stocking-advisor.live.ts` 5 / 5 |
 | `guard:live`, `audit:controls` | pass |
 
 New unit coverage: instanceId format at every sanitising layer; `withUniqueInstanceIds` (same
@@ -282,9 +286,11 @@ Every test asserts Stocking Load equals the same stock with no filters. Against 
 eleven fail (H and I only for the missing `data-instance-id`: custom duplicates already worked on
 `main`, since each custom filter gets its own `manual-` id).
 
-## 16. Live-test recommendation (step 32)
+## 16. Live test (step 32)
 
-**Recommended, after this ships:** one permanent production test —
+**Added after review** as a permanent production test in `tests/live/stocking-advisor-saved-filters.live.ts`:
+`phase D: hygger Double Sponge S added twice on 55 gal: two instances, likely-multi, saved, remove one
+by instance`. The scenario as recommended —
 
 > Fresh context, 55-gal tank + a stock. Add hygger Double Sponge S twice with Add Selected. Expect two
 > chips with distinct `data-instance-id`, both "Rated 10–40 gal"; engine `likely-multi-sponge`,
@@ -294,16 +300,33 @@ eleven fail (H and I only for the missing `data-instance-id`: custom duplicates 
 > the same single instance. Stocking Load equals the same stock with no filters throughout.
 
 It covers the whole phase D chain in production (picker, instance creation, engine counting,
-serializer, restore, remove-by-instance) with the primary acceptance case, and a regression back to
-product-id de-duplication would fail it at the second chip. **Not added in this phase** (per the
-instructions); the browser spec's D–F test is the same scenario and validates it locally.
+serializer, restore, remove-by-instance) with the primary acceptance case.
+
+Implementation: fresh context (no seeded storage); 55 gal + 8 neon tetras; the real picker (select
+once, Add Selected twice, the button must still be enabled before the second click). Asserts: exactly
+two `hygger-double-sponge-s` chips with different well-formed `data-instance-id`s, both "Rated 10–40
+gal", no GPH / "80" in either chip; calculator `[id, SPONGE, 0]` × 2, `manufacturer_rating` /
+`verified` × 2; GPH `[0,0,0]`, turnover 0; level `likely-multi-sponge`, status "Likely adequate —
+multiple sponge filters" (warn), only `filtration.likely_multi_sponge`; summary "2 sponge filters";
+no "80 gal", GPH or ×/h in the filter area and warnings; v2 = two identity-only entries (same
+productId, the two instanceIds); no v1 key. Reload → same instanceIds in order, identical evaluation
+and storage. × on the **first** instance → exactly one chip, the **second** instanceId, "Below
+manufacturer rating", v2 holds only that instance, no v1. Reload → same single instanceId, same
+evaluation. Stocking Load equals the no-filter load (label) and the engine's no-filter load at every
+step; no page errors and no site-script console errors (same third-party exclusion as the file).
+
+Local validation (`BASE_URL` = local static server, desktop Chromium): **passes on the phase D
+branch** (3 / 3 runs; whole live file 17 / 17); **fails on `main`** at the second add — "Add Selected"
+is disabled once the product is in the list (`expect(add).toBeEnabled()`: received disabled). Not run
+against production, which does not contain phase D yet. The live suite runs only under
+`playwright.live.config.ts`, so gate counts are unchanged.
 
 ## 17. Deferred issues
 
 - **Old tabs collapse duplicates** (§11): a tab still running pre-phase-D JavaScript shows one copy
   per product and, if the user edits filters in it, saves that. Conservative (less flow) and limited
   to open stale tabs; retire with the v1 mirror in phase E.
-- **UGF duplicates** stay blocked pending the UGF model (phase F) — review point in §3.
+- **UGF duplicates** stay blocked (locked in review, §3) until the UGF model (phase F).
 - **Chip grouping** ("AQUANEAT Middle ×2" with one chip, as the design sketched) was not built: the
   instructions ask for one chip per physical filter. Revisit with the status card (phase G) if long
   lists become hard to read.
@@ -320,3 +343,4 @@ instructions); the browser spec's D–F test is the same scenario and validates 
 - `tests/unit/filter-duplicates-phase-d.test.mjs` (new), `tests/stocking-advisor-duplicate-filters.spec.ts` (new), `playwright.stocking-gate.config.ts` (runs the new spec).
 - `tests/stocking-advisor-gate.spec.ts`, `tests/stocking-advisor-sponge-phase-b.spec.ts` — one selector each (× button located through its chip).
 - `_internal/reports/stocking-advisor-sponge-migration-phase-d-2026-09.md` (this report).
+- Follow-up: `tests/live/stocking-advisor-saved-filters.live.ts` (one phase D live test, §16); this report.
