@@ -19,15 +19,28 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y curl jq
 
+      # Fetch headers from apex (final 200 only)
       - name: Fetch headers from apex
+        shell: bash
         run: |
-          echo "Fetching headers from thetankguide.com"
-          curl -sSI https://thetankguide.com > apex_headers.txt
+          set -euo pipefail
+          URL="https://thetankguide.com/"
+          # Follow redirects (-L), dump all response headers (-I -D -), then keep only the final block.
+          curl -sSIL -H 'Cache-Control: no-cache' -D - "$URL" \
+          | awk 'BEGIN{RS="\r\n\r\n"} END{gsub(/\r/,""); print}' > apex_headers.txt
+          echo "---- apex final headers ----"
+          cat apex_headers.txt
 
+      # Fetch headers from www (final 200 only)
       - name: Fetch headers from www
+        shell: bash
         run: |
-          echo "Fetching headers from www.thetankguide.com"
-          curl -sSI https://www.thetankguide.com > www_headers.txt
+          set -euo pipefail
+          URL="https://www.thetankguide.com/"
+          curl -sSIL -H 'Cache-Control: no-cache' -D - "$URL" \
+          | awk 'BEGIN{RS="\r\n\r\n"} END{gsub(/\r/,""); print}' > www_headers.txt
+          echo "---- www final headers ----"
+          cat www_headers.txt
 
       - name: Combine and format JSON output
         run: |
