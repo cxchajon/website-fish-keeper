@@ -4,8 +4,8 @@
  *
  * Both writers (the filtration controller and js/stocking/tankStore.js) go through this module.
  *
- *   ttg.stocking.filters.v2  {"v":2,"filters":[entry, …]}   authoritative
- *   ttg.stocking.filters.v1  [{id, type, rated_gph}, …]    compatibility mirror, flow filters only
+ *   ttg.stocking.filters.v2  {"v":2,"filters":[entry, …]}   authoritative; the only key written
+ *   ttg.stocking.filters.v1  [{id, type, rated_gph}, …]    historical: read and migrated, never written
  *
  * A v2 entry records the instance, not a copy of the catalog: a catalog filter is re-resolved from
  * the current catalog by productId when the page restores it (its stored gph is used only when the
@@ -20,14 +20,16 @@
  *                   {…, ratingStatus:"needed", legacyGph}   an old custom sponge that only had a GPH:
  *                   legacyGph is kept for one migration cycle, never scored, never shown as flow.
  *
- * The v1 mirror is kept until phase E so a tab still running the previous JavaScript restores the
- * same powered filters. It holds only flow-method entries and only the three fields old code reads;
- * a rating-based sponge is never written to it (no manufacturer gallons in rated_gph).
+ * v1 (sponge migration phase E): the v1 compatibility mirror written by phases A–D is retired; its
+ * grace period (design 8.3) ended with phase E. Current code never writes v1. It still reads a
+ * historical v1 plan when v2 is missing or unreadable and migrates it (same rules as before: known
+ * sponge ids and fake sponge GPH neutralised, repeated ids become separate instances). A successful
+ * save removes the historical v1 key, because v2 then holds the plan; clearing the list removes both
+ * keys, so a cleared plan can never come back through the v1 fallback. legacyGph (old custom
+ * sponges) is migration metadata of v2 entries and is unaffected.
  *
  * Duplicates (phase D): each entry is one physical filter with its own instanceId; productId may
- * repeat and nothing here de-duplicates by it. In the v1 mirror two copies of a powered product are
- * two entries with the same id (v1 has no instance field; ids are never invented). Scripts from
- * before phase D restore those as a single filter; v2 stays authoritative.
+ * repeat and nothing here de-duplicates by it.
  */
 import { canonicalizeFilterType } from '../../utils.js';
 import {
@@ -186,19 +188,6 @@ export function serializeFilters(filters) {
   return assignInstanceIds(entries);
 }
 
-// Only what the previous JavaScript reads, and only for flow-method entries.
-export function toV1Mirror(entries) {
-  if (!Array.isArray(entries)) return [];
-  return entries
-    .filter((entry) => entry && entry.capacityMethod === CAPACITY_METHODS.FLOW)
-    .map((entry) => ({
-      id: entry.productId ?? entry.legacyId ?? `${MANUAL_ID_PREFIX}${entry.instanceId}`,
-      type: entry.type,
-      rated_gph: entry.gph ?? 0,
-    }))
-    .filter((item) => item.id || item.rated_gph > 0);
-}
-
 // v2 entry → the app-filter shape both readers (controller, stocking.js) already consume.
 function toAppFilter(entry) {
   const appFilter = {
@@ -311,7 +300,10 @@ export function readSavedFilters(storage = defaultStorage()) {
   return readSavedFilterState(storage).filters;
 }
 
-// Writes v2 and the v1 mirror. An empty list clears both, as v1 did. Storage errors are ignored.
+// Writes v2 only (phase E: no v1 mirror). After a successful v2 write the historical v1 key is
+// removed: v2 now holds the plan, and a stale v1 must not return if v2 is later lost. An empty list
+// removes both keys, so a cleared plan cannot be resurrected by the v1 fallback. If the v2 write
+// fails, v1 is left alone (nothing is lost). Storage errors are ignored.
 export function writeSavedFilters(storage = defaultStorage(), filters = []) {
   if (!storage) return false;
   try {
@@ -322,12 +314,7 @@ export function writeSavedFilters(storage = defaultStorage(), filters = []) {
       return true;
     }
     storage.setItem(FILTER_STORAGE_KEY_V2, JSON.stringify({ v: SAVED_FILTERS_VERSION, filters: entries }));
-    const mirror = toV1Mirror(entries);
-    if (mirror.length) {
-      storage.setItem(FILTER_STORAGE_KEY_V1, JSON.stringify(mirror));
-    } else {
-      storage.removeItem(FILTER_STORAGE_KEY_V1);
-    }
+    storage.removeItem(FILTER_STORAGE_KEY_V1);
     return true;
   } catch (_error) {
     return false;

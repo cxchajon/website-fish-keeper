@@ -76,7 +76,7 @@ const nonFiltration = (computed) => computed.status.warnings.filter((w) => !w.id
 // ---------------------------------------------------------------------------------------------
 // Catalog metadata
 
-test('catalog: the seven sponge records carry the locked metadata; ids unchanged; legacy GPH kept', () => {
+test('catalog: the seven sponge records carry the locked metadata; ids unchanged; no legacy GPH (phase E)', () => {
   const expected = {
     [HYGGER_S]: [10, 40, 'verified', 'verified'],
     [HYGGER_M]: [15, 55, 'verified', 'verified'],
@@ -95,9 +95,10 @@ test('catalog: the seven sponge records carry the locked metadata; ids unchanged
     assert.equal(item.manufacturerMaxGallons, max, item.id);
     assert.equal(item.ratingStatus, status, item.id);
     assert.equal(item.ratingEvidence, evidence, item.id);
-    // Legacy compatibility fields stay until phase E.
-    assert.ok(item.gphRated > 0, `${item.id} keeps legacy gphRated`);
-    assert.ok('minGallons' in item && 'maxGallons' in item, item.id);
+    // Phase E removed the legacy compatibility fields (GPH and GPH-bucket range) from the catalog.
+    for (const key of ['gphRated', 'rated_gph', 'ratedGph', 'gph', 'minGallons', 'maxGallons', 'legacyFieldsNote']) {
+      assert.equal(key in item, false, `${item.id} has no ${key}`);
+    }
   }
   assert.equal(RAW.find((item) => item.id === HYGGER_S).ratingSourceKind, 'manufacturer_official');
   assert.deepEqual(RAW.find((item) => item.id === 'aquaneat-sponge-60').ratingSourceKind, ['retailer_exact_product', 'third_party_manual']);
@@ -494,7 +495,7 @@ test('custom sponge serialization: {type, capacityMethod, manufacturerMaxGallons
   assert.match(entry.instanceId, /^f-/);
   assert.equal('gph' in entry, false);
   assert.equal('legacyGph' in entry, false);
-  assert.equal(storage.has(saved.FILTER_STORAGE_KEY_V1), false, 'v1 mirror excludes rating sponges');
+  assert.equal(storage.has(saved.FILTER_STORAGE_KEY_V1), false, 'no v1 is written (phase E)');
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -582,7 +583,7 @@ test('rating-only sponge survives every sanitizer / normalizer into compute', ()
   assert.deepEqual(math.normalizeFilters([{ type: 'HOB', rated_gph: 0 }]), []);
 });
 
-test('v1 mirror: powered filters kept, rating sponges excluded, no gallons in rated_gph', () => {
+test('current save: powered and sponge filters go to v2 only; no v1 mirror (phase E)', () => {
   const store = storageWith({});
   saved.writeSavedFilters(store, [
     toApp(product('tetra-whisper-iq-45')),
@@ -590,21 +591,18 @@ test('v1 mirror: powered filters kept, rating sponges excluded, no gallons in ra
     { ...toApp(customSponge(40)), label: 'Sponge filter' },
     toApp(powered('CANISTER', 180)),
   ]);
-  const mirror = JSON.parse(store.map.get(saved.FILTER_STORAGE_KEY_V1));
-  assert.deepEqual(mirror, [
-    { id: 'tetra-whisper-iq-45', type: 'HOB', rated_gph: 215 },
-    { id: 'manual-p1', type: 'CANISTER', rated_gph: 180 },
-  ]);
+  assert.equal(store.map.has(saved.FILTER_STORAGE_KEY_V1), false);
   const v2 = JSON.parse(store.map.get(saved.FILTER_STORAGE_KEY_V2)).filters;
-  assert.equal(v2.length, 4, 'v2 stays authoritative');
+  assert.equal(v2.length, 4, 'v2 is authoritative and the only key written');
+  assert.deepEqual(v2.map((e) => e.gph ?? null), [215, null, null, 180], 'no gallons stored as GPH');
 });
 
 // ---------------------------------------------------------------------------------------------
 // Catalog loader / cache (step 34)
 
-test('catalog cache key is v2; the loader keeps a GPH-less sponge record and drops a GPH-less powered one', async () => {
+test('catalog cache key is v3 (phase E); the loader keeps a GPH-less sponge record and drops a GPH-less powered one', async () => {
   const src = readFileSync(ROOT + 'js/gear-data.js', 'utf8');
-  assert.match(src, /STORAGE_KEY = 'ttg\.gear\.catalog\.v2'/);
+  assert.match(src, /STORAGE_KEY = 'ttg\.gear\.catalog\.v3'/);
   const gear = await import('../../js/gear-data.js');
   const fetchImpl = async () => ({ ok: true, json: async () => ([
     { id: 'future-sponge', brand: 'X', name: 'X Sponge', type: 'SPONGE', capacityMethod: 'manufacturer_rating', manufacturerMaxGallons: 20, ratingStatus: 'verified' },
@@ -614,7 +612,8 @@ test('catalog cache key is v2; the loader keeps a GPH-less sponge record and dro
   const loaded = await gear.getGearData({ forceRefresh: true, fetchImpl });
   assert.deepEqual(loaded.map((item) => item.id).sort(), ['future-sponge', 'ok-hob']);
   const sponge = loaded.find((item) => item.id === 'future-sponge');
-  assert.equal(sponge.gphRated, 0);
+  // No synthetic flow or bucket fields on a sponge (phase E).
+  for (const key of ['gphRated', 'rated_gph', 'minGallons', 'maxGallons']) assert.equal(key in sponge, false, key);
   assert.equal(sponge.ratingStatus, 'verified');
   // Restore the real catalog for any later test.
   await gear.getGearData({ forceRefresh: true });

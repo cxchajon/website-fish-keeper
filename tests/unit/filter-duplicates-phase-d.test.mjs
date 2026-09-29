@@ -220,7 +220,7 @@ test('Add Selected twice: same productId, new unique instanceId each time', () =
   });
 });
 
-test('serialize: two instances of one product survive as two v2 entries (powered and sponge); v1 mirror repeats the powered id only', () => {
+test('serialize: two instances of one product survive as two v2 entries (powered and sponge); no v1 mirror is written (phase E)', () => {
   const list = withIds([
     ...addProduct(addProduct([], AC70), AC70),
     ...addProduct(addProduct([], HYGGER_S), HYGGER_S),
@@ -235,8 +235,11 @@ test('serialize: two instances of one product survive as two v2 entries (powered
   entries.filter((e) => e.type === 'SPONGE').forEach((e) => {
     assert.deepEqual(Object.keys(e).sort(), ['capacityMethod', 'instanceId', 'productId', 'source', 'type'], 'catalog sponge: identity only');
   });
-  const mirror = saved.toV1Mirror(entries);
-  assert.deepEqual(mirror, [{ id: AC70, type: 'HOB', rated_gph: 300 }, { id: AC70, type: 'HOB', rated_gph: 300 }]);
+  assert.equal('toV1Mirror' in saved, false, 'phase E: the v1 mirror serializer is retired');
+  const storage = storageWith();
+  saved.writeSavedFilters(storage, list.map(toApp));
+  assert.deepEqual(JSON.parse(storage.map.get(V2)).filters.map((e) => e.instanceId), list.map((item) => item.instanceId));
+  assert.equal(storage.map.has(V1), false);
 });
 
 test('restore: the phase D example v2 plan keeps both hygger S instances, each re-resolved from the current catalog', () => {
@@ -319,7 +322,9 @@ test('v1 plan with a repeated powered id migrates both copies with distinct inst
   assert.equal(result.computed.filtering.level, 'adequate');
   assert.equal(result.preController.filtering.biologicalGph, 430, 'stocking.js view already counted both');
   assert.equal(result.written.filters.length, 2);
-  assert.deepEqual(result.mirror, [{ id: TETRA, type: 'HOB', rated_gph: 215 }, { id: TETRA, type: 'HOB', rated_gph: 215 }]);
+  assert.deepEqual(result.written.filters.map((e) => [e.productId, e.gph]), [[TETRA, 215], [TETRA, 215]]);
+  assert.notEqual(result.written.filters[0].instanceId, result.written.filters[1].instanceId);
+  assert.deepEqual(result.mirror, [], 'phase E: the historical v1 is migrated into v2 and not written back');
 });
 
 test('v1 plan with a repeated known sponge id migrates two separate sponge instances with zero GPH', () => {

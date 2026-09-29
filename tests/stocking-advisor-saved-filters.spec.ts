@@ -115,8 +115,8 @@ test.describe('saved filters v2', () => {
     expect(v2.v).toBe(2);
     expect(v2.filters.map((entry: { source: string; type: string }) => `${entry.source}:${entry.type}`))
       .toEqual(['product:HOB', 'custom:CANISTER', 'custom:POWERHEAD']);
-    const v1 = JSON.parse((await stored(page, V1)) as string);
-    expect(v1.map((entry: object) => Object.keys(entry).sort().join(','))).toEqual(['id,rated_gph,type', 'id,rated_gph,type', 'id,rated_gph,type']);
+    // Phase E: current saves write v2 only (the v1 mirror is retired).
+    expect(await stored(page, V1)).toBeNull();
   });
 
   test('B + E: custom powered and custom sponge filters survive save → reload', async ({ page }) => {
@@ -143,7 +143,7 @@ test.describe('saved filters v2', () => {
     expect(after.level).toBe('not-evaluated');
   });
 
-  test('F: an old v1 plan loads, scores as before and is written back as v2 (v1 kept)', async ({ page }) => {
+  test('F: an old v1 plan loads, scores as before and is written back as v2 (historical v1 removed)', async ({ page }) => {
     const v1 = [
       { id: 'aquaneat-sponge-20', type: 'SPONGE', rated_gph: 999 },
       { id: 'manual-old1', type: 'HOB', rated_gph: 150 },
@@ -158,9 +158,8 @@ test.describe('saved filters v2', () => {
     expect(first.scoring.slice(1).map((row) => row[2])).toEqual([150, 250]);
     const v2 = JSON.parse((await stored(page, V2)) as string);
     expect(v2.filters.map((entry: { capacityMethod: string }) => entry.capacityMethod)).toEqual(['manufacturer_rating', 'flow', 'flow']);
-    // Phase B: the v1 mirror keeps the powered filters only.
-    expect(JSON.parse((await stored(page, V1)) as string).map((entry: { id: string }) => entry.id))
-      .toEqual(['manual-old1', 'retired-product']);
+    // Phase E: migrated into v2; no v1 mirror is written and the historical v1 key is removed.
+    expect(await stored(page, V1)).toBeNull();
     await reloadAndCompare(page);
   });
 
@@ -185,8 +184,8 @@ test.describe('saved filters v2', () => {
     expect(first.scoring[0][2]).toBe(0);
     const saved = JSON.parse((await stored(page, V2)) as string);
     expect(saved.filters[0]).toEqual({ instanceId: 'f-fixt01', source: 'product', productId: 'aquaneat-sponge-20', type: 'SPONGE', capacityMethod: 'manufacturer_rating' });
-    // Rating-method entries never reach the v1 mirror.
-    expect(JSON.parse((await stored(page, V1)) as string).map((entry: { id: string }) => entry.id)).toEqual(['manual-fixt']);
+    // Phase E: no v1 mirror; the stale v1 beside a valid v2 is removed on save.
+    expect(await stored(page, V1)).toBeNull();
     await reloadAndCompare(page);
   });
 

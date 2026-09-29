@@ -6,6 +6,9 @@ import { test, expect, type Page } from '@playwright/test';
 
 const V1 = 'ttg.stocking.filters.v1';
 const V2 = 'ttg.stocking.filters.v2';
+// Current catalog cache key (phase E). Stale-shaped records are fed through it so the loader's
+// historical-record sanitising stays covered; the retired v2 / v1 generations must stay unused.
+const CATALOG_CURRENT = 'ttg.gear.catalog.v3';
 const CATALOG_V2 = 'ttg.gear.catalog.v2';
 const CATALOG_V1 = 'ttg.gear.catalog.v1';
 const HYGGER_S = 'hygger-double-sponge-s';
@@ -212,7 +215,7 @@ test.describe('sponge phase C: stale / legacy data', () => {
       ['aquaneat-sponge-20', 'SPONGE', 'manufacturer_rating', undefined],
       ['aquaclear-70', 'HOB', 'flow', 300],
     ]);
-    expect(JSON.parse((await stored(page, V1)) as string)).toEqual([{ id: 'aquaclear-70', type: 'HOB', rated_gph: 300 }]);
+    expect(await stored(page, V1)).toBeNull(); // phase E: no v1 mirror
   });
 
   test('stale type conflict with the catalog unavailable: the known sponge still scores 0 GPH (Rating needed)', async ({ page }) => {
@@ -233,9 +236,11 @@ test.describe('sponge phase C: stale / legacy data', () => {
     expect((await savedV2(page)).filters[0]).toEqual({ instanceId: 'f-off001', source: 'product', productId: HYGGER_S, type: 'SPONGE', capacityMethod: 'manufacturer_rating' });
   });
 
-  test('stale catalog cache (v2 key with GPH-only sponges, plus a v1 cache): Rating needed, then verified after refresh', async ({ page }) => {
+  test('stale catalog cache (GPH-only sponges in the current key, plus old v2 / v1 caches): Rating needed, then verified after refresh', async ({ page }) => {
+    const oldV2 = JSON.stringify(STALE_CATALOG.map((item) => (item.id === HYGGER_S ? { ...item, type: 'HOB', gphRated: 700 } : item)));
     await seedStorage(page, {
-      [CATALOG_V2]: JSON.stringify(STALE_CATALOG),
+      [CATALOG_CURRENT]: JSON.stringify(STALE_CATALOG),
+      [CATALOG_V2]: oldV2,
       [CATALOG_V1]: JSON.stringify(STALE_CATALOG.map((item) => (item.id === HYGGER_M ? { ...item, type: 'HOB', gphRated: 900 } : item))),
       [V1]: JSON.stringify([{ id: HYGGER_S, type: 'SPONGE', rated_gph: 120 }]),
     });
@@ -249,8 +254,10 @@ test.describe('sponge phase C: stale / legacy data', () => {
     expect([state.level, state.gph, state.turnover]).toEqual(['not-evaluated', [0, 0, 0], 0]);
     await expect(chip(page, HYGGER_S)).toContainText('Rating needed');
     expect(await filtrationText(page)).not.toMatch(FAKE_GPH);
-    // The background refresh has rewritten the v2 cache with current metadata; the old v1 cache is untouched.
-    await expect.poll(async () => JSON.parse((await stored(page, CATALOG_V2)) as string).find((i: { id: string }) => i.id === HYGGER_S).ratingStatus).toBe('verified');
+    // The background refresh has rewritten the current cache with current metadata; the old v2 and v1
+    // caches are neither used nor touched.
+    await expect.poll(async () => JSON.parse((await stored(page, CATALOG_CURRENT)) as string).find((i: { id: string }) => i.id === HYGGER_S).ratingStatus).toBe('verified');
+    expect(await stored(page, CATALOG_V2)).toBe(oldV2);
     expect(JSON.parse((await stored(page, CATALOG_V1)) as string).find((i: { id: string }) => i.id === HYGGER_M).gphRated).toBe(900);
     await page.reload();
     await setUpTank(page, '29g');
@@ -268,7 +275,8 @@ test.describe('sponge phase C: stale / legacy data', () => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     await seedStorage(page, {
-      [CATALOG_V2]: JSON.stringify(STALE_CATALOG),
+      [CATALOG_CURRENT]: JSON.stringify(STALE_CATALOG),
+      [CATALOG_V2]: JSON.stringify(STALE_CATALOG.map((item) => (item.id === HYGGER_S ? { ...item, type: 'HOB', gphRated: 900 } : item))),
       [V1]: JSON.stringify([{ id: HYGGER_S, type: 'SPONGE', rated_gph: 120 }, { id: 'manual-oldsp', type: 'SPONGE', rated_gph: 200 }]),
     });
     await openAdvisor(page, { offline: true });
@@ -282,8 +290,9 @@ test.describe('sponge phase C: stale / legacy data', () => {
     expect(await filtrationText(page)).not.toMatch(FAKE_GPH);
     // The (stale) cached catalog still serves the picker.
     await expect(page.locator(`#filter-product option[value="${HYGGER_M}"]`)).toContainText('Rating needed');
-    // Offline with no cache at all: the catalog is unavailable, the sponges stay Rating needed.
-    await page.evaluate((key) => localStorage.removeItem(key), CATALOG_V2);
+    // Offline with no current cache (only the obsolete v2 generation): the catalog is unavailable —
+    // v2 is not a fallback — and the sponges stay Rating needed.
+    await page.evaluate((key) => localStorage.removeItem(key), CATALOG_CURRENT);
     await page.reload();
     await setUpTank(page, '20l');
     await settle(page);
@@ -321,6 +330,6 @@ test.describe('sponge phase C: stale / legacy data', () => {
     expect([state.level, state.adequateBy]).toEqual(['adequate', 'powered']);
     await expect(chips(page)).toHaveCount(4);
     expect(await filtrationText(page)).not.toMatch(FAKE_GPH);
-    expect(JSON.parse((await stored(page, V1)) as string)).toEqual([{ id: 'tetra-whisper-iq-45', type: 'HOB', rated_gph: 215 }]);
+    expect(await stored(page, V1)).toBeNull(); // phase E: no v1 mirror; the stale v1 is removed on save
   });
 });

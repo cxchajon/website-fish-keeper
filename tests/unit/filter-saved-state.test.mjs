@@ -232,12 +232,13 @@ test('F. v1 payload migrates to v2: powered entries score exactly as before; spo
   assert.deepEqual(score(migrated).filtering.biologicalGph, 400, 'only the powered GPH counts');
   assert.deepEqual(migrated.filter((item) => item.type === 'SPONGE').map((item) => [item.id, item.gph, item.ratingStatus]),
     [[SPONGE_ID, 0, byId.get(SPONGE_ID).ratingStatus], ['manual-lx2', 0, 'needed']]);
-  // Writing back produces v2 and a v1 mirror of the powered (flow) entries only; v1 is never
-  // deleted by a read.
+  // A read never deletes v1. Writing back produces v2 only (phase E: no v1 mirror); the historical
+  // v1 key is removed once v2 holds the migrated plan.
   assert.ok(storage.map.has(V1));
   saved.writeSavedFilters(storage, state.filters);
   assert.equal(JSON.parse(storage.map.get(V2)).v, 2);
-  assert.deepEqual(JSON.parse(storage.map.get(V1)), powered(v1.map((entry) => ({ ...entry, type: canonicalizeFilterType(entry.type) }))));
+  assert.equal(JSON.parse(storage.map.get(V2)).filters.length, 4);
+  assert.equal(storage.map.has(V1), false);
 });
 
 test('G. a v2 payload loads directly and never reads v1', () => {
@@ -251,26 +252,42 @@ test('G. a v2 payload loads directly and never reads v1', () => {
   assert.equal(state.filters[0].id, HOB_ID);
 });
 
-test('v1 mirror: old scripts see only powered filters and the fields they read, never a sponge (phase B)', () => {
+test('no v1 mirror (phase E): current saves write v2 only, powered and sponge; clearing removes both keys', () => {
   const storage = memoryStorage();
   saved.writeSavedFilters(storage, [
     toApp(productItem(HOB_ID)),
-    // Stale "flow" sponge data: type wins, it is still left out of v1.
+    // Stale "flow" sponge data: type wins; still a rating sponge in v2, and nothing goes to v1.
     { ...toApp(customItem('SPONGE', 60)), capacityMethod: 'flow', rated_gph: 60, manufacturerMaxGallons: 20 },
     { ...toApp(productItem(SPONGE_ID)), capacityMethod: 'manufacturer_rating', manufacturerMaxGallons: 40 },
     toApp(customItem('CANISTER', 180, 4)),
   ]);
-  const mirror = JSON.parse(storage.map.get(V1));
-  assert.equal(mirror.length, 2, 'sponges (rating-method) are left out of v1');
-  for (const item of mirror) {
-    assert.deepEqual(Object.keys(item).sort(), ['id', 'rated_gph', 'type']);
-  }
-  assert.deepEqual(mirror.map((item) => [item.id, item.type, item.rated_gph]), [[HOB_ID, 'HOB', Math.round(byId.get(HOB_ID).gphRated)], ['manual-test4', 'CANISTER', 180]]);
-  assert.ok(!storage.map.get(V1).includes('SPONGE'));
-  // Clearing every filter clears both keys, as v1 did.
+  assert.equal(storage.map.has(V1), false, 'no v1 mirror');
+  const v2 = JSON.parse(storage.map.get(V2)).filters;
+  assert.deepEqual(v2.map((entry) => [entry.type, entry.capacityMethod, entry.gph ?? null]),
+    [['HOB', 'flow', Math.round(byId.get(HOB_ID).gphRated)], ['SPONGE', 'manufacturer_rating', null], ['SPONGE', 'manufacturer_rating', null], ['CANISTER', 'flow', 180]]);
+  // Clearing every filter clears both keys.
   saved.writeSavedFilters(storage, []);
   assert.equal(storage.map.has(V1), false);
   assert.equal(storage.map.has(V2), false);
+});
+
+test('clearing a plan that still has a historical v1 key removes it: the old plan cannot come back', () => {
+  const oldV1 = JSON.stringify([{ id: HOB_ID, type: 'HOB', rated_gph: 100 }, { id: SPONGE_ID, type: 'SPONGE', rated_gph: 120 }]);
+  // v2 present and a stale v1 beside it (an old tab): the user removes every filter.
+  const storage = memoryStorage({ [V2]: JSON.stringify({ v: 2, filters: [{ instanceId: 'f-aaaaaa', source: 'product', productId: HOB_ID, type: 'HOB', capacityMethod: 'flow', gph: 100 }] }), [V1]: oldV1 });
+  saved.writeSavedFilters(storage, []);
+  assert.deepEqual([storage.map.has(V2), storage.map.has(V1)], [false, false]);
+  assert.deepEqual(saved.readSavedFilterState(storage), { version: 0, entries: [], filters: [] }, 'nothing restores after reload');
+  // v1-only user clears the migrated plan: same.
+  const v1Only = memoryStorage({ [V1]: oldV1 });
+  assert.equal(saved.readSavedFilterState(v1Only).version, 1);
+  saved.writeSavedFilters(v1Only, []);
+  assert.deepEqual(saved.readSavedFilterState(v1Only).filters, []);
+  // A failed v2 write leaves v1 untouched (no data lost).
+  const failing = memoryStorage({ [V1]: oldV1 });
+  failing.setItem = () => { throw new Error('quota'); };
+  assert.equal(saved.writeSavedFilters(failing, [toApp(productItem(HOB_ID))]), false);
+  assert.equal(failing.map.get(V1), oldV1);
 });
 
 test('capacity fields survive save, restore, sanitize and compute preparation (phase B: sponges by rating)', () => {

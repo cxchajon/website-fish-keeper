@@ -110,7 +110,10 @@ guidance only.
 
 - Rated GPH overstates real flow; the model does not derate it (any fixed derating would be invented
   precision). The warning text says so.
-- Sponge-filter GPH figures in the catalog (60–200) are tank-size marketing, not measured flow.
+- Sponge filters are air-driven and have no reliable GPH, so none is stored or scored: the catalog's
+  former sponge GPH figures (60–200) were tank-size marketing, not measured flow, and were removed in
+  sponge migration phase E. Sponges are checked by the manufacturer's tank-size rating instead
+  (`_internal/reports/stocking-advisor-sponge-migration-phase-b-2026-09.md`).
 - There is no circulation or current-strength check; species flow preference is left to the
   environment guidance.
 - Media quantity, maintenance, clogging and maturity are unknown and not modelled.
