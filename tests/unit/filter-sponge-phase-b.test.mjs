@@ -16,6 +16,7 @@ const compute = await import('../../js/logic/compute.js');
 const math = await import('../../js/stocking-advisor/filtration/math.js');
 const saved = await import('../../js/stocking-advisor/filtration/saved-state.js');
 const items = await import('../../js/stocking-advisor/filtration/sponge-items.js');
+const ugfItems = await import('../../js/stocking-advisor/filtration/ugf-items.js');
 const { getGearData, filterGearByTank } = await import('../../js/gear-data.js');
 const { getTankById, TANK_SIZES } = await import('../../js/utils.js');
 
@@ -49,7 +50,10 @@ const customSponge = (gallons, n = 1) => items.buildCustomSpongeItem({ id: `manu
 const powered = (type, gph, n = 1) => ({ id: `manual-p${n}`, source: 'custom', type, gph, label: `${type} ${gph} GPH` });
 const product = (id) => {
   const p = byId.get(id);
-  return p.type === 'SPONGE' ? catalogSponge(id) : { id, source: 'product', type: p.type, gph: Math.round(p.gphRated), productId: id };
+  if (p.type === 'SPONGE') return catalogSponge(id);
+  // Phase F: a catalog UGF item carries compatibleTanks and no GPH (controller createProductFilter).
+  if (p.type === 'UGF') return ugfItems.buildUgfProductItem(p);
+  return { id, source: 'product', type: p.type, gph: Math.round(p.gphRated), productId: id };
 };
 
 const TANK_BY_GALLONS = { 10: '10g', 20: '20l', 29: '29g', 40: '40b', 55: '55g', 75: '75g' };
@@ -429,13 +433,16 @@ test('powered catalog filters are unchanged: GPH, turnover, level; Tetra IQ 45 s
   }
 });
 
-test('undergravel filter is unchanged in phase B: flow-scored, not a sponge', () => {
+test('undergravel filter is not a sponge; since phase F it is evaluated by tank compatibility, not flow', () => {
   const ugf = product('penn-plax-ugf-20-29');
   assert.equal(math.isSpongeFilter(ugf), false);
-  assert.equal(math.effectiveCapacityMethod(ugf), 'flow');
+  assert.equal(math.isRatingBasedSponge(ugf), false);
+  // Phase F (was 'flow' / 150 GPH through phase E): see filter-ugf-phase-f.test.mjs.
+  assert.equal(math.effectiveCapacityMethod(ugf), 'tank_compatibility');
   const computed = run('29g', [ugf]);
-  assert.equal(computed.filtering.gphTotal, 150);
+  assert.equal(computed.filtering.gphTotal, 0);
   assert.equal(computed.filtering.level, 'adequate');
+  assert.equal(computed.filtering.assessment.sponge.count, 0);
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -600,9 +607,9 @@ test('current save: powered and sponge filters go to v2 only; no v1 mirror (phas
 // ---------------------------------------------------------------------------------------------
 // Catalog loader / cache (step 34)
 
-test('catalog cache key is v3 (phase E); the loader keeps a GPH-less sponge record and drops a GPH-less powered one', async () => {
+test('catalog cache key is v4 (phase F; v3 in phase E); the loader keeps a GPH-less sponge record and drops a GPH-less powered one', async () => {
   const src = readFileSync(ROOT + 'js/gear-data.js', 'utf8');
-  assert.match(src, /STORAGE_KEY = 'ttg\.gear\.catalog\.v3'/);
+  assert.match(src, /STORAGE_KEY = 'ttg\.gear\.catalog\.v4'/);
   const gear = await import('../../js/gear-data.js');
   const fetchImpl = async () => ({ ok: true, json: async () => ([
     { id: 'future-sponge', brand: 'X', name: 'X Sponge', type: 'SPONGE', capacityMethod: 'manufacturer_rating', manufacturerMaxGallons: 20, ratingStatus: 'verified' },

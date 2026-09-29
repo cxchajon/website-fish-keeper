@@ -408,9 +408,15 @@
     "brand": "Penn-Plax",
     "name": "Penn-Plax Undergravel Aquarium Filter for 20 (Long) - 29 Gallon Tanks (Two 14\" x 11.1\" Plates)",
     "type": "UGF",
-    "gphRated": 150,
-    "minGallons": 20,
-    "maxGallons": 40
+    "capacityMethod": "tank_compatibility",
+    "compatibleTanks": [
+      "20l",
+      "29g"
+    ],
+    "compatibilityExpression": "listed_tanks",
+    "compatibilitySourceKind": "product_title",
+    "compatibilityNote": "Product claim: for 20 Long – 29 gallon tanks; two 14\" x 11.1\" plates (about 28\" x 11.1\" installed). Listed presets only: 20 High is not listed. No GPH or gallon rating is stored for this product.",
+    "compatibilityCheckedAt": "2026-09-29"
   },
   {
     "id": "marineland-penguin-350",

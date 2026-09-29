@@ -2,12 +2,12 @@
 // phase C stale-data fallback and phase D duplicate filter instances against production. Each test runs in a fresh browser context, so it
 // only touches its own throwaway localStorage. Phase E contract: current saves write
 // ttg.stocking.filters.v2 only (no v1 mirror; a historical v1 plan is still read, migrated and then
-// removed) and the catalog cache is ttg.gear.catalog.v3.
+// removed). Phase F contract: the catalog cache is ttg.gear.catalog.v4 (v3 in phase E).
 import { test, expect, type Page } from '@playwright/test';
 
 const V1 = 'ttg.stocking.filters.v1';
 const V2 = 'ttg.stocking.filters.v2';
-const CATALOG_CACHE = 'ttg.gear.catalog.v3';
+const CATALOG_CACHE = 'ttg.gear.catalog.v4';
 const ASSET_PATH = /\/(js|data|assets\/data)\//;
 
 type Errors = { page: string[]; console: string[] };
@@ -124,17 +124,19 @@ async function reloadWithStock(page: Page, tankId: string) {
 
 const filtrationWarningIds = (state: Snapshot) => state.warnings.filter((id: string) => id.startsWith('filtration.'));
 
-test('phases B–E are deployed: saved-state (rating model, no v1 mirror) and catalog cache v3 are served', async ({ request }) => {
+test('phases B–F are deployed: saved-state (rating model, no v1 mirror) and catalog cache v4 are served', async ({ request }) => {
   const response = await request.get('/js/stocking-advisor/filtration/saved-state.js');
   expect(response.status()).toBe(200);
   const body = await response.text();
   expect(body).toContain("'ttg.stocking.filters.v2'");
   expect(body).toContain('CAPACITY_METHODS.MANUFACTURER_RATING');
-  // Phase E: the v1 mirror serializer is retired and the catalog cache generation is v3.
+  // Phase E: the v1 mirror serializer is retired. Phase F: UGF entries are tank_compatibility and the
+  // catalog cache generation is v4.
   expect(body).not.toContain('toV1Mirror');
+  expect(body).toContain('CAPACITY_METHODS.TANK_COMPATIBILITY');
   const gear = await request.get('/js/gear-data.js');
   expect(gear.status()).toBe(200);
-  expect(await gear.text()).toContain("'ttg.gear.catalog.v3'");
+  expect(await gear.text()).toContain("'ttg.gear.catalog.v4'");
 });
 
 test('powered catalog filter (Tetra IQ 45): 215 GPH, load unchanged, v2 written (no v1 mirror), identical after reload', async ({ page }) => {
@@ -443,10 +445,11 @@ test('phase C: catalog unavailable — a known sponge id saved as a 900 GPH HOB 
     catalogRequests += 1;
     return route.abort('failed');
   });
-  // Fresh context: there is no cached catalog (current ttg.gear.catalog.v3, or an old v2 / v1) to fall back on either.
+  // Fresh context: there is no cached catalog (current ttg.gear.catalog.v4, or an old v3 / v2 / v1) to fall back on either.
   await page.addInitScript(() => {
     if (sessionStorage.getItem('__phaseC_seeded')) return;
     sessionStorage.setItem('__phaseC_seeded', '1');
+    localStorage.removeItem('ttg.gear.catalog.v4');
     localStorage.removeItem('ttg.gear.catalog.v3');
     localStorage.removeItem('ttg.gear.catalog.v2');
     localStorage.removeItem('ttg.gear.catalog.v1');

@@ -22,6 +22,8 @@
  * and pump direction change local flow at the same turnover.
  */
 
+import { TANK_SIZES } from '../../utils.js';
+
 export const FILTER_ROLES = Object.freeze({
   BIOLOGICAL: 'biological',
   CIRCULATION: 'circulation',
@@ -41,12 +43,14 @@ export const FILTRATION_LEVELS = Object.freeze({
   NONE: 'none', // nothing entered
   CIRCULATION_ONLY: 'circulation-only', // only powerheads entered
   VERY_LOW: 'very-low', // powered filters only, below MIN_BIOLOGICAL_TURNOVER
-  ADEQUATE: 'adequate', // powered filters meet the floor, or one verified sponge is rated for the tank
+  ADEQUATE: 'adequate', // powered filters meet the floor, one verified sponge is rated for the tank, or the UGF is listed for the tank preset
   // Sponge migration phase B (design report sections 1, 4.4):
   LIKELY_MULTI_SPONGE: 'likely-multi-sponge', // amber: no single sponge rated, verified ratings together reach the tank
   BELOW_RATING: 'below-rating', // amber: rated sponge(s) only, below the tank size
-  REVIEW: 'review', // amber: powered filter below the floor next to a sponge that doesn't carry the tank
-  NOT_EVALUATED: 'not-evaluated', // neutral: the only biological filtration is a sponge without a usable rating
+  REVIEW: 'review', // amber: powered filter below the floor next to a sponge / UGF that doesn't carry the tank
+  // neutral: the only biological filtration is a sponge without a usable rating, or an undergravel
+  // filter not listed for this tank preset (phase F: the status text then names the UGF)
+  NOT_EVALUATED: 'not-evaluated',
 });
 
 export function clamp(value, min, max) {
@@ -91,7 +95,8 @@ export function filterRole(filter) {
 
 // How a device's filtration capacity is expressed (sponge-filter migration design, sections 7–9).
 // Powered filters score by flow. Since phase B every SPONGE scores by its manufacturer tank rating,
-// whatever its data says (see effectiveCapacityMethod). tank_compatibility is carried, not scored.
+// and since phase F every UGF by its listed tank presets (tank_compatibility), whatever its data
+// says (see effectiveCapacityMethod). Any other device carrying tank_compatibility is unchanged.
 export const CAPACITY_METHODS = Object.freeze({
   FLOW: 'flow',
   MANUFACTURER_RATING: 'manufacturer_rating',
@@ -136,7 +141,7 @@ export function resolveCapacityMethod(filter) {
 }
 
 // Sponge filters are air-driven: their catalog / saved "GPH" is not a water flow (sponge audit).
-// Canonical type SPONGE only; an undergravel filter is not a sponge (its own model is phase F).
+// Canonical type SPONGE only; an undergravel filter is not a sponge (it has its own model, phase F).
 const SPONGE_TYPE_KEYS = new Set(['SPONGE', 'SPONGEFILTER']);
 
 export function isSpongeFilter(filter) {
@@ -163,14 +168,112 @@ export function isKnownSpongeProductId(id) {
   return typeof id === 'string' && KNOWN_SPONGE_PRODUCT_ID_SET.has(id.trim());
 }
 
+// Undergravel filters (phase F, design D12): plates under the gravel bed, sized by tank footprint.
+// A UGF is evaluated only by the tank presets its manufacturer lists (compatibleTanks), never by a
+// GPH, a turnover or a gallon range. Canonical type UGF (and the spellings utils.js maps to it).
+const UGF_TYPE_KEYS = new Set(['UGF', 'UNDERGRAVEL', 'UNDERGRAVELFILTER']);
+
+export function isUndergravelFilter(filter) {
+  return UGF_TYPE_KEYS.has(filterTypeKey(filter));
+}
+
+// Phase F (stale / legacy data): the catalog products typed UGF, by id — the undergravel twin of
+// KNOWN_SPONGE_PRODUCT_IDS. A saved or cached record with one of these ids is a UGF whatever type it
+// carries (stale "HOB", missing or nonsense type), so its historical 150 / 900 GPH can never be
+// scored, even when the catalog can't be loaded. Identity only: its compatible tanks come from the
+// current catalog, never from here. Must equal the UGF ids of assets/data/gearCatalog.json (tested).
+export const KNOWN_UGF_PRODUCT_IDS = Object.freeze([
+  'penn-plax-ugf-20-29',
+]);
+const KNOWN_UGF_PRODUCT_ID_SET = new Set(KNOWN_UGF_PRODUCT_IDS);
+
+export function isKnownUgfProductId(id) {
+  return typeof id === 'string' && KNOWN_UGF_PRODUCT_ID_SET.has(id.trim());
+}
+
+// The advisor's tank presets (js/utils.js TANK_SIZES), in their list order. A UGF can only be
+// checked against one of these canonical ids; gallons alone never identify a preset (20h and 20l are
+// both 20 gallons).
+export const TANK_PRESET_IDS = Object.freeze(TANK_SIZES.map((tank) => tank.id));
+const TANK_PRESET_ID_SET = new Set(TANK_PRESET_IDS);
+
+// A canonical tank preset id, or null. Exact ids only (after trimming): no gallons, labels or aliases.
+export function cleanTankPresetId(value) {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return TANK_PRESET_ID_SET.has(trimmed) ? trimmed : null;
+}
+
+// compatibleTanks metadata: an array of recognised preset ids, trimmed, de-duplicated, in preset
+// order. Anything that is not an array (a string "20l,29g", an object, a number) is malformed and
+// gives null; inside an array, non-strings, empty values and unknown ids are dropped. An empty result
+// is null. Compatibility is never inferred from gallons.
+export function sanitizeCompatibleTanks(value) {
+  if (!Array.isArray(value)) return null;
+  const ids = new Set();
+  value.forEach((candidate) => {
+    const id = cleanTankPresetId(candidate);
+    if (id) ids.add(id);
+  });
+  const ordered = TANK_PRESET_IDS.filter((id) => ids.has(id));
+  return ordered.length ? ordered : null;
+}
+
+// Short names for compatibility text: "20 Long", "29 gal". The preset label is the source; the
+// qualifier (High / Long / Breeder) is kept because it is what separates same-gallon presets.
+const TANK_SHORT_NAMES = Object.freeze(Object.fromEntries(TANK_SIZES.map((tank) => {
+  const qualifier = /Gallon (High|Long|Breeder)\b/.exec(tank.label ?? '')?.[1];
+  return [tank.id, qualifier ? `${tank.gallons} ${qualifier}` : `${tank.gallons} gal`];
+})));
+
+// "20 Long–29 gal" for the Penn-Plax plates. Presets that are neighbours in the preset list are
+// written as a run "first–last" (20l and 29g are adjacent; 20h comes before 20l, so it is not inside
+// the run; "5–15 gal" when both ends are plain gallons); separate runs are joined with ", ".
+// null without usable metadata.
+export function formatCompatibleTanks(value) {
+  const ids = sanitizeCompatibleTanks(value);
+  if (!ids) return null;
+  const runs = [];
+  ids.forEach((id) => {
+    const index = TANK_PRESET_IDS.indexOf(id);
+    const last = runs[runs.length - 1];
+    if (last && last.end + 1 === index) {
+      last.end = index;
+      last.ids.push(id);
+    } else {
+      runs.push({ end: index, ids: [id] });
+    }
+  });
+  return runs.map((run) => {
+    const first = TANK_SHORT_NAMES[run.ids[0]];
+    const lastName = TANK_SHORT_NAMES[run.ids[run.ids.length - 1]];
+    if (run.ids.length === 1) return first;
+    const plain = / gal$/;
+    return plain.test(first) && plain.test(lastName) ? `${first.replace(plain, '')}–${lastName}` : `${first}–${lastName}`;
+  }).join(', ');
+}
+
 // TYPE WINS (phase B): a SPONGE is always evaluated by its manufacturer tank rating, even when
 // stale data (an old catalog cache, a v1 plan, a phase A v2 plan, an old tab) says capacityMethod
 // "flow" or carries gph / rated_gph / gphRated. Those GPH values are never read for a sponge.
+// Phase F: likewise a UGF is always tank_compatibility, before any GPH field is read.
 // An explicitly unsupported method still fails closed (null), as in phase A.
 export function effectiveCapacityMethod(filter) {
   if (hasUnsupportedCapacityMethod(filter)) return null;
   if (isSpongeFilter(filter)) return CAPACITY_METHODS.MANUFACTURER_RATING;
+  if (isUndergravelFilter(filter)) return CAPACITY_METHODS.TANK_COMPATIBILITY;
   return resolveCapacityMethod(filter);
+}
+
+// A UGF counted as biological filtration without flow, evaluated by tank compatibility.
+// Unsupported-method entries are not (they fail closed).
+export function isCompatibilityBasedUgf(filter) {
+  return isUndergravelFilter(filter) && effectiveCapacityMethod(filter) === CAPACITY_METHODS.TANK_COMPATIBILITY;
+}
+
+// Either zero-flow biological model: kept in the device list with 0 GPH.
+function isZeroFlowBiological(filter) {
+  return isRatingBasedSponge(filter) || isCompatibilityBasedUgf(filter);
 }
 
 // A sponge counted as biological filtration without flow. Unsupported-method entries are not.
@@ -209,6 +312,9 @@ export function pickPassthroughFields(filter) {
   // it is not one of the keys parseFlow reads, and sponges never parse a flow anyway.
   const legacyGph = cleanGallons(filter.legacyGph);
   if (legacyGph !== null && legacyGph <= MAX_LEGACY_GPH) out.legacyGph = legacyGph;
+  // A UGF's listed tank presets (phase F), sanitised; malformed metadata is left out (fails closed).
+  const compatibleTanks = sanitizeCompatibleTanks(filter.compatibleTanks);
+  if (compatibleTanks) out.compatibleTanks = compatibleTanks;
   return out;
 }
 
@@ -249,9 +355,11 @@ export function normalizeFilter(filter) {
     return null;
   }
   // An unsupported capacity method contributes no flow (normalizeFilters then leaves it out).
-  // A sponge never contributes flow: type wins over any stored GPH (phase B).
+  // A sponge never contributes flow: type wins over any stored GPH (phase B). Nor does a UGF
+  // (phase F): its catalog / saved GPH was never a measured flow.
   const sponge = isRatingBasedSponge(filter);
-  const ratedGph = sponge || hasUnsupportedCapacityMethod(filter) ? 0 : parseFlow(filter);
+  const ugf = isCompatibilityBasedUgf(filter);
+  const ratedGph = sponge || ugf || hasUnsupportedCapacityMethod(filter) ? 0 : parseFlow(filter);
   const entry = {
     id: typeof filter.id === 'string' && filter.id ? filter.id : null,
     source: typeof filter.source === 'string' && filter.source ? filter.source : null,
@@ -265,21 +373,25 @@ export function normalizeFilter(filter) {
   if (sponge) {
     entry.capacityMethod = CAPACITY_METHODS.MANUFACTURER_RATING;
   }
+  if (ugf) {
+    entry.capacityMethod = CAPACITY_METHODS.TANK_COMPATIBILITY;
+  }
   return entry;
 }
 
 // Flow devices without a positive flow are dropped: they cannot be assessed. A sponge is kept with
-// zero flow: it is biological filtration evaluated by its tank rating, not by GPH.
+// zero flow: it is biological filtration evaluated by its tank rating, not by GPH. So is a UGF,
+// evaluated by its listed tank presets (phase F).
 export function normalizeFilters(filters) {
   if (!Array.isArray(filters)) {
     return [];
   }
-  // The sponge test reads the input (not the normalized copy), so a sponge with an unsupported
+  // The sponge / UGF test reads the input (not the normalized copy), so one with an unsupported
   // capacityMethod still fails closed.
   const out = [];
   for (const filter of filters) {
     const entry = normalizeFilter(filter);
-    if (entry && (entry.ratedGph > 0 || isRatingBasedSponge(filter))) out.push(entry);
+    if (entry && (entry.ratedGph > 0 || isZeroFlowBiological(filter))) out.push(entry);
   }
   return out;
 }
@@ -334,7 +446,45 @@ export const FILTRATION_STATUS = Object.freeze({
   [FILTRATION_LEVELS.REVIEW]: { icon: '⚠', text: 'Review filtration', tone: 'warn' },
   [FILTRATION_LEVELS.NOT_EVALUATED]: { icon: '○', text: 'Not evaluated — rating needed', tone: 'neutral' },
   RATING_NEEDED: { icon: '○', text: 'Rating needed', tone: 'neutral' },
+  // Phase F (design sections 11–12). UGF_NOT_LISTED is carried by the NOT_EVALUATED level when an
+  // undergravel filter is the only device that can't be evaluated: it means "can't be evaluated for
+  // this preset from its stated compatibility", not "unsafe".
+  UGF_RATED: { icon: '✓', text: 'Undergravel filter rated for this tank', tone: 'good' },
+  UGF_NOT_LISTED: { icon: '○', text: 'Rating needed — this undergravel filter isn\'t listed for this tank size', tone: 'neutral' },
 });
+
+// How an undergravel filter relates to the selected tank (phase F).
+export const UGF_STATUSES = Object.freeze({
+  COMPATIBLE: 'compatible', // the tank preset is in the product's compatibleTanks
+  NOT_LISTED: 'not-listed', // compatibleTanks known, this preset is not in it
+  TANK_UNKNOWN: 'tank-unknown', // compatibleTanks known, but no canonical tank preset id to check
+  COMPATIBILITY_UNKNOWN: 'compatibility-unknown', // no usable compatibleTanks (custom / offline / stale)
+});
+
+// One undergravel filter as the evaluation sees it. Only explicit preset ids decide compatibility:
+// no gallons arithmetic, no footprint maths, no GPH.
+function describeUgf(entry, tankId) {
+  const compatibleTanks = sanitizeCompatibleTanks(entry.compatibleTanks);
+  const compatibilityKnown = compatibleTanks !== null;
+  const compatible = compatibilityKnown && tankId !== null && compatibleTanks.includes(tankId);
+  let status = UGF_STATUSES.COMPATIBILITY_UNKNOWN;
+  if (compatible) status = UGF_STATUSES.COMPATIBLE;
+  else if (compatibilityKnown) status = tankId === null ? UGF_STATUSES.TANK_UNKNOWN : UGF_STATUSES.NOT_LISTED;
+  return {
+    id: entry.id ?? null,
+    instanceId: entry.instanceId ?? null,
+    productId: entry.productId ?? null,
+    label: entry.label ?? null,
+    capacityMethod: CAPACITY_METHODS.TANK_COMPATIBILITY,
+    compatibleTanks: compatibleTanks ?? [],
+    compatibilityText: formatCompatibleTanks(compatibleTanks),
+    tankId,
+    compatibilityKnown,
+    compatible,
+    status,
+    gph: 0,
+  };
+}
 
 // One sponge as the evaluation sees it. Only a verified rating carries numbers.
 function describeSponge(entry, gallons) {
@@ -357,30 +507,38 @@ function describeSponge(entry, gallons) {
 /**
  * Filtration adequacy for a tank and stock. Never changes the bioload percentage.
  *
- * Two independent paths (design D5/D6), never added together and never converted into each other:
+ * Three independent paths (design D5/D6/D12), never added together and never converted into each
+ * other:
  *   powered  HOB / canister / internal / custom powered: Phase 2C flow floor, unchanged
  *            (biological GPH ÷ nominal gallons ≥ MIN_BIOLOGICAL_TURNOVER).
  *   sponge   manufacturer tank rating, VERIFIED ratings only; sponges contribute 0 GPH.
+ *   ugf      the tank preset id is in the product's compatibleTanks; UGFs contribute 0 GPH.
  * Powerheads stay circulation only.
  *
  * @param {object} input
  * @param {Array} input.filters  devices as entered (any shape normalizeFilter accepts)
  * @param {number} input.gallons nominal tank gallons
  * @param {boolean} input.hasStock at least one species is planned
+ * @param {string|null} input.tankId canonical tank preset id (js/utils.js TANK_SIZES). Only the UGF
+ *   path reads it; it is never inferred from gallons, so without it a UGF cannot pass.
  */
-export function assessFiltration({ filters = [], gallons = 0, hasStock = false } = {}) {
+export function assessFiltration({ filters = [], gallons = 0, hasStock = false, tankId = null } = {}) {
   const list = normalizeFilters(filters);
   const totals = getTotalGPH(list, { normalized: true });
   const tankGallons = Math.max(0, toNum(gallons));
-  // Sponges carry 0 GPH, so the biological flow is the powered filters' flow only.
+  const presetId = cleanTankPresetId(tankId);
+  // Sponges and UGFs carry 0 GPH, so the biological flow is the powered filters' flow only.
   const biologicalTurnover = turnoverX(totals.biological, gallons);
   const totalTurnover = turnoverX(totals.rated, gallons);
   const biological = list.filter((entry) => entry.role === FILTER_ROLES.BIOLOGICAL);
   const biologicalCount = biological.length;
   const circulationCount = list.length - biologicalCount;
   const spongeEntries = biological.filter((entry) => isRatingBasedSponge(entry));
-  const poweredEntries = biological.filter((entry) => !isRatingBasedSponge(entry));
+  const ugfEntries = biological.filter((entry) => isCompatibilityBasedUgf(entry));
+  const poweredEntries = biological.filter((entry) => !isZeroFlowBiological(entry));
   const hasSponge = spongeEntries.length > 0;
+  const ugfs = ugfEntries.map((entry) => describeUgf(entry, presetId));
+  const ugfRated = ugfs.some((ugf) => ugf.compatible);
 
   const poweredPasses = poweredEntries.length > 0 && biologicalTurnover >= MIN_BIOLOGICAL_TURNOVER;
   const sponges = spongeEntries.map((entry) => describeSponge(entry, tankGallons));
@@ -404,11 +562,12 @@ export function assessFiltration({ filters = [], gallons = 0, hasStock = false }
     level = FILTRATION_LEVELS.NONE;
   } else if (biologicalCount === 0) {
     level = FILTRATION_LEVELS.CIRCULATION_ONLY;
-  } else if (poweredPasses || spongeRated) {
+  } else if (poweredPasses || spongeRated || ugfRated) {
     level = FILTRATION_LEVELS.ADEQUATE;
   } else if (spongeLikely) {
     level = FILTRATION_LEVELS.LIKELY_MULTI_SPONGE;
-  } else if (poweredEntries.length && sponges.length) {
+  } else if (poweredEntries.length && (sponges.length || ugfs.length)) {
+    // A weak powered filter next to a sponge or UGF that can't carry the tank (design 4.4).
     level = FILTRATION_LEVELS.REVIEW;
   } else if (poweredEntries.length) {
     level = FILTRATION_LEVELS.VERY_LOW;
@@ -418,20 +577,49 @@ export function assessFiltration({ filters = [], gallons = 0, hasStock = false }
     level = FILTRATION_LEVELS.NOT_EVALUATED;
   }
 
+  // Every path that passes on its own, in a fixed order. adequateBy keeps its phase B meaning
+  // ('powered' | 'sponge' | 'both' = powered and sponge) whenever one of those paths passes; it is
+  // 'ugf' only when the undergravel filter is the sole passing path. passingPaths is the complete
+  // structured answer (phase F; the phase G card reads it).
+  const passingPaths = [];
+  if (level === FILTRATION_LEVELS.ADEQUATE) {
+    if (poweredPasses) passingPaths.push('powered');
+    if (spongeRated) passingPaths.push('sponge');
+    if (ugfRated) passingPaths.push('ugf');
+  }
   let adequateBy = null;
   if (level === FILTRATION_LEVELS.ADEQUATE) {
-    adequateBy = poweredPasses && spongeRated ? 'both' : poweredPasses ? 'powered' : 'sponge';
+    if (poweredPasses || spongeRated) {
+      adequateBy = poweredPasses && spongeRated ? 'both' : poweredPasses ? 'powered' : 'sponge';
+    } else {
+      adequateBy = 'ugf';
+    }
   }
   let status = FILTRATION_STATUS[level];
   if (level === FILTRATION_LEVELS.ADEQUATE) {
-    status = adequateBy === 'sponge' ? FILTRATION_STATUS.SPONGE_RATED : FILTRATION_STATUS.POWERED_ADEQUATE;
+    status = adequateBy === 'sponge'
+      ? FILTRATION_STATUS.SPONGE_RATED
+      : adequateBy === 'ugf' ? FILTRATION_STATUS.UGF_RATED : FILTRATION_STATUS.POWERED_ADEQUATE;
+  } else if (level === FILTRATION_LEVELS.NOT_EVALUATED && ugfs.length && !sponges.length) {
+    // Only undergravel filter(s) that aren't listed for this tank: say so, neutrally.
+    status = FILTRATION_STATUS.UGF_NOT_LISTED;
+  }
+
+  let ugfStatus = 'none';
+  if (ugfs.length) {
+    if (ugfRated) ugfStatus = UGF_STATUSES.COMPATIBLE;
+    else if (ugfs.some((ugf) => ugf.status === UGF_STATUSES.NOT_LISTED)) ugfStatus = UGF_STATUSES.NOT_LISTED;
+    else if (ugfs.some((ugf) => ugf.status === UGF_STATUSES.TANK_UNKNOWN)) ugfStatus = UGF_STATUSES.TANK_UNKNOWN;
+    else ugfStatus = UGF_STATUSES.COMPATIBILITY_UNKNOWN;
   }
 
   return {
     level,
     status: { ...status },
     adequateBy,
+    passingPaths,
     gallons: tankGallons,
+    tankId: presetId,
     filters: list,
     totalGph: totals.rated,
     biologicalGph: totals.biological,
@@ -441,10 +629,12 @@ export function assessFiltration({ filters = [], gallons = 0, hasStock = false }
     totalTurnover,
     biologicalCount,
     circulationCount,
-    // "Has biological filtration" is not "has biological GPH": a sponge is the first without the second.
+    // "Has biological filtration" is not "has biological GPH": a sponge or a UGF is the first
+    // without the second.
     hasBiologicalFiltration: biologicalCount > 0,
     hasBiologicalGph: totals.biological > 0,
     hasSponge,
+    hasUgf: ugfs.length > 0,
     powered: {
       count: poweredEntries.length,
       gph: totals.biological,
@@ -460,6 +650,17 @@ export function assessFiltration({ filters = [], gallons = 0, hasStock = false }
       rated: spongeRated,
       likelyMulti: spongeLikely,
       entries: sponges,
+    },
+    // Undergravel filters (phase F): compatibility with the tank preset only. No GPH, no turnover,
+    // no gallons of capacity, never combined with the other paths.
+    ugf: {
+      count: ugfs.length,
+      capacityMethod: CAPACITY_METHODS.TANK_COMPATIBILITY,
+      tankId: presetId,
+      status: ugfStatus,
+      rated: ugfRated,
+      gph: 0,
+      entries: ugfs,
     },
     hasStock: Boolean(hasStock),
     // Nothing here scales the bioload percentage.

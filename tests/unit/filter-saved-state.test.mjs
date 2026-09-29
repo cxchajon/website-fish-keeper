@@ -18,6 +18,7 @@ globalThis.fetch = async (url) => {
 const saved = await import('../../js/stocking-advisor/filtration/saved-state.js');
 const math = await import('../../js/stocking-advisor/filtration/math.js');
 const spongeItems = await import('../../js/stocking-advisor/filtration/sponge-items.js');
+const ugfItems = await import('../../js/stocking-advisor/filtration/ugf-items.js');
 const compute = await import('../../js/logic/compute.js');
 const { getGearData } = await import('../../js/gear-data.js');
 const { getTankById, canonicalizeFilterType } = await import('../../js/utils.js');
@@ -75,6 +76,12 @@ function restore(entries) {
       out.push(spongeItems.restoreSpongeItem(entry, product?.type === 'SPONGE' ? product : null));
       continue;
     }
+    // Phase F: a UGF is restored by compatibility (catalog UGF) or as a zero-flow UGF, never by GPH.
+    if (math.isUndergravelFilter({ type: canonicalizeFilterType(entry.type) })) {
+      const product = entry.id ? byId.get(entry.id) : null;
+      out.push(ugfItems.restoreUgfItem(entry, product?.type === 'UGF' ? product : null));
+      continue;
+    }
     const gph = Number(entry.rated_gph);
     if (!(gph > 0)) continue;
     const product = entry.id ? byId.get(entry.id) : null;
@@ -107,6 +114,12 @@ function score(items, { tankId = '20l', stock = [['neon', 10], ['cory_bronze', 6
     filtering.assessment.sponge = {
       ...filtering.assessment.sponge,
       entries: filtering.assessment.sponge.entries.map(({ instanceId, ...rest }) => rest),
+    };
+  }
+  if (filtering.assessment.ugf) {
+    filtering.assessment.ugf = {
+      ...filtering.assessment.ugf,
+      entries: filtering.assessment.ugf.entries.map(({ instanceId, ...rest }) => rest),
     };
   }
   return { filtering, warnings: computed.status.warnings, bioload: computed.bioload, turnover: computed.tank.turnover };
@@ -302,7 +315,8 @@ test('capacity fields survive save, restore, sanitize and compute preparation (p
       // not usable → rating needed; its gph is legacy only.
       { instanceId: 'f-sponge2', source: 'custom', legacyId: 'manual-cs', label: 'Sponge', type: 'SPONGE',
         capacityMethod: 'manufacturer_rating', manufacturerMaxGallons: 30, gph: 45 },
-      // UGF is not a sponge (phase F): unchanged, still scored by its GPH.
+      // An old custom UGF (phase F): tank_compatibility, its stored 150 GPH is never kept or scored,
+      // and no compatible tanks are invented for it.
       { instanceId: 'f-ugf0001', source: 'custom', legacyId: 'manual-ugf', type: 'UGF', capacityMethod: 'tank_compatibility', gph: 150 },
     ],
   };
@@ -314,7 +328,7 @@ test('capacity fields survive save, restore, sanitize and compute preparation (p
     ['f-sponge2', 'manufacturer_rating', undefined, undefined, 'needed'],
     ['f-ugf0001', 'tank_compatibility', undefined, undefined, undefined],
   ]);
-  assert.deepEqual(state.filters.map((entry) => entry.rated_gph), [0, 0, 150]);
+  assert.deepEqual(state.filters.map((entry) => entry.rated_gph), [0, 0, 0]);
   assert.equal(state.filters[0].productId, SPONGE_ID);
   assert.equal(state.filters[1].legacyGph, 45);
 
@@ -324,19 +338,20 @@ test('capacity fields survive save, restore, sanitize and compute preparation (p
   assert.equal(restored[0].manufacturerMaxGallons, catalogSponge.manufacturerMaxGallons);
   const appFilters = math.normalizeFilters(restored.map(toApp));
   assert.deepEqual(appFilters.map((entry) => entry.type), ['SPONGE', 'SPONGE', 'UGF']);
-  assert.deepEqual(appFilters.map((entry) => entry.ratedGph), [0, 0, 150]);
+  assert.deepEqual(appFilters.map((entry) => entry.ratedGph), [0, 0, 0]);
   const sanitized = compute.sanitizeFilterList(appFilters);
   assert.deepEqual(sanitized.map(keep), appFilters.map(keep), 'compute.legacy sanitizeFilter keeps them');
-  assert.deepEqual(sanitized.map((entry) => entry.rated_gph), [0, 0, 150]);
+  assert.deepEqual(sanitized.map((entry) => entry.rated_gph), [0, 0, 0]);
   assert.equal(sanitized[0].productId, SPONGE_ID);
-  assert.equal(score(restored).filtering.biologicalGph, 150, 'no sponge GPH is scored');
+  assert.equal(score(restored).filtering.biologicalGph, 0, 'no sponge or UGF GPH is scored');
+  assert.equal(score(restored).filtering.assessment.ugf.status, 'compatibility-unknown', 'no compatible tanks invented');
 
   // Saved again: the same identity, no sponge GPH.
   const again = memoryStorage();
   saved.writeSavedFilters(again, appFilters);
   const envelope = JSON.parse(again.map.get(V2));
   assert.deepEqual(envelope.filters.map((entry) => entry.instanceId), ['f-sponge1', 'f-sponge2', 'f-ugf0001']);
-  assert.deepEqual(envelope.filters.map((entry) => entry.gph ?? null), [null, null, 150]);
+  assert.deepEqual(envelope.filters.map((entry) => entry.gph ?? null), [null, null, null]);
   assert.equal(again.map.has(V1), false, 'no flow-method entries → no v1 mirror');
 });
 
@@ -535,10 +550,15 @@ test('instance ids: unique, stable, separate from product ids', () => {
 
 test('the gear loader keeps capacity metadata only when a record has it (the seven sponges, phase B)', () => {
   const RAW = JSON.parse(readFileSync(ROOT + 'assets/data/gearCatalog.json', 'utf8'));
-  const nonSponge = RAW.filter((item) => item.type !== 'SPONGE');
+  // Phase F: the UGF record carries capacityMethod tank_compatibility (+ compatibleTanks), never a
+  // manufacturer gallon rating; powered records still carry none of these fields.
+  const powered = RAW.filter((item) => item.type !== 'SPONGE' && item.type !== 'UGF');
   for (const key of ['capacityMethod', 'manufacturerMaxGallons', 'manufacturerMinGallons', 'ratingStatus']) {
-    assert.ok(nonSponge.every((item) => !(key in item)), `no powered catalog record has ${key}`);
-    assert.ok(CATALOG.filter((item) => item.type !== 'SPONGE').every((item) => !(key in item)), `loader adds no ${key}`);
+    assert.ok(powered.every((item) => !(key in item)), `no powered catalog record has ${key}`);
+    assert.ok(CATALOG.filter((item) => item.type !== 'SPONGE' && item.type !== 'UGF').every((item) => !(key in item)), `loader adds no ${key}`);
+  }
+  for (const key of ['manufacturerMaxGallons', 'manufacturerMinGallons', 'ratingStatus']) {
+    assert.ok(CATALOG.filter((item) => item.type === 'UGF').every((item) => !(key in item)), `UGF has no ${key}`);
   }
   for (const item of CATALOG.filter((entry) => entry.type === 'SPONGE')) {
     assert.equal(item.capacityMethod, 'manufacturer_rating', item.id);

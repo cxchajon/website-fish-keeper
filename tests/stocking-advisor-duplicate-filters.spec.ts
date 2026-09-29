@@ -375,7 +375,8 @@ test.describe('phase D: duplicate filter instances', () => {
     await expect(productNote(page)).toContainText('one plate set per tank');
     await expect(addSelected(page)).toBeDisabled();
     await settle(page);
-    expect((await expectLoadUnchanged(page)).gph).toEqual([150, 150, 0]);
+    // Phase F: the UGF is scored by tank compatibility, never by its old 150 GPH.
+    expect((await expectLoadUnchanged(page)).gph).toEqual([0, 0, 0]);
   });
 
   for (const offline of [false, true]) {
@@ -388,7 +389,8 @@ test.describe('phase D: duplicate filter instances', () => {
       await setUpTank(page, '29g');
       await settle(page);
       expect(await instanceIds(page)).toEqual(['f-ugf001']);
-      expect((await expectLoadUnchanged(page)).gph).toEqual([150, 150, 0]);
+      // Historical 150 GPH is never scored (phase F), with or without the catalog.
+      expect((await expectLoadUnchanged(page)).gph).toEqual([0, 0, 0]);
     });
   }
 });

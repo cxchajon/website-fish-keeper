@@ -3,7 +3,7 @@ import { validateSpeciesRecord } from "./speciesSchema.js";
 import { EMPTY_TANK } from '../stocking/tankStore.js';
 import { canonicalizeFilterType, sumGph } from '../utils.js';
 import { getEffectiveGallons, getTotalGE, computeBioloadPercent, formatBioloadPercent } from '../bioload.js';
-import { assessFiltration, FILTRATION_LEVELS, FILTRATION_STATUS, MIN_BIOLOGICAL_TURNOVER, CAPACITY_METHODS, pickPassthroughFields, hasUnsupportedCapacityMethod, isKnownSpongeProductId, isSpongeFilter } from '../stocking-advisor/filtration/math.js';
+import { assessFiltration, FILTRATION_LEVELS, FILTRATION_STATUS, MIN_BIOLOGICAL_TURNOVER, CAPACITY_METHODS, UGF_STATUSES, pickPassthroughFields, hasUnsupportedCapacityMethod, isKnownSpongeProductId, isKnownUgfProductId, isSpongeFilter, isUndergravelFilter } from '../stocking-advisor/filtration/math.js';
 import { pickTankVariant, getTankVariants, describeVariant } from './sizeMap.js';
 import { BEHAVIOR_TAGS } from './behaviorTags.js';
 import { evaluateStockWarnings } from './warnings.js';
@@ -257,16 +257,22 @@ function sanitizeFilter(filter) {
     return { id: null, type: 'HOB', rated_gph: 0 };
   }
   const id = typeof filter.id === 'string' && filter.id.trim() ? filter.id.trim() : null;
-  // A known catalog sponge id is a sponge whatever type stale data stored (phase C).
-  const type = isKnownSpongeProductId(filter.productId ?? id)
+  // A known catalog sponge id is a sponge, and a known undergravel id a UGF, whatever type stale
+  // data stored (phases C / F).
+  const productKey = filter.productId ?? id;
+  const type = isKnownSpongeProductId(productKey)
     ? 'SPONGE'
-    : canonicalizeFilterType(filter.type ?? filter.kind ?? filter.filterType);
+    : isKnownUgfProductId(productKey)
+      ? 'UGF'
+      : canonicalizeFilterType(filter.type ?? filter.kind ?? filter.filterType);
   const unsupported = hasUnsupportedCapacityMethod(filter);
   // Type wins (sponge migration phase B): a SPONGE never carries flow, whatever gph / rated_gph /
   // capacityMethod "flow" stale data holds. It stays in the list with 0 GPH and is evaluated by its
-  // manufacturer tank rating. An explicitly unsupported capacity method fails closed: no flow.
+  // manufacturer tank rating. Phase F: the same for a UGF, evaluated by its compatibleTanks.
+  // An explicitly unsupported capacity method fails closed: no flow.
   const sponge = !unsupported && isSpongeFilter({ type });
-  const rated_gph = unsupported || sponge ? 0 : clampFlowRate(filter.rated_gph ?? filter.gph);
+  const ugf = !unsupported && isUndergravelFilter({ type });
+  const rated_gph = unsupported || sponge || ugf ? 0 : clampFlowRate(filter.rated_gph ?? filter.gph);
   // Flow scoring reads id, type and rated_gph; the sponge rating reads the capacity fields. Identity
   // fields (instanceId, productId) ride along.
   const sanitized = {
@@ -275,14 +281,19 @@ function sanitizeFilter(filter) {
     rated_gph,
     ...pickPassthroughFields(filter),
   };
-  if (unsupported && isSpongeFilter({ type })) {
+  if (unsupported && (isSpongeFilter({ type }) || isUndergravelFilter({ type }))) {
     // Keep the entry failing closed downstream: without a method a SPONGE would resolve to
-    // manufacturer_rating again. The marker is itself an unsupported value.
+    // manufacturer_rating (a UGF to tank_compatibility) again. The marker is itself unsupported.
     sanitized.capacityMethod = UNSUPPORTED_CAPACITY_METHOD;
   }
   if (sponge) {
     sanitized.capacityMethod = CAPACITY_METHODS.MANUFACTURER_RATING;
     // Names each sponge in the multi-sponge / below-rating messages.
+    if (typeof filter.label === 'string' && filter.label.trim()) sanitized.label = filter.label.trim();
+  }
+  if (ugf) {
+    // compatibleTanks (sanitised) rides along in the passthrough fields; no generic gallon range.
+    sanitized.capacityMethod = CAPACITY_METHODS.TANK_COMPATIBILITY;
     if (typeof filter.label === 'string' && filter.label.trim()) sanitized.label = filter.label.trim();
   }
   return sanitized;
@@ -1069,6 +1080,28 @@ function poweredFlowSentence(assessment, gallons) {
 
 const FILTRATION_SUPPORT_NOTE = 'Filtration supports your livestock but does not increase stocking capacity.';
 const RATING_NEEDED_HINT = 'For a custom sponge, enter the tank size the manufacturer rates it for (printed on the box or listing).';
+const UGF_METHOD_NOTE = 'Undergravel filters are checked by the tank sizes the manufacturer lists; water flow isn\'t estimated.';
+
+function ugfName(ugf) {
+  return ugf.label || 'This undergravel filter';
+}
+
+// Why one undergravel filter can't be evaluated here. Never a GPH, a turnover or a gallon range.
+function ugfNotEvaluatedSentence(ugf) {
+  const name = ugfName(ugf);
+  switch (ugf.status) {
+    case UGF_STATUSES.NOT_LISTED:
+      return `${name} is rated for ${ugf.compatibilityText} tanks, and this tank size isn't listed, so it isn't evaluated here.`;
+    case UGF_STATUSES.TANK_UNKNOWN:
+      return `${name} is rated for ${ugf.compatibilityText} tanks; select one of the tank sizes to check it.`;
+    default:
+      return `${name} has no listed compatible tank sizes available, so it isn't evaluated.`;
+  }
+}
+
+function ugfNotEvaluatedLines(ugfs) {
+  return ugfs.filter((ugf) => !ugf.compatible).map(ugfNotEvaluatedSentence).join(' ');
+}
 
 // Filtration warnings. They sit beside the bioload percentage and never change it: a bigger filter
 // cannot make a heavily stocked tank lighter, and a missing or weak one does not change how much
@@ -1088,6 +1121,16 @@ function buildFiltrationWarnings(assessment) {
   const unratedNote = unratedCount > 0
     ? ` ${unratedCount === 1 ? 'One sponge has' : `${unratedCount} sponges have`} no verified rating yet, so ${unratedCount === 1 ? 'it isn\'t' : 'they aren\'t'} evaluated.`
     : '';
+  // Undergravel filters (phase F). A UGF that isn't listed for this tank gets a neutral (info) note;
+  // it is never red and never the filtration chip.
+  const ugfs = assessment.ugf?.entries ?? [];
+  const notEvaluatedUgfs = ugfs.filter((ugf) => !ugf.compatible);
+  const ugfNotListedTitle = `${FILTRATION_STATUS.UGF_NOT_LISTED.icon} ${FILTRATION_STATUS.UGF_NOT_LISTED.text}`;
+  const pushUgfNote = () => {
+    if (!notEvaluatedUgfs.length) return;
+    push('filtration.ugf_not_listed', 'info', ugfNotListedTitle,
+      `${ugfNotEvaluatedLines(notEvaluatedUgfs)} This doesn't mean the tank is unsafe. ${UGF_METHOD_NOTE}`);
+  };
   switch (assessment.level) {
     case FILTRATION_LEVELS.NONE:
       push('filtration.none', 'warn', 'No filter added',
@@ -1103,7 +1146,21 @@ function buildFiltrationWarnings(assessment) {
       break;
     case FILTRATION_LEVELS.ADEQUATE: {
       // Powered filters meeting the floor stay exactly as before (no note). A sponge carrying the
-      // tank on its own gets a neutral confirmation line, since there is no flow figure to show.
+      // tank on its own gets a neutral confirmation line, since there is no flow figure to show; so
+      // does an undergravel filter listed for this tank (phase F). A UGF that isn't listed, next to
+      // another passing path, is a neutral supplemental note (after the switch).
+      if (assessment.adequateBy === 'ugf') {
+        const rated = ugfs.find((ugf) => ugf.compatible);
+        const poweredNote = assessment.powered?.belowFloor
+          ? ` The powered filter's flow is below the ${MIN_BIOLOGICAL_TURNOVER}× minimum, but the undergravel filter is rated for this tank on its own.`
+          : '';
+        const spongeNote = sponges.length
+          ? ` Sponge filters here are additional.${unratedNote}`
+          : '';
+        push('filtration.ugf_rated', 'info', `${FILTRATION_STATUS.UGF_RATED.icon} ${FILTRATION_STATUS.UGF_RATED.text}`,
+          `Rated for: ${rated.compatibilityText} tanks · Tank: ${gallons} gal. ${UGF_METHOD_NOTE}${poweredNote}${spongeNote} ${FILTRATION_SUPPORT_NOTE}`);
+        break;
+      }
       if (assessment.adequateBy !== 'sponge') break;
       const rated = verified.find((sponge) => sponge.coversTank);
       const poweredNote = assessment.powered?.belowFloor
@@ -1128,21 +1185,41 @@ function buildFiltrationWarnings(assessment) {
       break;
     }
     case FILTRATION_LEVELS.REVIEW: {
-      const spongeLine = verified.length
-        ? `Sponge filter: ${listSpongeRatings(verified)} — below this ${gallons}-gallon tank.${unratedNote}`
-        : `Sponge filter: rating needed, so it can't be evaluated yet. ${RATING_NEEDED_HINT}`;
+      // Powered below the floor next to a sponge and / or a UGF that doesn't carry the tank. The
+      // powered concern stays first and in full; the UGF line is neutral (phase F).
+      let spongeLine = '';
+      if (sponges.length) {
+        spongeLine = verified.length
+          ? ` Sponge filter: ${listSpongeRatings(verified)} — below this ${gallons}-gallon tank.${unratedNote}`
+          : ` Sponge filter: rating needed, so it can't be evaluated yet. ${RATING_NEEDED_HINT}`;
+      }
+      const ugfLine = notEvaluatedUgfs.length ? ` Undergravel filter: ${ugfNotEvaluatedLines(notEvaluatedUgfs)}` : '';
       push('filtration.review', 'warn', FILTRATION_STATUS[FILTRATION_LEVELS.REVIEW].text,
-        `Powered filter: ${poweredFlowSentence(assessment, gallons)} ${spongeLine} Neither filter is shown to be sized for this tank on its own.`);
+        `Powered filter: ${poweredFlowSentence(assessment, gallons)}${spongeLine}${ugfLine} Neither filter is shown to be sized for this tank on its own.`);
       break;
     }
     case FILTRATION_LEVELS.NOT_EVALUATED: {
-      const status = FILTRATION_STATUS[FILTRATION_LEVELS.NOT_EVALUATED];
-      push('filtration.rating_needed', 'info', `${status.icon} ${status.text}`,
-        `${sponges.length === 1 ? 'This sponge filter has' : 'These sponge filters have'} no verified manufacturer tank rating, so filtration isn't evaluated — not adequate, not unsafe. ${RATING_NEEDED_HINT}`);
+      // Only sponges without a rating and / or undergravel filters not listed for this tank.
+      const status = assessment.status ?? FILTRATION_STATUS[FILTRATION_LEVELS.NOT_EVALUATED];
+      const parts = [];
+      if (sponges.length) {
+        parts.push(`${sponges.length === 1 ? 'This sponge filter has' : 'These sponge filters have'} no verified manufacturer tank rating, so filtration isn't evaluated — not adequate, not unsafe. ${RATING_NEEDED_HINT}`);
+      }
+      if (notEvaluatedUgfs.length) {
+        parts.push(`${ugfNotEvaluatedLines(notEvaluatedUgfs)}${sponges.length ? '' : ' Filtration isn\'t evaluated — not adequate, not unsafe.'} ${UGF_METHOD_NOTE}`);
+      }
+      push('filtration.rating_needed', 'info', `${status.icon} ${status.text}`, parts.join(' '));
       break;
     }
     default:
       break;
+  }
+  // A UGF that isn't listed for this tank, beside a state decided by other devices: a neutral line.
+  // (REVIEW and NOT_EVALUATED already describe it in their own message.)
+  if (assessment.level === FILTRATION_LEVELS.ADEQUATE
+    || assessment.level === FILTRATION_LEVELS.LIKELY_MULTI_SPONGE
+    || assessment.level === FILTRATION_LEVELS.BELOW_RATING) {
+    pushUgfNote();
   }
   return warnings;
 }
@@ -1153,7 +1230,11 @@ function buildFilteringState(state, tank, entries) {
   const gallons = Number.isFinite(tank?.gallons) && tank.gallons > 0 ? tank.gallons : 0;
   const stockCount = Array.isArray(entries) ? entries.length : 0;
   const band = resolveTurnoverBand(entries);
-  const assessment = assessFiltration({ filters: sanitized, gallons, hasStock: stockCount > 0 });
+  // The canonical tank preset id (phase F): an undergravel filter is checked against the presets it
+  // lists, so it needs the preset itself; 20h and 20l are both 20 gallons. It comes from the resolved
+  // tank (calcTank presetId = state.tank.id) and is never derived from gallons here.
+  const tankId = tank?.presetId ?? null;
+  const assessment = assessFiltration({ filters: sanitized, gallons, hasStock: stockCount > 0, tankId });
   // Flow data (GPH/turnover) and "has a filter" are different since phase B: a sponge is biological
   // filtration with no flow figure.
   const hasFlowData = assessment.totalGph > 0;
@@ -1173,10 +1254,14 @@ function buildFilteringState(state, tank, entries) {
     statusTone = top.severity === 'danger' ? 'bad' : 'warn';
     statusText = top.title;
   } else if (assessment.level === FILTRATION_LEVELS.NOT_EVALUATED) {
-    statusText = FILTRATION_STATUS[FILTRATION_LEVELS.NOT_EVALUATED].text;
+    // Generic "Not evaluated — rating needed", or the UGF wording when only a UGF isn't listed.
+    statusText = assessment.status?.text ?? FILTRATION_STATUS[FILTRATION_LEVELS.NOT_EVALUATED].text;
   } else if (assessment.adequateBy === 'sponge') {
     statusTone = 'good';
     statusText = FILTRATION_STATUS.SPONGE_RATED.text;
+  } else if (assessment.adequateBy === 'ugf') {
+    statusTone = 'good';
+    statusText = FILTRATION_STATUS.UGF_RATED.text;
   } else if (hasFlowData) {
     statusTone = 'good';
     statusText = `Filter flow meets the ${MIN_BIOLOGICAL_TURNOVER}× minimum.`;

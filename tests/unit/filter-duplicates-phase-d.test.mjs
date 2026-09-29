@@ -19,6 +19,7 @@ const compute = await import('../../js/logic/compute.js');
 const math = await import('../../js/stocking-advisor/filtration/math.js');
 const saved = await import('../../js/stocking-advisor/filtration/saved-state.js');
 const items = await import('../../js/stocking-advisor/filtration/sponge-items.js');
+const ugfItems = await import('../../js/stocking-advisor/filtration/ugf-items.js');
 const instances = await import('../../js/stocking-advisor/filtration/instances.js');
 const { getGearData } = await import('../../js/gear-data.js');
 const { getTankById } = await import('../../js/utils.js');
@@ -46,6 +47,8 @@ const v2Storage = (filters) => storageWith({ [V2]: JSON.stringify({ v: 2, filter
 // --- controller model (hydrateFromAppState → setFilters), as in the phase C harness -----------------
 function productItem(product) {
   if (math.isSpongeFilter(product)) return items.buildSpongeProductItem(product);
+  // Phase F: a catalog UGF carries its compatibleTanks and no GPH (controller createProductFilter).
+  if (math.isUndergravelFilter(product)) return ugfItems.buildUgfProductItem(product);
   return { id: product.id, source: 'product', label: product.name, type: product.type, gph: Math.round(product.gphRated),
     productId: product.id, capacityMethod: 'flow' };
 }
@@ -58,7 +61,7 @@ function controllerRestore(filters, catalogById = CATALOG_BY_ID) {
     const product = id ? catalogById.get(id) ?? null : null;
     const kind = items.restoreKind(entry, product);
     if (kind === items.RESTORE_KINDS.DROP) continue;
-    if ((product ?? entry).type === 'UGF') {
+    if ((product ?? entry).type === 'UGF' || math.isKnownUgfProductId(entry.productId ?? id)) {
       const plateKey = product?.id ?? entry.productId ?? id;
       if (restoredUndergravel.has(plateKey)) continue;
       restoredUndergravel.add(plateKey);
@@ -71,6 +74,10 @@ function controllerRestore(filters, catalogById = CATALOG_BY_ID) {
     }
     if (kind === items.RESTORE_KINDS.SPONGE) {
       out.push(items.restoreSpongeItem(entry, null));
+      continue;
+    }
+    if (kind === items.RESTORE_KINDS.UGF) {
+      out.push(ugfItems.restoreUgfItem(entry, null));
       continue;
     }
     const gph = Math.min(Math.round(Number(entry.rated_gph ?? entry.gph) || 0), 1500);
@@ -528,14 +535,19 @@ test('undergravel plates stay one set per tank: a repeated saved copy is not res
   ]);
   const result = pageLoad(storage, { tank: '29g' });
   assert.deepEqual(result.restored.map((item) => item.instanceId), ['f-ugf1']);
-  assert.equal(result.computed.filtering.biologicalGph, 150);
-  // Catalog unavailable: the stored-GPH fallback applies the same rule.
+  // Phase F: the saved 150 GPH is historical; the UGF is 0 GPH and rated for 29 gal by compatibility.
+  assert.equal(result.computed.filtering.biologicalGph, 0);
+  assert.equal(result.computed.filtering.assessment.ugf.count, 1);
+  assert.equal(result.computed.filtering.level, 'adequate');
+  // Catalog unavailable: the known-UGF fallback applies the same rule.
   const offline = pageLoad(v2Storage([
     { instanceId: 'f-ugf1', source: 'product', productId: UGF, type: 'UGF', capacityMethod: 'flow', gph: 150 },
     { instanceId: 'f-ugf2', source: 'product', productId: UGF, type: 'UGF', capacityMethod: 'flow', gph: 150 },
   ]), { tank: '29g', catalogById: OFFLINE });
   assert.deepEqual(offline.restored.map((item) => item.instanceId), ['f-ugf1']);
-  assert.equal(offline.computed.filtering.biologicalGph, 150);
+  assert.equal(offline.computed.filtering.biologicalGph, 0);
+  assert.equal(offline.computed.filtering.assessment.ugf.count, 1);
+  assert.equal(offline.computed.filtering.level, 'not-evaluated');
 });
 
 test('STOCKING LOAD INVARIANT: 0 / 1 / 2 / 5 identical filters never change Stocking Load', () => {
