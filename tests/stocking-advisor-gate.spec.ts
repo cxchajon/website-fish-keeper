@@ -354,7 +354,7 @@ test.describe('desktop: catalog product filter', () => {
     const id = await addSelectedProduct(page);
     await settle(page);
     await expectChipsMatchCalculator(page, [id]);
-    await page.click(`[data-role="proto-filter-chips"] [data-remove-filter="${id}"]`);
+    await page.click(`[data-role="proto-filter-chips"] .proto-filter-chip[data-filter-id="${id}"] [data-remove-filter]`);
     await expect(filterChips(page)).toHaveCount(0);
     await settle(page);
     const seen = await expectChipsMatchCalculator(page, []);

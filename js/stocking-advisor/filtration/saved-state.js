@@ -23,6 +23,11 @@
  * The v1 mirror is kept until phase E so a tab still running the previous JavaScript restores the
  * same powered filters. It holds only flow-method entries and only the three fields old code reads;
  * a rating-based sponge is never written to it (no manufacturer gallons in rated_gph).
+ *
+ * Duplicates (phase D): each entry is one physical filter with its own instanceId; productId may
+ * repeat and nothing here de-duplicates by it. In the v1 mirror two copies of a powered product are
+ * two entries with the same id (v1 has no instance field; ids are never invented). Scripts from
+ * before phase D restore those as a single filter; v2 stays authoritative.
  */
 import { canonicalizeFilterType } from '../../utils.js';
 import {
@@ -67,7 +72,7 @@ function isManualId(id) {
   return typeof id === 'string' && id.startsWith(MANUAL_ID_PREFIX);
 }
 
-// A stable per-instance id, separate from the catalog productId (which may repeat from phase D).
+// A stable per-instance id, separate from the catalog productId (which repeats for identical filters).
 export function createInstanceId(taken = new Set()) {
   for (let attempt = 0; attempt < 20; attempt += 1) {
     const candidate = `f-${Math.random().toString(36).slice(2, 8)}`;

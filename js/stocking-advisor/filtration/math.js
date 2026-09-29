@@ -107,6 +107,14 @@ const KNOWN_RATING_STATUSES = new Set(Object.values(RATING_STATUSES));
 const MAX_RATED_GALLONS = 10000;
 const MAX_LEGACY_GPH = MAX_DEVICE_GPH;
 const MAX_ID_LENGTH = 128;
+// instanceId (phase D): which physical copy of a filter an entry is. Letters, digits, "-" and "_",
+// up to 64 characters (createInstanceId writes "f-" + base 36). Anything else is malformed and is
+// re-issued, like a missing or repeated id.
+const INSTANCE_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
+
+export function isValidInstanceId(value) {
+  return typeof value === 'string' && INSTANCE_ID_PATTERN.test(value);
+}
 
 function hasCapacityMethod(filter) {
   return Boolean(filter) && filter.capacityMethod !== undefined && filter.capacityMethod !== null;
@@ -187,8 +195,7 @@ function cleanGallons(value) {
 export function pickPassthroughFields(filter) {
   const out = {};
   if (!filter || typeof filter !== 'object') return out;
-  const instanceId = cleanId(filter.instanceId);
-  if (instanceId) out.instanceId = instanceId;
+  if (isValidInstanceId(filter.instanceId)) out.instanceId = filter.instanceId;
   const productId = cleanId(filter.productId);
   if (productId) out.productId = productId;
   const method = typeof filter.capacityMethod === 'string' ? filter.capacityMethod.trim() : '';
