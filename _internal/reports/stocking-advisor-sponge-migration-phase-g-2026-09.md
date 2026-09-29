@@ -371,20 +371,11 @@ taken locally; not committed). Review:
 - overflow / wrapping: none; long product names stay in the chips (pre-existing chip truncation on
   phones unchanged).
 
-## 23. Permanent-live recommendation (step 52)
+## 23. Permanent live test (step 52, added in review follow-up — section 26)
 
-**Recommended, not added.** The live suite validates the engine extensively but nothing user-visible
-in the new card. One check would catch the card regressing into a combined figure or losing the
-permanent sentence:
-
-`phase G: 55 gal + 2 × Hygger Small — card shows "⚠ Likely adequate — multiple sponge filters", two
-separate "rated 10–40 gal" sponge rows (distinct instance ids), "Tank: 55 gal", the permanent sentence,
-no "80", no GPH / × anywhere in the card, card data-warning-ids = filtration.likely_multi_sponge,
-no filtration strip in #stock-warnings, Stocking Load equal to no filters.`
-
-Add it only after phase G is deployed (it fails against phase F production by design). Meanwhile the
-existing live file was made deploy-tolerant (section 21) so the live-verify workflow stays green both
-before and after the phase G deploy.
+First recommended, then added after review as the one permanent phase G check (section 26). The
+existing live suite validates the engine extensively; this test covers the card itself, on the
+multi-sponge case that most directly guards the "no combined capacity" rule.
 
 ## 24. Remaining non-phase-G issues
 
@@ -436,6 +427,47 @@ Functional regression after the fix: unit 307 / 307; gate (with the phase G spec
 extended 105 pairs / 0 failures; permanent live locally against the branch 18 / 18; 3,120-scenario differential
 0 differences.
 
+## 26. Review follow-up: permanent phase G live test
+
+Added to `tests/live/stocking-advisor-saved-filters.live.ts` (same file, same helpers: `trackErrors`,
+`openAdvisor`, `setUp`, `chip`, `settle`, `snapshot`), one test:
+
+`phase G: filtration card for 55 gal + 2 × hygger Double Sponge S — amber likely-multi, one row per
+physical sponge, no combined capacity`
+
+Fresh browser context (Playwright default per test), 55 gal, 8 Neon Tetras, no seeded filters. The
+filters are added through the real picker: select hygger Double Sponge S once, **Add Selected twice**
+(the phase D duplicate path).
+
+| Step | Asserted (card read only through `data-role` / `data-*` attributes) |
+| --- | --- |
+| before filters | exactly one card, `data-level="none"` (existing "No filter added" state) |
+| card | exactly one, visible; `data-state="warn"`; `data-level="likely-multi-sponge"`; `data-warning-ids` contains `filtration.likely_multi_sponge`; the engine agrees (level, status `⚠ / Likely adequate — multiple sponge filters / warn`, warning ids) |
+| headline | `[data-role="filtration-status-headline"]` contains "Likely adequate — multiple sponge filters" (no icon markup required) |
+| two physical sponges | two `li[data-path="sponge"]` rows, text `Sponge 1: rated 10–40 gal` / `Sponge 2: rated 10–40 gal`; both `data-instance-id`s present, different from each other and equal to the two chips' instance ids; fact row `Tank: 55 gal` |
+| **no combined capacity (hard)** | card text has no `80` and no `80 gal`; the explanation contains the one allowed sentence ("… their combined capacity isn't verified."); with that sentence and the permanent sentence removed, no `combined`, `total capacity / rating / gallons`, `capacity bonus`, `extra (stocking) capacity`, `double`, `twice`; no `GPH`, `×` or `turnover` anywhere on the card |
+| redundancy | exactly `Redundancy: 2 biological filters provide backup during maintenance.` |
+| permanent sentence | `[data-role="filtration-status-note"]` visible, exactly "Filtration supports your livestock but does not increase stocking capacity." |
+| no duplicate | no `#stock-warnings [data-warning-id^="filtration."]` |
+| Stocking Load | DOM load equal to the same stock before any filter; engine load equal to the no-filter computation |
+| remove one instance | card follows without reload: `below-rating`, still `warn`, one row `Sponge filter: rated 10–40 gal` carrying the **remaining** instance id, no redundancy line, permanent sentence, no `80` / `GPH` |
+| errors | no page errors, no site-script console errors |
+
+Validation (local static servers only; **not run against production**, which is still phase F):
+
+| Target | Result |
+| --- | --- |
+| branch, new test alone | 3 / 3 passes |
+| branch, full permanent live suite | **19 / 19** (`stocking-advisor-saved-filters.live.ts` 14, `stocking-advisor.live.ts` 5) |
+| `main` (phase F) application code, full suite | 18 passed, 1 failed — the new test, at its first card assertion (`card` count 1), as intended |
+| mutation: an "Combined rating: 80 gal." sentence added to the multi-sponge explanation | fails (`/\b80\b/`) |
+| mutation: "Their total capacity is enough for this tank." added | fails (combined / total-capacity check) |
+| mutation: sponge rows collapsed to one | fails (two sponge rows) |
+
+Mutations were applied temporarily to `status-view.js` and reverted; no application code changed in
+this follow-up. **Run the live-verify workflow only after phase G is merged and deployed**: this test
+fails against phase F production by design (the other 18 tests pass on both).
+
 ## Files changed
 
 - `js/stocking-advisor/filtration/status-view.js` (new) — pure card view model.
@@ -447,4 +479,5 @@ extended 105 pairs / 0 failures; permanent live locally against the branch 18 / 
 - `css/app.bundle.css` — card styles (data-attribute selectors).
 - `data/stocking-advisor/FILTRATION_MODEL.md` — §3.1 filtration status card.
 - Tests: `tests/unit/filtration-status-card-phase-g.test.mjs` (new), `tests/stocking-advisor-filtration-card-phase-g.spec.ts` (new), `playwright.stocking-gate.config.ts`, and the updates in section 21.
+- `tests/live/stocking-advisor-saved-filters.live.ts` — also the permanent phase G card test (section 26).
 - `_internal/reports/stocking-advisor-sponge-migration-phase-g-2026-09.md` (this report).
