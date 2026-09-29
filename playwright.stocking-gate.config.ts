@@ -11,7 +11,7 @@ const launchOptions = process.env.PW_CHROMIUM_PATH ? { executablePath: process.e
 
 export default defineConfig({
   testDir: 'tests',
-  testMatch: ['stocking-advisor-gate.spec.ts', 'stocking-advisor-saved-filters.spec.ts', 'stocking-advisor-sponge-phase-b.spec.ts', 'stocking-advisor-sponge-phase-c.spec.ts'],
+  testMatch: ['stocking-advisor-gate.spec.ts', 'stocking-advisor-saved-filters.spec.ts', 'stocking-advisor-sponge-phase-b.spec.ts', 'stocking-advisor-sponge-phase-c.spec.ts', 'stocking-advisor-duplicate-filters.spec.ts'],
   timeout: 60000,
   expect: { timeout: 10000 },
   reporter: [['list']],

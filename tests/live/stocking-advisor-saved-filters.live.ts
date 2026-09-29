@@ -1,5 +1,5 @@
-// Live check of the saved-filter v2 plumbing, the sponge migration phase B rating model and the
-// phase C stale-data fallback against production. Each test runs in a fresh browser context, so it
+// Live check of the saved-filter v2 plumbing, the sponge migration phase B rating model, the
+// phase C stale-data fallback and phase D duplicate filter instances against production. Each test runs in a fresh browser context, so it
 // only touches its own throwaway localStorage.
 import { test, expect, type Page } from '@playwright/test';
 
@@ -519,6 +519,107 @@ test('phase C: catalog unavailable — a known sponge id saved as a 900 GPH HOB 
     || (message.startsWith('[Stocking] Filter catalog load failed: TypeError: Failed to fetch'));
   expect(errors.page).toEqual([]);
   expect(errors.console.filter((message) => !inducedByOutage(message))).toEqual([]);
+});
+
+// Phase D: the same catalog product twice is two physical filters (same productId, own instanceId).
+test('phase D: hygger Double Sponge S added twice on 55 gal: two instances, likely-multi, saved, remove one by instance', async ({ page }) => {
+  const HYGGER_S = 'hygger-double-sponge-s';
+  const INSTANCE_ID = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
+  const errors = trackErrors(page);
+  const hyggerChips = chip(page, HYGGER_S);
+  const instanceIds = () => hyggerChips.evaluateAll((nodes) => nodes.map((node) => (node as HTMLElement).dataset.instanceId ?? ''));
+  const engineLoad = () => page.evaluate(async () => {
+    const compute = await import('/js/logic/compute.js');
+    const appState = (window as unknown as { appState: Record<string, unknown> }).appState;
+    const load = (c: { bioload: Record<string, unknown> }) => [c.bioload.currentPercent, c.bioload.proposedPercent, c.bioload.text, c.bioload.severity];
+    return { load: load(compute.buildComputedState(appState)), withoutFilters: load(compute.buildComputedState({ ...appState, filters: [] })) };
+  });
+  const expectLoadUnchanged = async (state: Snapshot, noFilterLoad: string) => {
+    expect(state.load).toBe(noFilterLoad);
+    const engine = await engineLoad();
+    expect(engine.load).toEqual(engine.withoutFilters);
+  };
+
+  await openAdvisor(page);
+  await setUp(page, '55g');
+  await settle(page);
+  const noFilter = await snapshot(page);
+
+  // Real UI: select once, Add Selected twice.
+  await expect.poll(() => page.locator(`#filter-product option[value="${HYGGER_S}"]`).count(), { timeout: 20000 }).toBe(1);
+  await page.selectOption('#filter-product', HYGGER_S);
+  const add = page.locator('#filter-product-add');
+  await expect(add).toBeEnabled();
+  await add.click();
+  await expect(hyggerChips).toHaveCount(1);
+  await expect(add).toBeEnabled();
+  await add.click();
+  await expect(hyggerChips).toHaveCount(2);
+  await settle(page);
+
+  const [first, second] = await instanceIds();
+  expect(first).toMatch(INSTANCE_ID);
+  expect(second).toMatch(INSTANCE_ID);
+  expect(first).not.toBe(second);
+  await expect(page.locator('[data-role="proto-filter-chips"] .proto-filter-chip')).toHaveCount(2);
+  await expect(hyggerChips.locator('.proto-filter-chip__gph')).toHaveText(['Rated 10–40 gal', 'Rated 10–40 gal']);
+  for (const text of await hyggerChips.allTextContents()) expect(text).not.toMatch(/GPH|\b80\b/);
+  const pair = await snapshot(page);
+  expect(pair.scoring).toEqual([[HYGGER_S, 'SPONGE', 0], [HYGGER_S, 'SPONGE', 0]]);
+  expect(pair.capacity).toEqual([[HYGGER_S, 'manufacturer_rating', 'verified'], [HYGGER_S, 'manufacturer_rating', 'verified']]);
+  expect(pair.gph).toEqual([0, 0, 0]);
+  expect(pair.turnover).toBe(0);
+  expect(pair.level).toBe('likely-multi-sponge');
+  expect(pair.spongeStatus).toBe('likely-multi');
+  expect(pair.status).toEqual({ tone: 'warn', text: 'Likely adequate — multiple sponge filters' });
+  expect(pair.filtrationWarnings).toEqual([['filtration.likely_multi_sponge', 'warn']]);
+  const multi = page.locator('#stock-warnings .status-strip[data-warning-id="filtration.likely_multi_sponge"]');
+  await expect(multi).toHaveAttribute('data-state', 'warn');
+  await expect(multi).toContainText('Likely adequate — multiple sponge filters');
+  expect(pair.summary).toBe('Filtration: 2 sponge filters (rated by tank size)');
+  expect(pair.filterText).not.toMatch(/80\s*gal|GPH|×\/h/);
+  await expectLoadUnchanged(pair, noFilter.load);
+
+  const identity = (instanceId: string) => ({ instanceId, source: 'product', productId: HYGGER_S, type: 'SPONGE', capacityMethod: 'manufacturer_rating' });
+  expect((await storedJson(page, V2)).filters).toEqual([identity(first), identity(second)]);
+  expect(await stored(page, V1)).toBeNull();
+
+  // Reload: both instances keep their instanceIds.
+  await reloadWithStock(page, '55g');
+  await expect(hyggerChips).toHaveCount(2);
+  expect(await instanceIds()).toEqual([first, second]);
+  const reloaded = await snapshot(page);
+  expect(evaluation(reloaded)).toEqual(evaluation(pair));
+  expect((await storedJson(page, V2)).filters).toEqual([identity(first), identity(second)]);
+  expect(await stored(page, V1)).toBeNull();
+  await expectLoadUnchanged(reloaded, noFilter.load);
+
+  // Remove the first chip only: the second instance remains, not a recreated filter.
+  await page.locator(`[data-role="proto-filter-chips"] .proto-filter-chip[data-instance-id="${first}"] [data-remove-filter]`).click();
+  await expect(hyggerChips).toHaveCount(1);
+  await settle(page);
+  expect(await instanceIds()).toEqual([second]);
+  const one = await snapshot(page);
+  expect(one.scoring).toEqual([[HYGGER_S, 'SPONGE', 0]]);
+  expect(one.gph).toEqual([0, 0, 0]);
+  expect(one.level).toBe('below-rating');
+  expect(one.status).toEqual({ tone: 'warn', text: 'Below manufacturer rating' });
+  expect(one.filtrationWarnings).toEqual([['filtration.below_rating', 'warn']]);
+  expect(one.filterText).not.toMatch(/80\s*gal|GPH|×\/h/);
+  await expectLoadUnchanged(one, noFilter.load);
+  expect((await storedJson(page, V2)).filters).toEqual([identity(second)]);
+  expect(await stored(page, V1)).toBeNull();
+
+  // Reload: the remaining instance survives with the same instanceId.
+  await reloadWithStock(page, '55g');
+  await expect(hyggerChips).toHaveCount(1);
+  expect(await instanceIds()).toEqual([second]);
+  const remaining = await snapshot(page);
+  expect(evaluation(remaining)).toEqual(evaluation(one));
+  expect((await storedJson(page, V2)).filters).toEqual([identity(second)]);
+  expect(await stored(page, V1)).toBeNull();
+  await expectLoadUnchanged(remaining, noFilter.load);
+  expect(errors).toEqual({ page: [], console: [] });
 });
 
 test('regression: 44 species, Tetra IQ 45 at 215 GPH in the live catalog, no errors on load', async ({ page }) => {

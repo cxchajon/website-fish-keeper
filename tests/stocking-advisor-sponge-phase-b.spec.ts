@@ -356,7 +356,7 @@ test.describe('sponge phase B', () => {
     await expect(warning(page, 'filtration.sponge_rated')).toContainText('the sponge is rated for this tank on its own');
 
     // Replace the weak HOB with a strong one: adequate from the powered filter, sponges supplemental.
-    await page.click(`[data-role="proto-filter-chips"] [data-remove-filter^="manual-"]`);
+    await page.click(`[data-role="proto-filter-chips"] .proto-filter-chip[data-filter-id^="manual-"] [data-remove-filter]`);
     await addCustomGph(page, 'HOB', 150);
     await settle(page);
     state = await engine(page);

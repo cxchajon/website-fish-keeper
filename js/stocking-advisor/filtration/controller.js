@@ -10,7 +10,8 @@ import {
   pickPassthroughFields,
   resolveCapacityMethod,
 } from './math.js';
-import { createInstanceId, readSavedFilters, writeSavedFilters } from './saved-state.js';
+import { readSavedFilters, writeSavedFilters } from './saved-state.js';
+import { duplicatePositions, findInstance, removeInstance, replaceInstance, withUniqueInstanceIds } from './instances.js';
 import {
   SPONGE_ITEM_LABEL,
   buildCustomSpongeItem,
@@ -95,11 +96,13 @@ let lastOptionsSignature = '';
 let productDebugText = '';
 let productDebugVisible = false;
 // A custom sponge (restored from an old plan, "Rating needed") whose rating the user is entering:
-// Add replaces it in place instead of adding a second sponge.
-let pendingRatingTargetId = '';
+// Add replaces it in place instead of adding a second sponge. Its instanceId, so only that physical
+// filter changes when two identical unrated sponges exist (phase D).
+let pendingRatingTargetInstanceId = '';
 const SPONGE_MANUAL_NOTE = 'Rated for up to ___ gallons: enter the tank size the manufacturer rates this sponge for (printed on the box or listing, e.g. \u201cup to 20 gallons\u201d; for a range like 10\u201340 gal, enter 40). Sponge filters are checked by this rating; water flow isn\u2019t estimated.';
 const SPONGE_RATING_ERROR = 'Enter the tank size this sponge is rated for: a whole number of gallons from 1 to 999.';
 const FLOW_ERROR = 'Select a filter type and enter a positive flow value (GPH).';
+const UGF_ALREADY_ADDED = 'Already added. An undergravel filter is one plate set per tank.';
 
 const catalogMeta = {
   source: CATALOG_SOURCES.FALLBACK,
@@ -322,11 +325,22 @@ function resolveEfficiencyType(rawType) {
   return canonicalizeFilterType(rawType);
 }
 
+function isUndergravelProduct(product) {
+  return canonicalizeFilterType(product?.type ?? '') === 'UGF';
+}
+
+function hasProductInstance(product) {
+  return state.filters.some((entry) => entry.source === FILTER_SOURCES.PRODUCT && entry.productId === product.id);
+}
+
+// Phase D: the same catalog product may be added again; each Add Selected is one more physical
+// filter with its own instanceId. Undergravel plates stay one set per tank (design D11; their
+// catalog GPH is not a measured flow, so a second copy must not double it).
 function canAddProduct(product) {
   if (!product || !product.id) {
     return false;
   }
-  return !state.filters.some((entry) => entry.source === FILTER_SOURCES.PRODUCT && entry.id === product.id);
+  return !(isUndergravelProduct(product) && hasProductInstance(product));
 }
 
 // Powered / circulation types need a positive GPH; a sponge needs its rated tank size instead.
@@ -594,7 +608,7 @@ function syncManualFields() {
     refs.manualRatingInput.value = '';
   }
   if (!sponge) {
-    pendingRatingTargetId = '';
+    pendingRatingTargetInstanceId = '';
   }
 }
 
@@ -641,8 +655,8 @@ function showProductStatus(message, { duration = 2400 } = {}) {
 
 function renderChips() {
   if (!refs.chips) return;
-  if (pendingRatingTargetId && !state.filters.some((item) => item.id === pendingRatingTargetId)) {
-    pendingRatingTargetId = '';
+  if (pendingRatingTargetInstanceId && !findInstance(state.filters, pendingRatingTargetInstanceId)) {
+    pendingRatingTargetInstanceId = '';
   }
   refs.chips.innerHTML = '';
   const hasFilters = state.filters.length > 0;
@@ -657,10 +671,15 @@ function renderChips() {
   if (!hasFilters) {
     return;
   }
+  // Identical products show the same name; screen readers get "1 of 2" so each × is unambiguous.
+  const duplicates = duplicatePositions(state.filters);
   state.filters.forEach((item) => {
     const chip = document.createElement('span');
     chip.className = 'proto-filter-chip fp-chip';
+    // data-filter-id is the product (or custom) id and repeats for identical products; the chip's
+    // identity, and every action on it, is data-instance-id.
     chip.dataset.filterId = item.id ?? '';
+    chip.dataset.instanceId = item.instanceId ?? '';
     chip.dataset.source = item.source;
     chip.setAttribute('role', 'listitem');
 
@@ -678,11 +697,14 @@ function renderChips() {
     gph.className = 'proto-filter-chip__gph fp-chip__badge';
     gph.setAttribute('aria-hidden', 'true');
 
+    const duplicate = duplicates.get(item.instanceId);
+    const spokenLabel = duplicate ? `${item.label} (${duplicate.position} of ${duplicate.count})` : item.label;
+
     const remove = document.createElement('button');
     remove.type = 'button';
     remove.className = 'proto-filter-chip__remove fp-chip__close';
-    remove.dataset.removeFilter = item.id ?? '';
-    remove.setAttribute('aria-label', `Remove ${item.label}`);
+    remove.dataset.removeFilter = item.instanceId ?? '';
+    remove.setAttribute('aria-label', `Remove ${spokenLabel}`);
     remove.textContent = '×';
 
     let rate = null;
@@ -693,15 +715,15 @@ function renderChips() {
       gph.dataset.rating = badge === 'Rating needed' ? 'needed' : 'rated';
       gph.removeAttribute('aria-hidden');
       label.setAttribute('title', `${item.label} — ${badge}`);
-      remove.setAttribute('aria-label', `Remove ${item.label} (${badge})`);
+      remove.setAttribute('aria-label', `Remove ${spokenLabel} (${badge})`);
       if (needsCustomRating(item)) {
         // An old custom sponge (no rating): let the user enter the number printed on the box.
         rate = document.createElement('button');
         rate.type = 'button';
         rate.className = 'proto-filter-chip__rate';
-        rate.dataset.rateFilter = item.id ?? '';
+        rate.dataset.rateFilter = item.instanceId ?? '';
         rate.textContent = 'Add rating';
-        rate.setAttribute('aria-label', `Add the manufacturer tank rating for ${item.label}`);
+        rate.setAttribute('aria-label', `Add the manufacturer tank rating for ${spokenLabel}`);
         rate.style.cssText = 'flex:0 0 auto;width:auto;min-width:0;min-height:0;height:auto;margin:0;white-space:nowrap;border:1px solid currentColor;background:transparent;color:inherit;border-radius:6px;font-size:12px;line-height:1.2;padding:2px 6px;cursor:pointer;';
       }
     } else {
@@ -817,8 +839,6 @@ function setFilters(nextFilters) {
     return;
   }
   const sanitized = [];
-  const seen = new Set();
-  const instanceIds = new Set();
 
   nextFilters.forEach((raw) => {
     // An explicitly unsupported capacity method never becomes a flow filter.
@@ -846,18 +866,10 @@ function setFilters(nextFilters) {
         : source === FILTER_SOURCES.PRODUCT
           ? raw.name ?? id
           : computeManualLabel(efficiencyType, gph);
-    const key = `${source}:${id}`;
-    if (seen.has(key)) {
-      return;
-    }
-    seen.add(key);
-    // Stable per-instance id, separate from the product id. The same product still can't be added
-    // twice (the key above); repeated instances arrive in phase D.
+    // One entry = one physical filter (phase D). Nothing is de-duplicated by product or id: two
+    // AquaClear 70s are two filters. The stable per-instance id is the identity; a missing,
+    // malformed or repeated one (damaged saved state) is re-issued and the filter is kept.
     const fields = capacityFields(raw);
-    const instanceId = fields.instanceId && !instanceIds.has(fields.instanceId)
-      ? fields.instanceId
-      : createInstanceId(instanceIds);
-    instanceIds.add(instanceId);
     const productId = source === FILTER_SOURCES.PRODUCT ? id : fields.productId;
     sanitized.push({
       id,
@@ -867,12 +879,11 @@ function setFilters(nextFilters) {
       type,
       efficiencyType,
       ...fields,
-      instanceId,
       ...(productId ? { productId } : {}),
     });
   });
 
-  state.filters = sanitized;
+  state.filters = withUniqueInstanceIds(sanitized);
   render();
   applyFiltersToApp();
 }
@@ -901,10 +912,10 @@ function createProductFilter(product) {
   };
 }
 
-function removeFilterById(id) {
-  const targetId = typeof id === 'string' ? id : '';
-  const next = state.filters.filter((item) => item.id !== targetId);
-  setFilters(next);
+// Removes one physical filter; other copies of the same product stay.
+function removeFilterInstance(instanceId) {
+  if (!findInstance(state.filters, instanceId)) return;
+  setFilters(removeInstance(state.filters, instanceId));
   updateProductAddButton();
 }
 
@@ -914,9 +925,8 @@ function newManualId() {
 
 // Custom sponge: "Rated for up to ___ gallons" (the manufacturer's tank-size rating), no GPH.
 function addManualSponge(value) {
-  const target = pendingRatingTargetId
-    ? state.filters.find((item) => item.id === pendingRatingTargetId && needsCustomRating(item))
-    : null;
+  const pending = pendingRatingTargetInstanceId ? findInstance(state.filters, pendingRatingTargetInstanceId) : null;
+  const target = pending && needsCustomRating(pending) ? pending : null;
   const sponge = buildCustomSpongeItem({ id: target?.id ?? newManualId(), ratedGallons: value });
   if (!sponge) {
     setManualNote(SPONGE_RATING_ERROR, { isError: true });
@@ -926,12 +936,11 @@ function addManualSponge(value) {
     refs.manualRatingInput.value = '';
     refs.manualRatingInput.removeAttribute('aria-invalid');
   }
-  pendingRatingTargetId = '';
+  pendingRatingTargetInstanceId = '';
   setManualNote(defaultManualNote());
   if (target) {
-    // Rating an old custom sponge replaces it in place (same chip, same instance).
-    const rated = { ...sponge, instanceId: target.instanceId };
-    setFilters(state.filters.map((item) => (item === target ? rated : item)));
+    // Rating an old custom sponge replaces that one filter in place (same chip, same instance).
+    setFilters(replaceInstance(state.filters, target.instanceId, sponge));
   } else {
     setFilters(state.filters.concat([sponge]));
   }
@@ -1126,10 +1135,12 @@ async function handleProductChange(value) {
     return;
   }
   updateProductAddButton();
-  if (canAddProduct(item)) {
-    showProductStatus('Click Add Selected to add this filter.', { duration: 0 });
+  if (!canAddProduct(item)) {
+    showProductStatus(UGF_ALREADY_ADDED, { duration: 0 });
+  } else if (hasProductInstance(item)) {
+    showProductStatus('Already in your list. Click Add Selected to add another one.', { duration: 0 });
   } else {
-    showProductStatus('Already added. Remove its chip to add again.', { duration: 0 });
+    showProductStatus('Click Add Selected to add this filter.', { duration: 0 });
   }
 }
 
@@ -1148,7 +1159,7 @@ async function tryAddProduct() {
     return;
   }
   if (!canAddProduct(item)) {
-    showProductStatus('Already added', { duration: 2200 });
+    showProductStatus(UGF_ALREADY_ADDED, { duration: 2200 });
     updateProductAddButton();
     return;
   }
@@ -1228,12 +1239,22 @@ function hydrateFromAppState() {
     ? appState.filters
     : readStoredFilters();
   const next = [];
+  // Every saved entry is one physical filter: repeated product ids are restored as separate
+  // instances (phase D), each re-resolved from the current catalog with its own instanceId.
+  const restoredUndergravel = new Set();
   existing.forEach((entry) => {
     const id = typeof entry?.id === 'string' && entry.id ? entry.id : null;
     const product = id ? findProductById(id) : null;
     const kind = restoreKind(entry, product);
     if (kind === RESTORE_KINDS.DROP) {
       return;
+    }
+    // Undergravel plates stay one set per tank (canAddProduct): a repeated copy is not restored,
+    // whether or not the catalog is available to resolve it.
+    if (isUndergravelProduct(product ?? entry)) {
+      const plateKey = product?.id ?? entry?.productId ?? id;
+      if (restoredUndergravel.has(plateKey)) return;
+      restoredUndergravel.add(plateKey);
     }
     // Catalog type wins (phase C): a product the current catalog resolves is restored as that
     // catalog record, whatever type, capacityMethod, GPH or rating the saved entry holds. A known
@@ -1278,16 +1299,16 @@ function hydrateFromAppState() {
 }
 
 // "Add rating" on an old custom sponge: switch the custom row to Sponge and focus the rating field;
-// Add then gives that sponge its rating in place.
-function startRatingEntry(id) {
-  const target = state.filters.find((item) => item.id === id && needsCustomRating(item));
-  if (!target || !refs.manualType) return;
+// Add then gives that one sponge (by instanceId) its rating in place.
+function startRatingEntry(instanceId) {
+  const target = findInstance(state.filters, instanceId);
+  if (!target || !needsCustomRating(target) || !refs.manualType) return;
   const spongeOption = Array.from(refs.manualType.options || []).find((option) => isManualSpongeType(option.value || option.textContent || ''));
   if (spongeOption) {
     refs.manualType.value = spongeOption.value;
   }
   syncManualFields();
-  pendingRatingTargetId = target.id;
+  pendingRatingTargetInstanceId = target.instanceId;
   setManualNote(`Enter the tank size this sponge is rated for, then Add custom. ${SPONGE_MANUAL_NOTE}`);
   updateManualAddButton();
   refs.manualRatingInput?.focus({ preventScroll: false });
@@ -1301,15 +1322,14 @@ function handleChipClick(event) {
   }
   const button = event.target.closest('[data-remove-filter]');
   if (!button) return;
-  const id = button.dataset.removeFilter || '';
-  removeFilterById(id);
+  removeFilterInstance(button.dataset.removeFilter || '');
 }
 
 function handleManualInput(input) {
   if (input?.value) {
     input.removeAttribute('aria-invalid');
     if (refs.manualNote) {
-      refs.manualNote.textContent = pendingRatingTargetId && input === refs.manualRatingInput
+      refs.manualNote.textContent = pendingRatingTargetInstanceId && input === refs.manualRatingInput
         ? refs.manualNote.textContent
         : defaultManualNote();
     }
